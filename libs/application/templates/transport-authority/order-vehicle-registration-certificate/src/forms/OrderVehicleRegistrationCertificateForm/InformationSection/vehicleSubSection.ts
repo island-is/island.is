@@ -24,7 +24,7 @@ export const vehicleSubSection = buildSubSection({
           titleVariant: 'h5',
         }),
         buildTextField({
-          id: 'pickVehicle.plate',
+          id: 'vehicleInfo.plate',
           title: information.labels.vehicle.plate,
           backgroundColor: 'white',
           width: 'half',
@@ -38,7 +38,7 @@ export const vehicleSubSection = buildSubSection({
           },
         }),
         buildTextField({
-          id: 'pickVehicle.type',
+          id: 'vehicleInfo.type',
           title: information.labels.vehicle.type,
           backgroundColor: 'white',
           width: 'half',

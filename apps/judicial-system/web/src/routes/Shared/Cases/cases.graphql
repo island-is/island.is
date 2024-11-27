@@ -27,6 +27,7 @@ query Cases {
       noNationalId
       defenderChoice
       verdictViewDate
+      isSentToPrisonAdmin
     }
     courtDate
     isValidToDateInThePast

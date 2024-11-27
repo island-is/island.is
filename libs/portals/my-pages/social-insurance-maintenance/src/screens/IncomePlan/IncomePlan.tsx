@@ -9,6 +9,7 @@ import {
   CardLoader,
   FootNote,
   IntroHeader,
+  IntroWrapper,
   LinkButton,
   m as coreMessages,
   formatDate,
@@ -75,16 +76,14 @@ const IncomePlan = () => {
   const { data, loading, error } = useGetIncomePlanQuery()
 
   return (
-    <Box>
-      <IntroHeader
-        title={formatMessage(coreMessages.incomePlan)}
-        intro={formatMessage(coreMessages.incomePlanDescription)}
-        serviceProviderSlug={'tryggingastofnun'}
-        serviceProviderTooltip={formatMessage(
-          coreMessages.socialInsuranceTooltip,
-        )}
-      />
-
+    <IntroWrapper
+      title={formatMessage(coreMessages.incomePlan)}
+      intro={formatMessage(coreMessages.incomePlanDescription)}
+      serviceProviderSlug={'tryggingastofnun'}
+      serviceProviderTooltip={formatMessage(
+        coreMessages.socialInsuranceTooltip,
+      )}
+    >
       {error && !loading ? (
         <Problem error={error} noBorder={false} />
       ) : loading ? (
@@ -146,17 +145,15 @@ const IncomePlan = () => {
               heading={formatMessage(coreMessages.incomePlan)}
               cta={{
                 label: formatMessage(m.viewIncomePlan),
-                url: SocialInsuranceMaintenancePaths.SocialInsuranceMaintenanceIncomePlanDetail,
+                url:
+                  data.socialInsuranceIncomePlan.status ===
+                  SocialInsuranceIncomePlanStatus.IN_PROGRESS
+                    ? `${document.location.origin}/${formatMessage(
+                        m.incomePlanModifyLink,
+                      )}`
+                    : SocialInsuranceMaintenancePaths.SocialInsuranceMaintenanceIncomePlanDetail,
                 variant: 'text',
               }}
-              tag={
-                data?.socialInsuranceIncomePlan?.status
-                  ? parseTag(
-                      data.socialInsuranceIncomePlan?.status,
-                      formatMessage,
-                    )
-                  : undefined
-              }
             />
           ) : (
             <ActionCard
@@ -183,8 +180,7 @@ const IncomePlan = () => {
           )}
         </Stack>
       )}
-      <FootNote serviceProviderSlug="tryggingastofnun" />
-    </Box>
+    </IntroWrapper>
   )
 }
 

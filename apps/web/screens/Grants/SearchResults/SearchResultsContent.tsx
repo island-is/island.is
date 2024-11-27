@@ -1,17 +1,17 @@
-import { useIntl } from 'react-intl'
 import { useWindowSize } from 'react-use'
 import format from 'date-fns/format'
-import { useRouter } from 'next/router'
 
-import { Box, Inline, TagVariant, Text } from '@island.is/island-ui/core'
+import { Box, Text } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
+import { useLocale } from '@island.is/localization'
 import { Locale } from '@island.is/shared/types'
 import { isDefined } from '@island.is/shared/utils'
 import { InfoCard } from '@island.is/web/components'
-import { Grant, GrantStatus } from '@island.is/web/graphql/schema'
+import { Grant } from '@island.is/web/graphql/schema'
 import { useLinkResolver } from '@island.is/web/hooks'
 
 import { m } from '../messages'
+import { generateStatusTag } from '../utils'
 
 interface Props {
   grants?: Array<Grant>
@@ -20,8 +20,7 @@ interface Props {
 }
 
 export const SearchResultsContent = ({ grants, subheader, locale }: Props) => {
-  const { formatMessage } = useIntl()
-  const router = useRouter()
+  const { formatMessage } = useLocale()
   const { linkResolver } = useLinkResolver()
 
   const { width } = useWindowSize()
@@ -38,26 +37,7 @@ export const SearchResultsContent = ({ grants, subheader, locale }: Props) => {
       {grants?.length ? (
         <Box>
           {grants?.map((grant) => {
-            if (!grant) {
-              return null
-            }
-
-            let tagVariant: TagVariant | undefined
-            switch (grant.status) {
-              case GrantStatus.Open:
-                tagVariant = 'mint'
-                break
-              case GrantStatus.Closed:
-                tagVariant = 'rose'
-                break
-              case GrantStatus.OpensSoon:
-                tagVariant = 'purple'
-                break
-              default:
-                break
-            }
-
-            if (!grant.applicationId) {
+            if (!grant || !grant.applicationId) {
               return null
             }
 
@@ -71,12 +51,11 @@ export const SearchResultsContent = ({ grants, subheader, locale }: Props) => {
                 text={grant.description ?? ''}
                 logo={grant.fund?.parentOrganization?.logo?.url ?? ''}
                 logoAlt={grant.fund?.parentOrganization?.logo?.title ?? ''}
-                tags={[
-                  {
-                    label: grant.statusText ?? '',
-                    variant: tagVariant,
-                  },
-                ]}
+                tags={
+                  grant.status
+                    ? [generateStatusTag(grant.status, formatMessage)]
+                    : undefined
+                }
                 link={{
                   label: formatMessage(m.general.seeMore),
                   href: linkResolver(

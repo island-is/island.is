@@ -37,6 +37,30 @@ import { NotificationDispatchService } from '../notificationDispatch.service'
 
 jest.mock('@island.is/judicial-system/message')
 
+export const createTestUsers = (
+  roles: string[],
+): Record<
+  string,
+  {
+    id: string
+    name: string
+    email: string
+    mobile: string
+    nationalId: string
+  }
+> =>
+  roles.reduce((acc, role) => {
+    const id = uuid()
+    acc[role] = {
+      id: id,
+      name: `${role}-${id}`,
+      email: `${role}-${id}@omnitrix.is`,
+      mobile: id,
+      nationalId: '1234567890',
+    }
+    return acc
+  }, {} as Record<string, { id: string; name: string; email: string; mobile: string; nationalId: string }>)
+
 const formatMessage = createTestIntl({
   onError: jest.fn(),
   locale: 'is-IS',

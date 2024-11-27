@@ -2829,6 +2829,7 @@ user-notification:
     - 'nginx-ingress-internal'
     - 'islandis'
     - 'identity-server-delegation'
+    - 'application-system'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -2913,6 +2914,7 @@ user-notification-cleanup-worker:
     - 'nginx-ingress-internal'
     - 'islandis'
     - 'identity-server-delegation'
+    - 'application-system'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -3028,6 +3030,7 @@ user-notification-worker:
     - 'nginx-ingress-internal'
     - 'islandis'
     - 'identity-server-delegation'
+    - 'application-system'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
