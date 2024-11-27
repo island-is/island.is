@@ -250,11 +250,13 @@ export class LicenseService {
     locale: Locale,
     licenseType: GenericLicenseType,
     licenseId?: string,
+    agent?: UserAgent,
   ): Promise<GenericUserLicense | LicenseError | null> {
     const licensesOfType = await this.getLicensesOfType(
       user,
       locale,
       licenseType,
+      agent,
     )
 
     if (!licensesOfType) {

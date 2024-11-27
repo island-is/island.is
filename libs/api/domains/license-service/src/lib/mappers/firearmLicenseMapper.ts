@@ -36,14 +36,11 @@ export class FirearmLicensePayloadMapper implements GenericLicenseMapper {
   ): Promise<Array<GenericLicenseMappedPayloadResponse>> {
     if (!payload) return Promise.resolve([])
 
-    /*
     //App version before 1.4.8 doesn't know how to handle table
     const enableAppCompatibility = enableAppCompatibilityMode(
       userAgent?.app?.version,
       APP_VERSION_CUTOFF,
-      ) */
-
-    const enableAppCompatibility = true
+    )
 
     const typedPayload = payload as Array<FirearmLicenseDto>
 
@@ -114,7 +111,7 @@ export class FirearmLicensePayloadMapper implements GenericLicenseMapper {
             properties && enableAppCompatibility
               ? {
                   type: GenericLicenseDataFieldType.Group,
-                  //hideFromServicePortal: true,
+                  hideFromServicePortal: true,
                   label: formatMessage(m.firearmProperties),
                   fields: (properties.properties ?? []).map((property) => ({
                     type: GenericLicenseDataFieldType.Category,
