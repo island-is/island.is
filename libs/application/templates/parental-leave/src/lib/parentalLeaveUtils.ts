@@ -81,6 +81,7 @@ import {
   YesOrNo,
 } from '../types'
 import { currentDateStartTime } from './parentalLeaveTemplateUtils'
+import { ApplicationRights } from '@island.is/clients/vmst'
 
 export const getExpectedDateOfBirthOrAdoptionDateOrBirthDate = (
   application: Application,
@@ -351,6 +352,18 @@ export const getAdditionalSingleParentRightsInDays = (
 }
 
 export const getAvailableRightsInDays = (application: Application) => {
+  const { VMSTApplicationRights } = getApplicationExternalData(
+    application.externalData,
+  )
+  if (VMSTApplicationRights) {
+    const VMSTDays = VMSTApplicationRights.reduce(
+      (acc, right) => acc + Number(right.days),
+      0,
+    )
+
+    return VMSTDays
+  }
+
   const selectedChild = getSelectedChild(
     application.answers,
     application.externalData,
@@ -618,6 +631,11 @@ export const getApplicationExternalData = (
     'VMSTPeriods.data',
   ) as VMSTPeriod[]
 
+  const VMSTApplicationRights = getValueViaPath(
+    externalData,
+    'VMSTApplicationRights.data',
+  ) as ApplicationRights[]
+
   return {
     applicantName,
     applicantGenderCode,
@@ -629,6 +647,7 @@ export const getApplicationExternalData = (
     userPhoneNumber,
     dateOfBirth,
     VMSTPeriods,
+    VMSTApplicationRights,
   }
 }
 
@@ -1429,9 +1448,15 @@ export const calculateEndDateForPeriodWithStartAndLength = (
   let endDate = addDays(lastMonthBeforeEndDate, daysToAdd - 1)
   const daysInMonth = getDaysInMonth(lastMonthBeforeEndDate)
 
-  // If startDay is first day of the month and daysToAdd = 0
   if (daysToAdd === 0) {
     if (start.getDate() === 31) {
+      endDate = addDays(endDate, 1)
+    }
+    if (
+      start.getDate() > 28 &&
+      daysInMonth === 28 &&
+      endDate.getDate() !== 28
+    ) {
       endDate = addDays(endDate, 1)
     }
     return endDate
@@ -1446,8 +1471,6 @@ export const calculateEndDateForPeriodWithStartAndLength = (
   if (!isSameMonth(lastMonthBeforeEndDate, endDate)) {
     if (daysInMonth === 31) {
       endDate = addDays(endDate, 1)
-    } else if (daysInMonth === 28) {
-      endDate = addDays(endDate, -2)
     } else if (daysInMonth === 29) {
       endDate = addDays(endDate, -1)
     }

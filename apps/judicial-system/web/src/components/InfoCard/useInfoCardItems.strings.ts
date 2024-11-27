@@ -28,14 +28,16 @@ export const strings = defineMessages({
     description: 'Notaður sem titill á "ákvörðun" hluta af yfirliti ákæru.',
   },
   reviewTagAppealed: {
-    id: 'judicial.system.core:info_card_indictment.review_tag_appealed_v1',
-    defaultMessage: 'Áfrýja dómi',
+    id: 'judicial.system.core:info_card_indictment.review_tag_appealed_v2',
+    defaultMessage:
+      'Áfrýja {isFine, select, true {viðurlagaákvörðun} other {dómi}}',
     description:
       'Notað sem texti á tagg fyrir "Áfrýjun" tillögu í yfirliti ákæru.',
   },
   reviewTagAccepted: {
-    id: 'judicial.system.core:info_card_indictment.review_tag_completed_v1',
-    defaultMessage: 'Una dómi',
+    id: 'judicial.system.core:info_card_indictment.review_tag_completed_v2',
+    defaultMessage:
+      'Una {isFine, select, true {viðurlagaákvörðun} other {dómi}}',
     description: 'Notað sem texti á tagg fyrir "Una" tillögu í yfirliti ákæru.',
   },
   indictmentReviewedDateTitle: {
