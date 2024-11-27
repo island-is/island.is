@@ -10,7 +10,10 @@ jobs:
     needs:
       - prepare
     name: Check if app is on unicorn track
-    runs-on: ubuntu-latest
+    runs-on: ec2-runners
+    container:
+      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
+    timeout-minutes: 35
 
     outputs:
       IS_UNICORN: ${{ steps.unicorn-affected.outputs.IS_UNICORN }}
@@ -28,11 +31,28 @@ jobs:
           fi
 
   prepare:
-    runs-on: ubuntu-latest
+    runs-on: ec2-runners
+    container:
+      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
+    timeout-minutes: 35
+    strategy:
+      fail-fast: false
     steps:
-      - name: checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v3
         with:
           fetch-depth: 0
-      - name: yarn install
-        run: yarn install
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: 'package.json'
+
+      - name: Setup yarn
+        run: corepack enable
+
+      - name: Get cache
+        id: get-cache
+        uses: ./.github/actions/get-cache
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          enable-cache: 'node_modules,generated-files'
+
