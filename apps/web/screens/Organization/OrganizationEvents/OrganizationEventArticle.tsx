@@ -41,8 +41,9 @@ import { useWindowSize } from '@island.is/web/hooks/useViewport'
 import { useI18n } from '@island.is/web/i18n'
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 import { withMainLayout } from '@island.is/web/layouts/main'
-import type { Screen } from '@island.is/web/types'
+import type { Screen, ScreenContext } from '@island.is/web/types'
 import { CustomNextError } from '@island.is/web/units/errors'
+import { extractNamespaceFromOrganization } from '@island.is/web/utils/extractNamespaceFromOrganization'
 import { getOrganizationSidebarNavigationItems } from '@island.is/web/utils/organization'
 import { webRichText } from '@island.is/web/utils/richText'
 
@@ -140,12 +141,14 @@ export interface OrganizationEventArticleProps {
   locale: Locale
 }
 
-const OrganizationEventArticle: Screen<OrganizationEventArticleProps> = ({
-  organizationPage,
-  event,
-  namespace,
-  locale,
-}) => {
+type OrganizationEventArticleScreenContext = ScreenContext & {
+  organizationPage?: Query['getOrganizationPage']
+}
+
+const OrganizationEventArticle: Screen<
+  OrganizationEventArticleProps,
+  OrganizationEventArticleScreenContext
+> = ({ organizationPage, event, namespace, locale }) => {
   const n = useNamespace(namespace)
   const router = useRouter()
 
@@ -284,19 +287,26 @@ const OrganizationEventArticle: Screen<OrganizationEventArticleProps> = ({
     </>
   )
 }
-OrganizationEventArticle.getProps = async ({ apolloClient, query, locale }) => {
+OrganizationEventArticle.getProps = async ({
+  apolloClient,
+  query,
+  locale,
+  organizationPage: _organizationPage,
+}) => {
   const [organizationPageSlug, _, eventSlug] = query.slugs as string[]
   const [organizationPageResponse, eventResponse, namespace] =
     await Promise.all([
-      apolloClient.query<Query, QueryGetOrganizationPageArgs>({
-        query: GET_ORGANIZATION_PAGE_QUERY,
-        variables: {
-          input: {
-            slug: organizationPageSlug,
-            lang: locale as Locale,
-          },
-        },
-      }),
+      !_organizationPage
+        ? apolloClient.query<Query, QueryGetOrganizationPageArgs>({
+            query: GET_ORGANIZATION_PAGE_QUERY,
+            variables: {
+              input: {
+                slug: organizationPageSlug,
+                lang: locale as Locale,
+              },
+            },
+          })
+        : { data: { getOrganizationPage: _organizationPage } },
       apolloClient.query<Query, QueryGetSingleEventArgs>({
         query: GET_SINGLE_EVENT_QUERY,
         variables: {
@@ -342,11 +352,16 @@ OrganizationEventArticle.getProps = async ({ apolloClient, query, locale }) => {
     )
   }
 
+  const organizationNamespace = extractNamespaceFromOrganization(
+    organizationPage.organization,
+  )
+
   return {
     organizationPage,
     event,
     namespace,
     locale: locale as Locale,
+    customTopLoginButtonItem: organizationNamespace?.customTopLoginButtonItem,
     ...getThemeConfig(organizationPage?.theme, organizationPage?.organization),
   }
 }
