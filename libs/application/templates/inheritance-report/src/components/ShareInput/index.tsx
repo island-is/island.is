@@ -156,6 +156,13 @@ export const ShareInput = ({
 
               const validInput = percentageRegex.test(val)
               const numberValue = valueToNumber(val, ',')
+
+              // allow percentage with up to 4 digits after a decimal point
+              const regex4dec = /^(\d+(\.\d{0,4})?)?$/
+              if (!regex4dec.test(val.replace(',', '.'))) {
+                return
+              }
+
               const isRemoving = len < prevLen.current
               prevLen.current = len
 

@@ -16,7 +16,7 @@ import {
   StaticText,
 } from './Form'
 import { ApolloClient } from '@apollo/client'
-import { Application } from './Application'
+import { Application, FormValue } from './Application'
 import { CallToAction } from './StateMachine'
 import { Colors, theme } from '@island.is/island-ui/theme'
 import { Condition } from './Condition'
@@ -64,7 +64,7 @@ export type TagVariant =
   | 'mint'
   | 'disabled'
 
-export type TableRepeaterFields =
+export type RepeaterFields =
   | 'input'
   | 'select'
   | 'radio'
@@ -82,8 +82,8 @@ type TableRepeaterOptions =
       activeField?: Record<string, string>,
     ) => RepeaterOption[] | [])
 
-export type TableRepeaterItem = {
-  component: TableRepeaterFields
+export type RepeaterItem = {
+  component: RepeaterFields
   /**
    * Defaults to true
    */
@@ -253,13 +253,17 @@ export enum FieldTypes {
   NATIONAL_ID_WITH_NAME = 'NATIONAL_ID_WITH_NAME',
   ACTION_CARD_LIST = 'ACTION_CARD_LIST',
   TABLE_REPEATER = 'TABLE_REPEATER',
+  FIELDS_REPEATER = 'FIELDS_REPEATER',
   HIDDEN_INPUT = 'HIDDEN_INPUT',
   HIDDEN_INPUT_WITH_WATCHED_VALUE = 'HIDDEN_INPUT_WITH_WATCHED_VALUE',
   FIND_VEHICLE = 'FIND_VEHICLE',
+  VEHICLE_RADIO = 'VEHICLE_RADIO',
   STATIC_TABLE = 'STATIC_TABLE',
   ACCORDION = 'ACCORDION',
   BANK_ACCOUNT = 'BANK_ACCOUNT',
   SLIDER = 'SLIDER',
+  INFORMATION_CARD = 'INFORMATION_CARD',
+  DISPLAY = 'DISPLAY',
 }
 
 export enum FieldComponents {
@@ -288,12 +292,16 @@ export enum FieldComponents {
   NATIONAL_ID_WITH_NAME = 'NationalIdWithNameFormField',
   ACTION_CARD_LIST = 'ActionCardListFormField',
   TABLE_REPEATER = 'TableRepeaterFormField',
+  FIELDS_REPEATER = 'FieldsRepeaterFormField',
   HIDDEN_INPUT = 'HiddenInputFormField',
   FIND_VEHICLE = 'FindVehicleFormField',
+  VEHICLE_RADIO = 'VehicleRadioFormField',
   STATIC_TABLE = 'StaticTableFormField',
   ACCORDION = 'AccordionFormField',
   BANK_ACCOUNT = 'BankAccountFormField',
   SLIDER = 'SliderFormField',
+  INFORMATION_CARD = 'InformationCardFormField',
+  DISPLAY = 'DisplayFormField',
 }
 
 export interface CheckboxField extends InputField {
@@ -459,6 +467,14 @@ export interface KeyValueField extends BaseField {
   paddingBottom?: BoxProps['padding']
 }
 
+export interface InformationCardField extends BaseField {
+  readonly type: FieldTypes.INFORMATION_CARD
+  component: FieldComponents.INFORMATION_CARD
+  items: Array<{ label: FormText; value: FormText | FormTextArray }>
+  paddingX?: BoxProps['padding']
+  paddingY?: BoxProps['padding']
+}
+
 export interface CustomField extends BaseField {
   readonly type: FieldTypes.CUSTOM
   readonly component: string
@@ -509,6 +525,8 @@ export interface LinkField extends BaseField {
   component: FieldComponents.LINK
   s3key?: FormText
   link?: FormText
+  variant?: 'ghost' | 'text'
+  justifyContent?: 'flexStart' | 'center' | 'flexEnd'
   iconProps?: Pick<IconProps, 'icon' | 'type'>
 }
 
@@ -517,9 +535,11 @@ export interface PaymentChargeOverviewField extends BaseField {
   component: FieldComponents.PAYMENT_CHARGE_OVERVIEW
   forPaymentLabel: StaticText
   totalLabel: StaticText
-  getSelectedChargeItems: (
-    application: Application,
-  ) => { chargeItemCode: string; extraLabel?: StaticText }[]
+  getSelectedChargeItems: (application: Application) => {
+    chargeItemCode: string
+    chargeItemQuantity?: number
+    extraLabel?: StaticText
+  }[]
 }
 
 type ImageWidthProps = 'full' | 'auto' | '50%'
@@ -635,7 +655,7 @@ export type TableRepeaterField = BaseField & {
   marginTop?: ResponsiveProp<Space>
   marginBottom?: ResponsiveProp<Space>
   titleVariant?: TitleVariants
-  fields: Record<string, TableRepeaterItem>
+  fields: Record<string, RepeaterItem>
   /**
    * Maximum rows that can be added to the table.
    * When the maximum is reached, the button to add a new row is disabled.
@@ -655,6 +675,41 @@ export type TableRepeaterField = BaseField & {
     format?: Record<string, (value: string) => string | StaticText>
   }
 }
+
+export type FieldsRepeaterField = BaseField & {
+  readonly type: FieldTypes.FIELDS_REPEATER
+  component: FieldComponents.FIELDS_REPEATER
+  titleVariant?: TitleVariants
+  formTitle?: StaticText
+  formTitleVariant?: TitleVariants
+  formTitleNumbering?: 'prefix' | 'suffix' | 'none'
+  removeItemButtonText?: StaticText
+  addItemButtonText?: StaticText
+  saveItemButtonText?: StaticText
+  marginTop?: ResponsiveProp<Space>
+  marginBottom?: ResponsiveProp<Space>
+  fields: Record<string, RepeaterItem>
+  /**
+   * Maximum rows that can be added to the table.
+   * When the maximum is reached, the button to add a new row is disabled.
+   */
+  minRows?: number
+  maxRows?: number
+  table?: {
+    /**
+     * List of strings to render,
+     * if not provided it will be auto generated from the fields
+     */
+    header?: StaticText[]
+    /**
+     * List of field id's to render,
+     * if not provided it will be auto generated from the fields
+     */
+    rows?: string[]
+    format?: Record<string, (value: string) => string | StaticText>
+  }
+}
+
 export interface FindVehicleField extends InputField {
   readonly type: FieldTypes.FIND_VEHICLE
   component: FieldComponents.FIND_VEHICLE
@@ -673,6 +728,22 @@ export interface FindVehicleField extends InputField {
   isMachine?: boolean
   isEnergyFunds?: boolean
   energyFundsMessages?: Record<string, FormText>
+}
+
+export interface VehicleRadioField extends InputField {
+  readonly type: FieldTypes.VEHICLE_RADIO
+  component: FieldComponents.VEHICLE_RADIO
+  itemType: 'VEHICLE' | 'PLATE'
+  itemList: unknown[]
+  shouldValidateDebtStatus?: boolean
+  shouldValidateRenewal?: boolean
+  alertMessageErrorTitle?: FormText
+  validationErrorMessages?: Record<string, FormText>
+  validationErrorFallbackMessage?: FormText
+  inputErrorMessage: FormText
+  debtStatusErrorMessage?: FormText
+  renewalExpiresAtTag?: StaticText
+  validateRenewal?: (item: unknown) => boolean
 }
 
 export interface HiddenInputWithWatchedValueField extends BaseField {
@@ -739,6 +810,19 @@ export interface SliderField extends BaseField {
   saveAsString?: boolean
 }
 
+export interface DisplayField extends BaseField {
+  readonly type: FieldTypes.DISPLAY
+  component: FieldComponents.DISPLAY
+  marginTop?: ResponsiveProp<Space>
+  marginBottom?: ResponsiveProp<Space>
+  titleVariant?: TitleVariants
+  suffix?: MessageDescriptor | string
+  rightAlign?: boolean
+  variant?: TextFieldVariant
+  label?: MessageDescriptor | string
+  value: (answers: FormValue) => string
+}
+
 export type Field =
   | CheckboxField
   | CustomField
@@ -766,10 +850,14 @@ export type Field =
   | NationalIdWithNameField
   | ActionCardListField
   | TableRepeaterField
+  | FieldsRepeaterField
   | HiddenInputWithWatchedValueField
   | HiddenInputField
   | FindVehicleField
+  | VehicleRadioField
   | StaticTableField
   | AccordionField
   | BankAccountField
   | SliderField
+  | InformationCardField
+  | DisplayField

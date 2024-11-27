@@ -46,6 +46,9 @@ import {
   SliderField,
   MaybeWithApplication,
   MaybeWithApplicationAndFieldAndLocale,
+  InformationCardField,
+  DisplayField,
+  FieldsRepeaterField,
 } from '@island.is/application/types'
 import { Locale } from '@island.is/shared/types'
 import { Colors } from '@island.is/island-ui/theme'
@@ -634,12 +637,20 @@ export const buildAlertMessageField = (
 export const buildLinkField = (
   data: Omit<LinkField, 'type' | 'component' | 'children'>,
 ): LinkField => {
-  const { s3key, link, iconProps } = data
+  const {
+    s3key,
+    link,
+    iconProps,
+    variant = 'ghost',
+    justifyContent = 'flexStart',
+  } = data
   return {
     ...extractCommonFields(data),
     s3key,
     link,
     iconProps,
+    variant,
+    justifyContent,
     children: undefined,
     type: FieldTypes.LINK,
     component: FieldComponents.LINK,
@@ -867,6 +878,48 @@ export const buildTableRepeaterField = (
   }
 }
 
+export const buildFieldsRepeaterField = (
+  data: Omit<FieldsRepeaterField, 'type' | 'component' | 'children'>,
+): FieldsRepeaterField => {
+  const {
+    fields,
+    table,
+    title,
+    titleVariant,
+    formTitle,
+    formTitleVariant,
+    formTitleNumbering,
+    marginTop,
+    marginBottom,
+    removeItemButtonText,
+    addItemButtonText,
+    saveItemButtonText,
+    minRows,
+    maxRows,
+  } = data
+
+  return {
+    ...extractCommonFields(data),
+    children: undefined,
+    type: FieldTypes.FIELDS_REPEATER,
+    component: FieldComponents.FIELDS_REPEATER,
+    fields,
+    table,
+    title,
+    titleVariant,
+    formTitle,
+    formTitleVariant,
+    formTitleNumbering,
+    marginTop,
+    marginBottom,
+    removeItemButtonText,
+    addItemButtonText,
+    saveItemButtonText,
+    minRows,
+    maxRows,
+  }
+}
+
 export const buildStaticTableField = (
   data: Omit<
     StaticTableField,
@@ -964,5 +1017,61 @@ export const buildSliderField = (
     labelMultiplier,
     condition,
     saveAsString,
+  }
+}
+
+export const buildInformationFormField = (data: {
+  width?: FieldWidth
+  colSpan?: SpanType
+  condition?: Condition
+  items: Array<{ label: FormText; value: FormText | FormTextArray }>
+  paddingX?: BoxProps['padding']
+  paddingY?: BoxProps['padding']
+}): InformationCardField => {
+  const { condition, width = 'full', colSpan, paddingX, paddingY, items } = data
+
+  return {
+    id: '',
+    title: '',
+    children: undefined,
+    doesNotRequireAnswer: true,
+    condition,
+    width,
+    colSpan,
+    type: FieldTypes.INFORMATION_CARD,
+    component: FieldComponents.INFORMATION_CARD,
+    items,
+    paddingX,
+    paddingY,
+  }
+}
+export const buildDisplayField = (
+  data: Omit<DisplayField, 'type' | 'component' | 'children'>,
+): DisplayField => {
+  const {
+    title,
+    titleVariant,
+    label,
+    variant,
+    marginTop,
+    marginBottom,
+    value,
+    suffix,
+    rightAlign,
+  } = data
+  return {
+    ...extractCommonFields(data),
+    title,
+    titleVariant,
+    label,
+    variant,
+    marginTop,
+    marginBottom,
+    type: FieldTypes.DISPLAY,
+    component: FieldComponents.DISPLAY,
+    children: undefined,
+    value,
+    suffix,
+    rightAlign,
   }
 }

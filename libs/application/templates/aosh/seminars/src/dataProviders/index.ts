@@ -1,6 +1,29 @@
-import { IdentityApi } from '@island.is/application/types'
+import {
+  InstitutionNationalIds,
+  MockablePaymentCatalogApi,
+  PaymentCatalogApi,
+} from '@island.is/application/types'
+import { IdentityApi as IdentityApiProvider } from '@island.is/application/types'
+
 export { UserProfileApi } from '@island.is/application/types'
 
-export const IdentityApiWithActor = IdentityApi.configure({
-  params: { includeActorInfo: true },
+export const VinnueftirlitidPaymentCatalogApi = PaymentCatalogApi.configure({
+  params: {
+    organizationId: InstitutionNationalIds.VINNUEFTIRLITID,
+  },
+  externalDataId: 'payment',
+})
+
+export const MockableVinnueftirlitidPaymentCatalogApi =
+  MockablePaymentCatalogApi.configure({
+    params: {
+      organizationId: InstitutionNationalIds.VINNUEFTIRLITID,
+    },
+    externalDataId: 'payment',
+  })
+
+export const IdentityApi = IdentityApiProvider.configure({
+  params: {
+    includeActorInfo: true,
+  },
 })

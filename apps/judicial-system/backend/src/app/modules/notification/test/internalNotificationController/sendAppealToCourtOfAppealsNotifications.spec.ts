@@ -10,7 +10,10 @@ import {
   UserRole,
 } from '@island.is/judicial-system/types'
 
-import { createTestingNotificationModule } from '../createTestingNotificationModule'
+import {
+  createTestingNotificationModule,
+  createTestUsers,
+} from '../createTestingNotificationModule'
 
 import { Case } from '../../../case'
 import { DeliverResponse } from '../../models/deliver.response'
@@ -23,20 +26,17 @@ interface Then {
 type GivenWhenThen = (user: User, defenderNationalId?: string) => Promise<Then>
 
 describe('InternalNotificationController - Send appeal to court of appeals notifications', () => {
+  const { prosecutor, judge, registrar, defender, court } = createTestUsers([
+    'prosecutor',
+    'judge',
+    'registrar',
+    'defender',
+    'court',
+  ])
+
   const caseId = uuid()
-  const prosecutorName = uuid()
-  const prosecutorEmail = uuid()
-  const prosecutorMobileNumber = uuid()
-  const judgeName = uuid()
-  const judgeEmail = uuid()
-  const registrarName = uuid()
-  const registrarEmail = uuid()
-  const defenderName = uuid()
-  const defenderEmail = uuid()
+
   const courtCaseNumber = uuid()
-  const courtId = uuid()
-  const courtEmail = uuid()
-  const courtMobileNumber = uuid()
 
   let mockEmailService: EmailService
   let mockSmsService: SmsService
@@ -44,8 +44,8 @@ describe('InternalNotificationController - Send appeal to court of appeals notif
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    process.env.COURTS_ASSISTANT_MOBILE_NUMBERS = `{"${courtId}": "${courtMobileNumber}"}`
-    process.env.COURTS_EMAILS = `{"${courtId}": "${courtEmail}"}`
+    process.env.COURTS_ASSISTANT_MOBILE_NUMBERS = `{"${court.id}": "${court.mobile}"}`
+    process.env.COURTS_EMAILS = `{"${court.id}": "${court.email}"}`
 
     const { emailService, smsService, internalNotificationController } =
       await createTestingNotificationModule()
@@ -62,18 +62,18 @@ describe('InternalNotificationController - Send appeal to court of appeals notif
           {
             id: caseId,
             prosecutor: {
-              name: prosecutorName,
-              email: prosecutorEmail,
-              mobileNumber: prosecutorMobileNumber,
+              name: prosecutor.name,
+              email: prosecutor.email,
+              mobileNumber: prosecutor.mobile,
             },
-            judge: { name: judgeName, email: judgeEmail },
-            registrar: { name: registrarName, email: registrarEmail },
+            judge: { name: judge.name, email: judge.email },
+            registrar: { name: registrar.name, email: registrar.email },
             court: { name: 'Héraðsdómur Reykjavíkur' },
             defenderNationalId,
-            defenderName: defenderName,
-            defenderEmail: defenderEmail,
+            defenderName: defender.name,
+            defenderEmail: defender.email,
             courtCaseNumber,
-            courtId: courtId,
+            courtId: court.id,
           } as Case,
           {
             user,
@@ -102,35 +102,35 @@ describe('InternalNotificationController - Send appeal to court of appeals notif
     it('should send notification to judge, registrar, court and defender', () => {
       expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
         expect.objectContaining({
-          to: [{ name: judgeName, address: judgeEmail }],
+          to: [{ name: judge.name, address: judge.email }],
           subject: `Kæra í máli ${courtCaseNumber}`,
           html: `Úrskurður hefur verið kærður í máli ${courtCaseNumber}. Hægt er að nálgast gögn málsins á <a href="http://localhost:4200/krafa/yfirlit/${caseId}">yfirlitssíðu málsins í Réttarvörslugátt</a>.`,
         }),
       )
       expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
         expect.objectContaining({
-          to: [{ name: registrarName, address: registrarEmail }],
+          to: [{ name: registrar.name, address: registrar.email }],
           subject: `Kæra í máli ${courtCaseNumber}`,
           html: `Úrskurður hefur verið kærður í máli ${courtCaseNumber}. Hægt er að nálgast gögn málsins á <a href="http://localhost:4200/krafa/yfirlit/${caseId}">yfirlitssíðu málsins í Réttarvörslugátt</a>.`,
         }),
       )
       expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
         expect.objectContaining({
-          to: [{ name: 'Héraðsdómur Reykjavíkur', address: courtEmail }],
+          to: [{ name: 'Héraðsdómur Reykjavíkur', address: court.email }],
           subject: `Kæra í máli ${courtCaseNumber}`,
           html: `Úrskurður hefur verið kærður í máli ${courtCaseNumber}. Hægt er að nálgast gögn málsins á <a href="http://localhost:4200/krafa/yfirlit/${caseId}">yfirlitssíðu málsins í Réttarvörslugátt</a>.`,
         }),
       )
       expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
         expect.objectContaining({
-          to: [{ name: defenderName, address: defenderEmail }],
+          to: [{ name: defender.name, address: defender.email }],
           subject: `Kæra í máli ${courtCaseNumber}`,
           html: `Úrskurður hefur verið kærður í máli ${courtCaseNumber}. Hægt er að nálgast gögn málsins á <a href="http://localhost:4200/verjandi/krafa/${caseId}">yfirlitssíðu málsins í Réttarvörslugátt</a>.`,
         }),
       )
 
       expect(mockSmsService.sendSms).toHaveBeenCalledWith(
-        [courtMobileNumber],
+        [court.mobile],
         `Úrskurður hefur verið kærður í máli ${courtCaseNumber}. Sjá nánar á rettarvorslugatt.island.is`,
       )
       expect(then.result).toEqual({ delivered: true })
@@ -150,20 +150,20 @@ describe('InternalNotificationController - Send appeal to court of appeals notif
     it('should send notification to judge and defender', () => {
       expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
         expect.objectContaining({
-          to: [{ name: judgeName, address: judgeEmail }],
+          to: [{ name: judge.name, address: judge.email }],
           subject: `Kæra í máli ${courtCaseNumber}`,
           html: `Úrskurður hefur verið kærður í máli ${courtCaseNumber}. Hægt er að nálgast gögn málsins á <a href="http://localhost:4200/krafa/yfirlit/${caseId}">yfirlitssíðu málsins í Réttarvörslugátt</a>.`,
         }),
       )
       expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
         expect.objectContaining({
-          to: [{ name: defenderName, address: defenderEmail }],
+          to: [{ name: defender.name, address: defender.email }],
           subject: `Kæra í máli ${courtCaseNumber}`,
           html: `Úrskurður hefur verið kærður í máli ${courtCaseNumber}. Hægt er að nálgast gögn málsins hjá Héraðsdómi Reykjavíkur ef þau hafa ekki þegar verið afhent.`,
         }),
       )
       expect(mockSmsService.sendSms).toHaveBeenCalledWith(
-        [courtMobileNumber],
+        [court.mobile],
         `Úrskurður hefur verið kærður í máli ${courtCaseNumber}. Sjá nánar á rettarvorslugatt.island.is`,
       )
       expect(then.result).toEqual({ delivered: true })
@@ -180,24 +180,24 @@ describe('InternalNotificationController - Send appeal to court of appeals notif
     it('should send notifications to judge and prosecutor', () => {
       expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
         expect.objectContaining({
-          to: [{ name: judgeName, address: judgeEmail }],
+          to: [{ name: judge.name, address: judge.email }],
           subject: `Kæra í máli ${courtCaseNumber}`,
           html: `Úrskurður hefur verið kærður í máli ${courtCaseNumber}. Hægt er að nálgast gögn málsins á <a href="http://localhost:4200/krafa/yfirlit/${caseId}">yfirlitssíðu málsins í Réttarvörslugátt</a>.`,
         }),
       )
       expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
         expect.objectContaining({
-          to: [{ name: prosecutorName, address: prosecutorEmail }],
+          to: [{ name: prosecutor.name, address: prosecutor.email }],
           subject: `Kæra í máli ${courtCaseNumber}`,
           html: `Úrskurður hefur verið kærður í máli ${courtCaseNumber}. Hægt er að nálgast gögn málsins á <a href="http://localhost:4200/krafa/yfirlit/${caseId}">yfirlitssíðu málsins í Réttarvörslugátt</a>.`,
         }),
       )
       expect(mockSmsService.sendSms).toHaveBeenCalledWith(
-        [courtMobileNumber],
+        [court.mobile],
         `Úrskurður hefur verið kærður í máli ${courtCaseNumber}. Sjá nánar á rettarvorslugatt.island.is`,
       )
       expect(mockSmsService.sendSms).toHaveBeenCalledWith(
-        [prosecutorMobileNumber],
+        [prosecutor.mobile],
         `Úrskurður hefur verið kærður í máli ${courtCaseNumber}. Sjá nánar á rettarvorslugatt.island.is`,
       )
 

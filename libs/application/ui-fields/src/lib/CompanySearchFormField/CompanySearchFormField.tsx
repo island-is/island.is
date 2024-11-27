@@ -49,7 +49,7 @@ export const CompanySearchFormField: FC<React.PropsWithChildren<Props>> = ({
   }
 
   return (
-    <Box marginTop={[2, 4]}>
+    <Box marginTop={2}>
       <CompanySearchController
         required={buildFieldRequired(application, required)}
         checkIfEmployerIsOnForbiddenList={checkIfEmployerIsOnForbiddenList}
