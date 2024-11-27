@@ -571,6 +571,11 @@ export const errorMsgs = defineMessages({
     id: 'ap.regulations-admin:title-is-too-long',
     defaultMessage: 'Titill reglugerðar er of langur.',
   },
+  errorOnSaveReg: {
+    id: 'ap.regulations-admin:error-on-save-reg',
+    defaultMessage:
+      'Villa kom upp við að vista texta. Vinsamlegast afritið texta og reynið aftur síðar.',
+  },
 })
 
 export const homeMessages = defineMessages({

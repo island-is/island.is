@@ -285,8 +285,15 @@ const IndictmentOverview: FC = () => {
             indictmentAppealDeadline={
               workingCase.indictmentAppealDeadline ?? ''
             }
+            indictmentAppealDeadlineIsInThePast={
+              workingCase.indictmentVerdictAppealDeadlineExpired ?? false
+            }
             modalVisible={modalVisible}
             setModalVisible={setModalVisible}
+            isFine={
+              workingCase.indictmentRulingDecision ===
+              CaseIndictmentRulingDecision.FINE
+            }
             onSelect={() => setIsReviewDecisionSelected(true)}
           />
         )}
