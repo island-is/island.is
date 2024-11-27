@@ -1,0 +1,23 @@
+fragment ApplicationFragment on Application {
+  id
+  created
+  modified
+  applicant
+  state
+  typeId
+  name
+  progress
+  status
+  institution
+  actionCard {
+    draftTotalSteps
+    draftFinishedSteps
+    tag {
+      label
+      variant
+    }
+    pendingAction {
+      title
+    }
+  }
+}

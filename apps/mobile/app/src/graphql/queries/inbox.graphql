@@ -1,0 +1,57 @@
+mutation MarkAllDocumentsAsRead {
+  documentsV2MarkAllAsRead {
+    success
+  }
+}
+
+query ListOrganizations {
+  getOrganizations(input: { lang: "is-IS", perPage: 200 }) {
+    items {
+      ...OrganizationFragment
+    }
+  }
+}
+
+query ListDocuments($input: DocumentsV2DocumentsInput!) {
+  documentsV2(input: $input) {
+    data {
+      ...ListDocument
+    }
+    totalCount
+    unreadCount
+  }
+}
+
+query GetDocumentsCategoriesAndSenders {
+  getDocumentCategories {
+    id
+    name
+  }
+  getDocumentSenders {
+    id
+    name
+  }
+}
+
+query GetDocument($input: DocumentInput!, $locale: String) {
+  documentV2(input: $input, locale: $locale) {
+    ...ListDocument
+    content {
+      type
+      value
+    }
+  }
+}
+
+mutation PostMailActionMutation($input: DocumentsV2MailActionInput!) {
+  postMailActionV2(input: $input) {
+    success
+  }
+}
+
+query DocumentConfirmActions($input: DocumentConfirmActionsInput!) {
+  documentV2ConfirmActions(input: $input) {
+    id
+    confirmed
+  }
+}
