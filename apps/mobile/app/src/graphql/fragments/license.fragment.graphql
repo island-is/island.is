@@ -1,0 +1,46 @@
+fragment GenericLicenseDataFieldFragment on GenericLicenseDataField {
+  type
+  name
+  label
+  value
+  fields {
+    type
+    name
+    label
+    value
+    fields {
+      type
+      name
+      label
+      value
+    }
+  }
+}
+
+fragment GenericUserLicenseFragment on GenericUserLicense {
+  nationalId
+  license {
+    type
+    provider {
+      id
+    }
+    pkpass
+    pkpassStatus
+    timeout
+    status
+  }
+  fetch {
+    status
+    updated
+  }
+  payload {
+    data {
+      ...GenericLicenseDataFieldFragment
+    }
+    rawData
+    metadata {
+      licenseNumber
+      expired
+    }
+  }
+}
