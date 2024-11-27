@@ -24,7 +24,7 @@ export const createApplication = (
   modified: new Date(),
   externalData: {},
   id: faker.random.word(),
-  state: 'DRAFT',
+  state: 'draft',
   typeId: ApplicationTypes.EXAMPLE,
   name: '',
   status: ApplicationStatus.IN_PROGRESS,
