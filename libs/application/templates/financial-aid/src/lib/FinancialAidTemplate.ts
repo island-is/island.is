@@ -7,16 +7,19 @@ import {
   DefaultEvents,
   Application,
 } from '@island.is/application/types'
+
 import { assign } from 'xstate'
+
 import { Roles, ApplicationStates, ONE_DAY, ONE_MONTH } from './constants'
+
 import { application, stateDescriptions } from './messages'
 import { dataSchema } from './dataSchema'
 import {
-  isMunicipalityNotRegistered,
+  isMuncipalityNotRegistered,
   hasActiveCurrentApplication,
   hasSpouseCheck,
 } from './utils'
-import { FinancialAidAnswers, FinancialAidExternalData } from '..'
+import { FAApplication } from '..'
 import {
   CreateApplicationApi,
   CurrentApplicationApi,
@@ -62,8 +65,8 @@ const FinancialAidTemplate: ApplicationTemplate<
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/PrerequisitesForm').then((module) =>
-                  Promise.resolve(module.PrerequisitesForm),
+                import('../forms/Prerequisites').then((module) =>
+                  Promise.resolve(module.Prerequisites),
                 ),
               write: 'all',
               delete: true,
@@ -81,8 +84,8 @@ const FinancialAidTemplate: ApplicationTemplate<
         on: {
           SUBMIT: [
             {
-              target: ApplicationStates.MUNICIPALITYNOTREGISTERED,
-              cond: isMunicipalityNotRegistered,
+              target: ApplicationStates.MUNCIPALITYNOTREGISTERED,
+              cond: isMuncipalityNotRegistered,
             },
             {
               target: ApplicationStates.SUBMITTED,
@@ -106,8 +109,8 @@ const FinancialAidTemplate: ApplicationTemplate<
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/ApplicationForm').then((module) =>
-                  Promise.resolve(module.ApplicationForm),
+                import('../forms/Application').then((module) =>
+                  Promise.resolve(module.Application),
                 ),
               read: 'all',
               write: 'all',
@@ -139,8 +142,8 @@ const FinancialAidTemplate: ApplicationTemplate<
             {
               id: Roles.SPOUSE,
               formLoader: () =>
-                import('../forms/PrerequisitesSpouseForm').then((module) =>
-                  Promise.resolve(module.PrerequisitesSpouseForm),
+                import('../forms/PrerequisitesSpouse').then((module) =>
+                  Promise.resolve(module.PrerequisitesSpouse),
                 ),
               read: 'all',
               write: 'all',
@@ -149,7 +152,7 @@ const FinancialAidTemplate: ApplicationTemplate<
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/ApplicantSubmittedForm').then((module) =>
+                import('../forms/ApplicantSubmitted').then((module) =>
                   Promise.resolve(module.ApplicantSubmitted),
                 ),
               read: 'all',
@@ -179,8 +182,8 @@ const FinancialAidTemplate: ApplicationTemplate<
             {
               id: Roles.SPOUSE,
               formLoader: () =>
-                import('../forms/SpouseForm').then((module) =>
-                  Promise.resolve(module.spouseForm),
+                import('../forms/Spouse').then((module) =>
+                  Promise.resolve(module.Spouse),
                 ),
               read: 'all',
               write: 'all',
@@ -188,7 +191,7 @@ const FinancialAidTemplate: ApplicationTemplate<
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/ApplicantSubmittedForm').then((module) =>
+                import('../forms/ApplicantSubmitted').then((module) =>
                   Promise.resolve(module.ApplicantSubmitted),
                 ),
               read: 'all',
@@ -213,7 +216,7 @@ const FinancialAidTemplate: ApplicationTemplate<
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/ApplicantSubmittedForm').then((module) =>
+                import('../forms/ApplicantSubmitted').then((module) =>
                   Promise.resolve(module.ApplicantSubmitted),
                 ),
               read: 'all',
@@ -222,7 +225,7 @@ const FinancialAidTemplate: ApplicationTemplate<
             {
               id: Roles.SPOUSE,
               formLoader: () =>
-                import('../forms/SpouseSubmittedForm').then((module) =>
+                import('../forms/SpouseSubmitted').then((module) =>
                   Promise.resolve(module.SpouseSubmitted),
                 ),
               read: 'all',
@@ -234,7 +237,7 @@ const FinancialAidTemplate: ApplicationTemplate<
           EDIT: { target: ApplicationStates.SUBMITTED },
         },
       },
-      [ApplicationStates.MUNICIPALITYNOTREGISTERED]: {
+      [ApplicationStates.MUNCIPALITYNOTREGISTERED]: {
         meta: {
           name: application.name.defaultMessage,
           status: 'rejected',
@@ -247,10 +250,8 @@ const FinancialAidTemplate: ApplicationTemplate<
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import(
-                  '../forms/MunicipalityNotRegisteredForm/MunicipalityNotRegistered'
-                ).then((module) =>
-                  Promise.resolve(module.MunicipalityNotRegistered),
+                import('../forms/MuncipalityNotRegistered').then((module) =>
+                  Promise.resolve(module.MuncipalityNotRegistered),
                 ),
               read: 'all',
             },
@@ -262,13 +263,11 @@ const FinancialAidTemplate: ApplicationTemplate<
   stateMachineOptions: {
     actions: {
       assignToSpouse: assign((context) => {
-        const { externalData, answers } = context.application
-        const answersSchema = answers as unknown as FinancialAidAnswers
-        const externalDataSchema =
-          externalData as unknown as FinancialAidExternalData
+        const { externalData, answers } =
+          context.application as unknown as FAApplication
         const spouse =
-          externalDataSchema.nationalRegistrySpouse.data?.nationalId ||
-          answersSchema.relationshipStatus.spouseNationalId
+          externalData.nationalRegistrySpouse.data?.nationalId ||
+          answers.relationshipStatus.spouseNationalId
 
         if (spouse) {
           return {
