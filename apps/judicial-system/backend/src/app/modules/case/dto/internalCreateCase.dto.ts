@@ -1,3 +1,4 @@
+import { Transform } from 'class-transformer'
 import {
   ArrayMinSize,
   IsArray,
@@ -6,11 +7,15 @@ import {
   IsNotEmpty,
   IsOptional,
   IsString,
+  MaxLength,
+  MinLength,
 } from 'class-validator'
 
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 
 import { CaseType, Gender } from '@island.is/judicial-system/types'
+
+import { nationalIdTransformer } from '../../../transformers'
 
 export class InternalCreateCaseDto {
   @IsNotEmpty()
@@ -27,11 +32,17 @@ export class InternalCreateCaseDto {
 
   @IsNotEmpty()
   @IsString()
+  @MinLength(10)
+  @MaxLength(10)
+  @Transform(nationalIdTransformer)
   @ApiProperty({ type: String })
   readonly prosecutorNationalId!: string
 
   @IsNotEmpty()
   @IsString()
+  @MinLength(10)
+  @MaxLength(10)
+  @Transform(nationalIdTransformer)
   @ApiProperty({ type: String })
   readonly accusedNationalId!: string
 
