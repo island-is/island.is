@@ -86,7 +86,7 @@ describe('Subpoena Exists Guard', () => {
       then = await givenWhenThen()
     })
 
-    it('should throw BadRequestException', () => {
+    it('should throw InternalServerErrorException', () => {
       expect(then.error).toBeInstanceOf(InternalServerErrorException)
       expect(then.error.message).toBe('Missing defendant')
     })
