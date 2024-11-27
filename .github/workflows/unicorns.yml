@@ -3,7 +3,7 @@ on:
   workflow_dispatch:
   push:
     branches:
-      - 'unicorn-app-pipeline' #temp for debugging and testing
+      - 'feature/unicorn-app-pipeline' #temp for debugging and testing
 defaults:
   run:
     shell: bash
