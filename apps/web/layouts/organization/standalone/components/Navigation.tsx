@@ -1,3 +1,5 @@
+import { useWindowSize } from 'react-use'
+
 import {
   Box,
   GridColumn,
@@ -8,6 +10,7 @@ import {
   LinkV2,
   Text,
 } from '@island.is/island-ui/core'
+import { theme } from '@island.is/island-ui/theme'
 import { LanguageToggler, SearchInput } from '@island.is/web/components'
 import { useI18n } from '@island.is/web/i18n'
 
@@ -33,36 +36,38 @@ export const Navigation: React.FC<React.PropsWithChildren<NavigationProps>> = ({
   organizationSlug,
 }) => {
   const { activeLocale } = useI18n()
+  const { width } = useWindowSize()
 
   return (
     <GridContainer>
       <GridRow className={styles.gridRow} alignItems="center">
-        <GridColumn span="3/12">
+        <GridColumn span={['6/12', '6/12', '6/12', '3/12']}>
           <LinkV2 href={homeHref}>
             <Inline space={3} alignY="center" flexWrap="nowrap">
               {!!logo && (
                 <img src={logo} alt={logoAltText} className={styles.logo} />
               )}
-              <Text variant="h2" as="h1">
+              <Text
+                variant={width < theme.breakpoints.sm ? 'h3' : 'h2'}
+                as="h1"
+              >
                 {title}
               </Text>
             </Inline>
           </LinkV2>
         </GridColumn>
-        <GridColumn span="6/12">
-          <Hidden below="lg">
-            <Inline space={3} alignY="center" justifyContent="center">
-              {links.map((link) => (
-                <LinkV2 key={link.label} href={link.href}>
-                  <Text variant="h4" color="blue600">
-                    {link.label}
-                  </Text>
-                </LinkV2>
-              ))}
-            </Inline>
-          </Hidden>
+        <GridColumn span="6/12" hiddenBelow="lg">
+          <Inline space={3} alignY="center" justifyContent="center">
+            {links.map((link) => (
+              <LinkV2 key={link.label} href={link.href}>
+                <Text variant="h4" color="blue600">
+                  {link.label}
+                </Text>
+              </LinkV2>
+            ))}
+          </Inline>
         </GridColumn>
-        <GridColumn span="3/12">
+        <GridColumn span={['6/12', '6/12', '6/12', '3/12']}>
           <Hidden below="lg">
             <Box display="flex" alignItems="center" justifyContent="flexEnd">
               <SearchInput
