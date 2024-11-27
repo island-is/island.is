@@ -29,7 +29,7 @@ export const store = createStore(() => {
       const subGroups =
         faker.number.int(4) === 0
           ? []
-          : articleSubgroup.list(faker.datatype.number({ min: 2, max: 4 }))
+          : articleSubgroup.list(faker.number.int({ min: 2, max: 4 }))
 
       const groupArticles = article.list(subGroups.length * 2 + 2, {
         group,
