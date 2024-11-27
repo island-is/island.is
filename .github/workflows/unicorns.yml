@@ -4,7 +4,9 @@ on:
   push:
     branches:
       - 'feature/unicorn-app-pipeline' #temp for debugging and testing
-
+defaults:
+  run:
+    shell: bash
 jobs:
   check-unicorn:
     needs:
