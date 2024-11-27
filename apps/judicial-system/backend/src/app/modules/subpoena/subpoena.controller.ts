@@ -23,7 +23,7 @@ import {
 import {
   indictmentCases,
   SubpoenaType,
-  User,
+  type User,
 } from '@island.is/judicial-system/types'
 
 import {
