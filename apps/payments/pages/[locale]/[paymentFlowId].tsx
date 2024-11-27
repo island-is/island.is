@@ -20,7 +20,7 @@ import { CardPayment } from '../../components/CardPayment/CardPayment'
 import { InvoicePayment } from '../../components/InvoicePayment/InvoicePayment'
 import { ALLOWED_LOCALES, Locale } from '../../utils'
 import { getConfigcatClient } from '../../clients/configcat'
-import { card, generic, invoice } from '../../messages'
+import { card, generic, genericError, invoice } from '../../messages'
 
 interface PaymentPageProps {
   locale: string
@@ -214,7 +214,7 @@ export default function PaymentPage({
           </FormProvider>
         ) : (
           <Box display="flex" flexDirection="column">
-            <p>Ekki tókst að sækja upplýsingar um greiðsluflæði</p>
+            <p>{formatMessage(genericError.fetchFailed)}</p>
           </Box>
         )
       }
