@@ -128,13 +128,15 @@ export class ProxyService {
   }) {
     try {
       const reqHeaderContentType = req.headers['content-type']
+      const finalBody = body ?? req.body
+
       const response = await fetch(targetUrl, {
         method: 'POST',
         headers: {
           'Content-Type': reqHeaderContentType || 'application/json',
           Authorization: `Bearer ${accessToken}`,
         },
-        body: JSON.stringify(body ?? req.body),
+        body: finalBody ? JSON.stringify(finalBody) : undefined,
         agent: (parsedUrl) => {
           if (parsedUrl.protocol == 'http:') {
             return customAgent
