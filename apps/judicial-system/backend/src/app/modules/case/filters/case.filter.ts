@@ -277,7 +277,9 @@ const canPrisonAdminUserAccessCase = (
 
     // Check case indictment ruling decision access
     if (
-      theCase.indictmentRulingDecision !== CaseIndictmentRulingDecision.RULING
+      theCase.indictmentRulingDecision !==
+        CaseIndictmentRulingDecision.RULING &&
+      theCase.indictmentRulingDecision !== CaseIndictmentRulingDecision.FINE
     ) {
       return false
     }
