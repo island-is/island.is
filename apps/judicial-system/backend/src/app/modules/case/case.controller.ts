@@ -600,7 +600,6 @@ export class CaseController {
     districtCourtJudgeRule,
     districtCourtRegistrarRule,
     districtCourtAssistantRule,
-    
   )
   @Get([
     'case/:caseId/indictment',
