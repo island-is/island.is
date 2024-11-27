@@ -127,9 +127,7 @@
     "mock": {
       "executor": "nx:run-commands",
       "options": {
-        "commands": [
-          "API_MOCKS=true yarn start application-system-form --configuration=mock"
-        ]
+        "commands": ["API_MOCKS=true yarn start application-system-form"]
       }
     },
     "docker-static": {
