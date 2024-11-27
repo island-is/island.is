@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
+
 import {
   Text,
   Box,
@@ -14,34 +15,29 @@ import {
   getCommentFromLatestEvent,
 } from '@island.is/financial-aid/shared/lib'
 import { getValueViaPath } from '@island.is/application/core'
-import { FieldBaseProps, RecordObject } from '@island.is/application/types'
+import { RecordObject } from '@island.is/application/types'
+
 import { filesText, missingFiles } from '../../lib/messages'
-import { UploadFileType } from '../../lib/types'
+import { Files } from '..'
+import { FAFieldBaseProps, UploadFileType } from '../../lib/types'
 import useApplication from '../../lib/hooks/useApplication'
 import { Controller, useFormContext } from 'react-hook-form'
 import { useFileUpload } from '../../lib/hooks/useFileUpload'
-import Files from '../files/Files'
-import DescriptionText from '../../components/DescriptionText/DescriptionText'
+import DescriptionText from '../DescriptionText/DescriptionText'
 
-export const MissingFiles = ({
+const MissingFiles = ({
   application,
   setBeforeSubmitCallback,
   field,
-}: FieldBaseProps) => {
-  const currentApplicationId = getValueViaPath<string>(
-    application.externalData,
-    'currentApplication.data.currentApplicationId',
+}: FAFieldBaseProps) => {
+  const { currentApplication, updateApplication, loading } = useApplication(
+    application.externalData.currentApplication.data?.currentApplicationId,
   )
-  const email = getValueViaPath<string>(
-    application.externalData,
-    'municipality.data.email',
-  )
-  const { currentApplication, updateApplication, loading } =
-    useApplication(currentApplicationId)
   const isSpouse = getValueViaPath(field as RecordObject<any>, 'props.isSpouse')
 
   const { formatMessage } = useIntl()
   const { setValue, getValues } = useFormContext()
+
   const fileType: UploadFileType = 'otherFiles'
   const commentType = 'fileUploadComment'
   const files = getValues(fileType)
@@ -75,12 +71,15 @@ export const MissingFiles = ({
       }
 
       try {
-        if (!currentApplicationId) {
+        if (
+          !application.externalData.currentApplication.data
+            ?.currentApplicationId
+        ) {
           throw new Error()
         }
 
         const uploadedFiles = await uploadFiles(
-          currentApplicationId,
+          application.externalData.currentApplication.data.currentApplicationId,
           FileType.OTHER,
           files,
         )
@@ -171,7 +170,7 @@ export const MissingFiles = ({
           <DescriptionText
             text={missingFiles.error.message}
             format={{
-              email: email ?? '',
+              email: application.externalData.municipality.data?.email ?? '',
             }}
           />
         </>
@@ -179,3 +178,5 @@ export const MissingFiles = ({
     </>
   )
 }
+
+export default MissingFiles

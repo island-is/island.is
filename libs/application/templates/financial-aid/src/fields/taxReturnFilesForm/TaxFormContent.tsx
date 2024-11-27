@@ -2,7 +2,7 @@ import React from 'react'
 import { useIntl } from 'react-intl'
 import { Text, Box } from '@island.is/island-ui/core'
 import { taxReturnForm } from '../../lib/messages'
-import DescriptionText from '../../components/DescriptionText/DescriptionText'
+import { DescriptionText } from '..'
 
 const DirectTaxPaymentsInfo = () => {
   const { formatMessage } = useIntl()
