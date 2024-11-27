@@ -78,6 +78,7 @@ const ChartComponentSourceDataKeyField = () => {
     sdk.entry.fields.values.getValue() || {
       typeOfSource: SourceDataKeyValues.ExternalSourceKey,
       typeOfManualDataKey: ManualDataKeyValues.Date,
+      externalSourceDataKey: sdk.entry.fields.sourceDataKey.getValue(),
       dateItems: [],
       categoryItems: [],
     },
@@ -179,7 +180,8 @@ const ChartComponentSourceDataKeyField = () => {
     }))
   }
 
-  const disableMoreThanOneItemOnPieChart = manualData?.categoryItems?.length > 0
+  const disableMoreThanOneItemOnPieChart =
+    typeIsPieChart && manualData?.categoryItems?.length > 0
 
   return (
     <>

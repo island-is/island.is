@@ -43,10 +43,10 @@ export class UserProfileServiceV2 {
   }
 
   async createUserProfile(input: UpdateUserProfileInput, user: User) {
-    return this.updateUserProfile(input, user)
+    return this.updateMeUserProfile(input, user)
   }
 
-  async updateUserProfile(
+  async updateMeUserProfile(
     input: UpdateUserProfileInput,
     user: User,
   ): Promise<UserProfile> {
@@ -169,6 +169,19 @@ export class UserProfileServiceV2 {
     ).userProfileControllerFindUserProfile({
       clientType: UserProfileControllerFindUserProfileClientTypeEnum.FirstParty,
       xParamNationalId: nationalId,
+    })
+  }
+
+  async updateUserProfile(
+    input: UpdateUserProfileInput,
+    user: User,
+    nationalId: string,
+  ): Promise<AdminUserProfile> {
+    return this.v2UserProfileApiWithAuth(
+      user,
+    ).userProfileControllerPatchUserProfile({
+      xParamNationalId: nationalId,
+      patchUserProfileDto: input,
     })
   }
 }

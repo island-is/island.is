@@ -41,9 +41,6 @@ import {
   CompanyRegistryClientService,
 } from '@island.is/clients/rsk/company-registry'
 
-const WORK_STARTING_HOUR = 8 // 8 AM
-const WORK_ENDING_HOUR = 23 // 11 PM
-
 type HandleNotification = {
   profile: {
     nationalId: string
@@ -276,7 +273,7 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
       const nationalIdOfOriginalRecipient =
         message.onBehalfOf?.nationalId ?? profile.nationalId
 
-      fullName = await this.getFullName(nationalIdOfOriginalRecipient)
+      fullName = await this.getName(nationalIdOfOriginalRecipient)
     }
 
     const isEnglish = profile.locale === 'en'
@@ -314,36 +311,11 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
     }
   }
 
-  async sleepOutsideWorkingHours(messageId: string): Promise<void> {
-    const now = new Date()
-    const currentHour = now.getHours()
-    const currentMinutes = now.getMinutes()
-    const currentSeconds = now.getSeconds()
-    // Is it outside working hours?
-    if (currentHour >= WORK_ENDING_HOUR || currentHour < WORK_STARTING_HOUR) {
-      // If it's past the end hour or before the start hour, sleep until the start hour.
-      const sleepHours = (24 - currentHour + WORK_STARTING_HOUR) % 24
-      const sleepDurationMilliSeconds =
-        (sleepHours * 3600 - currentMinutes * 60 - currentSeconds) * 1000
-      this.logger.info(
-        `Worker will sleep until 8 AM. Sleep duration: ${sleepDurationMilliSeconds} ms`,
-        { messageId },
-      )
-      await new Promise((resolve) =>
-        setTimeout(resolve, sleepDurationMilliSeconds),
-      )
-      this.logger.info('Worker waking up after sleep.', { messageId })
-    }
-  }
-
   async run() {
     await this.worker.run<CreateHnippNotificationDto>(
       async (message, job): Promise<void> => {
         const messageId = job.id
         this.logger.info('Message received by worker', { messageId })
-
-        // check if we are within operational hours or wait until we are
-        await this.sleepOutsideWorkingHours(messageId)
 
         const notification = { messageId, ...message }
         let dbNotification = await this.notificationModel.findOne({
@@ -440,7 +412,7 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
               let recipientName = ''
 
               if (delegations.data.length > 0) {
-                recipientName = await this.getFullName(message.recipient)
+                recipientName = await this.getName(message.recipient)
               }
 
               await Promise.all(
@@ -469,16 +441,23 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
     )
   }
 
-  private async getFullName(nationalId: string): Promise<string> {
-    let identity: CompanyExtendedInfo | EinstaklingurDTONafnItar | null
+  private async getName(nationalId: string): Promise<string> {
+    try {
+      let identity: CompanyExtendedInfo | EinstaklingurDTONafnItar | null
 
-    if (isCompany(nationalId)) {
-      identity = await this.companyRegistryService.getCompany(nationalId)
-      return identity?.name ?? ''
+      if (isCompany(nationalId)) {
+        identity = await this.companyRegistryService.getCompany(nationalId)
+        return identity?.name || ''
+      }
+
+      identity = await this.nationalRegistryService.getName(nationalId)
+      return identity?.birtNafn || identity?.fulltNafn || ''
+    } catch (error) {
+      this.logger.error('Error getting name from national registry', {
+        error,
+      })
+      return ''
     }
-
-    identity = await this.nationalRegistryService.getName(nationalId)
-    return identity?.birtNafn ?? ''
   }
 
   /* Private methods */

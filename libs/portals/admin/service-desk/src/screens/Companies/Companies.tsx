@@ -1,5 +1,11 @@
-import { useEffect, useState } from 'react'
-import { Form, useActionData, useNavigate } from 'react-router-dom'
+import { useEffect, useRef, useState } from 'react'
+import {
+  Form,
+  useActionData,
+  useNavigate,
+  useSearchParams,
+  useSubmit,
+} from 'react-router-dom'
 import * as kennitala from 'kennitala'
 
 import { useLocale } from '@island.is/localization'
@@ -20,27 +26,34 @@ import { ServiceDeskPaths } from '../../lib/paths'
 import * as styles from './Companies.css'
 
 const Companies = () => {
+  const [searchParams, setSearchParams] = useSearchParams()
+  const searchQuery = searchParams?.get('q')
+
   const [focused, setFocused] = useState(false)
-  const [searchInput, setSearchInput] = useState('')
-  const [prevSearchInput, setPrevSearchInput] = useState('')
+  const [searchInput, setSearchInput] = useState(() => searchQuery || '')
+  const submit = useSubmit()
+
   const actionData = useActionData() as GetCompaniesResult
   const { formatMessage } = useLocale()
   const navigate = useNavigate()
   const { isSubmitting, isLoading } = useSubmitting()
   const companies = actionData?.data?.data
+  const formRef = useRef(null)
 
   const onFocus = () => setFocused(true)
   const onBlur = () => setFocused(false)
 
   useEffect(() => {
-    if (actionData) {
-      setPrevSearchInput(searchInput)
-    }
-
     if (actionData?.globalError) {
       toast.error(formatMessage(m.errorDefault))
     }
   }, [actionData])
+
+  useEffect(() => {
+    if (searchInput) {
+      submit(formRef.current)
+    }
+  }, [])
 
   return (
     <>
@@ -48,7 +61,7 @@ const Companies = () => {
         title={formatMessage(m.procures)}
         intro={formatMessage(m.procuresDescription)}
       />
-      <Form method="post">
+      <Form method="post" ref={formRef}>
         <Box display={['inline', 'inline', 'flex']} className={styles.search}>
           <AsyncSearchInput
             hasFocus={focused}
@@ -65,7 +78,17 @@ const Companies = () => {
             }}
             buttonProps={{
               type: 'submit',
-              disabled: searchInput.length === 0,
+              disabled: !searchInput,
+              onClick: (e) => {
+                e.preventDefault()
+                if (searchInput) {
+                  setSearchParams((params) => {
+                    params.set('q', searchInput)
+                    return params
+                  })
+                  submit(formRef.current)
+                }
+              },
             }}
           />
         </Box>
@@ -73,12 +96,12 @@ const Companies = () => {
       <Box marginTop={4}>
         <Box className={styles.relative}>
           <Stack space={3}>
-            {companies?.length === 0 ? (
+            {companies?.length === 0 && !!searchQuery ? (
               <Card
                 title={
-                  kennitala.isValid(prevSearchInput)
-                    ? formatNationalId(prevSearchInput)
-                    : prevSearchInput
+                  kennitala.isValid(searchQuery)
+                    ? formatNationalId(searchQuery)
+                    : searchQuery
                 }
                 description={formatMessage(m.noContent)}
                 bgGrey

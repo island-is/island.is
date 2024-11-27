@@ -3,7 +3,10 @@ import { useRouter } from 'next/router'
 
 import { AlertMessage, Box, Button, Text } from '@island.is/island-ui/core'
 import { login, titles } from '@island.is/judicial-system-web/messages'
-import { PageHeader } from '@island.is/judicial-system-web/src/components'
+import {
+  PageHeader,
+  PageTitle,
+} from '@island.is/judicial-system-web/src/components'
 import { api } from '@island.is/judicial-system-web/src/services'
 import { LoginErrorCodes } from '@island.is/judicial-system-web/src/types'
 
@@ -64,11 +67,9 @@ const Login = () => {
           </div>
         )}
         <div className={styles.titleContainer}>
-          <Box>
-            <Text as="h1" variant="h1">
-              {formatMessage(login.general.heading)}
-            </Text>
-          </Box>
+          <PageTitle marginBottom={0}>
+            {formatMessage(login.general.heading)}
+          </PageTitle>
         </div>
         <div className={styles.subTitleContainer}>
           <Text>{formatMessage(login.general.description)}</Text>

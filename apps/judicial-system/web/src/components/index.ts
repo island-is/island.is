@@ -66,7 +66,6 @@ export { default as ServiceAnnouncement } from './ServiceAnnouncement/ServiceAnn
 export { strings as serviceAnnouncementStrings } from './ServiceAnnouncement/ServiceAnnouncement.strings'
 export { default as ServiceInterruptionBanner } from './ServiceInterruptionBanner/ServiceInterruptionBanner'
 export { default as SignedDocument } from './SignedDocument/SignedDocument'
-export { default as OverviewHeader } from './OverviewHeader/OverviewHeader'
 export { default as TagAppealState } from './TagAppealState/TagAppealState'
 export { default as TagCaseState } from './TagCaseState/TagCaseState'
 export { default as CaseTag } from './Tags/CaseTag'

@@ -217,6 +217,11 @@ export const information = {
         defaultMessage: 'Það má ekki nota sömu kennitölu tvisvar',
         description: 'operator identical error',
       },
+      noChangesError: {
+        id: 'ta.cov.application:information.labels.operator.noChangesError',
+        defaultMessage: 'Ekki er búið að gera neinar breytingar á umráðamönnum',
+        description: 'operator no changes error',
+      },
     }),
     mainOperator: defineMessages({
       sectionTitle: {

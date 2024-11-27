@@ -23,7 +23,7 @@ import { getDeletionOrAddition } from './getDeletionOrAddition'
 // ----------------------------------------------------------------------
 const PREFIX = 'Reglugerð um '
 const PREFIX_AMENDING = 'breytingu á reglugerð nr. '
-const PREFIX_REPEALING = 'brottfellingu á reglugerð nr. '
+const PREFIX_REPEALING = 'brottfellingu reglugerðar nr. '
 
 const formatAffectedAndPlaceAffectedAtEnd = (
   groups: {

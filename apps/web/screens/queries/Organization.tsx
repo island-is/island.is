@@ -127,6 +127,12 @@ export const GET_ORGANIZATION_PAGE_QUERY = gql`
       slug
       title
       description
+      topLevelNavigation {
+        links {
+          label
+          href
+        }
+      }
       defaultHeaderImage {
         url
         contentType

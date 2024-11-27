@@ -6,7 +6,7 @@ updates:
     directory: /
     schedule:
       interval: weekly
-      time: 02:00
+      time: '02:00'
       day: saturday
       timezone: Etc/UTC
     labels:
@@ -17,7 +17,6 @@ updates:
       prefix-development: chore(deps-dev)
     open-pull-requests-limit: 2
     groups:
-      # Group minor and patch updates together
       minor-patch-dependencies:
         patterns:
           - '*'
@@ -25,17 +24,15 @@ updates:
           - minor
           - patch
     ignore:
-      # Ignore major updates as they might break things
       - dependency-name: '*'
         update-types: ['version-update:semver-major']
-    versioning-strategy: increase
 
   # Infra npm dependencies
   - package-ecosystem: npm
     directory: /infra
     schedule:
       interval: weekly
-      time: 03:00
+      time: '03:00'
       timezone: Etc/UTC
     labels:
       - automerge
@@ -45,7 +42,6 @@ updates:
       prefix-development: chore(deps-infra)
     open-pull-requests-limit: 2
     groups:
-      # Group minor and patch updates together
       minor-patch-dependencies:
         patterns:
           - '*'
@@ -53,18 +49,16 @@ updates:
           - minor
           - patch
     ignore:
-      # Ignore major updates as they might break things
       - dependency-name: '*'
         update-types: ['version-update:semver-major']
-    versioning-strategy: increase
 
   # GitHub Actions
   - package-ecosystem: github-actions
     directory: /
     schedule:
-      interval: weekly # Less frequent for Actions
+      interval: weekly
       day: saturday
-      time: 04:00
+      time: '04:00'
       timezone: Etc/UTC
     labels:
       - automerge
@@ -73,7 +67,6 @@ updates:
       prefix: chore(ci)
     open-pull-requests-limit: 2
     groups:
-      # Group minor and patch updates together
       minor-patch-dependencies:
         patterns:
           - '*'
@@ -81,10 +74,8 @@ updates:
           - minor
           - patch
     ignore:
-      # Ignore major updates as they might break things
       - dependency-name: '*'
         update-types: ['version-update:semver-major']
-    versioning-strategy: increase
 
   # GitHub Actions npm dependencies
   - package-ecosystem: npm
@@ -92,7 +83,7 @@ updates:
     schedule:
       interval: weekly
       day: saturday
-      time: 05:00
+      time: '05:00'
       timezone: Etc/UTC
     labels:
       - automerge
@@ -101,7 +92,6 @@ updates:
       prefix: chore(ci-deps)
     open-pull-requests-limit: 2
     groups:
-      # Group minor and patch updates together
       minor-patch-dependencies:
         patterns:
           - '*'
@@ -109,10 +99,8 @@ updates:
           - minor
           - patch
     ignore:
-      # Ignore major updates as they might break things
       - dependency-name: '*'
         update-types: ['version-update:semver-major']
-    versioning-strategy: increase
 
   # CI Scripts dependencies
   - package-ecosystem: npm
@@ -120,7 +108,7 @@ updates:
     schedule:
       interval: weekly
       day: saturday
-      time: 06:00
+      time: '06:00'
       timezone: Etc/UTC
     labels:
       - automerge
@@ -129,7 +117,6 @@ updates:
       prefix: chore(ci-deps)
     open-pull-requests-limit: 2
     groups:
-      # Group minor and patch updates together
       minor-patch-dependencies:
         patterns:
           - '*'
@@ -137,7 +124,5 @@ updates:
           - minor
           - patch
     ignore:
-      # Ignore major updates as they might break things
       - dependency-name: '*'
         update-types: ['version-update:semver-major']
-    versioning-strategy: increase

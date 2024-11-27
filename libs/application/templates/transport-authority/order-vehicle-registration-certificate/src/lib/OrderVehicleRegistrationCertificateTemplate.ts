@@ -24,12 +24,12 @@ import {
   IdentityApi,
   SamgongustofaPaymentCatalogApi,
   CurrentVehiclesApi,
+  MockableSamgongustofaPaymentCatalogApi,
 } from '../dataProviders'
 import { AuthDelegationType } from '@island.is/shared/types'
 import { ApiScope } from '@island.is/auth/scopes'
 import { buildPaymentState } from '@island.is/application/utils'
-import { ChargeItemCode } from '@island.is/shared/constants'
-import { getExtraData } from '../utils'
+import { getChargeItems, getExtraData } from '../utils'
 
 const determineMessageFromApplicationAnswers = (application: Application) => {
   const plate = getValueViaPath(
@@ -107,6 +107,7 @@ const template: ApplicationTemplate<
               api: [
                 IdentityApi,
                 SamgongustofaPaymentCatalogApi,
+                MockableSamgongustofaPaymentCatalogApi,
                 CurrentVehiclesApi,
               ],
             },
@@ -118,9 +119,7 @@ const template: ApplicationTemplate<
       },
       [States.PAYMENT]: buildPaymentState({
         organizationId: InstitutionNationalIds.SAMGONGUSTOFA,
-        chargeItemCodes: [
-          ChargeItemCode.TRANSPORT_AUTHORITY_ORDER_VEHICLE_REGISTRATION_CERTIFICATE,
-        ],
+        chargeItems: getChargeItems(),
         submitTarget: States.COMPLETED,
         extraData: getExtraData,
         onExit: [

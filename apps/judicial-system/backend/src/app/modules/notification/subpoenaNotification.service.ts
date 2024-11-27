@@ -56,16 +56,16 @@ export class SubpoenaNotificationService extends BaseNotificationService {
       courtCaseNumber: theCase.courtCaseNumber,
     })
 
+    const formattedBody = this.formatMessage(body, {
+      courtCaseNumber: theCase.courtCaseNumber,
+      linkStart: `<a href="${this.config.clientUrl}${ROUTE_HANDLER_ROUTE}/${theCase.id}">`,
+      linkEnd: '</a>',
+    })
+
     const promises: Promise<Recipient>[] = []
 
     for (const recipient of to) {
       if (recipient.email && recipient.name) {
-        const formattedBody = this.formatMessage(body, {
-          courtCaseNumber: theCase.courtCaseNumber,
-          linkStart: `<a href="${this.config.clientUrl}${ROUTE_HANDLER_ROUTE}/${theCase.id}">`,
-          linkEnd: '</a>',
-        })
-
         promises.push(
           this.sendEmail(
             formattedSubject,
@@ -134,27 +134,6 @@ export class SubpoenaNotificationService extends BaseNotificationService {
     )
   }
 
-  private sendDefendantSelectedDefenderNotification(
-    theCase: Case,
-  ): Promise<DeliverResponse> {
-    return this.sendEmails(
-      theCase,
-      SubpoenaNotificationType.DEFENDANT_SELECTED_DEFENDER,
-      strings.defendantSelectedDefenderSubject,
-      strings.defendantSelectedDefenderBody,
-      [
-        {
-          name: theCase.judge?.name,
-          email: theCase.judge?.email,
-        },
-        {
-          name: theCase.registrar?.name,
-          email: theCase.registrar?.email,
-        },
-      ],
-    )
-  }
-
   private sendNotification(
     type: SubpoenaNotificationType,
     theCase: Case,
@@ -164,8 +143,6 @@ export class SubpoenaNotificationService extends BaseNotificationService {
         return this.sendServiceSuccessfulNotification(theCase)
       case SubpoenaNotificationType.SERVICE_FAILED:
         return this.sendServiceFailedNotification(theCase)
-      case SubpoenaNotificationType.DEFENDANT_SELECTED_DEFENDER:
-        return this.sendDefendantSelectedDefenderNotification(theCase)
       default:
         throw new InternalServerErrorException(
           `Invalid notification type: ${type}`,
