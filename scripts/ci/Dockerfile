@@ -1,9 +1,12 @@
 # This is a multi-stage Dockerfile which contains all CI-related operations as well as images to be deployed in production
 ARG PLAYWRIGHT_VERSION
-ARG DOCKER_IMAGE_REGISTRY=public.ecr.aws
+ARG DOCKER_ECR_REGISTRY=public.ecr.aws/docker
+ARG DOCKER_IMAGE_REGISTRY=${DOCKER_ECR_REGISTRY%/docker}
+# Alias DOCKER_IMAGE_REGISTRY to DOCKER_REGISTRY for backwards compatibility
+ARG DOCKER_REGISTRY=${DOCKER_IMAGE_REGISTRY}/docker
 ARG NODE_IMAGE_TAG
 
-FROM ${DOCKER_IMAGE_REGISTRY}/docker/library/node:${NODE_IMAGE_TAG} AS deps
+FROM ${DOCKER_REGISTRY}/library/node:${NODE_IMAGE_TAG} AS deps
 
 # hadolint ignore=DL3018
 RUN apk add -U git
@@ -37,7 +40,7 @@ ENV NODE_OPTIONS="--max-old-space-size=8192"
 RUN yarn run build ${APP} --prod
 
 # This is base image for containers that are to be deployed
-FROM ${DOCKER_IMAGE_REGISTRY}/docker/library/node:${NODE_IMAGE_TAG} AS output-base
+FROM ${DOCKER_REGISTRY}/library/node:${NODE_IMAGE_TAG} AS output-base
 ARG APP
 ARG APP_HOME
 ARG APP_DIST_HOME
@@ -85,7 +88,7 @@ LABEL branch=${GIT_BRANCH}
 LABEL commit=${GIT_COMMIT_SHA}
 ENTRYPOINT [ "node", "main.js" ]
 
-FROM ${DOCKER_IMAGE_REGISTRY}/nginx/nginx:1.21-alpine AS output-static
+FROM ${DOCKER_REGISTRY}/nginx/nginx:1.21-alpine AS output-static
 ARG APP
 ARG APP_DIST_HOME
 ENV APP=${APP}

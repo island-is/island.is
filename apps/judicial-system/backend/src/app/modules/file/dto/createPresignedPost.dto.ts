@@ -4,14 +4,14 @@ import { ApiProperty } from '@nestjs/swagger'
 
 export class CreatePresignedPostDto {
   @IsNotEmpty()
-  @MaxLength(255)
   @IsString()
+  @MaxLength(255)
   @ApiProperty({ type: String })
   readonly fileName!: string
 
   @IsNotEmpty()
-  @MaxLength(255)
   @IsString()
+  @MaxLength(255)
   @ApiProperty({ type: String })
   readonly type!: string
 }
