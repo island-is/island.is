@@ -19,7 +19,7 @@ import {
 import { Features } from '@island.is/feature-flags'
 import { Roles, States, Events } from './constants'
 import { SeminarAnswersSchema } from './dataSchema'
-import { IdentityApi } from '../dataProviders'
+import { IdentityApiWithActor } from '../dataProviders'
 import { AuthDelegationType } from '@island.is/shared/types'
 import { application as applicationMessage } from './messages'
 import { ApiActions } from '../shared/contstants'
@@ -85,7 +85,7 @@ const template: ApplicationTemplate<
               ],
               write: 'all',
               delete: true,
-              api: [IdentityApi, UserProfileApi],
+              api: [IdentityApiWithActor, UserProfileApi],
             },
           ],
         },

@@ -6,7 +6,7 @@ import {
   coreMessages,
 } from '@island.is/application/core'
 import { externalData } from '../../lib/messages'
-import { UserProfileApi, IdentityApi } from '../../dataProviders'
+import { UserProfileApi, IdentityApiWithActor } from '../../dataProviders'
 import { DefaultEvents } from '@island.is/application/types'
 
 export const prerequisitesSection = buildSection({
@@ -33,7 +33,7 @@ export const prerequisitesSection = buildSection({
       }),
       dataProviders: [
         buildDataProviderItem({
-          provider: IdentityApi,
+          provider: IdentityApiWithActor,
           title: externalData.nationalRegistry.title,
           subTitle: externalData.nationalRegistry.subTitle,
         }),
