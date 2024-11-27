@@ -2,8 +2,8 @@ import { json, ref } from './dsl'
 import { BffInfo, Context, PortalKeys } from './types/input-types'
 
 import {
-    applicationSystemScopes,
-    servicePortalScopes
+  applicationSystemScopes,
+  servicePortalScopes,
 } from '../../../libs/auth/scopes/src/index'
 
 /**
