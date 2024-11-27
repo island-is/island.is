@@ -42,10 +42,9 @@ FROM src AS builder
 # Stage-specific ARGs
 ARG APP
 ARG APP_DIST_HOME
-
+ENV APP=${APP}
 ENV NODE_ENV=production
 ENV NODE_OPTIONS="--max-old-space-size=8192"
-ENV APP=${APP}
 
 RUN yarn run build ${APP} --prod
 
