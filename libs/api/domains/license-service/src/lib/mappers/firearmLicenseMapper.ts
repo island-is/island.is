@@ -23,7 +23,7 @@ import { expiryTag, formatDate } from '../utils'
 import { GenericLicenseDataField } from '../dto/GenericLicenseDataField.dto'
 import { UserAgent } from '@island.is/nest/core'
 import { enableAppCompatibilityMode } from '../utils/appCompatibilityMode'
-import { LOGGER_PROVIDER, Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
 
 const APP_VERSION_CUTOFF = '1.4.8'
 
