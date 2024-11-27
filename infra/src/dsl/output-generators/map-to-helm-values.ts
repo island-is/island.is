@@ -75,7 +75,7 @@ const serializeService: SerializeMethod<HelmService> = async (
       maxUnavailable: 1,
     },
     healthCheck: {
-      port: serviceDef.healthPort,
+      // port: serviceDef.healthPort,
       liveness: {
         path: serviceDef.liveness.path,
         initialDelaySeconds: serviceDef.liveness.initialDelaySeconds,
@@ -91,6 +91,10 @@ const serializeService: SerializeMethod<HelmService> = async (
   }
   if (!hackListForNonExistentTracer.includes(serviceDef.name)) {
     result.env.NODE_OPTIONS += ' -r dd-trace/init'
+  }
+  // add healthCheck port if set in the service
+  if (serviceDef.healthPort) {
+    result.healthCheck.port = serviceDef.healthPort
   }
   // command and args
   if (serviceDef.cmds) {
@@ -341,8 +345,9 @@ function serializeIngress(
   ingressConf: IngressForEnv,
   env: EnvironmentConfig,
 ) {
-  const hosts = (
-    typeof ingressConf.host === 'string' ? [ingressConf.host] : ingressConf.host
+  const hosts = (typeof ingressConf.host === 'string'
+    ? [ingressConf.host]
+    : ingressConf.host
   ).map((host) =>
     ingressConf.public ?? true
       ? hostFullName(host, env)
@@ -413,7 +418,6 @@ function serializeContainerRuns(
     let result: ContainerRunHelm = {
       command: [c.command],
       args: c.args,
-      image: c.image,
       resources: {
         limits: {
           memory: '256Mi',
@@ -424,6 +428,9 @@ function serializeContainerRuns(
           cpu: '50m',
         },
       },
+    }
+    if (c.image) {
+      result.image = c.image
     }
     if (c.resources) {
       result.resources = c.resources
