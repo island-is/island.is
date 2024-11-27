@@ -7,6 +7,7 @@ import {
 
 import { personal as personalMessages } from '../../../lib/messages'
 import { Application } from '@island.is/application/types'
+import { isCompanyType } from '../../../utils'
 
 export const personalInformationSection = buildSection({
   id: 'personalInformation',
@@ -25,9 +26,12 @@ export const personalInformationSection = buildSection({
           readOnly: true,
           format: '######-####',
           defaultValue: (application: Application) => {
+            const nationalIdPath = isCompanyType(application.externalData)
+              ? 'identity.data.actor.nationalId'
+              : 'identity.data.nationalId'
             const nationalId = getValueViaPath(
               application.externalData,
-              'identity.data.nationalId',
+              nationalIdPath,
               undefined,
             ) as string | undefined
 
@@ -41,9 +45,12 @@ export const personalInformationSection = buildSection({
           width: 'half',
           readOnly: true,
           defaultValue: (application: Application) => {
+            const namePath = isCompanyType(application.externalData)
+              ? 'identity.data.actor.name'
+              : 'identity.data.name'
             const name = getValueViaPath(
               application.externalData,
-              'identity.data.name',
+              namePath,
               undefined,
             ) as string | undefined
 

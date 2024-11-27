@@ -133,12 +133,49 @@ export const paymentArrangementSection = buildSection({
           condition: (answers: FormValue, externalData: ExternalData) =>
             isCompanyType(externalData) || isCompany(answers),
         }),
+        buildTextField({
+          id: 'paymentArrangement.companyInfo.nationalId',
+          title: paymentArrangement.labels.companySSN,
+          width: 'half',
+          readOnly: true,
+          required: true,
+          format: '######-####',
+          defaultValue: (application: Application) => {
+            const nationalId = getValueViaPath(
+              application.externalData,
+              'identity.data.nationalId',
+              undefined,
+            ) as string | undefined
+
+            return nationalId
+          },
+          condition: (answers: FormValue, externalData: ExternalData) =>
+            isCompanyType(externalData),
+        }),
+        buildTextField({
+          id: 'paymentArrangement.companyInfo.label',
+          title: paymentArrangement.labels.companyName,
+          width: 'half',
+          readOnly: true,
+          required: true,
+          defaultValue: (application: Application) => {
+            const name = getValueViaPath(
+              application.externalData,
+              'identity.data.name',
+              undefined,
+            ) as string | undefined
+
+            return name
+          },
+          condition: (answers: FormValue, externalData: ExternalData) =>
+            isCompanyType(externalData),
+        }),
         buildCompanySearchField({
           id: 'paymentArrangement.companyInfo',
-          title: paymentArrangement.labels.companySSN,
+          title: paymentArrangement.labels.companyTitle,
           required: true,
           condition: (answers: FormValue, externalData: ExternalData) =>
-            isCompanyType(externalData) || isCompany(answers),
+            !isCompanyType(externalData) && isCompany(answers),
         }),
         buildTextField({
           id: 'paymentArrangement.contactInfo.email',

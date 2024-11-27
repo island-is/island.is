@@ -21,30 +21,6 @@ export const overviewSection = buildSection({
           title: '',
           component: 'Overview',
         }),
-        // buildStaticTableField({
-        //   title: '',
-        //   header: ['Nafn þátttakanda', 'Kennitala', 'Netfang', 'Símanúmer'],
-        //   rows: [
-        //     [
-        //       'Notandi Jóns',
-        //       '012345-6789',
-        //       'notandijons@famemail.com',
-        //       '666 8999',
-        //     ],
-        //     [
-        //       'Þátttakandi 1 Jóns',
-        //       '012345-6789',
-        //       'thatttakandi1@email.co',
-        //       '666 8999',
-        //     ],
-        //     [
-        //       'Þátttakandi 2 Jóns',
-        //       '012345-6789',
-        //       'thatttakandi2@email.co',
-        //       '666 8999',
-        //     ],
-        //   ],
-        // }),
         buildSubmitField({
           id: 'submit',
           placement: 'footer',

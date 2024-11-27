@@ -9,7 +9,10 @@ import { useLocale } from '@island.is/localization'
 import { ReviewGroup } from '../Components/ReviewGroup'
 import { KeyValueFormField } from '@island.is/application/ui-fields'
 import { overview } from '../../lib/messages'
-import { getPaymentArrangementForOverview } from '../../utils'
+import {
+  getPaymentArrangementForOverview,
+  getPersonalInformationForOverview,
+} from '../../utils'
 import { ParticipantsOverviewExpandableTable } from '../Components/ParticipantsOverviewExpandableTable'
 
 export const Overview: FC<React.PropsWithChildren<FieldBaseProps>> = ({
@@ -52,12 +55,10 @@ export const Overview: FC<React.PropsWithChildren<FieldBaseProps>> = ({
             component: FieldComponents.KEY_VALUE,
             title: '',
             label: '',
-            value: ['TODO: Personal Info'],
-            // getAccidentInformationForOverview(
-            //   application.answers,
-            //   application.externalData,
-            //   formatMessage,
-            // ),
+            value: getPersonalInformationForOverview(
+              application.answers,
+              formatMessage,
+            ),
           }}
         />
       </ReviewGroup>

@@ -21,7 +21,7 @@ export const personal = {
   labels: defineMessages({
     userName: {
       id: 'aosh.sem.application:personal.labels.userName',
-      defaultMessage: 'Full nafn',
+      defaultMessage: 'Nafn',
       description: `user name `,
     },
     userNationalId: {

@@ -71,6 +71,11 @@ export const paymentArrangement = {
       defaultMessage: 'Upplýsingar um fyrirtæki',
       description: 'Company info label on conclusion screen',
     },
+    companyTitle: {
+      id: 'aosh.sr.application:paymentArrangement.labels.companyTitle',
+      defaultMessage: 'Fyrirtæki',
+      description: 'Company title label on conclusion screen',
+    },
     companySSN: {
       id: 'aosh.sr.application:paymentArrangement.labels.companySSN',
       defaultMessage: 'Kennitala fyrirtækis',
