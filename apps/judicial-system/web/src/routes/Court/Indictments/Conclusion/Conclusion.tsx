@@ -217,7 +217,7 @@ const Conclusion: FC = () => {
     ) {
       setSelectedAction(IndictmentDecision.SCHEDULING)
     }
-  }, [])
+  }, [workingCase.indictmentDecision])
 
   const stepIsValid = () => {
     // Do not leave any downloads unfinished
