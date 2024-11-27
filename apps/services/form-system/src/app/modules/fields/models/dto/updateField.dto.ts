@@ -1,7 +1,7 @@
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
+import { ApiPropertyOptional } from '@nestjs/swagger'
 import { LanguageType } from '../../../../dataTypes/languageType.model'
 import { FieldTypesEnum } from '../../../../dataTypes/fieldTypes/fieldTypes.enum'
-import { IsEnum, IsNotEmpty, IsOptional, ValidateNested } from 'class-validator'
+import { IsEnum, IsOptional, ValidateNested } from 'class-validator'
 import { Type } from 'class-transformer'
 import { FieldSettings } from '../../../../dataTypes/fieldSettings/fieldSettings.model'
 

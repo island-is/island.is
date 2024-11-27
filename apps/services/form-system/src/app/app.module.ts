@@ -20,6 +20,7 @@ import { OrganizationCertificationTypesModule } from './modules/organizationCert
 import { OrganizationFieldTypesModule } from './modules/organizationFieldTypes/organizationFieldTypes.module'
 import { OrganizationUrlsModule } from './modules/organizationUrls/organizationUrls.module'
 import { FormUrlsModule } from './modules/formUrls/formUrls.module'
+import { ServicesModule } from './modules/services/services.module'
 
 @Module({
   imports: [
@@ -44,6 +45,7 @@ import { FormUrlsModule } from './modules/formUrls/formUrls.module'
     OrganizationFieldTypesModule,
     OrganizationListTypesModule,
     OrganizationUrlsModule,
+    ServicesModule,
   ],
 })
 export class AppModule {}

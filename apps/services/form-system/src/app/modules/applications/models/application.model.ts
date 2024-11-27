@@ -4,12 +4,14 @@ import {
   CreatedAt,
   DataType,
   ForeignKey,
+  HasMany,
   Model,
   Table,
   UpdatedAt,
 } from 'sequelize-typescript'
 import { Form } from '../../forms/models/form.model'
 import { Dependency } from '../../../dataTypes/dependency.model'
+import { ApplicationEvent } from './applicationEvent.model'
 
 @Table({ tableName: 'application' })
 export class Application extends Model<Application> {
@@ -32,7 +34,7 @@ export class Application extends Model<Application> {
     allowNull: true,
     defaultValue: null,
   })
-  submitted?: Date
+  submittedAt?: Date
 
   @Column({
     type: DataType.BOOLEAN,
@@ -58,6 +60,9 @@ export class Application extends Model<Application> {
     allowNull: true,
   })
   dependencies?: Dependency[]
+
+  @HasMany(() => ApplicationEvent)
+  events?: ApplicationEvent[]
 
   @ForeignKey(() => Form)
   @Column({
