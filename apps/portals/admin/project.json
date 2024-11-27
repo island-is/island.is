@@ -62,9 +62,6 @@
         "production": {
           "buildTarget": "portals-admin:build:production",
           "hmr": false
-        },
-        "mock": {
-          "proxyConfig": false
         }
       },
       "dependsOn": [

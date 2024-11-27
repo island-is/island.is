@@ -70,9 +70,6 @@
       "configurations": {
         "production": {
           "buildTarget": "application-system-form:build:production"
-        },
-        "mock": {
-          "proxyConfig": false
         }
       },
       "dependsOn": [

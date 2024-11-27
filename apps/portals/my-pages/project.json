@@ -68,9 +68,6 @@
       "configurations": {
         "production": {
           "buildTarget": "service-portal:build:production"
-        },
-        "mock": {
-          "proxyConfig": false
         }
       },
       "dependsOn": [
