@@ -27,6 +27,9 @@ jobs:
       - name: Check unicorn affected
         id: unicorn-affected
         run: |
+          set -euo pipefail
+          ls
+          yarn install
           UNICORN=$(yarn is-unicorn)
           if [ "$UNICORN" = 'true' ]; then
               echo "unicorn is detected"
