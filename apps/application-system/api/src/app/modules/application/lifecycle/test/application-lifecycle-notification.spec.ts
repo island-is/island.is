@@ -77,8 +77,8 @@ describe('ApplicationLifeCycleService', () => {
                   pruneMessage: {
                     externalBody: 'external message',
                     internalBody: 'internal message',
+                    notificationTemplateId: 'template123',
                   },
-                  pruneNotificationTemplateId: 'template123',
                 },
               },
             },
@@ -128,8 +128,8 @@ describe('ApplicationLifeCycleService', () => {
                   pruneMessage: (app: PruningApplication) => ({
                     externalBody: `external message for ${app.id}`,
                     internalBody: `internal message for ${app.id}`,
+                    notificationTemplateId: 'template123',
                   }),
-                  pruneNotificationTemplateId: 'template123',
                 },
               },
             },
