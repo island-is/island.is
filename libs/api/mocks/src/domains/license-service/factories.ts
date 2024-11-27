@@ -6,8 +6,10 @@ import {
   GenericUserLicense,
   GenericUserLicenseFetchStatus,
   GenericUserLicenseMetadata,
+  GenericUserLicensePkPassStatus,
   GenericLicenseDataField,
   Payload,
+  GenericLicenseDataFieldType,
 } from '../../types'
 import {
   mockAdrLicense,
@@ -25,11 +27,7 @@ const genericLicenseFetch = factory<GenericLicenseFetch>({
 
 export const genericLicense = factory<GenericLicense>({
   pkpass: () => faker.datatype.boolean(),
-  pkpassStatus: faker.helpers.arrayElement([
-    'Available',
-    'NotAvailable',
-    'Unknown',
-  ]),
+  pkpassStatus: faker.helpers.enumValue(GenericUserLicensePkPassStatus),
   pkpassVerify: () => faker.datatype.boolean(),
   provider: () => ({
     id: faker.helpers.arrayElement([
@@ -55,7 +53,7 @@ export const genericLicenseDataField = factory<GenericLicenseDataField>({
   hideFromServicePortal: faker.datatype.boolean(),
   label: faker.lorem.word(),
   name: faker.person.fullName(),
-  type: faker.helpers.arrayElement(['Category', 'Group', 'Table', 'Value']),
+  type: faker.helpers.enumValue(GenericLicenseDataFieldType),
   value: faker.word.sample(),
 })
 
