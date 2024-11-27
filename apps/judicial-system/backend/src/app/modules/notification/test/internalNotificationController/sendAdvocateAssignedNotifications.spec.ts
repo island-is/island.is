@@ -3,10 +3,7 @@ import { uuid } from 'uuidv4'
 import { EmailService } from '@island.is/email-service'
 import { ConfigType } from '@island.is/nest/config'
 
-import {
-  DEFENDER_INDICTMENT_ROUTE,
-  DEFENDER_ROUTE,
-} from '@island.is/judicial-system/consts'
+import { DEFENDER_ROUTE } from '@island.is/judicial-system/consts'
 import {
   CaseNotificationType,
   CaseType,

@@ -28,8 +28,9 @@ import {
   GET_ORGANIZATION_PAGE_QUERY,
   GET_SINGLE_NEWS_ITEM_QUERY,
 } from '@island.is/web/screens/queries'
-import { Screen } from '@island.is/web/types'
+import type { Screen, ScreenContext } from '@island.is/web/types'
 import { CustomNextError } from '@island.is/web/units/errors'
+import { extractNamespaceFromOrganization } from '@island.is/web/utils/extractNamespaceFromOrganization'
 
 export interface OrganizationNewsArticleProps {
   newsItem: GetSingleNewsItemQuery['getSingleNews']
@@ -38,12 +39,14 @@ export interface OrganizationNewsArticleProps {
   locale: Locale
 }
 
-const OrganizationNewsArticle: Screen<OrganizationNewsArticleProps> = ({
-  newsItem,
-  namespace,
-  organizationPage,
-  locale,
-}) => {
+type OrganizationNewsArticleScreenContext = ScreenContext & {
+  organizationPage?: Query['getOrganizationPage']
+}
+
+const OrganizationNewsArticle: Screen<
+  OrganizationNewsArticleProps,
+  OrganizationNewsArticleScreenContext
+> = ({ newsItem, namespace, organizationPage, locale }) => {
   const router = useRouter()
   const { linkResolver } = useLinkResolver()
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -162,22 +165,27 @@ const OrganizationNewsArticle: Screen<OrganizationNewsArticleProps> = ({
   )
 }
 
-OrganizationNewsArticle.getProps = async ({ apolloClient, locale, query }) => {
+OrganizationNewsArticle.getProps = async ({
+  apolloClient,
+  locale,
+  query,
+  organizationPage: _organizationPage,
+}) => {
   const [organizationPageSlug, _, newsSlug] = query.slugs as string[]
 
-  const organizationPage = (
-    await Promise.resolve(
-      apolloClient.query<Query, QueryGetOrganizationPageArgs>({
-        query: GET_ORGANIZATION_PAGE_QUERY,
-        variables: {
-          input: {
-            slug: organizationPageSlug,
-            lang: locale as Locale,
+  const organizationPage = !_organizationPage
+    ? (
+        await apolloClient.query<Query, QueryGetOrganizationPageArgs>({
+          query: GET_ORGANIZATION_PAGE_QUERY,
+          variables: {
+            input: {
+              slug: organizationPageSlug,
+              lang: locale as Locale,
+            },
           },
-        },
-      }),
-    )
-  ).data?.getOrganizationPage
+        })
+      ).data?.getOrganizationPage
+    : _organizationPage
 
   if (!organizationPage) {
     throw new CustomNextError(
@@ -224,11 +232,16 @@ OrganizationNewsArticle.getProps = async ({ apolloClient, locale, query }) => {
     throw new CustomNextError(404, 'News not found')
   }
 
+  const organizationNamespace = extractNamespaceFromOrganization(
+    organizationPage.organization,
+  )
+
   return {
     organizationPage: organizationPage,
     newsItem,
     namespace,
     locale: locale as Locale,
+    customTopLoginButtonItem: organizationNamespace?.customTopLoginButtonItem,
     ...getThemeConfig(organizationPage?.theme, organizationPage?.organization),
   }
 }
