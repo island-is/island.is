@@ -1,9 +1,9 @@
 # This is a multi-stage Dockerfile which contains all CI-related operations as well as images to be deployed in production
 ARG PLAYWRIGHT_VERSION
 ARG DOCKER_ECR_REGISTRY=public.ecr.aws/docker
-ARG DOCKER_IMAGE_REGISTRY=${DOCKER_ECR_REGISTRY%/docker}/docker
+ARG DOCKER_IMAGE_REGISTRY=${DOCKER_ECR_REGISTRY%/docker}
 # Alias DOCKER_IMAGE_REGISTRY to DOCKER_REGISTRY for backwards compatibility
-ARG DOCKER_REGISTRY=${DOCKER_IMAGE_REGISTRY}
+ARG DOCKER_REGISTRY=${DOCKER_IMAGE_REGISTRY}/docker
 ARG NODE_IMAGE_TAG
 
 FROM ${DOCKER_REGISTRY}/library/node:${NODE_IMAGE_TAG} AS deps
