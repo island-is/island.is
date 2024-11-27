@@ -5,4 +5,4 @@ import { faker } from '@faker-js/faker'
  * @param length Controls the number of digit in the verification code
  */
 export const createVerificationCode = (length = 3) =>
-  faker.string.numeric(length).toString()
+  faker.string.numeric(length)
