@@ -15,7 +15,7 @@ import {
   GenericUserLicenseMetaLinksType,
 } from '../licenceService.type'
 import { FirearmLicenseDto } from '@island.is/clients/license-client'
-import { Injectable } from '@nestjs/common'
+import { Inject, Injectable } from '@nestjs/common'
 import { isDefined } from '@island.is/shared/utils'
 import { FormatMessage, IntlService } from '@island.is/cms-translations'
 import { m } from '../messages'
@@ -23,18 +23,24 @@ import { expiryTag, formatDate } from '../utils'
 import { GenericLicenseDataField } from '../dto/GenericLicenseDataField.dto'
 import { UserAgent } from '@island.is/nest/core'
 import { enableAppCompatibilityMode } from '../utils/appCompatibilityMode'
+import { LOGGER_PROVIDER, Logger } from '@island.is/logging'
 
 const APP_VERSION_CUTOFF = '1.4.8'
 
 @Injectable()
 export class FirearmLicensePayloadMapper implements GenericLicenseMapper {
-  constructor(private readonly intlService: IntlService) {}
+  constructor(
+    private readonly intlService: IntlService,
+    @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
+  ) {}
   async parsePayload(
     payload: Array<unknown>,
     locale: Locale = 'is',
     userAgent?: UserAgent,
   ): Promise<Array<GenericLicenseMappedPayloadResponse>> {
     if (!payload) return Promise.resolve([])
+
+    this.logger.info('USER INFO AGENT VERSION', userAgent?.app?.version)
 
     //App version before 1.4.8 doesn't know how to handle table
     const enableAppCompatibility = enableAppCompatibilityMode(
