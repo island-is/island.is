@@ -101,7 +101,6 @@ export const theme = {
       large: `${radius.default.$value ?? 8}px`, // TODO: check with designers to keep as large
       md: `${radius.md.$value ?? 12}px`,
       lg: `${radius.lg.$value ?? 16}px`,
-      xl: '24px', // TODO: should be added to figma?
       full: `${radius.full.$value ?? 9999}px`,
     },
     width: {
