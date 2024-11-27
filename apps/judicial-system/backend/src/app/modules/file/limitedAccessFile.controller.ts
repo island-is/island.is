@@ -37,6 +37,11 @@ import {
   LimitedAccessCaseExistsGuard,
 } from '../case'
 import { MergedCaseExistsGuard } from '../case/guards/mergedCaseExists.guard'
+import {
+  CivilClaimant,
+  CivilClaimantExistsGuard,
+  CurrentCivilClaimant,
+} from '../defendant'
 import { CreateFileDto } from './dto/createFile.dto'
 import { CreatePresignedPostDto } from './dto/createPresignedPost.dto'
 import { CurrentCaseFile } from './guards/caseFile.decorator'
@@ -106,6 +111,39 @@ export class LimitedAccessFileController {
     this.logger.debug(`Creating a file for case ${caseId}`)
 
     return this.fileService.createCaseFile(theCase, createFile, user)
+  }
+
+  @UseGuards(
+    new CaseTypeGuard([...indictmentCases]),
+    CivilClaimantExistsGuard,
+    CaseWriteGuard,
+    LimitedAccessWriteCaseFileGuard,
+  )
+  @RolesRules(defenderRule)
+  @Post('civilClaimant/:civilClaimantId/file')
+  @ApiCreatedResponse({
+    type: CaseFile,
+    description: 'Creates a new case file for a civil claimant',
+  })
+  createCivilClaimantCaseFile(
+    @Param('caseId') caseId: string,
+    @Param('civilClaimantId') civilClaimantId: string,
+    @CurrentHttpUser() user: User,
+    @CurrentCase() theCase: Case,
+    @CurrentCivilClaimant() civilClaimant: CivilClaimant,
+    @Body() createFile: CreateFileDto,
+  ): Promise<CaseFile> {
+    this.logger.debug(
+      `Creating a file for case ${caseId} and civil claimant ${civilClaimantId}`,
+    )
+
+    return this.fileService.createCaseFile(
+      theCase,
+      createFile,
+      user,
+      undefined,
+      civilClaimant,
+    )
   }
 
   @UseGuards(

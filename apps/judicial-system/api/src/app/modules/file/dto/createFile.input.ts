@@ -70,4 +70,14 @@ export class CreateFileInput {
   @IsOptional()
   @Field(() => String, { nullable: true })
   readonly userGeneratedFilename?: string
+
+  @Allow()
+  @IsOptional()
+  @Field(() => ID, { nullable: true })
+  readonly defendantId?: string
+
+  @Allow()
+  @IsOptional()
+  @Field(() => ID, { nullable: true })
+  readonly civilClaimantId?: string
 }

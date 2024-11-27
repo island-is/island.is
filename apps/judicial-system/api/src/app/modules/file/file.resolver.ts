@@ -65,14 +65,19 @@ export class FileResolver {
     @Context('dataSources')
     { backendService }: { backendService: BackendService },
   ): Promise<CaseFile> {
-    const { caseId, ...createFile } = input
+    const { caseId, defendantId, civilClaimantId, ...createFile } = input
 
     this.logger.debug(`Creating a file for case ${caseId}`)
 
     return this.auditTrailService.audit(
       user.id,
       AuditedAction.CREATE_FILE,
-      backendService.createCaseFile(caseId, createFile),
+      backendService.createCaseFile(
+        caseId,
+        createFile,
+        defendantId,
+        civilClaimantId,
+      ),
       (file) => file.id,
     )
   }

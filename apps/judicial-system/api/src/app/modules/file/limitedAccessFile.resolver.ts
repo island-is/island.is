@@ -64,14 +64,18 @@ export class LimitedAccessFileResolver {
     @Context('dataSources')
     { backendService }: { backendService: BackendService },
   ): Promise<CaseFile> {
-    const { caseId, ...createFile } = input
+    const { caseId, civilClaimantId, ...createFile } = input
 
     this.logger.debug(`Creating a file for case ${caseId}`)
 
     return this.auditTrailService.audit(
       user.id,
       AuditedAction.CREATE_FILE,
-      backendService.limitedAccessCreateCaseFile(caseId, createFile),
+      backendService.limitedAccessCreateCaseFile(
+        caseId,
+        createFile,
+        civilClaimantId,
+      ),
       (file) => file.id,
     )
   }

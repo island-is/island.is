@@ -31,6 +31,7 @@ import { createConfirmedPdf } from '../../formatters'
 import { AwsS3Service } from '../aws-s3'
 import { Case } from '../case'
 import { CourtDocumentFolder, CourtService } from '../court'
+import { CivilClaimant, Defendant } from '../defendant'
 import { UserService } from '../user'
 import { CreateFileDto } from './dto/createFile.dto'
 import { CreatePresignedPostDto } from './dto/createPresignedPost.dto'
@@ -339,6 +340,8 @@ export class FileService {
     theCase: Case,
     createFile: CreateFileDto,
     user: User,
+    defendant?: Defendant,
+    civilClaimant?: CivilClaimant,
   ): Promise<CaseFile> {
     const { key } = createFile
 
@@ -360,6 +363,8 @@ export class FileService {
       userGeneratedFilename:
         createFile.userGeneratedFilename ?? fileName.replace(/\.pdf$/, ''),
       submittedBy: user.name,
+      defendantId: defendant?.id,
+      civilClaimantId: civilClaimant?.id,
     })
 
     if (

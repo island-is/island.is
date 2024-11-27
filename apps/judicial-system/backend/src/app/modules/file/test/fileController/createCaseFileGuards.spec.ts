@@ -4,6 +4,7 @@ import { RolesGuard } from '@island.is/judicial-system/auth'
 
 import { CaseExistsGuard, CaseWriteGuard } from '../../../case'
 import { FileController } from '../../file.controller'
+import { WriteCaseFileGuard } from '../../guards/writeCaseFile.guard'
 
 describe('FileController - Create case file guards', () => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -17,7 +18,7 @@ describe('FileController - Create case file guards', () => {
   })
 
   it('should have three guards', () => {
-    expect(guards).toHaveLength(3)
+    expect(guards).toHaveLength(4)
   })
 
   describe('RolesGuard', () => {
@@ -53,6 +54,18 @@ describe('FileController - Create case file guards', () => {
 
     it('should have CaseWriteGuard as guard 3', () => {
       expect(guard).toBeInstanceOf(CaseWriteGuard)
+    })
+  })
+
+  describe('CaseWriteGuard', () => {
+    let guard: CanActivate
+
+    beforeEach(() => {
+      guard = new guards[3]()
+    })
+
+    it('should have CaseWriteGuard as guard 4', () => {
+      expect(guard).toBeInstanceOf(WriteCaseFileGuard)
     })
   })
 })

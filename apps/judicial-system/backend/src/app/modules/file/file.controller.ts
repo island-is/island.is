@@ -49,12 +49,21 @@ import {
   CurrentCase,
 } from '../case'
 import { MergedCaseExistsGuard } from '../case/guards/mergedCaseExists.guard'
+import {
+  CivilClaimant,
+  CivilClaimantExistsGuard,
+  CurrentCivilClaimant,
+  CurrentDefendant,
+  Defendant,
+  DefendantExistsGuard,
+} from '../defendant'
 import { CreateFileDto } from './dto/createFile.dto'
 import { CreatePresignedPostDto } from './dto/createPresignedPost.dto'
 import { UpdateFilesDto } from './dto/updateFile.dto'
 import { CurrentCaseFile } from './guards/caseFile.decorator'
 import { CaseFileExistsGuard } from './guards/caseFileExists.guard'
 import { ViewCaseFileGuard } from './guards/viewCaseFile.guard'
+import { WriteCaseFileGuard } from './guards/writeCaseFile.guard'
 import { DeleteFileResponse } from './models/deleteFile.response'
 import { CaseFile } from './models/file.model'
 import { PresignedPost } from './models/presignedPost.model'
@@ -98,7 +107,7 @@ export class FileController {
     return this.fileService.createPresignedPost(theCase, createPresignedPost)
   }
 
-  @UseGuards(RolesGuard, CaseExistsGuard, CaseWriteGuard)
+  @UseGuards(RolesGuard, CaseExistsGuard, CaseWriteGuard, WriteCaseFileGuard)
   @RolesRules(
     prosecutorRule,
     prosecutorRepresentativeRule,
@@ -124,6 +133,68 @@ export class FileController {
     this.logger.debug(`Creating a file for case ${caseId}`)
 
     return this.fileService.createCaseFile(theCase, createFile, user)
+  }
+
+  @UseGuards(
+    RolesGuard,
+    CaseExistsGuard,
+    DefendantExistsGuard,
+    CaseWriteGuard,
+    WriteCaseFileGuard,
+  )
+  @RolesRules(publicProsecutorStaffRule)
+  @Post('defendant/:defendantId/file')
+  @ApiCreatedResponse({
+    type: CaseFile,
+    description: 'Creates a new case file connected to a defendant',
+  })
+  async createDefendantCaseFile(
+    @Param('caseId') caseId: string,
+    @Param('defendantId') defendantId: string,
+    @CurrentHttpUser() user: User,
+    @CurrentCase() theCase: Case,
+    @CurrentDefendant() defendant: Defendant,
+    @Body() createFile: CreateFileDto,
+  ): Promise<CaseFile> {
+    this.logger.debug(
+      `Creating a file for case ${caseId} for defendant ${defendantId}`,
+    )
+
+    return this.fileService.createCaseFile(theCase, createFile, user, defendant)
+  }
+
+  @UseGuards(
+    RolesGuard,
+    CaseExistsGuard,
+    CivilClaimantExistsGuard,
+    CaseWriteGuard,
+    WriteCaseFileGuard,
+  )
+  @RolesRules(publicProsecutorStaffRule)
+  @Post('defendant/:defendantId/file')
+  @ApiCreatedResponse({
+    type: CaseFile,
+    description: 'Creates a new case file connected to a defendant',
+  })
+  async createCivilClaimantCaseFile(
+    @Param('caseId') caseId: string,
+    @Param('civilClaimantId') civilClaimantId: string,
+    @CurrentHttpUser() user: User,
+    @CurrentCase() theCase: Case,
+    @CurrentCivilClaimant() civilClaimant: CivilClaimant,
+    @Body() createFile: CreateFileDto,
+  ): Promise<CaseFile> {
+    this.logger.debug(
+      `Creating a file for case ${caseId} for civil claimant ${civilClaimantId}`,
+    )
+
+    return this.fileService.createCaseFile(
+      theCase,
+      createFile,
+      user,
+      undefined,
+      civilClaimant,
+    )
   }
 
   @UseGuards(

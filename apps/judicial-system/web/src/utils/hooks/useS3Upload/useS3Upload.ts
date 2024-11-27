@@ -189,7 +189,11 @@ const uploadToS3 = (
   return promise
 }
 
-const useS3Upload = (caseId: string) => {
+const useS3Upload = (
+  caseId: string,
+  defendantId?: string,
+  civilClaimantId?: string,
+) => {
   const { limitedAccess } = useContext(UserContext)
   const { formatMessage } = useIntl()
 
@@ -255,6 +259,8 @@ const useS3Upload = (caseId: string) => {
             displayDate: file.displayDate,
             policeFileId: file.policeFileId,
             userGeneratedFilename: file.userGeneratedFilename,
+            defendantId,
+            civilClaimantId,
           },
         },
       })
@@ -269,7 +275,14 @@ const useS3Upload = (caseId: string) => {
 
       return createdFile.id
     },
-    [limitedAccess, limitedAccessCreateFile, createFile, caseId],
+    [
+      limitedAccess,
+      limitedAccessCreateFile,
+      createFile,
+      caseId,
+      defendantId,
+      civilClaimantId,
+    ],
   )
 
   const handleUpload = useCallback(

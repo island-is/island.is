@@ -266,8 +266,19 @@ export class BackendService extends DataSource<{ req: Request }> {
     return this.post(`case/${id}/file/url`, createPresignedPost)
   }
 
-  createCaseFile(id: string, createFile: unknown): Promise<CaseFile> {
-    return this.post(`case/${id}/file`, createFile)
+  createCaseFile(
+    id: string,
+    createFile: unknown,
+    defendantId?: string,
+    civilClaimantId?: string,
+  ): Promise<CaseFile> {
+    const connectionInjection = defendantId
+      ? `/defendant/${defendantId}`
+      : civilClaimantId
+      ? `/civilClaimant/${civilClaimantId}`
+      : ''
+
+    return this.post(`case/${id}${connectionInjection}/file`, createFile)
   }
 
   getCaseFileSignedUrl(
@@ -435,8 +446,15 @@ export class BackendService extends DataSource<{ req: Request }> {
   limitedAccessCreateCaseFile(
     id: string,
     createFile: unknown,
+    civilClaimantId?: string,
   ): Promise<CaseFile> {
-    return this.post(`case/${id}/limitedAccess/file`, createFile)
+    const connectionInjection = civilClaimantId
+      ? `/civilClaimant/${civilClaimantId}`
+      : ''
+    return this.post(
+      `case/${id}/limitedAccess${connectionInjection}/file`,
+      createFile,
+    )
   }
 
   limitedAccessGetCaseFileSignedUrl(
