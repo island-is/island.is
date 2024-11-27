@@ -44,25 +44,21 @@ export const VaccinationsWrapper = () => {
       intro={formatMessage(m.vaccinationsIntro)}
       serviceProviderSlug={HEALTH_DIRECTORATE_SLUG}
       serviceProviderTooltip={formatMessage(m.landlaeknirVaccinationsTooltip)}
-    >
-      {/* Buttons */}
-      <Box printHidden display="flex" flexDirection="row" marginBottom={6}>
+      buttonGroup={[
         <LinkButton
           to={formatMessage(m.readAboutVaccinationsLink)}
           icon="open"
           variant="utility"
           text={formatMessage(m.readAboutVaccinations)}
-        />
-        <Box marginLeft={1}>
-          <LinkButton
-            to={formatMessage(m.makeVaccinationAppointmentLink)}
-            icon="open"
-            variant="utility"
-            text={formatMessage(m.makeVaccinationAppointment)}
-          />
-        </Box>
-      </Box>
-
+        />,
+        <LinkButton
+          to={formatMessage(m.makeVaccinationAppointmentLink)}
+          icon="open"
+          variant="utility"
+          text={formatMessage(m.makeVaccinationAppointment)}
+        />,
+      ]}
+    >
       <Box>
         {loading && (
           <SkeletonLoader

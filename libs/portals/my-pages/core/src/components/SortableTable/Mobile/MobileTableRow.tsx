@@ -1,4 +1,4 @@
-import { Box, Button, Stack, Text } from '@island.is/island-ui/core'
+import { Box, Button, Divider, Stack, Text } from '@island.is/island-ui/core'
 import { isDefined } from 'class-validator'
 import React, { useEffect, useRef, useState } from 'react'
 import AnimateHeight from 'react-animate-height'
@@ -78,17 +78,24 @@ const MobileTableRow: React.FC<Props> = ({ tableRow, inner, background }) => {
                   </Text>
                 </Box>
                 <Box width="half">
-                  <Text variant="default">{content}</Text>
+                  <Text variant="default" fontWeight="regular">
+                    {content}
+                  </Text>
                 </Box>
               </Box>
             )
           })}
         </Stack>
       </Box>
-      <Box width="full">{tableRow.action}</Box>
+      <Box width="full" marginY={1}>
+        {tableRow.action}
+      </Box>
       {/* Children - visible when extended */}
       {extended && (
         <AnimateHeight height={extended ? 'auto' : 0} duration={800}>
+          <Box paddingTop={2} paddingBottom={3}>
+            <Divider />
+          </Box>
           <Box ref={ref}>{tableRow.children}</Box>
         </AnimateHeight>
       )}

@@ -26,7 +26,7 @@ export const NestedLines = ({ data, width = 'full' }: Props) => {
     return isHalf ? index % 4 === 0 || index % 4 === 1 : index % 2 === 0
   }
   return (
-    <Box padding={2} background="blue100">
+    <Box padding={[0, 0, 0, 2, 2]} background="blue100">
       <GridContainer className={styles.grid}>
         <GridRow>
           {data.map((item, i) => (
@@ -37,7 +37,10 @@ export const NestedLines = ({ data, width = 'full' }: Props) => {
                 })}
               >
                 <GridRow>
-                  <GridColumn span={['12/12', '12/12', titleWidth]}>
+                  <GridColumn
+                    span={['12/12', '12/12', titleWidth]}
+                    paddingBottom={'smallGutter'}
+                  >
                     <Box className={styles.titleCol}>
                       <Text fontWeight="semiBold" variant="small" as="span">
                         {item.title}

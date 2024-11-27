@@ -1,4 +1,4 @@
-import { Box } from '@island.is/island-ui/core'
+import { Box, Stack } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { SortableTable } from '@island.is/portals/my-pages/core'
 import React, { useState } from 'react'
@@ -58,25 +58,31 @@ const MedicinePrescriptions = () => {
                       icon: { icon: 'reload', type: 'outline' },
                     }
                   : item?.status.type === 'tooltip'
-                  ? { type: 'info', label: item.status.data }
+                  ? {
+                      type: 'info',
+                      label: item.status.data,
+                      text: 'Ekki í boði',
+                    }
                   : { type: 'text', label: item.status.data },
 
               children: (
-                <Box padding={1} background={'blue100'}>
-                  <NestedInfoLines
-                    label={formatMessage(messages.moreDetailedInfo)}
-                    data={MedicinePrescriptionDetailData}
-                  />
+                <Box padding={[0, 0, 0, 1, 1]} background={'blue100'}>
+                  <Stack space={2}>
+                    <NestedInfoLines
+                      label={formatMessage(messages.moreDetailedInfo)}
+                      data={MedicinePrescriptionDetailData}
+                    />
 
-                  <DispensingContainer
-                    label={formatMessage(messages.dispenseHistory)}
-                    data={MedicineDispenseData}
-                  />
+                    <DispensingContainer
+                      label={formatMessage(messages.dispenseHistory)}
+                      data={MedicineDispenseData}
+                    />
 
-                  <NestedInfoLines
-                    label={formatMessage(messages.version)}
-                    data={MedicinePrescriptionDetailData2}
-                  />
+                    <NestedInfoLines
+                      label={formatMessage(messages.version)}
+                      data={MedicinePrescriptionDetailData2}
+                    />
+                  </Stack>
                 </Box>
               ),
             })) ?? []

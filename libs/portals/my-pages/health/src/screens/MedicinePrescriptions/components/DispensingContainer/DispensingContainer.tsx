@@ -3,6 +3,7 @@ import {
   GridColumn,
   GridContainer,
   GridRow,
+  Hidden,
   Icon,
   IconProps,
   Text,
@@ -24,35 +25,39 @@ interface Props {
 
 const DispensingContainer: React.FC<Props> = ({ label, data }) => {
   return (
-    <Box margin={2}>
-      <Text variant="small" fontWeight="medium" paddingBottom={2}>
+    <Box
+      marginY={[1, 1, 1, 2, 2]}
+      marginX={[0, 0, 0, 2, 2]}
+      className={styles.container}
+    >
+      <Text fontWeight="medium" paddingBottom={[1, 1, 1, 2, 2]}>
         {label}
       </Text>
       <GridContainer className={styles.grid}>
         <GridRow>
           {data.map((item, i) => (
-            <GridColumn key={i} span={'6/12'}>
+            <GridColumn key={i} span={['12/12', '12/12', '6/12']}>
               <GridContainer className={styles.innerGrid}>
                 <GridRow>
                   <GridColumn>
                     <Box paddingLeft={1} display="flex" alignItems="flexStart">
-                      <Box
-                        paddingX={1}
-                        display="flex"
-                        style={{ paddingTop: 2 }}
-                      >
-                        <Icon
-                          icon={item.icon.type}
-                          size="small"
-                          color={item.icon.color}
-                          type="outline"
-                        />
-                      </Box>
-                      <Box>
-                        <Text variant="small" fontWeight="medium">
-                          {item.title}
-                        </Text>
-                        <Text variant="small" color="dark400">
+                      <Hidden below="md">
+                        <Box
+                          paddingX={1}
+                          display="flex"
+                          style={{ paddingTop: 2 }}
+                        >
+                          <Icon
+                            icon={item.icon.type}
+                            size="small"
+                            color={item.icon.color}
+                            type="outline"
+                          />
+                        </Box>
+                      </Hidden>
+                      <Box className={styles.text}>
+                        <Text fontWeight="medium">{item.title}</Text>
+                        <Text fontWeight="regular" color="dark400">
                           {item.value}
                         </Text>
                       </Box>

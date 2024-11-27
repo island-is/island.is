@@ -1,7 +1,7 @@
 import { Box, Text } from '@island.is/island-ui/core'
 import { NestedLines } from '@island.is/portals/my-pages/core'
 import React from 'react'
-
+import * as styles from './NestedInfoLines.css'
 interface Props {
   label?: string
   data: {
@@ -17,7 +17,7 @@ const NestedInfoLines: React.FC<Props> = ({ label, data, width = 'full' }) => {
   return (
     <>
       {label && (
-        <Box paddingLeft={2}>
+        <Box paddingLeft={[0, 0, 0, 2, 2]} className={styles.title}>
           <Text variant="small" fontWeight="medium">
             {label}
           </Text>

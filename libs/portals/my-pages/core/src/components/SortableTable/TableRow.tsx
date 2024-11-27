@@ -1,4 +1,5 @@
 import {
+  Box,
   Button,
   Table as T,
   Tag,
@@ -34,7 +35,12 @@ export const TableRow = ({
     }
     if (valueItems.length - 1 === i && lastNode) {
       if (lastNode.type === 'info') {
-        return <Tooltip text={lastNode.label} />
+        return (
+          <Box display="flex">
+            {lastNode.text && <Text variant="medium">{lastNode.text}</Text>}
+            <Tooltip text={lastNode.label} />
+          </Box>
+        )
       } else if (lastNode.type === 'action') {
         return (
           <Button

@@ -1,12 +1,22 @@
-import { style } from '@vanilla-extract/css'
+import { globalStyle, style } from '@vanilla-extract/css'
 import { theme, themeUtils } from '@island.is/island-ui/theme'
 
 export const grid = style({
-  padding: `0 ${theme.spacing[1]}px`,
+  padding: `calc(${theme.spacing[1]}px / 2)`,
+  ...themeUtils.responsiveStyle({
+    md: {
+      padding: `0 ${theme.spacing[1]}px`,
+    },
+  }),
 })
 
 export const innerGrid = style({
-  padding: theme.spacing[1] * 1.5,
+  padding: `calc(${theme.spacing[1]}px / 2)`,
+  ...themeUtils.responsiveStyle({
+    md: {
+      padding: theme.spacing[1] * 1.5,
+    },
+  }),
 })
 
 export const white = style({
@@ -19,6 +29,7 @@ export const blue = style({
 
 export const titleCol = style({
   paddingLeft: theme.spacing[1],
+  fontSize: '14px',
   ...themeUtils.responsiveStyle({
     md: {
       paddingLeft: theme.spacing[2],
@@ -28,9 +39,18 @@ export const titleCol = style({
 
 export const valueCol = style({
   paddingLeft: theme.spacing[1],
+  fontSize: '14px',
   ...themeUtils.responsiveStyle({
     md: {
       paddingLeft: theme.spacing[0],
     },
   }),
+})
+
+globalStyle(`${valueCol} > span`, {
+  fontSize: '14px',
+})
+
+globalStyle(`${titleCol} > span`, {
+  fontSize: '14px',
 })

@@ -10,6 +10,7 @@ export type SortableData = {
     label: string
     icon?: Pick<IconProps, 'icon' | 'type'>
     action?: () => void
+    text?: string
   }
   children?: React.ReactElement | null // Children for each row if expandable
 } & { [key: string]: string | React.ReactElement | any }

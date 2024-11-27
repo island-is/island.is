@@ -71,6 +71,7 @@ export const SortableTable = (props: SortableTableProps) => {
 
     if (props.expandable) {
       headerItems.unshift('')
+      headerItems.pop()
     }
     setHeaderSorted(headerItems)
   }, [props.items])

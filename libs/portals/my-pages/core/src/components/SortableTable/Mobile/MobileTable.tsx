@@ -1,4 +1,4 @@
-import { Box, Divider, Text } from '@island.is/island-ui/core'
+import { Box, Text } from '@island.is/island-ui/core'
 import React from 'react'
 import MobileTableRow, { TableRow } from './MobileTableRow'
 
@@ -13,11 +13,7 @@ const MobileTable: React.FC<Props> = ({ rows, header, inner }) => {
     <Box>
       {/* Table Header */}
       {header && <Text>{header}</Text>}
-      {inner && (
-        <Box paddingTop={2} paddingBottom={3}>
-          <Divider />
-        </Box>
-      )}
+
       {rows.map((tableRow, index) => (
         <MobileTableRow
           key={index}

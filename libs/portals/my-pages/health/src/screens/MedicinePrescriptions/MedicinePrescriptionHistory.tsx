@@ -1,4 +1,4 @@
-import { Box } from '@island.is/island-ui/core'
+import { Box, Stack } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { SortableTable } from '@island.is/portals/my-pages/core'
 import { useNavigate } from 'react-router-dom'
@@ -33,16 +33,14 @@ const MedicinePrescriptionHistory = () => {
           }}
           expandable
           defaultSortByKey="medicine"
+          mobileTitleKey="medicine"
           items={
             MedicinePrescriptionsHistoryData?.map((item, i) => ({
               id: item?.id ?? `${i}`,
-              name: item?.medicineName ?? '',
-
               medicine: item?.medicineName ?? '',
               usedFor: item?.usedFor ?? '',
               lastDispensed: item?.lastDispensed ?? '',
               status: item?.status.type ?? '',
-
               lastNode:
                 item?.status.type === 'renew'
                   ? {
@@ -57,20 +55,22 @@ const MedicinePrescriptionHistory = () => {
 
               children: (
                 <Box padding={1} background={'blue100'}>
-                  <NestedInfoLines
-                    label={formatMessage(messages.moreDetailedInfo)}
-                    data={MedicinePrescriptionDetailData}
-                  />
+                  <Stack space={2}>
+                    <NestedInfoLines
+                      label={formatMessage(messages.moreDetailedInfo)}
+                      data={MedicinePrescriptionDetailData}
+                    />
 
-                  <DispensingContainer
-                    label={formatMessage(messages.dispenseHistory)}
-                    data={MedicineDispenseData}
-                  />
+                    <DispensingContainer
+                      label={formatMessage(messages.dispenseHistory)}
+                      data={MedicineDispenseData}
+                    />
 
-                  <NestedInfoLines
-                    label={formatMessage(messages.version)}
-                    data={MedicinePrescriptionDetailData2}
-                  />
+                    <NestedInfoLines
+                      label={formatMessage(messages.version)}
+                      data={MedicinePrescriptionDetailData2}
+                    />
+                  </Stack>
                 </Box>
               ),
             })) ?? []

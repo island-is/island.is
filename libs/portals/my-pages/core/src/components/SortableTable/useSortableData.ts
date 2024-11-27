@@ -11,8 +11,11 @@ export const useSortableData = <T>(
     const sortableItems = [...items]
     if (sortConfig.key !== '') {
       sortableItems.sort((a, b) => {
-        const keyA = a[sortConfig.key as keyof T] as string
-        const keyB = b[sortConfig.key as keyof T] as string
+        const keyA = a[sortConfig.key as keyof T] as string | undefined
+        const keyB = b[sortConfig.key as keyof T] as string | undefined
+        if (keyA === undefined || keyB === undefined) {
+          return 0
+        }
         return sortConfig.direction === 'ascending'
           ? keyA.localeCompare(keyB, undefined, { numeric: true })
           : keyA.localeCompare(keyB, undefined, { numeric: true }) * -1

@@ -1,4 +1,4 @@
-import { style } from '@vanilla-extract/css'
+import { globalStyle, style } from '@vanilla-extract/css'
 import { theme } from '@island.is/island-ui/theme'
 
 export const grid = style({
@@ -16,4 +16,11 @@ export const white = style({
 
 export const titleCol = style({
   paddingLeft: theme.spacing[2],
+})
+
+export const container = style({})
+
+export const text = style({})
+globalStyle(`${container} > p, ${text} > p`, {
+  fontSize: '14px',
 })
