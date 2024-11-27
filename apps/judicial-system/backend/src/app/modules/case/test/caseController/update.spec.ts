@@ -459,23 +459,6 @@ describe('CaseController - Update', () => {
       it('should post to queue', () => {
         expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
           {
-            type: MessageType.DELIVERY_TO_COURT_PROSECUTOR,
-            user,
-            caseId,
-          },
-          {
-            type: MessageType.DELIVERY_TO_COURT_DEFENDANT,
-            user,
-            caseId,
-            elementId: defendantId1,
-          },
-          {
-            type: MessageType.DELIVERY_TO_COURT_DEFENDANT,
-            user,
-            caseId,
-            elementId: defendantId2,
-          },
-          {
             type: MessageType.DELIVERY_TO_COURT_CASE_FILES_RECORD,
             user,
             caseId,

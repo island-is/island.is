@@ -25,7 +25,6 @@ import {
   RequestSharedWithDefender,
   restrictionCases,
   UserRole,
-  VERDICT_APPEAL_WINDOW_DAYS,
 } from '@island.is/judicial-system/types'
 
 const getProsecutionUserCasesQueryFilter = (user: User): WhereOptions => {
@@ -86,10 +85,13 @@ const getPublicProsecutionUserCasesQueryFilter = (): WhereOptions => {
         ],
       },
       {
-        // The following condition will filter out all event logs that are not of type INDICTMENT_SENT_TO_PUBLIC_PROSECUTOR
-        // but that should be ok the case list for the public prosecutor is not using other event logs
-        '$eventLogs.event_type$':
-          EventType.INDICTMENT_SENT_TO_PUBLIC_PROSECUTOR,
+        id: {
+          [Op.in]: Sequelize.literal(`
+            (SELECT case_id
+              FROM event_log
+              WHERE event_type = '${EventType.INDICTMENT_SENT_TO_PUBLIC_PROSECUTOR}')
+          `),
+        },
       },
     ],
   }
@@ -209,13 +211,18 @@ const getPrisonAdminUserCasesQueryFilter = (): WhereOptions => {
       {
         type: indictmentCases,
         state: CaseState.COMPLETED,
-        indictment_ruling_decision: CaseIndictmentRulingDecision.RULING,
+        indictment_ruling_decision: {
+          [Op.or]: [
+            CaseIndictmentRulingDecision.RULING,
+            CaseIndictmentRulingDecision.FINE,
+          ],
+        },
         indictment_review_decision: IndictmentCaseReviewDecision.ACCEPT,
         id: {
-          [Op.notIn]: Sequelize.literal(`
+          [Op.in]: Sequelize.literal(`
             (SELECT case_id
               FROM defendant
-              WHERE (verdict_appeal_date IS NOT NULL OR verdict_view_date IS NULL OR verdict_view_date > NOW() - INTERVAL '${VERDICT_APPEAL_WINDOW_DAYS} days'))
+              WHERE is_sent_to_prison_admin = true)
           `),
         },
       },
@@ -248,9 +255,15 @@ const getDefenceUserCasesQueryFilter = (user: User): WhereOptions => {
                 {
                   [Op.and]: [
                     { state: CaseState.RECEIVED },
-                    // The following condition will filter out all date logs that are not of type ARRAIGNMENT_DATE
-                    // but that should be ok for request cases since they only have one date log
-                    { '$dateLogs.date_type$': DateType.ARRAIGNMENT_DATE },
+                    {
+                      id: {
+                        [Op.in]: Sequelize.literal(`
+                          (SELECT case_id
+                            FROM date_log
+                            WHERE date_type = '${DateType.ARRAIGNMENT_DATE}')
+                        `),
+                      },
+                    },
                   ],
                 },
                 {
@@ -284,7 +297,8 @@ const getDefenceUserCasesQueryFilter = (user: User): WhereOptions => {
                     [Op.in]: Sequelize.literal(`
                       (SELECT case_id
                         FROM defendant
-                        WHERE defender_national_id in ('${normalizedNationalId}', '${formattedNationalId}') and is_defender_choice_confirmed = true)
+                        WHERE defender_national_id in ('${normalizedNationalId}', '${formattedNationalId}')
+                          AND is_defender_choice_confirmed = true)
                     `),
                   },
                 },
@@ -293,7 +307,9 @@ const getDefenceUserCasesQueryFilter = (user: User): WhereOptions => {
                     [Op.in]: Sequelize.literal(`
                       (SELECT case_id
                         FROM civil_claimant
-                        WHERE has_spokesperson = true AND spokesperson_national_id in ('${normalizedNationalId}', '${formattedNationalId}') and is_spokesperson_confirmed = true)
+                        WHERE has_spokesperson = true
+                          AND spokesperson_national_id in ('${normalizedNationalId}', '${formattedNationalId}')
+                          AND is_spokesperson_confirmed = true)
                     `),
                   },
                 },

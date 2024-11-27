@@ -18,21 +18,21 @@ import {
   DocumentLine,
   DocumentLineV3,
   useDocumentListV3,
-} from '@island.is/service-portal/documents'
+} from '@island.is/portals/my-pages/documents'
 import {
   LinkResolver,
   PlausiblePageviewDetail,
   ServicePortalPaths,
   m,
   useDynamicRoutesWithNavigation,
-} from '@island.is/service-portal/core'
+} from '@island.is/portals/my-pages/core'
 import Greeting from '../../components/Greeting/Greeting'
 import DocumentsEmpty from '../../components/DocumentsEmpty/DocumentsEmpty'
 import { iconIdMapper, iconTypeToSVG } from '../../utils/Icons/idMapper'
 import { useWindowSize } from 'react-use'
 import { theme } from '@island.is/island-ui/theme'
 import { MAIN_NAVIGATION } from '../../lib/masterNavigation'
-import { useOrganizations } from '@island.is/service-portal/graphql'
+import { useOrganizations } from '@island.is/portals/my-pages/graphql'
 import * as styles from './Dashboard.css'
 import cn from 'classnames'
 import { getOrganizationLogoUrl } from '@island.is/shared/utils'

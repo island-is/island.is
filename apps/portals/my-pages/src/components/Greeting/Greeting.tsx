@@ -9,7 +9,7 @@ import {
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { useAuth } from '@island.is/auth/react'
-import { m } from '@island.is/service-portal/core'
+import { m } from '@island.is/portals/my-pages/core'
 import * as styles from './Greeting.css'
 
 const Greeting: FC<React.PropsWithChildren<{}>> = () => {

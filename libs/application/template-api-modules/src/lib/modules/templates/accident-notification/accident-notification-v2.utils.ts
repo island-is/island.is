@@ -28,7 +28,6 @@ import {
   MinarsidurAPIModelsAccidentReportsInjuredDTO,
   MinarsidurAPIModelsAccidentReportsAccidentDTO,
   MinarsidurAPIModelsAccidentReportsEmployerDTO,
-  MinarsidurAPIModelsAccidentReportsClubDTO,
   MinarsidurAPIModelsAccidentReportsAccidentReportAttachmentDTO,
   MinarsidurAPIModelsAccidentReportsReporterDTOReportingForEnum,
   MinarsidurAPIModelsAccidentReportsAccidentReportAttachmentTypeEnum,
@@ -43,7 +42,6 @@ export const applicationToAccidentReport = (
     injured: getInjured(answers),
     accident: getAccident(answers),
     employer: getEmployer(answers),
-    club: getClub(answers),
     attachments: getAttachments(attachments),
   }
 }
@@ -51,9 +49,9 @@ export const applicationToAccidentReport = (
 const reportingForMap = {
   [WhoIsTheNotificationForEnum.ME]:
     MinarsidurAPIModelsAccidentReportsReporterDTOReportingForEnum.NUMBER_1,
-  [WhoIsTheNotificationForEnum.JURIDICALPERSON]:
-    MinarsidurAPIModelsAccidentReportsReporterDTOReportingForEnum.NUMBER_2,
   [WhoIsTheNotificationForEnum.POWEROFATTORNEY]:
+    MinarsidurAPIModelsAccidentReportsReporterDTOReportingForEnum.NUMBER_2,
+  [WhoIsTheNotificationForEnum.JURIDICALPERSON]:
     MinarsidurAPIModelsAccidentReportsReporterDTOReportingForEnum.NUMBER_3,
   [WhoIsTheNotificationForEnum.CHILDINCUSTODY]:
     MinarsidurAPIModelsAccidentReportsReporterDTOReportingForEnum.NUMBER_4,
@@ -265,6 +263,29 @@ const createDateTime = (date?: string | null, time?: string | null): Date => {
   return new Date(year, month - 1, day, hours, minutes)
 }
 
+const createNullableDateTime = (
+  date?: string | null,
+  time?: string | null,
+): Date | null => {
+  if (!date) {
+    return null
+  }
+
+  const [year, month, day] = date.split('-').map(Number)
+  let hours = time ? parseInt(time.slice(0, 2), 10) : 0
+  let minutes = time ? parseInt(time.slice(2, 4), 10) : 0
+
+  if (hours > 23 || hours < 0) {
+    hours = 0
+  }
+
+  if (minutes > 59 || minutes < 0) {
+    minutes = 0
+  }
+
+  return new Date(year, month - 1, day, hours, minutes)
+}
+
 const getAccident = (
   answers: AccidentNotificationAnswers,
 ): MinarsidurAPIModelsAccidentReportsAccidentDTO => {
@@ -296,7 +317,7 @@ const getAccident = (
     location: accidentLocation,
     locationDescription: locationDescription ?? '',
     symptoms: accidentDetails?.accidentSymptoms ?? '',
-    dateTimeOfDoctorVisit: createDateTime(
+    dateTimeOfDoctorVisit: createNullableDateTime(
       accidentDetails?.dateOfDoctorVisit,
       accidentDetails?.timeOfDoctorVisit,
     ),
@@ -373,12 +394,14 @@ const getEmployer = (
     answers.applicant &&
     utils.isRepresentativeOfCompanyOrInstitute(answers)
   ) {
+    const { companyName, companyNationalId } = answers.juridicalPerson
+    const { name, email, phoneNumber } = answers.applicant
     return {
-      companyName: answers.juridicalPerson.companyNationalId,
-      companyNationalId: answers.juridicalPerson.companyName,
-      representativeName: answers.applicant.name ?? '',
-      representativeEmail: answers.applicant.email ?? '',
-      representativePhone: answers.applicant.phoneNumber ?? '',
+      companyName,
+      companyNationalId,
+      representativeName: name ?? '',
+      representativeEmail: email ?? '',
+      representativePhone: phoneNumber ?? '',
     }
   }
 
@@ -390,33 +413,18 @@ const getEmployer = (
     return undefined
   }
 
-  return {
-    companyName: companyInfo.name ?? '',
-    companyNationalId: companyInfo.nationalRegistrationId ?? '',
-    representativeName: representative.name ?? '',
-    representativeEmail: representative.email ?? '',
-    representativePhone: representative.phoneNumber ?? '',
-  }
-}
+  const {
+    name: companyName = '',
+    nationalRegistrationId: companyNationalId = '',
+  } = companyInfo
+  const { name, email, phoneNumber } = representative
 
-const getClub = (
-  answers: AccidentNotificationAnswers,
-): MinarsidurAPIModelsAccidentReportsClubDTO | undefined => {
-  const accidentType = getValueViaPath<AccidentTypeEnum>(
-    answers,
-    'accidentType.radioButton',
-  )
-  if (accidentType !== AccidentTypeEnum.SPORTS) return
-
-  const club = getValueViaPath<CompanyInfoV2>(answers, 'companyInfo')
-  const accidentLocation = getValueViaPath<string>(
-    answers,
-    'accidentLocation.answer',
-  )
   return {
-    nationalId: club?.nationalRegistrationId ?? '',
-    name: club?.name ?? '',
-    accidentType: accidentLocation ?? '',
+    companyName,
+    companyNationalId,
+    representativeName: name ?? '',
+    representativeEmail: email ?? '',
+    representativePhone: phoneNumber ?? '',
   }
 }
 

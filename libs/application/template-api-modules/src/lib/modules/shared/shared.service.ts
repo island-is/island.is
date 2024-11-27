@@ -3,6 +3,7 @@ import { ConfigType } from '@nestjs/config'
 import { EmailService } from '@island.is/email-service'
 import {
   Application,
+  BasicChargeItem,
   GraphqlGatewayResponse,
 } from '@island.is/application/types'
 import {
@@ -58,7 +59,12 @@ export class SharedTemplateApiService {
       clientLocationOrigin,
     })
 
-    return this.smsService.sendSms(phoneNumber, message)
+    const normalizedPhoneNumber = this.normalizePhoneNumber(
+      phoneNumber,
+      application.id,
+    )
+
+    return this.smsService.sendSms(normalizedPhoneNumber, message)
   }
 
   async assignApplicationThroughSms(
@@ -75,7 +81,26 @@ export class SharedTemplateApiService {
       assignLink,
     )
 
-    return this.smsService.sendSms(phoneNumber, message)
+    const normalizedPhoneNumber = this.normalizePhoneNumber(
+      phoneNumber,
+      application.id,
+    )
+
+    return this.smsService.sendSms(normalizedPhoneNumber, message)
+  }
+
+  normalizePhoneNumber(phoneNumber: string, applicationId: string) {
+    if (phoneNumber.trim().length > 7) {
+      this.logger.warn(
+        `Recipient number for application ${applicationId} is longer than 7 characters, attempting to recover`,
+      )
+    }
+    if (phoneNumber.match(/\D/g)) {
+      this.logger.warn(
+        `Recipient number for application ${applicationId} contains non-numeric characters, attempting to recover`,
+      )
+    }
+    return phoneNumber.trim().replace(/\D/g, '').slice(-7)
   }
 
   async sendEmail(
@@ -169,17 +194,18 @@ export class SharedTemplateApiService {
     })
   }
 
+  // Note: this is an old function that only 2 applications use: PassportService and DrivingLicenseSubmissionService
   async createCharge(
     user: User,
     applicationId: string,
     performingOrganizationID: string,
-    chargeItemCodes: string[],
+    chargeItems: BasicChargeItem[],
     extraData: ExtraData[] | undefined = undefined,
   ) {
     return this.paymentService.createCharge(
       user,
       performingOrganizationID,
-      chargeItemCodes,
+      chargeItems,
       applicationId,
       extraData,
     )

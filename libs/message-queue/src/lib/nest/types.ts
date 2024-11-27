@@ -18,6 +18,8 @@ export interface Queue {
   maxReceiveCount?: number
   // define a dead-letter queue for messages that fail processing repeatedly
   deadLetterQueue?: DeadLetterQueue
+  // if true, the worker will sleep during the night
+  shouldSleepOutsideWorkingHours?: boolean
 }
 
 export interface DeadLetterQueue {
