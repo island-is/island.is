@@ -3,6 +3,7 @@ import { ConfigType } from '@nestjs/config'
 import { EmailService } from '@island.is/email-service'
 import {
   Application,
+  BasicChargeItem,
   GraphqlGatewayResponse,
 } from '@island.is/application/types'
 import {
@@ -193,17 +194,18 @@ export class SharedTemplateApiService {
     })
   }
 
+  // Note: this is an old function that only 2 applications use: PassportService and DrivingLicenseSubmissionService
   async createCharge(
     user: User,
     applicationId: string,
     performingOrganizationID: string,
-    chargeItemCodes: string[],
+    chargeItems: BasicChargeItem[],
     extraData: ExtraData[] | undefined = undefined,
   ) {
     return this.paymentService.createCharge(
       user,
       performingOrganizationID,
-      chargeItemCodes,
+      chargeItems,
       applicationId,
       extraData,
     )

@@ -1,4 +1,7 @@
-import { RightsPortalAidOrNutrition } from '@island.is/api/schema'
+import {
+  RightsPortalAidOrNutrition,
+  RightsPortalAidOrNutritionRenewalStatus,
+} from '@island.is/api/schema'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   DownloadFileButtons,
@@ -71,7 +74,7 @@ const Aids = ({ data }: Props) => {
               { value: formatMessage(messages.insuranceRatio) },
               { value: formatMessage(messages.availableRefund) },
               { value: formatMessage(messages.nextAvailableRefund) },
-              { value: '' },
+              { value: formatMessage(messages.renewal) },
             ]}
           />
           <T.Body>
@@ -99,6 +102,22 @@ const Aids = ({ data }: Props) => {
                   },
                   {
                     value: rowItem.expiring ? expiringIcon : '',
+                  },
+                  {
+                    value:
+                      rowItem.renewalStatus ===
+                      RightsPortalAidOrNutritionRenewalStatus.VALID
+                        ? formatMessage(messages.valid)
+                        : rowItem.renewalStatus ===
+                          RightsPortalAidOrNutritionRenewalStatus.VALID_FOR_RENEWAL
+                        ? formatMessage(messages.validForRenewal)
+                        : rowItem.renewalStatus ===
+                          RightsPortalAidOrNutritionRenewalStatus.RENEWAL_IN_PROGRESS
+                        ? formatMessage(messages.renewalInProgress)
+                        : rowItem.renewalStatus ===
+                          RightsPortalAidOrNutritionRenewalStatus.NOT_VALID_FOR_RENEWAL
+                        ? formatMessage(messages.notValidForRenewal)
+                        : '',
                   },
                 ]}
               >
