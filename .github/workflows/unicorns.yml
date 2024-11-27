@@ -1,5 +1,6 @@
 name: CI/CD pipeline
 on:
+  workflow_dispatch:
   push:
     branches:
       - 'unicorn-app-pipeline' #temp for debugging and testing
@@ -34,7 +35,6 @@ jobs:
               echo "No unicorn"
               echo IS_UNICORN=false >> "$GITHUB_OUTPUT"
           fi
-
 
   prepare:
     runs-on: ec2-runners
