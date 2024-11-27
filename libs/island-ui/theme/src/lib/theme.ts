@@ -102,7 +102,6 @@ export const theme = {
       md: `${radius.md.$value ?? 12}px`,
       lg: `${radius.lg.$value ?? 16}px`,
       xl: '24px', // TODO: should be added to figma?
-      circle: '50%', // TODO: should be added to figma?
       full: `${radius.full.$value ?? 9999}px`,
     },
     width: {

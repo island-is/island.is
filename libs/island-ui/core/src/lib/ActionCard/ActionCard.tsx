@@ -102,7 +102,7 @@ export const ActionCard: React.FC<React.PropsWithChildren<ActionCardProps>> = ({
         alignItems="center"
         flexShrink={0}
         marginRight={[2, 3]}
-        borderRadius="circle"
+        borderRadius="full"
         background={avatarColors.circle}
         className={styles.avatar}
       >
