@@ -345,9 +345,8 @@ function serializeIngress(
   ingressConf: IngressForEnv,
   env: EnvironmentConfig,
 ) {
-  const hosts = (typeof ingressConf.host === 'string'
-    ? [ingressConf.host]
-    : ingressConf.host
+  const hosts = (
+    typeof ingressConf.host === 'string' ? [ingressConf.host] : ingressConf.host
   ).map((host) =>
     ingressConf.public ?? true
       ? hostFullName(host, env)
