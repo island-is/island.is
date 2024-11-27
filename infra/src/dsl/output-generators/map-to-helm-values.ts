@@ -75,7 +75,6 @@ const serializeService: SerializeMethod<HelmService> = async (
       maxUnavailable: 1,
     },
     healthCheck: {
-      // port: serviceDef.healthPort,
       liveness: {
         path: serviceDef.liveness.path,
         initialDelaySeconds: serviceDef.liveness.initialDelaySeconds,
