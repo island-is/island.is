@@ -2,15 +2,12 @@ import { factory, faker, title } from '@island.is/shared/mocking'
 import {
   GenericLicense,
   GenericLicenseFetch,
-  GenericLicenseProviderId,
   GenericLicenseType,
   GenericUserLicense,
   GenericUserLicenseFetchStatus,
   GenericUserLicenseMetadata,
-  GenericUserLicensePkPassStatus,
   GenericLicenseDataField,
   Payload,
-  GenericLicenseDataFieldType,
 } from '../../types'
 import {
   mockAdrLicense,
@@ -21,28 +18,26 @@ import {
 import { mockDisabilityLicense } from './mocks/disabilityMock'
 import { maybeExpired } from './mocks/utils'
 
-const providerArray = [
-  'AdministrationOfOccupationalSafetyAndHealth',
-  'EnvironmentAgency',
-  'NationalPoliceCommissioner',
-  'SocialInsuranceAdministration',
-]
-
 const genericLicenseFetch = factory<GenericLicenseFetch>({
   status: 'Fetched' as GenericUserLicenseFetchStatus,
   updated: faker.date.recent().toISOString(),
 })
 
-const pkPassStatus = ['Available', 'NotAvailable', 'Unknown']
-
 export const genericLicense = factory<GenericLicense>({
   pkpass: () => faker.datatype.boolean(),
-  pkpassStatus: faker.helpers.arrayElement(
-    pkPassStatus,
-  ) as GenericUserLicensePkPassStatus,
+  pkpassStatus: faker.helpers.arrayElement([
+    'Available',
+    'NotAvailable',
+    'Unknown',
+  ]),
   pkpassVerify: () => faker.datatype.boolean(),
   provider: () => ({
-    id: faker.helpers.arrayElement(providerArray) as GenericLicenseProviderId,
+    id: faker.helpers.arrayElement([
+      'AdministrationOfOccupationalSafetyAndHealth',
+      'EnvironmentAgency',
+      'NationalPoliceCommissioner',
+      'SocialInsuranceAdministration',
+    ]),
   }),
   status: 'HasLicense',
   timeout: 100000,
