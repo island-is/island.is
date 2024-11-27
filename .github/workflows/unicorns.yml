@@ -1,0 +1,61 @@
+name: CI/CD pipeline
+on:
+  push:
+    branches:
+      - 'unicorn-app-pipeline' #temp for debugging and testing
+defaults:
+  run:
+    shell: bash
+
+concurrency:
+  # See https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#example-using-a-fallback-value
+  group: push-${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
+
+jobs:
+  check-unicorn:
+    needs:
+      - prepare
+    name: Check if app is on unicorn track
+    runs-on: ec2-runners
+    container:
+      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
+    outputs:
+      IS_UNICORN: ${{ steps.unicorn-affected.outputs.IS_UNICORN }}
+    steps:
+      - name: Check unicorn affected
+        id: unicorn-affected
+        run: |
+          UNICORN=$(yarn is-unicorn)
+          if [ "$UNICORN" = 'true' ]; then
+              echo "unicorn is detected"
+              echo IS_UNICORN=true >> "$GITHUB_OUTPUT"
+          else
+              echo "No unicorn"
+              echo IS_UNICORN=false >> "$GITHUB_OUTPUT"
+          fi
+
+
+  prepare:
+    runs-on: ec2-runners
+    container:
+      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
+    timeout-minutes: 90
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: 'package.json'
+
+      - name: Setup yarn
+        run: corepack enable
+
+      - name: Check node version
+        run: |
+          set -euo pipefail
+          node -v
+          ls -l `which node`
+
