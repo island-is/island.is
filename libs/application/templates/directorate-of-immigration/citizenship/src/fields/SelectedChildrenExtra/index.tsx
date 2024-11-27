@@ -40,6 +40,7 @@ export const MoreChildInfo: FC<FieldBaseProps> = (props) => {
         externalData,
         answers,
         index,
+        child,
       )
       const predefinedChild: ChildrenOfApplicant = {
         nationalId: child,
@@ -72,6 +73,7 @@ export const MoreChildInfo: FC<FieldBaseProps> = (props) => {
     return (
       <SelectedRepeaterItem
         index={index}
+        key={`child-${index}`}
         readOnlyFields={readOnlyFields}
         repeaterField={child}
         {...props}

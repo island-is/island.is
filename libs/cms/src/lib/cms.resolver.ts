@@ -126,6 +126,8 @@ import { Grant } from './models/grant.model'
 import { GetGrantsInput } from './dto/getGrants.input'
 import { GetSingleGrantInput } from './dto/getSingleGrant.input'
 import { GrantList } from './models/grantList.model'
+import { OrganizationParentSubpage } from './models/organizationParentSubpage.model'
+import { GetOrganizationParentSubpageInput } from './dto/getOrganizationParentSubpage.input'
 
 const defaultCache: CacheControlOptions = { maxAge: CACHE_CONTROL_MAX_AGE }
 
@@ -706,6 +708,14 @@ export class CmsResolver {
     @Args('input') input: GetTeamMembersInput,
   ): Promise<TeamMemberResponse> {
     return this.cmsElasticsearchService.getTeamMembers(input)
+  }
+
+  @CacheControl(defaultCache)
+  @Query(() => OrganizationParentSubpage, { nullable: true })
+  getOrganizationParentSubpage(
+    @Args('input') input: GetOrganizationParentSubpageInput,
+  ): Promise<OrganizationParentSubpage | null> {
+    return this.cmsContentfulService.getOrganizationParentSubpage(input)
   }
 }
 
