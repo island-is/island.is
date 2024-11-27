@@ -2,36 +2,22 @@ import React from 'react'
 import { useIntl } from 'react-intl'
 import { UploadFile, Box, AlertMessage } from '@island.is/island-ui/core'
 import { taxReturnForm } from '../../lib/messages'
-import { TaxData, UploadFileType } from '../..'
-import { FieldBaseProps } from '@island.is/application/types'
-import Files from '../files/Files'
-import { getValueViaPath } from '@island.is/application/core'
-import { getTaxFormContent } from './TaxFormContent'
 
-export const TaxReturnFilesForm = ({ field, application }: FieldBaseProps) => {
+import { FAFieldBaseProps, OverrideAnswerSchema, UploadFileType } from '../..'
+
+import { Files } from '..'
+import { getTaxFormContent } from './taxFormContent'
+import withLogo from '../Logo/Logo'
+
+const TaxReturnFilesForm = ({ field, application }: FAFieldBaseProps) => {
   const { formatMessage } = useIntl()
   const { id, answers, externalData, assignees } = application
-  const nationalId = getValueViaPath<string>(
-    externalData,
-    'nationalRegistry.data.nationalId',
-  )
-  const taxData = getValueViaPath<TaxData>(externalData, 'taxData.data')
-  const spouseTaxData = getValueViaPath<TaxData>(
-    externalData,
-    'taxDataSpouse.data',
-  )
-
-  const taxDataToUse =
-    assignees.includes(nationalId ?? '') && spouseTaxData
-      ? spouseTaxData
-      : taxData
-
-  if (!taxDataToUse) {
-    return null
-  }
 
   const { municipalitiesDirectTaxPayments, municipalitiesPersonalTaxReturn } =
-    taxDataToUse
+    assignees.includes(externalData.nationalRegistry.data.nationalId) &&
+    externalData?.taxDataSpouse?.data
+      ? externalData.taxDataSpouse.data
+      : externalData.taxData.data
 
   const taxReturnFetchFailed =
     municipalitiesPersonalTaxReturn?.personalTaxReturn === null
@@ -62,7 +48,9 @@ export const TaxReturnFilesForm = ({ field, application }: FieldBaseProps) => {
 
       <Files
         fileKey={field.id as UploadFileType}
-        uploadFiles={answers[field.id] as unknown as UploadFile[]}
+        uploadFiles={
+          answers[field.id as keyof OverrideAnswerSchema] as UploadFile[]
+        }
         folderId={id}
       />
 
@@ -70,3 +58,5 @@ export const TaxReturnFilesForm = ({ field, application }: FieldBaseProps) => {
     </>
   )
 }
+
+export default withLogo(TaxReturnFilesForm)
