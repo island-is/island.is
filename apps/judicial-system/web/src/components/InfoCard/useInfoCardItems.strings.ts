@@ -30,7 +30,7 @@ export const strings = defineMessages({
   reviewTagAppealed: {
     id: 'judicial.system.core:info_card_indictment.review_tag_appealed_v2',
     defaultMessage:
-      'Áfrýja {isFine, select, true {viðurlagaákvörðun} other {dómi}}',
+      '{isFine, select, true {Kæra viðurlagaákvörðun} other {Áfrýja dómi}}',
     description:
       'Notað sem texti á tagg fyrir "Áfrýjun" tillögu í yfirliti ákæru.',
   },
