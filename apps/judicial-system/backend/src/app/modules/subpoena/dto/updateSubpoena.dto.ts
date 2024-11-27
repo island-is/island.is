@@ -1,4 +1,11 @@
-import { IsEnum, IsOptional, IsString, MaxLength } from 'class-validator'
+import { Type } from 'class-transformer'
+import {
+  IsDate,
+  IsEnum,
+  IsOptional,
+  IsString,
+  MaxLength,
+} from 'class-validator'
 
 import { ApiPropertyOptional } from '@nestjs/swagger'
 
@@ -17,7 +24,8 @@ export class UpdateSubpoenaDto {
   readonly servedBy?: string
 
   @IsOptional()
-  @IsString()
+  @Type(() => Date)
+  @IsDate()
   @ApiPropertyOptional({ type: Date })
   readonly serviceDate?: Date
 
