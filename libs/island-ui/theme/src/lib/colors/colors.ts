@@ -1,7 +1,7 @@
 import { color } from './primitivesMapper'
 
 const {
-  primary: { blue, dark, red, white: white400 },
+  primary: { blue, dark, red },
   secondary: { blueberry, purple, rose },
   accent: { mint, yellow },
 } = color
@@ -25,7 +25,7 @@ export const red300 = red[300] ?? '#ff99b9'
 export const red200 = red[200] ?? '#ffccdc'
 export const red100 = red[100] ?? '#fff2f6'
 
-export const white = white400[400] ?? '#ffffff'
+export const white = '#ffffff'
 export const black = '#000000'
 export const overlay = '#f2f7ff'
 
