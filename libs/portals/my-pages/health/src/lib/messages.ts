@@ -87,6 +87,31 @@ export const messages = defineMessages({
     id: 'sp.health:repaid',
     defaultMessage: 'Endurgreitt',
   },
+  renewal: {
+    id: 'sp.health:renewal',
+    defaultMessage: 'Endurnýjun',
+  },
+  valid: {
+    id: 'sp.health:valid',
+    defaultMessage: 'Í gildi',
+  },
+  validForRenewal: {
+    id: 'sp.health:valid-for-renewal',
+    defaultMessage: 'Endurnýja',
+  },
+  renewalInProgress: {
+    id: 'sp.health:renewal-in-progress',
+    defaultMessage: 'Endurnýjun í gangi',
+  },
+  notValidForRenewal: {
+    id: 'sp.health:not-valid-for-renewal',
+    defaultMessage: 'Ekki hægt',
+  },
+  notValidForRenewalDetail: {
+    id: 'sp.health:not-valid-for-renewal-detail',
+    defaultMessage:
+      'Sjálfvirk endurnýjun er ekki í boði fyrir þetta hjálpartæki.',
+  },
   monthlyBreakdownOfInvoices: {
     id: 'sp.health:monthly-breakdown-of-invoices',
     defaultMessage: 'Sundurliðun reikninga í völdum mánuði',
@@ -210,6 +235,15 @@ export const messages = defineMessages({
     id: 'sp.health:no-health-insurance-message',
     defaultMessage: 'Síðasta trygging: {arg}',
   },
+  healthCenterNotAvailableForRegistration: {
+    id: 'sp.health:health-center-not-available-for-registration',
+    defaultMessage: 'Ekki hægt',
+  },
+  healthCenterNotAvailableForRegistrationDesc: {
+    id: 'sp.health:health-center-not-available-for-registration-desc',
+    defaultMessage:
+      'Þessi heilsugæslustöð er með lokað fyrir skráningar utan hverfis.',
+  },
   paymentTarget: {
     id: 'sp.health:payment-target',
     defaultMessage: 'Greiðslumark',
@@ -300,7 +334,7 @@ export const messages = defineMessages({
   },
   healthCenterTitle: {
     id: 'sp.health:health-center-title',
-    defaultMessage: 'Heilsugæsla',
+    defaultMessage: 'Skráð heilsugæsla',
   },
   healthCenterDescription: {
     id: 'sp.health:health-center-intro',
@@ -611,6 +645,10 @@ export const messages = defineMessages({
   personalDoctor: {
     id: 'sp.health:personal-doctor',
     defaultMessage: 'Heimilslæknir',
+  },
+  neighborhoodHealthCenter: {
+    id: 'sp.health:neighborhood-health-center',
+    defaultMessage: 'Hverfisheilsugæsla',
   },
   doctor: {
     id: 'sp.health:doctor',

@@ -26,6 +26,7 @@ interface DefendantInfoProps {
   defendant: Defendant
   displayAppealExpirationInfo?: boolean
   displayVerdictViewDate?: boolean
+  displaySentToPrisonAdminDate?: boolean
   defender?: Defender
 }
 
@@ -54,14 +55,11 @@ export const getAppealExpirationInfo = (
 const getVerdictViewDateText = (
   formatMessage: IntlShape['formatMessage'],
   verdictViewDate?: string | null,
-  serviceNotRequired?: boolean,
 ): string => {
   if (verdictViewDate) {
     return formatMessage(strings.verdictDisplayedDate, {
       date: formatDate(verdictViewDate, 'PPP'),
     })
-  } else if (serviceNotRequired) {
-    return formatMessage(strings.serviceNotRequired)
   } else {
     return formatMessage(strings.serviceRequired)
   }
@@ -72,6 +70,7 @@ export const DefendantInfo: FC<DefendantInfoProps> = (props) => {
     defendant,
     displayAppealExpirationInfo,
     displayVerdictViewDate,
+    displaySentToPrisonAdminDate = true,
     defender,
   } = props
   const { formatMessage } = useIntl()
@@ -129,21 +128,24 @@ export const DefendantInfo: FC<DefendantInfoProps> = (props) => {
         )}
       </Box>
       {displayAppealExpirationInfo && (
-        <Box marginTop={1}>
-          <Text as="span">
-            {formatMessage(appealExpirationInfo.message, {
-              appealExpirationDate: appealExpirationInfo.date,
-            })}
-          </Text>
-        </Box>
+        <Text as="p" marginTop={1} fontWeight="semiBold">
+          {formatMessage(appealExpirationInfo.message, {
+            appealExpirationDate: appealExpirationInfo.date,
+          })}
+        </Text>
       )}
-      {displayVerdictViewDate && defendant.serviceRequirement && (
+      {displayVerdictViewDate &&
+        defendant.serviceRequirement &&
+        defendant.serviceRequirement !== ServiceRequirement.NOT_REQUIRED && (
+          <Text marginTop={1} fontWeight="semiBold">
+            {getVerdictViewDateText(formatMessage, defendant.verdictViewDate)}
+          </Text>
+        )}
+      {displaySentToPrisonAdminDate && defendant.sentToPrisonAdminDate && (
         <Text marginTop={1} fontWeight="semiBold">
-          {getVerdictViewDateText(
-            formatMessage,
-            defendant.verdictViewDate,
-            defendant.serviceRequirement === ServiceRequirement.NOT_REQUIRED,
-          )}
+          {formatMessage(strings.sendToPrisonAdminDate, {
+            date: formatDate(defendant.sentToPrisonAdminDate),
+          })}
         </Text>
       )}
     </>

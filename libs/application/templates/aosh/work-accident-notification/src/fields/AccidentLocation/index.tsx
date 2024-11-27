@@ -42,7 +42,15 @@ export const AccidentLocation: FC<React.PropsWithChildren<FieldBaseProps>> = (
   )
   const [minorGroupOptions, setMinorGroupOptions] = useState<
     WorkingEnvironmentDto[]
-  >([])
+  >(
+    selectedMajorGroup
+      ? minorGroups.filter(
+          (group) =>
+            group.code?.substring(0, 2) ===
+            selectedMajorGroup?.value?.substring(0, 2),
+        )
+      : [],
+  )
 
   return (
     <Box paddingTop={2}>
@@ -56,7 +64,7 @@ export const AccidentLocation: FC<React.PropsWithChildren<FieldBaseProps>> = (
                   label={formatMessage(
                     accident.about.locationOfAccidentMajorGroup,
                   )}
-                  name="subMajorGroupSelect"
+                  name="accident.accidentLocationParentGroup"
                   options={majorGroups.map((option) => ({
                     label: option.name || '',
                     value: option.code,
@@ -80,7 +88,7 @@ export const AccidentLocation: FC<React.PropsWithChildren<FieldBaseProps>> = (
                 />
               )
             }}
-            name={'subMajorGroup'}
+            name={'accident.accidentLocationParentGroup'}
           />
         </GridColumn>
         <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
@@ -92,11 +100,12 @@ export const AccidentLocation: FC<React.PropsWithChildren<FieldBaseProps>> = (
                   label={formatMessage(
                     accident.about.locationOfAccidentMinorGroup,
                   )}
-                  name="subMajorGroupSelect"
+                  name="accident.accidentLocation"
                   options={minorGroupOptions.map((group) => ({
                     label: group.name || '',
                     value: group.code,
                   }))}
+                  isDisabled={!selectedMajorGroup}
                   value={selectedMinorGroup}
                   backgroundColor="blue"
                   onChange={(v) => {
@@ -113,7 +122,7 @@ export const AccidentLocation: FC<React.PropsWithChildren<FieldBaseProps>> = (
                 />
               )
             }}
-            name={'subMajorGroup'}
+            name={'accident.accidentLocation'}
           />
         </GridColumn>
       </GridRow>

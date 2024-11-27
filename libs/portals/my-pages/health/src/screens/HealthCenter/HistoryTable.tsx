@@ -26,22 +26,22 @@ const HistoryTable = ({ history }: Props) => {
         <T.Head>
           <T.Row>
             <T.HeadData>
-              <Text variant="medium" fontWeight="medium">
+              <Text variant="medium" fontWeight="semiBold">
                 {formatMessage(messages.from)}
               </Text>
             </T.HeadData>
             <T.HeadData>
-              <Text variant="medium" fontWeight="medium">
+              <Text variant="medium" fontWeight="semiBold">
                 {formatMessage(messages.to)}
               </Text>
             </T.HeadData>
             <T.HeadData>
-              <Text variant="medium" fontWeight="medium">
+              <Text variant="medium" fontWeight="semiBold">
                 {formatMessage(m.healthCenter)}
               </Text>
             </T.HeadData>
             <T.HeadData>
-              <Text variant="medium" fontWeight="medium">
+              <Text variant="medium" fontWeight="semiBold">
                 {formatMessage(messages.doctor)}
               </Text>
             </T.HeadData>

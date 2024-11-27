@@ -1,5 +1,4 @@
 import { RightsPortalAidOrNutrition } from '@island.is/api/schema'
-import { Box, Icon, Text, Tooltip } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   DownloadFileButtons,
@@ -12,6 +11,7 @@ import {
 import { messages } from '../../lib/messages'
 import { exportAidTable } from '../../utils/FileBreakdown'
 import NestedInfoLines from '../MedicinePrescriptions/components/NestedInfoLines/NestedInfoLines'
+import { Box, Text, Tooltip, Icon } from '@island.is/island-ui/core'
 
 interface Props {
   data: Array<RightsPortalAidOrNutrition>

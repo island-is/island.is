@@ -1,23 +1,29 @@
+import React, { MouseEvent } from 'react'
+import { useRouter } from 'next/router'
+
 import {
   Button,
   ButtonTypes,
   DropdownMenu,
   Hidden,
+  Inline,
 } from '@island.is/island-ui/core'
 import { webLoginButtonSelect } from '@island.is/plausible'
 import { useI18n } from '@island.is/web/i18n'
-import React, { MouseEvent } from 'react'
+import { LayoutProps } from '@island.is/web/layouts/main'
 
 const minarsidurLink = '/minarsidur/'
 const minarsidurDelegationsLink = '/minarsidur/login?prompt=select_account'
 
 export function LoginButton(props: {
   colorScheme: ButtonTypes['colorScheme']
+  topItem?: LayoutProps['customTopLoginButtonItem']
 }) {
   const { t } = useI18n()
+  const router = useRouter()
 
   function trackAndNavigate(
-    buttonType: 'Dropdown - Individuals' | 'Dropdown - Companies',
+    buttonType: 'Dropdown - Individuals' | 'Dropdown - Companies' | string,
     event: MouseEvent<HTMLAnchorElement>,
   ) {
     event.preventDefault()
@@ -52,6 +58,26 @@ export function LoginButton(props: {
       onClick: trackAndNavigate.bind(null, 'Dropdown - Companies'),
     },
   ]
+
+  if (
+    props.topItem &&
+    !props.topItem.blacklistedPathnames?.includes(
+      new URL(router.asPath, 'https://island.is').pathname,
+    )
+  ) {
+    items.unshift({
+      href: props.topItem.href,
+      title: (
+        <Inline alignY="center" space={1} flexWrap="nowrap">
+          {props.topItem.imgSrc && (
+            <img width={17} height={17} src={props.topItem.imgSrc} alt="" />
+          )}
+          {props.topItem.label}
+        </Inline>
+      ),
+      onClick: trackAndNavigate.bind(null, props.topItem.buttonType),
+    })
+  }
 
   return (
     <>

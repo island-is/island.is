@@ -1,4 +1,4 @@
-import { IsBoolean, IsEnum, IsOptional, IsString } from 'class-validator'
+import { IsEnum, IsOptional, IsString, MaxLength } from 'class-validator'
 
 import { ApiPropertyOptional } from '@nestjs/swagger'
 
@@ -11,6 +11,7 @@ export class UpdateSubpoenaDto {
   readonly serviceStatus?: ServiceStatus
 
   @IsOptional()
+  @MaxLength(255)
   @IsString()
   @ApiPropertyOptional({ type: String })
   readonly servedBy?: string
@@ -31,21 +32,25 @@ export class UpdateSubpoenaDto {
   readonly defenderChoice?: DefenderChoice
 
   @IsOptional()
+  @MaxLength(255)
   @IsString()
   @ApiPropertyOptional({ type: String })
   readonly defenderNationalId?: string
 
   @IsOptional()
+  @MaxLength(255)
   @IsString()
   @ApiPropertyOptional({ type: String })
   readonly defenderName?: string
 
   @IsOptional()
+  @MaxLength(255)
   @IsString()
   @ApiPropertyOptional({ type: String })
   readonly defenderEmail?: string
 
   @IsOptional()
+  @MaxLength(255)
   @IsString()
   @ApiPropertyOptional({ type: String })
   readonly defenderPhoneNumber?: string
@@ -56,11 +61,13 @@ export class UpdateSubpoenaDto {
   readonly requestedDefenderChoice?: DefenderChoice
 
   @IsOptional()
+  @MaxLength(255)
   @IsString()
   @ApiPropertyOptional({ type: String })
   readonly requestedDefenderNationalId?: string
 
   @IsOptional()
+  @MaxLength(255)
   @IsString()
   @ApiPropertyOptional({ type: String })
   readonly requestedDefenderName?: string

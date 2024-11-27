@@ -45,6 +45,7 @@ const HealthCenter = () => {
   const healthCenterData = data?.rightsPortalHealthCenterRegistrationHistory
 
   const canRegister = healthCenterData?.canRegister ?? false
+  const neighborhoodCenter = healthCenterData?.neighborhoodCenter ?? null
 
   if (loading)
     return (
@@ -118,6 +119,15 @@ const HealthCenter = () => {
               }
             />
             <Divider />
+            {neighborhoodCenter && (
+              <>
+                <UserInfoLine
+                  label={formatMessage(messages.neighborhoodHealthCenter)}
+                  content={neighborhoodCenter}
+                />
+                <Divider />
+              </>
+            )}
           </Stack>
         </Box>
       )}
