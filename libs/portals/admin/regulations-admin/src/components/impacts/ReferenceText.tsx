@@ -26,8 +26,8 @@ const t = getTexts({
 
   effectiveDate: 'Tekur gildi þann',
 
-  referenceLegend: 'Texti áhrifareglugerðar {name}',
-  referenceBaseLegend: 'Texti grunnreglugerðarinnar {name}',
+  referenceLegend: 'Texti breytingareglugerðar {name}',
+  referenceBaseLegend: 'Texti stofnreglugerðarinnar {name}',
   referenceMeta: 'Útgáfudagur: {published}',
   referenceEditLink: 'Leiðrétta',
 
