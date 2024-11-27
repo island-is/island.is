@@ -1,4 +1,8 @@
-import { Application } from '@island.is/application/api/core'
+import {
+  Application,
+  ActionCardTag,
+  ApplicationWithAttachments,
+} from './Application'
 export interface ApplicationLifecycle {
   isListed: boolean
   pruneAt: Date | null
@@ -6,7 +10,7 @@ export interface ApplicationLifecycle {
 }
 
 export type PruningApplication = Pick<
-  Application,
+  ApplicationWithAttachments,
   | 'id'
   | 'attachments'
   | 'answers'

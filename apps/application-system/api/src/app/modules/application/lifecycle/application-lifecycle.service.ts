@@ -1,5 +1,8 @@
 import { Inject, Injectable } from '@nestjs/common'
-import { ApplicationService } from '@island.is/application/api/core'
+import {
+  ApplicationService,
+  Application,
+} from '@island.is/application/api/core'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 import { ApplicationChargeService } from '../charge/application-charge.service'
@@ -9,7 +12,10 @@ import {
   NotificationsApi,
 } from '@island.is/clients/user-notification'
 import { getApplicationTemplateByTypeId } from '@island.is/application/template-loader'
-import { PruningApplication } from '@island.is/application/types'
+import {
+  ApplicationWithAttachments,
+  PruningApplication,
+} from '@island.is/application/types'
 
 export interface ApplicationPruning {
   pruned: boolean
@@ -112,7 +118,7 @@ export class ApplicationLifeCycleService {
           },
         )
 
-        prune.application = updatedApplication
+        prune.application = updatedApplication as PruningApplication
       } catch (error) {
         prune.pruned = false
         this.logger.error(
@@ -143,7 +149,16 @@ export class ApplicationLifeCycleService {
   }
 
   private async preparePrunedNotification(
-    application: PruningApplication,
+    application: Pick<
+      Application,
+      | 'id'
+      | 'typeId'
+      | 'state'
+      | 'applicant'
+      | 'attachments'
+      | 'answers'
+      | 'externalData'
+    >,
   ): Promise<CreateHnippNotificationDto | null> {
     const template = await getApplicationTemplateByTypeId(application.typeId)
     const stateConfig = template.stateMachineConfig.states[application.state]
@@ -151,7 +166,7 @@ export class ApplicationLifeCycleService {
     if (lifeCycle && lifeCycle.shouldBePruned && lifeCycle.pruneMessage) {
       const pruneMessage =
         typeof lifeCycle.pruneMessage === 'function'
-          ? lifeCycle.pruneMessage(application)
+          ? lifeCycle.pruneMessage(application as ApplicationWithAttachments)
           : lifeCycle.pruneMessage
       const notification = {
         recipient: application.applicant,
