@@ -1,6 +1,7 @@
 import * as React from 'react'
 
 import { DetailedInfoCard, DetailedProps } from './DetailedInfoCard'
+import { SimpleInfoCard } from './SimpleInfoCard'
 
 export interface BaseProps {
   title: string
@@ -15,7 +16,7 @@ export interface BaseProps {
 
 type Props =
   | (BaseProps & {
-      variant: 'simple'
+      variant?: 'simple'
     })
   | (DetailedProps & {
       variant: 'detailed'
@@ -24,5 +25,7 @@ type Props =
 export const InfoCard = (props: Props) => {
   if (props.variant === 'detailed') {
     return <DetailedInfoCard {...props} />
+  } else {
+    return <SimpleInfoCard {...props} />
   }
 }

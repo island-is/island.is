@@ -19,6 +19,9 @@ import { isDefined } from '@island.is/shared/utils'
 
 import { BaseProps } from './InfoCard'
 import * as styles from './InfoCard.css'
+import { useWindowSize } from 'react-use'
+import { useEffect, useState } from 'react'
+import { theme } from '@island.is/island-ui/theme'
 
 const eyebrowColor = 'blueberry600'
 
@@ -46,6 +49,16 @@ export const DetailedInfoCard = ({
   logoAlt,
   link,
 }: DetailedProps) => {
+  const [isTablet, setIsTablet] = useState(false)
+  const { width } = useWindowSize()
+
+  useEffect(() => {
+    if (width < theme.breakpoints.lg) {
+      return setIsTablet(true)
+    }
+    setIsTablet(false)
+  }, [width])
+
   const renderLogo = () => {
     if (!logo) {
       return null
@@ -161,7 +174,7 @@ export const DetailedInfoCard = ({
   }
 
   const renderContent = () => {
-    if (type === 'wide') {
+    if (type === 'wide' && !isTablet) {
       return (
         <GridContainer>
           <GridRow direction="row">

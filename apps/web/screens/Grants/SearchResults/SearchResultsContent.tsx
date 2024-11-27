@@ -1,7 +1,7 @@
 import { useWindowSize } from 'react-use'
 import format from 'date-fns/format'
 
-import { Box, Text } from '@island.is/island-ui/core'
+import { Box, Stack, Text } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import { useLocale } from '@island.is/localization'
 import { Locale } from '@island.is/shared/types'
@@ -35,7 +35,7 @@ export const SearchResultsContent = ({ grants, subheader, locale }: Props) => {
         </Box>
       )}
       {grants?.length ? (
-        <Box>
+        <Stack space={3}>
           {grants?.map((grant) => {
             if (!grant || !grant.applicationId) {
               return null
@@ -43,7 +43,6 @@ export const SearchResultsContent = ({ grants, subheader, locale }: Props) => {
 
             return (
               <InfoCard
-                type="wide"
                 variant="detailed"
                 eyebrow={grant.fund?.title ?? grant.name ?? ''}
                 subEyebrow={grant.fund?.parentOrganization?.title}
@@ -92,7 +91,7 @@ export const SearchResultsContent = ({ grants, subheader, locale }: Props) => {
               />
             )
           })}
-        </Box>
+        </Stack>
       ) : undefined}
       {!grants?.length && (
         <Box

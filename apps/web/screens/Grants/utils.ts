@@ -19,11 +19,6 @@ export const generateStatusTag = (
         label: formatMessage(m.search.applicationClosed),
         variant: 'rose',
       }
-    case GrantStatus.SeeDescription:
-      return {
-        label: formatMessage(m.search.applicationSeeDescription),
-        variant: 'purple',
-      }
     default:
       return
   }
