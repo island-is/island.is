@@ -143,7 +143,7 @@ describe('Indictment Case Exists For Defendant Guard', () => {
     })
   })
 
-  describe('missing case id', () => {
+  describe('missing defendant national id', () => {
     const caseId = uuid()
     let then: Then
 
