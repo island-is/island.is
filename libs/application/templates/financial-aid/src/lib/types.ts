@@ -6,6 +6,7 @@ import {
   NationalRegistryIndividual,
   NationalRegistrySpouse,
 } from '@island.is/application/types'
+
 import {
   DirectTaxPayment,
   Municipality,
