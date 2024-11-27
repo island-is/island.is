@@ -24,9 +24,9 @@ const machineRightsDataField = () => {
 
   return factory<GenericLicenseDataField>({
     type: 'Category',
-    name: faker.random.alpha({ upcase: true }),
-    label: faker.random.words(faker.datatype.number(5)),
-    description: faker.random.words(faker.datatype.number(5)),
+    name: faker.string.alpha({ casing: 'upper' }),
+    label: faker.word.words({ count: { min: 1, max: 5 } }),
+    description: faker.word.words({ count: { min: 1, max: 5 } }),
     fields: fields,
   })
 }
@@ -55,7 +55,7 @@ export const mockMachineLicense = (
     label: 'Réttindaflokkar',
     fields: generateDataField(
       machineRightsDataField,
-      faker.datatype.number(10),
+      faker.number.int(10),
     ),
   },
 ]

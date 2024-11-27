@@ -1,5 +1,5 @@
 'use strict'
-const faker = require('faker')
+const { faker } = require('@faker-js/faker')
 
 // Good to have test users accumulate more than the statistically
 // likely singular flight leg.
@@ -23,7 +23,7 @@ const pairings = [
 const getRandomFlightLeg = (flightId, flightDate, pairing) => {
   const randomPrice = 10000 + (0.5 - Math.random()) * 10000
   return {
-    id: faker.datatype.uuid(),
+    id: faker.string.uuid(),
     flight_id: flightId,
     origin: pairing[0],
     destination: pairing[1],
@@ -33,9 +33,12 @@ const getRandomFlightLeg = (flightId, flightDate, pairing) => {
     created: flightDate,
     modified: flightDate,
     financial_state: 'AWAITING_DEBIT',
-    airline: ['ernir', 'norlandair', 'icelandair', 'myflug'][
-      Math.floor(Math.random() * 4)
-    ],
+    airline: faker.helpers.arrayElement([
+      'ernir',
+      'norlandair',
+      'icelandair',
+      'myflug',
+    ]),
     cooperation: null,
     financial_state_updated: flightDate,
     is_connecting_flight: pairing[0] === 'THO' || pairing[1] === 'THO',
@@ -44,18 +47,18 @@ const getRandomFlightLeg = (flightId, flightDate, pairing) => {
 
 const getRandomFlight = (nationalId) => {
   // Random time, max 1 day into the future
-  const randomDate = new Date(
-    Date.now() + Math.ceil(Math.random() * 1000 * 60 * 60 * 24),
-  ).toISOString()
+  const randomDate = faker.date
+    .soon({ days: 1, refDate: Date.now() })
+    .toISOString()
   return {
-    id: faker.datatype.uuid(),
+    id: faker.string.uuid(),
     national_id: nationalId,
     created: randomDate,
     modified: randomDate,
     booking_date: randomDate,
     user_info: JSON.stringify({
-      age: faker.datatype.number(99),
-      gender: ['kk', 'kvk', 'x'][faker.datatype.number(2)],
+      age: faker.number.int(99),
+      gender: faker.helpers.arrayElement(['kk', 'kvk', 'x']),
       postalCode: '600',
     }),
     connectable: faker.datatype.boolean(),
@@ -72,11 +75,11 @@ module.exports = {
           ? specific_test_users[0]
           : i < 14
           ? specific_test_users[1]
-          : faker.phone.phoneNumber('##########')
+          : faker.string.numeric(7)
       const pairingLeg = Math.round(Math.random() * (pairings[0].length - 1))
       const flight = getRandomFlight(nationalId)
       flights.push(flight)
-      for (let j = 0; j < faker.datatype.number({ min: 1, max: 2 }); j++) {
+      for (let j = 0; j < faker.number.int({ min: 1, max: 2 }); j++) {
         flight_legs.push(
           getRandomFlightLeg(
             flight.id,

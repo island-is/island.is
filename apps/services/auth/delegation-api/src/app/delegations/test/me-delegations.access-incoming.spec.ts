@@ -1,6 +1,6 @@
 import { getModelToken } from '@nestjs/sequelize'
 import assert from 'assert'
-import faker from 'faker'
+import {faker} from '@faker-js/faker'
 import { Op } from 'sequelize'
 import request from 'supertest'
 
@@ -25,7 +25,7 @@ import { accessIncomingTestCases } from '../../../../test/access-incoming-test-c
 import { setupWithAuth } from '../../../../test/setup'
 import { filterExpectedDelegations } from './utils'
 
-const fromName: string = faker.name.findName()
+const fromName: string = faker.person.fullName()
 
 describe('MeDelegationsController', () => {
   describe.each([false, true])(

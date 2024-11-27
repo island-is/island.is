@@ -1,6 +1,6 @@
 import { IntlProvider } from 'react-intl'
-import faker from 'faker'
 import { ApolloClient, ApolloProvider, InMemoryCache } from '@apollo/client'
+import { faker } from '@faker-js/faker'
 import { render, screen } from '@testing-library/react'
 
 import {
@@ -18,7 +18,7 @@ describe('PoliceCaseNumbers component', () => {
     const workingCase: Case = {
       created: faker.date.past().toISOString(),
       modified: faker.date.past().toISOString(),
-      id: faker.datatype.uuid(),
+      id: faker.string.uuid(),
       type: CaseType.CUSTODY,
       origin: CaseOrigin.LOKE,
       state: CaseState.DRAFT,

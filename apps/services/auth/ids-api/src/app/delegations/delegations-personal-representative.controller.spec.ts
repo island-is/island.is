@@ -1,5 +1,5 @@
 import { getModelToken } from '@nestjs/sequelize'
-import faker from 'faker'
+import { faker } from '@faker-js/faker'
 import times from 'lodash/times'
 import request from 'supertest'
 
@@ -207,12 +207,12 @@ describe('Personal Representative DelegationsController', () => {
                   case 'unactivated':
                     return getPersonalRepresentativeRightType(
                       code,
-                      faker.date.soon(7),
+                      faker.date.soon({ days: 7}),
                     )
                   case 'outdated':
                     return getPersonalRepresentativeRightType(
                       code,
-                      faker.date.recent(5),
+                      faker.date.recent({ days: 5}),
                       faker.date.recent(),
                     )
                 }

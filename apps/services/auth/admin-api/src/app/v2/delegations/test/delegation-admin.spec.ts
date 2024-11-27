@@ -159,7 +159,7 @@ describe('DelegationAdmin - With authentication', () => {
       // Arrange
       await createDelegationAdmin(currentUser)
 
-      const invalidId = faker.datatype.uuid()
+      const invalidId = faker.string.uuid()
       // Act
       const res = await getRequestMethod(
         server,

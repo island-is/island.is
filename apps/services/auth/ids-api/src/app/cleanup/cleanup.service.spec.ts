@@ -1,5 +1,5 @@
 import { getModelToken } from '@nestjs/sequelize'
-import faker from 'faker'
+import {faker} from '@faker-js/faker'
 
 import { Grant, SequelizeConfigService } from '@island.is/auth-api-lib'
 import { setupAppWithoutAuth, TestApp } from '@island.is/testing/nest'
@@ -42,23 +42,23 @@ describe('CleanupService', () => {
 
     // Create grants that should be deleted
     await grantsModel.create({
-      key: faker.datatype.uuid(),
-      type: faker.random.word(),
-      subjectId: faker.datatype.uuid(),
-      clientId: faker.random.word(),
+      key: faker.string.uuid(),
+      type: faker.word.sample(),
+      subjectId: faker.string.uuid(),
+      clientId: faker.word.sample(),
       creationTime: new Date('2023-01-01'),
-      data: faker.random.words(),
+      data: faker.word.words(),
       expiration: new Date('2024-01-01'),
     })
 
     // Create grants that should remain
     await grantsModel.create({
-      key: faker.datatype.uuid(),
-      type: faker.random.word(),
-      subjectId: faker.datatype.uuid(),
-      clientId: faker.random.word(),
+      key: faker.string.uuid(),
+      type: faker.word.sample(),
+      subjectId: faker.string.uuid(),
+      clientId: faker.word.sample(),
       creationTime: new Date('2023-01-01'),
-      data: faker.random.words(),
+      data: faker.word.words(),
       expiration: new Date('3024-01-01'),
     })
 

@@ -1,5 +1,5 @@
 import { getModelToken } from '@nestjs/sequelize'
-import faker from 'faker'
+import {faker} from '@faker-js/faker'
 import { Model } from 'sequelize'
 import { createNationalId } from '@island.is/testing/fixtures'
 import { TestApp } from '@island.is/testing/nest'
@@ -22,7 +22,7 @@ export class FixtureFactory {
   async createUniversity() {
     return this.get(University).create({
       nationalId: createNationalId('company'),
-      contentfulKey: faker.random.word(),
+      contentfulKey: faker.word.sample(),
     })
   }
 
@@ -36,24 +36,24 @@ export class FixtureFactory {
     modeOfDeliveryList: ModeOfDelivery[]
   }) {
     const program = await this.get(Program).create({
-      externalId: faker.datatype.uuid(),
-      nameIs: faker.random.word(),
-      nameEn: faker.random.word(),
-      specializationExternalId: faker.datatype.uuid(),
+      externalId: faker.string.uuid(),
+      nameIs: faker.word.sample(),
+      nameEn: faker.word.sample(),
+      specializationExternalId: faker.string.uuid(),
       universityId: universityId,
-      departmentNameIs: faker.random.word(),
-      departmentNameEn: faker.random.word(),
+      departmentNameIs: faker.word.sample(),
+      departmentNameEn: faker.word.sample(),
       startingSemesterYear: 2023,
       startingSemesterSeason: Season.FALL,
       applicationStartDate: new Date(),
       applicationEndDate: new Date(),
       degreeType: DegreeType.UNDERGRADUATE,
-      degreeAbbreviation: faker.random.word(),
+      degreeAbbreviation: faker.word.sample(),
       credits: 180,
-      descriptionIs: faker.random.words(),
-      descriptionEn: faker.random.words(),
+      descriptionIs: faker.word.sample(),
+      descriptionEn: faker.word.sample(),
       durationInYears: durationInYears,
-      iscedCode: faker.random.word(),
+      iscedCode: faker.word.sample(),
       modeOfDelivery: [],
       active: true,
       tmpActive: false,

@@ -1,5 +1,5 @@
 'use strict'
-const faker = require('faker')
+const { faker } = require('@faker-js/faker')
 const {
   getGenericEndorsementList,
   getGenericEndorsement,
@@ -52,10 +52,10 @@ module.exports = {
     const endorsements = [
       ...fakePeople.map((fakeNationalId) => ({
         ...getGenericEndorsement(),
-        endorsement_list_id: faker.random.arrayElement(endorsementIds),
+        endorsement_list_id: faker.helpers.arrayElement(endorsementIds),
         endorser: fakeNationalId,
         meta: JSON.stringify({
-          fullName: faker.fake('{{name.firstName}} {{name.lastName}}'),
+          fullName: faker.helpers.fake('{{name.firstName}} {{name.lastName}}'),
           showName: true,
         }),
       })),

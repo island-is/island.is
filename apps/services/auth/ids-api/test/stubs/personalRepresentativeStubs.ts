@@ -5,7 +5,7 @@ import type {
   PersonalRepresentativeRightType,
   PersonalRepresentativeScopePermission,
 } from '@island.is/auth-api-lib'
-import faker from 'faker'
+import { faker } from '@faker-js/faker'
 import { CreationAttributes } from 'sequelize'
 import { uuid } from 'uuidv4'
 
@@ -23,7 +23,7 @@ export const getPersonalRepresentativeRelationship = (
   nationalIdPersonalRepresentative = getFakeNationalId(),
   nationalIdRepresentedPerson = getFakeNationalId(),
   id = uuid(),
-  validTo = faker.date.future(10),
+  validTo = faker.date.future({ years: 10 }),
   created = faker.date.recent(),
 ): Pick<
   PersonalRepresentative,
@@ -49,10 +49,10 @@ export const getPersonalRepresentativeRelationship = (
 })
 
 export const getPersonalRepresentativeRightType = (
-  code = faker.random.word(),
+  code = faker.word.sample(),
   validFrom = faker.date.recent(),
-  validTo = faker.date.future(10),
-  description = faker.random.words(),
+  validTo = faker.date.future({years: 10}),
+  description = faker.word.words(),
   created = faker.date.recent(),
 ): Partial<PersonalRepresentativeRightType> => ({
   code,
@@ -77,12 +77,12 @@ export const getPersonalRepresentativeRights = (
 export const getPRenabledApiScope = (
   domainName: string,
   enabled = true,
-  name = faker.random.word(),
+  name = faker.word.sample(),
 ): CreationAttributes<ApiScope> => ({
   enabled,
   name,
   displayName: name,
-  description: faker.random.words(),
+  description: faker.word.words(),
   domainName: domainName,
   grantToPersonalRepresentatives: true,
   grantToLegalGuardians: false,

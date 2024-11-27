@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 
-import * as faker from 'faker'
+import { faker } from '@faker-js/faker'
 import kennitala from 'kennitala'
 
 import { User } from '@island.is/shared/types'
@@ -8,45 +8,45 @@ import { createNationalId } from './nationalId'
 
 const createRandomOpenIDUser = (): User => {
   const [firstName, middleName, lastName] = [
-    faker.name.firstName(),
-    faker.name.middleName(),
-    faker.name.lastName(),
+    faker.person.firstName(),
+    faker.person.middleName(),
+    faker.person.lastName(),
   ]
   const nationalId = createNationalId()
   const subjectType = kennitala.isCompany(nationalId) ? 'legalEntity' : 'person'
 
   return {
-    id_token: faker.random.word(),
-    access_token: faker.random.word(),
-    token_type: faker.random.word(),
-    scope: faker.random.word(),
+    id_token: faker.word.sample(),
+    access_token: faker.word.sample(),
+    token_type: faker.word.sample(),
+    scope: faker.word.sample(),
     profile: {
       name: `${firstName} ${middleName} ${lastName}`,
       nationalId,
       subjectType,
       given_name: firstName,
       family_name: lastName,
-      nickname: faker.name.firstName(),
+      nickname: faker.person.fullName(),
       preferred_username: faker.internet.userName(),
-      profile: faker.internet.avatar(),
-      picture: faker.internet.avatar(),
-      phone_number: faker.phone.phoneNumber('#######'),
+      profile: faker.image.avatar(),
+      picture: faker.image.avatar(),
+      phone_number: faker.string.numeric(7),
       phone_number_verified: faker.datatype.boolean(),
       email: faker.internet.email(),
-      iss: faker.random.word(),
-      sub: faker.random.word(),
-      aud: faker.random.word(),
-      exp: faker.datatype.number(),
-      iat: faker.datatype.number(),
-      nat: faker.random.word(),
-      idp: faker.random.word(),
-      nonce: faker.random.word(),
+      iss: faker.word.sample(),
+      sub: faker.word.sample(),
+      aud: faker.word.sample(),
+      exp: faker.number.int(),
+      iat: faker.number.int(),
+      nat: faker.word.sample(),
+      idp: faker.word.sample(),
+      nonce: faker.word.sample(),
     },
-    expires_at: faker.datatype.number(),
-    state: faker.random.word(),
-    session_state: faker.random.word(),
+    expires_at: faker.number.int(),
+    state: faker.word.sample(),
+    session_state: faker.word.sample(),
     toStorageString: () => '',
-    expires_in: faker.datatype.number(),
+    expires_in: faker.number.int(),
     expired: faker.datatype.boolean(),
     scopes: [],
   }

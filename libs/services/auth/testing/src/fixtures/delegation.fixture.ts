@@ -1,4 +1,4 @@
-import * as faker from 'faker'
+import { faker } from '@faker-js/faker'
 import addDays from 'date-fns/addDays'
 import startOfDay from 'date-fns/startOfDay'
 
@@ -43,10 +43,10 @@ const createRandomDelegationScope = (
   delegationId: string,
 ): CreateDelegationScope => {
   return {
-    id: faker.datatype.uuid(),
-    validFrom: faker.datatype.datetime(),
-    validTo: faker.datatype.datetime(),
-    scopeName: faker.random.word(),
+    id: faker.string.uuid(),
+    validFrom: faker.date.anytime(),
+    validTo: faker.date.anytime(),
+    scopeName: faker.word.sample(),
     delegationId,
   }
 }
@@ -56,16 +56,16 @@ const createRandomDelegationScope = (
  * @returns
  */
 const createRandomDelegation = (): CreateDelegation => {
-  const id = faker.datatype.uuid()
+  const id = faker.string.uuid()
 
   return {
     id,
     fromNationalId: createNationalId(),
-    fromDisplayName: faker.random.word(),
+    fromDisplayName: faker.word.sample(),
     toNationalId: createNationalId(),
-    toName: faker.random.word(),
+    toName: faker.word.sample(),
     delegationScopes: [createRandomDelegationScope(id)],
-    domainName: faker.random.word(),
+    domainName: faker.word.sample(),
   }
 }
 

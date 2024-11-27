@@ -1,4 +1,4 @@
-import faker from 'faker'
+import { faker } from '@faker-js/faker'
 
 import {
   AuthDelegationType,
@@ -180,7 +180,7 @@ const delegations: Record<string, DelegationRecordDTO[]> = {
     {
       fromNationalId: userWithSendToDelegationsFeatureFlagDisabled.nationalId,
       toNationalId: userWithNoDelegations.nationalId,
-      subjectId: faker.datatype.uuid(),
+      subjectId: faker.string.uuid(),
       type: AuthDelegationType.ProcurationHolder,
     },
   ],

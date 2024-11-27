@@ -1,13 +1,13 @@
-import * as faker from 'faker'
+import { faker } from '@faker-js/faker'
 
 import { EinstaklingurDTOAllt } from '@island.is/clients/national-registry-v3'
 import { createNationalId } from '@island.is/testing/fixtures'
 
 const createRandomNationalRegistryV3User = (): EinstaklingurDTOAllt => {
   const [givenName, middleName, familyName] = [
-    faker.name.firstName(),
-    faker.name.middleName(),
-    faker.name.lastName(),
+    faker.person.firstName(),
+    faker.person.middleName(),
+    faker.person.lastName(),
   ]
   const name = `${givenName} ${middleName} ${familyName}`
 
@@ -21,23 +21,23 @@ const createRandomNationalRegistryV3User = (): EinstaklingurDTOAllt => {
       fulltNafn: name,
     },
     kyn: {
-      kynKodi: faker.datatype.number({ min: 1, max: 8 }).toString(),
+      kynKodi: faker.number.int({ min: 1, max: 8 }).toString(),
     },
     faedingarstadur: {
-      faedingarDagur: faker.date.past(100),
+      faedingarDagur: faker.date.past({ years: 100 }),
     },
     heimilisfang: {
-      husHeiti: faker.address.streetName(),
-      postnumer: faker.address.zipCode(),
-      poststod: faker.address.city(),
-      sveitarfelag: faker.address.cityPrefix(),
+      husHeiti: faker.location.street(),
+      postnumer: faker.location.zipCode(),
+      poststod: faker.location.city(),
+      sveitarfelag: faker.helpers.arrayElement(faker.definitions.location.city_prefix),
     },
     itarupplysingar: {
       adsetur: {
-        husHeiti: faker.address.streetName(),
-        postnumer: faker.address.zipCode(),
-        poststod: faker.address.city(),
-        sveitarfelag: faker.address.cityPrefix(),
+        husHeiti: faker.location.street(),
+        postnumer: faker.location.zipCode(),
+        poststod: faker.location.city(),
+        sveitarfelag: faker.helpers.arrayElement(faker.definitions.location.city_prefix),
       },
     },
   }

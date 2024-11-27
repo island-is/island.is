@@ -5,7 +5,7 @@ import {
   createApplicationTemplate,
   createApplication,
 } from '@island.is/application/testing'
-import * as faker from 'faker'
+import { faker } from '@faker-js/faker'
 import type { User } from '@island.is/auth-nest-tools'
 import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
 import { AllowedDelegation } from '@island.is/application/types'
@@ -26,8 +26,8 @@ const createMockUser = (nationalId?: string) => {
   return {
     nationalId: nationalId || '111111-3000',
     scope: [],
-    authorization: faker.random.word(),
-    client: faker.random.word(),
+    authorization: faker.word.sample(),
+    client: faker.word.sample(),
   }
 }
 

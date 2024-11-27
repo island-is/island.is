@@ -1,13 +1,12 @@
 import { createNationalId } from '@island.is/testing/fixtures'
-import faker from 'faker'
+import { faker } from '@faker-js/faker'
 
 export type NameIdTuple = [name: string, id: string]
 
-export const getFakeNationalId = () =>
-  faker.helpers.replaceSymbolWithNumber('##########')
+export const getFakeNationalId = () => faker.string.numeric(10)
 
 export const getFakeName = () =>
-  faker.fake('{{name.firstName}} {{name.lastName}}')
+  faker.helpers.fake('{{name.firstName}} {{name.lastName}}')
 
 export const getFakePerson = (): NameIdTuple => [
   getFakeName(),

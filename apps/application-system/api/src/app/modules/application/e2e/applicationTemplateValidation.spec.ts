@@ -2,7 +2,7 @@ import type { User } from '@island.is/auth-nest-tools'
 import { ApplicationValidationService } from '../tools/applicationTemplateValidation.service'
 import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
 import { Test } from '@nestjs/testing'
-import * as faker from 'faker'
+import { faker } from '@faker-js/faker'
 import { LoggingModule } from '@island.is/logging'
 import { environment } from '../../../../environments'
 
@@ -47,8 +47,8 @@ describe('ApplicationTemplateValidation', () => {
     const mockUser = {
       nationalId: '1234567891',
       scope: [],
-      authorization: faker.random.word(),
-      client: faker.random.word(),
+      authorization: faker.word.sample(),
+      client: faker.word.sample(),
     }
     const results = await applicationValidationService.isTemplateReady(
       {
@@ -64,8 +64,8 @@ describe('ApplicationTemplateValidation', () => {
     const mockUser = {
       nationalId: '1234567891',
       scope: [],
-      authorization: faker.random.word(),
-      client: faker.random.word(),
+      authorization: faker.word.sample(),
+      client: faker.word.sample(),
     }
 
     const results = await applicationValidationService.isTemplateReady(
@@ -82,8 +82,8 @@ describe('ApplicationTemplateValidation', () => {
     const mockUser = {
       nationalId: '1234567890',
       scope: [],
-      authorization: faker.random.word(),
-      client: faker.random.word(),
+      authorization: faker.word.sample(),
+      client: faker.word.sample(),
     }
 
     const results = await applicationValidationService.isTemplateReady(
@@ -100,8 +100,8 @@ describe('ApplicationTemplateValidation', () => {
     const mockUser = {
       nationalId: '1234567890',
       scope: [],
-      authorization: faker.random.word(),
-      client: faker.random.word(),
+      authorization: faker.word.sample(),
+      client: faker.word.sample(),
     }
 
     const envBefore = environment.production
@@ -124,8 +124,8 @@ describe('ApplicationTemplateValidation', () => {
     const mockUser = {
       nationalId: '1234567890',
       scope: [],
-      authorization: faker.random.word(),
-      client: faker.random.word(),
+      authorization: faker.word.sample(),
+      client: faker.word.sample(),
     }
 
     const envBefore = environment.production
@@ -148,8 +148,8 @@ describe('ApplicationTemplateValidation', () => {
     const mockUser = {
       nationalId: '1234567890',
       scope: [],
-      authorization: faker.random.word(),
-      client: faker.random.word(),
+      authorization: faker.word.sample(),
+      client: faker.word.sample(),
     }
 
     const envBefore = environment.production
@@ -170,8 +170,8 @@ describe('ApplicationTemplateValidation', () => {
     const mockUser = {
       nationalId: '1234567890',
       scope: [],
-      authorization: faker.random.word(),
-      client: faker.random.word(),
+      authorization: faker.word.sample(),
+      client: faker.word.sample(),
     }
 
     const results = await applicationValidationService.isTemplateReady(

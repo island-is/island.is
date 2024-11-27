@@ -5,7 +5,7 @@ import { generateDataField } from './utils'
 const adrRightsDataField = () =>
   factory<GenericLicenseDataField>({
     type: 'Category',
-    name: faker.random.alpha({ count: 1, upcase: true }),
+    name: faker.string.alpha({ length: 1, casing: 'upper' }),
     label: faker.lorem.lines(),
     description: faker.lorem.lines(),
   })
@@ -40,12 +40,12 @@ export const mockAdrLicense = (data: {
     {
       type: 'Group',
       label: 'Tankar',
-      fields: generateDataField(adrRightsDataField, faker.datatype.number(10)),
+      fields: generateDataField(adrRightsDataField, faker.number.int(10)),
     },
     {
       type: 'Group',
       label: 'Annað en tankar',
-      fields: generateDataField(adrRightsDataField, faker.datatype.number(10)),
+      fields: generateDataField(adrRightsDataField, faker.number.int(10)),
     },
   ]
 }

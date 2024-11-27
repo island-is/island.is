@@ -1,6 +1,6 @@
 import { getQueueToken } from '@nestjs/bull'
 import assert from 'assert'
-import faker from 'faker'
+import { faker } from '@faker-js/faker'
 import sortBy from 'lodash/sortBy'
 import request from 'supertest'
 
@@ -263,7 +263,7 @@ describe('SessionsController', () => {
         const res = await server
           .post(`/v1/me/sessions`)
           .send(
-            createSessionDto({ actorNationalId: faker.datatype.string(10) }),
+            createSessionDto({ actorNationalId: faker.string.sample(10) }),
           )
 
         // Assert

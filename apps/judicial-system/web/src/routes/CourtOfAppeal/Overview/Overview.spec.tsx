@@ -1,5 +1,5 @@
-import faker from 'faker'
 import { MockedProvider } from '@apollo/client/testing'
+import { faker } from '@faker-js/faker'
 import { render, screen } from '@testing-library/react'
 
 import {
@@ -29,7 +29,7 @@ window.scrollTo = jest.fn()
 
 describe('Overview', () => {
   it('should show a warning alert that indicates that the prosecutor requests the court of appeal ruling be not published, if the prosecutor requested it', async () => {
-    const caseId = faker.datatype.uuid()
+    const caseId = faker.string.uuid()
 
     render(
       <MockedProvider

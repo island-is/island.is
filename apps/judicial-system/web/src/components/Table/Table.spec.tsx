@@ -1,4 +1,4 @@
-import faker from 'faker'
+import { faker} from '@faker-js/faker'
 import { act, render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 
@@ -41,12 +41,12 @@ describe('Table', () => {
     const data: CaseListEntry[] = [
       {
         created: '2021-01-01T00:00:00Z',
-        id: faker.datatype.uuid(),
+        id: faker.string.uuid(),
         indictmentAppealDeadline: '2021-01-01T00:00:00Z',
       },
       {
         created: '2021-01-02T00:00:00Z',
-        id: faker.datatype.uuid(),
+        id: faker.string.uuid(),
         indictmentAppealDeadline: '2021-01-02T00:00:00Z',
       },
     ]

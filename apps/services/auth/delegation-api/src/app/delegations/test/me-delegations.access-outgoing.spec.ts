@@ -2,7 +2,7 @@ import { getModelToken } from '@nestjs/sequelize'
 import assert from 'assert'
 import addYears from 'date-fns/addYears'
 import startOfDay from 'date-fns/startOfDay'
-import faker from 'faker'
+import {faker} from '@faker-js/faker'
 import differenceWith from 'lodash/differenceWith'
 import { Op } from 'sequelize'
 import request from 'supertest'
@@ -51,7 +51,7 @@ describe.each(Object.keys(accessOutgoingTestCases))(
           builder.overrideProvider(UserIdentitiesService).useValue({
             findOrCreateSubjectId: jest
               .fn()
-              .mockResolvedValue(faker.datatype.uuid()),
+              .mockResolvedValue(faker.string.uuid()),
           }),
       })
       server = request(app.getHttpServer())
@@ -59,10 +59,10 @@ describe.each(Object.keys(accessOutgoingTestCases))(
 
       jest
         .spyOn(namesService, 'getPersonName')
-        .mockResolvedValue(faker.name.findName())
+        .mockResolvedValue(faker.person.fullName())
       jest
         .spyOn(namesService, 'getUserName')
-        .mockResolvedValue(faker.name.findName())
+        .mockResolvedValue(faker.person.fullName())
 
       factory = new FixtureFactory(app)
       domains = await Promise.all(

@@ -45,19 +45,19 @@ export const pagingData = ({
 })
 
 export const stadfang = factory<PropertyLocation>({
-  propertyNumber: () => faker.datatype.number(999),
-  municipality: () => faker.random.arrayElement(townArray),
-  postNumber: () => faker.datatype.number(800),
-  locationNumber: () => faker.datatype.number(9999),
+  propertyNumber: () => faker.number.int(999),
+  municipality: () => faker.helpers.arrayElement(townArray),
+  postNumber: () => faker.number.int(800),
+  locationNumber: () => faker.number.int(9999),
   displayShort: () =>
-    `${faker.random.arrayElement(streetArray)} ${faker.datatype.number(99)}`,
+    `${faker.helpers.arrayElement(streetArray)} ${faker.number.int(99)}`,
   display() {
     return `${this.displayShort}, ${this.municipality}`
   },
 })
 
 export const singleProperty = factory<SimpleProperties>({
-  propertyNumber: () => faker.helpers.replaceSymbolWithNumber('F?????', '?'),
+  propertyNumber: () => 'F' + faker.string.numeric(5),
   defaultAddress: () => stadfang(),
 })
 
@@ -65,14 +65,13 @@ export const propertyAppraisal = factory<Appraisal>({
   plannedYear: new Date().getFullYear() + 1,
   activeYear: new Date().getFullYear(),
 
-  activeAppraisal: () =>
-    faker.datatype.number({ min: 20000000, max: 50000000 }),
+  activeAppraisal: () => faker.number.int({ min: 20000000, max: 50000000 }),
   plannedAppraisal() {
     return this.activeAppraisal ? this.activeAppraisal + 1500000 : null
   },
 
   activeStructureAppraisal: () =>
-    faker.datatype.number({ min: 20000000, max: 50000000 }),
+    faker.number.int({ min: 20000000, max: 50000000 }),
   plannedStructureAppraisal() {
     return this.activeStructureAppraisal
       ? this.activeStructureAppraisal + 1500000
@@ -80,7 +79,7 @@ export const propertyAppraisal = factory<Appraisal>({
   },
 
   activePlotAssessment: () =>
-    faker.datatype.number({ min: 20000000, max: 50000000 }),
+    faker.number.int({ min: 20000000, max: 50000000 }),
   plannedPlotAssessment() {
     return this.activePlotAssessment
       ? this.activePlotAssessment + 1500000
@@ -89,7 +88,7 @@ export const propertyAppraisal = factory<Appraisal>({
 })
 
 export const propertyOwnerFactory = factory<PropertyOwner>({
-  name: () => faker.name.findName(),
+  name: () => faker.person.fullName(),
   ssn: '0000000000',
   ownership: 0.5,
   purchaseDate: () => faker.date.past(),
@@ -97,16 +96,16 @@ export const propertyOwnerFactory = factory<PropertyOwner>({
 })
 
 export const propertyUnitOnUse = factory<UnitOfUse>({
-  unitOfUseNumber: () => faker.helpers.replaceSymbolWithNumber('N?', '?'),
-  propertyNumber: () => faker.helpers.replaceSymbolWithNumber('F?????', '?'),
+  unitOfUseNumber: () => 'N' + faker.string.numeric(1),
+  propertyNumber: () => 'F' + faker.string.numeric(5),
   address: () => stadfang(),
-  marking: () => faker.helpers.replaceSymbolWithNumber('Íbúð ?', '?'),
-  usageDisplay: () => faker.helpers.replaceSymbolWithNumber('Notkun ?', '?'),
-  explanation: () => faker.helpers.replaceSymbolWithNumber('Skýring ?', '?'),
+  marking: () => 'Íbúð ' + faker.string.numeric(1),
+  usageDisplay: () => 'Notkun ' + faker.string.numeric(1),
+  explanation: () => 'Skýring ' + faker.string.numeric(1),
   buildYearDisplay: '2008',
-  displaySize: () => faker.datatype.number({ min: 100, max: 300 }),
+  displaySize: () => faker.number.int({ min: 100, max: 300 }),
   appraisal: () => propertyAppraisal(),
-  fireAssessment: faker.datatype.number({
+  fireAssessment: faker.number.int({
     min: 20000000,
     max: 40000000,
   }),

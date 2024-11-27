@@ -1,4 +1,4 @@
-import * as faker from 'faker'
+import { faker } from '@faker-js/faker'
 import { EventObject } from 'xstate'
 import { z } from 'zod'
 import { buildForm, DefaultStateLifeCycle } from '@island.is/application/core'
@@ -15,7 +15,7 @@ import {
 export const createApplication = (
   overrides?: Partial<ApplicationWithAttachments>,
 ): ApplicationWithAttachments => ({
-  applicant: faker.helpers.replaceSymbolWithNumber('##########'),
+  applicant: faker.string.numeric(10),
   answers: {},
   assignees: [],
   applicantActors: [],
@@ -23,7 +23,7 @@ export const createApplication = (
   created: new Date(),
   modified: new Date(),
   externalData: {},
-  id: faker.random.word(),
+  id: faker.word.sample(),
   state: 'DRAFT',
   typeId: ApplicationTypes.EXAMPLE,
   name: '',

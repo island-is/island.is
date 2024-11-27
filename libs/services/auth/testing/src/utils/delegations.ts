@@ -1,5 +1,5 @@
 import { expect } from '@jest/globals'
-import faker from 'faker'
+import { faker } from '@faker-js/faker'
 
 import {
   ApiScope,
@@ -55,7 +55,7 @@ export const expectMatchingDelegations = (
 export type NameIdTuple = [name: string, id: string]
 
 export const getFakeName = () =>
-  faker.fake('{{name.firstName}} {{name.lastName}}')
+  faker.helpers.fake('{{name.firstName}} {{name.lastName}}')
 
 export async function createDelegationModels(
   model: typeof Delegation,

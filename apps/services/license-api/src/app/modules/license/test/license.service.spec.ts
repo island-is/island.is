@@ -30,7 +30,7 @@ import {
 import { ConfigType } from '@nestjs/config'
 import { Test } from '@nestjs/testing'
 import { Cache } from 'cache-manager'
-import * as faker from 'faker'
+import { faker } from '@faker-js/faker'
 
 import ShortUniqueId from 'short-unique-id'
 import { BARCODE_EXPIRE_TIME_IN_SEC } from '@island.is/services/license'
@@ -47,11 +47,14 @@ const cacheStore = new Map<string, unknown>()
 const licenseIds = Object.values(LicenseId)
 
 const createCacheData = (licenseId: LicenseId): BarcodeData<LicenseType> => ({
-  nationalId: faker.datatype.number({ min: 10, max: 10 }).toString(),
+  // Question:
+  // Was this meant to always generate the value "10"?
+  // It seems like you want a numeric string with the length of 10 here instead.
+  nationalId: faker.number.int({ min: 10, max: 10 }).toString(),
   licenseType: getLicenseType(licenseId),
   extraData: {
-    name: faker.name.firstName(),
-    nationalId: faker.datatype.number({ min: 10, max: 10 }).toString(),
+    name: faker.person.firstName(),
+    nationalId: faker.number.int({ min: 10, max: 10 }).toString(),
   },
 })
 

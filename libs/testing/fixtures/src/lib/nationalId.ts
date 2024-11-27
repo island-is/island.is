@@ -1,4 +1,4 @@
-import * as faker from 'faker'
+import { faker } from '@faker-js/faker'
 import { generateCompany, generatePerson } from 'kennitala'
 
 export type NationalIdType =
@@ -10,40 +10,33 @@ export type NationalIdType =
   | 'residentChild'
   | 'temporaryResident'
 
-const YEAR = 1000 * 60 * 60 * 24 * 365
-
 export const createNationalId = (type?: NationalIdType): string => {
   let date: Date
-  let variant: number
   switch (type) {
     case 'company':
-      date = new Date(Date.now() - faker.datatype.number(100 * YEAR))
+      date = faker.date.past({ years: 100 })
       return generateCompany(date)
     case 'person':
-      variant = faker.datatype.number(8)
-      return variant === 0
+      return faker.datatype.boolean(0.1111)
         ? createNationalId('temporaryResident')
         : createNationalId('resident')
     case 'resident':
-      variant = faker.datatype.number(4)
-      return variant === 0
+      return faker.datatype.boolean(0.2)
         ? createNationalId('residentChild')
         : createNationalId('residentAdult')
     case 'residentAdult':
-      date = new Date(
-        Date.now() - faker.datatype.number({ min: 18 * YEAR, max: 100 * YEAR }),
-      )
+      date = faker.date.birthdate({ mode: 'age', min: 18, max: 100 })
       return generatePerson(date)
     case 'residentChild':
-      date = new Date(Date.now() - faker.datatype.number(18 * YEAR))
+      date = faker.date.birthdate({ mode: 'age', min: 1, max: 17 })
       return generatePerson(date)
     case 'temporaryResident':
-      return faker.helpers.replaceSymbolWithNumber(
-        faker.helpers.regexpStyleStringParse('[8-9]#########'),
+      return (
+        faker.number.int({ min: 8, max: 9 }).toString() +
+        faker.string.numeric(9)
       )
     default:
-      variant = faker.datatype.number(4)
-      return variant === 0
+      return faker.datatype.boolean(0.2)
         ? createNationalId('company')
         : createNationalId('person')
   }
