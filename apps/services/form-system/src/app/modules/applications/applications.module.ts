@@ -7,12 +7,33 @@ import { Form } from '../forms/models/form.model'
 import { ApplicationMapper } from './models/application.mapper'
 import { Value } from '../values/models/value.model'
 import { Organization } from '../organizations/models/organization.model'
+import { FormUrl } from '../formUrls/models/formUrl.model'
+import { OrganizationUrl } from '../organizationUrls/models/organizationUrl.model'
+import { ServiceManager } from '../services/service.manager'
+import { ZendeskService } from '../services/submits/zendesk.service'
+import { NudgeService } from '../services/submits/nudge.service'
+import { ApplicationEvent } from './models/applicationEvent.model'
 
 @Module({
   imports: [
-    SequelizeModule.forFeature([Application, Form, Value, Organization]),
+    SequelizeModule.forFeature([
+      Application,
+      ApplicationEvent,
+      Form,
+      Value,
+      Organization,
+      FormUrl,
+      OrganizationUrl,
+    ]),
   ],
   controllers: [ApplicationsController],
-  providers: [ApplicationsService, ApplicationMapper],
+  providers: [
+    ApplicationsService,
+    ApplicationMapper,
+    ServiceManager,
+    ZendeskService,
+    NudgeService,
+  ],
+  exports: [ApplicationsService],
 })
 export class ApplicationsModule {}

@@ -32,7 +32,7 @@ export class FieldSettingsFactory {
       case FieldTypesEnum.PROPERTY_NUMBER:
         keys = ['hasPropertyInput', 'hasPropertyList']
         return this.pickSettings(fieldSettings, keys)
-      case FieldTypesEnum.DOCUMENT:
+      case FieldTypesEnum.FILE:
         keys = ['fileTypes', 'fileMaxSize', 'maxFiles']
         return this.pickSettings(fieldSettings, keys)
       case FieldTypesEnum.TIME_INPUT:

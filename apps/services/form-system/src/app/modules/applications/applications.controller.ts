@@ -64,4 +64,14 @@ export class ApplicationsController {
   ): Promise<void> {
     await this.applicationsService.update(id, updateApplicationDto)
   }
+
+  @ApiOperation({ summary: 'Submit application' })
+  @ApiCreatedResponse({
+    description: 'Submit application',
+  })
+  @ApiParam({ name: 'id', type: String })
+  @Post('submit/:id')
+  async submit(@Param('id') id: string): Promise<void> {
+    await this.applicationsService.submit(id)
+  }
 }

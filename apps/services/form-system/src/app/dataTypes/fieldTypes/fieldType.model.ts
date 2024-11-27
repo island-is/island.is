@@ -188,7 +188,7 @@ export const FieldTypes: FieldType[] = [
     isCommon: false,
   },
   {
-    id: FieldTypesEnum.DOCUMENT,
+    id: FieldTypesEnum.FILE,
     name: { is: 'Skjal', en: 'Document' },
     description: {
       is: 'Notandi hleður upp skjali/skjölum',

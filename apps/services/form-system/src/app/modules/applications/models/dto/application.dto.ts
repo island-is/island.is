@@ -3,6 +3,7 @@ import { SectionDto } from '../../../sections/models/dto/section.dto'
 import { LanguageType } from '../../../../dataTypes/languageType.model'
 import { Dependency } from '../../../../dataTypes/dependency.model'
 import { ApplicationStatus } from '../../../../enums/applicationStatus'
+import { ApplicationEvents } from '../../../../enums/applicationEvents'
 
 export class ApplicationDto {
   @ApiPropertyOptional()
@@ -29,6 +30,9 @@ export class ApplicationDto {
   @ApiPropertyOptional({ type: Date })
   modified?: Date
 
+  @ApiPropertyOptional({ type: Date })
+  submittedAt?: Date
+
   @ApiPropertyOptional({ type: [Dependency] })
   dependencies?: Dependency[]
 
@@ -37,6 +41,9 @@ export class ApplicationDto {
 
   @ApiPropertyOptional({ enum: ApplicationStatus })
   status?: string
+
+  @ApiPropertyOptional({ enum: ApplicationEvents })
+  events?: string
 
   @ApiPropertyOptional({ type: [SectionDto] })
   sections?: SectionDto[]

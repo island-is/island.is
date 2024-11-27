@@ -15,6 +15,7 @@ import { CreateApplicationDto } from './models/dto/createApplication.dto'
 import { UpdateApplicationDto } from './models/dto/updateApplication.dto'
 import { ApplicationStatus } from '../../enums/applicationStatus'
 import { Organization } from '../organizations/models/organization.model'
+import { ServiceManager } from '../services/service.manager'
 
 @Injectable()
 export class ApplicationsService {
@@ -28,6 +29,7 @@ export class ApplicationsService {
     @InjectModel(Organization)
     private readonly organizationModel: typeof Organization,
     private readonly applicationMapper: ApplicationMapper,
+    private readonly serviceManager: ServiceManager,
   ) {}
 
   async create(
@@ -85,7 +87,30 @@ export class ApplicationsService {
     await application.save()
   }
 
-  async getApplication(applicationId: string): Promise<ApplicationDto> {
+  async submit(id: string): Promise<boolean> {
+    const application = await this.applicationModel.findByPk(id)
+
+    if (!application) {
+      throw new NotFoundException(`Application with id '${id}' not found`)
+    }
+
+    application.submittedAt = new Date()
+    application.save()
+
+    const applicationDto = await this.getApplication(id)
+
+    const success = await this.serviceManager.send(applicationDto)
+
+    if (success) {
+      application.status = ApplicationStatus.SUBMITTED
+      application.submittedAt = new Date()
+      application.save()
+    }
+
+    return success
+  }
+
+  public async getApplication(applicationId: string): Promise<ApplicationDto> {
     const application = await this.applicationModel.findByPk(applicationId)
 
     if (!application) {
