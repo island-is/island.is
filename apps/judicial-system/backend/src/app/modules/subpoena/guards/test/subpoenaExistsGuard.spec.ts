@@ -69,7 +69,7 @@ describe('Subpoena Exists Guard', () => {
       then = await givenWhenThen()
     })
 
-    it('should throw NotFoundException', () => {
+    it('should throw BadRequestException', () => {
       expect(then.error).toBeInstanceOf(BadRequestException)
       expect(then.error.message).toBe(
         `Subpoena ${subpoenaId} of defendant ${defendantId} does not exist`,
