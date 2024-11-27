@@ -43,7 +43,7 @@ export const Navigation: React.FC<React.PropsWithChildren<NavigationProps>> = ({
       <GridRow className={styles.gridRow} alignItems="center">
         <GridColumn span={['6/12', '6/12', '6/12', '3/12']}>
           <LinkV2 href={homeHref}>
-            <Inline space={3} alignY="center" flexWrap="nowrap">
+            <Inline space={[2, 2, 3]} alignY="center" flexWrap="nowrap">
               {!!logo && (
                 <img src={logo} alt={logoAltText} className={styles.logo} />
               )}
