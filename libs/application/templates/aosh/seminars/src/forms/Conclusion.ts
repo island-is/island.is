@@ -1,11 +1,32 @@
-import { buildForm } from '@island.is/application/core'
+import { buildForm, getValueViaPath } from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
 import { Logo } from '../assets/Logo'
+import { buildFormConclusionSection } from '@island.is/application/ui-forms'
+import { conclusion } from '../lib/messages'
+import { PaymentOptions } from '../shared/contstants'
 
 export const Conclusion: Form = buildForm({
   id: 'ConclusionApplicationForm',
   title: '',
   logo: Logo,
   mode: FormModes.COMPLETED,
-  children: [],
+  children: [
+    buildFormConclusionSection({
+      sectionTitle: conclusion.general.sectionTitle,
+      multiFieldTitle: conclusion.general.pageTitle,
+      alertTitle: conclusion.default.alertTitle, // TODO: Add seminar name from answers
+      alertMessage: '',
+      expandableHeader: conclusion.default.accordionTitle,
+      expandableIntro: '',
+      expandableDescription: (application) => {
+        const paymentOptions = getValueViaPath(
+          application.answers,
+          'paymentArrangement.paymentOptions',
+        )
+        return paymentOptions === PaymentOptions.cashOnDelivery
+          ? conclusion.default.accordionTextCashOnDelivery
+          : conclusion.default.accordionTextPutIntoAccount
+      },
+    }),
+  ],
 })

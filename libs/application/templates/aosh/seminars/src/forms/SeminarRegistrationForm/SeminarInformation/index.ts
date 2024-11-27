@@ -56,7 +56,7 @@ export const seminarInformationSection = buildSection({
           title: '',
           message: seminarMessages.labels.alertMessage,
           alertType: 'info',
-          marginTop: 3,
+          marginTop: 4,
           condition: (answers: FormValue, externalData: ExternalData) =>
             isPersonType(externalData),
         }),
