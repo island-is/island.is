@@ -102,6 +102,7 @@ export {
 export {
   getIndictmentVerdictAppealDeadlineStatus,
   VERDICT_APPEAL_WINDOW_DAYS,
+  FINE_APPEAL_WINDOW_DAYS,
 } from './lib/indictmentCase'
 
 export type {
