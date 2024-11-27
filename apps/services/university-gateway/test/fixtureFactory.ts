@@ -1,5 +1,5 @@
 import { getModelToken } from '@nestjs/sequelize'
-import {faker} from '@faker-js/faker'
+import { faker } from '@faker-js/faker'
 import { Model } from 'sequelize'
 import { createNationalId } from '@island.is/testing/fixtures'
 import { TestApp } from '@island.is/testing/nest'

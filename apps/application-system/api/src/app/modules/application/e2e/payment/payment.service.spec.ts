@@ -190,11 +190,7 @@ describe('Payment Service', () => {
       undefined,
     )
 
-    await service.fulfillPayment(
-      charge.id,
-      faker.string.uuid(),
-      applicationId,
-    )
+    await service.fulfillPayment(charge.id, faker.string.uuid(), applicationId)
     const result = await service.getStatus(user, applicationId)
     expect(result.fulfilled).toBe(true)
   })

@@ -1,4 +1,4 @@
-import {faker} from '@faker-js/faker'
+import { faker } from '@faker-js/faker'
 
 import { createNationalId, NationalIdType } from '@island.is/testing/fixtures'
 

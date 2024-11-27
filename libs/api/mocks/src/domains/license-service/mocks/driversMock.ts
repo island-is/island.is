@@ -83,9 +83,6 @@ export const mockDriversLicense = (
   {
     type: 'Group',
     label: 'Réttindaflokkar',
-    fields: generateDataField(
-      driversRightsDataField,
-      faker.number.int(10),
-    ),
+    fields: generateDataField(driversRightsDataField, faker.number.int(10)),
   },
 ]

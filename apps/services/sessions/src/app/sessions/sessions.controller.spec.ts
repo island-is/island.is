@@ -262,9 +262,7 @@ describe('SessionsController', () => {
         // Act
         const res = await server
           .post(`/v1/me/sessions`)
-          .send(
-            createSessionDto({ actorNationalId: faker.string.sample(10) }),
-          )
+          .send(createSessionDto({ actorNationalId: faker.string.sample(10) }))
 
         // Assert
         expect(res.status).toEqual(403)

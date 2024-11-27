@@ -1,4 +1,4 @@
-import {faker} from '@faker-js/faker'
+import { faker } from '@faker-js/faker'
 
 import { CaseFileState } from '@island.is/judicial-system-web/src/graphql/schema'
 

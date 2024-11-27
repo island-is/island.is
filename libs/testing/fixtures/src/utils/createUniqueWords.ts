@@ -5,5 +5,5 @@ import { faker } from '@faker-js/faker'
  * @param size The size of the words array
  */
 export const createUniqueWords = (size: number): string[] => {
-  return faker.helpers.uniqueArray(() => faker.word.sample(), size);
+  return faker.helpers.uniqueArray(() => faker.word.sample(), size)
 }

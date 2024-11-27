@@ -207,12 +207,12 @@ describe('Personal Representative DelegationsController', () => {
                   case 'unactivated':
                     return getPersonalRepresentativeRightType(
                       code,
-                      faker.date.soon({ days: 7}),
+                      faker.date.soon({ days: 7 }),
                     )
                   case 'outdated':
                     return getPersonalRepresentativeRightType(
                       code,
-                      faker.date.recent({ days: 5}),
+                      faker.date.recent({ days: 5 }),
                       faker.date.recent(),
                     )
                 }

@@ -30,14 +30,18 @@ const createRandomNationalRegistryV3User = (): EinstaklingurDTOAllt => {
       husHeiti: faker.location.street(),
       postnumer: faker.location.zipCode(),
       poststod: faker.location.city(),
-      sveitarfelag: faker.helpers.arrayElement(faker.definitions.location.city_prefix),
+      sveitarfelag: faker.helpers.arrayElement(
+        faker.definitions.location.city_prefix,
+      ),
     },
     itarupplysingar: {
       adsetur: {
         husHeiti: faker.location.street(),
         postnumer: faker.location.zipCode(),
         poststod: faker.location.city(),
-        sveitarfelag: faker.helpers.arrayElement(faker.definitions.location.city_prefix),
+        sveitarfelag: faker.helpers.arrayElement(
+          faker.definitions.location.city_prefix,
+        ),
       },
     },
   }

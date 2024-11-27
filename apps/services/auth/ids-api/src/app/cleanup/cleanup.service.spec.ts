@@ -1,5 +1,5 @@
 import { getModelToken } from '@nestjs/sequelize'
-import {faker} from '@faker-js/faker'
+import { faker } from '@faker-js/faker'
 
 import { Grant, SequelizeConfigService } from '@island.is/auth-api-lib'
 import { setupAppWithoutAuth, TestApp } from '@island.is/testing/nest'

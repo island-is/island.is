@@ -1,6 +1,6 @@
 import { Type } from '@nestjs/common'
 import { getConnectionToken } from '@nestjs/sequelize'
-import {faker} from '@faker-js/faker'
+import { faker } from '@faker-js/faker'
 import { Sequelize } from 'sequelize-typescript'
 import request from 'supertest'
 

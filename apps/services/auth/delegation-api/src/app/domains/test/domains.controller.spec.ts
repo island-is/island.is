@@ -1,5 +1,5 @@
 import assert from 'assert'
-import {faker} from '@faker-js/faker'
+import { faker } from '@faker-js/faker'
 import differenceWith from 'lodash/differenceWith'
 import shuffle from 'lodash/shuffle'
 import request from 'supertest'

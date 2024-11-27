@@ -53,9 +53,6 @@ export const mockMachineLicense = (
   {
     type: 'Group',
     label: 'Réttindaflokkar',
-    fields: generateDataField(
-      machineRightsDataField,
-      faker.number.int(10),
-    ),
+    fields: generateDataField(machineRightsDataField, faker.number.int(10)),
   },
 ]

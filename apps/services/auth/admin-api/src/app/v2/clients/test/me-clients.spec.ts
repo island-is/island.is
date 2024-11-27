@@ -1,5 +1,5 @@
 import { getModelToken } from '@nestjs/sequelize'
-import {faker} from '@faker-js/faker'
+import { faker } from '@faker-js/faker'
 import request from 'supertest'
 
 import {

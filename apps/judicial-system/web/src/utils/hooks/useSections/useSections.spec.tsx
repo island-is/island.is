@@ -1,6 +1,6 @@
 import { IntlProvider } from 'react-intl'
 import { ApolloClient, ApolloProvider, InMemoryCache } from '@apollo/client'
-import {faker} from '@faker-js/faker'
+import { faker } from '@faker-js/faker'
 import { renderHook } from '@testing-library/react'
 
 import { UserProvider } from '@island.is/judicial-system-web/src/components'

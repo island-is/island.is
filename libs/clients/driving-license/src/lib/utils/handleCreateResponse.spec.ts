@@ -1,11 +1,9 @@
 import { handleCreateResponse } from './handleCreateResponse'
-import { faker} from '@faker-js/faker'
+import { faker } from '@faker-js/faker'
 
 describe('handleCreateResponse', () => {
   it('should handle documented response type', () => {
-    expect(
-      handleCreateResponse(faker.number.int().toString()),
-    ).toMatchObject({
+    expect(handleCreateResponse(faker.number.int().toString())).toMatchObject({
       success: true,
     })
   })

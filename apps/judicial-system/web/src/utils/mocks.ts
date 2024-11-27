@@ -1,4 +1,4 @@
-import {faker} from '@faker-js/faker'
+import { faker } from '@faker-js/faker'
 
 import { CurrentUserDocument } from '@island.is/judicial-system-web/src/components/UserProvider/currentUser.generated'
 import {

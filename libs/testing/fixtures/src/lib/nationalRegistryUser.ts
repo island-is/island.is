@@ -21,18 +21,22 @@ const createRandomNationalRegistryUser = (): NationalRegistryClientPerson => {
     fullName: name,
     genderCode: faker.number.int({ min: 1, max: 8 }).toString(),
     exceptionFromDirectMarketing: faker.datatype.boolean(),
-    birthdate: faker.date.past({years: 100}),
+    birthdate: faker.date.past({ years: 100 }),
     legalDomicile: {
       streetAddress: faker.location.street(),
       postalCode: faker.location.zipCode(),
       locality: faker.location.city(),
-      municipalityNumber: faker.helpers.arrayElement(faker.definitions.location.city_prefix),
+      municipalityNumber: faker.helpers.arrayElement(
+        faker.definitions.location.city_prefix,
+      ),
     },
     residence: {
       streetAddress: faker.location.street(),
       postalCode: faker.location.zipCode(),
       locality: faker.location.city(),
-      municipalityNumber: faker.helpers.arrayElement(faker.definitions.location.city_prefix),
+      municipalityNumber: faker.helpers.arrayElement(
+        faker.definitions.location.city_prefix,
+      ),
     },
   }
 }

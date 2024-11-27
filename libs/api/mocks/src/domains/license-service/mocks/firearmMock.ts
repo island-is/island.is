@@ -86,10 +86,7 @@ export const mockFirearmLicense = (
   {
     type: 'Group',
     label: 'Réttindaflokkar',
-    fields: generateDataField(
-      firearmRightsDataField,
-      faker.number.int(10),
-    ),
+    fields: generateDataField(firearmRightsDataField, faker.number.int(10)),
   },
   {
     type: 'Table',
