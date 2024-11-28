@@ -18,7 +18,6 @@ permissions:
 
 env:
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  IS_REVERT: ${{ contains(github.event.pull_request.labels.*.name, 'revert') }}
 
 jobs:
   detect-failure:
@@ -54,7 +53,7 @@ jobs:
         run: |
           PR_NUMER=${{ steps.fetch-pr.outputs.PR_NUMBER }}
           echo "Adding revert label to PR: $PR_NUMBER"
-          gh pr edit "$PR_NUMBER" --add-label "revert"
+          gh pr edit "$PR_NUMBER" --add-label "revert-auto"
 
   create-revert-pr:
     name: Create Revert PR
@@ -71,7 +70,7 @@ jobs:
 
   manual-revert-pr:
     name: Handle Manual Revert Label
-    if: ${{ github.event_name == 'pull_request' && env.IS_REVERT && (github.event.pull_request.merged == true || github.event.pull_request.draft == true) }}
+    if: ${{ github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'revert-manual') && (github.event.pull_request.merged == true || github.event.pull_request.draft == true) }}
     runs-on: ubuntu-latest
     steps:
       - name: Create Revert PR
