@@ -14,7 +14,7 @@ type Props = Partial<{
   alertTitle: FormText
   alertMessage: FormText
   alertType: 'success' | 'warning' | 'error' | 'info'
-  multiFieldTitle: FormText
+  multiFieldTitle: StaticText
   secondButtonLink: StaticText
   secondButtonLabel: StaticText
   secondButtonMessage: StaticText

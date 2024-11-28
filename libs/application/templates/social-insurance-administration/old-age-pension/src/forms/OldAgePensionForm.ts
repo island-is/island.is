@@ -787,35 +787,28 @@ export const OldAgePensionForm: Form = buildForm({
         }),
       ],
     }),
-    buildFormConclusionSection({
-      multiFieldTitle: (application: Application) => {
-        const { hasIncomePlanStatus } = getApplicationExternalData(application.externalData)
-        return hasIncomePlanStatus === 'Accepted' || hasIncomePlanStatus === 'InProgress'
-        ? socialInsuranceAdministrationMessage.conclusionScreen
-          .receivedAwaitingIncomePlanTitle
-        : socialInsuranceAdministrationMessage.conclusionScreen.receivedTitle
-      },  
-      alertTitle: (application: Application) => {
-        const { hasIncomePlanStatus } = getApplicationExternalData(application.externalData)
-        console.log('hasIncomePlanStatus ===>', hasIncomePlanStatus)
-        return hasIncomePlanStatus === 'Accepted' || hasIncomePlanStatus === 'InProgress'
-         ? socialInsuranceAdministrationMessage.conclusionScreen.receivedAwaitingIncomePlanTitle
-         : 'Boop'
-      },
-      alertMessage: 
-        socialInsuranceAdministrationMessage.conclusionScreen
-          .incomePlanAlertMessage,
-      alertType: 'warning',
-      expandableDescription:
-        oldAgePensionFormMessage.conclusionScreen.bulletList,
-      expandableIntro: oldAgePensionFormMessage.conclusionScreen.nextStepsText,
-      bottomButtonLink: 'https://island.is/umsoknir/tekjuaaetlun',
-      bottomButtonLabel:
-        socialInsuranceAdministrationMessage.conclusionScreen
-          .incomePlanCardLabel,
-      bottomButtonMessage:
-        socialInsuranceAdministrationMessage.conclusionScreen
-          .incomePlanCardText,
-    }),
+    buildSection({
+      id: 'conclusionSection',
+      title: socialInsuranceAdministrationMessage.conclusionScreen.section,
+      children: [
+        buildMultiField({
+          id: 'conclusion.multifield',
+          title: (application: Application) => { 
+            const { hasIncomePlanStatus } = getApplicationExternalData(application.externalData)
+            return hasIncomePlanStatus
+              ? socialInsuranceAdministrationMessage.conclusionScreen.receivedTitle
+              : socialInsuranceAdministrationMessage.conclusionScreen.receivedAwaitingIncomePlanTitle
+          },
+          children: [
+            buildCustomField({
+              component: 'Conclusion',
+              id: 'conclusion',
+              title: '',
+              description: '',
+            }),
+          ],
+        }),
+      ],
+    })
   ],
 })
