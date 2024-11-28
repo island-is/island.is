@@ -10,10 +10,10 @@ import { CurrentVehiclesAndRecords } from '../../shared'
 import { ApolloQueryResult, useMutation } from '@apollo/client'
 import { UPDATE_APPLICATION } from '@island.is/application/graphql'
 import { useLocale } from '@island.is/localization'
-import { VehicleSelectField } from './VehicleSelectField'
 import {
   FindVehicleFormField,
   VehicleRadioFormField,
+  VehicleSelectFormField,
 } from '@island.is/application/ui-fields'
 import { information, applicationCheck, error } from '../../lib/messages'
 import { useLazyVehicleDetails } from '../../hooks/useLazyVehicleDetails'
@@ -53,11 +53,13 @@ export const VehiclesField: FC<React.PropsWithChildren<FieldBaseProps>> = (
         locale,
       },
     })
-  }, [])
+  }, [application.id, locale, updateApplication])
+
   useEffect(() => {
     setValue('sellerCoOwner', [])
     updateData()
-  }, [setValue])
+  }, [setValue, updateData])
+
   return (
     <Box paddingTop={2}>
       {currentVehicleList.totalRecords > 20 ? (
@@ -89,9 +91,30 @@ export const VehiclesField: FC<React.PropsWithChildren<FieldBaseProps>> = (
           }}
         />
       ) : currentVehicleList.totalRecords > 5 ? (
-        <VehicleSelectField
-          currentVehicleList={currentVehicleList.vehicles}
+        <VehicleSelectFormField
           {...props}
+          field={{
+            id: 'pickVehicle',
+            title: information.labels.pickVehicle.title,
+            type: FieldTypes.VEHICLE_SELECT,
+            component: FieldComponents.VEHICLE_SELECT,
+            children: undefined,
+            itemType: 'VEHICLE',
+            itemList: currentVehicleList?.vehicles,
+            getDetails: createGetVehicleDetailsWrapper(getVehicleDetails),
+            shouldValidateErrorMessages: true,
+            shouldValidateDebtStatus: true,
+            inputLabelText: information.labels.pickVehicle.vehicle,
+            inputPlaceholderText: information.labels.pickVehicle.placeholder,
+            alertMessageErrorTitle:
+              information.labels.pickVehicle.hasErrorTitle,
+            validationErrorMessages: applicationCheck.validation,
+            validationErrorFallbackMessage:
+              applicationCheck.validation.fallbackErrorMessage,
+            inputErrorMessage: error.requiredValidVehicle,
+            debtStatusErrorMessage:
+              information.labels.pickVehicle.isNotDebtLessTag,
+          }}
         />
       ) : (
         <VehicleRadioFormField
@@ -99,12 +122,12 @@ export const VehiclesField: FC<React.PropsWithChildren<FieldBaseProps>> = (
           field={{
             id: 'pickVehicle',
             title: information.labels.pickVehicle.title,
-            description: information.labels.pickVehicle.description,
             type: FieldTypes.VEHICLE_RADIO,
             component: FieldComponents.VEHICLE_RADIO,
             children: undefined,
             itemType: 'VEHICLE',
             itemList: currentVehicleList?.vehicles,
+            shouldValidateErrorMessages: true,
             shouldValidateDebtStatus: true,
             alertMessageErrorTitle:
               information.labels.pickVehicle.hasErrorTitle,

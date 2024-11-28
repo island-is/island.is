@@ -13,10 +13,10 @@ import { useLocale } from '@island.is/localization'
 import {
   FindVehicleFormField,
   VehicleRadioFormField,
+  VehicleSelectFormField,
 } from '@island.is/application/ui-fields'
 import { applicationCheck, error, information } from '../../lib/messages'
 import { useLazyVehicleDetails } from '../../hooks/useLazyVehicleDetails'
-import { VehicleSelectField } from './VehicleSelectField'
 
 export const VehiclesField: FC<React.PropsWithChildren<FieldBaseProps>> = (
   props,
@@ -27,6 +27,19 @@ export const VehiclesField: FC<React.PropsWithChildren<FieldBaseProps>> = (
   const [updateApplication] = useMutation(UPDATE_APPLICATION)
   const currentVehicleList = application.externalData.currentVehicleList
     .data as CurrentVehiclesAndRecords
+
+  const getVehicleDetails = useLazyVehicleDetails()
+  const createGetVehicleDetailsWrapper = (
+    getVehicleDetailsFunction: (variables: {
+      permno: string
+    }) => Promise<ApolloQueryResult<any>>,
+  ) => {
+    return async (plate: string) => {
+      const variables = { permno: plate }
+      const result = await getVehicleDetailsFunction(variables)
+      return result.data.vehicleOwnerchangeChecksByPermno // Adjust based on your query
+    }
+  }
 
   const updateData = useCallback(async () => {
     await updateApplication({
@@ -40,23 +53,12 @@ export const VehiclesField: FC<React.PropsWithChildren<FieldBaseProps>> = (
         locale,
       },
     })
-  }, [])
-  const getVehicleDetails = useLazyVehicleDetails()
-  const createGetVehicleDetailsWrapper = (
-    getVehicleDetailsFunction: (variables: {
-      permno: string
-    }) => Promise<ApolloQueryResult<any>>,
-  ) => {
-    return async (plate: string) => {
-      const variables = { permno: plate }
-      const result = await getVehicleDetailsFunction(variables)
-      return result.data.vehicleOwnerchangeChecksByPermno // Adjust based on your query
-    }
-  }
+  }, [application.id, locale, updateApplication])
+
   useEffect(() => {
     setValue('ownerCoOwners', [])
     updateData()
-  }, [setValue])
+  }, [setValue, updateData])
 
   return (
     <Box paddingTop={2}>
@@ -89,9 +91,30 @@ export const VehiclesField: FC<React.PropsWithChildren<FieldBaseProps>> = (
           }}
         />
       ) : currentVehicleList.totalRecords > 5 ? (
-        <VehicleSelectField
-          currentVehicleList={currentVehicleList.vehicles}
+        <VehicleSelectFormField
           {...props}
+          field={{
+            id: 'pickVehicle',
+            title: information.labels.pickVehicle.title,
+            type: FieldTypes.VEHICLE_SELECT,
+            component: FieldComponents.VEHICLE_SELECT,
+            children: undefined,
+            itemType: 'VEHICLE',
+            itemList: currentVehicleList?.vehicles,
+            getDetails: createGetVehicleDetailsWrapper(getVehicleDetails),
+            shouldValidateErrorMessages: true,
+            shouldValidateDebtStatus: true,
+            inputLabelText: information.labels.pickVehicle.vehicle,
+            inputPlaceholderText: information.labels.pickVehicle.placeholder,
+            alertMessageErrorTitle:
+              information.labels.pickVehicle.hasErrorTitle,
+            validationErrorMessages: applicationCheck.validation,
+            validationErrorFallbackMessage:
+              applicationCheck.validation.fallbackErrorMessage,
+            inputErrorMessage: error.requiredValidVehicle,
+            debtStatusErrorMessage:
+              information.labels.pickVehicle.isNotDebtLessTag,
+          }}
         />
       ) : (
         <VehicleRadioFormField
@@ -99,12 +122,12 @@ export const VehiclesField: FC<React.PropsWithChildren<FieldBaseProps>> = (
           field={{
             id: 'pickVehicle',
             title: information.labels.pickVehicle.title,
-            description: information.labels.pickVehicle.description,
             type: FieldTypes.VEHICLE_RADIO,
             component: FieldComponents.VEHICLE_RADIO,
             children: undefined,
             itemType: 'VEHICLE',
             itemList: currentVehicleList?.vehicles,
+            shouldValidateErrorMessages: true,
             shouldValidateDebtStatus: true,
             alertMessageErrorTitle:
               information.labels.pickVehicle.hasErrorTitle,

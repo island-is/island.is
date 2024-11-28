@@ -188,6 +188,7 @@ export const FindVehicleFormField: FC<React.PropsWithChildren<Props>> = ({
   const findVehicleByPlate = async () => {
     setIsLoading(true)
     try {
+      //TODOx handle if empty (orderVehicleRegistrationCertificate)
       if (!getDetails) {
         throw new Error('getDetails function is not defined')
       }
@@ -249,9 +250,6 @@ export const FindVehicleFormField: FC<React.PropsWithChildren<Props>> = ({
 
     setValue('vehicleMileage.requireMileage', vehicleDetails?.requireMileage)
     setValue('vehicleMileage.mileageReading', vehicleDetails?.mileageReading)
-
-    setValue('plateSize.frontPlateSize', [])
-    setValue('plateSize.rearPlateSize', [])
 
     if (permno) setValue('vehicleInfo.plate', permno)
     if (permno) setValue('vehicleInfo.type', vehicleDetails.make)
