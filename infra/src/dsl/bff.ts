@@ -9,7 +9,6 @@ import {
 
 const MINAR_SIDUR: PortalKeys = 'minarsidur'
 const STJORNBORD: PortalKeys = 'stjornbord'
-const ISLAND_IS_PROD_URL = 'https://island.is'
 
 /**
  * Trim any leading and trailing slashes
@@ -58,9 +57,11 @@ export const bffConfig = ({
   }
 
   const getRedirectUris = (baseUrl: string, key: PortalKeys) => [
-    baseUrl,
+    `${baseUrl}/${key}`,
     ...(key === MINAR_SIDUR ? [`${baseUrl}/umsoknir`] : []),
   ]
+
+  const islandIsProdUrl = ref((ctx) => `https://${ctx.env.domain}`)
 
   return {
     env: {
@@ -84,7 +85,7 @@ export const bffConfig = ({
         local: 'http://localhost:4200',
         dev: ref((ctx) => ctx.svc(getBaseUrl(ctx))),
         staging: ref((ctx) => ctx.svc(getBaseUrl(ctx))),
-        prod: ISLAND_IS_PROD_URL,
+        prod: islandIsProdUrl,
       },
       BFF_ALLOWED_REDIRECT_URIS: {
         local: json([
@@ -94,13 +95,13 @@ export const bffConfig = ({
         ]),
         dev: ref((ctx) => json(getRedirectUris(getBaseUrl(ctx), key))),
         staging: ref((ctx) => json(getRedirectUris(getBaseUrl(ctx), key))),
-        prod: json([ISLAND_IS_PROD_URL]),
+        prod: json([islandIsProdUrl]),
       },
       BFF_LOGOUT_REDIRECT_URI: {
         local: `http://localhost:4200/${key}`,
         dev: ref(getBaseUrl),
         staging: ref(getBaseUrl),
-        prod: ISLAND_IS_PROD_URL,
+        prod: islandIsProdUrl,
       },
       BFF_CALLBACKS_BASE_PATH: {
         local: `http://localhost:3010/${sanitizeGlobalPrefix}/callbacks`,
