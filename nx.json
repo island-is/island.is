@@ -95,7 +95,7 @@
   "targetDefaults": {
     "build": {
       "dependsOn": ["^build"],
-      "inputs": ["production", "^production"]
+      "inputs": ["production", "^production", "DevOps"]
     },
     "e2e": {
       "inputs": ["default", "^production"]
@@ -146,17 +146,18 @@
     }
   },
   "namedInputs": {
-    "default": ["{projectRoot}/**/*", "sharedGlobals", "docker-stuff", "CI"],
+    "default": ["{projectRoot}/**/*", "sharedGlobals", "DevOps"],
     "nodeVersion": [
       {
         "runtime": "node --version"
       }
     ],
+    "DevOps": ["CI", "Dockerfiles"],
     "CI": [
       "{workspaceRoot}/.github/actions/",
       "{workspaceRoot}/.github/workflows/"
     ],
-    "docker-stuff": [
+    "Dockerfiles": [
       "{workspaceRoot}/**/Dockerfile",
       "{workspaceRoot}/**/Dockerfile.*"
     ],
