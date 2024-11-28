@@ -9,6 +9,7 @@ import {
 
 const MINAR_SIDUR: PortalKeys = 'minarsidur'
 const STJORNBORD: PortalKeys = 'stjornbord'
+const ISLAND_IS_PROD_URL = 'https://island.is'
 
 /**
  * Trim any leading and trailing slashes
@@ -83,7 +84,7 @@ export const bffConfig = ({
         local: 'http://localhost:4200',
         dev: ref((ctx) => ctx.svc(getBaseUrl(ctx))),
         staging: ref((ctx) => ctx.svc(getBaseUrl(ctx))),
-        prod: 'https://island.is',
+        prod: ISLAND_IS_PROD_URL,
       },
       BFF_ALLOWED_REDIRECT_URIS: {
         local: json([
@@ -93,13 +94,13 @@ export const bffConfig = ({
         ]),
         dev: ref((ctx) => json(getRedirectUris(getBaseUrl(ctx), key))),
         staging: ref((ctx) => json(getRedirectUris(getBaseUrl(ctx), key))),
-        prod: json(getRedirectUris(`https://island.is/${key}`, key)),
+        prod: json([ISLAND_IS_PROD_URL]),
       },
       BFF_LOGOUT_REDIRECT_URI: {
         local: `http://localhost:4200/${key}`,
         dev: ref(getBaseUrl),
         staging: ref(getBaseUrl),
-        prod: 'https://island.is',
+        prod: ISLAND_IS_PROD_URL,
       },
       BFF_CALLBACKS_BASE_PATH: {
         local: `http://localhost:3010/${sanitizeGlobalPrefix}/callbacks`,
