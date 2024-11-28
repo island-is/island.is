@@ -41,7 +41,10 @@ jobs:
         id: fetch-pr
         run: |
           COMMIT_SHA="${{ github.event.workflow_run.head_commit.id }}"
-          PR_NUMBER=$(bash ./scripts/ci/get-pr.sh "$COMMIT_SHA")
+          if ! PR_NUMBER=$(bash ./scripts/ci/get-pr.sh "$COMMIT_SHA"); then
+            echo "Error: Failed to get PR number for commit $COMMIT_SHA"
+            exit 1
+          fi
 
           if [ -n "$PR_NUMBER" ]; then
             echo "PR_NUMBER=$PR_NUMBER" >> $GITHUB_OUTPUT
