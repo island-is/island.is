@@ -16,10 +16,12 @@ if (job === 'cleanup') {
     healthCheck: {
       database: true,
     },
-    }).then(async ({ app }) => {
-      if (job === 'worker') {
-        const notificationsWorkerService = await app.resolve(NotificationsWorkerService)
-        await notificationsWorkerService.run()
-      }
+  }).then(async ({ app }) => {
+    if (job === 'worker') {
+      const notificationsWorkerService = await app.resolve(
+        NotificationsWorkerService,
+      )
+      await notificationsWorkerService.run()
+    }
   })
 }
