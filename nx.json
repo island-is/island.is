@@ -146,7 +146,7 @@
     }
   },
   "namedInputs": {
-    "default": ["{projectRoot}/**/*", "sharedGlobals", "DevOps"],
+    "default": ["{projectRoot}/**/*", "sharedGlobals"],
     "nodeVersion": [
       {
         "runtime": "node --version"
@@ -154,8 +154,10 @@
     ],
     "DevOps": ["CI", "Dockerfiles"],
     "CI": [
+      "{workspaceRoot}/**/docker-compose*.yml",
       "{workspaceRoot}/.github/actions/",
-      "{workspaceRoot}/.github/workflows/"
+      "{workspaceRoot}/.github/workflows/",
+      "{workspaceRoot}/**/.dockerignore"
     ],
     "Dockerfiles": [
       "{workspaceRoot}/**/Dockerfile",
