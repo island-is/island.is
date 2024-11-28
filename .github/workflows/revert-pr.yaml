@@ -53,7 +53,7 @@ jobs:
         run: |
           PR_NUMER=${{ steps.fetch-pr.outputs.PR_NUMBER }}
           echo "Adding revert label to PR: $PR_NUMBER"
-          gh pr edit "$PR_NUMBER" --add-label "revert-auto"
+          gh pr edit "$PR_NUMBER" --add-label "revert"
 
   create-revert-pr:
     name: Create Revert PR
@@ -70,11 +70,12 @@ jobs:
 
   manual-revert-pr:
     name: Handle Manual Revert Label
-    if: ${{ github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'revert-manual') && (github.event.pull_request.merged == true || github.event.pull_request.draft == true) }}
+    if: ${{ github.event_name == 'pull_request' && github.event.pull_request.merged == true && contains(github.event.pull_request.labels.*.name, 'revert') && github.actor != 'github-actions' }}
     runs-on: ubuntu-latest
     steps:
       - name: Create Revert PR
         run: |
+          echo "actor: ${{ github.actor }}"
           echo "Reverting PR: ${{ github.event.pull_request.number }}"
           # REVERT_PR=$(bash ./scripts/ci/revert-pr.sh "${{ github.event.pull_request.number }}")
           # gh pr edit $REVERT_PR --add-label "automerge,high priority"
