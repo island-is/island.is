@@ -1,0 +1,118 @@
+{
+  "project_info": {
+    "project_number": "294559686112",
+    "project_id": "pc-api-8701487029959181480-770",
+    "storage_bucket": "pc-api-8701487029959181480-770.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:294559686112:android:d467443a8780beff039f85",
+        "android_client_info": {
+          "package_name": "is.island.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "294559686112-t2q0ae82t6g1hveokgd2muvh3pjm8j9r.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA3Pp2ST-NeiIxr8MKHCaXu_JVinqacRCA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "294559686112-t2q0ae82t6g1hveokgd2muvh3pjm8j9r.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "294559686112-6dfbk5dekst7008vshu1nv97o71kkr54.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "is.island.app.dev"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:294559686112:android:739eed32d4fedf83039f85",
+        "android_client_info": {
+          "package_name": "is.island.app.dev"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "294559686112-t2q0ae82t6g1hveokgd2muvh3pjm8j9r.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA3Pp2ST-NeiIxr8MKHCaXu_JVinqacRCA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "294559686112-t2q0ae82t6g1hveokgd2muvh3pjm8j9r.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "294559686112-6dfbk5dekst7008vshu1nv97o71kkr54.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "is.island.app.dev"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:294559686112:android:59d3df9efeed4f37039f85",
+        "android_client_info": {
+          "package_name": "is.island.app.staging"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "294559686112-t2q0ae82t6g1hveokgd2muvh3pjm8j9r.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA3Pp2ST-NeiIxr8MKHCaXu_JVinqacRCA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "294559686112-t2q0ae82t6g1hveokgd2muvh3pjm8j9r.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "294559686112-6dfbk5dekst7008vshu1nv97o71kkr54.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "is.island.app.dev"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
