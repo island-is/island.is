@@ -3,10 +3,11 @@ import { SequelizeModule } from '@nestjs/sequelize'
 
 import { RskRelationshipsClientModule } from '@island.is/clients-rsk-relationships'
 import { NationalRegistryClientModule } from '@island.is/clients/national-registry-v2'
+import { NationalRegistryV3ClientModule } from '@island.is/clients/national-registry-v3'
 import { CompanyRegistryClientModule } from '@island.is/clients/rsk/company-registry'
 import { SyslumennClientModule } from '@island.is/clients/syslumenn'
-import { FeatureFlagModule } from '@island.is/nest/feature-flags'
 import { ZendeskModule } from '@island.is/clients/zendesk'
+import { FeatureFlagModule } from '@island.is/nest/feature-flags'
 
 import { ClientAllowedScope } from '../clients/models/client-allowed-scope.model'
 import { Client } from '../clients/models/client.model'
@@ -19,6 +20,7 @@ import { ResourcesModule } from '../resources/resources.module'
 import { UserIdentitiesModule } from '../user-identities/user-identities.module'
 import { UserSystemNotificationModule } from '../user-notification'
 import { DelegationAdminCustomService } from './admin/delegation-admin-custom.service'
+import { AliveStatusService } from './alive-status.service'
 import { DelegationProviderService } from './delegation-provider.service'
 import { DelegationScopeService } from './delegation-scope.service'
 import { IncomingDelegationsCompanyService } from './delegations-incoming-company.service'
@@ -37,12 +39,14 @@ import { DelegationScope } from './models/delegation-scope.model'
 import { DelegationTypeModel } from './models/delegation-type.model'
 import { Delegation } from './models/delegation.model'
 import { NamesService } from './names.service'
+import { NationalRegistryV3FeatureService } from './national-registry-v3-feature.service'
 
 @Module({
   imports: [
     ResourcesModule,
     PersonalRepresentativeModule,
     NationalRegistryClientModule,
+    NationalRegistryV3ClientModule,
     RskRelationshipsClientModule,
     CompanyRegistryClientModule,
     ZendeskModule,
@@ -79,6 +83,8 @@ import { NamesService } from './names.service'
     DelegationsIndexService,
     DelegationProviderService,
     DelegationAdminCustomService,
+    AliveStatusService,
+    NationalRegistryV3FeatureService,
   ],
   exports: [
     DelegationsService,
