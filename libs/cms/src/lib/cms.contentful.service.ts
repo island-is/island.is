@@ -1232,8 +1232,9 @@ export class CmsContentfulService {
 
         // We need to fetch the label and href for all entry nodes, so we store them in a map
         const entryNode = {
-          label: node.entryId,
-          href: node.entryId,
+          label: '',
+          href: '',
+          entryId: node.entryId,
         }
         const nodeList = entryNodes.get(node.entryId) ?? []
         nodeList.push(entryNode)
@@ -1274,8 +1275,8 @@ export class CmsContentfulService {
     }
 
     // Remove entries from result that could not be resolved to their label or href
-    result.childLinks = result.childLinks.filter((link) =>
-      entryIdsToRemove.includes(link.label),
+    result.childLinks = result.childLinks.filter(
+      (link) => 'entryId' in link && entryIdsToRemove.includes(link.entryId),
     )
 
     return result
