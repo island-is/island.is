@@ -4,9 +4,9 @@
 
 If desired it is possible to have a custom message sent to an application's applicant when it is pruned.
 This is done by adding a `pruneMessage` object of type `PruningNotification` or a function returning a `PruningNotification` to the application's lifecycle configuration.
-The function will be passed an argument containing a `PruningApplication` object which contains the application's data. The `PruningNotification` object has `externalBody`, `internalBody` and `notificationTemplateId`. The former two can be used to fill in the values for the `externalBody` and `internalBody` template variables in the notification that will be sent to the user. The `notificationTemplateId` is the id of the notification template that will be used to send the notification. It is up to the user whether to use the body variables or not.
+When executed, the function will be passed an argument that is a `PruningApplication` object which contains the application's data. The `PruningNotification` object has `externalBody`, `internalBody` and `notificationTemplateId`. The former two can be used to fill in the values for the `externalBody` and `internalBody` template variables in the notification that will be sent to the user. The `notificationTemplateId` is the id of the notification template that will be used to send the notification. It is up to the user whether to use the body variables or not.
 
-For example an application might want to send a notification when an application that was in the draft stage was pruned. Here is an example of how that might be accimplished in the application template:
+For example an application might want to send a notification when an application that was in the draft stage was pruned. Here is an example of how that might be accomplished in the application template:
 
 ```typescript
 stateMachineConfig: {
@@ -15,8 +15,7 @@ stateMachineConfig: {
       [States.DRAFT]: {
         meta: {
           name: application.general.name.defaultMessage,
-          progress: 0.4,
-          lifecycle: defaultLifecycleWithPruneMessage((application: any) => ({
+          lifecycle: defaultLifecycleWithPruneMessage((application: PruningApplication) => ({
             externalBody: `Application has been in draft for more than 30 days and has been pruned.`,
             internalBody: `Application for ${application.externalData.nationalRegistry.data.fullName} has been in draft for more than 30 days. Please note that if desired the application may be re-submitted.`,
             notificationTemplateId: 'HNIPP.AS.*',
