@@ -49,7 +49,7 @@ export const dataSchema = z.object({
     .refine((value) => {
       return value.length > 0
     }),
-  email: z.string().email(),
+  email: z.string().optional(),
   phone: z.string().refine((v) => isValidPhoneNumber(v)),
   drivingInstructor: z.string().min(1),
   otherCountry: z

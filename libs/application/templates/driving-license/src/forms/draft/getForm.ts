@@ -28,8 +28,12 @@ export const draft: Form = buildForm({
       title: m.informationTitle,
       children: [
         subSectionApplicantInfo,
+
+        /* Erlent ökuskírteini tékk - Bráðabirgðaskírteini */
         subSectionOtherCountry,
         subSectionOtherCountryDirections,
+        /* ----------------------------------------------- */
+        
         subSectionQualityPhoto,
         subSectionDelivery,
         subSectionHealthDeclaration,
