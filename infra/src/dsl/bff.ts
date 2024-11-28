@@ -16,17 +16,21 @@ const sanitizePath = (path: string) => path.replace(/^\/+|\/+$/g, '')
 
 export const getScopes = (key: PortalKeys) => {
   switch (key) {
-    case MINAR_SIDUR:
+    case MINAR_SIDUR: {
       const combinedScopes = new Set([
         ...servicePortalScopes,
         ...applicationSystemScopes,
       ])
 
       return [...combinedScopes]
-    case STJORNBORD:
+    }
+
+    case STJORNBORD: {
       const uniqueScopes = new Set([...servicePortalScopes])
 
       return [...uniqueScopes]
+    }
+
     default:
       throw new Error('Invalid BFF client')
   }
@@ -50,6 +54,11 @@ export const bffConfig = ({
 
     return `https://${domain}`
   }
+
+  const getRedirectUris = (baseUrl: string, key: PortalKeys) => [
+    baseUrl,
+    ...(key === MINAR_SIDUR ? [`${baseUrl}/umsoknir`] : []),
+  ]
 
   return {
     env: {
@@ -81,9 +90,9 @@ export const bffConfig = ({
           // This is a special case for minarsidur, since it serves two applications
           ...(key === MINAR_SIDUR ? ['http://localhost:4242/umsoknir'] : []),
         ]),
-        dev: ref((ctx) => json([getBaseUrl(ctx)])),
-        staging: ref((ctx) => json([getBaseUrl(ctx)])),
-        prod: json(['https://island.is']),
+        dev: ref((ctx) => json(getRedirectUris(getBaseUrl(ctx), key))),
+        staging: ref((ctx) => json(getRedirectUris(getBaseUrl(ctx), key))),
+        prod: json(getRedirectUris(`https://island.is/${key}`, key)),
       },
       BFF_LOGOUT_REDIRECT_URI: {
         local: `http://localhost:4200/${key}`,
