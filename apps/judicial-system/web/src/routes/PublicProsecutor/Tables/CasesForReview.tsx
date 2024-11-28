@@ -45,6 +45,10 @@ const CasesForReview: FC<CasesForReviewTableProps> = ({ loading, cases }) => {
               thead={[
                 {
                   title: formatMessage(tables.caseNumber),
+                  sortable: {
+                    isSortable: true,
+                    key: 'courtCaseNumber',
+                  },
                 },
                 {
                   title: capitalize(
