@@ -2,7 +2,7 @@ import { FC } from 'react'
 import { useIntl } from 'react-intl'
 import { AnimatePresence } from 'framer-motion'
 
-import { Text } from '@island.is/island-ui/core'
+import { Tag, Text } from '@island.is/island-ui/core'
 import {
   capitalize,
   districtCourtAbbreviation,
@@ -22,7 +22,10 @@ import TableInfoContainer from '@island.is/judicial-system-web/src/components/Ta
 import TagCaseState, {
   mapIndictmentCaseStateToTagVariant,
 } from '@island.is/judicial-system-web/src/components/TagCaseState/TagCaseState'
-import { CaseListEntry } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  CaseIndictmentRulingDecision,
+  CaseListEntry,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { strings } from './CasesForReview.strings'
 
@@ -59,6 +62,7 @@ const CasesForReview: FC<CasesForReviewTableProps> = ({ loading, cases }) => {
                     key: 'defendants',
                   },
                 },
+                { title: formatMessage(tables.type) },
                 { title: formatMessage(tables.state) },
                 { title: formatMessage(tables.prosecutorName) },
                 {
@@ -70,9 +74,9 @@ const CasesForReview: FC<CasesForReviewTableProps> = ({ loading, cases }) => {
                 },
               ]}
               data={cases}
-              generateContextMenuItems={(row) => {
-                return [openCaseInNewTabMenuItem(row.id)]
-              }}
+              generateContextMenuItems={(row) => [
+                openCaseInNewTabMenuItem(row.id),
+              ]}
               columns={[
                 {
                   cell: (row) => {
@@ -93,6 +97,18 @@ const CasesForReview: FC<CasesForReviewTableProps> = ({ loading, cases }) => {
                 },
                 {
                   cell: (row) => <DefendantInfo defendants={row.defendants} />,
+                },
+                {
+                  cell: (row) => (
+                    <Tag variant="darkerBlue" outlined disabled>
+                      {formatMessage(
+                        row.indictmentRulingDecision ===
+                          CaseIndictmentRulingDecision.FINE
+                          ? tables.fineTag
+                          : tables.rulingTag,
+                      )}
+                    </Tag>
+                  ),
                 },
                 {
                   cell: (row) => (

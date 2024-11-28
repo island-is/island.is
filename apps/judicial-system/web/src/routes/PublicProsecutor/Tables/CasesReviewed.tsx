@@ -103,14 +103,15 @@ const CasesReviewed: FC<Props> = ({ loading, cases }) => {
                   ),
                   sortable: { isSortable: true, key: 'defendants' },
                 },
+                { title: formatMessage(tables.type) },
                 { title: formatMessage(tables.reviewDecision) },
                 { title: formatMessage(tables.verdictViewState) },
                 { title: formatMessage(tables.prosecutorName) },
               ]}
               data={cases}
-              generateContextMenuItems={(row) => {
-                return [openCaseInNewTabMenuItem(row.id)]
-              }}
+              generateContextMenuItems={(row) => [
+                openCaseInNewTabMenuItem(row.id),
+              ]}
               columns={[
                 {
                   cell: (row) => {
@@ -131,6 +132,18 @@ const CasesReviewed: FC<Props> = ({ loading, cases }) => {
                 },
                 {
                   cell: (row) => <DefendantInfo defendants={row.defendants} />,
+                },
+                {
+                  cell: (row) => (
+                    <Tag variant="darkerBlue" outlined disabled>
+                      {formatMessage(
+                        row.indictmentRulingDecision ===
+                          CaseIndictmentRulingDecision.FINE
+                          ? tables.fineTag
+                          : tables.rulingTag,
+                      )}
+                    </Tag>
+                  ),
                 },
                 {
                   cell: (row) => (
