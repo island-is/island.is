@@ -23,6 +23,8 @@ jobs:
       - name: Check unicorn affected
         id: unicorn-affected
         run: |
+          yarn nx show projects --base origin/main --affected
+          yarn is-unicorn
           UNICORN=$(yarn is-unicorn)
           if [ "$UNICORN" == 'true' ]; then
               echo "unicorn is detected"
