@@ -67,7 +67,7 @@ jobs:
   create-revert-pr:
     name: Automated PR revert
     needs: detect-failure
-    if: ${{ needs.fetch-pr.outputs.PR_NUMBER && github.event.workflow_run.conclusion == 'failure' }}
+    if: ${{ needs.detect-failure.outputs.PR_NUMBER && github.event.workflow_run.conclusion == 'failure' }}
     runs-on: ubuntu-latest
     steps:
       - name: Debug
