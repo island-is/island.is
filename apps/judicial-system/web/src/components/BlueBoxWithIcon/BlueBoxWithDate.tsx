@@ -348,7 +348,7 @@ const BlueBoxWithDate: FC<Props> = (props) => {
             size="small"
             disabled={
               !workingCase.indictmentReviewDecision ||
-              (!isFine && !defendant.verdictViewDate)
+              (!isFine && !defendant.verdictViewDate && serviceRequired)
             }
           >
             {formatMessage(strings.sendToPrisonAdmin)}
