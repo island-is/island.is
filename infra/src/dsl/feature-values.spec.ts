@@ -127,7 +127,7 @@ describe('Feature-deployment support', () => {
       BFF_GLOBAL_PREFIX: `/stjornbord/bff`,
       BFF_PAR_SUPPORT_ENABLED: 'true',
       BFF_ALLOWED_REDIRECT_URIS: json([
-        'https://feature-A-beta.dev01.devland.is',
+        'https://feature-A-beta.dev01.devland.is/stjornbord',
       ]),
       BFF_CLIENT_BASE_URL: 'https://feature-A-beta.dev01.devland.is',
       BFF_LOGOUT_REDIRECT_URI: 'https://feature-A-beta.dev01.devland.is',

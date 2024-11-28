@@ -159,7 +159,7 @@ describe('BFF PortalEnv serialization', () => {
       BFF_NAME: 'stjornbord',
       BFF_GLOBAL_PREFIX: `/${key}/bff`,
       BFF_PAR_SUPPORT_ENABLED: 'true',
-      BFF_ALLOWED_REDIRECT_URIS: json(['https://beta.dev01.devland.is']),
+      BFF_ALLOWED_REDIRECT_URIS: json([`https://beta.dev01.devland.is/${key}`]),
       BFF_CLIENT_BASE_PATH: `/${key}`,
       BFF_CLIENT_BASE_URL: 'https://beta.dev01.devland.is',
       BFF_LOGOUT_REDIRECT_URI: 'https://beta.dev01.devland.is',
