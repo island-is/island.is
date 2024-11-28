@@ -87,3 +87,8 @@ export const pruneAfterDays = (Days: number): StateLifeCycle => {
     whenToPrune: Days * 24 * 3600 * 1000,
   }
 }
+
+export enum UserRole {
+  LANDLORD = 'landlord',
+  TENANT = 'tenant',
+}

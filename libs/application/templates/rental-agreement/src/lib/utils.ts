@@ -10,6 +10,7 @@ import {
   RentOtherFeesPayeeOptions,
   SecurityDepositTypeOptions,
   SecurityDepositAmountOptions,
+  UserRole,
 } from './constants'
 import * as m from './messages'
 import format from 'date-fns/format'
@@ -239,5 +240,16 @@ export const getRentalOtherFeesPayeeOptions = () => [
   {
     value: RentOtherFeesPayeeOptions.TENANT,
     label: m.otherFees.paidByTenantLabel,
+  },
+]
+
+export const getUserRoleOptions = [
+  {
+    label: m.userRole.landlordOptionLabel,
+    value: UserRole.LANDLORD,
+  },
+  {
+    label: m.userRole.tenantOptionLabel,
+    value: UserRole.TENANT,
   },
 ]
