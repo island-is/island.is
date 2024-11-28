@@ -15,6 +15,7 @@ import { useLinkResolver } from '@island.is/web/hooks'
 import { useI18n } from '@island.is/web/i18n'
 import { getBackgroundStyle } from '@island.is/web/utils/organization'
 
+import { StandaloneAlertBanner } from './components/AlertBanner'
 import { Header, HeaderProps } from './components/Header'
 import { Navigation, NavigationProps } from './components/Navigation'
 
@@ -204,6 +205,7 @@ export const StandaloneLayout = ({
         }
       />
       <PageLoader />
+      <StandaloneAlertBanner alertBanner={organizationPage.alertBanner} />
       <Navigation {...navigationProps} />
       <Header {...headerProps} />
       <Box component="main" id="main-content" paddingY={8}>
