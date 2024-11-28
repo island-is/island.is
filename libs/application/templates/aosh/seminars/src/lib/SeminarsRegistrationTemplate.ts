@@ -21,6 +21,7 @@ import { Features } from '@island.is/feature-flags'
 import { Roles, States, Events } from './constants'
 import { SeminarAnswersSchema } from './dataSchema'
 import {
+  getSeminarsApi,
   IdentityApi,
   MockableVinnueftirlitidPaymentCatalogApi,
   VinnueftirlitidPaymentCatalogApi,
@@ -97,6 +98,7 @@ const template: ApplicationTemplate<
                 UserProfileApi,
                 VinnueftirlitidPaymentCatalogApi,
                 MockableVinnueftirlitidPaymentCatalogApi,
+                getSeminarsApi,
               ],
             },
           ],
