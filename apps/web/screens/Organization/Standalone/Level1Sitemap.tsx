@@ -44,7 +44,12 @@ const StandaloneLevel1Sitemap: Screen<
   StandaloneLevel1SitemapScreenContext
 > = ({ organizationPage, categoryTitle, items }) => {
   return (
-    <StandaloneLayout organizationPage={organizationPage}>
+    <StandaloneLayout
+      organizationPage={organizationPage}
+      seo={{
+        title: `${categoryTitle} | ${organizationPage.title}`,
+      }}
+    >
       <GridContainer>
         <GridRow>
           <GridColumn span={['9/9', '9/9', '7/9']} offset={['0', '0', '1/9']}>

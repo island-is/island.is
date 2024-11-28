@@ -68,7 +68,12 @@ const StandaloneParentSubpage: Screen<
   const { linkResolver } = useLinkResolver()
 
   return (
-    <StandaloneLayout organizationPage={organizationPage}>
+    <StandaloneLayout
+      organizationPage={organizationPage}
+      seo={{
+        title: `${subpage.title} | ${organizationPage.title}`,
+      }}
+    >
       <GridContainer>
         <GridRow>
           <GridColumn span={['9/9', '9/9', '7/9']} offset={['0', '0', '1/9']}>
