@@ -1,3 +1,4 @@
+import { setupShutdownHooks } from '@island.is/node-utils'
 import express, { Router, Request, Response, NextFunction } from 'express'
 import { collectDefaultMetrics, Histogram } from 'prom-client'
 import { metricsApp } from './metrics-publisher'
@@ -8,23 +9,6 @@ type RunServerParams = {
   name: string
   publicRoutes?: Router
   port?: number
-}
-
-const setupExitHook = () => {
-  // Make sure the server doesn't hang after parent process disconnects, eg when
-  // e2e tests are finished.
-  if (process.env.NX_INVOKED_BY_RUNNER === 'true') {
-    process.on('disconnect', () => {
-      process.exit(0)
-    })
-  }
-
-  for (const signal of ['SIGHUP', 'SIGINT', 'SIGTERM']) {
-    process.on(signal, () => {
-      logger.warning(`Received ${signal}, exiting...`)
-      process.exit(0)
-    })
-  }
 }
 
 export const runServer = ({
@@ -101,7 +85,7 @@ export const runServer = ({
   const server = app.listen(servicePort, () => {
     logger.info(`Listening on port ${servicePort}`)
   })
+  setupShutdownHooks(server)
   server.on('error', logger.error)
-  setupExitHook()
   return server
 }
