@@ -9,8 +9,6 @@ defaults:
     shell: bash
 jobs:
   check-unicorn:
-    needs:
-      - prepare
     name: Check if app is on unicorn track
     runs-on: ec2-runners
     container:
@@ -20,6 +18,24 @@ jobs:
     outputs:
       IS_UNICORN: ${{ steps.unicorn-affected.outputs.IS_UNICORN }}
     steps:
+      - name: Get cache
+        id: get-cache
+        uses: ./.github/actions/get-cache
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          enable-cache: 'node_modules,generated-files'
+
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: 'package.json'
+
+      - name: Setup yarn
+        run: corepack enable
+
       - name: Check unicorn affected
         id: unicorn-affected
         run: |
@@ -34,28 +50,5 @@ jobs:
               echo IS_UNICORN=false >> "$GITHUB_OUTPUT"
           fi
 
-  prepare:
-    runs-on: ec2-runners
-    container:
-      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
-    timeout-minutes: 35
-    strategy:
-      fail-fast: false
-    steps:
-      - uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
 
-      - uses: actions/setup-node@v4
-        with:
-          node-version-file: 'package.json'
 
-      - name: Setup yarn
-        run: corepack enable
-
-      - name: Get cache
-        id: get-cache
-        uses: ./.github/actions/get-cache
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          enable-cache: 'node_modules,generated-files'
