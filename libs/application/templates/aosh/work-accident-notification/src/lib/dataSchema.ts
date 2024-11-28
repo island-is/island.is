@@ -209,7 +209,7 @@ export const WorkAccidentNotificationAnswersSchema = z.object({
   employeeAmount: z.number().min(1),
 })
 
-export type WorkAccidentNotification = z.TypeOf<
+export type WorkAccidentNotificationAnswers = z.TypeOf<
   typeof WorkAccidentNotificationAnswersSchema
 >
 export type BasicCompanyType = z.TypeOf<typeof basicCompanySchema>
