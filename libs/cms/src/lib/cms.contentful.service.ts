@@ -1194,7 +1194,7 @@ export class CmsContentfulService {
       .getLocalizedEntries<types.IOrganizationPageFields>(input.lang, params)
       .catch(errorHandler('getOrganizationPageStandaloneSitemapLevel1'))
 
-    const tree = response.items[0].fields.sitemap?.fields.tree as SitemapTree
+    const tree = response.items?.[0]?.fields.sitemap?.fields.tree as SitemapTree
 
     if (!tree) {
       return null
@@ -1253,9 +1253,16 @@ export class CmsContentfulService {
         1,
       )
 
+    const entryIdsToRemove: string[] = []
+
     for (const parentSubpage of parentSubpageResponse.items) {
       const nodeList = entryNodes.get(parentSubpage.sys.id)
-      if (!nodeList) {
+      if (
+        !nodeList ||
+        !parentSubpage.fields.slug ||
+        !parentSubpage.fields.title
+      ) {
+        entryIdsToRemove.push(parentSubpage.sys.id)
         continue
       }
       for (const node of nodeList) {
@@ -1265,6 +1272,11 @@ export class CmsContentfulService {
         }/${parentSubpage.fields.slug}`
       }
     }
+
+    // Remove entries from result that could not be resolved to their label or href
+    result.childLinks = result.childLinks.filter((link) =>
+      entryIdsToRemove.includes(link.label),
+    )
 
     return result
   }
