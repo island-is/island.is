@@ -80,7 +80,22 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     [],
   ) as IncomePlanRow[]
 
-  return { incomePlan }
+  const temporaryCalculationMonth = getValueViaPath(
+    answers,
+    'temporaryCalculation.month',
+  ) as string
+
+  const temporaryCalculationShow = getValueViaPath(
+    answers,
+    'temporaryCalculation.show',
+    false,
+  ) as boolean
+
+  return {
+    incomePlan,
+    temporaryCalculationMonth,
+    temporaryCalculationShow,
+  }
 }
 
 export const getOneInstanceOfCategory = (

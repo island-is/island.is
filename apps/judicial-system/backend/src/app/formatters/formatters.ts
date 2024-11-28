@@ -5,7 +5,6 @@ import {
   DEFENDER_ROUTE,
 } from '@island.is/judicial-system/consts'
 import {
-  capitalize,
   enumerate,
   formatCaseType,
   formatDate,
@@ -14,11 +13,7 @@ import {
   laws,
   readableIndictmentSubtypes,
 } from '@island.is/judicial-system/formatters'
-import {
-  AdvocateType,
-  Gender,
-  UserRole,
-} from '@island.is/judicial-system/types'
+import { Gender, UserRole } from '@island.is/judicial-system/types'
 import {
   CaseCustodyRestrictions,
   CaseLegalProvisions,

@@ -25,7 +25,7 @@ import { UserAgent } from '@island.is/nest/core'
 import { enableAppCompatibilityMode } from '../utils/appCompatibilityMode'
 import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
 
-const APP_VERSION_CUTOFF = '1.4.8'
+const APP_VERSION_CUTOFF = '1.4.7'
 
 @Injectable()
 export class FirearmLicensePayloadMapper implements GenericLicenseMapper {

@@ -1,5 +1,10 @@
 import { json, service, ServiceBuilder } from '../../../../../infra/src/dsl/dsl'
-import { Base, Client, RskProcuring } from '../../../../../infra/src/dsl/xroad'
+import {
+  Base,
+  Client,
+  NationalRegistryAuthB2C,
+  RskProcuring,
+} from '../../../../../infra/src/dsl/xroad'
 
 const REDIS_NODE_CONFIG = {
   dev: json([
@@ -62,8 +67,10 @@ export const serviceSetup =
           '/k8s/services-auth/IDENTITY_SERVER_CLIENT_SECRET',
         SYSLUMENN_USERNAME: '/k8s/services-auth/SYSLUMENN_USERNAME',
         SYSLUMENN_PASSWORD: '/k8s/services-auth/SYSLUMENN_PASSWORD',
+        NATIONAL_REGISTRY_B2C_CLIENT_SECRET:
+          '/k8s/services-auth/NATIONAL_REGISTRY_B2C_CLIENT_SECRET',
       })
-      .xroad(Base, Client, RskProcuring)
+      .xroad(Base, Client, RskProcuring, NationalRegistryAuthB2C)
       .ingress({
         primary: {
           host: {
