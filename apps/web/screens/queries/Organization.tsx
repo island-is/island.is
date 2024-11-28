@@ -422,6 +422,7 @@ export const GET_ORGANIZATION_PARENT_SUBPAGE_QUERY = gql`
     $input: GetOrganizationParentSubpageInput!
   ) {
     getOrganizationParentSubpage(input: $input) {
+      id
       title
       childLinks {
         label
