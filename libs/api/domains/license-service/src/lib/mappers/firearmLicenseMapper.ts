@@ -29,18 +29,13 @@ const APP_VERSION_CUTOFF = '1.4.8'
 
 @Injectable()
 export class FirearmLicensePayloadMapper implements GenericLicenseMapper {
-  constructor(
-    private readonly intlService: IntlService,
-    @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
-  ) {}
+  constructor(private readonly intlService: IntlService) {}
   async parsePayload(
     payload: Array<unknown>,
     locale: Locale = 'is',
     userAgent?: UserAgent,
   ): Promise<Array<GenericLicenseMappedPayloadResponse>> {
     if (!payload) return Promise.resolve([])
-
-    this.logger.info('USER INFO AGENT VERSION', userAgent?.app?.version)
 
     //App version before 1.4.8 doesn't know how to handle table
     const enableAppCompatibility = enableAppCompatibilityMode(
@@ -114,23 +109,11 @@ export class FirearmLicensePayloadMapper implements GenericLicenseMapper {
                   formatMessage,
                 )
               : null,
-            properties && enableAppCompatibility
-              ? {
-                  type: GenericLicenseDataFieldType.Group,
-                  hideFromServicePortal: true,
-                  label: formatMessage(m.firearmProperties),
-                  fields: (properties.properties ?? []).map((property) => ({
-                    type: GenericLicenseDataFieldType.Category,
-                    fields: this.parseProperties(
-                      property,
-                      formatMessage,
-                    )?.filter(isDefined),
-                  })),
-                }
-              : null,
             properties
               ? {
-                  type: GenericLicenseDataFieldType.Table,
+                  type: enableAppCompatibility
+                    ? GenericLicenseDataFieldType.Group
+                    : GenericLicenseDataFieldType.Table,
                   label: formatMessage(m.firearmProperties),
                   fields: (properties.properties ?? []).map((property) => ({
                     type: GenericLicenseDataFieldType.Category,
