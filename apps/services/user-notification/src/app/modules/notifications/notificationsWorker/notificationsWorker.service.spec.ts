@@ -110,7 +110,6 @@ describe('NotificationsWorkerService', () => {
       ],
     })
 
-
     sequelize = await app.resolve(getConnectionToken() as Type<Sequelize>)
     notificationDispatch = app.get(NotificationDispatchService)
     emailService = app.get(EmailService)
@@ -120,7 +119,7 @@ describe('NotificationsWorkerService', () => {
     userProfileApi = app.get(V2UsersApi)
     nationalRegistryService = app.get(NationalRegistryV3ClientService)
     companyRegistryService = app.get(CompanyRegistryClientService)
-    
+
     notificationsWorkerService = await app.resolve(NotificationsWorkerService)
     notificationsWorkerService.run()
   })
