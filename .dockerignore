@@ -13,6 +13,7 @@
 # **/cache/
 /.yarn/cache/
 /cache*
+/.cache/
 
 # Logs and temporaries
 **/log/
