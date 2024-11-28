@@ -1,31 +1,8 @@
-# vi: ft=gitignore
-
-# Known ignores
-/.github/
-/.git/
-/scripts/ci/
-/.env.*
-/.envrc*
-
-# Cache and packages
-**/node_modules/
-**/cache/
+node_modules/
+dist/
+scripts/ci/
 /cache*
-
-# Logs and temporaries
-**/log/
-**/*.log
-**/tmp/
-**/temp/
-
-# Outputs
-**/dist/
-**/out/
-
-# Docker-stuff
-**/Dockerfile
-**/Dockerfile.*
-**/Containerfile
-**/Containerfile.*
-**/*-compose.yaml
-**/*-compose.yml
+cache/
+.git/
+log/
+*.log
