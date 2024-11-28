@@ -87,9 +87,14 @@ const landlordInfo = z.object({
         .object({
           nationalIdWithName: z.object({
             name: z.string().optional(),
-            nationalId: z.string().refine((x) => !!x && x.trim().length > 0, {
-              params: m.landlordDetails.landlordNationalIdEmptyError,
-            }),
+            nationalId: z
+              .string()
+              .refine((x) => !!x && x.trim().length > 0, {
+                params: m.landlordDetails.landlordNationalIdEmptyError,
+              })
+              .refine((x) => (x ? kennitala.isPerson(x) : false), {
+                params: m.landlordDetails.landlordNationalIdNotFoundError,
+              }),
           }),
           phone: z.string().optional(),
           email: z.string().optional(),

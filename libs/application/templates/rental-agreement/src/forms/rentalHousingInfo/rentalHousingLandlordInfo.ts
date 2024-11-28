@@ -31,7 +31,8 @@ export const RentalHousingLandlordInfo = buildSubSection({
             nationalIdWithName: {
               component: 'nationalIdWithName',
               options: (application, activeField) => {
-                console.log('Application: ', application.answers.landlordInfo)
+                console.log('ExternalData: ', application.externalData)
+                console.log('AppAnswers: ', application.answers.landlordInfo)
                 console.log('ActiveField', activeField?.nationalIdWithName)
                 return []
               },

@@ -75,4 +75,10 @@ export const landlordDetails = defineMessages({
     defaultMessage: 'Kennitala leigusala má ekki vera tómt',
     description: 'Landlord details national id empty error',
   },
+  landlordNationalIdNotFoundError: {
+    id: 'ra.application:landlordDetails.landlordNationalIdNotFoundError',
+    defaultMessage:
+      'Enginn aðili í Þjóðskrá hefur þessa kennitölu. Aðilar leigusamnings verða að hafa kennitölu til að geta undirritað samning rafrænt.',
+    description: 'Landlord details national id not found error',
+  },
 })
