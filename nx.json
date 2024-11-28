@@ -146,11 +146,19 @@
     }
   },
   "namedInputs": {
-    "default": ["{projectRoot}/**/*", "sharedGlobals"],
+    "default": ["{projectRoot}/**/*", "sharedGlobals", "docker-stuff", "CI"],
     "nodeVersion": [
       {
         "runtime": "node --version"
       }
+    ],
+    "CI": [
+      "{workspaceRoot}/.github/actions/",
+      "{workspaceRoot}/.github/workflows/"
+    ],
+    "docker-stuff": [
+      "{workspaceRoot}/**/Dockerfile",
+      "{workspaceRoot}/**/Dockerfile.*"
     ],
     "sharedGlobals": [
       "{workspaceRoot}/eslint-local-rules.js",
