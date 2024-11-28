@@ -41,9 +41,9 @@ export const ApplicantsRepresentativesSummary = ({ answers }: Props) => {
           <SummarySection
             sectionLabel={formatMessage(summary.landlordsRepresentativeLabel)}
           >
-            {landlordRepresentatives.map((landlordRep) => {
+            {landlordRepresentatives.map((landlordRep, index) => {
               return (
-                <Fragment key={crypto.randomUUID()}>
+                <Fragment key={`${index}_${landlordRep.nationalId}`}>
                   <GridRow className={gridRow}>
                     <GridColumn span={['12/12']}>
                       <KeyValue
@@ -81,9 +81,9 @@ export const ApplicantsRepresentativesSummary = ({ answers }: Props) => {
           <SummarySection
             sectionLabel={formatMessage(summary.tenantsRepresentativeLabel)}
           >
-            {tenantRepresentatives.map((tenantRep) => {
+            {tenantRepresentatives.map((tenantRep, index) => {
               return (
-                <Fragment key={crypto.randomUUID()}>
+                <Fragment key={`${index}_${tenantRep.nationalId}`}>
                   <GridRow className={gridRow}>
                     <GridColumn span={['12/12']}>
                       <KeyValue
