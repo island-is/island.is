@@ -114,12 +114,11 @@ export const attributes: (keyof Case)[] = [
 export interface LimitedAccessUpdateCase
   extends Pick<
     Case,
-    | 'accusedPostponedAppealDate'
-    | 'appealState'
-    | 'defendantStatementDate'
-    | 'openedByDefender'
-    | 'appealRulingDecision'
-  > {}
+    'defendantStatementDate' | 'openedByDefender' | 'appealRulingDecision'
+  > {
+  appealState?: CaseAppealState | null
+  accusedPostponedAppealDate?: Date | null
+}
 
 export const include: Includeable[] = [
   { model: Institution, as: 'prosecutorsOffice' },
