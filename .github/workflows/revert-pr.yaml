@@ -1,31 +1,80 @@
-name: Auto Revert on Failed Checks
+name: Checksuit
 
 on:
-  check_suite:
-    types: [completed]
+  workflow_run:
+    workflows:
+      - Monorepo pipeline - build and deploy
+    types:
+      - completed
+    branches:
+      - main
+  pull_request:
+    types:
+      - labeled
 
 permissions:
   contents: write
   pull-requests: write
 
+env:
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  IS_REVERT: ${{ contains(github.event.pull_request.labels.*.name, 'revert') }}
+
 jobs:
-  auto-revert:
-    name: Revert PR
+  detect-failure:
+    name: Determine Failure
+    if: ${{ github.event.workflow_run.conclusion == 'failure' }}
     runs-on: ec2-runners
+    outputs:
+      PR_NUMBER: ${{ steps.fetch-pr.outputs.PR_NUMBER }}
     container:
       image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
-    # if: github.event.pull_request.merged == true && github.event.workflow_run.conclusion == 'failure'
     steps:
       - uses: actions/checkout@v4
 
       - name: Debug
         run: |
-          echo '${{ toJson(github.event.check_suit.conclusion) }}'
-      - name: Create Revert PR
-        if: false
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          echo "Conclusion: ${{ github.event.workflow_run.conclusion }}"
+
+      - name: Fetch PR
+        id: fetch-pr
         run: |
-          echo ${{ github.event.workflow_run.conclusion }}
-          REVERT_PR=$(bash ./scripts/ci/revert-pr.sh "${{ github.event.pull_request.number }}")
+          COMMIT_SHA="${{ github.event.workflow_run.head_commit.id }}"
+          PR_NUMBER=$(bash ./scripts/ci/get-pr.sh "$COMMIT_SHA")
+
+          if [ -n "$PR_NUMBER" ]; then
+            echo "PR_NUMBER=$PR_NUMBER" >> $GITHUB_OUTPUT
+          else
+            echo "No merged PR found for commit $COMMIT_SHA."
+          fi
+
+      - name: Add Revert Label
+        id: add-revert-label
+        if: ${{ steps.fetch-pr.outputs.PR_NUMBER && github.event.workflow_run.conclusion == 'failure' }}
+        run: |
+          PR_NUMER=${{ steps.fetch-pr.outputs.PR_NUMBER }}
+          echo "Adding revert label to PR: $PR_NUMBER"
+          gh pr edit "$PR_NUMBER" --add-label "revert"
+
+  create-revert-pr:
+    name: Create Revert PR
+    needs: detect-failure
+    if: ${{ steps.fetch-pr.outputs.PR_NUMBER && github.event.workflow_run.conclusion == 'failure' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Create Revert PR
+        run: |
+          echo "Reverting PR: ${{ steps.fetch-pr.outputs.PR_NUMBER }}"
+          REVERT_PR=$(bash ./scripts/ci/revert-pr.sh "${{ steps.fetch-pr.outputs.PR_NUMBER }}")
           gh pr edit $REVERT_PR --add-label "automerge,high priority"
+
+  manual-revert-pr:
+    name: Handle Manual Revert Label
+    if: ${{ github.event_name == 'pull_request' && env.IS_REVERT && github.event.pull_request.merged == true }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Create Revert PR
+        run: |
+          echo "Reverting PR: ${{ github.event.pull_request.number }}"
+          # REVERT_PR=$(bash ./scripts/ci/revert-pr.sh "${{ github.event.pull_request.number }}")
+          # gh pr edit $REVERT_PR --add-label "automerge,high priority"
