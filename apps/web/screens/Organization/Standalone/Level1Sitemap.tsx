@@ -14,6 +14,7 @@ import {
   QueryGetOrganizationPageArgs,
   QueryGetOrganizationPageStandaloneSitemapLevel1Args,
 } from '@island.is/web/graphql/schema'
+import useContentfulId from '@island.is/web/hooks/useContentfulId'
 import { StandaloneLayout } from '@island.is/web/layouts/organization/standalone'
 import type { Screen, ScreenContext } from '@island.is/web/types'
 import { CustomNextError } from '@island.is/web/units/errors'
@@ -24,6 +25,11 @@ import {
 } from '../../queries'
 
 const GRID_COLUMN_SPAN: SpanType = ['1/1', '1/1', '1/1', '1/2', '1/3']
+
+const LanguageToggleSetup = (props: { ids: string[] }) => {
+  useContentfulId(...props.ids)
+  return null
+}
 
 type StandaloneLevel1SitemapScreenContext = ScreenContext & {
   organizationPage?: Query['getOrganizationPage']
@@ -50,6 +56,7 @@ const StandaloneLevel1Sitemap: Screen<
         title: `${categoryTitle} | ${organizationPage.title}`,
       }}
     >
+      <LanguageToggleSetup ids={[organizationPage.id]} />
       <GridContainer>
         <GridRow>
           <GridColumn span={['9/9', '9/9', '7/9']} offset={['0', '0', '1/9']}>
