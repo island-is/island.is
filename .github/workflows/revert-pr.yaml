@@ -58,26 +58,34 @@ jobs:
           gh pr edit "$PR_NUMBER" --add-label "revert"
 
   create-revert-pr:
-    name: Create Revert PR
+    name: Automated PR revert
     needs: detect-failure
     if: ${{ needs.fetch-pr.outputs.PR_NUMBER && github.event.workflow_run.conclusion == 'failure' }}
     runs-on: ubuntu-latest
     steps:
-      - name: Create Revert PR
+      - name: Debug
         run: |
           PR_NUMBER=${{ needs.fetch-pr.outputs.PR_NUMBER }}
           echo "Reverting PR: $PR_NUMBER"
+
+      - name: Execute PR revert
+        if: ${{ vars.ENABLE_PR_REVERT == 'true' }}
+        run: |
           REVERT_PR=$(bash ./scripts/ci/revert-pr.sh "$PR_NUMBER")
           gh pr edit $REVERT_PR --add-label "automerge,high priority"
 
   manual-revert-pr:
-    name: Handle Manual Revert Label
+    name: Manual PR revert
     if: ${{ github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'revert') && (github.event.pull_request.merged == true || github.event.pull_request.draft == true) && github.actor != 'github-actions' }}
     runs-on: ubuntu-latest
     steps:
-      - name: Create Revert PR
+      - name: Debug
         run: |
           echo "actor: ${{ github.actor }}"
           echo "Reverting PR: ${{ github.event.pull_request.number }}"
-          # REVERT_PR=$(bash ./scripts/ci/revert-pr.sh "${{ github.event.pull_request.number }}")
-          # gh pr edit $REVERT_PR --add-label "automerge,high priority"
+
+      - name: Execute PR revert
+        if: ${{ vars.ENABLE_PR_REVERT == 'true' }}
+        run: |
+          REVERT_PR=$(bash ./scripts/ci/revert-pr.sh "${{ github.event.pull_request.number }}")
+          gh pr edit $REVERT_PR --add-label "automerge,high priority"
