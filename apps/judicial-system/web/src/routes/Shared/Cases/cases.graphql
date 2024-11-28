@@ -34,6 +34,9 @@ query Cases {
     initialRulingDate
     rulingDate
     rulingSignatureDate
+    court {
+      name
+    }
     judge {
       id
       created
