@@ -174,11 +174,11 @@ export class ApplicationLifeCycleService {
         args: [
           {
             key: 'externalBody',
-            value: pruneMessage.externalBody,
+            value: pruneMessage.externalBody || '',
           },
           {
             key: 'internalBody',
-            value: pruneMessage.internalBody,
+            value: pruneMessage.internalBody || '',
           },
         ],
       }
