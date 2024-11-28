@@ -49,6 +49,3 @@ jobs:
               echo "No unicorn"
               echo IS_UNICORN=false >> "$GITHUB_OUTPUT"
           fi
-
-
-
