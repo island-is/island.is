@@ -1250,6 +1250,7 @@ export class CmsContentfulService {
           'sys.id[in]': Array.from(entryNodes.keys()).join(','),
           limit: 1000,
         },
+        1,
       )
 
     for (const parentSubpage of parentSubpageResponse.items) {
