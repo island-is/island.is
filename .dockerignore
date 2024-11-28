@@ -9,7 +9,9 @@
 
 # Cache and packages
 **/node_modules/
-**/cache/
+# Ignoring _all_ cache folders dosen't work, because we have libraries named `cache`
+# **/cache/
+/.yarn/cache/
 /cache*
 
 # Logs and temporaries
