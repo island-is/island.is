@@ -9,14 +9,7 @@ import { sectionRequirements } from './sectionRequirements'
 import { sectionExistingApplication } from './sectionExistingApplication'
 import { sectionDigitalLicenseInfo } from './sectionDigitalLicenseInfo'
 import { sectionAdvancedLicenseSelection } from './sectionAdvancedLicenseSelection'
-
-interface DrivingLicenseFormConfig {
-  allowFakeData?: boolean
-  allowPickLicense?: boolean
-  allowBELicense?: boolean
-  allow65Renewal?: boolean
-  allowAdvanced?: boolean
-}
+import { DrivingLicenseFormConfig } from '../../lib/constants'
 
 export const getForm = ({
   allowFakeData = false,
@@ -65,7 +58,7 @@ export const getForm = ({
         children: [],
       }),
       buildSection({
-        id: 'confirm',
+        id: 'done',
         title: m.applicationDone,
         children: [],
       }),

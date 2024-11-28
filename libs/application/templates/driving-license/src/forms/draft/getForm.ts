@@ -42,11 +42,6 @@ export const draft: Form = buildForm({
       children: [],
     }),
     buildSection({
-      id: 'confirm',
-      title: m.overviewSectionTitle,
-      children: [],
-    }),
-    buildSection({
       id: 'done',
       title: m.applicationDone,
       children: [],

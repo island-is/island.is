@@ -37,6 +37,14 @@ export enum Pickup {
   'DISTRICT' = 'district',
 }
 
+export interface DrivingLicenseFormConfig {
+  allowFakeData?: boolean
+  allowPickLicense?: boolean
+  allowBELicense?: boolean
+  allow65Renewal?: boolean
+  allowAdvanced?: boolean
+}
+
 export type ConditionFn = (answer: FormValue) => boolean
 
 export enum AdvancedLicenseGroupCodes {
