@@ -19,47 +19,31 @@ if linkage != nil
 end
 
 target 'IslandApp' do
+  use_expo_modules!
+  post_integrate do |installer|
+    begin
+      expo_patch_react_imports!(installer)
+    rescue => e
+      Pod::UI.warn e
+    end
+    begin
+      expo_patch_react_imports!(installer)
+    rescue => e
+      Pod::UI.warn e
+    end
+    begin
+      expo_patch_react_imports!(installer)
+    rescue => e
+      Pod::UI.warn e
+    end
+    begin
+      expo_patch_react_imports!(installer)
+    rescue => e
+      Pod::UI.warn e
+    end
+  end
   config = use_native_modules!
 
-  use_react_native!(
-    :path => config[:reactNativePath],
-    # An absolute path to your application root.
-    :app_path => "#{Pod::Config.instance.installation_root}/.."
-  )
-
-  target 'IslandAppTests' do
-    inherit! :complete
-    # Pods for testing
-  end
-
-
-#  Adding this in will cause an error: 
-# [!] Unable to find a specification for `RCT-Folly (= 2024.01.01.00)` depended upon by `react-native-quick-base64`
-  # target 'IslandApp' do
-  # use_expo_modules!
-  # post_integrate do |installer|
-  #   begin
-  #     expo_patch_react_imports!(installer)
-  #   rescue => e
-  #     Pod::UI.warn e
-  #   end
-  #   begin
-  #     expo_patch_react_imports!(installer)
-  #   rescue => e
-  #     Pod::UI.warn e
-  #   end
-  #   begin
-  #     expo_patch_react_imports!(installer)
-  #   rescue => e
-  #     Pod::UI.warn e
-  #   end
-  #   begin
-  #     expo_patch_react_imports!(installer)
-  #   rescue => e
-  #     Pod::UI.warn e
-  #   end
-  # end
-  # config = use_native_modules!
 
 
   pod 'Firebase', :modular_headers => true
@@ -68,6 +52,13 @@ target 'IslandApp' do
   pod 'GoogleUtilities', :modular_headers => true
   pod 'FirebaseABTesting', :modular_headers => true
   pod 'FirebaseInstallations', :modular_headers => true
+
+
+  use_react_native!(
+    :path => config[:reactNativePath],
+    # An absolute path to your application root.
+    :app_path => "#{Pod::Config.instance.installation_root}/.."
+  )
 
   post_install do |installer|
     react_native_post_install(
@@ -95,4 +86,3 @@ target 'IslandApp' do
     end
   end
 end
-
