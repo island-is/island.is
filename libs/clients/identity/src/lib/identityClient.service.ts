@@ -19,9 +19,12 @@ export class IdentityClientService {
     @Inject(LOGGER_PROVIDER) private logger: Logger,
   ) {}
 
-  async getIdentity(nationalId: string): Promise<Identity | null> {
+  async getIdentity(
+    nationalId: string,
+    actorNationalId?: string,
+  ): Promise<Identity | null> {
     if (kennitala.isCompany(nationalId)) {
-      return this.getCompanyIdentity(nationalId)
+      return this.getCompanyIdentity(nationalId, actorNationalId)
     } else {
       return this.getPersonIdentity(nationalId)
     }
@@ -55,12 +58,17 @@ export class IdentityClientService {
 
   private async getCompanyIdentity(
     nationalId: string,
+    actorNationalId?: string,
   ): Promise<Identity | null> {
     const company = await this.rskCompanyInfoService.getCompany(nationalId)
 
     if (!company) {
       return null
     }
+
+    const actor = actorNationalId
+      ? await this.getPersonIdentity(actorNationalId)
+      : null
 
     return {
       type: IdentityType.Company,
@@ -71,6 +79,9 @@ export class IdentityClientService {
         postalCode: company.address.postalCode,
         city: company.address.locality,
       },
+      actor: actor
+        ? { nationalId: actor.nationalId, name: actor.name }
+        : undefined,
     }
   }
 
