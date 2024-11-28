@@ -25,11 +25,12 @@ import {
   CurrentVehiclesApi,
   DeliveryStationsApi,
   PlateTypesApi,
+  MockableSamgongustofaPaymentCatalogApi,
 } from '../dataProviders'
 import { AuthDelegationType } from '@island.is/shared/types'
 import { ApiScope } from '@island.is/auth/scopes'
 import { buildPaymentState } from '@island.is/application/utils'
-import { getChargeItemCodes, getExtraData } from '../utils'
+import { getChargeItems, getExtraData } from '../utils'
 
 const determineMessageFromApplicationAnswers = (application: Application) => {
   const plate = getValueViaPath(
@@ -84,6 +85,9 @@ const template: ApplicationTemplate<
             ],
           },
           lifecycle: EphemeralStateLifeCycle,
+          onExit: defineTemplateApi({
+            action: ApiActions.validateApplication,
+          }),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -103,6 +107,7 @@ const template: ApplicationTemplate<
               delete: true,
               api: [
                 SamgongustofaPaymentCatalogApi,
+                MockableSamgongustofaPaymentCatalogApi,
                 CurrentVehiclesApi,
                 DeliveryStationsApi,
                 PlateTypesApi,
@@ -116,7 +121,7 @@ const template: ApplicationTemplate<
       },
       [States.PAYMENT]: buildPaymentState({
         organizationId: InstitutionNationalIds.SAMGONGUSTOFA,
-        chargeItemCodes: getChargeItemCodes,
+        chargeItems: getChargeItems,
         extraData: getExtraData,
         submitTarget: States.COMPLETED,
         onExit: [

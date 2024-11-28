@@ -21,6 +21,8 @@ query GetSubpoena($input: LawAndOrderSubpoenaInput!, $locale: String!) {
     texts {
       confirmation
       description
+      information
+      deadline
     }
   }
 }

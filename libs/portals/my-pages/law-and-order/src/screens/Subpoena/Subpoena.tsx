@@ -134,9 +134,13 @@ const Subpoena = () => {
           )}
           <Box paddingRight={[0, 0, 24]} marginTop={5}>
             <Text marginBottom={2}>
-              {formatMessage(messages.subpoenaInfoText)}
+              {subpoena.texts?.information ??
+                formatMessage(messages.subpoenaInfoText)}
             </Text>
-            <Text>{formatMessage(messages.subpoenaInfoText2)}</Text>
+            <Text>
+              {subpoena.texts?.deadline ??
+                formatMessage(messages.subpoenaInfoText2)}
+            </Text>
           </Box>
 
           {!loading && subpoena.data.hasChosen === false && (

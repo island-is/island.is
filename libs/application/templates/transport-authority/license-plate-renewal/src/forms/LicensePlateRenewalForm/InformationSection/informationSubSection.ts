@@ -30,10 +30,11 @@ export const informationSubSection = buildSubSection({
           width: 'half',
           readOnly: true,
           defaultValue: (application: Application) => {
-            return getSelectedVehicle(
+            const vehicle = getSelectedVehicle(
               application.externalData,
               application.answers,
-            ).regno
+            )
+            return vehicle?.regno
           },
         }),
         buildDescriptionField({
@@ -49,15 +50,12 @@ export const informationSubSection = buildSubSection({
           width: 'half',
           readOnly: true,
           defaultValue: (application: Application) => {
-            return format(
-              new Date(
-                getSelectedVehicle(
-                  application.externalData,
-                  application.answers,
-                ).startDate,
-              ),
-              'dd.MM.yyyy',
+            const vehicle = getSelectedVehicle(
+              application.externalData,
+              application.answers,
             )
+            const dateFrom = vehicle ? new Date(vehicle.startDate) : new Date()
+            return format(dateFrom, 'dd.MM.yyyy')
           },
         }),
         buildTextField({
@@ -67,12 +65,11 @@ export const informationSubSection = buildSubSection({
           width: 'half',
           readOnly: true,
           defaultValue: (application: Application) => {
-            const dateTo = new Date(
-              getSelectedVehicle(
-                application.externalData,
-                application.answers,
-              ).endDate,
+            const vehicle = getSelectedVehicle(
+              application.externalData,
+              application.answers,
             )
+            const dateTo = vehicle ? new Date(vehicle?.endDate) : new Date()
             return format(
               dateTo.setFullYear(dateTo.getFullYear() + 8),
               'dd.MM.yyyy',
