@@ -72,7 +72,7 @@ jobs:
     steps:
       - name: Debug
         run: |
-          PR_NUMBER=${{ needs.fetch-pr.outputs.PR_NUMBER }}
+          PR_NUMBER=${{ needs.detect-failure.outputs.PR_NUMBER }}
           echo "Reverting PR: $PR_NUMBER"
 
       - name: Execute PR revert
