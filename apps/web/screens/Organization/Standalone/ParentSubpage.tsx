@@ -74,7 +74,12 @@ const StandaloneParentSubpage: Screen<
   const { linkResolver } = useLinkResolver()
 
   return (
-    <StandaloneLayout organizationPage={organizationPage}>
+    <StandaloneLayout
+      organizationPage={organizationPage}
+      seo={{
+        title: `${subpage.title} | ${organizationPage.title}`,
+      }}
+    >
       <LanguageToggleSetup
         ids={[organizationPage.id, parentSubpage.id, subpage.id]}
       />
