@@ -1,6 +1,6 @@
 import { DefaultEvents, FormValue } from '@island.is/application/types'
 
-export const enum License {
+export enum License {
   B_FULL = 'B-full',
   B_TEMP = 'B-temp',
   B_FULL_RENEWAL_65 = 'B-full-renewal-65',

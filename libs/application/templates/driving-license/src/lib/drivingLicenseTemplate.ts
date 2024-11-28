@@ -2,7 +2,6 @@ import {
   DefaultStateLifeCycle,
   EphemeralStateLifeCycle,
   coreHistoryMessages,
-  getValueViaPath,
 } from '@island.is/application/core'
 import {
   ApplicationTemplate,
@@ -20,9 +19,7 @@ import {
   TeachersApi,
   ExistingApplicationApi,
   InstitutionNationalIds,
-  Application,
   ApplicationConfigurations,
-  BasicChargeItem,
 } from '@island.is/application/types'
 import { FeatureFlagClient } from '@island.is/feature-flags'
 import {
@@ -30,9 +27,6 @@ import {
   States,
   Roles,
   ApiActions,
-  CHARGE_ITEM_CODES,
-  DELIVERY_FEE,
-  Pickup,
   License,
 } from './constants'
 import { dataSchema } from './dataSchema'
@@ -41,7 +35,7 @@ import {
   DrivingLicenseFeatureFlags,
 } from './getApplicationFeatureFlags'
 import { m } from './messages'
-import { hasCompletedPrerequisitesStep } from './utils/formUtils'
+import { getCodes, hasCompletedPrerequisitesStep } from './utils/formUtils'
 import {
   GlassesCheckApi,
   MockableSyslumadurPaymentCatalogApi,
@@ -49,41 +43,10 @@ import {
 } from '../dataProviders'
 import { buildPaymentState } from '@island.is/application/utils'
 
-const getCodes = (application: Application): BasicChargeItem[] => {
-  const applicationFor = getValueViaPath<
-    'B-full' | 'B-temp' | 'BE' | 'B-full-renewal-65' | 'B-advanced'
-  >(application.answers, 'applicationFor')
-
-  const pickup = getValueViaPath<Pickup>(application.answers, 'pickup')
-
-  const codes: BasicChargeItem[] = []
-
-  const DEFAULT_ITEM_CODE = CHARGE_ITEM_CODES[License.B_FULL]
-
-  const targetCode =
-    typeof applicationFor === 'string'
-      ? CHARGE_ITEM_CODES[applicationFor]
-        ? CHARGE_ITEM_CODES[applicationFor]
-        : DEFAULT_ITEM_CODE
-      : DEFAULT_ITEM_CODE
-
-  codes.push({ code: targetCode })
-
-  if (pickup === Pickup.POST) {
-    codes.push({ code: CHARGE_ITEM_CODES[DELIVERY_FEE] })
-  }
-
-  if (!targetCode) {
-    throw new Error('No selected charge item code')
-  }
-
-  return codes
-}
-
 const configuration =
   ApplicationConfigurations[ApplicationTypes.DRIVING_LICENSE]
 
-const template: ApplicationTemplate<
+const DrivingLicenseTemplate: ApplicationTemplate<
   ApplicationContext,
   ApplicationStateSchema<Events>,
   Events
@@ -284,4 +247,4 @@ const template: ApplicationTemplate<
   },
 }
 
-export default template
+export default DrivingLicenseTemplate

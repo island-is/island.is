@@ -13,6 +13,7 @@ import {
   hasNoDrivingLicenseInOtherCountry,
 } from '../../lib/utils/formUtils'
 import { License } from '../../lib/constants'
+import { boolean } from 'zod'
 
 export const subSectionHealthDeclaration = buildSubSection({
   id: 'healthDeclaration',
@@ -143,7 +144,7 @@ export const subSectionHealthDeclaration = buildSubSection({
           alertType: 'warning',
           condition: (answers) =>
             answers.applicationFor !== License.BE &&
-            (answers.healthDeclaration as any)?.contactGlassesMismatch,
+            (answers.healthDeclaration as { contactGlassesMismatch: boolean })?.contactGlassesMismatch,
         }),
         //TODO: Remove when RLS/SGS supports health certificate in BE license
         buildDescriptionField({
