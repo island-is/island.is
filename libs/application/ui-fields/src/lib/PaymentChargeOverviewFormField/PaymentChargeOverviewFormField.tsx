@@ -33,12 +33,16 @@ export const PaymentChargeOverviewFormField: FC<
       (chargeWithInfo) =>
         chargeWithInfo.chargeItemCode === charge.chargeItemCode,
     )
-    return { ...chargeWithInfo, extraLabel: charge.extraLabel }
+    return {
+      ...chargeWithInfo,
+      quantity: charge.chargeItemQuantity,
+      extraLabel: charge.extraLabel,
+    }
   })
 
   // calculate total price for all selected charge items
   const totalPrice = selectedChargeWithInfoList.reduce(
-    (sum, charge) => sum + (charge?.priceAmount || 0),
+    (sum, charge) => sum + (charge?.priceAmount || 0) * (charge?.quantity || 1),
     0,
   )
 
@@ -58,11 +62,19 @@ export const PaymentChargeOverviewFormField: FC<
             <Text>
               {charge?.chargeItemName}
               {charge?.extraLabel
-                ? ' - ' +
-                  formatText(charge.extraLabel, application, formatMessage)
+                ? ` - ${formatText(
+                    charge.extraLabel,
+                    application,
+                    formatMessage,
+                  )}`
+                : ''}
+              {charge?.quantity && charge?.quantity > 1
+                ? ` - x${charge.quantity}`
                 : ''}
             </Text>
-            <Text>{formatIsk(charge?.priceAmount || 0)}</Text>
+            <Text>
+              {formatIsk((charge?.priceAmount || 0) * (charge?.quantity || 1))}
+            </Text>
           </Box>
         ))}
       </Box>

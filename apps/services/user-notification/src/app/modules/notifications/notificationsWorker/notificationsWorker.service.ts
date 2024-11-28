@@ -447,11 +447,11 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
 
       if (isCompany(nationalId)) {
         identity = await this.companyRegistryService.getCompany(nationalId)
-        return identity?.name ?? ''
+        return identity?.name || ''
       }
 
       identity = await this.nationalRegistryService.getName(nationalId)
-      return identity?.birtNafn ?? ''
+      return identity?.birtNafn || identity?.fulltNafn || ''
     } catch (error) {
       this.logger.error('Error getting name from national registry', {
         error,
