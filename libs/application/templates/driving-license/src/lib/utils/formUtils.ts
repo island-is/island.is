@@ -7,7 +7,14 @@ import {
   BasicChargeItem,
 } from '@island.is/application/types'
 import { m } from '../messages'
-import { License, ConditionFn, DrivingLicense, Pickup, CHARGE_ITEM_CODES, DELIVERY_FEE } from '../constants'
+import {
+  License,
+  ConditionFn,
+  DrivingLicense,
+  Pickup,
+  CHARGE_ITEM_CODES,
+  DELIVERY_FEE,
+} from '../constants'
 
 export const allowFakeCondition =
   (result = YES) =>

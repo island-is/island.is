@@ -22,13 +22,7 @@ import {
   ApplicationConfigurations,
 } from '@island.is/application/types'
 import { FeatureFlagClient } from '@island.is/feature-flags'
-import {
-  Events,
-  States,
-  Roles,
-  ApiActions,
-  License,
-} from './constants'
+import { Events, States, Roles, ApiActions, License } from './constants'
 import { dataSchema } from './dataSchema'
 import {
   getApplicationFeatureFlags,

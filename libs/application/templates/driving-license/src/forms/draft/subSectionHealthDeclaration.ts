@@ -144,7 +144,8 @@ export const subSectionHealthDeclaration = buildSubSection({
           alertType: 'warning',
           condition: (answers) =>
             answers.applicationFor !== License.BE &&
-            (answers.healthDeclaration as { contactGlassesMismatch: boolean })?.contactGlassesMismatch,
+            (answers.healthDeclaration as { contactGlassesMismatch: boolean })
+              ?.contactGlassesMismatch,
         }),
         //TODO: Remove when RLS/SGS supports health certificate in BE license
         buildDescriptionField({
