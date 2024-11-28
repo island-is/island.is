@@ -105,6 +105,8 @@ export class NotificationsController {
       messageId: id,
       ...flattenedArgs,
       ...body,
+      args: {}, // Remove args, since they're in a better format in `flattenedArgs`
+      queue: { url: this.queue.url, name: this.queue.queueName },
     })
 
     return {
