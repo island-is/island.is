@@ -16,7 +16,7 @@ import {
 import { Condition } from './Condition'
 import { TestSupport } from '@island.is/island-ui/utils'
 import { TemplateApi } from './template-api/TemplateApi'
-import { PruningNotification } from './ApplicationLifecycle'
+import { PruningApplication, PruningNotification } from './ApplicationLifecycle'
 
 export type ApplicationRole = 'applicant' | 'assignee' | string
 
@@ -76,18 +76,7 @@ export type StateLifeCycle =
       shouldDeleteChargeIfPaymentFulfilled?: boolean | null
       pruneMessage?:
         | PruningNotification
-        | ((
-            application: Pick<
-              ApplicationWithAttachments,
-              | 'id'
-              | 'typeId'
-              | 'state'
-              | 'applicant'
-              | 'attachments'
-              | 'answers'
-              | 'externalData'
-            >,
-          ) => PruningNotification)
+        | ((application: PruningApplication) => PruningNotification)
     }
 
 export type PendingActionDisplayType = 'warning' | 'success' | 'info' | 'error'

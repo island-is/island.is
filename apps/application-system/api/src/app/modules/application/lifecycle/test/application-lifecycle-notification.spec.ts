@@ -307,5 +307,42 @@ describe('ApplicationLifeCycleService', () => {
         `Failed to send pruning notification with error: ${mockError} for application ${mockApplicationId}`,
       )
     })
+
+    it('should handle malformed pruneMessage function', async () => {
+      const mockApplication = {
+        id: '123',
+        typeId: ApplicationTypes.EXAMPLE,
+        state: 'draft',
+        applicant: 'user123',
+        answers: {},
+        externalData: {},
+        attachments: [],
+      }
+
+      const mockTemplate = {
+        stateMachineConfig: {
+          states: {
+            draft: {
+              meta: {
+                lifecycle: {
+                  shouldBePruned: true,
+                  pruneMessage: () => {
+                    throw new Error('Unexpected error')
+                  },
+                },
+              },
+            },
+          },
+        },
+      }
+
+      ;(getApplicationTemplateByTypeId as jest.Mock).mockResolvedValue(
+        mockTemplate,
+      )
+
+      const result = await service['preparePrunedNotification'](mockApplication)
+      expect(result).toBeNull()
+      expect(mockLogger.error).toHaveBeenCalled()
+    })
   })
 })

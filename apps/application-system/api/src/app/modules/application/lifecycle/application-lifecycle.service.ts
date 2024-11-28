@@ -155,25 +155,33 @@ export class ApplicationLifeCycleService {
     const stateConfig = template.stateMachineConfig.states[application.state]
     const lifeCycle = stateConfig.meta?.lifecycle
     if (lifeCycle && lifeCycle.shouldBePruned && lifeCycle.pruneMessage) {
-      const pruneMessage =
-        typeof lifeCycle.pruneMessage === 'function'
-          ? lifeCycle.pruneMessage(application as ApplicationWithAttachments)
-          : lifeCycle.pruneMessage
-      const notification = {
-        recipient: application.applicant,
-        templateId: pruneMessage.notificationTemplateId,
-        args: [
-          {
-            key: 'externalBody',
-            value: pruneMessage.externalBody || '',
-          },
-          {
-            key: 'internalBody',
-            value: pruneMessage.internalBody || '',
-          },
-        ],
+      try {
+        const pruneMessage =
+          typeof lifeCycle.pruneMessage === 'function'
+            ? lifeCycle.pruneMessage(application as ApplicationWithAttachments)
+            : lifeCycle.pruneMessage
+        const notification = {
+          recipient: application.applicant,
+          templateId: pruneMessage.notificationTemplateId,
+          args: [
+            {
+              key: 'externalBody',
+              value: pruneMessage.externalBody || '',
+            },
+            {
+              key: 'internalBody',
+              value: pruneMessage.internalBody || '',
+            },
+          ],
+        }
+        return notification
+      } catch (error) {
+        this.logger.error(
+          `Failed to prepare pruning notification for application ${application.id}`,
+          error,
+        )
+        return null
       }
-      return notification
     }
     return null
   }
