@@ -15,39 +15,43 @@ import {
   UserProfile,
 } from '../../types/schema'
 import { m } from '../../lib/messages'
-import { B_TEMP, BE, B_FULL_RENEWAL_65 } from '../../lib/constants'
+import { License } from '../../lib/constants'
 
-export const subSectionTempInfo = buildSubSection({
+export const subSectionApplicantInfo = buildSubSection({
   id: 'infoStep',
   title: m.informationApplicant,
-  condition: (answers) =>
-    answers.applicationFor === B_TEMP ||
-    answers.applicationFor === BE ||
-    answers.applicationFor === B_FULL_RENEWAL_65,
   children: [
     buildMultiField({
       id: 'info',
       title: m.informationApplicant,
       space: 2,
       children: [
+        buildDividerField({}),
         buildKeyValueField({
           label: m.drivingLicenseTypeRequested,
           value: m.applicationForTempLicenseTitle,
-          condition: (answers) => answers.applicationFor === B_TEMP,
+          condition: (answers) => answers.applicationFor === License.B_TEMP,
         }),
         buildKeyValueField({
           label: m.drivingLicenseTypeRequested,
           value: m.applicationForBELicenseTitle,
-          condition: (answers) => answers.applicationFor === BE,
+          condition: (answers) => answers.applicationFor === License.BE,
         }),
         buildKeyValueField({
           label: m.drivingLicenseTypeRequested,
           value: m.applicationForRenewalLicenseDescription,
-          condition: (answers) => answers.applicationFor === B_FULL_RENEWAL_65,
+          condition: (answers) =>
+            answers.applicationFor === License.B_FULL_RENEWAL_65,
         }),
-        buildDividerField({
-          title: '',
-          color: 'dark400',
+        buildKeyValueField({
+          label: m.drivingLicenseTypeRequested,
+          value: m.applicationForBFullDescription,
+          condition: (answers) => answers.applicationFor === License.B_FULL,
+        }),
+        buildKeyValueField({
+          label: m.drivingLicenseTypeRequested,
+          value: m.applicationForBAdvancedDescription,
+          condition: (answers) => answers.applicationFor === License.B_ADVANCED,
         }),
         buildKeyValueField({
           label: m.informationFullName,
@@ -76,6 +80,7 @@ export const subSectionTempInfo = buildSubSection({
         buildPhoneField({
           id: 'phone',
           width: 'half',
+          required: true,
           title: m.phoneNumberTitle,
           defaultValue: (application: Application) =>
             application.externalData.userProfile.data.mobilePhoneNumber ?? '',
@@ -93,14 +98,19 @@ export const subSectionTempInfo = buildSubSection({
           id: 'drivingInstructorTitle',
           title: m.drivingInstructor,
           titleVariant: 'h4',
+          marginTop: 'gutter',
           description: m.chooseDrivingInstructor,
-          condition: (answers) => answers.applicationFor !== B_FULL_RENEWAL_65,
+          condition: (answers) =>
+            answers.applicationFor !== License.B_FULL_RENEWAL_65 &&
+            answers.applicationFor !== License.B_FULL,
         }),
         buildSelectField({
           id: 'drivingInstructor',
           title: m.drivingInstructor,
           required: true,
-          condition: (answers) => answers.applicationFor !== B_FULL_RENEWAL_65,
+          condition: (answers) =>
+            answers.applicationFor !== License.B_FULL_RENEWAL_65 &&
+            answers.applicationFor !== License.B_FULL,
           options: ({
             externalData: {
               teachers: { data },

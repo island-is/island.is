@@ -1,16 +1,7 @@
 import { z } from 'zod'
-import {
-  YES,
-  NO,
-  B_FULL_RENEWAL_65,
-  BE,
-  B_TEMP,
-  B_FULL,
-  B_ADVANCED,
-  AdvancedLicense,
-} from './constants'
+import { License, AdvancedLicense, Pickup } from './constants'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
-import { Pickup } from './types'
+import { NO, YES } from '@island.is/application/core'
 
 const isValidPhoneNumber = (phoneNumber: string) => {
   const phone = parsePhoneNumberFromString(phoneNumber, 'IS')
@@ -45,7 +36,13 @@ export const dataSchema = z.object({
   ]),
   requirementsMet: z.boolean().refine((v) => v),
   certificate: z.array(z.enum([YES, NO])).nonempty(),
-  applicationFor: z.enum([B_FULL, B_TEMP, BE, B_FULL_RENEWAL_65, B_ADVANCED]),
+  applicationFor: z.enum([
+    License.B_FULL,
+    License.B_TEMP,
+    License.BE,
+    License.B_FULL_RENEWAL_65,
+    License.B_ADVANCED,
+  ]),
   advancedLicense: z
     .array(z.enum(Object.values(AdvancedLicense) as [string, ...string[]]))
     .nonempty()

@@ -9,11 +9,10 @@ import { m } from '../../lib/messages'
 import {
   chooseDistrictCommissionerDescription,
   hasNoDrivingLicenseInOtherCountry,
-} from '../../lib/utils'
+} from '../../lib/utils/formUtils'
 
 import { Jurisdiction } from '@island.is/clients/driving-license'
-import { B_FULL_RENEWAL_65 } from '../../lib/constants'
-import { Pickup } from '../../lib/types'
+import { License, Pickup } from '../../lib/constants'
 
 export const subSectionDelivery = buildSubSection({
   id: 'user',
@@ -23,12 +22,8 @@ export const subSectionDelivery = buildSubSection({
     buildMultiField({
       id: 'info',
       title: m.pickupLocationTitle,
+      description: chooseDistrictCommissionerDescription,
       children: [
-        buildDescriptionField({
-          id: 'jurisdictionHeader',
-          title: '',
-          description: chooseDistrictCommissionerDescription,
-        }),
         buildSelectField({
           id: 'jurisdiction',
           title: m.districtCommissionerPickup,
@@ -52,13 +47,15 @@ export const subSectionDelivery = buildSubSection({
           description: m.pickupLocationHeader,
           titleVariant: 'h4',
           space: 'containerGutter',
-          condition: (answers) => answers.applicationFor === B_FULL_RENEWAL_65,
+          condition: (answers) =>
+            answers.applicationFor === License.B_FULL_RENEWAL_65,
         }),
         buildRadioField({
           id: 'pickup',
           title: '',
           defaultValue: Pickup.POST,
-          condition: (answers) => answers.applicationFor === B_FULL_RENEWAL_65,
+          condition: (answers) =>
+            answers.applicationFor === License.B_FULL_RENEWAL_65,
           options: [
             { value: Pickup.POST, label: m.overviewPickupPost },
             { value: Pickup.DISTRICT, label: m.overviewPickupDistrict },

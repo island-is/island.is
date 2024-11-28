@@ -1,11 +1,11 @@
 import { RadioController } from '@island.is/shared/form-fields'
 import { useLocale } from '@island.is/localization'
 import { Box, Text, GridRow, GridColumn } from '@island.is/island-ui/core'
-import { getValueViaPath, formatText } from '@island.is/application/core'
+import { NO, YES, getValueViaPath } from '@island.is/application/core'
 import { CustomField, FieldBaseProps } from '@island.is/application/types'
 import { m } from '../lib/messages'
 import { useFormContext } from 'react-hook-form'
-import { BE, NO, YES } from '../lib/constants'
+import { License } from '../lib/constants'
 
 interface PropTypes extends FieldBaseProps {
   field: CustomField
@@ -35,15 +35,13 @@ const HealthDeclaration = ({ field, application }: PropTypes): JSX.Element => {
   return (
     <>
       {props.title && (
-        <Box marginBottom={4}>
-          <Text variant="h5">
-            {formatText(props.title, application, formatMessage)}
-          </Text>
+        <Box marginBottom={3} marginTop={2}>
+          <Text variant="h4">{formatMessage(props.title)}</Text>
         </Box>
       )}
       <GridRow>
         <GridColumn span={['12/12', '8/12']} paddingBottom={1}>
-          <Text>{formatText(props.label, application, formatMessage)}</Text>
+          <Text>{formatMessage(props.label)}</Text>
         </GridColumn>
         <GridColumn span={['8/12', '3/12']} offset={['0', '1/12']}>
           <RadioController
@@ -57,17 +55,17 @@ const HealthDeclaration = ({ field, application }: PropTypes): JSX.Element => {
             }
             options={[
               {
-                label: formatText(m.yes, application, formatMessage),
-                value: 'yes',
+                label: formatMessage(m.yes),
+                value: YES,
               },
               {
-                label: formatText(m.no, application, formatMessage),
-                value: 'no',
+                label: formatMessage(m.no),
+                value: NO,
               },
             ]}
             onSelect={(value) => {
               //TODO: Remove when RLS/SGS supports health certificate in BE license
-              if (application.answers.applicationFor === BE) {
+              if (application.answers.applicationFor === License.BE) {
                 const currValues = getValues(
                   'healthDeclarationValidForBELicense',
                 ) as string[]

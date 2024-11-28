@@ -1,18 +1,11 @@
-import { getValueViaPath } from '@island.is/application/core'
+import { NO, YES, getValueViaPath } from '@island.is/application/core'
 import {
   FormValue,
   ApplicationContext,
   ExternalData,
 } from '@island.is/application/types'
 import { m } from '../messages'
-import { ConditionFn, DrivingLicense } from '../types'
-import {
-  B_FULL,
-  B_TEMP,
-  DrivingLicenseApplicationFor,
-  NO,
-  YES,
-} from '../constants'
+import { License, ConditionFn, DrivingLicense } from '../constants'
 
 export const allowFakeCondition =
   (result = YES) =>
@@ -36,12 +29,11 @@ export const isVisible =
   }
 
 export const isApplicationForCondition =
-  (result: DrivingLicenseApplicationFor | DrivingLicenseApplicationFor[]) =>
-  (answers: FormValue) => {
+  (result: string | string[]) => (answers: FormValue) => {
     const strings = Array.isArray(result) ? result : [result]
 
     return strings.some(
-      (x) => x === getValueViaPath(answers, 'applicationFor') ?? B_FULL,
+      (x) => x === getValueViaPath(answers, 'applicationFor') ?? License.B_FULL,
     )
   }
 
@@ -55,11 +47,7 @@ export const chooseDistrictCommissionerDescription = ({
   answers: FormValue
 }) => {
   const applicationForTemp =
-    getValueViaPath<DrivingLicenseApplicationFor>(
-      answers,
-      'applicationFor',
-      B_FULL,
-    ) === B_TEMP
+    getValueViaPath(answers, 'applicationFor') === License.B_TEMP
 
   return applicationForTemp
     ? m.chooseDistrictCommissionerForTempLicense

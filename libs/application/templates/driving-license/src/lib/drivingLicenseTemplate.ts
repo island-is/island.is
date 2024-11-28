@@ -29,13 +29,11 @@ import {
   Events,
   States,
   Roles,
-  BE,
-  B_TEMP,
-  B_FULL,
-  B_FULL_RENEWAL_65,
   ApiActions,
   CHARGE_ITEM_CODES,
   DELIVERY_FEE,
+  Pickup,
+  License,
 } from './constants'
 import { dataSchema } from './dataSchema'
 import {
@@ -43,25 +41,24 @@ import {
   DrivingLicenseFeatureFlags,
 } from './getApplicationFeatureFlags'
 import { m } from './messages'
-import { hasCompletedPrerequisitesStep } from './utils'
+import { hasCompletedPrerequisitesStep } from './utils/formUtils'
 import {
   GlassesCheckApi,
   MockableSyslumadurPaymentCatalogApi,
   SyslumadurPaymentCatalogApi,
 } from '../dataProviders'
 import { buildPaymentState } from '@island.is/application/utils'
-import { Pickup } from './types'
 
 const getCodes = (application: Application): BasicChargeItem[] => {
   const applicationFor = getValueViaPath<
     'B-full' | 'B-temp' | 'BE' | 'B-full-renewal-65' | 'B-advanced'
-  >(application.answers, 'applicationFor', 'B-full')
+  >(application.answers, 'applicationFor')
 
   const pickup = getValueViaPath<Pickup>(application.answers, 'pickup')
 
   const codes: BasicChargeItem[] = []
 
-  const DEFAULT_ITEM_CODE = CHARGE_ITEM_CODES[B_FULL]
+  const DEFAULT_ITEM_CODE = CHARGE_ITEM_CODES[License.B_FULL]
 
   const targetCode =
     typeof applicationFor === 'string'
@@ -93,17 +90,17 @@ const template: ApplicationTemplate<
 > = {
   type: ApplicationTypes.DRIVING_LICENSE,
   name: (application) =>
-    application.answers.applicationFor === BE
+    application.answers.applicationFor === License.BE
       ? m.applicationForBELicenseTitle.defaultMessage
-      : application.answers.applicationFor === B_TEMP
+      : application.answers.applicationFor === License.B_TEMP
       ? m.applicationForDrivingLicense.defaultMessage +
         ' - ' +
         m.applicationForTempLicenseTitle.defaultMessage
-      : application.answers.applicationFor === B_FULL
+      : application.answers.applicationFor === License.B_FULL
       ? m.applicationForDrivingLicense.defaultMessage +
         ' - ' +
         m.applicationForFullLicenseTitle.defaultMessage
-      : application.answers.applicationFor === B_FULL_RENEWAL_65
+      : application.answers.applicationFor === License.B_FULL_RENEWAL_65
       ? m.applicationForDrivingLicense.defaultMessage +
         ' - ' +
         m.applicationForRenewalLicenseTitle.defaultMessage
@@ -202,7 +199,8 @@ const template: ApplicationTemplate<
           roles: [
             {
               id: Roles.APPLICANT,
-              formLoader: async () => (await import('../forms/draft')).draft,
+              formLoader: async () =>
+                (await import('../forms/draft/getForm')).draft,
               actions: [
                 {
                   event: DefaultEvents.PAYMENT,

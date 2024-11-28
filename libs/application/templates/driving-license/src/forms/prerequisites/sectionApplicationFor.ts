@@ -5,13 +5,9 @@ import {
   getValueViaPath,
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
-import { DrivingLicense } from '../../lib/types'
 import {
-  B_ADVANCED,
-  B_FULL,
-  B_FULL_RENEWAL_65,
-  B_TEMP,
-  BE,
+  License,
+  DrivingLicense,
   DrivingLicenseFakeData,
 } from '../../lib/constants'
 
@@ -77,13 +73,13 @@ export const sectionApplicationFor = (
                 {
                   label: m.applicationForTempLicenseTitle,
                   subLabel: m.applicationForTempLicenseDescription,
-                  value: B_TEMP,
+                  value: License.B_TEMP,
                   disabled: !!currentLicense,
                 },
                 {
                   label: m.applicationForFullLicenseTitle,
                   subLabel: m.applicationForFullLicenseDescription,
-                  value: B_FULL,
+                  value: License.B_FULL,
                   disabled: !currentLicense,
                 },
               ]
@@ -92,7 +88,7 @@ export const sectionApplicationFor = (
                 options = options.concat({
                   label: m.applicationForRenewalLicenseTitle,
                   subLabel: m.applicationForRenewalLicenseDescription,
-                  value: B_FULL_RENEWAL_65,
+                  value: License.B_FULL_RENEWAL_65,
                   disabled: !currentLicense || age < 65,
                 })
               }
@@ -101,7 +97,7 @@ export const sectionApplicationFor = (
                 options = options.concat({
                   label: m.applicationForBELicenseTitle,
                   subLabel: m.applicationForBELicenseDescription,
-                  value: BE,
+                  value: License.BE,
                   disabled:
                     !currentLicense ||
                     age < 18 ||
@@ -118,7 +114,7 @@ export const sectionApplicationFor = (
                 options = options.concat({
                   label: m.applicationForAdvancedLicenseTitle,
                   subLabel: m.applicationForAdvancedLicenseDescription,
-                  value: B_ADVANCED,
+                  value: License.B_ADVANCED,
                   disabled: !categories?.some(
                     (c) => c.nr.toUpperCase() === 'B' && c.validToCode !== 8,
                   ),

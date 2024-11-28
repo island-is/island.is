@@ -4,16 +4,17 @@ import {
   buildRadioField,
   buildSubSection,
   getValueViaPath,
+  NO,
+  YES,
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
-import { B_TEMP, NO, YES } from '../../lib/constants'
-
-import { isApplicationForCondition } from '../../lib/utils'
+import { License } from '../../lib/constants'
+import { isApplicationForCondition } from '../../lib/utils/formUtils'
 
 export const subSectionOtherCountry = buildSubSection({
   id: 'otherCountry',
   title: m.foreignDrivingLicense,
-  condition: isApplicationForCondition(B_TEMP),
+  condition: isApplicationForCondition(License.B_TEMP),
   children: [
     buildMultiField({
       id: 'info',

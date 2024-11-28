@@ -796,6 +796,16 @@ export const m = defineMessages({
       'Umsókn um endurnýjun ökuréttinda í B flokki (fólksbifreið), fyrir 65 ára og eldri.',
     description: 'Option description for selecting to renew driving license',
   },
+  applicationForBFullDescription: {
+    id: 'dl.application:applicationForBFullDescription',
+    defaultMessage: 'Umsókn um fullnaðarréttindi í B flokki (fólksbifreið)',
+    description: 'Option description for selecting to renew driving license',
+  },
+  applicationForBAdvancedDescription: {
+    id: 'dl.application:applicationForBAdvancedDescription',
+    defaultMessage: 'Umsókn um aukin ökurétindi / meirapróf',
+    description: 'Option description for selecting to renew driving license',
+  },
   applicationForBELicenseTitle: {
     id: 'dl.application:applicationForBELicenseTitle',
     defaultMessage: 'Eftirvagn BE',

@@ -1,9 +1,9 @@
-import { buildForm } from '@island.is/application/core'
+import { YES, buildForm } from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
 import { m } from '../lib/messages'
 import { buildFormConclusionSection } from '@island.is/application/ui-forms'
-import { B_FULL_RENEWAL_65, B_TEMP, BE, YES } from '../lib/constants'
-import { needsHealthCertificateCondition } from '../lib/utils'
+import { needsHealthCertificateCondition } from '../lib/utils/formUtils'
+import { License } from '../lib/constants'
 
 export const done: Form = buildForm({
   id: 'done',
@@ -15,20 +15,20 @@ export const done: Form = buildForm({
       multiFieldTitle: m.applicationDone,
       alertTitle: m.applicationDone,
       alertMessage: ({ answers }) =>
-        answers.applicationFor === B_TEMP
+        answers.applicationFor === License.B_TEMP
           ? m.applicationDoneAlertMessage
-          : answers.applicationFor === BE
+          : answers.applicationFor === License.BE
           ? m.applicationDoneAlertMessageBE
-          : answers.applicationFor === B_FULL_RENEWAL_65
+          : answers.applicationFor === License.B_FULL_RENEWAL_65
           ? m.applicationDoneAlertMessage65Renewal
           : m.applicationDoneAlertMessageBFull,
       expandableHeader: m.nextStepsTitle,
       expandableDescription: ({ answers, externalData }) =>
-        answers.applicationFor === B_TEMP
+        answers.applicationFor === License.B_TEMP
           ? m.nextStepsDescription
-          : answers.applicationFor === BE
+          : answers.applicationFor === License.BE
           ? m.nextStepsDescriptionBE
-          : answers.applicationFor === B_FULL_RENEWAL_65
+          : answers.applicationFor === License.B_FULL_RENEWAL_65
           ? m.nextStepsDescription65Renewal
           : needsHealthCertificateCondition(YES)(answers, externalData)
           ? m.nextStepsDescriptionBFull
