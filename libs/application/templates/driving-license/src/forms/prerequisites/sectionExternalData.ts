@@ -42,7 +42,7 @@ export const sectionExternalData = buildSubSection({
         buildDataProviderItem({
           provider: CurrentLicenseApi,
           title: m.infoFromLicenseRegistry,
-          subTitle: m.confirmationStatusOfEligability,
+          subTitle: m.confirmationStatusOfEligibility,
         }),
         buildDataProviderItem({
           provider: GlassesCheckApi,

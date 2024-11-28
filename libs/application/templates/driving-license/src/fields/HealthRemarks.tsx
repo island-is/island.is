@@ -1,11 +1,6 @@
 import { FC, useEffect } from 'react'
 import { Box, AlertMessage } from '@island.is/island-ui/core'
-import {
-  NO,
-  YES,
-  formatText,
-  getValueViaPath,
-} from '@island.is/application/core'
+import { NO, YES, getValueViaPath } from '@island.is/application/core'
 import { FieldBaseProps } from '@island.is/application/types'
 import { m } from '../lib/messages'
 import { useLocale } from '@island.is/localization'
@@ -40,9 +35,9 @@ const HealthRemarks: FC<React.PropsWithChildren<FieldBaseProps>> = ({
     <Box marginBottom={3}>
       <AlertMessage
         type="warning"
-        title={formatText(m.healthRemarksTitle, application, formatMessage)}
+        title={formatMessage(m.healthRemarksTitle)}
         message={
-          formatText(m.healthRemarksDescription, application, formatMessage) +
+          formatMessage(m.healthRemarksDescription) +
             ' ' +
             remarks?.map((r) => r.description).join(', ') || ''
         }

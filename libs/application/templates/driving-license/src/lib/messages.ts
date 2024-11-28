@@ -654,8 +654,8 @@ export const m = defineMessages({
       'Veldu það embætti sýslumanns sem þú hyggst skila inn gæðamerktri ljósmynd',
     description: 'Choose district commissioner for submitting a quality photo',
   },
-  confirmationStatusOfEligability: {
-    id: 'dl.application:confirmationStatusOfEligability',
+  confirmationStatusOfEligibility: {
+    id: 'dl.application:confirmationStatusOfEligibility',
     defaultMessage:
       'Sóttar eru almennar upplýsingar um núverandi réttindi, sviptingar, punktastöðu og akstursmat ef við á.',
     description:
