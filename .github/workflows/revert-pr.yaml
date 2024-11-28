@@ -3,11 +3,6 @@ name: Auto Revert on Failed Checks
 on:
   check_suite:
     types: [completed]
-  workflow_run:
-    workflows: ['*']
-    types: [completed]
-    branches:
-      - ci/revert-pr-workflow
 
 permissions:
   contents: write
@@ -25,8 +20,7 @@ jobs:
 
       - name: Debug
         run: |
-          echo '${{ toJson(github.event.workflow_run.conclusion) }}' | jq '.'
-
+          echo '${{ toJson(github.event.check_suit.conclusion) }}'
       - name: Create Revert PR
         if: false
         env:
