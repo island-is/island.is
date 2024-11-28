@@ -53,9 +53,16 @@ jobs:
         id: add-revert-label
         if: ${{ steps.fetch-pr.outputs.PR_NUMBER && github.event.workflow_run.conclusion == 'failure' }}
         run: |
-          PR_NUMER=${{ steps.fetch-pr.outputs.PR_NUMBER }}
+          PR_NUMBER="${{ steps.fetch-pr.outputs.PR_NUMBER }}"
+          if [ -z "$PR_NUMBER" ]; then
+            echo "Error: PR number is empty"
+            exit 1
+          fi
           echo "Adding revert label to PR: $PR_NUMBER"
-          gh pr edit "$PR_NUMBER" --add-label "revert"
+          if ! gh pr edit "$PR_NUMBER" --add-label "revert"; then
+            echo "Error: Failed to add revert label"
+            exit 1
+          fi
 
   create-revert-pr:
     name: Automated PR revert
