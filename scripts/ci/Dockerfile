@@ -88,7 +88,7 @@ LABEL branch=${GIT_BRANCH}
 LABEL commit=${GIT_COMMIT_SHA}
 ENTRYPOINT [ "node", "main.js" ]
 
-FROM ${DOCKER_REGISTRY}/library/nginx:1.21-alpine AS output-static
+FROM ${DOCKER_REGISTRY%/docker}/nginx/nginx:1.21-alpine AS output-static
 ARG APP
 ARG APP_DIST_HOME
 ENV APP=${APP}
