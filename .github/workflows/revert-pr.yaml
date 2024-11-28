@@ -1,10 +1,6 @@
 name: Auto Revert on Failed Checks
 
 on:
-  pull_request:
-    # types: [closed]
-    branches:
-      - main
   check_suite:
     types: [completed]
   workflow_run:
