@@ -25,12 +25,16 @@ import {
 } from '@island.is/shared/types'
 import {
   createCurrentUser,
+  createNationalId,
   createNationalRegistryUser,
 } from '@island.is/testing/fixtures'
 import { TestApp } from '@island.is/testing/nest'
 
 import { defaultScopes, setupWithAuth } from '../../../../test/setup'
-import { getFakeNationalId } from '../../../../test/stubs/genericStubs'
+import {
+  getFakeCompanyNationalId,
+  getFakeNationalId,
+} from '../../../../test/stubs/genericStubs'
 
 describe('DelegationsController', () => {
   describe('Given a user is authenticated', () => {
@@ -51,6 +55,8 @@ describe('DelegationsController', () => {
       clientId: '@island.is/webapp',
     })
 
+    const representeeNationalId = createNationalId('person')
+
     const scopeValid1 = 'scope/valid1'
     const scopeValid2 = 'scope/valid2'
     const scopeValid1and2 = 'scope/valid1and2'
@@ -70,7 +76,7 @@ describe('DelegationsController', () => {
       scopeName: s,
     }))
 
-    const userNationalId = getFakeNationalId()
+    const userNationalId = createNationalId('person')
 
     const user = createCurrentUser({
       nationalId: userNationalId,
@@ -79,6 +85,7 @@ describe('DelegationsController', () => {
     })
 
     const domain = createDomain()
+    let nationalRegistryApiSpy: jest.SpyInstance
 
     beforeAll(async () => {
       app = await setupWithAuth({
@@ -109,15 +116,188 @@ describe('DelegationsController', () => {
       )
       nationalRegistryApi = app.get(NationalRegistryClientService)
       factory = new FixtureFactory(app)
+
+      client.supportedDelegationTypes = [
+        AuthDelegationType.GeneralMandate,
+        AuthDelegationType.LegalGuardian,
+        AuthDelegationType.ProcurationHolder,
+      ]
+      await factory.createClient(client)
+
+      nationalRegistryApiSpy = jest
+        .spyOn(nationalRegistryApi, 'getIndividual')
+        .mockImplementation(async (id) => {
+          const user = createNationalRegistryUser({
+            nationalId: representeeNationalId,
+          })
+
+          return user ?? null
+        })
     })
 
     afterAll(async () => {
       await app.cleanUp()
+      nationalRegistryApiSpy.mockClear()
+    })
+
+    describe('GET with general mandate delegation type for company', () => {
+      const companyNationalId = getFakeCompanyNationalId()
+
+      const scopeNames = [
+        'api-scope/generalMandate1',
+        'api-scope/generalMandate2',
+        'api-scope/generalMandate3',
+        'api-scope/procuration1',
+        'api-scope/procuration2',
+      ]
+
+      beforeAll(async () => {
+        const delegations = await delegationModel.create({
+          id: uuid(),
+          fromDisplayName: 'Company',
+          fromNationalId: companyNationalId,
+          toNationalId: userNationalId,
+          toName: 'Person',
+        })
+
+        await delegationDelegationTypeModel.create({
+          delegationId: delegations.id,
+          delegationTypeId: AuthDelegationType.GeneralMandate,
+        })
+
+        await apiScopeModel.bulkCreate(
+          scopeNames.map((name) => ({
+            name,
+            domainName: domain.name,
+            enabled: true,
+            description: `${name}: description`,
+            displayName: `${name}: display name`,
+          })),
+        )
+
+        await apiScopeDelegationTypeModel.bulkCreate([
+          {
+            apiScopeName: scopeNames[0],
+            delegationType: AuthDelegationType.GeneralMandate,
+          },
+          {
+            apiScopeName: scopeNames[1],
+            delegationType: AuthDelegationType.GeneralMandate,
+          },
+          {
+            apiScopeName: scopeNames[3],
+            delegationType: AuthDelegationType.ProcurationHolder,
+          },
+          {
+            apiScopeName: scopeNames[4],
+            delegationType: AuthDelegationType.ProcurationHolder,
+          },
+        ])
+      })
+
+      afterAll(async () => {
+        await apiScopeDelegationTypeModel.destroy({
+          where: {},
+          cascade: true,
+          truncate: true,
+          force: true,
+        })
+        await apiScopeModel.destroy({
+          where: {},
+          cascade: true,
+          truncate: true,
+          force: true,
+        })
+        await delegationDelegationTypeModel.destroy({
+          where: {},
+          cascade: true,
+          truncate: true,
+          force: true,
+        })
+        await delegationModel.destroy({
+          where: {},
+          cascade: true,
+          truncate: true,
+          force: true,
+        })
+      })
+
+      it('should return mergedDelegationDTO with the generalMandate', async () => {
+        const response = await server.get('/v2/delegations')
+
+        expect(response.status).toEqual(200)
+        expect(response.body).toHaveLength(1)
+      })
+
+      it('should return all general mandate scopes and other preset scopes', async () => {
+        const response = await server.get('/delegations/scopes').query({
+          fromNationalId: companyNationalId,
+          delegationType: [
+            AuthDelegationType.GeneralMandate,
+            AuthDelegationType.ProcurationHolder,
+          ],
+        })
+
+        const expected = [
+          scopeNames[0],
+          scopeNames[1],
+          scopeNames[3],
+          scopeNames[4],
+        ]
+
+        expect(response.status).toEqual(200)
+        expect(response.body).toEqual(expect.arrayContaining(expected))
+        expect(response.body).toHaveLength(expected.length)
+      })
+
+      it('should return all general mandate scopes and all procuration scopes', async () => {
+        const response = await server.get('/delegations/scopes').query({
+          fromNationalId: companyNationalId,
+          delegationType: [AuthDelegationType.GeneralMandate],
+        })
+
+        const expected = [
+          scopeNames[0],
+          scopeNames[1],
+          scopeNames[3],
+          scopeNames[4],
+        ]
+
+        expect(response.status).toEqual(200)
+        expect(response.body).toEqual(expect.arrayContaining(expected))
+        expect(response.body).toHaveLength(expected.length)
+      })
+
+      it('should return all general mandate scopes, and not procuration scopes since from nationalId is person', async () => {
+        // Assert
+        const delegation = await delegationModel.create({
+          id: uuid(),
+          fromDisplayName: 'FromPersonPerson',
+          fromNationalId: representeeNationalId,
+          toNationalId: userNationalId,
+          toName: 'Person',
+        })
+
+        await delegationDelegationTypeModel.create({
+          delegationId: delegation.id,
+          delegationTypeId: AuthDelegationType.GeneralMandate,
+        })
+
+        // Act
+        const response = await server.get('/delegations/scopes').query({
+          fromNationalId: representeeNationalId,
+          delegationType: [AuthDelegationType.GeneralMandate],
+        })
+
+        const expected = [scopeNames[0], scopeNames[1]]
+
+        expect(response.status).toEqual(200)
+        expect(response.body).toEqual(expect.arrayContaining(expected))
+        expect(response.body).toHaveLength(expected.length)
+      })
     })
 
     describe('GET with general mandate delegation type', () => {
-      const representeeNationalId = getFakeNationalId()
-      let nationalRegistryApiSpy: jest.SpyInstance
       const scopeNames = [
         'api-scope/generalMandate1',
         'api-scope/generalMandate2',
@@ -125,12 +305,6 @@ describe('DelegationsController', () => {
       ]
 
       beforeAll(async () => {
-        client.supportedDelegationTypes = [
-          AuthDelegationType.GeneralMandate,
-          AuthDelegationType.LegalGuardian,
-        ]
-        await factory.createClient(client)
-
         const delegations = await delegationModel.create({
           id: uuid(),
           fromDisplayName: 'Test',
@@ -171,21 +345,39 @@ describe('DelegationsController', () => {
             delegationType: AuthDelegationType.GeneralMandate,
           },
         ])
-
-        nationalRegistryApiSpy = jest
-          .spyOn(nationalRegistryApi, 'getIndividual')
-          .mockImplementation(async (id) => {
-            const user = createNationalRegistryUser({
-              nationalId: representeeNationalId,
-            })
-
-            return user ?? null
-          })
       })
 
       afterAll(async () => {
-        await app.cleanUp()
-        nationalRegistryApiSpy.mockClear()
+        await apiScopeDelegationTypeModel.destroy({
+          where: {},
+          cascade: true,
+          truncate: true,
+          force: true,
+        })
+        await apiScopeModel.destroy({
+          where: {},
+          cascade: true,
+          truncate: true,
+          force: true,
+        })
+        await delegationProviderModel.destroy({
+          where: {},
+          cascade: true,
+          truncate: true,
+          force: true,
+        })
+        await delegationDelegationTypeModel.destroy({
+          where: {},
+          cascade: true,
+          truncate: true,
+          force: true,
+        })
+        await delegationModel.destroy({
+          where: {},
+          cascade: true,
+          truncate: true,
+          force: true,
+        })
       })
 
       it('should return mergedDelegationDTO with the generalMandate', async () => {

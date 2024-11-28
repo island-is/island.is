@@ -296,6 +296,11 @@ export class DelegationsIncomingService {
       new Map(),
     )
 
+    // Remove duplicate delegationTypes..
+    mergedDelegationMap.forEach((delegation) => {
+      delegation.types = Array.from(new Set(delegation.types))
+    })
+
     return [...mergedDelegationMap.values()]
   }
 
