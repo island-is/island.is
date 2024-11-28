@@ -1,8 +1,4 @@
-import {
-  Application,
-  ActionCardTag,
-  ApplicationWithAttachments,
-} from './Application'
+import { ApplicationWithAttachments } from './Application'
 export interface ApplicationLifecycle {
   isListed: boolean
   pruneAt: Date | null

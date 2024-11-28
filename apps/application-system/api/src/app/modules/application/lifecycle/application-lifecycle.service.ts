@@ -149,16 +149,7 @@ export class ApplicationLifeCycleService {
   }
 
   private async preparePrunedNotification(
-    application: Pick<
-      Application,
-      | 'id'
-      | 'typeId'
-      | 'state'
-      | 'applicant'
-      | 'attachments'
-      | 'answers'
-      | 'externalData'
-    >,
+    application: PruningApplication,
   ): Promise<CreateHnippNotificationDto | null> {
     const template = await getApplicationTemplateByTypeId(application.typeId)
     const stateConfig = template.stateMachineConfig.states[application.state]
