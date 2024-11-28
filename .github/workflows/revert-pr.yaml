@@ -70,7 +70,7 @@ jobs:
 
   manual-revert-pr:
     name: Handle Manual Revert Label
-    if: ${{ github.event_name == 'pull_request' && github.event.pull_request.merged == true && contains(github.event.pull_request.labels.*.name, 'revert') && github.actor != 'github-actions' }}
+    if: ${{ github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'revert') && (github.event.pull_request.merged == true || github.event.pull_request.draft == true) && github.actor != 'github-actions' }}
     runs-on: ubuntu-latest
     steps:
       - name: Create Revert PR
