@@ -7,25 +7,25 @@ export type CardProps = Omit<InfoCardProps, 'type' | 'variant'>
 interface Props {
   cards: Array<CardProps>
   variant?: 'detailed' | 'simple'
-  type?: 'default' | 'wide'
+  layout?: 'default' | 'wide'
 }
 
-export const InfoCardWrapper = ({ cards, variant, type }: Props) => {
-  if (type === 'wide') {
+export const InfoCardWrapper = ({ cards, variant, layout }: Props) => {
+  if (layout === 'wide') {
     return (
-      <Inline space={3}>
+      <Stack space={3}>
         {cards.map((c) => (
-          <InfoCard variant={variant} type={type} {...c} />
+          <InfoCard variant={variant} type={layout} {...c} />
         ))}
-      </Inline>
+      </Stack>
     )
   }
 
   return (
-    <Stack space={3}>
+    <Inline space={3}>
       {cards.map((c) => (
-        <InfoCard variant={variant} type={type} {...c} />
+        <InfoCard variant={variant} type={layout} {...c} />
       ))}
-    </Stack>
+    </Inline>
   )
 }

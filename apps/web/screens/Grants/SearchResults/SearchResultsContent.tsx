@@ -1,12 +1,13 @@
+import { useState } from 'react'
 import { useWindowSize } from 'react-use'
 import format from 'date-fns/format'
 
-import { Box, Text } from '@island.is/island-ui/core'
+import { Box, Button, Icon, Text } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import { useLocale } from '@island.is/localization'
 import { Locale } from '@island.is/shared/types'
 import { isDefined } from '@island.is/shared/utils'
-import { CardProps, InfoCardWrapper } from '@island.is/web/components'
+import { InfoCardWrapper } from '@island.is/web/components'
 import { Grant } from '@island.is/web/graphql/schema'
 import { useLinkResolver } from '@island.is/web/hooks'
 
@@ -27,71 +28,90 @@ export const SearchResultsContent = ({ grants, subheader, locale }: Props) => {
   const isMobile = width <= theme.breakpoints.md
   const isTablet = width <= theme.breakpoints.lg && width > theme.breakpoints.md
 
-  const grantProps =
-    grants
-      ?.map((grant) => {
-        if (!grant || !grant.applicationId) {
-          return null
-        }
-
-        return {
-          eyebrow: grant.fund?.title ?? grant.name ?? '',
-          subEyebrow: grant.fund?.parentOrganization?.title,
-          title: grant.name ?? '',
-          description: grant.description ?? '',
-          logo: grant.fund?.parentOrganization?.logo?.url ?? '',
-          logoAlt: grant.fund?.parentOrganization?.logo?.title ?? '',
-          tags: grant.status
-            ? [generateStatusTag(grant.status, formatMessage)].filter(isDefined)
-            : undefined,
-          link: {
-            label: formatMessage(m.general.seeMore),
-            href: linkResolver(
-              'styrkjatorggrant',
-              [grant?.applicationId ?? ''],
-              locale,
-            ).href,
-          },
-          detailLines: [
-            grant.dateFrom && grant.dateTo
-              ? {
-                  icon: 'calendar' as const,
-                  text: `${format(new Date(grant.dateFrom), 'dd.MM.')}-${format(
-                    new Date(grant.dateTo),
-                    'dd.MM.yyyy',
-                  )}`,
-                }
-              : null,
-            {
-              icon: 'time' as const,
-              //todo: fix when the text is ready
-              text: 'Frestur til 16.08.2024, kl. 15.00',
-            },
-            grant.categoryTags
-              ? {
-                  icon: 'informationCircle' as const,
-                  text: grant.categoryTags
-                    .map((ct) => ct.title)
-                    .filter(isDefined)
-                    .join(', '),
-                }
-              : undefined,
-          ].filter(isDefined),
-        }
-      })
-      .filter(isDefined) ?? []
+  const [isGridLayout, setIsGridLayout] = useState(true)
 
   return (
     <>
       {!isMobile && (
-        <Box marginBottom={3}>
+        <Box display="flex" justifyContent="spaceBetween" marginBottom={3}>
           <Text>{subheader}</Text>
+          <Button
+            variant="utility"
+            icon={isGridLayout ? 'menu' : 'gridView'}
+            iconType="filled"
+            colorScheme="white"
+            size="small"
+            onClick={() => setIsGridLayout(!isGridLayout)}
+          >
+            {formatMessage(
+              isGridLayout ? m.general.displayList : m.general.displayGrid,
+            )}
+          </Button>
         </Box>
       )}
-      {grantProps?.length ? (
-        <InfoCardWrapper cards={grantProps} variant="detailed" />
+      {grants?.length ? (
+        <InfoCardWrapper
+          layout={!isGridLayout ? 'wide' : 'default'}
+          variant="detailed"
+          cards={
+            grants
+              ?.map((grant) => {
+                if (!grant || !grant.applicationId) {
+                  return null
+                }
+
+                return {
+                  eyebrow: grant.fund?.title ?? grant.name ?? '',
+                  subEyebrow: grant.fund?.parentOrganization?.title,
+                  title: grant.name ?? '',
+                  description: grant.description ?? '',
+                  logo: grant.fund?.parentOrganization?.logo?.url ?? '',
+                  logoAlt: grant.fund?.parentOrganization?.logo?.title ?? '',
+                  tags: grant.status
+                    ? [generateStatusTag(grant.status, formatMessage)].filter(
+                        isDefined,
+                      )
+                    : undefined,
+                  link: {
+                    label: formatMessage(m.general.seeMore),
+                    href: linkResolver(
+                      'styrkjatorggrant',
+                      [grant?.applicationId ?? ''],
+                      locale,
+                    ).href,
+                  },
+                  detailLines: [
+                    grant.dateFrom && grant.dateTo
+                      ? {
+                          icon: 'calendar' as const,
+                          text: `${format(
+                            new Date(grant.dateFrom),
+                            'dd.MM.',
+                          )}-${format(new Date(grant.dateTo), 'dd.MM.yyyy')}`,
+                        }
+                      : null,
+                    {
+                      icon: 'time' as const,
+                      //todo: fix when the text is ready
+                      text: 'Frestur til 16.08.2024, kl. 15.00',
+                    },
+                    grant.categoryTags
+                      ? {
+                          icon: 'informationCircle' as const,
+                          text: grant.categoryTags
+                            .map((ct) => ct.title)
+                            .filter(isDefined)
+                            .join(', '),
+                        }
+                      : undefined,
+                  ].filter(isDefined),
+                }
+              })
+              .filter(isDefined) ?? []
+          }
+        />
       ) : undefined}
-      {!grantProps?.length && (
+      {!grants?.length && (
         <Box
           display="flex"
           alignItems="center"

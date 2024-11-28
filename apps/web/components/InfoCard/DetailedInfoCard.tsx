@@ -115,11 +115,7 @@ export const DetailedInfoCard = ({
             if (!tag) {
               return null
             }
-            return (
-              <Tag whiteBackground outlined variant={tag.variant}>
-                {tag.label}
-              </Tag>
-            )
+            return <Tag variant={tag.variant}>{tag.label}</Tag>
           })
           .filter(isDefined)}
       </Inline>
