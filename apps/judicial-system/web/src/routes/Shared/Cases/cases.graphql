@@ -35,6 +35,7 @@ query Cases {
     rulingDate
     rulingSignatureDate
     court {
+      id
       name
     }
     judge {
