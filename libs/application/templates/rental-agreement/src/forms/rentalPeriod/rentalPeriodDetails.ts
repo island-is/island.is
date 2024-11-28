@@ -19,8 +19,6 @@ const rentalPeriodIsDefinite = (answers: FormValue) => {
   return rentalPeriodDefinite && rentalPeriodDefinite.includes(TRUE)
 }
 
-console.log('RentalPeriodIsDefinite: ', rentalPeriodIsDefinite)
-
 export const RentalPeriodDetails = buildSubSection({
   id: 'rentalPeriod',
   title: rentalPeriod.subSectionName,

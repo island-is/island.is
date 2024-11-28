@@ -1,11 +1,16 @@
+import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import {
   buildSubSection,
   buildMultiField,
   buildTableRepeaterField,
   YES,
 } from '@island.is/application/core'
-import { formatNationalId } from '../../lib/utils'
 import { landlordDetails } from '../../lib/messages'
+
+export const formatPhoneNumber = (phoneNumber: string): string => {
+  const phone = parsePhoneNumberFromString(phoneNumber, 'IS')
+  return phone?.formatNational() || phoneNumber
+}
 
 export const RentalHousingLandlordInfo = buildSubSection({
   id: 'landlordInfo',
@@ -23,16 +28,13 @@ export const RentalHousingLandlordInfo = buildSubSection({
           marginTop: 1,
           maxRows: 10,
           fields: {
-            name: {
-              component: 'input',
-              label: landlordDetails.nameInputLabel,
-              width: 'half',
-            },
-            nationalId: {
-              component: 'input',
-              label: landlordDetails.nationalIdInputLabel,
-              format: '######-####',
-              width: 'half',
+            nationalIdWithName: {
+              component: 'nationalIdWithName',
+              options: (application, activeField) => {
+                console.log('Application: ', application.answers.landlordInfo)
+                console.log('ActiveField', activeField?.nationalIdWithName)
+                return []
+              },
             },
             phone: {
               component: 'phone',
@@ -60,18 +62,24 @@ export const RentalHousingLandlordInfo = buildSubSection({
           },
           table: {
             format: {
-              isRepresentative: (value) => (value.includes(YES) ? 'Check' : ''),
-              name: (value: string) => value,
-              phone: (value: string) => value,
-              nationalId: (value: string) => formatNationalId(value),
+              isRepresentative: (value) =>
+                value.includes(YES) ? '(umboðsaðili)' : '',
+              nationalIdWithName: (value) => value,
+              phone: (value) => formatPhoneNumber(value),
+              email: (value) => value,
             },
             header: [
               landlordDetails.nameInputLabel,
+              landlordDetails.nationalIdInputLabel,
               landlordDetails.phoneInputLabel,
-              landlordDetails.nationalIdHeaderLabel,
               landlordDetails.emailInputLabel,
             ],
-            rows: ['name', 'phone', 'nationalId', 'email'],
+            rows: [
+              'nationalIdWithName.name',
+              'nationalIdWithName.nationalId',
+              'phone',
+              'email',
+            ],
           },
         }),
       ],

@@ -57,4 +57,22 @@ export const landlordDetails = defineMessages({
     defaultMessage: 'Þessi aðili er umboðsaðili leigusala',
     description: 'Landlord details representative label',
   },
+
+  landlordEmptyTableError: {
+    id: 'ra.application:landlordDetails.landlordEmptyTableError',
+    defaultMessage:
+      'Að minnsta kosti einn leigusali þarf að vera skráður á leigusamninginn.',
+    description: 'Landlord details no landlords in table',
+  },
+  landlordOnlyRepresentativeTableError: {
+    id: 'ra.application:landlordDetails.landlordOnlyRepresentativeTableError',
+    defaultMessage:
+      'Að minnsta kosti einn leigusali þarf að vera skráður á leigusamninginn. Ekki er nóg að skrá umboðsaðlia leigusala.',
+    description: 'Landlord details only a representative of landlord in table',
+  },
+  landlordNationalIdEmptyError: {
+    id: 'ra.application:landlordDetails.landlordNationalIdEmptyError',
+    defaultMessage: 'Kennitala leigusala má ekki vera tómt',
+    description: 'Landlord details national id empty error',
+  },
 })

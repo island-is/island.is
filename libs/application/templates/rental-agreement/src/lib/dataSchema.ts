@@ -81,22 +81,55 @@ const registerProperty = z
   })
 
 const landlordInfo = z.object({
-  table: z.array(
-    z.object({
-      name: z.string().optional(),
-      nationalId: z.string().optional(),
-      phone: z.string().optional(),
-      email: z.string().optional(),
-      isRepresentative: z.string().array().optional(),
-    }),
-  ),
+  table: z
+    .array(
+      z
+        .object({
+          nationalIdWithName: z.object({
+            name: z.string().optional(),
+            nationalId: z.string().refine((x) => !!x && x.trim().length > 0, {
+              params: m.landlordDetails.landlordNationalIdEmptyError,
+            }),
+          }),
+          phone: z.string().optional(),
+          email: z.string().optional(),
+          isRepresentative: z.string().array().optional(),
+        })
+        .refine(({ nationalIdWithName }) => {
+          return nationalIdWithName
+        }),
+    )
+    .optional(),
 })
+// .superRefine((data, ctx) => {
+//   if (data.table?.length === 0) {
+//     ctx.addIssue({
+//       code: z.ZodIssueCode.custom,
+//       message: 'Custom error message',
+//       params: m.landlordDetails.landlordEmptyTableError,
+//       path: ['table'],
+//     })
+//   }
+//   const nonRepresentatives = data.table?.filter(
+//     (landlord) => !landlord.isRepresentative,
+//   )
+//   if (nonRepresentatives?.length === 0) {
+//     ctx.addIssue({
+//       code: z.ZodIssueCode.custom,
+//       message: 'Custom error message',
+//       params: m.landlordDetails.landlordOnlyRepresentativeTableError,
+//       path: ['table'],
+//     })
+//   }
+// })
 
 const tenantInfo = z.object({
   table: z.array(
     z.object({
-      name: z.string().optional(),
-      nationalId: z.string().optional(),
+      nationalIdWithName: z.object({
+        name: z.string().optional(),
+        nationalId: z.string().optional(),
+      }),
       phone: z.string().optional(),
       email: z.string().optional(),
       isRepresentative: z.string().array().optional(),

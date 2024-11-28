@@ -17,7 +17,7 @@ type Props = {
 export const ApplicantsSummary = ({ answers }: Props) => {
   const { formatMessage } = useLocale()
 
-  const landlordListWithoutRepresentatives = answers.landlordInfo.table.filter(
+  const landlordListWithoutRepresentatives = answers.landlordInfo.table?.filter(
     (landlord) =>
       !landlord.isRepresentative || landlord.isRepresentative.length === 0,
   )
@@ -31,12 +31,13 @@ export const ApplicantsSummary = ({ answers }: Props) => {
     <>
       <SummarySection
         sectionLabel={
+          landlordListWithoutRepresentatives &&
           landlordListWithoutRepresentatives.length > 1
             ? formatMessage(summary.landlordsHeaderPlural)
             : formatMessage(summary.landlordsHeader)
         }
       >
-        {landlordListWithoutRepresentatives.map((landlord) => {
+        {landlordListWithoutRepresentatives?.map((landlord) => {
           return (
             <Fragment key={crypto.randomUUID()}>
               <GridRow className={gridRow}>
@@ -44,10 +45,12 @@ export const ApplicantsSummary = ({ answers }: Props) => {
                   <KeyValue
                     labelVariant="h5"
                     labelAs="p"
-                    label={landlord.name as string}
+                    label={landlord.nationalIdWithName.name as string}
                     value={`${formatMessage(
                       summary.nationalIdLabel,
-                    )}${formatNationalId(landlord.nationalId || '-')}`}
+                    )}${formatNationalId(
+                      landlord.nationalIdWithName.nationalId || '-',
+                    )}`}
                     gap={'smallGutter'}
                   />
                 </GridColumn>
@@ -85,10 +88,12 @@ export const ApplicantsSummary = ({ answers }: Props) => {
                   <KeyValue
                     labelVariant="h5"
                     labelAs="p"
-                    label={tenant.name as string}
+                    label={tenant.nationalIdWithName.name as string}
                     value={`${formatMessage(
                       summary.nationalIdLabel,
-                    )}${formatNationalId(tenant.nationalId || '-')}`}
+                    )}${formatNationalId(
+                      tenant.nationalIdWithName.nationalId || '-',
+                    )}`}
                     gap={'smallGutter'}
                   />
                 </GridColumn>
