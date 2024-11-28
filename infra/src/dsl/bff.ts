@@ -61,7 +61,7 @@ export const bffConfig = ({
     ...(key === MINAR_SIDUR ? [`${baseUrl}/umsoknir`] : []),
   ]
 
-  const islandIsProdUrl = ref((ctx) => `https://${ctx.env.domain}`)
+  const addProtocol = (url: string) => `https://${url}`
 
   return {
     env: {
@@ -85,7 +85,7 @@ export const bffConfig = ({
         local: 'http://localhost:4200',
         dev: ref((ctx) => ctx.svc(getBaseUrl(ctx))),
         staging: ref((ctx) => ctx.svc(getBaseUrl(ctx))),
-        prod: islandIsProdUrl,
+        prod: json([ref((ctx) => addProtocol(ctx.env.domain))]),
       },
       BFF_ALLOWED_REDIRECT_URIS: {
         local: json([
@@ -95,13 +95,13 @@ export const bffConfig = ({
         ]),
         dev: ref((ctx) => json(getRedirectUris(getBaseUrl(ctx), key))),
         staging: ref((ctx) => json(getRedirectUris(getBaseUrl(ctx), key))),
-        prod: json([islandIsProdUrl]),
+        prod: json([ref((ctx) => addProtocol(ctx.env.domain))]),
       },
       BFF_LOGOUT_REDIRECT_URI: {
         local: `http://localhost:4200/${key}`,
         dev: ref(getBaseUrl),
         staging: ref(getBaseUrl),
-        prod: islandIsProdUrl,
+        prod: json([ref((ctx) => addProtocol(ctx.env.domain))]),
       },
       BFF_CALLBACKS_BASE_PATH: {
         local: `http://localhost:3010/${sanitizeGlobalPrefix}/callbacks`,
