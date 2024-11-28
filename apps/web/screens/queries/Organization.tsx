@@ -430,3 +430,17 @@ export const GET_ORGANIZATION_PARENT_SUBPAGE_QUERY = gql`
     }
   }
 `
+
+export const GET_ORGANIZATION_PAGE_STANDALONE_SITEMAP_LEVEL1_QUERY = gql`
+  query GetOrganizationPageStandaloneSitemapLevel1Query(
+    $input: GetOrganizationPageStandaloneSitemapLevel1Input!
+  ) {
+    getOrganizationPageStandaloneSitemapLevel1(input: $input) {
+      childLinks {
+        label
+        href
+        description
+      }
+    }
+  }
+`
