@@ -6,7 +6,7 @@ ARG DOCKER_ECR_REGISTRY=public.ecr.aws/docker
 ARG DOCKER_IMAGE_REGISTRY=${DOCKER_ECR_REGISTRY%/docker}
 # Alias DOCKER_IMAGE_REGISTRY to DOCKER_REGISTRY for backwards compatibility
 ARG DOCKER_REGISTRY=${DOCKER_IMAGE_REGISTRY}/docker
-ARG NODE_IMAGE_TAG=latest
+ARG NODE_IMAGE_TAG
 ARG APP_HOME
 ARG APP_DIST_HOME=dist/${APP_HOME}
 ARG APP
@@ -112,8 +112,9 @@ LABEL commit=${GIT_COMMIT_SHA}
 ENTRYPOINT [ "node", "main.js" ]
 
 
-# Stage-specific ARGs
 FROM ${DOCKER_REGISTRY}/nginx/nginx:1.21-alpine AS output-static
+
+# Stage-specific ARGs
 ARG APP_DIST_HOME
 ARG GIT_BRANCH
 ARG GIT_COMMIT_SHA
