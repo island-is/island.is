@@ -1276,7 +1276,7 @@ export class CmsContentfulService {
 
     // Remove entries from result that could not be resolved to their label or href
     result.childLinks = result.childLinks.filter(
-      (link) => 'entryId' in link && entryIdsToRemove.includes(link.entryId),
+      (link) => !('entryId' in link && entryIdsToRemove.includes(link.entryId)),
     )
 
     return result
