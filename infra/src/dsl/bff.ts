@@ -2,6 +2,7 @@ import { json, ref } from './dsl'
 import { BffInfo, Context, PortalKeys } from './types/input-types'
 
 import {
+  adminPortalScopes,
   applicationSystemScopes,
   servicePortalScopes,
 } from '../../../libs/auth/scopes/src/index'
@@ -26,7 +27,7 @@ export const getScopes = (key: PortalKeys) => {
     }
 
     case STJORNBORD: {
-      const uniqueScopes = new Set([...servicePortalScopes])
+      const uniqueScopes = new Set([...adminPortalScopes])
 
       return [...uniqueScopes]
     }
