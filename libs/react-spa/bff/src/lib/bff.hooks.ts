@@ -40,14 +40,18 @@ export const useDynamicBffHook = <Key extends keyof BffContextType>(
 export const useBffUrlGenerator = () => useDynamicBffHook('bffUrlGenerator')
 export const useUserInfo = () => useDynamicBffHook('userInfo')
 
+/**
+ * Gets the user's birthday from the nationalId in the user profile.
+ *
+ * @warning This does not support system nationalId (kerfis kennitala) users.
+ * This should be read from the parsed id_token in the /user response, when the IDP adds support for it.
+ */
 export const useUserBirthday = () => {
   const userInfo = useUserInfo()
 
   return useMemo(() => {
     const nationalId = userInfo?.profile.nationalId
 
-    // This does not support system nationalId(kerfis kennitala) users.
-    // This should be read from the parsed id_token in the /user response, when the IDP adds support for it.
     return nationalId ? kennitala.info(nationalId)?.birthday : undefined
   }, [userInfo?.profile.nationalId])
 }
