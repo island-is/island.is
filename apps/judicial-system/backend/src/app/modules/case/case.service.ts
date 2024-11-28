@@ -40,6 +40,7 @@ import {
   CaseType,
   DateType,
   dateTypes,
+  defendantEventTypes,
   EventType,
   eventTypes,
   isCompletedCase,
@@ -59,7 +60,12 @@ import {
 } from '../../formatters'
 import { AwsS3Service } from '../aws-s3'
 import { CourtService } from '../court'
-import { CivilClaimant, Defendant, DefendantService } from '../defendant'
+import {
+  CivilClaimant,
+  Defendant,
+  DefendantEventLog,
+  DefendantService,
+} from '../defendant'
 import { EventService } from '../event'
 import { EventLog, EventLogService } from '../event-log'
 import { CaseFile, FileService } from '../file'
@@ -282,6 +288,14 @@ export const include: Includeable[] = [
         model: Subpoena,
         as: 'subpoenas',
         required: false,
+        order: [['created', 'DESC']],
+        separate: true,
+      },
+      {
+        model: DefendantEventLog,
+        as: 'eventLogs',
+        required: false,
+        where: { eventType: defendantEventTypes },
         order: [['created', 'DESC']],
         separate: true,
       },
@@ -784,10 +798,9 @@ export class CaseService {
           elementId: caseFile.id,
         })) ?? []
 
-    const messages = this.getDeliverProsecutorToCourtMessages(theCase, user)
-      .concat(this.getDeliverDefendantToCourtMessages(theCase, user))
-      .concat(deliverCaseFilesRecordToCourtMessages)
-      .concat(deliverCaseFileToCourtMessages)
+    const messages: Message[] = deliverCaseFilesRecordToCourtMessages.concat(
+      deliverCaseFileToCourtMessages,
+    )
 
     if (isTrafficViolationCase(theCase)) {
       messages.push({
@@ -2035,11 +2048,23 @@ export class CaseService {
   }
 
   async createCourtCase(theCase: Case, user: TUser): Promise<Case> {
+    let receivalDate: Date
+
+    if (isIndictmentCase(theCase.type)) {
+      receivalDate =
+        theCase.eventLogs?.find(
+          (eventLog) => eventLog.eventType === EventType.INDICTMENT_CONFIRMED,
+        )?.created ?? nowFactory()
+    } else {
+      receivalDate = nowFactory()
+    }
+
     const courtCaseNumber = await this.courtService.createCourtCase(
       user,
       theCase.id,
       theCase.courtId,
       theCase.type,
+      receivalDate,
       theCase.policeCaseNumbers,
       Boolean(theCase.parentCaseId),
       theCase.indictmentSubtypes,

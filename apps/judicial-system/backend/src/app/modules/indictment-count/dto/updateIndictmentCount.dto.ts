@@ -4,6 +4,7 @@ import {
   IsObject,
   IsOptional,
   IsString,
+  MaxLength,
 } from 'class-validator'
 
 import { ApiPropertyOptional } from '@nestjs/swagger'
@@ -14,11 +15,13 @@ import { IndictmentCountOffense } from '@island.is/judicial-system/types'
 export class UpdateIndictmentCountDto {
   @IsOptional()
   @IsString()
+  @MaxLength(255)
   @ApiPropertyOptional({ type: String })
   readonly policeCaseNumber?: string
 
   @IsOptional()
   @IsString()
+  @MaxLength(255)
   @ApiPropertyOptional({ type: String })
   readonly vehicleRegistrationNumber?: string
 

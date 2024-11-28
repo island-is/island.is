@@ -46,6 +46,12 @@ import { GetGenericListItemBySlugInput } from './dto/getGenericListItemBySlug.in
 import { GenericListItem } from './models/genericListItem.model'
 import { GetTeamMembersInput } from './dto/getTeamMembers.input'
 import { TeamMemberResponse } from './models/teamMemberResponse.model'
+import { GetGrantsInput } from './dto/getGrants.input'
+import { Grant, GrantStatus } from './models/grant.model'
+import { GrantList } from './models/grantList.model'
+import { logger } from '@island.is/logging'
+import { IGrantFields } from './generated/contentfulTypes'
+import { isDefined } from '@island.is/shared/utils'
 
 @Injectable()
 export class CmsElasticsearchService {
@@ -603,6 +609,162 @@ export class CmsElasticsearchService {
         JSON.parse(response._source.response ?? 'null'),
       )
       .filter(Boolean)
+  }
+
+  async getGrants(
+    index: string,
+    {
+      lang,
+      search,
+      page = 1,
+      size = 8,
+      statuses,
+      categories,
+      types,
+      organizations,
+    }: GetGrantsInput,
+  ): Promise<GrantList> {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const must: Record<string, any>[] = [
+      {
+        term: {
+          type: {
+            value: 'webGrant',
+          },
+        },
+      },
+    ]
+
+    let queryString = search ? search.toLowerCase() : ''
+
+    if (lang === 'is') {
+      queryString = queryString.replace('`', '')
+    }
+
+    const sort: ('_score' | sortRule)[] = [
+      {
+        [SortField.RELEASE_DATE]: {
+          order: SortDirection.DESC,
+        },
+      },
+      // Sort items with equal values by ascending title order
+      { 'title.sort': { order: SortDirection.ASC } },
+    ]
+
+    // Order by score first in case there is a query string
+    if (queryString.length > 0 && queryString !== '*') {
+      sort.unshift('_score')
+    }
+
+    if (queryString) {
+      must.push({
+        simple_query_string: {
+          query: queryString + '*',
+          fields: ['title^100', 'content'],
+          analyze_wildcard: true,
+        },
+      })
+    }
+
+    const tagFilters: Array<Array<string>> = []
+
+    if (categories) {
+      tagFilters.push(categories)
+    }
+    if (types) {
+      tagFilters.push(types)
+    }
+
+    tagFilters.forEach((filter) => {
+      must.push({
+        nested: {
+          path: 'tags',
+          query: {
+            bool: {
+              must: [
+                {
+                  terms: {
+                    'tags.key': filter,
+                  },
+                },
+                {
+                  term: {
+                    'tags.type': 'genericTag',
+                  },
+                },
+              ],
+            },
+          },
+        },
+      })
+    })
+
+    if (organizations) {
+      must.push({
+        nested: {
+          path: 'tags',
+          query: {
+            bool: {
+              must: [
+                {
+                  terms: {
+                    'tags.key': organizations,
+                  },
+                },
+                {
+                  term: {
+                    'tags.type': 'fund',
+                  },
+                },
+              ],
+            },
+          },
+        },
+      })
+    }
+
+    if (statuses) {
+      must.push({
+        nested: {
+          path: 'tags',
+          query: {
+            bool: {
+              must: [
+                {
+                  terms: {
+                    'tags.key': statuses,
+                  },
+                },
+                {
+                  term: {
+                    'tags.type': 'status',
+                  },
+                },
+              ],
+            },
+          },
+        },
+      })
+    }
+
+    const grantListResponse: ApiResponse<SearchResponse<MappedData>> =
+      await this.elasticService.findByQuery(index, {
+        query: {
+          bool: {
+            must,
+          },
+        },
+        sort,
+        size,
+        from: (page - 1) * size,
+      })
+
+    return {
+      total: grantListResponse.body.hits.total.value,
+      items: grantListResponse.body.hits.hits.map<Grant>((response) =>
+        JSON.parse(response._source.response ?? '[]'),
+      ),
+    }
   }
 
   async getPublishedMaterial(

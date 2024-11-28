@@ -121,6 +121,13 @@ import { TeamMemberResponse } from './models/teamMemberResponse.model'
 import { TeamList } from './models/teamList.model'
 import { TeamMember } from './models/teamMember.model'
 import { LatestGenericListItems } from './models/latestGenericListItems.model'
+import { GetGenericTagsInTagGroupsInput } from './dto/getGenericTagsInTagGroups.input'
+import { Grant } from './models/grant.model'
+import { GetGrantsInput } from './dto/getGrants.input'
+import { GetSingleGrantInput } from './dto/getSingleGrant.input'
+import { GrantList } from './models/grantList.model'
+import { OrganizationParentSubpage } from './models/organizationParentSubpage.model'
+import { GetOrganizationParentSubpageInput } from './dto/getOrganizationParentSubpage.input'
 
 const defaultCache: CacheControlOptions = { maxAge: CACHE_CONTROL_MAX_AGE }
 
@@ -445,6 +452,23 @@ export class CmsResolver {
   }
 
   @CacheControl(defaultCache)
+  @Query(() => GrantList)
+  async getGrants(@Args('input') input: GetGrantsInput): Promise<GrantList> {
+    return this.cmsElasticsearchService.getGrants(
+      getElasticsearchIndex(input.lang),
+      input,
+    )
+  }
+
+  @CacheControl(defaultCache)
+  @Query(() => Grant, { nullable: true })
+  async getSingleGrant(
+    @Args('input') { lang, id }: GetSingleGrantInput,
+  ): Promise<Grant | null> {
+    return this.cmsContentfulService.getGrant(lang, id)
+  }
+
+  @CacheControl(defaultCache)
   @Query(() => News, { nullable: true })
   getSingleNews(
     @Args('input') { lang, slug }: GetSingleNewsInput,
@@ -607,6 +631,14 @@ export class CmsResolver {
   }
 
   @CacheControl(defaultCache)
+  @Query(() => [GenericTag], { nullable: true })
+  getGenericTagsInTagGroups(
+    @Args('input') input: GetGenericTagsInTagGroupsInput,
+  ): Promise<Array<GenericTag> | null> {
+    return this.cmsContentfulService.getGenericTagsInTagGroups(input)
+  }
+
+  @CacheControl(defaultCache)
   @Query(() => Manual, { nullable: true })
   getSingleManual(
     @Args('input') input: GetSingleManualInput,
@@ -676,6 +708,14 @@ export class CmsResolver {
     @Args('input') input: GetTeamMembersInput,
   ): Promise<TeamMemberResponse> {
     return this.cmsElasticsearchService.getTeamMembers(input)
+  }
+
+  @CacheControl(defaultCache)
+  @Query(() => OrganizationParentSubpage, { nullable: true })
+  getOrganizationParentSubpage(
+    @Args('input') input: GetOrganizationParentSubpageInput,
+  ): Promise<OrganizationParentSubpage | null> {
+    return this.cmsContentfulService.getOrganizationParentSubpage(input)
   }
 }
 

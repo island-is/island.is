@@ -33,6 +33,7 @@ import { CustomPageSyncService } from './importers/customPage.service'
 import { GenericListItemSyncService } from './importers/genericListItem.service'
 import { TeamListSyncService } from './importers/teamList.service'
 import { MappingService } from './mapping.service'
+import { GrantsSyncService } from './importers/grants.service'
 
 @Module({
   imports: [
@@ -54,6 +55,7 @@ import { MappingService } from './mapping.service'
     NewsSyncService,
     AdgerdirPageSyncService,
     MenuSyncService,
+    GrantsSyncService,
     GroupedMenuSyncService,
     OrganizationPageSyncService,
     OrganizationSubpageSyncService,

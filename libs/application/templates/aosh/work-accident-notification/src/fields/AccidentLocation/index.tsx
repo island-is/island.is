@@ -1,18 +1,12 @@
 import { FieldBaseProps } from '@island.is/application/types'
-import { FC, useEffect, useState } from 'react'
-import {
-  Box,
-  Checkbox,
-  GridColumn,
-  GridRow,
-  Select,
-} from '@island.is/island-ui/core'
+import { FC, useState } from 'react'
+import { Box, GridColumn, GridRow, Select } from '@island.is/island-ui/core'
 import { getValueViaPath } from '@island.is/application/core'
 import { Controller, useFormContext } from 'react-hook-form'
 import { accident } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
 import { WorkingEnvironmentDto } from '@island.is/clients/work-accident-ver'
-import { WorkAccidentNotification } from '../../lib/dataSchema'
+import { WorkAccidentNotification } from '../..'
 
 type Option = {
   value: string
@@ -42,7 +36,15 @@ export const AccidentLocation: FC<React.PropsWithChildren<FieldBaseProps>> = (
   )
   const [minorGroupOptions, setMinorGroupOptions] = useState<
     WorkingEnvironmentDto[]
-  >([])
+  >(
+    selectedMajorGroup
+      ? minorGroups.filter(
+          (group) =>
+            group.code?.substring(0, 2) ===
+            selectedMajorGroup?.value?.substring(0, 2),
+        )
+      : [],
+  )
 
   return (
     <Box paddingTop={2}>
@@ -56,7 +58,7 @@ export const AccidentLocation: FC<React.PropsWithChildren<FieldBaseProps>> = (
                   label={formatMessage(
                     accident.about.locationOfAccidentMajorGroup,
                   )}
-                  name="subMajorGroupSelect"
+                  name="accident.accidentLocationParentGroup"
                   options={majorGroups.map((option) => ({
                     label: option.name || '',
                     value: option.code,
@@ -80,7 +82,7 @@ export const AccidentLocation: FC<React.PropsWithChildren<FieldBaseProps>> = (
                 />
               )
             }}
-            name={'subMajorGroup'}
+            name={'accident.accidentLocationParentGroup'}
           />
         </GridColumn>
         <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
@@ -92,11 +94,12 @@ export const AccidentLocation: FC<React.PropsWithChildren<FieldBaseProps>> = (
                   label={formatMessage(
                     accident.about.locationOfAccidentMinorGroup,
                   )}
-                  name="subMajorGroupSelect"
+                  name="accident.accidentLocation"
                   options={minorGroupOptions.map((group) => ({
                     label: group.name || '',
                     value: group.code,
                   }))}
+                  isDisabled={!selectedMajorGroup}
                   value={selectedMinorGroup}
                   backgroundColor="blue"
                   onChange={(v) => {
@@ -113,7 +116,7 @@ export const AccidentLocation: FC<React.PropsWithChildren<FieldBaseProps>> = (
                 />
               )
             }}
-            name={'subMajorGroup'}
+            name={'accident.accidentLocation'}
           />
         </GridColumn>
       </GridRow>

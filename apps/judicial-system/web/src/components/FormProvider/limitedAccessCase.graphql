@@ -45,6 +45,8 @@ query LimitedAccessCase($input: CaseQueryInput!) {
       verdictAppealDeadline
       isVerdictAppealDeadlineExpired
       subpoenaType
+      isSentToPrisonAdmin
+      sentToPrisonAdminDate
       subpoenas {
         id
         created
