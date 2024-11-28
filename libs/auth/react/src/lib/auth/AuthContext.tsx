@@ -1,7 +1,6 @@
-import { jwtDecode } from 'jwt-decode'
-import { createContext, useContext } from 'react'
+import { createContext } from 'react'
 
-import { User } from '@island.is/shared/types'
+import { useBff } from '@island.is/react-spa/bff'
 
 import { AuthReducerState, initialState } from './Auth.state'
 
@@ -40,10 +39,10 @@ const warnDeprecated = (hookName: string, alternative: string) => {
 /**
  * @deprecated Use useBff from `libs/react-spa/bff` instead.
  */
-export const useAuth: () => AuthContextType = () => {
+export const useAuth = () => {
   warnDeprecated('useAuth', 'useBff')
 
-  return useContext(AuthContext)
+  return useBff()
 }
 
 /**
@@ -51,27 +50,11 @@ export const useAuth: () => AuthContextType = () => {
  */
 export const useUserInfo = () => {
   warnDeprecated('useUserInfo', 'useUserInfo')
-  const { userInfo } = useContext(AuthContext)
+  const { userInfo } = useAuth()
 
   if (!userInfo) {
     throw new Error('User info is not available. Is the user authenticated?')
   }
 
   return userInfo
-}
-
-/**
- * @deprecated Use useUserInfo from `libs/react-spa/bff` instead where the user info is already decoded.
- */
-export const useUserDecodedIdToken = () => {
-  warnDeprecated('useUserDecodedIdToken', 'useUserInfo')
-  const userInfo = useUserInfo()
-
-  if (!userInfo.id_token) {
-    throw new Error(
-      'Decoded ID token is not available. Is the user authenticated?',
-    )
-  }
-
-  return jwtDecode<User['profile']>(userInfo.id_token)
 }
