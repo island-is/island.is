@@ -28,9 +28,6 @@ export const serviceSetup = (
       clientName,
       services,
       globalPrefix: '/bff',
-      allowedRedirectUris: {
-        local: ['http://localhost:4242/umsoknir'],
-      },
     })
     .readiness('/bff/health/check')
     .liveness('/bff/liveness')

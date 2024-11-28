@@ -6,6 +6,9 @@ import {
   servicePortalScopes,
 } from '../../../libs/auth/scopes/src/index'
 
+const MINAR_SIDUR: PortalKeys = 'minarsidur'
+const STJORNBORD: PortalKeys = 'stjornbord'
+
 /**
  * Trim any leading and trailing slashes
  */
@@ -13,14 +16,14 @@ const sanitizePath = (path: string) => path.replace(/^\/+|\/+$/g, '')
 
 export const getScopes = (key: PortalKeys) => {
   switch (key) {
-    case 'minarsidur':
+    case MINAR_SIDUR:
       const combinedScopes = new Set([
         ...servicePortalScopes,
         ...applicationSystemScopes,
       ])
 
       return [...combinedScopes]
-    case 'stjornbord':
+    case STJORNBORD:
       const uniqueScopes = new Set([...servicePortalScopes])
 
       return [...uniqueScopes]
@@ -35,16 +38,18 @@ export const bffConfig = ({
   clientName,
   clientId,
   globalPrefix,
-  allowedRedirectUris,
 }: BffInfo) => {
   const sanitizeGlobalPrefix = sanitizePath(globalPrefix)
 
-  const getBaseUrl = (ctx: Context) =>
-    ctx.featureDeploymentName
+  const getBaseUrl = (ctx: Context) => {
+    const domain = ctx.featureDeploymentName
       ? `${ctx.featureDeploymentName}-beta.${ctx.env.domain}`
       : ctx.env.type === 'prod'
       ? ctx.env.domain
       : `beta.${ctx.env.domain}`
+
+    return `https://${domain}`
+  }
 
   return {
     env: {
@@ -66,46 +71,33 @@ export const bffConfig = ({
       BFF_PAR_SUPPORT_ENABLED: 'true',
       BFF_CLIENT_BASE_URL: {
         local: 'http://localhost:4200',
-        dev: ref((ctx) => ctx.svc(`https://${getBaseUrl(ctx)}`)),
-        staging: ref((ctx) => ctx.svc(`https://${getBaseUrl(ctx)}`)),
+        dev: ref((ctx) => ctx.svc(getBaseUrl(ctx))),
+        staging: ref((ctx) => ctx.svc(getBaseUrl(ctx))),
         prod: 'https://island.is',
       },
       BFF_ALLOWED_REDIRECT_URIS: {
         local: json([
           `http://localhost:4200/${key}`,
-          ...(allowedRedirectUris?.local ?? []),
+          // This is a special case for minarsidur, since it serves two applications
+          ...(key === MINAR_SIDUR ? ['http://localhost:4242/umsoknir'] : []),
         ]),
-        dev: ref((ctx) =>
-          json([
-            `https://${getBaseUrl(ctx)}`,
-            ...(allowedRedirectUris?.dev ?? []),
-          ]),
-        ),
-        staging: ref((ctx) =>
-          json([
-            `https://${getBaseUrl(ctx)}`,
-            ...(allowedRedirectUris?.staging ?? []),
-          ]),
-        ),
-        prod: json(['https://island.is', ...(allowedRedirectUris?.prod ?? [])]),
+        dev: ref((ctx) => json([getBaseUrl(ctx)])),
+        staging: ref((ctx) => json([getBaseUrl(ctx)])),
+        prod: json(['https://island.is']),
       },
       BFF_LOGOUT_REDIRECT_URI: {
         local: `http://localhost:4200/${key}`,
-        dev: ref((ctx) => `https://${getBaseUrl(ctx)}`),
-        staging: ref((ctx) => `https://${getBaseUrl(ctx)}`),
+        dev: ref(getBaseUrl),
+        staging: ref(getBaseUrl),
         prod: 'https://island.is',
       },
       BFF_CALLBACKS_BASE_PATH: {
         local: `http://localhost:3010/${sanitizeGlobalPrefix}/callbacks`,
-        dev: ref(
-          (c) => `https://${getBaseUrl(c)}/${sanitizeGlobalPrefix}/callbacks`,
-        ),
+        dev: ref((c) => `${getBaseUrl(c)}/${sanitizeGlobalPrefix}/callbacks`),
         staging: ref(
-          (c) => `https://${getBaseUrl(c)}/${sanitizeGlobalPrefix}/callbacks`,
+          (c) => `${getBaseUrl(c)}/${sanitizeGlobalPrefix}/callbacks`,
         ),
-        prod: ref(
-          (c) => `https://${getBaseUrl(c)}/${sanitizeGlobalPrefix}/callbacks`,
-        ),
+        prod: ref((c) => `${getBaseUrl(c)}/${sanitizeGlobalPrefix}/callbacks`),
       },
       BFF_PROXY_API_ENDPOINT: {
         local: 'http://localhost:4444/api/graphql',
