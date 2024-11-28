@@ -3,9 +3,12 @@ import {
   buildMultiField,
   buildTableRepeaterField,
   YES,
+  getValueViaPath,
 } from '@island.is/application/core'
 import { formatNationalId } from '../../lib/utils'
 import { landlordDetails } from '../../lib/messages'
+import { FormValue } from '@island.is/application/types'
+import { UserRole } from '../../lib/constants'
 
 export const RentalHousingLandlordInfo = buildSubSection({
   id: 'landlordInfo',
@@ -72,6 +75,48 @@ export const RentalHousingLandlordInfo = buildSubSection({
               landlordDetails.emailInputLabel,
             ],
             rows: ['name', 'phone', 'nationalId', 'email'],
+          },
+          getStaticTableData: (application) => {
+            const name = getValueViaPath<string>(
+              application.externalData,
+              'nationalRegistry.data.fullName',
+            ) as string
+
+            const nationalId = getValueViaPath<string>(
+              application.externalData,
+              'nationalRegistry.data.nationalId',
+            )
+
+            const phone = getValueViaPath<string>(
+              application.externalData,
+              'userProfile.data.mobilePhoneNumber',
+            ) as string
+
+            const email = getValueViaPath<string>(
+              application.externalData,
+              'userProfile.data.email',
+            )
+
+            const userRole = application.answers.userRole as FormValue
+
+            if (
+              userRole.type === UserRole.LANDLORD &&
+              name &&
+              nationalId &&
+              phone &&
+              email
+            ) {
+              return [
+                {
+                  name,
+                  phone,
+                  nationalId,
+                  email,
+                },
+              ]
+            }
+
+            return []
           },
         }),
       ],
