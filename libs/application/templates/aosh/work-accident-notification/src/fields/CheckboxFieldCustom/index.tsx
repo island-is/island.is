@@ -10,9 +10,9 @@ import {
 import { getErrorViaPath, getValueViaPath } from '@island.is/application/core'
 import { Controller, useFormContext } from 'react-hook-form'
 import { WorkplaceHealthAndSafetyDto } from '@island.is/clients/work-accident-ver'
-import { WorkAccidentNotification } from '../../lib/dataSchema'
 import { useLocale } from '@island.is/localization'
 import { information } from '../../lib/messages/information'
+import { WorkAccidentNotification } from '../..'
 
 export const CheckboxFieldCustom: FC<
   React.PropsWithChildren<FieldBaseProps>
