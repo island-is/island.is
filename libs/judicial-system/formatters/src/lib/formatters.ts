@@ -12,7 +12,6 @@ import {
   Gender,
   IndictmentSubtype,
   IndictmentSubtypeMap,
-  InstitutionType,
   isRestrictionCase,
 } from '@island.is/judicial-system/types'
 
