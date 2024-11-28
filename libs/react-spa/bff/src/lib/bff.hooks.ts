@@ -46,6 +46,8 @@ export const useUserBirthday = () => {
   return useMemo(() => {
     const nationalId = userInfo?.profile.nationalId
 
+    // This does not support system nationalId(kerfis kennitala) users.
+    // This should be read from the parsed id_token in the /user response, when the IDP adds support for it.
     return nationalId ? kennitala.info(nationalId)?.birthday : undefined
   }, [userInfo?.profile.nationalId])
 }
