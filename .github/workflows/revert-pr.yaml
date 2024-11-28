@@ -1,0 +1,32 @@
+name: Auto Revert on Failed Checks
+
+on:
+  pull_request:
+    types: [closed]
+    branches:
+      - main
+  check_suite:
+    types: [completed]
+  workflow_run:
+    workflows: ['*']
+    types: [completed]
+    branches:
+      - main
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  auto-revert:
+    runs-on: ec2-runners
+    if: github.event.pull_request.merged == true && github.event.workflow_run.conclusion == 'failure'
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Create Revert PR
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          REVERT_PR=$(bash ./scripts/ci/revert-pr.sh "${{ github.event.pull_request.number }}")
+          gh pr edit $REVERT_PR --add-label "automerge,high priority"
