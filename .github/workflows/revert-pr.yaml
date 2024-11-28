@@ -59,13 +59,14 @@ jobs:
   create-revert-pr:
     name: Create Revert PR
     needs: detect-failure
-    if: ${{ steps.fetch-pr.outputs.PR_NUMBER && github.event.workflow_run.conclusion == 'failure' }}
+    if: ${{ needs.fetch-pr.outputs.PR_NUMBER && github.event.workflow_run.conclusion == 'failure' }}
     runs-on: ubuntu-latest
     steps:
       - name: Create Revert PR
         run: |
-          echo "Reverting PR: ${{ steps.fetch-pr.outputs.PR_NUMBER }}"
-          REVERT_PR=$(bash ./scripts/ci/revert-pr.sh "${{ steps.fetch-pr.outputs.PR_NUMBER }}")
+          PR_NUMBER=${{ needs.fetch-pr.outputs.PR_NUMBER }}
+          echo "Reverting PR: $PR_NUMBER"
+          REVERT_PR=$(bash ./scripts/ci/revert-pr.sh "$PR_NUMBER")
           gh pr edit $REVERT_PR --add-label "automerge,high priority"
 
   manual-revert-pr:
