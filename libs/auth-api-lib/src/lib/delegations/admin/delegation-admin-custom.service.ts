@@ -212,7 +212,6 @@ export class DelegationAdminCustomService {
     //   delegation.toNationalId,
     // )
 
-
     const newDelegation = await this.insertDelegation({
       ...delegation,
       createdBy: user.actor?.nationalId ?? user.nationalId,
