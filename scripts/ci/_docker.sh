@@ -2,6 +2,16 @@
 set -euo pipefail
 if [[ -n "${DEBUG:-}" || -n "${CI:-}" ]]; then set -x; fi
 
+# Required environment variables
+REQUIRED_ENV=(APP DOCKER_TAG)
+for e in "${REQUIRED_ENV[@]}"; do
+  if [[ -z "${!e:-}" ]]; then
+    echo "ERROR: $e is not set" >&2
+    echo "Required env vars: ${REQUIRED_ENV[*]}" >&2
+    exit 1
+  fi
+done
+
 DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)"
 
 # shellcheck disable=SC1091
@@ -16,6 +26,8 @@ ACTION=${3:-docker_build}
 PLAYWRIGHT_VERSION="$(yarn info --json @playwright/test | jq -r '.children.Version')"
 CONTAINER_BUILDER=${CONTAINER_BUILDER:-docker}
 DOCKER_LOCAL_CACHE="${DOCKER_LOCAL_CACHE:-true}"
+NODE_IMAGE_TAG="${NODE_IMAGE_TAG:-$(cd "$DIR" && ../../scripts/ci/get-node-version.mjs)}"
+DOCKER_REGISTRY=${DOCKER_REGISTRY:-localhost}
 
 BUILD_ARGS=()
 
@@ -29,8 +41,9 @@ mkargs() {
     --build-arg="APP=${APP}"
     --build-arg="APP_HOME=${APP_HOME}"
     --build-arg="APP_DIST_HOME=${APP_DIST_HOME}"
-    -t "${DOCKER_REGISTRY}""${APP}":"${DOCKER_TAG}"
+    -t "${DOCKER_REGISTRY}/${APP}:${DOCKER_TAG}"
     --build-arg="PLAYWRIGHT_VERSION=${PLAYWRIGHT_VERSION}"
+    --build-arg="NODE_IMAGE_TAG=${NODE_IMAGE_TAG}"
   )
   for extra_arg in ${EXTRA_DOCKER_BUILD_ARGS:-}; do
     BUILD_ARGS+=("$extra_arg")
@@ -43,6 +56,7 @@ mkargs() {
 
 container_build() {
   $CONTAINER_BUILDER buildx build "${BUILD_ARGS[@]}" "$PROJECT_ROOT"
+  echo "Successfully built ${DOCKER_REGISTRY}/${APP}:${DOCKER_TAG}" >&2
 }
 
 docker_build() {
