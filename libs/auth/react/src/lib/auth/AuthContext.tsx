@@ -1,6 +1,5 @@
 import { createContext, useContext } from 'react'
 
-
 import { AuthReducerState, initialState } from './Auth.state'
 
 export interface AuthContextType extends AuthReducerState {
@@ -43,7 +42,7 @@ export const useAuth = () => {
 
   const context = useContext(AuthContext)
 
-  if(!context) {
+  if (!context) {
     throw new Error('useAuth must be used within a AuthProvider')
   }
 
