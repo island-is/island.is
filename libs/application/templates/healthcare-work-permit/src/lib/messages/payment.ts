@@ -13,18 +13,7 @@ export const payment = {
       description: 'Payment page title',
     },
   }),
-  paymentChargeOverview: defineMessages({
-    forPayment: {
-      id: 'hwp.application:payment.paymentChargeOverview.forPayment',
-      defaultMessage: 'Til greiðslu',
-      description: 'For payment label',
-    },
-    total: {
-      id: 'hwp.application:payment.paymentChargeOverview.total',
-      defaultMessage: 'Samtals',
-      description: 'Total amount label',
-    },
-  }),
+
   confirmation: defineMessages({
     confirm: {
       id: 'hwp.application:payment.confirmation.confirm',

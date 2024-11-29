@@ -12,8 +12,10 @@ import {
   DelegationScope,
   DelegationTypeModel,
   Domain,
+  NationalRegistryV3FeatureService,
 } from '@island.is/auth-api-lib'
 import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
+import { NationalRegistryV3ClientService } from '@island.is/clients/national-registry-v3'
 import {
   createClient,
   createDomain,
@@ -37,6 +39,9 @@ import {
 } from '../../../../test/stubs/genericStubs'
 
 describe('DelegationsController', () => {
+  describe.each([false, true])(
+    'national registry v3 featureflag: %s',
+    (featureFlag) => {
   describe('Given a user is authenticated', () => {
     let app: TestApp
     let factory: FixtureFactory
@@ -48,10 +53,11 @@ describe('DelegationsController', () => {
     let delegationModel: typeof Delegation
     let delegationTypeModel: typeof DelegationTypeModel
     let nationalRegistryApi: NationalRegistryClientService
+    let nationalRegistryV3Api: NationalRegistryV3ClientService
     let delegationProviderModel: typeof DelegationProviderModel
     let delegationScopesModel: typeof DelegationScope
 
-    const client = createClient({
+    const client= createClient({
       clientId: '@island.is/webapp',
     })
 
@@ -86,17 +92,18 @@ describe('DelegationsController', () => {
 
     const domain = createDomain()
     let nationalRegistryApiSpy: jest.SpyInstance
+    let nationalRegistryV3ApiSpy: jest.SpyInstance
 
-    beforeAll(async () => {
-      app = await setupWithAuth({
-        user,
-      })
-      server = request(app.getHttpServer())
+      beforeAll(async () => {
+        app = await setupWithAuth({
+          user,
+        })
+        server = request(app.getHttpServer())
 
-      const domainModel = app.get<typeof Domain>(getModelToken(Domain))
-      await domainModel.create(domain)
+        const domainModel = app.get<typeof Domain>(getModelToken(Domain))
+        await domainModel.create(domain)
 
-      apiScopeModel = app.get<typeof ApiScope>(getModelToken(ApiScope))
+        apiScopeModel = app.get<typeof ApiScope>(getModelToken(ApiScope))
 
       apiScopeDelegationTypeModel = app.get<typeof ApiScopeDelegationType>(
         getModelToken(ApiScopeDelegationType),
@@ -133,11 +140,22 @@ describe('DelegationsController', () => {
 
           return user ?? null
         })
+
+        nationalRegistryV3ApiSpy = jest
+          .spyOn(nationalRegistryV3Api, 'getAllDataIndividual')
+          .mockImplementation(async () => {
+            const user = createNationalRegistryUser({
+              nationalId: representeeNationalId,
+            })
+
+            return { kennitala: user.nationalId, nafn: user.name }
+          })
     })
 
     afterAll(async () => {
       await app.cleanUp()
       nationalRegistryApiSpy.mockClear()
+      nationalRegistryV3ApiSpy.mockClear()
     })
 
     describe('GET with general mandate delegation type for company', () => {
@@ -467,4 +485,5 @@ describe('DelegationsController', () => {
       })
     })
   })
+      })
 })

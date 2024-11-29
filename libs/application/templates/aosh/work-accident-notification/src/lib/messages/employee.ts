@@ -69,7 +69,7 @@ export const employee = {
       description: 'Employment time in the same job',
     },
     employmentRate: {
-      id: 'aosh.wan.application:employee.employmentTime',
+      id: 'aosh.wan.application:employee.employmentRate',
       defaultMessage: 'Starfshlutfall',
       description: 'Employment rate %',
     },
@@ -79,7 +79,7 @@ export const employee = {
       description: 'Employees work hour arrangement',
     },
     startOfWorkdayDate: {
-      id: 'aosh.wan.application:employee.time',
+      id: 'aosh.wan.application:employee.startOfWorkdayDate',
       defaultMessage: 'Dagsetning',
       description: 'Start of employees workday date',
     },

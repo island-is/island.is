@@ -33,7 +33,7 @@ const VehicleBulkMileageTable = ({ vehicles, loading }: Props) => {
                 { value: '', printHidden: true },
                 { value: formatMessage(vehicleMessage.type) },
                 { value: formatMessage(vehicleMessage.permno) },
-                //{ value: formatMessage(vehicleMessage.lastRegistration) },
+                { value: formatMessage(vehicleMessage.lastRegistration) },
                 { value: formatMessage(vehicleMessage.odometer) },
                 { value: '', printHidden: true },
               ]}

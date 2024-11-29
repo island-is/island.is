@@ -21,25 +21,28 @@ import * as styles from './ReviewDecision.css'
 interface Props {
   caseId: string
   indictmentAppealDeadline?: string
+  indictmentAppealDeadlineIsInThePast?: boolean
   modalVisible?: boolean
   setModalVisible: Dispatch<SetStateAction<boolean>>
+  isFine: boolean
   onSelect?: () => void
 }
 
 export const ReviewDecision: FC<Props> = (props) => {
+  const {
+    caseId,
+    indictmentAppealDeadline,
+    indictmentAppealDeadlineIsInThePast,
+    modalVisible,
+    setModalVisible,
+    isFine,
+    onSelect,
+  } = props
+
   const { user } = useContext(UserContext)
   const router = useRouter()
   const { formatMessage: fm } = useIntl()
   const { updateCase } = useCase()
-
-  const {
-    caseId,
-    indictmentAppealDeadline,
-    modalVisible,
-    setModalVisible,
-    onSelect,
-  } = props
-
   const [indictmentReviewDecision, setIndictmentReviewDecision] = useState<
     IndictmentCaseReviewDecision | undefined
   >(undefined)
@@ -58,11 +61,15 @@ export const ReviewDecision: FC<Props> = (props) => {
 
   const options = [
     {
-      label: fm(strings.appealToCourtOfAppeals),
+      label: fm(
+        isFine
+          ? strings.appealFineToCourtOfAppeals
+          : strings.appealToCourtOfAppeals,
+      ),
       value: IndictmentCaseReviewDecision.APPEAL,
     },
     {
-      label: fm(strings.acceptDecision),
+      label: fm(isFine ? strings.acceptFineDecision : strings.acceptDecision),
       value: IndictmentCaseReviewDecision.ACCEPT,
     },
   ]
@@ -74,11 +81,13 @@ export const ReviewDecision: FC<Props> = (props) => {
   return (
     <Box marginBottom={5}>
       <SectionHeading
-        title={fm(strings.title)}
+        title={fm(strings.title, { isFine })}
         description={
           <Text variant="eyebrow" as="span">
             {fm(strings.subtitle, {
+              isFine,
               indictmentAppealDeadline: formatDate(indictmentAppealDeadline),
+              appealDeadlineIsInThePast: indictmentAppealDeadlineIsInThePast,
             })}
           </Text>
         }
@@ -107,9 +116,12 @@ export const ReviewDecision: FC<Props> = (props) => {
       {modalVisible && (
         <Modal
           title={fm(strings.reviewModalTitle)}
-          text={fm(strings.reviewModalText, {
-            reviewerDecision: indictmentReviewDecision,
-          })}
+          text={fm(
+            isFine ? strings.reviewModalTextFine : strings.reviewModalText,
+            {
+              reviewerDecision: indictmentReviewDecision,
+            },
+          )}
           primaryButtonText={fm(strings.reviewModalPrimaryButtonText)}
           secondaryButtonText={fm(strings.reviewModalSecondaryButtonText)}
           onClose={() => setModalVisible(false)}
