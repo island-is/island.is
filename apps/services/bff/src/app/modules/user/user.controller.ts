@@ -1,7 +1,14 @@
-import type { Request } from 'express'
+import type { Request, Response } from 'express'
 
 import type { BffUser } from '@island.is/shared/types'
-import { Controller, Get, Query, Req, VERSION_NEUTRAL } from '@nestjs/common'
+import {
+  Controller,
+  Get,
+  Query,
+  Req,
+  Res,
+  VERSION_NEUTRAL,
+} from '@nestjs/common'
 
 import { qsValidationPipe } from '../../utils/qs-validation-pipe'
 import { GetUserDto } from './dto/get-user.dto'
@@ -17,9 +24,14 @@ export class UserController {
   @Get()
   async getUser(
     @Req() req: Request,
+    @Res({ passthrough: true }) res: Response,
     @Query(qsValidationPipe)
     query: GetUserDto,
   ): Promise<BffUser> {
-    return this.userService.getUser(req, query.refresh === 'true')
+    return this.userService.getUser({
+      req,
+      res,
+      refresh: query.refresh === 'true',
+    })
   }
 }

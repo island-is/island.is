@@ -22,8 +22,8 @@ export class UpdateFileDto {
   readonly id!: string
 
   @IsOptional()
-  @MaxLength(255)
   @IsString()
+  @MaxLength(255)
   @ApiPropertyOptional({ type: String })
   readonly userGeneratedFilename?: string
 
