@@ -10,7 +10,7 @@ defaults:
 jobs:
   check-unicorn:
     name: Check if app is on unicorn track
-    runs-on: ec2-runners
+    runs-on: ubuntu-latest
     container:
       image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
     timeout-minutes: 35
@@ -39,6 +39,7 @@ jobs:
       - name: Check unicorn affected
         id: unicorn-affected
         run: |
+          ls -l
           yarn nx show projects --base origin/main --affected
           node scripts/ci/unicorn-utils.mjs
           UNICORN=$(node scripts/ci/unicorn-utils.mjs)
