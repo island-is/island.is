@@ -262,10 +262,9 @@ export const isHearingArrangementsStepValidIC = (
 export const isProcessingStepValidIndictments = (
   workingCase: Case,
 ): boolean => {
-  const defendantsAreValid = () =>
-    workingCase.defendants?.every((defendant) => {
-      return validate([[defendant.defendantPlea, ['empty']]]).isValid
-    })
+  const defendantsAreValid = workingCase.defendants?.every(
+    (defendant) => validate([[defendant.defendantPlea, ['empty']]]).isValid,
+  )
 
   const hasCivilClaimSelected =
     workingCase.hasCivilClaims !== null &&
@@ -275,9 +274,14 @@ export const isProcessingStepValidIndictments = (
     ? workingCase.civilClaimants?.every(
         (civilClaimant) =>
           civilClaimant.name &&
-          (civilClaimant.noNationalId ||
-            (civilClaimant.nationalId &&
-              civilClaimant.nationalId.replace('-', '').length === 10)),
+          validate([
+            [
+              civilClaimant.nationalId,
+              civilClaimant.noNationalId
+                ? ['date-of-birth']
+                : ['empty', 'national-id'],
+            ],
+          ]).isValid,
       )
     : true
 
@@ -286,7 +290,7 @@ export const isProcessingStepValidIndictments = (
       workingCase.court &&
       hasCivilClaimSelected &&
       allCivilClaimantsAreValid &&
-      defendantsAreValid(),
+      defendantsAreValid,
   )
 }
 

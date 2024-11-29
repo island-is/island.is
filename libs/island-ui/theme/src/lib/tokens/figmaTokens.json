@@ -30,6 +30,11 @@
                   "$scopes": ["ALL_SCOPES"],
                   "$type": "color",
                   "$value": "#0044b3"
+                },
+                "100-70": {
+                  "$scopes": ["ALL_SCOPES"],
+                  "$type": "color",
+                  "$value": "rgba(242, 247, 255, 70)"
                 }
               },
               "red": {
@@ -359,7 +364,7 @@
             "68": {
               "$scopes": ["WIDTH_HEIGHT", "GAP"],
               "$type": "float",
-              "$value": 69
+              "$value": 68
             },
             "72": {
               "$scopes": ["WIDTH_HEIGHT", "GAP"],
@@ -1104,7 +1109,7 @@
                 "$collectionName": "00 Primitives",
                 "$value": "{color.secondary.rose.400}"
               },
-              "rose-accent border": {
+              "rose-accent-border": {
                 "$scopes": ["STROKE_COLOR"],
                 "$type": "color",
                 "$libraryName": "",
@@ -1208,7 +1213,9 @@
             "default": {
               "$scopes": ["FRAME_FILL", "SHAPE_FILL"],
               "$type": "color",
-              "$value": "rgba(242, 247, 255, 70)"
+              "$libraryName": "",
+              "$collectionName": "00 Primitives",
+              "$value": "{color.primary.blue.100-70}"
             }
           }
         }
@@ -1411,7 +1418,7 @@
                 "$value": 34
               }
             },
-            "Medium": {
+            "Medium Regular": {
               "Font Name": {
                 "$scopes": ["FONT_FAMILY"],
                 "$type": "string",
@@ -1425,6 +1432,32 @@
                 "$libraryName": "",
                 "$collectionName": "00 Primitives",
                 "$value": "{font.weight.regular}"
+              },
+              "font-size": {
+                "$scopes": ["FONT_SIZE"],
+                "$type": "float",
+                "$value": 16
+              },
+              "line-height": {
+                "$scopes": ["LINE_HEIGHT"],
+                "$type": "float",
+                "$value": 26
+              }
+            },
+            "Medium Light": {
+              "Font Name": {
+                "$scopes": ["FONT_FAMILY"],
+                "$type": "string",
+                "$libraryName": "",
+                "$collectionName": "00 Primitives",
+                "$value": "{font.family.primary}"
+              },
+              "Font-weight": {
+                "$scopes": ["FONT_STYLE"],
+                "$type": "string",
+                "$libraryName": "",
+                "$collectionName": "00 Primitives",
+                "$value": "{font.weight.light}"
               },
               "font-size": {
                 "$scopes": ["FONT_SIZE"],
@@ -1489,6 +1522,190 @@
                 "$scopes": ["LINE_HEIGHT"],
                 "$type": "float",
                 "$value": 16
+              }
+            }
+          },
+          "Table": {
+            "Head": {
+              "Font Name": {
+                "$scopes": ["FONT_FAMILY"],
+                "$type": "string",
+                "$libraryName": "",
+                "$collectionName": "00 Primitives",
+                "$value": "{font.family.primary}"
+              },
+              "Font-weight": {
+                "$scopes": ["FONT_STYLE"],
+                "$type": "string",
+                "$libraryName": "",
+                "$collectionName": "00 Primitives",
+                "$value": "{font.weight.semibold}"
+              },
+              "font-size": {
+                "$scopes": ["FONT_SIZE"],
+                "$type": "float",
+                "$value": 16
+              },
+              "line-height": {
+                "$scopes": ["LINE_HEIGHT"],
+                "$type": "float",
+                "$value": 20
+              }
+            },
+            "Head Small": {
+              "Font Name": {
+                "$scopes": ["FONT_FAMILY"],
+                "$type": "string",
+                "$libraryName": "",
+                "$collectionName": "00 Primitives",
+                "$value": "{font.family.primary}"
+              },
+              "Font-weight": {
+                "$scopes": ["FONT_STYLE"],
+                "$type": "string",
+                "$libraryName": "",
+                "$collectionName": "00 Primitives",
+                "$value": "{font.weight.semibold}"
+              },
+              "font-size": {
+                "$scopes": ["FONT_SIZE"],
+                "$type": "float",
+                "$value": 14
+              },
+              "line-height": {
+                "$scopes": ["LINE_HEIGHT"],
+                "$type": "float",
+                "$value": 18
+              }
+            },
+            "Body": {
+              "Font Name": {
+                "$scopes": ["FONT_FAMILY"],
+                "$type": "string",
+                "$libraryName": "",
+                "$collectionName": "00 Primitives",
+                "$value": "{font.family.primary}"
+              },
+              "Font-weight": {
+                "$scopes": ["FONT_STYLE"],
+                "$type": "string",
+                "$libraryName": "",
+                "$collectionName": "00 Primitives",
+                "$value": "{font.weight.regular}"
+              },
+              "font-size": {
+                "$scopes": ["FONT_SIZE"],
+                "$type": "float",
+                "$value": 16
+              },
+              "line-height": {
+                "$scopes": ["LINE_HEIGHT"],
+                "$type": "float",
+                "$value": 20
+              }
+            },
+            "Body Large": {
+              "Font Name": {
+                "$scopes": ["FONT_FAMILY"],
+                "$type": "string",
+                "$libraryName": "",
+                "$collectionName": "00 Primitives",
+                "$value": "{font.family.primary}"
+              },
+              "Font-weight": {
+                "$scopes": ["FONT_STYLE"],
+                "$type": "string",
+                "$libraryName": "",
+                "$collectionName": "00 Primitives",
+                "$value": "{font.weight.regular}"
+              },
+              "font-size": {
+                "$scopes": ["FONT_SIZE"],
+                "$type": "float",
+                "$value": 18
+              },
+              "line-height": {
+                "$scopes": ["LINE_HEIGHT"],
+                "$type": "float",
+                "$value": 24
+              }
+            },
+            "Body Small": {
+              "Font Name": {
+                "$scopes": ["FONT_FAMILY"],
+                "$type": "string",
+                "$libraryName": "",
+                "$collectionName": "00 Primitives",
+                "$value": "{font.family.primary}"
+              },
+              "Font-weight": {
+                "$scopes": ["FONT_STYLE"],
+                "$type": "string",
+                "$libraryName": "",
+                "$collectionName": "00 Primitives",
+                "$value": "{font.weight.regular}"
+              },
+              "font-size": {
+                "$scopes": ["FONT_SIZE"],
+                "$type": "float",
+                "$value": 14
+              },
+              "line-height": {
+                "$scopes": ["LINE_HEIGHT"],
+                "$type": "float",
+                "$value": 18
+              }
+            },
+            "Foot": {
+              "Font Name": {
+                "$scopes": ["FONT_FAMILY"],
+                "$type": "string",
+                "$libraryName": "",
+                "$collectionName": "00 Primitives",
+                "$value": "{font.family.primary}"
+              },
+              "Font-weight": {
+                "$scopes": ["FONT_STYLE"],
+                "$type": "string",
+                "$libraryName": "",
+                "$collectionName": "00 Primitives",
+                "$value": "{font.weight.semibold}"
+              },
+              "font-size": {
+                "$scopes": ["FONT_SIZE"],
+                "$type": "float",
+                "$value": 16
+              },
+              "line-height": {
+                "$scopes": ["LINE_HEIGHT"],
+                "$type": "float",
+                "$value": 20
+              }
+            },
+            "Foot Small": {
+              "Font Name": {
+                "$scopes": ["FONT_FAMILY"],
+                "$type": "string",
+                "$libraryName": "",
+                "$collectionName": "00 Primitives",
+                "$value": "{font.family.primary}"
+              },
+              "Font-weight": {
+                "$scopes": ["FONT_STYLE"],
+                "$type": "string",
+                "$libraryName": "",
+                "$collectionName": "00 Primitives",
+                "$value": "{font.weight.semibold}"
+              },
+              "font-size": {
+                "$scopes": ["FONT_SIZE"],
+                "$type": "float",
+                "$value": 14
+              },
+              "line-height": {
+                "$scopes": ["LINE_HEIGHT"],
+                "$type": "float",
+                "$value": 18
               }
             }
           }
@@ -1686,7 +1903,7 @@
                 "$value": 28
               }
             },
-            "Medium": {
+            "Medium Regular": {
               "Font Name": {
                 "$scopes": ["FONT_FAMILY"],
                 "$type": "string",
@@ -1700,6 +1917,32 @@
                 "$libraryName": "",
                 "$collectionName": "00 Primitives",
                 "$value": "{font.weight.regular}"
+              },
+              "font-size": {
+                "$scopes": ["FONT_SIZE"],
+                "$type": "float",
+                "$value": 14
+              },
+              "line-height": {
+                "$scopes": ["LINE_HEIGHT"],
+                "$type": "float",
+                "$value": 20
+              }
+            },
+            "Medium Light": {
+              "Font Name": {
+                "$scopes": ["FONT_FAMILY"],
+                "$type": "string",
+                "$libraryName": "",
+                "$collectionName": "00 Primitives",
+                "$value": "{font.family.primary}"
+              },
+              "Font-weight": {
+                "$scopes": ["FONT_STYLE"],
+                "$type": "string",
+                "$libraryName": "",
+                "$collectionName": "00 Primitives",
+                "$value": "{font.weight.light}"
               },
               "font-size": {
                 "$scopes": ["FONT_SIZE"],
@@ -1764,6 +2007,190 @@
                 "$scopes": ["LINE_HEIGHT"],
                 "$type": "float",
                 "$value": 16
+              }
+            }
+          },
+          "Table": {
+            "Head": {
+              "Font Name": {
+                "$scopes": ["FONT_FAMILY"],
+                "$type": "string",
+                "$libraryName": "",
+                "$collectionName": "00 Primitives",
+                "$value": "{font.family.primary}"
+              },
+              "Font-weight": {
+                "$scopes": ["FONT_STYLE"],
+                "$type": "string",
+                "$libraryName": "",
+                "$collectionName": "00 Primitives",
+                "$value": "{font.weight.semibold}"
+              },
+              "font-size": {
+                "$scopes": ["FONT_SIZE"],
+                "$type": "float",
+                "$value": 14
+              },
+              "line-height": {
+                "$scopes": ["LINE_HEIGHT"],
+                "$type": "float",
+                "$value": 18
+              }
+            },
+            "Head Small": {
+              "Font Name": {
+                "$scopes": ["FONT_FAMILY"],
+                "$type": "string",
+                "$libraryName": "",
+                "$collectionName": "00 Primitives",
+                "$value": "{font.family.primary}"
+              },
+              "Font-weight": {
+                "$scopes": ["FONT_STYLE"],
+                "$type": "string",
+                "$libraryName": "",
+                "$collectionName": "00 Primitives",
+                "$value": "{font.weight.semibold}"
+              },
+              "font-size": {
+                "$scopes": ["FONT_SIZE"],
+                "$type": "float",
+                "$value": 14
+              },
+              "line-height": {
+                "$scopes": ["LINE_HEIGHT"],
+                "$type": "float",
+                "$value": 18
+              }
+            },
+            "Body": {
+              "Font Name": {
+                "$scopes": ["FONT_FAMILY"],
+                "$type": "string",
+                "$libraryName": "",
+                "$collectionName": "00 Primitives",
+                "$value": "{font.family.primary}"
+              },
+              "Font-weight": {
+                "$scopes": ["FONT_STYLE"],
+                "$type": "string",
+                "$libraryName": "",
+                "$collectionName": "00 Primitives",
+                "$value": "{font.weight.regular}"
+              },
+              "font-size": {
+                "$scopes": ["FONT_SIZE"],
+                "$type": "float",
+                "$value": 14
+              },
+              "line-height": {
+                "$scopes": ["LINE_HEIGHT"],
+                "$type": "float",
+                "$value": 18
+              }
+            },
+            "Body Large": {
+              "Font Name": {
+                "$scopes": ["FONT_FAMILY"],
+                "$type": "string",
+                "$libraryName": "",
+                "$collectionName": "00 Primitives",
+                "$value": "{font.family.primary}"
+              },
+              "Font-weight": {
+                "$scopes": ["FONT_STYLE"],
+                "$type": "string",
+                "$libraryName": "",
+                "$collectionName": "00 Primitives",
+                "$value": "{font.weight.regular}"
+              },
+              "font-size": {
+                "$scopes": ["FONT_SIZE"],
+                "$type": "float",
+                "$value": 16
+              },
+              "line-height": {
+                "$scopes": ["LINE_HEIGHT"],
+                "$type": "float",
+                "$value": 20
+              }
+            },
+            "Body Small": {
+              "Font Name": {
+                "$scopes": ["FONT_FAMILY"],
+                "$type": "string",
+                "$libraryName": "",
+                "$collectionName": "00 Primitives",
+                "$value": "{font.family.primary}"
+              },
+              "Font-weight": {
+                "$scopes": ["FONT_STYLE"],
+                "$type": "string",
+                "$libraryName": "",
+                "$collectionName": "00 Primitives",
+                "$value": "{font.weight.regular}"
+              },
+              "font-size": {
+                "$scopes": ["FONT_SIZE"],
+                "$type": "float",
+                "$value": 14
+              },
+              "line-height": {
+                "$scopes": ["LINE_HEIGHT"],
+                "$type": "float",
+                "$value": 18
+              }
+            },
+            "Foot": {
+              "Font Name": {
+                "$scopes": ["FONT_FAMILY"],
+                "$type": "string",
+                "$libraryName": "",
+                "$collectionName": "00 Primitives",
+                "$value": "{font.family.primary}"
+              },
+              "Font-weight": {
+                "$scopes": ["FONT_STYLE"],
+                "$type": "string",
+                "$libraryName": "",
+                "$collectionName": "00 Primitives",
+                "$value": "{font.weight.semibold}"
+              },
+              "font-size": {
+                "$scopes": ["FONT_SIZE"],
+                "$type": "float",
+                "$value": 14
+              },
+              "line-height": {
+                "$scopes": ["LINE_HEIGHT"],
+                "$type": "float",
+                "$value": 18
+              }
+            },
+            "Foot Small": {
+              "Font Name": {
+                "$scopes": ["FONT_FAMILY"],
+                "$type": "string",
+                "$libraryName": "",
+                "$collectionName": "00 Primitives",
+                "$value": "{font.family.primary}"
+              },
+              "Font-weight": {
+                "$scopes": ["FONT_STYLE"],
+                "$type": "string",
+                "$libraryName": "",
+                "$collectionName": "00 Primitives",
+                "$value": "{font.weight.semibold}"
+              },
+              "font-size": {
+                "$scopes": ["FONT_SIZE"],
+                "$type": "float",
+                "$value": 14
+              },
+              "line-height": {
+                "$scopes": ["LINE_HEIGHT"],
+                "$type": "float",
+                "$value": 18
               }
             }
           }

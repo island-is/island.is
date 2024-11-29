@@ -351,7 +351,7 @@ const Defendant = () => {
                 gender: defendant.gender,
                 name: defendant.name,
                 address: defendant.address,
-                nationalId: defendant.nationalId,
+                nationalId: defendant.nationalId || null,
                 noNationalId: defendant.noNationalId,
                 citizenship: defendant.citizenship,
               })
@@ -361,7 +361,7 @@ const Defendant = () => {
                 gender: defendant.gender,
                 name: defendant.name,
                 address: defendant.address,
-                nationalId: defendant.nationalId,
+                nationalId: defendant.nationalId || null,
                 noNationalId: defendant.noNationalId,
                 citizenship: defendant.citizenship,
               })
@@ -421,7 +421,7 @@ const Defendant = () => {
         gender: undefined,
         name: '',
         address: '',
-        nationalId: '',
+        nationalId: null,
         citizenship: '',
       })
 
@@ -442,7 +442,7 @@ const Defendant = () => {
           id: defendantId || uuid(),
           gender: undefined,
           name: '',
-          nationalId: '',
+          nationalId: null,
           address: '',
           citizenship: '',
         } as TDefendant,

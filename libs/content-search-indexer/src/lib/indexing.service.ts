@@ -61,8 +61,6 @@ export class IndexingService {
       let nextPageToken: string | undefined = undefined
       let postSyncOptions: SyncResponse['postSyncOptions']
 
-      const isIncrementalUpdate = syncType === 'fromLast'
-
       // Fetch initial page specifically in case importing is skipped (no need to wait for a new sync token if we don't need it)
       {
         const importerResponse = await importer.doSync({
@@ -83,11 +81,7 @@ export class IndexingService {
           postSyncOptions: importerResponsePostSyncOptions,
           ...elasticData
         } = importerResponse
-        await this.elasticService.bulk(
-          elasticIndex,
-          elasticData,
-          isIncrementalUpdate,
-        )
+        await this.elasticService.bulk(elasticIndex, elasticData)
 
         nextPageToken = importerResponseNextPageToken
         postSyncOptions = importerResponsePostSyncOptions
@@ -115,11 +109,7 @@ export class IndexingService {
               postSyncOptions: importerResponsePostSyncOptions,
               ...elasticData
             } = importerResponse
-            await this.elasticService.bulk(
-              elasticIndex,
-              elasticData,
-              isIncrementalUpdate,
-            )
+            await this.elasticService.bulk(elasticIndex, elasticData)
 
             nextPageToken = importerResponseNextPageToken
             postSyncOptions = importerResponsePostSyncOptions
