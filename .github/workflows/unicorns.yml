@@ -3,7 +3,7 @@ on:
   workflow_dispatch:
   push:
     branches:
-      - 'feature/unicorn-app-pipeline' #temp for debugging and testing
+      - 'unicorn-pipe' #temp for debugging and testing
 defaults:
   run:
     shell: bash
@@ -40,8 +40,8 @@ jobs:
         id: unicorn-affected
         run: |
           yarn nx show projects --base origin/main --affected
-          yarn is-unicorn
-          UNICORN=$(yarn is-unicorn)
+          node scripts/ci/unicorn-utils.mjs
+          UNICORN=$(node scripts/ci/unicorn-utils.mjs)
           if [ "$UNICORN" == 'true' ]; then
               echo "unicorn is detected"
               echo IS_UNICORN=true >> "$GITHUB_OUTPUT"

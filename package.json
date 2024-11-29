@@ -62,8 +62,7 @@
     "infra": "cd infra/ && yarn infra",
     "run-proxies": "./scripts/run-proxies.sh",
     "proxies": "yarn run-proxies",
-    "hmr-benchmark": "node -r esbuild-register scripts/hmr-benchmark.ts",
-    "is-unicorn": "affected=$(nx show projects --base origin/main --affected) && cd infra/ && yarn unicorn-affected --affected $affected"
+    "hmr-benchmark": "node -r esbuild-register scripts/hmr-benchmark.ts"
   },
   "dependencies": {
     "@apollo/client": "3.7.15",
