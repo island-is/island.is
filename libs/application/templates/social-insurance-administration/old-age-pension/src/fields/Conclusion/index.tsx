@@ -24,7 +24,9 @@ export const Conclusion: FC<React.PropsWithChildren<FieldBaseProps>> = (
   const { application } = props
   const { formatMessage } = useLocale()
 
-  const { hasIncomePlanStatus } = getApplicationExternalData(application.externalData)
+  const { hasIncomePlanStatus } = getApplicationExternalData(
+    application.externalData,
+  )
 
   if (!hasIncomePlanStatus) {
     return (
@@ -32,8 +34,14 @@ export const Conclusion: FC<React.PropsWithChildren<FieldBaseProps>> = (
         <Box marginBottom={5}>
           <AlertMessage
             type="warning"
-            title={formatMessage(socialInsuranceAdministrationMessage.conclusionScreen.receivedAwaitingIncomePlanTitle)}
-            message={formatMessage(socialInsuranceAdministrationMessage.conclusionScreen.incomePlanAlertMessage)}
+            title={formatMessage(
+              socialInsuranceAdministrationMessage.conclusionScreen
+                .receivedAwaitingIncomePlanTitle,
+            )}
+            message={formatMessage(
+              socialInsuranceAdministrationMessage.conclusionScreen
+                .incomePlanAlertMessage,
+            )}
           />
         </Box>
 
@@ -44,12 +52,16 @@ export const Conclusion: FC<React.PropsWithChildren<FieldBaseProps>> = (
         >
           <Box marginBottom={4}>
             <Markdown>
-              {formatMessage(oldAgePensionFormMessage.conclusionScreen.nextStepsText)}
+              {formatMessage(
+                oldAgePensionFormMessage.conclusionScreen.nextStepsText,
+              )}
             </Markdown>
           </Box>
           <BulletList space="gutter" type="ul">
             <Markdown>
-              {formatMessage(oldAgePensionFormMessage.conclusionScreen.bulletList)}
+              {formatMessage(
+                oldAgePensionFormMessage.conclusionScreen.bulletList,
+              )}
             </Markdown>
           </BulletList>
         </AccordionCard>
@@ -62,10 +74,12 @@ export const Conclusion: FC<React.PropsWithChildren<FieldBaseProps>> = (
               type: FieldTypes.MESSAGE_WITH_LINK_BUTTON_FIELD,
               component: FieldComponents.MESSAGE_WITH_LINK_BUTTON_FIELD,
               url: 'https://island.is/umsoknir/tekjuaaetlun',
-              buttonTitle: socialInsuranceAdministrationMessage.conclusionScreen
-              .incomePlanCardLabel,
-              message: socialInsuranceAdministrationMessage.conclusionScreen
-              .incomePlanCardText,
+              buttonTitle:
+                socialInsuranceAdministrationMessage.conclusionScreen
+                  .incomePlanCardLabel,
+              message:
+                socialInsuranceAdministrationMessage.conclusionScreen
+                  .incomePlanCardText,
             }}
           />
         </Box>
@@ -77,8 +91,12 @@ export const Conclusion: FC<React.PropsWithChildren<FieldBaseProps>> = (
         <Box marginBottom={5}>
           <AlertMessage
             type="success"
-            title={formatMessage(socialInsuranceAdministrationMessage.conclusionScreen.alertTitle)}
-            message={formatMessage(oldAgePensionFormMessage.conclusionScreen.alertMessage)}
+            title={formatMessage(
+              socialInsuranceAdministrationMessage.conclusionScreen.alertTitle,
+            )}
+            message={formatMessage(
+              oldAgePensionFormMessage.conclusionScreen.alertMessage,
+            )}
           />
         </Box>
 
@@ -89,12 +107,16 @@ export const Conclusion: FC<React.PropsWithChildren<FieldBaseProps>> = (
         >
           <Box marginBottom={4}>
             <Markdown>
-              {formatMessage(oldAgePensionFormMessage.conclusionScreen.nextStepsText)}
+              {formatMessage(
+                oldAgePensionFormMessage.conclusionScreen.nextStepsText,
+              )}
             </Markdown>
           </Box>
           <BulletList space="gutter" type="ul">
             <Markdown>
-              {formatMessage(oldAgePensionFormMessage.conclusionScreen.bulletList)}
+              {formatMessage(
+                oldAgePensionFormMessage.conclusionScreen.bulletList,
+              )}
             </Markdown>
           </BulletList>
         </AccordionCard>

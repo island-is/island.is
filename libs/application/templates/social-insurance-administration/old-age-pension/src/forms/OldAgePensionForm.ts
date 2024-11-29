@@ -793,11 +793,15 @@ export const OldAgePensionForm: Form = buildForm({
       children: [
         buildMultiField({
           id: 'conclusion.multifield',
-          title: (application: Application) => { 
-            const { hasIncomePlanStatus } = getApplicationExternalData(application.externalData)
+          title: (application: Application) => {
+            const { hasIncomePlanStatus } = getApplicationExternalData(
+              application.externalData,
+            )
             return hasIncomePlanStatus
-              ? socialInsuranceAdministrationMessage.conclusionScreen.receivedTitle
-              : socialInsuranceAdministrationMessage.conclusionScreen.receivedAwaitingIncomePlanTitle
+              ? socialInsuranceAdministrationMessage.conclusionScreen
+                  .receivedTitle
+              : socialInsuranceAdministrationMessage.conclusionScreen
+                  .receivedAwaitingIncomePlanTitle
           },
           children: [
             buildCustomField({
@@ -809,6 +813,6 @@ export const OldAgePensionForm: Form = buildForm({
           ],
         }),
       ],
-    })
+    }),
   ],
 })
