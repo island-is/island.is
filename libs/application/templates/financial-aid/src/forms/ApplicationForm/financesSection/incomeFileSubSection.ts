@@ -1,5 +1,4 @@
 import {
-  buildCustomField,
   buildFileUploadField,
   buildMultiField,
   buildSubSection,
@@ -23,10 +22,12 @@ export const incomeFilesSubSection = buildSubSection({
       title: m.incomeFilesForm.general.pageTitle,
       description: m.incomeFilesForm.general.descriptionTaxSuccess,
       children: [
-        buildCustomField({
+        buildFileUploadField({
           id: Routes.INCOMEFILES,
-          title: m.incomeFilesForm.general.pageTitle,
-          component: 'IncomeFilesForm',
+          title: '',
+          uploadMultiple: true,
+          maxSize: FILE_SIZE_LIMIT,
+          uploadAccept: UPLOAD_ACCEPT,
         }),
       ],
     }),

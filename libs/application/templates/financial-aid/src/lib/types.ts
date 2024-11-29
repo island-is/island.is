@@ -1,6 +1,5 @@
 import {
   ApplicantChildCustodyInformation,
-  ApplicationAnswerFile,
   NationalRegistryIndividual,
   NationalRegistrySpouse,
 } from '@island.is/application/types'
@@ -118,14 +117,4 @@ export enum SchoolType {
   KINDERGARDEN = 'kindergarden',
   ELEMENTARY = 'elementary',
   HIGHSCHOOL = 'highSchool',
-}
-
-export interface TaxData {
-  municipalitiesPersonalTaxReturn: {
-    personalTaxReturn: PersonalTaxReturn | null
-  }
-  municipalitiesDirectTaxPayments: {
-    directTaxPayments: DirectTaxPayment[]
-    success: boolean
-  }
 }
