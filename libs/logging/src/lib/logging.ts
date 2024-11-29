@@ -1,5 +1,6 @@
 import { createLogger, format, LoggerOptions, transports } from 'winston'
 import { utilities } from 'nest-winston'
+import { includeContextFormatter } from './context'
 
 import { maskNationalIdFormatter } from './formatters'
 
@@ -8,6 +9,8 @@ let logLevel = 'debug'
 let logFormat = format.combine(
   format.errors({ stack: true }),
   format.timestamp(),
+  // Disable locally to reduce noise. Can be reconsidered.
+  // includeContextFormatter(),
   utilities.format.nestLike('App'),
   maskNationalIdFormatter(),
 )
@@ -18,6 +21,7 @@ if (process.env.NODE_ENV === 'production') {
   logFormat = format.combine(
     format.errors({ stack: true }),
     format.timestamp(),
+    includeContextFormatter(),
     format.json(),
     maskNationalIdFormatter(),
   )
