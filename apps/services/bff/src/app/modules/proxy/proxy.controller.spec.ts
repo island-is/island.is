@@ -39,17 +39,9 @@ const EXPIRED_TOKEN_RESPONSE: TokenResponse = {
 }
 
 const mockIdsService = {
-  refreshToken: jest.fn().mockResolvedValue({
-    type: 'success',
-    data: tokensResponse,
-  }),
-  getTokens: jest.fn().mockResolvedValue({
-    type: 'success',
-    data: tokensResponse,
-  }),
-  revokeToken: jest.fn().mockResolvedValue({
-    type: 'success',
-  }),
+  refreshToken: jest.fn().mockResolvedValue(tokensResponse),
+  getTokens: jest.fn().mockResolvedValue(tokensResponse),
+  revokeToken: jest.fn().mockResolvedValue(undefined),
   getLoginSearchParams: jest.fn().mockImplementation(getLoginSearchParmsFn),
 }
 
@@ -160,10 +152,7 @@ describe('ProxyController', () => {
   describe('GET /api/graphql', () => {
     beforeEach(() => {
       jest.clearAllMocks()
-      mockIdsService.getTokens.mockResolvedValue({
-        type: 'success',
-        data: tokensResponse,
-      })
+      mockIdsService.getTokens.mockResolvedValue(tokensResponse)
     })
 
     it('should throw 401 unauthorized when not logged in', async () => {
@@ -222,10 +211,7 @@ describe('ProxyController', () => {
 
     it('should call refreshToken and cache token response when access_token is expired', async () => {
       // Arrange
-      mockIdsService.getTokens.mockResolvedValue({
-        type: 'success',
-        data: EXPIRED_TOKEN_RESPONSE,
-      })
+      mockIdsService.getTokens.mockResolvedValue(EXPIRED_TOKEN_RESPONSE)
 
       // Act
       await server.get('/login')
@@ -241,6 +227,87 @@ describe('ProxyController', () => {
       // Assert
       expect(mockIdsService.refreshToken).toHaveBeenCalled()
       expect(res.status).toEqual(HttpStatus.OK)
+    })
+
+    it('should handle polling timeout and retry', async () => {
+      // Arrange
+      const encryptedTokens = {
+        encryptedAccessToken: 'encrypted_access_token',
+        encryptedRefreshToken: 'encrypted_refresh_token',
+        accessTokenExp: Date.now(),
+      }
+
+      mockIdsService.getTokens.mockResolvedValue(EXPIRED_TOKEN_RESPONSE)
+      mockIdsService.refreshToken.mockResolvedValue(tokensResponse)
+
+      // Set up initial cache state
+      mockCacheStore.set(`current_${SID_VALUE}`, {
+        ...EXPIRED_TOKEN_RESPONSE,
+        ...encryptedTokens,
+      })
+      mockCacheStore.set(`refresh_token_in_progress:${SID_VALUE}`, true)
+
+      // Act
+      await server.get('/login')
+      await server
+        .get('/callbacks/login')
+        .set('Cookie', [`${SESSION_COOKIE_NAME}=${SID_VALUE}`])
+        .query({ code: 'some_code', state: SID_VALUE })
+
+      const res = await server
+        .post('/api/graphql')
+        .set('Cookie', [`${SESSION_COOKIE_NAME}=${SID_VALUE}`])
+
+      // Assert
+      expect(mockIdsService.refreshToken).toHaveBeenCalled()
+      expect(res.status).toEqual(HttpStatus.OK)
+      expect(res.body).toEqual({ message: 'success' })
+    })
+
+    it('should handle polling and not call ids refresh token', async () => {
+      // Arrange
+      const encryptedTokens = {
+        encryptedAccessToken: 'encrypted_access_token',
+        encryptedRefreshToken: 'encrypted_refresh_token',
+        accessTokenExp: Date.now() + 3600000, // Valid for 1 hour
+      }
+
+      mockIdsService.getTokens.mockResolvedValue({
+        ...tokensResponse,
+        ...encryptedTokens,
+      })
+
+      // Set up initial cache state
+      mockCacheStore.set(`current_${SID_VALUE}`, {
+        ...tokensResponse,
+        ...encryptedTokens,
+      })
+      mockCacheStore.set(`refresh_token_in_progress:${SID_VALUE}`, true)
+
+      // Simulate another service completing the refresh
+      setTimeout(() => {
+        mockCacheStore.delete(`refresh_token_in_progress:${SID_VALUE}`)
+        mockCacheStore.set(`current_${SID_VALUE}`, {
+          ...tokensResponse,
+          ...encryptedTokens,
+        })
+      }, 100)
+
+      // Act
+      await server.get('/login')
+      await server
+        .get('/callbacks/login')
+        .set('Cookie', [`${SESSION_COOKIE_NAME}=${SID_VALUE}`])
+        .query({ code: 'some_code', state: SID_VALUE })
+
+      const res = await server
+        .post('/api/graphql')
+        .set('Cookie', [`${SESSION_COOKIE_NAME}=${SID_VALUE}`])
+
+      // Assert
+      expect(mockIdsService.refreshToken).not.toHaveBeenCalled()
+      expect(res.status).toEqual(HttpStatus.OK)
+      expect(res.body).toEqual({ message: 'success' })
     })
   })
 })
