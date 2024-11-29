@@ -136,7 +136,6 @@ export class LimitedAccessFileController {
     @Param('civilClaimantId') civilClaimantId: string,
     @CurrentHttpUser() user: User,
     @CurrentCase() theCase: Case,
-    @CurrentCivilClaimant() civilClaimant: CivilClaimant,
     @Body() createFile: CreateFileDto,
   ): Promise<CaseFile> {
     this.logger.debug(
@@ -145,10 +144,8 @@ export class LimitedAccessFileController {
 
     return this.fileService.createCaseFile(
       theCase,
-      createFile,
+      { ...createFile, civilClaimantId },
       user,
-      undefined,
-      civilClaimant,
     )
   }
 
