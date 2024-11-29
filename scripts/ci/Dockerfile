@@ -94,6 +94,7 @@ CMD [ "node", "--no-experimental-fetch", "main.js" ]
 FROM output-base-with-pg AS output-next
 
 # Stage-specific ARGs
+ARG APP
 ARG APP_DIST_HOME
 ARG GIT_BRANCH
 ARG GIT_COMMIT_SHA
@@ -115,6 +116,7 @@ ENTRYPOINT [ "node", "main.js" ]
 FROM ${DOCKER_REGISTRY}/library/nginx:1.21-alpine AS output-static
 
 # Stage-specific ARGs
+ARG APP
 ARG APP_DIST_HOME
 ARG GIT_BRANCH
 ARG GIT_COMMIT_SHA
@@ -142,6 +144,7 @@ ENV BASEPATH=/
 FROM output-base AS output-jest
 
 # Stage-specific ARGs
+ARG APP
 ARG APP_DIST_HOME
 ARG GIT_BRANCH
 ARG GIT_COMMIT_SHA
@@ -168,6 +171,7 @@ FROM mcr.microsoft.com/playwright:v${PLAYWRIGHT_VERSION}-focal AS playwright-bas
 FROM playwright-base AS output-playwright
 
 # Stage-specific ARGs
+ARG APP
 ARG APP_DIST_HOME
 ARG APP_HOME
 ARG PLAYWRIGHT_BROWSER=chromium
@@ -209,6 +213,7 @@ ENTRYPOINT ["./entrypoint.sh"]
 FROM playwright-base AS output-local
 
 # Stage-specific ARGs
+ARG APP
 ARG APP_DIST_HOME
 ARG APP_HOME
 ARG GIT_BRANCH
