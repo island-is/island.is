@@ -1,24 +1,17 @@
 import React from 'react'
-import { useIntl } from 'react-intl'
-import cn from 'classnames'
 import { Text, Box, UploadFile } from '@island.is/island-ui/core'
-import {
-  getFileSizeInKilo,
-  getFileType,
-} from '@island.is/financial-aid/shared/lib'
+import { getFileType } from '@island.is/financial-aid/shared/lib'
 import { useFileUpload } from '../../lib/hooks/useFileUpload'
-import { missingFiles } from '../../lib/messages'
+import cn from 'classnames'
+
 import * as styles from './FileList.css'
 
-interface Props {
+type Props = {
   applicationSystemId: string
   files?: UploadFile[]
 }
 
-const FileList = ({ files, applicationSystemId }: Props) => {
-  const { formatMessage } = useIntl()
-  const { openFileById } = useFileUpload(files ?? [], applicationSystemId)
-
+const FileList = ({ files }: Props) => {
   if (files === undefined || files.length === 0) {
     return null
   }
@@ -26,17 +19,13 @@ const FileList = ({ files, applicationSystemId }: Props) => {
   return (
     <Box marginBottom={2}>
       {files.map((file, i) => {
-        return file.id ? (
-          <button
+        return file.key ? (
+          <div
             className={cn({
               [`${styles.filesLink}`]: true,
               [styles.hoverState]: file.id,
             })}
             key={'file-' + i}
-            onClick={(e) => {
-              e.preventDefault()
-              openFileById(file.id as string)
-            }}
           >
             <div className={styles.container}>
               <div className={styles.type}>
@@ -47,14 +36,12 @@ const FileList = ({ files, applicationSystemId }: Props) => {
               <div className={styles.name}>
                 <Text variant="small">{file.name}</Text>
               </div>
-              <Text variant="small">{`${formatMessage(
-                missingFiles.confirmation.file,
-              )} • ${getFileSizeInKilo(file)} KB`}</Text>
             </div>
-          </button>
+          </div>
         ) : null
       })}
     </Box>
   )
 }
+
 export default FileList

@@ -1,10 +1,11 @@
 import {
-  buildCustomField,
+  buildFileUploadField,
+  buildMultiField,
   buildSection,
   getValueViaPath,
 } from '@island.is/application/core'
 import { ApproveOptions } from '../../lib/types'
-import { Routes } from '../../lib/constants'
+import { FILE_SIZE_LIMIT, Routes, UPLOAD_ACCEPT } from '../../lib/constants'
 import * as m from '../../lib/messages'
 
 export const spouseIncomeFilesSection = buildSection({
@@ -15,10 +16,18 @@ export const spouseIncomeFilesSection = buildSection({
   id: Routes.SPOUSEINCOMEFILES,
   title: m.incomeFilesForm.general.sectionTitle,
   children: [
-    buildCustomField({
+    buildMultiField({
       id: Routes.SPOUSEINCOMEFILES,
       title: m.incomeFilesForm.general.pageTitle,
-      component: 'IncomeFilesForm',
+      description: m.incomeFilesForm.general.description,
+      children: [
+        buildFileUploadField({
+          id: Routes.SPOUSEINCOMEFILES,
+          title: '',
+          maxSize: FILE_SIZE_LIMIT,
+          uploadAccept: UPLOAD_ACCEPT,
+        }),
+      ],
     }),
   ],
 })

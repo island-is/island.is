@@ -1,5 +1,4 @@
 import {
-  buildCustomField,
   buildDescriptionField,
   buildFileUploadField,
   buildMultiField,
@@ -20,14 +19,26 @@ export const MissingFiles = buildSection({
       title: m.missingFiles.general.pageTitle,
       description: m.missingFiles.general.description,
       children: [
-        buildCustomField(
-          {
-            id: Routes.MISSINGFILES,
-            title: m.missingFiles.general.pageTitle,
-            component: 'MissingFiles',
-          },
-          { isSpouse: true },
-        ),
+        buildFileUploadField({
+          id: Routes.MISSINGFILESSPOUSE,
+          title: m.missingFiles.general.pageTitle,
+          uploadMultiple: true,
+          maxSize: FILE_SIZE_LIMIT,
+          uploadAccept: UPLOAD_ACCEPT,
+        }),
+        buildDescriptionField({
+          id: `${Routes.MISSINGFILESSPOUSE}.description`,
+          title: m.missingFiles.comment.title,
+          marginTop: 4,
+          titleVariant: 'h3',
+        }),
+        buildTextField({
+          id: 'fileUploadComment',
+          title: m.missingFiles.comment.inputTitle,
+          placeholder: m.missingFiles.comment.inputPlaceholder,
+          variant: 'textarea',
+          rows: 6,
+        }),
         buildSubmitField({
           id: 'missingFilesSubmit',
           title: '',
