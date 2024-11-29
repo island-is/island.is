@@ -37,9 +37,6 @@ describe('setupShutdownHooks', () => {
   })
 
   it('should set up event listeners for termination signals', () => {
-    // Arrange
-    // No additional arrangement needed as setup is in beforeEach
-
     // Act
     setupShutdownHooks(server)
 

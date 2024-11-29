@@ -5,7 +5,12 @@ export const setupShutdownHooks = (
   server: Server,
   onShutdown?: () => Promise<void>,
 ) => {
-  const terminationEvents = ['SIGHUP', 'SIGINT', 'SIGTERM']
+  let isShuttingDown = false
+  const terminationEvents: Array<NodeJS.Signals | 'disconnect'> = [
+    'SIGHUP',
+    'SIGINT',
+    'SIGTERM',
+  ]
 
   // Make sure the server doesn't hang after parent process disconnects, eg when
   // e2e tests are finished.
@@ -13,7 +18,6 @@ export const setupShutdownHooks = (
     terminationEvents.push('disconnect')
   }
 
-  let isShuttingDown = false
   const shutdown = async (signal: string) => {
     if (isShuttingDown) {
       return
