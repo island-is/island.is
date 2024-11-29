@@ -88,7 +88,7 @@ export const logoContainer = style({
   placeItems: 'center',
   margin: '0 auto',
   marginBottom: 4,
-  borderRadius: theme.border.radius.circle,
+  borderRadius: theme.border.radius.full,
   background: theme.color.white,
 
   ...themeUtils.responsiveStyle({

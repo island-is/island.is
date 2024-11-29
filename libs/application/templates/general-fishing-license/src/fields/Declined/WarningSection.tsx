@@ -34,7 +34,7 @@ export const WarningSection: FC<
         alignItems="center"
         justifyContent="center"
         position="absolute"
-        borderRadius="circle"
+        borderRadius="full"
         background="red600"
         color="red600"
         className={styles.sectionNumber}
