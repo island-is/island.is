@@ -7,16 +7,19 @@ import {
 } from '@island.is/auth-nest-tools'
 import { ApiScope } from '@island.is/auth/scopes'
 import { Audit } from '@island.is/nest/audit'
+import { CodeOwner } from '@island.is/nest/core'
+import { CodeOwners } from '@island.is/shared/constants'
 
 import type { Locale } from '@island.is/shared/types'
 import { UseGuards } from '@nestjs/common'
 import { Args, Query, Resolver } from '@nestjs/graphql'
-import { GetGenericLicensesInput } from '../dto/GetGenericLicenses.input'
-import { LicenseService } from '../licenseService.service'
 import { LicenseCollection } from '../dto/GenericLicenseCollection.dto'
 import { GenericUserLicense } from '../dto/GenericUserLicense.dto'
+import { GetGenericLicensesInput } from '../dto/GetGenericLicenses.input'
+import { LicenseService } from '../licenseService.service'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
+@CodeOwner(CodeOwners.Hugsmidjan)
 @Scopes(ApiScope.internal, ApiScope.licenses)
 @Resolver(() => LicenseCollection)
 @Audit({ namespace: '@island.is/api/license-service' })

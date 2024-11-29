@@ -7,6 +7,8 @@ import {
 } from '@island.is/auth-nest-tools'
 import { ApiScope, LicenseApiScope } from '@island.is/auth/scopes'
 import { Audit } from '@island.is/nest/audit'
+import { CodeOwner } from '@island.is/nest/core'
+import { CodeOwners } from '@island.is/shared/constants'
 import type { Locale } from '@island.is/shared/types'
 import { ForbiddenException, UseGuards } from '@nestjs/common'
 import { Args, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql'
@@ -17,6 +19,7 @@ import { LicenseService } from '../licenseService.service'
 import { GenericLicenseError } from '../dto/GenericLicenseError.dto'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
+@CodeOwner(CodeOwners.Hugsmidjan)
 @Scopes(ApiScope.internal, ApiScope.licenses)
 @Resolver(() => GenericUserLicense)
 @Audit({ namespace: '@island.is/api/license-service' })
