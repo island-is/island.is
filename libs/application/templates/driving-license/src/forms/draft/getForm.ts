@@ -33,7 +33,7 @@ export const draft: Form = buildForm({
         subSectionOtherCountry,
         subSectionOtherCountryDirections,
         /* ----------------------------------------------- */
-        
+
         subSectionQualityPhoto,
         subSectionDelivery,
         subSectionHealthDeclaration,
