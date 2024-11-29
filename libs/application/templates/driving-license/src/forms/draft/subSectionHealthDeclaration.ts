@@ -13,7 +13,6 @@ import {
   hasNoDrivingLicenseInOtherCountry,
 } from '../../lib/utils/formUtils'
 import { License } from '../../lib/constants'
-import { boolean } from 'zod'
 
 export const subSectionHealthDeclaration = buildSubSection({
   id: 'healthDeclaration',

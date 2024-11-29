@@ -29,7 +29,7 @@ export const draft: Form = buildForm({
       children: [
         subSectionApplicantInfo,
 
-        /* Erlent ökuskírteini tékk - Bráðabirgðaskírteini */
+        /* Check for foreign driving certificates - Temporary License */
         subSectionOtherCountry,
         subSectionOtherCountryDirections,
         /* ----------------------------------------------- */
