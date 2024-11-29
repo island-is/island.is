@@ -112,7 +112,7 @@ LABEL commit=${GIT_COMMIT_SHA}
 ENTRYPOINT [ "node", "main.js" ]
 
 
-FROM ${DOCKER_REGISTRY}/nginx/nginx:1.21-alpine AS output-static
+FROM ${DOCKER_REGISTRY}/library/nginx:1.21-alpine AS output-static
 
 # Stage-specific ARGs
 ARG APP_DIST_HOME

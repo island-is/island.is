@@ -183,13 +183,13 @@ export interface UpdateCase
   courtRecordSignatoryId?: string | null
   courtRecordSignatureDate?: Date | null
   parentCaseId?: string | null
-  arraignmentDate?: UpdateDateLog | null
-  courtDate?: UpdateDateLog | null
-  postponedIndefinitelyExplanation?: string | null
   indictmentReturnedExplanation?: string | null
   indictmentDeniedExplanation?: string | null
   indictmentHash?: string | null
-  civilDemands?: string | null
+  arraignmentDate?: UpdateDateLog
+  courtDate?: UpdateDateLog
+  postponedIndefinitelyExplanation?: string
+  civilDemands?: string
 }
 
 type DateLogKeys = keyof Pick<UpdateCase, 'arraignmentDate' | 'courtDate'>
