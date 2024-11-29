@@ -83,7 +83,7 @@ export const Breadcrumbs: FC<React.PropsWithChildren<BreadcrumbsProps>> = ({
               : renderCrumb}
             {visibleItems.length - 1 > index && (
               <Box
-                borderRadius={'circle'}
+                borderRadius="full"
                 display={'inlineBlock'}
                 marginY={0}
                 marginX={1}
