@@ -266,19 +266,27 @@ export class BackendService extends DataSource<{ req: Request }> {
     return this.post(`case/${id}/file/url`, createPresignedPost)
   }
 
-  createCaseFile(
+  createCaseFile(id: string, createFile: unknown): Promise<CaseFile> {
+    return this.post(`case/${id}/file`, createFile)
+  }
+
+  createDefendantCaseFile(
     id: string,
     createFile: unknown,
-    defendantId?: string,
+    defendantId: string,
+  ): Promise<CaseFile> {
+    return this.post(`case/${id}/defendant${defendantId}/file`, createFile)
+  }
+
+  createCivilClaimantCaseFile(
+    id: string,
+    createFile: unknown,
     civilClaimantId?: string,
   ): Promise<CaseFile> {
-    const connectionInjection = defendantId
-      ? `/defendant/${defendantId}`
-      : civilClaimantId
-      ? `/civilClaimant/${civilClaimantId}`
-      : ''
-
-    return this.post(`case/${id}${connectionInjection}/file`, createFile)
+    return this.post(
+      `case/${id}/civilClaimant/${civilClaimantId}/file`,
+      createFile,
+    )
   }
 
   getCaseFileSignedUrl(
@@ -446,13 +454,17 @@ export class BackendService extends DataSource<{ req: Request }> {
   limitedAccessCreateCaseFile(
     id: string,
     createFile: unknown,
+  ): Promise<CaseFile> {
+    return this.post(`case/${id}/limitedAccess/file`, createFile)
+  }
+
+  limitedAccessCreateCivilClaimantCaseFile(
+    id: string,
+    createFile: unknown,
     civilClaimantId?: string,
   ): Promise<CaseFile> {
-    const connectionInjection = civilClaimantId
-      ? `/civilClaimant/${civilClaimantId}`
-      : ''
     return this.post(
-      `case/${id}/limitedAccess${connectionInjection}/file`,
+      `case/${id}/limitedAccess$/civilClaimant/${civilClaimantId}/file`,
       createFile,
     )
   }
