@@ -8,8 +8,8 @@ import {
 } from '@island.is/auth-api-lib'
 import { AuthModule } from '@island.is/auth-nest-tools'
 import { RskRelationshipsClientConfig } from '@island.is/clients-rsk-relationships'
-import { NationalRegistryV3ClientConfig } from '@island.is/clients/national-registry-v3'
 import { NationalRegistryClientConfig } from '@island.is/clients/national-registry-v2'
+import { NationalRegistryV3ClientConfig } from '@island.is/clients/national-registry-v3'
 import { CompanyRegistryConfig } from '@island.is/clients/rsk/company-registry'
 import { SyslumennClientConfig } from '@island.is/clients/syslumenn'
 import { AuditModule } from '@island.is/nest/audit'
@@ -28,7 +28,6 @@ import { DelegationsModule } from './delegations/delegations.module'
 import { DomainsModule } from './domains/domains.module'
 import { LoginRestrictionsModule } from './login-restrictions/login-restrictions.module'
 import { ScopesModule } from './scopes/scopes.module'
-
 
 @Module({
   imports: [
