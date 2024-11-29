@@ -50,6 +50,14 @@ module.exports = {
               key: 'id',
             },
           },
+          organization_id: {
+            type: Sequelize.UUID,
+            allowNull: false,
+            references: {
+              model: 'organization',
+              key: 'id',
+            },
+          },
         },
         { transaction: t },
       ),

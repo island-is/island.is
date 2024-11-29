@@ -1,9 +1,16 @@
 import { Injectable } from '@nestjs/common'
-import { ApplicationDto } from '../../applications/models/dto/application.dto'
-import { OrganizationUrl } from '../../organizationUrls/models/organizationUrl.model'
+import { ApplicationDto } from '../applications/models/dto/application.dto'
+import { OrganizationUrl } from '../organizationUrls/models/organizationUrl.model'
+import { InjectModel } from '@nestjs/sequelize'
+import { ApplicationEvent } from '../applications/models/applicationEvent.model'
+import { ApplicationEvents } from '../../enums/applicationEvents'
 
 @Injectable()
 export class NudgeService {
+  constructor(
+    @InjectModel(ApplicationEvent)
+    private readonly applicationEventModel: typeof ApplicationEvent,
+  ) {}
   async sendNudge(
     applicationDto: ApplicationDto,
     url: OrganizationUrl,
@@ -28,6 +35,13 @@ export class NudgeService {
     } catch (error) {
       success = false
       console.log('error', error)
+    }
+
+    if (success) {
+      await this.applicationEventModel.create({
+        eventType: ApplicationEvents.NUDGE_SENT,
+        applicationId: applicationDto.id,
+      } as ApplicationEvent)
     }
 
     return success

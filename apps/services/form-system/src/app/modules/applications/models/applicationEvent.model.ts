@@ -9,6 +9,7 @@ import {
 } from 'sequelize-typescript'
 import { CreationOptional } from 'sequelize'
 import { Application } from './application.model'
+import { Value } from '../../values/models/value.model'
 
 @Table({ tableName: 'application_event' })
 export class ApplicationEvent extends Model<ApplicationEvent> {
@@ -39,11 +40,13 @@ export class ApplicationEvent extends Model<ApplicationEvent> {
   })
   isFileEvent!: boolean
 
+  @ForeignKey(() => Value)
   @Column({
     type: DataType.STRING,
     allowNull: true,
+    field: 'value_id',
   })
-  valueId?: string
+  valueId!: string
 
   @ForeignKey(() => Application)
   @Column({

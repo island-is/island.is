@@ -7,12 +7,17 @@ import { InjectModel } from '@nestjs/sequelize'
 import { Value } from './models/value.model'
 import { UpdateValueDto } from './models/dto/updateValue.dto'
 import { CreateValueDto } from './models/dto/createValue.dto'
+import { FieldTypesEnum } from '../../dataTypes/fieldTypes/fieldTypes.enum'
+import { ApplicationEvent } from '../applications/models/applicationEvent.model'
+import { ApplicationEvents } from '../../enums/applicationEvents'
 
 @Injectable()
 export class ValuesService {
   constructor(
     @InjectModel(Value)
     private readonly valueModel: typeof Value,
+    @InjectModel(ApplicationEvent)
+    private readonly applicationEventModel: typeof ApplicationEvent,
   ) {}
 
   async create(createValueDto: CreateValueDto): Promise<string> {
@@ -36,6 +41,15 @@ export class ValuesService {
     value.json = updateValueDto.json
 
     await value.save()
+
+    if (value.fieldType === FieldTypesEnum.FILE) {
+      await this.applicationEventModel.create({
+        eventType: ApplicationEvents.FILE_CREATED,
+        applicationId: value.applicationId,
+        isFileEvent: true,
+        valueId: value.id,
+      } as ApplicationEvent)
+    }
   }
 
   async delete(id: string): Promise<void> {

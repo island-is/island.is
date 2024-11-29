@@ -1,16 +1,13 @@
 import { ApiPropertyOptional } from '@nestjs/swagger'
-import { SectionDto } from '../../../sections/models/dto/section.dto'
 import { LanguageType } from '../../../../dataTypes/languageType.model'
 import { Dependency } from '../../../../dataTypes/dependency.model'
 import { ApplicationStatus } from '../../../../enums/applicationStatus'
-import { ApplicationEvent } from '../applicationEvent.model'
+import { ValueDto } from '../../../values/models/dto/value.dto'
+import { ApplicationEventDto } from './applicationEvent.dto'
 
-export class ApplicationDto {
+export class ApplicationMinimalDto {
   @ApiPropertyOptional()
   id?: string
-
-  @ApiPropertyOptional({ type: LanguageType })
-  organizationName?: LanguageType
 
   @ApiPropertyOptional()
   formId?: string
@@ -42,9 +39,9 @@ export class ApplicationDto {
   @ApiPropertyOptional({ enum: ApplicationStatus })
   status?: string
 
-  @ApiPropertyOptional({ type: [ApplicationEvent] })
-  events?: ApplicationEvent[]
+  @ApiPropertyOptional({ type: [ApplicationEventDto] })
+  events?: ApplicationEventDto[]
 
-  @ApiPropertyOptional({ type: [SectionDto] })
-  sections?: SectionDto[]
+  @ApiPropertyOptional({ type: [ValueDto] })
+  files?: ValueDto[]
 }
