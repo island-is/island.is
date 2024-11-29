@@ -68,8 +68,6 @@ export enum NotificationType {
   SERVICE_FAILED = SubpoenaNotificationType.SERVICE_FAILED,
   SPOKESPERSON_ASSIGNED = CivilClaimantNotificationType.SPOKESPERSON_ASSIGNED,
   INDICTMENTS_WAITING_FOR_CONFIRMATION = InstitutionNotificationType.INDICTMENTS_WAITING_FOR_CONFIRMATION,
-  INDICTMENT_SENT_TO_PRISON_ADMIN = DefendantNotificationType.INDICTMENT_SENT_TO_PRISON_ADMIN,
-  INDICTMENT_WITHDRAWN_FROM_PRISON_ADMIN = DefendantNotificationType.INDICTMENT_WITHDRAWN_FROM_PRISON_ADMIN,
 }
 
 export const notificationTypes = Object.values(NotificationType)
