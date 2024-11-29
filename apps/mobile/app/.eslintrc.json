@@ -1,10 +1,18 @@
 {
   "extends": ["plugin:@nx/react", "../../../.eslintrc.json"],
-  "ignorePatterns": ["!**/*", "public", ".cache", "node_modules"],
+  "ignorePatterns": ["!**/*", "node_modules", "**/*.stories.tsx","lib/pdf417/*-min.js"],
   "overrides": [
     {
       "files": ["*.ts", "*.tsx", "*.js", "*.jsx"],
-      "rules": {}
+      "rules": {
+        "no-restricted-imports": [
+          "error",
+          {
+            "paths": ["lodash", "date-fns", "date-fns/locale", "."]
+          }
+        ],
+        "func-style": "off"
+      }
     },
     {
       "files": ["*.ts", "*.tsx"],
