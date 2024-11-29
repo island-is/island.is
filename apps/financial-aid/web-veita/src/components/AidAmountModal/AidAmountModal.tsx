@@ -22,7 +22,7 @@ const AidAmountModal = ({
   onVisibilityChange,
   calculations,
 }: Props) => {
-  const closeModal = () => {
+  const closeModal = (): void => {
     onVisibilityChange(false)
   }
 
