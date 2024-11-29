@@ -635,6 +635,7 @@ export class ApplicationService {
     filters: FilterApplicationsDto,
     municipalityCodes: string[],
   ): Promise<FilterApplicationsResponse> {
+
     const whereOptions = {
       state: {
         [Op.in]:
@@ -696,7 +697,7 @@ export class ApplicationService {
     ])
 
     const staffList = resultsStaffWithApplications.map((row) => row.staff)
-    const staffListUniq = [...new Map(staffList.map((v) => [v.id, v])).values()]
+    const staffListUniq = [...new Map(staffList.filter((v) => v !== null).map((v) => [v.id, v])).values()]
 
     return {
       applications: resultsApplications.rows,
