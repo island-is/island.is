@@ -188,8 +188,11 @@ export const LanguageToggler = ({
     <DialogPrompt
       baseId={dialogId}
       initialVisibility={true}
-      title={gn('switchToEnglishModalTitle')}
-      description={gn('switchToEnglishModalText')}
+      title={gn('switchToEnglishModalTitle', 'Translation not available')}
+      description={gn(
+        'switchToEnglishModalText',
+        'The page you are viewing does not have an English translation yet',
+      )}
       ariaLabel="Confirm switching to english"
       disclosureElement={Disclosure}
       onConfirm={() => {
