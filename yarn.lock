@@ -13473,8 +13473,8 @@ __metadata:
     "@react-native/eslint-config": 0.74.87
     "@react-native/metro-config": 0.74.87
     "@react-native/typescript-config": 0.74.87
-    "@testing-library/jest-native": "*"
-    "@testing-library/react-native": "*"
+    "@testing-library/jest-native": 5.4.3
+    "@testing-library/react-native": 12.9.0
     "@tsconfig/react-native": 3.0.5
     "@types/intl": ^1
     "@types/jest": ^29.2.1
@@ -13498,7 +13498,7 @@ __metadata:
     intl: 1.2.5
     jest: 29.7.0
     lodash: 4.17.21
-    metro-config: "*"
+    metro-config: 0.81.0
     path-to-regexp: 6.2.2
     react: 18.2.0
     react-intl: 5.20.12
@@ -21550,7 +21550,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@testing-library/jest-native@npm:*, @testing-library/jest-native@npm:~5.4.3":
+"@testing-library/jest-native@npm:5.4.3, @testing-library/jest-native@npm:~5.4.3":
   version: 5.4.3
   resolution: "@testing-library/jest-native@npm:5.4.3"
   dependencies:
@@ -21567,7 +21567,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@testing-library/react-native@npm:*":
+"@testing-library/react-native@npm:12.9.0":
   version: 12.9.0
   resolution: "@testing-library/react-native@npm:12.9.0"
   dependencies:
@@ -44144,22 +44144,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"metro-config@npm:*, metro-config@npm:0.81.0":
-  version: 0.81.0
-  resolution: "metro-config@npm:0.81.0"
-  dependencies:
-    connect: ^3.6.5
-    cosmiconfig: ^5.0.5
-    flow-enums-runtime: ^0.0.6
-    jest-validate: ^29.6.3
-    metro: 0.81.0
-    metro-cache: 0.81.0
-    metro-core: 0.81.0
-    metro-runtime: 0.81.0
-  checksum: 4969423a292b4aec8f604ae0f682bd62f463ee7a84459c1cf069ff0239427a01e287b97516d265a6b1ec9e8a7b3eb09ad5a8b914e469c9aff56f25473325fe29
-  languageName: node
-  linkType: hard
-
 "metro-config@npm:0.80.12, metro-config@npm:~0.80.4":
   version: 0.80.12
   resolution: "metro-config@npm:0.80.12"
@@ -44188,6 +44172,22 @@ __metadata:
     metro-core: 0.80.9
     metro-runtime: 0.80.9
   checksum: 9822a2de858f4ad2d714cb2f70e51552a660ae059a490e4e7728b7b061367f6c6dce90bc4b49144e152e6dbece922a401183570b289dd6f8d595d5fcf3dfa781
+  languageName: node
+  linkType: hard
+
+"metro-config@npm:0.81.0":
+  version: 0.81.0
+  resolution: "metro-config@npm:0.81.0"
+  dependencies:
+    connect: ^3.6.5
+    cosmiconfig: ^5.0.5
+    flow-enums-runtime: ^0.0.6
+    jest-validate: ^29.6.3
+    metro: 0.81.0
+    metro-cache: 0.81.0
+    metro-core: 0.81.0
+    metro-runtime: 0.81.0
+  checksum: 4969423a292b4aec8f604ae0f682bd62f463ee7a84459c1cf069ff0239427a01e287b97516d265a6b1ec9e8a7b3eb09ad5a8b914e469c9aff56f25473325fe29
   languageName: node
   linkType: hard
 
