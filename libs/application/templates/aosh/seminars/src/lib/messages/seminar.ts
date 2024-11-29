@@ -45,6 +45,11 @@ export const seminar = {
       defaultMessage: 'Lýsing:',
       description: `seminar description label `,
     },
+    seminarDescriptionUrlText: {
+      id: 'aosh.sem.application:seminar.labels.seminarDescriptionUrlText',
+      defaultMessage: '(Sjá námskeiðslýsingu hér)[{url}]',
+      description: `seminar description label `,
+    },
     seminarLocation: {
       id: 'aosh.sem.application:seminar.labels.seminarLocation',
       defaultMessage: 'Staðsetning:',

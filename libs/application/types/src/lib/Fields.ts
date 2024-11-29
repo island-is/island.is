@@ -470,7 +470,9 @@ export interface KeyValueField extends BaseField {
 export interface InformationCardField extends BaseField {
   readonly type: FieldTypes.INFORMATION_CARD
   component: FieldComponents.INFORMATION_CARD
-  items: Array<{ label: FormText; value: FormText | FormTextArray }>
+  items: MaybeWithApplicationAndFieldAndLocale<
+    Array<{ label: FormText; value: FormText | FormTextArray }>
+  >
   paddingX?: BoxProps['padding']
   paddingY?: BoxProps['padding']
 }

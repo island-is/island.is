@@ -32,5 +32,5 @@ export const IdentityApi = IdentityApiProvider.configure({
 
 export const getSeminarsApi = defineTemplateApi({
   action: ApiActions.getSeminars,
-  externalDataId: 'seminars',
+  externalDataId: 'seminar',
 })

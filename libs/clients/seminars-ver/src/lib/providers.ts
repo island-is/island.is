@@ -4,7 +4,7 @@ import {
   LazyDuringDevScope,
   XRoadConfig,
 } from '@island.is/nest/config'
-import { Configuration, NamskeidApi } from '../../gen/fetch'
+import { Configuration, CourseApi } from '../../gen/fetch'
 import { SeminarsClientConfig } from './seminars.config'
 import { createEnhancedFetch } from '@island.is/clients/middlewares'
 
@@ -37,8 +37,8 @@ const ConfigFactory = (
 
 export const exportedApis = [
   {
-    api: NamskeidApi,
-    provide: NamskeidApi,
+    api: CourseApi,
+    provide: CourseApi,
     acceptHeader: 'application/json',
   },
 ].map(({ api, provide, acceptHeader }) => ({

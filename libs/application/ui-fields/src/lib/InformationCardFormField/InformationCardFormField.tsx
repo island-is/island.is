@@ -1,9 +1,10 @@
-import React, { FC } from 'react'
+import React, { FC, useMemo } from 'react'
 
-import { formatText } from '@island.is/application/core'
+import { buildFieldItems, formatText } from '@island.is/application/core'
 import { Application, InformationCardField } from '@island.is/application/types'
 import { Box, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
+import { Markdown } from '@island.is/shared/components'
 
 export const InformationCardFormField: FC<
   React.PropsWithChildren<{
@@ -11,7 +12,13 @@ export const InformationCardFormField: FC<
     application: Application
   }>
 > = ({ field, application }) => {
-  const { formatMessage } = useLocale()
+  const { formatMessage, lang: locale } = useLocale()
+  const { items } = field
+
+  const finalItems = useMemo(
+    () => buildFieldItems(items, application, field, locale),
+    [items, application, locale],
+  )
 
   return (
     <Box
@@ -21,13 +28,21 @@ export const InformationCardFormField: FC<
       paddingY={field.paddingY}
       paddingX={field.paddingX}
     >
-      {field.items.map((item) => {
+      {finalItems.map((item) => {
         return (
-          <Box display="flex">
+          <Box display="flex" key={`item-key-${item.value}`}>
             <Text fontWeight="semiBold">
               {formatText(item.label, application, formatMessage)}
             </Text>
-            <Text>{formatText(item.value, application, formatMessage)}</Text>
+            <Text>
+              <Markdown>
+                {(formatText(
+                  item.value,
+                  application,
+                  formatMessage,
+                ) as string) ?? ''}
+              </Markdown>
+            </Text>
           </Box>
         )
       })}

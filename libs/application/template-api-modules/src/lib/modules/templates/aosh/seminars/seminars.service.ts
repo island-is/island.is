@@ -6,11 +6,11 @@ import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { TemplateApiModuleActionProps } from '../../../../types'
 import {
-  NamskeidDto,
-  Seminar,
+  CourseDTO,
   SeminarsClientService,
 } from '@island.is/clients/seminars-ver'
 import { TemplateApiError } from '@island.is/nest/problem'
+import { getValueViaPath } from '@island.is/application/core'
 
 @Injectable()
 export class SeminarsTemplateService extends BaseTemplateApiService {
@@ -23,7 +23,13 @@ export class SeminarsTemplateService extends BaseTemplateApiService {
 
   async getSeminars({
     auth,
-  }: TemplateApiModuleActionProps): Promise<Array<Seminar>> {
+    application,
+  }: TemplateApiModuleActionProps): Promise<CourseDTO> {
+    const seminarQueryId = getValueViaPath<string>(
+      application.answers,
+      `initialQuery`,
+      '',
+    )
     const data = await this.seminarsClientService
       .getSeminars(auth)
       .catch(() => {
@@ -37,8 +43,21 @@ export class SeminarsTemplateService extends BaseTemplateApiService {
           400,
         )
       })
+    const selectedSeminar = data.find(
+      (seminar) => seminar.courseId?.toString() === seminarQueryId,
+    )
 
-    return data
+    if (!selectedSeminar) {
+      throw new TemplateApiError(
+        {
+          summary: `Ekkert námskeið fannst með þessu númeri: ${seminarQueryId}.`,
+          title: 'Villa í umsókn',
+        },
+        400,
+      )
+    }
+
+    return selectedSeminar
   }
 
   async submitApplication({

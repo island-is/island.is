@@ -43,6 +43,7 @@ const template: ApplicationTemplate<
   institution: applicationMessage.institutionName,
   translationNamespaces:
     ApplicationConfigurations.SeminarRegistration.translation,
+  initialQueryParameter: 'seminarId',
   dataSchema: SeminarAnswersSchema,
   allowedDelegations: [
     // TODO what delegations are allowed?
