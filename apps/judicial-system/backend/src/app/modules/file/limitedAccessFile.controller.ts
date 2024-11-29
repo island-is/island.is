@@ -119,7 +119,7 @@ export class LimitedAccessFileController {
     CaseWriteGuard,
     LimitedAccessWriteCaseFileGuard,
   )
-  @RolesRules(defenderRule)
+  @RolesRules() // This endpoint is not used by any role at the moment
   @Post('civilClaimant/:civilClaimantId/file')
   @ApiCreatedResponse({
     type: CaseFile,
