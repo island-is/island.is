@@ -63,7 +63,6 @@ import { UpdateFilesDto } from './dto/updateFile.dto'
 import { CurrentCaseFile } from './guards/caseFile.decorator'
 import { CaseFileExistsGuard } from './guards/caseFileExists.guard'
 import { ViewCaseFileGuard } from './guards/viewCaseFile.guard'
-import { WriteCaseFileGuard } from './guards/writeCaseFile.guard'
 import { DeleteFileResponse } from './models/deleteFile.response'
 import { CaseFile } from './models/file.model'
 import { PresignedPost } from './models/presignedPost.model'
@@ -107,7 +106,7 @@ export class FileController {
     return this.fileService.createPresignedPost(theCase, createPresignedPost)
   }
 
-  @UseGuards(RolesGuard, CaseExistsGuard, CaseWriteGuard, WriteCaseFileGuard)
+  @UseGuards(RolesGuard, CaseExistsGuard, CaseWriteGuard)
   @RolesRules(
     prosecutorRule,
     prosecutorRepresentativeRule,
@@ -135,13 +134,7 @@ export class FileController {
     return this.fileService.createCaseFile(theCase, createFile, user)
   }
 
-  @UseGuards(
-    RolesGuard,
-    CaseExistsGuard,
-    DefendantExistsGuard,
-    CaseWriteGuard,
-    WriteCaseFileGuard,
-  )
+  @UseGuards(RolesGuard, CaseExistsGuard, DefendantExistsGuard, CaseWriteGuard)
   @RolesRules(publicProsecutorStaffRule)
   @Post('defendant/:defendantId/file')
   @ApiCreatedResponse({
@@ -168,13 +161,12 @@ export class FileController {
     CaseExistsGuard,
     CivilClaimantExistsGuard,
     CaseWriteGuard,
-    WriteCaseFileGuard,
   )
-  @RolesRules(publicProsecutorStaffRule)
-  @Post('defendant/:defendantId/file')
+  @RolesRules() // This endpoint is not used by any role at the moment
+  @Post('civilClaimant/:civilClaimantId/file')
   @ApiCreatedResponse({
     type: CaseFile,
-    description: 'Creates a new case file connected to a defendant',
+    description: 'Creates a new case file connected to a civil claimant',
   })
   async createCivilClaimantCaseFile(
     @Param('caseId') caseId: string,
