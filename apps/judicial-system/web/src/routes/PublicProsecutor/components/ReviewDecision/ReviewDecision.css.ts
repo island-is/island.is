@@ -4,7 +4,12 @@ import { theme } from '@island.is/island-ui/theme'
 
 export const gridRow = style({
   display: 'grid',
-  gridTemplateColumns: '1.6fr 1fr',
+  gridTemplateColumns: '1fr auto',
   gridGap: theme.spacing[1],
-  marginBottom: theme.spacing[1],
+
+  '@media': {
+    [`screen and (max-width: ${theme.breakpoints.lg}px)`]: {
+      gridTemplateColumns: '1fr',
+    },
+  },
 })

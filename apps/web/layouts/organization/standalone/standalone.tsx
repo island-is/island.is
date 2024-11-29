@@ -10,11 +10,13 @@ import {
   SkipToMainContent,
 } from '@island.is/web/components'
 import { PRELOADED_FONTS } from '@island.is/web/constants'
+import { GlobalContextProvider } from '@island.is/web/context'
 import { OrganizationPage } from '@island.is/web/graphql/schema'
 import { useLinkResolver } from '@island.is/web/hooks'
 import { useI18n } from '@island.is/web/i18n'
 import { getBackgroundStyle } from '@island.is/web/utils/organization'
 
+import { StandaloneAlertBanner } from './components/AlertBanner'
 import { Header, HeaderProps } from './components/Header'
 import { Navigation, NavigationProps } from './components/Navigation'
 
@@ -86,7 +88,7 @@ export const StandaloneLayout = ({
   const featuredImage = seo?.image ?? organizationPage.featuredImage
 
   return (
-    <>
+    <GlobalContextProvider>
       <Head>
         {PRELOADED_FONTS.map((href, index) => {
           return (
@@ -204,6 +206,7 @@ export const StandaloneLayout = ({
         }
       />
       <PageLoader />
+      <StandaloneAlertBanner alertBanner={organizationPage.alertBanner} />
       <Navigation {...navigationProps} />
       <Header {...headerProps} />
       <Box component="main" id="main-content" paddingY={8}>
@@ -268,6 +271,6 @@ export const StandaloneLayout = ({
             url('/fonts/ibm-plex-sans-v7-latin-600.woff') format('woff');
         }
       `}</style>
-    </>
+    </GlobalContextProvider>
   )
 }
