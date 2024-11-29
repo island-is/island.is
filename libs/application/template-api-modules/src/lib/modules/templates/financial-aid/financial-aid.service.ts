@@ -200,8 +200,8 @@ export class FinancialAidService extends BaseTemplateApiService {
       usePersonalTaxCredit: Boolean(
         answersSchema.personalTaxCredit.type === ApproveOptions.Yes,
       ),
-      bankNumber: answersSchema.bankInfo.bankNumber,
-      ledger: answersSchema.bankInfo.ledger,
+      bankNumber: answersSchema.bankInfo.accountNumber,
+      ledger: answersSchema.bankInfo.accountNumber,
       accountNumber: answersSchema.bankInfo.accountNumber,
       employment: answersSchema.employment.type,
       employmentCustom: answersSchema.employment.custom,
