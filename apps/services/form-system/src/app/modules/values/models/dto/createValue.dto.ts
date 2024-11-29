@@ -15,5 +15,10 @@ export class CreateValueDto {
   @IsNotEmpty()
   @IsString()
   @ApiProperty()
+  fieldType!: string
+
+  @IsNotEmpty()
+  @IsString()
+  @ApiProperty()
   applicationId!: string
 }

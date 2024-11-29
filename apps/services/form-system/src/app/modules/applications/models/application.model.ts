@@ -12,6 +12,8 @@ import {
 import { Form } from '../../forms/models/form.model'
 import { Dependency } from '../../../dataTypes/dependency.model'
 import { ApplicationEvent } from './applicationEvent.model'
+import { Organization } from '../../organizations/models/organization.model'
+import { Value } from '../../values/models/value.model'
 
 @Table({ tableName: 'application' })
 export class Application extends Model<Application> {
@@ -64,6 +66,9 @@ export class Application extends Model<Application> {
   @HasMany(() => ApplicationEvent)
   events?: ApplicationEvent[]
 
+  @HasMany(() => Value)
+  files?: Value[]
+
   @ForeignKey(() => Form)
   @Column({
     type: DataType.STRING,
@@ -71,4 +76,12 @@ export class Application extends Model<Application> {
     field: 'form_id',
   })
   formId!: string
+
+  @ForeignKey(() => Organization)
+  @Column({
+    type: DataType.STRING,
+    allowNull: false,
+    field: 'organization_id',
+  })
+  organizationId!: string
 }

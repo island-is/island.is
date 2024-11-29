@@ -7,6 +7,7 @@ import { ScreenDto } from '../../screens/models/dto/screen.dto'
 import { SectionDto } from '../../sections/models/dto/section.dto'
 import { ValueDto } from '../../values/models/dto/value.dto'
 import { Dependency } from '../../../dataTypes/dependency.model'
+import { ApplicationMinimalDto } from './dto/applicationMinimal.dto'
 
 @Injectable()
 export class ApplicationMapper {
@@ -24,6 +25,7 @@ export class ApplicationMapper {
       slug: form.slug,
       formName: form.name,
       submittedAt: application.submittedAt,
+      events: application.events,
       sections: [],
     }
 
@@ -73,6 +75,45 @@ export class ApplicationMapper {
     })
 
     return applicationDto
+  }
+
+  mapApplicationToApplicationMinimalDto(
+    application: Application,
+    form: Form | null,
+  ): ApplicationMinimalDto {
+    const applicationMinimalDto: ApplicationMinimalDto = {
+      id: application.id,
+      isTest: application.isTest,
+      dependencies: application.dependencies,
+      completed: application.completed,
+      status: application.status,
+      formId: form?.id,
+      slug: form?.slug,
+      formName: form?.name,
+      submittedAt: application.submittedAt,
+      events: application.events?.map((event) => {
+        return {
+          created: event.created,
+          eventType: event.eventType,
+          isFileEvent: event.isFileEvent,
+        }
+      }),
+      files: application.files?.map((file) => {
+        return {
+          id: file.id,
+          order: file.order,
+          json: file.json,
+          events: file.events?.map((event) => {
+            return {
+              created: event.created,
+              eventType: event.eventType,
+              isFileEvent: event.isFileEvent,
+            }
+          }),
+        } as ValueDto
+      }),
+    }
+    return applicationMinimalDto
   }
 
   private isHidden(

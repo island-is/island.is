@@ -10,8 +10,8 @@ import { Organization } from '../organizations/models/organization.model'
 import { FormUrl } from '../formUrls/models/formUrl.model'
 import { OrganizationUrl } from '../organizationUrls/models/organizationUrl.model'
 import { ServiceManager } from '../services/service.manager'
-import { ZendeskService } from '../services/submits/zendesk.service'
-import { NudgeService } from '../services/submits/nudge.service'
+import { ZendeskService } from '../services/zendesk.service'
+import { NudgeService } from '../services/nudge.service'
 import { ApplicationEvent } from './models/applicationEvent.model'
 
 @Module({

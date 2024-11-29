@@ -4,12 +4,15 @@ import {
   CreatedAt,
   DataType,
   ForeignKey,
+  HasMany,
   Model,
   Table,
   UpdatedAt,
 } from 'sequelize-typescript'
 import { Field } from '../../fields/models/field.model'
 import { ValueType } from '../../../dataTypes/valueTypes/valueType.model'
+import { ApplicationEvent } from '../../applications/models/applicationEvent.model'
+import { Application } from '../../applications/models/application.model'
 
 @Table({ tableName: 'value' })
 export class Value extends Model<Value> {
@@ -40,6 +43,15 @@ export class Value extends Model<Value> {
   })
   order!: number
 
+  @Column({
+    type: DataType.STRING,
+    allowNull: false,
+  })
+  fieldType!: string
+
+  @HasMany(() => ApplicationEvent)
+  events?: ApplicationEvent[]
+
   @ForeignKey(() => Field)
   @Column({
     type: DataType.STRING,
@@ -48,9 +60,11 @@ export class Value extends Model<Value> {
   })
   fieldId!: string
 
+  @ForeignKey(() => Application)
   @Column({
     type: DataType.STRING,
     allowNull: false,
+    field: 'application_id',
   })
   applicationId!: string
 }

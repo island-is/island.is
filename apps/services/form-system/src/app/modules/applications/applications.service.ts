@@ -16,6 +16,10 @@ import { UpdateApplicationDto } from './models/dto/updateApplication.dto'
 import { ApplicationStatus } from '../../enums/applicationStatus'
 import { Organization } from '../organizations/models/organization.model'
 import { ServiceManager } from '../services/service.manager'
+import { ApplicationEvent } from './models/applicationEvent.model'
+import { ApplicationEvents } from '../../enums/applicationEvents'
+import { ApplicationListDto } from './models/dto/applicationList.dto'
+import { FieldTypesEnum } from '../../dataTypes/fieldTypes/fieldTypes.enum'
 
 @Injectable()
 export class ApplicationsService {
@@ -28,6 +32,8 @@ export class ApplicationsService {
     private readonly formModel: typeof Form,
     @InjectModel(Organization)
     private readonly organizationModel: typeof Organization,
+    @InjectModel(ApplicationEvent)
+    private readonly applicationEventModel: typeof ApplicationEvent,
     private readonly applicationMapper: ApplicationMapper,
     private readonly serviceManager: ServiceManager,
   ) {}
@@ -44,31 +50,42 @@ export class ApplicationsService {
 
     const newApplication: Application = await this.applicationModel.create({
       formId: form.id,
+      organizationId: form.organizationId,
       isTest: createApplicationDto.isTest,
       dependencies: form.dependencies,
       status: ApplicationStatus.IN_PROGRESS,
     } as Application)
 
-    form.sections.map((section) => {
-      section.screens?.map((screen) => {
-        screen.fields?.map(async (field) => {
-          await this.valueModel.create({
-            fieldId: field.id,
-            applicationId: newApplication.id,
-            json: this.createValue(field.fieldType),
-          } as Value)
-        })
-      })
-    })
+    await this.applicationEventModel.create({
+      eventType: ApplicationEvents.APPLICATION_CREATED,
+      applicationId: newApplication.id,
+    } as ApplicationEvent)
+
+    await Promise.all(
+      form.sections.map((section) =>
+        Promise.all(
+          section.screens?.map((screen) =>
+            Promise.all(
+              screen.fields?.map(async (field) => {
+                return this.valueModel.create({
+                  fieldId: field.id,
+                  fieldType: field.fieldType,
+                  applicationId: newApplication.id,
+                  json: ValueTypeFactory.getClass(
+                    field.fieldType,
+                    new ValueType(),
+                  ),
+                } as Value)
+              }) || [],
+            ),
+          ) || [],
+        ),
+      ),
+    )
 
     const applicationDto = await this.getApplication(newApplication.id)
 
     return applicationDto
-  }
-
-  private createValue(type: string) {
-    const value = ValueTypeFactory.getClass(type, new ValueType())
-    return value
   }
 
   async update(
@@ -110,8 +127,75 @@ export class ApplicationsService {
     return success
   }
 
-  public async getApplication(applicationId: string): Promise<ApplicationDto> {
-    const application = await this.applicationModel.findByPk(applicationId)
+  async findAll(
+    organizationId: string,
+    page: number,
+    limit: number,
+    isTest: boolean,
+  ): Promise<ApplicationListDto> {
+    const offset = (page - 1) * limit
+    const { count: total, rows: data } =
+      await this.applicationModel.findAndCountAll({
+        where: { organizationId: organizationId, isTest: isTest },
+        limit,
+        offset,
+        include: [
+          {
+            model: ApplicationEvent,
+            as: 'events',
+            where: { isFileEvent: false },
+          },
+          {
+            model: Value,
+            as: 'files',
+            where: { fieldType: FieldTypesEnum.FILE },
+            include: [
+              {
+                model: ApplicationEvent,
+                as: 'events',
+              },
+            ],
+          },
+        ],
+        order: [
+          [{ model: ApplicationEvent, as: 'events' }, 'created', 'ASC'],
+          [
+            { model: Value, as: 'files' },
+            { model: ApplicationEvent, as: 'events' },
+            'created',
+            'ASC',
+          ],
+        ],
+      })
+
+    const applicationMinimalDtos = await Promise.all(
+      data.map(async (application) => {
+        const form = await this.formModel.findByPk(application.formId)
+        return this.applicationMapper.mapApplicationToApplicationMinimalDto(
+          application,
+          form,
+        )
+      }),
+    )
+
+    const applicationList = new ApplicationListDto()
+    applicationList.applications = applicationMinimalDtos
+    applicationList.total = total
+    return applicationList
+  }
+
+  async getApplication(applicationId: string): Promise<ApplicationDto> {
+    const application = await this.applicationModel.findOne({
+      where: { id: applicationId },
+      include: [
+        {
+          model: ApplicationEvent,
+          as: 'events',
+          where: { isFileEvent: false },
+        },
+      ],
+      order: [[{ model: ApplicationEvent, as: 'events' }, 'created', 'ASC']],
+    })
 
     if (!application) {
       throw new NotFoundException(
@@ -163,7 +247,9 @@ export class ApplicationsService {
                     {
                       model: Value,
                       as: 'values',
-                      where: { applicationId: applicationId },
+                      where: {
+                        applicationId: applicationId,
+                      },
                     },
                   ],
                 },
@@ -197,6 +283,8 @@ export class ApplicationsService {
         ],
       ],
     })
+
+    console.log(JSON.stringify(form, null, 2))
 
     if (!form) {
       throw new NotFoundException(`Form with id '${formId}' not found`)
