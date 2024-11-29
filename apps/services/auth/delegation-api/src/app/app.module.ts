@@ -57,7 +57,6 @@ import { NationalRegistryClientConfig } from '@island.is/clients/national-regist
         DelegationApiUserSystemNotificationConfig,
         SyslumennClientConfig,
         ZendeskServiceConfig,
-        NationalRegistryV3ClientConfig,
       ],
     }),
   ],
