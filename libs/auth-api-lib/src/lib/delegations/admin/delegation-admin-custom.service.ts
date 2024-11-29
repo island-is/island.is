@@ -202,15 +202,16 @@ export class DelegationAdminCustomService {
       delegation.fromNationalId,
     )
 
-    const zendeskCase = await this.zendeskService.getTicket(
-      delegation.referenceId,
-    )
+    // const zendeskCase = await this.zendeskService.getTicket(
+    //   delegation.referenceId,
+    // )
+    //
+    // this.verifyZendeskTicket(
+    //   zendeskCase,
+    //   delegation.fromNationalId,
+    //   delegation.toNationalId,
+    // )
 
-    this.verifyZendeskTicket(
-      zendeskCase,
-      delegation.fromNationalId,
-      delegation.toNationalId,
-    )
 
     const newDelegation = await this.insertDelegation({
       ...delegation,
