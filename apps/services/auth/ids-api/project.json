@@ -4,9 +4,7 @@
   "sourceRoot": "apps/services/auth/ids-api/src",
   "projectType": "application",
   "prefix": "ids-api",
-  "tags": [
-    "scope:auth-api"
-  ],
+  "tags": ["scope:auth-api"],
   "generators": {},
   "targets": {
     "build": {
@@ -26,9 +24,7 @@
           ]
         }
       },
-      "outputs": [
-        "{workspaceRoot}/dist/apps/services/auth/ids-api"
-      ]
+      "outputs": ["{workspaceRoot}/dist/apps/services/auth/ids-api"]
     },
     "esbuild": {
       "executor": "./tools/executors/node:build",
@@ -68,9 +64,7 @@
           "inspect": false
         }
       },
-      "outputs": [
-        "{options.outputPath}"
-      ]
+      "outputs": ["{options.outputPath}"]
     },
     "serve": {
       "executor": "@nx/js:node",
@@ -85,10 +79,7 @@
         "buildTargetOptions": {
           "outputPath": "dist/apps/services/auth/ids-api/cleanup"
         },
-        "args": [
-          "--job",
-          "cleanup"
-        ]
+        "args": ["--job", "cleanup"]
       }
     },
     "lint": {
@@ -100,9 +91,7 @@
         "jestConfig": "apps/services/auth/ids-api/jest.config.ts",
         "runInBand": true
       },
-      "outputs": [
-        "{workspaceRoot}/coverage/apps/services/auth/ids-api"
-      ]
+      "outputs": ["{workspaceRoot}/coverage/apps/services/auth/ids-api"]
     },
     "docker-express": {
       "executor": "Intentionally left blank, only so this target is valid when using `nx show projects --with-target docker-express`"
@@ -119,9 +108,7 @@
       "options": {
         "command": "cross-env INIT_SCHEMA=true yarn ts-node -P apps/services/auth/ids-api/tsconfig.app.json apps/services/auth/ids-api/src/buildOpenApi.ts"
       },
-      "outputs": [
-        "{projectRoot}/src/openapi.yaml"
-      ]
+      "outputs": ["{projectRoot}/src/openapi.yaml"]
     },
     "migrate": {
       "executor": "nx:run-commands",
@@ -192,9 +179,7 @@
     "dev": {
       "executor": "nx:run-commands",
       "options": {
-        "commands": [
-          "yarn start services-auth-ids-api"
-        ]
+        "commands": ["yarn start services-auth-ids-api"]
       }
     }
   }

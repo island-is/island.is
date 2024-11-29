@@ -3,22 +3,16 @@
   "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/services/auth/delegation-api/src",
   "projectType": "application",
-  "tags": [
-    "scope:auth-api"
-  ],
+  "tags": ["scope:auth-api"],
   "targets": {
     "build": {
       "executor": "./tools/executors/node:build",
-      "outputs": [
-        "{options.outputPath}"
-      ],
+      "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "dist/apps/services/auth/delegation-api",
         "main": "apps/services/auth/delegation-api/src/main.ts",
         "tsConfig": "apps/services/auth/delegation-api/tsconfig.app.json",
-        "assets": [
-          "apps/services/auth/delegation-api/src/assets"
-        ]
+        "assets": ["apps/services/auth/delegation-api/src/assets"]
       },
       "configurations": {
         "production": {
@@ -50,9 +44,7 @@
     },
     "test": {
       "executor": "@nx/jest:jest",
-      "outputs": [
-        "{workspaceRoot}/coverage/apps/services/auth/delegation-api"
-      ],
+      "outputs": ["{workspaceRoot}/coverage/apps/services/auth/delegation-api"],
       "options": {
         "jestConfig": "apps/services/auth/delegation-api/jest.config.ts",
         "runInBand": true
@@ -63,9 +55,7 @@
       "options": {
         "command": "cross-env INIT_SCHEMA=true yarn ts-node -P apps/services/auth/delegation-api/tsconfig.app.json apps/services/auth/delegation-api/src/buildOpenApi.ts"
       },
-      "outputs": [
-        "{projectRoot}/src/openapi.yaml"
-      ]
+      "outputs": ["{projectRoot}/src/openapi.yaml"]
     },
     "docker-express": {
       "executor": "Intentionally left blank, only so this target is valid when using `nx show projects --with-target docker-express`"
