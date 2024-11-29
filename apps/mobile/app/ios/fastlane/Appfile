@@ -1,6 +1,0 @@
-app_identifier("is.island.app") # The bundle identifier of your app
-itc_team_id("123094020") # App Store Connect Team ID
-team_id("J3WWZR9JLF") # Developer Portal Team ID
-
-# For more information about the Appfile, see:
-#     https://docs.fastlane.tools/advanced/#appfile
