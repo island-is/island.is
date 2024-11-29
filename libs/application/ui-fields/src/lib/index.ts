@@ -27,6 +27,4 @@ export { TableRepeaterFormField } from './TableRepeaterFormField/TableRepeaterFo
 export { FindVehicleFormField } from './FindVehicleFormField/FindVehicleFormField'
 export { VehicleRadioFormField } from './VehicleRadioFormField/VehicleRadioFormField'
 export { StaticTableFormField } from './StaticTableFormField/StaticTableFormField'
-export { AccordionFormField } from './AccordionFormField/AccordionFormField'
-export { BankAccountFormField } from './BankAccountFormField/BankAccountFormField'
 export { SliderFormField } from './SliderFormField/SliderFormField'

@@ -1,0 +1,29 @@
+import React from 'react'
+import { useIntl } from 'react-intl'
+import { Text, UploadFile } from '@island.is/island-ui/core'
+import { childrenFilesForm } from '../../lib/messages'
+import { FAFieldBaseProps, OverrideAnswerSchema, UploadFileType } from '../..'
+import { Files } from '..'
+import withLogo from '../Logo/Logo'
+
+const ChildrenFilesForm = ({ field, application }: FAFieldBaseProps) => {
+  const { formatMessage } = useIntl()
+  const { id, answers } = application
+
+  return (
+    <>
+      <Text marginTop={2} marginBottom={[3, 3, 5]}>
+        {formatMessage(childrenFilesForm.general.description)}
+      </Text>
+      <Files
+        fileKey={field.id as UploadFileType}
+        uploadFiles={
+          answers[field.id as keyof OverrideAnswerSchema] as UploadFile[]
+        }
+        folderId={id}
+      />
+    </>
+  )
+}
+
+export default withLogo(ChildrenFilesForm)
