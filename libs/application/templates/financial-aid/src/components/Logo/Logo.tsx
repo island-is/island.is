@@ -16,12 +16,12 @@ export const Logo = ({ application }: Props) => {
 
   useEffect(() => {
     const getLogo = async () => {
-      const municipalityId =
-        municipality && municipality?.municipalityId
-          ? municipality.municipalityId
-          : ''
       const svgLogo = await import(
-        `../../assets/svg/${logoKeyFromMunicipalityCode[municipalityId]}`
+        `../../assets/svg/${
+          logoKeyFromMunicipalityCode[
+            municipality ? municipality?.municipalityId : ''
+          ]
+        }`
       )
       setLogo(svgLogo.default)
     }
