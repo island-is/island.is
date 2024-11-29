@@ -12,7 +12,7 @@ export const FormSystemClientConfig = defineConfig({
     return {
       basePath: env.required(
         'FORM_SYSTEM_API_BASE_PATH',
-        'https://profun.island.is/umsoknarkerfi',
+        'http://localhost:3434'
       ),
     }
   },
