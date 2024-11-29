@@ -1,2 +1,0 @@
-json_key_file("service-account.json")
-package_name("is.island.app.dev")

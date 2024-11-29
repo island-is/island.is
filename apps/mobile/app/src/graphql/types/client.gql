@@ -1,8 +1,0 @@
-directive @client on FIELD
-
-# Client side only
-
-type Document {
-  id: ID!
-  archived: Boolean
-}
