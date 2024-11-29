@@ -1,6 +1,5 @@
-import { createContext } from 'react'
+import { createContext, useContext } from 'react'
 
-import { useBff } from '@island.is/react-spa/bff'
 
 import { AuthReducerState, initialState } from './Auth.state'
 
@@ -42,7 +41,13 @@ const warnDeprecated = (hookName: string, alternative: string) => {
 export const useAuth = () => {
   warnDeprecated('useAuth', 'useBff')
 
-  return useBff()
+  const context = useContext(AuthContext)
+
+  if(!context) {
+    throw new Error('useAuth must be used within a AuthProvider')
+  }
+
+  return context
 }
 
 /**
