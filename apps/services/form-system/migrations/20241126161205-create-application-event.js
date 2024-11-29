@@ -29,8 +29,13 @@ module.exports = {
             allowNull: false,
           },
           value_id: {
-            type: Sequelize.STRING,
+            type: Sequelize.UUID,
+            onDelete: 'CASCADE',
             allowNull: true,
+            references: {
+              model: 'value',
+              key: 'id',
+            },
           },
           application_id: {
             type: Sequelize.UUID,

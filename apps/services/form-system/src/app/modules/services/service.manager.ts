@@ -3,8 +3,8 @@ import { InjectModel } from '@nestjs/sequelize'
 import { FormUrl } from '../formUrls/models/formUrl.model'
 import { OrganizationUrl } from '../organizationUrls/models/organizationUrl.model'
 import { UrlTypes } from '../../enums/urlTypes'
-import { ZendeskService } from './submits/zendesk.service'
-import { NudgeService } from './submits/nudge.service'
+import { ZendeskService } from './zendesk.service'
+import { NudgeService } from './nudge.service'
 import { UrlMethods } from '../../enums/urlMethods'
 import { ApplicationDto } from '../applications/models/dto/application.dto'
 
@@ -34,10 +34,6 @@ export class ServiceManager {
       (url) =>
         url?.type === UrlTypes.SUBMIT && url.isTest === applicationDto.isTest,
     )
-
-    if (!submitUrls) {
-      // TODO: LOG that there is no submitUrl for this application
-    }
 
     submitUrls.map(async (url) => {
       if (url?.method === UrlMethods.SEND_NUDGE) {

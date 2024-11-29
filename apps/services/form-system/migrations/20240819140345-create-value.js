@@ -29,6 +29,10 @@ module.exports = {
             allowNull: false,
             defaultValue: 0,
           },
+          field_type: {
+            type: Sequelize.STRING,
+            allowNull: false,
+          },
           field_id: {
             type: Sequelize.UUID,
             onDelete: 'CASCADE',
@@ -41,6 +45,10 @@ module.exports = {
           application_id: {
             type: Sequelize.UUID,
             allowNull: false,
+            references: {
+              model: 'application',
+              key: 'id',
+            },
           },
         },
         { transaction: t },
