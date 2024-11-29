@@ -58,17 +58,9 @@ const parResponse: ParResponse = {
 const allowedTargetLinkUri = 'http://test-client.com/testclient'
 
 const mockIdsService = {
-  getPar: jest.fn().mockResolvedValue({
-    type: 'success',
-    data: parResponse,
-  }),
-  getTokens: jest.fn().mockResolvedValue({
-    type: 'success',
-    data: tokensResponse,
-  }),
-  revokeToken: jest.fn().mockResolvedValue({
-    type: 'success',
-  }),
+  getPar: jest.fn().mockResolvedValue(parResponse),
+  getTokens: jest.fn().mockResolvedValue(tokensResponse),
+  revokeToken: jest.fn().mockResolvedValue(undefined),
   getLoginSearchParams: jest.fn().mockImplementation(getLoginSearchParmsFn),
 }
 

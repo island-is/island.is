@@ -107,7 +107,7 @@ export const Defendant = () => {
             gender: workingCase.defendants[0].gender,
             name: workingCase.defendants[0].name,
             address: workingCase.defendants[0].address,
-            nationalId: workingCase.defendants[0].nationalId,
+            nationalId: workingCase.defendants[0].nationalId || null,
             noNationalId: workingCase.defendants[0].noNationalId,
             citizenship: workingCase.defendants[0].citizenship,
           })

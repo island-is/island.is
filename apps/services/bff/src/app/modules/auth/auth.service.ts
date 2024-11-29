@@ -9,14 +9,13 @@ import {
   UnauthorizedException,
 } from '@nestjs/common'
 import { ConfigType } from '@nestjs/config'
-import { CookieOptions, Request, Response } from 'express'
+import type { Request, Response } from 'express'
 import jwksClient from 'jwks-rsa'
 import { jwtDecode } from 'jwt-decode'
 
 import { IdTokenClaims } from '@island.is/shared/types'
 import { Algorithm, decode, verify } from 'jsonwebtoken'
 import { v4 as uuid } from 'uuid'
-import { environment } from '../../../environment'
 import { BffConfig } from '../../bff.config'
 import { SESSION_COOKIE_NAME } from '../../constants/cookies'
 import { FIVE_SECONDS_IN_MS } from '../../constants/time'
@@ -26,6 +25,7 @@ import {
   CreateErrorQueryStrArgs,
   createErrorQueryStr,
 } from '../../utils/create-error-query-str'
+import { getCookieOptions } from '../../utils/get-cookie-options'
 import { validateUri } from '../../utils/validate-uri'
 import { CacheService } from '../cache/cache.service'
 import { IdsService } from '../ids/ids.service'
@@ -53,17 +53,6 @@ export class AuthService {
     private readonly cryptoService: CryptoService,
   ) {
     this.baseUrl = this.config.ids.issuer
-  }
-
-  private getCookieOptions(): CookieOptions {
-    return {
-      httpOnly: true,
-      secure: true,
-      // The lax setting allows cookies to be sent on top-level navigations (such as redirects),
-      // while still providing some protection against CSRF attacks.
-      sameSite: 'lax',
-      path: environment.globalPrefix,
-    }
   }
 
   /**
@@ -219,12 +208,8 @@ export class AuthService {
           prompt,
         })
 
-        if (parResponse.type === 'error') {
-          throw parResponse.data
-        }
-
         searchParams = new URLSearchParams({
-          request_uri: parResponse.data.request_uri,
+          request_uri: parResponse.request_uri,
           client_id: this.config.ids.clientId,
         })
       } else {
@@ -306,13 +291,7 @@ export class AuthService {
         codeVerifier: loginAttemptData.codeVerifier,
       })
 
-      if (tokenResponse.type === 'error') {
-        throw tokenResponse.data
-      }
-
-      const updatedTokenResponse = await this.updateTokenCache(
-        tokenResponse.data,
-      )
+      const updatedTokenResponse = await this.updateTokenCache(tokenResponse)
 
       // Clean up the login attempt from the cache since we have a successful login.
       this.cacheService
@@ -321,11 +300,15 @@ export class AuthService {
           this.logger.warn(err)
         })
 
+      // Clear any existing session cookie first
+      // This prevents multiple session cookies being set.
+      res.clearCookie(SESSION_COOKIE_NAME, getCookieOptions())
+
       // Create session cookie with successful login session id
       res.cookie(
         SESSION_COOKIE_NAME,
         updatedTokenResponse.userProfile.sid,
-        this.getCookieOptions(),
+        getCookieOptions(),
       )
 
       // Check if there is an old session cookie and clean up the cache
@@ -435,7 +418,7 @@ export class AuthService {
      * - Delete the current login from the cache
      * - Clear the session cookie
      */
-    res.clearCookie(SESSION_COOKIE_NAME, this.getCookieOptions())
+    res.clearCookie(SESSION_COOKIE_NAME, getCookieOptions())
 
     this.cacheService
       .delete(currentLoginCacheKey)
