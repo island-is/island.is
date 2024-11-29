@@ -154,7 +154,6 @@
     ],
     "DevOps": ["CI", "Dockerfiles", "{workspaceRoot}/scripts/**/*"],
     "CI": [
-      "{workspaceRoot}/**/docker-compose*.yml",
       "{workspaceRoot}/.github/actions/",
       "{workspaceRoot}/.github/workflows/",
       "{workspaceRoot}/**/.dockerignore"
