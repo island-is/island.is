@@ -94,7 +94,7 @@ const Defendant = () => {
                 gender: defendant.gender,
                 name: defendant.name,
                 address: defendant.address,
-                nationalId: defendant.nationalId,
+                nationalId: defendant.nationalId || null,
                 noNationalId: defendant.noNationalId,
                 citizenship: defendant.citizenship,
               })
@@ -104,7 +104,7 @@ const Defendant = () => {
                 gender: defendant.gender,
                 name: defendant.name,
                 address: defendant.address,
-                nationalId: defendant.nationalId,
+                nationalId: defendant.nationalId || null,
                 noNationalId: defendant.noNationalId,
                 citizenship: defendant.citizenship,
               })

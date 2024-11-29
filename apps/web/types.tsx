@@ -11,6 +11,9 @@ export type ScreenContext = {
   req: GetServerSidePropsContext['req']
 }
 
-export type Screen<Props = {}> = ComponentType<Props> & {
-  getProps: (ctx: ScreenContext) => Promise<Props>
+export type Screen<
+  Props = {},
+  Context = ScreenContext,
+> = ComponentType<Props> & {
+  getProps: (ctx: Context) => Promise<Props>
 }

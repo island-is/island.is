@@ -22,6 +22,7 @@ import {
   CaseNotificationType,
   CaseState,
   CaseType,
+  DefendantEventType,
   DefendantNotificationType,
   DefenderChoice,
   isIndictmentCase,
@@ -33,12 +34,15 @@ import { CreateDefendantDto } from './dto/createDefendant.dto'
 import { InternalUpdateDefendantDto } from './dto/internalUpdateDefendant.dto'
 import { UpdateDefendantDto } from './dto/updateDefendant.dto'
 import { Defendant } from './models/defendant.model'
+import { DefendantEventLog } from './models/defendantEventLog.model'
 import { DeliverResponse } from './models/deliver.response'
 
 @Injectable()
 export class DefendantService {
   constructor(
     @InjectModel(Defendant) private readonly defendantModel: typeof Defendant,
+    @InjectModel(DefendantEventLog)
+    private readonly defendantEventLogModel: typeof DefendantEventLog,
     private readonly courtService: CourtService,
     private readonly messageService: MessageService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
@@ -65,6 +69,26 @@ export class DefendantService {
       user,
       caseId: defendant.caseId,
       elementId: defendant.id,
+    }
+
+    return message
+  }
+
+  private getMessagesForIndictmentToPrisonAdminChanges(
+    defendant: Defendant,
+  ): Message {
+    const messageType =
+      defendant.isSentToPrisonAdmin === true
+        ? DefendantNotificationType.INDICTMENT_SENT_TO_PRISON_ADMIN
+        : DefendantNotificationType.INDICTMENT_WITHDRAWN_FROM_PRISON_ADMIN
+
+    const message = {
+      type: MessageType.DEFENDANT_NOTIFICATION,
+      caseId: defendant.caseId,
+      elementId: defendant.id,
+      body: {
+        type: messageType,
+      },
     }
 
     return message
@@ -139,19 +163,19 @@ export class DefendantService {
       return
     }
 
+    const messages: Message[] = []
+
     if (
       updatedDefendant.isDefenderChoiceConfirmed &&
       !oldDefendant.isDefenderChoiceConfirmed
     ) {
       // Defender choice was just confirmed by the court
-      const messages: Message[] = [
-        {
-          type: MessageType.DELIVERY_TO_COURT_INDICTMENT_DEFENDER,
-          user,
-          caseId: theCase.id,
-          elementId: updatedDefendant.id,
-        },
-      ]
+      messages.push({
+        type: MessageType.DELIVERY_TO_COURT_INDICTMENT_DEFENDER,
+        user,
+        caseId: theCase.id,
+        elementId: updatedDefendant.id,
+      })
 
       if (
         updatedDefendant.defenderChoice === DefenderChoice.CHOOSE ||
@@ -167,9 +191,20 @@ export class DefendantService {
           })
         }
       }
-
-      return this.messageService.sendMessagesToQueue(messages)
+    } else if (
+      updatedDefendant.isSentToPrisonAdmin !== undefined &&
+      updatedDefendant.isSentToPrisonAdmin !== oldDefendant.isSentToPrisonAdmin
+    ) {
+      messages.push(
+        this.getMessagesForIndictmentToPrisonAdminChanges(updatedDefendant),
+      )
     }
+
+    if (messages.length === 0) {
+      return
+    }
+
+    return this.messageService.sendMessagesToQueue(messages)
   }
 
   async createForNewCase(
@@ -257,6 +292,14 @@ export class DefendantService {
       defendant.id,
       update,
     )
+
+    if (update.isSentToPrisonAdmin) {
+      this.defendantEventLogModel.create({
+        caseId: theCase.id,
+        defendantId: defendant.id,
+        eventType: DefendantEventType.SENT_TO_PRISON_ADMIN,
+      })
+    }
 
     await this.sendIndictmentCaseUpdateDefendantMessages(
       theCase,

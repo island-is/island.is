@@ -154,7 +154,7 @@ export const Chart = ({ slice }: ChartProps) => {
           slice.displayAsCard,
           expanded,
         )}
-        borderRadius="xl"
+        borderRadius="lg"
       />
     )
   }

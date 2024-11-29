@@ -83,10 +83,15 @@ import { LifeEventPage, mapLifeEventPage } from './models/lifeEventPage.model'
 import { GetGenericTagBySlugInput } from './dto/getGenericTagBySlug.input'
 import { GetGenericTagsInTagGroupsInput } from './dto/getGenericTagsInTagGroups.input'
 import { Grant, mapGrant } from './models/grant.model'
-import { GrantList } from './models/grantList.model'
 import { mapManual } from './models/manual.model'
 import { mapServiceWebPage } from './models/serviceWebPage.model'
 import { mapEvent } from './models/event.model'
+import { GetOrganizationParentSubpageInput } from './dto/getOrganizationParentSubpage.input'
+import { mapOrganizationParentSubpage } from './models/organizationParentSubpage.model'
+import { GetOrganizationPageStandaloneSitemapLevel1Input } from './dto/getOrganizationPageStandaloneSitemap.input'
+import { OrganizationPageStandaloneSitemap } from './models/organizationPageStandaloneSitemap.model'
+import { SitemapTree, SitemapTreeNodeType } from '@island.is/shared/types'
+import { getOrganizationPageUrlPrefix } from '@island.is/shared/utils'
 
 const errorHandler = (name: string) => {
   return (error: Error) => {
@@ -1150,5 +1155,130 @@ export class CmsContentfulService {
       .catch(errorHandler('getGenericTag'))
 
     return (result.items as types.IGenericTag[]).map(mapGenericTag)
+  }
+
+  async getOrganizationParentSubpage(input: GetOrganizationParentSubpageInput) {
+    const params = {
+      content_type: 'organizationParentSubpage',
+      'fields.slug': input.slug,
+      'fields.organizationPage.sys.contentType.sys.id': 'organizationPage',
+      'fields.organizationPage.fields.slug': input.organizationPageSlug,
+      limit: 1,
+    }
+
+    const response = await this.contentfulRepository
+      .getLocalizedEntries<types.IOrganizationParentSubpageFields>(
+        input.lang,
+        params,
+      )
+      .catch(errorHandler('getOrganizationParentSubpage'))
+
+    return (
+      (response.items as types.IOrganizationParentSubpage[]).map(
+        mapOrganizationParentSubpage,
+      )[0] ?? null
+    )
+  }
+
+  async getOrganizationPageStandaloneSitemapLevel1(
+    input: GetOrganizationPageStandaloneSitemapLevel1Input,
+  ): Promise<OrganizationPageStandaloneSitemap | null> {
+    const params = {
+      content_type: 'organizationPage',
+      'fields.slug': input.organizationPageSlug,
+      select: 'fields.sitemap',
+      limit: 1,
+    }
+
+    const response = await this.contentfulRepository
+      .getLocalizedEntries<types.IOrganizationPageFields>(input.lang, params)
+      .catch(errorHandler('getOrganizationPageStandaloneSitemapLevel1'))
+
+    const tree = response.items?.[0]?.fields.sitemap?.fields.tree as SitemapTree
+
+    if (!tree) {
+      return null
+    }
+
+    const category = tree.childNodes.find(
+      (node) =>
+        node.type === SitemapTreeNodeType.CATEGORY &&
+        node.slug === input.categorySlug,
+    )
+
+    if (!category) {
+      return null
+    }
+
+    const entryNodes = new Map<string, { label: string; href: string }[]>()
+
+    const result = {
+      childLinks: category.childNodes.map((node) => {
+        if (node.type === SitemapTreeNodeType.CATEGORY) {
+          return {
+            label: node.label,
+            href: `/${getOrganizationPageUrlPrefix(input.lang)}/${
+              input.organizationPageSlug
+            }/${node.slug}`,
+            description: node.description,
+          }
+        }
+        if (node.type === SitemapTreeNodeType.URL) {
+          return {
+            label: node.label,
+            href: node.url,
+          }
+        }
+
+        // We need to fetch the label and href for all entry nodes, so we store them in a map
+        const entryNode = {
+          label: '',
+          href: '',
+          entryId: node.entryId,
+        }
+        const nodeList = entryNodes.get(node.entryId) ?? []
+        nodeList.push(entryNode)
+        entryNodes.set(node.entryId, nodeList)
+        return entryNode
+      }),
+    }
+
+    const parentSubpageResponse =
+      await this.contentfulRepository.getLocalizedEntries<types.IOrganizationParentSubpageFields>(
+        input.lang,
+        {
+          content_type: 'organizationParentSubpage',
+          'sys.id[in]': Array.from(entryNodes.keys()).join(','),
+          limit: 1000,
+        },
+        1,
+      )
+
+    const entryIdsToRemove: string[] = []
+
+    for (const parentSubpage of parentSubpageResponse.items) {
+      const nodeList = entryNodes.get(parentSubpage.sys.id)
+      if (
+        !nodeList ||
+        !parentSubpage.fields.slug ||
+        !parentSubpage.fields.title
+      ) {
+        entryIdsToRemove.push(parentSubpage.sys.id)
+        continue
+      }
+      for (const node of nodeList) {
+        node.label = parentSubpage.fields.title
+        node.href = `/${getOrganizationPageUrlPrefix(input.lang)}/${
+          input.organizationPageSlug
+        }/${parentSubpage.fields.slug}`
+      }
+    }
+
+    // Remove entries from result that could not be resolved to their label or href
+    result.childLinks = result.childLinks.filter(
+      (link) => !('entryId' in link && entryIdsToRemove.includes(link.entryId)),
+    )
+
+    return result
   }
 }

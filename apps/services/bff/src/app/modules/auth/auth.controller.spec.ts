@@ -5,12 +5,13 @@ import jwt from 'jsonwebtoken'
 import request from 'supertest'
 import { setupTestServer } from '../../../../test/setupTestServer'
 import {
-  mockedTokensResponse as tokensResponse,
-  SID_VALUE,
-  SESSION_COOKIE_NAME,
   ALGORITM_TYPE,
+  SESSION_COOKIE_NAME,
+  SID_VALUE,
   getLoginSearchParmsFn,
+  mockedTokensResponse as tokensResponse,
 } from '../../../../test/sharedConstants'
+import { environment } from '../../../environment'
 import { BffConfig } from '../../bff.config'
 import { IdsService } from '../ids/ids.service'
 import { ParResponse } from '../ids/ids.types'
@@ -58,17 +59,9 @@ const parResponse: ParResponse = {
 const allowedTargetLinkUri = 'http://test-client.com/testclient'
 
 const mockIdsService = {
-  getPar: jest.fn().mockResolvedValue({
-    type: 'success',
-    data: parResponse,
-  }),
-  getTokens: jest.fn().mockResolvedValue({
-    type: 'success',
-    data: tokensResponse,
-  }),
-  revokeToken: jest.fn().mockResolvedValue({
-    type: 'success',
-  }),
+  getPar: jest.fn().mockResolvedValue(parResponse),
+  getTokens: jest.fn().mockResolvedValue(tokensResponse),
+  revokeToken: jest.fn().mockResolvedValue(undefined),
   getLoginSearchParams: jest.fn().mockImplementation(getLoginSearchParmsFn),
 }
 
@@ -89,7 +82,7 @@ describe('AuthController', () => {
     })
 
     mockConfig = app.get<ConfigType<typeof BffConfig>>(BffConfig.KEY)
-    baseUrlWithKey = `${mockConfig.clientBaseUrl}${process.env.BFF_CLIENT_KEY_PATH}`
+    baseUrlWithKey = `${mockConfig.clientBaseUrl}${environment.keyPath}`
 
     server = request(app.getHttpServer())
   })
@@ -456,8 +449,8 @@ describe('AuthController', () => {
       expect(res.status).toEqual(HttpStatus.BAD_REQUEST)
       // Expect error to be
       expect(res.body).toMatchObject({
-        statusCode: 400,
-        message: 'No param "logout_token" provided!',
+        status: 400,
+        detail: 'No param "logout_token" provided!',
       })
     })
 

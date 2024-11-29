@@ -7,6 +7,7 @@ import { UPDATE_APPLICATION } from '@island.is/application/graphql'
 import { FieldBaseProps } from '@island.is/application/types'
 import { getValueViaPath } from '@island.is/application/core'
 import { useFormContext } from 'react-hook-form'
+import { MAX_EMPLOYEES } from '../../shared/constants'
 
 export const AddEmployee: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   application,
@@ -58,6 +59,9 @@ export const AddEmployee: FC<React.PropsWithChildren<FieldBaseProps>> = ({
         {formatMessage(overview.labels.addEmployeeDescription)}
       </Text>
       <Button
+        disabled={
+          employeeAmount && employeeAmount > MAX_EMPLOYEES ? true : false
+        }
         variant="ghost"
         icon="add"
         fluid
