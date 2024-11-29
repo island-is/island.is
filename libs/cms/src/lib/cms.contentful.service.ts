@@ -1270,7 +1270,7 @@ export class CmsContentfulService {
         node.label = parentSubpage.fields.title
         node.href = `/${getOrganizationPageUrlPrefix(input.lang)}/${
           input.organizationPageSlug
-        }/${input.categorySlug}/${parentSubpage.fields.slug}`
+        }/${parentSubpage.fields.slug}`
       }
     }
 
