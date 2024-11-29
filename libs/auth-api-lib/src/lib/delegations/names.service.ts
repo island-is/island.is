@@ -6,9 +6,7 @@ import {
   createEnhancedFetch,
   EnhancedFetchAPI,
 } from '@island.is/clients/middlewares'
-import {
-NationalRegistryV3ClientService,
-} from '@island.is/clients/national-registry-v3'
+import { NationalRegistryV3ClientService } from '@island.is/clients/national-registry-v3'
 
 import { DelegationConfig } from './DelegationConfig'
 
@@ -34,7 +32,9 @@ export class NamesService {
   }
 
   async getPersonName(nationalId: string) {
-    const person = await this.nationalRegistryClient.getAllDataIndividual(nationalId)
+    const person = await this.nationalRegistryClient.getAllDataIndividual(
+      nationalId,
+    )
     if (!person) {
       throw new BadRequestException(
         `A person with nationalId<${nationalId}> could not be found`,
