@@ -99,9 +99,6 @@
     "styled-components": "6.1.11",
     "zustand": "3.5.12"
   },
-  "installConfig": {
-    "hoistingLimits": "workspaces"
-  },
   "devDependencies": {
     "@babel/core": "^7.20.0",
     "@babel/preset-env": "^7.20.0",
