@@ -46,6 +46,7 @@ import { CreateFileDto } from './dto/createFile.dto'
 import { CreatePresignedPostDto } from './dto/createPresignedPost.dto'
 import { CurrentCaseFile } from './guards/caseFile.decorator'
 import { CaseFileExistsGuard } from './guards/caseFileExists.guard'
+import { CreateCivilClaimantCaseFileGuard } from './guards/createCivilClaimantCaseFile.guard'
 import { LimitedAccessViewCaseFileGuard } from './guards/limitedAccessViewCaseFile.guard'
 import { LimitedAccessWriteCaseFileGuard } from './guards/limitedAccessWriteCaseFile.guard'
 import { DeleteFileResponse } from './models/deleteFile.response'
@@ -113,13 +114,18 @@ export class LimitedAccessFileController {
     return this.fileService.createCaseFile(theCase, createFile, user)
   }
 
+  // This endpoint is not used by any role at the moment
+  // Before using the endpoint we should probably change
+  // the createCaseFile endpoint to createDefendantCaseFile and
+  // limit file creation to defendant's and spokesperson's clients
   @UseGuards(
     new CaseTypeGuard([...indictmentCases]),
     CivilClaimantExistsGuard,
     CaseWriteGuard,
     LimitedAccessWriteCaseFileGuard,
+    CreateCivilClaimantCaseFileGuard,
   )
-  @RolesRules() // This endpoint is not used by any role at the moment
+  @RolesRules()
   @Post('civilClaimant/:civilClaimantId/file')
   @ApiCreatedResponse({
     type: CaseFile,

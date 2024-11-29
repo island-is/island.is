@@ -49,19 +49,14 @@ import {
   CurrentCase,
 } from '../case'
 import { MergedCaseExistsGuard } from '../case/guards/mergedCaseExists.guard'
-import {
-  CivilClaimant,
-  CivilClaimantExistsGuard,
-  CurrentCivilClaimant,
-  CurrentDefendant,
-  Defendant,
-  DefendantExistsGuard,
-} from '../defendant'
+import { CivilClaimantExistsGuard, DefendantExistsGuard } from '../defendant'
 import { CreateFileDto } from './dto/createFile.dto'
 import { CreatePresignedPostDto } from './dto/createPresignedPost.dto'
 import { UpdateFilesDto } from './dto/updateFile.dto'
 import { CurrentCaseFile } from './guards/caseFile.decorator'
 import { CaseFileExistsGuard } from './guards/caseFileExists.guard'
+import { CreateCivilClaimantCaseFileGuard } from './guards/createCivilClaimantCaseFile.guard'
+import { CreateDefendantCaseFileGuard } from './guards/createDefendantCaseFile.guard'
 import { ViewCaseFileGuard } from './guards/viewCaseFile.guard'
 import { DeleteFileResponse } from './models/deleteFile.response'
 import { CaseFile } from './models/file.model'
@@ -134,7 +129,13 @@ export class FileController {
     return this.fileService.createCaseFile(theCase, createFile, user)
   }
 
-  @UseGuards(RolesGuard, CaseExistsGuard, DefendantExistsGuard, CaseWriteGuard)
+  @UseGuards(
+    RolesGuard,
+    CaseExistsGuard,
+    DefendantExistsGuard,
+    CaseWriteGuard,
+    CreateDefendantCaseFileGuard,
+  )
   @RolesRules(publicProsecutorStaffRule)
   @Post('defendant/:defendantId/file')
   @ApiCreatedResponse({
@@ -146,14 +147,17 @@ export class FileController {
     @Param('defendantId') defendantId: string,
     @CurrentHttpUser() user: User,
     @CurrentCase() theCase: Case,
-    @CurrentDefendant() defendant: Defendant,
     @Body() createFile: CreateFileDto,
   ): Promise<CaseFile> {
     this.logger.debug(
       `Creating a file for case ${caseId} for defendant ${defendantId}`,
     )
 
-    return this.fileService.createCaseFile(theCase, createFile, user, defendant)
+    return this.fileService.createCaseFile(
+      theCase,
+      { ...createFile, defendantId },
+      user,
+    )
   }
 
   @UseGuards(
@@ -161,6 +165,7 @@ export class FileController {
     CaseExistsGuard,
     CivilClaimantExistsGuard,
     CaseWriteGuard,
+    CreateCivilClaimantCaseFileGuard,
   )
   @RolesRules() // This endpoint is not used by any role at the moment
   @Post('civilClaimant/:civilClaimantId/file')
@@ -173,7 +178,6 @@ export class FileController {
     @Param('civilClaimantId') civilClaimantId: string,
     @CurrentHttpUser() user: User,
     @CurrentCase() theCase: Case,
-    @CurrentCivilClaimant() civilClaimant: CivilClaimant,
     @Body() createFile: CreateFileDto,
   ): Promise<CaseFile> {
     this.logger.debug(
@@ -182,10 +186,8 @@ export class FileController {
 
     return this.fileService.createCaseFile(
       theCase,
-      createFile,
+      { ...createFile, civilClaimantId },
       user,
-      undefined,
-      civilClaimant,
     )
   }
 
