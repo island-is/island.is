@@ -4,7 +4,7 @@ const namespace = 'services-payments'
 const serviceName = `${namespace}`
 const imageName = `${namespace}-image`
 
-export const serviceSetup = (): ServiceBuilder<typeof serviceName> =>
+export const serviceSetup = (): ServiceBuilder<'services-payments'> =>
   service(serviceName)
     .namespace(namespace)
     .image(imageName)

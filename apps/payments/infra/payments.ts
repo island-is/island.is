@@ -6,7 +6,7 @@ const image = `${namespace}-image`
 
 const basepath = '/greida'
 
-export const serviceSetup = (): ServiceBuilder<typeof serviceName> =>
+export const serviceSetup = (): ServiceBuilder<'payments'> =>
   service(serviceName)
     .namespace(namespace)
     .image(image)
