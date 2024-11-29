@@ -14,7 +14,7 @@ export const information = {
       description: 'Description of information page',
     },
     pageTitle: {
-      id: 'aosh.wan.application:information.company.pageTitle',
+      id: 'aosh.wan.application:information.general.pageTitle',
       defaultMessage: 'Tilkynningaraðili',
       description: 'Title of company information section',
     },

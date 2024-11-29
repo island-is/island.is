@@ -39,14 +39,10 @@ import {
 } from '@island.is/judicial-system/formatters'
 import type { User } from '@island.is/judicial-system/types'
 import {
-  CaseAppealRulingDecision,
-  CaseDecision,
   CaseState,
-  CaseTransition,
   CaseType,
   indictmentCases,
   investigationCases,
-  isRestrictionCase,
   restrictionCases,
   UserRole,
 } from '@island.is/judicial-system/types'

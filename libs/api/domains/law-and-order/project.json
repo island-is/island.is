@@ -24,6 +24,12 @@
           "codeCoverage": true
         }
       }
+    },
+    "extract-strings": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/api/domains/law-and-order/src/lib/messages.ts'"
+      }
     }
   },
   "tags": ["lib:api", "scope:api"]

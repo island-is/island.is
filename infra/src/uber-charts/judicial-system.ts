@@ -4,7 +4,6 @@ import { serviceSetup as jsWebSetup } from '../../../apps/judicial-system/web/in
 import { serviceSetup as jsXrdApiSetup } from '../../../apps/judicial-system/xrd-api/infra/judicial-system-xrd-api'
 import { serviceSetup as jsSchedulerSetup } from '../../../apps/judicial-system/scheduler/infra/judicial-system-scheduler'
 import { serviceSetup as jsMessageHandlerSetup } from '../../../apps/judicial-system/message-handler/infra/judicial-system-message-handler'
-import { serviceSetup as jsRobotApiSetup } from '../../../apps/judicial-system/robot-api/infra/judicial-system-xrd-robot-api'
 import { serviceSetup as jsDigitalInboxRobotApiSetup } from '../../../apps/judicial-system/digital-mailbox-api/infra/judicial-system-xrd-robot-api'
 
 import { EnvironmentServices } from '.././dsl/types/charts'
@@ -15,7 +14,6 @@ const jsWeb = jsWebSetup({ api: jsApi })
 const jsXrdApi = jsXrdApiSetup({ backend: jsBack })
 const jsScheduler = jsSchedulerSetup({ backend: jsBack })
 const jsMessageHandler = jsMessageHandlerSetup({ backend: jsBack })
-const jsRobotApi = jsRobotApiSetup({ backend: jsBack })
 const jsDigitalInboxRobotApi = jsDigitalInboxRobotApiSetup({ backend: jsBack })
 
 export const Services: EnvironmentServices = {
@@ -26,7 +24,6 @@ export const Services: EnvironmentServices = {
     jsXrdApi,
     jsScheduler,
     jsMessageHandler,
-    jsRobotApi,
     jsDigitalInboxRobotApi,
   ],
   staging: [
@@ -36,7 +33,6 @@ export const Services: EnvironmentServices = {
     jsXrdApi,
     jsScheduler,
     jsMessageHandler,
-    jsRobotApi,
     jsDigitalInboxRobotApi,
   ],
   dev: [
@@ -46,7 +42,6 @@ export const Services: EnvironmentServices = {
     jsXrdApi,
     jsScheduler,
     jsMessageHandler,
-    jsRobotApi,
     jsDigitalInboxRobotApi,
   ],
 }

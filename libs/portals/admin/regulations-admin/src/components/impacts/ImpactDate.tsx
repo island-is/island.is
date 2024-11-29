@@ -1,4 +1,13 @@
-import { Box, Button, DatePicker, Checkbox } from '@island.is/island-ui/core'
+import {
+  Box,
+  Button,
+  DatePicker,
+  Checkbox,
+  Text,
+  RadioButton,
+  GridColumn,
+  GridRow,
+} from '@island.is/island-ui/core'
 import { impactMsgs } from '../../lib/messages'
 import { DraftImpactForm } from '../../state/types'
 import { useLocale } from '@island.is/localization'
@@ -37,12 +46,31 @@ export const ImpactDate = (props: ImpactDateProps) => {
   return (
     <Box marginBottom={4} width={size}>
       <Box marginBottom={3}>
-        <Checkbox
-          label={t(impactMsgs.specificDateApply)}
-          labelVariant="default"
-          checked={hasCustomDate}
-          onChange={() => setHasCustomDate(!hasCustomDate)}
-        />
+        <GridRow rowGap={1}>
+          <GridColumn span="1/1">
+            <RadioButton
+              name={`set-no-custom-date`}
+              checked={!hasCustomDate}
+              onChange={() => {
+                onChange(undefined)
+                setHasCustomDate(false)
+              }}
+              backgroundColor="white"
+              label={t(impactMsgs.specificDateApplyTextDetails)}
+            />
+          </GridColumn>
+          <GridColumn span="1/1">
+            <RadioButton
+              name={`select-custom-date`}
+              checked={hasCustomDate}
+              onChange={() => {
+                setHasCustomDate(true)
+              }}
+              backgroundColor="white"
+              label={t(impactMsgs.specificDateApply)}
+            />
+          </GridColumn>
+        </GridRow>
       </Box>
       {hasCustomDate ? (
         <>
@@ -65,7 +93,10 @@ export const ImpactDate = (props: ImpactDateProps) => {
               size="small"
               variant="text"
               preTextIcon="close"
-              onClick={() => onChange(undefined)}
+              onClick={() => {
+                onChange(undefined)
+                setHasCustomDate(false)
+              }}
             >
               {t(impactMsgs.effectiveDate_default)}
             </Button>

@@ -23,6 +23,7 @@ import {
   CaseNotificationType,
   CaseState,
   dateTypes,
+  defendantEventTypes,
   eventTypes,
   stringTypes,
   UserRole,
@@ -34,6 +35,7 @@ import {
   CivilClaimant,
   CivilClaimantService,
   Defendant,
+  DefendantEventLog,
   DefendantService,
 } from '../defendant'
 import { EventLog } from '../event-log'
@@ -179,6 +181,14 @@ export const include: Includeable[] = [
         model: Subpoena,
         as: 'subpoenas',
         required: false,
+        order: [['created', 'DESC']],
+        separate: true,
+      },
+      {
+        model: DefendantEventLog,
+        as: 'eventLogs',
+        required: false,
+        where: { eventType: defendantEventTypes },
         order: [['created', 'DESC']],
         separate: true,
       },

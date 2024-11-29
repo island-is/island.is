@@ -12,10 +12,8 @@ import {
 } from '@island.is/clients/work-accident-ver'
 import {
   getDateAndTime,
-  getValueList,
   mapVictimData,
 } from './work-accident-notification.utils'
-import { getValueViaPath } from '@island.is/application/core'
 import { TemplateApiError } from '@island.is/nest/problem'
 
 @Injectable()
@@ -57,20 +55,20 @@ export class WorkAccidentNotificationTemplateService extends BaseTemplateApiServ
     const answers = application.answers as unknown as WorkAccidentNotification
     const payload = {
       accidentForCreationDto: {
-        companySSN: answers.companyInformation.nationalId,
+        companySSN: answers.basicInformation.nationalId,
         sizeOfEnterprise: parseInt(
-          answers.companyInformation.numberOfEmployees,
+          answers.basicInformation.numberOfEmployees,
           10,
         ),
         nameOfBranchOrDepartment:
           answers.companyInformation.nameOfBranch ??
-          answers.companyInformation.name,
+          answers.basicInformation.name,
         address:
           answers.companyInformation.addressOfBranch ??
-          answers.companyInformation.address,
+          answers.basicInformation.address,
         postcode:
           answers.companyInformation.postnumberOfBranch?.slice(0, 3) ??
-          answers.companyInformation.postnumber.slice(0, 3),
+          answers.basicInformation.postnumber.slice(0, 3),
         workplaceHealthAndSafety:
           answers.companyLaborProtection.workhealthAndSafetyOccupation?.map(
             (code: string) => {
