@@ -1,4 +1,8 @@
-import { service, ServiceBuilder } from '../../../../infra/src/dsl/dsl'
+import {
+  CodeOwners,
+  service,
+  ServiceBuilder,
+} from '../../../../infra/src/dsl/dsl'
 
 const namespace = 'services-sessions'
 const imageName = 'services-sessions'
@@ -7,6 +11,7 @@ export const serviceSetup = (): ServiceBuilder<'services-sessions'> =>
   service('services-sessions')
     .namespace(namespace)
     .image(imageName)
+    .codeOwner(CodeOwners.Aranja)
     .redis()
     .db({
       readOnly: true,

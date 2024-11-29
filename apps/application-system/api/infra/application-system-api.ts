@@ -1,4 +1,9 @@
-import { ref, service, ServiceBuilder } from '../../../../infra/src/dsl/dsl'
+import {
+  CodeOwners,
+  ref,
+  service,
+  ServiceBuilder,
+} from '../../../../infra/src/dsl/dsl'
 import {
   Base,
   ChargeFjsV2,
@@ -52,6 +57,7 @@ export const workerSetup =
       .db()
       .serviceAccount('application-system-api-worker')
       .redis()
+      .codeOwner(CodeOwners.NordaApplications)
       .env({
         IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/application-system',
         IDENTITY_SERVER_ISSUER_URL: {
