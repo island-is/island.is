@@ -130,7 +130,7 @@ export const Dashboard: FC<React.PropsWithChildren<unknown>> = () => {
 
                       {navRoot.subscribesTo === 'documents' && (
                         <Box
-                          borderRadius="circle"
+                          borderRadius="full"
                           className={cn(styles.badge[badgeActive])}
                         />
                       )}
@@ -223,7 +223,7 @@ export const Dashboard: FC<React.PropsWithChildren<unknown>> = () => {
                     </Text>
 
                     <Box
-                      borderRadius="circle"
+                      borderRadius="full"
                       className={cn(styles.badge[badgeActive])}
                     />
                   </Box>
