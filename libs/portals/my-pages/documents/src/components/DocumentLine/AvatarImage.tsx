@@ -38,7 +38,7 @@ export const AvatarImage: FC<Props> = ({
           ? { background: theme.color.blueberry100 }
           : undefined
       }
-      borderRadius="circle"
+      borderRadius="full"
       className={cn(styles.imageContainer, {
         [styles.largeAvatar]: large,
       })}

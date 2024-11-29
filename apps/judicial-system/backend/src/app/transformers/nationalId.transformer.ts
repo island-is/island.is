@@ -1,8 +1,13 @@
 interface Value {
-  value?: string
+  value?: string | null
 }
 
-type NationalIdTransformer = ({ value }: Value) => string | undefined
+type NationalIdTransformer = ({ value }: Value) => string | undefined | null
 
-export const nationalIdTransformer: NationalIdTransformer = ({ value }) =>
-  value?.replace(/-/g, '')
+export const nationalIdTransformer: NationalIdTransformer = ({ value }) => {
+  if (!value) {
+    return value
+  }
+
+  return value.replace(/-/g, '')
+}
