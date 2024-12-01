@@ -275,7 +275,7 @@ export class BackendService extends DataSource<{ req: Request }> {
     createFile: unknown,
     defendantId: string,
   ): Promise<CaseFile> {
-    return this.post(`case/${id}/defendant${defendantId}/file`, createFile)
+    return this.post(`case/${id}/defendant/${defendantId}/file`, createFile)
   }
 
   createCivilClaimantCaseFile(
@@ -456,6 +456,17 @@ export class BackendService extends DataSource<{ req: Request }> {
     createFile: unknown,
   ): Promise<CaseFile> {
     return this.post(`case/${id}/limitedAccess/file`, createFile)
+  }
+
+  limitedAccessCreateDefendantCaseFile(
+    id: string,
+    createFile: unknown,
+    defendantId?: string,
+  ): Promise<CaseFile> {
+    return this.post(
+      `case/${id}/limitedAccess$/defendant/${defendantId}/file`,
+      createFile,
+    )
   }
 
   limitedAccessCreateCivilClaimantCaseFile(

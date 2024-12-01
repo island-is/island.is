@@ -16,6 +16,7 @@ import type { User } from '@island.is/judicial-system/types'
 
 import { BackendService } from '../backend'
 import { CreateCivilClaimantFileInput } from './dto/createCivilClaimantFile.input'
+import { CreateDefendantFileInput } from './dto/createDefendantFile.input'
 import { CreateFileInput } from './dto/createFile.input'
 import { CreatePresignedPostInput } from './dto/createPresignedPost.input'
 import { DeleteFileInput } from './dto/deleteFile.input'
@@ -78,7 +79,33 @@ export class LimitedAccessFileResolver {
   }
 
   @Mutation(() => CaseFile)
-  limitedAccessCivilClaimantCreateFile(
+  limitedAccessCreateDefendantFile(
+    @Args('input', { type: () => CreateDefendantFileInput })
+    input: CreateDefendantFileInput,
+    @CurrentGraphQlUser() user: User,
+    @Context('dataSources')
+    { backendService }: { backendService: BackendService },
+  ): Promise<CaseFile> {
+    const { caseId, defendantId, ...createFile } = input
+
+    this.logger.debug(
+      `Creating a file for case ${caseId} and defendant ${defendantId}`,
+    )
+
+    return this.auditTrailService.audit(
+      user.id,
+      AuditedAction.CREATE_FILE,
+      backendService.limitedAccessCreateDefendantCaseFile(
+        caseId,
+        createFile,
+        defendantId,
+      ),
+      (file) => file.id,
+    )
+  }
+
+  @Mutation(() => CaseFile)
+  limitedAccessCreateCivilClaimantFile(
     @Args('input', { type: () => CreateCivilClaimantFileInput })
     input: CreateCivilClaimantFileInput,
     @CurrentGraphQlUser() user: User,
@@ -87,7 +114,9 @@ export class LimitedAccessFileResolver {
   ): Promise<CaseFile> {
     const { caseId, civilClaimantId, ...createFile } = input
 
-    this.logger.debug(`Creating a file for case ${caseId}`)
+    this.logger.debug(
+      `Creating a file for case ${caseId} and civil claimant ${civilClaimantId}`,
+    )
 
     return this.auditTrailService.audit(
       user.id,
