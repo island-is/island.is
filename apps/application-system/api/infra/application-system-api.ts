@@ -137,6 +137,7 @@ export const serviceSetup = (services: {
     .serviceAccount(serviceAccount)
     .command('node')
     .redis()
+    .codeOwner(CodeOwners.NordaApplications)
     .args('main.js')
     .env({
       EMAIL_REGION: 'eu-west-1',

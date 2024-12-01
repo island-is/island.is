@@ -84,6 +84,7 @@ export const workerSetup = (): ServiceBuilder<typeof serviceWorkerName> => {
     .serviceAccount(serviceWorkerName)
     .namespace(namespace)
     .image(imageName)
+    .codeOwner(CodeOwners.Origo)
     .command('node')
     .redis()
     .args('main.js', '--job', 'worker')
