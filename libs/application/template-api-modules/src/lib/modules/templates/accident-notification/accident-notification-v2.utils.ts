@@ -110,7 +110,7 @@ const studiesAccidentSubtypeMap = {
 const getAccidentTypes = (answers: AccidentNotificationAnswers) => {
   const accidentType = getValueViaPath<AccidentTypeEnum>(
     answers,
-    'accidentType.answer',
+    'accidentType.radioButton',
   )
   const workAccidentType = getValueViaPath<WorkAccidentTypeEnum>(
     answers,

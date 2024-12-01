@@ -1,18 +1,12 @@
 import { FieldBaseProps } from '@island.is/application/types'
-import { FC, useEffect, useState } from 'react'
-import {
-  Box,
-  Checkbox,
-  GridColumn,
-  GridRow,
-  Select,
-} from '@island.is/island-ui/core'
+import { FC, useState } from 'react'
+import { Box, GridColumn, GridRow, Select } from '@island.is/island-ui/core'
 import { getValueViaPath } from '@island.is/application/core'
 import { Controller, useFormContext } from 'react-hook-form'
 import { accident } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
 import { WorkingEnvironmentDto } from '@island.is/clients/work-accident-ver'
-import { WorkAccidentNotification } from '../../lib/dataSchema'
+import { WorkAccidentNotification } from '../..'
 
 type Option = {
   value: string
