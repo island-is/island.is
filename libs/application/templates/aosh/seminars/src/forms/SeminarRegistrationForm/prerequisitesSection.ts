@@ -11,6 +11,7 @@ import {
   IdentityApi,
   VinnueftirlitidPaymentCatalogApi,
   MockableVinnueftirlitidPaymentCatalogApi,
+  getSeminarsApi,
 } from '../../dataProviders'
 import { DefaultEvents } from '@island.is/application/types'
 
@@ -43,6 +44,10 @@ export const prerequisitesSection = buildSection({
         }),
         buildDataProviderItem({
           provider: MockableVinnueftirlitidPaymentCatalogApi,
+          title: '',
+        }),
+        buildDataProviderItem({
+          provider: getSeminarsApi,
           title: '',
         }),
         buildDataProviderItem({

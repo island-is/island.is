@@ -3,6 +3,7 @@ export enum ApiActions {
   rejectApplication = 'rejectApplication',
   submitApplication = 'submitApplication',
   deleteApplication = 'deleteApplication',
+  getSeminars = 'getSeminars',
 }
 
 export enum IndividualOrCompany {

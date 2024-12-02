@@ -12,6 +12,7 @@ export const staticData = (application: Application) => {
 
   return participantsFromAnswers
 }
+
 export * from './isIndividual'
 export * from './isCompany'
 export * from './isValidPhoneNumber'
@@ -20,3 +21,5 @@ export * from './isCompanyType'
 export * from './isPersonType'
 export * from './getPaymentArrangementForOverview'
 export * from './getPersonalInformationForOverview'
+export * from './formatIsk'
+export * from './getSeminarInformationForOverview'

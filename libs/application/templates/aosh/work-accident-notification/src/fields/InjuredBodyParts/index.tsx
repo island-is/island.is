@@ -1,9 +1,9 @@
 import { FieldBaseProps } from '@island.is/application/types'
 import { FC } from 'react'
 import { causeAndConsequences } from '../../lib/messages'
-import { WorkAccidentNotification } from '../../lib/dataSchema'
 import { CausesAndEffects } from '../Components/CausesAndEffects'
 import { getValueViaPath } from '@island.is/application/core'
+import { WorkAccidentNotification } from '../..'
 
 interface InjuredBodyPartsProps {
   field: {

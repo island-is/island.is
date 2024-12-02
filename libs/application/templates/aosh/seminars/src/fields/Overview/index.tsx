@@ -12,6 +12,7 @@ import { overview } from '../../lib/messages'
 import {
   getPaymentArrangementForOverview,
   getPersonalInformationForOverview,
+  getSeminarInformationForOverview,
 } from '../../utils'
 import { ParticipantsOverviewExpandableTable } from '../Components/ParticipantsOverviewExpandableTable'
 
@@ -36,12 +37,10 @@ export const Overview: FC<React.PropsWithChildren<FieldBaseProps>> = ({
             component: FieldComponents.KEY_VALUE,
             title: '',
             label: '',
-            value: ['TODO: Seminar'],
-            // getCompanyInformationForOverview(
-            //   application.answers,
-            //   application.externalData,
-            //   formatMessage,
-            // ),
+            value: getSeminarInformationForOverview(
+              application.externalData,
+              formatMessage,
+            ),
           }}
         />
       </ReviewGroup>

@@ -66,10 +66,9 @@ export class IdentityClientService {
       return null
     }
 
-    let actor: Identity | null = null
-    if (actorNationalId) {
-      actor = await this.getPersonIdentity(actorNationalId)
-    }
+    const actor = actorNationalId
+      ? await this.getPersonIdentity(actorNationalId)
+      : null
 
     return {
       type: IdentityType.Company,

@@ -75,7 +75,7 @@ const Processing: FC = () => {
   const router = useRouter()
   const isTrafficViolationCaseCheck = isTrafficViolationCase(workingCase)
   const [civilClaimantNationalIdUpdate, setCivilClaimantNationalIdUpdate] =
-    useState<{ nationalId: string; civilClaimantId: string }>()
+    useState<{ nationalId: string | null; civilClaimantId: string }>()
   const [hasCivilClaimantChoice, setHasCivilClaimantChoice] =
     useState<boolean>()
   const [nationalIdNotFound, setNationalIdNotFound] = useState<boolean>(false)
@@ -187,12 +187,12 @@ const Processing: FC = () => {
       handleUpdateCivilClaimant({
         caseId: workingCase.id,
         civilClaimantId,
-        nationalId,
+        nationalId: nationalId || null,
       })
     } else {
       const cleanNationalId = nationalId ? nationalId.replace('-', '') : ''
       setCivilClaimantNationalIdUpdate({
-        nationalId: cleanNationalId,
+        nationalId: cleanNationalId || null,
         civilClaimantId,
       })
     }

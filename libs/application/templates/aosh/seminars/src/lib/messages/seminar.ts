@@ -40,9 +40,24 @@ export const seminar = {
       defaultMessage: 'Lýkur:',
       description: `seminar ends label `,
     },
+    seminarOpens: {
+      id: 'aosh.sem.application:seminar.labels.seminarOpens',
+      defaultMessage: 'Við skráningu',
+      description: `seminar opens label `,
+    },
+    openForWeeks: {
+      id: 'aosh.sem.application:seminar.labels.openForWeeks',
+      defaultMessage: 'Er opið í 8 vikur frá skráningu',
+      description: `seminar open for weeks label `,
+    },
     seminarDescription: {
       id: 'aosh.sem.application:seminar.labels.seminarDescription',
       defaultMessage: 'Lýsing:',
+      description: `seminar description label `,
+    },
+    seminarDescriptionUrlText: {
+      id: 'aosh.sem.application:seminar.labels.seminarDescriptionUrlText',
+      defaultMessage: '[Sjá námskeiðslýsingu hér]({url})',
       description: `seminar description label `,
     },
     seminarLocation: {

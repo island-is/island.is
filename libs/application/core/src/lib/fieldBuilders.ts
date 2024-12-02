@@ -533,6 +533,20 @@ export const buildSubmitField = (data: {
   }
 }
 
+export const buildFieldItems = (
+  maybeItems: MaybeWithApplicationAndFieldAndLocale<
+    Array<{ label: FormText; value: FormText | FormTextArray }>
+  >,
+  application: Application,
+  field: Field,
+  locale: Locale,
+): Array<{ label: FormText; value: FormText | FormTextArray }> => {
+  if (typeof maybeItems === 'function') {
+    return maybeItems(application, field, locale)
+  }
+  return maybeItems
+}
+
 export const buildFieldOptions = (
   maybeOptions: MaybeWithApplicationAndFieldAndLocale<Option[]>,
   application: Application,
@@ -1024,7 +1038,9 @@ export const buildInformationFormField = (data: {
   width?: FieldWidth
   colSpan?: SpanType
   condition?: Condition
-  items: Array<{ label: FormText; value: FormText | FormTextArray }>
+  items: MaybeWithApplicationAndFieldAndLocale<
+    Array<{ label: FormText; value: FormText | FormTextArray }>
+  >
   paddingX?: BoxProps['padding']
   paddingY?: BoxProps['padding']
 }): InformationCardField => {

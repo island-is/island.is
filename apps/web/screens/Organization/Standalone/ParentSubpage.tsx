@@ -21,6 +21,7 @@ import {
   QueryGetOrganizationSubpageArgs,
 } from '@island.is/web/graphql/schema'
 import { useLinkResolver } from '@island.is/web/hooks'
+import useContentfulId from '@island.is/web/hooks/useContentfulId'
 import { useI18n } from '@island.is/web/i18n'
 import { StandaloneLayout } from '@island.is/web/layouts/organization/standalone'
 import type { Screen, ScreenContext } from '@island.is/web/types'
@@ -52,6 +53,11 @@ export interface StandaloneParentSubpageProps {
   namespace: Record<string, string>
 }
 
+const LanguageToggleSetup = (props: { ids: string[] }) => {
+  useContentfulId(...props.ids)
+  return null
+}
+
 const StandaloneParentSubpage: Screen<
   StandaloneParentSubpageProps,
   StandaloneParentSubpageScreenContext
@@ -68,7 +74,15 @@ const StandaloneParentSubpage: Screen<
   const { linkResolver } = useLinkResolver()
 
   return (
-    <StandaloneLayout organizationPage={organizationPage}>
+    <StandaloneLayout
+      organizationPage={organizationPage}
+      seo={{
+        title: `${subpage.title} | ${organizationPage.title}`,
+      }}
+    >
+      <LanguageToggleSetup
+        ids={[organizationPage.id, parentSubpage.id, subpage.id]}
+      />
       <GridContainer>
         <GridRow>
           <GridColumn span={['9/9', '9/9', '7/9']} offset={['0', '0', '1/9']}>

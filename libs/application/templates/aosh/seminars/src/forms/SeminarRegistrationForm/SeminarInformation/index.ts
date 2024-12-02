@@ -6,11 +6,13 @@ import {
   buildKeyValueField,
   buildMultiField,
   buildSection,
+  getValueViaPath,
 } from '@island.is/application/core'
 
 import { seminar as seminarMessages } from '../../../lib/messages'
 import { ExternalData, FormValue } from '@island.is/application/types'
-import { isPersonType } from '../../../utils'
+import { formatIsk, isPersonType } from '../../../utils'
+import { CourseDTO } from '@island.is/clients/seminars-ver'
 
 export const seminarInformationSection = buildSection({
   id: 'seminarInformation',
@@ -24,32 +26,49 @@ export const seminarInformationSection = buildSection({
         buildInformationFormField({
           paddingX: 3,
           paddingY: 3,
-          items: [
-            {
-              label: seminarMessages.labels.seminarType,
-              value: 'Stafrænt ADR-endurnýjun. Grunnnámskeið.',
-            },
-            {
-              label: seminarMessages.labels.seminarPrice,
-              value: '32.100 kr.',
-            },
-            {
-              label: seminarMessages.labels.seminarBegins,
-              value: 'Við skráningu',
-            },
-            {
-              label: seminarMessages.labels.seminarEnds,
-              value: 'Er opið í 8 vikur frá skráningu',
-            },
-            {
-              label: seminarMessages.labels.seminarDescription,
-              value: 'Lýsing hér',
-            },
-            {
-              label: seminarMessages.labels.seminarLocation,
-              value: 'Fræðslukerfi Vinnueftirlitsins (á netinu)',
-            },
-          ],
+          items: (application) => {
+            const seminar = getValueViaPath<CourseDTO>(
+              application.externalData,
+              'seminar.data',
+            )
+            return [
+              {
+                label: seminarMessages.labels.seminarType,
+                value: seminar?.name ?? '',
+              },
+              {
+                label: seminarMessages.labels.seminarPrice,
+                value: formatIsk(seminar?.price ?? 0),
+              },
+              {
+                label: seminarMessages.labels.seminarBegins,
+                value: seminar?.alwaysOpen
+                  ? seminarMessages.labels.seminarOpens
+                  : seminar?.dateFrom ?? '',
+              },
+              {
+                label: seminarMessages.labels.seminarEnds,
+                value: seminar?.alwaysOpen
+                  ? seminarMessages.labels.openForWeeks
+                  : seminar?.dateTo ?? '',
+              },
+              {
+                label: '',
+                value: '',
+              },
+              {
+                label: seminarMessages.labels.seminarDescription,
+                value: {
+                  ...seminarMessages.labels.seminarDescriptionUrlText,
+                  values: { url: seminar?.descriptionUrl },
+                },
+              },
+              {
+                label: seminarMessages.labels.seminarLocation,
+                value: seminar?.location ?? '',
+              },
+            ]
+          },
         }),
         buildAlertMessageField({
           id: 'seminarInformationAlert',
