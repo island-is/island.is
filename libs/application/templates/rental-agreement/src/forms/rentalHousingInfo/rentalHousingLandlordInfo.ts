@@ -3,12 +3,9 @@ import {
   buildMultiField,
   buildTableRepeaterField,
   YES,
-  getValueViaPath,
 } from '@island.is/application/core'
 import { formatNationalId } from '../../lib/utils'
 import { landlordDetails } from '../../lib/messages'
-import { FormValue } from '@island.is/application/types'
-import { UserRole } from '../../lib/constants'
 
 export const RentalHousingLandlordInfo = buildSubSection({
   id: 'landlordInfo',
@@ -76,48 +73,49 @@ export const RentalHousingLandlordInfo = buildSubSection({
             ],
             rows: ['name', 'phone', 'nationalId', 'email'],
           },
-          getStaticTableData: (application) => {
-            const name = getValueViaPath<string>(
-              application.externalData,
-              'nationalRegistry.data.fullName',
-            ) as string
+          // TODO: Remove if not needed
+          // getStaticTableData: (application) => {
+          //   const name = getValueViaPath<string>(
+          //     application.externalData,
+          //     'nationalRegistry.data.fullName',
+          //   ) as string
 
-            const nationalId = getValueViaPath<string>(
-              application.externalData,
-              'nationalRegistry.data.nationalId',
-            )
+          //   const nationalId = getValueViaPath<string>(
+          //     application.externalData,
+          //     'nationalRegistry.data.nationalId',
+          //   )
 
-            const phone = getValueViaPath<string>(
-              application.externalData,
-              'userProfile.data.mobilePhoneNumber',
-            ) as string
+          //   const phone = getValueViaPath<string>(
+          //     application.externalData,
+          //     'userProfile.data.mobilePhoneNumber',
+          //   ) as string
 
-            const email = getValueViaPath<string>(
-              application.externalData,
-              'userProfile.data.email',
-            )
+          //   const email = getValueViaPath<string>(
+          //     application.externalData,
+          //     'userProfile.data.email',
+          //   )
 
-            const userRole = application.answers.userRole as FormValue
+          //   const userRole = application.answers.userRole as FormValue
 
-            if (
-              userRole.type === UserRole.LANDLORD &&
-              name &&
-              nationalId &&
-              phone &&
-              email
-            ) {
-              return [
-                {
-                  name,
-                  phone,
-                  nationalId,
-                  email,
-                },
-              ]
-            }
+          //   if (
+          //     userRole.type === UserRole.LANDLORD &&
+          //     name &&
+          //     nationalId &&
+          //     phone &&
+          //     email
+          //   ) {
+          //     return [
+          //       {
+          //         name,
+          //         phone,
+          //         nationalId,
+          //         email,
+          //       },
+          //     ]
+          //   }
 
-            return []
-          },
+          //   return []
+          // },
         }),
       ],
     }),
