@@ -46,7 +46,7 @@ export const UserAvatar = ({
     alignItems="center"
     flexShrink={0}
     flexGrow={0}
-    borderRadius="circle"
+    borderRadius="full"
     className={[
       styles.avatarSize[size],
       styles.avatarColor[isDelegation ? 'isDelegation' : color],

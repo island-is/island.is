@@ -1,17 +1,17 @@
-import { FC } from 'react'
-import { Box, Button, ButtonTypes, GridColumn } from '@island.is/island-ui/core'
-import { useLocale } from '@island.is/localization'
-import { formatText, coreMessages } from '@island.is/application/core'
+import { coreMessages, formatText } from '@island.is/application/core'
 import {
   Application,
-  FormModes,
-  SubmitField,
   CallToAction,
+  FormModes,
   FormText,
+  SubmitField,
 } from '@island.is/application/types'
+import { Box, Button, ButtonTypes, GridColumn } from '@island.is/island-ui/core'
+import { useLocale } from '@island.is/localization'
+import { FC } from 'react'
 
+import { useUserInfo } from '@island.is/react-spa/bff'
 import * as styles from './ScreenFooter.css'
-import { useAuth } from '@island.is/auth/react'
 
 interface FooterProps {
   application: Application
@@ -70,7 +70,7 @@ export const ScreenFooter: FC<React.PropsWithChildren<FooterProps>> = ({
   nextButtonText,
 }) => {
   const { formatMessage } = useLocale()
-  const { userInfo: user } = useAuth()
+  const user = useUserInfo()
   const hasSubmitField = submitField !== undefined
   const isLastScreen = activeScreenIndex === numberOfScreens - 1
   const showGoBack =

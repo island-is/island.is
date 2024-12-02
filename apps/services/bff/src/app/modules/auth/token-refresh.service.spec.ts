@@ -2,7 +2,6 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import { Test } from '@nestjs/testing'
 import { CacheService } from '../cache/cache.service'
 import { IdsService } from '../ids/ids.service'
-import { TokenResponse } from '../ids/ids.types'
 import { AuthService } from './auth.service'
 import { CachedTokenResponse } from './auth.types'
 import { TokenRefreshService } from './token-refresh.service'
@@ -35,20 +34,11 @@ const mockTokenResponse: CachedTokenResponse = {
     delegationType: [],
     locale: 'is',
     birthdate: '1990-01-01',
+    iss: 'https://identity-server.dev01.devland.is',
   },
   accessTokenExp: Date.now() + 3600000, // Current time + 1 hour in milliseconds
   encryptedAccessToken: 'encrypted.access.token',
   encryptedRefreshToken: 'encrypted.refresh.token',
-}
-
-// When mocking IdsService.refreshToken response, we need TokenResponse type:
-const mockIdsTokenResponse: TokenResponse = {
-  id_token: 'mock.id.token',
-  access_token: 'mock.access.token',
-  refresh_token: 'mock.refresh.token',
-  expires_in: 3600,
-  token_type: 'Bearer',
-  scope: 'openid profile offline_access',
 }
 
 describe('TokenRefreshService', () => {
