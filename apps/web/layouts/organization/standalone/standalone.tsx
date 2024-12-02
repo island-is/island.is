@@ -67,6 +67,7 @@ export const StandaloneLayout = ({
     mobileBackground: organizationPage?.themeProperties.mobileBackgroundColor,
     isFrontpage: isFrontpage,
     underTitle: bannerTitle,
+    organizationSlug: organizationPage?.organization?.slug ?? ''
   }
 
   const { activeLocale } = useI18n()
