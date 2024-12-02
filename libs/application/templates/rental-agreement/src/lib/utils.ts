@@ -10,6 +10,7 @@ import {
   RentOtherFeesPayeeOptions,
   SecurityDepositTypeOptions,
   SecurityDepositAmountOptions,
+  UserRole,
 } from './constants'
 import * as m from './messages'
 import format from 'date-fns/format'
@@ -32,17 +33,15 @@ export const formatCurrency = (answer: string) =>
   answer.replace(/\B(?=(\d{3})+(?!\d))/g, '.') + ' ISK'
 
 export const getApplicationAnswers = (answers: Application['answers']) => {
-  const propertyCategoryTypeOptions =
-    getValueViaPath<RentalHousingCategoryTypes>(
-      answers,
-      'registerProperty.categoryType',
-    )
+  const propertyTypeOptions = getValueViaPath<RentalHousingCategoryTypes>(
+    answers,
+    'registerProperty.categoryType',
+  )
 
-  const propertyCategoryClassOptions =
-    getValueViaPath<RentalHousingCategoryClass>(
-      answers,
-      'registerProperty.categoryClass',
-    )
+  const propertyClassOptions = getValueViaPath<RentalHousingCategoryClass>(
+    answers,
+    'registerProperty.categoryClass',
+  )
 
   const inspectorOptions = getValueViaPath<RentalHousingConditionInspector>(
     answers,
@@ -77,8 +76,8 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
   )
 
   return {
-    propertyCategoryTypeOptions,
-    propertyCategoryClassOptions,
+    propertyTypeOptions,
+    propertyClassOptions,
     inspectorOptions,
     rentalAmountIndexTypesOptions,
     rentalAmountPaymentDateOptions,
@@ -88,7 +87,7 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
   }
 }
 
-export const getPropertyCategoryTypeOptions = () => [
+export const getPropertyTypeOptions = () => [
   {
     value: RentalHousingCategoryTypes.ENTIRE_HOME,
     label: m.registerProperty.category.typeSelectLabelEntireHome,
@@ -103,7 +102,7 @@ export const getPropertyCategoryTypeOptions = () => [
   },
 ]
 
-export const getPropertyCategoryClassOptions = () => [
+export const getPropertyClassOptions = () => [
   {
     value: RentalHousingCategoryClass.GENERAL_MARKET,
     label: m.registerProperty.category.classSelectLabelGeneralMarket,
@@ -114,7 +113,7 @@ export const getPropertyCategoryClassOptions = () => [
   },
 ]
 
-export const getPropertyCategoryClassGroupOptions = () => [
+export const getPropertyClassGroupOptions = () => [
   {
     value: RentalHousingCategoryClassGroup.STUDENT_HOUSING,
     label: m.registerProperty.category.classGroupSelectLabelStudentHousing,
@@ -241,5 +240,16 @@ export const getRentalOtherFeesPayeeOptions = () => [
   {
     value: RentOtherFeesPayeeOptions.TENANT,
     label: m.otherFees.paidByTenantLabel,
+  },
+]
+
+export const getUserRoleOptions = [
+  {
+    label: m.userRole.landlordOptionLabel,
+    value: UserRole.LANDLORD,
+  },
+  {
+    label: m.userRole.tenantOptionLabel,
+    value: UserRole.TENANT,
   },
 ]

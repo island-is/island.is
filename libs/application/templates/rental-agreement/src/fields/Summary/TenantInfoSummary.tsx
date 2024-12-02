@@ -44,7 +44,10 @@ export const TenantInfoSummary = ({ answers }: Props) => {
                 />
               </GridColumn>
               <GridColumn span={['12/12', '6/12']}>
-                <KeyValue label={summary.emailLabel} value={tenant.email} />
+                <KeyValue
+                  label={summary.emailLabel}
+                  value={tenant.email || '-'}
+                />
               </GridColumn>
               <GridColumn span={['12/12', '6/12']}>
                 <KeyValue
