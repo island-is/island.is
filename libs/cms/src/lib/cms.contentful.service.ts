@@ -1297,7 +1297,7 @@ export class CmsContentfulService {
 
     const response = await this.contentfulRepository
       .getLocalizedEntries<types.IOrganizationPageFields>(input.lang, params)
-      .catch(errorHandler('getOrganizationPageStandaloneSitemapLevel1'))
+      .catch(errorHandler('getOrganizationPageStandaloneSitemapLevel2'))
 
     const tree = response.items?.[0]?.fields.sitemap?.fields.tree as SitemapTree
 
