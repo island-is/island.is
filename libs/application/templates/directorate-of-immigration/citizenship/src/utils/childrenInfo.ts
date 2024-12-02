@@ -50,12 +50,12 @@ export const getSelectedCustodyChild = (
   const custodyChildren = getValueViaPath(
     externalData,
     'childrenCustodyInformation.data',
-    undefined,
-  ) as ApplicantChildCustodyInformation[] | undefined
+    [],
+  ) as ApplicantChildCustodyInformation[]
 
   const childInfo = childNationalId
     ? custodyChildren?.find((x) => x.nationalId === childNationalId)
-    : custodyChildren?.[index]
+    : custodyChildren[index]
 
   const selectedChildren = (answers as Citizenship).selectedChildren
   const isSelected =
