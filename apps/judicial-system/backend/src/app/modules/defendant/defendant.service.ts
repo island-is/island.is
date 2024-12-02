@@ -76,6 +76,7 @@ export class DefendantService {
 
   private getMessagesForIndictmentToPrisonAdminChanges(
     defendant: Defendant,
+    caseId: string,
   ): Message {
     const messageType =
       defendant.isSentToPrisonAdmin === true
@@ -84,7 +85,7 @@ export class DefendantService {
 
     const message = {
       type: MessageType.DEFENDANT_NOTIFICATION,
-      caseId: defendant.caseId,
+      caseId,
       elementId: defendant.id,
       body: {
         type: messageType,
@@ -176,7 +177,10 @@ export class DefendantService {
       updatedDefendant.isSentToPrisonAdmin !== oldDefendant.isSentToPrisonAdmin
     ) {
       messages.push(
-        this.getMessagesForIndictmentToPrisonAdminChanges(updatedDefendant),
+        this.getMessagesForIndictmentToPrisonAdminChanges(
+          updatedDefendant,
+          theCase.id,
+        ),
       )
     }
 

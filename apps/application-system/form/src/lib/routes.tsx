@@ -1,12 +1,12 @@
 import { Outlet, RouteObject } from 'react-router-dom'
 
-import { UserProfileLocale } from '@island.is/shared/components'
 import { ErrorShell, HeaderInfoProvider } from '@island.is/application/ui-shell'
+import { UserProfileLocale } from '@island.is/shared/components'
 
+import { Layout } from '../components/Layout/Layout'
 import { Application } from '../routes/Application'
 import { Applications } from '../routes/Applications'
 import { AssignApplication } from '../routes/AssignApplication'
-import { Layout } from '../components/Layout/Layout'
 
 export const BASE_PATH = '/umsoknir'
 

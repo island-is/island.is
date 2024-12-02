@@ -171,6 +171,7 @@ grantNamespaces:
   - 'application-system'
   - 'consultation-portal'
   - 'portals-admin'
+  - 'service-portal'
 grantNamespacesEnabled: true
 healthCheck:
   liveness:
