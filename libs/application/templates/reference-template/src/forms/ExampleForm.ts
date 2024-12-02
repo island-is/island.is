@@ -15,6 +15,7 @@ import {
   buildHiddenInput,
   buildHiddenInputWithWatchedValue,
   buildTableRepeaterField,
+  buildNationalIdWithNameField,
 } from '@island.is/application/core'
 import {
   Comparators,
@@ -33,7 +34,12 @@ export const ExampleForm: Form = buildForm({
     buildSection({
       id: 'conditions',
       title: m.conditionsSection,
-      children: [],
+      children: [
+        buildNationalIdWithNameField({
+          id: 'pickRole.electPerson',
+          title: '',
+        }),
+      ],
     }),
     buildSection({
       id: 'tableRepeaterWithPhone',
