@@ -3,13 +3,10 @@ import {
   buildMultiField,
   buildTableRepeaterField,
   YES,
-  getValueViaPath,
 } from '@island.is/application/core'
 import { formatPhoneNumber } from '@island.is/application/ui-components'
 import { formatNationalId } from '../../lib/utils'
 import { tenantDetails } from '../../lib/messages'
-import { FormValue } from '@island.is/application/types'
-import { UserRole } from '../../lib/constants'
 
 export const RentalHousingTenantInfo = buildSubSection({
   id: 'tenantInfo',
@@ -77,6 +74,7 @@ export const RentalHousingTenantInfo = buildSubSection({
             ],
             rows: ['name', 'phone', 'nationalId', 'email'],
           },
+          // TODO: Remove if not needed
           // getStaticTableData: (application) => {
           //   const name = getValueViaPath<string>(
           //     application.externalData,
