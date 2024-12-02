@@ -132,6 +132,7 @@ describe.each(prisonSystemRoles)('prison admin user %s', (role) => {
         (state) => {
           const accessibleCaseIndictmentRulingDecisions = [
             CaseIndictmentRulingDecision.RULING,
+            CaseIndictmentRulingDecision.FINE,
           ]
 
           describe.each(

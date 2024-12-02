@@ -1,0 +1,5 @@
+mutation LimitedAccessCreateDefendantFile($input: CreateDefendantFileInput!) {
+  limitedAccessCreateDefendantFile(input: $input) {
+    id
+  }
+}
