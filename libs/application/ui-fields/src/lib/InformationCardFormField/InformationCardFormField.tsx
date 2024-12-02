@@ -33,8 +33,9 @@ export const InformationCardFormField: FC<
           <Box display="flex" key={`item-key-${item.value}`}>
             <Text fontWeight="semiBold">
               {formatText(item.label, application, formatMessage)}
+              &nbsp;
             </Text>
-            <Text>
+            <Box>
               <Markdown>
                 {(formatText(
                   item.value,
@@ -42,7 +43,7 @@ export const InformationCardFormField: FC<
                   formatMessage,
                 ) as string) ?? ''}
               </Markdown>
-            </Text>
+            </Box>
           </Box>
         )
       })}

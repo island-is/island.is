@@ -25,13 +25,10 @@ export class SeminarsTemplateService extends BaseTemplateApiService {
     auth,
     application,
   }: TemplateApiModuleActionProps): Promise<CourseDTO> {
-    const seminarQueryId = getValueViaPath<string>(
-      application.answers,
-      `initialQuery`,
-      '',
-    )
+    const seminarQueryId =
+      getValueViaPath<string>(application.answers, `initialQuery`) ?? ''
     const data = await this.seminarsClientService
-      .getSeminars(auth)
+      .getSeminar(auth, parseInt(seminarQueryId, 10))
       .catch(() => {
         this.logger.warn('[seminars-service]: Error fetching data from AOSH')
         throw new TemplateApiError(
@@ -43,11 +40,8 @@ export class SeminarsTemplateService extends BaseTemplateApiService {
           400,
         )
       })
-    const selectedSeminar = data.find(
-      (seminar) => seminar.courseId?.toString() === seminarQueryId,
-    )
 
-    if (!selectedSeminar) {
+    if (!data) {
       throw new TemplateApiError(
         {
           summary: `Ekkert námskeið fannst með þessu númeri: ${seminarQueryId}.`,
@@ -57,7 +51,7 @@ export class SeminarsTemplateService extends BaseTemplateApiService {
       )
     }
 
-    return selectedSeminar
+    return data
   }
 
   async submitApplication({

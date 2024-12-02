@@ -9,7 +9,9 @@ export class SeminarsClientService {
   private namskeidApiWithAuth = (user: User) =>
     this.namskeidApi.withMiddleware(new AuthMiddleware(user as Auth))
 
-  async getSeminars(auth: User): Promise<Array<CourseDTO>> {
-    return await this.namskeidApiWithAuth(auth).apiCourseGet()
+  async getSeminar(auth: User, courseId: number): Promise<CourseDTO> {
+    return await this.namskeidApiWithAuth(auth).apiCourseCourseIdGet({
+      courseId,
+    })
   }
 }
