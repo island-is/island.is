@@ -19,7 +19,6 @@ import {
   QueryGetOrganizationPageArgs,
   QueryGetOrganizationPageStandaloneSitemapLevel2Args,
 } from '@island.is/web/graphql/schema'
-import { useLinkResolver } from '@island.is/web/hooks'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
 import { StandaloneLayout } from '@island.is/web/layouts/organization/standalone'
 import type { Screen, ScreenContext } from '@island.is/web/types'
@@ -49,15 +48,8 @@ const StandaloneLevel2Sitemap: Screen<
   StandaloneLevel2SitemapProps,
   StandaloneLevel2SitemapScreenContext
 > = ({ organizationPage, category, sitemap }) => {
-  const { linkResolver } = useLinkResolver()
-
   const breadcrumbItems: BreadCrumbItem[] = useMemo(() => {
-    const items: BreadCrumbItem[] = [
-      {
-        title: organizationPage.title,
-        href: linkResolver('organizationpage', [organizationPage.slug]).href,
-      },
-    ]
+    const items: BreadCrumbItem[] = []
 
     if (category) {
       items.push({
@@ -66,7 +58,7 @@ const StandaloneLevel2Sitemap: Screen<
       })
     }
     return items
-  }, [category, linkResolver, organizationPage.slug, organizationPage.title])
+  }, [category])
 
   return (
     <StandaloneLayout
