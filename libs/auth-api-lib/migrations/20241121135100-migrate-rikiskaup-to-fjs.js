@@ -9,9 +9,13 @@ module.exports = {
         -- A) Party A has granted a delegation to party B for both FJS and Rikiskaup domains. 
         --      In this case we want to change the delegation_id reference in delegation_scope from the Rikiskaup entry to the FJS entry.
         --      This avoids having duplicate (domain_name, to_national_id, from_national_id) trios
+        --      We then need to delete the remaining Rikiskaup delegation entry to avoid breaking uniqueness constraint
         -- B) Party A has granted a delegation to party B for Rikiskaup but not for FJS domain.
         --      In this case we can simply change the domain name for the delegation entry
+        -- Once that's done we change the scope id from the old scope to the new one.
+        -- TODO: do we also want to do cleanup?
 
+        -- A)
         -- Find all entries in case A and change the delegation_id reference to the FJS entry. 
         UPDATE delegation_scope
         SET delegation_id = fjs_entry.id
@@ -42,6 +46,7 @@ module.exports = {
                 AND d.from_national_id = delegation.from_national_id
             );
 
+        -- B)
         -- Move remaining delegations from domain Rikiskaup to FJS
         -- TODO: change this to only change rows with foreign key references from delegation_scope
             UPDATE delegation
@@ -50,19 +55,20 @@ module.exports = {
             
         -- Optional 
         -- Delete all delegations with no scope grant in domain Rikiskaup
-            DELETE FROM delegation
-            WHERE id IN (
-                SELECT d.id
-                FROM delegation d
-                LEFT JOIN scope s ON d.id = s.delegation_id
-                WHERE s.delegation_id IS NULL
-                AND d.domain_name = '@rikiskaup.is'
-            );
+        -- Not sure if this is needed since it seems delegations can exist without any scope grants?
+        DELETE FROM delegation
+        WHERE id IN (
+            SELECT d.id
+            FROM delegation d
+            LEFT JOIN scope s ON d.id = s.delegation_id
+            WHERE s.delegation_id IS NULL
+            AND d.domain_name = '@rikiskaup.is'
+        );
 
         -- Next we update scope ID for all delegation scopes
-            UPDATE delegation_scope t
-            SET scope_name='TODO'
-            WHERE t.scope_name='@rikiskaup.is/gagnaskilagatt';
+        UPDATE delegation_scope t
+        SET scope_name='TODO'
+        WHERE t.scope_name='@rikiskaup.is/gagnaskilagatt';
     
         -- Optional 
         -- Remove Rikiskaup from the IDS
