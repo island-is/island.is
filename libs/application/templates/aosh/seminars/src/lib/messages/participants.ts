@@ -19,4 +19,22 @@ export const participants = {
       description: `Participants page description `,
     },
   }),
+  labels: defineMessages({
+    csvError: {
+      id: 'aosh.sem.application:participants.labels.csvError',
+      defaultMessage:
+        'Athugið: csv sniðmátið virðist ekki vera rétt. Vinsamlegast farið yfir. Einnig er hægt að hlaða niður sniðmáti hér að ofan.',
+      description: `Participants csv upload error `,
+    },
+    uploadHeader: {
+      id: 'aosh.sem.application:participants.labels.uploadHeader',
+      defaultMessage: 'Skrá marga umsækjendur í einu',
+      description: 'participants csv upload header',
+    },
+    uploadButton: {
+      id: 'aosh.sem.application:participants.labels.uploadButton',
+      defaultMessage: 'Hlaða inn .csv skjali',
+      description: 'participants csv upload button label',
+    },
+  }),
 }

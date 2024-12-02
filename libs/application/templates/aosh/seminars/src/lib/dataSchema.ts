@@ -143,9 +143,20 @@ export const UserInformationSchema = z.intersection(
   }),
 )
 
-const ParticipantSchema = z.object({
+export const ParticipantSchema = z.object({
   name: z.string().min(1),
-  ssn: z.string().min(1),
+  nationalId: z
+    .string()
+    .refine(
+      (nationalId) =>
+        nationalId &&
+        nationalId.length !== 0 &&
+        kennitala.isValid(nationalId) &&
+        (kennitala.isCompany(nationalId) ||
+          kennitala.info(nationalId).age >= 18),
+    ),
+  email: z.string().min(1),
+  phoneNumber: z.string().min(1),
 })
 
 export const SeminarAnswersSchema = z.object({
@@ -153,6 +164,7 @@ export const SeminarAnswersSchema = z.object({
   applicant: UserInformationSchema,
   paymentArrangement: PaymentArrangementSchema,
   participantList: z.array(ParticipantSchema),
+  participantCsvError: z.boolean().optional(),
 })
 
 export type SeminarAnswers = z.TypeOf<typeof SeminarAnswersSchema>

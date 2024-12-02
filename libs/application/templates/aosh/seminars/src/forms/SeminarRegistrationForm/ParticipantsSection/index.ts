@@ -1,11 +1,14 @@
 import {
+  buildAlertMessageField,
   buildCustomField,
   buildMultiField,
   buildSection,
   buildTableRepeaterField,
+  getValueViaPath,
 } from '@island.is/application/core'
 
 import { participants as participantMessages } from '../../../lib/messages'
+import { FormValue } from '@island.is/application/types'
 
 export const participantsSection = buildSection({
   id: 'participants',
@@ -26,9 +29,19 @@ export const participantsSection = buildSection({
               label: 'Nafn',
               width: 'full',
             },
-            ssn: {
+            nationalId: {
               component: 'input',
               label: 'Kennitala',
+              width: 'half',
+            },
+            email: {
+              component: 'input',
+              label: 'Netfang',
+              width: 'half',
+            },
+            phoneNumber: {
+              component: 'input',
+              label: 'Símanúmer',
               width: 'half',
             },
           },
@@ -37,6 +50,20 @@ export const participantsSection = buildSection({
           id: 'participantCSV',
           title: 'prufa',
           component: 'Participants',
+        }),
+        buildAlertMessageField({
+          id: 'participantList.error',
+          title: '',
+          message: participantMessages.labels.csvError,
+          alertType: 'error',
+          condition: (answers: FormValue, _) => {
+            const hasError = getValueViaPath(
+              answers,
+              'participantCsvError',
+              false,
+            ) as boolean
+            return hasError
+          },
         }),
       ],
     }),
