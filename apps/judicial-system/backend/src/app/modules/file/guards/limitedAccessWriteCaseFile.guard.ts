@@ -21,14 +21,15 @@ export class LimitedAccessWriteCaseFileGuard implements CanActivate {
     const request = context.switchToHttp().getRequest()
 
     const user: User = request.user
+
+    if (!user) {
+      throw new InternalServerErrorException('Missing user')
+    }
+
     const theCase: Case = request.case
 
     if (!theCase) {
       throw new InternalServerErrorException('Missing case')
-    }
-
-    if (!user) {
-      throw new InternalServerErrorException('Missing user')
     }
 
     // The case file category is either in the request body (creating case file)

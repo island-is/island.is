@@ -87,6 +87,7 @@ interface UpdateDateLog {
   date?: Date
   location?: string
 }
+
 export interface UpdateCase
   extends Pick<
     Case,
