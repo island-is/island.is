@@ -146,13 +146,15 @@ export class ProxyService {
   }) {
     try {
       const reqHeaderContentType = req.headers['content-type']
+      const finalBody = body ?? req.body
+
       const response = await fetch(targetUrl, {
         method: 'POST',
         headers: {
           'Content-Type': reqHeaderContentType || 'application/json',
           Authorization: `Bearer ${accessToken}`,
         },
-        body: JSON.stringify(body ?? req.body),
+        body: finalBody ? JSON.stringify(finalBody) : undefined,
         agent: (parsedUrl) => {
           if (parsedUrl.protocol == 'http:') {
             return customAgent
@@ -227,6 +229,27 @@ export class ProxyService {
   }
 
   /**
+   * Prepares the request for proxying to an external API by validating the URL and getting the access token.
+   */
+  private prepareApiProxyRequest({
+    req,
+    res,
+    url,
+  }: {
+    req: Request
+    res: Response
+    url: string
+  }): Promise<string> {
+    if (!validateUri(url, this.config.allowedExternalApiUrls)) {
+      this.logger.error('Invalid external api url provided:', url)
+
+      throw new BadRequestException('Proxing url failed!')
+    }
+
+    return this.getAccessToken({ req, res })
+  }
+
+  /**
    * Forwards an incoming HTTP GET request to the specified URL (provided in the query string),
    * managing authentication, refreshing tokens if needed, and streaming the response back to the client.
    */
@@ -240,20 +263,40 @@ export class ProxyService {
     query: ApiProxyDto
   }): Promise<void> {
     const { url } = query
-
-    if (!validateUri(url, this.config.allowedExternalApiUrls)) {
-      this.logger.error('Invalid external api url provided:', url)
-
-      throw new BadRequestException('Proxying url failed!')
-    }
-
-    const accessToken = await this.getAccessToken({ req, res })
+    const accessToken = await this.prepareApiProxyRequest({ req, res, url })
 
     this.executeStreamRequest({
       accessToken,
       targetUrl: url,
       req,
       res,
+    })
+  }
+
+  /**
+   * Forwards an incoming HTTP POST request to the specified URL (provided in the query string),
+   * managing authentication, refreshing tokens if needed, and streaming the response back to the client.
+   */
+  async forwardPostApiRequest({
+    req,
+    res,
+    query,
+    body,
+  }: {
+    req: Request
+    res: Response
+    query: ApiProxyDto
+    body: Record<string, unknown>
+  }) {
+    const { url } = query
+    const accessToken = await this.prepareApiProxyRequest({ req, res, url })
+
+    this.executeStreamRequest({
+      accessToken,
+      targetUrl: url,
+      req,
+      res,
+      body,
     })
   }
 }
