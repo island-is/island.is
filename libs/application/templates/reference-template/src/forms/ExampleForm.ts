@@ -24,6 +24,7 @@ import {
 } from '@island.is/application/types'
 import { ApiActions } from '../shared'
 import { m } from '../lib/messages'
+import { applicantInformationMultiField } from '@island.is/application/ui-forms'
 
 export const ExampleForm: Form = buildForm({
   id: 'ExampleFormDraft',
@@ -44,48 +45,25 @@ export const ExampleForm: Form = buildForm({
           title: '',
           marginTop: 1,
           fields: {
-            name: {
-              component: 'input',
-              label: 'test 1',
-              width: 'half',
-            },
-            nationalId: {
-              component: 'input',
-              label: 'test 2',
-              format: '######-####',
-              width: 'half',
-            },
-            phone: {
-              component: 'phone',
-              label: 'test 3',
-              format: '###-####',
-              width: 'half',
-            },
-            email: {
-              component: 'input',
-              label: 'test 4',
-              type: 'email',
-              width: 'half',
-            },
-            isRepresentative: {
-              component: 'checkbox',
-              large: true,
-              displayInTable: false,
-              label: 'test 5',
-              options: [
-                {
-                  label: 'test 6',
-                  value: 'YES',
-                },
-              ],
+            nationalIdWithName: {
+              component: 'nationalIdWithName',
+              label: 'nationalIdWithName',
+              phoneLabel: 'Símanúmer',
+              emailLabel: 'Netfang',
+              required: true,
+              phone: true,
+              phoneRequired: true,
+              email: true,
+              emailRequired: true,
             },
           },
           table: {
-            header: [
-              'nameInputLabel',
-              'nationalIdHeaderLabel',
-              'phoneInputLabel',
-              'emailInputLabel',
+            header: ['name', 'nationalId', 'phone', 'email'],
+            rows: [
+              'name',
+              'nationalId',
+              'nationalId-phone',
+              'nationalId-email',
             ],
           },
         }),
