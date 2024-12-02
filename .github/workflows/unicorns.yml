@@ -39,7 +39,6 @@ jobs:
       - name: Check unicorn affected
         id: unicorn-affected
         run: |
-          ls -l
           yarn nx show projects --base origin/main --affected
           node scripts/ci/unicorn-utils.mjs
           UNICORN=$(node scripts/ci/unicorn-utils.mjs)
