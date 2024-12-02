@@ -273,12 +273,16 @@ Component.getProps = async (context) => {
       }
     }
 
-    if (isStandaloneTheme) {
+    try {
       return {
         page: {
           type: PageType.STANDALONE_PARENT_SUBPAGE,
           props: await StandaloneParentSubpage.getProps(modifiedContext),
         },
+      }
+    } catch (error) {
+      if (!(error instanceof CustomNextError)) {
+        throw error
       }
     }
 
@@ -347,12 +351,16 @@ Component.getProps = async (context) => {
       }
     }
 
-    if (isStandaloneTheme) {
+    try {
       return {
         page: {
           type: PageType.STANDALONE_PARENT_SUBPAGE,
           props: await StandaloneParentSubpage.getProps(modifiedContext),
         },
+      }
+    } catch (error) {
+      if (!(error instanceof CustomNextError)) {
+        throw error
       }
     }
 

@@ -14,24 +14,26 @@ const BFF_SERVER_UNAVAILABLE = 'BFF_SERVER_UNAVAILABLE'
 
 type BffProviderProps = {
   children: ReactNode
-  /**
-   * The base path of the application.
-   */
-  applicationBasePath: string
   mockedInitialState?: LoggedInState
+  applicationBasePath: string
+  /**
+   * Bff API - Global prefix path
+   * @example /stjornbord/bff, etc.
+   */
+  bffGlobalPrefix?: string
 }
 
 export const BffProvider = ({
   children,
   applicationBasePath,
   mockedInitialState,
+  bffGlobalPrefix,
 }: BffProviderProps) => {
   const [showSessionExpiredScreen, setSessionExpiredScreen] = useState(false)
-  const bffUrlGenerator = createBffUrlGenerator(applicationBasePath)
-  const [state, dispatch] = useReducer(
-    reducer,
-    mockedInitialState ?? initialState,
-  )
+  const bffUrlGenerator = createBffUrlGenerator(bffGlobalPrefix)
+  const [state, dispatch] = useReducer(reducer, {
+    ...(mockedInitialState ?? initialState),
+  })
 
   const { authState } = state
   const showErrorScreen = authState === 'error'
@@ -147,16 +149,12 @@ export const BffProvider = ({
         type: ActionType.SWITCH_USER,
       })
 
-      window.location.href = bffUrlGenerator(
-        '/login',
-        nationalId
-          ? {
-              login_hint: nationalId,
-            }
-          : {
-              prompt: 'select_account',
-            },
-      )
+      window.location.href = bffUrlGenerator('/login', {
+        target_link_uri: window.location.href,
+        ...(nationalId
+          ? { login_hint: nationalId }
+          : { prompt: 'select_account' }),
+      })
     },
     [bffUrlGenerator],
   )

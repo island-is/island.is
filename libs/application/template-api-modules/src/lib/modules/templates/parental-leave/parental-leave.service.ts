@@ -464,17 +464,17 @@ export class ParentalLeaveService extends BaseTemplateApiService {
     // We don't want to send old files to VMST again
     if (applicationFundId && applicationFundId !== '') {
       if (additionalDocuments) {
-        additionalDocuments.forEach(async (val, i) => {
+        for (const index of additionalDocuments.keys()) {
           const pdf = await this.getPdf(
             application,
-            i,
+            index,
             'fileUpload.additionalDocuments',
           )
           attachments.push({
             attachmentType: apiConstants.attachments.other,
             attachmentBytes: pdf,
           })
-        })
+        }
       }
       return attachments
     }
