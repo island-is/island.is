@@ -30,6 +30,7 @@ export const RentalHousingLandlordInfo = buildSubSection({
           fields: {
             nationalIdWithName: {
               component: 'nationalIdWithName',
+              required: true,
               options: (application, activeField) => {
                 console.log('ExternalData: ', application.externalData)
                 console.log('AppAnswers: ', application.answers.landlordInfo)
@@ -39,12 +40,14 @@ export const RentalHousingLandlordInfo = buildSubSection({
             },
             phone: {
               component: 'phone',
+              required: true,
               label: landlordDetails.phoneInputLabel,
               enableCountrySelector: true,
               width: 'half',
             },
             email: {
               component: 'input',
+              required: true,
               label: landlordDetails.emailInputLabel,
               type: 'email',
               width: 'half',

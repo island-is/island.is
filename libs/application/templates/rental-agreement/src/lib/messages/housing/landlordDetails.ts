@@ -72,7 +72,7 @@ export const landlordDetails = defineMessages({
   },
   landlordNationalIdEmptyError: {
     id: 'ra.application:landlordDetails.landlordNationalIdEmptyError',
-    defaultMessage: 'Kennitala leigusala má ekki vera tómt',
+    defaultMessage: 'Kennitala leigusala þarf að vera skráð',
     description: 'Landlord details national id empty error',
   },
   landlordNationalIdNotFoundError: {

@@ -11,6 +11,7 @@ import {
   TRUE,
 } from './constants'
 import * as m from './messages'
+import { x } from 'pdfkit'
 
 const isValidMeterNumber = (value: string) => {
   const meterNumberRegex = /^[0-9]{1,20}$/
@@ -83,27 +84,38 @@ const registerProperty = z
 const landlordInfo = z.object({
   table: z
     .array(
-      z
-        .object({
-          nationalIdWithName: z.object({
-            name: z.string().optional(),
-            nationalId: z
-              .string()
-              .refine((x) => !!x && x.trim().length > 0, {
+      z.object({
+        nationalIdWithName: z
+          .object({
+            nationalId: z.string().refine(
+              (value) => {
+                !!value && value.trim().length > 0
+              },
+              {
                 params: m.landlordDetails.landlordNationalIdEmptyError,
-              })
-              .refine((x) => (x ? kennitala.isPerson(x) : false), {
-                params: m.landlordDetails.landlordNationalIdNotFoundError,
-              }),
-          }),
-          phone: z.string().optional(),
-          email: z.string().optional(),
-          isRepresentative: z.string().array().optional(),
-        })
-        .refine(({ nationalIdWithName }) => {
-          return nationalIdWithName
-        }),
+              },
+            ),
+            name: z.string(),
+            // .refine((x) => !!x && x.trim().length > 0, {
+            //   params: m.landlordDetails.landlordNationalIdEmptyError,
+            // })
+            // .refine((x) => kennitala.isPerson(x as string), {
+            //   params: m.landlordDetails.landlordNationalIdNotFoundError,
+            // }),
+          })
+          .partial()
+          .refine(
+            ({ nationalId }) => {
+              !!nationalId && nationalId.trim().length > 0
+            },
+            { params: m.landlordDetails.landlordNationalIdEmptyError },
+          ),
+        phone: z.string().optional(),
+        email: z.string().optional(),
+        isRepresentative: z.string().array().optional(),
+      }),
     )
+    .nonempty()
     .optional(),
 })
 // .superRefine((data, ctx) => {
