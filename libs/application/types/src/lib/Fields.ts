@@ -598,6 +598,8 @@ export interface NationalIdWithNameField extends InputField {
   nameDefaultValue?: string
   errorMessage?: string
   minAgePerson?: number
+  searchPersons?: boolean
+  searchCompanies?: boolean
 }
 
 type Modify<T, R> = Omit<T, keyof R> & R

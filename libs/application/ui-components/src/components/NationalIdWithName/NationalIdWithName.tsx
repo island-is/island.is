@@ -33,6 +33,8 @@ interface NationalIdWithNameProps {
   nameDefaultValue?: string
   errorMessage?: string
   minAgePerson?: number
+  searchPersons?: boolean
+  searchCompanies?: boolean
 }
 
 export const NationalIdWithName: FC<
@@ -51,6 +53,8 @@ export const NationalIdWithName: FC<
   nameDefaultValue,
   errorMessage,
   minAgePerson,
+  searchPersons = true,
+  searchCompanies = false,
 }) => {
   const fieldId = customId.length > 0 ? customId : id
   const nameField = `${fieldId}.name`
@@ -62,6 +66,8 @@ export const NationalIdWithName: FC<
     formState: { errors },
   } = useFormContext()
   const [nationalIdInput, setNationalIdInput] = useState('')
+  const [personName, setPersonName] = useState('')
+  const [companyName, setCompanyName] = useState('')
 
   // get name validation errors
   const nameFieldErrors = errorMessage
@@ -105,6 +111,7 @@ export const NationalIdWithName: FC<
       {
         onCompleted: (data) => {
           onNameChange && onNameChange(data.identity?.name ?? '')
+          setPersonName(data.identity?.name ?? '')
           setValue(nameField, data.identity?.name ?? undefined)
         },
       },
@@ -125,6 +132,7 @@ export const NationalIdWithName: FC<
     {
       onCompleted: (companyData) => {
         // onNameChange && onNameChange(data.identity?.name ?? '')
+        setCompanyName(companyData.companyRegistryCompany?.name ?? '')
         // setValue(nameField, data.identity?.name ?? undefined)
         console.log(companyData)
       },
@@ -134,23 +142,38 @@ export const NationalIdWithName: FC<
   // fetch and update name when user has entered a valid national id
   useEffect(() => {
     if (nationalIdInput.length === 10 && kennitala.isValid(nationalIdInput)) {
-      getIdentity({
-        variables: {
-          input: {
-            nationalId: nationalIdInput,
-          },
-        },
-      })
+      {
+        searchPersons &&
+          getIdentity({
+            variables: {
+              input: {
+                nationalId: nationalIdInput,
+              },
+            },
+          })
+      }
 
-      getCompanyIdentity({
-        variables: {
-          input: {
-            nationalId: nationalIdInput,
-          },
-        },
-      })
+      {
+        searchCompanies &&
+          getCompanyIdentity({
+            variables: {
+              input: {
+                nationalId: nationalIdInput,
+              },
+            },
+          })
+      }
     }
   }, [nationalIdInput, getIdentity, getCompanyIdentity])
+
+  useEffect(() => {
+    console.log(personName, companyName)
+    if (personName) {
+      setValue(nameField, personName)
+    } else if (companyName) {
+      setValue(nameField, companyName)
+    }
+  }, [personName, companyName])
 
   return (
     <GridRow>

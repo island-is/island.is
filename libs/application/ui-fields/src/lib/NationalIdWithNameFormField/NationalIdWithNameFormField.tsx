@@ -27,6 +27,8 @@ export const NationalIdWithNameFormField: FC<
       nameDefaultValue={field.nameDefaultValue}
       errorMessage={field.errorMessage}
       minAgePerson={field.minAgePerson}
+      searchPersons={field.searchPersons}
+      searchCompanies={field.searchCompanies}
     />
   )
 }

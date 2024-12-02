@@ -793,6 +793,8 @@ export const buildNationalIdWithNameField = (
     nameDefaultValue,
     errorMessage,
     minAgePerson,
+    searchPersons,
+    searchCompanies,
   } = data
   return {
     ...extractCommonFields(data),
@@ -806,6 +808,8 @@ export const buildNationalIdWithNameField = (
     nameDefaultValue,
     errorMessage,
     minAgePerson,
+    searchPersons,
+    searchCompanies,
     children: undefined,
     type: FieldTypes.NATIONAL_ID_WITH_NAME,
     component: FieldComponents.NATIONAL_ID_WITH_NAME,
