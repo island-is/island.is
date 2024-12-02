@@ -87,7 +87,7 @@ export const DefaultHeader: React.FC<
                   className={cn(styles.logoContainer, {
                     [styles.logoContainerSubpage]: isSubpage,
                   })}
-                  borderRadius="circle"
+                  borderRadius="full"
                   background="white"
                 >
                   <img
@@ -144,7 +144,7 @@ export const DefaultHeader: React.FC<
                       className={cn(styles.logoContainerMobile, {
                         [styles.logoContainerMobileSubpage]: isSubpage,
                       })}
-                      borderRadius="circle"
+                      borderRadius="full"
                       background="white"
                     >
                       <img

@@ -5,7 +5,6 @@ import { RentalHousingTenantInfo } from './rentalHousingInfo/rentalHousingTenant
 import { RentalHousingSpecialProvisions } from './rentalHousingInfo/rentalHousingSpecialProvisions'
 import { RentalHousingCondition } from './rentalHousingInfo/rentalHousingCondition'
 import { RentalHousingFireProtections } from './rentalHousingInfo/rentalHousingFireProtections'
-import { RentalHousingUserRole } from './rentalHousingInfo/rentalHousingUserRole'
 
 import { application } from '../lib/messages'
 

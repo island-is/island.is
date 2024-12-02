@@ -26,21 +26,9 @@ export const ActionMenu: FC<React.PropsWithChildren<{}>> = ({ children }) => {
   return (
     <Box position="relative" ref={ref}>
       <button className={styles.trigger} onClick={handleTriggerClick}>
-        <Box
-          className={styles.dot}
-          background="blue400"
-          borderRadius="circle"
-        />
-        <Box
-          className={styles.dot}
-          background="blue400"
-          borderRadius="circle"
-        />
-        <Box
-          className={styles.dot}
-          background="blue400"
-          borderRadius="circle"
-        />
+        <Box className={styles.dot} background="blue400" borderRadius="full" />
+        <Box className={styles.dot} background="blue400" borderRadius="full" />
+        <Box className={styles.dot} background="blue400" borderRadius="full" />
       </button>
       {isOpen && (
         <Box

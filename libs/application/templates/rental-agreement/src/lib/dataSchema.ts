@@ -86,15 +86,8 @@ const landlordInfo = z.object({
       z.object({
         nationalIdWithName: z
           .object({
-            nationalId: z.string().refine(
-              (value) => {
-                !!value && value.trim().length > 0
-              },
-              {
-                params: m.landlordDetails.landlordNationalIdEmptyError,
-              },
-            ),
-            name: z.string(),
+            nationalId: z.string().optional(),
+            name: z.string().optional(),
             // .refine((x) => !!x && x.trim().length > 0, {
             //   params: m.landlordDetails.landlordNationalIdEmptyError,
             // })
@@ -102,7 +95,6 @@ const landlordInfo = z.object({
             //   params: m.landlordDetails.landlordNationalIdNotFoundError,
             // }),
           })
-          .partial()
           .refine(
             ({ nationalId }) => {
               !!nationalId && nationalId.trim().length > 0
@@ -114,7 +106,6 @@ const landlordInfo = z.object({
         isRepresentative: z.string().array().optional(),
       }),
     )
-    .nonempty()
     .optional(),
 })
 // .superRefine((data, ctx) => {

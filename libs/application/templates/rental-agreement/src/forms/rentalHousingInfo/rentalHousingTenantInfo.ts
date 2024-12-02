@@ -77,48 +77,48 @@ export const RentalHousingTenantInfo = buildSubSection({
             ],
             rows: ['name', 'phone', 'nationalId', 'email'],
           },
-          getStaticTableData: (application) => {
-            const name = getValueViaPath<string>(
-              application.externalData,
-              'nationalRegistry.data.fullName',
-            ) as string
+          // getStaticTableData: (application) => {
+          //   const name = getValueViaPath<string>(
+          //     application.externalData,
+          //     'nationalRegistry.data.fullName',
+          //   ) as string
 
-            const nationalId = getValueViaPath<string>(
-              application.externalData,
-              'nationalRegistry.data.nationalId',
-            )
+          //   const nationalId = getValueViaPath<string>(
+          //     application.externalData,
+          //     'nationalRegistry.data.nationalId',
+          //   )
 
-            const phone = getValueViaPath<string>(
-              application.externalData,
-              'userProfile.data.mobilePhoneNumber',
-            ) as string
+          //   const phone = getValueViaPath<string>(
+          //     application.externalData,
+          //     'userProfile.data.mobilePhoneNumber',
+          //   ) as string
 
-            const email = getValueViaPath<string>(
-              application.externalData,
-              'userProfile.data.email',
-            )
+          //   const email = getValueViaPath<string>(
+          //     application.externalData,
+          //     'userProfile.data.email',
+          //   )
 
-            const userRole = application.answers.userRole as FormValue
+          //   const userRole = application.answers.userRole as FormValue
 
-            if (
-              userRole.type === UserRole.TENANT &&
-              name &&
-              nationalId &&
-              phone &&
-              email
-            ) {
-              return [
-                {
-                  name,
-                  phone,
-                  nationalId,
-                  email,
-                },
-              ]
-            }
+          //   if (
+          //     userRole.type === UserRole.TENANT &&
+          //     name &&
+          //     nationalId &&
+          //     phone &&
+          //     email
+          //   ) {
+          //     return [
+          //       {
+          //         name,
+          //         phone,
+          //         nationalId,
+          //         email,
+          //       },
+          //     ]
+          //   }
 
-            return []
-          },
+          //   return []
+          // },
         }),
       ],
     }),

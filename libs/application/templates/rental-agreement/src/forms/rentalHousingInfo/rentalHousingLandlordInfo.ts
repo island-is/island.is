@@ -31,12 +31,12 @@ export const RentalHousingLandlordInfo = buildSubSection({
             nationalIdWithName: {
               component: 'nationalIdWithName',
               required: true,
-              options: (application, activeField) => {
-                console.log('ExternalData: ', application.externalData)
-                console.log('AppAnswers: ', application.answers.landlordInfo)
-                console.log('ActiveField', activeField?.nationalIdWithName)
-                return []
-              },
+              // options: (application, activeField) => {
+              //   console.log('ExternalData: ', application.externalData)
+              //   console.log('AppAnswers: ', application.answers.landlordInfo)
+              //   console.log('ActiveField', activeField?.nationalIdWithName)
+              //   return []
+              // },
             },
             phone: {
               component: 'phone',
@@ -85,6 +85,7 @@ export const RentalHousingLandlordInfo = buildSubSection({
               'email',
             ],
           },
+          // TODO: Remove if not needed
           // getStaticTableData: (application) => {
           //   const name = getValueViaPath<string>(
           //     application.externalData,
