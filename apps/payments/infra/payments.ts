@@ -1,7 +1,7 @@
 import { ref, service, ServiceBuilder } from '../../../infra/src/dsl/dsl'
 
 const namespace = 'payments'
-const serviceName = `${namespace}`
+const serviceName = namespace
 const image = `${namespace}-image`
 
 const basepath = '/greida'
