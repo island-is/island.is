@@ -5,17 +5,22 @@ import {
   Form,
   FormModes,
   Schema,
-  SectionChildren,
 } from '@island.is/application/types'
 import {
   Box,
   GridColumn,
   GridContainer,
   GridRow,
-  Text,
 } from '@island.is/island-ui/core'
 
+import { useLocale } from '@island.is/localization'
+import { useUserInfo } from '@island.is/react-spa/bff'
+import { ErrorShell } from '../components/ErrorShell'
+import FormStepper from '../components/FormStepper'
 import Screen from '../components/Screen'
+import { useHeaderInfo } from '../context/HeaderInfoProvider'
+import { useApplicationTitle } from '../hooks/useApplicationTitle'
+import { useHistorySync } from '../hooks/useHistorySync'
 import {
   ApplicationReducer,
   initializeReducer,
@@ -30,6 +35,7 @@ import { useAuth } from '@island.is/auth/react'
 import { useLocale } from '@island.is/localization'
 import { MessageDescriptor } from 'react-intl'
 import FormStepper from '../components/FormStepper'
+import { getFormComponent } from '../utils'
 
 export const FormShell: FC<
   React.PropsWithChildren<{
@@ -41,7 +47,7 @@ export const FormShell: FC<
 > = ({ application, nationalRegistryId, form, dataSchema }) => {
   const [updateForbidden, setUpdateForbidden] = useState(false)
   const { setInfo } = useHeaderInfo()
-  const { userInfo: user } = useAuth()
+  const user = useUserInfo()
   const [state, dispatch] = useReducer(
     ApplicationReducer,
     {

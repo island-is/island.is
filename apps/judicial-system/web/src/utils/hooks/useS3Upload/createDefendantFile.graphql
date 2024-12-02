@@ -1,0 +1,5 @@
+mutation CreateDefendantFile($input: CreateDefendantFileInput!) {
+  createDefendantFile(input: $input) {
+    id
+  }
+}

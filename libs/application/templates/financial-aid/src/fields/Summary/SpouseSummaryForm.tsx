@@ -22,6 +22,8 @@ import {
 } from './index'
 import withLogo from '../Logo/Logo'
 import { useFormContext } from 'react-hook-form'
+import { useUserInfo } from '@island.is/react-spa/bff'
+
 
 const SpouseSummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
   const { id, answers, externalData } = application
@@ -33,6 +35,8 @@ const SpouseSummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
   const nationalId =
     externalData.nationalRegistrySpouse.data?.nationalId ||
     answers?.relationshipStatus?.spouseNationalId
+  const userInfo = useUserInfo()
+
 
   const { userInfo } = useAuth()
   useEffect(() => {
