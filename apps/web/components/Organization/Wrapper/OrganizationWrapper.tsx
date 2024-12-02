@@ -31,6 +31,8 @@ import {
 } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import {
+  BoostChatPanel,
+  boostChatPanelEndpoints,
   DefaultHeaderProps,
   Footer as WebFooter,
   HeadWithSocialSharing,
@@ -957,6 +959,20 @@ export const OrganizationChatPanel = ({
     )
   }
 
+  const organizationIdWithBoost = organizationIds.find((id) => {
+    return id in boostChatPanelEndpoints
+  })
+
+  if (organizationIdWithBoost) {
+    return (
+      <BoostChatPanel
+        endpoint={
+          organizationIdWithBoost as keyof typeof boostChatPanelEndpoints
+        }
+      />
+    )
+  }
+
   return null
 }
 
@@ -1087,8 +1103,7 @@ export const OrganizationWrapper: React.FC<
   const router = useRouter()
   const { width } = useWindowSize()
   const [isMobile, setIsMobile] = useState<boolean | undefined>()
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore make web strict
+
   usePlausiblePageview(organizationPage.organization?.trackingDomain)
 
   useEffect(() => {
@@ -1113,6 +1128,18 @@ export const OrganizationWrapper: React.FC<
   const SidebarContainer = stickySidebar ? Sticky : Box
 
   const sidebarCards = organizationPage.sidebarCards ?? []
+
+  const namespace = useMemo(() => {
+    try {
+      return JSON.parse(
+        organizationPage.organization?.namespace?.fields || '{}',
+      )
+    } catch {
+      return {}
+    }
+  }, [organizationPage.organization?.namespace?.fields])
+
+  const n = useNamespace(namespace)
 
   return (
     <>
@@ -1382,11 +1409,13 @@ export const OrganizationWrapper: React.FC<
           />
         </Box>
       )}
-      <OrganizationChatPanel
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore make web strict
-        organizationIds={[organizationPage?.organization?.id]}
-      />
+      {n('enableOrganizationChatPanelForOrgPages', true) && (
+        <OrganizationChatPanel
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore make web strict
+          organizationIds={[organizationPage?.organization?.id]}
+        />
+      )}
     </>
   )
 }
