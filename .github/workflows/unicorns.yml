@@ -1,9 +1,7 @@
 name: CI/CD pipeline
 on:
-  workflow_dispatch:
-  push:
-    branches:
-      - 'unicorn-pipe' #temp for debugging and testing
+  pull_request: {}
+  workflow_dispatch: {}
 defaults:
   run:
     shell: bash
