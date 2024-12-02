@@ -9,7 +9,7 @@ import { useLocale } from '@island.is/localization'
 import { EmptyState } from '@island.is/portals/my-pages/core'
 import { useGetListsForUser, useGetSignedList } from '../../../hooks'
 import { Skeleton } from '../../../skeletons'
-import { useAuth } from '@island.is/auth/react'
+import { useUserInfo } from '@island.is/react-spa/bff'
 import { sortAlpha } from '@island.is/shared/utils'
 import { m } from '../../../lib/messages'
 import SignedList from '../SignedList'
@@ -20,7 +20,7 @@ const SigneeView = ({
 }: {
   currentCollection: SignatureCollection
 }) => {
-  const { userInfo: user } = useAuth()
+  const user = useUserInfo()
   const { formatMessage } = useLocale()
   const { signedLists, loadingSignedLists } = useGetSignedList()
   const { listsForUser, loadingUserLists, getListsForUserError } =
