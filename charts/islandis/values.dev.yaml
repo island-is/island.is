@@ -422,6 +422,7 @@ api:
     - 'application-system'
     - 'consultation-portal'
     - 'portals-admin'
+    - 'service-portal'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -2312,6 +2313,7 @@ services-bff-portals-admin:
     REDIS_URL_NODE_01: '["clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379"]'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
+    - 'nginx-ingress-external'
     - 'identity-server'
   grantNamespacesEnabled: true
   healthCheck:
@@ -2397,6 +2399,7 @@ services-bff-portals-my-pages:
     REDIS_URL_NODE_01: '["clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379"]'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
+    - 'nginx-ingress-external'
     - 'identity-server'
   grantNamespacesEnabled: true
   healthCheck:
