@@ -423,6 +423,7 @@ api:
     - 'consultation-portal'
     - 'portals-admin'
     - 'service-portal'
+    - 'portals-my-pages'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
