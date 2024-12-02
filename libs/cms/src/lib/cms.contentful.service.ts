@@ -1338,6 +1338,7 @@ export class CmsContentfulService {
             label: node.label,
             childLinks: node.childNodes.map((childNode) => {
               if (childNode.type === SitemapTreeNodeType.CATEGORY) {
+                // Category at depth 3 should be empty so it gets pruned at a later stage
                 return {
                   label: '',
                   href: '',
@@ -1371,6 +1372,7 @@ export class CmsContentfulService {
         if (node.type === SitemapTreeNodeType.URL) {
           return {
             label: node.label,
+            href: node.url,
             childLinks: [],
           }
         }
@@ -1410,6 +1412,7 @@ export class CmsContentfulService {
       ) {
         continue
       }
+
       for (const node of nodeList) {
         node.label = parentSubpage.fields.title
         node.href = `/${getOrganizationPageUrlPrefix(input.lang)}/${
