@@ -30,13 +30,6 @@ export const RentalHousingLandlordInfo = buildSubSection({
           fields: {
             nationalIdWithName: {
               component: 'nationalIdWithName',
-              required: true,
-              // options: (application, activeField) => {
-              //   console.log('ExternalData: ', application.externalData)
-              //   console.log('AppAnswers: ', application.answers.landlordInfo)
-              //   console.log('ActiveField', activeField?.nationalIdWithName)
-              //   return []
-              // },
             },
             phone: {
               component: 'phone',
@@ -66,11 +59,7 @@ export const RentalHousingLandlordInfo = buildSubSection({
           },
           table: {
             format: {
-              isRepresentative: (value) =>
-                value.includes(YES) ? '(umboðsaðili)' : '',
-              nationalIdWithName: (value) => value,
               phone: (value) => formatPhoneNumber(value),
-              email: (value) => value,
             },
             header: [
               landlordDetails.nameInputLabel,
@@ -78,12 +67,7 @@ export const RentalHousingLandlordInfo = buildSubSection({
               landlordDetails.phoneInputLabel,
               landlordDetails.emailInputLabel,
             ],
-            rows: [
-              'nationalIdWithName.name',
-              'nationalIdWithName.nationalId',
-              'phone',
-              'email',
-            ],
+            rows: ['name', 'nationalId', 'phone', 'email'],
           },
           // TODO: Remove if not needed
           // getStaticTableData: (application) => {
