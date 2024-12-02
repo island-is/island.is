@@ -18,7 +18,6 @@ jobs:
     outputs:
       IS_UNICORN: ${{ steps.unicorn-affected.outputs.IS_UNICORN }}
     steps:
-
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0
@@ -50,6 +49,3 @@ jobs:
               echo "No unicorn"
               echo IS_UNICORN=false >> "$GITHUB_OUTPUT"
           fi
-
-
-
