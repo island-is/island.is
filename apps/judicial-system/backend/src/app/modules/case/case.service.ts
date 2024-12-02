@@ -927,8 +927,12 @@ export class CaseService {
           (caseFile) =>
             caseFile.state === CaseFileState.STORED_IN_RVG &&
             caseFile.key &&
-            caseFile.category &&
-            [CaseFileCategory.RULING].includes(caseFile.category),
+            caseFile.category === CaseFileCategory.RULING &&
+            theCase.indictmentRulingDecision &&
+            [
+              CaseIndictmentRulingDecision.RULING,
+              CaseIndictmentRulingDecision.DISMISSAL,
+            ].includes(theCase.indictmentRulingDecision),
         )
         .map((caseFile) => ({
           type: MessageType.DELIVERY_TO_COURT_CASE_FILE,
