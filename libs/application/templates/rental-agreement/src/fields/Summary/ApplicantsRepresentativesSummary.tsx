@@ -43,7 +43,7 @@ export const ApplicantsRepresentativesSummary = ({ answers }: Props) => {
           >
             {landlordRepresentatives?.map((landlordRep) => {
               return (
-                <Fragment key={crypto.randomUUID()}>
+                <Fragment key={landlordRep.nationalIdWithName.nationalId}>
                   <GridRow className={gridRow}>
                     <GridColumn span={['12/12']}>
                       <KeyValue
@@ -85,7 +85,7 @@ export const ApplicantsRepresentativesSummary = ({ answers }: Props) => {
           >
             {tenantRepresentatives.map((tenantRep) => {
               return (
-                <Fragment key={crypto.randomUUID()}>
+                <Fragment key={tenantRep.nationalIdWithName.nationalId}>
                   <GridRow className={gridRow}>
                     <GridColumn span={['12/12']}>
                       <KeyValue

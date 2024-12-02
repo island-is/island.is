@@ -11,7 +11,6 @@ import {
   TRUE,
 } from './constants'
 import * as m from './messages'
-import { x } from 'pdfkit'
 
 const isValidMeterNumber = (value: string) => {
   const meterNumberRegex = /^[0-9]{1,20}$/

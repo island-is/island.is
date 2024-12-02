@@ -179,23 +179,6 @@ export const RentalInfoSummary = ({ answers }: Props) => {
             </>
           )}
       </GridRow>
-
-      {/* <Divider />
-
-        <GridRow className={gridRow}>
-          <GridColumn span={['12/12', '4/12']}>
-            <KeyValue
-              label={summary.paymentTransactionTypeLabel}
-              value={'---'}
-            />
-          </GridColumn>
-          <GridColumn span={['12/12', '4/12']}>
-            <KeyValue
-              label={summary.paymentTransactionAccountLabel}
-              value={'---'}
-            />
-          </GridColumn>
-        </GridRow> */}
     </SummarySection>
   )
 }

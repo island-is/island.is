@@ -166,10 +166,15 @@ export const summary = defineMessages({
     defaultMessage: 'Fermetrar',
     description: 'Property size label',
   },
-  propertyCategoryLabel: {
-    id: 'ra.application:summary.propertyCategoryLabel',
+  propertyClassLabel: {
+    id: 'ra.application:summary.propertyClassLabel',
     defaultMessage: 'Flokkun húsnæðis',
-    description: 'Property category label',
+    description: 'Property classification label',
+  },
+  propertyClassGroupLabel: {
+    id: 'ra.application:summary.propertyClassGroupLabel',
+    defaultMessage: 'Hópur',
+    description: 'Property classification group label',
   },
   propertyDescriptionLabel: {
     id: 'ra.application:summary.propertyDescriptionLabel',

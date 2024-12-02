@@ -1,10 +1,14 @@
 import { GridColumn, GridRow } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { RentalAgreement } from '../../lib/dataSchema'
-import { RentalHousingConditionInspector } from '../../lib/constants'
 import {
-  getPropertyCategoryClassOptions,
-  getPropertyCategoryTypeOptions,
+  RentalHousingCategoryClass,
+  RentalHousingConditionInspector,
+} from '../../lib/constants'
+import {
+  getPropertyTypeOptions,
+  getPropertyClassOptions,
+  getPropertyClassGroupOptions,
 } from '../../lib/utils'
 import { summary } from '../../lib/messages'
 import { KeyValue } from './KeyValue'
@@ -20,13 +24,19 @@ export const PropertyInfoSummary = ({ answers }: Props) => {
   const { formatMessage } = useLocale()
 
   const propertyType = (answer: string) => {
-    const options = getPropertyCategoryTypeOptions()
+    const options = getPropertyTypeOptions()
     const matchingOption = options.find((option) => option.value === answer)
     return matchingOption ? matchingOption.label : '-'
   }
 
-  const propertyCategory = (answer: string) => {
-    const options = getPropertyCategoryClassOptions()
+  const propertyClass = (answer: string) => {
+    const options = getPropertyClassOptions()
+    const matchingOption = options.find((option) => option.value === answer)
+    return matchingOption ? matchingOption.label : '-'
+  }
+
+  const propertyClassGroup = (answer: string) => {
+    const options = getPropertyClassGroupOptions()
     const matchingOption = options.find((option) => option.value === answer)
     return matchingOption ? matchingOption.label : '-'
   }
@@ -60,16 +70,29 @@ export const PropertyInfoSummary = ({ answers }: Props) => {
       <Divider />
 
       <GridRow className={gridRow}>
-        <GridColumn span={['12/12']}>
+        <GridColumn span={['12/12', '4/12']}>
           <KeyValue
-            label={summary.propertyCategoryLabel}
+            label={summary.propertyClassLabel}
             value={
-              propertyCategory(
-                answers.registerProperty.categoryClass as string,
-              ) || '-'
+              propertyClass(answers.registerProperty.categoryClass as string) ||
+              '-'
             }
           />
         </GridColumn>
+        {answers.registerProperty.categoryClass ===
+          RentalHousingCategoryClass.SPECIAL_GROUPS &&
+          answers.registerProperty.categoryClassGroup && (
+            <GridColumn span={['12/12', '4/12']}>
+              <KeyValue
+                label={summary.propertyClassGroupLabel}
+                value={
+                  propertyClassGroup(
+                    answers.registerProperty.categoryClassGroup as string,
+                  ) || '-'
+                }
+              />
+            </GridColumn>
+          )}
       </GridRow>
 
       <Divider />
