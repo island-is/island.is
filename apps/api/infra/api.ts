@@ -477,5 +477,6 @@ export const serviceSetup = (services: {
       'application-system',
       'consultation-portal',
       'portals-admin',
+      'service-portal',
     )
 }
