@@ -4,6 +4,7 @@ import {
   buildTableRepeaterField,
   YES,
 } from '@island.is/application/core'
+import { formatPhoneNumber } from '@island.is/application/ui-components'
 import { formatNationalId } from '../../lib/utils'
 import { landlordDetails } from '../../lib/messages'
 
@@ -23,16 +24,8 @@ export const RentalHousingLandlordInfo = buildSubSection({
           marginTop: 1,
           maxRows: 10,
           fields: {
-            name: {
-              component: 'input',
-              label: landlordDetails.nameInputLabel,
-              width: 'half',
-            },
-            nationalId: {
-              component: 'input',
-              label: landlordDetails.nationalIdInputLabel,
-              format: '######-####',
-              width: 'half',
+            NationalIdWithName: {
+              component: 'nationalIdWithName',
             },
             phone: {
               component: 'phone',
@@ -60,9 +53,7 @@ export const RentalHousingLandlordInfo = buildSubSection({
           },
           table: {
             format: {
-              isRepresentative: (value) => (value.includes(YES) ? 'Check' : ''),
-              name: (value: string) => value,
-              phone: (value: string) => value,
+              formatPhoneNumber: (value: string) => formatPhoneNumber(value),
               nationalId: (value: string) => formatNationalId(value),
             },
             header: [

@@ -41,18 +41,20 @@ export const ApplicantsRepresentativesSummary = ({ answers }: Props) => {
           <SummarySection
             sectionLabel={formatMessage(summary.landlordsRepresentativeLabel)}
           >
-            {landlordRepresentatives.map((landlordRep, index) => {
+            {landlordRepresentatives.map((landlordRep) => {
               return (
-                <Fragment key={`${index}_${landlordRep.nationalId}`}>
+                <Fragment key={landlordRep.nationalIdWithName?.nationalId}>
                   <GridRow className={gridRow}>
                     <GridColumn span={['12/12']}>
                       <KeyValue
                         labelVariant="h5"
                         labelAs="p"
-                        label={landlordRep.name as string}
+                        label={landlordRep.nationalIdWithName?.name as string}
                         value={`${formatMessage(
                           summary.nationalIdLabel,
-                        )}${formatNationalId(landlordRep.nationalId || '-')}`}
+                        )}${formatNationalId(
+                          landlordRep.nationalIdWithName?.nationalId || '-',
+                        )}`}
                         gap={'smallGutter'}
                       />
                     </GridColumn>
@@ -81,18 +83,20 @@ export const ApplicantsRepresentativesSummary = ({ answers }: Props) => {
           <SummarySection
             sectionLabel={formatMessage(summary.tenantsRepresentativeLabel)}
           >
-            {tenantRepresentatives.map((tenantRep, index) => {
+            {tenantRepresentatives.map((tenantRep) => {
               return (
-                <Fragment key={`${index}_${tenantRep.nationalId}`}>
+                <Fragment key={tenantRep.nationalIdWithName?.nationalId}>
                   <GridRow className={gridRow}>
                     <GridColumn span={['12/12']}>
                       <KeyValue
                         labelVariant="h5"
                         labelAs="p"
-                        label={tenantRep.name as string}
+                        label={tenantRep.nationalIdWithName?.name as string}
                         value={`${formatMessage(
                           summary.nationalIdLabel,
-                        )}${formatNationalId(tenantRep.nationalId || '-')}`}
+                        )}${formatNationalId(
+                          tenantRep.nationalIdWithName?.nationalId || '-',
+                        )}`}
                         gap={'smallGutter'}
                       />
                     </GridColumn>

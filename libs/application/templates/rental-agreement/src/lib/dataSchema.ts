@@ -83,8 +83,12 @@ const registerProperty = z
 const landlordInfo = z.object({
   table: z.array(
     z.object({
-      name: z.string().optional(),
-      nationalId: z.string().optional(),
+      nationalIdWithName: z
+        .object({
+          name: z.string().optional(),
+          nationalId: z.string().optional(),
+        })
+        .optional(),
       phone: z.string().optional(),
       email: z.string().optional(),
       isRepresentative: z.string().array().optional(),
@@ -95,8 +99,12 @@ const landlordInfo = z.object({
 const tenantInfo = z.object({
   table: z.array(
     z.object({
-      name: z.string().optional(),
-      nationalId: z.string().optional(),
+      nationalIdWithName: z
+        .object({
+          name: z.string().optional(),
+          nationalId: z.string().optional(),
+        })
+        .optional(),
       phone: z.string().optional(),
       email: z.string().optional(),
       isRepresentative: z.string().array().optional(),

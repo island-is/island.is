@@ -23,16 +23,8 @@ export const RentalHousingTenantInfo = buildSubSection({
           editField: true,
           marginTop: 1,
           fields: {
-            name: {
-              component: 'input',
-              label: tenantDetails.nameInputLabel,
-              width: 'half',
-            },
-            nationalId: {
-              component: 'input',
-              label: tenantDetails.nationalIdInputLabel,
-              format: '######-####',
-              width: 'half',
+            NationalIdWithName: {
+              component: 'nationalIdWithName',
             },
             phone: {
               component: 'phone',
@@ -60,11 +52,8 @@ export const RentalHousingTenantInfo = buildSubSection({
           },
           table: {
             format: {
-              isRepresentative: (value) =>
-                value.includes(YES) ? 'Umboðsaðili' : '',
-              name: (value: string) => value,
-              phone: (value) => formatPhoneNumber(value),
-              nationalId: (value) => formatNationalId(value),
+              formatPhoneNumber: (value: string) => formatPhoneNumber(value),
+              nationalId: (value: string) => formatNationalId(value),
             },
             header: [
               tenantDetails.nameInputLabel,

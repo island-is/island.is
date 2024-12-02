@@ -36,18 +36,20 @@ export const ApplicantsSummary = ({ answers }: Props) => {
             : formatMessage(summary.landlordsHeader)
         }
       >
-        {landlordListWithoutRepresentatives.map((landlord, index) => {
+        {landlordListWithoutRepresentatives.map((landlord) => {
           return (
-            <Fragment key={`${index}_${landlord.nationalId}`}>
+            <Fragment key={landlord.nationalIdWithName?.nationalId}>
               <GridRow className={gridRow}>
                 <GridColumn span={['12/12']}>
                   <KeyValue
                     labelVariant="h5"
                     labelAs="p"
-                    label={landlord.name as string}
+                    label={landlord.nationalIdWithName?.name as string}
                     value={`${formatMessage(
                       summary.nationalIdLabel,
-                    )}${formatNationalId(landlord.nationalId || '-')}`}
+                    )}${formatNationalId(
+                      landlord.nationalIdWithName?.nationalId || '-',
+                    )}`}
                     gap={'smallGutter'}
                   />
                 </GridColumn>
@@ -77,18 +79,20 @@ export const ApplicantsSummary = ({ answers }: Props) => {
             : formatMessage(summary.tenantsHeader)
         }
       >
-        {tenantListWithoutRepresentatives.map((tenant, index) => {
+        {tenantListWithoutRepresentatives.map((tenant) => {
           return (
-            <Fragment key={`${index}_${tenant.nationalId}`}>
+            <Fragment key={tenant.nationalIdWithName?.nationalId}>
               <GridRow className={gridRow}>
                 <GridColumn span={['12/12']}>
                   <KeyValue
                     labelVariant="h5"
                     labelAs="p"
-                    label={tenant.name as string}
+                    label={tenant.nationalIdWithName?.name as string}
                     value={`${formatMessage(
                       summary.nationalIdLabel,
-                    )}${formatNationalId(tenant.nationalId || '-')}`}
+                    )}${formatNationalId(
+                      tenant.nationalIdWithName?.nationalId || '-',
+                    )}`}
                     gap={'smallGutter'}
                   />
                 </GridColumn>
