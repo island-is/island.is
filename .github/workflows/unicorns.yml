@@ -18,16 +18,17 @@ jobs:
     outputs:
       IS_UNICORN: ${{ steps.unicorn-affected.outputs.IS_UNICORN }}
     steps:
+
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
       - name: Get cache
         id: get-cache
         uses: ./.github/actions/get-cache
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           enable-cache: 'node_modules,generated-files'
-
-      - uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
 
       - uses: actions/setup-node@v4
         with:
