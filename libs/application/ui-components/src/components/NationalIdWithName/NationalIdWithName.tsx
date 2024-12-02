@@ -13,7 +13,10 @@ import {
   Query,
   RskCompanyInfoInput,
 } from '@island.is/api/schema'
-import { InputController } from '@island.is/shared/form-fields'
+import {
+  InputController,
+  PhoneInputController,
+} from '@island.is/shared/form-fields'
 import { useFormContext } from 'react-hook-form'
 import * as kennitala from 'kennitala'
 import debounce from 'lodash/debounce'
@@ -27,6 +30,10 @@ interface NationalIdWithNameProps {
   customId?: string
   customNationalIdLabel?: StaticText
   customNameLabel?: StaticText
+  phoneLabel?: StaticText
+  emailLabel?: StaticText
+  phoneRequired?: boolean
+  emailRequired?: boolean
   onNationalIdChange?: (s: string) => void
   onNameChange?: (s: string) => void
   nationalIdDefaultValue?: string
@@ -35,6 +42,8 @@ interface NationalIdWithNameProps {
   minAgePerson?: number
   searchPersons?: boolean
   searchCompanies?: boolean
+  phone?: boolean
+  email?: boolean
 }
 
 export const NationalIdWithName: FC<
@@ -46,6 +55,10 @@ export const NationalIdWithName: FC<
   required,
   customId = '',
   customNationalIdLabel = '',
+  phoneLabel = '',
+  emailLabel = '',
+  phoneRequired = false,
+  emailRequired = false,
   customNameLabel = '',
   onNationalIdChange,
   onNameChange,
@@ -55,6 +68,8 @@ export const NationalIdWithName: FC<
   minAgePerson,
   searchPersons = true,
   searchCompanies = false,
+  phone = false,
+  email = false,
 }) => {
   const fieldId = customId.length > 0 ? customId : id
   const nameField = `${fieldId}.name`
@@ -236,6 +251,37 @@ export const NationalIdWithName: FC<
           disabled
         />
       </GridColumn>
+      {(phone || email) && (
+        <GridRow>
+          {phone && (
+            <GridColumn span={['1/1', '1/1', '1/1', '1/2']} paddingTop={2}>
+              <PhoneInputController
+                id={`${nationalIdField}-phone`}
+                label={formatMessage(phoneLabel)}
+                defaultValue={defaultNationalId}
+                required={phoneRequired}
+                backgroundColor="blue"
+                error={nationalIdFieldErrors}
+                disabled={disabled}
+              />
+            </GridColumn>
+          )}
+          {email && (
+            <GridColumn span={['1/1', '1/1', '1/1', '1/2']} paddingTop={2}>
+              <InputController
+                id={`${nationalIdField}-email`}
+                label={formatMessage(emailLabel)}
+                defaultValue={defaultNationalId}
+                type="email"
+                required={emailRequired}
+                backgroundColor="blue"
+                error={nationalIdFieldErrors}
+                disabled={disabled}
+              />
+            </GridColumn>
+          )}
+        </GridRow>
+      )}
     </GridRow>
   )
 }

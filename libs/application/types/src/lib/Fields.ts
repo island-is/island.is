@@ -89,6 +89,8 @@ export type RepeaterItem = {
    */
   displayInTable?: boolean
   label?: StaticText
+  phoneLabel?: StaticText
+  emailLabel?: StaticText
   placeholder?: StaticText
   options?: TableRepeaterOptions
   backgroundColor?: 'blue' | 'white'
@@ -99,6 +101,10 @@ export type RepeaterItem = {
     activeField?: Record<string, string>,
   ) => boolean
   dataTestId?: string
+  phone?: boolean
+  phoneRequired?: boolean
+  email?: boolean
+  emailRequired?: boolean
   readonly?:
     | boolean
     | ((
@@ -621,6 +627,8 @@ export type TableRepeaterField = BaseField & {
   marginBottom?: ResponsiveProp<Space>
   titleVariant?: TitleVariants
   fields: Record<string, RepeaterItem>
+  phone?: boolean
+  email?: boolean
   /**
    * Maximum rows that can be added to the table.
    * When the maximum is reached, the button to add a new row is disabled.
