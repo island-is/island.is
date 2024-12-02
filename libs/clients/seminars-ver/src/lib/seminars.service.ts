@@ -1,17 +1,31 @@
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { Injectable } from '@nestjs/common'
-import { CourseApi, CourseDTO } from '../../gen/fetch'
+import { CompanyApi, CompanyDTO, CourseApi, CourseDTO } from '../../gen/fetch'
 
 @Injectable()
 export class SeminarsClientService {
-  constructor(private readonly namskeidApi: CourseApi) {}
+  constructor(
+    private readonly courseApi: CourseApi,
+    private readonly companyApi: CompanyApi,
+  ) {}
 
-  private namskeidApiWithAuth = (user: User) =>
-    this.namskeidApi.withMiddleware(new AuthMiddleware(user as Auth))
+  private courseApiWithAuth = (user: User) =>
+    this.courseApi.withMiddleware(new AuthMiddleware(user as Auth))
+  private companyApiWithAuth = (user: User) =>
+    this.companyApi.withMiddleware(new AuthMiddleware(user as Auth))
 
   async getSeminar(auth: User, courseId: number): Promise<CourseDTO> {
-    return await this.namskeidApiWithAuth(auth).apiCourseCourseIdGet({
+    return await this.courseApiWithAuth(auth).apiCourseCourseIdGet({
       courseId,
+    })
+  }
+
+  async isValidCompany(
+    auth: User,
+    nationalId: string,
+  ): Promise<Array<CompanyDTO>> {
+    return await this.companyApiWithAuth(auth).apiCompanyGet({
+      nationalId,
     })
   }
 }
