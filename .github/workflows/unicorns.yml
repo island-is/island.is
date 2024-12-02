@@ -1,0 +1,48 @@
+name: CI/CD pipeline
+on:
+  pull_request: {}
+  workflow_dispatch: {}
+defaults:
+  run:
+    shell: bash
+jobs:
+  check-unicorn:
+    name: Check if app is on unicorn track
+    runs-on: ec2-runners
+    container:
+      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
+    timeout-minutes: 35
+
+    outputs:
+      IS_UNICORN: ${{ steps.unicorn-affected.outputs.IS_UNICORN }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Get cache
+        id: get-cache
+        uses: ./.github/actions/get-cache
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          enable-cache: 'node_modules,generated-files'
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: 'package.json'
+
+      - name: Setup yarn
+        run: corepack enable
+
+      - name: Check unicorn affected
+        id: unicorn-affected
+        run: |
+          node scripts/ci/unicorn-utils.mjs
+          UNICORN=$(node scripts/ci/unicorn-utils.mjs)
+          if [ "$UNICORN" == 'true' ]; then
+              echo "unicorn is detected"
+              echo IS_UNICORN=true >> "$GITHUB_OUTPUT"
+          else
+              echo "No unicorn"
+              echo IS_UNICORN=false >> "$GITHUB_OUTPUT"
+          fi
