@@ -12,8 +12,7 @@
     "url": "https://github.com/island-is/island.is.git"
   },
   "workspaces": [
-    "apps/native/*",
-    "apps/mobile/*"
+    "apps/native/*"
   ],
   "scripts": {
     "nx": "nx",
