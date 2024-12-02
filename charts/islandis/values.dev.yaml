@@ -584,6 +584,7 @@ application-system-api:
     APPLICATION_ATTACHMENT_BUCKET: 'island-is-dev-storage-application-system'
     AUTH_PUBLIC_API_URL: 'https://identity-server.dev01.devland.is/api'
     CLIENT_LOCATION_ORIGIN: 'https://beta.dev01.devland.is/umsoknir'
+    CODE_OWNER: 'norda-applications'
     COMPANY_REGISTRY_REDIS_NODES: '["clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379"]'
     COMPANY_REGISTRY_XROAD_PROVIDER_ID: 'IS-DEV/GOV/10006/Skatturinn/ft-v1'
     CONTENTFUL_HOST: 'preview.contentful.com'
@@ -2539,6 +2540,7 @@ services-sessions-cleanup:
     - 'node'
   enabled: true
   env:
+    CODE_OWNER: 'aranja'
     DB_HOST: 'postgres-applications.internal'
     DB_NAME: 'services_sessions'
     DB_REPLICAS_HOST: 'postgres-applications-reader.internal'
@@ -2600,6 +2602,7 @@ services-sessions-worker:
     - 'node'
   enabled: true
   env:
+    CODE_OWNER: 'aranja'
     DB_EXTENSIONS: 'uuid-ossp'
     DB_HOST: 'postgres-applications.internal'
     DB_NAME: 'services_sessions'
@@ -2824,6 +2827,7 @@ services-university-gateway-worker:
     - 'node'
   enabled: true
   env:
+    CODE_OWNER: 'origo'
     DB_HOST: 'postgres-applications.internal'
     DB_NAME: 'services_university_gateway'
     DB_REPLICAS_HOST: 'postgres-applications-reader.internal'
