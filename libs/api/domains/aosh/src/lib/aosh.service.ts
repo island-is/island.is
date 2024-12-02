@@ -6,7 +6,7 @@ import { VehicleMiniDto, VehicleSearchApi } from '@island.is/clients/vehicles'
 @Injectable()
 export class AoshService {
   constructor(
-    // private readonly AoshClientService: AoshClientService,
+    // private readonly seminarsClientService: SeminarsClientService,
     private readonly vehiclesApi: VehicleSearchApi,
   ) {}
 
