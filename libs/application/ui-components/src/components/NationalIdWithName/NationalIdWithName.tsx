@@ -17,11 +17,7 @@ import { InputController } from '@island.is/shared/form-fields'
 import { useFormContext } from 'react-hook-form'
 import * as kennitala from 'kennitala'
 import debounce from 'lodash/debounce'
-import {
-  COMPANY_IDENTITY_QUERY,
-  IDENTITY_QUERY,
-  VANISHED_IDENTITY_QUERY,
-} from './graphql/queries'
+import { COMPANY_IDENTITY_QUERY, IDENTITY_QUERY } from './graphql/queries'
 
 interface NationalIdWithNameProps {
   id: string
@@ -135,27 +131,6 @@ export const NationalIdWithName: FC<
     },
   )
 
-  // query to get name of vanished by national id
-  const [
-    getVanishedIdentity,
-    {
-      data: vanishedData,
-      loading: vanishedQueryLoading,
-      error: vanishedQueryError,
-    },
-  ] = useLazyQuery<Query, { input: IdentityInput }>(
-    gql`
-      ${VANISHED_IDENTITY_QUERY}
-    `,
-    {
-      onCompleted: (vanishedData) => {
-        // onNameChange && onNameChange(data.identity?.name ?? '')
-        // setValue(nameField, data.identity?.name ?? undefined)
-        console.log(vanishedData)
-      },
-    },
-  )
-
   // fetch and update name when user has entered a valid national id
   useEffect(() => {
     if (nationalIdInput.length === 10 && kennitala.isValid(nationalIdInput)) {
@@ -174,16 +149,8 @@ export const NationalIdWithName: FC<
           },
         },
       })
-
-      getVanishedIdentity({
-        variables: {
-          input: {
-            nationalId: nationalIdInput,
-          },
-        },
-      })
     }
-  }, [nationalIdInput, getIdentity, getCompanyIdentity, getVanishedIdentity])
+  }, [nationalIdInput, getIdentity, getCompanyIdentity])
 
   return (
     <GridRow>

@@ -14,11 +14,3 @@ export const COMPANY_IDENTITY_QUERY = `
     }
   }
 `
-
-export const VANISHED_IDENTITY_QUERY = `
-  query VanishedIdentityQuery($input: IdentityInput!) {
-    identity(input: $input) {
-      name
-    }
-  }
-`
