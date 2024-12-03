@@ -48,3 +48,9 @@ jobs:
               echo "No unicorn"
               echo IS_UNICORN=false >> "$GITHUB_OUTPUT"
           fi
+
+      - name: Create release branch
+        if: ${{ steps.unicorn-affected.outputs.IS_UNICORN == 'true' }}
+        run: |
+          node scripts/ci/create-release.mjs
+
