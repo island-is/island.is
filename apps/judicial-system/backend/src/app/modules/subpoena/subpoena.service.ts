@@ -353,16 +353,7 @@ export class SubpoenaService {
       user,
     )
 
-    if (
-      (!subpoenaInfo.serviceStatus ||
-        subpoenaInfo.serviceStatus === subpoena.serviceStatus) &&
-      (!subpoenaInfo.comment || subpoenaInfo.comment === subpoena.comment) &&
-      (!subpoenaInfo.servedBy || subpoenaInfo.servedBy === subpoena.servedBy) &&
-      (!subpoenaInfo.defenderNationalId ||
-        subpoenaInfo.defenderNationalId === subpoena.defenderNationalId) &&
-      (!subpoenaInfo.serviceDate ||
-        subpoenaInfo.serviceDate === subpoena.serviceDate)
-    ) {
+    if (!subpoenaInfo.isSubpoenaInfoChanged(subpoena)) {
       // The subpoena has not changed
       return subpoena
     }
