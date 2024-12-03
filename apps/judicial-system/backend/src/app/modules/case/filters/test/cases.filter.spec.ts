@@ -347,7 +347,6 @@ describe('getCasesQueryFilter', () => {
     expect(res).toStrictEqual({
       [Op.and]: [
         { is_archived: false },
-        { state: CaseState.ACCEPTED },
         {
           type: [
             CaseType.CUSTODY,
@@ -355,6 +354,7 @@ describe('getCasesQueryFilter', () => {
             CaseType.PAROLE_REVOCATION,
           ],
         },
+        { state: CaseState.ACCEPTED },
         {
           decision: [CaseDecision.ACCEPTING, CaseDecision.ACCEPTING_PARTIALLY],
         },
@@ -382,8 +382,8 @@ describe('getCasesQueryFilter', () => {
 
       [Op.or]: [
         {
-          state: CaseState.ACCEPTED,
           type: [...restrictionCases, CaseType.PAROLE_REVOCATION],
+          state: CaseState.ACCEPTED,
         },
         {
           type: indictmentCases,
