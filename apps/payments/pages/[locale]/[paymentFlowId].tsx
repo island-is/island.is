@@ -83,7 +83,7 @@ export const getServerSideProps: GetServerSideProps<PaymentPageProps> = async (
     false,
   )
 
-  if (isFeatureEnabled) {
+  if (!isFeatureEnabled) {
     return {
       notFound: true,
     }
