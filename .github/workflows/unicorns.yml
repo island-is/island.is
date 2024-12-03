@@ -1,31 +1,68 @@
-name: CI/CD pipeline
+name: Unicorn CI/CD pipeline
 on:
-  pull_request: {}
-  workflow_dispatch: {}
+  workflow_dispatch:
+  create:
+  pull_request:
+    types:
+      - opened
+      - synchronize
+      - labeled
+  pull_request_review:
+    types: [submitted]
+
+concurrency:
+  # See https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#example-using-a-fallback-value
+  group: push-unicorn${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
+
 defaults:
   run:
     shell: bash
 jobs:
+  check-approved:
+    name: Is PR approoved
+    runs-on: ubuntu-latest
+    outputs:
+      IS_APPROVED: ${{ steps.check-approoved.outputs.result }}
+    steps:
+      - name: Check if PR is approved
+        id: check-approoved
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            if (!context || !context.payload || !context.payload.pull_request) {
+              return false;
+            }
+            var reviews = await github.rest.pulls.listReviews({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: context.issue.number
+            });
+
+            if(!reviews || !reviews.data == null) {
+              return false;
+            }
+            var declined = reviews.data.filter(review => review.state != 'APPROVED').length > 0;
+            var pending = context.payload.pull_request.requested_teams.length > 0
+            console.log(!(declined && pending) ? 'Pr is approved' : 'Pr is not approved');
+            return !(declined && pending);
+      - name: output
+        run: echo "IS_APPROVED=${{ steps.check-approoved.outputs.result }}" >> $GITHUB_OUTPUT
+
   check-unicorn:
-    name: Check if app is on unicorn track
+    name: Is this a unicorn PR
+    needs: check-approved
+    if: ${{ needs.check-approved.outputs.IS_APPROVED }}"
     runs-on: ec2-runners
     container:
       image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
-    timeout-minutes: 35
-
-    outputs:
-      IS_UNICORN: ${{ steps.unicorn-affected.outputs.IS_UNICORN }}
+    timeout-minutes: 10
     steps:
+      - run: echo "selected runner = ${{ runner.name }}"
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-
-      - name: Get cache
-        id: get-cache
-        uses: ./.github/actions/get-cache
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          enable-cache: 'node_modules,generated-files'
 
       - uses: actions/setup-node@v4
         with:
@@ -34,15 +71,23 @@ jobs:
       - name: Setup yarn
         run: corepack enable
 
+      - name: Get cache
+        id: get-cache
+        uses: ./.github/actions/get-cache
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          enable-cache: 'node_modules,generated-files'
+
       - name: Check unicorn affected
         id: unicorn-affected
+        env:
+          BaseRef: ${{ github.base_ref }} #The target branch e.g. main (feature/unicorn-app)
+          HeadRef: ${{ github.head_ref }} #The branch being merged e.g. (unicorn-pipe-rel3)
         run: |
-          node scripts/ci/unicorn-utils.mjs
-          UNICORN=$(node scripts/ci/unicorn-utils.mjs)
-          if [ "$UNICORN" == 'true' ]; then
-              echo "unicorn is detected"
-              echo IS_UNICORN=true >> "$GITHUB_OUTPUT"
-          else
-              echo "No unicorn"
-              echo IS_UNICORN=false >> "$GITHUB_OUTPUT"
-          fi
+          echo "Comparing nx affected for $HeadRef using origin/$BaseRef as base branch"
+          echo IS_UNICORN=$(node scripts/ci/unicorn-utils.mjs "{\"baseBranch\": \"origin/$BaseRef\", \"mergeBranch\": \"$HeadRef\" }") >> "$GITHUB_OUTPUT"
+      - name: Results
+        run: |
+          echo "Unicorn = ${{ steps.unicorn-affected.outputs.IS_UNICORN }}"
+
+
