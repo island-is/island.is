@@ -23,7 +23,7 @@
       "dependsOn": [],
       "outputs": ["{options.bundleOutput}"],
       "options": {
-        "entryFile": "src/main.tsx",
+        "entryFile": "index.js",
         "platform": "ios",
         "bundleOutput": "dist/apps/native/app/ios/main.jsbundle"
       }
@@ -63,7 +63,7 @@
       "dependsOn": [],
       "outputs": ["{options.bundleOutput}"],
       "options": {
-        "entryFile": "src/main.tsx",
+        "entryFile": "index.js",
         "platform": "android",
         "bundleOutput": "dist/apps/native/app/android/main.jsbundle"
       }
