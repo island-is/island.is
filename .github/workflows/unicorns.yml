@@ -2,7 +2,7 @@ name: CI/CD pipeline
 on:
   push:
     branches:
-      - unicorn-pipe-rel
+      - unicorn-pipe-rel2
   # pull_request: {}
   workflow_dispatch: {}
 
