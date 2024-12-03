@@ -34,12 +34,7 @@ export const ExampleForm: Form = buildForm({
     buildSection({
       id: 'conditions',
       title: m.conditionsSection,
-      children: [
-        buildNationalIdWithNameField({
-          id: 'pickRole.electPerson',
-          title: '',
-        }),
-      ],
+      children: [],
     }),
     buildSection({
       id: 'tableRepeaterWithPhone',
