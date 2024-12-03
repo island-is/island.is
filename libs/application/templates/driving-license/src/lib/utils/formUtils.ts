@@ -50,19 +50,6 @@ export const hasNoDrivingLicenseInOtherCountry = (answers: FormValue) =>
   getValueViaPath(answers, 'otherCountry.drivingLicenseInOtherCountry') ===
     NO || true
 
-export const chooseDistrictCommissionerDescription = ({
-  answers,
-}: {
-  answers: FormValue
-}) => {
-  const applicationForTemp =
-    getValueViaPath(answers, 'applicationFor') === License.B_TEMP
-
-  return applicationForTemp
-    ? m.chooseDistrictCommissionerForTempLicense
-    : m.chooseDistrictCommissionerForFullLicense
-}
-
 export const hasCompletedPrerequisitesStep =
   (value = false) =>
   ({ application }: ApplicationContext) => {

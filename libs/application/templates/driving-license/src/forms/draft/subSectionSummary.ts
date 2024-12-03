@@ -128,30 +128,6 @@ export const subSectionSummary = buildSubSection({
             return (drivingAssessment.data as StudentAssessment).teacherName
           },
         }),
-        buildDividerField({
-          condition: needsHealthCertificateCondition(YES),
-        }),
-        buildDescriptionField({
-          id: 'bringalong',
-          title: m.overviewBringAlongTitle,
-          titleVariant: 'h4',
-          description: '',
-          condition: needsHealthCertificateCondition(YES),
-        }),
-        buildCheckboxField({
-          id: 'certificate',
-          title: '',
-          large: false,
-          backgroundColor: 'white',
-          defaultValue: [],
-          options: [
-            {
-              value: YES,
-              label: m.overviewBringCertificateData,
-            },
-          ],
-          condition: needsHealthCertificateCondition(YES),
-        }),
         buildDividerField({}),
         buildKeyValueField({
           label: m.pickupLocationTitle,

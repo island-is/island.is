@@ -6,10 +6,7 @@ import {
   buildSubSection,
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
-import {
-  chooseDistrictCommissionerDescription,
-  hasNoDrivingLicenseInOtherCountry,
-} from '../../lib/utils/formUtils'
+import { hasNoDrivingLicenseInOtherCountry } from '../../lib/utils/formUtils'
 
 import { Jurisdiction } from '@island.is/clients/driving-license'
 import { License, Pickup } from '../../lib/constants'
@@ -22,7 +19,10 @@ export const subSectionDelivery = buildSubSection({
     buildMultiField({
       id: 'info',
       title: m.pickupLocationTitle,
-      description: chooseDistrictCommissionerDescription,
+      description: ({ answers }) =>
+        answers.applicationFor === License.B_FULL_RENEWAL_65
+          ? m.chooseDistrictCommissionerForTempLicense
+          : m.chooseDistrictCommissionerForFullLicense,
       children: [
         buildSelectField({
           id: 'jurisdiction',
