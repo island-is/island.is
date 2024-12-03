@@ -24,12 +24,14 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Get cache
-        id: get-cache
-        uses: ./.github/actions/get-cache
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          enable-cache: 'node_modules,generated-files'
+      - name: yarn install
+        run: yarn install --immutable
+      # - name: Get cache
+      #   id: get-cache
+      #   uses: ./.github/actions/get-cache
+      #   with:
+      #     github-token: ${{ secrets.GITHUB_TOKEN }}
+      #     enable-cache: 'node_modules,generated-files'
 
       - uses: actions/setup-node@v4
         with:
