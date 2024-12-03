@@ -509,7 +509,9 @@ export class CmsElasticsearchService {
       },
     ]
 
-    let queryString = input.queryString ? input.queryString.toLowerCase() : ''
+    let queryString = input.queryString
+      ? input.queryString.trim().toLowerCase()
+      : ''
 
     if (input.lang === 'is') {
       queryString = queryString.replace('`', '')
@@ -520,6 +522,7 @@ export class CmsElasticsearchService {
         query: queryString + '*',
         fields: ['title^100', 'content'],
         analyze_wildcard: true,
+        default_operator: 'and',
       },
     })
 
@@ -531,14 +534,7 @@ export class CmsElasticsearchService {
           order: SortDirection.DESC,
         },
       },
-      // Sort items with equal values by ascending title order
-      { 'title.sort': { order: SortDirection.ASC } },
     ]
-
-    // Order by score first in case there is a query string
-    if (queryString.length > 0 && queryString !== '*') {
-      sort.unshift('_score')
-    }
 
     if (input.tags && input.tags.length > 0 && input.tagGroups) {
       must = must.concat(
