@@ -1,5 +1,4 @@
 import React, { FC, useEffect, useReducer, useState } from 'react'
-
 import {
   Application,
   Form,
@@ -12,7 +11,6 @@ import {
   GridContainer,
   GridRow,
 } from '@island.is/island-ui/core'
-
 import { useLocale } from '@island.is/localization'
 import { useUserInfo } from '@island.is/react-spa/bff'
 import { ErrorShell } from '../components/ErrorShell'
@@ -26,16 +24,7 @@ import {
   initializeReducer,
 } from '../reducer/ApplicationFormReducer'
 import { ActionTypes } from '../reducer/ReducerTypes'
-import { useHistorySync } from '../hooks/useHistorySync'
-import { useApplicationTitle } from '../hooks/useApplicationTitle'
-import { useHeaderInfo } from '../context/HeaderInfoProvider'
 import * as styles from './FormShell.css'
-import { ErrorShell } from '../components/ErrorShell'
-import { useAuth } from '@island.is/auth/react'
-import { useLocale } from '@island.is/localization'
-import { MessageDescriptor } from 'react-intl'
-import FormStepper from '../components/FormStepper'
-import { getFormComponent } from '../utils'
 
 export const FormShell: FC<
   React.PropsWithChildren<{

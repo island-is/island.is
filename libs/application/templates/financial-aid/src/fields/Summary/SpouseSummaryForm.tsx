@@ -1,8 +1,5 @@
 import React, { useEffect, useState } from 'react'
-
 import { Box } from '@island.is/island-ui/core'
-import { useAuth } from '@island.is/auth/react'
-
 import * as m from '../../lib/messages'
 import {
   ApproveOptions,
@@ -36,7 +33,6 @@ const SpouseSummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
     answers?.relationshipStatus?.spouseNationalId
   const userInfo = useUserInfo()
 
-  const { userInfo } = useAuth()
   useEffect(() => {
     setValue('spouseName', userInfo?.profile.name)
   }, [])
