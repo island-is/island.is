@@ -74,6 +74,27 @@ export class DefendantService {
     return message
   }
 
+  private getMessagesForIndictmentToPrisonAdminChanges(
+    defendant: Defendant,
+    caseId: string,
+  ): Message {
+    const messageType =
+      defendant.isSentToPrisonAdmin === true
+        ? DefendantNotificationType.INDICTMENT_SENT_TO_PRISON_ADMIN
+        : DefendantNotificationType.INDICTMENT_WITHDRAWN_FROM_PRISON_ADMIN
+
+    const message = {
+      type: MessageType.DEFENDANT_NOTIFICATION,
+      caseId,
+      elementId: defendant.id,
+      body: {
+        type: messageType,
+      },
+    }
+
+    return message
+  }
+
   private getUpdatedDefendant(
     numberOfAffectedRows: number,
     defendants: Defendant[],
@@ -143,19 +164,19 @@ export class DefendantService {
       return
     }
 
+    const messages: Message[] = []
+
     if (
       updatedDefendant.isDefenderChoiceConfirmed &&
       !oldDefendant.isDefenderChoiceConfirmed
     ) {
       // Defender choice was just confirmed by the court
-      const messages: Message[] = [
-        {
-          type: MessageType.DELIVERY_TO_COURT_INDICTMENT_DEFENDER,
-          user,
-          caseId: theCase.id,
-          elementId: updatedDefendant.id,
-        },
-      ]
+      messages.push({
+        type: MessageType.DELIVERY_TO_COURT_INDICTMENT_DEFENDER,
+        user,
+        caseId: theCase.id,
+        elementId: updatedDefendant.id,
+      })
 
       if (
         updatedDefendant.defenderChoice === DefenderChoice.CHOOSE ||
@@ -171,9 +192,23 @@ export class DefendantService {
           })
         }
       }
-
-      return this.messageService.sendMessagesToQueue(messages)
+    } else if (
+      updatedDefendant.isSentToPrisonAdmin !== undefined &&
+      updatedDefendant.isSentToPrisonAdmin !== oldDefendant.isSentToPrisonAdmin
+    ) {
+      messages.push(
+        this.getMessagesForIndictmentToPrisonAdminChanges(
+          updatedDefendant,
+          theCase.id,
+        ),
+      )
     }
+
+    if (messages.length === 0) {
+      return
+    }
+
+    return this.messageService.sendMessagesToQueue(messages)
   }
 
   async createForNewCase(

@@ -1,4 +1,5 @@
 import {
+  Body,
   Controller,
   Get,
   Post,
@@ -9,8 +10,8 @@ import {
 } from '@nestjs/common'
 import { Request, Response } from 'express'
 import { qsValidationPipe } from '../../utils/qs-validation-pipe'
-import { ProxyService } from './proxy.service'
 import { ApiProxyDto } from './dto/api-proxy.dto'
+import { ProxyService } from './proxy.service'
 
 @Controller({
   path: 'api',
@@ -27,6 +28,17 @@ export class ProxyController {
     query: ApiProxyDto,
   ): Promise<void> {
     return this.proxyService.forwardGetApiRequest({ req, res, query })
+  }
+
+  @Post()
+  async forwardPostApiRequest(
+    @Req() req: Request,
+    @Res() res: Response,
+    @Query(qsValidationPipe)
+    query: ApiProxyDto,
+    @Body() body: Record<string, unknown>,
+  ): Promise<void> {
+    return this.proxyService.forwardPostApiRequest({ req, res, query, body })
   }
 
   @Post('/graphql')

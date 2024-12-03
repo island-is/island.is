@@ -55,7 +55,7 @@ type HandleNotification = {
 }
 
 @Injectable()
-export class NotificationsWorkerService implements OnApplicationBootstrap {
+export class NotificationsWorkerService {
   constructor(
     private readonly notificationDispatch: NotificationDispatchService,
     private readonly messageProcessor: MessageProcessorService,
@@ -82,12 +82,6 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
     @InjectModel(Notification)
     private readonly notificationModel: typeof Notification,
   ) {}
-
-  onApplicationBootstrap() {
-    if (this.config.isWorker) {
-      void this.run()
-    }
-  }
 
   async handleDocumentNotification({
     profile,
@@ -311,7 +305,7 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
     }
   }
 
-  async run() {
+  public async run() {
     await this.worker.run<CreateHnippNotificationDto>(
       async (message, job): Promise<void> => {
         const messageId = job.id
