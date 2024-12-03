@@ -3,7 +3,7 @@ on:
   push:
     branches:
       - unicorn-pipe-rel
-  pull_request: {}
+  # pull_request: {}
   workflow_dispatch: {}
 
 defaults:
