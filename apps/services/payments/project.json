@@ -6,7 +6,7 @@
   "tags": ["scope:nest"],
   "targets": {
     "build": {
-      "executor": "@nx/webpack:webpack",
+      "executor": "./tools/executors/node:build",
       "outputs": ["{options.outputPath}"],
       "defaultConfiguration": "production",
       "options": {
@@ -15,8 +15,23 @@
         "outputPath": "dist/apps/services/payments",
         "main": "apps/services/payments/src/main.ts",
         "tsConfig": "apps/services/payments/tsconfig.app.json",
-        "assets": ["apps/services/payments/src/assets"],
-        "webpackConfig": "apps/services/payments/webpack.config.js"
+        "assets": [
+          {
+            "glob": "*",
+            "input": "apps/services/payments/migrations",
+            "output": "./migrations"
+          },
+          {
+            "glob": ".sequelizerc",
+            "input": "apps/services/payments",
+            "output": "./"
+          },
+          {
+            "glob": "sequelize.config.js",
+            "input": "apps/services/payments",
+            "output": "./"
+          }
+        ]
       },
       "configurations": {
         "development": {},
