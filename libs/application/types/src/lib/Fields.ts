@@ -600,6 +600,9 @@ export interface NationalIdWithNameField extends InputField {
   minAgePerson?: number
   searchPersons?: boolean
   searchCompanies?: boolean
+  titleVariant?: TitleVariants
+  marginTop?: ResponsiveProp<Space>
+  marginBottom?: ResponsiveProp<Space>
 }
 
 type Modify<T, R> = Omit<T, keyof R> & R

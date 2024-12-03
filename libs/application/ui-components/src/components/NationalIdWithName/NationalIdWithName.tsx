@@ -112,7 +112,6 @@ export const NationalIdWithName: FC<
         onCompleted: (data) => {
           onNameChange && onNameChange(data.identity?.name ?? '')
           setPersonName(data.identity?.name ?? '')
-          setValue(nameField, data.identity?.name ?? undefined)
         },
       },
     )
@@ -131,10 +130,9 @@ export const NationalIdWithName: FC<
     `,
     {
       onCompleted: (companyData) => {
-        // onNameChange && onNameChange(data.identity?.name ?? '')
+        onNameChange &&
+          onNameChange(companyData.companyRegistryCompany?.name ?? '')
         setCompanyName(companyData.companyRegistryCompany?.name ?? '')
-        // setValue(nameField, data.identity?.name ?? undefined)
-        console.log(companyData)
       },
     },
   )
@@ -167,7 +165,6 @@ export const NationalIdWithName: FC<
   }, [nationalIdInput, getIdentity, getCompanyIdentity])
 
   useEffect(() => {
-    console.log(personName, companyName)
     if (personName) {
       setValue(nameField, personName)
     } else if (companyName) {
@@ -194,7 +191,7 @@ export const NationalIdWithName: FC<
             onNationalIdChange &&
               onNationalIdChange(v.target.value.replace(/\W/g, ''))
           })}
-          loading={queryLoading}
+          loading={searchPersons ? queryLoading : companyQueryLoading}
           error={nationalIdFieldErrors}
           disabled={disabled}
         />
@@ -210,12 +207,23 @@ export const NationalIdWithName: FC<
           }
           required={required}
           error={
-            queryError || data?.identity === null
-              ? formatMessage(
-                  coreErrorMessages.nationalRegistryNameNotFoundForNationalId,
-                )
-              : nameFieldErrors && !data
-              ? nameFieldErrors
+            searchPersons
+              ? queryError || data?.identity === null
+                ? formatMessage(
+                    coreErrorMessages.nationalRegistryNameNotFoundForNationalId,
+                  )
+                : nameFieldErrors && !data
+                ? nameFieldErrors
+                : undefined
+              : searchCompanies
+              ? companyQueryError ||
+                companyData?.companyRegistryCompany === null
+                ? formatMessage(
+                    coreErrorMessages.nationalRegistryNameNotFoundForNationalId,
+                  )
+                : nameFieldErrors && !companyData
+                ? nameFieldErrors
+                : undefined
               : undefined
           }
           disabled
