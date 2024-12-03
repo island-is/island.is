@@ -2,7 +2,7 @@ name: CI/CD pipeline
 on:
   push:
     branches:
-      - unicorn-release
+      - unicorn-pipe-rel
   workflow_dispatch: {}
 defaults:
   run:
