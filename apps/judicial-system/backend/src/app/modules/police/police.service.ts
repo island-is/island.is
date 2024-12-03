@@ -39,7 +39,6 @@ import { UploadPoliceCaseFileDto } from './dto/uploadPoliceCaseFile.dto'
 import { CreateSubpoenaResponse } from './models/createSubpoena.response'
 import { PoliceCaseFile } from './models/policeCaseFile.model'
 import { PoliceCaseInfo } from './models/policeCaseInfo.model'
-import { SubpoenaInfo } from './models/subpoenaInfo.model'
 import { UploadPoliceCaseFileResponse } from './models/uploadPoliceCaseFile.response'
 import { policeModuleConfig } from './police.config'
 
@@ -57,6 +56,14 @@ export enum PoliceDocumentType {
 export interface PoliceDocument {
   type: PoliceDocumentType
   courtDocument: string
+}
+
+export interface SubpoenaInfo {
+  serviceStatus?: ServiceStatus
+  comment?: string
+  servedBy?: string
+  defenderNationalId?: string
+  serviceDate?: Date
 }
 
 const getChapter = (category?: string): number | undefined => {

@@ -35,7 +35,7 @@ import { DefendantService } from '../defendant/defendant.service'
 import { Defendant } from '../defendant/models/defendant.model'
 import { EventService } from '../event'
 import { FileService } from '../file'
-import { PoliceService } from '../police'
+import { PoliceService, SubpoenaInfo } from '../police'
 import { User } from '../user'
 import { UpdateSubpoenaDto } from './dto/updateSubpoena.dto'
 import { DeliverResponse } from './models/deliver.response'
@@ -58,6 +58,27 @@ export const include: Includeable[] = [
   },
   { model: Defendant, as: 'defendant' },
 ]
+
+const subpoenaInfoKeys: Array<keyof SubpoenaInfo> = [
+  'serviceStatus',
+  'comment',
+  'servedBy',
+  'defenderNationalId',
+  'serviceDate',
+]
+
+const isNewValueSetAndDifferent = (
+  newValue: unknown,
+  oldValue: unknown,
+): boolean => Boolean(newValue) && newValue !== oldValue
+
+export const isSubpoenaInfoChanged = (
+  newSubpoenaInfo: SubpoenaInfo,
+  oldSubpoenaInfo: SubpoenaInfo,
+) =>
+  subpoenaInfoKeys.some((key) =>
+    isNewValueSetAndDifferent(newSubpoenaInfo[key], oldSubpoenaInfo[key]),
+  )
 
 @Injectable()
 export class SubpoenaService {
@@ -353,7 +374,7 @@ export class SubpoenaService {
       user,
     )
 
-    if (!subpoenaInfo.isSubpoenaInfoChanged(subpoena)) {
+    if (!isSubpoenaInfoChanged(subpoenaInfo, subpoena)) {
       // The subpoena has not changed
       return subpoena
     }
