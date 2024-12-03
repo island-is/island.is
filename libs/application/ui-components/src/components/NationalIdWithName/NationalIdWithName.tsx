@@ -1,5 +1,5 @@
 import { FC, useEffect, useState } from 'react'
-import { Box, GridRow, GridColumn } from '@island.is/island-ui/core'
+import { GridRow, GridColumn } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import {
   coreErrorMessages,
@@ -162,15 +162,22 @@ export const NationalIdWithName: FC<
           })
       }
     }
-  }, [nationalIdInput, getIdentity, getCompanyIdentity])
+  }, [
+    nationalIdInput,
+    getIdentity,
+    getCompanyIdentity,
+    searchPersons,
+    searchCompanies,
+  ])
 
   useEffect(() => {
-    if (personName) {
+    const nameInAnswers = getValueViaPath(application.answers, nameField)
+    if (personName && nameInAnswers !== personName) {
       setValue(nameField, personName)
-    } else if (companyName) {
+    } else if (companyName && nameInAnswers !== companyName) {
       setValue(nameField, companyName)
     }
-  }, [personName, companyName])
+  }, [personName, companyName, setValue, nameField])
 
   return (
     <GridRow>
