@@ -1,23 +1,34 @@
 import { ApolloProvider } from '@apollo/client'
 
-import { initializeClient } from '@island.is/application/graphql'
+import { client } from '@island.is/application/graphql'
 import { LocaleProvider } from '@island.is/localization'
-import { defaultLanguage } from '@island.is/shared/constants'
-import { AuthProvider } from '@island.is/auth/react'
 import { FeatureFlagProvider } from '@island.is/react/feature-flags'
+import { defaultLanguage } from '@island.is/shared/constants'
 
+import { applicationSystemScopes } from '@island.is/auth/scopes'
+import { BffProvider, createMockedInitialState } from '@island.is/react-spa/bff'
+import { Router } from '../components/Router'
 import { environment } from '../environments'
 import { BASE_PATH } from '../lib/routes'
-import { Router } from '../components/Router'
+import { isMockMode } from '../mocks'
+
+const mockedInitialState = isMockMode
+  ? createMockedInitialState({
+      scopes: applicationSystemScopes,
+    })
+  : undefined
 
 export const App = () => (
-  <ApolloProvider client={initializeClient(environment.baseApiUrl)}>
+  <ApolloProvider client={client}>
     <LocaleProvider locale={defaultLanguage} messages={{}}>
-      <AuthProvider basePath={BASE_PATH}>
+      <BffProvider
+        applicationBasePath={BASE_PATH}
+        mockedInitialState={mockedInitialState}
+      >
         <FeatureFlagProvider sdkKey={environment.featureFlagSdkKey}>
           <Router />
         </FeatureFlagProvider>
-      </AuthProvider>
+      </BffProvider>
     </LocaleProvider>
   </ApolloProvider>
 )

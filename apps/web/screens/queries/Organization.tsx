@@ -445,3 +445,21 @@ export const GET_ORGANIZATION_PAGE_STANDALONE_SITEMAP_LEVEL1_QUERY = gql`
     }
   }
 `
+
+export const GET_ORGANIZATION_PAGE_STANDALONE_SITEMAP_LEVEL2_QUERY = gql`
+  query GetOrganizationPageStandaloneSitemapLevel2Query(
+    $input: GetOrganizationPageStandaloneSitemapLevel2Input!
+  ) {
+    getOrganizationPageStandaloneSitemapLevel2(input: $input) {
+      label
+      childCategories {
+        label
+        href
+        childLinks {
+          label
+          href
+        }
+      }
+    }
+  }
+`

@@ -1,7 +1,4 @@
-import { jwtDecode } from 'jwt-decode'
 import { createContext, useContext } from 'react'
-
-import { User } from '@island.is/shared/types'
 
 import { AuthReducerState, initialState } from './Auth.state'
 
@@ -31,26 +28,37 @@ export const defaultAuthContext = {
 
 export const AuthContext = createContext<AuthContextType>(defaultAuthContext)
 
-export const useAuth: () => AuthContextType = () => useContext(AuthContext)
+const warnDeprecated = (hookName: string, alternative: string) => {
+  console.warn(
+    `[Deprecation Warning] "${hookName}" is being replaced by BFF auth pattern Please use "${alternative}" from "libs/react-spa/bff".`,
+  )
+}
 
+/**
+ * @deprecated Use useBff from `libs/react-spa/bff` instead.
+ */
+export const useAuth = () => {
+  warnDeprecated('useAuth', 'useBff')
+
+  const context = useContext(AuthContext)
+
+  if (!context) {
+    throw new Error('useAuth must be used within a AuthProvider')
+  }
+
+  return context
+}
+
+/**
+ * @deprecated Use useUserInfo from `libs/react-spa/bff` instead.
+ */
 export const useUserInfo = () => {
-  const { userInfo } = useContext(AuthContext)
+  warnDeprecated('useUserInfo', 'useUserInfo')
+  const { userInfo } = useAuth()
 
   if (!userInfo) {
     throw new Error('User info is not available. Is the user authenticated?')
   }
 
   return userInfo
-}
-
-export const useUserDecodedIdToken = () => {
-  const userInfo = useUserInfo()
-
-  if (!userInfo.id_token) {
-    throw new Error(
-      'Decoded ID token is not available. Is the user authenticated?',
-    )
-  }
-
-  return jwtDecode<User['profile']>(userInfo.id_token)
 }
