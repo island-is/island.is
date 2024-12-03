@@ -2,8 +2,17 @@ import { useEffect, useState } from 'react'
 import { useWindowSize } from 'react-use'
 import cn from 'classnames'
 
-import { ResponsiveSpace, Text, TextProps } from '@island.is/island-ui/core'
+import {
+  Box,
+  Hidden,
+  ResponsiveSpace,
+  Stack,
+  Text,
+  TextProps,
+} from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
+import { SearchInput } from '@island.is/web/components'
+import { useI18n } from '@island.is/web/i18n'
 
 import * as styles from './Header.css'
 
@@ -21,6 +30,7 @@ export interface HeaderProps {
   imageObjectPosition?: 'left' | 'center' | 'right'
   className?: string
   isFrontpage?: boolean
+  organizationSlug?: string
 }
 
 export const Header: React.FC<React.PropsWithChildren<HeaderProps>> = ({
@@ -36,8 +46,10 @@ export const Header: React.FC<React.PropsWithChildren<HeaderProps>> = ({
   imageObjectPosition = 'center',
   className,
   isFrontpage = false,
+  organizationSlug,
 }) => {
   const { width } = useWindowSize()
+  const { activeLocale } = useI18n()
   const imageProvided = !!image
 
   const [isMobile, setIsMobile] = useState(false)
@@ -46,50 +58,64 @@ export const Header: React.FC<React.PropsWithChildren<HeaderProps>> = ({
     setIsMobile(width < theme.breakpoints.lg)
   }, [width])
   return (
-    <div
-      className={cn({ [styles.gridContainerWidth]: !fullWidth })}
-      style={{
-        background: isMobile ? mobileBackground || background : background,
-      }}
-    >
+    <Stack space={2}>
       <div
-        className={cn(
-          {
-            [styles.gridContainer]: !className,
-            [styles.gridContainerSubpage]: !isFrontpage,
-          },
-          className,
-        )}
+        className={cn({ [styles.gridContainerWidth]: !fullWidth })}
+        style={{
+          background: isMobile ? mobileBackground || background : background,
+        }}
       >
         <div
-          className={cn({
-            [styles.textContainerNoTitle]: isFrontpage && !underTitle,
-            [styles.textContainer]: isFrontpage && underTitle,
-            [styles.textContainerSubpage]: !isFrontpage,
-          })}
+          className={cn(
+            {
+              [styles.gridContainer]: !className,
+              [styles.gridContainerSubpage]: !isFrontpage,
+            },
+            className,
+          )}
         >
-          {underTitle && isFrontpage && (
-            <div className={cn(styles.textInnerContainer)}>
-              <Text variant="h1" as="h1" color={titleColor}>
-                {underTitle}
-              </Text>
-            </div>
+          <div
+            className={cn({
+              [styles.textContainerNoTitle]: isFrontpage && !underTitle,
+              [styles.textContainer]: isFrontpage && underTitle,
+              [styles.textContainerSubpage]: !isFrontpage,
+            })}
+          >
+            {underTitle && isFrontpage && (
+              <div className={cn(styles.textInnerContainer)}>
+                <Text variant="h1" as="h1" color={titleColor}>
+                  {underTitle}
+                </Text>
+              </div>
+            )}
+          </div>
+          {imageProvided && isFrontpage && (
+            <img
+              style={{
+                padding: imagePadding,
+                objectFit: imageObjectFit,
+                objectPosition: imageObjectPosition,
+                height: imageIsFullHeight ? '100%' : undefined,
+              }}
+              className={styles.headerImage}
+              src={image}
+              alt=""
+            />
           )}
         </div>
-        {imageProvided && isFrontpage && (
-          <img
-            style={{
-              padding: imagePadding,
-              objectFit: imageObjectFit,
-              objectPosition: imageObjectPosition,
-              height: imageIsFullHeight ? '100%' : undefined,
-            }}
-            className={styles.headerImage}
-            src={image}
-            alt=""
-          />
-        )}
       </div>
-    </div>
+      {isFrontpage && (
+        <Hidden above="md">
+          <Box marginX={3}>
+            <SearchInput
+              size="medium"
+              activeLocale={activeLocale}
+              placeholder={activeLocale === 'is' ? 'Leit' : 'Search'}
+              organization={organizationSlug}
+            />
+          </Box>
+        </Hidden>
+      )}
+    </Stack>
   )
 }
