@@ -1,5 +1,5 @@
 import { DefaultEvents } from '@island.is/application/types'
-
+export const FILE_SIZE_LIMIT = 10000000
 export type Events = { type: DefaultEvents.SUBMIT | DefaultEvents.ABORT }
 
 export enum States {
