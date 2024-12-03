@@ -54,8 +54,13 @@ const SubscriptionTable = ({
     data: thisData,
   })
 
-  if (
+  const hasNoItemsToShow =
     dataToRender.length === 0 &&
+    dontShowNew !== false &&
+    dontShowChanges !== false
+
+  if (
+    hasNoItemsToShow &&
     !subscribedToAllNewObj.checked &&
     !subscribedToAllChangesObj.checked
   ) {
