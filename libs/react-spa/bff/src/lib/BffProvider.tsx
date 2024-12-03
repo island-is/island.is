@@ -176,10 +176,24 @@ export const BffProvider = ({
   }
 
   useEffectOnce(() => {
-    const hasError = checkQueryStringError()
+    if (!isLoggedIn) {
+      // Check if the current path matches the old login path
+      const isOldLoginPath = window.location.href.includes(
+        `${applicationBasePath}/login`,
+      )
 
-    if (!hasError && !isLoggedIn) {
-      checkLogin()
+      if (isOldLoginPath) {
+        // If user is on old login path, redirect to BFF login
+        window.location.href = window.location.href.replace('/login', '')
+
+        return
+      }
+
+      const hasError = checkQueryStringError()
+
+      if (!hasError) {
+        checkLogin()
+      }
     }
   })
 

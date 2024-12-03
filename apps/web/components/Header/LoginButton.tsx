@@ -1,4 +1,4 @@
-import React, { MouseEvent } from 'react'
+import { MouseEvent } from 'react'
 import { useRouter } from 'next/router'
 
 import {
@@ -13,7 +13,7 @@ import { useI18n } from '@island.is/web/i18n'
 import { LayoutProps } from '@island.is/web/layouts/main'
 
 const minarsidurLink = '/minarsidur/'
-const minarsidurDelegationsLink = '/minarsidur/login?prompt=select_account'
+const minarsidurDelegationsLink = '/minarsidur?prompt=select_account'
 
 export function LoginButton(props: {
   colorScheme: ButtonTypes['colorScheme']
