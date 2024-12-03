@@ -1,8 +1,8 @@
 import { service, ServiceBuilder } from '../../../../infra/src/dsl/dsl'
 
 const namespace = 'services-payments'
-const serviceName = `${namespace}`
-const imageName = `${namespace}-image`
+const serviceName = namespace
+const imageName = namespace
 
 export const serviceSetup = (): ServiceBuilder<'services-payments'> =>
   service(serviceName)
