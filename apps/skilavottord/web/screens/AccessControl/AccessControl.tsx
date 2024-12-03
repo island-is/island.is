@@ -47,6 +47,7 @@ import {
 } from './components'
 
 import * as styles from './AccessControl.css'
+import NavigationLinks from '@island.is/skilavottord-web/components/NavigationLinks/NavigationLinks'
 
 const SkilavottordAllRecyclingPartnersQuery = gql`
   query skilavottordAllRecyclingPartnersQuery {
@@ -240,32 +241,9 @@ const AccessControl: FC<React.PropsWithChildren<unknown>> = () => {
   }
 
   return (
-    <PartnerPageLayout
-      side={
-        <Sidenav
-          title={sidenavText.title}
-          sections={[
-            {
-              icon: 'car',
-              title: `${sidenavText.recycled}`,
-              link: `${routes.recycledVehicles}`,
-            },
-            {
-              icon: 'business',
-              title: `${sidenavText.companies}`,
-              link: `${routes.recyclingCompanies.baseRoute}`,
-            },
-            {
-              icon: 'lockClosed',
-              title: `${sidenavText.accessControl}`,
-              link: `${routes.accessControl}`,
-            },
-          ]}
-          activeSection={2}
-        />
-      }
-    >
+    <PartnerPageLayout side={<NavigationLinks activeSection={3} />}>
       <Stack space={4}>
+        <pre>AccessControl</pre>
         <Box>
           <Breadcrumbs
             items={[

@@ -75,27 +75,8 @@ export class AuthGuard implements CanActivate {
 export const Authorize = (
   { roles = [] }: AuthorizeOptions = { roles: [] },
 ): MethodDecorator & ClassDecorator => {
-  logger.info(`car-recycling: AuthGuard environment #1`, {
-    environment: process.env.NODE_ENV,
-    isProduction: isRunningOnEnvironment('production'),
-  })
-
-  // IdsUserGuard is causing constant reload on local and DEV in the skilavottord-web
-  // To 'fix' it for now we just skip using it for non production
-  if (
-    process.env.NODE_ENV !== 'production' ||
-    !isRunningOnEnvironment('production')
-  ) {
-    logger.info('`car-recycling: AuthGuard - skipping IdsUserGuard')
-    return applyDecorators(
-      SetMetadata('roles', roles),
-      UseGuards(AuthGuard, RolesGuard),
-    )
-  }
-
-  // We are getting Invalid User error on PROD if we skip IdsUserGuard for some reason
   return applyDecorators(
     SetMetadata('roles', roles),
-    UseGuards(IdsUserGuard, AuthGuard, RolesGuard),
+    UseGuards(AuthGuard, RolesGuard),
   )
 }

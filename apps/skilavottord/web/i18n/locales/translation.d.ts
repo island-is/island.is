@@ -30,6 +30,7 @@ export interface Translation {
   notFound: NotFound
   errorBoundary: ErrorBoundary
   routes: Routes
+  municipalities: Municipalities
 }
 
 export interface AccessControl {
@@ -464,9 +465,27 @@ export interface RecyclingCompanies {
 export interface RecyclingCompaniesButtons {
   add: string
   view: string
+  addMunicipality: string
 }
 
 export interface RecyclingCompany {
+  view: View
+  add: Add
+  form: RecyclingCompanyForm
+}
+
+export interface Municipalities {
+  title: string
+  info: string
+  empty: string
+  subtitles: RecyclingCompaniesSubtitles
+  tableHeaders: RecyclingCompaniesTableHeaders
+  status: AccessControlStatus
+  buttons: RecyclingCompaniesButtons
+  municipality: Municipality
+}
+
+export interface Municipality {
   view: View
   add: Add
   form: RecyclingCompanyForm
@@ -495,6 +514,7 @@ export interface FormInputs {
   website: Name
   phone: Name
   active: Name
+  municipality: Name
 }
 
 export interface View {
@@ -540,6 +560,7 @@ export interface RecyclingFundSidenav {
   recycled: string
   companies: string
   accessControl: string
+  municipalities: string
 }
 
 export interface Routes {
@@ -552,7 +573,7 @@ export interface Routes {
   accessControlCompany: string
   recyclingCompanies: RecyclingCompaniesClass
   companyInfo: RecyclingCompaniesClass
-  deregisterVehicleKM: RoutesDeregisterVehicle
+  municipalities: RecyclingCompaniesClass
 }
 
 export interface RecyclingCompaniesClass {

@@ -1,44 +1,43 @@
-import React, { FC, useContext } from 'react'
-import { useRouter } from 'next/router'
 import { useQuery } from '@apollo/client'
 import gql from 'graphql-tag'
 import NextLink from 'next/link'
+import { useRouter } from 'next/router'
+import React, { FC, useContext } from 'react'
 
 import {
   Box,
   Breadcrumbs,
   Button,
-  GridColumn,
-  Table as T,
-  GridRow,
   Stack,
+  Table as T,
   Text,
 } from '@island.is/island-ui/core'
-import { PartnerPageLayout } from '@island.is/skilavottord-web/components/Layouts'
-import { useI18n } from '@island.is/skilavottord-web/i18n'
-import Sidenav from '@island.is/skilavottord-web/components/Sidenav/Sidenav'
 import { hasPermission } from '@island.is/skilavottord-web/auth/utils'
-import { UserContext } from '@island.is/skilavottord-web/context'
 import { NotFound } from '@island.is/skilavottord-web/components'
+import { PartnerPageLayout } from '@island.is/skilavottord-web/components/Layouts'
+import { UserContext } from '@island.is/skilavottord-web/context'
 import {
-  RecyclingPartner,
   Query,
+  RecyclingPartner,
   Role,
 } from '@island.is/skilavottord-web/graphql/schema'
+import { useI18n } from '@island.is/skilavottord-web/i18n'
 import { filterInternalPartners } from '@island.is/skilavottord-web/utils'
-import { BASE_PATH } from '@island.is/skilavottord/consts'
 
-import { RecyclingCompanyImage } from './components'
+import NavigationLinks from '@island.is/skilavottord-web/components/NavigationLinks/NavigationLinks'
+import PageHeader from '@island.is/skilavottord-web/components/PageHeader/PageHeader'
+import municipalities from '@island.is/skilavottord-web/pages/municipalities'
 
 export const SkilavottordAllRecyclingPartnersQuery = gql`
-  query skilavottordAllRecyclingPartnersQuery {
-    skilavottordAllRecyclingPartners {
+  query skilavottordAllRecyclingPartnersQuery($isMunicipality: Boolean!) {
+    skilavottordAllRecyclingPartners(isMunicipality: $isMunicipality) {
       companyId
       companyName
       address
       postnumber
       email
       active
+      municipalityId
     }
   }
 `
@@ -47,12 +46,31 @@ const RecyclingCompanies: FC<React.PropsWithChildren<unknown>> = () => {
   const { Table, Head, Row, HeadData, Body, Data } = T
   const { user } = useContext(UserContext)
   const router = useRouter()
+
+  const {
+    t: { recyclingCompanies: t, municipalities: mt, routes },
+  } = useI18n()
+
+  // Since we are resuing the same page for both municipalities and recycling companies we need to distinguish between municipalities and recycling companies
+  let isMunicipality = false
+  let buttonText = t.buttons.add
+  let activeSection = 2
+  let title = t.title
+  let info = t.info
+  if (router.route === routes.municipalities.baseRoute) {
+    activeSection = 1
+    title = mt.title
+    info = ''
+    isMunicipality = true
+    buttonText = t.buttons.addMunicipality
+  }
+
   const { data, error, loading } = useQuery<Query>(
     SkilavottordAllRecyclingPartnersQuery,
+    {
+      variables: { isMunicipality },
+    },
   )
-  const {
-    t: { recyclingCompanies: t, recyclingFundSidenav: sidenavText, routes },
-  } = useI18n()
 
   if (!user) {
     return null
@@ -65,54 +83,40 @@ const RecyclingCompanies: FC<React.PropsWithChildren<unknown>> = () => {
   recyclingPartners.sort((a, b) => a.companyName.localeCompare(b.companyName))
 
   const handleCreate = () => {
-    router.push({
-      pathname: routes.recyclingCompanies.add,
-    })
+    if (isMunicipality) {
+      router.push({
+        pathname: routes.municipalities.add,
+      })
+    } else {
+      router.push({
+        pathname: routes.recyclingCompanies.add,
+      })
+    }
   }
 
   const handleUpdate = (id: string) => {
-    router.push({
-      pathname: routes.recyclingCompanies.edit, // with BASE-PATH it duplicates the path
-      query: { id },
-    })
+    if (isMunicipality) {
+      router.push({
+        pathname: routes.municipalities.edit, // with BASE-PATH it duplicates the path
+        query: { id },
+      })
+    } else {
+      router.push({
+        pathname: routes.recyclingCompanies.edit, // with BASE-PATH it duplicates the path
+        query: { id },
+      })
+    }
   }
 
+  console.log('routes.', routes)
   return (
-    <PartnerPageLayout
-      side={
-        <Sidenav
-          title={sidenavText.title}
-          sections={[
-            {
-              icon: 'car',
-              title: `${sidenavText.recycled}`,
-              link: `${routes.recycledVehicles}`,
-            },
-            {
-              icon: 'business',
-              title: `${sidenavText.companies}`,
-              link: `${routes.recyclingCompanies.baseRoute}`,
-            },
-            {
-              ...(hasPermission('accessControl', user?.role)
-                ? {
-                    icon: 'lockClosed',
-                    title: `${sidenavText.accessControl}`,
-                    link: `${routes.accessControl}`,
-                  }
-                : null),
-            } as React.ComponentProps<typeof Sidenav>['sections'][0],
-          ].filter(Boolean)}
-          activeSection={1}
-        />
-      }
-    >
+    <PartnerPageLayout side={<NavigationLinks activeSection={activeSection} />}>
       <Stack space={4}>
         <Breadcrumbs
           items={[
-            { title: 'Ísland.is', href: routes.home['recyclingCompany'] },
+            { title: 'Ísland.is', href: routes.home['recyclingFund'] },
             {
-              title: t.title,
+              title: title,
             },
           ]}
           renderLink={(link, item) => {
@@ -125,52 +129,14 @@ const RecyclingCompanies: FC<React.PropsWithChildren<unknown>> = () => {
             )
           }}
         />
-        <Box
-          display="flex"
-          alignItems="flexStart"
-          justifyContent="spaceBetween"
-        >
-          <GridRow marginBottom={7}>
-            <GridColumn span={['8/8', '6/8', '5/8']} order={[2, 1]}>
-              <Text variant="h1" as="h1" marginBottom={4}>
-                {t.title}
-              </Text>
-              <Text variant="intro">{t.info}</Text>
-            </GridColumn>
-            <GridColumn
-              span={['8/8', '2/8']}
-              offset={['0', '0', '1/8']}
-              order={[1, 2]}
-            >
-              <Box textAlign={['center', 'right']} padding={[6, 0]}>
-                <RecyclingCompanyImage />
-              </Box>
-            </GridColumn>
-          </GridRow>
-        </Box>
+        <PageHeader title={title} info={info} />
         <Box display="flex" justifyContent="flexEnd">
-          <Button onClick={handleCreate}>{t.buttons.add}</Button>
+          <Button onClick={handleCreate}>{buttonText}</Button>
         </Box>
         {error || (loading && !data) ? (
           <Text>{t.empty}</Text>
         ) : (
           <Stack space={3}>
-            {/* {recyclingPartners.map((partner: RecyclingPartner) => (
-              <ActionCard
-                key={partner.companyId}
-                cta={{
-                  label: t.buttons.view,
-                  variant: 'text',
-                  onClick: () => handleUpdate(partner.companyId),
-                }}
-                heading={partner.companyName}
-                text={partner.companyId}
-                tag={{
-                  label: partner.active ? t.status.active : t.status.inactive,
-                  variant: partner.active ? 'mint' : 'red',
-                }}
-              />
-            ))} */}
             <Table>
               <Head>
                 <Row>

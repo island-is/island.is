@@ -98,6 +98,21 @@ export class RecyclingPartnerModel extends Model<RecyclingPartnerModel> {
   })
   updatedAt: Date
 
+  @Field()
+  @Column({
+    type: DataType.BOOLEAN,
+    field: 'is_municipality',
+  })
+  isMunicipality!: boolean
+
+  @Field({ nullable: true }) // Ensure this field is nullable in GraphQL
+  @Column({
+    type: DataType.STRING,
+    field: 'municipality_id',
+    allowNull: true, // Ensure this field allows null in Sequelize
+  })
+  municipalityId?: string
+
   @Field(() => [RecyclingRequestModel])
   @HasMany(() => RecyclingRequestModel)
   recyclingRequests?: typeof RecyclingRequestModel[]
