@@ -1,9 +1,10 @@
 {
-  "name": "IslandApp",
+  "name": "native-app",
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/native/app/src",
   "projectType": "application",
-  "tags": [],
+  "tags": ["scope:js"],
+  "generators": {},
   "targets": {
     "start": {
       "executor": "@nx/react-native:start",
