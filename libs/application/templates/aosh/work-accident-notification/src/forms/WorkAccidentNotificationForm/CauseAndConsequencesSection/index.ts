@@ -7,7 +7,7 @@ import { typeOfInjurySection } from './typeOfInjury'
 import { injuredBodyPartsSection } from './injuredBodyParts'
 import { deviationSection } from './deviation'
 import { FormValue } from '@island.is/application/types'
-import { WorkAccidentNotification } from '../../../lib/dataSchema'
+import { WorkAccidentNotification } from '../../..'
 
 export const causeAndConsequencesSection = (index: number) =>
   buildSection({

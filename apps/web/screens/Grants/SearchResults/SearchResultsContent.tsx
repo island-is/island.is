@@ -118,7 +118,7 @@ export const SearchResultsContent = ({ grants, subheader, locale }: Props) => {
           justifyContent="center"
           background="white"
           borderWidth="standard"
-          borderRadius="xl"
+          borderRadius="lg"
           borderColor="blue200"
           flexDirection={['columnReverse', 'columnReverse', 'row']}
           columnGap={[2, 4, 8, 8, 20]}

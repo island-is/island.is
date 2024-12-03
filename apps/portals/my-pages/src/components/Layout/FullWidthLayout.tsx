@@ -22,9 +22,9 @@ import {
 import { Link, matchPath, useNavigate } from 'react-router-dom'
 import { DocumentsPaths } from '@island.is/portals/my-pages/documents'
 import { theme } from '@island.is/island-ui/theme'
-import { useAuth } from '@island.is/auth/react'
 import { DocumentsScope } from '@island.is/auth/scopes'
 import { FinancePaths } from '@island.is/portals/my-pages/finance'
+import { useUserInfo } from '@island.is/react-spa/bff'
 
 interface FullWidthLayoutWrapperProps {
   activeParent?: PortalNavigationItem
@@ -49,7 +49,7 @@ export const FullWidthLayout: FC<FullWidthLayoutProps> = ({
 }) => {
   const navigate = useNavigate()
   const { formatMessage } = useLocale()
-  const { userInfo } = useAuth()
+  const userInfo = useUserInfo()
   const [navItems, setNavItems] = useState<PortalNavigationItem[] | undefined>()
 
   useEffect(() => {
