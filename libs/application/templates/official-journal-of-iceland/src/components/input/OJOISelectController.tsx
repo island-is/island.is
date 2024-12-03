@@ -78,6 +78,8 @@ export const OJOISelectController = ({
       options={options}
       defaultValue={defaultValue}
       disabled={disabled}
+      isSearchable={true}
+      filterConfig={{ matchFrom: 'start' }}
       onSelect={(opt) => handleChange(opt.label, opt.value)}
     />
   )

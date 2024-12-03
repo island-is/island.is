@@ -127,6 +127,9 @@ export const Publishing = ({ application }: OJOIFieldBaseProps) => {
               defaultValue={defaultCategory}
               options={mappedCategories}
               onChange={(opt) => onCategoryChange(opt?.value)}
+              filterConfig={{
+                matchFrom: 'start',
+              }}
             />
             <Box
               marginTop={1}
