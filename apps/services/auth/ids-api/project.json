@@ -179,7 +179,12 @@
     "dev": {
       "executor": "nx:run-commands",
       "options": {
-        "commands": ["yarn start services-auth-ids-api"]
+        "commands": [
+          {
+            "command": "yarn start services-auth-ids-api"
+          }
+        ],
+        "parallel": true
       }
     }
   }
