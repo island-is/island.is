@@ -4,7 +4,7 @@ import { useWindowSize } from 'react-use'
 
 import {
   Box,
-  Button,
+  FocusableBox,
   GridColumn,
   GridContainer,
   GridRow,
@@ -40,7 +40,7 @@ export type DetailedProps = BaseProps & {
 export const DetailedInfoCard = ({
   title,
   description,
-  type = 'default',
+  size = 'medium',
   eyebrow,
   subEyebrow,
   detailLines,
@@ -126,26 +126,6 @@ export const DetailedInfoCard = ({
     )
   }
 
-  const renderCta = () => {
-    if (!link) {
-      return null
-    }
-
-    return (
-      <Button
-        variant="text"
-        size="small"
-        icon="arrowForward"
-        iconType="outline"
-        nowrap
-      >
-        <LinkV2 href={link.href} newTab={true}>
-          {link.label}
-        </LinkV2>
-      </Button>
-    )
-  }
-
   const renderHeader = () => {
     return (
       <Box
@@ -174,7 +154,7 @@ export const DetailedInfoCard = ({
   }
 
   const renderContent = () => {
-    if (type === 'wide' && !isTablet) {
+    if (size === 'large' && !isTablet) {
       return (
         <GridContainer>
           <GridRow direction="row">
@@ -209,9 +189,19 @@ export const DetailedInfoCard = ({
   }
 
   return (
-    <Box
-      className={type === 'wide' ? styles.infoCardWide : styles.infoCard}
+    <FocusableBox
+      className={
+        size === 'large'
+          ? styles.infoCardWide
+          : size === 'small'
+          ? styles.infoCardSmall
+          : styles.infoCard
+      }
+      component={LinkV2}
+      href={link.href}
       background="white"
+      borderColor="white"
+      borderWidth="standard"
       width="full"
       borderRadius="standard"
     >
@@ -220,11 +210,8 @@ export const DetailedInfoCard = ({
         {renderContent()}
         <Box marginTop={3} display="flex" justifyContent="spaceBetween">
           {renderTags()}
-          <Box display="flex" alignItems="flexEnd">
-            {renderCta()}
-          </Box>
         </Box>
       </Box>
-    </Box>
+    </FocusableBox>
   )
 }

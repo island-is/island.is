@@ -33,7 +33,12 @@ export const SearchResultsContent = ({ grants, subheader, locale }: Props) => {
   return (
     <>
       {!isMobile && (
-        <Box display="flex" justifyContent="spaceBetween" marginBottom={3}>
+        <Box
+          display="flex"
+          justifyContent="spaceBetween"
+          marginBottom={3}
+          marginRight={3}
+        >
           <Text>{subheader}</Text>
           <Button
             variant="utility"
@@ -51,7 +56,7 @@ export const SearchResultsContent = ({ grants, subheader, locale }: Props) => {
       )}
       {grants?.length ? (
         <InfoCardWrapper
-          layout={!isGridLayout ? 'wide' : 'default'}
+          columns={!isGridLayout ? 1 : 3}
           variant="detailed"
           cards={
             grants
