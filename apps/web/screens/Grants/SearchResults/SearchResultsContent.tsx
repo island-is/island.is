@@ -56,7 +56,7 @@ export const SearchResultsContent = ({ grants, subheader, locale }: Props) => {
       )}
       {grants?.length ? (
         <InfoCardWrapper
-          columns={!isGridLayout ? 1 : 3}
+          columns={!isGridLayout ? 1 : 2}
           variant="detailed"
           cards={
             grants
@@ -70,8 +70,14 @@ export const SearchResultsContent = ({ grants, subheader, locale }: Props) => {
                   subEyebrow: grant.fund?.parentOrganization?.title,
                   title: grant.name ?? '',
                   description: grant.description ?? '',
-                  logo: grant.fund?.parentOrganization?.logo?.url ?? '',
-                  logoAlt: grant.fund?.parentOrganization?.logo?.title ?? '',
+                  logo:
+                    grant.fund?.featuredImage?.url ??
+                    grant.fund?.parentOrganization?.logo?.url ??
+                    '',
+                  logoAlt:
+                    grant.fund?.featuredImage?.title ??
+                    grant.fund?.parentOrganization?.logo?.title ??
+                    '',
                   tags: grant.status
                     ? [generateStatusTag(grant.status, formatMessage)].filter(
                         isDefined,
