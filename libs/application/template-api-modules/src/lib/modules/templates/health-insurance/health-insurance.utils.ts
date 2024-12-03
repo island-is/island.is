@@ -91,9 +91,13 @@ export const insuranceToXML = async (
     const fylgiskjol: Fylgiskjol = {
       fylgiskjal: [],
     }
+    logger.info(
+      `arrAttachments for application ${inputObj.applicationNumber}: ${arrAttachments}`,
+    )
     for (let i = 0; i < arrAttachments.length; i++) {
       const filename = arrAttachments[i]
-      const fileContent = await s3Service.getFileContent(filename, 'base64')
+      const fileUri = attachmentNames[i] // attachmentNames actually contains the URIs
+      const fileContent = await s3Service.getFileContent(fileUri, 'base64')
 
       if (!fileContent)
         throw new Error(`Unable to fetch file content for: ${filename}`)
@@ -124,6 +128,8 @@ export const insuranceToXML = async (
   const xml = `<?xml version="1.0" encoding="ISO-8859-1"?>${objectToXML(
     vistaSkjalBody,
   )}`
+
+  logger.info(`XML: ${xml}`)
 
   return xml
 }
@@ -221,6 +227,10 @@ export const transformApplicationToHealthInsuranceDTO = (
     }
 
     const attachmentNames = Object.values(application.attachments) ?? []
+
+    logger.info(
+      `attachmentNames for application ${application.id}: ${attachmentNames}`,
+    )
 
     const vistaskjal: VistaSkjalInput = {
       applicationNumber: application.id,
