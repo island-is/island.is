@@ -1,10 +1,5 @@
 import React from 'react'
-import {
-  Stack,
-  Table as T,
-  Text,
-  useBreakpoint,
-} from '@island.is/island-ui/core'
+import { Stack, Table as T, Text } from '@island.is/island-ui/core'
 import { mapIsToEn, sortLocale } from '../../../../utils/helpers'
 import { SubscriptionArray } from '../../../../types/interfaces'
 import { Area } from '../../../../types/enums'
@@ -37,7 +32,6 @@ const SubscriptionTable = ({
   searchValue,
   isMySubscriptions,
 }: Props) => {
-  const { md: mdBreakpoint } = useBreakpoint()
   const { Table, Body } = T
   const loc = localization.subscriptionTable
   const mappedCurrentTab = mapIsToEn[currentTab]
