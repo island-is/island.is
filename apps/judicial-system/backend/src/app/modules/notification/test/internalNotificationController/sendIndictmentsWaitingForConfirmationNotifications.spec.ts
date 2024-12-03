@@ -4,7 +4,10 @@ import { EmailService } from '@island.is/email-service'
 
 import { InstitutionNotificationType } from '@island.is/judicial-system/types'
 
-import { createTestingNotificationModule } from '../createTestingNotificationModule'
+import {
+  createTestingNotificationModule,
+  createTestUsers,
+} from '../createTestingNotificationModule'
 
 import { InternalCaseService } from '../../../case'
 import { UserService } from '../../../user'
@@ -18,10 +21,11 @@ interface Then {
 type GivenWhenThen = () => Promise<Then>
 
 describe('InternalNotificationController - Send indictments waiting for confirmation notifications', () => {
-  const prosecutorName1 = uuid()
-  const prosecutorEmail1 = uuid()
-  const prosecutorName2 = uuid()
-  const prosecutorEmail2 = uuid()
+  const { prosecutor1, prosecutor2 } = createTestUsers([
+    'prosecutor1',
+    'prosecutor2',
+  ])
+
   const prosecutorsOfficeId = uuid()
   let mockUserService: UserService
   let mockInternalCaseService: InternalCaseService
@@ -116,25 +120,25 @@ describe('InternalNotificationController - Send indictments waiting for confirma
       const mockGetUsersWhoCanConfirmIndictments =
         mockUserService.getUsersWhoCanConfirmIndictments as jest.Mock
       mockGetUsersWhoCanConfirmIndictments.mockResolvedValueOnce([
-        { name: prosecutorName1, email: prosecutorEmail1 },
-        { name: prosecutorName2, email: prosecutorEmail2 },
+        { name: prosecutor1.name, email: prosecutor1.email },
+        { name: prosecutor2.name, email: prosecutor2.email },
       ])
 
       then = await givenWhenThen()
     })
 
-    it('should not send messages', () => {
+    it('should send messages', () => {
       expect(mockEmailService.sendEmail).toHaveBeenCalledTimes(2)
       expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
         expect.objectContaining({
-          to: [{ name: prosecutorName1, address: prosecutorEmail1 }],
+          to: [{ name: prosecutor1.name, address: prosecutor1.email }],
           subject: 'Ákærur bíða staðfestingar',
           html: 'Í Réttarvörslugátt bíða 2 ákærur staðfestingar.<br /><br />Hægt er að nálgast yfirlit og staðfesta ákærur í <a href="https://rettarvorslugatt.island.is">Réttarvörslugátt</a>.',
         }),
       )
       expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
         expect.objectContaining({
-          to: [{ name: prosecutorName2, address: prosecutorEmail2 }],
+          to: [{ name: prosecutor2.name, address: prosecutor2.email }],
           subject: 'Ákærur bíða staðfestingar',
           html: 'Í Réttarvörslugátt bíða 2 ákærur staðfestingar.<br /><br />Hægt er að nálgast yfirlit og staðfesta ákærur í <a href="https://rettarvorslugatt.island.is">Réttarvörslugátt</a>.',
         }),

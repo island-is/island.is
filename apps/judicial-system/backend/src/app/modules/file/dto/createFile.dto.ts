@@ -6,6 +6,7 @@ import {
   IsNumber,
   IsOptional,
   IsString,
+  MaxLength,
 } from 'class-validator'
 
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
@@ -15,6 +16,7 @@ import { CaseFileCategory } from '@island.is/judicial-system/types'
 export class CreateFileDto {
   @IsNotEmpty()
   @IsString()
+  @MaxLength(255)
   @ApiProperty({ type: String })
   readonly type!: string
 
@@ -25,6 +27,7 @@ export class CreateFileDto {
 
   @IsNotEmpty()
   @IsString()
+  @MaxLength(255)
   @ApiProperty({ type: String })
   readonly key!: string
 
@@ -35,6 +38,7 @@ export class CreateFileDto {
 
   @IsOptional()
   @IsString()
+  @MaxLength(255)
   @ApiPropertyOptional({ type: String })
   readonly policeCaseNumber?: string
 
@@ -56,11 +60,13 @@ export class CreateFileDto {
 
   @IsOptional()
   @IsString()
+  @MaxLength(255)
   @ApiPropertyOptional({ type: String })
   readonly policeFileId?: string
 
   @IsOptional()
   @IsString()
+  @MaxLength(255)
   @ApiPropertyOptional({ type: String })
   readonly userGeneratedFilename?: string
 }

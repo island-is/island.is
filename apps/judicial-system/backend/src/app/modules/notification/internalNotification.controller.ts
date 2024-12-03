@@ -18,19 +18,28 @@ import {
 } from '@island.is/judicial-system/message'
 
 import { Case, CaseHasExistedGuard, CurrentCase } from '../case'
-import { CurrentDefendant, Defendant, DefendantExistsGuard } from '../defendant'
+import {
+  CivilClaimant,
+  CivilClaimantExistsGuard,
+  CurrentCivilClaimant,
+  CurrentDefendant,
+  Defendant,
+  DefendantExistsGuard,
+} from '../defendant'
 import { SubpoenaExistsGuard } from '../subpoena'
 import { CaseNotificationDto } from './dto/caseNotification.dto'
+import { CivilClaimantNotificationDto } from './dto/civilClaimantNotification.dto'
 import { DefendantNotificationDto } from './dto/defendantNotification.dto'
 import { InstitutionNotificationDto } from './dto/institutionNotification.dto'
 import { NotificationDispatchDto } from './dto/notificationDispatch.dto'
 import { SubpoenaNotificationDto } from './dto/subpoenaNotification.dto'
 import { DeliverResponse } from './models/deliver.response'
-import { CaseNotificationService } from './caseNotification.service'
-import { DefendantNotificationService } from './defendantNotification.service'
-import { InstitutionNotificationService } from './institutionNotification.service'
+import { CaseNotificationService } from './services/caseNotification/caseNotification.service'
+import { CivilClaimantNotificationService } from './services/civilClaimantNotification/civilClaimantNotification.service'
+import { DefendantNotificationService } from './services/defendantNotification/defendantNotification.service'
+import { InstitutionNotificationService } from './services/institutionNotification/institutionNotification.service'
+import { SubpoenaNotificationService } from './services/subpoenaNotification/subpoenaNotification.service'
 import { NotificationDispatchService } from './notificationDispatch.service'
-import { SubpoenaNotificationService } from './subpoenaNotification.service'
 
 @UseGuards(TokenGuard)
 @Controller('api/internal')
@@ -42,6 +51,7 @@ export class InternalNotificationController {
     private readonly institutionNotificationService: InstitutionNotificationService,
     private readonly subpoenaNotificationService: SubpoenaNotificationService,
     private readonly defendantNotificationService: DefendantNotificationService,
+    private readonly civilClaimantNotificationService: CivilClaimantNotificationService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
@@ -118,7 +128,35 @@ export class InternalNotificationController {
 
     return this.defendantNotificationService.sendDefendantNotification(
       notificationDto.type,
+      theCase,
       defendant,
+    )
+  }
+
+  @Post(
+    `case/:caseId/${
+      messageEndpoint[MessageType.CIVIL_CLAIMANT_NOTIFICATION]
+    }/:civilClaimantId`,
+  )
+  @UseGuards(CaseHasExistedGuard, CivilClaimantExistsGuard)
+  @ApiCreatedResponse({
+    type: DeliverResponse,
+    description: 'Sends civil claimant related notifications',
+  })
+  sendCivilClaimantNotification(
+    @Param('caseId') caseId: string,
+    @Param('civilClaimantId') civilClaimantId: string,
+    @CurrentCase() theCase: Case,
+    @CurrentCivilClaimant() civilClaimant: CivilClaimant,
+    @Body() notificationDto: CivilClaimantNotificationDto,
+  ): Promise<DeliverResponse> {
+    this.logger.debug(
+      `Sending ${notificationDto.type} notification for civil claimant ${civilClaimantId} and case ${caseId}`,
+    )
+
+    return this.civilClaimantNotificationService.sendCivilClaimantNotification(
+      notificationDto.type,
+      civilClaimant,
       theCase,
     )
   }

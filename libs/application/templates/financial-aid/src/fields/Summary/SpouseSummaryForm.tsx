@@ -1,20 +1,20 @@
-import React, { useEffect, useState } from 'react'
+import { FieldBaseProps } from '@island.is/application/types'
 import { Box } from '@island.is/island-ui/core'
-import { useAuth } from '@island.is/auth/react'
-import * as m from '../../lib/messages'
-import { SummaryComment as SummaryCommentType } from '../../lib/types'
-import { Routes } from '../../lib/constants'
-import { formatAddress, spouseFormItems } from '../../lib/formatters'
+import { useUserInfo } from '@island.is/react-spa/bff'
+import React, { useEffect, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 import DescriptionText from '../../components/DescriptionText/DescriptionText'
 import DirectTaxPaymentModal from '../../components/DirectTaxPaymentsModal/DirectTaxPaymentModal'
-import SummaryComment from '../../components/Summary/SummaryComment'
 import ContactInfo from '../../components/Summary/ContactInfo'
+import DirectTaxPaymentCell from '../../components/Summary/DirectTaxPaymentCell'
 import Files from '../../components/Summary/Files'
 import FormInfo from '../../components/Summary/FormInfo'
-import DirectTaxPaymentCell from '../../components/Summary/DirectTaxPaymentCell'
+import SummaryComment from '../../components/Summary/SummaryComment'
 import UserInfo from '../../components/Summary/UserInfo'
-import { FieldBaseProps } from '@island.is/application/types'
+import { Routes } from '../../lib/constants'
+import { formatAddress, spouseFormItems } from '../../lib/formatters'
+import * as m from '../../lib/messages'
+import { SummaryComment as SummaryCommentType } from '../../lib/types'
 import { getSpouseSummaryConstants } from './utils'
 
 export const SpouseSummaryForm = ({
@@ -26,8 +26,7 @@ export const SpouseSummaryForm = ({
 
   const [isModalOpen, setIsModalOpen] = useState(false)
   const { setValue } = useFormContext()
-
-  const { userInfo } = useAuth()
+  const userInfo = useUserInfo()
 
   useEffect(() => {
     setValue('spouseName', userInfo?.profile.name)

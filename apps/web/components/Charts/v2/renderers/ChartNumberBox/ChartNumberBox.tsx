@@ -87,7 +87,7 @@ export const ChartNumberBox = ({ slice }: ChartNumberBoxRendererProps) => {
   }, [slice, numberOfDataPoints, activeLocale])
 
   if (queryResult.loading) {
-    return <SkeletonLoader width="100%" height={130} borderRadius="xl" />
+    return <SkeletonLoader width="100%" height={130} borderRadius="lg" />
   }
 
   if (!queryResult.data || queryResult.data.length === 0) {

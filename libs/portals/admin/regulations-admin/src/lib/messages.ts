@@ -425,6 +425,12 @@ export const impactMsgs = defineMessages({
     defaultMessage: 'Breyting tekur gildi á ákveðinni dagsetningu',
   },
 
+  specificDateApplyTextDetails: {
+    id: 'ap.regulations-admin:change-applied-on-specific-date-text-details',
+    defaultMessage:
+      'Breyting tekur gildi þegar í stað, daginn eftir útgáfudag.',
+  },
+
   // ---------------------------------------------------------------------------
 
   regExplainer: {
@@ -570,6 +576,11 @@ export const errorMsgs = defineMessages({
   titleTooLong: {
     id: 'ap.regulations-admin:title-is-too-long',
     defaultMessage: 'Titill reglugerðar er of langur.',
+  },
+  errorOnSaveReg: {
+    id: 'ap.regulations-admin:error-on-save-reg',
+    defaultMessage:
+      'Villa kom upp við að vista texta. Vinsamlegast afritið texta og reynið aftur síðar.',
   },
 })
 

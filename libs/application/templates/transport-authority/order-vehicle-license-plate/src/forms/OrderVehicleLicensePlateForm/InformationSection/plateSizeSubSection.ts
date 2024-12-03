@@ -1,5 +1,4 @@
 import { Application } from '@island.is/api/schema'
-import { VehiclesCurrentVehicle } from '../../../shared'
 import {
   buildMultiField,
   buildTextField,
@@ -25,7 +24,7 @@ export const plateSizeSubSection = buildSubSection({
           titleVariant: 'h5',
         }),
         buildTextField({
-          id: 'plateSize.vehiclePlate',
+          id: 'vehicleInfo.plate',
           title: information.labels.plateSize.vehiclePlate,
           backgroundColor: 'white',
           width: 'half',
@@ -34,12 +33,12 @@ export const plateSizeSubSection = buildSubSection({
             const vehicle = getSelectedVehicle(
               application.externalData,
               application.answers,
-            ) as VehiclesCurrentVehicle
+            )
             return vehicle?.permno
           },
         }),
         buildTextField({
-          id: 'plateSize.vehicleType',
+          id: 'vehicleInfo.type',
           title: information.labels.plateSize.vehicleType,
           backgroundColor: 'white',
           width: 'half',
@@ -48,7 +47,7 @@ export const plateSizeSubSection = buildSubSection({
             const vehicle = getSelectedVehicle(
               application.externalData,
               application.answers,
-            ) as VehiclesCurrentVehicle
+            )
             return vehicle?.make
           },
         }),

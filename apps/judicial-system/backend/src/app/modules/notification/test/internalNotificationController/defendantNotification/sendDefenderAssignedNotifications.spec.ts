@@ -9,7 +9,10 @@ import {
   DefendantNotificationType,
 } from '@island.is/judicial-system/types'
 
-import { createTestingNotificationModule } from '../../createTestingNotificationModule'
+import {
+  createTestingNotificationModule,
+  createTestUsers,
+} from '../../createTestingNotificationModule'
 
 import { Case } from '../../../../case'
 import { Defendant } from '../../../../defendant'
@@ -36,6 +39,8 @@ type GivenWhenThen = (
 describe('InternalNotificationController - Send defender assigned notifications', () => {
   const caseId = uuid()
   const defendantId = uuid()
+
+  const { defender } = createTestUsers(['defender'])
   const court = { name: 'Héraðsdómur Reykjavíkur' } as Case['court']
 
   let mockEmailService: EmailService
@@ -91,8 +96,8 @@ describe('InternalNotificationController - Send defender assigned notifications'
     const defendant = {
       id: defendantId,
       defenderNationalId: '1234567890',
-      defenderName: 'Defender Name',
-      defenderEmail: 'ben10@omnitrix.is',
+      defenderName: defender.name,
+      defenderEmail: defender.email,
       isDefenderChoiceConfirmed: true,
     } as Defendant
 
@@ -158,7 +163,7 @@ describe('InternalNotificationController - Send defender assigned notifications'
   describe('when sending defender assigned notification to unconfirmed defender', () => {
     const defendant = {
       id: defendantId,
-      defenderEmail: 'ben101@omnitrix.is',
+      defenderEmail: defender.email,
       isDefenderChoiceConfirmed: false,
     } as Defendant
 
