@@ -5,7 +5,7 @@ import { recipe } from '@vanilla-extract/recipes'
 export const problemTemplateContainer = recipe({
   base: {
     borderWidth: theme.border.width.standard,
-    borderRadius: theme.border.radius.xl,
+    borderRadius: theme.border.radius.lg,
   },
   variants: {
     red: {

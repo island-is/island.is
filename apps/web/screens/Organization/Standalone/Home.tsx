@@ -11,6 +11,7 @@ import {
   QueryGetOrganizationPageArgs,
 } from '@island.is/web/graphql/schema'
 import { useNamespace } from '@island.is/web/hooks'
+import useContentfulId from '@island.is/web/hooks/useContentfulId'
 import { StandaloneLayout } from '@island.is/web/layouts/organization/standalone'
 import type { Screen, ScreenContext } from '@island.is/web/types'
 import { CustomNextError } from '@island.is/web/units/errors'
@@ -25,6 +26,11 @@ type StandaloneHomeScreenContext = ScreenContext & {
 export interface StandaloneHomeProps {
   organizationPage: OrganizationPage
   namespace: Record<string, string>
+}
+
+const LanguageToggleSetup = (props: { id: string }) => {
+  useContentfulId(props.id)
+  return null
 }
 
 const StandaloneHome: Screen<
@@ -43,6 +49,7 @@ const StandaloneHome: Screen<
       isFrontpage={true}
       bannerTitle={n('bannerTitle', '')}
     >
+      <LanguageToggleSetup id={organizationPage.id} />
       <Stack space={SLICE_SPACING}>
         <Stack space={SLICE_SPACING}>
           {organizationPage.slices.map((slice) => {
