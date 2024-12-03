@@ -6,7 +6,11 @@ const { createVanillaExtractPlugin } = require('@vanilla-extract/next-plugin')
 
 const withVanillaExtract = createVanillaExtractPlugin()
 
-const { API_URL = 'http://localhost:4444', CONFIGCAT_SDK_KEY } = process.env
+const {
+  API_URL = 'http://localhost:4444',
+  CONFIGCAT_SDK_KEY,
+  BASEPATH = '/greida',
+} = process.env
 
 const graphqlPath = '/api/graphql'
 
@@ -29,6 +33,7 @@ const nextConfig = {
     graphqlEndpoint: graphqlPath,
     configCatSdkKey: CONFIGCAT_SDK_KEY,
   },
+  basePath: `${BASEPATH}`,
   env: {
     API_MOCKS: process.env.API_MOCKS || '',
   },

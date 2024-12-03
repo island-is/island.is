@@ -6,12 +6,15 @@ const image = namespace
 
 const basepath = '/greida'
 
-export const serviceSetup = (): ServiceBuilder<'payments'> =>
+export const serviceSetup = (services: {
+  api: ServiceBuilder<'api'>
+}): ServiceBuilder<'payments'> =>
   service(serviceName)
-    .namespace(namespace)
     .image(image)
+    .namespace(namespace)
     .env({
       BASEPATH: basepath,
+      API_URL: ref((h) => `http://${h.svc(services.api)}`),
     })
     .secrets({
       SI_PUBLIC_CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY',

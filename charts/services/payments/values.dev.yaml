@@ -19,6 +19,7 @@ global:
 name: 'payments'
 enabled: true
 env:
+  API_URL: 'http://web-api.islandis.svc.cluster.local'
   BASEPATH: '/greida'
   LOG_LEVEL: 'info'
   NODE_OPTIONS: '--max-old-space-size=230 -r dd-trace/init'
