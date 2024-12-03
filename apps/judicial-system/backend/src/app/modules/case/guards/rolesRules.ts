@@ -327,27 +327,6 @@ export const districtCourtJudgeTransitionRule: RolesRule = {
     CaseTransition.REOPEN,
     CaseTransition.RECEIVE_APPEAL,
   ],
-  canActivate: (request) => {
-    const user: User = request.user
-    const theCase: Case = request.case
-    const transition = request.body.transition
-
-    if (!user || !theCase || !transition) {
-      return false
-    }
-
-    if (theCase.type === CaseType.INDICTMENT) {
-      if (
-        theCase.indictmentRulingDecision ===
-          CaseIndictmentRulingDecision.RULING ||
-        theCase.indictmentRulingDecision ===
-          CaseIndictmentRulingDecision.DISMISSAL
-      )
-        return user.id === theCase.judgeId
-    }
-
-    return true
-  },
 }
 
 // Allows registrars to transition cases
@@ -372,30 +351,6 @@ export const districtCourtAssistantTransitionRule: RolesRule = {
   type: RulesType.FIELD_VALUES,
   dtoField: 'transition',
   dtoFieldValues: [CaseTransition.RECEIVE, CaseTransition.COMPLETE],
-  canActivate: (request) => {
-    const user: User = request.user
-    const theCase: Case = request.case
-    const transition = request.body.transition
-
-    if (!user || !theCase || !transition) {
-      return false
-    }
-
-    if (
-      theCase.type === CaseType.INDICTMENT &&
-      transition === CaseTransition.COMPLETE
-    ) {
-      if (
-        theCase.indictmentRulingDecision ===
-          CaseIndictmentRulingDecision.RULING ||
-        theCase.indictmentRulingDecision ===
-          CaseIndictmentRulingDecision.DISMISSAL
-      )
-        return false
-    }
-
-    return true
-  },
 }
 
 // Allows court of appeals judges to transition cases
