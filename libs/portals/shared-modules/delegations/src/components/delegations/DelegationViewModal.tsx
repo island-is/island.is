@@ -1,6 +1,5 @@
-import { useEffect } from 'react'
-import { useAuth } from '@island.is/auth/react'
 import { Box } from '@island.is/island-ui/core'
+import { useEffect } from 'react'
 
 import { useLocale } from '@island.is/localization'
 import { formatNationalId } from '@island.is/portals/core'
@@ -9,10 +8,11 @@ import { IdentityCard } from '../IdentityCard/IdentityCard'
 import { AccessListContainer } from '../access/AccessList/AccessListContainer/AccessListContainer'
 import { useAuthScopeTreeLazyQuery } from '../access/AccessList/AccessListContainer/AccessListContainer.generated'
 
-import { m } from '../../lib/messages'
-import format from 'date-fns/format'
 import { AuthDelegationScope, AuthDelegationType } from '@island.is/api/schema'
+import { useUserInfo } from '@island.is/react-spa/bff'
+import format from 'date-fns/format'
 import isValid from 'date-fns/isValid'
+import { m } from '../../lib/messages'
 
 type DelegationViewModalProps = {
   delegation?: {
@@ -45,7 +45,7 @@ export const DelegationViewModal = ({
   ...rest
 }: DelegationViewModalProps) => {
   const { formatMessage, lang } = useLocale()
-  const { userInfo } = useAuth()
+  const userInfo = useUserInfo()
   const isOutgoing = direction === 'outgoing'
   const [getAuthScopeTree, { data: scopeTreeData, loading: scopeTreeLoading }] =
     useAuthScopeTreeLazyQuery()

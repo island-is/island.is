@@ -9,14 +9,13 @@ import {
   UnauthorizedException,
 } from '@nestjs/common'
 import { ConfigType } from '@nestjs/config'
-import { CookieOptions, Request, Response } from 'express'
+import type { Request, Response } from 'express'
 import jwksClient from 'jwks-rsa'
 import { jwtDecode } from 'jwt-decode'
 
 import { IdTokenClaims } from '@island.is/shared/types'
 import { Algorithm, decode, verify } from 'jsonwebtoken'
 import { v4 as uuid } from 'uuid'
-import { environment } from '../../../environment'
 import { BffConfig } from '../../bff.config'
 import { SESSION_COOKIE_NAME } from '../../constants/cookies'
 import { FIVE_SECONDS_IN_MS } from '../../constants/time'
@@ -26,11 +25,12 @@ import {
   CreateErrorQueryStrArgs,
   createErrorQueryStr,
 } from '../../utils/create-error-query-str'
+import { getCookieOptions } from '../../utils/get-cookie-options'
 import { validateUri } from '../../utils/validate-uri'
 import { CacheService } from '../cache/cache.service'
 import { IdsService } from '../ids/ids.service'
 import { LogoutTokenPayload, TokenResponse } from '../ids/ids.types'
-import { CachedTokenResponse } from './auth.types'
+import { CachedTokenResponse, LoginAttemptData } from './auth.types'
 import { CallbackLoginDto } from './dto/callback-login.dto'
 import { CallbackLogoutDto } from './dto/callback-logout.dto'
 import { LoginDto } from './dto/login.dto'
@@ -55,23 +55,12 @@ export class AuthService {
     this.baseUrl = this.config.ids.issuer
   }
 
-  private getCookieOptions(): CookieOptions {
-    return {
-      httpOnly: true,
-      secure: true,
-      // The lax setting allows cookies to be sent on top-level navigations (such as redirects),
-      // while still providing some protection against CSRF attacks.
-      sameSite: 'lax',
-      path: environment.keyPath,
-    }
-  }
-
   /**
    * Creates the client base URL with the path appended.
    */
   private createClientBaseUrl() {
     const baseUrl = new URL(this.config.clientBaseUrl)
-    baseUrl.pathname = `${baseUrl.pathname}${environment.keyPath}`
+    baseUrl.pathname = `${baseUrl.pathname}${this.config.clientBasePath}`
       // Prevent potential issues with malformed URLs.
       .replace('//', '/')
 
@@ -81,8 +70,13 @@ export class AuthService {
   /**
    * Redirects the user to the client base URL with an error query string.
    */
-  private createClientBaseUrlWithError(args: CreateErrorQueryStrArgs) {
-    return `${this.createClientBaseUrl()}?${createErrorQueryStr(args)}`
+  private createClientBaseUrlWithError(
+    args: CreateErrorQueryStrArgs,
+    targetUrl?: string,
+  ) {
+    const baseUrl = targetUrl ?? this.createClientBaseUrl()
+
+    return `${baseUrl}?${createErrorQueryStr(args)}`
   }
 
   /**
@@ -90,12 +84,14 @@ export class AuthService {
    */
   private redirectWithError(
     res: Response,
-    args?: Partial<CreateErrorQueryStrArgs>,
+    args?: Partial<CreateErrorQueryStrArgs> & { targetUrl?: string },
   ) {
     const code = args?.code || 500
     const error = args?.error || 'Login failed!'
 
-    return res.redirect(this.createClientBaseUrlWithError({ code, error }))
+    return res.redirect(
+      this.createClientBaseUrlWithError({ code, error }, args?.targetUrl),
+    )
   }
 
   /**
@@ -212,12 +208,8 @@ export class AuthService {
           prompt,
         })
 
-        if (parResponse.type === 'error') {
-          throw parResponse.data
-        }
-
         searchParams = new URLSearchParams({
-          request_uri: parResponse.data.request_uri,
+          request_uri: parResponse.request_uri,
           client_id: this.config.ids.clientId,
         })
       } else {
@@ -237,7 +229,9 @@ export class AuthService {
     } catch (error) {
       this.logger.error('Login failed: ', error)
 
-      return this.redirectWithError(res)
+      return this.redirectWithError(res, {
+        targetUrl: targetLinkUri,
+      })
     }
   }
 
@@ -283,13 +277,13 @@ export class AuthService {
       })
     }
 
+    let loginAttemptData: LoginAttemptData | undefined
+
     try {
       // Get login attempt from cache
-      const loginAttemptData = await this.cacheService.get<{
-        targetLinkUri?: string
-        codeVerifier: string
-        originUrl: string
-      }>(this.cacheService.createSessionKeyType('attempt', query.state))
+      loginAttemptData = await this.cacheService.get<LoginAttemptData>(
+        this.cacheService.createSessionKeyType('attempt', query.state),
+      )
 
       // Get tokens and user information from the authorization code
       const tokenResponse = await this.idsService.getTokens({
@@ -297,13 +291,7 @@ export class AuthService {
         codeVerifier: loginAttemptData.codeVerifier,
       })
 
-      if (tokenResponse.type === 'error') {
-        throw tokenResponse.data
-      }
-
-      const updatedTokenResponse = await this.updateTokenCache(
-        tokenResponse.data,
-      )
+      const updatedTokenResponse = await this.updateTokenCache(tokenResponse)
 
       // Clean up the login attempt from the cache since we have a successful login.
       this.cacheService
@@ -312,11 +300,15 @@ export class AuthService {
           this.logger.warn(err)
         })
 
+      // Clear any existing session cookie first
+      // This prevents multiple session cookies being set.
+      res.clearCookie(SESSION_COOKIE_NAME, getCookieOptions())
+
       // Create session cookie with successful login session id
       res.cookie(
         SESSION_COOKIE_NAME,
         updatedTokenResponse.userProfile.sid,
-        this.getCookieOptions(),
+        getCookieOptions(),
       )
 
       // Check if there is an old session cookie and clean up the cache
@@ -355,7 +347,9 @@ export class AuthService {
     } catch (error) {
       this.logger.error('Callback login failed: ', error)
 
-      return this.redirectWithError(res)
+      return this.redirectWithError(res, {
+        targetUrl: loginAttemptData?.targetLinkUri,
+      })
     }
   }
 
@@ -424,7 +418,7 @@ export class AuthService {
      * - Delete the current login from the cache
      * - Clear the session cookie
      */
-    res.clearCookie(SESSION_COOKIE_NAME, this.getCookieOptions())
+    res.clearCookie(SESSION_COOKIE_NAME, getCookieOptions())
 
     this.cacheService
       .delete(currentLoginCacheKey)

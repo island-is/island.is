@@ -1,5 +1,6 @@
 import { ConfigModule } from '@island.is/nest/config'
 import { Module } from '@nestjs/common'
+import { ProblemModule } from '@island.is/nest/problem'
 import { BffConfig } from './bff.config'
 import { AuthModule as AppAuthModule } from './modules/auth/auth.module'
 import { CacheModule } from './modules/cache/cache.module'
@@ -18,6 +19,7 @@ import { EnhancedFetchModule } from './modules/enhancedFetch/enhanced-fetch.modu
     AppAuthModule,
     ProxyModule,
     EnhancedFetchModule,
+    ProblemModule,
   ],
 })
 export class AppModule {}
