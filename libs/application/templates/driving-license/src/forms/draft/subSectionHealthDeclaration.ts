@@ -61,6 +61,7 @@ export const subSectionHealthDeclaration = buildSubSection({
         buildFileUploadField({
           id: 'healthDeclarationFileUpload',
           title: '',
+          uploadDescription: m.healthDeclarationAllowedFileTypes,
           uploadAccept: '.pdf, .doc, .docx, .jpg, .jpeg, .png, .xls, .xlsx',
           uploadMultiple: false,
           condition: (answers, externalData) =>
@@ -79,7 +80,8 @@ export const subSectionHealthDeclaration = buildSubSection({
         buildFileUploadField({
           id: 'healthDeclarationFileUpload',
           title: '',
-          uploadAccept: '.pdf, .doc, .docx, .jpg, .jpeg, .png, .xls, .xlsx',
+          uploadDescription: m.healthDeclarationAllowedFileTypes,
+          uploadAccept: '.pdf, .jpg, .jpeg, .png',
           uploadMultiple: false,
         }),
       ],

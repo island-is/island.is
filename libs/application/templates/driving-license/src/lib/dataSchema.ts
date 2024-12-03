@@ -31,7 +31,7 @@ export const dataSchema = z.object({
     isDisabled: z.enum([YES, NO]),
     hasOtherDiseases: z.enum([YES, NO]),
   }),
-  healthDeclarationFileUpload: z.array(fileSchema).nonempty(),
+  healthDeclarationFileUpload: z.array(fileSchema),
   contactGlassesMismatch: z.boolean(),
   willBringQualityPhoto: z.union([
     z.array(z.enum([YES, NO])).nonempty(),

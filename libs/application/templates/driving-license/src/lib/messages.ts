@@ -136,6 +136,11 @@ export const m = defineMessages({
       'Þú þarft að skila inn læknisvottorði vegna ökuleyfis til að endurnýja ökuskírteini þitt. Læknisvottorðið þarf að vera frá **heimilislækni** og vegna ökuleyfis. Þegar búið er að ljúka umsókn þarf að skila inn læknisvottorði á valið sýslumannsembætti til að hægt sé að panta skírteinið.  **Athugið að skírteinið verður ekki pantað fyrr en búið er að skila inn vottorði.**',
     description: 'Health declaration',
   },
+  healthDeclarationAllowedFileTypes: {
+    id: 'dl.application:healthDeclarationAllowedFileTypes',
+    defaultMessage: 'Samþykktar skráartegundir: .pdf, .jpg, .jpeg, .png',
+    description: 'Allowed file types',
+  },
   healthDeclarationMultiFieldSubTitle: {
     id: 'dl.application:healthDeclarationMultiField.subTitle',
     defaultMessage: 'Yfirlýsing um líkamlegt og andlegt heilbrigði',

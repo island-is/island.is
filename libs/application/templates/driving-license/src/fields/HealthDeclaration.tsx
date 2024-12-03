@@ -16,27 +16,18 @@ import {
 } from '@island.is/application/core'
 import { m } from '../lib/messages'
 import { healthDeclarationQuestions } from '../lib/constants'
-import { FC, useEffect } from 'react'
+import { FC } from 'react'
 import { FieldBaseProps } from '@island.is/application/types'
 import { MessageDescriptor } from 'react-intl'
 import { useFormContext } from 'react-hook-form'
-import { needsHealthCertificateCondition } from '../lib/utils/formUtils'
 
 const HealthDeclaration: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   application,
   errors,
 }) => {
-  const { answers, externalData } = application
   const { formatMessage } = useLocale()
   const { clearErrors } = useFormContext()
   const hasError = errors ? getErrorViaPath(errors, 'healthDeclaration') : false
-
-  useEffect(() => {
-    if (!needsHealthCertificateCondition(YES)(answers, externalData)) {
-      console.log('clearing errors')
-      clearErrors('healthDeclarationFileUpload')
-    }
-  }, [answers, clearErrors, externalData, hasError])
 
   const HealthDeclarationQuestion = ({
     id,
