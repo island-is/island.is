@@ -128,8 +128,14 @@ import { GetSingleGrantInput } from './dto/getSingleGrant.input'
 import { GrantList } from './models/grantList.model'
 import { OrganizationParentSubpage } from './models/organizationParentSubpage.model'
 import { GetOrganizationParentSubpageInput } from './dto/getOrganizationParentSubpage.input'
-import { OrganizationPageStandaloneSitemap } from './models/organizationPageStandaloneSitemap.model'
-import { GetOrganizationPageStandaloneSitemapLevel1Input } from './dto/getOrganizationPageStandaloneSitemap.input'
+import {
+  OrganizationPageStandaloneSitemap,
+  OrganizationPageStandaloneSitemapLevel2,
+} from './models/organizationPageStandaloneSitemap.model'
+import {
+  GetOrganizationPageStandaloneSitemapLevel1Input,
+  GetOrganizationPageStandaloneSitemapLevel2Input,
+} from './dto/getOrganizationPageStandaloneSitemap.input'
 
 const defaultCache: CacheControlOptions = { maxAge: CACHE_CONTROL_MAX_AGE }
 
@@ -726,6 +732,16 @@ export class CmsResolver {
     @Args('input') input: GetOrganizationPageStandaloneSitemapLevel1Input,
   ): Promise<OrganizationPageStandaloneSitemap | null> {
     return this.cmsContentfulService.getOrganizationPageStandaloneSitemapLevel1(
+      input,
+    )
+  }
+
+  @CacheControl(defaultCache)
+  @Query(() => OrganizationPageStandaloneSitemapLevel2, { nullable: true })
+  getOrganizationPageStandaloneSitemapLevel2(
+    @Args('input') input: GetOrganizationPageStandaloneSitemapLevel2Input,
+  ): Promise<OrganizationPageStandaloneSitemapLevel2 | null> {
+    return this.cmsContentfulService.getOrganizationPageStandaloneSitemapLevel2(
       input,
     )
   }
