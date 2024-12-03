@@ -78,7 +78,7 @@ export const subSectionHealthDeclaration = buildSubSection({
         answers.applicationFor === License.B_FULL_RENEWAL_65,
       children: [
         buildFileUploadField({
-          id: 'healthDeclarationFileUpload',
+          id: 'healthDeclarationFileUpload65',
           title: '',
           uploadDescription: m.healthDeclarationAllowedFileTypes,
           uploadAccept: '.pdf, .jpg, .jpeg, .png',
