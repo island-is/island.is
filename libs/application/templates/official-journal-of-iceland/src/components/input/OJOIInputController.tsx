@@ -15,6 +15,7 @@ type Props = {
   applicationId: string
   disabled?: boolean
   textarea?: boolean
+  maxLength?: number
   onChange?: (value: string) => void
 }
 
@@ -27,6 +28,7 @@ export const OJOIInputController = ({
   applicationId,
   disabled,
   textarea,
+  maxLength,
   onChange,
 }: Props) => {
   const { formatMessage: f } = useLocale()
@@ -71,6 +73,7 @@ export const OJOIInputController = ({
       disabled={disabled}
       textarea={textarea}
       rows={4}
+      maxLength={maxLength}
       required={false}
       onChange={(e) =>
         debouncedOnUpdateApplicationHandler(

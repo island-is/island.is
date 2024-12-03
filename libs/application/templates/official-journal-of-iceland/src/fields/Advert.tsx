@@ -105,6 +105,7 @@ export const Advert = ({ application, timeStamp }: Props) => {
             defaultValue={application.answers?.advert?.title}
             placeholder={advert.inputs.title.placeholder}
             textarea={true}
+            maxLength={600}
           />
         </Box>
         <Box>
