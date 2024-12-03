@@ -98,7 +98,7 @@
       "inputs": ["production", "^production"]
     },
     "e2e": {
-      "inputs": ["default", "^production"],
+      "inputs": ["default", "^production"]
     },
     "lint": {
       "inputs": ["default", "{workspaceRoot}/.eslintrc.json"]
