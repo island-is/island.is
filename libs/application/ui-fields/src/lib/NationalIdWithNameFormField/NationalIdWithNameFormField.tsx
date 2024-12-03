@@ -25,7 +25,7 @@ export const NationalIdWithNameFormField: FC<
   return (
     <Box marginTop={field.marginTop} marginBottom={field.marginBottom}>
       {field.title && (
-        <Text variant={field.titleVariant ?? 'h3'} marginBottom={2}>
+        <Text variant={field.titleVariant ?? 'h3'} marginBottom={1}>
           {formatTextWithLocale(
             field.title,
             application,
