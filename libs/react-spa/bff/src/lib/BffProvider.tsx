@@ -183,7 +183,7 @@ export const BffProvider = ({
       )
 
       if (isOldLoginPath) {
-        // If user is on old login path, redirect to BFF login
+        // If user is on old login path, redirect to url without /login
         window.location.href = window.location.href.replace('/login', '')
 
         return
