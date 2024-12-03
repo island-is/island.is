@@ -89,6 +89,7 @@ export const subSectionApplicantInfo = buildSubSection({
           id: 'email',
           title: m.informationYourEmail,
           width: 'half',
+          required: true,
           defaultValue: ({ externalData }: Application) => {
             const data = externalData.userProfile.data as UserProfile
             return data.email
@@ -107,7 +108,7 @@ export const subSectionApplicantInfo = buildSubSection({
         buildSelectField({
           id: 'drivingInstructor',
           title: m.drivingInstructor,
-          required: true,
+          //required: true,
           condition: (answers) =>
             answers.applicationFor !== License.B_FULL_RENEWAL_65 &&
             answers.applicationFor !== License.B_FULL,

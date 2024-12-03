@@ -61,11 +61,6 @@ export const useEligibility = (
     },
   })
 
-  //TODO: Remove when RLS/SGS supports health certificate in BE license
-  const hasGlasses = getValueViaPath<boolean>(
-    application.externalData,
-    'glassesCheck.data',
-  )
   const currentLicense = getValueViaPath<DrivingLicense>(
     application.externalData,
     'currentLicense.data',
@@ -75,20 +70,6 @@ export const useEligibility = (
       application.externalData,
       'qualityPhoto.data.hasQualityPhoto',
     ) ?? false
-
-  const hasOtherCategoryOrHealthRemarks = (
-    currentLicense: DrivingLicense | undefined,
-  ) => {
-    return (
-      (currentLicense?.categories.some((license) =>
-        otherLicenseCategories.includes(license.nr),
-      ) ??
-        false) ||
-      currentLicense?.remarks?.some((remark) =>
-        codesRequiringHealthCertificate.includes(remark.code),
-      )
-    )
-  }
 
   const hasExtendedDrivingLicense = (
     currentLicense: DrivingLicense | undefined,
@@ -113,9 +94,6 @@ export const useEligibility = (
       eligibility: fakeEligibility(
         applicationFor,
         parseInt(fakeData?.howManyDaysHaveYouLivedInIceland.toString(), 10),
-
-        //TODO: Remove when RLS/SGS supports health certificate in BE license
-        hasGlasses,
       ),
     }
   }
@@ -130,33 +108,6 @@ export const useEligibility = (
 
   const eligibility: ApplicationEligibilityRequirement[] =
     data.drivingLicenseApplicationEligibility?.requirements ?? []
-
-  //TODO: Remove when RLS/SGS supports health certificate in BE license
-  if (application.answers.applicationFor === License.BE) {
-    return {
-      loading: loading,
-      eligibility: {
-        isEligible: loading
-          ? undefined
-          : (data.drivingLicenseApplicationEligibility?.isEligible ?? false) &&
-            !hasGlasses &&
-            hasQualityPhoto &&
-            !hasOtherCategoryOrHealthRemarks(currentLicense),
-        requirements: [
-          ...eligibility,
-          {
-            key: RequirementKey.BeRequiresHealthCertificate,
-            requirementMet:
-              !hasGlasses && !hasOtherCategoryOrHealthRemarks(currentLicense),
-          },
-          {
-            key: RequirementKey.HasNoPhoto,
-            requirementMet: hasQualityPhoto,
-          },
-        ],
-      },
-    }
-  }
 
   if (application.answers.applicationFor === License.B_FULL_RENEWAL_65) {
     const licenseB = currentLicense?.categories?.find(

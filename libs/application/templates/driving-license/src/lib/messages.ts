@@ -880,11 +880,9 @@ export const m = defineMessages({
       'Vinsamlegast gefðu upp símanúmerið þitt eða þá staðfestu að símanúmerið þitt sé rétt',
     description: 'Your phone number',
   },
-  //TODO: Remove when RLS/SGS supports health certificate in BE license
   beLicenseHealthDeclarationRequiresHealthCertificate: {
     id: 'dl.application:requirementunmet.beLicenseHealthDeclarationRequiresHealthCertificate',
-    defaultMessage:
-      'Athugaðu að þar sem þú þarft að skila inn læknisvottorði getur þú ekki haldið áfram með umsóknina. Þú þarft þú að mæta í þitt sýslumanns embætti með læknisvottorð og leggja inn umsókn á staðnum',
+    defaultMessage: 'Athugaðu að þú þarft að hlaða inn læknisvottorði.',
     description:
       'Health declaration answers indicate that health certificate is required and BE application does not support health certificate requirement',
   },
@@ -1118,29 +1116,12 @@ export const requirementsMessages = defineMessages({
       'Þú þarft að hafa búsetu á Íslandi til að geta sótt um fullnaðarskírteini.',
     description: 'requirement unmet api returned false',
   },
-  //TODO: Remove when RLS/SGS supports health certificate in BE license
-  beLicenseRequiresHealthCertificateDescription: {
-    id: 'dl.application:requirementunmet.beLicenseRequiresHealthCertificateDescription',
-    defaultMessage:
-      'Ef tákntölur sem varða heilsufar/sjón eru skráðar á fyrri ökuskírteini eða umsækjandi er nú þegar með aukin ökuréttindi, þarf umsækjandi að mæta í sitt sýslumanns embætti með vottorð og leggja inn umsókn á staðnum',
-    description:
-      'BE application does not support health certificate requirement',
-  },
-  //TODO: Remove when RLS/SGS supports health certificate in BE license
-  beLicenseRequiresHealthCertificateTitle: {
-    id: 'dl.application:requirementunmet.beLicenseRequiresHealthCertificateTitle',
-    defaultMessage: 'Læknisvottorð',
-    description:
-      'BE application does not support health certificate requirement',
-  },
-  //TODO: Remove when RLS/SGS supports health certificate in BE license
   beLicenseQualityPhotoTitle: {
     id: 'dl.application:requirementunmet.beLicenseQualityPhotoTitle',
     defaultMessage: 'Gæðavottuð mynd',
     description:
       'requirement unmet api returned false for an unspecified reason',
   },
-  //TODO: Remove when RLS/SGS supports health certificate in BE license
   beLicenseQualityPhotoDescription: {
     id: 'dl.application:requirementunmet.beLicenseQualityPhotoDescription',
     defaultMessage:

@@ -8,27 +8,30 @@ const isValidPhoneNumber = (phoneNumber: string) => {
   return phone && phone.isValid()
 }
 
+const fileSchema = z.object({
+  key: z.string(),
+  name: z.string(),
+  url: z.string().optional(),
+})
+
 export const dataSchema = z.object({
   type: z.array(z.enum(['car', 'trailer', 'motorcycle'])).nonempty(),
   approveExternalData: z.boolean().refine((v) => v),
   jurisdiction: z.string().min(1),
   pickup: z.enum([Pickup.POST, Pickup.DISTRICT]).optional(),
   healthDeclaration: z.object({
-    usesContactGlasses: z.enum([YES, NO]),
-    hasReducedPeripheralVision: z.enum([YES, NO]),
-    hasEpilepsy: z.enum([YES, NO]),
-    hasHeartDisease: z.enum([YES, NO]),
-    hasMentalIllness: z.enum([YES, NO]),
-    usesMedicalDrugs: z.enum([YES, NO]),
-    isAlcoholic: z.enum([YES, NO]),
-    hasDiabetes: z.enum([YES, NO]),
-    isDisabled: z.enum([YES, NO]),
-    hasOtherDiseases: z.enum([YES, NO]),
-  }),
-  //TODO: Remove when RLS/SGS supports health certificate in BE license
-  healthDeclarationValidForBELicense: z
-    .array(z.string())
-    .refine((v) => v === undefined || v.length === 0),
+      usesContactGlasses: z.enum([YES, NO]),
+      hasReducedPeripheralVision: z.enum([YES, NO]),
+      hasEpilepsy: z.enum([YES, NO]),
+      hasHeartDisease: z.enum([YES, NO]),
+      hasMentalIllness: z.enum([YES, NO]),
+      usesMedicalDrugs: z.enum([YES, NO]),
+      isAlcoholic: z.enum([YES, NO]),
+      hasDiabetes: z.enum([YES, NO]),
+      isDisabled: z.enum([YES, NO]),
+      hasOtherDiseases: z.enum([YES, NO]),
+    }),
+  healthDeclarationFileUpload: z.array(fileSchema).nonempty(),
   contactGlassesMismatch: z.boolean(),
   willBringQualityPhoto: z.union([
     z.array(z.enum([YES, NO])).nonempty(),
@@ -49,9 +52,9 @@ export const dataSchema = z.object({
     .refine((value) => {
       return value.length > 0
     }),
-  email: z.string().optional(),
+  email: z.string().email(),
   phone: z.string().refine((v) => isValidPhoneNumber(v)),
-  drivingInstructor: z.string().min(1),
+  drivingInstructor: z.string().optional(), //.min(1),
   otherCountry: z
     .object({
       drivingLicenseInOtherCountry: z.enum([YES, NO]),

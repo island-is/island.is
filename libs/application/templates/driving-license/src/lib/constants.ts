@@ -1,4 +1,5 @@
 import { DefaultEvents, FormValue } from '@island.is/application/types'
+import { m } from './messages'
 
 export enum License {
   B_FULL = 'B-full',
@@ -46,6 +47,49 @@ export interface DrivingLicenseFormConfig {
 }
 
 export type ConditionFn = (answer: FormValue) => boolean
+
+export const healthDeclarationQuestions = [
+  {
+    id: 'healthDeclaration.usesContactGlasses',
+    label: m.healthDeclaration1,
+  },
+  {
+    id: 'healthDeclaration.hasReducedPeripheralVision',
+    label: m.healthDeclaration2,
+  },
+  {
+    id: 'healthDeclaration.hasEpilepsy',
+    label: m.healthDeclaration3,
+  },
+  {
+    id: 'healthDeclaration.hasHeartDisease',
+    label: m.healthDeclaration4,
+  },
+  {
+    id: 'healthDeclaration.hasMentalIllness',
+    label: m.healthDeclaration5,
+  },
+  {
+    id: 'healthDeclaration.usesMedicalDrugs',
+    label: m.healthDeclaration6,
+  },
+  {
+    id: 'healthDeclaration.isAlcoholic',
+    label: m.healthDeclaration7,
+  },
+  {
+    id: 'healthDeclaration.hasDiabetes',
+    label: m.healthDeclaration8,
+  },
+  {
+    id: 'healthDeclaration.isDisabled',
+    label: m.healthDeclaration9,
+  },
+  {
+    id: 'healthDeclaration.hasOtherDiseases',
+    label: m.healthDeclaration10,
+  },
+]
 
 export enum AdvancedLicenseGroupCodes {
   'C1' = 'C1',
