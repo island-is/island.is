@@ -15,7 +15,6 @@ import {
   buildHiddenInput,
   buildHiddenInputWithWatchedValue,
   buildTableRepeaterField,
-  buildNationalIdWithNameField,
 } from '@island.is/application/core'
 import {
   Comparators,
