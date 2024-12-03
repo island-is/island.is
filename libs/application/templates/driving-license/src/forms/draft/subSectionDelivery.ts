@@ -20,7 +20,7 @@ export const subSectionDelivery = buildSubSection({
       id: 'info',
       title: m.pickupLocationTitle,
       description: ({ answers }) =>
-        answers.applicationFor === License.B_FULL_RENEWAL_65
+        answers.applicationFor === License.B_TEMP
           ? m.chooseDistrictCommissionerForTempLicense
           : m.chooseDistrictCommissionerForFullLicense,
       children: [
