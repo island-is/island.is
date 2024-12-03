@@ -1,4 +1,4 @@
-import { useUserInfo } from '@island.is/auth/react'
+import { useUserInfo } from '@island.is/react-spa/bff'
 import { defineMessage } from 'react-intl'
 import {
   Box,
