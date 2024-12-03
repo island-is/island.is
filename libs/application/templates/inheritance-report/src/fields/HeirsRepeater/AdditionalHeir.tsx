@@ -31,6 +31,7 @@ import { LookupPerson } from '../LookupPerson'
 import { HeirsRepeaterProps } from './types'
 import ShareInput from '../../components/ShareInput'
 import { isFakePerson } from '../../lib/utils/fakeData'
+import { cleanPhone } from '../../lib/utils/utils'
 import { useLazyQuery } from '@apollo/client'
 import { GET_ELECTRONIC_ID_STATUS } from '../../graphql'
 
@@ -116,8 +117,28 @@ export const AdditionalHeir = ({
     defaultValue: '',
   })
 
+  const advocatePhoneInput = useWatch({
+    name: advocatePhoneField,
+    defaultValue: '',
+  })
+
+  const advocatePhoneInput2 = useWatch({
+    name: advocatePhoneField2,
+    defaultValue: '',
+  })
+
   const nationalIdInput = useWatch({
     name: `${fieldIndex}.nationalId`,
+    defaultValue: '',
+  })
+
+  const advocateNationalIdInput = useWatch({
+    name: `${fieldIndex}.advocate.nationalId`,
+    defaultValue: '',
+  })
+
+  const advocateNationalIdInput2 = useWatch({
+    name: `${fieldIndex}.advocate2.nationalId`,
     defaultValue: '',
   })
 
@@ -125,39 +146,118 @@ export const AdditionalHeir = ({
     values.applicationFor === PREPAID_INHERITANCE ? false : !currentHeir.enabled
 
   useEffect(() => {
-    const cleanPhone = phoneInput
-      .replace(/\D/g, '')
-      .replace(/^00354/, '')
-      .replace(/^354/, '')
+    if (
+      requiresAdvocate &&
+      advocateNationalIdInput &&
+      advocateNationalIdInput2 &&
+      advocatePhoneInput &&
+      advocatePhoneInput2
+    ) {
+      const cleanPhoneNumber = cleanPhone(advocatePhoneInput)
+      const cleanPhoneNumber2 = cleanPhone(advocatePhoneInput2)
 
-    if (cleanPhone.length === 7 && nationalIdInput?.length === 10) {
-      if (isFakePerson(nationalIdInput)) {
-        // For fake data
-        // Allow electronic ID for phone numbers ending in 9
-        if (cleanPhone.slice(-1) === '9') {
-          setValue(`${fieldIndex}.electronicID`, 'true')
-        } else {
-          setValue(`${fieldIndex}.electronicID`, '')
+      if (
+        cleanPhoneNumber.length === 7 &&
+        cleanPhoneNumber2.length === 7 &&
+        advocateNationalIdInput.length === 10 &&
+        advocateNationalIdInput2.length === 10
+      ) {
+        let faked = false
+
+        if (isFakePerson(advocateNationalIdInput)) {
+          // For fake data
+          // Allow electronic ID for phone numbers ending in 9
+          if (cleanPhoneNumber.slice(-1) === '9') {
+            setValue(`${fieldIndex}.advocate.electronicID`, 'true')
+          } else {
+            setValue(`${fieldIndex}.advocate.electronicID`, '')
+          }
+          faked = true
         }
-        return
-      }
 
-      getElectronicIdStatus({
-        variables: {
-          input: {
-            nationalIdInput,
-            phoneNumber: cleanPhone,
+        if (isFakePerson(advocateNationalIdInput2)) {
+          // For fake data
+          // Allow electronic ID for phone numbers ending in 9
+          if (cleanPhoneNumber2.slice(-1) === '9') {
+            setValue(`${fieldIndex}.advocate2.electronicID`, 'true')
+          } else {
+            setValue(`${fieldIndex}.advocate2.electronicID`, '')
+          }
+          faked = true
+        }
+
+        if (faked) {
+          return
+        }
+
+        getElectronicIdStatus({
+          variables: {
+            input: {
+              nationalId: advocateNationalIdInput,
+              phoneNumber: cleanPhoneNumber,
+            },
           },
-        },
-      }).then((res) => {
-        if (!res.data?.getSyslumennElectronicIDStatus) {
-          setValue(`${fieldIndex}.electronicID`, '')
-        } else {
-          setValue(`${fieldIndex}.electronicID`, 'true')
+        }).then((res) => {
+          if (!res.data?.getSyslumennElectronicIDStatus) {
+            setValue(`${fieldIndex}.advocate.electronicID`, '')
+          } else {
+            setValue(`${fieldIndex}.advocate.electronicID`, 'true')
+          }
+        })
+
+        getElectronicIdStatus({
+          variables: {
+            input: {
+              nationalId: advocateNationalIdInput2,
+              phoneNumber: cleanPhoneNumber2,
+            },
+          },
+        }).then((res) => {
+          if (!res.data?.getSyslumennElectronicIDStatus) {
+            setValue(`${fieldIndex}.advocate2.electronicID`, '')
+          } else {
+            setValue(`${fieldIndex}.advocate2.electronicID`, 'true')
+          }
+        })
+      }
+    } else if (!requiresAdvocate) {
+      const cleanPhoneNumber = cleanPhone(phoneInput)
+
+      if (cleanPhoneNumber.length === 7 && nationalIdInput?.length === 10) {
+        if (isFakePerson(nationalIdInput)) {
+          // For fake data
+          // Allow electronic ID for phone numbers ending in 9
+          if (cleanPhoneNumber.slice(-1) === '9') {
+            setValue(`${fieldIndex}.electronicID`, 'true')
+          } else {
+            setValue(`${fieldIndex}.electronicID`, '')
+          }
+          return
         }
-      })
+
+        getElectronicIdStatus({
+          variables: {
+            input: {
+              nationalId: nationalIdInput,
+              phoneNumber: cleanPhone,
+            },
+          },
+        }).then((res) => {
+          if (!res.data?.getSyslumennElectronicIDStatus) {
+            setValue(`${fieldIndex}.electronicID`, '')
+          } else {
+            setValue(`${fieldIndex}.electronicID`, 'true')
+          }
+        })
+      }
     }
-  }, [phoneInput, nationalIdInput])
+  }, [
+    phoneInput,
+    nationalIdInput,
+    requiresAdvocate,
+    advocateNationalIdInput,
+    advocateNationalIdInput2,
+  ])
 
   useEffect(() => {
     clearErrors(nameField)

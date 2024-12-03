@@ -121,12 +121,28 @@ const assetWithShare = assetSchema({ withShare: true })
 export const inheritanceReportSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
 
-  applicant: z.object({
-    email: z.string().email(),
-    phone: z.string().refine((v) => isValidPhoneNumber(v)),
-    nationalId: z.string(),
-    relation: z.string(),
-  }),
+  applicant: z
+    .object({
+      email: z.string().email(),
+      phone: z.string().refine((v) => isValidPhoneNumber(v)),
+      nationalId: z.string(),
+      relation: z.string(),
+      electronicID: z.string().optional(),
+    })
+    .refine(
+      ({ electronicID }) => {
+        console.log('HAVE ELECTRONIC ID', electronicID)
+        console.log(
+          'HAVE ELECTRONIC ID IS BEING CALCULATED AS',
+          Boolean(electronicID?.length),
+        )
+        return Boolean(electronicID?.length)
+      },
+      {
+        message: m.errorElectronicId.defaultMessage,
+        path: ['phone'],
+      },
+    ),
 
   /* prePaid inheritance applicant */
   prePaidApplicant: z.object({
@@ -555,6 +571,7 @@ export const inheritanceReportSchema = z.object({
             nationalId: z.string().optional(),
             phone: z.string().optional(),
             email: z.string().optional(),
+            electronicID: z.string().optional(),
           })
           .optional(),
         // Málsvari 2
@@ -611,11 +628,6 @@ export const inheritanceReportSchema = z.object({
       )
       .refine(
         ({ enabled, advocate, electronicID }) => {
-          console.log({
-            enabled,
-            advocate,
-            electronicID,
-          })
           return enabled && !advocate && electronicID
         },
         {
@@ -661,6 +673,19 @@ export const inheritanceReportSchema = z.object({
         },
         {
           path: ['advocate', 'nationalId'],
+        },
+      )
+      .refine(
+        ({ enabled, advocate }) => {
+          if (enabled && Boolean(Object.keys(advocate ?? {}).length)) {
+            const { electronicID } = advocate ?? {}
+            return Boolean(electronicID?.length)
+          }
+          return true
+        },
+        {
+          path: ['advocate', 'phone'],
+          message: m.errorElectronicId.defaultMessage,
         },
       )
       .array()

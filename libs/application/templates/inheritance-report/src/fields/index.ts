@@ -14,4 +14,5 @@ export { CalculateFuneralCost } from './CalculationsOfTotal/CalculateFuneralCost
 export { CalculateShare } from './CalculateShare'
 export { OverviewAssets } from './Overview/OverviewAssets'
 export { OverviewDebts } from './Overview/OverviewDebts'
+export { PhoneWithElectronicId } from './PhoneWithElectronicId'
 export { ShareInput } from '../components/ShareInput'

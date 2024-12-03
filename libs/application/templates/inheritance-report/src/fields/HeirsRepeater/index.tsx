@@ -2,7 +2,11 @@
 import { FC, Fragment, useCallback, useEffect, useState } from 'react'
 import { useFieldArray, useFormContext } from 'react-hook-form'
 import { useLocale } from '@island.is/localization'
-import { FieldBaseProps, GenericFormField } from '@island.is/application/types'
+import {
+  FieldBaseProps,
+  FieldTypes,
+  GenericFormField,
+} from '@island.is/application/types'
 import {
   Box,
   Button,
@@ -39,6 +43,7 @@ import {
 import DoubleColumnRow from '../../components/DoubleColumnRow'
 import ShareInput from '../../components/ShareInput'
 import { InheritanceReportInfo } from '@island.is/clients/syslumenn'
+import { PhoneWithElectronicId } from '../PhoneWithElectronicId'
 
 export const HeirsRepeater: FC<
   React.PropsWithChildren<FieldBaseProps<Answers> & HeirsRepeaterProps>
@@ -354,6 +359,7 @@ export const HeirsRepeater: FC<
                       clearErrors(`${fieldIndex}.advocate.phone`)
                       clearErrors(`${fieldIndex}.advocate.email`)
                       clearErrors(`${fieldIndex}.heirsPercentage`)
+                      clearErrors(`${fieldIndex}.electronicID`)
                       calculateTotal()
                     }}
                   >
@@ -407,6 +413,7 @@ export const HeirsRepeater: FC<
                       />
                     </GridColumn>
                     <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
+                      {/*
                       <PhoneInputController
                         id={`${fieldIndex}.phone`}
                         name={`${fieldIndex}.phone`}
@@ -418,6 +425,26 @@ export const HeirsRepeater: FC<
                           error && error[mainIndex] && error[mainIndex].phone
                         }
                         required
+                      />
+                    */}
+                      <PhoneWithElectronicId
+                        application={application}
+                        field={
+                          {
+                            id: `${fieldIndex}.phone`,
+                            title: m.phone,
+                            isPartOfRepeater: true,
+                            width: 'half',
+                            type: FieldTypes.CUSTOM,
+                            component: 'PhoneWithElectronicId',
+                            children: undefined,
+                            props: {
+                              nationalIdPath: `${fieldIndex}.nationalId`,
+                              enabled: member.enabled,
+                            },
+                          } as const
+                        }
+                        errors={error && { heirs: { data: error } }}
                       />
                     </GridColumn>
                   </>
@@ -535,6 +562,7 @@ export const HeirsRepeater: FC<
                       />
                     </GridColumn>
                     <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
+                      {/*}
                       <PhoneInputController
                         id={`${fieldIndex}.advocate.phone`}
                         name={`${fieldIndex}.advocate.phone`}
@@ -549,6 +577,27 @@ export const HeirsRepeater: FC<
                         }
                         size="sm"
                         required
+                      />
+                      {*/}
+                      <PhoneWithElectronicId
+                        application={application}
+                        field={
+                          {
+                            id: `${fieldIndex}.advocate.phone`,
+                            title: m.phone,
+                            isPartOfRepeater: true,
+                            width: 'half',
+                            type: FieldTypes.CUSTOM,
+                            component: 'PhoneWithElectronicId',
+                            children: undefined,
+                            props: {
+                              nationalIdPath: `${fieldIndex}.advocate.nationalId`,
+                              enabled: member.enabled,
+                              defaultValue: member.advocate?.phone || '',
+                            },
+                          } as const
+                        }
+                        errors={error && { heirs: { data: error } }}
                       />
                     </GridColumn>
                     <GridColumn span={['1/1', '1/2']} paddingBottom={2}>

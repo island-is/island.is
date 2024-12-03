@@ -1,4 +1,6 @@
 import {
+  buildCustomField,
+  buildHiddenInput,
   buildMultiField,
   buildPhoneField,
   buildSection,
@@ -49,22 +51,37 @@ export const applicant = buildSection({
             return externalData.nationalRegistry?.data.address.streetAddress
           },
         }),
-        buildPhoneField({
-          id: 'applicant.phone',
-          title: m.phone,
-          width: 'half',
-          required: true,
-          enableCountrySelector: true,
-          defaultValue: (application: Application) => {
-            const phone =
-              (
-                application.externalData.userProfile?.data as {
-                  mobilePhoneNumber?: string
-                }
-              )?.mobilePhoneNumber ?? ''
+        //buildPhoneField({
+        //  id: 'applicant.phone',
+        //  title: m.phone,
+        //  width: 'half',
+        //  required: true,
+        //  enableCountrySelector: true,
+        //  defaultValue: (application: Application) => {
+        //    const phone =
+        //      (
+        //        application.externalData.userProfile?.data as {
+        //          mobilePhoneNumber?: string
+        //        }
+        //      )?.mobilePhoneNumber ?? ''
 
-            return removeCountryCode(phone)
+        //    return removeCountryCode(phone)
+        //  },
+        //}),
+        buildCustomField(
+          {
+            id: 'applicant.phone',
+            component: 'PhoneWithElectronicId',
+            title: m.phone,
+            width: 'half',
           },
+          {
+            nationalIdPath: 'applicant.nationalId',
+            marginTop: 2,
+          },
+        ),
+        buildHiddenInput({
+          id: 'applicant.electronicID',
         }),
         buildTextField({
           id: 'applicant.email',

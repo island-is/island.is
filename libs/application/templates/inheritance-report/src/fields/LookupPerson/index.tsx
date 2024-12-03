@@ -14,6 +14,7 @@ import { m } from '../../lib/messages'
 import { useLazyQuery } from '@apollo/client'
 import { IdentityInput, Query } from '@island.is/api/schema'
 import { IDENTITY_QUERY } from '../../graphql'
+import { isFakePerson } from '../../lib/utils/fakeData'
 
 type LookupProps = {
   field: {
@@ -58,13 +59,22 @@ export const LookupPerson: FC<React.PropsWithChildren<LookupProps>> = ({
     if (personNationalId?.length === 10) {
       const isValidSSN = nationalId.isPerson(personNationalId)
       if (isValidSSN) {
-        getIdentity({
-          variables: {
-            input: {
-              nationalId: personNationalId,
+        if (
+          isFakePerson(personNationalId) &&
+          personNationalId.slice(-1) === '0'
+        ) {
+          clearErrors(`${id}.name`)
+          clearErrors(`${id}.nationalId`)
+          setValue(`${id}.name`, 'Fake Person')
+        } else {
+          getIdentity({
+            variables: {
+              input: {
+                nationalId: personNationalId,
+              },
             },
-          },
-        })
+          })
+        }
       }
     } else if (personNationalId?.length === 0) {
       clearErrors(`${id}.name`)
