@@ -177,7 +177,7 @@ export const NationalIdWithName: FC<
     } else if (companyName && nameInAnswers !== companyName) {
       setValue(nameField, companyName)
     }
-  }, [personName, companyName, setValue, nameField])
+  }, [personName, companyName, setValue, nameField, application.answers])
 
   return (
     <GridRow>
