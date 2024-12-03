@@ -921,14 +921,31 @@ export class CaseService {
     theCase: Case,
     user: TUser,
   ): Promise<void> {
-    const messages: Message[] = [
-      {
-        type: MessageType.NOTIFICATION,
-        user,
-        caseId: theCase.id,
-        body: { type: CaseNotificationType.RULING },
-      },
-    ]
+    const messages: Message[] =
+      theCase.caseFiles
+        ?.filter(
+          (caseFile) =>
+            caseFile.state === CaseFileState.STORED_IN_RVG &&
+            caseFile.key &&
+            caseFile.category === CaseFileCategory.RULING &&
+            theCase.indictmentRulingDecision &&
+            [
+              CaseIndictmentRulingDecision.RULING,
+              CaseIndictmentRulingDecision.DISMISSAL,
+            ].includes(theCase.indictmentRulingDecision),
+        )
+        .map((caseFile) => ({
+          type: MessageType.DELIVERY_TO_COURT_CASE_FILE,
+          user,
+          caseId: theCase.id,
+          elementId: caseFile.id,
+        })) ?? []
+    messages.push({
+      type: MessageType.NOTIFICATION,
+      user,
+      caseId: theCase.id,
+      body: { type: CaseNotificationType.RULING },
+    })
 
     if (theCase.origin === CaseOrigin.LOKE) {
       messages.push({
