@@ -63,10 +63,8 @@ export type Action =
  * Helper function to reset user-related state when switching users or logging out
  */
 const resetState = (authState: NonLoggedInAuthState): NonLoggedInState => ({
-  userInfo: null,
+  ...initialState,
   authState,
-  isAuthenticated: false,
-  error: null,
 })
 
 /**
