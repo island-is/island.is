@@ -65,7 +65,8 @@ export const subSectionHealthDeclaration = buildSubSection({
           uploadAccept: '.pdf, .doc, .docx, .jpg, .jpeg, .png, .xls, .xlsx',
           uploadMultiple: false,
           condition: (answers, externalData) =>
-            needsHealthCertificateCondition(YES)(answers, externalData),
+            needsHealthCertificateCondition(YES)(answers, externalData) &&
+            answers.applicationFor === License.BE,
         }),
       ],
     }),
