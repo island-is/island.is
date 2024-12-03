@@ -4,6 +4,7 @@ on:
     branches:
       - unicorn-pipe-rel
   workflow_dispatch: {}
+
 defaults:
   run:
     shell: bash
@@ -51,6 +52,8 @@ jobs:
 
       - name: Create release branch
         if: ${{ steps.unicorn-affected.outputs.IS_UNICORN == 'true' }}
+        env:
+          PR_NUMBER: ${{ github.event.number }}
         run: |
-          node scripts/ci/create-release.mjs
+          node scripts/ci/create-release.mjs $PR_NUMBER
 
