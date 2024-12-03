@@ -2,14 +2,14 @@
   "name": "island-app-e2e",
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "projectType": "application",
-  "sourceRoot": "apps/mobile/app-e2e/src",
+  "sourceRoot": "apps/native/app-e2e/src",
   "implicitDependencies": ["IslandApp"],
   "targets": {
     "e2e": {
       "executor": "@nx/playwright:playwright",
-      "outputs": ["{workspaceRoot}/dist/.playwright/apps/mobile/app-e2e"],
+      "outputs": ["{workspaceRoot}/dist/.playwright/apps/native/app-e2e"],
       "options": {
-        "config": "apps/mobile/app-e2e/playwright.config.ts"
+        "config": "apps/native/app-e2e/playwright.config.ts"
       }
     },
     "lint": {
