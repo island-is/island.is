@@ -82,57 +82,6 @@
         "jestConfig": "apps/native/app/jest.config.ts"
       }
     },
-    "build": {
-      "executor": "@nx/webpack:webpack",
-      "outputs": ["{options.outputPath}"],
-      "defaultConfiguration": "production",
-      "options": {
-        "compiler": "babel",
-        "outputPath": "dist/apps/native/app/web",
-        "index": "apps/native/app/src/index.html",
-        "baseHref": "/",
-        "main": "apps/native/app/src/main-web.tsx",
-        "tsConfig": "apps/native/app/tsconfig.app.json",
-        "assets": [
-          "apps/native/app/src/favicon.ico",
-          "apps/native/app/src/assets"
-        ],
-        "webpackConfig": "apps/native/app/webpack.config.js"
-      },
-      "configurations": {
-        "development": {
-          "extractLicenses": false,
-          "optimization": false,
-          "sourceMap": true,
-          "vendorChunk": true
-        },
-        "production": {
-          "optimization": true,
-          "outputHashing": "all",
-          "sourceMap": false,
-          "namedChunks": false,
-          "extractLicenses": true,
-          "vendorChunk": false
-        }
-      }
-    },
-    "serve": {
-      "executor": "@nx/webpack:dev-server",
-      "defaultConfiguration": "development",
-      "options": {
-        "buildTarget": "IslandApp:build",
-        "hmr": true
-      },
-      "configurations": {
-        "development": {
-          "buildTarget": "IslandApp:build:development"
-        },
-        "production": {
-          "buildTarget": "IslandApp:build:production",
-          "hmr": false
-        }
-      }
-    },
     "codegen/frontend-client": {
       "executor": "nx:run-commands",
       "options": {
