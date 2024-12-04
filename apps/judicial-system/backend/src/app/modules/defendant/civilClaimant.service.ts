@@ -1,6 +1,10 @@
 import { Op } from 'sequelize'
 
-import { Inject, Injectable } from '@nestjs/common'
+import {
+  Inject,
+  Injectable,
+  InternalServerErrorException,
+} from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 
 import type { Logger } from '@island.is/logging'
@@ -33,17 +37,18 @@ export class CivilClaimantService {
   }
 
   private async sendUpdateCivilClaimantMessages(
-    update: UpdateCivilClaimantDto,
+    oldCivilClaimant: CivilClaimant,
     updatedCivilClaimant: CivilClaimant,
   ): Promise<void> {
-    if (update.isSpokespersonConfirmed === true) {
+    if (
+      updatedCivilClaimant.isSpokespersonConfirmed &&
+      !oldCivilClaimant.isSpokespersonConfirmed
+    ) {
       return this.messageService.sendMessagesToQueue([
         {
           type: MessageType.CIVIL_CLAIMANT_NOTIFICATION,
           caseId: updatedCivilClaimant.caseId,
-          body: {
-            type: CivilClaimantNotificationType.SPOKESPERSON_ASSIGNED,
-          },
+          body: { type: CivilClaimantNotificationType.SPOKESPERSON_ASSIGNED },
           elementId: updatedCivilClaimant.id,
         },
       ])
@@ -52,13 +57,13 @@ export class CivilClaimantService {
 
   async update(
     caseId: string,
-    civilClaimantId: string,
+    civilClaimant: CivilClaimant,
     update: UpdateCivilClaimantDto,
   ): Promise<CivilClaimant> {
     const [numberOfAffectedRows, civilClaimants] =
       await this.civilClaimantModel.update(update, {
         where: {
-          id: civilClaimantId,
+          id: civilClaimant.id,
           caseId: caseId,
         },
         returning: true,
@@ -66,15 +71,22 @@ export class CivilClaimantService {
 
     if (numberOfAffectedRows > 1) {
       this.logger.error(
-        `Unexpected number of rows (${numberOfAffectedRows}) affected when updating civil claimant ${civilClaimantId} of case ${caseId}`,
+        `Unexpected number of rows (${numberOfAffectedRows}) affected when updating civil claimant ${civilClaimant.id} of case ${caseId}`,
       )
     } else if (numberOfAffectedRows < 1) {
-      throw new Error(`Could not update civil claimant ${civilClaimantId}`)
+      throw new InternalServerErrorException(
+        `Could not update civil claimant ${civilClaimant.id} of case ${caseId}`,
+      )
     }
 
-    await this.sendUpdateCivilClaimantMessages(update, civilClaimants[0])
+    const updatedCivilClaimant = civilClaimants[0]
 
-    return civilClaimants[0]
+    await this.sendUpdateCivilClaimantMessages(
+      civilClaimant,
+      updatedCivilClaimant,
+    )
+
+    return updatedCivilClaimant
   }
 
   async delete(caseId: string, civilClaimantId: string): Promise<boolean> {
@@ -91,7 +103,9 @@ export class CivilClaimantService {
         `Unexpected number of rows (${numberOfAffectedRows}) affected when deleting civil claimant ${civilClaimantId} of case ${caseId}`,
       )
     } else if (numberOfAffectedRows < 1) {
-      throw new Error(`Could not delete civil claimant ${civilClaimantId}`)
+      throw new InternalServerErrorException(
+        `Could not delete civil claimant ${civilClaimantId}`,
+      )
     }
 
     return true

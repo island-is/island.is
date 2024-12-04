@@ -8,6 +8,6 @@ export const getCookieOptions = (): CookieOptions => {
     // The lax setting allows cookies to be sent on top-level navigations (such as redirects),
     // while still providing some protection against CSRF attacks.
     sameSite: 'lax',
-    path: environment.keyPath,
+    path: environment.globalPrefix,
   }
 }
