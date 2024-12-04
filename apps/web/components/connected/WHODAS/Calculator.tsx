@@ -257,62 +257,74 @@ export const WHODASCalculator = ({ slice }: WHODASCalculatorProps) => {
       totalScore += score
     }
     return (
-      <WHODASResults
-        results={results}
-        bracket={
-          totalScore <= (slice.configJson?.firstBracketBreakpoint ?? 16.9)
-            ? 1
-            : 2
-        }
-      />
+      <Stack space={8}>
+        <MarkdownText replaceNewLinesWithBreaks={false}>
+          {formatMessage(m.results.topDescription)}
+        </MarkdownText>
+        <WHODASResults
+          results={results}
+          bracket={
+            totalScore <= (slice.configJson?.firstBracketBreakpoint ?? 16.9)
+              ? 1
+              : 2
+          }
+        />
+      </Stack>
     )
   }
 
   return (
-    <Stack space={6}>
-      <Box ref={formRef}>
-        <Stack space={4}>
-          <Stack space={1}>
-            <Text>
-              {formatMessage(m.form.progress, {
-                stepIndex: stepIndex + 1,
-                stepCount: steps.length,
-              })}
-            </Text>
-            <ProgressMeter progress={(stepIndex + 1) / steps.length} />
+    <Stack space={8}>
+      <MarkdownText replaceNewLinesWithBreaks={false}>
+        {formatMessage(m.form.topDescription)}
+      </MarkdownText>
+      <Stack space={6}>
+        <Box ref={formRef}>
+          <Stack space={4}>
+            <Stack space={1}>
+              <Text>
+                {formatMessage(m.form.progress, {
+                  stepIndex: stepIndex + 1,
+                  stepCount: steps.length,
+                })}
+              </Text>
+              <ProgressMeter progress={(stepIndex + 1) / steps.length} />
+            </Stack>
+            <WHODASForm
+              step={step}
+              stepIndex={stepIndex}
+              state={state}
+              setState={setState}
+            />
           </Stack>
-          <WHODASForm
-            step={step}
-            stepIndex={stepIndex}
-            state={state}
-            setState={setState}
-          />
-        </Stack>
-      </Box>
-      <Inline alignY="center" space={2}>
-        {stepIndex > 0 && (
+        </Box>
+        <Inline alignY="center" space={2}>
+          {stepIndex > 0 && (
+            <Button
+              size="small"
+              variant="ghost"
+              preTextIcon="arrowBack"
+              onClick={() => {
+                setStepIndex((s) => s - 1)
+              }}
+            >
+              {formatMessage(m.form.previousStep)}
+            </Button>
+          )}
           <Button
             size="small"
-            variant="ghost"
-            preTextIcon="arrowBack"
             onClick={() => {
-              setStepIndex((s) => s - 1)
+              setStepIndex((s) => s + 1)
             }}
           >
-            {formatMessage(m.form.previousStep)}
+            {formatMessage(
+              stepIndex >= steps.length - 1
+                ? m.form.seeResults
+                : m.form.nextStep,
+            )}
           </Button>
-        )}
-        <Button
-          size="small"
-          onClick={() => {
-            setStepIndex((s) => s + 1)
-          }}
-        >
-          {formatMessage(
-            stepIndex >= steps.length - 1 ? m.form.seeResults : m.form.nextStep,
-          )}
-        </Button>
-      </Inline>
+        </Inline>
+      </Stack>
     </Stack>
   )
 }
