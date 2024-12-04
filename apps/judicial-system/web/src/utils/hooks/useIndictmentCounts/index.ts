@@ -24,10 +24,7 @@ const useIndictmentCounts = () => {
   const { formatMessage } = useIntl()
 
   const [createIndictmentCountMutation] = useCreateIndictmentCountMutation()
-  const [
-    updateIndictmentCountMutation,
-    { loading: isUpdatingIndictmentCount },
-  ] = useUpdateIndictmentCountMutation()
+  const [updateIndictmentCountMutation] = useUpdateIndictmentCountMutation()
   const [deleteIndictmentCountMutation] = useDeleteIndictmentCountMutation()
 
   const createIndictmentCount = useCallback(
@@ -141,7 +138,6 @@ const useIndictmentCounts = () => {
 
   return {
     updateIndictmentCount,
-    isUpdatingIndictmentCount,
     createIndictmentCount,
     deleteIndictmentCount,
     updateIndictmentCountState,
