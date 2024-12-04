@@ -1,5 +1,4 @@
 import React, { FC, useEffect, useReducer, useState } from 'react'
-
 import {
   Application,
   Form,
@@ -12,7 +11,6 @@ import {
   GridContainer,
   GridRow,
 } from '@island.is/island-ui/core'
-
 import { useLocale } from '@island.is/localization'
 import { useUserInfo } from '@island.is/react-spa/bff'
 import { ErrorShell } from '../components/ErrorShell'
@@ -26,7 +24,6 @@ import {
   initializeReducer,
 } from '../reducer/ApplicationFormReducer'
 import { ActionTypes } from '../reducer/ReducerTypes'
-import { getFormComponent } from '../utils'
 import * as styles from './FormShell.css'
 
 export const FormShell: FC<
@@ -69,7 +66,7 @@ export const FormShell: FC<
   } = state.form
   const showProgressTag = mode !== FormModes.DRAFT
   const currentScreen = screens[activeScreen]
-  const FormLogo = getFormComponent(form.logo, storedApplication)
+  const FormLogo = form.logo
 
   const getDraftSectionCurrentScreen = (): number | undefined => {
     const currentDraftScreenSection = sections.find(
