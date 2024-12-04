@@ -1,4 +1,8 @@
-import { service, ServiceBuilder } from '../../../../infra/src/dsl/dsl'
+import {
+  CodeOwners,
+  service,
+  ServiceBuilder,
+} from '../../../../infra/src/dsl/dsl'
 import {
   Base,
   Client,
@@ -9,6 +13,7 @@ export const serviceSetup = (): ServiceBuilder<'regulations-admin-backend'> =>
   service('regulations-admin-backend')
     .image('regulations-admin-backend')
     .namespace('regulations-admin')
+    .codeOwner(CodeOwners.Hugsmidjan)
     .env({
       IDENTITY_SERVER_ISSUER_URL: {
         dev: 'https://identity-server.dev01.devland.is',
