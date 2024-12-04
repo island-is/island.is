@@ -6,6 +6,7 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { MarkdownToJSX } from 'markdown-to-jsx'
+import React from 'react'
 import * as styles from './Markdown.css'
 import { OptionalOverrides } from './Markdown'
 
