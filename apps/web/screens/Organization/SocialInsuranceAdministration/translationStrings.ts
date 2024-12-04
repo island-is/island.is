@@ -17,6 +17,12 @@ export const translationStrings = defineMessages({
     defaultMessage: 'Þú vilt hefja töku eftir 67 ára aldur',
     description: 'Upplýsingar sem birtast ef þú vilt seinka töku ellilífeyris',
   },
+  form2025PreviewLabel: {
+    id: 'web.pensionCalculator:form2025PreviewLabel',
+    defaultMessage: 'Eftir 1. september 2025',
+    description:
+      'Valmöguleiki í dropdown fyrir "Allar reiknivélar" ef það á að leyfa eftir 1. sept 2025 preview',
+  },
   results2025ImageUrl: {
     id: 'web.pensionCalculator:results2025ImageUrl',
     defaultMessage:
@@ -53,6 +59,24 @@ export const translationStrings = defineMessages({
     id: 'web.pensionCalculator:basePensionRetirementLabel',
     defaultMessage: 'Ellilífeyrir',
     description: 'Tegund lífeyris, Ellilífeyrir',
+  },
+  basePensionNewSystemDisabilityLabel: {
+    id: 'web.pensionCalculator:basePensionNewSystemDisabilityLabel',
+    defaultMessage: 'Örorkulífeyrir',
+    description:
+      'Tegund lífeyris fyrir nýtt kerfi þann 1. sept 2025, Örorkulífeyrir',
+  },
+  basePensionNewSystemPartialDisabilityLabel: {
+    id: 'web.pensionCalculator:basePensionNewSystemPartialDisabilityLabel',
+    defaultMessage: 'Hlutaörorkulífeyrir',
+    description:
+      'Tegund lífeyris fyrir nýtt kerfi þann 1. sept 2025, Hlutaörorkulífeyrir',
+  },
+  basePensionNewSystemMedicalAndRehabilitation: {
+    id: 'web.pensionCalculator:basePensionNewSystemMedicalAndRehabilitation',
+    defaultMessage: 'Sjúkra- og endurhæfing',
+    description:
+      'Tegund lífeyris fyrir nýtt kerfi þann 1. sept 2025, Sjúkra- og endurhæfing',
   },
   basePensionFishermanRetirementLabel: {
     id: 'web.pensionCalculator:basePensionFishermanRetirementLabel',
