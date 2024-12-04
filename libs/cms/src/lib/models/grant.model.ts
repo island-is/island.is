@@ -120,10 +120,7 @@ export const mapGrant = ({ fields, sys }: IGrant): Grant => {
     dateFrom: parseDate(fields.grantDateFrom, fields.grantOpenFromHour),
     dateTo: parseDate(fields.grantDateTo, fields.grantOpenToHour),
     status: parseStatus(fields),
-    statusText:
-      GrantStatus.CLOSED_WITH_NOTE || GrantStatus.OPEN_WITH_NOTE
-        ? fields.grantStatusNote
-        : undefined,
+    statusText: fields.grantStatusNote,
     fund: fields.grantFund ? mapFund(fields.grantFund) : undefined,
     files: (fields.grantFiles ?? []).map((file) => mapAsset(file)) ?? [],
     supportLinks: fields.grantSupportLinks
