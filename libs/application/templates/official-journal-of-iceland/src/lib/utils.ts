@@ -186,7 +186,7 @@ export const getRegularAnswers = (answers: OJOIApplication['answers']) => {
     signature: null,
   }
 }
-const hypenate = (text = '') =>
+const hyphenate = (text = '') =>
   hyphenateText(text, { locale: 'is', minLeft: 4, minRight: 4 })
 
 const getMembersMarkup = (member: z.infer<typeof memberItemSchema>) => {
@@ -196,10 +196,10 @@ const getMembersMarkup = (member: z.infer<typeof memberItemSchema>) => {
     marginBottom: member.below ? '0' : '1.5em',
   }
 
-  const name = hypenate(member.name)
-  const above = hypenate(member.above)
-  const after = hypenate(member.after)
-  const below = hypenate(member.below)
+  const name = hyphenate(member.name)
+  const above = hyphenate(member.above)
+  const after = hyphenate(member.after)
+  const below = hyphenate(member.below)
 
   const aboveMarkup = above
     ? `<p style="margin-bottom: 0;" align="center">${above}</p>`
@@ -262,7 +262,7 @@ const signatureTemplate = (
     .join('')
 
   const additionalMarkup = additionalSignature
-    ? `<p style="font-size: 16px;" align="right"><em>${hypenate(
+    ? `<p style="font-size: 16px;" align="right"><em>${hyphenate(
         additionalSignature,
       )}</em></p>`
     : ''
