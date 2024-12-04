@@ -1,3 +1,4 @@
+import { useContext } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
@@ -19,6 +20,7 @@ import {
   isTrafficViolationCase,
 } from '@island.is/judicial-system/types'
 import { core, sections } from '@island.is/judicial-system-web/messages'
+import { FeatureContext } from '@island.is/judicial-system-web/src/components'
 import { RouteSection } from '@island.is/judicial-system-web/src/components/PageLayout/PageLayout'
 import { formatCaseResult } from '@island.is/judicial-system-web/src/components/PageLayout/utils'
 import {
@@ -34,8 +36,6 @@ import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
 import { stepValidations, stepValidationsType } from '../../formHelper'
 import { shouldUseAppealWithdrawnRoutes } from '../../stepHelper'
-import { useContext } from 'react'
-import { FeatureContext } from '@island.is/judicial-system-web/src/components'
 
 const validateFormStepper = (
   isActiveSubSectionValid: boolean,
