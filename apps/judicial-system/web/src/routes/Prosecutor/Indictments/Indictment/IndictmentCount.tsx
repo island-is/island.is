@@ -484,9 +484,12 @@ export const IndictmentCount: FC<Props> = ({
           />
           <div className={styles.indictmentSubtypesContainter}>
             {subtypes.map((subtype: IndictmentSubtype) => (
-              <div className={styles.indictmentSubtypesItem} key={subtype}>
+              <div
+                className={styles.indictmentSubtypesItem}
+                key={`${subtype}-${indictmentCount.id}`}
+              >
                 <Checkbox
-                  name={subtype}
+                  name={`${subtype}-${indictmentCount.id}`}
                   value={subtype}
                   label={capitalize(indictmentSubtypes[subtype])}
                   checked={

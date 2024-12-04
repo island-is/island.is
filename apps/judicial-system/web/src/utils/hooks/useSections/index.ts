@@ -7,6 +7,7 @@ import {
   getAppealResultTextByValue,
 } from '@island.is/judicial-system/formatters'
 import {
+  Feature,
   isCompletedCase,
   isCourtOfAppealsUser,
   isDefenceUser,
@@ -33,6 +34,8 @@ import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
 import { stepValidations, stepValidationsType } from '../../formHelper'
 import { shouldUseAppealWithdrawnRoutes } from '../../stepHelper'
+import { useContext } from 'react'
+import { FeatureContext } from '@island.is/judicial-system-web/src/components'
 
 const validateFormStepper = (
   isActiveSubSectionValid: boolean,
@@ -60,6 +63,7 @@ const useSections = (
 ) => {
   const { formatMessage } = useIntl()
   const router = useRouter()
+  const { features } = useContext(FeatureContext)
   const isActive = (pathname: string) =>
     router.pathname.replace(/\/\[\w+\]/g, '') === pathname
 
@@ -402,7 +406,9 @@ const useSections = (
       state === CaseState.RECEIVED ||
       state === CaseState.WAITING_FOR_CANCELLATION ||
       router.pathname === `${constants.INDICTMENTS_ADD_FILES_ROUTE}/[id]`
-    const isTrafficViolation = isTrafficViolationCase(workingCase)
+    const isTrafficViolation =
+      features.includes(Feature.MULTIPLE_INDICTMENT_SUBTYPES) ||
+      isTrafficViolationCase(workingCase)
 
     return {
       name: formatMessage(sections.indictmentCaseProsecutorSection.title),
