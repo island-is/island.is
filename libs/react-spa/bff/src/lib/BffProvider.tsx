@@ -74,11 +74,26 @@ export const BffProvider = ({
     }
   }, [postMessage, state.userInfo, isLoggedIn])
 
-  const getTargetLinkUri = () => {
+  /**
+   * Prepares the target link uri for the login redirect.
+   * If the target_link_uri is not present in the query string, then the current url is returned.
+   * If the user is on the old login path, then /login is removed from the path
+   */
+  const prepareTargetLinkUri = () => {
     const urlParams = new URLSearchParams(window.location.search)
     const targetLinkUri = urlParams.get('target_link_uri')
+    let url = window.location.href
+    const oldLoginPath = `${applicationBasePath}/login`
 
-    return targetLinkUri ?? window.location.href
+    // Check if the current path matches the old login path
+    const isOldLoginPath = window.location.pathname.startsWith(oldLoginPath)
+
+    if (isOldLoginPath) {
+      // If user is on old login path, then remove /login from the path
+      url = window.location.href.replace(oldLoginPath, applicationBasePath)
+    }
+
+    return targetLinkUri ?? url
   }
 
   const checkLogin = async (noRefresh = false) => {
@@ -127,7 +142,7 @@ export const BffProvider = ({
     })
 
     window.location.href = bffUrlGenerator('/login', {
-      target_link_uri: getTargetLinkUri(),
+      target_link_uri: prepareTargetLinkUri(),
     })
   }, [bffUrlGenerator])
 
@@ -157,7 +172,7 @@ export const BffProvider = ({
       })
 
       window.location.href = bffUrlGenerator('/login', {
-        target_link_uri: getTargetLinkUri(),
+        target_link_uri: prepareTargetLinkUri(),
         ...(nationalId
           ? { login_hint: nationalId }
           : { prompt: 'select_account' }),
@@ -183,24 +198,10 @@ export const BffProvider = ({
   }
 
   useEffectOnce(() => {
-    if (!isLoggedIn) {
-      // Check if the current path matches the old login path
-      const isOldLoginPath = window.location.href.includes(
-        `${applicationBasePath}/login`,
-      )
+    const hasError = checkQueryStringError()
 
-      if (isOldLoginPath) {
-        // If user is on old login path, then start the sign-in process
-        signIn()
-
-        return
-      }
-
-      const hasError = checkQueryStringError()
-
-      if (!hasError) {
-        checkLogin()
-      }
+    if (!hasError && !isLoggedIn) {
+      checkLogin()
     }
   })
 
