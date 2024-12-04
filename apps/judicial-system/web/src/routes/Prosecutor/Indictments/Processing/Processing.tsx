@@ -26,6 +26,7 @@ import {
   InputNationalId,
   PageHeader,
   PageLayout,
+  PageTitle,
   ProsecutorCaseInfo,
   SectionHeading,
   UserContext,
@@ -74,7 +75,7 @@ const Processing: FC = () => {
   const router = useRouter()
   const isTrafficViolationCaseCheck = isTrafficViolationCase(workingCase)
   const [civilClaimantNationalIdUpdate, setCivilClaimantNationalIdUpdate] =
-    useState<{ nationalId: string; civilClaimantId: string }>()
+    useState<{ nationalId: string | null; civilClaimantId: string }>()
   const [hasCivilClaimantChoice, setHasCivilClaimantChoice] =
     useState<boolean>()
   const [nationalIdNotFound, setNationalIdNotFound] = useState<boolean>(false)
@@ -186,12 +187,12 @@ const Processing: FC = () => {
       handleUpdateCivilClaimant({
         caseId: workingCase.id,
         civilClaimantId,
-        nationalId,
+        nationalId: nationalId || null,
       })
     } else {
       const cleanNationalId = nationalId ? nationalId.replace('-', '') : ''
       setCivilClaimantNationalIdUpdate({
-        nationalId: cleanNationalId,
+        nationalId: cleanNationalId || null,
         civilClaimantId,
       })
     }
@@ -257,17 +258,20 @@ const Processing: FC = () => {
   )
 
   useEffect(() => {
-    if (!personData || !personData.items || personData.items.length === 0) {
-      setNationalIdNotFound(true)
+    if (!civilClaimantNationalIdUpdate) {
       return
     }
 
-    setNationalIdNotFound(false)
+    const items = personData?.items || []
+    const person = items[0]
+
+    setNationalIdNotFound(items.length === 0)
+
     const update = {
       caseId: workingCase.id,
-      civilClaimantId: civilClaimantNationalIdUpdate?.civilClaimantId || '',
-      name: personData?.items[0].name,
-      nationalId: personData.items[0].kennitala,
+      civilClaimantId: civilClaimantNationalIdUpdate.civilClaimantId || '',
+      nationalId: civilClaimantNationalIdUpdate.nationalId,
+      ...(person?.name ? { name: person.name } : {}),
     }
 
     handleUpdateCivilClaimant(update)
@@ -287,11 +291,7 @@ const Processing: FC = () => {
         title={formatMessage(titles.prosecutor.indictments.processing)}
       />
       <FormContentContainer>
-        <Box marginBottom={7}>
-          <Text as="h1" variant="h1">
-            {formatMessage(strings.heading)}
-          </Text>
-        </Box>
+        <PageTitle>{formatMessage(strings.heading)}</PageTitle>
         <ProsecutorCaseInfo workingCase={workingCase} hideCourt />
         <ProsecutorSection />
         <Box component="section" marginBottom={5}>

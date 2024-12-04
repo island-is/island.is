@@ -11,6 +11,7 @@ export default {
     ],
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
+  setupFiles: [`${__dirname}/test/environment.jest.ts`],
   coverageDirectory: '<rootDir>/coverage/libs/api/domains/communications',
   displayName: 'api-domains-communications',
   testEnvironment: 'node',

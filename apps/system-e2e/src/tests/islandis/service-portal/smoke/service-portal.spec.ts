@@ -1,5 +1,5 @@
 import { BrowserContext, expect, test } from '@playwright/test'
-import { messages as m } from '@island.is/service-portal/documents/messages'
+import { messages as m } from '@island.is/portals/my-pages/documents/messages'
 import { icelandicAndNoPopupUrl, urls } from '../../../../support/urls'
 import { session } from '../../../../support/session'
 import { label } from '../../../../support/i18n'

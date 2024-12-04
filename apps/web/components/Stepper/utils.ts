@@ -45,6 +45,7 @@ interface StepOptionCMS {
   labelEN: string
   transition: string
   optionSlug: string
+  linksToDisplayInHistory?: { label?: string; href?: string }[]
 }
 
 interface StepOptionsFromSourceTransitionCMS {
@@ -71,6 +72,7 @@ interface StepOption {
   label: string
   transition: string
   value: string
+  linksToDisplayInHistory?: StepOptionCMS['linksToDisplayInHistory']
 }
 
 interface StateMeta {
@@ -380,6 +382,7 @@ const getStepOptions = (
       label: label,
       transition: o.transition,
       value: o.optionSlug,
+      linksToDisplayInHistory: o.linksToDisplayInHistory,
     }
   })
 }

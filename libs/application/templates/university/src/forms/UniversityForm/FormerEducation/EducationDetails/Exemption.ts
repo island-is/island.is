@@ -15,7 +15,7 @@ import { ApplicationTypes } from '@island.is/university-gateway'
 export const ExemptionSubSection = buildSubSection({
   id: `${Routes.EDUCATIONDETAILS}.exemptionDetails`,
   title: formerEducation.labels.educationDetails.pageTitle,
-  condition: (answers: FormValue, externalData) => {
+  condition: (answers: FormValue) => {
     const optionAnswers = getValueViaPath(answers, 'educationOptions')
     return optionAnswers === ApplicationTypes.EXEMPTION
   },

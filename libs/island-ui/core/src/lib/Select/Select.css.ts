@@ -286,6 +286,7 @@ export const menu = style(
 export const option = style({
   selectors: {
     [`${wrapper} &.island-select__option`]: {
+      display: 'flex',
       cursor: 'pointer',
       position: 'relative',
       fontWeight: theme.typography.light,
@@ -360,4 +361,39 @@ globalStyle(
 
 export const isRequiredStar = style({
   color: theme.color.red600,
+})
+
+export const inputCheckbox = style({
+  height: theme.spacing[3],
+  left: 0,
+  opacity: 0,
+  position: 'absolute',
+  top: '50%',
+  transform: 'translateY(-50%)',
+  width: theme.spacing[3],
+  cursor: 'pointer',
+})
+
+export const checkbox = style({
+  alignItems: 'center',
+  alignSelf: 'center',
+  backgroundColor: theme.color.white,
+  border: `1px solid ${theme.color.blue200}`,
+  borderRadius: theme.border.radius.standard,
+  display: 'flex',
+  flexShrink: 0,
+  height: theme.spacing[3],
+  justifyContent: 'center',
+  marginRight: theme.spacing[2],
+  transition: 'border-color .1s, shadow .1s, background-color .1s',
+  width: theme.spacing[3],
+})
+
+export const checkboxChecked = style({
+  selectors: {
+    [`&${checkbox}`]: {
+      backgroundColor: theme.color.blue400,
+      borderColor: theme.color.blue400,
+    },
+  },
 })

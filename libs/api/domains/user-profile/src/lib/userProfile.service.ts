@@ -76,20 +76,28 @@ export class UserProfileService {
     return service.createUserProfile(input, user)
   }
 
-  async updateUserProfile(
+  async updateMeUserProfile(
     input: UpdateUserProfileInput,
     user: User,
   ): Promise<UserProfile> {
     const service = await this.getService(user)
 
-    return service.updateUserProfile(input, user)
+    return service.updateMeUserProfile(input, user)
+  }
+
+  async updateUserProfile(
+    nationalId: string,
+    input: UpdateUserProfileInput,
+    user: User,
+  ): Promise<UserProfile> {
+    return this.userProfileServiceV2.updateUserProfile(input, user, nationalId)
   }
 
   async deleteIslykillValue(
     input: DeleteIslykillValueInput,
     user: User,
   ): Promise<DeleteIslykillSettings> {
-    const { nationalId } = await this.userProfileServiceV2.updateUserProfile(
+    const { nationalId } = await this.userProfileServiceV2.updateMeUserProfile(
       {
         ...(input.email && { email: '' }),
         ...(input.mobilePhoneNumber && { mobilePhoneNumber: '' }),

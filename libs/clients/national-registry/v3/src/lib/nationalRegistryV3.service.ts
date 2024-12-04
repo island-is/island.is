@@ -13,7 +13,7 @@ import {
   EinstaklingurDTOItarAuka,
   EinstaklingurDTOLogforeldrar,
   EinstaklingurDTOLoghTengsl,
-  EinstaklingurDTONafnAllt,
+  EinstaklingurDTONafnItar,
   EinstaklingurDTORikisfang,
   EinstaklingurDTOTru,
   GerviEinstaklingarApi,
@@ -97,7 +97,7 @@ export class NationalRegistryV3ClientService {
     )
   }
 
-  getName(nationalId: string): Promise<EinstaklingurDTONafnAllt | null> {
+  getName(nationalId: string): Promise<EinstaklingurDTONafnItar | null> {
     return handle204(
       this.individualApi.midlunV1EinstaklingarNationalIdNafnItarGetRaw({
         nationalId,

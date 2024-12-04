@@ -11,13 +11,14 @@ import {
 import { applicantInformationMessages } from '@island.is/application/ui-forms'
 import { useLocale } from '@island.is/localization'
 import { format as formatNationalId } from 'kennitala'
-import { formatText } from '@island.is/application/core'
+import { formatTextWithLocale } from '@island.is/application/core'
 import * as m from '../../lib/messages'
 import {
   formatBankInfo,
   formatPhoneNumber,
   removeCountryCode,
 } from '@island.is/application/ui-components'
+import { Locale } from '@island.is/shared/types'
 
 const KeyValue = ({ label, value }: { label: StaticText; value: string }) => {
   const { formatMessage } = useLocale()
@@ -36,13 +37,18 @@ export const AdditionalOwnersOverview = ({
   field,
 }: FieldBaseProps<GrindavikHousingBuyout>) => {
   const additionalOwners = application.answers.additionalOwners ?? []
-  const { formatMessage } = useLocale()
+  const { formatMessage, lang: locale } = useLocale()
 
   return (
     <Box>
       <Box marginBottom={3}>
         <Text variant="h3" marginBottom={3}>
-          {formatText(field.title, application, formatMessage)}
+          {formatTextWithLocale(
+            field.title,
+            application,
+            locale as Locale,
+            formatMessage,
+          )}
         </Text>
         <Stack space={6} dividers>
           {additionalOwners.map((owner, index) => (

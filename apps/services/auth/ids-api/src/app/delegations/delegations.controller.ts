@@ -13,11 +13,9 @@ import {
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
 import {
-  DelegationDTO,
   DelegationScopeService,
   DelegationsIncomingService,
   DelegationsIndexService,
-  DelegationsService,
   MergedDelegationDTO,
 } from '@island.is/auth-api-lib'
 import {
@@ -45,33 +43,16 @@ export class DelegationsController {
   constructor(
     @Inject(LOGGER_PROVIDER)
     protected readonly logger: Logger,
-    private readonly delegationsService: DelegationsService,
     private readonly delegationScopeService: DelegationScopeService,
     private readonly delegationsIncomingService: DelegationsIncomingService,
     private readonly delegationIndexService: DelegationsIndexService,
   ) {}
 
   @Scopes('@identityserver.api/authentication')
+  @Version([VERSION_NEUTRAL, '1', '2'])
   @Get()
   @ApiOkResponse({ isArray: true })
-  async findAllToV1(@CurrentUser() user: User): Promise<DelegationDTO[]> {
-    const delegations = await this.delegationsService.findAllIncoming(user)
-
-    // don't fail the request if indexing fails
-    try {
-      void this.delegationIndexService.indexDelegations(user)
-    } catch {
-      this.logger.error('Failed to index delegations')
-    }
-
-    return delegations
-  }
-
-  @Scopes('@identityserver.api/authentication')
-  @Version('2')
-  @Get()
-  @ApiOkResponse({ isArray: true })
-  async findAllToV2(@CurrentUser() user: User): Promise<MergedDelegationDTO[]> {
+  async findAllTo(@CurrentUser() user: User): Promise<MergedDelegationDTO[]> {
     const delegations = await this.delegationsIncomingService.findAllAvailable({
       user,
     })

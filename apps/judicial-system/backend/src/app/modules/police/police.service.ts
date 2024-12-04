@@ -34,8 +34,7 @@ import { AwsS3Service } from '../aws-s3'
 import { Case } from '../case'
 import { Defendant } from '../defendant/models/defendant.model'
 import { EventService } from '../event'
-import { Subpoena, SubpoenaService } from '../subpoena'
-import { UpdateSubpoenaDto } from '../subpoena/dto/updateSubpoena.dto'
+import { SubpoenaService } from '../subpoena'
 import { UploadPoliceCaseFileDto } from './dto/uploadPoliceCaseFile.dto'
 import { CreateSubpoenaResponse } from './models/createSubpoena.response'
 import { PoliceCaseFile } from './models/policeCaseFile.model'
@@ -57,6 +56,14 @@ export enum PoliceDocumentType {
 export interface PoliceDocument {
   type: PoliceDocumentType
   courtDocument: string
+}
+
+export interface SubpoenaInfo {
+  serviceStatus?: ServiceStatus
+  comment?: string
+  servedBy?: string
+  defenderNationalId?: string
+  serviceDate?: Date
 }
 
 const getChapter = (category?: string): number | undefined => {
@@ -336,7 +343,10 @@ export class PoliceService {
       })
   }
 
-  async getSubpoenaStatus(subpoenaId: string, user: User): Promise<Subpoena> {
+  async getSubpoenaStatus(
+    subpoenaId: string,
+    user?: User,
+  ): Promise<SubpoenaInfo> {
     return this.fetchPoliceDocumentApi(
       `${this.xRoadPath}/GetSubpoenaStatus?id=${subpoenaId}`,
     )
@@ -347,37 +357,24 @@ export class PoliceService {
 
           this.subpoenaStructure.parse(response)
 
-          const subpoenaToUpdate = await this.subpoenaService.findBySubpoenaId(
-            subpoenaId,
-          )
-
-          const serviceStatus = response.deliveredToLawyer
-            ? ServiceStatus.DEFENDER
-            : response.prosecutedConfirmedSubpoenaThroughIslandis
-            ? ServiceStatus.ELECTRONICALLY
-            : response.deliveredOnPaper || response.delivered === true
-            ? ServiceStatus.IN_PERSON
-            : response.acknowledged === false && response.delivered === false
-            ? ServiceStatus.FAILED
-            : // TODO: handle expired
-              undefined
-
-          if (serviceStatus === undefined) {
-            return subpoenaToUpdate
+          return {
+            serviceStatus: response.deliveredToLawyer
+              ? ServiceStatus.DEFENDER
+              : response.prosecutedConfirmedSubpoenaThroughIslandis
+              ? ServiceStatus.ELECTRONICALLY
+              : response.deliveredOnPaper || response.delivered === true
+              ? ServiceStatus.IN_PERSON
+              : response.acknowledged === false && response.delivered === false
+              ? ServiceStatus.FAILED
+              : // TODO: handle expired
+                undefined,
+            comment: response.comment ?? undefined,
+            servedBy: response.servedBy ?? undefined,
+            defenderNationalId: response.defenderNationalId ?? undefined,
+            serviceDate: response.servedAt
+              ? new Date(response.servedAt)
+              : undefined,
           }
-
-          const updatedSubpoena = await this.subpoenaService.update(
-            subpoenaToUpdate,
-            {
-              comment: response.comment ?? undefined,
-              servedBy: response.servedBy ?? undefined,
-              defenderNationalId: response.defenderNationalId ?? undefined,
-              serviceDate: response.servedAt ?? undefined,
-              serviceStatus,
-            } as UpdateSubpoenaDto,
-          )
-
-          return updatedSubpoena
         }
 
         const reason = await res.text()
@@ -395,7 +392,7 @@ export class PoliceService {
         }
 
         if (reason instanceof ServiceUnavailableException) {
-          // Act as if the case does not exist
+          // Act as if the subpoena does not exist
           throw new NotFoundException({
             ...reason,
             message: `Subpoena ${subpoenaId} does not exist`,
@@ -407,8 +404,8 @@ export class PoliceService {
           'Failed to get subpoena',
           {
             subpoenaId,
-            actor: user.name,
-            institution: user.institution?.name,
+            actor: user?.name || 'Digital-mailbox',
+            institution: user?.institution?.name,
           },
           reason,
         )

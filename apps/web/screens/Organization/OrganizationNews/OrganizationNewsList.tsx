@@ -31,6 +31,7 @@ import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 import { LayoutProps, withMainLayout } from '@island.is/web/layouts/main'
 import type { Screen } from '@island.is/web/types'
 import { CustomNextError } from '@island.is/web/units/errors'
+import { extractNamespaceFromOrganization } from '@island.is/web/utils/extractNamespaceFromOrganization'
 import { getIntParam } from '@island.is/web/utils/queryParams'
 
 import {
@@ -44,7 +45,7 @@ import { GET_GENERIC_TAG_BY_SLUG_QUERY } from '../../queries/GenericTag'
 
 const PERPAGE = 10
 
-interface OrganizationNewsListProps {
+export interface OrganizationNewsListProps {
   organizationPage: OrganizationPage
   newsList: GetNewsQuery['getNews']['items']
   total: number
@@ -236,13 +237,15 @@ OrganizationNewsList.getProps = async ({ apolloClient, query, locale }) => {
   const month = year && getIntParam(query.m, { minValue: 1, maxValue: 12 })
   const selectedPage = getIntParam(query.page, { minValue: 1 }) ?? 1
 
+  const organizationPageSlug = (query.slugs as string[])[0]
+
   const organizationPage = (
     await Promise.resolve(
       apolloClient.query<Query, QueryGetOrganizationPageArgs>({
         query: GET_ORGANIZATION_PAGE_QUERY,
         variables: {
           input: {
-            slug: query.slug as string,
+            slug: organizationPageSlug,
             lang: locale as Locale,
           },
         },
@@ -253,7 +256,7 @@ OrganizationNewsList.getProps = async ({ apolloClient, query, locale }) => {
   if (!organizationPage) {
     throw new CustomNextError(
       404,
-      `Could not find organization page with slug: ${query.slug}`,
+      `Could not find organization page with slug: ${organizationPageSlug}`,
     )
   }
 
@@ -362,6 +365,10 @@ OrganizationNewsList.getProps = async ({ apolloClient, query, locale }) => {
     }
   }
 
+  const organizationNamespace = extractNamespaceFromOrganization(
+    organizationPage.organization,
+  )
+
   return {
     organizationPage,
     newsList: newsList ?? [],
@@ -374,6 +381,7 @@ OrganizationNewsList.getProps = async ({ apolloClient, query, locale }) => {
     namespace,
     locale: locale as Locale,
     languageToggleQueryParams,
+    customTopLoginButtonItem: organizationNamespace?.customTopLoginButtonItem,
     ...getThemeConfig(organizationPage?.theme, organizationPage?.organization),
   }
 }

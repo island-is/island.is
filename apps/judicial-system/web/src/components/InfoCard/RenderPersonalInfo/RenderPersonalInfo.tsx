@@ -9,7 +9,7 @@ interface RenderItemProps {
 }
 
 const RenderItem: FC<PropsWithChildren<RenderItemProps>> = (props) => (
-  <Box display={props.breakSpaces ? 'block' : 'flex'} component="span">
+  <Box display={props.breakSpaces ? 'block' : 'inlineBlock'} component="span">
     {props.children}
   </Box>
 )
@@ -20,11 +20,7 @@ const RenderPersonalData = (
   phoneNumber?: string | null,
   breakSpaces = true,
 ) => (
-  <Box
-    display={breakSpaces ? 'block' : ['block', 'block', 'block', 'flex']}
-    dataTestId="personalInfo"
-    component="p"
-  >
+  <Box dataTestId="personalInfo" component="span">
     {name && (
       <RenderItem breakSpaces={breakSpaces}>
         <Text as="span" whiteSpace="pre">{`${name}${

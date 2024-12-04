@@ -1,4 +1,3 @@
-import { useUserInfo } from '@island.is/auth/react'
 import {
   AlertMessage,
   Box,
@@ -10,25 +9,26 @@ import {
   Tag,
   Text,
 } from '@island.is/island-ui/core'
-import { Property } from '../components/property/Property'
-import { advert, error, publishing, summary } from '../lib/messages'
-import { OJOIFieldBaseProps } from '../lib/types'
 import { useLocale } from '@island.is/localization'
-import { MINIMUM_WEEKDAYS, Routes } from '../lib/constants'
-import { addWeekdays, getFastTrack, parseZodIssue } from '../lib/utils'
+import { useUserInfo } from '@island.is/react-spa/bff'
+import { useEffect } from 'react'
+import { ZodCustomIssue } from 'zod'
+import { Property } from '../components/property/Property'
 import { useCategories } from '../hooks/useCategories'
+import { useDepartment } from '../hooks/useDepartment'
+import { usePrice } from '../hooks/usePrice'
+import { useType } from '../hooks/useType'
+import { useApplication } from '../hooks/useUpdateApplication'
+import { MINIMUM_WEEKDAYS, Routes } from '../lib/constants'
 import {
   advertValidationSchema,
   publishingValidationSchema,
   signatureValidationSchema,
 } from '../lib/dataSchema'
-import { useApplication } from '../hooks/useUpdateApplication'
-import { ZodCustomIssue } from 'zod'
-import { useType } from '../hooks/useType'
-import { useDepartment } from '../hooks/useDepartment'
-import { usePrice } from '../hooks/usePrice'
-import { useEffect } from 'react'
+import { advert, error, publishing, summary } from '../lib/messages'
 import { signatures } from '../lib/messages/signatures'
+import { OJOIFieldBaseProps } from '../lib/types'
+import { addWeekdays, getFastTrack, parseZodIssue } from '../lib/utils'
 
 export const Summary = ({
   application,

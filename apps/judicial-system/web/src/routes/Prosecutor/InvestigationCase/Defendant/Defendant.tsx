@@ -32,6 +32,7 @@ import {
   FormFooter,
   PageHeader,
   PageLayout,
+  PageTitle,
 } from '@island.is/judicial-system-web/src/components'
 import {
   CaseOrigin,
@@ -93,7 +94,7 @@ const Defendant = () => {
                 gender: defendant.gender,
                 name: defendant.name,
                 address: defendant.address,
-                nationalId: defendant.nationalId,
+                nationalId: defendant.nationalId || null,
                 noNationalId: defendant.noNationalId,
                 citizenship: defendant.citizenship,
               })
@@ -103,7 +104,7 @@ const Defendant = () => {
                 gender: defendant.gender,
                 name: defendant.name,
                 address: defendant.address,
-                nationalId: defendant.nationalId,
+                nationalId: defendant.nationalId || null,
                 noNationalId: defendant.noNationalId,
                 citizenship: defendant.citizenship,
               })
@@ -246,11 +247,7 @@ const Defendant = () => {
 
       <FormContentContainer>
         <Box marginBottom={10}>
-          <Box marginBottom={7}>
-            <Text as="h1" variant="h1">
-              {formatMessage(m.heading)}
-            </Text>
-          </Box>
+          <PageTitle>{formatMessage(m.heading)}</PageTitle>
           <Box component="section" marginBottom={5}>
             <PoliceCaseNumbers
               workingCase={workingCase}
@@ -339,6 +336,7 @@ const Defendant = () => {
                     setWorkingCase,
                   )
                 }
+                maxLength={255}
               />
             </BlueBox>
           </Box>

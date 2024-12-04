@@ -13,8 +13,9 @@ import { overview, review, error as errorMsg } from '../../lib/messages'
 import { VehicleSection, OwnerSection, CoOwnersSection } from './sections'
 import {
   getApproveAnswers,
-  hasReviewerApproved,
+  canReviewerApprove,
   isLastReviewer,
+  canReviewerReApprove,
 } from '../../utils'
 import { RejectConfirmationModal } from './RejectConfirmationModal'
 import {
@@ -22,6 +23,8 @@ import {
   SUBMIT_APPLICATION,
 } from '@island.is/application/graphql'
 import { useLazyQuery, useMutation } from '@apollo/client'
+import { States } from '../../lib/constants'
+import { ValidationErrorMessages } from '../ValidationErrorMessages'
 
 export const Overview: FC<
   React.PropsWithChildren<FieldBaseProps & ReviewScreenProps>
@@ -42,11 +45,14 @@ export const Overview: FC<
   const [submitApplication, { error }] = useMutation(SUBMIT_APPLICATION, {
     onError: (e) => {
       console.error(e, e.message)
+      setButtonLoading(false)
       return
     },
   })
 
-  const [loading, setLoading] = useState<boolean>(false)
+  const [buttonLoading, setButtonLoading] = useState(false)
+  const [shouldLoadValidation, setShouldLoadValidation] = useState(false)
+  const [validationErrorFound, setValidationErrorFound] = useState(false)
 
   const doApproveAndSubmit = async () => {
     // Need to get updated application answers, in case any other reviewer has approved
@@ -107,11 +113,11 @@ export const Overview: FC<
           })
 
           if (resSubmit?.data) {
-            setLoading(false)
+            setButtonLoading(false)
             setStep && setStep('conclusion')
           }
         } else {
-          setLoading(false)
+          setButtonLoading(false)
           setStep && setStep('conclusion')
         }
       }
@@ -127,7 +133,8 @@ export const Overview: FC<
   }
 
   const onApproveButtonClick = async () => {
-    setLoading(true)
+    setButtonLoading(true)
+    setShouldLoadValidation(true)
     await doApproveAndSubmit()
   }
 
@@ -144,7 +151,14 @@ export const Overview: FC<
         <OwnerSection reviewerNationalId={reviewerNationalId} {...props} />
         <CoOwnersSection reviewerNationalId={reviewerNationalId} {...props} />
 
-        {error && (
+        {!buttonLoading && shouldLoadValidation && (
+          <ValidationErrorMessages
+            {...props}
+            setValidationErrorFound={setValidationErrorFound}
+          />
+        )}
+
+        {!validationErrorFound && error && (
           <InputError
             errorMessage={errorMsg.submitApplicationError.defaultMessage}
           />
@@ -156,7 +170,7 @@ export const Overview: FC<
             <Button variant="ghost" onClick={onBackButtonClick}>
               {formatMessage(review.buttons.back)}
             </Button>
-            {!hasReviewerApproved(reviewerNationalId, application.answers) && (
+            {canReviewerApprove(reviewerNationalId, application.answers) && (
               <Box display="flex" justifyContent="flexEnd" flexWrap="wrap">
                 <Box marginLeft={3}>
                   <Button
@@ -171,13 +185,25 @@ export const Overview: FC<
                   <Button
                     icon="checkmark"
                     onClick={onApproveButtonClick}
-                    loading={loading}
+                    loading={buttonLoading}
                   >
                     {formatMessage(review.buttons.approve)}
                   </Button>
                 </Box>
               </Box>
             )}
+            {canReviewerReApprove(reviewerNationalId, application.answers) &&
+              application.state !== States.COMPLETED && (
+                <Box display="flex" justifyContent="flexEnd" flexWrap="wrap">
+                  <Button
+                    icon="reload"
+                    loading={buttonLoading}
+                    onClick={onApproveButtonClick}
+                  >
+                    {formatMessage(review.buttons.tryAgain)}
+                  </Button>
+                </Box>
+              )}
           </Box>
         </Box>
       </Box>

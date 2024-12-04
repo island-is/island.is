@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import NumberFormat from 'react-number-format'
 import { useDebounce } from 'react-use'
 import { FieldExtensionSDK } from '@contentful/app-sdk'
@@ -78,11 +78,15 @@ const ChartComponentSourceDataKeyField = () => {
     sdk.entry.fields.values.getValue() || {
       typeOfSource: SourceDataKeyValues.ExternalSourceKey,
       typeOfManualDataKey: ManualDataKeyValues.Date,
+      externalSourceDataKey: sdk.entry.fields.sourceDataKey.getValue(),
       dateItems: [],
       categoryItems: [],
     },
   )
   const typeOfSource = manualData ? manualData['typeOfSource'] : null
+  const typeOfManualDataKey = manualData
+    ? manualData['typeOfManualDataKey']
+    : null
   const typeIsPieChart = sdk.entry.fields.type.getValue() === 'pie-cell'
 
   const externalSourceDataKey = manualData
@@ -95,7 +99,7 @@ const ChartComponentSourceDataKeyField = () => {
   const [textInput, setTextInput] = useState(externalSourceDataKey)
 
   const [manualDataKeyValue, setManualDataKeyValue] = useState(
-    typeIsPieChart ? ManualDataKeyValues.Category : ManualDataKeyValues.Date,
+    typeOfManualDataKey ?? ManualDataKeyValues.Date,
   )
 
   const componentKeyValue = sdk.ids.entry
@@ -104,15 +108,27 @@ const ChartComponentSourceDataKeyField = () => {
     sdk.window.startAutoResizer()
   }, [sdk.window])
 
+  const isInitialLoad = useRef(true)
   useEffect(() => {
-    sdk.entry.fields.type.onValueChanged((type) => {
+    const unsubscribe = sdk.entry.fields.type.onValueChanged((type) => {
+      if (isInitialLoad.current) {
+        // Skip the first trigger on page load
+        isInitialLoad.current = false
+        return
+      }
+
       if (type === 'pie-cell') {
         setManualDataKeyValue(ManualDataKeyValues.Category)
       } else {
         setManualDataKeyValue(ManualDataKeyValues.Date)
       }
     })
-  }, [sdk.entry.fields.type])
+
+    // Cleanup listener on unmount
+    return () => {
+      unsubscribe()
+    }
+  }, [sdk.entry.fields.type, setManualDataKeyValue])
 
   useDebounce(
     () => {
@@ -179,7 +195,8 @@ const ChartComponentSourceDataKeyField = () => {
     }))
   }
 
-  const disableMoreThanOneItemOnPieChart = manualData?.categoryItems?.length > 0
+  const disableMoreThanOneItemOnPieChart =
+    typeIsPieChart && manualData?.categoryItems?.length > 0
 
   return (
     <>
