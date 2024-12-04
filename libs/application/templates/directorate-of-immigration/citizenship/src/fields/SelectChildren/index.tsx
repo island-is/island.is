@@ -29,9 +29,10 @@ export const SelectChildren: FC<FieldBaseProps> = ({ field, application }) => {
 
       return {
         value: child.nationalId,
-        label: `${
-          child.givenName && child.familyName ? child.givenName : child.fullName
-        } ${child.givenName && child.familyName ? child.familyName : ''}`,
+        label:
+          child.givenName && child.familyName
+            ? `${child.givenName} ${child.familyName}`
+            : `${child.fullName}`,
         subLabel: child.otherParent
           ? `${formatMessage(selectChildren.checkboxes.subLabel)} ${
               child.otherParent?.fullName
