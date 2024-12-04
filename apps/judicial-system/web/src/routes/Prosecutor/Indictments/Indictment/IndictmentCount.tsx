@@ -412,6 +412,21 @@ export const IndictmentCount: FC<Props> = ({
     })
   }
 
+  const handleSubtypeChange = (
+    subtype: IndictmentSubtype,
+    checked: boolean,
+  ) => {
+    const currentSubtypes = new Set(
+      indictmentCount.indictmentCountSubtypes ?? [],
+    )
+
+    checked ? currentSubtypes.add(subtype) : currentSubtypes.delete(subtype)
+
+    handleIndictmentCountChanges({
+      indictmentCountSubtypes: Array.from(currentSubtypes),
+    })
+  }
+
   return (
     <BlueBox>
       {onDelete && (
@@ -480,18 +495,7 @@ export const IndictmentCount: FC<Props> = ({
                     ) ?? false
                   }
                   onChange={(evt) => {
-                    const indictmentCountSubtypes = evt.target.checked
-                      ? [
-                          ...(indictmentCount.indictmentCountSubtypes ?? []),
-                          subtype,
-                        ]
-                      : [
-                          ...(
-                            indictmentCount.indictmentCountSubtypes ?? []
-                          ).filter((val) => val !== subtype),
-                        ]
-
-                    handleIndictmentCountChanges({ indictmentCountSubtypes })
+                    handleSubtypeChange(subtype, evt.target.checked)
                   }}
                   backgroundColor="white"
                   large
