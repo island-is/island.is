@@ -3,14 +3,12 @@ import { m } from '../../../lib/messages'
 import { opperatingCostSubSection } from './opperatingCostSubSection'
 import { capitalNumberSubSection } from './capitalNumberSubSection'
 import { equityAndLiabilitiesSubSection } from './equityAndLiabilitySubSection'
-import { newOpperatingCostSubSection } from './newOpperatingCostSubsection'
 
 export const cemeteryKeyNumbersSection = buildSection({
   id: 'cemeteryKeyNumbers',
   title: m.keynumbers,
   children: [
     opperatingCostSubSection,
-    newOpperatingCostSubSection,
     capitalNumberSubSection,
     equityAndLiabilitiesSubSection,
   ],
