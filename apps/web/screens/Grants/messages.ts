@@ -34,7 +34,7 @@ export const m = {
     },
     applicationStatus: {
       id: 'web.grants:search.applicationStatus',
-      defaultMessage: 'Staða umsóknar',
+      defaultMessage: 'Staða umsókna',
     },
     applicationOpen: {
       id: 'web.grants:search.applicationOpen',
@@ -51,6 +51,26 @@ export const m = {
     applicationSeeDescription: {
       id: 'web.grants:search.applicationSeeDescription',
       defaultMessage: 'Sjá lýsingu',
+    },
+    applicationOpensAt: {
+      id: 'web.grants:search.applicationOpensAt',
+      defaultMessage: 'Opnar næst {arg}',
+    },
+    applicationEstimatedOpensAt: {
+      id: 'web.grants:search.applicationEstimatedOpensAt',
+      defaultMessage: 'Áætlað næst í {arg}',
+    },
+    applicationOpensTo: {
+      id: 'web.grants:search.applicationOpensTo',
+      defaultMessage: 'Frestur til {arg}',
+    },
+    applicationWasOpenTo: {
+      id: 'web.grants:search.applicationWasOpenTo',
+      defaultMessage: 'Frestur var til {arg}',
+    },
+    applicationAlwaysOpen: {
+      id: 'web.grants:search.applicationAlwaysOpen',
+      defaultMessage: 'Opið er allt árið',
     },
     category: {
       id: 'web.grants:search.category',

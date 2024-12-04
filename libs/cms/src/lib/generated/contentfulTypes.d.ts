@@ -1838,20 +1838,30 @@ export interface IGrantFields {
   /** Application hints */
   grantApplicationHints?: Document | undefined
 
-  /** Date from */
+  /** Open from */
   grantDateFrom?: string | undefined
 
-  /** Date to */
+  /** Open to */
   grantDateTo?: string | undefined
 
-  /** Is open? */
-  grantIsOpen?: boolean | undefined
+  /** From date is estimated */
+  grantFromDateIsEstimated?: boolean | undefined
 
   /** Status */
-  grantStatus: 'open' | 'closed' | 'see_description'
+  grantStatus:
+    | 'Automatic'
+    | 'Always open'
+    | 'Open with note'
+    | 'Closed with note'
+
+  /** Status Note */
+  grantStatusNote?: string | undefined
 
   /** Files */
   grantFiles?: Asset[] | undefined
+
+  /** Support links */
+  grantSupportLinks?: ILinkUrl[] | undefined
 
   /** Category tags */
   grantCategoryTags?: IGenericTag[] | undefined
