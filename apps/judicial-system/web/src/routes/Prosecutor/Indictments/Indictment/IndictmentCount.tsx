@@ -346,6 +346,10 @@ export const IndictmentCount: FC<Props> = ({
   const [legalArgumentsErrorMessage, setLegalArgumentsErrorMessage] =
     useState<string>('')
 
+  const subtypes = indictmentCount.policeCaseNumber
+    ? workingCase.indictmentSubtypes[indictmentCount.policeCaseNumber]
+    : []
+
   const offensesOptions = useMemo(
     () =>
       Object.values(IndictmentCountOffense).map((offense) => ({
@@ -457,37 +461,47 @@ export const IndictmentCount: FC<Props> = ({
           crimeScenes={workingCase.crimeScenes}
         />
       </Box>
-      <Box marginBottom={2}>
-        <SectionHeading
-          title={formatMessage(strings.selectIndictmentSubtype)}
-          heading="h4"
-        />
-        <div className={styles.indictmentSubtypesContainter}>
-          {indictmentCount.policeCaseNumber &&
-            workingCase.indictmentSubtypes[
-              indictmentCount.policeCaseNumber
-            ].map((subtype: IndictmentSubtype) => (
+      {subtypes.length > 1 && (
+        <Box marginBottom={2}>
+          <SectionHeading
+            title={formatMessage(strings.selectIndictmentSubtype)}
+            heading="h4"
+          />
+          <div className={styles.indictmentSubtypesContainter}>
+            {subtypes.map((subtype: IndictmentSubtype) => (
               <div className={styles.indictmentSubtypesItem} key={subtype}>
                 <Checkbox
                   name={subtype}
+                  value={subtype}
                   label={capitalize(indictmentSubtypes[subtype])}
-                  // checked={Boolean(civilClaimant.noNationalId)}
-                  // onChange={() => {
-                  //   handleUpdateCivilClaimant({
-                  //     caseId: workingCase.id,
-                  //     civilClaimantId: civilClaimant.id,
-                  //     nationalId: null,
-                  //     noNationalId: !civilClaimant.noNationalId,
-                  //   })
-                  // }}
+                  checked={
+                    indictmentCount.indictmentCountSubtypes?.includes(
+                      subtype,
+                    ) ?? false
+                  }
+                  onChange={(evt) => {
+                    const indictmentCountSubtypes = evt.target.checked
+                      ? [
+                          ...(indictmentCount.indictmentCountSubtypes ?? []),
+                          subtype,
+                        ]
+                      : [
+                          ...(
+                            indictmentCount.indictmentCountSubtypes ?? []
+                          ).filter((val) => val !== subtype),
+                        ]
+
+                    handleIndictmentCountChanges({ indictmentCountSubtypes })
+                  }}
                   backgroundColor="white"
                   large
                   filled
                 />
               </div>
             ))}
-        </div>
-      </Box>
+          </div>
+        </Box>
+      )}
       <Box marginBottom={2}>
         <InputMask
           mask={[/[A-Z]/i, /[A-Z]/i, /[A-Z]|[0-9]/i, /[0-9]/, /[0-9]/]}

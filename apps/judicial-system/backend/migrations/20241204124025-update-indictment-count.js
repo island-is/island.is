@@ -5,7 +5,7 @@ module.exports = {
     await queryInterface.sequelize.transaction((transaction) =>
       queryInterface.addColumn(
         'indictment_count',
-        'indictment_count_subtype',
+        'indictment_count_subtypes',
         {
           type: Sequelize.ARRAY(Sequelize.STRING),
           allowNull: true,
