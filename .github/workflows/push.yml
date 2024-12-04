@@ -6,6 +6,7 @@ on:
       - 'main'
       - 'release/**'
       - 'pre-release/**'
+      - '!unicorn-pipe-rel2'
     paths-ignore:
       - '**/*.md'
     tags:

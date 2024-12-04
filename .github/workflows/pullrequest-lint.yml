@@ -6,6 +6,8 @@ on:
       - reopened
       - edited
       - synchronize
+    branches:
+      - '!unicorn-pipe-rel2'
 
 defaults:
   run:
