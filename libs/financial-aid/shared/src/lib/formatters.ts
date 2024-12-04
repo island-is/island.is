@@ -360,12 +360,8 @@ export const applicationStateToFilterEnum: KeyMapping<
 
 export const aidCalculator = (
   homeCircumstances: HomeCircumstances,
-  aid?: Aid,
-): number | undefined => {
-  if (!aid) {
-    return undefined
-  }
-
+  aid: Aid,
+): number => {
   switch (homeCircumstances) {
     case 'OwnPlace':
       return aid.ownPlace

@@ -79,7 +79,7 @@ export interface Form {
   children: FormChildren[]
   icon?: string
   id: string
-  logo?: FormComponent
+  logo?: React.FC<React.PropsWithChildren<unknown>>
   mode?: FormModes
   renderLastScreenBackButton?: boolean
   renderLastScreenButton?: boolean
