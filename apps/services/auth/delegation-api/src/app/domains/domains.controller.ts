@@ -93,6 +93,7 @@ export class DomainsController {
     resources: (domains) => domains.map((domain) => domain.name),
   })
   @Scopes(
+    ...delegationScopes,
     AdminPortalScope.delegationSystemAdmin,
     AdminPortalScope.delegationSystem,
   )
