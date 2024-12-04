@@ -352,8 +352,9 @@ export class CmsContentfulService {
     fieldName: string,
     fieldValue: string,
     lang: string,
+    requireFieldValue = false,
   ): Promise<Organization | null> {
-    if (!fieldValue) {
+    if (requireFieldValue && !fieldValue) {
       return null
     }
 
@@ -377,7 +378,7 @@ export class CmsContentfulService {
     slug: string,
     lang: string,
   ): Promise<Organization | null> {
-    return this.getOrganizationBy('slug', slug, lang)
+    return this.getOrganizationBy('slug', slug, lang, true)
   }
 
   async getOrganizationByTitle(
@@ -398,7 +399,7 @@ export class CmsContentfulService {
     nationalId: string,
     lang: string,
   ): Promise<Organization | null> {
-    return this.getOrganizationBy('kennitala', nationalId, lang)
+    return this.getOrganizationBy('kennitala', nationalId, lang, true)
   }
 
   async getOrganizationPage(
