@@ -1841,8 +1841,14 @@ export interface IGrantFields {
   /** Open from */
   grantDateFrom?: string | undefined
 
+  /** Open from hour */
+  grantOpenFromHour?: number | undefined
+
   /** Open to */
   grantDateTo?: string | undefined
+
+  /** Open to hour */
+  grantOpenToHour?: number | undefined
 
   /** From date is estimated */
   grantFromDateIsEstimated?: boolean | undefined

@@ -54,7 +54,7 @@ export const m = {
     },
     applicationOpensAt: {
       id: 'web.grants:search.applicationOpensAt',
-      defaultMessage: 'Opnar næst {arg}',
+      defaultMessage: 'Opnar {arg}',
     },
     applicationEstimatedOpensAt: {
       id: 'web.grants:search.applicationEstimatedOpensAt',

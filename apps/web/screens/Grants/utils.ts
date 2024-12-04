@@ -80,7 +80,7 @@ export const parseStatus = (
       return {
         applicationStatus: 'open',
         deadlineStatus: grant.dateFrom
-          ? formatMessage(m.search.applicationOpensAt, {
+          ? formatMessage(m.search.applicationOpensTo, {
               arg: formatDate(new Date(grant.dateFrom), locale, 'dd.MMMM.'),
             })
           : formatMessage(m.search.applicationOpen),
