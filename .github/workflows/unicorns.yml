@@ -46,7 +46,6 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           enable-cache: 'node_modules,generated-files'
 
-
       - name: Check unicorn affected
         id: unicorn-affected
         run: |
@@ -66,4 +65,3 @@ jobs:
           PR_NUMBER: ${{ github.event.number }}
         run: |
           node scripts/ci/create-release.mjs $PR_NUMBER
-
