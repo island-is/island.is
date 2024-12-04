@@ -38,9 +38,9 @@ import { Defendant } from './models/defendant.model'
 import { DeleteDefendantResponse } from './models/delete.response'
 import { DefendantService } from './defendant.service'
 
-@UseGuards(JwtAuthGuard, RolesGuard)
 @Controller('api/case/:caseId/defendant')
 @ApiTags('defendants')
+@UseGuards(JwtAuthGuard, RolesGuard)
 export class DefendantController {
   constructor(
     private readonly defendantService: DefendantService,
