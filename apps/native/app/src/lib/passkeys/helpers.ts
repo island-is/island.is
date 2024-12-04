@@ -127,7 +127,7 @@ export const addPasskeyAsLoginHint = (
   const matchedPath = allowedPaths.find((path) => url.includes(path))
 
   if (matchedPath) {
-    return `${origin}${matchedPath}?login_hint=passkey:${authenticationResponse}&target_link_uri=${encodeURIComponent(
+    return `${origin}/bff/login?login_hint=passkey:${authenticationResponse}&target_link_uri=${encodeURIComponent(
       url,
     )}`
   }
