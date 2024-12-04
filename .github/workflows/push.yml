@@ -4,21 +4,21 @@ on:
   push:
     branches:
       - 'main'
-      - 'release/**'
-      - 'pre-release/**'
-      - '!unicorn-pipe-rel2'
-      - '!feature/unicorn/app'
-    paths-ignore:
-      - '**/*.md'
-    tags:
-      - docker-build-*
-  workflow_dispatch:
-  create:
-  pull_request:
-    types:
-      - opened
-      - synchronize
-      - labeled
+  #     - 'release/**'
+  #     - 'pre-release/**'
+  #     - '!unicorn-pipe-rel2'
+  #     - '!feature/unicorn/app'
+  #   paths-ignore:
+  #     - '**/*.md'
+  #   tags:
+  #     - docker-build-*
+  # workflow_dispatch:
+  # create:
+  # pull_request:
+  #   types:
+  #     - opened
+  #     - synchronize
+  #     - labeled
 
 defaults:
   run:
