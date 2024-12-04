@@ -73,7 +73,9 @@ jobs:
         - name: Create release branch
           env:
             PR_NUMBER: ${{ github.event.number }}
-            PR: ${{ github.base_ref }}
+            BaseRef: ${{ github.base_ref }}
+            HeadRef: ${{ github.head_ref }}
           run: |
             echo PR_NUMBER: $PR_NUMBER
-            echo PR: $PR
+            echo BaseRef: $BaseRef
+            echo HeadRef: $HeadRef
