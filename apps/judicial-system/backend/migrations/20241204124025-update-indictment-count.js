@@ -1,7 +1,7 @@
 'use strict'
 
 module.exports = {
- async up(queryInterface, Sequelize) {
+  async up(queryInterface, Sequelize) {
     await queryInterface.sequelize.transaction((transaction) =>
       queryInterface.addColumn(
         'indictment_count',
@@ -17,6 +17,9 @@ module.exports = {
   },
 
   async down(queryInterface) {
-    await queryInterface.removeColumn('indictment_count', 'indictment_count_subtypes')
+    await queryInterface.removeColumn(
+      'indictment_count',
+      'indictment_count_subtypes',
+    )
   },
 }
