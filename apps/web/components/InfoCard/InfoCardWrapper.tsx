@@ -6,10 +6,10 @@ import { theme } from '@island.is/island-ui/theme'
 
 import { InfoCard, InfoCardProps } from './InfoCard'
 
-export type CardProps = Omit<InfoCardProps, 'size' | 'variant'>
+export type InfoCardItemProps = Omit<InfoCardProps, 'size' | 'variant'>
 
 interface Props {
-  cards: Array<CardProps>
+  cards: Array<InfoCardItemProps>
   variant?: 'detailed' | 'simple'
   columns?: 1 | 2 | 3
 }
