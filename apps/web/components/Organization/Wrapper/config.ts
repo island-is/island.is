@@ -116,7 +116,7 @@ export const watsonConfig: Record<
       serviceInstanceID: 'bc3d8312-d862-4750-b8bf-529db282050a',
       showLauncher: false,
       carbonTheme: 'g10',
-      namespaceKey: 'default',
+      namespaceKey: 'samgongustofa',
     },
   },
   is: {
@@ -127,7 +127,7 @@ export const watsonConfig: Record<
       serviceInstanceID: 'bc3d8312-d862-4750-b8bf-529db282050a',
       showLauncher: false,
       carbonTheme: 'g10',
-      namespaceKey: 'default',
+      namespaceKey: 'samgongustofa',
     },
 
     // Skatturinn - Organization

@@ -3241,6 +3241,9 @@ export interface IOrganizationPage extends Entry<IOrganizationPageFields> {
 }
 
 export interface IOrganizationParentSubpageFields {
+  /** Organization Page */
+  organizationPage: IOrganizationPage
+
   /** Internal Title */
   internalTitle: string
 

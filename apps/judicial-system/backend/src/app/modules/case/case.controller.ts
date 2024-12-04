@@ -354,7 +354,7 @@ export class CaseController {
   )
   @UseInterceptors(CompletedAppealAccessedInterceptor, CaseInterceptor)
   @Get('case/:caseId')
-  @ApiOkResponse({ type: Case, description: 'Gets an existing case' })
+  @ApiOkResponse({ type: Case, description: 'Gets an existing case by id' })
   getById(@Param('caseId') caseId: string, @CurrentCase() theCase: Case): Case {
     this.logger.debug(`Getting case ${caseId} by id`)
 
