@@ -6,7 +6,7 @@ import gql from 'graphql-tag'
 import {
   Query,
   QueryGetPaymentFlowArgs,
-  QueryGetOrganizationArgs,
+  QueryGetOrganizationByNationalIdArgs,
 } from '@island.is/api/schema'
 import { Box, Button } from '@island.is/island-ui/core'
 import { Features } from '@island.is/feature-flags'
@@ -47,8 +47,8 @@ const GetPaymentFlow = gql`
 `
 
 const GetOrganization = gql`
-  query getOrganization($input: GetOrganizationInput!) {
-    getOrganization(input: $input) {
+  query getOrganizationByNationalId($input: GetOrganizationByNationalIdInput!) {
+    getOrganizationByNationalId(input: $input) {
       id
       title
       shortTitle
@@ -109,17 +109,17 @@ export const getServerSideProps: GetServerSideProps<PaymentPageProps> = async (
     paymentFlow = getPaymentFlow
 
     const {
-      data: { getOrganization },
-    } = await client.query<Query, QueryGetOrganizationArgs>({
+      data: { getOrganizationByNationalId },
+    } = await client.query<Query, QueryGetOrganizationByNationalIdArgs>({
       query: GetOrganization,
       variables: {
         input: {
-          slug: getPaymentFlow.organisationId,
+          nationalId: getPaymentFlow.organisationId,
         },
       },
     })
 
-    organization = getOrganization
+    organization = getOrganizationByNationalId
   } catch (e) {
     console.error(e)
   }
