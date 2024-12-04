@@ -31,7 +31,9 @@ export const AssetDebtEquityOverview = ({ answers }: Props) => {
         />
         <ValueLine
           label={m.totalAssets}
-          value={formatCurrency(answers.asset?.total)}
+          value={formatCurrency(
+            answers.equityAndLiabilitiesTotals?.assetsTotal,
+          )}
           isTotal
         />
       </GridColumn>
@@ -52,7 +54,9 @@ export const AssetDebtEquityOverview = ({ answers }: Props) => {
         />
         <ValueLine
           label={m.totalLiabilities}
-          value={formatCurrency(answers.liability?.total)}
+          value={formatCurrency(
+            answers.equityAndLiabilitiesTotals?.liabilitiesTotal,
+          )}
           isTotal
         />
         <Box paddingTop={3}>
@@ -62,7 +66,9 @@ export const AssetDebtEquityOverview = ({ answers }: Props) => {
           />
           <ValueLine
             label={m.debtsAndCash}
-            value={formatCurrency(answers.equityAndLiabilities?.total)}
+            value={formatCurrency(
+              answers.equityAndLiabilitiesTotals.equityAndLiabilitiesTotal,
+            )}
             isTotal
           />
         </Box>
