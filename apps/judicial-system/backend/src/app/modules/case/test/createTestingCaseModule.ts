@@ -180,6 +180,9 @@ export const createTestingCaseModule = async () => {
 
   const caseService = caseModule.get<CaseService>(CaseService)
 
+  const internalCaseService =
+    caseModule.get<InternalCaseService>(InternalCaseService)
+
   const limitedAccessCaseService = caseModule.get<LimitedAccessCaseService>(
     LimitedAccessCaseService,
   )
@@ -213,6 +216,7 @@ export const createTestingCaseModule = async () => {
     caseStringModel,
     caseConfig,
     caseService,
+    internalCaseService,
     limitedAccessCaseService,
     caseController,
     internalCaseController,
