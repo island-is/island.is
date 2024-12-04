@@ -3,8 +3,13 @@ on:
   # push:
   #   branches:
   #     - unicorn-pipe-rel2
-  issue_comment: {}
-  workflow_dispatch: {}
+  workflow_dispatch:
+  create:
+  pull_request:
+    types:
+      - opened
+      - synchronize
+      - labeled
 
 concurrency:
   # See https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#example-using-a-fallback-value
