@@ -28,6 +28,13 @@ jobs:
 
       # - name: yarn install
       #   run: yarn install --immutable
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: 'package.json'
+
+      - name: Setup yarn
+        run: corepack enable
+
       - name: Get cache
         id: get-cache
         uses: ./.github/actions/get-cache
@@ -35,12 +42,6 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           enable-cache: 'node_modules,generated-files'
 
-      - uses: actions/setup-node@v4
-        with:
-          node-version-file: 'package.json'
-
-      - name: Setup yarn
-        run: corepack enable
 
       - name: Check unicorn affected
         id: unicorn-affected
