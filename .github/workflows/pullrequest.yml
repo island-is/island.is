@@ -1,7 +1,9 @@
 name: Monorepo pipeline - pull request
 
 on:
-  pull_request: {}
+  pull_request:
+    branches:
+      - '!unicorn-pipe-rel2'
   workflow_dispatch: {}
 
 defaults:

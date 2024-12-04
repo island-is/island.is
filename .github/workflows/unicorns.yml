@@ -3,7 +3,9 @@ on:
   # push:
   #   branches:
   #     - unicorn-pipe-rel2
-  pull_request: {}
+  pull_request:
+    branches:
+      - unicorn-pipe-rel2
   workflow_dispatch: {}
 
 concurrency:
