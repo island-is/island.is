@@ -25,11 +25,10 @@ jobs:
     outputs:
       IS_UNICORN: ${{ steps.unicorn-affected.outputs.IS_UNICORN }}
 
-      # with:
-      #   fetch-depth: 0
-
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       # - name: yarn install
       #   run: yarn install --immutable
