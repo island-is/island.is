@@ -99,7 +99,7 @@ export const subSectionApplicantInfo = buildSubSection({
           id: 'drivingInstructorTitle',
           title: m.drivingInstructor,
           titleVariant: 'h4',
-          marginTop: 'gutter',
+          marginTop: 'containerGutter',
           description: m.chooseDrivingInstructor,
           condition: (answers) =>
             answers.applicationFor !== License.B_FULL_RENEWAL_65 &&

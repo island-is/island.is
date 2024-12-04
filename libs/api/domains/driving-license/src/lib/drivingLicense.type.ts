@@ -41,6 +41,7 @@ export interface NewBEDrivingLicenseInput {
   instructorSSN: string
   primaryPhoneNumber: string
   studentEmail: string
+  healthDeclarationFileUpload: string
 }
 
 export interface NewDrivingLicenseResult {

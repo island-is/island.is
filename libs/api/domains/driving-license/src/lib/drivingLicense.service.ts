@@ -538,6 +538,7 @@ export class DrivingLicenseService {
       instructorSSN: input.instructorSSN,
       email: input.studentEmail,
       phoneNumber: input.primaryPhoneNumber,
+      healthDeclarationFileUpload: input.healthDeclarationFileUpload,
     })
 
     return {
