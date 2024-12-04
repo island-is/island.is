@@ -76,4 +76,4 @@ jobs:
             PR: ${{ github.event.pull_request }}
           run: |
             echo PR_NUMBER: $PR_NUMBER
-            echo
+            echo PR: $PR
