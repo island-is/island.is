@@ -11,4 +11,5 @@ export const indictmentSubtypesContainter = style({
 
 export const indictmentSubtypesItem = style({
   flex: `1 1 calc(50% - ${theme.spacing[1]}px)`,
+  whiteSpace: 'nowrap',
 })
