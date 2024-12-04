@@ -309,6 +309,9 @@
       "@island.is/application/templates/aosh/work-accident-notification": [
         "libs/application/templates/aosh/work-accident-notification/src/index.ts"
       ],
+      "@island.is/application/templates/aosh/practical-exam": [
+        "libs/application/templates/aosh/practical-exam/src/index.ts"
+      ],
       "@island.is/application/templates/car-recycling": [
         "libs/application/templates/car-recycling/src/index.ts"
       ],
