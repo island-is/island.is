@@ -8,10 +8,7 @@ import {
 
 import { SharedTemplateApiService } from '../../shared'
 import { TemplateApiModuleActionProps } from '../../../types'
-import {
-  coreErrorMessages,
-  getValueViaPath,
-} from '@island.is/application/core'
+import { coreErrorMessages, getValueViaPath } from '@island.is/application/core'
 import {
   ApplicationTypes,
   ApplicationWithAttachments,
@@ -230,7 +227,7 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
         'healthDeclarationFileUpload',
       )
 
-      console.log('attachedFile', attachedFile) 
+      console.log('attachedFile', attachedFile)
 
       return this.drivingLicenseService.applyForBELicense(
         nationalId,
