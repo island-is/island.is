@@ -74,6 +74,13 @@ export const BffProvider = ({
     }
   }, [postMessage, state.userInfo, isLoggedIn])
 
+  const getTargetLinkUri = () => {
+    const urlParams = new URLSearchParams(window.location.search)
+    const targetLinkUri = urlParams.get('target_link_uri')
+
+    return targetLinkUri
+  }
+
   const checkLogin = async (noRefresh = false) => {
     dispatch({
       type: ActionType.SIGNIN_START,
@@ -120,7 +127,7 @@ export const BffProvider = ({
     })
 
     window.location.href = bffUrlGenerator('/login', {
-      target_link_uri: window.location.href,
+      target_link_uri: getTargetLinkUri() ?? window.location.href,
     })
   }, [bffUrlGenerator])
 
@@ -183,8 +190,8 @@ export const BffProvider = ({
       )
 
       if (isOldLoginPath) {
-        // If user is on old login path, redirect to url without /login
-        window.location.href = window.location.href.replace('/login', '')
+        // If user is on old login path, then start the sign-in process
+        signIn()
 
         return
       }
