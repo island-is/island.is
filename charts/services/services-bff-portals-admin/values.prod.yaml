@@ -20,11 +20,12 @@ name: 'services-bff-portals-admin'
 enabled: true
 env:
   BFF_ALLOWED_EXTERNAL_API_URLS: '["https://api.island.is"]'
-  BFF_ALLOWED_REDIRECT_URIS: '["https://island.is"]'
+  BFF_ALLOWED_REDIRECT_URIS: '["https://island.is/stjornbord"]'
   BFF_CACHE_USER_PROFILE_TTL_MS: '3595000'
   BFF_CALLBACKS_BASE_PATH: 'https://island.is/stjornbord/bff/callbacks'
+  BFF_CLIENT_BASE_PATH: '/stjornbord'
   BFF_CLIENT_BASE_URL: 'https://island.is'
-  BFF_CLIENT_KEY_PATH: '/stjornbord'
+  BFF_GLOBAL_PREFIX: '/stjornbord/bff'
   BFF_LOGIN_ATTEMPT_TTL_MS: '604800000'
   BFF_LOGOUT_REDIRECT_URI: 'https://island.is'
   BFF_NAME: 'stjornbord'
@@ -39,6 +40,7 @@ env:
   REDIS_URL_NODE_01: '["clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379"]'
   SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
 grantNamespaces:
+  - 'nginx-ingress-external'
   - 'identity-server'
 grantNamespacesEnabled: true
 healthCheck:

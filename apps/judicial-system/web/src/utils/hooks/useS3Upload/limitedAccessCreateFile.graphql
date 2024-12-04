@@ -1,12 +1,5 @@
 mutation LimitedAccessCreateFile($input: CreateFileInput!) {
   limitedAccessCreateFile(input: $input) {
     id
-    created
-    caseId
-    name
-    key
-    size
-    category
-    policeCaseNumber
   }
 }

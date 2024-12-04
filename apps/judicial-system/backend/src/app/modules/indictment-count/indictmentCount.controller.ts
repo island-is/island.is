@@ -27,9 +27,9 @@ import { DeleteIndictmentCountResponse } from './models/delete.response'
 import { IndictmentCount } from './models/indictmentCount.model'
 import { IndictmentCountService } from './indictmentCount.service'
 
-@UseGuards(JwtAuthGuard, RolesGuard)
 @Controller('api/case/:caseId/indictmentCount')
 @ApiTags('indictment-counts')
+@UseGuards(JwtAuthGuard, RolesGuard)
 export class IndictmentCountController {
   constructor(
     private readonly indictmentCountService: IndictmentCountService,

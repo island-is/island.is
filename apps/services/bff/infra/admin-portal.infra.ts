@@ -34,6 +34,7 @@ export const serviceSetup = (
       clientId: `@admin.island.is/bff-${key}`,
       clientName,
       services,
+      globalPrefix: `/${key}/bff`,
     })
     .readiness(`/${key}/bff/health/check`)
     .liveness(`/${key}/bff/liveness`)
@@ -75,7 +76,7 @@ export const serviceSetup = (
             'nginx.ingress.kubernetes.io/proxy-buffer-size': '8k',
           },
         },
-        paths: ['/stjornbord/bff'],
+        paths: [`/${key}/bff`],
       },
     })
-    .grantNamespaces('identity-server')
+    .grantNamespaces('nginx-ingress-external', 'identity-server')

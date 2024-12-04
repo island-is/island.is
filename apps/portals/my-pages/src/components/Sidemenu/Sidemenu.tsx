@@ -83,7 +83,7 @@ const Sidemenu = ({
             marginTop={2}
           >
             <Box
-              borderRadius="circle"
+              borderRadius="full"
               background="blue100"
               display="flex"
               justifyContent="center"
