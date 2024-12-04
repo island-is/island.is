@@ -21,6 +21,7 @@ const individualInfo = z.object({
   }),
   phone: z.string().refine((v) => isValidPhoneNumber(v)),
   email: z.string().refine((v) => isValidEmail(v)),
+  hasBirthCertificate: z.boolean().optional(),
 
   //Validators
   nationalIdValidatorApplicant: z.string().optional(),

@@ -355,6 +355,11 @@ export const m = defineMessages({
     defaultMessage: 'Tvö fæðingarvottorð frá Þjóðskrá Íslands',
     description: '',
   },
+  birthCertificatesWithParameters: {
+    id: 'mac.application:birthCertificatesWithParameters',
+    defaultMessage: '{nrOfBirthCerts} fæðingarvottorð frá Þjóðskrá Íslands',
+    description: '',
+  },
   surveyCertificate: {
     id: 'mac.application:surveyCertificate',
     defaultMessage: 'Könnunvarvottorð sýslumanns',

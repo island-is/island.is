@@ -18,6 +18,7 @@ import {
   buildAlertMessageField,
   buildImageField,
   buildCheckboxField,
+  buildHiddenInput,
 } from '@island.is/application/core'
 import {
   Form,
@@ -146,6 +147,17 @@ export const getApplication = ({ allowFakeData = false }): Form => {
                       const data = application.externalData.userProfile
                         .data as UserProfile
                       return data.email ?? ''
+                    },
+                  }),
+                  buildHiddenInput({
+                    id: 'applicant.hasBirthCertificate',
+                    defaultValue: (application: Application) => {
+                      const data = (
+                        application.externalData.birthCertificate.data as {
+                          hasBirthCertificate?: boolean
+                        }
+                      )?.hasBirthCertificate
+                      return data ?? false
                     },
                   }),
                   buildDescriptionField({

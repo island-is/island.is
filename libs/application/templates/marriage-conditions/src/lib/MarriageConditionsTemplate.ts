@@ -185,7 +185,30 @@ const MarriageConditionsTemplate: ApplicationTemplate<
       },
       [States.PAYMENT]: buildPaymentState({
         organizationId: InstitutionNationalIds.SYSLUMENN,
-        chargeItemCodes: ['AY129'],
+        chargeItemCodes: (application) => {
+          const paymentCodes = []
+          paymentCodes.push(
+            getValueViaPath<boolean>(
+              application.answers,
+              'applicant.hasBirthCertificate',
+            )
+              ? []
+              : ['AY153'],
+          )
+          paymentCodes.push(
+            getValueViaPath<boolean>(
+              application.externalData,
+              'birthCertificate.data.hasBirthCertificate',
+            )
+              ? []
+              : ['AY153'],
+          )
+          paymentCodes.push('AY128') // Survey
+          // paymentCodes.push('AY129') // Marriage conditions
+          paymentCodes.push(['AY154', 'AY154']) // Marital status
+
+          return paymentCodes.flat()
+        },
         submitTarget: States.DONE,
       }),
       [States.DONE]: {

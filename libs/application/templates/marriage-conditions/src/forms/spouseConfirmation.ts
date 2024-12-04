@@ -296,17 +296,6 @@ export const spouseConfirmation = ({ allowFakeData = false }): Form =>
                 },
                 {
                   allowFakeData,
-                  // TODO: When/if real data enters the payment catalog, remove this
-                  fakePayments: [
-                    {
-                      priceAmount: 2800,
-                      chargeItemCode: 'AY153',
-                    },
-                    {
-                      priceAmount: 2700,
-                      chargeItemCode: 'AY154',
-                    },
-                  ],
                 },
               ),
               buildSubmitField({
