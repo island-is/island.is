@@ -393,7 +393,10 @@ export const isTrafficViolationCase = (theCase: {
   return (
     flatIndictmentSubtypes.length > 0 &&
     flatIndictmentSubtypes.every(
-      (val) => val === IndictmentSubtype.TRAFFIC_VIOLATION,
+      (val) =>
+        val === IndictmentSubtype.TRAFFIC_VIOLATION ||
+        // TODO: Refactor this
+        val === IndictmentSubtype.NARCOTICS_OFFENSE,
     )
   )
 }

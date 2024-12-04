@@ -5,14 +5,20 @@ import { IntlShape, useIntl } from 'react-intl'
 import {
   Box,
   Button,
+  Checkbox,
   Icon,
   Input,
   Select,
   Tag,
 } from '@island.is/island-ui/core'
-import { formatDate } from '@island.is/judicial-system/formatters'
+import {
+  capitalize,
+  formatDate,
+  indictmentSubtypes,
+} from '@island.is/judicial-system/formatters'
 import {
   CrimeScene,
+  IndictmentSubtype,
   offenseSubstances,
   Substance,
   SubstanceMap,
@@ -20,6 +26,7 @@ import {
 import {
   BlueBox,
   IndictmentInfo,
+  SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
 import { IndictmentCountOffense } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
@@ -39,6 +46,7 @@ import { Substances as SubstanceChoices } from './Substances/Substances'
 import { indictmentCount as strings } from './IndictmentCount.strings'
 import { indictmentCountEnum as enumStrings } from './IndictmentCountEnum.strings'
 import { indictmentCountSubstanceEnum as substanceStrings } from './IndictmentCountSubstanceEnum.strings'
+import * as styles from './IndictmentCount.css'
 
 interface Props {
   indictmentCount: TIndictmentCount
@@ -448,6 +456,37 @@ export const IndictmentCount: FC<Props> = ({
           subtypes={workingCase.indictmentSubtypes}
           crimeScenes={workingCase.crimeScenes}
         />
+      </Box>
+      <Box marginBottom={2}>
+        <SectionHeading
+          title={formatMessage(strings.selectIndictmentSubtype)}
+          heading="h4"
+        />
+        <div className={styles.indictmentSubtypesContainter}>
+          {indictmentCount.policeCaseNumber &&
+            workingCase.indictmentSubtypes[
+              indictmentCount.policeCaseNumber
+            ].map((subtype: IndictmentSubtype) => (
+              <div className={styles.indictmentSubtypesItem} key={subtype}>
+                <Checkbox
+                  name={subtype}
+                  label={capitalize(indictmentSubtypes[subtype])}
+                  // checked={Boolean(civilClaimant.noNationalId)}
+                  // onChange={() => {
+                  //   handleUpdateCivilClaimant({
+                  //     caseId: workingCase.id,
+                  //     civilClaimantId: civilClaimant.id,
+                  //     nationalId: null,
+                  //     noNationalId: !civilClaimant.noNationalId,
+                  //   })
+                  // }}
+                  backgroundColor="white"
+                  large
+                  filled
+                />
+              </div>
+            ))}
+        </div>
       </Box>
       <Box marginBottom={2}>
         <InputMask
