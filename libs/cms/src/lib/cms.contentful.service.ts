@@ -349,9 +349,9 @@ export class CmsContentfulService {
   }
 
   private async getOrganizationBy(
-    lang: string,
     fieldName: string,
     fieldValue: string,
+    lang: string,
   ): Promise<Organization | null> {
     if (!fieldValue) {
       return null
@@ -377,28 +377,28 @@ export class CmsContentfulService {
     slug: string,
     lang: string,
   ): Promise<Organization | null> {
-    return this.getOrganizationBy(lang, 'slug', slug)
+    return this.getOrganizationBy('slug', slug, lang)
   }
 
   async getOrganizationByTitle(
     title: string,
     lang: string,
   ): Promise<Organization | null> {
-    return this.getOrganizationBy(lang, 'title[match]', title)
+    return this.getOrganizationBy('title[match]', title, lang)
   }
 
   async getOrganizationByReferenceId(
     referenceId: string,
     lang: string,
   ): Promise<Organization | null> {
-    return this.getOrganizationBy(lang, 'referenceIdentifier', referenceId)
+    return this.getOrganizationBy('referenceIdentifier', referenceId, lang)
   }
 
   async getOrganizationByNationalId(
     nationalId: string,
     lang: string,
   ): Promise<Organization | null> {
-    return this.getOrganizationBy(lang, 'kennitala', nationalId)
+    return this.getOrganizationBy('kennitala', nationalId, lang)
   }
 
   async getOrganizationPage(
