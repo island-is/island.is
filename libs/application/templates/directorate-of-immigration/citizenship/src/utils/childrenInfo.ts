@@ -59,7 +59,8 @@ export const getSelectedCustodyChild = (
 
   const selectedChildren = (answers as Citizenship).selectedChildren
   const isSelected =
-    selectedChildren && selectedChildren.find((sc) => sc === childNationalId)
+    selectedChildren &&
+    selectedChildren.find((sc) => sc === childInfo?.nationalId)
 
   return isSelected ? childInfo : undefined
 }
