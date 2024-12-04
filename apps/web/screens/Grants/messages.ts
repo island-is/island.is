@@ -73,7 +73,7 @@ export const m = {
       defaultMessage: 'Frestur var til {arg}',
     },
     applicationWasOpenToAndWith: {
-      id: 'web.grants:search.applicationWasOpenTo',
+      id: 'web.grants:search.applicationWasOpenToAndWith',
       defaultMessage: 'Frestur var til og með {arg}',
     },
     applicationAlwaysOpen: {
