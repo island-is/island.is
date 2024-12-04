@@ -8,6 +8,8 @@ import { Asset, mapAsset } from './asset.model'
 import { ReferenceLink, mapReferenceLink } from './referenceLink.model'
 import { Fund, mapFund } from './fund.model'
 import { isValidDate } from '@island.is/shared/utils'
+import addHours from 'date-fns/addHours'
+import format from 'date-fns/format'
 
 export enum GrantStatus {
   CLOSED,
@@ -115,8 +117,8 @@ export const mapGrant = ({ fields, sys }: IGrant): Grant => {
     applicationHints: fields.grantApplicationHints
       ? mapDocument(fields.grantApplicationHints, sys.id + ':application-hints')
       : [],
-    dateFrom: fields.grantDateFrom,
-    dateTo: fields.grantDateTo,
+    dateFrom: parseDate(fields.grantDateFrom, fields.grantOpenFromHour),
+    dateTo: parseDate(fields.grantDateTo, fields.grantOpenToHour),
     status: parseStatus(fields),
     statusText:
       GrantStatus.CLOSED_WITH_NOTE || GrantStatus.OPEN_WITH_NOTE
@@ -168,4 +170,15 @@ const parseStatus = (fields: IGrantFields): GrantStatus => {
     default:
       return GrantStatus.UNKNOWN
   }
+}
+
+const parseDate = (date?: string, time?: number): string | undefined => {
+  if (!date) {
+    return
+  }
+  const parsedDate = new Date(date)
+  if (!time) {
+    return format(parsedDate, 'yyyy-MM-dd')
+  }
+  return addHours(new Date(date), time).toISOString()
 }

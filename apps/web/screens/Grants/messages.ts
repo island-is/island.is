@@ -64,9 +64,17 @@ export const m = {
       id: 'web.grants:search.applicationOpensTo',
       defaultMessage: 'Frestur til {arg}',
     },
+    applicationOpensToWithDay: {
+      id: 'web.grants:search.applicationOpensToWithDay',
+      defaultMessage: 'Frestur til og með {arg}',
+    },
     applicationWasOpenTo: {
       id: 'web.grants:search.applicationWasOpenTo',
       defaultMessage: 'Frestur var til {arg}',
+    },
+    applicationWasOpenToAndWith: {
+      id: 'web.grants:search.applicationWasOpenTo',
+      defaultMessage: 'Frestur var til og með {arg}',
     },
     applicationAlwaysOpen: {
       id: 'web.grants:search.applicationAlwaysOpen',

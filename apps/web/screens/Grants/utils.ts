@@ -5,6 +5,7 @@ import localeIS from 'date-fns/locale/is'
 import { FormatMessage } from '@island.is/localization'
 import { Locale } from '@island.is/shared/types'
 import { Grant, GrantStatus } from '@island.is/web/graphql/schema'
+import getHours from 'date-fns/getHours'
 
 import { m } from './messages'
 
@@ -23,6 +24,8 @@ const formatDate = (
     locale: locale === 'is' ? localeIS : localeEn,
   })
 
+export const containsTimePart = (date: string) => date.includes('T')
+
 export const parseStatus = (
   grant: Grant,
   formatMessage: FormatMessage,
@@ -33,9 +36,14 @@ export const parseStatus = (
       return {
         applicationStatus: 'closed',
         deadlineStatus: grant.dateTo
-          ? formatMessage(m.search.applicationWasOpenTo, {
-              arg: formatDate(new Date(grant.dateTo), locale),
-            })
+          ? formatMessage(
+              containsTimePart(grant.dateTo)
+                ? m.search.applicationWasOpenToAndWith
+                : m.search.applicationWasOpenTo,
+              {
+                arg: formatDate(new Date(grant.dateTo), locale),
+              },
+            )
           : formatMessage(m.search.applicationClosed),
         note: grant.statusText ?? undefined,
       }
@@ -79,10 +87,15 @@ export const parseStatus = (
     case GrantStatus.Open: {
       return {
         applicationStatus: 'open',
-        deadlineStatus: grant.dateFrom
-          ? formatMessage(m.search.applicationOpensTo, {
-              arg: formatDate(new Date(grant.dateFrom), locale, 'dd.MMMM.'),
-            })
+        deadlineStatus: grant.dateTo
+          ? formatMessage(
+              containsTimePart(grant.dateTo)
+                ? m.search.applicationOpensToWithDay
+                : m.search.applicationOpensTo,
+              {
+                arg: formatDate(new Date(grant.dateTo), locale, 'dd.MMMM.'),
+              },
+            )
           : formatMessage(m.search.applicationOpen),
         note: grant.statusText ?? undefined,
       }
