@@ -10,7 +10,6 @@ import {
   getLoginSearchParmsFn,
   mockedTokensResponse as tokensResponse,
 } from '../../../../test/sharedConstants'
-import { environment } from '../../../environment'
 import { BffConfig } from '../../bff.config'
 import { TokenRefreshService } from '../auth/token-refresh.service'
 import { IdsService } from '../ids/ids.service'
@@ -62,7 +61,7 @@ const mockIdsService = {
 }
 
 const createLoginAttempt = (mockConfig: ConfigType<typeof BffConfig>) => ({
-  originUrl: `${mockConfig.clientBaseUrl}${environment.keyPath}`,
+  originUrl: `${mockConfig.clientBaseUrl}${mockConfig.clientBasePath}`,
   codeVerifier: 'test_code_verifier',
   targetLinkUri: undefined,
 })
@@ -120,7 +119,10 @@ describe('UserController', () => {
 
     it('should return user data when valid session exists', async () => {
       // Arrange - Set up login attempt in cache
-      mockCacheStore.set(`attempt_${SID_VALUE}`, createLoginAttempt(mockConfig))
+      mockCacheStore.set(
+        `attempt::${mockConfig.name}::${SID_VALUE}`,
+        createLoginAttempt(mockConfig),
+      )
 
       // Initialize session with login
       await server.get('/login')
@@ -150,7 +152,10 @@ describe('UserController', () => {
 
     it('should refresh token when access token is expired and refresh=true', async () => {
       // Arrange - Set up login attempt in cache
-      mockCacheStore.set(`attempt_${SID_VALUE}`, createLoginAttempt(mockConfig))
+      mockCacheStore.set(
+        `attempt::${mockConfig.name}::${SID_VALUE}`,
+        createLoginAttempt(mockConfig),
+      )
 
       // Initialize session
       await server.get('/login')
@@ -164,7 +169,10 @@ describe('UserController', () => {
         ...mockCachedTokenResponse,
         accessTokenExp: Date.now() - 1000, // Expired token
       }
-      mockCacheStore.set(`current_${SID_VALUE}`, expiredTokenResponse)
+      mockCacheStore.set(
+        `current::${mockConfig.name}::${SID_VALUE}`,
+        expiredTokenResponse,
+      )
 
       // Act
       const res = await server
@@ -186,7 +194,10 @@ describe('UserController', () => {
 
     it('should not refresh token when access token is expired but refresh=false', async () => {
       // Arrange - Set up login attempt in cache
-      mockCacheStore.set(`attempt_${SID_VALUE}`, createLoginAttempt(mockConfig))
+      mockCacheStore.set(
+        `attempt::${mockConfig.name}::${SID_VALUE}`,
+        createLoginAttempt(mockConfig),
+      )
 
       // Initialize session
       await server.get('/login')
@@ -200,7 +211,10 @@ describe('UserController', () => {
         ...mockCachedTokenResponse,
         accessTokenExp: Date.now() - 1000, // Expired token
       }
-      mockCacheStore.set(`current_${SID_VALUE}`, expiredTokenResponse)
+      mockCacheStore.set(
+        `current::${mockConfig.name}::${SID_VALUE}`,
+        expiredTokenResponse,
+      )
 
       // Act
       const res = await server

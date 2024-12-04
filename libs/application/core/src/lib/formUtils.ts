@@ -3,30 +3,30 @@
 // So disabling the check for now
 
 import deepmerge from 'deepmerge'
-import isArray from 'lodash/isArray'
 import get from 'lodash/get'
+import isArray from 'lodash/isArray'
 import HtmlParser from 'react-html-parser'
 
-import { shouldShowFormItem } from './conditionUtils'
 import {
   Application,
   ExternalData,
-  FormValue,
-  Form,
   Field,
-  RecordObject,
+  Form,
   FormItemTypes,
   FormLeaf,
   FormNode,
   FormText,
   FormTextArray,
+  FormTextWithLocale,
+  FormValue,
+  RecordObject,
   Section,
   StaticText,
   StaticTextObject,
   SubSection,
-  FormTextWithLocale,
 } from '@island.is/application/types'
-import { Locale, User } from '@island.is/shared/types'
+import { BffUser, Locale } from '@island.is/shared/types'
+import { shouldShowFormItem } from './conditionUtils'
 
 const containsArray = (obj: RecordObject) => {
   let contains = false
@@ -116,7 +116,7 @@ export const getSectionsInForm = (
   form: Form,
   answers: FormValue,
   externalData: ExternalData,
-  user: User | null,
+  user: BffUser | null,
 ): Section[] => {
   const sections: Section[] = []
   form.children.forEach((child) => {
@@ -137,7 +137,7 @@ export const getSubSectionsInSection = (
   section: Section,
   answers: FormValue,
   externalData: ExternalData,
-  user: User | null,
+  user: BffUser | null,
 ): SubSection[] => {
   const subSections: SubSection[] = []
   section?.children.forEach((child) => {
