@@ -8,10 +8,7 @@ import {
 
 import { SharedTemplateApiService } from '../../shared'
 import { TemplateApiModuleActionProps } from '../../../types'
-import {
-  coreErrorMessages,
-  getValueViaPath,
-} from '@island.is/application/core'
+import { coreErrorMessages, getValueViaPath } from '@island.is/application/core'
 import {
   ApplicationTypes,
   ApplicationWithAttachments,
@@ -34,8 +31,7 @@ import {
   DrivingLicenseSchema,
 } from './utils/healthDeclarationMapper'
 import { formatPhoneNumber } from './utils'
-import AmazonS3URI from 'amazon-s3-uri'
-import { S3 } from 'aws-sdk'
+import { S3Service } from '@island.is/nest/aws'
 
 const calculateNeedsHealthCert = (healthDeclaration = {}) => {
   return !!Object.values(healthDeclaration).find((val) => val === 'yes')
@@ -43,11 +39,11 @@ const calculateNeedsHealthCert = (healthDeclaration = {}) => {
 
 @Injectable()
 export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
-  s3: S3 = new S3()
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private readonly drivingLicenseService: DrivingLicenseService,
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
+    private readonly s3Service: S3Service,
   ) {
     super(ApplicationTypes.DRIVING_LICENSE)
   }
@@ -102,7 +98,7 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
 
     let result
     try {
-      result = await this.createLicense(nationalId, answers, auth)
+      result = await this.createLicense(nationalId, answers, auth, application)
     } catch (e) {
       this.log('error', 'Creating license failed', {
         e,
@@ -143,6 +139,7 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
     nationalId: string,
     answers: FormValue,
     auth: User,
+    application: ApplicationWithAttachments,
   ): Promise<NewDrivingLicenseResult> {
     const applicationFor =
       getValueViaPath<'B-full' | 'B-temp' | 'BE' | 'B-full-renewal-65'>(
@@ -225,12 +222,16 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
       )
       const email = getValueViaPath<string>(answers, 'email')
       const phone = getValueViaPath<string>(answers, 'phone')
-      const attachedFile = getValueViaPath<{ key: string; name: string }[]>(
+      const attachedFileKey = (getValueViaPath<{ key: string; name: string }[]>(
         answers,
         'healthDeclarationFileUpload',
-      )
+      ) ?? [{ key: '', name: '' }])[0].key
 
-      console.log('attachedFile', attachedFile) 
+      const fileName = (
+        application.attachments as {
+          [key: string]: string
+        }
+      )[attachedFileKey]
 
       return this.drivingLicenseService.applyForBELicense(
         nationalId,
@@ -240,8 +241,8 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
           instructorSSN: instructorSSN ?? '',
           primaryPhoneNumber: phone ?? '',
           studentEmail: email ?? '',
-          healthDeclarationFileUpload: attachedFile
-            ? await this.getBase64EncodedAttachment(attachedFile)
+          healthDeclarationFileUpload: attachedFileKey
+            ? await this.getBase64EncodedAttachment(fileName)
             : '',
         },
       )
@@ -302,21 +303,11 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
     return hasGlasses
   }
 
-  private async getBase64EncodedAttachment(
-    attachedFile: { key: string; name: string }[],
-  ): Promise<string> {
-    const { name } = attachedFile[0]
-
-    const { bucket, key } = AmazonS3URI(name)
-
-    const file = await this.s3
-      .getObject({
-        Bucket: bucket,
-        Key: key,
-      })
-      .promise()
-
-    const fileContent = file.Body as Buffer
-    return fileContent?.toString('base64') || ''
+  private async getBase64EncodedAttachment(fileName?: string): Promise<string> {
+    if (!fileName) {
+      return ''
+    }
+    const file = await this.s3Service.getFileContent(fileName, 'base64')
+    return file ?? ''
   }
 }
