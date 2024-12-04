@@ -301,6 +301,7 @@ export const WHODASCalculator = ({ slice }: WHODASCalculatorProps) => {
         <Inline alignY="center" space={2}>
           {stepIndex > 0 && (
             <Button
+              key={`previous-step-${stepIndex}`}
               size="small"
               variant="ghost"
               preTextIcon="arrowBack"
@@ -312,6 +313,7 @@ export const WHODASCalculator = ({ slice }: WHODASCalculatorProps) => {
             </Button>
           )}
           <Button
+            key={`next-step-${stepIndex}`}
             size="small"
             onClick={() => {
               setStepIndex((s) => s + 1)
