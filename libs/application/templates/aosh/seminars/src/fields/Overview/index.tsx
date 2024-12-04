@@ -15,6 +15,8 @@ import {
   getSeminarInformationForOverview,
 } from '../../utils'
 import { ParticipantsOverviewExpandableTable } from '../Components/ParticipantsOverviewExpandableTable'
+import { getValueViaPath } from '@island.is/application/core'
+import { ParticipantType } from '../../lib/dataSchema'
 
 export const Overview: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   ...props
@@ -90,7 +92,14 @@ export const Overview: FC<React.PropsWithChildren<FieldBaseProps>> = ({
         title={formatMessage(overview.labels.participants)}
         isLast
       >
-        <ParticipantsOverviewExpandableTable data={[]} />
+        <ParticipantsOverviewExpandableTable
+          data={
+            getValueViaPath<ParticipantType[]>(
+              application.answers,
+              'participantList',
+            ) ?? []
+          }
+        />
       </ReviewGroup>
     </Box>
   )

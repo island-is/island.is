@@ -200,6 +200,7 @@ export const paymentArrangementSection = buildSection({
           message: paymentArrangement.labels.contactOrganizationAlert,
           alertType: 'error',
           marginTop: 5,
+          doesNotRequireAnswer: true,
           condition: (answers: FormValue, externalData: ExternalData) =>
             isCompanyType(externalData) || isCompany(answers),
         }),

@@ -20,7 +20,7 @@ export class SeminarsClientService {
     })
   }
 
-  async isValidCompany(
+  async isCompanyValid(
     auth: User,
     nationalId: string,
   ): Promise<Array<CompanyDTO>> {

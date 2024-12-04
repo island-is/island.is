@@ -1,16 +1,12 @@
 import { Box, Button, Table as T } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { useState } from 'react'
-
-type ParticipantsTableData = {
-  name: string
-  nationalId: string
-  email: string
-  phoneNumber: string
-}
+import { ParticipantType } from '../../lib/dataSchema'
+import { formatPhoneNumber } from '../../utils'
+import { participants } from '../../lib/messages'
 
 interface Props {
-  data: ParticipantsTableData[]
+  data: ParticipantType[]
 }
 
 const TableRow = ({ line }: { line: string[] }) => {
@@ -26,12 +22,7 @@ const TableRow = ({ line }: { line: string[] }) => {
 export const ParticipantsOverviewExpandableTable = ({ data }: Props) => {
   const [isExpanded, setIsExpanded] = useState(false)
   const { formatMessage } = useLocale()
-
-  const mockData = [
-    ['Notandi Jóns', '012345-6789', 'notandijons@famemail.com', '666 8999'],
-    ['Þátttakandi 1 Jóns', '012345-6789', 'thatttakandi1@email.co', '666 8999'],
-    ['Þátttakandi 2 Jóns', '012345-6789', 'thatttakandi2@email.co', '666 8999'],
-  ]
+  const MAX_ROWS = 5
 
   const handleExpandTable = () => setIsExpanded(!isExpanded)
   return (
@@ -39,23 +30,45 @@ export const ParticipantsOverviewExpandableTable = ({ data }: Props) => {
       <T.Table>
         <T.Head>
           <T.Row>
-            <T.HeadData>Nafn þátttakanda</T.HeadData>
-            <T.HeadData>Kennitala</T.HeadData>
-            <T.HeadData>Netfang</T.HeadData>
-            <T.HeadData>Símanúmer</T.HeadData>
+            <T.HeadData>{formatMessage(participants.labels.name)}</T.HeadData>
+            <T.HeadData>
+              {formatMessage(participants.labels.nationalId)}
+            </T.HeadData>
+            <T.HeadData>{formatMessage(participants.labels.email)}</T.HeadData>
+            <T.HeadData>
+              {formatMessage(participants.labels.phoneNumber)}
+            </T.HeadData>
           </T.Row>
         </T.Head>
         <T.Body>
-          {!isExpanded && mockData.length > 2
-            ? mockData
-                .slice(0, 2)
-                .map((line, index) => <TableRow key={index} line={line} />)
-            : mockData.map((line, index) => (
-                <TableRow key={index} line={line} />
+          {!isExpanded && data.length > MAX_ROWS
+            ? data
+                .slice(0, MAX_ROWS)
+                .map((line, index) => (
+                  <TableRow
+                    key={index}
+                    line={[
+                      line.name,
+                      line.nationalId,
+                      line.email,
+                      formatPhoneNumber(line.phoneNumber),
+                    ]}
+                  />
+                ))
+            : data.map((line, index) => (
+                <TableRow
+                  key={index}
+                  line={[
+                    line.name,
+                    line.nationalId,
+                    line.email,
+                    formatPhoneNumber(line.phoneNumber),
+                  ]}
+                />
               ))}
         </T.Body>
       </T.Table>
-      {mockData.length > 2 && (
+      {data.length > MAX_ROWS && (
         <Box display="flex" justifyContent="center" marginY={2}>
           <Button variant="text" onClick={handleExpandTable} size="small">
             {isExpanded ? 'Sjá færri' : 'Sjá fleiri'}

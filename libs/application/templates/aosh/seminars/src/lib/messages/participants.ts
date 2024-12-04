@@ -36,5 +36,25 @@ export const participants = {
       defaultMessage: 'Hlaða inn .csv skjali',
       description: 'participants csv upload button label',
     },
+    name: {
+      id: 'aosh.sem.application:participants.labels.name',
+      defaultMessage: 'Nafn',
+      description: 'participants name label',
+    },
+    nationalId: {
+      id: 'aosh.sem.application:participants.labels.nationalId',
+      defaultMessage: 'Kennitala',
+      description: 'participants nationalId label',
+    },
+    email: {
+      id: 'aosh.sem.application:participants.labels.email',
+      defaultMessage: 'Netfang',
+      description: 'participants email label',
+    },
+    phoneNumber: {
+      id: 'aosh.sem.application:participants.labels.phoneNumber',
+      defaultMessage: 'Símanúmer',
+      description: 'participants phoneNumber label',
+    },
   }),
 }

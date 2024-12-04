@@ -49,6 +49,7 @@ export const participantsSection = buildSection({
         buildCustomField({
           id: 'participantCSV',
           title: 'prufa',
+          doesNotRequireAnswer: true,
           component: 'Participants',
         }),
         buildAlertMessageField({
@@ -56,6 +57,7 @@ export const participantsSection = buildSection({
           title: '',
           message: participantMessages.labels.csvError,
           alertType: 'error',
+          doesNotRequireAnswer: true,
           condition: (answers: FormValue, _) => {
             const hasError = getValueViaPath(
               answers,

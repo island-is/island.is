@@ -169,3 +169,4 @@ export const SeminarAnswersSchema = z.object({
 
 export type SeminarAnswers = z.TypeOf<typeof SeminarAnswersSchema>
 export type PaymentArrangementType = z.TypeOf<typeof PaymentArrangementSchema>
+export type ParticipantType = z.TypeOf<typeof ParticipantSchema>
