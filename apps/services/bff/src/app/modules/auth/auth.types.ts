@@ -21,3 +21,9 @@ export type CachedTokenResponse = Omit<
   encryptedAccessToken: string
   encryptedRefreshToken: string
 }
+
+export type LoginAttemptData = {
+  targetLinkUri?: string
+  codeVerifier: string
+  originUrl: string
+}

@@ -1,15 +1,15 @@
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 
-import { useAuth } from '@island.is/auth/react'
-import { LoadingScreen } from '@island.is/react/components'
-import { BASE_PATH, routes } from '../lib/routes'
-import React, { useRef } from 'react'
 import { useLocale } from '@island.is/localization'
+import { useUserInfo } from '@island.is/react-spa/bff'
+import { LoadingScreen } from '@island.is/react/components'
+import { useRef } from 'react'
 import { m } from '../lib/messages'
+import { BASE_PATH, routes } from '../lib/routes'
 
 export const Router = () => {
   const { formatMessage } = useLocale()
-  const { userInfo } = useAuth()
+  const userInfo = useUserInfo()
   const router = useRef<ReturnType<typeof createBrowserRouter>>()
 
   if (!userInfo) {

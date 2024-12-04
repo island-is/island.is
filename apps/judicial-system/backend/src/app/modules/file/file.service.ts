@@ -43,6 +43,11 @@ import { SignedUrl } from './models/signedUrl.model'
 import { UploadFileToCourtResponse } from './models/uploadFileToCourt.response'
 import { fileModuleConfig } from './file.config'
 
+interface CreateFile extends CreateFileDto {
+  defendantId?: string
+  civilClaimantId?: string
+}
+
 // File keys have the following format:
 // <uuid>/<uuid>/<filename>
 // As uuid-s have length 36, the filename starts at position 82 in the key.
@@ -337,7 +342,7 @@ export class FileService {
 
   async createCaseFile(
     theCase: Case,
-    createFile: CreateFileDto,
+    createFile: CreateFile,
     user: User,
   ): Promise<CaseFile> {
     const { key } = createFile
