@@ -1,0 +1,105 @@
+import {
+  buildDataProviderItem,
+  buildExternalDataProvider,
+  buildForm,
+  buildSection,
+  buildSubmitField,
+} from '@island.is/application/core'
+import { DefaultEvents, Form, FormModes } from '@island.is/application/types'
+import { Logo } from '../assets/Logo'
+import {
+  conclusion,
+  externalData,
+  extraInformation,
+  overview,
+  school,
+  userInformation,
+} from '../lib/messages'
+import {
+  NationalRegistryParentsApi,
+  NationalRegistryUserApi,
+  SchoolsApi,
+  UserProfileApi,
+} from '../dataProviders'
+
+export const Prerequisites: Form = buildForm({
+  id: 'PrerequisitesForm',
+  title: '',
+  logo: Logo,
+  mode: FormModes.NOT_STARTED,
+  renderLastScreenButton: true,
+  renderLastScreenBackButton: true,
+  children: [
+    buildSection({
+      id: 'externalData',
+      title: externalData.dataProvider.sectionTitle,
+      children: [
+        buildExternalDataProvider({
+          title: externalData.dataProvider.pageTitle,
+          id: 'approveExternalData',
+          subTitle: externalData.dataProvider.subTitle,
+          checkboxLabel: externalData.dataProvider.checkboxLabel,
+          submitField: buildSubmitField({
+            id: 'submit',
+            placement: 'footer',
+            title: '',
+            refetchApplicationAfterSubmit: true,
+            actions: [
+              {
+                event: DefaultEvents.SUBMIT,
+                name: externalData.dataProvider.submitButton,
+                type: 'primary',
+              },
+            ],
+          }),
+          dataProviders: [
+            buildDataProviderItem({
+              provider: NationalRegistryUserApi,
+              title: externalData.nationalRegistry.title,
+              subTitle: externalData.nationalRegistry.subTitle,
+            }),
+            buildDataProviderItem({
+              provider: NationalRegistryParentsApi,
+              title: '',
+            }),
+            buildDataProviderItem({
+              provider: UserProfileApi,
+              title: externalData.userProfile.title,
+              subTitle: externalData.userProfile.subTitle,
+            }),
+            buildDataProviderItem({
+              provider: SchoolsApi,
+              title: externalData.educationalCareer.title,
+              subTitle: externalData.educationalCareer.subTitle,
+            }),
+          ],
+        }),
+      ],
+    }),
+    buildSection({
+      id: 'userInformationSection',
+      title: userInformation.general.sectionTitle,
+      children: [],
+    }),
+    buildSection({
+      id: 'schoolSection',
+      title: school.general.sectionTitle,
+      children: [],
+    }),
+    buildSection({
+      id: 'extraInformationSection',
+      title: extraInformation.general.sectionTitle,
+      children: [],
+    }),
+    buildSection({
+      id: 'overviewSection',
+      title: overview.general.sectionTitle,
+      children: [],
+    }),
+    buildSection({
+      id: 'conclusion',
+      title: conclusion.general.sectionTitle,
+      children: [],
+    }),
+  ],
+})

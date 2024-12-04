@@ -22,6 +22,7 @@ export const applicantInformationMultiField = (
     emailRequired = true,
     emailDisabled = false,
     applicantInformationDescription = '',
+    readOnly = false,
   } = props ?? {}
   return buildMultiField({
     id: 'applicant',
@@ -32,7 +33,8 @@ export const applicantInformationMultiField = (
         id: 'applicant.name',
         title: applicantInformation.labels.name,
         backgroundColor: 'white',
-        disabled: true,
+        disabled: !readOnly,
+        readOnly: readOnly,
         defaultValue: (application: ApplicantInformationInterface) =>
           application.externalData?.nationalRegistry?.data?.fullName ??
           application.externalData?.identityRegistry?.data?.name ??
@@ -44,7 +46,8 @@ export const applicantInformationMultiField = (
         format: '######-####',
         width: 'half',
         backgroundColor: 'white',
-        disabled: true,
+        disabled: !readOnly,
+        readOnly: readOnly,
         defaultValue: (application: ApplicantInformationInterface) =>
           application.externalData?.nationalRegistry?.data?.nationalId ??
           application.externalData?.identityRegistry?.data?.nationalId ??
@@ -55,7 +58,8 @@ export const applicantInformationMultiField = (
         title: applicantInformation.labels.address,
         width: 'half',
         backgroundColor: 'white',
-        disabled: true,
+        disabled: !readOnly,
+        readOnly: readOnly,
         defaultValue: (application: ApplicantInformationInterface) =>
           application.externalData?.nationalRegistry?.data?.address
             ?.streetAddress ??
@@ -69,7 +73,8 @@ export const applicantInformationMultiField = (
         width: 'half',
         format: '###',
         backgroundColor: 'white',
-        disabled: true,
+        disabled: !readOnly,
+        readOnly: readOnly,
         defaultValue: (application: ApplicantInformationInterface) => {
           return (
             application.externalData?.nationalRegistry?.data?.address
@@ -85,7 +90,8 @@ export const applicantInformationMultiField = (
         title: applicantInformation.labels.city,
         width: 'half',
         backgroundColor: 'white',
-        disabled: true,
+        disabled: !readOnly,
+        readOnly: readOnly,
         defaultValue: (application: ApplicantInformationInterface) =>
           application.externalData?.nationalRegistry?.data?.address?.city ??
           application.externalData?.identityRegistry?.data?.address?.city ??

@@ -162,7 +162,8 @@ export const NationalIdWithName: FC<
               ? nameFieldErrors
               : undefined
           }
-          disabled
+          disabled={disabled}
+          readOnly={!disabled}
         />
       </GridColumn>
     </GridRow>
