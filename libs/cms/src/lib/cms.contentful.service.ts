@@ -348,18 +348,20 @@ export class CmsContentfulService {
     )
   }
 
-  async getOrganization(
-    slug: string,
+  private async getOrganizationBy(
+    fieldName: string,
+    fieldValue: string,
     lang: string,
+    requireFieldValue = false,
   ): Promise<Organization | null> {
-    if (!slug) {
+    if (requireFieldValue && !fieldValue) {
       return null
     }
 
     const params = {
       ['content_type']: 'organization',
       include: 10,
-      'fields.slug': slug,
+      [`fields.${fieldName}`]: fieldValue,
       limit: 1,
     }
 
@@ -372,42 +374,32 @@ export class CmsContentfulService {
     )
   }
 
+  async getOrganization(
+    slug: string,
+    lang: string,
+  ): Promise<Organization | null> {
+    return this.getOrganizationBy('slug', slug, lang, true)
+  }
+
   async getOrganizationByTitle(
     title: string,
     lang: string,
-  ): Promise<Organization> {
-    const params = {
-      ['content_type']: 'organization',
-      include: 10,
-      'fields.title[match]': title,
-    }
-
-    const result = await this.contentfulRepository
-      .getLocalizedEntries<types.IOrganizationFields>(lang, params)
-      .catch(errorHandler('getOrganization'))
-
-    return (
-      (result.items as types.IOrganization[]).map(mapOrganization)[0] ?? null
-    )
+  ): Promise<Organization | null> {
+    return this.getOrganizationBy('title[match]', title, lang)
   }
 
   async getOrganizationByReferenceId(
     referenceId: string,
     lang: string,
-  ): Promise<Organization> {
-    const params = {
-      ['content_type']: 'organization',
-      include: 10,
-      'fields.referenceIdentifier': referenceId,
-    }
+  ): Promise<Organization | null> {
+    return this.getOrganizationBy('referenceIdentifier', referenceId, lang)
+  }
 
-    const result = await this.contentfulRepository
-      .getLocalizedEntries<types.IOrganizationFields>(lang, params)
-      .catch(errorHandler('getOrganization'))
-
-    return (
-      (result.items as types.IOrganization[]).map(mapOrganization)[0] ?? null
-    )
+  async getOrganizationByNationalId(
+    nationalId: string,
+    lang: string,
+  ): Promise<Organization | null> {
+    return this.getOrganizationBy('kennitala', nationalId, lang, true)
   }
 
   async getOrganizationPage(
