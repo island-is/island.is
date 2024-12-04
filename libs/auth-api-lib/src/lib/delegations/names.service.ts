@@ -40,6 +40,6 @@ export class NamesService {
         `A person with nationalId<${nationalId}> could not be found`,
       )
     }
-    return person.fulltNafn?.fulltNafn ?? person.nafn ?? ''
+    return person.nafn ?? ''
   }
 }
