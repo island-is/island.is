@@ -1,4 +1,5 @@
 import { merge } from 'lodash'
+import { CodeOwners } from '../../../libs/shared/constants/src/lib/codeOwners'
 import {
   Context,
   EnvironmentVariables,
@@ -191,6 +192,11 @@ export class ServiceBuilder<ServiceType extends string> {
       ...bffConfig(config).secrets,
       ...this.serviceDef.secrets,
     }
+    return this
+  }
+
+  codeOwner(codeOwner: CodeOwners) {
+    this.serviceDef.env['CODE_OWNER'] = codeOwner
     return this
   }
 
@@ -565,3 +571,5 @@ export const service = <Service extends string>(
 }
 
 export const json = (value: unknown): string => JSON.stringify(value)
+
+export { CodeOwners }
