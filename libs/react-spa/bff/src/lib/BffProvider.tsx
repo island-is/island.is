@@ -78,7 +78,7 @@ export const BffProvider = ({
     const urlParams = new URLSearchParams(window.location.search)
     const targetLinkUri = urlParams.get('target_link_uri')
 
-    return targetLinkUri
+    return targetLinkUri ?? window.location.href
   }
 
   const checkLogin = async (noRefresh = false) => {
@@ -127,7 +127,7 @@ export const BffProvider = ({
     })
 
     window.location.href = bffUrlGenerator('/login', {
-      target_link_uri: getTargetLinkUri() ?? window.location.href,
+      target_link_uri: getTargetLinkUri(),
     })
   }, [bffUrlGenerator])
 
@@ -157,7 +157,7 @@ export const BffProvider = ({
       })
 
       window.location.href = bffUrlGenerator('/login', {
-        target_link_uri: window.location.href,
+        target_link_uri: getTargetLinkUri(),
         ...(nationalId
           ? { login_hint: nationalId }
           : { prompt: 'select_account' }),
