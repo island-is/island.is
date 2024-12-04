@@ -5,7 +5,6 @@ import localeIS from 'date-fns/locale/is'
 import { FormatMessage } from '@island.is/localization'
 import { Locale } from '@island.is/shared/types'
 import { Grant, GrantStatus } from '@island.is/web/graphql/schema'
-import getHours from 'date-fns/getHours'
 
 import { m } from './messages'
 
