@@ -1,4 +1,9 @@
-import { ref, service, ServiceBuilder } from '../../../infra/src/dsl/dsl'
+import {
+  CodeOwners,
+  ref,
+  service,
+  ServiceBuilder,
+} from '../../../infra/src/dsl/dsl'
 
 export const serviceSetup = (services: {
   api: ServiceBuilder<'api'>
@@ -7,6 +12,7 @@ export const serviceSetup = (services: {
   consultationService
     .image('consultation-portal')
     .namespace('consultation-portal')
+    .codeOwner(CodeOwners.Advania)
     .liveness('/liveness')
     .readiness('/liveness')
     .replicaCount({

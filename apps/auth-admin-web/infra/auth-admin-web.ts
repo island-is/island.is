@@ -1,4 +1,4 @@
-import { service, ServiceBuilder } from '../../../infra/src/dsl/dsl'
+import { CodeOwners, service, ServiceBuilder } from '../../../infra/src/dsl/dsl'
 
 const extraAnnotations = {
   'nginx.ingress.kubernetes.io/proxy-buffer-size': '16k',
@@ -12,6 +12,7 @@ export const serviceSetup = (): ServiceBuilder<'auth-admin-web'> =>
   service('auth-admin-web')
     .namespace('identity-server-admin')
     .image('auth-admin-web')
+    .codeOwner(CodeOwners.Aranja)
     .env({
       NEXT_PUBLIC_BACKEND_URL: '/backend',
       IDENTITYSERVER_DOMAIN: {
