@@ -6,6 +6,7 @@ import {
   useState,
 } from 'react'
 import { useIntl } from 'react-intl'
+import round from 'lodash/round'
 
 import {
   Box,
@@ -25,6 +26,10 @@ import { MarkdownText } from '../../Organization'
 import { m } from './Calculator.strings'
 import * as styles from './Calculator.css'
 
+const formatScore = (score: number) => {
+  return String(round(score, 1)).replace('.', ',')
+}
+
 interface Question {
   question: string
   answerOptions: {
@@ -41,6 +46,7 @@ interface Step {
 interface CheckboxState {
   steps: {
     title: string
+    maxScorePossible: number
     questions: {
       selectedAnswerIndex: number
       answerScore: number
@@ -119,9 +125,14 @@ interface WHODASResultsProps {
     steps: (Pick<Step, 'title'> & { scoreForStep: number })[]
   }
   bracket: 1 | 2
+  totalScore: number
 }
 
-const WHODASResults = ({ results, bracket }: WHODASResultsProps) => {
+const WHODASResults = ({
+  results,
+  bracket,
+  totalScore,
+}: WHODASResultsProps) => {
   const { format } = useDateUtils()
   const date = format(new Date(), 'do MMMM yyyy')
 
@@ -150,13 +161,7 @@ const WHODASResults = ({ results, bracket }: WHODASResultsProps) => {
           {formatMessage(m.results.scoreHeading)}
         </Text>
         <Box background="purple100" padding="p2" borderRadius="large">
-          <Text>
-            {formatMessage(
-              bracket === 1
-                ? m.results.firstBracketScoreText
-                : m.results.secondBracketScoreText,
-            )}
-          </Text>
+          <Text>{formatScore(totalScore)}</Text>
         </Box>
       </Stack>
       <Stack space={1}>
@@ -185,23 +190,27 @@ const WHODASResults = ({ results, bracket }: WHODASResultsProps) => {
         </MarkdownText>
       </Stack>
 
-      {bracket !== 1 && (
-        <Stack space={1}>
-          <Text variant="h3" as="h3">
-            {formatMessage(m.results.breakdownHeading)}
+      <Stack space={3}>
+        <Text variant="h3" as="h3">
+          {formatMessage(m.results.breakdownHeading)}
+        </Text>
+        <BulletList>
+          {results.steps.map((step) => (
+            <Bullet key={step.title}>
+              <Box className={styles.breakdownRowContainer}>
+                <Text>{step.title}</Text>
+                <Text>{formatScore(step.scoreForStep)}</Text>
+              </Box>
+            </Bullet>
+          ))}
+        </BulletList>
+        <Box className={styles.totalScoreRowContainer}>
+          <Text fontWeight="semiBold">
+            {formatMessage(m.results.totalScore)}
           </Text>
-          <BulletList>
-            {results.steps.map((step) => (
-              <Bullet key={step.title}>
-                <Box className={styles.breakdownRowContainer}>
-                  <Text>{step.title}</Text>
-                  <Text>{step.scoreForStep}</Text>
-                </Box>
-              </Bullet>
-            ))}
-          </BulletList>
-        </Stack>
-      )}
+          <Text fontWeight="semiBold">{formatScore(totalScore)}</Text>
+        </Box>
+      </Stack>
     </Stack>
   )
 }
@@ -225,6 +234,11 @@ export const WHODASCalculator = ({ slice }: WHODASCalculatorProps) => {
     steps: steps.map(({ title, description, questions }) => ({
       title,
       description,
+      maxScorePossible: questions.reduce(
+        (prev, acc) =>
+          prev + acc.answerOptions[acc.answerOptions.length - 1].score,
+        0,
+      ),
       questions: questions.map(() => ({
         selectedAnswerIndex: 0,
         answerScore: 0,
@@ -245,16 +259,24 @@ export const WHODASCalculator = ({ slice }: WHODASCalculatorProps) => {
 
   if (showResults) {
     let totalScore = 0
+    let totalMaxScorePossible = 0
     const results: WHODASResultsProps['results'] = {
       steps: [],
     }
     for (const stateStep of state.steps) {
+      totalMaxScorePossible += stateStep.maxScorePossible
       let score = 0
       for (const question of stateStep.questions) {
         score += question.answerScore
       }
-      results.steps.push({ ...stateStep, scoreForStep: score })
       totalScore += score
+      if (stateStep.maxScorePossible > 0 && score > 0) {
+        score = (score * 100) / stateStep.maxScorePossible
+      }
+      results.steps.push({ ...stateStep, scoreForStep: score })
+    }
+    if (totalScore > 0 && totalMaxScorePossible > 0) {
+      totalScore = (totalScore * 100) / totalMaxScorePossible
     }
     return (
       <Stack space={8}>
@@ -268,6 +290,7 @@ export const WHODASCalculator = ({ slice }: WHODASCalculatorProps) => {
               ? 1
               : 2
           }
+          totalScore={totalScore}
         />
       </Stack>
     )

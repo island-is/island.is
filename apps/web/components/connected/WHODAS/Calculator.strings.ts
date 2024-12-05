@@ -62,6 +62,11 @@ export const m = {
         'Takk fyrir að svara spurningalistanum, Mat á færni þinni. Mat þitt á færni er stuðningur við að meta þörf þína fyrir heimaþjónustu. Ef þú hefur ekki svarað öllum spurningum getur það haft áhrif á niðurstöðuna.',
       description: 'Texti fyrir ofan niðurstöðuskjá',
     },
+    totalScore: {
+      id: 'web.whodas.calculator:results.totalScore#markdown',
+      defaultMessage: 'Stig samtals',
+      description: 'Stig samtals',
+    },
     mainHeading: {
       id: 'web.whodas.calculator:form.mainHeading',
       defaultMessage: 'Niðurstaða mats á færni',
@@ -76,16 +81,6 @@ export const m = {
       id: 'web.whodas.calculator:form.scoreHeading',
       defaultMessage: 'Heildarstig',
       description: 'Heildarstig',
-    },
-    firstBracketScoreText: {
-      id: 'web.whodas.calculator:form.firstBracketScoreText',
-      defaultMessage: '0 til 16,9 stig',
-      description: 'Lítil skerðing á færni - "Score" texti',
-    },
-    secondBracketScoreText: {
-      id: 'web.whodas.calculator:form.secondBracketScoreText',
-      defaultMessage: '17 til 100 stig',
-      description: 'Talsverð skerðing á færni - "Score" texti',
     },
     firstBracketInterpretationText: {
       id: 'web.whodas.calculator:form.firstBracketInterpretationText',
