@@ -67,9 +67,7 @@ jobs:
           RefName: ${{ github.ref_name }}
         run: |
           echo "Creating a release for unicorn"
-          git tag TEST_UNICORN
-          git push origin tag TEST_UNICORN
-          # node scripts/ci/create-release.mjs $PR_NUMBER
+          node scripts/ci/create-release.mjs $PR_NUMBER
 
           #   if: ${{ steps.unicorn-affected.outputs.IS_UNICORN == 'true' }}
 

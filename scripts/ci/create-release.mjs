@@ -12,12 +12,6 @@ const { data: pullRequest } = await octokit.rest.pulls.get({
   pull_number: arg[0],
 })
 
-var relevantInfo = {
-  hadSha: pullRequest.head.sha,
-  hadSha: pullRequest.merge_commit_sha,
-  user: pullRequest.user.login,
-}
-
 // This is a temporary commit that is created behind the scenes for
 // the test merge that validated no conflicts exist with the base branch.
 // It is not committed to the repository.
