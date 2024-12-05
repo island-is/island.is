@@ -246,9 +246,10 @@ export const WHODASCalculator = ({ slice }: WHODASCalculatorProps) => {
       description,
       maxScorePossible: questions.reduce(
         (prev, acc) =>
-          prev + acc.answerOptions.length > 0
+          prev +
+          (acc.answerOptions.length > 0
             ? acc.answerOptions[acc.answerOptions.length - 1].score
-            : 0,
+            : 0),
         0,
       ),
       questions: questions.map(() => ({
@@ -290,6 +291,7 @@ export const WHODASCalculator = ({ slice }: WHODASCalculatorProps) => {
     if (totalMaxScorePossible > 0) {
       totalScore = (totalScore * 100) / totalMaxScorePossible
     }
+    console.log(results)
     return (
       <Stack space={8}>
         <MarkdownText replaceNewLinesWithBreaks={false}>
