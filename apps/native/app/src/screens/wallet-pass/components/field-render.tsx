@@ -1,6 +1,7 @@
-import { Field, FieldCard, FieldGroup, FieldLabel, FieldRow } from '@ui'
 import React from 'react'
 import { View } from 'react-native'
+
+import { Field, FieldCard, FieldGroup, FieldLabel, FieldRow } from '../../../ui'
 import {
   GenericLicenseDataField,
   GenericLicenseType,

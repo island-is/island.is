@@ -2,11 +2,12 @@ import Clipboard from '@react-native-clipboard/clipboard'
 import React from 'react'
 import { Image, TouchableOpacity, View } from 'react-native'
 import styled from 'styled-components/native'
+
+import { Label } from '../label/label'
 import CopyIcon from '../../assets/icons/copy.png'
 import { dynamicColor } from '../../utils'
 import { Skeleton } from '../skeleton/skeleton'
 import { Typography } from '../typography/typography'
-import { Label } from '@ui'
 
 const Host = styled.SafeAreaView<{
   noBorder: boolean

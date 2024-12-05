@@ -1,13 +1,3 @@
-import {
-  Button,
-  EmptyList,
-  ListItem,
-  ListItemSkeleton,
-  SearchBar,
-  Tag,
-  TopLine,
-  InboxCard,
-} from '@ui'
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 import {
@@ -26,6 +16,17 @@ import {
 } from 'react-native-navigation'
 import { useNavigationComponentDidAppear } from 'react-native-navigation-hooks/dist'
 import styled, { useTheme } from 'styled-components/native'
+
+import {
+  Button,
+  EmptyList,
+  ListItem,
+  ListItemSkeleton,
+  SearchBar,
+  Tag,
+  TopLine,
+  InboxCard,
+} from '../../ui'
 import filterIcon from '../../assets/icons/filter-icon.png'
 import inboxReadIcon from '../../assets/icons/inbox-read.png'
 import illustrationSrc from '../../assets/illustrations/le-company-s3.png'

@@ -1,9 +1,3 @@
-import {
-  Alert as InfoAlert,
-  dynamicColor,
-  LICENSE_CARD_ROW_GAP,
-  LicenseCard,
-} from '@ui'
 import * as FileSystem from 'expo-file-system'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
@@ -23,6 +17,12 @@ import { NavigationFunctionComponent } from 'react-native-navigation'
 import PassKit, { AddPassButton } from 'react-native-passkit-wallet'
 import styled, { useTheme } from 'styled-components/native'
 
+import {
+  Alert as InfoAlert,
+  dynamicColor,
+  LICENSE_CARD_ROW_GAP,
+  LicenseCard,
+} from '../../ui'
 import { useFeatureFlag } from '../../contexts/feature-flag-provider'
 import {
   GenericLicenseType,

@@ -1,7 +1,9 @@
-import { Colors, Typography } from '@ui'
 import { ReactNode } from 'react'
 import { Image, View } from 'react-native'
 import styled from 'styled-components/native'
+
+import { Typography } from '../typography/typography'
+import { Colors } from '../../utils'
 
 type Variant = 'info' | 'error' | 'warning'
 

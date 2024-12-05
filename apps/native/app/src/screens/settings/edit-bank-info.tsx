@@ -1,4 +1,3 @@
-import { Button, NavigationBarSheet, TextField, Typography } from '@ui'
 import React, { useEffect } from 'react'
 import { useIntl } from 'react-intl'
 import { Alert, ScrollView, View } from 'react-native'
@@ -6,6 +5,8 @@ import {
   Navigation,
   NavigationFunctionComponent,
 } from 'react-native-navigation'
+
+import { Button, NavigationBarSheet, TextField, Typography } from '../../ui'
 import { useGetProfileQuery } from '../../graphql/types/schema'
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
 import { bankInfoObject, stringifyBankData } from '../../lib/bank-info-helper'
