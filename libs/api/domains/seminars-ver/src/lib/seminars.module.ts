@@ -8,4 +8,4 @@ import { FeatureFlagModule } from '@island.is/nest/feature-flags'
   imports: [SeminarsClientModule, FeatureFlagModule],
   providers: [SeminarsResolver, SeminarsService],
 })
-export class WorkMachinesModule {}
+export class SeminarsModule {}

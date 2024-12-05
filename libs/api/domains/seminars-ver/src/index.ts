@@ -1,1 +1,2 @@
-export * from './lib/api-domains-seminars-ver'
+export * from './lib/seminars.module'
+export * from './lib/seminars.service'

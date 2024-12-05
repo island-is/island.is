@@ -22,7 +22,7 @@ export class SeminarsResolver {
   @Scopes(ApiScope.vinnueftirlitid)
   @Query(() => [CompanyValidationItem])
   @Audit()
-  async getTechnicalInfoInputs(
+  async isCompanyValid(
     @CurrentUser() auth: User,
     @Args('nationalId') nationalId: string,
   ) {

@@ -320,7 +320,6 @@ export const AsyncSearchInput = forwardRef<
   ) => {
     const { colorScheme: colorSchemeContext } = useContext(ColorSchemeContext)
     const { value, inputSize: size } = inputProps
-    console.log(value, inputProps)
     const showLabel = Boolean(label)
     const isOpen = hasFocus && !!children && React.Children.count(children) > 0
 

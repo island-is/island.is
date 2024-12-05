@@ -193,6 +193,11 @@ export const paymentArrangementSection = buildSection({
           condition: (answers: FormValue, externalData: ExternalData) =>
             isCompanyType(externalData) || isCompany(answers),
         }),
+        buildCustomField({
+          id: 'paymentArrangement.watchCompanyNationalId',
+          title: '',
+          component: 'WatchCompanyNationalId',
+        }),
         // TODO: Only visibile if company is not blacklisted
         buildAlertMessageField({
           id: 'paymentArrangement.contactOrganizationAlert',
