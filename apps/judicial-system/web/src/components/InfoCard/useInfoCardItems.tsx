@@ -15,6 +15,7 @@ import { core } from '@island.is/judicial-system-web/messages'
 import { requestCourtDate } from '@island.is/judicial-system-web/messages'
 import {
   Case,
+  CaseIndictmentRulingDecision,
   CaseType,
   IndictmentCaseReviewDecision,
 } from '@island.is/judicial-system-web/src/graphql/schema'
@@ -36,6 +37,7 @@ const useInfoCardItems = () => {
     caseType?: CaseType | null,
     displayAppealExpirationInfo?: boolean,
     displayVerdictViewDate?: boolean,
+    displaySentToPrisonAdminDate?: boolean,
   ): Item => {
     const defendants = workingCase.defendants
     const isMultipleDefendants = defendants && defendants.length > 1
@@ -78,6 +80,7 @@ const useInfoCardItems = () => {
                 }}
                 displayAppealExpirationInfo={displayAppealExpirationInfo}
                 displayVerdictViewDate={displayVerdictViewDate}
+                displaySentToPrisonAdminDate={displaySentToPrisonAdminDate}
               />
             </div>
           ))
@@ -277,6 +280,11 @@ const useInfoCardItems = () => {
           IndictmentCaseReviewDecision.ACCEPT
           ? strings.reviewTagAccepted
           : strings.reviewTagAppealed,
+        {
+          isFine:
+            workingCase.indictmentRulingDecision ===
+            CaseIndictmentRulingDecision.FINE,
+        },
       ),
     ],
   }

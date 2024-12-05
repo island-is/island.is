@@ -5,8 +5,8 @@ import {
 } from '@island.is/judicial-system/types'
 
 import {
-  Case,
   CaseIndictmentRulingDecision,
+  CaseListEntry,
   CaseState,
   IndictmentDecision,
   User,
@@ -14,7 +14,7 @@ import {
 import { strings } from './CaseTag.strings'
 
 export const getIndictmentCaseStateTag = (
-  workingCase: Case,
+  caseListEntry: CaseListEntry,
   user?: User,
 ): {
   color: TagVariant
@@ -26,7 +26,7 @@ export const getIndictmentCaseStateTag = (
     indictmentRulingDecision,
     indictmentDecision,
     courtDate,
-  } = workingCase
+  } = caseListEntry
 
   switch (state) {
     case CaseState.NEW:
@@ -39,7 +39,7 @@ export const getIndictmentCaseStateTag = (
         text: isDistrictCourtUser(user) ? strings.new : strings.sent,
       }
     case CaseState.RECEIVED:
-      return getReceivedIndictmentStateTag(indictmentDecision, courtDate?.date)
+      return getReceivedIndictmentStateTag(indictmentDecision, courtDate)
     case CaseState.COMPLETED:
       return getCompletedIndictmentStateTag(
         indictmentReviewer,

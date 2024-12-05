@@ -41,7 +41,7 @@ export default playwrightConfig
 Use the following command structure to run tests for any app:
 
 ```bash
-yarn e2e <app-name>
+yarn nx e2e <app-name>
 ```
 
 ### Useful Playwright Commands and Flags
@@ -49,26 +49,26 @@ yarn e2e <app-name>
 - **Run with UI Mode**: Launch the tests with a UI to select and debug tests interactively.
 
   ```bash
-  yarn e2e <app-name> --ui
+  yarn nx e2e <app-name> --ui
   ```
 
 - **Run Tests Without Caching**: Ensure a fresh run of tests without using cached results.
 
   ```bash
-   yarn e2e <app-name> --skip-nx-cache
+   yarn nx e2e <app-name> --skip-nx-cache
   ```
 
 - **Run Tests with Tags**: Use tags to include or exclude specific tests.
 
   ```bash
     # Run only tests tagged with @fast
-    yarn e2e <app-name> --grep @fast
+    yarn nx e2e <app-name> --grep @fast
 
     # Exclude tests tagged with @fast
-    yarn e2e <app-name> --grep-invert @fast
+    yarn nx e2e <app-name> --grep-invert @fast
 
     # Run tests tagged with either @fast or @slow
-    yarn e2e <app-name> --grep "@fast|@slow"
+    yarn nx e2e <app-name> --grep "@fast|@slow"
   ```
 
 - **View the Test Report**: After running tests, use this command to view the generated report:
@@ -80,13 +80,13 @@ yarn e2e <app-name>
 - **Run Specific Tests**: Use `--grep` to run tests matching a specific pattern:
 
   ```bash
-  yarn e2e <app-name> --grep "Home Page Test"
+  yarn nx e2e <app-name> --grep "Home Page Test"
   ```
 
 - **Debug Mode**: Run tests in debug mode for better visibility:
 
   ```bash
-  yarn e2e <app-name> --debug
+  yarn nx e2e <app-name> --debug
   ```
 
 For more details on Playwright commands and flags, refer to the [official documentation](https://playwright.dev/docs/test-cli)

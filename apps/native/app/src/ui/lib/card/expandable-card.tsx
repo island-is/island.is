@@ -47,7 +47,7 @@ const IconWrapper = styled.View`
   background-color: white;
   justify-content: center;
   align-items: center;
-  border-radius: ${({ theme }) => theme.border.radius.circle};
+  border-radius: ${({ theme }) => theme.border.radius.full};
   margin-right: ${({ theme }) => theme.spacing[1]}px;
 `
 

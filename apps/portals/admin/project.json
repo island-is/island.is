@@ -111,7 +111,7 @@
         ]
       }
     },
-    "mockmode": {
+    "mock": {
       "executor": "nx:run-commands",
       "options": {
         "commands": ["API_MOCKS=true yarn start portals-admin"]

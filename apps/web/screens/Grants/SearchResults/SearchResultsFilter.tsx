@@ -1,4 +1,5 @@
 import { useIntl } from 'react-intl'
+import sortBy from 'lodash/sortBy'
 
 import {
   Box,
@@ -7,7 +8,7 @@ import {
   FilterProps,
 } from '@island.is/island-ui/core'
 import { isDefined } from '@island.is/shared/utils'
-import { GenericTag } from '@island.is/web/graphql/schema'
+import { GenericTag, GrantStatus } from '@island.is/web/graphql/schema'
 
 import { m } from '../messages'
 import { SearchState } from './SearchResults'
@@ -30,13 +31,17 @@ export const GrantsSearchResultsFilter = ({
   variant = 'default',
 }: Props) => {
   const { formatMessage } = useIntl()
-  const categoryFilters = tags?.filter(
-    (t) => t.genericTagGroup?.slug === 'grant-category',
-  )
 
-  const typeFilters = tags?.filter(
-    (t) => t.genericTagGroup?.slug === 'grant-type',
-  )
+  const sortedFilters = {
+    categories: sortBy(
+      tags?.filter((t) => t.genericTagGroup?.slug === 'grant-category'),
+      'title',
+    ),
+    types: sortBy(
+      tags?.filter((t) => t.genericTagGroup?.slug === 'grant-type'),
+      'title',
+    ),
+  }
 
   return (
     <Box
@@ -73,36 +78,32 @@ export const GrantsSearchResultsFilter = ({
                 selected: searchState?.['status'] ?? [],
                 filters: [
                   {
-                    value: 'open',
+                    value: GrantStatus.Open.toString().toLowerCase(),
                     label: formatMessage(m.search.applicationOpen),
                   },
                   {
-                    value: 'open-soon',
-                    label: formatMessage(m.search.applicationOpensSoon),
-                  },
-                  {
-                    value: 'closed',
+                    value: GrantStatus.Closed.toString().toLowerCase(),
                     label: formatMessage(m.search.applicationClosed),
                   },
                 ],
               },
-              categoryFilters
+              sortedFilters.categories
                 ? {
                     id: 'category',
                     label: formatMessage(m.search.category),
                     selected: searchState?.['category'] ?? [],
-                    filters: categoryFilters.map((t) => ({
+                    filters: sortedFilters.categories.map((t) => ({
                       value: t.slug,
                       label: t.title,
                     })),
                   }
                 : undefined,
-              typeFilters
+              sortedFilters.types
                 ? {
                     id: 'type',
                     label: formatMessage(m.search.type),
                     selected: searchState?.['type'] ?? [],
-                    filters: typeFilters.map((t) => ({
+                    filters: sortedFilters.types.map((t) => ({
                       value: t.slug,
                       label: t.title,
                     })),
@@ -115,16 +116,8 @@ export const GrantsSearchResultsFilter = ({
                 selected: searchState?.['organization'] ?? [],
                 filters: [
                   {
-                    value: 'rannis',
+                    value: 'rannsoknamidstoed-islands-rannis',
                     label: 'Rannís',
-                  },
-                  {
-                    value: 'tonlistarmidstod',
-                    label: 'Tónlistarmiðstöð',
-                  },
-                  {
-                    value: 'kvikmyndastod',
-                    label: 'Kvikmyndastöð',
                   },
                 ],
               },

@@ -20,6 +20,7 @@ name: 'auth-admin-web'
 enabled: true
 env:
   BASE_URL: 'https://identity-server.dev01.devland.is/admin'
+  CODE_OWNER: 'aranja'
   IDENTITYSERVER_DOMAIN: 'identity-server.dev01.devland.is'
   LOG_LEVEL: 'info'
   NEXTAUTH_URL: 'https://identity-server.dev01.devland.is/admin/api/auth'

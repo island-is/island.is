@@ -132,6 +132,7 @@ export class AppService {
           `Failed to retrieve lawyer with national id ${updateSubpoena.defenderNationalId}`,
           reason,
         )
+
         throw new BadRequestException('Lawyer not found')
       }
     }
