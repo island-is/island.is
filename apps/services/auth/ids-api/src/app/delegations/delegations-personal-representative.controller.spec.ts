@@ -55,6 +55,8 @@ import {
   personalRepresentativeType,
 } from '../../../test/stubs/personalRepresentativeStubs'
 
+const setupHookTimeout = 10000
+
 describe('Personal Representative DelegationsController', () => {
   describe.each([false, true])(
     'national registry v3 featureflag: %s',
@@ -162,7 +164,7 @@ describe('Personal Representative DelegationsController', () => {
             .spyOn(nationalRegistryV3FeatureService, 'getValue')
             .mockImplementation(async () => featureFlag)
           factory = new FixtureFactory(app)
-        })
+        }, setupHookTimeout)
 
         const createDelegationTypeAndProvider = async (rightCode: string[]) => {
           const newDelegationProvider = await delegationProviderModel.create({
