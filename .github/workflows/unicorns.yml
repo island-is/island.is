@@ -57,13 +57,27 @@ jobs:
         run: |
           echo "Comparing nx affected for $HeadRef using origin/$BaseRef as base branch"
           echo IS_UNICORN=$(node scripts/ci/unicorn-utils.mjs "{\"baseBranch\": \"origin/$BaseRef\", \"mergeBranch\": \"$HeadRef\" }") >> "$GITHUB_OUTPUT"
-          echo $IS_UNICORN
-
-
-        # - name: Create release branch
+  found-unicorn:
+    if: needs.check-unicorn.outputs.IS_UNICORN == 'true'
+    needs: check-unicorn
+    name: Create a unicorn Relese
+    runs-on: ec2-runners
+    container:
+      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
+    timeout-minutes: 35
+    steps:
+      - name: Create release
+        env:
+          PR_NUMBER: ${{ github.event.number }}
+          BaseRef: ${{ github.base_ref }}
+          HeadRef: ${{ github.head_ref }}
+          RefName: ${{ github.ref_name }}
+        run: |
+          echo "Creating a release for unicorn
+          node scripts/ci/create-release.mjs $PR_NUMBER
         #   if: ${{ steps.unicorn-affected.outputs.IS_UNICORN == 'true' }}
 
-        # - name: Create release branch
+        # - name: Create release
         #   env:
         #     PR_NUMBER: ${{ github.event.number }}
         #     BaseRef: ${{ github.base_ref }}#     PR_NUMBER: 17134
