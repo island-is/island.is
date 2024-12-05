@@ -36,7 +36,7 @@ export const strings = defineMessages({
   },
   completeCaseModalBody: {
     id: 'judicial.system.core:indictments.summary.complete_case_modal_body',
-    defaultMessage: 'Niðurstaða málsinns verður send ákæranda og verjanda.',
+    defaultMessage: 'Niðurstaða málsins verður send ákæranda og verjanda.',
     description:
       'Notaður sem texti í staðfestingarglugga um hvort eigi að ljúka máli.',
   },
