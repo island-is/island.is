@@ -35,7 +35,6 @@ jobs:
         with:
           fetch-depth: 0
 
-
       - uses: actions/setup-node@v4
         with:
           node-version-file: 'package.json'
@@ -56,6 +55,7 @@ jobs:
           HeadRef: ${{ github.base_ref }} #The target branch e.g. main (feature/unicorn-app)
           RefName: ${{ github.head_ref }} #The branch being merged e.g. (unicorn-pipe-rel2)
         run: |
+          git fetch origin $HeadRef
           node scripts/ci/unicorn-utils.mjs "{\"baseBranch\": \"$HeadRef\", \"mergeBranch\": \"$RefName\" }"
           UNICORN=$(node scripts/ci/unicorn-utils.mjs)
           if [ "$UNICORN" == 'true' ]; then
