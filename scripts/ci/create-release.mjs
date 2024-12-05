@@ -12,32 +12,35 @@ const { data: pullRequest } = await octokit.rest.pulls.get({
   pull_number: arg[0],
 })
 
+var relevantInfo = {
+  hadSha: pullRequest.head.sha,
+  user: pullRequest.user.login,
+}
 console.log(pullRequest)
 
-// const { data: tag } = octokit.rest.git.createTag({
-//   owner: owner,
-//   repo: repo,
-//   tag: "v1.0.0",
-//   message: "Testing test",
-//   object: pullRequest.merge_commit_sha,
-//   type: "commit",
-//   tagger: {
-//     name: "Roberta Andersen",
-//     email: "robertaandersen1978@gmail.com"
-//   }
-// }).then(({ data }) => {
-//   console.log(data)
-// }).catch((error) => {
-//   console.error(error)
-// })
+const { data: tag } = octokit.rest.git.createTag({
+  owner: owner,
+  repo: repo,
+  tag: "v1.0.0",
+  message: "Testing test",
+  object: pullRequest.head.sha,
+  type: "commit",
+  tagger: {
+    name: pullRequest.user.login
+  }
+}).then(({ data }) => {
+  console.log(data)
+}).catch((error) => {
+  console.error(error)
+})
 
-// octokit.rest.repos.createRelease({
-//   owner: owner,
-//   repo: repo,
-//   tag_name: tag.data.tag,
-//   name: "Test 123",
-// }).then(({ data }) => {
-//   console.log(data)
-// }).catch((error) => {
-//   console.log(error)
-// });
+octokit.rest.repos.createRelease({
+  owner: owner,
+  repo: repo,
+  tag_name: tag.data.tag,
+  name: "Test 123",
+}).then(({ data }) => {
+  console.log(data)
+}).catch((error) => {
+  console.log(error)
+});
