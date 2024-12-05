@@ -66,7 +66,7 @@ jobs:
           HeadRef: ${{ github.head_ref }}
           RefName: ${{ github.ref_name }}
         run: |
-          echo "Creating a release for unicorn
+          echo "Creating a release for unicorn"
           node scripts/ci/create-release.mjs $PR_NUMBER
         #   if: ${{ steps.unicorn-affected.outputs.IS_UNICORN == 'true' }}
 
