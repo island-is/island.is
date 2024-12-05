@@ -63,6 +63,30 @@ export const RenderFiles: FC<RenderFilesProps> = ({
   )
 }
 
+interface FileSection {
+  title: string
+  onOpenFile: (fileId: string) => void
+  files?: CaseFile[]
+  shouldRender?: boolean
+}
+
+const FileSection: FC<FileSection> = (props: FileSection) => {
+  const { title, files, onOpenFile, shouldRender = true } = props
+
+  if (!files?.length || !shouldRender) {
+    return null
+  }
+
+  return (
+    <Box marginBottom={5}>
+      <Text variant="h4" as="h4" marginBottom={1}>
+        {title}
+      </Text>
+      <RenderFiles caseFiles={files} onOpenFile={onOpenFile} />
+    </Box>
+  )
+}
+
 const IndictmentCaseFilesList: FC<Props> = ({
   workingCase,
   displayGeneratedPDFs = true,
@@ -120,14 +144,11 @@ const IndictmentCaseFilesList: FC<Props> = ({
       {displayHeading && (
         <SectionHeading title={formatMessage(strings.title)} />
       )}
-      {indictments && indictments.length > 0 && (
-        <Box marginBottom={5}>
-          <Text variant="h4" as="h4" marginBottom={1}>
-            {formatMessage(caseFiles.indictmentSection)}
-          </Text>
-          <RenderFiles caseFiles={indictments} onOpenFile={onOpen} />
-        </Box>
-      )}
+      <FileSection
+        title={formatMessage(caseFiles.indictmentSection)}
+        files={indictments}
+        onOpenFile={onOpen}
+      />
       {showTrafficViolationCaseFiles && displayGeneratedPDFs && (
         <Box marginBottom={5}>
           <Text variant="h4" as="h4" marginBottom={1}>
@@ -144,42 +165,31 @@ const IndictmentCaseFilesList: FC<Props> = ({
           </Box>
         </Box>
       )}
-      {criminalRecords && criminalRecords.length > 0 && (
-        <Box marginBottom={5}>
-          <Text variant="h4" as="h4" marginBottom={1}>
-            {formatMessage(caseFiles.criminalRecordSection)}
-          </Text>
-          <RenderFiles caseFiles={criminalRecords} onOpenFile={onOpen} />
-        </Box>
-      )}
-      {criminalRecordUpdate &&
-        criminalRecordUpdate.length > 0 &&
-        (isDistrictCourtUser(user) ||
+      <FileSection
+        title={formatMessage(caseFiles.criminalRecordSection)}
+        files={criminalRecords}
+        onOpenFile={onOpen}
+      />
+      <FileSection
+        title={formatMessage(caseFiles.criminalRecordUpdateSection)}
+        files={criminalRecordUpdate}
+        onOpenFile={onOpen}
+        shouldRender={
+          isDistrictCourtUser(user) ||
           isPublicProsecutor(user) ||
-          isPublicProsecutorUser(user)) && (
-          <Box marginBottom={5}>
-            <Text variant="h4" as="h4" marginBottom={1}>
-              {formatMessage(caseFiles.criminalRecordUpdateSection)}
-            </Text>
-            <RenderFiles caseFiles={criminalRecordUpdate} onOpenFile={onOpen} />
-          </Box>
-        )}
-      {costBreakdowns && costBreakdowns.length > 0 && (
-        <Box marginBottom={5}>
-          <Text variant="h4" as="h4" marginBottom={1}>
-            {formatMessage(caseFiles.costBreakdownSection)}
-          </Text>
-          <RenderFiles caseFiles={costBreakdowns} onOpenFile={onOpen} />
-        </Box>
-      )}
-      {others && others.length > 0 && (
-        <Box marginBottom={5}>
-          <Text variant="h4" as="h4" marginBottom={1}>
-            {formatMessage(caseFiles.otherDocumentsSection)}
-          </Text>
-          <RenderFiles caseFiles={others} onOpenFile={onOpen} />
-        </Box>
-      )}
+          isPublicProsecutorUser(user)
+        }
+      />
+      <FileSection
+        title={formatMessage(caseFiles.costBreakdownSection)}
+        files={costBreakdowns}
+        onOpenFile={onOpen}
+      />
+      <FileSection
+        title={formatMessage(caseFiles.otherDocumentsSection)}
+        files={others}
+        onOpenFile={onOpen}
+      />
       {displayGeneratedPDFs && (
         <Box marginBottom={5}>
           <Text variant="h4" as="h4" marginBottom={1}>
@@ -216,19 +226,17 @@ const IndictmentCaseFilesList: FC<Props> = ({
             )}
         </Box>
       ) : null}
-      {workingCase.hasCivilClaims &&
-        civilClaims &&
-        civilClaims.length > 0 &&
-        (isDistrictCourtUser(user) ||
-          isProsecutionUser(user) ||
-          isDefenceUser(user)) && (
-          <Box marginBottom={5}>
-            <Text variant="h4" as="h4" marginBottom={1}>
-              {formatMessage(strings.civilClaimsTitle)}
-            </Text>
-            <RenderFiles caseFiles={civilClaims} onOpenFile={onOpen} />
-          </Box>
-        )}
+      <FileSection
+        title={formatMessage(strings.civilClaimsTitle)}
+        files={civilClaims}
+        onOpenFile={onOpen}
+        shouldRender={
+          Boolean(workingCase.hasCivilClaims) &&
+          (isDistrictCourtUser(user) ||
+            isProsecutionUser(user) ||
+            isDefenceUser(user))
+        }
+      />
       {showSubpoenaPdf && (
         <Box marginBottom={5}>
           <Text variant="h4" as="h4" marginBottom={1}>
