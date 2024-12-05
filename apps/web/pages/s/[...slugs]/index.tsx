@@ -181,6 +181,14 @@ Component.getProps = async (context) => {
   })
 
   if (!organizationPage) {
+    if (slugs.length === 1) {
+      return {
+        page: {
+          type: PageType.FRONTPAGE,
+          props: await Home.getProps(context),
+        },
+      }
+    }
     throw new CustomNextError(404, 'Organization page was not found')
   }
 

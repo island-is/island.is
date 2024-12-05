@@ -156,6 +156,7 @@ import {
   IdsClientConfig,
   XRoadConfig,
 } from '@island.is/nest/config'
+import { CodeOwnerInterceptor } from '@island.is/nest/core'
 import { DataLoaderInterceptor } from '@island.is/nest/dataloader'
 import { FeatureFlagConfig } from '@island.is/nest/feature-flags'
 import { ProblemModule } from '@island.is/nest/problem'
@@ -177,6 +178,7 @@ import { FormSystemModule } from '@island.is/api/domains/form-system'
 import { HealthDirectorateModule } from '@island.is/api/domains/health-directorate'
 
 import { VehiclesMileageClientConfig } from '@island.is/clients/vehicles-mileage'
+
 import { getConfig } from './environments'
 import { GraphqlOptionsFactory } from './graphql-options.factory'
 import { GraphQLConfig } from './graphql.config'
@@ -213,6 +215,10 @@ const environment = getConfig
     {
       provide: APP_INTERCEPTOR,
       useClass: DataLoaderInterceptor,
+    },
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: CodeOwnerInterceptor,
     },
   ],
   imports: [
