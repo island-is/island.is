@@ -141,6 +141,7 @@ export const BffProvider = ({
         return
       }
 
+      // If user is logged in and on the old login path, then start the sign-in process
       if (window.location.pathname.startsWith(oldLoginPath)) {
         signIn()
 
