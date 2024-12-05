@@ -9,6 +9,7 @@ auth-admin-web:
   enabled: true
   env:
     BASE_URL: 'https://identity-server.dev01.devland.is/admin'
+    CODE_OWNER: 'aranja'
     IDENTITYSERVER_DOMAIN: 'identity-server.dev01.devland.is'
     LOG_LEVEL: 'info'
     NEXTAUTH_URL: 'https://identity-server.dev01.devland.is/admin/api/auth'
@@ -217,6 +218,7 @@ namespaces:
 services-auth-admin-api:
   enabled: true
   env:
+    CODE_OWNER: 'aranja'
     COMPANY_REGISTRY_REDIS_NODES: '["clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379"]'
     COMPANY_REGISTRY_XROAD_PROVIDER_ID: 'IS-DEV/GOV/10006/Skatturinn/ft-v1'
     DB_HOST: 'postgres-applications.internal'
@@ -314,6 +316,7 @@ services-auth-admin-api:
 services-auth-delegation-api:
   enabled: true
   env:
+    CODE_OWNER: 'aranja'
     COMPANY_REGISTRY_REDIS_NODES: '["clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379"]'
     COMPANY_REGISTRY_XROAD_PROVIDER_ID: 'IS-DEV/GOV/10006/Skatturinn/ft-v1'
     DB_HOST: 'postgres-applications.internal'
@@ -410,6 +413,7 @@ services-auth-delegation-api:
 services-auth-ids-api:
   enabled: true
   env:
+    CODE_OWNER: 'aranja'
     COMPANY_REGISTRY_REDIS_NODES: '["clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379"]'
     COMPANY_REGISTRY_XROAD_PROVIDER_ID: 'IS-DEV/GOV/10006/Skatturinn/ft-v1'
     DB_EXTENSIONS: 'uuid-ossp'
@@ -758,6 +762,7 @@ services-auth-personal-representative-public:
 services-auth-public-api:
   enabled: true
   env:
+    CODE_OWNER: 'aranja'
     COMPANY_REGISTRY_REDIS_NODES: '["clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379"]'
     COMPANY_REGISTRY_XROAD_PROVIDER_ID: 'IS-DEV/GOV/10006/Skatturinn/ft-v1'
     DB_HOST: 'postgres-applications.internal'
