@@ -16,7 +16,6 @@ import { jwtDecode } from 'jwt-decode'
 import { IdTokenClaims } from '@island.is/shared/types'
 import { Algorithm, decode, verify } from 'jsonwebtoken'
 import { v4 as uuid } from 'uuid'
-import { environment } from '../../../environment'
 import { BffConfig } from '../../bff.config'
 import { SESSION_COOKIE_NAME } from '../../constants/cookies'
 import { FIVE_SECONDS_IN_MS } from '../../constants/time'
@@ -31,7 +30,7 @@ import { validateUri } from '../../utils/validate-uri'
 import { CacheService } from '../cache/cache.service'
 import { IdsService } from '../ids/ids.service'
 import { LogoutTokenPayload, TokenResponse } from '../ids/ids.types'
-import { CachedTokenResponse } from './auth.types'
+import { CachedTokenResponse, LoginAttemptData } from './auth.types'
 import { CallbackLoginDto } from './dto/callback-login.dto'
 import { CallbackLogoutDto } from './dto/callback-logout.dto'
 import { LoginDto } from './dto/login.dto'
@@ -61,7 +60,7 @@ export class AuthService {
    */
   private createClientBaseUrl() {
     const baseUrl = new URL(this.config.clientBaseUrl)
-    baseUrl.pathname = `${baseUrl.pathname}${environment.keyPath}`
+    baseUrl.pathname = `${baseUrl.pathname}${this.config.clientBasePath}`
       // Prevent potential issues with malformed URLs.
       .replace('//', '/')
 
@@ -71,8 +70,13 @@ export class AuthService {
   /**
    * Redirects the user to the client base URL with an error query string.
    */
-  private createClientBaseUrlWithError(args: CreateErrorQueryStrArgs) {
-    return `${this.createClientBaseUrl()}?${createErrorQueryStr(args)}`
+  private createClientBaseUrlWithError(
+    args: CreateErrorQueryStrArgs,
+    targetUrl?: string,
+  ) {
+    const baseUrl = targetUrl ?? this.createClientBaseUrl()
+
+    return `${baseUrl}?${createErrorQueryStr(args)}`
   }
 
   /**
@@ -80,12 +84,14 @@ export class AuthService {
    */
   private redirectWithError(
     res: Response,
-    args?: Partial<CreateErrorQueryStrArgs>,
+    args?: Partial<CreateErrorQueryStrArgs> & { targetUrl?: string },
   ) {
     const code = args?.code || 500
     const error = args?.error || 'Login failed!'
 
-    return res.redirect(this.createClientBaseUrlWithError({ code, error }))
+    return res.redirect(
+      this.createClientBaseUrlWithError({ code, error }, args?.targetUrl),
+    )
   }
 
   /**
@@ -223,7 +229,9 @@ export class AuthService {
     } catch (error) {
       this.logger.error('Login failed: ', error)
 
-      return this.redirectWithError(res)
+      return this.redirectWithError(res, {
+        targetUrl: targetLinkUri,
+      })
     }
   }
 
@@ -269,13 +277,13 @@ export class AuthService {
       })
     }
 
+    let loginAttemptData: LoginAttemptData | undefined
+
     try {
       // Get login attempt from cache
-      const loginAttemptData = await this.cacheService.get<{
-        targetLinkUri?: string
-        codeVerifier: string
-        originUrl: string
-      }>(this.cacheService.createSessionKeyType('attempt', query.state))
+      loginAttemptData = await this.cacheService.get<LoginAttemptData>(
+        this.cacheService.createSessionKeyType('attempt', query.state),
+      )
 
       // Get tokens and user information from the authorization code
       const tokenResponse = await this.idsService.getTokens({
@@ -339,7 +347,9 @@ export class AuthService {
     } catch (error) {
       this.logger.error('Callback login failed: ', error)
 
-      return this.redirectWithError(res)
+      return this.redirectWithError(res, {
+        targetUrl: loginAttemptData?.targetLinkUri,
+      })
     }
   }
 

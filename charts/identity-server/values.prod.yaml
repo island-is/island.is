@@ -9,6 +9,7 @@ auth-admin-web:
   enabled: true
   env:
     BASE_URL: 'https://innskra.island.is/admin'
+    CODE_OWNER: 'aranja'
     IDENTITYSERVER_DOMAIN: 'innskra.island.is'
     LOG_LEVEL: 'info'
     NEXTAUTH_URL: 'https://innskra.island.is/admin/api/auth'
@@ -214,6 +215,7 @@ namespaces:
 services-auth-admin-api:
   enabled: true
   env:
+    CODE_OWNER: 'aranja'
     COMPANY_REGISTRY_REDIS_NODES: '["clustercfg.general-redis-cluster-group.dnugi2.euw1.cache.amazonaws.com:6379"]'
     COMPANY_REGISTRY_XROAD_PROVIDER_ID: 'IS/GOV/5402696029/Skatturinn/ft-v1'
     DB_HOST: 'postgres-ids.internal'
@@ -311,6 +313,7 @@ services-auth-admin-api:
 services-auth-delegation-api:
   enabled: true
   env:
+    CODE_OWNER: 'aranja'
     COMPANY_REGISTRY_REDIS_NODES: '["clustercfg.general-redis-cluster-group.dnugi2.euw1.cache.amazonaws.com:6379"]'
     COMPANY_REGISTRY_XROAD_PROVIDER_ID: 'IS/GOV/5402696029/Skatturinn/ft-v1'
     DB_HOST: 'postgres-ids.internal'
@@ -407,6 +410,7 @@ services-auth-delegation-api:
 services-auth-ids-api:
   enabled: true
   env:
+    CODE_OWNER: 'aranja'
     COMPANY_REGISTRY_REDIS_NODES: '["clustercfg.general-redis-cluster-group.dnugi2.euw1.cache.amazonaws.com:6379"]'
     COMPANY_REGISTRY_XROAD_PROVIDER_ID: 'IS/GOV/5402696029/Skatturinn/ft-v1'
     DB_EXTENSIONS: 'uuid-ossp'
@@ -755,6 +759,7 @@ services-auth-personal-representative-public:
 services-auth-public-api:
   enabled: true
   env:
+    CODE_OWNER: 'aranja'
     COMPANY_REGISTRY_REDIS_NODES: '["clustercfg.general-redis-cluster-group.dnugi2.euw1.cache.amazonaws.com:6379"]'
     COMPANY_REGISTRY_XROAD_PROVIDER_ID: 'IS/GOV/5402696029/Skatturinn/ft-v1'
     DB_HOST: 'postgres-ids.internal'

@@ -1,5 +1,5 @@
 import { useParams } from 'react-router-dom'
-import { useUserInfo } from '@island.is/auth/react'
+import { useUserInfo } from '@island.is/react-spa/bff'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   formatNationalId,
