@@ -1,33 +1,30 @@
+import { SkeletonLoader } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
+import { SelectController } from '@island.is/shared/form-fields'
 import { MessageDescriptor } from 'react-intl'
-import { useApplication } from '../../hooks/useUpdateApplication'
-import { OJOIApplication } from '../../lib/types'
-import { useFormContext } from 'react-hook-form'
-import set from 'lodash/set'
-import { Select, SkeletonLoader } from '@island.is/island-ui/core'
 import { OJOI_INPUT_HEIGHT } from '../../lib/constants'
-import { isBaseEntity } from '../../lib/utils'
-import { getValueViaPath } from '@island.is/application/core'
+import { useApplication } from '../../hooks/useUpdateApplication'
+import set from 'lodash/set'
+import { InputFields } from '../../lib/types'
 
-type SelectOption<T> = {
+type OJOISelectControllerOption = {
   label: string
-  value: T
+  value: string
 }
 
-type Props<T> = {
+type Props = {
   name: string
   label: string | MessageDescriptor
   placeholder: string | MessageDescriptor
-  options?: SelectOption<T>[]
-  defaultValue?: T
+  options?: OJOISelectControllerOption[]
+  defaultValue?: string
   loading?: boolean
   applicationId: string
   disabled?: boolean
-  onBeforeChange?: (answers: OJOIApplication['answers'], value: T) => void
-  onChange?: (value: T) => void
+  onChange?: (label: string, value: string) => void
 }
 
-export const OJOISelectController = <T,>({
+export const OJOISelectController = ({
   name,
   label,
   placeholder,
@@ -36,40 +33,29 @@ export const OJOISelectController = <T,>({
   loading,
   applicationId,
   disabled,
-  onBeforeChange,
   onChange,
-}: Props<T>) => {
+}: Props) => {
   const { formatMessage: f } = useLocale()
-  const { updateApplication, application } = useApplication({
-    applicationId,
-  })
-
-  const { setValue } = useFormContext()
+  const { updateApplication, application } = useApplication({ applicationId })
 
   const placeholderText =
     typeof placeholder === 'string' ? placeholder : f(placeholder)
 
   const labelText = typeof label === 'string' ? label : f(label)
 
-  const handleChange = (value: T) => {
+  const handleChange = (label: string, value: string) => {
     const currentAnswers = structuredClone(application.answers)
     const newAnswers = set(currentAnswers, name, value)
-    onBeforeChange && onBeforeChange(newAnswers, value)
 
-    setValue(name, value)
-    updateApplication(newAnswers)
-
-    onChange && onChange(value)
-  }
-
-  const defaultVal = getValueViaPath(application.answers, name, defaultValue)
-  const defaultOpt = options?.find((opt) => {
-    if (isBaseEntity(opt.value) && isBaseEntity(defaultVal)) {
-      return opt.value.id === defaultVal.id
+    // we must reset the selected typeId if the department changes
+    if (name === InputFields.advert.departmentId) {
+      set(newAnswers, InputFields.advert.typeId, '')
     }
 
-    return undefined
-  })
+    updateApplication(newAnswers)
+
+    onChange && onChange(label, value)
+  }
 
   if (loading) {
     return (
@@ -82,19 +68,17 @@ export const OJOISelectController = <T,>({
   }
 
   return (
-    <Select
-      size="sm"
+    <SelectController
+      id={name}
       name={name}
       label={labelText}
-      isDisabled={disabled}
       placeholder={placeholderText}
+      size="sm"
       backgroundColor="blue"
       options={options}
-      defaultValue={defaultOpt}
-      onChange={(opt) => {
-        if (!opt?.value) return
-        return handleChange(opt.value)
-      }}
+      defaultValue={defaultValue}
+      disabled={disabled}
+      onSelect={(opt) => handleChange(opt.label, opt.value)}
     />
   )
 }

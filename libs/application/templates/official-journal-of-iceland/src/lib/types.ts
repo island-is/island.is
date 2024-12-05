@@ -11,8 +11,9 @@ export const InputFields = {
     approveExternalData: 'requirements.approveExternalData',
   },
   [Routes.ADVERT]: {
-    department: 'advert.department',
-    type: 'advert.type',
+    departmentId: 'advert.departmentId',
+    typeName: 'advert.typeName',
+    typeId: 'advert.typeId',
     title: 'advert.title',
     html: 'advert.html',
     requestedDate: 'advert.requestedDate',
@@ -38,8 +39,8 @@ export const InputFields = {
 
 export const RequiredInputFieldsNames = {
   [Routes.ADVERT]: {
-    department: 'Deild',
-    type: 'Tegund',
+    departmentId: 'Deild',
+    typeId: 'Tegund',
     title: 'Titill',
     html: 'Auglýsing',
     requestedDate: 'Útgáfudagur',
