@@ -28,7 +28,7 @@ export enum HealthPaths {
   HealthMedicineCertificate = '/heilsa/lyf/lyfjaskirteini/:name/:id',
   HealthMedicinePrescription = '/heilsa/lyf/lyfjaavisanir',
   HealthMedicinePrescriptionOverview = '/heilsa/lyf/lyfjaavisanir/yfirlit',
-  HealthMedicinePrescriptionHistory = '/heilsa/lyf/lyfjaavisanir/saga',
+  HealthMedicinePrescriptionHistory = '/heilsa/lyf/lyfjasaga',
   HealthMedicineDelegation = '/heilsa/lyf/lyfjaumbod',
 
   HealthCenter = '/heilsa/heilsugaesla',

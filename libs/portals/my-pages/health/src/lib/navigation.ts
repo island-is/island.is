@@ -89,18 +89,8 @@ export const healthNavigation: PortalNavigationItem = {
         {
           name: messages.medicinePrescriptions,
           path: HealthPaths.HealthMedicinePrescription,
-          children: [
-            {
-              name: messages.medicinePrescriptions,
-              path: HealthPaths.HealthMedicinePrescriptionOverview,
-              breadcrumbHide: true,
-            },
-            {
-              name: messages.medicinePrescriptionHistory,
-              path: HealthPaths.HealthMedicinePrescriptionHistory,
-            },
-          ],
         },
+
         {
           name: messages.medicineDelegation,
           path: HealthPaths.HealthMedicineDelegation,
@@ -134,6 +124,10 @@ export const healthNavigation: PortalNavigationItem = {
               breadcrumbHide: true,
             },
           ],
+        },
+        {
+          name: messages.medicinePrescriptionHistory,
+          path: HealthPaths.HealthMedicinePrescriptionHistory,
         },
       ],
     },

@@ -170,9 +170,7 @@ export const healthModule: PortalModule = {
       name: hm.medicineTitle,
       path: HealthPaths.HealthMedicine,
       enabled: userInfo.scopes.includes(ApiScope.healthMedicines),
-      element: (
-        <Navigate to={HealthPaths.HealthMedicinePaymentParticipation} replace />
-      ), // Change to HealthPaths.HealthMedicinePrescription after release of Landlæknir Lyf data
+      element: <Navigate to={HealthPaths.HealthMedicinePrescription} replace />,
     },
     {
       name: hm.medicinePrescriptions,
@@ -180,13 +178,6 @@ export const healthModule: PortalModule = {
       key: MEDICINE_LANDLAEKNIR_FLAG,
       enabled: userInfo.scopes.includes(ApiScope.healthMedicines),
       element: <MedicinePrescriptions />,
-    },
-    {
-      name: hm.medicinePrescriptions,
-      path: HealthPaths.HealthMedicinePrescriptionOverview,
-      key: MEDICINE_LANDLAEKNIR_FLAG,
-      enabled: userInfo.scopes.includes(ApiScope.healthMedicines),
-      element: <Navigate to={HealthPaths.HealthMedicinePrescription} />,
     },
     {
       name: hm.medicinePrescriptionHistory,
