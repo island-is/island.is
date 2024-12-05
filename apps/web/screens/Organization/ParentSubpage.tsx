@@ -29,11 +29,6 @@ type OrganizationParentSubpageScreenContext = ScreenContext & {
 
 export type OrganizationParentSubpageProps = StandaloneParentSubpageProps
 
-const LanguageToggleSetup = (props: { ids: string[] }) => {
-  useContentfulId(...props.ids)
-  return null
-}
-
 const OrganizationParentSubpage: Screen<
   OrganizationParentSubpageProps,
   OrganizationParentSubpageScreenContext
@@ -49,6 +44,7 @@ const OrganizationParentSubpage: Screen<
   const { activeLocale } = useI18n()
   const { linkResolver } = useLinkResolver()
   const n = useNamespace(namespace)
+  useContentfulId(organizationPage.id, parentSubpage.id, subpage.id)
 
   return (
     <OrganizationWrapper
@@ -79,10 +75,6 @@ const OrganizationParentSubpage: Screen<
         <GridContainer>
           <GridRow>
             <GridColumn span={['9/9', '9/9', '7/9']} offset={['0', '0', '1/9']}>
-              <LanguageToggleSetup
-                ids={[organizationPage.id, parentSubpage.id, subpage.id]}
-              />
-
               <Stack space={3}>
                 {parentSubpage.childLinks.length > 1 && (
                   <Stack space={4}>
