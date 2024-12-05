@@ -22,6 +22,7 @@ import {
 } from '@island.is/web/graphql/schema'
 import { useLinkResolver } from '@island.is/web/hooks'
 import { withMainLayout } from '@island.is/web/layouts/main'
+import { CustomNextError } from '@island.is/web/units/errors'
 import { webRichText } from '@island.is/web/utils/richText'
 
 import {
@@ -32,7 +33,6 @@ import SidebarLayout from '../../Layouts/SidebarLayout'
 import { GET_GRANT_QUERY } from '../../queries'
 import { m } from '../messages'
 import { GrantSidebar } from './GrantSidebar'
-import { CustomNextError } from '@island.is/web/units/errors'
 
 const GrantSinglePage: CustomScreen<GrantSingleProps> = ({ grant, locale }) => {
   const { formatMessage } = useIntl()
@@ -40,6 +40,7 @@ const GrantSinglePage: CustomScreen<GrantSingleProps> = ({ grant, locale }) => {
   const router = useRouter()
 
   const baseUrl = linkResolver('styrkjatorg', [], locale).href
+  const searchUrl = linkResolver('styrkjatorgsearch', [], locale).href
   const currentUrl = linkResolver(
     'styrkjatorggrant',
     [grant?.applicationId ?? ''],
@@ -54,6 +55,10 @@ const GrantSinglePage: CustomScreen<GrantSingleProps> = ({ grant, locale }) => {
     {
       title: formatMessage(m.home.title),
       href: baseUrl,
+    },
+    {
+      title: formatMessage(m.search.results),
+      href: searchUrl,
     },
     {
       title: grant?.name ?? formatMessage(m.home.grant),

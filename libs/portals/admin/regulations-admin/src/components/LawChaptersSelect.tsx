@@ -37,8 +37,8 @@ export const LawChaptersSelect = () => {
   const chaptersField = draft.lawChapters
   const activeChapters = chaptersField.value
 
-  const { data: mentionedList /*, loading  , error */ } =
-    useRegulationListQuery(draft.mentioned)
+  // const { data: mentionedList /*, loading  , error */ } =
+  //   useRegulationListQuery(draft.mentioned)
 
   const lawChaptersOptions = useLawChapterOptions(
     lawChapters.list,
@@ -47,16 +47,17 @@ export const LawChaptersSelect = () => {
   )
 
   // Auto fill lawChapters if there are mentions and no lawchapters present
-  useEffect(() => {
-    if (mentionedList?.length && !draft.lawChapters.value.length) {
-      mentionedList.forEach((mention) => {
-        mention.lawChapters?.forEach((ch) => {
-          actions.updateLawChapterProp('add', ch.slug)
-        })
-      })
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [mentionedList])
+  // REMOVE FOR NOW. NOT SHOWING CORRECT RESULTS. MIGHT WANT TO REVISIT
+  // useEffect(() => {
+  //   if (mentionedList?.length && !draft.lawChapters.value.length) {
+  //     mentionedList.forEach((mention) => {
+  //       mention.lawChapters?.forEach((ch) => {
+  //         actions.updateLawChapterProp('add', ch.slug)
+  //       })
+  //     })
+  //   }
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [mentionedList])
 
   return (
     <Box>

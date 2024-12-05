@@ -1,5 +1,5 @@
 import { FC, useEffect, useState } from 'react'
-import { Box, GridRow, GridColumn } from '@island.is/island-ui/core'
+import { GridRow, GridColumn } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import {
   coreErrorMessages,
@@ -8,12 +8,16 @@ import {
 } from '@island.is/application/core'
 import { Application, StaticText } from '@island.is/application/types'
 import { gql, useLazyQuery } from '@apollo/client'
-import { IdentityInput, Query } from '@island.is/api/schema'
+import {
+  IdentityInput,
+  Query,
+  RskCompanyInfoInput,
+} from '@island.is/api/schema'
 import { InputController } from '@island.is/shared/form-fields'
 import { useFormContext } from 'react-hook-form'
 import * as kennitala from 'kennitala'
 import debounce from 'lodash/debounce'
-import { IDENTITY_QUERY } from './graphql/queries'
+import { COMPANY_IDENTITY_QUERY, IDENTITY_QUERY } from './graphql/queries'
 
 interface NationalIdWithNameProps {
   id: string
@@ -29,6 +33,8 @@ interface NationalIdWithNameProps {
   nameDefaultValue?: string
   errorMessage?: string
   minAgePerson?: number
+  searchPersons?: boolean
+  searchCompanies?: boolean
 }
 
 export const NationalIdWithName: FC<
@@ -47,6 +53,8 @@ export const NationalIdWithName: FC<
   nameDefaultValue,
   errorMessage,
   minAgePerson,
+  searchPersons = true,
+  searchCompanies = false,
 }) => {
   const fieldId = customId.length > 0 ? customId : id
   const nameField = `${fieldId}.name`
@@ -58,6 +66,8 @@ export const NationalIdWithName: FC<
     formState: { errors },
   } = useFormContext()
   const [nationalIdInput, setNationalIdInput] = useState('')
+  const [personName, setPersonName] = useState('')
+  const [companyName, setCompanyName] = useState('')
 
   // get name validation errors
   const nameFieldErrors = errorMessage
@@ -101,23 +111,73 @@ export const NationalIdWithName: FC<
       {
         onCompleted: (data) => {
           onNameChange && onNameChange(data.identity?.name ?? '')
-          setValue(nameField, data.identity?.name ?? undefined)
+          setPersonName(data.identity?.name ?? '')
         },
       },
     )
 
+  // query to get company name by national id
+  const [
+    getCompanyIdentity,
+    {
+      data: companyData,
+      loading: companyQueryLoading,
+      error: companyQueryError,
+    },
+  ] = useLazyQuery<Query, { input: RskCompanyInfoInput }>(
+    gql`
+      ${COMPANY_IDENTITY_QUERY}
+    `,
+    {
+      onCompleted: (companyData) => {
+        onNameChange &&
+          onNameChange(companyData.companyRegistryCompany?.name ?? '')
+        setCompanyName(companyData.companyRegistryCompany?.name ?? '')
+      },
+    },
+  )
+
   // fetch and update name when user has entered a valid national id
   useEffect(() => {
     if (nationalIdInput.length === 10 && kennitala.isValid(nationalIdInput)) {
-      getIdentity({
-        variables: {
-          input: {
-            nationalId: nationalIdInput,
-          },
-        },
-      })
+      {
+        searchPersons &&
+          getIdentity({
+            variables: {
+              input: {
+                nationalId: nationalIdInput,
+              },
+            },
+          })
+      }
+
+      {
+        searchCompanies &&
+          getCompanyIdentity({
+            variables: {
+              input: {
+                nationalId: nationalIdInput,
+              },
+            },
+          })
+      }
     }
-  }, [nationalIdInput, getIdentity])
+  }, [
+    nationalIdInput,
+    getIdentity,
+    getCompanyIdentity,
+    searchPersons,
+    searchCompanies,
+  ])
+
+  useEffect(() => {
+    const nameInAnswers = getValueViaPath(application.answers, nameField)
+    if (personName && nameInAnswers !== personName) {
+      setValue(nameField, personName)
+    } else if (companyName && nameInAnswers !== companyName) {
+      setValue(nameField, companyName)
+    }
+  }, [personName, companyName, setValue, nameField, application.answers])
 
   return (
     <GridRow>
@@ -138,7 +198,7 @@ export const NationalIdWithName: FC<
             onNationalIdChange &&
               onNationalIdChange(v.target.value.replace(/\W/g, ''))
           })}
-          loading={queryLoading}
+          loading={searchPersons ? queryLoading : companyQueryLoading}
           error={nationalIdFieldErrors}
           disabled={disabled}
         />
@@ -154,12 +214,23 @@ export const NationalIdWithName: FC<
           }
           required={required}
           error={
-            queryError || data?.identity === null
-              ? formatMessage(
-                  coreErrorMessages.nationalRegistryNameNotFoundForNationalId,
-                )
-              : nameFieldErrors && !data
-              ? nameFieldErrors
+            searchPersons
+              ? queryError || data?.identity === null
+                ? formatMessage(
+                    coreErrorMessages.nationalRegistryNameNotFoundForNationalId,
+                  )
+                : nameFieldErrors && !data
+                ? nameFieldErrors
+                : undefined
+              : searchCompanies
+              ? companyQueryError ||
+                companyData?.companyRegistryCompany === null
+                ? formatMessage(
+                    coreErrorMessages.nationalRegistryNameNotFoundForNationalId,
+                  )
+                : nameFieldErrors && !companyData
+                ? nameFieldErrors
+                : undefined
               : undefined
           }
           disabled

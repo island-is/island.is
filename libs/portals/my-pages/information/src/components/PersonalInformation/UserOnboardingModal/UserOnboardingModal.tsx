@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   formatPlausiblePathToParams,
@@ -11,8 +11,6 @@ import {
   GridContainer,
   Button,
   Box,
-  Columns,
-  Column,
 } from '@island.is/island-ui/core'
 import { m } from '@island.is/portals/my-pages/core'
 import { servicePortalCloseOnBoardingModal } from '@island.is/plausible'
@@ -21,11 +19,11 @@ import { OnboardingHeader } from './components/Header'
 import ProfileForm from '../Forms/ProfileForm/ProfileForm'
 import * as styles from './UserOnboardingModal.css'
 import { onboardingModalStorage } from '../../../utils/showUserOnboardingModal'
-import { useAuth } from '@island.is/auth/react'
+import { useUserInfo } from '@island.is/react-spa/bff'
 
 export const UserOnboardingModal = () => {
   useNamespaces('sp.settings')
-  const { userInfo } = useAuth()
+  const userInfo = useUserInfo()
   const [toggleCloseModal, setToggleCloseModal] = useState(false)
   const [canDropOverlay, setCanDropOverlay] = useState(false)
   const [formLoading, setFormLoadingState] = useState(false)

@@ -209,6 +209,58 @@ describe('DefendantController - Update', () => {
     },
   )
 
+  describe('defendant in indictment is sent to prison admin', () => {
+    const defendantUpdate = { isSentToPrisonAdmin: true }
+    const updatedDefendant = { ...defendant, ...defendantUpdate }
+
+    beforeEach(async () => {
+      const mockUpdate = mockDefendantModel.update as jest.Mock
+      mockUpdate.mockResolvedValueOnce([1, [updatedDefendant]])
+
+      await givenWhenThen(defendantUpdate, CaseType.INDICTMENT, caseId)
+    })
+
+    it('should queue messages', () => {
+      expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
+        {
+          type: MessageType.DEFENDANT_NOTIFICATION,
+          caseId,
+          elementId: defendantId,
+          body: {
+            type: DefendantNotificationType.INDICTMENT_SENT_TO_PRISON_ADMIN,
+          },
+        },
+      ])
+      expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledTimes(1)
+    })
+  })
+
+  describe('defendant in indictment is withdrawn from prison admin', () => {
+    const defendantUpdate = { isSentToPrisonAdmin: false }
+    const updatedDefendant = { ...defendant, ...defendantUpdate }
+
+    beforeEach(async () => {
+      const mockUpdate = mockDefendantModel.update as jest.Mock
+      mockUpdate.mockResolvedValueOnce([1, [updatedDefendant]])
+
+      await givenWhenThen(defendantUpdate, CaseType.INDICTMENT, caseId)
+    })
+
+    it('should queue messages for indictment withdrawn from prison admin', () => {
+      expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
+        {
+          type: MessageType.DEFENDANT_NOTIFICATION,
+          caseId,
+          elementId: defendantId,
+          body: {
+            type: DefendantNotificationType.INDICTMENT_WITHDRAWN_FROM_PRISON_ADMIN,
+          },
+        },
+      ])
+      expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledTimes(1)
+    })
+  })
+
   describe('defendant update fails', () => {
     let then: Then
 

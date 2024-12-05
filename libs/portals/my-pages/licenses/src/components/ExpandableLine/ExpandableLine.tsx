@@ -115,7 +115,7 @@ const ExpandableLine: FC<React.PropsWithChildren<Props>> = ({
               <GridColumn>
                 <Box>
                   <FocusableBox
-                    borderRadius="circle"
+                    borderRadius="full"
                     background="blue100"
                     onClick={onExpandButton}
                     padding={1}

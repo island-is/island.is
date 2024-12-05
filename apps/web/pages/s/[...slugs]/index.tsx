@@ -1,5 +1,9 @@
 import { type FC } from 'react'
 
+import type {
+  Query,
+  QueryGetOrganizationPageArgs,
+} from '@island.is/web/graphql/schema'
 import withApollo from '@island.is/web/graphql/withApollo'
 import { withLocale } from '@island.is/web/i18n'
 import type { LayoutProps } from '@island.is/web/layouts/main'
@@ -24,15 +28,32 @@ import OrganizationNewsList, {
 import PublishedMaterial, {
   type PublishedMaterialProps,
 } from '@island.is/web/screens/Organization/PublishedMaterial/PublishedMaterial'
+import StandaloneHome, {
+  type StandaloneHomeProps,
+} from '@island.is/web/screens/Organization/Standalone/Home'
+import StandaloneLevel1Sitemap, {
+  type StandaloneLevel1SitemapProps,
+} from '@island.is/web/screens/Organization/Standalone/Level1Sitemap'
+import StandaloneLevel2Sitemap, {
+  type StandaloneLevel2SitemapProps,
+} from '@island.is/web/screens/Organization/Standalone/Level2Sitemap'
+import StandaloneParentSubpage, {
+  StandaloneParentSubpageProps,
+} from '@island.is/web/screens/Organization/Standalone/ParentSubpage'
 import SubPage, {
   type SubPageProps,
 } from '@island.is/web/screens/Organization/SubPage'
-import { Screen as ScreenType } from '@island.is/web/types'
+import { GET_ORGANIZATION_PAGE_QUERY } from '@island.is/web/screens/queries'
+import type { Screen as ScreenType } from '@island.is/web/types'
 import { CustomNextError } from '@island.is/web/units/errors'
 import { getServerSidePropsWrapper } from '@island.is/web/utils/getServerSidePropsWrapper'
 
 enum PageType {
   FRONTPAGE = 'frontpage',
+  STANDALONE_FRONTPAGE = 'standalone-frontpage',
+  STANDALONE_PARENT_SUBPAGE = 'standalone-parent-subpage',
+  STANDALONE_LEVEL1_SITEMAP = 'standalone-level1-sitemap',
+  STANDALONE_LEVEL2_SITEMAP = 'standalone-level2-sitemap',
   SUBPAGE = 'subpage',
   ALL_NEWS = 'news',
   PUBLISHED_MATERIAL = 'published-material',
@@ -45,6 +66,16 @@ enum PageType {
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const pageMap: Record<PageType, FC<any>> = {
   [PageType.FRONTPAGE]: (props) => <Home {...props} />,
+  [PageType.STANDALONE_FRONTPAGE]: (props) => <StandaloneHome {...props} />,
+  [PageType.STANDALONE_PARENT_SUBPAGE]: (props) => (
+    <StandaloneParentSubpage {...props} />
+  ),
+  [PageType.STANDALONE_LEVEL1_SITEMAP]: (props) => (
+    <StandaloneLevel1Sitemap {...props} />
+  ),
+  [PageType.STANDALONE_LEVEL2_SITEMAP]: (props) => (
+    <StandaloneLevel2Sitemap {...props} />
+  ),
   [PageType.SUBPAGE]: (props) => <SubPage {...props} />,
   [PageType.ALL_NEWS]: (props) => <OrganizationNewsList {...props} />,
   [PageType.PUBLISHED_MATERIAL]: (props) => <PublishedMaterial {...props} />,
@@ -64,6 +95,22 @@ interface Props {
           layoutProps: LayoutProps
           componentProps: HomeProps
         }
+      }
+    | {
+        type: PageType.STANDALONE_FRONTPAGE
+        props: StandaloneHomeProps
+      }
+    | {
+        type: PageType.STANDALONE_PARENT_SUBPAGE
+        props: StandaloneParentSubpageProps
+      }
+    | {
+        type: PageType.STANDALONE_LEVEL1_SITEMAP
+        props: StandaloneLevel1SitemapProps
+      }
+    | {
+        type: PageType.STANDALONE_LEVEL2_SITEMAP
+        props: StandaloneLevel2SitemapProps
       }
     | {
         type: PageType.SUBPAGE
@@ -121,12 +168,40 @@ Component.getProps = async (context) => {
   const slugs = context.query.slugs as string[]
   const locale = context.locale || 'is'
 
-  // Frontpage
+  const {
+    data: { getOrganizationPage: organizationPage },
+  } = await context.apolloClient.query<Query, QueryGetOrganizationPageArgs>({
+    query: GET_ORGANIZATION_PAGE_QUERY,
+    variables: {
+      input: {
+        slug: slugs[0],
+        lang: locale,
+      },
+    },
+  })
+
+  if (!organizationPage) {
+    throw new CustomNextError(404, 'Organization page was not found')
+  }
+
+  const modifiedContext = { ...context, organizationPage }
+
+  const isStandaloneTheme = organizationPage.theme === 'standalone'
+
   if (slugs.length === 1) {
+    if (isStandaloneTheme) {
+      return {
+        page: {
+          type: PageType.STANDALONE_FRONTPAGE,
+          props: await StandaloneHome.getProps(modifiedContext),
+        },
+      }
+    }
+
     return {
       page: {
         type: PageType.FRONTPAGE,
-        props: await Home.getProps(context),
+        props: await Home.getProps(modifiedContext),
       },
     }
   }
@@ -137,7 +212,7 @@ Component.getProps = async (context) => {
         return {
           page: {
             type: PageType.ALL_NEWS,
-            props: await OrganizationNewsList.getProps(context),
+            props: await OrganizationNewsList.getProps(modifiedContext),
           },
         }
       }
@@ -145,7 +220,7 @@ Component.getProps = async (context) => {
         return {
           page: {
             type: PageType.ALL_EVENTS,
-            props: await OrganizationEventList.getProps(context),
+            props: await OrganizationEventList.getProps(modifiedContext),
           },
         }
       }
@@ -153,7 +228,7 @@ Component.getProps = async (context) => {
         return {
           page: {
             type: PageType.PUBLISHED_MATERIAL,
-            props: await PublishedMaterial.getProps(context),
+            props: await PublishedMaterial.getProps(modifiedContext),
           },
         }
       }
@@ -162,7 +237,7 @@ Component.getProps = async (context) => {
         return {
           page: {
             type: PageType.ALL_NEWS,
-            props: await OrganizationNewsList.getProps(context),
+            props: await OrganizationNewsList.getProps(modifiedContext),
           },
         }
       }
@@ -170,7 +245,7 @@ Component.getProps = async (context) => {
         return {
           page: {
             type: PageType.ALL_EVENTS,
-            props: await OrganizationEventList.getProps(context),
+            props: await OrganizationEventList.getProps(modifiedContext),
           },
         }
       }
@@ -178,18 +253,43 @@ Component.getProps = async (context) => {
         return {
           page: {
             type: PageType.PUBLISHED_MATERIAL,
-            props: await PublishedMaterial.getProps(context),
+            props: await PublishedMaterial.getProps(modifiedContext),
           },
         }
       }
     }
 
-    // Subpage
-    const props = await SubPage.getProps(context)
+    if (
+      isStandaloneTheme &&
+      organizationPage.topLevelNavigation?.links.some(
+        (link) => slugs[1] === link.href.split('/').pop(),
+      )
+    ) {
+      return {
+        page: {
+          type: PageType.STANDALONE_LEVEL1_SITEMAP,
+          props: await StandaloneLevel1Sitemap.getProps(modifiedContext),
+        },
+      }
+    }
+
+    try {
+      return {
+        page: {
+          type: PageType.STANDALONE_PARENT_SUBPAGE,
+          props: await StandaloneParentSubpage.getProps(modifiedContext),
+        },
+      }
+    } catch (error) {
+      if (!(error instanceof CustomNextError)) {
+        throw error
+      }
+    }
+
     return {
       page: {
         type: PageType.SUBPAGE,
-        props,
+        props: await SubPage.getProps(modifiedContext),
       },
     }
   }
@@ -200,7 +300,7 @@ Component.getProps = async (context) => {
         return {
           page: {
             type: PageType.NEWS_DETAILS,
-            props: await OrganizationNewsArticle.getProps(context),
+            props: await OrganizationNewsArticle.getProps(modifiedContext),
           },
         }
       }
@@ -208,7 +308,7 @@ Component.getProps = async (context) => {
         return {
           page: {
             type: PageType.EVENT_DETAILS,
-            props: await OrganizationEventArticle.getProps(context),
+            props: await OrganizationEventArticle.getProps(modifiedContext),
           },
         }
       }
@@ -217,7 +317,7 @@ Component.getProps = async (context) => {
         return {
           page: {
             type: PageType.NEWS_DETAILS,
-            props: await OrganizationNewsArticle.getProps(context),
+            props: await OrganizationNewsArticle.getProps(modifiedContext),
           },
         }
       }
@@ -225,16 +325,51 @@ Component.getProps = async (context) => {
         return {
           page: {
             type: PageType.EVENT_DETAILS,
-            props: await OrganizationEventArticle.getProps(context),
+            props: await OrganizationEventArticle.getProps(modifiedContext),
           },
         }
+      }
+    }
+
+    if (
+      isStandaloneTheme &&
+      organizationPage.topLevelNavigation?.links.some(
+        (link) => slugs[1] === link.href.split('/').pop(),
+      )
+    ) {
+      try {
+        return {
+          page: {
+            type: PageType.STANDALONE_LEVEL2_SITEMAP,
+            props: await StandaloneLevel2Sitemap.getProps(modifiedContext),
+          },
+        }
+      } catch (error) {
+        if (!(error instanceof CustomNextError)) {
+          throw error
+        }
+      }
+    }
+
+    try {
+      return {
+        page: {
+          type: PageType.STANDALONE_PARENT_SUBPAGE,
+          props: await StandaloneParentSubpage.getProps(modifiedContext),
+        },
+      }
+    } catch (error) {
+      if (!(error instanceof CustomNextError)) {
+        throw error
       }
     }
 
     return {
       page: {
         type: PageType.GENERIC_LIST_ITEM,
-        props: await OrganizationSubPageGenericListItem.getProps(context),
+        props: await OrganizationSubPageGenericListItem.getProps(
+          modifiedContext,
+        ),
       },
     }
   }
