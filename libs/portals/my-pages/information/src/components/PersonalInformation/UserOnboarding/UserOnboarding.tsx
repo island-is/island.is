@@ -1,20 +1,20 @@
 import { Suspense, useEffect, useRef, useState } from 'react'
 
-import { useAuth } from '@island.is/auth/react'
 import { UserProfileScope } from '@island.is/auth/scopes'
 import { Features, useFeatureFlagClient } from '@island.is/react/feature-flags'
 
+import { useUserInfo } from '@island.is/react-spa/bff'
+import { showUserOnboardingModal } from '../../../utils/showUserOnboardingModal'
+import { UserOnboardingModal } from '../UserOnboardingModal/UserOnboardingModal'
 import {
   GetUserProfileQuery,
   useGetUserProfileQuery,
 } from './UserOnboarding.generated'
-import { UserOnboardingModal } from '../UserOnboardingModal/UserOnboardingModal'
-import { showUserOnboardingModal } from '../../../utils/showUserOnboardingModal'
 
 const isDevelopment = process.env.NODE_ENV === 'development'
 
 const UserOnboarding = () => {
-  const { userInfo } = useAuth()
+  const userInfo = useUserInfo()
   // Use userRef to store the userProfile data to preserve the initial value after re-fetch.
   const userProfile = useRef<GetUserProfileQuery['getUserProfile'] | null>(null)
   const isCompany = userInfo?.profile?.subjectType === 'legalEntity'

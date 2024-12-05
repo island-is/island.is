@@ -13,7 +13,7 @@ export const CardLoader: FC<React.PropsWithChildren<unknown>> = () => {
     >
       <Hidden below="sm">
         <Box marginRight={[2, 3]}>
-          <SkeletonLoader width={66} height={66} borderRadius="circle" />
+          <SkeletonLoader width={66} height={66} borderRadius="full" />
         </Box>
       </Hidden>
       <div>
