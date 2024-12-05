@@ -8,6 +8,7 @@ import {
   ILink,
   ILinkGroup,
   ILinkGroupFields,
+  IOrganizationParentSubpage,
   IOrganizationSubpage,
   IProjectPage,
   IProjectSubpage,
@@ -32,7 +33,7 @@ export class LinkGroup {
 type PageAbove = IProjectPage
 
 type LinkType = Omit<
-  ILink | IOrganizationSubpage | IProjectSubpage,
+  ILink | IOrganizationSubpage | IProjectSubpage | IOrganizationParentSubpage,
   'update' | 'toPlainObject'
 >
 
@@ -63,8 +64,14 @@ export const mapLinkGroup = ({
 
 const mapLinkWrapper = (link: LinkType, pageAbove: PageAbove | undefined) => {
   const contentTypeId = link?.sys?.contentType?.sys?.id
-  if (contentTypeId === 'organizationSubpage') {
-    return generateOrganizationSubpageLink(link as IOrganizationSubpage)
+
+  if (
+    contentTypeId === 'organizationSubpage' ||
+    contentTypeId === 'organizationParentSubpage'
+  ) {
+    return generateOrganizationSubpageLink(
+      (link as IOrganizationSubpage) || (link as IOrganizationParentSubpage),
+    )
   } else if (contentTypeId === 'projectSubpage') {
     return generateProjectSubpageLink(link as IProjectSubpage, pageAbove)
   } else if (contentTypeId === 'link') {
