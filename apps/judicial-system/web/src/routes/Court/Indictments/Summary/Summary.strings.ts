@@ -38,4 +38,10 @@ export const strings = defineMessages({
     defaultMessage: 'Gögn hafa verið send ákæranda og verjanda.',
     description: 'Notaður sem texti í staðfestingarglugga um að mál sé lokið.',
   },
+  onlyAssignedJudgeCanComplete: {
+    id: 'judicial.system.core:indictments.summary.only_assigned_judge_can_complete',
+    defaultMessage: 'Einungis skráður dómari getur lokið málinu',
+    description:
+      'Notaður sem texti í stað "áfram" takkans á samantektarskjá ákæru þegar "áfram" takkinn er falinn',
+  },
 })
