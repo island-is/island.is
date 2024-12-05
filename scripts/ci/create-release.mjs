@@ -16,12 +16,11 @@ var relevantInfo = {
   hadSha: pullRequest.head.sha,
   user: pullRequest.user.login,
 }
-console.log(pullRequest)
 
 const { data: tag } = octokit.rest.git.createTag({
   owner: owner,
   repo: repo,
-  tag: "v1.0.0",
+  tag: "TESTTEST",
   message: "Testing test",
   object: pullRequest.head.sha,
   type: "commit",
@@ -34,13 +33,13 @@ const { data: tag } = octokit.rest.git.createTag({
   console.error(error)
 })
 
-octokit.rest.repos.createRelease({
-  owner: owner,
-  repo: repo,
-  tag_name: tag.data.tag,
-  name: "Test 123",
-}).then(({ data }) => {
-  console.log(data)
-}).catch((error) => {
-  console.log(error)
-});
+// octokit.rest.repos.createRelease({
+//   owner: owner,
+//   repo: repo,
+//   tag_name: tag.data.tag,
+//   name: "Test 123",
+// }).then(({ data }) => {
+//   console.log(data)
+// }).catch((error) => {
+//   console.log(error)
+// });
