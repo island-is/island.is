@@ -1,5 +1,12 @@
 import { useEffectOnce } from '@island.is/react-spa/shared'
-import { ReactNode, useCallback, useEffect, useReducer, useState } from 'react'
+import {
+  ReactNode,
+  useCallback,
+  useEffect,
+  useMemo,
+  useReducer,
+  useState,
+} from 'react'
 
 import { LoadingScreen } from '@island.is/react/components'
 import { BffContext } from './BffContext'
@@ -42,6 +49,7 @@ export const BffProvider = ({
     authState === 'switching' ||
     authState === 'logging-out'
   const isLoggedIn = authState === 'logged-in'
+  const oldLoginPath = `${applicationBasePath}/login`
 
   const { postMessage } = useBffBroadcaster((event) => {
     if (
@@ -75,26 +83,34 @@ export const BffProvider = ({
   }, [postMessage, state.userInfo, isLoggedIn])
 
   /**
-   * Prepares the target link uri for the login redirect.
+   * Prepares login query params (target_link_uri, prompt, login_hint) from if they exist in the url.
    * If the target_link_uri is not present in the query string, then the current url is returned.
-   * If the user is on the old login path, then /login is removed from the path
+   * If the user is on the old login path, then `/login` is removed from the path
    */
-  const prepareTargetLinkUri = () => {
+  const loginQueryParams = useMemo(() => {
     const urlParams = new URLSearchParams(window.location.search)
     const targetLinkUri = urlParams.get('target_link_uri')
-    let url = window.location.href
-    const oldLoginPath = `${applicationBasePath}/login`
+    const prompt = urlParams.get('prompt')
+    const loginHint = urlParams.get('login_hint')
+    const url = window.location.href
 
-    // Check if the current path matches the old login path
-    const isOldLoginPath = window.location.pathname.startsWith(oldLoginPath)
-
-    if (isOldLoginPath) {
-      // If user is on old login path, then remove /login from the path
-      url = window.location.href.replace(oldLoginPath, applicationBasePath)
+    const params = {
+      target_link_uri:
+        targetLinkUri ??
+        (window.location.pathname.startsWith(oldLoginPath)
+          ? // Remove `/login` from the path to prevent redirect loop
+            url.replace(oldLoginPath, applicationBasePath)
+          : url),
+      ...(prompt && {
+        prompt,
+      }),
+      ...(loginHint && {
+        login_hint: loginHint,
+      }),
     }
 
-    return targetLinkUri ?? url
-  }
+    return params
+  }, [applicationBasePath, oldLoginPath])
 
   const checkLogin = async (noRefresh = false) => {
     dispatch({
@@ -122,6 +138,12 @@ export const BffProvider = ({
         return
       }
 
+      if (window.location.pathname.startsWith(oldLoginPath)) {
+        signIn()
+
+        return
+      }
+
       const user = await res.json()
 
       dispatch({
@@ -141,10 +163,8 @@ export const BffProvider = ({
       type: ActionType.SIGNIN_START,
     })
 
-    window.location.href = bffUrlGenerator('/login', {
-      target_link_uri: prepareTargetLinkUri(),
-    })
-  }, [bffUrlGenerator])
+    window.location.href = bffUrlGenerator('/login', loginQueryParams)
+  }, [bffUrlGenerator, loginQueryParams])
 
   const signOut = useCallback(() => {
     if (!state.userInfo) {
@@ -172,13 +192,13 @@ export const BffProvider = ({
       })
 
       window.location.href = bffUrlGenerator('/login', {
-        target_link_uri: prepareTargetLinkUri(),
+        target_link_uri: loginQueryParams['target_link_uri'],
         ...(nationalId
           ? { login_hint: nationalId }
           : { prompt: 'select_account' }),
       })
     },
-    [bffUrlGenerator],
+    [bffUrlGenerator, loginQueryParams],
   )
 
   const checkQueryStringError = () => {
