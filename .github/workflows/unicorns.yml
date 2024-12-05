@@ -68,12 +68,11 @@ jobs:
           echo IS_UNICORN=$(node scripts/ci/unicorn-utils.mjs "{\"baseBranch\": \"origin/$BaseRef\", \"mergeBranch\": \"$HeadRef\" }") >> "$GITHUB_OUTPUT"
   found-unicorn:
     if: needs.check-unicorn.outputs.IS_UNICORN == 'true'
-    needs: check-unicorn
+    needs:
+      - check-unicorn
+      - prepare
+    runs-on: ${{needs.prepare.outputs.RUNNER}}
     name: Create a unicorn Relese
-    runs-on: ec2-runners
-    container:
-      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
-    timeout-minutes: 35
     steps:
       - name: Create release
         env:
