@@ -246,7 +246,9 @@ export const WHODASCalculator = ({ slice }: WHODASCalculatorProps) => {
       description,
       maxScorePossible: questions.reduce(
         (prev, acc) =>
-          prev + acc.answerOptions[acc.answerOptions.length - 1].score,
+          prev + acc.answerOptions.length > 0
+            ? acc.answerOptions[acc.answerOptions.length - 1].score
+            : 0,
         0,
       ),
       questions: questions.map(() => ({
