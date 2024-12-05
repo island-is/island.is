@@ -14,32 +14,25 @@ const { data: pullRequest } = await octokit.rest.pulls.get({
 
 var relevantInfo = {
   hadSha: pullRequest.head.sha,
+  hadSha: pullRequest.merge_commit_sha,
   user: pullRequest.user.login,
 }
 
-// const { data: tag } = octokit.rest.git.createTag({
-//   owner: owner,
-//   repo: repo,
-//   tag: "TESTTEST",
-//   message: "Testing test",
-//   object: pullRequest.head.sha,
-//   type: "commit",
-//   tagger: {
-//     name: pullRequest.user.login
-//   }
-// }).then(({ tag }) => {
-//   console.log(tag)
-// }).catch((error) => {
-//   console.error(error)
-// })
+// This is a temporary commit that is created behind the scenes for
+// the test merge that validated no conflicts exist with the base branch.
+// It is not committed to the repository.
+// After the PR is merged, this value instead represents the SHA of the merge commit
+const SHA = pullRequest.merge_commit_sha
 
-// octokit.rest.repos.createRelease({
-//   owner: owner,
-//   repo: repo,
-//   tag_name: tag.data.tag,
-//   name: "Test 123",
-// }).then(({ data }) => {
-//   console.log(data)
-// }).catch((error) => {
-//   console.log(error)
-// });
+octokit.rest.repos.createRelease({
+  owner: owner,
+  repo: repo,
+  target_commitish: SHA,
+  tag_name: "UNICORN_TEST",
+  name: "Test 123",
+  generate_release_notes: true,
+}).then(({ data }) => {
+  console.log(data)
+}).catch((error) => {
+  console.log(error)
+});
