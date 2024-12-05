@@ -18,8 +18,8 @@ const SHA = pullRequest.head.sha;
 // It is not committed to the repository.
 // After the PR is merged, this value instead represents the SHA of the merge commit
 octokit.rest.repos.createRelease({
-  owner: "robertaandersen",
-  repo: "ActionsTest",
+  owner: owner,
+  repo: repo,
   target_commitish: SHA,
   tag_name: "SomeTag",
   name: "Test 123",
