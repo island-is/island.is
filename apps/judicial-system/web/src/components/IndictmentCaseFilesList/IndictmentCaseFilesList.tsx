@@ -1,4 +1,4 @@
-import { FC, useContext } from 'react'
+import { FC, useContext, useMemo } from 'react'
 import { useIntl } from 'react-intl'
 import { AnimatePresence } from 'framer-motion'
 
@@ -23,6 +23,7 @@ import {
 import {
   CaseFile,
   CaseFileCategory,
+  User,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 import { useFileList } from '@island.is/judicial-system-web/src/utils/hooks'
@@ -41,6 +42,13 @@ interface Props {
 interface RenderFilesProps {
   caseFiles: CaseFile[]
   onOpenFile: (fileId: string) => void
+}
+
+interface FileSection {
+  title: string
+  onOpenFile: (fileId: string) => void
+  files?: CaseFile[]
+  shouldRender?: boolean
 }
 
 export const RenderFiles: FC<RenderFilesProps> = ({
@@ -63,13 +71,6 @@ export const RenderFiles: FC<RenderFilesProps> = ({
   )
 }
 
-interface FileSection {
-  title: string
-  onOpenFile: (fileId: string) => void
-  files?: CaseFile[]
-  shouldRender?: boolean
-}
-
 const FileSection: FC<FileSection> = (props: FileSection) => {
   const { title, files, onOpenFile, shouldRender = true } = props
 
@@ -84,6 +85,60 @@ const FileSection: FC<FileSection> = (props: FileSection) => {
       </Text>
       <RenderFiles caseFiles={files} onOpenFile={onOpenFile} />
     </Box>
+  )
+}
+
+const useFilteredCaseFiles = (caseFiles?: CaseFile[] | null) => {
+  return useMemo(
+    () => ({
+      indictments: caseFiles?.filter(
+        (file) => file.category === CaseFileCategory.INDICTMENT,
+      ),
+      criminalRecords: caseFiles?.filter(
+        (file) => file.category === CaseFileCategory.CRIMINAL_RECORD,
+      ),
+      costBreakdowns: caseFiles?.filter(
+        (file) => file.category === CaseFileCategory.COST_BREAKDOWN,
+      ),
+      others: caseFiles?.filter(
+        (file) => file.category === CaseFileCategory.CASE_FILE,
+      ),
+      rulings: caseFiles?.filter(
+        (file) => file.category === CaseFileCategory.RULING,
+      ),
+      courtRecords: caseFiles?.filter(
+        (file) => file.category === CaseFileCategory.COURT_RECORD,
+      ),
+      criminalRecordUpdate: caseFiles?.filter(
+        (file) => file.category === CaseFileCategory.CRIMINAL_RECORD_UPDATE,
+      ),
+      uploadedCaseFiles: caseFiles?.filter(
+        (file) =>
+          file.category === CaseFileCategory.PROSECUTOR_CASE_FILE ||
+          file.category === CaseFileCategory.DEFENDANT_CASE_FILE,
+      ),
+      civilClaims: caseFiles?.filter(
+        (file) => file.category === CaseFileCategory.CIVIL_CLAIM,
+      ),
+    }),
+    [caseFiles],
+  )
+}
+
+const useFilePermissions = (workingCase: Case, user?: User) => {
+  return useMemo(
+    () => ({
+      canViewCriminalRecordUpdate:
+        isDistrictCourtUser(user) ||
+        isPublicProsecutor(user) ||
+        isPublicProsecutorUser(user),
+      canViewCivilClaims:
+        Boolean(workingCase.hasCivilClaims) &&
+        (isDistrictCourtUser(user) ||
+          isProsecutionUser(user) ||
+          isDefenceUser(user)),
+    }),
+    [user],
   )
 }
 
@@ -107,37 +162,8 @@ const IndictmentCaseFilesList: FC<Props> = ({
       (defendant) => defendant.subpoenas && defendant.subpoenas.length > 0,
     )
 
-  const cf = workingCase.caseFiles
-
-  const indictments = cf?.filter(
-    (file) => file.category === CaseFileCategory.INDICTMENT,
-  )
-  const criminalRecords = cf?.filter(
-    (file) => file.category === CaseFileCategory.CRIMINAL_RECORD,
-  )
-  const costBreakdowns = cf?.filter(
-    (file) => file.category === CaseFileCategory.COST_BREAKDOWN,
-  )
-  const others = cf?.filter(
-    (file) => file.category === CaseFileCategory.CASE_FILE,
-  )
-  const rulings = cf?.filter(
-    (file) => file.category === CaseFileCategory.RULING,
-  )
-  const courtRecords = cf?.filter(
-    (file) => file.category === CaseFileCategory.COURT_RECORD,
-  )
-  const criminalRecordUpdate = cf?.filter(
-    (file) => file.category === CaseFileCategory.CRIMINAL_RECORD_UPDATE,
-  )
-  const uploadedCaseFiles = cf?.filter(
-    (file) =>
-      file.category === CaseFileCategory.PROSECUTOR_CASE_FILE ||
-      file.category === CaseFileCategory.DEFENDANT_CASE_FILE,
-  )
-  const civilClaims = cf?.filter(
-    (file) => file.category === CaseFileCategory.CIVIL_CLAIM,
-  )
+  const filteredFiles = useFilteredCaseFiles(workingCase.caseFiles)
+  const permissions = useFilePermissions(workingCase, user)
 
   return (
     <>
@@ -146,7 +172,7 @@ const IndictmentCaseFilesList: FC<Props> = ({
       )}
       <FileSection
         title={formatMessage(caseFiles.indictmentSection)}
-        files={indictments}
+        files={filteredFiles.indictments}
         onOpenFile={onOpen}
       />
       {showTrafficViolationCaseFiles && displayGeneratedPDFs && (
@@ -167,27 +193,23 @@ const IndictmentCaseFilesList: FC<Props> = ({
       )}
       <FileSection
         title={formatMessage(caseFiles.criminalRecordSection)}
-        files={criminalRecords}
+        files={filteredFiles.criminalRecords}
         onOpenFile={onOpen}
       />
       <FileSection
         title={formatMessage(caseFiles.criminalRecordUpdateSection)}
-        files={criminalRecordUpdate}
+        files={filteredFiles.criminalRecordUpdate}
         onOpenFile={onOpen}
-        shouldRender={
-          isDistrictCourtUser(user) ||
-          isPublicProsecutor(user) ||
-          isPublicProsecutorUser(user)
-        }
+        shouldRender={permissions.canViewCriminalRecordUpdate}
       />
       <FileSection
         title={formatMessage(caseFiles.costBreakdownSection)}
-        files={costBreakdowns}
+        files={filteredFiles.costBreakdowns}
         onOpenFile={onOpen}
       />
       <FileSection
         title={formatMessage(caseFiles.otherDocumentsSection)}
-        files={others}
+        files={filteredFiles.others}
         onOpenFile={onOpen}
       />
       {displayGeneratedPDFs && (
@@ -211,31 +233,33 @@ const IndictmentCaseFilesList: FC<Props> = ({
           ))}
         </Box>
       )}
-      {courtRecords?.length || rulings?.length ? (
+      {filteredFiles.courtRecords?.length || filteredFiles.rulings?.length ? (
         <Box marginBottom={5}>
           <Text variant="h4" as="h4" marginBottom={1}>
             {formatMessage(strings.rulingAndCourtRecordsTitle)}
           </Text>
-          {courtRecords && courtRecords.length > 0 && (
-            <RenderFiles caseFiles={courtRecords} onOpenFile={onOpen} />
-          )}
+          {filteredFiles.courtRecords &&
+            filteredFiles.courtRecords.length > 0 && (
+              <RenderFiles
+                caseFiles={filteredFiles.courtRecords}
+                onOpenFile={onOpen}
+              />
+            )}
           {(isDistrictCourtUser(user) || isCompletedCase(workingCase.state)) &&
-            rulings &&
-            rulings.length > 0 && (
-              <RenderFiles caseFiles={rulings} onOpenFile={onOpen} />
+            filteredFiles.rulings &&
+            filteredFiles.rulings.length > 0 && (
+              <RenderFiles
+                caseFiles={filteredFiles.rulings}
+                onOpenFile={onOpen}
+              />
             )}
         </Box>
       ) : null}
       <FileSection
         title={formatMessage(strings.civilClaimsTitle)}
-        files={civilClaims}
+        files={filteredFiles.civilClaims}
         onOpenFile={onOpen}
-        shouldRender={
-          Boolean(workingCase.hasCivilClaims) &&
-          (isDistrictCourtUser(user) ||
-            isProsecutionUser(user) ||
-            isDefenceUser(user))
-        }
+        shouldRender={permissions.canViewCivilClaims}
       />
       {showSubpoenaPdf && (
         <Box marginBottom={5}>
@@ -275,14 +299,18 @@ const IndictmentCaseFilesList: FC<Props> = ({
           )}
         </Box>
       )}
-      {uploadedCaseFiles && uploadedCaseFiles.length > 0 && (
-        <Box marginBottom={5}>
-          <Text variant="h4" as="h4" marginBottom={3}>
-            {formatMessage(strings.uploadedCaseFiles)}
-          </Text>
-          <CaseFileTable caseFiles={uploadedCaseFiles} onOpenFile={onOpen} />
-        </Box>
-      )}
+      {filteredFiles.uploadedCaseFiles &&
+        filteredFiles.uploadedCaseFiles.length > 0 && (
+          <Box marginBottom={5}>
+            <Text variant="h4" as="h4" marginBottom={3}>
+              {formatMessage(strings.uploadedCaseFiles)}
+            </Text>
+            <CaseFileTable
+              caseFiles={filteredFiles.uploadedCaseFiles}
+              onOpenFile={onOpen}
+            />
+          </Box>
+        )}
       <AnimatePresence>
         {fileNotFound && <FileNotFoundModal dismiss={dismissFileNotFound} />}
       </AnimatePresence>
