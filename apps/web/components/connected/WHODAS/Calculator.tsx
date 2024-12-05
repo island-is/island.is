@@ -282,12 +282,12 @@ export const WHODASCalculator = ({ slice }: WHODASCalculatorProps) => {
         score += question.answerScore
       }
       totalScore += score
-      if (stateStep.maxScorePossible > 0 && score > 0) {
+      if (stateStep.maxScorePossible > 0) {
         score = (score * 100) / stateStep.maxScorePossible
       }
       results.steps.push({ ...stateStep, scoreForStep: score })
     }
-    if (totalScore > 0 && totalMaxScorePossible > 0) {
+    if (totalMaxScorePossible > 0) {
       totalScore = (totalScore * 100) / totalMaxScorePossible
     }
     return (
