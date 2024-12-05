@@ -2,6 +2,7 @@ import { buildForm } from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
 import { Logo } from '../../assets/Logo'
 import { informationSection } from './InformationSection'
+import { examineeSection } from './ExamineeSection'
 
 export const PracticalExamForm: Form = buildForm({
   id: 'PracticalExamFormDraft',
@@ -9,6 +10,6 @@ export const PracticalExamForm: Form = buildForm({
   logo: Logo,
   mode: FormModes.DRAFT,
   renderLastScreenButton: true,
-  renderLastScreenBackButton: false,
-  children: [informationSection],
+  renderLastScreenBackButton: true,
+  children: [examineeSection, informationSection],
 })

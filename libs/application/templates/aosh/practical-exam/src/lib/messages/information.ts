@@ -3,18 +3,18 @@ import { defineMessages } from 'react-intl'
 export const information = {
   general: defineMessages({
     pageTitle: {
-      id: 'aosh.pe.application:general.dataProvider.pageTitle',
+      id: 'aosh.pe.application:information.general.pageTitle',
       defaultMessage: 'Persónuupplýsingar',
       description: `Information page title`,
     },
     pageDescription: {
-      id: 'aosh.pe.application:general.dataProvider.pageDescription',
+      id: 'aosh.pe.application:information.general.pageDescription',
       defaultMessage: 'Upplýsingar um skráningaraðila',
       description: `Information page description`,
     },
 
     sectionTitle: {
-      id: 'aosh.pe.application:general.dataProvider.sectionTitle',
+      id: 'aosh.pe.application:information.general.sectionTitle',
       defaultMessage: 'Persónuupplýsingar',
       description: `Information section title`,
     },
