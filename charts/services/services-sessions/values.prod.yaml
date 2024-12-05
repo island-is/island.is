@@ -19,6 +19,7 @@ global:
 name: 'services-sessions'
 enabled: true
 env:
+  CODE_OWNER: 'aranja'
   DB_HOST: 'postgres-applications.internal'
   DB_NAME: 'services_sessions'
   DB_REPLICAS_HOST: 'postgres-applications.internal'

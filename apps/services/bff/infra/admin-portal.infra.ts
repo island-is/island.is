@@ -1,5 +1,10 @@
 /* eslint-disable @nx/enforce-module-boundaries */
-import { ServiceBuilder, json, service } from '../../../../infra/src/dsl/dsl'
+import {
+  ServiceBuilder,
+  json,
+  service,
+  CodeOwners,
+} from '../../../../infra/src/dsl/dsl'
 import { BffInfraServices } from '../../../../infra/src/dsl/types/input-types'
 
 const bffName = 'services-bff'
@@ -13,6 +18,7 @@ export const serviceSetup = (
   service(serviceName)
     .namespace(clientName)
     .image(bffName)
+    .codeOwner(CodeOwners.Core)
     .redis()
     .serviceAccount(bffName)
     .env({
