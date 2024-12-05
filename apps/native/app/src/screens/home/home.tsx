@@ -55,7 +55,7 @@ import {
 } from './licenses-module'
 import { OnboardingModule } from './onboarding-module'
 import {
-  useListVehiclesQuery,
+  useListVehiclesV2Query,
   validateVehiclesInitialData,
   VehiclesModule,
 } from './vehicles-module'
@@ -174,13 +174,11 @@ export const MainHomeScreen: NavigationFunctionComponent = ({
     skip: !airDiscountWidgetEnabled,
   })
 
-  const vehiclesRes = useListVehiclesQuery({
+  const vehiclesRes = useListVehiclesV2Query({
     variables: {
       input: {
         page: 1,
         pageSize: 15,
-        showDeregeristered: false,
-        showHistory: false,
       },
     },
     skip: !vehiclesWidgetEnabled,
