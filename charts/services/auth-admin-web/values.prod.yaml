@@ -20,6 +20,7 @@ name: 'auth-admin-web'
 enabled: true
 env:
   BASE_URL: 'https://innskra.island.is/admin'
+  CODE_OWNER: 'aranja'
   IDENTITYSERVER_DOMAIN: 'innskra.island.is'
   LOG_LEVEL: 'info'
   NEXTAUTH_URL: 'https://innskra.island.is/admin/api/auth'

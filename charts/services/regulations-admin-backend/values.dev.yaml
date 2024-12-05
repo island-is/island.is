@@ -19,6 +19,7 @@ global:
 name: 'regulations-admin-backend'
 enabled: true
 env:
+  CODE_OWNER: 'hugsmidjan'
   DB_HOST: 'postgres-applications.internal'
   DB_NAME: 'regulations_admin_backend'
   DB_REPLICAS_HOST: 'postgres-applications-reader.internal'
