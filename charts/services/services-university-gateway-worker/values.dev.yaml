@@ -25,6 +25,7 @@ command:
   - 'node'
 enabled: true
 env:
+  CODE_OWNER: 'origo'
   DB_HOST: 'postgres-applications.internal'
   DB_NAME: 'services_university_gateway'
   DB_REPLICAS_HOST: 'postgres-applications-reader.internal'

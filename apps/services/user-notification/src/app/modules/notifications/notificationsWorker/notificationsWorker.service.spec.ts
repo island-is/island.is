@@ -116,10 +116,12 @@ describe('NotificationsWorkerService', () => {
     queue = app.get(getQueueServiceToken('notifications'))
     notificationModel = app.get(getModelToken(Notification))
     notificationsService = app.get(NotificationsService)
-    notificationsWorkerService = app.get(NotificationsWorkerService)
     userProfileApi = app.get(V2UsersApi)
     nationalRegistryService = app.get(NationalRegistryV3ClientService)
     companyRegistryService = app.get(CompanyRegistryClientService)
+
+    notificationsWorkerService = await app.resolve(NotificationsWorkerService)
+    notificationsWorkerService.run()
   })
 
   beforeEach(async () => {
