@@ -22,18 +22,17 @@ import { PracticalExamAnswersSchema } from './dataSchema'
 import { IdentityApi } from '../dataProviders'
 import { AuthDelegationType } from '@island.is/shared/types'
 import { ApiScope } from '@island.is/auth/scopes'
+import { shared } from './messages/shared'
 
 const template: ApplicationTemplate<
   ApplicationContext,
   ApplicationStateSchema<Events>,
   Events
 > = {
-  type: ApplicationTypes.WORK_ACCIDENT_NOTIFICATION,
-  name: 'REPLACE ME',
-  //institution: shared.application.institutionName,
-  translationNamespaces: [
-    ApplicationConfigurations.WorkAccidentNotification.translation,
-  ],
+  type: ApplicationTypes.PRACTICAL_EXAM,
+  name: shared.application.name,
+  institution: shared.application.institutionName,
+  translationNamespaces: ApplicationConfigurations.PracticalExam.translation,
   dataSchema: PracticalExamAnswersSchema,
   allowedDelegations: [
     {
@@ -44,7 +43,7 @@ const template: ApplicationTemplate<
     },
   ],
   requiredScopes: [ApiScope.vinnueftirlitid],
-  featureFlag: Features.WorkAccidentNotificationEnabled,
+  //featureFlag: Features.WorkAccidentNotificationEnabled,
   allowMultipleApplicationsInDraft: true,
   stateMachineConfig: {
     initial: States.PREREQUISITES,
@@ -56,7 +55,7 @@ const template: ApplicationTemplate<
           status: 'draft',
           actionCard: {
             tag: {
-              //label: shared.application.actionCardPrerequisites,
+              label: shared.application.actionCardPrerequisites,
               variant: 'blue',
             },
             historyLogs: [
@@ -70,10 +69,10 @@ const template: ApplicationTemplate<
           roles: [
             {
               id: Roles.APPLICANT,
-              // formLoader: () =>
-              //   import('../forms/Prerequisites').then((module) =>
-              //     Promise.resolve(module.Prerequisites),
-              //   ),
+              formLoader: () =>
+                import('../forms/Prerequisites').then((module) =>
+                  Promise.resolve(module.Prerequisites),
+                ),
               actions: [
                 {
                   event: DefaultEvents.SUBMIT,
@@ -93,11 +92,11 @@ const template: ApplicationTemplate<
       },
       [States.DRAFT]: {
         meta: {
-          name: 'Skráning í verkleg próf',
+          name: 'Skráning í verklegt próf',
           status: 'draft',
           actionCard: {
             tag: {
-              // label: shared.application.actionCardDraft,
+              label: shared.application.actionCardDraft,
               variant: 'blue',
             },
             historyLogs: [
@@ -111,11 +110,10 @@ const template: ApplicationTemplate<
           roles: [
             {
               id: Roles.APPLICANT,
-              // formLoader: () =>
-              //   import('../forms/WorkAccidentNotificationForm/index').then(
-              //     (module) =>
-              //       Promise.resolve(module.WorkAccidentNotificationForm),
-              //   ),
+              formLoader: () =>
+                import('../forms/PracticalExamForm/index').then((module) =>
+                  Promise.resolve(module.PracticalExamForm),
+                ),
               actions: [
                 {
                   event: DefaultEvents.SUBMIT,

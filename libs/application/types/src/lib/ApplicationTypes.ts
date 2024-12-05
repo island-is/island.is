@@ -403,7 +403,7 @@ export const ApplicationConfigurations = {
     translation: ['aosh.rnm.application'],
   },
   [ApplicationTypes.PRACTICAL_EXAM]: {
-    slug: 'verkleg-prof',
+    slug: 'verklegt-prof',
     translation: ['aosh.pe.application'],
   },
 }
