@@ -28,8 +28,8 @@ const { data: tag } = octokit.rest.git.createTag({
   tagger: {
     name: pullRequest.user.login
   }
-}).then(({ data }) => {
-  console.log(data)
+}).then(({ tag }) => {
+  console.log(tag)
 }).catch((error) => {
   console.error(error)
 })
