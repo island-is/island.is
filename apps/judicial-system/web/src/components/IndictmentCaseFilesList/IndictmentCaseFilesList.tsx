@@ -8,6 +8,7 @@ import {
   isCompletedCase,
   isDefenceUser,
   isDistrictCourtUser,
+  isPrisonAdminUser,
   isProsecutionUser,
   isPublicProsecutor,
   isPublicProsecutorUser,
@@ -137,6 +138,8 @@ const useFilePermissions = (workingCase: Case, user?: User) => {
         (isDistrictCourtUser(user) ||
           isProsecutionUser(user) ||
           isDefenceUser(user)),
+      canViewSentToPrisonAdminFiles:
+        isPrisonAdminUser(user) || isPublicProsecutorUser(user),
     }),
     [user],
   )
@@ -315,6 +318,7 @@ const IndictmentCaseFilesList: FC<Props> = ({
         title={formatMessage(strings.civilClaimsTitle)}
         files={filteredFiles.sentToPrisonAdminFiles}
         onOpenFile={onOpen}
+        shouldRender={permissions.canViewSentToPrisonAdminFiles}
       />
       <AnimatePresence>
         {fileNotFound && <FileNotFoundModal dismiss={dismissFileNotFound} />}
