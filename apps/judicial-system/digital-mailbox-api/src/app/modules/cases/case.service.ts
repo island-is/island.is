@@ -11,7 +11,6 @@ import {
   AuditedAction,
   AuditTrailService,
 } from '@island.is/judicial-system/audit-trail'
-import { normalizeAndFormatNationalId } from '@island.is/judicial-system/formatters'
 import { LawyersService } from '@island.is/judicial-system/lawyers'
 import { DefenderChoice } from '@island.is/judicial-system/types'
 
@@ -43,15 +42,15 @@ export class CaseService {
   }
 
   async getCase(
-    id: string,
+    caseId: string,
     nationalId: string,
     lang?: string,
   ): Promise<CaseResponse> {
     return this.auditTrailService.audit(
       'digital-mailbox-api',
       AuditedAction.GET_INDICTMENT,
-      this.getCaseInfo(id, nationalId, lang),
-      () => id,
+      this.getCaseInfo(caseId, nationalId, lang),
+      () => caseId,
     )
   }
 
@@ -92,27 +91,11 @@ export class CaseService {
   }
 
   private async getCaseInfo(
-    id: string,
+    caseId: string,
     nationalId: string,
     lang?: string,
   ): Promise<CaseResponse> {
-    const response = await this.fetchCase(id, nationalId)
-    const defendantInfo = response.defendants.find(
-      (defendant) =>
-        defendant.nationalId &&
-        normalizeAndFormatNationalId(nationalId).includes(defendant.nationalId),
-    )
-
-    if (!defendantInfo) {
-      throw new NotFoundException('Defendant not found')
-    }
-
-    if (
-      defendantInfo.subpoenas?.[0]?.subpoenaId &&
-      !defendantInfo.subpoenas[0].serviceStatus
-    ) {
-      await this.fetchServiceStatus(id, defendantInfo.subpoenas[0].subpoenaId)
-    }
+    const response = await this.fetchCase(caseId, nationalId)
 
     return CaseResponse.fromInternalCaseResponse(response, lang)
   }
@@ -168,6 +151,7 @@ export class CaseService {
       requestedDefenderName: chosenLawyer?.Name,
     }
     await this.patchDefenseInfo(defendantNationalId, caseId, defenderChoice)
+
     const updatedCase = await this.fetchCase(caseId, defendantNationalId)
 
     return SubpoenaResponse.fromInternalCaseResponse(
@@ -182,9 +166,9 @@ export class CaseService {
   ): Promise<InternalCasesResponse[]> {
     try {
       const res = await fetch(
-        `${this.config.backendUrl}/api/internal/cases/indictments`,
+        `${this.config.backendUrl}/api/internal/cases/indictments/defendant/${nationalId}`,
         {
-          method: 'POST',
+          method: 'GET',
           headers: {
             'Content-Type': 'application/json',
             authorization: `Bearer ${this.config.secretToken}`,
@@ -206,25 +190,24 @@ export class CaseService {
   }
 
   private async fetchCase(
-    id: string,
+    caseId: string,
     nationalId: string,
   ): Promise<InternalCaseResponse> {
     try {
       const res = await fetch(
-        `${this.config.backendUrl}/api/internal/case/indictment/${id}`,
+        `${this.config.backendUrl}/api/internal/case/indictment/${caseId}/defendant/${nationalId}`,
         {
-          method: 'POST',
+          method: 'GET',
           headers: {
             'Content-Type': 'application/json',
             authorization: `Bearer ${this.config.secretToken}`,
           },
-          body: JSON.stringify({ nationalId }),
         },
       )
 
       if (!res.ok) {
         if (res.status === 404) {
-          throw new NotFoundException(`Case ${id} not found`)
+          throw new NotFoundException(`Case ${caseId} not found`)
         }
 
         const reason = await res.text()
@@ -247,52 +230,6 @@ export class CaseService {
 
       throw new BadGatewayException(
         `Failed to fetch case by id: ${reason.message}`,
-      )
-    }
-  }
-
-  private async fetchServiceStatus(
-    caseId: string,
-    subpoenaId: string,
-  ): Promise<InternalCaseResponse> {
-    try {
-      const res = await fetch(
-        `${this.config.backendUrl}/api/internal/case/${caseId}/subpoenaStatus/${subpoenaId}`,
-        {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            authorization: `Bearer ${this.config.secretToken}`,
-          },
-        },
-      )
-
-      if (!res.ok) {
-        if (res.status === 404) {
-          throw new NotFoundException(`Case ${caseId} not found`)
-        }
-
-        const reason = await res.text()
-
-        throw new BadGatewayException(
-          reason ||
-            'Unexpected error occurred while fetching serviceStatus by subpoenaID',
-        )
-      }
-
-      const caseData = await res.json()
-
-      return caseData
-    } catch (reason) {
-      if (
-        reason instanceof BadGatewayException ||
-        reason instanceof NotFoundException
-      ) {
-        throw reason
-      }
-
-      throw new BadGatewayException(
-        `Failed to fetch serviceStatus by subpoenaId: ${reason.message}`,
       )
     }
   }

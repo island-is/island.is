@@ -34,6 +34,9 @@ import StandaloneHome, {
 import StandaloneLevel1Sitemap, {
   type StandaloneLevel1SitemapProps,
 } from '@island.is/web/screens/Organization/Standalone/Level1Sitemap'
+import StandaloneLevel2Sitemap, {
+  type StandaloneLevel2SitemapProps,
+} from '@island.is/web/screens/Organization/Standalone/Level2Sitemap'
 import StandaloneParentSubpage, {
   StandaloneParentSubpageProps,
 } from '@island.is/web/screens/Organization/Standalone/ParentSubpage'
@@ -50,6 +53,7 @@ enum PageType {
   STANDALONE_FRONTPAGE = 'standalone-frontpage',
   STANDALONE_PARENT_SUBPAGE = 'standalone-parent-subpage',
   STANDALONE_LEVEL1_SITEMAP = 'standalone-level1-sitemap',
+  STANDALONE_LEVEL2_SITEMAP = 'standalone-level2-sitemap',
   SUBPAGE = 'subpage',
   ALL_NEWS = 'news',
   PUBLISHED_MATERIAL = 'published-material',
@@ -68,6 +72,9 @@ const pageMap: Record<PageType, FC<any>> = {
   ),
   [PageType.STANDALONE_LEVEL1_SITEMAP]: (props) => (
     <StandaloneLevel1Sitemap {...props} />
+  ),
+  [PageType.STANDALONE_LEVEL2_SITEMAP]: (props) => (
+    <StandaloneLevel2Sitemap {...props} />
   ),
   [PageType.SUBPAGE]: (props) => <SubPage {...props} />,
   [PageType.ALL_NEWS]: (props) => <OrganizationNewsList {...props} />,
@@ -100,6 +107,10 @@ interface Props {
     | {
         type: PageType.STANDALONE_LEVEL1_SITEMAP
         props: StandaloneLevel1SitemapProps
+      }
+    | {
+        type: PageType.STANDALONE_LEVEL2_SITEMAP
+        props: StandaloneLevel2SitemapProps
       }
     | {
         type: PageType.SUBPAGE
@@ -170,6 +181,14 @@ Component.getProps = async (context) => {
   })
 
   if (!organizationPage) {
+    if (slugs.length === 1) {
+      return {
+        page: {
+          type: PageType.FRONTPAGE,
+          props: await Home.getProps(context),
+        },
+      }
+    }
     throw new CustomNextError(404, 'Organization page was not found')
   }
 
@@ -316,6 +335,26 @@ Component.getProps = async (context) => {
             type: PageType.EVENT_DETAILS,
             props: await OrganizationEventArticle.getProps(modifiedContext),
           },
+        }
+      }
+    }
+
+    if (
+      isStandaloneTheme &&
+      organizationPage.topLevelNavigation?.links.some(
+        (link) => slugs[1] === link.href.split('/').pop(),
+      )
+    ) {
+      try {
+        return {
+          page: {
+            type: PageType.STANDALONE_LEVEL2_SITEMAP,
+            props: await StandaloneLevel2Sitemap.getProps(modifiedContext),
+          },
+        }
+      } catch (error) {
+        if (!(error instanceof CustomNextError)) {
+          throw error
         }
       }
     }

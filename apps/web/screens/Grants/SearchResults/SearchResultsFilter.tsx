@@ -1,4 +1,5 @@
 import { useIntl } from 'react-intl'
+import sortBy from 'lodash/sortBy'
 
 import {
   Box,
@@ -30,13 +31,17 @@ export const GrantsSearchResultsFilter = ({
   variant = 'default',
 }: Props) => {
   const { formatMessage } = useIntl()
-  const categoryFilters = tags?.filter(
-    (t) => t.genericTagGroup?.slug === 'grant-category',
-  )
 
-  const typeFilters = tags?.filter(
-    (t) => t.genericTagGroup?.slug === 'grant-type',
-  )
+  const sortedFilters = {
+    categories: sortBy(
+      tags?.filter((t) => t.genericTagGroup?.slug === 'grant-category'),
+      'title',
+    ),
+    types: sortBy(
+      tags?.filter((t) => t.genericTagGroup?.slug === 'grant-type'),
+      'title',
+    ),
+  }
 
   return (
     <Box
@@ -82,23 +87,23 @@ export const GrantsSearchResultsFilter = ({
                   },
                 ],
               },
-              categoryFilters
+              sortedFilters.categories
                 ? {
                     id: 'category',
                     label: formatMessage(m.search.category),
                     selected: searchState?.['category'] ?? [],
-                    filters: categoryFilters.map((t) => ({
+                    filters: sortedFilters.categories.map((t) => ({
                       value: t.slug,
                       label: t.title,
                     })),
                   }
                 : undefined,
-              typeFilters
+              sortedFilters.types
                 ? {
                     id: 'type',
                     label: formatMessage(m.search.type),
                     selected: searchState?.['type'] ?? [],
-                    filters: typeFilters.map((t) => ({
+                    filters: sortedFilters.types.map((t) => ({
                       value: t.slug,
                       label: t.title,
                     })),
