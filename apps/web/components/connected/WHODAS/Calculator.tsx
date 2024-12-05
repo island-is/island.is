@@ -295,15 +295,17 @@ export const WHODASCalculator = ({ slice }: WHODASCalculatorProps) => {
         <MarkdownText replaceNewLinesWithBreaks={false}>
           {formatMessage(m.results.topDescription)}
         </MarkdownText>
-        <WHODASResults
-          results={results}
-          bracket={
-            totalScore <= (slice.configJson?.firstBracketBreakpoint ?? 16.9)
-              ? 1
-              : 2
-          }
-          totalScore={totalScore}
-        />
+        <Box className={styles.stayOnSinglePageWhenPrinting}>
+          <WHODASResults
+            results={results}
+            bracket={
+              totalScore <= (slice.configJson?.firstBracketBreakpoint ?? 16.9)
+                ? 1
+                : 2
+            }
+            totalScore={totalScore}
+          />
+        </Box>
       </Stack>
     )
   }
