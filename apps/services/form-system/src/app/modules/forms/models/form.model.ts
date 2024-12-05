@@ -28,6 +28,13 @@ export class Form extends Model<Form> {
   id!: string
 
   @Column({
+    type: DataType.UUID,
+    allowNull: false,
+    defaultValue: DataType.UUIDV4,
+  })
+  identifier!: string
+
+  @Column({
     type: DataType.JSON,
     allowNull: false,
     defaultValue: new LanguageType(),
@@ -37,8 +44,6 @@ export class Form extends Model<Form> {
   @Column({
     type: DataType.STRING,
     allowNull: false,
-    unique: true,
-    defaultValue: DataType.UUIDV4,
   })
   slug!: string
 

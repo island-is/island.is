@@ -10,6 +10,10 @@ module.exports = {
             allowNull: false,
             defaultValue: Sequelize.UUIDV4,
           },
+          identifier: {
+            type: Sequelize.UUID,
+            allowNull: false,
+          },
           name: {
             type: Sequelize.JSON,
             allowNull: false,
