@@ -41,7 +41,6 @@ import {
 } from '@island.is/application/types'
 import {
   applicantInformationMultiField,
-  buildFormConclusionSection,
 } from '@island.is/application/ui-forms'
 import isEmpty from 'lodash/isEmpty'
 import { ApplicationType, Employment, RatioType } from '../lib/constants'
