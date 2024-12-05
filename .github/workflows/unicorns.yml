@@ -20,16 +20,12 @@ defaults:
   run:
     shell: bash
 jobs:
-  prepare:
+  check-unicorn:
     name: Setup
     runs-on: ec2-runners
     container:
       image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
     timeout-minutes: 10
-    env:
-      ARTIFACT_NAME: ActionsTest-${{ github.sha }}
-    outputs:
-      artifact-name: ${{ env.ARTIFACT_NAME }}
     steps:
       - run: echo "selected runner = ${{ runner.name }}"
       - uses: actions/checkout@v4
@@ -50,30 +46,6 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           enable-cache: 'node_modules,generated-files'
 
-      - name: 'Upload Artifact'
-        uses: actions/upload-artifact@v4
-        id: artifact-upload-step
-        with:
-          name: ${{ env.ARTIFACT_NAME }}
-          overwrite: true
-          path: .
-          retention-days: 1
-
-  check-unicorn:
-    name: Check if app is on unicorn track
-    needs: prepare
-    runs-on: ec2-runners
-    container:
-      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
-    timeout-minutes: 45
-
-    outputs:
-      IS_UNICORN: ${{ steps.unicorn-affected.outputs.IS_UNICORN }}
-
-    steps:
-      - uses: actions/download-artifact@v4
-        with:
-          name: ${{ needs.prepare.outputs.artifact-name }}
       - name: Check unicorn affected
         id: unicorn-affected
         env:
@@ -86,21 +58,8 @@ jobs:
         run: |
           echo "Unicorn = ${{ steps.unicorn-affected.outputs.IS_UNICORN }}"
 
-  found-unicorn:
-    if: needs.check-unicorn.outputs.IS_UNICORN == 'true'
-    needs:
-      - check-unicorn
-      - prepare
-    runs-on: ec2-runners
-    container:
-      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
-    timeout-minutes: 45
-    name: Create a unicorn Relese
-    steps:
-      - uses: actions/download-artifact@v4
-        with:
-          name: ${{ needs.prepare.outputs.artifact-name }}
       - name: Create release
+        if: ${{ steps.unicorn-affected.outputs.IS_UNICORN }}
         env:
           PR_NUMBER: ${{ github.event.number }}
           BaseRef: ${{ github.base_ref }}
