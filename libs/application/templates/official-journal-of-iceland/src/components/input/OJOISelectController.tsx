@@ -68,7 +68,7 @@ export const OJOISelectController = <T,>({
       return opt.value.id === defaultVal.id
     }
 
-    return undefined
+    return false
   })
 
   if (loading) {
