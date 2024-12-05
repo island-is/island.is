@@ -17,21 +17,21 @@ var relevantInfo = {
   user: pullRequest.user.login,
 }
 
-const { data: tag } = octokit.rest.git.createTag({
-  owner: owner,
-  repo: repo,
-  tag: "TESTTEST",
-  message: "Testing test",
-  object: pullRequest.head.sha,
-  type: "commit",
-  tagger: {
-    name: pullRequest.user.login
-  }
-}).then(({ tag }) => {
-  console.log(tag)
-}).catch((error) => {
-  console.error(error)
-})
+// const { data: tag } = octokit.rest.git.createTag({
+//   owner: owner,
+//   repo: repo,
+//   tag: "TESTTEST",
+//   message: "Testing test",
+//   object: pullRequest.head.sha,
+//   type: "commit",
+//   tagger: {
+//     name: pullRequest.user.login
+//   }
+// }).then(({ tag }) => {
+//   console.log(tag)
+// }).catch((error) => {
+//   console.error(error)
+// })
 
 // octokit.rest.repos.createRelease({
 //   owner: owner,
