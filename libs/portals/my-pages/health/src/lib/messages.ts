@@ -1190,11 +1190,15 @@ export const messages = defineMessages({
   medicinePrescriptionIntroText: {
     id: 'sp.health:medicine-prescription-intro-text',
     defaultMessage:
-      'Hér má finna yfirlit yfir þínar lyfjaávísanir og lyfjasögu. Þú getur sótt um lyfjaendurnýjun þegar á við.',
+      'Hér finnur þú yfirlit yfir þínar lyfjaávísanir. Þú getur sótt um lyfjaendurnýjun þegar á við.',
   },
   medicinePrescriptionHistory: {
     id: 'sp.health:medicine-prescription-history',
     defaultMessage: 'Lyfjasagan',
+  },
+  medicinePrescriptionHistoryIntroText: {
+    id: 'sp.health:medicine-prescription-history-intro-text',
+    defaultMessage: 'Hér finnur þú yfirlit yfir þína lyfjasögu.',
   },
   usedFor: {
     id: 'sp.health:used-for',
