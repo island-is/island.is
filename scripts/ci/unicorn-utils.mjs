@@ -10,7 +10,7 @@ console.log(`Comparing nx affected for ${arg.mergeBranch} using ${arg.baseBranch
 try {
   const affected = JSON.parse(
     execSync(
-      `cd ${workspaceRoot} && yarn nx show projects --affected --base ${arg.baseBranch} --json | jq -r`,
+      `cd ${workspaceRoot} && yarn nx show projects --affected --base origin/${arg.baseBranch} --json | jq -r`,
     ).toString(),
   )
   console.log(affected.some((item) => unicornApps.includes(item)))
