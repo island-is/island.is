@@ -31,51 +31,50 @@ jobs:
       IS_UNICORN: ${{ steps.unicorn-affected.outputs.IS_UNICORN }}
 
     steps:
-    #   - uses: actions/checkout@v4
-    #     with:
-    #       fetch-depth: 0
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
-    #   # - name: yarn install
-    #   #   run: yarn install --immutable
-    #   - uses: actions/setup-node@v4
-    #     with:
-    #       node-version-file: 'package.json'
 
-    #   - name: Setup yarn
-    #     run: corepack enable
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: 'package.json'
 
-    #   - name: Get cache
-    #     id: get-cache
-    #     uses: ./.github/actions/get-cache
-    #     with:
-    #       github-token: ${{ secrets.GITHUB_TOKEN }}
-    #       enable-cache: 'node_modules,generated-files'
+      - name: Setup yarn
+        run: corepack enable
 
-    #   - name: Check unicorn affected
-    #     id: unicorn-affected
-    #     run: |
-    #       node scripts/ci/unicorn-utils.mjs
-    #       UNICORN=$(node scripts/ci/unicorn-utils.mjs)
-    #       if [ "$UNICORN" == 'true' ]; then
-    #           echo "unicorn is detected"
-    #           echo IS_UNICORN=true >> "$GITHUB_OUTPUT"
-    #       else
-    #           echo "No unicorn"
-    #           echo IS_UNICORN=false >> "$GITHUB_OUTPUT"
-    #       fi
+      - name: Get cache
+        id: get-cache
+        uses: ./.github/actions/get-cache
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          enable-cache: 'node_modules,generated-files'
 
-    #   - name: Create release branch
-    #     if: ${{ steps.unicorn-affected.outputs.IS_UNICORN == 'true' }}
-    #     env:
-    #       PR_NUMBER: ${{ github.event.number }}
-    #     run: |
-    #       node scripts/ci/create-release.mjs $PR_NUMBER
-        - name: Create release branch
-          env:
-            PR_NUMBER: ${{ github.event.number }}
-            BaseRef: ${{ github.base_ref }}
-            HeadRef: ${{ github.head_ref }}
-          run: |
-            echo PR_NUMBER: $PR_NUMBER
-            echo BaseRef: $BaseRef
-            echo HeadRef: $HeadRef
+      - name: Check unicorn affected
+        id: unicorn-affected
+        env:
+          HeadRef: ${{ github.head_ref }} #The target branch e.g. main (feature/unicorn-app)
+          RefName: ${{ github.ref_name }} #The branch being merged e.g. (unicorn-pipe-rel2)
+        run: |
+          node scripts/ci/unicorn-utils.mjs "{\"targetBranch\": \"$HeadRef\", \"sourceBranch\": \"$RefName\" }"
+          UNICORN=$(node scripts/ci/unicorn-utils.mjs)
+          if [ "$UNICORN" == 'true' ]; then
+              echo "unicorn is detected"
+              echo IS_UNICORN=true >> "$GITHUB_OUTPUT"
+          else
+              echo "No unicorn"
+              echo IS_UNICORN=false >> "$GITHUB_OUTPUT"
+          fi
+
+        # - name: Create release branch
+        #   if: ${{ steps.unicorn-affected.outputs.IS_UNICORN == 'true' }}
+
+        # - name: Create release branch
+        #   env:
+        #     PR_NUMBER: ${{ github.event.number }}
+        #     BaseRef: ${{ github.base_ref }}#     PR_NUMBER: 17134
+        #     HeadRef: ${{ github.head_ref }}#     BaseRef: feature/unicorn-app
+        #     RefName: ${{ github.ref_name }}#     HeadRef: unicorn-pipe-rel2
+        #   run: |
+        #       node scripts/ci/create-release.mjs $PR_NUMBER
+
