@@ -39,9 +39,7 @@ import {
   NO,
   YES,
 } from '@island.is/application/types'
-import {
-  applicantInformationMultiField,
-} from '@island.is/application/ui-forms'
+import { applicantInformationMultiField } from '@island.is/application/ui-forms'
 import isEmpty from 'lodash/isEmpty'
 import { ApplicationType, Employment, RatioType } from '../lib/constants'
 import { oldAgePensionFormMessage } from '../lib/messages'
