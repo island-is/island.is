@@ -64,6 +64,7 @@ export class S3Service {
       Bucket: bucket,
       Key: key,
       CopySource: copySource,
+      Metadata: {} // Overwriting default metadata to avoid a known issue with foreign characters in filename
     }
     try {
       return await this.s3Client.send(new CopyObjectCommand(input))
