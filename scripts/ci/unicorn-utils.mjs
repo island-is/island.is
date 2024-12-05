@@ -4,9 +4,6 @@ import { workspaceRoot } from '@nx/devkit'
 const unicornApps = ['unicorn-app']
 
 const arg = JSON.parse(process.argv.slice(2))
-
-console.log(`Comparing nx affected for ${arg.mergeBranch} using ${arg.baseBranch} as base branch`);
-
 try {
   const affected = JSON.parse(
     execSync(

@@ -55,14 +55,10 @@ jobs:
           BaseRef: ${{ github.base_ref }} #The target branch e.g. main (feature/unicorn-app)
           HeadRef: ${{ github.head_ref }} #The branch being merged e.g. (unicorn-pipe-rel2)
         run: |
-          UNICORN=$(node scripts/ci/unicorn-utils.mjs "{\"baseBranch\": \"origin/$BaseRef\", \"mergeBranch\": \"$HeadRef\" }")
-          if [ "$UNICORN" == 'true' ]; then
-              echo "unicorn is detected"
-              echo IS_UNICORN=true >> "$GITHUB_OUTPUT"
-          else
-              echo "No unicorn"
-              echo IS_UNICORN=false >> "$GITHUB_OUTPUT"
-          fi
+          echo "Comparing nx affected for $HeadRef using origin/$BaseRef as base branch"
+          echo IS_UNICORN=$(node scripts/ci/unicorn-utils.mjs "{\"baseBranch\": \"origin/$BaseRef\", \"mergeBranch\": \"$HeadRef\" }") >> "$GITHUB_OUTPUT"
+          echo $IS_UNICORN
+
 
         # - name: Create release branch
         #   if: ${{ steps.unicorn-affected.outputs.IS_UNICORN == 'true' }}
