@@ -63,9 +63,16 @@ export const m = {
       description: 'Texti fyrir ofan niðurstöðuskjá',
     },
     totalScore: {
-      id: 'web.whodas.calculator:results.totalScore#markdown',
+      id: 'web.whodas.calculator:results.totalScore',
       defaultMessage: 'Stig samtals',
       description: 'Stig samtals',
+    },
+    resultDisclaimer: {
+      id: 'web.whodas.calculator:results.resultDisclaimer',
+      defaultMessage:
+        'Gott er að prenta út eða senda sér svarið. Það getur gangast við umsókn um heimaþjónustu.',
+      description:
+        'Gott er að prenta út eða senda sér svarið. Það getur gangast við umsókn um heimaþjónustu.',
     },
     mainHeading: {
       id: 'web.whodas.calculator:form.mainHeading',
