@@ -65,6 +65,14 @@ export const m = defineMessages({
     id: 'admin-portal.service-desk:info',
     defaultMessage: 'Upplýsingar: ',
   },
+  notifications: {
+    id: 'admin-portal.service-desk:notifications',
+    defaultMessage: 'Tilkynningar: ',
+  },
+  loadMore: {
+    id: 'admin-portal.service-desk:load-more',
+    defaultMessage: 'Sjá meira',
+  },
   email: {
     id: 'admin-portal.service-desk:email',
     defaultMessage: 'Netfang',
