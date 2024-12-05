@@ -35,6 +35,7 @@ import {
   getValueViaPath,
 } from '@island.is/application/core'
 import { buildPaymentState } from '@island.is/application/utils'
+import { number } from 'zod'
 
 const pruneAfter = (time: number) => {
   return {
@@ -185,7 +186,7 @@ const MarriageConditionsTemplate: ApplicationTemplate<
       },
       [States.PAYMENT]: buildPaymentState({
         organizationId: InstitutionNationalIds.SYSLUMENN,
-        chargeItemCodes: (application) => {
+        chargeItems: (application) => {
           const paymentCodes = []
           paymentCodes.push(
             getValueViaPath<boolean>(
@@ -193,7 +194,7 @@ const MarriageConditionsTemplate: ApplicationTemplate<
               'applicant.hasBirthCertificate',
             )
               ? []
-              : ['AY153'],
+              : { code: 'AY153', quantity: 1 },
           )
           paymentCodes.push(
             getValueViaPath<boolean>(
@@ -201,11 +202,11 @@ const MarriageConditionsTemplate: ApplicationTemplate<
               'birthCertificate.data.hasBirthCertificate',
             )
               ? []
-              : ['AY153'],
+              : { code: 'AY153', quantity: 1 },
           )
-          paymentCodes.push('AY128') // Survey
+          paymentCodes.push({ code: 'AY128', quantity: 1 }) // Survey
           // paymentCodes.push('AY129') // Marriage conditions
-          paymentCodes.push(['AY154', 'AY154']) // Marital status
+          paymentCodes.push({ code: 'AY154', quantity: 2 }) // Marital status
 
           return paymentCodes.flat()
         },
