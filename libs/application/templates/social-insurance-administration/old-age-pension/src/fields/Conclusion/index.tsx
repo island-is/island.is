@@ -28,113 +28,77 @@ export const Conclusion: FC<React.PropsWithChildren<FieldBaseProps>> = (
     application.externalData,
   )
 
-  if (!hasIncomePlanStatus) {
-    return (
-      <Box marginTop={2}>
-        <Box marginBottom={5}>
-          <AlertMessage
-            type="warning"
-            title={formatMessage(
-              socialInsuranceAdministrationMessage.conclusionScreen
-                .receivedAwaitingIncomePlanTitle,
+  return (
+    <Box marginTop={2}>
+      <Box marginBottom={5}>
+        <AlertMessage
+          type={hasIncomePlanStatus ? 'success' : 'warning'}
+          title={
+            hasIncomePlanStatus
+              ? formatMessage(
+                  socialInsuranceAdministrationMessage.conclusionScreen
+                    .alertTitle,
+                )
+              : formatMessage(
+                  socialInsuranceAdministrationMessage.conclusionScreen
+                    .receivedAwaitingIncomePlanTitle,
+                )
+          }
+          message={
+            hasIncomePlanStatus
+              ? formatMessage(
+                  oldAgePensionFormMessage.conclusionScreen.alertMessage,
+                )
+              : formatMessage(
+                  socialInsuranceAdministrationMessage.conclusionScreen
+                    .incomePlanAlertMessage,
+                )
+          }
+        />
+      </Box>
+
+      <AccordionCard
+        id="conclusion-card"
+        label={formatMessage(oldAgePensionFormMessage.conclusionScreen.title)}
+        startExpanded={true}
+      >
+        <Box marginBottom={4}>
+          <Markdown>
+            {formatMessage(
+              oldAgePensionFormMessage.conclusionScreen.nextStepsText,
             )}
-            message={formatMessage(
-              socialInsuranceAdministrationMessage.conclusionScreen
-                .incomePlanAlertMessage,
-            )}
-          />
+          </Markdown>
         </Box>
+        <BulletList space="gutter" type="ul">
+          <Markdown>
+            {formatMessage(
+              oldAgePensionFormMessage.conclusionScreen.bulletList,
+            )}
+          </Markdown>
+        </BulletList>
+      </AccordionCard>
 
-        <AccordionCard
-          id="conclusion-card"
-          label={formatMessage(oldAgePensionFormMessage.conclusionScreen.title)}
-          startExpanded={true}
-        >
-          <Box marginBottom={4}>
-            <Markdown>
-              {formatMessage(
-                oldAgePensionFormMessage.conclusionScreen.nextStepsText,
-              )}
-            </Markdown>
-          </Box>
-          <BulletList space="gutter" type="ul">
-            <Markdown>
-              {formatMessage(
-                oldAgePensionFormMessage.conclusionScreen.bulletList,
-              )}
-            </Markdown>
-          </BulletList>
-        </AccordionCard>
-
-        <Box marginTop={3} marginBottom={5}>
-          <MessageWithLinkButtonFormField
-            application={application}
-            field={{
-              ...props.field,
-              type: FieldTypes.MESSAGE_WITH_LINK_BUTTON_FIELD,
-              component: FieldComponents.MESSAGE_WITH_LINK_BUTTON_FIELD,
-              url: 'https://island.is/umsoknir/tekjuaaetlun',
-              buttonTitle:
-                socialInsuranceAdministrationMessage.conclusionScreen
+      <Box marginTop={3} marginBottom={5}>
+        <MessageWithLinkButtonFormField
+          application={application}
+          field={{
+            ...props.field,
+            type: FieldTypes.MESSAGE_WITH_LINK_BUTTON_FIELD,
+            component: FieldComponents.MESSAGE_WITH_LINK_BUTTON_FIELD,
+            url: hasIncomePlanStatus
+              ? 'https://island.is/minarsidur/umsoknir'
+              : 'https://island.is/umsoknir/tekjuaaetlun',
+            buttonTitle: hasIncomePlanStatus
+              ? coreMessages.openServicePortalButtonTitle
+              : socialInsuranceAdministrationMessage.conclusionScreen
                   .incomePlanCardLabel,
-              message:
-                socialInsuranceAdministrationMessage.conclusionScreen
+            message: hasIncomePlanStatus
+              ? coreMessages.openServicePortalMessageText
+              : socialInsuranceAdministrationMessage.conclusionScreen
                   .incomePlanCardText,
-            }}
-          />
-        </Box>
+          }}
+        />
       </Box>
-    )
-  } else {
-    return (
-      <Box marginTop={2}>
-        <Box marginBottom={5}>
-          <AlertMessage
-            type="success"
-            title={formatMessage(
-              socialInsuranceAdministrationMessage.conclusionScreen.alertTitle,
-            )}
-            message={formatMessage(
-              oldAgePensionFormMessage.conclusionScreen.alertMessage,
-            )}
-          />
-        </Box>
-
-        <AccordionCard
-          id="conclusion-card"
-          label={formatMessage(oldAgePensionFormMessage.conclusionScreen.title)}
-          startExpanded={true}
-        >
-          <Box marginBottom={4}>
-            <Markdown>
-              {formatMessage(
-                oldAgePensionFormMessage.conclusionScreen.nextStepsText,
-              )}
-            </Markdown>
-          </Box>
-          <BulletList space="gutter" type="ul">
-            <Markdown>
-              {formatMessage(
-                oldAgePensionFormMessage.conclusionScreen.bulletList,
-              )}
-            </Markdown>
-          </BulletList>
-        </AccordionCard>
-
-        <Box marginTop={3} marginBottom={5}>
-          <MessageWithLinkButtonFormField
-            application={application}
-            field={{
-              ...props.field,
-              type: FieldTypes.MESSAGE_WITH_LINK_BUTTON_FIELD,
-              component: FieldComponents.MESSAGE_WITH_LINK_BUTTON_FIELD,
-              url: 'https://island.is/minarsidur/umsoknir',
-              buttonTitle: coreMessages.openServicePortalButtonTitle,
-              message: coreMessages.openServicePortalMessageText,
-            }}
-          />
-        </Box>
-      </Box>
-    )
-  }
+    </Box>
+  )
 }

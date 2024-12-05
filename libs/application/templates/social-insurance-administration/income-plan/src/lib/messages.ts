@@ -320,6 +320,11 @@ export const inReviewFormMessages = defineMessages({
     defaultMessage: 'Tekjuáætlun þín hefur ekki verið tekin til vinnslu.',
     description: 'Your income plan has not been processed.',
   },
+  reviewDescription: {
+    id: 'ip.application:inReview.review.description',
+    defaultMessage: 'Tekjuáætlun þín hefur verið tekin til vinnslu.',
+    description: 'Your income plan has been processed.',
+  },
 })
 
 export const statesMessages = defineMessages({
