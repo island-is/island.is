@@ -89,36 +89,36 @@ const FileSection: FC<FileSection> = (props: FileSection) => {
 }
 
 const useFilteredCaseFiles = (caseFiles?: CaseFile[] | null) => {
+  const filterByCategories = (
+    categories: CaseFileCategory | CaseFileCategory[],
+  ) => {
+    const categoryArray = Array.isArray(categories) ? categories : [categories]
+
+    return (
+      caseFiles?.filter(
+        (file) => file.category && categoryArray.includes(file.category),
+      ) ?? []
+    )
+  }
+
   return useMemo(
     () => ({
-      indictments: caseFiles?.filter(
-        (file) => file.category === CaseFileCategory.INDICTMENT,
+      indictments: filterByCategories(CaseFileCategory.INDICTMENT),
+      criminalRecords: filterByCategories(CaseFileCategory.CRIMINAL_RECORD),
+      costBreakdowns: filterByCategories(CaseFileCategory.COST_BREAKDOWN),
+      others: filterByCategories(CaseFileCategory.CASE_FILE),
+      rulings: filterByCategories(CaseFileCategory.RULING),
+      courtRecords: filterByCategories(CaseFileCategory.COURT_RECORD),
+      criminalRecordUpdate: filterByCategories(
+        CaseFileCategory.CRIMINAL_RECORD_UPDATE,
       ),
-      criminalRecords: caseFiles?.filter(
-        (file) => file.category === CaseFileCategory.CRIMINAL_RECORD,
-      ),
-      costBreakdowns: caseFiles?.filter(
-        (file) => file.category === CaseFileCategory.COST_BREAKDOWN,
-      ),
-      others: caseFiles?.filter(
-        (file) => file.category === CaseFileCategory.CASE_FILE,
-      ),
-      rulings: caseFiles?.filter(
-        (file) => file.category === CaseFileCategory.RULING,
-      ),
-      courtRecords: caseFiles?.filter(
-        (file) => file.category === CaseFileCategory.COURT_RECORD,
-      ),
-      criminalRecordUpdate: caseFiles?.filter(
-        (file) => file.category === CaseFileCategory.CRIMINAL_RECORD_UPDATE,
-      ),
-      uploadedCaseFiles: caseFiles?.filter(
-        (file) =>
-          file.category === CaseFileCategory.PROSECUTOR_CASE_FILE ||
-          file.category === CaseFileCategory.DEFENDANT_CASE_FILE,
-      ),
-      civilClaims: caseFiles?.filter(
-        (file) => file.category === CaseFileCategory.CIVIL_CLAIM,
+      uploadedCaseFiles: filterByCategories([
+        CaseFileCategory.PROSECUTOR_CASE_FILE,
+        CaseFileCategory.DEFENDANT_CASE_FILE,
+      ]),
+      civilClaims: filterByCategories(CaseFileCategory.CIVIL_CLAIM),
+      sentToPrisonAdminFiles: filterByCategories(
+        CaseFileCategory.SENT_TO_PRISON_ADMIN_FILE,
       ),
     }),
     [caseFiles],
@@ -311,6 +311,11 @@ const IndictmentCaseFilesList: FC<Props> = ({
             />
           </Box>
         )}
+      <FileSection
+        title={formatMessage(strings.civilClaimsTitle)}
+        files={filteredFiles.sentToPrisonAdminFiles}
+        onOpenFile={onOpen}
+      />
       <AnimatePresence>
         {fileNotFound && <FileNotFoundModal dismiss={dismissFileNotFound} />}
       </AnimatePresence>
