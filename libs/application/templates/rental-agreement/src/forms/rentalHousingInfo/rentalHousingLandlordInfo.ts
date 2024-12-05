@@ -1,16 +1,11 @@
-import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import {
   buildSubSection,
   buildMultiField,
   buildTableRepeaterField,
-  YES,
 } from '@island.is/application/core'
+import { formatNationalId, formatPhoneNumber } from '../../lib/utils'
+import { IS_REPRESENTATIVE } from '../../lib/constants'
 import { landlordDetails } from '../../lib/messages'
-
-export const formatPhoneNumber = (phoneNumber: string): string => {
-  const phone = parsePhoneNumberFromString(phoneNumber, 'IS')
-  return phone?.formatNational() || phoneNumber
-}
 
 export const RentalHousingLandlordInfo = buildSubSection({
   id: 'landlordInfo',
@@ -30,6 +25,7 @@ export const RentalHousingLandlordInfo = buildSubSection({
           fields: {
             nationalIdWithName: {
               component: 'nationalIdWithName',
+              required: true,
             },
             phone: {
               component: 'phone',
@@ -45,29 +41,36 @@ export const RentalHousingLandlordInfo = buildSubSection({
               type: 'email',
               width: 'half',
             },
+            address: {
+              component: 'input',
+              required: true,
+              label: landlordDetails.addressInputLabel,
+              maxLength: 100,
+            },
             isRepresentative: {
               component: 'checkbox',
-              label: landlordDetails.representativeLabel,
               large: true,
               options: [
                 {
                   label: landlordDetails.representativeLabel,
-                  value: YES,
+                  value: IS_REPRESENTATIVE,
                 },
               ],
             },
           },
           table: {
             format: {
-              phone: (value) => formatPhoneNumber(value),
+              name: (value) => value,
+              phone: (value) => value && formatPhoneNumber(value),
+              nationalId: (value) => value && formatNationalId(value),
             },
             header: [
               landlordDetails.nameInputLabel,
-              landlordDetails.nationalIdInputLabel,
               landlordDetails.phoneInputLabel,
+              landlordDetails.nationalIdHeaderLabel,
               landlordDetails.emailInputLabel,
             ],
-            rows: ['name', 'nationalId', 'phone', 'email'],
+            rows: ['name', 'phone', 'nationalId', 'email'],
           },
           // TODO: Remove if not needed
           // getStaticTableData: (application) => {

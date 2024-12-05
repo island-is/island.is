@@ -15,6 +15,8 @@ export enum Roles {
   APPLICANT = 'applicant',
 }
 
+export const IS_REPRESENTATIVE = 'isRepresentative'
+
 export enum AnswerOptions {
   YES = 'yes',
   NO = 'no',

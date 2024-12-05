@@ -42,9 +42,48 @@ export const tenantDetails = defineMessages({
     defaultMessage: 'Símanúmer',
     description: 'Tenant Details phone input label',
   },
+  addressInputLabel: {
+    id: 'ra.application:tenantDetails.addressInputLabel',
+    defaultMessage: 'Heimilisfang',
+    description: 'Tenant details address input label',
+  },
   representativeLabel: {
     id: 'ra.application:tenantDetails.representativeLabel',
     defaultMessage: 'Þessi aðili er umboðsaðili leigjanda',
     description: 'Tenant Details representative label',
+  },
+
+  // DataSchema errors
+  tenantEmptyTableError: {
+    id: 'ra.application:tenantDetails.tenantEmptyTableError',
+    defaultMessage:
+      'Að minnsta kosti einn leigutaki þarf að vera skráður á leigusamninginn.',
+    description: 'Tenant details no tenants in table',
+  },
+  tenantOnlyRepresentativeTableError: {
+    id: 'ra.application:tenantDetails.tenantOnlyRepresentativeTableError',
+    defaultMessage:
+      'Að minnsta kosti einn leigutaki þarf að vera skráður á leigusamninginn. Ekki er nóg að skrá umboðsaðlia leigusala.',
+    description: 'Tenant details only a representative of tenant in table',
+  },
+  tenantNationalIdEmptyError: {
+    id: 'ra.application:tenantDetails.tenantNationalIdEmptyError',
+    defaultMessage: 'Kennitala leigutaka þarf að vera skráð',
+    description: 'Tenant details national id empty error',
+  },
+  tenantPhoneNumberEmptyError: {
+    id: 'ra.application:tenantDetails.tenantPhoneNumberEmptyError',
+    defaultMessage: 'Símanúmer leigutaka þarf að vera skráð',
+    description: 'Tenant details phone number empty error',
+  },
+  tenantEmailEmptyError: {
+    id: 'ra.application:tenantDetails.tenantEmailEmptyError',
+    defaultMessage: 'Netfang leigutaka þarf að vera skráð',
+    description: 'Tenant details email empty error',
+  },
+  tenantAddressEmptyError: {
+    id: 'ra.application:tenantDetails.tenantAddressEmptyError',
+    defaultMessage: 'Heimilisfang leigutaka þarf að vera skráð',
+    description: 'Tenant details address empty error',
   },
 })
