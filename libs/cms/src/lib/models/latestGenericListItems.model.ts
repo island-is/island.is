@@ -80,7 +80,7 @@ export const mapLatestGenericListItems = ({
             ? 'is'
             : (sys.locale as ElasticsearchIndexLocale),
         page: 1,
-        size: 2,
+        size: fields.itemCount ?? 2,
       }
     : null,
 })
