@@ -1,15 +1,3 @@
-import {
-  Accordion,
-  AccordionItem,
-  Alert,
-  CustomLicenseType,
-  dynamicColor,
-  font,
-  Input,
-  InputRow,
-  LicenseCard,
-  LinkText,
-} from '@ui'
 import React from 'react'
 import { useIntl } from 'react-intl'
 import {
@@ -21,6 +9,19 @@ import {
 } from 'react-native'
 import { NavigationFunctionComponent } from 'react-native-navigation'
 import styled from 'styled-components/native'
+
+import {
+  Accordion,
+  AccordionItem,
+  Alert,
+  CustomLicenseType,
+  dynamicColor,
+  font,
+  Input,
+  InputRow,
+  LicenseCard,
+  LinkText,
+} from '../../ui'
 import IconStatusVerified from '../../assets/icons/valid.png'
 import IconStatusNonVerified from '../../assets/icons/warning.png'
 import { useGetIdentityDocumentQuery } from '../../graphql/types/schema'

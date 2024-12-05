@@ -1,5 +1,5 @@
-import { Theme } from '@ui'
 import 'styled-components'
+import { Theme } from '../ui'
 
 declare module 'styled-components' {
   export interface Shade {

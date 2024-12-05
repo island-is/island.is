@@ -1,4 +1,4 @@
-import { ApplicationConfigurations } from '@island.is/application/types/lib/ApplicationTypes'
+import { ApplicationConfigurations } from '@island.is/application/types'
 import { getConfig } from '../config'
 import {
   Application,

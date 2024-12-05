@@ -1,8 +1,9 @@
-import { Button, Divider, Input, InputRow } from '@ui'
 import React from 'react'
 import { useIntl } from 'react-intl'
 import { ScrollView, Text, View } from 'react-native'
 import { NavigationFunctionComponent } from 'react-native-navigation'
+
+import { Button, Divider, Input, InputRow } from '../../ui'
 import { useGetVehicleQuery } from '../../graphql/types/schema'
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
 import { useConnectivityIndicator } from '../../hooks/use-connectivity-indicator'

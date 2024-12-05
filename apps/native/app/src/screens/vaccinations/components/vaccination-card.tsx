@@ -1,3 +1,9 @@
+import { useState } from 'react'
+import { FormattedMessage, useIntl } from 'react-intl'
+import { TouchableOpacity, View } from 'react-native'
+import styled, { useTheme } from 'styled-components/native'
+import { Markdown } from '../../../ui/lib/markdown/markdown'
+
 import {
   Badge,
   ExpandableCard,
@@ -5,13 +11,7 @@ import {
   Skeleton,
   Typography,
   dynamicColor,
-} from '@ui'
-import { useState } from 'react'
-import { FormattedMessage, useIntl } from 'react-intl'
-import { TouchableOpacity, View } from 'react-native'
-import styled, { useTheme } from 'styled-components/native'
-import { Markdown } from '../../../ui/lib/markdown/markdown'
-
+} from '../../../ui'
 import chevronDown from '../../../assets/icons/chevron-down.png'
 import clockIcon from '../../../assets/icons/clock.png'
 import externalLinkIcon from '../../../assets/icons/external-link.png'

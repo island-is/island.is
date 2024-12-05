@@ -1,14 +1,15 @@
+import { useState } from 'react'
+import { FormattedMessage, useIntl } from 'react-intl'
+import { Image, Linking, Pressable, View } from 'react-native'
+import styled, { useTheme } from 'styled-components/native'
+
 import {
   Skeleton,
   Typography,
   blue400,
   dynamicColor,
   ExpandableCard,
-} from '@ui'
-import { useState } from 'react'
-import { FormattedMessage, useIntl } from 'react-intl'
-import { Image, Linking, Pressable, View } from 'react-native'
-import styled, { useTheme } from 'styled-components/native'
+} from '../../../ui'
 import chevronDown from '../../../assets/icons/chevron-down.png'
 import {
   ChargeType,

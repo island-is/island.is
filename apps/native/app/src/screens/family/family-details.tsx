@@ -1,4 +1,3 @@
-import { Input, InputRow, NavigationBarSheet, Typography } from '@ui'
 import React from 'react'
 import { useIntl } from 'react-intl'
 import { SafeAreaView, ScrollView, View } from 'react-native'
@@ -6,6 +5,8 @@ import {
   Navigation,
   NavigationFunctionComponent,
 } from 'react-native-navigation'
+
+import { Input, InputRow, NavigationBarSheet, Typography } from '../../ui'
 import { useNationalRegistryChildrenQuery } from '../../graphql/types/schema'
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
 import { formatNationalId } from '../../lib/format-national-id'

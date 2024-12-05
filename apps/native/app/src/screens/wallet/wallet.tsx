@@ -1,5 +1,3 @@
-import { Alert, EmptyList, GeneralCardSkeleton, TopLine } from '@ui'
-
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 import {
@@ -15,6 +13,7 @@ import SpotlightSearch from 'react-native-spotlight-search'
 import { useTheme } from 'styled-components/native'
 import { useNavigationComponentDidAppear } from 'react-native-navigation-hooks'
 
+import { Alert, EmptyList, GeneralCardSkeleton, TopLine } from '../../ui'
 import illustrationSrc from '../../assets/illustrations/le-retirement-s3.png'
 import { BottomTabsIndicator } from '../../components/bottom-tabs-indicator/bottom-tabs-indicator'
 import {

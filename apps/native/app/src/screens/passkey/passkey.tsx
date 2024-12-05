@@ -1,4 +1,3 @@
-import { Button, Typography, NavigationBarSheet, LinkText } from '@ui'
 import React, { useEffect, useState } from 'react'
 import { useIntl, FormattedMessage } from 'react-intl'
 import {
@@ -15,6 +14,8 @@ import {
   Navigation,
   NavigationFunctionComponent,
 } from 'react-native-navigation'
+
+import { Button, Typography, NavigationBarSheet, LinkText } from '../../ui'
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
 import logo from '../../assets/logo/logo-64w.png'
 import externalLink from '../../assets/icons/external-link.png'
