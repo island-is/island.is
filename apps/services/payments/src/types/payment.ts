@@ -5,7 +5,9 @@ export enum PaymentMethod {
 
 export type PaymentInformation = {
   id: string
-  productId: string
+  productIds: string[]
+  // If null then the name of the first product id will be used (fetched from FJS)
+  productTitle?: string
   availablePaymentMethods: PaymentMethod[]
   onSuccessUrl: string
   onUpdateUrl?: string

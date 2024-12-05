@@ -11,10 +11,17 @@ export class GetPaymentFlowDTO {
   id!: string
 
   @ApiProperty({
-    description: 'Identifier for the product being paid for',
+    description: 'Product title to display to the payer',
     type: String,
   })
-  productId!: string
+  productTitle!: string
+
+  @ApiProperty({
+    description:
+      'Price of the product being paid for, can be combined of multiple prices based on the product ids of the payment flow',
+    type: Number,
+  })
+  productPrice!: number
 
   @ApiPropertyOptional({
     description:

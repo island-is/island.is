@@ -30,13 +30,21 @@ export class PaymentFlow extends Model<
   })
   id!: CreationOptional<string>
 
-  @ApiProperty()
+  @ApiProperty({ type: [String] })
+  @Column({
+    type: DataType.ARRAY(DataType.STRING),
+    allowNull: false,
+    field: 'product_ids',
+  })
+  productIds!: string[]
+
+  @ApiPropertyOptional()
   @Column({
     type: DataType.STRING,
-    allowNull: false,
-    field: 'product_id',
+    allowNull: true,
+    field: 'product_title',
   })
-  productId!: string
+  productTitle?: string
 
   @ApiPropertyOptional()
   @Column({

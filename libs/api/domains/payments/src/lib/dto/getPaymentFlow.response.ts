@@ -8,7 +8,10 @@ export class GetPaymentFlowResponse {
   id!: string
 
   @Field(() => String)
-  productId!: string
+  productTitle!: string
+
+  @Field(() => Number)
+  productPrice!: number
 
   @Field(() => String, { nullable: true })
   invoiceId?: string

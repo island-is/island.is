@@ -37,7 +37,8 @@ const GetPaymentFlow = gql`
   query getPaymentFlow($input: GetPaymentFlowInput!) {
     getPaymentFlow(input: $input) {
       id
-      productId
+      productTitle
+      productPrice
       invoiceId
       availablePaymentMethods
       organisationId
@@ -124,10 +125,9 @@ export const getServerSideProps: GetServerSideProps<PaymentPageProps> = async (
     console.error(e)
   }
 
-  // TODO fetch product information from TBR
   const productInformation = {
-    amount: 133337,
-    title: 'Titill vöru',
+    amount: paymentFlow?.productPrice ?? 0,
+    title: paymentFlow.productTitle,
   }
 
   return {
