@@ -2127,6 +2127,9 @@ export interface ILatestGenericListItemsFields {
 
   /** See more link text */
   seeMoreLinkText?: string | undefined
+
+  /** Item Count */
+  itemCount?: number | undefined
 }
 
 export interface ILatestGenericListItems
@@ -3241,6 +3244,9 @@ export interface IOrganizationPage extends Entry<IOrganizationPageFields> {
 }
 
 export interface IOrganizationParentSubpageFields {
+  /** Organization Page */
+  organizationPage: IOrganizationPage
+
   /** Internal Title */
   internalTitle: string
 

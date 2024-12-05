@@ -76,6 +76,7 @@ export class DefendantService {
 
   private getMessagesForIndictmentToPrisonAdminChanges(
     defendant: Defendant,
+    caseId: string,
   ): Message {
     const messageType =
       defendant.isSentToPrisonAdmin === true
@@ -84,7 +85,7 @@ export class DefendantService {
 
     const message = {
       type: MessageType.DEFENDANT_NOTIFICATION,
-      caseId: defendant.caseId,
+      caseId,
       elementId: defendant.id,
       body: {
         type: messageType,
@@ -92,26 +93,6 @@ export class DefendantService {
     }
 
     return message
-  }
-
-  private getUpdatedDefendant(
-    numberOfAffectedRows: number,
-    defendants: Defendant[],
-    defendantId: string,
-    caseId: string,
-  ): Defendant {
-    if (numberOfAffectedRows > 1) {
-      // Tolerate failure, but log error
-      this.logger.error(
-        `Unexpected number of rows (${numberOfAffectedRows}) affected when updating defendant ${defendantId} of case ${caseId}`,
-      )
-    } else if (numberOfAffectedRows < 1) {
-      throw new InternalServerErrorException(
-        `Could not update defendant ${defendantId} of case ${caseId}`,
-      )
-    }
-
-    return defendants[0]
   }
 
   private async sendRequestCaseUpdateDefendantMessages(
@@ -196,7 +177,10 @@ export class DefendantService {
       updatedDefendant.isSentToPrisonAdmin !== oldDefendant.isSentToPrisonAdmin
     ) {
       messages.push(
-        this.getMessagesForIndictmentToPrisonAdminChanges(updatedDefendant),
+        this.getMessagesForIndictmentToPrisonAdminChanges(
+          updatedDefendant,
+          theCase.id,
+        ),
       )
     }
 
@@ -251,12 +235,18 @@ export class DefendantService {
       { where: { id: defendantId, caseId }, returning: true, transaction },
     )
 
-    return this.getUpdatedDefendant(
-      numberOfAffectedRows,
-      defendants,
-      defendantId,
-      caseId,
-    )
+    if (numberOfAffectedRows > 1) {
+      // Tolerate failure, but log error
+      this.logger.error(
+        `Unexpected number of rows (${numberOfAffectedRows}) affected when updating defendant ${defendantId} of case ${caseId}`,
+      )
+    } else if (numberOfAffectedRows < 1) {
+      throw new InternalServerErrorException(
+        `Could not update defendant ${defendantId} of case ${caseId}`,
+      )
+    }
+
+    return defendants[0]
   }
 
   async updateRequestCaseDefendant(

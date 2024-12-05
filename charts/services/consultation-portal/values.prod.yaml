@@ -22,6 +22,7 @@ env:
   API_URL: 'http://web-api.islandis.svc.cluster.local'
   BACKEND_DL_URL: 'https://samradapi.island.is/api/Documents/'
   BASEPATH: '/consultation-portal'
+  CODE_OWNER: 'Advania'
   ENVIRONMENT: 'prod'
   IDENTITY_SERVER_ISSUER_DOMAIN: 'innskra.island.is'
   LOG_LEVEL: 'info'

@@ -67,9 +67,9 @@ export class DocumentController {
         rawDocumentDTO.fileName
       }.pdf`,
     )
-    res.header('Pragma: no-cache')
-    res.header('Cache-Control: no-cache')
-    res.header('Cache-Control: nmax-age=0')
+    res.header('Pragma', 'no-cache')
+    res.header('Cache-Control', 'no-cache')
+    res.header('Cache-Control', 'nmax-age=0')
 
     return res.end(buffer)
   }
