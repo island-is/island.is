@@ -55,7 +55,7 @@ jobs:
           BaseRef: ${{ github.base_ref }} #The target branch e.g. main (feature/unicorn-app)
           HeadRef: ${{ github.head_ref }} #The branch being merged e.g. (unicorn-pipe-rel2)
         run: |
-          git fetch origin/$BaseRef
+          git fetch origin $BaseRef
           node scripts/ci/unicorn-utils.mjs "{\"baseBranch\": \"$BaseRef\", \"mergeBranch\": \"$HeadRef\" }"
           UNICORN=$(node scripts/ci/unicorn-utils.mjs)
           if [ "$UNICORN" == 'true' ]; then
