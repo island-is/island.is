@@ -68,6 +68,9 @@ jobs:
         run: |
           echo "Comparing nx affected for $HeadRef using origin/$BaseRef as base branch"
           echo IS_UNICORN=$(node scripts/ci/unicorn-utils.mjs "{\"baseBranch\": \"origin/$BaseRef\", \"mergeBranch\": \"$HeadRef\" }") >> "$GITHUB_OUTPUT"
+      - name: Results
+        run: |
+          echo "Unicorn = ${{ steps.unicorn-affected.outputs.IS_UNICORN }}"
   found-unicorn:
     if: needs.check-unicorn.outputs.IS_UNICORN == 'true'
     needs:
