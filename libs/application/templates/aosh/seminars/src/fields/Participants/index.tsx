@@ -62,8 +62,11 @@ export const Participants: FC<React.PropsWithChildren<FieldBaseProps>> = ({
     const reader = new FileReader()
     reader.onload = function (e) {
       const csvData = reader.result as string
-      // TODO if CSV error, display error on screen and make file rejected
       parse(csvData, (err, data) => {
+        if (err) {
+          rejectFile()
+          return
+        }
         const headers = data.shift()
         const validHeaders = checkHeaders(headers[0])
         if (!validHeaders) {
@@ -90,8 +93,7 @@ export const Participants: FC<React.PropsWithChildren<FieldBaseProps>> = ({
     return
   }
 
-  const removeFile = (file: UploadFile) => {
-    console.log('file', file)
+  const removeFile = () => {
     setFileState([])
   }
 
@@ -101,6 +103,13 @@ export const Participants: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   }
   return (
     <Box>
+      <a
+        href="/libs/application/templates/aosh/seminars/src/assets/csv_template.csv"
+        download
+      >
+        TEST{' '}
+      </a>
+
       <Controller
         name="csv-upload-participants"
         render={() => (
@@ -110,7 +119,7 @@ export const Participants: FC<React.PropsWithChildren<FieldBaseProps>> = ({
             header={formatMessage(participantMessages.labels.uploadHeader)}
             buttonLabel={formatMessage(participantMessages.labels.uploadButton)}
             onChange={(e) => changeFile(e)}
-            onRemove={(e) => removeFile(e)}
+            onRemove={() => removeFile()}
             onUploadRejection={rejectFile}
             errorMessage={uploadError || error}
             multiple={false}

@@ -1,6 +1,8 @@
 import {
   buildAlertMessageField,
   buildCustomField,
+  buildDescriptionField,
+  buildLinkField,
   buildMultiField,
   buildSection,
   buildTableRepeaterField,
@@ -22,7 +24,6 @@ export const participantsSection = buildSection({
         buildTableRepeaterField({
           id: 'participantList',
           title: 'test',
-          //maxRows eina leiðin til að koma í veg fyrir "bæta við" takka, bæta við prop eða?
           fields: {
             name: {
               component: 'input',
@@ -45,6 +46,16 @@ export const participantsSection = buildSection({
               width: 'half',
             },
           },
+        }),
+        buildDescriptionField({
+          id: '',
+          title: '',
+          description: participantMessages.labels.csvDescription,
+        }),
+        buildLinkField({
+          id: '',
+          title: 'test',
+          link: 'libs/application/templates/aosh/seminars/src/assets/CSV_TEMPLATE.csv',
         }),
         buildCustomField({
           id: 'participantCSV',
