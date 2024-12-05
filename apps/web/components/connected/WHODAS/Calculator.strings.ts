@@ -2,6 +2,11 @@ import { defineMessages } from 'react-intl'
 
 export const m = {
   form: defineMessages({
+    topDescription: {
+      id: 'web.whodas.calculator:form.topDescription#markdown',
+      defaultMessage: 'Merktu við einn valkost fyrir hverja spurningu.',
+      description: 'Texti fyrir ofan spurningalista',
+    },
     previousStep: {
       id: 'web.whodas.calculator:form.previousStep',
       defaultMessage: 'Fyrra skref',
@@ -51,6 +56,12 @@ export const m = {
     },
   }),
   results: defineMessages({
+    topDescription: {
+      id: 'web.whodas.calculator:results.topDescription#markdown',
+      defaultMessage:
+        'Takk fyrir að svara spurningalistanum, Mat á færni þinni. Mat þitt á færni er stuðningur við að meta þörf þína fyrir heimaþjónustu. Ef þú hefur ekki svarað öllum spurningum getur það haft áhrif á niðurstöðuna.',
+      description: 'Texti fyrir ofan niðurstöðuskjá',
+    },
     mainHeading: {
       id: 'web.whodas.calculator:form.mainHeading',
       defaultMessage: 'Niðurstaða mats á færni',
