@@ -90,20 +90,22 @@ const FileSection: FC<FileSection> = (props: FileSection) => {
 }
 
 const useFilteredCaseFiles = (caseFiles?: CaseFile[] | null) => {
-  const filterByCategories = (
-    categories: CaseFileCategory | CaseFileCategory[],
-  ) => {
-    const categoryArray = Array.isArray(categories) ? categories : [categories]
+  return useMemo(() => {
+    const filterByCategories = (
+      categories: CaseFileCategory | CaseFileCategory[],
+    ) => {
+      const categoryArray = Array.isArray(categories)
+        ? categories
+        : [categories]
 
-    return (
-      caseFiles?.filter(
-        (file) => file.category && categoryArray.includes(file.category),
-      ) ?? []
-    )
-  }
+      return (
+        caseFiles?.filter(
+          (file) => file.category && categoryArray.includes(file.category),
+        ) ?? []
+      )
+    }
 
-  return useMemo(
-    () => ({
+    return {
       indictments: filterByCategories(CaseFileCategory.INDICTMENT),
       criminalRecords: filterByCategories(CaseFileCategory.CRIMINAL_RECORD),
       costBreakdowns: filterByCategories(CaseFileCategory.COST_BREAKDOWN),
@@ -121,9 +123,8 @@ const useFilteredCaseFiles = (caseFiles?: CaseFile[] | null) => {
       sentToPrisonAdminFiles: filterByCategories(
         CaseFileCategory.SENT_TO_PRISON_ADMIN_FILE,
       ),
-    }),
-    [caseFiles],
-  )
+    }
+  }, [caseFiles])
 }
 
 const useFilePermissions = (workingCase: Case, user?: User) => {
@@ -141,7 +142,7 @@ const useFilePermissions = (workingCase: Case, user?: User) => {
       canViewSentToPrisonAdminFiles:
         isPrisonAdminUser(user) || isPublicProsecutorUser(user),
     }),
-    [user],
+    [user, workingCase.hasCivilClaims],
   )
 }
 
