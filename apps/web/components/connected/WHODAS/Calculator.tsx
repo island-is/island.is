@@ -291,7 +291,6 @@ export const WHODASCalculator = ({ slice }: WHODASCalculatorProps) => {
     if (totalMaxScorePossible > 0) {
       totalScore = (totalScore * 100) / totalMaxScorePossible
     }
-    console.log(results)
     return (
       <Stack space={8}>
         <MarkdownText replaceNewLinesWithBreaks={false}>
