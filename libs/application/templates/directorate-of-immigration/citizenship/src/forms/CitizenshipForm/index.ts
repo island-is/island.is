@@ -1,4 +1,4 @@
-import { buildForm, buildSection } from '@island.is/application/core'
+import { buildDescriptionField, buildForm, buildSection } from '@island.is/application/core'
 import { Form, FormModes, Section } from '@island.is/application/types'
 import { confirmation, externalData, payment } from '../../lib/messages'
 import { InformationSection } from './InformationSection'
@@ -29,6 +29,18 @@ export const CitizenshipForm: Form = buildForm({
       id: 'externalData',
       title: externalData.dataProvider.sectionTitle,
       children: [],
+    }),
+    buildSection({
+      id: 'HjorturJ',
+      title: 'ASDFGH',
+      condition: (_answers) => false,
+      children: [
+        buildDescriptionField({
+          id: `huehuehue`,
+          title: 'Brudda',
+          titleVariant: 'h5',
+        }),
+      ],
     }),
     PersonalSection,
     InformationSection,
