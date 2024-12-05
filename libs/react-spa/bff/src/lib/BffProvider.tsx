@@ -83,9 +83,12 @@ export const BffProvider = ({
   }, [postMessage, state.userInfo, isLoggedIn])
 
   /**
-   * Prepares login query params (target_link_uri, prompt, login_hint) from if they exist in the url.
-   * If the target_link_uri is not present in the query string, then the current url is returned.
-   * If the user is on the old login path, then `/login` is removed from the path
+   * Builds authentication query parameters for login redirection:
+   * - target_link_uri: Destination URL after successful login
+   *   • Uses URL from query string if provided
+   *   • Falls back to current URL, with '/login' stripped if on legacy login path
+   * - prompt: Optional authentication prompt type
+   * - login_hint: Optional suggested account identifier
    */
   const loginQueryParams = useMemo(() => {
     const urlParams = new URLSearchParams(window.location.search)
