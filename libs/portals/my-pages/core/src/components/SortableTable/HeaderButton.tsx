@@ -29,10 +29,8 @@ export const HeaderButton = ({
     {sortConfig.key === headItem && (
       <Icon
         className={styles.chevron}
-        color="dark400"
-        icon={
-          sortConfig.direction === 'ascending' ? 'chevronDown' : 'chevronUp'
-        }
+        color="blue400"
+        icon={sortConfig.direction === 'ascending' ? 'caretDown' : 'caretUp'}
         size="small"
       />
     )}
