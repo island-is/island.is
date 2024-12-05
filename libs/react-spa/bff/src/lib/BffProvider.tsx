@@ -1,12 +1,5 @@
 import { useEffectOnce } from '@island.is/react-spa/shared'
-import {
-  ReactNode,
-  useCallback,
-  useEffect,
-  useMemo,
-  useReducer,
-  useState,
-} from 'react'
+import { ReactNode, useCallback, useEffect, useReducer, useState } from 'react'
 
 import { LoadingScreen } from '@island.is/react/components'
 import { BffContext } from './BffContext'
@@ -90,13 +83,12 @@ export const BffProvider = ({
    * - prompt: Optional authentication prompt type
    * - login_hint: Optional suggested account identifier
    */
-  const loginQueryParams = useMemo(() => {
+  const getLoginQueryParams = useCallback(() => {
     const urlParams = new URLSearchParams(window.location.search)
     const targetLinkUri = urlParams.get('target_link_uri')
     const prompt = urlParams.get('prompt')
     const loginHint = urlParams.get('login_hint')
     const url = window.location.href
-
     const params = {
       target_link_uri:
         targetLinkUri ??
@@ -111,6 +103,7 @@ export const BffProvider = ({
         login_hint: loginHint,
       }),
     }
+    console.log(url, params)
 
     return params
   }, [applicationBasePath, oldLoginPath])
@@ -167,8 +160,8 @@ export const BffProvider = ({
       type: ActionType.SIGNIN_START,
     })
 
-    window.location.href = bffUrlGenerator('/login', loginQueryParams)
-  }, [bffUrlGenerator, loginQueryParams])
+    window.location.href = bffUrlGenerator('/login', getLoginQueryParams())
+  }, [bffUrlGenerator, getLoginQueryParams])
 
   const signOut = useCallback(() => {
     if (!state.userInfo) {
@@ -195,14 +188,17 @@ export const BffProvider = ({
         type: ActionType.SWITCH_USER,
       })
 
+      const loginQueryParams = getLoginQueryParams()
+      const targetLinkUri = loginQueryParams['target_link_uri']
+
       window.location.href = bffUrlGenerator('/login', {
-        target_link_uri: loginQueryParams['target_link_uri'],
+        target_link_uri: targetLinkUri,
         ...(nationalId
           ? { login_hint: nationalId }
           : { prompt: 'select_account' }),
       })
     },
-    [bffUrlGenerator, loginQueryParams],
+    [bffUrlGenerator, getLoginQueryParams],
   )
 
   const checkQueryStringError = () => {
