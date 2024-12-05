@@ -56,7 +56,7 @@ jobs:
           HeadRef: ${{ github.head_ref }} #The branch being merged e.g. (unicorn-pipe-rel2)
         run: |
           node scripts/ci/unicorn-utils.mjs "{\"baseBranch\": \"origin/$BaseRef\", \"mergeBranch\": \"$HeadRef\" }"
-          UNICORN=$(scripts/ci/unicorn-utils.mjs "{\"baseBranch\": \"origin/$BaseRef\", \"mergeBranch\": \"$HeadRef\" }")
+          UNICORN=$(node scripts/ci/unicorn-utils.mjs "{\"baseBranch\": \"origin/$BaseRef\", \"mergeBranch\": \"$HeadRef\" }")
           if [ "$UNICORN" == 'true' ]; then
               echo "unicorn is detected"
               echo IS_UNICORN=true >> "$GITHUB_OUTPUT"
