@@ -51,7 +51,10 @@ jobs:
   check-unicorn:
     name: Check if app is on unicorn track
     needs: prepare
-    runs-on: ${{needs.prepare.outputs.RUNNER}}
+    runs-on: ec2-runners
+    container:
+      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
+    timeout-minutes: 45
 
     outputs:
       IS_UNICORN: ${{ steps.unicorn-affected.outputs.IS_UNICORN }}
@@ -70,7 +73,10 @@ jobs:
     needs:
       - check-unicorn
       - prepare
-    runs-on: ${{needs.prepare.outputs.RUNNER}}
+    runs-on: ec2-runners
+    container:
+      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
+    timeout-minutes: 45
     name: Create a unicorn Relese
     steps:
       - name: Create release
