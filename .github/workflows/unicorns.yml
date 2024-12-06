@@ -67,7 +67,7 @@ jobs:
           # echo $OWNER
           # echo $REPO
           # echo $PR_NUMBER
-          echo $EVENT
+          echo $EVENT | jq
           curl -L \
             -H "Accept: application/vnd.github+json" \
             -H "Authorization: Bearer $GITHUB_TOKEN" \
