@@ -532,7 +532,14 @@ export class DrivingLicenseApi {
     instructorSSN: string
     phoneNumber: string
     email: string
+    healthDeclarationFileUpload: {
+      base64: string
+      filename: string
+    }
   }): Promise<boolean> {
+    const [fileName, fileExtension] =
+      params.healthDeclarationFileUpload.filename.split('.')
+
     const response = await this.applicationV5.apiApplicationsV5ApplyforBePost({
       apiVersion: v5.DRIVING_LICENSE_API_VERSION_V5,
       apiVersion2: v5.DRIVING_LICENSE_API_VERSION_V5,
@@ -543,6 +550,15 @@ export class DrivingLicenseApi {
         instructorSSN: params.instructorSSN,
         primaryPhoneNumber: params.phoneNumber,
         studentEmail: params.email,
+        contentList: [
+          {
+            content: params.healthDeclarationFileUpload.base64,
+            description: 'HealthDeclaration',
+            fileExtension,
+            fileName,
+            contentType: fileExtension,
+          },
+        ],
       },
     })
 

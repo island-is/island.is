@@ -36,11 +36,17 @@ export interface NewTemporaryDrivingLicenseInput {
   phone: string
 }
 
+export interface FileAndMetadata {
+  filename: string
+  base64: string
+}
+
 export interface NewBEDrivingLicenseInput {
   jurisdiction: number
   instructorSSN: string
   primaryPhoneNumber: string
   studentEmail: string
+  healthDeclarationFileUpload: FileAndMetadata
 }
 
 export interface NewDrivingLicenseResult {

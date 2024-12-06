@@ -1,18 +1,20 @@
 import { FC, useEffect } from 'react'
 import { Box, AlertMessage } from '@island.is/island-ui/core'
-import { formatText, getValueViaPath } from '@island.is/application/core'
+import { NO, YES, getValueViaPath } from '@island.is/application/core'
 import { FieldBaseProps } from '@island.is/application/types'
 import { m } from '../lib/messages'
 import { useLocale } from '@island.is/localization'
 import { useFormContext } from 'react-hook-form'
-import { YES, NO, codesRequiringHealthCertificate } from '../lib/constants'
-import { DrivingLicense, Remark } from '../lib/types'
+import {
+  DrivingLicense,
+  codesRequiringHealthCertificate,
+} from '../lib/constants'
 
 const HealthRemarks: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   application,
 }) => {
   const { formatMessage } = useLocale()
-  const remarks: Remark[] =
+  const remarks =
     getValueViaPath<DrivingLicense>(
       application.externalData,
       'currentLicense.data',
@@ -33,9 +35,9 @@ const HealthRemarks: FC<React.PropsWithChildren<FieldBaseProps>> = ({
     <Box marginBottom={3}>
       <AlertMessage
         type="warning"
-        title={formatText(m.healthRemarksTitle, application, formatMessage)}
+        title={formatMessage(m.healthRemarksTitle)}
         message={
-          formatText(m.healthRemarksDescription, application, formatMessage) +
+          formatMessage(m.healthRemarksDescription) +
             ' ' +
             remarks?.map((r) => r.description).join(', ') || ''
         }
