@@ -65,6 +65,7 @@ jobs:
         run: |
           echo $OWNER
           echo $REPO
+          echo $PR_NUMBER
           curl -L \
             -H "Accept: application/vnd.github+json" \
             -H "Authorization: Bearer $GITHUB_TOKEN" \
