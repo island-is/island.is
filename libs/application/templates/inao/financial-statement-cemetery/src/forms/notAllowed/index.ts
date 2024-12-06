@@ -1,10 +1,26 @@
-import { buildForm } from '@island.is/application/core'
-import { notAllowedSection } from './notAllowedSection'
+import {
+  buildDescriptionField,
+  buildForm,
+  buildSection,
+} from '@island.is/application/core'
 import Logo from '../../components/Logo'
+import { m } from '../../lib/messages'
 
 export const notAllowedForm = buildForm({
   id: 'notAllowedForm',
   title: '',
   logo: Logo,
-  children: [notAllowedSection],
+  children: [
+    buildSection({
+      id: 'notAllowedSection',
+      title: '',
+      children: [
+        buildDescriptionField({
+          id: 'notAllowedDescription',
+          title: m.notAllowedTitle,
+          description: m.notAllowedDescription,
+        }),
+      ],
+    }),
+  ],
 })

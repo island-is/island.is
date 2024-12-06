@@ -3,7 +3,8 @@ import { m } from './messages'
 import * as kennitala from 'kennitala'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { BOARDMEMEBER, CARETAKER } from '../utils/constants'
-import { getBoardmembersAndCaretakers } from '../utils/helpers'
+import { checkIfNegative, getBoardmembersAndCaretakers } from '../utils/helpers'
+import { YES } from '@island.is/application/types'
 
 const FileSchema = z.object({
   name: z.string(),
@@ -11,46 +12,34 @@ const FileSchema = z.object({
   url: z.string().optional(),
 })
 
-const checkIfNegative = (inputNumber: string) => {
-  if (Number(inputNumber) < 0) {
-    return false
-  } else {
-    return true
-  }
-}
+const cemeteryOperation = z.object({
+  incomeLimit: z.string().optional(),
+})
 
 const conditionalAbout = z.object({
   operatingYear: z.string().refine((x) => !!x, { params: m.required }),
 })
 
-const cemeteryOperation = z.object({
-  incomeLimit: z.string().optional(),
+const about = z.object({
+  nationalId: z
+    .string()
+    .refine((val) => (val ? kennitala.isValid(val) : false), {
+      params: m.nationalIdError,
+    }),
+  fullName: z.string().refine((x) => !!x, { params: m.required }),
+  powerOfAttorneyNationalId: z.string().optional(),
+  powerOfAttorneyName: z.string().optional(),
+  phoneNumber: z.string().refine(
+    (p) => {
+      const phoneNumber = parsePhoneNumberFromString(p, 'IS')
+      return phoneNumber && phoneNumber.isValid()
+    },
+    { params: m.dataSchemePhoneNumber },
+  ),
+  email: z.string().email(),
 })
 
-const cemeteryLiability = z.object({
-  longTerm: z
-    .string()
-    .refine((x) => !!x, { params: m.required })
-    .refine((x) => checkIfNegative(x), { params: m.negativeNumberError }),
-  shortTerm: z
-    .string()
-    .refine((x) => !!x, { params: m.required })
-    .refine((x) => checkIfNegative(x), { params: m.negativeNumberError }),
-  total: z.string().refine((x) => !!x, { params: m.required }),
-})
-
-const cemeteryAsset = z.object({
-  currentAssets: z
-    .string()
-    .refine((x) => !!x, { params: m.required })
-    .refine((x) => checkIfNegative(x), { params: m.negativeNumberError }),
-  fixedAssetsTotal: z
-    .string()
-    .refine((x) => !!x, { params: m.required })
-    .refine((x) => checkIfNegative(x), { params: m.negativeNumberError }),
-  total: z.string(),
-})
-
+// Key numbers - Income and Expenses - Income
 const cemeteryIncome = z.object({
   careIncome: z
     .string()
@@ -71,6 +60,7 @@ const cemeteryIncome = z.object({
   total: z.string(),
 })
 
+// Key numbers - Income and Expenses - Expenses
 const cemeteryExpense = z.object({
   payroll: z
     .string()
@@ -103,24 +93,71 @@ const cemeteryExpense = z.object({
   total: z.string(),
 })
 
-const about = z.object({
-  nationalId: z
+// Key numbers - Capital numbers
+const capitalNumbers = z.object({
+  capitalIncome: z
     .string()
-    .refine((val) => (val ? kennitala.isValid(val) : false), {
-      params: m.nationalIdError,
-    }),
-  fullName: z.string().refine((x) => !!x, { params: m.required }),
-  powerOfAttorneyNationalId: z.string().optional(),
-  powerOfAttorneyName: z.string().optional(),
-  phoneNumber: z.string().refine(
-    (p) => {
-      const phoneNumber = parsePhoneNumberFromString(p, 'IS')
-      return phoneNumber && phoneNumber.isValid()
-    },
-    { params: m.dataSchemePhoneNumber },
-  ),
-  email: z.string().email(),
+    .refine((x) => !!x, { params: m.required })
+    .refine((x) => checkIfNegative(x), { params: m.negativeNumberError }),
+  capitalCost: z
+    .string()
+    .refine((x) => !!x, { params: m.required })
+    .refine((x) => checkIfNegative(x), { params: m.negativeNumberError }),
+  total: z.string(),
 })
+
+// Key numbers - Equity and Liability - Assets
+const cemeteryAsset = z.object({
+  currentAssets: z
+    .string()
+    .refine((x) => !!x, { params: m.required })
+    .refine((x) => checkIfNegative(x), { params: m.negativeNumberError }),
+  fixedAssetsTotal: z
+    .string()
+    .refine((x) => !!x, { params: m.required })
+    .refine((x) => checkIfNegative(x), { params: m.negativeNumberError }),
+})
+
+// Key numbers - Equity and Liability - Liabilities
+const cemeteryLiability = z.object({
+  longTerm: z
+    .string()
+    .refine((x) => !!x, { params: m.required })
+    .refine((x) => checkIfNegative(x), { params: m.negativeNumberError }),
+  shortTerm: z
+    .string()
+    .refine((x) => !!x, { params: m.required })
+    .refine((x) => checkIfNegative(x), { params: m.negativeNumberError }),
+})
+
+// Key numbers - Equity and Liability - Equity
+const cemeteryEquity = z.object({
+  equityAtTheBeginningOfTheYear: z
+    .string()
+    .refine((x) => !!x, { params: m.required }),
+  operationResult: z.string(),
+  revaluationDueToPriceChanges: z
+    .string()
+    .refine((x) => !!x, { params: m.required })
+    .refine((x) => checkIfNegative(x), { params: m.negativeNumberError }),
+  reevaluateOther: z
+    .string()
+    .refine((x) => !!x, { params: m.required })
+    .refine((x) => checkIfNegative(x), { params: m.negativeNumberError }),
+  total: z.string(),
+})
+
+// Key numbers - Equity and Liability - Equity and Liabilities totals
+const equityAndLiabilitiesTotals = z
+  .object({
+    assetsTotal: z.string(),
+    liabilitiesTotal: z.string(),
+    equityAndLiabilitiesTotal: z.string(),
+  })
+  .refine((x) => x.assetsTotal === x.equityAndLiabilitiesTotal, {
+    message: 'equityAndLiabilities.total must match assets.total',
+    path: ['equityAndLiabilitiesTotals', 'equityAndLiabilitiesTotal'],
+  })
 
 const cemeteryCaretaker = z
   .array(
@@ -178,54 +215,23 @@ const cemeteryCaretaker = z
     { params: m.errormemberNotUnique },
   )
 
-const cemeteryEquity = z.object({
-  equityAtTheBeginningOfTheYear: z
-    .string()
-    .refine((x) => !!x, { params: m.required }),
-  operationResult: z.string(),
-  revaluationDueToPriceChanges: z
-    .string()
-    .refine((x) => !!x, { params: m.required })
-    .refine((x) => checkIfNegative(x), { params: m.negativeNumberError }),
-  reevaluateOther: z
-    .string()
-    .refine((x) => !!x, { params: m.required })
-    .refine((x) => checkIfNegative(x), { params: m.negativeNumberError }),
-  total: z.string(),
-})
-
-const equityAndLiabilities = z.object({
-  total: z.string(),
-})
-
-const capitalNumbers = z.object({
-  capitalIncome: z
-    .string()
-    .refine((x) => !!x, { params: m.required })
-    .refine((x) => checkIfNegative(x), { params: m.negativeNumberError }),
-  capitalCost: z
-    .string()
-    .refine((x) => !!x, { params: m.required })
-    .refine((x) => checkIfNegative(x), { params: m.negativeNumberError }),
-  total: z.string(),
-})
-
 export const dataSchema = z.object({
-  conditionalAbout,
-  about,
   approveExternalData: z.boolean().refine((v) => v),
   cemeteryOperation,
-  cemeteryAsset,
-  cemeteryLiability,
+  conditionalAbout,
+  about,
   cemeteryIncome,
   cemeteryExpense,
+  capitalNumbers,
+  cemeteryAsset,
+  cemeteryLiability,
+  cemeteryEquity,
+  equityAndLiabilitiesTotals,
+  cemeteryCaretaker,
   attachments: z.object({
     file: z.array(FileSchema).nonempty(),
   }),
-  cemeteryCaretaker,
-  cemeteryEquity,
-  equityAndLiabilities,
-  capitalNumbers,
+  approveOverview: z.array(z.literal(YES)).length(1),
 })
 
 export type FinancialStatementCemetery = z.TypeOf<typeof dataSchema>

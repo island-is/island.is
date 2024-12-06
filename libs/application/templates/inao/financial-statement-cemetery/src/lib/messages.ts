@@ -682,4 +682,10 @@ export const m = defineMessages({
       'Ef þú telur að þessi kennitala ætti að vera skráð sem kirkjugarður þá bendum við þér á að hafa samband við Ríkisendurskoðun í síma 448 8800',
     description: 'Descriptionwhen user is not allowed to apply',
   },
+  conclusionAlertMessage: {
+    id: 'fspp.application:conclusionAlertMessage',
+    defaultMessage:
+      'Ársreikning fyrir rekstrarárið {value1} hefur verið skilað',
+    description: 'Conclusion alert message',
+  },
 })

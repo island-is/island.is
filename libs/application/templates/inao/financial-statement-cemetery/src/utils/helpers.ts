@@ -6,6 +6,7 @@ import {
   CARETAKER,
   CEMETERYEQUITIESANDLIABILITIESIDS,
   CEMETERYOPERATIONIDS,
+  EQUITYANDLIABILITIESTOTALS,
   OPERATINGCOST,
   TOTAL,
 } from './constants'
@@ -110,6 +111,14 @@ export const getConfigInfoForKey = (config: Config[], configKey: string) => {
 export const formatCurrency = (answer?: string) => {
   if (!answer) return '0. kr'
   return answer.replace(/\B(?=(\d{3})+(?!\d))/g, '.') + ' kr.'
+}
+
+export const checkIfNegative = (inputNumber: string) => {
+  if (Number(inputNumber) < 0) {
+    return false
+  } else {
+    return true
+  }
 }
 
 export const sumIncome = (answers: FormValue) => {
@@ -261,19 +270,68 @@ export const sumTotalEquity = (answers: FormValue) => {
 }
 
 export const sumTotalEquityAndLiabilities = (answers: FormValue) => {
+  const liabilityTotal = getValueViaPath<string>(
+    answers,
+    EQUITYANDLIABILITIESTOTALS.liabilitiesTotal,
+  )
   const totalEquity = getValueViaPath<string>(
     answers,
     CEMETERYEQUITIESANDLIABILITIESIDS.equityTotal,
   )
-  const totalLiabilities = getValueViaPath<string>(
-    answers,
-    CEMETERYEQUITIESANDLIABILITIESIDS.totalEquityAndLiabilities,
-  )
-  console.log(totalEquity, totalLiabilities)
 
-  return `${Number(totalEquity) + Number(totalLiabilities)}`
+  return `${Number(totalEquity) + Number(liabilityTotal)}`
 }
 
-export const shouldShowEquityAndLiabilityError = (answers: FormValue) => {
-  return true
+export const showEquitiesAndLiabilitiesAlert = (answers: FormValue) => {
+  const fixedAssetsTotal = getValueViaPath<string>(
+    answers,
+    CEMETERYEQUITIESANDLIABILITIESIDS.fixedAssetsTotal,
+  )
+  const currentAssets = getValueViaPath<string>(
+    answers,
+    CEMETERYEQUITIESANDLIABILITIESIDS.currentAssets,
+  )
+  const longTerm = getValueViaPath<string>(
+    answers,
+    CEMETERYEQUITIESANDLIABILITIESIDS.longTerm,
+  )
+  const shortTerm = getValueViaPath<string>(
+    answers,
+    CEMETERYEQUITIESANDLIABILITIESIDS.shortTerm,
+  )
+  const equityAtTheBeginningOfTheYear = getValueViaPath<string>(
+    answers,
+    CEMETERYEQUITIESANDLIABILITIESIDS.equityAtTheBeginningOfTheYear,
+  )
+  const revaluationDueToPriceChanges = getValueViaPath<string>(
+    answers,
+    CEMETERYEQUITIESANDLIABILITIESIDS.revaluationDueToPriceChanges,
+  )
+  const reevaluateOther = getValueViaPath<string>(
+    answers,
+    CEMETERYEQUITIESANDLIABILITIESIDS.reevaluateOther,
+  )
+
+  const totalAssets = getValueViaPath<string>(
+    answers,
+    EQUITYANDLIABILITIESTOTALS.assetsTotal,
+  )
+  const totalEquityAndLiabilities = getValueViaPath<string>(
+    answers,
+    EQUITYANDLIABILITIESTOTALS.equityAndLiabilitiesTotal,
+  )
+
+  if (
+    !fixedAssetsTotal ||
+    !currentAssets ||
+    !longTerm ||
+    !shortTerm ||
+    !equityAtTheBeginningOfTheYear ||
+    !revaluationDueToPriceChanges ||
+    !reevaluateOther ||
+    !operationResult
+  ) {
+    return false
+  }
+  return totalAssets !== totalEquityAndLiabilities
 }

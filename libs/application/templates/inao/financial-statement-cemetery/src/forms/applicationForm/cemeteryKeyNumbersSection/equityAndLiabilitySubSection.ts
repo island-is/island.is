@@ -1,6 +1,5 @@
 import {
   buildAlertMessageField,
-  buildCustomField,
   buildDescriptionField,
   buildDisplayField,
   buildMultiField,
@@ -8,10 +7,13 @@ import {
   buildTextField,
 } from '@island.is/application/core'
 import { m } from '../../../lib/messages'
-import { CEMETERYEQUITIESANDLIABILITIESIDS } from '../../../utils/constants'
+import {
+  CEMETERYEQUITIESANDLIABILITIESIDS,
+  EQUITYANDLIABILITIESTOTALS,
+} from '../../../utils/constants'
 import {
   operationResult,
-  shouldShowEquityAndLiabilityError,
+  showEquitiesAndLiabilitiesAlert,
   sumAssets,
   sumLiabilities,
   sumTotalEquity,
@@ -48,7 +50,7 @@ export const equityAndLiabilitiesSubSection = buildSubSection({
           rightAlign: true,
         }),
         buildDisplayField({
-          id: CEMETERYEQUITIESANDLIABILITIESIDS.assetTotal,
+          id: EQUITYANDLIABILITIESTOTALS.assetsTotal,
           title: '',
           label: m.totalAssets,
           value: sumAssets,
@@ -77,7 +79,7 @@ export const equityAndLiabilitiesSubSection = buildSubSection({
           rightAlign: true,
         }),
         buildDisplayField({
-          id: CEMETERYEQUITIESANDLIABILITIESIDS.liabilityTotal,
+          id: EQUITYANDLIABILITIESTOTALS.liabilitiesTotal,
           title: '',
           label: m.totalLiabilities,
           value: sumLiabilities,
@@ -137,7 +139,7 @@ export const equityAndLiabilitiesSubSection = buildSubSection({
           titleVariant: 'h3',
         }),
         buildDisplayField({
-          id: CEMETERYEQUITIESANDLIABILITIESIDS.totalEquityAndLiabilities,
+          id: EQUITYANDLIABILITIESTOTALS.equityAndLiabilitiesTotal,
           title: '',
           value: sumTotalEquityAndLiabilities,
           variant: 'currency',
@@ -145,22 +147,12 @@ export const equityAndLiabilitiesSubSection = buildSubSection({
         }),
 
         buildAlertMessageField({
-          condition: (application) => {
-            return shouldShowEquityAndLiabilityError(application)
-          },
+          condition: showEquitiesAndLiabilitiesAlert,
           id: 'equityAndLiabilityError',
           title: m.equityErrorTitle,
-          description: m.equityDebtsAssetsValidatorError,
+          message: m.equityDebtsAssetsValidatorError,
           alertType: 'error',
         }),
-
-        // buildCustomField({
-        //   id: 'cemeteryEquitiesAndLiabilities',
-        //   title: m.keyNumbersDebt,
-        //   description: m.fillOutAppopriate,
-        //   component: 'CemeteryEquities',
-        //   childInputIds: Object.values(CEMETERYEQUITIESANDLIABILITIESIDS),
-        // }),
       ],
     }),
   ],
