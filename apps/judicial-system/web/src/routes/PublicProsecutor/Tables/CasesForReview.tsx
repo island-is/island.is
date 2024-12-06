@@ -2,8 +2,12 @@ import { FC } from 'react'
 import { useIntl } from 'react-intl'
 import { AnimatePresence } from 'framer-motion'
 
-import { Text } from '@island.is/island-ui/core'
-import { capitalize, formatDate } from '@island.is/judicial-system/formatters'
+import { Tag, Text } from '@island.is/island-ui/core'
+import {
+  capitalize,
+  districtCourtAbbreviation,
+  formatDate,
+} from '@island.is/judicial-system/formatters'
 import { core, tables } from '@island.is/judicial-system-web/messages'
 import { SectionHeading } from '@island.is/judicial-system-web/src/components'
 import { useContextMenu } from '@island.is/judicial-system-web/src/components/ContextMenu/ContextMenu'
@@ -18,7 +22,10 @@ import TableInfoContainer from '@island.is/judicial-system-web/src/components/Ta
 import TagCaseState, {
   mapIndictmentCaseStateToTagVariant,
 } from '@island.is/judicial-system-web/src/components/TagCaseState/TagCaseState'
-import { CaseListEntry } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  CaseIndictmentRulingDecision,
+  CaseListEntry,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { strings } from './CasesForReview.strings'
 
@@ -41,6 +48,10 @@ const CasesForReview: FC<CasesForReviewTableProps> = ({ loading, cases }) => {
               thead={[
                 {
                   title: formatMessage(tables.caseNumber),
+                  sortable: {
+                    isSortable: true,
+                    key: 'courtCaseNumber',
+                  },
                 },
                 {
                   title: capitalize(
@@ -51,6 +62,7 @@ const CasesForReview: FC<CasesForReviewTableProps> = ({ loading, cases }) => {
                     key: 'defendants',
                   },
                 },
+                { title: formatMessage(tables.type) },
                 { title: formatMessage(tables.state) },
                 { title: formatMessage(tables.prosecutorName) },
                 {
@@ -62,21 +74,41 @@ const CasesForReview: FC<CasesForReviewTableProps> = ({ loading, cases }) => {
                 },
               ]}
               data={cases}
-              generateContextMenuItems={(row) => {
-                return [openCaseInNewTabMenuItem(row.id)]
-              }}
+              generateContextMenuItems={(row) => [
+                openCaseInNewTabMenuItem(row.id),
+              ]}
               columns={[
                 {
-                  cell: (row) => (
-                    <CourtCaseNumber
-                      courtCaseNumber={row.courtCaseNumber ?? ''}
-                      policeCaseNumbers={row.policeCaseNumbers ?? []}
-                      appealCaseNumber={row.appealCaseNumber ?? ''}
-                    />
-                  ),
+                  cell: (row) => {
+                    const courtAbbreviation = districtCourtAbbreviation(
+                      row.court?.name,
+                    )
+
+                    return (
+                      <CourtCaseNumber
+                        courtCaseNumber={`${
+                          courtAbbreviation ? `${courtAbbreviation}: ` : ''
+                        }${row.courtCaseNumber ?? ''}`}
+                        policeCaseNumbers={row.policeCaseNumbers ?? []}
+                        appealCaseNumber={row.appealCaseNumber ?? ''}
+                      />
+                    )
+                  },
                 },
                 {
                   cell: (row) => <DefendantInfo defendants={row.defendants} />,
+                },
+                {
+                  cell: (row) => (
+                    <Tag variant="darkerBlue" outlined disabled>
+                      {formatMessage(
+                        row.indictmentRulingDecision ===
+                          CaseIndictmentRulingDecision.FINE
+                          ? tables.fineTag
+                          : tables.rulingTag,
+                      )}
+                    </Tag>
+                  ),
                 },
                 {
                   cell: (row) => (
