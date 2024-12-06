@@ -15,6 +15,20 @@ export enum Roles {
   APPLICANT = 'applicant',
 }
 
+export enum Routes {
+  LANDLORDINFORMATION = 'landlordInfo',
+  TENANTINFORMATION = 'tenantInfo',
+  PROPERTYINFORMATION = 'registerProperty.info',
+  PROPERTYCATEGORY = 'registerProperty.category',
+  SPECIALPROVISIONS = 'specialProvisions',
+  CONDITION = 'condition',
+  FIREPROTECTIONS = 'fireProtections',
+  RENTALPERIOD = 'rentalPeriod',
+  RENTALAMOUNT = 'rentalAmount',
+  SECURITYDEPOSIT = 'securityDeposit',
+  OTHERFEES = 'otherFees',
+}
+
 export enum AnswerOptions {
   YES = 'yes',
   NO = 'no',

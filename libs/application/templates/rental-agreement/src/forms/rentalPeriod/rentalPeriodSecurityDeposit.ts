@@ -12,6 +12,7 @@ import { FormValue } from '@island.is/application/types'
 import {
   SecurityDepositTypeOptions,
   SecurityDepositAmountOptions,
+  Routes,
 } from '../../lib/constants'
 import {
   getSecurityDepositTypeOptions,
@@ -20,11 +21,11 @@ import {
 import { securityDeposit } from '../../lib/messages'
 
 export const RentalPeriodSecurityDeposit = buildSubSection({
-  id: 'securityDeposit.SecurityDeposit',
+  id: Routes.SECURITYDEPOSIT,
   title: securityDeposit.subSectionName,
   children: [
     buildMultiField({
-      id: 'securityDeposit.Details',
+      id: Routes.SECURITYDEPOSIT,
       title: securityDeposit.pageTitle,
       description: securityDeposit.pageDescription,
       children: [

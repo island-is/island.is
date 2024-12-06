@@ -12,6 +12,7 @@ import {
   AnswerOptions,
   RentalAmountIndexTypes,
   RentalAmountPaymentDateOptions,
+  Routes,
   TRUE,
 } from '../../lib/constants'
 import {
@@ -30,11 +31,11 @@ const rentalAmountConnectedToIndex = (answers: FormValue) => {
 }
 
 export const RentalPeriodAmount = buildSubSection({
-  id: 'rentalAmount',
+  id: Routes.RENTALAMOUNT,
   title: rentalAmount.subSectionName,
   children: [
     buildMultiField({
-      id: 'rentalAmount.details',
+      id: Routes.RENTALAMOUNT,
       title: rentalAmount.pageTitle,
       description: rentalAmount.pageDescription,
       children: [

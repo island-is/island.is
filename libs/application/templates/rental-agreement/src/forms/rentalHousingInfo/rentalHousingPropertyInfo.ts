@@ -13,6 +13,7 @@ import { postalCodes } from '@island.is/shared/utils'
 import {
   RentalHousingCategoryClass,
   RentalHousingCategoryTypes,
+  Routes,
 } from '../../lib/constants'
 import {
   getApplicationAnswers,
@@ -27,11 +28,11 @@ const messagesSummary = registerProperty.infoSummary
 const messagesCategory = registerProperty.category
 
 export const RentalHousingPropertyInfo: SubSection = buildSubSection({
-  id: 'registerProperty',
+  id: Routes.PROPERTYINFORMATION,
   title: registerProperty.subsection.name,
   children: [
     buildMultiField({
-      id: 'registerProperty.info',
+      id: Routes.PROPERTYINFORMATION,
       title: messagesInfo.pageTitle,
       description: messagesInfo.pageDescription,
       children: [
@@ -141,7 +142,7 @@ export const RentalHousingPropertyInfo: SubSection = buildSubSection({
       ],
     }),
     buildMultiField({
-      id: 'registerProperty.category',
+      id: Routes.PROPERTYCATEGORY,
       title: messagesCategory.pageTitle,
       description: messagesCategory.pageDescription,
       children: [

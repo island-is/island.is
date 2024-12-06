@@ -10,7 +10,7 @@ import {
   getApplicationAnswers,
   getRentalOtherFeesPayeeOptions,
 } from '../../lib/utils'
-import { RentOtherFeesPayeeOptions } from '../../lib/constants'
+import { RentOtherFeesPayeeOptions, Routes } from '../../lib/constants'
 import { otherFees } from '../../lib/messages'
 
 const housingFundAmountPayedByTenant = (answers: FormValue) => {
@@ -29,11 +29,11 @@ const heatingCostPayedByTenant = (answers: FormValue) => {
 }
 
 export const RentalPeriodOtherFees = buildSubSection({
-  id: 'rentOtherFees',
+  id: Routes.OTHERFEES,
   title: otherFees.subSectionName,
   children: [
     buildMultiField({
-      id: 'rentOtherFees.details',
+      id: Routes.OTHERFEES,
       title: otherFees.pageTitle,
       description: otherFees.pageDescription,
       children: [

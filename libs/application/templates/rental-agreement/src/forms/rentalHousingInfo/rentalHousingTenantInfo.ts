@@ -7,13 +7,14 @@ import {
 import { formatPhoneNumber } from '@island.is/application/ui-components'
 import { formatNationalId } from '../../lib/utils'
 import { tenantDetails } from '../../lib/messages'
+import { Routes } from '../../lib/constants'
 
 export const RentalHousingTenantInfo = buildSubSection({
-  id: 'tenantInfo',
+  id: Routes.TENANTINFORMATION,
   title: tenantDetails.subSectionName,
   children: [
     buildMultiField({
-      id: 'tenantInfo.multiField',
+      id: Routes.TENANTINFORMATION,
       title: tenantDetails.pageTitle,
       description: tenantDetails.pageDescription,
       children: [
@@ -63,49 +64,6 @@ export const RentalHousingTenantInfo = buildSubSection({
             ],
             rows: ['name', 'phone', 'nationalId', 'email'],
           },
-          // TODO: Remove if not needed
-          // getStaticTableData: (application) => {
-          //   const name = getValueViaPath<string>(
-          //     application.externalData,
-          //     'nationalRegistry.data.fullName',
-          //   ) as string
-
-          //   const nationalId = getValueViaPath<string>(
-          //     application.externalData,
-          //     'nationalRegistry.data.nationalId',
-          //   )
-
-          //   const phone = getValueViaPath<string>(
-          //     application.externalData,
-          //     'userProfile.data.mobilePhoneNumber',
-          //   ) as string
-
-          //   const email = getValueViaPath<string>(
-          //     application.externalData,
-          //     'userProfile.data.email',
-          //   )
-
-          //   const userRole = application.answers.userRole as FormValue
-
-          //   if (
-          //     userRole.type === UserRole.TENANT &&
-          //     name &&
-          //     nationalId &&
-          //     phone &&
-          //     email
-          //   ) {
-          //     return [
-          //       {
-          //         name,
-          //         phone,
-          //         nationalId,
-          //         email,
-          //       },
-          //     ]
-          //   }
-
-          //   return []
-          // },
         }),
       ],
     }),

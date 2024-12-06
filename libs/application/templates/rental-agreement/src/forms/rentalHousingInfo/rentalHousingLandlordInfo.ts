@@ -7,13 +7,14 @@ import {
 import { formatPhoneNumber } from '@island.is/application/ui-components'
 import { formatNationalId } from '../../lib/utils'
 import { landlordDetails } from '../../lib/messages'
+import { Routes } from '../../lib/constants'
 
 export const RentalHousingLandlordInfo = buildSubSection({
-  id: 'landlordInfo',
+  id: Routes.LANDLORDINFORMATION,
   title: landlordDetails.subSectionName,
   children: [
     buildMultiField({
-      id: 'landlordInfo.multiField',
+      id: Routes.LANDLORDINFORMATION,
       title: landlordDetails.pageTitle,
       description: landlordDetails.pageDescription,
       children: [
@@ -64,49 +65,6 @@ export const RentalHousingLandlordInfo = buildSubSection({
             ],
             rows: ['name', 'phone', 'nationalId', 'email'],
           },
-          // TODO: Remove if not needed
-          // getStaticTableData: (application) => {
-          //   const name = getValueViaPath<string>(
-          //     application.externalData,
-          //     'nationalRegistry.data.fullName',
-          //   ) as string
-
-          //   const nationalId = getValueViaPath<string>(
-          //     application.externalData,
-          //     'nationalRegistry.data.nationalId',
-          //   )
-
-          //   const phone = getValueViaPath<string>(
-          //     application.externalData,
-          //     'userProfile.data.mobilePhoneNumber',
-          //   ) as string
-
-          //   const email = getValueViaPath<string>(
-          //     application.externalData,
-          //     'userProfile.data.email',
-          //   )
-
-          //   const userRole = application.answers.userRole as FormValue
-
-          //   if (
-          //     userRole.type === UserRole.LANDLORD &&
-          //     name &&
-          //     nationalId &&
-          //     phone &&
-          //     email
-          //   ) {
-          //     return [
-          //       {
-          //         name,
-          //         phone,
-          //         nationalId,
-          //         email,
-          //       },
-          //     ]
-          //   }
-
-          //   return []
-          // },
         }),
       ],
     }),
