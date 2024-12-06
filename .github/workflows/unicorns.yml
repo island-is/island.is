@@ -26,6 +26,10 @@ jobs:
     outputs:
       IS_PR_APPROOVED: ${{ steps.check-approoved.outputs.result }}
     steps:
+      - name: Set up job
+        id: setup
+        run: |
+          echo ${{ toJSON(github.event) }}
       - name: Check if PR is approved
         id: check-approoved
         uses: actions/github-script@v7
@@ -50,10 +54,6 @@ jobs:
       image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
     timeout-minutes: 10
     steps:
-      - name: PRing event
-        id: setup
-        run: |
-          echo $EVENT_CONTEXT
       - run: echo "selected runner = ${{ runner.name }}"
       - uses: actions/checkout@v4
         with:
