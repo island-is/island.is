@@ -41,13 +41,14 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           # return pullRequest.state === 'APPROVED';
           script: |
-            const { data: pullRequest } = await github.rest.pulls.get({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              pull_number: context.issue.number
-            });
-            console.log(pullRequest)
-            return pullRequest.state === 'APPROVED';
+            console.log(context.payload.pull_request);
+          # const { data: pullRequest } = await github.rest.pulls.get({
+            #   owner: context.repo.owner,
+            #   repo: context.repo.repo,
+            #   pull_number: context.issue.number
+            # });
+            # console.log(pullRequest)
+            # return pullRequest.state === 'APPROVED';
       - name: Results
         run: |
           echo "Is IS_PR_APPROOVED=${{ steps.check-approoved.outputs.result }}"
