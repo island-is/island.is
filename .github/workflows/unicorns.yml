@@ -47,6 +47,21 @@ jobs:
             var pending = context.payload.pull_request.requested_teams.length > 0
             console.log(!(declined && pending) ? 'Pr is approved' : 'Pr is not approved');
             return !(declined && pending);
+      - name: Find Latest Release Branch
+        if: ${{ steps.check-approoved.outputs.result }}
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const branches = await github.rest.repos.listBranches({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              protected: true
+            });
+
+            const releaseBranches = branches.data.filter(branch => branch.name.startsWith('release'));
+            console.log('Release branches:', releaseBranches.map(branch => branch.name));
+            return releaseBranches.length > 0 ? releaseBranches[0].name : null;
       - name: output
         run: echo "IS_APPROVED=${{ steps.check-approoved.outputs.result }}" >> $GITHUB_OUTPUT
 
