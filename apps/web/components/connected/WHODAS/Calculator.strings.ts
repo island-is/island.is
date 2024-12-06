@@ -62,11 +62,6 @@ export const m = {
         'Takk fyrir að svara spurningalistanum, Mat á færni þinni. Mat þitt á færni er stuðningur við að meta þörf þína fyrir heimaþjónustu. Ef þú hefur ekki svarað öllum spurningum getur það haft áhrif á niðurstöðuna.',
       description: 'Texti fyrir ofan niðurstöðuskjá',
     },
-    totalScore: {
-      id: 'web.whodas.calculator:results.totalScore',
-      defaultMessage: 'Stig samtals',
-      description: 'Stig samtals',
-    },
     resultDisclaimer: {
       id: 'web.whodas.calculator:results.resultDisclaimer',
       defaultMessage:
