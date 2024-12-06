@@ -455,6 +455,7 @@ services-auth-ids-api:
   grantNamespaces:
     - 'nginx-ingress-external'
     - 'user-notification'
+    - 'datadog'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
