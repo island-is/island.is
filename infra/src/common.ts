@@ -33,7 +33,7 @@ export async function runCommand({
   proc.stdout?.on('data', (data: Buffer | string) => {
     data
       .toString()
-      .split('\n')
+      .split(/\r?\n|\r|\n/g)
       .forEach((line: string) => {
         logger.info(logMessage(line.trim()))
       })
