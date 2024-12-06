@@ -1,4 +1,4 @@
-import faker from 'faker'
+import { faker } from '@faker-js/faker'
 
 import { CaseFileState } from '@island.is/judicial-system-web/src/graphql/schema'
 
@@ -10,10 +10,10 @@ import {
 
 const caseFiles = [
   {
-    id: faker.datatype.uuid(),
+    id: faker.string.uuid(),
     created: faker.date.past().toISOString(),
     modified: faker.date.past().toISOString(),
-    caseId: faker.datatype.uuid(),
+    caseId: faker.string.uuid(),
     name: faker.lorem.word(),
     type: faker.lorem.word(),
     state: CaseFileState.STORED_IN_RVG,
@@ -22,10 +22,10 @@ const caseFiles = [
     orderWithinChapter: 1,
   },
   {
-    id: faker.datatype.uuid(),
+    id: faker.string.uuid(),
     created: faker.date.past().toISOString(),
     modified: faker.date.past().toISOString(),
-    caseId: faker.datatype.uuid(),
+    caseId: faker.string.uuid(),
     name: faker.lorem.word(),
     type: faker.lorem.word(),
     state: CaseFileState.STORED_IN_RVG,
@@ -34,10 +34,10 @@ const caseFiles = [
     orderWithinChapter: 0,
   },
   {
-    id: faker.datatype.uuid(),
+    id: faker.string.uuid(),
     created: faker.date.past().toISOString(),
     modified: faker.date.past().toISOString(),
-    caseId: faker.datatype.uuid(),
+    caseId: faker.string.uuid(),
     name: faker.lorem.word(),
     type: faker.lorem.word(),
     state: CaseFileState.STORED_IN_RVG,
@@ -46,10 +46,10 @@ const caseFiles = [
     orderWithinChapter: 2,
   },
   {
-    id: faker.datatype.uuid(),
+    id: faker.string.uuid(),
     created: faker.date.past().toISOString(),
     modified: faker.date.past().toISOString(),
-    caseId: faker.datatype.uuid(),
+    caseId: faker.string.uuid(),
     name: faker.lorem.word(),
     type: faker.lorem.word(),
     state: CaseFileState.STORED_IN_RVG,
@@ -67,7 +67,7 @@ describe('getFilesToUpdate', () => {
   it('should return the item if a file is reordered but not put under a chapter', () => {
     const items: ReorderableItem[] = [
       {
-        id: faker.datatype.uuid(),
+        id: faker.string.uuid(),
         displayText: faker.lorem.words(2),
         isDivider: false,
         isHeading: false,
@@ -75,7 +75,7 @@ describe('getFilesToUpdate', () => {
         orderWithinChapter: 0,
       },
       {
-        id: faker.datatype.uuid(),
+        id: faker.string.uuid(),
         displayText: faker.lorem.words(2),
         isDivider: false,
         isHeading: false,
@@ -83,14 +83,14 @@ describe('getFilesToUpdate', () => {
         orderWithinChapter: 1,
       },
       {
-        id: faker.datatype.uuid(),
+        id: faker.string.uuid(),
         displayText: faker.lorem.words(2),
         isDivider: false,
         isHeading: true,
         chapter: 1,
       },
       {
-        id: faker.datatype.uuid(),
+        id: faker.string.uuid(),
         displayText: faker.lorem.words(2),
         isDivider: false,
         isHeading: false,
@@ -98,19 +98,19 @@ describe('getFilesToUpdate', () => {
         orderWithinChapter: 0,
       },
       {
-        id: faker.datatype.uuid(),
+        id: faker.string.uuid(),
         displayText: faker.lorem.words(2),
         isDivider: true,
         isHeading: false,
       },
       {
-        id: faker.datatype.uuid(),
+        id: faker.string.uuid(),
         displayText: faker.lorem.words(2),
         isDivider: false,
         isHeading: false,
       },
       {
-        id: faker.datatype.uuid(),
+        id: faker.string.uuid(),
         displayText: faker.lorem.words(2),
         isDivider: false,
         isHeading: false,
@@ -129,13 +129,13 @@ describe('getFilesToUpdate', () => {
   it('should return the correct chapter, orderWithinChapter and items if a file is reordered as the first item in a chapter', () => {
     const items: ReorderableItem[] = [
       {
-        id: faker.datatype.uuid(),
+        id: faker.string.uuid(),
         displayText: faker.lorem.words(2),
         isDivider: false,
         isHeading: false,
       },
       {
-        id: faker.datatype.uuid(),
+        id: faker.string.uuid(),
         displayText: faker.lorem.words(2),
         isDivider: false,
         isHeading: false,
@@ -143,14 +143,14 @@ describe('getFilesToUpdate', () => {
         orderWithinChapter: 1,
       },
       {
-        id: faker.datatype.uuid(),
+        id: faker.string.uuid(),
         displayText: faker.lorem.words(2),
         isDivider: false,
         isHeading: true,
         chapter: 1,
       },
       {
-        id: faker.datatype.uuid(),
+        id: faker.string.uuid(),
         displayText: faker.lorem.words(2),
         isDivider: false,
         isHeading: false,
@@ -158,19 +158,19 @@ describe('getFilesToUpdate', () => {
         orderWithinChapter: 0,
       },
       {
-        id: faker.datatype.uuid(),
+        id: faker.string.uuid(),
         displayText: faker.lorem.words(2),
         isDivider: true,
         isHeading: false,
       },
       {
-        id: faker.datatype.uuid(),
+        id: faker.string.uuid(),
         displayText: faker.lorem.words(2),
         isDivider: false,
         isHeading: false,
       },
       {
-        id: faker.datatype.uuid(),
+        id: faker.string.uuid(),
         displayText: faker.lorem.words(2),
         isDivider: false,
         isHeading: false,
@@ -187,7 +187,7 @@ describe('getFilesToUpdate', () => {
   it('should return the correct chapter, orderWithinChapter and items if a file is reordered as the last item in a chapter', () => {
     const items: ReorderableItem[] = [
       {
-        id: faker.datatype.uuid(),
+        id: faker.string.uuid(),
         displayText: faker.lorem.words(2),
         isDivider: false,
         isHeading: false,
@@ -195,20 +195,20 @@ describe('getFilesToUpdate', () => {
         orderWithinChapter: 0,
       },
       {
-        id: faker.datatype.uuid(),
+        id: faker.string.uuid(),
         displayText: faker.lorem.words(2),
         isDivider: false,
         isHeading: false,
       },
       {
-        id: faker.datatype.uuid(),
+        id: faker.string.uuid(),
         displayText: faker.lorem.words(2),
         isDivider: false,
         isHeading: true,
         chapter: 1,
       },
       {
-        id: faker.datatype.uuid(),
+        id: faker.string.uuid(),
         displayText: faker.lorem.words(2),
         isDivider: false,
         isHeading: false,
@@ -216,19 +216,19 @@ describe('getFilesToUpdate', () => {
         orderWithinChapter: 0,
       },
       {
-        id: faker.datatype.uuid(),
+        id: faker.string.uuid(),
         displayText: faker.lorem.words(2),
         isDivider: true,
         isHeading: false,
       },
       {
-        id: faker.datatype.uuid(),
+        id: faker.string.uuid(),
         displayText: faker.lorem.words(2),
         isDivider: false,
         isHeading: false,
       },
       {
-        id: faker.datatype.uuid(),
+        id: faker.string.uuid(),
         displayText: faker.lorem.words(2),
         isDivider: false,
         isHeading: false,
@@ -241,7 +241,7 @@ describe('getFilesToUpdate', () => {
   it('should return the correct chapter, orderWithinChapter and items if a file is reordered under a previously empty chapter', () => {
     const items: ReorderableItem[] = [
       {
-        id: faker.datatype.uuid(),
+        id: faker.string.uuid(),
         displayText: faker.lorem.words(2),
         isDivider: false,
         isHeading: false,
@@ -249,7 +249,7 @@ describe('getFilesToUpdate', () => {
         orderWithinChapter: 0,
       },
       {
-        id: faker.datatype.uuid(),
+        id: faker.string.uuid(),
         displayText: faker.lorem.words(2),
         isDivider: false,
         isHeading: false,
@@ -257,14 +257,14 @@ describe('getFilesToUpdate', () => {
         orderWithinChapter: 1,
       },
       {
-        id: faker.datatype.uuid(),
+        id: faker.string.uuid(),
         displayText: faker.lorem.words(2),
         isDivider: false,
         isHeading: true,
         chapter: 1,
       },
       {
-        id: faker.datatype.uuid(),
+        id: faker.string.uuid(),
         displayText: faker.lorem.words(2),
         isDivider: false,
         isHeading: false,
@@ -272,19 +272,19 @@ describe('getFilesToUpdate', () => {
         orderWithinChapter: 4,
       },
       {
-        id: faker.datatype.uuid(),
+        id: faker.string.uuid(),
         displayText: faker.lorem.words(2),
         isDivider: true,
         isHeading: false,
       },
       {
-        id: faker.datatype.uuid(),
+        id: faker.string.uuid(),
         displayText: faker.lorem.words(2),
         isDivider: false,
         isHeading: false,
       },
       {
-        id: faker.datatype.uuid(),
+        id: faker.string.uuid(),
         displayText: faker.lorem.words(2),
         isDivider: false,
         isHeading: false,

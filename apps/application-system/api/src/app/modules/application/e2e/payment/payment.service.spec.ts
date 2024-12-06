@@ -20,7 +20,7 @@ let app: INestApplication
 let service: PaymentService
 
 let fjsClient: MockChargeFjsV2ClientService
-const applicationId = faker.datatype.uuid()
+const applicationId = faker.string.uuid()
 const user = createCurrentUser()
 
 class MockChargeFjsV2ClientService {
@@ -190,11 +190,7 @@ describe('Payment Service', () => {
       undefined,
     )
 
-    await service.fulfillPayment(
-      charge.id,
-      faker.datatype.uuid(),
-      applicationId,
-    )
+    await service.fulfillPayment(charge.id, faker.string.uuid(), applicationId)
     const result = await service.getStatus(user, applicationId)
     expect(result.fulfilled).toBe(true)
   })

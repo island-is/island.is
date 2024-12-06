@@ -1,5 +1,5 @@
-import faker from 'faker'
 import { MockedProvider } from '@apollo/client/testing'
+import { faker } from '@faker-js/faker'
 import { act, render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 
@@ -29,7 +29,7 @@ window.scrollTo = jest.fn()
 
 describe('Summary', () => {
   it('should show a modal window when the appeal is completed', async () => {
-    const caseId = faker.datatype.uuid()
+    const caseId = faker.string.uuid()
 
     render(
       <MockedProvider
@@ -68,7 +68,7 @@ describe('Summary', () => {
   })
 
   it('should show a modal window when the appeal ruling is modified', async () => {
-    const caseId = faker.datatype.uuid()
+    const caseId = faker.string.uuid()
     jest
       .spyOn(stepHelper, 'hasSentNotification')
       .mockReturnValue({ hasSent: true, date: null })

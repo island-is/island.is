@@ -1,4 +1,4 @@
-import faker from 'faker'
+import { faker } from '@faker-js/faker'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 
@@ -297,9 +297,9 @@ describe('Step helper', () => {
       const email = faker.internet.email()
       const n: Notification[] = [
         {
-          id: faker.datatype.uuid(),
+          id: faker.string.uuid(),
           created: faker.date.future().toISOString(),
-          caseId: faker.datatype.uuid(),
+          caseId: faker.string.uuid(),
           type: NotificationType.COURT_DATE,
           recipients: [
             {
@@ -309,9 +309,9 @@ describe('Step helper', () => {
           ],
         },
         {
-          id: faker.datatype.uuid(),
+          id: faker.string.uuid(),
           created: faker.date.past().toISOString(),
-          caseId: faker.datatype.uuid(),
+          caseId: faker.string.uuid(),
           type: NotificationType.COURT_DATE,
           recipients: [
             {
@@ -337,7 +337,7 @@ describe('Step helper', () => {
       const spy = jest.fn()
       const fieldToUpdate = 'courtCaseNumber'
       const value = '1234/1234'
-      const id = faker.datatype.uuid()
+      const id = faker.string.uuid()
       const theCase = { id } as Case
       const update = {
         courtCaseNumber: value,
@@ -361,7 +361,7 @@ describe('Step helper', () => {
       const spy = jest.fn()
       const fieldToUpdate = 'courtCaseNumber'
       const value = '12341234'
-      const id = faker.datatype.uuid()
+      const id = faker.string.uuid()
       const theCase = { id } as Case
 
       // Act
@@ -383,9 +383,9 @@ describe('Step helper', () => {
     const email = faker.internet.email()
     const n: Notification[] = [
       {
-        id: faker.datatype.uuid(),
+        id: faker.string.uuid(),
         created: faker.date.future().toISOString(),
-        caseId: faker.datatype.uuid(),
+        caseId: faker.string.uuid(),
         type: NotificationType.COURT_DATE,
         recipients: [
           {
@@ -409,9 +409,9 @@ describe('Step helper', () => {
     const email = faker.internet.email()
     const n: Notification[] = [
       {
-        id: faker.datatype.uuid(),
+        id: faker.string.uuid(),
         created: faker.date.future().toISOString(),
-        caseId: faker.datatype.uuid(),
+        caseId: faker.string.uuid(),
         type: NotificationType.COURT_DATE,
         recipients: [
           {
@@ -421,9 +421,9 @@ describe('Step helper', () => {
         ],
       },
       {
-        id: faker.datatype.uuid(),
+        id: faker.string.uuid(),
         created: faker.date.past().toISOString(),
-        caseId: faker.datatype.uuid(),
+        caseId: faker.string.uuid(),
         type: NotificationType.COURT_DATE,
         recipients: [
           {

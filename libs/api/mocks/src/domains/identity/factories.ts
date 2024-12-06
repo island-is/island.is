@@ -3,21 +3,21 @@ import { createNationalId } from '@island.is/testing/fixtures'
 import { Identity, IdentityAddress } from '../../types'
 
 export const identityAddress = factory<IdentityAddress>({
-  streetAddress: faker.address.streetAddress(),
-  postalCode: faker.address.zipCode(),
-  city: faker.address.city(),
+  streetAddress: faker.location.streetAddress(),
+  postalCode: faker.location.zipCode(),
+  city: faker.location.city(),
 })
 
 export const identity = factory<Identity>({
   nationalId: () => createNationalId('person'),
-  name: () => faker.name.findName(),
+  name: () => faker.person.fullName(),
   type: 'Person',
   address: () => identityAddress(),
 
   $traits: {
     company: {
       type: 'Company',
-      name: () => faker.company.companyName(),
+      name: () => faker.company.name(),
       nationalId: () => createNationalId('company'),
     },
   },

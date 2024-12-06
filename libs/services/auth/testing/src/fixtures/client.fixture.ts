@@ -1,4 +1,4 @@
-import * as faker from 'faker'
+import { faker } from '@faker-js/faker'
 import { Client, ClientAllowedScope, ClientType } from '@island.is/auth-api-lib'
 
 export type CreateClient = Pick<
@@ -25,10 +25,10 @@ export type CreateClient = Pick<
 
 const createRandomClient = (): CreateClient => {
   return {
-    clientId: faker.random.word(),
-    nationalId: faker.datatype.string(10),
+    clientId: faker.word.sample(),
+    nationalId: faker.string.sample(10),
     clientType: ClientType.web,
-    clientName: faker.random.word(),
+    clientName: faker.word.sample(),
     supportsCustomDelegation: false,
     supportsLegalGuardians: false,
     supportsProcuringHolders: false,

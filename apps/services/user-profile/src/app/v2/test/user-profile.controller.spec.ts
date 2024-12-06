@@ -1,5 +1,5 @@
 import request from 'supertest'
-import faker from 'faker'
+import { faker } from '@faker-js/faker'
 import { getModelToken } from '@nestjs/sequelize'
 import subMonths from 'date-fns/subMonths'
 import addMonths from 'date-fns/addMonths'
