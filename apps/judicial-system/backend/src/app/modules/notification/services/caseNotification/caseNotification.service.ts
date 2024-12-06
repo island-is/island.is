@@ -693,6 +693,7 @@ export class CaseNotificationService extends BaseNotificationService {
 
   private sendCourtOfficialAssignedEmailNotificationForIndictmentCase(
     theCase: Case,
+    role: UserRole.DISTRICT_COURT_JUDGE | UserRole.DISTRICT_COURT_REGISTRAR,
   ): Promise<Recipient> {
     return this.sendEmail(
       this.formatMessage(notifications.courtOfficialAssignedEmail.subject, {
@@ -700,12 +701,16 @@ export class CaseNotificationService extends BaseNotificationService {
       }),
       this.formatMessage(notifications.courtOfficialAssignedEmail.body, {
         courtCaseNumber: theCase.courtCaseNumber,
-        role: UserRole.DISTRICT_COURT_JUDGE,
+        role,
         linkStart: `<a href="${this.config.clientUrl}${ROUTE_HANDLER_ROUTE}/${theCase.id}">`,
         linkEnd: '</a>',
       }),
-      theCase.judge?.name,
-      theCase.judge?.email,
+      role === UserRole.DISTRICT_COURT_JUDGE
+        ? theCase.judge?.name
+        : theCase.registrar?.name,
+      role === UserRole.DISTRICT_COURT_JUDGE
+        ? theCase.judge?.email
+        : theCase.registrar?.email,
     )
   }
 
@@ -837,11 +842,30 @@ export class CaseNotificationService extends BaseNotificationService {
     const recipient =
       await this.sendCourtOfficialAssignedEmailNotificationForIndictmentCase(
         theCase,
+        UserRole.DISTRICT_COURT_JUDGE,
       )
 
     const result = await this.recordNotification(
       theCase.id,
       CaseNotificationType.DISTRICT_COURT_JUDGE_ASSIGNED,
+      [recipient],
+    )
+
+    return result
+  }
+
+  private async sendDistrictCourtRegistrarAssignedNotifications(
+    theCase: Case,
+  ): Promise<DeliverResponse> {
+    const recipient =
+      await this.sendCourtOfficialAssignedEmailNotificationForIndictmentCase(
+        theCase,
+        UserRole.DISTRICT_COURT_REGISTRAR,
+      )
+
+    const result = await this.recordNotification(
+      theCase.id,
+      CaseNotificationType.DISTRICT_COURT_REGISTRAR_ASSIGNED,
       [recipient],
     )
 
@@ -2591,6 +2615,8 @@ export class CaseNotificationService extends BaseNotificationService {
         return this.sendCourtDateNotifications(theCase, user)
       case CaseNotificationType.DISTRICT_COURT_JUDGE_ASSIGNED:
         return this.sendDistrictCourtJudgeAssignedNotifications(theCase)
+      case CaseNotificationType.DISTRICT_COURT_REGISTRAR_ASSIGNED:
+        return this.sendDistrictCourtRegistrarAssignedNotifications(theCase)
       case CaseNotificationType.RULING:
         return this.sendRulingNotifications(theCase)
       case CaseNotificationType.MODIFIED:

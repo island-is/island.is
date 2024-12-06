@@ -36,6 +36,7 @@ export const districtCourtJudgeNotificationRule: RolesRule = {
   dtoFieldValues: [
     CaseNotificationType.COURT_DATE,
     CaseNotificationType.DISTRICT_COURT_JUDGE_ASSIGNED,
+    CaseNotificationType.DISTRICT_COURT_REGISTRAR_ASSIGNED,
   ],
 }
 
@@ -47,6 +48,7 @@ export const districtCourtRegistrarNotificationRule: RolesRule = {
   dtoFieldValues: [
     CaseNotificationType.COURT_DATE,
     CaseNotificationType.DISTRICT_COURT_JUDGE_ASSIGNED,
+    CaseNotificationType.DISTRICT_COURT_REGISTRAR_ASSIGNED,
   ],
 }
 

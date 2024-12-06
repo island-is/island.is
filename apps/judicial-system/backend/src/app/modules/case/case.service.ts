@@ -700,6 +700,20 @@ export class CaseService {
     ])
   }
 
+  private addMessagesForDistrictCourtRegistrarAssignedToQueue(
+    theCase: Case,
+    user: TUser,
+  ): Promise<void> {
+    return this.messageService.sendMessagesToQueue([
+      {
+        type: MessageType.NOTIFICATION,
+        user,
+        caseId: theCase.id,
+        body: { type: CaseNotificationType.DISTRICT_COURT_REGISTRAR_ASSIGNED },
+      },
+    ])
+  }
+
   private addMessagesForReceivedCaseToQueue(
     theCase: Case,
     user: TUser,
@@ -1466,8 +1480,15 @@ export class CaseService {
         await this.addMessagesForNewCourtDateToQueue(updatedCase, user)
       }
 
-      if (judgeChanged || registrarChanged) {
+      if (judgeChanged) {
         await this.addMessagesForDistrictCourtJudgeAssignedToQueue(
+          updatedCase,
+          user,
+        )
+      }
+
+      if (registrarChanged) {
+        await this.addMessagesForDistrictCourtRegistrarAssignedToQueue(
           updatedCase,
           user,
         )
