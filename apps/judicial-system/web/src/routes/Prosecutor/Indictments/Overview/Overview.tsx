@@ -191,16 +191,13 @@ const Overview: FC = () => {
         <PageTitle>{formatMessage(strings.heading)}</PageTitle>
         <ProsecutorCaseInfo workingCase={workingCase} />
         {workingCase.defendants?.map((defendant) =>
-          defendant.subpoenas?.map(
-            (subpoena) =>
-              subpoena.subpoenaId && (
-                <ServiceAnnouncement
-                  key={`${subpoena.id}-${subpoena.created}`}
-                  subpoena={subpoena}
-                  defendantName={defendant.name}
-                />
-              ),
-          ),
+          defendant.subpoenas?.map((subpoena) => (
+            <ServiceAnnouncement
+              key={`${subpoena.id}-${subpoena.created}`}
+              subpoena={subpoena}
+              defendantName={defendant.name}
+            />
+          )),
         )}
         {workingCase.court &&
           latestDate?.date &&

@@ -1,4 +1,5 @@
 import {
+  CodeOwners,
   ServiceBuilder,
   json,
   ref,
@@ -57,6 +58,7 @@ export const userNotificationServiceSetup = (services: {
     .image(imageName)
     .namespace(serviceName)
     .serviceAccount(serviceName)
+    .codeOwner(CodeOwners.Juni)
     .db()
     .command('node')
     .args('--no-experimental-fetch', 'main.js')
@@ -122,6 +124,7 @@ export const userNotificationWorkerSetup = (services: {
     .image(imageName)
     .namespace(serviceName)
     .serviceAccount(serviceWorkerName)
+    .codeOwner(CodeOwners.Juni)
     .command('node')
     .args('--no-experimental-fetch', 'main.js', '--job=worker')
     .db()
@@ -170,6 +173,7 @@ export const userNotificationCleanUpWorkerSetup = (): ServiceBuilder<
     .image(imageName)
     .namespace(serviceName)
     .serviceAccount(serviceCleanupWorkerName)
+    .codeOwner(CodeOwners.Juni)
     .command('node')
     .args('--no-experimental-fetch', 'main.js', '--job=cleanup')
     .db({ name: 'user-notification' })
