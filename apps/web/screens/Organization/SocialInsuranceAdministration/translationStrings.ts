@@ -972,6 +972,38 @@ export const translationStrings = defineMessages({
     defaultMessage: 'Örorkulífeyrir',
     description: 'Niðurstöðuskjár, Örorkulífeyrir 2025',
   },
+  'REIKNH.SJUKRAOGENDURH_HUPPBOT_2025': {
+    id: 'web.pensionCalculator:REIKNH.SJUKRAOGENDURH_HUPPBOT_2025',
+    defaultMessage: 'Sjúkra- og endurhæfingargreiðslur og heimilisuppbót',
+    description:
+      'Niðurstöðuskjár, Sjúkra- og endurhæfingargreiðslur og heimilisuppbót',
+  },
+  'REIKNH.SJUKRAOGENDURH_2025': {
+    id: 'web.pensionCalculator:REIKNH.SJUKRAOGENDURH_2025',
+    defaultMessage: 'Sjúkra- og endurhæfingargreiðslur',
+    description: 'Niðurstöðuskjár, Sjúkra- og endurhæfingargreiðslur',
+  },
+  'REIKNH.HLUTAORORKA_ALDURSV_HUPPBOT_2025': {
+    id: 'web.pensionCalculator:REIKNH.HLUTAORORKA_ALDURSV_HUPPBOT_2025',
+    defaultMessage: 'Hlutaörorkulífeyrir, aldursviðbót og heimilisuppbót',
+    description:
+      'Niðurstöðuskjár, Hlutaörorkulífeyrir, aldursviðbót og heimilisuppbót',
+  },
+  'REIKNH.HLUTAORORKA_ALDURSV_2025': {
+    id: 'web.pensionCalculator:REIKNH.HLUTAORORKA_ALDURSV_2025',
+    defaultMessage: 'Hlutaörorkulífeyrir og aldursviðbót',
+    description: 'Niðurstöðuskjár, Hlutaörorkulífeyrir og aldursviðbót',
+  },
+  'REIKNH.HLUTAORORKA_HUPPBOT_2025': {
+    id: 'web.pensionCalculator:REIKNH.HLUTAORORKA_HUPPBOT_2025',
+    defaultMessage: 'Hlutaörorkulífeyrir og heimilisuppbót',
+    description: 'Niðurstöðuskjár, Hlutaörorkulífeyrir og heimilisuppbót',
+  },
+  'REIKNH.HLUTAORORKA': {
+    id: 'web.pensionCalculator:REIKNH.HLUTAORORKA',
+    defaultMessage: 'Hlutaörorkulífeyrir',
+    description: 'Niðurstöðuskjár, Hlutaörorkulífeyrir',
+  },
   highlighedResultItemHeadingForTotalAfterTaxFromTR: {
     id: 'web.pensionCalculator:REIKNH.highlighedResultItemHeadingForTotalAfterTaxFromTR',
     defaultMessage: 'Þar af greiðslur frá TR',
