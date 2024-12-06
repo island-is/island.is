@@ -105,7 +105,7 @@ export class SubpoenaController {
     districtCourtRegistrarRule,
     districtCourtAssistantRule,
   )
-  @Get(['', ':subpoenaId'])
+  @Get(['', ':subpoenaId/pdf'])
   @UseGuards(SubpoenaExistsOptionalGuard)
   @Header('Content-Type', 'application/pdf')
   @ApiOkResponse({
