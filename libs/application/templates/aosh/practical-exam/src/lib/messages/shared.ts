@@ -44,7 +44,7 @@ export const shared = {
     },
     email: {
       id: 'aosh.pe.application:shared.labels.email',
-      defaultMessage: 'Nafn',
+      defaultMessage: 'Netfang',
       description: `Label for the applicant's email`,
     },
     phone: {

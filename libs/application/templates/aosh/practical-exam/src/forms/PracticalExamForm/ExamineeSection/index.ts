@@ -4,6 +4,7 @@ import {
   buildTableRepeaterField,
 } from '@island.is/application/core'
 import { examinee, shared } from '../../../lib/messages'
+import { getAllCountryCodes } from '@island.is/shared/utils'
 
 export const examineeSection = buildSection({
   id: 'examineeSection',
@@ -11,18 +12,51 @@ export const examineeSection = buildSection({
   children: [
     buildMultiField({
       title: examinee.general.pageTitle,
-      id: 'examinees',
+      id: 'examineesMultiField',
       description: examinee.general.pageDescription,
       children: [
         buildTableRepeaterField({
           id: 'examinees',
           title: '',
           fields: {
-            nationlId: {
-              component: 'input',
+            nationalId: {
+              component: 'nationalIdWithName',
               label: shared.labels.ssn,
+            },
+            email: {
+              component: 'input',
+              label: shared.labels.email,
               width: 'half',
-              format: '######-####',
+              type: 'email',
+            },
+            phone: {
+              component: 'input',
+              label: shared.labels.phone,
+              type: 'tel',
+              format: '###-####',
+              width: 'half',
+            },
+            licenseNumber: {
+              component: 'input',
+              label: examinee.labels.licenceNumber,
+              width: 'half',
+              displayInTable: false,
+            },
+            countryIssuer: {
+              component: 'select',
+              label: examinee.labels.countryIssuer,
+              width: 'half',
+              displayInTable: false,
+              options: getAllCountryCodes().map((country) => ({
+                label: country.name,
+                value: country.name,
+              })),
+            },
+          },
+          table: {
+            format: {
+              nationalId: (value) => `${value.slice(0, 6)}-${value.slice(6)}`,
+              phone: (value) => `${value.slice(0, 3)}-${value.slice(3)}`,
             },
           },
         }),
