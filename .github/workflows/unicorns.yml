@@ -58,7 +58,7 @@ jobs:
               repo: context.repo.repo,
               protected: false
             });
-
+            console.log(branches.data);
             const releaseBranches = branches.data.filter(branch => branch.name.startsWith('release'));
             console.log('Release branches:', releaseBranches.map(branch => branch.name));
             return releaseBranches.length > 0 ? releaseBranches[0].name : null;
