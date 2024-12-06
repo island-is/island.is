@@ -6,7 +6,6 @@ export const conclusionSection = buildFormConclusionSection({
   multiFieldTitle: m.received,
   alertTitle: m.returned,
   alertMessage: (application) => {
-    console.log(application)
     const year = getValueViaPath<string>(
       application.answers,
       'conditionalAbout.operatingYear',
