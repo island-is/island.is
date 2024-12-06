@@ -25,10 +25,6 @@ export const overviewSection = buildSection({
           component: 'PartyOverview',
         }),
         buildCheckboxField({
-          condition: (answers) => {
-            console.log('answers: ', answers)
-            return true
-          },
           id: 'approveOverview',
           title: '',
           options: [
