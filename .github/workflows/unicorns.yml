@@ -53,19 +53,15 @@ jobs:
         id: get_latest_release
         with:
           query: |
-            {
-              repository(owner: "island-is", name: "island.is") {
-                refs(
-                  first: 100
-                  refPrefix: "refs/heads/release/"
-                  orderBy: {field:TAG_COMMIT_DATE, direction: DESC
-                  }) {
-                  nodes{name}
-                }
+            query release($owner:String!,$repo:String!) {
+              repository(owner:$owner,name:$repo) {
+                refs(first: 50, refPrefix:"refs/heads/") {
+                  nodes {
+                    name
+                  }
                 }
               }
             }
-
           owner: ${{ github.event.pull_request.head.repo.owner.login }}
           repo: ${{ github.event.repository.name }}
         env:
