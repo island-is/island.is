@@ -43,6 +43,7 @@ jobs:
 
   check-unicorn:
     name: Release The Unicorns
+    if: ${{ needs.check-approoved.outputs.IS_PR_APPROOVED == 'true' }}
     runs-on: ec2-runners
     container:
       image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
