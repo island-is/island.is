@@ -20,13 +20,13 @@ defaults:
     shell: bash
 jobs:
   check-approved:
-    name: Is PR approoved
+    name: Is PR approved
     runs-on: ubuntu-latest
     outputs:
-      IS_APPROVED: ${{ steps.check-approoved.outputs.result }}
+      IS_APPROVED: ${{ steps.check-approved.outputs.result }}
     steps:
       - name: Check if PR is approved
-        id: check-approoved
+        id: check-approved
         uses: actions/github-script@v7
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
@@ -49,15 +49,27 @@ jobs:
             return !(declined && pending);
 
       - name: Find Latest Release Branch
-        if: ${{ steps.check-approoved.outputs.result }}
-        run: |
-          node scripts/ci/get-last-release.mjs $(git branch -r)
+        if: ${{ steps.check-approved.outputs.result }}
+        id: find-latest-release
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+
+            var reviews = await github.rest.request('GET /repos/island-is/island.is/branches', {
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              headers: {
+                'X-GitHub-Api-Version': '2022-11-28'
+              })
+
+            console.log(reviews.data);
 
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - run: "echo 'latest release: ${{ steps.get_latest_release.outputs.data }}'"
       - name: output
-        run: echo "IS_APPROVED=${{ steps.check-approoved.outputs.result }}" >> $GITHUB_OUTPUT
+        run: echo "IS_APPROVED=${{ steps.check-approved.outputs.result }}" >> $GITHUB_OUTPUT
 
   check-unicorn:
     name: Is this a unicorn PR
