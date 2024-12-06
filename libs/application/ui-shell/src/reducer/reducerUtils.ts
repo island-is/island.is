@@ -401,7 +401,7 @@ const convertFormNodeToScreens = (
   user: BffUser | null,
 ): FormScreen[] => {
   const { children } = formNode
-  //console.log('FormNodeType: ', formNode.type) 
+  //console.log('FormNodeType: ', formNode.type)
 
   if (isValidScreen(formNode)) {
     return convertLeafToScreens(
@@ -419,9 +419,12 @@ const convertFormNodeToScreens = (
   let newScreens: FormScreen[] = []
 
   // Top level case: If this is a whole section that should not be shown
-  if(formNode.type === FormItemTypes.SECTION && !shouldShowFormItem(formNode, answers, externalData, user)) {
+  if (
+    formNode.type === FormItemTypes.SECTION &&
+    !shouldShowFormItem(formNode, answers, externalData, user)
+  ) {
     //console.log('Should not show form thing: ', formNode.id)
-    //return screens 
+    //return screens
   }
 
   if (children) {
@@ -454,7 +457,9 @@ const convertFormNodeToScreens = (
         externalData,
         user,
       )
-      console.log(`NodeTitle: ${child.id} - NodeType: ${child.type} - isParentNav: ${isParentNavigable}, shouldBeVisible: ${shouldBeVisible}`)
+      console.log(
+        `NodeTitle: ${child.id} - NodeType: ${child.type} - isParentNav: ${isParentNavigable}, shouldBeVisible: ${shouldBeVisible}`,
+      )
 
       newScreens = convertFormNodeToScreens(
         child,

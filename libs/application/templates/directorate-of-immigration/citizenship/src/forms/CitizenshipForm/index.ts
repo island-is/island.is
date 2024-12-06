@@ -1,4 +1,8 @@
-import { buildDescriptionField, buildForm, buildSection } from '@island.is/application/core'
+import {
+  buildDescriptionField,
+  buildForm,
+  buildSection,
+} from '@island.is/application/core'
 import { Form, FormModes, Section } from '@island.is/application/types'
 import { confirmation, externalData, payment } from '../../lib/messages'
 import { InformationSection } from './InformationSection'
