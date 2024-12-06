@@ -41,13 +41,14 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           # return pullRequest.state === 'APPROVED';
           script: |
-            console.log(context.payload.pull_request.number);
-            const { data: requestedReviewers } = await github.rest.pulls.listRequestedReviewers({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              pull_number: context.payload.pull_request.number
-            });
-            console.log(requestedReviewers)
+            console.log(context.payload.pull_request);
+
+          # const { data: requestedReviewers } = await github.rest.pulls.listRequestedReviewers({
+            #   owner: context.repo.owner,
+            #   repo: context.repo.repo,
+            #   pull_number: context.payload.pull_request.number
+            # });
+            # console.log(requestedReviewers)
           # const { data: pullRequest } = await github.rest.pulls.get({
             #   owner: context.repo.owner,
             #   repo: context.repo.repo,
