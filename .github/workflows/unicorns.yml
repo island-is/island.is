@@ -61,6 +61,7 @@ jobs:
           OWNER: ${{ github.repository_owner }}
           REPO: ${{ github.repository }}
           PR_NUMBER: ${{ github.event.number }}
+          EVENT: ${{ toJSON(github.event) }}
           # echo "Is IS_PR_APPROOVED=${{ steps.check-approoved.outputs.result }}"
         run: |
           echo $OWNER
