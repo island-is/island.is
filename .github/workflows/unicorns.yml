@@ -42,12 +42,12 @@ jobs:
           # return pullRequest.state === 'APPROVED';
           script: |
             console.log(context.payload.pull_request.number);
-            const { data: reviews } = await github.rest.pulls.listReviews({
+            const { data: requestedReviewers } = await github.rest.pulls.listRequestedReviewers({
               owner: context.repo.owner,
               repo: context.repo.repo,
               pull_number: context.payload.pull_request.number
             });
-            console.log(reviews)
+            console.log(requestedReviewers)
           # const { data: pullRequest } = await github.rest.pulls.get({
             #   owner: context.repo.owner,
             #   repo: context.repo.repo,
