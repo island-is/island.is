@@ -55,7 +55,6 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-
             var reviews = await github.rest.request('GET /repos/island-is/island.is/branches', {
               owner: context.repo.owner,
               repo: context.repo.repo,
@@ -65,9 +64,6 @@ jobs:
 
             console.log(reviews.data);
 
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - run: "echo 'latest release: ${{ steps.get_latest_release.outputs.data }}'"
       - name: output
         run: echo "IS_APPROVED=${{ steps.check-approved.outputs.result }}" >> $GITHUB_OUTPUT
 
