@@ -3,6 +3,7 @@ export type ConfigType = { direction: 'ascending' | 'descending'; key: string }
 
 export type SortableData = {
   mobileTitle?: string
+  subTitleFirstCol?: string
   id: string
   tag?: TagVariant
   lastNode?: {
@@ -29,4 +30,6 @@ export type SortableTableProps = {
   defaultSortByKey: string // Starting sort key, use one of keys in SortableData
   mobileTitleKey?: string // Key to use for mobile title
   inner?: boolean // Is the table inside another table
+  align?: 'left' | 'right'
+  ellipsisLength?: number
 }

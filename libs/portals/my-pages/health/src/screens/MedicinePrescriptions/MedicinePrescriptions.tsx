@@ -23,8 +23,8 @@ const MedicinePrescriptions = () => {
   const { formatMessage } = useLocale()
   const [activePrescription, setActivePrescription] = React.useState<any>(null)
   const [openModal, setOpenModal] = useState(false)
-  const [activeTag, setActiveTag] = useState('1')
-
+  const [activeTag, setActiveTag] = useState('0')
+  const stringMaxLength = 22
   const filterList = (id: string) => {
     if (activeTag !== id) setActiveTag(id)
     if (id === '0') return MedicinePrescriptionsData
@@ -61,9 +61,9 @@ const MedicinePrescriptions = () => {
       )}
     >
       <Box>
-        <Box display="flex" flexDirection="row" marginBottom={2}>
+        <Box display="flex" flexDirection="row" flexWrap={'wrap'}>
           {tagLabels.map((item) => (
-            <Box marginRight={1}>
+            <Box marginRight={1} marginBottom={[1, 1, 1, 2, 2]}>
               <Tag
                 onClick={() => filterList(item.id)}
                 children={item.label}
@@ -82,8 +82,10 @@ const MedicinePrescriptions = () => {
             status: formatMessage(messages.renewal),
           }}
           expandable
+          align="left"
           defaultSortByKey="medicine"
           mobileTitleKey="medicine"
+          ellipsisLength={stringMaxLength}
           items={
             filteredData?.map((item, i) => ({
               id: item?.id ?? `${i}`,
@@ -112,25 +114,24 @@ const MedicinePrescriptions = () => {
                   : { type: 'text', label: item.status.data },
 
               children: (
-                <Box padding={[0, 0, 0, 1, 1]} background={'blue100'}>
+                <Box background={'blue100'}>
                   <Stack space={2}>
                     <NestedInfoLines
                       label={formatMessage(messages.moreDetailedInfo)}
                       data={MedicinePrescriptionDetailData}
                     />
-
-                    <DispensingContainer
-                      label={formatMessage(messages.dispenseHistory)}
-                      data={MedicineDispenseData}
-                    />
-
                     <NestedInfoLines
                       label={formatMessage(messages.version)}
                       data={MedicinePrescriptionDetailData2}
                     />
+                    <DispensingContainer
+                      label={formatMessage(messages.dispenseHistory)}
+                      data={MedicineDispenseData}
+                    />
                   </Stack>
                 </Box>
               ),
+              subTitleFirstCol: item?.instructions,
             })) ?? []
           }
         />

@@ -2,7 +2,7 @@ import { style } from '@vanilla-extract/css'
 
 export const chevron = style({
   position: 'absolute',
-  right: -20,
+  right: -24,
   top: 0,
   bottom: 0,
   margin: 'auto',

@@ -2,6 +2,8 @@ import { Box, Button, Divider, Stack, Text } from '@island.is/island-ui/core'
 import { isDefined } from 'class-validator'
 import React, { useEffect, useRef, useState } from 'react'
 import AnimateHeight from 'react-animate-height'
+import * as styles from './MobileTable.css'
+import cn from 'classnames'
 
 export interface TableRow {
   title: string
@@ -16,9 +18,15 @@ interface Props {
   tableRow: TableRow
   inner?: boolean
   background?: 'white' | 'blue'
+  first?: boolean
 }
 
-const MobileTableRow: React.FC<Props> = ({ tableRow, inner, background }) => {
+const MobileTableRow: React.FC<Props> = ({
+  tableRow,
+  inner,
+  background,
+  first,
+}) => {
   const [extended, setExtended] = useState(false)
 
   const ref = useRef<HTMLDivElement>(null)
@@ -30,11 +38,14 @@ const MobileTableRow: React.FC<Props> = ({ tableRow, inner, background }) => {
 
   return (
     <Box
-      borderRadius={inner ? undefined : 'standard'}
-      borderColor={inner ? undefined : 'blue200'}
-      border={inner ? undefined : 'standard'}
-      padding={inner ? 1 : 2}
-      marginBottom={2}
+      className={cn({
+        [styles.container]: extended,
+        [styles.divider]: !extended,
+      })}
+      padding={inner ? 1 : 0}
+      paddingTop={3}
+      marginTop={first ? 0 : 3}
+      position="relative"
       background={
         extended || background === 'blue'
           ? 'blue100'
@@ -53,7 +64,7 @@ const MobileTableRow: React.FC<Props> = ({ tableRow, inner, background }) => {
           {tableRow.title}
         </Text>
         {!inner && tableRow.children && (
-          <Box>
+          <Box marginLeft={1}>
             <Button
               circle
               icon={extended ? 'remove' : 'add'}

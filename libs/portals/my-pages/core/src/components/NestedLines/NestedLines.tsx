@@ -7,6 +7,7 @@ import {
 } from '@island.is/island-ui/core'
 import cn from 'classnames'
 import * as styles from './NestedLines.css'
+import useIsMobile from '../../hooks/useIsMobile/useIsMobile'
 
 interface Props {
   data: {
@@ -25,40 +26,43 @@ export const NestedLines = ({ data, width = 'full' }: Props) => {
   const modulusCalculations = (index: number) => {
     return isHalf ? index % 4 === 0 || index % 4 === 1 : index % 2 === 0
   }
+  const { isMobile } = useIsMobile()
+
   return (
-    <Box padding={[0, 0, 0, 2, 2]} background="blue100">
+    <Box background="blue100">
       <GridContainer className={styles.grid}>
-        <GridRow>
-          {data.map((item, i) => (
-            <GridColumn key={i} span={isHalf ? '6/12' : '12/12'}>
-              <GridContainer
-                className={cn(styles.innerGrid, {
-                  [styles.white]: modulusCalculations(i),
-                })}
-              >
-                <GridRow>
-                  <GridColumn
-                    span={['12/12', '12/12', titleWidth]}
-                    paddingBottom={'smallGutter'}
-                  >
-                    <Box className={styles.titleCol}>
-                      <Text fontWeight="semiBold" variant="small" as="span">
-                        {item.title}
-                      </Text>
-                    </Box>
-                  </GridColumn>
-                  <GridColumn span={['12/12', '12/12', columnWidth]}>
-                    <Box className={styles.valueCol}>
-                      <Text variant="small" as="span">
-                        {item.value}
-                      </Text>
-                    </Box>
-                  </GridColumn>
-                </GridRow>
-              </GridContainer>
-            </GridColumn>
-          ))}
-        </GridRow>
+        {data.map((item, i) => (
+          <GridColumn
+            key={i}
+            span={isHalf && !isMobile ? '6/12' : '12/12'}
+            className={cn(styles.noPadding, {
+              [styles.white]: modulusCalculations(i),
+            })}
+          >
+            <GridContainer className={cn(styles.innerGrid)}>
+              <GridRow>
+                <GridColumn
+                  span={isMobile ? '6/12' : ['12/12', '12/12', titleWidth]}
+                >
+                  <Box className={styles.titleCol}>
+                    <Text fontWeight="semiBold" variant="small" as="span">
+                      {item.title}
+                    </Text>
+                  </Box>
+                </GridColumn>
+                <GridColumn
+                  span={isMobile ? '6/12' : ['12/12', '12/12', columnWidth]}
+                >
+                  <Box className={styles.valueCol}>
+                    <Text variant="small" as="span">
+                      {item.value}
+                    </Text>
+                  </Box>
+                </GridColumn>
+              </GridRow>
+            </GridContainer>
+          </GridColumn>
+        ))}
       </GridContainer>
     </Box>
   )

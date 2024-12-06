@@ -8,21 +8,22 @@ import {
 } from '@island.is/island-ui/core'
 import { ExpandRow } from '../ExpandableTable'
 import { SortableData } from './types'
+import { ellipsis } from '../../utils/utils'
 
 export const TableRow = ({
   item,
-  headerSorted,
-  labels,
   tagOutlined,
   expandable,
+  align,
+  ellipsisLength,
 }: {
   item: SortableData
-  headerSorted: string[]
-  labels: Record<string, string>
   tagOutlined?: boolean
   expandable?: boolean
+  align?: 'left' | 'right'
+  ellipsisLength?: number
 }) => {
-  const { id, tag, lastNode, children, ...itemObject } = item
+  const { id, tag, lastNode, children, subTitleFirstCol, ...itemObject } = item
   const valueItems = Object.values(itemObject)
 
   const renderValueItem = (valueItem: any, i: number) => {
@@ -63,9 +64,14 @@ export const TableRow = ({
       }
     }
     return (
-      <Text variant="medium" as="span">
-        {valueItem}
-      </Text>
+      <>
+        <Text variant="medium" as="span">
+          {ellipsisLength ? ellipsis(valueItem, ellipsisLength) : valueItem}
+        </Text>
+        {i === 0 && subTitleFirstCol && (
+          <Text variant="small">{subTitleFirstCol}</Text>
+        )}
+      </>
     )
   }
 
@@ -74,7 +80,7 @@ export const TableRow = ({
       key={id}
       data={valueItems.map((valueItem, i) => ({
         value: renderValueItem(valueItem, i),
-        align: valueItems.slice(-2).includes(valueItem) ? 'right' : 'left',
+        align: align ?? 'left',
       }))}
     >
       {children}

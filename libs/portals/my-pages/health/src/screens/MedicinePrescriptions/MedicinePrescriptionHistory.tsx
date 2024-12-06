@@ -7,7 +7,6 @@ import {
 } from '@island.is/portals/my-pages/core'
 import { useNavigate } from 'react-router-dom'
 import { messages } from '../../lib/messages'
-import { HealthPaths } from '../../lib/paths'
 import {
   MedicineDispenseData,
   MedicinePrescriptionDetailData,
@@ -23,8 +22,8 @@ const MedicinePrescriptionHistory = () => {
 
   return (
     <IntroWrapper
-      title={formatMessage(messages.medicinePrescriptions)}
-      intro={formatMessage(messages.medicinePrescriptionIntroText)}
+      title={formatMessage(messages.medicinePrescriptionHistory)}
+      intro={formatMessage(messages.medicinePrescriptionHistoryIntroText)}
       serviceProviderSlug={HEALTH_DIRECTORATE_SLUG}
       serviceProviderTooltip={formatMessage(
         messages.landlaeknirMedicinePrescriptionsTooltip,
@@ -39,24 +38,19 @@ const MedicinePrescriptionHistory = () => {
           status: formatMessage(messages.type),
         }}
         expandable
+        align="left"
         defaultSortByKey="medicine"
         mobileTitleKey="medicine"
+        ellipsisLength={22}
         items={
           MedicinePrescriptionsHistoryData?.map((item, i) => ({
             id: item?.id ?? `${i}`,
             medicine: item?.medicineName ?? '',
             usedFor: item?.usedFor ?? '',
             lastDispensed: item?.lastDispensed ?? '',
-            status: item?.status.type ?? '',
+            status: undefined,
             lastNode:
-              item?.status.type === 'renew'
-                ? {
-                    type: 'action',
-                    label: formatMessage(messages.renew),
-                    action: () => navigate(item.status.data),
-                    icon: { icon: 'reload', type: 'outline' },
-                  }
-                : item?.status.type === 'tooltip'
+              item?.status.type === 'tooltip'
                 ? { type: 'info', label: item.status.data }
                 : { type: 'text', label: item.status.data },
 
@@ -68,14 +62,13 @@ const MedicinePrescriptionHistory = () => {
                     data={MedicinePrescriptionDetailData}
                   />
 
-                  <DispensingContainer
-                    label={formatMessage(messages.dispenseHistory)}
-                    data={MedicineDispenseData}
-                  />
-
                   <NestedInfoLines
                     label={formatMessage(messages.version)}
                     data={MedicinePrescriptionDetailData2}
+                  />
+                  <DispensingContainer
+                    label={formatMessage(messages.dispenseHistory)}
+                    data={MedicineDispenseData}
                   />
                 </Stack>
               </Box>

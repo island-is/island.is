@@ -1,4 +1,4 @@
-import { Box, Text } from '@island.is/island-ui/core'
+import { Box, Stack, Text } from '@island.is/island-ui/core'
 import React from 'react'
 import MobileTableRow, { TableRow } from './MobileTableRow'
 
@@ -10,7 +10,7 @@ interface Props {
 
 const MobileTable: React.FC<Props> = ({ rows, header, inner }) => {
   return (
-    <Box>
+    <Box marginTop={2}>
       {/* Table Header */}
       {header && <Text>{header}</Text>}
 
@@ -20,6 +20,7 @@ const MobileTable: React.FC<Props> = ({ rows, header, inner }) => {
           tableRow={tableRow}
           inner={inner}
           background={inner ? (index % 2 === 0 ? 'white' : 'blue') : undefined}
+          first={index === 0}
         />
       ))}
     </Box>

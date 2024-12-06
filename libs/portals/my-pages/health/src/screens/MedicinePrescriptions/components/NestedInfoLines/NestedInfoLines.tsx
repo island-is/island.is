@@ -15,16 +15,16 @@ interface Props {
 
 const NestedInfoLines: React.FC<Props> = ({ label, data, width = 'full' }) => {
   return (
-    <>
+    <Box margin={[0, 0, 1, 3, 3]}>
       {label && (
-        <Box paddingLeft={[0, 0, 0, 2, 2]} className={styles.title}>
+        <Box className={styles.title} paddingBottom={2}>
           <Text variant="small" fontWeight="medium">
             {label}
           </Text>
         </Box>
       )}
       <NestedLines data={data} width={width} />
-    </>
+    </Box>
   )
 }
 

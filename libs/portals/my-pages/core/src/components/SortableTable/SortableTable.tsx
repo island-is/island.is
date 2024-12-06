@@ -73,6 +73,9 @@ export const SortableTable = (props: SortableTableProps) => {
       headerItems.unshift('')
       headerItems.pop()
     }
+    if (props.items.find((item) => item.subTitleFirstCol)) {
+      headerItems.pop()
+    }
     setHeaderSorted(headerItems)
   }, [props.items])
 
@@ -93,7 +96,14 @@ export const SortableTable = (props: SortableTableProps) => {
           inner={props.inner}
           header={props.title ?? ''}
           rows={items.map((item) => {
-            const { id, tag, lastNode, children, ...itemObject } = item
+            const {
+              id,
+              tag,
+              lastNode,
+              children,
+              subTitleFirstCol,
+              ...itemObject
+            } = item
             const valueItems = Object.entries(itemObject)
               .filter(([key]) => key !== props.mobileTitleKey)
               .map(([, value]) => value)
@@ -166,7 +176,7 @@ export const SortableTable = (props: SortableTableProps) => {
                     labels={props.labels}
                     index={i}
                     align={
-                      headerSorted.slice(-2).includes(headItem)
+                      props.align ?? headerSorted.slice(-2).includes(headItem)
                         ? 'right'
                         : 'left'
                     }
@@ -179,7 +189,14 @@ export const SortableTable = (props: SortableTableProps) => {
             <T.Head>
               <T.Row>
                 {headerSorted.map((headItem, i) => (
-                  <T.HeadData key={`head-${headItem}`}>
+                  <T.HeadData
+                    key={`head-${headItem}`}
+                    align={
+                      props.align ?? headerSorted.slice(-2).includes(headItem)
+                        ? 'right'
+                        : 'left'
+                    }
+                  >
                     <Text variant="medium" fontWeight="semiBold" as="p">
                       <HeaderButton
                         headItem={headItem}
@@ -199,10 +216,10 @@ export const SortableTable = (props: SortableTableProps) => {
               <TableRow
                 key={item.id}
                 item={item}
-                headerSorted={headerSorted}
-                labels={props.labels}
                 tagOutlined={props.tagOutlined}
                 expandable={props.expandable}
+                align={props.align}
+                ellipsisLength={props.ellipsisLength}
               />
             ))}
             {props.footer && (

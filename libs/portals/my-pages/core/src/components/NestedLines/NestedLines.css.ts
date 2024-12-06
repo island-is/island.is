@@ -11,10 +11,12 @@ export const grid = style({
 })
 
 export const innerGrid = style({
-  padding: `calc(${theme.spacing[1]}px / 2)`,
+  padding: `calc(${theme.spacing[1]}px)`,
   ...themeUtils.responsiveStyle({
     md: {
       padding: theme.spacing[1] * 1.5,
+      paddingLeft: 0,
+      paddingRight: 0,
     },
   }),
 })
@@ -45,6 +47,10 @@ export const valueCol = style({
       paddingLeft: theme.spacing[0],
     },
   }),
+})
+
+export const noPadding = style({
+  padding: 0,
 })
 
 globalStyle(`${valueCol} > span`, {

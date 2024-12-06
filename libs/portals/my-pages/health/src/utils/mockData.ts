@@ -3,6 +3,7 @@ import { HealthPaths } from '../lib/paths'
 export interface Prescription {
   id: string
   medicineName: string
+  instructions: string
   usedFor: string
   process: string
   validTo: string
@@ -16,6 +17,7 @@ export const MedicinePrescriptionsData: Prescription[] = [
     id: '1',
     medicineName: 'Esomeprazol Actavis 40mg',
     usedFor: 'Verkir',
+    instructions: '1 sinni á dag',
     process: 'Fullafgreitt',
     validTo: '01.02.2025',
     status: {
@@ -26,6 +28,7 @@ export const MedicinePrescriptionsData: Prescription[] = [
   {
     id: '2',
     medicineName: 'Naltrexone hydrochloride-forskriftarlyf 1 mg/ml',
+    instructions: '2 ml 1 sinni á dag',
     usedFor: 'Verkir',
     process: 'Fullafgreitt',
     validTo: '05.06.2025',
