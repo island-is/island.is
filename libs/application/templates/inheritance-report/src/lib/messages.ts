@@ -995,6 +995,11 @@ export const m = defineMessages({
     defaultMessage: 'Legsteinn (áætlaður kostnaður)',
     description: '',
   },
+  funeralServiceCost: {
+    id: 'ir.application:funeralServiceCost',
+    defaultMessage: 'Útfararþjónusta',
+    description: '',
+  },
   funeralOtherCostQuestion: {
     id: 'ir.application:funeralOtherCostQuestion',
     defaultMessage: 'Annar kostnaður?',
@@ -1253,7 +1258,7 @@ export const m = defineMessages({
   },
   deceasedShare: {
     id: 'ir.application:deceasedShare',
-    defaultMessage: 'Hlutfall séreignar',
+    defaultMessage: 'Búshluti maka',
     description: '',
   },
   spousesShareDescription: {
