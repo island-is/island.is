@@ -1,4 +1,4 @@
-import type { formatMessage, FormatMessage } from '@island.is/cms-translations'
+import type { FormatMessage } from '@island.is/cms-translations'
 
 import {
   DEFENDER_INDICTMENT_ROUTE,
