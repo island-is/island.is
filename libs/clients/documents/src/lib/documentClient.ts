@@ -133,7 +133,7 @@ export class DocumentClient {
     type ExcludesFalse = <T>(x: T | null | undefined | false | '') => x is T
 
     const inputs = [
-      sortBy ? `sortBy=${sortBy}` : 'sortBy=Date', // first in array to skip &
+      sortBy ? `sortBy=${sortBy}` : 'sortBy=Publication', // first in array to skip &
       order ? `orderBy=${order}` : 'order=Descending',
       page ? `page=${page}` : 'page=1',
       pageSize ? `pageSize=${pageSize}` : 'pageSize=15',

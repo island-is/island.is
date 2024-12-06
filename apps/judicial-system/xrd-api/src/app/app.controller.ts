@@ -1,8 +1,8 @@
 import {
+  BadGatewayException,
   Body,
   Controller,
   Inject,
-  InternalServerErrorException,
   Param,
   ParseUUIDPipe,
   Patch,
@@ -10,7 +10,7 @@ import {
   UseInterceptors,
 } from '@nestjs/common'
 import { Get } from '@nestjs/common'
-import { ApiCreatedResponse, ApiResponse } from '@nestjs/swagger'
+import { ApiCreatedResponse, ApiOkResponse, ApiResponse } from '@nestjs/swagger'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -45,7 +45,11 @@ export class AppController {
   }
 
   @Get('defenders')
-  @ApiResponse({ status: 500, description: 'Failed to retrieve defenders' })
+  @ApiOkResponse({
+    type: [Defender],
+    description: 'Returns a list of defenders',
+  })
+  @ApiResponse({ status: 502, description: 'Failed to retrieve defenders' })
   async getLawyers(): Promise<Defender[]> {
     try {
       this.logger.debug('Retrieving litigators from lawyer registry')
@@ -61,12 +65,13 @@ export class AppController {
       }))
     } catch (error) {
       this.logger.error('Failed to retrieve lawyers', error)
-      throw new InternalServerErrorException('Failed to retrieve lawyers')
+      throw new BadGatewayException('Failed to retrieve lawyers')
     }
   }
 
   @Patch('subpoena/:subpoenaId')
-  @ApiResponse({ status: 500, description: 'Failed to update subpoena' })
+  @ApiResponse({ status: 400, description: 'Invalid input' })
+  @ApiResponse({ status: 502, description: 'Failed to update subpoena' })
   async updateSubpoena(
     @Param('subpoenaId', new ParseUUIDPipe()) subpoenaId: string,
     @Body() updateSubpoena: UpdateSubpoenaDto,

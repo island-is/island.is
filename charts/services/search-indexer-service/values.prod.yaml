@@ -21,6 +21,7 @@ enabled: true
 env:
   AIR_DISCOUNT_SCHEME_FRONTEND_HOSTNAME: 'loftbru.island.is'
   APPLICATION_URL: 'http://search-indexer-service'
+  CODE_OWNER: 'stefna'
   CONTENTFUL_ENTRY_FETCH_CHUNK_SIZE: '40'
   CONTENTFUL_ENVIRONMENT: 'master'
   CONTENTFUL_HOST: 'cdn.contentful.com'
