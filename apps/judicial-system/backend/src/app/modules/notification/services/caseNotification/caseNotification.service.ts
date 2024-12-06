@@ -21,6 +21,7 @@ import {
   INDICTMENTS_OVERVIEW_ROUTE,
   INVESTIGATION_CASE_POLICE_CONFIRMATION_ROUTE,
   RESTRICTION_CASE_OVERVIEW_ROUTE,
+  ROUTE_HANDLER_ROUTE,
   SIGNED_VERDICT_OVERVIEW_ROUTE,
 } from '@island.is/judicial-system/consts'
 import {
@@ -45,6 +46,7 @@ import {
   isRestrictionCase,
   RequestSharedWithDefender,
   SessionArrangements,
+  UserRole,
   type User,
 } from '@island.is/judicial-system/types'
 
@@ -689,6 +691,29 @@ export class CaseNotificationService extends BaseNotificationService {
     })
   }
 
+  private sendCourtOfficialAssignedEmailNotificationForIndictmentCase(
+    theCase: Case,
+    role: UserRole.DISTRICT_COURT_JUDGE | UserRole.DISTRICT_COURT_REGISTRAR,
+  ): Promise<Recipient> {
+    return this.sendEmail(
+      this.formatMessage(notifications.courtOfficialAssignedEmail.subject, {
+        courtCaseNumber: theCase.courtCaseNumber,
+      }),
+      this.formatMessage(notifications.courtOfficialAssignedEmail.body, {
+        courtCaseNumber: theCase.courtCaseNumber,
+        role,
+        linkStart: `<a href="${this.config.clientUrl}${ROUTE_HANDLER_ROUTE}/${theCase.id}">`,
+        linkEnd: '</a>',
+      }),
+      role === UserRole.DISTRICT_COURT_JUDGE
+        ? theCase.judge?.name
+        : theCase.registrar?.name,
+      role === UserRole.DISTRICT_COURT_JUDGE
+        ? theCase.judge?.email
+        : theCase.registrar?.email,
+    )
+  }
+
   private sendCourtDateEmailNotificationForIndictmentCase(
     theCase: Case,
     user: User,
@@ -806,6 +831,42 @@ export class CaseNotificationService extends BaseNotificationService {
       theCase.id,
       CaseNotificationType.COURT_DATE,
       recipients,
+    )
+
+    return result
+  }
+
+  private async sendDistrictCourtJudgeAssignedNotifications(
+    theCase: Case,
+  ): Promise<DeliverResponse> {
+    const recipient =
+      await this.sendCourtOfficialAssignedEmailNotificationForIndictmentCase(
+        theCase,
+        UserRole.DISTRICT_COURT_JUDGE,
+      )
+
+    const result = await this.recordNotification(
+      theCase.id,
+      CaseNotificationType.DISTRICT_COURT_JUDGE_ASSIGNED,
+      [recipient],
+    )
+
+    return result
+  }
+
+  private async sendDistrictCourtRegistrarAssignedNotifications(
+    theCase: Case,
+  ): Promise<DeliverResponse> {
+    const recipient =
+      await this.sendCourtOfficialAssignedEmailNotificationForIndictmentCase(
+        theCase,
+        UserRole.DISTRICT_COURT_REGISTRAR,
+      )
+
+    const result = await this.recordNotification(
+      theCase.id,
+      CaseNotificationType.DISTRICT_COURT_REGISTRAR_ASSIGNED,
+      [recipient],
     )
 
     return result
@@ -2552,6 +2613,10 @@ export class CaseNotificationService extends BaseNotificationService {
         return this.sendReceivedByCourtNotifications(theCase)
       case CaseNotificationType.COURT_DATE:
         return this.sendCourtDateNotifications(theCase, user)
+      case CaseNotificationType.DISTRICT_COURT_JUDGE_ASSIGNED:
+        return this.sendDistrictCourtJudgeAssignedNotifications(theCase)
+      case CaseNotificationType.DISTRICT_COURT_REGISTRAR_ASSIGNED:
+        return this.sendDistrictCourtRegistrarAssignedNotifications(theCase)
       case CaseNotificationType.RULING:
         return this.sendRulingNotifications(theCase)
       case CaseNotificationType.MODIFIED:
