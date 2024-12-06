@@ -31,7 +31,7 @@ jobs:
       - name: Set up job
         id: setup
         run: |
-          echo $EVENT
+          echo $EVENT | jq
       - name: Check if PR is approved
         id: check-approoved
         uses: actions/github-script@v7
