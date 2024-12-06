@@ -1,4 +1,4 @@
-import type { FormatMessage } from '@island.is/cms-translations'
+import type { formatMessage, FormatMessage } from '@island.is/cms-translations'
 
 import {
   DEFENDER_INDICTMENT_ROUTE,
@@ -255,6 +255,26 @@ export const formatPostponedCourtDateEmailNotification = (
     courtRoomText,
     judgeText,
     hasAccessToRvg: Boolean(overviewUrl),
+    linkStart: `<a href="${overviewUrl}">`,
+    linkEnd: '</a>',
+  })
+
+  return { subject, body }
+}
+
+export const formatCourtOfficialAssignedEmailNotification = (
+  formatMessage: FormatMessage,
+  courtCaseNumber?: string,
+  userRole?: UserRole,
+  overviewUrl?: string,
+) => {
+  const subject = formatMessage(
+    notifications.courtOfficialAssignedEmail.subject,
+    { courtCaseNumber },
+  )
+  const body = formatMessage(notifications.courtOfficialAssignedEmail.body, {
+    courtCaseNumber,
+    role: userRole,
     linkStart: `<a href="${overviewUrl}">`,
     linkEnd: '</a>',
   })

@@ -55,6 +55,7 @@ import {
   formatCourtReadyForCourtSmsNotification,
   formatCourtResubmittedToCourtSmsNotification,
   formatCourtRevokedSmsNotification,
+  formatCourtOfficialAssignedEmailNotification,
   formatDefenderCourtDateEmailNotification,
   formatDefenderCourtDateLinkEmailNotification,
   formatDefenderReadyForCourtEmailNotification,
@@ -689,6 +690,34 @@ export class CaseNotificationService extends BaseNotificationService {
     })
   }
 
+  private sendCourtOfficialAssignedEmailNotificationForIndictmentCase(
+    theCase: Case,
+    overviewUrl?: string,
+  ): Promise<Recipient>[] {
+    const promises: Promise<Recipient>[] = []
+    console.log('theCase.judge', theCase.judge?.email)
+
+    for (const courtOfficial of [theCase.judge, theCase.registrar]) {
+      const { subject, body } = formatCourtOfficialAssignedEmailNotification(
+        this.formatMessage,
+        theCase.courtCaseNumber,
+        courtOfficial?.role,
+        overviewUrl,
+      )
+
+      promises.push(
+        this.sendEmail(
+          subject,
+          body,
+          courtOfficial?.name,
+          courtOfficial?.email,
+        ),
+      )
+    }
+
+    return promises
+  }
+
   private sendCourtDateEmailNotificationForIndictmentCase(
     theCase: Case,
     user: User,
@@ -805,6 +834,31 @@ export class CaseNotificationService extends BaseNotificationService {
     const result = await this.recordNotification(
       theCase.id,
       CaseNotificationType.COURT_DATE,
+      recipients,
+    )
+
+    return result
+  }
+
+  private async sendCourtOfficialAssignedNotifications(
+    theCase: Case,
+    user: User,
+  ): Promise<DeliverResponse> {
+    const promises: Promise<Recipient>[] = []
+
+    if (isIndictmentCase(theCase.type)) {
+      promises.push(
+        ...this.sendCourtOfficialAssignedEmailNotificationForIndictmentCase(
+          theCase,
+        ),
+      )
+    }
+
+    const recipients = await Promise.all(promises)
+
+    const result = await this.recordNotification(
+      theCase.id,
+      CaseNotificationType.COURT_OFFICIAL_ASSIGNED,
       recipients,
     )
 
@@ -2552,6 +2606,8 @@ export class CaseNotificationService extends BaseNotificationService {
         return this.sendReceivedByCourtNotifications(theCase)
       case CaseNotificationType.COURT_DATE:
         return this.sendCourtDateNotifications(theCase, user)
+      case CaseNotificationType.COURT_OFFICIAL_ASSIGNED:
+        return this.sendCourtOfficialAssignedNotifications(theCase, user)
       case CaseNotificationType.RULING:
         return this.sendRulingNotifications(theCase)
       case CaseNotificationType.MODIFIED:
