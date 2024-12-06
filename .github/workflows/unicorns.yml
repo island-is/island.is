@@ -20,63 +20,68 @@ defaults:
   run:
     shell: bash
 jobs:
-  check-unicorn:
-    name: Release The Unicorns
-    runs-on: ec2-runners
-    container:
-      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
-    timeout-minutes: 10
+  check-approoved:
+    name: Is PR approoved
+    runs-on: ubuntu-latest
     steps:
-      - run: echo "selected runner = ${{ runner.name }}"
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - uses: actions/setup-node@v4
-        with:
-          node-version-file: 'package.json'
-
-      - name: Setup yarn
-        run: corepack enable
-
-      - name: Get cache
-        id: get-cache
-        uses: ./.github/actions/get-cache
+      - name: Check if PR is approved
+        id: check-approoved
+        uses: actions/github-script@v4
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          enable-cache: 'node_modules,generated-files'
+          script: |
+            const { data: pullRequest } = await github.pulls.get({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: context.issue.number
+            });
+            return pullRequest.state === 'APPROVED';
+      - name: Check if PR is approved
+        run: echo "Is PR approved = ${{ steps.check-approoved.outputs.result }}"
+  # check-unicorn:
+  #   name: Release The Unicorns
+  #   runs-on: ec2-runners
+  #   container:
+  #     image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
+  #   timeout-minutes: 10
+  #   steps:
+  #     - run: echo "selected runner = ${{ runner.name }}"
+  #     - uses: actions/checkout@v4
+  #       with:
+  #         fetch-depth: 0
 
-      - name: Check unicorn affected
-        id: unicorn-affected
-        env:
-          BaseRef: ${{ github.base_ref }} #The target branch e.g. main (feature/unicorn-app)
-          HeadRef: ${{ github.head_ref }} #The branch being merged e.g. (unicorn-pipe-rel2)
-        run: |
-          echo "Comparing nx affected for $HeadRef using origin/$BaseRef as base branch"
-          echo IS_UNICORN=$(node scripts/ci/unicorn-utils.mjs "{\"baseBranch\": \"origin/$BaseRef\", \"mergeBranch\": \"$HeadRef\" }") >> "$GITHUB_OUTPUT"
-      - name: Results
-        run: |
-          echo "Unicorn = ${{ steps.unicorn-affected.outputs.IS_UNICORN }}"
+  #     - uses: actions/setup-node@v4
+  #       with:
+  #         node-version-file: 'package.json'
 
-      - name: Create release
-        if: ${{ steps.unicorn-affected.outputs.IS_UNICORN }}
-        env:
-          PR_NUMBER: ${{ github.event.number }}
-          BaseRef: ${{ github.base_ref }}
-          HeadRef: ${{ github.head_ref }}
-          RefName: ${{ github.ref_name }}
-        run: |
-          echo "Creating a release for unicorn"
-          node scripts/ci/create-release.mjs $PR_NUMBER
+  #     - name: Setup yarn
+  #       run: corepack enable
 
-          #   if: ${{ steps.unicorn-affected.outputs.IS_UNICORN == 'true' }}
+  #     - name: Get cache
+  #       id: get-cache
+  #       uses: ./.github/actions/get-cache
+  #       with:
+  #         github-token: ${{ secrets.GITHUB_TOKEN }}
+  #         enable-cache: 'node_modules,generated-files'
 
-        # - name: Create release
-        #   env:
-        #     PR_NUMBER: ${{ github.event.number }}
-        #     BaseRef: ${{ github.base_ref }}#     PR_NUMBER: 17134
-        #     HeadRef: ${{ github.head_ref }}#     BaseRef: feature/unicorn-app
-        #     RefName: ${{ github.ref_name }}#     HeadRef: unicorn-pipe-rel2
-        #   run: |
-        #       node scripts/ci/create-release.mjs $PR_NUMBER
+  #     - name: Check unicorn affected
+  #       id: unicorn-affected
+  #       env:
+  #         BaseRef: ${{ github.base_ref }} #The target branch e.g. main (feature/unicorn-app)
+  #         HeadRef: ${{ github.head_ref }} #The branch being merged e.g. (unicorn-pipe-rel2)
+  #       run: |
+  #         echo "Comparing nx affected for $HeadRef using origin/$BaseRef as base branch"
+  #         echo IS_UNICORN=$(node scripts/ci/unicorn-utils.mjs "{\"baseBranch\": \"origin/$BaseRef\", \"mergeBranch\": \"$HeadRef\" }") >> "$GITHUB_OUTPUT"
+  #     - name: Results
+  #       run: |
+  #         echo "Unicorn = ${{ steps.unicorn-affected.outputs.IS_UNICORN }}"
 
+  #     - name: Approved PR
+  #       if: ${{ steps.unicorn-affected.outputs.IS_UNICORN }}
+  #       env:
+  #         PR_NUMBER: ${{ github.event.number }}
+  #         BaseRef: ${{ github.base_ref }}
+  #         HeadRef: ${{ github.head_ref }}
+  #         RefName: ${{ github.ref_name }}
+  #       run: |
+  #         node scripts/ci/.mjs $PR_NUMBER
