@@ -1416,6 +1416,30 @@ export class CaseService {
 
     if (
       isIndictment &&
+      [CaseState.SUBMITTED, CaseState.RECEIVED].includes(updatedCase.state)
+    ) {
+      const judgeChanged =
+        updatedCase.judge?.nationalId !== theCase.judge?.nationalId
+      const registrarChanged =
+        updatedCase.registrar?.nationalId !== theCase.registrar?.nationalId
+
+      if (judgeChanged) {
+        await this.addMessagesForDistrictCourtJudgeAssignedToQueue(
+          updatedCase,
+          user,
+        )
+      }
+
+      if (registrarChanged) {
+        await this.addMessagesForDistrictCourtRegistrarAssignedToQueue(
+          updatedCase,
+          user,
+        )
+      }
+    }
+
+    if (
+      isIndictment &&
       ![
         CaseState.DRAFT,
         CaseState.SUBMITTED,
@@ -1470,28 +1494,10 @@ export class CaseService {
       const courtDateChanged =
         updatedCourtDate &&
         updatedCourtDate.date.getTime() !== courtDate?.date.getTime()
-      const judgeChanged =
-        updatedCase.judge?.nationalId !== theCase.judge?.nationalId
-      const registrarChanged =
-        updatedCase.registrar?.nationalId !== theCase.registrar?.nationalId
 
       if (arraignmentDateChanged || courtDateChanged) {
         // New arraignment date or new court date
         await this.addMessagesForNewCourtDateToQueue(updatedCase, user)
-      }
-
-      if (judgeChanged) {
-        await this.addMessagesForDistrictCourtJudgeAssignedToQueue(
-          updatedCase,
-          user,
-        )
-      }
-
-      if (registrarChanged) {
-        await this.addMessagesForDistrictCourtRegistrarAssignedToQueue(
-          updatedCase,
-          user,
-        )
       }
 
       await this.addMessagesForNewSubpoenasToQueue(theCase, updatedCase, user)
