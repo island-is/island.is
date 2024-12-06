@@ -65,10 +65,9 @@ jobs:
                 }
               }
             }
-            {
-              owner: ${{ github.event.pull_request.head.repo.owner.login }}
-              repo: ${{ github.event.repository.name }}
-            }
+
+          owner: ${{ github.event.pull_request.head.repo.owner.login }}
+          repo: ${{ github.event.repository.name }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - run: "echo 'latest release: ${{ steps.get_latest_release.outputs.data }}'"
