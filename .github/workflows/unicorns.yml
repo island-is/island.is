@@ -57,7 +57,7 @@ jobs:
               repository(owner:$owner,name:$repo) {
                 refs(
                   first: 50,
-                  refPrefix:"refs/heads/"
+                  refPrefix:"refs/heads/release/"
                   orderBy: {field:TAG_COMMIT_DATE, direction: DESC}) {
                   nodes {
                     name
