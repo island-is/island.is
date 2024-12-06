@@ -15,7 +15,6 @@ import {
   PageLayout,
   PageTitle,
   RenderFiles,
-  SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
 import { CaseFileCategory } from '@island.is/judicial-system-web/src/graphql/schema'
 import { useFileList } from '@island.is/judicial-system-web/src/utils/hooks'
@@ -85,7 +84,8 @@ const IndictmentOverview = () => {
               <RadioButton
                 id="punishment-type-imprisonment"
                 name="punishmentTypeImprisonment"
-                checked={selectedPunishmentType === PunishmentType.IMPRISONMENT}
+                checked={selectedPunishmentType === PunishmentType.IMPRISONMENT
+                }
                 onChange={() => {
                   setPunishmentType(PunishmentType.IMPRISONMENT)
                 }}
@@ -98,7 +98,8 @@ const IndictmentOverview = () => {
               <RadioButton
                 id="punishment-type-probation"
                 name="punishmentTypeProbation"
-                checked={selectedPunishmentType === PunishmentType.PROBATION}
+                checked={selectedPunishmentType === PunishmentType.PROBATION
+                }
                 onChange={() => {
                   setPunishmentType(PunishmentType.PROBATION)
                 }}
@@ -111,7 +112,8 @@ const IndictmentOverview = () => {
               <RadioButton
                 id="punishment-type-fine"
                 name="punishmentTypeFine"
-                checked={selectedPunishmentType === PunishmentType.FINE}
+                checked={selectedPunishmentType === PunishmentType.FINE
+                }
                 onChange={() => {
                   setPunishmentType(PunishmentType.FINE)
                 }}
@@ -124,14 +126,10 @@ const IndictmentOverview = () => {
               <RadioButton
                 id="punishment-type-indictment-ruling-decision-fine"
                 name="punishmentTypeIndictmentRulingDecisionFine"
-                checked={
-                  selectedPunishmentType ===
-                  PunishmentType.INDICTMENT_RULING_DECISION_FINE
+                checked={selectedPunishmentType === PunishmentType.INDICTMENT_RULING_DECISION_FINE
                 }
                 onChange={() => {
-                  setPunishmentType(
-                    PunishmentType.INDICTMENT_RULING_DECISION_FINE,
-                  )
+                  setPunishmentType(PunishmentType.INDICTMENT_RULING_DECISION_FINE)
                 }}
                 large
                 backgroundColor="white"
@@ -142,9 +140,7 @@ const IndictmentOverview = () => {
               <RadioButton
                 id="punishment-type-indictment-signed-fine-invitation"
                 name="punishmentTypeIndictmentSignedFineInvitation"
-                checked={
-                  selectedPunishmentType ===
-                  PunishmentType.SIGNED_FINE_INVITATION
+                checked={selectedPunishmentType === PunishmentType.SIGNED_FINE_INVITATION
                 }
                 onChange={() => {
                   setPunishmentType(PunishmentType.SIGNED_FINE_INVITATION)
