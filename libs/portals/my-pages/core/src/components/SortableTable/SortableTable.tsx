@@ -175,11 +175,7 @@ export const SortableTable = (props: SortableTableProps) => {
                     requestSort={requestSort}
                     labels={props.labels}
                     index={i}
-                    align={
-                      props.align ?? headerSorted.slice(-2).includes(headItem)
-                        ? 'right'
-                        : 'left'
-                    }
+                    align={props.align ?? 'left'}
                   />
                 ),
                 element: true,
@@ -191,11 +187,7 @@ export const SortableTable = (props: SortableTableProps) => {
                 {headerSorted.map((headItem, i) => (
                   <T.HeadData
                     key={`head-${headItem}`}
-                    align={
-                      props.align ?? headerSorted.slice(-2).includes(headItem)
-                        ? 'right'
-                        : 'left'
-                    }
+                    align={props.align ?? 'left'}
                   >
                     <Text variant="medium" fontWeight="semiBold" as="p">
                       <HeaderButton
@@ -218,7 +210,7 @@ export const SortableTable = (props: SortableTableProps) => {
                 item={item}
                 tagOutlined={props.tagOutlined}
                 expandable={props.expandable}
-                align={props.align}
+                align={props.align ?? 'left'}
                 ellipsisLength={props.ellipsisLength}
               />
             ))}

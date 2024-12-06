@@ -31,8 +31,9 @@ export const SortedVaccinationsTable = ({ data }: Props) => {
           status: formatMessage(messages.status),
         }}
         expandable
-        defaultSortByKey="vaccine"
+        defaultSortByKey="status"
         mobileTitleKey="vaccine"
+        align="left"
         tagOutlined
         items={
           data.map((item, i) => ({
@@ -53,6 +54,7 @@ export const SortedVaccinationsTable = ({ data }: Props) => {
                       messages.vaccinesTableHeaderLocation,
                     ),
                   }}
+                  align="left"
                   defaultSortByKey="nr"
                   inner
                   items={

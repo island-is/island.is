@@ -35,7 +35,6 @@ const MedicinePrescriptionHistory = () => {
           medicine: formatMessage(messages.medicineTitle),
           usedFor: formatMessage(messages.usedFor),
           lastDispensed: formatMessage(messages.lastDispensed),
-          status: formatMessage(messages.type),
         }}
         expandable
         align="left"
@@ -48,12 +47,6 @@ const MedicinePrescriptionHistory = () => {
             medicine: item?.medicineName ?? '',
             usedFor: item?.usedFor ?? '',
             lastDispensed: item?.lastDispensed ?? '',
-            status: undefined,
-            lastNode:
-              item?.status.type === 'tooltip'
-                ? { type: 'info', label: item.status.data }
-                : { type: 'text', label: item.status.data },
-
             children: (
               <Box padding={1} background={'blue100'}>
                 <Stack space={2}>
