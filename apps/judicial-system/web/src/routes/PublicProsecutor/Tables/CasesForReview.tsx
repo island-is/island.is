@@ -2,11 +2,7 @@ import { FC } from 'react'
 import { useIntl } from 'react-intl'
 import { AnimatePresence } from 'framer-motion'
 
-<<<<<<< HEAD
-import { Text } from '@island.is/island-ui/core'
-=======
 import { Tag, Text } from '@island.is/island-ui/core'
->>>>>>> d1f95c5f173ea4f84e92d269e11f838ecc529fa0
 import {
   capitalize,
   districtCourtAbbreviation,
