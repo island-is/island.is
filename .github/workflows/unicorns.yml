@@ -39,64 +39,66 @@ jobs:
         uses: actions/github-script@v7
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
+          # return pullRequest.state === 'APPROVED';
           script: |
             const { data: pullRequest } = await github.rest.pulls.get({
               owner: context.repo.owner,
               repo: context.repo.repo,
               pull_number: context.issue.number
             });
-            return pullRequest.state === 'APPROVED';
+            console.log("hallo")
+            return pullRequest
 
       - name: Results
         run: echo "Is IS_PR_APPROOVED=${{ steps.check-approoved.outputs.result }}"
 
-  check-unicorn:
-    name: Release The Unicorns
-    if: ${{ needs.check-approoved.outputs.IS_PR_APPROOVED == 'true' }}
-    runs-on: ec2-runners
-    container:
-      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
-    timeout-minutes: 10
-    steps:
-      - run: echo "selected runner = ${{ runner.name }}"
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
+  # check-unicorn:
+  #   name: Release The Unicorns
+  #   if: ${{ needs.check-approoved.outputs.IS_PR_APPROOVED == 'true' }}
+  #   runs-on: ec2-runners
+  #   container:
+  #     image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
+  #   timeout-minutes: 10
+  #   steps:
+  #     - run: echo "selected runner = ${{ runner.name }}"
+  #     - uses: actions/checkout@v4
+  #       with:
+  #         fetch-depth: 0
 
-      - uses: actions/setup-node@v4
-        with:
-          node-version-file: 'package.json'
+  #     - uses: actions/setup-node@v4
+  #       with:
+  #         node-version-file: 'package.json'
 
-      - name: Setup yarn
-        run: corepack enable
+  #     - name: Setup yarn
+  #       run: corepack enable
 
-      - name: Get cache
-        id: get-cache
-        uses: ./.github/actions/get-cache
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          enable-cache: 'node_modules,generated-files'
+  #     - name: Get cache
+  #       id: get-cache
+  #       uses: ./.github/actions/get-cache
+  #       with:
+  #         github-token: ${{ secrets.GITHUB_TOKEN }}
+  #         enable-cache: 'node_modules,generated-files'
 
-      - name: Check unicorn affected
-        id: unicorn-affected
-        env:
-          BaseRef: ${{ github.base_ref }} #The target branch e.g. main (feature/unicorn-app)
-          HeadRef: ${{ github.head_ref }} #The branch being merged e.g. (unicorn-pipe-rel2)
-        run: |
-          echo "Comparing nx affected for $HeadRef using origin/$BaseRef as base branch"
-          echo IS_UNICORN=$(node scripts/ci/unicorn-utils.mjs "{\"baseBranch\": \"origin/$BaseRef\", \"mergeBranch\": \"$HeadRef\" }") >> "$GITHUB_OUTPUT"
-      - name: Results
-        run: |
-          echo "Unicorn = ${{ steps.unicorn-affected.outputs.IS_UNICORN }}"
+  #     - name: Check unicorn affected
+  #       id: unicorn-affected
+  #       env:
+  #         BaseRef: ${{ github.base_ref }} #The target branch e.g. main (feature/unicorn-app)
+  #         HeadRef: ${{ github.head_ref }} #The branch being merged e.g. (unicorn-pipe-rel2)
+  #       run: |
+  #         echo "Comparing nx affected for $HeadRef using origin/$BaseRef as base branch"
+  #         echo IS_UNICORN=$(node scripts/ci/unicorn-utils.mjs "{\"baseBranch\": \"origin/$BaseRef\", \"mergeBranch\": \"$HeadRef\" }") >> "$GITHUB_OUTPUT"
+  #     - name: Results
+  #       run: |
+  #         echo "Unicorn = ${{ steps.unicorn-affected.outputs.IS_UNICORN }}"
 
-      - name: Approved PR
-        if: ${{ steps.unicorn-affected.outputs.IS_UNICORN }}
-        env:
-          PR_NUMBER: ${{ github.event.number }}
-          BaseRef: ${{ github.base_ref }}
-          HeadRef: ${{ github.head_ref }}
-          RefName: ${{ github.ref_name }}
-        run: |
-          echo "Approving PR $PR_NUMBER"
-          echo "BaseRef = $BaseRef"
-          echo "HeadRef = $HeadRef"
+  #     - name: Approved PR
+  #       if: ${{ steps.unicorn-affected.outputs.IS_UNICORN }}
+  #       env:
+  #         PR_NUMBER: ${{ github.event.number }}
+  #         BaseRef: ${{ github.base_ref }}
+  #         HeadRef: ${{ github.head_ref }}
+  #         RefName: ${{ github.ref_name }}
+  #       run: |
+  #         echo "Approving PR $PR_NUMBER"
+  #         echo "BaseRef = $BaseRef"
+  #         echo "HeadRef = $HeadRef"
