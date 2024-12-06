@@ -3,7 +3,7 @@ import { defineMessages } from 'react-intl'
 export const invoice = defineMessages({
   paymentMethodTitle: {
     id: 'payments.invoice:title',
-    defaultMessage: 'Krafa',
+    defaultMessage: 'Krafa í netbanka',
     description: 'Title for invoice payment method',
   },
   nationalIdOfPayer: {

@@ -3,7 +3,7 @@ import { defineMessages } from 'react-intl'
 export const card = defineMessages({
   paymentMethodTitle: {
     id: 'payments.card:title',
-    defaultMessage: 'Kortagreiðsla',
+    defaultMessage: 'Greiðslukort',
     description: 'Title for card payment method',
   },
   cardNumber: {
@@ -28,7 +28,7 @@ export const card = defineMessages({
   },
   cardCVC: {
     id: 'payments.card:cardCVC',
-    defaultMessage: 'Öryggiskóði',
+    defaultMessage: 'CVC',
     description: 'Card CVC',
   },
   cardCVCPlaceholder: {
