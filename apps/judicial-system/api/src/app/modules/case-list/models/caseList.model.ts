@@ -77,6 +77,9 @@ export class CaseListEntry {
   @Field(() => String, { nullable: true })
   readonly prosecutorPostponedAppealDate?: string
 
+  @Field(() => Institution, { nullable: true })
+  readonly court?: Institution
+
   @Field(() => User, { nullable: true })
   readonly creatingProsecutor?: User
 

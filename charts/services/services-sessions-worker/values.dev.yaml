@@ -24,6 +24,7 @@ command:
   - 'node'
 enabled: true
 env:
+  CODE_OWNER: 'aranja'
   DB_EXTENSIONS: 'uuid-ossp'
   DB_HOST: 'postgres-applications.internal'
   DB_NAME: 'services_sessions'
