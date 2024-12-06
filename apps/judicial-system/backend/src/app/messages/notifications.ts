@@ -866,7 +866,7 @@ export const notifications = {
     body: {
       id: 'judicial.system.backend:notifications.court_official_assigned_email.body',
       defaultMessage:
-        'Héraðsdómur hefur skráð þig sem {role, select, JUDGE {dómara} REGISTRAR {dómritara} other {óþekkt}} í máli {courtCaseNumber}. Hægt er að nálgast gögn málsins á {linkStart}yfirlitssíðu málsins í Réttarvörslugátt{linkEnd}}',
+        'Héraðsdómur hefur skráð þig sem {role, select, DISTRICT_COURT_JUDGE {dómara} DISTRICT_COURT_REGISTRAR {dómritara} other {óþekkt}} í máli {courtCaseNumber}. Hægt er að nálgast gögn málsins á {linkStart}yfirlitssíðu málsins í Réttarvörslugátt{linkEnd}',
       description:
         'Texti í pósti til dómara og dómritara þegar máli er úthlutað á þau',
     },
