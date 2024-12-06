@@ -55,8 +55,7 @@ jobs:
           script: |
             const branches = await github.rest.repos.listBranches({
               owner: context.repo.owner,
-              repo: context.repo.repo,
-              protected: true
+              repo: context.repo.repo
             });
 
             const releaseBranches = branches.data.filter(branch => branch.name.startsWith('release'));
