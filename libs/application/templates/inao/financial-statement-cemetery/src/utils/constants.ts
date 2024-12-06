@@ -63,16 +63,20 @@ export const CEMETERYEQUITIESANDLIABILITIESIDS = {
   equityPrefix: 'cemeteryEquity',
   currentAssets: 'cemeteryAsset.currentAssets',
   fixedAssetsTotal: 'cemeteryAsset.fixedAssetsTotal',
-  assetTotal: 'cemeteryAsset.total',
   longTerm: 'cemeteryLiability.longTerm',
   shortTerm: 'cemeteryLiability.shortTerm',
-  liabilityTotal: 'cemeteryLiability.total',
   equityAtTheBeginningOfTheYear: 'cemeteryEquity.equityAtTheBeginningOfTheYear',
   revaluationDueToPriceChanges: 'cemeteryEquity.revaluationDueToPriceChanges',
   reevaluateOther: 'cemeteryEquity.reevaluateOther',
   operationResult: 'cemeteryEquity.operationResult',
   equityTotal: 'cemeteryEquity.total',
-  totalEquityAndLiabilities: 'equityAndLiabilities.total',
+}
+
+export const EQUITYANDLIABILITIESTOTALS = {
+  assetsTotal: 'equityAndLiabilitiesTotals.assetsTotal',
+  liabilitiesTotal: 'equityAndLiabilitiesTotals.liabilitiesTotal',
+  equityAndLiabilitiesTotal:
+    'equityAndLiabilitiesTotals.equityAndLiabilitiesTotal',
 }
 
 export const OPERATINGCOST = {

@@ -1,9 +1,51 @@
-import { buildSection } from '@island.is/application/core'
+import {
+  buildCheckboxField,
+  buildCustomField,
+  buildMultiField,
+  buildSection,
+  buildSubmitField,
+  YES,
+} from '@island.is/application/core'
 import { m } from '../../../lib/messages'
-import { overviewMultiField } from './oveviewMultiField'
+import { DefaultEvents } from '@island.is/application/types'
 
 export const overviewSection = buildSection({
   id: 'overviewSection',
   title: m.overviewSectionTitle,
-  children: [overviewMultiField],
+  children: [
+    buildMultiField({
+      id: 'overview',
+      title: m.yearlyOverview,
+      description: m.review,
+      children: [
+        buildCustomField({
+          id: 'overviewCemetryField',
+          title: '',
+          doesNotRequireAnswer: true,
+          component: 'CemeteryOverview',
+        }),
+        buildCheckboxField({
+          id: 'approveOverview',
+          title: '',
+          options: [
+            {
+              label: m.overviewCorrect,
+              value: YES,
+            },
+          ],
+        }),
+        buildSubmitField({
+          id: 'overview.submit',
+          title: '',
+          actions: [
+            {
+              event: DefaultEvents.SUBMIT,
+              name: m.send,
+              type: 'primary',
+            },
+          ],
+        }),
+      ],
+    }),
+  ],
 })

@@ -1,21 +1,15 @@
-import { useState } from 'react'
-import { DefaultEvents, FieldBaseProps } from '@island.is/application/types'
-import { getErrorViaPath, getValueViaPath } from '@island.is/application/core'
-
+import { FieldBaseProps } from '@island.is/application/types'
+import { getValueViaPath } from '@island.is/application/core'
 import {
   AlertBanner,
   Box,
-  Checkbox,
   Divider,
   GridColumn,
   GridRow,
-  InputError,
   Text,
 } from '@island.is/island-ui/core'
-import { Controller, useFormContext } from 'react-hook-form'
 import { useLocale } from '@island.is/localization'
 import { format as formatNationalId } from 'kennitala'
-import { useSubmitApplication } from '../../hooks/useSubmitApplication'
 import { m } from '../../lib/messages'
 import { FinancialStatementCemetery } from '../../lib/dataSchema'
 import { currencyStringToNumber, formatCurrency } from '../../utils/helpers'
@@ -24,32 +18,14 @@ import { ValueLine } from './ValueLine'
 import { CapitalNumberOverview } from './CapitalNumbersOverview'
 import { BOARDMEMEBER } from '../../utils/constants'
 import { FileValueLine } from './FileValueLine'
-import BottomBar from './BottomBar'
 import {
   columnStyle,
   sectionColumn,
   starterColumnStyle,
 } from './overviewStyles.css'
 
-export const CemeteryOverview = ({
-  application,
-  goToScreen,
-  refetch,
-}: FieldBaseProps) => {
-  const {
-    formState: { errors },
-    setError,
-    setValue,
-  } = useFormContext()
+export const CemeteryOverview = ({ application }: FieldBaseProps) => {
   const { formatMessage } = useLocale()
-  const [approveOverview, setApproveOverview] = useState(false)
-
-  const [submitApplication, { error: submitError, loading }] =
-    useSubmitApplication({
-      application,
-      refetch,
-      event: DefaultEvents.SUBMIT,
-    })
 
   const answers = application.answers as FinancialStatementCemetery
   const fileName = answers.attachments?.file?.[0]?.name
@@ -57,30 +33,8 @@ export const CemeteryOverview = ({
   const cemeteryIncome = currencyStringToNumber(answers.cemeteryIncome?.total)
   const fixedAssetsTotal = answers.cemeteryAsset?.fixedAssetsTotal
   const longTermDebt = answers.cemeteryLiability?.longTerm
-  const email = getValueViaPath(answers, 'about.email')
+  const email = getValueViaPath<string>(answers, 'about.email')
   const cemeteryCaretakers = answers.cemeteryCaretaker
-
-  const onBackButtonClick = () => {
-    if (
-      Number(cemeteryIncome) < Number(careTakerLimit) &&
-      fixedAssetsTotal === '0' &&
-      longTermDebt === '0'
-    ) {
-      goToScreen && goToScreen('caretakers')
-    } else {
-      goToScreen && goToScreen('attachments.file')
-    }
-  }
-
-  const onSendButtonClick = () => {
-    if (approveOverview) {
-      submitApplication()
-    } else {
-      setError('applicationApprove', {
-        type: 'error',
-      })
-    }
-  }
 
   return (
     <Box marginBottom={2}>
@@ -202,7 +156,9 @@ export const CemeteryOverview = ({
             />
             <ValueLine
               label={m.totalAssets}
-              value={formatCurrency(answers.cemeteryAsset.total)}
+              value={formatCurrency(
+                answers.equityAndLiabilitiesTotals?.assetsTotal,
+              )}
               isTotal
             />
           </GridColumn>
@@ -224,7 +180,9 @@ export const CemeteryOverview = ({
             <ValueLine
               isTotal
               label={m.totalLiabilities}
-              value={formatCurrency(answers.cemeteryLiability?.total)}
+              value={formatCurrency(
+                answers.equityAndLiabilitiesTotals?.liabilitiesTotal,
+              )}
             />
             <Box paddingTop={3} paddingBottom={2}>
               <Text variant="h4" as="h4">
@@ -259,7 +217,9 @@ export const CemeteryOverview = ({
             <ValueLine
               isTotal
               label={m.debtsAndCash}
-              value={formatCurrency(answers.equityAndLiabilities?.total)}
+              value={formatCurrency(
+                answers.equityAndLiabilitiesTotals?.equityAndLiabilitiesTotal,
+              )}
             />
           </GridColumn>
         </GridRow>
@@ -313,35 +273,6 @@ export const CemeteryOverview = ({
           <Divider />
         </>
       ) : null}
-      <Box paddingY={3}>
-        <Text variant="h3" as="h3">
-          {formatMessage(m.overview)}
-        </Text>
-      </Box>
-
-      <Box background="blue100">
-        <Controller
-          name="applicationApprove"
-          defaultValue={approveOverview}
-          rules={{ required: true }}
-          render={({ field: { onChange, value } }) => {
-            return (
-              <Checkbox
-                onChange={(e) => {
-                  onChange(e.target.checked)
-                  setApproveOverview(e.target.checked)
-                  setValue('applicationApprove' as string, e.target.checked)
-                }}
-                checked={value}
-                name="applicationApprove"
-                id="applicationApprove"
-                label={formatMessage(m.overviewCorrect)}
-                large
-              />
-            )
-          }}
-        />
-      </Box>
       {Number(cemeteryIncome) < Number(careTakerLimit) &&
       fixedAssetsTotal === '0' &&
       longTermDebt === '0' ? (
@@ -355,24 +286,6 @@ export const CemeteryOverview = ({
           />
         </Box>
       ) : null}
-      {errors && getErrorViaPath(errors, 'applicationApprove') ? (
-        <InputError errorMessage={formatMessage(m.errorApproval)} />
-      ) : null}
-      {submitError ? (
-        <Box paddingY={2}>
-          <AlertBanner
-            title={formatMessage(m.submitErrorTitle)}
-            description={formatMessage(m.submitErrorMessage)}
-            variant="error"
-            dismissable
-          />
-        </Box>
-      ) : null}
-      <BottomBar
-        loading={loading}
-        onSendButtonClick={onSendButtonClick}
-        onBackButtonClick={onBackButtonClick}
-      />
     </Box>
   )
 }
