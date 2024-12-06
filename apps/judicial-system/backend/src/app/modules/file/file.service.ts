@@ -148,12 +148,12 @@ export class FileService {
         courtDocumentFolder = CourtDocumentFolder.INDICTMENT_DOCUMENTS
         break
       case CaseFileCategory.COURT_RECORD:
-        courtDocumentFolder = CourtDocumentFolder.COURT_DOCUMENTS
-        break
       case CaseFileCategory.RULING:
         courtDocumentFolder = CourtDocumentFolder.COURT_DOCUMENTS
         break
       case CaseFileCategory.CASE_FILE:
+      case CaseFileCategory.PROSECUTOR_CASE_FILE:
+      case CaseFileCategory.DEFENDANT_CASE_FILE:
       case undefined:
       case null:
         courtDocumentFolder = CourtDocumentFolder.CASE_DOCUMENTS
@@ -388,6 +388,25 @@ export class FileService {
         },
       ])
     }
+
+    if (
+      isIndictmentCase(theCase.type) &&
+      file.category &&
+      [
+        CaseFileCategory.PROSECUTOR_CASE_FILE,
+        CaseFileCategory.DEFENDANT_CASE_FILE,
+      ].includes(file.category)
+    ) {
+      await this.messageService.sendMessagesToQueue([
+        {
+          type: MessageType.DELIVERY_TO_COURT_CASE_FILE,
+          user,
+          caseId: theCase.id,
+          elementId: file.id,
+        },
+      ])
+    }
+
     return file
   }
 
