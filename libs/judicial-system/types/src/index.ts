@@ -19,6 +19,8 @@ export {
   NotificationDispatchType,
   DefendantNotificationType,
   CivilClaimantNotificationType,
+  IndictmentCaseNotificationType,
+  EventNotificationType,
   notificationTypes,
 } from './lib/notification'
 export type { Institution } from './lib/institution'
