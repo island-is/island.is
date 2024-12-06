@@ -30,6 +30,7 @@ export async function runCommand({
     shell: true,
     stdio: 'pipe',
   })
+  logger.debug('Process started', { proc, cwd, command })
   proc.stdout?.on('data', (data: Buffer | string) => {
     data
       .toString()
@@ -59,16 +60,14 @@ const logLevelEnv = (
   'info'
 ).toLowerCase()
 export const LOG_LEVEL: LogLevel =
-  (
-    {
-      trace: 'trace',
-      debug: 'debug',
-      info: 'info',
-      warn: 'warn',
-      warning: 'warn',
-      error: 'error',
-    } as const
-  )[logLevelEnv] ?? 'info'
+  ({
+    trace: 'trace',
+    debug: 'debug',
+    info: 'info',
+    warn: 'warn',
+    warning: 'warn',
+    error: 'error',
+  } as const)[logLevelEnv] ?? 'info'
 
 export class Logger {
   readonly logLevel = LOG_LEVEL
