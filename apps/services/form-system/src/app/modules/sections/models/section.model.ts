@@ -64,13 +64,6 @@ export class Section extends Model<Section> {
     allowNull: false,
     defaultValue: false,
   })
-  isHidden!: boolean
-
-  @Column({
-    type: DataType.BOOLEAN,
-    allowNull: false,
-    defaultValue: false,
-  })
   isCompleted!: boolean
 
   @HasMany(() => Screen)

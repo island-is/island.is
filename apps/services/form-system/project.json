@@ -12,7 +12,29 @@
         "outputPath": "dist/apps/services/form-system",
         "main": "apps/services/form-system/src/main.ts",
         "tsConfig": "apps/services/form-system/tsconfig.app.json",
-        "assets": ["apps/services/form-system/src/assets"]
+        "assets": [
+          "apps/services/form-system/src/assets",
+          {
+            "glob": "*",
+            "input": "apps/services/form-system/migrations",
+            "output": "./migrations"
+          },
+          {
+            "glob": "*",
+            "input": "apps/services/form-system/seeders",
+            "output": "./seeders"
+          },
+          {
+            "glob": ".sequelizerc",
+            "input": "apps/services/form-system",
+            "output": "./"
+          },
+          {
+            "glob": "sequelize.config.js",
+            "input": "apps/services/form-system",
+            "output": "./"
+          }
+        ]
       },
       "configurations": {
         "production": {
@@ -95,6 +117,24 @@
     },
     "docker-express": {
       "executor": "Intentionally left blank, only so this target is valid when using `nx show projects --with-target docker-express`"
+    },
+    "dev-init": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "yarn dev-services services-form-system",
+          "yarn nx run services-form-system:migrate",
+          "yarn nx run services-form-system:seed"
+        ],
+        "parallel": false
+      }
+    },
+    "dev": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": ["yarn start services-form-system"],
+        "parallel": true
+      }
     }
   }
 }
