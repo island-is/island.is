@@ -117,6 +117,7 @@ export interface PaginateInput {
   primaryKeyField: string
   orderOption: any
   where?: any
+  attributes?: any
   after: string
   before?: string
   limit: number
@@ -138,6 +139,7 @@ export async function paginate<T = any>({
   after,
   before,
   limit,
+  attributes,
   ...queryArgs
 }: PaginateInput): Promise<{
   totalCount: number
@@ -164,6 +166,7 @@ export async function paginate<T = any>({
     where: paginationWhere,
     limit,
     order,
+    attributes,
     ...queryArgs,
   }
 

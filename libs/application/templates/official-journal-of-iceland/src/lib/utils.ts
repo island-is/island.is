@@ -3,6 +3,7 @@ import addYears from 'date-fns/addYears'
 import { z } from 'zod'
 import {
   additionSchema,
+  baseEntitySchema,
   committeeSignatureSchema,
   memberItemSchema,
   partialSchema,
@@ -131,6 +132,11 @@ export const getSignatureDefaultValues = (signature: any, index?: number) => {
 
   return { institution: signature.institution, date: signature.date }
 }
+
+export const isBaseEntity = (
+  entity: unknown,
+): entity is z.infer<typeof baseEntitySchema> =>
+  baseEntitySchema.safeParse(entity).success
 
 export const isAddition = (
   addition: unknown,

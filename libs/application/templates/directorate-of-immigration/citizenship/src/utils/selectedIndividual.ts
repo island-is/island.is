@@ -28,7 +28,9 @@ export const getSelectedIndividualName = (
   )
 
   if (selectedChild) {
-    return `${selectedChild.givenName} ${selectedChild.familyName}`
+    return selectedChild.givenName && selectedChild.familyName
+      ? `${selectedChild.givenName} ${selectedChild.familyName}`
+      : `${selectedChild.fullName}`
   }
 
   return undefined
