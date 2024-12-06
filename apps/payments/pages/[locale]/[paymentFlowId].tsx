@@ -206,9 +206,11 @@ export default function PaymentPage({
                     ? formatMessage(card.pay)
                     : formatMessage(invoice.create)}
                 </Button>
-                <Button colorScheme="white" fluid>
-                  {formatMessage(generic.buttonCancel)}
-                </Button>
+                <Box display="flex" justifyContent="center" marginBottom={1}>
+                  <Button variant="text">
+                    {formatMessage(generic.buttonCancel)}
+                  </Button>
+                </Box>
               </Box>
             </form>
           </FormProvider>

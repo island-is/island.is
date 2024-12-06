@@ -53,8 +53,8 @@ export const PageCard = ({
             {headerSlot}
           </Box>
           <Box
-            paddingX={[3, 4]}
-            paddingTop={4}
+            paddingX={3}
+            paddingTop={3}
             paddingBottom={2}
             display="flex"
             width="full"

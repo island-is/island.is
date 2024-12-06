@@ -24,9 +24,9 @@ export const InvoicePayment = () => {
           {...register('nationalId', {
             required: true,
           })}
-          size="md"
-          disabled
+          size="sm"
           value={'123456-7890'}
+          readOnly
         />
         <Input
           backgroundColor="blue"
@@ -34,7 +34,9 @@ export const InvoicePayment = () => {
           {...register('reference', {
             required: false,
           })}
-          size="md"
+          size="sm"
+          value={'Fyrirtaeki ehf.'}
+          readOnly
         />
       </PaymentContainer>
     </>

@@ -69,7 +69,7 @@ export const CardPayment = () => {
                 backgroundColor="blue"
                 label={formatMessage(card.cardNumber)}
                 placeholder={formatMessage(card.cardNumberPlaceholder)}
-                size="md"
+                size="sm"
                 errorMessage={formState.errors.card?.message}
               />
             </InputMask>
@@ -103,7 +103,7 @@ export const CardPayment = () => {
                     backgroundColor="blue"
                     label={formatMessage(card.cardExpiry)}
                     placeholder={formatMessage(card.cardExpiryPlaceholder)}
-                    size="md"
+                    size="sm"
                     rows={6}
                     errorMessage={formState.errors.cardExpiry?.message}
                   />
@@ -116,7 +116,7 @@ export const CardPayment = () => {
               name={'cardCVC'}
               control={control}
               rules={{
-                required: formatMessage(cardError.cardExpiry),
+                required: formatMessage(cardError.cardCVC),
                 validate: (value) => validateCardCVC(value, formatMessage),
               }}
               render={({ field }) => (
@@ -126,7 +126,7 @@ export const CardPayment = () => {
                     backgroundColor="blue"
                     label={formatMessage(card.cardCVC)}
                     placeholder={formatMessage(card.cardCVCPlaceholder)}
-                    size="md"
+                    size="sm"
                     rows={6}
                     errorMessage={formState.errors.cardCVC?.message}
                   />

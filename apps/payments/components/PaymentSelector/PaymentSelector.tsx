@@ -1,5 +1,7 @@
-import { Box, Button } from '@island.is/island-ui/core'
+import { Box } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
+
+import { ButtonPayment as Button } from '../ButtonPayment/ButtonPayment'
 
 import { card, invoice } from '../../messages'
 
@@ -30,23 +32,21 @@ export const PaymentSelector = ({
       flexDirection="row"
       justifyContent="spaceBetween"
       columnGap={1}
-      marginBottom={2}
     >
-      {/* TODO use toggle buttons similar to menu in service-portal */}
       {hasCard && (
         <Button
-          colorScheme={selectedPayment === 'card' ? 'light' : 'white'}
+          isSelected={selectedPayment === 'card'}
           onClick={() => onSelectPayment('card')}
-          fluid
+          type="card"
         >
           {formatMessage(card.paymentMethodTitle)}
         </Button>
       )}
       {hasInvoice && (
         <Button
-          colorScheme={selectedPayment === 'invoice' ? 'light' : 'white'}
+          isSelected={selectedPayment === 'invoice'}
           onClick={() => onSelectPayment('invoice')}
-          fluid
+          type="invoice"
         >
           {formatMessage(invoice.paymentMethodTitle)}
         </Button>

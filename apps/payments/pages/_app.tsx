@@ -5,6 +5,7 @@ import { ApolloProvider } from '@apollo/client/react'
 import { LocaleProvider } from '@island.is/localization'
 
 import initApollo from '../graphql/client'
+import './app.css'
 
 const Layout: FC<React.PropsWithChildren<unknown>> = ({ children }) => {
   return (

@@ -22,16 +22,16 @@ export const PaymentHeader = ({
     <>
       <Box>
         {organizationTitle && (
-          <Box display="flex" marginTop={3} marginBottom={1}>
+          <Box display="flex" marginTop={2} marginBottom={0}>
             <Text color="purple400" variant="eyebrow">
               {organizationTitle}
             </Text>
           </Box>
         )}
-        <Text variant="h1">
+        <Text variant="h2">
           {amount && todoCallGlobalFormatUtilFunction(amount)}
         </Text>
-        <Text variant="default" fontWeight={'medium'}>
+        <Text variant="small" fontWeight="regular">
           {productTitle}
         </Text>
       </Box>

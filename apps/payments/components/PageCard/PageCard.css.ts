@@ -35,6 +35,8 @@ const createStandardBorder = () =>
 
 export const cardContainer = style({
   position: 'relative',
+  overflow: 'hidden',
+
   borderTop: createStandardBorder(),
   ...themeUtils.responsiveStyle({
     xs: {
