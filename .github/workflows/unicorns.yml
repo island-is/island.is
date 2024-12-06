@@ -38,7 +38,8 @@ jobs:
               pull_number: context.issue.number
             });
             return pullRequest.state === 'APPROVED';
-      - name: Check if PR is approved
+
+      - name: Results
         run: echo "Is IS_PR_APPROOVED=${{ steps.check-approoved.outputs.result }}"
 
   check-unicorn:
