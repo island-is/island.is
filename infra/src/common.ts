@@ -30,7 +30,7 @@ export async function runCommand({
     shell: true,
     stdio: 'pipe',
   })
-  proc.stdout?.on('data', (data) => {
+  proc.stdout?.on('data', (data: Buffer | string) => {
     data
       .toString()
       .split('\n')
