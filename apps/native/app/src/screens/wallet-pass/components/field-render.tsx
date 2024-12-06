@@ -67,6 +67,31 @@ export const FieldRender = ({
                 </FieldGroup>
               )
 
+            case 'Table':
+              if (label) {
+                return (
+                  <View key={key} style={{ marginTop: 24, paddingBottom: 4 }}>
+                    <FieldLabel>{label}</FieldLabel>
+                    {FieldRender({
+                      data: fields as GenericLicenseDataField[],
+                      level: 2,
+                      licenseType: licenseType,
+                    })}
+                  </View>
+                )
+              }
+              return (
+                <FieldGroup key={key}>
+                  <View>
+                    {FieldRender({
+                      data: fields as GenericLicenseDataField[],
+                      level: 2,
+                      licenseType: licenseType,
+                    })}
+                  </View>
+                </FieldGroup>
+              )
+
             case 'Category':
               return (
                 <FieldCard
