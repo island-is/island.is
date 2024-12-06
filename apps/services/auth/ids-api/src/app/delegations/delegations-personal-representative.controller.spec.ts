@@ -36,16 +36,13 @@ import {
 } from '@island.is/shared/types'
 import {
   createCurrentUser,
+  createNationalId,
   createNationalRegistryUser,
 } from '@island.is/testing/fixtures'
 import { TestApp } from '@island.is/testing/nest'
 
 import { defaultScopes, setupWithAuth } from '../../../test/setup'
-import {
-  getFakeName,
-  getFakeNationalId,
-  NameIdTuple,
-} from '../../../test/stubs/genericStubs'
+import { getFakeName, NameIdTuple } from '../../../test/stubs/genericStubs'
 import {
   delegationTypes,
   getPersonalRepresentativeRelationship,
@@ -54,6 +51,8 @@ import {
   getScopePermission,
   personalRepresentativeType,
 } from '../../../test/stubs/personalRepresentativeStubs'
+
+const getFakeNationalId = () => createNationalId('person')
 
 const setupHookTimeout = 10000
 
