@@ -414,87 +414,87 @@ const Conclusion: FC = () => {
                 title={formatMessage(strings.completingTitle)}
                 required
               />
-                <BlueBox>
-                  <Box marginBottom={2}>
-                    <RadioButton
-                      id="decision-ruling"
-                      name="decision"
-                      checked={
-                        selectedDecision === CaseIndictmentRulingDecision.RULING
-                      }
-                      onChange={() => {
-                        setSelectedDecision(CaseIndictmentRulingDecision.RULING)
-                      }}
-                      large
-                      backgroundColor="white"
-                      label={formatMessage(strings.ruling)}
-                    />
-                  </Box>
-                  <Box marginBottom={2}>
-                    <RadioButton
-                      id="decision-fine"
-                      name="decision"
-                      checked={
-                        selectedDecision === CaseIndictmentRulingDecision.FINE
-                      }
-                      onChange={() => {
-                        setSelectedDecision(CaseIndictmentRulingDecision.FINE)
-                      }}
-                      large
-                      backgroundColor="white"
-                      label={formatMessage(strings.fine)}
-                    />
-                  </Box>
-                  <Box marginBottom={2}>
-                    <RadioButton
-                      id="decision-dismissal"
-                      name="decision"
-                      checked={
-                        selectedDecision ===
-                        CaseIndictmentRulingDecision.DISMISSAL
-                      }
-                      onChange={() => {
-                        setSelectedDecision(
-                          CaseIndictmentRulingDecision.DISMISSAL,
-                        )
-                      }}
-                      large
-                      backgroundColor="white"
-                      label={formatMessage(strings.dismissal)}
-                    />
-                  </Box>
-                  <Box marginBottom={2}>
-                    <RadioButton
-                      id="decision-merge"
-                      name="decision"
-                      checked={
-                        selectedDecision === CaseIndictmentRulingDecision.MERGE
-                      }
-                      onChange={() => {
-                        setSelectedDecision(CaseIndictmentRulingDecision.MERGE)
-                      }}
-                      large
-                      backgroundColor="white"
-                      label={formatMessage(strings.merge)}
-                    />
-                  </Box>
+              <BlueBox>
+                <Box marginBottom={2}>
                   <RadioButton
-                    id="decision-cancellation"
+                    id="decision-ruling"
+                    name="decision"
+                    checked={
+                      selectedDecision === CaseIndictmentRulingDecision.RULING
+                    }
+                    onChange={() => {
+                      setSelectedDecision(CaseIndictmentRulingDecision.RULING)
+                    }}
+                    large
+                    backgroundColor="white"
+                    label={formatMessage(strings.ruling)}
+                  />
+                </Box>
+                <Box marginBottom={2}>
+                  <RadioButton
+                    id="decision-fine"
+                    name="decision"
+                    checked={
+                      selectedDecision === CaseIndictmentRulingDecision.FINE
+                    }
+                    onChange={() => {
+                      setSelectedDecision(CaseIndictmentRulingDecision.FINE)
+                    }}
+                    large
+                    backgroundColor="white"
+                    label={formatMessage(strings.fine)}
+                  />
+                </Box>
+                <Box marginBottom={2}>
+                  <RadioButton
+                    id="decision-dismissal"
                     name="decision"
                     checked={
                       selectedDecision ===
-                      CaseIndictmentRulingDecision.CANCELLATION
+                      CaseIndictmentRulingDecision.DISMISSAL
                     }
                     onChange={() => {
                       setSelectedDecision(
-                        CaseIndictmentRulingDecision.CANCELLATION,
+                        CaseIndictmentRulingDecision.DISMISSAL,
                       )
                     }}
                     large
                     backgroundColor="white"
-                    label={formatMessage(strings.cancellation)}
+                    label={formatMessage(strings.dismissal)}
                   />
-                </BlueBox>
+                </Box>
+                <Box marginBottom={2}>
+                  <RadioButton
+                    id="decision-merge"
+                    name="decision"
+                    checked={
+                      selectedDecision === CaseIndictmentRulingDecision.MERGE
+                    }
+                    onChange={() => {
+                      setSelectedDecision(CaseIndictmentRulingDecision.MERGE)
+                    }}
+                    large
+                    backgroundColor="white"
+                    label={formatMessage(strings.merge)}
+                  />
+                </Box>
+                <RadioButton
+                  id="decision-cancellation"
+                  name="decision"
+                  checked={
+                    selectedDecision ===
+                    CaseIndictmentRulingDecision.CANCELLATION
+                  }
+                  onChange={() => {
+                    setSelectedDecision(
+                      CaseIndictmentRulingDecision.CANCELLATION,
+                    )
+                  }}
+                  large
+                  backgroundColor="white"
+                  label={formatMessage(strings.cancellation)}
+                />
+              </BlueBox>
             </Box>
             {selectedDecision === CaseIndictmentRulingDecision.MERGE && (
               <Box marginBottom={5}>
