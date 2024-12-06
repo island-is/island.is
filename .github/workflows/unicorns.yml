@@ -10,6 +10,8 @@ on:
       - opened
       - synchronize
       - labeled
+  pull_request_review:
+    types: [submitted]
 
 concurrency:
   # See https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#example-using-a-fallback-value
