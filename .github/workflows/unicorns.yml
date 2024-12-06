@@ -49,19 +49,27 @@ jobs:
             return !(declined && pending);
       - name: Find Latest Release Branch
         if: ${{ steps.check-approoved.outputs.result }}
-        uses: actions/github-script@v7
+        uses: octokit/graphql-action@v2.x
+        id: get_latest_release
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            const branches = await github.rest.repos.listBranches({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              protected: false
-            });
-            console.log(branches.data);
-            const releaseBranches = branches.data.filter(branch => branch.name.startsWith('release'));
-            console.log('Release branches:', releaseBranches.map(branch => branch.name));
-            return releaseBranches.length > 0 ? releaseBranches[0].name : null;
+          query: |
+            query release($owner:String!,$repo:String!) {
+              repository(owner:$owner,name:$repo) {
+                releases(first:1) {
+                  nodes {
+                    name
+                    createdAt
+                    tagName
+                    description
+                  }
+                }
+              }
+            }
+            owner: ${{ github.event.repository.owner.name }}
+            repo: ${{ github.event.repository.name }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - run: "echo 'latest release: ${{ steps.get_latest_release.outputs.data }}'"
       - name: output
         run: echo "IS_APPROVED=${{ steps.check-approoved.outputs.result }}" >> $GITHUB_OUTPUT
 
