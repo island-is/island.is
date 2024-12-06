@@ -55,12 +55,9 @@ jobs:
           query: |
             query release($owner:String!,$repo:String!) {
               repository(owner:$owner,name:$repo) {
-                releases(first:1) {
+                refs(first: 50, refPrefix:"refs/heads/") {
                   nodes {
                     name
-                    createdAt
-                    tagName
-                    description
                   }
                 }
               }
