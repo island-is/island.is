@@ -280,20 +280,20 @@ const Overview: FC = () => {
                 <RadioButton
                   large
                   name="indictmentConfirmationRequest"
-                  id="confirmIndictment"
-                  backgroundColor="white"
-                  label={formatMessage(strings.confirmIndictment)}
-                  checked={indictmentConfirmationDecision === 'confirm'}
-                  onChange={() => setIndictmentConfirmationDecision('confirm')}
-                />
-                <RadioButton
-                  large
-                  name="indictmentConfirmationRequest"
                   id="denyIndictment"
                   backgroundColor="white"
                   label={formatMessage(strings.denyIndictment)}
                   checked={indictmentConfirmationDecision === 'deny'}
                   onChange={() => setIndictmentConfirmationDecision('deny')}
+                />
+                <RadioButton
+                  large
+                  name="indictmentConfirmationRequest"
+                  id="confirmIndictment"
+                  backgroundColor="white"
+                  label={formatMessage(strings.confirmIndictment)}
+                  checked={indictmentConfirmationDecision === 'confirm'}
+                  onChange={() => setIndictmentConfirmationDecision('confirm')}
                 />
               </div>
             </BlueBox>
