@@ -3,6 +3,7 @@ import { Form, FormModes } from '@island.is/application/types'
 import { Logo } from '../../assets/Logo'
 import { informationSection } from './InformationSection'
 import { examineeSection } from './ExamineeSection'
+import { instructorSection } from './InstructorSection'
 
 export const PracticalExamForm: Form = buildForm({
   id: 'PracticalExamFormDraft',
@@ -11,5 +12,5 @@ export const PracticalExamForm: Form = buildForm({
   mode: FormModes.DRAFT,
   renderLastScreenButton: true,
   renderLastScreenBackButton: true,
-  children: [examineeSection, informationSection],
+  children: [informationSection, examineeSection, instructorSection],
 })

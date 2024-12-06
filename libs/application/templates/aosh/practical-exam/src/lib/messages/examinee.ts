@@ -27,8 +27,13 @@ export const examinee = {
     },
     countryIssuer: {
       id: 'aosh.pe.application:examinee.labels.countryIssuer',
-      defaultMessage: 'útgáfuland ökurskirteinis',
+      defaultMessage: 'Útgáfuland ökurskirteinis',
       description: `Label for the country that issued the license`,
+    },
+    pickCountry: {
+      id: 'aosh.pe.application:examinee.labels.pickCountry',
+      defaultMessage: 'Velja útgáfuland',
+      description: `placeholder for the country that issued the license`,
     },
   }),
 }

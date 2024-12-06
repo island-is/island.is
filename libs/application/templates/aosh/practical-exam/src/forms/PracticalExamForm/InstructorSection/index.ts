@@ -1,23 +1,25 @@
 import {
   buildMultiField,
   buildSection,
+  buildSubmitField,
   buildTableRepeaterField,
 } from '@island.is/application/core'
-import { examinee, shared } from '../../../lib/messages'
-import { getAllCountryCodes } from '@island.is/shared/utils'
+import { instructor, shared } from '../../../lib/messages'
 
-export const examineeSection = buildSection({
-  id: 'examineeSection',
-  title: examinee.general.sectionTitle,
+export const instructorSection = buildSection({
+  id: 'instructorSection',
+  title: instructor.general.sectionTitle,
   children: [
     buildMultiField({
-      title: examinee.general.pageTitle,
-      id: 'examineesMultiField',
-      description: examinee.general.pageDescription,
+      title: instructor.general.pageTitle,
+      id: 'instructorsMultiField',
+      description: instructor.general.pageDescription,
       children: [
         buildTableRepeaterField({
-          id: 'examinees',
+          id: 'instructors',
           title: '',
+          addItemButtonText: instructor.tableRepeater.addInstructorButton,
+          editField: true,
           fields: {
             nationalId: {
               component: 'nationalIdWithName',
@@ -36,23 +38,6 @@ export const examineeSection = buildSection({
               format: '###-####',
               placeholder: '000-0000',
               width: 'half',
-            },
-            licenseNumber: {
-              component: 'input',
-              label: examinee.labels.licenceNumber,
-              width: 'half',
-              displayInTable: false,
-            },
-            countryIssuer: {
-              component: 'select',
-              label: examinee.labels.countryIssuer,
-              placeholder: examinee.labels.pickCountry,
-              width: 'half',
-              displayInTable: false,
-              options: getAllCountryCodes().map((country) => ({
-                label: country.name,
-                value: country.name,
-              })),
             },
           },
           table: {

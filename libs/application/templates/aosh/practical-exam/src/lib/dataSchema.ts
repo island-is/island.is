@@ -30,9 +30,25 @@ const examineeSchema = z.array(
   }),
 )
 
+const instructorSchema = z.array(
+  z.object({
+    nationalId: z.object({
+      nationalId: z.string().refine((nationalId) => {
+        return (
+          nationalId && nationalId.length !== 0 && kennitala.isValid(nationalId)
+        )
+      }),
+      name: z.string().min(1).max(256),
+    }),
+    email: z.string().refine((email) => isValidEmail(email)),
+    phone: z.string().refine((phone) => isValidPhoneNumber(phone)),
+  }),
+)
+
 export const PracticalExamAnswersSchema = z.object({
   information: informationSchema,
   examinees: examineeSchema,
+  instructors: instructorSchema,
 })
 
 export type PracticalExamAnswers = z.TypeOf<typeof PracticalExamAnswersSchema>
