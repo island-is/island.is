@@ -42,7 +42,7 @@ jobs:
           # return pullRequest.state === 'APPROVED';
           script: |
             console.log(context.payload.pull_request);
-            var requested_reviewersNames = requested_reviewers.map((reviewer) => reviewer.login);
+            var requested_reviewersNames = context.payload.pull_request.requested_reviewers.map((reviewer) => reviewer.login);
             console.log(requested_reviewersNames);
 
           # const { data: pullRequest } = await github.rest.pulls.get({
