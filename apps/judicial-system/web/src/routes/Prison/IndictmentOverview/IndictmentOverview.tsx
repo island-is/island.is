@@ -1,11 +1,12 @@
 import { useContext } from 'react'
 import { useIntl } from 'react-intl'
 
-import { Box, Text } from '@island.is/island-ui/core'
+import { Box, RadioButton, Text } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import { core } from '@island.is/judicial-system-web/messages'
 import {
+  BlueBox,
   FormContentContainer,
   FormContext,
   FormFooter,
@@ -14,6 +15,7 @@ import {
   PageLayout,
   PageTitle,
   RenderFiles,
+  SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
 import { CaseFileCategory } from '@island.is/judicial-system-web/src/graphql/schema'
 import { useFileList } from '@island.is/judicial-system-web/src/utils/hooks'
@@ -56,7 +58,7 @@ const IndictmentOverview = () => {
         <Box marginBottom={5}>
           <InfoCardClosedIndictment displayVerdictViewDate />
         </Box>
-        <Box marginBottom={10}>
+        <Box marginBottom={5}>
           <Text variant="h4" as="h4" marginBottom={1}>
             {formatMessage(strings.verdictTitle)}
           </Text>
@@ -68,6 +70,26 @@ const IndictmentOverview = () => {
               ) || []
             }
           />
+        </Box>
+         {/* TODO: Are we missing "Fullnusta" here? */}
+        <Box marginBottom={10}>
+          {/* Comment: Thought about using SectionHeading but its larger and thus not consistent with prev titles */}
+          <Text variant="h4" as="h4" marginBottom={2}>{formatMessage(strings.punishmentTypeTitle)}</Text>
+          <BlueBox>
+            <Box marginBottom={1}>
+              <RadioButton
+                id="punishment-type-imprisonment"
+                name="punishmentTypeImprisonment"
+                checked={true
+                }
+                onChange={() => {
+                }}
+                large
+                backgroundColor="white"
+                label={formatMessage(strings.imprisonment)}
+              />
+            </Box>
+          </BlueBox>
         </Box>
       </FormContentContainer>
       <FormContentContainer isFooter>
