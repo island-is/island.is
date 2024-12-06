@@ -129,6 +129,7 @@ identity-server:
     - 'nginx-ingress-external'
     - 'user-notification'
     - 'portals-admin'
+    - 'datadog'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -457,6 +458,7 @@ services-auth-ids-api:
   grantNamespaces:
     - 'nginx-ingress-external'
     - 'user-notification'
+    - 'datadog'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -565,6 +567,7 @@ services-auth-ids-api-cleanup:
     - 'nginx-ingress-external'
     - 'user-notification'
     - 'portals-admin'
+    - 'datadog'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
