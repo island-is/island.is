@@ -245,8 +245,6 @@ export class DocumentServiceV2 {
       mutableCategoryIds.filter((c) => !hiddenCategoryIds.includes(c))
     }
 
-    console.log('restOfInput', restOfInput)
-
     const documents = await this.documentService.getDocumentList({
       ...restOfInput,
       categoryId: mutableCategoryIds.join(),
