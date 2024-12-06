@@ -46,11 +46,11 @@ jobs:
               repo: context.repo.repo,
               pull_number: context.issue.number
             });
-            console.log("hallo")
-            return pullRequest
-
+            console.log(pullRequest)
+            return pullRequest.state === 'APPROVED';
       - name: Results
-        run: echo "Is IS_PR_APPROOVED=${{ steps.check-approoved.outputs.result }}"
+        run: |
+          echo "Is IS_PR_APPROOVED=${{ steps.check-approoved.outputs.result }}"
 
   # check-unicorn:
   #   name: Release The Unicorns
