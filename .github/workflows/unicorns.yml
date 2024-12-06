@@ -42,7 +42,6 @@ jobs:
           # return pullRequest.state === 'APPROVED';
           script: |
             var requested_reviewersNames = context.payload.pull_request.requested_reviewers.map((reviewer) => reviewer.login);
-
             return context.payload.pull_request.state
       - name: Results
         env:
@@ -51,17 +50,18 @@ jobs:
           REPO: ${{ github.repository }}
           PR_NUMBER: ${{ github.event.number }}
           EVENT: ${{ toJSON(github.event) }}
-          # echo "Is IS_PR_APPROOVED=${{ steps.check-approoved.outputs.result }}"
         run: |
-          # echo $OWNER
+          echo "Is IS_PR_APPROOVED=${{ steps.check-approoved.outputs.result }}"
+
+            # echo $OWNER
           # echo $REPO
           # echo $PR_NUMBER
-          echo $EVENT | jq
-          curl -L \
-            -H "Accept: application/vnd.github+json" \
-            -H "Authorization: Bearer $GITHUB_TOKEN" \
-            -H "X-GitHub-Api-Version: 2022-11-28" \
-            https://api.github.com/repos/$REPO/pulls/$PR_NUMBER/reviews
+          # echo $EVENT | jq
+          # curl -L \
+          #   -H "Accept: application/vnd.github+json" \
+          #   -H "Authorization: Bearer $GITHUB_TOKEN" \
+          #   -H "X-GitHub-Api-Version: 2022-11-28" \
+          #   https://api.github.com/repos/$REPO/pulls/$PR_NUMBER/reviews
 
   # check-unicorn:
   #   name: Release The Unicorns
