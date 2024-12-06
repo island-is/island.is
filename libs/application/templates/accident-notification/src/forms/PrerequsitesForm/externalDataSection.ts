@@ -1,13 +1,15 @@
 import {
   buildDataProviderItem,
   buildExternalDataProvider,
-  buildSubSection,
+  buildSection,
+  buildSubmitField,
+  coreMessages,
 } from '@island.is/application/core'
-import { externalData } from '../../../lib/messages'
-import { NationalRegistryUserApi } from '@island.is/application/types'
+import { externalData } from '../../lib/messages'
+import { NationalRegistryUserApi } from '../../dataProviders'
 
-export const accidentNotificationSubSection = buildSubSection({
-  id: 'AccidentNotificationForm',
+export const externalDataSection = buildSection({
+  id: 'ExternalDataRegularSection',
   title: externalData.dataProvider.sectionTitle,
   children: [
     buildExternalDataProvider({
@@ -16,6 +18,19 @@ export const accidentNotificationSubSection = buildSubSection({
       subTitle: externalData.dataProvider.subTitle,
       description: '',
       checkboxLabel: externalData.dataProvider.checkboxLabel,
+      submitField: buildSubmitField({
+        id: 'submit',
+        placement: 'footer',
+        title: '',
+        refetchApplicationAfterSubmit: true,
+        actions: [
+          {
+            event: 'SUBMIT',
+            name: coreMessages.buttonNext,
+            type: 'primary',
+          },
+        ],
+      }),
       dataProviders: [
         buildDataProviderItem({
           id: 'directoryOfLabor',
