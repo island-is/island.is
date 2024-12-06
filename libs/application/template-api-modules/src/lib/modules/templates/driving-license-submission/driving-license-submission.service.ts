@@ -222,16 +222,16 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
       )
       const email = getValueViaPath<string>(answers, 'email')
       const phone = getValueViaPath<string>(answers, 'phone')
-      const attachedFileKey = (getValueViaPath<{ key: string; name: string }[]>(
+      const attachedFile = (getValueViaPath<{ key: string; name: string }[]>(
         answers,
         'healthDeclarationFileUpload',
-      ) ?? [{ key: '', name: '' }])[0].key
+      ) ?? [{ key: '', name: '' }])[0]
 
-      const fileName = (
+      const filename = (
         application.attachments as {
           [key: string]: string
         }
-      )[attachedFileKey]
+      )[attachedFile.key]
 
       return this.drivingLicenseService.applyForBELicense(
         nationalId,
@@ -241,9 +241,12 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
           instructorSSN: instructorSSN ?? '',
           primaryPhoneNumber: phone ?? '',
           studentEmail: email ?? '',
-          healthDeclarationFileUpload: attachedFileKey
-            ? await this.getBase64EncodedAttachment(fileName)
-            : '',
+          healthDeclarationFileUpload: {
+            base64: attachedFile.key
+              ? await this.getBase64EncodedAttachment(filename)
+              : '',
+            filename: attachedFile.name,
+          },
         },
       )
     }
