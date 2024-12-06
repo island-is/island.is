@@ -97,4 +97,6 @@ jobs:
           HeadRef: ${{ github.head_ref }}
           RefName: ${{ github.ref_name }}
         run: |
-          node scripts/ci/.mjs $PR_NUMBER
+          echo "Approving PR $PR_NUMBER"
+          echo "BaseRef = $BaseRef"
+          echo "HeadRef = $HeadRef"
