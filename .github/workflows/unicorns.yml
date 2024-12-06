@@ -47,26 +47,12 @@ jobs:
             var pending = context.payload.pull_request.requested_teams.length > 0
             console.log(!(declined && pending) ? 'Pr is approved' : 'Pr is not approved');
             return !(declined && pending);
+
       - name: Find Latest Release Branch
         if: ${{ steps.check-approoved.outputs.result }}
-        uses: octokit/graphql-action@v2.x
-        id: get_latest_release
-        with:
-          query: |
-            query release($owner:String!,$repo:String!) {
-              repository(owner:$owner,name:$repo) {
-                refs(
-                  first: 50,
-                  refPrefix:"refs/heads/release/"
-                  orderBy: {field:TAG_COMMIT_DATE, direction: DESC}) {
-                  nodes {
-                    name
-                  }
-                }
-              }
-            }
-          owner: ${{ github.event.pull_request.head.repo.owner.login }}
-          repo: ${{ github.event.repository.name }}
+        run: |
+          node scripts/ci/get-last-release.mjs $(git branch -r)
+
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - run: "echo 'latest release: ${{ steps.get_latest_release.outputs.data }}'"
