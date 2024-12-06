@@ -162,7 +162,9 @@ const WHODASResults = ({
             {formatMessage(m.results.scoreHeading)}
           </Text>
           <Box background="purple100" padding="p2" borderRadius="large">
-            <Text>{formatScore(totalScore)}</Text>
+            <Text>
+              {formatScore(totalScore)} {formatMessage(m.results.outOf100)}
+            </Text>
           </Box>
         </Stack>
         <Stack space={1}>
@@ -203,17 +205,14 @@ const WHODASResults = ({
                     <Bullet key={step.title}>
                       <Box className={styles.breakdownRowContainer}>
                         <Text>{step.title}</Text>
-                        <Text>{formatScore(step.scoreForStep)}</Text>
+                        <Text>
+                          {formatScore(step.scoreForStep)}{' '}
+                          {formatMessage(m.results.outOf100)}
+                        </Text>
                       </Box>
                     </Bullet>
                   ))}
                 </BulletList>
-                <Box className={styles.totalScoreRowContainer}>
-                  <Text fontWeight="semiBold">
-                    {formatMessage(m.results.totalScore)}
-                  </Text>
-                  <Text fontWeight="semiBold">{formatScore(totalScore)}</Text>
-                </Box>
               </Stack>
             </Stack>
             <Box
