@@ -1,15 +1,15 @@
 import {
+  ServiceBuilder,
+  json,
+  ref,
+  service,
+} from '../../../../infra/src/dsl/dsl'
+import {
   Base,
   Client,
   NationalRegistryB2C,
   RskCompanyInfo,
 } from '../../../../infra/src/dsl/xroad'
-import {
-  json,
-  ref,
-  service,
-  ServiceBuilder,
-} from '../../../../infra/src/dsl/dsl'
 
 const serviceName = 'user-notification'
 const serviceWorkerName = `${serviceName}-worker`
@@ -41,6 +41,7 @@ const getEnv = (services: {
     '@island.is/auth/delegations/index:system',
   ]),
   SERVICE_PORTAL_CLICK_ACTION_URL: 'https://island.is/minarsidur',
+  SERVICE_PORTAL_BFF_LOGIN_URL: 'https://island.is/bff/login',
   EMAIL_FROM_ADDRESS: {
     dev: 'development@island.is',
     staging: 'development@island.is',
