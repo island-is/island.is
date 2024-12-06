@@ -16,6 +16,13 @@ import * as m from './messages'
 import format from 'date-fns/format'
 import parseISO from 'date-fns/parseISO'
 import is from 'date-fns/locale/is'
+import { parsePhoneNumberFromString } from 'libphonenumber-js'
+
+export const validateEmail = (value: string) => {
+  const regex =
+    /^[\w!#$%&'*+/=?`{|}~^-]+(?:\.[\w!#$%&'*+/=?`{|}~^-]+)*@(?:[A-Z0-9-]+\.)+[A-Z]{2,6}$/i
+  return regex.test(value)
+}
 
 export const insertAt = (str: string, sub: string, pos: number) =>
   `${str.slice(0, pos)}${sub}${str.slice(pos)}`
@@ -27,6 +34,11 @@ export const formatDate = (date: string) => {
   return format(parseISO(date), 'dd.MM.yyyy', {
     locale: is,
   })
+}
+
+export const formatPhoneNumber = (phoneNumber: string): string => {
+  const phone = parsePhoneNumberFromString(phoneNumber, 'IS')
+  return phone?.formatNational() || phoneNumber
 }
 
 export const formatCurrency = (answer: string) =>

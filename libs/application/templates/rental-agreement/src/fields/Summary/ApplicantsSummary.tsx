@@ -1,10 +1,9 @@
 import { Fragment } from 'react'
 import { GridColumn, GridRow } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { formatPhoneNumber } from '@island.is/application/ui-components'
 import { RentalAgreement } from '../../lib/dataSchema'
 import { summary } from '../../lib/messages'
-import { formatNationalId } from '../../lib/utils'
+import { formatNationalId, formatPhoneNumber } from '../../lib/utils'
 import { KeyValue } from './KeyValue'
 import { SummarySection } from './SummarySection'
 import { Divider } from './Divider'
@@ -17,7 +16,7 @@ type Props = {
 export const ApplicantsSummary = ({ answers }: Props) => {
   const { formatMessage } = useLocale()
 
-  const landlordListWithoutRepresentatives = answers.landlordInfo.table.filter(
+  const landlordListWithoutRepresentatives = answers.landlordInfo.table?.filter(
     (landlord) =>
       !landlord.isRepresentative || landlord.isRepresentative.length === 0,
   )
@@ -31,24 +30,25 @@ export const ApplicantsSummary = ({ answers }: Props) => {
     <>
       <SummarySection
         sectionLabel={
+          landlordListWithoutRepresentatives &&
           landlordListWithoutRepresentatives.length > 1
             ? formatMessage(summary.landlordsHeaderPlural)
             : formatMessage(summary.landlordsHeader)
         }
       >
-        {landlordListWithoutRepresentatives.map((landlord) => {
+        {landlordListWithoutRepresentatives?.map((landlord) => {
           return (
-            <Fragment key={landlord.nationalIdWithName?.nationalId}>
+            <Fragment key={landlord.nationalIdWithName.nationalId}>
               <GridRow className={gridRow}>
                 <GridColumn span={['12/12']}>
                   <KeyValue
                     labelVariant="h5"
                     labelAs="p"
-                    label={landlord.nationalIdWithName?.name as string}
+                    label={landlord.nationalIdWithName.name as string}
                     value={`${formatMessage(
                       summary.nationalIdLabel,
                     )}${formatNationalId(
-                      landlord.nationalIdWithName?.nationalId || '-',
+                      landlord.nationalIdWithName.nationalId || '-',
                     )}`}
                     gap={'smallGutter'}
                   />
@@ -81,17 +81,17 @@ export const ApplicantsSummary = ({ answers }: Props) => {
       >
         {tenantListWithoutRepresentatives.map((tenant) => {
           return (
-            <Fragment key={tenant.nationalIdWithName?.nationalId}>
+            <Fragment key={tenant.nationalIdWithName.nationalId}>
               <GridRow className={gridRow}>
                 <GridColumn span={['12/12']}>
                   <KeyValue
                     labelVariant="h5"
                     labelAs="p"
-                    label={tenant.nationalIdWithName?.name as string}
+                    label={tenant.nationalIdWithName.name as string}
                     value={`${formatMessage(
                       summary.nationalIdLabel,
                     )}${formatNationalId(
-                      tenant.nationalIdWithName?.nationalId || '-',
+                      tenant.nationalIdWithName.nationalId || '-',
                     )}`}
                     gap={'smallGutter'}
                   />

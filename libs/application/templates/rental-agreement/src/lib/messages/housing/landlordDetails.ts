@@ -52,9 +52,48 @@ export const landlordDetails = defineMessages({
     defaultMessage: 'Símanúmer',
     description: 'Landlord details phone input label',
   },
+  addressInputLabel: {
+    id: 'ra.application:landlordDetails.addressInputLabel',
+    defaultMessage: 'Heimilisfang',
+    description: 'Landlord details address input label',
+  },
   representativeLabel: {
     id: 'ra.application:landlordDetails.representativeLabel',
     defaultMessage: 'Þessi aðili er umboðsaðili leigusala',
     description: 'Landlord details representative label',
+  },
+
+  // DataSchema errors
+  landlordEmptyTableError: {
+    id: 'ra.application:landlordDetails.landlordEmptyTableError',
+    defaultMessage:
+      'Að minnsta kosti einn leigusali þarf að vera skráður á leigusamninginn.',
+    description: 'Landlord details no landlords in table',
+  },
+  landlordOnlyRepresentativeTableError: {
+    id: 'ra.application:landlordDetails.landlordOnlyRepresentativeTableError',
+    defaultMessage:
+      'Að minnsta kosti einn leigusali þarf að vera skráður á leigusamninginn. Ekki er nóg að skrá umboðsaðlia leigusala.',
+    description: 'Landlord details only a representative of landlord in table',
+  },
+  landlordNationalIdEmptyError: {
+    id: 'ra.application:landlordDetails.landlordNationalIdEmptyError',
+    defaultMessage: 'Kennitala leigusala þarf að vera skráð',
+    description: 'Landlord details national id empty error',
+  },
+  landlordPhoneNumberEmptyError: {
+    id: 'ra.application:landlordDetails.landlordPhoneNumberEmptyError',
+    defaultMessage: 'Símanúmer leigusala þarf að vera skráð',
+    description: 'Landlord details phone number empty error',
+  },
+  landlordEmailEmptyError: {
+    id: 'ra.application:landlordDetails.landlordEmailEmptyError',
+    defaultMessage: 'Netfang leigusala þarf að vera skráð',
+    description: 'Landlord details email empty error',
+  },
+  landlordAddressEmptyError: {
+    id: 'ra.application:landlordDetails.landlordAddressEmptyError',
+    defaultMessage: 'Heimilisfang leigusala þarf að vera skráð',
+    description: 'Landlord details address empty error',
   },
 })
