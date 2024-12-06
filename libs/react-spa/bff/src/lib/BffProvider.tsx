@@ -89,6 +89,7 @@ export const BffProvider = ({
     const prompt = urlParams.get('prompt')
     const loginHint = urlParams.get('login_hint')
     const url = window.location.href
+
     const params = {
       target_link_uri:
         targetLinkUri ??
@@ -103,7 +104,6 @@ export const BffProvider = ({
         login_hint: loginHint,
       }),
     }
-    console.log(url, params)
 
     return params
   }, [applicationBasePath, oldLoginPath])
