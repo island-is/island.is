@@ -52,7 +52,7 @@ const Summary: FC = () => {
     return router.push(`${destination}/${workingCase.id}`)
   }
 
-  const handleNextButtonClick = async () => {
+  const handleModalPrimaryButtonClick = async () => {
     const transitionSuccess = await transitionCase(
       workingCase.id,
       CaseTransition.COMPLETE,
@@ -63,7 +63,7 @@ const Summary: FC = () => {
       return
     }
 
-    setModalVisible('CONFIRM_INDICTMENT')
+    router.push(`${constants.INDICTMENTS_COMPLETED_ROUTE}/${workingCase.id}`)
   }
 
   const [courtRecordFiles, rulingFiles] = (workingCase.caseFiles || []).reduce(
@@ -158,20 +158,24 @@ const Summary: FC = () => {
           previousUrl={`${constants.INDICTMENTS_CONCLUSION_ROUTE}/${workingCase.id}`}
           nextButtonIcon="checkmark"
           nextButtonText={formatMessage(strings.nextButtonText)}
-          onNextButtonClick={async () => await handleNextButtonClick()}
-          nextIsDisabled={isTransitioningCase}
+          onNextButtonClick={() => setModalVisible('CONFIRM_INDICTMENT')}
         />
       </FormContentContainer>
       {modalVisible === 'CONFIRM_INDICTMENT' && (
         <Modal
-          title={formatMessage(strings.completedCaseModalTitle)}
-          text={formatMessage(strings.completedCaseModalBody)}
-          primaryButtonText={formatMessage(core.closeModal)}
-          onPrimaryButtonClick={() =>
-            router.push(
-              `${constants.INDICTMENTS_COMPLETED_ROUTE}/${workingCase.id}`,
-            )
+          title={formatMessage(strings.completeCaseModalTitle)}
+          text={formatMessage(strings.completeCaseModalBody)}
+          primaryButtonText={formatMessage(
+            strings.completeCaseModalPrimaryButton,
+          )}
+          onPrimaryButtonClick={async () =>
+            await handleModalPrimaryButtonClick()
           }
+          secondaryButtonText={formatMessage(
+            strings.completeCaseModalSecondaryButton,
+          )}
+          onSecondaryButtonClick={() => setModalVisible(undefined)}
+          isPrimaryButtonLoading={isTransitioningCase}
         />
       )}
     </PageLayout>
