@@ -50,7 +50,7 @@ jobs:
       image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
     timeout-minutes: 10
     steps:
-      - name: Set up job
+      - name: PRing event
         id: setup
         run: |
           echo $EVENT_CONTEXT
