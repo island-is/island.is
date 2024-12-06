@@ -75,6 +75,7 @@ describe('Personal Representative DelegationsController', () => {
         let prTypeModel: typeof PersonalRepresentativeType
         let prDelegationTypeModel: typeof PersonalRepresentativeDelegationTypeModel
         let delegationTypeModel: typeof DelegationTypeModel
+        let nationalRegistryV3FeatureService: NationalRegistryV3FeatureService
         let nationalRegistryApi: NationalRegistryClientService
         let nationalRegistryV3Api: NationalRegistryV3ClientService
         let delegationProviderModel: typeof DelegationProviderModel
@@ -154,15 +155,12 @@ describe('Personal Representative DelegationsController', () => {
             getModelToken(DelegationProviderModel),
           )
           clientModel = app.get<typeof Client>(getModelToken(Client))
+          nationalRegistryV3FeatureService = app.get(
+            NationalRegistryV3FeatureService,
+          )
           nationalRegistryApi = app.get(NationalRegistryClientService)
           nationalRegistryV3Api = app.get(NationalRegistryV3ClientService)
           delegationIndexService = app.get(DelegationsIndexService)
-          const nationalRegistryV3FeatureService = app.get(
-            NationalRegistryV3FeatureService,
-          )
-          jest
-            .spyOn(nationalRegistryV3FeatureService, 'getValue')
-            .mockImplementation(async () => featureFlag)
           factory = new FixtureFactory(app)
         }, setupHookTimeout)
 
@@ -405,6 +403,10 @@ describe('Personal Representative DelegationsController', () => {
                   ),
                 ]
 
+                jest
+                  .spyOn(nationalRegistryV3FeatureService, 'getValue')
+                  .mockImplementation(async () => featureFlag)
+
                 nationalRegistryApiSpy = jest
                   .spyOn(nationalRegistryApi, 'getIndividual')
                   .mockImplementation(async (id) => {
@@ -463,7 +465,7 @@ describe('Personal Representative DelegationsController', () => {
               })
 
               afterAll(async () => {
-                jest.clearAllMocks()
+                jest.resetAllMocks()
                 await prRightsModel.destroy({
                   where: {},
                   cascade: true,
