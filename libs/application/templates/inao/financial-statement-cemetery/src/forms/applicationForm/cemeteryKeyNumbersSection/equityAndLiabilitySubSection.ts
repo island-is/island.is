@@ -1,10 +1,22 @@
 import {
+  buildAlertMessageField,
   buildCustomField,
+  buildDescriptionField,
+  buildDisplayField,
   buildMultiField,
   buildSubSection,
+  buildTextField,
 } from '@island.is/application/core'
 import { m } from '../../../lib/messages'
 import { CEMETERYEQUITIESANDLIABILITIESIDS } from '../../../utils/constants'
+import {
+  operationResult,
+  shouldShowEquityAndLiabilityError,
+  sumAssets,
+  sumLiabilities,
+  sumTotalEquity,
+  sumTotalEquityAndLiabilities,
+} from '../../../utils/helpers'
 
 export const equityAndLiabilitiesSubSection = buildSubSection({
   id: 'keyNumbers.cemetryEquitiesAndLiabilities',
@@ -15,13 +27,140 @@ export const equityAndLiabilitiesSubSection = buildSubSection({
       title: m.keyNumbersDebt,
       description: m.fillOutAppopriate,
       children: [
-        buildCustomField({
-          id: 'cemeteryEquitiesAndLiabilities',
-          title: m.keyNumbersDebt,
-          description: m.fillOutAppopriate,
-          component: 'CemeteryEquities',
-          childInputIds: Object.values(CEMETERYEQUITIESANDLIABILITIESIDS),
+        // Assets
+        buildDescriptionField({
+          id: 'assetsDescription',
+          title: m.properties,
+          titleVariant: 'h3',
         }),
+        buildTextField({
+          id: CEMETERYEQUITIESANDLIABILITIESIDS.fixedAssetsTotal,
+          title: m.fixedAssetsTotal,
+          width: 'half',
+          variant: 'currency',
+          rightAlign: true,
+        }),
+        buildTextField({
+          id: CEMETERYEQUITIESANDLIABILITIESIDS.currentAssets,
+          title: m.currentAssets,
+          width: 'half',
+          variant: 'currency',
+          rightAlign: true,
+        }),
+        buildDisplayField({
+          id: CEMETERYEQUITIESANDLIABILITIESIDS.assetTotal,
+          title: '',
+          label: m.totalAssets,
+          value: sumAssets,
+          variant: 'currency',
+          rightAlign: true,
+        }),
+
+        // Debt
+        buildDescriptionField({
+          id: 'incomeDescription',
+          title: m.debts,
+          titleVariant: 'h3',
+        }),
+        buildTextField({
+          id: CEMETERYEQUITIESANDLIABILITIESIDS.longTerm,
+          title: m.longTerm,
+          width: 'half',
+          variant: 'currency',
+          rightAlign: true,
+        }),
+        buildTextField({
+          id: CEMETERYEQUITIESANDLIABILITIESIDS.shortTerm,
+          title: m.shortTerm,
+          width: 'half',
+          variant: 'currency',
+          rightAlign: true,
+        }),
+        buildDisplayField({
+          id: CEMETERYEQUITIESANDLIABILITIESIDS.liabilityTotal,
+          title: '',
+          label: m.totalLiabilities,
+          value: sumLiabilities,
+          variant: 'currency',
+          rightAlign: true,
+        }),
+
+        // Equity
+        buildDescriptionField({
+          id: 'equityDescription',
+          title: m.equity,
+          titleVariant: 'h3',
+        }),
+        buildTextField({
+          id: CEMETERYEQUITIESANDLIABILITIESIDS.equityAtTheBeginningOfTheYear,
+          title: m.equityAtTheBeginningOfTheYear,
+          width: 'half',
+          variant: 'currency',
+          rightAlign: true,
+        }),
+        buildTextField({
+          id: CEMETERYEQUITIESANDLIABILITIESIDS.revaluationDueToPriceChanges,
+          title: m.revaluationDueToPriceChanges,
+          width: 'half',
+          variant: 'currency',
+          rightAlign: true,
+        }),
+        buildTextField({
+          id: CEMETERYEQUITIESANDLIABILITIESIDS.reevaluateOther,
+          title: m.reevaluateOther,
+          width: 'half',
+          variant: 'currency',
+          rightAlign: true,
+        }),
+        buildDisplayField({
+          id: CEMETERYEQUITIESANDLIABILITIESIDS.operationResult,
+          title: '',
+          label: m.operationResult,
+          value: operationResult,
+          variant: 'currency',
+          rightAlign: true,
+          width: 'half',
+        }),
+        buildDisplayField({
+          id: CEMETERYEQUITIESANDLIABILITIESIDS.equityTotal,
+          title: '',
+          label: m.totalEquity,
+          value: sumTotalEquity,
+          variant: 'currency',
+          rightAlign: true,
+        }),
+
+        // Debts and Equity
+        buildDescriptionField({
+          id: 'debtsAndEquityDescription',
+          title: m.debtsAndCash,
+          titleVariant: 'h3',
+        }),
+        buildDisplayField({
+          id: CEMETERYEQUITIESANDLIABILITIESIDS.totalEquityAndLiabilities,
+          title: '',
+          value: sumTotalEquityAndLiabilities,
+          variant: 'currency',
+          rightAlign: true,
+        }),
+
+        buildAlertMessageField({
+          condition: (application) => {
+            return shouldShowEquityAndLiabilityError(application)
+          },
+          id: 'equityAndLiabilityError',
+          title: m.equityErrorTitle,
+          description: m.equityDebtsAssetsValidatorError,
+          alertType: 'error',
+        }),
+
+        // buildCustomField({
+        //   id: 'cemeteryEquitiesAndLiabilities',
+        //   title: m.keyNumbersDebt,
+        //   description: m.fillOutAppopriate,
+        //   component: 'CemeteryEquities',
+        //   childInputIds: Object.values(CEMETERYEQUITIESANDLIABILITIESIDS),
+        // }),
       ],
     }),
   ],
