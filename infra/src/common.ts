@@ -35,9 +35,7 @@ export async function runCommand({
       .toString()
       .split('\n')
       .forEach((line: string) => {
-        if (line.trim().length > 0) {
-          logger.info(logMessage(line))
-        }
+        logger.info(logMessage(line.trim()))
       })
   })
   proc.stderr?.on('data', (data) => {
