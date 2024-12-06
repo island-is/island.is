@@ -401,7 +401,6 @@ const convertFormNodeToScreens = (
   user: BffUser | null,
 ): FormScreen[] => {
   const { children } = formNode
-  //console.log('FormNodeType: ', formNode.type)
 
   if (isValidScreen(formNode)) {
     return convertLeafToScreens(

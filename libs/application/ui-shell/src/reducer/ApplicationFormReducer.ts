@@ -25,7 +25,7 @@ export const initializeReducer = (
     state.user,
   )
   const screens = convertFormToScreens(form, answers, externalData, state.user).filter(s => s.isNavigable)
-  console.log(screens)
+  
   const currentScreen =
     form.mode === FormModes.IN_PROGRESS
       ? 0
