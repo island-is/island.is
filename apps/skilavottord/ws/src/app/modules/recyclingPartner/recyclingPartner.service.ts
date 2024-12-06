@@ -6,6 +6,7 @@ import {
   CreateRecyclingPartnerInput,
   UpdateRecyclingPartnerInput,
 } from './recyclingPartner.input'
+import { Op } from 'sequelize'
 
 @Injectable()
 export class RecyclingPartnerService {
@@ -15,12 +16,22 @@ export class RecyclingPartnerService {
   ) {}
 
   async findAll(): Promise<RecyclingPartnerModel[]> {
-    return await this.recyclingPartnerModel.findAll()
+    return await this.recyclingPartnerModel.findAll({
+      where: {
+        [Op.or]: [{ isMunicipality: false }, { isMunicipality: null }],
+      },
+    })
   }
 
   async findAllActive(): Promise<RecyclingPartnerModel[]> {
     return this.recyclingPartnerModel.findAll({
       where: { active: true },
+    })
+  }
+
+  async findAllRecyclingPartners(): Promise<RecyclingPartnerModel[]> {
+    return this.recyclingPartnerModel.findAll({
+      where: { isMunicipality: true },
     })
   }
 

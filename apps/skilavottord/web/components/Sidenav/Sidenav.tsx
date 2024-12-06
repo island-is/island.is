@@ -20,7 +20,7 @@ interface SidenavProps {
   activeSection: number
 }
 
-type SidenavIcon = 'car' | 'business' | 'lockClosed'
+type SidenavIcon = 'car' | 'business' | 'lockClosed' | 'municipality'
 
 export const Sidenav = ({ title, sections, activeSection }: SidenavProps) => (
   <Box background="blue100" padding={4} borderRadius="large">

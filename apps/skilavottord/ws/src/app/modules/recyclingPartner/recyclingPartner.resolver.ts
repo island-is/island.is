@@ -10,6 +10,7 @@ import {
   RecyclingPartnerInput,
   UpdateRecyclingPartnerInput,
 } from './recyclingPartner.input'
+import { boolean } from 'yargs'
 
 @Authorize()
 @Resolver(() => RecyclingPartnerModel)
@@ -19,8 +20,16 @@ export class RecyclingPartnerResolver {
   @Authorize({
     roles: [Role.developer, Role.recyclingFund],
   })
-  @Query(() => [RecyclingPartnerModel])
-  async skilavottordAllRecyclingPartners(): Promise<RecyclingPartnerModel[]> {
+  @Query(() => [RecyclingPartnerModel], {
+    name: 'skilavottordAllRecyclingPartners',
+  })
+  async getAllRecyclingPartners(
+    @Args('isMunicipality', { type: () => Boolean, nullable: true })
+    isMunicipality: boolean,
+  ): Promise<RecyclingPartnerModel[]> {
+    if (isMunicipality) {
+      return this.recyclingPartnerService.findAllRecyclingPartners()
+    }
     return this.recyclingPartnerService.findAll()
   }
 
