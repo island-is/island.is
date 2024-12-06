@@ -196,5 +196,6 @@ export const serviceSetup = (services: {
       'nginx-ingress-external',
       'user-notification',
       'portals-admin',
+      'datadog'
     )
 }
