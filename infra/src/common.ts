@@ -25,7 +25,7 @@ export async function runCommand({
     logger.info(logMessage(`[DRY RUN] ${command.join(' ')}`))
     return spawn('true')
   }
-  const proc = spawn(command.join(' '), [], {
+  const proc = spawn('bash', ['-c'].concat(command), {
     cwd,
     shell: true,
     stdio: 'pipe',
