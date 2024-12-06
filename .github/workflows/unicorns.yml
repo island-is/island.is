@@ -47,23 +47,6 @@ jobs:
             var pending = context.payload.pull_request.requested_teams.length > 0
             console.log(!(declined && pending) ? 'Pr is approved' : 'Pr is not approved');
             return !(declined && pending);
-
-      - name: Find Latest Release Branch
-        if: ${{ steps.check-approved.outputs.result }}
-        id: find-latest-release
-        uses: actions/github-script@v7
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            var reviews = await github.rest.request('GET /repos/island-is/island.is/branches', {
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              headers: {
-                'X-GitHub-Api-Version': '2022-11-28'
-              })
-
-            console.log(reviews.data);
-
       - name: output
         run: echo "IS_APPROVED=${{ steps.check-approved.outputs.result }}" >> $GITHUB_OUTPUT
 
@@ -106,3 +89,9 @@ jobs:
       - name: Results
         run: |
           echo "Unicorn = ${{ steps.unicorn-affected.outputs.IS_UNICORN }}"
+
+      - name: Find Latest Release Branch
+        run: |
+          node scripts/ci/get-last-release.mjs $(git branch -r)
+
+      - run: "echo 'latest release: ${{ steps.get_latest_release.outputs.data }}'"
