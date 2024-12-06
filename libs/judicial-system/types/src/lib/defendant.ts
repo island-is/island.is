@@ -41,11 +41,7 @@ export enum PunishmentType {
   PROBATION = 'PROBATION',
   FINE = 'FINE',
   INDICTMENT_RULING_DECISION_FINE = 'INDICTMENT_RULING_DECISION_FINE',
-<<<<<<< HEAD
-  SIGNED_FINE_INVITATION = 'SIGNED_FINE_INVITATION',
-=======
   SIGNED_FINE_INVITATION = 'SIGNED_FINE_INVITATION'
->>>>>>> 8998d0842b (feat(j-s): add punishment type ts type and remaining radio buttons)
 }
 
 export const successfulServiceStatus: string[] = [

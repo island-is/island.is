@@ -62,7 +62,7 @@ const Decision: FC<Props> = ({
               checkedRadio === CaseDecision.ACCEPTING_PARTIALLY ||
               (!checkedRadio &&
                 workingCase.decision === CaseDecision.ACCEPTING_PARTIALLY)
-            } 
+            }
             onChange={() => {
               setCheckedRadio(CaseDecision.ACCEPTING_PARTIALLY)
               onChange(CaseDecision.ACCEPTING_PARTIALLY)
