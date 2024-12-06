@@ -42,6 +42,13 @@ jobs:
           # return pullRequest.state === 'APPROVED';
           script: |
             var requested_reviewersNames = context.payload.pull_request.requested_reviewers.map((reviewer) => reviewer.login);
+
+            var reviews = await github.pulls.listReviews({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: context.payload.pull_request.number,
+            });
+            console.log(reviews.data);
             return context.payload.pull_request.state
       - name: Results
         env:
