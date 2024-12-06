@@ -1,7 +1,10 @@
 import {
   buildDescriptionField,
   buildForm,
+  buildMultiField,
+  buildRadioField,
   buildSection,
+  getValueViaPath,
 } from '@island.is/application/core'
 import { Form, FormModes, Section } from '@island.is/application/types'
 import { confirmation, externalData, payment } from '../../lib/messages'
@@ -35,18 +38,60 @@ export const CitizenshipForm: Form = buildForm({
       children: [],
     }),
     buildSection({
-      id: 'HjorturJ',
-      title: 'ASDFGH',
+      id: 'NeverGetToMe',
+      title: 'Never get to me',
       condition: (_answers) => false,
       children: [
         buildDescriptionField({
-          id: `huehuehue`,
-          title: 'Brudda',
+          id: `neverBeGottenTo`,
+          title: 'I should never be gotten to',
           titleVariant: 'h5',
         }),
       ],
     }),
     PersonalSection,
+    buildSection({ 
+      id: 'MultiSection',
+      title: 'Answer test',
+      children: [
+        buildMultiField({
+          id: 'blabla',
+          title: 'Mega title',
+          description: 'something',
+          children: [
+            buildDescriptionField({
+              id: `huehuehue`,
+              title: 'Answer me',
+              titleVariant: 'h5',
+            }),
+            buildRadioField({
+              id: 'somethingToBeAnswered',
+              title: '',
+              backgroundColor: 'blue',
+              width: 'half',
+              required: true,
+              options: [
+                { value: 'yes', label: 'Ye' },
+                { value: 'no', label: 'Naw' },
+              ],
+            }),
+          ]
+        })
+      ],
+    }),
+    buildSection({
+      id: 'OnlyWhenYesWasAnswered',
+      title: 'OnlyWhenYes',
+      condition: (formValue) =>
+        getValueViaPath(formValue, 'somethingToBeAnswered') === 'yes',
+      children: [
+        buildDescriptionField({
+          id: `haha`,
+          title: 'Answered!!!!',
+          titleVariant: 'h5',
+        }),
+      ],
+    }),
     InformationSection,
     SupportingDocumentsSection,
     ...buildSupportingDocumentsSections(),

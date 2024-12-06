@@ -423,7 +423,6 @@ const convertFormNodeToScreens = (
     formNode.type === FormItemTypes.SECTION &&
     !shouldShowFormItem(formNode, answers, externalData, user)
   ) {
-    //console.log('Should not show form thing: ', formNode.id)
     //return screens
   }
 
@@ -456,9 +455,6 @@ const convertFormNodeToScreens = (
         answers,
         externalData,
         user,
-      )
-      console.log(
-        `NodeTitle: ${child.id} - NodeType: ${child.type} - isParentNav: ${isParentNavigable}, shouldBeVisible: ${shouldBeVisible}`,
       )
 
       newScreens = convertFormNodeToScreens(
