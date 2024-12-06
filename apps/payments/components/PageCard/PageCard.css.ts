@@ -2,15 +2,17 @@ import { keyframes, style } from '@vanilla-extract/css'
 import { theme, themeUtils } from '@island.is/island-ui/theme'
 
 export const container = style({
-  height: '100%',
   margin: 0,
 
   ...themeUtils.responsiveStyle({
     xs: {
-      margin: theme.spacing[1],
-      maxWidth: '430px',
-      height: 'initial',
+      height: '100dvh',
       justifyContent: 'initial',
+    },
+    sm: {
+      maxWidth: '430px',
+      width: '430px',
+      height: 'initial',
     },
   }),
 })
@@ -30,17 +32,16 @@ export const fadeIn = style({
   animationDuration: '300ms',
 })
 
-const createStandardBorder = () =>
-  `${theme.border.width.standard}px ${theme.border.style.solid} ${theme.border.color.standard}`
-
 export const cardContainer = style({
   position: 'relative',
   overflow: 'hidden',
 
-  borderTop: createStandardBorder(),
   ...themeUtils.responsiveStyle({
     xs: {
-      border: createStandardBorder(),
+      border: 'none',
+    },
+    sm: {
+      border: `${theme.border.width.standard}px ${theme.border.style.solid} ${theme.border.color.standard}`,
       borderRadius: theme.border.radius.large,
     },
   }),

@@ -79,7 +79,7 @@ export const CardPayment = () => {
           display="flex"
           flexDirection="row"
           justifyContent="spaceBetween"
-          columnGap={2}
+          columnGap={[2, 3]}
         >
           <Box width="full">
             <Controller

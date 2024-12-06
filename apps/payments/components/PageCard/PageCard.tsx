@@ -36,14 +36,17 @@ export const PageCard = ({
         flexDirection="column"
         justifyContent="spaceBetween"
         rowGap={2}
-        width="full"
         className={styles.container}
       >
-        <Box marginTop={[8, 8, 15]} className={styles.cardContainer}>
+        <Box
+          marginTop={[0, 8, 15]}
+          className={styles.cardContainer}
+          height="full"
+          flexGrow={1}
+        >
           <Box
             paddingX={[3, 4]}
-            paddingTop={2}
-            paddingBottom={4}
+            paddingY={[3, 4]}
             className={getHeaderBackgroundClassName(headerColorScheme)}
             flexDirection="row"
             display="flex"
@@ -53,9 +56,8 @@ export const PageCard = ({
             {headerSlot}
           </Box>
           <Box
-            paddingX={3}
-            paddingTop={3}
-            paddingBottom={2}
+            paddingX={[3, 4]}
+            paddingY={[3, 4]}
             display="flex"
             width="full"
             flexDirection="column"
@@ -65,7 +67,12 @@ export const PageCard = ({
           </Box>
         </Box>
         <footer className={styles.footer}>
-          <Box display="flex" justifyContent="spaceBetween" alignItems="center">
+          <Box
+            display="flex"
+            justifyContent="spaceBetween"
+            alignItems="center"
+            marginX={[2, 0]}
+          >
             <LinkV2 href="https://island.is/skilmalar-island-is" skipTab>
               <Logo width={120} />
             </LinkV2>

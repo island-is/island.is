@@ -189,7 +189,7 @@ export default function PaymentPage({
         !invalidFlowSetup ? (
           <FormProvider {...methods}>
             <form onSubmit={methods.handleSubmit(onSubmit)}>
-              <Box display="flex" flexDirection="column" rowGap={2}>
+              <Box display="flex" flexDirection="column" rowGap={[2, 3]}>
                 <PaymentSelector
                   availablePaymentMethods={['card', 'invoice']}
                   selectedPayment={selectedPaymentMethod as any}

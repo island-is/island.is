@@ -22,7 +22,7 @@ export const PaymentHeader = ({
     <>
       <Box>
         {organizationTitle && (
-          <Box display="flex" marginTop={2} marginBottom={0}>
+          <Box display="flex">
             <Text color="purple400" variant="eyebrow">
               {organizationTitle}
             </Text>
