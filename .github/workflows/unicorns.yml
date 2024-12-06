@@ -64,9 +64,10 @@ jobs:
           EVENT: ${{ toJSON(github.event) }}
           # echo "Is IS_PR_APPROOVED=${{ steps.check-approoved.outputs.result }}"
         run: |
-          echo $OWNER
-          echo $REPO
-          echo $PR_NUMBER
+          # echo $OWNER
+          # echo $REPO
+          # echo $PR_NUMBER
+          echo $EVENT
           curl -L \
             -H "Accept: application/vnd.github+json" \
             -H "Authorization: Bearer $GITHUB_TOKEN" \
