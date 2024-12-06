@@ -1,7 +1,7 @@
-import { Box, Checkbox, Divider, Stack } from '@island.is/island-ui/core'
-import React, { useState } from 'react'
-import { useNamespaces } from '@island.is/localization'
 import { HealthDirectorateOrganDonationOrgan } from '@island.is/api/schema'
+import { Box, Checkbox, Divider, Stack } from '@island.is/island-ui/core'
+import { useNamespaces } from '@island.is/localization'
+import { useState } from 'react'
 
 interface LimitationsProps {
   data: HealthDirectorateOrganDonationOrgan[]
