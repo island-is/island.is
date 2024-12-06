@@ -50,10 +50,10 @@ jobs:
       image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
     timeout-minutes: 10
     steps:
-      - env:
-        EVENT_CONTEXT: ${{ toJSON(github.event) }}
-      run: |
-        echo $EVENT_CONTEXT
+      - name: Set up job
+        id: setup
+        run: |
+          echo $EVENT_CONTEXT
       - run: echo "selected runner = ${{ runner.name }}"
       - uses: actions/checkout@v4
         with:
