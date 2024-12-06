@@ -7,11 +7,13 @@ const { publicRuntimeConfig } = getConfig()
 let configCatClient: IConfigCatClient | null = null
 
 function getServerSideClient() {
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
   const configcat = require('configcat-node')
   return configcat.createClient(publicRuntimeConfig.configCatSdkKey)
 }
 
 function getBrowserClient() {
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
   const configcat = require('configcat-js')
   return configcat.getClient(
     publicRuntimeConfig.configCatSdkKey,
