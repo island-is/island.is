@@ -1,4 +1,4 @@
-import { useContext } from 'react'
+import { useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 
 import { Box, RadioButton, Text } from '@island.is/island-ui/core'
@@ -21,6 +21,7 @@ import { CaseFileCategory } from '@island.is/judicial-system-web/src/graphql/sch
 import { useFileList } from '@island.is/judicial-system-web/src/utils/hooks'
 
 import { strings } from './IndictmentOverview.strings'
+import { PunishmentType } from '@island.is/judicial-system/types'
 
 const IndictmentOverview = () => {
   const { workingCase } = useContext(FormContext)
@@ -29,6 +30,8 @@ const IndictmentOverview = () => {
   const { onOpen } = useFileList({
     caseId: workingCase.id,
   })
+
+  const [selectedPunishmentType, setPunishmentType] = useState<PunishmentType>()
 
   return (
     <PageLayout workingCase={workingCase} isLoading={false} notFound={false}>
@@ -76,17 +79,74 @@ const IndictmentOverview = () => {
           {/* Comment: Thought about using SectionHeading but its larger and thus not consistent with prev titles */}
           <Text variant="h4" as="h4" marginBottom={2}>{formatMessage(strings.punishmentTypeTitle)}</Text>
           <BlueBox>
-            <Box marginBottom={1}>
+            <Box marginBottom={2}>
               <RadioButton
                 id="punishment-type-imprisonment"
                 name="punishmentTypeImprisonment"
-                checked={true
+                checked={selectedPunishmentType === PunishmentType.IMPRISONMENT
                 }
                 onChange={() => {
+                  setPunishmentType(PunishmentType.IMPRISONMENT)
                 }}
                 large
                 backgroundColor="white"
                 label={formatMessage(strings.imprisonment)}
+              />
+            </Box>
+            <Box marginBottom={2}>
+              <RadioButton
+                id="punishment-type-probation"
+                name="punishmentTypeProbation"
+                checked={selectedPunishmentType === PunishmentType.PROBATION
+                }
+                onChange={() => {
+                  setPunishmentType(PunishmentType.PROBATION)
+                }}
+                large
+                backgroundColor="white"
+                label={formatMessage(strings.probation)}
+              />
+            </Box>
+            <Box marginBottom={2}>
+              <RadioButton
+                id="punishment-type-fine"
+                name="punishmentTypeFine"
+                checked={selectedPunishmentType === PunishmentType.FINE
+                }
+                onChange={() => {
+                  setPunishmentType(PunishmentType.FINE)
+                }}
+                large
+                backgroundColor="white"
+                label={formatMessage(strings.fine)}
+              />
+            </Box>
+            <Box marginBottom={2}>
+              <RadioButton
+                id="punishment-type-indictment-ruling-decision-fine"
+                name="punishmentTypeIndictmentRulingDecisionFine"
+                checked={selectedPunishmentType === PunishmentType.INDICTMENT_RULING_DECISION_FINE
+                }
+                onChange={() => {
+                  setPunishmentType(PunishmentType.INDICTMENT_RULING_DECISION_FINE)
+                }}
+                large
+                backgroundColor="white"
+                label={formatMessage(strings.indictmentRulingDecisionfine)}
+              />
+            </Box>
+            <Box marginBottom={2}>
+              <RadioButton
+                id="punishment-type-indictment-signed-fine-invitation"
+                name="punishmentTypeIndictmentSignedFineInvitation"
+                checked={selectedPunishmentType === PunishmentType.SIGNED_FINE_INVITATION
+                }
+                onChange={() => {
+                  setPunishmentType(PunishmentType.SIGNED_FINE_INVITATION)
+                }}
+                large
+                backgroundColor="white"
+                label={formatMessage(strings.signedFineInvitation)}
               />
             </Box>
           </BlueBox>
