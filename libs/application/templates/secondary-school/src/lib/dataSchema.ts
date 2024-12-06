@@ -69,10 +69,12 @@ const SelectionSchema = z
     firstProgram: z.object({
       id: z.string().optional(),
       name: z.string().optional(),
+      registrationEndDate: z.string().optional(),
     }),
     secondProgram: z.object({
       id: z.string().optional(),
       name: z.string().optional(),
+      registrationEndDate: z.string().optional(),
     }),
     thirdLanguage: z.object({
       code: z.string().optional(),

@@ -1,20 +1,22 @@
-export type Language = {
+export interface Language {
   code: string
-  //TODOx þýða í öll dropdown
   nameIs: string
   nameEn: string
 }
 
-export type SecondarySchool = {
+export interface SecondarySchool {
   id: string
   name: string
   thirdLanguages: Language[]
 }
 
-export type Program = {
+export interface Program {
   id: string
-  //TODOx þýða í öll dropdown
   nameIs: string
   nameEn: string
   registrationEndDate: Date
+}
+
+export interface Application {
+  nationalId: string
 }

@@ -202,6 +202,8 @@ import { UmbodsmadurSkuldaraModule } from '@island.is/api/domains/umbodsmadur-sk
 import { UmbodsmadurSkuldaraClientConfig } from '@island.is/clients/ums-cost-of-living-calculator'
 import { emailModuleConfig } from '@island.is/email-service'
 import { ZendeskServiceConfig } from '@island.is/clients/zendesk'
+import { SecondarySchoolClientConfig } from '@island.is/clients/secondary-school'
+import { SecondarySchoolApiModule } from '@island.is/api/domains/secondary-school'
 
 const environment = getConfig
 
@@ -336,6 +338,7 @@ const environment = getConfig
     LawAndOrderModule,
     UmbodsmadurSkuldaraModule,
     HealthDirectorateModule,
+    SecondarySchoolApiModule,
     ConfigModule.forRoot({
       isGlobal: true,
       load: [
@@ -436,6 +439,7 @@ const environment = getConfig
         WorkAccidentClientConfig,
         ZendeskServiceConfig,
         emailModuleConfig,
+        SecondarySchoolClientConfig,
       ],
     }),
   ],

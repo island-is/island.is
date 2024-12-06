@@ -10,6 +10,7 @@ import { userInformation } from '../../../lib/messages'
 import { Application } from '@island.is/application/types'
 import { getParent, hasParent } from '../../../utils'
 
+//TODOx þarf að gera tengilið required ef aðili er yfir 18 og það eru engir forsjáraðliar?
 export const custodianSubSection = buildSubSection({
   id: 'custodianSubSection',
   title: userInformation.custodian.subSectionTitle,

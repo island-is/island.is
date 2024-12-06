@@ -2,7 +2,7 @@ import { FieldBaseProps } from '@island.is/application/types'
 import { Box, AlertMessage } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { SelectController } from '@island.is/shared/form-fields'
-import { FC, useState } from 'react'
+import { FC, useState, useCallback, useEffect } from 'react'
 import { school } from '../../lib/messages'
 import {
   Language,
@@ -12,69 +12,103 @@ import {
 } from '../../shared'
 import { useFormContext } from 'react-hook-form'
 import { getValueViaPath } from '@island.is/application/core'
+import { useLazyProgramList } from '../../hooks/useLazyProgramList'
 
 export const SelectionItem: FC<FieldBaseProps> = (props) => {
   const { formatMessage } = useLocale()
-  const { application } = props
+  const { application, setFieldLoadingState } = props
   const { setValue } = useFormContext()
 
+  const [selectedFirstProgram, setSelectedFirstProgram] = useState<string>() //TODOx afhverju hreinsast ekki út í SelectController
+  const [isLoadingPrograms, setIsLoadingPrograms] = useState<boolean>(false)
+
+  const oldSchoolId = getValueViaPath<string | undefined>(
+    application.answers,
+    `${props.field.id}.school.id`,
+  )
+
   const schools = application.externalData.schools.data as SecondarySchool[]
-
-  const getThirdLanguages = (schoolId: string | undefined): Language[] => {
-    if (!schoolId) return []
-
-    const schoolInfo = schools.find((x) => x.id === schoolId)
-    return schoolInfo?.thirdLanguages || []
-  }
-
-  //TODOx graphql
-  const programs: Program[] = [
-    { id: '1', name: 'Náttúrufræðibraut' },
-    { id: '2', name: 'Félagsfræðibraut' },
-  ]
-
+  const [programs, setPrograms] = useState<Program[]>([])
   const [thirdLanguages, setThirdLanguages] = useState<Language[]>(
-    getThirdLanguages(
-      getValueViaPath<string | undefined>(
-        application.answers,
-        `${props.field.id}.school.id`,
-      ),
-    ),
+    (oldSchoolId &&
+      schools.find((x) => x.id === oldSchoolId)?.thirdLanguages) ||
+      [],
   )
 
   const selectSchool = (schoolId: string) => {
     const schoolInfo = schools.find((x) => x.id === schoolId)
 
-    // set selected school
-    setValue(`${props.field.id}.school.name`, schoolInfo?.name)
+    setIsLoadingPrograms(true)
+    getProgramListCallback(schoolId)
+      .then((response) => {
+        // set selected school
+        setValue(`${props.field.id}.school.name`, schoolInfo?.name)
 
-    // clear program selection
-    setValue(`${props.field.id}.firstProgram.id`, '')
-    setValue(`${props.field.id}.firstProgram.name`, undefined)
-    setValue(`${props.field.id}.secondProgram.id`, '')
-    setValue(`${props.field.id}.secondProgram.name`, undefined)
-    //TODOx update programList
+        // clear first program selection
+        setValue(`${props.field.id}.firstProgram.id`, '')
+        setValue(`${props.field.id}.firstProgram.name`, undefined)
+        setValue(
+          `${props.field.id}.firstProgram.registrationEndDate`,
+          undefined,
+        )
+        setSelectedFirstProgram(undefined)
 
-    // clear language selection
-    setValue(`${props.field.id}.thirdLanguage.code`, '')
-    setValue(`${props.field.id}.thirdLanguage.name`, undefined)
-    setThirdLanguages(getThirdLanguages(schoolId))
+        // clear second program selection
+        setValue(`${props.field.id}.secondProgram.id`, '')
+        setValue(`${props.field.id}.secondProgram.name`, undefined)
+        setValue(
+          `${props.field.id}.secondProgram.registrationEndDate`,
+          undefined,
+        )
+
+        // clear third language selection
+        setValue(`${props.field.id}.thirdLanguage.code`, '')
+        setValue(`${props.field.id}.thirdLanguage.name`, undefined)
+
+        // update options in dropdowns
+        setPrograms(response.secondarySchoolProgramsBySchoolId)
+        setThirdLanguages(schoolInfo?.thirdLanguages || [])
+      })
+      .catch((error) => console.error(error))
+      .finally(() => {
+        setIsLoadingPrograms(false)
+      })
   }
 
   const selectProgram = (fieldName: string, programId: string) => {
     const programInfo = programs.find((x) => x.id === programId)
-    setValue(`${props.field.id}.${fieldName}.name`, programInfo?.name)
+    setValue(`${props.field.id}.${fieldName}.name`, programInfo?.nameIs)
+    setValue(
+      `${props.field.id}.${fieldName}.registrationEndDate`,
+      programInfo?.registrationEndDate,
+    )
+    setSelectedFirstProgram(programId)
   }
 
   const selectThirdLanguage = (languageCode: string) => {
     const languageInfo = thirdLanguages.find((x) => x.code === languageCode)
-    setValue(`${props.field.id}.thirdLanguage.name`, languageInfo?.name)
+    setValue(`${props.field.id}.thirdLanguage.name`, languageInfo?.nameIs)
   }
 
   const selectNordicLanguage = (languageCode: string) => {
     const languageInfo = NORDIC_LANGUAGES.find((x) => x.code === languageCode)
-    setValue(`${props.field.id}.nordicLanguage.name`, languageInfo?.name)
+    setValue(`${props.field.id}.nordicLanguage.name`, languageInfo?.nameIs)
   }
+
+  const getProgramList = useLazyProgramList()
+  const getProgramListCallback = useCallback(
+    async (schoolId: string) => {
+      const { data } = await getProgramList({
+        schoolId,
+      })
+      return data
+    },
+    [getProgramList],
+  )
+
+  useEffect(() => {
+    setFieldLoadingState?.(isLoadingPrograms)
+  }, [isLoadingPrograms, setFieldLoadingState])
 
   return (
     <Box>
@@ -99,9 +133,10 @@ export const SelectionItem: FC<FieldBaseProps> = (props) => {
           label={formatMessage(school.selection.firstProgramLabel)}
           backgroundColor="blue"
           required
+          defaultValue={selectedFirstProgram}
           options={programs.map((program) => {
             return {
-              label: program.name,
+              label: program.nameIs,
               value: program.id,
             }
           })}
@@ -118,7 +153,7 @@ export const SelectionItem: FC<FieldBaseProps> = (props) => {
           required
           options={programs.map((program) => {
             return {
-              label: program.name,
+              label: program.nameIs,
               value: program.id,
             }
           })}
@@ -135,7 +170,7 @@ export const SelectionItem: FC<FieldBaseProps> = (props) => {
           required
           options={thirdLanguages.map((language) => {
             return {
-              label: language.name,
+              label: language.nameIs,
               value: language.code,
             }
           })}
@@ -149,7 +184,7 @@ export const SelectionItem: FC<FieldBaseProps> = (props) => {
           backgroundColor="blue"
           options={NORDIC_LANGUAGES.map((language) => {
             return {
-              label: language.name,
+              label: language.nameIs,
               value: language.code,
             }
           })}

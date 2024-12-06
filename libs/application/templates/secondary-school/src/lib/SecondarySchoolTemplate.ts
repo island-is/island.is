@@ -25,8 +25,39 @@ import {
   UserProfileApi,
 } from '../dataProviders'
 import { Features } from '@island.is/feature-flags'
+import { SecondarySchoolAnswers } from '..'
 
-//TODOx ekki leyfa fleiri en 1 opna umsókn
+const pruneInDaysAfterRegistrationCloses = (
+  application: Application,
+  days: number,
+) => {
+  const answers = application.answers as SecondarySchoolAnswers
+
+  // get the last regirastion date out of all the programs selected
+  const lastRegistrationEndDate = [
+    answers?.selection?.first?.firstProgram?.registrationEndDate,
+    answers?.selection?.first?.secondProgram?.registrationEndDate,
+    answers?.selection?.second?.firstProgram?.registrationEndDate,
+    answers?.selection?.second?.secondProgram?.registrationEndDate,
+    answers?.selection?.third?.firstProgram?.registrationEndDate,
+    answers?.selection?.third?.secondProgram?.registrationEndDate,
+  ]
+    .filter((x) => !!x)
+    .map((x) => (x ? new Date(x) : new Date()))
+    .sort((a, b) => b.getTime() - a.getTime())[0] // descending order
+
+  // add days to registration end date
+  const date = lastRegistrationEndDate
+    ? new Date(lastRegistrationEndDate)
+    : new Date()
+  date.setDate(date.getDate() + days)
+
+  // set time to right before midnight
+  const pruneDate = new Date(date.toUTCString())
+  pruneDate.setHours(23, 59, 59)
+  return pruneDate
+}
+
 const template: ApplicationTemplate<
   ApplicationContext,
   ApplicationStateSchema<Events>,
@@ -62,6 +93,9 @@ const template: ApplicationTemplate<
             ],
           },
           lifecycle: EphemeralStateLifeCycle,
+          onEntry: defineTemplateApi({
+            action: ApiActions.validateCanCreate,
+          }),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -107,10 +141,7 @@ const template: ApplicationTemplate<
               },
             ],
           },
-          lifecycle: pruneAfterDays(30), //TODOx when registration closes
-          onExit: defineTemplateApi({
-            action: ApiActions.validateApplication,
-          }),
+          lifecycle: pruneAfterDays(1), //TODOx ef hægt að fá sameiginlegt registrationEndDate fyrir alla, væri gott að setja það inn hér
           roles: [
             {
               id: Roles.APPLICANT,
@@ -138,9 +169,17 @@ const template: ApplicationTemplate<
         meta: {
           name: 'Completed',
           status: 'completed',
-          lifecycle: pruneAfterDays(30), //TODOx prune x days after registration closes
+          lifecycle: {
+            shouldBeListed: true,
+            shouldBePruned: true,
+            whenToPrune: (application: Application) =>
+              pruneInDaysAfterRegistrationCloses(application, 30),
+          },
           onEntry: defineTemplateApi({
             action: ApiActions.submitApplication,
+          }),
+          onDelete: defineTemplateApi({
+            action: ApiActions.deleteApplication,
           }),
           actionCard: {
             tag: {
