@@ -89,5 +89,3 @@ jobs:
       - name: Results
         run: |
           echo "Unicorn = ${{ steps.unicorn-affected.outputs.IS_UNICORN }}"
-
-
