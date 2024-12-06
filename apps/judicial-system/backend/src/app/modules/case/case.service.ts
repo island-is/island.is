@@ -686,7 +686,7 @@ export class CaseService {
     ])
   }
 
-  private addMessagesForCourtOfficalAssignedToQueue(
+  private addMessagesForDistrictCourtJudgeAssignedToQueue(
     theCase: Case,
     user: TUser,
   ): Promise<void> {
@@ -695,7 +695,7 @@ export class CaseService {
         type: MessageType.NOTIFICATION,
         user,
         caseId: theCase.id,
-        body: { type: CaseNotificationType.COURT_OFFICIAL_ASSIGNED },
+        body: { type: CaseNotificationType.DISTRICT_COURT_JUDGE_ASSIGNED },
       },
     ])
   }
@@ -1467,7 +1467,10 @@ export class CaseService {
       }
 
       if (judgeChanged || registrarChanged) {
-        await this.addMessagesForCourtOfficalAssignedToQueue(updatedCase, user)
+        await this.addMessagesForDistrictCourtJudgeAssignedToQueue(
+          updatedCase,
+          user,
+        )
       }
 
       await this.addMessagesForNewSubpoenasToQueue(theCase, updatedCase, user)
