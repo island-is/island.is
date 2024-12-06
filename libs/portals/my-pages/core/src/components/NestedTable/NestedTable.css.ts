@@ -20,7 +20,7 @@ export const titleCol = style({
 export const wrapper = style({
   display: 'grid',
   background: theme.color.blue100,
-  padding: `0 ${theme.spacing[3]}px ${theme.spacing[3]}px ${theme.spacing[3]}px`,
+  //padding: `0 ${theme.spacing[3]}px ${theme.spacing[3]}px ${theme.spacing[3]}px`,
 })
 
 export const td = style({

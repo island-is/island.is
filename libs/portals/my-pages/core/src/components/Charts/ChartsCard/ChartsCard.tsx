@@ -2,9 +2,14 @@ import React, { ReactNode } from 'react'
 import { useMeasure } from 'react-use'
 import cn from 'classnames'
 import { Box, Text, Hyphen } from '@island.is/island-ui/core'
+import {
+  MixedChart,
+  SimpleBarChart,
+  SimpleLineChart,
+  SimplePieChart,
+} from '../'
 
 import * as styles from './ChartsCard.css'
-import SimpleLineChart from '../SimpleLineChart'
 
 interface ChartCardDataProps {
   graphTitle?: string
@@ -12,7 +17,7 @@ interface ChartCardDataProps {
   organization?: string
   data?: string
   datakeys?: string
-  type?: string
+  type?: 'mixed' | 'line' | 'bar' | 'pie'
 }
 
 export interface ChartsCardsProps {
@@ -23,16 +28,34 @@ export interface ChartsCardsProps {
 export const ChartsCard: React.FC<
   React.PropsWithChildren<ChartsCardsProps>
 > = ({ chart, subPage }) => {
-  const { graphTitle, graphDescription, organization, data, datakeys } = chart
+  const { graphTitle, graphDescription, organization, type, data, datakeys } =
+    chart
   const [ref, { width }] = useMeasure()
-
-  if (!graphTitle || !data || !datakeys) {
-    return null
-  }
-
   const graphData = { title: graphTitle, data: data, datakeys: datakeys }
 
-  const children = <SimpleLineChart graphData={graphData} />
+  let children = null
+  switch (type) {
+    case 'mixed':
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore make web strict
+      children = <MixedChart graphData={graphData} />
+      break
+    case 'line':
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore make web strict
+      children = <SimpleLineChart graphData={graphData} />
+      break
+    case 'bar':
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore make web strict
+      children = <SimpleBarChart graphData={graphData} />
+      break
+    case 'pie':
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore make web strict
+      children = <SimplePieChart graphData={graphData} />
+      break
+  }
 
   const items = (
     <Box
@@ -44,7 +67,9 @@ export const ChartsCard: React.FC<
       justifyContent="flexStart"
     >
       <Box
-        className={styles.outerWrapper}
+        className={cn(styles.outerWrapper, {
+          [styles.pie]: type === 'pie',
+        })}
         background={subPage ? 'blue100' : 'purple100'}
       >
         <Box
@@ -68,6 +93,9 @@ export const ChartsCard: React.FC<
                 </Text>
               )}
               <Text variant="h3" color="dark400">
+                {/*
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-expect-error make web strict */}
                 <Hyphen>{graphTitle}</Hyphen>
               </Text>
               {graphDescription && (
@@ -81,7 +109,9 @@ export const ChartsCard: React.FC<
         display="flex"
         justifyContent="center"
         alignItems="center"
-        className={styles.graphWrapper}
+        className={cn(styles.graphWrapper, {
+          [styles.pie]: type === 'pie',
+        })}
       >
         <Box
           justifyContent="center"

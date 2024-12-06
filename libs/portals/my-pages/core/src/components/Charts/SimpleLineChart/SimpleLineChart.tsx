@@ -1,3 +1,4 @@
+import React from 'react'
 import {
   LineChart,
   XAxis,
@@ -9,8 +10,12 @@ import {
   Line,
 } from 'recharts'
 import { Box } from '@island.is/island-ui/core'
-import { CustomizedAxisTick, RenderLegend, YAxisLabel } from './subComponents'
-import { COLORS } from './constants'
+import {
+  CustomizedAxisTick,
+  RenderLegend,
+  COLORS,
+  YAxisLabel,
+} from '../sharedChartComponents'
 
 interface GraphDataProps {
   title?: string

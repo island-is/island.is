@@ -28,6 +28,7 @@ import { useVehiclesListLazyQuery } from './VehicleBulkMileage.generated'
 import { isDefined } from '@island.is/shared/utils'
 import { AssetsPaths } from '../../lib/paths'
 import { Problem } from '@island.is/react-spa/shared'
+import { LineChart } from './LineChart'
 
 interface FormData {
   [key: string]: number
@@ -118,6 +119,9 @@ const VehicleBulkMileage = () => {
 
   const methods = useForm<FormData>()
 
+  const displayFilters =
+    filterValue || (data?.vehiclesListV3?.totalRecords ?? 0) > 10
+
   return (
     <Stack space={2}>
       <FormProvider {...methods}>
@@ -143,62 +147,69 @@ const VehicleBulkMileage = () => {
           }
           serviceProviderSlug={SAMGONGUSTOFA_SLUG}
           serviceProviderTooltip={formatMessage(m.vehiclesTooltip)}
-          buttonGroup={[
-            <LinkButton
-              key="upload"
-              to={AssetsPaths.AssetsVehiclesBulkMileageUpload}
-              text={formatMessage(vehicleMessage.bulkPostMileage)}
-              icon="upload"
-              variant="utility"
-            />,
-            <LinkButton
-              key="overview"
-              to={AssetsPaths.AssetsVehiclesBulkMileageJobOverview}
-              text={formatMessage(vehicleMessage.jobOverview)}
-              icon="receipt"
-              variant="utility"
-            />,
-          ]}
+          buttonGroup={
+            displayFilters
+              ? [
+                  <LinkButton
+                    key="upload"
+                    to={AssetsPaths.AssetsVehiclesBulkMileageUpload}
+                    text={formatMessage(vehicleMessage.bulkPostMileage)}
+                    icon="upload"
+                    variant="utility"
+                  />,
+                  <LinkButton
+                    key="overview"
+                    to={AssetsPaths.AssetsVehiclesBulkMileageJobOverview}
+                    text={formatMessage(vehicleMessage.jobOverview)}
+                    icon="receipt"
+                    variant="utility"
+                  />,
+                ]
+              : undefined
+          }
         >
-          <Box marginBottom={2}>
-            <Filter
-              labelClear={formatMessage(m.clearFilter)}
-              labelClearAll={formatMessage(m.clearAllFilters)}
-              labelOpen={formatMessage(m.openFilter)}
-              labelClose={formatMessage(m.closeFilter)}
-              variant="popover"
-              onFilterClear={() => {
-                console.log('clear')
-              }}
-              align="left"
-              reverse
-              filterInput={
-                <FilterInput
-                  backgroundColor="blue"
-                  value={search ?? ''}
-                  onChange={(search) => {
-                    setSearch(search)
-                  }}
-                  name={formatMessage(m.searchLabel)}
-                  placeholder={formatMessage(vehicleMessage.searchForPlate)}
-                />
-              }
-            >
-              <Box padding={4}>
-                <Text variant="eyebrow" as="p" paddingBottom={2}>
-                  {formatMessage(m.filterBy)}
-                </Text>
-                <Checkbox
-                  name="onlyMileageRequiredVehicles"
-                  label={formatMessage(
-                    vehicleMessage.vehiclesRequireMileageRegistration,
-                  )}
-                  checked={filterValue}
-                  onChange={() => setFilterValue(!filterValue)}
-                />
-              </Box>
-            </Filter>
-          </Box>
+          {displayFilters && (
+            <Box marginBottom={2}>
+              <Filter
+                labelClear={formatMessage(m.clearFilter)}
+                labelClearAll={formatMessage(m.clearAllFilters)}
+                labelOpen={formatMessage(m.openFilter)}
+                labelClose={formatMessage(m.closeFilter)}
+                variant="popover"
+                onFilterClear={() => {
+                  console.log('clear')
+                }}
+                align="left"
+                reverse
+                filterInput={
+                  <FilterInput
+                    backgroundColor="blue"
+                    value={search ?? ''}
+                    onChange={(search) => {
+                      setSearch(search)
+                    }}
+                    name={formatMessage(m.searchLabel)}
+                    placeholder={formatMessage(vehicleMessage.searchForPlate)}
+                  />
+                }
+              >
+                <Box padding={4}>
+                  <Text variant="eyebrow" as="p" paddingBottom={2}>
+                    {formatMessage(m.filterBy)}
+                  </Text>
+                  <Checkbox
+                    name="onlyMileageRequiredVehicles"
+                    label={formatMessage(
+                      vehicleMessage.vehiclesRequireMileageRegistration,
+                    )}
+                    checked={filterValue}
+                    onChange={() => setFilterValue(!filterValue)}
+                  />
+                </Box>
+              </Filter>
+            </Box>
+          )}
+          <LineChart />
           <Stack space={4}>
             {error && !loading && <Problem error={error} noBorder={false} />}
             {!error && (
