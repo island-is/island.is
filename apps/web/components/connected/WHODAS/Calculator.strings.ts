@@ -124,5 +124,10 @@ export const m = {
       defaultMessage: 'Sundurliðun á niðurstöðum',
       description: 'Sundurliðun á niðurstöðum',
     },
+    outOf100: {
+      id: 'web.whodas.calculator:results.outOf100',
+      defaultMessage: 'af 100',
+      description: 'af 100',
+    },
   }),
 }
