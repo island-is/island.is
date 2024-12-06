@@ -130,7 +130,7 @@ export class UserProfileService {
       }
 
       return {
-        name: individual.fulltNafn?.fulltNafn ?? individual.nafn ?? undefined,
+        name: individual.nafn ?? undefined,
         givenName: individual.fulltNafn?.eiginNafn ?? undefined,
         familyName: individual.fulltNafn?.kenniNafn ?? undefined,
         middleName: individual.fulltNafn?.milliNafn ?? undefined,
