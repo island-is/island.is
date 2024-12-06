@@ -73,7 +73,6 @@ const hasDisabilityAssessment = (
   return (
     typeOfBasePension === BasePensionType.Disability ||
     typeOfBasePension === BasePensionType.Rehabilitation ||
-    // TODO: verify
     typeOfBasePension === BasePensionType.NewSystemDisability ||
     typeOfBasePension === BasePensionType.NewSystemPartialDisability ||
     typeOfBasePension === BasePensionType.NewSystemMedicalAndRehabilitation
