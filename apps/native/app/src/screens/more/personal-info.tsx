@@ -27,7 +27,7 @@ export const PersonalInfoScreen: NavigationFunctionComponent = ({
   const intl = useIntl()
   const { dismiss, dismissed } = usePreferencesStore()
   const natRegRes = useNationalRegistryUserQuery()
-  const natRegData = natRegRes?.data?.nationalRegistryUser
+  const natRegData = natRegRes?.data?.nationalRegistryPerson
   const errorNatReg = !!natRegRes.error && !natRegData
   const loadingNatReg = natRegRes.loading && !natRegData
 
