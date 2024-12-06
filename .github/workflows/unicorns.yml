@@ -25,15 +25,15 @@ jobs:
   check-approoved:
     name: Is PR approoved
     runs-on: ubuntu-latest
-    env:
-      EVENT: ${{ toJSON(github.event) }}
+    # env:
+    #   EVENT: ${{ toJSON(github.event) }}
     outputs:
       IS_PR_APPROOVED: ${{ steps.check-approoved.outputs.result }}
     steps:
-      - name: Set up job
-        id: setup
-        run: |
-          echo $EVENT | jq
+      # - name: Set up job
+      #   id: setup
+      #   run: |
+      #     echo $EVENT | jq
       - name: Check if PR is approved
         id: check-approoved
         uses: actions/github-script@v7
