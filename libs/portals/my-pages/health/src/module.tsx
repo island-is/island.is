@@ -170,7 +170,9 @@ export const healthModule: PortalModule = {
       name: hm.medicineTitle,
       path: HealthPaths.HealthMedicine,
       enabled: userInfo.scopes.includes(ApiScope.healthMedicines),
-      element: <Navigate to={HealthPaths.HealthMedicinePrescription} replace />,
+      element: (
+        <Navigate to={HealthPaths.HealthMedicinePaymentParticipation} replace />
+      ),
     },
     {
       name: hm.medicinePrescriptions,
@@ -186,13 +188,14 @@ export const healthModule: PortalModule = {
       enabled: userInfo.scopes.includes(ApiScope.healthMedicines),
       element: <MedicinePrescriptionHistory />,
     },
-    {
-      name: hm.medicineDelegation,
-      path: HealthPaths.HealthMedicineDelegation,
-      key: MEDICINE_LANDLAEKNIR_FLAG,
-      enabled: userInfo.scopes.includes(ApiScope.healthMedicines),
-      element: <MedicineDelegation />,
-    },
+    // Commented out because not ready yet
+    // {
+    //   name: hm.medicineDelegation,
+    //   path: HealthPaths.HealthMedicineDelegation,
+    //   key: MEDICINE_LANDLAEKNIR_FLAG,
+    //   enabled: userInfo.scopes.includes(ApiScope.healthMedicines),
+    //   element: <MedicineDelegation />,
+    // },
     {
       name: hm.medicinePaymentParticipation,
       path: HealthPaths.HealthMedicinePaymentParticipation,
