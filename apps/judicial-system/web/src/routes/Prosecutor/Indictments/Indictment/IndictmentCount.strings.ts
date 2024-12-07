@@ -141,4 +141,9 @@ export const indictmentCount = defineMessages({
       'Telst háttsemi þessi varða við {articles} umferðarlaga nr. 77/2019.',
     description: 'Notaður sem sjálfgefinn texti í heimfærslu svæði.',
   },
+  selectIndictmentSubtype: {
+    id: 'judicial.system.core:indictments_indictment.indictment_count.select_indictment_subtype',
+    defaultMessage: 'Veldu sakarefni',
+    description: 'Notaður sem titill fyrir "Veldu sakarefni" svæði.',
+  },
 })

@@ -10,7 +10,10 @@ import {
 import { ApiPropertyOptional } from '@nestjs/swagger'
 
 import type { SubstanceMap } from '@island.is/judicial-system/types'
-import { IndictmentCountOffense } from '@island.is/judicial-system/types'
+import {
+  IndictmentCountOffense,
+  IndictmentSubtype,
+} from '@island.is/judicial-system/types'
 
 export class UpdateIndictmentCountDto {
   @IsOptional()
@@ -50,4 +53,10 @@ export class UpdateIndictmentCountDto {
   @IsString()
   @ApiPropertyOptional({ type: String })
   readonly legalArguments?: string
+
+  @IsOptional()
+  @IsArray()
+  @IsEnum(IndictmentSubtype, { each: true })
+  @ApiPropertyOptional({ enum: IndictmentSubtype, isArray: true })
+  readonly indictmentCountSubtypes?: IndictmentSubtype[]
 }
