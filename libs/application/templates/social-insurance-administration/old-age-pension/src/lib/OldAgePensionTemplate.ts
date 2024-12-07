@@ -38,6 +38,7 @@ import {
   SocialInsuranceAdministrationIsApplicantEligibleApi,
   SocialInsuranceAdministrationApplicantApi,
   SocialInsuranceAdministrationCurrenciesApi,
+  SocialInsuranceAdministrationLatestIncomePlan,
 } from '../dataProviders'
 import {
   determineNameFromApplicationAnswers,
@@ -97,6 +98,7 @@ const OldAgePensionTemplate: ApplicationTemplate<
                 SocialInsuranceAdministrationIsApplicantEligibleApi,
                 SocialInsuranceAdministrationApplicantApi,
                 SocialInsuranceAdministrationCurrenciesApi,
+                SocialInsuranceAdministrationLatestIncomePlan,
               ],
               delete: true,
             },
