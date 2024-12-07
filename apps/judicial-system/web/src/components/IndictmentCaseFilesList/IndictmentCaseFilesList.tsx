@@ -316,7 +316,7 @@ const IndictmentCaseFilesList: FC<Props> = ({
           </Box>
         )}
       <FileSection
-        title={formatMessage(strings.sentToPrionsAdmin)}
+        title={formatMessage(strings.sentToPrisonAdmin)}
         files={filteredFiles.sentToPrisonAdminFiles}
         onOpenFile={onOpen}
         shouldRender={permissions.canViewSentToPrisonAdminFiles}

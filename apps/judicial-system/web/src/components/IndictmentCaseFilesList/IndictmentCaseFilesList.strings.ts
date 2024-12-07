@@ -51,8 +51,8 @@ export const strings = defineMessages({
     description:
       'Notaður sem texti á PDF takka til að sækja birtingarvottorð í ákærum.',
   },
-  sentToPrionsAdmin: {
-    id: 'judicial.system.core:indictment_case_files_list.sent_to_prions_admin',
+  sentToPrisonAdmin: {
+    id: 'judicial.system.core:indictment_case_files_list.sent_to_prison_admin',
     defaultMessage: 'Fullnusta',
     description:
       'Notaður sem titill á fullnusta hluta á dómskjalaskjá í ákærum.',
