@@ -162,7 +162,9 @@ const WHODASResults = ({
             {formatMessage(m.results.scoreHeading)}
           </Text>
           <Box background="purple100" padding="p2" borderRadius="large">
-            <Text>{formatScore(totalScore)}</Text>
+            <Text>
+              {formatScore(totalScore)} {formatMessage(m.results.outOf100)}
+            </Text>
           </Box>
         </Stack>
         <Stack space={1}>
@@ -191,36 +193,39 @@ const WHODASResults = ({
           </MarkdownText>
         </Stack>
 
-        <Stack space={3}>
-          <Text variant="h3" as="h3">
-            {formatMessage(m.results.breakdownHeading)}
-          </Text>
-          <BulletList>
-            {results.steps.map((step) => (
-              <Bullet key={step.title}>
-                <Box className={styles.breakdownRowContainer}>
-                  <Text>{step.title}</Text>
-                  <Text>{formatScore(step.scoreForStep)}</Text>
-                </Box>
-              </Bullet>
-            ))}
-          </BulletList>
-          <Box className={styles.totalScoreRowContainer}>
-            <Text fontWeight="semiBold">
-              {formatMessage(m.results.totalScore)}
-            </Text>
-            <Text fontWeight="semiBold">{formatScore(totalScore)}</Text>
-          </Box>
-        </Stack>
+        {bracket > 1 && (
+          <Stack space={6}>
+            <Stack space={3}>
+              <Stack space={3}>
+                <Text variant="h3" as="h3">
+                  {formatMessage(m.results.breakdownHeading)}
+                </Text>
+                <BulletList>
+                  {results.steps.map((step) => (
+                    <Bullet key={step.title}>
+                      <Box className={styles.breakdownRowContainer}>
+                        <Text>{step.title}</Text>
+                        <Text>
+                          {formatScore(step.scoreForStep)}{' '}
+                          {formatMessage(m.results.outOf100)}
+                        </Text>
+                      </Box>
+                    </Bullet>
+                  ))}
+                </BulletList>
+              </Stack>
+            </Stack>
+            <Box
+              background="blue100"
+              paddingX={[4]}
+              paddingY={[3]}
+              borderRadius="large"
+            >
+              <Text>{formatMessage(m.results.resultDisclaimer)}</Text>
+            </Box>
+          </Stack>
+        )}
       </Stack>
-      <Box
-        background="blue100"
-        paddingX={[4]}
-        paddingY={[3]}
-        borderRadius="large"
-      >
-        <Text>{formatMessage(m.results.resultDisclaimer)}</Text>
-      </Box>
     </Stack>
   )
 }
@@ -246,9 +251,10 @@ export const WHODASCalculator = ({ slice }: WHODASCalculatorProps) => {
       description,
       maxScorePossible: questions.reduce(
         (prev, acc) =>
-          prev + acc.answerOptions.length > 0
+          prev +
+          (acc.answerOptions.length > 0
             ? acc.answerOptions[acc.answerOptions.length - 1].score
-            : 0,
+            : 0),
         0,
       ),
       questions: questions.map(() => ({
