@@ -30,20 +30,15 @@ export const PageCard = ({
   headerColorScheme = 'primary',
 }: PageCardWrapperProps) => {
   return (
-    <PageCenter verticalCenter={false}>
+    <PageCenter verticalCenter>
       <Box
         display="flex"
         flexDirection="column"
         justifyContent="spaceBetween"
-        rowGap={2}
+        rowGap={1}
         className={styles.container}
       >
-        <Box
-          marginTop={[0, 8, 15]}
-          className={styles.cardContainer}
-          height="full"
-          flexGrow={1}
-        >
+        <Box className={styles.cardContainer} height="full" flexGrow={1}>
           <Box
             paddingX={[3, 4]}
             paddingY={[3, 4]}
@@ -74,16 +69,17 @@ export const PageCard = ({
             marginX={[2, 0]}
           >
             <LinkV2 href="https://island.is/skilmalar-island-is" skipTab>
-              <Logo width={120} />
+              <Logo width={87} />
             </LinkV2>
             <Box display="flex" columnGap={2}>
-              <LinkV2 href="#" color="blue400">
+              <LinkV2 href="#" color="blue400" className={styles.link}>
                 English
               </LinkV2>
               <span className={styles.linkSeparator} />
               <LinkV2
                 href="https://island.is/minar-sidur-adgangsstyring"
                 color="blue400"
+                className={styles.link}
               >
                 Aðstoð
               </LinkV2>

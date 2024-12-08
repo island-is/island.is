@@ -82,7 +82,7 @@ export const footer = style({
   paddingBottom: theme.spacing[2],
   paddingRight: theme.spacing[3],
   paddingLeft: theme.spacing[3],
-  marginTop: theme.spacing[4],
+  marginTop: theme.spacing[2],
   ...themeUtils.responsiveStyle({
     xs: {
       paddingRight: 0,
@@ -95,4 +95,9 @@ export const footer = style({
 export const linkSeparator = style({
   width: 1,
   backgroundColor: theme.color.blue200,
+})
+
+export const link = style({
+  fontWeight: theme.typography.semiBold,
+  fontSize: 16,
 })
