@@ -77,7 +77,7 @@ export const PageCard = ({
               </LinkV2>
               <span className={styles.linkSeparator} />
               <LinkV2
-                href="https://island.is/minar-sidur-adgangsstyring"
+                href="https://island.is/adstod"
                 color="blue400"
                 className={styles.link}
               >
