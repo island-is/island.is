@@ -25,4 +25,3 @@ export const withCodeOwner = <R, TArgs extends unknown[]>(
   }
   return withLoggingContext({ codeOwner }, callback, ...args)
 }
-;``
