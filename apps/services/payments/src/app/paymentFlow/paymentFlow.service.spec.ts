@@ -23,7 +23,7 @@ describe('PaymentFlowService', () => {
     it('should create flow', async () => {
       const paymentInfo: Omit<PaymentInformation, 'id'> = {
         availablePaymentMethods: [PaymentMethod.CARD],
-        productId: 'test',
+        productIds: ['test'],
         onSuccessUrl: 'http://localhost:3333/success',
         onUpdateUrl: 'http://localhost:3333/update',
         onErrorUrl: 'http://localhost:3333/error',
