@@ -1,5 +1,5 @@
 import { service, ServiceBuilder } from '../../../../infra/src/dsl/dsl'
-import { Base, ChargeFjsV2 } from '../../../../infra/src/dsl/xroad'
+import { Base, Client, ChargeFjsV2 } from '../../../../infra/src/dsl/xroad'
 
 const namespace = 'services-payments'
 const serviceName = namespace
@@ -16,7 +16,7 @@ export const serviceSetup = (): ServiceBuilder<'services-payments'> =>
     .env({
       // TODO
     })
-    .xroad(Base, ChargeFjsV2)
+    .xroad(Base, Client, ChargeFjsV2)
     .readiness('/liveness')
     .liveness('/liveness')
     .grantNamespaces('nginx-ingress-internal', 'islandis')
