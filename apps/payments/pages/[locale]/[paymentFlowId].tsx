@@ -127,7 +127,7 @@ export const getServerSideProps: GetServerSideProps<PaymentPageProps> = async (
 
   const productInformation = {
     amount: paymentFlow?.productPrice ?? 0,
-    title: paymentFlow.productTitle,
+    title: paymentFlow?.productTitle ?? '',
   }
 
   return {
