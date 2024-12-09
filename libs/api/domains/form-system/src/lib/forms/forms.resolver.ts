@@ -8,17 +8,9 @@ import { CodeOwner } from '@island.is/nest/core'
 import { CodeOwners } from '@island.is/shared/constants'
 import { UseGuards } from '@nestjs/common'
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql'
-import {
-  CreateFormInput,
-  DeleteFormInput,
-  GetFormInput,
-  GetFormsInput,
-  UpdateFormInput,
-} from '../../dto/forms.input'
-import { UpdateFormSettingsInput } from '../../dto/updateFormSettings.input'
-import { FormListResponse } from '../../models/formListResponse.model'
-import { FormResponse } from '../../models/formResponse.model'
 import { FormsService } from './forms.service'
+import { CreateFormInput, DeleteFormInput, GetFormInput, GetAllFormsInput, UpdateFormInput } from '../../dto/form.input'
+import { FormResponse } from '../../models/form.model'
 
 @Resolver()
 @UseGuards(IdsUserGuard)
