@@ -98,6 +98,7 @@ export const Advert = ({ application }: OJOIFieldBaseProps) => {
             defaultValue={application.answers?.advert?.title}
             placeholder={advert.inputs.title.placeholder}
             textarea={true}
+            maxLength={600}
           />
         </Box>
         <Box>

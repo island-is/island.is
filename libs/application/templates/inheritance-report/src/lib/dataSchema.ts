@@ -498,6 +498,7 @@ export const inheritanceReportSchema = z.object({
       rent: z.string().optional(),
       food: z.string().optional(),
       tombstone: z.string().optional(),
+      service: z.string().optional(),
       hasOther: z.array(z.enum([YES])).optional(),
       other: z.string().optional(),
       otherDetails: z.string().optional(),
