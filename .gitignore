@@ -106,10 +106,6 @@ tmp-sessions/
 
 # React Native
 
-# OSX
-#
-.DS_Store
-
 # Xcode
 #
 build/
@@ -149,12 +145,6 @@ local.properties
 google-services.json
 service-account.json
 
-# node.js
-#
-node_modules/
-npm-debug.log
-yarn-error.log
-
 # fastlane
 #
 # It is recommended to not store the screenshots in the git repo. Instead, use fastlane to re-generate the
@@ -180,7 +170,3 @@ yarn-error.log
 # testing
 /coverage
 
-
-## Nested node_modules
-
-node_modules/
