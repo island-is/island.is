@@ -14,6 +14,10 @@ const { getNavigationOptions, useNavigationOptions } =
     topBar: {
       visible: true,
     },
+    bottomTabs: {
+      visible: false,
+      drawBehind: true,
+    },
   }))
 
 export const VehicleDetailScreen: NavigationFunctionComponent<{

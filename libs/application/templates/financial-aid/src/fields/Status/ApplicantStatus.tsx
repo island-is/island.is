@@ -1,28 +1,27 @@
 import React from 'react'
+
 import { ApplicationState } from '@island.is/financial-aid/shared/lib'
 import { Box, LoadingDots } from '@island.is/island-ui/core'
+
+import { FAFieldBaseProps } from '../../lib/types'
 import { hasSpouse, waitingForSpouse } from '../../lib/utils'
+import {
+  AidAmount,
+  ApprovedAlert,
+  Header,
+  MissingFilesCard,
+  MoreActions,
+  RejectionMessage,
+  SpouseAlert,
+  Timeline,
+} from './index'
 import useApplication from '../../lib/hooks/useApplication'
-import Header from '../../components/Status/Header/Header'
-import SpouseAlert from '../../components/Status/SpouseAlert/SpouseAlert'
-import ApprovedAlert from '../../components/Status/ApprovedAlert/ApprovedAlert'
-import RejectionMessage from '../../components/Status/RejectionMessage/RejectionMessage'
-import MissingFilesCard from '../../components/Status/MissingFilesCard/MissingFilesCard'
-import AidAmount from '../../components/Status/AidAmount/AidAmount'
-import Timeline from '../../components/Status/Timeline/Timeline'
-import MoreActions from '../../components/Status/MoreActions/MoreActions'
-import { FieldBaseProps } from '@island.is/application/types'
-import { getApplicantStatusConstants } from './util'
+import * as styles from './Status.css'
 
-export const ApplicantStatus = ({
-  application,
-  goToScreen,
-}: FieldBaseProps) => {
-  const { answers, externalData } = application
-  const { currentApplicationId, showCopyUrl, homepage, email, rulesHomepage } =
-    getApplicantStatusConstants(answers, externalData)
-
-  const { currentApplication, loading } = useApplication(currentApplicationId)
+const ApplicantStatus = ({ application, goToScreen }: FAFieldBaseProps) => {
+  const { currentApplication, loading } = useApplication(
+    application.externalData.currentApplication.data?.currentApplicationId,
+  )
   const { municipality } = application.externalData
   const isWaitingForSpouse = waitingForSpouse(application.state)
 
@@ -36,18 +35,22 @@ export const ApplicantStatus = ({
   }
 
   return (
-    <Box paddingBottom={5}>
+    <Box paddingBottom={5} className={styles.container}>
       <Header state={state} />
-      {isWaitingForSpouse && <SpouseAlert showCopyUrl={showCopyUrl ?? false} />}
+      {isWaitingForSpouse && (
+        <SpouseAlert
+          showCopyUrl={!application.externalData.sendSpouseEmail?.data.success}
+        />
+      )}
       {state === ApplicationState.APPROVED && (
         <ApprovedAlert events={currentApplication?.applicationEvents} />
       )}
       {state === ApplicationState.REJECTED && (
         <RejectionMessage
           rejectionComment={currentApplication?.rejection}
-          rulesPage={rulesHomepage}
-          homepage={homepage}
-          email={email}
+          rulesPage={municipality.data?.rulesHomepage}
+          homepage={municipality.data?.homepage}
+          email={municipality.data?.email}
         />
       )}
       {state === ApplicationState.DATANEEDED && (
@@ -68,14 +71,16 @@ export const ApplicantStatus = ({
         modified={currentApplication?.modified ?? application.modified}
         showSpouseStep={
           isWaitingForSpouse
-            ? hasSpouse(answers, externalData)
+            ? hasSpouse(application.answers, application.externalData)
             : currentApplication?.spouseNationalId != null
         }
       />
       <MoreActions
-        municipalityRulesPage={rulesHomepage}
-        municipalityEmail={email}
+        municipalityRulesPage={municipality.data?.rulesHomepage}
+        municipalityEmail={municipality.data?.email}
       />
     </Box>
   )
 }
+
+export default ApplicantStatus

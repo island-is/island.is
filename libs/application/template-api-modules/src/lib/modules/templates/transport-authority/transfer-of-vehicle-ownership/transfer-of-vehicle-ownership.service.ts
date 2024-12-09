@@ -14,7 +14,7 @@ import {
   generateApplicationSubmittedSms,
   generateApplicationRejectedSms,
 } from './smsGenerators'
-import { EmailRecipient, EmailRole } from './types'
+import { EmailRecipient, EmailRole, RejectType } from './types'
 import {
   getAllRoles,
   getRecipients,
@@ -103,7 +103,7 @@ export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
       )
     }
 
-    // A. vehicleCount > 20
+    // Case: count > 20
     // Display search box, validate vehicle when permno is entered
     if (totalRecords > 20) {
       return {
@@ -116,13 +116,13 @@ export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
 
     const vehicles = await Promise.all(
       resultData.map(async (vehicle) => {
-        // B. 20 >= vehicleCount > 5
+        // Case: 20 >= count > 5
         // Display dropdown, validate vehicle when selected in dropdown
         if (totalRecords > 5) {
           return this.mapVehicle(auth, vehicle, false)
         }
 
-        // C. vehicleCount <= 5
+        // Case: count <= 5
         // Display radio buttons, validate all vehicles now
         return this.mapVehicle(auth, vehicle, true)
       }),
@@ -333,7 +333,7 @@ export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
   async addReview({
     application,
     auth,
-  }: TemplateApiModuleActionProps): Promise<void> {
+  }: TemplateApiModuleActionProps): Promise<Array<EmailRecipient>> {
     const answers = application.answers as TransferOfVehicleOwnershipAnswers
 
     // 1. Make sure review comes from buyer, he is the only one that can add more reviewers
@@ -342,7 +342,7 @@ export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
       !answers.buyer.nationalId ||
       auth.nationalId !== answers.buyer.nationalId
     ) {
-      return
+      return []
     }
 
     // 2. Notify users that were added that need to review
@@ -365,10 +365,11 @@ export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
     )
     if (buyerCoOwners) {
       for (let i = 0; i < buyerCoOwners.length; i++) {
-        const oldEntry = oldRecipientList.find((x) => {
-          x.role === EmailRole.buyerCoOwner &&
-            x.ssn === buyerCoOwners[i].nationalId
-        })
+        const oldEntry = oldRecipientList.find(
+          (x) =>
+            x.role === EmailRole.buyerCoOwner &&
+            x.ssn === buyerCoOwners[i].nationalId,
+        )
         const emailChanged = oldEntry
           ? oldEntry.email !== buyerCoOwners[i].email
           : true
@@ -393,10 +394,11 @@ export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
     )
     if (buyerOperators) {
       for (let i = 0; i < buyerOperators.length; i++) {
-        const oldEntry = oldRecipientList.find((x) => {
-          x.role === EmailRole.buyerOperator &&
-            x.ssn === buyerOperators[i].nationalId
-        })
+        const oldEntry = oldRecipientList.find(
+          (x) =>
+            x.role === EmailRole.buyerOperator &&
+            x.ssn === buyerOperators[i].nationalId,
+        )
         const emailChanged = oldEntry
           ? oldEntry.email !== buyerOperators[i].email
           : true
@@ -453,16 +455,29 @@ export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
           })
       }
     }
+
+    return newlyAddedRecipientList
   }
 
-  async rejectApplication({
-    application,
-    auth,
-  }: TemplateApiModuleActionProps): Promise<void> {
+  async rejectApplication(props: TemplateApiModuleActionProps): Promise<void> {
+    return this.doRejectApplication(props, RejectType.REJECT)
+  }
+
+  async deleteApplication(props: TemplateApiModuleActionProps): Promise<void> {
+    return this.doRejectApplication(props, RejectType.DELETE)
+  }
+
+  private async doRejectApplication(
+    { application, auth }: TemplateApiModuleActionProps,
+    rejectType: RejectType,
+  ): Promise<void> {
     // 1. Delete charge so that the seller gets reimburshed
-    const chargeId = getPaymentIdFromExternalData(application)
-    if (chargeId) {
-      await this.chargeFjsV2ClientService.deleteCharge(chargeId)
+    // Note: not necessary on delete, since that is done in the shared delete function
+    if (rejectType !== RejectType.DELETE) {
+      const chargeId = getPaymentIdFromExternalData(application)
+      if (chargeId) {
+        await this.chargeFjsV2ClientService.deleteCharge(chargeId)
+      }
     }
 
     // 2. Notify everyone in the process that the application has been withdrawn
@@ -482,13 +497,14 @@ export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
                 props,
                 recipientList[i],
                 rejectedByRecipient,
+                rejectType,
               ),
             application,
           )
           .catch((e) => {
             this.logger.error(
               `Error sending email about rejectApplication in application: ID: ${application.id}, 
-            role: ${recipientList[i].role}`,
+            role: ${recipientList[i].role} (${rejectType})`,
               e,
             )
           })
@@ -502,6 +518,7 @@ export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
                 application,
                 recipientList[i],
                 rejectedByRecipient,
+                rejectType,
               ),
             application,
           )
@@ -509,7 +526,7 @@ export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
             this.logger.error(
               `Error sending sms about rejectApplication to 
               a phonenumber in application: ID: ${application.id}, 
-              role: ${recipientList[i].role}`,
+              role: ${recipientList[i].role} (${rejectType})`,
               e,
             )
           })
@@ -571,34 +588,51 @@ export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
 
     const mileage = answers?.vehicleMileage?.value
 
-    await this.vehicleOwnerChangeClient.saveOwnerChange(auth, {
-      permno: answers?.pickVehicle?.plate,
-      seller: {
-        ssn: answers?.seller?.nationalId,
-        email: answers?.seller?.email,
+    const submitResult = await this.vehicleOwnerChangeClient.saveOwnerChange(
+      auth,
+      {
+        permno: answers?.pickVehicle?.plate,
+        seller: {
+          ssn: answers?.seller?.nationalId,
+          email: answers?.seller?.email,
+        },
+        buyer: {
+          ssn: answers?.buyer?.nationalId,
+          email: answers?.buyer?.email,
+        },
+        dateOfPurchase: new Date(answers?.vehicle?.date),
+        dateOfPurchaseTimestamp: createdStr.substring(11, createdStr.length),
+        saleAmount: Number(answers?.vehicle?.salePrice || '0') || 0,
+        mileage: mileage ? Number(mileage) || 0 : null,
+        insuranceCompanyCode: answers?.insurance?.value,
+        coOwners: buyerCoOwners?.map((coOwner) => ({
+          ssn: coOwner.nationalId || '',
+          email: coOwner.email || '',
+        })),
+        operators: buyerOperators?.map((operator) => ({
+          ssn: operator.nationalId || '',
+          email: operator.email || '',
+          isMainOperator:
+            buyerOperators.length > 1
+              ? operator.nationalId === answers.buyerMainOperator?.nationalId
+              : true,
+        })),
       },
-      buyer: {
-        ssn: answers?.buyer?.nationalId,
-        email: answers?.buyer?.email,
-      },
-      dateOfPurchase: new Date(answers?.vehicle?.date),
-      dateOfPurchaseTimestamp: createdStr.substring(11, createdStr.length),
-      saleAmount: Number(answers?.vehicle?.salePrice || '0') || 0,
-      mileage: mileage ? Number(mileage) || 0 : null,
-      insuranceCompanyCode: answers?.insurance?.value,
-      coOwners: buyerCoOwners?.map((coOwner) => ({
-        ssn: coOwner.nationalId || '',
-        email: coOwner.email || '',
-      })),
-      operators: buyerOperators?.map((operator) => ({
-        ssn: operator.nationalId || '',
-        email: operator.email || '',
-        isMainOperator:
-          buyerOperators.length > 1
-            ? operator.nationalId === answers.buyerMainOperator?.nationalId
-            : true,
-      })),
-    })
+    )
+
+    if (
+      submitResult.hasError &&
+      submitResult.errorMessages &&
+      submitResult.errorMessages.length > 0
+    ) {
+      throw new TemplateApiError(
+        {
+          title: applicationCheck.validation.alertTitle,
+          summary: submitResult.errorMessages,
+        },
+        400,
+      )
+    }
 
     // 3. Notify everyone in the process that the application has successfully been submitted
 

@@ -287,13 +287,13 @@ describe('InternalCaseController - Archive', () => {
         ],
         where: archiveFilter,
       })
-      expect(mockDefendantService.updateForArcive).toHaveBeenCalledWith(
+      expect(mockDefendantService.updateDatabaseDefendant).toHaveBeenCalledWith(
         caseId,
         defendantId1,
         { nationalId: '', name: '', address: '' },
         transaction,
       )
-      expect(mockDefendantService.updateForArcive).toHaveBeenCalledWith(
+      expect(mockDefendantService.updateDatabaseDefendant).toHaveBeenCalledWith(
         caseId,
         defendantId2,
         { nationalId: '', name: '', address: '' },

@@ -1,25 +1,28 @@
-import { Args, Mutation, Query, Resolver } from '@nestjs/graphql'
-import { FormsService } from './forms.service'
-import { FormResponse } from '../../models/formResponse.model'
-import {
-  CreateFormInput,
-  GetFormInput,
-  GetFormsInput,
-  UpdateFormInput,
-  DeleteFormInput,
-} from '../../dto/forms.input'
 import {
   CurrentUser,
   IdsUserGuard,
   type User,
 } from '@island.is/auth-nest-tools'
-import { FormListResponse } from '../../models/formListResponse.model'
 import { Audit } from '@island.is/nest/audit'
+import { CodeOwner } from '@island.is/nest/core'
+import { CodeOwners } from '@island.is/shared/constants'
 import { UseGuards } from '@nestjs/common'
+import { Args, Mutation, Query, Resolver } from '@nestjs/graphql'
+import {
+  CreateFormInput,
+  DeleteFormInput,
+  GetFormInput,
+  GetFormsInput,
+  UpdateFormInput,
+} from '../../dto/forms.input'
 import { UpdateFormSettingsInput } from '../../dto/updateFormSettings.input'
+import { FormListResponse } from '../../models/formListResponse.model'
+import { FormResponse } from '../../models/formResponse.model'
+import { FormsService } from './forms.service'
 
 @Resolver()
 @UseGuards(IdsUserGuard)
+@CodeOwner(CodeOwners.Advania)
 @Audit({ namespace: '@island.is/api/form-system' })
 export class FormsResolver {
   constructor(private readonly formsService: FormsService) {}

@@ -1,5 +1,5 @@
 query NationalRegistryUser {
-  nationalRegistryUser {
+  nationalRegistryPerson {
     nationalId
     fullName
     gender
@@ -23,37 +23,83 @@ query NationalRegistryUser {
   }
 }
 
-query NationalRegistryChildren {
-  nationalRegistryUser {
+query NationalRegistryPerson {
+  nationalRegistryPerson {
     nationalId
-    fullName
+    name {
+      fullName
+    }
     spouse {
-      name
       nationalId
+      fullName
+    }
+    childCustody {
+      nationalId
+      fullName
+    }
+    biologicalChildren {
+      nationalId
+      fullName
     }
   }
-  nationalRegistryChildren {
+}
+
+query NationalRegistryBioChild($childNationalId: String) {
+  nationalRegistryPerson {
     nationalId
     fullName
-    displayName
-    genderDisplay
-    birthplace
-    custody1
-    custodyText1
-    nameCustody1
-    custody2
-    custodyText2
-    nameCustody2
-    parent1
-    nameParent1
-    parent2
-    nameParent2
-    homeAddress
-    religion
-    nationality
-    religion
-    homeAddress
-    nationality
-    legalResidence
+    biologicalChildren(childNationalId: $childNationalId) {
+      details {
+        nationalId
+        fullName
+        baseId
+        housing {
+          address {
+            streetAddress
+          }
+        }
+      }
+    }
+  }
+}
+
+query NationalRegistryChildCustody($childNationalId: String) {
+  nationalRegistryPerson {
+    nationalId
+    fullName
+    childCustody(childNationalId: $childNationalId) {
+      details {
+        nationalId
+        fullName
+        baseId
+        gender
+        religion
+        housing {
+          address {
+            streetAddress
+            postalCode
+            city
+          }
+        }
+        birthplace {
+          location
+        }
+        citizenship {
+          code
+          name
+        }
+      }
+    }
+  }
+}
+
+query NationalRegistrySpouse {
+  nationalRegistryPerson {
+    nationalId
+    spouse {
+      maritalStatus
+      nationalId
+      fullName
+    }
   }
 }

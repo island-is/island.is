@@ -18,6 +18,9 @@ export class AdvertMainCategory {
 
   @Field(() => String)
   description!: string
+
+  @Field(() => [AdvertCategory])
+  categories!: AdvertCategory[]
 }
 
 @ObjectType('OfficialJournalOfIcelandAdvertCategory')

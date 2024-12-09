@@ -113,7 +113,7 @@ const AppealCasesTable: FC<Props> = (props) => {
               <ColumnCaseType
                 type={row.type}
                 decision={row.decision}
-                parentCaseId={row.parentCaseId ?? ''}
+                parentCaseId={row.parentCaseId}
               />
             ),
           },

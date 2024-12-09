@@ -13,6 +13,7 @@ import {
   FormFooter,
   PageHeader,
   PageLayout,
+  PageTitle,
   ProsecutorCaseInfo,
 } from '@island.is/judicial-system-web/src/components'
 import {
@@ -73,11 +74,7 @@ const PoliceReport = () => {
         title={formatMessage(titles.prosecutor.investigationCases.policeReport)}
       />
       <FormContentContainer>
-        <Box marginBottom={7}>
-          <Text as="h1" variant="h1">
-            {formatMessage(icReportForm.heading)}
-          </Text>
-        </Box>
+        <PageTitle>{formatMessage(icReportForm.heading)}</PageTitle>
         <ProsecutorCaseInfo workingCase={workingCase} />
         <Box marginBottom={5}>
           <BlueBox>

@@ -25,6 +25,7 @@ import { CustomPageSyncService } from './importers/customPage.service'
 import { GenericListItemSyncService } from './importers/genericListItem.service'
 import { TeamListSyncService } from './importers/teamList.service'
 import type { CmsSyncProvider, processSyncDataInput } from './cmsSync.service'
+import { GrantsSyncService } from './importers/grants.service'
 
 @Injectable()
 export class MappingService {
@@ -53,6 +54,7 @@ export class MappingService {
     private readonly manualSyncService: ManualSyncService,
     private readonly manualChapterItemSyncService: ManualChapterItemSyncService,
     private readonly customPageSyncService: CustomPageSyncService,
+    private readonly grantSyncService: GrantsSyncService,
     private readonly genericListItemSyncService: GenericListItemSyncService,
     private readonly teamListSyncService: TeamListSyncService,
   ) {
@@ -73,6 +75,7 @@ export class MappingService {
       this.supportQNASyncService,
       this.linkSyncService,
       this.enhancedAssetService,
+      this.grantSyncService,
       this.vacancyService,
       this.serviceWebPageSyncService,
       this.eventSyncService,

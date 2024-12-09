@@ -506,6 +506,35 @@ describe('DelegationsIndexService', () => {
     })
   })
 
+  describe('indexCustomDelegationWithExisitingDelegations', () => {
+    const testCase = indexingTestCases.customAndPersonalRepresentative
+
+    beforeEach(async () => {
+      await setup(testCase)
+    })
+
+    it('should index custom delegations without overiding existing delegations', async () => {
+      // Arrange
+      const nationalId = user.nationalId
+
+      // Act
+      await delegationIndexService.indexRepresentativeDelegations(
+        nationalId,
+        user,
+      )
+      await delegationIndexService.indexCustomDelegations(nationalId, user)
+
+      // Assert
+      const delegationsAfter = await delegationIndexModel.findAll({
+        where: {
+          toNationalId: nationalId,
+        },
+      })
+
+      expect(delegationsAfter.length).toEqual(testCase.expectedFrom.length)
+    })
+  })
+
   describe('indexRepresentativeDelegations', () => {
     const testCase = indexingTestCases.personalRepresentative
 
