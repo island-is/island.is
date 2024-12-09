@@ -30,9 +30,12 @@ const IndictmentOverview = () => {
     caseId: workingCase.id,
   })
 
-  const { defendants } = workingCase;
-  const defendant = defendants && defendants?.length > 0 ? defendants[0] : undefined;
-  const [selectedPunishmentType, setPunishmentType] = useState<PunishmentType | undefined>(defendant?.punishmentType || undefined);
+  const { defendants } = workingCase
+  const defendant =
+    defendants && defendants?.length > 0 ? defendants[0] : undefined
+  const [selectedPunishmentType, setPunishmentType] = useState<
+    PunishmentType | undefined
+  >(defendant?.punishmentType || undefined)
 
   return (
     <PageLayout workingCase={workingCase} isLoading={false} notFound={false}>
