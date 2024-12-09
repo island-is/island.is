@@ -2,6 +2,7 @@ import {
   coreHistoryMessages,
   corePendingActionMessages,
   EphemeralStateLifeCycle,
+  getValueViaPath,
   pruneAfterDays,
 } from '@island.is/application/core'
 import {
@@ -15,14 +16,22 @@ import {
   ApplicationConfigurations,
   Application,
   defineTemplateApi,
+  InstitutionNationalIds,
 } from '@island.is/application/types'
 import { Features } from '@island.is/feature-flags'
 import { Roles, States, Events } from './constants'
+import { buildPaymentState } from '@island.is/application/utils'
 import { PracticalExamAnswersSchema } from './dataSchema'
-import { IdentityApi } from '../dataProviders'
+import {
+  IdentityApi,
+  MockableVinnueftirlitidPaymentCatalogApi,
+  VinnueftirlitidPaymentCatalogApi,
+} from '../dataProviders'
 import { AuthDelegationType } from '@island.is/shared/types'
 import { ApiScope } from '@island.is/auth/scopes'
 import { shared } from './messages/shared'
+import { getChargeItems, isCompany } from '../utils'
+import { PaymentOptions } from '../shared/constants'
 
 const template: ApplicationTemplate<
   ApplicationContext,
@@ -82,7 +91,12 @@ const template: ApplicationTemplate<
               ],
               write: 'all',
               delete: true,
-              api: [IdentityApi, UserProfileApi],
+              api: [
+                IdentityApi,
+                UserProfileApi,
+                VinnueftirlitidPaymentCatalogApi,
+                MockableVinnueftirlitidPaymentCatalogApi,
+              ],
             },
           ],
         },
@@ -127,17 +141,45 @@ const template: ApplicationTemplate<
           ],
         },
         on: {
-          [DefaultEvents.SUBMIT]: { target: States.COMPLETED },
+          [DefaultEvents.SUBMIT]: [
+            {
+              target: States.COMPLETED,
+              cond: ({ application }: ApplicationContext) => {
+                const paymentOptions = getValueViaPath<PaymentOptions>(
+                  application.answers,
+                  'paymentArrangement.paymentOptions',
+                )
+                return (
+                  paymentOptions === PaymentOptions.putIntoAccount &&
+                  isCompany(application.answers)
+                )
+              },
+            },
+            {
+              target: States.PAYMENT,
+            },
+          ],
         },
       },
+      [States.PAYMENT]: buildPaymentState({
+        organizationId: InstitutionNationalIds.VINNUEFTIRLITID,
+        chargeItems: getChargeItems,
+        submitTarget: States.COMPLETED,
+        // onExit: [
+        //   defineTemplateApi({
+        //     action: ApiActions.submitApplication,
+        //     triggerEvent: DefaultEvents.SUBMIT,
+        //   }),
+        // ],
+      }),
       [States.COMPLETED]: {
         meta: {
           name: 'Completed',
           status: 'completed',
           lifecycle: pruneAfterDays(30),
-          onEntry: defineTemplateApi({
-            action: 'TODO REPLACE ME',
-          }),
+          // onEntry: defineTemplateApi({
+          //   action: ApiActions.submitApplication
+          // }),
           actionCard: {
             tag: {
               //label: shared.application.actionCardDone,
@@ -151,10 +193,10 @@ const template: ApplicationTemplate<
           roles: [
             {
               id: Roles.APPLICANT,
-              // formLoader: () =>
-              //   import('../forms/Conclusion').then((module) =>
-              //     Promise.resolve(module.Conclusion),
-              //   ),
+              formLoader: () =>
+                import('../forms/Conclusion').then((module) =>
+                  Promise.resolve(module.Conclusion),
+                ),
               read: 'all',
             },
           ],

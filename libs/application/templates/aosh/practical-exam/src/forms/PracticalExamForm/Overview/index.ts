@@ -20,18 +20,18 @@ export const overviewSection = buildSection({
           title: '',
           component: 'Overview',
         }),
-        buildSubmitField({
-          id: 'submit',
-          placement: 'footer',
-          title: overview.general.approveButton,
-          actions: [
-            {
-              event: DefaultEvents.SUBMIT,
-              name: overview.general.approveButton,
-              type: 'primary',
-            },
-          ],
-        }),
+        // buildSubmitField({
+        //   id: 'submit',
+        //   placement: 'footer',
+        //   title: overview.general.approveButton,
+        //   actions: [
+        //     {
+        //       event: DefaultEvents.PAYMENT,
+        //       name: overview.general.approveButton,
+        //       type: 'primary',
+        //     },
+        //   ],
+        // }),
       ],
     }),
   ],
