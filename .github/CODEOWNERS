@@ -111,6 +111,9 @@ libs/clients/rsk/relationships/                                                 
 /apps/native/app/                                                                                        @island-is/aranja-app
 codemagic.yaml                                                                                           @island-is/aranja-app
 /apps/web/public/.well-known/                                                                            @island-is/aranja-app
+/apps/payments                                                                                           @island-is/aranja
+/apps/services/payments                                                                                  @island-is/aranja
+/libs/clients/payments                                                                                   @island-is/aranja
 
 /apps/judicial-system/                                                                                   @island-is/kolibri-justice-league
 /libs/judicial-system/                                                                                   @island-is/kolibri-justice-league

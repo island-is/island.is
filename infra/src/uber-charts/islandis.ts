@@ -15,6 +15,10 @@ import { serviceSetup as adminPortalSetup } from '../../../apps/portals/admin/in
 import { serviceSetup as servicePortalSetup } from '../../../apps/portals/my-pages/infra/portals-my-pages'
 import { serviceSetup as servicePortalApiSetup } from '../../../apps/services/user-profile/infra/service-portal-api'
 
+// Payments
+import { serviceSetup as paymentsWebAppServiceSetup } from '../../../apps/payments/infra/payments'
+import { serviceSetup as paymentsMicroserviceServiceSetup } from '../../../apps/services/payments/infra/payments'
+
 // Bff's
 import { serviceSetup as bffAdminPortalServiceSetup } from '../../../apps/services/bff/infra/admin-portal.infra'
 import { serviceSetup as bffServicePortalServiceSetup } from '../../../apps/services/bff/infra/my-pages-portal.infra'
@@ -105,6 +109,8 @@ const authAdminApi = authAdminApiSetup()
 const universityGatewayService = universityGatewaySetup()
 const universityGatewayWorker = universityGatewayWorkerSetup()
 
+const paymentsMicroservice = paymentsMicroserviceServiceSetup()
+
 const api = apiSetup({
   appSystemApi,
   servicePortalApi,
@@ -117,12 +123,14 @@ const api = apiSetup({
   authAdminApi,
   universityGatewayApi: universityGatewayService,
   userNotificationService,
+  paymentsApi: paymentsMicroservice,
 })
 
 const adminPortal = adminPortalSetup()
 const servicePortal = servicePortalSetup()
 const bffAdminPortalService = bffAdminPortalServiceSetup({ api })
 const bffServicePortalService = bffServicePortalServiceSetup({ api })
+const paymentsWebApp = paymentsWebAppServiceSetup({ api })
 
 const appSystemForm = appSystemFormSetup()
 const web = webSetup({ api })
@@ -260,6 +268,8 @@ export const Services: EnvironmentServices = {
     universityGatewayService,
     universityGatewayWorker,
     bffAdminPortalService,
+    paymentsWebApp,
+    paymentsMicroservice,
     bffServicePortalService,
   ],
 }
