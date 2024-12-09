@@ -1,5 +1,8 @@
-import { UseGuards } from '@nestjs/common'
+import { CodeOwner } from '@island.is/nest/core'
+import { CodeOwners } from '@island.is/shared/constants'
 import { Args, Mutation, Resolver, Query } from '@nestjs/graphql'
+import { OrganizationsService } from './organizations.services'
+import { CreateOrganizationInput } from '../../dto/organization.input'
 import {
   CurrentUser,
   IdsUserGuard,
@@ -12,9 +15,10 @@ import { GetOrganizationInput } from '../../dto/organization.input'
 
 @Resolver()
 @UseGuards(IdsUserGuard)
+@CodeOwner(CodeOwners.Advania)
 @Audit({ namespace: '@island.is/api/form-system' })
 export class OrganizationsResolver {
-  constructor(private readonly organizationsService: OrganizationsService) {}
+  constructor(private readonly organizationsService: OrganizationsService) { }
 
   @Query(() => Organization, {
     name: 'formSystemGetOrganization',

@@ -570,6 +570,11 @@ export interface NationalIdWithNameField extends InputField {
   nameDefaultValue?: string
   errorMessage?: string
   minAgePerson?: number
+  searchPersons?: boolean
+  searchCompanies?: boolean
+  titleVariant?: TitleVariants
+  marginTop?: ResponsiveProp<Space>
+  marginBottom?: ResponsiveProp<Space>
 }
 
 type Modify<T, R> = Omit<T, keyof R> & R
@@ -778,6 +783,7 @@ export interface DisplayField extends BaseField {
   titleVariant?: TitleVariants
   suffix?: MessageDescriptor | string
   rightAlign?: boolean
+  halfWidthOwnline?: boolean
   variant?: TextFieldVariant
   label?: MessageDescriptor | string
   value: (answers: FormValue) => string

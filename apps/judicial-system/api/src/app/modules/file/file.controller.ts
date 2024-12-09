@@ -195,7 +195,7 @@ export class FileController {
       } for defendant ${defendantId} of case ${id} as a pdf document`,
     )
 
-    const subpoenaIdInjection = subpoenaId ? `/${subpoenaId}` : ''
+    const subpoenaIdInjection = subpoenaId ? `/${subpoenaId}/pdf` : ''
     const queryInjection = arraignmentDate
       ? `?arraignmentDate=${arraignmentDate}&location=${location}&subpoenaType=${subpoenaType}`
       : ''

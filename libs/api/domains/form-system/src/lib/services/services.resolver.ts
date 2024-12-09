@@ -1,4 +1,6 @@
-import { Args, Resolver, Mutation } from '@nestjs/graphql'
+import { CodeOwner } from '@island.is/nest/core'
+import { CodeOwners } from '@island.is/shared/constants'
+import { Mutation, Args, Resolver } from '@nestjs/graphql'
 import {
   CurrentUser,
   IdsUserGuard,
@@ -12,9 +14,10 @@ import { GetTranslationInput } from '../../dto/service.input'
 
 @Resolver()
 @UseGuards(IdsUserGuard)
+@CodeOwner(CodeOwners.Advania)
 @Audit({ namespace: '@island.is/api/form-system' })
 export class ServicesResolver {
-  constructor(private readonly formSystemServices: ServicesService) {}
+  constructor(private readonly formSystemServices: ServicesService) { }
 
   @Mutation(() => Translation, {
     name: 'formSystemGetTranslation',
