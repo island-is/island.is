@@ -18,7 +18,7 @@ import is from 'date-fns/locale/is'
 import parseISO from 'date-fns/parseISO'
 import kennitala from 'kennitala'
 import React, { FC } from 'react'
-import { States, YES } from '../../constants'
+import { States, YES } from '../../utils/constants'
 import { AccidentNotification } from '../../lib/dataSchema'
 import {
   accidentDetails,

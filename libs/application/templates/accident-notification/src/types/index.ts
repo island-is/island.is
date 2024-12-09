@@ -1,4 +1,4 @@
-import { NO, YES } from './../constants'
+import { NO, YES } from '../utils/constants'
 
 export type CompanyInfo = {
   nationalRegistrationId: string
@@ -56,11 +56,6 @@ export enum OnBehalf {
 export enum ChoiceEnum {
   YES = 'yes',
   NO = 'no',
-}
-
-export enum DataProviderTypes {
-  NationalRegistry = 'NationalRegistryProvider',
-  UserProfile = 'UserProfileProvider',
 }
 
 export enum WhoIsTheNotificationForEnum {
