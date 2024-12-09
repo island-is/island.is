@@ -12,7 +12,13 @@ import {
 import { NavigationFunctionComponent } from 'react-native-navigation'
 import { useTheme } from 'styled-components/native'
 
-import { EmptyList, FamilyMemberCard, Skeleton, TopLine } from '../../ui'
+import {
+  EmptyList,
+  FamilyMemberCard,
+  Skeleton,
+  TopLine,
+  Problem,
+} from '../../ui'
 import illustrationSrc from '../../assets/illustrations/hero_spring.png'
 import { BottomTabsIndicator } from '../../components/bottom-tabs-indicator/bottom-tabs-indicator'
 import {
