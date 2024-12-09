@@ -265,6 +265,7 @@ export const expandAnswers = (
       rent: answers?.funeralCost?.rent ?? '',
       food: answers?.funeralCost?.food ?? '',
       tombstone: answers?.funeralCost?.tombstone ?? '',
+      service: answers?.funeralCost?.service ?? '',
       hasOther: answers?.funeralCost?.hasOther ?? [],
       other: answers?.funeralCost?.other ?? '',
       otherDetails: answers?.funeralCost?.otherDetails ?? '',

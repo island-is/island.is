@@ -1,29 +1,28 @@
-import { getConnectionToken, getModelToken } from '@nestjs/sequelize'
 import { INestApplication, Type } from '@nestjs/common'
+import { getConnectionToken, getModelToken } from '@nestjs/sequelize'
 import { TestingModuleBuilder } from '@nestjs/testing'
 import { Sequelize } from 'sequelize-typescript'
 
-import { testServer, truncate, useDatabase } from '@island.is/testing/nest'
-import { UserProfileDto, V2UsersApi } from '@island.is/clients/user-profile'
-import { getQueueServiceToken, QueueService } from '@island.is/message-queue'
-import { FeatureFlagService } from '@island.is/nest/feature-flags'
-import { NationalRegistryV3ClientService } from '@island.is/clients/national-registry-v3'
-import { EmailService } from '@island.is/email-service'
 import { DelegationsApi } from '@island.is/clients/auth/delegation-api'
 import { CmsService } from '@island.is/clients/cms'
+import { NationalRegistryV3ClientService } from '@island.is/clients/national-registry-v3'
 import {
   CompanyExtendedInfo,
   CompanyRegistryClientService,
 } from '@island.is/clients/rsk/company-registry'
+import { UserProfileDto, V2UsersApi } from '@island.is/clients/user-profile'
+import { EmailService } from '@island.is/email-service'
+import { QueueService, getQueueServiceToken } from '@island.is/message-queue'
+import { FeatureFlagService } from '@island.is/nest/feature-flags'
+import { testServer, truncate, useDatabase } from '@island.is/testing/nest'
 
 import { UserNotificationsConfig } from '../../../../config'
 import { FIREBASE_PROVIDER } from '../../../../constants'
 import { AppModule } from '../../../app.module'
 import { SequelizeConfigService } from '../../../sequelizeConfig.service'
-import { NotificationDispatchService } from '../notificationDispatch.service'
 import { Notification } from '../notification.model'
+import { NotificationDispatchService } from '../notificationDispatch.service'
 import { NotificationsService } from '../notifications.service'
-import { NotificationsWorkerService } from './notificationsWorker.service'
 import { wait } from './helpers'
 import {
   MockDelegationsService,
@@ -31,19 +30,20 @@ import {
   MockNationalRegistryV3ClientService,
   MockUserNotificationsConfig,
   companyUser,
-  userWithNoEmail,
+  delegationSubjectId,
+  getMockHnippTemplate,
+  mockTemplateId,
+  userProfiles,
   userWithDelegations,
   userWithDelegations2,
   userWithDocumentNotificationsDisabled,
   userWithEmailNotificationsDisabled,
   userWithFeatureFlagDisabled,
-  userWithSendToDelegationsFeatureFlagDisabled,
-  getMockHnippTemplate,
-  mockTemplateId,
-  delegationSubjectId,
   userWithNoDelegations,
-  userProfiles,
+  userWithNoEmail,
+  userWithSendToDelegationsFeatureFlagDisabled,
 } from './mocks'
+import { NotificationsWorkerService } from './notificationsWorker.service'
 
 const workingHoursDelta = 1000 * 60 * 60 // 1 hour
 const insideWorkingHours = new Date(2021, 1, 1, 9, 0, 0)
@@ -303,7 +303,7 @@ describe('NotificationsWorkerService', () => {
             expect.objectContaining({
               component: 'ImageWithLink',
               context: expect.objectContaining({
-                href: `https://island.is/minarsidur/login?login_hint=${delegationSubjectId}&target_link_uri=https://island.is/minarsidur/postholf`,
+                href: `https://island.is/bff/login?login_hint=${delegationSubjectId}&target_link_uri=https://island.is/minarsidur/postholf`,
               }),
             }),
           ]),
