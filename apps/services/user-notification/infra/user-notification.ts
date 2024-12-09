@@ -42,7 +42,11 @@ const getEnv = (services: {
     '@island.is/auth/delegations/index:system',
   ]),
   SERVICE_PORTAL_CLICK_ACTION_URL: 'https://island.is/minarsidur',
-  SERVICE_PORTAL_BFF_LOGIN_URL: 'https://island.is/bff/login',
+  SERVICE_PORTAL_BFF_LOGIN_URL: {
+    dev: 'https://beta.dev01.devland.is/bff/login',
+    staging: 'https://beta.staging01.devland.is/bff/login',
+    prod: 'https://island.is/bff/login',
+  },
   EMAIL_FROM_ADDRESS: {
     dev: 'development@island.is',
     staging: 'development@island.is',
