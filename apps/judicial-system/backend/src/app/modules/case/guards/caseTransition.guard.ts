@@ -23,9 +23,7 @@ export class CaseTransitionGuard implements CanActivate {
 
     // This shouldn't happen
     if (!theCase || !user) {
-      throw new InternalServerErrorException(
-        'Missing case or user or transition',
-      )
+      throw new InternalServerErrorException('Missing case or user')
     }
 
     const transitionRule = getTransitionRule(transition)
