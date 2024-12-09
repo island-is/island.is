@@ -101,7 +101,7 @@ export class ChangeCoOwnerOfVehicleService extends BaseTemplateApiService {
       )
     }
 
-    // A. vehicleCount > 20
+    // Case: count > 20
     // Display search box, validate vehicle when permno is entered
     if (totalRecords > 20) {
       return {
@@ -114,13 +114,13 @@ export class ChangeCoOwnerOfVehicleService extends BaseTemplateApiService {
 
     const vehicles = await Promise.all(
       resultData.map(async (vehicle) => {
-        // B. 20 >= vehicleCount > 5
+        // Case: 20 >= count > 5
         // Display dropdown, validate vehicle when selected in dropdown
         if (totalRecords > 5) {
           return this.mapVehicle(auth, vehicle, false)
         }
 
-        // C. vehicleCount <= 5
+        // Case: count <= 5
         // Display radio buttons, validate all vehicles now
         return this.mapVehicle(auth, vehicle, true)
       }),
@@ -468,34 +468,51 @@ export class ChangeCoOwnerOfVehicleService extends BaseTemplateApiService {
 
     const mileage = answers?.vehicleMileage?.value
 
-    await this.vehicleOwnerChangeClient.saveOwnerChange(auth, {
-      permno: permno,
-      seller: {
-        ssn: ownerSsn,
-        email: ownerEmail,
+    const submitResult = await this.vehicleOwnerChangeClient.saveOwnerChange(
+      auth,
+      {
+        permno: permno,
+        seller: {
+          ssn: ownerSsn,
+          email: ownerEmail,
+        },
+        buyer: {
+          ssn: ownerSsn,
+          email: ownerEmail,
+        },
+        dateOfPurchase: new Date(application.created),
+        dateOfPurchaseTimestamp: createdStr.substring(11, createdStr.length),
+        saleAmount: currentOwnerChange?.saleAmount,
+        mileage: mileage ? Number(mileage) || 0 : null,
+        insuranceCompanyCode: currentOwnerChange?.insuranceCompanyCode,
+        operators: currentOperators?.map((operator) => ({
+          ssn: operator.ssn || '',
+          // Note: It should be ok that the email we send in is empty, since we dont get
+          // the email when fetching current operators, and according to them (SGS), they
+          // are not using the operator email in their API (not being saved in their DB)
+          email: null,
+          isMainOperator: operator.isMainOperator || false,
+        })),
+        coOwners: filteredCoOwners.map((x) => ({
+          ssn: x.nationalId || '',
+          email: x.email || '',
+        })),
       },
-      buyer: {
-        ssn: ownerSsn,
-        email: ownerEmail,
-      },
-      dateOfPurchase: new Date(application.created),
-      dateOfPurchaseTimestamp: createdStr.substring(11, createdStr.length),
-      saleAmount: currentOwnerChange?.saleAmount,
-      mileage: mileage ? Number(mileage) || 0 : null,
-      insuranceCompanyCode: currentOwnerChange?.insuranceCompanyCode,
-      operators: currentOperators?.map((operator) => ({
-        ssn: operator.ssn || '',
-        // Note: It should be ok that the email we send in is empty, since we dont get
-        // the email when fetching current operators, and according to them (SGS), they
-        // are not using the operator email in their API (not being saved in their DB)
-        email: null,
-        isMainOperator: operator.isMainOperator || false,
-      })),
-      coOwners: filteredCoOwners.map((x) => ({
-        ssn: x.nationalId || '',
-        email: x.email || '',
-      })),
-    })
+    )
+
+    if (
+      submitResult.hasError &&
+      submitResult.errorMessages &&
+      submitResult.errorMessages.length > 0
+    ) {
+      throw new TemplateApiError(
+        {
+          title: applicationCheck.validation.alertTitle,
+          summary: submitResult.errorMessages,
+        },
+        400,
+      )
+    }
 
     // 3. Notify everyone in the process that the application has successfully been submitted
 

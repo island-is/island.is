@@ -1,13 +1,21 @@
 import { Op } from 'sequelize'
 
-import { Inject, Injectable } from '@nestjs/common'
+import {
+  Inject,
+  Injectable,
+  InternalServerErrorException,
+} from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import { normalizeAndFormatNationalId } from '@island.is/judicial-system/formatters'
-import { CaseState } from '@island.is/judicial-system/types'
+import { MessageService, MessageType } from '@island.is/judicial-system/message'
+import {
+  CaseState,
+  CivilClaimantNotificationType,
+} from '@island.is/judicial-system/types'
 
 import { Case } from '../case/models/case.model'
 import { UpdateCivilClaimantDto } from './dto/updateCivilClaimant.dto'
@@ -18,6 +26,7 @@ export class CivilClaimantService {
   constructor(
     @InjectModel(CivilClaimant)
     private readonly civilClaimantModel: typeof CivilClaimant,
+    private readonly messageService: MessageService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
@@ -27,15 +36,34 @@ export class CivilClaimantService {
     })
   }
 
+  private async sendUpdateCivilClaimantMessages(
+    oldCivilClaimant: CivilClaimant,
+    updatedCivilClaimant: CivilClaimant,
+  ): Promise<void> {
+    if (
+      updatedCivilClaimant.isSpokespersonConfirmed &&
+      !oldCivilClaimant.isSpokespersonConfirmed
+    ) {
+      return this.messageService.sendMessagesToQueue([
+        {
+          type: MessageType.CIVIL_CLAIMANT_NOTIFICATION,
+          caseId: updatedCivilClaimant.caseId,
+          body: { type: CivilClaimantNotificationType.SPOKESPERSON_ASSIGNED },
+          elementId: updatedCivilClaimant.id,
+        },
+      ])
+    }
+  }
+
   async update(
     caseId: string,
-    civilClaimantId: string,
+    civilClaimant: CivilClaimant,
     update: UpdateCivilClaimantDto,
   ): Promise<CivilClaimant> {
     const [numberOfAffectedRows, civilClaimants] =
       await this.civilClaimantModel.update(update, {
         where: {
-          id: civilClaimantId,
+          id: civilClaimant.id,
           caseId: caseId,
         },
         returning: true,
@@ -43,13 +71,22 @@ export class CivilClaimantService {
 
     if (numberOfAffectedRows > 1) {
       this.logger.error(
-        `Unexpected number of rows (${numberOfAffectedRows}) affected when updating civil claimant ${civilClaimantId} of case ${caseId}`,
+        `Unexpected number of rows (${numberOfAffectedRows}) affected when updating civil claimant ${civilClaimant.id} of case ${caseId}`,
       )
     } else if (numberOfAffectedRows < 1) {
-      throw new Error(`Could not update civil claimant ${civilClaimantId}`)
+      throw new InternalServerErrorException(
+        `Could not update civil claimant ${civilClaimant.id} of case ${caseId}`,
+      )
     }
 
-    return civilClaimants[0]
+    const updatedCivilClaimant = civilClaimants[0]
+
+    await this.sendUpdateCivilClaimantMessages(
+      civilClaimant,
+      updatedCivilClaimant,
+    )
+
+    return updatedCivilClaimant
   }
 
   async delete(caseId: string, civilClaimantId: string): Promise<boolean> {
@@ -66,7 +103,9 @@ export class CivilClaimantService {
         `Unexpected number of rows (${numberOfAffectedRows}) affected when deleting civil claimant ${civilClaimantId} of case ${caseId}`,
       )
     } else if (numberOfAffectedRows < 1) {
-      throw new Error(`Could not delete civil claimant ${civilClaimantId}`)
+      throw new InternalServerErrorException(
+        `Could not delete civil claimant ${civilClaimantId}`,
+      )
     }
 
     return true

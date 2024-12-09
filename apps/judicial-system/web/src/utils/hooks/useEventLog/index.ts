@@ -29,6 +29,8 @@ const useEventLog = () => {
     [createEventLogMutation, formatMessage],
   )
 
-  return { createEventLog }
+  return {
+    createEventLog,
+  }
 }
 export default useEventLog

@@ -18,10 +18,16 @@ export {
   InstitutionNotificationType,
   NotificationDispatchType,
   DefendantNotificationType,
+  CivilClaimantNotificationType,
   notificationTypes,
 } from './lib/notification'
 export type { Institution } from './lib/institution'
-export { EventType, eventTypes } from './lib/eventLog'
+export {
+  EventType,
+  eventTypes,
+  DefendantEventType,
+  defendantEventTypes,
+} from './lib/eventLog'
 export { DateType, dateTypes } from './lib/dateLog'
 export { StringType, stringTypes } from './lib/caseString'
 
@@ -96,6 +102,7 @@ export {
 export {
   getIndictmentVerdictAppealDeadlineStatus,
   VERDICT_APPEAL_WINDOW_DAYS,
+  FINE_APPEAL_WINDOW_DAYS,
 } from './lib/indictmentCase'
 
 export type {

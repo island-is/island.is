@@ -25,6 +25,7 @@ command:
   - 'node'
 enabled: true
 env:
+  CODE_OWNER: 'juni'
   DB_HOST: 'postgres-applications.internal'
   DB_NAME: 'user_notification'
   DB_REPLICAS_HOST: 'postgres-applications-reader.internal'
@@ -36,6 +37,7 @@ grantNamespaces:
   - 'nginx-ingress-internal'
   - 'islandis'
   - 'identity-server-delegation'
+  - 'application-system'
 grantNamespacesEnabled: true
 healthCheck:
   liveness:

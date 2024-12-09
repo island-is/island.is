@@ -8,7 +8,7 @@ import { information, overview, review } from '../../../lib/messages'
 import { States } from '../../../lib/constants'
 import { ReviewGroup } from '../../ReviewGroup'
 import { ReviewScreenProps } from '../../../shared'
-import { formatPhoneNumber, hasReviewerApproved } from '../../../utils'
+import { formatPhoneNumber, canReviewerApprove } from '../../../utils'
 import kennitala from 'kennitala'
 
 export const BuyerSection: FC<
@@ -30,7 +30,7 @@ export const BuyerSection: FC<
     <ReviewGroup
       editMessage={
         isBuyer &&
-        !hasReviewerApproved(reviewerNationalId, answers) &&
+        canReviewerApprove(reviewerNationalId, answers) &&
         application.state !== States.COMPLETED
           ? formatMessage(overview.labels.addCoOwnerAndOperatorButton)
           : undefined

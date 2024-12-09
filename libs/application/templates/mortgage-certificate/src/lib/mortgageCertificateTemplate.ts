@@ -21,10 +21,11 @@ import {
   IdentityApi,
   UserProfileApi,
   SyslumadurPaymentCatalogApi,
+  MockableSyslumadurPaymentCatalogApi,
 } from '../dataProviders'
 import { AuthDelegationType } from '@island.is/shared/types'
 import { buildPaymentState } from '@island.is/application/utils'
-import { getApplicationFeatureFlags, getChargeItemCodes } from '../util'
+import { getApplicationFeatureFlags, getChargeItems } from '../util'
 import { MortgageCertificateSchema } from './dataSchema'
 import { application } from './messages'
 import { FeatureFlagClient } from '@island.is/feature-flags'
@@ -84,7 +85,12 @@ const template: ApplicationTemplate<
               write: 'all',
               read: 'all',
               delete: true,
-              api: [IdentityApi, UserProfileApi, SyslumadurPaymentCatalogApi],
+              api: [
+                IdentityApi,
+                UserProfileApi,
+                SyslumadurPaymentCatalogApi,
+                MockableSyslumadurPaymentCatalogApi,
+              ],
             },
           ],
         },
@@ -145,7 +151,7 @@ const template: ApplicationTemplate<
       },
       [States.PAYMENT]: buildPaymentState({
         organizationId: InstitutionNationalIds.SYSLUMENN,
-        chargeItemCodes: getChargeItemCodes,
+        chargeItems: getChargeItems,
         submitTarget: States.COMPLETED,
         onExit: [
           defineTemplateApi({

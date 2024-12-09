@@ -40,6 +40,7 @@ import {
   CaseType,
   DateType,
   dateTypes,
+  defendantEventTypes,
   EventType,
   eventTypes,
   isCompletedCase,
@@ -59,7 +60,12 @@ import {
 } from '../../formatters'
 import { AwsS3Service } from '../aws-s3'
 import { CourtService } from '../court'
-import { CivilClaimant, Defendant, DefendantService } from '../defendant'
+import {
+  CivilClaimant,
+  Defendant,
+  DefendantEventLog,
+  DefendantService,
+} from '../defendant'
 import { EventService } from '../event'
 import { EventLog, EventLogService } from '../event-log'
 import { CaseFile, FileService } from '../file'
@@ -81,6 +87,7 @@ interface UpdateDateLog {
   date?: Date
   location?: string
 }
+
 export interface UpdateCase
   extends Pick<
     Case,
@@ -177,13 +184,13 @@ export interface UpdateCase
   courtRecordSignatoryId?: string | null
   courtRecordSignatureDate?: Date | null
   parentCaseId?: string | null
-  arraignmentDate?: UpdateDateLog | null
-  courtDate?: UpdateDateLog | null
-  postponedIndefinitelyExplanation?: string | null
   indictmentReturnedExplanation?: string | null
   indictmentDeniedExplanation?: string | null
   indictmentHash?: string | null
-  civilDemands?: string | null
+  arraignmentDate?: UpdateDateLog
+  courtDate?: UpdateDateLog
+  postponedIndefinitelyExplanation?: string
+  civilDemands?: string
 }
 
 type DateLogKeys = keyof Pick<UpdateCase, 'arraignmentDate' | 'courtDate'>
@@ -282,6 +289,14 @@ export const include: Includeable[] = [
         model: Subpoena,
         as: 'subpoenas',
         required: false,
+        order: [['created', 'DESC']],
+        separate: true,
+      },
+      {
+        model: DefendantEventLog,
+        as: 'eventLogs',
+        required: false,
+        where: { eventType: defendantEventTypes },
         order: [['created', 'DESC']],
         separate: true,
       },
@@ -394,6 +409,7 @@ export const include: Includeable[] = [
 ]
 
 export const caseListInclude: Includeable[] = [
+  { model: Institution, as: 'court' },
   { model: Institution, as: 'prosecutorsOffice' },
   {
     model: Defendant,
@@ -760,12 +776,16 @@ export class CaseService {
           CaseFileCategory.CRIMINAL_RECORD,
           CaseFileCategory.COST_BREAKDOWN,
           CaseFileCategory.CASE_FILE,
+          CaseFileCategory.PROSECUTOR_CASE_FILE,
+          CaseFileCategory.DEFENDANT_CASE_FILE,
         ]
       : [
           CaseFileCategory.INDICTMENT,
           CaseFileCategory.CRIMINAL_RECORD,
           CaseFileCategory.COST_BREAKDOWN,
           CaseFileCategory.CASE_FILE,
+          CaseFileCategory.PROSECUTOR_CASE_FILE,
+          CaseFileCategory.DEFENDANT_CASE_FILE,
         ]
 
     const deliverCaseFileToCourtMessages =
@@ -906,14 +926,29 @@ export class CaseService {
     theCase: Case,
     user: TUser,
   ): Promise<void> {
-    const messages: Message[] = [
-      {
-        type: MessageType.NOTIFICATION,
-        user,
-        caseId: theCase.id,
-        body: { type: CaseNotificationType.RULING },
-      },
-    ]
+    const messages: Message[] =
+      theCase.caseFiles
+        ?.filter(
+          (caseFile) =>
+            caseFile.state === CaseFileState.STORED_IN_RVG &&
+            caseFile.key &&
+            caseFile.category &&
+            [CaseFileCategory.COURT_RECORD, CaseFileCategory.RULING].includes(
+              caseFile.category,
+            ),
+        )
+        .map((caseFile) => ({
+          type: MessageType.DELIVERY_TO_COURT_CASE_FILE,
+          user,
+          caseId: theCase.id,
+          elementId: caseFile.id,
+        })) ?? []
+    messages.push({
+      type: MessageType.NOTIFICATION,
+      user,
+      caseId: theCase.id,
+      body: { type: CaseNotificationType.RULING },
+    })
 
     if (theCase.origin === CaseOrigin.LOKE) {
       messages.push({
@@ -2034,11 +2069,23 @@ export class CaseService {
   }
 
   async createCourtCase(theCase: Case, user: TUser): Promise<Case> {
+    let receivalDate: Date
+
+    if (isIndictmentCase(theCase.type)) {
+      receivalDate =
+        theCase.eventLogs?.find(
+          (eventLog) => eventLog.eventType === EventType.INDICTMENT_CONFIRMED,
+        )?.created ?? nowFactory()
+    } else {
+      receivalDate = nowFactory()
+    }
+
     const courtCaseNumber = await this.courtService.createCourtCase(
       user,
       theCase.id,
       theCase.courtId,
       theCase.type,
+      receivalDate,
       theCase.policeCaseNumbers,
       Boolean(theCase.parentCaseId),
       theCase.indictmentSubtypes,

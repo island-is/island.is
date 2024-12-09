@@ -19,6 +19,7 @@ global:
 name: 'services-auth-ids-api'
 enabled: true
 env:
+  CODE_OWNER: 'aranja'
   COMPANY_REGISTRY_REDIS_NODES: '["clustercfg.general-redis-cluster-group.dnugi2.euw1.cache.amazonaws.com:6379"]'
   COMPANY_REGISTRY_XROAD_PROVIDER_ID: 'IS/GOV/5402696029/Skatturinn/ft-v1'
   DB_EXTENSIONS: 'uuid-ossp'
@@ -62,6 +63,7 @@ env:
 grantNamespaces:
   - 'nginx-ingress-external'
   - 'user-notification'
+  - 'datadog'
 grantNamespacesEnabled: true
 healthCheck:
   liveness:

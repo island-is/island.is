@@ -2,16 +2,25 @@ import { gql, useQuery } from '@apollo/client'
 import { OperatorChangeValidationMessage } from '@island.is/api/schema'
 import { getValueViaPath } from '@island.is/application/core'
 import { FieldBaseProps } from '@island.is/application/types'
-import { AlertMessage, Box, Text } from '@island.is/island-ui/core'
+import {
+  AlertMessage,
+  Box,
+  Bullet,
+  BulletList,
+} from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { FC, useEffect } from 'react'
+import { Dispatch, FC, SetStateAction, useEffect } from 'react'
 import { ChangeOperatorOfVehicleAnswers } from '../..'
 import { VALIDATE_VEHICLE_OPERATOR_CHANGE } from '../../graphql/queries'
 import { applicationCheck } from '../../lib/messages'
 
+interface Props {
+  setValidationErrorFound?: Dispatch<SetStateAction<boolean>>
+}
+
 export const ValidationErrorMessages: FC<
-  React.PropsWithChildren<FieldBaseProps>
-> = (props) => {
+  React.PropsWithChildren<Props & FieldBaseProps>
+> = ({ setValidationErrorFound, ...props }) => {
   const { application, setFieldLoadingState } = props
 
   const { formatMessage } = useLocale()
@@ -49,12 +58,18 @@ export const ValidationErrorMessages: FC<
             : null,
         },
       },
+      onCompleted: (data) => {
+        if (data?.vehicleOperatorChangeValidation?.hasError) {
+          setValidationErrorFound?.(true)
+        }
+      },
+      fetchPolicy: 'no-cache',
     },
   )
 
   useEffect(() => {
     setFieldLoadingState?.(loading)
-  }, [loading])
+  }, [loading, setFieldLoadingState])
 
   return data?.vehicleOperatorChangeValidation?.hasError &&
     data.vehicleOperatorChangeValidation.errorMessages.length > 0 ? (
@@ -64,7 +79,7 @@ export const ValidationErrorMessages: FC<
         title={formatMessage(applicationCheck.validation.alertTitle)}
         message={
           <Box component="span" display="block">
-            <ul>
+            <BulletList>
               {data.vehicleOperatorChangeValidation.errorMessages.map(
                 (error: OperatorChangeValidationMessage) => {
                   const message = formatMessage(
@@ -82,15 +97,13 @@ export const ValidationErrorMessages: FC<
                     error?.errorNo
 
                   return (
-                    <li>
-                      <Text variant="small">
-                        {message || defaultMessage || fallbackMessage}
-                      </Text>
-                    </li>
+                    <Bullet key={error.errorNo}>
+                      {message || defaultMessage || fallbackMessage}
+                    </Bullet>
                   )
                 },
               )}
-            </ul>
+            </BulletList>
           </Box>
         }
       />

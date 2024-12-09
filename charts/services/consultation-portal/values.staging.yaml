@@ -22,6 +22,7 @@ env:
   API_URL: 'http://web-api.islandis.svc.cluster.local'
   BACKEND_DL_URL: 'https://samradapi-test.devland.is/api/Documents/'
   BASEPATH: '/consultation-portal'
+  CODE_OWNER: 'Advania'
   ENVIRONMENT: 'staging'
   IDENTITY_SERVER_ISSUER_DOMAIN: 'identity-server.staging01.devland.is'
   LOG_LEVEL: 'info'

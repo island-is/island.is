@@ -27,6 +27,7 @@ enabled: true
 env:
   AUTH_DELEGATION_API_URL: 'http://web-services-auth-delegation-api.identity-server-delegation.svc.cluster.local'
   AUTH_DELEGATION_MACHINE_CLIENT_SCOPE: '["@island.is/auth/delegations/index:system"]'
+  CODE_OWNER: 'juni'
   COMPANY_REGISTRY_REDIS_NODES: '["clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379"]'
   COMPANY_REGISTRY_XROAD_PROVIDER_ID: 'IS-DEV/GOV/10006/Skatturinn/ft-v1'
   CONTENTFUL_HOST: 'preview.contentful.com'
@@ -59,6 +60,7 @@ grantNamespaces:
   - 'nginx-ingress-internal'
   - 'islandis'
   - 'identity-server-delegation'
+  - 'application-system'
 grantNamespacesEnabled: true
 healthCheck:
   liveness:
