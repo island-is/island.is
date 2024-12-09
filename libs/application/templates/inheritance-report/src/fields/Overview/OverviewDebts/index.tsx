@@ -95,6 +95,12 @@ export const OverviewDebts: FC<React.PropsWithChildren<FieldBaseProps>> = ({
             )}
           />
           <Row
+            title={formatMessage(m.funeralServiceCost)}
+            value={formatCurrency(
+              getValueViaPath<string>(answers, 'funeralCost.service') || '0',
+            )}
+          />
+          <Row
             title={formatMessage(m.funeralOtherCost)}
             value={formatCurrency(
               getValueViaPath<string>(answers, 'funeralCost.other') || '0',

@@ -119,7 +119,9 @@ export const Review: FC<ReviewScreenProps> = ({
             </Box>
             <Box marginBottom={10}>
               <Text variant="default">
-                {formatMessage(inReviewFormMessages.description)}
+                {state === `${States.TRYGGINGASTOFNUN_SUBMITTED}`
+                  ? formatMessage(inReviewFormMessages.description)
+                  : formatMessage(inReviewFormMessages.reviewDescription)}
               </Text>
             </Box>
           </Box>

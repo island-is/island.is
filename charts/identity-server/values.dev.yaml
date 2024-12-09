@@ -9,6 +9,7 @@ auth-admin-web:
   enabled: true
   env:
     BASE_URL: 'https://identity-server.dev01.devland.is/admin'
+    CODE_OWNER: 'aranja'
     IDENTITYSERVER_DOMAIN: 'identity-server.dev01.devland.is'
     LOG_LEVEL: 'info'
     NEXTAUTH_URL: 'https://identity-server.dev01.devland.is/admin/api/auth'
@@ -128,6 +129,7 @@ identity-server:
     - 'nginx-ingress-external'
     - 'user-notification'
     - 'portals-admin'
+    - 'datadog'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -217,6 +219,7 @@ namespaces:
 services-auth-admin-api:
   enabled: true
   env:
+    CODE_OWNER: 'aranja'
     COMPANY_REGISTRY_REDIS_NODES: '["clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379"]'
     COMPANY_REGISTRY_XROAD_PROVIDER_ID: 'IS-DEV/GOV/10006/Skatturinn/ft-v1'
     DB_HOST: 'postgres-applications.internal'
@@ -314,6 +317,7 @@ services-auth-admin-api:
 services-auth-delegation-api:
   enabled: true
   env:
+    CODE_OWNER: 'aranja'
     COMPANY_REGISTRY_REDIS_NODES: '["clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379"]'
     COMPANY_REGISTRY_XROAD_PROVIDER_ID: 'IS-DEV/GOV/10006/Skatturinn/ft-v1'
     DB_HOST: 'postgres-applications.internal'
@@ -323,6 +327,10 @@ services-auth-delegation-api:
     IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/auth-api'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
     LOG_LEVEL: 'info'
+    NATIONAL_REGISTRY_B2C_CLIENT_ID: '6cf94113-d326-4e4d-b97c-1fea12d2f5e1'
+    NATIONAL_REGISTRY_B2C_ENDPOINT: 'https://skraidentitydev.b2clogin.com/skraidentitydev.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token'
+    NATIONAL_REGISTRY_B2C_PATH: 'IS-DEV/GOV/10001/SKRA-Cloud-Protected/Midlun-v1'
+    NATIONAL_REGISTRY_B2C_SCOPE: 'https://skraidentitydev.onmicrosoft.com/midlun/.default'
     NODE_OPTIONS: '--max-old-space-size=460 -r dd-trace/init'
     SERVERSIDE_FEATURES_ON: ''
     SYSLUMENN_HOST: 'https://api.syslumenn.is/staging'
@@ -393,6 +401,7 @@ services-auth-delegation-api:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     DB_PASS: '/k8s/servicesauth/DB_PASSWORD'
     IDENTITY_SERVER_CLIENT_SECRET: '/k8s/services-auth/IDENTITY_SERVER_CLIENT_SECRET'
+    NATIONAL_REGISTRY_B2C_CLIENT_SECRET: '/k8s/services-auth/NATIONAL_REGISTRY_B2C_CLIENT_SECRET'
     NATIONAL_REGISTRY_IDS_CLIENT_SECRET: '/k8s/xroad/client/NATIONAL-REGISTRY/IDENTITYSERVER_SECRET'
     SYSLUMENN_PASSWORD: '/k8s/services-auth/SYSLUMENN_PASSWORD'
     SYSLUMENN_USERNAME: '/k8s/services-auth/SYSLUMENN_USERNAME'
@@ -405,6 +414,7 @@ services-auth-delegation-api:
 services-auth-ids-api:
   enabled: true
   env:
+    CODE_OWNER: 'aranja'
     COMPANY_REGISTRY_REDIS_NODES: '["clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379"]'
     COMPANY_REGISTRY_XROAD_PROVIDER_ID: 'IS-DEV/GOV/10006/Skatturinn/ft-v1'
     DB_EXTENSIONS: 'uuid-ossp'
@@ -448,6 +458,7 @@ services-auth-ids-api:
   grantNamespaces:
     - 'nginx-ingress-external'
     - 'user-notification'
+    - 'datadog'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -556,6 +567,7 @@ services-auth-ids-api-cleanup:
     - 'nginx-ingress-external'
     - 'user-notification'
     - 'portals-admin'
+    - 'datadog'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -753,6 +765,7 @@ services-auth-personal-representative-public:
 services-auth-public-api:
   enabled: true
   env:
+    CODE_OWNER: 'aranja'
     COMPANY_REGISTRY_REDIS_NODES: '["clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379"]'
     COMPANY_REGISTRY_XROAD_PROVIDER_ID: 'IS-DEV/GOV/10006/Skatturinn/ft-v1'
     DB_HOST: 'postgres-applications.internal'

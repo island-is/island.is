@@ -283,6 +283,7 @@ export class CitizenshipService extends BaseTemplateApiService {
           })
       }
     }
+    const nonNullPassports = answers.childrenPassport?.filter((x) => !!x)
 
     // Submit the application
     await this.directorateOfImmigrationClient.submitApplicationForCitizenship(
@@ -392,14 +393,14 @@ export class CitizenshipService extends BaseTemplateApiService {
             familyName: c.familyName,
           })) || [],
         childrenPassport: await Promise.all(
-          answers.childrenPassport?.map(async (p) => ({
-            nationalId: p.nationalId,
-            dateOfIssue: new Date(p.publishDate),
-            dateOfExpiry: new Date(p.expirationDate),
-            passportNumber: p.passportNumber,
-            passportTypeId: parseInt(p.passportTypeId),
-            countryIdOfIssuer: p.countryOfIssuerId,
-            file: await this.getUrlForAttachment(application, p.attachment),
+          nonNullPassports?.map(async (p) => ({
+            nationalId: p?.nationalId ?? '',
+            dateOfIssue: new Date(p?.publishDate ?? ''),
+            dateOfExpiry: new Date(p?.expirationDate ?? ''),
+            passportNumber: p?.passportNumber ?? '',
+            passportTypeId: parseInt(p?.passportTypeId ?? ''),
+            countryIdOfIssuer: p?.countryOfIssuerId ?? '',
+            file: await this.getUrlForAttachment(application, p?.attachment),
           })) || [],
         ),
         childrenSupportingDocuments: await Promise.all(

@@ -93,7 +93,8 @@ export const insuranceToXML = async (
     }
     for (let i = 0; i < arrAttachments.length; i++) {
       const filename = arrAttachments[i]
-      const fileContent = await s3Service.getFileContent(filename, 'base64')
+      const fileUri = attachmentNames[i] // attachmentNames actually contains the URIs
+      const fileContent = await s3Service.getFileContent(fileUri, 'base64')
 
       if (!fileContent)
         throw new Error(`Unable to fetch file content for: ${filename}`)

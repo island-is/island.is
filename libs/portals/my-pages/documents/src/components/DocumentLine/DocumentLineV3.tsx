@@ -299,7 +299,7 @@ export const DocumentLineV3: FC<Props> = ({
                   alignItems="center"
                   justifyContent="center"
                   background={selected ? 'blue400' : 'blue300'}
-                  borderRadius="circle"
+                  borderRadius="full"
                   className={styles.checkCircle}
                 >
                   <Icon icon="checkmark" color="white" type="filled" />
