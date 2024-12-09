@@ -13,37 +13,45 @@ const informationSchema = z.object({
     ),
 })
 
-const examineeSchema = z.array(
-  z.object({
-    nationalId: z.object({
-      nationalId: z.string().refine((nationalId) => {
-        return (
-          nationalId && nationalId.length !== 0 && kennitala.isValid(nationalId)
-        )
+const examineeSchema = z
+  .array(
+    z.object({
+      nationalId: z.object({
+        nationalId: z.string().refine((nationalId) => {
+          return (
+            nationalId &&
+            nationalId.length !== 0 &&
+            kennitala.isValid(nationalId)
+          )
+        }),
+        name: z.string().min(1).max(256),
       }),
-      name: z.string().min(1).max(256),
+      email: z.string().refine((email) => isValidEmail(email)),
+      phone: z.string().refine((phone) => isValidPhoneNumber(phone)),
+      licenseNumber: z.string().optional(), // TODO(balli) Need validation rules from VER
+      countryIssuer: z.string().min(1).max(256),
     }),
-    email: z.string().refine((email) => isValidEmail(email)),
-    phone: z.string().refine((phone) => isValidPhoneNumber(phone)),
-    licenseNumber: z.string().optional(), // TODO(balli) Need validation rules from VER
-    countryIssuer: z.string().min(1).max(256),
-  }),
-)
+  )
+  .min(1)
 
-const instructorSchema = z.array(
-  z.object({
-    nationalId: z.object({
-      nationalId: z.string().refine((nationalId) => {
-        return (
-          nationalId && nationalId.length !== 0 && kennitala.isValid(nationalId)
-        )
+const instructorSchema = z
+  .array(
+    z.object({
+      nationalId: z.object({
+        nationalId: z.string().refine((nationalId) => {
+          return (
+            nationalId &&
+            nationalId.length !== 0 &&
+            kennitala.isValid(nationalId)
+          )
+        }),
+        name: z.string().min(1).max(256),
       }),
-      name: z.string().min(1).max(256),
+      email: z.string().refine((email) => isValidEmail(email)),
+      phone: z.string().refine((phone) => isValidPhoneNumber(phone)),
     }),
-    email: z.string().refine((email) => isValidEmail(email)),
-    phone: z.string().refine((phone) => isValidPhoneNumber(phone)),
-  }),
-)
+  )
+  .min(1)
 
 export const PracticalExamAnswersSchema = z.object({
   information: informationSchema,
