@@ -33,6 +33,8 @@ export const InputFields = {
   [Routes.MISC]: {
     signatureType: 'misc.signatureType',
     selectedTemplate: 'misc.selectedTemplate',
+    asDocument: 'misc.asDocument',
+    asRoman: 'misc.asRoman',
   },
 }
 
