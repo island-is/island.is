@@ -191,7 +191,6 @@ export const AccessControlModal: FC<
                   options={recyclingPartners}
                   onChange={onChange}
                   required={partnerIdRequired}
-                  isCreatable
                 />
               )
             }}

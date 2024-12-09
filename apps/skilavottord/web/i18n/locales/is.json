@@ -367,7 +367,8 @@
     "title": "Úrvinnslusjóður",
     "recycled": "Meðhöndluð ökutæki",
     "companies": "Móttökuaðilar",
-    "accessControl": "Aðgangsstýring"
+    "accessControl": "Aðgangsstýring",
+    "municipalities": "Sveitarfélög"
   },
   "recyclingCompanies": {
     "title": "Móttökuaðilar",
@@ -390,7 +391,8 @@
     },
     "buttons": {
       "add": "Bæta við móttökuaðila",
-      "view": "Skoða"
+      "view": "Skoða",
+      "addMunicipality": "Bæta við sveitarfélagi"
     },
     "recyclingCompany": {
       "view": {
@@ -409,32 +411,32 @@
       "form": {
         "inputs": {
           "companyId": {
-            "label": "Auðkenni fyrirtækis (ID)",
-            "placeholder": "Auðkenni fyrirtækis",
+            "label": "Auðkenni (ID)",
+            "placeholder": "Auðkenni",
             "rules": {
-              "required": "Skylda er að fylla út auðkenni fyrirtækis"
+              "required": "Skylda er að fylla út auðkenni"
             }
           },
           "companyName": {
-            "label": "Nafn fyrirtækis",
-            "placeholder": "Nafn fyrirtækis",
+            "label": "Nafn",
+            "placeholder": "Nafn",
             "rules": {
-              "required": "Skylda er að fylla út nafn fyrirtækis"
+              "required": "Skylda er að fylla út nafn"
             }
           },
           "nationalId": {
-            "label": "Kennitala fyrirtækis",
-            "placeholder": "Kennitala fyrirtækis",
+            "label": "Kennitala",
+            "placeholder": "Kennitala",
             "rules": {
-              "required": "Skylda er að fylla út kennitölu fyrirtækis",
+              "required": "Skylda er að fylla út kennitölu",
               "validate": "Kennitalan er ekki gild kennitala"
             }
           },
           "email": {
-            "label": "Netfang fyrirtækis",
-            "placeholder": "Netfang fyrirtækis",
+            "label": "Netfang",
+            "placeholder": "Netfang",
             "rules": {
-              "required": "Skylda er að fylla út netfang fyrirtækis",
+              "required": "Skylda er að fylla út netfang",
               "validate": "Netfang er ekki réttu formi"
             }
           },
@@ -479,12 +481,16 @@
             "rules": {
               "required": "Skylda er að fylla út virkni"
             }
+          },
+          "municipality": {
+            "label": "Sveitarfélag",
+            "placeholder": "Sveitarfélag"
           }
         },
         "buttons": {
           "cancel": "Hætta við",
           "continue": "Halda áfram",
-          "confirm": "Staðfesta",
+          "confirm": "Vista",
           "goBack": "Til baka"
         }
       }
@@ -627,6 +633,29 @@
       "baseRoute": "/company-info",
       "add": "/company-info/add",
       "edit": "/company-info/edit/[id]"
+    },
+    "municipalities": {
+      "baseRoute": "/municipalities",
+      "add": "/municipalities/add",
+      "edit": "/municipalities/[id]"
+    }
+  },
+  "municipalities": {
+    "title": "Sveitarfélög",
+    "municipality": {
+      "view": {
+        "title": "Sveitarfélag",
+        "breadcrumb": "Skoða",
+        "info": "Þú getur annaðhvort uppfært eða eytt móttökuaðila. Vinsamlegast staðfestið að upplýsingar fyrirtækis séu rétt slegnar inn.",
+        "updated": "Uppfært",
+        "deleted": "Eytt"
+      },
+      "add": {
+        "title": "Bæta við sveitarfélagi",
+        "breadcrumb": "Bæta við",
+        "info": "Þegar nýju sveitarfélagi er bætt við, verður það aðgengilegt í aðgangsstýringu. Vinsamlegast staðfestið að upplýsingar sveitarfélags séu rétt slegnar inn.",
+        "added": "Bætt við"
+      }
     }
   }
 }

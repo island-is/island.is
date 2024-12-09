@@ -24,6 +24,7 @@ import {
 } from '@island.is/skilavottord-web/graphql/schema'
 
 import { CarsTable, RecyclingCompanyImage } from './components'
+import NavigationLinks from '@island.is/skilavottord-web/components/NavigationLinks/NavigationLinks'
 
 export const SkilavottordVehiclesQuery = gql`
   query skilavottordVehiclesQuery($after: String!) {
@@ -112,35 +113,7 @@ const Overview: FC<React.PropsWithChildren<unknown>> = () => {
   }
 
   return (
-    <PartnerPageLayout
-      side={
-        <Sidenav
-          title={sidenavText.title}
-          sections={[
-            {
-              icon: 'car',
-              title: `${sidenavText.recycled}`,
-              link: `${routes.recycledVehicles}`,
-            },
-            {
-              icon: 'business',
-              title: `${sidenavText.companies}`,
-              link: `${routes.recyclingCompanies.baseRoute}`,
-            },
-            {
-              ...(hasPermission('accessControl', user?.role)
-                ? {
-                    icon: 'lockClosed',
-                    title: `${sidenavText.accessControl}`,
-                    link: `${routes.accessControl}`,
-                  }
-                : null),
-            } as React.ComponentProps<typeof Sidenav>['sections'][0],
-          ].filter(Boolean)}
-          activeSection={0}
-        />
-      }
-    >
+    <PartnerPageLayout side={<NavigationLinks activeSection={0} />}>
       <Stack space={4}>
         <Breadcrumbs
           items={[
