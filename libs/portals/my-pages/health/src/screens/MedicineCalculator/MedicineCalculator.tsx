@@ -15,22 +15,22 @@ import {
   CONTENT_GAP_LG,
   CONTENT_GAP_SM,
   SECTION_GAP,
-} from './constants'
+} from '../../utils/constants'
 import { amountFormat, m } from '@island.is/portals/my-pages/core'
 import { useEffect, useRef, useState } from 'react'
 import { useDebounce, useWindowSize } from 'react-use'
 import {
   useGetDrugCalculationMutation,
   useGetDrugsQuery,
-} from './Medicine.generated'
+} from '../Medicine/Medicine.generated'
 import {
   RightsPortalCalculatorRequestInput,
   RightsPortalDrug,
   RightsPortalDrugCalculatorResponse,
 } from '@island.is/api/schema'
-import * as styles from './Medicine.css'
+import * as styles from '../Medicine/Medicine.css'
 import { DrugRow } from './components/DrugRow/DrugRow'
-import { MedicineWrapper } from './wrapper/MedicineWrapper'
+import { MedicinePaymentParticipationWrapper } from '../Medicine/wrapper/MedicinePaymentParticipationWrapper'
 import { HealthPaths } from '../../lib/paths'
 import { Problem } from '@island.is/react-spa/shared'
 import { EmptyTable } from '@island.is/portals/my-pages/core'
@@ -164,7 +164,9 @@ export const MedicineCalulator = () => {
     : 0
 
   return (
-    <MedicineWrapper pathname={HealthPaths.HealthMedicineCalculator}>
+    <MedicinePaymentParticipationWrapper
+      pathname={HealthPaths.HealthMedicineCalculator}
+    >
       <Box marginBottom={SECTION_GAP}>
         <Text variant="h5" marginBottom={CONTENT_GAP_SM}>
           {formatMessage(messages.medicineCalculatorIntroTitle)}
@@ -474,7 +476,7 @@ export const MedicineCalulator = () => {
           {formatMessage(messages.medicineCalculatorFooter)}
         </Text>
       </Box>
-    </MedicineWrapper>
+    </MedicinePaymentParticipationWrapper>
   )
 }
 

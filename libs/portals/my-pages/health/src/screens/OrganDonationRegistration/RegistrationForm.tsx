@@ -1,30 +1,28 @@
 import {
   Box,
+  Button,
   RadioButton,
   Stack,
   Text,
-  Button,
   toast,
-  LoadingDots,
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
-  IntroHeader,
+  IntroWrapper,
   LinkResolver,
   m as coreMessages,
 } from '@island.is/portals/my-pages/core'
-import { messages } from '../..'
-import { useEffect, useState } from 'react'
-import React from 'react'
-import { HealthPaths } from '../../lib/paths'
-import * as styles from './OrganDonationRegistration.css'
-import Limitations from './Limitations'
+import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { messages } from '../..'
+import { HealthPaths } from '../../lib/paths'
 import {
   useGetOrgansListQuery,
   useUpdateOrganDonationInfoMutation,
 } from '../OrganDonation/OrganDonation.generated'
-import { Loader } from './Loader'
+import Limitations from './components/Limitations'
+import { Loader } from './components/Loader'
+import * as styles from './OrganDonationRegistration.css'
 
 const OPT_IN = 'opt-in'
 const OPT_IN_EXCEPTIONS = 'opt-in-exceptions'
@@ -94,11 +92,10 @@ export const Form2 = () => {
   }
 
   return (
-    <Box>
-      <IntroHeader
-        title={formatMessage(messages.organDonation)}
-        intro={formatMessage(messages.organDonationDescription)}
-      />
+    <IntroWrapper
+      title={formatMessage(messages.organDonation)}
+      intro={formatMessage(messages.organDonationDescription)}
+    >
       <Text variant="eyebrow" color="purple400" marginBottom={1}>
         {formatMessage(messages.changeTake)}
       </Text>
@@ -187,7 +184,7 @@ export const Form2 = () => {
           </Box>
         </form>
       )}
-    </Box>
+    </IntroWrapper>
   )
 }
 
