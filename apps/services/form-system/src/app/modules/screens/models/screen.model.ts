@@ -65,7 +65,7 @@ export class Screen extends Model<Screen> {
   callRuleset!: boolean
 
   @HasMany(() => Field)
-  fields?: Field[]
+  fields!: Field[]
 
   @ForeignKey(() => Section)
   @Column({
