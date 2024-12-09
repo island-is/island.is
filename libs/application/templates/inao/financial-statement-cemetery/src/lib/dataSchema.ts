@@ -3,7 +3,10 @@ import { m } from './messages'
 import * as kennitala from 'kennitala'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { BOARDMEMEBER, CARETAKER } from '../utils/constants'
-import { checkIfNegative, getBoardmembersAndCaretakers } from '../utils/helpers'
+import {
+  isPositiveNumberInString,
+  getBoardmembersAndCaretakers,
+} from '../utils/helpers'
 import { YES } from '@island.is/application/types'
 
 const FileSchema = z.object({
@@ -44,19 +47,27 @@ const cemeteryIncome = z.object({
   careIncome: z
     .string()
     .refine((x) => !!x, { params: m.required })
-    .refine((x) => checkIfNegative(x), { params: m.negativeNumberError }),
+    .refine((x) => isPositiveNumberInString(x), {
+      params: m.negativeNumberError,
+    }),
   burialRevenue: z
     .string()
     .refine((x) => !!x, { params: m.required })
-    .refine((x) => checkIfNegative(x), { params: m.negativeNumberError }),
+    .refine((x) => isPositiveNumberInString(x), {
+      params: m.negativeNumberError,
+    }),
   grantFromTheCemeteryFund: z
     .string()
     .refine((x) => !!x, { params: m.required })
-    .refine((x) => checkIfNegative(x), { params: m.negativeNumberError }),
+    .refine((x) => isPositiveNumberInString(x), {
+      params: m.negativeNumberError,
+    }),
   otherIncome: z
     .string()
     .refine((x) => !!x, { params: m.required })
-    .refine((x) => checkIfNegative(x), { params: m.negativeNumberError }),
+    .refine((x) => isPositiveNumberInString(x), {
+      params: m.negativeNumberError,
+    }),
   total: z.string(),
 })
 
@@ -65,31 +76,45 @@ const cemeteryExpense = z.object({
   payroll: z
     .string()
     .refine((x) => !!x, { params: m.required })
-    .refine((x) => checkIfNegative(x), { params: m.negativeNumberError }),
+    .refine((x) => isPositiveNumberInString(x), {
+      params: m.negativeNumberError,
+    }),
   funeralCost: z
     .string()
     .refine((x) => !!x, { params: m.required })
-    .refine((x) => checkIfNegative(x), { params: m.negativeNumberError }),
+    .refine((x) => isPositiveNumberInString(x), {
+      params: m.negativeNumberError,
+    }),
   chapelExpense: z
     .string()
     .refine((x) => !!x, { params: m.required })
-    .refine((x) => checkIfNegative(x), { params: m.negativeNumberError }),
+    .refine((x) => isPositiveNumberInString(x), {
+      params: m.negativeNumberError,
+    }),
   donationsToOther: z
     .string()
     .refine((x) => !!x, { params: m.required })
-    .refine((x) => checkIfNegative(x), { params: m.negativeNumberError }),
+    .refine((x) => isPositiveNumberInString(x), {
+      params: m.negativeNumberError,
+    }),
   cemeteryFundExpense: z
     .string()
     .refine((x) => !!x, { params: m.required })
-    .refine((x) => checkIfNegative(x), { params: m.negativeNumberError }),
+    .refine((x) => isPositiveNumberInString(x), {
+      params: m.negativeNumberError,
+    }),
   otherOperationCost: z
     .string()
     .refine((x) => !!x, { params: m.required })
-    .refine((x) => checkIfNegative(x), { params: m.negativeNumberError }),
+    .refine((x) => isPositiveNumberInString(x), {
+      params: m.negativeNumberError,
+    }),
   depreciation: z
     .string()
     .refine((x) => !!x, { params: m.required })
-    .refine((x) => checkIfNegative(x), { params: m.negativeNumberError }),
+    .refine((x) => isPositiveNumberInString(x), {
+      params: m.negativeNumberError,
+    }),
   total: z.string(),
 })
 
@@ -98,11 +123,15 @@ const capitalNumbers = z.object({
   capitalIncome: z
     .string()
     .refine((x) => !!x, { params: m.required })
-    .refine((x) => checkIfNegative(x), { params: m.negativeNumberError }),
+    .refine((x) => isPositiveNumberInString(x), {
+      params: m.negativeNumberError,
+    }),
   capitalCost: z
     .string()
     .refine((x) => !!x, { params: m.required })
-    .refine((x) => checkIfNegative(x), { params: m.negativeNumberError }),
+    .refine((x) => isPositiveNumberInString(x), {
+      params: m.negativeNumberError,
+    }),
   total: z.string(),
 })
 
@@ -111,11 +140,15 @@ const cemeteryAsset = z.object({
   currentAssets: z
     .string()
     .refine((x) => !!x, { params: m.required })
-    .refine((x) => checkIfNegative(x), { params: m.negativeNumberError }),
+    .refine((x) => isPositiveNumberInString(x), {
+      params: m.negativeNumberError,
+    }),
   fixedAssetsTotal: z
     .string()
     .refine((x) => !!x, { params: m.required })
-    .refine((x) => checkIfNegative(x), { params: m.negativeNumberError }),
+    .refine((x) => isPositiveNumberInString(x), {
+      params: m.negativeNumberError,
+    }),
 })
 
 // Key numbers - Equity and Liability - Liabilities
@@ -123,11 +156,15 @@ const cemeteryLiability = z.object({
   longTerm: z
     .string()
     .refine((x) => !!x, { params: m.required })
-    .refine((x) => checkIfNegative(x), { params: m.negativeNumberError }),
+    .refine((x) => isPositiveNumberInString(x), {
+      params: m.negativeNumberError,
+    }),
   shortTerm: z
     .string()
     .refine((x) => !!x, { params: m.required })
-    .refine((x) => checkIfNegative(x), { params: m.negativeNumberError }),
+    .refine((x) => isPositiveNumberInString(x), {
+      params: m.negativeNumberError,
+    }),
 })
 
 // Key numbers - Equity and Liability - Equity
@@ -139,11 +176,15 @@ const cemeteryEquity = z.object({
   revaluationDueToPriceChanges: z
     .string()
     .refine((x) => !!x, { params: m.required })
-    .refine((x) => checkIfNegative(x), { params: m.negativeNumberError }),
+    .refine((x) => isPositiveNumberInString(x), {
+      params: m.negativeNumberError,
+    }),
   reevaluateOther: z
     .string()
     .refine((x) => !!x, { params: m.required })
-    .refine((x) => checkIfNegative(x), { params: m.negativeNumberError }),
+    .refine((x) => isPositiveNumberInString(x), {
+      params: m.negativeNumberError,
+    }),
   total: z.string(),
 })
 

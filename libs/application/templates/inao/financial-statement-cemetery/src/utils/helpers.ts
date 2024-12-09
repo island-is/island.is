@@ -135,12 +135,8 @@ export const formatCurrency = (answer?: string) => {
   return answer.replace(/\B(?=(\d{3})+(?!\d))/g, '.') + ' kr.'
 }
 
-export const checkIfNegative = (inputNumber: string) => {
-  if (Number(inputNumber) < 0) {
-    return false
-  } else {
-    return true
-  }
+export const isPositiveNumberInString = (input: string) => {
+  return Number(input) > 0
 }
 
 export const sumIncome = (answers: FormValue) => {
