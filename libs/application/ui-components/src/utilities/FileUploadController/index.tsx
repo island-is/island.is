@@ -65,6 +65,7 @@ interface FileUploadControllerProps {
   readonly id: string
   error?: string
   application: Application
+  onRemove?: (f: UploadFile) => void
   readonly header?: string
   readonly description?: string
   readonly buttonLabel?: string
@@ -89,6 +90,7 @@ export const FileUploadController = ({
   maxSizeErrorText,
   totalMaxSize = DEFAULT_TOTAL_MAX_SIZE,
   forImageUpload,
+  onRemove,
 }: FileUploadControllerProps) => {
   const { formatMessage } = useLocale()
   const { clearErrors, setValue } = useFormContext()
@@ -231,6 +233,8 @@ export const FileUploadController = ({
         return
       }
     }
+
+    onRemove?.(fileToRemove)
 
     // We remove it from the list if: the delete attachment above succeeded,
     // or if the user clicked x for a file that failed to upload and is in

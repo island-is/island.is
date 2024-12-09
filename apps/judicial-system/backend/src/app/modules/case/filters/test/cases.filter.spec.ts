@@ -21,7 +21,6 @@ import {
   RequestSharedWithDefender,
   restrictionCases,
   UserRole,
-  VERDICT_APPEAL_WINDOW_DAYS,
 } from '@island.is/judicial-system/types'
 
 import { getCasesQueryFilter } from '../cases.filter'
@@ -348,7 +347,6 @@ describe('getCasesQueryFilter', () => {
     expect(res).toStrictEqual({
       [Op.and]: [
         { is_archived: false },
-        { state: CaseState.ACCEPTED },
         {
           type: [
             CaseType.CUSTODY,
@@ -356,6 +354,7 @@ describe('getCasesQueryFilter', () => {
             CaseType.PAROLE_REVOCATION,
           ],
         },
+        { state: CaseState.ACCEPTED },
         {
           decision: [CaseDecision.ACCEPTING, CaseDecision.ACCEPTING_PARTIALLY],
         },
@@ -383,21 +382,24 @@ describe('getCasesQueryFilter', () => {
 
       [Op.or]: [
         {
-          state: CaseState.ACCEPTED,
           type: [...restrictionCases, CaseType.PAROLE_REVOCATION],
+          state: CaseState.ACCEPTED,
         },
         {
           type: indictmentCases,
           state: CaseState.COMPLETED,
-          indictment_ruling_decision: CaseIndictmentRulingDecision.RULING,
+          indictment_ruling_decision: {
+            [Op.or]: [
+              CaseIndictmentRulingDecision.RULING,
+              CaseIndictmentRulingDecision.FINE,
+            ],
+          },
           indictment_review_decision: IndictmentCaseReviewDecision.ACCEPT,
           id: {
-            [Op.notIn]: Sequelize.literal(`
+            [Op.in]: Sequelize.literal(`
             (SELECT case_id
               FROM defendant
-              WHERE (verdict_appeal_date IS NOT NULL
-                OR verdict_view_date IS NULL
-                OR verdict_view_date > NOW() - INTERVAL '${VERDICT_APPEAL_WINDOW_DAYS} days'))
+              WHERE is_sent_to_prison_admin = true)
           `),
           },
         },

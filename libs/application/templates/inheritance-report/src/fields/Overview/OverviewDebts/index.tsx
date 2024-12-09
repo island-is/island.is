@@ -95,6 +95,12 @@ export const OverviewDebts: FC<React.PropsWithChildren<FieldBaseProps>> = ({
             )}
           />
           <Row
+            title={formatMessage(m.funeralServiceCost)}
+            value={formatCurrency(
+              getValueViaPath<string>(answers, 'funeralCost.service') || '0',
+            )}
+          />
+          <Row
             title={formatMessage(m.funeralOtherCost)}
             value={formatCurrency(
               getValueViaPath<string>(answers, 'funeralCost.other') || '0',
@@ -123,7 +129,10 @@ const Debt = ({
   return (
     <Box marginBottom={2}>
       {description && (
-        <TopRow title={description} value={propertyValuation ?? ''} />
+        <TopRow
+          title={description + ' (' + debtType + ')'}
+          value={propertyValuation ?? ''}
+        />
       )}
       <Box marginLeft={[0, 4]}>
         {nationalId && (
@@ -133,7 +142,6 @@ const Debt = ({
           />
         )}
         <Row title={formatMessage(m.debtsLoanIdentity)} value={assetNumber} />
-        <Row title={formatMessage(m.debtType)} value={debtType} />
       </Box>
     </Box>
   )

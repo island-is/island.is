@@ -1,9 +1,14 @@
-import { service, ServiceBuilder } from '../../../../infra/src/dsl/dsl'
+import {
+  CodeOwners,
+  service,
+  ServiceBuilder,
+} from '../../../../infra/src/dsl/dsl'
 
 export const serviceSetup = (): ServiceBuilder<'services-form-system'> =>
   service('services-form-system')
     .image('services-form-system')
     .namespace('services-form-system')
+    .codeOwner(CodeOwners.Advania)
     .env({
       IDENTITY_SERVER_ISSUER_URL: {
         dev: 'https://identity-server.dev01.devland.is',

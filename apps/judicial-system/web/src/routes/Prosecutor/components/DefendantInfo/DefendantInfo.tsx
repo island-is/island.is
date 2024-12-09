@@ -190,7 +190,7 @@ const DefendantInfo: FC<Props> = (props) => {
             onChange({
               caseId: workingCase.id,
               defendantId: defendant.id,
-              nationalId: value,
+              nationalId: value || null,
             })
           }
           onChange={(value) =>
@@ -198,7 +198,7 @@ const DefendantInfo: FC<Props> = (props) => {
               {
                 caseId: workingCase.id,
                 defendantId: defendant.id,
-                nationalId: value,
+                nationalId: value || null,
               },
               setWorkingCase,
             )

@@ -11,7 +11,7 @@ import {
   extractStringsFromObject,
   pruneNonSearchableSliceUnionFields,
 } from './utils'
-import { mapGrant } from '../../models/grant.model'
+import { mapGrant, GrantStatus } from '../../models/grant.model'
 import { isDefined } from '@island.is/shared/utils'
 
 @Injectable()
@@ -32,6 +32,7 @@ export class GrantsSyncService implements CmsSyncProvider<IGrant> {
       .map<MappedData | boolean>((entry) => {
         try {
           const mapped = mapGrant(entry)
+
           if (isCircular(mapped)) {
             logger.warn('Circular reference found in grants', {
               id: entry?.sys?.id,
@@ -98,6 +99,38 @@ export class GrantsSyncService implements CmsSyncProvider<IGrant> {
               })
             }
           })
+
+          if (mapped.fund?.parentOrganization?.slug) {
+            tags.push({
+              key: mapped.fund.parentOrganization.slug,
+              type: 'organization',
+              value: mapped.fund.parentOrganization.title,
+            })
+          }
+
+          switch (mapped.status) {
+            case GrantStatus.SEE_DESCRIPTION:
+              tags.push({
+                key: 'see_description',
+                type: 'status',
+                value: 'see_description',
+              })
+              break
+            case GrantStatus.OPEN:
+              tags.push({
+                key: 'open',
+                type: 'status',
+                value: 'open',
+              })
+              break
+            case GrantStatus.CLOSED:
+              tags.push({
+                key: 'closed',
+                type: 'status',
+                value: 'closed',
+              })
+              break
+          }
 
           // Tag the document with the ids of its children so we can later look up what document a child belongs to
           const childEntryIds = extractChildEntryIds(entry)

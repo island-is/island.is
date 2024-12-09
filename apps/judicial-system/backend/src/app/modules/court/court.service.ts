@@ -524,7 +524,6 @@ export class CourtService {
       const subject = `${courtName} - ${courtCaseNumber} - lyktir`
       const content = JSON.stringify({
         isCorrection,
-        courtName,
         courtCaseNumber,
         decision,
         rulingDate,
@@ -581,7 +580,6 @@ export class CourtService {
         subtypes,
         defendants,
         prosecutor,
-        courtName,
       })
 
       return this.sendToRobot(
@@ -657,7 +655,7 @@ export class CourtService {
   ): Promise<unknown> {
     try {
       const subject = `${courtName} - ${courtCaseNumber} - úthlutun`
-      const content = JSON.stringify({ ...assignedRole, courtName })
+      const content = JSON.stringify(assignedRole)
 
       return this.sendToRobot(
         subject,
@@ -692,7 +690,6 @@ export class CourtService {
     const content = JSON.stringify({
       subject: noticeSubject,
       text: noticeText,
-      courtName,
     })
 
     return this.sendToRobot(
