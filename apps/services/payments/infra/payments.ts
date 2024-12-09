@@ -14,7 +14,16 @@ export const serviceSetup = (): ServiceBuilder<'services-payments'> =>
     })
     .migrations()
     .env({
-      // TODO
+      IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/payments',
+      IDENTITY_SERVER_ISSUER_URL: {
+        dev: 'https://identity-server.dev01.devland.is',
+        staging: 'https://identity-server.staging01.devland.is',
+        prod: 'https://innskra.island.is',
+      },
+    })
+    .secrets({
+      IDENTITY_SERVER_CLIENT_SECRET:
+        '/k8s/services-payments/IDENTITY_SERVER_CLIENT_SECRET',
     })
     .xroad(Base, Client, ChargeFjsV2)
     .readiness('/liveness')
