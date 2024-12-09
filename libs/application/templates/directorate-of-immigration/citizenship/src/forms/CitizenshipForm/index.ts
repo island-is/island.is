@@ -50,7 +50,7 @@ export const CitizenshipForm: Form = buildForm({
       ],
     }),
     PersonalSection,
-    buildSection({ 
+    buildSection({
       id: 'MultiSection',
       title: 'Answer test',
       children: [
@@ -75,8 +75,8 @@ export const CitizenshipForm: Form = buildForm({
                 { value: 'no', label: 'Naw' },
               ],
             }),
-          ]
-        })
+          ],
+        }),
       ],
     }),
     buildSection({
