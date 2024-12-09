@@ -606,6 +606,7 @@ export class InternalCaseService {
           ? {
               name: theCase.prosecutor.name,
               nationalId: theCase.prosecutor.nationalId,
+              email: theCase.prosecutor.email,
             }
           : undefined,
       )

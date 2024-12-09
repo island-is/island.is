@@ -54,7 +54,11 @@ describe('InternalCaseController - Deliver indictment info to court', () => {
       { eventType: EventType.INDICTMENT_CONFIRMED, created: indictmentDate },
     ],
     defendants: [{ name: 'Test Ákærði', nationalId: '1234567890' }],
-    prosecutor: { name: 'Test Sækjandi', nationalId: '0101010101' },
+    prosecutor: {
+      name: 'Test Sækjandi',
+      nationalId: '0101010101',
+      email: 'prosecutor@omnitrix.is',
+    },
   } as Case
 
   let mockCourtService: CourtService

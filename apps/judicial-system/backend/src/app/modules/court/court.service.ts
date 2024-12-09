@@ -336,6 +336,9 @@ export class CourtService {
       )
 
       const isIndictment = isIndictmentCase(type)
+      const policeCaseNumber = policeCaseNumbers[0]
+        ? policeCaseNumbers[0].replace(/-/g, '')
+        : ''
 
       return await this.courtClientService.createCase(courtId, {
         caseType: isIndictment ? 'S - Ákærumál' : 'R - Rannsóknarmál',
@@ -344,7 +347,7 @@ export class CourtService {
         receivalDate: formatISO(receivalDate, { representation: 'date' }),
         basedOn: isIndictment ? 'Sakamál' : 'Rannsóknarhagsmunir',
         // TODO: pass in all policeCaseNumbers when CourtService supports it
-        sourceNumber: policeCaseNumbers[0] ? policeCaseNumbers[0] : '',
+        sourceNumber: policeCaseNumber,
       })
     } catch (reason) {
       if (reason instanceof ServiceUnavailableException) {
@@ -569,14 +572,17 @@ export class CourtService {
     policeCaseNumber?: string,
     subtypes?: string[],
     defendants?: { name?: string; nationalId?: string }[],
-    prosecutor?: { name?: string; nationalId?: string },
+    prosecutor?: { name?: string; nationalId?: string; email?: string },
   ): Promise<unknown> {
     try {
       const subject = `${courtName} - ${courtCaseNumber} - upplýsingar`
+
+      const sanitizedPoliceCaseNumber = policeCaseNumber?.replace(/-/g, '')
+
       const content = JSON.stringify({
         receivedByCourtDate,
         indictmentDate,
-        policeCaseNumber,
+        sanitizedPoliceCaseNumber,
         subtypes,
         defendants,
         prosecutor,
