@@ -24,6 +24,8 @@ env:
   DB_NAME: 'services_payments'
   DB_REPLICAS_HOST: 'postgres-applications-reader.internal'
   DB_USER: 'services_payments'
+  IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/payments'
+  IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
   LOG_LEVEL: 'info'
   NODE_OPTIONS: '--max-old-space-size=230 -r dd-trace/init'
   SERVERSIDE_FEATURES_ON: ''
@@ -98,6 +100,7 @@ resources:
 secrets:
   CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
   DB_PASS: '/k8s/services-payments/DB_PASSWORD'
+  IDENTITY_SERVER_CLIENT_SECRET: '/k8s/services-payments/IDENTITY_SERVER_CLIENT_SECRET'
 securityContext:
   allowPrivilegeEscalation: false
   privileged: false
