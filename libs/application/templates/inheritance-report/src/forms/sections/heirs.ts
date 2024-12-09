@@ -1,4 +1,5 @@
 import {
+  buildAlertMessageField,
   buildCheckboxField,
   buildCustomField,
   buildDescriptionField,
@@ -10,6 +11,7 @@ import {
   buildSubSection,
   buildTextField,
   getValueViaPath,
+  NO,
   YES,
 } from '@island.is/application/core'
 import { formatCurrency } from '@island.is/application/ui-components'
@@ -20,6 +22,7 @@ import {
   shouldShowCustomSpouseShare,
   valueToNumber,
 } from '../../lib/utils/helpers'
+import { PREPAID_INHERITANCE } from '../../lib/constants'
 
 export const heirs = buildSection({
   id: 'heirs',
@@ -79,7 +82,10 @@ export const heirs = buildSection({
         buildMultiField({
           id: 'heirs',
           title: m.heirsAndPartition,
-          description: m.heirsAndPartitionDescription,
+          description: ({ answers }) =>
+            answers.applicationFor === PREPAID_INHERITANCE
+              ? m.heirsAndPartitionPrePaidDescription
+              : m.heirsAndPartitionDescription,
           children: [
             buildDescriptionField({
               id: 'heirs.total',
@@ -88,6 +94,25 @@ export const heirs = buildSection({
             buildDescriptionField({
               id: 'heirs.hasModified',
               title: '',
+            }),
+            buildAlertMessageField({
+              id: 'reminderToFillInSpouse',
+              title: '',
+              message: m.heirsReminderToFillInSpouse,
+              alertType: 'info',
+              marginBottom: 'containerGutter',
+              condition: (answers) => {
+                return (
+                  getValueViaPath<string>(
+                    answers,
+                    'customShare.deceasedWasMarried',
+                  ) === YES &&
+                  getValueViaPath<string>(
+                    answers,
+                    'customShare.hasCustomSpouseSharePercentage',
+                  ) === NO
+                )
+              },
             }),
             buildCustomField(
               {
@@ -140,6 +165,27 @@ export const heirs = buildSection({
       ],
     }),
     buildSubSection({
+      id: 'privateTransfer',
+      title: m.fileUploadPrivateTransfer,
+      children: [
+        buildMultiField({
+          id: 'heirsAdditionalInfo',
+          title: m.fileUploadPrivateTransfer,
+          description: m.uploadPrivateTransferUserGuidelines,
+          children: [
+            buildFileUploadField({
+              id: 'heirsAdditionalInfoPrivateTransferFiles',
+              uploadAccept: '.pdf, .doc, .docx, .jpg, .jpeg, .png, .xls, .xlsx',
+              uploadDescription: m.uploadPrivateTransferDescription,
+              title: '',
+              uploadHeader: '',
+              uploadMultiple: false,
+            }),
+          ],
+        }),
+      ],
+    }),
+    buildSubSection({
       id: 'heirsAdditionalInfo',
       title: m.heirAdditionalInfo,
       children: [
@@ -161,22 +207,6 @@ export const heirs = buildSection({
               variant: 'textarea',
               rows: 4,
               maxLength: 1800,
-            }),
-            buildDescriptionField({
-              id: 'heirsAdditionalInfoFilesPrivateTitle',
-              title: m.fileUploadPrivateTransfer,
-              description: m.uploadPrivateTransferUserGuidelines,
-              titleVariant: 'h5',
-              space: 'containerGutter',
-              marginBottom: 'smallGutter',
-            }),
-            buildFileUploadField({
-              id: 'heirsAdditionalInfoPrivateTransferFiles',
-              uploadAccept: '.pdf, .doc, .docx, .jpg, .jpeg, .png, .xls, .xlsx',
-              uploadDescription: m.uploadPrivateTransferDescription,
-              title: '',
-              uploadHeader: '',
-              uploadMultiple: false,
             }),
             buildDescriptionField({
               id: 'heirsAdditionalInfoFilesOtherDocumentsTitle',
