@@ -7,7 +7,7 @@ apiVersion: policy/v1
 kind: PodDisruptionBudget
 metadata:
   name: {{ $serviceName }}-pdb
-  namespace: {{ $namespace }} 
+  namespace: {{ $namespace }}
 spec:
 {{- if hasKey .Values.podDisruptionBudget "minAvailable" }}
   minAvailable: {{ .Values.podDisruptionBudget.minAvailable }}
