@@ -1,5 +1,4 @@
 import {
-  Box,
   Inline,
   Stack,
   Button,
@@ -10,32 +9,75 @@ import {
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   EmptyTable,
-  FootNote,
-  IntroHeader,
+  IntroWrapper,
   LinkButton,
   amountFormat,
   m as coreMessages,
 } from '@island.is/portals/my-pages/core'
 import { m } from '../../lib/messages'
-import { useGetIncomePlanDetailQuery } from './IncomePlanDetail.generated'
+import {
+  useGetIncomePlanDetailLazyQuery,
+  useGetIncomePlanDetailQuery,
+} from './IncomePlanDetail.generated'
 import { Problem } from '@island.is/react-spa/shared'
+import { useEffect, useState } from 'react'
+import { useFeatureFlagClient } from '@island.is/react/feature-flags'
 
 const IncomePlanDetail = () => {
   useNamespaces('sp.social-insurance-maintenance')
   const { formatMessage } = useLocale()
 
-  const { data, loading, error } = useGetIncomePlanDetailQuery()
-  return (
-    <Box>
-      <IntroHeader
+  const [displayPaymentPlan, setDisplayPaymentPlan] = useState(false)
+  const [query, { data, loading, error }] = useGetIncomePlanDetailLazyQuery()
+
+  const featureFlagClient = useFeatureFlagClient()
+  useEffect(() => {
+    const isFlagEnabled = async () => {
+      const ffEnabled = await featureFlagClient.getValue(
+        `isServicePortalPaymentPlan2025Enabled`,
+        false,
+      )
+      if (ffEnabled) {
+        setDisplayPaymentPlan(ffEnabled as boolean)
+      }
+    }
+    isFlagEnabled()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  useEffect(() => {
+    if (displayPaymentPlan) {
+      query()
+    }
+  }, [displayPaymentPlan])
+
+  if (!displayPaymentPlan) {
+    return (
+      <IntroWrapper
         title={formatMessage(coreMessages.latestIncomePlan)}
         intro={formatMessage(m.incomePlanDetail)}
         serviceProviderSlug={'tryggingastofnun'}
         serviceProviderTooltip={formatMessage(
           coreMessages.socialInsuranceTooltip,
         )}
-      />
+      >
+        <AlertMessage
+          type="warning"
+          message={formatMessage(m.incomePlanTemporarilyUnavailable)}
+        />
+      </IntroWrapper>
+    )
+  }
 
+  return (
+    <IntroWrapper
+      title={formatMessage(coreMessages.latestIncomePlan)}
+      intro={formatMessage(m.incomePlanDetail)}
+      serviceProviderSlug={'tryggingastofnun'}
+      serviceProviderTooltip={formatMessage(
+        coreMessages.socialInsuranceTooltip,
+      )}
+    >
       {error && !loading ? (
         <Problem error={error} noBorder={false} />
       ) : !error && !loading && !data?.socialInsuranceIncomePlan ? (
@@ -117,10 +159,7 @@ const IncomePlanDetail = () => {
           )}
         </Stack>
       )}
-      <Hidden print>
-        <FootNote serviceProviderSlug="tryggingastofnun" />
-      </Hidden>
-    </Box>
+    </IntroWrapper>
   )
 }
 
