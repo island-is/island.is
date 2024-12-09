@@ -6,6 +6,14 @@ export const m = {
       id: 'web.grants:general.seeMore',
       defaultMessage: 'Skoða nánar',
     },
+    displayGrid: {
+      id: 'web.grants:general.displayGrid',
+      defaultMessage: 'Sýna sem spjöld',
+    },
+    displayList: {
+      id: 'web.grants:general.displayList',
+      defaultMessage: 'Sýna sem lista',
+    },
   }),
   search: defineMessages({
     search: {

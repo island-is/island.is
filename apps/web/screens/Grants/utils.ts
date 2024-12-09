@@ -1,6 +1,7 @@
 import { TagVariant } from '@island.is/island-ui/core'
 import { FormatMessage } from '@island.is/localization'
 import { GrantStatus } from '@island.is/web/graphql/schema'
+
 import { m } from './messages'
 
 export const generateStatusTag = (
@@ -17,11 +18,6 @@ export const generateStatusTag = (
       return {
         label: formatMessage(m.search.applicationClosed),
         variant: 'rose',
-      }
-    case GrantStatus.SeeDescription:
-      return {
-        label: formatMessage(m.search.applicationSeeDescription),
-        variant: 'purple',
       }
     default:
       return
