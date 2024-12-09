@@ -1664,6 +1664,12 @@ export const m = defineMessages({
       'Skýringar og athugasemdir erfingja og/eða þess sem skilar inn erfðafjárskýrslu.',
     description: '',
   },
+  heirAdditionalInfoPrePaidDescription: {
+    id: 'ir.application:heirAdditionalInfoPrePaidDescription',
+    defaultMessage:
+      'Skýringar og athugasemdir erfingja og/eða þess sem skilar inn erfðafjárskýrslu.',
+    description: '',
+  },
   info: {
     id: 'ir.application:info',
     defaultMessage: 'Athugasemdir',
