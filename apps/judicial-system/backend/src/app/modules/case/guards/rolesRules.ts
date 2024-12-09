@@ -1,6 +1,5 @@
 import { RolesRule, RulesType } from '@island.is/judicial-system/auth'
 import {
-  CaseIndictmentRulingDecision,
   CaseTransition,
   CaseType,
   User,
