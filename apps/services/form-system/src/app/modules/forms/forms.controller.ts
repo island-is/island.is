@@ -1,4 +1,3 @@
-import { Documentation } from '@island.is/nest/swagger'
 import {
   Body,
   Controller,
@@ -7,23 +6,34 @@ import {
   NotFoundException,
   Param,
   Post,
+  Put,
   VERSION_NEUTRAL,
 } from '@nestjs/common'
-import { ApiCreatedResponse, ApiTags } from '@nestjs/swagger'
+import {
+  ApiBody,
+  ApiCreatedResponse,
+  ApiNoContentResponse,
+  ApiOperation,
+  ApiParam,
+  ApiTags,
+} from '@nestjs/swagger'
 import { FormsService } from './forms.service'
 import { CreateFormDto } from './models/dto/createForm.dto'
 import { FormResponseDto } from './models/dto/form.response.dto'
+import { UpdateFormDto } from './models/dto/updateForm.dto'
 
 @ApiTags('forms')
 @Controller({ path: 'forms', version: ['1', VERSION_NEUTRAL] })
 export class FormsController {
   constructor(private readonly formsService: FormsService) {}
 
-  @Post()
+  @ApiOperation({ summary: 'Create new form' })
   @ApiCreatedResponse({
     type: FormResponseDto,
     description: 'Create new form',
   })
+  @ApiBody({ type: CreateFormDto })
+  @Post()
   async create(@Body() createFormDto: CreateFormDto): Promise<FormResponseDto> {
     const formResponse = await this.formsService.create(createFormDto)
     if (!formResponse) {
@@ -32,22 +42,26 @@ export class FormsController {
     return formResponse
   }
 
-  @Get('organization/:organizationId')
-  @Documentation({
+  @ApiOperation({ summary: 'Get all forms belonging to organization' })
+  @ApiCreatedResponse({
+    type: FormResponseDto,
     description: 'Get all forms belonging to organization',
-    response: { status: 200, type: FormResponseDto },
   })
+  @ApiParam({ name: 'organizationId', type: String })
+  @Get('organization/:organizationId')
   async findAll(
     @Param('organizationId') organizationId: string,
   ): Promise<FormResponseDto> {
     return await this.formsService.findAll(organizationId)
   }
 
-  @Get(':id')
-  @Documentation({
+  @ApiOperation({ summary: 'Get FormResponse by formId' })
+  @ApiCreatedResponse({
+    type: FormResponseDto,
     description: 'Get FormResponse by formId',
-    response: { status: 200, type: FormResponseDto },
   })
+  @ApiParam({ name: 'id', type: String })
+  @Get(':id')
   async findOne(@Param('id') id: string): Promise<FormResponseDto> {
     const formResponse = await this.formsService.findOne(id)
     if (!formResponse) {
@@ -57,6 +71,26 @@ export class FormsController {
     return formResponse
   }
 
+  @ApiOperation({ summary: 'Update form' })
+  @ApiCreatedResponse({
+    description: 'Update form',
+  })
+  @ApiBody({ type: UpdateFormDto })
+  @ApiParam({ name: 'id', type: String })
+  @Put(':id')
+  async updateForm(
+    @Param('id') id: string,
+    @Body() updateFormDto: UpdateFormDto,
+  ): Promise<void> {
+    console.log('updateFormDto', updateFormDto)
+    return this.formsService.update(id, updateFormDto)
+  }
+
+  @ApiOperation({ summary: 'Delete form' })
+  @ApiNoContentResponse({
+    description: 'Delete field',
+  })
+  @ApiParam({ name: 'id', type: String })
   @Delete(':id')
   async delete(@Param('id') id: string): Promise<void> {
     return this.formsService.delete(id)

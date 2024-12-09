@@ -1,5 +1,3 @@
-'use strict'
-
 module.exports = {
   async up(queryInterface, Sequelize) {
     return queryInterface.sequelize.transaction((t) =>
@@ -27,12 +25,7 @@ module.exports = {
             allowNull: false,
           },
           section_type: {
-            type: Sequelize.DataTypes.ENUM(
-              'premises',
-              'parties',
-              'input',
-              'payment',
-            ),
+            type: Sequelize.STRING,
             allowNull: false,
             defaultValue: 'input',
           },
@@ -43,11 +36,6 @@ module.exports = {
           waiting_text: {
             type: Sequelize.JSON,
             allowNull: true,
-          },
-          is_hidden: {
-            type: Sequelize.BOOLEAN,
-            allowNull: false,
-            defaultValue: false,
           },
           is_completed: {
             type: Sequelize.BOOLEAN,

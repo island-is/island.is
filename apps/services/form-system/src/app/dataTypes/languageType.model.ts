@@ -1,14 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger'
-import { IsNotEmpty, IsString } from 'class-validator'
+import { IsString } from 'class-validator'
 
 export class LanguageType {
-  @IsNotEmpty()
   @IsString()
-  @ApiProperty()
-  is!: string
+  @ApiProperty({ type: String, default: '' })
+  is = ''
 
-  @IsNotEmpty()
   @IsString()
-  @ApiProperty()
-  en!: string
+  @ApiProperty({ type: String, default: '' })
+  en = ''
 }
