@@ -483,7 +483,7 @@ export const convertFormToScreens = (
     -1,
     -1,
     user,
-  ).filter(s => s.isNavigable)
+  ).filter((s) => s.isNavigable)
 }
 
 export const getNavigableSectionsInForm = (

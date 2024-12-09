@@ -25,7 +25,7 @@ export const initializeReducer = (
     state.user,
   )
   const screens = convertFormToScreens(form, answers, externalData, state.user)
-  
+
   const currentScreen =
     form.mode === FormModes.IN_PROGRESS
       ? 0
@@ -61,7 +61,7 @@ const addNewAnswersToState = (
       newAnswers,
       state.application.externalData,
       state.user,
-    )
+    ),
   }
 }
 
