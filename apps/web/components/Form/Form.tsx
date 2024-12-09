@@ -757,44 +757,12 @@ export const Form = ({ form }: FormProps) => {
             {form.questionsHeadingText}
           </Text>
           <Stack space={4}>
-            {form.fields
-              .filter((field) => field.type !== FormFieldType.FILE)
-              .map((field) => {
-                const slug = getUniqueFormFieldValue(field)
-                return (
-                  <FormField
-                    key={field.id}
-                    field={field}
-                    slug={slug}
-                    value={data[slug] ?? ''}
-                    error={errors.find((error) => error.field === slug)?.error}
-                    onChange={(key, value) => {
-                      if (field.type === FormFieldType.CHECKBOXES) {
-                        const prevFieldData = data[slug]
-                        if (prevFieldData) {
-                          const json = JSON.parse(prevFieldData)
-                          json[key] =
-                            json[key] === 'false' || !json[key]
-                              ? 'true'
-                              : 'false'
-                          onChange(slug, JSON.stringify(json))
-                        } else {
-                          onChange(slug, JSON.stringify({ [key]: 'true' }))
-                        }
-                      } else {
-                        onChange(key, value)
-                      }
-                    }}
-                  />
-                )
-              })}
-            {form.fields
-              .filter((field) => field.type === FormFieldType.FILE)
-              .map((field) => {
-                const slug = getUniqueFormFieldValue(field)
+            {form.fields.map((field) => {
+              const slug = getUniqueFormFieldValue(field)
+              if (field.type === FormFieldType.FILE) {
                 return (
                   <InputFileUpload
-                    key={slug}
+                    key={field.id}
                     header={field.title}
                     description={field.placeholder}
                     buttonLabel={n(
@@ -819,7 +787,34 @@ export const Form = ({ form }: FormProps) => {
                     }
                   />
                 )
-              })}
+              }
+
+              return (
+                <FormField
+                  key={field.id}
+                  field={field}
+                  slug={slug}
+                  value={data[slug] ?? ''}
+                  error={errors.find((error) => error.field === slug)?.error}
+                  onChange={(key, value) => {
+                    if (field.type === FormFieldType.CHECKBOXES) {
+                      const prevFieldData = data[slug]
+                      if (prevFieldData) {
+                        const json = JSON.parse(prevFieldData)
+                        json[key] =
+                          json[key] === 'false' || !json[key] ? 'true' : 'false'
+                        onChange(slug, JSON.stringify(json))
+                      } else {
+                        onChange(slug, JSON.stringify({ [key]: 'true' }))
+                      }
+                    } else {
+                      onChange(key, value)
+                    }
+                  }}
+                />
+              )
+            })}
+
             <Box display="flex" justifyContent="flexEnd">
               <Button onClick={() => onSubmit()} loading={isSubmitting}>
                 {n('formSend', activeLocale === 'is' ? 'Senda' : 'Submit')}
