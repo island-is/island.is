@@ -10,6 +10,7 @@ import {
   DEFENDER_ROUTE,
 } from '@island.is/judicial-system/consts'
 import {
+  Feature,
   isCompletedCase,
   isCourtOfAppealsUser,
   isDefenceUser,
@@ -23,6 +24,7 @@ import {
 } from '@island.is/judicial-system/types'
 import { errors } from '@island.is/judicial-system-web/messages'
 import {
+  FeatureContext,
   FormContext,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
@@ -40,6 +42,7 @@ const useCaseList = () => {
   >([null, false])
   const { user, limitedAccess } = useContext(UserContext)
   const { getCase } = useContext(FormContext)
+  const { features } = useContext(FeatureContext)
   const { formatMessage } = useIntl()
   const { isTransitioningCase, isSendingNotification } = useCase()
   const router = useRouter()
@@ -47,7 +50,9 @@ const useCaseList = () => {
   const openCase = useCallback(
     (caseToOpen: Case, openCaseInNewTab?: boolean) => {
       let routeTo = null
-      const isTrafficViolation = isTrafficViolationCase(caseToOpen)
+      const isTrafficViolation =
+        features.includes(Feature.MULTIPLE_INDICTMENT_SUBTYPES) ||
+        isTrafficViolationCase(caseToOpen)
 
       if (isDefenceUser(user)) {
         if (isRequestCase(caseToOpen.type)) {

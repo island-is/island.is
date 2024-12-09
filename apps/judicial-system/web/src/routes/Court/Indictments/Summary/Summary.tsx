@@ -19,6 +19,7 @@ import {
   PageTitle,
   RenderFiles,
   SectionHeading,
+  UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import {
   Defendants,
@@ -43,6 +44,7 @@ const Summary: FC = () => {
     useContext(FormContext)
   const { transitionCase, isTransitioningCase } = useCase()
   const [modalVisible, setModalVisible] = useState<'CONFIRM_INDICTMENT'>()
+  const { user } = useContext(UserContext)
 
   const { onOpen } = useFileList({
     caseId: workingCase.id,
@@ -89,6 +91,13 @@ const Summary: FC = () => {
   const indictmentRulingTag = getIndictmentRulingDecisionTag(
     workingCase.indictmentRulingDecision,
   )
+
+  const canUserCompleteCase =
+    (workingCase.indictmentRulingDecision !==
+      CaseIndictmentRulingDecision.RULING &&
+      workingCase.indictmentRulingDecision !==
+        CaseIndictmentRulingDecision.DISMISSAL) ||
+    workingCase.judge?.id === user?.id
 
   return (
     <PageLayout
@@ -159,6 +168,12 @@ const Summary: FC = () => {
           nextButtonIcon="checkmark"
           nextButtonText={formatMessage(strings.nextButtonText)}
           onNextButtonClick={() => setModalVisible('CONFIRM_INDICTMENT')}
+          hideNextButton={!canUserCompleteCase}
+          infoBoxText={
+            canUserCompleteCase
+              ? ''
+              : formatMessage(strings.onlyAssignedJudgeCanComplete)
+          }
         />
       </FormContentContainer>
       {modalVisible === 'CONFIRM_INDICTMENT' && (
