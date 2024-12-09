@@ -51,6 +51,10 @@ export class GenericListItemSyncService
             )
           }
 
+          for (const tag of mapped.filterTags ?? []) {
+            contentSections.push(tag.title)
+          }
+
           const content = contentSections.join(' ')
 
           const tags: MappedData['tags'] =
