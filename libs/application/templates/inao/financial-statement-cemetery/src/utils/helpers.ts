@@ -78,7 +78,7 @@ export const isCemetryUnderFinancialLimit = (
   const isCemetry = userType === FSIUSERTYPE.CEMETRY
   const totalIncome = isCemetry ? applicationAnswers.cemeteryIncome?.total : '0'
   const longTermDebt = applicationAnswers.cemeteryLiability?.longTerm
-  const isUnderLimit = currencyStringToNumber(totalIncome) < careTakerLimit
+  const isUnderLimit = Number(totalIncome) < Number(careTakerLimit)
   if (
     isCemetry &&
     isUnderLimit &&
