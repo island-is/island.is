@@ -16,26 +16,39 @@ import {
   PageTitle,
   RenderFiles,
 } from '@island.is/judicial-system-web/src/components'
-import { CaseFileCategory } from '@island.is/judicial-system-web/src/graphql/schema'
-import { useFileList } from '@island.is/judicial-system-web/src/utils/hooks'
+import { CaseFileCategory, Defendant } from '@island.is/judicial-system-web/src/graphql/schema'
+import { useCase, useDefendants, useFileList } from '@island.is/judicial-system-web/src/utils/hooks'
 
 import { strings } from './IndictmentOverview.strings'
 import { PunishmentType } from '@island.is/judicial-system/types'
 
 const IndictmentOverview = () => {
-  const { workingCase } = useContext(FormContext)
+  const { workingCase, setWorkingCase } = useContext(FormContext)
   const { formatMessage } = useIntl()
+  const { setAndSendDefendantToServer } = useDefendants()
 
   const { onOpen } = useFileList({
     caseId: workingCase.id,
   })
 
-  const { defendants } = workingCase
-  const defendant =
-    defendants && defendants?.length > 0 ? defendants[0] : undefined
-  const [selectedPunishmentType, setPunishmentType] = useState<
-    PunishmentType | undefined
-  >(defendant?.punishmentType || undefined)
+  const { defendants } = workingCase;
+  const defendant = defendants && defendants?.length > 0 ? defendants[0] : undefined;
+  const [selectedPunishmentType, setPunishmentType] = useState<PunishmentType>();
+
+  const onChange = (updatedPunishmentType: PunishmentType) => {
+    defendant && setAndSendDefendantToServer(
+      {
+        caseId: workingCase.id,
+        defendantId: defendant.id,
+        // TODO: why is this not generated in the graphql file???
+        punishmentType: updatedPunishmentType,
+      },
+      setWorkingCase,
+    )
+    setPunishmentType(updatedPunishmentType);
+  }
+
+  const hasSetPunishmentType = (punishmentType: PunishmentType) => !selectedPunishmentType && defendant?.punishmentType === punishmentType;
 
   return (
     <PageLayout workingCase={workingCase} isLoading={false} notFound={false}>
@@ -87,9 +100,9 @@ const IndictmentOverview = () => {
               <RadioButton
                 id="punishment-type-imprisonment"
                 name="punishmentTypeImprisonment"
-                checked={selectedPunishmentType === PunishmentType.IMPRISONMENT}
+                checked={selectedPunishmentType === PunishmentType.IMPRISONMENT || hasSetPunishmentType(PunishmentType.IMPRISONMENT)}
                 onChange={() => {
-                  setPunishmentType(PunishmentType.IMPRISONMENT)
+                  onChange(PunishmentType.IMPRISONMENT)
                 }}
                 large
                 backgroundColor="white"
@@ -100,9 +113,9 @@ const IndictmentOverview = () => {
               <RadioButton
                 id="punishment-type-probation"
                 name="punishmentTypeProbation"
-                checked={selectedPunishmentType === PunishmentType.PROBATION}
+                checked={selectedPunishmentType === PunishmentType.PROBATION || hasSetPunishmentType(PunishmentType.PROBATION)}
                 onChange={() => {
-                  setPunishmentType(PunishmentType.PROBATION)
+                  onChange(PunishmentType.PROBATION)
                 }}
                 large
                 backgroundColor="white"
@@ -113,9 +126,9 @@ const IndictmentOverview = () => {
               <RadioButton
                 id="punishment-type-fine"
                 name="punishmentTypeFine"
-                checked={selectedPunishmentType === PunishmentType.FINE}
+                checked={selectedPunishmentType === PunishmentType.FINE || hasSetPunishmentType(PunishmentType.FINE)}
                 onChange={() => {
-                  setPunishmentType(PunishmentType.FINE)
+                  onChange(PunishmentType.FINE)
                 }}
                 large
                 backgroundColor="white"
@@ -128,10 +141,10 @@ const IndictmentOverview = () => {
                 name="punishmentTypeIndictmentRulingDecisionFine"
                 checked={
                   selectedPunishmentType ===
-                  PunishmentType.INDICTMENT_RULING_DECISION_FINE
+                  PunishmentType.INDICTMENT_RULING_DECISION_FINE || hasSetPunishmentType(PunishmentType.INDICTMENT_RULING_DECISION_FINE)
                 }
                 onChange={() => {
-                  setPunishmentType(
+                  onChange(
                     PunishmentType.INDICTMENT_RULING_DECISION_FINE,
                   )
                 }}
@@ -146,10 +159,10 @@ const IndictmentOverview = () => {
                 name="punishmentTypeIndictmentSignedFineInvitation"
                 checked={
                   selectedPunishmentType ===
-                  PunishmentType.SIGNED_FINE_INVITATION
+                  PunishmentType.SIGNED_FINE_INVITATION || hasSetPunishmentType(PunishmentType.SIGNED_FINE_INVITATION)
                 }
                 onChange={() => {
-                  setPunishmentType(PunishmentType.SIGNED_FINE_INVITATION)
+                  onChange(PunishmentType.SIGNED_FINE_INVITATION)
                 }}
                 large
                 backgroundColor="white"
