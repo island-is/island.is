@@ -67,7 +67,7 @@ export class Section extends Model<Section> {
   isCompleted!: boolean
 
   @HasMany(() => Screen)
-  screens?: Screen[]
+  screens!: Screen[]
 
   @ForeignKey(() => Form)
   @Column({ type: DataType.STRING, allowNull: false, field: 'form_id' })

@@ -35,11 +35,7 @@ export class FormsController {
   @ApiBody({ type: CreateFormDto })
   @Post()
   async create(@Body() createFormDto: CreateFormDto): Promise<FormResponseDto> {
-    const formResponse = await this.formsService.create(createFormDto)
-    if (!formResponse) {
-      throw new Error('Error')
-    }
-    return formResponse
+    return await this.formsService.create(createFormDto)
   }
 
   @ApiOperation({ summary: 'Get all forms belonging to organization' })
@@ -55,20 +51,15 @@ export class FormsController {
     return await this.formsService.findAll(organizationId)
   }
 
-  @ApiOperation({ summary: 'Get FormResponse by formId' })
+  @ApiOperation({ summary: 'Get form by idd' })
   @ApiCreatedResponse({
     type: FormResponseDto,
-    description: 'Get FormResponse by formId',
+    description: 'Get form by id',
   })
   @ApiParam({ name: 'id', type: String })
   @Get(':id')
   async findOne(@Param('id') id: string): Promise<FormResponseDto> {
-    const formResponse = await this.formsService.findOne(id)
-    if (!formResponse) {
-      throw new NotFoundException(`Form not found`)
-    }
-
-    return formResponse
+    return await this.formsService.findOne(id)
   }
 
   @ApiOperation({ summary: 'Update form' })
@@ -82,8 +73,29 @@ export class FormsController {
     @Param('id') id: string,
     @Body() updateFormDto: UpdateFormDto,
   ): Promise<void> {
-    console.log('updateFormDto', updateFormDto)
-    return this.formsService.update(id, updateFormDto)
+    return await this.formsService.update(id, updateFormDto)
+  }
+
+  @ApiOperation({ summary: 'Change published form' })
+  @ApiCreatedResponse({
+    type: FormResponseDto,
+    description: 'Change published form',
+  })
+  @ApiParam({ name: 'id', type: String })
+  @Put('changePublished/:id')
+  async changePublishedForm(@Param('id') id: string): Promise<FormResponseDto> {
+    return await this.formsService.changePublished(id)
+  }
+
+  @ApiOperation({ summary: 'Publish form' })
+  @ApiCreatedResponse({
+    type: FormResponseDto,
+    description: 'Publish form',
+  })
+  @ApiParam({ name: 'id', type: String })
+  @Put('publish/:id')
+  async publish(@Param('id') id: string): Promise<FormResponseDto> {
+    return await this.formsService.publish(id)
   }
 
   @ApiOperation({ summary: 'Delete form' })
@@ -93,6 +105,6 @@ export class FormsController {
   @ApiParam({ name: 'id', type: String })
   @Delete(':id')
   async delete(@Param('id') id: string): Promise<void> {
-    return this.formsService.delete(id)
+    return await this.formsService.delete(id)
   }
 }

@@ -9,14 +9,20 @@ import { FormsService } from './forms.service'
 import { Form } from './models/form.model'
 import { ListItem } from '../listItems/models/listItem.model'
 import { OrganizationUrl } from '../organizationUrls/models/organizationUrl.model'
+import { Field } from '../fields/models/field.model'
+import { FormCertificationType } from '../formCertificationTypes/models/formCertificationType.model'
+import { FormUrl } from '../formUrls/models/formUrl.model'
 
 @Module({
   imports: [
     SequelizeModule.forFeature([
       Form,
       FormApplicantType,
+      FormCertificationType,
+      FormUrl,
       Section,
       Screen,
+      Field,
       Organization,
       ListItem,
       OrganizationUrl,
