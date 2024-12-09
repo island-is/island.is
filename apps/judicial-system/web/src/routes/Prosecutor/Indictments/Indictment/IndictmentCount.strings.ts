@@ -123,6 +123,12 @@ export const indictmentCount = defineMessages({
     defaultMessage: 'í blóðsýni mældist',
     description: 'Notaður sem upphafstexti fyrir efni í blóði í atvikalýsingu.',
   },
+  indictmentDescriptionSubtypesAutofill: {
+    id: 'judicial.system.core:indictments_indictment.indictment_count.indictment_description_subtypes_auto_fill',
+    defaultMessage: 'fyrir [{subtypes}] með því að hafa, {date}',
+    description:
+      'Notaður sem ástæða í atvikalýsingu fyrir önnur brot en umferðalagabrot.',
+  },
   legalArgumentsLabel: {
     id: 'judicial.system.core:indictments_indictment.indictment_count.legal_arguments_label',
     defaultMessage: 'Heimfærsla',

@@ -294,12 +294,28 @@ export const isProcessingStepValidIndictments = (
   )
 }
 
+const hasOnlyOneItemInSubArrays = (
+  indictmentSubtypes?: Record<string, string[]>,
+) => {
+  if (!indictmentSubtypes) return false
+
+  return Object.values(indictmentSubtypes).every(
+    (subArray) => subArray.length === 1,
+  )
+}
+
 export const isTrafficViolationStepValidIndictments = (
   workingCase: Case,
 ): boolean => {
   return Boolean(
-    workingCase.demands &&
-      (!workingCase.hasCivilClaims || workingCase.civilDemands),
+    hasOnlyOneItemInSubArrays(workingCase.indictmentSubtypes) ||
+      (workingCase.indictmentCounts?.every(
+        (indictmentCount) =>
+          indictmentCount.indictmentCountSubtypes &&
+          indictmentCount.indictmentCountSubtypes?.length > 0,
+      ) &&
+        workingCase.demands &&
+        (!workingCase.hasCivilClaims || workingCase.civilDemands)),
   )
 }
 

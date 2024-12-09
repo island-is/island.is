@@ -283,14 +283,34 @@ export const getLegalArguments = (
   })
 }
 
+const hasOnlyOneItemInSubArrays = (
+  indictmentSubtypes?: Record<string, string[]>,
+) => {
+  if (!indictmentSubtypes) return false
+
+  return Object.values(indictmentSubtypes).every(
+    (subArray) => subArray.length === 1,
+  )
+}
+
 export const getIncidentDescription = (
   indictmentCount: TIndictmentCount,
   formatMessage: IntlShape['formatMessage'],
   crimeScene?: CrimeScene,
+  subtypes?: Record<string, string[]>,
 ) => {
-  const { offenses, substances, vehicleRegistrationNumber } = indictmentCount
+  const {
+    offenses,
+    substances,
+    vehicleRegistrationNumber,
+    indictmentCountSubtypes,
+  } = indictmentCount
 
-  if (offenses?.length === 0) {
+  if (
+    offenses?.length === 0 ||
+    (!hasOnlyOneItemInSubArrays(subtypes) &&
+      indictmentCountSubtypes?.length === 0)
+  ) {
     return ''
   }
 
@@ -309,17 +329,29 @@ export const getIncidentDescription = (
     formatMessage,
   )
 
-  const incidentDescription = formatMessage(
-    strings.incidentDescriptionAutofill,
-    {
-      incidentDate: incidentDate ? incidentDate : '[Dagsetning]',
-      vehicleRegistrationNumber: vehicleRegistrationNumber
-        ? vehicleRegistrationNumber
-        : '[Skráningarnúmer ökutækis]',
-      reason,
-      incidentLocation: incidentLocation ? incidentLocation : '[Vettvangur]',
-    },
+  const formattedIncidentDate = incidentDate ? incidentDate : '[Dagsetning]'
+  const formattedIndictmentLocation = incidentLocation
+    ? incidentLocation
+    : '[Vettvangur]'
+  const formattedVehicleRegistrationNumber = vehicleRegistrationNumber
+    ? vehicleRegistrationNumber
+    : '[Skráningarnúmer ökutækis]'
+
+  const incidentDescription = indictmentCountSubtypes?.every(
+    (subtype) => subtype === IndictmentSubtype.TRAFFIC_VIOLATION,
   )
+    ? formatMessage(strings.incidentDescriptionAutofill, {
+        incidentDate: formattedIncidentDate,
+        vehicleRegistrationNumber: formattedVehicleRegistrationNumber,
+        reason,
+        incidentLocation: formattedIndictmentLocation,
+      })
+    : formatMessage(strings.indictmentDescriptionSubtypesAutofill, {
+        subtypes: indictmentCountSubtypes
+          ?.map((subtype) => indictmentSubtypes[subtype])
+          .join(', '),
+        date: formattedIncidentDate,
+      })
 
   return incidentDescription
 }
@@ -404,6 +436,7 @@ export const IndictmentCount: FC<Props> = ({
       },
       formatMessage,
       crimeScene,
+      workingCase.indictmentSubtypes,
     )
 
     onChange(indictmentCount.id, {
