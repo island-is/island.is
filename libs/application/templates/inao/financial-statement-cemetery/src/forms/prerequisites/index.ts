@@ -10,7 +10,7 @@ import { DefaultEvents, Form, FormModes } from '@island.is/application/types'
 import Logo from '../../components/Logo'
 import {
   CurrentUserTypeProvider,
-  IndentityApiProvider,
+  IdentityApiProvider,
   UserInfoApi,
 } from '../../dataProviders'
 import { m } from '../../lib/messages'
@@ -32,7 +32,7 @@ export const PrerequisitesForm: Form = buildForm({
           checkboxLabel: m.dataCollectionCheckboxLabel,
           dataProviders: [
             buildDataProviderItem({
-              provider: IndentityApiProvider,
+              provider: IdentityApiProvider,
               title: m.dataCollectionNationalRegistryTitle,
               subTitle: m.dataCollectionNationalRegistrySubtitle,
             }),
