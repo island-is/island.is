@@ -16,7 +16,7 @@ type InitializerFn<T, FactoryArgs extends Array<unknown>> = (
  *
  * ```typescript
  * const section = simpleFactory((type?: SectionType) => {
- *   type = type || Faker.random.arrayElement(sectionTypes)
+ *   type = type || faker.helpers.arrayElement(sectionTypes)
  *
  *   switch (type) {
  *     case 'content':

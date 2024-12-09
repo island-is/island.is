@@ -18,7 +18,7 @@ import schema from './schema'
 import { Article, User, Resolvers } from './types'
 
 const user = factory<User>({
-  name: () => faker.name.findName(),
+  name: () => faker.person.fullName(),
 })
 
 const article = factory<Article>({
@@ -349,7 +349,7 @@ import { factory, faker } from '@island.is/shared/mocking'
 import { User, Article } from './types'
 
 const user = factory<User>({
-  name: () => faker.name.findName(),
+  name: () => faker.person.fullName(),
 })
 
 const article = factory<Article>({
@@ -416,7 +416,7 @@ slice.list(3) // Array<ContentSlice | ImageSlice>
 
 - `faker`
 
-Re-exported [faker](https://github.com/Marak/faker.js) to create fake mock data. One day we may add our own locale to create more Icelandic mock data.
+Re-exported [faker](https://fakerjs.dev) to create fake mock data. One day we may add our own locale to create more Icelandic mock data.
 
 ## Remove mocking code from production builds
 

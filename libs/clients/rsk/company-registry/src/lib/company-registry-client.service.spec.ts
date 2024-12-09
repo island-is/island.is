@@ -1,5 +1,5 @@
 import { Logger } from '@island.is/logging'
-import faker from 'faker'
+import { faker } from '@faker-js/faker'
 
 import { FetchError } from '@island.is/clients/middlewares'
 
@@ -24,59 +24,59 @@ describe('CompanyRegistryClientService', () => {
   it('maps company endpoint', async () => {
     // Arrange
     const company = {
-      kennitala: faker.random.word(),
-      nafn: faker.random.word(),
+      kennitala: faker.word.sample(),
+      nafn: faker.word.sample(),
       link: [],
       sidastUppfaert: faker.date.past().toISOString(),
-      stada: faker.random.word(),
+      stada: faker.word.sample(),
       skrad: faker.date.past().toISOString(),
       heimilisfang: [
         {
           gerd: 'Lögheimili',
-          heimilisfang: faker.address.streetAddress(),
-          postnumer: faker.address.zipCode(),
-          erPostholf: faker.datatype.number(1).toString(),
-          stadur: faker.address.city(),
-          land: faker.address.countryCode(),
-          byggd: faker.random.word(),
-          sveitarfelaganumer: faker.random.word(),
+          heimilisfang: faker.location.streetAddress(),
+          postnumer: faker.location.zipCode(),
+          erPostholf: faker.number.int(1).toString(),
+          stadur: faker.location.city(),
+          land: faker.location.countryCode(),
+          byggd: faker.word.sample(),
+          sveitarfelaganumer: faker.word.sample(),
         },
         {
           gerd: 'Póstfang',
-          heimilisfang: faker.address.streetAddress(),
-          postnumer: faker.address.zipCode(),
-          erPostholf: faker.datatype.number(1).toString(),
-          stadur: faker.address.city(),
-          land: faker.address.countryCode(),
-          byggd: faker.random.word(),
-          sveitarfelaganumer: faker.random.word(),
+          heimilisfang: faker.location.streetAddress(),
+          postnumer: faker.location.zipCode(),
+          erPostholf: faker.number.int(1).toString(),
+          stadur: faker.location.city(),
+          land: faker.location.countryCode(),
+          byggd: faker.word.sample(),
+          sveitarfelaganumer: faker.word.sample(),
         },
       ],
       rekstrarform: [
         {
-          heiti: faker.random.word(),
-          tegund: faker.random.word(),
+          heiti: faker.word.sample(),
+          tegund: faker.word.sample(),
         },
       ],
       tengdirAdilar: [
         {
-          tegund: faker.random.word(),
-          nafn: faker.name.findName(),
-          kennitala: faker.random.word(),
+          tegund: faker.word.sample(),
+          nafn: faker.person.fullName(),
+          kennitala: faker.word.sample(),
         },
       ],
       virdisaukaskattur: [
         {
-          vskNumer: faker.random.word(),
-          stada: faker.random.word(),
+          vskNumer: faker.word.sample(),
+          stada: faker.word.sample(),
           skrad: faker.date.past().toISOString(),
           afskraning: faker.date.past().toISOString(),
           flokkun: [
             {
-              gerd: faker.random.word(),
-              heiti: faker.random.word(),
-              flokkunarkerfi: faker.random.word(),
-              numer: faker.random.word(),
+              gerd: faker.word.sample(),
+              heiti: faker.word.sample(),
+              flokkunarkerfi: faker.word.sample(),
+              numer: faker.word.sample(),
             },
           ],
         },
@@ -122,7 +122,7 @@ describe('CompanyRegistryClientService', () => {
         type: form.tegund,
       })),
     }
-    const input = faker.random.word()
+    const input = faker.word.sample()
     const ssidGet = jest.spyOn(api, 'ssidGet').mockResolvedValue(company)
 
     // Act
@@ -149,17 +149,17 @@ describe('CompanyRegistryClientService', () => {
   it('maps search endpoint', async () => {
     // Arrange
     const apiData = {
-      count: faker.datatype.number(),
+      count: faker.number.int(),
       hasMore: faker.datatype.boolean(),
-      limit: faker.datatype.number(),
-      offset: faker.datatype.number(),
+      limit: faker.number.int(),
+      offset: faker.number.int(),
       items: [
         {
-          vskNumer: faker.random.word(),
-          nafn: faker.random.word(),
-          stada: faker.random.word(),
+          vskNumer: faker.word.sample(),
+          nafn: faker.word.sample(),
+          stada: faker.word.sample(),
           skrad: faker.date.past().toISOString(),
-          kennitala: faker.random.word(),
+          kennitala: faker.word.sample(),
           sidastUppfaert: faker.date.past().toISOString(),
         },
       ],
@@ -182,9 +182,9 @@ describe('CompanyRegistryClientService', () => {
       })),
     }
     const request: SearchRequest = {
-      searchString: faker.random.word(),
-      limit: faker.datatype.number(),
-      offset: faker.datatype.number(),
+      searchString: faker.word.sample(),
+      limit: faker.number.int(),
+      offset: faker.number.int(),
     }
 
     // Act
