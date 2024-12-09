@@ -1,1 +1,7 @@
-export { isValidEmail } from './validation'
+export { isValidEmail, formatPhoneNumber } from './validation'
+export * from './isCompanyType'
+export * from './isPersonType'
+export * from './isIndividual'
+export * from './isCompany'
+export * from './getPersonalInformationForOverview'
+export * from './getPaymentArrangementForOverview'
