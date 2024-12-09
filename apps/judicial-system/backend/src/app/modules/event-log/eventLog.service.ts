@@ -108,13 +108,17 @@ export class EventLogService {
     const notificationType = eventToNotificationMap[eventType]
 
     if (notificationType) {
-      this.messageService.sendMessagesToQueue([
-        {
-          type: MessageType.EVENT_NOTIFICATION_DISPATCH,
-          caseId: caseId,
-          body: { type: notificationType },
-        },
-      ])
+      try {
+        this.messageService.sendMessagesToQueue([
+          {
+            type: MessageType.EVENT_NOTIFICATION_DISPATCH,
+            caseId: caseId,
+            body: { type: notificationType },
+          },
+        ])
+      } catch (error) {
+        this.logger.error('Failed to send event notification to queue', error)
+      }
     }
   }
 }
