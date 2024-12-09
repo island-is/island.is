@@ -155,6 +155,10 @@ export const debtsAndFuneralCost = buildSection({
                     id: 'tombstone',
                     title: m.funeralTombstoneCost,
                   },
+                  {
+                    id: 'service',
+                    title: m.funeralServiceCost,
+                  },
                 ],
               },
             ),
