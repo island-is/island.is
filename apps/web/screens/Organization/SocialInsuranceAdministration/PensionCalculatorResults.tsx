@@ -1,4 +1,4 @@
-import { Fragment, useState } from 'react'
+import { Fragment, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
 
 import {
@@ -58,7 +58,9 @@ import {
   convertToQueryParams,
   extractSlug,
   getDateOfCalculationsOptions,
+  is2025FormPreviewActive,
   is2025PreviewActive,
+  NEW_SYSTEM_TAKES_PLACE_DATE,
 } from './utils'
 import * as styles from './PensionCalculatorResults.css'
 
@@ -285,11 +287,24 @@ const PensionCalculatorResults: CustomScreen<PensionCalculatorResultsProps> = ({
 
   const highlightedItems2025 = calculation2025.highlightedItems ?? []
 
-  const title = `${formatMessage(translationStrings.mainTitle)} ${
-    dateOfCalculationsOptions.find(
+  const allCalculatorsOptions = useMemo(() => {
+    const options = [...dateOfCalculationsOptions]
+
+    if (is2025FormPreviewActive(customPageData)) {
+      options.unshift({
+        label: formatMessage(translationStrings.form2025PreviewLabel),
+        value: NEW_SYSTEM_TAKES_PLACE_DATE.toISOString(),
+      })
+    }
+
+    return options
+  }, [customPageData, dateOfCalculationsOptions, formatMessage])
+
+  const title = `${formatMessage(translationStrings.mainTitle)} ${(
+    allCalculatorsOptions.find(
       (o) => o.value === calculationInput.dateOfCalculations,
-    )?.label ?? ''
-  }`
+    )?.label ?? dateOfCalculationsOptions[0].label
+  ).toLowerCase()}`
 
   const calculationIsPresent =
     typeof calculation.groups?.length === 'number' &&
