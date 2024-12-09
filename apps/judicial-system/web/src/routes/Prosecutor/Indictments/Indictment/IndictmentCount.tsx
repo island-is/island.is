@@ -304,13 +304,10 @@ export const getIncidentDescription = (
     substances,
     vehicleRegistrationNumber,
     indictmentCountSubtypes,
+    policeCaseNumber,
   } = indictmentCount
 
-  if (
-    offenses?.length === 0 ||
-    (!hasOnlyOneItemInSubArrays(subtypes) &&
-      indictmentCountSubtypes?.length === 0)
-  ) {
+  if (offenses?.length === 0) {
     return ''
   }
 
@@ -323,35 +320,51 @@ export const getIncidentDescription = (
       formatDate(crimeScene.date, 'PPPP')?.replace('dagur,', 'daginn') ?? ''
   }
 
+  const formattedIncidentDate = incidentDate ? incidentDate : '[Dagsetning]'
+
+  const formattedIndictmentLocation = incidentLocation
+    ? incidentLocation
+    : '[Vettvangur]'
+
+  const formattedVehicleRegistrationNumber = vehicleRegistrationNumber
+    ? vehicleRegistrationNumber
+    : '[Skráningarnúmer ökutækis]'
+
   const reason = getIncidentDescriptionReason(
     offenses ?? [],
     substances ?? {},
     formatMessage,
   )
 
-  const formattedIncidentDate = incidentDate ? incidentDate : '[Dagsetning]'
-  const formattedIndictmentLocation = incidentLocation
-    ? incidentLocation
-    : '[Vettvangur]'
-  const formattedVehicleRegistrationNumber = vehicleRegistrationNumber
-    ? vehicleRegistrationNumber
-    : '[Skráningarnúmer ökutækis]'
+  const incidentDescription =
+    hasOnlyOneItemInSubArrays(subtypes) &&
+    policeCaseNumber &&
+    subtypes &&
+    subtypes[policeCaseNumber][0] === IndictmentSubtype.TRAFFIC_VIOLATION
+      ? formatMessage(strings.incidentDescriptionAutofill, {
+          incidentDate: formattedIncidentDate,
+          vehicleRegistrationNumber: formattedVehicleRegistrationNumber,
+          reason,
+          incidentLocation: formattedIndictmentLocation,
+        })
+      : hasOnlyOneItemInSubArrays(subtypes)
+      ? formatMessage(strings.indictmentDescriptionSubtypesAutofill, {
+          subtypes:
+            subtypes &&
+            policeCaseNumber &&
+            indictmentSubtypes[
+              subtypes[policeCaseNumber][0] as IndictmentSubtype
+            ],
+          date: formattedIncidentDate,
+        })
+      : formatMessage(strings.indictmentDescriptionSubtypesAutofill, {
+          subtypes: indictmentCountSubtypes
+            ?.map((subtype) => indictmentSubtypes[subtype])
+            .join(', '),
+          date: formattedIncidentDate,
+        })
 
-  const incidentDescription = indictmentCountSubtypes?.every(
-    (subtype) => subtype === IndictmentSubtype.TRAFFIC_VIOLATION,
-  )
-    ? formatMessage(strings.incidentDescriptionAutofill, {
-        incidentDate: formattedIncidentDate,
-        vehicleRegistrationNumber: formattedVehicleRegistrationNumber,
-        reason,
-        incidentLocation: formattedIndictmentLocation,
-      })
-    : formatMessage(strings.indictmentDescriptionSubtypesAutofill, {
-        subtypes: indictmentCountSubtypes
-          ?.map((subtype) => indictmentSubtypes[subtype])
-          .join(', '),
-        date: formattedIncidentDate,
-      })
+  console.log(incidentDescription)
 
   return incidentDescription
 }
