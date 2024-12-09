@@ -30,7 +30,9 @@ const IndictmentOverview = () => {
     caseId: workingCase.id,
   })
 
-  const [selectedPunishmentType, setPunishmentType] = useState<PunishmentType>()
+  const { defendants } = workingCase;
+  const defendant = defendants && defendants?.length > 0 ? defendants[0] : undefined;
+  const [selectedPunishmentType, setPunishmentType] = useState<PunishmentType | undefined>(defendant?.punishmentType || undefined);
 
   return (
     <PageLayout workingCase={workingCase} isLoading={false} notFound={false}>
@@ -73,9 +75,7 @@ const IndictmentOverview = () => {
             }
           />
         </Box>
-        {/* TODO: Are we missing "Fullnusta" here? */}
         <Box marginBottom={10}>
-          {/* Comment: Thought about using SectionHeading but its larger and thus not consistent with prev titles */}
           <Text variant="h4" as="h4" marginBottom={2}>
             {formatMessage(strings.punishmentTypeTitle)}
           </Text>
