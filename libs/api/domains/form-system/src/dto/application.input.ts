@@ -11,7 +11,7 @@ export class CreateApplicationInput {
 @InputType('FormSystemGetApplicationInput')
 export class GetApplicationInput {
   @Field(() => String, { nullable: true })
-  id?: string
+  formId?: string
 }
 
 @InputType('FormSystemApplicationInput')

@@ -6,7 +6,7 @@ import { handle4xx } from '../../utils/errorHandler'
 import {
   ApplicationsApi,
   ApplicationsControllerCreateRequest,
-  ApplicationsControllerGetApplicationRequest,
+  ApplicationsControllerGetPreviewRequest,
 } from '@island.is/clients/form-system'
 import {
   CreateApplicationInput,
@@ -20,7 +20,7 @@ export class ApplicationsService {
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
     private applicationsApi: ApplicationsApi,
-  ) {}
+  ) { }
 
   // eslint-disable-next-line
   handleError(error: any, errorDetail?: string): ApolloError | null {
@@ -60,8 +60,8 @@ export class ApplicationsService {
     input: GetApplicationInput,
   ): Promise<Application> {
     const response = await this.applicationsApiWithAuth(auth)
-      .applicationsControllerGetApplication(
-        input as ApplicationsControllerGetApplicationRequest,
+      .applicationsControllerGetPreview(
+        input as ApplicationsControllerGetPreviewRequest,
       )
       .catch((e) => handle4xx(e, this.handleError, 'failed to get application'))
 

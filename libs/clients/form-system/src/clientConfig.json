@@ -205,7 +205,6 @@
     "/organizations": {
       "post": {
         "operationId": "OrganizationsController_create",
-        "summary": "Create an organization",
         "parameters": [],
         "requestBody": {
           "required": true,
@@ -219,14 +218,7 @@
         },
         "responses": {
           "201": {
-            "description": "Create an organization",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/OrganizationDto"
-                }
-              }
-            }
+            "description": ""
           }
         },
         "tags": [
@@ -235,15 +227,58 @@
       },
       "get": {
         "operationId": "OrganizationsController_findAll",
-        "summary": "Get all Organizations",
+        "description": "Get all Organizations",
         "parameters": [],
         "responses": {
-          "201": {
-            "description": "Get all Organizations",
+          "200": {
+            "description": "",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/OrganizationsResponseDto"
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/OrganizationsResponseDto"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
                 }
               }
             }
@@ -257,7 +292,7 @@
     "/organizations/{id}": {
       "get": {
         "operationId": "OrganizationsController_findOne",
-        "summary": "Get an organization by id",
+        "description": "Get Organization by id",
         "parameters": [
           {
             "name": "id",
@@ -269,12 +304,52 @@
           }
         ],
         "responses": {
-          "201": {
-            "description": "Get an organization by id",
+          "200": {
+            "description": "",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/OrganizationDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
                 }
               }
             }
@@ -288,7 +363,6 @@
     "/forms": {
       "post": {
         "operationId": "FormsController_create",
-        "summary": "Create new form",
         "parameters": [],
         "requestBody": {
           "required": true,
@@ -320,7 +394,7 @@
     "/forms/organization/{organizationId}": {
       "get": {
         "operationId": "FormsController_findAll",
-        "summary": "Get all forms belonging to organization",
+        "description": "Get all forms belonging to organization",
         "parameters": [
           {
             "name": "organizationId",
@@ -332,12 +406,52 @@
           }
         ],
         "responses": {
-          "201": {
-            "description": "Get all forms belonging to organization",
+          "200": {
+            "description": "",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/FormResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
                 }
               }
             }
@@ -351,7 +465,7 @@
     "/forms/{id}": {
       "get": {
         "operationId": "FormsController_findOne",
-        "summary": "Get FormResponse by formId",
+        "description": "Get FormResponse by formId",
         "parameters": [
           {
             "name": "id",
@@ -363,12 +477,52 @@
           }
         ],
         "responses": {
-          "201": {
-            "description": "Get FormResponse by formId",
+          "200": {
+            "description": "",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/FormResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
                 }
               }
             }
@@ -378,41 +532,8 @@
           "forms"
         ]
       },
-      "put": {
-        "operationId": "FormsController_updateForm",
-        "summary": "Update form",
-        "parameters": [
-          {
-            "name": "id",
-            "required": true,
-            "in": "path",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/UpdateFormDto"
-              }
-            }
-          }
-        },
-        "responses": {
-          "201": {
-            "description": "Update form"
-          }
-        },
-        "tags": [
-          "forms"
-        ]
-      },
       "delete": {
         "operationId": "FormsController_delete",
-        "summary": "Delete form",
         "parameters": [
           {
             "name": "id",
@@ -424,8 +545,8 @@
           }
         ],
         "responses": {
-          "204": {
-            "description": "Delete field"
+          "200": {
+            "description": ""
           }
         },
         "tags": [
@@ -436,7 +557,6 @@
     "/sections": {
       "post": {
         "operationId": "SectionsController_create",
-        "summary": "Creates a new section",
         "parameters": [],
         "requestBody": {
           "required": true,
@@ -450,14 +570,7 @@
         },
         "responses": {
           "201": {
-            "description": "Creates a new section",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/SectionDto"
-                }
-              }
-            }
+            "description": ""
           }
         },
         "tags": [
@@ -466,7 +579,7 @@
       },
       "put": {
         "operationId": "SectionsController_updateDisplayOrder",
-        "summary": "Update display order of sections",
+        "description": "Update display order of sections",
         "parameters": [],
         "requestBody": {
           "required": true,
@@ -480,7 +593,47 @@
         },
         "responses": {
           "204": {
-            "description": "Update display order of sections"
+            "description": ""
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
           }
         },
         "tags": [
@@ -489,9 +642,29 @@
       }
     },
     "/sections/{id}": {
+      "delete": {
+        "operationId": "SectionsController_delete",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "sections"
+        ]
+      },
       "put": {
         "operationId": "SectionsController_update",
-        "summary": "Updates a section",
         "parameters": [
           {
             "name": "id",
@@ -513,30 +686,8 @@
           }
         },
         "responses": {
-          "201": {
-            "description": "Updates a section"
-          }
-        },
-        "tags": [
-          "sections"
-        ]
-      },
-      "delete": {
-        "operationId": "SectionsController_delete",
-        "summary": "Delete section by id",
-        "parameters": [
-          {
-            "name": "id",
-            "required": true,
-            "in": "path",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "204": {
-            "description": "Delete section by id"
+          "200": {
+            "description": ""
           }
         },
         "tags": [
@@ -547,7 +698,6 @@
     "/screens": {
       "post": {
         "operationId": "ScreensController_create",
-        "summary": "Creates a new screen",
         "parameters": [],
         "requestBody": {
           "required": true,
@@ -561,14 +711,7 @@
         },
         "responses": {
           "201": {
-            "description": "Creates a new screen",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ScreenDto"
-                }
-              }
-            }
+            "description": ""
           }
         },
         "tags": [
@@ -577,7 +720,7 @@
       },
       "put": {
         "operationId": "ScreensController_updateDisplayOrder",
-        "summary": "Update display order of screens",
+        "description": "Update display order of screens",
         "parameters": [],
         "requestBody": {
           "required": true,
@@ -591,7 +734,47 @@
         },
         "responses": {
           "204": {
-            "description": "Update display order of screens"
+            "description": ""
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
           }
         },
         "tags": [
@@ -602,7 +785,6 @@
     "/screens/{id}": {
       "put": {
         "operationId": "ScreensController_update",
-        "summary": "Updates screen",
         "parameters": [
           {
             "name": "id",
@@ -624,15 +806,8 @@
           }
         },
         "responses": {
-          "201": {
-            "description": "Updates a screen",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ScreenDto"
-                }
-              }
-            }
+          "200": {
+            "description": ""
           }
         },
         "tags": [
@@ -641,7 +816,6 @@
       },
       "delete": {
         "operationId": "ScreensController_delete",
-        "summary": "Delete screen by id",
         "parameters": [
           {
             "name": "id",
@@ -653,8 +827,8 @@
           }
         ],
         "responses": {
-          "204": {
-            "description": "Delete screen by id"
+          "200": {
+            "description": ""
           }
         },
         "tags": [
@@ -665,7 +839,6 @@
     "/fields": {
       "post": {
         "operationId": "FieldsController_create",
-        "summary": "Create a field",
         "parameters": [],
         "requestBody": {
           "required": true,
@@ -679,14 +852,7 @@
         },
         "responses": {
           "201": {
-            "description": "Create a field",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/FieldDto"
-                }
-              }
-            }
+            "description": ""
           }
         },
         "tags": [
@@ -695,7 +861,7 @@
       },
       "put": {
         "operationId": "FieldsController_updateDisplayOrder",
-        "summary": "Update display order of fields",
+        "description": "Update display order of fields",
         "parameters": [],
         "requestBody": {
           "required": true,
@@ -709,7 +875,47 @@
         },
         "responses": {
           "204": {
-            "description": "Update display order of fields"
+            "description": ""
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
           }
         },
         "tags": [
@@ -718,9 +924,77 @@
       }
     },
     "/fields/{id}": {
+      "get": {
+        "operationId": "FieldsController_findOne",
+        "description": "Get Field by id",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FieldDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "fields"
+        ]
+      },
       "put": {
         "operationId": "FieldsController_update",
-        "summary": "Update field",
         "parameters": [
           {
             "name": "id",
@@ -742,8 +1016,8 @@
           }
         },
         "responses": {
-          "204": {
-            "description": "Update field"
+          "200": {
+            "description": ""
           }
         },
         "tags": [
@@ -752,7 +1026,6 @@
       },
       "delete": {
         "operationId": "FieldsController_delete",
-        "summary": "Delete field by id",
         "parameters": [
           {
             "name": "id",
@@ -764,8 +1037,8 @@
           }
         ],
         "responses": {
-          "204": {
-            "description": "Delete field by id"
+          "200": {
+            "description": ""
           }
         },
         "tags": [
@@ -776,7 +1049,6 @@
     "/listItems": {
       "post": {
         "operationId": "ListItemsController_create",
-        "summary": "Create a list item",
         "parameters": [],
         "requestBody": {
           "required": true,
@@ -790,14 +1062,7 @@
         },
         "responses": {
           "201": {
-            "description": "Create a list item",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ListItemDto"
-                }
-              }
-            }
+            "description": ""
           }
         },
         "tags": [
@@ -806,7 +1071,7 @@
       },
       "put": {
         "operationId": "ListItemsController_updateDisplayOrder",
-        "summary": "Update display order of list items",
+        "description": "Update display order of list items",
         "parameters": [],
         "requestBody": {
           "required": true,
@@ -820,7 +1085,47 @@
         },
         "responses": {
           "204": {
-            "description": "Update display order of list items"
+            "description": ""
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
           }
         },
         "tags": [
@@ -831,7 +1136,6 @@
     "/listItems/{id}": {
       "put": {
         "operationId": "ListItemsController_update",
-        "summary": "Update list item",
         "parameters": [
           {
             "name": "id",
@@ -853,8 +1157,8 @@
           }
         },
         "responses": {
-          "204": {
-            "description": "Update list item"
+          "200": {
+            "description": ""
           }
         },
         "tags": [
@@ -863,7 +1167,6 @@
       },
       "delete": {
         "operationId": "ListItemsController_delete",
-        "summary": "Delete list item",
         "parameters": [
           {
             "name": "id",
@@ -875,8 +1178,8 @@
           }
         ],
         "responses": {
-          "204": {
-            "description": "Delete of list items"
+          "200": {
+            "description": ""
           }
         },
         "tags": [
@@ -884,13 +1187,13 @@
         ]
       }
     },
-    "/applications/{id}": {
+    "/applications": {
       "get": {
-        "operationId": "ApplicationsController_getApplication",
-        "summary": "Get an application by id",
+        "operationId": "ApplicationsController_getPreview",
+        "description": "Get application preview",
         "parameters": [
           {
-            "name": "id",
+            "name": "formId",
             "required": true,
             "in": "path",
             "schema": {
@@ -899,8 +1202,8 @@
           }
         ],
         "responses": {
-          "201": {
-            "description": "Get an application by id",
+          "200": {
+            "description": "",
             "content": {
               "application/json": {
                 "schema": {
@@ -908,38 +1211,46 @@
                 }
               }
             }
-          }
-        },
-        "tags": [
-          "applications"
-        ]
-      },
-      "put": {
-        "operationId": "ApplicationsController_update",
-        "summary": "Update application dependencies",
-        "parameters": [
-          {
-            "name": "id",
-            "required": true,
-            "in": "path",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/UpdateApplicationDto"
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
               }
             }
-          }
-        },
-        "responses": {
-          "204": {
-            "description": "Update application dependencies"
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
           }
         },
         "tags": [
@@ -950,7 +1261,7 @@
     "/applications/{slug}": {
       "post": {
         "operationId": "ApplicationsController_create",
-        "summary": "Create new application",
+        "description": "Create new application",
         "parameters": [
           {
             "name": "slug",
@@ -961,19 +1272,9 @@
             }
           }
         ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreateApplicationDto"
-              }
-            }
-          }
-        },
         "responses": {
-          "201": {
-            "description": "Create new application",
+          "200": {
+            "description": "",
             "content": {
               "application/json": {
                 "schema": {
@@ -981,561 +1282,50 @@
                 }
               }
             }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
           }
         },
         "tags": [
           "applications"
-        ]
-      }
-    },
-    "/values": {
-      "post": {
-        "operationId": "ValuesController_create",
-        "summary": "Creates a new value",
-        "parameters": [],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreateValueDto"
-              }
-            }
-          }
-        },
-        "responses": {
-          "201": {
-            "description": "Creates a new value",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ValueDto"
-                }
-              }
-            }
-          }
-        },
-        "tags": [
-          "values"
-        ]
-      }
-    },
-    "/values/{id}": {
-      "put": {
-        "operationId": "ValuesController_update",
-        "summary": "Update a value",
-        "parameters": [
-          {
-            "name": "id",
-            "required": true,
-            "in": "path",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/UpdateValueDto"
-              }
-            }
-          }
-        },
-        "responses": {
-          "201": {
-            "description": "Update a value",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ValueDto"
-                }
-              }
-            }
-          }
-        },
-        "tags": [
-          "values"
-        ]
-      },
-      "delete": {
-        "operationId": "ValuesController_delete",
-        "summary": "Delete value by id",
-        "parameters": [
-          {
-            "name": "id",
-            "required": true,
-            "in": "path",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "204": {
-            "description": "Delete value by id"
-          }
-        },
-        "tags": [
-          "values"
-        ]
-      }
-    },
-    "/formApplicantTypes": {
-      "post": {
-        "operationId": "FormApplicantTypesController_create",
-        "summary": "Add form applicant type",
-        "parameters": [],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreateFormApplicantTypeDto"
-              }
-            }
-          }
-        },
-        "responses": {
-          "201": {
-            "description": "Add form applicant type",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/FormApplicantTypeDto"
-                }
-              }
-            }
-          }
-        },
-        "tags": [
-          "form applicant types"
-        ]
-      }
-    },
-    "/formApplicantTypes/{id}": {
-      "put": {
-        "operationId": "FormApplicantTypesController_update",
-        "summary": "Update form applicant",
-        "parameters": [
-          {
-            "name": "id",
-            "required": true,
-            "in": "path",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/UpdateFormApplicantTypeDto"
-              }
-            }
-          }
-        },
-        "responses": {
-          "201": {
-            "description": "Update form applicant"
-          }
-        },
-        "tags": [
-          "form applicant types"
-        ]
-      },
-      "delete": {
-        "operationId": "FormApplicantTypesController_delete",
-        "summary": "Delete form applicant",
-        "parameters": [
-          {
-            "name": "id",
-            "required": true,
-            "in": "path",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "204": {
-            "description": "Delete form applicant"
-          }
-        },
-        "tags": [
-          "form applicant types"
-        ]
-      }
-    },
-    "/formCertificationTypes": {
-      "post": {
-        "operationId": "FormCertificationTypesController_create",
-        "summary": "Add form certification type",
-        "parameters": [],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreateFormCertificationTypeDto"
-              }
-            }
-          }
-        },
-        "responses": {
-          "201": {
-            "description": "Add form certification type",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/FormCertificationTypeDto"
-                }
-              }
-            }
-          }
-        },
-        "tags": [
-          "form certification types"
-        ]
-      }
-    },
-    "/formCertificationTypes/{id}": {
-      "delete": {
-        "operationId": "FormCertificationTypesController_delete",
-        "summary": "Remove form certification type",
-        "parameters": [
-          {
-            "name": "id",
-            "required": true,
-            "in": "path",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "204": {
-            "description": "Remove form certification type"
-          }
-        },
-        "tags": [
-          "form certification types"
-        ]
-      }
-    },
-    "/formUrls": {
-      "post": {
-        "operationId": "FormUrlsController_create",
-        "summary": "Add form url",
-        "parameters": [],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreateFormUrlDto"
-              }
-            }
-          }
-        },
-        "responses": {
-          "201": {
-            "description": "Add form url",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/FormUrlDto"
-                }
-              }
-            }
-          }
-        },
-        "tags": [
-          "form urls"
-        ]
-      }
-    },
-    "/formUrls/{id}": {
-      "delete": {
-        "operationId": "FormUrlsController_delete",
-        "summary": "Remove form url",
-        "parameters": [
-          {
-            "name": "id",
-            "required": true,
-            "in": "path",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "204": {
-            "description": "Remove form url"
-          }
-        },
-        "tags": [
-          "form urls"
-        ]
-      }
-    },
-    "/organizationCertificationTypes": {
-      "post": {
-        "operationId": "OrganizationCertificationTypesController_create",
-        "summary": "Add organization certification type",
-        "parameters": [],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreateOrganizationCertificationTypeDto"
-              }
-            }
-          }
-        },
-        "responses": {
-          "201": {
-            "description": "Add organization certification type",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/OrganizationCertificationTypeDto"
-                }
-              }
-            }
-          }
-        },
-        "tags": [
-          "organization certification types"
-        ]
-      }
-    },
-    "/organizationCertificationTypes/{id}": {
-      "delete": {
-        "operationId": "OrganizationCertificationTypesController_delete",
-        "summary": "Remove organization certification type",
-        "parameters": [
-          {
-            "name": "id",
-            "required": true,
-            "in": "path",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "204": {
-            "description": "Remove organization certification type"
-          }
-        },
-        "tags": [
-          "organization certification types"
-        ]
-      }
-    },
-    "/organizationFieldTypes": {
-      "post": {
-        "operationId": "OrganizationFieldTypesController_create",
-        "summary": "Add organization field type",
-        "parameters": [],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreateOrganizationFieldTypeDto"
-              }
-            }
-          }
-        },
-        "responses": {
-          "201": {
-            "description": "Add organization field type",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/OrganizationFieldTypeDto"
-                }
-              }
-            }
-          }
-        },
-        "tags": [
-          "organization field types"
-        ]
-      }
-    },
-    "/organizationFieldTypes/{id}": {
-      "delete": {
-        "operationId": "OrganizationFieldTypesController_delete",
-        "summary": "Remove organization field type",
-        "parameters": [
-          {
-            "name": "id",
-            "required": true,
-            "in": "path",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "204": {
-            "description": "Remove organization field type"
-          }
-        },
-        "tags": [
-          "organization field types"
-        ]
-      }
-    },
-    "/organizationListTypes": {
-      "post": {
-        "operationId": "OrganizationListTypesController_create",
-        "summary": "Add organization list type",
-        "parameters": [],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreateOrganizationListTypeDto"
-              }
-            }
-          }
-        },
-        "responses": {
-          "201": {
-            "description": "Add organization list type",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/OrganizationListTypeDto"
-                }
-              }
-            }
-          }
-        },
-        "tags": [
-          "organization list types"
-        ]
-      }
-    },
-    "/organizationListTypes/{id}": {
-      "delete": {
-        "operationId": "OrganizationListTypesController_delete",
-        "summary": "Remove organization list type",
-        "parameters": [
-          {
-            "name": "id",
-            "required": true,
-            "in": "path",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "204": {
-            "description": "Remove organization list type"
-          }
-        },
-        "tags": [
-          "organization list types"
-        ]
-      }
-    },
-    "/organizationUrls": {
-      "post": {
-        "operationId": "OrganizationUrlsController_create",
-        "summary": "Add organization url",
-        "parameters": [],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreateOrganizationUrlDto"
-              }
-            }
-          }
-        },
-        "responses": {
-          "201": {
-            "description": "Add organization url",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/OrganizationUrlDto"
-                }
-              }
-            }
-          }
-        },
-        "tags": [
-          "organization urls"
-        ]
-      }
-    },
-    "/organizationUrls/{id}": {
-      "put": {
-        "operationId": "OrganizationUrlsController_update",
-        "summary": "Update an organization url",
-        "parameters": [
-          {
-            "name": "id",
-            "required": true,
-            "in": "path",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/UpdateOrganizationUrlDto"
-              }
-            }
-          }
-        },
-        "responses": {
-          "201": {
-            "description": "Update an organization url"
-          }
-        },
-        "tags": [
-          "organization urls"
-        ]
-      },
-      "delete": {
-        "operationId": "OrganizationUrlsController_delete",
-        "summary": "Remove organization url",
-        "parameters": [
-          {
-            "name": "id",
-            "required": true,
-            "in": "path",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "204": {
-            "description": "Remove organization url"
-          }
-        },
-        "tags": [
-          "organization urls"
         ]
       }
     }
@@ -1580,12 +1370,10 @@
         "type": "object",
         "properties": {
           "is": {
-            "type": "string",
-            "default": ""
+            "type": "string"
           },
           "en": {
-            "type": "string",
-            "default": ""
+            "type": "string"
           }
         },
         "required": [
@@ -1608,51 +1396,53 @@
           "nationalId"
         ]
       },
-      "Dependency": {
-        "type": "object",
-        "properties": {
-          "parentProp": {
-            "type": "string"
-          },
-          "childProps": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "isSelected": {
-            "type": "boolean"
-          }
-        },
-        "required": [
-          "parentProp",
-          "childProps",
-          "isSelected"
-        ]
-      },
-      "FormCertificationTypeDto": {
+      "CertificationTypeDto": {
         "type": "object",
         "properties": {
           "id": {
             "type": "string"
           },
-          "certificationTypeId": {
-            "type": "string"
+          "name": {
+            "$ref": "#/components/schemas/LanguageType"
+          },
+          "description": {
+            "$ref": "#/components/schemas/LanguageType"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "estateGuardianshipCertificateStamped",
+              "estateGuardianshipCertificateUnstamped",
+              "residenceCertificate",
+              "indebtednessCertificate",
+              "criminalRecordStamped",
+              "criminalRecordUnstamped"
+            ]
           }
         },
         "required": [
           "id",
-          "certificationTypeId"
+          "name",
+          "description",
+          "type"
         ]
       },
-      "FormApplicantTypeDto": {
+      "FormApplicantDto": {
         "type": "object",
         "properties": {
           "id": {
             "type": "string"
           },
-          "applicantTypeId": {
-            "type": "string"
+          "applicantType": {
+            "type": "string",
+            "enum": [
+              "individual",
+              "individualWithDelegationFromIndividual",
+              "individualWithDelegationFromLegalEntity",
+              "individualWithProcuration",
+              "individualGivingDelegation",
+              "legalEntity"
+            ]
           },
           "name": {
             "$ref": "#/components/schemas/LanguageType"
@@ -1660,119 +1450,9 @@
         },
         "required": [
           "id",
-          "applicantTypeId",
+          "applicantType",
           "name"
         ]
-      },
-      "FormUrlDto": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string"
-          },
-          "organizationUrlId": {
-            "type": "string"
-          },
-          "url": {
-            "type": "string"
-          },
-          "isXroad": {
-            "type": "boolean"
-          },
-          "isTest": {
-            "type": "boolean"
-          },
-          "type": {
-            "type": "string"
-          },
-          "method": {
-            "type": "string"
-          }
-        },
-        "required": [
-          "id",
-          "organizationUrlId",
-          "url",
-          "isXroad",
-          "isTest",
-          "type",
-          "method"
-        ]
-      },
-      "FieldSettings": {
-        "type": "object",
-        "properties": {
-          "minValue": {
-            "type": "number"
-          },
-          "maxValue": {
-            "type": "number"
-          },
-          "minLength": {
-            "type": "number"
-          },
-          "maxLength": {
-            "type": "number"
-          },
-          "minDate": {
-            "format": "date-time",
-            "type": "string"
-          },
-          "maxDate": {
-            "format": "date-time",
-            "type": "string"
-          },
-          "minAmount": {
-            "type": "number"
-          },
-          "maxAmount": {
-            "type": "number"
-          },
-          "year": {
-            "type": "number"
-          },
-          "hasLink": {
-            "type": "boolean"
-          },
-          "url": {
-            "type": "string"
-          },
-          "buttonText": {
-            "$ref": "#/components/schemas/LanguageType"
-          },
-          "isLarge": {
-            "type": "boolean"
-          },
-          "hasPropertyInput": {
-            "type": "boolean"
-          },
-          "hasPropertyList": {
-            "type": "boolean"
-          },
-          "listType": {
-            "type": "string",
-            "enum": [
-              "9e1600f7-7d25-4997-9e8d-16e6d15cd901",
-              "2cd6cda1-ab72-4746-bb38-16b95b89ae75",
-              "1df24f32-1481-4775-81eb-0cf0a5eb9328",
-              "7aa0396f-2574-40cb-8ea4-299a5b62b22d",
-              "7bfc3703-af37-455b-b9a1-8b612f46184b",
-              "f50779b3-464c-42e3-9cc3-8914886f9bf7"
-            ]
-          },
-          "fileTypes": {
-            "type": "string"
-          },
-          "fileMaxSize": {
-            "type": "number"
-          },
-          "maxFiles": {
-            "type": "number"
-          },
-          "timeInterval": {
-            "type": "string"
-          }
-        }
       },
       "ListItemDto": {
         "type": "object",
@@ -1804,122 +1484,75 @@
           "isSelected"
         ]
       },
-      "Month": {
+      "FieldSettingsDto": {
         "type": "object",
         "properties": {
-          "month": {
+          "minValue": {
             "type": "number"
           },
-          "amount": {
+          "maxValue": {
             "type": "number"
           },
-          "days": {
-            "type": "array",
-            "items": {
-              "type": "number"
-            }
-          }
-        }
-      },
-      "ValueType": {
-        "type": "object",
-        "properties": {
-          "text": {
-            "type": "string"
-          },
-          "number": {
+          "minLength": {
             "type": "number"
           },
-          "date": {
+          "maxLength": {
+            "type": "number"
+          },
+          "minDate": {
             "format": "date-time",
             "type": "string"
           },
-          "listValue": {
+          "maxDate": {
+            "format": "date-time",
             "type": "string"
           },
-          "nationalId": {
+          "minAmount": {
             "type": "string"
           },
-          "name": {
+          "maxAmount": {
             "type": "string"
-          },
-          "address": {
-            "type": "string"
-          },
-          "postalCode": {
-            "type": "string"
-          },
-          "municipality": {
-            "type": "string"
-          },
-          "jobTitle": {
-            "type": "string"
-          },
-          "altName": {
-            "type": "string"
-          },
-          "homestayNumber": {
-            "type": "string"
-          },
-          "propertyNumber": {
-            "type": "string"
-          },
-          "totalDays": {
-            "type": "number"
-          },
-          "totalAmount": {
-            "type": "number"
           },
           "year": {
             "type": "number"
           },
-          "isNullReport": {
+          "hasLink": {
             "type": "boolean"
           },
-          "months": {
+          "url": {
+            "type": "string"
+          },
+          "buttonText": {
+            "type": "string"
+          },
+          "hasPropertyInput": {
+            "type": "boolean"
+          },
+          "hasPropertyList": {
+            "type": "boolean"
+          },
+          "list": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/Month"
+              "$ref": "#/components/schemas/ListItemDto"
             }
           },
-          "email": {
+          "listType": {
             "type": "string"
           },
-          "iskNumber": {
+          "fileTypes": {
             "type": "string"
           },
-          "checkboxValue": {
-            "type": "boolean"
+          "fileMaxSize": {
+            "type": "number"
           },
-          "phoneNumber": {
-            "type": "string"
+          "maxFiles": {
+            "type": "number"
           },
-          "bankAccount": {
-            "type": "string"
-          },
-          "time": {
+          "timeInterval": {
             "type": "string"
           }
         }
-      },
-      "ValueDto": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string"
-          },
-          "order": {
-            "type": "number"
-          },
-          "json": {
-            "$ref": "#/components/schemas/ValueType"
-          }
-        },
-        "required": [
-          "id",
-          "order",
-          "json"
-        ]
       },
       "FieldDto": {
         "type": "object",
@@ -1942,29 +1575,36 @@
           "isPartOfMultiset": {
             "type": "boolean"
           },
-          "isRequired": {
-            "type": "boolean"
-          },
-          "isHidden": {
-            "type": "boolean"
-          },
           "fieldSettings": {
-            "$ref": "#/components/schemas/FieldSettings"
+            "$ref": "#/components/schemas/FieldSettingsDto"
           },
           "fieldType": {
-            "type": "string"
-          },
-          "list": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/ListItemDto"
-            }
-          },
-          "values": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/ValueDto"
-            }
+            "type": "string",
+            "enum": [
+              "default",
+              "email",
+              "propertyNumber",
+              "iskNumberbox",
+              "checkbox",
+              "datePicker",
+              "numberbox",
+              "payer",
+              "nationaIdEstate",
+              "phoneNumber",
+              "message",
+              "radioButtons",
+              "document",
+              "bankAccount",
+              "nationalId",
+              "homestayNumber",
+              "iskSumbox",
+              "dropdownList",
+              "nationalIdAll",
+              "timeInput",
+              "homestayOverview",
+              "payment",
+              "textbox"
+            ]
           }
         },
         "required": [
@@ -1974,8 +1614,6 @@
           "displayOrder",
           "description",
           "isPartOfMultiset",
-          "isRequired",
-          "isHidden",
           "fieldType"
         ]
       },
@@ -1997,9 +1635,6 @@
           "isHidden": {
             "type": "boolean"
           },
-          "isCompleted": {
-            "type": "boolean"
-          },
           "multiset": {
             "type": "number"
           },
@@ -2019,7 +1654,6 @@
           "name",
           "displayOrder",
           "isHidden",
-          "isCompleted",
           "multiset",
           "callRuleset"
         ]
@@ -2106,44 +1740,22 @@
           "derivedFrom": {
             "type": "number"
           },
-          "status": {
-            "type": "string",
-            "enum": [
-              "a9d495ea-433a-46d4-84ba-8604cc8c7d40",
-              "3ea7923b-e2a8-499d-b2db-42336bfe7c0b",
-              "06459c6f-9f1e-4ddd-bbd8-e553d9a4363e",
-              "c095bb71-b4ab-4a7c-9be4-4621b62591ce",
-              "11c9db90-2065-45d5-b649-c98001c10dcb"
-            ]
-          },
           "stopProgressOnValidatingScreen": {
             "type": "boolean"
           },
           "completedMessage": {
             "$ref": "#/components/schemas/LanguageType"
           },
-          "dependencies": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/Dependency"
-            }
-          },
           "certificationTypes": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/FormCertificationTypeDto"
+              "$ref": "#/components/schemas/CertificationTypeDto"
             }
           },
-          "applicantTypes": {
+          "applicants": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/FormApplicantTypeDto"
-            }
-          },
-          "urls": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/FormUrlDto"
+              "$ref": "#/components/schemas/FormApplicantDto"
             }
           },
           "sections": {
@@ -2175,7 +1787,6 @@
           "isTranslated",
           "applicationDaysToRemove",
           "derivedFrom",
-          "status",
           "stopProgressOnValidatingScreen"
         ]
       },
@@ -2218,6 +1829,35 @@
           "organizations"
         ]
       },
+      "HttpProblemResponse": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "object",
+            "description": "A URI reference that identifies the problem type"
+          },
+          "title": {
+            "type": "string",
+            "description": "A short, human-readable summary of the problem type"
+          },
+          "status": {
+            "type": "number",
+            "description": "The HTTP status code"
+          },
+          "detail": {
+            "type": "string",
+            "description": "A human-readable explanation specific to this occurrence of the problem"
+          },
+          "instance": {
+            "type": "string",
+            "description": "A URI reference that identifies the specific occurrence of the problem."
+          }
+        },
+        "required": [
+          "type",
+          "title"
+        ]
+      },
       "CreateFormDto": {
         "type": "object",
         "properties": {
@@ -2229,11 +1869,39 @@
           "organizationId"
         ]
       },
-      "FieldType": {
+      "FieldTypeDto": {
         "type": "object",
         "properties": {
           "id": {
             "type": "string"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "default",
+              "email",
+              "propertyNumber",
+              "iskNumberbox",
+              "checkbox",
+              "datePicker",
+              "numberbox",
+              "payer",
+              "nationaIdEstate",
+              "phoneNumber",
+              "message",
+              "radioButtons",
+              "document",
+              "bankAccount",
+              "nationalId",
+              "homestayNumber",
+              "iskSumbox",
+              "dropdownList",
+              "nationalIdAll",
+              "timeInput",
+              "homestayOverview",
+              "payment",
+              "textbox"
+            ]
           },
           "name": {
             "$ref": "#/components/schemas/LanguageType"
@@ -2245,23 +1913,18 @@
             "type": "boolean"
           },
           "fieldSettings": {
-            "$ref": "#/components/schemas/FieldSettings"
-          },
-          "values": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/ValueDto"
-            }
+            "$ref": "#/components/schemas/FieldSettingsDto"
           }
         },
         "required": [
           "id",
+          "type",
           "name",
           "description",
           "isCommon"
         ]
       },
-      "CertificationType": {
+      "ListTypeDto": {
         "type": "object",
         "properties": {
           "id": {
@@ -2272,94 +1935,20 @@
           },
           "description": {
             "$ref": "#/components/schemas/LanguageType"
-          },
-          "isCommon": {
-            "type": "boolean"
-          }
-        },
-        "required": [
-          "id",
-          "name",
-          "description",
-          "isCommon"
-        ]
-      },
-      "ApplicantType": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string"
-          },
-          "description": {
-            "$ref": "#/components/schemas/LanguageType"
-          },
-          "name": {
-            "$ref": "#/components/schemas/LanguageType"
-          },
-          "nameSuggestions": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/LanguageType"
-            }
-          }
-        },
-        "required": [
-          "id",
-          "description"
-        ]
-      },
-      "ListType": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string"
-          },
-          "name": {
-            "$ref": "#/components/schemas/LanguageType"
-          },
-          "description": {
-            "$ref": "#/components/schemas/LanguageType"
-          },
-          "isCommon": {
-            "type": "boolean"
-          }
-        },
-        "required": [
-          "id",
-          "name",
-          "description",
-          "isCommon"
-        ]
-      },
-      "OrganizationUrlDto": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string"
-          },
-          "url": {
-            "type": "string"
-          },
-          "isXroad": {
-            "type": "boolean"
-          },
-          "isTest": {
-            "type": "boolean"
           },
           "type": {
             "type": "string"
           },
-          "method": {
-            "type": "string"
+          "isCommon": {
+            "type": "boolean"
           }
         },
         "required": [
           "id",
-          "url",
-          "isXroad",
-          "isTest",
+          "name",
+          "description",
           "type",
-          "method"
+          "isCommon"
         ]
       },
       "FormResponseDto": {
@@ -2371,31 +1960,19 @@
           "fieldTypes": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/FieldType"
+              "$ref": "#/components/schemas/FieldTypeDto"
             }
           },
           "certificationTypes": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/CertificationType"
-            }
-          },
-          "applicantTypes": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/ApplicantType"
+              "$ref": "#/components/schemas/CertificationTypeDto"
             }
           },
           "listTypes": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/ListType"
-            }
-          },
-          "urls": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/OrganizationUrlDto"
+              "$ref": "#/components/schemas/ListTypeDto"
             }
           },
           "forms": {
@@ -2406,55 +1983,15 @@
           }
         }
       },
-      "UpdateFormDto": {
-        "type": "object",
-        "properties": {
-          "organizationId": {
-            "type": "string"
-          },
-          "name": {
-            "$ref": "#/components/schemas/LanguageType"
-          },
-          "slug": {
-            "type": "string"
-          },
-          "invalidationDate": {
-            "format": "date-time",
-            "type": "string"
-          },
-          "isTranslated": {
-            "type": "boolean"
-          },
-          "applicationDaysToRemove": {
-            "type": "number"
-          },
-          "stopProgressOnValidatingScreen": {
-            "type": "boolean"
-          },
-          "completedMessage": {
-            "$ref": "#/components/schemas/LanguageType"
-          },
-          "dependencies": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/Dependency"
-            }
-          }
-        }
-      },
       "CreateSectionDto": {
         "type": "object",
         "properties": {
           "formId": {
             "type": "string"
-          },
-          "displayOrder": {
-            "type": "number"
           }
         },
         "required": [
-          "formId",
-          "displayOrder"
+          "formId"
         ]
       },
       "UpdateSectionDto": {
@@ -2466,7 +2003,10 @@
           "waitingText": {
             "$ref": "#/components/schemas/LanguageType"
           }
-        }
+        },
+        "required": [
+          "name"
+        ]
       },
       "SectionDisplayOrderDto": {
         "type": "object",
@@ -2498,14 +2038,10 @@
         "properties": {
           "sectionId": {
             "type": "string"
-          },
-          "displayOrder": {
-            "type": "number"
           }
         },
         "required": [
-          "sectionId",
-          "displayOrder"
+          "sectionId"
         ]
       },
       "UpdateScreenDto": {
@@ -2520,7 +2056,12 @@
           "callRuleset": {
             "type": "boolean"
           }
-        }
+        },
+        "required": [
+          "name",
+          "multiset",
+          "callRuleset"
+        ]
       },
       "ScreenDisplayOrderDto": {
         "type": "object",
@@ -2556,19 +2097,75 @@
         "properties": {
           "screenId": {
             "type": "string"
-          },
-          "fieldType": {
-            "type": "string"
-          },
-          "displayOrder": {
-            "type": "number"
           }
         },
         "required": [
-          "screenId",
-          "fieldType",
-          "displayOrder"
+          "screenId"
         ]
+      },
+      "UpdateFieldSettingsDto": {
+        "type": "object",
+        "properties": {
+          "minValue": {
+            "type": "number"
+          },
+          "maxValue": {
+            "type": "number"
+          },
+          "minLength": {
+            "type": "number"
+          },
+          "maxLength": {
+            "type": "number"
+          },
+          "minDate": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "maxDate": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "minAmount": {
+            "type": "string"
+          },
+          "maxAmount": {
+            "type": "string"
+          },
+          "year": {
+            "type": "number"
+          },
+          "hasLink": {
+            "type": "boolean"
+          },
+          "url": {
+            "type": "string"
+          },
+          "buttonText": {
+            "type": "string"
+          },
+          "hasPropertyInput": {
+            "type": "boolean"
+          },
+          "hasPropertyList": {
+            "type": "boolean"
+          },
+          "listType": {
+            "type": "string"
+          },
+          "fileTypes": {
+            "type": "string"
+          },
+          "fileMaxSize": {
+            "type": "number"
+          },
+          "maxFiles": {
+            "type": "number"
+          },
+          "timeInterval": {
+            "type": "string"
+          }
+        }
       },
       "UpdateFieldDto": {
         "type": "object",
@@ -2582,41 +2179,45 @@
           "isPartOfMultiset": {
             "type": "boolean"
           },
-          "isRequired": {
-            "type": "boolean"
-          },
           "fieldSettings": {
-            "$ref": "#/components/schemas/FieldSettings"
+            "$ref": "#/components/schemas/UpdateFieldSettingsDto"
           },
           "fieldType": {
             "type": "string",
             "enum": [
-              "b6a7e297-22fd-4426-a4e1-04a11a2e8914",
-              "eee2840d-a26f-4e9b-a21b-e4478c09e546",
-              "16603815-3db5-4aec-9bc7-56c1207bb79f",
-              "cdd63941-ff33-49d1-8b23-0293e413a281",
-              "f1d14fe1-9e70-4ab2-8f95-8a06a9cf9f48",
-              "0420775e-ab81-47fc-85af-6c40be3844ac",
-              "720fb3a3-6a85-456e-8173-b5913e219dc5",
-              "1f56b93b-8290-4409-8fe0-1b297338e672",
-              "dc50f154-0dfa-4597-80b8-6f3d9ebc36b1",
-              "d6c292c7-4e7c-44a6-bb7e-b956122598b0",
-              "ff7f8580-0419-4f07-9551-fc407d6fb796",
-              "f806a35b-12c9-4d24-8845-024f77e077f7",
-              "0e104698-4e58-4874-97a2-a8fd8d3ab7c4",
-              "1955db2d-c1e3-42ed-b6c5-a668c6136e38",
-              "cd73ebb6-6573-490a-9bd1-1e693a9229eb",
-              "6df647aa-27c8-48b1-8ac9-05e8b4251892",
-              "15a57466-0be3-451d-988d-5b807fea3459",
-              "7cbbe78f-cd5f-4fb9-a77c-86af2bf986b1",
-              "ac3fa8a0-9258-49d1-aff2-1dacf31538f0",
-              "94819d53-69b6-464b-abda-3bb6299d2511",
-              "83f6f77d-1ca7-4f99-8806-05cec59a48e4",
-              "6a616adc-80ab-47c1-8037-1d9a8dc68a5c",
-              "d4143c45-6d45-4052-93c6-42d46572a874"
+              "default",
+              "email",
+              "propertyNumber",
+              "iskNumberbox",
+              "checkbox",
+              "datePicker",
+              "numberbox",
+              "payer",
+              "nationaIdEstate",
+              "phoneNumber",
+              "message",
+              "radioButtons",
+              "document",
+              "bankAccount",
+              "nationalId",
+              "homestayNumber",
+              "iskSumbox",
+              "dropdownList",
+              "nationalIdAll",
+              "timeInput",
+              "homestayOverview",
+              "payment",
+              "textbox"
             ]
           }
-        }
+        },
+        "required": [
+          "name",
+          "description",
+          "isPartOfMultiset",
+          "fieldSettings",
+          "fieldType"
+        ]
       },
       "FieldDisplayOrderDto": {
         "type": "object",
@@ -2677,7 +2278,12 @@
           "isSelected": {
             "type": "boolean"
           }
-        }
+        },
+        "required": [
+          "label",
+          "value",
+          "isSelected"
+        ]
       },
       "ListItemDisplayOrderDto": {
         "type": "object",
@@ -2710,17 +2316,11 @@
           "id": {
             "type": "string"
           },
-          "organizationName": {
-            "$ref": "#/components/schemas/LanguageType"
+          "organization": {
+            "$ref": "#/components/schemas/OrganizationDto"
           },
           "formId": {
             "type": "string"
-          },
-          "formName": {
-            "$ref": "#/components/schemas/LanguageType"
-          },
-          "isTest": {
-            "type": "boolean"
           },
           "slug": {
             "type": "string"
@@ -2733,267 +2333,11 @@
             "format": "date-time",
             "type": "string"
           },
-          "dependencies": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/Dependency"
-            }
-          },
-          "completed": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "status": {
-            "type": "string",
-            "enum": [
-              "ee2545cc-b27f-4d75-bc82-b57f9d10c1b3",
-              "7108cc27-9834-46d4-b651-a369bbadc522",
-              "22b3ab87-4d42-4987-b6fe-33abcf05f112",
-              "f7ee473d-66b9-4a1d-b416-5b1e161a580f",
-              "f5203b2c-6507-482e-ab75-e82954f9377a",
-              "2497f6f3-4b7e-4a6b-bc1e-9084ea2ad72f"
-            ]
-          },
           "sections": {
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/SectionDto"
             }
-          }
-        }
-      },
-      "CreateApplicationDto": {
-        "type": "object",
-        "properties": {
-          "isTest": {
-            "type": "boolean"
-          }
-        },
-        "required": [
-          "isTest"
-        ]
-      },
-      "UpdateApplicationDto": {
-        "type": "object",
-        "properties": {
-          "dependencies": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/Dependency"
-            }
-          },
-          "completed": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          }
-        }
-      },
-      "CreateValueDto": {
-        "type": "object",
-        "properties": {
-          "order": {
-            "type": "number"
-          },
-          "fieldId": {
-            "type": "string"
-          },
-          "applicationId": {
-            "type": "string"
-          }
-        },
-        "required": [
-          "order",
-          "fieldId",
-          "applicationId"
-        ]
-      },
-      "UpdateValueDto": {
-        "type": "object",
-        "properties": {
-          "json": {
-            "$ref": "#/components/schemas/ValueType"
-          }
-        },
-        "required": [
-          "json"
-        ]
-      },
-      "CreateFormApplicantTypeDto": {
-        "type": "object",
-        "properties": {
-          "formId": {
-            "type": "string"
-          },
-          "applicantTypeId": {
-            "type": "string"
-          }
-        },
-        "required": [
-          "formId",
-          "applicantTypeId"
-        ]
-      },
-      "UpdateFormApplicantTypeDto": {
-        "type": "object",
-        "properties": {
-          "name": {
-            "$ref": "#/components/schemas/LanguageType"
-          }
-        },
-        "required": [
-          "name"
-        ]
-      },
-      "CreateFormCertificationTypeDto": {
-        "type": "object",
-        "properties": {
-          "formId": {
-            "type": "string"
-          },
-          "certificationTypeId": {
-            "type": "string"
-          }
-        },
-        "required": [
-          "formId",
-          "certificationTypeId"
-        ]
-      },
-      "CreateFormUrlDto": {
-        "type": "object",
-        "properties": {
-          "formId": {
-            "type": "string"
-          },
-          "organizationUrlId": {
-            "type": "string"
-          }
-        },
-        "required": [
-          "formId",
-          "organizationUrlId"
-        ]
-      },
-      "CreateOrganizationCertificationTypeDto": {
-        "type": "object",
-        "properties": {
-          "organizationId": {
-            "type": "string"
-          },
-          "certificationTypeId": {
-            "type": "string"
-          }
-        },
-        "required": [
-          "organizationId",
-          "certificationTypeId"
-        ]
-      },
-      "OrganizationCertificationTypeDto": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string"
-          },
-          "certificationTypeId": {
-            "type": "string"
-          }
-        },
-        "required": [
-          "id",
-          "certificationTypeId"
-        ]
-      },
-      "CreateOrganizationFieldTypeDto": {
-        "type": "object",
-        "properties": {
-          "organizationId": {
-            "type": "string"
-          },
-          "fieldTypeId": {
-            "type": "string"
-          }
-        },
-        "required": [
-          "organizationId",
-          "fieldTypeId"
-        ]
-      },
-      "OrganizationFieldTypeDto": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string"
-          },
-          "fieldTypeId": {
-            "type": "string"
-          }
-        },
-        "required": [
-          "id",
-          "fieldTypeId"
-        ]
-      },
-      "CreateOrganizationListTypeDto": {
-        "type": "object",
-        "properties": {
-          "organizationId": {
-            "type": "string"
-          },
-          "listTypeId": {
-            "type": "string"
-          }
-        },
-        "required": [
-          "organizationId",
-          "listTypeId"
-        ]
-      },
-      "OrganizationListTypeDto": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string"
-          },
-          "listTypeId": {
-            "type": "string"
-          }
-        },
-        "required": [
-          "id",
-          "listTypeId"
-        ]
-      },
-      "CreateOrganizationUrlDto": {
-        "type": "object",
-        "properties": {
-          "organizationId": {
-            "type": "string"
-          },
-          "type": {
-            "type": "string"
-          }
-        },
-        "required": [
-          "organizationId",
-          "type"
-        ]
-      },
-      "UpdateOrganizationUrlDto": {
-        "type": "object",
-        "properties": {
-          "url": {
-            "type": "string"
-          },
-          "isXroad": {
-            "type": "boolean"
-          },
-          "method": {
-            "type": "string"
           }
         }
       }
