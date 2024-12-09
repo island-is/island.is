@@ -417,14 +417,6 @@ const convertFormNodeToScreens = (
   let screens: FormScreen[] = []
   let newScreens: FormScreen[] = []
 
-  // Top level case: If this is a whole section that should not be shown
-  if (
-    formNode.type === FormItemTypes.SECTION &&
-    !shouldShowFormItem(formNode, answers, externalData, user)
-  ) {
-    //return screens
-  }
-
   if (children) {
     for (let i = 0; i < children.length; i++) {
       const child = children[i]
@@ -491,7 +483,7 @@ export const convertFormToScreens = (
     -1,
     -1,
     user,
-  )
+  ).filter(s => s.isNavigable)
 }
 
 export const getNavigableSectionsInForm = (
