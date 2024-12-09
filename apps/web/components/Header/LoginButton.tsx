@@ -1,19 +1,24 @@
 import React, { MouseEvent } from 'react'
+import { useWindowSize } from 'react-use'
+import cn from 'classnames'
 import { useRouter } from 'next/router'
 
 import {
   Button,
   ButtonTypes,
   DropdownMenu,
-  Hidden,
   Inline,
+  Logo,
 } from '@island.is/island-ui/core'
+import { theme } from '@island.is/island-ui/theme'
 import { webLoginButtonSelect } from '@island.is/plausible'
 import { useI18n } from '@island.is/web/i18n'
 import { LayoutProps } from '@island.is/web/layouts/main'
 
+import * as styles from './LoginButton.css'
+
 const minarsidurLink = '/minarsidur/'
-const minarsidurDelegationsLink = '/minarsidur/login?prompt=select_account'
+const minarsidurDelegationsLink = '/bff/login?prompt=select_account'
 
 export function LoginButton(props: {
   colorScheme: ButtonTypes['colorScheme']
@@ -21,6 +26,7 @@ export function LoginButton(props: {
 }) {
   const { t } = useI18n()
   const router = useRouter()
+  const { width } = useWindowSize()
 
   function trackAndNavigate(
     buttonType: 'Dropdown - Individuals' | 'Dropdown - Companies' | string,
@@ -49,12 +55,38 @@ export function LoginButton(props: {
   const items = [
     {
       href: minarsidurLink,
-      title: t.loginIndividuals,
+      title: (
+        <Inline alignY="center" space={1} flexWrap="nowrap">
+          {props.topItem && (
+            <Logo
+              width={17}
+              height={17}
+              iconOnly={true}
+              id="minar-sidur-individuals"
+              solid={false}
+            />
+          )}
+          {t.loginIndividuals}
+        </Inline>
+      ),
       onClick: trackAndNavigate.bind(null, 'Dropdown - Individuals'),
     },
     {
       href: minarsidurDelegationsLink,
-      title: t.loginDelegations,
+      title: (
+        <Inline alignY="center" space={1} flexWrap="nowrap">
+          {props.topItem && (
+            <Logo
+              width={17}
+              height={17}
+              iconOnly={true}
+              id="minar-sidur-companies"
+              solid={false}
+            />
+          )}
+          {t.loginDelegations}
+        </Inline>
+      ),
       onClick: trackAndNavigate.bind(null, 'Dropdown - Companies'),
     },
   ]
@@ -79,42 +111,26 @@ export function LoginButton(props: {
     })
   }
 
+  const isMobile = width < theme.breakpoints.md
+
   return (
-    <>
-      <Hidden above={'md'}>
-        <DropdownMenu
-          fixed
-          disclosure={
-            <Button
-              colorScheme={props.colorScheme}
-              variant="utility"
-              icon="person"
-              title={t.login}
-            />
-          }
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          // @ts-ignore make web strict
-          items={items}
-        />
-      </Hidden>
-      <Hidden below={'lg'}>
-        <DropdownMenu
-          fixed
-          disclosure={
-            <Button
-              colorScheme={props.colorScheme}
-              variant="utility"
-              icon="person"
-            >
-              {t.login}
-            </Button>
-          }
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          // @ts-ignore make web strict
-          items={items}
-          openOnHover
-        />
-      </Hidden>
-    </>
+    <DropdownMenu
+      fixed
+      menuClassName={cn({ [styles.dropdownMenu]: Boolean(props.topItem) })}
+      disclosure={
+        <Button
+          colorScheme={props.colorScheme}
+          variant="utility"
+          icon="person"
+          title={isMobile ? t.login : undefined}
+        >
+          {!isMobile && t.login}
+        </Button>
+      }
+      openOnHover={!isMobile}
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore make web strict
+      items={items}
+    />
   )
 }

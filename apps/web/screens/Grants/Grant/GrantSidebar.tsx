@@ -40,19 +40,19 @@ export const GrantSidebar = ({ grant, locale }: Props) => {
         generateLine(
           formatMessage(m.single.fund),
           grant?.fund?.link?.slug ? (
-            <Text fontWeight="semiBold" variant="medium" color="blue400">
-              <LinkV2
-                {...linkResolver(grant.fund.link.type as LinkType, [
-                  grant.fund.link.slug,
-                ])}
-                newTab
-                color="blue400"
-                underline="normal"
-                underlineVisibility="hover"
-              >
+            <LinkV2
+              {...linkResolver(grant.fund.link.type as LinkType, [
+                grant.fund.link.slug,
+              ])}
+              newTab
+              color="blue400"
+              underline="normal"
+              underlineVisibility="hover"
+            >
+              <Text fontWeight="semiBold" variant="medium" color="blue400">
                 {grant.fund.title}
-              </LinkV2>
-            </Text>
+              </Text>
+            </LinkV2>
           ) : undefined,
         ),
         generateLine(

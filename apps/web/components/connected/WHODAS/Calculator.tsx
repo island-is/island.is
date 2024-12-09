@@ -6,6 +6,7 @@ import {
   useState,
 } from 'react'
 import { useIntl } from 'react-intl'
+import round from 'lodash/round'
 
 import {
   Box,
@@ -25,6 +26,10 @@ import { MarkdownText } from '../../Organization'
 import { m } from './Calculator.strings'
 import * as styles from './Calculator.css'
 
+const formatScore = (score: number) => {
+  return String(round(score, 1)).replace('.', ',')
+}
+
 interface Question {
   question: string
   answerOptions: {
@@ -41,6 +46,7 @@ interface Step {
 interface CheckboxState {
   steps: {
     title: string
+    maxScorePossible: number
     questions: {
       selectedAnswerIndex: number
       answerScore: number
@@ -119,89 +125,107 @@ interface WHODASResultsProps {
     steps: (Pick<Step, 'title'> & { scoreForStep: number })[]
   }
   bracket: 1 | 2
+  totalScore: number
 }
 
-const WHODASResults = ({ results, bracket }: WHODASResultsProps) => {
+const WHODASResults = ({
+  results,
+  bracket,
+  totalScore,
+}: WHODASResultsProps) => {
   const { format } = useDateUtils()
   const date = format(new Date(), 'do MMMM yyyy')
 
   const { formatMessage } = useIntl()
 
   return (
-    <Stack space={3}>
-      <Inline space={3} alignY="center" justifyContent="spaceBetween">
-        <Text variant="h2" as="h2">
-          {formatMessage(m.results.mainHeading)}
-        </Text>
-        <Button
-          variant="utility"
-          size="small"
-          icon="print"
-          onClick={() => {
-            window.print()
-          }}
-        >
-          {formatMessage(m.results.print)}
-        </Button>
-      </Inline>
-      <Text>{date}</Text>
-      <Stack space={1}>
-        <Text variant="h3" as="h3">
-          {formatMessage(m.results.scoreHeading)}
-        </Text>
-        <Box background="purple100" padding="p2" borderRadius="large">
+    <Stack space={6}>
+      <Stack space={3}>
+        <Inline space={3} alignY="center" justifyContent="spaceBetween">
+          <Text variant="h2" as="h2">
+            {formatMessage(m.results.mainHeading)}
+          </Text>
+          <Button
+            variant="utility"
+            size="small"
+            icon="print"
+            onClick={() => {
+              window.print()
+            }}
+          >
+            {formatMessage(m.results.print)}
+          </Button>
+        </Inline>
+        <Text>{date}</Text>
+        <Stack space={1}>
+          <Text variant="h3" as="h3">
+            {formatMessage(m.results.scoreHeading)}
+          </Text>
+          <Box background="purple100" padding="p2" borderRadius="large">
+            <Text>
+              {formatScore(totalScore)} {formatMessage(m.results.outOf100)}
+            </Text>
+          </Box>
+        </Stack>
+        <Stack space={1}>
+          <Text variant="h3" as="h3">
+            {formatMessage(m.results.interpretationHeading)}
+          </Text>
           <Text>
             {formatMessage(
               bracket === 1
-                ? m.results.firstBracketScoreText
-                : m.results.secondBracketScoreText,
+                ? m.results.firstBracketInterpretationText
+                : m.results.secondBracketInterpretationText,
             )}
           </Text>
-        </Box>
-      </Stack>
-      <Stack space={1}>
-        <Text variant="h3" as="h3">
-          {formatMessage(m.results.interpretationHeading)}
-        </Text>
-        <Text>
-          {formatMessage(
-            bracket === 1
-              ? m.results.firstBracketInterpretationText
-              : m.results.secondBracketInterpretationText,
-          )}
-        </Text>
-      </Stack>
+        </Stack>
 
-      <Stack space={1}>
-        <Text variant="h3" as="h3">
-          {formatMessage(m.results.adviceHeading)}
-        </Text>
-        <MarkdownText replaceNewLinesWithBreaks={false}>
-          {formatMessage(
-            bracket === 1
-              ? m.results.firstBracketAdviceText
-              : m.results.secondBracketAdviceText,
-          )}
-        </MarkdownText>
-      </Stack>
-
-      {bracket !== 1 && (
         <Stack space={1}>
           <Text variant="h3" as="h3">
-            {formatMessage(m.results.breakdownHeading)}
+            {formatMessage(m.results.adviceHeading)}
           </Text>
-          <BulletList>
-            {results.steps.map((step) => (
-              <Bullet key={step.title}>
-                <Box className={styles.breakdownRowContainer}>
-                  <Text>{step.title}</Text>
-                  <Text>{step.scoreForStep}</Text>
-                </Box>
-              </Bullet>
-            ))}
-          </BulletList>
+          <MarkdownText replaceNewLinesWithBreaks={false}>
+            {formatMessage(
+              bracket === 1
+                ? m.results.firstBracketAdviceText
+                : m.results.secondBracketAdviceText,
+            )}
+          </MarkdownText>
         </Stack>
-      )}
+
+        {bracket > 1 && (
+          <Stack space={6}>
+            <Stack space={3}>
+              <Stack space={3}>
+                <Text variant="h3" as="h3">
+                  {formatMessage(m.results.breakdownHeading)}
+                </Text>
+                <BulletList>
+                  {results.steps.map((step) => (
+                    <Bullet key={step.title}>
+                      <Box className={styles.breakdownRowContainer}>
+                        <Text>{step.title}</Text>
+                        <Text>
+                          {formatScore(step.scoreForStep)}{' '}
+                          {formatMessage(m.results.outOf100)}
+                        </Text>
+                      </Box>
+                    </Bullet>
+                  ))}
+                </BulletList>
+              </Stack>
+            </Stack>
+            <Box
+              background="blue100"
+              paddingX={[4]}
+              paddingY={[3]}
+              borderRadius="large"
+            >
+              <Text>{formatMessage(m.results.resultDisclaimer)}</Text>
+            </Box>
+          </Stack>
+        )}
+      </Stack>
     </Stack>
   )
 }
@@ -225,6 +249,14 @@ export const WHODASCalculator = ({ slice }: WHODASCalculatorProps) => {
     steps: steps.map(({ title, description, questions }) => ({
       title,
       description,
+      maxScorePossible: questions.reduce(
+        (prev, acc) =>
+          prev +
+          (acc.answerOptions.length > 0
+            ? acc.answerOptions[acc.answerOptions.length - 1].score
+            : 0),
+        0,
+      ),
       questions: questions.map(() => ({
         selectedAnswerIndex: 0,
         answerScore: 0,
@@ -245,74 +277,99 @@ export const WHODASCalculator = ({ slice }: WHODASCalculatorProps) => {
 
   if (showResults) {
     let totalScore = 0
+    let totalMaxScorePossible = 0
     const results: WHODASResultsProps['results'] = {
       steps: [],
     }
     for (const stateStep of state.steps) {
+      totalMaxScorePossible += stateStep.maxScorePossible
       let score = 0
       for (const question of stateStep.questions) {
         score += question.answerScore
       }
-      results.steps.push({ ...stateStep, scoreForStep: score })
       totalScore += score
+      if (stateStep.maxScorePossible > 0) {
+        score = (score * 100) / stateStep.maxScorePossible
+      }
+      results.steps.push({ ...stateStep, scoreForStep: score })
+    }
+    if (totalMaxScorePossible > 0) {
+      totalScore = (totalScore * 100) / totalMaxScorePossible
     }
     return (
-      <WHODASResults
-        results={results}
-        bracket={
-          totalScore <= (slice.configJson?.firstBracketBreakpoint ?? 16.9)
-            ? 1
-            : 2
-        }
-      />
+      <Stack space={8}>
+        <MarkdownText replaceNewLinesWithBreaks={false}>
+          {formatMessage(m.results.topDescription)}
+        </MarkdownText>
+        <Box className={styles.stayOnSinglePageWhenPrinting}>
+          <WHODASResults
+            results={results}
+            bracket={
+              totalScore <= (slice.configJson?.firstBracketBreakpoint ?? 16.9)
+                ? 1
+                : 2
+            }
+            totalScore={totalScore}
+          />
+        </Box>
+      </Stack>
     )
   }
 
   return (
-    <Stack space={6}>
-      <Box ref={formRef}>
-        <Stack space={4}>
-          <Stack space={1}>
-            <Text>
-              {formatMessage(m.form.progress, {
-                stepIndex: stepIndex + 1,
-                stepCount: steps.length,
-              })}
-            </Text>
-            <ProgressMeter progress={(stepIndex + 1) / steps.length} />
+    <Stack space={8}>
+      <MarkdownText replaceNewLinesWithBreaks={false}>
+        {formatMessage(m.form.topDescription)}
+      </MarkdownText>
+      <Stack space={6}>
+        <Box ref={formRef}>
+          <Stack space={4}>
+            <Stack space={1}>
+              <Text>
+                {formatMessage(m.form.progress, {
+                  stepIndex: stepIndex + 1,
+                  stepCount: steps.length,
+                })}
+              </Text>
+              <ProgressMeter progress={(stepIndex + 1) / steps.length} />
+            </Stack>
+            <WHODASForm
+              step={step}
+              stepIndex={stepIndex}
+              state={state}
+              setState={setState}
+            />
           </Stack>
-          <WHODASForm
-            step={step}
-            stepIndex={stepIndex}
-            state={state}
-            setState={setState}
-          />
-        </Stack>
-      </Box>
-      <Inline alignY="center" space={2}>
-        {stepIndex > 0 && (
+        </Box>
+        <Inline alignY="center" space={2}>
+          {stepIndex > 0 && (
+            <Button
+              key={`previous-step-${stepIndex}`}
+              size="small"
+              variant="ghost"
+              preTextIcon="arrowBack"
+              onClick={() => {
+                setStepIndex((s) => s - 1)
+              }}
+            >
+              {formatMessage(m.form.previousStep)}
+            </Button>
+          )}
           <Button
+            key={`next-step-${stepIndex}`}
             size="small"
-            variant="ghost"
-            preTextIcon="arrowBack"
             onClick={() => {
-              setStepIndex((s) => s - 1)
+              setStepIndex((s) => s + 1)
             }}
           >
-            {formatMessage(m.form.previousStep)}
+            {formatMessage(
+              stepIndex >= steps.length - 1
+                ? m.form.seeResults
+                : m.form.nextStep,
+            )}
           </Button>
-        )}
-        <Button
-          size="small"
-          onClick={() => {
-            setStepIndex((s) => s + 1)
-          }}
-        >
-          {formatMessage(
-            stepIndex >= steps.length - 1 ? m.form.seeResults : m.form.nextStep,
-          )}
-        </Button>
-      </Inline>
+        </Inline>
+      </Stack>
     </Stack>
   )
 }

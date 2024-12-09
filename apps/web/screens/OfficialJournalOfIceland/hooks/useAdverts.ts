@@ -20,8 +20,8 @@ export type UseAdvertsVariables = {
   type?: Array<string>
   category?: Array<string>
   involvedParty?: Array<string>
-  dateFrom?: Date
-  dateTo?: Date
+  dateFrom?: string
+  dateTo?: string
 }
 
 export type UseAdvertsInput = {
