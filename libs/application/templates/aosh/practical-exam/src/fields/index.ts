@@ -1,3 +1,6 @@
 export { WatchCompanyNationalId } from './WatchCompanyNationalId'
 export { AgreementCheckbox } from './AgreementCheckbox'
 export { Overview } from './Overview'
+export { ExamineeValidation } from './ExamineeValidation'
+export { InstructorValidation } from './InstructorValidation'
+export { ExamCategories } from './ExamCategories'

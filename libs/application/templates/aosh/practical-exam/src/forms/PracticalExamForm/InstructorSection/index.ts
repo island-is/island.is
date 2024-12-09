@@ -1,7 +1,7 @@
 import {
+  buildCustomField,
   buildMultiField,
   buildSection,
-  buildSubmitField,
   buildTableRepeaterField,
 } from '@island.is/application/core'
 import { instructor, shared } from '../../../lib/messages'
@@ -46,6 +46,11 @@ export const instructorSection = buildSection({
               phone: (value) => `${value.slice(0, 3)}-${value.slice(3)}`,
             },
           },
+        }),
+        buildCustomField({
+          id: '',
+          title: '',
+          component: 'InstructorValidation',
         }),
       ],
     }),

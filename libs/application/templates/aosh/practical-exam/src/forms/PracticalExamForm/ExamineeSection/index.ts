@@ -1,4 +1,5 @@
 import {
+  buildCustomField,
   buildMultiField,
   buildSection,
   buildTableRepeaterField,
@@ -61,6 +62,11 @@ export const examineeSection = buildSection({
               phone: (value) => `${value.slice(0, 3)}-${value.slice(3)}`,
             },
           },
+        }),
+        buildCustomField({
+          id: '',
+          title: '',
+          component: 'ExamineeValidation',
         }),
       ],
     }),
