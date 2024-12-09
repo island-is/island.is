@@ -1,6 +1,8 @@
 import { IdsUserGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
 import { ApiScope } from '@island.is/auth/scopes'
 import { Audit } from '@island.is/nest/audit'
+import { CodeOwner } from '@island.is/nest/core'
+import { CodeOwners } from '@island.is/shared/constants'
 import { UseGuards } from '@nestjs/common'
 import { Parent, ResolveField, Resolver } from '@nestjs/graphql'
 import { GenericLicenseProvider } from '../dto/GenericLicenseProvider.dto'
@@ -13,6 +15,7 @@ import {
 import { Loader } from '@island.is/nest/dataloader'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
+@CodeOwner(CodeOwners.Hugsmidjan)
 @Scopes(ApiScope.internal, ApiScope.licenses)
 @Resolver(() => GenericLicenseProvider)
 @Audit({ namespace: '@island.is/api/license-service' })
