@@ -64,7 +64,6 @@ export const clientInfoSection = buildSection({
         }),
         buildCustomField({
           condition: (answers, externalData) => {
-            console.log('Application: ', answers, externalData)
             return true
           },
           id: 'powerOfAttorney',
