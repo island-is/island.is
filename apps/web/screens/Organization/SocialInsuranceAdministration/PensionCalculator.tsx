@@ -934,7 +934,11 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
                                   }
                                   label={formatMessage(
                                     typeOfBasePension ===
-                                      BasePensionType.Disability
+                                      BasePensionType.Disability ||
+                                      typeOfBasePension ===
+                                        BasePensionType.NewSystemDisability ||
+                                      typeOfBasePension ===
+                                        BasePensionType.NewSystemPartialDisability
                                       ? translationStrings.ageOfFirst75DisabilityAssessment
                                       : translationStrings.ageOfFirst75RehabilitationAssessment,
                                   )}
