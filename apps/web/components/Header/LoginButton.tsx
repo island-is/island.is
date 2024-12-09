@@ -15,8 +15,6 @@ import { webLoginButtonSelect } from '@island.is/plausible'
 import { useI18n } from '@island.is/web/i18n'
 import { LayoutProps } from '@island.is/web/layouts/main'
 
-import * as styles from './LoginButton.css'
-
 const minarsidurLink = '/minarsidur/'
 const minarsidurDelegationsLink = '/bff/login?prompt=select_account'
 
@@ -116,7 +114,6 @@ export function LoginButton(props: {
   return (
     <DropdownMenu
       fixed
-      menuClassName={cn({ [styles.dropdownMenu]: Boolean(props.topItem) })}
       disclosure={
         <Button
           colorScheme={props.colorScheme}
