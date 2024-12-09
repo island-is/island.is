@@ -209,7 +209,6 @@ const VehicleBulkMileage = () => {
               </Filter>
             </Box>
           )}
-          <LineChart />
           <Stack space={4}>
             {error && !loading && <Problem error={error} noBorder={false} />}
             {!error && (

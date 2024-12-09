@@ -2,7 +2,7 @@ import React from 'react'
 import * as styles from './charts.css'
 import cn from 'classnames'
 import { LegendProps, TooltipProps } from 'recharts'
-import { Box, Text } from '@island.is/island-ui/core'
+import { Box, Inline, Text } from '@island.is/island-ui/core'
 
 interface AxisTickProps {
   x?: number
@@ -83,25 +83,21 @@ interface CustomLegendProps extends LegendProps {
 export const RenderLegend = (props: CustomLegendProps) => {
   const { payload, title } = props
 
+  if (!payload || !payload.values) {
+    return null
+  }
+
   return (
-    <div className={cn(styles.wrapper)}>
-      <p className={cn(styles.title)}>{title}</p>
-      <ul className={cn(styles.listWrapper)}>
-        {payload
-          ? payload.map((entry, index) => (
-              <li className={cn(styles.list)} key={`item-${index}`}>
-                <div
-                  className={cn(styles.dot)}
-                  style={{
-                    border: '3px solid ' + entry.color,
-                  }}
-                />
-                {entry.value}
-              </li>
-            ))
-          : null}
-      </ul>
-    </div>
+    <Inline space={1}>
+      <Box as="ul" component={Inline}>
+        {[...payload.values()].map((item) => (
+          <Box as="li">
+            <Text>{title}</Text>
+            <Text>{item.value}</Text>
+          </Box>
+        ))}
+      </Box>
+    </Inline>
   )
 }
 

@@ -18,8 +18,8 @@ export const scroll = style({
 })
 
 export const outerWrapper = style({
-  width: '889px',
-  minHeight: '156px',
+  width: '100%',
+  height: '100%',
   borderTopLeftRadius: '8px',
   borderTopRightRadius: '8px',
   alignItems: 'center',
@@ -35,7 +35,7 @@ export const graphWrapper = style({
   display: 'flex',
   justifyContent: 'center',
   alignItems: 'center',
-  width: '889px',
+  width: '100%',
   height: '100%',
 })
 

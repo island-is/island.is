@@ -1,4 +1,3 @@
-import React from 'react'
 import {
   BarChart,
   Bar,
@@ -17,76 +16,104 @@ import {
   YAxisLabel,
 } from '../sharedChartComponents'
 import { Box } from '@island.is/island-ui/core'
+import * as styles from './styles.css'
+
+type Datakeys = Array<string>
+
+interface Axis {
+  label?: string
+  datakey: string
+}
+
+interface BarType {
+  datakey: string
+}
 
 interface GraphDataProps {
   title?: string
-  data: string
-  datakeys: string
+  data: Array<Record<string, number | string>>
+  datakeys: Array<string>
+  bars: Array<BarType>
+  xAxis: Axis
+  yAxis: Axis
 }
-interface GraphProps {
-  graphData: GraphDataProps
-}
-export const SimpleBarChart = ({ graphData }: GraphProps) => {
-  const { data, datakeys } = graphData
-  const parsedData = JSON.parse(data)
-  const parsedDatakeys = JSON.parse(datakeys)
-  const stackIds = parsedDatakeys.bars.map(
-    (e: { stackId: number }) => e.stackId,
-  )
-  const shouldStack = new Set(stackIds).size !== stackIds.length
+
+export const SimpleBarChart = ({
+  title,
+  data,
+  datakeys,
+  bars,
+  xAxis,
+  yAxis,
+}: GraphDataProps) => {
   return (
-    <Box width="full" height="full">
-      <YAxisLabel label={parsedDatakeys.yAxis?.label} />
-      <ResponsiveContainer width="100%" height="100%">
-        <BarChart
-          width={20}
-          height={150}
-          data={parsedData}
-          margin={{
-            top: 30,
-            right: 0,
-            left: 20,
-            bottom: 5,
-          }}
+    <Box
+      display="flex"
+      flexDirection="column"
+      flexGrow={1}
+      alignItems="stretch"
+      justifyContent="flexStart"
+    >
+      <Box
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        className={styles.graphWrapper}
+      >
+        <Box
+          justifyContent="center"
+          alignItems="center"
+          className={styles.graphParent}
         >
-          <CartesianGrid
-            strokeDasharray="0"
-            vertical={false}
-            stroke="#CCDFFF"
-          />
-          <XAxis
-            dataKey={parsedDatakeys.xAxis}
-            stroke="#CCDFFF"
-            tick={<CustomizedAxisTick />}
-            padding={{ left: 30 }}
-            tickLine={false}
-          />
-          <YAxis stroke="#CCDFFF" tick={<CustomizedAxisTick />} />
-          <Tooltip content={<CustomTooltip />} />
-          <Legend
-            iconType="circle"
-            align="right"
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore make web strict
-            content={RenderLegend}
-          />
-          {parsedDatakeys.bars.map((item: any, index: number) => (
-            //TODO: Better way to fix implicit any type?
-            <Bar
-              key={index}
-              dataKey={item.datakey}
-              fill={item.color ? item.color : COLORS[index % COLORS.length]}
-              stackId={item.stackId}
-              barSize={16}
-              radius={
-                index === parsedDatakeys.bars.length - 1 || !shouldStack
-                  ? [20, 20, 0, 0]
-                  : 0
-              }
-            />
-          ))}
-        </BarChart>
-      </ResponsiveContainer>
+          <Box width="full" height="full">
+            <YAxisLabel label={yAxis.label} />
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart
+                width={20}
+                height={150}
+                data={data}
+                margin={{
+                  top: 30,
+                  right: 0,
+                  left: 20,
+                  bottom: 5,
+                }}
+              >
+                <CartesianGrid
+                  strokeDasharray="0"
+                  vertical={false}
+                  stroke="#CCDFFF"
+                />
+                <XAxis
+                  dataKey={xAxis.datakey}
+                  stroke="#CCDFFF"
+                  tick={<CustomizedAxisTick />}
+                  padding={{ left: 30 }}
+                  tickLine={false}
+                />
+                <YAxis stroke="#CCDFFF" tick={<CustomizedAxisTick />} />
+                <Tooltip content={<CustomTooltip />} />
+                <Legend
+                  iconType="circle"
+                  align="right"
+                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                  // @ts-ignore make web strict
+                  content={RenderLegend}
+                />
+                {bars.map((item: BarType, index: number) => (
+                  <Bar
+                    key={index}
+                    dataKey={item.datakey}
+                    fill={'#FFF066'}
+                    barSize={16}
+                    radius={[20, 20, 0, 0]}
+                  />
+                ))}
+              </BarChart>
+            </ResponsiveContainer>
+          </Box>
+        </Box>
+      </Box>
     </Box>
   )
 }

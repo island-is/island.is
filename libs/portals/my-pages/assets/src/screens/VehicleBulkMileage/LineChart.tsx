@@ -1,7 +1,6 @@
-import { Box, Text } from '@island.is/island-ui/core'
-import { ChartsCard } from '@island.is/portals/my-pages/core'
+import { SimpleBarChart } from '@island.is/portals/my-pages/core'
 
-const data = [
+const data: Array<Record<string, string | number>> = [
   {
     date: '01.02.2022',
     mileage: 1000,
@@ -19,10 +18,7 @@ const data = [
 const datakeys = [
   {
     yAxis: {
-      right: 0,
-      label: 'bingbong',
-      labelRight: 'bognbong',
-      showRight: true,
+      label: 'Km.',
     },
     xAxis: 'date',
     bars: [
@@ -32,24 +28,26 @@ const datakeys = [
         color: 'blue',
       },
     ],
-    lines: [
-      {
-        datakey: 'mileage',
-        color: 'red',
-        stackId: 1,
-      },
-    ],
+    lines: [],
   },
 ]
 
 export const LineChart = () => {
   return (
-    <ChartsCard
-      chart={{
-        graphTitle: '',
-        data: JSON.stringify(data),
-        datakeys: JSON.stringify(datakeys),
-        type: 'mixed',
+    <SimpleBarChart
+      data={data}
+      datakeys={['date', 'mileage']}
+      bars={[
+        {
+          datakey: 'mileage',
+        },
+      ]}
+      xAxis={{
+        datakey: 'date',
+      }}
+      yAxis={{
+        datakey: 'mileage',
+        label: 'Km.',
       }}
     />
   )
