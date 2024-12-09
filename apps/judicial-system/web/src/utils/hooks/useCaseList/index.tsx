@@ -142,7 +142,7 @@ const useCaseList = () => {
         router.push(`${routeTo}/${caseToOpen.id}`)
       }
     },
-    [router, user],
+    [router, user, features],
   )
 
   const handleOpenCase = useCallback(
