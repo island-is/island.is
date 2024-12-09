@@ -26,7 +26,7 @@ export class EndorsementList extends Model {
 
   @ApiProperty()
   @Column({
-    type: DataType.NUMBER,
+    type: DataType.INTEGER,
     allowNull: true,
   })
   counter!: number
@@ -96,8 +96,9 @@ export class EndorsementList extends Model {
   @HasMany(() => Endorsement)
   endorsements?: Endorsement[]
 
-  @ApiProperty()
-  endorsementCounter?: number
+  // OK TO DELETE THIS NOW .........................................
+  // @ApiProperty()
+  // endorsementCounter?: number
 
   @ApiProperty()
   @Column({
@@ -120,7 +121,7 @@ export class EndorsementList extends Model {
   readonly modified!: Date
 
   @ApiProperty({
-    type: Number,
+    type: DataType.INTEGER,
     description: 'The number of endorsements in the list',
   })
   @Column({
