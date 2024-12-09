@@ -76,7 +76,7 @@ describe('CaseController - Transition guards', () => {
       guard = new guards[4]()
     })
 
-    it('should have CaseWriteGuard as guard 5', () => {
+    it('should have CaseTransitionGuard as guard 5', () => {
       expect(guard).toBeInstanceOf(CaseTransitionGuard)
     })
   })
