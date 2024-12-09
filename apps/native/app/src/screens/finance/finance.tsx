@@ -1,8 +1,9 @@
-import { Button, Heading, Skeleton, TableViewCell, Typography } from '@ui'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { SafeAreaView, ScrollView } from 'react-native'
 import { NavigationFunctionComponent } from 'react-native-navigation'
 import { useTheme } from 'styled-components/native'
+
+import { Button, Heading, Skeleton, TableViewCell, Typography } from '../../ui'
 import externalLink from '../../assets/icons/external-link.png'
 import { getConfig } from '../../config'
 import { GetFinanceStatus } from '../../graphql/types/finance.types'

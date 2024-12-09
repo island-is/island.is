@@ -1,18 +1,20 @@
 {
-  "extends": "@tsconfig/react-native/tsconfig.json",
+  "extends": "../../../tsconfig.base.json",
   "compilerOptions": {
-    "baseUrl": ".",
-    "strict": true,
-    "paths": {
-      "@ui": ["src/ui"],
-      "@ui/*": ["src/ui/*"],
-      "@island.is/application/types": ["../../libs/application/types/src"],
-      "@island.is/application/types/*": ["../../libs/application/types/src/*"]
-    }
+    "isolatedModules": true,
+    "jsx": "react-native",
+    "lib": ["esnext"],
+    "resolveJsonModule": true,
+    "declaration": true
   },
-  "exclude": [
-    "**/*.stories.tsx",
-    "**/*.stories.ts",
-    "src/screens/devtools/storybook.tsx"
+  "files": [],
+  "include": [],
+  "references": [
+    {
+      "path": "./tsconfig.app.json"
+    },
+    {
+      "path": "./tsconfig.spec.json"
+    }
   ]
 }

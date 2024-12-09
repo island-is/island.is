@@ -1,4 +1,3 @@
-import { dynamicColor, font } from '@ui'
 import React, { useCallback, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import {
@@ -10,6 +9,7 @@ import {
   useWindowDimensions,
 } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
+import { dynamicColor, font } from '../../ui'
 import { testIDs } from '../../utils/test-ids'
 
 interface PinKeypadProps {

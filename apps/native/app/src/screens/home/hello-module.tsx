@@ -1,11 +1,10 @@
-import { Typography, Skeleton } from '@ui'
 import * as FileSystem from 'expo-file-system'
-
 import React, { useEffect } from 'react'
 import { FormattedMessage } from 'react-intl'
 import { Image, SafeAreaView } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
+import { Typography, Skeleton } from '../../ui'
 import { useAuthStore } from '../../stores/auth-store'
 import { usePreferencesStore } from '../../stores/preferences-store'
 import { useGetFrontPageImageQuery } from '../../graphql/types/schema'

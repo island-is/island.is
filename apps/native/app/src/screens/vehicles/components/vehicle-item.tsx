@@ -1,8 +1,9 @@
-import { Label, VehicleCard } from '@ui'
 import React from 'react'
 import { FormattedDate, FormattedMessage } from 'react-intl'
 import { SafeAreaView, TouchableHighlight, View, ViewStyle } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
+
+import { Label, VehicleCard } from '../../../ui'
 import { ListVehiclesV2Query } from '../../../graphql/types/schema'
 import { navigateTo } from '../../../lib/deep-linking'
 
