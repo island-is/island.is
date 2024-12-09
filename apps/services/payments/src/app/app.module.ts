@@ -9,7 +9,6 @@ import { ProblemModule } from '@island.is/nest/problem'
 import { ChargeFjsV2ClientConfig } from '@island.is/clients/charge-fjs-v2'
 import { XRoadConfig } from '@island.is/nest/config'
 
-// import { environment } from '../environments'
 import { PaymentFlowModule } from './paymentFlow/paymentFlow.module'
 import { SequelizeConfigService } from '../sequelizeConfig.service'
 
