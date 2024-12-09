@@ -7,6 +7,8 @@ import {
 } from '@island.is/auth-nest-tools'
 import { ApiScope } from '@island.is/auth/scopes'
 import { Audit } from '@island.is/nest/audit'
+import { CodeOwner } from '@island.is/nest/core'
+import { CodeOwners } from '@island.is/shared/constants'
 
 import { UseGuards } from '@nestjs/common'
 import { Args, Mutation, Resolver } from '@nestjs/graphql'
@@ -20,6 +22,7 @@ import { GenericPkPassVerification } from '../dto/GenericPkPassVerification.dto'
 import { VerifyPkPassInput } from '../dto/VerifyPkPass.input'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
+@CodeOwner(CodeOwners.Hugsmidjan)
 @Resolver(() => GenericPkPass)
 @Audit({ namespace: '@island.is/api/license-service' })
 export class PkPassResolver {

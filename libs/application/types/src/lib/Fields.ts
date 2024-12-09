@@ -783,6 +783,7 @@ export interface DisplayField extends BaseField {
   titleVariant?: TitleVariants
   suffix?: MessageDescriptor | string
   rightAlign?: boolean
+  halfWidthOwnline?: boolean
   variant?: TextFieldVariant
   label?: MessageDescriptor | string
   value: (answers: FormValue) => string
