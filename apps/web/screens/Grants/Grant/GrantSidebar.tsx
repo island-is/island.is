@@ -1,6 +1,7 @@
 import { useMemo } from 'react'
 
 import { Box, Button, LinkV2, Stack, Text } from '@island.is/island-ui/core'
+import { useLocale } from '@island.is/localization'
 import { Locale } from '@island.is/shared/types'
 import { isDefined } from '@island.is/shared/utils'
 import { InstitutionPanel } from '@island.is/web/components'
@@ -8,8 +9,7 @@ import { Grant } from '@island.is/web/graphql/schema'
 import { LinkType, useLinkResolver } from '@island.is/web/hooks'
 
 import { m } from '../messages'
-import { useLocale } from '@island.is/localization'
-import { generateStatusTag } from '../utils'
+import { generateStatusTag, parseStatus } from '../utils'
 
 interface Props {
   grant: Grant
@@ -33,6 +33,11 @@ const generateLine = (heading: string, content?: React.ReactNode) => {
 export const GrantSidebar = ({ grant, locale }: Props) => {
   const { linkResolver } = useLinkResolver()
   const { formatMessage } = useLocale()
+
+  const status = useMemo(
+    () => parseStatus(grant, formatMessage, locale),
+    [grant, formatMessage, locale],
+  )
 
   const detailPanelData = useMemo(
     () =>
@@ -74,20 +79,23 @@ export const GrantSidebar = ({ grant, locale }: Props) => {
         ),
         generateLine(
           formatMessage(m.single.deadline),
-          grant?.applicationDeadlineStatus ? (
-            <Text variant="medium">{grant.applicationDeadlineStatus}</Text>
+          status.deadlineStatus ? (
+            <Text variant="medium">{status.deadlineStatus}</Text>
           ) : undefined,
         ),
         generateLine(
           formatMessage(m.single.status),
           grant?.status ? (
             <Text variant="medium">
-              {generateStatusTag(grant.status, formatMessage)?.label}
+              {
+                generateStatusTag(status.applicationStatus, formatMessage)
+                  ?.label
+              }
             </Text>
           ) : undefined,
         ),
       ].filter(isDefined) ?? [],
-    [grant, formatMessage, linkResolver],
+    [grant, formatMessage, linkResolver, status],
   )
 
   const filesPanelData = useMemo(
