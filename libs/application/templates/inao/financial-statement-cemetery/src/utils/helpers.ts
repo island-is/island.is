@@ -4,6 +4,8 @@ import {
   BOARDMEMEBER,
   CAPITALNUMBERS,
   CARETAKER,
+  CemeteriesBackwardLimit,
+  CemeteriesYearAllowed,
   CEMETERYEQUITIESANDLIABILITIESIDS,
   CEMETERYOPERATIONIDS,
   EQUITYANDLIABILITIESTOTALS,
@@ -13,7 +15,7 @@ import {
 import { FinancialStatementCemetery } from '../lib/dataSchema'
 import getYear from 'date-fns/getYear'
 import subYears from 'date-fns/subYears'
-import { BoardMember, Config, FSIUSERTYPE } from '../types/types'
+import { AuditConfig, BoardMember, Config, FSIUSERTYPE } from '../types/types'
 
 export const getTotal = (values: Record<string, string>, key: string) => {
   if (!values[key]) {
@@ -86,6 +88,28 @@ export const isCemetryUnderFinancialLimit = (
     return true
   }
   return false
+}
+
+export const getYearOptions = (data: AuditConfig) => {
+  let yearLimit: string | undefined
+  data.financialStatementsInaoConfig.map((item) => {
+    if (item.key === CemeteriesBackwardLimit) {
+      yearLimit = item.value
+    }
+  })
+
+  let countYearBackwardsFrom: string | undefined
+  data.financialStatementsInaoConfig.map((item) => {
+    if (item.key === CemeteriesYearAllowed) {
+      countYearBackwardsFrom = item.value
+    }
+  })
+
+  if (!countYearBackwardsFrom) {
+    return []
+  }
+
+  return possibleOperatingYears(yearLimit || '1', countYearBackwardsFrom)
 }
 
 export const possibleOperatingYears = (

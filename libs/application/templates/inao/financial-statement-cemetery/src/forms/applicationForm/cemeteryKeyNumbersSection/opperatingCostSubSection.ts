@@ -1,4 +1,5 @@
 import {
+  buildCustomField,
   buildDescriptionField,
   buildDisplayField,
   buildMultiField,
@@ -22,6 +23,11 @@ export const opperatingCostSubSection = buildSubSection({
       title: m.keyNumbersIncomeAndExpenses,
       description: m.fillOutAppopriate,
       children: [
+        buildCustomField({
+          id: 'cemetryIncomeLimit',
+          title: '',
+          component: 'CemeteryIncomeLimit',
+        }),
         // Income
         buildDescriptionField({
           id: 'incomeDescription',

@@ -23,6 +23,7 @@ import {
   sectionColumn,
   starterColumnStyle,
 } from './overviewStyles.css'
+import { Fragment } from 'react/jsx-runtime'
 
 export const CemeteryOverview = ({ application }: FieldBaseProps) => {
   const { formatMessage } = useLocale()
@@ -233,8 +234,8 @@ export const CemeteryOverview = ({ application }: FieldBaseProps) => {
               {formatMessage(m.cemeteryBoardmembers)}
             </Text>
           </Box>
-          {cemeteryCaretakers.map((careTaker) => (
-            <>
+          {cemeteryCaretakers.map((careTaker, i) => (
+            <Fragment key={i}>
               <Box className={columnStyle}>
                 <GridRow>
                   <GridColumn span={['12/12', '6/12']}>
@@ -263,7 +264,7 @@ export const CemeteryOverview = ({ application }: FieldBaseProps) => {
                 </GridRow>
               </Box>
               <Divider />
-            </>
+            </Fragment>
           ))}
         </>
       ) : null}
