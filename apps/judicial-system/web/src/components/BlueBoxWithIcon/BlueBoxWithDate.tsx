@@ -26,10 +26,10 @@ import { formatDateForServer, useDefendants } from '../../utils/hooks'
 import DateTime from '../DateTime/DateTime'
 import { FormContext } from '../FormProvider/FormProvider'
 import { getAppealExpirationInfo } from '../InfoCard/DefendantInfo/DefendantInfo'
+import Modal from '../Modal/Modal'
 import SectionHeading from '../SectionHeading/SectionHeading'
 import { strings } from './BlueBoxWithDate.strings'
 import * as styles from './BlueBoxWithIcon.css'
-import Modal from '../Modal/Modal'
 
 interface Props {
   defendant: Defendant
