@@ -2127,6 +2127,9 @@ export interface ILatestGenericListItemsFields {
 
   /** See more link text */
   seeMoreLinkText?: string | undefined
+
+  /** Item Count */
+  itemCount?: number | undefined
 }
 
 export interface ILatestGenericListItems
@@ -2345,10 +2348,21 @@ export interface ILinkGroupFields {
   name: string
 
   /** Primary Link */
-  primaryLink: ILink | IOrganizationSubpage | IProjectSubpage
+  primaryLink:
+    | ILink
+    | IOrganizationSubpage
+    | IProjectSubpage
+    | IOrganizationParentSubpage
 
   /** Children Links */
-  childrenLinks?: (ILink | IProjectSubpage | IOrganizationSubpage)[] | undefined
+  childrenLinks?:
+    | (
+        | ILink
+        | IProjectSubpage
+        | IOrganizationSubpage
+        | IOrganizationParentSubpage
+      )[]
+    | undefined
 }
 
 export interface ILinkGroup extends Entry<ILinkGroupFields> {
@@ -3241,6 +3255,9 @@ export interface IOrganizationPage extends Entry<IOrganizationPageFields> {
 }
 
 export interface IOrganizationParentSubpageFields {
+  /** Organization Page */
+  organizationPage: IOrganizationPage
+
   /** Internal Title */
   internalTitle: string
 

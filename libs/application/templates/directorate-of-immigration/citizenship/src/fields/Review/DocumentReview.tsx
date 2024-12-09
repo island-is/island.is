@@ -109,7 +109,7 @@ export const DocumentReview: FC<Props> = ({
                     },
                   })}
                   {answers.childrenPassport?.map((passportFiles) => {
-                    return passportFiles.attachment?.map((file) => {
+                    return passportFiles?.attachment?.map((file) => {
                       return <Text>{file.name}</Text>
                     })
                   })}
