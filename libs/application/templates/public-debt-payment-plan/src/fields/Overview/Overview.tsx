@@ -53,7 +53,7 @@ export const Overview = ({ application, goToScreen }: FieldBaseProps) => {
     'paymentPlans',
   ) as PaymentPlan[]
 
-  const identityRegistry = getValueViaPath(
+  const identity = getValueViaPath(
     application.externalData,
     'identity',
   ) as IdentityResult
@@ -138,14 +138,14 @@ export const Overview = ({ application, goToScreen }: FieldBaseProps) => {
       <ReviewGroup isEditable editAction={() => editAction('applicantSection')}>
         <GridRow>
           <GridColumn span={['6/12', '5/12']}>
-            {identityRegistry?.data?.name && (
+            {identity?.data?.name && (
               <Box>
                 <Label>
                   {formatMessage(
                     isCompany ? overview.companyName : overview.name,
                   )}
                 </Label>
-                <Text>{identityRegistry.data.name}</Text>
+                <Text>{identity.data.name}</Text>
               </Box>
             )}
             {applicant?.phoneNumber && (
@@ -158,12 +158,12 @@ export const Overview = ({ application, goToScreen }: FieldBaseProps) => {
             )}
           </GridColumn>
           <GridColumn span={['6/12', '5/12']}>
-            {identityRegistry?.data?.address?.streetAddress &&
-              identityRegistry?.data?.address?.postalCode &&
-              identityRegistry?.data?.address?.city && (
+            {identity?.data?.address?.streetAddress &&
+              identity?.data?.address?.postalCode &&
+              identity?.data?.address?.city && (
                 <Box>
                   <Label>{formatMessage(overview.address)}</Label>
-                  <Text>{`${identityRegistry?.data?.address?.streetAddress}, ${identityRegistry?.data?.address?.postalCode} ${identityRegistry?.data?.address?.city}`}</Text>
+                  <Text>{`${identity?.data?.address?.streetAddress}, ${identity?.data?.address?.postalCode} ${identity?.data?.address?.city}`}</Text>
                 </Box>
               )}
             {applicant?.email && (

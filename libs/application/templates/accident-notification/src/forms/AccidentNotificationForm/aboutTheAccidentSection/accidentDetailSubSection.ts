@@ -8,8 +8,9 @@ import {
   buildTextField,
 } from '@island.is/application/core'
 import { accidentDetails } from '../../../lib/messages'
-import { isDateOlderThanAYear, isHomeActivitiesAccident } from '../../../utils'
-import { isHealthInsured } from '../../../utils/isHealthInsured'
+import { isDateOlderThanAYear } from '../../../utils/dateUtils'
+import { isHealthInsured } from '../../../utils/miscUtils'
+import { isHomeActivitiesAccident } from '../../../utils/accidentUtils'
 
 // Details of the accident
 export const accidentDetailsSubSection = buildSubSection({
