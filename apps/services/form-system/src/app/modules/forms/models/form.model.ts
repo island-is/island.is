@@ -7,6 +7,7 @@ import {
   HasMany,
   Model,
   Table,
+  Unique,
   UpdatedAt,
 } from 'sequelize-typescript'
 import { Section } from '../../sections/models/section.model'
@@ -16,6 +17,7 @@ import { FormApplicantType } from '../../formApplicantTypes/models/formApplicant
 import { Dependency } from '../../../dataTypes/dependency.model'
 import { FormCertificationType } from '../../formCertificationTypes/models/formCertificationType.model'
 import { FormUrl } from '../../formUrls/models/formUrl.model'
+import { FormStatus } from '../../../enums/formStatus'
 
 @Table({ tableName: 'form' })
 export class Form extends Model<Form> {
@@ -44,6 +46,7 @@ export class Form extends Model<Form> {
   @Column({
     type: DataType.STRING,
     allowNull: false,
+    defaultValue: '',
   })
   slug!: string
 
@@ -67,6 +70,13 @@ export class Form extends Model<Form> {
   })
   isTranslated!: boolean
 
+  // @Column({
+  //   type: DataType.BOOLEAN,
+  //   allowNull: false,
+  //   defaultValue: false,
+  // })
+  // isPublished!: boolean
+
   @Column({
     type: DataType.INTEGER,
     defaultValue: 60,
@@ -74,11 +84,10 @@ export class Form extends Model<Form> {
   applicationDaysToRemove!: number
 
   @Column({
-    type: DataType.INTEGER,
-    allowNull: false,
-    defaultValue: 0,
+    type: DataType.UUID,
+    allowNull: true,
   })
-  derivedFrom!: number
+  derivedFrom!: string
 
   @Column({
     type: DataType.STRING,

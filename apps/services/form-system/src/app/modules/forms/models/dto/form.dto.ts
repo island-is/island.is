@@ -34,11 +34,14 @@ export class FormDto {
   @ApiProperty()
   isTranslated!: boolean
 
+  // @ApiProperty()
+  // isPublished!: boolean
+
   @ApiProperty()
   applicationDaysToRemove!: number
 
   @ApiProperty()
-  derivedFrom!: number
+  derivedFrom!: string
 
   @ApiProperty({ enum: FormStatus })
   status!: string

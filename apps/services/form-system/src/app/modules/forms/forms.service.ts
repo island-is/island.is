@@ -48,6 +48,9 @@ import { OrganizationUrl } from '../organizationUrls/models/organizationUrl.mode
 import { FormUrl } from '../formUrls/models/formUrl.model'
 import { FormUrlDto } from '../formUrls/models/dto/formUrl.dto'
 import { FormStatus } from '../../enums/formStatus'
+import { Op, UUIDV4 } from 'sequelize'
+import { v4 as uuidV4 } from 'uuid'
+import { Sequelize } from 'sequelize-typescript'
 
 @Injectable()
 export class FormsService {
@@ -58,10 +61,22 @@ export class FormsService {
     private readonly sectionModel: typeof Section,
     @InjectModel(Screen)
     private readonly screenModel: typeof Screen,
+    @InjectModel(Field)
+    private readonly fieldModel: typeof Field,
+    @InjectModel(ListItem)
+    private readonly listItemModel: typeof ListItem,
     @InjectModel(Organization)
     private readonly organizationModel: typeof Organization,
     @InjectModel(OrganizationUrl)
     private readonly organizationUrlModel: typeof OrganizationUrl,
+    @InjectModel(FormCertificationType)
+    private readonly formCertificationTypeModel: typeof FormCertificationType,
+    @InjectModel(FormApplicantType)
+    private readonly formApplicantTypeModel: typeof FormApplicantType,
+    @InjectModel(FormUrl)
+    private readonly formUrlModel: typeof FormUrl,
+
+    private readonly sequelize: Sequelize,
   ) {}
 
   async findAll(organizationId: string): Promise<FormResponseDto> {
@@ -77,6 +92,7 @@ export class FormsService {
       'created',
       'modified',
       'isTranslated',
+      // 'isPublished',
       'status',
       'applicationDaysToRemove',
       'stopProgressOnValidatingScreen',
@@ -94,18 +110,22 @@ export class FormsService {
     return formResponseDto
   }
 
-  async findOne(id: string): Promise<FormResponseDto | null> {
+  async findOne(id: string): Promise<FormResponseDto> {
     const form = await this.findById(id)
 
     if (!form) {
-      return null
+      throw new NotFoundException(`Form with id '${id}' not found`)
     }
     const formResponse = await this.buildFormResponse(form)
+
+    if (!formResponse) {
+      throw new Error('Error generating form response')
+    }
 
     return formResponse
   }
 
-  async create(createFormDto: CreateFormDto): Promise<FormResponseDto | null> {
+  async create(createFormDto: CreateFormDto): Promise<FormResponseDto> {
     const { organizationId } = createFormDto
 
     if (!organizationId) {
@@ -126,11 +146,78 @@ export class FormsService {
 
     await this.createFormTemplate(newForm)
 
+    // We are fetching the form again to get the full object with all relations
     const form = await this.findById(newForm.id)
+
+    if (!form) {
+      throw new NotFoundException(`Form with id '${newForm.id}' not found`)
+    }
 
     const formResponse = await this.buildFormResponse(form)
 
+    if (!formResponse) {
+      throw new Error('Error generating form response')
+    }
+
     return formResponse
+  }
+
+  async changePublished(id: string): Promise<FormResponseDto> {
+    const newForm = await this.copyForm(id, true)
+
+    const formResponse = await this.buildFormResponse(newForm)
+
+    if (!formResponse) {
+      throw new Error('Error generating form response')
+    }
+
+    return formResponse
+  }
+
+  async publish(id: string): Promise<FormResponseDto> {
+    const form = await this.formModel.findByPk(id)
+
+    if (!form) {
+      throw new NotFoundException(`Form with id '${id}' not found`)
+    }
+
+    const existingPublishedForm = await this.formModel.findOne({
+      where: {
+        slug: form.slug,
+        status: FormStatus.PUBLISHED,
+        // isPublished: true,
+        id: { [Op.ne]: form.derivedFrom },
+      },
+    })
+
+    if (existingPublishedForm) {
+      throw new Error(
+        `A published form with the slug '${form.slug}' already exists`,
+      )
+    }
+
+    form.status = FormStatus.PUBLISHED
+    // form.isPublished = true
+
+    if (form.derivedFrom) {
+      const derivedFromForm = await this.formModel.findByPk(form.derivedFrom)
+
+      if (!derivedFromForm) {
+        throw new NotFoundException(`Form with id '${id}' not found`)
+      }
+
+      derivedFromForm.status = FormStatus.UNPUBLISHED_BECAUSE_CHANGED
+      // derivedFromForm.isPublished = false
+
+      await this.sequelize.transaction(async (transaction) => {
+        await form.save({ transaction })
+        await derivedFromForm.save({ transaction })
+      })
+    } else {
+      await form.save()
+    }
+
+    return this.findAll(form.organizationId)
   }
 
   async update(id: string, updateFormDto: UpdateFormDto): Promise<void> {
@@ -353,6 +440,7 @@ export class FormsService {
       'created',
       'modified',
       'isTranslated',
+      // 'isPublished',
       'status',
       'applicationDaysToRemove',
       'stopProgressOnValidatingScreen',
@@ -520,5 +608,124 @@ export class FormsService {
       displayOrder: 0,
       name: { is: 'innsláttarsíða 1', en: 'Input screen 1' },
     } as Screen)
+  }
+
+  private async copyForm(id: string, isDerived: boolean): Promise<Form> {
+    const existingForm = await this.findById(id)
+
+    if (!existingForm) {
+      throw new NotFoundException(`Form with id '${id}' not found`)
+    }
+
+    if (existingForm.status === FormStatus.PUBLISHED_BEING_CHANGED) {
+      throw new Error(
+        `Cannot change form that is in status ${FormStatus.PUBLISHED_BEING_CHANGED}`,
+      )
+    }
+
+    const newForm = existingForm.toJSON()
+    newForm.id = uuidV4()
+    // newForm.isPublished = false
+    newForm.status = isDerived
+      ? FormStatus.PUBLISHED_BEING_CHANGED
+      : FormStatus.IN_DEVELOPMENT
+    newForm.created = new Date()
+    newForm.modified = new Date()
+    newForm.derivedFrom = isDerived ? existingForm.id : ''
+    newForm.identifier = isDerived ? existingForm.identifier : uuidV4()
+
+    const sections: Section[] = []
+    const screens: Screen[] = []
+    const fields: Field[] = []
+    const listItems: ListItem[] = []
+    const formCertificationTypes: FormCertificationType[] = []
+    const formApplicantTypes: FormApplicantType[] = []
+    const formUrls: FormUrl[] = []
+
+    for (const section of existingForm.sections) {
+      const newSection = section.toJSON()
+      newSection.id = uuidV4()
+      newSection.formId = newForm.id
+      newSection.created = new Date()
+      newSection.modified = new Date()
+      sections.push(newSection)
+      for (const screen of section.screens) {
+        const newScreen = screen.toJSON()
+        newScreen.id = uuidV4()
+        newScreen.sectionId = newSection.id
+        newScreen.created = new Date()
+        newScreen.modified = new Date()
+        screens.push(newScreen)
+        for (const field of screen.fields) {
+          const newField = field.toJSON()
+          newField.id = uuidV4()
+          newField.screenId = newScreen.id
+          newField.identifier = isDerived ? field.identifier : uuidV4()
+          newField.created = new Date()
+          newField.modified = new Date()
+          fields.push(newField)
+          if (field.list) {
+            for (const listItem of field.list) {
+              const newListItem = listItem.toJSON()
+              newListItem.id = uuidV4()
+              newListItem.fieldId = newField.id
+              newListItem.created = new Date()
+              newListItem.modified = new Date()
+              listItems.push(newListItem)
+            }
+          }
+        }
+      }
+    }
+
+    if (existingForm.formCertificationTypes) {
+      for (const certificationType of existingForm.formCertificationTypes) {
+        const newFormCertificationType = certificationType.toJSON()
+        newFormCertificationType.id = uuidV4()
+        newFormCertificationType.formId = newForm.id
+        newFormCertificationType.created = new Date()
+        newFormCertificationType.modified = new Date()
+        formCertificationTypes.push(newFormCertificationType)
+      }
+    }
+
+    if (existingForm.formApplicantTypes) {
+      for (const applicantType of existingForm.formApplicantTypes) {
+        const newFormApplicantType = applicantType.toJSON()
+        newFormApplicantType.id = uuidV4()
+        newFormApplicantType.formId = newForm.id
+        newFormApplicantType.created = new Date()
+        newFormApplicantType.modified = new Date()
+        formApplicantTypes.push(newFormApplicantType)
+      }
+    }
+
+    if (existingForm.formUrls) {
+      for (const formUrl of existingForm.formUrls) {
+        const newFormUrl = formUrl.toJSON()
+        newFormUrl.id = uuidV4()
+        newFormUrl.formId = newForm.id
+        newFormUrl.created = new Date()
+        newFormUrl.modified = new Date()
+        formUrls.push(newFormUrl)
+      }
+    }
+
+    await this.sequelize.transaction(async (transaction) => {
+      await this.formModel.create(newForm, { transaction })
+      await this.sectionModel.bulkCreate(sections, { transaction })
+      await this.screenModel.bulkCreate(screens, { transaction })
+      await this.fieldModel.bulkCreate(fields, { transaction })
+      await this.listItemModel.bulkCreate(listItems, { transaction })
+      await this.formCertificationTypeModel.bulkCreate(formCertificationTypes, {
+        transaction,
+      })
+      await this.formApplicantTypeModel.bulkCreate(formApplicantTypes, {
+        transaction,
+      })
+      await this.formUrlModel.bulkCreate(formUrls, { transaction })
+    })
+
+    return newForm
   }
 }

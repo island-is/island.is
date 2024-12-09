@@ -1,7 +1,7 @@
 module.exports = {
   async up(queryInterface, Sequelize) {
-    return queryInterface.sequelize.transaction((t) =>
-      queryInterface.createTable(
+    return queryInterface.sequelize.transaction(async (t) => {
+      await queryInterface.createTable(
         'form',
         {
           id: {
@@ -42,14 +42,19 @@ module.exports = {
             allowNull: false,
             defaultValue: false,
           },
+          // is_published: {
+          //   type: Sequelize.BOOLEAN,
+          //   allowNull: false,
+          //   defaultValue: false,
+          // },
           application_days_to_remove: {
             type: Sequelize.INTEGER,
             allowNull: false,
             defaultValue: 60,
           },
           derived_from: {
-            type: Sequelize.INTEGER,
-            allowNull: false,
+            type: Sequelize.UUID,
+            allowNull: true,
           },
           status: {
             type: Sequelize.STRING,
@@ -78,13 +83,13 @@ module.exports = {
           },
         },
         { transaction: t },
-      ),
-    )
+      )
+    })
   },
 
   async down(queryInterface, Sequelize) {
-    return queryInterface.sequelize.transaction((t) =>
-      queryInterface.dropTable('form', { transaction: t }),
-    )
+    return queryInterface.sequelize.transaction(async (t) => {
+      await queryInterface.dropTable('form', { transaction: t })
+    })
   },
 }
