@@ -421,7 +421,7 @@ export const getApplication = ({ allowFakeData = false }): Form => {
                   }),
                   buildNationalIdWithNameField({
                     id: 'witness1.person',
-                    title: m.name,
+                    title: '',
                     required: true,
                     minAgePerson: 18,
                   }),
@@ -460,7 +460,7 @@ export const getApplication = ({ allowFakeData = false }): Form => {
                   }),
                   buildNationalIdWithNameField({
                     id: 'witness2.person',
-                    title: m.name,
+                    title: '',
                     required: true,
                     minAgePerson: 18,
                   }),
