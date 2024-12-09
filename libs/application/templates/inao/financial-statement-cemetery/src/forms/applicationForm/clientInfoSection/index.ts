@@ -63,9 +63,6 @@ export const clientInfoSection = buildSection({
           title: '',
         }),
         buildCustomField({
-          condition: (answers, externalData) => {
-            return true
-          },
           id: 'powerOfAttorney',
           title: '',
           description: '',
