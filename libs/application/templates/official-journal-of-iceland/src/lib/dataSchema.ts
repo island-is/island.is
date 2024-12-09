@@ -83,6 +83,8 @@ const miscSchema = z
   .object({
     signatureType: z.string().optional(),
     selectedTemplate: z.string().optional(),
+    asDocument: z.boolean().optional(),
+    asRoman: z.boolean().optional(),
   })
   .partial()
 
