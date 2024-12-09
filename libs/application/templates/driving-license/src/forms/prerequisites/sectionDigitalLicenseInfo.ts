@@ -5,7 +5,7 @@ import {
   buildSubSection,
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
-import { B_TEMP } from '../../lib/constants'
+import { License } from '../../lib/constants'
 
 export const sectionDigitalLicenseInfo = buildSubSection({
   id: 'digitalLicenseInfo',
@@ -20,7 +20,7 @@ export const sectionDigitalLicenseInfo = buildSubSection({
           id: 'digitalLicenseInfo',
           title: m.digitalLicenseInfoAlertTitle,
           message: ({ answers }) =>
-            answers.applicationFor === B_TEMP
+            answers.applicationFor === License.B_TEMP
               ? m.digitalLicenseInfoAlertMessageBTemp
               : m.digitalLicenseInfoAlertMessageBFull,
           alertType: 'info',

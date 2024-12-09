@@ -1,14 +1,15 @@
 import {
+  NO,
+  YES,
   buildDescriptionField,
   buildMultiField,
   buildRadioField,
-  buildSelectField,
   buildSubSection,
   buildTextField,
   getValueViaPath,
 } from '@island.is/application/core'
-import { DrivingLicenseFakeData, NO, YES } from '../../lib/constants'
-import { allowFakeCondition } from '../../lib/utils'
+import { DrivingLicenseFakeData } from '../../lib/constants'
+import { allowFakeCondition } from '../../lib/utils/formUtils'
 
 export const sectionFakeData = buildSubSection({
   id: 'fakeData',

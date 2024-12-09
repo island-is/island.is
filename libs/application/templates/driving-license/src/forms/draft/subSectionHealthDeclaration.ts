@@ -3,16 +3,16 @@ import {
   buildCustomField,
   buildSubSection,
   buildAlertMessageField,
-  buildDescriptionField,
   YES,
+  buildFileUploadField,
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
-import { hasNoDrivingLicenseInOtherCountry } from '../../lib/utils'
 import {
   hasHealthRemarks,
   needsHealthCertificateCondition,
+  hasNoDrivingLicenseInOtherCountry,
 } from '../../lib/utils/formUtils'
-import { BE, B_FULL_RENEWAL_65 } from '../../lib/constants'
+import { License } from '../../lib/constants'
 
 export const subSectionHealthDeclaration = buildSubSection({
   id: 'healthDeclaration',
@@ -22,156 +22,68 @@ export const subSectionHealthDeclaration = buildSubSection({
     buildMultiField({
       id: 'overview',
       title: m.healthDeclarationMultiFieldTitle,
-      condition: (answers) => answers.applicationFor !== B_FULL_RENEWAL_65,
+      description: m.healthDeclarationSubTitle,
+      condition: (answers) =>
+        answers.applicationFor !== License.B_FULL_RENEWAL_65,
       space: 2,
       children: [
-        buildDescriptionField({
-          id: 'healthDeclarationDescription',
-          title: '',
-          description: m.healthDeclarationSubTitle,
-          marginBottom: 2,
-        }),
         buildCustomField({
           id: 'remarks',
           title: '',
           component: 'HealthRemarks',
           condition: (answers, externalData) =>
-            hasHealthRemarks(externalData) && answers.applicationFor !== BE,
+            hasHealthRemarks(externalData) &&
+            answers.applicationFor !== License.BE,
         }),
-        buildCustomField(
-          {
-            id: 'healthDeclaration.usesContactGlasses',
-            title: '',
-            component: 'HealthDeclaration',
-          },
-          {
-            title: m.healthDeclarationMultiFieldSubTitle,
-            label: m.healthDeclaration1,
-          },
-        ),
-        buildCustomField(
-          {
-            id: 'healthDeclaration.hasReducedPeripheralVision',
-            title: '',
-            component: 'HealthDeclaration',
-          },
-          {
-            label: m.healthDeclaration2,
-          },
-        ),
-        buildCustomField(
-          {
-            id: 'healthDeclaration.hasEpilepsy',
-            title: '',
-            component: 'HealthDeclaration',
-          },
-          {
-            label: m.healthDeclaration3,
-          },
-        ),
-        buildCustomField(
-          {
-            id: 'healthDeclaration.hasHeartDisease',
-            title: '',
-            component: 'HealthDeclaration',
-          },
-          {
-            label: m.healthDeclaration4,
-          },
-        ),
-        buildCustomField(
-          {
-            id: 'healthDeclaration.hasMentalIllness',
-            title: '',
-            component: 'HealthDeclaration',
-          },
-          {
-            label: m.healthDeclaration5,
-          },
-        ),
-        buildCustomField(
-          {
-            id: 'healthDeclaration.usesMedicalDrugs',
-            title: '',
-            component: 'HealthDeclaration',
-          },
-          {
-            label: m.healthDeclaration6,
-          },
-        ),
-        buildCustomField(
-          {
-            id: 'healthDeclaration.isAlcoholic',
-            title: '',
-            component: 'HealthDeclaration',
-          },
-          {
-            label: m.healthDeclaration7,
-          },
-        ),
-        buildCustomField(
-          {
-            id: 'healthDeclaration.hasDiabetes',
-            title: '',
-            component: 'HealthDeclaration',
-          },
-          {
-            label: m.healthDeclaration8,
-          },
-        ),
-        buildCustomField(
-          {
-            id: 'healthDeclaration.isDisabled',
-            title: '',
-            component: 'HealthDeclaration',
-          },
-          {
-            label: m.healthDeclaration9,
-          },
-        ),
-        buildCustomField(
-          {
-            id: 'healthDeclaration.hasOtherDiseases',
-            title: '',
-            component: 'HealthDeclaration',
-          },
-          {
-            label: m.healthDeclaration10,
-          },
-        ),
+        buildCustomField({
+          id: 'healthDeclaration',
+          title: '',
+          component: 'HealthDeclaration',
+        }),
         buildAlertMessageField({
           id: 'healthDeclaration.contactGlassesMismatch',
           title: '',
           message: m.alertHealthDeclarationGlassesMismatch,
           alertType: 'warning',
           condition: (answers) =>
-            answers.applicationFor !== BE &&
-            (answers.healthDeclaration as any)?.contactGlassesMismatch,
-        }),
-        //TODO: Remove when RLS/SGS supports health certificate in BE license
-        buildDescriptionField({
-          id: 'healthDeclarationValidForBELicense',
-          title: '',
+            answers.applicationFor !== License.BE &&
+            (answers.healthDeclaration as { contactGlassesMismatch: boolean })
+              ?.contactGlassesMismatch,
         }),
         buildAlertMessageField({
-          id: 'healthDeclaration.BE',
+          id: 'healthDeclarationWarning',
           title: '',
           message: m.beLicenseHealthDeclarationRequiresHealthCertificate,
           alertType: 'warning',
           condition: (answers, externalData) =>
             needsHealthCertificateCondition(YES)(answers, externalData),
         }),
+        buildFileUploadField({
+          id: 'healthDeclarationFileUpload',
+          title: '',
+          uploadDescription: m.healthDeclarationAllowedFileTypes,
+          uploadAccept: '.pdf, .doc, .docx, .jpg, .jpeg, .png, .xls, .xlsx',
+          uploadMultiple: false,
+          condition: (answers, externalData) =>
+            needsHealthCertificateCondition(YES)(answers, externalData) &&
+            answers.applicationFor === License.BE,
+        }),
       ],
     }),
+    // Applicants older than 65 always need to provide their medical certificate
     buildMultiField({
       id: 'healthDeclarationAge65',
       title: m.healthDeclarationMultiFieldTitle,
-      condition: (answers) => answers.applicationFor === B_FULL_RENEWAL_65,
+      description: m.healthDeclarationMultiField65Description,
+      condition: (answers) =>
+        answers.applicationFor === License.B_FULL_RENEWAL_65,
       children: [
-        buildDescriptionField({
-          id: 'healthDeclarationDescription65',
+        buildFileUploadField({
+          id: 'healthDeclarationFileUpload65',
           title: '',
-          description: m.healthDeclarationMultiField65Description,
+          uploadDescription: m.healthDeclarationAllowedFileTypes,
+          uploadAccept: '.pdf, .jpg, .jpeg, .png',
+          uploadMultiple: false,
         }),
       ],
     }),
