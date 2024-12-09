@@ -6,6 +6,21 @@ export const generic = defineMessages({
     defaultMessage: 'Hætta við',
     description: 'Cancel',
   },
+  footerHelp: {
+    id: 'payments.generic:footerHelp',
+    defaultMessage: 'Aðstoð',
+    description: 'FAQ',
+  },
+  footerLocaleIS: {
+    id: 'payments.generic:footerLocaleIS',
+    defaultMessage: 'Íslenska',
+    description: 'Icelandic',
+  },
+  footerLocaleEN: {
+    id: 'payments.generic:footerLocaleEN',
+    defaultMessage: 'English',
+    description: 'English',
+  },
 })
 
 export const genericError = defineMessages({

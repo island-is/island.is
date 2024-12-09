@@ -3,6 +3,7 @@ import { theme, themeUtils } from '@island.is/island-ui/theme'
 
 export const container = style({
   margin: 0,
+  width: '100%',
 
   ...themeUtils.responsiveStyle({
     xs: {

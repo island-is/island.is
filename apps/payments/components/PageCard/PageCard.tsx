@@ -2,6 +2,8 @@ import { Box, LinkV2, Logo } from '@island.is/island-ui/core'
 
 import * as styles from './PageCard.css'
 import { PageCenter } from '../PageCenter/PageCenter'
+import { useLocale } from '@island.is/localization'
+import { generic } from '../../messages'
 
 type PageCardWrapperProps = {
   headerSlot: React.ReactNode
@@ -29,6 +31,12 @@ export const PageCard = ({
   bodySlot,
   headerColorScheme = 'primary',
 }: PageCardWrapperProps) => {
+  const { locale, formatMessage, changeLanguage } = useLocale()
+
+  const handleLanguageChange = () => {
+    changeLanguage(locale === 'is' ? 'en' : 'is')
+  }
+
   return (
     <PageCenter verticalCenter>
       <Box
@@ -73,7 +81,11 @@ export const PageCard = ({
             </LinkV2>
             <Box display="flex" columnGap={2}>
               <LinkV2 href="#" color="blue400" className={styles.link}>
-                English
+                {formatMessage(
+                  locale === 'en'
+                    ? generic.footerLocaleIS
+                    : generic.footerLocaleEN,
+                )}
               </LinkV2>
               <span className={styles.linkSeparator} />
               <LinkV2
@@ -81,7 +93,7 @@ export const PageCard = ({
                 color="blue400"
                 className={styles.link}
               >
-                Aðstoð
+                {formatMessage(generic.footerHelp)}
               </LinkV2>
             </Box>
           </Box>
