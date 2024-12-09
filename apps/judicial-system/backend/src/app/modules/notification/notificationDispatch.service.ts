@@ -3,16 +3,20 @@ import {
   Injectable,
   InternalServerErrorException,
 } from '@nestjs/common'
+import { ConfigType } from '@nestjs/config'
 
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 
 import { MessageService, MessageType } from '@island.is/judicial-system/message'
 import {
+  EventNotificationType,
+  IndictmentCaseNotificationType,
   InstitutionNotificationType,
   InstitutionType,
   NotificationDispatchType,
 } from '@island.is/judicial-system/types'
 
+import { Case } from '../case'
 import { Institution, InstitutionService } from '../institution'
 import { DeliverResponse } from './models/deliver.response'
 
@@ -57,6 +61,45 @@ export class NotificationDispatchService {
       }
     } catch (error) {
       this.logger.error('Failed to dispatch notification', error)
+
+      return { delivered: false }
+    }
+
+    return { delivered: true }
+  }
+
+  private async dispatchIndictmentSentToPublicProsecutorNotifications(
+    theCase: Case,
+  ): Promise<void> {
+    return this.messageService.sendMessagesToQueue([
+      {
+        type: MessageType.INDICTMENT_CASE_NOTIFICATION,
+        caseId: theCase.id,
+        body: {
+          type: IndictmentCaseNotificationType.INDICTMENT_VERDICT_INFO,
+        },
+      },
+    ])
+  }
+
+  async dispatchEventNotification(
+    type: EventNotificationType,
+    theCase: Case,
+  ): Promise<DeliverResponse> {
+    try {
+      switch (type) {
+        case EventNotificationType.INDICTMENT_SENT_TO_PUBLIC_PROSECUTOR:
+          await this.dispatchIndictmentSentToPublicProsecutorNotifications(
+            theCase,
+          )
+          break
+        default:
+          throw new InternalServerErrorException(
+            `Invalid notification type ${type}`,
+          )
+      }
+    } catch (error) {
+      this.logger.error('Failed to dispatch event notification', error)
 
       return { delivered: false }
     }
