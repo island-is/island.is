@@ -168,7 +168,7 @@ export const getApplication = ({ allowFakeData = false }): Form => {
                   }),
                   buildNationalIdWithNameField({
                     id: 'spouse.person',
-                    title: m.name,
+                    title: '',
                     required: true,
                     minAgePerson: 18,
                   }),
