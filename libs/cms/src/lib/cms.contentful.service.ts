@@ -423,6 +423,32 @@ export class CmsContentfulService {
     )
   }
 
+  async getOrganizationSubpageHref(
+    organizationSubpageId: string,
+    organizationSubpageSlug: string,
+    lang: string,
+  ) {
+    const params = {
+      ['content_type']: 'organizationParentSubpage',
+      links_to_entry: organizationSubpageId,
+      include: 1,
+      limit: 1,
+    }
+
+    const parentSubpageResponse =
+      await this.contentfulRepository.getLocalizedEntries<types.IOrganizationSubpageFields>(
+        lang,
+        params,
+      )
+    const parentSubpage = parentSubpageResponse?.items?.[0]
+
+    return {
+      href: `/${getOrganizationPageUrlPrefix(lang)}/${
+        parentSubpage.fields.organizationPage.fields.slug
+      }/${organizationSubpageSlug}`,
+    }
+  }
+
   async getOrganizationSubpage(
     organizationSlug: string,
     slug: string,
