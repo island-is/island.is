@@ -134,4 +134,15 @@ export const tables = defineMessages({
     defaultMessage: 'Sent',
     description: 'Notaður sem titill fyrir sent dálk í lista yfir mál.',
   },
+  fineTag: {
+    id: 'judicial.system.core:tables.fine_tag',
+    defaultMessage: 'Viðurlagaákvörðun',
+    description:
+      'Notaðir sem texti í tagg þegar mál endar sem viðurlagaákvörðun',
+  },
+  rulingTag: {
+    id: 'judicial.system.core:tables.ruling_tag',
+    defaultMessage: 'Dómur',
+    description: 'Notaðir sem texti í tagg þegar mál endar sem dómur',
+  },
 })

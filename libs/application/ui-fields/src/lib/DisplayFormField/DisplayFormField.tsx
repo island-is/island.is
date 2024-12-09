@@ -21,6 +21,7 @@ export const DisplayFormField = ({ field, application }: Props) => {
     variant,
     suffix,
     rightAlign = false,
+    halfWidthOwnline = false,
   } = field
   const { watch, setValue } = useFormContext()
   const allValues = watch()
@@ -29,52 +30,66 @@ export const DisplayFormField = ({ field, application }: Props) => {
 
   useEffect(() => {
     const newDisplayValue = value(allValues)
-    setDisplayValue(newDisplayValue)
-    setValue(id, newDisplayValue)
+    if (newDisplayValue !== displayValue) {
+      setDisplayValue(newDisplayValue)
+      setValue(id, newDisplayValue)
+    }
   }, [allValues])
 
   return (
-    <Box paddingY={3}>
-      {title ? (
-        <Text variant={titleVariant} paddingBottom={1}>
-          {formatTextWithLocale(
-            title,
-            application,
-            locale as Locale,
-            formatMessage,
-          )}
-        </Text>
-      ) : null}
+    <Box
+      paddingY={3}
+      display="flex"
+      flexDirection="column"
+      alignItems={halfWidthOwnline ? 'flexEnd' : undefined}
+    >
+      <Box
+        width={halfWidthOwnline ? 'half' : 'full'}
+        paddingLeft={halfWidthOwnline ? 'p2' : undefined}
+      >
+        {title ? (
+          <Text variant={titleVariant} paddingBottom={1}>
+            {formatTextWithLocale(
+              title,
+              application,
+              locale as Locale,
+              formatMessage,
+            )}
+          </Text>
+        ) : null}
 
-      <InputController
-        id={id}
-        name={id}
-        label={
-          label &&
-          formatTextWithLocale(
-            label,
-            application,
-            locale as Locale,
-            formatMessage,
-          )
-        }
-        rightAlign={rightAlign}
-        readOnly
-        backgroundColor="blue"
-        currency={variant === 'currency'}
-        suffix={
-          suffix &&
-          formatTextWithLocale(
-            suffix,
-            application,
-            locale as Locale,
-            formatMessage,
-          )
-        }
-        type={
-          variant === 'currency' || variant === 'textarea' ? undefined : variant
-        }
-      />
+        <InputController
+          id={id}
+          name={id}
+          label={
+            label &&
+            formatTextWithLocale(
+              label,
+              application,
+              locale as Locale,
+              formatMessage,
+            )
+          }
+          rightAlign={rightAlign}
+          readOnly
+          backgroundColor="blue"
+          currency={variant === 'currency'}
+          suffix={
+            suffix &&
+            formatTextWithLocale(
+              suffix,
+              application,
+              locale as Locale,
+              formatMessage,
+            )
+          }
+          type={
+            variant === 'currency' || variant === 'textarea'
+              ? undefined
+              : variant
+          }
+        />
+      </Box>
     </Box>
   )
 }
