@@ -683,7 +683,7 @@ export const m = defineMessages({
     description: 'Descriptionwhen user is not allowed to apply',
   },
   conclusionAlertMessage: {
-    id: 'fspp.application:conclusionAlertMessage',
+    id: 'fsc.application:conclusionAlertMessage',
     defaultMessage:
       'Ársreikning fyrir rekstrarárið {value1} hefur verið skilað',
     description: 'Conclusion alert message',
