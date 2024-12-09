@@ -92,14 +92,12 @@ export const isCemetryUnderFinancialLimit = (
 
 export const getYearOptions = (data: AuditConfig) => {
   let yearLimit: string | undefined
-  data.financialStatementsInaoConfig.map((item) => {
+  let countYearBackwardsFrom: string | undefined
+  data.financialStatementsInaoConfig.forEach((item) => {
     if (item.key === CemeteriesBackwardLimit) {
       yearLimit = item.value
     }
-  })
 
-  let countYearBackwardsFrom: string | undefined
-  data.financialStatementsInaoConfig.map((item) => {
     if (item.key === CemeteriesYearAllowed) {
       countYearBackwardsFrom = item.value
     }
