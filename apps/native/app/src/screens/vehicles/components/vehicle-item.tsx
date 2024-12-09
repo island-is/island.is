@@ -3,7 +3,7 @@ import React from 'react'
 import { FormattedDate, FormattedMessage } from 'react-intl'
 import { SafeAreaView, TouchableHighlight, View, ViewStyle } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
-import { ListVehiclesQuery } from '../../../graphql/types/schema'
+import { ListVehiclesV2Query } from '../../../graphql/types/schema'
 import { navigateTo } from '../../../lib/deep-linking'
 
 function differenceInMonths(a: Date, b: Date) {
@@ -11,7 +11,7 @@ function differenceInMonths(a: Date, b: Date) {
 }
 
 type VehicleListItem = NonNullable<
-  NonNullable<ListVehiclesQuery['vehiclesList']>['vehicleList']
+  NonNullable<ListVehiclesV2Query['vehiclesListV2']>['vehicleList']
 >[0]
 
 const Cell = styled(TouchableHighlight)`
@@ -31,8 +31,8 @@ export const VehicleItem = React.memo(
     style?: ViewStyle
   }) => {
     const theme = useTheme()
-    const nextInspection = item?.nextInspection?.nextInspectionDate
-      ? new Date(item?.nextInspection.nextInspectionDate)
+    const nextInspection = item?.nextMainInspection
+      ? new Date(item?.nextMainInspection)
       : null
 
     const isInspectionDeadline =
@@ -51,14 +51,14 @@ export const VehicleItem = React.memo(
           onPress={() => {
             navigateTo(`/vehicle/`, {
               id: item.permno,
-              title: item.type,
+              title: item.make,
             })
           }}
         >
           <SafeAreaView>
             <VehicleCard
-              title={item.type}
-              color={item.color}
+              title={item.make}
+              color={item.colorName}
               number={item.regno}
               minHeight={minHeight}
               label={

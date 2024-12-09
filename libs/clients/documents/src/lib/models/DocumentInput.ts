@@ -5,7 +5,7 @@ export type GetDocumentListInput = {
   categoryId?: string
   subjectContains?: string
   typeId?: string
-  sortBy?: 'Date' | 'Category' | 'Type' | 'Subject' | 'Sender'
+  sortBy?: 'Date' | 'Category' | 'Type' | 'Subject' | 'Sender' | 'Publication'
   order?: 'Ascending' | 'Descending'
   opened?: boolean
   archived?: boolean
