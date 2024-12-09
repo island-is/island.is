@@ -49,12 +49,10 @@ query NationalRegistryBioChild($childNationalId: String) {
     nationalId
     fullName
     biologicalChildren(childNationalId: $childNationalId) {
-      __typename
       details {
         nationalId
         fullName
         baseId
-        __typename
         housing {
           address {
             streetAddress
@@ -70,12 +68,10 @@ query NationalRegistryChildCustody($childNationalId: String) {
     nationalId
     fullName
     childCustody(childNationalId: $childNationalId) {
-      __typename
       details {
         nationalId
         fullName
         baseId
-        __typename
         gender
         religion
         housing {
