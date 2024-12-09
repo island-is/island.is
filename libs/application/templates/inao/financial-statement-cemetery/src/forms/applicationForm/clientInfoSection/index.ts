@@ -36,7 +36,7 @@ export const clientInfoSection = buildSection({
           },
         }),
         buildDescriptionField({
-          id: 'test1',
+          id: 'about.description',
           title: '',
         }),
         buildTextField({
@@ -59,7 +59,7 @@ export const clientInfoSection = buildSection({
           },
         }),
         buildDescriptionField({
-          id: 'test2',
+          id: 'about.description2',
           title: '',
         }),
         buildCustomField({
