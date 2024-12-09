@@ -3,10 +3,9 @@ import { uuid } from 'uuidv4'
 import { EmailService } from '@island.is/email-service'
 
 import {
-  CaseNotificationType,
+  CaseIndictmentRulingDecision,
   CaseOrigin,
   IndictmentCaseNotificationType,
-  NotificationType,
   ServiceRequirement,
 } from '@island.is/judicial-system/types'
 
@@ -16,9 +15,7 @@ import {
 } from '../../createTestingNotificationModule'
 
 import { Case } from '../../../../case'
-import { CaseNotificationDto } from '../../../dto/caseNotification.dto'
 import { DeliverResponse } from '../../../models/deliver.response'
-import { Notification } from '../../../models/notification.model'
 
 interface Then {
   result: DeliverResponse
@@ -87,9 +84,24 @@ describe('IndictmentCaseService', () => {
   })
 
   describe('notifications sent to institution with registered e-mail', () => {
-    it('should send a notification', async () => {
+    it('should not send a notification if indictment ruling decision is not RULING', async () => {
       const then = await givenWhenThen(
         theCase,
+        IndictmentCaseNotificationType.INDICTMENT_VERDICT_INFO,
+      )
+
+      expect(mockEmailService.sendEmail).toBeCalledTimes(0)
+      expect(then.result.delivered).toEqual(true)
+    })
+
+    it('should send a notification when indictment ruling decision is RULING', async () => {
+      const caseWithRulingDecision = {
+        ...theCase,
+        indictmentRulingDecision: CaseIndictmentRulingDecision.RULING,
+      } as Case
+
+      const then = await givenWhenThen(
+        caseWithRulingDecision,
         IndictmentCaseNotificationType.INDICTMENT_VERDICT_INFO,
       )
 
@@ -98,14 +110,14 @@ describe('IndictmentCaseService', () => {
           to: [
             { address: prosecutorsOfficeEmail, name: prosecutorsOfficeName },
           ],
-          subject: `Máli lokið ${courtCaseNumber}`,
-          text: expect.stringContaining(
+          subject: expect.stringContaining(`Máli lokið ${courtCaseNumber}`),
+          html: expect.stringContaining(
             `Máli ${courtCaseNumber} hjá ${courtName} hefur verið lokið.`,
           ),
         }),
       )
 
-      expect(then.result.delivered).toEqual(true)
+      expect(then.result).toEqual({ delivered: true })
     })
   })
 

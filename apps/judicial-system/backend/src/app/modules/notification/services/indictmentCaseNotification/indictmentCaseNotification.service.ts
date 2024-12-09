@@ -10,7 +10,11 @@ import { EmailService } from '@island.is/email-service'
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { type ConfigType } from '@island.is/nest/config'
 
-import { IndictmentCaseNotificationType } from '@island.is/judicial-system/types'
+import {
+  CaseIndictmentRulingDecision,
+  IndictmentCaseNotificationType,
+  IndictmentDecision,
+} from '@island.is/judicial-system/types'
 
 import { Case } from '../../../case'
 import { EventService } from '../../../event'
@@ -71,16 +75,21 @@ export class IndictmentCaseNotificationService extends BaseNotificationService {
     return this.recordNotification(theCase.id, notificationType, recipients)
   }
 
-  private sendVerdictInfoNotification(theCase: Case): Promise<DeliverResponse> {
+  private async sendVerdictInfoNotification(
+    theCase: Case,
+  ): Promise<DeliverResponse> {
     const institutionId = theCase.prosecutor?.institution?.id
     const institutionEmail =
       (institutionId &&
         this.config.email.policeInstitutionEmails[institutionId]) ??
       undefined
 
-    if (!institutionEmail) {
-      // institution does not want to receive these emails
-      return Promise.resolve({ delivered: true })
+    const hasRuling =
+      theCase.indictmentRulingDecision === CaseIndictmentRulingDecision.RULING
+
+    if (!institutionEmail || !hasRuling) {
+      // institution does not want to receive these emails or the case does not have a ruling
+      return { delivered: true }
     }
 
     const formattedSubject = this.formatMessage(
