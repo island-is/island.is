@@ -1256,9 +1256,14 @@ export const m = defineMessages({
     defaultMessage: 'Séreign',
     description: '',
   },
+  deceasedSharePercentage: {
+    id: 'ir.application:deceasedSharePercentage',
+    defaultMessage: 'Búshluti maka',
+    description: '',
+  },
   deceasedShare: {
     id: 'ir.application:deceasedShare',
-    defaultMessage: 'Búshluti maka',
+    defaultMessage: 'Hlutfall séreignar',
     description: '',
   },
   spousesShareDescription: {
