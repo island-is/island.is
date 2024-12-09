@@ -70,7 +70,7 @@ const mapLinkWrapper = (link: LinkType, pageAbove: PageAbove | undefined) => {
     contentTypeId === 'organizationParentSubpage'
   ) {
     return generateOrganizationSubpageLink(
-      (link as IOrganizationSubpage) || (link as IOrganizationParentSubpage),
+      link as IOrganizationSubpage | IOrganizationParentSubpage,
     )
   } else if (contentTypeId === 'projectSubpage') {
     return generateProjectSubpageLink(link as IProjectSubpage, pageAbove)
