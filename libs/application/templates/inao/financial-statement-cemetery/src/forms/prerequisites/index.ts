@@ -28,7 +28,7 @@ export const PrerequisitesForm: Form = buildForm({
       children: [
         buildExternalDataProvider({
           id: 'approveExternalData',
-          title: m.dataCollectionTitleUserCemetry,
+          title: m.dataCollectionTitleUserCemetery,
           checkboxLabel: m.dataCollectionCheckboxLabel,
           dataProviders: [
             buildDataProviderItem({

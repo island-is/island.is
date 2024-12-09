@@ -375,7 +375,7 @@ export const m = defineMessages({
     defaultMessage: 'Gagnaöflun',
     description: 'Title for data collection section',
   },
-  dataCollectionTitleUserCemetry: {
+  dataCollectionTitleUserCemetery: {
     id: 'fsc.application:applicationDataCollectionTitleUserCemetry',
     defaultMessage: 'Gagnaöflun vegna skila ársreiknings kirkjugarðs',
     description: 'Title for data collection section',

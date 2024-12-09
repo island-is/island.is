@@ -60,7 +60,7 @@ export const equityAndLiabilitiesSubSection = buildSubSection({
 
         // Debt
         buildDescriptionField({
-          id: 'incomeDescription',
+          id: 'debtsDescription',
           title: m.debts,
           titleVariant: 'h3',
         }),
