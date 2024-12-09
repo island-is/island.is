@@ -1,12 +1,9 @@
 {
   "extends": "../../../tsconfig.base.json",
   "compilerOptions": {
-    "allowSyntheticDefaultImports": true,
     "isolatedModules": true,
     "jsx": "react-native",
     "lib": ["esnext"],
-    "moduleResolution": "node",
-    "skipLibCheck": true,
     "resolveJsonModule": true,
     "declaration": true
   },
