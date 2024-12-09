@@ -125,7 +125,7 @@ describe('Feature-deployment support', () => {
       BFF_NAME: 'stjornbord',
       BFF_CLIENT_BASE_PATH: '/stjornbord',
       BFF_GLOBAL_PREFIX: `/stjornbord/bff`,
-      BFF_PAR_SUPPORT_ENABLED: 'true',
+      BFF_PAR_SUPPORT_ENABLED: 'false',
       BFF_ALLOWED_REDIRECT_URIS: json([
         'https://feature-A-beta.dev01.devland.is/stjornbord',
       ]),
