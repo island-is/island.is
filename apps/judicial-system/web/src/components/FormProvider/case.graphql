@@ -35,6 +35,7 @@ query Case($input: CaseQueryInput!) {
       subpoenaType
       isSentToPrisonAdmin
       sentToPrisonAdminDate
+      punishmentType
       subpoenas {
         id
         created
