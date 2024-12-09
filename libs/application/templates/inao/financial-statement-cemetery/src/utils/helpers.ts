@@ -38,23 +38,6 @@ export const currencyStringToNumber = (str: string) => {
   return parseInt(cleanString, 10)
 }
 
-export const getCurrentUserType = (
-  answers: FormValue,
-  externalData: ExternalData,
-) => {
-  const fakeUserType: FSIUSERTYPE | undefined = getValueViaPath(
-    answers,
-    'fakeData.options',
-  )
-
-  const currentUserType: FSIUSERTYPE | undefined = getValueViaPath(
-    externalData,
-    'getUserType.data.value',
-  )
-
-  return fakeUserType ? fakeUserType : currentUserType
-}
-
 export const getBoardmembersAndCaretakers = (members: Array<BoardMember>) => {
   const careTakers = members
     ?.filter((member) => member.role === CARETAKER)
@@ -66,27 +49,21 @@ export const getBoardmembersAndCaretakers = (members: Array<BoardMember>) => {
   return { careTakers, boardMembers }
 }
 
-export const isCemetryUnderFinancialLimit = (
-  answers: FormValue,
-  externalData: ExternalData,
-) => {
-  const userType = getCurrentUserType(answers, externalData)
-  const applicationAnswers = answers as FinancialStatementCemetery
-  const careTakerLimit =
-    applicationAnswers.cemeteryOperation?.incomeLimit ?? '0'
-  const fixedAssetsTotal = applicationAnswers.cemeteryAsset?.fixedAssetsTotal
-  const isCemetry = userType === FSIUSERTYPE.CEMETRY
-  const totalIncome = isCemetry ? applicationAnswers.cemeteryIncome?.total : '0'
-  const longTermDebt = applicationAnswers.cemeteryLiability?.longTerm
-  const isUnderLimit = Number(totalIncome) < Number(careTakerLimit)
-  if (
-    isCemetry &&
-    isUnderLimit &&
-    fixedAssetsTotal === '0' &&
-    longTermDebt === '0'
-  ) {
+export const isCemetryUnderFinancialLimit = (answers: FormValue) => {
+  const totalIncome =
+    getValueViaPath<string>(answers, 'cemeteryIncome.total') || '0'
+  const incomeLimit =
+    getValueViaPath<string>(answers, 'cemeteryOperation.incomeLimit') || '0'
+  const fixedAssetsTotal =
+    getValueViaPath<string>(answers, 'cemeteryAsset.fixedAssetsTotal') || '0'
+  const longTermDebt =
+    getValueViaPath<string>(answers, 'cemeteryLiability.longTerm') || '0'
+  const isUnderLimit = Number(totalIncome) < Number(incomeLimit)
+
+  if (isUnderLimit && fixedAssetsTotal === '0' && longTermDebt === '0') {
     return true
   }
+
   return false
 }
 
