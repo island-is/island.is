@@ -166,9 +166,9 @@ export const CalculateShare: FC<React.PropsWithChildren<FieldBaseProps>> = ({
       }
     })
 
-    const inventory: CalcShared = (
-      [(answers.assets as unknown as EstateAssets)?.inventory] ?? []
-    ).map((item) => {
+    const inventory: CalcShared = [
+      (answers.assets as unknown as EstateAssets)?.inventory,
+    ].map((item) => {
       const value = valueToNumber(item.value)
       const deceasedShare = valueToNumber(item.deceasedShare)
       const { shareValue, deceasedShareValue } = getShareValue(
@@ -185,9 +185,9 @@ export const CalculateShare: FC<React.PropsWithChildren<FieldBaseProps>> = ({
       }
     })
 
-    const money: CalcShared = (
-      [(answers.assets as unknown as EstateAssets)?.money] ?? []
-    ).map((item) => {
+    const money: CalcShared = [
+      (answers.assets as unknown as EstateAssets)?.money,
+    ].map((item) => {
       const value = valueToNumber(item.value)
       const deceasedShare = valueToNumber(item.deceasedShare)
       const { shareValue, deceasedShareValue } = getShareValue(
