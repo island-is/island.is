@@ -51,12 +51,12 @@ const FamilyMember = React.memo(
     const theme = useTheme()
 
     return (
-      <View style={{ paddingHorizontal: 16 }}>
+      <View style={{ paddingHorizontal: theme.spacing[2] }}>
         <TouchableHighlight
           underlayColor={
             theme.isDark ? theme.shades.dark.shade100 : theme.color.blue100
           }
-          style={{ marginBottom: 16, borderRadius: 16 }}
+          style={{ marginBottom: theme.spacing[2], borderRadius: 16 }}
           onPress={() => {
             navigateTo(`/family/${item.type}/${item.nationalId}`, {
               id: item?.nationalId,
@@ -140,7 +140,7 @@ export const FamilyOverviewScreen: NavigationFunctionComponent = ({
   const renderItem = ({ item }: { item: FamilyListItem }) => {
     if (item.type === 'skeleton') {
       return (
-        <View style={{ paddingHorizontal: 16 }}>
+        <View style={{ paddingHorizontal: theme.spacing[2] }}>
           <Skeleton
             active
             backgroundColor={{
@@ -155,7 +155,7 @@ export const FamilyOverviewScreen: NavigationFunctionComponent = ({
             height={104}
             style={{
               borderRadius: 16,
-              marginBottom: 16,
+              marginBottom: theme.spacing[2],
             }}
           />
         </View>
@@ -164,7 +164,7 @@ export const FamilyOverviewScreen: NavigationFunctionComponent = ({
 
     if (item.type === 'empty') {
       return (
-        <View style={{ marginTop: 80, paddingHorizontal: 16 }}>
+        <View style={{ marginTop: 80, paddingHorizontal: theme.spacing[2] }}>
           <EmptyList
             title={intl.formatMessage({ id: 'family.emptyListTitle' })}
             description={intl.formatMessage({
@@ -205,14 +205,14 @@ export const FamilyOverviewScreen: NavigationFunctionComponent = ({
           ref={flatListRef}
           testID={testIDs.SCREEN_FAMILY_OVERVIEW}
           style={{
-            paddingTop: 16,
+            paddingTop: theme.spacing[2],
             zIndex: 9,
           }}
           contentInset={{
             bottom: 32,
           }}
           contentContainerStyle={{
-            paddingBottom: 16,
+            paddingBottom: theme.spacing[2],
           }}
           refreshControl={
             <RefreshControl refreshing={refetching} onRefresh={onRefresh} />

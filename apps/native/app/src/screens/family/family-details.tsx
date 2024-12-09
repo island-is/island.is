@@ -17,6 +17,7 @@ import {
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
 import { formatNationalId } from '../../lib/format-national-id'
 import { testIDs } from '../../utils/test-ids'
+import { useTheme } from 'styled-components'
 
 type ChildCustodyDetails = NonNullable<
   NonNullable<
@@ -53,6 +54,7 @@ export const FamilyDetailScreen: NavigationFunctionComponent<{
 }> = ({ componentId, id, type }) => {
   useNavigationOptions(componentId)
   const intl = useIntl()
+  const theme = useTheme()
 
   const bioChildRes = useNationalRegistryBioChildQuery({
     variables: { childNationalId: id },
@@ -95,7 +97,11 @@ export const FamilyDetailScreen: NavigationFunctionComponent<{
       <ScrollView style={{ flex: 1 }}>
         <SafeAreaView>
           <View
-            style={{ paddingBottom: 8, paddingTop: 16, paddingHorizontal: 16 }}
+            style={{
+              paddingBottom: theme.spacing[1],
+              paddingTop: theme.spacing[2],
+              paddingHorizontal: theme.spacing[2],
+            }}
           >
             <Typography>
               {intl.formatMessage({ id: 'familyDetail.description' })}
