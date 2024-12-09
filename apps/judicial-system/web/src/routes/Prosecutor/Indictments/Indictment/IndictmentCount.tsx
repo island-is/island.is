@@ -307,66 +307,58 @@ export const getIncidentDescription = (
     policeCaseNumber,
   } = indictmentCount
 
-  if (offenses?.length === 0) {
+  if (!offenses || offenses.length === 0) {
     return ''
   }
 
-  let incidentLocation = ''
-  let incidentDate = ''
+  const incidentLocation = crimeScene?.place || '[Vettvangur]'
+  const incidentDate = crimeScene?.date
+    ? formatDate(crimeScene.date, 'PPPP')?.replace('dagur,', 'daginn') || ''
+    : '[Dagsetning]'
 
-  if (crimeScene) {
-    incidentLocation = crimeScene.place ?? ''
-    incidentDate =
-      formatDate(crimeScene.date, 'PPPP')?.replace('dagur,', 'daginn') ?? ''
-  }
-
-  const formattedIncidentDate = incidentDate ? incidentDate : '[Dagsetning]'
-
-  const formattedIndictmentLocation = incidentLocation
-    ? incidentLocation
-    : '[Vettvangur]'
-
-  const formattedVehicleRegistrationNumber = vehicleRegistrationNumber
-    ? vehicleRegistrationNumber
-    : '[Skráningarnúmer ökutækis]'
+  const vehicleRegistration =
+    vehicleRegistrationNumber || '[Skráningarnúmer ökutækis]'
 
   const reason = getIncidentDescriptionReason(
-    offenses ?? [],
-    substances ?? {},
+    offenses,
+    substances || {},
     formatMessage,
   )
 
-  const incidentDescription =
-    hasOnlyOneItemInSubArrays(subtypes) &&
-    policeCaseNumber &&
-    subtypes &&
-    subtypes[policeCaseNumber][0] === IndictmentSubtype.TRAFFIC_VIOLATION
-      ? formatMessage(strings.incidentDescriptionAutofill, {
-          incidentDate: formattedIncidentDate,
-          vehicleRegistrationNumber: formattedVehicleRegistrationNumber,
-          reason,
-          incidentLocation: formattedIndictmentLocation,
-        })
-      : hasOnlyOneItemInSubArrays(subtypes)
-      ? formatMessage(strings.indictmentDescriptionSubtypesAutofill, {
-          subtypes:
-            subtypes &&
-            policeCaseNumber &&
-            indictmentSubtypes[
-              subtypes[policeCaseNumber][0] as IndictmentSubtype
-            ],
-          date: formattedIncidentDate,
-        })
-      : formatMessage(strings.indictmentDescriptionSubtypesAutofill, {
-          subtypes: indictmentCountSubtypes
-            ?.map((subtype) => indictmentSubtypes[subtype])
-            .join(', '),
-          date: formattedIncidentDate,
-        })
+  const hasSingleSubtype = hasOnlyOneItemInSubArrays(subtypes)
 
-  console.log(incidentDescription)
+  const singleSubType =
+    subtypes && policeCaseNumber && subtypes[policeCaseNumber]?.[0]
 
-  return incidentDescription
+  const trafficViolationSubtype =
+    singleSubType === IndictmentSubtype.TRAFFIC_VIOLATION
+
+  if (hasSingleSubtype && trafficViolationSubtype) {
+    return formatMessage(strings.incidentDescriptionAutofill, {
+      incidentDate,
+      vehicleRegistrationNumber: vehicleRegistration,
+      reason,
+      incidentLocation,
+    })
+  }
+
+  if (hasSingleSubtype) {
+    return formatMessage(strings.indictmentDescriptionSubtypesAutofill, {
+      subtypes: singleSubType
+        ? indictmentSubtypes[singleSubType as IndictmentSubtype]
+        : '',
+      date: incidentDate,
+    })
+  }
+
+  const allSubtypes = indictmentCountSubtypes
+    ?.map((subtype) => indictmentSubtypes[subtype])
+    .join(', ')
+
+  return formatMessage(strings.indictmentDescriptionSubtypesAutofill, {
+    subtypes: allSubtypes,
+    date: incidentDate,
+  })
 }
 
 export const IndictmentCount: FC<Props> = ({
