@@ -7,6 +7,7 @@ import { AnimatePresence } from 'framer-motion'
 import { Box, FocusableBox, Text } from '@island.is/island-ui/core'
 import {
   displayFirstPlusRemaining,
+  districtCourtAbbreviation,
   formatDOB,
 } from '@island.is/judicial-system/formatters'
 import { tables } from '@island.is/judicial-system-web/messages'
@@ -69,6 +70,7 @@ const MobileCase: FC<PropsWithChildren<Props>> = ({
   isLoading = false,
 }) => {
   const { formatMessage } = useIntl()
+  const courtAbbreviation = districtCourtAbbreviation(theCase.court?.name)
 
   return (
     <CategoryCard
@@ -91,7 +93,12 @@ const MobileCase: FC<PropsWithChildren<Props>> = ({
       <Text title={theCase.policeCaseNumbers?.join(', ')}>
         {displayFirstPlusRemaining(theCase.policeCaseNumbers)}
       </Text>
-      {theCase.courtCaseNumber && <Text>{theCase.courtCaseNumber}</Text>}
+
+      {theCase.courtCaseNumber && (
+        <Text>{`${courtAbbreviation ? `${courtAbbreviation}: ` : ''}${
+          theCase.courtCaseNumber
+        }`}</Text>
+      )}
       <br />
       {theCase.defendants && theCase.defendants.length > 0 && (
         <>

@@ -311,6 +311,7 @@ export const GenericList = ({
               key={value}
               active={true}
               onClick={() => {
+                setPage(null)
                 setParameters((prevParameters) => {
                   const updatedParameters = {
                     ...prevParameters,
@@ -465,6 +466,7 @@ export const GenericList = ({
                             if (!category) {
                               return
                             }
+                            setPage(null)
                             setParameters((prevParameters) => ({
                               ...prevParameters,
                               [category]: (

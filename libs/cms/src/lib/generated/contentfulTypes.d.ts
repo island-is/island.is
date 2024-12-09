@@ -2127,6 +2127,9 @@ export interface ILatestGenericListItemsFields {
 
   /** See more link text */
   seeMoreLinkText?: string | undefined
+
+  /** Item Count */
+  itemCount?: number | undefined
 }
 
 export interface ILatestGenericListItems
