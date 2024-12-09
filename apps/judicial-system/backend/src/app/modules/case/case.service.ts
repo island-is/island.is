@@ -409,6 +409,7 @@ export const include: Includeable[] = [
 ]
 
 export const caseListInclude: Includeable[] = [
+  { model: Institution, as: 'court' },
   { model: Institution, as: 'prosecutorsOffice' },
   {
     model: Defendant,
@@ -775,12 +776,16 @@ export class CaseService {
           CaseFileCategory.CRIMINAL_RECORD,
           CaseFileCategory.COST_BREAKDOWN,
           CaseFileCategory.CASE_FILE,
+          CaseFileCategory.PROSECUTOR_CASE_FILE,
+          CaseFileCategory.DEFENDANT_CASE_FILE,
         ]
       : [
           CaseFileCategory.INDICTMENT,
           CaseFileCategory.CRIMINAL_RECORD,
           CaseFileCategory.COST_BREAKDOWN,
           CaseFileCategory.CASE_FILE,
+          CaseFileCategory.PROSECUTOR_CASE_FILE,
+          CaseFileCategory.DEFENDANT_CASE_FILE,
         ]
 
     const deliverCaseFileToCourtMessages =
@@ -927,12 +932,10 @@ export class CaseService {
           (caseFile) =>
             caseFile.state === CaseFileState.STORED_IN_RVG &&
             caseFile.key &&
-            caseFile.category === CaseFileCategory.RULING &&
-            theCase.indictmentRulingDecision &&
-            [
-              CaseIndictmentRulingDecision.RULING,
-              CaseIndictmentRulingDecision.DISMISSAL,
-            ].includes(theCase.indictmentRulingDecision),
+            caseFile.category &&
+            [CaseFileCategory.COURT_RECORD, CaseFileCategory.RULING].includes(
+              caseFile.category,
+            ),
         )
         .map((caseFile) => ({
           type: MessageType.DELIVERY_TO_COURT_CASE_FILE,

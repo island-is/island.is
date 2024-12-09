@@ -128,7 +128,7 @@ interface NavigationData {
 interface WrapperProps {
   pageTitle: string
   pageDescription?: string
-  pageFeaturedImage?: Image
+  pageFeaturedImage?: Image | null
   organizationPage: OrganizationPage
   breadcrumbItems?: BreadCrumbItem[]
   mainContent?: ReactNode

@@ -3,8 +3,8 @@ import {
   buildSection,
   getValueViaPath,
 } from '@island.is/application/core'
-import { m } from '../../../../lib/messages'
-import { LESS } from '../../../../utils/constants'
+import { LESS } from '../../../utils/constants'
+import { m } from '../../../lib/messages'
 
 export const financialStatementSection = buildSection({
   id: 'documents',

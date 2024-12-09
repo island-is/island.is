@@ -89,7 +89,9 @@ const appSystemApi = appSystemApiSetup({
   servicePortalApi,
   userNotificationService,
 })
-const appSystemApiWorker = appSystemApiWorkerSetup()
+const appSystemApiWorker = appSystemApiWorkerSetup({
+  userNotificationService,
+})
 
 const nameRegistryBackend = serviceNameRegistryBackendSetup()
 
