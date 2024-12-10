@@ -1,4 +1,3 @@
-import { EmptyList, FamilyMemberCard, Problem, Skeleton, TopLine } from '@ui'
 import React, { useCallback, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 import {
@@ -12,6 +11,14 @@ import {
 } from 'react-native'
 import { NavigationFunctionComponent } from 'react-native-navigation'
 import { useTheme } from 'styled-components/native'
+
+import {
+  EmptyList,
+  FamilyMemberCard,
+  Skeleton,
+  TopLine,
+  Problem,
+} from '../../ui'
 import illustrationSrc from '../../assets/illustrations/hero_spring.png'
 import { BottomTabsIndicator } from '../../components/bottom-tabs-indicator/bottom-tabs-indicator'
 import {
