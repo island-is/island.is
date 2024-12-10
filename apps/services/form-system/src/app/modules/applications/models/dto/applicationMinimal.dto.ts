@@ -36,7 +36,7 @@ export class ApplicationMinimalDto {
   @ApiPropertyOptional({ type: [String] })
   completed?: string[]
 
-  @ApiPropertyOptional({ enum: ApplicationStatus })
+  @ApiPropertyOptional()
   status?: string
 
   @ApiPropertyOptional({ type: [ApplicationEventDto] })

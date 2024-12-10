@@ -107,7 +107,8 @@ export class ApplicationsService {
   }
 
   async validateScreen(
-    screenDto: ScreenDto,
+    screenId: string,
+    applicationDto: ApplicationDto,
   ): Promise<ScreenValidationResponse> {
     const screenValidationResponse: ScreenValidationResponse =
       new ScreenValidationResponse()

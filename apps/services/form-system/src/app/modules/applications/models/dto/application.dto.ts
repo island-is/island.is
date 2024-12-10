@@ -4,6 +4,7 @@ import { LanguageType } from '../../../../dataTypes/languageType.model'
 import { Dependency } from '../../../../dataTypes/dependency.model'
 import { ApplicationStatus } from '../../../../enums/applicationStatus'
 import { ApplicationEvent } from '../applicationEvent.model'
+import { ApplicationEventDto } from './applicationEvent.dto'
 
 export class ApplicationDto {
   @ApiPropertyOptional()
@@ -39,11 +40,11 @@ export class ApplicationDto {
   @ApiPropertyOptional({ type: [String] })
   completed?: string[]
 
-  @ApiPropertyOptional({ enum: ApplicationStatus })
+  @ApiPropertyOptional()
   status?: string
 
-  @ApiPropertyOptional({ type: [ApplicationEvent] })
-  events?: ApplicationEvent[]
+  @ApiPropertyOptional({ type: [ApplicationEventDto] })
+  events?: ApplicationEventDto[]
 
   @ApiPropertyOptional({ type: [SectionDto] })
   sections?: SectionDto[]
