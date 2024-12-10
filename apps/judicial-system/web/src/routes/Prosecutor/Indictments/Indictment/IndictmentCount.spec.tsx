@@ -197,18 +197,25 @@ describe('getIncidentDescriptionReason', () => {
   })
 })
 
-describe.only('getIncidentDescription', () => {
-  test('should return an empty string if there are no offenses', () => {
+describe('getIncidentDescription', () => {
+  test('should return an empty string if there are no offenses in traffic violations', () => {
     const result = getIncidentDescription(
-      { id: 'testId', offenses: [] },
+      { id: 'testId', offenses: [], policeCaseNumber: '123-123-123' },
       formatMessage,
+      {},
+      { '123-123-123': [IndictmentSubtype.TRAFFIC_VIOLATION] },
     )
 
     expect(result).toBe('')
   })
 
-  test('should return an empty string if offenses are missing', () => {
-    const result = getIncidentDescription({ id: 'testId' }, formatMessage)
+  test('should return an empty string if offenses are missing in traffic violations', () => {
+    const result = getIncidentDescription(
+      { id: 'testId', policeCaseNumber: '123-123-123' },
+      formatMessage,
+      {},
+      { '123-123-123': [IndictmentSubtype.TRAFFIC_VIOLATION] },
+    )
 
     expect(result).toBe('')
   })
@@ -242,5 +249,54 @@ describe.only('getIncidentDescription', () => {
     )
 
     expect(result).toBe('fyrir [tollalagabrot] með því að hafa, [Dagsetning]')
+  })
+
+  test('should return a description when there are multiple subtypes but only traffic violation is selected', () => {
+    const result = getIncidentDescription(
+      {
+        id: 'testId',
+        policeCaseNumber: '123-123-123',
+        offenses: [offense.DRUNK_DRIVING],
+        indictmentCountSubtypes: [IndictmentSubtype.TRAFFIC_VIOLATION],
+      },
+      formatMessage,
+      {},
+      {
+        '123-123-123': [
+          IndictmentSubtype.CUSTOMS_VIOLATION,
+          IndictmentSubtype.TRAFFIC_VIOLATION,
+        ],
+      },
+    )
+
+    expect(result).toBe(
+      'fyrir umferðarlagabrot með því að hafa, [Dagsetning], ekið bifreiðinni [Skráningarnúmer ökutækis] undir áhrifum áfengis um [Vettvangur], þar sem lögregla stöðvaði aksturinn.',
+    )
+  })
+
+  test('should return a description when there are multiple subtypes and all are selected', () => {
+    const result = getIncidentDescription(
+      {
+        id: 'testId',
+        policeCaseNumber: '123-123-123',
+        offenses: [offense.DRUNK_DRIVING],
+        indictmentCountSubtypes: [
+          IndictmentSubtype.CUSTOMS_VIOLATION,
+          IndictmentSubtype.TRAFFIC_VIOLATION,
+        ],
+      },
+      formatMessage,
+      {},
+      {
+        '123-123-123': [
+          IndictmentSubtype.CUSTOMS_VIOLATION,
+          IndictmentSubtype.TRAFFIC_VIOLATION,
+        ],
+      },
+    )
+
+    expect(result).toBe(
+      'fyrir [tollalagabrot, umferðarlagabrot] með því að hafa, [Dagsetning]',
+    )
   })
 })
