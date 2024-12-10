@@ -462,6 +462,9 @@ export const IndictmentCount: FC<Props> = ({
 
     handleIndictmentCountChanges({
       indictmentCountSubtypes: Array.from(currentSubtypes),
+      ...(!currentSubtypes.has(IndictmentSubtype.TRAFFIC_VIOLATION) && {
+        offenses: [],
+      }),
     })
   }
   return (
