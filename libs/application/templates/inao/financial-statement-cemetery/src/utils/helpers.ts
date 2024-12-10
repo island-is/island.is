@@ -5,10 +5,12 @@ import {
   CARETAKER,
   CemeteriesBackwardLimit,
   CemeteriesYearAllowed,
+  CEMETERYOPERATIONIDS,
+  TaxInfoTypes,
 } from './constants'
 import getYear from 'date-fns/getYear'
 import subYears from 'date-fns/subYears'
-import { AuditConfig, BoardMember } from '../types/types'
+import { AuditConfig, BoardMember, TaxInfoItem } from '../types/types'
 
 export const getBoardmembersAndCaretakers = (members: Array<BoardMember>) => {
   const careTakers = members
@@ -69,4 +71,66 @@ export const possibleOperatingYears = (
       return { label: yearsFromNow, value: yearsFromNow }
     })
   return operationYears
+}
+
+export const getCareIncomeAndBurialRevenueAndGrant = (
+  taxInfo?: Array<TaxInfoItem>,
+) => {
+  if (!taxInfo) {
+    return {
+      careIncome: undefined,
+      burialRevenue: undefined,
+      grantFromTheCemeteryFund: undefined,
+    }
+  }
+
+  const careIncome = taxInfo.find(
+    (item) => item.key === TaxInfoTypes.CARE_INCOME,
+  )
+  const burialRevenue = taxInfo.find(
+    (item) => item.key === TaxInfoTypes.BURIAL_REVENUE,
+  )
+  const grantFromTheCemeteryFund = taxInfo.find(
+    (item) => item.key === TaxInfoTypes.GRANT_FROM_THE_CEMETERY_FUND,
+  )
+  const donationsToCemeteryFund = taxInfo.find(
+    (item) => item.key === TaxInfoTypes.DONATIONS_TO_CEMETERYFUND,
+  )
+
+  return {
+    careIncome: careIncome ? careIncome.value : undefined,
+    burialRevenue: burialRevenue ? burialRevenue.value : undefined,
+    grantFromTheCemeteryFund: grantFromTheCemeteryFund
+      ? grantFromTheCemeteryFund.value
+      : undefined,
+    donationsToCemeteryFund: donationsToCemeteryFund
+      ? donationsToCemeteryFund.value
+      : undefined,
+  }
+}
+
+export const getTaxInfoFromAnswers = (answers: FormValue) => {
+  const careIncome = getValueViaPath<string>(
+    answers,
+    CEMETERYOPERATIONIDS.careIncome,
+  )
+  const burialRevenue = getValueViaPath<string>(
+    answers,
+    CEMETERYOPERATIONIDS.burialRevenue,
+  )
+  const grantFromTheCemeteryFund = getValueViaPath<string>(
+    answers,
+    CEMETERYOPERATIONIDS.grantFromTheCemeteryFund,
+  )
+  const donationsToCemeteryFund = getValueViaPath<string>(
+    answers,
+    CEMETERYOPERATIONIDS.donationsToCemeteryFund,
+  )
+
+  return {
+    careIncomeFromAnswers: careIncome,
+    burialRevenueFromAnswers: burialRevenue,
+    grantFromTheCemeteryFundFromAnswers: grantFromTheCemeteryFund,
+    donationsToCemeteryFundFromAnswers: donationsToCemeteryFund,
+  }
 }

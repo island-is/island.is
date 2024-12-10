@@ -52,3 +52,13 @@ export type CareTaker = {
   name: string
   role: string
 }
+
+export type TaxInfoItem = {
+  __typename: string
+  key: number
+  value: string
+}
+
+export type TaxInfoData = {
+  financialStatementsInaoTaxInfo: Array<TaxInfoItem>
+}
