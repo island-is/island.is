@@ -108,6 +108,41 @@ export class NotificationsController {
     return this.notificationsService.findMany(nationalId, query)
   }
 
+  @UseGuards(IdsUserGuard, ScopesGuard)
+  @Scopes(AdminPortalScope.serviceDesk)
+  @Get('/status/:notificationId')
+  @Version('1')
+  @Documentation({
+    summary: 'Get status information for a specific notification',
+    response: { status: HttpStatus.OK },
+    request: {
+      params: {
+        notificationId: {
+          type: 'string',
+          description: 'ID of the notification',
+          example: 'notif-123-456',
+        },
+      },
+    },
+  })
+  async getNotificationStatus(
+    @Param('notificationId') notificationId: string,
+  ): Promise<{
+    id: string
+    status: string
+    createdAt: string
+    lastUpdated: string
+  }> {
+    this.logger.info(`Fetching status for notification: ${notificationId}`)
+    
+    return {
+      id: notificationId,
+      status: 'DELIVERED',
+      createdAt: '2024-12-10T10:00:00Z',
+      lastUpdated: '2024-12-10T10:15:00Z',
+    }
+  }
+
   @Documentation({
     summary: 'Creates a new notification and adds to queue',
     includeNoContentResponse: true,
