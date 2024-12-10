@@ -19,7 +19,6 @@ import {
   FormSystemField,
   FormSystemSection,
   Maybe,
-  FormSystemSectionDtoSectionTypeEnum,
 } from '@island.is/api/schema'
 import { ControlContext, IControlContext } from '../../context/ControlContext'
 import { ItemType } from '../../lib/utils/interfaces'
@@ -28,7 +27,7 @@ import { useIntl } from 'react-intl'
 import { NavComponent } from '../NavComponent/NavComponent'
 import { CREATE_SECTION, UPDATE_SECTION_DISPLAY_ORDER } from '@island.is/form-system/graphql'
 import { useMutation } from '@apollo/client'
-import { m } from '@island.is/form-system/ui'
+import { m, SectionTypes } from '@island.is/form-system/ui'
 
 type DndAction =
   | 'SECTION_OVER_SECTION'
@@ -232,7 +231,7 @@ export const Navbar = () => {
         </div>
         {sections
           ?.filter((s): s is FormSystemSection => s !== null && s !== undefined)
-          .filter((s) => s.sectionType !== FormSystemSectionDtoSectionTypeEnum.Input)
+          .filter((s) => s.sectionType !== SectionTypes.INPUT)
           .map((s) => (
             <Box key={s.id}>
               <NavComponent
@@ -249,7 +248,7 @@ export const Navbar = () => {
             size="small"
             onClick={() => {
               setInSettings(false)
-              const section = sections?.find((s) => s?.sectionType === FormSystemSectionDtoSectionTypeEnum.Input)
+              const section = sections?.find((s) => s?.sectionType === SectionTypes.INPUT)
               if (section) {
                 controlDispatch({
                   type: 'SET_ACTIVE_ITEM',
@@ -291,7 +290,7 @@ export const Navbar = () => {
               ?.filter(
                 (s): s is FormSystemSection => s !== null && s !== undefined,
               )
-              .filter((s) => s.sectionType === FormSystemSectionDtoSectionTypeEnum.Input)
+              .filter((s) => s.sectionType === SectionTypes.INPUT)
               .map((s, i) => (
                 <Box key={s.id}>
                   <NavComponent

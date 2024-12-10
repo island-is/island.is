@@ -1,5 +1,4 @@
 import { Field, ObjectType, Int } from '@nestjs/graphql'
-import { SectionDtoSectionTypeEnum } from '@island.is/clients/form-system'
 import { LanguageType } from './languageType.model'
 import { Screen as ScreenModel } from './screen.model'
 
@@ -11,8 +10,8 @@ export class Section {
   @Field(() => LanguageType, { nullable: true })
   name?: LanguageType
 
-  @Field(() => SectionDtoSectionTypeEnum, { nullable: true })
-  sectionType?: SectionDtoSectionTypeEnum
+  @Field(() => String, { nullable: true })
+  sectionType?: string
 
   @Field(() => Int, { nullable: true })
   displayOrder?: number

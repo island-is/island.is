@@ -6,7 +6,7 @@ import { handle4xx } from '../../utils/errorHandler'
 import {
   ApplicationsApi,
   ApplicationsControllerCreateRequest,
-  ApplicationsControllerGetPreviewRequest,
+  ApplicationsControllerGetApplicationRequest,
 } from '@island.is/clients/form-system'
 import {
   CreateApplicationInput,
@@ -60,8 +60,8 @@ export class ApplicationsService {
     input: GetApplicationInput,
   ): Promise<Application> {
     const response = await this.applicationsApiWithAuth(auth)
-      .applicationsControllerGetPreview(
-        input as ApplicationsControllerGetPreviewRequest,
+      .applicationsControllerGetApplication(
+        input as ApplicationsControllerGetApplicationRequest,
       )
       .catch((e) => handle4xx(e, this.handleError, 'failed to get application'))
 

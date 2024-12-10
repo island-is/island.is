@@ -1,4 +1,6 @@
 import { UseGuards } from '@nestjs/common'
+import { CodeOwner } from '@island.is/nest/core'
+import { CodeOwners } from '@island.is/shared/constants'
 import { Args, Mutation, Resolver } from '@nestjs/graphql'
 import {
   CurrentUser,
@@ -17,9 +19,10 @@ import { Screen } from '../../models/screen.model'
 
 @Resolver()
 @UseGuards(IdsUserGuard)
+@CodeOwner(CodeOwners.Advania)
 @Audit({ namespace: '@island.is/api/form-system' })
 export class ScreensResolver {
-  constructor(private readonly screensService: ScreensService) {}
+  constructor(private readonly screensService: ScreensService) { }
 
   @Mutation(() => Screen, {
     name: 'formSystemCreateScreen',
