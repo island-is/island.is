@@ -134,7 +134,7 @@ export class NotificationsController {
     lastUpdated: string
   }> {
     this.logger.info(`Fetching status for notification: ${notificationId}`)
-    
+
     return {
       id: notificationId,
       status: 'DELIVERED',
