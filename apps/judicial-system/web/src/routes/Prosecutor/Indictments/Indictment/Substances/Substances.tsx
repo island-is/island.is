@@ -17,6 +17,7 @@ import { Substance } from '../Substance/Substance'
 import { substances as strings } from './Substances.strings'
 import { substanceEnum } from './SubstancesEnum.strings'
 import * as styles from './Substances.css'
+import { SectionHeading } from '@island.is/judicial-system-web/src/components'
 
 interface Props {
   indictmentCount: TIndictmentCount
@@ -65,6 +66,13 @@ export const Substances: FC<Props> = ({
 
   return (
     <Box marginBottom={2}>
+      <SectionHeading
+        title={formatMessage(strings.substanceTitle, {
+          substanceType: indictmentCountOffenseType,
+        })}
+        heading="h4"
+        marginBottom={2}
+      />
       <Box marginBottom={2}>
         <Select
           name={`${indictmentCountOffenseType}-offense-type`}

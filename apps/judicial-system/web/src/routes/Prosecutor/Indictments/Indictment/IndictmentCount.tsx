@@ -528,6 +528,7 @@ export const IndictmentCount: FC<Props> = ({
               <SectionHeading
                 title={formatMessage(strings.selectIndictmentSubtype)}
                 heading="h4"
+                marginBottom={2}
               />
               <div className={styles.indictmentSubtypesContainter}>
                 {subtypes.map((subtype: IndictmentSubtype) => (
@@ -563,6 +564,11 @@ export const IndictmentCount: FC<Props> = ({
           indictmentCount.indictmentCountSubtypes[0] ===
             IndictmentSubtype.TRAFFIC_VIOLATION && (
             <>
+              <SectionHeading
+                heading="h4"
+                title={formatMessage(strings.vehicleRegistrationNumberTitle)}
+                marginBottom={2}
+              />
               <Box marginBottom={2}>
                 <InputMask
                   mask={[/[A-Z]/i, /[A-Z]/i, /[A-Z]|[0-9]/i, /[0-9]/, /[0-9]/]}
@@ -618,6 +624,11 @@ export const IndictmentCount: FC<Props> = ({
                 </InputMask>
               </Box>
               <Box marginBottom={2}>
+                <SectionHeading
+                  heading="h4"
+                  title={formatMessage(strings.incidentTitle)}
+                  marginBottom={2}
+                />
                 <Select
                   name="offenses"
                   options={offensesOptions}
@@ -680,6 +691,11 @@ export const IndictmentCount: FC<Props> = ({
                 IndictmentCountOffense.DRUNK_DRIVING,
               ) && (
                 <Box marginBottom={2}>
+                  <SectionHeading
+                    title={formatMessage(strings.bloodAlcoholContentTitle)}
+                    heading="h4"
+                    marginBottom={2}
+                  />
                   <InputMask
                     mask={'9,99'}
                     maskPlaceholder={null}
@@ -755,10 +771,15 @@ export const IndictmentCount: FC<Props> = ({
                       indictmentCount={indictmentCount}
                       indictmentCountOffenseType={offenseType}
                       onChange={handleIndictmentCountChanges}
-                    ></SubstanceChoices>
+                    />
                   </Box>
                 ))}
               <Box marginBottom={2}>
+                <SectionHeading
+                  heading="h4"
+                  title={formatMessage(strings.lawsBrokenTitle)}
+                  marginBottom={2}
+                />
                 <Select
                   name="lawsBroken"
                   options={lawsBrokenOptions}

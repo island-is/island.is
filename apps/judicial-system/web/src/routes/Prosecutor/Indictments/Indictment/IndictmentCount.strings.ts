@@ -23,6 +23,12 @@ export const indictmentCount = defineMessages({
     description:
       'Notaður sem skýritexti á LÖKE málsnúmers lista á ákæruliða skrefi í ákærum.',
   },
+  vehicleRegistrationNumberTitle: {
+    id: 'judicial.system.core:indictments_indictment.indictment_count.vehicle_registration_number_title',
+    defaultMessage: 'Númer ökutækis',
+    description:
+      'Notaður sem titill á "Númer ökutækis" svæði á ákæruliða skrefi í ákærum.',
+  },
   vehicleRegistrationNumberLabel: {
     id: 'judicial.system.core:indictments_indictment.indictment_count.vehicle_registration_number_label',
     defaultMessage: 'Skráningarnúmer ökutækis',
@@ -34,6 +40,12 @@ export const indictmentCount = defineMessages({
     defaultMessage: 'AB-123',
     description:
       'Notaður sem skýritexti á "skráningarnúmer ökutækis" svæði á ákæruliða skrefi í ákærum.',
+  },
+  incidentTitle: {
+    id: 'judicial.system.core:indictments_indictment.indictment_count.incident_title',
+    defaultMessage: 'Brot',
+    description:
+      'Notaður sem titill á "brot" lista á ákæruliða skrefi í ákærum.',
   },
   incidentLabel: {
     id: 'judicial.system.core:indictments_indictment.indictment_count.incident_label',
@@ -65,6 +77,12 @@ export const indictmentCount = defineMessages({
     description:
       'Notaður sem skýritexti á "atvikalýsing" svæði á ákæruliða skrefi í ákærum.',
   },
+  bloodAlcoholContentTitle: {
+    id: 'judicial.system.core:indictments_indictment.indictment_count.blood_alcohol_content_title',
+    defaultMessage: 'Vínandamagn',
+    description:
+      'Notaður sem titill á "vínandamagn" svæði á ákæruliða skrefi í ákærum.',
+  },
   bloodAlcoholContentLabel: {
     id: 'judicial.system.core:indictments_indictment.indictment_count.blood_alcohol_content_label',
     defaultMessage: 'Vínandamagn (‰)',
@@ -76,6 +94,12 @@ export const indictmentCount = defineMessages({
     defaultMessage: '0,00',
     description:
       'Notaður sem skýritexti á "vínandamagn" svæði á ákæruliða skrefi í ákærum.',
+  },
+  lawsBrokenTitle: {
+    id: 'judicial.system.core:indictments_indictment.indictment_count.laws_broken_title',
+    defaultMessage: 'Lagaákvæði',
+    description:
+      'Notaður sem titill á "lagaákvæði" leitarboxi á ákæruliða skrefi í ákærum.',
   },
   lawsBrokenLabel: {
     id: 'judicial.system.core:indictments_indictment.indictment_count.laws_broken_label',
