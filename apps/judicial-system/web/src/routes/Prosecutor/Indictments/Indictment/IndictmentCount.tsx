@@ -328,8 +328,6 @@ export const getIncidentDescription = (
     return ''
   }
 
-  console.log(hasSingleSubtype, trafficViolationSubtype, subtypes)
-
   if (
     (hasSingleSubtype && trafficViolationSubtype) ||
     (indictmentCountSubtypes?.length === 1 &&
