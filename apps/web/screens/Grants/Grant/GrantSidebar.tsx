@@ -1,6 +1,14 @@
 import { useMemo } from 'react'
 
-import { Box, Button, LinkV2, Stack, Text } from '@island.is/island-ui/core'
+import {
+  Box,
+  BoxProps,
+  Button,
+  LinkV2,
+  Stack,
+  Text,
+} from '@island.is/island-ui/core'
+import { useLocale } from '@island.is/localization'
 import { Locale } from '@island.is/shared/types'
 import { isDefined } from '@island.is/shared/utils'
 import { InstitutionPanel } from '@island.is/web/components'
@@ -8,7 +16,6 @@ import { Grant } from '@island.is/web/graphql/schema'
 import { LinkType, useLinkResolver } from '@island.is/web/hooks'
 
 import { m } from '../messages'
-import { useLocale } from '@island.is/localization'
 import { generateStatusTag } from '../utils'
 
 interface Props {
@@ -26,6 +33,20 @@ const generateLine = (heading: string, content?: React.ReactNode) => {
         {heading}
       </Text>
       {content}
+    </Box>
+  )
+}
+
+const generateSidebarPanel = (
+  data: Array<React.ReactElement>,
+  background: BoxProps['background'],
+) => {
+  if (!data) {
+    return undefined
+  }
+  return (
+    <Box background={background} padding={3} borderRadius="standard">
+      <Stack space={2}>{data}</Stack>
     </Box>
   )
 }
@@ -154,21 +175,9 @@ export const GrantSidebar = ({ grant, locale }: Props) => {
         img={grant.fund?.parentOrganization.logo?.url}
         locale={locale}
       />
-      {detailPanelData.length ? (
-        <Box background="blue100" padding={3} borderRadius="standard">
-          <Stack space={2}>{detailPanelData}</Stack>
-        </Box>
-      ) : undefined}
-      {filesPanelData.length ? (
-        <Box background="red100" padding={3} borderRadius="standard">
-          <Stack space={2}>{filesPanelData}</Stack>
-        </Box>
-      ) : undefined}
-      {supportLinksPanelData.length ? (
-        <Box background="red100" padding={3} borderRadius="standard">
-          <Stack space={2}>{supportLinksPanelData}</Stack>
-        </Box>
-      ) : undefined}
+      {generateSidebarPanel(detailPanelData, 'blue100')}
+      {generateSidebarPanel(filesPanelData, 'red100')}
+      {generateSidebarPanel(supportLinksPanelData, 'purple100')}
     </Stack>
   )
 }
