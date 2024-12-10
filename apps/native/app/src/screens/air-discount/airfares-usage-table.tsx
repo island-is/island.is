@@ -2,7 +2,7 @@ import React from 'react'
 import { FormattedDate, FormattedTime } from 'react-intl'
 import styled from 'styled-components/native'
 
-import { Typography, dynamicColor } from '@ui'
+import { Typography, dynamicColor } from '../../ui'
 import { GetAirDiscountFlightLegsQuery } from '../../graphql/types/schema'
 import { useTheme } from 'styled-components'
 
