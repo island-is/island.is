@@ -100,6 +100,7 @@ export const GrantSidebar = ({ grant, locale }: Props) => {
           return (
             <LinkV2
               key={`${f.url}-${index}`}
+              newTab
               href={f.url}
               underlineVisibility="hover"
             >
@@ -111,6 +112,35 @@ export const GrantSidebar = ({ grant, locale }: Props) => {
         })
         .filter(isDefined) ?? [],
     [grant.files],
+  )
+
+  const supportLinksPanelData = useMemo(
+    () =>
+      grant.supportLinks
+        ?.map((link) => {
+          if (!link.url || !link.text || !link.id) {
+            return null
+          }
+          return (
+            <LinkV2
+              newTab
+              key={link.id}
+              href={link.url}
+              underlineVisibility="hover"
+            >
+              <Button
+                size="medium"
+                icon="link"
+                iconType="outline"
+                variant="text"
+              >
+                {link.text}
+              </Button>
+            </LinkV2>
+          )
+        })
+        .filter(isDefined) ?? [],
+    [grant.supportLinks],
   )
 
   return (
@@ -132,6 +162,11 @@ export const GrantSidebar = ({ grant, locale }: Props) => {
       {filesPanelData.length ? (
         <Box background="red100" padding={3} borderRadius="standard">
           <Stack space={2}>{filesPanelData}</Stack>
+        </Box>
+      ) : undefined}
+      {supportLinksPanelData.length ? (
+        <Box background="red100" padding={3} borderRadius="standard">
+          <Stack space={2}>{supportLinksPanelData}</Stack>
         </Box>
       ) : undefined}
     </Stack>
