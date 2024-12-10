@@ -28,7 +28,7 @@ export class SeminarsTemplateService extends BaseTemplateApiService {
     const seminarQueryId =
       getValueViaPath<string>(application.answers, `initialQuery`) ?? ''
     const data = await this.seminarsClientService
-      .getSeminar(auth, parseInt(seminarQueryId, 10))
+      .getSeminar(auth, seminarQueryId)
       .catch(() => {
         this.logger.warn('[seminars-service]: Error fetching data from AOSH')
         throw new TemplateApiError(
