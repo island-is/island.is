@@ -15,12 +15,17 @@ import {
   GenericUserLicenseMetaLinksType,
 } from '../licenceService.type'
 import { FirearmLicenseDto } from '@island.is/clients/license-client'
-import { Injectable } from '@nestjs/common'
+import { Inject, Injectable } from '@nestjs/common'
 import { isDefined } from '@island.is/shared/utils'
 import { FormatMessage, IntlService } from '@island.is/cms-translations'
 import { m } from '../messages'
 import { expiryTag, formatDate } from '../utils'
 import { GenericLicenseDataField } from '../dto/GenericLicenseDataField.dto'
+import { UserAgent } from '@island.is/nest/core'
+import { enableAppCompatibilityMode } from '../utils/appCompatibilityMode'
+import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
+
+const APP_VERSION_CUTOFF = '1.4.7'
 
 @Injectable()
 export class FirearmLicensePayloadMapper implements GenericLicenseMapper {
@@ -28,8 +33,15 @@ export class FirearmLicensePayloadMapper implements GenericLicenseMapper {
   async parsePayload(
     payload: Array<unknown>,
     locale: Locale = 'is',
+    userAgent?: UserAgent,
   ): Promise<Array<GenericLicenseMappedPayloadResponse>> {
     if (!payload) return Promise.resolve([])
+
+    //App version before 1.4.8 doesn't know how to handle table
+    const enableAppCompatibility = enableAppCompatibilityMode(
+      userAgent?.app?.version,
+      APP_VERSION_CUTOFF,
+    )
 
     const typedPayload = payload as Array<FirearmLicenseDto>
 
@@ -99,21 +111,9 @@ export class FirearmLicensePayloadMapper implements GenericLicenseMapper {
               : null,
             properties
               ? {
-                  type: GenericLicenseDataFieldType.Group,
-                  hideFromServicePortal: true,
-                  label: formatMessage(m.firearmProperties),
-                  fields: (properties.properties ?? []).map((property) => ({
-                    type: GenericLicenseDataFieldType.Category,
-                    fields: this.parseProperties(
-                      property,
-                      formatMessage,
-                    )?.filter(isDefined),
-                  })),
-                }
-              : null,
-            properties
-              ? {
-                  type: GenericLicenseDataFieldType.Table,
+                  type: enableAppCompatibility
+                    ? GenericLicenseDataFieldType.Group
+                    : GenericLicenseDataFieldType.Table,
                   label: formatMessage(m.firearmProperties),
                   fields: (properties.properties ?? []).map((property) => ({
                     type: GenericLicenseDataFieldType.Category,

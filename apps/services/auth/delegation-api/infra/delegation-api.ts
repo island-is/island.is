@@ -1,4 +1,5 @@
 import {
+  CodeOwners,
   json,
   ref,
   service,
@@ -29,6 +30,7 @@ export const serviceSetup = (services: {
   return service('services-auth-delegation-api')
     .namespace('identity-server-delegation')
     .image('services-auth-delegation-api')
+    .codeOwner(CodeOwners.Aranja)
     .db({
       name: 'servicesauth',
     })
