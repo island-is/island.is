@@ -26,11 +26,16 @@ import { filterInternalPartners } from '@island.is/skilavottord-web/utils'
 
 import NavigationLinks from '@island.is/skilavottord-web/components/NavigationLinks/NavigationLinks'
 import PageHeader from '@island.is/skilavottord-web/components/PageHeader/PageHeader'
-import municipalities from '@island.is/skilavottord-web/pages/municipalities'
 
-export const SkilavottordAllRecyclingPartnersQuery = gql`
-  query skilavottordAllRecyclingPartnersQuery($isMunicipality: Boolean!) {
-    skilavottordAllRecyclingPartners(isMunicipality: $isMunicipality) {
+export const SkilavottordAllRecyclingPartnersByTypeQuery = gql`
+  query skilavottordAllRecyclingPartnersByTypeQuery(
+    $isMunicipality: Boolean!
+    $municipalityId: String
+  ) {
+    skilavottordAllRecyclingPartnersByType(
+      isMunicipality: $isMunicipality
+      municipalityId: $municipalityId
+    ) {
       companyId
       companyName
       address
@@ -57,6 +62,7 @@ const RecyclingCompanies: FC<React.PropsWithChildren<unknown>> = () => {
   let activeSection = 2
   let title = t.title
   let info = t.info
+
   if (router.route === routes.municipalities.baseRoute) {
     activeSection = 1
     title = mt.title
@@ -65,10 +71,19 @@ const RecyclingCompanies: FC<React.PropsWithChildren<unknown>> = () => {
     buttonText = t.buttons.addMunicipality
   }
 
+  // Show only recycling companies for the municipality
+  let partnerId = null
+  if (user?.role === Role.municipality) {
+    partnerId = user?.partnerId
+  }
+
   const { data, error, loading } = useQuery<Query>(
-    SkilavottordAllRecyclingPartnersQuery,
+    SkilavottordAllRecyclingPartnersByTypeQuery,
     {
-      variables: { isMunicipality },
+      variables: {
+        isMunicipality,
+        municipalityId: partnerId,
+      },
     },
   )
 
@@ -78,7 +93,7 @@ const RecyclingCompanies: FC<React.PropsWithChildren<unknown>> = () => {
     return <NotFound />
   }
 
-  const partners = data?.skilavottordAllRecyclingPartners || []
+  const partners = data?.skilavottordAllRecyclingPartnersByType || []
   const recyclingPartners = filterInternalPartners(partners)
   recyclingPartners.sort((a, b) => a.companyName.localeCompare(b.companyName))
 
@@ -108,7 +123,6 @@ const RecyclingCompanies: FC<React.PropsWithChildren<unknown>> = () => {
     }
   }
 
-  console.log('routes.', routes)
   return (
     <PartnerPageLayout side={<NavigationLinks activeSection={activeSection} />}>
       <Stack space={4}>

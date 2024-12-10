@@ -365,6 +365,7 @@
   },
   "recyclingFundSidenav": {
     "title": "Úrvinnslusjóður",
+    "municipalityTitle": "Sveitarfélag",
     "recycled": "Meðhöndluð ökutæki",
     "companies": "Móttökuaðilar",
     "accessControl": "Aðgangsstýring",

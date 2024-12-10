@@ -16,7 +16,7 @@ import { useI18n } from '@island.is/skilavottord-web/i18n'
 import NavigationLinks from '@island.is/skilavottord-web/components/NavigationLinks/NavigationLinks'
 import PageHeader from '@island.is/skilavottord-web/components/PageHeader/PageHeader'
 import { RecyclingCompanyForm } from '../components'
-import { SkilavottordAllRecyclingPartnersQuery } from '../RecyclingCompanies'
+import { SkilavottordAllRecyclingPartnersByTypeQuery } from '../RecyclingCompanies'
 
 export const CreateSkilavottordRecyclingPartnerMutation = gql`
   mutation createSkilavottordRecyclingPartnerMutation(
@@ -40,14 +40,6 @@ export const CreateSkilavottordRecyclingPartnerMutation = gql`
 `
 
 const RecyclingCompanyCreate: FC<React.PropsWithChildren<unknown>> = () => {
-  const {
-    control,
-    handleSubmit,
-    setValue,
-    formState: { errors },
-  } = useForm({
-    mode: 'onChange',
-  })
   const { user } = useContext(UserContext)
   const router = useRouter()
   const {
@@ -62,10 +54,11 @@ const RecyclingCompanyCreate: FC<React.PropsWithChildren<unknown>> = () => {
 
   const isMunicipality = router.route === routes.municipalities.add
 
-  React.useEffect(() => {
-    // Set initial value for the checkbox based on query param
-    setValue('isMunicipality', isMunicipality)
-  }, [isMunicipality, setValue])
+  // Show only recycling companies for the municipality
+  let partnerId = null
+  if (user?.role === Role.municipality) {
+    partnerId = user?.partnerId
+  }
 
   // If coming from municipality page
   if (isMunicipality) {
@@ -76,6 +69,15 @@ const RecyclingCompanyCreate: FC<React.PropsWithChildren<unknown>> = () => {
     route = routes.municipalities.baseRoute
   }
 
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    mode: 'onChange',
+    defaultValues: { isMunicipality, municipalityId: partnerId },
+  })
+
   const [createSkilavottordRecyclingPartner] = useMutation(
     CreateSkilavottordRecyclingPartnerMutation,
     {
@@ -84,8 +86,8 @@ const RecyclingCompanyCreate: FC<React.PropsWithChildren<unknown>> = () => {
       },
       refetchQueries: [
         {
-          query: SkilavottordAllRecyclingPartnersQuery,
-          variables: { isMunicipality },
+          query: SkilavottordAllRecyclingPartnersByTypeQuery,
+          variables: { isMunicipality, municipalityId: partnerId },
         },
       ],
     },
@@ -98,11 +100,9 @@ const RecyclingCompanyCreate: FC<React.PropsWithChildren<unknown>> = () => {
   }
 
   const handleCreateRecyclingPartner = handleSubmit(async (input) => {
-    console.log('input', input)
-
-    const municipalityId = input.municipality?.value || ''
-
-    delete input.municipality
+    if (typeof input.municipalityId !== 'string') {
+      input.municipalityId = input.municipalityId?.value || ''
+    }
 
     const { errors } = await createSkilavottordRecyclingPartner({
       variables: {
@@ -110,7 +110,6 @@ const RecyclingCompanyCreate: FC<React.PropsWithChildren<unknown>> = () => {
           ...input,
           active: !!input.active,
           isMunicipality: !!input.isMunicipality,
-          municipalityId,
         },
       },
     })

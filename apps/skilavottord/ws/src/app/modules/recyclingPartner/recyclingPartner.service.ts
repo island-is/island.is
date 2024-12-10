@@ -16,11 +16,7 @@ export class RecyclingPartnerService {
   ) {}
 
   async findAll(): Promise<RecyclingPartnerModel[]> {
-    return await this.recyclingPartnerModel.findAll({
-      where: {
-        [Op.or]: [{ isMunicipality: false }, { isMunicipality: null }],
-      },
-    })
+    return await this.recyclingPartnerModel.findAll()
   }
 
   async findAllActive(): Promise<RecyclingPartnerModel[]> {
@@ -29,9 +25,29 @@ export class RecyclingPartnerService {
     })
   }
 
-  async findAllRecyclingPartners(): Promise<RecyclingPartnerModel[]> {
-    return this.recyclingPartnerModel.findAll({
-      where: { isMunicipality: true },
+  async findAllRecyclingPartnersByType(
+    isMunicipality: boolean,
+    municipalityId: string | null,
+  ): Promise<RecyclingPartnerModel[]> {
+    // If Role.municipality, return all recycling partners that are not municipalities
+    if (municipalityId) {
+      return await this.recyclingPartnerModel.findAll({
+        where: {
+          isMunicipality: false,
+          municipalityId: municipalityId,
+        },
+      })
+    }
+
+    if (isMunicipality) {
+      return await this.recyclingPartnerModel.findAll({
+        where: { isMunicipality: true },
+      })
+    }
+    return await this.recyclingPartnerModel.findAll({
+      where: {
+        [Op.or]: [{ isMunicipality: false }, { isMunicipality: null }],
+      },
     })
   }
 

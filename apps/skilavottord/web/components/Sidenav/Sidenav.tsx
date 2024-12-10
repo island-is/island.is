@@ -1,17 +1,10 @@
-import React, { FC } from 'react'
-import {
-  Box,
-  Divider,
-  FocusableBox,
-  Icon,
-  Stack,
-  Text,
-} from '@island.is/island-ui/core'
+import { Box, FocusableBox, Icon, Stack, Text } from '@island.is/island-ui/core'
 
 interface SidenavSection {
   title: string
   link: string
   icon?: string
+  hidden?: boolean
 }
 
 interface SidenavProps {
@@ -30,7 +23,7 @@ export const Sidenav = ({ title, sections, activeSection }: SidenavProps) => (
       </Text>
       <Stack space={3}>
         {sections.map((section, index) => {
-          if (!section?.title) return null
+          if (!section?.title || section.hidden) return null
           return (
             <FocusableBox
               key={index}

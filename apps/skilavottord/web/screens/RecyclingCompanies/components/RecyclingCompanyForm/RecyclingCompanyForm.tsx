@@ -1,9 +1,10 @@
+import * as kennitala from 'kennitala'
 import React, { BaseSyntheticEvent, FC, useContext } from 'react'
 import { Control, Controller, FieldError } from 'react-hook-form'
 import { FieldValues } from 'react-hook-form/dist/types'
 import { DeepMap } from 'react-hook-form/dist/types/utils'
-import * as kennitala from 'kennitala'
 
+import { useQuery } from '@apollo/client'
 import {
   Box,
   Button,
@@ -14,13 +15,12 @@ import {
   Select,
   Stack,
 } from '@island.is/island-ui/core'
-import { useI18n } from '@island.is/skilavottord-web/i18n'
 import { InputController } from '@island.is/shared/form-fields'
 import { isDeveloper } from '@island.is/skilavottord-web/auth/utils'
 import UserContext from '@island.is/skilavottord-web/context/UserContext'
-import { SkilavottordAllRecyclingPartnersQuery } from '../../RecyclingCompanies'
-import { useQuery } from '@apollo/client'
 import { Query } from '@island.is/skilavottord-web/graphql/schema'
+import { useI18n } from '@island.is/skilavottord-web/i18n'
+import { SkilavottordAllRecyclingPartnersByTypeQuery } from '../../RecyclingCompanies'
 
 interface RecyclingCompanyForm {
   onSubmit: (
@@ -49,15 +49,13 @@ const RecyclingCompanyForm: FC<
     t: { recyclingCompanies: t },
   } = useI18n()
 
-  const { data, error, loading } = useQuery<Query>(
-    SkilavottordAllRecyclingPartnersQuery,
-    {
+  const { data } =
+    useQuery<Query>(SkilavottordAllRecyclingPartnersByTypeQuery, {
       skip: isMunicipality,
       variables: { isMunicipality: true },
-    },
-  )
+    }) || []
 
-  const municipalities = data?.skilavottordAllRecyclingPartners.map(
+  const municipalities = data?.skilavottordAllRecyclingPartnersByType.map(
     (municipality) => ({
       label: municipality.companyName,
       value: municipality.companyId,
@@ -281,7 +279,7 @@ const RecyclingCompanyForm: FC<
             <GridRow>
               <GridColumn span="12/12">
                 <Controller
-                  name="municipality"
+                  name="municipalityId"
                   control={control}
                   render={({ field: { onChange, value, name } }) => {
                     return (
@@ -295,12 +293,15 @@ const RecyclingCompanyForm: FC<
                             .placeholder
                         }
                         size="md"
-                        value={value}
+                        value={municipalities?.find(
+                          (option) => option.value === value,
+                        )}
                         hasError={!!errors?.municipality?.message}
                         errorMessage={errors?.municipality?.message}
                         backgroundColor="blue"
                         options={municipalities}
                         onChange={onChange}
+                        isCreatable
                       />
                     )
                   }}

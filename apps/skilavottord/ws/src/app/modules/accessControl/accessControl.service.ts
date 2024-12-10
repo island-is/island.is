@@ -1,15 +1,15 @@
-import { InjectModel } from '@nestjs/sequelize'
 import { Injectable } from '@nestjs/common'
+import { InjectModel } from '@nestjs/sequelize'
 import { Op } from 'sequelize'
 
 import { RecyclingPartnerModel } from '../recyclingPartner'
 
-import { AccessControlModel, AccessControlRole } from './accessControl.model'
 import {
   CreateAccessControlInput,
   DeleteAccessControlInput,
   UpdateAccessControlInput,
 } from './accessControl.input'
+import { AccessControlModel, AccessControlRole } from './accessControl.model'
 
 @Injectable()
 export class AccessControlService {
@@ -34,13 +34,21 @@ export class AccessControlService {
   async findByRecyclingPartner(
     partnerId: string,
   ): Promise<AccessControlModel[]> {
+    const partnerIds = []
+    // Get all sub companies
+    const getAllCompanyIds = async (partnerId: string) => {
+      partnerIds.push(partnerId)
+      const subCompanies = await RecyclingPartnerModel.findAll({
+        where: { municipalityId: partnerId },
+      })
+      for (const subCompany of subCompanies) {
+        await getAllCompanyIds(subCompany.companyId)
+      }
+    }
+    await getAllCompanyIds(partnerId)
     return this.accessControlModel.findAll({
-      where: { partnerId, role: ['recyclingCompany', 'recyclingCompanyAdmin'] },
-      include: [
-        {
-          model: RecyclingPartnerModel,
-        },
-      ],
+      where: { partnerId: partnerIds },
+      include: [RecyclingPartnerModel],
     })
   }
 

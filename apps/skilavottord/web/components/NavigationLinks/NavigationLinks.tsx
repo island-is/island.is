@@ -1,5 +1,8 @@
 import { useI18n } from '@island.is/skilavottord-web/i18n'
 import Sidenav from '../Sidenav/Sidenav'
+import { UserContext } from '@island.is/skilavottord-web/context'
+import { useContext } from 'react'
+import { Role } from '@island.is/skilavottord-web/graphql/schema'
 
 export const NavigationLinks = ({
   activeSection,
@@ -10,9 +13,16 @@ export const NavigationLinks = ({
     t: { recyclingFundSidenav: sidenavText, routes },
   } = useI18n()
 
+  const { user } = useContext(UserContext)
+
+  let title = sidenavText.title
+  if (user?.role === Role.municipality) {
+    title = sidenavText.municipalityTitle
+  }
+
   return (
     <Sidenav
-      title={sidenavText.title}
+      title={title}
       sections={[
         {
           icon: 'car',
@@ -23,6 +33,7 @@ export const NavigationLinks = ({
           icon: 'people',
           title: `${sidenavText.municipalities}`,
           link: `${routes.municipalities.baseRoute}`,
+          hidden: user?.role === Role.municipality,
         },
         {
           icon: 'business',

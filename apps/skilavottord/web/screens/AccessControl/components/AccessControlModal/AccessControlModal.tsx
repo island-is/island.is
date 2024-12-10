@@ -1,10 +1,10 @@
+import * as kennitala from 'kennitala'
 import React, { BaseSyntheticEvent, FC } from 'react'
 import { Control, Controller } from 'react-hook-form'
 import { FieldError, FieldValues } from 'react-hook-form/dist/types'
 import { DeepMap } from 'react-hook-form/dist/types/utils'
-import * as kennitala from 'kennitala'
 
-import { Box, Button, Select, Option, Stack } from '@island.is/island-ui/core'
+import { Box, Button, Option, Select, Stack } from '@island.is/island-ui/core'
 import { InputController } from '@island.is/shared/form-fields'
 import { Modal, ModalProps } from '@island.is/skilavottord-web/components'
 import { useI18n } from '@island.is/skilavottord-web/i18n'
@@ -191,6 +191,7 @@ export const AccessControlModal: FC<
                   options={recyclingPartners}
                   onChange={onChange}
                   required={partnerIdRequired}
+                  isCreatable
                 />
               )
             }}

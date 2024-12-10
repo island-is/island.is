@@ -9,7 +9,6 @@ type Page =
   | 'accessControl'
   | 'accessControlCompany'
   | 'companyInfo'
-  | 'deregisterVehicleKM'
 
 export const isDeveloper = (role: Role) => role === Role.developer
 
@@ -19,19 +18,20 @@ export const hasPermission = (page: Page, role: Role) => {
   if (role === Role.developer) return true
 
   const permittedRoutes = {
-    recyclingCompany: [
-      'deregisterVehicle',
-      'companyInfo',
-      'deregisterVehicleKM',
-    ],
+    recyclingCompany: ['deregisterVehicle', 'companyInfo'],
     recyclingCompanyAdmin: [
       'deregisterVehicle',
       'companyInfo',
       'accessControlCompany',
-      'deregisterVehicleKM',
     ],
     citizen: ['myCars', 'recycleVehicle'],
-    recyclingFund: ['recycledVehicles', 'recyclingCompanies', 'accessControl'],
+    recyclingFund: [
+      'recycledVehicles',
+      'recyclingCompanies',
+      'accessControl',
+      'municipalities',
+    ],
+    municipality: ['recycledVehicles', 'recyclingCompanies', 'accessControl'],
   }
 
   return permittedRoutes[role].includes(page)

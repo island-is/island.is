@@ -365,6 +365,7 @@
   },
   "recyclingFundSidenav": {
     "title": "Service",
+    "municipalityTitle": "Municipality",
     "recycled": "Recycled cars",
     "companies": "Recycling companies",
     "accessControl": "Access Control",

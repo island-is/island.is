@@ -22,7 +22,7 @@ import { useI18n } from '@island.is/skilavottord-web/i18n'
 import NavigationLinks from '@island.is/skilavottord-web/components/NavigationLinks/NavigationLinks'
 import PageHeader from '@island.is/skilavottord-web/components/PageHeader/PageHeader'
 import { RecyclingCompanyForm } from '../components'
-import { SkilavottordAllRecyclingPartnersQuery } from '../RecyclingCompanies'
+import { SkilavottordAllRecyclingPartnersByTypeQuery } from '../RecyclingCompanies'
 
 const SkilavottordRecyclingPartnerQuery = gql`
   query SkilavottordRecyclingPartnerQuery($input: RecyclingPartnerInput!) {
@@ -37,6 +37,7 @@ const SkilavottordRecyclingPartnerQuery = gql`
       website
       phone
       active
+      municipalityId
     }
   }
 `
@@ -79,6 +80,12 @@ const RecyclingCompanyUpdate: FC<React.PropsWithChildren<unknown>> = () => {
 
   const isMunicipality = router.route === routes.municipalities.edit
 
+  // Show only recycling companies for the municipality
+  let partnerId = null
+  if (user?.role === Role.municipality) {
+    partnerId = user?.partnerId
+  }
+
   const { data, error, loading } = useQuery<Query>(
     SkilavottordRecyclingPartnerQuery,
     {
@@ -99,8 +106,8 @@ const RecyclingCompanyUpdate: FC<React.PropsWithChildren<unknown>> = () => {
           variables: { input: { companyId: id } },
         },
         {
-          query: SkilavottordAllRecyclingPartnersQuery,
-          variables: { isMunicipality },
+          query: SkilavottordAllRecyclingPartnersByTypeQuery,
+          variables: { isMunicipality, municipalityId: partnerId },
         },
       ],
     },
@@ -111,8 +118,6 @@ const RecyclingCompanyUpdate: FC<React.PropsWithChildren<unknown>> = () => {
   let info = t.recyclingCompany.view.info
   let activeSection = 2
   let route = routes.recyclingCompanies.baseRoute
-
-  console.log('router', router)
 
   React.useEffect(() => {
     setValue('isMunicipality', isMunicipality)
@@ -140,6 +145,10 @@ const RecyclingCompanyUpdate: FC<React.PropsWithChildren<unknown>> = () => {
   const handleUpdateRecyclingPartner = handleSubmit(async (input) => {
     // Not needed to be sent to the backend, causes error if it is sent
     delete input.__typename
+
+    if (typeof input.municipalityId !== 'string') {
+      input.municipalityId = input.municipalityId?.value || ''
+    }
 
     const { errors } = await updateSkilavottordRecyclingPartner({
       variables: { input },

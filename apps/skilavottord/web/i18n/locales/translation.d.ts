@@ -557,6 +557,7 @@ export interface RecyclingFundOverviewSubtitles {
 
 export interface RecyclingFundSidenav {
   title: string
+  municipalityTitle: string
   recycled: string
   companies: string
   accessControl: string

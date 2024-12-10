@@ -10,7 +10,6 @@ import {
   RecyclingPartnerInput,
   UpdateRecyclingPartnerInput,
 } from './recyclingPartner.input'
-import { boolean } from 'yargs'
 
 @Authorize()
 @Resolver(() => RecyclingPartnerModel)
@@ -18,19 +17,31 @@ export class RecyclingPartnerResolver {
   constructor(private recyclingPartnerService: RecyclingPartnerService) {}
 
   @Authorize({
-    roles: [Role.developer, Role.recyclingFund],
+    roles: [Role.developer, Role.recyclingFund, Role.municipality],
   })
   @Query(() => [RecyclingPartnerModel], {
     name: 'skilavottordAllRecyclingPartners',
   })
-  async getAllRecyclingPartners(
+  async getAllRecyclingPartners(): Promise<RecyclingPartnerModel[]> {
+    return this.recyclingPartnerService.findAll()
+  }
+
+  @Authorize({
+    roles: [Role.developer, Role.recyclingFund, Role.municipality],
+  })
+  @Query(() => [RecyclingPartnerModel], {
+    name: 'skilavottordAllRecyclingPartnersByType',
+  })
+  async getAllRecyclingPartnersByType(
     @Args('isMunicipality', { type: () => Boolean, nullable: true })
     isMunicipality: boolean,
+    @Args('municipalityId', { type: () => String, nullable: true })
+    municipalityId: string | null,
   ): Promise<RecyclingPartnerModel[]> {
-    if (isMunicipality) {
-      return this.recyclingPartnerService.findAllRecyclingPartners()
-    }
-    return this.recyclingPartnerService.findAll()
+    return this.recyclingPartnerService.findAllRecyclingPartnersByType(
+      isMunicipality,
+      municipalityId,
+    )
   }
 
   @Query(() => [RecyclingPartnerModel])
@@ -41,7 +52,7 @@ export class RecyclingPartnerResolver {
   }
 
   @Authorize({
-    roles: [Role.developer, Role.recyclingFund],
+    roles: [Role.developer, Role.recyclingFund, Role.municipality],
   })
   @Query(() => RecyclingPartnerModel)
   async skilavottordRecyclingPartner(
@@ -52,7 +63,7 @@ export class RecyclingPartnerResolver {
   }
 
   @Authorize({
-    roles: [Role.developer, Role.recyclingFund],
+    roles: [Role.developer, Role.recyclingFund, Role.municipality],
   })
   @Mutation(() => RecyclingPartnerModel)
   async createSkilavottordRecyclingPartner(
@@ -73,7 +84,7 @@ export class RecyclingPartnerResolver {
   }
 
   @Authorize({
-    roles: [Role.developer, Role.recyclingFund],
+    roles: [Role.developer, Role.recyclingFund, Role.municipality],
   })
   @Mutation(() => RecyclingPartnerModel)
   async updateSkilavottordRecyclingPartner(

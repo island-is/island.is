@@ -25,10 +25,15 @@ import {
 
 import { CarsTable, RecyclingCompanyImage } from './components'
 import NavigationLinks from '@island.is/skilavottord-web/components/NavigationLinks/NavigationLinks'
+import PageHeader from '@island.is/skilavottord-web/components/PageHeader/PageHeader'
 
 export const SkilavottordVehiclesQuery = gql`
-  query skilavottordVehiclesQuery($after: String!) {
-    skilavottordAllDeregisteredVehicles(first: 20, after: $after) {
+  query skilavottordVehiclesQuery($after: String!, $municipalityId: String!) {
+    skilavottordAllDeregisteredVehicles(
+      first: 20
+      after: $after
+      municipalityId: $municipalityId
+    ) {
       pageInfo {
         endCursor
         hasNextPage
@@ -52,13 +57,13 @@ export const SkilavottordVehiclesQuery = gql`
 const Overview: FC<React.PropsWithChildren<unknown>> = () => {
   const { user } = useContext(UserContext)
   const {
-    t: { recyclingFundOverview: t, recyclingFundSidenav: sidenavText, routes },
+    t: { recyclingFundOverview: t, routes },
   } = useI18n()
   const { data, loading, fetchMore } = useQuery<Query>(
     SkilavottordVehiclesQuery,
     {
       notifyOnNetworkStatusChange: true,
-      variables: { after: '' },
+      variables: { after: '', municipalityId: '601' },
     },
   )
   const { pageInfo, items: vehicles } =
@@ -132,29 +137,9 @@ const Overview: FC<React.PropsWithChildren<unknown>> = () => {
             )
           }}
         />
-        <Box
-          display="flex"
-          alignItems="flexStart"
-          justifyContent="spaceBetween"
-        >
-          <GridRow marginBottom={7}>
-            <GridColumn span={['8/8', '6/8', '5/8']} order={[2, 1]}>
-              <Text variant="h1" as="h1" marginBottom={4}>
-                {t.title}
-              </Text>
-              <Text variant="intro">{t.info}</Text>
-            </GridColumn>
-            <GridColumn
-              span={['8/8', '2/8']}
-              offset={['0', '0', '1/8']}
-              order={[1, 2]}
-            >
-              <Box textAlign={['center', 'right']} padding={[6, 0]}>
-                <RecyclingCompanyImage />
-              </Box>
-            </GridColumn>
-          </GridRow>
-        </Box>
+
+        <PageHeader title={t.title} info={t.info} />
+
         <Stack space={3}>
           <Text variant="h3">{t.subtitles.deregistered}</Text>
           {vehicles && vehicles.length > 0 ? (
