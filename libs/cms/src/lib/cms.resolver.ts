@@ -136,6 +136,7 @@ import {
   GetOrganizationPageStandaloneSitemapLevel1Input,
   GetOrganizationPageStandaloneSitemapLevel2Input,
 } from './dto/getOrganizationPageStandaloneSitemap.input'
+import { GetOrganizationByNationalIdInput } from './dto/getOrganizationByNationalId.input'
 
 const defaultCache: CacheControlOptions = { maxAge: CACHE_CONTROL_MAX_AGE }
 
@@ -252,6 +253,17 @@ export class CmsResolver {
   ): Promise<Organization | null> {
     return this.cmsContentfulService.getOrganizationByTitle(
       input?.title ?? '',
+      input?.lang ?? 'is-IS',
+    )
+  }
+
+  @CacheControl(defaultCache)
+  @Query(() => Organization, { nullable: true })
+  getOrganizationByNationalId(
+    @Args('input') input: GetOrganizationByNationalIdInput,
+  ): Promise<Organization | null> {
+    return this.cmsContentfulService.getOrganizationByNationalId(
+      input?.nationalId ?? '',
       input?.lang ?? 'is-IS',
     )
   }
