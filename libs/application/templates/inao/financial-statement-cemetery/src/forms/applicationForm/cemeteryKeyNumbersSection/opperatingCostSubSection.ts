@@ -12,7 +12,7 @@ import {
   sumExpenses,
   sumIncome,
   sumOperatingResults,
-} from '../../../utils/helpers'
+} from '../../../utils/sums'
 
 export const opperatingCostSubSection = buildSubSection({
   id: 'operatingCost',
