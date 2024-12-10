@@ -16,10 +16,6 @@ import { AuditConfig } from '../../../types/types'
 import { getYearOptions } from '../../../utils/helpers'
 
 export const clientInfoSection = buildSection({
-  condition: (_answers, externalData) => {
-    console.log(externalData)
-    return true
-  },
   id: 'info',
   title: m.info,
   children: [

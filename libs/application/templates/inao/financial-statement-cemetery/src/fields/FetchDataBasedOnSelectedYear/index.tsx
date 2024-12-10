@@ -53,8 +53,6 @@ export const FetchDataBasedOnSelectedYear = () => {
         taxInfoData.financialStatementsInaoTaxInfo,
       )
 
-      console.log(careIncome, burialRevenue, grantFromTheCemeteryFund)
-
       careIncome &&
         !careIncomeFromAnswers &&
         setValue(CEMETERYOPERATIONIDS.careIncome, careIncome)
