@@ -58,7 +58,6 @@ describe('withCodeOwner', () => {
     // Assert
     expect(logger.warn).toHaveBeenCalledWith(
       'Setting code owner "core" with no active dd-trace span',
-      { stack: expect.any(String) },
     )
     expect(withLoggingContext).toHaveBeenCalledWith(
       { codeOwner: CodeOwners.Core },

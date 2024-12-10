@@ -16,12 +16,11 @@ export const withCodeOwner = <R, TArgs extends unknown[]>(
   const span = tracer.scope().active()
   if (span) {
     span.setTag('codeOwner', codeOwner)
-  } else {
-    const stack = new Error().stack
+  } else if (process.env.NODE_ENV !== 'development') {
     logger.warn(
       `Setting code owner "${codeOwner}" with no active dd-trace span`,
-      { stack },
     )
   }
+
   return withLoggingContext({ codeOwner }, callback, ...args)
 }
