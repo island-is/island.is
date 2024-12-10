@@ -20,7 +20,7 @@ import {
 import { messages } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
 import { useState } from 'react'
-import { CONTENT_GAP, SECTION_GAP } from '../Medicine/constants'
+import { CONTENT_GAP, SECTION_GAP } from '../../utils/constants'
 import {
   useGetCopaymentStatusQuery,
   useGetCopaymentPeriodsQuery,
