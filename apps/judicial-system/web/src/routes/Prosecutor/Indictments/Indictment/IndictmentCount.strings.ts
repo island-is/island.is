@@ -6,6 +6,11 @@ export const indictmentCount = defineMessages({
     defaultMessage: 'Eyða',
     description: 'Notaður sem texti á Eyða hnappi á ákæruliða skrefi í ákærum.',
   },
+  policeCaseNumberTitle: {
+    id: 'judicial.system.core:indictments_indictment.indictment_count.police_case_number_title',
+    defaultMessage: 'Málsnúmer lögreglu',
+    description: 'Notaður sem titill fyrir "Málsnúmer lögreglu" svæði.',
+  },
   policeCaseNumberLabel: {
     id: 'judicial.system.core:indictments_indictment.indictment_count.police_case_number_label',
     defaultMessage: 'LÖKE málsnúmer',
@@ -41,6 +46,12 @@ export const indictmentCount = defineMessages({
     defaultMessage: 'Veldu brot',
     description:
       'Notaður sem skýritexti á "brot" lista á ákæruliða skrefi í ákærum.',
+  },
+  incidentDescriptionTitle: {
+    id: 'judicial.system.core:indictments_indictment.indictment_count.incident_description_title',
+    defaultMessage: 'Atvikalýsing',
+    description:
+      'Notaður sem titill á "atvikalýsing" svæði á ákæruliða skrefi í ákærum.',
   },
   incidentDescriptionLabel: {
     id: 'judicial.system.core:indictments_indictment.indictment_count.incident_description_label',
@@ -128,6 +139,12 @@ export const indictmentCount = defineMessages({
     defaultMessage: 'fyrir [{subtypes}] með því að hafa, {date}',
     description:
       'Notaður sem ástæða í atvikalýsingu fyrir önnur brot en umferðalagabrot.',
+  },
+  legalArgumentsTitle: {
+    id: 'judicial.system.core:indictments_indictment.indictment_count.legal_arguments_title',
+    defaultMessage: 'Heimfærsla',
+    description:
+      'Notaður sem titill á "heimfærslu" svæði á ákæruliða skrefi í ákærum.',
   },
   legalArgumentsLabel: {
     id: 'judicial.system.core:indictments_indictment.indictment_count.legal_arguments_label',

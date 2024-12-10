@@ -19,6 +19,7 @@ import {
 import {
   CrimeScene,
   IndictmentSubtype,
+  isTrafficViolationCase,
   offenseSubstances,
   Substance,
   SubstanceMap,
@@ -479,6 +480,11 @@ export const IndictmentCount: FC<Props> = ({
           </Button>
         </Box>
       )}
+      <SectionHeading
+        heading="h4"
+        title={formatMessage(strings.policeCaseNumberTitle)}
+        marginBottom={2}
+      />
       <Box marginBottom={1}>
         <Select
           name="policeCaseNumber"
@@ -507,300 +513,314 @@ export const IndictmentCount: FC<Props> = ({
           required
         />
       </Box>
-      <Box marginBottom={3}>
-        <IndictmentInfo
-          policeCaseNumber={indictmentCount.policeCaseNumber ?? ''}
-          subtypes={workingCase.indictmentSubtypes}
-          crimeScenes={workingCase.crimeScenes}
-        />
-      </Box>
-      {subtypes.length > 1 && (
-        <Box marginBottom={2}>
-          <SectionHeading
-            title={formatMessage(strings.selectIndictmentSubtype)}
-            heading="h4"
-          />
-          <div className={styles.indictmentSubtypesContainter}>
-            {subtypes.map((subtype: IndictmentSubtype) => (
-              <div
-                className={styles.indictmentSubtypesItem}
-                key={`${subtype}-${indictmentCount.id}`}
-              >
-                <Checkbox
-                  name={`${subtype}-${indictmentCount.id}`}
-                  value={subtype}
-                  label={capitalize(indictmentSubtypes[subtype])}
-                  checked={
-                    indictmentCount.indictmentCountSubtypes?.includes(
-                      subtype,
-                    ) ?? false
-                  }
-                  onChange={(evt) => {
-                    handleSubtypeChange(subtype, evt.target.checked)
-                  }}
-                  backgroundColor="white"
-                  large
-                  filled
-                />
-              </div>
-            ))}
-          </div>
-        </Box>
-      )}
       <Box marginBottom={2}>
-        <InputMask
-          mask={[/[A-Z]/i, /[A-Z]/i, /[A-Z]|[0-9]/i, /[0-9]/, /[0-9]/]}
-          maskPlaceholder={null}
-          value={indictmentCount.vehicleRegistrationNumber ?? ''}
-          beforeMaskedStateChange={({ nextState }) => {
-            let { value } = nextState
-            value = value.toUpperCase()
-
-            return { ...nextState, value }
-          }}
-          onChange={(event) => {
-            removeErrorMessageIfValid(
-              ['empty', 'vehicle-registration-number'],
-              event.target.value,
-              vehicleRegistrationNumberErrorMessage,
-              setVehicleRegistrationNumberErrorMessage,
-            )
-
-            updateIndictmentCountState(
-              indictmentCount.id,
-              {
-                vehicleRegistrationNumber: event.target.value,
-              },
-              setWorkingCase,
-            )
-          }}
-          onBlur={async (event) => {
-            validateAndSetErrorMessage(
-              ['empty', 'vehicle-registration-number'],
-              event.target.value,
-              setVehicleRegistrationNumberErrorMessage,
-            )
-
-            handleIndictmentCountChanges({
-              vehicleRegistrationNumber: event.target.value,
-            })
-          }}
-        >
-          <Input
-            name="vehicleRegistrationNumber"
-            autoComplete="off"
-            label={formatMessage(strings.vehicleRegistrationNumberLabel)}
-            placeholder={formatMessage(
-              strings.vehicleRegistrationNumberPlaceholder,
-            )}
-            errorMessage={vehicleRegistrationNumberErrorMessage}
-            hasError={vehicleRegistrationNumberErrorMessage !== ''}
-            required
-          />
-        </InputMask>
-      </Box>
-      <Box marginBottom={2}>
-        <Select
-          name="offenses"
-          options={offensesOptions}
-          label={formatMessage(strings.incidentLabel)}
-          placeholder={formatMessage(strings.incidentPlaceholder)}
-          onChange={(so) => {
-            const selectedOffense = so?.value as IndictmentCountOffense
-            const offenses = [
-              ...(indictmentCount.offenses ?? []),
-              selectedOffense,
-            ].sort(offensesCompare)
-
-            handleIndictmentCountChanges({
-              offenses,
-            })
-          }}
-          value={null}
-          required
-        />
-      </Box>
-      {indictmentCount.offenses && indictmentCount.offenses.length > 0 && (
-        <Box marginBottom={2}>
-          {indictmentCount.offenses.map((offense) => (
-            <Box
-              display="inlineBlock"
-              key={`${indictmentCount.id}-${offense}`}
-              component="span"
-              marginBottom={1}
-              marginRight={1}
-            >
-              <Tag
-                variant="darkerBlue"
-                onClick={() => {
-                  const offenses = (indictmentCount.offenses ?? []).filter(
-                    (o) => o !== offense,
-                  )
-
-                  offenseSubstances[offense].forEach((e) => {
-                    if (indictmentCount.substances) {
-                      delete indictmentCount.substances[e]
-                    }
-                  })
-
-                  handleIndictmentCountChanges({
-                    offenses,
-                    substances: indictmentCount.substances,
-                  })
-                }}
-              >
-                <Box display="flex" alignItems="center">
-                  {formatMessage(enumStrings[offense])}
-                  <Icon icon="close" size="small" />
-                </Box>
-              </Tag>
+        {subtypes.length > 1 && (
+          <>
+            <Box marginBottom={3}>
+              <IndictmentInfo
+                policeCaseNumber={indictmentCount.policeCaseNumber ?? ''}
+                subtypes={workingCase.indictmentSubtypes}
+                crimeScenes={workingCase.crimeScenes}
+              />
             </Box>
-          ))}
-        </Box>
-      )}
-      {indictmentCount.offenses?.includes(
-        IndictmentCountOffense.DRUNK_DRIVING,
-      ) && (
-        <Box marginBottom={2}>
-          <InputMask
-            mask={'9,99'}
-            maskPlaceholder={null}
-            value={indictmentCount.substances?.ALCOHOL ?? ''}
-            onChange={(event) => {
-              removeErrorMessageIfValid(
-                ['empty'],
-                event.target.value,
-                bloodAlcoholContentErrorMessage,
-                setBloodAlcoholContentErrorMessage,
-              )
+            <Box marginBottom={2}>
+              <SectionHeading
+                title={formatMessage(strings.selectIndictmentSubtype)}
+                heading="h4"
+              />
+              <div className={styles.indictmentSubtypesContainter}>
+                {subtypes.map((subtype: IndictmentSubtype) => (
+                  <div
+                    className={styles.indictmentSubtypesItem}
+                    key={`${subtype}-${indictmentCount.id}`}
+                  >
+                    <Checkbox
+                      name={`${subtype}-${indictmentCount.id}`}
+                      value={subtype}
+                      label={capitalize(indictmentSubtypes[subtype])}
+                      checked={
+                        indictmentCount.indictmentCountSubtypes?.includes(
+                          subtype,
+                        ) ?? false
+                      }
+                      onChange={(evt) => {
+                        handleSubtypeChange(subtype, evt.target.checked)
+                      }}
+                      backgroundColor="white"
+                      large
+                      filled
+                    />
+                  </div>
+                ))}
+              </div>
+            </Box>
+          </>
+        )}
+      </Box>
+      {isTrafficViolationCase(workingCase) && (
+        <>
+          <Box marginBottom={2}>
+            <InputMask
+              mask={[/[A-Z]/i, /[A-Z]/i, /[A-Z]|[0-9]/i, /[0-9]/, /[0-9]/]}
+              maskPlaceholder={null}
+              value={indictmentCount.vehicleRegistrationNumber ?? ''}
+              beforeMaskedStateChange={({ nextState }) => {
+                let { value } = nextState
+                value = value.toUpperCase()
 
-              updateIndictmentCountState(
-                indictmentCount.id,
-                {
-                  substances: {
-                    ...indictmentCount.substances,
-                    ALCOHOL: event.target.value,
+                return { ...nextState, value }
+              }}
+              onChange={(event) => {
+                removeErrorMessageIfValid(
+                  ['empty', 'vehicle-registration-number'],
+                  event.target.value,
+                  vehicleRegistrationNumberErrorMessage,
+                  setVehicleRegistrationNumberErrorMessage,
+                )
+
+                updateIndictmentCountState(
+                  indictmentCount.id,
+                  {
+                    vehicleRegistrationNumber: event.target.value,
                   },
-                },
-                setWorkingCase,
-              )
-            }}
-            onBlur={(event) => {
-              const value =
-                event.target.value.length > 0
-                  ? `${event.target.value}${'0,00'.slice(
-                      event.target.value.length,
-                    )}`
-                  : event.target.value
+                  setWorkingCase,
+                )
+              }}
+              onBlur={async (event) => {
+                validateAndSetErrorMessage(
+                  ['empty', 'vehicle-registration-number'],
+                  event.target.value,
+                  setVehicleRegistrationNumberErrorMessage,
+                )
 
-              validateAndSetErrorMessage(
-                ['empty'],
-                value,
-                setBloodAlcoholContentErrorMessage,
-              )
+                handleIndictmentCountChanges({
+                  vehicleRegistrationNumber: event.target.value,
+                })
+              }}
+            >
+              <Input
+                name="vehicleRegistrationNumber"
+                autoComplete="off"
+                label={formatMessage(strings.vehicleRegistrationNumberLabel)}
+                placeholder={formatMessage(
+                  strings.vehicleRegistrationNumberPlaceholder,
+                )}
+                errorMessage={vehicleRegistrationNumberErrorMessage}
+                hasError={vehicleRegistrationNumberErrorMessage !== ''}
+                required
+              />
+            </InputMask>
+          </Box>
+          <Box marginBottom={2}>
+            <Select
+              name="offenses"
+              options={offensesOptions}
+              label={formatMessage(strings.incidentLabel)}
+              placeholder={formatMessage(strings.incidentPlaceholder)}
+              onChange={(so) => {
+                const selectedOffense = so?.value as IndictmentCountOffense
+                const offenses = [
+                  ...(indictmentCount.offenses ?? []),
+                  selectedOffense,
+                ].sort(offensesCompare)
 
-              const substances = {
-                ...indictmentCount.substances,
-                ALCOHOL: value,
-              }
-
-              handleIndictmentCountChanges({
-                substances,
-              })
-            }}
-          >
-            <Input
-              name="alcohol"
-              autoComplete="off"
-              label={formatMessage(strings.bloodAlcoholContentLabel)}
-              placeholder={formatMessage(
-                strings.bloodAlcoholContentPlaceholder,
-              )}
-              errorMessage={bloodAlcoholContentErrorMessage}
-              hasError={bloodAlcoholContentErrorMessage !== ''}
+                handleIndictmentCountChanges({
+                  offenses,
+                })
+              }}
+              value={null}
               required
             />
-          </InputMask>
-        </Box>
-      )}
-      {indictmentCount.offenses
-        ?.filter(
-          (offenseType) =>
-            offenseType === IndictmentCountOffense.ILLEGAL_DRUGS_DRIVING ||
-            offenseType === IndictmentCountOffense.PRESCRIPTION_DRUGS_DRIVING,
-        )
-        .map((offenseType) => (
-          <Box key={`${indictmentCount.id}-${offenseType}-substances`}>
-            <SubstanceChoices
-              indictmentCount={indictmentCount}
-              indictmentCountOffenseType={offenseType}
-              onChange={handleIndictmentCountChanges}
-            ></SubstanceChoices>
           </Box>
-        ))}
-      <Box marginBottom={2}>
-        <Select
-          name="lawsBroken"
-          options={lawsBrokenOptions}
-          label={formatMessage(strings.lawsBrokenLabel)}
-          placeholder={formatMessage(strings.lawsBrokenPlaceholder)}
-          value={null}
-          onChange={(selectedOption) => {
-            const law = (selectedOption as LawsBrokenOption).law
-            const lawsBroken = [
-              ...(indictmentCount.lawsBroken ?? []),
-              law,
-            ].sort(lawsCompare)
+          {indictmentCount.offenses && indictmentCount.offenses.length > 0 && (
+            <Box marginBottom={2}>
+              {indictmentCount.offenses.map((offense) => (
+                <Box
+                  display="inlineBlock"
+                  key={`${indictmentCount.id}-${offense}`}
+                  component="span"
+                  marginBottom={1}
+                  marginRight={1}
+                >
+                  <Tag
+                    variant="darkerBlue"
+                    onClick={() => {
+                      const offenses = (indictmentCount.offenses ?? []).filter(
+                        (o) => o !== offense,
+                      )
 
-            onChange(indictmentCount.id, {
-              lawsBroken: lawsBroken,
-              legalArguments: getLegalArguments(lawsBroken, formatMessage),
-            })
+                      offenseSubstances[offense].forEach((e) => {
+                        if (indictmentCount.substances) {
+                          delete indictmentCount.substances[e]
+                        }
+                      })
 
-            handleIndictmentCountChanges({
-              lawsBroken,
-            })
-          }}
-          required
-        />
-      </Box>
-      {indictmentCount.lawsBroken && indictmentCount.lawsBroken.length > 0 && (
-        <Box marginBottom={2}>
-          {indictmentCount.lawsBroken.map((brokenLaw) => (
-            <Box
-              display="inlineBlock"
-              key={`${indictmentCount.id}-${brokenLaw}`}
-              component="span"
-              marginBottom={1}
-              marginRight={1}
-            >
-              <Tag
-                variant="darkerBlue"
-                onClick={() => {
-                  const lawsBroken = (indictmentCount.lawsBroken ?? []).filter(
-                    (b) => lawsCompare(b, brokenLaw) !== 0,
+                      handleIndictmentCountChanges({
+                        offenses,
+                        substances: indictmentCount.substances,
+                      })
+                    }}
+                  >
+                    <Box display="flex" alignItems="center">
+                      {formatMessage(enumStrings[offense])}
+                      <Icon icon="close" size="small" />
+                    </Box>
+                  </Tag>
+                </Box>
+              ))}
+            </Box>
+          )}
+          {indictmentCount.offenses?.includes(
+            IndictmentCountOffense.DRUNK_DRIVING,
+          ) && (
+            <Box marginBottom={2}>
+              <InputMask
+                mask={'9,99'}
+                maskPlaceholder={null}
+                value={indictmentCount.substances?.ALCOHOL ?? ''}
+                onChange={(event) => {
+                  removeErrorMessageIfValid(
+                    ['empty'],
+                    event.target.value,
+                    bloodAlcoholContentErrorMessage,
+                    setBloodAlcoholContentErrorMessage,
                   )
 
-                  onChange(indictmentCount.id, {
-                    lawsBroken: lawsBroken,
-                    legalArguments: getLegalArguments(
-                      lawsBroken,
-                      formatMessage,
-                    ),
+                  updateIndictmentCountState(
+                    indictmentCount.id,
+                    {
+                      substances: {
+                        ...indictmentCount.substances,
+                        ALCOHOL: event.target.value,
+                      },
+                    },
+                    setWorkingCase,
+                  )
+                }}
+                onBlur={(event) => {
+                  const value =
+                    event.target.value.length > 0
+                      ? `${event.target.value}${'0,00'.slice(
+                          event.target.value.length,
+                        )}`
+                      : event.target.value
+
+                  validateAndSetErrorMessage(
+                    ['empty'],
+                    value,
+                    setBloodAlcoholContentErrorMessage,
+                  )
+
+                  const substances = {
+                    ...indictmentCount.substances,
+                    ALCOHOL: value,
+                  }
+
+                  handleIndictmentCountChanges({
+                    substances,
                   })
                 }}
-                aria-label={lawTag(brokenLaw)}
               >
-                <Box display="flex" alignItems="center">
-                  {lawTag(brokenLaw)}
-                  <Icon icon="close" size="small" />
-                </Box>
-              </Tag>
+                <Input
+                  name="alcohol"
+                  autoComplete="off"
+                  label={formatMessage(strings.bloodAlcoholContentLabel)}
+                  placeholder={formatMessage(
+                    strings.bloodAlcoholContentPlaceholder,
+                  )}
+                  errorMessage={bloodAlcoholContentErrorMessage}
+                  hasError={bloodAlcoholContentErrorMessage !== ''}
+                  required
+                />
+              </InputMask>
             </Box>
-          ))}
-        </Box>
+          )}
+          {indictmentCount.offenses
+            ?.filter(
+              (offenseType) =>
+                offenseType === IndictmentCountOffense.ILLEGAL_DRUGS_DRIVING ||
+                offenseType ===
+                  IndictmentCountOffense.PRESCRIPTION_DRUGS_DRIVING,
+            )
+            .map((offenseType) => (
+              <Box key={`${indictmentCount.id}-${offenseType}-substances`}>
+                <SubstanceChoices
+                  indictmentCount={indictmentCount}
+                  indictmentCountOffenseType={offenseType}
+                  onChange={handleIndictmentCountChanges}
+                ></SubstanceChoices>
+              </Box>
+            ))}
+          <Box marginBottom={2}>
+            <Select
+              name="lawsBroken"
+              options={lawsBrokenOptions}
+              label={formatMessage(strings.lawsBrokenLabel)}
+              placeholder={formatMessage(strings.lawsBrokenPlaceholder)}
+              value={null}
+              onChange={(selectedOption) => {
+                const law = (selectedOption as LawsBrokenOption).law
+                const lawsBroken = [
+                  ...(indictmentCount.lawsBroken ?? []),
+                  law,
+                ].sort(lawsCompare)
+
+                onChange(indictmentCount.id, {
+                  lawsBroken: lawsBroken,
+                  legalArguments: getLegalArguments(lawsBroken, formatMessage),
+                })
+
+                handleIndictmentCountChanges({
+                  lawsBroken,
+                })
+              }}
+              required
+            />
+          </Box>
+          {indictmentCount.lawsBroken && indictmentCount.lawsBroken.length > 0 && (
+            <Box marginBottom={2}>
+              {indictmentCount.lawsBroken.map((brokenLaw) => (
+                <Box
+                  display="inlineBlock"
+                  key={`${indictmentCount.id}-${brokenLaw}`}
+                  component="span"
+                  marginBottom={1}
+                  marginRight={1}
+                >
+                  <Tag
+                    variant="darkerBlue"
+                    onClick={() => {
+                      const lawsBroken = (
+                        indictmentCount.lawsBroken ?? []
+                      ).filter((b) => lawsCompare(b, brokenLaw) !== 0)
+
+                      onChange(indictmentCount.id, {
+                        lawsBroken: lawsBroken,
+                        legalArguments: getLegalArguments(
+                          lawsBroken,
+                          formatMessage,
+                        ),
+                      })
+                    }}
+                    aria-label={lawTag(brokenLaw)}
+                  >
+                    <Box display="flex" alignItems="center">
+                      {lawTag(brokenLaw)}
+                      <Icon icon="close" size="small" />
+                    </Box>
+                  </Tag>
+                </Box>
+              ))}
+            </Box>
+          )}
+        </>
       )}
-      <Box component="section" marginBottom={2}>
+      <Box component="section" marginBottom={3}>
+        <SectionHeading
+          heading="h4"
+          title={formatMessage(strings.incidentDescriptionTitle)}
+          marginBottom={2}
+        />
         <Box marginBottom={2}>
           <Input
             name="incidentDescription"
@@ -842,47 +862,51 @@ export const IndictmentCount: FC<Props> = ({
           />
         </Box>
       </Box>
-      <Box component="section" marginBottom={2}>
-        <Box marginBottom={2}>
-          <Input
-            name="legalArguments"
-            autoComplete="off"
-            label={formatMessage(strings.legalArgumentsLabel)}
-            placeholder={formatMessage(strings.legalArgumentsPlaceholder)}
-            errorMessage={legalArgumentsErrorMessage}
-            hasError={legalArgumentsErrorMessage !== ''}
-            value={indictmentCount.legalArguments ?? ''}
-            onChange={(event) => {
-              removeErrorMessageIfValid(
-                ['empty'],
-                event.target.value,
-                legalArgumentsErrorMessage,
-                setLegalArgumentsErrorMessage,
-              )
+      <Box component="section">
+        <SectionHeading
+          heading="h4"
+          title={formatMessage(strings.legalArgumentsTitle)}
+          marginBottom={2}
+        />
 
-              updateIndictmentCountState(
-                indictmentCount.id,
-                { legalArguments: event.target.value },
-                setWorkingCase,
-              )
-            }}
-            onBlur={(event) => {
-              validateAndSetErrorMessage(
-                ['empty'],
-                event.target.value,
-                setLegalArgumentsErrorMessage,
-              )
+        <Input
+          name="legalArguments"
+          autoComplete="off"
+          label={formatMessage(strings.legalArgumentsLabel)}
+          placeholder={formatMessage(strings.legalArgumentsPlaceholder)}
+          errorMessage={legalArgumentsErrorMessage}
+          hasError={legalArgumentsErrorMessage !== ''}
+          value={indictmentCount.legalArguments ?? ''}
+          onChange={(event) => {
+            removeErrorMessageIfValid(
+              ['empty'],
+              event.target.value,
+              legalArgumentsErrorMessage,
+              setLegalArgumentsErrorMessage,
+            )
 
-              onChange(indictmentCount.id, {
-                legalArguments: event.target.value.trim(),
-              })
-            }}
-            required
-            rows={7}
-            autoExpand={{ on: true, maxHeight: 600 }}
-            textarea
-          />
-        </Box>
+            updateIndictmentCountState(
+              indictmentCount.id,
+              { legalArguments: event.target.value },
+              setWorkingCase,
+            )
+          }}
+          onBlur={(event) => {
+            validateAndSetErrorMessage(
+              ['empty'],
+              event.target.value,
+              setLegalArgumentsErrorMessage,
+            )
+
+            onChange(indictmentCount.id, {
+              legalArguments: event.target.value.trim(),
+            })
+          }}
+          required
+          rows={7}
+          autoExpand={{ on: true, maxHeight: 600 }}
+          textarea
+        />
       </Box>
     </BlueBox>
   )
