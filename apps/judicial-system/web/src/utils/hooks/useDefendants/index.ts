@@ -63,6 +63,7 @@ const useDefendants = () => {
   const updateDefendant = useCallback(
     async (updateDefendant: UpdateDefendantInput) => {
       try {
+        console.log({updateDefendant})
         const { data } = await updateDefendantMutation({
           variables: {
             input: updateDefendant,
