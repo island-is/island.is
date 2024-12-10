@@ -1,7 +1,7 @@
 import { ApiPropertyOptional } from '@nestjs/swagger'
 
 export class ApplicationEventDto {
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ type: Date })
   created?: Date
 
   @ApiPropertyOptional()
