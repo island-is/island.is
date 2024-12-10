@@ -163,6 +163,14 @@ export class FormsService {
   }
 
   async changePublished(id: string): Promise<FormResponseDto> {
+    const form = await this.formModel.findOne({
+      where: { status: FormStatus.PUBLISHED_BEING_CHANGED, derivedFrom: id },
+    })
+
+    if (form) {
+      throw new Error('Form is already being changed')
+    }
+
     const newForm = await this.copyForm(id, true)
 
     const formResponse = await this.buildFormResponse(newForm)

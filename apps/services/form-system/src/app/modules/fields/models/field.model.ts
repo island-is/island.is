@@ -14,6 +14,7 @@ import { LanguageType } from '../../../dataTypes/languageType.model'
 import { Value } from '../../values/models/value.model'
 import { FieldSettings } from '../../../dataTypes/fieldSettings/fieldSettings.model'
 import { ListItem } from '../../listItems/models/listItem.model'
+import { FieldTypesEnum } from '../../../dataTypes/fieldTypes/fieldTypes.enum'
 
 @Table({ tableName: 'field' })
 export class Field extends Model<Field> {
@@ -94,8 +95,10 @@ export class Field extends Model<Field> {
   values?: Value[]
 
   @Column({
-    type: DataType.STRING,
+    type: DataType.ENUM,
     allowNull: false,
+    values: Object.values(FieldTypesEnum),
+    defaultValue: FieldTypesEnum.TEXTBOX,
   })
   fieldType!: string
 }
