@@ -1,0 +1,324 @@
+import { useState } from 'react'
+import { GetServerSideProps } from 'next'
+import { FormProvider, SubmitHandler, useForm } from 'react-hook-form'
+import gql from 'graphql-tag'
+
+import {
+  Query,
+  QueryGetPaymentFlowArgs,
+  QueryGetOrganizationByNationalIdArgs,
+} from '@island.is/api/schema'
+import { Box, Button, ModalBase } from '@island.is/island-ui/core'
+import { Features } from '@island.is/feature-flags'
+import { useLocale } from '@island.is/localization'
+
+import { PageCard } from '../../../components/PageCard/PageCard'
+import initApollo from '../../../graphql/client'
+import { PaymentHeader } from '../../../components/PaymentHeader/PaymentHeader'
+import { PaymentSelector } from '../../../components/PaymentSelector/PaymentSelector'
+import { CardPayment } from '../../../components/CardPayment/CardPayment'
+import { InvoicePayment } from '../../../components/InvoicePayment/InvoicePayment'
+import { ALLOWED_LOCALES, Locale } from '../../../utils'
+import { getConfigcatClient } from '../../../clients/configcat'
+import { card, generic, genericError, invoice } from '../../../messages'
+import { ThreeDSecure } from '../../../components/ThreeDSecure/ThreeDSecure'
+
+interface PaymentPageProps {
+  locale: string
+  paymentFlowId: string
+  paymentFlow: Query['getPaymentFlow']
+  organization: Query['getOrganization']
+  productInformation: {
+    amount: number
+    title: string
+  }
+}
+
+const GetPaymentFlow = gql`
+  query getPaymentFlow($input: GetPaymentFlowInput!) {
+    getPaymentFlow(input: $input) {
+      id
+      productTitle
+      productPrice
+      invoiceId
+      availablePaymentMethods
+      organisationId
+      metadata
+    }
+  }
+`
+
+const GetOrganization = gql`
+  query getOrganizationByNationalId($input: GetOrganizationByNationalIdInput!) {
+    getOrganizationByNationalId(input: $input) {
+      id
+      title
+      shortTitle
+      logo {
+        url
+        title
+      }
+    }
+  }
+`
+
+export const getServerSideProps: GetServerSideProps<PaymentPageProps> = async (
+  context,
+) => {
+  const { locale, paymentFlowId } = context.params as {
+    locale: string
+    paymentFlowId: string
+  }
+
+  if (!ALLOWED_LOCALES.includes(locale as Locale)) {
+    return {
+      redirect: {
+        destination: `/${ALLOWED_LOCALES[0]}/${paymentFlowId}`,
+        permanent: false,
+      },
+    }
+  }
+
+  const configCatClient = getConfigcatClient()
+  const isFeatureEnabled = await configCatClient.getValueAsync(
+    Features.isIslandisPaymentEnabled,
+    false,
+  )
+
+  if (!isFeatureEnabled) {
+    return {
+      notFound: true,
+    }
+  }
+
+  const client = initApollo()
+
+  let paymentFlow: any = null // TODO look into type "used before initialization"
+  let organization: PaymentPageProps['organization'] = null
+
+  try {
+    const {
+      data: { getPaymentFlow },
+    } = await client.query<Query, QueryGetPaymentFlowArgs>({
+      query: GetPaymentFlow,
+      variables: {
+        input: {
+          id: paymentFlowId,
+        },
+      },
+    })
+
+    paymentFlow = getPaymentFlow
+
+    const {
+      data: { getOrganizationByNationalId },
+    } = await client.query<Query, QueryGetOrganizationByNationalIdArgs>({
+      query: GetOrganization,
+      variables: {
+        input: {
+          nationalId: getPaymentFlow.organisationId,
+        },
+      },
+    })
+
+    organization = getOrganizationByNationalId
+  } catch (e) {
+    console.error(e)
+  }
+
+  const productInformation = {
+    amount: paymentFlow?.productPrice ?? 0,
+    title: paymentFlow?.productTitle ?? '',
+  }
+
+  return {
+    props: {
+      locale,
+      paymentFlowId,
+      paymentFlow,
+      organization,
+      productInformation,
+    },
+  }
+}
+
+export default function PaymentPage({
+  paymentFlow,
+  organization,
+  productInformation,
+}: PaymentPageProps) {
+  const methods = useForm({
+    mode: 'onBlur',
+    reValidateMode: 'onChange',
+  })
+  const { formatMessage } = useLocale()
+  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<string>(
+    paymentFlow?.availablePaymentMethods?.[0] ?? '',
+  )
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [isProcessingPayment, setIsProcessingPayment] = useState(false)
+  const [threeDSecureData, setThreeDSecureData] = useState(null)
+
+  const invalidFlowSetup =
+    !organization ||
+    !productInformation ||
+    !paymentFlow ||
+    !paymentFlow.availablePaymentMethods
+
+  const payWithCard = async (data: Record<string, unknown>) => {
+    const { card, cardExpiry, cardCVC } = data
+
+    // Verify fields
+    if (!card || !cardExpiry || typeof cardExpiry !== 'string' || !cardCVC) {
+      return
+    }
+
+    const [month, year] = cardExpiry?.split('/')
+
+    try {
+      const response = await fetch('/greida/api/card/verify', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          card: {
+            number: Number(card),
+            expiryMonth: Number(month),
+            expiryYear: Number(year),
+            cvc: Number(cardCVC),
+          },
+          amount: productInformation.amount,
+          correlationId: paymentFlow.id,
+        }),
+      })
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`)
+      }
+      const result = await response.json()
+      console.log({
+        result,
+      })
+      setThreeDSecureData(result)
+    } catch (err) {
+      console.log(err)
+    }
+  }
+
+  const onSubmit: SubmitHandler<Record<string, unknown>> = async (data) => {
+    setIsSubmitting(true)
+    console.log('Submit', data)
+
+    try {
+      if (selectedPaymentMethod === 'card') {
+        setIsProcessingPayment(true)
+        await payWithCard(data)
+      }
+    } catch (e) {
+      console.warn('Error occured while submitting payment', e)
+    }
+
+    setIsSubmitting(false)
+  }
+
+  const changePaymentMethod = (paymentMethod: string) => {
+    methods.reset()
+    setSelectedPaymentMethod(paymentMethod)
+  }
+
+  return (
+    <>
+      <PageCard
+        headerSlot={
+          !invalidFlowSetup ? (
+            <PaymentHeader
+              organizationTitle={organization?.title}
+              organizationImageSrc={organization?.logo?.url}
+              organizationImageAlt={organization?.logo?.title}
+              amount={productInformation.amount}
+              productTitle={productInformation.title}
+            />
+          ) : (
+            <PaymentHeader organizationTitle="Villa" />
+          )
+        }
+        bodySlot={
+          !invalidFlowSetup ? (
+            <FormProvider {...methods}>
+              <form onSubmit={methods.handleSubmit(onSubmit)}>
+                <Box display="flex" flexDirection="column" rowGap={[2, 3]}>
+                  <PaymentSelector
+                    availablePaymentMethods={['card', 'invoice']}
+                    selectedPayment={selectedPaymentMethod as any}
+                    onSelectPayment={changePaymentMethod}
+                  />
+                  {selectedPaymentMethod === 'card' && <CardPayment />}
+                  {selectedPaymentMethod === 'invoice' && <InvoicePayment />}
+                  <Button
+                    type="submit"
+                    loading={isSubmitting}
+                    fluid
+                    disabled={!methods.formState.isValid || isSubmitting}
+                  >
+                    {selectedPaymentMethod === 'card'
+                      ? formatMessage(card.pay)
+                      : formatMessage(invoice.create)}
+                  </Button>
+                  <Box display="flex" justifyContent="center">
+                    <Button variant="text">
+                      {formatMessage(generic.buttonCancel)}
+                    </Button>
+                  </Box>
+                </Box>
+              </form>
+            </FormProvider>
+          ) : (
+            <Box display="flex" flexDirection="column">
+              <p>{formatMessage(genericError.fetchFailed)}</p>
+            </Box>
+          )
+        }
+        headerColorScheme="primary"
+      />
+      <ModalBase
+        baseId="3ds"
+        isVisible={isProcessingPayment}
+        hideOnClickOutside={false}
+      >
+        <Box
+          position="relative"
+          width="full"
+          display="flex"
+          alignItems="center"
+          justifyContent="center"
+          marginTop={[1, 8, 15]}
+        >
+          <Box
+            borderRadius="large"
+            overflow="hidden"
+            background="white"
+            width="half"
+            padding={[1, 2, 3]}
+          >
+            <Box
+              display="flex"
+              flexDirection="column"
+              justifyContent="center"
+              rowGap={2}
+            >
+              {threeDSecureData && (
+                <ThreeDSecure
+                  isActive={isProcessingPayment}
+                  onClose={() => setIsProcessingPayment(false)}
+                  postUrl={threeDSecureData.postUrl}
+                  scriptPath={threeDSecureData.scriptPath}
+                  verificationFields={threeDSecureData.verificationFields}
+                />
+              )}
+            </Box>
+          </Box>
+        </Box>
+      </ModalBase>
+    </>
+  )
+}
