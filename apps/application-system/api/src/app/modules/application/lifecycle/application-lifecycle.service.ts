@@ -151,39 +151,52 @@ export class ApplicationLifeCycleService {
   private async preparePrunedNotification(
     application: PruningApplication,
   ): Promise<CreateHnippNotificationDto | null> {
-    const template = await getApplicationTemplateByTypeId(application.typeId)
-    const stateConfig = template.stateMachineConfig.states[application.state]
-    const lifeCycle = stateConfig.meta?.lifecycle
-    if (lifeCycle && lifeCycle.shouldBePruned && lifeCycle.pruneMessage) {
-      try {
-        const pruneMessage =
-          typeof lifeCycle.pruneMessage === 'function'
-            ? lifeCycle.pruneMessage(application as ApplicationWithAttachments)
-            : lifeCycle.pruneMessage
-        const notification = {
-          recipient: application.applicant,
-          templateId: pruneMessage.notificationTemplateId,
-          args: [
-            {
-              key: 'externalBody',
-              value: pruneMessage.externalBody || '',
-            },
-            {
-              key: 'internalBody',
-              value: pruneMessage.internalBody || '',
-            },
-          ],
-        }
-        return notification
-      } catch (error) {
-        this.logger.error(
-          `Failed to prepare pruning notification for application ${application.id}`,
-          error,
-        )
+    try {
+      const template = await getApplicationTemplateByTypeId(application.typeId)
+      if (!template) {
         return null
       }
+      const stateConfig = template.stateMachineConfig.states[application.state]
+      const lifeCycle = stateConfig.meta?.lifecycle
+      if (lifeCycle && lifeCycle.shouldBePruned && lifeCycle.pruneMessage) {
+        try {
+          const pruneMessage =
+            typeof lifeCycle.pruneMessage === 'function'
+              ? lifeCycle.pruneMessage(
+                  application as ApplicationWithAttachments,
+                )
+              : lifeCycle.pruneMessage
+          const notification = {
+            recipient: application.applicant,
+            templateId: pruneMessage.notificationTemplateId,
+            args: [
+              {
+                key: 'externalBody',
+                value: pruneMessage.externalBody || '',
+              },
+              {
+                key: 'internalBody',
+                value: pruneMessage.internalBody || '',
+              },
+            ],
+          }
+          return notification
+        } catch (error) {
+          this.logger.error(
+            `Failed to prepare pruning notification for application ${application.id}`,
+            error,
+          )
+          return null
+        }
+      }
+      return null
+    } catch (error) {
+      this.logger.error(
+        `Failed to get application template for application typeId ${application.typeId}`,
+        error,
+      )
+      return null
     }
-    return null
   }
 
   private async sendPrunedNotification(
