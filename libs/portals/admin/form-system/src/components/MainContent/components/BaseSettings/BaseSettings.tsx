@@ -9,7 +9,7 @@ import {
 import { useContext } from 'react'
 import { ControlContext } from '../../../../context/ControlContext'
 import { useIntl } from 'react-intl'
-import { m } from '../../../../lib/messages'
+import { m } from '@island.is/form-system/ui'
 
 export const BaseSettings = () => {
   const {
@@ -17,8 +17,7 @@ export const BaseSettings = () => {
     controlDispatch,
     setFocus,
     focus,
-    formUpdate,
-    updateSettings,
+    formUpdate
   } = useContext(ControlContext)
   const { form } = control
   const { formatMessage } = useIntl()
@@ -67,9 +66,9 @@ export const BaseSettings = () => {
             placeholder={formatMessage(m.max120Days)}
             name="applicationsDaysToRemove"
             value={
-              form.applicationsDaysToRemove === 0
+              form.applicationDaysToRemove === 0
                 ? ''
-                : form.applicationsDaysToRemove ?? ''
+                : form.applicationDaysToRemove ?? ''
             }
             backgroundColor="blue"
             type="number"
@@ -107,15 +106,14 @@ export const BaseSettings = () => {
         <Column>
           <Checkbox
             label={formatMessage(m.allowProgress)}
-            checked={form.stopProgressOnValidatingStep ?? false}
+            checked={form.stopProgressOnValidatingScreen !== null && form.stopProgressOnValidatingScreen !== undefined ? form.stopProgressOnValidatingScreen : false}
             onChange={(e) => {
               controlDispatch({
-                type: 'CHANGE_STOP_PROGRESS_ON_VALIDATING_STEP',
-                payload: { value: e.target.checked },
-              })
-              updateSettings({
-                ...form,
-                stopProgressOnValidatingStep: e.target.checked,
+                type: 'CHANGE_STOP_PROGRESS_ON_VALIDATING_SCREEN',
+                payload: {
+                  value: e.target.checked,
+                  update: formUpdate
+                },
               })
             }}
           />

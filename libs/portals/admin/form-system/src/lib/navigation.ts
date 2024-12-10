@@ -1,6 +1,6 @@
 import { PortalNavigationItem } from '@island.is/portals/core'
-import { m } from './messages'
 import { FormSystemPaths } from './paths'
+import { m } from '@island.is/form-system/ui'
 
 export const formSystemNavigation: PortalNavigationItem = {
   name: m.rootName,
@@ -15,5 +15,10 @@ export const formSystemNavigation: PortalNavigationItem = {
       path: FormSystemPaths.Form,
       activeIfExact: true,
     },
+    {
+      name: m.rootName,
+      path: FormSystemPaths.FormApplications,
+      activeIfExact: true,
+    }
   ],
 }
