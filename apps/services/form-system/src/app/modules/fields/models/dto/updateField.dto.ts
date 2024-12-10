@@ -34,6 +34,6 @@ export class UpdateFieldDto {
 
   @IsOptional()
   @IsEnum(FieldTypesEnum)
-  @ApiPropertyOptional({ enum: FieldTypesEnum })
+  @ApiPropertyOptional()
   fieldType?: string
 }

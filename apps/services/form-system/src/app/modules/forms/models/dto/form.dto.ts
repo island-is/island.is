@@ -43,7 +43,7 @@ export class FormDto {
   @ApiProperty()
   derivedFrom!: string
 
-  @ApiProperty({ enum: FormStatus })
+  @ApiProperty()
   status!: string
 
   @ApiProperty()
