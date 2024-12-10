@@ -14,6 +14,7 @@ export const GET_GRANTS_QUERY = gql`
           slug
           type
         }
+        applicationButtonLabel
         dateFrom
         dateTo
         isOpen

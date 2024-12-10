@@ -30,11 +30,11 @@ export class Grant {
   @Field({ nullable: true })
   applicationId?: string
 
-  @Field({ nullable: true })
-  applicationDeadlineStatus?: string
-
   @CacheField(() => ReferenceLink, { nullable: true })
   applicationUrl?: ReferenceLink
+
+  @Field({ nullable: true })
+  applicationButtonLabel?: string
 
   @CacheField(() => [SliceUnion])
   specialEmphasis?: Array<typeof SliceUnion>
@@ -46,9 +46,6 @@ export class Grant {
   howToApply?: Array<typeof SliceUnion>
 
   @CacheField(() => [SliceUnion])
-  applicationDeadline?: Array<typeof SliceUnion>
-
-  @CacheField(() => [SliceUnion])
   applicationHints?: Array<typeof SliceUnion>
 
   @Field({ nullable: true })
@@ -56,9 +53,6 @@ export class Grant {
 
   @Field({ nullable: true })
   dateTo?: string
-
-  @Field({ nullable: true })
-  isOpen?: boolean
 
   @CacheField(() => GrantStatus, { nullable: true })
   status?: GrantStatus
@@ -81,11 +75,10 @@ export const mapGrant = ({ fields, sys }: IGrant): Grant => ({
   name: fields.grantName,
   description: fields.grantDescription,
   applicationId: fields.grantApplicationId,
-  applicationDeadlineStatus: fields.grantApplicationDeadlineStatus,
   applicationUrl: fields.granApplicationUrl?.fields
     ? mapReferenceLink(fields.granApplicationUrl)
     : undefined,
-
+  applicationButtonLabel: fields.grantButtonLabel,
   specialEmphasis: fields.grantSpecialEmphasis
     ? mapDocument(fields.grantSpecialEmphasis, sys.id + ':special-emphasis')
     : [],
@@ -95,18 +88,11 @@ export const mapGrant = ({ fields, sys }: IGrant): Grant => ({
   howToApply: fields.grantHowToApply
     ? mapDocument(fields.grantHowToApply, sys.id + ':how-to-apply')
     : [],
-  applicationDeadline: fields.grantApplicationDeadline
-    ? mapDocument(
-        fields.grantApplicationDeadline,
-        sys.id + ':application-deadline',
-      )
-    : [],
   applicationHints: fields.grantApplicationHints
     ? mapDocument(fields.grantApplicationHints, sys.id + ':application-hints')
     : [],
   dateFrom: fields.grantDateFrom,
   dateTo: fields.grantDateTo,
-  isOpen: fields.grantIsOpen ?? undefined,
   status:
     fields.grantStatus === 'open'
       ? GrantStatus.OPEN

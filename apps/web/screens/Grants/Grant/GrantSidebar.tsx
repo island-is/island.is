@@ -56,6 +56,20 @@ export const GrantSidebar = ({ grant, locale }: Props) => {
           ) : undefined,
         ),
         generateLine(
+          formatMessage(m.single.status),
+          grant?.status ? (
+            <Text variant="medium">
+              {generateStatusTag(grant.status, formatMessage)?.label}
+            </Text>
+          ) : undefined,
+        ),
+        generateLine(
+          formatMessage(m.single.applications,
+          grant?.applicationDeadlineStatus ? (
+            <Text variant="medium">{grant.applicationDeadlineStatus}</Text>
+          ) : undefined,
+        ),
+        generateLine(
           formatMessage(m.single.category),
           grant?.categoryTags ? (
             <Text variant="medium">
@@ -70,20 +84,6 @@ export const GrantSidebar = ({ grant, locale }: Props) => {
           formatMessage(m.single.type),
           grant?.typeTag?.title ? (
             <Text variant="medium">{grant.typeTag?.title}</Text>
-          ) : undefined,
-        ),
-        generateLine(
-          formatMessage(m.single.deadline),
-          grant?.applicationDeadlineStatus ? (
-            <Text variant="medium">{grant.applicationDeadlineStatus}</Text>
-          ) : undefined,
-        ),
-        generateLine(
-          formatMessage(m.single.status),
-          grant?.status ? (
-            <Text variant="medium">
-              {generateStatusTag(grant.status, formatMessage)?.label}
-            </Text>
           ) : undefined,
         ),
       ].filter(isDefined) ?? [],
