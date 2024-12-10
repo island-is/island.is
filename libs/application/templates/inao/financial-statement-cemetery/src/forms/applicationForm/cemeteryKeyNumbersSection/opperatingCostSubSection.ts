@@ -24,9 +24,9 @@ export const opperatingCostSubSection = buildSubSection({
       description: m.fillOutAppopriate,
       children: [
         buildCustomField({
-          id: 'cemetryIncomeLimit',
+          id: 'fetchDataBasedOnYear',
           title: '',
-          component: 'CemeteryIncomeLimit',
+          component: 'FetchDataBasedOnSelectedYear',
         }),
         // Income
         buildDescriptionField({
