@@ -20,6 +20,8 @@ import { ApplicationEvent } from './models/applicationEvent.model'
 import { ApplicationEvents } from '../../enums/applicationEvents'
 import { ApplicationListDto } from './models/dto/applicationList.dto'
 import { FieldTypesEnum } from '../../dataTypes/fieldTypes/fieldTypes.enum'
+import { ScreenDto } from '../screens/models/dto/screen.dto'
+import { ScreenValidationResponse } from '../../dataTypes/validationResponse.model'
 
 @Injectable()
 export class ApplicationsService {
@@ -102,6 +104,15 @@ export class ApplicationsService {
     application.completed = updateApplicationDto.completed
 
     await application.save()
+  }
+
+  async validateScreen(
+    screenDto: ScreenDto,
+  ): Promise<ScreenValidationResponse> {
+    const screenValidationResponse: ScreenValidationResponse =
+      new ScreenValidationResponse()
+
+    return screenValidationResponse
   }
 
   async submit(id: string): Promise<boolean> {

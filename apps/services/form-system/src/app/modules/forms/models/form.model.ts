@@ -46,7 +46,7 @@ export class Form extends Model<Form> {
   @Column({
     type: DataType.STRING,
     allowNull: false,
-    defaultValue: '',
+    defaultValue: ' ',
   })
   slug!: string
 
@@ -90,8 +90,10 @@ export class Form extends Model<Form> {
   derivedFrom!: string
 
   @Column({
-    type: DataType.STRING,
+    type: DataType.ENUM,
     allowNull: false,
+    values: Object.values(FormStatus),
+    defaultValue: FormStatus.IN_DEVELOPMENT,
   })
   status!: string
 

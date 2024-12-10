@@ -27,7 +27,6 @@ module.exports = {
           section_type: {
             type: Sequelize.STRING,
             allowNull: false,
-            defaultValue: 'input',
           },
           display_order: {
             type: Sequelize.INTEGER,

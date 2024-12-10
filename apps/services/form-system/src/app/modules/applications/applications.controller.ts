@@ -21,11 +21,17 @@ import { ApplicationDto } from './models/dto/application.dto'
 import { CreateApplicationDto } from './models/dto/createApplication.dto'
 import { UpdateApplicationDto } from './models/dto/updateApplication.dto'
 import { ApplicationListDto } from './models/dto/applicationList.dto'
+import { ScreenDto } from '../screens/models/dto/screen.dto'
+import { ScreenValidationResponse } from '../../dataTypes/validationResponse.model'
+import { ValidationService } from '../services/validation.service'
 
 @ApiTags('applications')
 @Controller({ path: 'applications', version: ['1', VERSION_NEUTRAL] })
 export class ApplicationsController {
-  constructor(private readonly applicationsService: ApplicationsService) {}
+  constructor(
+    private readonly applicationsService: ApplicationsService,
+    private readonly validationService: ValidationService,
+  ) {}
 
   @ApiOperation({ summary: 'Get an application by id' })
   @ApiCreatedResponse({
@@ -75,6 +81,18 @@ export class ApplicationsController {
   @Post('submit/:id')
   async submit(@Param('id') id: string): Promise<void> {
     await this.applicationsService.submit(id)
+  }
+
+  @ApiOperation({ summary: 'validate and save input values of a screen' })
+  @ApiCreatedResponse({
+    description: 'validate and save input values of a screen',
+  })
+  @ApiBody({ type: ScreenDto })
+  @Post('/validateScreen')
+  async validateScreen(
+    @Body() screenDto: ScreenDto,
+  ): Promise<ScreenValidationResponse> {
+    return await this.applicationsService.validateScreen(screenDto)
   }
 
   @ApiOperation({ summary: 'Get all applications belonging to organization' })
