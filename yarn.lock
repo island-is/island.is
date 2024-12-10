@@ -13499,7 +13499,7 @@ __metadata:
     lodash: 4.17.21
     metro-config: 0.81.0
     path-to-regexp: 6.2.2
-    react: 18.2.0
+    react: 18.3.1
     react-intl: 5.20.12
     react-native: 0.74.5
     react-native-app-auth: 7.2.0
@@ -50536,15 +50536,6 @@ __metadata:
     react: ^16.8.0
     react-dom: ^16.8.0
   checksum: 1c1505bf62e87f5fbf7b27b50bf090f983222ea029b5208116675f4841fb13141fcf4fcabb256e790d38ee8681ca94f0a7b2fe14b4f73e9aa0caa2978f3717a2
-  languageName: node
-  linkType: hard
-
-"react@npm:18.2.0":
-  version: 18.2.0
-  resolution: "react@npm:18.2.0"
-  dependencies:
-    loose-envify: ^1.1.0
-  checksum: 88e38092da8839b830cda6feef2e8505dec8ace60579e46aa5490fc3dc9bba0bd50336507dc166f43e3afc1c42939c09fe33b25fae889d6f402721dcd78fca1b
   languageName: node
   linkType: hard
 
