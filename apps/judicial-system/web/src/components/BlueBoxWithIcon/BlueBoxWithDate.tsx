@@ -15,7 +15,7 @@ import {
 import { PUBLIC_PROSECUTOR_STAFF_INDICTMENT_SEND_TO_PRISON_ADMIN_ROUTE } from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import { VERDICT_APPEAL_WINDOW_DAYS } from '@island.is/judicial-system/types'
-import { errors } from '@island.is/judicial-system-web/messages'
+import { core, errors } from '@island.is/judicial-system-web/messages'
 
 import {
   CaseIndictmentRulingDecision,
@@ -26,6 +26,7 @@ import { formatDateForServer, useDefendants } from '../../utils/hooks'
 import DateTime from '../DateTime/DateTime'
 import { FormContext } from '../FormProvider/FormProvider'
 import { getAppealExpirationInfo } from '../InfoCard/DefendantInfo/DefendantInfo'
+import Modal from '../Modal/Modal'
 import SectionHeading from '../SectionHeading/SectionHeading'
 import { strings } from './BlueBoxWithDate.strings'
 import * as styles from './BlueBoxWithIcon.css'
@@ -34,6 +35,8 @@ interface Props {
   defendant: Defendant
   icon?: IconMapIcon
 }
+
+type VisibleModal = 'REVOKE_SEND_TO_PRISON_ADMIN'
 
 const BlueBoxWithDate: FC<Props> = (props) => {
   const { defendant, icon } = props
@@ -47,7 +50,8 @@ const BlueBoxWithDate: FC<Props> = (props) => {
   })
   const [triggerAnimation, setTriggerAnimation] = useState<boolean>(false)
   const [triggerAnimation2, setTriggerAnimation2] = useState<boolean>(false)
-  const { setAndSendDefendantToServer } = useDefendants()
+  const [modalVisible, setModalVisible] = useState<VisibleModal>()
+  const { setAndSendDefendantToServer, isUpdatingDefendant } = useDefendants()
   const { workingCase, setWorkingCase } = useContext(FormContext)
   const router = useRouter()
 
@@ -111,6 +115,8 @@ const BlueBoxWithDate: FC<Props> = (props) => {
       },
       setWorkingCase,
     )
+
+    setModalVisible(undefined)
   }
 
   const appealExpirationInfo = useMemo(() => {
@@ -335,7 +341,7 @@ const BlueBoxWithDate: FC<Props> = (props) => {
         {defendant.isSentToPrisonAdmin ? (
           <Button
             variant="text"
-            onClick={handleRevokeSendToPrisonAdmin}
+            onClick={() => setModalVisible('REVOKE_SEND_TO_PRISON_ADMIN')}
             size="small"
             colorScheme="destructive"
           >
@@ -355,6 +361,20 @@ const BlueBoxWithDate: FC<Props> = (props) => {
           </Button>
         )}
       </Box>
+      {modalVisible === 'REVOKE_SEND_TO_PRISON_ADMIN' && (
+        <Modal
+          title={formatMessage(strings.revokeSendToPrisonAdminModalTitle)}
+          text={formatMessage(strings.revokeSendToPrisonAdminModalText, {
+            courtCaseNumber: workingCase.courtCaseNumber,
+            defendant: defendant.name,
+          })}
+          onPrimaryButtonClick={handleRevokeSendToPrisonAdmin}
+          primaryButtonText={formatMessage(strings.revoke)}
+          isPrimaryButtonLoading={isUpdatingDefendant}
+          secondaryButtonText={formatMessage(core.cancel)}
+          onSecondaryButtonClick={() => setModalVisible(undefined)}
+        />
+      )}
     </>
   )
 }

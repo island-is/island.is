@@ -1,13 +1,14 @@
 import { z } from 'zod'
 
-import { defineConfig } from '@island.is/nest/config'
 import { processJob } from '@island.is/infra-nest-server'
+import { defineConfig } from '@island.is/nest/config'
 
 // Exported for testing purposes
 export const schema = z.object({
   isWorker: z.boolean(),
   firebaseCredentials: z.string(),
   servicePortalClickActionUrl: z.string(),
+  servicePortalBffLoginUrl: z.string(),
   contentfulAccessToken: z.string(),
   emailFromAddress: z.string(),
   redis: z.object({
@@ -27,6 +28,9 @@ export const UserNotificationsConfig = defineConfig({
       servicePortalClickActionUrl:
         env.optional('SERVICE_PORTAL_CLICK_ACTION_URL') ??
         'https://island.is/minarsidur',
+      servicePortalBffLoginUrl:
+        env.optional('SERVICE_PORTAL_BFF_LOGIN_URL') ??
+        'https://island.is/bff/login',
       contentfulAccessToken: env.optional('CONTENTFUL_ACCESS_TOKEN', ''),
       emailFromAddress: env.required(
         'EMAIL_FROM_ADDRESS',

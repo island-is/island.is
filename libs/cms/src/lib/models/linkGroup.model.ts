@@ -8,6 +8,7 @@ import {
   ILink,
   ILinkGroup,
   ILinkGroupFields,
+  IOrganizationParentSubpage,
   IOrganizationSubpage,
   IProjectPage,
   IProjectSubpage,
@@ -32,7 +33,7 @@ export class LinkGroup {
 type PageAbove = IProjectPage
 
 type LinkType = Omit<
-  ILink | IOrganizationSubpage | IProjectSubpage,
+  ILink | IOrganizationSubpage | IProjectSubpage | IOrganizationParentSubpage,
   'update' | 'toPlainObject'
 >
 
@@ -63,8 +64,14 @@ export const mapLinkGroup = ({
 
 const mapLinkWrapper = (link: LinkType, pageAbove: PageAbove | undefined) => {
   const contentTypeId = link?.sys?.contentType?.sys?.id
-  if (contentTypeId === 'organizationSubpage') {
-    return generateOrganizationSubpageLink(link as IOrganizationSubpage)
+
+  if (
+    contentTypeId === 'organizationSubpage' ||
+    contentTypeId === 'organizationParentSubpage'
+  ) {
+    return generateOrganizationSubpageLink(
+      link as IOrganizationSubpage | IOrganizationParentSubpage,
+    )
   } else if (contentTypeId === 'projectSubpage') {
     return generateProjectSubpageLink(link as IProjectSubpage, pageAbove)
   } else if (contentTypeId === 'link') {
@@ -73,7 +80,9 @@ const mapLinkWrapper = (link: LinkType, pageAbove: PageAbove | undefined) => {
   return null
 }
 
-const generateOrganizationSubpageLink = (subpage: IOrganizationSubpage) => {
+const generateOrganizationSubpageLink = (
+  subpage: IOrganizationSubpage | IOrganizationParentSubpage,
+) => {
   const prefix = getOrganizationPageUrlPrefix(subpage.sys.locale)
 
   return mapLink({
@@ -88,7 +97,9 @@ const generateOrganizationSubpageLink = (subpage: IOrganizationSubpage) => {
       },
     },
     fields: {
-      text: subpage.fields.shortTitle || subpage.fields.title,
+      text:
+        (subpage as IOrganizationSubpage).fields.shortTitle ||
+        subpage.fields.title,
       url: `/${prefix}/${subpage.fields.organizationPage.fields.slug}/${subpage.fields.slug}`,
     },
   })
