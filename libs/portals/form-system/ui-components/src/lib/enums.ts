@@ -1,3 +1,4 @@
+
 export const FieldTypesEnum = {
   TEXTBOX: 'b6a7e297-22fd-4426-a4e1-04a11a2e8914',
   EMAIL: 'd6c292c7-4e7c-44a6-bb7e-b956122598b0',
@@ -56,10 +57,10 @@ export const ListTypesEnum = {
 } as const
 
 export const SectionTypes = {
-  PREMISES: 'premises',
-  PARTIES: 'parties',
-  INPUT: 'input',
-  PAYMENT: 'payment',
+  PREMISES: '72f8db2b-8b6a-4e6d-964b-003f3b802ff1',
+  PARTIES: 'f9f69a74-c72c-48a8-bfc0-a452cde4b8d1',
+  INPUT: '94786b44-e3ce-4463-a7a3-e1073fe8fb81',
+  PAYMENT: '6017215a-ed8b-4115-b1b0-ae08fa4b763c',
 } as const
 
 export const UrlMethods = {

@@ -3,7 +3,6 @@ import {
   FormSystemSection,
   FormSystemScreen,
   FormSystemField,
-  FormSystemSectionDtoSectionTypeEnum,
 } from '@island.is/api/schema'
 import { ItemType, NavbarSelectStatus } from '../../lib/utils/interfaces'
 import { useSortable } from '@dnd-kit/sortable'
@@ -14,6 +13,7 @@ import cn from 'classnames'
 import { Box, Checkbox } from '@island.is/island-ui/core'
 import { truncateName } from '../../lib/utils/truncateText'
 import { NavButtons } from './components/NavButtons'
+import { SectionTypes } from '@island.is/form-system/ui'
 
 type Props = {
   type: ItemType
@@ -132,7 +132,7 @@ export const NavComponent = ({
               }}
             >
               {!(
-                type === 'Section' && (data as FormSystemSection).sectionType !== FormSystemSectionDtoSectionTypeEnum.Input
+                type === 'Section' && (data as FormSystemSection).sectionType !== SectionTypes.INPUT
               ) && <NavButtons />}
             </Box>
           )}

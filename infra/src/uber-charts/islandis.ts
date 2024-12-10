@@ -106,9 +106,9 @@ const authAdminApi = authAdminApiSetup()
 const universityGatewayService = universityGatewaySetup()
 const universityGatewayWorker = universityGatewayWorkerSetup()
 
-const userNotificationService = userNotificationServiceSetup({
-  userProfileApi: servicePortalApi,
-})
+// const userNotificationService = userNotificationServiceSetup({
+//   userProfileApi: servicePortalApi,
+// })
 
 const formSystemApi = formSystemApiSetup()
 

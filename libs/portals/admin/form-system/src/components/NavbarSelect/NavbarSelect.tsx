@@ -6,11 +6,10 @@ import {
   FormSystemSection,
   FormSystemScreen,
   FormSystemField,
-  FormSystemSectionDtoSectionTypeEnum,
 } from '@island.is/api/schema'
 import { NavbarSelectStatus } from '../../lib/utils/interfaces'
 import { useIntl } from 'react-intl'
-import { m } from '@island.is/form-system/ui'
+import { m, SectionTypes } from '@island.is/form-system/ui'
 
 export const NavbarSelect = () => {
   const { control, selectStatus } = useContext(ControlContext)
@@ -25,7 +24,7 @@ export const NavbarSelect = () => {
       </Box>
       {sections
         ?.filter((s): s is FormSystemSection => s !== null && s !== undefined)
-        .filter((s) => s.sectionType === FormSystemSectionDtoSectionTypeEnum.Input)
+        .filter((s) => s.sectionType === SectionTypes.INPUT)
         .map((s) => (
           <Box key={s.id}>
             <SelectNavComponent

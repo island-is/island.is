@@ -5,8 +5,7 @@ import { useContext } from 'react'
 import { baseSettingsStep } from '../../../../lib/utils/getBaseSettingsSection'
 import { ControlContext } from '../../../../context/ControlContext'
 import { useIntl } from 'react-intl'
-import { FormSystemSectionDtoSectionTypeEnum } from '@island.is/api/schema'
-import { m } from '@island.is/form-system/ui'
+import { m, SectionTypes } from '@island.is/form-system/ui'
 
 export const NavbarTab = () => {
   const { control, controlDispatch, inSettings, setInSettings } =
@@ -22,7 +21,7 @@ export const NavbarTab = () => {
             [styles.selected]: !inSettings,
           })}
           onClick={() => {
-            const section = sections?.find((s) => s?.sectionType === FormSystemSectionDtoSectionTypeEnum.Input)
+            const section = sections?.find((s) => s?.sectionType === SectionTypes.INPUT)
             controlDispatch({
               type: 'SET_ACTIVE_ITEM',
               payload: {

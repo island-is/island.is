@@ -1,6 +1,6 @@
 import { useCallback, useMemo, useReducer, useState } from "react"
 import { ControlContext, IControlContext } from "./ControlContext"
-import { FormSystemForm, FormSystemFormResponse, FormSystemSection, FormSystemSectionDtoSectionTypeEnum } from "@island.is/api/schema"
+import { FormSystemForm, FormSystemFormResponse, FormSystemSection } from "@island.is/api/schema"
 import { ControlState, controlReducer } from "../hooks/controlReducer"
 import { ActiveItem, NavbarSelectStatus } from "../lib/utils/interfaces"
 import { removeTypename } from "../lib/utils/removeTypename"
@@ -11,6 +11,7 @@ import { updateActiveItemFn } from "../lib/utils/updateActiveItem"
 import { useMutation } from "@apollo/client"
 import { UPDATE_FIELD, UPDATE_FIELDS_DISPLAY_ORDER, UPDATE_FORM, UPDATE_SCREEN, UPDATE_SCREEN_DISPLAY_ORDER, UPDATE_SECTION, UPDATE_SECTION_DISPLAY_ORDER } from "@island.is/form-system/graphql"
 import { updateFormFn } from "../lib/utils/updateFormFn"
+import { SectionTypes } from '@island.is/form-system/ui'
 
 export const FormProvider: React.FC<{ children: React.ReactNode, formBuilder: FormSystemFormResponse }> = ({ children, formBuilder }) => {
   const [focus, setFocus] = useState<string>('')
@@ -27,7 +28,7 @@ export const FormProvider: React.FC<{ children: React.ReactNode, formBuilder: Fo
       data: inSettings
         ? baseSettingsStep
         : removeTypename(form?.sections)?.find(
-          (s: FormSystemSection) => s?.sectionType === FormSystemSectionDtoSectionTypeEnum.Input,
+          (s: FormSystemSection) => s?.sectionType === SectionTypes.INPUT,
         ) ?? defaultStep,
     },
     activeListItem: null,

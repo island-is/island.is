@@ -1,4 +1,6 @@
 import { UseGuards } from '@nestjs/common'
+import { CodeOwner } from '@island.is/nest/core'
+import { CodeOwners } from '@island.is/shared/constants'
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql'
 import {
   CurrentUser,
@@ -15,9 +17,10 @@ import {
 
 @Resolver()
 @UseGuards(IdsUserGuard)
+@CodeOwner(CodeOwners.Advania)
 @Audit({ namespace: '@island.is/api/form-system' })
 export class ApplicationsResolver {
-  constructor(private readonly applicationsService: ApplicationsService) {}
+  constructor(private readonly applicationsService: ApplicationsService) { }
 
   @Query(() => Application, {
     name: 'formSystemGetApplication',

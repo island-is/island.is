@@ -5,13 +5,13 @@ import {
   FormSystemListItem,
   FormSystemSection,
   FormSystemFieldSettings,
-  FormSystemSectionDtoSectionTypeEnum,
   FormSystemFormCertificationTypeDto,
 } from '@island.is/api/schema'
 import { UniqueIdentifier } from '@dnd-kit/core'
 import { arrayMove } from '@dnd-kit/sortable'
 import { removeTypename } from '../lib/utils/removeTypename'
 import { ActiveItem } from '../lib/utils/interfaces'
+import { SectionTypes } from '@island.is/form-system/ui'
 
 type ActiveItemActions =
   | { type: 'SET_ACTIVE_ITEM'; payload: { activeItem: ActiveItem } }
@@ -206,7 +206,7 @@ export const controlReducer = (
       const newSection = {
         ...action.payload.section,
         displayOrder: sections?.length ?? 0,
-        sectionType: FormSystemSectionDtoSectionTypeEnum.Input
+        sectionType: SectionTypes.INPUT,
       }
       return {
         ...state,

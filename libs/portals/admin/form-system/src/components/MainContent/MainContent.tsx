@@ -9,14 +9,14 @@ import {
 } from '@island.is/island-ui/core'
 import { useContext, useState } from 'react'
 import { ControlContext } from '../../context/ControlContext'
-import { FormSystemSectionDtoSectionTypeEnum, FormSystemSection, FormSystemScreen } from '@island.is/api/schema'
+import { FormSystemSection, FormSystemScreen } from '@island.is/api/schema'
 import { BaseSettings } from './components/BaseSettings/BaseSettings'
 import { Premises } from './components/Premises/Premises'
 import { FieldContent } from './components/FieldContent/FieldContent'
 import { PreviewStepOrGroup } from './components/PreviewStepOrGroup/PreviewStepOrGroup'
 import { useIntl } from 'react-intl'
 import { RelevantParties } from './components/RelevantParties/RelevantParties'
-import { m } from '@island.is/form-system/ui'
+import { m, SectionTypes } from '@island.is/form-system/ui'
 
 export const MainContent = () => {
   const {
@@ -37,10 +37,10 @@ export const MainContent = () => {
         (activeItem.data as FormSystemSection).id === "BaseSettings" ? (
         <BaseSettings />
       ) : activeItem.type === 'Section' &&
-        (activeItem.data as FormSystemSection).sectionType === FormSystemSectionDtoSectionTypeEnum.Premises ? (
+        (activeItem.data as FormSystemSection).sectionType === SectionTypes.PREMISES ? (
         <Premises />
       ) : activeItem.type === 'Section' &&
-        (activeItem.data as FormSystemSection).sectionType === FormSystemSectionDtoSectionTypeEnum.Parties ? (
+        (activeItem.data as FormSystemSection).sectionType === SectionTypes.PARTIES ? (
         <RelevantParties />
       ) : openPreview ? (
         <PreviewStepOrGroup setOpenPreview={setOpenPreview} />
