@@ -101,6 +101,7 @@ export const subSectionTempInfo = buildSubSection({
           title: m.drivingInstructor,
           required: true,
           condition: (answers) => answers.applicationFor !== B_FULL_RENEWAL_65,
+          //required: true,
           options: ({
             externalData: {
               teachers: { data },

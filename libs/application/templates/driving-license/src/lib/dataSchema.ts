@@ -54,7 +54,7 @@ export const dataSchema = z.object({
     }),
   email: z.string().email(),
   phone: z.string().refine((v) => isValidPhoneNumber(v)),
-  drivingInstructor: z.string().min(1),
+  drivingInstructor: z.string().optional(), //.min(1),
   otherCountry: z
     .object({
       drivingLicenseInOtherCountry: z.enum([YES, NO]),
