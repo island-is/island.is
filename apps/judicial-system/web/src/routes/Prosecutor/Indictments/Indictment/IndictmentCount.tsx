@@ -48,6 +48,7 @@ import { indictmentCount as strings } from './IndictmentCount.strings'
 import { indictmentCountEnum as enumStrings } from './IndictmentCountEnum.strings'
 import { indictmentCountSubstanceEnum as substanceStrings } from './IndictmentCountSubstanceEnum.strings'
 import * as styles from './IndictmentCount.css'
+import { hasOnlyOneItemInSubArrays } from '@island.is/judicial-system-web/src/utils/utils'
 
 interface Props {
   indictmentCount: TIndictmentCount
@@ -282,16 +283,6 @@ export const getLegalArguments = (
   return formatMessage(strings.legalArgumentsAutofill, {
     articles: `${articles} mgr. ${lawsBroken[lawsBroken.length - 1][0]}. gr.`,
   })
-}
-
-const hasOnlyOneItemInSubArrays = (
-  indictmentSubtypes?: Record<string, string[]>,
-) => {
-  if (!indictmentSubtypes) return false
-
-  return Object.values(indictmentSubtypes).every(
-    (subArray) => subArray.length === 1,
-  )
 }
 
 export const getIncidentDescription = (

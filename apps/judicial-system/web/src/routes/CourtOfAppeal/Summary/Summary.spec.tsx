@@ -9,7 +9,7 @@ import {
   CaseType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { mockTransitonCaseMutation } from '@island.is/judicial-system-web/src/utils/mocks'
-import * as stepHelper from '@island.is/judicial-system-web/src/utils/stepHelper'
+import * as stepHelper from '@island.is/judicial-system-web/src/utils/utils'
 import {
   FormContextWrapper,
   IntlProviderWrapper,
