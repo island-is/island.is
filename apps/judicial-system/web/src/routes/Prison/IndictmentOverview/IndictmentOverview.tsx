@@ -22,10 +22,11 @@ import { useCase, useDefendants, useFileList } from '@island.is/judicial-system-
 import { strings } from './IndictmentOverview.strings'
 import { PunishmentType } from '@island.is/judicial-system/types'
 
+
 const IndictmentOverview = () => {
-  const { workingCase, setWorkingCase } = useContext(FormContext)
+  const { workingCase } = useContext(FormContext)
   const { formatMessage } = useIntl()
-  const { setAndSendDefendantToServer } = useDefendants()
+  const { updateDefendant } = useDefendants()
 
   const { onOpen } = useFileList({
     caseId: workingCase.id,
@@ -35,15 +36,15 @@ const IndictmentOverview = () => {
   const defendant = defendants && defendants?.length > 0 ? defendants[0] : undefined;
   const [selectedPunishmentType, setPunishmentType] = useState<PunishmentType>();
 
+  // TODO: A given user can update a given field, we have to fix that
+  // TODO: Limited access defentant => only allow update for a given field
   const onChange = (updatedPunishmentType: PunishmentType) => {
-    defendant && setAndSendDefendantToServer(
+    defendant && updateDefendant(
       {
         caseId: workingCase.id,
         defendantId: defendant.id,
-        // TODO: why is this not generated in the graphql file???
         punishmentType: updatedPunishmentType,
-      },
-      setWorkingCase,
+      }
     )
     setPunishmentType(updatedPunishmentType);
   }
