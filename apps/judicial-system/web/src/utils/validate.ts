@@ -17,7 +17,7 @@ import {
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
-import { isBusiness } from './utils'
+import { hasOnlyOneItemInSubArrays, isBusiness } from './utils'
 
 export type Validation =
   | 'empty'
@@ -291,16 +291,6 @@ export const isProcessingStepValidIndictments = (
       hasCivilClaimSelected &&
       allCivilClaimantsAreValid &&
       defendantsAreValid,
-  )
-}
-
-const hasOnlyOneItemInSubArrays = (
-  indictmentSubtypes?: Record<string, string[]>,
-) => {
-  if (!indictmentSubtypes) return false
-
-  return Object.values(indictmentSubtypes).every(
-    (subArray) => subArray.length === 1,
   )
 }
 
