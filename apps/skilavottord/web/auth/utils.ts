@@ -10,7 +10,10 @@ type Page =
   | 'accessControlCompany'
   | 'companyInfo'
 
-export const isDeveloper = (role: Role) => role === Role.developer
+export const hasDeveloperRole = (role: Role | undefined) =>
+  role === Role.developer
+export const hasMunicipalityRole = (role: Role | undefined) =>
+  role === Role.municipality
 
 export const hasPermission = (page: Page, role: Role) => {
   if (!role) return false

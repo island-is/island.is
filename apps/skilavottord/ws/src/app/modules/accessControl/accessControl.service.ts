@@ -34,7 +34,24 @@ export class AccessControlService {
   async findByRecyclingPartner(
     partnerId: string,
   ): Promise<AccessControlModel[]> {
-    const partnerIds = []
+    let partnerIds = []
+
+    // Get all sub recycling partners of the municipality
+    // else get all
+    if (partnerId) {
+      // Get all sub recycling partners of the municipality
+      const subRecyclingPartners = await RecyclingPartnerModel.findAll({
+        where: { municipalityId: partnerId },
+      })
+
+      partnerIds = [
+        partnerId,
+        ...subRecyclingPartners.map((partner) => partner.companyId),
+      ]
+    } else {
+      partnerIds = null
+    }
+
     // Get all sub companies
     const getAllCompanyIds = async (partnerId: string) => {
       partnerIds.push(partnerId)
@@ -45,6 +62,7 @@ export class AccessControlService {
         await getAllCompanyIds(subCompany.companyId)
       }
     }
+
     await getAllCompanyIds(partnerId)
     return this.accessControlModel.findAll({
       where: { partnerId: partnerIds },

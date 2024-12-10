@@ -6,7 +6,10 @@ import React, { FC, useContext } from 'react'
 import { useForm } from 'react-hook-form'
 
 import { Box, Breadcrumbs, Stack, toast } from '@island.is/island-ui/core'
-import { hasPermission } from '@island.is/skilavottord-web/auth/utils'
+import {
+  hasPermission,
+  hasMunicipalityRole,
+} from '@island.is/skilavottord-web/auth/utils'
 import { NotFound } from '@island.is/skilavottord-web/components'
 import { PartnerPageLayout } from '@island.is/skilavottord-web/components/Layouts'
 import { UserContext } from '@island.is/skilavottord-web/context'
@@ -56,7 +59,7 @@ const RecyclingCompanyCreate: FC<React.PropsWithChildren<unknown>> = () => {
 
   // Show only recycling companies for the municipality
   let partnerId = null
-  if (user?.role === Role.municipality) {
+  if (hasMunicipalityRole(user?.role)) {
     partnerId = user?.partnerId
   }
 

@@ -1,8 +1,8 @@
-import { useI18n } from '@island.is/skilavottord-web/i18n'
-import Sidenav from '../Sidenav/Sidenav'
+import { hasMunicipalityRole } from '@island.is/skilavottord-web/auth/utils'
 import { UserContext } from '@island.is/skilavottord-web/context'
+import { useI18n } from '@island.is/skilavottord-web/i18n'
 import { useContext } from 'react'
-import { Role } from '@island.is/skilavottord-web/graphql/schema'
+import Sidenav from '../Sidenav/Sidenav'
 
 export const NavigationLinks = ({
   activeSection,
@@ -16,7 +16,7 @@ export const NavigationLinks = ({
   const { user } = useContext(UserContext)
 
   let title = sidenavText.title
-  if (user?.role === Role.municipality) {
+  if (hasMunicipalityRole(user?.role)) {
     title = sidenavText.municipalityTitle
   }
 
@@ -33,7 +33,7 @@ export const NavigationLinks = ({
           icon: 'people',
           title: `${sidenavText.municipalities}`,
           link: `${routes.municipalities.baseRoute}`,
-          hidden: user?.role === Role.municipality,
+          hidden: hasMunicipalityRole(user?.role),
         },
         {
           icon: 'business',

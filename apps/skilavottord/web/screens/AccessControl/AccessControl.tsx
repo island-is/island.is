@@ -2,7 +2,7 @@ import { useLazyQuery, useMutation, useQuery } from '@apollo/client'
 import gql from 'graphql-tag'
 import * as kennitala from 'kennitala'
 import NextLink from 'next/link'
-import React, { FC, useContext, useEffect, useState } from 'react'
+import React, { FC, useContext, useState } from 'react'
 
 import {
   Box,
@@ -16,8 +16,8 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import {
+  hasDeveloperRole,
   hasPermission,
-  isDeveloper,
 } from '@island.is/skilavottord-web/auth/utils'
 import { NotFound } from '@island.is/skilavottord-web/components'
 import { PartnerPageLayout } from '@island.is/skilavottord-web/components/Layouts'
@@ -41,10 +41,8 @@ import { AccessControlCreate, AccessControlUpdate } from './components'
 
 import NavigationLinks from '@island.is/skilavottord-web/components/NavigationLinks/NavigationLinks'
 import PageHeader from '@island.is/skilavottord-web/components/PageHeader/PageHeader'
-import * as styles from './AccessControl.css'
 import { SkilavottordAllRecyclingPartnersByTypeQuery } from '../RecyclingCompanies/RecyclingCompanies'
-import municipalities from '@island.is/skilavottord-web/pages/en/municipalities'
-import { use } from 'dd-trace'
+import * as styles from './AccessControl.css'
 
 const SkilavottordAllRecyclingPartnersQuery = gql`
   query skilavottordAllRecyclingPartnersQuery {
@@ -233,7 +231,7 @@ const AccessControl: FC<React.PropsWithChildren<unknown>> = () => {
 
   const roles = Object.keys(AccessControlRole)
     .filter((role) =>
-      !isDeveloper(user?.role) ? role !== Role.developer : role,
+      !hasDeveloperRole(user?.role) ? role !== Role.developer : role,
     )
     .filter((role) => {
       if (user.role == Role.municipality) {
