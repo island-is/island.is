@@ -13,6 +13,7 @@ import { Field } from '../../fields/models/field.model'
 import { ValueType } from '../../../dataTypes/valueTypes/valueType.model'
 import { ApplicationEvent } from '../../applications/models/applicationEvent.model'
 import { Application } from '../../applications/models/application.model'
+import { FieldTypesEnum } from '../../../dataTypes/fieldTypes/fieldTypes.enum'
 
 @Table({ tableName: 'value' })
 export class Value extends Model<Value> {
@@ -44,8 +45,9 @@ export class Value extends Model<Value> {
   order!: number
 
   @Column({
-    type: DataType.STRING,
+    type: DataType.ENUM,
     allowNull: false,
+    values: Object.values(FieldTypesEnum),
   })
   fieldType!: string
 

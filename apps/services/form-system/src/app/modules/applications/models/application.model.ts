@@ -14,6 +14,7 @@ import { Dependency } from '../../../dataTypes/dependency.model'
 import { ApplicationEvent } from './applicationEvent.model'
 import { Organization } from '../../organizations/models/organization.model'
 import { Value } from '../../values/models/value.model'
+import { ApplicationStatus } from '../../../enums/applicationStatus'
 
 @Table({ tableName: 'application' })
 export class Application extends Model<Application> {
@@ -46,8 +47,10 @@ export class Application extends Model<Application> {
   isTest!: boolean
 
   @Column({
-    type: DataType.STRING,
+    type: DataType.ENUM,
     allowNull: false,
+    values: Object.values(ApplicationStatus),
+    defaultValue: ApplicationStatus.IN_PROGRESS,
   })
   status!: string
 

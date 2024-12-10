@@ -13,6 +13,7 @@ import { ServiceManager } from '../services/service.manager'
 import { ZendeskService } from '../services/zendesk.service'
 import { NudgeService } from '../services/nudge.service'
 import { ApplicationEvent } from './models/applicationEvent.model'
+import { ValidationService } from '../services/validation.service'
 
 @Module({
   imports: [
@@ -33,6 +34,7 @@ import { ApplicationEvent } from './models/applicationEvent.model'
     ServiceManager,
     ZendeskService,
     NudgeService,
+    ValidationService,
   ],
   exports: [ApplicationsService],
 })
