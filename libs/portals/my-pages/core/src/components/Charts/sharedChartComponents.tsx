@@ -88,16 +88,27 @@ export const RenderLegend = (props: CustomLegendProps) => {
   }
 
   return (
-    <Inline space={1}>
-      <Box as="ul" component={Inline}>
-        {[...payload.values()].map((item) => (
-          <Box as="li">
-            <Text>{title}</Text>
-            <Text>{item.value}</Text>
-          </Box>
-        ))}
-      </Box>
-    </Inline>
+    <Box
+      as="ul"
+      marginTop={3}
+      display="flex"
+      width="full"
+      justifyContent={'flexEnd'}
+    >
+      {[...payload.values()].map((item) => (
+        <Box display="flex" as="li">
+          <Box
+            alignSelf={'center'}
+            className={styles.dot}
+            style={{
+              backgroundColor: item.color,
+              borderColor: item.color,
+            }}
+          />
+          <Text variant="small">{item.value}</Text>
+        </Box>
+      ))}
+    </Box>
   )
 }
 

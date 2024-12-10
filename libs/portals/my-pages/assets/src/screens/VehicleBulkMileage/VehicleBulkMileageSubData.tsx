@@ -12,7 +12,6 @@ import { useLocale } from '@island.is/localization'
 import { useMemo, useState } from 'react'
 import { VehiclesMileageRegistrationHistory } from '@island.is/api/schema'
 import { displayWithUnit } from '../../utils/displayWithUnit'
-import { LineChart } from './LineChart'
 import format from 'date-fns/format'
 
 interface Props {
@@ -108,7 +107,7 @@ export const VehicleBulkMileageSubData = ({
             : formatMessage(vehicleMessage.viewTable)}
         </Button>
       </Box>
-      {displayMode === 'table' ? (
+      {displayMode === 'chart' ? (
         <NestedFullTable
           headerArray={[
             formatMessage(vehicleMessage.date),
