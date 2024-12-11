@@ -111,8 +111,9 @@ export const createTestingDefendantModule = async () => {
     )
 
   const limitedAccessDefendantController =
-  defendantModule.get<LimitedAccessDefendantController>(LimitedAccessDefendantController)
-
+    defendantModule.get<LimitedAccessDefendantController>(
+      LimitedAccessDefendantController,
+    )
 
   const civilClaimantModel = await defendantModule.resolve<
     typeof CivilClaimant

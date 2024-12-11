@@ -1,4 +1,3 @@
-
 import { prisonSystemStaffUpdateRule } from '../../guards/rolesRules'
 import { LimitedAccessDefendantController } from '../../limitedAccessDefendant.controller'
 
