@@ -17,6 +17,7 @@ import {
 } from '../sharedChartComponents'
 import { Box } from '@island.is/island-ui/core'
 import * as styles from './styles.css'
+import { theme } from '@island.is/island-ui/theme'
 
 type Datakeys = Array<string>
 
@@ -96,15 +97,15 @@ export const SimpleBarChart = ({
                 <Legend
                   iconType="circle"
                   align="right"
-                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                  // @ts-ignore make web strict
-                  content={RenderLegend}
+                  content={
+                    <RenderLegend labels={{ mileage: 'Kílómetrastaða' }} />
+                  }
                 />
                 {bars.map((item: BarType, index: number) => (
                   <Bar
                     key={index}
                     dataKey={item.datakey}
-                    fill={'#FFF066'}
+                    fill={theme.color.blue400}
                     barSize={16}
                     radius={[20, 20, 0, 0]}
                   />

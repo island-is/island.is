@@ -16,7 +16,6 @@ import {
   SAMGONGUSTOFA_SLUG,
   LinkButton,
   IntroWrapper,
-  formatDate,
 } from '@island.is/portals/my-pages/core'
 import { vehicleMessage as messages, vehicleMessage } from '../../lib/messages'
 import * as styles from './VehicleBulkMileage.css'

@@ -2,7 +2,7 @@ import React from 'react'
 import * as styles from './charts.css'
 import cn from 'classnames'
 import { LegendProps, TooltipProps } from 'recharts'
-import { Box, Inline, Text } from '@island.is/island-ui/core'
+import { Box, Text } from '@island.is/island-ui/core'
 
 interface AxisTickProps {
   x?: number
@@ -18,20 +18,22 @@ export const CustomTooltip = ({
 }: TooltipProps<string, number>) => {
   if (active && payload && payload.length) {
     return (
-      <div className={cn(styles.tooltip)}>
-        <p>{label}</p>
+      <Box className={cn(styles.tooltip)}>
+        <Text variant="small">{label}</Text>
         {payload.map((item, index) => (
-          <li className={cn(styles.list)} key={`item-${index}`}>
+          <Box as="li" className={cn(styles.list)} key={`item-${index}`}>
             <div
               className={cn(styles.dot)}
               style={{
                 border: '3px solid ' + item.color,
               }}
             />
-            {item.name} : {item.value}
-          </li>
+            <Text variant="small">
+              {item.name} : {item.value}
+            </Text>
+          </Box>
         ))}
-      </div>
+      </Box>
     )
   }
 
@@ -44,9 +46,7 @@ export const CustomizedAxisTick = ({
   className,
   payload,
 }: AxisTickProps) => {
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore make web strict
-  const xAxis = className.includes('xAxis')
+  const xAxis = className?.includes('xAxis')
   return (
     <g transform={`translate(${x},${y})`}>
       <text
@@ -79,10 +79,9 @@ export const CustomizedRightAxisTick = ({ x, y, payload }: AxisTickProps) => {
 }
 interface CustomLegendProps extends LegendProps {
   title?: string
+  labels?: Record<string, string>
 }
-export const RenderLegend = (props: CustomLegendProps) => {
-  const { payload, title } = props
-
+export const RenderLegend = ({ payload, title, labels }: CustomLegendProps) => {
   if (!payload || !payload.values) {
     return null
   }
@@ -105,7 +104,7 @@ export const RenderLegend = (props: CustomLegendProps) => {
               borderColor: item.color,
             }}
           />
-          <Text variant="small">{item.value}</Text>
+          <Text variant="small">{labels?.[item.value] ?? item.value}</Text>
         </Box>
       ))}
     </Box>
