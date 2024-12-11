@@ -16,6 +16,7 @@ type DataField = {
   box?: Omit<UseBoxStylesProps, 'component'>
   borderColor?: keyof typeof theme.color
   align?: 'left' | 'right' | 'center'
+  disabled?: boolean
 }
 
 type Table = {
@@ -80,6 +81,7 @@ export const Data = ({
   box = {},
   borderColor = 'blue200',
   align,
+  disabled,
   ...props
 }: DataField &
   Omit<AllHTMLAttributes<HTMLTableDataCellElement>, 'className'>) => {
@@ -87,6 +89,7 @@ export const Data = ({
     styles.cell,
     getTextStyles({
       variant: 'small',
+      disabled,
       ...text,
     }),
     useBoxStyles({
@@ -112,6 +115,7 @@ export const HeadData = ({
   text = {},
   box = {},
   align = 'left',
+  disabled,
   ...props
 }: DataField &
   Omit<AllHTMLAttributes<HTMLTableHeaderCellElement>, 'className'>) => {
@@ -119,6 +123,7 @@ export const HeadData = ({
     styles.cell,
     getTextStyles({
       variant: 'h5',
+      disabled,
       ...text,
     }),
     useBoxStyles({

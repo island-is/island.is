@@ -149,14 +149,11 @@ export const ParticipantSchema = z.object({
     .string()
     .refine(
       (nationalId) =>
-        nationalId &&
-        nationalId.length !== 0 &&
-        kennitala.isValid(nationalId) &&
-        (kennitala.isCompany(nationalId) ||
-          kennitala.info(nationalId).age >= 18),
+        nationalId && nationalId.length !== 0 && kennitala.isValid(nationalId),
     ),
   email: z.string().min(1),
   phoneNumber: z.string().min(1),
+  disabled: z.boolean().optional(),
 })
 
 export const SeminarAnswersSchema = z.object({

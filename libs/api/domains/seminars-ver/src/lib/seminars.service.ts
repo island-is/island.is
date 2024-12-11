@@ -1,5 +1,6 @@
 import {
   CompanyDTO,
+  IndividualDTO,
   SeminarsClientService,
 } from '@island.is/clients/seminars-ver'
 import { User } from '@island.is/auth-nest-tools'
@@ -20,5 +21,25 @@ export class SeminarsService {
     nationalId: string,
   ): Promise<Array<CompanyDTO>> {
     return this.seminarsService.isCompanyValid(auth, nationalId)
+  }
+
+  async checkIndividuals(
+    auth: User,
+    nationalIds: Array<string>,
+    courseID: number,
+  ): Promise<Array<IndividualDTO>> {
+    const tmp = this.seminarsService.checkIndividuals(
+      auth,
+      nationalIds,
+      courseID,
+    )
+    const tmp2 = (await tmp).map((x, i) => {
+      let neww = x
+      if (i === 0) {
+        neww = { ...x, mayTakeCourse: false }
+      }
+      return neww
+    })
+    return tmp2
   }
 }

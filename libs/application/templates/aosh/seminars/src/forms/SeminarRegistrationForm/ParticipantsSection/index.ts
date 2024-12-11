@@ -11,6 +11,7 @@ import {
 
 import { participants as participantMessages } from '../../../lib/messages'
 import { FormValue } from '@island.is/application/types'
+import { Application } from '@island.is/api/schema'
 
 export const participantsSection = buildSection({
   id: 'participants',
@@ -51,11 +52,6 @@ export const participantsSection = buildSection({
           id: '',
           title: '',
           description: participantMessages.labels.csvDescription,
-        }),
-        buildLinkField({
-          id: '',
-          title: 'test',
-          link: 'libs/application/templates/aosh/seminars/src/assets/CSV_TEMPLATE.csv',
         }),
         buildCustomField({
           id: 'participantCSV',
