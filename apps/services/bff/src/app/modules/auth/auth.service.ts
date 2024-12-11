@@ -291,9 +291,7 @@ export class AuthService {
     if (!loginAttemptData) {
       this.logger.warn(this.cacheService.createKeyError(loginAttemptCacheKey))
 
-      return this.redirectWithError(res, {
-        code: 400,
-      })
+      return this.redirectWithError(res)
     }
 
     try {
