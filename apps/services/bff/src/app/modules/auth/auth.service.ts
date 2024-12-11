@@ -277,14 +277,26 @@ export class AuthService {
       })
     }
 
-    let loginAttemptData: LoginAttemptData | undefined
+    const loginAttemptCacheKey = this.cacheService.createSessionKeyType(
+      'attempt',
+      query.state,
+    )
+    // Get login attempt data from the cache
+    const loginAttemptData = await this.cacheService.get<LoginAttemptData>(
+      loginAttemptCacheKey,
+      // Do not throw an error if the key is not found
+      false,
+    )
+
+    if (!loginAttemptData) {
+      this.logger.warn(this.cacheService.createKeyError(loginAttemptCacheKey))
+
+      return this.redirectWithError(res, {
+        code: 400,
+      })
+    }
 
     try {
-      // Get login attempt from cache
-      loginAttemptData = await this.cacheService.get<LoginAttemptData>(
-        this.cacheService.createSessionKeyType('attempt', query.state),
-      )
-
       // Get tokens and user information from the authorization code
       const tokenResponse = await this.idsService.getTokens({
         code: query.code,
