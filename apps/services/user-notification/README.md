@@ -40,7 +40,6 @@ Get secrets:
 yarn get-secrets user-notification
 ```
 
-
 Initalize dependencies:
 
 ```sh
