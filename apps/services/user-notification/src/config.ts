@@ -18,8 +18,6 @@ export const schema = z.object({
   }),
 })
 
-
-
 export const UserNotificationsConfig = defineConfig({
   name: 'UserNotificationsApi',
   schema,
