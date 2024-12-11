@@ -42,7 +42,6 @@ const IndictmentOverview = () => {
         caseId: workingCase.id,
         defendantId: defendant.id,
         punishmentType: updatedPunishmentType,
-        address: "test 9"
       }
     )
     setPunishmentType(updatedPunishmentType);
