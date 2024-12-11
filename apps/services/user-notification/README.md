@@ -69,3 +69,4 @@ Start a cleanup worker with this command:
 
 ```sh
 yarn nx run services-user-notification:cleanup
+```
