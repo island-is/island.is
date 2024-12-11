@@ -8,6 +8,7 @@ import { useLocale } from '@island.is/localization'
 import { formatText, formatTextWithLocale } from '@island.is/application/core'
 import { Markdown } from '@island.is/shared/components'
 import { useEffect, useState } from 'react'
+
 interface Props extends FieldBaseProps {
   field: AccordionField
 }
