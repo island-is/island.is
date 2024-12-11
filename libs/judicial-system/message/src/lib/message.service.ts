@@ -198,9 +198,6 @@ export class MessageService {
   ): Promise<void> {
     const MAX_BATCH_SIZE = 10
 
-    if (messages.length === 0) {
-      return // No messages to send
-    }
     if (messages.length <= MAX_BATCH_SIZE) {
       const queueUrl = await this.getQueueUrl()
 
