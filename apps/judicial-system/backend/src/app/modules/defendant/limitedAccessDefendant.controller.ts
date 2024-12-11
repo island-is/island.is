@@ -6,7 +6,7 @@ import {
   Patch,
   UseGuards,
 } from '@nestjs/common'
-import { ApiOkResponse,ApiTags } from '@nestjs/swagger'
+import { ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -19,7 +19,7 @@ import {
 } from '@island.is/judicial-system/auth'
 import { User } from '@island.is/judicial-system/types'
 
-import { Case,CaseExistsGuard, CurrentCase } from '../case'
+import { Case, CaseExistsGuard, CurrentCase } from '../case'
 import { UpdateDefendantDto } from './dto/updateDefendant.dto'
 import { CurrentDefendant } from './guards/defendant.decorator'
 import { DefendantExistsGuard } from './guards/defendantExists.guard'

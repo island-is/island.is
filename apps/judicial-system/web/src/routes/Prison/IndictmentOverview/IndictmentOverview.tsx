@@ -17,9 +17,7 @@ import {
   PageTitle,
   RenderFiles,
 } from '@island.is/judicial-system-web/src/components'
-import {
-  CaseFileCategory,
-} from '@island.is/judicial-system-web/src/graphql/schema'
+import { CaseFileCategory } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   useDefendants,
   useFileList,
