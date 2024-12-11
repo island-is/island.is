@@ -1,4 +1,5 @@
-import { Inject, Injectable } from '@nestjs/common'
+import { Inject, Injectable, Optional } from '@nestjs/common'
+import { ConfigService } from '@nestjs/config'
 
 import { AuthMiddleware } from '@island.is/auth-nest-tools'
 import { FetchError } from '@island.is/clients/middlewares'
@@ -30,6 +31,7 @@ type CountryFormatter = { of: (countryCode: string) => string }
 
 @Injectable()
 export class UserProfileService {
+  alsoUseFakeApi = false
   // REMOVE these ignores after upgrading to TypeScript 4.5
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
@@ -45,7 +47,14 @@ export class UserProfileService {
     private companyRegistryApi: CompanyRegistryClientService,
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
-  ) {}
+    @Optional()
+    readonly configService?: ConfigService,
+  ) {
+    if (configService) {
+      this.alsoUseFakeApi =
+        configService.get<boolean>('ALSO_USE_FAKE_USER_API') ?? false
+    }
+  }
 
   userProfileApiWithAuth(auth: Auth) {
     return this.userProfileApi.withMiddleware(new AuthMiddleware(auth))
@@ -123,6 +132,7 @@ export class UserProfileService {
       const individual = await this.nationalRegistryV3.getAllDataIndividual(
         auth.nationalId,
         false,
+        this.alsoUseFakeApi,
       )
 
       if (!individual) {
