@@ -3,6 +3,7 @@ import { m } from './messages'
 import * as kennitala from 'kennitala'
 import { parsePhoneNumberFromString } from 'libphonenumber-js/min'
 import { checkIfNegative } from '../utils/helpers'
+import { YES } from '@island.is/application/core'
 
 const requiredNonNegativeString = z
   .string()
@@ -16,9 +17,11 @@ const FileSchema = z.object({
   key: z.string(),
   url: z.string().optional(),
 })
+
 const conditionalAbout = z.object({
   operatingYear: requiredString,
 })
+
 const about = z.object({
   nationalId: z
     .string()
@@ -38,17 +41,7 @@ const about = z.object({
   email: z.string().email(),
 })
 
-const election = z.object({
-  selectElection: z.string().optional(),
-  electionName: z.string().optional(),
-  genitiveName: z.string().optional(),
-  incomeLimit: requiredString,
-})
-
-const operatingCost = z.object({
-  total: requiredString,
-})
-
+// Key numbers - operating cost -income
 const partyIncome = z.object({
   contributionsFromTheTreasury: requiredNonNegativeString,
   parliamentaryPartySupport: requiredNonNegativeString,
@@ -60,54 +53,70 @@ const partyIncome = z.object({
   total: z.string(),
 })
 
+// Key numbers - operating cost - expenses
 const partyExpense = z.object({
   electionOffice: requiredNonNegativeString,
   otherCost: requiredNonNegativeString,
   total: z.string(),
 })
 
+// Key numbers - operating cost - total
+const operatingCost = z.object({
+  total: requiredString,
+})
+
+// Key numbers - capital numbers
 const capitalNumbers = z.object({
   capitalIncome: requiredNonNegativeString,
   capitalCost: requiredNonNegativeString,
   total: z.string(),
 })
 
-const equityAndLiabilities = z.object({
-  total: z.string(),
-})
-
+// Key numbers - equities and liabilities - assets
 const asset = z.object({
   currentAssets: requiredNonNegativeString,
   fixedAssetsTotal: requiredNonNegativeString,
-  total: requiredString,
 })
 
+// Key numbers - equities and liabilities - liabilities
+const liability = z.object({
+  longTerm: requiredNonNegativeString,
+  shortTerm: requiredNonNegativeString,
+})
+
+// Key numbers - equities and liabilities - equity
 const equity = z.object({
   totalEquity: requiredString,
 })
 
-const liability = z.object({
-  longTerm: requiredNonNegativeString,
-  shortTerm: requiredNonNegativeString,
-  total: requiredNonNegativeString,
-})
+// Key numbers - equities and liabilities - total
+const equityAndLiabilitiesTotals = z
+  .object({
+    assetsTotal: z.string(),
+    liabilitiesTotal: z.string(),
+    equityAndLiabilitiesTotal: z.string(),
+  })
+  .refine((x) => x.assetsTotal === x.equityAndLiabilitiesTotal, {
+    message: 'equityAndLiabilities.total must match assets.total',
+    path: ['equityAndLiabilitiesTotals', 'equityAndLiabilitiesTotal'],
+  })
 
 export const dataSchema = z.object({
   approveExternalData: z.literal(true),
   conditionalAbout,
   about,
-  election, // Needed??
   operatingCost,
   partyIncome,
   partyExpense,
   capitalNumbers,
-  equityAndLiabilities,
+  equityAndLiabilitiesTotals,
   asset,
   equity,
   liability,
   attachments: z.object({
     file: z.array(FileSchema).nonempty(),
   }),
+  approveOverview: z.array(z.literal(YES)).length(1),
 })
 
 export type FinancialStatementPoliticalParty = z.TypeOf<typeof dataSchema>

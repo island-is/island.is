@@ -42,7 +42,12 @@ describe('CivilClaimantController - Update', () => {
       const then = {} as Then
 
       await civilClaimantController
-        .update(caseId, civilClaimantId, updateData)
+        .update(
+          caseId,
+          civilClaimantId,
+          { id: civilClaimantId } as CivilClaimant,
+          updateData,
+        )
         .then((result) => (then.result = result))
         .catch((error) => (then.error = error))
 

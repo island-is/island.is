@@ -5,6 +5,7 @@ import addDays from 'date-fns/addDays'
 import startOfDay from 'date-fns/startOfDay'
 import { Op, Transaction } from 'sequelize'
 import { uuid } from 'uuidv4'
+import * as kennitala from 'kennitala'
 
 import { SyslumennService } from '@island.is/clients/syslumenn'
 import { logger } from '@island.is/logging'
@@ -209,7 +210,14 @@ export class DelegationScopeService {
           {
             model: ApiScopeDelegationType,
             where: {
-              delegationType: AuthDelegationType.GeneralMandate,
+              delegationType: {
+                [Op.or]: kennitala.isCompany(fromNationalId)
+                  ? [
+                      AuthDelegationType.GeneralMandate,
+                      AuthDelegationType.ProcurationHolder,
+                    ]
+                  : [AuthDelegationType.GeneralMandate],
+              },
             },
           },
         ],

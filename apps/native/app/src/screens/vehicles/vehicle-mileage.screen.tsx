@@ -1,11 +1,3 @@
-import {
-  Button,
-  Divider,
-  NavigationBarSheet,
-  TextField,
-  Typography,
-  useDynamicColor,
-} from '@ui'
 import { useCallback, useMemo, useState } from 'react'
 import { FormattedDate, useIntl } from 'react-intl'
 import { Alert, FlatList, View } from 'react-native'
@@ -14,6 +6,14 @@ import {
   NavigationFunctionComponent,
 } from 'react-native-navigation'
 
+import {
+  Button,
+  Divider,
+  NavigationBarSheet,
+  TextField,
+  Typography,
+  useDynamicColor,
+} from '../../ui'
 import externalLinkIcon from '../../assets/icons/external-link.png'
 import {
   GetVehicleDocument,

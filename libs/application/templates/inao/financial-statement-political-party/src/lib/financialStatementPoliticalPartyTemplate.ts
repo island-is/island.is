@@ -19,7 +19,7 @@ import {
 } from '@island.is/application/core'
 import {
   CurrentUserTypeProvider,
-  IndentityApiProvider,
+  IdentityApiProvider,
   NationalRegistryUserApi,
   UserInfoApi,
 } from '../dataProviders'
@@ -81,7 +81,7 @@ const FinancialStatementPoliticalPartyTemplate: ApplicationTemplate<
               delete: true,
               api: [
                 CurrentUserTypeProvider,
-                IndentityApiProvider,
+                IdentityApiProvider,
                 NationalRegistryUserApi,
                 UserInfoApi,
               ],
@@ -122,7 +122,7 @@ const FinancialStatementPoliticalPartyTemplate: ApplicationTemplate<
               delete: true,
               api: [
                 CurrentUserTypeProvider,
-                IndentityApiProvider,
+                IdentityApiProvider,
                 NationalRegistryUserApi,
                 UserInfoApi,
               ],
