@@ -9,7 +9,6 @@ export const GET_GRANTS_QUERY = gql`
         name
         description
         applicationId
-        applicationDeadlineStatus
         applicationUrl {
           slug
           type
@@ -17,7 +16,6 @@ export const GET_GRANTS_QUERY = gql`
         applicationButtonLabel
         dateFrom
         dateTo
-        isOpen
         status
         categoryTags {
           id
@@ -68,7 +66,6 @@ export const GET_GRANT_QUERY = gql`
           slug
           type
     }
-      applicationDeadlineStatus
       status
       categoryTags {
         id
@@ -109,10 +106,6 @@ export const GET_GRANT_QUERY = gql`
         ${nestedFields}
       }
       howToApply {
-        ...AllSlices
-        ${nestedFields}
-      }
-      applicationDeadline {
         ...AllSlices
         ${nestedFields}
       }
