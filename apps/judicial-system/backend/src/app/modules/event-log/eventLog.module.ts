@@ -1,12 +1,17 @@
-import { Module } from '@nestjs/common'
+import { forwardRef, Module } from '@nestjs/common'
 import { SequelizeModule } from '@nestjs/sequelize'
+
+import { MessageModule } from '@island.is/judicial-system/message'
 
 import { EventLog } from './models/eventLog.model'
 import { EventLogController } from './eventLog.controller'
 import { EventLogService } from './eventLog.service'
 
 @Module({
-  imports: [SequelizeModule.forFeature([EventLog])],
+  imports: [
+    forwardRef(() => MessageModule),
+    SequelizeModule.forFeature([EventLog]),
+  ],
   providers: [EventLogService],
   exports: [EventLogService],
   controllers: [EventLogController],
