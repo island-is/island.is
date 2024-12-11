@@ -1,23 +1,32 @@
-import { JwtAuthGuard, RolesGuard, RolesRules, CurrentHttpUser } from "@island.is/judicial-system/auth"
-import { ServiceRequirement, User } from "@island.is/judicial-system/types"
-import { LOGGER_PROVIDER } from "@island.is/logging"
-import { Controller, UseGuards, Inject, Patch, Param, Body } from "@nestjs/common"
-import { ApiTags, ApiOkResponse } from "@nestjs/swagger"
-import { prisonSystemStaffRule } from "../../guards"
-import { CaseExistsGuard, CurrentCase, Case } from "../case"
-import { DefendantService } from "./defendant.service"
-import { UpdateDefendantDto } from "./dto/updateDefendant.dto"
-import { CurrentDefendant } from "./guards/defendant.decorator"
-import { DefendantExistsGuard } from "./guards/defendantExists.guard"
-import { Defendant } from "./models/defendant.model"
+import {
+  JwtAuthGuard,
+  RolesGuard,
+  RolesRules,
+  CurrentHttpUser,
+} from '@island.is/judicial-system/auth'
+import { ServiceRequirement, User } from '@island.is/judicial-system/types'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+import {
+  Controller,
+  UseGuards,
+  Inject,
+  Patch,
+  Param,
+  Body,
+} from '@nestjs/common'
+import { ApiTags, ApiOkResponse } from '@nestjs/swagger'
+import { prisonSystemStaffRule } from '../../guards'
+import { CaseExistsGuard, CurrentCase, Case } from '../case'
+import { DefendantService } from './defendant.service'
+import { UpdateDefendantDto } from './dto/updateDefendant.dto'
+import { CurrentDefendant } from './guards/defendant.decorator'
+import { DefendantExistsGuard } from './guards/defendantExists.guard'
+import { Defendant } from './models/defendant.model'
 import type { Logger } from '@island.is/logging'
-import { prisonSystemStaffUpdateRule } from "./guards/roleRules"
+import { prisonSystemStaffUpdateRule } from './guards/roleRules'
 
 interface LimitedAccessUpdateDefendant
-  extends Pick<
-  UpdateDefendantDto,
-    | 'punishmentType'
-  > {}
+  extends Pick<UpdateDefendantDto, 'punishmentType'> {}
 
 @Controller('api/case/:caseId/limitedAccess/defendant')
 @ApiTags('limited access defendant')
@@ -29,9 +38,7 @@ export class LimitedAccessDefendantController {
   ) {}
 
   @UseGuards(CaseExistsGuard, DefendantExistsGuard)
-  @RolesRules(
-    prisonSystemStaffUpdateRule
-  )
+  @RolesRules(prisonSystemStaffUpdateRule)
   @Patch(':defendantId')
   @ApiOkResponse({
     type: Defendant,
@@ -45,7 +52,9 @@ export class LimitedAccessDefendantController {
     @CurrentDefendant() defendant: Defendant,
     @Body() updateDto: LimitedAccessUpdateDefendant,
   ): Promise<Defendant> {
-    this.logger.debug(`Updating limitedAccess defendant ${defendantId} of case ${caseId}`)
+    this.logger.debug(
+      `Updating limitedAccess defendant ${defendantId} of case ${caseId}`,
+    )
 
     return this.defendantService.updateRequestCaseDefendant(
       theCase,

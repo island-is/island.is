@@ -36,12 +36,18 @@ export class LimitedAccessDefendantResolver {
     { backendService }: { backendService: BackendService },
   ): Promise<Defendant> {
     const { caseId, defendantId, ...updateDefendant } = input
-    this.logger.debug(`Updating limitedAccess defendant ${defendantId} for case ${caseId}`)
+    this.logger.debug(
+      `Updating limitedAccess defendant ${defendantId} for case ${caseId}`,
+    )
 
     return this.auditTrailService.audit(
       user.id,
       AuditedAction.UPDATE_DEFENDANT,
-      backendService.limitedAccessUpdateDefendant(caseId, defendantId, updateDefendant),
+      backendService.limitedAccessUpdateDefendant(
+        caseId,
+        defendantId,
+        updateDefendant,
+      ),
       defendantId,
     )
   }
