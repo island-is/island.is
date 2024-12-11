@@ -50,38 +50,54 @@ export const FetchDataBasedOnSelectedYear = () => {
   }, [data, setValue])
 
   useEffect(() => {
-    if (taxInfoData) {
-      const {
-        careIncome,
-        burialRevenue,
-        grantFromTheCemeteryFund,
-        donationsToCemeteryFund,
-      } = getCareIncomeAndBurialRevenueAndGrant(
-        taxInfoData.financialStatementsInaoTaxInfo,
-      )
+    if (!taxInfoData) return
 
-      console.log(careIncome, burialRevenue, grantFromTheCemeteryFund)
+    const {
+      careIncome,
+      burialRevenue,
+      grantFromTheCemeteryFund,
+      donationsToCemeteryFund,
+    } = getCareIncomeAndBurialRevenueAndGrant(
+      taxInfoData.financialStatementsInaoTaxInfo,
+    )
 
-      careIncome &&
-        !careIncomeFromAnswers &&
-        setValue(CEMETERYOPERATIONIDS.careIncome, careIncome)
-      burialRevenue &&
-        !burialRevenueFromAnswers &&
-        setValue(CEMETERYOPERATIONIDS.burialRevenue, burialRevenue)
-      grantFromTheCemeteryFund &&
-        !grantFromTheCemeteryFundFromAnswers &&
-        setValue(
-          CEMETERYOPERATIONIDS.grantFromTheCemeteryFund,
-          grantFromTheCemeteryFund,
-        )
-      donationsToCemeteryFund &&
-        !donationsToCemeteryFundFromAnswers &&
-        setValue(
-          CEMETERYOPERATIONIDS.donationsToCemeteryFund,
-          donationsToCemeteryFund,
-        )
-    }
-  }, [taxInfoData])
+    const updates = [
+      {
+        id: CEMETERYOPERATIONIDS.careIncome,
+        value: careIncome,
+        exists: careIncomeFromAnswers,
+      },
+      {
+        id: CEMETERYOPERATIONIDS.burialRevenue,
+        value: burialRevenue,
+        exists: burialRevenueFromAnswers,
+      },
+      {
+        id: CEMETERYOPERATIONIDS.grantFromTheCemeteryFund,
+        value: grantFromTheCemeteryFund,
+        exists: grantFromTheCemeteryFundFromAnswers,
+      },
+      {
+        id: CEMETERYOPERATIONIDS.donationsToCemeteryFund,
+        value: donationsToCemeteryFund,
+        exists: donationsToCemeteryFundFromAnswers,
+      },
+    ]
+
+    updates.forEach((update) => {
+      if (!update.exists) {
+        setValue(update.id, update.value)
+      }
+    })
+  }, [
+    taxInfoData,
+    setValue,
+    careIncomeFromAnswers,
+    burialRevenueFromAnswers,
+    grantFromTheCemeteryFundFromAnswers,
+    donationsToCemeteryFundFromAnswers,
+    CEMETERYOPERATIONIDS,
+  ])
 
   if (loading || taxInfoLoading) {
     return (
