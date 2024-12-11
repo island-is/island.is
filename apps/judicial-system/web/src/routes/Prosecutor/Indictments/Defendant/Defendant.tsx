@@ -294,6 +294,7 @@ const Defendant = () => {
 
           updateIndictmentCount(workingCase.id, ic.id, {
             incidentDescription,
+            indictmentCountSubtypes: [],
           } as UpdateIndictmentCount)
         })
     }

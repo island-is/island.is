@@ -240,8 +240,17 @@ export const PoliceCaseInfo: FC<Props> = ({
                 variant="darkerBlue"
                 onClick={() => {
                   updatePoliceCase(index, {
+                    policeCaseNumber: policeCaseNumbers[index],
                     subtypes: subtypes.filter((s) => s !== subtype),
                   })
+
+                  updateIndictmentCount(
+                    policeCaseNumbers[index],
+                    crimeScene || {},
+                    {
+                      [policeCaseNumbers[index]]: [],
+                    },
+                  )
                 }}
                 aria-label={formatMessage(policeCaseInfo.removeSubtype, {
                   subtype: indictmentSubtypes[subtypes[0]],
