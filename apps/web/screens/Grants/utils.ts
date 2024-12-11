@@ -1,6 +1,7 @@
 import { TagVariant } from '@island.is/island-ui/core'
 import { FormatMessage } from '@island.is/localization'
 import { GrantStatus } from '@island.is/web/graphql/schema'
+
 import { m } from './messages'
 
 export const generateStatusTag = (

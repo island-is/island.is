@@ -104,7 +104,7 @@ export const m = {
     },
     deadline: {
       id: 'web.grants:single.deadline',
-      defaultMessage: 'Umsóknarfrestur',
+      defaultMessage: 'Umsóknir',
     },
     status: {
       id: 'web.grants:single.status',
