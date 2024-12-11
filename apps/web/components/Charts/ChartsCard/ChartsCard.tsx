@@ -1,16 +1,15 @@
 import React, { ReactNode } from 'react'
 import { useMeasure } from 'react-use'
 import cn from 'classnames'
-
-import { Box, Hyphen, Text } from '@island.is/island-ui/core'
-import { ExportCSVButton } from '@island.is/web/components'
-
+import { Box, Text, Hyphen } from '@island.is/island-ui/core'
 import {
   MixedChart,
   SimpleBarChart,
   SimpleLineChart,
   SimplePieChart,
 } from '../'
+import { ExportCSVButton } from '@island.is/web/components'
+
 import * as styles from './ChartsCard.css'
 
 interface ChartCardDataProps {
@@ -139,7 +138,30 @@ export const ChartsCard: React.FC<
       </Box>
     </Box>
   )
-  return <>{items}</>
+  return <FrameWrapper width={width}>{items}</FrameWrapper>
+}
+
+const FrameWrapper = ({
+  width,
+  children,
+}: {
+  width: number
+  children: ReactNode
+}) => {
+  return (
+    <Box
+      className={cn(styles.frameWrapper, {
+        [styles.scroll]: width < 800,
+      })}
+      borderColor="purple100"
+      borderWidth="standard"
+      borderRadius="large"
+      display="flex"
+      flexDirection="column"
+    >
+      {children}
+    </Box>
+  )
 }
 
 export default ChartsCard
