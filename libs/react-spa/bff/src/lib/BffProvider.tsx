@@ -42,6 +42,7 @@ export const BffProvider = ({
     authState === 'switching' ||
     authState === 'logging-out'
   const isLoggedIn = authState === 'logged-in'
+  const oldLoginPath = `${applicationBasePath}/login`
 
   const { postMessage } = useBffBroadcaster((event) => {
     if (
@@ -74,6 +75,39 @@ export const BffProvider = ({
     }
   }, [postMessage, state.userInfo, isLoggedIn])
 
+  /**
+   * Builds authentication query parameters for login redirection:
+   * - target_link_uri: Destination URL after successful login
+   *   • Uses URL from query string if provided
+   *   • Falls back to current URL, with '/login' stripped if on legacy login path
+   * - prompt: Optional authentication prompt type
+   * - login_hint: Optional suggested account identifier
+   */
+  const getLoginQueryParams = useCallback(() => {
+    const urlParams = new URLSearchParams(window.location.search)
+    const targetLinkUri = urlParams.get('target_link_uri')
+    const prompt = urlParams.get('prompt')
+    const loginHint = urlParams.get('login_hint')
+    const url = window.location.href
+
+    const params = {
+      target_link_uri:
+        targetLinkUri ??
+        (window.location.pathname.startsWith(oldLoginPath)
+          ? // Remove `/login` from the path to prevent redirect loop
+            url.replace(oldLoginPath, applicationBasePath)
+          : url),
+      ...(prompt && {
+        prompt,
+      }),
+      ...(loginHint && {
+        login_hint: loginHint,
+      }),
+    }
+
+    return params
+  }, [applicationBasePath, oldLoginPath])
+
   const checkLogin = async (noRefresh = false) => {
     dispatch({
       type: ActionType.SIGNIN_START,
@@ -100,6 +134,13 @@ export const BffProvider = ({
         return
       }
 
+      // If user is logged in and on the old login path, then start the sign-in process
+      if (window.location.pathname.startsWith(oldLoginPath)) {
+        signIn()
+
+        return
+      }
+
       const user = await res.json()
 
       dispatch({
@@ -119,10 +160,8 @@ export const BffProvider = ({
       type: ActionType.SIGNIN_START,
     })
 
-    window.location.href = bffUrlGenerator('/login', {
-      target_link_uri: window.location.href,
-    })
-  }, [bffUrlGenerator])
+    window.location.href = bffUrlGenerator('/login', getLoginQueryParams())
+  }, [bffUrlGenerator, getLoginQueryParams])
 
   const signOut = useCallback(() => {
     if (!state.userInfo) {
@@ -149,14 +188,17 @@ export const BffProvider = ({
         type: ActionType.SWITCH_USER,
       })
 
+      const loginQueryParams = getLoginQueryParams()
+      const targetLinkUri = loginQueryParams['target_link_uri']
+
       window.location.href = bffUrlGenerator('/login', {
-        target_link_uri: window.location.href,
+        target_link_uri: targetLinkUri,
         ...(nationalId
           ? { login_hint: nationalId }
           : { prompt: 'select_account' }),
       })
     },
-    [bffUrlGenerator],
+    [bffUrlGenerator, getLoginQueryParams],
   )
 
   const checkQueryStringError = () => {
