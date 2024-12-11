@@ -28,10 +28,10 @@ export class AdvertsInput {
   @Field(() => [String], { nullable: true })
   involvedParty?: string[]
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => String, { nullable: true })
   dateFrom?: string
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => String, { nullable: true })
   dateTo?: string
 }
 
