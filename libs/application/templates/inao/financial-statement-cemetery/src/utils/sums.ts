@@ -203,6 +203,11 @@ export const showEquitiesAndLiabilitiesAlert = (answers: FormValue) => {
       answers,
       EQUITYANDLIABILITIESTOTALS.equityAndLiabilitiesTotal,
     ) || '0'
+  const operationResult =
+    getValueViaPath<string>(
+      answers,
+      CEMETERYEQUITIESANDLIABILITIESIDS.operationResult,
+    ) || '0'
 
   if (
     !fixedAssetsTotal ||

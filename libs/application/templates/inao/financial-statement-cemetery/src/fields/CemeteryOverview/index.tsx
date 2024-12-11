@@ -228,7 +228,7 @@ export const CemeteryOverview = ({ application }: FieldBaseProps) => {
       <Divider />
       {cemeteryUnderFinancialLimit &&
       cemeteryCaretakers &&
-      cemeteryCaretakers?.length > 0 ? (
+      cemeteryCaretakers.length > 0 ? (
         <>
           <Box className={starterColumnStyle}>
             <Text variant="h3" as="h3">
