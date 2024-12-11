@@ -17,7 +17,7 @@ import {
   RolesGuard,
   RolesRules,
 } from '@island.is/judicial-system/auth'
-import { User } from '@island.is/judicial-system/types'
+import { type User } from '@island.is/judicial-system/types'
 
 import { Case, CaseExistsGuard, CurrentCase } from '../case'
 import { UpdateDefendantDto } from './dto/updateDefendant.dto'
