@@ -37,6 +37,5 @@ if (isServer) {
  * @param environment
  */
 export const isRunningOnEnvironment = (environment: ActiveEnvironment) => {
-  console.log('isRunningOnEnvironment', environment, activeEnvironment)
   return environment === activeEnvironment
 }
