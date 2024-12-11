@@ -126,7 +126,6 @@
       "executor": "nx:run-commands",
       "options": {
         "commands": [
-          "yarn get-secrets user-notification",
           "yarn nx run services-user-notification:dev-services",
           "yarn nx run services-user-notification:migrate",
           "yarn nx run services-user-notification:seed"

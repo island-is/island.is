@@ -40,6 +40,8 @@ Get secrets:
 yarn get-secrets user-notification
 ```
 
+> **Important**: For local development, the `FIREBASE_CREDENTIALS` environment variable needs to be cleaned of newlines. After running `get-secrets`, make sure to remove any newline characters from the `FIREBASE_CREDENTIALS` value in your environment.
+
 Initalize dependencies:
 
 ```sh
@@ -68,4 +70,3 @@ Start a cleanup worker with this command:
 
 ```sh
 yarn nx run services-user-notification:cleanup
-```
