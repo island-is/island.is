@@ -3229,6 +3229,7 @@ export interface IOrganizationPageFields {
     | 'thjodskjalasafn'
     | 'faggilding'
     | 'standalone'
+    | 'rannis'
 
   /** Theme Properties */
   themeProperties?: Record<string, any> | undefined
