@@ -7,6 +7,7 @@ import { BankAccountField, FieldBaseProps } from '@island.is/application/types'
 import { Box, GridColumn, GridRow, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { InputController } from '@island.is/shared/form-fields'
+
 interface Props extends FieldBaseProps {
   field: BankAccountField
 }
