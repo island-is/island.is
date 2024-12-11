@@ -270,10 +270,16 @@ export const PoliceCaseInfo: FC<Props> = ({
           }}
           onBlur={(event) => {
             updatePoliceCase()
-            updateIndictmentCount(policeCaseNumbers[index], {
-              ...crimeScene,
-              place: event.target.value,
-            })
+            updateIndictmentCount(
+              policeCaseNumbers[index],
+              {
+                ...crimeScene,
+                place: event.target.value,
+              },
+              {
+                [policeCaseNumbers[index]]: [...(subtypes || [])],
+              },
+            )
           }}
         />
       </Box>
@@ -289,10 +295,16 @@ export const PoliceCaseInfo: FC<Props> = ({
               crimeScene: { ...crimeScene, date: date },
             })
 
-            updateIndictmentCount(policeCaseNumbers[index], {
-              ...crimeScene,
-              date: date,
-            })
+            updateIndictmentCount(
+              policeCaseNumbers[index],
+              {
+                ...crimeScene,
+                date: date,
+              },
+              {
+                [policeCaseNumbers[index]]: [...(subtypes || [])],
+              },
+            )
           }
         }}
       />
