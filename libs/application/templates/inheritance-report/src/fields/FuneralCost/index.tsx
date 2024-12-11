@@ -76,6 +76,7 @@ export const FuneralCost: FC<
     const rentCost = valueToNumber(values?.rent)
     const foodCost = valueToNumber(values?.food)
     const tombstoneCost = valueToNumber(values?.tombstone)
+    const servicesCost = valueToNumber(values?.service)
 
     let total =
       buildCost +
@@ -85,7 +86,8 @@ export const FuneralCost: FC<
       musicCost +
       rentCost +
       foodCost +
-      tombstoneCost
+      tombstoneCost +
+      servicesCost
 
     if (hasOther) {
       total += valueToNumber(values?.other)

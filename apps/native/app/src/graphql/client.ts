@@ -164,6 +164,9 @@ const cache = new InMemoryCache({
         getUserProfile: {
           merge: true,
         },
+        nationalRegistryPerson: {
+          merge: false,
+        },
       },
     },
     DocumentV2: {

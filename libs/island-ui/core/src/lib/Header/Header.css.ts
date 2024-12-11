@@ -21,10 +21,14 @@ export const infoDescription = style({
   fontWeight: 300,
   lineHeight: 1.5,
   fontSize: 14,
+  maxHeight: 40,
+  position: 'relative',
+  overflow: 'auto',
 
   ...themeUtils.responsiveStyle({
     md: {
       fontSize: 18,
+      maxHeight: 66,
     },
   }),
 })
