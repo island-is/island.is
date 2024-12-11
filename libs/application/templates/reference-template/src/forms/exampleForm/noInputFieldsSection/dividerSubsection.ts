@@ -1,12 +1,11 @@
 import {
   buildDividerField,
   buildMultiField,
-  buildSection,
+  buildSubSection,
 } from '@island.is/application/core'
-import { Colors } from '@island.is/island-ui/theme'
 
-export const dividerSection = buildSection({
-  id: 'dividerSection',
+export const dividerSubsection = buildSubSection({
+  id: 'dividerSubsection',
   title: 'Divider',
   children: [
     buildMultiField({

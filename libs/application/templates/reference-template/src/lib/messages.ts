@@ -41,15 +41,21 @@ export const m = defineMessages({
     defaultMessage: 'Upplýsingar',
     description: 'Some description',
   },
-  introField: {
-    id: 'example.application:intro.field',
-    defaultMessage: 'Velkomin(n)',
+  introTitle: {
+    id: 'example.application:intro.title',
+    defaultMessage: 'Velkomin',
     description: 'Some description',
   },
-  introIntroduction: {
-    id: 'example.application:intro.introduction',
+  introDescription: {
+    id: 'example.application:intro.description',
     defaultMessage:
-      '*Hello*, **{name}**! [This is a link to Google!](http://google.com)',
+      'Þessi umsókn sýnir hvernig á að smíða umsókn. Hver umsókn skiptist niður í nokkur form og eru mismunandi form sýnd eftir stöðu umsóknarinnar og/eða hlutverki notandans. Formið sem umsóknin er að birta núna er "exampleForm" og núna er umsóknin í stöðunni "draft" og merkir það að þú hafir komist í gegnum fyrsta formið "prerequisitesForm" þar sem staðan var "prerequisites".',
+    description: 'Some description',
+  },
+  introDescription2: {
+    id: 'example.application:intro.description2',
+    defaultMessage:
+      'Í Þessu formi er farið yfir allar mögulegar einingar sem kerfið býður upp á og sýndar eru mismunandi stillingar sem að láta einingarnar birtast eða hegða sér á mismunandi vegu.',
     description: 'Some description',
   },
   about: {

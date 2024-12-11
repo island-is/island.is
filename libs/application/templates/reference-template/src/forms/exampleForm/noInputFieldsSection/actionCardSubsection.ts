@@ -1,10 +1,10 @@
 import {
-  buildSection,
   buildActionCardListField,
+  buildSubSection,
 } from '@island.is/application/core'
 
-export const actionCardSection = buildSection({
-  id: 'actionCardSection',
+export const actionCardSubsection = buildSubSection({
+  id: 'actionCardSubsection',
   title: 'Action card',
   children: [
     buildActionCardListField({

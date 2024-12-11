@@ -142,7 +142,7 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
       },
       [States.DRAFT]: {
         meta: {
-          name: 'Umsókn um ökunám',
+          name: 'Dæmi um umsókn',
           actionCard: {
             description: m.draftDescription,
             historyLogs: {

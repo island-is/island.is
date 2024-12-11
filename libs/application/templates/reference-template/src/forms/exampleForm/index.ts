@@ -1,3 +1,4 @@
+import { createElement } from 'react'
 import {
   buildForm,
   buildDescriptionField,
@@ -11,19 +12,15 @@ import { m } from '../../lib/messages'
 import { ApiActions } from '../../shared'
 import { introSection } from './introSection/introSection'
 import { simpleInputsSection } from './simpleInputsSection'
-import { descriptionSection } from './descriptionSection/descriptionSection'
-import { accordionSection } from './accordionSection/accordionSection'
 import { tableRepeaterSection } from './tableRepeaterSection/tableRepeaterSection'
 import { staticTableSection } from './staticTableSection/StaticTableSection'
-import { actionCardSection } from './actionCardSection/actionCardSection'
 import { compositeFieldsSection } from './compositeFieldsSection'
-import { createElement } from 'react'
-import { Logo } from '../../components/Logo/Logo'
-import { dividerSection } from './dividerSection/dividerSection'
-import { keyValueSection } from './keyValueSection/keyValueSection'
 import { commonActionsSection } from './commonActionsSection'
 import { customSection } from './customSection/customSection'
 import { overviewSection } from './overviewSection/overviewSection'
+import { noInputFieldsSection } from './noInputFieldsSection'
+import { Logo } from '../../components/Logo/Logo'
+
 export const ExampleForm: Form = buildForm({
   id: 'ExampleFormDraft',
   title: 'Main form',
@@ -37,15 +34,11 @@ export const ExampleForm: Form = buildForm({
   children: [
     introSection,
     commonActionsSection,
-    descriptionSection,
-    dividerSection,
+    noInputFieldsSection,
     simpleInputsSection,
     compositeFieldsSection,
-    accordionSection,
     tableRepeaterSection,
     staticTableSection,
-    actionCardSection,
-    keyValueSection,
     customSection,
     overviewSection,
     buildSection({

@@ -1,8 +1,11 @@
-import { buildSection, buildKeyValueField } from '@island.is/application/core'
-import { buildMultiField } from 'libs/application/core/src/lib/formBuilders'
+import {
+  buildKeyValueField,
+  buildMultiField,
+  buildSubSection,
+} from '@island.is/application/core'
 
-export const keyValueSection = buildSection({
-  id: 'keyValueSection',
+export const keyValueSubsection = buildSubSection({
+  id: 'keyValueSubsection',
   title: 'Key-Value',
   children: [
     buildMultiField({

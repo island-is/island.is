@@ -1,7 +1,10 @@
-import { buildAccordionField, buildSection } from '@island.is/application/core'
+import {
+  buildAccordionField,
+  buildSubSection,
+} from '@island.is/application/core'
 
-export const accordionSection = buildSection({
-  id: 'accordion',
+export const accordionSubsection = buildSubSection({
+  id: 'accordionSubsection',
   title: 'Accordion',
   children: [
     buildAccordionField({
