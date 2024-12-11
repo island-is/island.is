@@ -1,86 +1,134 @@
-import { useState } from 'react'
-import { DefaultEvents, FieldBaseProps } from '@island.is/application/types'
-import { getErrorViaPath, getValueViaPath } from '@island.is/application/core'
-
+import { Fragment } from 'react'
+import { FieldBaseProps } from '@island.is/application/types'
+import { getValueViaPath } from '@island.is/application/core'
 import {
   AlertBanner,
   Box,
-  Checkbox,
   Divider,
   GridColumn,
   GridRow,
-  InputError,
   Text,
 } from '@island.is/island-ui/core'
-import { Controller, useFormContext } from 'react-hook-form'
 import { useLocale } from '@island.is/localization'
 import { format as formatNationalId } from 'kennitala'
-import { useSubmitApplication } from '../../hooks/useSubmitApplication'
 import { m } from '../../lib/messages'
 import { FinancialStatementCemetery } from '../../lib/dataSchema'
-import { currencyStringToNumber, formatCurrency } from '../../utils/helpers'
+import { formatCurrency } from '../../utils/helpers'
 import { AboutOverview } from './AboutOverview'
 import { ValueLine } from './ValueLine'
 import { CapitalNumberOverview } from './CapitalNumbersOverview'
 import { BOARDMEMEBER } from '../../utils/constants'
 import { FileValueLine } from './FileValueLine'
-import BottomBar from './BottomBar'
 import {
   columnStyle,
   sectionColumn,
   starterColumnStyle,
 } from './overviewStyles.css'
 
-export const CemeteryOverview = ({
-  application,
-  goToScreen,
-  refetch,
-}: FieldBaseProps) => {
-  const {
-    formState: { errors },
-    setError,
-    setValue,
-  } = useFormContext()
+export const CemeteryOverview = ({ application }: FieldBaseProps) => {
   const { formatMessage } = useLocale()
-  const [approveOverview, setApproveOverview] = useState(false)
-
-  const [submitApplication, { error: submitError, loading }] =
-    useSubmitApplication({
-      application,
-      refetch,
-      event: DefaultEvents.SUBMIT,
-    })
 
   const answers = application.answers as FinancialStatementCemetery
-  const fileName = answers.attachments?.file?.[0]?.name
-  const careTakerLimit = answers.cemeteryOperation?.incomeLimit ?? '0'
-  const cemeteryIncome = currencyStringToNumber(answers.cemeteryIncome?.total)
-  const fixedAssetsTotal = answers.cemeteryAsset?.fixedAssetsTotal
-  const longTermDebt = answers.cemeteryLiability?.longTerm
-  const email = getValueViaPath(answers, 'about.email')
+  const file = getValueViaPath<Array<File>>(answers, 'attachments.file')
+  const fileName = file?.[0]?.name
+  const incomeLimit =
+    getValueViaPath<string>(answers, 'cemeteryOperations.incomeLimit') ?? '0'
+  const email = getValueViaPath<string>(answers, 'about.email')
   const cemeteryCaretakers = answers.cemeteryCaretaker
 
-  const onBackButtonClick = () => {
-    if (
-      Number(cemeteryIncome) < Number(careTakerLimit) &&
-      fixedAssetsTotal === '0' &&
-      longTermDebt === '0'
-    ) {
-      goToScreen && goToScreen('caretakers')
-    } else {
-      goToScreen && goToScreen('attachments.file')
-    }
-  }
+  const careIncome = getValueViaPath<string>(
+    answers,
+    'cemeteryIncome.careIncome',
+  )
+  const burialRevenue = getValueViaPath<string>(
+    answers,
+    'cemeteryIncome.burialRevenue',
+  )
+  const grantFromTheCemeteryFund = getValueViaPath<string>(
+    answers,
+    'cemeteryIncome.grantFromTheCemeteryFund',
+  )
+  const otherIncome = getValueViaPath<string>(
+    answers,
+    'cemeteryIncome.otherIncome',
+  )
+  const totalIncome = getValueViaPath<string>(answers, 'cemeteryIncome.total')
 
-  const onSendButtonClick = () => {
-    if (approveOverview) {
-      submitApplication()
-    } else {
-      setError('applicationApprove', {
-        type: 'error',
-      })
-    }
-  }
+  const payroll = getValueViaPath<string>(answers, 'cemeteryExpense.payroll')
+  const funeralCost = getValueViaPath<string>(
+    answers,
+    'cemeteryExpense.funeralCost',
+  )
+  const chapelExpense = getValueViaPath<string>(
+    answers,
+    'cemeteryExpense.chapelExpense',
+  )
+  const donationsToCemeteryFund = getValueViaPath<string>(
+    answers,
+    'cemeteryExpense.cemeteryFundExpense',
+  )
+  const donationsToOther = getValueViaPath<string>(
+    answers,
+    'cemeteryExpense.donationsToOther',
+  )
+  const otherOperationCost = getValueViaPath<string>(
+    answers,
+    'cemeteryExpense.otherOperationCost',
+  )
+  const depreciation = getValueViaPath<string>(
+    answers,
+    'cemeteryExpense.depreciation',
+  )
+  const totalExpenses = getValueViaPath<string>(
+    answers,
+    'cemeteryExpense.total',
+  )
+
+  const fixedAssetsTotal = getValueViaPath<string>(
+    answers,
+    'cemeteryAsset.fixedAssetsTotal',
+  )
+  const currentAssets = getValueViaPath<string>(
+    answers,
+    'cemeteryAsset.currentAssets',
+  )
+  const totalAssets = getValueViaPath<string>(answers, 'assetsTotal')
+
+  const longTerm = getValueViaPath<string>(
+    answers,
+    'cemeteryLiability.longTerm',
+  )
+  const shortTerm = getValueViaPath<string>(
+    answers,
+    'cemeteryLiability.shortTerm',
+  )
+  const totalLiabilities = getValueViaPath<string>(
+    answers,
+    'equityAndLiabilitiesTotals.liabilitiesTotal',
+  )
+
+  const equityAtTheBeginningOfTheYear = getValueViaPath<string>(
+    answers,
+    'cemeteryEquity.equityAtTheBeginningOfTheYear',
+  )
+  const revaluationDueToPriceChanges = getValueViaPath<string>(
+    answers,
+    'cemeteryEquity.revaluationDueToPriceChanges',
+  )
+  const reevaluateOther = getValueViaPath<string>(
+    answers,
+    'cemeteryEquity.reevaluateOther',
+  )
+  const operationResult = getValueViaPath<string>(
+    answers,
+    'cemeteryEquity.operationResult',
+  )
+  const totalEquity = getValueViaPath<string>(answers, 'cemeteryEquity.total')
+
+  const debtsAndCash = getValueViaPath<string>(
+    answers,
+    'equityAndLiabilitiesTotals.equityAndLiabilitiesTotal',
+  )
 
   return (
     <Box marginBottom={2}>
@@ -104,26 +152,24 @@ export const CemeteryOverview = ({
             </Box>
             <ValueLine
               label={m.careIncome}
-              value={formatCurrency(answers.cemeteryIncome?.careIncome)}
+              value={formatCurrency(careIncome)}
             />
             <ValueLine
               label={m.burialRevenue}
-              value={formatCurrency(answers.cemeteryIncome?.burialRevenue)}
+              value={formatCurrency(burialRevenue)}
             />
             <ValueLine
               label={m.grantFromTheCemeteryFund}
-              value={formatCurrency(
-                answers.cemeteryIncome?.grantFromTheCemeteryFund,
-              )}
+              value={formatCurrency(grantFromTheCemeteryFund)}
             />
             <ValueLine
               label={m.otherIncome}
-              value={formatCurrency(answers.cemeteryIncome?.otherIncome)}
+              value={formatCurrency(otherIncome)}
             />
             <ValueLine
               isTotal
               label={m.totalIncome}
-              value={formatCurrency(answers.cemeteryIncome?.total)}
+              value={formatCurrency(totalIncome)}
             />
           </GridColumn>
           <GridColumn span={['12/12', '6/12']} className={sectionColumn}>
@@ -132,42 +178,35 @@ export const CemeteryOverview = ({
                 {formatMessage(m.expenses)}
               </Text>
             </Box>
-            <ValueLine
-              label={m.payroll}
-              value={formatCurrency(answers.cemeteryExpense?.payroll)}
-            />
+            <ValueLine label={m.payroll} value={formatCurrency(payroll)} />
             <ValueLine
               label={m.funeralCost}
-              value={formatCurrency(answers.cemeteryExpense?.funeralCost)}
+              value={formatCurrency(funeralCost)}
             />
             <ValueLine
               label={m.chapelExpense}
-              value={formatCurrency(answers.cemeteryExpense?.chapelExpense)}
+              value={formatCurrency(chapelExpense)}
             />
             <ValueLine
               label={m.donationsToCemeteryFund}
-              value={formatCurrency(
-                answers.cemeteryExpense?.cemeteryFundExpense,
-              )}
+              value={formatCurrency(donationsToCemeteryFund)}
             />
             <ValueLine
               label={m.donationsToOther}
-              value={formatCurrency(answers.cemeteryExpense?.donationsToOther)}
+              value={formatCurrency(donationsToOther)}
             />
             <ValueLine
               label={m.otherOperationCost}
-              value={formatCurrency(
-                answers.cemeteryExpense?.otherOperationCost,
-              )}
+              value={formatCurrency(otherOperationCost)}
             />
             <ValueLine
               label={m.depreciation}
-              value={formatCurrency(answers.cemeteryExpense?.depreciation)}
+              value={formatCurrency(depreciation)}
             />
             <ValueLine
               isTotal
               label={m.totalExpenses}
-              value={formatCurrency(answers.cemeteryExpense.total)}
+              value={formatCurrency(totalExpenses)}
             />
           </GridColumn>
         </GridRow>
@@ -193,16 +232,16 @@ export const CemeteryOverview = ({
             </Box>
             <ValueLine
               label={m.fixedAssetsTotal}
-              value={formatCurrency(answers.cemeteryAsset?.fixedAssetsTotal)}
+              value={formatCurrency(fixedAssetsTotal)}
             />
 
             <ValueLine
               label={m.currentAssets}
-              value={formatCurrency(answers.cemeteryAsset?.currentAssets)}
+              value={formatCurrency(currentAssets)}
             />
             <ValueLine
               label={m.totalAssets}
-              value={formatCurrency(answers.cemeteryAsset.total)}
+              value={formatCurrency(totalAssets)}
               isTotal
             />
           </GridColumn>
@@ -213,18 +252,12 @@ export const CemeteryOverview = ({
                 {formatMessage(m.debts)}
               </Text>
             </Box>
-            <ValueLine
-              label={m.longTerm}
-              value={formatCurrency(answers.cemeteryLiability?.longTerm)}
-            />
-            <ValueLine
-              label={m.shortTerm}
-              value={formatCurrency(answers.cemeteryLiability?.shortTerm)}
-            />
+            <ValueLine label={m.longTerm} value={formatCurrency(longTerm)} />
+            <ValueLine label={m.shortTerm} value={formatCurrency(shortTerm)} />
             <ValueLine
               isTotal
               label={m.totalLiabilities}
-              value={formatCurrency(answers.cemeteryLiability?.total)}
+              value={formatCurrency(totalLiabilities)}
             />
             <Box paddingTop={3} paddingBottom={2}>
               <Text variant="h4" as="h4">
@@ -233,39 +266,35 @@ export const CemeteryOverview = ({
             </Box>
             <ValueLine
               label={m.equityAtTheBeginningOfTheYear}
-              value={formatCurrency(
-                answers.cemeteryEquity?.equityAtTheBeginningOfTheYear,
-              )}
+              value={formatCurrency(equityAtTheBeginningOfTheYear)}
             />
             <ValueLine
               label={m.revaluationDueToPriceChanges}
-              value={formatCurrency(
-                answers.cemeteryEquity?.revaluationDueToPriceChanges,
-              )}
+              value={formatCurrency(revaluationDueToPriceChanges)}
             />
             <ValueLine
               label={m.reevaluateOther}
-              value={formatCurrency(answers.cemeteryEquity?.reevaluateOther)}
+              value={formatCurrency(reevaluateOther)}
             />
             <ValueLine
               label={m.operationResult}
-              value={formatCurrency(answers.cemeteryEquity?.operationResult)}
+              value={formatCurrency(operationResult)}
             />
             <ValueLine
               isTotal
               label={m.totalEquity}
-              value={formatCurrency(answers.cemeteryEquity?.total)}
+              value={formatCurrency(totalEquity)}
             />
             <ValueLine
               isTotal
               label={m.debtsAndCash}
-              value={formatCurrency(answers.equityAndLiabilities?.total)}
+              value={formatCurrency(debtsAndCash)}
             />
           </GridColumn>
         </GridRow>
       </Box>
       <Divider />
-      {parseInt(answers.cemeteryIncome?.total, 10) < Number(careTakerLimit) &&
+      {Number(totalIncome) < Number(incomeLimit) &&
       cemeteryCaretakers?.length > 0 ? (
         <>
           <Box className={starterColumnStyle}>
@@ -273,8 +302,8 @@ export const CemeteryOverview = ({
               {formatMessage(m.cemeteryBoardmembers)}
             </Text>
           </Box>
-          {cemeteryCaretakers.map((careTaker) => (
-            <>
+          {cemeteryCaretakers.map((careTaker, i) => (
+            <Fragment key={i}>
               <Box className={columnStyle}>
                 <GridRow>
                   <GridColumn span={['12/12', '6/12']}>
@@ -303,48 +332,19 @@ export const CemeteryOverview = ({
                 </GridRow>
               </Box>
               <Divider />
-            </>
+            </Fragment>
           ))}
         </>
       ) : null}
       {fileName ? (
         <>
-          <FileValueLine label={answers.attachments?.file?.[0]?.name} />
+          <FileValueLine label={file?.[0]?.name} />
           <Divider />
         </>
       ) : null}
-      <Box paddingY={3}>
-        <Text variant="h3" as="h3">
-          {formatMessage(m.overview)}
-        </Text>
-      </Box>
-
-      <Box background="blue100">
-        <Controller
-          name="applicationApprove"
-          defaultValue={approveOverview}
-          rules={{ required: true }}
-          render={({ field: { onChange, value } }) => {
-            return (
-              <Checkbox
-                onChange={(e) => {
-                  onChange(e.target.checked)
-                  setApproveOverview(e.target.checked)
-                  setValue('applicationApprove' as string, e.target.checked)
-                }}
-                checked={value}
-                name="applicationApprove"
-                id="applicationApprove"
-                label={formatMessage(m.overviewCorrect)}
-                large
-              />
-            )
-          }}
-        />
-      </Box>
-      {Number(cemeteryIncome) < Number(careTakerLimit) &&
+      {Number(totalIncome) < Number(incomeLimit) &&
       fixedAssetsTotal === '0' &&
-      longTermDebt === '0' ? (
+      longTerm === '0' ? (
         <Box paddingTop={4}>
           <AlertBanner
             title={`${formatMessage(m.SignatureMessage)}`}
@@ -355,24 +355,6 @@ export const CemeteryOverview = ({
           />
         </Box>
       ) : null}
-      {errors && getErrorViaPath(errors, 'applicationApprove') ? (
-        <InputError errorMessage={formatMessage(m.errorApproval)} />
-      ) : null}
-      {submitError ? (
-        <Box paddingY={2}>
-          <AlertBanner
-            title={formatMessage(m.submitErrorTitle)}
-            description={formatMessage(m.submitErrorMessage)}
-            variant="error"
-            dismissable
-          />
-        </Box>
-      ) : null}
-      <BottomBar
-        loading={loading}
-        onSendButtonClick={onSendButtonClick}
-        onBackButtonClick={onBackButtonClick}
-      />
     </Box>
   )
 }
