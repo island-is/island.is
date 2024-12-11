@@ -85,7 +85,9 @@ export const ReportFieldsRepeater: FC<
     }
 
     const total = values.reduce((acc: number, current: any, index: number) => {
-      const sumField2 = valueToNumber(current[props?.sumField2], ',')
+      const sumField2 = current.enabled
+        ? valueToNumber(current[props?.sumField2], ',')
+        : 0
       let currentValue = valueToNumber(
         current.enabled ? current[props?.sumField] : 0,
         ',',

@@ -29,7 +29,7 @@ env:
   BFF_LOGIN_ATTEMPT_TTL_MS: '604800000'
   BFF_LOGOUT_REDIRECT_URI: 'https://island.is'
   BFF_NAME: 'stjornbord'
-  BFF_PAR_SUPPORT_ENABLED: 'true'
+  BFF_PAR_SUPPORT_ENABLED: 'false'
   BFF_PROXY_API_ENDPOINT: 'http://web-api.islandis.svc.cluster.local/api/graphql'
   CODE_OWNER: 'core'
   IDENTITY_SERVER_CLIENT_ID: '@admin.island.is/bff-stjornbord'
