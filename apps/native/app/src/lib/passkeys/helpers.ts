@@ -1,6 +1,6 @@
 import {
-  PasskeyRegistrationResult,
   PasskeyAuthenticationResult,
+  PasskeyRegistrationResult,
 } from 'react-native-passkey'
 import {
   AuthPasskeyAuthenticationOptions,
@@ -106,6 +106,10 @@ export const convertBase64UrlToBase64String = (base64Url: string) => {
   return base64Url.replace(/-/g, '+').replace(/_/g, '/')
 }
 
+const MY_PAGES_PATH = '/minarsidur'
+const APPLICATIONS_PATH = '/umsoknir'
+const allowedPaths = [MY_PAGES_PATH, APPLICATIONS_PATH]
+
 export const addPasskeyAsLoginHint = (
   url: string,
   authenticationResponse: string,
@@ -120,14 +124,10 @@ export const addPasskeyAsLoginHint = (
     return false
   }
 
-  if (url.includes('/minarsidur')) {
-    return `${origin}/minarsidur/login?login_hint=passkey:${authenticationResponse}&target_link_uri=${encodeURIComponent(
-      url,
-    )}`
-  }
+  const matchedPath = allowedPaths.find((path) => url.includes(path))
 
-  if (url.includes('/umsoknir')) {
-    return `${origin}/umsoknir/login?login_hint=passkey:${authenticationResponse}&target_link_uri=${encodeURIComponent(
+  if (matchedPath) {
+    return `${origin}/bff/login?login_hint=passkey:${authenticationResponse}&target_link_uri=${encodeURIComponent(
       url,
     )}`
   }
@@ -139,7 +139,7 @@ export const doesUrlSupportPasskey = (url: string): boolean => {
     (url.startsWith('https://beta.dev01.devland.is') ||
       url.startsWith('https://beta.staging01.devland.is') ||
       url.startsWith('https://island.is')) &&
-    (url.includes('/minarsidur') || url.includes('/umsoknir'))
+    (url.includes(MY_PAGES_PATH) || url.includes(APPLICATIONS_PATH))
   ) {
     return true
   }

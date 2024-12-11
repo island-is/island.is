@@ -1,3 +1,4 @@
+import { useContext } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
@@ -7,6 +8,7 @@ import {
   getAppealResultTextByValue,
 } from '@island.is/judicial-system/formatters'
 import {
+  Feature,
   isCompletedCase,
   isCourtOfAppealsUser,
   isDefenceUser,
@@ -18,6 +20,7 @@ import {
   isTrafficViolationCase,
 } from '@island.is/judicial-system/types'
 import { core, sections } from '@island.is/judicial-system-web/messages'
+import { FeatureContext } from '@island.is/judicial-system-web/src/components'
 import { RouteSection } from '@island.is/judicial-system-web/src/components/PageLayout/PageLayout'
 import { formatCaseResult } from '@island.is/judicial-system-web/src/components/PageLayout/utils'
 import {
@@ -60,6 +63,7 @@ const useSections = (
 ) => {
   const { formatMessage } = useIntl()
   const router = useRouter()
+  const { features } = useContext(FeatureContext)
   const isActive = (pathname: string) =>
     router.pathname.replace(/\/\[\w+\]/g, '') === pathname
 
@@ -402,7 +406,9 @@ const useSections = (
       state === CaseState.RECEIVED ||
       state === CaseState.WAITING_FOR_CANCELLATION ||
       router.pathname === `${constants.INDICTMENTS_ADD_FILES_ROUTE}/[id]`
-    const isTrafficViolation = isTrafficViolationCase(workingCase)
+    const isTrafficViolation =
+      features.includes(Feature.MULTIPLE_INDICTMENT_SUBTYPES) ||
+      isTrafficViolationCase(workingCase)
 
     return {
       name: formatMessage(sections.indictmentCaseProsecutorSection.title),

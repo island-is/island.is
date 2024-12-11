@@ -1,7 +1,8 @@
-import { CustomLicenseType, LicenseCard } from '@ui'
 import React from 'react'
 import { SafeAreaView, ViewStyle } from 'react-native'
 import styled from 'styled-components/native'
+
+import { CustomLicenseType, LicenseCard } from '../../../ui'
 import { Pressable as PressableRaw } from '../../../components/pressable/pressable'
 import {
   GenericUserLicense,
