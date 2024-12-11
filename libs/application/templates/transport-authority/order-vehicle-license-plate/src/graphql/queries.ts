@@ -10,7 +10,6 @@ export const GET_VEHICLE_PLATE_ORDER_CHECKS_BY_PERMNO = `
         make
         color
         role
-        requireMileage
       }
     }
   } 
@@ -32,4 +31,16 @@ export const GET_VEHICLE_INFORMATION = `
       }
     }
   }
+`
+
+export const VALIDATE_VEHICLE_PLATE_ORDER = `
+  query GetVehiclePlateOrderValidation($answers: PlateOrderAnswers!) {
+    vehiclePlateOrderValidation(answers: $answers) {
+      hasError
+      errorMessages {
+        errorNo
+        defaultMessage
+      }
+    }
+  } 
 `

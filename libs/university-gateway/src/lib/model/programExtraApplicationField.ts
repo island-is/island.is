@@ -1,7 +1,7 @@
 import { FieldType } from '../types/fieldType'
 
 export interface IProgramExtraApplicationField {
-  externalId: string
+  externalKey: string
   nameIs: string
   nameEn: string
   descriptionIs?: string

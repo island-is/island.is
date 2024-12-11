@@ -43,16 +43,16 @@ const SelectDefender: FC<Props> = ({ defendant }) => {
         caseId,
         defendantId: defendant.id,
         defenderNationalId: defendantWaivesRightToCounsel
-          ? ''
-          : defendant.defenderNationalId,
+          ? null
+          : defendant.defenderNationalId || null,
         defenderName: defendantWaivesRightToCounsel
-          ? ''
+          ? null
           : defendant.defenderName,
         defenderEmail: defendantWaivesRightToCounsel
-          ? ''
+          ? null
           : defendant.defenderEmail,
         defenderPhoneNumber: defendantWaivesRightToCounsel
-          ? ''
+          ? null
           : defendant.defenderPhoneNumber,
         defenderChoice:
           defendantWaivesRightToCounsel === true
@@ -210,6 +210,7 @@ const SelectDefender: FC<Props> = ({ defendant }) => {
           )}
           primaryButtonText={formatMessage(
             strings.confirmModalPrimaryButtonText,
+            { isConfirming: !defendant.isDefenderChoiceConfirmed },
           )}
           onPrimaryButtonClick={() =>
             toggleDefenderChoiceConfirmed(

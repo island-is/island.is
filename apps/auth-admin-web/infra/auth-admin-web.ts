@@ -1,4 +1,4 @@
-import { service, ServiceBuilder } from '../../../infra/src/dsl/dsl'
+import { CodeOwners, service, ServiceBuilder } from '../../../infra/src/dsl/dsl'
 
 const extraAnnotations = {
   'nginx.ingress.kubernetes.io/proxy-buffer-size': '16k',
@@ -8,10 +8,11 @@ const extraAnnotations = {
     'client_header_buffer_size 16k; large_client_header_buffers 4 16k;',
 }
 
-export const serviceSetup = (): ServiceBuilder<'auth-admin-web'> => {
-  return service('auth-admin-web')
+export const serviceSetup = (): ServiceBuilder<'auth-admin-web'> =>
+  service('auth-admin-web')
     .namespace('identity-server-admin')
     .image('auth-admin-web')
+    .codeOwner(CodeOwners.Aranja)
     .env({
       NEXT_PUBLIC_BACKEND_URL: '/backend',
       IDENTITYSERVER_DOMAIN: {
@@ -74,4 +75,3 @@ export const serviceSetup = (): ServiceBuilder<'auth-admin-web'> => {
       staging: { progressDeadlineSeconds: 1200 },
       prod: { progressDeadlineSeconds: 1200 },
     })
-}

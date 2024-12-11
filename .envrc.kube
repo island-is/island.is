@@ -4,7 +4,7 @@ set -euo pipefail
 
 for c in kubectx kubectl aws; do
   if ! command -v "$c" >/dev/null; then
-    echo "$c not installed"
+    echo "Optional dependency $c not installed. Aborting automatic kube configuration"
     return
   fi
 done

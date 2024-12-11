@@ -21,13 +21,13 @@ export {
   formatProsecutorReceivedByCourtSmsNotification,
   formatDefenderCourtDateLinkEmailNotification,
   formatDefenderResubmittedToCourtEmailNotification,
-  formatAdvocateAssignedEmailNotification,
   formatCourtIndictmentReadyForCourtEmailNotification,
   formatDefenderRoute,
   formatDefenderReadyForCourtEmailNotification,
   formatCourtOfAppealJudgeAssignedEmailNotification,
   formatPostponedCourtDateEmailNotification,
   stripHtmlTags,
+  filterWhitelistEmails,
 } from './formatters'
 export { Confirmation } from './pdfHelpers'
 export { getRequestPdfAsBuffer, getRequestPdfAsString } from './requestPdf'

@@ -36,7 +36,7 @@ import {
 import { VehicleMileageOverview } from '../models/getVehicleMileage.model'
 import isSameDay from 'date-fns/isSameDay'
 import { mileageDetailConstructor } from '../utils/helpers'
-import { handle404 } from '@island.is/clients/middlewares'
+import { FetchError, handle404 } from '@island.is/clients/middlewares'
 import { VehicleSearchCustomDto } from '../vehicles.type'
 import { operatorStatusMapper } from '../utils/operatorStatusMapper'
 import { VehiclesListInputV3 } from '../dto/vehiclesListInputV3'
@@ -44,6 +44,9 @@ import { VehiclesCurrentListResponse } from '../models/v3/currentVehicleListResp
 import { isDefined } from '@island.is/shared/utils'
 import { GetVehicleMileageInput } from '../dto/getVehicleMileageInput'
 import { MileageRegistrationHistory } from '../models/v3/mileageRegistrationHistory.model'
+import { VehiclesMileageUpdateError } from '../models/v3/vehicleMileageResponseError.model'
+import { UpdateResponseError } from '../dto/updateResponseError.dto'
+import { MileageRegistration } from '../models/v3/mileageRegistration.model'
 
 const ORIGIN_CODE = 'ISLAND.IS'
 const LOG_CATEGORY = 'vehicle-service'
@@ -109,8 +112,14 @@ export class VehiclesService {
       showCoowned: true,
       showOperated: true,
       showOwned: true,
+      onlyMileageRequiredVehicles: input.filterOnlyRequiredMileageRegistration,
       page: input.page,
       pageSize: input.pageSize,
+      permno: input.query
+        ? input.query.length < 5
+          ? `${input.query}*`
+          : `${input.query}`
+        : undefined,
     })
 
     if (
@@ -133,6 +142,21 @@ export class VehiclesService {
             if (!d.permno || !d.regno) {
               return null
             }
+
+            let lastMileageRegistration: MileageRegistration | undefined
+
+            if (
+              d.latestOriginCode &&
+              d.latestMileage &&
+              d.latestMileageReadDate
+            ) {
+              lastMileageRegistration = {
+                originCode: d.latestOriginCode,
+                mileage: d.latestMileage,
+                date: d.latestMileageReadDate,
+                internalId: d.latestMileageInternalId ?? undefined,
+              }
+            }
             return {
               vehicleId: d.permno,
               registrationNumber: d.regno,
@@ -140,6 +164,7 @@ export class VehiclesService {
               type: d.make ?? undefined,
               color: d.colorName ?? undefined,
               mileageDetails: {
+                lastMileageRegistration,
                 canRegisterMileage: d.canRegisterMilage ?? undefined,
                 requiresMileageRegistration:
                   d.requiresMileageRegistration ?? undefined,
@@ -370,28 +395,18 @@ export class VehiclesService {
       permno: input.permno,
     })
 
-    const [lastRegistration, ...history] = res
+    const samplePermno = res[0].permno
 
-    if (!lastRegistration.permno) {
+    if (!samplePermno) {
       return null
     }
 
     return {
-      vehicleId: lastRegistration.permno,
-      lastMileageRegistration:
-        lastRegistration.originCode &&
-        lastRegistration.readDate &&
-        lastRegistration.mileage
-          ? {
-              originCode: lastRegistration.originCode,
-              mileage: lastRegistration.mileage,
-              date: lastRegistration.readDate,
-            }
-          : undefined,
-      mileageRegistrationHistory: history?.length
-        ? history
+      vehicleId: samplePermno,
+      mileageRegistrationHistory: res?.length
+        ? res
             .map((h) => {
-              if (h.permno !== lastRegistration.permno) {
+              if (h.permno !== samplePermno) {
                 return null
               }
               if (!h.originCode || !h.mileage || !h.readDate) {
@@ -458,9 +473,88 @@ export class VehiclesService {
       throw new ForbiddenException(UNAUTHORIZED_OWNERSHIP_LOG)
     }
 
-    return this.getMileageWithAuth(auth).rootPut({
+    const dtos = await this.getMileageWithAuth(auth).rootPut({
       putMileageReadingModel: input,
     })
+
+    return dtos.length > 0 ? dtos[0] : null
+  }
+
+  async postMileageReadingV2(
+    auth: User,
+    input: RootPostRequest['postMileageReadingModel'],
+  ): Promise<PostMileageReadingModel | VehiclesMileageUpdateError | null> {
+    if (!input) return null
+
+    const isAllowed = await this.isAllowedMileageRegistration(
+      auth,
+      input.permno,
+    )
+    if (!isAllowed) {
+      this.logger.error(UNAUTHORIZED_OWNERSHIP_LOG, {
+        category: LOG_CATEGORY,
+        error: 'postMileageReading failed',
+      })
+      throw new ForbiddenException(UNAUTHORIZED_OWNERSHIP_LOG)
+    }
+
+    try {
+      const res = await this.getMileageWithAuth(auth).rootPostRaw({
+        postMileageReadingModel: input,
+      })
+
+      if (res.raw.status === 200) {
+        this.logger.info(
+          'Tried to post already existing mileage reading. Should use PUT',
+        )
+        return null
+      }
+
+      const value = await res.value()
+      return value
+    } catch (e) {
+      if (e instanceof FetchError && (e.status === 400 || e.status === 429)) {
+        const errorBody = e.body as UpdateResponseError
+        return {
+          code: e.status,
+          message: errorBody.Errors?.[0]?.errorMess || 'Unknown error',
+        }
+      } else throw e
+    }
+  }
+
+  async putMileageReadingV2(
+    auth: User,
+    input: RootPutRequest['putMileageReadingModel'],
+  ): Promise<MileageReadingDto | VehiclesMileageUpdateError | null> {
+    if (!input) return null
+
+    const isAllowed = await this.isAllowedMileageRegistration(
+      auth,
+      input.permno,
+    )
+    if (!isAllowed) {
+      this.logger.error(UNAUTHORIZED_OWNERSHIP_LOG, {
+        category: LOG_CATEGORY,
+        error: 'putMileageReading failed',
+      })
+      throw new ForbiddenException(UNAUTHORIZED_OWNERSHIP_LOG)
+    }
+
+    try {
+      const dtos = await this.getMileageWithAuth(auth).rootPut({
+        putMileageReadingModel: input,
+      })
+      return dtos.length > 0 ? dtos[0] : null
+    } catch (e) {
+      if (e instanceof FetchError && (e.status === 400 || e.status === 429)) {
+        const errorBody = e.body as UpdateResponseError
+        return {
+          code: e.status,
+          message: errorBody.Errors?.[0]?.errorMess || 'Unknown error',
+        }
+      } else throw e
+    }
   }
 
   async canRegisterMileage(

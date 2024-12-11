@@ -8,7 +8,7 @@ import {
   SubpoenaType,
 } from '@island.is/judicial-system/types'
 
-import { Subpoena } from './subpoena.model'
+import { Subpoena } from '../../subpoena'
 
 registerEnumType(Gender, { name: 'Gender' })
 registerEnumType(DefendantPlea, { name: 'DefendantPlea' })
@@ -72,6 +72,9 @@ export class Defendant {
   @Field(() => String, { nullable: true })
   readonly verdictAppealDeadline?: string
 
+  @Field(() => String, { nullable: true })
+  readonly verdictAppealDate?: string
+
   @Field(() => Boolean, { nullable: true })
   readonly isVerdictAppealDeadlineExpired?: boolean
 
@@ -98,4 +101,10 @@ export class Defendant {
 
   @Field(() => Boolean, { nullable: true })
   readonly caseFilesSharedWithDefender?: boolean
+
+  @Field(() => Boolean, { nullable: true })
+  readonly isSentToPrisonAdmin?: boolean
+
+  @Field(() => String, { nullable: true })
+  readonly sentToPrisonAdminDate?: string
 }

@@ -316,3 +316,11 @@ export const GET_APPLICATION_CASE_QUERY = gql`
     }
   }
 `
+
+export const GET_PDF_QUERY = gql`
+  query GetPdf($input: OJOIAIdInput!) {
+    OJOIAGetPdf(input: $input) {
+      pdf
+    }
+  }
+`

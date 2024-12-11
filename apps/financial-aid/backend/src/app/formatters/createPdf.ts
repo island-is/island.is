@@ -2,10 +2,11 @@ import { PDFDocument, StandardFonts } from 'pdf-lib'
 import format from 'date-fns/format'
 import {
   ApplicationEvent,
-  ApplicationEventType,
   ApplicationState,
+  DirectTaxPayment,
   getEventData,
   showSpouseData,
+  UserType,
 } from '@island.is/financial-aid/shared/lib'
 import { ApplicationModel } from '../modules/application'
 import {
@@ -14,8 +15,10 @@ import {
   getApplicantSpouse,
   getApplicationInfo,
   getChildrenInfo,
+  getDirectTaxPayments,
   getHeader,
   getNationalRegistryInfo,
+  groupDirectPayments,
 } from './applicationPdfHelper'
 import {
   baseFontSize,
@@ -30,6 +33,8 @@ import {
   colorOfHeaderInTimeline,
   color_lightPurple,
   Section,
+  drawHeadersForTable,
+  drawTable,
 } from './pdfhelpers'
 
 export const createPdf = async (
@@ -46,19 +51,20 @@ export const createPdf = async (
   const font = await pdfDoc.embedFont(StandardFonts.Helvetica)
   const boldFont = await pdfDoc.embedFont(StandardFonts.HelveticaBold)
 
-  const { name, state, created } = application
+  const { name, state, created, directTaxPayments = [] } = application
 
   const { applicationState, ageOfApplication } = getHeader(created, state)
 
-  const stateWidth = font.widthOfTextAtSize(applicationState, baseFontSize)
+  const stateWidth = font.widthOfTextAtSize(applicationState, largeFontSize)
 
   // Define padding between title and the new text
   const lineSpacing = 10
 
   //   ---- ----- HEADER ---- ----
+  const headerYPosition = height - margin - largeFontSize
   page.drawText(name, {
     x: margin,
-    y: height - margin - largeFontSize,
+    y: headerYPosition,
     size: largeFontSize,
     font: boldFont,
     color: color_black,
@@ -66,14 +72,13 @@ export const createPdf = async (
 
   page.drawText(applicationState, {
     x: width - stateWidth - margin,
-    y: height - margin - baseFontSize,
-    size: baseFontSize,
-    font: font,
+    y: headerYPosition,
+    size: largeFontSize,
+    font: boldFont,
     color: state === ApplicationState.REJECTED ? color_red : color_green,
   })
 
-  let currentYPosition =
-    height - margin - largeFontSize - smallFontSize - lineSpacing
+  let currentYPosition = headerYPosition - smallFontSize - lineSpacing
 
   const checkYPositionAndAddPage = (): void => {
     if (currentYPosition < 100) {
@@ -115,6 +120,37 @@ export const createPdf = async (
     page = updatedPage
     currentYPosition = updatedYPosition
     checkYPositionAndAddPage()
+  }
+
+  // process direct payments
+  const processDirectPayments = (
+    directPayments: DirectTaxPayment[],
+    sectionTitle: string,
+  ) => {
+    if (directPayments.length > 0) {
+      drawSection(sectionTitle, getDirectTaxPayments(directPayments))
+
+      currentYPosition = drawHeadersForTable(
+        page,
+        currentYPosition,
+        margin,
+        boldFont,
+      )
+      checkYPositionAndAddPage()
+
+      const { updatedPage, updatedYPosition } = drawTable(
+        page,
+        pdfDoc,
+        groupDirectPayments(directPayments),
+        margin,
+        currentYPosition,
+        boldFont,
+        font,
+      )
+      page = updatedPage
+      currentYPosition = updatedYPosition
+      checkYPositionAndAddPage()
+    }
   }
 
   //   ---- ----- APPLICATION INFO ---- ----
@@ -187,6 +223,14 @@ export const createPdf = async (
       currentYPosition = updatedYPosition
       checkYPositionAndAddPage()
     }
+
+    const spouseDirectPayments =
+      directTaxPayments.filter((d) => d.userType === UserType.SPOUSE) ?? []
+
+    processDirectPayments(
+      spouseDirectPayments,
+      'Upplýsingar um staðgreiðslu maka',
+    )
   }
 
   if (application.children?.length > 0) {
@@ -211,6 +255,11 @@ export const createPdf = async (
     }
   }
 
+  const applicantDirectPayments =
+    directTaxPayments.filter((d) => d.userType === UserType.APPLICANT) ?? []
+
+  processDirectPayments(applicantDirectPayments, 'Upplýsingar um staðgreiðslu')
+
   drawSection('Umsóknarferli', getApplicantMoreInfo(application))
 
   //   ---- ----- APPLICATION EVENTS ---- ----
@@ -230,6 +279,7 @@ export const createPdf = async (
     const applicationEvent: ApplicationEvent = {
       ...event,
       created: event.created.toISOString(), // Convert Date to string
+      staffName: 'Starfsmaður',
     }
 
     const eventData = getEventData(

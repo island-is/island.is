@@ -58,7 +58,7 @@ describe('DefendantInfo', () => {
       )
 
       expect(dataSections.message.id).toStrictEqual(
-        'judicial.system.core:info_card.defendant_info.service_requirement_not_required_v1',
+        'judicial.system.core:info_card.defendant_info.service_not_required',
       )
     })
 

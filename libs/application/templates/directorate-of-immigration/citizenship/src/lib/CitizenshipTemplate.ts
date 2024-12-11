@@ -18,7 +18,6 @@ import {
 } from '@island.is/application/core'
 import { Events, States, Roles } from './constants'
 import { application as applicationMessage } from './messages'
-import { Features } from '@island.is/feature-flags'
 import { ApiActions } from '../shared'
 import { CitizenshipSchema } from './dataSchema'
 import {
@@ -36,7 +35,7 @@ import {
   MockableUtlendingastofnunPaymentCatalogApi,
 } from '../dataProviders'
 import { buildPaymentState } from '@island.is/application/utils'
-import { getChargeItemCodes } from '../utils'
+import { getChargeItems } from '../utils'
 
 const template: ApplicationTemplate<
   ApplicationContext,
@@ -48,7 +47,6 @@ const template: ApplicationTemplate<
   institution: applicationMessage.institutionName,
   translationNamespaces: ApplicationConfigurations.Citizenship.translation,
   dataSchema: CitizenshipSchema,
-  featureFlag: Features.citizenship,
   stateMachineConfig: {
     initial: States.PREREQUISITES,
     states: {
@@ -144,7 +142,7 @@ const template: ApplicationTemplate<
       },
       [States.PAYMENT]: buildPaymentState({
         organizationId: InstitutionNationalIds.UTLENDINGASTOFNUN,
-        chargeItemCodes: getChargeItemCodes,
+        chargeItems: getChargeItems,
         submitTarget: States.COMPLETED,
         onExit: [
           defineTemplateApi({

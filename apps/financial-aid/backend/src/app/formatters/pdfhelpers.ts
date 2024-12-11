@@ -1,4 +1,8 @@
-import { ApplicationEventType } from '@island.is/financial-aid/shared/lib'
+import {
+  ApplicationEventType,
+  DirectTaxPayment,
+  formatNationalId,
+} from '@island.is/financial-aid/shared/lib'
 import { PDFDocument, PDFFont, PDFPage, rgb } from 'pdf-lib'
 
 export const calculatePt = (px: number) => Math.ceil(px * 0.74999943307122)
@@ -13,6 +17,7 @@ export const color_black = rgb(0, 0, 0)
 export const color_red = rgb(1, 0, 0.3)
 export const color_green = rgb(0, 0.702, 0.62)
 export const color_lightPurple = rgb(0.88, 0.835, 0.925)
+export const color_blue = rgb(0.8, 0.875, 1)
 
 export const stripHTMLTags = (str) => str.replace(/<[^>]*>/g, '')
 
@@ -209,4 +214,143 @@ export const colorOfHeaderInTimeline = (eventType: ApplicationEventType) => {
     return color_green
   }
   return color_black
+}
+
+export const drawHeadersForTable = (
+  page: PDFPage,
+  currentYPosition: number,
+  margin: number,
+  boldFont: PDFFont,
+) => {
+  const pageWidth = page.getWidth() - margin * 2
+  const headers = [
+    'Fyrirtæki',
+    'Heildarlaun',
+    'Persónuafsláttur',
+    'Staðgreiðsla',
+  ]
+  const columnWidth = pageWidth / 4
+  let x = margin
+  const lineSpacing = 15
+
+  page.drawLine({
+    start: { x: margin, y: currentYPosition },
+    end: { x: pageWidth, y: currentYPosition },
+    thickness: 1,
+    color: color_lightPurple,
+  })
+  const headerYPosition = currentYPosition - lineSpacing
+  headers.forEach((header) => {
+    page.drawText(header, {
+      x: x,
+      y: headerYPosition,
+      size: baseFontSize,
+      font: boldFont,
+      color: color_black,
+    })
+    x += columnWidth
+  })
+
+  const lineYPosition = headerYPosition - lineSpacing
+  page.drawLine({
+    start: { x: margin, y: lineYPosition },
+    end: { x: pageWidth, y: lineYPosition },
+    thickness: 1,
+    color: color_lightPurple,
+  })
+
+  return lineYPosition - lineSpacing
+}
+
+export const drawTable = (
+  page: PDFPage,
+  pdfDoc: PDFDocument,
+  data: Record<string, DirectTaxPayment[]>,
+  margin: number,
+  currentYPosition: number,
+  boldFont: PDFFont,
+  font: PDFFont,
+) => {
+  const pageWidth = page.getWidth() - margin * 2
+  const columnWidth = pageWidth / 4
+  const rowHeight = 20
+
+  const formatNumber = (number: number) =>
+    `${number.toLocaleString('de-DE')} kr.`
+
+  const addNewPage = () => {
+    const newPage = pdfDoc.addPage()
+    const { height } = newPage.getSize()
+    return { page: newPage, currentYPosition: height - margin }
+  }
+
+  const drawHeader = (key: string, yPosition: number) => {
+    page.drawRectangle({
+      x: margin,
+      y: yPosition,
+      width: pageWidth,
+      height: 15,
+      color: color_blue,
+    })
+    page.drawText(key, {
+      x: margin,
+      y: yPosition + 5,
+      size: smallFontSize,
+      font: boldFont,
+      color: color_black,
+    })
+  }
+
+  const drawRow = (payment: DirectTaxPayment, yPosition: number) => {
+    let x = margin
+    const columns = [
+      formatNationalId(payment.payerNationalId),
+      formatNumber(payment.totalSalary),
+      formatNumber(payment.personalAllowance),
+      formatNumber(payment.withheldAtSource),
+    ]
+
+    columns.forEach((text) => {
+      page.drawText(text, {
+        x: x,
+        y: yPosition,
+        size: baseFontSize,
+        font,
+        color: color_black,
+      })
+      x += columnWidth
+    })
+  }
+
+  Object.entries(data).forEach(([key, payments]) => {
+    drawHeader(key, currentYPosition)
+    currentYPosition -= rowHeight
+
+    if (currentYPosition < margin + rowHeight) {
+      ;({ page, currentYPosition } = addNewPage())
+    }
+
+    payments.forEach((payment) => {
+      drawRow(payment, currentYPosition)
+      currentYPosition -= rowHeight
+
+      if (currentYPosition < margin + rowHeight) {
+        ;({ page, currentYPosition } = addNewPage())
+      }
+    })
+
+    currentYPosition -= rowHeight / 2
+  })
+
+  page.drawLine({
+    start: { x: margin, y: currentYPosition + rowHeight },
+    end: { x: pageWidth, y: currentYPosition + rowHeight },
+    thickness: 1,
+    color: color_lightPurple,
+  })
+
+  return {
+    updatedPage: page,
+    updatedYPosition: currentYPosition - rowHeight / 2,
+  }
 }

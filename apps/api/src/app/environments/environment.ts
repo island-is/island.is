@@ -97,6 +97,7 @@ const prodConfig = () => ({
     basePath: process.env.ISLYKILL_SERVICE_BASEPATH,
   },
 })
+
 const devConfig = () => ({
   production: false,
   xroad: {
@@ -207,6 +208,7 @@ const devConfig = () => ({
     basePath: process.env.ISLYKILL_SERVICE_BASEPATH,
   },
 })
+
 export const getConfig =
   process.env.PROD_MODE === 'true' || process.env.NODE_ENV === 'production'
     ? prodConfig()

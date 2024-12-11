@@ -1,25 +1,111 @@
 import format from 'date-fns/format'
-import { useLoaderData, useNavigate } from 'react-router-dom'
+import { useLoaderData, useNavigate, useRevalidator } from 'react-router-dom'
 
-import { ActionCard, Box, Stack, Text } from '@island.is/island-ui/core'
+import {
+  ActionCard,
+  Box,
+  Stack,
+  Text,
+  Table as T,
+  LoadingDots,
+  SkeletonLoader,
+} from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { BackButton } from '@island.is/portals/admin/core'
 import { IntroHeader, formatNationalId } from '@island.is/portals/core'
 import { dateFormat } from '@island.is/shared/constants'
+import InfiniteScroll from 'react-infinite-scroller'
 
-import { ServiceDeskPaths } from '../../lib/paths'
-import { UserProfileResult } from './User.loader'
 import { m } from '../../lib/messages'
+import {
+  GetAdminNotificationsQuery,
+  useUpdateUserProfileMutation,
+} from './User.generated'
+import { UpdateUserProfileInput } from '@island.is/api/schema'
+import React from 'react'
+import { isValidDate } from '@island.is/shared/utils'
+import { useGetAdminNotificationsQuery } from './User.generated'
+import { UserProfileResult } from './User.loader'
+import { Problem } from '@island.is/react-spa/shared'
+
+const DEFAULT_PAGE_SIZE = 10
 
 const User = () => {
   const { formatMessage } = useLocale()
   const navigate = useNavigate()
   const user = useLoaderData() as UserProfileResult
   const formattedNationalId = formatNationalId(user.nationalId)
+  const [updateProfile] = useUpdateUserProfileMutation()
+  const { revalidate } = useRevalidator()
+
+  const {
+    data: notifications,
+    loading,
+    error,
+    fetchMore,
+  } = useGetAdminNotificationsQuery({
+    variables: {
+      nationalId: user.nationalId,
+      input: { limit: DEFAULT_PAGE_SIZE },
+    },
+  })
+
+  const handleUpdateProfile = async (input: UpdateUserProfileInput) => {
+    try {
+      const updatedProfile = await updateProfile({
+        variables: {
+          nationalId: user.nationalId,
+          input,
+        },
+      })
+
+      if (updatedProfile.data) {
+        revalidate()
+      }
+    } catch (e) {
+      console.error(e)
+    }
+  }
+
+  const loadMore = async () => {
+    if (
+      loading ||
+      !notifications ||
+      !notifications?.adminNotifications?.pageInfo.hasNextPage
+    ) {
+      return
+    }
+
+    await fetchMore({
+      variables: {
+        nationalId: user.nationalId,
+        input: {
+          limit: DEFAULT_PAGE_SIZE,
+          after:
+            notifications?.adminNotifications?.pageInfo.endCursor ?? undefined,
+        },
+      },
+      updateQuery: (prev, { fetchMoreResult }): GetAdminNotificationsQuery => {
+        return {
+          adminNotifications: {
+            ...fetchMoreResult.adminNotifications,
+            data: [
+              ...(prev.adminNotifications?.data || []),
+              ...(fetchMoreResult.adminNotifications?.data || []),
+            ],
+          } as GetAdminNotificationsQuery['adminNotifications'],
+        }
+      },
+    })
+  }
 
   return (
     <Stack space={'containerGutter'}>
-      <BackButton onClick={() => navigate(ServiceDeskPaths.Users)} />
+      <BackButton
+        onClick={() => {
+          navigate(-1)
+        }}
+      />
       <div>
         <div>
           <IntroHeader
@@ -93,14 +179,30 @@ const User = () => {
             <ActionCard
               heading={formatMessage(m.email)}
               text={user.email ?? ''}
-              unavailable={{
-                active: true,
+              cta={
+                !user.email || user.emailVerified
+                  ? undefined
+                  : {
+                      label: formatMessage(m.delete),
+                      buttonType: {
+                        variant: 'text',
+                        colorScheme: 'destructive',
+                      },
+                      size: 'small',
+                      icon: 'trash',
+                      onClick: () => handleUpdateProfile({ email: '' }),
+                    }
+              }
+              tag={{
                 label: formatMessage(
-                  user.emailVerified ? m.verified : m.unverified,
+                  !user.email
+                    ? m.noEmail
+                    : user.emailVerified
+                    ? m.verified
+                    : m.unverified,
                 ),
-                message: formatMessage(
-                  user.emailVerified ? m.verifiedTooltip : m.unverifiedTooltip,
-                ),
+                variant: 'blue',
+                outlined: true,
               }}
             />
           </Box>
@@ -108,20 +210,87 @@ const User = () => {
             <ActionCard
               heading={formatMessage(m.phone)}
               text={user.mobilePhoneNumber ?? ''}
-              unavailable={{
-                active: true,
+              cta={
+                !user.mobilePhoneNumber || user.mobilePhoneNumberVerified
+                  ? undefined
+                  : {
+                      label: formatMessage(m.delete),
+                      buttonType: {
+                        variant: 'text',
+                        colorScheme: 'destructive',
+                      },
+                      size: 'small',
+                      icon: 'trash',
+                      onClick: () =>
+                        handleUpdateProfile({ mobilePhoneNumber: '' }),
+                    }
+              }
+              tag={{
                 label: formatMessage(
-                  user.mobilePhoneNumberVerified ? m.verified : m.unverified,
+                  !user.mobilePhoneNumber
+                    ? m.noMobilePhone
+                    : user.mobilePhoneNumberVerified
+                    ? m.verified
+                    : m.unverified,
                 ),
-                message: formatMessage(
-                  user.mobilePhoneNumberVerified
-                    ? m.verifiedTooltip
-                    : m.unverifiedTooltip,
-                ),
+                variant: 'blue',
+                outlined: true,
               }}
             />
           </Box>
         </Box>
+      </Stack>
+      <Stack space="gutter">
+        <Text variant="h4">{formatMessage(m.notifications)}</Text>
+        {error ? (
+          <Problem error={error} />
+        ) : loading ? (
+          <SkeletonLoader height={40} repeat={6} width={'100%'} />
+        ) : (
+          <InfiniteScroll
+            pageStart={0}
+            loadMore={loadMore}
+            hasMore={notifications?.adminNotifications?.pageInfo.hasNextPage}
+            loader={
+              <Box
+                key={'user.screens.notifications.loader'}
+                marginTop={'gutter'}
+                display={'flex'}
+                justifyContent={'center'}
+              >
+                <LoadingDots />
+              </Box>
+            }
+          >
+            <T.Table>
+              <T.Head>
+                <T.Row>
+                  <T.HeadData>ID</T.HeadData>
+                  <T.HeadData>Message ID</T.HeadData>
+                  <T.HeadData>Sender ID</T.HeadData>
+                  <T.HeadData>Sent</T.HeadData>
+                </T.Row>
+              </T.Head>
+              <T.Body>
+                {notifications?.adminNotifications?.data.map(
+                  (notification, index) => (
+                    <T.Row key={index}>
+                      <T.Data>{notification.id}</T.Data>
+                      <T.Data>{notification.notificationId}</T.Data>
+                      <T.Data>{notification.sender.id}</T.Data>
+                      <T.Data>
+                        {notification.sent &&
+                        isValidDate(new Date(notification.sent))
+                          ? format(new Date(notification.sent), 'dd.MM.yyyy')
+                          : ''}
+                      </T.Data>
+                    </T.Row>
+                  ),
+                )}
+              </T.Body>
+            </T.Table>
+          </InfiniteScroll>
+        )}
       </Stack>
     </Stack>
   )

@@ -32,8 +32,7 @@ import {
   VinnueftirlitidPaymentCatalogApi,
 } from '../dataProviders'
 import { ApiScope } from '@island.is/auth/scopes'
-import { Features } from '@island.is/feature-flags'
-import { getChargeItemCodes } from '../utils'
+import { getChargeItems } from '../utils'
 import { buildPaymentState } from '@island.is/application/utils'
 import { getExtraData } from '../utils/getSelectedMachine'
 
@@ -57,7 +56,6 @@ const template: ApplicationTemplate<
   type: ApplicationTypes.STREET_REGISTRATION,
   name: determineMessageFromApplicationAnswers,
   institution: applicationMessage.institutionName,
-  featureFlag: Features.StreetRegistration,
   translationNamespaces: [
     ApplicationConfigurations.StreetRegistration.translation,
   ],
@@ -165,7 +163,7 @@ const template: ApplicationTemplate<
       },
       [States.PAYMENT]: buildPaymentState({
         organizationId: InstitutionNationalIds.SAMGONGUSTOFA,
-        chargeItemCodes: getChargeItemCodes,
+        chargeItems: getChargeItems,
         submitTarget: States.COMPLETED,
         onExit: [
           defineTemplateApi({

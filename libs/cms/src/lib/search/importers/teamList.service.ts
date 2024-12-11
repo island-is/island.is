@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common'
 import { logger } from '@island.is/logging'
 import type { MappedData } from '@island.is/content-search-indexer/types'
+import { documentToPlainTextString } from '@contentful/rich-text-plain-text-renderer'
 import type { ITeamList } from '../../generated/contentfulTypes'
 import { mapTeamList } from '../../models/teamList.model'
 import type { CmsSyncProvider, processSyncDataInput } from '../cmsSync.service'
@@ -27,7 +28,21 @@ export class TeamListSyncService implements CmsSyncProvider<ITeamList> {
       const teamList = mapTeamList(teamListEntry)
       for (const member of teamList.teamMembers ?? []) {
         try {
-          const content = member.name ? member.name : undefined
+          const memberEntry = teamListEntry.fields.teamMembers?.find(
+            (m) => m.sys.id === member.id,
+          )
+          const contentSection: string[] = []
+
+          contentSection.push(
+            memberEntry?.fields?.intro
+              ? documentToPlainTextString(memberEntry.fields.intro)
+              : '',
+          )
+          if (member.title) {
+            contentSection.push(member.title)
+          }
+
+          const content = contentSection.join(' ')
           teamMembers.push({
             _id: member.id,
             title: member.name,

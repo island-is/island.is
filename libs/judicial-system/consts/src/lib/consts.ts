@@ -100,6 +100,8 @@ export const DEFENDER_STATEMENT_ROUTE = '/verjandi/greinargerd'
 //#region Public prosecutor user routes
 export const PUBLIC_PROSECUTOR_STAFF_INDICTMENT_OVERVIEW_ROUTE =
   '/rikissaksoknari/akaera/yfirlit'
+export const PUBLIC_PROSECUTOR_STAFF_INDICTMENT_SEND_TO_PRISON_ADMIN_ROUTE =
+  '/rikissaksoknari/akaera/senda-til-fmst'
 //#endregion Public prosecutor user routes
 
 //#region Prison user routes
@@ -202,6 +204,7 @@ export const CHANGE_USER_ROUTE = '/notendur/breyta'
 //#region Shared routes
 export const CASES_ROUTE = '/krofur'
 export const SIGNED_VERDICT_OVERVIEW_ROUTE = '/krafa/yfirlit'
+export const ROUTE_HANDLER_ROUTE = '/beinir'
 //#endregion Shared routes
 
 export const prosecutorRestrictionCasesRoutes = [

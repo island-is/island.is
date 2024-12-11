@@ -18,6 +18,7 @@ import {
   GetInvolvedPartiesRequest,
   GetApplicationCaseRequest,
   GetApplicationCaseResponse,
+  GetPdfRespone,
 } from '../../gen/fetch'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
@@ -97,30 +98,18 @@ export class OfficialJournalOfIcelandApplicationClientService {
   async getPdf(
     params: GetPdfByApplicationIdRequest,
     auth: Auth,
-  ): Promise<Buffer> {
-    const streamableFile = await this.ojoiApplicationApiWithAuth(
-      auth,
-    ).getPdfByApplicationId(params)
+  ): Promise<GetPdfRespone> {
+    try {
+      return this.ojoiApplicationApiWithAuth(auth).getPdfByApplicationId(params)
+    } catch (error) {
+      this.logger.warn('Failed to get pdf', {
+        applicationId: params.id,
+        error,
+        category: LOG_CATEGORY,
+      })
 
-    const isStreamable = (
-      streamableFile: any,
-    ): streamableFile is { getStream: () => NodeJS.ReadableStream } =>
-      typeof streamableFile.getStream === 'function'
-
-    if (!isStreamable(streamableFile)) {
-      throw new Error('Error reading streamable file')
+      throw error
     }
-
-    const chunks: Uint8Array[] = [] // Change the type of 'chunks' to 'Uint8Array[]'
-    for await (const chunk of streamableFile.getStream()) {
-      if (typeof chunk === 'string') {
-        chunks.push(Buffer.from(chunk))
-      } else {
-        chunks.push(chunk)
-      }
-    }
-
-    return Buffer.concat(chunks)
   }
 
   async getPrice(

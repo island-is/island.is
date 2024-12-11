@@ -1,4 +1,8 @@
-import { StateLifeCycle } from '@island.is/application/types'
+import {
+  PruningApplication,
+  PruningNotification,
+  StateLifeCycle,
+} from '@island.is/application/types'
 
 export const EphemeralStateLifeCycle: StateLifeCycle = {
   shouldBeListed: false,
@@ -15,6 +19,15 @@ export const pruneAfterDays = (Days: number): StateLifeCycle => {
 }
 
 export const DefaultStateLifeCycle: StateLifeCycle = pruneAfterDays(30)
+
+export const defaultLifecycleWithPruneMessage = (
+  message:
+    | PruningNotification
+    | ((application: PruningApplication) => PruningNotification),
+) => ({
+  ...DefaultStateLifeCycle,
+  pruneMessage: message,
+})
 
 export const NO_ANSWER = null
 

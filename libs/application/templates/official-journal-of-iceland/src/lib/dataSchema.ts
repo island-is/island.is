@@ -3,6 +3,10 @@ import { error } from './messages'
 import { AnswerOption, SignatureTypes } from './constants'
 import { MessageDescriptor } from 'react-intl'
 
+const emailRegex =
+  /^[\w!#$%&'*+/=?`{|}~^-]+(?:\.[\w!#$%&'*+/=?`{|}~^-]+)*@(?:[A-Z0-9-]+\.)+[A-Z]{2,6}$/i
+const isValidEmail = (value?: string) =>
+  value ? emailRegex.test(value) : false
 export const memberItemSchema = z
   .object({
     name: z.string().optional(),
@@ -12,6 +16,17 @@ export const memberItemSchema = z
     after: z.string().optional(),
   })
   .partial()
+
+export const additionSchema = z.array(
+  z
+    .object({
+      id: z.string().optional(),
+      title: z.string().optional(),
+      content: z.string().optional(),
+      type: z.enum(['html', 'file']).optional(),
+    })
+    .partial(),
+)
 
 export const membersSchema = z.array(memberItemSchema).optional()
 
@@ -27,6 +42,12 @@ export const regularSignatureItemSchema = z
 export const regularSignatureSchema = z
   .array(regularSignatureItemSchema)
   .optional()
+
+export const baseEntitySchema = z.object({
+  id: z.string(),
+  title: z.string(),
+  slug: z.string(),
+})
 
 export const signatureInstitutionSchema = z.enum(['institution', 'date'])
 
@@ -46,15 +67,15 @@ export const channelSchema = z
 
 const advertSchema = z
   .object({
-    departmentId: z.string().optional(),
-    typeName: z.string().optional(),
-    typeId: z.string().optional(),
+    department: baseEntitySchema.optional(),
+    type: baseEntitySchema.optional().nullable(),
     title: z.string().optional(),
     html: z.string().optional(),
     requestedDate: z.string().optional(),
-    categories: z.array(z.string()).optional(),
+    categories: z.array(baseEntitySchema).optional(),
     channels: z.array(channelSchema).optional(),
     message: z.string().optional(),
+    additions: additionSchema.optional(),
   })
   .partial()
 
@@ -62,6 +83,8 @@ const miscSchema = z
   .object({
     signatureType: z.string().optional(),
     selectedTemplate: z.string().optional(),
+    asDocument: z.boolean().optional(),
+    asRoman: z.boolean().optional(),
   })
   .partial()
 
@@ -92,16 +115,16 @@ export const partialSchema = z.object({
 // We make properties optional to throw custom error messages
 export const advertValidationSchema = z.object({
   advert: z.object({
-    departmentId: z
-      .string()
+    department: baseEntitySchema
       .optional()
-      .refine((value) => value && value.length > 0, {
+      .nullable()
+      .refine((value) => value !== null && value !== undefined, {
         params: error.missingDepartment,
       }),
-    typeId: z
-      .string()
+    type: baseEntitySchema
       .optional()
-      .refine((value) => value && value.length > 0, {
+      .nullable()
+      .refine((value) => value !== null && value !== undefined, {
         params: error.missingType,
       }),
     title: z
@@ -121,17 +144,17 @@ export const advertValidationSchema = z.object({
 
 export const previewValidationSchema = z.object({
   advert: z.object({
-    departmentId: z
-      .string()
+    department: baseEntitySchema
       .optional()
-      .refine((value) => value && value.length > 0, {
-        params: error.missingPreviewDepartment,
+      .nullable()
+      .refine((value) => value !== null && value !== undefined, {
+        params: error.missingDepartment,
       }),
-    typeId: z
-      .string()
+    type: baseEntitySchema
       .optional()
-      .refine((value) => value && value.length > 0, {
-        params: error.missingPreviewType,
+      .nullable()
+      .refine((value) => value !== null && value !== undefined, {
+        params: error.missingType,
       }),
     title: z
       .string()
@@ -157,10 +180,41 @@ export const publishingValidationSchema = z.object({
       params: error.missingRequestedDate,
     }),
   categories: z
-    .array(z.string())
+    .array(baseEntitySchema)
     .optional()
     .refine((value) => Array.isArray(value) && value.length > 0, {
       params: error.noCategorySelected,
+    }),
+  channels: z
+    .array(channelSchema)
+    .optional()
+    .superRefine((schema, context) => {
+      let pass = true
+      if (!schema || schema.length === 0) {
+        context.addIssue({
+          code: z.ZodIssueCode.custom,
+          params: error.emptyChannel,
+          path: ['advert', 'channels'],
+        })
+
+        pass = false
+      }
+
+      const validChannels = schema?.every(
+        (channel) => validateChannel(channel) === true,
+      )
+
+      if (!validChannels) {
+        context.addIssue({
+          code: z.ZodIssueCode.custom,
+          params: error.invalidChannel,
+          path: ['advert', 'channels'],
+        })
+
+        pass = false
+      }
+
+      return pass
     }),
 })
 
@@ -336,6 +390,12 @@ const validateCommitteeSignature = (
       .every((isValid) => isValid) ?? false
 
   return hasValidInstitutionAndDate && hasValidChairman && hasValidMembers
+}
+
+const validateChannel = (channel: z.infer<typeof channelSchema>) => {
+  const validEmail = isValidEmail(channel.email)
+
+  return validEmail
 }
 
 type Flatten<T> = T extends any[] ? T[number] : T

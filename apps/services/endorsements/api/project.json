@@ -33,6 +33,11 @@
             "glob": "*",
             "input": "libs/email-service/src/tools/design",
             "output": "./email-service-assets"
+          },
+          {
+            "glob": "*",
+            "input": "apps/services/endorsements/api/src/assets",
+            "output": "apps/services/endorsements/api/src/assets"
           }
         ]
       },

@@ -97,13 +97,13 @@ export const ChangeOperatorOfVehicleSchema = z.object({
   ownerCoOwner: z.array(UserInformationSchema),
   vehicleMileage: z
     .object({
-      isRequired: z.boolean().optional(),
+      requireMileage: z.boolean().optional(),
       mileageReading: z.string().optional(),
       value: z.string().optional(),
     })
     .refine(
       (x: VehicleMileage) => {
-        if (x.isRequired) {
+        if (x.requireMileage) {
           return (
             (x.value !== undefined &&
               x.value !== '' &&
