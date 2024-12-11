@@ -27,9 +27,6 @@ import { prisonSystemStaffUpdateRule } from './guards/rolesRules'
 import { Defendant } from './models/defendant.model'
 import { DefendantService } from './defendant.service'
 
-interface LimitedAccessUpdateDefendant
-  extends Pick<UpdateDefendantDto, 'punishmentType'> {}
-
 @Controller('api/case/:caseId/limitedAccess/defendant')
 @ApiTags('limited access defendant')
 @UseGuards(JwtAuthGuard, RolesGuard)
@@ -52,7 +49,7 @@ export class LimitedAccessDefendantController {
     @CurrentHttpUser() user: User,
     @CurrentCase() theCase: Case,
     @CurrentDefendant() defendant: Defendant,
-    @Body() updateDto: LimitedAccessUpdateDefendant,
+    @Body() updateDto: Pick<UpdateDefendantDto, 'punishmentType'>,
   ): Promise<Defendant> {
     this.logger.debug(
       `Updating limitedAccess defendant ${defendantId} of case ${caseId}`,

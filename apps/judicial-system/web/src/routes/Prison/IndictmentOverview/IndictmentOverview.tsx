@@ -42,13 +42,13 @@ const IndictmentOverview = () => {
   const [selectedPunishmentType, setPunishmentType] = useState<PunishmentType>()
 
   const onChange = (updatedPunishmentType: PunishmentType) => {
+    setPunishmentType(updatedPunishmentType)
     defendant &&
       limitedAccessUpdateDefendant({
         caseId: workingCase.id,
         defendantId: defendant.id,
         punishmentType: updatedPunishmentType,
       })
-    setPunishmentType(updatedPunishmentType)
   }
 
   const hasSetPunishmentType = (punishmentType: PunishmentType) =>
