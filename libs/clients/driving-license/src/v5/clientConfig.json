@@ -2047,17 +2047,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/MayApplyForRenewal65"
+                  "$ref": "#/components/schemas/MayApplyForRenewal65Dto"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/MayApplyForRenewal65"
+                  "$ref": "#/components/schemas/MayApplyForRenewal65Dto"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/MayApplyForRenewal65"
+                  "$ref": "#/components/schemas/MayApplyForRenewal65Dto"
                 }
               }
             }
@@ -3339,7 +3339,7 @@
         "additionalProperties": false,
         "description": "Data transfer object for results for person applying for\r\nfull license"
       },
-      "MayApplyForRenewal65": {
+      "MayApplyForRenewal65Dto": {
         "type": "object",
         "properties": {
           "result": {
@@ -3648,6 +3648,16 @@
           "healtCertificate": {
             "type": "string",
             "description": "Healt certificate",
+            "nullable": true
+          },
+          "pickupPlasticAtDistrict": {
+            "type": "boolean",
+            "description": "Will person pick plastic up at district",
+            "nullable": true
+          },
+          "sendPlasticToPerson": {
+            "type": "boolean",
+            "description": "Person requests plastic to be sent to him",
             "nullable": true
           }
         },

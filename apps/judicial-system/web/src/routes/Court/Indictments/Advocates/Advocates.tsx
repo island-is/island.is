@@ -16,8 +16,6 @@ import {
   PageTitle,
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
-import { NotificationType } from '@island.is/judicial-system-web/src/graphql/schema'
-import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { isDefenderStepValid } from '@island.is/judicial-system-web/src/utils/validate'
 
 import SelectCivilClaimantAdvocate from './SelectCivilClaimantAdvocate'
@@ -28,18 +26,17 @@ const Advocates = () => {
   const { workingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
   const router = useRouter()
-  const { sendNotification, isSendingNotification } = useCase()
+
   const { formatMessage } = useIntl()
 
   const handleNavigationTo = useCallback(
     async (destination: string) => {
-      await sendNotification(workingCase.id, NotificationType.DEFENDER_ASSIGNED)
       router.push(`${destination}/${workingCase.id}`)
     },
-    [workingCase.id, sendNotification, router],
+    [workingCase.id, router],
   )
 
-  const stepIsValid = !isSendingNotification && isDefenderStepValid(workingCase)
+  const stepIsValid = isDefenderStepValid(workingCase)
   const hasCivilClaimants = (workingCase.civilClaimants?.length ?? 0) > 0
 
   return (
@@ -59,6 +56,24 @@ const Advocates = () => {
             message={formatMessage(strings.alertBannerText)}
             type="info"
           />
+          {workingCase.defendants
+            ?.filter((defendant) => defendant.requestedDefenderChoice)
+            .map((defendant) => (
+              <Box marginTop={2}>
+                <AlertMessage
+                  title={formatMessage(strings.defenderChoiceAlertTitle, {
+                    defendantName: defendant.name,
+                  })}
+                  message={formatMessage(strings.defenderChoiceAlertMessage, {
+                    requestedDefenderChoice: defendant.requestedDefenderChoice,
+                    requestedDefenderName: defendant.requestedDefenderName,
+                    requestedDefenderNationalId:
+                      defendant.requestedDefenderNationalId,
+                  })}
+                  type="warning"
+                />
+              </Box>
+            ))}
         </Box>
         <Box component="section" marginBottom={hasCivilClaimants ? 5 : 10}>
           <SectionHeading
@@ -84,7 +99,7 @@ const Advocates = () => {
         <FormFooter
           nextButtonIcon="arrowForward"
           previousUrl={`${constants.INDICTMENTS_SUBPOENA_ROUTE}/${workingCase.id}`}
-          nextIsLoading={isLoadingWorkingCase || isSendingNotification}
+          nextIsLoading={isLoadingWorkingCase}
           nextButtonText={formatMessage(core.continue)}
           nextUrl={`${constants.INDICTMENTS_CONCLUSION_ROUTE}/${workingCase.id}`}
           nextIsDisabled={!stepIsValid}

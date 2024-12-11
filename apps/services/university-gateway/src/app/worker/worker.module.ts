@@ -37,7 +37,6 @@ import { environment } from '../../environments'
 import { InternalProgramService } from '../modules/program/internalProgram.service'
 import { InternalApplicationService } from '../modules/application/internalApplication.service'
 import { University } from '../modules/university/model/university'
-import { ProgramCourse } from '../modules/program/model/programCourse'
 import { ProgramModeOfDelivery } from '../modules/program/model/programModeOfDelivery'
 import { Program } from '../modules/program/model/program'
 import { ProgramExtraApplicationField } from '../modules/program/model/programExtraApplicationField'
@@ -58,7 +57,6 @@ import { Application } from '../modules/application/model/application'
       Program,
       ProgramModeOfDelivery,
       ProgramExtraApplicationField,
-      ProgramCourse,
       Application,
     ]),
     ReykjavikUniversityApplicationClientModule,

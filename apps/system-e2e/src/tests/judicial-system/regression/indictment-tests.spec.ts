@@ -106,7 +106,7 @@ test.describe.serial('Indictment tests', () => {
       async () => {
         await page
           .getByText(
-            'Sakavottorð *Dragðu gögn hingað til að hlaða uppVelja gögn til að hlaða upp',
+            'SakavottorðDragðu gögn hingað til að hlaða uppVelja gögn til að hlaða upp',
           )
           .click()
       },

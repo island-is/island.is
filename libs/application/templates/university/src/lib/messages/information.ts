@@ -81,6 +81,17 @@ export const information = {
         defaultMessage: 'Kjörsvið',
         description: 'Specialization label label',
       },
+      warningEmptyProgramListTitle: {
+        id: 'uni.application:information.labels.programSelection.warningEmptyProgramListTitle',
+        defaultMessage: 'Athugið',
+        description: 'Warning empty program list title',
+      },
+      warningEmptyProgramListMessage: {
+        id: 'uni.application:information.labels.programSelection.warningEmptyProgramListMessage',
+        defaultMessage:
+          'Ekki er hægt að sækja um nám fyrir þennan skóla að svo stöddu',
+        description: 'Warning empty program list message',
+      },
     }),
     modeOfDeliverySection: defineMessages({
       sectionTitle: {

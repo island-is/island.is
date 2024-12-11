@@ -3,12 +3,16 @@ import { uuid } from 'uuidv4'
 import { EmailService } from '@island.is/email-service'
 
 import {
-  NotificationType,
+  CaseNotificationType,
+  InstitutionType,
   User,
   UserRole,
 } from '@island.is/judicial-system/types'
 
-import { createTestingNotificationModule } from '../createTestingNotificationModule'
+import {
+  createTestingNotificationModule,
+  createTestUsers,
+} from '../createTestingNotificationModule'
 
 import { Case } from '../../../case'
 import { DeliverResponse } from '../../models/deliver.response'
@@ -19,29 +23,28 @@ interface Then {
 }
 
 type GivenWhenThen = (
-  role: UserRole,
+  user: User,
   defenderNationalId?: string,
   appealsCourtNumber?: string,
 ) => Promise<Then>
 
 describe('InternalNotificationController - Send appeal statement notifications', () => {
-  const userId = uuid()
+  const roles = [
+    'prosecutor',
+    'defender',
+    'assistant',
+    'judge1',
+    'judge2',
+    'judge3',
+  ]
+
+  const { prosecutor, defender, assistant, judge1, judge2, judge3 } =
+    createTestUsers(roles)
+
   const caseId = uuid()
-  const prosecutorName = uuid()
-  const prosecutorEmail = uuid()
-  const defenderName = uuid()
-  const defenderEmail = uuid()
   const courtCaseNumber = uuid()
   const receivedDate = new Date()
   const appealCaseNumber = uuid()
-  const assistantName = uuid()
-  const assistantEmail = uuid()
-  const judgeName1 = uuid()
-  const judgeEmail1 = uuid()
-  const judgeName2 = uuid()
-  const judgeEmail2 = uuid()
-  const judgeName3 = uuid()
-  const judgeEmail3 = uuid()
 
   let mockEmailService: EmailService
 
@@ -54,7 +57,7 @@ describe('InternalNotificationController - Send appeal statement notifications',
     mockEmailService = emailService
 
     givenWhenThen = async (
-      role: UserRole,
+      user: User,
       defenderNationalId?: string,
       appealCaseNumber?: string,
     ) => {
@@ -65,20 +68,20 @@ describe('InternalNotificationController - Send appeal statement notifications',
           caseId,
           {
             id: caseId,
-            prosecutor: { name: prosecutorName, email: prosecutorEmail },
+            prosecutor: { name: prosecutor.name, email: prosecutor.email },
             court: { name: 'Héraðsdómur Reykjavíkur' },
             defenderNationalId,
-            defenderName: defenderName,
-            defenderEmail: defenderEmail,
+            defenderName: defender.name,
+            defenderEmail: defender.email,
             courtCaseNumber,
             appealReceivedByCourtDate: receivedDate,
             appealCaseNumber,
-            appealAssistant: { name: assistantName, email: assistantEmail },
-            appealJudge1: { name: judgeName1, email: judgeEmail1 },
+            appealAssistant: { name: assistant.name, email: assistant.email },
+            appealJudge1: { name: judge1.name, email: judge1.email },
           } as Case,
           {
-            user: { id: userId, role } as User,
-            type: NotificationType.APPEAL_STATEMENT,
+            user,
+            type: CaseNotificationType.APPEAL_STATEMENT,
           },
         )
         .then((result) => (then.result = result))
@@ -99,17 +102,24 @@ describe('InternalNotificationController - Send appeal statement notifications',
     let then: Then
 
     beforeEach(async () => {
-      then = await givenWhenThen(UserRole.PROSECUTOR, uuid(), appealCaseNumber)
+      then = await givenWhenThen(
+        {
+          role: UserRole.PROSECUTOR,
+          institution: { type: InstitutionType.PROSECUTORS_OFFICE },
+        } as User,
+        uuid(),
+        appealCaseNumber,
+      )
     })
 
     it('should send notification to appeals court and defender', () => {
-      expectCourtEmail(assistantName, assistantEmail)
-      expectCourtEmail(judgeName1, judgeEmail1)
-      expectCourtEmail(judgeName2, judgeEmail2)
-      expectCourtEmail(judgeName3, judgeEmail3)
+      expectCourtEmail(assistant.name, assistant.email)
+      expectCourtEmail(judge1.name, judge1.email)
+      expectCourtEmail(judge2.name, judge2.email)
+      expectCourtEmail(judge3.name, judge3.email)
       expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
         expect.objectContaining({
-          to: [{ name: defenderName, address: defenderEmail }],
+          to: [{ name: defender.name, address: defender.email }],
           subject: `Ný greinargerð í máli ${courtCaseNumber} (${appealCaseNumber})`,
           html: `Greinargerð hefur borist vegna kæru í máli ${courtCaseNumber} (Landsréttarmál nr. ${appealCaseNumber}). Hægt er að nálgast gögn málsins á <a href="http://localhost:4200/verjandi/krafa/${caseId}">yfirlitssíðu málsins í Réttarvörslugátt</a>.`,
         }),
@@ -123,20 +133,23 @@ describe('InternalNotificationController - Send appeal statement notifications',
 
     beforeEach(async () => {
       then = await givenWhenThen(
-        UserRole.PROSECUTOR,
+        {
+          role: UserRole.PROSECUTOR,
+          institution: { type: InstitutionType.PROSECUTORS_OFFICE },
+        } as User,
         undefined,
         appealCaseNumber,
       )
     })
 
     it('should send notification to appeals court and defender', () => {
-      expectCourtEmail(assistantName, assistantEmail)
-      expectCourtEmail(judgeName1, judgeEmail1)
-      expectCourtEmail(judgeName2, judgeEmail2)
-      expectCourtEmail(judgeName3, judgeEmail3)
+      expectCourtEmail(assistant.name, assistant.email)
+      expectCourtEmail(judge1.name, judge1.email)
+      expectCourtEmail(judge2.name, judge2.email)
+      expectCourtEmail(judge3.name, judge3.email)
       expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
         expect.objectContaining({
-          to: [{ name: defenderName, address: defenderEmail }],
+          to: [{ name: defender.name, address: defender.email }],
           subject: `Ný greinargerð í máli ${courtCaseNumber} (${appealCaseNumber})`,
           html: `Greinargerð hefur borist vegna kæru í máli ${courtCaseNumber} (Landsréttarmál nr. ${appealCaseNumber}). Hægt er að nálgast gögn málsins hjá Héraðsdómi Reykjavíkur ef þau hafa ekki þegar verið afhent.`,
         }),
@@ -149,17 +162,21 @@ describe('InternalNotificationController - Send appeal statement notifications',
     let then: Then
 
     beforeEach(async () => {
-      then = await givenWhenThen(UserRole.DEFENDER, uuid(), appealCaseNumber)
+      then = await givenWhenThen(
+        { role: UserRole.DEFENDER } as User,
+        uuid(),
+        appealCaseNumber,
+      )
     })
 
     it('should send notification to appeals court and prosecutor', () => {
-      expectCourtEmail(assistantName, assistantEmail)
-      expectCourtEmail(judgeName1, judgeEmail1)
-      expectCourtEmail(judgeName2, judgeEmail2)
-      expectCourtEmail(judgeName3, judgeEmail3)
+      expectCourtEmail(assistant.name, assistant.email)
+      expectCourtEmail(judge1.name, judge1.email)
+      expectCourtEmail(judge2.name, judge2.email)
+      expectCourtEmail(judge3.name, judge3.email)
       expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
         expect.objectContaining({
-          to: [{ name: prosecutorName, address: prosecutorEmail }],
+          to: [{ name: prosecutor.name, address: prosecutor.email }],
           subject: `Ný greinargerð í máli ${courtCaseNumber} (${appealCaseNumber})`,
           html: `Greinargerð hefur borist vegna kæru í máli ${courtCaseNumber} (Landsréttarmál nr. ${appealCaseNumber}). Hægt er að nálgast gögn málsins á <a href="http://localhost:4200/krafa/yfirlit/${caseId}">yfirlitssíðu málsins í Réttarvörslugátt</a>.`,
         }),
@@ -172,13 +189,19 @@ describe('InternalNotificationController - Send appeal statement notifications',
     let then: Then
 
     beforeEach(async () => {
-      then = await givenWhenThen(UserRole.PROSECUTOR, uuid())
+      then = await givenWhenThen(
+        {
+          role: UserRole.PROSECUTOR,
+          institution: { type: InstitutionType.PROSECUTORS_OFFICE },
+        } as User,
+        uuid(),
+      )
     })
 
     it('should send notification to defender', () => {
       expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
         expect.objectContaining({
-          to: [{ name: defenderName, address: defenderEmail }],
+          to: [{ name: defender.name, address: defender.email }],
           subject: `Ný greinargerð í máli ${courtCaseNumber}`,
           html: `Greinargerð hefur borist vegna kæru í máli ${courtCaseNumber}. Hægt er að nálgast gögn málsins á <a href="http://localhost:4200/verjandi/krafa/${caseId}">yfirlitssíðu málsins í Réttarvörslugátt</a>.`,
         }),
@@ -191,13 +214,16 @@ describe('InternalNotificationController - Send appeal statement notifications',
     let then: Then
 
     beforeEach(async () => {
-      then = await givenWhenThen(UserRole.PROSECUTOR)
+      then = await givenWhenThen({
+        role: UserRole.PROSECUTOR,
+        institution: { type: InstitutionType.PROSECUTORS_OFFICE },
+      } as User)
     })
 
     it('should send notification to defender', () => {
       expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
         expect.objectContaining({
-          to: [{ name: defenderName, address: defenderEmail }],
+          to: [{ name: defender.name, address: defender.email }],
           subject: `Ný greinargerð í máli ${courtCaseNumber}`,
           html: `Greinargerð hefur borist vegna kæru í máli ${courtCaseNumber}. Hægt er að nálgast gögn málsins hjá Héraðsdómi Reykjavíkur ef þau hafa ekki þegar verið afhent.`,
         }),
@@ -210,13 +236,13 @@ describe('InternalNotificationController - Send appeal statement notifications',
     let then: Then
 
     beforeEach(async () => {
-      then = await givenWhenThen(UserRole.DEFENDER, uuid())
+      then = await givenWhenThen({ role: UserRole.DEFENDER } as User, uuid())
     })
 
     it('should send notification to prosecutor', () => {
       expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
         expect.objectContaining({
-          to: [{ name: prosecutorName, address: prosecutorEmail }],
+          to: [{ name: prosecutor.name, address: prosecutor.email }],
           subject: `Ný greinargerð í máli ${courtCaseNumber}`,
           html: `Greinargerð hefur borist vegna kæru í máli ${courtCaseNumber}. Hægt er að nálgast gögn málsins á <a href="http://localhost:4200/krafa/yfirlit/${caseId}">yfirlitssíðu málsins í Réttarvörslugátt</a>.`,
         }),

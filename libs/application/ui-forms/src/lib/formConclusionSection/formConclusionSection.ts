@@ -7,7 +7,7 @@ import {
   buildSection,
   coreMessages,
 } from '@island.is/application/core'
-import { Application, FormText, StaticText } from '@island.is/application/types'
+import { FormText, StaticText } from '@island.is/application/types'
 import { conclusion } from './messages'
 
 type Props = Partial<{
@@ -18,6 +18,7 @@ type Props = Partial<{
   secondButtonLink: StaticText
   secondButtonLabel: StaticText
   secondButtonMessage: StaticText
+  accordion?: boolean
   expandableHeader: FormText
   expandableIntro: FormText
   expandableDescription: FormText
@@ -27,7 +28,7 @@ type Props = Partial<{
   sectionTitle: StaticText
   bottomButtonLink: string
   bottomButtonLabel: StaticText
-  bottomButtonMessage: StaticText
+  bottomButtonMessage: FormText
 }>
 
 /**
@@ -38,6 +39,7 @@ type Props = Partial<{
  * @param  alertMessage The message inside the green alert box.
  * @param  alertType The type of alert, can be success, warning, error, info. * JUST ADDED *
  * @param  multiFieldTitle Title of the conclusion section. * JUST ADDED *
+ * @param  accordion If false, there will be no accordion.
  * @param  expandableHeader Header of the expandable description section.
  * @param  expandableIntro Intro text of the expandable description section.
  * @param  expandableDescription Markdown code for the expandable description section, most applications use bulletpoints.
@@ -54,6 +56,7 @@ export const buildFormConclusionSection = ({
   alertMessage = conclusion.alertMessageField.message,
   alertType = 'success',
   multiFieldTitle = conclusion.information.formTitle,
+  accordion = true,
   expandableHeader = conclusion.expandableDescriptionField.title,
   expandableIntro = conclusion.expandableDescriptionField.introText,
   expandableDescription = conclusion.expandableDescriptionField.description,
@@ -64,8 +67,20 @@ export const buildFormConclusionSection = ({
   bottomButtonLink = '/minarsidur/umsoknir',
   bottomButtonLabel = coreMessages.openServicePortalButtonTitle,
   bottomButtonMessage = coreMessages.openServicePortalMessageText,
-}: Props) =>
-  buildSection({
+}: Props) => {
+  const expandableDescriptionField = accordion
+    ? [
+        buildExpandableDescriptionField({
+          id: 'uiForms.conclusionExpandableDescription',
+          title: expandableHeader,
+          introText: expandableIntro,
+          description: expandableDescription,
+          startExpanded: true,
+        }),
+      ]
+    : []
+
+  return buildSection({
     id: 'uiForms.conclusionSection',
     title: sectionTitle,
     children: [
@@ -88,13 +103,7 @@ export const buildFormConclusionSection = ({
             alertType: alertType,
             message: alertMessage,
           }),
-          buildExpandableDescriptionField({
-            id: 'uiForms.conclusionExpandableDescription',
-            title: expandableHeader,
-            introText: expandableIntro,
-            description: expandableDescription,
-            startExpanded: true,
-          }),
+          ...expandableDescriptionField,
           buildMessageWithLinkButtonField({
             id: 'uiForms.conclusionBottomLink',
             title: '',
@@ -107,3 +116,4 @@ export const buildFormConclusionSection = ({
       }),
     ],
   })
+}

@@ -92,8 +92,8 @@ export const Component: ScreenType<ComponentProps> = ({
 
 Component.getProps = async (ctx) => {
   const [parentProps, genericListItemProps] = await Promise.all([
-    SubPageLayout.getProps?.(ctx),
-    GenericListItemPage.getProps?.(ctx),
+    SubPageLayout.getProps(ctx),
+    GenericListItemPage.getProps(ctx),
   ])
 
   if (!parentProps) {

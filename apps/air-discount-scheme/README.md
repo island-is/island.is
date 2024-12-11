@@ -21,7 +21,7 @@ There are certain precondition to be eligible for a discount. They are:
 The API is used by airlines to verify the discount code validity and get basic
 booking info about the user.
 
-The airlines that have access to this api are `Icelandair`, `Ernir` and
+The airlines that have access to this api are `Icelandair`, `Ernir`, `Myflug` and
 `Norlandair`. Historically some flights were booked for `Norlandair` through
 `Icelandair`, those flights are marked with the `Icelandair` airline but have a
 cooperation field with `Norlandair`.

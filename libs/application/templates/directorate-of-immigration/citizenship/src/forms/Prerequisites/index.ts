@@ -24,9 +24,10 @@ import {
   NationalRegistrySpouseDetailsApi,
   ResidenceInIcelandLastChangeDateApi,
   UserProfileApi,
-  UtlendingastofnunPaymentCatalogApi,
   TravelDocumentTypesApi,
   ApplicantInformationApi,
+  MockableUtlendingastofnunPaymentCatalogApi,
+  UtlendingastofnunPaymentCatalogApi,
 } from '../../dataProviders'
 
 export const Prerequisites: Form = buildForm({
@@ -108,6 +109,10 @@ export const Prerequisites: Form = buildForm({
             }),
             buildDataProviderItem({
               provider: UtlendingastofnunPaymentCatalogApi,
+              title: '',
+            }),
+            buildDataProviderItem({
+              provider: MockableUtlendingastofnunPaymentCatalogApi,
               title: '',
             }),
             buildDataProviderItem({

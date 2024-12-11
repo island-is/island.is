@@ -59,8 +59,7 @@ export const externalData = {
     },
     parentBIntroText: {
       id: 'id.application:externalData.preInformation.parentBIntroText#markdown',
-      defaultMessage:
-        'Í þessu ferli samþykkir þú sem forsjáraðili umsókn **{guardianName}** um vegabréf fyrir **{childsName}**. Þegar þessi umsókn hefur verið samþykkt þarf viðkomandi að mæta í myndatöku hjá næsta sýslumanni til þess að vegabréfið geti farið í framleiðslu. Þegar vegabréfið er tilbúið verður hægt að sækja það hjá því sýslumannsembætti sem tilgreint var í umsóknarferlinu. Þetta ferli vistast sjálfkrafa á Mínar síður á Ísland.is. Þar getur þú einnig fylgst með stöðu umsóknar eftir að öll gögn hafa verið send inn.',
+      defaultMessage: `Í þessu ferli samþykkir þú sem forsjáraðili umsókn **{guardianName}** um vegabréf fyrir **{childName}**. Þegar þessi umsókn hefur verið samþykkt þarf viðkomandi að mæta í myndatöku hjá næsta sýslumanni til þess að vegabréfið geti farið í framleiðslu. Þegar vegabréfið er tilbúið verður hægt að sækja það hjá því sýslumannsembætti sem tilgreint var í umsóknarferlinu. Þetta ferli vistast sjálfkrafa á Mínar síður á Ísland.is. Þar getur þú einnig fylgst með stöðu umsóknar eftir að öll gögn hafa verið send inn.`,
       description: 'parent B preInformation description',
     },
   }),

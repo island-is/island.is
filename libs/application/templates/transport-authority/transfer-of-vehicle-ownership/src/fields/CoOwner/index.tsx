@@ -14,7 +14,6 @@ import { InputController } from '@island.is/shared/form-fields'
 import { FC, useEffect } from 'react'
 import { GET_VEHICLE_INFORMATION } from '../../graphql/queries'
 import { information } from '../../lib/messages'
-import { VehiclesCurrentVehicle } from '../../shared'
 import { getSelectedVehicle } from '../../utils'
 
 export const CoOwner: FC<React.PropsWithChildren<FieldBaseProps>> = (props) => {
@@ -26,7 +25,7 @@ export const CoOwner: FC<React.PropsWithChildren<FieldBaseProps>> = (props) => {
   const vehicle = getSelectedVehicle(
     application.externalData,
     application.answers,
-  ) as VehiclesCurrentVehicle
+  )
 
   const { data, loading, error } = useQuery(
     gql`
@@ -35,7 +34,7 @@ export const CoOwner: FC<React.PropsWithChildren<FieldBaseProps>> = (props) => {
     {
       variables: {
         input: {
-          permno: vehicle.permno,
+          permno: vehicle?.permno,
           regno: '',
           vin: '',
         },
@@ -45,7 +44,7 @@ export const CoOwner: FC<React.PropsWithChildren<FieldBaseProps>> = (props) => {
 
   useEffect(() => {
     setFieldLoadingState?.(loading || !!error)
-  }, [loading, error])
+  }, [loading, error, setFieldLoadingState])
 
   return !loading && !error ? (
     data?.vehiclesDetail?.coOwners &&

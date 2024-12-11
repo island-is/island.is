@@ -1,6 +1,10 @@
 import { defineTemplateApi } from '../../TemplateApi'
 
-export const IdentityApi = defineTemplateApi({
+export interface IdentityParameters {
+  includeActorInfo?: boolean
+}
+
+export const IdentityApi = defineTemplateApi<IdentityParameters>({
   action: 'identity',
   namespace: 'Identity',
 })

@@ -24,7 +24,11 @@ export interface WatsonChatPanelProps {
   carbonTheme?: string
 
   // What key in the 'ChatPanels' UI Configuration in Contentful stores the language pack for this chat bot
-  namespaceKey?: 'default' | 'ukrainian-citizens' | 'skatturinn'
+  namespaceKey?:
+    | 'default'
+    | 'ukrainian-citizens'
+    | 'skatturinn'
+    | 'samgongustofa'
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   onLoad?: (instance: any) => void
@@ -48,6 +52,9 @@ export type WatsonIntegration =
 
   // Útlendingastofnun
   | '89a03e83-5c73-4642-b5ba-cd3771ceca54'
+
+  // Útlendingastofnun - english
+  | '9e320784-ad44-4da9-9eb3-f305057a196a'
 
   // Sjúkratryggingar
   | 'e625e707-c9ce-4048-802c-c12b905c28be'
@@ -78,4 +85,6 @@ export type WatsonIntegration =
 
 export type WatsonServiceInstance =
   // Askur
-  'bc3d8312-d862-4750-b8bf-529db282050a'
+  | 'bc3d8312-d862-4750-b8bf-529db282050a'
+  // Útlendingastofnun - english
+  | '2529638b-503c-4374-955c-0310139ec177'

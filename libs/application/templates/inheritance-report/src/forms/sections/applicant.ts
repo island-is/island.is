@@ -10,6 +10,7 @@ import { format as formatNationalId } from 'kennitala'
 import { removeCountryCode } from '@island.is/application/ui-components'
 import { m } from '../../lib/messages'
 import { RelationEnum } from '../../types'
+import { PREPAID_INHERITANCE } from '../../lib/constants'
 
 export const applicant = buildSection({
   id: 'applicantsInformation',
@@ -18,7 +19,10 @@ export const applicant = buildSection({
     buildMultiField({
       id: 'applicant',
       title: m.applicantsInfo,
-      description: m.applicantsInfoSubtitle,
+      description: ({ answers }) =>
+        answers.applicationFor === PREPAID_INHERITANCE
+          ? m.applicantsInfoPrePaidSubtitle
+          : m.applicantsInfoSubtitle,
       children: [
         buildTextField({
           id: 'applicant.nationalId',
@@ -54,7 +58,7 @@ export const applicant = buildSection({
           title: m.phone,
           width: 'half',
           required: true,
-          disableDropdown: false,
+          enableCountrySelector: true,
           defaultValue: (application: Application) => {
             const phone =
               (

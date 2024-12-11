@@ -2,6 +2,7 @@ import { IsEnum } from 'class-validator'
 
 import { ApiProperty } from '@nestjs/swagger'
 
+import { getIntro } from '@island.is/judicial-system/consts'
 import {
   formatDate,
   normalizeAndFormatNationalId,
@@ -10,6 +11,7 @@ import {
   DateType,
   DefenderChoice,
   isSuccessfulServiceStatus,
+  SubpoenaType,
 } from '@island.is/judicial-system/types'
 
 import { InternalCaseResponse } from './internal/internalCase.response'
@@ -51,6 +53,12 @@ class AlertMessage {
 class SubpoenaData {
   @ApiProperty({ type: () => String })
   title!: string
+
+  @ApiProperty({ type: String })
+  subpoenaInfoText!: string
+
+  @ApiProperty({ type: String })
+  subpoenaNotificationDeadline!: string
 
   @ApiProperty({ type: String })
   subtitle?: string
@@ -95,9 +103,22 @@ export class SubpoenaResponse {
           defendant.nationalId,
         ),
     )
+    const subpoenaType = defendantInfo?.subpoenaType
 
-    const waivedRight = defendantInfo?.defenderChoice === DefenderChoice.WAIVE
-    const hasDefender = defendantInfo?.defenderName !== null
+    const intro = getIntro(defendantInfo?.gender, lang)
+    const formatedSubpoenaInfoText = `${intro.intro}${
+      subpoenaType
+        ? ` ${
+            subpoenaType === SubpoenaType.ABSENCE
+              ? intro.absenceIntro
+              : intro.arrestIntro
+          }`
+        : ''
+    }`
+
+    const waivedRight =
+      defendantInfo?.requestedDefenderChoice === DefenderChoice.WAIVE
+    const hasDefender = defendantInfo?.requestedDefenderNationalId !== null
     const subpoenas = defendantInfo?.subpoenas ?? []
     const hasBeenServed =
       subpoenas.length > 0 &&
@@ -118,11 +139,13 @@ export class SubpoenaResponse {
       caseId: internalCase.id,
       data: {
         title: t.subpoena,
+        subpoenaInfoText: formatedSubpoenaInfoText,
+        subpoenaNotificationDeadline: intro.deadline,
         subtitle: courtNameAndAddress,
         hasBeenServed: hasBeenServed,
         hasChosenDefender: Boolean(
-          defendantInfo?.defenderChoice &&
-            defendantInfo.defenderChoice !== DefenderChoice.DELAY,
+          defendantInfo?.requestedDefenderChoice &&
+            defendantInfo.requestedDefenderChoice !== DefenderChoice.DELAY,
         ),
         defaultDefenderChoice: DefenderChoice.DELAY,
         alerts: [
@@ -160,12 +183,12 @@ export class SubpoenaResponse {
         ],
       },
 
-      defenderInfo: defendantInfo?.defenderChoice
+      defenderInfo: defendantInfo?.requestedDefenderChoice
         ? {
-            defenderChoice: defendantInfo?.defenderChoice,
+            defenderChoice: defendantInfo?.requestedDefenderChoice,
             defenderName:
               !waivedRight && hasDefender
-                ? defendantInfo?.defenderName
+                ? defendantInfo?.requestedDefenderName
                 : undefined,
             canEdit: canChangeDefenseChoice,
             courtContactInfo: canChangeDefenseChoice

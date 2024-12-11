@@ -23,10 +23,11 @@ import { HealthInsuranceService } from './health-insurance/health-insurance.serv
 import { InnaService } from './education/inna.service'
 import { InnaModule } from './education/inna.module'
 
+export const dynamicModules = [UserProfileModule]
+
 export const modules = [
   NationalRegistryModule,
   PaymentApiModule,
-  UserProfileModule,
   IdentityModule,
   DrivingLicenseModule,
   ApplicationModule,

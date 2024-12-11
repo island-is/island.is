@@ -2,7 +2,7 @@ import { Inject, Injectable } from '@nestjs/common'
 import startOfDay from 'date-fns/startOfDay'
 
 import { AuthHeaderMiddleware } from '@island.is/auth-nest-tools'
-import { createEnhancedFetch } from '@island.is/clients/middlewares'
+import { createEnhancedFetch, handle404 } from '@island.is/clients/middlewares'
 
 import {
   Configuration,
@@ -107,7 +107,7 @@ export class SyslumennService {
     }
 
     const { audkenni, accessToken } = await api.innskraningPost({
-      notandi: config,
+      apiNotandi: config,
     })
     if (audkenni && accessToken) {
       return {
@@ -255,7 +255,7 @@ export class SyslumennService {
     const { id, api } = await this.createApi()
     const explanation = 'Rafrænt undirritað vottorð'
     return await api.innsiglaSkjolPost({
-      skeyti: {
+      innsiglaSkjolSkeyti: {
         audkenni: id,
         skyring: explanation,
         skjol: documents,
@@ -267,7 +267,7 @@ export class SyslumennService {
     const { id, api } = await this.createApi()
     const explanation = 'Rafrænt undirritað vottorð'
     return await api.innsiglunPost({
-      skeyti: {
+      innsiglaSkeyti: {
         audkenni: id,
         skyring: explanation,
         skjal: document,
@@ -365,10 +365,10 @@ export class SyslumennService {
     const { id, api } = await this.createApi()
     const response = await api
       .vedbokavottordRegluverkiPost({
-        skilabod: {
+        vedbandayfirlitSkeyti: {
           audkenni: id,
           fastanumer: cleanPropertyNumber(assetId),
-          tegundAndlags: assetType as number,
+          tegundAndlags: assetType as unknown as VedbondTegundAndlags,
         },
       })
       .catch((e) => {
@@ -411,7 +411,7 @@ export class SyslumennService {
     const { id, api } = await this.createApi()
 
     const res = await api.vedbokarvottord2Post({
-      skilabod: {
+      vedbandayfirlitMargirSkeyti: {
         audkenni: id,
         eignir: properties.map(({ propertyNumber, propertyType }) => {
           return {
@@ -432,8 +432,8 @@ export class SyslumennService {
         const contentBase64 = resultItem.vedbandayfirlitPDFSkra || ''
         return {
           contentBase64: contentBase64,
-          apiMessage: resultItem.skilabod,
-          propertyNumber: resultItem.fastanumer,
+          apiMessage: resultItem.skilabod ?? undefined,
+          propertyNumber: resultItem.fastanumer ?? undefined,
         }
       }) ?? []
 
@@ -465,7 +465,7 @@ export class SyslumennService {
 
     const res = await api
       .vedbokavottordRegluverkiPost({
-        skilabod: {
+        vedbandayfirlitSkeyti: {
           audkenni: id,
           fastanumer: cleanPropertyNumber(propertyNumber),
           tegundAndlags: VedbondTegundAndlags.NUMBER_0, // 0 = Real estate
@@ -487,7 +487,7 @@ export class SyslumennService {
       unitsOfUse: {
         unitsOfUse: [
           {
-            explanation: fasteign?.notkun,
+            explanation: fasteign?.notkun ?? undefined,
           },
         ],
       },
@@ -502,7 +502,7 @@ export class SyslumennService {
 
     const res = await api
       .vedbokavottordRegluverkiPost({
-        skilabod: {
+        vedbandayfirlitSkeyti: {
           audkenni: id,
           fastanumer:
             propertyType === '0'
@@ -516,18 +516,14 @@ export class SyslumennService {
               : VedbondTegundAndlags.NUMBER_0, // 0 = Real estate
         },
       })
-      .catch(() => {
-        throw new Error(
-          `Failed to get all properties for property number: ${propertyNumber}`,
-        )
-      })
+      .catch(handle404)
 
     return {
-      propertyNumber: res.fastanum,
-      propertyType: res.tegundEignar,
-      realEstate: res.fasteign ? res.fasteign.map(mapRealEstateResponse) : [],
-      vehicle: res.okutaeki ? mapVehicleResponse(res.okutaeki) : undefined,
-      ship: res.skip ? mapShipResponse(res.skip) : undefined,
+      propertyNumber: res?.fastanum ?? undefined,
+      propertyType: res?.tegundEignar ?? undefined,
+      realEstate: res?.fasteign ? res.fasteign.map(mapRealEstateResponse) : [],
+      vehicle: res?.okutaeki ? mapVehicleResponse(res.okutaeki) : undefined,
+      ship: res?.skip ? mapShipResponse(res.skip) : undefined,
     }
   }
 
@@ -562,7 +558,7 @@ export class SyslumennService {
   async getRegistryPerson(nationalId: string): Promise<RegistryPerson> {
     const { id, api } = await this.createApi()
     const res = await api.leitaAdKennitoluIThjodskraPost({
-      skeyti: {
+      thjodskraSkeyti: {
         audkenni: id,
         kennitala: nationalId,
       },
@@ -603,7 +599,7 @@ export class SyslumennService {
   ): Promise<unknown> {
     const { id, api } = await this.createApi()
     const res = await api.skiptaUmSkraningaradilaDanarbusPost({
-      payload: {
+      skiptaUmSkraningaradili: {
         audkenni: id,
         kennitalaFra: currentRegistrantNationalId,
         kennitalaTil: newRegistrantNationalId,

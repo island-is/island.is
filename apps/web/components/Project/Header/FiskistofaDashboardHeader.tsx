@@ -13,7 +13,7 @@ export const FiskistofaDashboardHeader: React.FC<
   React.PropsWithChildren<FiskistofaDashboardHeaderProps>
 > = ({ projectPage }) => {
   const namespace = useMemo(() => {
-    return JSON.parse(projectPage?.namespace?.fields ?? '{}')
+    return JSON.parse(projectPage?.namespace?.fields || '{}')
   }, [projectPage?.namespace?.fields])
 
   const n = useNamespace(namespace)

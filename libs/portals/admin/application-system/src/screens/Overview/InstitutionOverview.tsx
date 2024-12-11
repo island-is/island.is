@@ -19,7 +19,7 @@ import { ApplicationFilters, MultiChoiceFilter } from '../../types/filters'
 import { Organization } from '@island.is/shared/types'
 import { institutionMapper } from '@island.is/application/types'
 import { AdminApplication } from '../../types/adminApplication'
-import { useUserInfo } from '@island.is/auth/react'
+import { useUserInfo } from '@island.is/react-spa/bff'
 import endOfDay from 'date-fns/endOfDay'
 
 const defaultFilters: ApplicationFilters = {

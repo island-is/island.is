@@ -2,8 +2,8 @@ import { test, BrowserContext, expect } from '@playwright/test'
 import { icelandicAndNoPopupUrl, urls } from '../../../../support/urls'
 import { session } from '../../../../support/session'
 import { label } from '../../../../support/i18n'
-import { messages } from '@island.is/service-portal/assets/messages'
-import { m } from '@island.is/service-portal/core/messages'
+import { messages } from '@island.is/portals/my-pages/assets/messages'
+import { m } from '@island.is/portals/my-pages/core/messages'
 import { disableI18n } from '../../../../support/disablers'
 
 const homeUrl = `${urls.islandisBaseUrl}/minarsidur`

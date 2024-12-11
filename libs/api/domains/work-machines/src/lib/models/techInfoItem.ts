@@ -9,6 +9,9 @@ export class TechInfoItem {
   label?: string | null
 
   @Field(() => String, { nullable: true })
+  labelEn?: string | null
+
+  @Field(() => String, { nullable: true })
   type?: string | null
 
   @Field(() => Boolean, { nullable: true })
@@ -17,6 +20,15 @@ export class TechInfoItem {
   @Field(() => String, { nullable: true })
   maxLength?: string | null
 
-  @Field(() => [String], { nullable: true })
-  values?: Array<string> | null
+  @Field(() => [TechInfoListItem], { nullable: true })
+  values?: Array<TechInfoListItem> | null
+}
+
+@ObjectType('WorkMachinesTechInfoListItem')
+export class TechInfoListItem {
+  @Field(() => String, { nullable: true })
+  name?: string | null
+
+  @Field(() => String, { nullable: true })
+  nameEn?: string | null
 }

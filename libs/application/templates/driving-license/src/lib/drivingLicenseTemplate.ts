@@ -22,6 +22,7 @@ import {
   InstitutionNationalIds,
   Application,
   ApplicationConfigurations,
+  BasicChargeItem,
 } from '@island.is/application/types'
 import { FeatureFlagClient } from '@island.is/feature-flags'
 import {
@@ -33,7 +34,6 @@ import {
   B_FULL,
   B_FULL_RENEWAL_65,
   ApiActions,
-  Pickup,
   CHARGE_ITEM_CODES,
   DELIVERY_FEE,
 } from './constants'
@@ -44,17 +44,22 @@ import {
 } from './getApplicationFeatureFlags'
 import { m } from './messages'
 import { hasCompletedPrerequisitesStep } from './utils'
-import { GlassesCheckApi, SyslumadurPaymentCatalogApi } from '../dataProviders'
+import {
+  GlassesCheckApi,
+  MockableSyslumadurPaymentCatalogApi,
+  SyslumadurPaymentCatalogApi,
+} from '../dataProviders'
 import { buildPaymentState } from '@island.is/application/utils'
+import { Pickup } from './types'
 
-const getCodes = (application: Application) => {
+const getCodes = (application: Application): BasicChargeItem[] => {
   const applicationFor = getValueViaPath<
-    'B-full' | 'B-temp' | 'BE' | 'B-full-renewal-65'
+    'B-full' | 'B-temp' | 'BE' | 'B-full-renewal-65' | 'B-advanced'
   >(application.answers, 'applicationFor', 'B-full')
 
   const pickup = getValueViaPath<Pickup>(application.answers, 'pickup')
 
-  const codes: string[] = []
+  const codes: BasicChargeItem[] = []
 
   const DEFAULT_ITEM_CODE = CHARGE_ITEM_CODES[B_FULL]
 
@@ -65,10 +70,10 @@ const getCodes = (application: Application) => {
         : DEFAULT_ITEM_CODE
       : DEFAULT_ITEM_CODE
 
-  codes.push(targetCode)
+  codes.push({ code: targetCode })
 
   if (pickup === Pickup.POST) {
-    codes.push(CHARGE_ITEM_CODES[DELIVERY_FEE])
+    codes.push({ code: CHARGE_ITEM_CODES[DELIVERY_FEE] })
   }
 
   if (!targetCode) {
@@ -138,6 +143,8 @@ const template: ApplicationTemplate<
                     featureFlags[DrivingLicenseFeatureFlags.ALLOW_BE_LICENSE],
                   allow65Renewal:
                     featureFlags[DrivingLicenseFeatureFlags.ALLOW_65_RENEWAL],
+                  allowAdvanced:
+                    featureFlags[DrivingLicenseFeatureFlags.ALLOW_ADVANCED],
                 })
               },
               write: 'all',
@@ -147,6 +154,7 @@ const template: ApplicationTemplate<
                 TeachersApi,
                 UserProfileApi,
                 SyslumadurPaymentCatalogApi,
+                MockableSyslumadurPaymentCatalogApi,
                 GlassesCheckApi,
                 JurisdictionApi,
                 CurrentLicenseApi.configure({
@@ -224,7 +232,7 @@ const template: ApplicationTemplate<
       },
       [States.PAYMENT]: buildPaymentState({
         organizationId: InstitutionNationalIds.SYSLUMENN,
-        chargeItemCodes: getCodes,
+        chargeItems: getCodes,
       }),
       [States.DONE]: {
         meta: {

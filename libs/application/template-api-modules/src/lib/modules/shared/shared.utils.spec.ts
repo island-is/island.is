@@ -1,6 +1,37 @@
-import { BaseTemplateAPIModuleConfig } from '../../types'
+import { SharedModuleConfig } from '../../types'
 import { ConfigService } from '@nestjs/config'
 import * as utils from './shared.utils'
+
+const mockConfig = {
+  SharedModuleConfig: {
+    clientLocationOrigin: 'http://localhost:4242',
+    baseApiUrl: 'http://localhost:4444',
+    attachmentBucket: 'attachmentBucket',
+    templateApi: {
+      clientLocationOrigin: 'http://localhost:4242/umsoknir',
+      email: {
+        sender: 'Devland.is',
+        address: 'development@island.is',
+      },
+      jwtSecret: 'supersecret',
+      xRoadBasePathWithEnv: '',
+      baseApiUrl: 'http://localhost:4444',
+      presignBucket: '',
+      attachmentBucket: 'island-is-dev-storage-application-system',
+      generalPetition: {
+        endorsementApiBasePath: 'http://localhost:4246',
+      },
+      userProfile: {
+        serviceBasePath: 'http://localhost:3366',
+      },
+      islykill: {
+        cert: '',
+        passphrase: '',
+        basePath: '',
+      },
+    },
+  },
+}
 
 describe('objectToXML', () => {
   it('should generate an acceptable xml from an object', () => {
@@ -59,28 +90,16 @@ describe('objectToXML', () => {
   })
 })
 
-describe('getConfigValue', () => {
-  it('should return the correct config value', () => {
-    const mockClass = {
-      get: jest.fn(),
-    } as unknown as ConfigService<BaseTemplateAPIModuleConfig>
-    jest.spyOn(mockClass, 'get').mockImplementation(() => 'x')
+describe('shared utils', () => {
+  let configService: ConfigService<SharedModuleConfig>
 
-    const result = utils.getConfigValue(mockClass, 'attachmentBucket')
-
-    expect(result).toEqual('x')
+  beforeEach(() => {
+    configService = new ConfigService(mockConfig)
   })
 
-  it('should throw when a value for a key doesnt exist', () => {
-    const mockClass = {
-      get: jest.fn(),
-    } as unknown as ConfigService<BaseTemplateAPIModuleConfig>
-    jest.spyOn(mockClass, 'get').mockImplementation(() => undefined)
+  it('should get the client location origin from the config', () => {
+    const result = utils.getConfigValue(configService, 'clientLocationOrigin')
 
-    const act = () => utils.getConfigValue(mockClass, 'attachmentBucket')
-
-    expect(act).toThrowError(
-      'TemplateAPIModules.sharedService: Missing config value for attachmentBucket',
-    )
+    expect(result).toEqual('http://localhost:4242')
   })
 })

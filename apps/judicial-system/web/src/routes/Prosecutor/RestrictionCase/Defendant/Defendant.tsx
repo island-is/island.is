@@ -16,6 +16,7 @@ import {
   FormFooter,
   PageHeader,
   PageLayout,
+  PageTitle,
 } from '@island.is/judicial-system-web/src/components'
 import {
   CaseOrigin,
@@ -106,7 +107,7 @@ export const Defendant = () => {
             gender: workingCase.defendants[0].gender,
             name: workingCase.defendants[0].name,
             address: workingCase.defendants[0].address,
-            nationalId: workingCase.defendants[0].nationalId,
+            nationalId: workingCase.defendants[0].nationalId || null,
             noNationalId: workingCase.defendants[0].noNationalId,
             citizenship: workingCase.defendants[0].citizenship,
           })
@@ -137,11 +138,7 @@ export const Defendant = () => {
       {!institutionLoading && (
         <>
           <FormContentContainer>
-            <Box marginBottom={7}>
-              <Text as="h1" variant="h1">
-                {formatMessage(m.heading)}
-              </Text>
-            </Box>
+            <PageTitle>{formatMessage(m.heading)}</PageTitle>
             <Box component="section" marginBottom={5}>
               <PoliceCaseNumbers
                 workingCase={workingCase}

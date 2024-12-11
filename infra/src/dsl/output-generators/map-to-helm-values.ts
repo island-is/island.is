@@ -75,7 +75,6 @@ const serializeService: SerializeMethod<HelmService> = async (
       maxUnavailable: 1,
     },
     healthCheck: {
-      port: serviceDef.healthPort,
       liveness: {
         path: serviceDef.liveness.path,
         initialDelaySeconds: serviceDef.liveness.initialDelaySeconds,
@@ -91,6 +90,10 @@ const serializeService: SerializeMethod<HelmService> = async (
   }
   if (!hackListForNonExistentTracer.includes(serviceDef.name)) {
     result.env.NODE_OPTIONS += ' -r dd-trace/init'
+  }
+  // add healthCheck port if set in the service
+  if (serviceDef.healthPort) {
+    result.healthCheck.port = serviceDef.healthPort
   }
   // command and args
   if (serviceDef.cmds) {
@@ -413,7 +416,6 @@ function serializeContainerRuns(
     let result: ContainerRunHelm = {
       command: [c.command],
       args: c.args,
-      image: c.image,
       resources: {
         limits: {
           memory: '256Mi',
@@ -424,6 +426,9 @@ function serializeContainerRuns(
           cpu: '50m',
         },
       },
+    }
+    if (c.image) {
+      result.image = c.image
     }
     if (c.resources) {
       result.resources = c.resources
@@ -506,6 +511,7 @@ function getFeatureDeploymentNamespace(env: EnvironmentConfig) {
 
 export const HelmOutput: OutputFormat<HelmService> = {
   featureDeployment(s: ServiceDefinition, env): void {
+    // Set feature-deployment prefix for URLs
     Object.entries(s.ingress).forEach(([name, ingress]) => {
       if (!Array.isArray(ingress.host.dev)) {
         ingress.host.dev = [ingress.host.dev]

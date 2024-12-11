@@ -32,6 +32,8 @@ import { ManualChapterItemSyncService } from './importers/manualChapterItem.serv
 import { CustomPageSyncService } from './importers/customPage.service'
 import { GenericListItemSyncService } from './importers/genericListItem.service'
 import { TeamListSyncService } from './importers/teamList.service'
+import { MappingService } from './mapping.service'
+import { GrantsSyncService } from './importers/grants.service'
 
 @Module({
   imports: [
@@ -53,6 +55,7 @@ import { TeamListSyncService } from './importers/teamList.service'
     NewsSyncService,
     AdgerdirPageSyncService,
     MenuSyncService,
+    GrantsSyncService,
     GroupedMenuSyncService,
     OrganizationPageSyncService,
     OrganizationSubpageSyncService,
@@ -69,6 +72,7 @@ import { TeamListSyncService } from './importers/teamList.service'
     CustomPageSyncService,
     GenericListItemSyncService,
     TeamListSyncService,
+    MappingService,
   ],
   exports: [CmsSyncService],
 })

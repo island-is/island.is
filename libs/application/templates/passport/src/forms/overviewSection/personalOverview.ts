@@ -8,7 +8,6 @@ import { Application } from '@island.is/application/types'
 import { formatPhoneNumber } from '@island.is/application/ui-components'
 import format from 'date-fns/format'
 import {
-  DistrictCommissionerAgencies,
   Passport,
   Service,
   Services,
@@ -25,9 +24,7 @@ export const personalOverview = buildMultiField({
     buildDividerField({}),
     buildDescriptionField({
       id: 'overviewPI.infoTitle',
-      title: m.infoTitle,
-      titleVariant: 'h3',
-      description: '',
+      title: '',
       space: 'gutter',
       marginBottom: 'gutter',
     }),
@@ -54,7 +51,6 @@ export const personalOverview = buildMultiField({
     buildDescriptionField({
       id: 'overview.space1',
       title: '',
-      description: '',
       space: 'gutter',
     }),
     buildKeyValueField({
@@ -83,7 +79,6 @@ export const personalOverview = buildMultiField({
     buildDescriptionField({
       id: 'overview.space2',
       title: '',
-      description: '',
       space: 'gutter',
     }),
     buildKeyValueField({
@@ -98,21 +93,6 @@ export const personalOverview = buildMultiField({
           : m.noPassport.defaultMessage
       },
     }),
-    buildDescriptionField({
-      id: 'overview.space3',
-      title: '',
-      description: '',
-      space: 'gutter',
-    }),
-    buildDividerField({}),
-    buildDescriptionField({
-      id: 'overview.dropLocationTitle',
-      title: m.serviceTypeTitle,
-      titleVariant: 'h3',
-      description: '',
-      space: 'gutter',
-      marginBottom: 'gutter',
-    }),
     buildKeyValueField({
       label: m.serviceTypeTitle,
       width: 'half',
@@ -120,11 +100,6 @@ export const personalOverview = buildMultiField({
         (application.answers.service as Service).type === Services.REGULAR
           ? m.serviceTypeRegular
           : m.serviceTypeExpress,
-    }),
-    buildKeyValueField({
-      label: m.dropLocation,
-      width: 'half',
-      value: 'Þjóðskrá',
     }),
   ],
 })

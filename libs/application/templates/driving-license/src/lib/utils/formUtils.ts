@@ -62,8 +62,8 @@ export const chooseDistrictCommissionerDescription = ({
     ) === B_TEMP
 
   return applicationForTemp
-    ? m.chooseDistrictCommisionerForTempLicense.defaultMessage
-    : m.chooseDistrictCommisionerForFullLicense.defaultMessage
+    ? m.chooseDistrictCommissionerForTempLicense
+    : m.chooseDistrictCommissionerForFullLicense
 }
 
 export const hasCompletedPrerequisitesStep =

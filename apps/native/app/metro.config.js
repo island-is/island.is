@@ -1,18 +1,8 @@
-const path = require('path')
+const { withNxMetro } = require('@nx/react-native')
 const { getDefaultConfig, mergeConfig } = require('@react-native/metro-config')
 
-const libs = ['application/types']
-
-const extraNodeModules = libs.reduce((acc, lib) => {
-  acc[`@island.is/${lib}`] = path.resolve(__dirname, `../../../libs/${lib}/src`)
-  return acc
-}, {})
-
-const watchFolders = [
-  ...libs.map((lib) => path.resolve(__dirname, `../../../libs/${lib}/src`)),
-]
-
-const nodeModulesPaths = [path.resolve(path.join(__dirname, './node_modules'))]
+const defaultConfig = getDefaultConfig(__dirname)
+const { assetExts, sourceExts } = defaultConfig.resolver
 
 /**
  * Metro configuration
@@ -20,15 +10,22 @@ const nodeModulesPaths = [path.resolve(path.join(__dirname, './node_modules'))]
  *
  * @type {import('metro-config').MetroConfig}
  */
-const config = {
-  resolver: {
-    extraNodeModules: {
-      '@ui': path.resolve(__dirname + '/src/ui'),
-      ...extraNodeModules,
-    },
-    nodeModulesPaths,
+const customConfig = {
+  transformer: {
+    babelTransformerPath: require.resolve('react-native-svg-transformer'),
   },
-  watchFolders,
+  resolver: {
+    assetExts: assetExts.filter((ext) => ext !== 'svg'),
+    sourceExts: [...sourceExts, 'cjs', 'mjs', 'svg'],
+  },
 }
 
-module.exports = mergeConfig(getDefaultConfig(__dirname), config)
+module.exports = withNxMetro(mergeConfig(defaultConfig, customConfig), {
+  // Change this to true to see debugging info.
+  // Useful if you have issues resolving modules
+  debug: false,
+  // all the file extensions used for imports other than 'ts', 'tsx', 'js', 'jsx', 'json'
+  extensions: [],
+  // Specify folders to watch, in addition to Nx defaults (workspace libraries and node_modules)
+  watchFolders: [],
+})

@@ -16,7 +16,7 @@ export const prePaidApplicant = buildSection({
     buildMultiField({
       id: 'prePaidApplicant',
       title: m.applicantsInfo,
-      description: m.applicantsInfoSubtitle,
+      description: m.applicantsPrePaidInfoSubtitle,
       children: [
         buildNationalIdWithNameField({
           id: 'prePaidApplicant',
@@ -29,7 +29,7 @@ export const prePaidApplicant = buildSection({
           title: m.phone,
           width: 'half',
           required: true,
-          disableDropdown: false,
+          enableCountrySelector: true,
         }),
         buildTextField({
           id: 'prePaidApplicant.email',

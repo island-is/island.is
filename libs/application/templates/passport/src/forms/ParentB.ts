@@ -6,6 +6,7 @@ import {
   buildMultiField,
   buildSection,
   buildSubmitField,
+  getValueViaPath,
 } from '@island.is/application/core'
 import {
   Application,
@@ -14,12 +15,10 @@ import {
   FormModes,
   PassportsApi,
 } from '@island.is/application/types'
-import { ChildsPersonalInfo } from '../lib/constants'
 import { m } from '../lib/messages'
 import { childsOverview } from './overviewSection/childsOverview'
 import {
   SyslumadurPaymentCatalogApi,
-  DeliveryAddressApi,
   UserInfoApi,
   NationalRegistryUserParentB,
 } from '../dataProviders'
@@ -41,12 +40,14 @@ export const ParentB: Form = buildForm({
           description: (application: Application) => ({
             ...m.parentBIntroText,
             values: {
-              childsName: (
-                application.answers.childsPersonalInfo as ChildsPersonalInfo
-              )?.name,
-              guardianName: (
-                application.answers.childsPersonalInfo as ChildsPersonalInfo
-              )?.guardian1.name,
+              childsName: getValueViaPath(
+                application.answers,
+                'childsPersonalInfo.name',
+              ) as string,
+              guardianName: getValueViaPath(
+                application.answers,
+                'childsPersonalInfo.guardian1.name',
+              ) as string,
             },
           }),
           children: [
@@ -84,10 +85,6 @@ export const ParentB: Form = buildForm({
             }),
             buildDataProviderItem({
               provider: SyslumadurPaymentCatalogApi,
-              title: '',
-            }),
-            buildDataProviderItem({
-              provider: DeliveryAddressApi,
               title: '',
             }),
           ],

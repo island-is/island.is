@@ -15,12 +15,12 @@ export const serviceSetup = (services: {
     })
     .resources({
       limits: {
-        cpu: '200m',
-        memory: '256Mi',
+        cpu: '400m',
+        memory: '512Mi',
       },
       requests: {
-        cpu: '20m',
-        memory: '128Mi',
+        cpu: '40m',
+        memory: '256Mi',
       },
     })
     .env({

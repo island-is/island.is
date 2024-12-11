@@ -66,6 +66,7 @@ export class VehiclesBulkMileageResolver {
   ) {
     return this.bulkService.getBulkMileageRegistrationRequestOverview(
       user,
+      input.locale,
       input.guid,
     )
   }

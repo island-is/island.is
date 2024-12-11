@@ -1,7 +1,6 @@
 import {
   Body,
   Controller,
-  Get,
   Inject,
   Param,
   Patch,
@@ -27,13 +26,14 @@ import { DefendantExistsGuard } from '../defendant/guards/defendantExists.guard'
 import { Defendant } from '../defendant/models/defendant.model'
 import { DeliverDto } from './dto/deliver.dto'
 import { UpdateSubpoenaDto } from './dto/updateSubpoena.dto'
+import { PoliceSubpoenaExistsGuard } from './guards/policeSubpoenaExists.guard'
 import { CurrentSubpoena } from './guards/subpoena.decorator'
 import { SubpoenaExistsGuard } from './guards/subpoenaExists.guard'
 import { DeliverResponse } from './models/deliver.response'
 import { Subpoena } from './models/subpoena.model'
 import { SubpoenaService } from './subpoena.service'
 
-@Controller('api/internal/')
+@Controller('api/internal')
 @ApiTags('internal subpoenas')
 @UseGuards(TokenGuard)
 export class InternalSubpoenaController {
@@ -42,20 +42,9 @@ export class InternalSubpoenaController {
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
-  @UseGuards(SubpoenaExistsGuard)
-  @Get('subpoena/:subpoenaId')
-  async getSubpoena(
-    @Param('subpoenaId') subpoenaId: string,
-    @CurrentSubpoena() subpoena: Subpoena,
-  ): Promise<Subpoena | null> {
-    this.logger.debug(`Getting subpoena by subpoena id ${subpoenaId}`)
-
-    return subpoena
-  }
-
-  @UseGuards(SubpoenaExistsGuard)
+  @UseGuards(PoliceSubpoenaExistsGuard)
   @Patch('subpoena/:subpoenaId')
-  async updateSubpoena(
+  updateSubpoena(
     @Param('subpoenaId') subpoenaId: string,
     @CurrentSubpoena() subpoena: Subpoena,
     @Body() update: UpdateSubpoenaDto,
@@ -80,7 +69,7 @@ export class InternalSubpoenaController {
     type: DeliverResponse,
     description: 'Delivers a subpoena to police',
   })
-  async deliverSubpoenaToPolice(
+  deliverSubpoenaToPolice(
     @Param('caseId') caseId: string,
     @Param('defendantId') defendantId: string,
     @Param('subpoenaId') subpoenaId: string,
@@ -93,7 +82,7 @@ export class InternalSubpoenaController {
       `Delivering subpoena ${subpoenaId} to police for defendant ${defendantId} of case ${caseId}`,
     )
 
-    return await this.subpoenaService.deliverSubpoenaToPolice(
+    return this.subpoenaService.deliverSubpoenaToPolice(
       theCase,
       defendant,
       subpoena,

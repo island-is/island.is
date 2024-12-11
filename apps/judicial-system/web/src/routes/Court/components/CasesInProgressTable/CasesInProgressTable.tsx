@@ -11,7 +11,6 @@ import { AnimatePresence } from 'framer-motion'
 
 import { Box, toast } from '@island.is/island-ui/core'
 import { capitalize } from '@island.is/judicial-system/formatters'
-import { CaseIndictmentRulingDecision } from '@island.is/judicial-system/types'
 import { core, errors, tables } from '@island.is/judicial-system-web/messages'
 import {
   FormContext,
@@ -32,6 +31,7 @@ import Table, {
 } from '@island.is/judicial-system-web/src/components/Table/Table'
 import TableInfoContainer from '@island.is/judicial-system-web/src/components/Table/TableInfoContainer/TableInfoContainer'
 import {
+  CaseIndictmentRulingDecision,
   CaseListEntry,
   CaseState,
   CaseTransition,
@@ -74,7 +74,7 @@ const CasesInProgressTable: FC<CasesInProgressTableProps> = (props) => {
     }
 
     const updated = await updateCase(caseToCancelId, {
-      indictmentRulingDecision: CaseIndictmentRulingDecision.CANCELLATION,
+      indictmentRulingDecision: CaseIndictmentRulingDecision.WITHDRAWAL,
     })
 
     if (!updated) {
@@ -141,7 +141,15 @@ const CasesInProgressTable: FC<CasesInProgressTableProps> = (props) => {
                 {
                   cell: (row) => <DefendantInfo defendants={row.defendants} />,
                 },
-                { cell: (row) => <ColumnCaseType type={row.type} /> },
+                {
+                  cell: (row) => (
+                    <ColumnCaseType
+                      type={row.type}
+                      decision={row.decision}
+                      parentCaseId={row.parentCaseId}
+                    />
+                  ),
+                },
                 { cell: (row) => <CreatedDate created={row.created} /> },
                 {
                   cell: (row) => (

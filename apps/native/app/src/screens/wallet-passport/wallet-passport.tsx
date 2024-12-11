@@ -1,15 +1,3 @@
-import {
-  Accordion,
-  AccordionItem,
-  Alert,
-  CustomLicenseType,
-  dynamicColor,
-  font,
-  Input,
-  InputRow,
-  LicenseCard,
-  LinkText,
-} from '@ui'
 import React from 'react'
 import { useIntl } from 'react-intl'
 import {
@@ -21,9 +9,21 @@ import {
 } from 'react-native'
 import { NavigationFunctionComponent } from 'react-native-navigation'
 import styled from 'styled-components/native'
+
+import {
+  Accordion,
+  AccordionItem,
+  Alert,
+  CustomLicenseType,
+  dynamicColor,
+  font,
+  Input,
+  InputRow,
+  LicenseCard,
+  LinkText,
+} from '../../ui'
 import IconStatusVerified from '../../assets/icons/valid.png'
 import IconStatusNonVerified from '../../assets/icons/warning.png'
-import { useFeatureFlag } from '../../contexts/feature-flag-provider'
 import { useGetIdentityDocumentQuery } from '../../graphql/types/schema'
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
 import { useConnectivityIndicator } from '../../hooks/use-connectivity-indicator'
@@ -94,10 +94,6 @@ export const WalletPassportScreen: NavigationFunctionComponent<{
   useNavigationOptions(componentId)
   useConnectivityIndicator({ componentId })
   const { openBrowser } = useBrowser()
-  const showChildrenPassport = useFeatureFlag(
-    'isChildrenPassportEnabled',
-    false,
-  )
 
   const intl = useIntl()
   const { data, loading, error } = useGetIdentityDocumentQuery({
@@ -160,7 +156,6 @@ export const WalletPassportScreen: NavigationFunctionComponent<{
               loading={loading}
               error={!!error}
               size="big"
-              borderDark
             />
           </InputRow>
 
@@ -218,7 +213,7 @@ export const WalletPassportScreen: NavigationFunctionComponent<{
             />
           </InputRow>
 
-          {showChildrenPassport && childrenPassport?.length > 0 ? (
+          {childrenPassport?.length > 0 ? (
             <View style={{ paddingHorizontal: 16, marginTop: 8 }}>
               <Label>
                 {intl.formatMessage({ id: 'walletPassport.children' })}

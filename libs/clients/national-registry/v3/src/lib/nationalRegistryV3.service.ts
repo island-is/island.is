@@ -13,7 +13,7 @@ import {
   EinstaklingurDTOItarAuka,
   EinstaklingurDTOLogforeldrar,
   EinstaklingurDTOLoghTengsl,
-  EinstaklingurDTONafnAllt,
+  EinstaklingurDTONafnItar,
   EinstaklingurDTORikisfang,
   EinstaklingurDTOTru,
   GerviEinstaklingarApi,
@@ -27,9 +27,11 @@ export class NationalRegistryV3ClientService {
   ) {}
 
   getAddress(nationalId: string): Promise<EinstaklingurDTOHeimili | null> {
-    return this.individualApi.midlunV1EinstaklingarNationalIdHeimilisfangGet({
-      nationalId,
-    })
+    return handle204(
+      this.individualApi.midlunV1EinstaklingarNationalIdHeimilisfangGetRaw({
+        nationalId,
+      }),
+    )
   }
 
   getAllDataIndividual(
@@ -50,69 +52,84 @@ export class NationalRegistryV3ClientService {
   getBiologicalFamily(
     nationalId: string,
   ): Promise<EinstaklingurDTOLogforeldrar | null> {
-    return this.individualApi.midlunV1EinstaklingarNationalIdLogforeldrarGet({
-      nationalId,
-    })
+    return handle204(
+      this.individualApi.midlunV1EinstaklingarNationalIdLogforeldrarGetRaw({
+        nationalId,
+      }),
+    )
   }
 
   async getCustodians(
     nationalId: string,
   ): Promise<Array<EinstaklingurDTOForsjaItem> | null> {
-    const child =
-      await this.individualApi.midlunV1EinstaklingarNationalIdForsjaGet({
+    const child = await handle204(
+      this.individualApi.midlunV1EinstaklingarNationalIdForsjaGetRaw({
         nationalId,
-      })
+      }),
+    )
 
     return child?.forsjaradilar?.filter(isDefined) ?? null
   }
 
   getSpouse(nationalId: string): Promise<EinstaklingurDTOHju | null> {
-    return this.individualApi.midlunV1EinstaklingarNationalIdHjuGet({
-      nationalId,
-    })
+    return handle204(
+      this.individualApi.midlunV1EinstaklingarNationalIdHjuGetRaw({
+        nationalId,
+      }),
+    )
   }
 
   getCitizenship(
     nationalId: string,
   ): Promise<EinstaklingurDTORikisfang | null> {
-    return this.individualApi.midlunV1EinstaklingarNationalIdRikisfangGet({
-      nationalId,
-    })
-  }
-
-  getBirthplace(nationalId: string): Promise<EinstaklingurDTOFaeding | null> {
-    return this.individualApi.midlunV1EinstaklingarNationalIdFaedingarstadurGet(
-      {
+    return handle204(
+      this.individualApi.midlunV1EinstaklingarNationalIdRikisfangGetRaw({
         nationalId,
-      },
+      }),
     )
   }
 
-  getName(nationalId: string): Promise<EinstaklingurDTONafnAllt | null> {
-    return this.individualApi.midlunV1EinstaklingarNationalIdNafnItarGet({
-      nationalId,
-    })
+  getBirthplace(nationalId: string): Promise<EinstaklingurDTOFaeding | null> {
+    return handle204(
+      this.individualApi.midlunV1EinstaklingarNationalIdFaedingarstadurGetRaw({
+        nationalId,
+      }),
+    )
+  }
+
+  getName(nationalId: string): Promise<EinstaklingurDTONafnItar | null> {
+    return handle204(
+      this.individualApi.midlunV1EinstaklingarNationalIdNafnItarGetRaw({
+        nationalId,
+      }),
+    )
   }
 
   getReligion(nationalId: string): Promise<EinstaklingurDTOTru | null> {
-    return this.individualApi.midlunV1EinstaklingarNationalIdTruGet({
-      nationalId,
-    })
+    return handle204(
+      this.individualApi.midlunV1EinstaklingarNationalIdTruGetRaw({
+        nationalId,
+      }),
+    )
   }
 
   getHousing(nationalId: string): Promise<EinstaklingurDTOItarAuka | null> {
-    return this.individualApi.midlunV1EinstaklingarNationalIdItarGet({
-      nationalId,
-    })
+    return handle204(
+      this.individualApi.midlunV1EinstaklingarNationalIdItarGetRaw({
+        nationalId,
+      }),
+    )
   }
 
   getDomicileData(
     nationalId: string,
   ): Promise<EinstaklingurDTOLoghTengsl | null> {
-    return this.individualApi.midlunV1EinstaklingarNationalIdLogheimilistengslGet(
-      {
-        nationalId,
-      },
+    return handle204(
+      this.individualApi.midlunV1EinstaklingarNationalIdLogheimilistengslGetRaw(
+        {
+          nationalId,
+        },
+      ),
     )
   }
 }

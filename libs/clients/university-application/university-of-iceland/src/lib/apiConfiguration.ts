@@ -4,12 +4,7 @@ import {
   IdsClientConfig,
   XRoadConfig,
 } from '@island.is/nest/config'
-import {
-  ApplicationApi,
-  Configuration,
-  CoursesApi,
-  ProgramsApi,
-} from '../../gen/fetch'
+import { ApplicationApi, Configuration, ProgramsApi } from '../../gen/fetch'
 import { UniversityOfIcelandApplicationClientConfig } from './universityOfIcelandClient.config'
 
 const configFactory = (
@@ -38,29 +33,27 @@ const configFactory = (
   basePath,
 })
 
-export const exportedApis = [ProgramsApi, CoursesApi, ApplicationApi].map(
-  (Api) => ({
-    provide: Api,
-    useFactory: (
-      xRoadConfig: ConfigType<typeof XRoadConfig>,
-      config: ConfigType<typeof UniversityOfIcelandApplicationClientConfig>,
-      idsClientConfig: ConfigType<typeof IdsClientConfig>,
-    ) => {
-      return new Api(
-        new Configuration(
-          configFactory(
-            xRoadConfig,
-            config,
-            idsClientConfig,
-            `${xRoadConfig.xRoadBasePath}/r1/${config.xroadPath}`,
-          ),
+export const exportedApis = [ProgramsApi, ApplicationApi].map((Api) => ({
+  provide: Api,
+  useFactory: (
+    xRoadConfig: ConfigType<typeof XRoadConfig>,
+    config: ConfigType<typeof UniversityOfIcelandApplicationClientConfig>,
+    idsClientConfig: ConfigType<typeof IdsClientConfig>,
+  ) => {
+    return new Api(
+      new Configuration(
+        configFactory(
+          xRoadConfig,
+          config,
+          idsClientConfig,
+          `${xRoadConfig.xRoadBasePath}/r1/${config.xroadPath}`,
         ),
-      )
-    },
-    inject: [
-      XRoadConfig.KEY,
-      UniversityOfIcelandApplicationClientConfig.KEY,
-      IdsClientConfig.KEY,
-    ],
-  }),
-)
+      ),
+    )
+  },
+  inject: [
+    XRoadConfig.KEY,
+    UniversityOfIcelandApplicationClientConfig.KEY,
+    IdsClientConfig.KEY,
+  ],
+}))

@@ -2,7 +2,6 @@ import { Dispatch, FC, ReactNode, SetStateAction } from 'react'
 import { useIntl } from 'react-intl'
 
 import { Box, RadioButton, Text } from '@island.is/island-ui/core'
-import { SubpoenaType as SubpoenaTypeEnum } from '@island.is/judicial-system/types'
 import {
   BlueBox,
   SectionHeading,
@@ -10,6 +9,7 @@ import {
 import {
   Case,
   Defendant,
+  SubpoenaType as SubpoenaTypeEnum,
   UpdateDefendantInput,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
