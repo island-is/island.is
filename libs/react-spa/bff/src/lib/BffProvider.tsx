@@ -278,7 +278,6 @@ export const BffProvider = ({
         signOut,
         switchUser,
         bffUrlGenerator,
-        applicationBasePath,
       }}
     >
       {renderContent()}
