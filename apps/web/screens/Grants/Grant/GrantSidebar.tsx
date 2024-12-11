@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
+import { useIntl } from 'react-intl'
 
 import { Box, Button, LinkV2, Stack, Text } from '@island.is/island-ui/core'
-import { useLocale } from '@island.is/localization'
 import { Locale } from '@island.is/shared/types'
 import { isDefined } from '@island.is/shared/utils'
 import { InstitutionPanel } from '@island.is/web/components'
@@ -32,7 +32,7 @@ const generateLine = (heading: string, content?: React.ReactNode) => {
 
 export const GrantSidebar = ({ grant, locale }: Props) => {
   const { linkResolver } = useLinkResolver()
-  const { formatMessage } = useLocale()
+  const { formatMessage } = useIntl()
 
   const status = useMemo(
     () => parseStatus(grant, formatMessage, locale),

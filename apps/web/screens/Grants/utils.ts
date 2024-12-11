@@ -7,6 +7,7 @@ import { Locale } from '@island.is/shared/types'
 import { Grant, GrantStatus } from '@island.is/web/graphql/schema'
 
 import { m } from './messages'
+import { IntlFormatters, IntlShape } from 'react-intl'
 
 interface Status {
   applicationStatus: 'open' | 'closed' | 'unknown'
@@ -27,7 +28,7 @@ export const containsTimePart = (date: string) => date.includes('T')
 
 export const parseStatus = (
   grant: Grant,
-  formatMessage: FormatMessage,
+  formatMessage: IntlShape['formatMessage'],
   locale: Locale,
 ): Status => {
   switch (grant.status) {
@@ -117,7 +118,7 @@ export const parseStatus = (
 
 export const generateStatusTag = (
   status: Status['applicationStatus'],
-  formatMessage: FormatMessage,
+  formatMessage: IntlShape['formatMessage'],
 ) =>
   status !== 'unknown'
     ? {
