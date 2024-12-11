@@ -28,6 +28,7 @@ export enum Routes {
   SECURITYDEPOSIT = 'securityDeposit',
   OTHERFEES = 'otherFees',
 }
+export const IS_REPRESENTATIVE = 'isRepresentative'
 
 export enum AnswerOptions {
   YES = 'yes',

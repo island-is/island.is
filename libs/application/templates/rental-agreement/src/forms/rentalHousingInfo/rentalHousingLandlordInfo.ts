@@ -2,10 +2,9 @@ import {
   buildSubSection,
   buildMultiField,
   buildTableRepeaterField,
-  YES,
 } from '@island.is/application/core'
-import { formatPhoneNumber } from '@island.is/application/ui-components'
-import { formatNationalId } from '../../lib/utils'
+import { formatNationalId, formatPhoneNumber } from '../../lib/utils'
+import { IS_REPRESENTATIVE } from '../../lib/constants'
 import { landlordDetails } from '../../lib/messages'
 import { Routes } from '../../lib/constants'
 
@@ -25,37 +24,46 @@ export const RentalHousingLandlordInfo = buildSubSection({
           marginTop: 1,
           maxRows: 10,
           fields: {
-            NationalIdWithName: {
+            nationalIdWithName: {
               component: 'nationalIdWithName',
+              required: true,
             },
             phone: {
               component: 'phone',
+              required: true,
               label: landlordDetails.phoneInputLabel,
               enableCountrySelector: true,
               width: 'half',
             },
             email: {
               component: 'input',
+              required: true,
               label: landlordDetails.emailInputLabel,
               type: 'email',
               width: 'half',
             },
+            address: {
+              component: 'input',
+              required: true,
+              label: landlordDetails.addressInputLabel,
+              maxLength: 100,
+            },
             isRepresentative: {
               component: 'checkbox',
-              label: landlordDetails.representativeLabel,
               large: true,
               options: [
                 {
                   label: landlordDetails.representativeLabel,
-                  value: YES,
+                  value: IS_REPRESENTATIVE,
                 },
               ],
             },
           },
           table: {
             format: {
-              formatPhoneNumber: (value: string) => formatPhoneNumber(value),
-              nationalId: (value: string) => formatNationalId(value),
+              name: (value) => value,
+              phone: (value) => value && formatPhoneNumber(value),
+              nationalId: (value) => value && formatNationalId(value),
             },
             header: [
               landlordDetails.nameInputLabel,

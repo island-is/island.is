@@ -17,7 +17,7 @@ type Props = {
 export const ApplicantsRepresentativesSummary = ({ answers }: Props) => {
   const { formatMessage } = useLocale()
 
-  const landlordListHasRepresentatives = answers.landlordInfo.table.some(
+  const landlordListHasRepresentatives = answers.landlordInfo.table?.some(
     (landlord) =>
       landlord.isRepresentative && landlord.isRepresentative.length > 0,
   )
@@ -25,7 +25,7 @@ export const ApplicantsRepresentativesSummary = ({ answers }: Props) => {
     (tenant) => tenant.isRepresentative && tenant.isRepresentative.length > 0,
   )
 
-  const landlordRepresentatives = answers.landlordInfo.table.filter(
+  const landlordRepresentatives = answers.landlordInfo.table?.filter(
     (landlordRep) =>
       landlordRep.isRepresentative && landlordRep.isRepresentative.length > 0,
   )
@@ -41,7 +41,7 @@ export const ApplicantsRepresentativesSummary = ({ answers }: Props) => {
           <SummarySection
             sectionLabel={formatMessage(summary.landlordsRepresentativeLabel)}
           >
-            {landlordRepresentatives.map((landlordRep) => {
+            {landlordRepresentatives?.map((landlordRep) => {
               return (
                 <Fragment key={landlordRep.nationalIdWithName?.nationalId}>
                   <GridRow className={gridRow}>

@@ -1,10 +1,9 @@
 import { Fragment } from 'react'
 import { GridColumn, GridRow } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { formatPhoneNumber } from '@island.is/application/ui-components'
 import { RentalAgreement } from '../../lib/dataSchema'
 import { summary } from '../../lib/messages'
-import { formatNationalId } from '../../lib/utils'
+import { formatNationalId, formatPhoneNumber } from '../../lib/utils'
 import { KeyValue } from './KeyValue'
 import { SummarySection } from './SummarySection'
 import { Divider } from './Divider'
@@ -17,7 +16,7 @@ type Props = {
 export const ApplicantsSummary = ({ answers }: Props) => {
   const { formatMessage } = useLocale()
 
-  const landlordListWithoutRepresentatives = answers.landlordInfo.table.filter(
+  const landlordListWithoutRepresentatives = answers.landlordInfo.table?.filter(
     (landlord) =>
       !landlord.isRepresentative || landlord.isRepresentative.length === 0,
   )
@@ -31,12 +30,13 @@ export const ApplicantsSummary = ({ answers }: Props) => {
     <>
       <SummarySection
         sectionLabel={
+          landlordListWithoutRepresentatives &&
           landlordListWithoutRepresentatives.length > 1
             ? formatMessage(summary.landlordsHeaderPlural)
             : formatMessage(summary.landlordsHeader)
         }
       >
-        {landlordListWithoutRepresentatives.map((landlord) => {
+        {landlordListWithoutRepresentatives?.map((landlord) => {
           return (
             <Fragment key={landlord.nationalIdWithName?.nationalId}>
               <GridRow className={gridRow}>
