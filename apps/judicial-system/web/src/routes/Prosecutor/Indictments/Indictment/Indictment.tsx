@@ -380,7 +380,7 @@ const Indictment = () => {
                   onChange={handleUpdateIndictmentCount}
                   setWorkingCase={setWorkingCase}
                   updateIndictmentCountState={updateIndictmentCountState}
-                ></IndictmentCount>
+                />
               </AnimatePresence>
             </Box>
           </motion.div>

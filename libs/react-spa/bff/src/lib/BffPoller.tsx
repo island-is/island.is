@@ -3,7 +3,7 @@ import { BffUser } from '@island.is/shared/types'
 import { ReactNode, useCallback, useEffect, useMemo } from 'react'
 import {
   BffBroadcastEvents,
-  useBff,
+  useAuth,
   useBffBroadcaster,
   useUserInfo,
 } from './bff.hooks'
@@ -43,7 +43,7 @@ export const BffPoller = ({
   newSessionCb,
   pollIntervalMS = 10000,
 }: BffPollerProps) => {
-  const { signIn, bffUrlGenerator } = useBff()
+  const { signIn, bffUrlGenerator } = useAuth()
   const userInfo = useUserInfo()
   const { postMessage } = useBffBroadcaster()
 
