@@ -24,7 +24,6 @@ import {
 } from '@island.is/application/types'
 import { ApiActions } from '../shared'
 import { m } from '../lib/messages'
-import Logo from '../fields/akureyri.svg'
 
 export const ExampleForm: Form = buildForm({
   id: 'ExampleFormDraft',
