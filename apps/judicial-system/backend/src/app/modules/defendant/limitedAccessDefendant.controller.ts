@@ -23,7 +23,7 @@ import { CurrentDefendant } from './guards/defendant.decorator'
 import { DefendantExistsGuard } from './guards/defendantExists.guard'
 import { Defendant } from './models/defendant.model'
 import type { Logger } from '@island.is/logging'
-import { prisonSystemStaffUpdateRule } from "./guards/rolesRules"
+import { prisonSystemStaffUpdateRule } from './guards/rolesRules'
 
 interface LimitedAccessUpdateDefendant
   extends Pick<UpdateDefendantDto, 'punishmentType'> {}
