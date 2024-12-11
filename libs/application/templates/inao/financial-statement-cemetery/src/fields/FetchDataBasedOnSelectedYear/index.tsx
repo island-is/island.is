@@ -1,5 +1,9 @@
 import { useEffect } from 'react'
-import { AlertMessage, ContentBlock } from '@island.is/island-ui/core'
+import {
+  AlertMessage,
+  ContentBlock,
+  LoadingDots,
+} from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { useQuery } from '@apollo/client'
 import { useFormContext } from 'react-hook-form'
@@ -19,13 +23,16 @@ export const FetchDataBasedOnSelectedYear = () => {
   const values = getValues()
   const year: string = values?.conditionalAbout?.operatingYear
 
-  const { data, error } = useQuery(financialLimitQuery, {
+  const { data, error, loading } = useQuery(financialLimitQuery, {
     variables: { input: { year, clientType: `${FSIUSERTYPE.CEMETRY}` } },
   })
 
-  const { data: taxInfoData } = useQuery<TaxInfoData>(taxInfoQuery, {
-    variables: { year },
-  })
+  const { data: taxInfoData, loading: taxInfoLoading } = useQuery<TaxInfoData>(
+    taxInfoQuery,
+    {
+      variables: { year },
+    },
+  )
 
   const {
     careIncomeFromAnswers,
@@ -73,6 +80,14 @@ export const FetchDataBasedOnSelectedYear = () => {
         )
     }
   }, [taxInfoData])
+
+  if (loading || taxInfoLoading) {
+    return (
+      <ContentBlock>
+        <LoadingDots />
+      </ContentBlock>
+    )
+  }
 
   if (error) {
     return (
