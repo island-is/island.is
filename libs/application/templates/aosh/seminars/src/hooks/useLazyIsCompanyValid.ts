@@ -6,7 +6,7 @@ import { CompanyDTO } from '@island.is/clients/seminars-ver'
 export const useLazyIsCompanyValid = () => {
   return useLazyQuery<
     {
-      isCompanyValid: CompanyDTO[]
+      seminarsVerIsCompanyValid: CompanyDTO
     },
     {
       nationalId: string

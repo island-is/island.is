@@ -21,7 +21,7 @@ export class SeminarsResolver {
   constructor(private readonly seminarsService: SeminarsService) {}
 
   @Scopes(ApiScope.vinnueftirlitid)
-  @Query(() => [CompanyValidationItem])
+  @Query(() => CompanyValidationItem, { name: 'seminarsVerIsCompanyValid' })
   @Audit()
   async isCompanyValid(
     @CurrentUser() auth: User,

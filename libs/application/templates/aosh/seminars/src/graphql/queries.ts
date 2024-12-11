@@ -1,6 +1,6 @@
 export const IS_COMPANY_VALID = `
   query IsCompanyValid($nationalId: String!) {
-    isCompanyValid(nationalId: $nationalId) {
+    seminarsVerIsCompanyValid(nationalId: $nationalId) {
       nationalId
       mayPayWithAnAccount
     }

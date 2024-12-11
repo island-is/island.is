@@ -1,6 +1,7 @@
-import { theme } from '@ui'
 import { Appearance, ColorSchemeName } from 'react-native'
+
 import { AppearanceMode, ThemeMode } from '../stores/preferences-store'
+import { theme } from '../ui'
 
 export const themes = {
   light: {

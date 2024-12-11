@@ -24,16 +24,13 @@ export class SeminarsClientService {
   private individualApiWithAuth = (user: User) =>
     this.individualApi.withMiddleware(new AuthMiddleware(user as Auth))
 
-  async getSeminar(auth: User, courseId: number): Promise<CourseDTO> {
+  async getSeminar(auth: User, courseId: string): Promise<CourseDTO> {
     return await this.courseApiWithAuth(auth).apiCourseCourseIdGet({
       courseId,
     })
   }
 
-  async isCompanyValid(
-    auth: User,
-    nationalId: string,
-  ): Promise<Array<CompanyDTO>> {
+  async isCompanyValid(auth: User, nationalId: string): Promise<CompanyDTO> {
     return await this.companyApiWithAuth(auth).apiCompanyGet({
       nationalId,
     })

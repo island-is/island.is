@@ -16,10 +16,7 @@ export class SeminarsService {
     private readonly seminarsService: SeminarsClientService,
   ) {}
 
-  async isCompanyValid(
-    auth: User,
-    nationalId: string,
-  ): Promise<Array<CompanyDTO>> {
+  async isCompanyValid(auth: User, nationalId: string): Promise<CompanyDTO> {
     return this.seminarsService.isCompanyValid(auth, nationalId)
   }
 

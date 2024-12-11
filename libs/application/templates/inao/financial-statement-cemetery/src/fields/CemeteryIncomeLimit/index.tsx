@@ -20,8 +20,8 @@ export const CemeteryIncomeLimit = () => {
   })
 
   useEffect(() => {
-    const limit =
-      data?.financialStatementCemeteryClientFinancialLimit?.toString()
+    const limit = data?.financialStatementsInaoClientFinancialLimit?.toString()
+
     if (limit) {
       setValue(CEMETERYOPERATIONIDS.incomeLimit, limit)
     }
