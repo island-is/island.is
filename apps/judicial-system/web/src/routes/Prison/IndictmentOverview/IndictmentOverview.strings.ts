@@ -48,8 +48,8 @@ export const strings = defineMessages({
     defaultMessage: 'Sekt',
     description: 'Notaður sem texti í sekt valmöguleika í Refsitegund',
   },
-  indictmentRulingDecisionfine: {
-    id: 'judicial.system.core:court.indictment_overview.punishmentType.indictmentRulingDecisionfine',
+  indictmentRulingDecisionFine: {
+    id: 'judicial.system.core:court.indictment_overview.punishmentType.indictmentRulingDecisionFine',
     defaultMessage: 'Viðurlagaákvörðun',
     description: 'Notaður sem texti í viðurlagaákvörðun í Refsitegund',
   },

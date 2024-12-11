@@ -4,6 +4,7 @@ import { useIntl } from 'react-intl'
 import { Box, RadioButton, Text } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
+import { PunishmentType } from '@island.is/judicial-system/types'
 import { core } from '@island.is/judicial-system-web/messages'
 import {
   BlueBox,
@@ -18,16 +19,13 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import {
   CaseFileCategory,
-  Defendant,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
-  useCase,
   useDefendants,
   useFileList,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 
 import { strings } from './IndictmentOverview.strings'
-import { PunishmentType } from '@island.is/judicial-system/types'
 
 const IndictmentOverview = () => {
   const { workingCase } = useContext(FormContext)
@@ -166,7 +164,7 @@ const IndictmentOverview = () => {
                 }}
                 large
                 backgroundColor="white"
-                label={formatMessage(strings.indictmentRulingDecisionfine)}
+                label={formatMessage(strings.indictmentRulingDecisionFine)}
               />
             </Box>
             <Box marginBottom={2}>

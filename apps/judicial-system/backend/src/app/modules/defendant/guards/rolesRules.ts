@@ -1,5 +1,6 @@
 import { RolesRule, RulesType } from '@island.is/judicial-system/auth'
 import { UserRole } from '@island.is/judicial-system/types'
+
 import { UpdateDefendantDto } from '../dto/updateDefendant.dto'
 
 const limitedAccessFields: (keyof UpdateDefendantDto)[] = ['punishmentType']

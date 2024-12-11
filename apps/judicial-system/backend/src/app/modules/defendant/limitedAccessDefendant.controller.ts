@@ -1,29 +1,31 @@
 import {
+  Body,
+  Controller,
+  Inject,
+  Param,
+  Patch,
+  UseGuards,
+} from '@nestjs/common'
+import { ApiOkResponse,ApiTags } from '@nestjs/swagger'
+
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+
+import {
+  CurrentHttpUser,
   JwtAuthGuard,
   RolesGuard,
   RolesRules,
-  CurrentHttpUser,
 } from '@island.is/judicial-system/auth'
-import { ServiceRequirement, User } from '@island.is/judicial-system/types'
-import { LOGGER_PROVIDER } from '@island.is/logging'
-import {
-  Controller,
-  UseGuards,
-  Inject,
-  Patch,
-  Param,
-  Body,
-} from '@nestjs/common'
-import { ApiTags, ApiOkResponse } from '@nestjs/swagger'
-import { prisonSystemStaffRule } from '../../guards'
-import { CaseExistsGuard, CurrentCase, Case } from '../case'
-import { DefendantService } from './defendant.service'
+import { User } from '@island.is/judicial-system/types'
+
+import { Case,CaseExistsGuard, CurrentCase } from '../case'
 import { UpdateDefendantDto } from './dto/updateDefendant.dto'
 import { CurrentDefendant } from './guards/defendant.decorator'
 import { DefendantExistsGuard } from './guards/defendantExists.guard'
-import { Defendant } from './models/defendant.model'
-import type { Logger } from '@island.is/logging'
 import { prisonSystemStaffUpdateRule } from './guards/rolesRules'
+import { Defendant } from './models/defendant.model'
+import { DefendantService } from './defendant.service'
 
 interface LimitedAccessUpdateDefendant
   extends Pick<UpdateDefendantDto, 'punishmentType'> {}
