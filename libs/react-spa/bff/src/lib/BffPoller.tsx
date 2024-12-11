@@ -86,12 +86,21 @@ export const BffPoller = ({
         postMessage({
           type: BffBroadcastEvents.NEW_SESSION,
           userInfo: newUser,
+          bffBasePath: bffUrlGenerator(),
         })
 
         newSessionCb()
       }
     }
-  }, [newUser, error, userInfo, signIn, postMessage, newSessionCb])
+  }, [
+    newUser,
+    error,
+    userInfo,
+    signIn,
+    postMessage,
+    newSessionCb,
+    bffUrlGenerator,
+  ])
 
   return children
 }

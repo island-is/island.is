@@ -45,9 +45,9 @@ export const BffProvider = ({
   const oldLoginPath = `${applicationBasePath}/login`
 
   const { postMessage } = useBffBroadcaster((event) => {
-    // Only act if subpath matches application base path.
+    // Only act if bff base url matches
     // Reason: Broadcaster broadcasts to all tabs/windows/iframes on the same origin no matter the subpath, so we need to handle this manually.
-    if (event.data.subpath === applicationBasePath) {
+    if (event.data.bffBasePath === bffUrlGenerator()) {
       if (
         isLoggedIn &&
         event.data.type === BffBroadcastEvents.NEW_SESSION &&
@@ -75,10 +75,10 @@ export const BffProvider = ({
       postMessage({
         type: BffBroadcastEvents.NEW_SESSION,
         userInfo: state.userInfo,
-        subpath: applicationBasePath,
+        bffBasePath: bffUrlGenerator(),
       })
     }
-  }, [postMessage, state.userInfo, isLoggedIn, applicationBasePath])
+  }, [postMessage, state.userInfo, isLoggedIn, bffUrlGenerator])
 
   /**
    * Builds authentication query parameters for login redirection:
@@ -180,6 +180,7 @@ export const BffProvider = ({
     // Broadcast to all tabs/windows/iframes that the user is logging out
     postMessage({
       type: BffBroadcastEvents.LOGOUT,
+      bffBasePath: bffUrlGenerator(),
     })
 
     window.location.href = bffUrlGenerator('/logout', {
@@ -277,6 +278,7 @@ export const BffProvider = ({
         signOut,
         switchUser,
         bffUrlGenerator,
+        applicationBasePath,
       }}
     >
       {renderContent()}
