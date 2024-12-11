@@ -583,7 +583,7 @@ export class InternalCaseController {
   )
   @ApiOkResponse({
     type: DeliverResponse,
-    description: 'Delivers a signed ruling to police',
+    description: 'Delivers a signed court record to police',
   })
   deliverSignedCourtRecordToPolice(
     @Param('caseId') caseId: string,
