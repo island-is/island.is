@@ -846,8 +846,10 @@ export class CaseService {
       this.getDeliverProsecutorToCourtMessages(theCase, user),
     )
   }
-
-  private addMessagesForSignedCourtRecordToQueue(theCase: Case, user: TUser) {
+  private addMessagesForSignedCourtRecordToQueue(
+    theCase: Case,
+    user: TUser,
+  ): Promise<void> {
     const messages = []
 
     if (
@@ -861,13 +863,8 @@ export class CaseService {
       })
     }
 
-    if (messages && messages.length > 0) {
-      return this.messageService.sendMessagesToQueue(messages)
-    }
-
-    return
+    return this.messageService.sendMessagesToQueue(messages)
   }
-
   private addMessagesForSignedRulingToQueue(
     theCase: Case,
     user: TUser,
