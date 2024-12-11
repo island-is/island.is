@@ -15,25 +15,52 @@ import {
   buildHiddenInput,
   buildHiddenInputWithWatchedValue,
   buildTableRepeaterField,
+  buildAccordionField,
+  buildBankAccountField,
 } from '@island.is/application/core'
 import {
+  Application,
   Comparators,
   Form,
+  FormComponent,
   FormModes,
   FormValue,
 } from '@island.is/application/types'
 import { ApiActions } from '../shared'
 import { m } from '../lib/messages'
+import { createElement } from 'react'
+import Logo from '../fields/akureyri.svg'
 
 export const ExampleForm: Form = buildForm({
   id: 'ExampleFormDraft',
   title: 'Atvinnuleysisbætur',
   mode: FormModes.DRAFT,
+  logo: Logo as unknown as FormComponent,
   children: [
     buildSection({
       id: 'conditions',
       title: m.conditionsSection,
-      children: [],
+      children: [
+        buildMultiField({
+          id: 'accordionAndBankAccount',
+          title: 'Accordion and bank account',
+          children: [
+            buildAccordionField({
+              id: 'accordion',
+              title: 'Accordion title',
+              accordionItems: [
+                { itemTitle: 'Item title1', itemContent: 'Item content1' },
+                { itemTitle: 'Item title2', itemContent: 'Item content2' },
+                { itemTitle: 'Item title3', itemContent: 'Item content3' },
+              ],
+            }),
+            buildBankAccountField({
+              id: 'bankAccount',
+              title: 'Bank account title',
+            }),
+          ],
+        }),
+      ],
     }),
     buildSection({
       id: 'tableRepeaterWithPhone',
