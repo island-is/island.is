@@ -13,15 +13,20 @@ import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 import { useCreateDefendantMutation } from './createDefendant.generated'
 import { useDeleteDefendantMutation } from './deleteDefendant.generated'
 import { useUpdateDefendantMutation } from './updateDefendant.generated'
+import { useLimitedAccessUpdateDefendantMutation } from './limitedAccessUpdateDefendant.generated'
 
 const useDefendants = () => {
   const { formatMessage } = useIntl()
 
   const [createDefendantMutation, { loading: isCreatingDefendant }] =
     useCreateDefendantMutation()
+
   const [deleteDefendantMutation] = useDeleteDefendantMutation()
+
   const [updateDefendantMutation, { loading: isUpdatingDefendant }] =
     useUpdateDefendantMutation()
+    
+    const [limitedAccessUpdateDefendantMutation] = useLimitedAccessUpdateDefendantMutation()
 
   const createDefendant = useCallback(
     async (defendant: CreateDefendantInput) => {
@@ -63,7 +68,6 @@ const useDefendants = () => {
   const updateDefendant = useCallback(
     async (updateDefendant: UpdateDefendantInput) => {
       try {
-        console.log({updateDefendant})
         const { data } = await updateDefendantMutation({
           variables: {
             input: updateDefendant,
@@ -77,6 +81,26 @@ const useDefendants = () => {
       }
     },
     [formatMessage, updateDefendantMutation],
+  )
+
+  // TODO: This is maybe not ideal?
+  const limitedAccessUpdateDefendant = useCallback(
+    async (updateDefendant: UpdateDefendantInput) => {
+      try {
+        console.log({updateDefendant})
+        const { data } = await limitedAccessUpdateDefendantMutation({
+          variables: {
+            input: updateDefendant,
+          },
+        })
+
+        return Boolean(data)
+      } catch (error) {
+        toast.error(formatMessage(errors.updateDefendant))
+        return false
+      }
+    },
+    [formatMessage, limitedAccessUpdateDefendantMutation],
   )
 
   const updateDefendantState = useCallback(
@@ -120,6 +144,7 @@ const useDefendants = () => {
     createDefendant,
     deleteDefendant,
     updateDefendant,
+    limitedAccessUpdateDefendant,
     isUpdatingDefendant,
     updateDefendantState,
     setAndSendDefendantToServer,

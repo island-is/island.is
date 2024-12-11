@@ -26,7 +26,7 @@ import { PunishmentType } from '@island.is/judicial-system/types'
 const IndictmentOverview = () => {
   const { workingCase } = useContext(FormContext)
   const { formatMessage } = useIntl()
-  const { updateDefendant } = useDefendants()
+  const { limitedAccessUpdateDefendant } = useDefendants()
 
   const { onOpen } = useFileList({
     caseId: workingCase.id,
@@ -36,14 +36,13 @@ const IndictmentOverview = () => {
   const defendant = defendants && defendants?.length > 0 ? defendants[0] : undefined;
   const [selectedPunishmentType, setPunishmentType] = useState<PunishmentType>();
 
-  // TODO: A given user can update a given field, we have to fix that
-  // TODO: Limited access defentant => only allow update for a given field
   const onChange = (updatedPunishmentType: PunishmentType) => {
-    defendant && updateDefendant(
+    defendant && limitedAccessUpdateDefendant(
       {
         caseId: workingCase.id,
         defendantId: defendant.id,
         punishmentType: updatedPunishmentType,
+        address: "test 9"
       }
     )
     setPunishmentType(updatedPunishmentType);
