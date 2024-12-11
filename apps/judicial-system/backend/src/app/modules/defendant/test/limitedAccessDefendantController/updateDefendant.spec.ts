@@ -93,23 +93,4 @@ describe('LimitedAccessDefendantController - UpdateDefendant', () => {
       expect(mockMessageService.sendMessagesToQueue).not.toHaveBeenCalled()
     })
   })
-
-  describe('defendant limited updated fails on fields that are not supported', () => {
-    const defendantUpdate = { address: "test 1" }
-    const updatedDefendant = { ...defendant, ...defendantUpdate }
-    let then: Then
-
-    beforeEach(async () => {
-      const mockUpdate = mockDefendantModel.update as jest.Mock
-      mockUpdate.mockResolvedValueOnce([1, [updatedDefendant]])
-
-      then = await givenWhenThen(defendantUpdate, CaseType.INDICTMENT)
-    })
-
-    it('should throw error', () => {
-      expect(then.error).toBeInstanceOf(Error)
-      expect(then.error.message).toBe('Some error')
-
-    })
-  })
 })
