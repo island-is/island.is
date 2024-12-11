@@ -1,5 +1,6 @@
 import {
   buildCustomField,
+  buildDescriptionField,
   buildMultiField,
   buildSection,
 } from '@island.is/application/core'
@@ -14,26 +15,16 @@ export const dataHandlingSection = buildSection({
       id: 'agreementDescriptionMultiField',
       space: 2,
       children: [
-        buildCustomField({
-          id: 'agreementDescriptionCustomField',
+        buildDescriptionField({
+          id: 'agreementDescriptionDescriptionField',
           title: '',
-          component: 'AgreementDescription',
-          doesNotRequireAnswer: true,
+          description: externalData.agreementDescription.bullets,
         }),
-        buildCustomField(
-          {
-            id: 'extrainformationWithDataprovider',
-            title: '',
-            component: 'DescriptionWithLink',
-            doesNotRequireAnswer: true,
-          },
-          {
-            descriptionFirstPart: externalData.extraInformation.description,
-            descriptionSecondPart: '',
-            linkName: externalData.extraInformation.linkText,
-            url: externalData.extraInformation.link,
-          },
-        ),
+        buildDescriptionField({
+          id: 'moreInformation',
+          title: '',
+          description: externalData.agreementDescription.moreInformation,
+        }),
       ],
     }),
   ],
