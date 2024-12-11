@@ -193,16 +193,6 @@ const MarriageConditionsTemplate: ApplicationTemplate<
             formLoader: async () => {
               return PaymentForm
             },
-            actions: [
-              { event: DefaultEvents.SUBMIT, name: 'Panta', type: 'primary' },
-              {
-                event: DefaultEvents.ABORT,
-                name: 'Hætta við',
-                type: 'primary',
-              },
-            ],
-            write: 'all',
-            delete: true,
           },
         ],
         onExit: [
@@ -236,11 +226,7 @@ const MarriageConditionsTemplate: ApplicationTemplate<
           return paymentCodes.flat()
         },
         submitTarget: States.DONE,
-      }) as StateNodeConfig<
-        ApplicationContext,
-        ApplicationStateSchema<Events>,
-        Events
-      >,
+      }),
       [States.DONE]: {
         meta: {
           name: 'Done',
