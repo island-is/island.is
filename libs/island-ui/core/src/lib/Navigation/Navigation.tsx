@@ -19,6 +19,7 @@ import { Icon } from '../IconRC/Icon'
 import * as styles from './Navigation.css'
 import { IconProps } from '../IconRC/types'
 import { VisuallyHidden } from '../VisuallyHidden/VisuallyHidden'
+import { ModalBase } from '../ModalBase/ModalBase'
 
 type NavigationContextProps = {
   baseId: string
@@ -261,6 +262,23 @@ export const Navigation: FC<React.PropsWithChildren<NavigationProps>> = ({
       </Box>
     </Box>
   )
+  const [isScrolled, setIsScrolled] = useState(false)
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const element = document.getElementById('menuDialog-mobile-test')
+      if (element) {
+        const rect = element.getBoundingClientRect()
+        setIsScrolled(rect.top === 0)
+        rect.top === 0 ? console.log('scrolled') : console.log('not scrolled')
+      }
+    }
+
+    window.addEventListener('scroll', handleScroll)
+    return () => {
+      window.removeEventListener('scroll', handleScroll)
+    }
+  }, [baseId, isScrolled])
 
   return (
     <NavigationContext.Provider
@@ -272,6 +290,8 @@ export const Navigation: FC<React.PropsWithChildren<NavigationProps>> = ({
           alignItems="center"
           borderRadius="large"
           position="relative"
+          className={isScrolled ? styles.menuDialog : ''}
+          id="menuDialog-mobile-test"
         >
           <MenuButton
             {...menu}
@@ -293,10 +313,9 @@ export const Navigation: FC<React.PropsWithChildren<NavigationProps>> = ({
               top: '-10px',
               transform: 'none',
               width: '100%',
-              borderRadius: '8px',
               zIndex: 1000000,
             }}
-            className={cn(styles.transition, styles.menuShadow[colorScheme])}
+            className={cn(styles.transition)}
           >
             <MobileNavigationDialog
               Title={Title}
@@ -355,51 +374,55 @@ const MobileNavigationDialog = ({
   mobileNavigationButtonCloseLabel,
 }: MobileNavigationDialogProps) => {
   return (
-    <Box
-      component="nav"
-      background={colorSchemeColors[colorScheme]['backgroundColor']}
-      paddingY={2}
-      borderRadius={'large'}
+    <ModalBase
+      baseId={'mobile-nav'}
+      isVisible={menuState.visible ?? false}
+      preventBodyScroll
+      className={styles.mobileNav}
     >
-      <Box position="relative">
-        {Title}
-        <Box
-          position="absolute"
-          right={0}
-          marginRight={2}
-          style={{ top: '50%', transform: 'translateY(-50%)' }}
-        >
-          <FocusableBox
-            component="button"
-            onClick={onClick}
-            background={colorSchemeColors[colorScheme]['dividerColor']}
-            className={styles.dropdownIcon}
+      <Box
+        component="nav"
+        background={colorSchemeColors[colorScheme]['backgroundColor']}
+        paddingY={2}
+      >
+        <Box position="relative">
+          {Title}
+          <Box
+            position="absolute"
+            right={0}
+            marginRight={2}
+            style={{ top: '50%', transform: 'translateY(-50%)' }}
           >
-            <VisuallyHidden>{mobileNavigationButtonCloseLabel}</VisuallyHidden>
-            <Icon
-              icon={'chevronUp'}
-              size="small"
-              color={colorSchemeColors[colorScheme]['color']}
-            />
-          </FocusableBox>
+            <FocusableBox
+              component="button"
+              onClick={onClick}
+              background={'white'}
+              className={styles.dropdownIcon}
+            >
+              <VisuallyHidden>
+                {mobileNavigationButtonCloseLabel}
+              </VisuallyHidden>
+              <Icon icon={'close'} size="medium" color={'blue400'} />
+            </FocusableBox>
+          </Box>
         </Box>
-      </Box>
-      <Box display="flex" alignItems="center" paddingY={2}>
-        <Box
-          background={colorSchemeColors[colorScheme]['dividerColor']}
-          className={styles.divider}
+        <Box display="flex" alignItems="center" paddingY={2}>
+          <Box
+            background={colorSchemeColors[colorScheme]['dividerColor']}
+            className={styles.divider}
+          />
+        </Box>
+        <NavigationTree
+          id="mobile"
+          items={items}
+          asSpan={asSpan}
+          colorScheme={colorScheme}
+          renderLink={renderLink}
+          menuState={menuState}
+          linkOnClick={onClick}
         />
       </Box>
-      <NavigationTree
-        id="mobile"
-        items={items}
-        asSpan={asSpan}
-        colorScheme={colorScheme}
-        renderLink={renderLink}
-        menuState={menuState}
-        linkOnClick={onClick}
-      />
-    </Box>
+    </ModalBase>
   )
 }
 interface MobileButtonProps {
@@ -415,6 +438,32 @@ const MobileButton = ({
   titleIcon,
   mobileNavigationButtonOpenLabel,
 }: MobileButtonProps) => {
+  const [isShaking, setIsShaking] = useState(false)
+  const time = 60000 // 1 minute
+
+  useEffect(() => {
+    const handleIdle = () => {
+      setIsShaking(true)
+      setTimeout(() => setIsShaking(false), 1000) // Stop shaking after 1 second
+    }
+
+    const idleTimer = setTimeout(handleIdle, time)
+
+    const resetTimer = () => {
+      clearTimeout(idleTimer)
+      setTimeout(handleIdle, time)
+    }
+
+    window.addEventListener('mousemove', resetTimer)
+    window.addEventListener('keydown', resetTimer)
+
+    return () => {
+      clearTimeout(idleTimer)
+      window.removeEventListener('mousemove', resetTimer)
+      window.removeEventListener('keydown', resetTimer)
+    }
+  }, [])
+
   return (
     <Box
       component="span"
@@ -458,14 +507,15 @@ const MobileButton = ({
       >
         <FocusableBox
           component="span"
-          background={colorSchemeColors[colorScheme]['dividerColor']}
+          background={'white'}
           className={styles.dropdownIcon}
         >
           <VisuallyHidden>{mobileNavigationButtonOpenLabel}</VisuallyHidden>
           <Icon
-            icon={'chevronDown'}
-            size="small"
-            color={colorSchemeColors[colorScheme]['color']}
+            icon="menu"
+            size="medium"
+            color={'blue400'}
+            className={isShaking ? styles.shake : ''}
           />
         </FocusableBox>
       </Box>
