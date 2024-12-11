@@ -2,7 +2,6 @@ import { z } from 'zod'
 
 import { processJob } from '@island.is/infra-nest-server'
 import { defineConfig } from '@island.is/nest/config'
-import { isRunningOnEnvironment } from '@island.is/shared/utils'
 
 // Exported for testing purposes
 export const schema = z.object({
@@ -18,26 +17,14 @@ export const schema = z.object({
   }),
 })
 
-
-
 export const UserNotificationsConfig = defineConfig({
   name: 'UserNotificationsApi',
   schema,
-  load: (env) => {
+  load(env) {
     const isWorker = processJob() === 'worker'
-
-    let firebaseCredentials = env.required('FIREBASE_CREDENTIALS', '')
-
-    // Clean the credentials string for local development
-    if (isRunningOnEnvironment('local')) {
-      firebaseCredentials = firebaseCredentials
-        .replace(/\\n/g, '') // clean newlines
-        .replace(/\\/g, '') // clean backslashes
-    }
-
     return {
       isWorker,
-      firebaseCredentials,
+      firebaseCredentials: env.required('FIREBASE_CREDENTIALS', ''),
       servicePortalClickActionUrl:
         env.optional('SERVICE_PORTAL_CLICK_ACTION_URL') ??
         'https://island.is/minarsidur',
