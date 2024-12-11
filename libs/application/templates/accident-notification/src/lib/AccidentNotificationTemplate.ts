@@ -103,9 +103,9 @@ const AccidentNotificationTemplate: ApplicationTemplate<
     },
   ],
   stateMachineConfig: {
-    initial: States.PREQUISITES,
+    initial: States.PREREQUISITES,
     states: {
-      [States.PREQUISITES]: {
+      [States.PREREQUISITES]: {
         meta: {
           name: application.general.name.defaultMessage,
           progress: 0,
@@ -123,7 +123,7 @@ const AccidentNotificationTemplate: ApplicationTemplate<
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/PrerequsitesForm').then((val) =>
+                import('../forms/PrerequisitesForm').then((val) =>
                   Promise.resolve(val.PrerequisitesForm),
                 ),
               actions: [
@@ -136,7 +136,7 @@ const AccidentNotificationTemplate: ApplicationTemplate<
             {
               id: Roles.PROCURER,
               formLoader: () =>
-                import('../forms/PrerequsitesProcureForm').then((val) =>
+                import('../forms/PrerequisitesProcureForm').then((val) =>
                   Promise.resolve(val.PrerequisitesProcureForm),
                 ),
               actions: [
