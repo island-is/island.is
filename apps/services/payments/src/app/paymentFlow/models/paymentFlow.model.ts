@@ -54,6 +54,14 @@ export class PaymentFlow extends Model<
   })
   invoiceId?: string
 
+  @ApiProperty()
+  @Column({
+    type: DataType.STRING,
+    allowNull: false,
+    field: 'payer_national_id',
+  })
+  payerNationalId!: string
+
   @ApiProperty({ type: [String] })
   @Column({
     type: DataType.ARRAY(DataType.STRING),

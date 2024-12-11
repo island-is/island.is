@@ -1,5 +1,11 @@
 import { service, ServiceBuilder } from '../../../../infra/src/dsl/dsl'
-import { Base, Client, ChargeFjsV2 } from '../../../../infra/src/dsl/xroad'
+import {
+  Base,
+  Client,
+  ChargeFjsV2,
+  RskCompanyInfo,
+  NationalRegistryB2C,
+} from '../../../../infra/src/dsl/xroad'
 
 const namespace = 'services-payments'
 const serviceName = namespace
@@ -24,8 +30,10 @@ export const serviceSetup = (): ServiceBuilder<'services-payments'> =>
     .secrets({
       IDENTITY_SERVER_CLIENT_SECRET:
         '/k8s/services-payments/IDENTITY_SERVER_CLIENT_SECRET',
+      NATIONAL_REGISTRY_B2C_CLIENT_SECRET:
+        '/k8s/services-payments/NATIONAL_REGISTRY_B2C_CLIENT_SECRET',
     })
-    .xroad(Base, Client, ChargeFjsV2)
+    .xroad(Base, Client, ChargeFjsV2, RskCompanyInfo, NationalRegistryB2C)
     .readiness('/liveness')
     .liveness('/liveness')
     .grantNamespaces('nginx-ingress-internal', 'islandis')

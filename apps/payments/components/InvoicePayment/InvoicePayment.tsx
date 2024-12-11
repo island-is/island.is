@@ -8,10 +8,25 @@ import { invoice } from '../../messages'
 
 interface InvoicePaymentInput {
   nationalId: string
-  reference?: string
+  reference: string
 }
 
-export const InvoicePayment = () => {
+const formatNationalId = (nationalId?: string) => {
+  if (!nationalId) {
+    return ''
+  }
+
+  if (nationalId.length === 10) {
+    return `${nationalId.slice(0, 6)}-${nationalId.slice(6)}`
+  }
+
+  return nationalId
+}
+
+export const InvoicePayment = ({
+  nationalId,
+  reference,
+}: InvoicePaymentInput) => {
   const { formatMessage } = useLocale()
   const { register } = useFormContext<InvoicePaymentInput>()
 
@@ -25,7 +40,7 @@ export const InvoicePayment = () => {
             required: true,
           })}
           size="sm"
-          value={'123456-7890'}
+          value={formatNationalId(nationalId)}
           readOnly
         />
         <Input
@@ -35,7 +50,7 @@ export const InvoicePayment = () => {
             required: false,
           })}
           size="sm"
-          value={'Fyrirtaeki ehf.'}
+          value={reference}
           readOnly
         />
       </PaymentContainer>

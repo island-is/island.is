@@ -26,6 +26,7 @@ describe('PaymentFlowController', () => {
     it('should create a string url with correct initialisation', async () => {
       const payload = {
         productIds: ['product-id'],
+        payerNationalId: '1234567890',
         availablePaymentMethods: [PaymentMethod.CARD, PaymentMethod.INVOICE],
         onSuccessUrl: 'https://www.island.is/greida/success',
         onUpdateUrl: 'https://www.island.is/greida/update',

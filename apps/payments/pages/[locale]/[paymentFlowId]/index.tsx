@@ -22,6 +22,7 @@ import { ALLOWED_LOCALES, Locale } from '../../../utils'
 import { getConfigcatClient } from '../../../clients/configcat'
 import { card, generic, genericError, invoice } from '../../../messages'
 import { ThreeDSecure } from '../../../components/ThreeDSecure/ThreeDSecure'
+import { useRouter } from 'next/router'
 
 interface PaymentPageProps {
   locale: string
@@ -40,6 +41,8 @@ const GetPaymentFlow = gql`
       id
       productTitle
       productPrice
+      payerNationalId
+      payerName
       invoiceId
       availablePaymentMethods
       organisationId
@@ -147,6 +150,7 @@ export default function PaymentPage({
   organization,
   productInformation,
 }: PaymentPageProps) {
+  const router = useRouter()
   const methods = useForm({
     mode: 'onBlur',
     reValidateMode: 'onChange',
@@ -213,6 +217,9 @@ export default function PaymentPage({
       if (selectedPaymentMethod === 'card') {
         setIsProcessingPayment(true)
         await payWithCard(data)
+      } else {
+        router.push(`${router.asPath}/krafa-stofnud`)
+        return
       }
     } catch (e) {
       console.warn('Error occured while submitting payment', e)
@@ -248,12 +255,22 @@ export default function PaymentPage({
               <form onSubmit={methods.handleSubmit(onSubmit)}>
                 <Box display="flex" flexDirection="column" rowGap={[2, 3]}>
                   <PaymentSelector
-                    availablePaymentMethods={['card', 'invoice']}
+                    availablePaymentMethods={
+                      (paymentFlow?.availablePaymentMethods as any) ?? [
+                        'card',
+                        'invoice',
+                      ]
+                    }
                     selectedPayment={selectedPaymentMethod as any}
                     onSelectPayment={changePaymentMethod}
                   />
                   {selectedPaymentMethod === 'card' && <CardPayment />}
-                  {selectedPaymentMethod === 'invoice' && <InvoicePayment />}
+                  {selectedPaymentMethod === 'invoice' && (
+                    <InvoicePayment
+                      nationalId={paymentFlow?.payerNationalId}
+                      reference={paymentFlow?.payerName}
+                    />
+                  )}
                   <Button
                     type="submit"
                     loading={isSubmitting}

@@ -1,5 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
+import { isCompany, isValid } from 'kennitala'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -9,6 +10,8 @@ import { PaymentFlow } from './models/paymentFlow.model'
 
 import { PaymentInformation, PaymentMethod } from '../../types'
 import { GetPaymentFlowDTO } from './dtos/getPaymentFlow.dto'
+import { NationalRegistryV3ClientService } from '@island.is/clients/national-registry-v3'
+import { CompanyRegistryClientService } from '@island.is/clients/rsk/company-registry'
 
 @Injectable()
 export class PaymentFlowService {
@@ -18,6 +21,8 @@ export class PaymentFlowService {
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
     private chargeFjsV2ClientService: ChargeFjsV2ClientService,
+    private nationalRegistryV3: NationalRegistryV3ClientService,
+    private companyRegistryApi: CompanyRegistryClientService,
   ) {}
 
   async createPaymentUrl(
@@ -59,6 +64,32 @@ export class PaymentFlowService {
     }
   }
 
+  private async getPayerName(payerNationalId: string) {
+    if (!isValid(payerNationalId)) {
+      throw new Error('Invalid payer national id')
+    }
+
+    if (isCompany(payerNationalId)) {
+      const company = await this.companyRegistryApi.getCompany(payerNationalId)
+
+      if (!company) {
+        throw new Error('Company not found')
+      }
+
+      return company.name
+    }
+
+    const person = await this.nationalRegistryV3.getAllDataIndividual(
+      payerNationalId,
+    )
+
+    if (!person) {
+      throw new Error('Person not found')
+    }
+
+    return person.nafn ?? ''
+  }
+
   async getPaymentInfo(id: string): Promise<GetPaymentFlowDTO | null> {
     try {
       const result = (
@@ -78,10 +109,13 @@ export class PaymentFlowService {
         result.productIds,
       )
 
+      const payerName = await this.getPayerName(result.payerNationalId)
+
       return {
         ...result,
         productTitle: result.productTitle ?? paymentDetails.firstProductTitle,
         productPrice: paymentDetails.totalPrice,
+        payerName,
         availablePaymentMethods:
           result.availablePaymentMethods as PaymentMethod[],
       }

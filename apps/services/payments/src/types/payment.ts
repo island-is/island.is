@@ -8,6 +8,7 @@ export type PaymentInformation = {
   productIds: string[]
   // If null then the name of the first product id will be used (fetched from FJS)
   productTitle?: string
+  payerNationalId: string
   availablePaymentMethods: PaymentMethod[]
   onSuccessUrl: string
   onUpdateUrl?: string

@@ -23,6 +23,18 @@ export class GetPaymentFlowDTO {
   })
   productPrice!: number
 
+  @ApiProperty({
+    description: 'National id of the payer, can be a company or an individual',
+    type: String,
+  })
+  payerNationalId!: string
+
+  @ApiProperty({
+    description: 'Name of the payer',
+    type: String,
+  })
+  payerName!: string
+
   @ApiPropertyOptional({
     description:
       'Optional identifier for an invoice associated with the payment flow',

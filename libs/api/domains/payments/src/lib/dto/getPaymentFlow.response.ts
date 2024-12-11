@@ -16,6 +16,12 @@ export class GetPaymentFlowResponse {
   @Field(() => String, { nullable: true })
   invoiceId?: string
 
+  @Field(() => String)
+  payerNationalId!: string
+
+  @Field(() => String)
+  payerName!: string
+
   @Field(() => [String])
   availablePaymentMethods!: string[]
 
