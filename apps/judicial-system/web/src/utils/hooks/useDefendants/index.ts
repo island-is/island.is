@@ -25,8 +25,9 @@ const useDefendants = () => {
 
   const [updateDefendantMutation, { loading: isUpdatingDefendant }] =
     useUpdateDefendantMutation()
-    
-    const [limitedAccessUpdateDefendantMutation] = useLimitedAccessUpdateDefendantMutation()
+
+  const [limitedAccessUpdateDefendantMutation] =
+    useLimitedAccessUpdateDefendantMutation()
 
   const createDefendant = useCallback(
     async (defendant: CreateDefendantInput) => {
@@ -87,7 +88,7 @@ const useDefendants = () => {
   const limitedAccessUpdateDefendant = useCallback(
     async (updateDefendant: UpdateDefendantInput) => {
       try {
-        console.log({updateDefendant})
+        console.log({ updateDefendant })
         const { data } = await limitedAccessUpdateDefendantMutation({
           variables: {
             input: updateDefendant,

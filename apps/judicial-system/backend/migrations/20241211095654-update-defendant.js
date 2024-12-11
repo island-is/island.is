@@ -1,7 +1,7 @@
-'use strict';
+'use strict'
 
 module.exports = {
-  async up (queryInterface, Sequelize) {
+  async up(queryInterface, Sequelize) {
     return queryInterface.sequelize.transaction((t) =>
       Promise.all([
         queryInterface.addColumn(
@@ -16,11 +16,11 @@ module.exports = {
       ]),
     )
   },
-  async down (queryInterface, Sequelize) {
+  async down(queryInterface, Sequelize) {
     return queryInterface.sequelize.transaction((t) =>
       queryInterface.removeColumn('defendant', 'punishment_type', {
         transaction: t,
       }),
     )
   },
-};
+}
