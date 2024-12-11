@@ -45,23 +45,27 @@ export const BffProvider = ({
   const oldLoginPath = `${applicationBasePath}/login`
 
   const { postMessage } = useBffBroadcaster((event) => {
-    if (
-      isLoggedIn &&
-      event.data.type === BffBroadcastEvents.NEW_SESSION &&
-      isNewUser(state.userInfo, event.data.userInfo)
-    ) {
-      setSessionExpiredScreen(true)
-    } else if (event.data.type === BffBroadcastEvents.LOGOUT) {
-      // We will wait 1 seconds before we dispatch logout action.
-      // The reason is that IDS will not log the user out immediately.
-      // Note! The bff poller may have triggered logout by that time anyways.
-      setTimeout(() => {
-        dispatch({
-          type: ActionType.LOGGED_OUT,
-        })
+    // Only act if subpath matches application base path.
+    // Reason: Broadcaster broadcasts to all tabs/windows/iframes on the same origin no matter the subpath, so we need to handle this manually.
+    if (event.data.subpath === applicationBasePath) {
+      if (
+        isLoggedIn &&
+        event.data.type === BffBroadcastEvents.NEW_SESSION &&
+        isNewUser(state.userInfo, event.data.userInfo)
+      ) {
+        setSessionExpiredScreen(true)
+      } else if (event.data.type === BffBroadcastEvents.LOGOUT) {
+        // We will wait 1 seconds before we dispatch logout action.
+        // The reason is that IDS will not log the user out immediately.
+        // Note! The bff poller may have triggered logout by that time anyways.
+        setTimeout(() => {
+          dispatch({
+            type: ActionType.LOGGED_OUT,
+          })
 
-        signIn()
-      }, 1000)
+          signIn()
+        }, 1000)
+      }
     }
   })
 
@@ -71,9 +75,10 @@ export const BffProvider = ({
       postMessage({
         type: BffBroadcastEvents.NEW_SESSION,
         userInfo: state.userInfo,
+        subpath: applicationBasePath,
       })
     }
-  }, [postMessage, state.userInfo, isLoggedIn])
+  }, [postMessage, state.userInfo, isLoggedIn, applicationBasePath])
 
   /**
    * Builds authentication query parameters for login redirection:
