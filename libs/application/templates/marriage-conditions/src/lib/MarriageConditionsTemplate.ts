@@ -17,7 +17,7 @@ import {
   InstitutionNationalIds,
   ApplicationConfigurations,
 } from '@island.is/application/types'
-import { assign } from 'xstate'
+import { assign, StateNodeConfig } from 'xstate'
 import { FeatureFlagClient } from '@island.is/feature-flags'
 import {
   getApplicationFeatureFlags,
@@ -36,6 +36,7 @@ import {
 } from '@island.is/application/core'
 import { buildPaymentState } from '@island.is/application/utils'
 import { number } from 'zod'
+import { PaymentForm } from '@island.is/application/ui-forms'
 
 const pruneAfter = (time: number) => {
   return {
@@ -186,6 +187,30 @@ const MarriageConditionsTemplate: ApplicationTemplate<
       },
       [States.PAYMENT]: buildPaymentState({
         organizationId: InstitutionNationalIds.SYSLUMENN,
+        roles: [
+          {
+            id: Roles.ASSIGNED_SPOUSE,
+            formLoader: async () => {
+              return PaymentForm
+            },
+            actions: [
+              { event: DefaultEvents.SUBMIT, name: 'Panta', type: 'primary' },
+              {
+                event: DefaultEvents.ABORT,
+                name: 'Hætta við',
+                type: 'primary',
+              },
+            ],
+            write: 'all',
+            delete: true,
+          },
+        ],
+        onExit: [
+          defineTemplateApi({
+            action: ApiActions.submitApplication,
+            triggerEvent: DefaultEvents.SUBMIT,
+          }),
+        ],
         chargeItems: (application) => {
           const paymentCodes = []
           paymentCodes.push(
@@ -211,18 +236,17 @@ const MarriageConditionsTemplate: ApplicationTemplate<
           return paymentCodes.flat()
         },
         submitTarget: States.DONE,
-      }),
+      }) as StateNodeConfig<
+        ApplicationContext,
+        ApplicationStateSchema<Events>,
+        Events
+      >,
       [States.DONE]: {
         meta: {
           name: 'Done',
           status: 'completed',
           progress: 1,
           lifecycle: pruneAfter(sixtyDays),
-          onEntry: defineTemplateApi({
-            action: ApiActions.submitApplication,
-            shouldPersistToExternalData: true,
-            throwOnError: true,
-          }),
           roles: [
             {
               id: Roles.APPLICANT,

@@ -111,25 +111,13 @@ export class MarriageConditionsSubmissionService extends BaseTemplateApiService 
   }
 
   async assignSpouse({ application }: TemplateApiModuleActionProps) {
-    //TODO: this now needs to be moved over to spouse, so to when the application is being submitted
-    /*const isPayment = await this.sharedTemplateAPIService.getPaymentStatus(
-      auth,
-      application.id,
-    )
-
-    if (!isPayment?.fulfilled) {
-      return {
-        success: false,
-      }
-    }*/
-
     await this.sharedTemplateAPIService.sendEmail(
       generateAssignOtherSpouseApplicationEmail,
       application,
     )
   }
 
-  async submitApplication({ application }: TemplateApiModuleActionProps) {
+  async submitApplication({ application, auth }: TemplateApiModuleActionProps) {
     const {
       applicant,
       spouse,
@@ -139,6 +127,17 @@ export class MarriageConditionsSubmissionService extends BaseTemplateApiService 
       spousePersonalInfo,
       ceremony,
     } = application.answers as MarriageConditionsAnswers
+
+    const isPayment = await this.sharedTemplateAPIService.getPaymentStatus(
+      auth,
+      application.id,
+    )
+
+    if (!isPayment?.fulfilled) {
+      return {
+        success: false,
+      }
+    }
     const personMapper = [
       {
         type: PersonTypes.APPLICANT,
