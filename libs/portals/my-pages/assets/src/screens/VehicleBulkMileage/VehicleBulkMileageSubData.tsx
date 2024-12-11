@@ -107,7 +107,7 @@ export const VehicleBulkMileageSubData = ({
             : formatMessage(vehicleMessage.viewTable)}
         </Button>
       </Box>
-      {displayMode === 'chart' ? (
+      {displayMode === 'table' ? (
         <NestedFullTable
           headerArray={[
             formatMessage(vehicleMessage.date),
