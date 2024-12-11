@@ -11,8 +11,8 @@ import { CurrentDefendant } from "./guards/defendant.decorator"
 import { DefendantExistsGuard } from "./guards/defendantExists.guard"
 import { Defendant } from "./models/defendant.model"
 import type { Logger } from '@island.is/logging'
+import { prisonSystemStaffUpdateRule } from "./guards/roleRules"
 
-// TODO: use or no use?
 interface LimitedAccessUpdateDefendant
   extends Pick<
   UpdateDefendantDto,
@@ -30,7 +30,7 @@ export class LimitedAccessDefendantController {
 
   @UseGuards(CaseExistsGuard, DefendantExistsGuard)
   @RolesRules(
-    prisonSystemStaffRule
+    prisonSystemStaffUpdateRule
   )
   @Patch(':defendantId')
   @ApiOkResponse({
@@ -46,12 +46,11 @@ export class LimitedAccessDefendantController {
     @Body() updateDto: LimitedAccessUpdateDefendant,
   ): Promise<Defendant> {
     this.logger.debug(`Updating limitedAccess defendant ${defendantId} of case ${caseId}`)
-    const { punishmentType } = updateDto;
 
     return this.defendantService.updateRequestCaseDefendant(
       theCase,
       defendant,
-      { punishmentType },
+      updateDto,
       user,
     )
   }
