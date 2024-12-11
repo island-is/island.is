@@ -1,23 +1,20 @@
 import { z } from 'zod'
-import { redirect } from 'react-router-dom'
 
 import {
   RawRouterActionResponse,
   WrappedActionFn,
 } from '@island.is/portals/core'
 import {
-  replaceParams,
   validateFormData,
   ValidateFormDataResult,
 } from '@island.is/react-spa/shared'
-import { maskString, isSearchTermValid } from '@island.is/shared/utils'
+import { isSearchTermValid } from '@island.is/shared/utils'
 
 import {
   GetPaginatedUserProfilesDocument,
   GetPaginatedUserProfilesQuery,
   type GetPaginatedUserProfilesQueryVariables,
 } from './Users.generated'
-import { ServiceDeskPaths } from '../../lib/paths'
 
 export enum ErrorType {
   // Add more error types here when needed

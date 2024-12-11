@@ -138,7 +138,7 @@ const StandaloneParentSubpage: Screen<
   )
 }
 
-StandaloneParentSubpage.getProps = async ({
+export const getProps: typeof StandaloneParentSubpage['getProps'] = async ({
   apolloClient,
   locale,
   query,
@@ -261,5 +261,7 @@ StandaloneParentSubpage.getProps = async ({
     namespace,
   }
 }
+
+StandaloneParentSubpage.getProps = getProps
 
 export default StandaloneParentSubpage

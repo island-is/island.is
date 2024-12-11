@@ -4,6 +4,7 @@ import { JwtAuthGuard, RolesGuard } from '@island.is/judicial-system/auth'
 
 import { CaseController } from '../../case.controller'
 import { CaseExistsGuard } from '../../guards/caseExists.guard'
+import { CaseTransitionGuard } from '../../guards/caseTransition.guard'
 import { CaseWriteGuard } from '../../guards/caseWrite.guard'
 
 describe('CaseController - Transition guards', () => {
@@ -17,8 +18,8 @@ describe('CaseController - Transition guards', () => {
     )
   })
 
-  it('should have four guards', () => {
-    expect(guards).toHaveLength(4)
+  it('should have five guards', () => {
+    expect(guards).toHaveLength(5)
   })
 
   describe('JwtAuthGuard', () => {
@@ -66,6 +67,17 @@ describe('CaseController - Transition guards', () => {
 
     it('should have CaseWriteGuard as guard 4', () => {
       expect(guard).toBeInstanceOf(CaseWriteGuard)
+    })
+  })
+  describe('CaseTransitionGuard', () => {
+    let guard: CanActivate
+
+    beforeEach(() => {
+      guard = new guards[4]()
+    })
+
+    it('should have CaseTransitionGuard as guard 5', () => {
+      expect(guard).toBeInstanceOf(CaseTransitionGuard)
     })
   })
 })

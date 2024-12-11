@@ -1,3 +1,9 @@
+import React, { useMemo } from 'react'
+import { FormattedMessage, useIntl } from 'react-intl'
+import { Image, SafeAreaView, TouchableOpacity } from 'react-native'
+import styled, { useTheme } from 'styled-components/native'
+import { ApolloError } from '@apollo/client'
+
 import {
   Typography,
   Heading,
@@ -5,20 +11,13 @@ import {
   ViewPager,
   EmptyCard,
   GeneralCardSkeleton,
-} from '@ui'
-
-import React, { useMemo } from 'react'
-import { FormattedMessage, useIntl } from 'react-intl'
-import { Image, SafeAreaView, TouchableOpacity } from 'react-native'
-import styled, { useTheme } from 'styled-components/native'
-import { ApolloError } from '@apollo/client'
-
+} from '../../ui'
 import illustrationSrc from '../../assets/illustrations/le-moving-s4.png'
 import { navigateTo } from '../../lib/deep-linking'
 import { VehicleItem } from '../vehicles/components/vehicle-item'
 import {
-  ListVehiclesQuery,
-  useListVehiclesQuery,
+  ListVehiclesV2Query,
+  useListVehiclesV2Query,
 } from '../../graphql/types/schema'
 import { screenWidth } from '../../utils/dimensions'
 
@@ -30,7 +29,7 @@ const validateVehiclesInitialData = ({
   data,
   loading,
 }: {
-  data: ListVehiclesQuery | undefined
+  data: ListVehiclesV2Query | undefined
   loading: boolean
 }) => {
   if (loading) {
@@ -38,7 +37,7 @@ const validateVehiclesInitialData = ({
   }
   // Only show widget initially if there are vehicles that require mileage registration
   if (
-    data?.vehiclesList?.vehicleList?.some(
+    data?.vehiclesListV2?.vehicleList?.some(
       (vehicle) => vehicle.requiresMileageRegistration,
     )
   ) {
@@ -49,7 +48,7 @@ const validateVehiclesInitialData = ({
 }
 
 interface VehiclesModuleProps {
-  data: ListVehiclesQuery | undefined
+  data: ListVehiclesV2Query | undefined
   loading: boolean
   error?: ApolloError | undefined
 }
@@ -59,7 +58,7 @@ const VehiclesModule = React.memo(
     const theme = useTheme()
     const intl = useIntl()
 
-    const vehicles = data?.vehiclesList?.vehicleList
+    const vehicles = data?.vehiclesListV2?.vehicleList
 
     // Reorder vehicles so vehicles that require mileage registration are shown first
     const reorderedVehicles = useMemo(
@@ -170,4 +169,4 @@ const VehiclesModule = React.memo(
   },
 )
 
-export { VehiclesModule, validateVehiclesInitialData, useListVehiclesQuery }
+export { VehiclesModule, validateVehiclesInitialData, useListVehiclesV2Query }
