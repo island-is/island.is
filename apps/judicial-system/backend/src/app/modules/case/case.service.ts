@@ -45,6 +45,7 @@ import {
   eventTypes,
   isCompletedCase,
   isIndictmentCase,
+  isInvestigationCase,
   isRequestCase,
   isTrafficViolationCase,
   notificationTypes,
@@ -844,6 +845,27 @@ export class CaseService {
     return this.messageService.sendMessagesToQueue(
       this.getDeliverProsecutorToCourtMessages(theCase, user),
     )
+  }
+
+  private addMessagesForSignedCourtRecordToQueue(theCase: Case, user: TUser) {
+    const messages = []
+
+    if (
+      theCase.origin === CaseOrigin.LOKE &&
+      isInvestigationCase(theCase.type)
+    ) {
+      messages.push({
+        type: MessageType.DELIVERY_TO_POLICE_SIGNED_COURT_RECORD,
+        user,
+        caseId: theCase.id,
+      })
+    }
+
+    if (messages && messages.length > 0) {
+      return this.messageService.sendMessagesToQueue(messages)
+    }
+
+    return
   }
 
   private addMessagesForSignedRulingToQueue(
@@ -1898,6 +1920,8 @@ export class CaseService {
         user,
         false,
       )
+
+      await this.addMessagesForSignedCourtRecordToQueue(theCase, user)
 
       return { documentSigned: true }
     } catch (error) {
