@@ -8,11 +8,11 @@ import { BffContext, BffContextType } from './BffContext'
 /**
  * This hook is used to get the BFF authentication context.
  */
-export const useBff = () => {
+export const useAuth = () => {
   const bffContext = useContext(BffContext)
 
   if (!bffContext) {
-    throw new Error('useBff must be used within a BffProvider')
+    throw new Error('use must be used within a BffProvider')
   }
 
   return bffContext
@@ -24,7 +24,7 @@ export const useBff = () => {
 export const useDynamicBffHook = <Key extends keyof BffContextType>(
   returnField: Key,
 ): NonNullable<BffContextType[Key]> => {
-  const bffContext = useBff()
+  const bffContext = useAuth()
 
   if (!isDefined(bffContext[returnField])) {
     throw new Error(`The field ${returnField} does not exist in the BffContext`)
