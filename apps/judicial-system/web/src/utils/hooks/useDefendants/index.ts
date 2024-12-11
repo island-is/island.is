@@ -12,8 +12,8 @@ import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
 import { useCreateDefendantMutation } from './createDefendant.generated'
 import { useDeleteDefendantMutation } from './deleteDefendant.generated'
-import { useUpdateDefendantMutation } from './updateDefendant.generated'
 import { useLimitedAccessUpdateDefendantMutation } from './limitedAccessUpdateDefendant.generated'
+import { useUpdateDefendantMutation } from './updateDefendant.generated'
 
 const useDefendants = () => {
   const { formatMessage } = useIntl()
