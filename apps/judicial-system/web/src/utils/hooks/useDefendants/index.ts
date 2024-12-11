@@ -83,11 +83,9 @@ const useDefendants = () => {
     [formatMessage, updateDefendantMutation],
   )
 
-  // TODO: This is maybe not ideal?
   const limitedAccessUpdateDefendant = useCallback(
     async (updateDefendant: UpdateDefendantInput) => {
       try {
-        console.log({updateDefendant})
         const { data } = await limitedAccessUpdateDefendantMutation({
           variables: {
             input: updateDefendant,
