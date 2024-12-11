@@ -68,6 +68,7 @@ const ActionExtendDeadline = ({
             icon="calendar"
             iconType="outline"
             variant="ghost"
+            disabled={!allowedToProcess}
             onClick={() => setModalChangeDateIsOpen(true)}
           ></Button>
         </Box>

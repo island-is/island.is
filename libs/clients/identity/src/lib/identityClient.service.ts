@@ -2,7 +2,7 @@ import { Inject, Injectable } from '@nestjs/common'
 import * as kennitala from 'kennitala'
 
 import { CompanyRegistryClientService } from '@island.is/clients/rsk/company-registry'
-import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
+import { NationalRegistryV3ClientService } from '@island.is/clients/national-registry-v3'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 
@@ -14,14 +14,17 @@ type FallbackIdentity = Partial<Omit<Identity, 'nationalId' | 'type'>>
 @Injectable()
 export class IdentityClientService {
   constructor(
-    private nationalRegistryXRoadService: NationalRegistryClientService,
+    private nationalRegistryService: NationalRegistryV3ClientService,
     private rskCompanyInfoService: CompanyRegistryClientService,
     @Inject(LOGGER_PROVIDER) private logger: Logger,
   ) {}
 
-  async getIdentity(nationalId: string): Promise<Identity | null> {
+  async getIdentity(
+    nationalId: string,
+    actorNationalId?: string,
+  ): Promise<Identity | null> {
     if (kennitala.isCompany(nationalId)) {
-      return this.getCompanyIdentity(nationalId)
+      return this.getCompanyIdentity(nationalId, actorNationalId)
     } else {
       return this.getPersonIdentity(nationalId)
     }
@@ -55,12 +58,17 @@ export class IdentityClientService {
 
   private async getCompanyIdentity(
     nationalId: string,
+    actorNationalId?: string,
   ): Promise<Identity | null> {
     const company = await this.rskCompanyInfoService.getCompany(nationalId)
 
     if (!company) {
       return null
     }
+
+    const actor = actorNationalId
+      ? await this.getPersonIdentity(actorNationalId)
+      : null
 
     return {
       type: IdentityType.Company,
@@ -71,13 +79,16 @@ export class IdentityClientService {
         postalCode: company.address.postalCode,
         city: company.address.locality,
       },
+      actor: actor
+        ? { nationalId: actor.nationalId, name: actor.name }
+        : undefined,
     }
   }
 
   private async getPersonIdentity(
     nationalId: string,
   ): Promise<Identity | null> {
-    const person = await this.nationalRegistryXRoadService.getIndividual(
+    const person = await this.nationalRegistryService.getAllDataIndividual(
       nationalId,
     )
 
@@ -86,14 +97,14 @@ export class IdentityClientService {
     }
 
     return {
-      nationalId: person.nationalId,
-      givenName: person.givenName,
-      familyName: person.familyName,
-      name: person.name,
-      address: person.legalDomicile && {
-        streetAddress: person.legalDomicile.streetAddress,
-        postalCode: person.legalDomicile.postalCode,
-        city: person.legalDomicile.locality,
+      nationalId: person.kennitala,
+      givenName: person.fulltNafn?.eiginNafn ?? null,
+      familyName: person.fulltNafn?.kenniNafn ?? null,
+      name: person.nafn,
+      address: person.heimilisfang && {
+        streetAddress: person.heimilisfang.husHeiti,
+        postalCode: person.heimilisfang.postnumer,
+        city: person.heimilisfang.sveitarfelag,
       },
       type: IdentityType.Person,
     } as Identity

@@ -9,7 +9,6 @@ import {
   Box,
   Button,
   RadioButton,
-  Text,
   toast,
 } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
@@ -22,11 +21,12 @@ import {
   FormFooter,
   IndictmentCaseFilesList,
   IndictmentCaseScheduledCard,
-  IndictmentsLawsBrokenAccordionItem,
+  // IndictmentsLawsBrokenAccordionItem, NOTE: Temporarily hidden while list of laws broken is not complete
   InfoCardActiveIndictment,
   Modal,
   PageHeader,
   PageLayout,
+  PageTitle,
   ProsecutorCaseInfo,
   SectionHeading,
   ServiceAnnouncement,
@@ -188,11 +188,7 @@ const Overview: FC = () => {
             ></AlertMessage>
           </Box>
         )}
-        <Box marginBottom={7}>
-          <Text as="h1" variant="h1">
-            {formatMessage(strings.heading)}
-          </Text>
-        </Box>
+        <PageTitle>{formatMessage(strings.heading)}</PageTitle>
         <ProsecutorCaseInfo workingCase={workingCase} />
         {workingCase.defendants?.map((defendant) =>
           defendant.subpoenas?.map((subpoena) => (
@@ -222,13 +218,17 @@ const Overview: FC = () => {
             </Box>
           )}
         <Box component="section" marginBottom={5}>
-          <InfoCardActiveIndictment />
+          <InfoCardActiveIndictment displayVerdictViewDate />
         </Box>
         {(hasLawsBroken || hasMergeCases) && (
           <Box marginBottom={5}>
+            {/* 
+            NOTE: Temporarily hidden while list of laws broken is not complete in
+            indictment cases
+            
             {hasLawsBroken && (
               <IndictmentsLawsBrokenAccordionItem workingCase={workingCase} />
-            )}
+            )} */}
             {hasMergeCases && (
               <Accordion>
                 {workingCase.mergedCases?.map((mergedCase) => (
@@ -280,20 +280,20 @@ const Overview: FC = () => {
                 <RadioButton
                   large
                   name="indictmentConfirmationRequest"
-                  id="confirmIndictment"
-                  backgroundColor="white"
-                  label={formatMessage(strings.confirmIndictment)}
-                  checked={indictmentConfirmationDecision === 'confirm'}
-                  onChange={() => setIndictmentConfirmationDecision('confirm')}
-                />
-                <RadioButton
-                  large
-                  name="indictmentConfirmationRequest"
                   id="denyIndictment"
                   backgroundColor="white"
                   label={formatMessage(strings.denyIndictment)}
                   checked={indictmentConfirmationDecision === 'deny'}
                   onChange={() => setIndictmentConfirmationDecision('deny')}
+                />
+                <RadioButton
+                  large
+                  name="indictmentConfirmationRequest"
+                  id="confirmIndictment"
+                  backgroundColor="white"
+                  label={formatMessage(strings.confirmIndictment)}
+                  checked={indictmentConfirmationDecision === 'confirm'}
+                  onChange={() => setIndictmentConfirmationDecision('confirm')}
                 />
               </div>
             </BlueBox>

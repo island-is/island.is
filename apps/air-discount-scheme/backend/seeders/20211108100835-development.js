@@ -33,8 +33,8 @@ const getRandomFlightLeg = (flightId, flightDate, pairing) => {
     created: flightDate,
     modified: flightDate,
     financial_state: 'AWAITING_DEBIT',
-    airline: ['ernir', 'norlandair', 'icelandair'][
-      Math.floor(Math.random() * 3)
+    airline: ['ernir', 'norlandair', 'icelandair', 'myflug'][
+      Math.floor(Math.random() * 4)
     ],
     cooperation: null,
     financial_state_updated: flightDate,

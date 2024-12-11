@@ -32,6 +32,7 @@ import {
   Modal,
   PageHeader,
   PageLayout,
+  PageTitle,
   PdfButton,
   ProsecutorCaseInfo,
   UserContext,
@@ -154,11 +155,7 @@ export const Overview = () => {
             />
           </Box>
         )}
-        <Box marginBottom={7}>
-          <Text as="h1" variant="h1">
-            {formatMessage(m.heading)}
-          </Text>
-        </Box>
+        <PageTitle>{formatMessage(m.heading)}</PageTitle>
         <ProsecutorCaseInfo workingCase={workingCase} />
         {workingCase.state === CaseState.RECEIVED &&
           workingCase.arraignmentDate?.date &&

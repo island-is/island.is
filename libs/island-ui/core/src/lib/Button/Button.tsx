@@ -101,7 +101,11 @@ export const Button = forwardRef<
             {preTextIcon && (
               <ButtonIcon icon={preTextIcon} type={preTextIconType} preText />
             )}
-            {children}
+            {typeof children === 'string' && variant !== 'text' ? (
+              <span>{children}</span>
+            ) : (
+              children
+            )}
             {icon && <ButtonIcon icon={icon} type={iconType} />}
           </>
         )}

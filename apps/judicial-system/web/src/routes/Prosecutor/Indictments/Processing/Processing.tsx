@@ -10,11 +10,16 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
-import { isTrafficViolationCase } from '@island.is/judicial-system/types'
+import {
+  AdvocateType,
+  Feature,
+  isTrafficViolationCase,
+} from '@island.is/judicial-system/types'
 import { core, titles } from '@island.is/judicial-system-web/messages'
 import {
   BlueBox,
   CommentsInput,
+  FeatureContext,
   FormContentContainer,
   FormContext,
   FormFooter,
@@ -23,6 +28,7 @@ import {
   InputNationalId,
   PageHeader,
   PageLayout,
+  PageTitle,
   ProsecutorCaseInfo,
   SectionHeading,
   UserContext,
@@ -59,6 +65,7 @@ const Processing: FC = () => {
     isCaseUpToDate,
     refreshCase,
   } = useContext(FormContext)
+  const { features } = useContext(FeatureContext)
   const { updateCase, transitionCase, setAndSendCaseToServer } = useCase()
   const { formatMessage } = useIntl()
   const { updateDefendant, updateDefendantState } = useDefendants()
@@ -69,9 +76,11 @@ const Processing: FC = () => {
     deleteCivilClaimant,
   } = useCivilClaimants()
   const router = useRouter()
-  const isTrafficViolationCaseCheck = isTrafficViolationCase(workingCase)
+  const isTrafficViolationCaseCheck =
+    features.includes(Feature.MULTIPLE_INDICTMENT_SUBTYPES) ||
+    isTrafficViolationCase(workingCase)
   const [civilClaimantNationalIdUpdate, setCivilClaimantNationalIdUpdate] =
-    useState<{ nationalId: string; civilClaimantId: string }>()
+    useState<{ nationalId: string | null; civilClaimantId: string }>()
   const [hasCivilClaimantChoice, setHasCivilClaimantChoice] =
     useState<boolean>()
   const [nationalIdNotFound, setNationalIdNotFound] = useState<boolean>(false)
@@ -183,12 +192,12 @@ const Processing: FC = () => {
       handleUpdateCivilClaimant({
         caseId: workingCase.id,
         civilClaimantId,
-        nationalId,
+        nationalId: nationalId || null,
       })
     } else {
       const cleanNationalId = nationalId ? nationalId.replace('-', '') : ''
       setCivilClaimantNationalIdUpdate({
-        nationalId: cleanNationalId,
+        nationalId: cleanNationalId || null,
         civilClaimantId,
       })
     }
@@ -254,17 +263,20 @@ const Processing: FC = () => {
   )
 
   useEffect(() => {
-    if (!personData || !personData.items || personData.items.length === 0) {
-      setNationalIdNotFound(true)
+    if (!civilClaimantNationalIdUpdate) {
       return
     }
 
-    setNationalIdNotFound(false)
+    const items = personData?.items || []
+    const person = items[0]
+
+    setNationalIdNotFound(items.length === 0)
+
     const update = {
       caseId: workingCase.id,
-      civilClaimantId: civilClaimantNationalIdUpdate?.civilClaimantId || '',
-      name: personData?.items[0].name,
-      nationalId: personData.items[0].kennitala,
+      civilClaimantId: civilClaimantNationalIdUpdate.civilClaimantId || '',
+      nationalId: civilClaimantNationalIdUpdate.nationalId,
+      ...(person?.name ? { name: person.name } : {}),
     }
 
     handleUpdateCivilClaimant(update)
@@ -284,11 +296,7 @@ const Processing: FC = () => {
         title={formatMessage(titles.prosecutor.indictments.processing)}
       />
       <FormContentContainer>
-        <Box marginBottom={7}>
-          <Text as="h1" variant="h1">
-            {formatMessage(strings.heading)}
-          </Text>
-        </Box>
+        <PageTitle>{formatMessage(strings.heading)}</PageTitle>
         <ProsecutorCaseInfo workingCase={workingCase} hideCourt />
         <ProsecutorSection />
         <Box component="section" marginBottom={5}>
@@ -596,8 +604,8 @@ const Processing: FC = () => {
                           clientId={civilClaimant.id}
                           advocateType={
                             civilClaimant.spokespersonIsLawyer
-                              ? 'defender'
-                              : 'legal_rights_protector'
+                              ? AdvocateType.LAWYER
+                              : AdvocateType.LEGAL_RIGHTS_PROTECTOR
                           }
                           disabled={
                             civilClaimant.spokespersonIsLawyer === null ||

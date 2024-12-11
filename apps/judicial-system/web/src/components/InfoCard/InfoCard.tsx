@@ -13,7 +13,7 @@ interface Section {
 
 export interface Item {
   id: string // Used as a key
-  title: string
+  title: string | ReactNode
   values: string[] | ReactNode[]
 }
 

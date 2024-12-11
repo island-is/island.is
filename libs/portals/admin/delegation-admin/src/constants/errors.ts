@@ -12,4 +12,6 @@ export const FORM_ERRORS: Record<ErrorCodes, MessageDescriptor> = {
   [ErrorCodes.INPUT_VALIDATION_SAME_NATIONAL_ID]: m.sameNationalIdError,
   [ErrorCodes.INPUT_VALIDATION_INVALID_PERSON]: m.validPersonError,
   [ErrorCodes.INVALID_DATE_FORMAT]: m.invalidDateFormatError,
+  [ErrorCodes.COULD_NOT_CREATE_DELEGATION]: m.couldNotCreateDelegationError,
+  [ErrorCodes.REFERENCE_ID_ALREADY_EXISTS]: m.referenceIdAlreadyExistsError,
 }

@@ -15,7 +15,9 @@ import {
   GridColumn,
   GridContainer,
   GridRow,
+  Hyphen,
   Icon,
+  type IconProps,
   Inline,
   Pagination,
   Stack,
@@ -84,9 +86,11 @@ export const NonClickableItem = ({ item }: ItemProps) => {
       <Stack space={3}>
         <Stack space={0}>
           <Stack space={0}>
-            <Text variant="eyebrow" color="purple400">
-              {item.date && format(new Date(item.date), 'dd.MM.yyyy')}
-            </Text>
+            {item.date && (
+              <Text variant="eyebrow" color="purple400">
+                {format(new Date(item.date), 'dd.MM.yyyy')}
+              </Text>
+            )}
             <Text variant="h3" as="span" color="dark400">
               {item.title}
             </Text>
@@ -126,9 +130,15 @@ export const ClickableItem = ({ item, baseUrl }: ClickableItemProps) => {
   const pathname = new URL(baseUrl || router.asPath, 'https://island.is')
     .pathname
 
+  let icon: IconProps['icon'] | null = null
+
   let href = item.slug ? `${pathname}/${item.slug}` : undefined
   if (item.assetUrl) {
     href = item.assetUrl
+    icon = 'document'
+  } else if (item.externalUrl) {
+    href = item.externalUrl
+    icon = 'open'
   }
 
   const filterTags = item.filterTags ?? []
@@ -146,24 +156,48 @@ export const ClickableItem = ({ item, baseUrl }: ClickableItemProps) => {
         <Stack space={3}>
           <Box width="full">
             <Box width="full">
-              <Box className={styles.clickableItemTopRowContainer}>
-                <Inline space={2} justifyContent="spaceBetween">
-                  <Text variant="eyebrow" color="purple400">
-                    {item.date && format(new Date(item.date), 'dd.MM.yyyy')}
+              {item.date && (
+                <Box className={styles.clickableItemTopRowContainer}>
+                  <Inline space={2} justifyContent="spaceBetween">
+                    <Text variant="eyebrow" color="purple400">
+                      {format(new Date(item.date), 'dd.MM.yyyy')}
+                    </Text>
+                    {icon && (
+                      <Icon
+                        size="medium"
+                        type="outline"
+                        color="blue400"
+                        icon={icon}
+                      />
+                    )}
+                  </Inline>
+                </Box>
+              )}
+              <GridRow>
+                <GridColumn
+                  span={
+                    !item.date && icon
+                      ? ['10/12', '10/12', '10/12', '10/12', '11/12']
+                      : '1/1'
+                  }
+                >
+                  <Text variant="h3" as="span" color="blue400">
+                    <Hyphen>{item.title}</Hyphen>
                   </Text>
-                  {item.assetUrl && (
-                    <Icon
-                      size="medium"
-                      type="outline"
-                      color="blue400"
-                      icon="document"
-                    />
-                  )}
-                </Inline>
-              </Box>
-              <Text variant="h3" as="span" color="blue400">
-                {item.title}
-              </Text>
+                </GridColumn>
+                {!item.date && icon && (
+                  <GridColumn span={['2/12', '2/12', '2/12', '2/12', '1/12']}>
+                    <Box display="flex" justifyContent="flexEnd">
+                      <Icon
+                        size="medium"
+                        type="outline"
+                        color="blue400"
+                        icon={icon}
+                      />
+                    </Box>
+                  </GridColumn>
+                )}
+              </GridRow>
             </Box>
             {item.cardIntro?.length > 0 && (
               <Box>{webRichText(item.cardIntro ?? [])}</Box>
@@ -304,6 +338,7 @@ export const GenericList = ({
               key={value}
               active={true}
               onClick={() => {
+                setPage(null)
                 setParameters((prevParameters) => {
                   const updatedParameters = {
                     ...prevParameters,
@@ -458,6 +493,7 @@ export const GenericList = ({
                             if (!category) {
                               return
                             }
+                            setPage(null)
                             setParameters((prevParameters) => ({
                               ...prevParameters,
                               [category]: (

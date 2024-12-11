@@ -2,10 +2,14 @@ import PDFDocument from 'pdfkit'
 
 import { FormatMessage } from '@island.is/cms-translations'
 
+import { getIntro } from '@island.is/judicial-system/consts'
 import {
+  capitalize,
   formatDate,
   formatDOB,
+  getWordByGender,
   lowercase,
+  Word,
 } from '@island.is/judicial-system/formatters'
 import { SubpoenaType } from '@island.is/judicial-system/types'
 
@@ -48,6 +52,7 @@ export const createSubpoena = (
   })
 
   const sinc: Buffer[] = []
+  const intro = getIntro(defendant.gender)
 
   doc.on('data', (chunk) => sinc.push(chunk))
 
@@ -111,7 +116,12 @@ export const createSubpoena = (
     'Times-Roman',
   )
   addEmptyLines(doc)
-  addNormalText(doc, 'Ákærði: ', 'Times-Bold', true)
+  addNormalText(
+    doc,
+    `${capitalize(getWordByGender(Word.AKAERDI, defendant.gender))}: `,
+    'Times-Bold',
+    true,
+  )
   addNormalText(doc, defendant.name || 'Nafn ekki skráð', 'Times-Roman')
   addEmptyLines(doc, 2)
 
@@ -137,22 +147,22 @@ export const createSubpoena = (
 
   addNormalText(doc, formatMessage(strings.type), 'Times-Roman')
   addEmptyLines(doc)
-  addNormalText(doc, formatMessage(strings.intro), 'Times-Bold')
+  addNormalText(doc, formatMessage(intro.intro), 'Times-Bold')
 
   if (subpoenaType) {
     addNormalText(
       doc,
       formatMessage(
         subpoenaType === SubpoenaType.ABSENCE
-          ? strings.absenceIntro
-          : strings.arrestIntro,
+          ? intro.absenceIntro
+          : intro.arrestIntro,
       ),
       'Times-Bold',
     )
   }
 
   addEmptyLines(doc)
-  addNormalText(doc, formatMessage(strings.deadline), 'Times-Roman')
+  addNormalText(doc, formatMessage(intro.deadline), 'Times-Roman')
 
   addFooter(doc)
 

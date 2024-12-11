@@ -42,3 +42,14 @@ export const mapGetAttachmentType = (
       return GetApplicationAttachmentsTypeEnum.Fylgiskjol
   }
 }
+
+type EnumType = { [s: string | number]: string }
+
+export const safeEnumMapper = <T extends EnumType>(
+  val: unknown,
+  enumType: T,
+): T[keyof T] | null => {
+  const found = Object.values(enumType).find((enumVal) => enumVal === val)
+
+  return found ? (found as T[keyof T]) : null
+}

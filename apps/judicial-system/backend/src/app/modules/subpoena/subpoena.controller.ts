@@ -15,11 +15,16 @@ import { ApiOkResponse, ApiTags } from '@nestjs/swagger'
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 
 import {
+  CurrentHttpUser,
   JwtAuthGuard,
   RolesGuard,
   RolesRules,
 } from '@island.is/judicial-system/auth'
-import { indictmentCases, SubpoenaType } from '@island.is/judicial-system/types'
+import {
+  indictmentCases,
+  SubpoenaType,
+  type User,
+} from '@island.is/judicial-system/types'
 
 import {
   districtCourtAssistantRule,
@@ -41,9 +46,15 @@ import { Defendant } from '../defendant'
 import { CurrentDefendant } from '../defendant/guards/defendant.decorator'
 import { DefendantExistsGuard } from '../defendant/guards/defendantExists.guard'
 import { CurrentSubpoena } from './guards/subpoena.decorator'
-import { SubpoenaExistsOptionalGuard } from './guards/subpoenaExists.guard'
+import {
+  SubpoenaExistsGuard,
+  SubpoenaExistsOptionalGuard,
+} from './guards/subpoenaExists.guard'
 import { Subpoena } from './models/subpoena.model'
+import { SubpoenaService } from './subpoena.service'
 
+@Controller('api/case/:caseId/defendant/:defendantId/subpoena')
+@ApiTags('subpoenas')
 @UseGuards(
   JwtAuthGuard,
   RolesGuard,
@@ -51,18 +62,40 @@ import { Subpoena } from './models/subpoena.model'
   new CaseTypeGuard(indictmentCases),
   CaseReadGuard,
   DefendantExistsGuard,
-  SubpoenaExistsOptionalGuard,
 )
-@Controller([
-  'api/case/:caseId/defendant/:defendantId/subpoena',
-  'api/case/:caseId/defendant/:defendantId/subpoena/:subpoenaId',
-])
-@ApiTags('subpoenas')
 export class SubpoenaController {
   constructor(
     private readonly pdfService: PdfService,
+    private readonly subpoenaService: SubpoenaService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
+
+  @RolesRules(
+    prosecutorRule,
+    prosecutorRepresentativeRule,
+    districtCourtJudgeRule,
+    districtCourtAssistantRule,
+    districtCourtRegistrarRule,
+  )
+  @Get(':subpoenaId')
+  @UseGuards(SubpoenaExistsGuard)
+  @ApiOkResponse({
+    type: Subpoena,
+    description: 'Gets the subpoena for a given defendant',
+  })
+  getSubpoena(
+    @Param('caseId') caseId: string,
+    @Param('defendantId') defendantId: string,
+    @Param('subpoenaId') subpoenaId: string,
+    @CurrentSubpoena() subpoena: Subpoena,
+    @CurrentHttpUser() user: User,
+  ): Promise<Subpoena> {
+    this.logger.debug(
+      `Gets subpoena ${subpoenaId} for defendant ${defendantId} of case ${caseId}`,
+    )
+
+    return this.subpoenaService.getSubpoena(subpoena, user)
+  }
 
   @RolesRules(
     prosecutorRule,
@@ -72,7 +105,8 @@ export class SubpoenaController {
     districtCourtRegistrarRule,
     districtCourtAssistantRule,
   )
-  @Get()
+  @Get(['', ':subpoenaId/pdf'])
+  @UseGuards(SubpoenaExistsOptionalGuard)
   @Header('Content-Type', 'application/pdf')
   @ApiOkResponse({
     content: { 'application/pdf': {} },
@@ -103,6 +137,44 @@ export class SubpoenaController {
       arraignmentDate,
       location,
       subpoenaType,
+    )
+
+    res.end(pdf)
+  }
+
+  @RolesRules(
+    prosecutorRule,
+    prosecutorRepresentativeRule,
+    publicProsecutorStaffRule,
+    districtCourtJudgeRule,
+    districtCourtRegistrarRule,
+    districtCourtAssistantRule,
+  )
+  @Get(':subpoenaId/serviceCertificate')
+  @UseGuards(SubpoenaExistsGuard)
+  @Header('Content-Type', 'application/pdf')
+  @ApiOkResponse({
+    content: { 'application/pdf': {} },
+    description:
+      'Gets the service certificate for a given defendant as a pdf document',
+  })
+  async getServiceCertificatePdf(
+    @Param('caseId') caseId: string,
+    @Param('defendantId') defendantId: string,
+    @Param('subpoenaId') subpoenaId: string,
+    @CurrentCase() theCase: Case,
+    @CurrentDefendant() defendant: Defendant,
+    @CurrentSubpoena() subpoena: Subpoena,
+    @Res() res: Response,
+  ): Promise<void> {
+    this.logger.debug(
+      `Getting service certificate for defendant ${defendantId} in subpoena ${subpoenaId} of case ${caseId} as a pdf document`,
+    )
+
+    const pdf = await this.pdfService.getServiceCertificatePdf(
+      theCase,
+      defendant,
+      subpoena,
     )
 
     res.end(pdf)

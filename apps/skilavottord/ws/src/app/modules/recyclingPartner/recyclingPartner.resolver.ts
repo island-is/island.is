@@ -56,7 +56,7 @@ export class RecyclingPartnerResolver {
 
     if (recyclingPartner) {
       throw new ConflictException(
-        'Recycling partner with that id already exists',
+        `Recycling partner with the id ${input.companyId} already exists`,
       )
     }
 

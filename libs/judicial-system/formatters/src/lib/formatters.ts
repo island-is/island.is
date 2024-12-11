@@ -132,6 +132,8 @@ export const getHumanReadableCaseIndictmentRulingDecision = (
       return 'Niðurfelling máls'
     case CaseIndictmentRulingDecision.MERGE:
       return 'Sameinað'
+    case CaseIndictmentRulingDecision.WITHDRAWAL:
+      return 'Afturkallað'
     default:
       return 'Ekki skráð'
   }
@@ -214,6 +216,29 @@ export const indictmentSubtypes: IndictmentSubtypes = {
   TRAFFIC_VIOLATION: 'umferðarlagabrot',
   WEPONS_VIOLATION: 'vopnalagabrot',
   THEFT: 'þjófnaður',
+}
+
+export const districtCourtAbbreviation = (courtName?: string | null) => {
+  switch (courtName) {
+    case 'Héraðsdómur Reykjavíkur':
+      return 'HDR'
+    case 'Héraðsdómur Reykjaness':
+      return 'HDRN'
+    case 'Héraðsdómur Vesturlands':
+      return 'HDV'
+    case 'Héraðsdómur Suðurlands':
+      return 'HDS'
+    case 'Héraðsdómur Norðurlands eystra':
+      return 'HDNE'
+    case 'Héraðsdómur Norðurlands vestra':
+      return 'HDNV'
+    case 'Héraðsdómur Austurlands':
+      return 'HDA'
+    case 'Héraðsdómur Vestfjarða':
+      return 'HDVF'
+    default:
+      return ''
+  }
 }
 
 export const getAppealResultTextByValue = (
@@ -422,4 +447,20 @@ export const readableIndictmentSubtypes = (
 
 export const sanitize = (str: string) => {
   return str.replace(/"/g, '')
+}
+
+export enum Word {
+  AKAERDI = 'AKAERDI',
+}
+export const getWordByGender = (word: Word, gender?: Gender): string | null => {
+  switch (word) {
+    case Word.AKAERDI:
+      return gender === Gender.MALE
+        ? 'ákærði'
+        : gender === Gender.FEMALE
+        ? 'ákærða'
+        : 'ákært'
+    default:
+      return null
+  }
 }

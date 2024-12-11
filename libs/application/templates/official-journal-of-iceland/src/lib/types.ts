@@ -11,8 +11,8 @@ export const InputFields = {
     approveExternalData: 'requirements.approveExternalData',
   },
   [Routes.ADVERT]: {
-    departmentId: 'advert.departmentId',
-    typeId: 'advert.typeId',
+    department: 'advert.department',
+    type: 'advert.type',
     title: 'advert.title',
     html: 'advert.html',
     requestedDate: 'advert.requestedDate',
@@ -20,6 +20,7 @@ export const InputFields = {
     channels: 'advert.channels',
     message: 'advert.message',
     involvedPartyId: 'advert.involvedPartyId',
+    additions: 'advert.additions',
   },
   [Routes.SIGNATURE]: {
     regular: 'signatures.regular',
@@ -32,13 +33,15 @@ export const InputFields = {
   [Routes.MISC]: {
     signatureType: 'misc.signatureType',
     selectedTemplate: 'misc.selectedTemplate',
+    asDocument: 'misc.asDocument',
+    asRoman: 'misc.asRoman',
   },
 }
 
 export const RequiredInputFieldsNames = {
   [Routes.ADVERT]: {
-    departmentId: 'Deild',
-    typeId: 'Tegund',
+    department: 'Deild',
+    type: 'Tegund',
     title: 'Titill',
     html: 'Auglýsing',
     requestedDate: 'Útgáfudagur',

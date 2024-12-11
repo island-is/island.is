@@ -1,9 +1,12 @@
 import { validateAnswers } from '@island.is/application/core'
-import { FormValue } from '@island.is/application/types'
+import { FormNode, FormValue } from '@island.is/application/types'
 import { FormatMessage } from '@island.is/localization'
 import { ResolverError, ResolverResult } from 'react-hook-form'
-
 import { ResolverContext } from '../types'
+
+// Get all field id's from the provided form node
+const getFormNodeFieldIds = (formNode: FormNode) =>
+  formNode?.children?.filter((x) => x.id).map((x) => x.id as string) ?? []
 
 type Resolver = ({
   formValue,
@@ -29,6 +32,7 @@ export const resolver: Resolver = ({ formValue, context, formatMessage }) => {
     dataSchema: context.dataSchema,
     answers: formValue,
     isFullSchemaValidation: false,
+    currentScreenFields: getFormNodeFieldIds(context.formNode),
     formatMessage,
   })
 

@@ -1,4 +1,11 @@
-import { Controller, Get, Inject, Query, UseGuards } from '@nestjs/common'
+import {
+  Controller,
+  Get,
+  Inject,
+  Param,
+  Query,
+  UseGuards,
+} from '@nestjs/common'
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
 import { apiBasePath } from '@island.is/financial-aid/shared/lib'
@@ -9,6 +16,7 @@ import { ApiKeyGuard } from '../../guards/apiKey.guard'
 import { CurrentMunicipalityCode } from '../../decorators/apiKey.decorator'
 import { ApplicationState } from '@island.is/financial-aid/shared/lib'
 import { ApplicationModel } from '../application'
+import { PdfApplicationResponse } from './pdfApplication.response'
 
 @Controller(`${apiBasePath}/open-api-applications`)
 @UseGuards(ApiKeyGuard)
@@ -43,5 +51,21 @@ export class OpenApiApplicationController {
       endDate,
       state,
     )
+  }
+
+  @Get('id/:id')
+  @ApiOkResponse({
+    type: PdfApplicationResponse,
+    description: 'Get application',
+  })
+  async getApplicationPdfById(
+    @Param('id') id: string,
+    @CurrentMunicipalityCode() municipalityCode: string,
+  ) {
+    this.logger.info(
+      `Open api Application controller: Getting application by id ${id}`,
+    )
+
+    return this.applicationService.getApplicationPdfById(municipalityCode, id)
   }
 }

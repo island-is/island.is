@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { Modal } from '@island.is/react/components'
 import { useRevalidator } from 'react-router-dom'
 import { m } from '../../../lib/messages'
-import { ListStatus } from '../../../lib/utils'
+import { ListStatus } from '@island.is/api/schema'
 import { useSignatureCollectionLockListMutation } from './lockList.generated'
 
 const ActionLockList = ({
@@ -44,6 +44,7 @@ const ActionLockList = ({
         icon="lockClosed"
         colorScheme="destructive"
         onClick={() => setModalLockListIsOpen(true)}
+        disabled={listStatus !== ListStatus.Active}
       >
         {formatMessage(m.lockList)}
       </Button>
@@ -56,7 +57,7 @@ const ActionLockList = ({
         closeButtonLabel={''}
       >
         <Box marginTop={5}>
-          <Text>{formatMessage(m.lockList)}</Text>
+          <Text>{formatMessage(m.lockListDescription)}</Text>
           <Box display="flex" justifyContent="flexEnd" marginTop={5}>
             <Button
               iconType="outline"

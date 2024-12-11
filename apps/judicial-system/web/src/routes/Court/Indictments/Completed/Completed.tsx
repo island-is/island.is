@@ -7,7 +7,6 @@ import {
   Box,
   InputFileUpload,
   RadioButton,
-  Text,
   UploadFile,
 } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
@@ -15,15 +14,17 @@ import { core, titles } from '@island.is/judicial-system-web/messages'
 import {
   BlueBox,
   ConnectedCaseFilesAccordionItem,
+  CourtCaseInfo,
   FormContentContainer,
   FormContext,
   FormFooter,
   IndictmentCaseFilesList,
-  IndictmentsLawsBrokenAccordionItem,
+  // IndictmentsLawsBrokenAccordionItem, NOTE: Temporarily hidden while list of laws broken is not complete
   InfoCardClosedIndictment,
   Modal,
   PageHeader,
   PageLayout,
+  PageTitle,
   SectionHeading,
   useIndictmentsLawsBroken,
 } from '@island.is/judicial-system-web/src/components'
@@ -60,11 +61,11 @@ const Completed: FC = () => {
   )
 
   const handleNextButtonClick = useCallback(async () => {
-    const allSucceeded = await handleUpload(
+    const uploadResult = await handleUpload(
       uploadFiles.filter((file) => file.percent === 0),
       updateUploadFile,
     )
-    if (!allSucceeded) {
+    if (uploadResult !== 'ALL_SUCCEEDED') {
       return
     }
 
@@ -143,19 +144,20 @@ const Completed: FC = () => {
     >
       <PageHeader title={formatMessage(titles.court.indictments.completed)} />
       <FormContentContainer>
-        <Box marginBottom={7}>
-          <Text as="h1" variant="h1">
-            {formatMessage(strings.heading)}
-          </Text>
-        </Box>
+        <PageTitle>{formatMessage(strings.heading)}</PageTitle>
+        <CourtCaseInfo workingCase={workingCase} />
         <Box marginBottom={5} component="section">
           <InfoCardClosedIndictment />
         </Box>
         {(hasLawsBroken || hasMergeCases) && (
           <Box marginBottom={5}>
+            {/*
+            NOTE: Temporarily hidden while list of laws broken is not complete in
+            indictment cases
+            
             {hasLawsBroken && (
               <IndictmentsLawsBrokenAccordionItem workingCase={workingCase} />
-            )}
+            )} */}
             {hasMergeCases && (
               <Accordion>
                 {workingCase.mergedCases?.map((mergedCase) => (

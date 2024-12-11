@@ -6,7 +6,7 @@ import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { type ConfigType } from '@island.is/nest/config'
 
 import { MessageService, MessageType } from '@island.is/judicial-system/message'
-import { NotificationType } from '@island.is/judicial-system/types'
+import { NotificationDispatchType } from '@island.is/judicial-system/types'
 
 import { appModuleConfig } from './app.config'
 import { now } from './date.factory'
@@ -33,7 +33,9 @@ export class AppService {
       .sendMessagesToQueue([
         {
           type: MessageType.NOTIFICATION_DISPATCH,
-          body: { type: NotificationType.INDICTMENTS_WAITING_FOR_CONFIRMATION },
+          body: {
+            type: NotificationDispatchType.INDICTMENTS_WAITING_FOR_CONFIRMATION,
+          },
         },
       ])
       .catch((reason) =>

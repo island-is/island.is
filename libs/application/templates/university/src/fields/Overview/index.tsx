@@ -16,6 +16,7 @@ import {
   EducationDetailsItemNotFinished,
 } from '../../shared/types'
 import { ApplicationTypes } from '@island.is/university-gateway'
+import { getChosenProgram } from '../../utils'
 
 export const Overview: FC<FieldBaseProps> = ({
   application,
@@ -47,12 +48,19 @@ export const Overview: FC<FieldBaseProps> = ({
     setAcceptModalVisibility(true)
   }
 
+  const chosenProgram = getChosenProgram(application.externalData, answers)
+  const showOtherDocuments =
+    !!chosenProgram &&
+    chosenProgram.extraApplicationFields &&
+    chosenProgram.extraApplicationFields.length > 0
+
   return (
     <Box>
-      <Divider />
       <ProgramReview field={field} application={application} />
+
       <Divider />
       <ApplicantReview field={field} application={application} />
+
       <Divider />
       {educationOptionChosen &&
         educationOptionChosen === ApplicationTypes.EXEMPTION && (
@@ -89,13 +97,18 @@ export const Overview: FC<FieldBaseProps> = ({
           route={Routes.EDUCATIONDETAILSFINISHED}
         />
       )}
-      <Divider />
-      <OtherDocumentsReview
-        field={field}
-        application={application}
-        route={Routes.OTHERDOCUMENTS}
-        goToScreen={goToScreen}
-      />
+
+      {showOtherDocuments && <Divider />}
+      {showOtherDocuments && (
+        <OtherDocumentsReview
+          field={field}
+          application={application}
+          route={Routes.OTHERDOCUMENTS}
+          goToScreen={goToScreen}
+          extraApplicationFields={chosenProgram.extraApplicationFields}
+        />
+      )}
+
       <Box marginTop={14}>
         <Divider />
         <Box display="flex" justifyContent="spaceBetween" paddingY={5}>

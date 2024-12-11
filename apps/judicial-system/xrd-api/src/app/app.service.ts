@@ -120,6 +120,7 @@ export class AppService {
         const chosenLawyer = await this.lawyersService.getLawyer(
           updateSubpoena.defenderNationalId,
         )
+
         defenderInfo = {
           defenderName: chosenLawyer.Name,
           defenderEmail: chosenLawyer.Email,
@@ -131,6 +132,7 @@ export class AppService {
           `Failed to retrieve lawyer with national id ${updateSubpoena.defenderNationalId}`,
           reason,
         )
+
         throw new BadRequestException('Lawyer not found')
       }
     }
@@ -157,6 +159,9 @@ export class AppService {
       defenderName: defenderInfo.defenderName,
       defenderEmail: defenderInfo.defenderEmail,
       defenderPhoneNumber: defenderInfo.defenderPhoneNumber,
+      requestedDefenderChoice: updateSubpoena.defenderChoice,
+      requestedDefenderNationalId: updateSubpoena.defenderNationalId,
+      requestedDefenderName: defenderInfo.defenderName,
     }
 
     try {
@@ -178,8 +183,8 @@ export class AppService {
         return {
           subpoenaComment: response.comment,
           defenderInfo: {
-            defenderChoice: response.defendant.defenderChoice,
-            defenderName: response.defendant.defenderName,
+            defenderChoice: response.defendant.requestedDefenderChoice,
+            defenderName: response.defendant.requestedDefenderName,
           },
         } as SubpoenaResponse
       }

@@ -136,6 +136,7 @@ export const ParentInformationSchema = z
     nationalId: z.string().optional(),
     givenName: z.string().optional(),
     familyName: z.string().optional(),
+    currentName: z.string(),
     wasRemoved: z.string().min(1).optional(),
   })
   .refine(
@@ -346,7 +347,7 @@ export const CitizenshipSchema = z.object({
   countriesOfResidence: CountriesOfResidenceSchema,
   staysAbroad: StaysAbroadSchema,
   passport: PassportSchema,
-  childrenPassport: z.array(ChildrenPassportSchema).optional(),
+  childrenPassport: z.array(ChildrenPassportSchema.nullable()).optional(),
   maritalStatus: MaritalStatusSchema,
   formerIcelander: z.enum([YES, NO]), //.refine((v) => v === YES) // TODO REVERT WHEN UTL FIXED SERVICES
   supportingDocuments: SupportingDocumentsSchema,

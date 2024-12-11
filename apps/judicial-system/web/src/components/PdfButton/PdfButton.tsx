@@ -18,6 +18,7 @@ interface Props {
     | 'custodyNotice'
     | 'indictment'
     | 'subpoena'
+    | 'serviceCertificate'
 
   disabled?: boolean
   renderAs?: 'button' | 'row'

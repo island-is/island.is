@@ -12,7 +12,6 @@ import {
   ApplicationStateSchema,
   Application,
   DefaultEvents,
-  NationalRegistryUserApi,
   UserProfileApi,
   defineTemplateApi,
 } from '@island.is/application/types'
@@ -25,6 +24,7 @@ import {
   ReferenceDataApi,
   EphemeralApi,
   MyMockProvider,
+  NationalRegistryApi,
 } from '../dataProviders'
 import { ExampleSchema } from './dataSchema'
 
@@ -117,7 +117,7 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
                     id: 1986,
                   },
                 }),
-                NationalRegistryUserApi.configure({
+                NationalRegistryApi.configure({
                   params: {
                     ageToValidate: 18,
                   },

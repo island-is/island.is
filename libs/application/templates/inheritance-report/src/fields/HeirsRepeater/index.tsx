@@ -213,9 +213,17 @@ export const HeirsRepeater: FC<
         : valueToNumber(getValueViaPath(answers, 'netPropertyForExchange'))
 
       const inheritanceValue = netPropertyForExchange * percentage
+      const customSpouseSharePercentage = getValueViaPath<string>(
+        answers,
+        'customShare.customSpouseSharePercentage',
+      )
+      const withCustomPercentage =
+        (100 - Number(customSpouseSharePercentage)) * 2
 
       const taxFreeInheritanceValue = isSpouse
         ? inheritanceValue
+        : customSpouseSharePercentage
+        ? (withCustomPercentage / 100) * inheritanceTaxFreeLimit * percentage
         : inheritanceTaxFreeLimit * percentage
       const taxableInheritanceValue = inheritanceValue - taxFreeInheritanceValue
 
@@ -500,7 +508,11 @@ export const HeirsRepeater: FC<
                         variant="h4"
                         color={member.enabled ? 'dark400' : 'dark300'}
                       >
-                        {formatMessage(m.inheritanceAdvocateLabel)}
+                        {formatMessage(
+                          isPrePaidApplication
+                            ? m.inheritanceAdvocateLabelPrePaid
+                            : m.inheritanceAdvocateLabel,
+                        )}
                       </Text>
                     </GridColumn>
                     <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
@@ -585,6 +597,7 @@ export const HeirsRepeater: FC<
               updateValues={updateValues}
               remove={remove}
               error={error[index] ?? null}
+              isPrepaid={isPrePaidApplication}
             />
           </Box>
         )

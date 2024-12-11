@@ -1,7 +1,7 @@
 import { IntroHeader, PortalNavigation } from '@island.is/portals/core'
 import { signatureCollectionNavigation } from '../../lib/navigation'
 import { useLocale } from '@island.is/localization'
-import { m, parliamentaryMessages } from '../../lib/messages'
+import { m } from '../../lib/messages'
 import {
   ActionCard,
   Box,
@@ -15,6 +15,7 @@ import {
   Stack,
   Text,
   toast,
+  TagVariant,
 } from '@island.is/island-ui/core'
 import {
   useLoaderData,
@@ -48,6 +49,8 @@ export const Constituency = ({
     (list) => list.area.name === constituencyName,
   )
 
+  const areaId = collection.areas.find((a) => a.name === constituencyName)?.id
+
   const countCandidatesLists = (allLists: SignatureCollectionList[]) => {
     return allLists?.reduce((acc: any, list: SignatureCollectionList) => {
       acc[list.candidate.id] = (acc[list.candidate.id] || 0) + 1
@@ -68,6 +71,33 @@ export const Constituency = ({
   })
 
   const [removeCandidate] = useSignatureCollectionAdminRemoveCandidateMutation()
+
+  const getTagConfig = (list: SignatureCollectionList) => {
+    // Lista læst
+    if (!list.active && !list.reviewed) {
+      return {
+        label: formatMessage(m.listLocked),
+        variant: 'blueberry' as TagVariant,
+        outlined: false,
+      }
+    }
+
+    // Úrvinnslu lokið
+    if (!list.active && list.reviewed) {
+      return {
+        label: formatMessage(m.confirmListReviewed),
+        variant: 'mint' as TagVariant,
+        outlined: false,
+      }
+    }
+
+    // Söfnun í gangi
+    return {
+      label: formatMessage(m.listOpen),
+      variant: 'blue' as TagVariant,
+      outlined: false,
+    }
+  }
 
   return (
     <GridContainer>
@@ -90,9 +120,7 @@ export const Constituency = ({
             <Breadcrumbs
               items={[
                 {
-                  title: formatMessage(
-                    parliamentaryMessages.signatureListsTitle,
-                  ),
+                  title: formatMessage(m.parliamentaryCollectionTitle),
                   href: `/stjornbord${SignatureCollectionPaths.ParliamentaryRoot}`,
                 },
                 {
@@ -104,7 +132,7 @@ export const Constituency = ({
           <IntroHeader
             title={constituencyName}
             intro={
-              formatMessage(parliamentaryMessages.singleConstituencyIntro) +
+              formatMessage(m.parliamentaryConstituencyIntro) +
               ' ' +
               constituencyName
             }
@@ -127,9 +155,10 @@ export const Constituency = ({
                     ': ' +
                     constituencyLists.length}
                 </Text>
-                {constituencyLists?.length > 0 && (
-                  <CreateCollection collectionId={collection?.id} />
-                )}
+                <CreateCollection
+                  collectionId={collection?.id}
+                  areaId={areaId}
+                />
               </Box>
               <Stack space={3}>
                 {constituencyLists.map((list) => (
@@ -155,83 +184,87 @@ export const Constituency = ({
                       },
                     }}
                     tag={
-                      !list.reviewed
+                      allowedToProcess
                         ? {
-                            label: 'Cancel collection',
-                            renderTag: () => (
-                              <DialogPrompt
-                                baseId="cancel_collection_dialog"
-                                title={
-                                  formatMessage(m.cancelCollectionButton) +
-                                  ' - ' +
-                                  list.area?.name
-                                }
-                                description={
-                                  candidatesListCount[list.candidate.id] === 1
-                                    ? formatMessage(
-                                        m.cancelCollectionModalMessageLastList,
-                                      )
-                                    : formatMessage(
-                                        m.cancelCollectionModalMessage,
-                                      )
-                                }
-                                ariaLabel="delete"
-                                disclosureElement={
-                                  <Tag outlined variant="red">
-                                    <Box display="flex" alignItems="center">
-                                      <Icon
-                                        icon="trash"
-                                        size="small"
-                                        type="outline"
-                                      />
-                                    </Box>
-                                  </Tag>
-                                }
-                                onConfirm={() => {
-                                  removeList({
-                                    variables: {
-                                      input: {
-                                        listId: list.id,
-                                      },
-                                    },
-                                  })
-
-                                  if (
+                            ...getTagConfig(list),
+                            renderTag: (cld) => (
+                              <Box
+                                display="flex"
+                                alignItems="center"
+                                columnGap={1}
+                              >
+                                {cld}
+                                <DialogPrompt
+                                  baseId="cancel_collection_dialog"
+                                  title={
+                                    formatMessage(m.cancelCollectionButton) +
+                                    ' - ' +
+                                    list.area?.name
+                                  }
+                                  description={
                                     candidatesListCount[list.candidate.id] === 1
-                                  ) {
-                                    removeCandidate({
+                                      ? formatMessage(
+                                          m.cancelCollectionModalMessageLastList,
+                                        )
+                                      : formatMessage(
+                                          m.cancelCollectionModalMessage,
+                                        )
+                                  }
+                                  ariaLabel="delete"
+                                  disclosureElement={
+                                    <Tag outlined variant="red">
+                                      <Box display="flex" alignItems="center">
+                                        <Icon
+                                          icon="trash"
+                                          size="small"
+                                          type="outline"
+                                        />
+                                      </Box>
+                                    </Tag>
+                                  }
+                                  onConfirm={() => {
+                                    removeList({
                                       variables: {
                                         input: {
-                                          candidateId: list.candidate.id,
+                                          listId: list.id,
                                         },
                                       },
                                     })
+
+                                    if (
+                                      candidatesListCount[list.candidate.id] ===
+                                      1
+                                    ) {
+                                      removeCandidate({
+                                        variables: {
+                                          input: {
+                                            candidateId: list.candidate.id,
+                                          },
+                                        },
+                                      })
+                                    }
+                                  }}
+                                  buttonTextConfirm={
+                                    candidatesListCount[list.candidate.id] === 1
+                                      ? formatMessage(
+                                          m.cancelCollectionAndCandidateModalConfirmButton,
+                                        )
+                                      : formatMessage(
+                                          m.cancelCollectionModalConfirmButton,
+                                        )
                                   }
-                                }}
-                                buttonTextConfirm={
-                                  candidatesListCount[list.candidate.id] === 1
-                                    ? formatMessage(
-                                        m.cancelCollectionAndCandidateModalConfirmButton,
-                                      )
-                                    : formatMessage(
-                                        m.cancelCollectionModalConfirmButton,
-                                      )
-                                }
-                                buttonPropsConfirm={{
-                                  variant: 'primary',
-                                  colorScheme: 'destructive',
-                                }}
-                                buttonTextCancel={formatMessage(
-                                  m.cancelCollectionModalCancelButton,
-                                )}
-                              />
+                                  buttonPropsConfirm={{
+                                    variant: 'primary',
+                                    colorScheme: 'destructive',
+                                  }}
+                                  buttonTextCancel={formatMessage(
+                                    m.cancelCollectionModalCancelButton,
+                                  )}
+                                />
+                              </Box>
                             ),
                           }
-                        : {
-                            label: m.confirmListReviewed.defaultMessage,
-                            variant: 'mint',
-                            outlined: false,
-                          }
+                        : undefined
                     }
                   />
                 ))}

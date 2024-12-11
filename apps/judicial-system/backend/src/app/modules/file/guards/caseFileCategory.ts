@@ -11,7 +11,9 @@ import {
   User,
 } from '@island.is/judicial-system/types'
 
-export const defenderCaseFileCategoriesForRestrictionAndInvestigationCases = [
+import { CivilClaimant, Defendant } from '../../defendant'
+
+export const defenderCaseFileCategoriesForRequestCases = [
   CaseFileCategory.PROSECUTOR_APPEAL_BRIEF,
   CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT,
   CaseFileCategory.DEFENDANT_APPEAL_BRIEF,
@@ -23,17 +25,21 @@ export const defenderCaseFileCategoriesForRestrictionAndInvestigationCases = [
   CaseFileCategory.APPEAL_COURT_RECORD,
 ]
 
-const defenderCaseFileCategoriesForIndictmentCases = [
+const defenderDefaultCaseFileCategoriesForIndictmentCases = [
   CaseFileCategory.COURT_RECORD,
   CaseFileCategory.RULING,
-  CaseFileCategory.INDICTMENT,
-  CaseFileCategory.CRIMINAL_RECORD,
-  CaseFileCategory.COST_BREAKDOWN,
-  CaseFileCategory.CASE_FILE,
-  CaseFileCategory.PROSECUTOR_CASE_FILE,
-  CaseFileCategory.DEFENDANT_CASE_FILE,
-  CaseFileCategory.CIVIL_CLAIM,
 ]
+
+const defenderCaseFileCategoriesForIndictmentCases =
+  defenderDefaultCaseFileCategoriesForIndictmentCases.concat(
+    CaseFileCategory.INDICTMENT,
+    CaseFileCategory.CRIMINAL_RECORD,
+    CaseFileCategory.COST_BREAKDOWN,
+    CaseFileCategory.CASE_FILE,
+    CaseFileCategory.PROSECUTOR_CASE_FILE,
+    CaseFileCategory.DEFENDANT_CASE_FILE,
+    CaseFileCategory.CIVIL_CLAIM,
+  )
 
 const prisonAdminCaseFileCategories = [
   CaseFileCategory.APPEAL_RULING,
@@ -42,49 +48,122 @@ const prisonAdminCaseFileCategories = [
 
 const prisonStaffCaseFileCategories = [CaseFileCategory.APPEAL_RULING]
 
-export const canLimitedAcccessUserViewCaseFile = (
+const canDefenceUserViewCaseFileOfRequestCase = (
+  caseState: CaseState,
+  caseFileCategory: CaseFileCategory,
+) => {
+  return (
+    isCompletedCase(caseState) &&
+    defenderCaseFileCategoriesForRequestCases.includes(caseFileCategory)
+  )
+}
+
+const canDefenceUserViewCaseFileOfIndictmentCase = (
+  nationalId: string,
+  caseFileCategory: CaseFileCategory,
+  defendants?: Defendant[],
+  civilClaimants?: CivilClaimant[],
+) => {
+  if (
+    Defendant.isConfirmedDefenderOfDefendantWithCaseFileAccess(
+      nationalId,
+      defendants,
+    )
+  ) {
+    return defenderCaseFileCategoriesForIndictmentCases.includes(
+      caseFileCategory,
+    )
+  }
+
+  if (
+    CivilClaimant.isConfirmedSpokespersonOfCivilClaimantWithCaseFileAccess(
+      nationalId,
+      civilClaimants,
+    )
+  ) {
+    return defenderCaseFileCategoriesForIndictmentCases.includes(
+      caseFileCategory,
+    )
+  }
+
+  return defenderDefaultCaseFileCategoriesForIndictmentCases.includes(
+    caseFileCategory,
+  )
+}
+
+const canDefenceUserViewCaseFile = (
+  nationalId: string,
+  caseType: CaseType,
+  caseState: CaseState,
+  caseFileCategory: CaseFileCategory,
+  defendants?: Defendant[],
+  civilClaimants?: CivilClaimant[],
+) => {
+  if (isRequestCase(caseType)) {
+    return canDefenceUserViewCaseFileOfRequestCase(caseState, caseFileCategory)
+  }
+
+  if (isIndictmentCase(caseType)) {
+    return canDefenceUserViewCaseFileOfIndictmentCase(
+      nationalId,
+      caseFileCategory,
+      defendants,
+      civilClaimants,
+    )
+  }
+
+  return false
+}
+
+const canPrisonStaffUserViewCaseFile = (
+  caseState: CaseState,
+  caseFileCategory: CaseFileCategory,
+) => {
+  return (
+    isCompletedCase(caseState) &&
+    prisonStaffCaseFileCategories.includes(caseFileCategory)
+  )
+}
+
+const canPrisonAdminUserViewCaseFile = (
+  caseState: CaseState,
+  caseFileCategory: CaseFileCategory,
+) => {
+  return (
+    isCompletedCase(caseState) &&
+    prisonAdminCaseFileCategories.includes(caseFileCategory)
+  )
+}
+
+export const canLimitedAccessUserViewCaseFile = (
   user: User,
   caseType: CaseType,
   caseState: CaseState,
   caseFileCategory?: CaseFileCategory,
+  defendants?: Defendant[],
+  civilClaimants?: CivilClaimant[],
 ) => {
   if (!caseFileCategory) {
     return false
   }
 
   if (isDefenceUser(user)) {
-    if (
-      isRequestCase(caseType) &&
-      isCompletedCase(caseState) &&
-      defenderCaseFileCategoriesForRestrictionAndInvestigationCases.includes(
-        caseFileCategory,
-      )
-    ) {
-      return true
-    }
-
-    if (
-      isIndictmentCase(caseType) &&
-      defenderCaseFileCategoriesForIndictmentCases.includes(caseFileCategory)
-    ) {
-      return true
-    }
+    return canDefenceUserViewCaseFile(
+      user.nationalId,
+      caseType,
+      caseState,
+      caseFileCategory,
+      defendants,
+      civilClaimants,
+    )
   }
 
-  if (isCompletedCase(caseState)) {
-    if (
-      isPrisonStaffUser(user) &&
-      prisonStaffCaseFileCategories.includes(caseFileCategory)
-    ) {
-      return true
-    }
+  if (isPrisonStaffUser(user)) {
+    return canPrisonStaffUserViewCaseFile(caseState, caseFileCategory)
+  }
 
-    if (
-      isPrisonAdminUser(user) &&
-      prisonAdminCaseFileCategories.includes(caseFileCategory)
-    ) {
-      return true
-    }
+  if (isPrisonAdminUser(user)) {
+    return canPrisonAdminUserViewCaseFile(caseState, caseFileCategory)
   }
 
   return false

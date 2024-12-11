@@ -3,15 +3,20 @@ import {
   Injectable,
   InternalServerErrorException,
 } from '@nestjs/common'
+import { ConfigType } from '@nestjs/config'
 
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 
 import { MessageService, MessageType } from '@island.is/judicial-system/message'
 import {
+  EventNotificationType,
+  IndictmentCaseNotificationType,
+  InstitutionNotificationType,
   InstitutionType,
-  NotificationType,
+  NotificationDispatchType,
 } from '@island.is/judicial-system/types'
 
+import { Case } from '../case'
 import { Institution, InstitutionService } from '../institution'
 import { DeliverResponse } from './models/deliver.response'
 
@@ -30,9 +35,9 @@ export class NotificationDispatchService {
 
     const messages = prosecutorsOffices.map(
       (prosecutorsOffice: Institution) => ({
-        type: MessageType.NOTIFICATION,
+        type: MessageType.INSTITUTION_NOTIFICATION,
         body: {
-          type: NotificationType.INDICTMENTS_WAITING_FOR_CONFIRMATION,
+          type: InstitutionNotificationType.INDICTMENTS_WAITING_FOR_CONFIRMATION,
           prosecutorsOfficeId: prosecutorsOffice.id,
         },
       }),
@@ -41,10 +46,12 @@ export class NotificationDispatchService {
     return this.messageService.sendMessagesToQueue(messages)
   }
 
-  async dispatchNotification(type: NotificationType): Promise<DeliverResponse> {
+  async dispatchNotification(
+    type: NotificationDispatchType,
+  ): Promise<DeliverResponse> {
     try {
       switch (type) {
-        case NotificationType.INDICTMENTS_WAITING_FOR_CONFIRMATION:
+        case NotificationDispatchType.INDICTMENTS_WAITING_FOR_CONFIRMATION:
           await this.dispatchIndictmentsWaitingForConfirmationNotification()
           break
         default:
@@ -54,6 +61,45 @@ export class NotificationDispatchService {
       }
     } catch (error) {
       this.logger.error('Failed to dispatch notification', error)
+
+      return { delivered: false }
+    }
+
+    return { delivered: true }
+  }
+
+  private async dispatchIndictmentSentToPublicProsecutorNotifications(
+    theCase: Case,
+  ): Promise<void> {
+    return this.messageService.sendMessagesToQueue([
+      {
+        type: MessageType.INDICTMENT_CASE_NOTIFICATION,
+        caseId: theCase.id,
+        body: {
+          type: IndictmentCaseNotificationType.INDICTMENT_VERDICT_INFO,
+        },
+      },
+    ])
+  }
+
+  async dispatchEventNotification(
+    type: EventNotificationType,
+    theCase: Case,
+  ): Promise<DeliverResponse> {
+    try {
+      switch (type) {
+        case EventNotificationType.INDICTMENT_SENT_TO_PUBLIC_PROSECUTOR:
+          await this.dispatchIndictmentSentToPublicProsecutorNotifications(
+            theCase,
+          )
+          break
+        default:
+          throw new InternalServerErrorException(
+            `Invalid notification type ${type}`,
+          )
+      }
+    } catch (error) {
+      this.logger.error('Failed to dispatch event notification', error)
 
       return { delivered: false }
     }

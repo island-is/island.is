@@ -8,7 +8,7 @@ import {
   SubpoenaType,
 } from '@island.is/judicial-system/types'
 
-import { Subpoena } from './subpoena.model'
+import { Subpoena } from '../../subpoena'
 
 registerEnumType(Gender, { name: 'Gender' })
 registerEnumType(DefendantPlea, { name: 'DefendantPlea' })
@@ -72,12 +72,39 @@ export class Defendant {
   @Field(() => String, { nullable: true })
   readonly verdictAppealDeadline?: string
 
+  @Field(() => String, { nullable: true })
+  readonly verdictAppealDate?: string
+
+  @Field(() => Boolean, { nullable: true })
+  readonly isVerdictAppealDeadlineExpired?: boolean
+
   @Field(() => DefenderChoice, { nullable: true })
   readonly defenderChoice?: DefenderChoice
+
+  @Field(() => DefenderChoice, { nullable: true })
+  readonly requestedDefenderChoice?: DefenderChoice
+
+  @Field(() => String, { nullable: true })
+  readonly requestedDefenderNationalId?: string
+
+  @Field(() => String, { nullable: true })
+  readonly requestedDefenderName?: string
 
   @Field(() => SubpoenaType, { nullable: true })
   readonly subpoenaType?: SubpoenaType
 
   @Field(() => [Subpoena], { nullable: true })
   readonly subpoenas?: Subpoena[]
+
+  @Field(() => Boolean, { nullable: true })
+  readonly isDefenderChoiceConfirmed?: boolean
+
+  @Field(() => Boolean, { nullable: true })
+  readonly caseFilesSharedWithDefender?: boolean
+
+  @Field(() => Boolean, { nullable: true })
+  readonly isSentToPrisonAdmin?: boolean
+
+  @Field(() => String, { nullable: true })
+  readonly sentToPrisonAdminDate?: string
 }

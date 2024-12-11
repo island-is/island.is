@@ -1,12 +1,41 @@
 import { globalStyle, style } from '@vanilla-extract/css'
 
-import { theme } from '@island.is/island-ui/theme'
+import { theme, themeUtils } from '@island.is/island-ui/theme'
 
 const lineWidth = '2px'
 
 export const line = style({
   borderRight: `${lineWidth} solid ${theme.color.blue200}`,
   height: '86px',
+})
+
+export const longLine = style({
+  borderLeft: `${lineWidth} solid ${theme.color.blue200}`,
+})
+
+export const text2025Container = style({
+  ...themeUtils.responsiveStyle({
+    xs: {
+      maxWidth: '180px',
+    },
+    md: {
+      maxWidth: '200px',
+    },
+  }),
+})
+
+export const highlightedItemsContainer = style({
+  display: 'grid',
+  ...themeUtils.responsiveStyle({
+    xs: {
+      gridTemplateColumns: '1fr',
+      gap: theme.spacing[4],
+    },
+    lg: {
+      gridTemplateColumns: '1fr auto 1fr',
+      gap: theme.spacing[7],
+    },
+  }),
 })
 
 export const fullWidth = style({

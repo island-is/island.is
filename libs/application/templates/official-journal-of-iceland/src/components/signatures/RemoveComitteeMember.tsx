@@ -46,7 +46,7 @@ export const RemoveCommitteeMember = ({
   }
 
   return (
-    <Box className={styles.removeInputGroup}>
+    <Box display="flex" flexDirection="column" justifyContent="flexEnd">
       <Button
         disabled={memberIndex < MINIMUM_COMMITTEE_SIGNATURE_MEMBER_COUNT}
         loading={isLoading}

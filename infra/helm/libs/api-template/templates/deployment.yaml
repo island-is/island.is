@@ -1,9 +1,9 @@
 {{- if .Values.enabled }}
-{{- $fullName := include "api-template.fullname" . -}}
+{{- $fullName := include "api-template.name" . -}}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "api-template.fullname" . }}
+  name: {{ include "api-template.name" . }}
   {{- if .Values.namespace }}
   namespace: {{ .Values.namespace }}
   {{- end }}
@@ -11,7 +11,7 @@ metadata:
     {{- include "api-template.labels" . | nindent 4 }}
     tags.datadoghq.com/env: {{ .Values.global.env.name }}
     tags.datadoghq.com/service: {{ include "api-template.name" . }}
-    tags.datadoghq.com/version: {{ .Values.image.tag | default .Values.global.image.tag }}
+    tags.datadoghq.com/version: {{ .Values.image.tag }}
 spec:
   replicas: {{ .Values.replicaCount.default }}
   strategy:
@@ -25,7 +25,7 @@ spec:
         {{- include "api-template.selectorLabels" . | nindent 8 }}
         tags.datadoghq.com/env: {{ .Values.global.env.name }}
         tags.datadoghq.com/service: {{ include "api-template.name" . }}
-        tags.datadoghq.com/version: {{ .Values.image.tag | default .Values.global.image.tag }}
+        tags.datadoghq.com/version: {{ .Values.image.tag }}
       annotations:
         prometheus.io/scrape: "true"
         prometheus.io/path: /metrics
@@ -55,6 +55,15 @@ spec:
         {{- toYaml .Values.annotations | nindent 8 }}
         {{- end }}
     spec:
+    {{- if .Values.armBetaEnrolled }}
+      tolerations:
+      - key: "arm"
+        operator: "Equal"
+        value: "true"
+        effect: "NoSchedule"
+      nodeSelector:
+        nodetype: "arm"
+    {{- end }}
     {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
@@ -69,7 +78,7 @@ spec:
         - name: {{ .name | default "migration" }}
           securityContext:
             {{- toYaml $.Values.securityContext | nindent 12 }}
-          image: "{{ if .image }}{{ .image }}{{ else }}{{ $.Values.image.repository }}:{{ $.Values.image.tag | default $.Values.global.image.tag }}{{ end }}"
+          image: "{{ if .image }}{{ .image }}{{ else }}{{ $.Values.image.repository }}:{{ $.Values.image.tag }}{{ end }}"
           command: {{ .command | toJson }}
           args: {{ .args | toJson }}
           env:
@@ -89,7 +98,7 @@ spec:
                   key: {{ $key }}
             {{- end }}
             - name: APP_VERSION
-              value: {{ $.Values.image.tag | default $.Values.global.image.tag }}
+              value: {{ $.Values.image.tag }}
             - name: DD_ENV
               valueFrom:
                 fieldRef:
@@ -123,7 +132,7 @@ spec:
         - name: {{ .Chart.Name }}
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
-          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Values.global.image.tag }}"
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           {{- if .Values.command }}
           command: {{ .Values.command | toJson }}
@@ -160,7 +169,7 @@ spec:
                   key: {{ $key }}
             {{- end }}
             - name: APP_VERSION
-              value: {{ .Values.image.tag | default .Values.global.image.tag }}
+              value: {{ .Values.image.tag }}
             - name: DD_ENV
               valueFrom:
                 fieldRef:
@@ -175,6 +184,8 @@ spec:
                   fieldPath: metadata.labels['tags.datadoghq.com/version']
             - name: DD_LOGS_INJECTION
               value: "true"
+            - name: DD_DBM_PROPAGATION_MODE
+              value: "full"
             - name: DD_AGENT_HOST
               valueFrom:
                 fieldRef:
@@ -183,6 +194,8 @@ spec:
               value: "true"
             - name: DD_DOGSTATSD_NON_LOCAL_TRAFFIC
               value: "true"
+            - name: DD_PROFILING_ENABLED
+              value: "false"
             - name: DD_APM_REPLACE_TAGS
               value: '[
                 {

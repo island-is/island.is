@@ -12,6 +12,7 @@ import {
   TicketStatus,
   ZendeskService,
 } from '@island.is/clients/zendesk'
+import { CompanyRegistryClientService } from '@island.is/clients/rsk/company-registry'
 
 import { Delegation } from '../models/delegation.model'
 import { DelegationAdminCustomDto } from '../dto/delegation-admin-custom.dto'
@@ -29,6 +30,7 @@ import { DelegationDelegationType } from '../models/delegation-delegation-type.m
 import { DelegationsIncomingCustomService } from '../delegations-incoming-custom.service'
 import { DelegationValidity } from '../types/delegationValidity'
 import { ErrorCodes } from '@island.is/shared/utils'
+import { Op } from 'sequelize'
 
 @Injectable()
 export class DelegationAdminCustomService {
@@ -44,6 +46,7 @@ export class DelegationAdminCustomService {
     private delegationScopeService: DelegationScopeService,
     private namesService: NamesService,
     private sequelize: Sequelize,
+    private rskCompanyInfoService: CompanyRegistryClientService,
   ) {}
 
   private getZendeskCustomFields(ticket: Ticket): {
@@ -153,7 +156,7 @@ export class DelegationAdminCustomService {
     }
   }
 
-  async createDelegationByZendeskId(zendeskId: string): Promise<void> {
+  async createDelegationByZendeskId(zendeskId: string): Promise<DelegationDTO> {
     const zendeskCase = await this.zendeskService.getTicket(zendeskId)
 
     const {
@@ -181,13 +184,15 @@ export class DelegationAdminCustomService {
 
     this.verifyTicketCompletion(zendeskCase)
 
-    await this.insertDelegation({
+    const resp = await this.insertDelegation({
       fromNationalId,
       toNationalId,
       referenceId: zendeskId,
       validTo: this.formatZendeskDate(validTo),
       createdBy: createdByNationalId,
     })
+
+    return resp.toDTO(AuthDelegationType.GeneralMandate)
   }
 
   async createDelegation(
@@ -273,9 +278,7 @@ export class DelegationAdminCustomService {
       })
     }
 
-    if (
-      !(kennitala.isPerson(fromNationalId) && kennitala.isPerson(toNationalId))
-    ) {
+    if (!kennitala.isPerson(toNationalId)) {
       throw new BadRequestException({
         message: 'National Ids are not valid',
         error: ErrorCodes.INPUT_VALIDATION_INVALID_PERSON,
@@ -297,9 +300,44 @@ export class DelegationAdminCustomService {
     },
   ): Promise<Delegation> {
     const [fromDisplayName, toName] = await Promise.all([
-      this.namesService.getPersonName(delegation.fromNationalId),
+      kennitala.isPerson(delegation.fromNationalId)
+        ? this.namesService.getPersonName(delegation.fromNationalId)
+        : this.rskCompanyInfoService
+            .getCompany(delegation.fromNationalId)
+            .then((company) => company?.name ?? ''),
       this.namesService.getPersonName(delegation.toNationalId),
     ])
+
+    const existingDelegation = await this.delegationModel.findOne({
+      where: {
+        [Op.or]: [
+          {
+            fromNationalId: delegation.fromNationalId,
+            toNationalId: delegation.toNationalId,
+            domainName: null,
+          },
+          {
+            referenceId: delegation.referenceId,
+          },
+        ],
+      },
+    })
+
+    if (existingDelegation) {
+      // Throw error if reference ID already exists in db.
+      if (existingDelegation.referenceId === delegation.referenceId) {
+        throw new BadRequestException({
+          message: 'Delegation with the same reference id already exists',
+          error: ErrorCodes.REFERENCE_ID_ALREADY_EXISTS,
+        })
+      } else {
+        // Throw generic error if delegation already exists.
+        throw new BadRequestException({
+          message: 'Could not create delegation',
+          error: ErrorCodes.COULD_NOT_CREATE_DELEGATION,
+        })
+      }
+    }
 
     return this.sequelize.transaction(async (transaction) => {
       return this.delegationModel.create(

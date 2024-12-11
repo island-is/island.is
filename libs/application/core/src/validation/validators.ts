@@ -18,8 +18,10 @@ const populateError = (
   error: ZodIssue[],
   pathToError: string | undefined,
   formatMessage: FormatMessage,
+  currentScreenFields?: string[],
 ) => {
-  let errorObject = {}
+  let errorObject: Record<string, string> = {}
+
   error.forEach((element) => {
     const defaultZodError = element.message === 'Invalid input'
     const path = pathToError || element.path
@@ -35,6 +37,33 @@ const populateError = (
     }
     errorObject = set(errorObject, path, message)
   })
+
+  /**
+   * If currentScreenFields is provided, only return errors for fields on that screen.
+   * This is to avoid bugs in some scenarios (f.x. when going back via the browser back button)
+   * Zod tries to validate screens that are not currently active, causing the user to not
+   * be able to submit the screen.
+   */
+  if (currentScreenFields && currentScreenFields.length > 0) {
+    // If we have nested fields, we need to resolve only the top level field
+    const resolvedNestedFields = currentScreenFields.map(
+      (id) => id.split('.')[0],
+    )
+    const relevantErrors = Object.fromEntries(
+      Object.entries(errorObject).filter(([key]) =>
+        resolvedNestedFields.includes(key),
+      ),
+    )
+
+    if (Object.keys(relevantErrors).length === 0) {
+      // No errors on the current screen
+      return undefined
+    }
+
+    console.info(relevantErrors)
+    return relevantErrors
+  }
+
   console.info(errorObject)
   return errorObject
 }
@@ -43,11 +72,13 @@ export const validateAnswers = ({
   dataSchema,
   answers,
   formatMessage,
+  currentScreenFields,
 }: {
   dataSchema: Schema | ZodEffects<any, any, any>
   answers: FormValue
   isFullSchemaValidation?: boolean
   formatMessage: FormatMessage
+  currentScreenFields?: string[]
 }): ValidationRecord | undefined => {
   try {
     if (dataSchema instanceof ZodEffects) {
@@ -59,7 +90,7 @@ export const validateAnswers = ({
     }
   } catch (e) {
     const zodErrors: ZodIssue[] = e.errors
-    return populateError(zodErrors, e.path, formatMessage)
+    return populateError(zodErrors, e.path, formatMessage, currentScreenFields)
   }
   return undefined
 }

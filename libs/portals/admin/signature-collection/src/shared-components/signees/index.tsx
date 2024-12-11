@@ -120,6 +120,7 @@ const Signees = ({ numberOfSignatures }: { numberOfSignatures: number }) => {
                 <T.HeadData>{formatMessage(m.signeeDate)}</T.HeadData>
                 <T.HeadData>{formatMessage(m.signeeName)}</T.HeadData>
                 <T.HeadData>{formatMessage(m.signeeNationalId)}</T.HeadData>
+                <T.HeadData>{formatMessage(m.signeeAddress)}</T.HeadData>
                 <T.HeadData></T.HeadData>
               </T.Row>
             </T.Head>
@@ -134,7 +135,7 @@ const Signees = ({ numberOfSignatures }: { numberOfSignatures: number }) => {
                         box={{
                           background: s.isDigital ? 'white' : 'blueberry100',
                         }}
-                        style={{ width: '25%' }}
+                        style={{ width: '22%' }}
                       >
                         {format(new Date(s.created), 'dd.MM.yyyy HH:mm')}
                       </T.Data>
@@ -155,13 +156,23 @@ const Signees = ({ numberOfSignatures }: { numberOfSignatures: number }) => {
                         {formatNationalId(s.signee.nationalId)}
                       </T.Data>
                       <T.Data
+                        text={{ variant: 'medium' }}
+                        box={{
+                          background: s.isDigital ? 'white' : 'blueberry100',
+                        }}
+                      >
+                        {s.signee.address}
+                      </T.Data>
+                      <T.Data
                         box={{
                           background: s.isDigital ? 'white' : 'blueberry100',
                         }}
                       >
                         {!s.isDigital && (
                           <Box display="flex">
-                            <Text>{s.pageNumber}</Text>
+                            <Box marginRight={1}>
+                              <Text>{s.pageNumber}</Text>
+                            </Box>
                             <Icon
                               icon="document"
                               type="outline"

@@ -203,7 +203,6 @@ export const useEligibility = (
         isEligible: loading
           ? undefined
           : (data.drivingLicenseApplicationEligibility?.isEligible ?? false) &&
-            hasQualityPhoto &&
             !hasExtendedLicense &&
             !hasAnyInvalidRemarks,
         requirements,

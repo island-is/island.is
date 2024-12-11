@@ -1,16 +1,18 @@
 import {
+  buildAsyncSelectField,
   buildCustomField,
   buildDescriptionField,
   buildMultiField,
   buildSection,
   buildTextField,
 } from '@island.is/application/core'
-import { getCurrentUserType } from '../../../utils/helpers'
 import { Application, UserProfile } from '@island.is/application/types'
 import { m } from '../../../lib/messages'
 import { ABOUTIDS } from '../../../utils/constants'
 import { Identity } from '@island.is/api/schema'
-import { FSIUSERTYPE } from '../../../types/types'
+import { getAuditConfig } from '../../../graphql'
+import { AuditConfig } from '../../../types/types'
+import { getYearOptions } from '../../../utils/helpers'
 
 export const clientInfoSection = buildSection({
   id: 'info',
@@ -19,24 +21,23 @@ export const clientInfoSection = buildSection({
     buildMultiField({
       id: 'about',
       title: m.info,
-      description: (application: Application) => {
-        const answers = application.answers
-        const externalData = application.externalData
-        const userType = getCurrentUserType(answers, externalData)
-        return userType === FSIUSERTYPE.INDIVIDUAL
-          ? m.reviewInfo
-          : m.reviewContact
-      },
+      description: m.reviewContact,
       children: [
-        buildDescriptionField({
+        buildAsyncSelectField({
           id: ABOUTIDS.operatingYear,
-          title: '',
+          title: m.operatingYear,
+          placeholder: m.selectOperatingYear,
+          width: 'half',
+          loadOptions: async ({ apolloClient }) => {
+            const { data } = await apolloClient.query<AuditConfig>({
+              query: getAuditConfig,
+            })
+            return getYearOptions(data)
+          },
         }),
-        buildCustomField({
-          id: 'OperatingYear',
-          childInputIds: [ABOUTIDS.operatingYear],
+        buildDescriptionField({
+          id: 'about.description',
           title: '',
-          component: 'OperatingYear',
         }),
         buildTextField({
           id: 'about.nationalId',
@@ -58,7 +59,7 @@ export const clientInfoSection = buildSection({
           },
         }),
         buildDescriptionField({
-          id: ABOUTIDS.powerOfAttorneyName,
+          id: 'about.description2',
           title: '',
         }),
         buildCustomField({
@@ -93,11 +94,6 @@ export const clientInfoSection = buildSection({
               .data as UserProfile
             return userProfile.mobilePhoneNumber
           },
-        }),
-        buildCustomField({
-          id: 'delegation check',
-          component: 'DelegationCheck',
-          title: '',
         }),
       ],
     }),

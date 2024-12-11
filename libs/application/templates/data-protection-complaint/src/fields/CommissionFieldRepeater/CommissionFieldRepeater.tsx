@@ -1,6 +1,10 @@
 import React, { FC, useEffect } from 'react'
 import { useLocale } from '@island.is/localization'
-import { formatText, getErrorViaPath } from '@island.is/application/core'
+import {
+  formatText,
+  formatTextWithLocale,
+  getErrorViaPath,
+} from '@island.is/application/core'
 import { FieldBaseProps } from '@island.is/application/types'
 import { InputController } from '@island.is/shared/form-fields'
 import {
@@ -13,7 +17,7 @@ import {
 import { useFieldArray } from 'react-hook-form'
 import * as styles from './CommissionFieldRepeater.css'
 import { info } from '../../lib/messages'
-
+import { Locale } from '@island.is/shared/types'
 type PersonField = {
   name: string
   nationalId: string
@@ -23,7 +27,7 @@ export const CommissionFieldRepeater: FC<
   React.PropsWithChildren<FieldBaseProps>
 > = ({ application, errors, field }) => {
   const { id, title } = field
-  const { formatMessage } = useLocale()
+  const { formatMessage, lang: locale } = useLocale()
   const { fields, append, remove } = useFieldArray({ name: id })
 
   useEffect(() => {
@@ -58,7 +62,12 @@ export const CommissionFieldRepeater: FC<
               </Box>
             )}
             <Text variant="h4" marginBottom={3}>
-              {formatText(title, application, formatMessage)}{' '}
+              {formatTextWithLocale(
+                title,
+                application,
+                locale as Locale,
+                formatMessage,
+              )}{' '}
               {index > 0 ? index + 1 : ''}
             </Text>
             <GridRow>

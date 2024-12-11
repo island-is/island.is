@@ -247,7 +247,7 @@ export const spouseConfirmation = ({ allowFakeData = false }): Form =>
                     readOnly: true,
                     defaultValue: (application: Application) => {
                       const status = application.externalData.maritalStatus
-                        .data as any
+                        .data as { maritalStatus: string }
                       return status.maritalStatus
                     },
                   }),

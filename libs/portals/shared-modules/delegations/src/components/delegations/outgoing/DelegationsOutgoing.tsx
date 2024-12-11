@@ -113,6 +113,9 @@ export const DelegationsOutgoing = () => {
           ) : (
             <Stack space={3}>
               {filteredDelegations.map((delegation) => {
+                if (delegation.type === AuthDelegationType.LegalGuardianMinor)
+                  return null
+
                 const isGeneralMandate =
                   delegation.type === AuthDelegationType.GeneralMandate
 
@@ -121,15 +124,11 @@ export const DelegationsOutgoing = () => {
                     <AccessCard
                       key={delegation.id}
                       delegation={delegation}
-                      onDelete={
-                        !isGeneralMandate
-                          ? (delegation) => {
-                              setDelegation(
-                                delegation as AuthCustomDelegationOutgoing,
-                              )
-                            }
-                          : undefined
-                      }
+                      onDelete={(delegation) => {
+                        setDelegation(
+                          delegation as AuthCustomDelegationOutgoing,
+                        )
+                      }}
                       onEdit={
                         !isGeneralMandate
                           ? (delegation) =>

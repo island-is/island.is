@@ -39,7 +39,7 @@ interface HomeProps {
 }
 
 const Home: Screen<HomeProps> = ({ categories, news, page, locale }) => {
-  const namespace = JSON.parse(page?.namespace?.fields ?? '{}')
+  const namespace = JSON.parse(page?.namespace?.fields || '{}')
   const { activeLocale } = useI18n()
   const { globalNamespace } = useContext(GlobalContext)
   const n = useNamespace(namespace)

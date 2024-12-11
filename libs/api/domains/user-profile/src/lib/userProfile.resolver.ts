@@ -56,7 +56,7 @@ export class UserProfileResolver {
     @Args('input') input: UpdateUserProfileInput,
     @CurrentUser() user: User,
   ): Promise<UserProfile | null> {
-    return this.userProfileService.updateUserProfile(input, user)
+    return this.userProfileService.updateMeUserProfile(input, user)
   }
 
   @Mutation(() => UserProfile, { nullable: true })

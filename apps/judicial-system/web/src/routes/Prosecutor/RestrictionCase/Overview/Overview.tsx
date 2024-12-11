@@ -34,6 +34,7 @@ import {
   Modal,
   PageHeader,
   PageLayout,
+  PageTitle,
   PdfButton,
   ProsecutorCaseInfo,
   UserContext,
@@ -158,14 +159,12 @@ export const Overview = () => {
             />
           </Box>
         )}
-        <Box marginBottom={7}>
-          <Text as="h1" variant="h1">
-            {formatMessage(m.headingV3, {
-              isExtended: Boolean(workingCase.parentCase),
-              caseType: workingCase.type,
-            })}
-          </Text>
-        </Box>
+        <PageTitle>
+          {formatMessage(m.headingV3, {
+            isExtended: Boolean(workingCase.parentCase),
+            caseType: workingCase.type,
+          })}
+        </PageTitle>
         <ProsecutorCaseInfo workingCase={workingCase} />
         {workingCase.state === CaseState.RECEIVED &&
           workingCase.arraignmentDate?.date &&

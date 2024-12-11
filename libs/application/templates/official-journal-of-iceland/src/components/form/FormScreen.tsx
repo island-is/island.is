@@ -2,13 +2,17 @@ import {
   AlertMessage,
   AlertMessageProps,
   Box,
+  Bullet,
+  BulletList,
+  Button,
+  Inline,
   SkeletonLoader,
   Text,
 } from '@island.is/island-ui/core'
 import * as styles from './FormScreen.css'
 import { useLocale } from '@island.is/localization'
 import { general } from '../../lib/messages'
-import { OJOI_INPUT_HEIGHT } from '../../lib/constants'
+import { OJOI_INPUT_HEIGHT, Routes } from '../../lib/constants'
 
 type WarningProps = {
   type?: AlertMessageProps['type']
@@ -23,6 +27,7 @@ type Props = {
   warning?: WarningProps
   children?: React.ReactNode
   loading?: boolean
+  goToScreen?: (screen: string) => void
 }
 
 export const FormScreen = ({
@@ -32,6 +37,7 @@ export const FormScreen = ({
   children,
   warning,
   loading,
+  goToScreen,
 }: Props) => {
   const { formatMessage } = useLocale()
 
@@ -43,6 +49,54 @@ export const FormScreen = ({
 
   return (
     <>
+      {process.env.NODE_ENV === 'development' && goToScreen && (
+        <Box marginBottom={2}>
+          <Inline flexWrap="wrap" space={2}>
+            <Button
+              variant="text"
+              size="small"
+              onClick={() => goToScreen(Routes.ADVERT)}
+            >
+              Grunnupplýsingar
+            </Button>
+            <Button
+              variant="text"
+              size="small"
+              onClick={() => goToScreen(Routes.ATTACHMENTS)}
+            >
+              Viðaukar og fylgiskjöl
+            </Button>
+            <Button
+              variant="text"
+              size="small"
+              onClick={() => goToScreen(Routes.PREVIEW)}
+            >
+              Forskoðun
+            </Button>
+            <Button
+              variant="text"
+              size="small"
+              onClick={() => goToScreen(Routes.ORIGINAL)}
+            >
+              Frumrit
+            </Button>
+            <Button
+              variant="text"
+              size="small"
+              onClick={() => goToScreen(Routes.PUBLISHING)}
+            >
+              Óskir um birtingu
+            </Button>
+            <Button
+              variant="text"
+              size="small"
+              onClick={() => goToScreen(Routes.SUMMARY)}
+            >
+              Samantekt
+            </Button>
+          </Inline>
+        </Box>
+      )}
       <Box className={styles.formIntro}>
         {(title || button) && (
           <Box marginBottom={2} className={styles.titleWrapper}>

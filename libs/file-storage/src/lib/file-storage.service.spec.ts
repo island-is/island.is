@@ -2,6 +2,7 @@ import { ConfigModule } from '@nestjs/config'
 import { Test } from '@nestjs/testing'
 import { FileStorageConfig } from './file-storage.configuration'
 import { FileStorageService } from './file-storage.service'
+import { S3Service } from '@island.is/nest/aws'
 
 describe('FileStorageService', () => {
   let service: FileStorageService
@@ -14,7 +15,13 @@ describe('FileStorageService', () => {
           load: [FileStorageConfig],
         }),
       ],
-      providers: [FileStorageService],
+      providers: [
+        FileStorageService,
+        {
+          provide: S3Service,
+          useValue: {},
+        },
+      ],
     }).compile()
 
     service = module.get(FileStorageService)

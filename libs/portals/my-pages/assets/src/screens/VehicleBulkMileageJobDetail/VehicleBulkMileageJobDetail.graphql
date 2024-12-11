@@ -1,0 +1,26 @@
+query getJobsStatus($input: BulkVehicleMileageRequestStatusInput!) {
+  vehicleBulkMileageRegistrationRequestStatus(input: $input) {
+    jobsErrored
+    jobsFinished
+    jobsRemaining
+    jobsSubmitted
+    jobsValid
+    requestId
+  }
+}
+query getJobRegistrations($input: BulkVehicleMileageRequestOverviewInput!) {
+  vehicleBulkMileageRegistrationRequestOverview(input: $input) {
+    requests {
+      guid
+      vehicleId
+      mileage
+      returnCode
+      errors {
+        code
+        message
+        warningSerialCode
+        warningText
+      }
+    }
+  }
+}

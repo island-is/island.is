@@ -28,11 +28,11 @@ export class AdvertsInput {
   @Field(() => [String], { nullable: true })
   involvedParty?: string[]
 
-  @Field(() => Date, { nullable: true })
-  dateFrom?: Date
+  @Field(() => String, { nullable: true })
+  dateFrom?: string
 
-  @Field(() => Date, { nullable: true })
-  dateTo?: Date
+  @Field(() => String, { nullable: true })
+  dateTo?: string
 }
 
 @InputType('OfficialJournalOfIcelandTypesInput')

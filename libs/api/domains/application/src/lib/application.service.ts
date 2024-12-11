@@ -11,11 +11,7 @@ import { DeleteAttachmentInput } from './dto/deleteAttachment.input'
 import { UpdateApplicationExternalDataInput } from './dto/updateApplicationExternalData.input'
 import { SubmitApplicationInput } from './dto/submitApplication.input'
 import { AssignApplicationInput } from './dto/assignApplication.input'
-import { GeneratePdfInput } from './dto/generatePdf.input'
-import { RequestFileSignatureInput } from './dto/requestFileSignature.input'
-import { UploadSignedFileInput } from './dto/uploadSignedFile.input'
 import { ApplicationApplicationsInput } from './dto/applicationApplications.input'
-import { GetPresignedUrlInput } from './dto/getPresignedUrl.input'
 import { ApplicationPayment } from './application.model'
 import { AttachmentPresignedUrlInput } from './dto/AttachmentPresignedUrl.input'
 import { DeleteApplicationInput } from './dto/deleteApplication.input'
@@ -201,47 +197,6 @@ export class ApplicationService {
   async deleteApplication(input: DeleteApplicationInput, auth: Auth) {
     return this.applicationApiWithAuth(auth).applicationControllerDelete({
       id: input.id,
-    })
-  }
-
-  async generatePdfPresignedUrl(input: GeneratePdfInput, auth: Auth) {
-    const { id, ...generatePdfDto } = input
-    return await this.applicationApiWithAuth(
-      auth,
-    ).applicationControllerGeneratePdf({
-      id,
-      generatePdfDto,
-    })
-  }
-
-  async requestFileSignature(input: RequestFileSignatureInput, auth: Auth) {
-    const { id, ...requestFileSignatureDto } = input
-    return await this.applicationApiWithAuth(
-      auth,
-    ).applicationControllerRequestFileSignature({
-      id,
-      requestFileSignatureDto,
-    })
-  }
-
-  async uploadSignedFile(input: UploadSignedFileInput, auth: Auth) {
-    const { id, ...uploadSignedFileDto } = input
-    return await this.applicationApiWithAuth(
-      auth,
-    ).applicationControllerUploadSignedFile({
-      id,
-      uploadSignedFileDto,
-    })
-  }
-
-  async presignedUrl(input: GetPresignedUrlInput, auth: Auth) {
-    const { id, type } = input
-
-    return await this.applicationApiWithAuth(
-      auth,
-    ).applicationControllerGetPresignedUrl({
-      id,
-      pdfType: type,
     })
   }
 

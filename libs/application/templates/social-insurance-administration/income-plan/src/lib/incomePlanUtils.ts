@@ -8,7 +8,7 @@ import {
   LatestIncomePlan,
   WithholdingTax,
 } from '../types'
-import { INCOME_PLANS_CLOSED } from './constants'
+import { NO_ACTIVE_APPLICATIONS, INCOME_PLANS_CLOSED } from './constants'
 import { incomePlanFormMessage } from './messages'
 
 export const getApplicationExternalData = (
@@ -80,7 +80,22 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     [],
   ) as IncomePlanRow[]
 
-  return { incomePlan }
+  const temporaryCalculationMonth = getValueViaPath(
+    answers,
+    'temporaryCalculation.month',
+  ) as string
+
+  const temporaryCalculationShow = getValueViaPath(
+    answers,
+    'temporaryCalculation.show',
+    false,
+  ) as boolean
+
+  return {
+    incomePlan,
+    temporaryCalculationMonth,
+    temporaryCalculationShow,
+  }
 }
 
 export const getOneInstanceOfCategory = (
@@ -133,8 +148,9 @@ export const isEligible = (externalData: ExternalData): boolean => {
 
 export const eligibleText = (externalData: ExternalData) => {
   const { isEligible } = getApplicationExternalData(externalData)
-
   return isEligible.reasonCode === INCOME_PLANS_CLOSED
     ? incomePlanFormMessage.pre.isNotEligibleClosedDescription
+    : isEligible.reasonCode === NO_ACTIVE_APPLICATIONS
+    ? incomePlanFormMessage.pre.isNotEligibleNoActiveApplicationDescription
     : incomePlanFormMessage.pre.isNotEligibleDescription
 }

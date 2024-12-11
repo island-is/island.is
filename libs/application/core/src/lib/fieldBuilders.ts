@@ -42,8 +42,12 @@ import {
   HiddenInputWithWatchedValueField,
   HiddenInputField,
   SliderField,
+  MaybeWithApplication,
+  MaybeWithApplicationAndFieldAndLocale,
+  DisplayField,
+  FieldsRepeaterField,
 } from '@island.is/application/types'
-
+import { Locale } from '@island.is/shared/types'
 import { Colors } from '@island.is/island-ui/theme'
 import { SpanType, BoxProps } from '@island.is/island-ui/core/types'
 import { coreDefaultFieldMessages } from './messages'
@@ -114,6 +118,8 @@ export const buildDateField = (
   const {
     maxDate,
     minDate,
+    minYear,
+    maxYear,
     excludeDates,
     placeholder,
     backgroundColor = 'blue',
@@ -126,6 +132,8 @@ export const buildDateField = (
     placeholder,
     maxDate,
     minDate,
+    minYear,
+    maxYear,
     excludeDates,
     type: FieldTypes.DATE,
     component: FieldComponents.DATE,
@@ -316,7 +324,7 @@ export const buildPhoneField = (
     readOnly,
     rightAlign,
     allowedCountryCodes,
-    disableDropdown,
+    enableCountrySelector,
   } = data
   return {
     ...extractCommonFields(data),
@@ -326,7 +334,7 @@ export const buildPhoneField = (
     required,
     readOnly,
     allowedCountryCodes,
-    disableDropdown,
+    enableCountrySelector,
     rightAlign,
     type: FieldTypes.PHONE,
     component: FieldComponents.PHONE,
@@ -480,15 +488,25 @@ export const buildSubmitField = (data: {
 }
 
 export const buildFieldOptions = (
-  maybeOptions: MaybeWithApplicationAndField<Option[]>,
+  maybeOptions: MaybeWithApplicationAndFieldAndLocale<Option[]>,
   application: Application,
   field: Field,
+  locale: Locale,
 ): Option[] => {
   if (typeof maybeOptions === 'function') {
-    return maybeOptions(application, field)
+    return maybeOptions(application, field, locale)
   }
-
   return maybeOptions
+}
+
+export const buildFieldRequired = (
+  application: Application,
+  maybeRequired?: MaybeWithApplication<boolean>,
+) => {
+  if (typeof maybeRequired === 'function') {
+    return maybeRequired(application)
+  }
+  return maybeRequired
 }
 
 export const buildRedirectToServicePortalField = (data: {
@@ -524,6 +542,7 @@ export const buildMessageWithLinkButtonField = (
 ): MessageWithLinkButtonField => {
   const { id, title, url, message, buttonTitle, marginBottom, marginTop } = data
   return {
+    ...extractCommonFields(data),
     children: undefined,
     id,
     title,
@@ -729,6 +748,12 @@ export const buildNationalIdWithNameField = (
     nameDefaultValue,
     errorMessage,
     minAgePerson,
+    searchPersons,
+    searchCompanies,
+    titleVariant,
+    description,
+    marginTop,
+    marginBottom,
   } = data
   return {
     ...extractCommonFields(data),
@@ -742,9 +767,15 @@ export const buildNationalIdWithNameField = (
     nameDefaultValue,
     errorMessage,
     minAgePerson,
+    searchPersons,
+    searchCompanies,
     children: undefined,
     type: FieldTypes.NATIONAL_ID_WITH_NAME,
     component: FieldComponents.NATIONAL_ID_WITH_NAME,
+    titleVariant,
+    description,
+    marginTop,
+    marginBottom,
   }
 }
 
@@ -801,6 +832,48 @@ export const buildTableRepeaterField = (
     editButtonTooltipText,
     editField,
     getStaticTableData,
+    maxRows,
+  }
+}
+
+export const buildFieldsRepeaterField = (
+  data: Omit<FieldsRepeaterField, 'type' | 'component' | 'children'>,
+): FieldsRepeaterField => {
+  const {
+    fields,
+    table,
+    title,
+    titleVariant,
+    formTitle,
+    formTitleVariant,
+    formTitleNumbering,
+    marginTop,
+    marginBottom,
+    removeItemButtonText,
+    addItemButtonText,
+    saveItemButtonText,
+    minRows,
+    maxRows,
+  } = data
+
+  return {
+    ...extractCommonFields(data),
+    children: undefined,
+    type: FieldTypes.FIELDS_REPEATER,
+    component: FieldComponents.FIELDS_REPEATER,
+    fields,
+    table,
+    title,
+    titleVariant,
+    formTitle,
+    formTitleVariant,
+    formTitleNumbering,
+    marginTop,
+    marginBottom,
+    removeItemButtonText,
+    addItemButtonText,
+    saveItemButtonText,
+    minRows,
     maxRows,
   }
 }
@@ -902,5 +975,38 @@ export const buildSliderField = (
     labelMultiplier,
     condition,
     saveAsString,
+  }
+}
+
+export const buildDisplayField = (
+  data: Omit<DisplayField, 'type' | 'component' | 'children'>,
+): DisplayField => {
+  const {
+    title,
+    titleVariant,
+    label,
+    variant,
+    marginTop,
+    marginBottom,
+    value,
+    suffix,
+    rightAlign,
+    halfWidthOwnline,
+  } = data
+  return {
+    ...extractCommonFields(data),
+    title,
+    titleVariant,
+    label,
+    variant,
+    marginTop,
+    marginBottom,
+    type: FieldTypes.DISPLAY,
+    component: FieldComponents.DISPLAY,
+    children: undefined,
+    value,
+    suffix,
+    rightAlign,
+    halfWidthOwnline,
   }
 }

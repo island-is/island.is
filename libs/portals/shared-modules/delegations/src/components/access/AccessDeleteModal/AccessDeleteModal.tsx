@@ -1,24 +1,24 @@
 import { useEffect, useState } from 'react'
 
-import { useAuth } from '@island.is/auth/react'
 import { Box, toast, useBreakpoint } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { formatNationalId } from '@island.is/portals/core'
+import { useUserInfo } from '@island.is/react-spa/bff'
 import { Problem } from '@island.is/react-spa/shared'
 import { Modal, ModalProps } from '@island.is/react/components'
 import { AuthDelegationType } from '@island.is/shared/types'
 
-import { DelegationsFormFooter } from '../../delegations/DelegationsFormFooter'
-import { IdentityCard } from '../../IdentityCard/IdentityCard'
-import { AccessListContainer } from '../AccessList/AccessListContainer/AccessListContainer'
-import { useAuthScopeTreeLazyQuery } from '../AccessList/AccessListContainer/AccessListContainer.generated'
-import { useDeleteAuthDelegationMutation } from './AccessDeleteModal.generated'
+import { useDynamicShadow } from '../../../hooks/useDynamicShadow'
+import { m } from '../../../lib/messages'
 import {
   AuthCustomDelegation,
   AuthCustomDelegationOutgoing,
 } from '../../../types/customDelegation'
-import { m } from '../../../lib/messages'
-import { useDynamicShadow } from '../../../hooks/useDynamicShadow'
+import { IdentityCard } from '../../IdentityCard/IdentityCard'
+import { DelegationsFormFooter } from '../../delegations/DelegationsFormFooter'
+import { AccessListContainer } from '../AccessList/AccessListContainer/AccessListContainer'
+import { useAuthScopeTreeLazyQuery } from '../AccessList/AccessListContainer/AccessListContainer.generated'
+import { useDeleteAuthDelegationMutation } from './AccessDeleteModal.generated'
 
 type AccessDeleteModalProps = Pick<ModalProps, 'onClose' | 'isVisible'> & {
   delegation?: AuthCustomDelegation
@@ -32,7 +32,7 @@ export const AccessDeleteModal = ({
   ...rest
 }: AccessDeleteModalProps) => {
   const { formatMessage, lang } = useLocale()
-  const { userInfo } = useAuth()
+  const userInfo = useUserInfo()
   const { md } = useBreakpoint()
   const [error, setError] = useState(false)
   const [deleteAuthDelegation, { loading }] = useDeleteAuthDelegationMutation()

@@ -217,6 +217,11 @@ export const information = {
         defaultMessage: 'Það má ekki nota sömu kennitölu tvisvar',
         description: 'operator identical error',
       },
+      noChangesError: {
+        id: 'ta.cov.application:information.labels.operator.noChangesError',
+        defaultMessage: 'Ekki er búið að gera neinar breytingar á umráðamönnum',
+        description: 'operator no changes error',
+      },
     }),
     mainOperator: defineMessages({
       sectionTitle: {
@@ -250,12 +255,6 @@ export const information = {
         id: 'ta.cov.application:information.labels.vehicle.title',
         defaultMessage: 'Ökutæki',
         description: 'Vehicle title',
-      },
-      description: {
-        id: 'ta.cov.application:information.labels.vehicle.description',
-        defaultMessage:
-          'Et sed ut est aliquam proin elit sed. Nunc tellus lacus sed eu pulvinar.',
-        description: 'Vehicle description',
       },
       plate: {
         id: 'ta.cov.application:information.labels.vehicle.plate',

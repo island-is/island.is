@@ -59,6 +59,9 @@ import { RightsPortalClientConfig } from '@island.is/clients/icelandic-health-in
 import { FriggClientConfig } from '@island.is/clients/mms/frigg'
 import { smsModuleConfig } from '@island.is/nova-sms'
 import { emailModuleConfig } from '@island.is/email-service'
+import { sharedModuleConfig } from '@island.is/application/template-api-modules'
+import { UserNotificationClientConfig } from '@island.is/clients/user-notification'
+import { NationalRegistryV3ClientConfig } from '@island.is/clients/national-registry-v3'
 
 @Module({
   imports: [
@@ -117,6 +120,9 @@ import { emailModuleConfig } from '@island.is/email-service'
         FriggClientConfig,
         smsModuleConfig,
         emailModuleConfig,
+        sharedModuleConfig,
+        UserNotificationClientConfig,
+        NationalRegistryV3ClientConfig,
       ],
     }),
   ],

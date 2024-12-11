@@ -1,9 +1,4 @@
-import {
-  buildCustomField,
-  buildForm,
-  buildMultiField,
-  buildSection,
-} from '@island.is/application/core'
+import { buildForm, buildSection } from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
 import { Routes } from '../lib/constants'
 import {
@@ -13,7 +8,6 @@ import {
   requirements,
   preview,
   publishing,
-  summary,
 } from '../lib/messages'
 import { complete } from '../lib/messages/complete'
 import { buildFormConclusionSection } from '@island.is/application/ui-forms'

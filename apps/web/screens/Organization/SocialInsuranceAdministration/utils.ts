@@ -149,3 +149,7 @@ export const extractSlug = (
     : (customPageData?.configJson?.englishSlug as string) ||
         'social-insurance-administration'
 }
+
+export const is2025PreviewActive = (customPageData?: CustomPage | null) => {
+  return Boolean(customPageData?.configJson?.show2025Preview)
+}

@@ -50,9 +50,7 @@ export const subSectionOtherCountry = buildSubSection({
             {
               value: NO,
               label: m.noDeprivedDrivingLicenseInOtherCountryTitle,
-              subLabel:
-                m.noDeprivedDrivingLicenseInOtherCountryDescription
-                  .defaultMessage,
+              subLabel: m.noDeprivedDrivingLicenseInOtherCountryDescription,
             },
           ],
         }),

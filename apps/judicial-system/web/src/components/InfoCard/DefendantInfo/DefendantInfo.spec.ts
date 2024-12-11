@@ -15,10 +15,12 @@ describe('DefendantInfo', () => {
 
     test('should return the correct string if serviceRequirement is REQUIRED and verdictAppealDeadline is not provided', () => {
       const verdictAppealDeadline = undefined
+      const isVerdictAppealDeadlineExpired = false
       const serviceRequirement = ServiceRequirement.REQUIRED
 
       const dataSections = getAppealExpirationInfo(
         verdictAppealDeadline,
+        isVerdictAppealDeadlineExpired,
         serviceRequirement,
       )
 
@@ -29,10 +31,13 @@ describe('DefendantInfo', () => {
 
     test('should return the correct string if serviceRequirement is NOT_APPLICABLE and verdictAppealDeadline is not provided', () => {
       const verdictAppealDeadline = undefined
+      const isVerdictAppealDeadlineExpired = false
+
       const serviceRequirement = ServiceRequirement.NOT_APPLICABLE
 
       const dataSections = getAppealExpirationInfo(
         verdictAppealDeadline,
+        isVerdictAppealDeadlineExpired,
         serviceRequirement,
       )
 
@@ -43,24 +48,28 @@ describe('DefendantInfo', () => {
 
     test('should return the correct string if serviceRequirement is NOT_REQUIRED', () => {
       const verdictAppealDeadline = undefined
+      const isVerdictAppealDeadlineExpired = false
       const serviceRequirement = ServiceRequirement.NOT_REQUIRED
 
       const dataSections = getAppealExpirationInfo(
         verdictAppealDeadline,
+        isVerdictAppealDeadlineExpired,
         serviceRequirement,
       )
 
       expect(dataSections.message.id).toStrictEqual(
-        'judicial.system.core:info_card.defendant_info.service_requirement_not_required_v1',
+        'judicial.system.core:info_card.defendant_info.service_not_required',
       )
     })
 
     test('should return the correct string if serviceRequirement is REQUIRED and appeal expiration date is in the future', () => {
       const verdictAppealDeadline = '2024-08-05'
+      const isVerdictAppealDeadlineExpired = false
       const serviceRequirement = ServiceRequirement.REQUIRED
 
       const dataSections = getAppealExpirationInfo(
         verdictAppealDeadline,
+        isVerdictAppealDeadlineExpired,
         serviceRequirement,
       )
 
@@ -72,10 +81,12 @@ describe('DefendantInfo', () => {
 
     test('should return the correct string if serviceRequirement is NOT_APPLICABLE and appeal expiration date is in the future', () => {
       const verdictAppealDeadline = '2024-08-05'
+      const isVerdictAppealDeadlineExpired = false
       const serviceRequirement = ServiceRequirement.NOT_APPLICABLE
 
       const dataSections = getAppealExpirationInfo(
         verdictAppealDeadline,
+        isVerdictAppealDeadlineExpired,
         serviceRequirement,
       )
 
@@ -87,10 +98,12 @@ describe('DefendantInfo', () => {
 
     test('should return the correct string if serviceRequirement is REQUIRED and appeal expiration date is in the past', () => {
       const verdictAppealDeadline = '2024-07-07'
+      const isVerdictAppealDeadlineExpired = true
       const serviceRequirement = ServiceRequirement.REQUIRED
 
       const dataSections = getAppealExpirationInfo(
         verdictAppealDeadline,
+        isVerdictAppealDeadlineExpired,
         serviceRequirement,
       )
 
@@ -102,10 +115,12 @@ describe('DefendantInfo', () => {
 
     test('should return the correct string if serviceRequirement is NOT_APPLICABLE and appeal expiration date is in the past', () => {
       const verdictAppealDeadline = '2024-07-07'
+      const isVerdictAppealDeadlineExpired = true
       const serviceRequirement = ServiceRequirement.NOT_APPLICABLE
 
       const dataSections = getAppealExpirationInfo(
         verdictAppealDeadline,
+        isVerdictAppealDeadlineExpired,
         serviceRequirement,
       )
 

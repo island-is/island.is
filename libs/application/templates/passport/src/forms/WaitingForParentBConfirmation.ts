@@ -2,9 +2,9 @@ import {
   buildDescriptionField,
   buildForm,
   buildMultiField,
+  getValueViaPath,
 } from '@island.is/application/core'
 import { Application, Form, FormModes } from '@island.is/application/types'
-import { ChildsPersonalInfo } from '../lib/constants'
 import { m } from '../lib/messages'
 
 export const WaitingForParentBConfirmation: Form = buildForm({
@@ -18,12 +18,14 @@ export const WaitingForParentBConfirmation: Form = buildForm({
       description: (application: Application) => ({
         ...m.waitingForConfirmationDescription,
         values: {
-          childsName: (
-            application.answers.childsPersonalInfo as ChildsPersonalInfo
-          )?.name,
-          guardian2Name: (
-            application.answers.childsPersonalInfo as ChildsPersonalInfo
-          )?.guardian2.name,
+          childsName: getValueViaPath(
+            application.answers,
+            'childsPersonalInfo.name',
+          ) as string,
+          guardian2Name: getValueViaPath(
+            application.answers,
+            'childsPersonalInfo.guardian2.name',
+          ) as string,
         },
       }),
       children: [
@@ -31,7 +33,6 @@ export const WaitingForParentBConfirmation: Form = buildForm({
           id: 'nextStepsTitle',
           title: m.applicationCompleteNextSteps,
           titleVariant: 'h3',
-          description: '',
           marginBottom: 1,
         }),
         buildDescriptionField({

@@ -109,7 +109,13 @@ export const PrisonCases: FC = () => {
               cell: (row) => <DefendantInfo defendants={row.defendants} />,
             },
             {
-              cell: (row) => <ColumnCaseType type={row.type} />,
+              cell: (row) => (
+                <ColumnCaseType
+                  type={row.type}
+                  decision={row.decision}
+                  parentCaseId={row.parentCaseId}
+                />
+              ),
             },
             {
               cell: (row) => <CreatedDate created={row.created} />,
