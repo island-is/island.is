@@ -53,6 +53,7 @@ interface Props {
   updateIndictmentCount: (
     policeCaseNumber: string,
     crimeScene: CrimeScene,
+    subtypes?: Record<string, string[]>,
   ) => void
   policeCaseNumberImmutable: boolean
 }
@@ -209,8 +210,16 @@ export const PoliceCaseInfo: FC<Props> = ({
           placeholder={formatMessage(policeCaseInfo.indictmentTypePlaceholder)}
           onChange={(selectedOption) => {
             const indictmentSubtype = selectedOption?.value as IndictmentSubtype
+
             updatePoliceCase(index, {
               subtypes: [...(subtypes || []), indictmentSubtype],
+            })
+
+            updateIndictmentCount(policeCaseNumbers[index], crimeScene || {}, {
+              [policeCaseNumbers[index]]: [
+                ...(subtypes || []),
+                indictmentSubtype,
+              ],
             })
           }}
           value={null}

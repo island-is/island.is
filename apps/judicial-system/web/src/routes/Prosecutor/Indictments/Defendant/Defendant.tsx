@@ -279,6 +279,7 @@ const Defendant = () => {
   const handleUpdateIndictmentCount = (
     policeCaseNumber: string,
     crimeScene: CrimeScene,
+    subtypes?: Record<string, string[]>,
   ) => {
     if (workingCase.indictmentCounts) {
       workingCase.indictmentCounts
@@ -288,6 +289,7 @@ const Defendant = () => {
             ic,
             formatMessage,
             crimeScene,
+            subtypes,
           )
 
           updateIndictmentCount(workingCase.id, ic.id, {
