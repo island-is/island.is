@@ -253,28 +253,7 @@ export const hveHeaderGridContainerSubpage = style({
   }),
 })
 
-export const rannisHeaderImage = style({
-  // Taken from Default Header styles because when giving className prop this style is overwritten
-  display: 'grid',
-  maxWidth: '1342px',
-  margin: '0 auto',
-  ...themeUtils.responsiveStyle({
-    lg: {
-      gridTemplateRows: '315px',
-      gridTemplateColumns: '65fr 35fr',
-    },
-  }),
-})
-
 export const logoLarge = style({
   width: '80px',
   height: '80px',
-})
-
-globalStyle(`${rannisHeaderImage} img:first-of-type`, {
-  ...themeUtils.responsiveStyle({
-    lg: {
-      opacity: 0.4,
-    },
-  }),
 })

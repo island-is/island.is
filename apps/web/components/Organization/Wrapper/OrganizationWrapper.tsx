@@ -619,13 +619,10 @@ export const OrganizationHeader: React.FC<
         />
       )
     case 'rannis':
-      console.log('RANNIS')
-      console.log(defaultProps)
       return (
         <DefaultHeader
           {...defaultProps}
-          className={styles.rannisHeaderImage}
-          background="linear-gradient(286deg, rgb(255 0 0) 0.85%, #d60505 16.4%, rgb(200 3 3 / 89%) 32.16%, rgb(163 0 0 / 88%) 56.43%, rgb(165 0 0 / 98%) 78.47%, rgb(137 0 0 / 96%) 100.8%)"
+          background="linear-gradient(271deg, #FF1500 5.72%, #DB0B00 91.04%)"
         />
       )
     default:
