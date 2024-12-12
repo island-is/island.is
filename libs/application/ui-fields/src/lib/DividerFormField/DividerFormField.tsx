@@ -30,10 +30,10 @@ export const DividerFormField: FC<
   }
 
   return (
-    <Box 
-      paddingTop={2} 
-      paddingBottom={2} 
-      marginTop={marginTop} 
+    <Box
+      paddingTop={2}
+      paddingBottom={2}
+      marginTop={marginTop}
       marginBottom={marginBottom}
     >
       <Divider />
