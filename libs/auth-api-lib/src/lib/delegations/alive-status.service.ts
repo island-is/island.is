@@ -21,21 +21,18 @@ const decesead = 'LÉST'
 
 @Injectable()
 export class AliveStatusService {
-  alsoUseFakeApi = false
-
   constructor(
     private readonly nationalRegistryClient: NationalRegistryClientService,
     private readonly nationalRegistryV3Client: NationalRegistryV3ClientService,
     private readonly companyRegistryClient: CompanyRegistryClientService,
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
+    private alsoUseFakeApi: boolean,
     @Optional()
     readonly configService?: ConfigService,
   ) {
-    if (configService) {
-      this.alsoUseFakeApi =
-        configService.get<boolean>('ALSO_USE_FAKE_USER_API') ?? false
-    }
+    this.alsoUseFakeApi =
+      configService?.get<boolean>('ALSO_USE_FAKE_USER_API') ?? false
   }
 
   /**
