@@ -18,7 +18,7 @@ export const ExpandableDescriptionFormField: FC<
   const { formatMessage, lang: locale } = useLocale()
 
   return (
-    <Box marginY={2}>
+    <Box marginTop={field.marginTop ?? 2} marginBottom={field.marginBottom ?? 2}>
       <AccordionCard
         startExpanded={field.startExpanded}
         id={`BulletPointFormField-${field.id}`}

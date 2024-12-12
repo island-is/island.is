@@ -40,6 +40,8 @@ export const RadioFormField: FC<React.PropsWithChildren<Props>> = ({
     required,
     hasIllustration,
     widthWithIllustration,
+    marginTop,
+    marginBottom,
   } = field
   const { formatMessage, lang: locale } = useLocale()
 
@@ -49,7 +51,13 @@ export const RadioFormField: FC<React.PropsWithChildren<Props>> = ({
   )
 
   return (
-    <Box paddingTop={field.space} role="region" aria-labelledby={id + 'title'}>
+    <Box 
+      marginTop={marginTop} 
+      marginBottom={marginBottom} 
+      paddingTop={field.space} 
+      role="region" 
+      aria-labelledby={id + 'title'}
+    >
       {showFieldName && (
         <Text variant="h4" as="h4" id={id + 'title'}>
           {formatTextWithLocale(

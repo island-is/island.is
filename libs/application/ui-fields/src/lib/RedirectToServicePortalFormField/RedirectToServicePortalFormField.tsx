@@ -12,7 +12,7 @@ interface Props extends FieldBaseProps {
 
 export const RedirectToServicePortalFormField: FC<
   React.PropsWithChildren<Props>
-> = ({ application }) => {
+> = ({ field, application }) => {
   useEffect(() => {
     const applicationId = application.id
     const path = window.location.origin
@@ -31,8 +31,8 @@ export const RedirectToServicePortalFormField: FC<
       alignItems="center"
       justifyContent="center"
       width="full"
-      marginTop={10}
-      marginBottom={10}
+      marginTop={field.marginTop ?? 10}
+      marginBottom={field.marginBottom ?? 10}
     >
       <LoadingDots large />
     </Box>
