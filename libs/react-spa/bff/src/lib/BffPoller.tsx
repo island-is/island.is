@@ -46,7 +46,7 @@ export const BffPoller = ({
   const { signIn, bffUrlGenerator } = useAuth()
   const userInfo = useUserInfo()
   const { postMessage } = useBffBroadcaster()
-  const bffBasePath = bffUrlGenerator()
+  const bffBaseUrl = bffUrlGenerator()
 
   const url = useMemo(
     () => bffUrlGenerator('/user', { refresh: 'true' }),
@@ -87,7 +87,7 @@ export const BffPoller = ({
         postMessage({
           type: BffBroadcastEvents.NEW_SESSION,
           userInfo: newUser,
-          bffBasePath,
+          bffBaseUrl,
         })
 
         newSessionCb()

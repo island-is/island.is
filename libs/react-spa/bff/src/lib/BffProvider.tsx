@@ -43,19 +43,19 @@ export const BffProvider = ({
     authState === 'logging-out'
   const isLoggedIn = authState === 'logged-in'
   const oldLoginPath = `${applicationBasePath}/login`
-  const bffBasePath = bffUrlGenerator()
+  const bffBaseUrl = bffUrlGenerator()
 
   const { postMessage } = useBffBroadcaster((event) => {
     /**
-     * Filter broadcast events by matching BFF base path
+     * Filter broadcast events by matching BFF base url
      *
      * Since the Broadcaster sends messages to all tabs/windows/iframes
      * sharing the same origin (domain), we need to explicitly check if
-     * the message belongs to our specific BFF instance by comparing base paths.
+     * the message belongs to our specific BFF instance by comparing base urls.
      * This prevents handling events meant for other applications/contexts
      * running on the same domain.
      */
-    if (event.data.bffBasePath === bffBasePath) {
+    if (event.data.bffBaseUrl === bffBaseUrl) {
       if (
         isLoggedIn &&
         event.data.type === BffBroadcastEvents.NEW_SESSION &&
@@ -83,10 +83,10 @@ export const BffProvider = ({
       postMessage({
         type: BffBroadcastEvents.NEW_SESSION,
         userInfo: state.userInfo,
-        bffBasePath,
+        bffBaseUrl,
       })
     }
-  }, [postMessage, state.userInfo, isLoggedIn, bffBasePath])
+  }, [postMessage, state.userInfo, isLoggedIn, bffBaseUrl])
 
   /**
    * Builds authentication query parameters for login redirection:
@@ -188,13 +188,13 @@ export const BffProvider = ({
     // Broadcast to all tabs/windows/iframes that the user is logging out
     postMessage({
       type: BffBroadcastEvents.LOGOUT,
-      bffBasePath,
+      bffBaseUrl,
     })
 
     window.location.href = bffUrlGenerator('/logout', {
       sid: state.userInfo.profile.sid,
     })
-  }, [bffUrlGenerator, postMessage, state.userInfo, bffBasePath])
+  }, [bffUrlGenerator, postMessage, state.userInfo, bffBaseUrl])
 
   const switchUser = useCallback(
     (nationalId?: string) => {

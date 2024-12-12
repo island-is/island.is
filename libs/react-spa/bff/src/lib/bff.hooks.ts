@@ -64,12 +64,12 @@ export enum BffBroadcastEvents {
 type NewSessionEvent = {
   type: BffBroadcastEvents.NEW_SESSION
   userInfo: BffUser
-  bffBasePath: string
+  bffBaseUrl: string
 }
 
 type LogoutEvent = {
   type: BffBroadcastEvents.LOGOUT
-  bffBasePath: string
+  bffBaseUrl: string
 }
 
 export type BffBroadcastEvent = NewSessionEvent | LogoutEvent
