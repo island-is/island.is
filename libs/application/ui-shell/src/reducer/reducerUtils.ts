@@ -181,6 +181,25 @@ export const moveToScreen = (
   return screenIndex
 }
 
+export const canGoBack = (
+  screens: FormScreen[],
+  screenIndex: number,
+): boolean => {
+  // Check if we're already at the start
+  if (screenIndex <= 0) {
+    return false
+  }
+
+  // Look for any navigable screen behind where we are
+  for (let i = screenIndex - 1; i >= 0; i--) {
+    if (screens[i].isNavigable) {
+      return true
+    }
+  }
+
+  return false
+}
+
 const convertFieldToScreen = (
   field: Field,
   answers: FormValue,
