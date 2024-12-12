@@ -3,6 +3,7 @@ import type { StyleRule } from '@vanilla-extract/css'
 import omit from 'lodash/omit'
 import * as color from './colors/colors'
 import { font, spacing as spacingPrimitives, radius } from './tokens/tokens'
+import { fontWeight, typographyValues } from './typography/typography'
 
 export const UNIT = 8
 
@@ -76,13 +77,13 @@ export const theme = {
   touchableSize: 10,
   typography: {
     fontFamily: `"${font.family.primary.$value}", San Francisco, Segoe UI, sans-serif`,
-    light: 300,
-    regular: 400,
+    light: fontWeight.light,
+    regular: fontWeight.regular,
     medium: 500,
-    semiBold: 600,
-    headingsFontWeight: 600,
-    baseFontSize: 18,
-    baseLineHeight: 1.5,
+    semiBold: fontWeight.semiBold,
+    headingsFontWeight: fontWeight.semiBold,
+    baseFontSize: typographyValues.desktop.paragraph.default.fontSize,
+    baseLineHeight: `${typographyValues.desktop.paragraph.default.lineHeight} px`,
   },
   spacing,
   transforms: {
