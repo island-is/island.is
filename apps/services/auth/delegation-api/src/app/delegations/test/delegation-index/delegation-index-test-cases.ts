@@ -1,5 +1,5 @@
 import { generatePerson } from 'kennitala'
-import faker from 'faker'
+import { faker } from '@faker-js/faker'
 
 import { createClient } from '@island.is/services/auth/testing'
 import { AuthDelegationType } from '@island.is/shared/types'
@@ -7,21 +7,16 @@ import { createNationalId } from '@island.is/testing/fixtures'
 
 import { clientId, TestCase } from './delegations-index-types'
 
-const YEAR = 1000 * 60 * 60 * 24 * 365
 export const testDate = new Date(2024, 2, 1)
 const today = new Date()
 
 const adult1 = createNationalId('residentAdult')
 const adult2 = createNationalId('residentAdult')
 const child1 = generatePerson(
-  new Date(
-    Date.now() - faker.datatype.number({ min: 17 * YEAR, max: 18 * YEAR }),
-  ),
+  faker.date.birthdate({ mode: 'age', min: 17, max: 18, refDate: today }),
 ) // between 17-18 years old
 export const child2 = generatePerson(
-  new Date(
-    Date.now() - faker.datatype.number({ min: 1 * YEAR, max: 15 * YEAR }),
-  ),
+  faker.date.birthdate({ mode: 'age', min: 1, max: 15, refDate: today }),
 ) // under 16 years old
 const child3 = generatePerson(
   new Date(today.getFullYear() - 16, today.getMonth(), today.getDate()),
