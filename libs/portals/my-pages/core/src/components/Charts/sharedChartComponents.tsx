@@ -61,6 +61,7 @@ export const CustomizedAxisTick = ({
         dy={16}
         textAnchor="end"
         fill="#00003C"
+        fontSize={'14px'}
       >
         {payload?.value} {xAxis}
       </text>

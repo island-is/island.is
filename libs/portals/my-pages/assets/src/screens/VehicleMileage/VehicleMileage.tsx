@@ -34,10 +34,7 @@ import {
 import { displayWithUnit } from '../../utils/displayWithUnit'
 import * as styles from './VehicleMileage.css'
 import { Problem } from '@island.is/react-spa/shared'
-import {
-  VehicleMileageDetail,
-  VehicleMileageOverview,
-} from '@island.is/api/schema'
+import { VehicleMileageDetail } from '@island.is/api/schema'
 import format from 'date-fns/format'
 
 const ORIGIN_CODE = 'ISLAND.IS'
