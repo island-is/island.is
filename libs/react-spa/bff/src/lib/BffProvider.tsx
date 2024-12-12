@@ -43,25 +43,37 @@ export const BffProvider = ({
     authState === 'logging-out'
   const isLoggedIn = authState === 'logged-in'
   const oldLoginPath = `${applicationBasePath}/login`
+  const bffBaseUrl = bffUrlGenerator()
 
   const { postMessage } = useBffBroadcaster((event) => {
-    if (
-      isLoggedIn &&
-      event.data.type === BffBroadcastEvents.NEW_SESSION &&
-      isNewUser(state.userInfo, event.data.userInfo)
-    ) {
-      setSessionExpiredScreen(true)
-    } else if (event.data.type === BffBroadcastEvents.LOGOUT) {
-      // We will wait 1 seconds before we dispatch logout action.
-      // The reason is that IDS will not log the user out immediately.
-      // Note! The bff poller may have triggered logout by that time anyways.
-      setTimeout(() => {
-        dispatch({
-          type: ActionType.LOGGED_OUT,
-        })
+    /**
+     * Filter broadcast events by matching BFF base url
+     *
+     * Since the Broadcaster sends messages to all tabs/windows/iframes
+     * sharing the same origin (domain), we need to explicitly check if
+     * the message belongs to our specific BFF instance by comparing base urls.
+     * This prevents handling events meant for other applications/contexts
+     * running on the same domain.
+     */
+    if (event.data.bffBaseUrl === bffBaseUrl) {
+      if (
+        isLoggedIn &&
+        event.data.type === BffBroadcastEvents.NEW_SESSION &&
+        isNewUser(state.userInfo, event.data.userInfo)
+      ) {
+        setSessionExpiredScreen(true)
+      } else if (event.data.type === BffBroadcastEvents.LOGOUT) {
+        // We will wait 1 seconds before we dispatch logout action.
+        // The reason is that IDS will not log the user out immediately.
+        // Note! The bff poller may have triggered logout by that time anyways.
+        setTimeout(() => {
+          dispatch({
+            type: ActionType.LOGGED_OUT,
+          })
 
-        signIn()
-      }, 1000)
+          signIn()
+        }, 1000)
+      }
     }
   })
 
@@ -71,9 +83,10 @@ export const BffProvider = ({
       postMessage({
         type: BffBroadcastEvents.NEW_SESSION,
         userInfo: state.userInfo,
+        bffBaseUrl,
       })
     }
-  }, [postMessage, state.userInfo, isLoggedIn])
+  }, [postMessage, state.userInfo, isLoggedIn, bffBaseUrl])
 
   /**
    * Builds authentication query parameters for login redirection:
@@ -175,12 +188,13 @@ export const BffProvider = ({
     // Broadcast to all tabs/windows/iframes that the user is logging out
     postMessage({
       type: BffBroadcastEvents.LOGOUT,
+      bffBaseUrl,
     })
 
     window.location.href = bffUrlGenerator('/logout', {
       sid: state.userInfo.profile.sid,
     })
-  }, [bffUrlGenerator, postMessage, state.userInfo])
+  }, [bffUrlGenerator, postMessage, state.userInfo, bffBaseUrl])
 
   const switchUser = useCallback(
     (nationalId?: string) => {
