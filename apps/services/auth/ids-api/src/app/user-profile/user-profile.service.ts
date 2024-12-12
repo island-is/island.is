@@ -46,8 +46,8 @@ export class UserProfileService {
     private companyRegistryApi: CompanyRegistryClientService,
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
-    @Optional()
     private alsoUseFakeApi: boolean,
+    @Optional()
     readonly configService?: ConfigService,
   ) {
     this.alsoUseFakeApi =
