@@ -189,29 +189,12 @@ export const DetailedInfoCard = ({
   }
 
   return (
-    <FocusableBox
-      className={
-        size === 'large'
-          ? styles.infoCardWide
-          : size === 'small'
-          ? styles.infoCardSmall
-          : styles.infoCard
-      }
-      component={LinkV2}
-      href={link.href}
-      background="white"
-      borderColor="white"
-      borderWidth="standard"
-      width="full"
-      borderRadius="standard"
-    >
-      <Box width="full" paddingX={4} paddingY={3}>
-        {renderHeader()}
-        {renderContent()}
-        <Box marginTop={3} display="flex" justifyContent="spaceBetween">
-          {renderTags()}
-        </Box>
+    <>
+      {renderHeader()}
+      {renderContent()}
+      <Box marginTop={3} display="flex" justifyContent="spaceBetween">
+        {renderTags()}
       </Box>
-    </FocusableBox>
+    </>
   )
 }
