@@ -17,24 +17,13 @@ function show-help() {
   echo ""
 }
 
-
 function get-secrets {
   echo "Fetching secret environment variables for '$*'"
 
-  pre=$(wc -l "$env_secret_file" | awk '{print $1}')
+  pre=$(wc -l "$env_secret_file")
   debug "Project '$*' has $pre secrets before render-secrets"
-  
-  # Capture output of ts-node command
-  output=$(ts-node --dir "$ROOT"/infra "$ROOT"/infra/src/cli/cli render-secrets --service="$*")
-
-  # Process each line of output
-  echo "$output" | while IFS= read -r line; do
-    # Clean each line: remove newlines and backslashes within the line but keep JSON format intact
-    cleaned_line=$(echo "$line" | tr -d '\n' | sed 's/\\n/ /g' | sed 's/\\//g')
-    echo "$cleaned_line" >> "$env_secret_file"
-  done
-
-  post=$(wc -l "$env_secret_file" | awk '{print $1}')
+  ts-node --dir "$ROOT"/infra "$ROOT"/infra/src/cli/cli render-secrets --service="$*" >>"$env_secret_file"
+  post=$(wc -l "$env_secret_file")
   debug "Project '$*' has $post secrets after render-secrets"
 
   if [ "$pre" == "$post" ]; then
