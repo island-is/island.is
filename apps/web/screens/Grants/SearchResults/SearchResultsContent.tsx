@@ -1,10 +1,10 @@
 import { useState } from 'react'
+import { useIntl } from 'react-intl'
 import { useWindowSize } from 'react-use'
 import format from 'date-fns/format'
 
-import { Box, Button, Icon, Text } from '@island.is/island-ui/core'
+import { Box, Button, Text } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
-import { useLocale } from '@island.is/localization'
 import { Locale } from '@island.is/shared/types'
 import { isDefined } from '@island.is/shared/utils'
 import { InfoCardWrapper } from '@island.is/web/components'
@@ -12,7 +12,7 @@ import { Grant } from '@island.is/web/graphql/schema'
 import { useLinkResolver } from '@island.is/web/hooks'
 
 import { m } from '../messages'
-import { generateStatusTag } from '../utils'
+import { generateStatusTag, parseStatus } from '../utils'
 
 interface Props {
   grants?: Array<Grant>
@@ -21,7 +21,7 @@ interface Props {
 }
 
 export const SearchResultsContent = ({ grants, subheader, locale }: Props) => {
-  const { formatMessage } = useLocale()
+  const { formatMessage } = useIntl()
   const { linkResolver } = useLinkResolver()
 
   const { width } = useWindowSize()
@@ -65,6 +65,8 @@ export const SearchResultsContent = ({ grants, subheader, locale }: Props) => {
                   return null
                 }
 
+                const status = parseStatus(grant, formatMessage, locale)
+
                 return {
                   eyebrow: grant.fund?.title ?? grant.name ?? '',
                   subEyebrow: grant.fund?.parentOrganization?.title,
@@ -78,10 +80,13 @@ export const SearchResultsContent = ({ grants, subheader, locale }: Props) => {
                     grant.fund?.featuredImage?.title ??
                     grant.fund?.parentOrganization?.logo?.title ??
                     '',
-                  tags: grant.status
-                    ? [generateStatusTag(grant.status, formatMessage)].filter(
-                        isDefined,
-                      )
+                  tags: status.applicationStatus
+                    ? [
+                        generateStatusTag(
+                          status.applicationStatus,
+                          formatMessage,
+                        ),
+                      ].filter(isDefined)
                     : undefined,
                   link: {
                     label: formatMessage(m.general.seeMore),
@@ -97,14 +102,14 @@ export const SearchResultsContent = ({ grants, subheader, locale }: Props) => {
                           icon: 'calendar' as const,
                           text: `${format(
                             new Date(grant.dateFrom),
-                            'dd.MM.',
-                          )}-${format(new Date(grant.dateTo), 'dd.MM.yyyy')}`,
+                            'dd.MM.yyyy',
+                          )} - ${format(new Date(grant.dateTo), 'dd.MM.yyyy')}`,
                         }
                       : null,
                     {
                       icon: 'time' as const,
                       //todo: fix when the text is ready
-                      text: 'Frestur til 16.08.2024, kl. 15.00',
+                      text: status.deadlineStatus,
                     },
                     grant.categoryTags
                       ? {
