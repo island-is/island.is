@@ -11,11 +11,16 @@ interface AxisTickProps {
   payload?: { value: string }
 }
 
+interface CustomTooltipProps extends TooltipProps<number, string> {
+  valueLabels?: Record<string, string>
+}
+
 export const CustomTooltip = ({
   payload,
   active,
   label,
-}: TooltipProps<string, number>) => {
+  valueLabels,
+}: CustomTooltipProps) => {
   if (active && payload && payload.length) {
     return (
       <Box className={cn(styles.tooltip)}>
@@ -29,7 +34,8 @@ export const CustomTooltip = ({
               }}
             />
             <Text variant="small">
-              {item.name} : {item.value}
+              {valueLabels && item.name ? valueLabels[item.name] : item.name} :
+              {item.value}
             </Text>
           </Box>
         ))}

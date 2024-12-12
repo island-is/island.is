@@ -3,7 +3,6 @@ import {
   NestedFullTable,
   SimpleBarChart,
   formatDate,
-  m,
 } from '@island.is/portals/my-pages/core'
 import { Box, Text, Button } from '@island.is/island-ui/core'
 import { AssetsPaths } from '../../lib/paths'
@@ -96,7 +95,7 @@ export const VehicleBulkMileageSubData = ({
         <Button
           size="small"
           variant="utility"
-          icon={displayMode === 'table' ? 'gridView' : 'listView'}
+          icon={displayMode === 'table' ? 'gridView' : 'menu'}
           colorScheme="white"
           onClick={() =>
             setDisplayMode(displayMode === 'table' ? 'chart' : 'table')
@@ -133,6 +132,11 @@ export const VehicleBulkMileageSubData = ({
           yAxis={{
             datakey: 'mileage',
             label: 'Km.',
+          }}
+          tooltip={{
+            labels: {
+              mileage: formatMessage(vehicleMessage.odometer),
+            },
           }}
         />
       ) : undefined}

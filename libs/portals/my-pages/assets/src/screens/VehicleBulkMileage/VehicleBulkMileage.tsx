@@ -3,7 +3,6 @@ import {
   Box,
   Filter,
   FilterInput,
-  Inline,
   Checkbox,
   Pagination,
   Text,
@@ -27,7 +26,6 @@ import { useVehiclesListLazyQuery } from './VehicleBulkMileage.generated'
 import { isDefined } from '@island.is/shared/utils'
 import { AssetsPaths } from '../../lib/paths'
 import { Problem } from '@island.is/react-spa/shared'
-import { LineChart } from './LineChart'
 
 interface FormData {
   [key: string]: number

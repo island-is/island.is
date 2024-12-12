@@ -30,6 +30,10 @@ interface BarType {
   datakey: string
 }
 
+interface TooltipType {
+  labels: Record<string, string>
+}
+
 interface GraphDataProps {
   title?: string
   data: Array<Record<string, number | string>>
@@ -37,6 +41,7 @@ interface GraphDataProps {
   bars: Array<BarType>
   xAxis: Axis
   yAxis: Axis
+  tooltip?: TooltipType
 }
 
 export const SimpleBarChart = ({
@@ -46,6 +51,7 @@ export const SimpleBarChart = ({
   bars,
   xAxis,
   yAxis,
+  tooltip,
 }: GraphDataProps) => {
   return (
     <Box
@@ -93,7 +99,9 @@ export const SimpleBarChart = ({
                   tickLine={false}
                 />
                 <YAxis stroke="#CCDFFF" tick={<CustomizedAxisTick />} />
-                <Tooltip content={<CustomTooltip />} />
+                <Tooltip
+                  content={<CustomTooltip valueLabels={tooltip?.labels} />}
+                />
                 <Legend
                   iconType="circle"
                   align="right"
