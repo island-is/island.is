@@ -8,10 +8,10 @@ import { execSync } from 'child_process'
 
 export default async () => {
   await startPostgres()
-  execSync(
-    'cross-env NODE_ENV=test yarn nx run services-endorsements-api:migrate',
-  )
-  execSync(
-    'cross-env NODE_ENV=test yarn nx run services-endorsements-api:seed --seed 20210505212921-e2e-tests.js',
-  )
+  // execSync(
+  //   'cross-env NODE_ENV=test yarn nx run services-endorsements-api:migrate',
+  // )
+  // execSync(
+  //   'cross-env NODE_ENV=test yarn nx run services-endorsements-api:seed --seed 20210505212921-e2e-tests.js',
+  // )
 }
