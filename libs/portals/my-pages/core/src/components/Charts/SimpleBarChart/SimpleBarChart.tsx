@@ -62,59 +62,61 @@ export const SimpleBarChart = ({
       alignItems="stretch"
       justifyContent="flexStart"
     >
-      <Box
-        justifyContent="center"
-        alignItems="center"
-        className={styles.graphParent}
-      >
-        <Box width="full" height="full">
-          <YAxisLabel label={yAxis.label} />
-          <ResponsiveContainer width="100%" height="90%">
-            <BarChart
-              width={20}
-              height={150}
-              data={data}
-              margin={{
-                top: 30,
-                right: 0,
-                left: 20,
-                bottom: 5,
-              }}
-            >
-              <CartesianGrid
-                strokeDasharray="0"
-                vertical={false}
-                stroke="#CCDFFF"
-              />
-              <XAxis
-                dataKey={xAxis.datakey}
-                stroke="#CCDFFF"
-                tick={<CustomizedAxisTick />}
-                padding={{ left: 30 }}
-                tickLine={false}
-              />
-              <YAxis stroke="#CCDFFF" tick={<CustomizedAxisTick />} />
-              <Tooltip
-                content={<CustomTooltip valueLabels={tooltip?.labels} />}
-              />
-              <Legend
-                iconType="circle"
-                align="right"
-                content={
-                  <RenderLegend labels={{ mileage: 'Kílómetrastaða' }} />
-                }
-              />
-              {bars.map((item: BarType, index: number) => (
-                <Bar
-                  key={index}
-                  dataKey={item.datakey}
-                  fill={theme.color.blue400}
-                  barSize={16}
-                  radius={[20, 20, 0, 0]}
+      <Box className={styles.graphWrapper} width="full">
+        <Box
+          justifyContent="center"
+          alignItems="center"
+          className={styles.graphParent}
+        >
+          <Box width="full" height="full">
+            <YAxisLabel label={yAxis.label} />
+            <ResponsiveContainer width="100%" height="90%">
+              <BarChart
+                width={20}
+                height={150}
+                data={data}
+                margin={{
+                  top: 30,
+                  right: 0,
+                  left: 20,
+                  bottom: 5,
+                }}
+              >
+                <CartesianGrid
+                  strokeDasharray="0"
+                  vertical={false}
+                  stroke="#CCDFFF"
                 />
-              ))}
-            </BarChart>
-          </ResponsiveContainer>
+                <XAxis
+                  dataKey={xAxis.datakey}
+                  stroke="#CCDFFF"
+                  tick={<CustomizedAxisTick />}
+                  padding={{ left: 30 }}
+                  tickLine={false}
+                />
+                <YAxis stroke="#CCDFFF" tick={<CustomizedAxisTick />} />
+                <Tooltip
+                  content={<CustomTooltip valueLabels={tooltip?.labels} />}
+                />
+                <Legend
+                  iconType="circle"
+                  align="right"
+                  content={
+                    <RenderLegend labels={{ mileage: 'Kílómetrastaða' }} />
+                  }
+                />
+                {bars.map((item: BarType, index: number) => (
+                  <Bar
+                    key={index}
+                    dataKey={item.datakey}
+                    fill={theme.color.blue400}
+                    barSize={16}
+                    radius={[20, 20, 0, 0]}
+                  />
+                ))}
+              </BarChart>
+            </ResponsiveContainer>
+          </Box>
         </Box>
       </Box>
     </Box>
