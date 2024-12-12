@@ -1,12 +1,16 @@
 import { createIntl } from 'react-intl'
 
 import { Substance, SubstanceMap } from '@island.is/judicial-system/types'
-import { IndictmentCountOffense as offense } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  IndictmentSubtype,
+  IndictmentCountOffense as offense,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 
 import {
   getIncidentDescriptionReason,
   getLegalArguments,
   getRelevantSubstances,
+  getIncidentDescription,
 } from './IndictmentCount'
 
 const formatMessage = createIntl({
@@ -189,6 +193,110 @@ describe('getIncidentDescriptionReason', () => {
 
     expect(result).toBe(
       'óhæfur til að stjórna henni örugglega vegna áhrifa ávana- og fíkniefna og slævandi lyfja',
+    )
+  })
+})
+
+describe('getIncidentDescription', () => {
+  test('should return an empty string if there are no offenses in traffic violations', () => {
+    const result = getIncidentDescription(
+      { id: 'testId', offenses: [], policeCaseNumber: '123-123-123' },
+      formatMessage,
+      {},
+      { '123-123-123': [IndictmentSubtype.TRAFFIC_VIOLATION] },
+    )
+
+    expect(result).toBe('')
+  })
+
+  test('should return an empty string if offenses are missing in traffic violations', () => {
+    const result = getIncidentDescription(
+      { id: 'testId', policeCaseNumber: '123-123-123' },
+      formatMessage,
+      {},
+      { '123-123-123': [IndictmentSubtype.TRAFFIC_VIOLATION] },
+    )
+
+    expect(result).toBe('')
+  })
+
+  test('should return a description for only traffic violations', () => {
+    const result = getIncidentDescription(
+      {
+        id: 'testId',
+        offenses: [offense.DRUNK_DRIVING],
+        policeCaseNumber: '123-123-123',
+      },
+      formatMessage,
+      {},
+      { '123-123-123': [IndictmentSubtype.TRAFFIC_VIOLATION] },
+    )
+
+    expect(result).toBe(
+      'fyrir umferðarlagabrot með því að hafa, [Dagsetning], ekið bifreiðinni [Skráningarnúmer ökutækis] undir áhrifum áfengis um [Vettvangur], þar sem lögregla stöðvaði aksturinn.',
+    )
+  })
+
+  test('should return a description for a single subtype that is not a traffic violation', () => {
+    const result = getIncidentDescription(
+      {
+        id: 'testId',
+        policeCaseNumber: '123-123-123',
+      },
+      formatMessage,
+      {},
+      { '123-123-123': [IndictmentSubtype.CUSTOMS_VIOLATION] },
+    )
+
+    expect(result).toBe('fyrir [tollalagabrot] með því að hafa, [Dagsetning]')
+  })
+
+  test('should return a description when there are multiple subtypes but only traffic violation is selected', () => {
+    const result = getIncidentDescription(
+      {
+        id: 'testId',
+        policeCaseNumber: '123-123-123',
+        offenses: [offense.DRUNK_DRIVING],
+        indictmentCountSubtypes: [IndictmentSubtype.TRAFFIC_VIOLATION],
+      },
+      formatMessage,
+      {},
+      {
+        '123-123-123': [
+          IndictmentSubtype.CUSTOMS_VIOLATION,
+          IndictmentSubtype.TRAFFIC_VIOLATION,
+        ],
+      },
+    )
+
+    expect(result).toBe(
+      'fyrir umferðarlagabrot með því að hafa, [Dagsetning], ekið bifreiðinni [Skráningarnúmer ökutækis] undir áhrifum áfengis um [Vettvangur], þar sem lögregla stöðvaði aksturinn.',
+    )
+  })
+
+  test('should return a description when there are multiple subtypes and all are selected', () => {
+    const result = getIncidentDescription(
+      {
+        id: 'testId',
+        policeCaseNumber: '123-123-123',
+        offenses: [offense.DRUNK_DRIVING],
+        indictmentCountSubtypes: [
+          IndictmentSubtype.CUSTOMS_VIOLATION,
+          IndictmentSubtype.TRAFFIC_VIOLATION,
+        ],
+      },
+      formatMessage,
+      {},
+      {
+        '123-123-123': [
+          IndictmentSubtype.CUSTOMS_VIOLATION,
+          IndictmentSubtype.TRAFFIC_VIOLATION,
+        ],
+      },
+    )
+
+    expect(result).toBe(
+      'fyrir [tollalagabrot, umferðarlagabrot] með því að hafa, [Dagsetning]',
     )
   })
 })

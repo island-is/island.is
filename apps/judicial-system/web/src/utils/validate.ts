@@ -17,7 +17,7 @@ import {
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
-import { isBusiness } from './stepHelper'
+import { hasOnlyOneItemInSubArrays, isBusiness } from './utils'
 
 export type Validation =
   | 'empty'
@@ -298,8 +298,14 @@ export const isTrafficViolationStepValidIndictments = (
   workingCase: Case,
 ): boolean => {
   return Boolean(
-    workingCase.demands &&
-      (!workingCase.hasCivilClaims || workingCase.civilDemands),
+    hasOnlyOneItemInSubArrays(workingCase.indictmentSubtypes) ||
+      (workingCase.indictmentCounts?.every(
+        (indictmentCount) =>
+          indictmentCount.indictmentCountSubtypes &&
+          indictmentCount.indictmentCountSubtypes?.length > 0,
+      ) &&
+        workingCase.demands &&
+        (!workingCase.hasCivilClaims || workingCase.civilDemands)),
   )
 }
 

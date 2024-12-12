@@ -14,8 +14,9 @@ import { validateAndSendToServer } from './formHelper'
 import {
   getAppealEndDate,
   getShortGender,
+  hasOnlyOneItemInSubArrays,
   hasSentNotification,
-} from './stepHelper'
+} from './utils'
 
 describe('Formatters utils', () => {
   describe('Parse time', () => {
@@ -137,7 +138,7 @@ describe('Formatters utils', () => {
   })
 })
 
-describe('Step helper', () => {
+describe('Utils', () => {
   describe('insertAt', () => {
     test('should insert a string at a certain position into another string', () => {
       // Arrange
@@ -329,6 +330,70 @@ describe('Step helper', () => {
       // Assert
       expect(res).toEqual(false)
     })
+
+    test('should return false if no notification is found of a specific notification type', () => {
+      // Arrange
+      const email = faker.internet.email()
+      const n: Notification[] = [
+        {
+          id: faker.datatype.uuid(),
+          created: faker.date.future().toISOString(),
+          caseId: faker.datatype.uuid(),
+          type: NotificationType.COURT_DATE,
+          recipients: [
+            {
+              success: true,
+              address: email,
+            },
+          ],
+        },
+      ]
+      const nt = NotificationType.REVOKED
+
+      // Act
+      const res = hasSentNotification(nt, n).hasSent
+
+      // Assert
+      expect(res).toEqual(false)
+    })
+
+    test('should return true if the latest notification has been sent successfully', () => {
+      // Arrange
+      const email = faker.internet.email()
+      const n: Notification[] = [
+        {
+          id: faker.datatype.uuid(),
+          created: faker.date.future().toISOString(),
+          caseId: faker.datatype.uuid(),
+          type: NotificationType.COURT_DATE,
+          recipients: [
+            {
+              success: true,
+              address: email,
+            },
+          ],
+        },
+        {
+          id: faker.datatype.uuid(),
+          created: faker.date.past().toISOString(),
+          caseId: faker.datatype.uuid(),
+          type: NotificationType.COURT_DATE,
+          recipients: [
+            {
+              success: true,
+              address: email,
+            },
+          ],
+        },
+      ]
+      const nt = NotificationType.COURT_DATE
+
+      // Act
+      const res = hasSentNotification(nt, n).hasSent
+
+      // Assert
+      expect(res).toEqual(true)
+    })
   })
 
   describe('validateAndSendToServer', () => {
@@ -378,67 +443,58 @@ describe('Step helper', () => {
     })
   })
 
-  test('should return false if no notification is found of a spesific notification type', () => {
-    // Arrange
-    const email = faker.internet.email()
-    const n: Notification[] = [
-      {
-        id: faker.datatype.uuid(),
-        created: faker.date.future().toISOString(),
-        caseId: faker.datatype.uuid(),
-        type: NotificationType.COURT_DATE,
-        recipients: [
-          {
-            success: true,
-            address: email,
-          },
-        ],
-      },
-    ]
-    const nt = NotificationType.REVOKED
+  describe('hasOnlyOneItemInSubArrays', () => {
+    test('should return true if all subarrays in the given object have only one item', () => {
+      // Arrange
+      const indictmentSubtypes = {
+        '123-123-123': ['item1'],
+        '234-234-234': ['item2'],
+      }
 
-    // Act
-    const res = hasSentNotification(nt, n).hasSent
+      // Act
+      const result = hasOnlyOneItemInSubArrays(indictmentSubtypes)
 
-    // Assert
-    expect(res).toEqual(false)
-  })
+      // Assert
+      expect(result).toEqual(true)
+    })
 
-  test('should return true if the latest notification has been sent successfully', () => {
-    // Arrange
-    const email = faker.internet.email()
-    const n: Notification[] = [
-      {
-        id: faker.datatype.uuid(),
-        created: faker.date.future().toISOString(),
-        caseId: faker.datatype.uuid(),
-        type: NotificationType.COURT_DATE,
-        recipients: [
-          {
-            success: true,
-            address: email,
-          },
-        ],
-      },
-      {
-        id: faker.datatype.uuid(),
-        created: faker.date.past().toISOString(),
-        caseId: faker.datatype.uuid(),
-        type: NotificationType.COURT_DATE,
-        recipients: [
-          {
-            success: true,
-            address: email,
-          },
-        ],
-      },
-    ]
-    const nt = NotificationType.COURT_DATE
+    test('should return false if any subarray in the given object has more than one item', () => {
+      // Arrange
+      const indictmentSubtypes = {
+        '123-123-123': ['item1', 'item2'],
+        '234-234-234': ['item3'],
+      }
 
-    // Act
-    const res = hasSentNotification(nt, n).hasSent
+      // Act
+      const result = hasOnlyOneItemInSubArrays(indictmentSubtypes)
 
-    // Assert
-    expect(res).toEqual(true)
+      // Assert
+      expect(result).toEqual(false)
+    })
+
+    test('should return false if the given object is empty', () => {
+      // Arrange
+      const indictmentSubtypes: Record<string, string[]> = {}
+
+      // Act
+      const result = hasOnlyOneItemInSubArrays(indictmentSubtypes)
+
+      // Assert
+      expect(result).toEqual(false)
+    })
+
+    test('should return false if any subarray is the given object has no items', () => {
+      // Arrange
+      const indictmentSubtypes = {
+        '123-123-123': [],
+        '234-234-234': [],
+      }
+
+      // Act
+      const result = hasOnlyOneItemInSubArrays(indictmentSubtypes)
+
+      // Assert
+      expect(result).toEqual(false)
+    })
   })
 })
