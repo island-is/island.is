@@ -35,6 +35,8 @@ export const searchQuery = (
   // Handle aliases since the search engine has not been configured to support organization aliases
   if (queryString.trim().toLowerCase() === 'tr') {
     queryString = 'Tryggingastofnun'
+  } else if (queryString.trim().toLowerCase() === 'vmst') {
+    queryString = 'Vinnumálastofnun'
   }
 
   // * wildcard support for internal clients - eg. used by island.is app
