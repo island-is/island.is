@@ -34,10 +34,13 @@ interface NationalIdWithNameProps {
   onNameChange?: (s: string) => void
   nationalIdDefaultValue?: string
   nameDefaultValue?: string
+  phoneDefaultValue?: string
+  emailDefaultValue?: string
   errorMessage?: string
   minAgePerson?: number
   phone?: boolean
   email?: boolean
+  error?: string
 }
 
 export const NationalIdWithName: FC<
@@ -58,14 +61,19 @@ export const NationalIdWithName: FC<
   onNameChange,
   nationalIdDefaultValue,
   nameDefaultValue,
+  phoneDefaultValue,
+  emailDefaultValue,
   errorMessage,
   minAgePerson,
   phone = false,
   email = false,
+  error,
 }) => {
   const fieldId = customId.length > 0 ? customId : id
   const nameField = `${fieldId}.name`
   const nationalIdField = `${fieldId}.nationalId`
+  const emailField = `${fieldId}.email`
+  const phoneField = `${fieldId}.phone`
 
   const { formatMessage } = useLocale()
   const {
@@ -74,12 +82,14 @@ export const NationalIdWithName: FC<
   } = useFormContext()
   const [nationalIdInput, setNationalIdInput] = useState('')
 
-  // get name validation errors
-  const nameFieldErrors = errorMessage
-    ? nameDefaultValue?.length === 0
-      ? errorMessage
-      : undefined
-    : getErrorViaPath(errors, nameField)
+  const getFieldErrorString = (error: any, id: string): string | undefined => {
+    /**
+     * Errors that occur in a field-array have incorrect typing
+     * This hack is needed to get the correct type
+     */
+    const errorList = error as unknown as Record<string, string>[] | undefined
+    return (errorList?.[id as any] as unknown as string) ?? undefined
+  }
 
   // get national id validation errors
   let nationalIdFieldErrors: string | undefined
@@ -106,6 +116,12 @@ export const NationalIdWithName: FC<
   const defaultName = nameDefaultValue
     ? nameDefaultValue
     : getValueViaPath(application.answers, nameField, '')
+  const defaultPhone = phoneDefaultValue
+    ? phoneDefaultValue
+    : getValueViaPath(application.answers, phoneField, '')
+  const defaultEmail = emailDefaultValue
+    ? emailDefaultValue
+    : getValueViaPath(application.answers, emailField, '')
 
   // query to get name by national id
   const [getIdentity, { data, loading: queryLoading, error: queryError }] =
@@ -155,7 +171,7 @@ export const NationalIdWithName: FC<
                 onNationalIdChange(v.target.value.replace(/\W/g, ''))
             })}
             loading={queryLoading}
-            error={nationalIdFieldErrors}
+            error={getFieldErrorString(error, 'nationalId')}
             disabled={disabled}
           />
         </GridColumn>
@@ -174,8 +190,8 @@ export const NationalIdWithName: FC<
                 ? formatMessage(
                     coreErrorMessages.nationalRegistryNameNotFoundForNationalId,
                   )
-                : nameFieldErrors && !data
-                ? nameFieldErrors
+                : getFieldErrorString(error, 'name') && !data
+                ? getFieldErrorString(error, 'name')
                 : undefined
             }
             disabled
@@ -187,12 +203,12 @@ export const NationalIdWithName: FC<
           {phone && (
             <GridColumn span={['1/1', '1/1', '1/1', '1/2']} paddingTop={2}>
               <PhoneInputController
-                id={`${nationalIdField}-phone`}
+                id={phoneField}
                 label={formatMessage(phoneLabel)}
-                defaultValue={defaultNationalId}
+                defaultValue={defaultPhone}
                 required={phoneRequired}
                 backgroundColor="blue"
-                error={nationalIdFieldErrors}
+                error={getFieldErrorString(error, 'phone')}
                 disabled={disabled}
               />
             </GridColumn>
@@ -200,13 +216,13 @@ export const NationalIdWithName: FC<
           {email && (
             <GridColumn span={['1/1', '1/1', '1/1', '1/2']} paddingTop={2}>
               <InputController
-                id={`${nationalIdField}-email`}
+                id={emailField}
                 label={formatMessage(emailLabel)}
-                defaultValue={defaultNationalId}
+                defaultValue={defaultEmail}
                 type="email"
                 required={emailRequired}
                 backgroundColor="blue"
-                error={nationalIdFieldErrors}
+                error={getFieldErrorString(error, 'email')}
                 disabled={disabled}
               />
             </GridColumn>
