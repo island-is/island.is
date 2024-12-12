@@ -11,15 +11,14 @@ import {
 import {
   CustomizedAxisTick,
   RenderLegend,
-  COLORS,
   CustomTooltip,
   YAxisLabel,
 } from '../sharedChartComponents'
 import { Box } from '@island.is/island-ui/core'
 import * as styles from './styles.css'
 import { theme } from '@island.is/island-ui/theme'
-
-type Datakeys = Array<string>
+import cn from 'classnames'
+import { useWindowSize } from 'react-use'
 
 interface Axis {
   label?: string
@@ -55,6 +54,10 @@ export const SimpleBarChart = ({
 }: GraphDataProps) => {
   return (
     <Box
+      className={styles.frameWrapper}
+      borderColor="purple100"
+      borderWidth="standard"
+      borderRadius="large"
       display="flex"
       flexDirection="column"
       flexGrow={1}
@@ -62,65 +65,58 @@ export const SimpleBarChart = ({
       justifyContent="flexStart"
     >
       <Box
-        display="flex"
         justifyContent="center"
         alignItems="center"
-        className={styles.graphWrapper}
+        className={styles.graphParent}
       >
-        <Box
-          justifyContent="center"
-          alignItems="center"
-          className={styles.graphParent}
-        >
-          <Box width="full" height="full">
-            <YAxisLabel label={yAxis.label} />
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart
-                width={20}
-                height={150}
-                data={data}
-                margin={{
-                  top: 30,
-                  right: 0,
-                  left: 20,
-                  bottom: 5,
-                }}
-              >
-                <CartesianGrid
-                  strokeDasharray="0"
-                  vertical={false}
-                  stroke="#CCDFFF"
+        <Box width="full" height="full">
+          <YAxisLabel label={yAxis.label} />
+          <ResponsiveContainer width="100%" height="90%">
+            <BarChart
+              width={20}
+              height={150}
+              data={data}
+              margin={{
+                top: 30,
+                right: 0,
+                left: 20,
+                bottom: 5,
+              }}
+            >
+              <CartesianGrid
+                strokeDasharray="0"
+                vertical={false}
+                stroke="#CCDFFF"
+              />
+              <XAxis
+                dataKey={xAxis.datakey}
+                stroke="#CCDFFF"
+                tick={<CustomizedAxisTick />}
+                padding={{ left: 30 }}
+                tickLine={false}
+              />
+              <YAxis stroke="#CCDFFF" tick={<CustomizedAxisTick />} />
+              <Tooltip
+                content={<CustomTooltip valueLabels={tooltip?.labels} />}
+              />
+              <Legend
+                iconType="circle"
+                align="right"
+                content={
+                  <RenderLegend labels={{ mileage: 'Kílómetrastaða' }} />
+                }
+              />
+              {bars.map((item: BarType, index: number) => (
+                <Bar
+                  key={index}
+                  dataKey={item.datakey}
+                  fill={theme.color.blue400}
+                  barSize={16}
+                  radius={[20, 20, 0, 0]}
                 />
-                <XAxis
-                  dataKey={xAxis.datakey}
-                  stroke="#CCDFFF"
-                  tick={<CustomizedAxisTick />}
-                  padding={{ left: 30 }}
-                  tickLine={false}
-                />
-                <YAxis stroke="#CCDFFF" tick={<CustomizedAxisTick />} />
-                <Tooltip
-                  content={<CustomTooltip valueLabels={tooltip?.labels} />}
-                />
-                <Legend
-                  iconType="circle"
-                  align="right"
-                  content={
-                    <RenderLegend labels={{ mileage: 'Kílómetrastaða' }} />
-                  }
-                />
-                {bars.map((item: BarType, index: number) => (
-                  <Bar
-                    key={index}
-                    dataKey={item.datakey}
-                    fill={theme.color.blue400}
-                    barSize={16}
-                    radius={[20, 20, 0, 0]}
-                  />
-                ))}
-              </BarChart>
-            </ResponsiveContainer>
-          </Box>
+              ))}
+            </BarChart>
+          </ResponsiveContainer>
         </Box>
       </Box>
     </Box>
