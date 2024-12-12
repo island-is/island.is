@@ -1,5 +1,3 @@
-'use strict'
-
 module.exports = {
   async up(queryInterface, Sequelize) {
     return queryInterface.sequelize.transaction((t) =>
@@ -22,11 +20,41 @@ module.exports = {
             defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
             allowNull: false,
           },
+          submitted_at: {
+            type: Sequelize.DATE,
+            allowNull: true,
+            defaultValue: null,
+          },
+          is_test: {
+            type: Sequelize.BOOLEAN,
+            allowNull: false,
+            defaultValue: false,
+          },
+          status: {
+            type: Sequelize.STRING,
+            allowNull: false,
+          },
+          dependencies: {
+            type: Sequelize.JSON,
+            allowNull: true,
+          },
+          completed: {
+            type: Sequelize.JSON,
+            allowNull: true,
+          },
           form_id: {
             type: Sequelize.UUID,
             allowNull: false,
             references: {
               model: 'form',
+              key: 'id',
+            },
+          },
+          organization_id: {
+            type: Sequelize.UUID,
+            allowNull: false,
+            references: {
+              model: 'organization',
               key: 'id',
             },
           },

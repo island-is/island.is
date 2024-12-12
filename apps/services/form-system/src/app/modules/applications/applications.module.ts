@@ -5,17 +5,37 @@ import { ApplicationsService } from './applications.service'
 import { ApplicationsController } from './applications.controller'
 import { Form } from '../forms/models/form.model'
 import { ApplicationMapper } from './models/application.mapper'
-import { FieldSettingsMapper } from '../fieldSettings/models/fieldSettings.mapper'
-import { ListItemMapper } from '../listItems/models/listItem.mapper'
+import { Value } from '../values/models/value.model'
+import { Organization } from '../organizations/models/organization.model'
+import { FormUrl } from '../formUrls/models/formUrl.model'
+import { OrganizationUrl } from '../organizationUrls/models/organizationUrl.model'
+import { ServiceManager } from '../services/service.manager'
+import { ZendeskService } from '../services/zendesk.service'
+import { NudgeService } from '../services/nudge.service'
+import { ApplicationEvent } from './models/applicationEvent.model'
+import { ValidationService } from '../services/validation.service'
 
 @Module({
-  imports: [SequelizeModule.forFeature([Application, Form])],
+  imports: [
+    SequelizeModule.forFeature([
+      Application,
+      ApplicationEvent,
+      Form,
+      Value,
+      Organization,
+      FormUrl,
+      OrganizationUrl,
+    ]),
+  ],
   controllers: [ApplicationsController],
   providers: [
     ApplicationsService,
     ApplicationMapper,
-    FieldSettingsMapper,
-    ListItemMapper,
+    ServiceManager,
+    ZendeskService,
+    NudgeService,
+    ValidationService,
   ],
+  exports: [ApplicationsService],
 })
 export class ApplicationsModule {}
