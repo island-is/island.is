@@ -1,43 +1,42 @@
-import { Inject, Injectable } from '@nestjs/common'
+import { Injectable } from '@nestjs/common'
 
-import {
-  GetVerdictsOperationRequest,
-  SecurityApi,
-  VerdictApi,
-} from '../../gen/fetch/apis/'
-import { VerdictsClientConfig } from './verdicts-client.config'
-import { ConfigType } from '@nestjs/config'
+import { GetVerdictsOperationRequest, VerdictApi } from '../../gen/fetch/apis/'
 
 @Injectable()
 export class VerdictsClientService {
-  constructor(
-    @Inject(VerdictsClientConfig.KEY)
-    private readonly clientConfig: ConfigType<typeof VerdictsClientConfig>,
-    private readonly securityApi: SecurityApi,
-    private readonly verdictApi: VerdictApi,
-  ) {}
-
-  // TODO: Don't authenticate on every request, reuse token and refresh if it expires
-  private async getAuthenticationToken() {
-    return this.securityApi.authenticate({
-      username: this.clientConfig.goproUsername,
-      password: this.clientConfig.goproPassword,
-    })
-  }
+  constructor(private readonly verdictApi: VerdictApi) {}
 
   async getVerdicts(input: GetVerdictsOperationRequest['requestData']) {
-    const token = await this.getAuthenticationToken()
-    return this.verdictApi.getVerdicts({
-      requestData: input,
-      token,
+    // TODO: use input
+    const response = await this.verdictApi.getVerdicts({
+      requestData: {
+        courtLevel: '',
+        caseCategory: '',
+        caseType: '',
+        caseNumber: '',
+        title: '',
+        keywords: [''],
+        laws: [''],
+        dateFrom: '',
+        dateTo: '',
+        orderBy: 'title',
+        pageNumber: 1,
+        itemsPerPage: 10,
+      },
     })
+
+    return {
+      items: (
+        (response.items?.filter((item) => Boolean(item.title)) ?? []) as {
+          title: string
+        }[]
+      ).map((item) => ({ title: item.title })),
+    }
   }
 
   async getSingleVerdictById(id: string) {
-    const token = await this.getAuthenticationToken()
     return this.verdictApi.getVerdict({
       id,
-      token,
     })
   }
 }
