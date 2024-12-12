@@ -26,6 +26,7 @@ import {
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 
 import { policeCaseInfo } from './PoliceCaseInfo.strings'
+import { TempIndictmentCount } from '@island.is/judicial-system-web/src/types'
 
 interface Props {
   index: number
@@ -56,6 +57,7 @@ interface Props {
     subtypes?: Record<string, string[]>,
   ) => void
   policeCaseNumberImmutable: boolean
+  indictmentCount?: TempIndictmentCount
 }
 
 export const PoliceCaseInfo: FC<Props> = ({
@@ -69,6 +71,7 @@ export const PoliceCaseInfo: FC<Props> = ({
   updatePoliceCase,
   policeCaseNumberImmutable = false,
   updateIndictmentCount,
+  indictmentCount,
 }) => {
   const { formatMessage } = useIntl()
 
@@ -215,12 +218,7 @@ export const PoliceCaseInfo: FC<Props> = ({
               subtypes: [...(subtypes || []), indictmentSubtype],
             })
 
-            updateIndictmentCount(policeCaseNumbers[index], crimeScene || {}, {
-              [policeCaseNumbers[index]]: [
-                ...(subtypes || []),
-                indictmentSubtype,
-              ],
-            })
+            updateIndictmentCount(policeCaseNumbers[index], crimeScene || {})
           }}
           value={null}
           required
@@ -244,11 +242,17 @@ export const PoliceCaseInfo: FC<Props> = ({
                     subtypes: subtypes.filter((s) => s !== subtype),
                   })
 
+                  console.log(indictmentCount?.indictmentCountSubtypes)
+
                   updateIndictmentCount(
                     policeCaseNumbers[index],
                     crimeScene || {},
                     {
-                      [policeCaseNumbers[index]]: [],
+                      [policeCaseNumbers[index]]: subtypes.filter(
+                        (s) =>
+                          s !== subtype &&
+                          indictmentCount?.indictmentCountSubtypes?.includes(s),
+                      ),
                     },
                   )
                 }}

@@ -294,7 +294,9 @@ const Defendant = () => {
 
           updateIndictmentCount(workingCase.id, ic.id, {
             incidentDescription,
-            indictmentCountSubtypes: [],
+            ...(subtypes && {
+              indictmentCountSubtypes: subtypes[policeCaseNumber],
+            }),
           } as UpdateIndictmentCount)
         })
     }
@@ -509,6 +511,11 @@ const Defendant = () => {
                         workingCase.origin === CaseOrigin.LOKE && index === 0
                       }
                       updateIndictmentCount={handleUpdateIndictmentCount}
+                      indictmentCount={workingCase.indictmentCounts?.find(
+                        (ic) =>
+                          ic.policeCaseNumber ===
+                          workingCase.policeCaseNumbers?.[index],
+                      )}
                     />
                   )}
                 </Box>
