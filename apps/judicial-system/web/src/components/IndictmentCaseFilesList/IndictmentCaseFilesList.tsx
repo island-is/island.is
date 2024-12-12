@@ -143,6 +143,8 @@ const useFilePermissions = (workingCase: Case, user?: User) => {
           isDefenceUser(user)),
       canViewSentToPrisonAdminFiles:
         isPrisonAdminUser(user) || isPublicProsecutorUser(user),
+      canViewRulings:
+        isDistrictCourtUser(user) || isCompletedCase(workingCase.state),
     }),
     [user, workingCase.hasCivilClaims],
   )
@@ -255,7 +257,7 @@ const IndictmentCaseFilesList: FC<Props> = ({
                 onOpenFile={onOpen}
               />
             )}
-          {(isDistrictCourtUser(user) || isCompletedCase(workingCase.state)) &&
+          {permissions.canViewRulings &&
             filteredFiles.rulings &&
             filteredFiles.rulings.length > 0 && (
               <RenderFiles
