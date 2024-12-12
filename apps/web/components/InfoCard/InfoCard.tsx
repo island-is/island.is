@@ -39,6 +39,7 @@ export const InfoCard = (props: InfoCardProps) => {
       href={props.link.href}
       background="white"
       borderColor="white"
+      color="blue"
       borderWidth="standard"
       width="full"
       borderRadius="standard"
