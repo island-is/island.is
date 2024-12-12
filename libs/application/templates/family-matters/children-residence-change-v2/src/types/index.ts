@@ -23,9 +23,3 @@ export type CRCFieldBaseProps = Override<
   FieldBaseProps,
   { application: CRCApplication; errors: ErrorSchema }
 >
-
-export enum DataProviderTypes {
-  MockNationalRegistry = 'MockNationalRegistryProvider',
-  NationalRegistry = 'NationalRegistryProvider',
-  UserProfile = 'UserProfileProvider',
-}
