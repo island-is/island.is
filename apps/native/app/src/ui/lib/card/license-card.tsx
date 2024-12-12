@@ -1,5 +1,3 @@
-import { Barcode } from '@ui/lib/barcode/barcode'
-import { Skeleton } from '@ui/lib/skeleton/skeleton'
 import React from 'react'
 import { FormattedDate, useIntl } from 'react-intl'
 import {
@@ -10,6 +8,9 @@ import {
   ViewStyle,
 } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
+
+import { Barcode } from '../barcode/barcode'
+import { Skeleton } from '../skeleton/skeleton'
 import { ExpirationProgressBar } from '../../../components/progress-bar/expiration-progress-bar'
 import { GenericLicenseType } from '../../../graphql/types/schema'
 import { isString } from '../../../utils/is-string'
