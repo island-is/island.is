@@ -54,6 +54,8 @@ const VehicleBulkMileageTable = ({ vehicles, loading }: Props) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [formValues])
 
+  console.log(rows)
+
   return (
     <Box>
       <form>
@@ -71,35 +73,37 @@ const VehicleBulkMileageTable = ({ vehicles, loading }: Props) => {
             />
             <T.Body>
               {rows}
-              <T.Row>
-                <td>
-                  <Box marginTop={2}>
-                    <Text variant="medium" fontWeight="semiBold">
-                      Samtals:
-                    </Text>
-                  </Box>
-                </td>
-                <td />
-                <td />
-                <td>
-                  <Box padding={2}>
-                    <Text variant="medium" fontWeight="semiBold">
-                      {displayWithUnit(totalLastMileage, 'km', true)}
-                    </Text>
-                  </Box>
-                </td>
-                <td>
-                  <Box padding={2}>
-                    <Text
-                      variant="medium"
-                      fontWeight="semiBold"
-                      textAlign="right"
-                    >
-                      {displayWithUnit(totalRegisteredMileage, 'km', true)}
-                    </Text>
-                  </Box>
-                </td>
-              </T.Row>
+              {rows.length > 0 && (
+                <T.Row>
+                  <td>
+                    <Box marginTop={2}>
+                      <Text variant="medium" fontWeight="semiBold">
+                        Samtals:
+                      </Text>
+                    </Box>
+                  </td>
+                  <td />
+                  <td />
+                  <td>
+                    <Box padding={2}>
+                      <Text variant="medium" fontWeight="semiBold">
+                        {displayWithUnit(totalLastMileage, 'km', true)}
+                      </Text>
+                    </Box>
+                  </td>
+                  <td>
+                    <Box padding={2}>
+                      <Text
+                        variant="medium"
+                        fontWeight="semiBold"
+                        textAlign="right"
+                      >
+                        {displayWithUnit(totalRegisteredMileage, 'km', true)}
+                      </Text>
+                    </Box>
+                  </td>
+                </T.Row>
+              )}
             </T.Body>
           </T.Table>
         )}

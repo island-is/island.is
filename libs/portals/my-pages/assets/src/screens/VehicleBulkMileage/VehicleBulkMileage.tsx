@@ -117,7 +117,7 @@ const VehicleBulkMileage = () => {
   const methods = useForm<FormData>()
 
   const displayFilters =
-    filterValue || (data?.vehiclesListV3?.totalRecords ?? 0) > 10
+    filterValue || search || (data?.vehiclesListV3?.totalRecords ?? 0) > 10
 
   return (
     <Stack space={2}>
