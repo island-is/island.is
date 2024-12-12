@@ -54,7 +54,7 @@ interface Props {
   updateIndictmentCount: (
     policeCaseNumber: string,
     crimeScene: CrimeScene,
-    subtypes?: Record<string, string[]>,
+    subtypes?: Record<string, IndictmentSubtype[]>,
   ) => void
   policeCaseNumberImmutable: boolean
   indictmentCount?: TempIndictmentCount
@@ -241,8 +241,6 @@ export const PoliceCaseInfo: FC<Props> = ({
                     policeCaseNumber: policeCaseNumbers[index],
                     subtypes: subtypes.filter((s) => s !== subtype),
                   })
-
-                  console.log(indictmentCount?.indictmentCountSubtypes)
 
                   updateIndictmentCount(
                     policeCaseNumbers[index],

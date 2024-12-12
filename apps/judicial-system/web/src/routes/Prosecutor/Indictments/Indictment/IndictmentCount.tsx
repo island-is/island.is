@@ -42,13 +42,13 @@ import {
   UpdateIndictmentCount,
   useIndictmentCounts,
 } from '@island.is/judicial-system-web/src/utils/hooks'
+import { hasOnlyOneItemInSubArrays } from '@island.is/judicial-system-web/src/utils/utils'
 
 import { Substances as SubstanceChoices } from './Substances/Substances'
 import { indictmentCount as strings } from './IndictmentCount.strings'
 import { indictmentCountEnum as enumStrings } from './IndictmentCountEnum.strings'
 import { indictmentCountSubstanceEnum as substanceStrings } from './IndictmentCountSubstanceEnum.strings'
 import * as styles from './IndictmentCount.css'
-import { hasOnlyOneItemInSubArrays } from '@island.is/judicial-system-web/src/utils/utils'
 
 interface Props {
   indictmentCount: TIndictmentCount

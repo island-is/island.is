@@ -279,25 +279,28 @@ const Defendant = () => {
   const handleUpdateIndictmentCount = (
     policeCaseNumber: string,
     crimeScene: CrimeScene,
-    subtypes?: Record<string, string[]>,
+    subtypes?: Record<string, IndictmentSubtype[]>,
   ) => {
     if (workingCase.indictmentCounts) {
       workingCase.indictmentCounts
-        .filter((ic) => ic.policeCaseNumber === policeCaseNumber)
-        .forEach((ic) => {
+        .filter(
+          (indictmentCount) =>
+            indictmentCount.policeCaseNumber === policeCaseNumber,
+        )
+        .forEach((indictmentCount) => {
           const incidentDescription = getIncidentDescription(
-            ic,
+            indictmentCount,
             formatMessage,
             crimeScene,
             subtypes,
           )
 
-          updateIndictmentCount(workingCase.id, ic.id, {
+          updateIndictmentCount(workingCase.id, indictmentCount.id, {
             incidentDescription,
             ...(subtypes && {
               indictmentCountSubtypes: subtypes[policeCaseNumber],
             }),
-          } as UpdateIndictmentCount)
+          })
         })
     }
   }
@@ -512,8 +515,8 @@ const Defendant = () => {
                       }
                       updateIndictmentCount={handleUpdateIndictmentCount}
                       indictmentCount={workingCase.indictmentCounts?.find(
-                        (ic) =>
-                          ic.policeCaseNumber ===
+                        (indictmentCount) =>
+                          indictmentCount.policeCaseNumber ===
                           workingCase.policeCaseNumbers?.[index],
                       )}
                     />
