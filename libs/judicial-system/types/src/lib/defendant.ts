@@ -36,6 +36,14 @@ export enum ServiceStatus {
   EXPIRED = 'EXPIRED', // If a subpoena expires
 }
 
+export enum PunishmentType {
+  IMPRISONMENT = 'IMPRISONMENT',
+  PROBATION = 'PROBATION',
+  FINE = 'FINE',
+  INDICTMENT_RULING_DECISION_FINE = 'INDICTMENT_RULING_DECISION_FINE',
+  SIGNED_FINE_INVITATION = 'SIGNED_FINE_INVITATION',
+}
+
 export const successfulServiceStatus: string[] = [
   ServiceStatus.ELECTRONICALLY,
   ServiceStatus.DEFENDER,
