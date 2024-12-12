@@ -5,6 +5,7 @@ import { useRouter } from 'next/router'
 import { SliceType } from '@island.is/island-ui/contentful'
 import {
   ActionCard,
+  AlertBanner,
   Box,
   Breadcrumbs,
   Divider,
@@ -102,6 +103,7 @@ const GrantSinglePage: CustomScreen<GrantSingleProps> = ({ grant, locale }) => {
           </Box>
           <ActionCard
             heading={grant.name}
+            text={'Lokað fyrir umsóknir / Frestur var til 14. júní 2024'}
             backgroundColor="blue"
             cta={{
               disabled: !grant.applicationUrl?.slug,
@@ -111,6 +113,7 @@ const GrantSinglePage: CustomScreen<GrantSingleProps> = ({ grant, locale }) => {
               iconType: 'outline',
             }}
           />
+          <AlertBanner description="Einhver stuttur texti um það sem einkennir þessar umsóknir" />
           {grant.specialEmphasis?.length ? (
             <>
               <Box className="rs_read">
