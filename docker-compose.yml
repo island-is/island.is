@@ -30,7 +30,7 @@ services:
       DOWNLOAD_SERVICE_BASE_PATH: https://api.dev01.devland.is
       ENDORSEMENT_SYSTEM_BASE_API_URL: http://localhost:9673
       REGULATIONS_ADMIN_URL: http://localhost:9686
-      IDENTITY_SERVER_CLIENT_ID: "@island.is/clients/api"
+      IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/api'
       AIR_DISCOUNT_SCHEME_CLIENT_TIMEOUT: 20000
       XROAD_NATIONAL_REGISTRY_TIMEOUT: 20000
       XROAD_PROPERTIES_TIMEOUT: 35000
@@ -52,10 +52,10 @@ services:
       HSN_WEB_FORM_ID: 1dimJFHLFYtnhoYEA3JxRK
       SESSIONS_API_URL: http://localhost:9354
       AUTH_ADMIN_API_PATH: https://identity-server.dev01.devland.is/backend
-      AUTH_ADMIN_API_PATHS: "{\"development\":\"https://identity-server.dev01.devland.is/backend\"}"
+      AUTH_ADMIN_API_PATHS: '{"development":"https://identity-server.dev01.devland.is/backend"}'
       AUTH_IDS_API_URL: https://identity-server.dev01.devland.is
       HUNTING_LICENSE_PASS_TEMPLATE_ID: 1da72d52-a93a-4d0f-8463-1933a2bd210b
-      XROAD_RSK_PROCURING_SCOPE: "[\"@rsk.is/prokura\",\"@rsk.is/prokura:admin\"]"
+      XROAD_RSK_PROCURING_SCOPE: '["@rsk.is/prokura","@rsk.is/prokura:admin"]'
       UNIVERSITY_GATEWAY_API_URL: http://localhost:9470
       WATSON_ASSISTANT_CHAT_FEEDBACK_DB_NAME: island-is-assistant-feedback
       XROAD_ADR_MACHINE_LICENSE_PATH: IS-DEV/GOV/10013/Vinnueftirlitid-Protected/rettindi-token-v1
@@ -145,7 +145,7 @@ services:
       IP: 0.0.0.0
     ports:
       - 9456:9456
-    command: "yarn nx serve api"
+    command: 'yarn nx serve api'
     working_dir: /app
     volumes:
       - ./apps:/app/apps
@@ -160,8 +160,8 @@ services:
       test:
         - CMD
         - wget
-        - "--spider"
-        - "--quiet"
+        - '--spider'
+        - '--quiet'
         - http://localhost:9456/liveness
       interval: 10s
       timeout: 5s
@@ -191,7 +191,7 @@ services:
       IP: 0.0.0.0
     ports:
       - 4200:4200
-    command: "yarn nx serve consultation-portal"
+    command: 'yarn nx serve consultation-portal'
     working_dir: /app
     volumes:
       - ./apps:/app/apps
