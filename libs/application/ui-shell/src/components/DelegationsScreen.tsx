@@ -16,7 +16,7 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { useBff } from '@island.is/react-spa/bff'
+import { useAuth } from '@island.is/react-spa/bff'
 import { useFeatureFlagClient } from '@island.is/react/feature-flags'
 import * as kennitala from 'kennitala'
 import { format as formatKennitala } from 'kennitala'
@@ -50,7 +50,7 @@ export const DelegationsScreen = ({
   })
   const { formatMessage } = useLocale()
   const type = getTypeFromSlug(slug)
-  const { switchUser, userInfo: user } = useBff()
+  const { switchUser, userInfo: user } = useAuth()
   const featureFlagClient: FeatureFlagClient = useFeatureFlagClient()
   const navigate = useNavigate()
 
