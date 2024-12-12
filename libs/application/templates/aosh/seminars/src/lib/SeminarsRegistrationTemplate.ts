@@ -2,6 +2,7 @@ import {
   coreHistoryMessages,
   corePendingActionMessages,
   EphemeralStateLifeCycle,
+  getValueViaPath,
   pruneAfterDays,
 } from '@island.is/application/core'
 import {
@@ -28,9 +29,9 @@ import {
 } from '../dataProviders'
 import { AuthDelegationType } from '@island.is/shared/types'
 import { application as applicationMessage } from './messages'
-import { ApiActions } from '../shared/contstants'
+import { ApiActions, PaymentOptions } from '../shared/contstants'
 import { buildPaymentState } from '@island.is/application/utils'
-import { getChargeItems } from '../utils'
+import { getChargeItems, isCompany } from '../utils'
 // import { ApiScope } from '@island.is/auth/scopes'
 
 const template: ApplicationTemplate<
@@ -145,19 +146,36 @@ const template: ApplicationTemplate<
           ],
         },
         on: {
-          [DefaultEvents.SUBMIT]: { target: States.PAYMENT },
+          [DefaultEvents.SUBMIT]: [
+            {
+              target: States.COMPLETED,
+              cond: ({ application }: ApplicationContext) => {
+                const paymentOptions = getValueViaPath<PaymentOptions>(
+                  application.answers,
+                  'paymentArrangement.paymentOptions',
+                )
+                return (
+                  paymentOptions === PaymentOptions.putIntoAccount &&
+                  isCompany(application.answers)
+                )
+              },
+            },
+            {
+              target: States.PAYMENT,
+            },
+          ],
         },
       },
       [States.PAYMENT]: buildPaymentState({
         organizationId: InstitutionNationalIds.VINNUEFTIRLITID,
         chargeItems: getChargeItems,
         submitTarget: States.COMPLETED,
-        onExit: [
-          defineTemplateApi({
-            action: ApiActions.submitApplication,
-            triggerEvent: DefaultEvents.SUBMIT,
-          }),
-        ],
+        // onExit: [
+        //   defineTemplateApi({
+        //     action: ApiActions.submitApplication,
+        //     triggerEvent: DefaultEvents.SUBMIT,
+        //   }),
+        // ],
       }),
       [States.COMPLETED]: {
         meta: {
