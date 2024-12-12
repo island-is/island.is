@@ -299,6 +299,21 @@ jobs:
           keys: ${{ needs.prepare.outputs.CACHE_KEYS }}
           enable-cache: 'node_modules,generated-files'
 
+      - name: Cache Node Modules
+        id: cache-node-modules
+        uses: actions/cache@v3
+        with:
+          path: |
+            node_modules
+            .yarn/cache
+          key: ${{ runner.os }}-node-modules-${{ hashFiles('yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-node-modules-
+
+      - name: Install Dependencies
+        if: steps.cache-node-modules.outputs.cache-hit != 'true'
+        run: yarn install --immutable
+
       - name: Running e2e tests
         run: yarn e2e "${AFFECTED_PROJECT}"
 
