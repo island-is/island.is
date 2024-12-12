@@ -41,15 +41,11 @@ type BootstrapOptions = {
 }
 
 const startServer = (app: Express, port = 4200) => {
-  const nextPort = parseInt(process.env.PORT || '') || port
-  const metricsPort = nextPort + 1
-  app.listen(nextPort, () => {
-    logger.info(
-      `Next custom server listening at http://localhost:${nextPort}`,
-      {
-        context: 'Bootstrap',
-      },
-    )
+  const metricsPort = port + 1
+  app.listen(port, () => {
+    logger.info(`Next custom server listening at http://localhost:${port}`, {
+      context: 'Bootstrap',
+    })
   })
   startMetricServer(metricsPort)
 }

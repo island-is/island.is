@@ -5,26 +5,33 @@ import { localrun } from '../dsl/exports/localrun'
 import { logger, runCommand } from '../common'
 import { ChildProcess } from 'child_process'
 import { LocalrunValueFile } from '../dsl/types/output-types'
+import { generateDockerCompose } from './generate-docker-compose'
 
 export async function renderLocalServices({
   services,
+  dependencies = [],
   print = false,
   json = false,
+  dockerCompose = false,
   dryRun = false,
-  noUpdateSecrets = false,
+  skipSecrets = false,
 }: {
   services: string[]
+  dependencies?: string[]
   print?: boolean
   json?: boolean
+  dockerCompose?: boolean
   dryRun?: boolean
-  noUpdateSecrets?: boolean
+  skipSecrets?: boolean
 }): Promise<LocalrunValueFile> {
   logger.debug('renderLocalServices', {
     services,
+    dependencies,
     print,
     json,
     dryRun,
-    noUpdateSecrets,
+    dockerCompose,
+    skipSecrets,
   })
   const chartName = 'islandis'
   const env = 'dev'
@@ -37,7 +44,7 @@ export async function renderLocalServices({
     habitat,
     uberChart,
     habitat.filter((s) => services.includes(s.name())),
-    { dryRun, noUpdateSecrets },
+    { dryRun, skipSecrets },
   )
 
   if (print) {
@@ -52,6 +59,14 @@ export async function renderLocalServices({
     )
   }
 
+  if (dockerCompose) {
+    generateDockerCompose(
+      renderedLocalServices.services,
+      services,
+      dependencies,
+    )
+  }
+
   return renderedLocalServices
 }
 
@@ -63,14 +78,14 @@ export async function runLocalServices(
     neverFail = !!dryRun,
     print = false,
     json = false,
-    noUpdateSecrets = false,
+    skipSecrets = false,
     startProxies = false,
   }: {
     dryRun?: boolean
     neverFail?: boolean
     print?: boolean
     json?: boolean
-    noUpdateSecrets?: boolean
+    skipSecrets?: boolean
     startProxies?: boolean
   } = {},
 ) {
@@ -84,7 +99,7 @@ export async function runLocalServices(
     print,
     json,
     dryRun,
-    noUpdateSecrets,
+    skipSecrets,
   })
 
   // Verify that all dependencies exist in the rendered dependency list

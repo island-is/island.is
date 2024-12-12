@@ -99,10 +99,26 @@
         "jestConfig": "apps/consultation-portal/jest.config.ts"
       }
     },
-    "e2e": {
+    "setup-env": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "yarn ts-node -P apps/consultation-portal/tsconfig.json apps/consultation-portal/e2e/setup-local-env.ts"
+      }
+    },
+    "run-e2e-tests": {
       "executor": "@nx/playwright:playwright",
       "options": {
         "config": "{projectRoot}/playwright.config.ts"
+      }
+    },
+    "e2e": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          { "command": "nx run consultation-portal:setup-env" },
+          { "command": "nx run consultation-portal:run-e2e-tests" }
+        ],
+        "parallel": false
       }
     },
     "lint": {

@@ -64,13 +64,11 @@ const cli = yargs(process.argv.slice(2))
             array: true,
             demandOption: true,
           })
+          .option('dependencies', { array: true, type: 'string', default: [] })
           .option('json', { type: 'boolean', default: false })
           .option('dry', { type: 'boolean', default: false })
-          .option('no-update-secrets', {
-            type: 'boolean',
-            default: false,
-            alias: ['nosecrets', 'no-secrets'],
-          })
+          .option('docker-compose', { type: 'boolean', default: false })
+          .option('skip-secrets', { type: 'boolean', default: false })
           // Custom check for 'services' since yargs lack built-in validation
           .check((argv) => {
             const svc = argv.services
@@ -85,10 +83,12 @@ const cli = yargs(process.argv.slice(2))
     async (argv) => {
       await renderLocalServices({
         services: argv.services,
+        dependencies: argv.dependencies,
         dryRun: argv.dry,
         json: argv.json,
+        dockerCompose: argv['docker-compose'],
         print: true,
-        noUpdateSecrets: argv['no-update-secrets'],
+        skipSecrets: argv['skip-secrets'],
       })
     },
   )
@@ -106,11 +106,7 @@ const cli = yargs(process.argv.slice(2))
           .option('dependencies', { array: true, type: 'string', default: [] })
           .option('json', { type: 'boolean', default: false })
           .option('dry', { type: 'boolean', default: false })
-          .option('no-update-secrets', {
-            type: 'boolean',
-            default: false,
-            alias: ['nosecrets', 'no-secrets'],
-          })
+          .option('skip-secrets', { type: 'boolean', default: false })
           .option('print', { type: 'boolean', default: false })
           .option('proxies', { type: 'boolean', default: false })
           .option('never-fail', {
@@ -134,7 +130,7 @@ const cli = yargs(process.argv.slice(2))
         dryRun: argv.dry,
         json: argv.json,
         neverFail: argv['never-fail'],
-        noUpdateSecrets: argv['no-update-secrets'],
+        skipSecrets: argv['skip-secrets'],
         print: argv.print,
         startProxies: argv.proxies,
       })
