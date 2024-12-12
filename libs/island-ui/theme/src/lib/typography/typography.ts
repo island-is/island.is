@@ -6,123 +6,115 @@ import {
 export const fontWeight = {
   light: 300,
   regular: 400,
+  medium: 500,
   semiBold: 600,
 }
+
+const { heading, paragraph, other, table } = typographyDesktopTokens
+const {
+  heading: headingMobile,
+  paragraph: paragraphMobile,
+  other: otherMobile,
+  table: tableMobile,
+} = typographyMobileTokens
 
 export const typographyValues = {
   desktop: {
     headings: {
       h1: {
         fontWeight: fontWeight.semiBold,
-        fontSize: typographyDesktopTokens.Heading.H1['font-size'].$value,
-        lineHeight: typographyDesktopTokens.Heading.H1['line-height'].$value,
+        fontSize: heading.h1.fontsize,
+        lineHeight: heading.h1.lineheight,
       },
       h2: {
         fontWeight: fontWeight.semiBold,
-        fontSize: typographyDesktopTokens.Heading.H2['font-size'].$value,
-        lineHeight: typographyDesktopTokens.Heading.H2['line-height'].$value,
+        fontSize: heading.h2.fontsize,
+        lineHeight: heading.h2.lineheight,
       },
       h3: {
         fontWeight: fontWeight.semiBold,
-        fontSize: typographyDesktopTokens.Heading.H3['font-size'].$value,
-        lineHeight: typographyDesktopTokens.Heading.H3['line-height'].$value,
+        fontSize: heading.h3.fontsize,
+        lineHeight: heading.h3.lineheight,
       },
       h4: {
         fontWeight: fontWeight.semiBold,
-        fontSize: typographyDesktopTokens.Heading.H4['font-size'].$value,
-        lineHeight: typographyDesktopTokens.Heading.H4['line-height'].$value,
+        fontSize: heading.h4.fontsize,
+        lineHeight: heading.h4.lineheight,
       },
       h5: {
         fontWeight: fontWeight.semiBold,
-        fontSize: typographyDesktopTokens.Heading.H5['font-size'].$value,
-        lineHeight: typographyDesktopTokens.Heading.H5['line-height'].$value,
+        fontSize: heading.h5.fontsize,
+        lineHeight: heading.h5.lineheight,
       },
     },
     paragraph: {
       default: {
         fontWeight: fontWeight.light,
-        fontSize: typographyDesktopTokens.Paragraph.Default['font-size'].$value,
-        lineHeight:
-          typographyDesktopTokens.Paragraph.Default['line-height'].$value,
+        fontSize: paragraph.default.fontsize,
+        lineHeight: paragraph.default.lineheight,
       },
       small: {
         fontWeight: fontWeight.regular,
-        fontSize: typographyDesktopTokens.Paragraph.Small['font-size'].$value,
-        lineHeight:
-          typographyDesktopTokens.Paragraph.Small['line-height'].$value,
+        fontSize: paragraph.small.fontsize,
+        lineHeight: paragraph.small.lineheight,
       },
       mediumRegular: {
         fontWeight: fontWeight.regular,
-        fontSize:
-          typographyDesktopTokens.Paragraph['Medium Regular']['font-size']
-            .$value,
-        lineHeight:
-          typographyDesktopTokens.Paragraph['Medium Regular']['line-height']
-            .$value,
+        fontSize: paragraph.mediumRegular.fontsize,
+
+        lineHeight: paragraph.mediumLight.lineheight,
       },
       mediumLight: {
         fontWeight: fontWeight.light,
-        fontSize:
-          typographyDesktopTokens.Paragraph['Medium Light']['font-size'].$value,
-        lineHeight:
-          typographyDesktopTokens.Paragraph['Medium Light']['line-height']
-            .$value,
+        fontSize: paragraph.mediumLight.fontsize,
+        lineHeight: paragraph.mediumLight.lineheight,
       },
       large: {
         fontWeight: fontWeight.light,
-        fontSize: typographyDesktopTokens.Paragraph.Large['font-size'].$value,
-        lineHeight:
-          typographyDesktopTokens.Paragraph.Large['line-height'].$value,
+        fontSize: paragraph.large.fontsize,
+        lineHeight: paragraph.large.lineheight,
       },
     },
     eyebrow: {
       fontWeight: fontWeight.semiBold,
-      fontSize: typographyDesktopTokens.Other.Eyebrows['font-size'].$value,
-      lineHeight: typographyDesktopTokens.Other.Eyebrows['line-height'].$value,
+      fontSize: other.eyebrows.fontsize,
+      lineHeight: other.eyebrows.lineheight,
     },
     table: {
       header: {
         fontWeight: fontWeight.semiBold,
-        fontSize: typographyDesktopTokens.Table.Head['font-size'].$value,
-        lineHeight: typographyDesktopTokens.Table.Head['line-height'].$value,
+        fontSize: table.head.fontsize,
+        lineHeight: table.head.lineheight,
       },
       headerSmall: {
         fontWeight: fontWeight.semiBold,
-        fontSize:
-          typographyDesktopTokens.Table['Head Small']['font-size'].$value,
-        lineHeight:
-          typographyDesktopTokens.Table['Head Small']['line-height'].$value,
+        fontSize: table.headSmall.fontsize,
+        lineHeight: table.headSmall.lineheight,
       },
       body: {
         fontWeight: fontWeight.regular,
-        fontSize: typographyDesktopTokens.Table.Body['font-size'].$value,
-        lineHeight: typographyDesktopTokens.Table.Body['line-height'].$value,
+        fontSize: table.body.fontsize,
+        lineHeight: table.body.lineheight,
       },
       bodyLarge: {
         fontWeight: fontWeight.regular,
-        fontSize:
-          typographyDesktopTokens.Table['Body Large']['font-size'].$value,
-        lineHeight:
-          typographyDesktopTokens.Table['Body Large']['line-height'].$value,
+        fontSize: table.bodyLarge.fontsize,
+        lineHeight: table.bodyLarge.lineheight,
       },
       bodySmall: {
         fontWeight: fontWeight.regular,
-        fontSize:
-          typographyDesktopTokens.Table['Body Small']['font-size'].$value,
-        lineHeight:
-          typographyDesktopTokens.Table['Body Small']['line-height'].$value,
+        fontSize: table.bodySmall.fontsize,
+        lineHeight: table.bodySmall.lineheight,
       },
       foot: {
         fontWeight: fontWeight.semiBold,
-        fontSize: typographyDesktopTokens.Table['Foot']['font-size'].$value,
-        lineHeight: typographyDesktopTokens.Table['Foot']['line-height'].$value,
+        fontSize: table.foot.fontsize,
+        lineHeight: table.foot.lineheight,
       },
       footSmall: {
         fontWeight: fontWeight.semiBold,
-        fontSize:
-          typographyDesktopTokens.Table['Foot Small']['font-size'].$value,
-        lineHeight:
-          typographyDesktopTokens.Table['Foot Small']['line-height'].$value,
+        fontSize: table.footSmall.fontsize,
+        lineHeight: table.footSmall.lineheight,
       },
     },
   },
@@ -130,115 +122,98 @@ export const typographyValues = {
     headings: {
       h1: {
         fontWeight: fontWeight.semiBold,
-        fontSize: typographyMobileTokens.Heading.H1['font-size'].$value,
-        lineHeight: typographyMobileTokens.Heading.H1['line-height'].$value,
+        fontSize: headingMobile.h1.fontsize,
+        lineHeight: headingMobile.h1.lineheight,
       },
       h2: {
         fontWeight: fontWeight.semiBold,
-        fontSize: typographyMobileTokens.Heading.H2['font-size'].$value,
-        lineHeight: typographyMobileTokens.Heading.H2['line-height'].$value,
+        fontSize: headingMobile.h2.fontsize,
+        lineHeight: headingMobile.h2.lineheight,
       },
       h3: {
         fontWeight: fontWeight.semiBold,
-        fontSize: typographyMobileTokens.Heading.H3['font-size'].$value,
-        lineHeight: typographyMobileTokens.Heading.H3['line-height'].$value,
+        fontSize: headingMobile.h3.fontsize,
+        lineHeight: headingMobile.h3.lineheight,
       },
       h4: {
         fontWeight: fontWeight.semiBold,
-        fontSize: typographyMobileTokens.Heading.H4['font-size'].$value,
-        lineHeight: typographyMobileTokens.Heading.H4['line-height'].$value,
+        fontSize: headingMobile.h4.fontsize,
+        lineHeight: headingMobile.h4.lineheight,
       },
       h5: {
         fontWeight: fontWeight.semiBold,
-        fontSize: typographyMobileTokens.Heading.H5['font-size'].$value,
-        lineHeight: typographyMobileTokens.Heading.H5['line-height'].$value,
+        fontSize: headingMobile.h5.fontsize,
+        lineHeight: headingMobile.h5.lineheight,
       },
     },
     paragraph: {
       default: {
         fontWeight: fontWeight.light,
-        fontSize: typographyMobileTokens.Paragraph.Default['font-size'].$value,
-        lineHeight:
-          typographyMobileTokens.Paragraph.Default['line-height'].$value,
+        fontSize: paragraphMobile.default.fontsize,
+        lineHeight: paragraphMobile.default.lineheight,
       },
       small: {
         fontWeight: fontWeight.regular,
-        fontSize: typographyMobileTokens.Paragraph.Small['font-size'].$value,
-        lineHeight:
-          typographyMobileTokens.Paragraph.Small['line-height'].$value,
+        fontSize: paragraphMobile.small.fontsize,
+        lineHeight: paragraphMobile.small.lineheight,
       },
       mediumRegular: {
         fontWeight: fontWeight.regular,
-        fontSize:
-          typographyMobileTokens.Paragraph['Medium Regular']['font-size']
-            .$value,
-        lineHeight:
-          typographyMobileTokens.Paragraph['Medium Regular']['line-height']
-            .$value,
+        fontSize: paragraphMobile.mediumRegular.fontsize,
+
+        lineHeight: paragraphMobile.mediumLight.lineheight,
       },
       mediumLight: {
         fontWeight: fontWeight.light,
-        fontSize:
-          typographyMobileTokens.Paragraph['Medium Light']['font-size'].$value,
-        lineHeight:
-          typographyMobileTokens.Paragraph['Medium Light']['line-height']
-            .$value,
+        fontSize: paragraphMobile.mediumLight.fontsize,
+        lineHeight: paragraphMobile.mediumLight.lineheight,
       },
       large: {
         fontWeight: fontWeight.light,
-        fontSize: typographyMobileTokens.Paragraph.Large['font-size'].$value,
-        lineHeight:
-          typographyMobileTokens.Paragraph.Large['line-height'].$value,
+        fontSize: paragraphMobile.large.fontsize,
+        lineHeight: paragraphMobile.large.lineheight,
       },
     },
     eyebrow: {
       fontWeight: fontWeight.semiBold,
-      fontSize: typographyMobileTokens.Other.Eyebrows['font-size'].$value,
-      lineHeight: typographyMobileTokens.Other.Eyebrows['line-height'].$value,
+      fontSize: otherMobile.eyebrows.fontsize,
+      lineHeight: otherMobile.eyebrows.lineheight,
     },
     table: {
       header: {
         fontWeight: fontWeight.semiBold,
-        fontSize: typographyMobileTokens.Table.Head['font-size'].$value,
-        lineHeight: typographyMobileTokens.Table.Head['line-height'].$value,
+        fontSize: tableMobile.head.fontsize,
+        lineHeight: tableMobile.head.lineheight,
       },
       headerSmall: {
         fontWeight: fontWeight.semiBold,
-        fontSize:
-          typographyMobileTokens.Table['Head Small']['font-size'].$value,
-        lineHeight:
-          typographyMobileTokens.Table['Head Small']['line-height'].$value,
+        fontSize: tableMobile.headSmall.fontsize,
+        lineHeight: tableMobile.headSmall.lineheight,
       },
       body: {
         fontWeight: fontWeight.regular,
-        fontSize: typographyMobileTokens.Table.Body['font-size'].$value,
-        lineHeight: typographyMobileTokens.Table.Body['line-height'].$value,
+        fontSize: tableMobile.body.fontsize,
+        lineHeight: tableMobile.body.lineheight,
       },
       bodyLarge: {
         fontWeight: fontWeight.regular,
-        fontSize:
-          typographyMobileTokens.Table['Body Large']['font-size'].$value,
-        lineHeight:
-          typographyMobileTokens.Table['Body Large']['line-height'].$value,
+        fontSize: tableMobile.bodyLarge.fontsize,
+        lineHeight: tableMobile.bodyLarge.lineheight,
       },
       bodySmall: {
         fontWeight: fontWeight.regular,
-        fontSize:
-          typographyMobileTokens.Table['Body Small']['font-size'].$value,
-        lineHeight:
-          typographyMobileTokens.Table['Body Small']['line-height'].$value,
+        fontSize: tableMobile.bodySmall.fontsize,
+        lineHeight: tableMobile.bodySmall.lineheight,
       },
       foot: {
         fontWeight: fontWeight.semiBold,
-        fontSize: typographyMobileTokens.Table['Foot']['font-size'].$value,
-        lineHeight: typographyMobileTokens.Table['Foot']['line-height'].$value,
+        fontSize: tableMobile.foot.fontsize,
+        lineHeight: tableMobile.foot.lineheight,
       },
       footSmall: {
         fontWeight: fontWeight.semiBold,
-        fontSize:
-          typographyMobileTokens.Table['Foot Small']['font-size'].$value,
-        lineHeight:
-          typographyMobileTokens.Table['Foot Small']['line-height'].$value,
+        fontSize: tableMobile.footSmall.fontsize,
+        lineHeight: tableMobile.footSmall.lineheight,
       },
     },
   },
