@@ -36,6 +36,10 @@ export const externalDataSubSection = buildSubSection({
           title: newPrimarySchoolMessages.pre.userProfileInformationTitle,
           subTitle: newPrimarySchoolMessages.pre.userProfileInformationSubTitle,
         }),
+        buildDataProviderItem({
+          title: newPrimarySchoolMessages.pre.childInformationTitle,
+          subTitle: newPrimarySchoolMessages.pre.childInformationSubTitle,
+        }),
       ],
     }),
   ],
