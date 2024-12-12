@@ -5,6 +5,9 @@ export const GET_VERDICTS_QUERY = gql`
     webVerdicts(input: $input) {
       items {
         title
+        court
+        caseNumber
+        verdictDate
       }
       input {
         searchTerm

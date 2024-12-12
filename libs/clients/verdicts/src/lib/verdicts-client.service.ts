@@ -19,18 +19,34 @@ export class VerdictsClientService {
         laws: [''],
         dateFrom: '',
         dateTo: '',
-        orderBy: 'title',
+        orderBy: 'title', // TODO: how should the verdicts be ordered?
         pageNumber: 1,
         itemsPerPage: 10,
+        ...input,
       },
     })
 
     return {
       items: (
-        (response.items?.filter((item) => Boolean(item.title)) ?? []) as {
+        (response.items?.filter(
+          (item) =>
+            Boolean(item.title) &&
+            Boolean(item.court) &&
+            Boolean(item.caseNumber) &&
+            Boolean(item.verdictDate) &&
+            Boolean(item.caseId),
+        ) ?? []) as {
           title: string
+          court: string
+          caseNumber: string
+          verdictDate: Date
         }[]
-      ).map((item) => ({ title: item.title })),
+      ).map((item) => ({
+        title: item.title,
+        court: item.court,
+        caseNumber: item.caseNumber,
+        verdictDate: item.verdictDate,
+      })),
     }
   }
 
