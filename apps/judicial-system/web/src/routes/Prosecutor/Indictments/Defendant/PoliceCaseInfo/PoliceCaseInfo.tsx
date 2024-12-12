@@ -86,6 +86,8 @@ export const PoliceCaseInfo: FC<Props> = ({
   const [policeCaseNumberErrorMessage, setPoliceCaseNumberErrorMessage] =
     useState<string>('')
 
+  const subtypesArray = [...(subtypes || [])]
+
   useEffect(() => {
     if (policeCaseNumbers[index] !== originalPoliceCaseNumber) {
       // This component is now handling a new police case number
@@ -215,7 +217,7 @@ export const PoliceCaseInfo: FC<Props> = ({
             const indictmentSubtype = selectedOption?.value as IndictmentSubtype
 
             updatePoliceCase(index, {
-              subtypes: [...(subtypes || []), indictmentSubtype],
+              subtypes: [...subtypesArray, indictmentSubtype],
             })
 
             updateIndictmentCount(policeCaseNumbers[index], crimeScene || {})
@@ -284,7 +286,7 @@ export const PoliceCaseInfo: FC<Props> = ({
             updateIndictmentCount(
               policeCaseNumbers[index],
               { ...crimeScene, place: event.target.value },
-              { [policeCaseNumbers[index]]: [...(subtypes || [])] },
+              { [policeCaseNumbers[index]]: subtypesArray },
             )
           }}
         />
@@ -303,13 +305,8 @@ export const PoliceCaseInfo: FC<Props> = ({
 
             updateIndictmentCount(
               policeCaseNumbers[index],
-              {
-                ...crimeScene,
-                date: date,
-              },
-              {
-                [policeCaseNumbers[index]]: [...(subtypes || [])],
-              },
+              { ...crimeScene, date: date },
+              { [policeCaseNumbers[index]]: subtypesArray },
             )
           }
         }}
