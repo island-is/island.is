@@ -32,11 +32,6 @@ export const externalDataSection = buildSection({
         ],
       }),
       dataProviders: [
-        // buildDataProviderItem({
-        //   provider: NationalRegistryUserApi,
-        //   title: externalData.nationalRegistry.title,
-        //   subTitle: externalData.nationalRegistry.procureDescription,
-        // }),
         buildDataProviderItem({
           provider: IdentityApi,
           title: externalData.nationalRegistry.title,
