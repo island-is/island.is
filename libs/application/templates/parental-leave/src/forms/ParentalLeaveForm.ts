@@ -1223,6 +1223,7 @@ export const ParentalLeaveForm: Form = buildForm({
               children: [
                 buildSliderField({
                   id: 'multipleBirthsRequestDays',
+                  title: '',
                   label: {
                     singular: parentalLeaveFormMessages.shared.day,
                     plural: parentalLeaveFormMessages.shared.days,
@@ -1317,6 +1318,7 @@ export const ParentalLeaveForm: Form = buildForm({
               children: [
                 buildSliderField({
                   id: 'requestRights.requestDays',
+                  title: '',
                   label: {
                     singular: parentalLeaveFormMessages.shared.day,
                     plural: parentalLeaveFormMessages.shared.days,
@@ -1365,6 +1367,7 @@ export const ParentalLeaveForm: Form = buildForm({
               children: [
                 buildSliderField({
                   id: 'giveRights.giveDays',
+                  title: '',
                   label: {
                     singular: parentalLeaveFormMessages.shared.day,
                     plural: parentalLeaveFormMessages.shared.days,
