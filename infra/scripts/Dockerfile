@@ -9,9 +9,10 @@ FROM ${DOCKER_IMAGE_REGISTRY}/docker/library/node:${NODE_IMAGE_TAG} AS build
 WORKDIR /app/infra
 
 ENV NODE_OPTIONS=--openssl-legacy-provider
+RUN corepack enable
 
 COPY infra/package.json infra/yarn.lock /app/infra/
-COPY .yarn/ ./.yarn
+COPY infra/.yarn/ /app/.yarn/
 RUN yarn install --immutable
 
 COPY infra/ /app/infra/
