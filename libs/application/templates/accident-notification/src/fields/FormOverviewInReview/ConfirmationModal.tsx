@@ -3,11 +3,10 @@ import { Application, DefaultEvents } from '@island.is/application/types'
 import { SUBMIT_APPLICATION } from '@island.is/application/graphql'
 import { Box, Button, Icon, ModalBase, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import React, { FC } from 'react'
 import { inReview } from '../../lib/messages'
 import * as styles from './ConfirmationModal.css'
 
-type ConfirmationModalProps = {
+type Props = {
   visibility: boolean
   setVisibility: (visibility: boolean) => void
   title: string
@@ -20,9 +19,7 @@ type ConfirmationModalProps = {
   refetch?: () => void
 }
 
-export const ConfirmationModal: FC<
-  React.PropsWithChildren<ConfirmationModalProps>
-> = ({
+export const ConfirmationModal = ({
   visibility,
   setVisibility,
   title,
@@ -33,7 +30,7 @@ export const ConfirmationModal: FC<
   application,
   comment = '',
   refetch,
-}) => {
+}: Props) => {
   const { formatMessage } = useLocale()
   const [submitApplication, { loading: loadingSubmit }] = useMutation(
     SUBMIT_APPLICATION,
@@ -68,6 +65,7 @@ export const ConfirmationModal: FC<
   const closeModal = () => {
     setVisibility(false)
   }
+
   return (
     <ModalBase
       baseId="confirmationModal"

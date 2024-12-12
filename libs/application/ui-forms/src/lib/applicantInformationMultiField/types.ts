@@ -2,7 +2,7 @@ import { FormText } from '@island.is/application/types'
 export interface ApplicantInformationInterface {
   externalData: {
     // new dataprovider
-    identityRegistry: {
+    identity: {
       data: {
         name: 'string'
         nationalId: 'string'
