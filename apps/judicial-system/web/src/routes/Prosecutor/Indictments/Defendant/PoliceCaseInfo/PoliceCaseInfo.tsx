@@ -283,13 +283,8 @@ export const PoliceCaseInfo: FC<Props> = ({
             updatePoliceCase()
             updateIndictmentCount(
               policeCaseNumbers[index],
-              {
-                ...crimeScene,
-                place: event.target.value,
-              },
-              {
-                [policeCaseNumbers[index]]: [...(subtypes || [])],
-              },
+              { ...crimeScene, place: event.target.value },
+              { [policeCaseNumbers[index]]: [...(subtypes || [])] },
             )
           }}
         />
