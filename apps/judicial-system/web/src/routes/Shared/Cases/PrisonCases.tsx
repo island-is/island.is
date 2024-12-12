@@ -3,7 +3,10 @@ import { useIntl } from 'react-intl'
 import partition from 'lodash/partition'
 
 import { AlertMessage, Box, Tag, Text } from '@island.is/island-ui/core'
-import { capitalize } from '@island.is/judicial-system/formatters'
+import {
+  capitalize,
+  districtCourtAbbreviation,
+} from '@island.is/judicial-system/formatters'
 import {
   core,
   errors,
@@ -166,6 +169,10 @@ export const PrisonCases: FC = () => {
           thead={[
             {
               title: formatMessage(tables.caseNumber),
+              sortable: {
+                isSortable: true,
+                key: 'courtCaseNumber',
+              },
             },
             {
               title: capitalize(formatMessage(core.defendant, { suffix: 'i' })),
@@ -182,13 +189,21 @@ export const PrisonCases: FC = () => {
           data={cases}
           columns={[
             {
-              cell: (row) => (
-                <CourtCaseNumber
-                  courtCaseNumber={row.courtCaseNumber ?? ''}
-                  policeCaseNumbers={row.policeCaseNumbers ?? []}
-                  appealCaseNumber={row.appealCaseNumber ?? ''}
-                />
-              ),
+              cell: (row) => {
+                const courtAbbreviation = districtCourtAbbreviation(
+                  row.court?.name,
+                )
+
+                return (
+                  <CourtCaseNumber
+                    courtCaseNumber={`${
+                      courtAbbreviation ? `${courtAbbreviation}: ` : ''
+                    }${row.courtCaseNumber ?? ''}`}
+                    policeCaseNumbers={row.policeCaseNumbers ?? []}
+                    appealCaseNumber={row.appealCaseNumber ?? ''}
+                  />
+                )
+              },
             },
             {
               cell: (row) => <DefendantInfo defendants={row.defendants} />,
