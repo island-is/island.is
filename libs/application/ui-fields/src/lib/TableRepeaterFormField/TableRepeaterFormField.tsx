@@ -84,78 +84,14 @@ export const TableRepeaterFormField: FC<Props> = ({
   // check for components that might need some custom value mapping
   const customMappedValues = handleCustomMappedValues(tableItems, values)
 
-  const requiredFieldsPopulated = (values: any) => {
-    console.log('values', values)
-    const fields = Object.keys(values)
-
-    let isValid = true
-    for (const field of fields) {
-      const item = items.find((item) => item.id === field)
-      console.log('item', item)
-      const value = values[field]
-      console.log('value', value)
-
-      if (field === 'nationalIdWithName') {
-        if (item?.required) {
-          const nationalId = value['nationalId']
-          if (!nationalId) {
-            isValid = false
-          }
-        }
-        if (item?.emailRequired) {
-          const email = value['nationalId-email']
-          if (!email) {
-            isValid = false
-          }
-        }
-        if (item?.phoneRequired) {
-          const phone = value['nationalId-phone']
-          if (!phone) {
-            isValid = false
-          }
-        }
-      } else {
-        if (item?.required) {
-          if (!value) {
-            isValid = false
-          }
-        }
-      }
-    }
-    return isValid
-  }
-
   const handleSaveItem = async (index: number) => {
-    let isValid = await methods.trigger(`${data.id}[${index}]`, {
+    const fieldId = `${data.id}[${index}]`
+    let isValid = await methods.trigger(fieldId, {
       shouldFocus: true,
     })
 
-    // console.log('index', index)
-    // console.log('isValid', isValid)
-    // console.log('isvalid input', `${data.id}[${index}]`)
-    // console.log('values', values)
-    // console.log('fields', fields)
-    // console.log('activeField', activeField)
-    // console.log('savedFields', savedFields)
-    // console.log('items', items)
-    // console.log('tableItems', tableItems)
-    // console.log('tableHeader', tableHeader)
-    // console.log('tableRows', tableRows)
-    // console.log('customMappedValues', customMappedValues)
-    // console.log('values[index]', values[index])
-    // console.log('methods', methods)
-
-    console.log(
-      'requiredFieldsPopulated',
-      await requiredFieldsPopulated(values[index]),
-    )
-
-    if (isValid && requiredFieldsPopulated(values[index])) {
+    if (isValid) {
       setActiveIndex(-1)
-    } else {
-      methods.setError(`${data.id}[${index}]`, {
-        message: 'Missing required fields',
-      })
     }
   }
 

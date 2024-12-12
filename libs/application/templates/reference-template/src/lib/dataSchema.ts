@@ -15,6 +15,16 @@ const careerHistoryCompaniesValidation = (data: any) => {
 }
 export const ExampleSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
+  tableRepeaterField: z.array(
+    z.object({
+      nationalIdWithName: z.object({
+        name: z.string().min(1).max(256),
+        nationalId: z.string().min(1).max(256),
+        phone: z.string().min(1).max(256),
+        email: z.string().email(),
+      }),
+    }),
+  ),
   person: z.object({
     name: z.string().min(1).max(256),
     age: z.string().refine((x) => {

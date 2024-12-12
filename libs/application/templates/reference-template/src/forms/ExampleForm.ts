@@ -41,7 +41,7 @@ export const ExampleForm: Form = buildForm({
       title: 'Table repeater',
       children: [
         buildTableRepeaterField({
-          id: 'rentalHousingLandlordInfoTable',
+          id: 'tableRepeaterField',
           title: '',
           marginTop: 1,
           fields: {
@@ -59,12 +59,7 @@ export const ExampleForm: Form = buildForm({
           },
           table: {
             header: ['name', 'nationalId', 'phone', 'email'],
-            rows: [
-              'name',
-              'nationalId',
-              'nationalId-phone',
-              'nationalId-email',
-            ],
+            rows: ['name', 'nationalId', 'phone', 'email'],
           },
         }),
       ],
