@@ -93,7 +93,7 @@ export const BffPoller = ({
         newSessionCb()
       }
     }
-  }, [newUser, error, userInfo, signIn, postMessage, newSessionCb, bffBasePath])
+  }, [newUser, error, userInfo, signIn, postMessage, newSessionCb, bffBaseUrl])
 
   return children
 }
