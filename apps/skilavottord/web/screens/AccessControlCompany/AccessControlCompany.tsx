@@ -1,50 +1,47 @@
 /* eslint-disable react-hooks/rules-of-hooks */
-import React, { FC, useContext, useState } from 'react'
 import { useMutation, useQuery } from '@apollo/client'
 import gql from 'graphql-tag'
-import NextLink from 'next/link'
 import * as kennitala from 'kennitala'
+import NextLink from 'next/link'
+import React, { FC, useContext, useState } from 'react'
 
 import {
   Box,
   Breadcrumbs,
   Button,
-  Stack,
-  Text,
-  Table as T,
+  DialogPrompt,
+  DropdownMenu,
   GridColumn,
   GridRow,
   SkeletonLoader,
-  DialogPrompt,
-  DropdownMenu,
+  Stack,
+  Table as T,
+  Text,
 } from '@island.is/island-ui/core'
-import { PartnerPageLayout } from '@island.is/skilavottord-web/components/Layouts'
-import { useI18n } from '@island.is/skilavottord-web/i18n'
-import Sidenav from '@island.is/skilavottord-web/components/Sidenav/Sidenav'
 import {
   hasPermission,
-  isDeveloper,
+  hasDeveloperRole,
 } from '@island.is/skilavottord-web/auth/utils'
-import { UserContext } from '@island.is/skilavottord-web/context'
 import { NotFound } from '@island.is/skilavottord-web/components'
+import { PartnerPageLayout } from '@island.is/skilavottord-web/components/Layouts'
+import Sidenav from '@island.is/skilavottord-web/components/Sidenav/Sidenav'
+import { UserContext } from '@island.is/skilavottord-web/context'
 import {
-  filterInternalPartners,
-  getRoleTranslation,
-} from '@island.is/skilavottord-web/utils'
-import {
+  AccessControlRole,
   AccessControl as AccessControlType,
   CreateAccessControlInput,
   DeleteAccessControlInput,
   Query,
   Role,
   UpdateAccessControlInput,
-  AccessControlRole,
 } from '@island.is/skilavottord-web/graphql/schema'
+import { useI18n } from '@island.is/skilavottord-web/i18n'
+import { getRoleTranslation } from '@island.is/skilavottord-web/utils'
 import { BASE_PATH } from '@island.is/skilavottord/consts'
 
 import {
-  AccessControlImage,
   AccessControlCreate,
+  AccessControlImage,
   AccessControlUpdate,
 } from './components'
 
@@ -209,7 +206,7 @@ const AccessControlCompany: FC<React.PropsWithChildren<unknown>> = () => {
 
   const roles = Object.keys(AccessControlRole)
     .filter((role) =>
-      !isDeveloper(user?.role) ? role !== Role.developer : role,
+      !hasDeveloperRole(user?.role) ? role !== Role.developer : role,
     )
     .filter(
       (role) =>

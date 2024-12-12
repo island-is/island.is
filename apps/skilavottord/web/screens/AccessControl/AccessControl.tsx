@@ -1,51 +1,47 @@
-import React, { FC, useContext, useState } from 'react'
-import { useMutation, useQuery } from '@apollo/client'
+import { useLazyQuery, useMutation, useQuery } from '@apollo/client'
 import gql from 'graphql-tag'
-import NextLink from 'next/link'
 import * as kennitala from 'kennitala'
+import NextLink from 'next/link'
+import React, { FC, useContext, useState } from 'react'
 
 import {
   Box,
   Breadcrumbs,
   Button,
-  Stack,
-  Text,
-  Table as T,
-  GridColumn,
-  GridRow,
-  SkeletonLoader,
   DialogPrompt,
   DropdownMenu,
+  SkeletonLoader,
+  Stack,
+  Table as T,
+  Text,
 } from '@island.is/island-ui/core'
-import { PartnerPageLayout } from '@island.is/skilavottord-web/components/Layouts'
-import { useI18n } from '@island.is/skilavottord-web/i18n'
-import Sidenav from '@island.is/skilavottord-web/components/Sidenav/Sidenav'
 import {
+  hasDeveloperRole,
   hasPermission,
-  isDeveloper,
 } from '@island.is/skilavottord-web/auth/utils'
-import { UserContext } from '@island.is/skilavottord-web/context'
 import { NotFound } from '@island.is/skilavottord-web/components'
+import { PartnerPageLayout } from '@island.is/skilavottord-web/components/Layouts'
+import { UserContext } from '@island.is/skilavottord-web/context'
 import {
-  filterInternalPartners,
-  getRoleTranslation,
-} from '@island.is/skilavottord-web/utils'
-import {
+  AccessControlRole,
   AccessControl as AccessControlType,
   CreateAccessControlInput,
   DeleteAccessControlInput,
   Query,
   Role,
   UpdateAccessControlInput,
-  AccessControlRole,
 } from '@island.is/skilavottord-web/graphql/schema'
-
+import { useI18n } from '@island.is/skilavottord-web/i18n'
 import {
-  AccessControlImage,
-  AccessControlCreate,
-  AccessControlUpdate,
-} from './components'
+  filterInternalPartners,
+  getRoleTranslation,
+} from '@island.is/skilavottord-web/utils'
 
+import { AccessControlCreate, AccessControlUpdate } from './components'
+
+import NavigationLinks from '@island.is/skilavottord-web/components/NavigationLinks/NavigationLinks'
+import PageHeader from '@island.is/skilavottord-web/components/PageHeader/PageHeader'
+import { SkilavottordAllRecyclingPartnersByTypeQuery } from '../RecyclingCompanies/RecyclingCompanies'
 import * as styles from './AccessControl.css'
 
 const SkilavottordAllRecyclingPartnersQuery = gql`
@@ -54,6 +50,7 @@ const SkilavottordAllRecyclingPartnersQuery = gql`
       companyId
       companyName
       active
+      municipalityId
     }
   }
 `
@@ -69,6 +66,7 @@ const SkilavottordAccessControlsQuery = gql`
       recyclingPartner {
         companyId
         companyName
+        municipalityId
       }
     }
   }
@@ -121,16 +119,37 @@ export const DeleteSkilavottordAccessControlMutation = gql`
 const AccessControl: FC<React.PropsWithChildren<unknown>> = () => {
   const { Table, Head, Row, HeadData, Body, Data } = T
   const { user } = useContext(UserContext)
-  const {
-    data: recyclingPartnerData,
-    error: recyclingPartnerError,
-    loading: recyclingPartnerLoading,
-  } = useQuery<Query>(SkilavottordAllRecyclingPartnersQuery, { ssr: false })
+
+  const [
+    getAllRecyclingPartner,
+    {
+      data: recyclingPartnerData,
+      error: recyclingPartnerError,
+      loading: recyclingPartnerLoading,
+    },
+  ] = useLazyQuery<Query>(SkilavottordAllRecyclingPartnersQuery, {
+    ssr: false,
+  })
+
+  const [
+    getAllRecyclingPartnersByMunicipality,
+    {
+      data: recyclingPartnerByIdData,
+      error: recyclingPartnerByIdError,
+      loading: recyclingPartnerByIdLoading,
+    },
+  ] = useLazyQuery<Query>(SkilavottordAllRecyclingPartnersByTypeQuery, {
+    ssr: false,
+    variables: { isMunicipality: false, municipalityId: user?.partnerId },
+  })
+
   const {
     data: accessControlsData,
     error: accessControlsError,
     loading: accessControlsLoading,
-  } = useQuery<Query>(SkilavottordAccessControlsQuery, { ssr: false })
+  } = useQuery<Query>(SkilavottordAccessControlsQuery, {
+    ssr: false,
+  })
 
   const [createSkilavottordAccessControl] = useMutation(
     CreateSkilavottordAccessControlMutation,
@@ -175,12 +194,16 @@ const AccessControl: FC<React.PropsWithChildren<unknown>> = () => {
   ] = useState(false)
   const [partner, setPartner] = useState<AccessControlType>()
 
-  const error = recyclingPartnerError || accessControlsError
-  const loading = recyclingPartnerLoading || accessControlsLoading
-  const isData = !!recyclingPartnerData && !!accessControlsData
+  const error =
+    recyclingPartnerError || accessControlsError || recyclingPartnerByIdError
+  const loading =
+    recyclingPartnerLoading ||
+    accessControlsLoading ||
+    recyclingPartnerByIdLoading
+  const isData = !!recyclingPartnerData || !!accessControlsData
 
   const {
-    t: { accessControl: t, recyclingFundSidenav: sidenavText, routes },
+    t: { accessControl: t, routes },
     activeLocale,
   } = useI18n()
 
@@ -190,18 +213,37 @@ const AccessControl: FC<React.PropsWithChildren<unknown>> = () => {
     return <NotFound />
   }
 
-  const accessControls = accessControlsData?.skilavottordAccessControls || []
+  const accessControls =
+    accessControlsData?.skilavottordAccessControls ||
+    accessControlsData?.skilavottordAccessControlsByRecyclingPartner ||
+    []
 
-  const partners = recyclingPartnerData?.skilavottordAllRecyclingPartners || []
+  const partners =
+    recyclingPartnerData?.skilavottordAllRecyclingPartners ||
+    recyclingPartnerByIdData?.skilavottordAllRecyclingPartnersByType ||
+    []
   const recyclingPartners = filterInternalPartners(partners).map((partner) => ({
-    label: partner.companyName,
+    label: partner.municipalityId
+      ? `${partner.municipalityId} - ${partner.companyName}`
+      : partner.companyName,
     value: partner.companyId,
   }))
 
   const roles = Object.keys(AccessControlRole)
     .filter((role) =>
-      !isDeveloper(user?.role) ? role !== Role.developer : role,
+      !hasDeveloperRole(user?.role) ? role !== Role.developer : role,
     )
+    .filter((role) => {
+      if (user.role == Role.municipality) {
+        return (
+          role === Role.recyclingCompany ||
+          role === Role.recyclingCompanyAdmin ||
+          role === Role.municipality
+        )
+      }
+
+      return role
+    })
     .map((role) => ({
       label: getRoleTranslation(role as Role, activeLocale),
       value: role,
@@ -210,8 +252,15 @@ const AccessControl: FC<React.PropsWithChildren<unknown>> = () => {
   const handleCreateAccessControlCloseModal = () =>
     setIsCreateAccessControlModalVisible(false)
 
-  const handleCreateAccessControlOpenModal = () =>
+  const handleCreateAccessControlOpenModal = () => {
+    if (user.role === Role.municipality) {
+      getAllRecyclingPartnersByMunicipality()
+    } else {
+      getAllRecyclingPartner()
+    }
+
     setIsCreateAccessControlModalVisible(true)
+  }
 
   const handleUpdateAccessControlCloseModal = () => setPartner(undefined)
 
@@ -240,31 +289,7 @@ const AccessControl: FC<React.PropsWithChildren<unknown>> = () => {
   }
 
   return (
-    <PartnerPageLayout
-      side={
-        <Sidenav
-          title={sidenavText.title}
-          sections={[
-            {
-              icon: 'car',
-              title: `${sidenavText.recycled}`,
-              link: `${routes.recycledVehicles}`,
-            },
-            {
-              icon: 'business',
-              title: `${sidenavText.companies}`,
-              link: `${routes.recyclingCompanies.baseRoute}`,
-            },
-            {
-              icon: 'lockClosed',
-              title: `${sidenavText.accessControl}`,
-              link: `${routes.accessControl}`,
-            },
-          ]}
-          activeSection={2}
-        />
-      }
-    >
+    <PartnerPageLayout side={<NavigationLinks activeSection={3} />}>
       <Stack space={4}>
         <Box>
           <Breadcrumbs
@@ -290,23 +315,7 @@ const AccessControl: FC<React.PropsWithChildren<unknown>> = () => {
           alignItems="flexStart"
           justifyContent="spaceBetween"
         >
-          <GridRow marginBottom={7}>
-            <GridColumn span={['8/8', '6/8', '5/8']} order={[2, 1]}>
-              <Text variant="h1" as="h1" marginBottom={4}>
-                {t.title}
-              </Text>
-              <Text variant="intro">{t.info}</Text>
-            </GridColumn>
-            <GridColumn
-              span={['8/8', '2/8']}
-              offset={['0', '0', '1/8']}
-              order={[1, 2]}
-            >
-              <Box textAlign={['center', 'right']} padding={[6, 0]}>
-                <AccessControlImage />
-              </Box>
-            </GridColumn>
-          </GridRow>
+          <PageHeader title={t.title} info={t.info} />
           <AccessControlCreate
             title={t.modal.titles.add}
             text={t.modal.subtitles.add}

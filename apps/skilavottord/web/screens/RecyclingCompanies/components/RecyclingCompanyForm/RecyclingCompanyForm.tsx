@@ -1,9 +1,10 @@
-import React, { BaseSyntheticEvent, FC } from 'react'
+import * as kennitala from 'kennitala'
+import React, { BaseSyntheticEvent, FC, useContext } from 'react'
 import { Control, Controller, FieldError } from 'react-hook-form'
 import { FieldValues } from 'react-hook-form/dist/types'
 import { DeepMap } from 'react-hook-form/dist/types/utils'
-import * as kennitala from 'kennitala'
 
+import { useQuery } from '@apollo/client'
 import {
   Box,
   Button,
@@ -11,10 +12,15 @@ import {
   GridColumn,
   GridContainer,
   GridRow,
+  Select,
   Stack,
 } from '@island.is/island-ui/core'
-import { useI18n } from '@island.is/skilavottord-web/i18n'
 import { InputController } from '@island.is/shared/form-fields'
+import { hasDeveloperRole } from '@island.is/skilavottord-web/auth/utils'
+import UserContext from '@island.is/skilavottord-web/context/UserContext'
+import { Query } from '@island.is/skilavottord-web/graphql/schema'
+import { useI18n } from '@island.is/skilavottord-web/i18n'
+import { SkilavottordAllRecyclingPartnersByTypeQuery } from '../../RecyclingCompanies'
 
 interface RecyclingCompanyForm {
   onSubmit: (
@@ -24,14 +30,37 @@ interface RecyclingCompanyForm {
   errors: DeepMap<FieldValues, FieldError>
   control: Control<FieldValues>
   editView?: boolean
+  isMunicipality?: boolean | undefined
 }
 
 const RecyclingCompanyForm: FC<
   React.PropsWithChildren<RecyclingCompanyForm>
-> = ({ onSubmit, onCancel, control, errors, editView = false }) => {
+> = ({
+  onSubmit,
+  onCancel,
+  control,
+  errors,
+  editView = false,
+  isMunicipality = false,
+}) => {
+  const { user } = useContext(UserContext)
+
   const {
     t: { recyclingCompanies: t },
   } = useI18n()
+
+  const { data } =
+    useQuery<Query>(SkilavottordAllRecyclingPartnersByTypeQuery, {
+      skip: isMunicipality,
+      variables: { isMunicipality: true },
+    }) || []
+
+  const municipalities = data?.skilavottordAllRecyclingPartnersByType.map(
+    (municipality) => ({
+      label: municipality.companyName,
+      value: municipality.companyId,
+    }),
+  )
 
   return (
     <form onSubmit={onSubmit}>
@@ -245,6 +274,41 @@ const RecyclingCompanyForm: FC<
               />
             </GridColumn>
           </GridRow>
+
+          {!isMunicipality && (
+            <GridRow>
+              <GridColumn span="12/12">
+                <Controller
+                  name="municipalityId"
+                  control={control}
+                  render={({ field: { onChange, value, name } }) => {
+                    return (
+                      <Select
+                        name={name}
+                        label={
+                          t.recyclingCompany.form.inputs.municipality.label
+                        }
+                        placeholder={
+                          t.recyclingCompany.form.inputs.municipality
+                            .placeholder
+                        }
+                        size="md"
+                        value={municipalities?.find(
+                          (option) => option.value === value,
+                        )}
+                        hasError={!!errors?.municipality?.message}
+                        errorMessage={errors?.municipality?.message}
+                        backgroundColor="blue"
+                        options={municipalities}
+                        onChange={onChange}
+                        isCreatable
+                      />
+                    )
+                  }}
+                />
+              </GridColumn>
+            </GridRow>
+          )}
           <GridRow>
             <GridColumn span="12/12">
               <Controller
@@ -269,6 +333,32 @@ const RecyclingCompanyForm: FC<
               />
             </GridColumn>
           </GridRow>
+          <div
+            style={{
+              display:
+                user?.role && hasDeveloperRole(user.role) ? 'block' : 'none',
+            }}
+          >
+            <GridRow>
+              <GridColumn span="12/12">
+                <Controller
+                  name="isMunicipality"
+                  control={control}
+                  defaultValue={isMunicipality}
+                  render={({ field: { onChange, value, name } }) => (
+                    <Checkbox
+                      large
+                      label="Er sveitarfélag"
+                      name={name}
+                      backgroundColor="blue"
+                      onChange={(e) => onChange(e.target.checked)}
+                      checked={value}
+                    />
+                  )}
+                />
+              </GridColumn>
+            </GridRow>
+          </div>
         </Stack>
       </GridContainer>
       <Box display="flex" justifyContent="spaceBetween" marginTop={7}>
@@ -282,8 +372,8 @@ const RecyclingCompanyForm: FC<
           </Button>
         )}
 
-        <Button icon="arrowForward" type="submit">
-          {t.recyclingCompany.form.buttons.continue}
+        <Button icon="save" type="submit">
+          {t.recyclingCompany.form.buttons.confirm}
         </Button>
       </Box>
     </form>

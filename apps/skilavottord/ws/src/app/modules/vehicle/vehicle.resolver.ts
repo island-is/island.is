@@ -18,15 +18,18 @@ export class VehicleResolver {
     private samgongustofaService: SamgongustofaService,
   ) {}
 
-  @Authorize({ roles: [Role.developer, Role.recyclingFund] })
+  @Authorize({ roles: [Role.developer, Role.recyclingFund, Role.municipality] })
   @Query(() => VehicleConnection)
   async skilavottordAllDeregisteredVehicles(
+    @CurrentUser() user: User,
     @Args('first', { type: () => Int }) first: number,
     @Args('after') after: string,
+    @Args('municipalityId') municipalityId: string,
   ): Promise<VehicleConnection> {
     const { pageInfo, totalCount, data } =
       await this.vehicleService.findAllByFilter(first, after, {
         requestType: RecyclingRequestTypes.deregistered,
+        partnerId: user.role === Role.municipality ? user.partnerId : null,
       })
     return {
       pageInfo,
