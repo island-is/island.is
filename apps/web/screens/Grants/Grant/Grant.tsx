@@ -1,6 +1,7 @@
 import { useIntl } from 'react-intl'
 import NextLink from 'next/link'
 import { useRouter } from 'next/router'
+import { generateStatusTag, parseStatus } from '../utils'
 
 import { SliceType } from '@island.is/island-ui/contentful'
 import {
