@@ -262,6 +262,7 @@ const Slider = ({
             <Box
               className={styles.TrackCell}
               key={index}
+              data-testid={`slider-step-${index}`}
               style={calculateCellStyle(index)}
               onClick={(e) => onCellClick(index, e)}
             />
