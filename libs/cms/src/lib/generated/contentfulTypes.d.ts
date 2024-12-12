@@ -1850,6 +1850,9 @@ export interface IGrantFields {
   /** Files */
   grantFiles?: Asset[] | undefined
 
+  /** Support links */
+  grantSupportLinks?: ILink[] | undefined
+
   /** Category tags */
   grantCategoryTags?: IGenericTag[] | undefined
 

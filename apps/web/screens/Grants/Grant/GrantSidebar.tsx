@@ -1,7 +1,15 @@
 import { useMemo } from 'react'
 import { useIntl } from 'react-intl'
 
-import { Box, Button, LinkV2, Stack, Text } from '@island.is/island-ui/core'
+import {
+  Box,
+  BoxProps,
+  Button,
+  LinkV2,
+  Stack,
+  Text,
+} from '@island.is/island-ui/core'
+import { useLocale } from '@island.is/localization'
 import { Locale } from '@island.is/shared/types'
 import { isDefined } from '@island.is/shared/utils'
 import { InstitutionPanel } from '@island.is/web/components'
@@ -26,6 +34,20 @@ const generateLine = (heading: string, content?: React.ReactNode) => {
         {heading}
       </Text>
       {content}
+    </Box>
+  )
+}
+
+const generateSidebarPanel = (
+  data: Array<React.ReactElement>,
+  background: BoxProps['background'],
+) => {
+  if (!data) {
+    return undefined
+  }
+  return (
+    <Box background={background} padding={3} borderRadius="standard">
+      <Stack space={2}>{data}</Stack>
     </Box>
   )
 }
@@ -102,6 +124,7 @@ export const GrantSidebar = ({ grant, locale }: Props) => {
           return (
             <LinkV2
               key={`${f.url}-${index}`}
+              newTab
               href={f.url}
               underlineVisibility="hover"
             >
@@ -115,6 +138,35 @@ export const GrantSidebar = ({ grant, locale }: Props) => {
     [grant.files],
   )
 
+  const supportLinksPanelData = useMemo(
+    () =>
+      grant.supportLinks
+        ?.map((link) => {
+          if (!link.url || !link.text || !link.id) {
+            return null
+          }
+          return (
+            <LinkV2
+              newTab
+              key={link.id}
+              href={link.url}
+              underlineVisibility="hover"
+            >
+              <Button
+                size="medium"
+                icon="link"
+                iconType="outline"
+                variant="text"
+              >
+                {link.text}
+              </Button>
+            </LinkV2>
+          )
+        })
+        .filter(isDefined) ?? [],
+    [grant.supportLinks],
+  )
+
   return (
     <Stack space={3}>
       <InstitutionPanel
@@ -126,16 +178,9 @@ export const GrantSidebar = ({ grant, locale }: Props) => {
         img={grant.fund?.parentOrganization.logo?.url}
         locale={locale}
       />
-      {detailPanelData.length ? (
-        <Box background="blue100" padding={3} borderRadius="standard">
-          <Stack space={2}>{detailPanelData}</Stack>
-        </Box>
-      ) : undefined}
-      {filesPanelData.length ? (
-        <Box background="red100" padding={3} borderRadius="standard">
-          <Stack space={2}>{filesPanelData}</Stack>
-        </Box>
-      ) : undefined}
+      {generateSidebarPanel(detailPanelData, 'blue100')}
+      {generateSidebarPanel(filesPanelData, 'red100')}
+      {generateSidebarPanel(supportLinksPanelData, 'purple100')}
     </Stack>
   )
 }

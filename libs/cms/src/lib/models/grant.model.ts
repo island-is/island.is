@@ -7,6 +7,7 @@ import { mapDocument, SliceUnion } from '../unions/slice.union'
 import { Asset, mapAsset } from './asset.model'
 import { ReferenceLink, mapReferenceLink } from './referenceLink.model'
 import { Fund, mapFund } from './fund.model'
+import { Link, mapLink } from './link.model'
 
 export enum GrantStatus {
   CLOSED,
@@ -60,6 +61,9 @@ export class Grant {
   @CacheField(() => [Asset], { nullable: true })
   files?: Array<Asset>
 
+  @CacheField(() => [Link], { nullable: true })
+  supportLinks?: Array<Link>
+
   @CacheField(() => [GenericTag], { nullable: true })
   categoryTags?: Array<GenericTag>
 
@@ -103,6 +107,8 @@ export const mapGrant = ({ fields, sys }: IGrant): Grant => ({
       : undefined,
   fund: fields.grantFund ? mapFund(fields.grantFund) : undefined,
   files: (fields.grantFiles ?? []).map((file) => mapAsset(file)) ?? [],
+  supportLinks:
+    (fields.grantSupportLinks ?? []).map((link) => mapLink(link)) ?? [],
   categoryTags: fields.grantCategoryTags
     ? fields.grantCategoryTags.map((tag) => mapGenericTag(tag))
     : undefined,
