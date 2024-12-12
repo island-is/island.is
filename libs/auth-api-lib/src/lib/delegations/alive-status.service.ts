@@ -21,13 +21,14 @@ const decesead = 'LÉST'
 
 @Injectable()
 export class AliveStatusService {
+  alsoUseFakeApi: boolean
+
   constructor(
     private readonly nationalRegistryClient: NationalRegistryClientService,
     private readonly nationalRegistryV3Client: NationalRegistryV3ClientService,
     private readonly companyRegistryClient: CompanyRegistryClientService,
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
-    private alsoUseFakeApi: boolean,
     @Optional()
     readonly configService?: ConfigService,
   ) {

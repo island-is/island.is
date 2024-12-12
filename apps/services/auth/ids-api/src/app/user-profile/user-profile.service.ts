@@ -31,6 +31,7 @@ type CountryFormatter = { of: (countryCode: string) => string }
 
 @Injectable()
 export class UserProfileService {
+  alsoUseFakeApi: boolean
   // REMOVE these ignores after upgrading to TypeScript 4.5
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
@@ -46,7 +47,6 @@ export class UserProfileService {
     private companyRegistryApi: CompanyRegistryClientService,
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
-    private alsoUseFakeApi: boolean,
     @Optional()
     readonly configService?: ConfigService,
   ) {
