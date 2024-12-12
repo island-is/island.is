@@ -149,14 +149,35 @@ export const Participants: FC<React.PropsWithChildren<FieldBaseProps>> = ({
     setValue('participantCsvError', true)
     return
   }
+
+  const csvFile = `data:text/csv;charset=utf-8,nafn;kennitala;netfang;sími
+      PRUFA;010130-3019;prufa@prufa.is;8889999
+      PRUFA 2;111111-1119;prufa2@prufa.is;1283499`
+
+  const onCsvButtonClick = () => {
+    const encodeUri = encodeURI(csvFile)
+    const a = document.createElement('a')
+    a.setAttribute('href', encodeUri)
+    a.setAttribute('target', '_blank')
+    a.setAttribute('download', 'csv_template.csv')
+    document.body.appendChild(a)
+    a.click()
+    document.body.removeChild(a)
+  }
+
   return (
     <Box>
-      <a
-        href="/libs/application/templates/aosh/seminars/src/assets/csv_template.csv"
-        download
-      >
-        TEST{' '}
-      </a>
+      <Box marginTop={1} marginBottom={4}>
+        <Button
+          onClick={onCsvButtonClick}
+          variant="text"
+          size="small"
+          icon="download"
+          iconType="outline"
+        >
+          {formatMessage(participantMessages.labels.csvButtonText)}
+        </Button>
+      </Box>
 
       <Controller
         name="csv-upload-participants"

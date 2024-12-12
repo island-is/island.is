@@ -29,7 +29,7 @@ export const participants = {
     csvDescription: {
       id: 'aosh.sem.application:participants.labels.csvDescription',
       defaultMessage:
-        'Ef þú ert að skrá marga einstaklinga í einu á námskeið geturðu hlaðið inn .csv skjali hér',
+        'Ef þú ert að skrá marga einstaklinga í einu á námskeið geturðu hlaðið inn .csv skjali hér.',
       description: `Participants csv upload description `,
     },
     uploadHeader: {
@@ -61,6 +61,11 @@ export const participants = {
       id: 'aosh.sem.application:participants.labels.phoneNumber',
       defaultMessage: 'Símanúmer',
       description: 'participants phoneNumber label',
+    },
+    csvButtonText: {
+      id: 'aosh.sem.application:participants.labels.csvButtonText',
+      defaultMessage: 'Sækja csv sniðmát',
+      description: 'participants csv button text',
     },
   }),
 }

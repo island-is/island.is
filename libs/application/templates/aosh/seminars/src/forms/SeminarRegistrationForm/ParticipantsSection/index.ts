@@ -50,8 +50,9 @@ export const participantsSection = buildSection({
         }),
         buildDescriptionField({
           id: '',
-          title: '',
-          description: participantMessages.labels.csvDescription,
+          title: participantMessages.labels.csvDescription,
+          titleVariant: 'h5',
+          marginTop: 2,
         }),
         buildCustomField({
           id: 'participantCSV',
