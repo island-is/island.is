@@ -13,6 +13,7 @@ import {
 import { getChargeItems } from '../../utils'
 import { conclusion, payment } from '../../lib/messages'
 import { PaymentOptions } from '../../shared/constants'
+import { examCategoriesSection } from './ExamCategories'
 
 export const PracticalExamForm: Form = buildForm({
   id: 'PracticalExamFormDraft',
@@ -25,6 +26,7 @@ export const PracticalExamForm: Form = buildForm({
     informationSection,
     examineeSection,
     instructorSection,
+    examCategoriesSection,
     paymentArrangementSection,
     overviewSection,
     buildFormPaymentChargeOverviewSection({

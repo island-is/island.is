@@ -2,12 +2,10 @@ import {
   buildCustomField,
   buildMultiField,
   buildSection,
-  buildStaticTableField,
 } from '@island.is/application/core'
 import { examCategories } from '../../../lib/messages'
-import { getExaminees } from '../../../utils'
 
-export const ExamCategoriesSection = buildSection({
+export const examCategoriesSection = buildSection({
   id: 'examCategoriesSection',
   title: examCategories.general.sectionTitle,
   children: [
@@ -33,7 +31,7 @@ export const ExamCategoriesSection = buildSection({
         //     ),
         // }),
         buildCustomField({
-          id: '',
+          id: 'examCategory',
           title: '',
           component: 'ExamCategories',
         }),
