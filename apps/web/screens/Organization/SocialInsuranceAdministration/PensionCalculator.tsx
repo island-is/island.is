@@ -481,7 +481,11 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
     return options
   }, [defaultPensionDate, maxMonthPensionDelay, maxMonthPensionHurry])
 
-  const title = `${formatMessage(translationStrings.mainTitle)} ${(
+  const title = `${formatMessage(
+    isNewSystemActive
+      ? translationStrings.form2025PreviewMainTitle
+      : translationStrings.mainTitle,
+  )} ${(
     allCalculatorsOptions.find((o) => o.value === dateOfCalculations)?.label ??
     dateOfCalculationsOptions[0].label
   ).toLowerCase()}`

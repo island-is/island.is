@@ -453,6 +453,11 @@ export const translationStrings = defineMessages({
     defaultMessage: 'Reiknivél lífeyris',
     description: 'Aðal titill',
   },
+  form2025PreviewMainTitle: {
+    id: 'web.pensionCalculator:form2025PreviewMainTitle',
+    defaultMessage: 'Reiknivél örorku- og endurhæfingargreiðslna',
+    description: 'Aðal titill fyrir nýju eftir 1. sept 2025 reiknivél',
+  },
   resultDisclaimer: {
     id: 'web.pensionCalculator:resultDisclaimer',
     defaultMessage:
