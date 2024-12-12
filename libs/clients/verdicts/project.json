@@ -3,7 +3,7 @@
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/clients/verdicts/src",
   "projectType": "library",
-  "tags": [],
+  "tags": ["lib:nest", "scope:nest"],
   "targets": {
     "lint": {
       "executor": "@nx/eslint:lint"
