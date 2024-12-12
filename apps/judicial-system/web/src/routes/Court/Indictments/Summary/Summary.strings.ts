@@ -28,14 +28,34 @@ export const strings = defineMessages({
     description:
       'Notaður sem titill á Staðfesta takka á Samantektarskjá ákæru.',
   },
-  completedCaseModalTitle: {
-    id: 'judicial.system.core:indictments.summary.completed_case_modal_title',
-    defaultMessage: 'Máli hefur verið lokið',
-    description: 'Notaður sem titill á staðfestingarglugga um að mál sé lokið.',
+  completeCaseModalTitle: {
+    id: 'judicial.system.core:indictments.summary.complete_case_modal_title',
+    defaultMessage: 'Viltu ljúka máli?',
+    description:
+      'Notaður sem titill á staðfestingarglugga um að hvort eigi að ljúka máli.',
   },
-  completedCaseModalBody: {
-    id: 'judicial.system.core:indictments.summary.completed_case_modal_body_v2',
-    defaultMessage: 'Gögn hafa verið send ákæranda og verjanda.',
-    description: 'Notaður sem texti í staðfestingarglugga um að mál sé lokið.',
+  completeCaseModalBody: {
+    id: 'judicial.system.core:indictments.summary.complete_case_modal_body',
+    defaultMessage: 'Niðurstaða málsins verður send ákæranda og verjanda.',
+    description:
+      'Notaður sem texti í staðfestingarglugga um hvort eigi að ljúka máli.',
+  },
+  completeCaseModalPrimaryButton: {
+    id: 'judicial.system.core:indictments.summary.complete_case_modal_primary_button',
+    defaultMessage: 'Já, ljúka máli',
+    description:
+      'Notaður sem texti á aðalhnapp í staðfestingarglugga um hvort eigi að ljúka máli.',
+  },
+  completeCaseModalSecondaryButton: {
+    id: 'judicial.system.core:indictments.summary.complete_case_modal_secondary_button',
+    defaultMessage: 'Hætta við',
+    description:
+      'Notaður sem texti á aukahnapp í staðfestingarglugga um hvort eigi að ljúka máli.',
+  },
+  onlyAssignedJudgeCanComplete: {
+    id: 'judicial.system.core:indictments.summary.only_assigned_judge_can_complete',
+    defaultMessage: 'Einungis skráður dómari getur lokið málinu',
+    description:
+      'Notaður sem texti í stað "áfram" takkans á samantektarskjá ákæru þegar "áfram" takkinn er falinn',
   },
 })

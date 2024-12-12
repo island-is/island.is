@@ -211,7 +211,7 @@ export const prosecutorTransitionRule: RolesRule = {
     const dto: TransitionCaseDto = request.body
     const theCase: Case = request.case
 
-    // Deny if something is missing - shuould never happen
+    // Deny if something is missing - should never happen
     if (!user || !dto || !theCase) {
       return false
     }
@@ -258,7 +258,7 @@ export const defenderTransitionRule: RolesRule = {
     const dto: TransitionCaseDto = request.body
     const theCase: Case = request.case
 
-    // Deny if something is missing - shuould never happen
+    // Deny if something is missing - should never happen
     if (!dto || !theCase) {
       return false
     }
@@ -393,7 +393,7 @@ export const districtCourtJudgeSignRulingRule: RolesRule = {
     const user: User = request.user
     const theCase: Case = request.case
 
-    // Deny if something is missing - shuould never happen
+    // Deny if something is missing - should never happen
     if (!user || !theCase) {
       return false
     }
