@@ -1,9 +1,32 @@
-import { buildSection } from '@island.is/application/core'
+import {
+  buildCustomField,
+  buildMultiField,
+  buildSection,
+} from '@island.is/application/core'
 import { m } from '../../../lib/messages'
-import { caretakerMultiField } from './caretakerMultiField'
+import { CEMETERYCARETAKER } from '../../../utils/constants'
+import { isCemetryUnderFinancialLimit } from '../../../utils/helpers'
 
+// This section should appear if the cemetries total income is under the income limit
 export const cemeteryCaretekerSection = buildSection({
+  condition: (answers) => {
+    return isCemetryUnderFinancialLimit(answers)
+  },
   id: 'cemeteryCaretekerSection',
   title: m.cemeteryCaretakers,
-  children: [caretakerMultiField],
+  children: [
+    buildMultiField({
+      id: 'caretakers',
+      title: m.cemeteryBoardmembers,
+      description: m.cemeteryRegisterCaretakers,
+      children: [
+        buildCustomField({
+          id: 'cemeteryCaretaker',
+          title: m.cemeteryBoardmembers,
+          component: 'CemeteryCaretaker',
+          childInputIds: Object.values(CEMETERYCARETAKER),
+        }),
+      ],
+    }),
+  ],
 })

@@ -3,11 +3,9 @@ import { m } from './messages'
 import * as kennitala from 'kennitala'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { BOARDMEMEBER, CARETAKER } from '../utils/constants'
-import {
-  isPositiveNumberInString,
-  getBoardmembersAndCaretakers,
-} from '../utils/helpers'
+import { getBoardmembersAndCaretakers } from '../utils/helpers'
 import { YES } from '@island.is/application/types'
+import { isPositiveNumberInString } from '../utils/currency'
 
 const FileSchema = z.object({
   name: z.string(),

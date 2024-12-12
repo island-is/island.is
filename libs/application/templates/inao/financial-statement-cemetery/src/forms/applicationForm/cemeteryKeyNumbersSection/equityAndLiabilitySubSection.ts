@@ -13,12 +13,12 @@ import {
 } from '../../../utils/constants'
 import {
   operationResult,
+  sumLiabilities,
+  sumTotalEquityAndLiabilities,
+  sumTotalEquity,
   showEquitiesAndLiabilitiesAlert,
   sumAssets,
-  sumLiabilities,
-  sumTotalEquity,
-  sumTotalEquityAndLiabilities,
-} from '../../../utils/helpers'
+} from '../../../utils/sums'
 
 export const equityAndLiabilitiesSubSection = buildSubSection({
   id: 'keyNumbers.cemetryEquitiesAndLiabilities',
