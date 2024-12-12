@@ -1,9 +1,4 @@
-import {
-  Application,
-  FieldBaseProps,
-  NationalRegistryIndividual,
-} from '@island.is/application/types'
-import { RentalAgreement } from './dataSchema'
+import { NationalRegistryIndividual } from '@island.is/application/types'
 
 export interface ExternalData {
   nationalRegistry: {

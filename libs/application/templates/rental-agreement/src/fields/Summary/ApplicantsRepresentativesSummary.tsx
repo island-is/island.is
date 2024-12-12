@@ -14,7 +14,7 @@ export const ApplicantsRepresentativesSummary: FC<FieldBaseProps> = ({
   ...props
 }) => {
   const { formatMessage } = useLocale()
-  const { application, goToScreen } = props
+  const { application } = props
   const answers = application.answers as RentalAgreement
 
   const landlordListHasRepresentatives = answers.landlordInfo.table.some(
