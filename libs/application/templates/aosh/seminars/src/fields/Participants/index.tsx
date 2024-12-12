@@ -7,12 +7,14 @@ import {
   UploadFileStatus,
 } from '@island.is/island-ui/core'
 import { FieldBaseProps } from '@island.is/application/types'
-import { FC, useEffect, useState } from 'react'
+import { FC, useCallback, useEffect, useState } from 'react'
 import { FILE_SIZE_LIMIT } from '../../lib/constants'
 import { parse } from 'csv-parse'
 import { Participant } from '../../shared/types'
 import { participants as participantMessages } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
+import { useLazyAreIndividualsValid } from '../../hooks/useLazyAreIndividualsValid'
+import { formatText, getValueViaPath } from '@island.is/application/core'
 
 interface IndexableObject {
   [index: number]: Array<string>
@@ -52,18 +54,40 @@ const checkHeaders = (headers: string): boolean => {
 export const Participants: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   error,
   application,
+  setBeforeSubmitCallback,
 }) => {
   const { setValue, getValues } = useFormContext()
   const { formatMessage } = useLocale()
   const [fileState, setFileState] = useState<Array<UploadFile>>([])
   const [uploadError, setUploadError] = useState<string>('')
+  const [participantList, setParticipantList] = useState<Array<Participant>>([])
+
+  // setBeforeSubmitCallback?.(async () => {
+  //   setValue('participantList', participantList)
+  //   return [true, null]
+  // })
+
+  const getAreIndividualsValid = useLazyAreIndividualsValid()
+  const getIsCompanyValidCallback = useCallback(
+    async (nationalIds: Array<string>, courseID: number) => {
+      const { data } = await getAreIndividualsValid({
+        nationalIds,
+        courseID,
+      })
+      return data
+    },
+    [getAreIndividualsValid],
+  )
 
   const changeFile = (props: Array<UploadFile>) => {
     const reader = new FileReader()
     reader.onload = function (e) {
       const csvData = reader.result as string
-      // TODO if CSV error, display error on screen and make file rejected
       parse(csvData, (err, data) => {
+        if (err) {
+          rejectFile()
+          return
+        }
         const headers = data.shift()
         const validHeaders = checkHeaders(headers[0])
         if (!validHeaders) {
@@ -76,7 +100,7 @@ export const Participants: FC<React.PropsWithChildren<FieldBaseProps>> = ({
           },
         )
         const currentParticipantList = getValues('participantList')
-        setValue('participantList', [...currentParticipantList, ...answerValue])
+        const combinedParticipants = [...currentParticipantList, ...answerValue]
 
         const fileWithSuccessStatus: UploadFile = props[0]
         Object.assign(fileWithSuccessStatus, {
@@ -84,14 +108,40 @@ export const Participants: FC<React.PropsWithChildren<FieldBaseProps>> = ({
         })
         setValue('participantCsvError', false)
         setFileState([fileWithSuccessStatus])
+        setParticipantList(combinedParticipants)
+        updateValidity(combinedParticipants)
       })
     }
     reader.readAsText(props[0] as Blob)
     return
   }
 
-  const removeFile = (file: UploadFile) => {
-    console.log('file', file)
+  const updateValidity = async (participants: Array<Participant>) => {
+    const nationalIds = participants.map((x) => x.nationalId)
+
+    if (nationalIds.length > 0) {
+      const seminarId = getValueViaPath(
+        application.answers,
+        'initialQuery',
+        '',
+      ) as string
+      const res = await getIsCompanyValidCallback(
+        nationalIds,
+        parseInt(seminarId),
+      )
+      const updatedParticipantList = participants.map((x) => {
+        const participantInRes = res.areIndividualsValid.filter(
+          (z) => z.nationalID === x.nationalId,
+        )
+        return { ...x, disabled: participantInRes[0].mayTakeCourse }
+      })
+
+      setParticipantList(updatedParticipantList)
+      setValue('participantList', updatedParticipantList)
+    }
+  }
+
+  const removeFile = () => {
     setFileState([])
   }
 
@@ -101,6 +151,13 @@ export const Participants: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   }
   return (
     <Box>
+      <a
+        href="/libs/application/templates/aosh/seminars/src/assets/csv_template.csv"
+        download
+      >
+        TEST{' '}
+      </a>
+
       <Controller
         name="csv-upload-participants"
         render={() => (
@@ -110,7 +167,7 @@ export const Participants: FC<React.PropsWithChildren<FieldBaseProps>> = ({
             header={formatMessage(participantMessages.labels.uploadHeader)}
             buttonLabel={formatMessage(participantMessages.labels.uploadButton)}
             onChange={(e) => changeFile(e)}
-            onRemove={(e) => removeFile(e)}
+            onRemove={() => removeFile()}
             onUploadRejection={rejectFile}
             errorMessage={uploadError || error}
             multiple={false}

@@ -7,6 +7,8 @@ import {
   CourseApi,
   CourseDTO,
   RegistrationApi,
+  IndividualApi,
+  IndividualDTO,
 } from '../../gen/fetch'
 
 @Injectable()
@@ -15,6 +17,7 @@ export class SeminarsClientService {
     private readonly courseApi: CourseApi,
     private readonly companyApi: CompanyApi,
     private readonly registrationApi: RegistrationApi,
+    private readonly individualApi: IndividualApi,
   ) {}
 
   private courseApiWithAuth = (user: User) =>
@@ -23,6 +26,8 @@ export class SeminarsClientService {
     this.companyApi.withMiddleware(new AuthMiddleware(user as Auth))
   private registrationApiWithAuth = (user: User) =>
     this.registrationApi.withMiddleware(new AuthMiddleware(user as Auth))
+  private individualApiWithAuth = (user: User) =>
+    this.individualApi.withMiddleware(new AuthMiddleware(user as Auth))
 
   async getSeminar(auth: User, courseId: string): Promise<CourseDTO> {
     return await this.courseApiWithAuth(auth).apiCourseCourseIdGet({
@@ -43,5 +48,16 @@ export class SeminarsClientService {
     return await this.registrationApiWithAuth(auth).apiRegistrationPost(
       registration,
     )
+  }
+
+  async checkIndividuals(
+    auth: User,
+    nationalIds: Array<string>,
+    courseID: number,
+  ): Promise<Array<IndividualDTO>> {
+    return await this.individualApiWithAuth(auth).apiIndividualGet({
+      courseID,
+      nationalIds,
+    })
   }
 }

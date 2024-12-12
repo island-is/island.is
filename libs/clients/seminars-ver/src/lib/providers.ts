@@ -9,6 +9,7 @@ import {
   Configuration,
   CourseApi,
   RegistrationApi,
+  IndividualApi,
 } from '../../gen/fetch'
 import { SeminarsClientConfig } from './seminars.config'
 import { createEnhancedFetch } from '@island.is/clients/middlewares'
@@ -54,6 +55,11 @@ export const exportedApis = [
   {
     api: RegistrationApi,
     provide: RegistrationApi,
+    acceptHeader: 'application/json',
+  },
+  {
+    api: IndividualApi,
+    provide: IndividualApi,
     acceptHeader: 'application/json',
   },
 ].map(({ api, provide, acceptHeader }) => ({

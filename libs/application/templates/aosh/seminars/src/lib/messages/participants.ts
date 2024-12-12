@@ -26,6 +26,12 @@ export const participants = {
         'Athugið: csv sniðmátið virðist ekki vera rétt. Vinsamlegast farið yfir. Einnig er hægt að hlaða niður sniðmáti hér að ofan.',
       description: `Participants csv upload error `,
     },
+    csvDescription: {
+      id: 'aosh.sem.application:participants.labels.csvDescription',
+      defaultMessage:
+        'Ef þú ert að skrá marga einstaklinga í einu á námskeið geturðu hlaðið inn .csv skjali hér',
+      description: `Participants csv upload description `,
+    },
     uploadHeader: {
       id: 'aosh.sem.application:participants.labels.uploadHeader',
       defaultMessage: 'Skrá marga umsækjendur í einu',

@@ -12,6 +12,7 @@ import { Audit } from '@island.is/nest/audit'
 import { FeatureFlagGuard } from '@island.is/nest/feature-flags'
 import { SeminarsService } from './seminars.service'
 import { CompanyValidationItem } from './models/companyValidation'
+import { IndividualValidationItem } from './models/individualValidation'
 
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
 @Resolver()
@@ -27,5 +28,16 @@ export class SeminarsResolver {
     @Args('nationalId') nationalId: string,
   ) {
     return this.seminarsService.isCompanyValid(auth, nationalId)
+  }
+
+  @Scopes(ApiScope.vinnueftirlitid)
+  @Query(() => [IndividualValidationItem])
+  @Audit()
+  async areIndividualsValid(
+    @CurrentUser() auth: User,
+    @Args('nationalIds', { type: () => [String] }) nationalIds: Array<string>,
+    @Args('courseID', { type: () => Number }) courseID: number,
+  ) {
+    return this.seminarsService.checkIndividuals(auth, nationalIds, courseID)
   }
 }

@@ -1,6 +1,8 @@
 import {
   buildAlertMessageField,
   buildCustomField,
+  buildDescriptionField,
+  buildLinkField,
   buildMultiField,
   buildSection,
   buildTableRepeaterField,
@@ -9,6 +11,7 @@ import {
 
 import { participants as participantMessages } from '../../../lib/messages'
 import { FormValue } from '@island.is/application/types'
+import { Application } from '@island.is/api/schema'
 
 export const participantsSection = buildSection({
   id: 'participants',
@@ -22,7 +25,6 @@ export const participantsSection = buildSection({
         buildTableRepeaterField({
           id: 'participantList',
           title: 'test',
-          //maxRows eina leiðin til að koma í veg fyrir "bæta við" takka, bæta við prop eða?
           fields: {
             name: {
               component: 'input',
@@ -45,6 +47,11 @@ export const participantsSection = buildSection({
               width: 'half',
             },
           },
+        }),
+        buildDescriptionField({
+          id: '',
+          title: '',
+          description: participantMessages.labels.csvDescription,
         }),
         buildCustomField({
           id: 'participantCSV',
