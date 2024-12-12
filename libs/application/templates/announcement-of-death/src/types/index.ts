@@ -22,7 +22,3 @@ export interface Child {
 export interface NationalRegistry extends Person {
   children: Child[]
 }
-
-export enum DataProviderTypes {
-  NationalRegistry = 'NationalRegistryProvider',
-}

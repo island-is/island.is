@@ -1,6 +1,6 @@
 import { getValueViaPath } from '@island.is/application/core'
 import { FormValue } from '@island.is/application/types'
-import { YES } from '../constants'
+import { YES } from './constants'
 import { YesOrNo } from '../types'
 import { isGeneralWorkplaceAccident } from './isGeneralWorkplaceAccident'
 
