@@ -136,6 +136,11 @@ export const m = defineMessages({
       'Þú þarft að skila inn læknisvottorði vegna ökuleyfis til að endurnýja ökuskírteini þitt. Læknisvottorðið þarf að vera frá **heimilislækni** og vegna ökuleyfis. Þegar búið er að ljúka umsókn þarf að skila inn læknisvottorði á valið sýslumannsembætti til að hægt sé að panta skírteinið.  **Athugið að skírteinið verður ekki pantað fyrr en búið er að skila inn vottorði.**',
     description: 'Health declaration',
   },
+  healthDeclarationAllowedFileTypes: {
+    id: 'dl.application:healthDeclarationAllowedFileTypes',
+    defaultMessage: 'Samþykktar skráartegundir: .pdf, .jpg, .jpeg, .png',
+    description: 'Allowed file types',
+  },
   healthDeclarationMultiFieldSubTitle: {
     id: 'dl.application:healthDeclarationMultiField.subTitle',
     defaultMessage: 'Yfirlýsing um líkamlegt og andlegt heilbrigði',
@@ -654,8 +659,8 @@ export const m = defineMessages({
       'Veldu það embætti sýslumanns sem þú hyggst skila inn gæðamerktri ljósmynd',
     description: 'Choose district commissioner for submitting a quality photo',
   },
-  confirmationStatusOfEligability: {
-    id: 'dl.application:confirmationStatusOfEligability',
+  confirmationStatusOfEligibility: {
+    id: 'dl.application:confirmationStatusOfEligibility',
     defaultMessage:
       'Sóttar eru almennar upplýsingar um núverandi réttindi, sviptingar, punktastöðu og akstursmat ef við á.',
     description:
@@ -796,6 +801,16 @@ export const m = defineMessages({
       'Umsókn um endurnýjun ökuréttinda í B flokki (fólksbifreið), fyrir 65 ára og eldri.',
     description: 'Option description for selecting to renew driving license',
   },
+  applicationForBFullDescription: {
+    id: 'dl.application:applicationForBFullDescription',
+    defaultMessage: 'Umsókn um fullnaðarréttindi í B flokki (fólksbifreið)',
+    description: 'Option description for selecting to renew driving license',
+  },
+  applicationForBAdvancedDescription: {
+    id: 'dl.application:applicationForBAdvancedDescription',
+    defaultMessage: 'Umsókn um aukin ökurétindi / meirapróf',
+    description: 'Option description for selecting to renew driving license',
+  },
   applicationForBELicenseTitle: {
     id: 'dl.application:applicationForBELicenseTitle',
     defaultMessage: 'Eftirvagn BE',
@@ -870,11 +885,9 @@ export const m = defineMessages({
       'Vinsamlegast gefðu upp símanúmerið þitt eða þá staðfestu að símanúmerið þitt sé rétt',
     description: 'Your phone number',
   },
-  //TODO: Remove when RLS/SGS supports health certificate in BE license
   beLicenseHealthDeclarationRequiresHealthCertificate: {
     id: 'dl.application:requirementunmet.beLicenseHealthDeclarationRequiresHealthCertificate',
-    defaultMessage:
-      'Athugaðu að þar sem þú þarft að skila inn læknisvottorði getur þú ekki haldið áfram með umsóknina. Þú þarft þú að mæta í þitt sýslumanns embætti með læknisvottorð og leggja inn umsókn á staðnum',
+    defaultMessage: 'Athugaðu að þú þarft að hlaða inn læknisvottorði.',
     description:
       'Health declaration answers indicate that health certificate is required and BE application does not support health certificate requirement',
   },
@@ -909,17 +922,17 @@ export const m = defineMessages({
     description: 'C1 group title',
   },
   groupTitleC: {
-    id: 'dl.application:groupTitleC1',
+    id: 'dl.application:groupTitleC',
     defaultMessage: 'Vörubíll og eftirvagn (C og CE)',
     description: 'C1 group title',
   },
   groupTitleD1: {
-    id: 'dl.application:groupTitleC1',
+    id: 'dl.application:groupTitleD1',
     defaultMessage: 'Lítil rúta og eftirvagn (D1 og D1E)',
     description: 'C1 group title',
   },
   groupTitleD: {
-    id: 'dl.application:groupTitleC1',
+    id: 'dl.application:groupTitleD',
     defaultMessage: 'Stór rúta og eftirvagn (D og DE)',
     description: 'C1 group title',
   },
@@ -1108,29 +1121,12 @@ export const requirementsMessages = defineMessages({
       'Þú þarft að hafa búsetu á Íslandi til að geta sótt um fullnaðarskírteini.',
     description: 'requirement unmet api returned false',
   },
-  //TODO: Remove when RLS/SGS supports health certificate in BE license
-  beLicenseRequiresHealthCertificateDescription: {
-    id: 'dl.application:requirementunmet.beLicenseRequiresHealthCertificateDescription',
-    defaultMessage:
-      'Ef tákntölur sem varða heilsufar/sjón eru skráðar á fyrri ökuskírteini eða umsækjandi er nú þegar með aukin ökuréttindi, þarf umsækjandi að mæta í sitt sýslumanns embætti með vottorð og leggja inn umsókn á staðnum',
-    description:
-      'BE application does not support health certificate requirement',
-  },
-  //TODO: Remove when RLS/SGS supports health certificate in BE license
-  beLicenseRequiresHealthCertificateTitle: {
-    id: 'dl.application:requirementunmet.beLicenseRequiresHealthCertificateTitle',
-    defaultMessage: 'Læknisvottorð',
-    description:
-      'BE application does not support health certificate requirement',
-  },
-  //TODO: Remove when RLS/SGS supports health certificate in BE license
   beLicenseQualityPhotoTitle: {
     id: 'dl.application:requirementunmet.beLicenseQualityPhotoTitle',
     defaultMessage: 'Gæðavottuð mynd',
     description:
       'requirement unmet api returned false for an unspecified reason',
   },
-  //TODO: Remove when RLS/SGS supports health certificate in BE license
   beLicenseQualityPhotoDescription: {
     id: 'dl.application:requirementunmet.beLicenseQualityPhotoDescription',
     defaultMessage:

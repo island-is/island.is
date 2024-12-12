@@ -1,6 +1,6 @@
 import { buildForm, buildSection } from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
-import { LogreglanLogo } from '../../assets'
+import { Logo } from '../../assets'
 import { m } from '../../lib/messages'
 import { sectionFakeData } from './sectionFakeData'
 import { sectionExternalData } from './sectionExternalData'
@@ -9,14 +9,7 @@ import { sectionRequirements } from './sectionRequirements'
 import { sectionExistingApplication } from './sectionExistingApplication'
 import { sectionDigitalLicenseInfo } from './sectionDigitalLicenseInfo'
 import { sectionAdvancedLicenseSelection } from './sectionAdvancedLicenseSelection'
-
-interface DrivingLicenseFormConfig {
-  allowFakeData?: boolean
-  allowPickLicense?: boolean
-  allowBELicense?: boolean
-  allow65Renewal?: boolean
-  allowAdvanced?: boolean
-}
+import { DrivingLicenseFormConfig } from '../../lib/constants'
 
 export const getForm = ({
   allowFakeData = false,
@@ -28,7 +21,7 @@ export const getForm = ({
   buildForm({
     id: 'DrivingLicenseApplicationPrerequisitesForm',
     title: '',
-    logo: LogreglanLogo,
+    logo: Logo,
     mode: FormModes.DRAFT,
     renderLastScreenButton: true,
     renderLastScreenBackButton: true,
@@ -65,7 +58,7 @@ export const getForm = ({
         children: [],
       }),
       buildSection({
-        id: 'confirm',
+        id: 'done',
         title: m.applicationDone,
         children: [],
       }),

@@ -17,9 +17,9 @@ export const sectionRequirements = buildSubSection({
       description: m.eligibilityRequirementTitle,
       children: [
         buildCustomField({
+          id: 'eligibilitySummary',
           title: m.eligibilityRequirementTitle,
           component: 'EligibilitySummary',
-          id: 'eligsummary',
         }),
         buildSubmitField({
           id: 'submit',
