@@ -34,19 +34,34 @@ export class NationalRegistryV3ClientService {
     )
   }
 
-  getAllDataIndividual(
+  async getAllDataIndividual(
     nationalId: string,
-    useFakeApi?: boolean,
+    useFakeApiOnly?: boolean,
+    alsoTryFakeApiWhenNotFound?: boolean,
   ): Promise<EinstaklingurDTOAllt | null> {
-    return useFakeApi
-      ? this.fakeApi.midlunV1GerviEinstaklingarNationalIdGet({
+    if (useFakeApiOnly) {
+      return handle204(
+        this.fakeApi.midlunV1GerviEinstaklingarNationalIdGetRaw({
           nationalId,
-        })
-      : handle204(
-          this.individualApi.midlunV1EinstaklingarNationalIdGetRaw({
-            nationalId,
-          }),
-        )
+        }),
+      )
+    }
+
+    const result = await handle204(
+      this.individualApi.midlunV1EinstaklingarNationalIdGetRaw({
+        nationalId,
+      }),
+    )
+
+    if (!result && alsoTryFakeApiWhenNotFound) {
+      return handle204(
+        this.fakeApi.midlunV1GerviEinstaklingarNationalIdGetRaw({
+          nationalId,
+        }),
+      )
+    }
+
+    return result
   }
 
   getBiologicalFamily(
