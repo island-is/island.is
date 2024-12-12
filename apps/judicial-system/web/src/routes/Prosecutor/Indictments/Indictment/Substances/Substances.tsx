@@ -6,6 +6,7 @@ import {
   offenseSubstances,
   Substance as SubstanceEnum,
 } from '@island.is/judicial-system/types'
+import { SectionHeading } from '@island.is/judicial-system-web/src/components'
 import { IndictmentCountOffense } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   ReactSelectOption,
@@ -17,7 +18,6 @@ import { Substance } from '../Substance/Substance'
 import { substances as strings } from './Substances.strings'
 import { substanceEnum } from './SubstancesEnum.strings'
 import * as styles from './Substances.css'
-import { SectionHeading } from '@island.is/judicial-system-web/src/components'
 
 interface Props {
   indictmentCount: TIndictmentCount

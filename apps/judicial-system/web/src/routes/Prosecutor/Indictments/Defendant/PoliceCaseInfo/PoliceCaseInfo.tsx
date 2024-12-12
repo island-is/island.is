@@ -20,13 +20,13 @@ import {
   DateTime,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
+import { TempIndictmentCount } from '@island.is/judicial-system-web/src/types'
 import {
   removeErrorMessageIfValid,
   validateAndSetErrorMessage,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 
 import { policeCaseInfo } from './PoliceCaseInfo.strings'
-import { TempIndictmentCount } from '@island.is/judicial-system-web/src/types'
 
 interface Props {
   index: number

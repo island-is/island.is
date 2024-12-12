@@ -2,15 +2,15 @@ import { createIntl } from 'react-intl'
 
 import { Substance, SubstanceMap } from '@island.is/judicial-system/types'
 import {
-  IndictmentSubtype,
   IndictmentCountOffense as offense,
+  IndictmentSubtype,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import {
+  getIncidentDescription,
   getIncidentDescriptionReason,
   getLegalArguments,
   getRelevantSubstances,
-  getIncidentDescription,
 } from './IndictmentCount'
 
 const formatMessage = createIntl({
