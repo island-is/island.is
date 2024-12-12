@@ -28,6 +28,7 @@ const PaymentPlan = () => {
   const [query, { data, loading, error }] = useGetPreviousPaymentsLazyQuery()
 
   const featureFlagClient = useFeatureFlagClient()
+
   useEffect(() => {
     const isFlagEnabled = async () => {
       const ffEnabled = await featureFlagClient.getValue(
