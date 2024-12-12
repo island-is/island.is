@@ -7,7 +7,7 @@ import {
   buildSubmitField,
 } from '@island.is/application/core'
 import { DefaultEvents, FormValue } from '@island.is/application/types'
-import { FILE_SIZE_LIMIT, UPLOAD_ACCEPT } from '../../constants'
+import { FILE_SIZE_LIMIT, UPLOAD_ACCEPT } from '../../utils/constants'
 import { addDocuments, error } from '../../lib/messages'
 import {
   hasReceivedInjuryCertificate,
