@@ -17,6 +17,12 @@ export const translationStrings = defineMessages({
     defaultMessage: 'Þú vilt hefja töku eftir 67 ára aldur',
     description: 'Upplýsingar sem birtast ef þú vilt seinka töku ellilífeyris',
   },
+  form2025PreviewLabel: {
+    id: 'web.pensionCalculator:form2025PreviewLabel',
+    defaultMessage: 'Eftir 1. september 2025',
+    description:
+      'Valmöguleiki í dropdown fyrir "Allar reiknivélar" ef það á að leyfa eftir 1. sept 2025 preview',
+  },
   results2025ImageUrl: {
     id: 'web.pensionCalculator:results2025ImageUrl',
     defaultMessage:
@@ -53,6 +59,24 @@ export const translationStrings = defineMessages({
     id: 'web.pensionCalculator:basePensionRetirementLabel',
     defaultMessage: 'Ellilífeyrir',
     description: 'Tegund lífeyris, Ellilífeyrir',
+  },
+  basePensionNewSystemDisabilityLabel: {
+    id: 'web.pensionCalculator:basePensionNewSystemDisabilityLabel',
+    defaultMessage: 'Örorkulífeyrir',
+    description:
+      'Tegund lífeyris fyrir nýtt kerfi þann 1. sept 2025, Örorkulífeyrir',
+  },
+  basePensionNewSystemPartialDisabilityLabel: {
+    id: 'web.pensionCalculator:basePensionNewSystemPartialDisabilityLabel',
+    defaultMessage: 'Hlutaörorkulífeyrir',
+    description:
+      'Tegund lífeyris fyrir nýtt kerfi þann 1. sept 2025, Hlutaörorkulífeyrir',
+  },
+  basePensionNewSystemMedicalAndRehabilitation: {
+    id: 'web.pensionCalculator:basePensionNewSystemMedicalAndRehabilitation',
+    defaultMessage: 'Sjúkra- og endurhæfing',
+    description:
+      'Tegund lífeyris fyrir nýtt kerfi þann 1. sept 2025, Sjúkra- og endurhæfing',
   },
   basePensionFishermanRetirementLabel: {
     id: 'web.pensionCalculator:basePensionFishermanRetirementLabel',
@@ -428,6 +452,11 @@ export const translationStrings = defineMessages({
     id: 'web.pensionCalculator:mainTitle',
     defaultMessage: 'Reiknivél lífeyris',
     description: 'Aðal titill',
+  },
+  form2025PreviewMainTitle: {
+    id: 'web.pensionCalculator:form2025PreviewMainTitle',
+    defaultMessage: 'Reiknivél örorku- og endurhæfingargreiðslna',
+    description: 'Aðal titill fyrir nýju eftir 1. sept 2025 reiknivél',
   },
   resultDisclaimer: {
     id: 'web.pensionCalculator:resultDisclaimer',
@@ -947,6 +976,38 @@ export const translationStrings = defineMessages({
     id: 'web.pensionCalculator:REIKNH.ORORKA_2025',
     defaultMessage: 'Örorkulífeyrir',
     description: 'Niðurstöðuskjár, Örorkulífeyrir 2025',
+  },
+  'REIKNH.SJUKRAOGENDURH_HUPPBOT_2025': {
+    id: 'web.pensionCalculator:REIKNH.SJUKRAOGENDURH_HUPPBOT_2025',
+    defaultMessage: 'Sjúkra- og endurhæfingargreiðslur og heimilisuppbót',
+    description:
+      'Niðurstöðuskjár, Sjúkra- og endurhæfingargreiðslur og heimilisuppbót',
+  },
+  'REIKNH.SJUKRAOGENDURH_2025': {
+    id: 'web.pensionCalculator:REIKNH.SJUKRAOGENDURH_2025',
+    defaultMessage: 'Sjúkra- og endurhæfingargreiðslur',
+    description: 'Niðurstöðuskjár, Sjúkra- og endurhæfingargreiðslur',
+  },
+  'REIKNH.HLUTAORORKA_ALDURSV_HUPPBOT_2025': {
+    id: 'web.pensionCalculator:REIKNH.HLUTAORORKA_ALDURSV_HUPPBOT_2025',
+    defaultMessage: 'Hlutaörorkulífeyrir, aldursviðbót og heimilisuppbót',
+    description:
+      'Niðurstöðuskjár, Hlutaörorkulífeyrir, aldursviðbót og heimilisuppbót',
+  },
+  'REIKNH.HLUTAORORKA_ALDURSV_2025': {
+    id: 'web.pensionCalculator:REIKNH.HLUTAORORKA_ALDURSV_2025',
+    defaultMessage: 'Hlutaörorkulífeyrir og aldursviðbót',
+    description: 'Niðurstöðuskjár, Hlutaörorkulífeyrir og aldursviðbót',
+  },
+  'REIKNH.HLUTAORORKA_HUPPBOT_2025': {
+    id: 'web.pensionCalculator:REIKNH.HLUTAORORKA_HUPPBOT_2025',
+    defaultMessage: 'Hlutaörorkulífeyrir og heimilisuppbót',
+    description: 'Niðurstöðuskjár, Hlutaörorkulífeyrir og heimilisuppbót',
+  },
+  'REIKNH.HLUTAORORKA': {
+    id: 'web.pensionCalculator:REIKNH.HLUTAORORKA',
+    defaultMessage: 'Hlutaörorkulífeyrir',
+    description: 'Niðurstöðuskjár, Hlutaörorkulífeyrir',
   },
   highlighedResultItemHeadingForTotalAfterTaxFromTR: {
     id: 'web.pensionCalculator:REIKNH.highlighedResultItemHeadingForTotalAfterTaxFromTR',
