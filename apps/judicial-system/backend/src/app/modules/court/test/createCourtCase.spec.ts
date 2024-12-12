@@ -105,7 +105,7 @@ describe('CourtService - Create court case', () => {
             status: 'Skráð',
             receivalDate: formatISO(receivalDate, { representation: 'date' }),
             basedOn: 'Rannsóknarhagsmunir',
-            sourceNumber: policeCaseNumbers[0],
+            sourceNumber: policeCaseNumbers[0].replace(/-/g, ''),
           },
         )
       })
@@ -146,7 +146,7 @@ describe('CourtService - Create court case', () => {
             status: 'Skráð',
             receivalDate: formatISO(receivalDate, { representation: 'date' }),
             basedOn: 'Sakamál',
-            sourceNumber: policeCaseNumbers[0],
+            sourceNumber: policeCaseNumbers[0].replace(/-/g, ''),
           },
         )
       })
@@ -183,7 +183,7 @@ describe('CourtService - Create court case', () => {
         status: 'Skráð',
         receivalDate: formatISO(receivalDate, { representation: 'date' }),
         basedOn: 'Rannsóknarhagsmunir',
-        sourceNumber: policeCaseNumbers[0],
+        sourceNumber: policeCaseNumbers[0].replace(/-/g, ''),
       })
     })
   })
@@ -218,7 +218,7 @@ describe('CourtService - Create court case', () => {
         status: 'Skráð',
         receivalDate: formatISO(receivalDate, { representation: 'date' }),
         basedOn: 'Rannsóknarhagsmunir',
-        sourceNumber: policeCaseNumbers[0],
+        sourceNumber: policeCaseNumbers[0].replace(/-/g, ''),
       })
     })
   })
