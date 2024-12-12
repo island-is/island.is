@@ -93,8 +93,7 @@ export class NewPrimarySchoolService extends BaseTemplateApiService {
         400,
       )
     }
-    console.log({ filteredChildren })
-    filteredChildren[0].genderCode
+
     return filteredChildren
   }
 
