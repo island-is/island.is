@@ -187,8 +187,8 @@ export const generateDockerComposeConfig = async (
         },
       },
       container_name: name,
+      env_file: [`.env.${name}`],
       environment: {
-        ...service.env,
         IP: '0.0.0.0',
       },
       ports: [`${service.port}:${service.port}`],
