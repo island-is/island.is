@@ -1,4 +1,4 @@
-import { setCodeOwner } from '@island.is/infra-tracing'
+import { withCodeOwner } from '@island.is/infra-tracing'
 import { CodeOwners } from '@island.is/shared/constants'
 import {
   Injectable,
@@ -19,9 +19,8 @@ export class CodeOwnerInterceptor implements NestInterceptor {
       CODE_OWNER_KEY,
       [context.getHandler(), context.getClass()],
     )
-
     if (codeOwner) {
-      setCodeOwner(codeOwner)
+      return withCodeOwner(codeOwner, () => next.handle())
     }
     return next.handle()
   }

@@ -12,12 +12,14 @@ import {
 import * as constants from '@island.is/judicial-system/consts'
 import {
   AdvocateType,
+  Feature,
   isTrafficViolationCase,
 } from '@island.is/judicial-system/types'
 import { core, titles } from '@island.is/judicial-system-web/messages'
 import {
   BlueBox,
   CommentsInput,
+  FeatureContext,
   FormContentContainer,
   FormContext,
   FormFooter,
@@ -63,6 +65,7 @@ const Processing: FC = () => {
     isCaseUpToDate,
     refreshCase,
   } = useContext(FormContext)
+  const { features } = useContext(FeatureContext)
   const { updateCase, transitionCase, setAndSendCaseToServer } = useCase()
   const { formatMessage } = useIntl()
   const { updateDefendant, updateDefendantState } = useDefendants()
@@ -73,7 +76,9 @@ const Processing: FC = () => {
     deleteCivilClaimant,
   } = useCivilClaimants()
   const router = useRouter()
-  const isTrafficViolationCaseCheck = isTrafficViolationCase(workingCase)
+  const isTrafficViolationCaseCheck =
+    features.includes(Feature.MULTIPLE_INDICTMENT_SUBTYPES) ||
+    isTrafficViolationCase(workingCase)
   const [civilClaimantNationalIdUpdate, setCivilClaimantNationalIdUpdate] =
     useState<{ nationalId: string | null; civilClaimantId: string }>()
   const [hasCivilClaimantChoice, setHasCivilClaimantChoice] =
