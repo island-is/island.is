@@ -42,7 +42,7 @@ const generateSidebarPanel = (
   data: Array<React.ReactElement>,
   background: BoxProps['background'],
 ) => {
-  if (!data) {
+  if (!data.length) {
     return undefined
   }
   return (
