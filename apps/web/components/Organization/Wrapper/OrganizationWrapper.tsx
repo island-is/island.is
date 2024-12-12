@@ -618,6 +618,13 @@ export const OrganizationHeader: React.FC<
           logoImageClassName={styles.logoLarge}
         />
       )
+    case 'rannis':
+      return (
+        <DefaultHeader
+          {...defaultProps}
+          background="linear-gradient(271deg, #FF1500 5.72%, #DB0B00 91.04%)"
+        />
+      )
     default:
       return <DefaultHeader {...defaultProps} />
   }
