@@ -80,6 +80,12 @@ export const GET_GRANT_QUERY = gql`
         id
         title
       }
+      supportLinks {
+        id
+        text
+        url
+        date
+      }
       files {
           ...AssetFields
       }
