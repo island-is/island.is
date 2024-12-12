@@ -17,6 +17,11 @@ export const summary = defineMessages({
       'Vinsamlegast farðu yfir gögnin hér að neðan til að staðfesta að réttar upplýsingar hafi verið gefnar upp. ',
     description: 'Description of the summary page',
   },
+  changeSectionButtonLabel: {
+    id: 'ra.application:summary.changeSectionButtonLabel',
+    defaultMessage: 'Breyta',
+    description: 'Change section button label',
+  },
 
   // Property address
   rentalPropertyIdPrefix: {

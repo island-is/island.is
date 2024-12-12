@@ -7,12 +7,14 @@ import {
   buildAlertMessageField,
   buildHiddenInputWithWatchedValue,
   buildRadioField,
+  getValueViaPath,
 } from '@island.is/application/core'
 import { FormValue } from '@island.is/application/types'
 import {
   SecurityDepositTypeOptions,
   SecurityDepositAmountOptions,
   Routes,
+  AnswerOptions,
 } from '../../lib/constants'
 import {
   getSecurityDepositTypeOptions,
@@ -21,6 +23,14 @@ import {
 import { securityDeposit } from '../../lib/messages'
 
 export const RentalPeriodSecurityDeposit = buildSubSection({
+  condition: (answers) => {
+    const checkbox = getValueViaPath<Array<string>>(
+      answers,
+      'rentalAmount.isPaymentInsuranceRequired',
+    )
+    console.log('Checkbox: ', checkbox)
+    return checkbox?.includes(AnswerOptions.YES) || false
+  },
   id: Routes.SECURITYDEPOSIT,
   title: securityDeposit.subSectionName,
   children: [

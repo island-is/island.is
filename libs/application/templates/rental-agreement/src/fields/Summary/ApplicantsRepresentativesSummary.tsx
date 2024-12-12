@@ -1,23 +1,23 @@
-import { Fragment } from 'react'
-import { GridColumn, GridRow } from '@island.is/island-ui/core'
-import { formatPhoneNumber } from '@island.is/application/ui-components'
+import { FC, Fragment } from 'react'
+import { Button, GridColumn, GridRow } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { RentalAgreement } from '../../lib/dataSchema'
 import { summary } from '../../lib/messages'
-import { formatNationalId } from '../../lib/utils'
+import { formatNationalId, formatPhoneNumber } from '../../lib/utils'
 import { KeyValue } from './KeyValue'
 import { SummarySection } from './SummarySection'
 import { Divider } from './Divider'
-import { gridRow } from './summaryStyles.css'
+import { changeButton, gridRow } from './summaryStyles.css'
+import { FieldBaseProps } from '@island.is/application/types'
 
-type Props = {
-  answers: RentalAgreement
-}
-
-export const ApplicantsRepresentativesSummary = ({ answers }: Props) => {
+export const ApplicantsRepresentativesSummary: FC<FieldBaseProps> = ({
+  ...props
+}) => {
   const { formatMessage } = useLocale()
+  const { application, goToScreen } = props
+  const answers = application.answers as RentalAgreement
 
-  const landlordListHasRepresentatives = answers.landlordInfo.table?.some(
+  const landlordListHasRepresentatives = answers.landlordInfo.table.some(
     (landlord) =>
       landlord.isRepresentative && landlord.isRepresentative.length > 0,
   )
@@ -58,6 +58,7 @@ export const ApplicantsRepresentativesSummary = ({ answers }: Props) => {
                         gap={'smallGutter'}
                       />
                     </GridColumn>
+
                     <GridColumn span={['12/12', '6/12']}>
                       <KeyValue
                         label={summary.emailLabel}
@@ -70,6 +71,16 @@ export const ApplicantsRepresentativesSummary = ({ answers }: Props) => {
                         value={formatPhoneNumber(landlordRep.phone || '-')}
                       />
                     </GridColumn>
+
+                    <div className={changeButton}>
+                      <Button
+                        variant="ghost"
+                        size="small"
+                        onClick={() => console.log('Open')}
+                      >
+                        {formatMessage(summary.changeSectionButtonLabel)}
+                      </Button>
+                    </div>
                   </GridRow>
                   <Divider />
                 </Fragment>

@@ -11,7 +11,9 @@ export const summaryNoBorder = style({
 })
 
 export const gridRow = style({
+  position: 'relative',
   display: 'flex',
+  paddingRight: '100px',
 })
 
 export const divider = style({
@@ -24,4 +26,10 @@ export const divider = style({
       display: 'none',
     },
   },
+})
+
+export const changeButton = style({
+  position: 'absolute',
+  bottom: '0',
+  right: '0',
 })

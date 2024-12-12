@@ -6,6 +6,7 @@ import {
   buildCheckboxField,
   buildSelectField,
   getValueViaPath,
+  buildHiddenInput,
 } from '@island.is/application/core'
 import { FormValue } from '@island.is/application/types'
 import {
@@ -120,6 +121,16 @@ export const RentalPeriodAmount = buildSubSection({
               label: rentalAmount.paymentInsuranceRequiredLabel,
             },
           ],
+        }),
+        buildHiddenInput({
+          id: 'rentalAmount.paymentInsuranceDetails',
+          condition: (answers) => {
+            const checkbox = getValueViaPath<Array<string>>(
+              answers,
+              'rentalAmount.isPaymentInsuranceRequired',
+            )
+            return checkbox?.includes(AnswerOptions.YES) || false
+          },
         }),
       ],
     }),

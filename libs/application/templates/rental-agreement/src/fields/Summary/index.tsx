@@ -17,7 +17,7 @@ import { ApplicantsSummary } from './ApplicantsSummary'
 import { summaryWrap } from './summaryStyles.css'
 
 export const Summary: FC<React.PropsWithChildren<FieldBaseProps>> = (props) => {
-  const { application } = props
+  const { application, field } = props
   const { formatMessage } = useLocale()
 
   const answers = application.answers as RentalAgreement
@@ -30,8 +30,11 @@ export const Summary: FC<React.PropsWithChildren<FieldBaseProps>> = (props) => {
         </Text>
         <Text marginBottom={5}>{formatMessage(summary.pageDescription)}</Text>
       </Box>
-      <ApplicantsSummary answers={answers} />
-      <ApplicantsRepresentativesSummary answers={answers} />
+      <ApplicantsSummary application={application} field={field} />
+      <ApplicantsRepresentativesSummary
+        application={application}
+        field={field}
+      />
       <RentalInfoSummary answers={answers} />
       <PropertyInfoSummary answers={answers} />
       <OtherFeesSummary answers={answers} />

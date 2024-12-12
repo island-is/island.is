@@ -1,22 +1,22 @@
-import { Fragment } from 'react'
-import { GridColumn, GridRow } from '@island.is/island-ui/core'
+import { GridColumn } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { RentalAgreement } from '../../lib/dataSchema'
 import { summary } from '../../lib/messages'
 import { formatNationalId, formatPhoneNumber } from '../../lib/utils'
 import { KeyValue } from './KeyValue'
-import { SummarySection } from './SummarySection'
-import { Divider } from './Divider'
-import { gridRow } from './summaryStyles.css'
+import { SummaryCard } from './components/SummaryCard'
+import { SummaryCardRow } from './components/SummaryCardRow'
+import { Routes } from '../../lib/constants'
+import { FieldBaseProps } from '@island.is/application/types'
+import { RentalAgreement } from '../../lib/dataSchema'
 
-type Props = {
-  answers: RentalAgreement
-}
-
-export const ApplicantsSummary = ({ answers }: Props) => {
+export const ApplicantsSummary = ({
+  application,
+  goToScreen,
+}: FieldBaseProps) => {
   const { formatMessage } = useLocale()
+  const answers = application.answers as RentalAgreement
 
-  const landlordListWithoutRepresentatives = answers.landlordInfo.table?.filter(
+  const landlordListWithoutRepresentatives = answers.landlordInfo.table.filter(
     (landlord) =>
       !landlord.isRepresentative || landlord.isRepresentative.length === 0,
   )
@@ -28,8 +28,8 @@ export const ApplicantsSummary = ({ answers }: Props) => {
 
   return (
     <>
-      <SummarySection
-        sectionLabel={
+      <SummaryCard
+        cardLabel={
           landlordListWithoutRepresentatives &&
           landlordListWithoutRepresentatives.length > 1
             ? formatMessage(summary.landlordsHeaderPlural)
@@ -38,42 +38,43 @@ export const ApplicantsSummary = ({ answers }: Props) => {
       >
         {landlordListWithoutRepresentatives?.map((landlord) => {
           return (
-            <Fragment key={landlord.nationalIdWithName?.nationalId}>
-              <GridRow className={gridRow}>
-                <GridColumn span={['12/12']}>
-                  <KeyValue
-                    labelVariant="h5"
-                    labelAs="p"
-                    label={landlord.nationalIdWithName?.name as string}
-                    value={`${formatMessage(
-                      summary.nationalIdLabel,
-                    )}${formatNationalId(
-                      landlord.nationalIdWithName?.nationalId || '-',
-                    )}`}
-                    gap={'smallGutter'}
-                  />
-                </GridColumn>
-                <GridColumn span={['12/12', '6/12']}>
-                  <KeyValue
-                    label={summary.emailLabel}
-                    value={landlord.email || ''}
-                  />
-                </GridColumn>
-                <GridColumn span={['12/12', '6/12']}>
-                  <KeyValue
-                    label={summary.phoneNumberLabel}
-                    value={formatPhoneNumber(landlord.phone || '-')}
-                  />
-                </GridColumn>
-              </GridRow>
-              <Divider />
-            </Fragment>
+            <SummaryCardRow
+              key={landlord.nationalIdWithName?.nationalId}
+              editAction={goToScreen}
+              route={Routes.LANDLORDINFORMATION}
+            >
+              <GridColumn span={['12/12']}>
+                <KeyValue
+                  labelVariant="h5"
+                  labelAs="p"
+                  label={landlord.nationalIdWithName?.name as string}
+                  value={`${formatMessage(
+                    summary.nationalIdLabel,
+                  )}${formatNationalId(
+                    landlord.nationalIdWithName?.nationalId || '-',
+                  )}`}
+                  gap={'smallGutter'}
+                />
+              </GridColumn>
+              <GridColumn span={['12/12', '6/12']}>
+                <KeyValue
+                  label={summary.emailLabel}
+                  value={landlord.email || ''}
+                />
+              </GridColumn>
+              <GridColumn span={['12/12', '6/12']}>
+                <KeyValue
+                  label={summary.phoneNumberLabel}
+                  value={formatPhoneNumber(landlord.phone || '-')}
+                />
+              </GridColumn>
+            </SummaryCardRow>
           )
         })}
-      </SummarySection>
+      </SummaryCard>
 
-      <SummarySection
-        sectionLabel={
+      <SummaryCard
+        cardLabel={
           tenantListWithoutRepresentatives.length > 1
             ? formatMessage(summary.tenantsHeaderPlural)
             : formatMessage(summary.tenantsHeader)
@@ -81,39 +82,40 @@ export const ApplicantsSummary = ({ answers }: Props) => {
       >
         {tenantListWithoutRepresentatives.map((tenant) => {
           return (
-            <Fragment key={tenant.nationalIdWithName?.nationalId}>
-              <GridRow className={gridRow}>
-                <GridColumn span={['12/12']}>
-                  <KeyValue
-                    labelVariant="h5"
-                    labelAs="p"
-                    label={tenant.nationalIdWithName?.name as string}
-                    value={`${formatMessage(
-                      summary.nationalIdLabel,
-                    )}${formatNationalId(
-                      tenant.nationalIdWithName?.nationalId || '-',
-                    )}`}
-                    gap={'smallGutter'}
-                  />
-                </GridColumn>
-                <GridColumn span={['12/12', '6/12']}>
-                  <KeyValue
-                    label={summary.emailLabel}
-                    value={tenant.email || '-'}
-                  />
-                </GridColumn>
-                <GridColumn span={['12/12', '6/12']}>
-                  <KeyValue
-                    label={summary.phoneNumberLabel}
-                    value={formatPhoneNumber(tenant.phone || '-')}
-                  />
-                </GridColumn>
-              </GridRow>
-              <Divider />
-            </Fragment>
+            <SummaryCardRow
+              key={tenant.nationalIdWithName?.nationalId}
+              editAction={goToScreen}
+              route={Routes.TENANTINFORMATION}
+            >
+              <GridColumn span={['12/12']}>
+                <KeyValue
+                  labelVariant="h5"
+                  labelAs="p"
+                  label={tenant.nationalIdWithName?.name as string}
+                  value={`${formatMessage(
+                    summary.nationalIdLabel,
+                  )}${formatNationalId(
+                    tenant.nationalIdWithName?.nationalId || '-',
+                  )}`}
+                  gap={'smallGutter'}
+                />
+              </GridColumn>
+              <GridColumn span={['12/12', '6/12']}>
+                <KeyValue
+                  label={summary.emailLabel}
+                  value={tenant.email || '-'}
+                />
+              </GridColumn>
+              <GridColumn span={['12/12', '6/12']}>
+                <KeyValue
+                  label={summary.phoneNumberLabel}
+                  value={formatPhoneNumber(tenant.phone || '-')}
+                />
+              </GridColumn>
+            </SummaryCardRow>
           )
         })}
-      </SummarySection>
+      </SummaryCard>
     </>
   )
 }
