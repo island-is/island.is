@@ -10,18 +10,23 @@ import {
 
 import { useEffect, useState, useCallback, useMemo } from 'react'
 import {
+  EmptyTable,
   ExpandRow,
+  LinkButton,
+  LinkResolver,
   NestedFullTable,
   formatDate,
   m,
 } from '@island.is/portals/my-pages/core'
-import { AlertMessage, Box } from '@island.is/island-ui/core'
 import { vehicleMessage } from '../../lib/messages'
 import { VehicleBulkMileageSaveButton } from './VehicleBulkMileageSaveButton'
 import { InputController } from '@island.is/shared/form-fields'
 import * as styles from './VehicleBulkMileage.css'
 import { displayWithUnit } from '../../utils/displayWithUnit'
 import { isReadDateToday } from '../../utils/readDate'
+import { AlertMessage, Box, Text, Button } from '@island.is/island-ui/core'
+import format from 'date-fns/format'
+import { VehicleBulkMileageSubData } from './VehicleBulkMileageSubData'
 
 const ORIGIN_CODE = 'ISLAND.IS'
 
@@ -210,36 +215,23 @@ export const VehicleBulkMileageRow = ({ vehicle }: Props) => {
     }
   }, [mileageData?.vehicleMileageDetails, vehicle.vehicleId])
 
-  const nestedTable = useMemo(() => {
-    if (!data?.vehiclesMileageRegistrationHistory) {
-      return [[]]
-    }
-    const tableData: Array<Array<string>> = [[]]
-    for (const mileageRegistration of data?.vehiclesMileageRegistrationHistory
-      ?.mileageRegistrationHistory ?? []) {
-      if (mileageRegistration) {
-        tableData.push([
-          formatDate(mileageRegistration.date),
-          mileageRegistration.originCode,
-          //'-',
-          displayWithUnit(mileageRegistration.mileage, 'km', true),
-        ])
-      }
-    }
-
-    return tableData
-  }, [data?.vehiclesMileageRegistrationHistory])
-
   return (
     <ExpandRow
       key={`bulk-mileage-vehicle-row-${vehicle.vehicleId}`}
       onExpandCallback={executeRegistrationsQuery}
       data={[
         {
-          value: vehicle.vehicleType,
+          value: (
+            <Box>
+              <Text variant="medium">{vehicle.vehicleType}</Text>
+              <Text variant="small">{vehicle.vehicleId}</Text>
+            </Box>
+          ),
         },
         {
-          value: vehicle.vehicleId,
+          value: vehicle.lastMileageRegistration?.date
+            ? format(vehicle.lastMileageRegistration?.date, 'dd.MM.yyyy')
+            : '-',
         },
         {
           value: vehicle.lastMileageRegistration?.mileage
@@ -257,6 +249,8 @@ export const VehicleBulkMileageRow = ({ vehicle }: Props) => {
                 control={control}
                 id={vehicle.vehicleId}
                 name={vehicle.vehicleId}
+                backgroundColor="blue"
+                placeholder="km"
                 type="number"
                 suffix=" km"
                 thousandSeparator
@@ -375,17 +369,17 @@ export const VehicleBulkMileageRow = ({ vehicle }: Props) => {
           type="error"
           message={formatMessage(vehicleMessage.mileageHistoryFetchFailed)}
         />
-      ) : (
-        <NestedFullTable
-          headerArray={[
-            formatMessage(vehicleMessage.date),
-            formatMessage(vehicleMessage.registration),
-            //formatMessage(vehicleMessage.annualUsage),
-            formatMessage(vehicleMessage.odometer),
-          ]}
+      ) : data?.vehiclesMileageRegistrationHistory ? (
+        <VehicleBulkMileageSubData
+          vehicleId={vehicle.vehicleId}
+          data={data?.vehiclesMileageRegistrationHistory}
           loading={loading}
-          emptyMessage={formatMessage(vehicleMessage.mileageHistoryNotFound)}
-          data={nestedTable}
+        />
+      ) : (
+        <EmptyTable
+          background={'blue100'}
+          loading={loading}
+          message={formatMessage(vehicleMessage.noVehiclesFound)}
         />
       )}
     </ExpandRow>
