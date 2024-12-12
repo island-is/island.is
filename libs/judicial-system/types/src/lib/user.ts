@@ -70,8 +70,8 @@ export const isPublicProsecutorUser = (user?: InstitutionUser): boolean => {
   return Boolean(
     user?.role &&
       publicProsecutorRoles.includes(user.role) &&
-      user?.institution?.type === InstitutionType.PROSECUTORS_OFFICE &&
-      user?.institution?.id === '8f9e2f6d-6a00-4a5e-b39b-95fd110d762e', // TODO: Create a new institution type to avoid hardcoding
+      user.institution?.type === InstitutionType.PROSECUTORS_OFFICE &&
+      user.institution?.id === '8f9e2f6d-6a00-4a5e-b39b-95fd110d762e', // TODO: Create a new institution type to avoid hardcoding
   )
 }
 
@@ -85,7 +85,7 @@ export const isDistrictCourtUser = (user?: InstitutionUser): boolean => {
   return Boolean(
     user?.role &&
       districtCourtRoles.includes(user.role) &&
-      user?.institution?.type === InstitutionType.DISTRICT_COURT,
+      user.institution?.type === InstitutionType.DISTRICT_COURT,
   )
 }
 
@@ -99,7 +99,7 @@ export const isCourtOfAppealsUser = (user?: InstitutionUser): boolean => {
   return Boolean(
     user?.role &&
       courtOfAppealsRoles.includes(user.role) &&
-      user?.institution?.type === InstitutionType.COURT_OF_APPEALS,
+      user.institution?.type === InstitutionType.COURT_OF_APPEALS,
   )
 }
 
@@ -109,14 +109,14 @@ export const isPrisonSystemUser = (user?: InstitutionUser): boolean => {
   return Boolean(
     user?.role &&
       prisonSystemRoles.includes(user.role) &&
-      (user?.institution?.type === InstitutionType.PRISON ||
-        user?.institution?.type === InstitutionType.PRISON_ADMIN),
+      (user.institution?.type === InstitutionType.PRISON ||
+        user.institution?.type === InstitutionType.PRISON_ADMIN),
   )
 }
 
-export const isPrisonAdminUser = (user: InstitutionUser): boolean =>
+export const isPrisonAdminUser = (user?: InstitutionUser): boolean =>
   Boolean(
-    user.role &&
+    user?.role &&
       prisonSystemRoles.includes(user.role) &&
       user.institution?.type === InstitutionType.PRISON_ADMIN,
   )
