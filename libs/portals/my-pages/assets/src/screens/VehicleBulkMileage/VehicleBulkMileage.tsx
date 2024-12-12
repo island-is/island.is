@@ -39,6 +39,7 @@ const VehicleBulkMileage = () => {
   const [totalPages, setTotalPages] = useState<number>(1)
   const [search, setSearch] = useState<string>()
   const [filterValue, setFilterValue] = useState<boolean>(false)
+  const [displayFilters, setDisplayFilters] = useState<boolean>(false)
 
   const [vehicleListQuery, { data, loading, error, called }] =
     useVehiclesListLazyQuery()
@@ -116,8 +117,11 @@ const VehicleBulkMileage = () => {
 
   const methods = useForm<FormData>()
 
-  const displayFilters =
-    filterValue || search || (data?.vehiclesListV3?.totalRecords ?? 0) > 10
+  useEffect(() => {
+    if (!displayFilters) {
+      setDisplayFilters((data?.vehiclesListV3?.totalRecords ?? 0) > 10)
+    }
+  }, [data, displayFilters])
 
   return (
     <Stack space={2}>
