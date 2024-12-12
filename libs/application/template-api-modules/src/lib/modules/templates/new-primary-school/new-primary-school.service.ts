@@ -13,6 +13,8 @@ import { TemplateApiModuleActionProps } from '../../../types'
 import { BaseTemplateApiService } from '../../base-template-api.service'
 import { transformApplicationToNewPrimarySchoolDTO } from './new-primary-school.utils'
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
+import { isRunningInProduction } from '../parental-leave/constants'
+import { mockedUsers } from './new-primary-school-mock-users'
 
 @Injectable()
 export class NewPrimarySchoolService extends BaseTemplateApiService {
@@ -38,6 +40,12 @@ export class NewPrimarySchoolService extends BaseTemplateApiService {
   }
 
   async getChildren({ auth }: TemplateApiModuleActionProps) {
+    if (!isRunningInProduction) {
+      const mockedUser = mockedUsers[auth.nationalId]
+      if (mockedUser) {
+        return mockedUser
+      }
+    }
     const children =
       await this.nationalRegistryService.getChildrenCustodyInformation(auth)
 
@@ -85,7 +93,8 @@ export class NewPrimarySchoolService extends BaseTemplateApiService {
         400,
       )
     }
-
+    console.log({ filteredChildren })
+    filteredChildren[0].genderCode
     return filteredChildren
   }
 
