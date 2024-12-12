@@ -1,5 +1,4 @@
 import { Module } from '@nestjs/common'
-import { ConfigModule as NestConfigModule } from '@nestjs/config'
 import { SequelizeModule } from '@nestjs/sequelize'
 
 import {
@@ -57,9 +56,6 @@ import { UsersModule } from './users/users.module'
     NotificationsModule,
     LoginRestrictionsModule,
     PasskeysModule,
-    NestConfigModule.forRoot({
-      ignoreEnvFile: true,
-    }),
     ConfigModule.forRoot({
       isGlobal: true,
       load: [
