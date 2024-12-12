@@ -5,7 +5,7 @@ import {
   buildSubSection,
 } from '@island.is/application/core'
 import { error, powerOfAttorney } from '../../../lib/messages'
-import { FILE_SIZE_LIMIT, UPLOAD_ACCEPT } from '../../../constants'
+import { FILE_SIZE_LIMIT, UPLOAD_ACCEPT } from '../../../utils/constants'
 import { isUploadNow } from '../../../utils/isUploadNow'
 
 export const powerOfAttorneyUploadSubSection = buildSubSection({
