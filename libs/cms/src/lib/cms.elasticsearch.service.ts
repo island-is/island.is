@@ -47,11 +47,8 @@ import { GenericListItem } from './models/genericListItem.model'
 import { GetTeamMembersInput } from './dto/getTeamMembers.input'
 import { TeamMemberResponse } from './models/teamMemberResponse.model'
 import { GetGrantsInput } from './dto/getGrants.input'
-import { Grant, GrantStatus } from './models/grant.model'
+import { Grant } from './models/grant.model'
 import { GrantList } from './models/grantList.model'
-import { logger } from '@island.is/logging'
-import { IGrantFields } from './generated/contentfulTypes'
-import { isDefined } from '@island.is/shared/utils'
 
 @Injectable()
 export class CmsElasticsearchService {
@@ -614,7 +611,6 @@ export class CmsElasticsearchService {
       search,
       page = 1,
       size = 8,
-      statuses,
       categories,
       types,
       organizations,
@@ -710,30 +706,6 @@ export class CmsElasticsearchService {
                 {
                   term: {
                     'tags.type': 'fund',
-                  },
-                },
-              ],
-            },
-          },
-        },
-      })
-    }
-
-    if (statuses) {
-      must.push({
-        nested: {
-          path: 'tags',
-          query: {
-            bool: {
-              must: [
-                {
-                  terms: {
-                    'tags.key': statuses,
-                  },
-                },
-                {
-                  term: {
-                    'tags.type': 'status',
                   },
                 },
               ],
