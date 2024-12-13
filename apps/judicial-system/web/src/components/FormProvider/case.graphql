@@ -44,6 +44,7 @@ query Case($input: CaseQueryInput!) {
         comment
         defenderNationalId
         caseId
+        defendantId
         subpoenaId
       }
     }
@@ -215,6 +216,7 @@ query Case($input: CaseQueryInput!) {
       lawsBroken
       incidentDescription
       legalArguments
+      indictmentCountSubtypes
     }
     requestDriversLicenseSuspension
     appealState

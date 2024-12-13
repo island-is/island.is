@@ -36,6 +36,7 @@ grantNamespaces:
   - 'nginx-ingress-external'
   - 'user-notification'
   - 'portals-admin'
+  - 'datadog'
 grantNamespacesEnabled: true
 healthCheck:
   liveness:

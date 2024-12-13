@@ -6,7 +6,7 @@ import {
 } from '@island.is/application/core'
 import { juridicalPerson } from '../../../lib/messages'
 import { isReportingOnBehalfOfEmployee } from '../../../utils'
-import { YES } from '../../../constants'
+import { YES } from '../../../utils/constants'
 
 export const juridicalPersonCompanySubSection = buildSubSection({
   id: 'juridicalPerson.company',

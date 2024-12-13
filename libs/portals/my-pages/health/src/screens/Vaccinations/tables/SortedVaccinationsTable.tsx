@@ -1,3 +1,5 @@
+import { HealthDirectorateVaccination } from '@island.is/api/schema'
+import { Box } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   EmptyTable,
@@ -6,10 +8,8 @@ import {
 } from '@island.is/portals/my-pages/core'
 import { messages } from '../../../lib/messages'
 import { tagSelector } from '../../../utils/tagSelector'
-import { VaccinationsDetailTable } from './VaccinationsDetailTable'
 import { DetailHeader, DetailRow } from '../../../utils/types'
-import { HealthDirectorateVaccination } from '@island.is/api/schema'
-import { Box } from '@island.is/island-ui/core'
+import { VaccinationsDetailTable } from './VaccinationsDetailTable'
 
 interface Props {
   data?: Array<HealthDirectorateVaccination>
@@ -48,7 +48,7 @@ export const SortedVaccinationsTable = ({ data }: Props) => {
         }}
         tagOutlined
         expandable
-        defaultSortByKey="vaccine"
+        defaultSortByKey="status"
         items={
           data.map((item, i) => ({
             id: item?.id ?? `${i}`,
