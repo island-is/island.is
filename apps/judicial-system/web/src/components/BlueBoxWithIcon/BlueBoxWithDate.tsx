@@ -338,7 +338,11 @@ const BlueBoxWithDate: FC<Props> = (props) => {
         </AnimatePresence>
       </Box>
       <Box display="flex" justifyContent="flexEnd" marginTop={1}>
-        {defendant.isSentToPrisonAdmin ? (
+        {defendant.verdictAppealDate ? (
+          <Button variant="text" size="small" colorScheme="destructive">
+            {formatMessage(strings.revokeAppeal)}
+          </Button>
+        ) : defendant.isSentToPrisonAdmin ? (
           <Button
             variant="text"
             onClick={() => setModalVisible('REVOKE_SEND_TO_PRISON_ADMIN')}
