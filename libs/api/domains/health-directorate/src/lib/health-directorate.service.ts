@@ -28,14 +28,17 @@ export class HealthDirectorateService {
     if (data === null) {
       return null
     }
+
     const donorStatus: Donor = {
-      isDonor: data?.isDonor ?? true,
+      isDonor: data?.isDonor,
       limitations: {
         hasLimitations:
           ((data?.exceptions?.length ?? 0) > 0 && data?.isDonor) ?? false,
         limitedOrgansList: data?.exceptions,
         comment: data?.exceptionComment,
       },
+      isMinor: false, // data?.isMinor
+      isTemporaryResident: false, // data?.isTemporaryResident
     }
     return donorStatus
   }
@@ -67,6 +70,7 @@ export class HealthDirectorateService {
       {
         isDonor: input.isDonor,
         exceptions: input.organLimitations ?? [],
+        exceptionComment: { exceptionComment: input.comment },
       },
       locale === 'is' ? organLocale.Is : organLocale.En,
     )

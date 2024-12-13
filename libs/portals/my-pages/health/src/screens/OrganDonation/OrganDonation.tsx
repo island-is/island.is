@@ -1,15 +1,16 @@
+import { Box, Button, Text } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   ActionCard,
   CardLoader,
-  IntroHeader,
+  IntroWrapper,
   LinkResolver,
 } from '@island.is/portals/my-pages/core'
-import { messages as m } from '../../lib/messages'
-import { Button, Box, Text } from '@island.is/island-ui/core'
-import { HealthPaths } from '../../lib/paths'
 import { Problem } from '@island.is/react-spa/shared'
+import { messages as m } from '../../lib/messages'
+import { HealthPaths } from '../../lib/paths'
 import { useGetDonorStatusQuery } from './OrganDonation.generated'
+import { NoAccess } from './components/NoAccess'
 
 const OrganDonation = () => {
   useNamespaces('sp.health')
@@ -22,15 +23,20 @@ const OrganDonation = () => {
     },
   })
   const donorStatus = data?.healthDirectorateOrganDonation.donor
+  const isMinor = donorStatus?.isMinor
+  const isTemporaryResident = donorStatus?.isTemporaryResident
+  const hasLimitations = donorStatus?.limitations?.hasLimitations ?? false
+  const limitationText = hasLimitations
+    ? [
+        formatMessage(m.iAmOrganDonorWithExceptionsText),
+        donorStatus?.limitations?.limitedOrgansList
+          ?.map((organ) => organ.name)
+          .join(', '),
+      ].join(' ') + '.'
+    : formatMessage(m.iAmOrganDonorText)
+
   const cardText: string = donorStatus?.isDonor
-    ? donorStatus?.limitations?.hasLimitations
-      ? [
-          formatMessage(m.iAmOrganDonorWithExceptionsText),
-          donorStatus?.limitations.limitedOrgansList
-            ?.map((organ) => organ.name)
-            .join(', '),
-        ].join(' ') + '.'
-      : formatMessage(m.iAmOrganDonorText)
+    ? limitationText
     : formatMessage(m.iAmNotOrganDonorText)
 
   const heading = donorStatus?.isDonor
@@ -40,12 +46,10 @@ const OrganDonation = () => {
     : formatMessage(m.iAmNotOrganDonor)
 
   return (
-    <Box>
-      <IntroHeader
-        title={formatMessage(m.organDonation)}
-        intro={formatMessage(m.organDonationDescription)}
-      />
-      <Box marginBottom={6}>
+    <IntroWrapper
+      title={formatMessage(m.organDonation)}
+      intro={formatMessage(m.organDonationDescription)}
+      buttonGroup={[
         <LinkResolver
           href={formatMessage(m.organDonationLink)}
           key="organ-donation"
@@ -53,36 +57,50 @@ const OrganDonation = () => {
           <Button variant="utility" size="small" icon="open" iconType="outline">
             {formatMessage(m.readAboutOrganDonation)}
           </Button>
-        </LinkResolver>
-      </Box>
+        </LinkResolver>,
+      ]}
+    >
       {loading && (
         <Box marginY={4}>
           <CardLoader />
         </Box>
       )}
-      {!error && !loading && donorStatus !== null && (
-        <Box>
-          <Text variant="eyebrow" color="purple400" marginBottom={1}>
-            {formatMessage(m.takeOnOrganDonation)}
-          </Text>
-          <ActionCard
-            heading={heading}
-            text={cardText}
-            cta={{
-              url: HealthPaths.HealthOrganDonationRegistration,
-              label: formatMessage(m.changeTake),
-              centered: true,
-              variant: 'text',
-            }}
-            loading={loading}
-          />
-        </Box>
+      {!error &&
+        !loading &&
+        !isMinor &&
+        !isTemporaryResident &&
+        donorStatus !== null && (
+          <Box>
+            <Text variant="eyebrow" color="purple400" marginBottom={1}>
+              {formatMessage(m.takeOnOrganDonation)}
+            </Text>
+            <ActionCard
+              heading={heading}
+              text={cardText}
+              cta={{
+                url: HealthPaths.HealthOrganDonationRegistration,
+                label: formatMessage(m.changeTake),
+                centered: true,
+                variant: 'text',
+              }}
+              loading={loading}
+            />
+          </Box>
+        )}
+      {!error && !loading && (isMinor || isTemporaryResident) && (
+        <NoAccess
+          text={
+            isMinor
+              ? formatMessage(m.organMinor)
+              : formatMessage(m.organTemporaryNationalId)
+          }
+        />
       )}
       {error && !loading && <Problem error={error} noBorder={false} />}
       {!error && !loading && data === null && (
         <Problem type="no_data" noBorder={false} />
       )}
-    </Box>
+    </IntroWrapper>
   )
 }
 
