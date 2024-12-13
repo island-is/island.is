@@ -211,62 +211,64 @@ export const NationalIdWithName: FC<
   }, [personName, companyName, setValue, nameField, application.answers])
 
   return (
-    <GridRow>
-      <GridColumn span={['1/1', '1/1', '1/1', '1/2']} paddingTop={2}>
-        <InputController
-          id={nationalIdField}
-          label={
-            customNationalIdLabel
-              ? formatMessage(customNationalIdLabel)
-              : formatMessage(coreErrorMessages.nationalRegistryNationalId)
-          }
-          defaultValue={defaultNationalId}
-          format="######-####"
-          required={required}
-          backgroundColor="blue"
-          onChange={debounce((v) => {
-            setNationalIdInput(v.target.value.replace(/\W/g, ''))
-            onNationalIdChange &&
-              onNationalIdChange(v.target.value.replace(/\W/g, ''))
-          })}
-          loading={searchPersons ? queryLoading : companyQueryLoading}
-          error={nationalIdFieldErrors}
-          disabled={disabled}
-        />
-      </GridColumn>
-      <GridColumn span={['1/1', '1/1', '1/1', '1/2']} paddingTop={2}>
-        <InputController
-          id={nameField}
-          defaultValue={defaultName}
-          label={
-            customNameLabel
-              ? formatMessage(customNameLabel)
-              : formatMessage(coreErrorMessages.nationalRegistryName)
-          }
-          required={required}
-          error={
-            searchPersons
-              ? queryError || data?.identity === null
-                ? formatMessage(
-                    coreErrorMessages.nationalRegistryNameNotFoundForNationalId,
-                  )
-                : getFieldErrorString(error, 'name') && !data
-                ? getFieldErrorString(error, 'name')
+    <>
+      <GridRow>
+        <GridColumn span={['1/1', '1/1', '1/1', '1/2']} paddingTop={2}>
+          <InputController
+            id={nationalIdField}
+            label={
+              customNationalIdLabel
+                ? formatMessage(customNationalIdLabel)
+                : formatMessage(coreErrorMessages.nationalRegistryNationalId)
+            }
+            defaultValue={defaultNationalId}
+            format="######-####"
+            required={required}
+            backgroundColor="blue"
+            onChange={debounce((v) => {
+              setNationalIdInput(v.target.value.replace(/\W/g, ''))
+              onNationalIdChange &&
+                onNationalIdChange(v.target.value.replace(/\W/g, ''))
+            })}
+            loading={searchPersons ? queryLoading : companyQueryLoading}
+            error={nationalIdFieldErrors}
+            disabled={disabled}
+          />
+        </GridColumn>
+        <GridColumn span={['1/1', '1/1', '1/1', '1/2']} paddingTop={2}>
+          <InputController
+            id={nameField}
+            defaultValue={defaultName}
+            label={
+              customNameLabel
+                ? formatMessage(customNameLabel)
+                : formatMessage(coreErrorMessages.nationalRegistryName)
+            }
+            required={required}
+            error={
+              searchPersons
+                ? queryError || data?.identity === null
+                  ? formatMessage(
+                      coreErrorMessages.nationalRegistryNameNotFoundForNationalId,
+                    )
+                  : getFieldErrorString(error, 'name') && !data
+                  ? getFieldErrorString(error, 'name')
+                  : undefined
+                : searchCompanies
+                ? companyQueryError ||
+                  companyData?.companyRegistryCompany === null
+                  ? formatMessage(
+                      coreErrorMessages.nationalRegistryNameNotFoundForNationalId,
+                    )
+                  : getFieldErrorString(error, 'name') && !companyData
+                  ? getFieldErrorString(error, 'name')
+                  : undefined
                 : undefined
-              : searchCompanies
-              ? companyQueryError ||
-                companyData?.companyRegistryCompany === null
-                ? formatMessage(
-                    coreErrorMessages.nationalRegistryNameNotFoundForNationalId,
-                  )
-                : getFieldErrorString(error, 'name') && !companyData
-                ? getFieldErrorString(error, 'name')
-                : undefined
-              : undefined
-          }
-          disabled
-        />
-      </GridColumn>
+            }
+            disabled
+          />
+        </GridColumn>
+      </GridRow>
       {(phone || email) && (
         <GridRow>
           {phone && (
@@ -298,6 +300,6 @@ export const NationalIdWithName: FC<
           )}
         </GridRow>
       )}
-    </GridRow>
+    </>
   )
 }
