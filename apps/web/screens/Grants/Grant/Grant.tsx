@@ -1,7 +1,6 @@
 import { useIntl } from 'react-intl'
 import NextLink from 'next/link'
 import { useRouter } from 'next/router'
-import { generateStatusTag, parseStatus } from '../utils'
 
 import { SliceType } from '@island.is/island-ui/contentful'
 import {
@@ -149,15 +148,6 @@ const GrantSinglePage: CustomScreen<GrantSingleProps> = ({ grant, locale }) => {
                   locale,
                 )}
               </Box>
-            </Box>
-          ) : undefined}
-          {grant.applicationDeadline?.length ? (
-            <Box className="rs_read">
-              {webRichText(
-                grant.applicationDeadline as SliceType[],
-                undefined,
-                locale,
-              )}
             </Box>
           ) : undefined}
           {grant.applicationHints?.length ? (

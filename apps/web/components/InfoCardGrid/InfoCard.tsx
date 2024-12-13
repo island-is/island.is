@@ -49,6 +49,7 @@ export const InfoCard = ({ size, ...restOfProps }: InfoCardProps) => {
           ? styles.infoCardSmall
           : styles.infoCard
       }
+      aria-label={restOfProps.title}
       component={LinkV2}
       href={restOfProps.link.href}
       background={size === 'small' ? 'yellow100' : 'white'}

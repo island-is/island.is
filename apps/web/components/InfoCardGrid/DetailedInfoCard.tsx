@@ -92,12 +92,12 @@ export const DetailedInfoCard = ({
     return (
       <Inline space={1}>
         {tags
-          .map((tag) => {
+          .map((tag, index) => {
             if (!tag) {
               return null
             }
             return (
-              <Tag disabled variant={tag.variant}>
+              <Tag key={`${tag.label}-${index}`} disabled variant={tag.variant}>
                 {tag.label}
               </Tag>
             )

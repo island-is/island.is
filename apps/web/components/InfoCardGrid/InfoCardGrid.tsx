@@ -37,8 +37,9 @@ export const InfoCardGrid = ({ cards, variant, columns }: Props) => {
 
   return (
     <Inline space={3}>
-      {cards.map((c) => (
+      {cards.map((c, index) => (
         <InfoCard
+          key={`${c.title}-${index}`}
           variant={variant}
           size={columns === 3 ? 'small' : 'medium'}
           {...c}
