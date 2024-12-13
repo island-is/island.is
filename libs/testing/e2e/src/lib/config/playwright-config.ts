@@ -28,7 +28,7 @@ export const createPlaywrightConfig = ({
     },
     webServer: {
       stdout: 'pipe' as const,
-      command: `docker compose up`,
+      command: `docker-compose up`,
       reuseExistingServer: !process.env.CI,
       timeout: timeoutMs,
       cwd: resolve(__dirname, '../../../../../..'),
