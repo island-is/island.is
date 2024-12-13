@@ -88,13 +88,17 @@ export const NationalIdWithName: FC<
   const [personName, setPersonName] = useState('')
   const [companyName, setCompanyName] = useState('')
 
-  const getFieldErrorString = (error: any, id: string): string | undefined => {
-    /**
-     * Errors that occur in a field-array have incorrect typing
-     * This hack is needed to get the correct type
-     */
-    const errorList = error as unknown as Record<string, string>[] | undefined
-    return (errorList?.[id as any] as unknown as string) ?? undefined
+  const getFieldErrorString = (
+    error: unknown,
+    id: string,
+  ): string | undefined => {
+    if (!error || typeof error !== 'object') return undefined
+
+    const errorList = error as Record<string, unknown>[]
+    if (!Array.isArray(errorList)) return undefined
+
+    const fieldError = errorList[id as any]
+    return typeof fieldError === 'string' ? fieldError : undefined
   }
 
   // get national id validation errors
