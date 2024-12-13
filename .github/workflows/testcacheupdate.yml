@@ -1,0 +1,153 @@
+name: Monorepo pipeline - pull request
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch: {}
+
+defaults:
+  run:
+    shell: bash
+
+concurrency:
+  # See https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#example-using-a-fallback-value
+  group: pullrequest-${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
+
+env:
+  COMPOSE_HTTP_TIMEOUT: 180
+
+jobs:
+  prepare:
+    runs-on: ec2-runners
+    container:
+      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
+    timeout-minutes: 35
+
+    env:
+      AFFECTED_ALL: ${{ secrets.AFFECTED_ALL }}
+      CHUNK_SIZE: 7
+      SERVERSIDE_FEATURES_ON: ''
+      DOCKER_REGISTRY: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/
+      DOCKER_BASE_IMAGE_REGISTRY: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/ecr-public
+
+    outputs:
+      CACHE_KEYS: ${{ steps.get-cache.outputs.keys }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: 'package.json'
+
+      - name: Setup yarn
+        run: corepack enable
+
+      - name: Check node version
+        run: |
+          set -euo pipefail
+          node -v
+          ls -l `which node`
+
+
+      - name: Get cache
+        id: get-cache
+        uses: ./.github/actions/get-cache
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          enable-cache: 'node_modules,cypress,generated-files'
+
+
+  linting-workspace:
+    needs:
+      - prepare
+    runs-on: ec2-runners
+    container:
+      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: 'package.json'
+      - name: Setup yarn
+        run: corepack enable
+      - name: Get cache
+        id: get-cache
+        uses: ./.github/actions/get-cache
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          keys: ${{ needs.prepare.outputs.CACHE_KEYS }}
+          enable-cache: 'node_modules,generated-files'
+
+      - name: Linting workspace
+        run: ./scripts/ci/20_lint-workspace.sh
+
+
+
+  formatting:
+    needs:
+      - prepare
+    runs-on: ec2-runners
+    container:
+      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        if: ${{ github.event_name == 'pull_request' }}
+        with:
+          token: ${{ secrets.DIRTY_FIX_BOT_TOKEN }}
+          ref: ${{ github.event.pull_request.head.ref }}
+
+      - uses: actions/checkout@v4
+        if: ${{ github.ref == 'ref/heads/main' }}
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: 'package.json'
+      - name: Setup yarn
+        run: corepack enable
+
+      - name: Get cache
+        id: get-cache
+        uses: ./.github/actions/get-cache
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          keys: ${{ needs.prepare.outputs.CACHE_KEYS }}
+          enable-cache: 'node_modules'
+
+
+  linting:
+    needs:
+      - prepare
+    runs-on: ec2-runners
+    container:
+      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
+    timeout-minutes: 35
+    if: needs.prepare.outputs.LINT_CHUNKS
+    env:
+      AFFECTED_PROJECTS: ${{ matrix.projects }}
+      NODE_OPTIONS: --max-old-space-size=4096
+      MAX_JOBS: 3
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJson(needs.prepare.outputs.LINT_CHUNKS) }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: 'package.json'
+      - name: Setup yarn
+        run: corepack enable
+      - name: Get cache
+        id: get-cache
+        uses: ./.github/actions/get-cache
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          keys: ${{ needs.prepare.outputs.CACHE_KEYS }}
+          enable-cache: 'node_modules,generated-files'
+      - name: Linting
+        run: ./scripts/ci/run-in-parallel-native.sh lint
+
