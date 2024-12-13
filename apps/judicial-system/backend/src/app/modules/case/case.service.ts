@@ -46,7 +46,6 @@ import {
   isCompletedCase,
   isIndictmentCase,
   isRequestCase,
-  isTrafficViolationCase,
   notificationTypes,
   StringType,
   stringTypes,
@@ -799,13 +798,11 @@ export class CaseService {
       deliverCaseFileToCourtMessages,
     )
 
-    if (isTrafficViolationCase(theCase)) {
-      messages.push({
-        type: MessageType.DELIVERY_TO_COURT_INDICTMENT,
-        user,
-        caseId: theCase.id,
-      })
-    }
+    messages.push({
+      type: MessageType.DELIVERY_TO_COURT_INDICTMENT,
+      user,
+      caseId: theCase.id,
+    })
 
     if (theCase.state === CaseState.WAITING_FOR_CANCELLATION) {
       messages.push({

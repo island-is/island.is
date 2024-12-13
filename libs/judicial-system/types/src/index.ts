@@ -86,7 +86,6 @@ export {
   isInvestigationCase,
   isRequestCase,
   isAcceptingCaseDecision,
-  isTrafficViolationCase,
   completedRequestCaseStates,
   completedIndictmentCaseStates,
   completedCaseStates,

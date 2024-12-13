@@ -19,7 +19,6 @@ import {
 import {
   CrimeScene,
   IndictmentSubtype,
-  isTrafficViolationCase,
   offenseSubstances,
   Substance,
   SubstanceMap,
@@ -469,6 +468,16 @@ export const IndictmentCount: FC<Props> = ({
     })
   }
 
+  const hasSingleSubtype = hasOnlyOneItemInSubArrays(subtypes)
+
+  const singleSubType =
+    (indictmentCount.policeCaseNumber &&
+      subtypes?.[indictmentCount.policeCaseNumber]?.[0]) ||
+    undefined
+
+  const trafficViolationSubtype =
+    singleSubType === IndictmentSubtype.TRAFFIC_VIOLATION
+
   return (
     <BlueBox>
       {onDelete && (
@@ -561,7 +570,7 @@ export const IndictmentCount: FC<Props> = ({
           </>
         )}
       </Box>
-      {(isTrafficViolationCase(workingCase) ||
+      {((hasSingleSubtype && trafficViolationSubtype) ||
         (indictmentCount?.indictmentCountSubtypes?.includes(
           IndictmentSubtype.TRAFFIC_VIOLATION,
         ) ??
