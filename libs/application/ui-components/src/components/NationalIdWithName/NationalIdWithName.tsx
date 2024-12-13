@@ -40,8 +40,8 @@ interface NationalIdWithNameProps {
   minAgePerson?: number
   searchPersons?: boolean
   searchCompanies?: boolean
-  phone?: boolean
-  email?: boolean
+  showPhoneField?: boolean
+  showEmailField?: boolean
   error?: string
 }
 
@@ -69,8 +69,8 @@ export const NationalIdWithName: FC<
   minAgePerson,
   searchPersons = true,
   searchCompanies = false,
-  phone = false,
-  email = false,
+  showPhoneField = false,
+  showEmailField = false,
   error,
 }) => {
   const fieldId = customId.length > 0 ? customId : id
@@ -269,9 +269,9 @@ export const NationalIdWithName: FC<
           />
         </GridColumn>
       </GridRow>
-      {(phone || email) && (
+      {(showPhoneField || showEmailField) && (
         <GridRow>
-          {phone && (
+          {showPhoneField && (
             <GridColumn span={['1/1', '1/1', '1/1', '1/2']} paddingTop={2}>
               <PhoneInputController
                 id={phoneField}
@@ -284,7 +284,7 @@ export const NationalIdWithName: FC<
               />
             </GridColumn>
           )}
-          {email && (
+          {showEmailField && (
             <GridColumn span={['1/1', '1/1', '1/1', '1/2']} paddingTop={2}>
               <InputController
                 id={emailField}
