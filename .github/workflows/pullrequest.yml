@@ -307,7 +307,7 @@ jobs:
         run: yarn install --immutable
 
       - name: Install Playwright Dependencies
-        run: yarn playwright install-deps
+        run: yarn playwright install --with-deps
 
       - name: Running e2e tests
         run: yarn e2e "${AFFECTED_PROJECT}"
