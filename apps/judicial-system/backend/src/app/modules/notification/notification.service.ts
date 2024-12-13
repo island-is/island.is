@@ -78,8 +78,6 @@ export class NotificationService {
       case CaseNotificationType.APPEAL_JUDGES_ASSIGNED:
       case CaseNotificationType.APPEAL_CASE_FILES_UPDATED:
       case CaseNotificationType.CASE_FILES_UPDATED:
-      case CaseNotificationType.DISTRICT_COURT_JUDGE_ASSIGNED:
-      case CaseNotificationType.DISTRICT_COURT_REGISTRAR_ASSIGNED:
         messages = [this.getNotificationMessage(type, user, theCase)]
         break
       default:
