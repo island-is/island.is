@@ -40,11 +40,7 @@ const CaseFiles = () => {
     workingCase.id,
   )
 
-  const stepIsValid =
-    uploadFiles.some(
-      (file) =>
-        file.category === CaseFileCategory.INDICTMENT && file.status === 'done',
-    ) && allFilesDoneOrError
+  const stepIsValid = allFilesDoneOrError
   const handleNavigationTo = useCallback(
     (destination: string) => router.push(`${destination}/${workingCase.id}`),
     [workingCase.id],

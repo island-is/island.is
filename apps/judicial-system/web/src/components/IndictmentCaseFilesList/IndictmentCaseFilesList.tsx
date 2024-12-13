@@ -83,9 +83,6 @@ const IndictmentCaseFilesList: FC<Props> = ({
 
   const cf = workingCase.caseFiles
 
-  const indictments = cf?.filter(
-    (file) => file.category === CaseFileCategory.INDICTMENT,
-  )
   const criminalRecords = cf?.filter(
     (file) => file.category === CaseFileCategory.CRIMINAL_RECORD,
   )
@@ -117,14 +114,6 @@ const IndictmentCaseFilesList: FC<Props> = ({
     <>
       {displayHeading && (
         <SectionHeading title={formatMessage(strings.title)} />
-      )}
-      {indictments && indictments.length > 0 && (
-        <Box marginBottom={5}>
-          <Text variant="h4" as="h4" marginBottom={1}>
-            {formatMessage(caseFiles.indictmentSection)}
-          </Text>
-          <RenderFiles caseFiles={indictments} onOpenFile={onOpen} />
-        </Box>
       )}
       {displayGeneratedPDFs && (
         <Box marginBottom={5}>
