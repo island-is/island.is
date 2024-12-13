@@ -17,12 +17,16 @@ export const SimpleInfoCard = ({
   eyebrow,
 }: BaseProps) => {
   const renderHeader = () => {
+    if (!eyebrow) {
+      return
+    }
     return (
       <Box
         display="flex"
         flexDirection="row"
         justifyContent="spaceBetween"
         marginBottom={3}
+        role="heading"
       >
         <Text variant="eyebrow" color={eyebrowColor}>
           {eyebrow}
