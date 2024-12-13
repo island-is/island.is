@@ -309,13 +309,6 @@ jobs:
       - name: Install Playwright Dependencies
         run: yarn playwright install-deps
 
-      - name: Install Docker Compose
-        run: |
-          mkdir -p ~/.docker/cli-plugins
-          curl -SL https://github.com/docker/compose/releases/latest/download/docker-compose-linux-x86_64 -o ~/.docker/cli-plugins/docker-compose
-          chmod +x ~/.docker/cli-plugins/docker-compose
-          docker-compose version
-
       - name: Running e2e tests
         run: yarn e2e "${AFFECTED_PROJECT}"
 
