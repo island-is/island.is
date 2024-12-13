@@ -1418,19 +1418,19 @@ export class CaseService {
       isIndictment &&
       [CaseState.SUBMITTED, CaseState.RECEIVED].includes(updatedCase.state)
     ) {
-      const judgeChanged =
+      const isJudgeChanged =
         updatedCase.judge?.nationalId !== theCase.judge?.nationalId
-      const registrarChanged =
+      const isRegistrarChanged =
         updatedCase.registrar?.nationalId !== theCase.registrar?.nationalId
 
-      if (judgeChanged) {
+      if (isJudgeChanged) {
         await this.addMessagesForDistrictCourtJudgeAssignedToQueue(
           updatedCase,
           user,
         )
       }
 
-      if (registrarChanged) {
+      if (isRegistrarChanged) {
         await this.addMessagesForDistrictCourtRegistrarAssignedToQueue(
           updatedCase,
           user,
