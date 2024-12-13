@@ -485,10 +485,13 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
     isNewSystemActive
       ? translationStrings.form2025PreviewMainTitle
       : translationStrings.mainTitle,
-  )} ${(
+  )}`
+  const titlePostfix = `${(
     allCalculatorsOptions.find((o) => o.value === dateOfCalculations)?.label ??
     dateOfCalculationsOptions[0].label
   ).toLowerCase()}`
+
+  const titleVariant = isNewSystemActive ? 'h2' : 'h1'
 
   const startMonthOptions = useMemo(() => {
     if (!defaultPensionDate) {
@@ -551,9 +554,16 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
             >
               <Box paddingY={5}>
                 <Stack space={3}>
-                  <Text variant="h1" as="h1">
-                    {title}
-                  </Text>
+                  {isNewSystemActive && (
+                    <Text variant={titleVariant} as="h1">
+                      {title} <div>{titlePostfix}</div>
+                    </Text>
+                  )}
+                  {!isNewSystemActive && (
+                    <Text variant={titleVariant} as="h1">
+                      {title} {titlePostfix}
+                    </Text>
+                  )}
                   <Text>{formatMessage(translationStrings.isTurnedOff)}</Text>
                 </Stack>
               </Box>
@@ -574,9 +584,16 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
                     <Stack space={3}>
                       <Stack space={3}>
                         <Box paddingTop={6}>
-                          <Text variant="h1" as="h1">
-                            {title}
-                          </Text>
+                          {isNewSystemActive && (
+                            <Text variant={titleVariant} as="h1">
+                              {title} <div>{titlePostfix}</div>
+                            </Text>
+                          )}
+                          {!isNewSystemActive && (
+                            <Text variant={titleVariant} as="h1">
+                              {title} {titlePostfix}
+                            </Text>
+                          )}
                         </Box>
                       </Stack>
                       <Box
