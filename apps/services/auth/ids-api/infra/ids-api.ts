@@ -100,6 +100,11 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-ids-api'> => {
         staging: 'digitaliceland',
         dev: 'digitaliceland',
       },
+      ALSO_USE_FAKE_USER_API: {
+        dev: 'true',
+        staging: 'false',
+        prod: 'false',
+      },
     })
     .secrets({
       ZENDESK_CONTACT_FORM_EMAIL: '/k8s/api/ZENDESK_CONTACT_FORM_EMAIL',
