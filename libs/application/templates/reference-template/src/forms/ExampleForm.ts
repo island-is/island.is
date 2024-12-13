@@ -24,7 +24,6 @@ import {
 } from '@island.is/application/types'
 import { ApiActions } from '../shared'
 import { m } from '../lib/messages'
-import { applicantInformationMultiField } from '@island.is/application/ui-forms'
 
 export const ExampleForm: Form = buildForm({
   id: 'ExampleFormDraft',
@@ -41,25 +40,53 @@ export const ExampleForm: Form = buildForm({
       title: 'Table repeater',
       children: [
         buildTableRepeaterField({
-          id: 'tableRepeaterField',
+          id: 'rentalHousingLandlordInfoTable',
           title: '',
           marginTop: 1,
           fields: {
-            nationalIdWithName: {
-              component: 'nationalIdWithName',
-              label: 'nationalIdWithName',
-              phoneLabel: 'Símanúmer',
-              emailLabel: 'Netfang',
-              required: true,
-              showPhoneField: true,
-              phoneRequired: true,
-              showEmailField: true,
-              emailRequired: true,
+            name: {
+              component: 'input',
+              label: 'test 1',
+              width: 'half',
+            },
+            nationalId: {
+              component: 'input',
+              label: 'test 2',
+              format: '######-####',
+              width: 'half',
+            },
+            phone: {
+              component: 'phone',
+              label: 'test 3',
+              format: '###-####',
+              width: 'half',
+            },
+            email: {
+              component: 'input',
+              label: 'test 4',
+              type: 'email',
+              width: 'half',
+            },
+            isRepresentative: {
+              component: 'checkbox',
+              large: true,
+              displayInTable: false,
+              label: 'test 5',
+              options: [
+                {
+                  label: 'test 6',
+                  value: 'YES',
+                },
+              ],
             },
           },
           table: {
-            header: ['name', 'nationalId', 'phone', 'email'],
-            rows: ['name', 'nationalId', 'phone', 'email'],
+            header: [
+              'nameInputLabel',
+              'nationalIdHeaderLabel',
+              'phoneInputLabel',
+              'emailInputLabel',
+            ],
           },
         }),
       ],
