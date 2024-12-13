@@ -116,7 +116,7 @@ export const NationalIdWithName: FC<
       { minAge: minAgePerson },
     )
   } else if (!errorMessage) {
-    nationalIdFieldErrors = getErrorViaPath(errors, nationalIdField)
+    nationalIdFieldErrors = getFieldErrorString(error, 'nationalId')
   }
 
   // get default values
@@ -230,7 +230,7 @@ export const NationalIdWithName: FC<
               onNationalIdChange(v.target.value.replace(/\W/g, ''))
           })}
           loading={searchPersons ? queryLoading : companyQueryLoading}
-          error={getFieldErrorString(error, 'nationalId')}
+          error={nationalIdFieldErrors}
           disabled={disabled}
         />
       </GridColumn>
