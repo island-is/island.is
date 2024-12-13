@@ -1,11 +1,7 @@
 import { FC, useEffect, useState } from 'react'
 import { GridRow, GridColumn } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import {
-  coreErrorMessages,
-  getErrorViaPath,
-  getValueViaPath,
-} from '@island.is/application/core'
+import { coreErrorMessages, getValueViaPath } from '@island.is/application/core'
 import { Application, StaticText } from '@island.is/application/types'
 import { gql, useLazyQuery } from '@apollo/client'
 import {
