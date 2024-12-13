@@ -81,5 +81,3 @@ for arn in $arns; do
     }
   done
 done
-
-printf "Með kveðju\n\nApró ehf." >>"$OUTPUT_FILE"
