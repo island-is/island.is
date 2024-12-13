@@ -1305,8 +1305,6 @@ export class CaseService {
   ): Promise<void> {
     const isIndictment = isIndictmentCase(updatedCase.type)
 
-    console.log('!!!!!!!!!!!!!!!!!!!!!!', { isIndictment: updatedCase.state })
-
     if (updatedCase.state !== theCase.state) {
       // New case state
       if (
