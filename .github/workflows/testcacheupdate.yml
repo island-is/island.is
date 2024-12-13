@@ -1,5 +1,4 @@
-name: Monorepo pipeline - pull request
-
+name: Cache update test
 on:
   push:
     branches:
@@ -15,8 +14,6 @@ concurrency:
   group: pullrequest-${{ github.head_ref || github.run_id }}
   cancel-in-progress: true
 
-env:
-  COMPOSE_HTTP_TIMEOUT: 180
 
 jobs:
   prepare:
