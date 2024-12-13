@@ -525,7 +525,7 @@ export class CmsElasticsearchService {
 
     const size = input.size ?? 10
 
-    const sort: ('_score' | sortRule)[] = [
+    const sort: sortRule[] = [
       {
         [SortField.RELEASE_DATE]: {
           order: SortDirection.DESC,
