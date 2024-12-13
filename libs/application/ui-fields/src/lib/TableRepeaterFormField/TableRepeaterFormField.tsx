@@ -85,8 +85,7 @@ export const TableRepeaterFormField: FC<Props> = ({
   const customMappedValues = handleCustomMappedValues(tableItems, values)
 
   const handleSaveItem = async (index: number) => {
-    const fieldId = `${data.id}[${index}]`
-    const isValid = await methods.trigger(fieldId, {
+    const isValid = await methods.trigger(`${data.id}[${index}]`, {
       shouldFocus: true,
     })
 
