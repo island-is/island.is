@@ -146,7 +146,7 @@ const useFilePermissions = (workingCase: Case, user?: User) => {
       canViewRulings:
         isDistrictCourtUser(user) || isCompletedCase(workingCase.state),
     }),
-    [user, workingCase.hasCivilClaims],
+    [user, workingCase.hasCivilClaims, workingCase.state],
   )
 }
 
