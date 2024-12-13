@@ -19,8 +19,12 @@ export const ExampleSchema = z.object({
     z.object({
       nationalIdWithName: z.object({
         name: z.string().min(1).max(256),
-        nationalId: z.string().min(1).max(256),
-        phone: z.string().min(1).max(256),
+        nationalId: z.string().refine((n) => n && kennitala.isValid(n), {
+          params: m.dataSchemeNationalId,
+        }),
+        phone: z.string().refine(isValidNumber, {
+          params: m.dataSchemePhoneNumber,
+        }),
         email: z.string().email(),
       }),
     }),
