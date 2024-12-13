@@ -109,7 +109,7 @@ const serializeService: SerializeMethod<HelmService> = async (
   result.resources = serviceDef.resources
 
   // replicas
-  if (env1.type == "staging") {
+  if (env1.type == 'staging') {
     result.replicaCount = {
       min: 1,
       max: 4,
