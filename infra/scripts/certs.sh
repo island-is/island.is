@@ -37,7 +37,7 @@ aws sts get-caller-identity >/dev/null 2>&1 || {
 # Fetch certificates pending validation
 echo "Fetching certificates pending validation..."
 arns=$(aws acm list-certificates \
-  --certificate-statuses PENDING_VALIDATION \
+  --certificate-statuses FAILED \
   --includes keyTypes=RSA_1024,RSA_2048,RSA_3072,RSA_4096,EC_prime256v1,EC_secp384r1,EC_secp521r1 \
   2>/dev/null |
   jq -r '.CertificateSummaryList[] | .CertificateArn') ||
