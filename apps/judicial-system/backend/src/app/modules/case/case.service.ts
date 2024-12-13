@@ -686,7 +686,7 @@ export class CaseService {
     ])
   }
 
-  private addMessagesForCourtOfficalAssignedToQueue(
+  private addMessagesForDistrictCourtJudgeAssignedToQueue(
     theCase: Case,
     user: TUser,
   ): Promise<void> {
@@ -695,7 +695,21 @@ export class CaseService {
         type: MessageType.NOTIFICATION,
         user,
         caseId: theCase.id,
-        body: { type: CaseNotificationType.COURT_OFFICIAL_ASSIGNED },
+        body: { type: CaseNotificationType.DISTRICT_COURT_JUDGE_ASSIGNED },
+      },
+    ])
+  }
+
+  private addMessagesForDistrictCourtRegistrarAssignedToQueue(
+    theCase: Case,
+    user: TUser,
+  ): Promise<void> {
+    return this.messageService.sendMessagesToQueue([
+      {
+        type: MessageType.NOTIFICATION,
+        user,
+        caseId: theCase.id,
+        body: { type: CaseNotificationType.DISTRICT_COURT_REGISTRAR_ASSIGNED },
       },
     ])
   }
@@ -1402,6 +1416,30 @@ export class CaseService {
 
     if (
       isIndictment &&
+      [CaseState.SUBMITTED, CaseState.RECEIVED].includes(updatedCase.state)
+    ) {
+      const judgeChanged =
+        updatedCase.judge?.nationalId !== theCase.judge?.nationalId
+      const registrarChanged =
+        updatedCase.registrar?.nationalId !== theCase.registrar?.nationalId
+
+      if (judgeChanged) {
+        await this.addMessagesForDistrictCourtJudgeAssignedToQueue(
+          updatedCase,
+          user,
+        )
+      }
+
+      if (registrarChanged) {
+        await this.addMessagesForDistrictCourtRegistrarAssignedToQueue(
+          updatedCase,
+          user,
+        )
+      }
+    }
+
+    if (
+      isIndictment &&
       ![
         CaseState.DRAFT,
         CaseState.SUBMITTED,
@@ -1456,18 +1494,10 @@ export class CaseService {
       const courtDateChanged =
         updatedCourtDate &&
         updatedCourtDate.date.getTime() !== courtDate?.date.getTime()
-      const judgeChanged =
-        updatedCase.judge?.nationalId !== theCase.judge?.nationalId
-      const registrarChanged =
-        updatedCase.registrar?.nationalId !== theCase.registrar?.nationalId
 
       if (arraignmentDateChanged || courtDateChanged) {
         // New arraignment date or new court date
         await this.addMessagesForNewCourtDateToQueue(updatedCase, user)
-      }
-
-      if (judgeChanged || registrarChanged) {
-        await this.addMessagesForCourtOfficalAssignedToQueue(updatedCase, user)
       }
 
       await this.addMessagesForNewSubpoenasToQueue(theCase, updatedCase, user)
