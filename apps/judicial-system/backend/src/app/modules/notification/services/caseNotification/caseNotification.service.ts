@@ -835,40 +835,23 @@ export class CaseNotificationService extends BaseNotificationService {
     return result
   }
 
-  private async sendDistrictCourtJudgeAssignedNotifications(
+  private async sendDistrictCourtUserAssignedNotifications(
     theCase: Case,
+    userRole: UserRole.DISTRICT_COURT_JUDGE | UserRole.DISTRICT_COURT_REGISTRAR,
   ): Promise<DeliverResponse> {
     const recipient =
       await this.sendCourtOfficialAssignedEmailNotificationForIndictmentCase(
         theCase,
-        UserRole.DISTRICT_COURT_JUDGE,
+        userRole,
       )
 
-    const result = await this.recordNotification(
+    return await this.recordNotification(
       theCase.id,
-      CaseNotificationType.DISTRICT_COURT_JUDGE_ASSIGNED,
+      userRole === UserRole.DISTRICT_COURT_JUDGE
+        ? CaseNotificationType.DISTRICT_COURT_JUDGE_ASSIGNED
+        : CaseNotificationType.DISTRICT_COURT_REGISTRAR_ASSIGNED,
       [recipient],
     )
-
-    return result
-  }
-
-  private async sendDistrictCourtRegistrarAssignedNotifications(
-    theCase: Case,
-  ): Promise<DeliverResponse> {
-    const recipient =
-      await this.sendCourtOfficialAssignedEmailNotificationForIndictmentCase(
-        theCase,
-        UserRole.DISTRICT_COURT_REGISTRAR,
-      )
-
-    const result = await this.recordNotification(
-      theCase.id,
-      CaseNotificationType.DISTRICT_COURT_REGISTRAR_ASSIGNED,
-      [recipient],
-    )
-
-    return result
   }
   //#endregion
 
@@ -2613,9 +2596,15 @@ export class CaseNotificationService extends BaseNotificationService {
       case CaseNotificationType.COURT_DATE:
         return this.sendCourtDateNotifications(theCase, user)
       case CaseNotificationType.DISTRICT_COURT_JUDGE_ASSIGNED:
-        return this.sendDistrictCourtJudgeAssignedNotifications(theCase)
+        return this.sendDistrictCourtUserAssignedNotifications(
+          theCase,
+          UserRole.DISTRICT_COURT_JUDGE,
+        )
       case CaseNotificationType.DISTRICT_COURT_REGISTRAR_ASSIGNED:
-        return this.sendDistrictCourtRegistrarAssignedNotifications(theCase)
+        return this.sendDistrictCourtUserAssignedNotifications(
+          theCase,
+          UserRole.DISTRICT_COURT_REGISTRAR,
+        )
       case CaseNotificationType.RULING:
         return this.sendRulingNotifications(theCase)
       case CaseNotificationType.MODIFIED:
