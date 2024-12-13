@@ -1,6 +1,6 @@
 import { getValueViaPath } from '@island.is/application/core'
 import { FormValue } from '@island.is/application/types'
-import { YES } from '../constants'
+import { YES } from './constants'
 import { WhoIsTheNotificationForEnum } from '../types'
 
 export const isRepresentativeOfCompanyOrInstitute = (formValue: FormValue) => {

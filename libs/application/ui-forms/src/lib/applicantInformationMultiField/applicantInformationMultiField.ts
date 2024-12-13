@@ -35,7 +35,7 @@ export const applicantInformationMultiField = (
         disabled: true,
         defaultValue: (application: ApplicantInformationInterface) =>
           application.externalData?.nationalRegistry?.data?.fullName ??
-          application.externalData?.identityRegistry?.data?.name ??
+          application.externalData?.identity?.data?.name ??
           '',
       }),
       buildTextField({
@@ -47,7 +47,7 @@ export const applicantInformationMultiField = (
         disabled: true,
         defaultValue: (application: ApplicantInformationInterface) =>
           application.externalData?.nationalRegistry?.data?.nationalId ??
-          application.externalData?.identityRegistry?.data?.nationalId ??
+          application.externalData?.identity?.data?.nationalId ??
           '',
       }),
       buildTextField({
@@ -59,8 +59,7 @@ export const applicantInformationMultiField = (
         defaultValue: (application: ApplicantInformationInterface) =>
           application.externalData?.nationalRegistry?.data?.address
             ?.streetAddress ??
-          application.externalData?.identityRegistry?.data?.address
-            ?.streetAddress ??
+          application.externalData?.identity?.data?.address?.streetAddress ??
           '',
       }),
       buildTextField({
@@ -74,8 +73,7 @@ export const applicantInformationMultiField = (
           return (
             application.externalData?.nationalRegistry?.data?.address
               ?.postalCode ??
-            application.externalData?.identityRegistry?.data?.address
-              ?.postalCode ??
+            application.externalData?.identity?.data?.address?.postalCode ??
             ''
           )
         },
@@ -88,7 +86,7 @@ export const applicantInformationMultiField = (
         disabled: true,
         defaultValue: (application: ApplicantInformationInterface) =>
           application.externalData?.nationalRegistry?.data?.address?.city ??
-          application.externalData?.identityRegistry?.data?.address?.city ??
+          application.externalData?.identity?.data?.address?.city ??
           '',
       }),
       buildTextField({
