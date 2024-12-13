@@ -73,11 +73,7 @@ export const ApplicantsRepresentativesSummary: FC<FieldBaseProps> = ({
                     </GridColumn>
 
                     <div className={changeButton}>
-                      <Button
-                        variant="ghost"
-                        size="small"
-                        onClick={() => console.log('Open')}
-                      >
+                      <Button variant="ghost" size="small" onClick={() => {}}>
                         {formatMessage(summary.changeSectionButtonLabel)}
                       </Button>
                     </div>

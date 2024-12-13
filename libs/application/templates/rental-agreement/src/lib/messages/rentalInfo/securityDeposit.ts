@@ -30,7 +30,7 @@ export const securityDeposit = defineMessages({
   },
   typeSelectionTitle: {
     id: 'ra.application:securityDeposit.typeSelectionTitle',
-    defaultMessage: 'Tegund tryggingar',
+    defaultMessage: 'Tegund tryggingar ',
     description: 'security deposit type selection title',
   },
   typeSelectionPlaceholder: {

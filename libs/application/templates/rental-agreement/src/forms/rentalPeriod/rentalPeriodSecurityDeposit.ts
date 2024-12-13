@@ -24,17 +24,23 @@ import { securityDeposit } from '../../lib/messages'
 
 export const RentalPeriodSecurityDeposit = buildSubSection({
   condition: (answers) => {
-    const checkbox = getValueViaPath<Array<string>>(
+    const securityDeposit = getValueViaPath<Array<string>>(
       answers,
       'rentalAmount.isPaymentInsuranceRequired',
     )
-    console.log('Checkbox: ', checkbox)
-    return checkbox?.includes(AnswerOptions.YES) || false
+    return securityDeposit?.includes(AnswerOptions.YES) || false
   },
   id: Routes.SECURITYDEPOSIT,
   title: securityDeposit.subSectionName,
   children: [
     buildMultiField({
+      condition: (answers) => {
+        const securityDeposit = getValueViaPath<Array<string>>(
+          answers,
+          'rentalAmount.isPaymentInsuranceRequired',
+        )
+        return securityDeposit?.includes(AnswerOptions.YES) || false
+      },
       id: Routes.SECURITYDEPOSIT,
       title: securityDeposit.pageTitle,
       description: securityDeposit.pageDescription,

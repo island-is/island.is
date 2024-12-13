@@ -23,9 +23,6 @@ export const SummaryCardRow = ({
 }: SummaryCardProps) => {
   const { formatMessage } = useLocale()
 
-  console.log('editAction', editAction)
-  console.log('route', route)
-
   return (
     <>
       <GridRow className={gridRow}>
