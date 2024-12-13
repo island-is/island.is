@@ -40,8 +40,6 @@ export const InfoCard = ({ size, ...restOfProps }: InfoCardProps) => {
 
   const cardSize = isMobile ? 'small' : size
 
-  console.log(isMobile)
-  console.log(cardSize)
   return (
     <FocusableBox
       className={
@@ -58,7 +56,7 @@ export const InfoCard = ({ size, ...restOfProps }: InfoCardProps) => {
       color="blue"
       borderWidth="standard"
       width="full"
-      borderRadius="standard"
+      borderRadius="large"
     >
       <Box width="full" paddingX={4} paddingY={3}>
         {restOfProps.variant === 'detailed' ? (
