@@ -6,7 +6,7 @@ import {
 } from '@island.is/application/core'
 import { m } from '../../../lib/messages'
 import { CAPITALNUMBERS } from '../../../utils/constants'
-import { sumCapitalNumbers } from '../../../utils/helpers'
+import { sumCapitalNumbers } from '../../../utils/sums'
 
 export const capitalNumberSubSection = buildSubSection({
   id: 'keynumbers.capitalNumbers',
