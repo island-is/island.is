@@ -12,8 +12,7 @@
  */
 
 export * from './Card/Card'
-export * from './InfoCard/InfoCard'
-export * from './InfoCard/InfoCardWrapper'
+export * from './InfoCardGrid/InfoCardGrid'
 export * from './Header/Header'
 export * from './SearchInput/SearchInput'
 export * from './LanguageToggler/LanguageToggler'

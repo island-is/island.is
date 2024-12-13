@@ -14,7 +14,7 @@ interface Props {
   columns?: 1 | 2 | 3
 }
 
-export const InfoCardWrapper = ({ cards, variant, columns }: Props) => {
+export const InfoCardGrid = ({ cards, variant, columns }: Props) => {
   const [isMobile, setIsMobile] = useState(false)
   const { width } = useWindowSize()
 

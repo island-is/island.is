@@ -1,6 +1,8 @@
-import * as React from 'react'
+import { useEffect, useState } from 'react'
+import { useWindowSize } from 'react-use'
 
 import { Box, FocusableBox, LinkV2 } from '@island.is/island-ui/core'
+import { theme } from '@island.is/island-ui/theme'
 
 import { DetailedInfoCard, DetailedProps } from './DetailedInfoCard'
 import { SimpleInfoCard } from './SimpleInfoCard'
@@ -25,19 +27,33 @@ export type InfoCardProps =
       variant: 'detailed'
     })
 
-export const InfoCard = (props: InfoCardProps) => {
+export const InfoCard = ({ size, ...restOfProps }: InfoCardProps) => {
+  const [isMobile, setIsMobile] = useState<boolean>(false)
+  const { width } = useWindowSize()
+
+  useEffect(() => {
+    if (width < theme.breakpoints.md) {
+      return setIsMobile(true)
+    }
+    setIsMobile(false)
+  }, [width])
+
+  const cardSize = isMobile ? 'small' : size
+
+  console.log(isMobile)
+  console.log(cardSize)
   return (
     <FocusableBox
       className={
-        props.size === 'large'
+        size === 'large'
           ? styles.infoCardWide
-          : props.size === 'small'
+          : size === 'small'
           ? styles.infoCardSmall
           : styles.infoCard
       }
       component={LinkV2}
-      href={props.link.href}
-      background="white"
+      href={restOfProps.link.href}
+      background={size === 'small' ? 'yellow100' : 'white'}
       borderColor="white"
       color="blue"
       borderWidth="standard"
@@ -45,10 +61,10 @@ export const InfoCard = (props: InfoCardProps) => {
       borderRadius="standard"
     >
       <Box width="full" paddingX={4} paddingY={3}>
-        {props.variant === 'detailed' ? (
-          <DetailedInfoCard {...props} />
+        {restOfProps.variant === 'detailed' ? (
+          <DetailedInfoCard size={cardSize} {...restOfProps} />
         ) : (
-          <SimpleInfoCard {...props} />
+          <SimpleInfoCard size={cardSize} {...restOfProps} />
         )}
       </Box>
     </FocusableBox>

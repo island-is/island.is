@@ -1,27 +1,19 @@
-import * as React from 'react'
-import { useEffect, useState } from 'react'
-import { useWindowSize } from 'react-use'
-
 import {
   Box,
-  FocusableBox,
   GridColumn,
   GridContainer,
   GridRow,
   Icon,
   IconMapIcon,
   Inline,
-  LinkV2,
   Stack,
   Tag,
   Text,
 } from '@island.is/island-ui/core'
 import { ActionCardProps } from '@island.is/island-ui/core/types'
-import { theme } from '@island.is/island-ui/theme'
 import { isDefined } from '@island.is/shared/utils'
 
 import { BaseProps } from './InfoCard'
-import * as styles from './InfoCard.css'
 
 const eyebrowColor = 'blueberry600'
 
@@ -47,18 +39,7 @@ export const DetailedInfoCard = ({
   tags,
   logo,
   logoAlt,
-  link,
 }: DetailedProps) => {
-  const [isTablet, setIsTablet] = useState(false)
-  const { width } = useWindowSize()
-
-  useEffect(() => {
-    if (width < theme.breakpoints.lg) {
-      return setIsTablet(true)
-    }
-    setIsTablet(false)
-  }, [width])
-
   const renderLogo = () => {
     if (!logo) {
       return null
@@ -88,7 +69,7 @@ export const DetailedInfoCard = ({
             >
               <Icon
                 icon={d.icon}
-                size="small"
+                size="medium"
                 type="outline"
                 color="blue400"
                 useStroke
@@ -154,7 +135,7 @@ export const DetailedInfoCard = ({
   }
 
   const renderContent = () => {
-    if (size === 'large' && !isTablet) {
+    if (size === 'large') {
       return (
         <GridContainer>
           <GridRow direction="row">

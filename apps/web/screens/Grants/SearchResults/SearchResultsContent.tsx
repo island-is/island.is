@@ -7,7 +7,7 @@ import { Box, Button, Text } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import { Locale } from '@island.is/shared/types'
 import { isDefined } from '@island.is/shared/utils'
-import { InfoCardWrapper } from '@island.is/web/components'
+import { InfoCardGrid } from '@island.is/web/components'
 import { Grant } from '@island.is/web/graphql/schema'
 import { useLinkResolver } from '@island.is/web/hooks'
 
@@ -55,7 +55,7 @@ export const SearchResultsContent = ({ grants, subheader, locale }: Props) => {
         </Box>
       )}
       {grants?.length ? (
-        <InfoCardWrapper
+        <InfoCardGrid
           columns={!isGridLayout ? 1 : 2}
           variant="detailed"
           cards={

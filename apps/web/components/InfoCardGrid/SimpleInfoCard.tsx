@@ -1,20 +1,12 @@
-import * as React from 'react'
-import { useEffect, useState } from 'react'
-import { useWindowSize } from 'react-use'
-
 import {
   Box,
-  FocusableBox,
   GridColumn,
   GridContainer,
   GridRow,
-  LinkV2,
   Text,
 } from '@island.is/island-ui/core'
-import { theme } from '@island.is/island-ui/theme'
 
 import { BaseProps } from './InfoCard'
-import * as styles from './InfoCard.css'
 
 const eyebrowColor = 'blueberry600'
 
@@ -23,18 +15,7 @@ export const SimpleInfoCard = ({
   description,
   size = 'medium',
   eyebrow,
-  link,
 }: BaseProps) => {
-  const [isTablet, setIsTablet] = useState(false)
-  const { width } = useWindowSize()
-
-  useEffect(() => {
-    if (width < theme.breakpoints.lg) {
-      return setIsTablet(true)
-    }
-    setIsTablet(false)
-  }, [width])
-
   const renderHeader = () => {
     return (
       <Box
