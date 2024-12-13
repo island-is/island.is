@@ -8,7 +8,6 @@ import {
   getAppealResultTextByValue,
 } from '@island.is/judicial-system/formatters'
 import {
-  Feature,
   isCompletedCase,
   isCourtOfAppealsUser,
   isDefenceUser,
@@ -17,7 +16,6 @@ import {
   isInvestigationCase,
   isProsecutionUser,
   isRestrictionCase,
-  isTrafficViolationCase,
 } from '@island.is/judicial-system/types'
 import { core, sections } from '@island.is/judicial-system-web/messages'
 import { FeatureContext } from '@island.is/judicial-system-web/src/components'
@@ -406,9 +404,6 @@ const useSections = (
       state === CaseState.RECEIVED ||
       state === CaseState.WAITING_FOR_CANCELLATION ||
       router.pathname === `${constants.INDICTMENTS_ADD_FILES_ROUTE}/[id]`
-    const isTrafficViolation =
-      features.includes(Feature.MULTIPLE_INDICTMENT_SUBTYPES) ||
-      isTrafficViolationCase(workingCase)
 
     return {
       name: formatMessage(sections.indictmentCaseProsecutorSection.title),
@@ -505,39 +500,31 @@ const useSections = (
                       )
                   : undefined,
             },
-            ...(isTrafficViolation
-              ? [
-                  {
-                    name: formatMessage(
-                      sections.indictmentCaseProsecutorSection.indictment,
-                    ),
-                    href: `${constants.INDICTMENTS_TRAFFIC_VIOLATION_ROUTE}/${id}`,
-                    isActive: isActive(
-                      constants.INDICTMENTS_TRAFFIC_VIOLATION_ROUTE,
-                    ),
-                    onClick:
-                      !isActive(
+            {
+              name: formatMessage(
+                sections.indictmentCaseProsecutorSection.indictment,
+              ),
+              href: `${constants.INDICTMENTS_TRAFFIC_VIOLATION_ROUTE}/${id}`,
+              isActive: isActive(constants.INDICTMENTS_TRAFFIC_VIOLATION_ROUTE),
+              onClick:
+                !isActive(constants.INDICTMENTS_TRAFFIC_VIOLATION_ROUTE) &&
+                validateFormStepper(
+                  isValid,
+                  [
+                    constants.INDICTMENTS_DEFENDANT_ROUTE,
+                    constants.INDICTMENTS_POLICE_CASE_FILES_ROUTE,
+                    constants.INDICTMENTS_CASE_FILE_ROUTE,
+                    constants.INDICTMENTS_PROCESSING_ROUTE,
+                  ],
+                  workingCase,
+                ) &&
+                onNavigationTo
+                  ? async () =>
+                      await onNavigationTo(
                         constants.INDICTMENTS_TRAFFIC_VIOLATION_ROUTE,
-                      ) &&
-                      validateFormStepper(
-                        isValid,
-                        [
-                          constants.INDICTMENTS_DEFENDANT_ROUTE,
-                          constants.INDICTMENTS_POLICE_CASE_FILES_ROUTE,
-                          constants.INDICTMENTS_CASE_FILE_ROUTE,
-                          constants.INDICTMENTS_PROCESSING_ROUTE,
-                        ],
-                        workingCase,
-                      ) &&
-                      onNavigationTo
-                        ? async () =>
-                            await onNavigationTo(
-                              constants.INDICTMENTS_TRAFFIC_VIOLATION_ROUTE,
-                            )
-                        : undefined,
-                  },
-                ]
-              : []),
+                      )
+                  : undefined,
+            },
             {
               name: capitalize(
                 formatMessage(

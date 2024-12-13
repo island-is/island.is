@@ -771,22 +771,13 @@ export class CaseService {
       }),
     )
 
-    const caseFilesCategories = isTrafficViolationCase(theCase)
-      ? [
-          CaseFileCategory.CRIMINAL_RECORD,
-          CaseFileCategory.COST_BREAKDOWN,
-          CaseFileCategory.CASE_FILE,
-          CaseFileCategory.PROSECUTOR_CASE_FILE,
-          CaseFileCategory.DEFENDANT_CASE_FILE,
-        ]
-      : [
-          CaseFileCategory.INDICTMENT,
-          CaseFileCategory.CRIMINAL_RECORD,
-          CaseFileCategory.COST_BREAKDOWN,
-          CaseFileCategory.CASE_FILE,
-          CaseFileCategory.PROSECUTOR_CASE_FILE,
-          CaseFileCategory.DEFENDANT_CASE_FILE,
-        ]
+    const caseFilesCategories = [
+      CaseFileCategory.CRIMINAL_RECORD,
+      CaseFileCategory.COST_BREAKDOWN,
+      CaseFileCategory.CASE_FILE,
+      CaseFileCategory.PROSECUTOR_CASE_FILE,
+      CaseFileCategory.DEFENDANT_CASE_FILE,
+    ]
 
     const deliverCaseFileToCourtMessages =
       theCase.caseFiles
