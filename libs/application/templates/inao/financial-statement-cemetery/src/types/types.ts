@@ -46,3 +46,19 @@ type InaoConfigItem = {
 export type AuditConfig = {
   financialStatementsInaoConfig: Array<InaoConfigItem>
 }
+
+export type CareTaker = {
+  nationalId: string
+  name: string
+  role: string
+}
+
+export type TaxInfoItem = {
+  __typename: string
+  key: number
+  value: string
+}
+
+export type TaxInfoData = {
+  financialStatementsInaoTaxInfo: Array<TaxInfoItem>
+}
