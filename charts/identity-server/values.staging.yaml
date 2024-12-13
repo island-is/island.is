@@ -129,6 +129,7 @@ identity-server:
     - 'nginx-ingress-external'
     - 'user-notification'
     - 'portals-admin'
+    - 'datadog'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -413,6 +414,7 @@ services-auth-delegation-api:
 services-auth-ids-api:
   enabled: true
   env:
+    ALSO_USE_FAKE_USER_API: 'false'
     CODE_OWNER: 'aranja'
     COMPANY_REGISTRY_REDIS_NODES: '["clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379"]'
     COMPANY_REGISTRY_XROAD_PROVIDER_ID: 'IS-TEST/GOV/5402696029/Skatturinn/ft-v1'
@@ -457,6 +459,7 @@ services-auth-ids-api:
   grantNamespaces:
     - 'nginx-ingress-external'
     - 'user-notification'
+    - 'datadog'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -565,6 +568,7 @@ services-auth-ids-api-cleanup:
     - 'nginx-ingress-external'
     - 'user-notification'
     - 'portals-admin'
+    - 'datadog'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:

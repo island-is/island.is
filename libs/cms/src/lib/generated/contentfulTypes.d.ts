@@ -1838,20 +1838,36 @@ export interface IGrantFields {
   /** Application hints */
   grantApplicationHints?: Document | undefined
 
-  /** Date from */
+  /** Open from */
   grantDateFrom?: string | undefined
 
-  /** Date to */
+  /** Open from hour */
+  grantOpenFromHour?: number | undefined
+
+  /** Open to */
   grantDateTo?: string | undefined
 
-  /** Is open? */
-  grantIsOpen?: boolean | undefined
+  /** Open to hour */
+  grantOpenToHour?: number | undefined
+
+  /** From date is estimated */
+  grantFromDateIsEstimated?: boolean | undefined
 
   /** Status */
-  grantStatus: 'open' | 'closed' | 'see_description'
+  grantStatus:
+    | 'Automatic'
+    | 'Always open'
+    | 'Open with note'
+    | 'Closed with note'
+
+  /** Status Note */
+  grantStatusNote?: string | undefined
 
   /** Files */
   grantFiles?: Asset[] | undefined
+
+  /** Support links */
+  grantSupportLinks?: ILink[] | undefined
 
   /** Category tags */
   grantCategoryTags?: IGenericTag[] | undefined
@@ -2348,10 +2364,21 @@ export interface ILinkGroupFields {
   name: string
 
   /** Primary Link */
-  primaryLink: ILink | IOrganizationSubpage | IProjectSubpage
+  primaryLink:
+    | ILink
+    | IOrganizationSubpage
+    | IProjectSubpage
+    | IOrganizationParentSubpage
 
   /** Children Links */
-  childrenLinks?: (ILink | IProjectSubpage | IOrganizationSubpage)[] | undefined
+  childrenLinks?:
+    | (
+        | ILink
+        | IProjectSubpage
+        | IOrganizationSubpage
+        | IOrganizationParentSubpage
+      )[]
+    | undefined
 }
 
 export interface ILinkGroup extends Entry<ILinkGroupFields> {

@@ -991,6 +991,7 @@ export const buildDisplayField = (
     value,
     suffix,
     rightAlign,
+    halfWidthOwnline,
   } = data
   return {
     ...extractCommonFields(data),
@@ -1006,5 +1007,6 @@ export const buildDisplayField = (
     value,
     suffix,
     rightAlign,
+    halfWidthOwnline,
   }
 }
