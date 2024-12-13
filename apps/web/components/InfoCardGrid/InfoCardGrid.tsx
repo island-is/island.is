@@ -29,7 +29,7 @@ export const InfoCardGrid = ({ cards, variant, columns }: Props) => {
     return (
       <Stack space={3}>
         {cards.map((c) => (
-          <InfoCard variant={variant} size={'large'} {...c} />
+          <InfoCard key={c.id} variant={variant} size={'large'} {...c} />
         ))}
       </Stack>
     )

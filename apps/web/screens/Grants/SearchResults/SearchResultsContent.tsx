@@ -68,6 +68,7 @@ export const SearchResultsContent = ({ grants, subheader, locale }: Props) => {
                 const status = parseStatus(grant, formatMessage, locale)
 
                 return {
+                  id: grant.id,
                   eyebrow: grant.fund?.title ?? grant.name ?? '',
                   subEyebrow: grant.fund?.parentOrganization?.title,
                   title: grant.name ?? '',

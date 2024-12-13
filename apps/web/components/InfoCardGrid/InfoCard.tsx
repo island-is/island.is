@@ -9,6 +9,7 @@ import { SimpleInfoCard } from './SimpleInfoCard'
 import * as styles from './InfoCard.css'
 
 export interface BaseProps {
+  id: string
   title: string
   description: string
   eyebrow: string
