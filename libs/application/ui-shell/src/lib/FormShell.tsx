@@ -25,6 +25,7 @@ import {
 } from '../reducer/ApplicationFormReducer'
 import { ActionTypes } from '../reducer/ReducerTypes'
 import * as styles from './FormShell.css'
+import { getFormComponent } from '../utils'
 import { canGoBack } from '../reducer/reducerUtils'
 
 export const FormShell: FC<
@@ -67,7 +68,7 @@ export const FormShell: FC<
   } = state.form
   const showProgressTag = mode !== FormModes.DRAFT
   const currentScreen = screens[activeScreen]
-  const FormLogo = form.logo
+  const FormLogo = getFormComponent(form.logo, storedApplication)
 
   const getDraftSectionCurrentScreen = (): number | undefined => {
     const currentDraftScreenSection = sections.find(
