@@ -42,8 +42,9 @@ const GrantsHomePage: CustomScreen<GrantsHomeProps> = ({
   locale,
   customPageData,
 }) => {
-  const { formatMessage } = useIntl()
+  const intl = useIntl()
   const { linkResolver } = useLinkResolver()
+  const { formatMessage } = intl
 
   const baseUrl = linkResolver('styrkjatorg', [], locale).href
   const searchUrl = linkResolver('styrkjatorgsearch', [], locale).href

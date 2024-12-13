@@ -351,7 +351,7 @@ const Defendant = () => {
                 gender: defendant.gender,
                 name: defendant.name,
                 address: defendant.address,
-                nationalId: defendant.nationalId,
+                nationalId: defendant.nationalId || null,
                 noNationalId: defendant.noNationalId,
                 citizenship: defendant.citizenship,
               })
@@ -361,7 +361,7 @@ const Defendant = () => {
                 gender: defendant.gender,
                 name: defendant.name,
                 address: defendant.address,
-                nationalId: defendant.nationalId,
+                nationalId: defendant.nationalId || null,
                 noNationalId: defendant.noNationalId,
                 citizenship: defendant.citizenship,
               })
@@ -370,7 +370,6 @@ const Defendant = () => {
           router.push(`${destination}/${createdCase.id}`)
         } else {
           toast.error(formatMessage(errors.createCase))
-          return
         }
       } else {
         router.push(`${destination}/${workingCase.id}`)
@@ -416,14 +415,7 @@ const Defendant = () => {
 
   const handleCreateDefendantClick = async () => {
     if (workingCase.id) {
-      const defendantId = await createDefendant({
-        caseId: workingCase.id,
-        gender: undefined,
-        name: '',
-        address: '',
-        nationalId: '',
-        citizenship: '',
-      })
+      const defendantId = await createDefendant({ caseId: workingCase.id })
 
       createEmptyDefendant(defendantId)
     } else {
@@ -438,14 +430,7 @@ const Defendant = () => {
       ...prevWorkingCase,
       defendants: prevWorkingCase.defendants && [
         ...prevWorkingCase.defendants,
-        {
-          id: defendantId || uuid(),
-          gender: undefined,
-          name: '',
-          nationalId: '',
-          address: '',
-          citizenship: '',
-        } as TDefendant,
+        { id: defendantId || uuid() },
       ],
     }))
   }

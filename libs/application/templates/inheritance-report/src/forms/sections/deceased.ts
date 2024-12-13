@@ -84,7 +84,7 @@ export const deceased = buildSection({
         }),
         buildDescriptionField({
           id: 'space3',
-          space: 'gutter',
+          space: 'containerGutter',
           title: '',
         }),
         buildRadioField({
@@ -118,12 +118,12 @@ export const deceased = buildSection({
           {
             name: 'customShare.customSpouseSharePercentage',
             placeholder: '50%',
-            label: m.deceasedShare.defaultMessage,
+            label: m.deceasedSharePercentage.defaultMessage,
           },
         ),
         buildDescriptionField({
           id: 'space4',
-          space: 'gutter',
+          space: 'containerGutter',
           title: '',
         }),
         buildRadioField({

@@ -1,4 +1,3 @@
-import { useIntl } from 'react-intl'
 import { useWindowSize } from 'react-use'
 import format from 'date-fns/format'
 import { useRouter } from 'next/router'
@@ -13,7 +12,7 @@ import { Grant } from '@island.is/web/graphql/schema'
 import { useLinkResolver } from '@island.is/web/hooks'
 
 import { m } from '../messages'
-import { generateStatusTag } from '../utils'
+import { generateStatusTag, parseStatus } from '../utils'
 
 interface Props {
   grants?: Array<Grant>
@@ -44,6 +43,7 @@ export const SearchResultsContent = ({ grants, subheader, locale }: Props) => {
               return null
             }
 
+            const status = parseStatus(grant, formatMessage, locale)
             return (
               <Box key={grant.id}>
                 {grant.applicationId && (
@@ -54,11 +54,10 @@ export const SearchResultsContent = ({ grants, subheader, locale }: Props) => {
                     text={grant.description ?? ''}
                     logo={grant.fund?.parentOrganization?.logo?.url ?? ''}
                     logoAlt={grant.fund?.parentOrganization?.logo?.title ?? ''}
-                    tag={
-                      grant.status
-                        ? generateStatusTag(grant.status, formatMessage)
-                        : undefined
-                    }
+                    tag={generateStatusTag(
+                      status.applicationStatus,
+                      formatMessage,
+                    )}
                     cta={{
                       label: formatMessage(m.general.seeMore),
                       variant: 'text',
@@ -80,14 +79,17 @@ export const SearchResultsContent = ({ grants, subheader, locale }: Props) => {
                             text: `${format(
                               new Date(grant.dateFrom),
                               'dd.MM.',
-                            )}-${format(new Date(grant.dateTo), 'dd.MM.yyyy')}`,
+                            )} - ${format(
+                              new Date(grant.dateTo),
+                              'dd.MM.yyyy',
+                            )}`,
                           }
                         : null,
-                      grant.applicationDeadlineStatus
+                      status.deadlineStatus
                         ? {
                             icon: 'time' as const,
                             //todo: fix when the text is ready
-                            text: grant.applicationDeadlineStatus,
+                            text: status.deadlineStatus,
                           }
                         : undefined,
                       grant.categoryTags
@@ -114,7 +116,7 @@ export const SearchResultsContent = ({ grants, subheader, locale }: Props) => {
           justifyContent="center"
           background="white"
           borderWidth="standard"
-          borderRadius="xl"
+          borderRadius="lg"
           borderColor="blue200"
           flexDirection={['columnReverse', 'columnReverse', 'row']}
           columnGap={[2, 4, 8, 8, 20]}

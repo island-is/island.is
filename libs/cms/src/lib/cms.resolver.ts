@@ -126,6 +126,16 @@ import { Grant } from './models/grant.model'
 import { GetGrantsInput } from './dto/getGrants.input'
 import { GetSingleGrantInput } from './dto/getSingleGrant.input'
 import { GrantList } from './models/grantList.model'
+import { OrganizationParentSubpage } from './models/organizationParentSubpage.model'
+import { GetOrganizationParentSubpageInput } from './dto/getOrganizationParentSubpage.input'
+import {
+  OrganizationPageStandaloneSitemap,
+  OrganizationPageStandaloneSitemapLevel2,
+} from './models/organizationPageStandaloneSitemap.model'
+import {
+  GetOrganizationPageStandaloneSitemapLevel1Input,
+  GetOrganizationPageStandaloneSitemapLevel2Input,
+} from './dto/getOrganizationPageStandaloneSitemap.input'
 
 const defaultCache: CacheControlOptions = { maxAge: CACHE_CONTROL_MAX_AGE }
 
@@ -706,6 +716,34 @@ export class CmsResolver {
     @Args('input') input: GetTeamMembersInput,
   ): Promise<TeamMemberResponse> {
     return this.cmsElasticsearchService.getTeamMembers(input)
+  }
+
+  @CacheControl(defaultCache)
+  @Query(() => OrganizationParentSubpage, { nullable: true })
+  getOrganizationParentSubpage(
+    @Args('input') input: GetOrganizationParentSubpageInput,
+  ): Promise<OrganizationParentSubpage | null> {
+    return this.cmsContentfulService.getOrganizationParentSubpage(input)
+  }
+
+  @CacheControl(defaultCache)
+  @Query(() => OrganizationPageStandaloneSitemap, { nullable: true })
+  getOrganizationPageStandaloneSitemapLevel1(
+    @Args('input') input: GetOrganizationPageStandaloneSitemapLevel1Input,
+  ): Promise<OrganizationPageStandaloneSitemap | null> {
+    return this.cmsContentfulService.getOrganizationPageStandaloneSitemapLevel1(
+      input,
+    )
+  }
+
+  @CacheControl(defaultCache)
+  @Query(() => OrganizationPageStandaloneSitemapLevel2, { nullable: true })
+  getOrganizationPageStandaloneSitemapLevel2(
+    @Args('input') input: GetOrganizationPageStandaloneSitemapLevel2Input,
+  ): Promise<OrganizationPageStandaloneSitemapLevel2 | null> {
+    return this.cmsContentfulService.getOrganizationPageStandaloneSitemapLevel2(
+      input,
+    )
   }
 }
 

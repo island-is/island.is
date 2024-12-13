@@ -14,7 +14,17 @@ export const notificationModuleConfig = defineConfig({
       replyToName: env.required('EMAIL_REPLY_TO_NAME', 'Réttarvörslugátt'),
       prisonEmail: env.required('PRISON_EMAIL', ''),
       prisonAdminEmail: env.required('PRISON_ADMIN_EMAIL', ''),
+      prisonAdminIndictmentEmails: env.required(
+        'PRISON_ADMIN_INDICTMENT_EMAILS',
+        '',
+      ),
       courtsEmails: env.requiredJSON('COURTS_EMAILS', {}) as {
+        [key: string]: string
+      },
+      policeInstitutionEmails: env.requiredJSON(
+        'POLICE_INSTITUTIONS_EMAILS',
+        {},
+      ) as {
         [key: string]: string
       },
     },

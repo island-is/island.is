@@ -1,4 +1,4 @@
-import { useRouter } from 'next/router'
+import { NextRouter, useRouter } from 'next/router'
 import { ParsedUrlQuery } from 'querystring'
 
 import { SliceType } from '@island.is/island-ui/contentful'
@@ -27,6 +27,7 @@ import {
 import { SLICE_SPACING } from '@island.is/web/constants'
 import {
   ContentLanguage,
+  OrganizationPage,
   Query,
   QueryGetNamespaceArgs,
   QueryGetOrganizationPageArgs,
@@ -43,7 +44,7 @@ import { extractNamespaceFromOrganization } from '@island.is/web/utils/extractNa
 import { webRichText } from '@island.is/web/utils/richText'
 import { safelyExtractPathnameFromUrl } from '@island.is/web/utils/safelyExtractPathnameFromUrl'
 
-import { Screen } from '../../types'
+import { Screen, ScreenContext } from '../../types'
 import {
   GET_NAMESPACE_QUERY,
   GET_ORGANIZATION_PAGE_QUERY,
@@ -61,11 +62,14 @@ export interface SubPageProps {
   customContentfulIds?: (string | undefined)[]
 }
 
-const SubPageContent = ({
+export const SubPageContent = ({
   subpage,
   namespace,
   organizationPage,
-}: Pick<SubPageProps, 'subpage' | 'organizationPage' | 'namespace'>) => {
+  subpageTitleVariant = 'h1',
+}: Pick<SubPageProps, 'subpage' | 'organizationPage' | 'namespace'> & {
+  subpageTitleVariant?: 'h1' | 'h2'
+}) => {
   const n = useNamespace(namespace)
   const { activeLocale } = useI18n()
   const content = (
@@ -132,7 +136,10 @@ const SubPageContent = ({
                   >
                     <>
                       <Box className="rs_read" marginBottom={2}>
-                        <Text variant="h1" as="h1">
+                        <Text
+                          variant={subpageTitleVariant}
+                          as={subpageTitleVariant}
+                        >
                           {subpage?.title}
                         </Text>
                       </Box>
@@ -208,7 +215,32 @@ const SubPageContent = ({
   )
 }
 
-const SubPage: Screen<SubPageProps> = ({
+export const getSubpageNavList = (
+  organizationPage: OrganizationPage | null | undefined,
+  router: NextRouter,
+): NavigationItem[] => {
+  const pathname = new URL(router.asPath, 'https://island.is').pathname
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore make web strict
+  return organizationPage?.menuLinks.map(({ primaryLink, childrenLinks }) => ({
+    title: primaryLink?.text,
+    href: primaryLink?.url,
+    active:
+      primaryLink?.url === pathname ||
+      childrenLinks.some((link) => link.url === pathname),
+    items: childrenLinks.map(({ text, url }) => ({
+      title: text,
+      href: url,
+      active: url === pathname,
+    })),
+  }))
+}
+
+type SubPageScreenContext = ScreenContext & {
+  organizationPage?: Query['getOrganizationPage']
+}
+
+const SubPage: Screen<SubPageProps, SubPageScreenContext> = ({
   organizationPage,
   subpage,
   namespace,
@@ -228,24 +260,6 @@ const SubPage: Screen<SubPageProps> = ({
     : [organizationPage?.id, subpage?.id]
 
   useContentfulId(...contentfulIds)
-
-  const pathname = new URL(router.asPath, 'https://island.is').pathname
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore make web strict
-  const navList: NavigationItem[] = organizationPage?.menuLinks.map(
-    ({ primaryLink, childrenLinks }) => ({
-      title: primaryLink?.text,
-      href: primaryLink?.url,
-      active:
-        primaryLink?.url === pathname ||
-        childrenLinks.some((link) => link.url === pathname),
-      items: childrenLinks.map(({ text, url }) => ({
-        title: text,
-        href: url,
-        active: url === pathname,
-      })),
-    }),
-  )
 
   return (
     <OrganizationWrapper
@@ -282,7 +296,7 @@ const SubPage: Screen<SubPageProps> = ({
       }
       navigationData={{
         title: n('navigationTitle', 'Efnisyfirlit'),
-        items: navList,
+        items: getSubpageNavList(organizationPage, router),
       }}
     >
       {customContent ? (
@@ -357,7 +371,13 @@ const renderSlices = (
   }
 }
 
-SubPage.getProps = async ({ apolloClient, locale, query, req }) => {
+SubPage.getProps = async ({
+  apolloClient,
+  locale,
+  query,
+  req,
+  organizationPage,
+}) => {
   const pathname = safelyExtractPathnameFromUrl(req.url)
 
   const { slug, subSlug } = getSlugAndSubSlug(query, pathname)
@@ -370,15 +390,19 @@ SubPage.getProps = async ({ apolloClient, locale, query, req }) => {
     },
     namespace,
   ] = await Promise.all([
-    apolloClient.query<Query, QueryGetOrganizationPageArgs>({
-      query: GET_ORGANIZATION_PAGE_QUERY,
-      variables: {
-        input: {
-          slug: slug as string,
-          lang: locale as ContentLanguage,
+    !organizationPage
+      ? apolloClient.query<Query, QueryGetOrganizationPageArgs>({
+          query: GET_ORGANIZATION_PAGE_QUERY,
+          variables: {
+            input: {
+              slug: slug as string,
+              lang: locale as ContentLanguage,
+            },
+          },
+        })
+      : {
+          data: { getOrganizationPage: organizationPage },
         },
-      },
-    }),
     apolloClient.query<Query, QueryGetOrganizationSubpageArgs>({
       query: GET_ORGANIZATION_SUBPAGE_QUERY,
       variables: {

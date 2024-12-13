@@ -32,6 +32,7 @@ interface HeaderProps {
   // @ts-ignore make web strict
   megaMenuData
   organizationSearchFilter?: string
+  searchPlaceholder?: string
   customTopLoginButtonItem?: LayoutProps['customTopLoginButtonItem']
 }
 
@@ -43,6 +44,7 @@ export const Header: FC<React.PropsWithChildren<HeaderProps>> = ({
   megaMenuData,
   languageToggleQueryParams,
   organizationSearchFilter,
+  searchPlaceholder,
   customTopLoginButtonItem,
   children,
 }) => {
@@ -95,7 +97,7 @@ export const Header: FC<React.PropsWithChildren<HeaderProps>> = ({
                           id="search_input_header"
                           size="medium"
                           activeLocale={locale}
-                          placeholder={t.searchPlaceholder}
+                          placeholder={searchPlaceholder ?? t.searchPlaceholder}
                           autocomplete={true}
                           autosuggest={true}
                           organization={organizationSearchFilter}

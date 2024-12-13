@@ -15,8 +15,8 @@ import { CaseFileCategory } from '@island.is/judicial-system/types'
 
 export class CreateFileDto {
   @IsNotEmpty()
-  @MaxLength(255)
   @IsString()
+  @MaxLength(255)
   @ApiProperty({ type: String })
   readonly type!: string
 
@@ -26,8 +26,8 @@ export class CreateFileDto {
   readonly category?: CaseFileCategory
 
   @IsNotEmpty()
-  @MaxLength(255)
   @IsString()
+  @MaxLength(255)
   @ApiProperty({ type: String })
   readonly key!: string
 
@@ -37,8 +37,8 @@ export class CreateFileDto {
   readonly size!: number
 
   @IsOptional()
-  @MaxLength(255)
   @IsString()
+  @MaxLength(255)
   @ApiPropertyOptional({ type: String })
   readonly policeCaseNumber?: string
 
@@ -59,14 +59,14 @@ export class CreateFileDto {
   readonly displayDate?: Date
 
   @IsOptional()
-  @MaxLength(255)
   @IsString()
+  @MaxLength(255)
   @ApiPropertyOptional({ type: String })
   readonly policeFileId?: string
 
   @IsOptional()
-  @MaxLength(255)
   @IsString()
+  @MaxLength(255)
   @ApiPropertyOptional({ type: String })
   readonly userGeneratedFilename?: string
 }
