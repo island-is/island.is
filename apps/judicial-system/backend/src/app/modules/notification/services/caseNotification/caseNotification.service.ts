@@ -46,8 +46,8 @@ import {
   isRestrictionCase,
   RequestSharedWithDefender,
   SessionArrangements,
-  UserRole,
   type User,
+  UserRole,
 } from '@island.is/judicial-system/types'
 
 import {
@@ -695,6 +695,9 @@ export class CaseNotificationService extends BaseNotificationService {
     theCase: Case,
     role: UserRole.DISTRICT_COURT_JUDGE | UserRole.DISTRICT_COURT_REGISTRAR,
   ): Promise<Recipient> {
+    const official =
+      role === UserRole.DISTRICT_COURT_JUDGE ? theCase.judge : theCase.registrar
+
     return this.sendEmail(
       this.formatMessage(notifications.courtOfficialAssignedEmail.subject, {
         courtCaseNumber: theCase.courtCaseNumber,
@@ -705,12 +708,8 @@ export class CaseNotificationService extends BaseNotificationService {
         linkStart: `<a href="${this.config.clientUrl}${ROUTE_HANDLER_ROUTE}/${theCase.id}">`,
         linkEnd: '</a>',
       }),
-      role === UserRole.DISTRICT_COURT_JUDGE
-        ? theCase.judge?.name
-        : theCase.registrar?.name,
-      role === UserRole.DISTRICT_COURT_JUDGE
-        ? theCase.judge?.email
-        : theCase.registrar?.email,
+      official?.name,
+      official?.email,
     )
   }
 
