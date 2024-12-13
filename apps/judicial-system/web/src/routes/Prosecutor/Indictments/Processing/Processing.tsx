@@ -10,16 +10,11 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
-import {
-  AdvocateType,
-  Feature,
-  isTrafficViolationCase,
-} from '@island.is/judicial-system/types'
+import { AdvocateType } from '@island.is/judicial-system/types'
 import { core, titles } from '@island.is/judicial-system-web/messages'
 import {
   BlueBox,
   CommentsInput,
-  FeatureContext,
   FormContentContainer,
   FormContext,
   FormFooter,
@@ -65,7 +60,6 @@ const Processing: FC = () => {
     isCaseUpToDate,
     refreshCase,
   } = useContext(FormContext)
-  const { features } = useContext(FeatureContext)
   const { updateCase, transitionCase, setAndSendCaseToServer } = useCase()
   const { formatMessage } = useIntl()
   const { updateDefendant, updateDefendantState } = useDefendants()
@@ -76,9 +70,6 @@ const Processing: FC = () => {
     deleteCivilClaimant,
   } = useCivilClaimants()
   const router = useRouter()
-  const isTrafficViolationCaseCheck =
-    features.includes(Feature.MULTIPLE_INDICTMENT_SUBTYPES) ||
-    isTrafficViolationCase(workingCase)
   const [civilClaimantNationalIdUpdate, setCivilClaimantNationalIdUpdate] =
     useState<{ nationalId: string | null; civilClaimantId: string }>()
   const [hasCivilClaimantChoice, setHasCivilClaimantChoice] =
@@ -667,13 +658,7 @@ const Processing: FC = () => {
           nextButtonIcon="arrowForward"
           previousUrl={`${constants.INDICTMENTS_CASE_FILE_ROUTE}/${workingCase.id}`}
           nextIsDisabled={!stepIsValid}
-          onNextButtonClick={() =>
-            handleNavigationTo(
-              isTrafficViolationCaseCheck
-                ? constants.INDICTMENTS_TRAFFIC_VIOLATION_ROUTE
-                : constants.INDICTMENTS_CASE_FILES_ROUTE,
-            )
-          }
+          nextUrl={constants.INDICTMENTS_TRAFFIC_VIOLATION_ROUTE}
         />
       </FormContentContainer>
     </PageLayout>

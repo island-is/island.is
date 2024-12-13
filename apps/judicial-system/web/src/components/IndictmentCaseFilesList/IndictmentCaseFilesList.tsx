@@ -5,7 +5,6 @@ import { AnimatePresence } from 'framer-motion'
 import { Box, Text } from '@island.is/island-ui/core'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import {
-  Feature,
   isCompletedCase,
   isDefenceUser,
   isDistrictCourtUser,
@@ -13,10 +12,8 @@ import {
   isPublicProsecutor,
   isPublicProsecutorUser,
   isSuccessfulServiceStatus,
-  isTrafficViolationCase,
 } from '@island.is/judicial-system/types'
 import {
-  FeatureContext,
   FileNotFoundModal,
   PdfButton,
   SectionHeading,
@@ -73,15 +70,10 @@ const IndictmentCaseFilesList: FC<Props> = ({
 }) => {
   const { formatMessage } = useIntl()
   const { user, limitedAccess } = useContext(UserContext)
-  const { features } = useContext(FeatureContext)
   const { onOpen, fileNotFound, dismissFileNotFound } = useFileList({
     caseId: workingCase.id,
     connectedCaseParentId,
   })
-
-  const showTrafficViolationCaseFiles =
-    features.includes(Feature.MULTIPLE_INDICTMENT_SUBTYPES) ||
-    isTrafficViolationCase(workingCase)
 
   const showSubpoenaPdf =
     displayGeneratedPDFs &&
@@ -134,7 +126,7 @@ const IndictmentCaseFilesList: FC<Props> = ({
           <RenderFiles caseFiles={indictments} onOpenFile={onOpen} />
         </Box>
       )}
-      {showTrafficViolationCaseFiles && displayGeneratedPDFs && (
+      {displayGeneratedPDFs && (
         <Box marginBottom={5}>
           <Text variant="h4" as="h4" marginBottom={1}>
             {formatMessage(caseFiles.indictmentSection)}
