@@ -91,6 +91,8 @@ export const OJOISelectController = <T,>({
       backgroundColor="blue"
       options={options}
       defaultValue={defaultOpt}
+      isSearchable={true}
+      filterConfig={{ matchFrom: 'start' }}
       onChange={(opt) => {
         if (!opt?.value) return
         return handleChange(opt.value)

@@ -38,7 +38,12 @@ export const LiveChatIncChatPanel = ({
   const n = useNamespace(namespace)
 
   useEffect(() => {
-    if (!hasButtonBeenClicked && !showLauncher) {
+    const queryParam = new URLSearchParams(window.location.search).get('wa_lid')
+    if (
+      !hasButtonBeenClicked &&
+      !showLauncher &&
+      !(queryParam && ['t10', 't11'].includes(queryParam))
+    ) {
       return () => {
         // No need for cleanup if we don't initialize widget
       }
