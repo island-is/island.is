@@ -289,7 +289,7 @@ export const getIncidentDescription = (
   indictmentCount: TIndictmentCount,
   formatMessage: IntlShape['formatMessage'],
   crimeScene?: CrimeScene,
-  subtypes?: Record<string, string[]>,
+  subtypes?: Record<string, IndictmentSubtype[]>,
 ) => {
   const {
     offenses,
@@ -310,7 +310,7 @@ export const getIncidentDescription = (
   const hasSingleSubtype = hasOnlyOneItemInSubArrays(subtypes)
 
   const singleSubType =
-    subtypes && policeCaseNumber && subtypes[policeCaseNumber]?.[0]
+    (policeCaseNumber && subtypes?.[policeCaseNumber]?.[0]) || undefined
 
   const trafficViolationSubtype =
     singleSubType === IndictmentSubtype.TRAFFIC_VIOLATION
@@ -347,9 +347,7 @@ export const getIncidentDescription = (
 
   if (hasSingleSubtype) {
     return formatMessage(strings.indictmentDescriptionSubtypesAutofill, {
-      subtypes: singleSubType
-        ? indictmentSubtypes[singleSubType as IndictmentSubtype]
-        : '',
+      subtypes: singleSubType ? indictmentSubtypes[singleSubType] : '',
       date: incidentDate,
     })
   }
