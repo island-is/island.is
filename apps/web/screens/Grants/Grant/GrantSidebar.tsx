@@ -116,7 +116,7 @@ export const GrantSidebar = ({ grant, locale }: Props) => {
           ) : undefined,
         ),
       ].filter(isDefined) ?? [],
-    [grant, status, formatMessage, linkResolver],
+    [grant, formatMessage, linkResolver, status],
   )
 
   const filesPanelData = useMemo(
