@@ -35,7 +35,7 @@ air-discount-scheme-api:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 20
       replicas:
-        max: 4
+        max: 3
         min: 1
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/air-discount-scheme-api'
@@ -59,7 +59,7 @@ air-discount-scheme-api:
   pvcs: []
   replicaCount:
     default: 1
-    max: 4
+    max: 3
     min: 1
   resources:
     limits:
@@ -123,7 +123,7 @@ air-discount-scheme-backend:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 20
       replicas:
-        max: 4
+        max: 3
         min: 1
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/air-discount-scheme-backend'
@@ -171,7 +171,7 @@ air-discount-scheme-backend:
   pvcs: []
   replicaCount:
     default: 1
-    max: 4
+    max: 3
     min: 1
   resources:
     limits:
@@ -223,7 +223,7 @@ air-discount-scheme-web:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 20
       replicas:
-        max: 4
+        max: 3
         min: 1
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/air-discount-scheme-web'
@@ -250,7 +250,7 @@ air-discount-scheme-web:
   pvcs: []
   replicaCount:
     default: 1
-    max: 4
+    max: 3
     min: 1
   resources:
     limits:
@@ -440,7 +440,7 @@ api:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 4
+        max: 3
         min: 1
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/api'
@@ -461,7 +461,7 @@ api:
   pvcs: []
   replicaCount:
     default: 1
-    max: 4
+    max: 3
     min: 1
   resources:
     limits:
@@ -713,7 +713,7 @@ application-system-api:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 4
+        max: 3
         min: 1
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/application-system-api'
@@ -764,7 +764,7 @@ application-system-api:
   pvcs: []
   replicaCount:
     default: 1
-    max: 4
+    max: 3
     min: 1
   resources:
     limits:
@@ -880,7 +880,7 @@ application-system-api-worker:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 4
+        max: 3
         min: 1
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/application-system-api'
@@ -892,7 +892,7 @@ application-system-api-worker:
   pvcs: []
   replicaCount:
     default: 1
-    max: 4
+    max: 3
     min: 1
   resources:
     limits:
@@ -955,7 +955,7 @@ application-system-form:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 4
+        max: 3
         min: 1
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/application-system-form'
@@ -976,7 +976,7 @@ application-system-form:
   pvcs: []
   replicaCount:
     default: 1
-    max: 4
+    max: 3
     min: 1
   resources:
     limits:
@@ -1023,7 +1023,7 @@ consultation-portal:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 4
+        max: 3
         min: 1
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/consultation-portal'
@@ -1044,7 +1044,7 @@ consultation-portal:
   pvcs: []
   replicaCount:
     default: 1
-    max: 4
+    max: 3
     min: 1
   resources:
     limits:
@@ -1114,7 +1114,7 @@ download-service:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 4
+        max: 3
         min: 1
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/download-service'
@@ -1134,7 +1134,7 @@ download-service:
   pvcs: []
   replicaCount:
     default: 1
-    max: 4
+    max: 3
     min: 1
   resources:
     limits:
@@ -1216,7 +1216,7 @@ endorsement-system-api:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 4
+        max: 3
         min: 1
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-endorsements-api'
@@ -1251,7 +1251,7 @@ endorsement-system-api:
   pvcs: []
   replicaCount:
     default: 1
-    max: 4
+    max: 3
     min: 1
   resources:
     limits:
@@ -1313,7 +1313,7 @@ icelandic-names-registry-backend:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 4
+        max: 3
         min: 1
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/icelandic-names-registry-backend'
@@ -1359,7 +1359,7 @@ icelandic-names-registry-backend:
   pvcs: []
   replicaCount:
     default: 1
-    max: 4
+    max: 3
     min: 1
   resources:
     limits:
@@ -1398,7 +1398,7 @@ island-ui-storybook:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 4
+        max: 3
         min: 1
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/island-ui-storybook'
@@ -1417,7 +1417,7 @@ island-ui-storybook:
   pvcs: []
   replicaCount:
     default: 1
-    max: 4
+    max: 3
     min: 1
   resources:
     limits:
@@ -1471,7 +1471,7 @@ license-api:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 4
+        max: 3
         min: 1
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/license-api'
@@ -1490,7 +1490,7 @@ license-api:
   pvcs: []
   replicaCount:
     default: 1
-    max: 4
+    max: 3
     min: 1
   resources:
     limits:
@@ -1576,7 +1576,7 @@ portals-admin:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 8
       replicas:
-        max: 4
+        max: 3
         min: 1
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/portals-admin'
@@ -1597,7 +1597,7 @@ portals-admin:
   pvcs: []
   replicaCount:
     default: 1
-    max: 4
+    max: 3
     min: 1
   resources:
     limits:
@@ -1655,7 +1655,7 @@ regulations-admin-backend:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 4
+        max: 3
         min: 1
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/regulations-admin-backend'
@@ -1688,7 +1688,7 @@ regulations-admin-backend:
   pvcs: []
   replicaCount:
     default: 1
-    max: 4
+    max: 3
     min: 1
   resources:
     limits:
@@ -1742,7 +1742,7 @@ search-indexer-service:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 4
+        max: 3
         min: 1
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-search-indexer'
@@ -1820,7 +1820,7 @@ search-indexer-service:
   pvcs: []
   replicaCount:
     default: 1
-    max: 4
+    max: 3
     min: 1
   resources:
     limits:
@@ -1873,7 +1873,7 @@ service-portal:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 4
+        max: 3
         min: 1
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/service-portal'
@@ -1894,7 +1894,7 @@ service-portal:
   pvcs: []
   replicaCount:
     default: 1
-    max: 4
+    max: 3
     min: 1
   resources:
     limits:
@@ -1962,7 +1962,7 @@ service-portal-api:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 4
+        max: 3
         min: 1
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-user-profile'
@@ -2006,7 +2006,7 @@ service-portal-api:
   pvcs: []
   replicaCount:
     default: 1
-    max: 4
+    max: 3
     min: 1
   resources:
     limits:
@@ -2080,7 +2080,7 @@ services-bff-portals-admin:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 4
+        max: 3
         min: 1
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-bff'
@@ -2104,7 +2104,7 @@ services-bff-portals-admin:
   pvcs: []
   replicaCount:
     default: 1
-    max: 4
+    max: 3
     min: 1
   resources:
     limits:
@@ -2166,7 +2166,7 @@ services-bff-portals-my-pages:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 4
+        max: 3
         min: 1
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-bff'
@@ -2190,7 +2190,7 @@ services-bff-portals-my-pages:
   pvcs: []
   replicaCount:
     default: 1
-    max: 4
+    max: 3
     min: 1
   resources:
     limits:
@@ -2241,7 +2241,7 @@ services-documents:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 4
+        max: 3
         min: 1
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-documents'
@@ -2274,7 +2274,7 @@ services-documents:
   pvcs: []
   replicaCount:
     default: 1
-    max: 4
+    max: 3
     min: 1
   resources:
     limits:
@@ -2323,7 +2323,7 @@ services-sessions:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 4
+        max: 3
         min: 1
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-sessions'
@@ -2342,7 +2342,7 @@ services-sessions:
   pvcs: []
   replicaCount:
     default: 1
-    max: 4
+    max: 3
     min: 1
   resources:
     limits:
@@ -2393,7 +2393,7 @@ services-sessions-cleanup:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 4
+        max: 3
         min: 1
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-sessions'
@@ -2403,7 +2403,7 @@ services-sessions-cleanup:
   pvcs: []
   replicaCount:
     default: 1
-    max: 4
+    max: 3
     min: 1
   resources:
     limits:
@@ -2459,7 +2459,7 @@ services-sessions-worker:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 4
+        max: 3
         min: 1
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-sessions'
@@ -2495,7 +2495,7 @@ services-sessions-worker:
   pvcs: []
   replicaCount:
     default: 1
-    max: 4
+    max: 3
     min: 1
   resources:
     limits:
@@ -2565,7 +2565,7 @@ services-university-gateway:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 4
+        max: 3
         min: 1
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-university-gateway'
@@ -2622,7 +2622,7 @@ services-university-gateway:
   pvcs: []
   replicaCount:
     default: 1
-    max: 4
+    max: 3
     min: 1
   resources:
     limits:
@@ -2695,7 +2695,7 @@ services-university-gateway-worker:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 4
+        max: 3
         min: 1
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-university-gateway'
@@ -2707,7 +2707,7 @@ services-university-gateway-worker:
   pvcs: []
   replicaCount:
     default: 1
-    max: 4
+    max: 3
     min: 1
   resources:
     limits:
@@ -2755,7 +2755,7 @@ skilavottord-web:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 8
       replicas:
-        max: 4
+        max: 3
         min: 1
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/skilavottord-web'
@@ -2776,7 +2776,7 @@ skilavottord-web:
   pvcs: []
   replicaCount:
     default: 1
-    max: 4
+    max: 3
     min: 1
   resources:
     limits:
@@ -2825,7 +2825,7 @@ skilavottord-ws:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 4
+        max: 3
         min: 1
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/skilavottord-ws'
@@ -2867,7 +2867,7 @@ skilavottord-ws:
   pvcs: []
   replicaCount:
     default: 1
-    max: 4
+    max: 3
     min: 1
   resources:
     limits:
@@ -2951,7 +2951,7 @@ user-notification:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 4
+        max: 3
         min: 1
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-user-notification'
@@ -2974,7 +2974,7 @@ user-notification:
   pvcs: []
   replicaCount:
     default: 1
-    max: 4
+    max: 3
     min: 1
   resources:
     limits:
@@ -3037,7 +3037,7 @@ user-notification-cleanup-worker:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 4
+        max: 3
         min: 1
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-user-notification'
@@ -3072,7 +3072,7 @@ user-notification-cleanup-worker:
   pvcs: []
   replicaCount:
     default: 1
-    max: 4
+    max: 3
     min: 1
   resources:
     limits:
@@ -3155,7 +3155,7 @@ user-notification-worker:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 4
+        max: 3
         min: 1
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-user-notification'
@@ -3190,7 +3190,7 @@ user-notification-worker:
   pvcs: []
   replicaCount:
     default: 1
-    max: 4
+    max: 3
     min: 1
   resources:
     limits:
@@ -3251,7 +3251,7 @@ web:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 4
+        max: 3
         min: 1
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/web'
@@ -3272,7 +3272,7 @@ web:
   pvcs: []
   replicaCount:
     default: 1
-    max: 4
+    max: 3
     min: 1
   resources:
     limits:
@@ -3323,7 +3323,7 @@ xroad-collector:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 4
+        max: 3
         min: 1
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-xroad-collector'
@@ -3335,7 +3335,7 @@ xroad-collector:
   pvcs: []
   replicaCount:
     default: 1
-    max: 4
+    max: 3
     min: 1
   resources:
     limits:

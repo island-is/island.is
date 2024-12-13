@@ -112,7 +112,7 @@ const serializeService: SerializeMethod<HelmService> = async (
   if (env1.type == 'staging') {
     result.replicaCount = {
       min: 1,
-      max: 4,
+      max: 3,
       default: 1,
     }
   } else {
