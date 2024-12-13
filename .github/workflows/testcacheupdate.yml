@@ -1,8 +1,8 @@
-name: Cache update test
+name: Test
 on:
   push:
     branches:
-      - main
+      - cache-update
   workflow_dispatch: {}
 
 defaults:
