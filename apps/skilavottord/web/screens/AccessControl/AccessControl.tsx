@@ -17,6 +17,7 @@ import {
 } from '@island.is/island-ui/core'
 import {
   hasDeveloperRole,
+  hasMunicipalityRole,
   hasPermission,
 } from '@island.is/skilavottord-web/auth/utils'
 import { NotFound } from '@island.is/skilavottord-web/components'
@@ -41,7 +42,7 @@ import { AccessControlCreate, AccessControlUpdate } from './components'
 
 import NavigationLinks from '@island.is/skilavottord-web/components/NavigationLinks/NavigationLinks'
 import PageHeader from '@island.is/skilavottord-web/components/PageHeader/PageHeader'
-import { SkilavottordAllRecyclingPartnersByTypeQuery } from '../RecyclingCompanies/RecyclingCompanies'
+import { SkilavottordRecyclingPartnersQuery } from '../RecyclingCompanies/RecyclingCompanies'
 import * as styles from './AccessControl.css'
 
 const SkilavottordAllRecyclingPartnersQuery = gql`
@@ -51,6 +52,7 @@ const SkilavottordAllRecyclingPartnersQuery = gql`
       companyName
       active
       municipalityId
+      isMunicipality
     }
   }
 `
@@ -67,6 +69,7 @@ const SkilavottordAccessControlsQuery = gql`
         companyId
         companyName
         municipalityId
+        isMunicipality
       }
     }
   }
@@ -82,9 +85,11 @@ export const CreateSkilavottordAccessControlMutation = gql`
       role
       email
       phone
+      partnerId
       recyclingPartner {
         companyId
         companyName
+        municipalityId
       }
     }
   }
@@ -138,9 +143,12 @@ const AccessControl: FC<React.PropsWithChildren<unknown>> = () => {
       error: recyclingPartnerByIdError,
       loading: recyclingPartnerByIdLoading,
     },
-  ] = useLazyQuery<Query>(SkilavottordAllRecyclingPartnersByTypeQuery, {
+  ] = useLazyQuery<Query>(SkilavottordRecyclingPartnersQuery, {
     ssr: false,
-    variables: { isMunicipality: false, municipalityId: user?.partnerId },
+    variables: {
+      isMunicipalityPage: false,
+      municipalityId: user?.partnerId,
+    },
   })
 
   const {
@@ -220,21 +228,34 @@ const AccessControl: FC<React.PropsWithChildren<unknown>> = () => {
 
   const partners =
     recyclingPartnerData?.skilavottordAllRecyclingPartners ||
-    recyclingPartnerByIdData?.skilavottordAllRecyclingPartnersByType ||
+    recyclingPartnerByIdData?.skilavottordRecyclingPartners ||
     []
-  const recyclingPartners = filterInternalPartners(partners).map((partner) => ({
-    label: partner.municipalityId
-      ? `${partner.municipalityId} - ${partner.companyName}`
-      : partner.companyName,
-    value: partner.companyId,
-  }))
+  const recyclingPartners = filterInternalPartners(partners)
+    .filter((partner) => {
+      return !partner.isMunicipality
+    })
+    .map((partner) => ({
+      label: partner.municipalityId
+        ? `${partner.municipalityId} - ${partner.companyName}`
+        : partner.companyName,
+      value: partner.companyId,
+    }))
+
+  const municipalities = filterInternalPartners(partners)
+    .filter((partner) => {
+      return partner.isMunicipality
+    })
+    .map((partner) => ({
+      label: partner.companyName,
+      value: partner.companyId,
+    }))
 
   const roles = Object.keys(AccessControlRole)
     .filter((role) =>
       !hasDeveloperRole(user?.role) ? role !== Role.developer : role,
     )
     .filter((role) => {
-      if (user.role == Role.municipality) {
+      if (hasMunicipalityRole(Role.municipality)) {
         return (
           role === Role.recyclingCompany ||
           role === Role.recyclingCompanyAdmin ||
@@ -253,7 +274,7 @@ const AccessControl: FC<React.PropsWithChildren<unknown>> = () => {
     setIsCreateAccessControlModalVisible(false)
 
   const handleCreateAccessControlOpenModal = () => {
-    if (user.role === Role.municipality) {
+    if (hasMunicipalityRole(user?.role)) {
       getAllRecyclingPartnersByMunicipality()
     } else {
       getAllRecyclingPartner()
@@ -323,6 +344,7 @@ const AccessControl: FC<React.PropsWithChildren<unknown>> = () => {
             onCancel={handleCreateAccessControlCloseModal}
             onSubmit={handleCreateAccessControl}
             recyclingPartners={recyclingPartners}
+            municipalities={municipalities}
             roles={roles}
           />
         </Box>
@@ -384,7 +406,14 @@ const AccessControl: FC<React.PropsWithChildren<unknown>> = () => {
                         items={[
                           {
                             title: t.buttons.edit,
-                            onClick: () => setPartner(item),
+                            onClick: () => {
+                              if (hasMunicipalityRole(user?.role)) {
+                                getAllRecyclingPartnersByMunicipality()
+                              } else {
+                                getAllRecyclingPartner()
+                              }
+                              setPartner(item)
+                            },
                           },
                           {
                             title: t.buttons.delete,
@@ -438,6 +467,7 @@ const AccessControl: FC<React.PropsWithChildren<unknown>> = () => {
         recyclingPartners={recyclingPartners}
         roles={roles}
         currentPartner={partner}
+        municipalities={municipalities}
       />
     </PartnerPageLayout>
   )

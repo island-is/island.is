@@ -19,7 +19,7 @@ import { useI18n } from '@island.is/skilavottord-web/i18n'
 import NavigationLinks from '@island.is/skilavottord-web/components/NavigationLinks/NavigationLinks'
 import PageHeader from '@island.is/skilavottord-web/components/PageHeader/PageHeader'
 import { RecyclingCompanyForm } from '../components'
-import { SkilavottordAllRecyclingPartnersByTypeQuery } from '../RecyclingCompanies'
+import { SkilavottordRecyclingPartnersQuery } from '../RecyclingCompanies'
 
 export const CreateSkilavottordRecyclingPartnerMutation = gql`
   mutation createSkilavottordRecyclingPartnerMutation(
@@ -55,7 +55,7 @@ const RecyclingCompanyCreate: FC<React.PropsWithChildren<unknown>> = () => {
   let activeSection = 2
   let route = routes.recyclingCompanies.baseRoute
 
-  const isMunicipality = router.route === routes.municipalities.add
+  const isMunicipalityPage = router.route === routes.municipalities.add
 
   // Show only recycling companies for the municipality
   let partnerId = null
@@ -64,7 +64,7 @@ const RecyclingCompanyCreate: FC<React.PropsWithChildren<unknown>> = () => {
   }
 
   // If coming from municipality page
-  if (isMunicipality) {
+  if (isMunicipalityPage) {
     activeSection = 1
     breadcrumbTitle = mt.title
     title = mt.municipality.add.title
@@ -78,7 +78,10 @@ const RecyclingCompanyCreate: FC<React.PropsWithChildren<unknown>> = () => {
     formState: { errors },
   } = useForm({
     mode: 'onChange',
-    defaultValues: { isMunicipality, municipalityId: partnerId },
+    defaultValues: {
+      isMunicipality: isMunicipalityPage,
+      municipalityId: partnerId,
+    },
   })
 
   const [createSkilavottordRecyclingPartner] = useMutation(
@@ -89,8 +92,8 @@ const RecyclingCompanyCreate: FC<React.PropsWithChildren<unknown>> = () => {
       },
       refetchQueries: [
         {
-          query: SkilavottordAllRecyclingPartnersByTypeQuery,
-          variables: { isMunicipality, municipalityId: partnerId },
+          query: SkilavottordRecyclingPartnersQuery,
+          variables: { isMunicipalityPage, municipalityId: partnerId },
         },
       ],
     },
@@ -117,7 +120,7 @@ const RecyclingCompanyCreate: FC<React.PropsWithChildren<unknown>> = () => {
       },
     })
     if (!errors) {
-      if (isMunicipality) {
+      if (isMunicipalityPage) {
         router.push(routes.municipalities.baseRoute).then(() => {
           toast.success(t.recyclingCompany.add.added)
         })
@@ -130,7 +133,7 @@ const RecyclingCompanyCreate: FC<React.PropsWithChildren<unknown>> = () => {
   })
 
   const handleCancel = () => {
-    if (isMunicipality) {
+    if (isMunicipalityPage) {
       router.push(routes.municipalities.baseRoute)
     } else {
       router.push(routes.recyclingCompanies.baseRoute)
@@ -170,7 +173,7 @@ const RecyclingCompanyCreate: FC<React.PropsWithChildren<unknown>> = () => {
           onCancel={handleCancel}
           control={control}
           errors={errors}
-          isMunicipality={isMunicipality}
+          isMunicipalityPage={isMunicipalityPage}
         />
       </Box>
     </PartnerPageLayout>

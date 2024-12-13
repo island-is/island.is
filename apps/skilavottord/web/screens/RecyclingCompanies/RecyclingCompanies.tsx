@@ -13,8 +13,8 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import {
-  hasPermission,
   hasMunicipalityRole,
+  hasPermission,
 } from '@island.is/skilavottord-web/auth/utils'
 import { NotFound } from '@island.is/skilavottord-web/components'
 import { PartnerPageLayout } from '@island.is/skilavottord-web/components/Layouts'
@@ -30,13 +30,13 @@ import { filterInternalPartners } from '@island.is/skilavottord-web/utils'
 import NavigationLinks from '@island.is/skilavottord-web/components/NavigationLinks/NavigationLinks'
 import PageHeader from '@island.is/skilavottord-web/components/PageHeader/PageHeader'
 
-export const SkilavottordAllRecyclingPartnersByTypeQuery = gql`
-  query skilavottordAllRecyclingPartnersByTypeQuery(
-    $isMunicipality: Boolean!
+export const SkilavottordRecyclingPartnersQuery = gql`
+  query skilavottordRecyclingPartnersQuery(
+    $isMunicipalityPage: Boolean!
     $municipalityId: String
   ) {
-    skilavottordAllRecyclingPartnersByType(
-      isMunicipality: $isMunicipality
+    skilavottordRecyclingPartners(
+      isMunicipalityPage: $isMunicipalityPage
       municipalityId: $municipalityId
     ) {
       companyId
@@ -46,6 +46,7 @@ export const SkilavottordAllRecyclingPartnersByTypeQuery = gql`
       email
       active
       municipalityId
+      isMunicipality
     }
   }
 `
@@ -60,17 +61,19 @@ const RecyclingCompanies: FC<React.PropsWithChildren<unknown>> = () => {
   } = useI18n()
 
   // Since we are resuing the same page for both municipalities and recycling companies we need to distinguish between municipalities and recycling companies
-  let isMunicipality = false
+  let isMunicipalityPage = false
   let buttonText = t.buttons.add
   let activeSection = 2
   let title = t.title
   let info = t.info
+  let empty = t.empty
 
   if (router.route === routes.municipalities.baseRoute) {
     activeSection = 1
     title = mt.title
-    info = ''
-    isMunicipality = true
+    info = mt.info
+    empty = mt.empty
+    isMunicipalityPage = true
     buttonText = t.buttons.addMunicipality
   }
 
@@ -81,10 +84,10 @@ const RecyclingCompanies: FC<React.PropsWithChildren<unknown>> = () => {
   }
 
   const { data, error, loading } = useQuery<Query>(
-    SkilavottordAllRecyclingPartnersByTypeQuery,
+    SkilavottordRecyclingPartnersQuery,
     {
       variables: {
-        isMunicipality,
+        isMunicipalityPage: isMunicipalityPage,
         municipalityId: partnerId,
       },
     },
@@ -96,12 +99,12 @@ const RecyclingCompanies: FC<React.PropsWithChildren<unknown>> = () => {
     return <NotFound />
   }
 
-  const partners = data?.skilavottordAllRecyclingPartnersByType || []
+  const partners = data?.skilavottordRecyclingPartners || []
   const recyclingPartners = filterInternalPartners(partners)
   recyclingPartners.sort((a, b) => a.companyName.localeCompare(b.companyName))
 
   const handleCreate = () => {
-    if (isMunicipality) {
+    if (isMunicipalityPage) {
       router.push({
         pathname: routes.municipalities.add,
       })
@@ -113,7 +116,7 @@ const RecyclingCompanies: FC<React.PropsWithChildren<unknown>> = () => {
   }
 
   const handleUpdate = (id: string) => {
-    if (isMunicipality) {
+    if (isMunicipalityPage) {
       router.push({
         pathname: routes.municipalities.edit, // with BASE-PATH it duplicates the path
         query: { id },
@@ -151,7 +154,7 @@ const RecyclingCompanies: FC<React.PropsWithChildren<unknown>> = () => {
           <Button onClick={handleCreate}>{buttonText}</Button>
         </Box>
         {error || (loading && !data) ? (
-          <Text>{t.empty}</Text>
+          <Text>{empty}</Text>
         ) : (
           <Stack space={3}>
             <Table>

@@ -30,16 +30,16 @@ export class RecyclingPartnerResolver {
     roles: [Role.developer, Role.recyclingFund, Role.municipality],
   })
   @Query(() => [RecyclingPartnerModel], {
-    name: 'skilavottordAllRecyclingPartnersByType',
+    name: 'skilavottordRecyclingPartners',
   })
-  async getAllRecyclingPartnersByType(
-    @Args('isMunicipality', { type: () => Boolean, nullable: true })
-    isMunicipality: boolean,
+  async getRecyclingPartners(
+    @Args('isMunicipalityPage', { type: () => Boolean, nullable: true })
+    isMunicipalityPage: boolean,
     @Args('municipalityId', { type: () => String, nullable: true })
     municipalityId: string | null,
   ): Promise<RecyclingPartnerModel[]> {
-    return this.recyclingPartnerService.findAllRecyclingPartnersByType(
-      isMunicipality,
+    return this.recyclingPartnerService.findRecyclingPartners(
+      isMunicipalityPage,
       municipalityId,
     )
   }

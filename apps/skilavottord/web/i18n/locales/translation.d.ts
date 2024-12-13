@@ -72,6 +72,7 @@ export interface ModalInputs {
   recyclingLocation: RecyclingLocation
   role: Name
   partner: Name
+  municipality: Name
 }
 
 export interface Email {

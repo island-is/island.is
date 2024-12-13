@@ -25,8 +25,8 @@ export class RecyclingPartnerService {
     })
   }
 
-  async findAllRecyclingPartnersByType(
-    isMunicipality: boolean,
+  async findRecyclingPartners(
+    isMunicipalityPage: boolean,
     municipalityId: string | null,
   ): Promise<RecyclingPartnerModel[]> {
     // If Role.municipality, return all recycling partners that are not municipalities
@@ -39,7 +39,7 @@ export class RecyclingPartnerService {
       })
     }
 
-    if (isMunicipality) {
+    if (isMunicipalityPage) {
       return await this.recyclingPartnerModel.findAll({
         where: { isMunicipality: true },
       })
@@ -76,5 +76,18 @@ export class RecyclingPartnerService {
       },
     )
     return accessControl
+  }
+
+  /**
+   * Get the id of the municipality or recyclingpartner that is paying for the recycling request
+   * @param companyId
+   * @returns
+   */
+  async getGetPayingPartnerId(companyId: string): Promise<string> {
+    const partner = await this.recyclingPartnerModel.findOne({
+      where: { companyId },
+    })
+
+    return partner.municipalityId || partner.companyId
   }
 }

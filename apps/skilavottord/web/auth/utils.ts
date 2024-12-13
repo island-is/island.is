@@ -15,6 +15,9 @@ export const hasDeveloperRole = (role: Role | undefined) =>
 export const hasMunicipalityRole = (role: Role | undefined) =>
   role === Role.municipality
 
+export const hasRecyclingFundRole = (role: Role | undefined) =>
+  role === Role.recyclingFund
+
 export const hasPermission = (page: Page, role: Role) => {
   if (!role) return false
 

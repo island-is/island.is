@@ -52,18 +52,6 @@ export class AccessControlService {
       partnerIds = null
     }
 
-    // Get all sub companies
-    const getAllCompanyIds = async (partnerId: string) => {
-      partnerIds.push(partnerId)
-      const subCompanies = await RecyclingPartnerModel.findAll({
-        where: { municipalityId: partnerId },
-      })
-      for (const subCompany of subCompanies) {
-        await getAllCompanyIds(subCompany.companyId)
-      }
-    }
-
-    await getAllCompanyIds(partnerId)
     return this.accessControlModel.findAll({
       where: { partnerId: partnerIds },
       include: [RecyclingPartnerModel],

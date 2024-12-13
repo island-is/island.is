@@ -11,16 +11,14 @@ import {
   Button,
   DialogPrompt,
   DropdownMenu,
-  GridColumn,
-  GridRow,
   SkeletonLoader,
   Stack,
   Table as T,
   Text,
 } from '@island.is/island-ui/core'
 import {
-  hasPermission,
   hasDeveloperRole,
+  hasPermission,
 } from '@island.is/skilavottord-web/auth/utils'
 import { NotFound } from '@island.is/skilavottord-web/components'
 import { PartnerPageLayout } from '@island.is/skilavottord-web/components/Layouts'
@@ -39,23 +37,10 @@ import { useI18n } from '@island.is/skilavottord-web/i18n'
 import { getRoleTranslation } from '@island.is/skilavottord-web/utils'
 import { BASE_PATH } from '@island.is/skilavottord/consts'
 
-import {
-  AccessControlCreate,
-  AccessControlImage,
-  AccessControlUpdate,
-} from './components'
+import { AccessControlCreate, AccessControlUpdate } from './components'
 
+import PageHeader from '@island.is/skilavottord-web/components/PageHeader/PageHeader'
 import * as styles from './AccessControl.css'
-
-// const SkilavottordAllRecyclingPartnersQuery = gql`
-//   query skilavottordAllRecyclingPartnersQuery {
-//     skilavottordAllRecyclingPartners {
-//       companyId
-//       companyName
-//       active
-//     }
-//   }
-// `
 
 const SkilavottordAccessControlsByRecyclingPartnerQuery = gql`
   query skilavottordAccessControlsByRecyclingPartnerQuery {
@@ -135,16 +120,6 @@ const AccessControlCompany: FC<React.PropsWithChildren<unknown>> = () => {
     return <NotFound />
   }
 
-  // const {
-  //   data: recyclingPartnerData,
-  //   error: recyclingPartnerError,
-  //   loading: recyclingPartnerLoading,
-  // } = useQuery<Query>(SkilavottordAllRecyclingPartnersQuery, { ssr: false })
-  // const {
-  //   data: accessControlsData,
-  //   error: accessControlsError,
-  //   loading: accessControlsLoading,
-  // } = useQuery<Query>(SkilavottordAccessControlsQuery, { ssr: false })
   const {
     data: accessControlsData,
     error,
@@ -303,33 +278,14 @@ const AccessControlCompany: FC<React.PropsWithChildren<unknown>> = () => {
           alignItems="flexStart"
           justifyContent="spaceBetween"
         >
-          <GridRow marginBottom={7}>
-            <GridColumn span={['8/8', '6/8', '5/8']} order={[2, 1]}>
-              <Text variant="h1" as="h1" marginBottom={4}>
-                {t.title}{' '}
-                {accessControls.length > 0
-                  ? accessControls[0]?.recyclingPartner?.companyName
-                  : ''}
-              </Text>
-              <Text variant="intro">{t.info}</Text>
-            </GridColumn>
-            <GridColumn
-              span={['8/8', '2/8']}
-              offset={['0', '0', '1/8']}
-              order={[1, 2]}
-            >
-              <Box textAlign={['center', 'right']} padding={[6, 0]}>
-                <AccessControlImage />
-              </Box>
-            </GridColumn>
-          </GridRow>
+          <PageHeader info={t.info} title={t.title} />
+
           <AccessControlCreate
             title={t.modal.titles.add}
             text={t.modal.subtitles.add}
             show={isCreateAccessControlModalVisible}
             onCancel={handleCreateAccessControlCloseModal}
             onSubmit={handleCreateAccessControl}
-            // recyclingPartners={recyclingPartners}
             roles={roles}
           />
         </Box>

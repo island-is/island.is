@@ -1,31 +1,29 @@
-import React, { FC, useContext, useRef, useEffect } from 'react'
-import gql from 'graphql-tag'
 import { useQuery } from '@apollo/client'
+import gql from 'graphql-tag'
 import NextLink from 'next/link'
+import React, { FC, useContext, useEffect, useRef } from 'react'
 
-import { useI18n } from '@island.is/skilavottord-web/i18n'
 import {
   Box,
   Breadcrumbs,
-  GridColumn,
-  GridRow,
   LoadingDots,
   Stack,
   Text,
 } from '@island.is/island-ui/core'
-import { PartnerPageLayout } from '@island.is/skilavottord-web/components/Layouts'
-import { Sidenav, NotFound } from '@island.is/skilavottord-web/components'
-import { UserContext } from '@island.is/skilavottord-web/context'
 import { hasPermission } from '@island.is/skilavottord-web/auth/utils'
+import { NotFound } from '@island.is/skilavottord-web/components'
+import { PartnerPageLayout } from '@island.is/skilavottord-web/components/Layouts'
+import { UserContext } from '@island.is/skilavottord-web/context'
 import {
   Query,
   Role,
   Vehicle,
 } from '@island.is/skilavottord-web/graphql/schema'
+import { useI18n } from '@island.is/skilavottord-web/i18n'
 
-import { CarsTable, RecyclingCompanyImage } from './components'
 import NavigationLinks from '@island.is/skilavottord-web/components/NavigationLinks/NavigationLinks'
 import PageHeader from '@island.is/skilavottord-web/components/PageHeader/PageHeader'
+import { CarsTable } from './components'
 
 export const SkilavottordVehiclesQuery = gql`
   query skilavottordVehiclesQuery($after: String!, $municipalityId: String!) {

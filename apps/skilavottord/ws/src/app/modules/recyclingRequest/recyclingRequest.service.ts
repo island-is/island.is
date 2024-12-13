@@ -33,7 +33,7 @@ export class RecyclingRequestService {
     private httpService: HttpService,
     private fjarsyslaService: FjarsyslaService,
     @Inject(forwardRef(() => RecyclingPartnerService))
-    private recycllingPartnerService: RecyclingPartnerService,
+    private recyclingPartnerService: RecyclingPartnerService,
     private vehicleService: VehicleService,
     private icelandicTransportAuthorityServices: IcelandicTransportAuthorityServices,
   ) {}
@@ -43,6 +43,9 @@ export class RecyclingRequestService {
     disposalStation: string,
     vehicle: VehicleModel,
   ) {
+    const disposalStationId =
+      await this.recyclingPartnerService.getGetPayingPartnerId(disposalStation)
+
     try {
       const { restAuthUrl, restDeRegUrl, restUsername, restPassword } =
         environment.samgongustofa
@@ -73,7 +76,7 @@ export class RecyclingRequestService {
       const jsonDeRegBody = JSON.stringify({
         permno: vehiclePermno,
         deRegisterDate: format(new Date(), "yyyy-MM-dd'T'HH:mm:ss"),
-        disposalStation: disposalStation,
+        disposalStation: disposalStationId,
         explanation: 'Rafrænt afskráning',
         mileage: vehicle.mileage ?? 0,
         plateCount: vehicle.plateCount,
@@ -251,7 +254,7 @@ export class RecyclingRequestService {
       // is partnerId null?
       if (partnerId) {
         newRecyclingRequest.recyclingPartnerId = partnerId
-        const partner = await this.recycllingPartnerService.findOne(partnerId)
+        const partner = await this.recyclingPartnerService.findOne(partnerId)
         if (!partner) {
           this.logger.error(
             `car-recycling: The recycling station is not in the recycling station list`,

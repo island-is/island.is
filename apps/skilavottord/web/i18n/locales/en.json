@@ -581,7 +581,10 @@
         },
         "municipality": {
           "label": "Municipality",
-          "placeholder": "Municipality"
+          "placeholder": "Municipality",
+          "rules": {
+            "required": "Municipality is required"
+          }
         }
       },
       "buttons": {

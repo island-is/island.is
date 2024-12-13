@@ -20,7 +20,7 @@ import { hasDeveloperRole } from '@island.is/skilavottord-web/auth/utils'
 import UserContext from '@island.is/skilavottord-web/context/UserContext'
 import { Query } from '@island.is/skilavottord-web/graphql/schema'
 import { useI18n } from '@island.is/skilavottord-web/i18n'
-import { SkilavottordAllRecyclingPartnersByTypeQuery } from '../../RecyclingCompanies'
+import { SkilavottordRecyclingPartnersQuery } from '../../RecyclingCompanies'
 
 interface RecyclingCompanyForm {
   onSubmit: (
@@ -30,7 +30,7 @@ interface RecyclingCompanyForm {
   errors: DeepMap<FieldValues, FieldError>
   control: Control<FieldValues>
   editView?: boolean
-  isMunicipality?: boolean | undefined
+  isMunicipalityPage?: boolean | undefined
 }
 
 const RecyclingCompanyForm: FC<
@@ -41,7 +41,7 @@ const RecyclingCompanyForm: FC<
   control,
   errors,
   editView = false,
-  isMunicipality = false,
+  isMunicipalityPage = false,
 }) => {
   const { user } = useContext(UserContext)
 
@@ -50,12 +50,12 @@ const RecyclingCompanyForm: FC<
   } = useI18n()
 
   const { data } =
-    useQuery<Query>(SkilavottordAllRecyclingPartnersByTypeQuery, {
-      skip: isMunicipality,
-      variables: { isMunicipality: true },
+    useQuery<Query>(SkilavottordRecyclingPartnersQuery, {
+      skip: isMunicipalityPage,
+      variables: { isMunicipalityPage: true },
     }) || []
 
-  const municipalities = data?.skilavottordAllRecyclingPartnersByType.map(
+  const municipalities = data?.skilavottordRecyclingPartners.map(
     (municipality) => ({
       label: municipality.companyName,
       value: municipality.companyId,
@@ -275,7 +275,7 @@ const RecyclingCompanyForm: FC<
             </GridColumn>
           </GridRow>
 
-          {!isMunicipality && (
+          {!isMunicipalityPage && (
             <GridRow>
               <GridColumn span="12/12">
                 <Controller
@@ -344,7 +344,7 @@ const RecyclingCompanyForm: FC<
                 <Controller
                   name="isMunicipality"
                   control={control}
-                  defaultValue={isMunicipality}
+                  defaultValue={isMunicipalityPage}
                   render={({ field: { onChange, value, name } }) => (
                     <Checkbox
                       large

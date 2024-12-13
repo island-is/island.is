@@ -373,7 +373,7 @@
   },
   "recyclingCompanies": {
     "title": "Móttökuaðilar",
-    "info": "Upplýsingar til að hjálpa viðskiptavinum að hafa samband við móttökuaðila.",
+    "info": "Skráðir móttökuaðilar",
     "empty": "Engin móttökuaðili fannst",
     "subtitles": {
       "companies": "Móttökuaðilar"
@@ -582,6 +582,13 @@
           "rules": {
             "required": "Skylda er að fylla út móttökuaðila"
           }
+        },
+        "municipality": {
+          "label": "Sveitarfélag",
+          "placeholder": "Sveitarfélag",
+          "rules": {
+            "required": "Skylda er að fylla út sveitarfélag"
+          }
         }
       },
       "buttons": {
@@ -643,6 +650,7 @@
   },
   "municipalities": {
     "title": "Sveitarfélög",
+    "empty": "Ekkert sveitarfélag fannst",
     "municipality": {
       "view": {
         "title": "Sveitarfélag",

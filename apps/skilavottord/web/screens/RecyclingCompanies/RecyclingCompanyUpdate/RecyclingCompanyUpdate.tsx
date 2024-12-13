@@ -25,7 +25,7 @@ import { useI18n } from '@island.is/skilavottord-web/i18n'
 import NavigationLinks from '@island.is/skilavottord-web/components/NavigationLinks/NavigationLinks'
 import PageHeader from '@island.is/skilavottord-web/components/PageHeader/PageHeader'
 import { RecyclingCompanyForm } from '../components'
-import { SkilavottordAllRecyclingPartnersByTypeQuery } from '../RecyclingCompanies'
+import { SkilavottordRecyclingPartnersQuery } from '../RecyclingCompanies'
 
 const SkilavottordRecyclingPartnerQuery = gql`
   query SkilavottordRecyclingPartnerQuery($input: RecyclingPartnerInput!) {
@@ -81,7 +81,7 @@ const RecyclingCompanyUpdate: FC<React.PropsWithChildren<unknown>> = () => {
   const router = useRouter()
   const { id } = router.query
 
-  const isMunicipality = router.route === routes.municipalities.edit
+  const isMunicipalityPage = router.route === routes.municipalities.edit
 
   // Show only recycling companies for the municipality
   let partnerId = null
@@ -109,8 +109,11 @@ const RecyclingCompanyUpdate: FC<React.PropsWithChildren<unknown>> = () => {
           variables: { input: { companyId: id } },
         },
         {
-          query: SkilavottordAllRecyclingPartnersByTypeQuery,
-          variables: { isMunicipality, municipalityId: partnerId },
+          query: SkilavottordRecyclingPartnersQuery,
+          variables: {
+            isMunicipalityPage: isMunicipalityPage,
+            municipalityId: partnerId,
+          },
         },
       ],
     },
@@ -123,11 +126,11 @@ const RecyclingCompanyUpdate: FC<React.PropsWithChildren<unknown>> = () => {
   let route = routes.recyclingCompanies.baseRoute
 
   React.useEffect(() => {
-    setValue('isMunicipality', isMunicipality)
-  }, [isMunicipality, setValue])
+    setValue('isMunicipality', isMunicipalityPage)
+  }, [isMunicipalityPage, setValue])
 
   // If coming from municipality page
-  if (isMunicipality) {
+  if (isMunicipalityPage) {
     activeSection = 1
     breadcrumbTitle = mt.title
     title = mt.municipality.view.title
@@ -157,13 +160,25 @@ const RecyclingCompanyUpdate: FC<React.PropsWithChildren<unknown>> = () => {
       variables: { input },
     })
     if (!errors) {
-      router.push(routes.recyclingCompanies.baseRoute).then(() => {
-        toast.success(t.recyclingCompany.view.updated)
-      })
+      if (isMunicipalityPage) {
+        router.push(routes.municipalities.baseRoute).then(() => {
+          toast.success(t.recyclingCompany.view.updated)
+        })
+      } else {
+        router.push(routes.recyclingCompanies.baseRoute).then(() => {
+          toast.success(t.recyclingCompany.view.updated)
+        })
+      }
     }
   })
 
-  const handleCancel = () => router.push(routes.recyclingCompanies.baseRoute)
+  const handleCancel = () => {
+    if (isMunicipalityPage) {
+      router.push(routes.municipalities.baseRoute)
+    } else {
+      router.push(routes.recyclingCompanies.baseRoute)
+    }
+  }
 
   return (
     <PartnerPageLayout side={<NavigationLinks activeSection={activeSection} />}>
@@ -201,7 +216,7 @@ const RecyclingCompanyUpdate: FC<React.PropsWithChildren<unknown>> = () => {
             control={control}
             errors={errors}
             editView
-            isMunicipality={isMunicipality}
+            isMunicipalityPage={isMunicipalityPage}
           />
         )}
       </Box>
