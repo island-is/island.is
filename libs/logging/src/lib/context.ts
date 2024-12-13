@@ -19,8 +19,12 @@ export const withLoggingContext = <R, TArgs extends unknown[]>(
 }
 
 export const includeContextFormatter = format((info) => {
+  const defaultCodeOwner = process.env.CODE_OWNER
   const context = loggingContextStorage.getStore()
 
+  if (defaultCodeOwner) {
+    info.codeOwner = defaultCodeOwner
+  }
   if (context) {
     Object.assign(info, context)
   }

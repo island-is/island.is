@@ -1,4 +1,3 @@
-import { useUserInfo } from '@island.is/react-spa/bff'
 import {
   AlertMessage,
   Box,
@@ -23,6 +22,7 @@ import {
   isDateAfterToday,
   m,
 } from '@island.is/portals/my-pages/core'
+import { useUserInfo } from '@island.is/react-spa/bff'
 import { Problem } from '@island.is/react-spa/shared'
 import { useEffect, useState } from 'react'
 import { messages } from '../../lib/messages'

@@ -1,7 +1,7 @@
-import { dynamicColor } from '@ui'
 import React, { useCallback, useEffect, useRef } from 'react'
 import { Animated, ViewStyle } from 'react-native'
 import styled from 'styled-components/native'
+import { dynamicColor } from '../../ui'
 
 interface VisualizedPinCodeProps {
   code: string
