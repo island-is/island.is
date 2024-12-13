@@ -34,6 +34,7 @@ import {
   IndictmentCountModule,
   InstitutionModule,
   PoliceModule,
+  SubpoenaModule,
   UserModule,
 } from './modules'
 
@@ -68,6 +69,7 @@ const autoSchemaFile = production
     CaseListModule,
     DefendantModule,
     DefenderModule,
+    SubpoenaModule,
     IndictmentCountModule,
     FileModule,
     InstitutionModule,

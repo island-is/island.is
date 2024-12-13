@@ -61,6 +61,9 @@ export enum Features {
   //New License service fetch enabled
   licensesV2 = 'isLicensesV2Enabled',
 
+  //Is social administration payment plan 2025 enabled?
+  isServicePortalPaymentPlan2025Enabled = 'isServicePortalPaymentPlan2025Enabled',
+
   //Possible universities
   isUniversityOfAkureyriEnabled = 'isUniversityOfAkureyriEnabled',
   isAgriculturalUniversityOfIcelandEnabled = 'isAgriculturalUniversityOfIcelandEnabled',

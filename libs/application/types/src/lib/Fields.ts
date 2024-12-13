@@ -259,10 +259,10 @@ export enum FieldTypes {
   FIND_VEHICLE = 'FIND_VEHICLE',
   VEHICLE_RADIO = 'VEHICLE_RADIO',
   STATIC_TABLE = 'STATIC_TABLE',
-  ACCORDION = 'ACCORDION',
-  BANK_ACCOUNT = 'BANK_ACCOUNT',
   SLIDER = 'SLIDER',
   DISPLAY = 'DISPLAY',
+  ACCORDION = 'ACCORDION',
+  BANK_ACCOUNT = 'BANK_ACCOUNT',
 }
 
 export enum FieldComponents {
@@ -296,10 +296,10 @@ export enum FieldComponents {
   FIND_VEHICLE = 'FindVehicleFormField',
   VEHICLE_RADIO = 'VehicleRadioFormField',
   STATIC_TABLE = 'StaticTableFormField',
-  ACCORDION = 'AccordionFormField',
-  BANK_ACCOUNT = 'BankAccountFormField',
   SLIDER = 'SliderFormField',
   DISPLAY = 'DisplayFormField',
+  ACCORDION = 'AccordionFormField',
+  BANK_ACCOUNT = 'BankAccountFormField',
 }
 
 export interface CheckboxField extends InputField {
@@ -545,30 +545,6 @@ export interface ImageField extends BaseField {
   imagePosition?: ImagePositionProps | Array<ImagePositionProps>
 }
 
-export type AccordionItem = {
-  itemTitle: FormText
-  itemContent: FormText
-}
-
-export interface AccordionField extends BaseField {
-  readonly type: FieldTypes.ACCORDION
-  component: FieldComponents.ACCORDION
-  accordionItems:
-    | Array<AccordionItem>
-    | ((application: Application) => Array<AccordionItem>)
-  marginTop?: ResponsiveProp<Space>
-  marginBottom?: ResponsiveProp<Space>
-  titleVariant?: TitleVariants
-}
-
-export interface BankAccountField extends BaseField {
-  readonly type: FieldTypes.BANK_ACCOUNT
-  component: FieldComponents.BANK_ACCOUNT
-  marginTop?: ResponsiveProp<Space>
-  marginBottom?: ResponsiveProp<Space>
-  titleVariant?: TitleVariants
-}
-
 export interface PdfLinkButtonField extends BaseField {
   readonly type: FieldTypes.PDF_LINK_BUTTON
   component: FieldComponents.PDF_LINK_BUTTON
@@ -598,6 +574,11 @@ export interface NationalIdWithNameField extends InputField {
   nameDefaultValue?: string
   errorMessage?: string
   minAgePerson?: number
+  searchPersons?: boolean
+  searchCompanies?: boolean
+  titleVariant?: TitleVariants
+  marginTop?: ResponsiveProp<Space>
+  marginBottom?: ResponsiveProp<Space>
 }
 
 type Modify<T, R> = Omit<T, keyof R> & R
@@ -696,6 +677,28 @@ export type FieldsRepeaterField = BaseField & {
     rows?: string[]
     format?: Record<string, (value: string) => string | StaticText>
   }
+}
+
+export type AccordionItem = {
+  itemTitle: FormText
+  itemContent: FormText
+}
+export interface AccordionField extends BaseField {
+  readonly type: FieldTypes.ACCORDION
+  component: FieldComponents.ACCORDION
+  accordionItems:
+    | Array<AccordionItem>
+    | ((application: Application) => Array<AccordionItem>)
+  marginTop?: ResponsiveProp<Space>
+  marginBottom?: ResponsiveProp<Space>
+  titleVariant?: TitleVariants
+}
+export interface BankAccountField extends BaseField {
+  readonly type: FieldTypes.BANK_ACCOUNT
+  component: FieldComponents.BANK_ACCOUNT
+  marginTop?: ResponsiveProp<Space>
+  marginBottom?: ResponsiveProp<Space>
+  titleVariant?: TitleVariants
 }
 
 export interface FindVehicleField extends InputField {
@@ -806,6 +809,7 @@ export interface DisplayField extends BaseField {
   titleVariant?: TitleVariants
   suffix?: MessageDescriptor | string
   rightAlign?: boolean
+  halfWidthOwnline?: boolean
   variant?: TextFieldVariant
   label?: MessageDescriptor | string
   value: (answers: FormValue) => string
@@ -844,7 +848,7 @@ export type Field =
   | FindVehicleField
   | VehicleRadioField
   | StaticTableField
-  | AccordionField
-  | BankAccountField
   | SliderField
   | DisplayField
+  | AccordionField
+  | BankAccountField

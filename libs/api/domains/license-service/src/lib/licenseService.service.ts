@@ -47,6 +47,7 @@ import {
   BarcodeService,
   TOKEN_EXPIRED_ERROR,
 } from '@island.is/services/license'
+import { UserAgent } from '@island.is/nest/core'
 
 const LOG_CATEGORY = 'license-service'
 
@@ -96,6 +97,7 @@ export class LicenseService {
     user: User,
     locale: Locale,
     { includedTypes, excludedTypes, onlyList }: GetGenericLicenseOptions = {},
+    userAgent?: UserAgent,
   ): Promise<LicenseCollection> {
     const fetchPromises = AVAILABLE_LICENSES.map(async (license) => {
       if (excludedTypes && excludedTypes.indexOf(license.type) >= 0) {
@@ -107,7 +109,7 @@ export class LicenseService {
       }
 
       if (!onlyList) {
-        return this.getLicensesOfType(user, locale, license.type)
+        return this.getLicensesOfType(user, locale, license.type, userAgent)
       }
 
       return null
@@ -140,6 +142,7 @@ export class LicenseService {
     user: User,
     locale: Locale,
     licenseType: GenericLicenseType,
+    agent?: UserAgent,
   ): Promise<LicenseTypeFetchResponse | null> {
     const licenseTypeDefinition = AVAILABLE_LICENSES.find(
       (i) => i.type === licenseType,
@@ -187,6 +190,7 @@ export class LicenseService {
     const licensesPayload = await mapper.parsePayload(
       licensesFetchResponse.data,
       locale,
+      agent,
     )
 
     const mappedLicenses: Array<GenericUserLicense> = await Promise.all(
@@ -246,11 +250,13 @@ export class LicenseService {
     locale: Locale,
     licenseType: GenericLicenseType,
     licenseId?: string,
+    agent?: UserAgent,
   ): Promise<GenericUserLicense | LicenseError | null> {
     const licensesOfType = await this.getLicensesOfType(
       user,
       locale,
       licenseType,
+      agent,
     )
 
     if (!licensesOfType) {
