@@ -17,6 +17,7 @@ export const GET_GRANTS_QUERY = gql`
         dateFrom
         dateTo
         status
+        statusText
         categoryTags {
           id
           title
@@ -67,6 +68,9 @@ export const GET_GRANT_QUERY = gql`
           type
     }
       status
+      statusText
+      dateFrom
+      dateTo
       categoryTags {
         id
         title

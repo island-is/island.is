@@ -25,6 +25,7 @@ import {
 } from '../reducer/ApplicationFormReducer'
 import { ActionTypes } from '../reducer/ReducerTypes'
 import * as styles from './FormShell.css'
+import { canGoBack } from '../reducer/reducerUtils'
 
 export const FormShell: FC<
   React.PropsWithChildren<{
@@ -142,6 +143,7 @@ export const FormShell: FC<
                       payload,
                     })
                   }}
+                  canGoBack={canGoBack(screens, activeScreen)}
                   prevScreen={() => dispatch({ type: ActionTypes.PREV_SCREEN })}
                   activeScreenIndex={activeScreen}
                   numberOfScreens={screens.length}

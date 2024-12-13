@@ -21,7 +21,12 @@ import {
   isRepresentativeOfCompanyOrInstitute,
 } from '../../../utils'
 import { AttachmentsEnum } from '../../../types'
-import { FILE_SIZE_LIMIT, NO, UPLOAD_ACCEPT, YES } from '../../../constants'
+import {
+  FILE_SIZE_LIMIT,
+  NO,
+  UPLOAD_ACCEPT,
+  YES,
+} from '../../../utils/constants'
 
 // Injury certificate and fatal accident section
 export const attachmentsSubSection = buildSubSection({

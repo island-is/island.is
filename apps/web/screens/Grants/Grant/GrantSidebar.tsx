@@ -17,7 +17,7 @@ import { Grant } from '@island.is/web/graphql/schema'
 import { LinkType, useLinkResolver } from '@island.is/web/hooks'
 
 import { m } from '../messages'
-import { generateStatusTag } from '../utils'
+import { generateStatusTag, parseStatus } from '../utils'
 
 interface Props {
   grant: Grant
@@ -42,7 +42,7 @@ const generateSidebarPanel = (
   data: Array<React.ReactElement>,
   background: BoxProps['background'],
 ) => {
-  if (!data) {
+  if (!data.length) {
     return undefined
   }
   return (
