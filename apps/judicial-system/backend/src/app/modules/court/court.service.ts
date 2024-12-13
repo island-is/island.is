@@ -343,6 +343,7 @@ export class CourtService {
 
       return await this.courtClientService.createCase(courtId, {
         caseType: isIndictment ? 'S - Ákærumál' : 'R - Rannsóknarmál',
+        // TODO: send a list of subtypes when CourtService supports it
         subtype: courtSubtype as string,
         status: 'Skráð',
         receivalDate: formatISO(receivalDate, { representation: 'date' }),
