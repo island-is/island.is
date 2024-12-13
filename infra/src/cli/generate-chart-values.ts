@@ -22,40 +22,21 @@ const headerComment = `#########################################################
 
 `
 
-// Recursive function to filter out empty string properties
-const removeEmptyStringProperties = (obj: any): any => {
-  if (typeof obj !== 'object' || obj === null) return obj
-
-  if (Array.isArray(obj)) {
-    return obj.map(removeEmptyStringProperties)
-  }
-
-  return Object.fromEntries(
-    Object.entries(obj)
-      .filter(([_, value]) => value !== '') // Filter out empty strings
-      .map(([key, value]) => [key, removeEmptyStringProperties(value)]), // Recursively apply to nested objects
-  )
-}
-
 const writeYamlFile = (filePath: string, content: unknown) => {
-  const filteredContent = removeEmptyStringProperties(content)
   const doc = new yaml.Document()
-  doc.contents = doc.createNode(filteredContent, { keepUndefined: false })
-
+  doc.contents = doc.createNode(content)
   mkdirSync(path.dirname(filePath), { recursive: true })
   writeFileSync(filePath, headerComment + doc.toString(yamlOptions), {
     encoding: 'utf8',
   })
 }
 
-async function generateChartValues() {
+const generateChartValues = async () => {
   console.log('Gathering charts')
 
   for (const [name, envs] of Object.entries(Deployments)) {
     for (const [envType, envName] of Object.entries(envs)) {
       console.log(`Processing ${name} ${envName} ${envType}`)
-
-      // Get rendered environment values and parse
       const renderedYaml = await renderEnv(envType as OpsEnv, name as ChartName)
       const renderedValues = yaml
         .parseDocument(renderedYaml, { schema: 'json' })
@@ -76,12 +57,12 @@ async function generateChartValues() {
       const services = Charts[name as ChartName][envType as OpsEnv]
       for (const service of services) {
         const serviceName = service.name()
+        console.log(`Processing ${serviceName} ${envName} ${envType}`)
         if (renderedValues[serviceName]) {
           const serviceValues = {
-            service: {
-              name: serviceName,
-              ...renderedValues[serviceName],
-            },
+            global: renderedValues.global,
+            name: serviceName,
+            ...renderedValues[serviceName],
           }
 
           writeYamlFile(

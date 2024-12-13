@@ -7,13 +7,13 @@ import {
   Input,
   RadioButton,
   Select,
-  Text,
 } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import { isCoreUser } from '@island.is/judicial-system/types'
 import {
   FormContentContainer,
   FormFooter,
+  PageTitle,
 } from '@island.is/judicial-system-web/src/components'
 import {
   Institution,
@@ -136,11 +136,7 @@ export const UserForm: FC<Props> = ({
   return (
     <div className={styles.userFormContainer}>
       <FormContentContainer>
-        <Box marginBottom={7}>
-          <Text as="h1" variant="h1">
-            Notandi
-          </Text>
-        </Box>
+        <PageTitle>Notandi</PageTitle>
         <Box marginBottom={2}>
           <InputMask
             // eslint-disable-next-line local-rules/disallow-kennitalas

@@ -1,6 +1,7 @@
 import CryptoJS from 'crypto-js'
 import format from 'date-fns/format'
 import { Base64 } from 'js-base64'
+import { Op } from 'sequelize'
 import { Sequelize } from 'sequelize-typescript'
 
 import {
@@ -57,7 +58,7 @@ import { CaseFile, FileService } from '../file'
 import { IndictmentCount, IndictmentCountService } from '../indictment-count'
 import { Institution } from '../institution'
 import { PoliceDocument, PoliceDocumentType, PoliceService } from '../police'
-import { Subpoena } from '../subpoena'
+import { Subpoena, SubpoenaService } from '../subpoena'
 import { User, UserService } from '../user'
 import { InternalCreateCaseDto } from './dto/internalCreateCase.dto'
 import { archiveFilter } from './filters/case.archiveFilter'
@@ -171,6 +172,8 @@ export class InternalCaseService {
     private readonly fileService: FileService,
     @Inject(forwardRef(() => DefendantService))
     private readonly defendantService: DefendantService,
+    @Inject(forwardRef(() => SubpoenaService))
+    private readonly subpoenaService: SubpoenaService,
     @Inject(forwardRef(() => PdfService))
     private readonly pdfService: PdfService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
@@ -418,7 +421,7 @@ export class InternalCaseService {
           collectEncryptionProperties(defendantEncryptionProperties, defendant)
         defendantsArchive.push(defendantArchive)
 
-        await this.defendantService.updateForArcive(
+        await this.defendantService.updateDatabaseDefendant(
           theCase.id,
           defendant.id,
           clearedDefendantProperties,
@@ -580,6 +583,10 @@ export class InternalCaseService {
       : []
 
     const mappedSubtypes = subtypeList.flatMap((key) => courtSubtypes[key])
+    const indictmentIssuedByProsecutorAndReceivedByCourt =
+      theCase.eventLogs?.find(
+        (eventLog) => eventLog.eventType === EventType.INDICTMENT_CONFIRMED,
+      )?.created
 
     return this.courtService
       .updateIndictmentCaseWithIndictmentInfo(
@@ -587,12 +594,8 @@ export class InternalCaseService {
         theCase.id,
         theCase.court?.name,
         theCase.courtCaseNumber,
-        theCase.eventLogs?.find(
-          (eventLog) => eventLog.eventType === EventType.CASE_RECEIVED_BY_COURT,
-        )?.created,
-        theCase.eventLogs?.find(
-          (eventLog) => eventLog.eventType === EventType.INDICTMENT_CONFIRMED,
-        )?.created,
+        indictmentIssuedByProsecutorAndReceivedByCourt,
+        indictmentIssuedByProsecutorAndReceivedByCourt,
         theCase.policeCaseNumbers[0],
         mappedSubtypes,
         theCase.defendants?.map((defendant) => ({
@@ -603,6 +606,7 @@ export class InternalCaseService {
           ? {
               name: theCase.prosecutor.name,
               nationalId: theCase.prosecutor.nationalId,
+              email: theCase.prosecutor.email,
             }
           : undefined,
       )
@@ -610,29 +614,6 @@ export class InternalCaseService {
       .catch((reason) => {
         this.logger.error(
           `Failed to update indictment case ${theCase.id} with indictment info`,
-          { reason },
-        )
-
-        return { delivered: false }
-      })
-  }
-
-  async deliverIndictmentDefenderInfoToCourt(
-    theCase: Case,
-    user: TUser,
-  ): Promise<DeliverResponse> {
-    return this.courtService
-      .updateIndictmentCaseWithDefenderInfo(
-        user,
-        theCase.id,
-        theCase.court?.name,
-        theCase.courtCaseNumber,
-        theCase.defendants,
-      )
-      .then(() => ({ delivered: true }))
-      .catch((reason) => {
-        this.logger.error(
-          `Failed to update indictment case ${theCase.id} with defender info`,
           { reason },
         )
 
@@ -1203,7 +1184,7 @@ export class InternalCaseService {
 
   // As this is only currently used by the digital mailbox API
   // we will only return indictment cases that have a court date
-  async getIndictmentCases(nationalId: string): Promise<Case[]> {
+  async getAllDefendantIndictmentCases(nationalId: string): Promise<Case[]> {
     return this.caseModel.findAll({
       include: [
         {
@@ -1223,6 +1204,12 @@ export class InternalCaseService {
       attributes: ['id', 'courtCaseNumber', 'type', 'state'],
       where: {
         type: CaseType.INDICTMENT,
+        // Make sure we don't send cases that are in deleted or other inaccessible states
+        state: [
+          CaseState.RECEIVED,
+          CaseState.COMPLETED,
+          CaseState.WAITING_FOR_CANCELLATION,
+        ],
         // The national id could be without a hyphen or with a hyphen so we need to
         // search for both
         '$defendants.national_id$': normalizeAndFormatNationalId(nationalId),
@@ -1230,8 +1217,11 @@ export class InternalCaseService {
     })
   }
 
-  async getIndictmentCase(caseId: string, nationalId: string): Promise<Case> {
-    const caseById = await this.caseModel.findOne({
+  async findByIdAndDefendantNationalId(
+    caseId: string,
+    defendantNationalId: string,
+  ): Promise<Case> {
+    const theCase = await this.caseModel.findOne({
       include: [
         {
           model: Defendant,
@@ -1258,17 +1248,39 @@ export class InternalCaseService {
       where: {
         type: CaseType.INDICTMENT,
         id: caseId,
-        // The national id could be without a hyphen or with a hyphen so we need to
-        // search for both
-        '$defendants.national_id$': normalizeAndFormatNationalId(nationalId),
+        state: { [Op.not]: CaseState.DELETED },
+        isArchived: false,
+        // This select only defendants with the given national id, other defendants are not included
+        '$defendants.national_id$':
+          normalizeAndFormatNationalId(defendantNationalId),
       },
     })
 
-    if (!caseById) {
-      throw new NotFoundException(`Case ${caseId} not found`)
+    if (!theCase) {
+      throw new NotFoundException(`Case ${caseId} does not exist`)
     }
 
-    return caseById
+    return theCase
+  }
+
+  async getDefendantIndictmentCase(
+    theCase: Case,
+    defendantNationalId: string,
+  ): Promise<Case> {
+    const subpoena = theCase.defendants?.[0].subpoenas?.[0]
+
+    if (!subpoena) {
+      return theCase
+    }
+
+    const latestSubpoena = await this.subpoenaService.getSubpoena(subpoena)
+
+    if (latestSubpoena === subpoena) {
+      // The subpoena was up to date
+      return theCase
+    }
+
+    return this.findByIdAndDefendantNationalId(theCase.id, defendantNationalId)
   }
 
   countIndictmentsWaitingForConfirmation(prosecutorsOfficeId: string) {

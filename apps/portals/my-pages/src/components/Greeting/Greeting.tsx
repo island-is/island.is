@@ -1,4 +1,3 @@
-import React, { FC } from 'react'
 import {
   Box,
   GridColumn,
@@ -8,13 +7,13 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { useAuth } from '@island.is/auth/react'
-import { m } from '@island.is/service-portal/core'
+import { useUserInfo } from '@island.is/react-spa/bff'
+import { m } from '@island.is/portals/my-pages/core'
 import * as styles from './Greeting.css'
 
-const Greeting: FC<React.PropsWithChildren<{}>> = () => {
+const Greeting = () => {
   const { formatMessage } = useLocale()
-  const { userInfo } = useAuth()
+  const userInfo = useUserInfo()
   const currentHour = new Date().getHours()
 
   const isEveningGreeting = currentHour > 17 || currentHour < 4

@@ -36,6 +36,13 @@ const strings = defineMessages({
     description:
       'Notaður sem texti í valmöguleika fyrir það þegar ekki skal birta dómdfellda dóminn.',
   },
+  serviceRequirementNotRequiredTooltip: {
+    id: 'judicial.system.core:court.indictments.completed.service_requirement_not_required_tooltip',
+    defaultMessage:
+      'Ekki þarf að birta dóm þar sem sektarfjárhæð er lægri en sem nemur áfrýjunarfjárhæð í einkamáli kr. 1.355.762. Gildir frá 01.01.2024',
+    description:
+      'Notað sem tooltip í valmöguleika fyrir það þegar ekki skal birta dómdfellda dóminn.',
+  },
   serviceRequirementNotApplicable: {
     id: 'judicial.system.core:court.indictments.completed.service_requirement_not_applicable',
     defaultMessage: 'Dómfelldi var viðstaddur dómsuppkvaðningu',

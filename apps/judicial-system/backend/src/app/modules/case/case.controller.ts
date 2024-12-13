@@ -39,14 +39,10 @@ import {
 } from '@island.is/judicial-system/formatters'
 import type { User } from '@island.is/judicial-system/types'
 import {
-  CaseAppealRulingDecision,
-  CaseDecision,
   CaseState,
-  CaseTransition,
   CaseType,
   indictmentCases,
   investigationCases,
-  isRestrictionCase,
   restrictionCases,
   UserRole,
 } from '@island.is/judicial-system/types'
@@ -74,6 +70,7 @@ import { CurrentCase } from './guards/case.decorator'
 import { CaseCompletedGuard } from './guards/caseCompleted.guard'
 import { CaseExistsGuard } from './guards/caseExists.guard'
 import { CaseReadGuard } from './guards/caseRead.guard'
+import { CaseTransitionGuard } from './guards/caseTransition.guard'
 import { CaseTypeGuard } from './guards/caseType.guard'
 import { CaseWriteGuard } from './guards/caseWrite.guard'
 import { MergedCaseExistsGuard } from './guards/mergedCaseExists.guard'
@@ -277,7 +274,13 @@ export class CaseController {
     return this.caseService.update(theCase, update, user) as Promise<Case> // Never returns undefined
   }
 
-  @UseGuards(JwtAuthGuard, CaseExistsGuard, RolesGuard, CaseWriteGuard)
+  @UseGuards(
+    JwtAuthGuard,
+    CaseExistsGuard,
+    RolesGuard,
+    CaseWriteGuard,
+    CaseTransitionGuard,
+  )
   @RolesRules(
     prosecutorTransitionRule,
     prosecutorRepresentativeTransitionRule,
@@ -358,7 +361,7 @@ export class CaseController {
   )
   @UseInterceptors(CompletedAppealAccessedInterceptor, CaseInterceptor)
   @Get('case/:caseId')
-  @ApiOkResponse({ type: Case, description: 'Gets an existing case' })
+  @ApiOkResponse({ type: Case, description: 'Gets an existing case by id' })
   getById(@Param('caseId') caseId: string, @CurrentCase() theCase: Case): Case {
     this.logger.debug(`Getting case ${caseId} by id`)
 

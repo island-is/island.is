@@ -79,7 +79,7 @@ export interface Form {
   children: FormChildren[]
   icon?: string
   id: string
-  logo?: FormComponent
+  logo?: React.FC<React.PropsWithChildren<unknown>>
   mode?: FormModes
   renderLastScreenBackButton?: boolean
   renderLastScreenButton?: boolean
@@ -185,6 +185,7 @@ export interface FieldBaseProps<TAnswers = FormValue> {
   application: Application<TAnswers>
   showFieldName?: boolean
   goToScreen?: (id: string) => void
+  answerQuestions?: (answers: FormValue) => void
   refetch?: () => void
   setBeforeSubmitCallback?: SetBeforeSubmitCallback
   setFieldLoadingState?: SetFieldLoadingState

@@ -101,19 +101,23 @@ export const MultiSelectDropdownController: FC<
 
   useEffect(() => {
     if (!pickedValue || !pickedValue.key || !pickedValue.option) return
+
     setAnswers((currentValue) => ({
       ...currentValue,
-      [pickedValue.key]: [
-        ...(currentValue[pickedValue.key] || []),
-        pickedValue.option,
-      ],
+      [pickedValue.key]: currentValue[pickedValue.key]?.some(
+        (option) => option.value === pickedValue.option.value,
+      )
+        ? currentValue[pickedValue.key]
+        : [...(currentValue[pickedValue.key] || []), pickedValue.option],
     }))
+
     setValue(answerId, {
       ...answers,
-      [pickedValue.key]: [
-        ...(answers[pickedValue.key] || []),
-        pickedValue.option,
-      ],
+      [pickedValue.key]: answers[pickedValue.key]?.some(
+        (option) => option.value === pickedValue.option.value,
+      )
+        ? answers[pickedValue.key]
+        : [...(answers[pickedValue.key] || []), pickedValue.option],
     })
   }, [pickedValue])
 

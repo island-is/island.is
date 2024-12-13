@@ -10,7 +10,10 @@ import {
   UserRole,
 } from '@island.is/judicial-system/types'
 
-import { createTestingNotificationModule } from '../createTestingNotificationModule'
+import {
+  createTestingNotificationModule,
+  createTestUsers,
+} from '../createTestingNotificationModule'
 
 import { Case } from '../../../case'
 import { DeliverResponse } from '../../models/deliver.response'
@@ -23,18 +26,15 @@ interface Then {
 type GivenWhenThen = (user: User) => Promise<Then>
 
 describe('InternalNotificationController - Send case files updated notifications', () => {
+  const { prosecutor, judge, defender, spokesperson } = createTestUsers([
+    'prosecutor',
+    'judge',
+    'defender',
+    'spokesperson',
+  ])
+
   const caseId = uuid()
   const courtCaseNumber = uuid()
-  const prosecutorName = uuid()
-  const prosecutorEmail = uuid()
-  const judgeName = uuid()
-  const judgeEmail = uuid()
-  const defenderNationalId = uuid()
-  const defenderName = uuid()
-  const defenderEmail = uuid()
-  const spokespersonNationalId = uuid()
-  const spokespersonName = uuid()
-  const spokespersonEmail = uuid()
   let mockEmailService: EmailService
   let givenWhenThen: GivenWhenThen
 
@@ -55,15 +55,21 @@ describe('InternalNotificationController - Send case files updated notifications
             type: CaseType.INDICTMENT,
             courtCaseNumber,
             court: { name: 'Héraðsdómur Reykjavíkur' },
-            prosecutor: { name: prosecutorName, email: prosecutorEmail },
-            judge: { name: judgeName, email: judgeEmail },
-            defendants: [{ defenderNationalId, defenderName, defenderEmail }],
+            prosecutor: { name: prosecutor.name, email: prosecutor.email },
+            judge: { name: judge.name, email: judge.email },
+            defendants: [
+              {
+                defenderNationalId: defender.nationalId,
+                defenderName: defender.name,
+                defenderEmail: defender.email,
+              },
+            ],
             civilClaimants: [
               {
                 hasSpokesperson: true,
-                spokespersonNationalId,
-                spokespersonName,
-                spokespersonEmail,
+                spokespersonNationalId: spokesperson.nationalId,
+                spokespersonName: spokesperson.name,
+                spokespersonEmail: spokesperson.email,
               },
             ],
           } as Case,
@@ -92,21 +98,21 @@ describe('InternalNotificationController - Send case files updated notifications
     it('should send notifications', () => {
       expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
         expect.objectContaining({
-          to: [{ name: judgeName, address: judgeEmail }],
+          to: [{ name: judge.name, address: judge.email }],
           subject: `Ný gögn í máli ${courtCaseNumber}`,
           html: `Ný gögn hafa borist vegna máls ${courtCaseNumber}. Hægt er að nálgast gögn málsins á <a href="http://localhost:4200/domur/akaera/yfirlit/${caseId}">yfirlitssíðu málsins í Réttarvörslugátt</a>.`,
         }),
       )
       expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
         expect.objectContaining({
-          to: [{ name: spokespersonName, address: spokespersonEmail }],
+          to: [{ name: spokesperson.name, address: spokesperson.email }],
           subject: `Ný gögn í máli ${courtCaseNumber}`,
           html: `Ný gögn hafa borist vegna máls ${courtCaseNumber}. Hægt er að nálgast gögn málsins á <a href="http://localhost:4200/verjandi/akaera/${caseId}">yfirlitssíðu málsins í Réttarvörslugátt</a>.`,
         }),
       )
       expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
         expect.objectContaining({
-          to: [{ name: defenderName, address: defenderEmail }],
+          to: [{ name: defender.name, address: defender.email }],
           subject: `Ný gögn í máli ${courtCaseNumber}`,
           html: `Ný gögn hafa borist vegna máls ${courtCaseNumber}. Hægt er að nálgast gögn málsins á <a href="http://localhost:4200/verjandi/akaera/${caseId}">yfirlitssíðu málsins í Réttarvörslugátt</a>.`,
         }),
@@ -127,21 +133,21 @@ describe('InternalNotificationController - Send case files updated notifications
     it('should send notifications', () => {
       expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
         expect.objectContaining({
-          to: [{ name: judgeName, address: judgeEmail }],
+          to: [{ name: judge.name, address: judge.email }],
           subject: `Ný gögn í máli ${courtCaseNumber}`,
           html: `Ný gögn hafa borist vegna máls ${courtCaseNumber}. Hægt er að nálgast gögn málsins á <a href="http://localhost:4200/domur/akaera/yfirlit/${caseId}">yfirlitssíðu málsins í Réttarvörslugátt</a>.`,
         }),
       )
       expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
         expect.objectContaining({
-          to: [{ name: spokespersonName, address: spokespersonEmail }],
+          to: [{ name: spokesperson.name, address: spokesperson.email }],
           subject: `Ný gögn í máli ${courtCaseNumber}`,
           html: `Ný gögn hafa borist vegna máls ${courtCaseNumber}. Hægt er að nálgast gögn málsins á <a href="http://localhost:4200/verjandi/akaera/${caseId}">yfirlitssíðu málsins í Réttarvörslugátt</a>.`,
         }),
       )
       expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
         expect.objectContaining({
-          to: [{ name: prosecutorName, address: prosecutorEmail }],
+          to: [{ name: prosecutor.name, address: prosecutor.email }],
           subject: `Ný gögn í máli ${courtCaseNumber}`,
           html: `Ný gögn hafa borist vegna máls ${courtCaseNumber}. Hægt er að nálgast gögn málsins á <a href="http://localhost:4200/akaera/stadfesta/${caseId}">yfirlitssíðu málsins í Réttarvörslugátt</a>.`,
         }),

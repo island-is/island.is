@@ -17,14 +17,16 @@ import {
   UserModule,
 } from '../index'
 import { Notification } from './models/notification.model'
-import { CaseNotificationService } from './caseNotification.service'
-import { DefendantNotificationService } from './defendantNotification.service'
-import { InstitutionNotificationService } from './institutionNotification.service'
+import { CaseNotificationService } from './services/caseNotification/caseNotification.service'
+import { CivilClaimantNotificationService } from './services/civilClaimantNotification/civilClaimantNotification.service'
+import { DefendantNotificationService } from './services/defendantNotification/defendantNotification.service'
+import { IndictmentCaseNotificationService } from './services/indictmentCaseNotification/indictmentCaseNotification.service'
+import { InstitutionNotificationService } from './services/institutionNotification/institutionNotification.service'
+import { SubpoenaNotificationService } from './services/subpoenaNotification/subpoenaNotification.service'
 import { InternalNotificationController } from './internalNotification.controller'
 import { NotificationController } from './notification.controller'
 import { NotificationService } from './notification.service'
 import { NotificationDispatchService } from './notificationDispatch.service'
-import { SubpoenaNotificationService } from './subpoenaNotification.service'
 
 @Module({
   imports: [
@@ -43,12 +45,14 @@ import { SubpoenaNotificationService } from './subpoenaNotification.service'
   ],
   controllers: [NotificationController, InternalNotificationController],
   providers: [
-    NotificationService,
     CaseNotificationService,
-    NotificationDispatchService,
-    InstitutionNotificationService,
-    SubpoenaNotificationService,
+    CivilClaimantNotificationService,
     DefendantNotificationService,
+    IndictmentCaseNotificationService,
+    InstitutionNotificationService,
+    NotificationService,
+    NotificationDispatchService,
+    SubpoenaNotificationService,
   ],
 })
 export class NotificationModule {}

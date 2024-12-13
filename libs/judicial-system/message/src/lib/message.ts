@@ -30,6 +30,9 @@ export enum MessageType {
   INSTITUTION_NOTIFICATION = 'INSTITUTION_NOTIFICATION',
   NOTIFICATION_DISPATCH = 'NOTIFICATION_DISPATCH',
   DEFENDANT_NOTIFICATION = 'DEFENDANT_NOTIFICATION',
+  CIVIL_CLAIMANT_NOTIFICATION = 'CIVIL_CLAIMANT_NOTIFICATION',
+  INDICTMENT_CASE_NOTIFICATION = 'INDICTMENT_CASE_NOTIFICATION',
+  EVENT_NOTIFICATION_DISPATCH = 'EVENT_NOTIFICATION_DISPATCH',
 }
 
 export const messageEndpoint: { [key in MessageType]: string } = {
@@ -66,6 +69,9 @@ export const messageEndpoint: { [key in MessageType]: string } = {
   INSTITUTION_NOTIFICATION: 'institutionNotification',
   NOTIFICATION_DISPATCH: 'notification/dispatch',
   DEFENDANT_NOTIFICATION: 'defendantNotification',
+  CIVIL_CLAIMANT_NOTIFICATION: 'civilClaimantNotification',
+  INDICTMENT_CASE_NOTIFICATION: 'indictmentCaseNotification',
+  EVENT_NOTIFICATION_DISPATCH: 'eventNotification/dispatch',
 }
 
 export type Message = {

@@ -84,7 +84,7 @@ export const prePaidHeirs = buildSection({
         buildMultiField({
           id: 'prePaidHeirsAdditionalInfo',
           title: m.heirAdditionalInfo,
-          description: m.heirAdditionalInfoDescription,
+          description: m.heirAdditionalInfoPrePaidDescription,
           children: [
             buildTextField({
               id: 'heirsAdditionalInfo',
@@ -112,6 +112,7 @@ export const prePaidHeirs = buildSection({
               uploadDescription: m.fileUploadOtherDocumentsPrePaidDescription,
               title: '',
               uploadHeader: '',
+              uploadMultiple: true,
             }),
           ],
         }),

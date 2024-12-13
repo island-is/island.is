@@ -7,6 +7,7 @@ import {
   districtCourtRegistrarRule,
   prosecutorRepresentativeRule,
   prosecutorRule,
+  publicProsecutorStaffRule,
 } from '../../../../guards'
 import { FileController } from '../../file.controller'
 
@@ -22,7 +23,7 @@ describe('FileController - Create presigned post rules', () => {
   })
 
   it('should give permission to roles', () => {
-    expect(rules).toHaveLength(8)
+    expect(rules).toHaveLength(9)
     expect(rules).toContain(prosecutorRule)
     expect(rules).toContain(prosecutorRepresentativeRule)
     expect(rules).toContain(districtCourtJudgeRule)
@@ -31,5 +32,6 @@ describe('FileController - Create presigned post rules', () => {
     expect(rules).toContain(courtOfAppealsJudgeRule)
     expect(rules).toContain(courtOfAppealsRegistrarRule)
     expect(rules).toContain(courtOfAppealsAssistantRule)
+    expect(rules).toContain(publicProsecutorStaffRule)
   })
 })

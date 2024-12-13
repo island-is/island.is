@@ -9,11 +9,13 @@ auth-admin-web:
   enabled: true
   env:
     BASE_URL: 'https://identity-server.staging01.devland.is/admin'
+    CODE_OWNER: 'aranja'
     IDENTITYSERVER_DOMAIN: 'identity-server.staging01.devland.is'
     LOG_LEVEL: 'info'
     NEXTAUTH_URL: 'https://identity-server.staging01.devland.is/admin/api/auth'
     NEXT_PUBLIC_BACKEND_URL: '/backend'
     NODE_OPTIONS: '--max-old-space-size=230 -r dd-trace/init'
+    SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
     - 'nginx-ingress-external'
     - 'nginx-ingress-internal'
@@ -119,6 +121,7 @@ identity-server:
     PersistenceSettings__DelegationsCacheEnabled: 'false'
     RedisSettings__Address: 'clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com'
     RedisSettings__Port: '6379'
+    SERVERSIDE_FEATURES_ON: ''
     SessionsApiSettings__BaseAddress: 'http://web-services-sessions.services-sessions.svc.cluster.local'
   files:
     - 'ids-signing.pfx'
@@ -126,6 +129,7 @@ identity-server:
     - 'nginx-ingress-external'
     - 'user-notification'
     - 'portals-admin'
+    - 'datadog'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -215,6 +219,7 @@ namespaces:
 services-auth-admin-api:
   enabled: true
   env:
+    CODE_OWNER: 'aranja'
     COMPANY_REGISTRY_REDIS_NODES: '["clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379"]'
     COMPANY_REGISTRY_XROAD_PROVIDER_ID: 'IS-TEST/GOV/5402696029/Skatturinn/ft-v1'
     DB_HOST: 'postgres-applications.internal'
@@ -225,7 +230,12 @@ services-auth-admin-api:
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
     IDENTITY_SERVER_ISSUER_URL_LIST: '["https://identity-server.staging01.devland.is","https://innskra.island.is"]'
     LOG_LEVEL: 'info'
+    NATIONAL_REGISTRY_B2C_CLIENT_ID: '6cf94113-d326-4e4d-b97c-1fea12d2f5e1'
+    NATIONAL_REGISTRY_B2C_ENDPOINT: 'https://skraidentitydev.b2clogin.com/skraidentitydev.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token'
+    NATIONAL_REGISTRY_B2C_PATH: 'IS-TEST/GOV/10001/SKRA-Cloud-Protected/Midlun-v1'
+    NATIONAL_REGISTRY_B2C_SCOPE: 'https://skraidentitydev.onmicrosoft.com/midlun/.default'
     NODE_OPTIONS: '--max-old-space-size=691 -r dd-trace/init'
+    SERVERSIDE_FEATURES_ON: ''
     SYSLUMENN_HOST: 'https://api.syslumenn.is/staging'
     SYSLUMENN_TIMEOUT: '3000'
     XROAD_BASE_PATH: 'http://securityserver.staging01.devland.is'
@@ -294,6 +304,7 @@ services-auth-admin-api:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     DB_PASS: '/k8s/servicesauth/DB_PASSWORD'
     IDENTITY_SERVER_CLIENT_SECRET: '/k8s/services-auth/IDENTITY_SERVER_CLIENT_SECRET'
+    NATIONAL_REGISTRY_B2C_CLIENT_SECRET: '/k8s/services-auth/NATIONAL_REGISTRY_B2C_CLIENT_SECRET'
     NATIONAL_REGISTRY_IDS_CLIENT_SECRET: '/k8s/xroad/client/NATIONAL-REGISTRY/IDENTITYSERVER_SECRET'
     SYSLUMENN_PASSWORD: '/k8s/services-auth/SYSLUMENN_PASSWORD'
     SYSLUMENN_USERNAME: '/k8s/services-auth/SYSLUMENN_USERNAME'
@@ -306,6 +317,7 @@ services-auth-admin-api:
 services-auth-delegation-api:
   enabled: true
   env:
+    CODE_OWNER: 'aranja'
     COMPANY_REGISTRY_REDIS_NODES: '["clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379"]'
     COMPANY_REGISTRY_XROAD_PROVIDER_ID: 'IS-TEST/GOV/5402696029/Skatturinn/ft-v1'
     DB_HOST: 'postgres-applications.internal'
@@ -315,7 +327,12 @@ services-auth-delegation-api:
     IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/auth-api'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
     LOG_LEVEL: 'info'
+    NATIONAL_REGISTRY_B2C_CLIENT_ID: '6cf94113-d326-4e4d-b97c-1fea12d2f5e1'
+    NATIONAL_REGISTRY_B2C_ENDPOINT: 'https://skraidentitydev.b2clogin.com/skraidentitydev.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token'
+    NATIONAL_REGISTRY_B2C_PATH: 'IS-TEST/GOV/10001/SKRA-Cloud-Protected/Midlun-v1'
+    NATIONAL_REGISTRY_B2C_SCOPE: 'https://skraidentitydev.onmicrosoft.com/midlun/.default'
     NODE_OPTIONS: '--max-old-space-size=460 -r dd-trace/init'
+    SERVERSIDE_FEATURES_ON: ''
     SYSLUMENN_HOST: 'https://api.syslumenn.is/staging'
     SYSLUMENN_TIMEOUT: '3000'
     USER_NOTIFICATION_API_URL: 'http://web-user-notification.user-notification.svc.cluster.local'
@@ -384,6 +401,7 @@ services-auth-delegation-api:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     DB_PASS: '/k8s/servicesauth/DB_PASSWORD'
     IDENTITY_SERVER_CLIENT_SECRET: '/k8s/services-auth/IDENTITY_SERVER_CLIENT_SECRET'
+    NATIONAL_REGISTRY_B2C_CLIENT_SECRET: '/k8s/services-auth/NATIONAL_REGISTRY_B2C_CLIENT_SECRET'
     NATIONAL_REGISTRY_IDS_CLIENT_SECRET: '/k8s/xroad/client/NATIONAL-REGISTRY/IDENTITYSERVER_SECRET'
     SYSLUMENN_PASSWORD: '/k8s/services-auth/SYSLUMENN_PASSWORD'
     SYSLUMENN_USERNAME: '/k8s/services-auth/SYSLUMENN_USERNAME'
@@ -396,6 +414,8 @@ services-auth-delegation-api:
 services-auth-ids-api:
   enabled: true
   env:
+    ALSO_USE_FAKE_USER_API: 'false'
+    CODE_OWNER: 'aranja'
     COMPANY_REGISTRY_REDIS_NODES: '["clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379"]'
     COMPANY_REGISTRY_XROAD_PROVIDER_ID: 'IS-TEST/GOV/5402696029/Skatturinn/ft-v1'
     DB_EXTENSIONS: 'uuid-ossp'
@@ -419,6 +439,7 @@ services-auth-ids-api:
     PASSKEY_CORE_RP_NAME: 'Island.is'
     PUBLIC_URL: 'https://identity-server.staging01.devland.is/api'
     REDIS_NODES: '["clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379"]'
+    SERVERSIDE_FEATURES_ON: ''
     SYSLUMENN_HOST: 'https://api.syslumenn.is/staging'
     SYSLUMENN_TIMEOUT: '3000'
     USER_PROFILE_CLIENT_SCOPE: '["@island.is/user-profile:read"]'
@@ -434,9 +455,11 @@ services-auth-ids-api:
     XROAD_TJODSKRA_MEMBER_CODE: '6503760649'
     XROAD_TLS_BASE_PATH: 'https://securityserver.staging01.devland.is'
     XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.staging01.devland.is/r1/IS-TEST'
+    ZENDESK_CONTACT_FORM_SUBDOMAIN: 'digitaliceland'
   grantNamespaces:
     - 'nginx-ingress-external'
     - 'user-notification'
+    - 'datadog'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -491,6 +514,7 @@ services-auth-ids-api:
       DB_NAME: 'servicesauth'
       DB_REPLICAS_HOST: 'postgres-applications.internal'
       DB_USER: 'servicesauth'
+      SERVERSIDE_FEATURES_ON: ''
     secrets:
       DB_PASS: '/k8s/servicesauth/DB_PASSWORD'
   namespace: 'identity-server'
@@ -518,6 +542,9 @@ services-auth-ids-api:
     NOVA_USERNAME: '/k8s/services-auth/NOVA_USERNAME'
     SYSLUMENN_PASSWORD: '/k8s/services-auth/SYSLUMENN_PASSWORD'
     SYSLUMENN_USERNAME: '/k8s/services-auth/SYSLUMENN_USERNAME'
+    ZENDESK_CONTACT_FORM_EMAIL: '/k8s/api/ZENDESK_CONTACT_FORM_EMAIL'
+    ZENDESK_CONTACT_FORM_TOKEN: '/k8s/api/ZENDESK_CONTACT_FORM_TOKEN'
+    ZENDESK_WEBHOOK_SECRET_GENERAL_MANDATE: '/k8s/services-auth/ZENDESK_WEBHOOK_SECRET_GENERAL_MANDATE'
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
@@ -536,10 +563,12 @@ services-auth-ids-api-cleanup:
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
     LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=921 -r dd-trace/init'
+    SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
     - 'nginx-ingress-external'
     - 'user-notification'
     - 'portals-admin'
+    - 'datadog'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -594,7 +623,12 @@ services-auth-personal-representative:
     IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/auth-api'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
     LOG_LEVEL: 'info'
+    NATIONAL_REGISTRY_B2C_CLIENT_ID: '6cf94113-d326-4e4d-b97c-1fea12d2f5e1'
+    NATIONAL_REGISTRY_B2C_ENDPOINT: 'https://skraidentitydev.b2clogin.com/skraidentitydev.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token'
+    NATIONAL_REGISTRY_B2C_PATH: 'IS-TEST/GOV/10001/SKRA-Cloud-Protected/Midlun-v1'
+    NATIONAL_REGISTRY_B2C_SCOPE: 'https://skraidentitydev.onmicrosoft.com/midlun/.default'
     NODE_OPTIONS: '--max-old-space-size=460 -r dd-trace/init'
+    SERVERSIDE_FEATURES_ON: ''
     SYSLUMENN_HOST: 'https://api.syslumenn.is/staging'
     SYSLUMENN_TIMEOUT: '3000'
     XROAD_BASE_PATH: 'http://securityserver.staging01.devland.is'
@@ -658,6 +692,7 @@ services-auth-personal-representative:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     DB_PASS: '/k8s/servicesauth/DB_PASSWORD'
     IDENTITY_SERVER_CLIENT_SECRET: '/k8s/services-auth/IDENTITY_SERVER_CLIENT_SECRET'
+    NATIONAL_REGISTRY_B2C_CLIENT_SECRET: '/k8s/services-auth/NATIONAL_REGISTRY_B2C_CLIENT_SECRET'
     SYSLUMENN_PASSWORD: '/k8s/services-auth/SYSLUMENN_PASSWORD'
     SYSLUMENN_USERNAME: '/k8s/services-auth/SYSLUMENN_USERNAME'
     ZENDESK_CONTACT_FORM_EMAIL: '/k8s/api/ZENDESK_CONTACT_FORM_EMAIL'
@@ -676,6 +711,7 @@ services-auth-personal-representative-public:
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
     LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=460 -r dd-trace/init'
+    SERVERSIDE_FEATURES_ON: ''
   grantNamespaces: []
   grantNamespacesEnabled: false
   healthCheck:
@@ -730,6 +766,7 @@ services-auth-personal-representative-public:
 services-auth-public-api:
   enabled: true
   env:
+    CODE_OWNER: 'aranja'
     COMPANY_REGISTRY_REDIS_NODES: '["clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379"]'
     COMPANY_REGISTRY_XROAD_PROVIDER_ID: 'IS-TEST/GOV/5402696029/Skatturinn/ft-v1'
     DB_HOST: 'postgres-applications.internal'
@@ -739,6 +776,10 @@ services-auth-public-api:
     IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/auth-api'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
     LOG_LEVEL: 'info'
+    NATIONAL_REGISTRY_B2C_CLIENT_ID: '6cf94113-d326-4e4d-b97c-1fea12d2f5e1'
+    NATIONAL_REGISTRY_B2C_ENDPOINT: 'https://skraidentitydev.b2clogin.com/skraidentitydev.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token'
+    NATIONAL_REGISTRY_B2C_PATH: 'IS-TEST/GOV/10001/SKRA-Cloud-Protected/Midlun-v1'
+    NATIONAL_REGISTRY_B2C_SCOPE: 'https://skraidentitydev.onmicrosoft.com/midlun/.default'
     NODE_OPTIONS: '--max-old-space-size=345 -r dd-trace/init'
     PASSKEY_CORE_ALLOWED_ORIGINS: '["https://island.is","android:apk-key-hash:JgPeo_F6KYk-ngRa26tO2SsAtMiTBQCc7WtSgN-jRX0","android:apk-key-hash:EsLTUu5kaY7XPmMl2f7nbq4amu-PNzdYu3FecNf90wU"]'
     PASSKEY_CORE_CHALLENGE_TTL_MS: '120000'
@@ -746,6 +787,7 @@ services-auth-public-api:
     PASSKEY_CORE_RP_NAME: 'Island.is'
     PUBLIC_URL: 'https://identity-server.staging01.devland.is/api'
     REDIS_NODES: '["clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379"]'
+    SERVERSIDE_FEATURES_ON: ''
     SYSLUMENN_HOST: 'https://api.syslumenn.is/staging'
     SYSLUMENN_TIMEOUT: '3000'
     XROAD_BASE_PATH: 'http://securityserver.staging01.devland.is'
@@ -818,6 +860,7 @@ services-auth-public-api:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     DB_PASS: '/k8s/servicesauth/DB_PASSWORD'
     IDENTITY_SERVER_CLIENT_SECRET: '/k8s/services-auth/IDENTITY_SERVER_CLIENT_SECRET'
+    NATIONAL_REGISTRY_B2C_CLIENT_SECRET: '/k8s/services-auth/NATIONAL_REGISTRY_B2C_CLIENT_SECRET'
     NATIONAL_REGISTRY_IDS_CLIENT_SECRET: '/k8s/xroad/client/NATIONAL-REGISTRY/IDENTITYSERVER_SECRET'
     SYSLUMENN_PASSWORD: '/k8s/services-auth/SYSLUMENN_PASSWORD'
     SYSLUMENN_USERNAME: '/k8s/services-auth/SYSLUMENN_USERNAME'

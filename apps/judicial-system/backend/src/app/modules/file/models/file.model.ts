@@ -17,6 +17,7 @@ import {
 
 // TODO Find a way to import from an index file
 import { Case } from '../../case/models/case.model'
+import { CivilClaimant, Defendant } from '../../defendant'
 
 @Table({
   tableName: 'case_file',
@@ -44,6 +45,16 @@ export class CaseFile extends Model {
   @Column({ type: DataType.UUID, allowNull: false })
   @ApiProperty({ type: String })
   caseId!: string
+
+  @ForeignKey(() => Defendant)
+  @Column({ type: DataType.UUID, allowNull: true })
+  @ApiProperty({ type: String })
+  defendantId?: string
+
+  @ForeignKey(() => CivilClaimant)
+  @Column({ type: DataType.UUID, allowNull: true })
+  @ApiProperty({ type: String })
+  civilClaimantId?: string
 
   @Column({ type: DataType.STRING, allowNull: false })
   @ApiProperty({ type: String })

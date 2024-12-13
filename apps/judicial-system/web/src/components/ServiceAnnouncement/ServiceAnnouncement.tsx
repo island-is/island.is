@@ -1,4 +1,4 @@
-import { FC, useEffect, useState } from 'react'
+import { FC } from 'react'
 import { IntlShape, MessageDescriptor, useIntl } from 'react-intl'
 
 import { AlertMessage, Box, LoadingDots, Text } from '@island.is/island-ui/core'
@@ -94,10 +94,7 @@ interface ServiceAnnouncementProps {
 const ServiceAnnouncement: FC<ServiceAnnouncementProps> = (props) => {
   const { subpoena: localSubpoena, defendantName } = props
 
-  const [subpoena, setSubpoena] = useState<Subpoena>()
-
-  const { subpoenaStatus, subpoenaStatusLoading, subpoenaStatusError } =
-    useSubpoena(localSubpoena.caseId, localSubpoena.subpoenaId)
+  const { subpoena, subpoenaLoading } = useSubpoena(localSubpoena)
 
   const { formatMessage } = useIntl()
 
@@ -111,38 +108,22 @@ const ServiceAnnouncement: FC<ServiceAnnouncementProps> = (props) => {
     ? mapServiceStatusMessages(subpoena, formatMessage, lawyer)
     : []
 
-  // Use data from RLS but fallback to local data
-  useEffect(() => {
-    if (subpoenaStatusError || localSubpoena.serviceStatus) {
-      setSubpoena(localSubpoena)
-    } else {
-      setSubpoena({
-        ...localSubpoena,
-        servedBy: subpoenaStatus?.subpoenaStatus?.servedBy,
-        serviceStatus: subpoenaStatus?.subpoenaStatus?.serviceStatus,
-        serviceDate: subpoenaStatus?.subpoenaStatus?.serviceDate,
-        comment: subpoenaStatus?.subpoenaStatus?.comment,
-        defenderNationalId: subpoenaStatus?.subpoenaStatus?.defenderNationalId,
-      })
-    }
-  }, [localSubpoena, subpoenaStatus, subpoenaStatusError])
-
-  return !subpoena && !subpoenaStatusLoading ? (
-    <Box marginBottom={2}>{renderError(formatMessage)}</Box>
-  ) : subpoenaStatusLoading && !localSubpoena.serviceStatus ? (
+  return subpoenaLoading ? (
     <Box display="flex" justifyContent="center" paddingY={5}>
       <LoadingDots />
     </Box>
+  ) : !subpoena ? (
+    <Box marginBottom={2}>{renderError(formatMessage)}</Box>
   ) : (
     <Box marginBottom={2}>
       <AlertMessage
         title={`${formatMessage(title)}${
-          defendantName && subpoena?.serviceStatus ? ` - ${defendantName}` : ''
+          defendantName && subpoena.serviceStatus ? ` - ${defendantName}` : ''
         }`}
         message={
           <Box>
             {messages.map((msg) => (
-              <Text variant="small" key={`${msg}-${localSubpoena.created}`}>
+              <Text variant="small" key={`${msg}-${subpoena.created}`}>
                 {msg}
               </Text>
             ))}
