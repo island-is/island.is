@@ -12,7 +12,7 @@ import { overview } from '../../lib/messages'
 import { SecondarySchoolAnswers } from '../..'
 import { getTranslatedProgram } from '../../utils'
 import { ReviewGroup } from '../../components/ReviewGroup'
-import { Routes } from '../../shared'
+import { Routes } from '../../lib/constants'
 
 export const SchoolSelectionOverview: FC<FieldBaseProps> = ({
   application,

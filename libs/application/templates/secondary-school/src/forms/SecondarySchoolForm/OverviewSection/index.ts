@@ -19,7 +19,7 @@ export const overviewSection = buildSection({
       description: overview.general.description,
       children: [
         buildAlertMessageField({
-          id: 'alertPastRegistrationdate',
+          id: 'alertPastRegistrationEndDate',
           alertType: 'error',
           title: error.errorPastRegistrationDateTitle,
           message: error.errorPastRegistrationDateDescription,

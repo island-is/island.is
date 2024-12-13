@@ -9,7 +9,7 @@ import {
 import { userInformation } from '../../../lib/messages'
 import { Application } from '@island.is/application/types'
 import { getParent, getHasParent } from '../../../utils'
-import { Routes } from '../../../shared'
+import { Routes } from '../../../lib/constants'
 
 export const custodianSubSection = buildSubSection({
   id: 'custodianSubSection',

@@ -5,7 +5,7 @@ import {
   buildSection,
 } from '@island.is/application/core'
 import { school } from '../../../lib/messages'
-import { Routes } from '../../../shared'
+import { Routes } from '../../../lib/constants'
 
 export const schoolSection = buildSection({
   id: 'schoolSection',

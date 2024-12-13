@@ -6,7 +6,7 @@ import { overview } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
 import { formatKennitala, formatPhoneNumber } from '../../utils'
 import { ReviewGroup } from '../../components/ReviewGroup'
-import { Routes } from '../../shared'
+import { Routes } from '../../lib/constants'
 
 export const ApplicantOverview: FC<FieldBaseProps> = ({
   application,

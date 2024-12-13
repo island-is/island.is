@@ -17,3 +17,10 @@ export enum ApiActions {
   submitApplication = 'submitApplication',
   deleteApplication = 'deleteApplication',
 }
+
+export enum Routes {
+  PERSONAL = 'personalMultiField',
+  CUSTODIAN = 'custodianMultiField',
+  EXTRA_INFORMATION = 'extraInformationMultiField',
+  SCHOOL = 'schoolMultiField',
+}

@@ -7,7 +7,11 @@ import {
   NationalRegistryParent,
   YES,
 } from '@island.is/application/types'
-import { SecondarySchoolAnswers } from '@island.is/application/templates/secondary-school'
+import {
+  getEndOfDayUTC,
+  getFirstRegistrationEndDate,
+  SecondarySchoolAnswers,
+} from '@island.is/application/templates/secondary-school'
 import {
   ApplicationContact,
   ApplicationSelectionSchool,
@@ -61,24 +65,8 @@ export class SecondarySchoolService extends BaseTemplateApiService {
   }: TemplateApiModuleActionProps): Promise<void> {
     const answers = application.answers as SecondarySchoolAnswers
 
-    // get the first registration date out of all the programs selected
-    const firstRegistrationEndDate = [
-      answers?.selection?.first?.firstProgram?.registrationEndDate,
-      answers?.selection?.first?.secondProgram?.registrationEndDate,
-      answers?.selection?.second?.firstProgram?.registrationEndDate,
-      answers?.selection?.second?.secondProgram?.registrationEndDate,
-      answers?.selection?.third?.firstProgram?.registrationEndDate,
-      answers?.selection?.third?.secondProgram?.registrationEndDate,
-    ]
-      .filter((x) => !!x)
-      .map((x) => (x ? new Date(x) : new Date()))
-      .sort((a, b) => a.getTime() - b.getTime())[0] // ascending order
-
-    const date = new Date(firstRegistrationEndDate.toUTCString())
-    date.setHours(23, 59, 59)
-
     // If we are past the registration date for any of the selected programs, dont allow delete
-    if (date < new Date()) {
+    if (getEndOfDayUTC(getFirstRegistrationEndDate(answers)) < new Date()) {
       throw new TemplateApiError(
         {
           title: error.errorDeletePastRegistrationEndTitle,
@@ -139,7 +127,7 @@ export class SecondarySchoolService extends BaseTemplateApiService {
       }
     }
 
-    // Contacts
+    // Other contacts
     const otherContacts = answers?.otherContacts || []
     for (let i = 0; i < otherContacts.length; i++) {
       if (otherContacts[i].include) {

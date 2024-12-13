@@ -12,7 +12,7 @@ import { useLocale } from '@island.is/localization'
 import { overview } from '../../lib/messages'
 import { SecondarySchoolAnswers } from '../..'
 import { ReviewGroup } from '../../components/ReviewGroup'
-import { Routes } from '../../shared'
+import { Routes } from '../../lib/constants'
 
 export const ExtraInformationOverview: FC<FieldBaseProps> = ({
   application,

@@ -6,7 +6,8 @@ import {
 } from '@island.is/application/core'
 import { userInformation } from '../../../lib/messages'
 import { applicantInformationMultiField } from '@island.is/application/ui-forms'
-import { ApplicationType, Routes } from '../../../shared'
+import { ApplicationType } from '../../../shared'
+import { Routes } from '../../../lib/constants'
 
 export const personalSubSection = buildSubSection({
   id: 'personalSubSection',

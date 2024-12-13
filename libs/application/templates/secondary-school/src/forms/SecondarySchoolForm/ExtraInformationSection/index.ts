@@ -22,7 +22,7 @@ export const extraInformationSection = buildSection({
       description: extraInformation.general.description,
       children: [
         buildAlertMessageField({
-          id: 'alertPastRegistrationdate',
+          id: 'alertPastRegistrationEndDate',
           alertType: 'error',
           title: error.errorPastRegistrationDateTitle,
           message: error.errorPastRegistrationDateDescription,
@@ -32,6 +32,7 @@ export const extraInformationSection = buildSection({
             )
           },
         }),
+
         // Native language
         buildDescriptionField({
           id: 'extraInformation.nativeLanguage.subtitle',
