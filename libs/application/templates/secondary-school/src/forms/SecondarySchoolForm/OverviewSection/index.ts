@@ -1,12 +1,13 @@
 import {
-  buildCheckboxField,
+  buildAlertMessageField,
   buildCustomField,
   buildMultiField,
   buildSection,
   buildSubmitField,
 } from '@island.is/application/core'
-import { overview } from '../../../lib/messages'
-import { DefaultEvents, NO, YES } from '@island.is/application/types'
+import { error, overview } from '../../../lib/messages'
+import { DefaultEvents } from '@island.is/application/types'
+import { getEndOfDayUTC, getFirstRegistrationEndDate } from '../../../utils'
 
 export const overviewSection = buildSection({
   id: 'overviewSection',
@@ -17,19 +18,22 @@ export const overviewSection = buildSection({
       title: overview.general.pageTitle,
       description: overview.general.description,
       children: [
+        buildAlertMessageField({
+          id: 'alertPastRegistrationdate',
+          alertType: 'error',
+          title: error.errorPastRegistrationDateTitle,
+          message: error.errorPastRegistrationDateDescription,
+          condition: (answers) => {
+            return (
+              getEndOfDayUTC(getFirstRegistrationEndDate(answers)) < new Date()
+            )
+          },
+        }),
         buildCustomField({
           component: 'Overview',
           id: 'overview',
           title: '',
           description: '',
-        }),
-        buildCheckboxField({
-          id: 'approveTermsAndConditions',
-          title: '',
-          options: [
-            { value: YES, label: overview.confirmation.checkboxMessage },
-          ],
-          defaultValue: [NO],
         }),
         buildSubmitField({
           id: 'submit',

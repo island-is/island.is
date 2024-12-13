@@ -60,20 +60,12 @@ export const overview = {
       description: 'Other contact phone label',
     },
   }),
-  supportingDocuments: defineMessages({
-    subtitle: {
-      id: 'ss.application:overview.supportingDocuments.subtitle',
-      defaultMessage: 'Fylgigögn',
-      description: 'Supporting documents subtitle',
-    },
-    description: {
-      id: 'ss.application:overview.supportingDocuments.description',
-      defaultMessage:
-        'Risus eget mauris ut vestibulum scelerisque ac. Vivamus vitae purus.',
-      description: 'Supporting documents label',
-    },
-  }),
   selection: defineMessages({
+    subtitle: {
+      id: 'ss.application:overview.selection.subtitle',
+      defaultMessage: 'Val á skóla',
+      description: 'Selection subtitle',
+    },
     firstSubtitle: {
       id: 'ss.application:overview.selection.firstSubtitle',
       defaultMessage: 'Fyrsta val',
@@ -111,34 +103,18 @@ export const overview = {
       defaultMessage: 'Móðurmál',
       description: 'Native language label',
     },
-    hasDisabilityLabel: {
-      id: 'ss.application:overview.extraInformation.hasDisabilityLabel',
-      defaultMessage: 'Fötlunargreining',
-      description: 'Has disability label',
-    },
-    hasDisabilityYesValue: {
-      id: 'ss.application:overview.extraInformation.hasDisabilityYesValue',
-      defaultMessage: 'Já',
-      description: 'Has disability yes value',
-    },
-    disabilityDescriptionLabel: {
-      id: 'ss.application:overview.extraInformation.disabilityDescriptionLabel',
-      defaultMessage: 'Fötlun',
-      description: 'Disability description label',
-    },
     otherLabel: {
       id: 'ss.application:overview.extraInformation.otherLabel',
       defaultMessage: 'Aðrar upplýsingar',
       description: 'Other label',
     },
+    supportingDocumentsLabel: {
+      id: 'ss.application:overview.extraInformation.supportingDocumentsLabel',
+      defaultMessage: 'Fylgigögn',
+      description: 'Supporting documents label',
+    },
   }),
   confirmation: defineMessages({
-    checkboxMessage: {
-      id: 'ss.application:overview.confirmation.checkboxMessage',
-      defaultMessage:
-        'Með því að haka í þetta box samþykki ég að gangast undir skilmála þess framhaldsskóla sem ég fæ pláss í. Skilmálar eru á vefsíðum skólanna.',
-      description: 'Confirm checkbox message',
-    },
     confirm: {
       id: 'ss.application:overview.confirmation.confirm',
       defaultMessage: 'Áfram',

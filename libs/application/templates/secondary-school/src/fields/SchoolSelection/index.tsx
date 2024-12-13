@@ -6,17 +6,33 @@ import { school } from '../../lib/messages'
 import { getValueViaPath } from '@island.is/application/core'
 import { useFormContext } from 'react-hook-form'
 import { SelectionItem } from './selectionItem'
+import { ApplicationType } from '../../shared'
+import { hasDuplicates } from '../../utils'
 
 export const SchoolSelection: FC<FieldBaseProps> = (props) => {
   const { formatMessage } = useLocale()
   const { application, setBeforeSubmitCallback } = props
   const { setValue, watch } = useFormContext()
 
+  const isFreshman =
+    getValueViaPath<ApplicationType>(
+      application.answers,
+      'applicationType.type',
+    ) === ApplicationType.FRESHMAN
+
   const [schoolDuplicateError, setSchoolDuplicateError] =
     useState<boolean>(false)
   const [programDuplicateError, setProgramDuplicateError] =
     useState<boolean>(false)
 
+  const [includeSecondSelection, setIncludeSecondSelection] = useState<boolean>(
+    isFreshman
+      ? true
+      : getValueViaPath<boolean>(
+          application.answers,
+          `${props.field.id}.second.include`,
+        ) || false,
+  )
   const [includeThirdSelection, setIncludeThirdSelection] = useState<boolean>(
     getValueViaPath<boolean>(
       application.answers,
@@ -24,56 +40,63 @@ export const SchoolSelection: FC<FieldBaseProps> = (props) => {
     ) || false,
   )
 
-  const onClickAdd = () => {
-    setIncludeThirdSelection(true)
-    setValue(`${props.field.id}.third.include`, true)
+  // Add / remove second selection (only non-freshman can to this)
+  const onClickAddSecond = () => {
+    if (!isFreshman) {
+      setIncludeSecondSelection(true)
+      setValue(`${props.field.id}.second.include`, true)
+    }
+  }
+  const onClickRemoveSecond = () => {
+    if (!isFreshman) {
+      setIncludeSecondSelection(false)
+      setValue(`${props.field.id}.second.include`, false)
+    }
   }
 
-  const onClickRemove = () => {
-    setIncludeThirdSelection(false)
-    setValue(`${props.field.id}.third.include`, false)
+  // Add / remove third selection (only freshman can to this)
+  const onClickAddThird = () => {
+    if (isFreshman) {
+      setIncludeThirdSelection(true)
+      setValue(`${props.field.id}.third.include`, true)
+    }
+  }
+  const onClickRemoveThird = () => {
+    if (isFreshman) {
+      setIncludeThirdSelection(false)
+      setValue(`${props.field.id}.third.include`, false)
+    }
   }
 
   const checkSchoolDuplicate = () => {
-    const firstSchoolId = watch(`${props.field.id}.first.school.id`)
-    const secondSchoolId = watch(`${props.field.id}.second.school.id`)
-    const thirdSchoolId = watch(`${props.field.id}.third.school.id`)
-    const includeThird = watch(`${props.field.id}.third.include`) as boolean
+    const schoolIds = [watch(`${props.field.id}.first.school.id`)]
 
-    if (
-      firstSchoolId === secondSchoolId ||
-      (includeThird &&
-        (firstSchoolId === thirdSchoolId || secondSchoolId === thirdSchoolId))
-    ) {
-      return true
-    }
+    if (includeSecondSelection)
+      schoolIds.push(watch(`${props.field.id}.second.school.id`))
 
-    return false
+    if (includeThirdSelection)
+      schoolIds.push(watch(`${props.field.id}.third.school.id`))
+
+    return hasDuplicates(schoolIds)
   }
 
   const checkProgramDuplicate = () => {
-    if (
-      watch(`${props.field.id}.first.firstProgram.id`) ===
-      watch(`${props.field.id}.first.secondProgram.id`)
-    )
-      return true
+    const programIds: string[] = [
+      watch(`${props.field.id}.first.firstProgram.id`),
+      watch(`${props.field.id}.first.secondProgram.id`) || '',
+    ]
 
-    if (
-      watch(`${props.field.id}.second.firstProgram.id`) ===
-      watch(`${props.field.id}.second.secondProgram.id`)
-    )
-      return true
+    if (includeSecondSelection) {
+      programIds.push(watch(`${props.field.id}.second.firstProgram.id`))
+      programIds.push(watch(`${props.field.id}.second.secondProgram.id`) || '')
+    }
 
-    const includeThird = watch(`${props.field.id}.third.include`) as boolean
+    if (includeThirdSelection) {
+      programIds.push(watch(`${props.field.id}.third.firstProgram.id`))
+      programIds.push(watch(`${props.field.id}.third.secondProgram.id`) || '')
+    }
 
-    if (
-      includeThird &&
-      watch(`${props.field.id}.third.firstProgram.id`) ===
-        watch(`${props.field.id}.third.secondProgram.id`)
-    )
-      return true
-
-    return false
+    return hasDuplicates(programIds.filter((x) => !!x))
   }
 
   setBeforeSubmitCallback?.(async () => {
@@ -95,21 +118,27 @@ export const SchoolSelection: FC<FieldBaseProps> = (props) => {
     return [true, null]
   })
 
-  // default set include=true for first and second selection since
-  // they should both be required
+  // default set include for first, second and third selection
+  // freshman has second selection as required, and third selection as optional
+  // non-freshman has second selection as optional, and third selection is hidden (not available)
   useEffect(() => {
     setValue(`${props.field.id}.first.include`, true)
-    setValue(`${props.field.id}.second.include`, true)
-  }, [props.field.id, setValue])
+    if (isFreshman) setValue(`${props.field.id}.second.include`, true)
+    if (!isFreshman) setValue(`${props.field.id}.third.include`, false)
+  }, [isFreshman, props.field.id, setValue])
 
   return (
     <Box>
+      {/* First selection */}
+      {/* Required for everyone */}
       <Box>
-        <Text variant="h5">
-          {formatMessage(school.firstSelection.subtitle)}
-        </Text>
+        {includeSecondSelection && (
+          <Text variant="h5">
+            {formatMessage(school.firstSelection.subtitle)}
+          </Text>
+        )}
         <SelectionItem
-          application={props.application}
+          {...props}
           field={{
             ...props.field,
             id: `${props.field.id}.first`,
@@ -117,60 +146,107 @@ export const SchoolSelection: FC<FieldBaseProps> = (props) => {
         />
       </Box>
 
-      <Box marginTop={2}>
-        <Text variant="h5">
-          {formatMessage(school.secondSelection.subtitle)}
-        </Text>
-        <SelectionItem
-          application={props.application}
-          field={{
-            ...props.field,
-            id: `${props.field.id}.second`,
-          }}
-        />
-      </Box>
-
-      {includeThirdSelection ? (
+      {/* Second selection */}
+      {/* Required for freshman, optional for non-freshman */}
+      {includeSecondSelection ? (
         <Box marginTop={2}>
           <Text variant="h5">
-            {formatMessage(school.thirdSelection.subtitle)}
+            {formatMessage(school.secondSelection.subtitle)}
           </Text>
           <SelectionItem
-            application={props.application}
+            {...props}
             field={{
               ...props.field,
-              id: `${props.field.id}.third`,
+              id: `${props.field.id}.second`,
             }}
           />
         </Box>
       ) : (
         <Box marginTop={2}>
           <Text variant="h5">
-            {formatMessage(school.thirdSelection.addSubtitle)}
+            {formatMessage(school.secondSelection.addSubtitle)}
           </Text>
           <Text>{formatMessage(school.thirdSelection.addDescription)}</Text>
         </Box>
       )}
+      {!isFreshman && (
+        <Box marginTop={2}>
+          {!includeSecondSelection && (
+            <Button
+              icon="add"
+              onClick={() => onClickAddSecond()}
+              variant="ghost"
+              fluid
+            >
+              {formatMessage(school.thirdSelection.addButtonLabel)}
+            </Button>
+          )}
+          {includeSecondSelection && (
+            <Button
+              icon="remove"
+              onClick={() => onClickRemoveSecond()}
+              variant="ghost"
+              colorScheme="destructive"
+              fluid
+            >
+              {formatMessage(school.thirdSelection.removeButtonLabel)}
+            </Button>
+          )}
+        </Box>
+      )}
 
-      <Box marginTop={2}>
-        {!includeThirdSelection && (
-          <Button icon="add" onClick={() => onClickAdd()} variant="ghost" fluid>
-            {formatMessage(school.thirdSelection.addButtonLabel)}
-          </Button>
-        )}
-        {includeThirdSelection && (
-          <Button
-            icon="remove"
-            onClick={() => onClickRemove()}
-            variant="ghost"
-            colorScheme="destructive"
-            fluid
-          >
-            {formatMessage(school.thirdSelection.removeButtonLabel)}
-          </Button>
-        )}
-      </Box>
+      {/* Third selection */}
+      {/* Optional for freshman, hidden for non-freshman */}
+      {isFreshman && (
+        <>
+          {includeThirdSelection ? (
+            <Box marginTop={2}>
+              <Text variant="h5">
+                {formatMessage(school.thirdSelection.subtitle)}
+              </Text>
+              <SelectionItem
+                {...props}
+                field={{
+                  ...props.field,
+                  id: `${props.field.id}.third`,
+                }}
+              />
+            </Box>
+          ) : (
+            <Box marginTop={2}>
+              <Text variant="h5">
+                {formatMessage(school.thirdSelection.addSubtitle)}
+              </Text>
+              <Text>{formatMessage(school.thirdSelection.addDescription)}</Text>
+            </Box>
+          )}
+          <Box marginTop={2}>
+            {!includeThirdSelection && (
+              <Button
+                icon="add"
+                onClick={() => onClickAddThird()}
+                variant="ghost"
+                fluid
+              >
+                {formatMessage(school.thirdSelection.addButtonLabel)}
+              </Button>
+            )}
+            {includeThirdSelection && (
+              <Button
+                icon="remove"
+                onClick={() => onClickRemoveThird()}
+                variant="ghost"
+                colorScheme="destructive"
+                fluid
+              >
+                {formatMessage(school.thirdSelection.removeButtonLabel)}
+              </Button>
+            )}
+          </Box>
+        </>
+      )}
 
+      {/* Duplicate error */}
       {schoolDuplicateError && (
         <Box marginTop={4}>
           <AlertMessage

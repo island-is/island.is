@@ -58,12 +58,13 @@ export const externalData = {
     title: {
       id: 'ss.application:externalData.educationalCareer.title',
       defaultMessage:
-        'Upplýsingar um námsferil frá mínum síðum Ísland.is og námsumsjónarkerfum',
+        'Upplýsingar um námsferil frá mínum síðum Ísland.is og námsumsjónarkerfum skólanna',
       description: 'Information about your educational career',
     },
     subTitle: {
       id: 'ss.application:externalData.educationalCareer.subTitle',
-      defaultMessage: 'Upplýsingar um núverandi námsgráður og skírteini.',
+      defaultMessage:
+        'Lokaeinkunnir úr grunnskóla eða upplýsingar um fyrirliggjandi námsgráður og skírteini.',
       description: 'We will fetch degrees and certificates',
     },
   }),

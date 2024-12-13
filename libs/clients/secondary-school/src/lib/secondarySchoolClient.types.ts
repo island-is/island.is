@@ -1,13 +1,14 @@
 export interface Language {
   code: string
-  nameIs: string
-  nameEn: string
+  name: string
 }
 
 export interface SecondarySchool {
   id: string
   name: string
   thirdLanguages: Language[]
+  nordicLanguages: Language[]
+  allowRequestDormitory: boolean
 }
 
 export interface Program {
@@ -17,6 +18,45 @@ export interface Program {
   registrationEndDate: Date
 }
 
+export interface ApplicationContact {
+  nationalId: string
+  name: string
+  phone: string
+  email: string
+  address?: string
+  postalCode?: string
+  city?: string
+}
+
+export interface ApplicationSelectionSchoolProgram {
+  priority: number
+  programId: string
+}
+
+export interface ApplicationSelectionSchool {
+  priority: number
+  schoolId: string
+  programs: ApplicationSelectionSchoolProgram[]
+  thirdLanguageCode?: string
+  nordicLanguageCode?: string
+  requestDormitory?: boolean
+}
+
+export interface ApplicationAttachment {
+  fileContent: string
+}
+
 export interface Application {
   nationalId: string
+  name: string
+  phone: string
+  email: string
+  address: string
+  postalCode: string
+  city: string
+  contacts: ApplicationContact[]
+  schools: ApplicationSelectionSchool[]
+  nativeLanguageCode?: string
+  otherDescription?: string
+  attachments: ApplicationAttachment[]
 }

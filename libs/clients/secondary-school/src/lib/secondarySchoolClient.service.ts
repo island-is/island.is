@@ -1,4 +1,5 @@
-import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
+// import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
+import { User } from '@island.is/auth-nest-tools'
 import { Injectable } from '@nestjs/common'
 import {
   SchoolsApi,
@@ -10,6 +11,7 @@ import {
   Program,
   SecondarySchool,
 } from './secondarySchoolClient.types'
+import { getAllLanguageCodes } from '@island.is/shared/utils'
 
 @Injectable()
 export class SecondarySchoolClient {
@@ -43,14 +45,19 @@ export class SecondarySchoolClient {
       thirdLanguages:
         school.thirdLanguages?.map((language) => ({
           code: language.code || '',
-          nameIs: language.name || '',
-          nameEn: language.nameEnglish || '',
+          name: language.name || '',
         })) || [],
+      // TODOx vantar í API - nordicLanguages
+      nordicLanguages: getAllLanguageCodes().filter((x) =>
+        ['sv', 'no', 'fi'].includes(x.code),
+      ),
+      // TODOx vantar í API - allowRequestDormitory
+      allowRequestDormitory: false,
     }))
   }
 
   async getPrograms(schoolId: string): Promise<Program[]> {
-    const res = await this.programmesApi.v1ProgrammesGet({
+    const res = await this.programmesApi.v1ProgrammesSimpleGet({
       schoolId,
       rowOffset: undefined,
       fetchSize: undefined,
@@ -70,7 +77,7 @@ export class SecondarySchoolClient {
     //   fetchSize: undefined,
     // })
 
-    //TODOx get information about how we know if application is in progress
+    //TODOx vantar í API - get information about how we know if application is in progress
     return true
   }
 
@@ -83,15 +90,50 @@ export class SecondarySchoolClient {
   async create(auth: User, application: Application): Promise<string> {
     const applicationId = await this.applicationsApi.v1ApplicationsPost({
       applicationBaseDto: {
-        //TODOx add fields to create application
+        applicantNationalId: application.nationalId,
+        applicantName: application.name,
+        phoneNumber: application.phone,
+        email: application.email,
+        placeOfResidence: application.address,
+        postCode: application.postalCode,
+        municipality: application.city,
+        nextOfKin: application.contacts.map((contact) => ({
+          nationalId: contact.nationalId,
+          phoneNumber: contact.phone,
+          name: contact.name,
+          email: contact.email,
+          address: contact.address,
+          postCode: contact.postalCode,
+        })),
+        speakingLanguage: application.nativeLanguageCode,
+        otherInformation: application.otherDescription,
+        applicationChoices: application.schools.map((school) => ({
+          priority: school.priority,
+          schoolId: school.schoolId,
+          programmeChoice: school.programs.map((program) => ({
+            priority: program.priority,
+            programmeId: program.programId,
+          })),
+          thirdLanguages: school.thirdLanguageCode,
+          northernLanguage: school.nordicLanguageCode,
+          requestDormitory: school.requestDormitory,
+        })),
+        //TODOx vantar í API - missing applicationType
       },
     })
 
     await this.applicationsApi.v1ApplicationsApplicationIdAttachmentsPatch({
       applicationId,
-      files: [], //TODOx add attachments
+      files: application.attachments
+        .filter((x) => !!x)
+        .map((x) => this.base64ToBlob(x.fileContent)),
     })
 
     return applicationId
+  }
+
+  private base64ToBlob(base64: string): Blob {
+    const byteCharacters = Buffer.from(base64, 'base64')
+    return new Blob([byteCharacters])
   }
 }

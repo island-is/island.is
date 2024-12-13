@@ -25,26 +25,17 @@ import {
   UserProfileApi,
 } from '../dataProviders'
 import { Features } from '@island.is/feature-flags'
-import { SecondarySchoolAnswers } from '..'
+import { getEndOfDayUTC, getLastRegistrationEndDate } from '../utils'
+import { AuthDelegationType } from '@island.is/shared/types'
+import { ApiScope } from '@island.is/auth/scopes'
 
 const pruneInDaysAfterRegistrationCloses = (
   application: Application,
   days: number,
 ) => {
-  const answers = application.answers as SecondarySchoolAnswers
-
-  // get the last regirastion date out of all the programs selected
-  const lastRegistrationEndDate = [
-    answers?.selection?.first?.firstProgram?.registrationEndDate,
-    answers?.selection?.first?.secondProgram?.registrationEndDate,
-    answers?.selection?.second?.firstProgram?.registrationEndDate,
-    answers?.selection?.second?.secondProgram?.registrationEndDate,
-    answers?.selection?.third?.firstProgram?.registrationEndDate,
-    answers?.selection?.third?.secondProgram?.registrationEndDate,
-  ]
-    .filter((x) => !!x)
-    .map((x) => (x ? new Date(x) : new Date()))
-    .sort((a, b) => b.getTime() - a.getTime())[0] // descending order
+  const lastRegistrationEndDate = getLastRegistrationEndDate(
+    application.answers,
+  )
 
   // add days to registration end date
   const date = lastRegistrationEndDate
@@ -53,9 +44,7 @@ const pruneInDaysAfterRegistrationCloses = (
   date.setDate(date.getDate() + days)
 
   // set time to right before midnight
-  const pruneDate = new Date(date.toUTCString())
-  pruneDate.setHours(23, 59, 59)
-  return pruneDate
+  return getEndOfDayUTC(date)
 }
 
 const template: ApplicationTemplate<
@@ -70,8 +59,13 @@ const template: ApplicationTemplate<
     ApplicationConfigurations.SecondarySchool.translation,
   ],
   dataSchema: SecondarySchoolSchema,
-  //TODOx should allow delegation?
   featureFlag: Features.SecondarySchoolEnabled,
+  allowedDelegations: [
+    {
+      type: AuthDelegationType.Custom,
+    },
+  ],
+  requiredScopes: [ApiScope.menntamalastofnun],
   stateMachineConfig: {
     initial: States.PREREQUISITES,
     states: {
@@ -93,7 +87,7 @@ const template: ApplicationTemplate<
             ],
           },
           lifecycle: EphemeralStateLifeCycle,
-          onEntry: defineTemplateApi({
+          onExit: defineTemplateApi({
             action: ApiActions.validateCanCreate,
           }),
           roles: [
@@ -141,7 +135,10 @@ const template: ApplicationTemplate<
               },
             ],
           },
-          lifecycle: pruneAfterDays(1), //TODOx ef hægt að fá sameiginlegt registrationEndDate fyrir alla, væri gott að setja það inn hér
+          lifecycle: pruneAfterDays(7),
+          onExit: defineTemplateApi({
+            action: ApiActions.validateCanCreate,
+          }),
           roles: [
             {
               id: Roles.APPLICANT,

@@ -36,34 +36,17 @@ export const extraInformation = {
       description: 'Native language select placeholder',
     },
   }),
-  disability: defineMessages({
-    subtitle: {
-      id: 'ss.application:extraInformation.disabilites.subtitle',
-      defaultMessage: 'Fatlanir',
-      description: 'Disabilites sub title',
-    },
-    checkboxLabel: {
-      id: 'ss.application:extraInformation.disabilites.checkboxLabel',
-      defaultMessage: 'Fötlunargreining liggur fyrir',
-      description: 'Disabilites checkbox label',
-    },
-    textareaLabel: {
-      id: 'ss.application:extraInformation.disabilites.textareaLabel',
-      defaultMessage: 'Fötlun',
-      description: 'Disabilites textarea label',
-    },
-    textareaPlaceholder: {
-      id: 'ss.application:extraInformation.disabilites.textareaPlaceholder',
-      defaultMessage:
-        'Vinsamlegast skrifið stutta lýsingu á fötlun og þörf fyrir helstu þjónustu',
-      description: 'Disabilites textarea placeholder',
-    },
-  }),
   other: defineMessages({
     subtitle: {
       id: 'ss.application:extraInformation.other.subtitle',
-      defaultMessage: 'Aðrar upplýsingar sem nemandi vill koma á framfæri',
+      defaultMessage: 'Aðrar upplýsingar sem umsækjandi vill koma á framfæri',
       description: 'Other sub title',
+    },
+    description: {
+      id: 'ss.application:extraInformation.other.description',
+      defaultMessage:
+        'Hérna er hægt að tilgreina upplýsingar sem þú telur mikilvægt að koma á framfæri, s.s. ef fötlunargreining liggur fyrir eða aðrar upplýsingar sem þú telur nauðsynlegt að skólinn búi yfir.',
+      description: 'Other description',
     },
     textareaLabel: {
       id: 'ss.application:extraInformation.other.textareaLabel',
@@ -74,6 +57,34 @@ export const extraInformation = {
       id: 'ss.application:extraInformation.other.textareaPlaceholder',
       defaultMessage: 'Placeholder ef það þarf',
       description: 'Other textarea placeholder',
+    },
+  }),
+  supportingDocuments: defineMessages({
+    subtitle: {
+      id: 'ss.application:extraInformation.supportingDocuments.subtitle',
+      defaultMessage: 'Fylgigögn',
+      description: 'Supporting documents sub title',
+    },
+    description: {
+      id: 'ss.application:extraInformation.supportingDocuments.description',
+      defaultMessage:
+        'Hér getur þú hlaðið inn gögnum sem þú telur mikilvægt að fylgi umsókninni og styðji við hana. Athugið að ekki er nauðsynlegt að láta nein viðbótargögn fylgja umsókn.',
+      description: 'Supporting documents description',
+    },
+    fileUploadHeader: {
+      id: 'ss.application:extraInformation.supportingDocuments.fileUploadHeader',
+      defaultMessage: 'Viðhengi',
+      description: 'Supporting documents file upload title',
+    },
+    fileUploadDescription: {
+      id: 'ss.application:extraInformation.supportingDocuments.fileUploadDescription',
+      defaultMessage: 'Tekið er við skjölum með endingu: .pdf, .docx, .rtf',
+      description: 'Supporting documents file upload title',
+    },
+    fileUploadButtonLabel: {
+      id: 'ss.application:extraInformation.supportingDocuments.fileUploadButtonLabel',
+      defaultMessage: 'Velja skjöl til að hlaða upp',
+      description: 'Supporting documents file upload title',
     },
   }),
 }

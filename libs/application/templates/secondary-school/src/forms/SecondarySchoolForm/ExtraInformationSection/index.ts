@@ -1,14 +1,16 @@
 import {
-  buildCheckboxField,
+  buildAlertMessageField,
   buildDescriptionField,
+  buildFileUploadField,
   buildMultiField,
   buildSection,
   buildSelectField,
   buildTextField,
-  YES,
 } from '@island.is/application/core'
-import { extraInformation } from '../../../lib/messages'
+import { error, extraInformation } from '../../../lib/messages'
 import { getAllLanguageCodes } from '@island.is/shared/utils'
+import { FILE_SIZE_LIMIT, FILE_TYPES_ALLOWED } from '../../../shared'
+import { getEndOfDayUTC, getFirstRegistrationEndDate } from '../../../utils'
 
 export const extraInformationSection = buildSection({
   id: 'extraInformationSection',
@@ -19,6 +21,17 @@ export const extraInformationSection = buildSection({
       title: extraInformation.general.pageTitle,
       description: extraInformation.general.description,
       children: [
+        buildAlertMessageField({
+          id: 'alertPastRegistrationdate',
+          alertType: 'error',
+          title: error.errorPastRegistrationDateTitle,
+          message: error.errorPastRegistrationDateDescription,
+          condition: (answers) => {
+            return (
+              getEndOfDayUTC(getFirstRegistrationEndDate(answers)) < new Date()
+            )
+          },
+        }),
         // Native language
         buildDescriptionField({
           id: 'extraInformation.nativeLanguage.subtitle',
@@ -41,37 +54,11 @@ export const extraInformationSection = buildSection({
           },
         }),
 
-        // Disability
-        buildDescriptionField({
-          id: 'extraInformation.disability.subtitle',
-          title: extraInformation.disability.subtitle,
-          titleVariant: 'h5',
-          space: 3,
-        }),
-        buildCheckboxField({
-          id: 'extraInformation.hasDisability',
-          title: '',
-          large: false,
-          backgroundColor: 'white',
-          options: [
-            {
-              value: YES,
-              label: extraInformation.disability.checkboxLabel,
-            },
-          ],
-        }),
-        buildTextField({
-          id: 'extraInformation.disabilityDescription',
-          variant: 'textarea',
-          rows: 5,
-          title: extraInformation.disability.textareaLabel,
-          placeholder: extraInformation.disability.textareaPlaceholder,
-        }),
-
         // Other
         buildDescriptionField({
-          id: 'extraInformation.other.subtitle',
+          id: 'extraInformation.otherDescription.subtitle',
           title: extraInformation.other.subtitle,
+          description: extraInformation.other.description,
           titleVariant: 'h5',
           space: 3,
         }),
@@ -81,6 +68,27 @@ export const extraInformationSection = buildSection({
           rows: 5,
           title: extraInformation.other.textareaLabel,
           placeholder: extraInformation.other.textareaPlaceholder,
+        }),
+
+        // Supporting documents
+        buildDescriptionField({
+          id: 'extraInformation.supportingDocuments.subtitle',
+          title: extraInformation.supportingDocuments.subtitle,
+          description: extraInformation.supportingDocuments.description,
+          titleVariant: 'h5',
+          space: 3,
+        }),
+        buildFileUploadField({
+          id: 'extraInformation.supportingDocuments',
+          title: '',
+          introduction: '',
+          uploadAccept: FILE_TYPES_ALLOWED,
+          maxSize: FILE_SIZE_LIMIT,
+          uploadHeader: extraInformation.supportingDocuments.fileUploadHeader,
+          uploadDescription:
+            extraInformation.supportingDocuments.fileUploadDescription,
+          uploadButtonLabel:
+            extraInformation.supportingDocuments.fileUploadButtonLabel,
         }),
       ],
     }),

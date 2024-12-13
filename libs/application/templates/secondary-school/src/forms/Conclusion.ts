@@ -16,6 +16,7 @@ export const Conclusion: Form = buildForm({
   title: '',
   logo: Logo,
   mode: FormModes.COMPLETED,
+
   children: [
     buildSection({
       id: 'externalData',

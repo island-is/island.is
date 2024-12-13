@@ -1,19 +1,17 @@
 export type Language = {
   code: string
-  //TODOx þýða í öll dropdown
-  nameIs: string
-  nameEn: string
+  name: string
 }
 
 export type SecondarySchool = {
   id: string
   name: string
   thirdLanguages: Language[]
+  nordicLanguages: Language[]
 }
 
 export type Program = {
   id: string
-  //TODOx þýða í öll dropdown
   nameIs: string
   nameEn: string
   registrationEndDate: Date

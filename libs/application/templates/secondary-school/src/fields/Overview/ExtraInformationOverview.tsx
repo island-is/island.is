@@ -1,65 +1,102 @@
-import { FieldBaseProps, YES } from '@island.is/application/types'
+import { FieldBaseProps } from '@island.is/application/types'
 import { FC } from 'react'
-import { Box, GridColumn, GridRow, Text } from '@island.is/island-ui/core'
+import {
+  Box,
+  Divider,
+  GridColumn,
+  GridRow,
+  Icon,
+  Text,
+} from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { overview } from '../../lib/messages'
 import { SecondarySchoolAnswers } from '../..'
+import { ReviewGroup } from '../../components/ReviewGroup'
+import { Routes } from '../../shared'
 
 export const ExtraInformationOverview: FC<FieldBaseProps> = ({
   application,
+  goToScreen,
 }) => {
   const { formatMessage } = useLocale()
 
   const answers = application.answers as SecondarySchoolAnswers
 
   const showNativeLanguage = !!answers?.extraInformation?.nativeLanguage
-  const showHasDisability =
-    !!answers?.extraInformation?.hasDisability?.includes(YES)
-  const showDisabilityDescription =
-    !!answers?.extraInformation?.disabilityDescription
   const showOtherDescription = !!answers?.extraInformation?.otherDescription
+  const showSupportingDocuments =
+    !!answers?.extraInformation?.supportingDocuments?.length
+
+  const onClick = (page: string) => {
+    if (goToScreen) goToScreen(page)
+  }
 
   return (
-    (showNativeLanguage ||
-      showHasDisability ||
-      showDisabilityDescription ||
-      showOtherDescription) && (
-      <Box paddingBottom={4} paddingTop={4}>
-        <GridRow>
-          <GridColumn span="1/2">
-            <Text variant="h4">
-              {formatMessage(overview.extraInformation.subtitle)}:
-            </Text>
-            {showNativeLanguage && (
-              <Text>
-                {formatMessage(overview.extraInformation.nativeLanguageLabel)}:{' '}
-                {answers?.extraInformation?.nativeLanguage}
-              </Text>
-            )}
-            {showHasDisability && (
-              <Text>
-                {formatMessage(overview.extraInformation.hasDisabilityLabel)}:{' '}
-                {formatMessage(overview.extraInformation.hasDisabilityYesValue)}
-              </Text>
-            )}
-            {showDisabilityDescription && (
-              <Text>
-                {formatMessage(
-                  overview.extraInformation.disabilityDescriptionLabel,
+    (showNativeLanguage || showOtherDescription || showSupportingDocuments) && (
+      <>
+        <Divider />
+        <ReviewGroup
+          handleClick={() => onClick(Routes.EXTRA_INFORMATION)}
+          editMessage={formatMessage(overview.general.editMessage)}
+          title={formatMessage(overview.extraInformation.subtitle)}
+          isLast
+        >
+          <Box>
+            <GridRow>
+              <GridColumn>
+                {/* Native language */}
+                {showNativeLanguage && (
+                  <Text>
+                    {formatMessage(
+                      overview.extraInformation.nativeLanguageLabel,
+                    )}
+                    : {answers?.extraInformation?.nativeLanguage}
+                  </Text>
                 )}
-                : {answers?.extraInformation?.disabilityDescription}
-              </Text>
-            )}
-            {showOtherDescription && (
-              <Text>
-                {formatMessage(overview.extraInformation.otherLabel)}:{' '}
-                {answers?.extraInformation?.otherDescription}
-              </Text>
-            )}
-          </GridColumn>
-          <GridColumn span="1/2"></GridColumn>
-        </GridRow>
-      </Box>
+
+                {/* Other description */}
+                {showOtherDescription && (
+                  <Text>
+                    {formatMessage(overview.extraInformation.otherLabel)}:{' '}
+                    {answers?.extraInformation?.otherDescription}
+                  </Text>
+                )}
+
+                {/* Supporting documents */}
+                {showSupportingDocuments && (
+                  <Text>
+                    {formatMessage(
+                      overview.extraInformation.supportingDocumentsLabel,
+                    )}
+                    :
+                  </Text>
+                )}
+                {answers?.extraInformation?.supportingDocuments?.map(
+                  (attachment) => {
+                    return (
+                      <Box
+                        display="flex"
+                        alignItems="center"
+                        marginBottom="smallGutter"
+                      >
+                        <Box marginRight={1} display="flex" alignItems="center">
+                          <Icon
+                            color="blue400"
+                            icon="document"
+                            size="small"
+                            type="outline"
+                          />
+                        </Box>
+                        <Text>{attachment.name}</Text>
+                      </Box>
+                    )
+                  },
+                )}
+              </GridColumn>
+            </GridRow>
+          </Box>
+        </ReviewGroup>
+      </>
     )
   )
 }

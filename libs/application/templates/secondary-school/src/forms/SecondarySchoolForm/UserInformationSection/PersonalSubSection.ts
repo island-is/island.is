@@ -3,18 +3,17 @@ import {
   buildMultiField,
   buildRadioField,
   buildSubSection,
-  buildTextField,
 } from '@island.is/application/core'
 import { userInformation } from '../../../lib/messages'
 import { applicantInformationMultiField } from '@island.is/application/ui-forms'
-import { ApplicationType } from '../../../shared'
+import { ApplicationType, Routes } from '../../../shared'
 
 export const personalSubSection = buildSubSection({
   id: 'personalSubSection',
   title: userInformation.applicant.subSectionTitle,
   children: [
     buildMultiField({
-      id: 'personalMultiField',
+      id: Routes.PERSONAL,
       title: userInformation.applicant.pageTitle,
       description: userInformation.applicant.description,
       children: [
@@ -28,24 +27,6 @@ export const personalSubSection = buildSubSection({
           phoneRequired: true,
           readOnly: true,
         }).children,
-        buildDescriptionField({
-          id: 'otherAddressInfo.subtitle',
-          title: userInformation.otherAddress.subtitle,
-          titleVariant: 'h5',
-          space: 3,
-        }),
-        buildTextField({
-          id: 'otherAddress.address',
-          title: userInformation.otherAddress.address,
-          backgroundColor: 'blue',
-          width: 'half',
-        }),
-        buildTextField({
-          id: 'otherAddress.postalCode',
-          title: userInformation.otherAddress.postalCode,
-          backgroundColor: 'blue',
-          width: 'half',
-        }),
         buildDescriptionField({
           id: 'applicationTypeInfo.subtitle',
           title: userInformation.applicationType.subtitle,

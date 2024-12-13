@@ -31,37 +31,20 @@ export const userInformation = {
       description: 'Applicant subtitle',
     },
   }),
-  otherAddress: defineMessages({
-    subtitle: {
-      id: 'ss.application:userInformation.otherAddress.subtitle',
-      defaultMessage: 'Dvalarstaður ef annar en lögheimili',
-      description: 'Other address subtitle',
-    },
-    address: {
-      id: 'ss.application:userInformation.otherAddress.address',
-      defaultMessage: 'Heimilisfang',
-      description: 'Other address address',
-    },
-    postalCode: {
-      id: 'ss.application:userInformation.otherAddress.postalCode',
-      defaultMessage: 'Póstnúmer og sveitarfélag',
-      description: 'Other address postal code',
-    },
-  }),
   applicationType: defineMessages({
     subtitle: {
       id: 'ss.application:userInformation.applicationType.subtitle',
-      defaultMessage: 'Núverandi staða umsækjanda',
+      defaultMessage: 'Tegund umsækjanda',
       description: 'Application typa subtitle',
     },
     freshmanOptionTitle: {
       id: 'ss.application:userInformation.applicationType.freshmanOptionTitle',
-      defaultMessage: 'Nýnemi að koma úr 10. bekk',
+      defaultMessage: 'Nýnemi (að koma beint úr grunnskóla)',
       description: 'Freshman option title',
     },
     generalApplicationOptionTitle: {
       id: 'ss.application:userInformation.applicationType.generalApplicationOptionTitle',
-      defaultMessage: 'Almenn umsókn',
+      defaultMessage: 'Aðrir',
       description: 'General application option title',
     },
   }),
@@ -101,10 +84,10 @@ export const userInformation = {
       defaultMessage: 'Heimilisfang',
       description: 'Custodian address',
     },
-    postalCode: {
-      id: 'ss.application:userInformation.custodian.postalCode',
+    postalCodeAndCity: {
+      id: 'ss.application:userInformation.custodian.postalCodeAndCity',
       defaultMessage: 'Póstnúmer og staður',
-      description: 'Custodian postal code',
+      description: 'Custodian postal code and city',
     },
     email: {
       id: 'ss.application:userInformation.custodian.email',
@@ -118,6 +101,16 @@ export const userInformation = {
     },
   }),
   otherContact: defineMessages({
+    subSectionTitle: {
+      id: 'ss.application:userInformation.otherContact.subSectionTitle',
+      defaultMessage: 'Tengiliður',
+      description: 'Title of other contact sub section',
+    },
+    pageTitle: {
+      id: 'ss.application:userInformation.otherContact.pageTitle',
+      defaultMessage: 'Tengiliður',
+      description: 'Title of other contact page',
+    },
     subtitle: {
       id: 'ss.application:userInformation.otherContact.subtitle',
       defaultMessage: 'Aðrir tengiliðir',
@@ -152,39 +145,6 @@ export const userInformation = {
       id: 'ss.application:userInformation.otherContact.phone',
       defaultMessage: 'Símanúmer',
       description: 'Other contact phone',
-    },
-  }),
-  supportingDocuments: defineMessages({
-    subSectionTitle: {
-      id: 'ss.application:userInformation.supportingDocuments.subSectionTitle',
-      defaultMessage: 'Fylgigögn',
-      description: 'Title of supporting documents sub section',
-    },
-    pageTitle: {
-      id: 'ss.application:userInformation.supportingDocuments.pageTitle',
-      defaultMessage: 'Fylgigögn',
-      description: 'Title of supporting documents page',
-    },
-    description: {
-      id: 'ss.application:userInformation.supportingDocuments.description',
-      defaultMessage:
-        'Þú getur hengt hér inn skjöl eins og staðfestingu sérfræðings á greiningu t.d. vegna sértækra námsörðugleika (ekki mælt með að láta full greiningargögn fylgja með fyrr en ef skóli biður um þau þegar umsókn hefur verið samþykkt), meðmæli eða annað það sem þú vilt að fylgi umsókninni. Ef þú hefur ekki tök á að setja skjöl rafrænt hér inn getur þú sent þau í pósti til þeirra skóla sem sótt er um.',
-      description: 'Description of supporting documents page',
-    },
-    fileUploadHeader: {
-      id: 'ss.application:userInformation.supportingDocuments.fileUploadHeader',
-      defaultMessage: 'Viðhengi',
-      description: 'File upload title',
-    },
-    fileUploadDescription: {
-      id: 'ss.application:userInformation.supportingDocuments.fileUploadDescription',
-      defaultMessage: 'Tekið er við skjölum með endingu: .pdf, .docx, .rtf',
-      description: 'File upload title',
-    },
-    fileUploadButtonLabel: {
-      id: 'ss.application:userInformation.supportingDocuments.fileUploadButtonLabel',
-      defaultMessage: 'Velja skjöl til að hlaða upp',
-      description: 'File upload title',
     },
   }),
 }

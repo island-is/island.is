@@ -37,7 +37,7 @@ export const school = {
     },
     thirdLanguageLabel: {
       id: 'ss.application:school.selection.thirdLanguageLabel',
-      defaultMessage: 'Þriðja tungumál á bóknámsbraut',
+      defaultMessage: 'Þriðja tungumál ef við á',
       description: 'Third language select label',
     },
     nordicLanguageLabel: {
@@ -50,6 +50,11 @@ export const school = {
       defaultMessage:
         'Þetta er aðeins valmöguleiki ef nemandinn er með bakgrunn í öðru norðurlandamáli en dönsku. Önnur norðurlandamál eru yfirleitt kennd fyrir utan stundarskrá og stundum í öðrum skóla.',
       description: 'Nordic language alert message',
+    },
+    requestDormitoryCheckboxLabel: {
+      id: 'ss.application:school.selection.requestDormitoryCheckboxLabel',
+      defaultMessage: 'Ég óska eftir heimavist',
+      description: 'Request dormitory checkbox label',
     },
     schoolDuplicateError: {
       id: 'ss.application:school.selection.schoolDuplicateError',
@@ -75,6 +80,11 @@ export const school = {
       defaultMessage: 'Annað val',
       description: 'Second selection sub title',
     },
+    addSubtitle: {
+      id: 'ss.application:school.secondSelection.addSubtitle',
+      defaultMessage: 'Viltu bæta við öðrum skóla?',
+      description: 'Add second selection sub title',
+    },
   }),
   thirdSelection: defineMessages({
     subtitle: {
@@ -90,7 +100,7 @@ export const school = {
     addDescription: {
       id: 'ss.application:school.thirdSelection.addDescription',
       defaultMessage:
-        'Ef þú vilt auka líkurnar á að komast inn í skóla sem þú hefur valið geturðu bætt við þriðja vali. Athugið að hverjum nemanda er úthlutaður aðeins einn skóli. ',
+        'Ákveðnir framhaldsskólar á Íslandi fá jafnan fleiri umsóknir en pláss leyfa. Til að auka líkur á að komast inn í skóla að þínu vali getur þú bætt inn þriðja skólanum. Mikilvægt er að kynna sér inntökuskilyrði hvers skóla vandlega. Fáir þú ekki inn í einhverjum þeirra skóla sem þú sækir um mun Miðstöð menntunar og skólaþjónustu útvega þér skólapláss.',
       description: 'Add third selection description',
     },
     addButtonLabel: {
