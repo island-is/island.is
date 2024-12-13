@@ -22,6 +22,16 @@ const {
  * @type {import('@nx/next/plugins/with-nx').WithNxOptions}
  **/
 const nextConfig = {
+  async headers() {
+    return [
+      {
+        source: '/s/vinnumalastofnun',
+        headers: [
+          { key: 'Referrer-Policy', value: 'no-referrer-when-downgrade' },
+        ],
+      },
+    ]
+  },
   async rewrites() {
     return [
       {
