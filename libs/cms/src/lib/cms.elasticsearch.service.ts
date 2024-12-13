@@ -531,6 +531,8 @@ export class CmsElasticsearchService {
           order: SortDirection.DESC,
         },
       },
+      // Sort items with equal values by ascending title order
+      { 'title.sort': { order: SortDirection.ASC } },
     ]
 
     if (input.tags && input.tags.length > 0 && input.tagGroups) {
