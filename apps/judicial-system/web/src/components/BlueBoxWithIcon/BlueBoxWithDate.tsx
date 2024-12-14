@@ -119,6 +119,17 @@ const BlueBoxWithDate: FC<Props> = (props) => {
     setModalVisible(undefined)
   }
 
+  const handleRevokeAppeal = () => {
+    setAndSendDefendantToServer(
+      {
+        caseId: workingCase.id,
+        defendantId: defendant.id,
+        verdictAppealDate: null,
+      },
+      setWorkingCase,
+    )
+  }
+
   const appealExpirationInfo = useMemo(() => {
     const deadline =
       defendant.verdictAppealDeadline ||
@@ -339,7 +350,12 @@ const BlueBoxWithDate: FC<Props> = (props) => {
       </Box>
       <Box display="flex" justifyContent="flexEnd" marginTop={1}>
         {defendant.verdictAppealDate ? (
-          <Button variant="text" size="small" colorScheme="destructive">
+          <Button
+            variant="text"
+            onClick={handleRevokeAppeal}
+            size="small"
+            colorScheme="destructive"
+          >
             {formatMessage(strings.revokeAppeal)}
           </Button>
         ) : defendant.isSentToPrisonAdmin ? (
