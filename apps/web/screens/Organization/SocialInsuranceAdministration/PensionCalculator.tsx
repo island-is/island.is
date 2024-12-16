@@ -50,6 +50,7 @@ import {
   GET_ORGANIZATION_PAGE_QUERY,
   GET_ORGANIZATION_QUERY,
 } from '../../queries'
+import { PensionCalculatorTitle } from './PensionCalculatorTitle'
 import { PensionCalculatorWrapper } from './PensionCalculatorWrapper'
 import { translationStrings } from './translationStrings'
 import {
@@ -554,16 +555,12 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
             >
               <Box paddingY={5}>
                 <Stack space={3}>
-                  {isNewSystemActive && (
-                    <Text variant={titleVariant} as="h1">
-                      {title} <div>{titlePostfix}</div>
-                    </Text>
-                  )}
-                  {!isNewSystemActive && (
-                    <Text variant={titleVariant} as="h1">
-                      {title} {titlePostfix}
-                    </Text>
-                  )}
+                  <PensionCalculatorTitle
+                    isNewSystemActive={isNewSystemActive}
+                    title={title}
+                    titlePostfix={titlePostfix}
+                    titleVariant={titleVariant}
+                  />
                   <Text>{formatMessage(translationStrings.isTurnedOff)}</Text>
                 </Stack>
               </Box>
@@ -584,16 +581,12 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
                     <Stack space={3}>
                       <Stack space={3}>
                         <Box paddingTop={6}>
-                          {isNewSystemActive && (
-                            <Text variant={titleVariant} as="h1">
-                              {title} <div>{titlePostfix}</div>
-                            </Text>
-                          )}
-                          {!isNewSystemActive && (
-                            <Text variant={titleVariant} as="h1">
-                              {title} {titlePostfix}
-                            </Text>
-                          )}
+                          <PensionCalculatorTitle
+                            isNewSystemActive={isNewSystemActive}
+                            title={title}
+                            titlePostfix={titlePostfix}
+                            titleVariant={titleVariant}
+                          />
                         </Box>
                       </Stack>
                       <Box
