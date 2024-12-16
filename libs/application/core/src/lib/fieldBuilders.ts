@@ -412,7 +412,7 @@ export const buildDividerField = (data: {
     color,
     condition,
     marginTop,
-    marginBottom
+    marginBottom,
   }
 }
 
@@ -476,7 +476,7 @@ export const buildSubmitField = (data: {
     title,
     actions,
     refetchApplicationAfterSubmit,
-    marginTop, 
+    marginTop,
     marginBottom,
   } = data
   return {
