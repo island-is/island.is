@@ -58,13 +58,6 @@ export class GrantsSyncService implements CmsSyncProvider<IGrant> {
                   mapped?.howToApply?.map(pruneNonSearchableSliceUnionFields),
                 )
               : undefined,
-            mapped.applicationDeadline
-              ? extractStringsFromObject(
-                  mapped?.applicationDeadline?.map(
-                    pruneNonSearchableSliceUnionFields,
-                  ),
-                )
-              : undefined,
             mapped?.applicationHints
               ? extractStringsFromObject(
                   mapped?.applicationHints?.map(
@@ -109,14 +102,9 @@ export class GrantsSyncService implements CmsSyncProvider<IGrant> {
           }
 
           switch (mapped.status) {
-            case GrantStatus.SEE_DESCRIPTION:
-              tags.push({
-                key: 'see_description',
-                type: 'status',
-                value: 'see_description',
-              })
-              break
             case GrantStatus.OPEN:
+            case GrantStatus.ALWAYS_OPEN:
+            case GrantStatus.OPEN_WITH_NOTE:
               tags.push({
                 key: 'open',
                 type: 'status',
@@ -124,6 +112,9 @@ export class GrantsSyncService implements CmsSyncProvider<IGrant> {
               })
               break
             case GrantStatus.CLOSED:
+            case GrantStatus.CLOSED_OPENING_SOON:
+            case GrantStatus.CLOSED_OPENING_SOON_WITH_ESTIMATION:
+            case GrantStatus.CLOSED_WITH_NOTE:
               tags.push({
                 key: 'closed',
                 type: 'status',

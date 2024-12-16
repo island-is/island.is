@@ -219,7 +219,7 @@ workflows:
         - island-upload-keystore
       groups:
         - google_credentials
-        - firebase_credentials
+        - firebase_credentials_dev
       vars:
         <<: *shared_envs
         PACKAGE_NAME: 'is.island.app.dev'

@@ -89,6 +89,8 @@ export type RepeaterItem = {
    */
   displayInTable?: boolean
   label?: StaticText
+  phoneLabel?: StaticText
+  emailLabel?: StaticText
   placeholder?: StaticText
   options?: TableRepeaterOptions
   backgroundColor?: 'blue' | 'white'
@@ -99,6 +101,10 @@ export type RepeaterItem = {
     activeField?: Record<string, string>,
   ) => boolean
   dataTestId?: string
+  showPhoneField?: boolean
+  phoneRequired?: boolean
+  showEmailField?: boolean
+  emailRequired?: boolean
   readonly?:
     | boolean
     | ((
@@ -261,6 +267,8 @@ export enum FieldTypes {
   STATIC_TABLE = 'STATIC_TABLE',
   SLIDER = 'SLIDER',
   DISPLAY = 'DISPLAY',
+  ACCORDION = 'ACCORDION',
+  BANK_ACCOUNT = 'BANK_ACCOUNT',
 }
 
 export enum FieldComponents {
@@ -296,6 +304,8 @@ export enum FieldComponents {
   STATIC_TABLE = 'StaticTableFormField',
   SLIDER = 'SliderFormField',
   DISPLAY = 'DisplayFormField',
+  ACCORDION = 'AccordionFormField',
+  BANK_ACCOUNT = 'BankAccountFormField',
 }
 
 export interface CheckboxField extends InputField {
@@ -675,6 +685,28 @@ export type FieldsRepeaterField = BaseField & {
   }
 }
 
+export type AccordionItem = {
+  itemTitle: FormText
+  itemContent: FormText
+}
+export interface AccordionField extends BaseField {
+  readonly type: FieldTypes.ACCORDION
+  component: FieldComponents.ACCORDION
+  accordionItems:
+    | Array<AccordionItem>
+    | ((application: Application) => Array<AccordionItem>)
+  marginTop?: ResponsiveProp<Space>
+  marginBottom?: ResponsiveProp<Space>
+  titleVariant?: TitleVariants
+}
+export interface BankAccountField extends BaseField {
+  readonly type: FieldTypes.BANK_ACCOUNT
+  component: FieldComponents.BANK_ACCOUNT
+  marginTop?: ResponsiveProp<Space>
+  marginBottom?: ResponsiveProp<Space>
+  titleVariant?: TitleVariants
+}
+
 export interface FindVehicleField extends InputField {
   readonly type: FieldTypes.FIND_VEHICLE
   component: FieldComponents.FIND_VEHICLE
@@ -824,3 +856,5 @@ export type Field =
   | StaticTableField
   | SliderField
   | DisplayField
+  | AccordionField
+  | BankAccountField
