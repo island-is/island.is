@@ -11,8 +11,21 @@ export const descriptionSubsection = buildSubSection({
   children: [
     buildMultiField({
       id: 'description',
-      title: 'The description field',
+      title: 'Textar með buildDescriptionField',
       children: [
+        buildDescriptionField({
+          id: 'description',
+          title: '',
+          description: m.descriptionFieldDescription,
+          marginBottom: [2],
+        }),
+        buildDescriptionField({
+          id: 'description2',
+          title: '',
+          description: m.descriptionFieldDescription2,
+          marginBottom: [2],
+        }),
+
         buildDescriptionField({
           id: 'description',
           title: 'Default title size ',

@@ -36,6 +36,8 @@ const personSchema = z.object({
       return false
     }
     return asNumber > 15
+  }),
+})
 
 export const ExampleSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
@@ -81,7 +83,6 @@ export const ExampleSchema = z.object({
     // someHiddenInputWatchedRequired: z
     //   .string()
     //   .refine((x) => x.includes('Valid')),
-
   }),
   nationalId: z.string().refine((n) => n && !kennitala.isValid(n), {
     params: m.dataSchemeNationalId,

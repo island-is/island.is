@@ -268,4 +268,22 @@ export const m = defineMessages({
       'Ef valkostir í field eru allir í einu `enum`, þá skal nota `z.nativeEnum()` í zod validation til að sleppa við að lista upp alla hvern valkost í enum-inu eins og þarf að gera ef stuðst er við `z.enum()` ',
     description: 'Validation description',
   },
+  conditionsDescription2: {
+    id: 'example.application:conditions.description2#markdown',
+    defaultMessage:
+      'Þetta er gert á sama hátt í báðum tilvikum. Allt ætti að geta tekið inn `condition` sem parameter og condition tekur inn fall `(answers, externalData) => { ... }` sem skilar `true` eða `false`',
+    description: 'Validation description',
+  },
+  descriptionFieldDescription: {
+    id: 'example.application:descriptionFieldDescription',
+    defaultMessage:
+      'Allur texti sem birtist í umsóknum ætti að koma úr `lib/messages.ts`. Þessum texta er svo hlaðið upp í contentful með því að keyra `yarn nx run <template-name>:extract-strings`, þar sem `<template-name>` er nafnið á umsókninni eins og það er skrifað í `project.json` í viðeigandi template. Fyrir þessa umsókn er þetta `yarn nx run application-templates-reference-template:extract-strings`. Í contentfull sér skilastjóri eða starfsmaður stofnunar um að setja inn enskar þýðingar og uppfæra textan frá því sem forritari setur inn í defaultMessage.',
+    description: 'Description field description',
+  },
+  descriptionFieldDescription2: {
+    id: 'example.application:descriptionFieldDescription2',
+    defaultMessage:
+      'Hér eru listaðir upp allir möguleikar á texta frá buildDescriptionField. Flestir þeirra tengjast því að bæta við  `#markdown` í id-ið til að geta notað markdown í textanum. Einnig er hægt að setja breytur inn í texta og stýra fyrirsagnastærð',
+    description: 'Description field description',
+  },
 })
