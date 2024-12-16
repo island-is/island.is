@@ -51,6 +51,7 @@ import {
   GET_ORGANIZATION_QUERY,
 } from '../../queries'
 import { GET_PENSION_CALCULATION } from '../../queries/PensionCalculator'
+import { PensionCalculatorTitle } from './PensionCalculatorTitle'
 import { PensionCalculatorWrapper } from './PensionCalculatorWrapper'
 import { translationStrings } from './translationStrings'
 import {
@@ -361,16 +362,12 @@ const PensionCalculatorResults: CustomScreen<PensionCalculatorResultsProps> = ({
                 >
                   <Box paddingY={5}>
                     <Stack space={3}>
-                      {isNewSystemActive && (
-                        <Text variant={titleVariant} as="h1">
-                          {title} <div>{titlePostfix}</div>
-                        </Text>
-                      )}
-                      {!isNewSystemActive && (
-                        <Text variant={titleVariant} as="h1">
-                          {title} {titlePostfix}
-                        </Text>
-                      )}
+                      <PensionCalculatorTitle
+                        isNewSystemActive={isNewSystemActive}
+                        title={title}
+                        titlePostfix={titlePostfix}
+                        titleVariant={titleVariant}
+                      />
                       <Text>
                         {formatMessage(translationStrings.isTurnedOff)}
                       </Text>
@@ -391,16 +388,12 @@ const PensionCalculatorResults: CustomScreen<PensionCalculatorResultsProps> = ({
                   <Box paddingY={6}>
                     <Stack space={5}>
                       <Stack space={2}>
-                        {isNewSystemActive && (
-                          <Text variant={titleVariant} as="h1">
-                            {title} <div>{titlePostfix}</div>
-                          </Text>
-                        )}
-                        {!isNewSystemActive && (
-                          <Text variant={titleVariant} as="h1">
-                            {title} {titlePostfix}
-                          </Text>
-                        )}
+                        <PensionCalculatorTitle
+                          isNewSystemActive={isNewSystemActive}
+                          title={title}
+                          titlePostfix={titlePostfix}
+                          titleVariant={titleVariant}
+                        />
                         <Box className={styles.textMaxWidth}>
                           <Text>
                             {formatMessage(
