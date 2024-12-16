@@ -1,4 +1,5 @@
 import gql from 'graphql-tag'
+
 import { nestedFields, slices } from './fragments'
 
 export const GET_GRANTS_QUERY = gql`
@@ -9,15 +10,14 @@ export const GET_GRANTS_QUERY = gql`
         name
         description
         applicationId
-        applicationDeadlineStatus
         applicationUrl {
           slug
           type
         }
         dateFrom
         dateTo
-        isOpen
         status
+        statusText
         categoryTags {
           id
           title
@@ -67,8 +67,11 @@ export const GET_GRANT_QUERY = gql`
           slug
           type
     }
-      applicationDeadlineStatus
+    applicationButtonLabel
       status
+      statusText
+      dateFrom
+      dateTo
       categoryTags {
         id
         title
@@ -114,10 +117,6 @@ export const GET_GRANT_QUERY = gql`
         ${nestedFields}
       }
       howToApply {
-        ...AllSlices
-        ${nestedFields}
-      }
-      applicationDeadline {
         ...AllSlices
         ${nestedFields}
       }
