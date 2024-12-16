@@ -1,50 +1,78 @@
 {
   "openapi": "3.0.1",
   "info": {
-    "title": "MMS Application API",
-    "description": "MMS Application api",
+    "title": "MMS Island.is application API",
+    "description": "API for Island.is",
     "version": "1.0"
   },
   "paths": {
-    "/v1/applications/{applicationId}": {
+    "/v1/applications": {
       "get": {
         "tags": ["Applications"],
         "summary": "[GET] Fetch an application.",
-        "parameters": [
-          {
-            "name": "applicationId",
-            "in": "path",
-            "description": "(required) ApplicationId.",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          }
-        ],
         "responses": {
           "200": {
             "description": "OK",
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/ApplicationDto"
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/ApplicationDto" }
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ApplicationDto"
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/ApplicationDto" }
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ApplicationDto"
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/ApplicationDto" }
                 }
               }
             }
           }
         }
       },
+      "post": {
+        "tags": ["Applications"],
+        "summary": "[POST] Creates a new application.",
+        "requestBody": {
+          "description": "(required) Application  MMS.Core.Domain.Dtos.Application.ApplicationBaseDto.",
+          "content": {
+            "application/json-patch+json": {
+              "schema": { "$ref": "#/components/schemas/ApplicationBaseDto" }
+            },
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/ApplicationBaseDto" }
+            },
+            "text/json": {
+              "schema": { "$ref": "#/components/schemas/ApplicationBaseDto" }
+            },
+            "application/*+json": {
+              "schema": { "$ref": "#/components/schemas/ApplicationBaseDto" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": { "type": "string", "format": "uuid" }
+              },
+              "application/json": {
+                "schema": { "type": "string", "format": "uuid" }
+              },
+              "text/json": { "schema": { "type": "string", "format": "uuid" } }
+            }
+          }
+        }
+      }
+    },
+    "/v1/applications/{applicationId}": {
       "put": {
         "tags": ["Applications"],
         "summary": "[GET] Overwrites an existing application",
@@ -54,34 +82,23 @@
             "in": "path",
             "description": "(required) ApplicationId.",
             "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
+            "schema": { "type": "string", "format": "uuid" }
           }
         ],
         "requestBody": {
           "description": "(required) Application  MMS.Core.Domain.Dtos.Application.ApplicationUpdateDto.",
           "content": {
             "application/json-patch+json": {
-              "schema": {
-                "$ref": "#/components/schemas/ApplicationBaseDto"
-              }
+              "schema": { "$ref": "#/components/schemas/ApplicationBaseDto" }
             },
             "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/ApplicationBaseDto"
-              }
+              "schema": { "$ref": "#/components/schemas/ApplicationBaseDto" }
             },
             "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/ApplicationBaseDto"
-              }
+              "schema": { "$ref": "#/components/schemas/ApplicationBaseDto" }
             },
             "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/ApplicationBaseDto"
-              }
+              "schema": { "$ref": "#/components/schemas/ApplicationBaseDto" }
             }
           }
         },
@@ -90,70 +107,13 @@
             "description": "OK",
             "content": {
               "text/plain": {
-                "schema": {
-                  "type": "string",
-                  "format": "uuid"
-                }
+                "schema": { "type": "string", "format": "uuid" }
               },
               "application/json": {
-                "schema": {
-                  "type": "string",
-                  "format": "uuid"
-                }
+                "schema": { "type": "string", "format": "uuid" }
               },
-              "text/json": {
-                "schema": {
-                  "type": "string",
-                  "format": "uuid"
-                }
-              }
+              "text/json": { "schema": { "type": "string", "format": "uuid" } }
             }
-          }
-        }
-      },
-      "patch": {
-        "tags": ["Applications"],
-        "summary": "[GET] Change an application (Not implemented).",
-        "parameters": [
-          {
-            "name": "applicationId",
-            "in": "path",
-            "description": "(required) ApplicationId.",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          }
-        ],
-        "requestBody": {
-          "description": "(required) Application  MMS.Core.Domain.Dtos.Application.ApplicationUpdateDto.",
-          "content": {
-            "application/json-patch+json": {
-              "schema": {
-                "$ref": "#/components/schemas/ApplicationUpdateDto"
-              }
-            },
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/ApplicationUpdateDto"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/ApplicationUpdateDto"
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/ApplicationUpdateDto"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "OK"
           }
         }
       },
@@ -166,138 +126,10 @@
             "in": "path",
             "description": "(required) ApplicationId.",
             "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
+            "schema": { "type": "string", "format": "uuid" }
           }
         ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      }
-    },
-    "/v1/applications": {
-      "post": {
-        "tags": ["Applications"],
-        "summary": "[POST] Creates a new application.",
-        "requestBody": {
-          "description": "(required) Application  MMS.Core.Domain.Dtos.Application.ApplicationBaseDto.",
-          "content": {
-            "application/json-patch+json": {
-              "schema": {
-                "$ref": "#/components/schemas/ApplicationBaseDto"
-              }
-            },
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/ApplicationBaseDto"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/ApplicationBaseDto"
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/ApplicationBaseDto"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "string",
-                  "format": "uuid"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "type": "string",
-                  "format": "uuid"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "type": "string",
-                  "format": "uuid"
-                }
-              }
-            }
-          }
-        }
-      },
-      "get": {
-        "tags": ["Applications"],
-        "summary": "[GET] Get a list of applications.",
-        "parameters": [
-          {
-            "name": "nationalId",
-            "in": "query",
-            "description": "(Optional) If searching for appliactions by National ID",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "rowOffset",
-            "in": "query",
-            "description": "(Optional) Offset for pagination. Row where to start fetching from.",
-            "schema": {
-              "type": "integer",
-              "format": "int32",
-              "default": 0
-            }
-          },
-          {
-            "name": "fetchSize",
-            "in": "query",
-            "description": "(Optional) Fetch size for pagination. How many rows to fetch.",
-            "schema": {
-              "type": "integer",
-              "format": "int32",
-              "default": 100000
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ApplicationDto"
-                  }
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ApplicationDto"
-                  }
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ApplicationDto"
-                  }
-                }
-              }
-            }
-          }
-        }
+        "responses": { "200": { "description": "OK" } }
       }
     },
     "/v1/applications/{applicationId}/attachments": {
@@ -310,10 +142,7 @@
             "in": "path",
             "description": "The ID of the application to add attachments to.",
             "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
+            "schema": { "type": "string", "format": "uuid" }
           }
         ],
         "requestBody": {
@@ -324,394 +153,16 @@
                 "properties": {
                   "files": {
                     "type": "array",
-                    "items": {
-                      "type": "string",
-                      "format": "binary"
-                    },
+                    "items": { "type": "string", "format": "binary" },
                     "description": "A collection of files to upload."
                   }
                 }
               },
-              "encoding": {
-                "files": {
-                  "style": "form"
-                }
-              }
+              "encoding": { "files": { "style": "form" } }
             }
           }
         },
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      }
-    },
-    "/v1/programmes/{programmeId}": {
-      "get": {
-        "tags": ["Programmes"],
-        "summary": "[GET] Get programme.",
-        "parameters": [
-          {
-            "name": "programmeId",
-            "in": "path",
-            "description": "(required) Programme Id",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProgrammeDto"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProgrammeDto"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProgrammeDto"
-                }
-              }
-            }
-          }
-        }
-      },
-      "patch": {
-        "tags": ["Programmes"],
-        "summary": "[PATCH] Change available Programmes",
-        "parameters": [
-          {
-            "name": "programmeId",
-            "in": "path",
-            "description": "(required) semesterId.",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          }
-        ],
-        "requestBody": {
-          "description": "(required) Programme MMS.Core.Domain.Dtos.Programme.PatchProgrammeDto.",
-          "content": {
-            "application/json-patch+json": {
-              "schema": {
-                "$ref": "#/components/schemas/PatchProgrammeDto"
-              }
-            },
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/PatchProgrammeDto"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/PatchProgrammeDto"
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/PatchProgrammeDto"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProgrammeDto"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProgrammeDto"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProgrammeDto"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/v1/programmes": {
-      "get": {
-        "tags": ["Programmes"],
-        "summary": "[GET] Get a list of programmes.",
-        "parameters": [
-          {
-            "name": "rowOffset",
-            "in": "query",
-            "description": "(optional) Offset for pagination. Row where to start fetching from. Default 0",
-            "schema": {
-              "type": "integer",
-              "format": "int32",
-              "default": 0
-            }
-          },
-          {
-            "name": "fetchSize",
-            "in": "query",
-            "description": "(optional) Fetch size for pagination. How many rows to fetch. Default 100000",
-            "schema": {
-              "type": "integer",
-              "format": "int32",
-              "default": 100000
-            }
-          },
-          {
-            "name": "schoolId",
-            "in": "query",
-            "description": "(optional)  Id of the school which the programmes belong to.",
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ProgrammeDto"
-                  }
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ProgrammeDto"
-                  }
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ProgrammeDto"
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/v1/programmes/simple": {
-      "get": {
-        "tags": ["Programmes"],
-        "summary": "[GET] Get a list of programmes.",
-        "parameters": [
-          {
-            "name": "rowOffset",
-            "in": "query",
-            "description": "(optional) Offset for pagination. Row where to start fetching from. Default 0",
-            "schema": {
-              "type": "integer",
-              "format": "int32",
-              "default": 0
-            }
-          },
-          {
-            "name": "fetchSize",
-            "in": "query",
-            "description": "(optional) Fetch size for pagination. How many rows to fetch. Default 1000000",
-            "schema": {
-              "type": "integer",
-              "format": "int32",
-              "default": 100000
-            }
-          },
-          {
-            "name": "schoolId",
-            "in": "query",
-            "description": "(optional)  Id of the school which the programmes belong to.",
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ProgrammeSimpleDto"
-                  }
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ProgrammeSimpleDto"
-                  }
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ProgrammeSimpleDto"
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/v1/programmes/all": {
-      "get": {
-        "tags": ["Programmes"],
-        "summary": "[GET] Get a list of programmes.",
-        "parameters": [
-          {
-            "name": "rowOffset",
-            "in": "query",
-            "description": "(optional) Offset for pagination. Row where to start fetching from. Default 0",
-            "schema": {
-              "type": "integer",
-              "format": "int32",
-              "default": 0
-            }
-          },
-          {
-            "name": "fetchSize",
-            "in": "query",
-            "description": "(optional) Fetch size for pagination. How many rows to fetch. Default 1000000",
-            "schema": {
-              "type": "integer",
-              "format": "int32",
-              "default": 100000
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ProgrammeSimpleDto"
-                  }
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ProgrammeSimpleDto"
-                  }
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ProgrammeSimpleDto"
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/v1/programmes/schools/{schoolId}": {
-      "get": {
-        "tags": ["Programmes"],
-        "summary": "[GET] Get all programmes for a school.",
-        "parameters": [
-          {
-            "name": "schoolId",
-            "in": "path",
-            "description": "(optional) School Id",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          },
-          {
-            "name": "rowOffset",
-            "in": "query",
-            "description": "(optional) Offset for pagination. Row where to start fetching from. Default 0",
-            "schema": {
-              "type": "integer",
-              "format": "int32",
-              "default": 0
-            }
-          },
-          {
-            "name": "fetchSize",
-            "in": "query",
-            "description": "(optional) Fetch size for pagination. How many rows to fetch. Default 1000000",
-            "schema": {
-              "type": "integer",
-              "format": "int32",
-              "default": 100000
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ProgrammeDto"
-                  }
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ProgrammeDto"
-                  }
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ProgrammeDto"
-                  }
-                }
-              }
-            }
-          }
-        }
+        "responses": { "200": { "description": "OK" } }
       }
     },
     "/v1/schools/{schoolId}": {
@@ -724,10 +175,7 @@
             "in": "path",
             "description": "(required) SchoolId.",
             "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
+            "schema": { "type": "string", "format": "uuid" }
           }
         ],
         "responses": {
@@ -735,19 +183,13 @@
             "description": "OK",
             "content": {
               "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/SchoolDto"
-                }
+                "schema": { "$ref": "#/components/schemas/SchoolDto" }
               },
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/SchoolDto"
-                }
+                "schema": { "$ref": "#/components/schemas/SchoolDto" }
               },
               "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/SchoolDto"
-                }
+                "schema": { "$ref": "#/components/schemas/SchoolDto" }
               }
             }
           }
@@ -763,11 +205,7 @@
             "name": "rowOffset",
             "in": "query",
             "description": "(optional) Offset for pagination. Row where to start fetching from.",
-            "schema": {
-              "type": "integer",
-              "format": "int32",
-              "default": 0
-            }
+            "schema": { "type": "integer", "format": "int32", "default": 0 }
           },
           {
             "name": "fetchSize",
@@ -787,25 +225,19 @@
               "text/plain": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/SchoolDto"
-                  }
+                  "items": { "$ref": "#/components/schemas/SchoolDto" }
                 }
               },
               "application/json": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/SchoolDto"
-                  }
+                  "items": { "$ref": "#/components/schemas/SchoolDto" }
                 }
               },
               "text/json": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/SchoolDto"
-                  }
+                  "items": { "$ref": "#/components/schemas/SchoolDto" }
                 }
               }
             }
@@ -813,35 +245,28 @@
         }
       }
     },
-    "/v1/schools/{schoolId}/grades/elementary": {
+    "/v1/schools/{schoolId}/programmes": {
       "get": {
         "tags": ["Schools"],
-        "summary": "[GET] Fetch list of grades. (NOT IMPLEMENTED)",
+        "summary": "[GET] Get a list of programmes.",
         "parameters": [
           {
             "name": "schoolId",
             "in": "path",
             "description": "(required) SchoolId.",
             "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
+            "schema": { "type": "string", "format": "uuid" }
           },
           {
             "name": "rowOffset",
             "in": "query",
-            "description": "(optional) Offset for pagination. Row where to start fetching from.",
-            "schema": {
-              "type": "integer",
-              "format": "int32",
-              "default": 0
-            }
+            "description": "(optional) Offset for pagination. Row where to start fetching from. Default 0",
+            "schema": { "type": "integer", "format": "int32", "default": 0 }
           },
           {
             "name": "fetchSize",
             "in": "query",
-            "description": "(optional) Fetch size for pagination. How many rows to fetch.",
+            "description": "(optional) Fetch size for pagination. How many rows to fetch. Default 1000000",
             "schema": {
               "type": "integer",
               "format": "int32",
@@ -856,323 +281,19 @@
               "text/plain": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/GradeDto"
-                  }
+                  "items": { "$ref": "#/components/schemas/ProgrammeSimpleDto" }
                 }
               },
               "application/json": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/GradeDto"
-                  }
+                  "items": { "$ref": "#/components/schemas/ProgrammeSimpleDto" }
                 }
               },
               "text/json": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/GradeDto"
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/v1/schools/{schoolId}/thirdlanguage/{languageId}": {
-      "post": {
-        "tags": ["Schools"],
-        "summary": "[POST] Add a language to a school.",
-        "parameters": [
-          {
-            "name": "schoolId",
-            "in": "path",
-            "description": "(required) School ID.",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          },
-          {
-            "name": "languageId",
-            "in": "path",
-            "description": "(required) Language ID.",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      },
-      "delete": {
-        "tags": ["Schools"],
-        "summary": "[DELETE] Removes a link between a school and a third language.",
-        "parameters": [
-          {
-            "name": "schoolId",
-            "in": "path",
-            "description": "(required) School ID.",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          },
-          {
-            "name": "languageId",
-            "in": "path",
-            "description": "(required) Language ID.",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      }
-    },
-    "/v1/semesters/{semesterId}": {
-      "get": {
-        "tags": ["Semesters"],
-        "summary": "[GET] Fetch semester from ID.",
-        "parameters": [
-          {
-            "name": "semesterId",
-            "in": "path",
-            "description": "(required) SemesterId.",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/SemesterDto"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/SemesterDto"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/SemesterDto"
-                }
-              }
-            }
-          }
-        }
-      },
-      "patch": {
-        "tags": ["Semesters"],
-        "summary": "[PATCH] Change semester",
-        "parameters": [
-          {
-            "name": "semesterId",
-            "in": "path",
-            "description": "(required) semesterId.",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          }
-        ],
-        "requestBody": {
-          "description": "(required) Semester MMS.Core.Domain.Dtos.Semester.PatchSemesterDto.",
-          "content": {
-            "application/json-patch+json": {
-              "schema": {
-                "$ref": "#/components/schemas/PatchSemesterDto"
-              }
-            },
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/PatchSemesterDto"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/PatchSemesterDto"
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/PatchSemesterDto"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/SemesterDto"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/SemesterDto"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/SemesterDto"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/v1/semesters": {
-      "get": {
-        "tags": ["Semesters"],
-        "summary": "[GET] Fetch list of semesters.",
-        "parameters": [
-          {
-            "name": "schoolId",
-            "in": "query",
-            "description": "(optional) School that the semesters are being fetched for.",
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          },
-          {
-            "name": "registryEnabled",
-            "in": "query",
-            "description": "(optional) Fetch only available semesters for registration.",
-            "schema": {
-              "type": "boolean",
-              "default": false
-            }
-          },
-          {
-            "name": "rowOffset",
-            "in": "query",
-            "description": "(optional) Offset for pagination. Row where to start fetching from.",
-            "schema": {
-              "type": "integer",
-              "format": "int32",
-              "default": 0
-            }
-          },
-          {
-            "name": "fetchSize",
-            "in": "query",
-            "description": "(optional) Fetch size for pagination. How many rows to fetch.",
-            "schema": {
-              "type": "integer",
-              "format": "int32",
-              "default": 100000
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/SemesterDto"
-                  }
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/SemesterDto"
-                  }
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/SemesterDto"
-                  }
-                }
-              }
-            }
-          }
-        }
-      },
-      "post": {
-        "tags": ["Semesters"],
-        "summary": "[POST] Creates a new semester.",
-        "requestBody": {
-          "description": "(required) Semester MMS.Core.Domain.Dtos.Semester.CreateSemesterDto.",
-          "content": {
-            "application/json-patch+json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreateSemesterDto"
-              }
-            },
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreateSemesterDto"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreateSemesterDto"
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreateSemesterDto"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "string",
-                  "format": "uuid"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "type": "string",
-                  "format": "uuid"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "type": "string",
-                  "format": "uuid"
+                  "items": { "$ref": "#/components/schemas/ProgrammeSimpleDto" }
                 }
               }
             }
@@ -1190,19 +311,13 @@
             "in": "path",
             "description": "(required) National Id of the students being fetched for.",
             "required": true,
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           },
           {
             "name": "rowOffset",
             "in": "query",
             "description": "(optional) Offset for pagination. Row where to start fetching from.",
-            "schema": {
-              "type": "integer",
-              "format": "int32",
-              "default": 0
-            }
+            "schema": { "type": "integer", "format": "int32", "default": 0 }
           },
           {
             "name": "fetchSize",
@@ -1222,206 +337,19 @@
               "text/plain": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/GradeDto"
-                  }
+                  "items": { "$ref": "#/components/schemas/GradeDto" }
                 }
               },
               "application/json": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/GradeDto"
-                  }
+                  "items": { "$ref": "#/components/schemas/GradeDto" }
                 }
               },
               "text/json": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/GradeDto"
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/v1/users": {
-      "get": {
-        "tags": ["Users"],
-        "summary": "[GET] Fetches all the users for current users school.",
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/UserDto"
-                  }
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/UserDto"
-                  }
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/UserDto"
-                  }
-                }
-              }
-            }
-          }
-        }
-      },
-      "post": {
-        "tags": ["Users"],
-        "summary": "[POST] Create a new user for the current users school.",
-        "requestBody": {
-          "description": "The user information.",
-          "content": {
-            "application/json-patch+json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreateUserDto"
-              }
-            },
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreateUserDto"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreateUserDto"
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreateUserDto"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/UserDto"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/UserDto"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/UserDto"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/v1/users/school": {
-      "post": {
-        "tags": ["Users"],
-        "summary": "[POST] Create a new user for a school.",
-        "requestBody": {
-          "description": "The user information.",
-          "content": {
-            "application/json-patch+json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreateUserDto"
-              }
-            },
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreateUserDto"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreateUserDto"
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreateUserDto"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/UserDto"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/UserDto"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/UserDto"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/v1/users/{userId}": {
-      "delete": {
-        "tags": ["Users"],
-        "summary": "[DELETE] Deletes a user.",
-        "parameters": [
-          {
-            "name": "userId",
-            "in": "path",
-            "description": "The user ID.",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "boolean"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "type": "boolean"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "type": "boolean"
+                  "items": { "$ref": "#/components/schemas/GradeDto" }
                 }
               }
             }
@@ -1435,59 +363,26 @@
       "ApplicationBaseDto": {
         "type": "object",
         "properties": {
-          "applicantNationalId": {
-            "type": "string",
-            "nullable": true
-          },
-          "applicantName": {
-            "type": "string",
-            "nullable": true
-          },
-          "phoneNumber": {
-            "type": "string",
-            "nullable": true
-          },
-          "email": {
-            "type": "string",
-            "nullable": true
-          },
-          "placeOfResidence": {
-            "type": "string",
-            "nullable": true
-          },
-          "postCode": {
-            "type": "string",
-            "nullable": true
-          },
-          "municipality": {
-            "type": "string",
-            "nullable": true
-          },
+          "applicantNationalId": { "type": "string", "nullable": true },
+          "applicantName": { "type": "string", "nullable": true },
+          "isFreshman": { "type": "boolean" },
+          "phoneNumber": { "type": "string", "nullable": true },
+          "email": { "type": "string", "nullable": true },
+          "placeOfResidence": { "type": "string", "nullable": true },
+          "postCode": { "type": "string", "nullable": true },
+          "municipality": { "type": "string", "nullable": true },
           "nextOfKin": {
             "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/NextOfKinDto"
-            },
+            "items": { "$ref": "#/components/schemas/NextOfKinDto" },
             "nullable": true
           },
-          "speakingLanguage": {
-            "type": "string",
-            "nullable": true
-          },
-          "northernLanguage": {
-            "$ref": "#/components/schemas/NorthernLanguage"
-          },
-          "hasDisabilityDiagnosis": {
-            "type": "boolean"
-          },
+          "speakingLanguage": { "type": "string", "nullable": true },
+          "hasDisabilityDiagnosis": { "type": "boolean" },
           "disabilityDiagnosisDescription": {
             "type": "string",
             "nullable": true
           },
-          "otherInformation": {
-            "type": "string",
-            "nullable": true
-          },
+          "otherInformation": { "type": "string", "nullable": true },
           "applicationChoices": {
             "type": "array",
             "items": {
@@ -1501,80 +396,42 @@
       "ApplicationChoicesBaseDto": {
         "type": "object",
         "properties": {
-          "priority": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "schoolId": {
-            "type": "string",
-            "format": "uuid"
-          },
+          "priority": { "type": "integer", "format": "int32" },
+          "schoolId": { "type": "string", "format": "uuid" },
           "programmeChoice": {
             "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/ProgrammeChoiceDto"
-            },
+            "items": { "$ref": "#/components/schemas/ProgrammeChoiceDto" },
             "nullable": true
           },
-          "thirdLanguage": {
-            "type": "string",
-            "nullable": true
-          },
-          "northernLanguage": {
-            "type": "string",
-            "nullable": true
-          },
-          "requestDormitory": {
-            "type": "boolean",
-            "nullable": true
-          }
+          "thirdLanguage": { "type": "string", "nullable": true },
+          "northernLanguage": { "type": "string", "nullable": true },
+          "requestDormitory": { "type": "boolean", "nullable": true }
         },
         "additionalProperties": false
       },
       "ApplicationChoicesReturnDto": {
         "type": "object",
         "properties": {
-          "priority": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "school": {
-            "$ref": "#/components/schemas/SchoolDto"
-          },
+          "priority": { "type": "integer", "format": "int32" },
+          "school": { "$ref": "#/components/schemas/SchoolDto" },
           "programmeChoice": {
             "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/ProgrammeChoiceDto"
-            },
+            "items": { "$ref": "#/components/schemas/ProgrammeChoiceDto" },
             "nullable": true
           },
-          "thirdLanguage": {
-            "$ref": "#/components/schemas/LanguageDto"
-          },
-          "northernLanguage": {
-            "$ref": "#/components/schemas/LanguageDto"
-          }
+          "thirdLanguage": { "$ref": "#/components/schemas/LanguageDto" },
+          "northernLanguage": { "$ref": "#/components/schemas/LanguageDto" },
+          "requestDormitory": { "type": "boolean" }
         },
         "additionalProperties": false
       },
       "ApplicationDto": {
         "type": "object",
         "properties": {
-          "id": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "createdDate": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "updatedDate": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "speakingLanguage": {
-            "$ref": "#/components/schemas/Language"
-          },
+          "id": { "type": "string", "format": "uuid" },
+          "createdDate": { "type": "string", "format": "date-time" },
+          "updatedDate": { "type": "string", "format": "date-time" },
+          "speakingLanguage": { "$ref": "#/components/schemas/LanguageDto" },
           "applicationChoices": {
             "type": "array",
             "items": {
@@ -1585,174 +442,25 @@
           "currentApplicantStatus": {
             "$ref": "#/components/schemas/CurrentApplicantStatus"
           },
-          "applicantNationalId": {
-            "type": "string",
-            "nullable": true
-          },
-          "applicantName": {
-            "type": "string",
-            "nullable": true
-          },
-          "phoneNumber": {
-            "type": "string",
-            "nullable": true
-          },
-          "email": {
-            "type": "string",
-            "nullable": true
-          },
-          "placeOfResidence": {
-            "type": "string",
-            "nullable": true
-          },
-          "postCode": {
-            "type": "string",
-            "nullable": true
-          },
-          "municipality": {
-            "type": "string",
-            "nullable": true
-          },
+          "applicantNationalId": { "type": "string", "nullable": true },
+          "applicantName": { "type": "string", "nullable": true },
+          "isFreshman": { "type": "boolean" },
+          "phoneNumber": { "type": "string", "nullable": true },
+          "email": { "type": "string", "nullable": true },
+          "placeOfResidence": { "type": "string", "nullable": true },
+          "postCode": { "type": "string", "nullable": true },
+          "municipality": { "type": "string", "nullable": true },
           "nextOfKin": {
             "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/NextOfKinDto"
-            },
+            "items": { "$ref": "#/components/schemas/NextOfKinDto" },
             "nullable": true
           },
-          "northernLanguage": {
-            "$ref": "#/components/schemas/NorthernLanguage"
-          },
-          "hasDisabilityDiagnosis": {
-            "type": "boolean"
-          },
+          "hasDisabilityDiagnosis": { "type": "boolean" },
           "disabilityDiagnosisDescription": {
             "type": "string",
             "nullable": true
           },
-          "otherInformation": {
-            "type": "string",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "ApplicationUpdateDto": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "applicantNationalId": {
-            "type": "string",
-            "nullable": true
-          },
-          "applicantName": {
-            "type": "string",
-            "nullable": true
-          },
-          "phoneNumber": {
-            "type": "string",
-            "nullable": true
-          },
-          "email": {
-            "type": "string",
-            "nullable": true
-          },
-          "placeOfResidence": {
-            "type": "string",
-            "nullable": true
-          },
-          "postCode": {
-            "type": "string",
-            "nullable": true
-          },
-          "municipality": {
-            "type": "string",
-            "nullable": true
-          },
-          "nextOfKin": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/NextOfKinDto"
-            },
-            "nullable": true
-          },
-          "speakingLanguage": {
-            "type": "string",
-            "nullable": true
-          },
-          "northernLanguage": {
-            "$ref": "#/components/schemas/NorthernLanguage"
-          },
-          "hasDisabilityDiagnosis": {
-            "type": "boolean"
-          },
-          "disabilityDiagnosisDescription": {
-            "type": "string",
-            "nullable": true
-          },
-          "otherInformation": {
-            "type": "string",
-            "nullable": true
-          },
-          "applicationChoices": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/ApplicationChoicesBaseDto"
-            },
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "CreateSemesterDto": {
-        "type": "object",
-        "properties": {
-          "name": {
-            "type": "string",
-            "nullable": true
-          },
-          "schoolId": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "registryEnabled": {
-            "type": "boolean"
-          },
-          "registryStartDate": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "registryEndDate": {
-            "type": "string",
-            "format": "date-time",
-            "nullable": true
-          },
-          "numberOfStudents": {
-            "type": "integer",
-            "format": "int32"
-          }
-        },
-        "additionalProperties": false
-      },
-      "CreateUserDto": {
-        "type": "object",
-        "properties": {
-          "nationalId": {
-            "type": "string",
-            "nullable": true
-          },
-          "email": {
-            "type": "string",
-            "nullable": true
-          },
-          "schoolId": {
-            "type": "string",
-            "format": "uuid",
-            "nullable": true
-          }
+          "otherInformation": { "type": "string", "nullable": true }
         },
         "additionalProperties": false
       },
@@ -1767,77 +475,21 @@
       "GradeDto": {
         "type": "object",
         "properties": {
-          "schoolNationalId": {
-            "type": "string",
-            "nullable": true
-          },
-          "grade": {
-            "type": "string",
-            "nullable": true
-          },
-          "courseName": {
-            "type": "string",
-            "nullable": true
-          },
-          "review": {
-            "type": "string",
-            "nullable": true
-          },
-          "evaluationCriteria": {
-            "type": "string",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "Language": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "name": {
-            "type": "string",
-            "nullable": true
-          },
-          "nameEnglish": {
-            "type": "string",
-            "nullable": true
-          },
-          "code": {
-            "type": "string",
-            "nullable": true
-          },
-          "schools": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/School"
-            },
-            "nullable": true
-          }
+          "schoolNationalId": { "type": "string", "nullable": true },
+          "grade": { "type": "string", "nullable": true },
+          "courseName": { "type": "string", "nullable": true },
+          "review": { "type": "string", "nullable": true },
+          "evaluationCriteria": { "type": "string", "nullable": true }
         },
         "additionalProperties": false
       },
       "LanguageDto": {
         "type": "object",
         "properties": {
-          "id": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "name": {
-            "type": "string",
-            "nullable": true
-          },
-          "nameEnglish": {
-            "type": "string",
-            "nullable": true
-          },
-          "code": {
-            "type": "string",
-            "nullable": true
-          }
+          "id": { "type": "string", "format": "uuid" },
+          "name": { "type": "string", "nullable": true },
+          "nameEnglish": { "type": "string", "nullable": true },
+          "code": { "type": "string", "nullable": true }
         },
         "additionalProperties": false
       },
@@ -1845,313 +497,33 @@
         "required": ["name", "nationalId", "phoneNumber"],
         "type": "object",
         "properties": {
-          "nationalId": {
-            "type": "string",
-            "nullable": true
-          },
-          "phoneNumber": {
-            "type": "string",
-            "nullable": true
-          },
-          "name": {
-            "type": "string",
-            "nullable": true
-          },
-          "email": {
-            "type": "string",
-            "nullable": true
-          },
-          "address": {
-            "type": "string",
-            "nullable": true
-          },
-          "postCode": {
-            "type": "string",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "NorthernLanguage": {
-        "enum": ["dk", "no", "se", "fi"],
-        "type": "string"
-      },
-      "PatchProgrammeDto": {
-        "type": "object",
-        "properties": {
-          "registryEnabled": {
-            "type": "boolean",
-            "nullable": true
-          },
-          "registryStartDate": {
-            "type": "string",
-            "format": "date-time",
-            "nullable": true
-          },
-          "registryEndDate": {
-            "type": "string",
-            "format": "date-time",
-            "nullable": true
-          },
-          "numberOfStudents": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "PatchSemesterDto": {
-        "type": "object",
-        "properties": {
-          "name": {
-            "type": "string",
-            "nullable": true
-          },
-          "registryEnabled": {
-            "type": "boolean",
-            "nullable": true
-          },
-          "registryStartDate": {
-            "type": "string",
-            "format": "date-time",
-            "nullable": true
-          },
-          "registryEndDate": {
-            "type": "string",
-            "format": "date-time",
-            "nullable": true
-          },
-          "numberOfStudents": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "Programme": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "code": {
-            "type": "string",
-            "nullable": true
-          },
-          "version": {
-            "type": "string",
-            "nullable": true
-          },
-          "title": {
-            "type": "string",
-            "nullable": true
-          },
-          "titleEnglish": {
-            "type": "string",
-            "nullable": true
-          },
-          "credits": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true
-          },
-          "description": {
-            "type": "string",
-            "nullable": true
-          },
-          "status": {
-            "type": "string",
-            "nullable": true
-          },
-          "statusTranslation": {
-            "type": "string",
-            "nullable": true
-          },
-          "prerequisites": {
-            "type": "string",
-            "nullable": true
-          },
-          "isMinistryRejected": {
-            "type": "boolean"
-          },
-          "evaluation": {
-            "type": "string",
-            "nullable": true
-          },
-          "registryEnabled": {
-            "type": "boolean"
-          },
-          "registryStartDate": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "registryEndDate": {
-            "type": "string",
-            "format": "date-time",
-            "nullable": true
-          },
-          "numberOfStudents": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "schoolId": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "school": {
-            "$ref": "#/components/schemas/School"
-          },
-          "standardizedProgrammeId": {
-            "type": "string",
-            "format": "uuid",
-            "nullable": true
-          },
-          "standardizedProgramme": {
-            "$ref": "#/components/schemas/StandardizedProgramme"
-          },
-          "innaId": {
-            "type": "integer",
-            "format": "int32"
-          }
+          "nationalId": { "type": "string", "nullable": true },
+          "phoneNumber": { "type": "string", "nullable": true },
+          "name": { "type": "string", "nullable": true },
+          "email": { "type": "string", "nullable": true },
+          "address": { "type": "string", "nullable": true },
+          "postCode": { "type": "string", "nullable": true }
         },
         "additionalProperties": false
       },
       "ProgrammeChoiceDto": {
         "type": "object",
         "properties": {
-          "programmeId": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "priority": {
-            "type": "integer",
-            "format": "int32"
-          }
-        },
-        "additionalProperties": false
-      },
-      "ProgrammeDto": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "version": {
-            "type": "string",
-            "nullable": true
-          },
-          "code": {
-            "type": "string",
-            "nullable": true
-          },
-          "title": {
-            "type": "string",
-            "nullable": true
-          },
-          "titleEnglish": {
-            "type": "string",
-            "nullable": true
-          },
-          "credits": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true
-          },
-          "description": {
-            "type": "string",
-            "nullable": true
-          },
-          "status": {
-            "type": "string",
-            "nullable": true
-          },
-          "statusTranslation": {
-            "type": "string",
-            "nullable": true
-          },
-          "prerequisites": {
-            "type": "string",
-            "nullable": true
-          },
-          "isMinistryRejected": {
-            "type": "boolean"
-          },
-          "evaluation": {
-            "type": "string",
-            "nullable": true
-          },
-          "schoolId": {
-            "type": "string",
-            "format": "uuid",
-            "nullable": true
-          },
-          "registryEnabled": {
-            "type": "boolean",
-            "nullable": true
-          },
-          "registryStartDate": {
-            "type": "string",
-            "format": "date-time",
-            "nullable": true
-          },
-          "registryEndDate": {
-            "type": "string",
-            "format": "date-time",
-            "nullable": true
-          },
-          "numberOfStudents": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true
-          },
-          "standardizedProgrammeTitle": {
-            "type": "string",
-            "nullable": true
-          },
-          "standardizedProgrammeCode": {
-            "type": "string",
-            "nullable": true
-          }
+          "programmeId": { "type": "string", "format": "uuid" },
+          "priority": { "type": "integer", "format": "int32" }
         },
         "additionalProperties": false
       },
       "ProgrammeSimpleDto": {
         "type": "object",
         "properties": {
-          "id": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "title": {
-            "type": "string",
-            "nullable": true
-          },
-          "titleEnglish": {
-            "type": "string",
-            "nullable": true
-          },
-          "credits": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true
-          },
-          "description": {
-            "type": "string",
-            "nullable": true
-          },
-          "evaluation": {
-            "type": "string",
-            "nullable": true
-          },
-          "schoolId": {
-            "type": "string",
-            "format": "uuid",
-            "nullable": true
-          },
+          "id": { "type": "string", "format": "uuid" },
+          "title": { "type": "string", "nullable": true },
+          "titleEnglish": { "type": "string", "nullable": true },
+          "credits": { "type": "integer", "format": "int32", "nullable": true },
+          "description": { "type": "string", "nullable": true },
+          "evaluation": { "type": "string", "nullable": true },
+          "schoolId": { "type": "string", "format": "uuid", "nullable": true },
           "registryStartDate": {
             "type": "string",
             "format": "date-time",
@@ -2160,77 +532,6 @@
           "registryEndDate": {
             "type": "string",
             "format": "date-time",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "School": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "name": {
-            "type": "string",
-            "nullable": true
-          },
-          "nationalId": {
-            "type": "string",
-            "nullable": true
-          },
-          "address": {
-            "type": "string",
-            "nullable": true
-          },
-          "municipality": {
-            "type": "string",
-            "nullable": true
-          },
-          "postCode": {
-            "type": "string",
-            "nullable": true
-          },
-          "abbreviation": {
-            "type": "string",
-            "nullable": true
-          },
-          "email": {
-            "type": "string",
-            "nullable": true
-          },
-          "phoneNumber": {
-            "type": "string",
-            "nullable": true
-          },
-          "website": {
-            "type": "string",
-            "nullable": true
-          },
-          "innaId": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "programmes": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/Programme"
-            },
-            "nullable": true
-          },
-          "semesters": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/Semester"
-            },
-            "nullable": true
-          },
-          "thirdLanguages": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/Language"
-            },
             "nullable": true
           }
         },
@@ -2239,199 +540,19 @@
       "SchoolDto": {
         "type": "object",
         "properties": {
-          "schoolId": {
-            "type": "string",
-            "format": "uuid",
-            "nullable": true
-          },
-          "name": {
-            "type": "string",
-            "nullable": true
-          },
-          "nationalId": {
-            "type": "string",
-            "nullable": true
-          },
-          "postCode": {
-            "type": "string",
-            "nullable": true
-          },
-          "address": {
-            "type": "string",
-            "nullable": true
-          },
-          "municipality": {
-            "type": "string",
-            "nullable": true
-          },
-          "abbreviation": {
-            "type": "string",
-            "nullable": true
-          },
-          "email": {
-            "type": "string",
-            "nullable": true
-          },
-          "phoneNumber": {
-            "type": "string",
-            "nullable": true
-          },
-          "website": {
-            "type": "string",
-            "nullable": true
-          },
+          "schoolId": { "type": "string", "format": "uuid", "nullable": true },
+          "name": { "type": "string", "nullable": true },
+          "nationalId": { "type": "string", "nullable": true },
+          "postCode": { "type": "string", "nullable": true },
+          "address": { "type": "string", "nullable": true },
+          "municipality": { "type": "string", "nullable": true },
+          "abbreviation": { "type": "string", "nullable": true },
+          "email": { "type": "string", "nullable": true },
+          "phoneNumber": { "type": "string", "nullable": true },
+          "website": { "type": "string", "nullable": true },
           "thirdLanguages": {
             "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/LanguageDto"
-            },
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "Semester": {
-        "type": "object",
-        "properties": {
-          "name": {
-            "type": "string",
-            "nullable": true
-          },
-          "schoolId": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "school": {
-            "$ref": "#/components/schemas/School"
-          },
-          "registryEnabled": {
-            "type": "boolean"
-          },
-          "registryStartDate": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "registryEndDate": {
-            "type": "string",
-            "format": "date-time",
-            "nullable": true
-          },
-          "numberOfStudents": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "id": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "created": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "updated": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "createdBy": {
-            "type": "string",
-            "nullable": true
-          },
-          "updatedBy": {
-            "type": "string",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "SemesterDto": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "name": {
-            "type": "string",
-            "nullable": true
-          },
-          "schoolId": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "registryEnabled": {
-            "type": "boolean"
-          },
-          "registryStartDate": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "registryEndDate": {
-            "type": "string",
-            "format": "date-time",
-            "nullable": true
-          },
-          "numberOfStudents": {
-            "type": "integer",
-            "format": "int32"
-          }
-        },
-        "additionalProperties": false
-      },
-      "StandardizedProgramme": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "title": {
-            "type": "string",
-            "nullable": true
-          },
-          "code": {
-            "type": "string",
-            "nullable": true
-          },
-          "innaId": {
-            "type": "integer",
-            "format": "int32"
-          }
-        },
-        "additionalProperties": false
-      },
-      "UserDto": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "name": {
-            "type": "string",
-            "nullable": true
-          },
-          "nationalId": {
-            "type": "string",
-            "nullable": true
-          },
-          "email": {
-            "type": "string",
-            "nullable": true
-          },
-          "phoneNumber": {
-            "type": "string",
-            "nullable": true
-          },
-          "schoolId": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "schoolName": {
-            "type": "string",
-            "nullable": true
-          },
-          "schoolAbbreviation": {
-            "type": "string",
+            "items": { "$ref": "#/components/schemas/LanguageDto" },
             "nullable": true
           }
         },
@@ -2447,9 +568,5 @@
       }
     }
   },
-  "security": [
-    {
-      "Bearer": []
-    }
-  ]
+  "security": [{ "Bearer": [] }]
 }

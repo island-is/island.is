@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common'
+import { User } from '@island.is/auth-nest-tools'
 import { SecondarySchoolProgram } from './graphql/models'
 import { SecondarySchoolClient } from '@island.is/clients/secondary-school'
 
@@ -7,8 +8,9 @@ export class SecondarySchoolApi {
   constructor(private readonly secondarySchoolClient: SecondarySchoolClient) {}
 
   async getProgramsBySchoolId(
+    auth: User,
     schoolId: string,
   ): Promise<SecondarySchoolProgram[]> {
-    return this.secondarySchoolClient.getPrograms(schoolId)
+    return this.secondarySchoolClient.getPrograms(auth, schoolId)
   }
 }

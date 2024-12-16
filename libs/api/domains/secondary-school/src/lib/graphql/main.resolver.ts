@@ -1,7 +1,13 @@
 import { Args, Query, Resolver } from '@nestjs/graphql'
 import { ApiScope } from '@island.is/auth/scopes'
 import { UseGuards } from '@nestjs/common'
-import { IdsUserGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
+import {
+  CurrentUser,
+  IdsUserGuard,
+  Scopes,
+  ScopesGuard,
+  User,
+} from '@island.is/auth-nest-tools'
 import { SecondarySchoolApi } from '../secondarySchool.service'
 import { SecondarySchoolProgram } from './models'
 
@@ -14,7 +20,8 @@ export class MainResolver {
   @Query(() => [SecondarySchoolProgram])
   async secondarySchoolProgramsBySchoolId(
     @Args('schoolId', { type: () => String }) schoolId: string,
+    @CurrentUser() user: User,
   ) {
-    return await this.secondarySchoolApi.getProgramsBySchoolId(schoolId)
+    return await this.secondarySchoolApi.getProgramsBySchoolId(user, schoolId)
   }
 }

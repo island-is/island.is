@@ -1,11 +1,6 @@
-// import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
-import { User } from '@island.is/auth-nest-tools'
+import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { Injectable } from '@nestjs/common'
-import {
-  SchoolsApi,
-  ProgrammesApi,
-  ApplicationsApi,
-} from '../../gen/fetch/apis'
+import { SchoolsApi, ApplicationsApi } from '../../gen/fetch/apis'
 import {
   Application,
   Program,
@@ -17,24 +12,19 @@ import { getAllLanguageCodes } from '@island.is/shared/utils'
 export class SecondarySchoolClient {
   constructor(
     private readonly schoolsApi: SchoolsApi,
-    private readonly programmesApi: ProgrammesApi,
     private readonly applicationsApi: ApplicationsApi,
   ) {}
 
-  // private schoolsApiWithAuth(auth: Auth) {
-  //   return this.schoolsApi.withMiddleware(new AuthMiddleware(auth))
-  // }
+  private schoolsApiWithAuth(auth: Auth) {
+    return this.schoolsApi.withMiddleware(new AuthMiddleware(auth))
+  }
 
-  // private programmesApiWithAuth(auth: Auth) {
-  //   return this.programmesApi.withMiddleware(new AuthMiddleware(auth))
-  // }
+  private applicationsApiWithAuth(auth: Auth) {
+    return this.applicationsApi.withMiddleware(new AuthMiddleware(auth))
+  }
 
-  // private applicationsApiWithAuth(auth: Auth) {
-  //   return this.applicationsApi.withMiddleware(new AuthMiddleware(auth))
-  // }
-
-  async getSchools(): Promise<SecondarySchool[]> {
-    const res = await this.schoolsApi.v1SchoolsGet({
+  async getSchools(auth: User): Promise<SecondarySchool[]> {
+    const res = await this.schoolsApiWithAuth(auth).v1SchoolsGet({
       rowOffset: undefined,
       fetchSize: undefined,
     })
@@ -56,8 +46,10 @@ export class SecondarySchoolClient {
     }))
   }
 
-  async getPrograms(schoolId: string): Promise<Program[]> {
-    const res = await this.programmesApi.v1ProgrammesSimpleGet({
+  async getPrograms(auth: User, schoolId: string): Promise<Program[]> {
+    const res = await this.schoolsApiWithAuth(
+      auth,
+    ).v1SchoolsSchoolIdProgrammesGet({
       schoolId,
       rowOffset: undefined,
       fetchSize: undefined,
@@ -82,13 +74,15 @@ export class SecondarySchoolClient {
   }
 
   async delete(auth: User, applicationId: string): Promise<void> {
-    this.applicationsApi.v1ApplicationsApplicationIdDelete({
+    this.applicationsApiWithAuth(auth).v1ApplicationsApplicationIdDelete({
       applicationId,
     })
   }
 
   async create(auth: User, application: Application): Promise<string> {
-    const applicationId = await this.applicationsApi.v1ApplicationsPost({
+    const applicationId = await this.applicationsApiWithAuth(
+      auth,
+    ).v1ApplicationsPost({
       applicationBaseDto: {
         applicantNationalId: application.nationalId,
         applicantName: application.name,
@@ -122,7 +116,9 @@ export class SecondarySchoolClient {
       },
     })
 
-    await this.applicationsApi.v1ApplicationsApplicationIdAttachmentsPatch({
+    await this.applicationsApiWithAuth(
+      auth,
+    ).v1ApplicationsApplicationIdAttachmentsPatch({
       applicationId,
       files: application.attachments
         .filter((x) => !!x)

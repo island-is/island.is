@@ -15,6 +15,16 @@
         "jestConfig": "libs/clients/secondary-school/jest.config.ts"
       }
     },
+    "update-openapi-document": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "curl -H \"X-Road-Client: $XROAD_CLIENT_ID\" http://localhost:8081/r1/IS-DEV/GOV/10066/MMS-Protected/getOpenAPI?serviceCode=umsoknagatt -H 'Accept: application/json' > src/clientConfig.json"
+        ],
+        "parallel": false,
+        "cwd": "libs/clients/secondary-school"
+      }
+    },
     "codegen/backend-client": {
       "executor": "nx:run-commands",
       "options": {

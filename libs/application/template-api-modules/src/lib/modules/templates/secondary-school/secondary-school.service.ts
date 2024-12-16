@@ -39,8 +39,10 @@ export class SecondarySchoolService extends BaseTemplateApiService {
     super(ApplicationTypes.SECONDARY_SCHOOL)
   }
 
-  async getSchools(): Promise<SecondarySchool[]> {
-    return this.secondarySchoolClient.getSchools()
+  async getSchools({
+    auth,
+  }: TemplateApiModuleActionProps): Promise<SecondarySchool[]> {
+    return this.secondarySchoolClient.getSchools(auth)
   }
 
   async validateCanCreate({

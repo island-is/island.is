@@ -12,12 +12,11 @@ export const SecondarySchoolClientConfig = defineConfig<z.infer<typeof schema>>(
     schema,
     load(env) {
       return {
-        // TODOx vantar xroad config
         xroadPath: env.required(
           'XROAD_SECONDARY_SCHOOL_PATH',
-          'IS-DEV/GOV/10021/MMS-todo/umsokn_v1',
+          'IS-DEV/GOV/10066/MMS-Protected/umsoknagatt',
         ),
-        scope: ['@mms.is/some-scope'],
+        scope: [],
       }
     },
   },
