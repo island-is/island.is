@@ -1,4 +1,4 @@
-import React, { FC, useEffect } from 'react'
+import React, { FC, useContext, useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 
 import { Option } from '@island.is/island-ui/core'
@@ -9,7 +9,9 @@ import {
   UpdateAccessControlInput,
 } from '@island.is/skilavottord-web/graphql/schema'
 
+import { getPartnerId } from '@island.is/skilavottord-web/utils/accessUtils'
 import { AccessControlModal } from '../AccessControlModal/AccessControlModal'
+import { UserContext } from '@island.is/skilavottord-web/context'
 
 interface AccessControlUpdateProps
   extends Omit<
@@ -46,6 +48,8 @@ export const AccessControlUpdate: FC<
     mode: 'onChange',
   })
 
+  const { user } = useContext(UserContext)
+
   useEffect(() => {
     reset({
       ...currentPartner,
@@ -69,10 +73,12 @@ export const AccessControlUpdate: FC<
         email,
         phone,
         role: role.value,
-        partnerId:
-          role.value === Role.municipality // if selected role is municipality, use municipalityId, else use partnerId
-            ? municipalityId?.value
-            : partnerId?.value || null,
+        partnerId: getPartnerId(
+          user,
+          municipalityId?.value,
+          partnerId?.value,
+          role.value,
+        ),
       })
     },
   )

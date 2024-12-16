@@ -18,7 +18,11 @@ import {
 } from '@island.is/skilavottord-web/auth/utils'
 import { Modal, ModalProps } from '@island.is/skilavottord-web/components'
 import { UserContext } from '@island.is/skilavottord-web/context'
-import { AccessControl, Role } from '@island.is/skilavottord-web/graphql/schema'
+import {
+  AccessControl,
+  AccessControlRole,
+  Role,
+} from '@island.is/skilavottord-web/graphql/schema'
 import { useI18n } from '@island.is/skilavottord-web/i18n'
 
 interface AccessControlModalProps
@@ -66,9 +70,17 @@ export const AccessControlModal: FC<
   const [showMunicipalities, setShowMunicipalitiesSelection] = useState(false)
 
   useEffect(() => {
-    setShowCompaniesSelection(true)
-    setShowMunicipalitiesSelection(false)
-  }, [])
+    if (
+      currentPartner &&
+      currentPartner.role === AccessControlRole.municipality
+    ) {
+      setShowCompaniesSelection(false)
+      setShowMunicipalitiesSelection(true)
+    } else {
+      setShowCompaniesSelection(true)
+      setShowMunicipalitiesSelection(false)
+    }
+  }, [currentPartner])
 
   const handleRoleOnChange = (e: Option) => {
     // If the user selects municipality we don't need to select a recycling partner since muncipality can't be a recycling partner worker

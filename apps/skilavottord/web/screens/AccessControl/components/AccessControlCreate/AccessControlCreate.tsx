@@ -8,8 +8,8 @@ import {
   Role,
 } from '@island.is/skilavottord-web/graphql/schema'
 
-import { hasMunicipalityRole } from '@island.is/skilavottord-web/auth/utils'
 import { UserContext } from '@island.is/skilavottord-web/context'
+import { getPartnerId } from '@island.is/skilavottord-web/utils/accessUtils'
 import { AccessControlModal } from '../AccessControlModal/AccessControlModal'
 
 interface AccessControlCreateProps
@@ -47,20 +47,6 @@ export const AccessControlCreate: FC<
     mode: 'onChange',
   })
 
-  const getPartnerId = (
-    municipalityId: string,
-    partnerId: string,
-    role: Role,
-  ) => {
-    // If the user has municipality role, then he can only create a new access under the same municipality
-    if (hasMunicipalityRole(user?.role) && hasMunicipalityRole(role)) {
-      return user.partnerId
-    }
-
-    // If selected role is municipality, use municipalityId, else use partnerId
-    return hasMunicipalityRole(role) ? municipalityId : partnerId || null
-  }
-
   const handleOnSubmit = handleSubmit(
     ({ nationalId, name, role, partnerId, email, phone, municipalityId }) => {
       return onSubmit({
@@ -70,6 +56,7 @@ export const AccessControlCreate: FC<
         email,
         role: role.value,
         partnerId: getPartnerId(
+          user,
           municipalityId?.value,
           partnerId?.value,
           role.value,
