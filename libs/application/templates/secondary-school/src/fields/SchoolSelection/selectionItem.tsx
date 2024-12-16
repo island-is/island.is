@@ -28,8 +28,12 @@ export const SelectionItem: FC<FieldBaseProps> = (props) => {
   const { application, setFieldLoadingState } = props
   const { setValue } = useFormContext()
   const [isLoadingPrograms, setIsLoadingPrograms] = useState<boolean>(false)
-  const [secondProgramRequire, setSecondProgramRequire] =
-    useState<boolean>(true)
+
+  const isFreshman =
+    getValueViaPath<ApplicationType>(
+      application.answers,
+      'applicationType.type',
+    ) === ApplicationType.FRESHMAN
 
   // options for dropdowns
   const schoolOptions = application.externalData.schools
@@ -237,17 +241,10 @@ export const SelectionItem: FC<FieldBaseProps> = (props) => {
     setValue(`${props.field.id}.requestDormitory`, [])
   }
 
-  // default set required=true for second program if freshman
+  // default set include=true for second program if freshman
   useEffect(() => {
-    const isFreshman =
-      getValueViaPath<ApplicationType>(
-        application.answers,
-        'applicationType.type',
-      ) === ApplicationType.FRESHMAN
-
-    setValue(`${props.field.id}.secondProgram.require`, isFreshman)
-    setSecondProgramRequire(isFreshman)
-  }, [application.answers, props.field.id, setValue])
+    setValue(`${props.field.id}.secondProgram.include`, isFreshman)
+  }, [isFreshman, props.field.id, setValue])
 
   useEffect(() => {
     setFieldLoadingState?.(isLoadingPrograms)
@@ -301,36 +298,37 @@ export const SelectionItem: FC<FieldBaseProps> = (props) => {
         />
       </Box>
 
-      <Box marginTop={2}>
-        <Controller
-          name={`${props.field.id}.secondProgram.id`}
-          render={({ field: { onChange } }) => {
-            return (
-              <Select
-                name={`${props.field.id}.secondProgram.id`}
-                label={formatMessage(school.selection.secondProgramLabel)}
-                backgroundColor="blue"
-                required={secondProgramRequire}
-                isClearable={!secondProgramRequire}
-                isLoading={isLoadingPrograms}
-                isDisabled={isLoadingPrograms}
-                value={selectedSecondProgram}
-                options={programOptions.map((program) => {
-                  return {
-                    label: getTranslatedProgram(lang, program),
-                    value: program.id,
-                  }
-                })}
-                onChange={(option: Option | null) => {
-                  onChange(option?.value)
-                  setSelectedSecondProgram(option)
-                  setValueProgram('secondProgram', option?.value)
-                }}
-              />
-            )
-          }}
-        />
-      </Box>
+      {isFreshman && (
+        <Box marginTop={2}>
+          <Controller
+            name={`${props.field.id}.secondProgram.id`}
+            render={({ field: { onChange } }) => {
+              return (
+                <Select
+                  name={`${props.field.id}.secondProgram.id`}
+                  label={formatMessage(school.selection.secondProgramLabel)}
+                  backgroundColor="blue"
+                  required={true}
+                  isLoading={isLoadingPrograms}
+                  isDisabled={isLoadingPrograms}
+                  value={selectedSecondProgram}
+                  options={programOptions.map((program) => {
+                    return {
+                      label: getTranslatedProgram(lang, program),
+                      value: program.id,
+                    }
+                  })}
+                  onChange={(option: Option | null) => {
+                    onChange(option?.value)
+                    setSelectedSecondProgram(option)
+                    setValueProgram('secondProgram', option?.value)
+                  }}
+                />
+              )
+            }}
+          />
+        </Box>
+      )}
 
       <Box marginTop={2}>
         <Controller

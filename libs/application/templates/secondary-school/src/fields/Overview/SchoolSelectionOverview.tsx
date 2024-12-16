@@ -49,7 +49,7 @@ export const SchoolSelectionOverview: FC<FieldBaseProps> = ({
                   answers?.selection?.first?.firstProgram,
                 )}
               </Text>
-              {!!answers?.selection?.first?.secondProgram?.id && (
+              {!!answers?.selection?.first?.secondProgram?.include && (
                 <Text>
                   {formatMessage(overview.selection.secondProgramLabel)}:{' '}
                   {getTranslatedProgram(
@@ -80,7 +80,7 @@ export const SchoolSelectionOverview: FC<FieldBaseProps> = ({
                     answers?.selection?.second?.firstProgram,
                   )}
                 </Text>
-                {!!answers?.selection?.second?.secondProgram?.id && (
+                {!!answers?.selection?.second?.secondProgram?.include && (
                   <Text>
                     {formatMessage(overview.selection.secondProgramLabel)}:{' '}
                     {getTranslatedProgram(
@@ -115,7 +115,7 @@ export const SchoolSelectionOverview: FC<FieldBaseProps> = ({
                       answers?.selection?.third?.firstProgram,
                     )}
                   </Text>
-                  {!!answers?.selection?.third?.secondProgram?.id && (
+                  {!!answers?.selection?.third?.secondProgram?.include && (
                     <Text>
                       {formatMessage(overview.selection.secondProgramLabel)}:{' '}
                       {getTranslatedProgram(

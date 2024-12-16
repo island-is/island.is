@@ -83,17 +83,32 @@ export const SchoolSelection: FC<FieldBaseProps> = (props) => {
   const checkProgramDuplicate = () => {
     const programIds: string[] = [
       watch(`${props.field.id}.first.firstProgram.id`),
-      watch(`${props.field.id}.first.secondProgram.id`) || '',
     ]
+    const firstInclude = watch(
+      `${props.field.id}.first.secondProgram.include`,
+    ) as boolean
+    if (firstInclude) {
+      programIds.push(watch(`${props.field.id}.first.secondProgram.id`))
+    }
 
     if (includeSecondSelection) {
       programIds.push(watch(`${props.field.id}.second.firstProgram.id`))
-      programIds.push(watch(`${props.field.id}.second.secondProgram.id`) || '')
+      const secondInclude = watch(
+        `${props.field.id}.second.secondProgram.include`,
+      ) as boolean
+      if (secondInclude) {
+        programIds.push(watch(`${props.field.id}.second.secondProgram.id`))
+      }
     }
 
     if (includeThirdSelection) {
       programIds.push(watch(`${props.field.id}.third.firstProgram.id`))
-      programIds.push(watch(`${props.field.id}.third.secondProgram.id`) || '')
+      const thirdInclude = watch(
+        `${props.field.id}.third.secondProgram.include`,
+      ) as boolean
+      if (thirdInclude) {
+        programIds.push(watch(`${props.field.id}.third.secondProgram.id`))
+      }
     }
 
     return hasDuplicates(programIds.filter((x) => !!x))

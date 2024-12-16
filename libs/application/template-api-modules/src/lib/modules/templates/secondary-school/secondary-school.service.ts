@@ -157,7 +157,9 @@ export class SecondarySchoolService extends BaseTemplateApiService {
           },
           {
             priority: 1,
-            programId: answers.selection.first.secondProgram?.id || '',
+            programId: answers.selection.first.secondProgram?.include
+              ? answers.selection.first.secondProgram.id || ''
+              : '',
           },
         ].filter((x) => !!x.programId),
         thirdLanguageCode: answers.selection.first.thirdLanguage?.code,
@@ -181,7 +183,9 @@ export class SecondarySchoolService extends BaseTemplateApiService {
           },
           {
             priority: 1,
-            programId: answers.selection.second.secondProgram?.id || '',
+            programId: answers.selection.second.secondProgram?.include
+              ? answers.selection.second.secondProgram.id || ''
+              : '',
           },
         ].filter((x) => !!x.programId),
         thirdLanguageCode: answers.selection.second.thirdLanguage?.code,
@@ -205,7 +209,9 @@ export class SecondarySchoolService extends BaseTemplateApiService {
           },
           {
             priority: 1,
-            programId: answers.selection.third.secondProgram?.id || '',
+            programId: answers.selection.third.secondProgram?.include
+              ? answers.selection.third.secondProgram.id || ''
+              : '',
           },
         ].filter((x) => !!x.programId),
         thirdLanguageCode: answers.selection.third.thirdLanguage?.code,
