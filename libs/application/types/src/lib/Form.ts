@@ -110,13 +110,13 @@ export interface Section extends FormItem {
   type: FormItemTypes.SECTION
   children: SectionChildren[]
   draftPageNumber?: number
-  tabTitle?: string
+  tabTitle?: FormTextWithLocale
 }
 
 export interface SubSection extends FormItem {
   type: FormItemTypes.SUB_SECTION
   children: FormLeaf[]
-  tabTitle?: string
+  tabTitle?: FormTextWithLocale
 }
 
 export interface Repeater extends FormItem {
