@@ -107,4 +107,7 @@ export class Defendant {
 
   @Field(() => String, { nullable: true })
   readonly sentToPrisonAdminDate?: string
+
+  @Field(() => String, { nullable: true })
+  readonly openedByPrisonAdminDate?: string
 }
