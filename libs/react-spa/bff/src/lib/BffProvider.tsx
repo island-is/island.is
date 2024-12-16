@@ -39,7 +39,7 @@ export const BffProvider = ({
   })
 
   const { authState } = state
-  const showErrorScreen = authState === 'error' // TODO here look at making this dynamic depending on error code
+  const showErrorScreen = authState === 'error'
   const showLoadingScreen =
     authState === 'loading' ||
     authState === 'switching' ||
