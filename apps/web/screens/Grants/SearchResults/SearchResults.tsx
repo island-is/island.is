@@ -163,6 +163,7 @@ const GrantsSearchResultsPage: CustomScreen<GrantsHomeProps> = ({
         } else if (res.error) {
           setGrants([])
           console.error('Error fetching grants', res.error)
+        }
       })
       .catch((err) => {
         setGrants([])
@@ -403,43 +404,43 @@ GrantsSearchResults.getProps = async ({ apolloClient, locale, query }) => {
   }
 
   const [
-     {
-       data: { getGrants },
-     },
-     {
-       data: { getGenericTagsInTagGroups },
-     },
-   ] = await Promise.all([
-     apolloClient.query<Query, QueryGetGrantsArgs>({
-       query: GET_GRANTS_QUERY,
-       variables: {
-         input: {
-           lang: locale as ContentLanguage,
-           page: parseAsInteger.withDefault(1).parseServerSide(query?.page),
-           search: parseAsString.parseServerSide(query?.query) ?? undefined,
-           categories: filterArray<string>(
-             arrayParser.parseServerSide(query?.category),
-           ),
-           statuses: filterArray<string>(
-             arrayParser.parseServerSide(query?.status),
-           ),
-           types: filterArray<string>(arrayParser.parseServerSide(query?.type)),
-           organizations: filterArray<string>(
-             arrayParser.parseServerSide(query?.organization),
-           ),
-         },
-       },
-     }),
-     apolloClient.query<Query, QueryGetGenericTagsInTagGroupsArgs>({
-       query: GET_GENERIC_TAGS_IN_TAG_GROUPS_QUERY,
-       variables: {
-         input: {
-           lang: locale as ContentLanguage,
-           tagGroupSlugs: ['grant-category', 'grant-type'],
-         },
-       },
-     }),
-   ])
+    {
+      data: { getGrants },
+    },
+    {
+      data: { getGenericTagsInTagGroups },
+    },
+  ] = await Promise.all([
+    apolloClient.query<Query, QueryGetGrantsArgs>({
+      query: GET_GRANTS_QUERY,
+      variables: {
+        input: {
+          lang: locale as ContentLanguage,
+          page: parseAsInteger.withDefault(1).parseServerSide(query?.page),
+          search: parseAsString.parseServerSide(query?.query) ?? undefined,
+          categories: filterArray<string>(
+            arrayParser.parseServerSide(query?.category),
+          ),
+          statuses: filterArray<string>(
+            arrayParser.parseServerSide(query?.status),
+          ),
+          types: filterArray<string>(arrayParser.parseServerSide(query?.type)),
+          organizations: filterArray<string>(
+            arrayParser.parseServerSide(query?.organization),
+          ),
+        },
+      },
+    }),
+    apolloClient.query<Query, QueryGetGenericTagsInTagGroupsArgs>({
+      query: GET_GENERIC_TAGS_IN_TAG_GROUPS_QUERY,
+      variables: {
+        input: {
+          lang: locale as ContentLanguage,
+          tagGroupSlugs: ['grant-category', 'grant-type'],
+        },
+      },
+    }),
+  ])
   return {
     initialGrants: getGrants,
     tags: getGenericTagsInTagGroups ?? undefined,
