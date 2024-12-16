@@ -150,7 +150,10 @@ export const PasskeyScreen: NavigationFunctionComponent<{
             <TouchableOpacity
               style={{ flexWrap: 'wrap' }}
               onPress={() =>
-                openBrowser('https://island.is/adgangslyklar', componentId)
+                openBrowser(
+                  'https://island.is/innskraning-umbod-og-adgangsstyring-a-island-is#innskraning-med-adgangslykli-i-island-is-appinu',
+                  componentId,
+                )
               }
             >
               <LinkText>
