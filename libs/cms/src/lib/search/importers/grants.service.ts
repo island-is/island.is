@@ -58,13 +58,6 @@ export class GrantsSyncService implements CmsSyncProvider<IGrant> {
                   mapped?.howToApply?.map(pruneNonSearchableSliceUnionFields),
                 )
               : undefined,
-            mapped.applicationDeadline
-              ? extractStringsFromObject(
-                  mapped?.applicationDeadline?.map(
-                    pruneNonSearchableSliceUnionFields,
-                  ),
-                )
-              : undefined,
             mapped?.applicationHints
               ? extractStringsFromObject(
                   mapped?.applicationHints?.map(
