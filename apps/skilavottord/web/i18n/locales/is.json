@@ -656,14 +656,14 @@
       "view": {
         "title": "Sveitarfélag",
         "breadcrumb": "Skoða",
-        "info": "Þú getur annaðhvort uppfært eða eytt móttökuaðila. Vinsamlegast staðfestið að upplýsingar fyrirtækis séu rétt slegnar inn.",
+        "info": "Þú getur uppfært sveitarfélagið. Vinsamlegast staðfestið að upplýsingar sveitarfélagsins séu rétt slegnar inn.",
         "updated": "Uppfært",
         "deleted": "Eytt"
       },
       "add": {
         "title": "Bæta við sveitarfélagi",
         "breadcrumb": "Bæta við",
-        "info": "Þegar nýju sveitarfélagi er bætt við, verður það aðgengilegt í aðgangsstýringu. Vinsamlegast staðfestið að upplýsingar sveitarfélags séu rétt slegnar inn.",
+        "info": "Þegar nýju sveitarfélagi er bætt við, verður það aðgengilegt í aðgangsstýringu. Vinsamlegast staðfestið að upplýsingar sveitarfélagsins séu rétt slegnar inn.",
         "added": "Bætt við"
       }
     }
