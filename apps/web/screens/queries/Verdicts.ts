@@ -8,6 +8,11 @@ export const GET_VERDICTS_QUERY = gql`
         court
         caseNumber
         verdictDate
+        keywords
+        presidentJudge {
+          name
+          title
+        }
       }
       input {
         searchTerm

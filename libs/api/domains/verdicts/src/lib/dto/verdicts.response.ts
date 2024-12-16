@@ -2,7 +2,16 @@ import { CacheField } from '@island.is/nest/graphql'
 import { Field, ObjectType } from '@nestjs/graphql'
 import { VerdictsInput } from './verdicts.input'
 
-@ObjectType()
+@ObjectType('WebVerdictJudge')
+class VerdictJudge {
+  @Field(() => String, { nullable: true })
+  name?: string | null
+
+  @Field(() => String, { nullable: true })
+  title?: string | null
+}
+
+@ObjectType('WebVerdictItem')
 class VerdictItem {
   @Field(() => String)
   title!: string
@@ -15,6 +24,12 @@ class VerdictItem {
 
   @Field(() => Date)
   verdictDate!: Date
+
+  @CacheField(() => VerdictJudge, { nullable: true })
+  presidentJudge?: VerdictJudge | null
+
+  @CacheField(() => [String])
+  keywords!: string[]
 
   // TODO: Add more fields
 }

@@ -1,6 +1,10 @@
 import { Injectable } from '@nestjs/common'
 
-import { GetVerdictsOperationRequest, VerdictApi } from '../../gen/fetch/apis/'
+import {
+  GetVerdictsOperationRequest,
+  VerdictApi,
+  type DetailedVerdictData,
+} from '../../gen/fetch/'
 
 @Injectable()
 export class VerdictsClientService {
@@ -33,19 +37,20 @@ export class VerdictsClientService {
             Boolean(item.title) &&
             Boolean(item.court) &&
             Boolean(item.caseNumber) &&
-            Boolean(item.verdictDate) &&
-            Boolean(item.caseId),
-        ) ?? []) as {
+            Boolean(item.verdictDate),
+        ) ?? []) as (DetailedVerdictData & {
           title: string
           court: string
           caseNumber: string
           verdictDate: Date
-        }[]
+        })[]
       ).map((item) => ({
         title: item.title,
         court: item.court,
         caseNumber: item.caseNumber,
         verdictDate: item.verdictDate,
+        presidentJudge: item.judges?.find((judge) => judge.isPresident),
+        keywords: item.keywords ?? [],
       })),
     }
   }

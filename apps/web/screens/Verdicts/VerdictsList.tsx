@@ -95,12 +95,24 @@ const VerdictsList: Screen<VerdictsListProps> = ({ items }) => {
                         <GridRow>
                           <GridColumn>
                             <Text>{item.court}</Text>
+                            <Text>
+                              {item.presidentJudge?.name}{' '}
+                              {item.presidentJudge?.title}
+                            </Text>
                           </GridColumn>
                           <GridColumn>
                             <Text>{item.title}</Text>
                           </GridColumn>
                         </GridRow>
                       </Stack>
+
+                      <GridRow>
+                        <GridColumn>
+                          <Text variant="small" color="dark300">
+                            {item.keywords.join('. ')}
+                          </Text>
+                        </GridColumn>
+                      </GridRow>
                     </Stack>
                   </GridContainer>
                 </FocusableBox>
