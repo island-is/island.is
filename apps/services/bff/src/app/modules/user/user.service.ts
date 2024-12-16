@@ -5,6 +5,7 @@ import { BffUser } from '@island.is/shared/types'
 import { SESSION_COOKIE_NAME } from '../../constants/cookies'
 
 import { ErrorService } from '../../services/error.service'
+import { hasTimestampExpiredInMS } from '../../utils/has-timestamp-expired-in-ms'
 import { CachedTokenResponse } from '../auth/auth.types'
 import { TokenRefreshService } from '../auth/token-refresh.service'
 import { CacheService } from '../cache/cache.service'
@@ -58,7 +59,11 @@ export class UserService {
           false,
         )
 
-      if (cachedTokenResponse && refresh) {
+      if (
+        cachedTokenResponse &&
+        hasTimestampExpiredInMS(cachedTokenResponse.accessTokenExp) &&
+        refresh
+      ) {
         cachedTokenResponse = await this.tokenRefreshService.refreshToken({
           sid,
           encryptedRefreshToken: cachedTokenResponse.encryptedRefreshToken,
