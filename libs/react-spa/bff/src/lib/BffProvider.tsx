@@ -141,7 +141,7 @@ export const BffProvider = ({
       if (!res.ok) {
         // Bff server is down
         if (res.status >= 500) {
-          throw new Error(BFF_SERVER_UNAVAILABLE)
+          throw new BffError(BFF_SERVER_UNAVAILABLE, res.status)
         }
 
         // For other none ok responses, like 401/403, proceed with sign-in redirect.

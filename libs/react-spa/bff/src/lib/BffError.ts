@@ -5,7 +5,7 @@
  *
  * @example
  * // Creating a new BFF error
- * const error = new BffError('Resource not found', '404', 'NOT_FOUND');
+ * const error = new BffError('Resource not found', 404, 'NOT_FOUND');
  *
  * // Extract error from URL parameters
  * const urlError = BffError.fromURL();
@@ -15,9 +15,9 @@
  */
 export class BffError extends Error {
   code?: string
-  statusCode?: string
+  statusCode?: number
 
-  constructor(message: string, statusCode?: string, code?: string) {
+  constructor(message: string, statusCode?: number, code?: string) {
     super(message)
     this.name = 'BffError'
     this.statusCode = statusCode
@@ -39,14 +39,6 @@ export class BffError extends Error {
       return null
     }
 
-    return new BffError(message, statusCode, code)
-  }
-
-  getFormattedMessage() {
-    if (this.code) {
-      return `${this.statusCode}: Error occurred with code: "${this.code}" ${this.message}`
-    }
-
-    return `${this.statusCode}: ${this.message}`
+    return new BffError(message, parseInt(statusCode) || 500, code)
   }
 }
