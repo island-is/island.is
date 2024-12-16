@@ -297,16 +297,27 @@ export const isProcessingStepValidIndictments = (
 export const isTrafficViolationStepValidIndictments = (
   workingCase: Case,
 ): boolean => {
-  return Boolean(
-    hasOnlyOneItemInSubArrays(workingCase.indictmentSubtypes) ||
-      (workingCase.indictmentCounts?.every(
-        (indictmentCount) =>
-          indictmentCount.indictmentCountSubtypes &&
-          indictmentCount.indictmentCountSubtypes?.length > 0,
-      ) &&
-        workingCase.demands &&
-        (!workingCase.hasCivilClaims || workingCase.civilDemands)),
+  if (!workingCase.indictmentSubtypes) {
+    return false
+  }
+
+  if (hasOnlyOneItemInSubArrays(workingCase.indictmentSubtypes)) {
+    return true
+  }
+
+  const hasValidIndictmentCounts =
+    workingCase.indictmentCounts?.every(
+      (indictmentCount) =>
+        indictmentCount.indictmentCountSubtypes &&
+        indictmentCount.indictmentCountSubtypes.length > 0,
+    ) ?? false
+
+  const hasValidDemands = Boolean(
+    workingCase.demands &&
+      (!workingCase.hasCivilClaims || workingCase.civilDemands),
   )
+
+  return hasValidIndictmentCounts && hasValidDemands
 }
 
 export const isPoliceDemandsStepValidRC = (workingCase: Case): boolean => {
