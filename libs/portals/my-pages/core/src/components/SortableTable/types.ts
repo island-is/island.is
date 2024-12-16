@@ -14,6 +14,7 @@ export type SortableData = {
     text?: string
   }
   children?: React.ReactElement | null // Children for each row if expandable
+  onExpandCallback?: () => void
 } & { [key: string]: string | React.ReactElement | any }
 
 export type SortableTableProps = {

@@ -7,6 +7,7 @@ import {
   Box,
   Button,
   Hyphen,
+  hyphenateText,
   LinkV2,
   Select,
   SkeletonLoader,
@@ -20,6 +21,7 @@ import {
   ExpandHeader,
   ExpandRow,
   LinkResolver,
+  SortableTable,
   UserInfoLine,
   amountFormat,
   m,
@@ -476,6 +478,101 @@ export const MedicinePurchase = () => {
                   )
                 })}
               </T.Table>
+              <SortableTable
+                labels={{
+                  date: formatMessage(m.date),
+                  explanationNote: formatMessage(m.explanationNote),
+                  price: hyphenateText(
+                    formatMessage(messages.medicinePaymentParticipationPrice),
+                    {},
+                  ),
+                  paidByCustomer: formatMessage(
+                    messages.medicinePaidByCustomer,
+                  ),
+                }}
+                expandable
+                items={
+                  bills.map((bill, index) => ({
+                    id: bill.id ?? `bill-${index}`,
+                    date: formatDateFns(bill.date, DATE_FORMAT),
+                    explanationNote: bill.description ?? '',
+                    price: amountFormat(bill.totalCopaymentAmount ?? 0),
+                    paidByCustomer: amountFormat(bill.totalCustomerAmount ?? 0),
+                    onExpandCallback: () => {
+                      if (bill?.id && selectedPeriod?.id) {
+                        setSelectedLineItem(bill.id)
+                        lineItemQuery({
+                          variables: {
+                            input: {
+                              billId: bill.id,
+                              paymentPeriodId: selectedPeriod.id,
+                            },
+                          },
+                          onCompleted: (data) => {
+                            if (bill && bill.id) {
+                              fetchedLineItems.set(
+                                bill.id,
+                                data.rightsPortalDrugBillLines,
+                              )
+                            }
+                          },
+                        })
+                      }
+                    },
+                    children: (
+                      <SortableTable
+                        inner
+                        labels={{
+                          medicine: formatMessage(messages.medicineDrugName),
+                          strength: formatMessage(messages.medicineStrength),
+                          quantity: formatMessage(messages.medicineQuantity),
+                          units: formatMessage(messages.medicineAmount),
+                          salesPrice: formatMessage(messages.medicineSalePrice),
+                          copaymentAmount: formatMessage(
+                            messages.medicinePaymentParticipationPrice,
+                          ),
+                          excessAmount: formatMessage(
+                            messages.medicineExcessPrice,
+                          ),
+                          customerAmount: formatMessage(
+                            messages.medicinePaidByCustomer,
+                          ),
+                        }}
+                        items={
+                          [...fetchedLineItems].flatMap((item, j) => {
+                            const [billId, lineItems] = item
+                            if (billId === bill.id) {
+                              return lineItems.map((lineItem, k) => ({
+                                id: `${j}-${k}`,
+                                medicine: lineItem.drugName,
+                                strength: lineItem.strength,
+                                quantity: lineItem.quantity,
+                                units: lineItem.units,
+                                salesPrice: amountFormat(
+                                  lineItem.salesPrice ?? 0,
+                                ),
+                                copaymentAmount: amountFormat(
+                                  lineItem.copaymentAmount ?? 0,
+                                ),
+                                excessAmount: amountFormat(
+                                  lineItem.excessAmount ?? 0,
+                                ),
+                                customerAmount: amountFormat(
+                                  lineItem.customerAmount ?? 0,
+                                ),
+                              }))
+                            } else return []
+                          }) ?? []
+                        }
+                        defaultSortByKey="medicine"
+                        mobileTitleKey="medicine"
+                      />
+                    ),
+                  })) ?? []
+                }
+                defaultSortByKey="date"
+                mobileTitleKey="explanationNote"
+              />
             </>
           )
         )}

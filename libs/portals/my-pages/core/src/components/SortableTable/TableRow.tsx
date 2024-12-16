@@ -14,6 +14,7 @@ export const TableRow = ({
   item,
   tagOutlined,
   expandable,
+  onExpandCallback,
   align,
   ellipsisLength,
 }: {
@@ -22,6 +23,7 @@ export const TableRow = ({
   expandable?: boolean
   align?: 'left' | 'right'
   ellipsisLength?: number
+  onExpandCallback?: () => void
 }) => {
   const { id, tag, lastNode, children, subTitleFirstCol, ...itemObject } = item
   const valueItems = Object.values(itemObject)
@@ -82,6 +84,7 @@ export const TableRow = ({
         value: renderValueItem(valueItem, i),
         align: align ?? 'left',
       }))}
+      onExpandCallback={onExpandCallback}
     >
       {children}
     </ExpandRow>

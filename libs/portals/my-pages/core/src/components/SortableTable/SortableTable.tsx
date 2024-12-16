@@ -210,6 +210,7 @@ export const SortableTable = (props: SortableTableProps) => {
                 item={item}
                 tagOutlined={props.tagOutlined}
                 expandable={props.expandable}
+                onExpandCallback={item.onExpandCallback}
                 align={props.align ?? 'left'}
                 ellipsisLength={props.ellipsisLength}
               />
