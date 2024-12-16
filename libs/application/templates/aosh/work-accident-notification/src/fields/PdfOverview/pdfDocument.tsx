@@ -38,12 +38,12 @@ export const PdfDocument: FC<
     application.answers,
     application.externalData,
     formatMessage,
-  )
+  ).map((info) => info?.replace(/\*\*/g, ''))
   const accidentInfo = getAccidentInformationForOverview(
     application.answers,
     application.externalData,
     formatMessage,
-  )
+  ).map((info) => info?.replace(/\*\*/g, ''))
   return (
     <Document>
       <Page size="A4" style={pdfStyles.body}>
@@ -82,13 +82,13 @@ export const PdfDocument: FC<
               application.externalData,
               employee,
               formatMessage,
-            )
+            ).map((info) => info?.replace(/\*\*/g, ''))
             const causeandConsequencesInfo = getCauseAndConsequencesForOverview(
               application.externalData,
               application.answers,
               index,
               formatMessage,
-            )
+            ).map((info) => info?.replace(/\*\*/g, ''))
             return (
               <View key={`employee-${index}`} style={pdfStyles.view}>
                 <Text style={pdfStyles.employeeHeader}>
