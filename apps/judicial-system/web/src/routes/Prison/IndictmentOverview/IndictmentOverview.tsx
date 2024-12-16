@@ -26,9 +26,9 @@ import {
 import { strings } from './IndictmentOverview.strings'
 
 const IndictmentOverview = () => {
-  const { workingCase } = useContext(FormContext)
+  const { workingCase, setWorkingCase } = useContext(FormContext)
   const { formatMessage } = useIntl()
-  const { limitedAccessUpdateDefendant } = useDefendants()
+  const { limitedAccessUpdateDefendant, updateDefendantState } = useDefendants()
 
   const { onOpen } = useFileList({
     caseId: workingCase.id,
@@ -37,20 +37,21 @@ const IndictmentOverview = () => {
   const { defendants } = workingCase
   const defendant =
     defendants && defendants?.length > 0 ? defendants[0] : undefined
-  const [selectedPunishmentType, setPunishmentType] = useState<PunishmentType>()
 
   const onChange = (updatedPunishmentType: PunishmentType) => {
-    setPunishmentType(updatedPunishmentType)
-    defendant &&
-      limitedAccessUpdateDefendant({
-        caseId: workingCase.id,
-        defendantId: defendant.id,
-        punishmentType: updatedPunishmentType,
-      })
+    if (!defendant) return
+
+    const defendantUpdate = {
+      defendantId: defendant.id,
+      caseId: workingCase.id,
+      punishmentType: updatedPunishmentType,
+    }
+    updateDefendantState(defendantUpdate, setWorkingCase)
+    limitedAccessUpdateDefendant(defendantUpdate)
   }
 
-  const hasSetPunishmentType = (punishmentType: PunishmentType) =>
-    !selectedPunishmentType && defendant?.punishmentType === punishmentType
+  const hasPunishmentType = (punishmentType: PunishmentType) =>
+    defendant?.punishmentType === punishmentType
 
   return (
     <PageLayout workingCase={workingCase} isLoading={false} notFound={false}>
@@ -102,10 +103,7 @@ const IndictmentOverview = () => {
               <RadioButton
                 id="punishment-type-imprisonment"
                 name="punishmentTypeImprisonment"
-                checked={
-                  selectedPunishmentType === PunishmentType.IMPRISONMENT ||
-                  hasSetPunishmentType(PunishmentType.IMPRISONMENT)
-                }
+                checked={hasPunishmentType(PunishmentType.IMPRISONMENT)}
                 onChange={() => {
                   onChange(PunishmentType.IMPRISONMENT)
                 }}
@@ -118,10 +116,7 @@ const IndictmentOverview = () => {
               <RadioButton
                 id="punishment-type-probation"
                 name="punishmentTypeProbation"
-                checked={
-                  selectedPunishmentType === PunishmentType.PROBATION ||
-                  hasSetPunishmentType(PunishmentType.PROBATION)
-                }
+                checked={hasPunishmentType(PunishmentType.PROBATION)}
                 onChange={() => {
                   onChange(PunishmentType.PROBATION)
                 }}
@@ -134,10 +129,7 @@ const IndictmentOverview = () => {
               <RadioButton
                 id="punishment-type-fine"
                 name="punishmentTypeFine"
-                checked={
-                  selectedPunishmentType === PunishmentType.FINE ||
-                  hasSetPunishmentType(PunishmentType.FINE)
-                }
+                checked={hasPunishmentType(PunishmentType.FINE)}
                 onChange={() => {
                   onChange(PunishmentType.FINE)
                 }}
@@ -150,36 +142,34 @@ const IndictmentOverview = () => {
               <RadioButton
                 id="punishment-type-indictment-ruling-decision-fine"
                 name="punishmentTypeIndictmentRulingDecisionFine"
-                checked={
-                  selectedPunishmentType ===
-                    PunishmentType.INDICTMENT_RULING_DECISION_FINE ||
-                  hasSetPunishmentType(
-                    PunishmentType.INDICTMENT_RULING_DECISION_FINE,
-                  )
-                }
+                checked={hasPunishmentType(
+                  PunishmentType.INDICTMENT_RULING_DECISION_FINE,
+                )}
                 onChange={() => {
                   onChange(PunishmentType.INDICTMENT_RULING_DECISION_FINE)
                 }}
                 large
                 backgroundColor="white"
-                label={formatMessage(strings.punishmentTypeIndictmentRulingDecisionFine)}
+                label={formatMessage(
+                  strings.punishmentTypeIndictmentRulingDecisionFine,
+                )}
               />
             </Box>
             <Box marginBottom={2}>
               <RadioButton
                 id="punishment-type-indictment-signed-fine-invitation"
                 name="punishmentTypeIndictmentSignedFineInvitation"
-                checked={
-                  selectedPunishmentType ===
-                    PunishmentType.SIGNED_FINE_INVITATION ||
-                  hasSetPunishmentType(PunishmentType.SIGNED_FINE_INVITATION)
-                }
+                checked={hasPunishmentType(
+                  PunishmentType.SIGNED_FINE_INVITATION,
+                )}
                 onChange={() => {
                   onChange(PunishmentType.SIGNED_FINE_INVITATION)
                 }}
                 large
                 backgroundColor="white"
-                label={formatMessage(strings.punishmentTypeSignedFineInvitation)}
+                label={formatMessage(
+                  strings.punishmentTypeSignedFineInvitation,
+                )}
               />
             </Box>
           </BlueBox>

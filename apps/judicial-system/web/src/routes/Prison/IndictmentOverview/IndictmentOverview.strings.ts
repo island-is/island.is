@@ -44,17 +44,17 @@ export const strings = defineMessages({
       'Notaður sem texti í skilorðsbundið valmöguleika í Refsitegund',
   },
   punishmentTypeFine: {
-    id: 'judicial.system.core:court.indictment_overview.punishment_type_fine',
+    id: 'judicial.system.core:indictment_overview.punishment_type_fine',
     defaultMessage: 'Sekt',
     description: 'Notaður sem texti í sekt valmöguleika í Refsitegund',
   },
   punishmentTypeIndictmentRulingDecisionFine: {
-    id: 'judicial.system.core:court.indictment_overview.punishment_type_indictment_ruling_decision_fine',
+    id: 'judicial.system.core:indictment_overview.punishment_type_indictment_ruling_decision_fine',
     defaultMessage: 'Viðurlagaákvörðun',
     description: 'Notaður sem texti í viðurlagaákvörðun í Refsitegund',
   },
   punishmentTypeSignedFineInvitation: {
-    id: 'judicial.system.core:court.indictment_overview.punishment_type_signed_fine_invitation',
+    id: 'judicial.system.core:indictment_overview.punishment_type_signed_fine_invitation',
     defaultMessage: 'Áritað sektarboð',
     description: 'Notaður sem texti í sektarboð í Refsitegund',
   },
