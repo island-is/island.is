@@ -51,11 +51,11 @@ export const RadioFormField: FC<React.PropsWithChildren<Props>> = ({
   )
 
   return (
-    <Box 
-      marginTop={marginTop} 
-      marginBottom={marginBottom} 
-      paddingTop={field.space} 
-      role="region" 
+    <Box
+      marginTop={marginTop}
+      marginBottom={marginBottom}
+      paddingTop={field.space}
+      role="region"
       aria-labelledby={id + 'title'}
     >
       {showFieldName && (
