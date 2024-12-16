@@ -49,6 +49,7 @@ import { TeamMemberResponse } from './models/teamMemberResponse.model'
 import { GetGrantsInput } from './dto/getGrants.input'
 import { Grant } from './models/grant.model'
 import { GrantList } from './models/grantList.model'
+import { logger } from '@island.is/logging'
 
 @Injectable()
 export class CmsElasticsearchService {
@@ -724,9 +725,9 @@ export class CmsElasticsearchService {
             must,
           },
         },
+        //size,
         sort,
-        size,
-        from: (page - 1) * size,
+        //from: (page - 1) * size,
       })
 
     return {

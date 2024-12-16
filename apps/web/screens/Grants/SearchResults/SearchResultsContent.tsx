@@ -3,11 +3,10 @@ import { useIntl } from 'react-intl'
 import { useWindowSize } from 'react-use'
 import format from 'date-fns/format'
 
-import { Box, Button, Text } from '@island.is/island-ui/core'
+import { Box, Button, InfoCardGrid, Text } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import { Locale } from '@island.is/shared/types'
 import { isDefined } from '@island.is/shared/utils'
-import { InfoCardGrid } from '@island.is/web/components'
 import { Grant } from '@island.is/web/graphql/schema'
 import { useLinkResolver } from '@island.is/web/hooks'
 

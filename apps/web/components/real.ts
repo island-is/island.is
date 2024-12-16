@@ -12,7 +12,6 @@
  */
 
 export * from './Card/Card'
-export * from './InfoCardGrid/InfoCardGrid'
 export * from './Header/Header'
 export * from './SearchInput/SearchInput'
 export * from './LanguageToggler/LanguageToggler'

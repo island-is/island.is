@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react'
 import { useWindowSize } from 'react-use'
 
-import { Box, FocusableBox, LinkV2 } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 
 import { DetailedInfoCard, DetailedProps } from './DetailedInfoCard'
 import { SimpleInfoCard } from './SimpleInfoCard'
 import * as styles from './InfoCard.css'
+import { Box, FocusableBox, LinkV2 } from '../..'
 
 export interface BaseProps {
   id: string

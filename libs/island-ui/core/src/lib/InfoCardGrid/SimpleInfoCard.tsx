@@ -1,10 +1,4 @@
-import {
-  Box,
-  GridColumn,
-  GridContainer,
-  GridRow,
-  Text,
-} from '@island.is/island-ui/core'
+import { Box, GridColumn, GridContainer, GridRow, Text } from '../..'
 
 import { BaseProps } from './InfoCard'
 

@@ -9,11 +9,11 @@ import {
   Stack,
   Tag,
   Text,
-} from '@island.is/island-ui/core'
-import { ActionCardProps } from '@island.is/island-ui/core/types'
+} from '../..'
 import { isDefined } from '@island.is/shared/utils'
 
 import { BaseProps } from './InfoCard'
+import { ActionCardProps } from '../ActionCard/types'
 
 const eyebrowColor = 'blueberry600'
 

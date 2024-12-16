@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useWindowSize } from 'react-use'
 
-import { Inline, Stack } from '@island.is/island-ui/core'
+import { Inline, Stack } from '../..'
 import { theme } from '@island.is/island-ui/theme'
 
 import { InfoCard, InfoCardProps } from './InfoCard'

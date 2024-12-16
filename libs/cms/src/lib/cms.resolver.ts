@@ -136,6 +136,7 @@ import {
   GetOrganizationPageStandaloneSitemapLevel1Input,
   GetOrganizationPageStandaloneSitemapLevel2Input,
 } from './dto/getOrganizationPageStandaloneSitemap.input'
+import { logger } from '@island.is/logging'
 
 const defaultCache: CacheControlOptions = { maxAge: CACHE_CONTROL_MAX_AGE }
 
