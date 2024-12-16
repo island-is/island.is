@@ -1,3 +1,4 @@
+import { useMemo } from 'react'
 import { useIntl } from 'react-intl'
 import NextLink from 'next/link'
 import { useRouter } from 'next/router'
@@ -33,6 +34,7 @@ import {
 import SidebarLayout from '../../Layouts/SidebarLayout'
 import { GET_GRANT_QUERY } from '../../queries'
 import { m } from '../messages'
+import { generateStatusTag, parseStatus } from '../utils'
 import { GrantSidebar } from './GrantSidebar'
 
 const GrantSinglePage: CustomScreen<GrantSingleProps> = ({ grant, locale }) => {
@@ -68,6 +70,11 @@ const GrantSinglePage: CustomScreen<GrantSingleProps> = ({ grant, locale }) => {
     },
   ]
 
+  const status = useMemo(
+    () => (grant ? parseStatus(grant, formatMessage, locale) : null),
+    [grant, formatMessage, locale],
+  )
+
   if (!grant) {
     return null
   }
@@ -101,9 +108,16 @@ const GrantSinglePage: CustomScreen<GrantSingleProps> = ({ grant, locale }) => {
             </Text>
             <Text variant="default">{grant.description}</Text>
           </Box>
+
           <ActionCard
             heading={grant.name}
-            text={'Lokað fyrir umsóknir / Frestur var til 14. júní 2024'}
+            text={
+              status
+                ? generateStatusTag(status.applicationStatus, formatMessage)
+                    ?.label +
+                  (status.deadlineStatus ? ' / ' + status.deadlineStatus : '')
+                : ''
+            }
             backgroundColor="blue"
             cta={{
               disabled: !grant.applicationUrl?.slug,
@@ -114,7 +128,7 @@ const GrantSinglePage: CustomScreen<GrantSingleProps> = ({ grant, locale }) => {
               iconType: 'outline',
             }}
           />
-          <AlertBanner description="Einhver stuttur texti um það sem einkennir þessar umsóknir" />
+          <AlertBanner description={status?.note} />
           {grant.specialEmphasis?.length ? (
             <>
               <Box className="rs_read">
