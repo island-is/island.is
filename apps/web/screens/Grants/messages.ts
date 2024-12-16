@@ -34,7 +34,7 @@ export const m = {
     },
     applicationStatus: {
       id: 'web.grants:search.applicationStatus',
-      defaultMessage: 'Staða umsóknar',
+      defaultMessage: 'Staða umsókna',
     },
     applicationOpen: {
       id: 'web.grants:search.applicationOpen',
@@ -51,6 +51,34 @@ export const m = {
     applicationSeeDescription: {
       id: 'web.grants:search.applicationSeeDescription',
       defaultMessage: 'Sjá lýsingu',
+    },
+    applicationOpensAt: {
+      id: 'web.grants:search.applicationOpensAt',
+      defaultMessage: 'Opnar {arg}',
+    },
+    applicationEstimatedOpensAt: {
+      id: 'web.grants:search.applicationEstimatedOpensAt',
+      defaultMessage: 'Áætlað næst í {arg}',
+    },
+    applicationOpensTo: {
+      id: 'web.grants:search.applicationOpensTo',
+      defaultMessage: 'Frestur til {arg}',
+    },
+    applicationOpensToWithDay: {
+      id: 'web.grants:search.applicationOpensToWithDay',
+      defaultMessage: 'Frestur til og með {arg}',
+    },
+    applicationWasOpenTo: {
+      id: 'web.grants:search.applicationWasOpenTo',
+      defaultMessage: 'Frestur var til {arg}',
+    },
+    applicationWasOpenToAndWith: {
+      id: 'web.grants:search.applicationWasOpenToAndWith',
+      defaultMessage: 'Frestur var til og með {arg}',
+    },
+    applicationAlwaysOpen: {
+      id: 'web.grants:search.applicationAlwaysOpen',
+      defaultMessage: 'Opið er allt árið',
     },
     category: {
       id: 'web.grants:search.category',
@@ -98,9 +126,13 @@ export const m = {
       id: 'web.grants:single.type',
       defaultMessage: 'Tegund',
     },
+    applications: {
+      id: 'web.grants:single.applications',
+      defaultMessage: 'Umsóknir',
+    },
     deadline: {
       id: 'web.grants:single.deadline',
-      defaultMessage: 'Umsóknarfrestur',
+      defaultMessage: 'Umsóknir',
     },
     status: {
       id: 'web.grants:single.status',

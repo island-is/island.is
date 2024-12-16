@@ -3,7 +3,7 @@ import { BffUser } from '@island.is/shared/types'
 import { ReactNode, useCallback, useEffect, useMemo } from 'react'
 import {
   BffBroadcastEvents,
-  useBff,
+  useAuth,
   useBffBroadcaster,
   useUserInfo,
 } from './bff.hooks'
@@ -43,9 +43,10 @@ export const BffPoller = ({
   newSessionCb,
   pollIntervalMS = 10000,
 }: BffPollerProps) => {
-  const { signIn, bffUrlGenerator } = useBff()
+  const { signIn, bffUrlGenerator } = useAuth()
   const userInfo = useUserInfo()
   const { postMessage } = useBffBroadcaster()
+  const bffBaseUrl = bffUrlGenerator()
 
   const url = useMemo(
     () => bffUrlGenerator('/user', { refresh: 'true' }),
@@ -86,12 +87,13 @@ export const BffPoller = ({
         postMessage({
           type: BffBroadcastEvents.NEW_SESSION,
           userInfo: newUser,
+          bffBaseUrl,
         })
 
         newSessionCb()
       }
     }
-  }, [newUser, error, userInfo, signIn, postMessage, newSessionCb])
+  }, [newUser, error, userInfo, signIn, postMessage, newSessionCb, bffBaseUrl])
 
   return children
 }
