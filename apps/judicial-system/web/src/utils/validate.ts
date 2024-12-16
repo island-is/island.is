@@ -302,7 +302,19 @@ export const isTrafficViolationStepValidIndictments = (
   }
 
   if (hasOnlyOneItemInSubArrays(workingCase.indictmentSubtypes)) {
-    return true
+    const hasValidTrafficViolationIndictmentCounts =
+      workingCase.indictmentCounts?.every(
+        (indictmentCount) =>
+          indictmentCount.policeCaseNumber &&
+          indictmentCount.offenses &&
+          indictmentCount.offenses?.length > 0 &&
+          indictmentCount.vehicleRegistrationNumber &&
+          indictmentCount.lawsBroken &&
+          indictmentCount.incidentDescription &&
+          indictmentCount.legalArguments,
+      ) ?? false
+
+    return hasValidTrafficViolationIndictmentCounts
   }
 
   const hasValidIndictmentCounts =
