@@ -753,7 +753,6 @@ export class CmsElasticsearchService {
         size,
         from: (page - 1) * size,
       })
-
     return {
       total: grantListResponse.body.hits.total.value,
       items: grantListResponse.body.hits.hits.map<Grant>((response) =>
