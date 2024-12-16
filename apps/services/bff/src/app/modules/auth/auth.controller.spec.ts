@@ -561,7 +561,10 @@ describe('AuthController', () => {
       mockCacheManagerValue.set(currentKey, cachedData)
 
       getCacheSpy.mockImplementation((key) => {
-        if (key === currentKey) return Promise.resolve(cachedData)
+        if (key === currentKey) {
+          return Promise.resolve(cachedData)
+        }
+
         return Promise.resolve(null)
       })
 

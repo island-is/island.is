@@ -243,18 +243,19 @@ export class AuthService {
   }
 
   /**
-   * Handles cases where a login attempt is no longer available in the cache.
-   * This can happen in atleast three scenarios:
-   * 1. The cache key has expired
-   * 2. The cache key has been deleted
-   * 3. User pressed the back button and the cache key has already been deleted. TODO make better explanation
+   * Handles cases where a login attempt cache entry is not found during the callback phase.
+   * This typically occurs in one of these scenarios:
    *
-   * The method attempts to recover by:
-   * 1. Checking if there's an active possible older session
-   * 2. If found, looking up the original login attempt data from the current session
-   * 3. Redirecting the user to either:
-   *    - The original target URL if the login attempt data is found
-   *    - An error page if no recovery is possible
+   * 1. The login attempt cache has expired (TTL exceeded).
+   * 2. The cache entry was deleted.
+   * 3. The user attempted to reuse a callback URL after a successful login
+   *    (e.g., by using browser back button after logging in)
+   *
+   * Recovery process:
+   * 1. Checks if there's an existing active session (via session cookie)
+   * 2. If a session exists, looks for the original login attempt data in that session
+   * 3. If found, returns a 409 Conflict indicating multiple session attempt
+   * 4. If no recovery is possible, redirects to error page
    */
   private async handleMissingLoginAttempt({
     req,
