@@ -50,7 +50,6 @@ export const BffDoubleSessionModal = ({
             <Button variant="text" onClick={() => onKeepCurrentUser()}>
               halda fyrri innskráningu
             </Button>
-            .
           </span>
         </>
       }

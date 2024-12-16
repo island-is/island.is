@@ -207,15 +207,7 @@ export const BffProvider = ({
 
       const loginQueryParams = getLoginQueryParams()
       const targetLinkUri = loginQueryParams['target_link_uri']
-      console.log(
-        nationalId,
-        bffUrlGenerator('/login', {
-          target_link_uri: targetLinkUri,
-          ...(nationalId
-            ? { login_hint: nationalId }
-            : { prompt: 'select_account' }),
-        }),
-      )
+
       window.location.href = bffUrlGenerator('/login', {
         target_link_uri: targetLinkUri,
         ...(nationalId
