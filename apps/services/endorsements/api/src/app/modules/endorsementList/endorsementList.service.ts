@@ -247,7 +247,7 @@ export class EndorsementListService {
       ])
     }
     this.logger.info(`Creating endorsement list: ${list.title}`)
-    const ownerName = await this.fetchOwnerNameFromRegistry(list.owner);
+    const ownerName = await this.fetchOwnerNameFromRegistry(list.owner)
     const endorsementList = await this.endorsementListModel.create({
       ...list,
       ownerName,
@@ -958,7 +958,9 @@ export class EndorsementListService {
     }
   }
 
-  private async fetchOwnerNameFromRegistry(nationalId: string): Promise<string> {
+  private async fetchOwnerNameFromRegistry(
+    nationalId: string,
+  ): Promise<string> {
     try {
       const person = await this.nationalRegistryApiV3.getName(nationalId)
       return person?.fulltNafn ? person.fulltNafn : ''
