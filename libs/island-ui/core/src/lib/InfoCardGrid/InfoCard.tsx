@@ -54,7 +54,7 @@ export const InfoCard = ({ size, ...restOfProps }: InfoCardProps) => {
       component={LinkV2}
       href={restOfProps.link.href}
       background={size === 'small' ? 'yellow100' : 'white'}
-      borderColor="white"
+      borderColor="blue200"
       color="blue"
       borderWidth="standard"
       width="full"
