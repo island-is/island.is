@@ -50,7 +50,7 @@ export const RadioFormField: FC<React.PropsWithChildren<Props>> = ({
     [options, application, locale],
   )
 
-  const paddingTop = field.space ?? 0
+  const paddingTop = field.space ?? 2
 
   return (
     <Box
@@ -82,7 +82,7 @@ export const RadioFormField: FC<React.PropsWithChildren<Props>> = ({
         />
       )}
 
-      <Box marginTop={2}>
+      <Box>
         <RadioController
           largeButtons={largeButtons}
           backgroundColor={backgroundColor}
@@ -116,6 +116,8 @@ export const RadioFormField: FC<React.PropsWithChildren<Props>> = ({
           }))}
           onSelect={field.onSelect}
           hasIllustration={hasIllustration}
+          paddingBottom={0}
+          paddingTop={2}
         />
       </Box>
     </Box>

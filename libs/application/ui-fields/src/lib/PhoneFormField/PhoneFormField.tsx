@@ -58,7 +58,7 @@ export const PhoneFormField: FC<React.PropsWithChildren<Props>> = ({
         />
       )}
 
-      <Box paddingBottom={2}>
+      <Box paddingTop={2}>
         <PhoneInputController
           disabled={disabled}
           readOnly={readOnly}

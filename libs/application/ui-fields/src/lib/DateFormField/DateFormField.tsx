@@ -129,7 +129,7 @@ export const DateFormField: FC<React.PropsWithChildren<Props>> = ({
         />
       )}
 
-      <Box paddingBottom={2}>
+      <Box paddingTop={2}>
         <DatePickerController
           disabled={disabled}
           defaultValue={

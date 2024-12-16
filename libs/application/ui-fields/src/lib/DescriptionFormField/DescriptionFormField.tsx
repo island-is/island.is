@@ -16,8 +16,8 @@ export const DescriptionFormField: FC<
 > = ({ application, field, showFieldName }) => {
   const { formatMessage, lang: locale } = useLocale()
 
-  const paddingTop = field.space ?? 0
-  const marginBottom = field.marginBottom ?? 2
+  const paddingTop = field.space ?? 2
+  const marginBottom = field.marginBottom ?? 0
   const marginTop = field.marginTop ?? 0
 
   return (
