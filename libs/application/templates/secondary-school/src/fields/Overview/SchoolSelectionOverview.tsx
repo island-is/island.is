@@ -37,10 +37,14 @@ export const SchoolSelectionOverview: FC<FieldBaseProps> = ({
         <Box>
           <GridRow>
             {/* First selection */}
-            <GridColumn span="1/2">
-              <Text variant="h5">
-                {formatMessage(overview.selection.firstSubtitle)}
-              </Text>
+            <GridColumn
+              span={answers?.selection?.second?.include ? '1/2' : '1/1'}
+            >
+              {answers?.selection?.second?.include && (
+                <Text variant="h5">
+                  {formatMessage(overview.selection.firstSubtitle)}
+                </Text>
+              )}
               <Text>{answers?.selection?.first?.school?.name}</Text>
               <Text>
                 {formatMessage(overview.selection.firstProgramLabel)}:{' '}

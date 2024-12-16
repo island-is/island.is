@@ -8,11 +8,12 @@ import { useFormContext } from 'react-hook-form'
 import { SelectionItem } from './selectionItem'
 import { ApplicationType } from '../../shared'
 import { hasDuplicates } from '../../utils'
+import { SecondarySchoolAnswers } from '../..'
 
 export const SchoolSelection: FC<FieldBaseProps> = (props) => {
   const { formatMessage } = useLocale()
   const { application, setBeforeSubmitCallback } = props
-  const { setValue, watch } = useFormContext()
+  const { setValue, getValues } = useFormContext()
 
   const isFreshman =
     getValueViaPath<ApplicationType>(
@@ -69,45 +70,46 @@ export const SchoolSelection: FC<FieldBaseProps> = (props) => {
   }
 
   const checkSchoolDuplicate = () => {
-    const schoolIds = [watch(`${props.field.id}.first.school.id`)]
+    const updatedAnswers = getValues() as SecondarySchoolAnswers
+
+    const schoolIds: string[] = [
+      updatedAnswers?.selection?.first?.school?.id || '',
+    ]
 
     if (includeSecondSelection)
-      schoolIds.push(watch(`${props.field.id}.second.school.id`))
+      schoolIds.push(updatedAnswers?.selection?.second?.school?.id || '')
 
     if (includeThirdSelection)
-      schoolIds.push(watch(`${props.field.id}.third.school.id`))
+      schoolIds.push(updatedAnswers?.selection?.third?.school?.id || '')
 
-    return hasDuplicates(schoolIds)
+    return hasDuplicates(schoolIds.filter((x) => !!x))
   }
 
   const checkProgramDuplicate = () => {
+    const updatedAnswers = getValues() as SecondarySchoolAnswers
+
     const programIds: string[] = [
-      watch(`${props.field.id}.first.firstProgram.id`),
+      updatedAnswers?.selection?.first?.firstProgram?.id || '',
     ]
-    const firstInclude = watch(
-      `${props.field.id}.first.secondProgram.include`,
-    ) as boolean
-    if (firstInclude) {
-      programIds.push(watch(`${props.field.id}.first.secondProgram.id`))
+    if (updatedAnswers?.selection?.first?.secondProgram?.include) {
+      programIds.push(updatedAnswers?.selection?.first?.secondProgram?.id || '')
     }
 
     if (includeSecondSelection) {
-      programIds.push(watch(`${props.field.id}.second.firstProgram.id`))
-      const secondInclude = watch(
-        `${props.field.id}.second.secondProgram.include`,
-      ) as boolean
-      if (secondInclude) {
-        programIds.push(watch(`${props.field.id}.second.secondProgram.id`))
+      programIds.push(updatedAnswers?.selection?.second?.firstProgram?.id || '')
+      if (updatedAnswers?.selection?.second?.secondProgram?.include) {
+        programIds.push(
+          updatedAnswers?.selection?.second?.secondProgram?.id || '',
+        )
       }
     }
 
     if (includeThirdSelection) {
-      programIds.push(watch(`${props.field.id}.third.firstProgram.id`))
-      const thirdInclude = watch(
-        `${props.field.id}.third.secondProgram.include`,
-      ) as boolean
-      if (thirdInclude) {
-        programIds.push(watch(`${props.field.id}.third.secondProgram.id`))
+      programIds.push(updatedAnswers?.selection?.third?.firstProgram?.id || '')
+      if (updatedAnswers?.selection?.third?.secondProgram?.include) {
+        programIds.push(
+          updatedAnswers?.selection?.third?.secondProgram?.id || '',
+        )
       }
     }
 
