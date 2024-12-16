@@ -679,15 +679,11 @@ export interface AccordionField extends BaseField {
   accordionItems:
     | Array<AccordionItem>
     | ((application: Application) => Array<AccordionItem>)
-  marginTop?: BoxProps['marginTop']
-  marginBottom?: BoxProps['marginBottom']
   titleVariant?: TitleVariants
 }
 export interface BankAccountField extends BaseField {
   readonly type: FieldTypes.BANK_ACCOUNT
   component: FieldComponents.BANK_ACCOUNT
-  marginTop?: BoxProps['marginTop']
-  marginBottom?: BoxProps['marginBottom']
   titleVariant?: TitleVariants
 }
 
