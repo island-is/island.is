@@ -5,7 +5,7 @@ import {
   isInjuredAndRepresentativeOfCompanyOrInstitute,
   isRepresentativeOfCompanyOrInstitute,
 } from './isRepresentativeOfCompanyOrInstitute'
-import { NO, YES } from '../constants'
+import { NO, YES } from './constants'
 
 const emptyObject = {}
 

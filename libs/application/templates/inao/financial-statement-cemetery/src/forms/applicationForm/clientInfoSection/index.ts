@@ -1,12 +1,13 @@
 import {
   buildAsyncSelectField,
-  buildCustomField,
   buildDescriptionField,
   buildMultiField,
+  buildPhoneField,
   buildSection,
   buildTextField,
+  getValueViaPath,
 } from '@island.is/application/core'
-import { Application, UserProfile } from '@island.is/application/types'
+import { Application } from '@island.is/application/types'
 import { m } from '../../../lib/messages'
 import { ABOUTIDS } from '../../../utils/constants'
 import { Identity } from '@island.is/api/schema'
@@ -58,42 +59,49 @@ export const clientInfoSection = buildSection({
             return nationalRegistry.name
           },
         }),
-        buildDescriptionField({
-          id: 'about.description2',
-          title: '',
+        buildTextField({
+          id: ABOUTIDS.powerOfAttorneyNationalId,
+          title: m.powerOfAttorneyNationalId,
+          width: 'half',
+          readOnly: true,
+          format: '######-####',
+          defaultValue: (application: Application) =>
+            getValueViaPath<string>(
+              application.externalData,
+              'identity.data.actor.nationalId',
+            ),
         }),
-        buildCustomField({
-          id: 'powerOfAttorney',
-          title: '',
-          description: '',
-          component: 'PowerOfAttorneyFields',
-          childInputIds: [
-            ABOUTIDS.powerOfAttorneyNationalId,
-            ABOUTIDS.powerOfAttorneyName,
-          ],
+        buildTextField({
+          id: ABOUTIDS.powerOfAttorneyName,
+          title: m.powerOfAttorneyName,
+          width: 'half',
+          readOnly: true,
+          defaultValue: (application: Application) =>
+            getValueViaPath<string>(
+              application.externalData,
+              'identity.data.actor.name',
+            ),
         }),
-
         buildTextField({
           id: 'about.email',
           title: m.email,
           width: 'half',
           variant: 'email',
-          defaultValue: (application: Application) => {
-            const userProfile = application.externalData.userProfile
-              .data as UserProfile
-            return userProfile.email
-          },
+          defaultValue: (application: Application) =>
+            getValueViaPath<string>(
+              application.externalData,
+              'userProfile.data.email',
+            ),
         }),
-        buildTextField({
+        buildPhoneField({
           id: 'about.phoneNumber',
           title: m.phoneNumber,
           width: 'half',
-          variant: 'tel',
-          defaultValue: (application: Application) => {
-            const userProfile = application.externalData.userProfile
-              .data as UserProfile
-            return userProfile.mobilePhoneNumber
-          },
+          defaultValue: (application: Application) =>
+            getValueViaPath<string>(
+              application.externalData,
+              'userProfile.data.mobilePhoneNumber',
+            ),
         }),
       ],
     }),
