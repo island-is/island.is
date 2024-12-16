@@ -148,13 +148,25 @@ export const PropertyInfoSummary = ({ answers }: Props) => {
 
       <Divider />
 
-      <GridRow className={gridRow}>
-        <GridColumn span={['12/12']}>
-          <KeyValue label={summary.fileUploadLabel} value={'---'} />
-        </GridColumn>
-      </GridRow>
+      {
+        /* Only show the file upload section if the user has uploaded files */
+        answers.condition.resultsFiles && (
+          <>
+            <GridRow className={gridRow}>
+              <GridColumn span={['12/12']}>
+                <KeyValue
+                  label={summary.fileUploadLabel}
+                  value={answers.condition.resultsFiles
+                    .map((file) => file.name)
+                    .join(', ')}
+                />
+              </GridColumn>
+            </GridRow>
 
-      <Divider />
+            <Divider />
+          </>
+        )
+      }
 
       <GridRow className={gridRow}>
         <GridColumn span={['12/12', '6/12', '3/12']}>

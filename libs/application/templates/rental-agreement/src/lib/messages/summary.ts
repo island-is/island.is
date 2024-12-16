@@ -63,6 +63,11 @@ export const summary = defineMessages({
     defaultMessage: 'Trygging',
     description: 'Security deposit label',
   },
+  securityDepositNotRequired: {
+    id: 'ra.application:summary.securityDepositNotRequired',
+    defaultMessage: 'Ekki krafist',
+    description: 'Security deposit not required',
+  },
   securityTypeLabel: {
     id: 'ra.application:summary.securityTypeLabel',
     defaultMessage: 'Tegund',

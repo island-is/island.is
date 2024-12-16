@@ -1,7 +1,11 @@
 import { GridColumn, GridRow } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { RentalAgreement } from '../../lib/dataSchema'
-import { SecurityDepositAmountOptions, TRUE } from '../../lib/constants'
+import {
+  AnswerOptions,
+  SecurityDepositAmountOptions,
+  TRUE,
+} from '../../lib/constants'
 import {
   formatCurrency,
   formatDate,
@@ -40,6 +44,13 @@ export const RentalInfoSummary = ({ answers }: Props) => {
     const matchingOption = options.find((option) => option.value === answer)
     return matchingOption ? matchingOption.label : '-'
   }
+
+  const isSecurityDepositRequired =
+    answers.rentalAmount.isPaymentInsuranceRequired?.includes(AnswerOptions.YES)
+  const isSecurityDepositAmount =
+    answers.securityDeposit?.securityAmount ||
+    answers.securityDeposit?.securityAmountOther
+  const isSecurityDepositType = answers.securityDeposit?.securityType
 
   const securityDepositAmount = (answer: string | undefined) => {
     const options = getSecurityAmountOptions()
@@ -127,25 +138,32 @@ export const RentalInfoSummary = ({ answers }: Props) => {
             value={formatCurrency(answers.rentalAmount.amount) || '-'}
           />
         </GridColumn>
+
         <GridColumn span={['12/12', '4/12']}>
           <KeyValue
             label={summary.securityDepositLabel}
             value={
-              securityDepositAmount(answers.securityDeposit.securityAmount) ||
-              '-'
+              isSecurityDepositRequired && isSecurityDepositAmount
+                ? securityDepositAmount(answers.securityDeposit.securityAmount)
+                : summary.securityDepositNotRequired
             }
           />
         </GridColumn>
-        <GridColumn span={['12/12', '4/12']}>
-          <KeyValue
-            label={summary.securityTypeLabel}
-            value={
-              securityDepositType(
-                answers.securityDeposit.securityType as string,
-              ) || '-'
-            }
-          />
-        </GridColumn>
+
+        {isSecurityDepositRequired && (
+          <GridColumn span={['12/12', '4/12']}>
+            <KeyValue
+              label={summary.securityTypeLabel}
+              value={
+                isSecurityDepositType
+                  ? securityDepositType(
+                      answers.securityDeposit.securityType as string,
+                    )
+                  : summary.securityDepositNotRequired
+              }
+            />
+          </GridColumn>
+        )}
       </GridRow>
 
       <Divider />
