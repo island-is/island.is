@@ -7,6 +7,7 @@ export const FILE_SIZE_LIMIT = 10000000 // 10MB
 
 export enum States {
   // Draft flow
+  PREREQUISITES = 'prerequisites',
   DRAFT = 'draft',
   REVIEW = 'review',
   REVIEW_ADD_ATTACHMENT = 'reviewAddAttachment',

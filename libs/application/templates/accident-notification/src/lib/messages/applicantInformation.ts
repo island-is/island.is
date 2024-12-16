@@ -55,6 +55,18 @@ export const applicantInformation = {
       description: 'Telephone number',
     },
   }),
+  procure: defineMessages({
+    titill: {
+      id: 'an.application:applicantInfo.procure.title',
+      defaultMessage: 'Upplýsingar um ',
+      description: 'Name of the procure identity',
+    },
+    name: {
+      id: 'an.application:applicantInfo.procure.name',
+      defaultMessage: 'Nafn',
+      description: 'Name of the procure identity',
+    },
+  }),
   forThirdParty: defineMessages({
     title: {
       id: 'an.application:applicantInfo.forThirdParty.title',
