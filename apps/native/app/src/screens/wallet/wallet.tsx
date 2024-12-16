@@ -113,6 +113,7 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
         ],
       },
     },
+    fetchPolicy: 'cache-first',
   })
 
   // Additional licenses
