@@ -15,6 +15,7 @@ import {
   CareerIndustryEnum,
   YesNoEnum,
 } from '../utils/constants'
+import { radioValidationExampleEnum } from '../utils/types'
 
 const careerHistoryCompaniesValidation = (data: any) => {
   // Applicant selected other but didnt supply the reason so we dont allow it
@@ -78,6 +79,13 @@ const deepNestedSchema = z.object({
   }),
 })
 
+const validationSchema = z.object({
+  validationTextField: z.string().min(3, {
+    message: 'Custom validation message',
+  }),
+  validationRadioField: z.nativeEnum(radioValidationExampleEnum),
+})
+
 // The exported dataSchema should be as flat and easy to read as possible.
 export const dataSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
@@ -89,6 +97,7 @@ export const dataSchema = z.object({
   dreamJob: z.string().optional(),
   assigneeEmail: z.string().email(),
   approvedByReviewer: z.nativeEnum(ApprovedByReviewerEnum),
+  validation: validationSchema,
 })
 
 export type AnswersSchema = z.infer<typeof dataSchema>

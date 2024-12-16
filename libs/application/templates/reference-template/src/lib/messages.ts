@@ -256,4 +256,16 @@ export const m = defineMessages({
     defaultMessage: 'Submit',
     description: 'Overview title',
   },
+  validationDescription: {
+    id: 'example.application:validation.description#markdown',
+    defaultMessage:
+      'Einhver field bjóða upp á að setja gildið `required: true`, sem nýtir innbyggða virkni í `html` og getur verið afvirkjað með því að skoða DOM-ið fyrir síðuna.\n\n Almennt er best að setja allt sem verður að vera fyllt út eða verður að vera fyllt út á ákveðinn hátt í `/lib/dataSchema.ts`. Fyrir validation skal nota *zod*.',
+    description: 'Validation description',
+  },
+  validationDescription3: {
+    id: 'example.application:validation.description3#markdown',
+    defaultMessage:
+      'Ef valkostir í field eru allir í einu `enum`, þá skal nota `z.nativeEnum()` í zod validation til að sleppa við að lista upp alla hvern valkost í enum-inu eins og þarf að gera ef stuðst er við `z.enum()` ',
+    description: 'Validation description',
+  },
 })
