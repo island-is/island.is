@@ -44,6 +44,9 @@ export class Grant {
   @CacheField(() => ReferenceLink, { nullable: true })
   applicationUrl?: ReferenceLink
 
+  @Field({ nullable: true })
+  applicationButtonLabel?: string
+
   @CacheField(() => [SliceUnion])
   specialEmphasis?: Array<typeof SliceUnion>
 
@@ -138,7 +141,7 @@ export const mapGrant = ({ fields, sys }: IGrant): Grant => {
     applicationUrl: fields.granApplicationUrl?.fields
       ? mapReferenceLink(fields.granApplicationUrl)
       : undefined,
-
+    applicationButtonLabel: fields.grantButtonLabel,
     specialEmphasis: fields.grantSpecialEmphasis
       ? mapDocument(fields.grantSpecialEmphasis, sys.id + ':special-emphasis')
       : [],

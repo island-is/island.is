@@ -99,12 +99,6 @@ export const GrantSidebar = ({ grant, locale }: Props) => {
           ) : undefined,
         ),
         generateLine(
-          formatMessage(m.single.deadline),
-          status.deadlineStatus ? (
-            <Text variant="medium">{status.deadlineStatus}</Text>
-          ) : undefined,
-        ),
-        generateLine(
           formatMessage(m.single.status),
           grant?.status ? (
             <Text variant="medium">
