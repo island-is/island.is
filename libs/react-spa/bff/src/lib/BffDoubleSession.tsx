@@ -8,14 +8,18 @@ type BffDoubleSessionModalProps = {
 }
 
 /**
- * This is a special modal when a user has done something he shouldn't have done. Which results in two active sessions.
- * User login as normal, but then he presses the back button, which causes the user to be routed to the login page.
- * The user then re-logs in, but the previous session is still active and the user teqnically has two sessions.
- * This user gives the user a warning and a possibility to either:
- * 1. Switch user to get correct new session.
- * 2. Keep the current user session and continue.
+ * Modal that handles cases where multiple active sessions are detected for a user.
+ * This typically occurs in one of these scenarios:
  *
- * Note: This screen is unfortunately not translated because at this point we don't have a user locale.
+ * 1. User logs in normally, then uses browser back button to return to login page
+ * 2. User logs in again while having an active session
+ * 3. This creates a conflict where two active sessions exist simultaneously
+ *
+ * Resolution options:
+ * 1. Switch User: Activates the new login session
+ * 2. Keep Current: Maintains the existing active session
+ *
+ * Note: This component is not translated as it appears before user locale is available
  */
 export const BffDoubleSessionModal = ({
   onSwitchUser,
