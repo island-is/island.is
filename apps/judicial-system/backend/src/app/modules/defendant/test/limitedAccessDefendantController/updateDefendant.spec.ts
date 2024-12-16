@@ -52,7 +52,6 @@ describe('LimitedAccessDefendantController - UpdateDefendant', () => {
     givenWhenThen = async (
       defendantUpdate: UpdateDefendantDto,
       type: CaseType,
-      courtCaseNumber?: string,
     ) => {
       const then = {} as Then
 
@@ -61,7 +60,7 @@ describe('LimitedAccessDefendantController - UpdateDefendant', () => {
           caseId,
           defendantId,
           user,
-          { id: caseId, courtCaseNumber, type } as Case,
+          { id: caseId, type } as Case,
           defendant,
           defendantUpdate,
         )

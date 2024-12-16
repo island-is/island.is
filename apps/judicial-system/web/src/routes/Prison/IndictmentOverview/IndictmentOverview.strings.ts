@@ -27,34 +27,34 @@ export const strings = defineMessages({
     description: 'Titill á Dómur hluta',
   },
   punishmentTypeTitle: {
-    id: 'judicial.system.core:indictment_overview.punishmentType_title',
+    id: 'judicial.system.core:indictment_overview.punishment_type_title',
     defaultMessage: 'Refsitegund',
     description: 'Titill á Refsitegund',
   },
-  imprisonment: {
-    id: 'judicial.system.core:indictment_overview.punishmentType.imprisonment',
+  punishmentTypeImprisonment: {
+    id: 'judicial.system.core:indictment_overview.punishment_type_imprisonment',
     defaultMessage: 'Óskilorðsbundið',
     description:
       'Notaður sem texti í óskilorðsbundið valmöguleika í Refsitegund',
   },
-  probation: {
-    id: 'judicial.system.core:indictment_overview.punishmentType.probation',
+  punishmentTypeProbation: {
+    id: 'judicial.system.core:indictment_overview.punishment_type_probation',
     defaultMessage: 'Skilorðsbundið',
     description:
       'Notaður sem texti í skilorðsbundið valmöguleika í Refsitegund',
   },
-  fine: {
-    id: 'judicial.system.core:court.indictment_overview.punishmentType.fine',
+  punishmentTypeFine: {
+    id: 'judicial.system.core:court.indictment_overview.punishment_type_fine',
     defaultMessage: 'Sekt',
     description: 'Notaður sem texti í sekt valmöguleika í Refsitegund',
   },
-  indictmentRulingDecisionFine: {
-    id: 'judicial.system.core:court.indictment_overview.punishmentType.indictmentRulingDecisionFine',
+  punishmentTypeIndictmentRulingDecisionFine: {
+    id: 'judicial.system.core:court.indictment_overview.punishment_type_indictment_ruling_decision_fine',
     defaultMessage: 'Viðurlagaákvörðun',
     description: 'Notaður sem texti í viðurlagaákvörðun í Refsitegund',
   },
-  signedFineInvitation: {
-    id: 'judicial.system.core:court.indictment_overview.punishmentType.signedFineInvitation',
+  punishmentTypeSignedFineInvitation: {
+    id: 'judicial.system.core:court.indictment_overview.punishment_type_signed_fine_invitation',
     defaultMessage: 'Áritað sektarboð',
     description: 'Notaður sem texti í sektarboð í Refsitegund',
   },

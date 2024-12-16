@@ -111,7 +111,7 @@ const IndictmentOverview = () => {
                 }}
                 large
                 backgroundColor="white"
-                label={formatMessage(strings.imprisonment)}
+                label={formatMessage(strings.punishmentTypeImprisonment)}
               />
             </Box>
             <Box marginBottom={2}>
@@ -127,7 +127,7 @@ const IndictmentOverview = () => {
                 }}
                 large
                 backgroundColor="white"
-                label={formatMessage(strings.probation)}
+                label={formatMessage(strings.punishmentTypeProbation)}
               />
             </Box>
             <Box marginBottom={2}>
@@ -143,7 +143,7 @@ const IndictmentOverview = () => {
                 }}
                 large
                 backgroundColor="white"
-                label={formatMessage(strings.fine)}
+                label={formatMessage(strings.punishmentTypeFine)}
               />
             </Box>
             <Box marginBottom={2}>
@@ -162,7 +162,7 @@ const IndictmentOverview = () => {
                 }}
                 large
                 backgroundColor="white"
-                label={formatMessage(strings.indictmentRulingDecisionFine)}
+                label={formatMessage(strings.punishmentTypeIndictmentRulingDecisionFine)}
               />
             </Box>
             <Box marginBottom={2}>
@@ -179,7 +179,7 @@ const IndictmentOverview = () => {
                 }}
                 large
                 backgroundColor="white"
-                label={formatMessage(strings.signedFineInvitation)}
+                label={formatMessage(strings.punishmentTypeSignedFineInvitation)}
               />
             </Box>
           </BlueBox>
