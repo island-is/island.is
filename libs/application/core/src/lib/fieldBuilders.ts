@@ -398,8 +398,10 @@ export const buildDividerField = (data: {
   condition?: Condition
   title?: FormText
   color?: Colors
+  marginBottom?: BoxProps['marginBottom']
+  marginTop?: BoxProps['marginTop']
 }): DividerField => {
-  const { title, color, condition } = data
+  const { title, color, condition, marginTop, marginBottom } = data
   return {
     id: '',
     children: undefined,
@@ -409,6 +411,8 @@ export const buildDividerField = (data: {
     title: title ?? '',
     color,
     condition,
+    marginTop,
+    marginBottom
   }
 }
 
@@ -461,6 +465,8 @@ export const buildSubmitField = (data: {
   id: string
   title: FormText
   placement?: 'footer' | 'screen'
+  marginBottom?: BoxProps['marginBottom']
+  marginTop?: BoxProps['marginTop']
   refetchApplicationAfterSubmit?: boolean
   actions: CallToAction[]
 }): SubmitField => {
@@ -470,6 +476,8 @@ export const buildSubmitField = (data: {
     title,
     actions,
     refetchApplicationAfterSubmit,
+    marginTop, 
+    marginBottom,
   } = data
   return {
     children: undefined,
@@ -482,6 +490,8 @@ export const buildSubmitField = (data: {
       typeof refetchApplicationAfterSubmit !== 'undefined'
         ? refetchApplicationAfterSubmit
         : false,
+    marginTop,
+    marginBottom,
     type: FieldTypes.SUBMIT,
     component: FieldComponents.SUBMIT,
   }
@@ -512,12 +522,16 @@ export const buildFieldRequired = (
 export const buildRedirectToServicePortalField = (data: {
   id: string
   title: FormText
+  marginBottom?: BoxProps['marginBottom']
+  marginTop?: BoxProps['marginTop']
 }): RedirectToServicePortalField => {
-  const { id, title } = data
+  const { id, title, marginTop, marginBottom } = data
   return {
     children: undefined,
     id,
     title,
+    marginTop,
+    marginBottom,
     type: FieldTypes.REDIRECT_TO_SERVICE_PORTAL,
     component: FieldComponents.REDIRECT_TO_SERVICE_PORTAL,
   }
@@ -559,6 +573,7 @@ export const buildExpandableDescriptionField = (
 ): ExpandableDescriptionField => {
   const { id, title, description, introText, startExpanded } = data
   return {
+    ...extractCommonFields(data),
     children: undefined,
     id,
     title,
@@ -605,6 +620,7 @@ export const buildPaymentChargeOverviewField = (
   const { id, title, forPaymentLabel, totalLabel, getSelectedChargeItems } =
     data
   return {
+    ...extractCommonFields(data),
     children: undefined,
     id,
     title,
@@ -928,6 +944,8 @@ export const buildSliderField = (
     labelMultiplier = 1,
     id,
     saveAsString,
+    marginTop,
+    marginBottom,
   } = data
   return {
     title: '',
@@ -954,6 +972,8 @@ export const buildSliderField = (
     labelMultiplier,
     condition,
     saveAsString,
+    marginTop,
+    marginBottom,
   }
 }
 
