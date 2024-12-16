@@ -98,6 +98,7 @@ const Limitations = ({
                     messages.organRegistrationOtherText,
                   )}
                   maxLength={220}
+                  onChange={(e) => setComment(e.target.value)}
                   value={comment}
                 />
               </Box>

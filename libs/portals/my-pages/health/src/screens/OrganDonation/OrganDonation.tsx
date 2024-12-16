@@ -25,14 +25,21 @@ const OrganDonation = () => {
   const donorStatus = data?.healthDirectorateOrganDonation.donor
   const isMinor = donorStatus?.isMinor
   const isTemporaryResident = donorStatus?.isTemporaryResident
-  const hasLimitations = donorStatus?.limitations?.hasLimitations ?? false
+  const hasLimitations = donorStatus?.limitations?.hasLimitations
+
+  const comment = donorStatus?.limitations?.comment
+
+  const allLimitations: Array<string> =
+    donorStatus?.limitations?.limitedOrgansList?.map((item) => item.name) ?? []
+
+  if (comment !== undefined && comment !== null && comment.length > 0) {
+    allLimitations.push(comment)
+  }
+
   const limitationText = hasLimitations
-    ? [
-        formatMessage(m.iAmOrganDonorWithExceptionsText),
-        donorStatus?.limitations?.limitedOrgansList
-          ?.map((organ) => organ.name)
-          .join(', '),
-      ].join(' ') + '.'
+    ? formatMessage(m.iAmOrganDonorWithExceptionsText) +
+      ' ' +
+      allLimitations.join(', ')
     : formatMessage(m.iAmOrganDonorText)
 
   const cardText: string = donorStatus?.isDonor
