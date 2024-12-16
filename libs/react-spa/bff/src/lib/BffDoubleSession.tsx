@@ -39,11 +39,11 @@ export const BffDoubleSessionModal = ({
           Vinsamlegast veldu annað hvort að
           <br />
           <span className={buttonWrapper}>
-            <Button variant="text" onClick={onSwitchUser}>
+            <Button variant="text" onClick={() => onSwitchUser()}>
               skipta um notanda
             </Button>{' '}
             eða{' '}
-            <Button variant="text" onClick={onKeepCurrentUser}>
+            <Button variant="text" onClick={() => onKeepCurrentUser()}>
               halda fyrri innskráningu
             </Button>
             .

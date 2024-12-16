@@ -284,8 +284,9 @@ export class AuthService {
 
       if (oldLoginAttemptData) {
         return this.redirectWithError(res, {
+          statusCode: 409, // Conflict
           code: LOGIN_ATTEMPT_FAILED_ACTIVE_SESSION,
-          message: 'Login session mixup',
+          message: 'Multiple sessions detected!',
         })
       }
     }

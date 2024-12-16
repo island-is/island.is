@@ -104,7 +104,7 @@ export const BffProvider = ({
     const targetLinkUri = urlParams.get('target_link_uri')
     const prompt = urlParams.get('prompt')
     const loginHint = urlParams.get('login_hint')
-    const url = window.location.href
+    const url = BffError.removeBffErrorParamsFromURL()
 
     const params = {
       target_link_uri:
@@ -207,7 +207,15 @@ export const BffProvider = ({
 
       const loginQueryParams = getLoginQueryParams()
       const targetLinkUri = loginQueryParams['target_link_uri']
-
+      console.log(
+        nationalId,
+        bffUrlGenerator('/login', {
+          target_link_uri: targetLinkUri,
+          ...(nationalId
+            ? { login_hint: nationalId }
+            : { prompt: 'select_account' }),
+        }),
+      )
       window.location.href = bffUrlGenerator('/login', {
         target_link_uri: targetLinkUri,
         ...(nationalId
@@ -244,10 +252,13 @@ export const BffProvider = ({
       return children
     }
 
+    const error = state?.error
+
     // Here priority matters. Make sure to check double session screen before error screen.
     if (
       showErrorScreen &&
-      state?.error?.code === LOGIN_ATTEMPT_FAILED_ACTIVE_SESSION
+      error?.statusCode === 409 &&
+      error?.code === LOGIN_ATTEMPT_FAILED_ACTIVE_SESSION
     ) {
       return (
         <BffDoubleSessionModal
