@@ -73,7 +73,6 @@ const GrantsSearchResultsPage: CustomScreen<GrantsHomeProps> = ({
   const [grants, setGrants] = useState<Array<Grant>>(
     initialGrantList?.items ?? [],
   )
-  const [page, setPage] = useState<number>(1)
   const [totalHits, setTotalHits] = useState<number | undefined>(
     initialGrantList?.total ?? 0,
   )
@@ -98,7 +97,7 @@ const GrantsSearchResultsPage: CustomScreen<GrantsHomeProps> = ({
     const organizations = searchParams.getAll('organization')
 
     setSearchState({
-      page: page ? Number.parseInt(page) : undefined,
+      page: page ? Number.parseInt(page) : 1,
       query: searchParams.get('query') ?? undefined,
       status: statuses.length ? statuses : undefined,
       category: categories.length ? categories : undefined,
@@ -111,7 +110,7 @@ const GrantsSearchResultsPage: CustomScreen<GrantsHomeProps> = ({
     if (!totalHits) {
       return
     }
-    return totalHits > 8 ? Math.floor(totalHits / PAGE_SIZE) : 1
+    return totalHits > 8 ? Math.ceil(totalHits / PAGE_SIZE) : 1
   }, [totalHits])
 
   const updateUrl = useCallback(() => {
@@ -216,7 +215,7 @@ const GrantsSearchResultsPage: CustomScreen<GrantsHomeProps> = ({
 
   const onResetFilter = () => {
     setSearchState({
-      page: undefined,
+      page: 1,
       query: undefined,
       status: undefined,
       category: undefined,
@@ -307,26 +306,28 @@ const GrantsSearchResultsPage: CustomScreen<GrantsHomeProps> = ({
                 locale={locale}
               />
             </Box>
-            {totalPages && (
+            {totalPages && totalPages > 1 ? (
               <Box marginTop={2} marginBottom={0}>
                 <Pagination
                   variant="purple"
-                  page={page}
-                  itemsPerPage={8}
+                  page={searchState?.page ?? 1}
+                  itemsPerPage={PAGE_SIZE}
                   totalItems={totalHits}
                   totalPages={totalPages}
                   renderLink={(page, className, children) => (
                     <Box
                       cursor="pointer"
                       className={className}
-                      onClick={() => setPage(page)}
+                      onClick={() => {
+                        updateSearchStateValue('page', page)
+                      }}
                     >
                       {children}
                     </Box>
                   )}
                 />
               </Box>
-            )}
+            ) : undefined}
           </SidebarLayout>
         )}
         {isMobile && (
@@ -441,8 +442,9 @@ GrantsSearchResults.getProps = async ({ apolloClient, locale, query }) => {
       },
     }),
   ])
+
   return {
-    initialGrants: getGrants,
+    initialGrantList: getGrants,
     tags: getGenericTagsInTagGroups ?? undefined,
     locale: locale as Locale,
     themeConfig: {
