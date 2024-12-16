@@ -13,6 +13,7 @@ import type { Request, Response } from 'express'
 import jwksClient from 'jwks-rsa'
 import { jwtDecode } from 'jwt-decode'
 
+import { LOGIN_ATTEMPT_FAILED_ACTIVE_SESSION } from '@island.is/shared/constants'
 import { IdTokenClaims } from '@island.is/shared/types'
 import { Algorithm, decode, verify } from 'jsonwebtoken'
 import { v4 as uuid } from 'uuid'
@@ -86,11 +87,14 @@ export class AuthService {
     res: Response,
     args?: Partial<CreateErrorQueryStrArgs> & { targetUrl?: string },
   ) {
-    const code = args?.code || 500
-    const error = args?.error || 'Login failed!'
+    const statusCode = args?.statusCode || 500
+    const message = args?.message || 'Login failed!'
 
     return res.redirect(
-      this.createClientBaseUrlWithError({ code, error }, args?.targetUrl),
+      this.createClientBaseUrlWithError(
+        { code: args?.code, message, statusCode },
+        args?.targetUrl,
+      ),
     )
   }
 
@@ -99,10 +103,12 @@ export class AuthService {
    */
   public async updateTokenCache(
     tokenResponse: TokenResponse,
+    loginAttemptData?: Record<string, LoginAttemptData>,
   ): Promise<CachedTokenResponse> {
     const userProfile: IdTokenClaims = jwtDecode(tokenResponse.id_token)
 
     const value: CachedTokenResponse = {
+      loginAttemptData,
       ...tokenResponse,
       // Encrypt the access and refresh tokens before saving them to the cache
       // to prevent unauthorized access to the tokens if cached service is compromised.
@@ -171,7 +177,7 @@ export class AuthService {
       )
 
       return this.redirectWithError(res, {
-        code: 400,
+        statusCode: 400,
       })
     }
 
@@ -189,11 +195,12 @@ export class AuthService {
       await this.cacheService.save({
         key: this.cacheService.createSessionKeyType('attempt', attemptLoginId),
         value: {
-          // Fallback if targetLinkUri is not provided
-          originUrl: this.createClientBaseUrl(),
           // Code verifier to be used in the callback
           codeVerifier,
-          targetLinkUri,
+          targetLinkUri:
+            targetLinkUri ??
+            // Fallback if targetLinkUri is not provided
+            this.createClientBaseUrl(),
         },
         ttl: this.config.cacheLoginAttemptTTLms,
       })
@@ -236,6 +243,59 @@ export class AuthService {
   }
 
   /**
+   * Handles cases where a login attempt is no longer available in the cache.
+   * This can happen in atleast three scenarios:
+   * 1. The cache key has expired
+   * 2. The cache key has been deleted
+   * 3. User pressed the back button and the cache key has already been deleted. TODO make better explanation
+   *
+   * The method attempts to recover by:
+   * 1. Checking if there's an active possible older session
+   * 2. If found, looking up the original login attempt data from the current session
+   * 3. Redirecting the user to either:
+   *    - The original target URL if the login attempt data is found
+   *    - An error page if no recovery is possible
+   */
+  private async handleMissingLoginAttempt({
+    req,
+    res,
+    loginAttemptCacheKey,
+  }: {
+    req: Request
+    res: Response
+    loginAttemptCacheKey: string
+  }) {
+    const sid = req.cookies[SESSION_COOKIE_NAME]
+
+    // Check if older session exists
+    if (sid) {
+      const currentCacheKey = this.cacheService.createSessionKeyType(
+        'current',
+        sid,
+      )
+
+      const currentCacheData = await this.cacheService.get<CachedTokenResponse>(
+        currentCacheKey,
+        false,
+      )
+
+      const oldLoginAttemptData =
+        currentCacheData?.loginAttemptData?.[loginAttemptCacheKey]
+
+      if (oldLoginAttemptData) {
+        return this.redirectWithError(res, {
+          code: LOGIN_ATTEMPT_FAILED_ACTIVE_SESSION,
+          message: 'Login session mixup',
+        })
+      }
+    }
+
+    this.logger.warn(this.cacheService.createKeyError(loginAttemptCacheKey))
+
+    return this.redirectWithError(res)
+  }
+
+  /**
    * Callback for the login flow
    * This method is called from the identity server after the user has logged in
    * and the authorization code has been issued.
@@ -260,8 +320,8 @@ export class AuthService {
       this.logger.error('Callback login IDS invalid request: ', idsError)
 
       return this.redirectWithError(res, {
-        code: 500,
-        error: idsError,
+        statusCode: 500,
+        message: idsError,
       })
     }
 
@@ -273,7 +333,7 @@ export class AuthService {
       )
 
       return this.redirectWithError(res, {
-        code: 400,
+        statusCode: 400,
       })
     }
 
@@ -289,9 +349,11 @@ export class AuthService {
     )
 
     if (!loginAttemptData) {
-      this.logger.warn(this.cacheService.createKeyError(loginAttemptCacheKey))
-
-      return this.redirectWithError(res)
+      return this.handleMissingLoginAttempt({
+        req,
+        res,
+        loginAttemptCacheKey,
+      })
     }
 
     try {
@@ -301,14 +363,14 @@ export class AuthService {
         codeVerifier: loginAttemptData.codeVerifier,
       })
 
-      const updatedTokenResponse = await this.updateTokenCache(tokenResponse)
+      const updatedTokenResponse = await this.updateTokenCache(tokenResponse, {
+        [loginAttemptCacheKey]: loginAttemptData,
+      })
 
       // Clean up the login attempt from the cache since we have a successful login.
-      this.cacheService
-        .delete(this.cacheService.createSessionKeyType('attempt', query.state))
-        .catch((err) => {
-          this.logger.warn(err)
-        })
+      this.cacheService.delete(loginAttemptCacheKey).catch((err) => {
+        this.logger.warn(err)
+      })
 
       // Clear any existing session cookie first
       // This prevents multiple session cookies being set.
@@ -351,9 +413,7 @@ export class AuthService {
         }
       }
 
-      return res.redirect(
-        loginAttemptData.targetLinkUri || loginAttemptData.originUrl,
-      )
+      return res.redirect(loginAttemptData.targetLinkUri)
     } catch (error) {
       this.logger.error('Callback login failed: ', error)
 
@@ -394,8 +454,8 @@ export class AuthService {
       )
 
       return this.redirectWithError(res, {
-        code: 400,
-        error: 'Logout failed!',
+        statusCode: 400,
+        message: 'Logout failed!',
       })
     }
 

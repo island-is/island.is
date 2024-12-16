@@ -2,7 +2,10 @@ import { useEffectOnce } from '@island.is/react-spa/shared'
 import { ReactNode, useCallback, useEffect, useReducer, useState } from 'react'
 
 import { LoadingScreen } from '@island.is/react/components'
+import { LOGIN_ATTEMPT_FAILED_ACTIVE_SESSION } from '@island.is/shared/constants'
 import { BffContext } from './BffContext'
+import { BffDoubleSessionModal } from './BffDoubleSession'
+import { BffError } from './BffError'
 import { BffPoller } from './BffPoller'
 import { BffSessionExpiredModal } from './BffSessionExpiredModal'
 import { ErrorScreen } from './ErrorScreen'
@@ -36,7 +39,7 @@ export const BffProvider = ({
   })
 
   const { authState } = state
-  const showErrorScreen = authState === 'error'
+  const showErrorScreen = authState === 'error' // TODO here look at making this dynamic depending on error code
   const showLoadingScreen =
     authState === 'loading' ||
     authState === 'switching' ||
@@ -163,7 +166,7 @@ export const BffProvider = ({
     } catch (error) {
       dispatch({
         type: ActionType.ERROR,
-        payload: error,
+        payload: new BffError(error.message),
       })
     }
   }
@@ -215,27 +218,16 @@ export const BffProvider = ({
     [bffUrlGenerator, getLoginQueryParams],
   )
 
-  const checkQueryStringError = () => {
-    const urlParams = new URLSearchParams(window.location.search)
-    const error = urlParams.get('bff_error_code')
-    const errorDescription = urlParams.get('bff_error_description')
+  useEffectOnce(() => {
+    const error = BffError.fromURL()
 
-    if (error) {
+    if (!error && !isLoggedIn) {
+      checkLogin()
+    } else if (error) {
       dispatch({
         type: ActionType.ERROR,
-        payload: new Error(`${error}: ${errorDescription}`),
+        payload: error,
       })
-    }
-
-    // Returns true if there is an error
-    return !!error
-  }
-
-  useEffectOnce(() => {
-    const hasError = checkQueryStringError()
-
-    if (!hasError && !isLoggedIn) {
-      checkLogin()
     }
   })
 
@@ -250,6 +242,19 @@ export const BffProvider = ({
   const renderContent = () => {
     if (mockedInitialState) {
       return children
+    }
+
+    // Here priority matters. Make sure to check double session screen before error screen.
+    if (
+      showErrorScreen &&
+      state?.error?.code === LOGIN_ATTEMPT_FAILED_ACTIVE_SESSION
+    ) {
+      return (
+        <BffDoubleSessionModal
+          onSwitchUser={switchUser}
+          onKeepCurrentUser={onRetry}
+        />
+      )
     }
 
     if (showErrorScreen) {
