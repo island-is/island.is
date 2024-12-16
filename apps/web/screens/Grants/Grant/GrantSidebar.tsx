@@ -1,6 +1,15 @@
 import { useMemo } from 'react'
+import { useIntl } from 'react-intl'
 
-import { Box, Button, LinkV2, Stack, Text } from '@island.is/island-ui/core'
+import {
+  Box,
+  BoxProps,
+  Button,
+  LinkV2,
+  Stack,
+  Text,
+} from '@island.is/island-ui/core'
+import { useLocale } from '@island.is/localization'
 import { Locale } from '@island.is/shared/types'
 import { isDefined } from '@island.is/shared/utils'
 import { InstitutionPanel } from '@island.is/web/components'
@@ -8,8 +17,7 @@ import { Grant } from '@island.is/web/graphql/schema'
 import { LinkType, useLinkResolver } from '@island.is/web/hooks'
 
 import { m } from '../messages'
-import { useLocale } from '@island.is/localization'
-import { generateStatusTag } from '../utils'
+import { generateStatusTag, parseStatus } from '../utils'
 
 interface Props {
   grant: Grant
@@ -30,9 +38,28 @@ const generateLine = (heading: string, content?: React.ReactNode) => {
   )
 }
 
+const generateSidebarPanel = (
+  data: Array<React.ReactElement>,
+  background: BoxProps['background'],
+) => {
+  if (!data.length) {
+    return undefined
+  }
+  return (
+    <Box background={background} padding={3} borderRadius="standard">
+      <Stack space={2}>{data}</Stack>
+    </Box>
+  )
+}
+
 export const GrantSidebar = ({ grant, locale }: Props) => {
   const { linkResolver } = useLinkResolver()
-  const { formatMessage } = useLocale()
+  const { formatMessage } = useIntl()
+
+  const status = useMemo(
+    () => parseStatus(grant, formatMessage, locale),
+    [grant, formatMessage, locale],
+  )
 
   const detailPanelData = useMemo(
     () =>
@@ -40,19 +67,19 @@ export const GrantSidebar = ({ grant, locale }: Props) => {
         generateLine(
           formatMessage(m.single.fund),
           grant?.fund?.link?.slug ? (
-            <Text fontWeight="semiBold" variant="medium" color="blue400">
-              <LinkV2
-                {...linkResolver(grant.fund.link.type as LinkType, [
-                  grant.fund.link.slug,
-                ])}
-                newTab
-                color="blue400"
-                underline="normal"
-                underlineVisibility="hover"
-              >
+            <LinkV2
+              {...linkResolver(grant.fund.link.type as LinkType, [
+                grant.fund.link.slug,
+              ])}
+              newTab
+              color="blue400"
+              underline="normal"
+              underlineVisibility="hover"
+            >
+              <Text fontWeight="semiBold" variant="medium" color="blue400">
                 {grant.fund.title}
-              </LinkV2>
-            </Text>
+              </Text>
+            </LinkV2>
           ) : undefined,
         ),
         generateLine(
@@ -73,21 +100,18 @@ export const GrantSidebar = ({ grant, locale }: Props) => {
           ) : undefined,
         ),
         generateLine(
-          formatMessage(m.single.deadline),
-          grant?.applicationDeadlineStatus ? (
-            <Text variant="medium">{grant.applicationDeadlineStatus}</Text>
-          ) : undefined,
-        ),
-        generateLine(
           formatMessage(m.single.status),
           grant?.status ? (
             <Text variant="medium">
-              {generateStatusTag(grant.status, formatMessage)?.label}
+              {
+                generateStatusTag(status.applicationStatus, formatMessage)
+                  ?.label
+              }
             </Text>
           ) : undefined,
         ),
       ].filter(isDefined) ?? [],
-    [grant, formatMessage, linkResolver],
+    [grant, formatMessage, linkResolver, status],
   )
 
   const filesPanelData = useMemo(
@@ -100,6 +124,7 @@ export const GrantSidebar = ({ grant, locale }: Props) => {
           return (
             <LinkV2
               key={`${f.url}-${index}`}
+              newTab
               href={f.url}
               underlineVisibility="hover"
             >
@@ -113,6 +138,35 @@ export const GrantSidebar = ({ grant, locale }: Props) => {
     [grant.files],
   )
 
+  const supportLinksPanelData = useMemo(
+    () =>
+      grant.supportLinks
+        ?.map((link) => {
+          if (!link.url || !link.text || !link.id) {
+            return null
+          }
+          return (
+            <LinkV2
+              newTab
+              key={link.id}
+              href={link.url}
+              underlineVisibility="hover"
+            >
+              <Button
+                size="medium"
+                icon="link"
+                iconType="outline"
+                variant="text"
+              >
+                {link.text}
+              </Button>
+            </LinkV2>
+          )
+        })
+        .filter(isDefined) ?? [],
+    [grant.supportLinks],
+  )
+
   return (
     <Stack space={3}>
       <InstitutionPanel
@@ -124,16 +178,9 @@ export const GrantSidebar = ({ grant, locale }: Props) => {
         img={grant.fund?.parentOrganization.logo?.url}
         locale={locale}
       />
-      {detailPanelData.length ? (
-        <Box background="blue100" padding={3} borderRadius="standard">
-          <Stack space={2}>{detailPanelData}</Stack>
-        </Box>
-      ) : undefined}
-      {filesPanelData.length ? (
-        <Box background="red100" padding={3} borderRadius="standard">
-          <Stack space={2}>{filesPanelData}</Stack>
-        </Box>
-      ) : undefined}
+      {generateSidebarPanel(detailPanelData, 'blue100')}
+      {generateSidebarPanel(filesPanelData, 'red100')}
+      {generateSidebarPanel(supportLinksPanelData, 'purple100')}
     </Stack>
   )
 }

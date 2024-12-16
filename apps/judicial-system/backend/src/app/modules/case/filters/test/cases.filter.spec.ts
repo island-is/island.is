@@ -347,7 +347,6 @@ describe('getCasesQueryFilter', () => {
     expect(res).toStrictEqual({
       [Op.and]: [
         { is_archived: false },
-        { state: CaseState.ACCEPTED },
         {
           type: [
             CaseType.CUSTODY,
@@ -355,6 +354,7 @@ describe('getCasesQueryFilter', () => {
             CaseType.PAROLE_REVOCATION,
           ],
         },
+        { state: CaseState.ACCEPTED },
         {
           decision: [CaseDecision.ACCEPTING, CaseDecision.ACCEPTING_PARTIALLY],
         },
@@ -382,13 +382,18 @@ describe('getCasesQueryFilter', () => {
 
       [Op.or]: [
         {
-          state: CaseState.ACCEPTED,
           type: [...restrictionCases, CaseType.PAROLE_REVOCATION],
+          state: CaseState.ACCEPTED,
         },
         {
           type: indictmentCases,
           state: CaseState.COMPLETED,
-          indictment_ruling_decision: CaseIndictmentRulingDecision.RULING,
+          indictment_ruling_decision: {
+            [Op.or]: [
+              CaseIndictmentRulingDecision.RULING,
+              CaseIndictmentRulingDecision.FINE,
+            ],
+          },
           indictment_review_decision: IndictmentCaseReviewDecision.ACCEPT,
           id: {
             [Op.in]: Sequelize.literal(`

@@ -19,6 +19,8 @@ export {
   NotificationDispatchType,
   DefendantNotificationType,
   CivilClaimantNotificationType,
+  IndictmentCaseNotificationType,
+  EventNotificationType,
   notificationTypes,
 } from './lib/notification'
 export type { Institution } from './lib/institution'
@@ -102,6 +104,7 @@ export {
 export {
   getIndictmentVerdictAppealDeadlineStatus,
   VERDICT_APPEAL_WINDOW_DAYS,
+  FINE_APPEAL_WINDOW_DAYS,
 } from './lib/indictmentCase'
 
 export type {

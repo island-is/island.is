@@ -40,12 +40,13 @@ import {
   StaticTableField,
   HiddenInputWithWatchedValueField,
   HiddenInputField,
-  AccordionField,
-  BankAccountField,
   SliderField,
   MaybeWithApplication,
   MaybeWithApplicationAndFieldAndLocale,
+  DisplayField,
   FieldsRepeaterField,
+  AccordionField,
+  BankAccountField,
 } from '@island.is/application/types'
 import { Locale } from '@island.is/shared/types'
 import { Colors } from '@island.is/island-ui/theme'
@@ -457,49 +458,6 @@ export const buildKeyValueField = (data: {
   }
 }
 
-export const buildAccordionField = (
-  data: Omit<AccordionField, 'type' | 'component' | 'children'>,
-): AccordionField => {
-  const {
-    accordionItems,
-    title,
-    titleVariant,
-    id,
-    marginTop,
-    marginBottom,
-    condition,
-  } = data
-  return {
-    children: undefined,
-    id,
-    title,
-    titleVariant,
-    marginTop,
-    marginBottom,
-    accordionItems,
-    condition,
-    type: FieldTypes.ACCORDION,
-    component: FieldComponents.ACCORDION,
-  }
-}
-
-export const buildBankAccountField = (
-  data: Omit<BankAccountField, 'type' | 'component' | 'children'>,
-): BankAccountField => {
-  const { title, id, marginBottom, marginTop, titleVariant } = data
-
-  return {
-    children: undefined,
-    id,
-    title,
-    marginBottom,
-    marginTop,
-    titleVariant,
-    type: FieldTypes.BANK_ACCOUNT,
-    component: FieldComponents.BANK_ACCOUNT,
-  }
-}
-
 export const buildSubmitField = (data: {
   id: string
   title: FormText
@@ -792,6 +750,12 @@ export const buildNationalIdWithNameField = (
     nameDefaultValue,
     errorMessage,
     minAgePerson,
+    searchPersons,
+    searchCompanies,
+    titleVariant,
+    description,
+    marginTop,
+    marginBottom,
   } = data
   return {
     ...extractCommonFields(data),
@@ -805,9 +769,15 @@ export const buildNationalIdWithNameField = (
     nameDefaultValue,
     errorMessage,
     minAgePerson,
+    searchPersons,
+    searchCompanies,
     children: undefined,
     type: FieldTypes.NATIONAL_ID_WITH_NAME,
     component: FieldComponents.NATIONAL_ID_WITH_NAME,
+    titleVariant,
+    description,
+    marginTop,
+    marginBottom,
   }
 }
 
@@ -1010,5 +980,79 @@ export const buildSliderField = (
     onChangeEnd,
     labelMultiplier,
     saveAsString,
+  }
+}
+
+export const buildDisplayField = (
+  data: Omit<DisplayField, 'type' | 'component' | 'children'>,
+): DisplayField => {
+  const {
+    title,
+    titleVariant,
+    label,
+    variant,
+    marginTop,
+    marginBottom,
+    value,
+    suffix,
+    rightAlign,
+    halfWidthOwnline,
+  } = data
+  return {
+    ...extractCommonFields(data),
+    title,
+    titleVariant,
+    label,
+    variant,
+    marginTop,
+    marginBottom,
+    type: FieldTypes.DISPLAY,
+    component: FieldComponents.DISPLAY,
+    children: undefined,
+    value,
+    suffix,
+    rightAlign,
+    halfWidthOwnline,
+  }
+}
+
+export const buildAccordionField = (
+  data: Omit<AccordionField, 'type' | 'component' | 'children'>,
+): AccordionField => {
+  const {
+    accordionItems,
+    title,
+    titleVariant,
+    id,
+    marginTop,
+    marginBottom,
+    condition,
+  } = data
+  return {
+    children: undefined,
+    id,
+    title,
+    titleVariant,
+    marginTop,
+    marginBottom,
+    accordionItems,
+    condition,
+    type: FieldTypes.ACCORDION,
+    component: FieldComponents.ACCORDION,
+  }
+}
+export const buildBankAccountField = (
+  data: Omit<BankAccountField, 'type' | 'component' | 'children'>,
+): BankAccountField => {
+  const { title, id, marginBottom, marginTop, titleVariant } = data
+  return {
+    children: undefined,
+    id,
+    title,
+    marginBottom,
+    marginTop,
+    titleVariant,
+    type: FieldTypes.BANK_ACCOUNT,
+    component: FieldComponents.BANK_ACCOUNT,
   }
 }

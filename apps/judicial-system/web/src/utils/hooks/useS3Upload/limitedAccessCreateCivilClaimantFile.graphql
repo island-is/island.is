@@ -1,0 +1,7 @@
+mutation LimitedAccessCreateCivilClaimantFile(
+  $input: CreateCivilClaimantFileInput!
+) {
+  limitedAccessCreateCivilClaimantFile(input: $input) {
+    id
+  }
+}

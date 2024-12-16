@@ -52,7 +52,7 @@ export const notifications = {
   }),
   emailWhitelistDomains: defineMessage({
     id: 'judicial.system.backend:notifications.email_whitelist_domains',
-    defaultMessage: 'omnitrix.is,kolibri.is',
+    defaultMessage: 'omnitrix.is,kolibri.is,dummy.dd',
     description: 'Notað til að tilgreina hvort póstfang sé í hvítlista',
   }),
   readyForCourt: defineMessages({
@@ -854,6 +854,21 @@ export const notifications = {
       defaultMessage:
         'Ný gögn hafa borist vegna máls {courtCaseNumber}. {userHasAccessToRVG, select, true {Hægt er að nálgast gögn málsins á {linkStart}yfirlitssíðu málsins í Réttarvörslugátt{linkEnd}} other {Hægt er að nálgast gögn málsins hjá {court} ef þau hafa ekki þegar verið afhent}}.',
       description: 'Texti í pósti til aðila máls þegar ný gögn eru send',
+    },
+  }),
+  courtOfficialAssignedEmail: defineMessages({
+    subject: {
+      id: 'judicial.system.backend:notifications.court_official_assigned_email.subject',
+      defaultMessage: 'Úthlutun máls {courtCaseNumber}',
+      description:
+        'Fyrirsögn í pósti til dómara og dómritara þegar máli er úthlutað á þau',
+    },
+    body: {
+      id: 'judicial.system.backend:notifications.court_official_assigned_email.body',
+      defaultMessage:
+        'Héraðsdómur hefur skráð þig sem {role, select, DISTRICT_COURT_JUDGE {dómara} DISTRICT_COURT_REGISTRAR {dómritara} other {óþekkt}} í máli {courtCaseNumber}. Hægt er að nálgast gögn málsins á {linkStart}yfirlitssíðu málsins í Réttarvörslugátt{linkEnd}',
+      description:
+        'Texti í pósti til dómara og dómritara þegar máli er úthlutað á þau',
     },
   }),
 }

@@ -23,9 +23,9 @@ export const Logo: FC<React.PropsWithChildren<unknown>> = () => (
         gradientTransform="translate(-7649.04289 -1970.10554) scale(2.863)"
         gradientUnits="userSpaceOnUse"
       >
-        <stop offset="0" stop-color="#fff" />
-        <stop offset="0.40909" stop-color="#fff" />
-        <stop offset="1" stop-color="#fff" />
+        <stop offset="0" stopColor="#fff" />
+        <stop offset="0.40909" stopColor="#fff" />
+        <stop offset="1" stopColor="#fff" />
       </radialGradient>
       <clipPath id="clip-path-2">
         <path
@@ -42,8 +42,8 @@ export const Logo: FC<React.PropsWithChildren<unknown>> = () => (
         gradientTransform="translate(3236.69056 -5325.32716) rotate(89.99998) scale(2.31075)"
         gradientUnits="userSpaceOnUse"
       >
-        <stop offset="0" stop-color="#fff" />
-        <stop offset="1" stop-color="#fff" />
+        <stop offset="0" stopColor="#fff" />
+        <stop offset="1" stopColor="#fff" />
       </linearGradient>
       <clipPath id="clip-path-3">
         <path
@@ -60,10 +60,10 @@ export const Logo: FC<React.PropsWithChildren<unknown>> = () => (
         gradientTransform="translate(-7163.71257 -1623.24529) scale(2.73111)"
         gradientUnits="userSpaceOnUse"
       >
-        <stop offset="0" stop-color="#fff" />
-        <stop offset="0.26704" stop-color="#fff" />
-        <stop offset="0.71591" stop-color="#fff" />
-        <stop offset="1" stop-color="#fff" />
+        <stop offset="0" stopColor="#fff" />
+        <stop offset="0.26704" stopColor="#fff" />
+        <stop offset="0.71591" stopColor="#fff" />
+        <stop offset="1" stopColor="#fff" />
       </linearGradient>
       <clipPath id="clip-path-4">
         <path
@@ -80,9 +80,9 @@ export const Logo: FC<React.PropsWithChildren<unknown>> = () => (
         gradientTransform="translate(2319.7923 -3676.69622) rotate(90.00001) scale(1.92694)"
         gradientUnits="userSpaceOnUse"
       >
-        <stop offset="0" stop-color="#fff" />
-        <stop offset="0.64772" stop-color="#fff" />
-        <stop offset="1" stop-color="#fff" />
+        <stop offset="0" stopColor="#fff" />
+        <stop offset="0.64772" stopColor="#fff" />
+        <stop offset="1" stopColor="#fff" />
       </linearGradient>
       <clipPath id="clip-path-5">
         <path

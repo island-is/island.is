@@ -386,7 +386,7 @@ export const PhoneInput = forwardRef(
               <Box
                 className={styles.spinner}
                 flexShrink={0}
-                borderRadius="circle"
+                borderRadius="full"
               />
             )}
             {!loading && hasError && (

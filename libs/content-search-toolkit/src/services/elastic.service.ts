@@ -68,7 +68,7 @@ export class ElasticService {
   }
 
   // this can partially succeed
-  async bulk(index: string, documents: SyncRequest, refresh = false) {
+  async bulk(index: string, documents: SyncRequest) {
     logger.info('Processing documents', {
       index,
       added: documents.add.length,
@@ -106,14 +106,10 @@ export class ElasticService {
       return false
     }
 
-    await this.bulkRequest(index, requests, refresh)
+    await this.bulkRequest(index, requests)
   }
 
-  async bulkRequest(
-    index: string,
-    requests: Record<string, unknown>[],
-    refresh = false,
-  ) {
+  async bulkRequest(index: string, requests: Record<string, unknown>[]) {
     const chunkSize = 14
     let delay = INITIAL_DELAY
     let retries = MAX_RETRY_COUNT
@@ -129,7 +125,6 @@ export class ElasticService {
           const response = await client.bulk({
             index: index,
             body: requestChunk,
-            refresh: refresh ? 'true' : undefined,
           })
 
           // not all errors are thrown log if the response has any errors

@@ -16,7 +16,7 @@ import {
   StaticText,
 } from './Form'
 import { ApolloClient } from '@apollo/client'
-import { Application } from './Application'
+import { Application, FormValue } from './Application'
 import { CallToAction } from './StateMachine'
 import { Colors, theme } from '@island.is/island-ui/theme'
 import { Condition } from './Condition'
@@ -89,6 +89,8 @@ export type RepeaterItem = {
    */
   displayInTable?: boolean
   label?: StaticText
+  phoneLabel?: StaticText
+  emailLabel?: StaticText
   placeholder?: StaticText
   options?: TableRepeaterOptions
   backgroundColor?: 'blue' | 'white'
@@ -99,6 +101,10 @@ export type RepeaterItem = {
     activeField?: Record<string, string>,
   ) => boolean
   dataTestId?: string
+  showPhoneField?: boolean
+  phoneRequired?: boolean
+  showEmailField?: boolean
+  emailRequired?: boolean
   readonly?:
     | boolean
     | ((
@@ -259,9 +265,10 @@ export enum FieldTypes {
   FIND_VEHICLE = 'FIND_VEHICLE',
   VEHICLE_RADIO = 'VEHICLE_RADIO',
   STATIC_TABLE = 'STATIC_TABLE',
+  SLIDER = 'SLIDER',
+  DISPLAY = 'DISPLAY',
   ACCORDION = 'ACCORDION',
   BANK_ACCOUNT = 'BANK_ACCOUNT',
-  SLIDER = 'SLIDER',
 }
 
 export enum FieldComponents {
@@ -295,9 +302,10 @@ export enum FieldComponents {
   FIND_VEHICLE = 'FindVehicleFormField',
   VEHICLE_RADIO = 'VehicleRadioFormField',
   STATIC_TABLE = 'StaticTableFormField',
+  SLIDER = 'SliderFormField',
+  DISPLAY = 'DisplayFormField',
   ACCORDION = 'AccordionFormField',
   BANK_ACCOUNT = 'BankAccountFormField',
-  SLIDER = 'SliderFormField',
 }
 
 export interface CheckboxField extends InputField {
@@ -543,30 +551,6 @@ export interface ImageField extends BaseField {
   imagePosition?: ImagePositionProps | Array<ImagePositionProps>
 }
 
-export type AccordionItem = {
-  itemTitle: FormText
-  itemContent: FormText
-}
-
-export interface AccordionField extends BaseField {
-  readonly type: FieldTypes.ACCORDION
-  component: FieldComponents.ACCORDION
-  accordionItems:
-    | Array<AccordionItem>
-    | ((application: Application) => Array<AccordionItem>)
-  marginTop?: ResponsiveProp<Space>
-  marginBottom?: ResponsiveProp<Space>
-  titleVariant?: TitleVariants
-}
-
-export interface BankAccountField extends BaseField {
-  readonly type: FieldTypes.BANK_ACCOUNT
-  component: FieldComponents.BANK_ACCOUNT
-  marginTop?: ResponsiveProp<Space>
-  marginBottom?: ResponsiveProp<Space>
-  titleVariant?: TitleVariants
-}
-
 export interface PdfLinkButtonField extends BaseField {
   readonly type: FieldTypes.PDF_LINK_BUTTON
   component: FieldComponents.PDF_LINK_BUTTON
@@ -596,6 +580,11 @@ export interface NationalIdWithNameField extends InputField {
   nameDefaultValue?: string
   errorMessage?: string
   minAgePerson?: number
+  searchPersons?: boolean
+  searchCompanies?: boolean
+  titleVariant?: TitleVariants
+  marginTop?: ResponsiveProp<Space>
+  marginBottom?: ResponsiveProp<Space>
 }
 
 type Modify<T, R> = Omit<T, keyof R> & R
@@ -694,6 +683,28 @@ export type FieldsRepeaterField = BaseField & {
     rows?: string[]
     format?: Record<string, (value: string) => string | StaticText>
   }
+}
+
+export type AccordionItem = {
+  itemTitle: FormText
+  itemContent: FormText
+}
+export interface AccordionField extends BaseField {
+  readonly type: FieldTypes.ACCORDION
+  component: FieldComponents.ACCORDION
+  accordionItems:
+    | Array<AccordionItem>
+    | ((application: Application) => Array<AccordionItem>)
+  marginTop?: ResponsiveProp<Space>
+  marginBottom?: ResponsiveProp<Space>
+  titleVariant?: TitleVariants
+}
+export interface BankAccountField extends BaseField {
+  readonly type: FieldTypes.BANK_ACCOUNT
+  component: FieldComponents.BANK_ACCOUNT
+  marginTop?: ResponsiveProp<Space>
+  marginBottom?: ResponsiveProp<Space>
+  titleVariant?: TitleVariants
 }
 
 export interface FindVehicleField extends InputField {
@@ -797,6 +808,20 @@ export interface SliderField extends BaseField {
   saveAsString?: boolean
 }
 
+export interface DisplayField extends BaseField {
+  readonly type: FieldTypes.DISPLAY
+  component: FieldComponents.DISPLAY
+  marginTop?: ResponsiveProp<Space>
+  marginBottom?: ResponsiveProp<Space>
+  titleVariant?: TitleVariants
+  suffix?: MessageDescriptor | string
+  rightAlign?: boolean
+  halfWidthOwnline?: boolean
+  variant?: TextFieldVariant
+  label?: MessageDescriptor | string
+  value: (answers: FormValue) => string
+}
+
 export type Field =
   | CheckboxField
   | CustomField
@@ -830,6 +855,7 @@ export type Field =
   | FindVehicleField
   | VehicleRadioField
   | StaticTableField
+  | SliderField
+  | DisplayField
   | AccordionField
   | BankAccountField
-  | SliderField
