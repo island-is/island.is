@@ -16,7 +16,10 @@ import {
   Stack,
 } from '@island.is/island-ui/core'
 import { InputController } from '@island.is/shared/form-fields'
-import { hasDeveloperRole } from '@island.is/skilavottord-web/auth/utils'
+import {
+  hasDeveloperRole,
+  hasMunicipalityRole,
+} from '@island.is/skilavottord-web/auth/utils'
 import UserContext from '@island.is/skilavottord-web/context/UserContext'
 import { Query } from '@island.is/skilavottord-web/graphql/schema'
 import { useI18n } from '@island.is/skilavottord-web/i18n'
@@ -302,6 +305,7 @@ const RecyclingCompanyForm: FC<
                         options={municipalities}
                         onChange={onChange}
                         isCreatable
+                        isDisabled={hasMunicipalityRole(user?.role)}
                       />
                     )
                   }}
