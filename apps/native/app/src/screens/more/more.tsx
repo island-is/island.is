@@ -1,10 +1,11 @@
-import { FamilyMemberCard, MoreCard } from '@ui'
 import React, { useState } from 'react'
 import { useIntl } from 'react-intl'
 import { SafeAreaView, ScrollView, TouchableHighlight } from 'react-native'
 import { NavigationFunctionComponent } from 'react-native-navigation'
 import { useNavigationComponentDidAppear } from 'react-native-navigation-hooks'
 import styled, { useTheme } from 'styled-components/native'
+
+import { FamilyMemberCard, MoreCard } from '../../ui'
 import assetsIcon from '../../assets/icons/assets.png'
 import familyIcon from '../../assets/icons/family.png'
 import financeIcon from '../../assets/icons/finance.png'

@@ -1,17 +1,18 @@
-import { useIntl } from 'react-intl'
 import { useWindowSize } from 'react-use'
 import format from 'date-fns/format'
 import { useRouter } from 'next/router'
 
-import { Box, Inline, TagVariant, Text } from '@island.is/island-ui/core'
+import { Box, Inline, Text } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
+import { useLocale } from '@island.is/localization'
 import { Locale } from '@island.is/shared/types'
 import { isDefined } from '@island.is/shared/utils'
 import { PlazaCard } from '@island.is/web/components'
-import { Grant, GrantStatus } from '@island.is/web/graphql/schema'
+import { Grant } from '@island.is/web/graphql/schema'
 import { useLinkResolver } from '@island.is/web/hooks'
 
 import { m } from '../messages'
+import { generateStatusTag, parseStatus } from '../utils'
 
 interface Props {
   grants?: Array<Grant>
@@ -20,7 +21,7 @@ interface Props {
 }
 
 export const SearchResultsContent = ({ grants, subheader, locale }: Props) => {
-  const { formatMessage } = useIntl()
+  const { formatMessage } = useLocale()
   const router = useRouter()
   const { linkResolver } = useLinkResolver()
 
@@ -42,21 +43,7 @@ export const SearchResultsContent = ({ grants, subheader, locale }: Props) => {
               return null
             }
 
-            let tagVariant: TagVariant | undefined
-            switch (grant.status) {
-              case GrantStatus.Open:
-                tagVariant = 'mint'
-                break
-              case GrantStatus.Closed:
-                tagVariant = 'rose'
-                break
-              case GrantStatus.OpensSoon:
-                tagVariant = 'purple'
-                break
-              default:
-                break
-            }
-
+            const status = parseStatus(grant, formatMessage, locale)
             return (
               <Box key={grant.id}>
                 {grant.applicationId && (
@@ -67,10 +54,10 @@ export const SearchResultsContent = ({ grants, subheader, locale }: Props) => {
                     text={grant.description ?? ''}
                     logo={grant.fund?.parentOrganization?.logo?.url ?? ''}
                     logoAlt={grant.fund?.parentOrganization?.logo?.title ?? ''}
-                    tag={{
-                      label: grant.statusText ?? '',
-                      variant: tagVariant,
-                    }}
+                    tag={generateStatusTag(
+                      status.applicationStatus,
+                      formatMessage,
+                    )}
                     cta={{
                       label: formatMessage(m.general.seeMore),
                       variant: 'text',
@@ -92,14 +79,19 @@ export const SearchResultsContent = ({ grants, subheader, locale }: Props) => {
                             text: `${format(
                               new Date(grant.dateFrom),
                               'dd.MM.',
-                            )}-${format(new Date(grant.dateTo), 'dd.MM.yyyy')}`,
+                            )} - ${format(
+                              new Date(grant.dateTo),
+                              'dd.MM.yyyy',
+                            )}`,
                           }
                         : null,
-                      {
-                        icon: 'time' as const,
-                        //todo: fix when the text is ready
-                        text: 'Frestur til 16.08.2024, kl. 15.00',
-                      },
+                      status.deadlineStatus
+                        ? {
+                            icon: 'time' as const,
+                            //todo: fix when the text is ready
+                            text: status.deadlineStatus,
+                          }
+                        : undefined,
                       grant.categoryTags
                         ? {
                             icon: 'informationCircle' as const,
@@ -124,7 +116,7 @@ export const SearchResultsContent = ({ grants, subheader, locale }: Props) => {
           justifyContent="center"
           background="white"
           borderWidth="standard"
-          borderRadius="xl"
+          borderRadius="lg"
           borderColor="blue200"
           flexDirection={['columnReverse', 'columnReverse', 'row']}
           columnGap={[2, 4, 8, 8, 20]}

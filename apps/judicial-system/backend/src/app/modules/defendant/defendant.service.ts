@@ -22,6 +22,7 @@ import {
   CaseNotificationType,
   CaseState,
   CaseType,
+  DefendantEventType,
   DefendantNotificationType,
   DefenderChoice,
   isIndictmentCase,
@@ -33,12 +34,15 @@ import { CreateDefendantDto } from './dto/createDefendant.dto'
 import { InternalUpdateDefendantDto } from './dto/internalUpdateDefendant.dto'
 import { UpdateDefendantDto } from './dto/updateDefendant.dto'
 import { Defendant } from './models/defendant.model'
+import { DefendantEventLog } from './models/defendantEventLog.model'
 import { DeliverResponse } from './models/deliver.response'
 
 @Injectable()
 export class DefendantService {
   constructor(
     @InjectModel(Defendant) private readonly defendantModel: typeof Defendant,
+    @InjectModel(DefendantEventLog)
+    private readonly defendantEventLogModel: typeof DefendantEventLog,
     private readonly courtService: CourtService,
     private readonly messageService: MessageService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
@@ -70,24 +74,25 @@ export class DefendantService {
     return message
   }
 
-  private getUpdatedDefendant(
-    numberOfAffectedRows: number,
-    defendants: Defendant[],
-    defendantId: string,
+  private getMessagesForIndictmentToPrisonAdminChanges(
+    defendant: Defendant,
     caseId: string,
-  ): Defendant {
-    if (numberOfAffectedRows > 1) {
-      // Tolerate failure, but log error
-      this.logger.error(
-        `Unexpected number of rows (${numberOfAffectedRows}) affected when updating defendant ${defendantId} of case ${caseId}`,
-      )
-    } else if (numberOfAffectedRows < 1) {
-      throw new InternalServerErrorException(
-        `Could not update defendant ${defendantId} of case ${caseId}`,
-      )
+  ): Message {
+    const messageType =
+      defendant.isSentToPrisonAdmin === true
+        ? DefendantNotificationType.INDICTMENT_SENT_TO_PRISON_ADMIN
+        : DefendantNotificationType.INDICTMENT_WITHDRAWN_FROM_PRISON_ADMIN
+
+    const message = {
+      type: MessageType.DEFENDANT_NOTIFICATION,
+      caseId,
+      elementId: defendant.id,
+      body: {
+        type: messageType,
+      },
     }
 
-    return defendants[0]
+    return message
   }
 
   private async sendRequestCaseUpdateDefendantMessages(
@@ -133,31 +138,57 @@ export class DefendantService {
     theCase: Case,
     updatedDefendant: Defendant,
     oldDefendant: Defendant,
+    user: User,
   ): Promise<void> {
     if (!theCase.courtCaseNumber) {
       return
     }
 
-    if (updatedDefendant.isDefenderChoiceConfirmed) {
+    const messages: Message[] = []
+
+    if (
+      updatedDefendant.isDefenderChoiceConfirmed &&
+      !oldDefendant.isDefenderChoiceConfirmed
+    ) {
+      // Defender choice was just confirmed by the court
+      messages.push({
+        type: MessageType.DELIVERY_TO_COURT_INDICTMENT_DEFENDER,
+        user,
+        caseId: theCase.id,
+        elementId: updatedDefendant.id,
+      })
+
       if (
         updatedDefendant.defenderChoice === DefenderChoice.CHOOSE ||
         updatedDefendant.defenderChoice === DefenderChoice.DELEGATE
       ) {
-        // TODO: Update defender with robot if needed
-
         // Defender was just confirmed by judge
         if (!oldDefendant.isDefenderChoiceConfirmed) {
-          await this.messageService.sendMessagesToQueue([
-            {
-              type: MessageType.DEFENDANT_NOTIFICATION,
-              caseId: theCase.id,
-              body: { type: DefendantNotificationType.DEFENDER_ASSIGNED },
-              elementId: updatedDefendant.id,
-            },
-          ])
+          messages.push({
+            type: MessageType.DEFENDANT_NOTIFICATION,
+            caseId: theCase.id,
+            body: { type: DefendantNotificationType.DEFENDER_ASSIGNED },
+            elementId: updatedDefendant.id,
+          })
         }
       }
+    } else if (
+      updatedDefendant.isSentToPrisonAdmin !== undefined &&
+      updatedDefendant.isSentToPrisonAdmin !== oldDefendant.isSentToPrisonAdmin
+    ) {
+      messages.push(
+        this.getMessagesForIndictmentToPrisonAdminChanges(
+          updatedDefendant,
+          theCase.id,
+        ),
+      )
     }
+
+    if (messages.length === 0) {
+      return
+    }
+
+    return this.messageService.sendMessagesToQueue(messages)
   }
 
   async createForNewCase(
@@ -204,15 +235,21 @@ export class DefendantService {
       { where: { id: defendantId, caseId }, returning: true, transaction },
     )
 
-    return this.getUpdatedDefendant(
-      numberOfAffectedRows,
-      defendants,
-      defendantId,
-      caseId,
-    )
+    if (numberOfAffectedRows > 1) {
+      // Tolerate failure, but log error
+      this.logger.error(
+        `Unexpected number of rows (${numberOfAffectedRows}) affected when updating defendant ${defendantId} of case ${caseId}`,
+      )
+    } else if (numberOfAffectedRows < 1) {
+      throw new InternalServerErrorException(
+        `Could not update defendant ${defendantId} of case ${caseId}`,
+      )
+    }
+
+    return defendants[0]
   }
 
-  async updateRequestCase(
+  async updateRequestCaseDefendant(
     theCase: Case,
     defendant: Defendant,
     update: UpdateDefendantDto,
@@ -234,10 +271,11 @@ export class DefendantService {
     return updatedDefendant
   }
 
-  async updateIndictmentCase(
+  async updateIndictmentCaseDefendant(
     theCase: Case,
     defendant: Defendant,
     update: UpdateDefendantDto,
+    user: User,
   ): Promise<Defendant> {
     const updatedDefendant = await this.updateDatabaseDefendant(
       theCase.id,
@@ -245,10 +283,19 @@ export class DefendantService {
       update,
     )
 
+    if (update.isSentToPrisonAdmin) {
+      this.defendantEventLogModel.create({
+        caseId: theCase.id,
+        defendantId: defendant.id,
+        eventType: DefendantEventType.SENT_TO_PRISON_ADMIN,
+      })
+    }
+
     await this.sendIndictmentCaseUpdateDefendantMessages(
       theCase,
       updatedDefendant,
       defendant,
+      user,
     )
 
     return updatedDefendant
@@ -261,9 +308,14 @@ export class DefendantService {
     user: User,
   ): Promise<Defendant> {
     if (isIndictmentCase(theCase.type)) {
-      return this.updateIndictmentCase(theCase, defendant, update)
+      return this.updateIndictmentCaseDefendant(
+        theCase,
+        defendant,
+        update,
+        user,
+      )
     } else {
-      return this.updateRequestCase(theCase, defendant, update, user)
+      return this.updateRequestCaseDefendant(theCase, defendant, update, user)
     }
   }
 
@@ -425,6 +477,32 @@ export class DefendantService {
       })
       .catch((reason) => {
         this.logger.error('Failed to update case with defendant', { reason })
+
+        return { delivered: false }
+      })
+  }
+
+  async deliverIndictmentDefenderToCourt(
+    theCase: Case,
+    defendant: Defendant,
+    user: User,
+  ): Promise<DeliverResponse> {
+    return this.courtService
+      .updateIndictmentCaseWithDefenderInfo(
+        user,
+        theCase.id,
+        theCase.court?.name,
+        theCase.courtCaseNumber,
+        defendant.nationalId,
+        defendant.defenderName,
+        defendant.defenderEmail,
+      )
+      .then(() => ({ delivered: true }))
+      .catch((reason) => {
+        this.logger.error(
+          `Failed to update defender info for defendant ${defendant.id} of indictment case ${theCase.id}`,
+          { reason },
+        )
 
         return { delivered: false }
       })

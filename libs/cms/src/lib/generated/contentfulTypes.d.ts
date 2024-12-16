@@ -1555,7 +1555,7 @@ export interface IFundFields {
   fundTitle: string
 
   /** Link */
-  fundLink?: IArticle | IOrganizationSubpage | ILinkUrl | undefined
+  fundLink?: ILinkUrl | undefined
 
   /** Featured Image */
   fundFeaturedImage: Asset
@@ -1814,14 +1814,11 @@ export interface IGrantFields {
   /** Description  */
   grantDescription?: string | undefined
 
-  /** Grant Application ID */
+  /** Grant reference ID */
   grantApplicationId?: string | undefined
 
-  /** Application deadline text */
-  grantApplicationDeadlineText: string[]
-
-  /** Application Url */
-  granApplicationUrl?: ILinkUrl | undefined
+  /** Fund */
+  grantFund: IFund
 
   /** Special emphasis */
   grantSpecialEmphasis?: Document | undefined
@@ -1832,39 +1829,51 @@ export interface IGrantFields {
   /** How to apply? */
   grantHowToApply?: Document | undefined
 
-  /** Application deadline */
-  grantApplicationDeadline?: Document | undefined
-
   /** Application hints */
   grantApplicationHints?: Document | undefined
+
+  /** Application url */
+  granApplicationUrl?: ILinkUrl | undefined
+
+  /** Application button label */
+  grantButtonLabel?: string | undefined
 
   /** Date from */
   grantDateFrom?: string | undefined
 
-  /** Date to */
+  /** Open from hour */
+  grantOpenFromHour?: number | undefined
+
+  /** Open to */
   grantDateTo?: string | undefined
 
-  /** Is open? */
-  grantIsOpen?: boolean | undefined
+  /** Open to hour */
+  grantOpenToHour?: number | undefined
+
+  /** From date is estimated */
+  grantFromDateIsEstimated?: boolean | undefined
 
   /** Status */
-  grantStatus?:
-    | 'Opið fyrir umsóknir'
-    | 'Lokað fyrir umsóknir'
-    | 'Opnar fljótlega'
-    | undefined
+  grantStatus:
+    | 'Automatic'
+    | 'Always open'
+    | 'Open with note'
+    | 'Closed with note'
+
+  /** Status Note */
+  grantStatusNote?: string | undefined
 
   /** Files */
   grantFiles?: Asset[] | undefined
+
+  /** Support links */
+  grantSupportLinks?: ILink[] | undefined
 
   /** Category tags */
   grantCategoryTags?: IGenericTag[] | undefined
 
   /** Type tag */
   grantTypeTag?: IGenericTag | undefined
-
-  /** Fund */
-  grantFund: IFund
 }
 
 /** Grant is a part of "Styrkjatorg". */
@@ -2168,6 +2177,9 @@ export interface ILatestGenericListItemsFields {
 
   /** See more link text */
   seeMoreLinkText?: string | undefined
+
+  /** Item Count */
+  itemCount?: number | undefined
 }
 
 export interface ILatestGenericListItems
@@ -2386,10 +2398,21 @@ export interface ILinkGroupFields {
   name: string
 
   /** Primary Link */
-  primaryLink: ILink | IOrganizationSubpage | IProjectSubpage
+  primaryLink:
+    | ILink
+    | IOrganizationSubpage
+    | IProjectSubpage
+    | IOrganizationParentSubpage
 
   /** Children Links */
-  childrenLinks?: (ILink | IProjectSubpage | IOrganizationSubpage)[] | undefined
+  childrenLinks?:
+    | (
+        | ILink
+        | IProjectSubpage
+        | IOrganizationSubpage
+        | IOrganizationParentSubpage
+      )[]
+    | undefined
 }
 
 export interface ILinkGroup extends Entry<ILinkGroupFields> {
@@ -3282,6 +3305,9 @@ export interface IOrganizationPage extends Entry<IOrganizationPageFields> {
 }
 
 export interface IOrganizationParentSubpageFields {
+  /** Organization Page */
+  organizationPage: IOrganizationPage
+
   /** Internal Title */
   internalTitle: string
 

@@ -3,11 +3,11 @@ import { BffUser } from '@island.is/shared/types'
 import { ReactNode, useCallback, useEffect, useMemo } from 'react'
 import {
   BffBroadcastEvents,
-  useBff,
+  useAuth,
   useBffBroadcaster,
   useUserInfo,
 } from './bff.hooks'
-import { isNewSession } from './bff.utils'
+import { isNewUser } from './bff.utils'
 
 type BffPollerProps = {
   children: ReactNode
@@ -43,9 +43,10 @@ export const BffPoller = ({
   newSessionCb,
   pollIntervalMS = 10000,
 }: BffPollerProps) => {
-  const { signIn, bffUrlGenerator } = useBff()
+  const { signIn, bffUrlGenerator } = useAuth()
   const userInfo = useUserInfo()
   const { postMessage } = useBffBroadcaster()
+  const bffBaseUrl = bffUrlGenerator()
 
   const url = useMemo(
     () => bffUrlGenerator('/user', { refresh: 'true' }),
@@ -78,20 +79,21 @@ export const BffPoller = ({
       // If user polling fails, likely due to 401, then sign in.
       signIn()
     } else if (newUser) {
-      // If session has changed (e.g. delegation switch), then notifiy tabs/windows/iframes and execute the callback.
-      if (isNewSession(newUser, userInfo)) {
+      // If user has changed (e.g. delegation switch), then notifiy tabs/windows/iframes and execute the callback.
+      if (isNewUser(newUser, userInfo)) {
         // Note! The tab, window, or iframe that sends this message will not receive it.
         // This is because the BroadcastChannel API does not broadcast messages to the sender.
         // Therefore we need to manually handle the new session in the current tab/window, by calling the newSessionCb().
         postMessage({
           type: BffBroadcastEvents.NEW_SESSION,
           userInfo: newUser,
+          bffBaseUrl,
         })
 
         newSessionCb()
       }
     }
-  }, [newUser, error, userInfo, signIn, postMessage, newSessionCb])
+  }, [newUser, error, userInfo, signIn, postMessage, newSessionCb, bffBaseUrl])
 
   return children
 }

@@ -1,5 +1,15 @@
-import { json, service, ServiceBuilder } from '../../../../../infra/src/dsl/dsl'
-import { Base, Client, RskProcuring } from '../../../../../infra/src/dsl/xroad'
+import {
+  CodeOwners,
+  json,
+  service,
+  ServiceBuilder,
+} from '../../../../../infra/src/dsl/dsl'
+import {
+  Base,
+  Client,
+  NationalRegistryAuthB2C,
+  RskProcuring,
+} from '../../../../../infra/src/dsl/xroad'
 
 const REDIS_NODE_CONFIG = {
   dev: json([
@@ -18,6 +28,7 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-public-api'> => {
     .namespace('identity-server-admin')
     .image('services-auth-public-api')
     .db({ name: 'servicesauth' })
+    .codeOwner(CodeOwners.Aranja)
     .env({
       IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/auth-api',
       IDENTITY_SERVER_ISSUER_URL: {
@@ -86,8 +97,10 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-public-api'> => {
         '/k8s/xroad/client/NATIONAL-REGISTRY/IDENTITYSERVER_SECRET',
       SYSLUMENN_USERNAME: '/k8s/services-auth/SYSLUMENN_USERNAME',
       SYSLUMENN_PASSWORD: '/k8s/services-auth/SYSLUMENN_PASSWORD',
+      NATIONAL_REGISTRY_B2C_CLIENT_SECRET:
+        '/k8s/services-auth/NATIONAL_REGISTRY_B2C_CLIENT_SECRET',
     })
-    .xroad(Base, Client, RskProcuring)
+    .xroad(Base, Client, RskProcuring, NationalRegistryAuthB2C)
     .ingress({
       primary: {
         host: {

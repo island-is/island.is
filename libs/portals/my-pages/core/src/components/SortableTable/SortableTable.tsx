@@ -1,13 +1,13 @@
-import React, { useMemo, useState } from 'react'
 import {
-  Text,
-  Table as T,
   Icon,
-  TagVariant,
+  Table as T,
   Tag,
+  TagVariant,
+  Text,
 } from '@island.is/island-ui/core'
-import * as styles from './SortableTable.css'
+import React, { useMemo, useState } from 'react'
 import { ExpandHeader, ExpandRow } from '../ExpandableTable'
+import * as styles from './SortableTable.css'
 
 type ConfigType = { direction: 'ascending' | 'descending'; key: string }
 
@@ -166,7 +166,7 @@ export const SortableTable = (props: SortableTableProps) => {
                 data={valueItems.map((valueItem, i) => ({
                   value:
                     valueItems.length - 1 === i && tag ? (
-                      <Tag variant={tag} outlined={props.tagOutlined}>
+                      <Tag variant={tag} outlined={props.tagOutlined} disabled>
                         {valueItem}
                       </Tag>
                     ) : (
@@ -187,7 +187,11 @@ export const SortableTable = (props: SortableTableProps) => {
                   return (
                     <T.Data key={`body-${id}-${i}`}>
                       {lastItem && tag ? (
-                        <Tag variant={tag} outlined={props.tagOutlined}>
+                        <Tag
+                          variant={tag}
+                          outlined={props.tagOutlined}
+                          disabled
+                        >
                           {valueItem}
                         </Tag>
                       ) : (

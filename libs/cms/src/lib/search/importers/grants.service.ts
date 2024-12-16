@@ -11,7 +11,7 @@ import {
   extractStringsFromObject,
   pruneNonSearchableSliceUnionFields,
 } from './utils'
-import { mapGrant } from '../../models/grant.model'
+import { mapGrant, GrantStatus } from '../../models/grant.model'
 import { isDefined } from '@island.is/shared/utils'
 
 @Injectable()
@@ -32,6 +32,7 @@ export class GrantsSyncService implements CmsSyncProvider<IGrant> {
       .map<MappedData | boolean>((entry) => {
         try {
           const mapped = mapGrant(entry)
+
           if (isCircular(mapped)) {
             logger.warn('Circular reference found in grants', {
               id: entry?.sys?.id,
@@ -55,13 +56,6 @@ export class GrantsSyncService implements CmsSyncProvider<IGrant> {
             mapped.howToApply
               ? extractStringsFromObject(
                   mapped?.howToApply?.map(pruneNonSearchableSliceUnionFields),
-                )
-              : undefined,
-            mapped.applicationDeadline
-              ? extractStringsFromObject(
-                  mapped?.applicationDeadline?.map(
-                    pruneNonSearchableSliceUnionFields,
-                  ),
                 )
               : undefined,
             mapped?.applicationHints
@@ -98,6 +92,36 @@ export class GrantsSyncService implements CmsSyncProvider<IGrant> {
               })
             }
           })
+
+          if (mapped.fund?.parentOrganization?.slug) {
+            tags.push({
+              key: mapped.fund.parentOrganization.slug,
+              type: 'organization',
+              value: mapped.fund.parentOrganization.title,
+            })
+          }
+
+          switch (mapped.status) {
+            case GrantStatus.OPEN:
+            case GrantStatus.ALWAYS_OPEN:
+            case GrantStatus.OPEN_WITH_NOTE:
+              tags.push({
+                key: 'open',
+                type: 'status',
+                value: 'open',
+              })
+              break
+            case GrantStatus.CLOSED:
+            case GrantStatus.CLOSED_OPENING_SOON:
+            case GrantStatus.CLOSED_OPENING_SOON_WITH_ESTIMATION:
+            case GrantStatus.CLOSED_WITH_NOTE:
+              tags.push({
+                key: 'closed',
+                type: 'status',
+                value: 'closed',
+              })
+              break
+          }
 
           // Tag the document with the ids of its children so we can later look up what document a child belongs to
           const childEntryIds = extractChildEntryIds(entry)

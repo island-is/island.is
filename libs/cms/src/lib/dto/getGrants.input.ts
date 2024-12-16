@@ -1,6 +1,7 @@
 import { IsArray, IsInt, IsOptional, IsString } from 'class-validator'
 import { Field, InputType, Int } from '@nestjs/graphql'
 import { ElasticsearchIndexLocale } from '@island.is/content-search-index-manager'
+import { GrantStatus } from '../models/grant.model'
 
 @InputType()
 export class GetGrantsInput {

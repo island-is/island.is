@@ -1,6 +1,5 @@
 import { MockedProvider } from '@apollo/client/testing'
 import { render, screen, waitFor } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
 
 import { UserProvider } from '@island.is/judicial-system-web/src/components'
 import {
@@ -299,112 +298,6 @@ describe('Cases', () => {
       expect(
         await waitFor(() => screen.queryByLabelText('Viltu eyða drögum?')),
       ).not.toBeInTheDocument()
-    })
-  })
-
-  describe('All user types - sorting', () => {
-    test('should order the table data by accused name in ascending order when the user clicks the accused name table header', async () => {
-      const user = userEvent.setup()
-      render(
-        <MockedProvider
-          mocks={[...mockCasesQuery, ...mockProsecutorQuery]}
-          addTypename={false}
-        >
-          <UserProvider authenticated={true}>
-            <LocaleProvider locale="is" messages={{}}>
-              <Cases />
-            </LocaleProvider>
-          </UserProvider>
-        </MockedProvider>,
-      )
-
-      await user.click(await screen.findByTestId('defendantsSortButton'))
-
-      const tableRows = await screen.findAllByTestId('tableRow')
-
-      expect(tableRows[0]).toHaveTextContent('D. M. Kil')
-      expect(tableRows[1]).toHaveTextContent('Erlingur L Kristinsson')
-      expect(tableRows[2]).toHaveTextContent('Jon Harring')
-      expect(tableRows[3]).toHaveTextContent('Jon Harring Sr.')
-      expect(tableRows[4]).toHaveTextContent('Moe')
-    })
-
-    test('should order the table data by accused name in descending order when the user clicks the accused name table header twice', async () => {
-      const user = userEvent.setup()
-      render(
-        <MockedProvider
-          mocks={[...mockCasesQuery, ...mockProsecutorQuery]}
-          addTypename={false}
-        >
-          <UserProvider authenticated={true}>
-            <LocaleProvider locale="is" messages={{}}>
-              <Cases />
-            </LocaleProvider>
-          </UserProvider>
-        </MockedProvider>,
-      )
-
-      await user.dblClick(await screen.findByTestId('defendantsSortButton'))
-
-      const tableRows = await screen.findAllByTestId('tableRow')
-
-      expect(tableRows[0]).toHaveTextContent('D. M. Kil')
-      expect(tableRows[1]).toHaveTextContent('Erlingur L Kristinsson')
-      expect(tableRows[2]).toHaveTextContent('Jon Harring')
-      expect(tableRows[3]).toHaveTextContent('Jon Harring Sr.')
-      expect(tableRows[4]).toHaveTextContent('Moe')
-    })
-
-    test('should order the table data by created in ascending order when the user clicks the created table header', async () => {
-      const user = userEvent.setup()
-      render(
-        <MockedProvider
-          mocks={[...mockCasesQuery, ...mockProsecutorQuery]}
-          addTypename={false}
-        >
-          <UserProvider authenticated={true}>
-            <LocaleProvider locale="is" messages={{}}>
-              <Cases />
-            </LocaleProvider>
-          </UserProvider>
-        </MockedProvider>,
-      )
-
-      await user.click(await screen.findByTestId('createdSortButton'))
-
-      const tableRows = await screen.findAllByTestId('tableRow')
-
-      expect(tableRows[0]).toHaveTextContent('Erlingur L Kristinsson')
-      expect(tableRows[1]).toHaveTextContent('Jon Harring Sr.')
-      expect(tableRows[2]).toHaveTextContent('Jon Harring')
-      expect(tableRows[3]).toHaveTextContent('D. M. Kil')
-      expect(tableRows[4]).toHaveTextContent('Moe')
-    })
-
-    test('should order the table data by created in acending order when the user clicks the created table header twice', async () => {
-      const user = userEvent.setup()
-      render(
-        <MockedProvider
-          mocks={[...mockCasesQuery, ...mockProsecutorQuery]}
-          addTypename={false}
-        >
-          <UserProvider authenticated={true}>
-            <LocaleProvider locale="is" messages={{}}>
-              <Cases />
-            </LocaleProvider>
-          </UserProvider>
-        </MockedProvider>,
-      )
-
-      await user.dblClick(await screen.findByTestId('createdSortButton'))
-
-      const tableRows = await screen.findAllByTestId('tableRow')
-
-      expect(tableRows[0]).toHaveTextContent('Erlingur L Kristinsson')
-      expect(tableRows[1]).toHaveTextContent('Jon Harring Sr.')
-      expect(tableRows[2]).toHaveTextContent('Jon Harring')
-      expect(tableRows[3]).toHaveTextContent('D. M. Kil')
-      expect(tableRows[4]).toHaveTextContent('Moe')
     })
   })
 

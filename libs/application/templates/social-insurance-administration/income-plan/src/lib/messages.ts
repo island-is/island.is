@@ -98,20 +98,15 @@ export const incomePlanFormMessage: MessageDir = {
       defaultMessage: 'Bráðabirgðaútreikningur',
       description: 'Temporary calculation',
     },
-    tableHeaderOne: {
-      id: 'ip.application:table.header.one',
+    tableHeaderPaymentTypes: {
+      id: 'ip.application:table.header.payment.type',
       defaultMessage: 'Greiðslutegundir',
       description: 'Payment types',
     },
-    tableHeaderTwo: {
-      id: 'ip.application:table.header.two',
-      defaultMessage: 'Samtals á mánuði',
-      description: 'Montly total',
-    },
-    tableHeaderThree: {
-      id: 'ip.application:table.header.three',
-      defaultMessage: 'Samtals á ári',
-      description: 'Annual total',
+    tableHeaderTotal: {
+      id: 'ip.application:table.header.total',
+      defaultMessage: 'Samtals {year}',
+      description: 'Total {year}',
     },
     tableDescription: {
       id: 'ip.application:table.description',
@@ -275,11 +270,6 @@ export const incomePlanFormMessage: MessageDir = {
         'Vinsamlegast farðu yfir tekjuáætlunina áður en þú sendir hana inn.',
       description: 'Please review the application before submitting.',
     },
-    buttonEdit: {
-      id: 'ip.application:button.edit',
-      defaultMessage: 'Breyta tekjuáætlun',
-      description: 'Edit application',
-    },
   }),
 
   conclusionScreen: defineMessages({
@@ -320,6 +310,11 @@ export const inReviewFormMessages = defineMessages({
     defaultMessage: 'Tekjuáætlun þín hefur ekki verið tekin til vinnslu.',
     description: 'Your income plan has not been processed.',
   },
+  reviewDescription: {
+    id: 'ip.application:inReview.review.description',
+    defaultMessage: 'Tekjuáætlun þín hefur verið tekin til vinnslu.',
+    description: 'Your income plan has been processed.',
+  },
 })
 
 export const statesMessages = defineMessages({
@@ -336,10 +331,8 @@ export const statesMessages = defineMessages({
   },
   tryggingastofnunSubmittedContent: {
     id: 'ip.application:tryggingastofnunSubmittedContent',
-    defaultMessage:
-      'Tekjuáætlunin þín er í bið eftir yfirferð. Hægt er að breyta tekjuáætlun þar til hún er komin í yfirferð.',
-    description:
-      'Your income plan is awaiting review. It is possible to edit the income plan until it is under review.',
+    defaultMessage: 'Tekjuáætlunin þín er í bið eftir yfirferð.',
+    description: 'Your income plan is awaiting review.',
   },
   incomePlanEdited: {
     id: 'ip.application:incomePlanEdited',
