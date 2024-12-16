@@ -162,7 +162,7 @@ const GrantsSearchResultsPage: CustomScreen<GrantsHomeProps> = ({
           setTotalHits(res.data.getGrants.total)
         } else if (res.error) {
           setGrants([])
-          console.error('Error fetching grants', res.error)c
+          console.error('Error fetching grants', res.error)
       })
       .catch((err) => {
         setGrants([])
