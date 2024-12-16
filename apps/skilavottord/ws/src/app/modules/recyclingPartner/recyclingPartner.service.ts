@@ -27,28 +27,32 @@ export class RecyclingPartnerService {
 
   async findRecyclingPartners(
     isMunicipalityPage: boolean,
-    municipalityId: string | null,
+    municipalityId: string | null | undefined,
   ): Promise<RecyclingPartnerModel[]> {
-    // If Role.municipality, return all recycling partners that are not municipalities
-    if (municipalityId) {
+    try {
+      // If Role.municipality, return all recycling partners that are not municipalities
+      if (municipalityId) {
+        return await this.recyclingPartnerModel.findAll({
+          where: {
+            isMunicipality: false,
+            municipalityId: municipalityId,
+          },
+        })
+      }
+
+      if (isMunicipalityPage) {
+        return await this.recyclingPartnerModel.findAll({
+          where: { isMunicipality: true },
+        })
+      }
       return await this.recyclingPartnerModel.findAll({
         where: {
-          isMunicipality: false,
-          municipalityId: municipalityId,
+          [Op.or]: [{ isMunicipality: false }, { isMunicipality: null }],
         },
       })
+    } catch (error) {
+      throw new Error(`Failed to fetch recycling partners: ${error.message}`)
     }
-
-    if (isMunicipalityPage) {
-      return await this.recyclingPartnerModel.findAll({
-        where: { isMunicipality: true },
-      })
-    }
-    return await this.recyclingPartnerModel.findAll({
-      where: {
-        [Op.or]: [{ isMunicipality: false }, { isMunicipality: null }],
-      },
-    })
   }
 
   async findOne(companyId: string): Promise<RecyclingPartnerModel> {

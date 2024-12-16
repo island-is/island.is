@@ -486,7 +486,7 @@
           "municipality": {
             "label": "Sveitarfélag",
             "placeholder": "Sveitarfélag",
-            "required": "Skylda að fylla út sveitarfélag"
+            "required": "Skylda er að fylla út sveitarfélag"
           }
         },
         "buttons": {
