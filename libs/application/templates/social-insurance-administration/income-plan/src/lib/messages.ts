@@ -331,10 +331,8 @@ export const statesMessages = defineMessages({
   },
   tryggingastofnunSubmittedContent: {
     id: 'ip.application:tryggingastofnunSubmittedContent',
-    defaultMessage:
-      'Tekjuáætlunin þín er í bið eftir yfirferð.',
-    description:
-      'Your income plan is awaiting review.',
+    defaultMessage: 'Tekjuáætlunin þín er í bið eftir yfirferð.',
+    description: 'Your income plan is awaiting review.',
   },
   incomePlanEdited: {
     id: 'ip.application:incomePlanEdited',
