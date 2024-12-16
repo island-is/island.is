@@ -128,10 +128,10 @@ export const NationalIdWithName: FC<
     : getValueViaPath(application.answers, nameField, '')
   const defaultPhone = phoneDefaultValue
     ? phoneDefaultValue
-    : getValueViaPath(application.answers, phoneField, '')
+    : getValueViaPath<string>(application.answers, phoneField, '')
   const defaultEmail = emailDefaultValue
     ? emailDefaultValue
-    : getValueViaPath(application.answers, emailField, '')
+    : getValueViaPath<string>(application.answers, emailField, '')
 
   // query to get name by national id
   const [getIdentity, { data, loading: queryLoading, error: queryError }] =
