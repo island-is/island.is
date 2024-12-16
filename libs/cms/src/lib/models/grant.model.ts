@@ -141,7 +141,7 @@ export const mapGrant = ({ fields, sys }: IGrant): Grant => {
     applicationUrl: fields.granApplicationUrl?.fields
       ? mapReferenceLink(fields.granApplicationUrl)
       : undefined,
-
+    applicationButtonLabel: fields.grantButtonLabel,
     specialEmphasis: fields.grantSpecialEmphasis
       ? mapDocument(fields.grantSpecialEmphasis, sys.id + ':special-emphasis')
       : [],

@@ -1,4 +1,5 @@
 import gql from 'graphql-tag'
+
 import { nestedFields, slices } from './fragments'
 
 export const GET_GRANTS_QUERY = gql`
@@ -13,7 +14,6 @@ export const GET_GRANTS_QUERY = gql`
           slug
           type
         }
-        applicationButtonLabel
         dateFrom
         dateTo
         status
@@ -67,6 +67,7 @@ export const GET_GRANT_QUERY = gql`
           slug
           type
     }
+    applicationButtonLabel
       status
       statusText
       dateFrom
