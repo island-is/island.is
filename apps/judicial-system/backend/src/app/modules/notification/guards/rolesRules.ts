@@ -28,7 +28,7 @@ export const defenderNotificationRule: RolesRule = {
   ],
 } as RolesRule
 
-// Allows district court judges to send notifiications
+// Allows district court judges to send notifications
 export const districtCourtJudgeNotificationRule: RolesRule = {
   role: UserRole.DISTRICT_COURT_JUDGE,
   type: RulesType.FIELD_VALUES,

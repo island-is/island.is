@@ -230,5 +230,117 @@ describe('UserController', () => {
         profile: expiredTokenResponse.userProfile,
       })
     })
+
+    it('should not refresh token when token exists but is not expired', async () => {
+      // Arrange - Set up login attempt in cache
+      mockCacheStore.set(
+        `attempt::${mockConfig.name}::${SID_VALUE}`,
+        createLoginAttempt(mockConfig),
+      )
+
+      // Initialize session
+      await server.get('/login')
+      await server
+        .get('/callbacks/login')
+        .set('Cookie', [`${SESSION_COOKIE_NAME}=${SID_VALUE}`])
+        .query({ code: 'some_code', state: SID_VALUE })
+
+      // Set valid (not expired) token in cache
+      const validTokenResponse = {
+        ...mockCachedTokenResponse,
+        accessTokenExp: Date.now() + 1000, // Future expiration
+      }
+      mockCacheStore.set(
+        `current::${mockConfig.name}::${SID_VALUE}`,
+        validTokenResponse,
+      )
+
+      // Act
+      const res = await server
+        .get('/user')
+        .query({ refresh: 'true' })
+        .set('Cookie', [`${SESSION_COOKIE_NAME}=${SID_VALUE}`])
+
+      // Assert
+      expect(mockTokenRefreshService.refreshToken).not.toHaveBeenCalled()
+      expect(res.status).toEqual(HttpStatus.OK)
+      expect(res.body).toEqual({
+        scopes: validTokenResponse.scopes,
+        profile: validTokenResponse.userProfile,
+      })
+    })
+
+    it('should refresh token only when all conditions are met (token exists, is expired, and refresh=true)', async () => {
+      // Arrange - Set up login attempt in cache
+      mockCacheStore.set(
+        `attempt::${mockConfig.name}::${SID_VALUE}`,
+        createLoginAttempt(mockConfig),
+      )
+
+      const testCases = [
+        {
+          exists: true,
+          expired: true,
+          refresh: true,
+          shouldCallRefresh: true,
+        },
+        {
+          exists: true,
+          expired: true,
+          refresh: false,
+          shouldCallRefresh: false,
+        },
+        {
+          exists: true,
+          expired: false,
+          refresh: true,
+          shouldCallRefresh: false,
+        },
+        {
+          exists: false,
+          expired: true,
+          refresh: true,
+          shouldCallRefresh: false,
+        },
+      ]
+
+      for (const testCase of testCases) {
+        // Reset mocks
+        jest.clearAllMocks()
+        mockCacheStore.clear()
+
+        if (testCase.exists) {
+          const tokenResponse = {
+            ...mockCachedTokenResponse,
+            accessTokenExp: testCase.expired
+              ? Date.now() - 1000 // Expired
+              : Date.now() + 1000, // Not expired
+          }
+          mockCacheStore.set(
+            `current::${mockConfig.name}::${SID_VALUE}`,
+            tokenResponse,
+          )
+        }
+
+        // Act
+        const res = await server
+          .get('/user')
+          .query({ refresh: testCase.refresh.toString() })
+          .set('Cookie', [`${SESSION_COOKIE_NAME}=${SID_VALUE}`])
+
+        // Assert
+        if (testCase.shouldCallRefresh) {
+          expect(mockTokenRefreshService.refreshToken).toHaveBeenCalled()
+        } else {
+          expect(mockTokenRefreshService.refreshToken).not.toHaveBeenCalled()
+        }
+
+        if (testCase.exists) {
+          expect(res.status).toEqual(HttpStatus.OK)
+        } else {
+          expect(res.status).toEqual(HttpStatus.UNAUTHORIZED)
+        }
+      }
+    })
   })
 })

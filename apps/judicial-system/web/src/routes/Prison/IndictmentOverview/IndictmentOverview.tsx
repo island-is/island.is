@@ -1,4 +1,4 @@
-import { useContext, useState } from 'react'
+import { useContext } from 'react'
 import { useIntl } from 'react-intl'
 
 import { Box, RadioButton, Text } from '@island.is/island-ui/core'
