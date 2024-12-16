@@ -89,6 +89,8 @@ export type RepeaterItem = {
    */
   displayInTable?: boolean
   label?: StaticText
+  phoneLabel?: StaticText
+  emailLabel?: StaticText
   placeholder?: StaticText
   options?: TableRepeaterOptions
   backgroundColor?: 'blue' | 'white'
@@ -99,6 +101,10 @@ export type RepeaterItem = {
     activeField?: Record<string, string>,
   ) => boolean
   dataTestId?: string
+  showPhoneField?: boolean
+  phoneRequired?: boolean
+  showEmailField?: boolean
+  emailRequired?: boolean
   readonly?:
     | boolean
     | ((
