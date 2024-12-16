@@ -50,6 +50,10 @@ const IndictmentOverview = () => {
     limitedAccessUpdateDefendant(defendantUpdate)
   }
 
+  const sentToPrisonAdminFiles = workingCase.caseFiles?.filter(
+    (file) => file.category === CaseFileCategory.SENT_TO_PRISON_ADMIN_FILE,
+  )
+
   const hasPunishmentType = (punishmentType: PunishmentType) =>
     defendant?.punishmentType === punishmentType
 
@@ -94,6 +98,18 @@ const IndictmentOverview = () => {
             }
           />
         </Box>
+
+        {sentToPrisonAdminFiles && sentToPrisonAdminFiles.length > 0 && (
+          <Box marginBottom={5}>
+            <Text variant="h4" as="h4" marginBottom={1}>
+              {formatMessage(strings.sentToPrisonAdminFileTitle)}
+            </Text>
+            <RenderFiles
+              onOpenFile={onOpen}
+              caseFiles={sentToPrisonAdminFiles}
+            />
+          </Box>
+        )}
         <Box marginBottom={10}>
           <Text variant="h4" as="h4" marginBottom={2}>
             {formatMessage(strings.punishmentTypeTitle)}
