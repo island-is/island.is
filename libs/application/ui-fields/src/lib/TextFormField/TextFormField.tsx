@@ -67,7 +67,7 @@ export const TextFormField: FC<React.PropsWithChildren<Props>> = ({
         />
       )}
 
-      <Box paddingTop={2}>
+      <Box paddingBottom={2}>
         <InputController
           disabled={disabled}
           readOnly={readOnly}

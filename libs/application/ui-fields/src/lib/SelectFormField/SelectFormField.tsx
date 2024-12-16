@@ -61,7 +61,7 @@ export const SelectFormField: FC<React.PropsWithChildren<Props>> = ({
         />
       )}
 
-      <Box paddingTop={2}>
+      <Box paddingBottom={2}>
         <SelectController
           required={buildFieldRequired(application, required)}
           defaultValue={
