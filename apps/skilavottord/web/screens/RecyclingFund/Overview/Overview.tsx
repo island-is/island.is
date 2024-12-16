@@ -26,12 +26,8 @@ import PageHeader from '@island.is/skilavottord-web/components/PageHeader/PageHe
 import { CarsTable } from './components'
 
 export const SkilavottordVehiclesQuery = gql`
-  query skilavottordVehiclesQuery($after: String!, $municipalityId: String!) {
-    skilavottordAllDeregisteredVehicles(
-      first: 20
-      after: $after
-      municipalityId: $municipalityId
-    ) {
+  query skilavottordVehiclesQuery($after: String!) {
+    skilavottordAllDeregisteredVehicles(first: 20, after: $after) {
       pageInfo {
         endCursor
         hasNextPage
@@ -61,7 +57,7 @@ const Overview: FC<React.PropsWithChildren<unknown>> = () => {
     SkilavottordVehiclesQuery,
     {
       notifyOnNetworkStatusChange: true,
-      variables: { after: '', municipalityId: '601' },
+      variables: { after: '' },
     },
   )
   const { pageInfo, items: vehicles } =

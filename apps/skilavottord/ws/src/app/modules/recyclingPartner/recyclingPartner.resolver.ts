@@ -1,4 +1,9 @@
-import { ConflictException, NotFoundException } from '@nestjs/common'
+import {
+  BadRequestException,
+  ConflictException,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common'
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql'
 
 import { Authorize, Role } from '../auth'
@@ -32,16 +37,22 @@ export class RecyclingPartnerResolver {
   @Query(() => [RecyclingPartnerModel], {
     name: 'skilavottordRecyclingPartners',
   })
-  async getRecyclingPartners(
+  async skilavottordRecyclingPartners(
     @Args('isMunicipalityPage', { type: () => Boolean, nullable: true })
     isMunicipalityPage: boolean,
     @Args('municipalityId', { type: () => String, nullable: true })
     municipalityId: string | null,
   ): Promise<RecyclingPartnerModel[]> {
-    return this.recyclingPartnerService.findRecyclingPartners(
-      isMunicipalityPage,
-      municipalityId,
-    )
+    try {
+      return this.recyclingPartnerService.findRecyclingPartners(
+        isMunicipalityPage,
+        municipalityId,
+      )
+    } catch (error) {
+      throw new InternalServerErrorException(
+        `Failed to fetch recycling partners: ${error.message}`,
+      )
+    }
   }
 
   @Query(() => [RecyclingPartnerModel])

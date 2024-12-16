@@ -77,7 +77,7 @@ export class UpdateRecyclingPartnerInput {
   @Field()
   email?: string
 
-  @Field()
+  @Field({ nullable: true })
   isMunicipality?: boolean
 
   @Field({ nullable: true })

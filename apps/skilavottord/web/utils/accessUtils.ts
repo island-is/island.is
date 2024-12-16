@@ -3,8 +3,8 @@ import { Role, SkilavottordUser } from '../graphql/schema'
 
 export const getPartnerId = (
   user: SkilavottordUser | undefined,
-  municipalityId: string,
-  partnerId: string,
+  municipalityId: string | null,
+  partnerId: string | null,
   role: Role,
 ) => {
   // If the user has municipality role, then he can only create a new access under the same municipality
@@ -13,5 +13,5 @@ export const getPartnerId = (
   }
 
   // If selected role is municipality, use municipalityId, else use partnerId
-  return hasMunicipalityRole(role) ? municipalityId : partnerId || null
+  return hasMunicipalityRole(role) ? municipalityId ?? null : partnerId ?? null
 }

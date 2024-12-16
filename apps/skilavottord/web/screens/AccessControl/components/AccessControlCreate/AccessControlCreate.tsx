@@ -83,8 +83,9 @@ export const AccessControlCreate: FC<
       control={control}
       errors={errors}
       partnerIdRequired={
-        watch('role')?.value === Role.recyclingCompanyAdmin ||
-        watch('role')?.value === Role.recyclingCompany
+        (watch('role')?.value === Role.recyclingCompanyAdmin ||
+          watch('role')?.value === Role.recyclingCompany) ??
+        false
       }
     />
   )

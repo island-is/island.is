@@ -3,8 +3,8 @@ module.exports = {
   up: (queryInterface) => {
     return queryInterface.sequelize.query(`
       BEGIN;
-        ALTER TABLE recycling_partner ADD COLUMN is_municipality BOOLEAN;
-        ALTER TABLE recycling_partner ADD COLUMN municipality_id VARCHAR;
+        ALTER TABLE recycling_partner ADD COLUMN is_municipality BOOLEAN NOT NULL DEFAULT FALSE
+        ALTER TABLE recycling_partner ADD COLUMN municipality_id VARCHAR(50)
         CREATE INDEX idx_recycling_partner_is_municipality ON recycling_partner(is_municipality);
       COMMIT;
     `)

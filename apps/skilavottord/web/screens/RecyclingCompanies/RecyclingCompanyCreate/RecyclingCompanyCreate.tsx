@@ -78,10 +78,9 @@ const RecyclingCompanyCreate: FC<React.PropsWithChildren<unknown>> = () => {
     formState: { errors },
   } = useForm({
     mode: 'onChange',
-    defaultValues: {
-      isMunicipality: isMunicipalityPage,
-      municipalityId: partnerId,
-    },
+    defaultValues: isMunicipalityPage
+      ? { isMunicipalityPage }
+      : { isMunicipalityPage, municipalityId: partnerId },
   })
 
   const [createSkilavottordRecyclingPartner] = useMutation(

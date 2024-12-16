@@ -60,6 +60,7 @@ const UpdateSkilavottordRecyclingPartnerMutation = gql`
       website
       phone
       active
+      municipalityId
     }
   }
 `
@@ -148,36 +149,35 @@ const RecyclingCompanyUpdate: FC<React.PropsWithChildren<unknown>> = () => {
     return <NotFound />
   }
 
+  const navigateToBaseRoute = () => {
+    const route = isMunicipalityPage
+      ? routes.municipalities.baseRoute
+      : routes.recyclingCompanies.baseRoute
+    return router.push(route)
+  }
+
   const handleUpdateRecyclingPartner = handleSubmit(async (input) => {
     // Not needed to be sent to the backend, causes error if it is sent
     delete input.__typename
 
-    if (typeof input.municipalityId !== 'string') {
-      input.municipalityId = input.municipalityId?.value || ''
-    }
+    const municipalityId = input.municipalityId
+    input.municipalityId =
+      typeof municipalityId === 'object' && municipalityId?.value
+        ? municipalityId.value
+        : (municipalityId as string) || ''
 
     const { errors } = await updateSkilavottordRecyclingPartner({
       variables: { input },
     })
     if (!errors) {
-      if (isMunicipalityPage) {
-        router.push(routes.municipalities.baseRoute).then(() => {
-          toast.success(t.recyclingCompany.view.updated)
-        })
-      } else {
-        router.push(routes.recyclingCompanies.baseRoute).then(() => {
-          toast.success(t.recyclingCompany.view.updated)
-        })
-      }
+      navigateToBaseRoute().then(() => {
+        toast.success(t.recyclingCompany.view.updated)
+      })
     }
   })
 
   const handleCancel = () => {
-    if (isMunicipalityPage) {
-      router.push(routes.municipalities.baseRoute)
-    } else {
-      router.push(routes.recyclingCompanies.baseRoute)
-    }
+    navigateToBaseRoute()
   }
 
   return (

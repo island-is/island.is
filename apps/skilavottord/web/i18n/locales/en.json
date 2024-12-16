@@ -650,14 +650,14 @@
       "view": {
         "title": "Municipality",
         "breadcrumb": "View",
-        "info": "Þú getur annaðhvort uppfært eða eytt móttökuaðila. Vinsamlegast staðfestið að upplýsingar fyrirtækis séu rétt slegnar inn.",
+        "info": "You can update the municipality. Please confirm that the information are correct.",
         "updated": "Updated",
         "deleted": "Deleted"
       },
       "add": {
         "title": "Add municipality",
         "breadcrumb": "Add new",
-        "info": "Þegar nýju sveitarfélagi er bætt við, verður hann aðgengilegur í aðgangsstýringu. Vinsamlegast staðfestið að upplýsingar fyrirtækis séu rétt slegnar inn.",
+        "info": "Adding a new municipality will make it available to access control. Please verify that the municipality information is correct.",
         "added": "Added"
       }
     }

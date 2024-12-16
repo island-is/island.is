@@ -67,7 +67,14 @@ export class AccessControlResolver {
     const isDeveloper = user.role === Role.developer
 
     if (user.role === Role.municipality) {
-      return this.accessControlService.findByRecyclingPartner(user.partnerId)
+      try {
+        return this.accessControlService.findByRecyclingPartner(user.partnerId)
+      } catch (error) {
+        throw new ApolloError(
+          'Failed to fetch municipality access controls',
+          'MUNICIPALITY_ACCESS_ERROR',
+        )
+      }
     }
 
     return this.accessControlService.findAll(isDeveloper)

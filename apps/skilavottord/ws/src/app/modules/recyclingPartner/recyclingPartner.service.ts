@@ -83,11 +83,15 @@ export class RecyclingPartnerService {
    * @param companyId
    * @returns
    */
-  async getGetPayingPartnerId(companyId: string): Promise<string> {
+  async getPayingPartnerId(companyId: string): Promise<string> {
     const partner = await this.recyclingPartnerModel.findOne({
       where: { companyId },
     })
 
-    return partner.municipalityId || partner.companyId
+    if (!partner) {
+      throw new Error(`Partner not found for company ID: ${companyId}`)
+    }
+
+    return partner.municipalityId ?? partner.companyId
   }
 }

@@ -49,7 +49,7 @@ export class RecyclingRequestService {
     vehicle: VehicleModel,
   ) {
     const disposalStationId =
-      await this.recyclingPartnerService.getGetPayingPartnerId(disposalStation)
+      await this.recyclingPartnerService.getPayingPartnerId(disposalStation)
 
     try {
       const { restAuthUrl, restDeRegUrl, restUsername, restPassword } =

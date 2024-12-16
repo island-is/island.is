@@ -29,14 +29,20 @@ export class VehicleService {
     // else get all
     if (filter.partnerId) {
       // Get all sub recycling partners of the municipality
-      const subRecyclingPartners = await RecyclingPartnerModel.findAll({
-        where: { municipalityId: filter.partnerId },
-      })
+      try {
+        const subRecyclingPartners = await RecyclingPartnerModel.findAll({
+          where: { municipalityId: filter.partnerId },
+          attributes: ['companyId'],
+        })
 
-      partnerIds = [
-        filter.partnerId,
-        ...subRecyclingPartners.map((partner) => partner.companyId),
-      ]
+        partnerIds = [
+          filter.partnerId,
+          ...subRecyclingPartners.map((partner) => partner.companyId),
+        ]
+      } catch (error) {
+        this.logger.error('Failed to fetch sub-partners:', error)
+        throw new Error('Failed to process municipality partners')
+      }
     } else {
       partnerIds = null
     }

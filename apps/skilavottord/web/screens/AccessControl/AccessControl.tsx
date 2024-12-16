@@ -208,7 +208,8 @@ const AccessControl: FC<React.PropsWithChildren<unknown>> = () => {
     recyclingPartnerLoading ||
     accessControlsLoading ||
     recyclingPartnerByIdLoading
-  const isData = !!recyclingPartnerData || !!accessControlsData
+  const isData =
+    !!recyclingPartnerData || !!recyclingPartnerByIdData || !!accessControlsData
 
   const {
     t: { accessControl: t, routes },
