@@ -1,16 +1,15 @@
-import React, { FC, useContext, useEffect } from 'react'
+import React, { FC, useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 
 import { Option } from '@island.is/island-ui/core'
 import { ModalProps } from '@island.is/skilavottord-web/components'
 import {
   AccessControl,
-  UpdateAccessControlInput,
   Role,
+  UpdateAccessControlInput,
 } from '@island.is/skilavottord-web/graphql/schema'
 
 import { AccessControlModal } from '../AccessControlModal/AccessControlModal'
-import { UserContext } from '@island.is/skilavottord-web/context'
 
 interface AccessControlUpdateProps
   extends Omit<
@@ -39,7 +38,6 @@ export const AccessControlUpdate: FC<
 }) => {
   const {
     control,
-    setValue,
     reset,
     handleSubmit,
     watch,
@@ -49,7 +47,6 @@ export const AccessControlUpdate: FC<
   })
 
   useEffect(() => {
-    console.log('currentPartner', currentPartner)
     reset({
       ...currentPartner,
       role: roles.find((option) => option.value === currentPartner?.role),

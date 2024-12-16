@@ -8,9 +8,9 @@ import {
   Role,
 } from '@island.is/skilavottord-web/graphql/schema'
 
-import { AccessControlModal } from '../AccessControlModal/AccessControlModal'
-import { UserContext } from '@island.is/skilavottord-web/context'
 import { hasMunicipalityRole } from '@island.is/skilavottord-web/auth/utils'
+import { UserContext } from '@island.is/skilavottord-web/context'
+import { AccessControlModal } from '../AccessControlModal/AccessControlModal'
 
 interface AccessControlCreateProps
   extends Omit<
@@ -69,7 +69,11 @@ export const AccessControlCreate: FC<
         phone,
         email,
         role: role.value,
-        partnerId: getPartnerId(municipalityId, partnerId, role),
+        partnerId: getPartnerId(
+          municipalityId?.value,
+          partnerId?.value,
+          role.value,
+        ),
       })
     },
   )
