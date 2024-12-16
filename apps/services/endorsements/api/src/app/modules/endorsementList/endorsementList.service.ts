@@ -309,6 +309,10 @@ export class EndorsementListService {
         throw new NotFoundException(['This endorsement list does not exist.'])
       }
       owner = endorsementList.owner
+      // Use stored ownerName if available
+      if (endorsementList.ownerName) {
+        return endorsementList.ownerName
+      }
     }
 
     try {
