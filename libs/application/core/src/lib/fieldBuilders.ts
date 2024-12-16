@@ -71,8 +71,8 @@ const extractCommonFields = (
     dataTestId,
     width = 'full',
     nextButtonText,
-    marginBottom = 0,
-    marginTop = 0,
+    marginBottom,
+    marginTop,
   } = data
 
   return {
