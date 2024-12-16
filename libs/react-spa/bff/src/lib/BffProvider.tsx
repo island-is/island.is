@@ -42,25 +42,38 @@ export const BffProvider = ({
     authState === 'switching' ||
     authState === 'logging-out'
   const isLoggedIn = authState === 'logged-in'
+  const oldLoginPath = `${applicationBasePath}/login`
+  const bffBaseUrl = bffUrlGenerator()
 
   const { postMessage } = useBffBroadcaster((event) => {
-    if (
-      isLoggedIn &&
-      event.data.type === BffBroadcastEvents.NEW_SESSION &&
-      isNewUser(state.userInfo, event.data.userInfo)
-    ) {
-      setSessionExpiredScreen(true)
-    } else if (event.data.type === BffBroadcastEvents.LOGOUT) {
-      // We will wait 1 seconds before we dispatch logout action.
-      // The reason is that IDS will not log the user out immediately.
-      // Note! The bff poller may have triggered logout by that time anyways.
-      setTimeout(() => {
-        dispatch({
-          type: ActionType.LOGGED_OUT,
-        })
+    /**
+     * Filter broadcast events by matching BFF base url
+     *
+     * Since the Broadcaster sends messages to all tabs/windows/iframes
+     * sharing the same origin (domain), we need to explicitly check if
+     * the message belongs to our specific BFF instance by comparing base urls.
+     * This prevents handling events meant for other applications/contexts
+     * running on the same domain.
+     */
+    if (event.data.bffBaseUrl === bffBaseUrl) {
+      if (
+        isLoggedIn &&
+        event.data.type === BffBroadcastEvents.NEW_SESSION &&
+        isNewUser(state.userInfo, event.data.userInfo)
+      ) {
+        setSessionExpiredScreen(true)
+      } else if (event.data.type === BffBroadcastEvents.LOGOUT) {
+        // We will wait 1 seconds before we dispatch logout action.
+        // The reason is that IDS will not log the user out immediately.
+        // Note! The bff poller may have triggered logout by that time anyways.
+        setTimeout(() => {
+          dispatch({
+            type: ActionType.LOGGED_OUT,
+          })
 
-        signIn()
-      }, 1000)
+          signIn()
+        }, 1000)
+      }
     }
   })
 
@@ -70,9 +83,43 @@ export const BffProvider = ({
       postMessage({
         type: BffBroadcastEvents.NEW_SESSION,
         userInfo: state.userInfo,
+        bffBaseUrl,
       })
     }
-  }, [postMessage, state.userInfo, isLoggedIn])
+  }, [postMessage, state.userInfo, isLoggedIn, bffBaseUrl])
+
+  /**
+   * Builds authentication query parameters for login redirection:
+   * - target_link_uri: Destination URL after successful login
+   *   • Uses URL from query string if provided
+   *   • Falls back to current URL, with '/login' stripped if on legacy login path
+   * - prompt: Optional authentication prompt type
+   * - login_hint: Optional suggested account identifier
+   */
+  const getLoginQueryParams = useCallback(() => {
+    const urlParams = new URLSearchParams(window.location.search)
+    const targetLinkUri = urlParams.get('target_link_uri')
+    const prompt = urlParams.get('prompt')
+    const loginHint = urlParams.get('login_hint')
+    const url = window.location.href
+
+    const params = {
+      target_link_uri:
+        targetLinkUri ??
+        (window.location.pathname.startsWith(oldLoginPath)
+          ? // Remove `/login` from the path to prevent redirect loop
+            url.replace(oldLoginPath, applicationBasePath)
+          : url),
+      ...(prompt && {
+        prompt,
+      }),
+      ...(loginHint && {
+        login_hint: loginHint,
+      }),
+    }
+
+    return params
+  }, [applicationBasePath, oldLoginPath])
 
   const checkLogin = async (noRefresh = false) => {
     dispatch({
@@ -100,6 +147,13 @@ export const BffProvider = ({
         return
       }
 
+      // If user is logged in and on the old login path, then start the sign-in process
+      if (window.location.pathname.startsWith(oldLoginPath)) {
+        signIn()
+
+        return
+      }
+
       const user = await res.json()
 
       dispatch({
@@ -119,10 +173,8 @@ export const BffProvider = ({
       type: ActionType.SIGNIN_START,
     })
 
-    window.location.href = bffUrlGenerator('/login', {
-      target_link_uri: window.location.href,
-    })
-  }, [bffUrlGenerator])
+    window.location.href = bffUrlGenerator('/login', getLoginQueryParams())
+  }, [bffUrlGenerator, getLoginQueryParams])
 
   const signOut = useCallback(() => {
     if (!state.userInfo) {
@@ -136,12 +188,13 @@ export const BffProvider = ({
     // Broadcast to all tabs/windows/iframes that the user is logging out
     postMessage({
       type: BffBroadcastEvents.LOGOUT,
+      bffBaseUrl,
     })
 
     window.location.href = bffUrlGenerator('/logout', {
       sid: state.userInfo.profile.sid,
     })
-  }, [bffUrlGenerator, postMessage, state.userInfo])
+  }, [bffUrlGenerator, postMessage, state.userInfo, bffBaseUrl])
 
   const switchUser = useCallback(
     (nationalId?: string) => {
@@ -149,14 +202,17 @@ export const BffProvider = ({
         type: ActionType.SWITCH_USER,
       })
 
+      const loginQueryParams = getLoginQueryParams()
+      const targetLinkUri = loginQueryParams['target_link_uri']
+
       window.location.href = bffUrlGenerator('/login', {
-        target_link_uri: window.location.href,
+        target_link_uri: targetLinkUri,
         ...(nationalId
           ? { login_hint: nationalId }
           : { prompt: 'select_account' }),
       })
     },
-    [bffUrlGenerator],
+    [bffUrlGenerator, getLoginQueryParams],
   )
 
   const checkQueryStringError = () => {

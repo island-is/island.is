@@ -19,7 +19,7 @@ import { AuthDelegationType } from '@island.is/shared/types'
 import { dataSchema } from './dataSchema'
 import {
   CurrentUserTypeProvider,
-  IndentityApiProvider,
+  IdentityApiProvider,
   NationalRegistryUserApi,
   UserInfoApi,
 } from '../dataProviders'
@@ -79,7 +79,7 @@ const FinancialStatementCemeteryTemplate: ApplicationTemplate<
               delete: true,
               api: [
                 CurrentUserTypeProvider,
-                IndentityApiProvider,
+                IdentityApiProvider,
                 NationalRegistryUserApi,
                 UserInfoApi,
               ],
