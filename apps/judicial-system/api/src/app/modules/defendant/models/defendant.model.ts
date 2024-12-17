@@ -112,7 +112,7 @@ export class Defendant {
 
   @Field(() => String, { nullable: true })
   readonly openedByPrisonAdminDate?: string
-  
+
   @Field(() => PunishmentType, { nullable: true })
   readonly punishmentType?: PunishmentType
 }
