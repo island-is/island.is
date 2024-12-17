@@ -12,14 +12,13 @@ import { m } from '../../lib/messages'
 import { ApiActions } from '../../shared'
 import { introSection } from './introSection/introSection'
 import { simpleInputsSection } from './simpleInputsSection'
-import { tableRepeaterSection } from './tableRepeaterSection/tableRepeaterSection'
-import { staticTableSection } from './staticTableSection/StaticTableSection'
 import { compositeFieldsSection } from './compositeFieldsSection'
 import { commonActionsSection } from './commonActionsSection'
 import { customSection } from './customSection/customSection'
 import { overviewSection } from './overviewSection/overviewSection'
 import { noInputFieldsSection } from './noInputFieldsSection'
 import { Logo } from '../../components/Logo/Logo'
+import { tablesAndRepeatersSection } from './tablesAndRepeatersSection'
 
 export const ExampleForm: Form = buildForm({
   id: 'ExampleFormDraft',
@@ -37,8 +36,7 @@ export const ExampleForm: Form = buildForm({
     noInputFieldsSection,
     simpleInputsSection,
     compositeFieldsSection,
-    tableRepeaterSection,
-    staticTableSection,
+    tablesAndRepeatersSection,
     customSection,
     overviewSection,
     buildSection({

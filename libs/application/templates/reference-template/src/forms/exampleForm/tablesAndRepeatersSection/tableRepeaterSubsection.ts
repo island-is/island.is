@@ -1,10 +1,10 @@
 import {
-  buildSection,
+  buildSubSection,
   buildTableRepeaterField,
 } from '@island.is/application/core'
 import { selectOptions } from '../../../utils/options'
 
-export const tableRepeaterSection = buildSection({
+export const tableRepeaterSubsection = buildSubSection({
   id: 'repeater',
   title: 'Table Repeater',
   children: [

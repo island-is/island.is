@@ -1,10 +1,10 @@
 import {
-  buildSection,
+  buildSubSection,
   buildStaticTableField,
 } from '@island.is/application/core'
 
-export const staticTableSection = buildSection({
-  id: 'staticTableSection',
+export const staticTableSubsection = buildSubSection({
+  id: 'staticTableSubsection',
   title: 'Static table',
   children: [
     buildStaticTableField({

@@ -31,7 +31,7 @@ export const textInputSubsection = buildSubSection({
           rightAlign: true,
         }),
         buildTextField({
-          id: 'readOnlydTextInput',
+          id: 'readOnlyTextInput',
           title: '',
           defaultValue: 'Read only',
           width: 'half',
@@ -85,7 +85,7 @@ export const textInputSubsection = buildSubSection({
           width: 'half',
         }),
         buildTextField({
-          id: 'currencyTextInput',
+          id: 'currencyTextInput2',
           title: '',
           placeholder: 'Variant currency ($)',
           variant: 'currency',
@@ -93,7 +93,7 @@ export const textInputSubsection = buildSubSection({
           suffix: ' $',
         }),
         buildTextField({
-          id: 'currencyTextInput',
+          id: 'currencyTextInput3',
           title: '',
           placeholder: 'Variant currency (€)',
           variant: 'currency',

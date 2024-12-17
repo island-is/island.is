@@ -843,7 +843,6 @@ export const buildFieldsRepeaterField = (
 ): FieldsRepeaterField => {
   const {
     fields,
-    table,
     title,
     titleVariant,
     formTitle,
@@ -864,7 +863,6 @@ export const buildFieldsRepeaterField = (
     type: FieldTypes.FIELDS_REPEATER,
     component: FieldComponents.FIELDS_REPEATER,
     fields,
-    table,
     title,
     titleVariant,
     formTitle,
