@@ -19,10 +19,10 @@ Example folder structure:
 | /applicationForm
 | |-- index.ts (This file has a buildForm function)
 | |-- /section1
-| | |-- index.ts (This file has a buildSection function)
-| | |-- /subsection1.ts (This file has a buildSubSection function)
-| | |-- /subsection2.ts (This file has a buildSubSection function)
-| | |-- /subsection3.ts (This file has a buildSubSection function)
+| | |-- index.ts (This file has a buildSection function and imports the subsection childs)
+| | |-- subsection1.ts (This file has a buildSubSection function)
+| | |-- subsection2.ts (This file has a buildSubSection function)
+| | |-- subsection3.ts (This file has a buildSubSection function)
 | |-- /section2
 | | |-- index.ts (This file has a buildSection function)
 | |-- /section3
