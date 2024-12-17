@@ -11,6 +11,7 @@ import { messages as m } from '../../lib/messages'
 import { HealthPaths } from '../../lib/paths'
 import { useGetDonorStatusQuery } from './OrganDonation.generated'
 import { NoAccess } from './components/NoAccess'
+import { getOrganText } from './helpers/textMapper'
 
 const OrganDonation = () => {
   useNamespaces('sp.health')
@@ -25,7 +26,6 @@ const OrganDonation = () => {
   const donorStatus = data?.healthDirectorateOrganDonation.donor
   const isMinor = donorStatus?.isMinor
   const isTemporaryResident = donorStatus?.isTemporaryResident
-  const hasLimitations = donorStatus?.limitations?.hasLimitations
 
   const comment = donorStatus?.limitations?.comment
 
@@ -36,21 +36,21 @@ const OrganDonation = () => {
     allLimitations.push(comment)
   }
 
-  const limitationText = hasLimitations
-    ? formatMessage(m.iAmOrganDonorWithExceptionsText) +
-      ' ' +
-      allLimitations.join(', ')
-    : formatMessage(m.iAmOrganDonorText)
-
-  const cardText: string = donorStatus?.isDonor
-    ? limitationText
-    : formatMessage(m.iAmNotOrganDonorText)
-
-  const heading = donorStatus?.isDonor
-    ? donorStatus.limitations?.hasLimitations
-      ? formatMessage(m.iAmOrganDonorWithExceptions)
-      : formatMessage(m.iAmOrganDonor)
-    : formatMessage(m.iAmNotOrganDonor)
+  const texts = getOrganText(
+    donorStatus?.isDonor ?? true,
+    donorStatus?.limitations?.hasLimitations ?? false,
+    {
+      iAmOrganDonorWithExceptionsText: formatMessage(
+        m.iAmOrganDonorWithExceptionsText,
+      ),
+      iAmNotOrganDonorText: formatMessage(m.iAmOrganDonorText),
+      iAmOrganDonorText: formatMessage(m.iAmNotOrganDonorText),
+      iAmOrganDonorWithExceptions: formatMessage(m.iAmOrganDonorWithExceptions),
+      iAmOrganDonor: formatMessage(m.iAmOrganDonor),
+      iAmNotOrganDonor: formatMessage(m.iAmNotOrganDonor),
+    },
+    allLimitations,
+  )
 
   return (
     <IntroWrapper
@@ -82,8 +82,8 @@ const OrganDonation = () => {
               {formatMessage(m.takeOnOrganDonation)}
             </Text>
             <ActionCard
-              heading={heading}
-              text={cardText}
+              heading={texts.heading}
+              text={texts.cardText}
               cta={{
                 url: HealthPaths.HealthOrganDonationRegistration,
                 label: formatMessage(m.changeTake),

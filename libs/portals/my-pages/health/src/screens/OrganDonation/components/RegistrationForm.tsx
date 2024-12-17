@@ -18,7 +18,7 @@ import { messages } from '../../..'
 import { HealthPaths } from '../../../lib/paths'
 import * as styles from '../OrganDonation.css'
 import {
-  useGetOrgansListQuery,
+  useGetDonorStatusQuery,
   useUpdateOrganDonationInfoMutation,
 } from '../OrganDonation.generated'
 import Limitations from './Limitations'
@@ -34,7 +34,7 @@ export const OrganRegistrationForm = () => {
   const { formatMessage, lang } = useLocale()
   const navigate = useNavigate()
 
-  const { data, loading } = useGetOrgansListQuery({
+  const { data, loading } = useGetDonorStatusQuery({
     variables: { locale: lang },
     fetchPolicy: 'no-cache',
   })
@@ -46,12 +46,14 @@ export const OrganRegistrationForm = () => {
   const hasLimitations =
     data?.healthDirectorateOrganDonation.donor?.limitations?.hasLimitations
   const allLimitations = data?.healthDirectorateOrganDonation.organList
+  const exceptionComment =
+    data?.healthDirectorateOrganDonation.donor?.limitations?.comment
+
   const selectedLimitations =
     data?.healthDirectorateOrganDonation.donor?.limitations?.limitedOrgansList?.map(
       (item) => item.id,
     )
-  const exceptionComment =
-    data?.healthDirectorateOrganDonation.donor?.limitations?.comment
+
   if (exceptionComment && exceptionComment?.length > 0) {
     selectedLimitations?.push('other')
   }
@@ -60,6 +62,7 @@ export const OrganRegistrationForm = () => {
       ? OPT_IN_EXCEPTIONS
       : OPT_IN
     : OPT_OUT
+
   const [radioValue, setRadioValue] = useState<string | undefined>(donorStatus)
 
   const [updateDonorStatus, { loading: submitLoading }] =

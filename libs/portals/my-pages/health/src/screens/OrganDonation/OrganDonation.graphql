@@ -13,24 +13,6 @@ query getDonorStatus($locale: String) {
       isMinor
       isTemporaryResident
     }
-  }
-}
-
-query getOrgansList($locale: String) {
-  healthDirectorateOrganDonation(locale: $locale) {
-    donor {
-      isDonor
-      isMinor
-      isTemporaryResident
-      limitations {
-        hasLimitations
-        limitedOrgansList {
-          id
-          name
-        }
-        comment
-      }
-    }
     organList {
       id
       name
