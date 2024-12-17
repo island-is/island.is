@@ -68,6 +68,8 @@ export const serviceSetup = (): ServiceBuilder<'judicial-system-backend'> =>
       EMAIL_FROM_NAME: '/k8s/judicial-system/EMAIL_FROM_NAME',
       EMAIL_REPLY_TO: '/k8s/judicial-system/EMAIL_REPLY_TO',
       EMAIL_REPLY_TO_NAME: '/k8s/judicial-system/EMAIL_REPLY_TO_NAME',
+      POLICE_INSTITUTIONS_EMAILS:
+        '/k8s/judicial-system/POLICE_INSTITUTIONS_EMAILS',
       PRISON_EMAIL: '/k8s/judicial-system/PRISON_EMAIL',
       PRISON_ADMIN_EMAIL: '/k8s/judicial-system/PRISON_ADMIN_EMAIL',
       PRISON_ADMIN_INDICTMENT_EMAILS:

@@ -47,11 +47,8 @@ import { GenericListItem } from './models/genericListItem.model'
 import { GetTeamMembersInput } from './dto/getTeamMembers.input'
 import { TeamMemberResponse } from './models/teamMemberResponse.model'
 import { GetGrantsInput } from './dto/getGrants.input'
-import { Grant, GrantStatus } from './models/grant.model'
+import { Grant } from './models/grant.model'
 import { GrantList } from './models/grantList.model'
-import { logger } from '@island.is/logging'
-import { IGrantFields } from './generated/contentfulTypes'
-import { isDefined } from '@island.is/shared/utils'
 
 @Injectable()
 export class CmsElasticsearchService {
@@ -509,7 +506,9 @@ export class CmsElasticsearchService {
       },
     ]
 
-    let queryString = input.queryString ? input.queryString.toLowerCase() : ''
+    let queryString = input.queryString
+      ? input.queryString.trim().toLowerCase()
+      : ''
 
     if (input.lang === 'is') {
       queryString = queryString.replace('`', '')
@@ -520,12 +519,13 @@ export class CmsElasticsearchService {
         query: queryString + '*',
         fields: ['title^100', 'content'],
         analyze_wildcard: true,
+        default_operator: 'and',
       },
     })
 
     const size = input.size ?? 10
 
-    const sort: ('_score' | sortRule)[] = [
+    const sort: sortRule[] = [
       {
         [SortField.RELEASE_DATE]: {
           order: SortDirection.DESC,
@@ -534,11 +534,6 @@ export class CmsElasticsearchService {
       // Sort items with equal values by ascending title order
       { 'title.sort': { order: SortDirection.ASC } },
     ]
-
-    // Order by score first in case there is a query string
-    if (queryString.length > 0 && queryString !== '*') {
-      sort.unshift('_score')
-    }
 
     if (input.tags && input.tags.length > 0 && input.tagGroups) {
       must = must.concat(
@@ -618,7 +613,6 @@ export class CmsElasticsearchService {
       search,
       page = 1,
       size = 8,
-      statuses,
       categories,
       types,
       organizations,
@@ -723,30 +717,6 @@ export class CmsElasticsearchService {
       })
     }
 
-    if (statuses) {
-      must.push({
-        nested: {
-          path: 'tags',
-          query: {
-            bool: {
-              must: [
-                {
-                  terms: {
-                    'tags.key': statuses,
-                  },
-                },
-                {
-                  term: {
-                    'tags.type': 'status',
-                  },
-                },
-              ],
-            },
-          },
-        },
-      })
-    }
-
     const grantListResponse: ApiResponse<SearchResponse<MappedData>> =
       await this.elasticService.findByQuery(index, {
         query: {
@@ -758,7 +728,6 @@ export class CmsElasticsearchService {
         size,
         from: (page - 1) * size,
       })
-
     return {
       total: grantListResponse.body.hits.total.value,
       items: grantListResponse.body.hits.hits.map<Grant>((response) =>

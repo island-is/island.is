@@ -1,5 +1,6 @@
+{{- if .Values.schedule }}
 {{- if .Values.enabled }}
-{{- $fullName := include "cronjob-template.fullname" . -}}
+{{- $fullName := include "api-template.fullname" . -}}
 apiVersion: batch/v1
 kind: CronJob
 metadata:
@@ -12,7 +13,7 @@ metadata:
     chart: "{{ $.Chart.Name }}-{{ $.Chart.Version | replace "+" "_" }}"
     tags.datadoghq.com/env: {{ .Values.global.env.name }}
     tags.datadoghq.com/service: {{ include "cronjob-template.name" . }}
-    tags.datadoghq.com/version: {{ .Values.image.tag | default .Values.global.image.tag }}
+    tags.datadoghq.com/version: {{ .Values.image.tag }}
 spec:
   concurrencyPolicy: {{ .Values.concurrencyPolicy | default "Allow" }}
   failedJobsHistoryLimit: {{ .Values.failedJobsHistoryLimit | default 1 }}
@@ -52,13 +53,13 @@ spec:
             chart: "{{ $.Chart.Name }}-{{ $.Chart.Version | replace "+" "_" }}"
             tags.datadoghq.com/env: {{ .Values.global.env.name }}
             tags.datadoghq.com/service: {{ include "cronjob-template.name" . }}
-            tags.datadoghq.com/version: {{ .Values.image.tag | default .Values.global.image.tag }}
+            tags.datadoghq.com/version: {{ .Values.image.tag }}
         spec:
           serviceAccountName: {{ include "cronjob-template.serviceAccountName" $ }}
           securityContext:
             {{- toYaml $.Values.podSecurityContext | nindent 12 }}
           containers:
-          - image: "{{ $.Values.image.repository }}:{{ $.Values.image.tag | default .Values.global.image.tag }}"
+          - image: "{{ $.Values.image.repository }}:{{ $.Values.image.tag }}"
             name: {{ .Chart.Name }}
             securityContext:
               {{- toYaml $.Values.securityContext | nindent 14 }}
@@ -92,7 +93,7 @@ spec:
                     key: {{ $key }}
               {{- end }}
               - name: APP_VERSION
-                value: {{ .Values.image.tag | default .Values.global.image.tag }}
+                value: {{ .Values.image.tag }}
               - name: DD_ENV
                 valueFrom:
                   fieldRef:
@@ -144,4 +145,5 @@ spec:
           {{- end }}
           {{- end }}
           restartPolicy: {{ .Values.restartPolicy | default "Never" }}
+{{- end }}
 {{- end }}

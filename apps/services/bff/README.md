@@ -37,3 +37,7 @@ Runs tests with Jest and outputs coverage to `coverage/apps/services/bff`.
 ## Code owners and maintainers
 
 - [Aranja](https://github.com/orgs/island-is/teams/aranja/members)
+
+## Troubleshooting
+
+If you encounter any issues while setting up or running the BFF service, please refer to the [Troubleshooting Guide](TROUBLESHOOT_GUIDE.md)
