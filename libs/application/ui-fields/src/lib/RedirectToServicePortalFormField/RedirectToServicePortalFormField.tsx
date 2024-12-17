@@ -24,6 +24,7 @@ export const RedirectToServicePortalFormField: FC<
       '_self',
     )
   }, [application])
+  const { marginTop = 10, marginBottom = 10 } = field
 
   return (
     <Box
@@ -31,8 +32,8 @@ export const RedirectToServicePortalFormField: FC<
       alignItems="center"
       justifyContent="center"
       width="full"
-      marginTop={field.marginTop ?? 10}
-      marginBottom={field.marginBottom ?? 10}
+      marginTop={marginTop}
+      marginBottom={marginBottom}
     >
       <LoadingDots large />
     </Box>

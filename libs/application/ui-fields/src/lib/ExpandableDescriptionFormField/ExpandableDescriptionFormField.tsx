@@ -16,11 +16,12 @@ export const ExpandableDescriptionFormField: FC<
   React.PropsWithChildren<Props>
 > = ({ application, field }) => {
   const { formatMessage, lang: locale } = useLocale()
+  const {marginTop = 2, marginBottom = 2 } = field
 
   return (
     <Box
-      marginTop={field.marginTop ?? 2}
-      marginBottom={field.marginBottom ?? 2}
+      marginTop={marginTop}
+      marginBottom={marginBottom}
     >
       <AccordionCard
         startExpanded={field.startExpanded}
