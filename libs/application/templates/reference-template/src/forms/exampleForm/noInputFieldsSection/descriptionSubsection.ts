@@ -10,11 +10,11 @@ export const descriptionSubsection = buildSubSection({
   title: 'Description',
   children: [
     buildMultiField({
-      id: 'description',
+      id: 'descriptionMultiField',
       title: 'Textar með buildDescriptionField',
       children: [
         buildDescriptionField({
-          id: 'description',
+          id: 'description1',
           title: '',
           description: m.descriptionFieldDescription,
           marginBottom: [2],
@@ -27,7 +27,7 @@ export const descriptionSubsection = buildSubSection({
         }),
 
         buildDescriptionField({
-          id: 'description',
+          id: 'description3',
           title: 'Default title size ',
           description: 'Description inserted as a regular string',
           marginBottom: [2],
@@ -35,35 +35,35 @@ export const descriptionSubsection = buildSubSection({
           titleTooltip: 'Title tooltip text',
         }),
         buildDescriptionField({
-          id: 'description',
+          id: 'description4',
           title: 'h1 title size',
           titleVariant: 'h1',
           description: m.regularTextExample,
           marginBottom: [2],
         }),
         buildDescriptionField({
-          id: 'description',
+          id: 'description5',
           title: 'h2 title size (same as default)',
           titleVariant: 'h2',
           description: m.markdownHeadingExample,
           marginBottom: [2],
         }),
         buildDescriptionField({
-          id: 'description',
+          id: 'description6',
           title: 'h3 title size',
           titleVariant: 'h3',
           description: m.markdownBulletListExample,
           marginBottom: [2],
         }),
         buildDescriptionField({
-          id: 'description',
+          id: 'description7',
           title: 'h4 title size',
           titleVariant: 'h4',
           description: m.markdownNumberedListExample,
           marginBottom: [2],
         }),
         buildDescriptionField({
-          id: 'description',
+          id: 'description8',
           title: 'h5 title size',
           titleVariant: 'h5',
           description: {
@@ -73,7 +73,7 @@ export const descriptionSubsection = buildSubSection({
           marginBottom: [2],
         }),
         buildDescriptionField({
-          id: 'description',
+          id: 'description9',
           title: '',
           description: m.markdownCodeExample,
           marginBottom: [2],
