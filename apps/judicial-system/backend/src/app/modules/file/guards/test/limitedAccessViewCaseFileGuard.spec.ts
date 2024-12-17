@@ -434,6 +434,7 @@ describe('Limited Access View Case File Guard', () => {
         const allowedCaseFileCategories = [
           CaseFileCategory.APPEAL_RULING,
           CaseFileCategory.RULING,
+          CaseFileCategory.SENT_TO_PRISON_ADMIN_FILE,
         ]
 
         describe.each(allowedCaseFileCategories)(
