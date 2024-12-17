@@ -73,6 +73,7 @@ export const BoostChatPanel: React.FC<
       text={'Hæ, get ég aðstoðað?'}
       onClick={() => window.boost.chatPanel.show()}
       isVisible={showButton}
+      pushUp={pushUp}
     />
   )
 }
