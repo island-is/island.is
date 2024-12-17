@@ -14,7 +14,7 @@ import { validateAndSendToServer } from './formHelper'
 import {
   getAppealEndDate,
   getShortGender,
-  hasOnlyOneItemInSubArrays,
+  hasOnlyOneItemValues,
   hasSentNotification,
 } from './utils'
 
@@ -452,7 +452,7 @@ describe('Utils', () => {
       }
 
       // Act
-      const result = hasOnlyOneItemInSubArrays(indictmentSubtypes)
+      const result = hasOnlyOneItemValues(indictmentSubtypes)
 
       // Assert
       expect(result).toEqual(true)
@@ -466,7 +466,7 @@ describe('Utils', () => {
       }
 
       // Act
-      const result = hasOnlyOneItemInSubArrays(indictmentSubtypes)
+      const result = hasOnlyOneItemValues(indictmentSubtypes)
 
       // Assert
       expect(result).toEqual(false)
@@ -477,7 +477,7 @@ describe('Utils', () => {
       const indictmentSubtypes: Record<string, string[]> = {}
 
       // Act
-      const result = hasOnlyOneItemInSubArrays(indictmentSubtypes)
+      const result = hasOnlyOneItemValues(indictmentSubtypes)
 
       // Assert
       expect(result).toEqual(false)
@@ -491,7 +491,7 @@ describe('Utils', () => {
       }
 
       // Act
-      const result = hasOnlyOneItemInSubArrays(indictmentSubtypes)
+      const result = hasOnlyOneItemValues(indictmentSubtypes)
 
       // Assert
       expect(result).toEqual(false)

@@ -17,7 +17,7 @@ import {
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
-import { hasOnlyOneItemInSubArrays, isBusiness } from './utils'
+import { hasOnlyOneItemValues, isBusiness } from './utils'
 
 export type Validation =
   | 'empty'
@@ -301,7 +301,7 @@ export const isTrafficViolationStepValidIndictments = (
     return false
   }
 
-  if (hasOnlyOneItemInSubArrays(workingCase.indictmentSubtypes)) {
+  if (hasOnlyOneItemValues(workingCase.indictmentSubtypes)) {
     const hasValidTrafficViolationIndictmentCounts =
       workingCase.indictmentCounts?.every(
         (indictmentCount) =>

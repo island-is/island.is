@@ -42,7 +42,7 @@ import {
   UpdateIndictmentCount,
   useIndictmentCounts,
 } from '@island.is/judicial-system-web/src/utils/hooks'
-import { hasOnlyOneItemInSubArrays } from '@island.is/judicial-system-web/src/utils/utils'
+import { hasOnlyOneItemValues } from '@island.is/judicial-system-web/src/utils/utils'
 
 import { Substances as SubstanceChoices } from './Substances/Substances'
 import { indictmentCount as strings } from './IndictmentCount.strings'
@@ -307,7 +307,7 @@ export const getIncidentDescription = (
   const vehicleRegistration =
     vehicleRegistrationNumber || '[Skráningarnúmer ökutækis]'
 
-  const hasSingleSubtype = hasOnlyOneItemInSubArrays(subtypes)
+  const hasSingleSubtype = hasOnlyOneItemValues(subtypes)
 
   const singleSubType =
     (policeCaseNumber && subtypes?.[policeCaseNumber]?.[0]) || undefined
