@@ -44,7 +44,7 @@ export const SliderFormField: FC<
   )
 
   return (
-    <Box>
+    <Box marginTop={field.marginTop} marginBottom={field.marginBottom}>
       <Controller
         name={field.id}
         defaultValue={
