@@ -1,5 +1,6 @@
 // TODO: Add tests
 import {
+  IndictmentSubtype,
   isIndictmentCase,
   isTrafficViolationCase,
 } from '@island.is/judicial-system/types'
@@ -11,6 +12,7 @@ import {
   CaseType,
   DateLog,
   DefenderChoice,
+  IndictmentCount,
   IndictmentDecision,
   SessionArrangements,
   User,
@@ -18,6 +20,7 @@ import {
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
 import { hasOnlyOneItemValues, isBusiness } from './utils'
+import { indictmentCount } from '../routes/Prosecutor/Indictments/Indictment/IndictmentCount.strings'
 
 export type Validation =
   | 'empty'
@@ -297,22 +300,41 @@ export const isProcessingStepValidIndictments = (
 export const isTrafficViolationStepValidIndictments = (
   workingCase: Case,
 ): boolean => {
-  if (!workingCase.indictmentSubtypes) {
+  const hasValidDemands = Boolean(
+    workingCase.demands &&
+      (!workingCase.hasCivilClaims || workingCase.civilDemands),
+  )
+
+  if (!workingCase.indictmentSubtypes || !hasValidDemands) {
     return false
   }
 
-  if (hasOnlyOneItemValues(workingCase.indictmentSubtypes)) {
+  const validateIndictmentCount = (indictmentCount: IndictmentCount) =>
+    indictmentCount.policeCaseNumber &&
+    indictmentCount.offenses &&
+    indictmentCount.offenses?.length > 0 &&
+    indictmentCount.vehicleRegistrationNumber &&
+    indictmentCount.lawsBroken &&
+    indictmentCount.incidentDescription &&
+    indictmentCount.legalArguments
+
+  const trafficViolationIndictmentCounts =
+    workingCase.indictmentCounts?.filter((indictmentCount) =>
+      indictmentCount.indictmentCountSubtypes?.includes(
+        IndictmentSubtype.TRAFFIC_VIOLATION,
+      ),
+    ) ?? []
+
+  if (isTrafficViolationCase(workingCase)) {
     const hasValidTrafficViolationIndictmentCounts =
-      workingCase.indictmentCounts?.every(
-        (indictmentCount) =>
-          indictmentCount.policeCaseNumber &&
-          indictmentCount.offenses &&
-          indictmentCount.offenses?.length > 0 &&
-          indictmentCount.vehicleRegistrationNumber &&
-          indictmentCount.lawsBroken &&
-          indictmentCount.incidentDescription &&
-          indictmentCount.legalArguments,
-      ) ?? false
+      workingCase.indictmentCounts?.every(validateIndictmentCount) ?? false
+
+    return hasValidTrafficViolationIndictmentCounts
+  }
+
+  if (trafficViolationIndictmentCounts.length > 0) {
+    const hasValidTrafficViolationIndictmentCounts =
+      trafficViolationIndictmentCounts.every(validateIndictmentCount) ?? false
 
     return hasValidTrafficViolationIndictmentCounts
   }
@@ -323,11 +345,6 @@ export const isTrafficViolationStepValidIndictments = (
         indictmentCount.indictmentCountSubtypes &&
         indictmentCount.indictmentCountSubtypes.length > 0,
     ) ?? false
-
-  const hasValidDemands = Boolean(
-    workingCase.demands &&
-      (!workingCase.hasCivilClaims || workingCase.civilDemands),
-  )
 
   return hasValidIndictmentCounts && hasValidDemands
 }
