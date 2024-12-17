@@ -38,12 +38,12 @@ export const overviewSection = buildSection({
         buildSubmitField({
           id: 'submit',
           placement: 'footer',
-          title: overview.confirmation.confirm,
+          title: overview.buttons.confirm,
           refetchApplicationAfterSubmit: true,
           actions: [
             {
               event: DefaultEvents.SUBMIT,
-              name: overview.confirmation.confirm,
+              name: overview.buttons.confirm,
               type: 'primary',
             },
           ],

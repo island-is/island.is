@@ -5,3 +5,8 @@ export enum ApplicationType {
 
 export const FILE_SIZE_LIMIT = 10000000
 export const FILE_TYPES_ALLOWED = '.pdf, .docx, .rtf'
+
+export enum ConclusionView {
+  DEFAULT = 'DEFAULT',
+  OVERVIEW = 'OVERVIEW',
+}

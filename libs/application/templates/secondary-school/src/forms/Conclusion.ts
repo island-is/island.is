@@ -1,4 +1,8 @@
-import { buildForm, buildSection } from '@island.is/application/core'
+import {
+  buildCustomField,
+  buildForm,
+  buildSection,
+} from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
 import {
   userInformation,
@@ -9,7 +13,6 @@ import {
   overview,
 } from '../lib/messages'
 import { Logo } from '../assets/Logo'
-import { buildFormConclusionSection } from '@island.is/application/ui-forms'
 
 export const Conclusion: Form = buildForm({
   id: 'ConclusionForm',
@@ -43,11 +46,17 @@ export const Conclusion: Form = buildForm({
       title: overview.general.sectionTitle,
       children: [],
     }),
-    buildFormConclusionSection({
-      alertTitle: conclusion.general.alertTitle,
-      alertMessage: conclusion.general.alertMessage,
-      expandableHeader: conclusion.general.accordionTitle,
-      expandableDescription: conclusion.general.accordionText,
+    buildSection({
+      id: 'conclusionSection',
+      title: conclusion.general.sectionTitle,
+      children: [
+        buildCustomField({
+          component: 'Conclusion',
+          id: 'conclusion',
+          title: '',
+          description: '',
+        }),
+      ],
     }),
   ],
 })

@@ -47,20 +47,37 @@ export class SecondarySchoolClient {
   }
 
   async getPrograms(auth: User, schoolId: string): Promise<Program[]> {
-    const res = await this.schoolsApiWithAuth(
-      auth,
-    ).v1SchoolsSchoolIdProgrammesGet({
-      schoolId,
-      rowOffset: undefined,
-      fetchSize: undefined,
-    })
+    //TODOx this needs to send us registrationEndDate for both almenn and nýnemi
+    // const res = await this.schoolsApiWithAuth(
+    //   auth,
+    // ).v1SchoolsSchoolIdProgrammesGet({
+    //   schoolId,
+    //   rowOffset: undefined,
+    //   fetchSize: undefined,
+    // })
 
-    return res.map((program) => ({
-      id: program.id || '',
-      nameIs: program.title || '',
-      nameEn: program.titleEnglish || '',
-      registrationEndDate: program.registryEndDate || new Date(),
-    }))
+    // return res.map((program) => ({
+    //   id: program.id || '',
+    //   nameIs: program.title || '',
+    //   nameEn: program.titleEnglish || '',
+    //   registrationEndDate: program.registryEndDate || new Date(),
+    // }))
+
+    //TODOx
+    return [
+      {
+        id: schoolId + '1',
+        nameIs: 'Náttúrufræðibraut',
+        nameEn: '',
+        registrationEndDate: new Date('2025-06-01'),
+      },
+      {
+        id: schoolId + '2',
+        nameIs: 'Félagsfræðibraut',
+        nameEn: '',
+        registrationEndDate: new Date('2025-06-01'),
+      },
+    ]
   }
 
   async validateCanCreate(auth: User): Promise<boolean> {
@@ -80,52 +97,54 @@ export class SecondarySchoolClient {
   }
 
   async create(auth: User, application: Application): Promise<string> {
-    const applicationId = await this.applicationsApiWithAuth(
-      auth,
-    ).v1ApplicationsPost({
-      applicationBaseDto: {
-        applicantNationalId: application.nationalId,
-        applicantName: application.name,
-        phoneNumber: application.phone,
-        email: application.email,
-        placeOfResidence: application.address,
-        postCode: application.postalCode,
-        municipality: application.city,
-        nextOfKin: application.contacts.map((contact) => ({
-          nationalId: contact.nationalId,
-          phoneNumber: contact.phone,
-          name: contact.name,
-          email: contact.email,
-          address: contact.address,
-          postCode: contact.postalCode,
-        })),
-        speakingLanguage: application.nativeLanguageCode,
-        otherInformation: application.otherDescription,
-        applicationChoices: application.schools.map((school) => ({
-          priority: school.priority,
-          schoolId: school.schoolId,
-          programmeChoice: school.programs.map((program) => ({
-            priority: program.priority,
-            programmeId: program.programId,
-          })),
-          thirdLanguages: school.thirdLanguageCode,
-          northernLanguage: school.nordicLanguageCode,
-          requestDormitory: school.requestDormitory,
-        })),
-        //TODOx vantar í API - missing applicationType
-      },
-    })
+    // const applicationId = await this.applicationsApiWithAuth(
+    //   auth,
+    // ).v1ApplicationsPost({
+    //   applicationBaseDto: {
+    //     applicantNationalId: application.nationalId,
+    //     applicantName: application.name,
+    //     phoneNumber: application.phone,
+    //     email: application.email,
+    //     placeOfResidence: application.address,
+    //     postCode: application.postalCode,
+    //     municipality: application.city,
+    //     nextOfKin: application.contacts.map((contact) => ({
+    //       nationalId: contact.nationalId,
+    //       phoneNumber: contact.phone,
+    //       name: contact.name,
+    //       email: contact.email,
+    //       address: contact.address,
+    //       postCode: contact.postalCode,
+    //     })),
+    //     speakingLanguage: application.nativeLanguageCode,
+    //     otherInformation: application.otherDescription,
+    //     applicationChoices: application.schools.map((school) => ({
+    //       priority: school.priority,
+    //       schoolId: school.schoolId,
+    //       programmeChoice: school.programs.map((program) => ({
+    //         priority: program.priority,
+    //         programmeId: program.programId,
+    //       })),
+    //       thirdLanguages: school.thirdLanguageCode,
+    //       northernLanguage: school.nordicLanguageCode,
+    //       requestDormitory: school.requestDormitory,
+    //     })),
+    //     //TODOx vantar í API - missing applicationType
+    //   },
+    // })
 
-    await this.applicationsApiWithAuth(
-      auth,
-    ).v1ApplicationsApplicationIdAttachmentsPatch({
-      applicationId,
-      files: application.attachments
-        .filter((x) => !!x)
-        .map((x) => this.base64ToBlob(x.fileContent)),
-    })
+    // await this.applicationsApiWithAuth(
+    //   auth,
+    // ).v1ApplicationsApplicationIdAttachmentsPatch({
+    //   applicationId,
+    //   files: application.attachments
+    //     .filter((x) => !!x)
+    //     .map((x) => this.base64ToBlob(x.fileContent)),
+    // })
 
-    return applicationId
+    // return applicationId
+
+    return 'TODOx'
   }
 
   private base64ToBlob(base64: string): Blob {

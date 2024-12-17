@@ -10,24 +10,24 @@ import {
 } from '@island.is/island-ui/core'
 
 interface ReviewGroupProps {
-  isFirst?: boolean
-  isLast?: boolean
+  hideTopDivider?: boolean
   editMessage?: string
   handleClick?: () => void
+  isEditable?: boolean
   title: string
 }
 
 export const ReviewGroup: FC<React.PropsWithChildren<ReviewGroupProps>> = ({
   children,
-  isFirst,
-  isLast,
+  hideTopDivider,
   editMessage,
   handleClick,
+  isEditable = true,
   title,
 }) => {
   return (
     <Box>
-      {!isFirst && <Divider />}
+      {!hideTopDivider && <Divider />}
 
       <Box paddingY={4}>
         <GridRow>
@@ -41,7 +41,7 @@ export const ReviewGroup: FC<React.PropsWithChildren<ReviewGroupProps>> = ({
               <Text variant="h4">{title}</Text>
             </Box>
           </GridColumn>
-          {editMessage && (
+          {isEditable && editMessage && (
             <GridColumn span={['1/2', '1/2', '1/2', '3/7', '1/3']}>
               <Box
                 paddingBottom={2}
@@ -60,8 +60,6 @@ export const ReviewGroup: FC<React.PropsWithChildren<ReviewGroupProps>> = ({
           <GridColumn>{children}</GridColumn>
         </GridRow>
       </Box>
-
-      {!isLast && <Divider />}
     </Box>
   )
 }

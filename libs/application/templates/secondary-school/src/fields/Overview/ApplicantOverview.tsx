@@ -6,7 +6,7 @@ import { overview } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
 import { formatKennitala, formatPhoneNumber } from '../../utils'
 import { ReviewGroup } from '../../components/ReviewGroup'
-import { Routes } from '../../lib/constants'
+import { Routes, States } from '../../lib/constants'
 
 export const ApplicantOverview: FC<FieldBaseProps> = ({
   application,
@@ -25,7 +25,8 @@ export const ApplicantOverview: FC<FieldBaseProps> = ({
       handleClick={() => onClick(Routes.PERSONAL)}
       editMessage={formatMessage(overview.general.editMessage)}
       title={formatMessage(overview.applicant.subtitle)}
-      isFirst
+      isEditable={application.state === States.DRAFT}
+      hideTopDivider={application.state !== States.DRAFT}
     >
       <Box>
         <GridRow>

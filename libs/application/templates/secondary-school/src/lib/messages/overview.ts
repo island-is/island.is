@@ -15,7 +15,7 @@ export const overview = {
     description: {
       id: 'ss.application:overview.general.description',
       defaultMessage:
-        'Risus et porttitor enim vel tincidunt volutpat. Viverra cursus mattis sed lorem quis arcu laoreet.',
+        'Vinsamlegast farðu vel yfir allar upplýsingar hér að neðan áður en umsóknin er send.',
       description: 'Description of overview page',
     },
     editMessage: {
@@ -114,9 +114,9 @@ export const overview = {
       description: 'Supporting documents label',
     },
   }),
-  confirmation: defineMessages({
+  buttons: defineMessages({
     confirm: {
-      id: 'ss.application:overview.confirmation.confirm',
+      id: 'ss.application:overview.buttons.confirm',
       defaultMessage: 'Áfram',
       description: 'Continue',
     },
