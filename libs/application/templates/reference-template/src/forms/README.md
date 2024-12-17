@@ -30,3 +30,19 @@ Example folder structure:
 
 | /confirmationForm
 | |-- confirmationForm.ts
+
+## BuildForm, buildSection, buildSubSection and buildMultiField
+
+Those are the four building blocks of each form.
+
+The root of each form is a buildForm function and that is the only thing that can be imported into the state machine in the main template file.
+
+The buildForm function has an array of children. Those children should be buildSection functions.
+
+BuildSection will be displayed in the stepper as top level section. The children array of a buildSection can be buildSubSection, buildMultiField or a regular buildField function.
+
+BuildSubSection is a subsection of a buildSection and will be displayed in the stepper as a subsection of the buildSection. The children array of a buildSubSection can be buildMultiField or buildField functions.
+
+BuildMultiField is a wrapper around many buildField functions. if a buildSection or buildSubSection doesn't have a buildMultiField, it will only display one field at a time and stepping through the screens will be strange in regards to the stepper.
+
+In most cases you want to use one buildMultiField as the child of a buildSection or buildSubSection since in most cases you want to display multiple fields at a time on the screen.

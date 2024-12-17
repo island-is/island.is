@@ -1,12 +1,12 @@
-import { FC } from 'react'
-
-export const plate200: FC<React.PropsWithChildren<unknown>> = () => (
+export const plate200 = () => (
   <svg
     width="158"
     height="119"
     viewBox="0 0 158 119"
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
+    role="img"
+    aria-label="Plate 200"
   >
     <rect
       x="1.05542"
