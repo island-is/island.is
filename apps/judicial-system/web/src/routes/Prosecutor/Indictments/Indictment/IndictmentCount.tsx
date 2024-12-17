@@ -42,7 +42,7 @@ import {
   UpdateIndictmentCount,
   useIndictmentCounts,
 } from '@island.is/judicial-system-web/src/utils/hooks'
-import { hasOnlyOneItemInSubArrays } from '@island.is/judicial-system-web/src/utils/utils'
+import { hasOnlyOneItemValues } from '@island.is/judicial-system-web/src/utils/utils'
 
 import { Substances as SubstanceChoices } from './Substances/Substances'
 import { indictmentCount as strings } from './IndictmentCount.strings'
@@ -307,7 +307,7 @@ export const getIncidentDescription = (
   const vehicleRegistration =
     vehicleRegistrationNumber || '[Skráningarnúmer ökutækis]'
 
-  const hasSingleSubtype = hasOnlyOneItemInSubArrays(subtypes)
+  const hasSingleSubtype = hasOnlyOneItemValues(subtypes)
 
   const singleSubType =
     (policeCaseNumber && subtypes?.[policeCaseNumber]?.[0]) || undefined
@@ -384,7 +384,7 @@ export const IndictmentCount: FC<Props> = ({
   const [legalArgumentsErrorMessage, setLegalArgumentsErrorMessage] =
     useState<string>('')
 
-  const subtypes = indictmentCount.policeCaseNumber
+  const subtypes: IndictmentSubtype[] = indictmentCount.policeCaseNumber
     ? workingCase.indictmentSubtypes[indictmentCount.policeCaseNumber]
     : []
 
@@ -465,6 +465,8 @@ export const IndictmentCount: FC<Props> = ({
       indictmentCountSubtypes: Array.from(currentSubtypes),
       ...(!currentSubtypes.has(IndictmentSubtype.TRAFFIC_VIOLATION) && {
         offenses: [],
+        substances: {},
+        vehicleRegistrationNumber: null,
       }),
     })
   }

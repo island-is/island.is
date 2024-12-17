@@ -214,13 +214,15 @@ export const PoliceCaseInfo: FC<Props> = ({
           label={formatMessage(policeCaseInfo.indictmentTypeLabel)}
           placeholder={formatMessage(policeCaseInfo.indictmentTypePlaceholder)}
           onChange={(selectedOption) => {
-            const indictmentSubtype = selectedOption?.value as IndictmentSubtype
+            const indictmentSubtype = selectedOption?.value
 
-            updatePoliceCase(index, {
-              subtypes: [...subtypesArray, indictmentSubtype],
-            })
+            if (!indictmentSubtype) {
+              return
+            }
 
-            updateIndictmentCount(policeCaseNumbers[index], crimeScene || {})
+            const subtypes = [...subtypesArray, indictmentSubtype]
+
+            updatePoliceCase(index, { subtypes })
           }}
           value={null}
           required
