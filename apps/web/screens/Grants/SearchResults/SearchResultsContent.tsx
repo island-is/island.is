@@ -108,7 +108,6 @@ export const SearchResultsContent = ({ grants, subheader, locale }: Props) => {
                       : null,
                     {
                       icon: 'time' as const,
-                      //todo: fix when the text is ready
                       text: status.deadlineStatus,
                     },
                     grant.categoryTags

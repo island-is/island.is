@@ -110,7 +110,7 @@ const GrantsSearchResultsPage: CustomScreen<GrantsHomeProps> = ({
     if (!totalHits) {
       return
     }
-    return totalHits > 8 ? Math.ceil(totalHits / PAGE_SIZE) : 1
+    return totalHits > PAGE_SIZE ? Math.ceil(totalHits / PAGE_SIZE) : 1
   }, [totalHits])
 
   const updateUrl = useCallback(() => {
