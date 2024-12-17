@@ -8,7 +8,7 @@ import { ListItem } from '../listItems/models/listItem.model'
 import { Field } from '../fields/models/field.model'
 import { Screen } from '../screens/models/screen.model'
 import { ApplicationMapper } from './models/application.mapper'
-import { Value } from '../values/models/value.model'
+import { Value } from './models/value.model'
 import { ValueTypeFactory } from '../../dataTypes/valueTypes/valueType.factory'
 import { ValueType } from '../../dataTypes/valueTypes/valueType.model'
 import { CreateApplicationDto } from './models/dto/createApplication.dto'
@@ -106,13 +106,64 @@ export class ApplicationsService {
     await application.save()
   }
 
-  async validateScreen(
+  async submitScreen(
     screenId: string,
     applicationDto: ApplicationDto,
   ): Promise<ScreenValidationResponse> {
-    const screenValidationResponse: ScreenValidationResponse =
-      new ScreenValidationResponse()
+    const sections = applicationDto.sections
 
+    if (!sections) {
+      throw new NotFoundException(`Sections not found`)
+    }
+
+    const screenDto = sections
+      .flatMap((section) => section.screens || [])
+      .find((screen) => screen.id === screenId)
+
+    if (!screenDto) {
+      throw new NotFoundException(`Screen with id '${screenId}' not found`)
+    }
+
+    const filteredFields = screenDto.fields?.filter(
+      (field) => field.isHidden === false,
+    )
+    const filteredScreenDto = { ...screenDto, fields: filteredFields }
+
+    filteredScreenDto.fields?.forEach(async (field) => {
+      await this.valueModel.destroy({
+        where: {
+          fieldId: field.id,
+          applicationId: applicationDto.id,
+        },
+      })
+
+      field.values?.forEach(async (value, index) => {
+        const newValue = await this.valueModel.create({
+          fieldId: field.id,
+          fieldType: field.fieldType,
+          applicationId: applicationDto.id,
+          order: index,
+          json: value.json,
+        } as Value)
+
+        if (field.fieldType === FieldTypesEnum.FILE) {
+          await this.applicationEventModel.create({
+            eventType: ApplicationEvents.FILE_CREATED,
+            applicationId: applicationDto.id,
+            isFileEvent: true,
+            valueId: newValue.id,
+          } as ApplicationEvent)
+        }
+      })
+    })
+
+    // internal validation of the input values of the screen
+    const screenValidationResponse =
+      this.serviceManager.validation(filteredScreenDto)
+
+    // TODO: Send the input values to the service manager for external validation
+
+    // TODO: Check if the section is also completed
     return screenValidationResponse
   }
 

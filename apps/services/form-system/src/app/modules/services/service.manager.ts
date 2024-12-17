@@ -7,6 +7,9 @@ import { ZendeskService } from './zendesk.service'
 import { NudgeService } from './nudge.service'
 import { UrlMethods } from '../../enums/urlMethods'
 import { ApplicationDto } from '../applications/models/dto/application.dto'
+import { ScreenValidationResponse } from '../../dataTypes/validationResponse.model'
+import { ValidationService } from './validation.service'
+import { ScreenDto } from '../screens/models/dto/screen.dto'
 
 @Injectable()
 export class ServiceManager {
@@ -17,6 +20,7 @@ export class ServiceManager {
     private readonly organizationUrlModel: typeof OrganizationUrl,
     private readonly zendeskService: ZendeskService,
     private readonly nugdeService: NudgeService,
+    private readonly validationService: ValidationService,
   ) {}
 
   async send(applicationDto: ApplicationDto): Promise<boolean> {
@@ -44,5 +48,11 @@ export class ServiceManager {
     })
 
     return false
+  }
+
+  async validation(screenDto: ScreenDto): Promise<ScreenValidationResponse> {
+    const screenValidationResponse =
+      await this.validationService.validateScreen(screenDto)
+    return screenValidationResponse
   }
 }
