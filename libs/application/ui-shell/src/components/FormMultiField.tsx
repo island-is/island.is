@@ -18,7 +18,11 @@ import ConditionHandler from './ConditionHandler'
 import FormField from './FormField'
 import { FieldDef, MultiFieldScreen } from '../types'
 
-const IGNORED_HALF_TYPES: FieldTypes[] = [FieldTypes.RADIO, FieldTypes.CHECKBOX]
+const IGNORED_HALF_TYPES: FieldTypes[] = [
+  FieldTypes.RADIO,
+  FieldTypes.CHECKBOX,
+  FieldTypes.FIELDS_REPEATER,
+]
 
 const FormMultiField: FC<
   React.PropsWithChildren<{

@@ -9,12 +9,14 @@ import { fileUploadSubsection } from './fileUploadSubsection'
 import { sliderSubsection } from './sliderSubsection'
 import { companySearchSubsection } from './companySearchSubsection'
 import { asyncSelectSubsection } from './asyncSelectSubsection'
+import { displayFieldSubsection } from './displayFieldSubsection'
 
 export const simpleInputsSection = buildSection({
   id: 'simpleInputsSection',
   title: 'Simple inputs',
   children: [
     textInputSubsection,
+    displayFieldSubsection,
     checkboxSubsection,
     radioSubsection,
     selectSubsection,

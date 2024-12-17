@@ -3,7 +3,6 @@ import {
   buildFieldsRepeaterField,
   buildMultiField,
   buildSubSection,
-  buildTextField,
 } from '@island.is/application/core'
 
 export const fieldsRepeaterSubsection = buildSubSection({
@@ -24,19 +23,53 @@ export const fieldsRepeaterSubsection = buildSubSection({
           id: 'fieldsRepeater',
           title: 'Fields Repeater',
           formTitle: 'Title for each form',
+          width: 'half',
           fields: {
-            nationalId: {
+            input: {
               component: 'input',
-              label: 'National ID',
+              label: 'Regular input',
               width: 'half',
               type: 'text',
               format: '######-####',
             },
-            fullName: {
-              component: 'input',
-              label: 'Full name',
+            select: {
+              component: 'select',
+              label: 'Select',
               width: 'half',
-              type: 'text',
+              options: [
+                { label: 'Option 1', value: 'option1' },
+                { label: 'Option 2', value: 'option2' },
+              ],
+            },
+            radio: {
+              component: 'radio',
+              width: 'half',
+              options: [
+                { label: 'Option 1', value: 'option1' },
+                { label: 'Option 2', value: 'option2' },
+                { label: 'Option 3', value: 'option3' },
+              ],
+            },
+            checkbox: {
+              component: 'checkbox',
+              options: [
+                { label: 'Option 1', value: 'option1' },
+                { label: 'Option 2', value: 'option2' },
+              ],
+            },
+            date: {
+              component: 'date',
+              label: 'Date',
+              width: 'half',
+            },
+            nationalIdWithName: {
+              component: 'nationalIdWithName',
+              label: 'National ID with name',
+            },
+            phone: {
+              component: 'phone',
+              label: 'Phone',
+              width: 'half',
             },
           },
         }),
