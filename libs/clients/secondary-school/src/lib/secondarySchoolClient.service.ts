@@ -79,6 +79,7 @@ export class SecondarySchoolClient {
       applicationBaseDto: {
         applicantNationalId: application.nationalId,
         applicantName: application.name,
+        isFreshman: application.isFreshman,
         phoneNumber: application.phone,
         email: application.email,
         placeOfResidence: application.address,
@@ -101,21 +102,23 @@ export class SecondarySchoolClient {
             priority: program.priority,
             programmeId: program.programId,
           })),
-          thirdLanguages: school.thirdLanguageCode,
+          thirdLanguage: school.thirdLanguageCode,
           northernLanguage: school.nordicLanguageCode,
           requestDormitory: school.requestDormitory,
         })),
       },
     })
 
-    await this.applicationsApiWithAuth(
-      auth,
-    ).v1ApplicationsApplicationIdAttachmentsPatch({
-      applicationId,
-      files: application.attachments
-        .filter((x) => !!x)
-        .map((x) => this.base64ToBlob(x.fileContent)),
-    })
+    if (application.attachments.length > 0) {
+      await this.applicationsApiWithAuth(
+        auth,
+      ).v1ApplicationsApplicationIdAttachmentsPatch({
+        applicationId,
+        files: application.attachments
+          .filter((x) => !!x)
+          .map((x) => this.base64ToBlob(x.fileContent)),
+      })
+    }
 
     return applicationId
   }

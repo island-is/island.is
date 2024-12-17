@@ -8,6 +8,7 @@ import {
   YES,
 } from '@island.is/application/types'
 import {
+  ApplicationType as SecondarySchoolApplicationType,
   getEndOfDayUTC,
   getFirstRegistrationEndDate,
   SecondarySchoolAnswers,
@@ -164,8 +165,10 @@ export class SecondarySchoolService extends BaseTemplateApiService {
               : '',
           },
         ].filter((x) => !!x.programId),
-        thirdLanguageCode: answers.selection.first.thirdLanguage?.code,
-        nordicLanguageCode: answers.selection.first.nordicLanguage?.code,
+        thirdLanguageCode:
+          answers.selection.first.thirdLanguage?.code || undefined,
+        nordicLanguageCode:
+          answers.selection.first.nordicLanguage?.code || undefined,
         requestDormitory:
           answers.selection.first.requestDormitory?.includes(YES),
       })
@@ -190,8 +193,10 @@ export class SecondarySchoolService extends BaseTemplateApiService {
               : '',
           },
         ].filter((x) => !!x.programId),
-        thirdLanguageCode: answers.selection.second.thirdLanguage?.code,
-        nordicLanguageCode: answers.selection.second.nordicLanguage?.code,
+        thirdLanguageCode:
+          answers.selection.second.thirdLanguage?.code || undefined,
+        nordicLanguageCode:
+          answers.selection.second.nordicLanguage?.code || undefined,
         requestDormitory:
           answers.selection.second.requestDormitory?.includes(YES),
       })
@@ -216,8 +221,10 @@ export class SecondarySchoolService extends BaseTemplateApiService {
               : '',
           },
         ].filter((x) => !!x.programId),
-        thirdLanguageCode: answers.selection.third.thirdLanguage?.code,
-        nordicLanguageCode: answers.selection.third.nordicLanguage?.code,
+        thirdLanguageCode:
+          answers.selection.third.thirdLanguage?.code || undefined,
+        nordicLanguageCode:
+          answers.selection.third.nordicLanguage?.code || undefined,
         requestDormitory:
           answers.selection.third.requestDormitory?.includes(YES),
       })
@@ -245,9 +252,12 @@ export class SecondarySchoolService extends BaseTemplateApiService {
       address: answers?.applicant?.address,
       postalCode: answers?.applicant?.postalCode,
       city: answers?.applicant?.city,
+      isFreshman:
+        answers?.applicationType.type ===
+        SecondarySchoolApplicationType.FRESHMAN,
       contacts: contacts,
       schools: schools,
-      nativeLanguageCode: answers?.extraInformation?.nativeLanguage,
+      nativeLanguageCode: answers?.extraInformation?.nativeLanguageCode,
       otherDescription: answers?.extraInformation?.otherDescription,
       attachments: attachments,
     })

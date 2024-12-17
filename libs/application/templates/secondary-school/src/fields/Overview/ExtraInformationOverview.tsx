@@ -6,6 +6,7 @@ import { overview } from '../../lib/messages'
 import { SecondarySchoolAnswers } from '../..'
 import { ReviewGroup } from '../../components/ReviewGroup'
 import { Routes, States } from '../../lib/constants'
+import { getLanguageByCode } from '@island.is/shared/utils'
 
 export const ExtraInformationOverview: FC<FieldBaseProps> = ({
   application,
@@ -15,13 +16,19 @@ export const ExtraInformationOverview: FC<FieldBaseProps> = ({
 
   const answers = application.answers as SecondarySchoolAnswers
 
-  const showNativeLanguage = !!answers?.extraInformation?.nativeLanguage
+  const showNativeLanguage = !!answers?.extraInformation?.nativeLanguageCode
   const showOtherDescription = !!answers?.extraInformation?.otherDescription
   const showSupportingDocuments =
     !!answers?.extraInformation?.supportingDocuments?.length
 
   const onClick = (page: string) => {
     if (goToScreen) goToScreen(page)
+  }
+
+  const getLanguageName = (code: string | undefined): string => {
+    if (!code) return ''
+    const language = getLanguageByCode(code)
+    return language?.name || ''
   }
 
   return (
@@ -39,7 +46,10 @@ export const ExtraInformationOverview: FC<FieldBaseProps> = ({
               {showNativeLanguage && (
                 <Text>
                   {formatMessage(overview.extraInformation.nativeLanguageLabel)}
-                  : {answers?.extraInformation?.nativeLanguage}
+                  :{' '}
+                  {getLanguageName(
+                    answers?.extraInformation?.nativeLanguageCode,
+                  )}
                 </Text>
               )}
 

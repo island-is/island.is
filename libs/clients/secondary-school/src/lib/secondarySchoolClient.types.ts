@@ -54,6 +54,7 @@ export interface Application {
   address: string
   postalCode: string
   city: string
+  isFreshman: boolean
   contacts: ApplicationContact[]
   schools: ApplicationSelectionSchool[]
   nativeLanguageCode?: string

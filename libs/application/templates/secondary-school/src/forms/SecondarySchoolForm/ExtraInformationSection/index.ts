@@ -40,7 +40,7 @@ export const extraInformationSection = buildSection({
           titleVariant: 'h5',
         }),
         buildSelectField({
-          id: 'extraInformation.nativeLanguage',
+          id: 'extraInformation.nativeLanguageCode',
           title: extraInformation.nativeLanguage.selectLabel,
           placeholder: extraInformation.nativeLanguage.selectPlaceholder,
           width: 'full',
