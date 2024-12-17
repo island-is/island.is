@@ -48,7 +48,7 @@ export const PdfViewer: FC<React.PropsWithChildren<PdfViewerProps>> = ({
         const path = window.location.origin
         const isLocalhost = path.includes('localhost')
         const workerUrl = isLocalhost
-          ? `https://unpkg.com/pdfjs-dist@4.4.168/legacy/build/pdf.worker.min.mjs`
+          ? 'https://assets.ctfassets.net/8k0h54kbe6bj/8dqL0H07pYWZEkXwLtgBp/1c347f9a4f2bb255f78389b42cf40b97/pdf.worker.min.mjs'
           : `${path}/assets/pdf.worker.min.mjs`
         pdf.pdfjs.GlobalWorkerOptions.workerSrc = workerUrl
         setPdfLib(pdf)
