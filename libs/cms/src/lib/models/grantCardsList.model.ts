@@ -1,10 +1,13 @@
-import { Field, ObjectType, ID, registerEnumType, Int } from '@nestjs/graphql'
+import { Field, ObjectType, ID, registerEnumType } from '@nestjs/graphql'
 
 import { IGrantCardsList } from '../generated/contentfulTypes'
 import { CacheField } from '@island.is/nest/graphql'
-import { Fund, mapFund } from './fund.model'
+import { mapFund } from './fund.model'
 import { SystemMetadata } from '@island.is/shared/types'
-import { logger } from '@island.is/logging'
+import { GrantList } from './grantList.model'
+import { GraphQLJSONObject } from 'graphql-type-json'
+import { GetGrantsInput } from '../dto/getGrants.input'
+import { ElasticsearchIndexLocale } from '@island.is/content-search-index-manager'
 
 enum CardSorting {
   ALPHABETICAL,
@@ -24,14 +27,11 @@ export class GrantCardsList {
   @Field({ nullable: true })
   displayTitle?: boolean
 
-  @CacheField(() => [Fund], { nullable: true })
-  funds?: Array<Fund>
+  @CacheField(() => GrantList, { nullable: true })
+  resolvedGrantsList?: GetGrantsInput
 
-  @Field(() => Int, { nullable: true })
-  maxNumberOfCards?: number
-
-  @CacheField(() => CardSorting, { nullable: true })
-  sorting?: CardSorting
+  @CacheField(() => GraphQLJSONObject)
+  namespace?: typeof GraphQLJSONObject
 }
 
 export const mapGrantCardsList = ({
@@ -43,15 +43,13 @@ export const mapGrantCardsList = ({
     id: sys.id,
     title: fields.grantCardListTitle,
     displayTitle: fields.grantCardsListDisplayTitle,
-    funds: fields.grantCardListFunds
-      ? fields.grantCardListFunds.map((g) => mapFund(g))
-      : undefined,
-    maxNumberOfCards: fields.grantCardsListMaxNumberOfCards ?? undefined,
-    sorting:
-      fields.grantCardsListSorting === 'Alphabetical'
-        ? CardSorting.ALPHABETICAL
-        : fields.grantCardsListSorting === 'Most recently updated first'
-        ? CardSorting.MOST_RECENTLY_UPDATED_FIRST
-        : undefined,
+    resolvedGrantsList: {
+      lang:
+        sys.locale === 'is-IS'
+          ? 'is'
+          : (sys.locale as ElasticsearchIndexLocale),
+      funds: fields?.grantCardListFunds?.map((f) => f.sys.id) ?? undefined,
+      size: fields.grantCardsListMaxNumberOfCards,
+    },
   }
 }

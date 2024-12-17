@@ -793,17 +793,61 @@ export const slices = gql`
   }
 
   fragment GrantCardsListFields on GrantCardsList {
+    __typename
+    id
     title
     displayTitle
-    funds {
-      title
-      link {
-        slug
-        type
+    namespace
+    resolvedGrantsList {
+      total
+      items {
+        id
+        name
+        description
+        applicationId
+        applicationUrl {
+          slug
+          type
+        }
+        dateFrom
+        dateTo
+        status
+        statusText
+        categoryTags {
+          id
+          title
+          genericTagGroup {
+            title
+          }
+        }
+        typeTag {
+          id
+          title
+          genericTagGroup {
+            title
+          }
+        }
+        fund {
+          id
+          title
+          link {
+            slug
+            type
+          }
+          featuredImage {
+            id
+            url
+          }
+          parentOrganization {
+            id
+            title
+            logo {
+              url
+            }
+          }
+        }
       }
     }
-    maxNumberOfCards
-    sorting
   }
 
   fragment LatestEventsSliceFields on LatestEventsSlice {

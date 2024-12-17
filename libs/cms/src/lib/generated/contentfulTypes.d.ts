@@ -1838,7 +1838,7 @@ export interface IGrantFields {
   /** Application button label */
   grantButtonLabel?: string | undefined
 
-  /** Date from */
+  /** Open from */
   grantDateFrom?: string | undefined
 
   /** Open from hour */
@@ -2398,21 +2398,10 @@ export interface ILinkGroupFields {
   name: string
 
   /** Primary Link */
-  primaryLink:
-    | ILink
-    | IOrganizationSubpage
-    | IProjectSubpage
-    | IOrganizationParentSubpage
+  primaryLink: ILink | IOrganizationSubpage | IProjectSubpage
 
   /** Children Links */
-  childrenLinks?:
-    | (
-        | ILink
-        | IProjectSubpage
-        | IOrganizationSubpage
-        | IOrganizationParentSubpage
-      )[]
-    | undefined
+  childrenLinks?: (ILink | IProjectSubpage | IOrganizationSubpage)[] | undefined
 }
 
 export interface ILinkGroup extends Entry<ILinkGroupFields> {
@@ -3131,9 +3120,6 @@ export interface IOrganizationFields {
 
   /** Kennitala */
   kennitala?: string | undefined
-
-  /** Alert Banner */
-  alertBanner?: IAlertBanner | undefined
 }
 
 export interface IOrganization extends Entry<IOrganizationFields> {
@@ -3193,6 +3179,7 @@ export interface IOrganizationPageFields {
         | ISectionWithImage
         | IChartNumberBox
         | ILatestGenericListItems
+        | ILatestNewsSlice
       )[]
     | undefined
 
@@ -3211,6 +3198,7 @@ export interface IOrganizationPageFields {
         | ITimeline
         | ITwoColumnText
         | ILatestEventsSlice
+        | IOverviewLinks
       )[]
     | undefined
 
@@ -3279,6 +3267,7 @@ export interface IOrganizationPageFields {
     | 'thjodskjalasafn'
     | 'faggilding'
     | 'standalone'
+    | 'rannis'
 
   /** Theme Properties */
   themeProperties?: Record<string, any> | undefined
@@ -3454,8 +3443,11 @@ export interface IOrganizationTag extends Entry<IOrganizationTagFields> {
 }
 
 export interface IOverviewLinksFields {
-  /** Title */
+  /** Internal Title */
   title?: string | undefined
+
+  /** Displayed Title */
+  displayedTitle?: string | undefined
 
   /** Overview Links */
   overviewLinks?: IIntroLinkImage[] | undefined
@@ -4097,6 +4089,7 @@ export interface ISliceConnectedComponentFields {
     | 'Starfsrettindi/ProfessionRights'
     | 'VMST/ParentalLeaveCalculator'
     | 'DigitalIceland/BenefitsOfDigitalProcesses'
+    | 'WHODAS/Calculator'
     | undefined
 
   /** Localized JSON */
