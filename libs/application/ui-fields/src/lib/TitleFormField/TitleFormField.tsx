@@ -13,18 +13,24 @@ export const TitleFormField: FC<
   }>
 > = ({ field, application }) => {
   const { formatMessage, lang: locale } = useLocale()
-  const { title, titleVariant = 'h5', color = 'blue400', marginTop = 5, marginBottom = 1 } = field
+  const {
+    title,
+    titleVariant = 'h5',
+    color = 'blue400',
+    marginTop = 5,
+    marginBottom = 1,
+  } = field
 
   return (
     <Box marginTop={marginTop} marginBottom={marginBottom}>
-        <Text variant={titleVariant} color={color ?? 'blue400'}>
-            {formatTextWithLocale(
-            title,
-            application,
-            locale as Locale,
-            formatMessage,
-            )}
-        </Text>
+      <Text variant={titleVariant} color={color ?? 'blue400'}>
+        {formatTextWithLocale(
+          title,
+          application,
+          locale as Locale,
+          formatMessage,
+        )}
+      </Text>
     </Box>
   )
 }
