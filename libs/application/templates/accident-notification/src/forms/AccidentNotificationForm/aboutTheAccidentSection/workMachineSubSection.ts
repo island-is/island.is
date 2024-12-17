@@ -10,7 +10,7 @@ import {
   isGeneralWorkplaceAccident,
 } from '../../../utils'
 import { isSportAccidentAndEmployee } from '../../../utils/isSportAccidentAndEmployee'
-import { NO, YES } from '../../../constants'
+import { NO, YES } from '../../../utils/constants'
 
 // Workmachine information only applicable to generic workplace accidents
 export const workMachineSubSection = buildSubSection({

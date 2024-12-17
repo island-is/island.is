@@ -1814,14 +1814,11 @@ export interface IGrantFields {
   /** Description  */
   grantDescription?: string | undefined
 
-  /** Grant Application ID */
+  /** Grant reference ID */
   grantApplicationId?: string | undefined
 
-  /** Application Deadline Status */
-  grantApplicationDeadlineStatus?: string | undefined
-
-  /** Application Url */
-  granApplicationUrl?: ILinkUrl | undefined
+  /** Fund */
+  grantFund: IFund
 
   /** Special emphasis */
   grantSpecialEmphasis?: Document | undefined
@@ -1832,23 +1829,39 @@ export interface IGrantFields {
   /** How to apply? */
   grantHowToApply?: Document | undefined
 
-  /** Application deadline */
-  grantApplicationDeadline?: Document | undefined
-
   /** Application hints */
   grantApplicationHints?: Document | undefined
+
+  /** Application url */
+  granApplicationUrl?: ILinkUrl | undefined
+
+  /** Application button label */
+  grantButtonLabel?: string | undefined
 
   /** Date from */
   grantDateFrom?: string | undefined
 
-  /** Date to */
+  /** Open from hour */
+  grantOpenFromHour?: number | undefined
+
+  /** Open to */
   grantDateTo?: string | undefined
 
-  /** Is open? */
-  grantIsOpen?: boolean | undefined
+  /** Open to hour */
+  grantOpenToHour?: number | undefined
+
+  /** From date is estimated */
+  grantFromDateIsEstimated?: boolean | undefined
 
   /** Status */
-  grantStatus: 'open' | 'closed' | 'see_description'
+  grantStatus:
+    | 'Automatic'
+    | 'Always open'
+    | 'Open with note'
+    | 'Closed with note'
+
+  /** Status Note */
+  grantStatusNote?: string | undefined
 
   /** Files */
   grantFiles?: Asset[] | undefined
@@ -1861,9 +1874,6 @@ export interface IGrantFields {
 
   /** Type tag */
   grantTypeTag?: IGenericTag | undefined
-
-  /** Fund */
-  grantFund: IFund
 }
 
 /** Grant is a part of "Styrkjatorg". */
@@ -3232,6 +3242,7 @@ export interface IOrganizationPageFields {
     | 'thjodskjalasafn'
     | 'faggilding'
     | 'standalone'
+    | 'rannis'
 
   /** Theme Properties */
   themeProperties?: Record<string, any> | undefined

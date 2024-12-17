@@ -46,6 +46,8 @@ import {
   MaybeWithApplicationAndFieldAndLocale,
   DisplayField,
   FieldsRepeaterField,
+  AccordionField,
+  BankAccountField,
 } from '@island.is/application/types'
 import { Locale } from '@island.is/shared/types'
 import { Colors } from '@island.is/island-ui/theme'
@@ -71,6 +73,8 @@ const extractCommonFields = (
     dataTestId,
     width = 'full',
     nextButtonText,
+    marginBottom,
+    marginTop,
   } = data
 
   return {
@@ -84,6 +88,8 @@ const extractCommonFields = (
     title,
     width,
     nextButtonText,
+    marginBottom,
+    marginTop,
   }
 }
 
@@ -152,8 +158,6 @@ export const buildDescriptionField = (
     tooltip,
     titleTooltip,
     space,
-    marginBottom,
-    marginTop,
     doesNotRequireAnswer = true,
   } = data
   return {
@@ -165,8 +169,6 @@ export const buildDescriptionField = (
     tooltip,
     titleTooltip,
     space,
-    marginBottom,
-    marginTop,
     type: FieldTypes.DESCRIPTION,
     component: FieldComponents.DESCRIPTION,
   }
@@ -398,8 +400,10 @@ export const buildDividerField = (data: {
   condition?: Condition
   title?: FormText
   color?: Colors
+  marginBottom?: BoxProps['marginBottom']
+  marginTop?: BoxProps['marginTop']
 }): DividerField => {
-  const { title, color, condition } = data
+  const { title, color, condition, marginTop, marginBottom } = data
   return {
     id: '',
     children: undefined,
@@ -409,6 +413,8 @@ export const buildDividerField = (data: {
     title: title ?? '',
     color,
     condition,
+    marginTop,
+    marginBottom,
   }
 }
 
@@ -461,6 +467,8 @@ export const buildSubmitField = (data: {
   id: string
   title: FormText
   placement?: 'footer' | 'screen'
+  marginBottom?: BoxProps['marginBottom']
+  marginTop?: BoxProps['marginTop']
   refetchApplicationAfterSubmit?: boolean
   actions: CallToAction[]
 }): SubmitField => {
@@ -470,6 +478,8 @@ export const buildSubmitField = (data: {
     title,
     actions,
     refetchApplicationAfterSubmit,
+    marginTop,
+    marginBottom,
   } = data
   return {
     children: undefined,
@@ -482,6 +492,8 @@ export const buildSubmitField = (data: {
       typeof refetchApplicationAfterSubmit !== 'undefined'
         ? refetchApplicationAfterSubmit
         : false,
+    marginTop,
+    marginBottom,
     type: FieldTypes.SUBMIT,
     component: FieldComponents.SUBMIT,
   }
@@ -512,12 +524,16 @@ export const buildFieldRequired = (
 export const buildRedirectToServicePortalField = (data: {
   id: string
   title: FormText
+  marginBottom?: BoxProps['marginBottom']
+  marginTop?: BoxProps['marginTop']
 }): RedirectToServicePortalField => {
-  const { id, title } = data
+  const { id, title, marginTop, marginBottom } = data
   return {
     children: undefined,
     id,
     title,
+    marginTop,
+    marginBottom,
     type: FieldTypes.REDIRECT_TO_SERVICE_PORTAL,
     component: FieldComponents.REDIRECT_TO_SERVICE_PORTAL,
   }
@@ -540,7 +556,7 @@ export const buildPaymentPendingField = (data: {
 export const buildMessageWithLinkButtonField = (
   data: Omit<MessageWithLinkButtonField, 'type' | 'component' | 'children'>,
 ): MessageWithLinkButtonField => {
-  const { id, title, url, message, buttonTitle, marginBottom, marginTop } = data
+  const { id, title, url, message, buttonTitle } = data
   return {
     ...extractCommonFields(data),
     children: undefined,
@@ -549,8 +565,6 @@ export const buildMessageWithLinkButtonField = (
     url,
     message,
     buttonTitle,
-    marginTop,
-    marginBottom,
     type: FieldTypes.MESSAGE_WITH_LINK_BUTTON_FIELD,
     component: FieldComponents.MESSAGE_WITH_LINK_BUTTON_FIELD,
   }
@@ -561,6 +575,7 @@ export const buildExpandableDescriptionField = (
 ): ExpandableDescriptionField => {
   const { id, title, description, introText, startExpanded } = data
   return {
+    ...extractCommonFields(data),
     children: undefined,
     id,
     title,
@@ -574,7 +589,7 @@ export const buildExpandableDescriptionField = (
 export const buildAlertMessageField = (
   data: Omit<AlertMessageField, 'type' | 'component' | 'children'>,
 ): AlertMessageField => {
-  const { message, alertType, marginTop, marginBottom, links } = data
+  const { message, alertType, links } = data
   return {
     ...extractCommonFields(data),
     children: undefined,
@@ -582,8 +597,6 @@ export const buildAlertMessageField = (
     alertType,
     type: FieldTypes.ALERT_MESSAGE,
     component: FieldComponents.ALERT_MESSAGE,
-    marginTop,
-    marginBottom,
     links,
   }
 }
@@ -609,6 +622,7 @@ export const buildPaymentChargeOverviewField = (
   const { id, title, forPaymentLabel, totalLabel, getSelectedChargeItems } =
     data
   return {
+    ...extractCommonFields(data),
     children: undefined,
     id,
     title,
@@ -628,8 +642,6 @@ export const buildImageField = (
     title,
     image,
     alt,
-    marginTop,
-    marginBottom,
     condition,
     titleVariant = 'h4',
     // imageWidth and imagePosition can be arrays [sm,  md, lg, xl] for different screen sizes
@@ -637,14 +649,13 @@ export const buildImageField = (
     imagePosition = 'left',
   } = data
   return {
+    ...extractCommonFields(data),
     children: undefined,
     id,
     title,
     image,
     alt,
     imageWidth,
-    marginTop,
-    marginBottom,
     condition,
     titleVariant,
     imagePosition,
@@ -752,8 +763,6 @@ export const buildNationalIdWithNameField = (
     searchCompanies,
     titleVariant,
     description,
-    marginTop,
-    marginBottom,
   } = data
   return {
     ...extractCommonFields(data),
@@ -774,15 +783,13 @@ export const buildNationalIdWithNameField = (
     component: FieldComponents.NATIONAL_ID_WITH_NAME,
     titleVariant,
     description,
-    marginTop,
-    marginBottom,
   }
 }
 
 export const buildActionCardListField = (
   data: Omit<ActionCardListField, 'type' | 'component' | 'children'>,
 ): ActionCardListField => {
-  const { items, space, marginTop, marginBottom } = data
+  const { items, space } = data
 
   return {
     ...extractCommonFields(data),
@@ -790,8 +797,6 @@ export const buildActionCardListField = (
     type: FieldTypes.ACTION_CARD_LIST,
     component: FieldComponents.ACTION_CARD_LIST,
     items,
-    marginTop,
-    marginBottom,
     space,
   }
 }
@@ -803,8 +808,6 @@ export const buildTableRepeaterField = (
     fields,
     table,
     formTitle,
-    marginTop,
-    marginBottom,
     titleVariant,
     addItemButtonText,
     saveItemButtonText,
@@ -823,8 +826,6 @@ export const buildTableRepeaterField = (
     fields,
     table,
     formTitle,
-    marginTop,
-    marginBottom,
     titleVariant,
     addItemButtonText,
     saveItemButtonText,
@@ -847,8 +848,6 @@ export const buildFieldsRepeaterField = (
     formTitle,
     formTitleVariant,
     formTitleNumbering,
-    marginTop,
-    marginBottom,
     removeItemButtonText,
     addItemButtonText,
     saveItemButtonText,
@@ -868,8 +867,6 @@ export const buildFieldsRepeaterField = (
     formTitle,
     formTitleVariant,
     formTitleNumbering,
-    marginTop,
-    marginBottom,
     removeItemButtonText,
     addItemButtonText,
     saveItemButtonText,
@@ -949,6 +946,8 @@ export const buildSliderField = (
     labelMultiplier = 1,
     id,
     saveAsString,
+    marginTop,
+    marginBottom,
   } = data
   return {
     title: '',
@@ -975,6 +974,8 @@ export const buildSliderField = (
     labelMultiplier,
     condition,
     saveAsString,
+    marginTop,
+    marginBottom,
   }
 }
 
@@ -986,8 +987,6 @@ export const buildDisplayField = (
     titleVariant,
     label,
     variant,
-    marginTop,
-    marginBottom,
     value,
     suffix,
     rightAlign,
@@ -999,8 +998,6 @@ export const buildDisplayField = (
     titleVariant,
     label,
     variant,
-    marginTop,
-    marginBottom,
     type: FieldTypes.DISPLAY,
     component: FieldComponents.DISPLAY,
     children: undefined,
@@ -1008,5 +1005,46 @@ export const buildDisplayField = (
     suffix,
     rightAlign,
     halfWidthOwnline,
+  }
+}
+
+export const buildAccordionField = (
+  data: Omit<AccordionField, 'type' | 'component' | 'children'>,
+): AccordionField => {
+  const {
+    accordionItems,
+    title,
+    titleVariant,
+    id,
+    marginTop,
+    marginBottom,
+    condition,
+  } = data
+  return {
+    children: undefined,
+    id,
+    title,
+    titleVariant,
+    marginTop,
+    marginBottom,
+    accordionItems,
+    condition,
+    type: FieldTypes.ACCORDION,
+    component: FieldComponents.ACCORDION,
+  }
+}
+export const buildBankAccountField = (
+  data: Omit<BankAccountField, 'type' | 'component' | 'children'>,
+): BankAccountField => {
+  const { title, id, marginBottom, marginTop, titleVariant } = data
+  return {
+    children: undefined,
+    id,
+    title,
+    marginBottom,
+    marginTop,
+    titleVariant,
+    type: FieldTypes.BANK_ACCOUNT,
+    component: FieldComponents.BANK_ACCOUNT,
   }
 }

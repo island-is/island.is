@@ -45,6 +45,7 @@ import {
   eventTypes,
   isCompletedCase,
   isIndictmentCase,
+  isInvestigationCase,
   isRequestCase,
   isTrafficViolationCase,
   notificationTypes,
@@ -686,6 +687,34 @@ export class CaseService {
     ])
   }
 
+  private addMessagesForDistrictCourtJudgeAssignedToQueue(
+    theCase: Case,
+    user: TUser,
+  ): Promise<void> {
+    return this.messageService.sendMessagesToQueue([
+      {
+        type: MessageType.NOTIFICATION,
+        user,
+        caseId: theCase.id,
+        body: { type: CaseNotificationType.DISTRICT_COURT_JUDGE_ASSIGNED },
+      },
+    ])
+  }
+
+  private addMessagesForDistrictCourtRegistrarAssignedToQueue(
+    theCase: Case,
+    user: TUser,
+  ): Promise<void> {
+    return this.messageService.sendMessagesToQueue([
+      {
+        type: MessageType.NOTIFICATION,
+        user,
+        caseId: theCase.id,
+        body: { type: CaseNotificationType.DISTRICT_COURT_REGISTRAR_ASSIGNED },
+      },
+    ])
+  }
+
   private addMessagesForReceivedCaseToQueue(
     theCase: Case,
     user: TUser,
@@ -845,7 +874,25 @@ export class CaseService {
       this.getDeliverProsecutorToCourtMessages(theCase, user),
     )
   }
+  private addMessagesForSignedCourtRecordToQueue(
+    theCase: Case,
+    user: TUser,
+  ): Promise<void> {
+    const messages = []
 
+    if (
+      theCase.origin === CaseOrigin.LOKE &&
+      isInvestigationCase(theCase.type)
+    ) {
+      messages.push({
+        type: MessageType.DELIVERY_TO_POLICE_SIGNED_COURT_RECORD,
+        user,
+        caseId: theCase.id,
+      })
+    }
+
+    return this.messageService.sendMessagesToQueue(messages)
+  }
   private addMessagesForSignedRulingToQueue(
     theCase: Case,
     user: TUser,
@@ -1386,6 +1433,30 @@ export class CaseService {
 
     if (
       isIndictment &&
+      [CaseState.SUBMITTED, CaseState.RECEIVED].includes(updatedCase.state)
+    ) {
+      const isJudgeChanged =
+        updatedCase.judge?.nationalId !== theCase.judge?.nationalId
+      const isRegistrarChanged =
+        updatedCase.registrar?.nationalId !== theCase.registrar?.nationalId
+
+      if (isJudgeChanged) {
+        await this.addMessagesForDistrictCourtJudgeAssignedToQueue(
+          updatedCase,
+          user,
+        )
+      }
+
+      if (isRegistrarChanged) {
+        await this.addMessagesForDistrictCourtRegistrarAssignedToQueue(
+          updatedCase,
+          user,
+        )
+      }
+    }
+
+    if (
+      isIndictment &&
       ![
         CaseState.DRAFT,
         CaseState.SUBMITTED,
@@ -1898,6 +1969,8 @@ export class CaseService {
         user,
         false,
       )
+
+      await this.addMessagesForSignedCourtRecordToQueue(theCase, user)
 
       return { documentSigned: true }
     } catch (error) {

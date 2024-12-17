@@ -48,6 +48,7 @@ query LimitedAccessCase($input: CaseQueryInput!) {
       isSentToPrisonAdmin
       sentToPrisonAdminDate
       openedByPrisonAdminDate
+      punishmentType
       subpoenas {
         id
         created
