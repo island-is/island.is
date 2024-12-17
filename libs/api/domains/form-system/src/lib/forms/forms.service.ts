@@ -26,7 +26,7 @@ export class FormsService {
   constructor(
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
     private formsService: FormsApi,
-  ) { }
+  ) {}
 
   // eslint-disable-next-line
   handleError(error: any, errorDetail?: string): ApolloError | null {
@@ -34,6 +34,7 @@ export class FormsService {
       error: JSON.stringify(error),
       category: 'forms-service',
     }
+    console.error(err)
     this.logger.error(errorDetail || 'Error in forms service', err)
     throw new ApolloError(error.message)
   }
@@ -48,11 +49,9 @@ export class FormsService {
         createFormDto: input as CreateFormDto,
       })
       .catch((e) => handle4xx(e, this.handleError, 'failed to create form'))
-
     if (!response || response instanceof ApolloError) {
       return {}
     }
-
     return response as FormResponse
   }
 
@@ -71,9 +70,8 @@ export class FormsService {
   async getForm(auth: User, input: GetFormInput): Promise<FormResponse> {
     const response = await this.formsApiWithAuth(auth)
       .formsControllerFindOne(input as FormsControllerFindOneRequest)
-      //.catch((e) => console.error(e))
+      .catch((e) => console.error(e))
       .catch((e) => handle4xx(e, this.handleError, 'failed to get form'))
-
     if (!response || response instanceof ApolloError) {
       return {}
     }

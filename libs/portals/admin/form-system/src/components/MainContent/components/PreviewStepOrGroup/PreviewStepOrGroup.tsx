@@ -45,7 +45,10 @@ export const PreviewStepOrGroup = ({ setOpenPreview }: Props) => {
                   fields
                     ?.filter((field) => field?.screenId === screen?.id)
                     .map((field) => (
-                      <Preview key={field?.id} data={field as FormSystemField} />
+                      <Preview
+                        key={field?.id}
+                        data={field as FormSystemField}
+                      />
                     ))
                 )}
               </Box>
@@ -62,7 +65,9 @@ export const PreviewStepOrGroup = ({ setOpenPreview }: Props) => {
           ) : (
             fields
               ?.filter((field) => field?.screenId === activeItem?.data?.id)
-              .map((field) => <Preview key={field?.id} data={field as FormSystemField} />)
+              .map((field) => (
+                <Preview key={field?.id} data={field as FormSystemField} />
+              ))
           )}
         </div>
       )}

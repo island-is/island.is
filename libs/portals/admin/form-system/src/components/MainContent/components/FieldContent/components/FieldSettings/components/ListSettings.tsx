@@ -82,7 +82,7 @@ export const ListSettings = () => {
                 <RadioButton
                   label={formatMessage(m.customList)}
                   // eslint-disable-next-line @typescript-eslint/no-empty-function
-                  onChange={() => { }}
+                  onChange={() => {}}
                   checked={radio[0]}
                 />
               </Box>
@@ -94,7 +94,7 @@ export const ListSettings = () => {
                 <RadioButton
                   label={formatMessage(m.predeterminedLists)}
                   // eslint-disable-next-line @typescript-eslint/no-empty-function
-                  onChange={() => { }}
+                  onChange={() => {}}
                   checked={radio[1]}
                 />
               </Box>
@@ -103,10 +103,7 @@ export const ListSettings = () => {
         </>
       )}
       {radio[0] && (
-        <Button
-          variant="ghost"
-          onClick={() => setInListBuilder(true)}
-        >
+        <Button variant="ghost" onClick={() => setInListBuilder(true)}>
           {formatMessage(m.listBuilder)}
         </Button>
       )}

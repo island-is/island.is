@@ -14,10 +14,13 @@ import { m } from '@island.is/form-system/ui'
 export const ToggleConnection = () => {
   const { control, selectStatus, setSelectStatus } = useContext(ControlContext)
   const currentItem = control.activeItem.data as FormSystemField
-  const currentItemDependency = control.form.dependencies?.find(dep => dep?.parentProp === currentItem.id)
+  const currentItemDependency = control.form.dependencies?.find(
+    (dep) => dep?.parentProp === currentItem.id,
+  )
   const hasConnections =
     currentItemDependency !== undefined &&
-    currentItemDependency?.childProps && currentItemDependency.childProps.length > 0
+    currentItemDependency?.childProps &&
+    currentItemDependency.childProps.length > 0
   const { formatMessage } = useIntl()
   return (
     <Row>

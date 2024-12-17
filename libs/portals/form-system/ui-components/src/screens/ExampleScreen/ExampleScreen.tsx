@@ -1,6 +1,6 @@
-import { useAuth } from "@island.is/auth/react"
-import { useLocale, useLocalizedQuery } from "@island.is/localization"
-import { useNavigate, useParams } from "react-router-dom"
+import { useAuth } from '@island.is/auth/react'
+import { useLocale, useLocalizedQuery } from '@island.is/localization'
+import { useNavigate, useParams } from 'react-router-dom'
 
 export const ExampleScreen = () => {
   return (
@@ -9,7 +9,6 @@ export const ExampleScreen = () => {
     </div>
   )
 }
-
 
 type Params = {
   slug: string

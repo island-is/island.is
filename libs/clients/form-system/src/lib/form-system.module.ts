@@ -36,7 +36,7 @@ import {
     SectionsApiProvider,
     FormApplicantProvider,
     CertificationsProvider,
-    ValuesProvider
+    ValuesProvider,
   ],
   exports: [
     ApplicationsApi,
@@ -48,7 +48,7 @@ import {
     SectionsApi,
     FormApplicantTypesApi,
     FormCertificationTypesApi,
-    ValuesApi
+    ValuesApi,
   ],
 })
-export class FormSystemClientModule { }
+export class FormSystemClientModule {}

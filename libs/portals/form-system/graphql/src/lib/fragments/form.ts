@@ -43,6 +43,7 @@ export const FormFragment = gql`
     dependencies {
       ...Dependency
     }
+    status
   }
   ${LanguageFields}
   ${FormApplicantFragment}

@@ -69,7 +69,8 @@ export const NavComponent = ({
           [styles.navComponent.step]: type === 'Section' && focusComponent,
           [styles.navComponent.group]: type === 'Screen' && focusComponent,
           [styles.navComponent.input]: type === 'Field' && focusComponent,
-          [styles.navComponent.stepSelect]: type === 'Section' && !focusComponent,
+          [styles.navComponent.stepSelect]:
+            type === 'Section' && !focusComponent,
           [styles.navComponent.groupSelect]:
             type === 'Screen' && !focusComponent,
           [styles.navComponent.inputSelect]:
@@ -132,7 +133,8 @@ export const NavComponent = ({
               }}
             >
               {!(
-                type === 'Section' && (data as FormSystemSection).sectionType !== SectionTypes.INPUT
+                type === 'Section' &&
+                (data as FormSystemSection).sectionType !== SectionTypes.INPUT
               ) && <NavButtons />}
             </Box>
           )}

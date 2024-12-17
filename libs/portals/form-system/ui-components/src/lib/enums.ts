@@ -1,4 +1,3 @@
-
 export const FieldTypesEnum = {
   TEXTBOX: 'b6a7e297-22fd-4426-a4e1-04a11a2e8914',
   EMAIL: 'd6c292c7-4e7c-44a6-bb7e-b956122598b0',
@@ -78,14 +77,18 @@ export const ApplicationStatus = {
   IN_PROGRESS: 'ee2545cc-b27f-4d75-bc82-b57f9d10c1b3',
   DONE: '385bbb3d-8dd6-4725-9f9c-90effc070de2',
   SENT_IN: '22b3ab87-4d42-4987-b6fe-33abcf05f112',
-  ALL_DATA_HAS_BEEN_RECIEVED_BY_ORGANIZATION: 'ec63e29f-4c9f-4dc4-8e05-68956d3e1453',
+  ALL_DATA_HAS_BEEN_RECIEVED_BY_ORGANIZATION:
+    'ec63e29f-4c9f-4dc4-8e05-68956d3e1453',
 } as const
 
 export type FieldTypesEnum = typeof FieldTypesEnum[keyof typeof FieldTypesEnum]
-export type CertificationTypesEnum = typeof CertificationTypesEnum[keyof typeof CertificationTypesEnum]
-export type ApplicantTypesEnum = typeof ApplicantTypesEnum[keyof typeof ApplicantTypesEnum]
+export type CertificationTypesEnum =
+  typeof CertificationTypesEnum[keyof typeof CertificationTypesEnum]
+export type ApplicantTypesEnum =
+  typeof ApplicantTypesEnum[keyof typeof ApplicantTypesEnum]
 export type ListTypesEnum = typeof ListTypesEnum[keyof typeof ListTypesEnum]
 export type SectionTypes = typeof SectionTypes[keyof typeof SectionTypes]
 export type UrlMethods = typeof UrlMethods[keyof typeof UrlMethods]
 export type UrlTypes = typeof UrlTypes[keyof typeof UrlTypes]
-export type ApplicationStatus = typeof ApplicationStatus[keyof typeof ApplicationStatus]
+export type ApplicationStatus =
+  typeof ApplicationStatus[keyof typeof ApplicationStatus]

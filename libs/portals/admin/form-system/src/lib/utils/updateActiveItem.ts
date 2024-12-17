@@ -1,5 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { ApolloCache, DefaultContext, MutationTuple, OperationVariables } from '@apollo/client'
+import {
+  ApolloCache,
+  DefaultContext,
+  MutationTuple,
+  OperationVariables,
+} from '@apollo/client'
 import { ActiveItem } from './interfaces'
 import {
   FormSystemSection,
@@ -7,12 +12,26 @@ import {
   FormSystemField,
 } from '@island.is/api/schema'
 
-
 export const updateActiveItemFn = async (
   activeItem: ActiveItem,
-  sectionMutation: MutationTuple<any, OperationVariables, DefaultContext, ApolloCache<any>>,
-  screenMutation: MutationTuple<any, OperationVariables, DefaultContext, ApolloCache<any>>,
-  fieldMutation: MutationTuple<any, OperationVariables, DefaultContext, ApolloCache<any>>,
+  sectionMutation: MutationTuple<
+    any,
+    OperationVariables,
+    DefaultContext,
+    ApolloCache<any>
+  >,
+  screenMutation: MutationTuple<
+    any,
+    OperationVariables,
+    DefaultContext,
+    ApolloCache<any>
+  >,
+  fieldMutation: MutationTuple<
+    any,
+    OperationVariables,
+    DefaultContext,
+    ApolloCache<any>
+  >,
   currentActiveItem?: ActiveItem,
 ) => {
   const { type } = activeItem
@@ -21,26 +40,24 @@ export const updateActiveItemFn = async (
   const [updateField] = fieldMutation
   try {
     if (type === 'Section') {
-      const { id, name, waitingText } =
-        currentActiveItem
-          ? (currentActiveItem.data as FormSystemSection)
-          : (activeItem.data as FormSystemSection)
+      const { id, name, waitingText } = currentActiveItem
+        ? (currentActiveItem.data as FormSystemSection)
+        : (activeItem.data as FormSystemSection)
       updateSection({
         variables: {
           input: {
             id,
             updateSectionDto: {
               name,
-              waitingText
-            }
+              waitingText,
+            },
           },
         },
       })
     } else if (type === 'Screen') {
-      const { id, name, multiset, callRuleset } =
-        currentActiveItem
-          ? (currentActiveItem.data as FormSystemScreen)
-          : (activeItem.data as FormSystemScreen)
+      const { id, name, multiset, callRuleset } = currentActiveItem
+        ? (currentActiveItem.data as FormSystemScreen)
+        : (activeItem.data as FormSystemScreen)
       updateScreen({
         variables: {
           input: {
@@ -48,10 +65,10 @@ export const updateActiveItemFn = async (
             updateScreenDto: {
               name,
               multiset: multiset ? multiset : 0,
-              callRuleset
+              callRuleset,
             },
           },
-        }
+        },
       })
     } else if (type === 'Field') {
       const {
@@ -62,10 +79,10 @@ export const updateActiveItemFn = async (
         fieldSettings,
         fieldType,
         isRequired,
-        isHidden
+        isHidden,
       } = currentActiveItem
-          ? (currentActiveItem.data as FormSystemField)
-          : (activeItem.data as FormSystemField)
+        ? (currentActiveItem.data as FormSystemField)
+        : (activeItem.data as FormSystemField)
       updateField({
         variables: {
           input: {
@@ -85,7 +102,7 @@ export const updateActiveItemFn = async (
     }
   } catch (e) {
     if (e.GraphQLError) {
-      console.error("GraphQL errors:", e.graphQLErrors)
+      console.error('GraphQL errors:', e.graphQLErrors)
     }
     console.error('Error updating active item: ', e)
   }

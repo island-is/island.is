@@ -16,9 +16,9 @@ import { SectionTypes } from '@island.is/form-system/ui'
 type ActiveItemActions =
   | { type: 'SET_ACTIVE_ITEM'; payload: { activeItem: ActiveItem } }
   | {
-    type: 'SET_ACTIVE_LIST_ITEM'
-    payload: { listItem: FormSystemListItem | null }
-  }
+      type: 'SET_ACTIVE_LIST_ITEM'
+      payload: { listItem: FormSystemListItem | null }
+    }
 
 type ScreenActions =
   | { type: 'ADD_SCREEN'; payload: { screen: FormSystemScreen } }
@@ -28,21 +28,21 @@ type FieldActions =
   | { type: 'ADD_FIELD'; payload: { field: FormSystemField } }
   | { type: 'REMOVE_FIELD'; payload: { id: string } }
   | {
-    type: 'CHANGE_FIELD_TYPE'
-    payload: {
-      newValue: string
-      fieldSettings: FormSystemFieldSettings
-      update: (updatedActiveItem?: ActiveItem) => void
+      type: 'CHANGE_FIELD_TYPE'
+      payload: {
+        newValue: string
+        fieldSettings: FormSystemFieldSettings
+        update: (updatedActiveItem?: ActiveItem) => void
+      }
     }
-  }
   | {
-    type: 'CHANGE_DESCRIPTION'
-    payload: { lang: 'en' | 'is'; newValue: string }
-  }
+      type: 'CHANGE_DESCRIPTION'
+      payload: { lang: 'en' | 'is'; newValue: string }
+    }
   | {
-    type: 'CHANGE_IS_REQUIRED'
-    payload: { update: (updatedActiveItem?: ActiveItem) => void }
-  }
+      type: 'CHANGE_IS_REQUIRED'
+      payload: { update: (updatedActiveItem?: ActiveItem) => void }
+    }
 
 type SectionActions =
   | { type: 'ADD_SECTION'; payload: { section: FormSystemSection } }
@@ -50,123 +50,123 @@ type SectionActions =
 
 type DndActions =
   | {
-    type: 'SECTION_OVER_SECTION'
-    payload: { activeId: UniqueIdentifier; overId: UniqueIdentifier }
-  }
+      type: 'SECTION_OVER_SECTION'
+      payload: { activeId: UniqueIdentifier; overId: UniqueIdentifier }
+    }
   | {
-    type: 'SCREEN_OVER_SECTION'
-    payload: { activeId: UniqueIdentifier; overId: UniqueIdentifier }
-  }
+      type: 'SCREEN_OVER_SECTION'
+      payload: { activeId: UniqueIdentifier; overId: UniqueIdentifier }
+    }
   | {
-    type: 'SCREEN_OVER_SCREEN'
-    payload: { activeId: UniqueIdentifier; overId: UniqueIdentifier }
-  }
+      type: 'SCREEN_OVER_SCREEN'
+      payload: { activeId: UniqueIdentifier; overId: UniqueIdentifier }
+    }
   | {
-    type: 'FIELD_OVER_SCREEN'
-    payload: { activeId: UniqueIdentifier; overId: UniqueIdentifier }
-  }
+      type: 'FIELD_OVER_SCREEN'
+      payload: { activeId: UniqueIdentifier; overId: UniqueIdentifier }
+    }
   | {
-    type: 'FIELD_OVER_FIELD'
-    payload: { activeId: UniqueIdentifier; overId: UniqueIdentifier }
-  }
+      type: 'FIELD_OVER_FIELD'
+      payload: { activeId: UniqueIdentifier; overId: UniqueIdentifier }
+    }
   | {
-    type: 'LIST_ITEM_OVER_LIST_ITEM'
-    payload: { activeId: UniqueIdentifier; overId: UniqueIdentifier }
-  }
+      type: 'LIST_ITEM_OVER_LIST_ITEM'
+      payload: { activeId: UniqueIdentifier; overId: UniqueIdentifier }
+    }
 
 type ChangeActions =
   | { type: 'CHANGE_NAME'; payload: { lang: 'en' | 'is'; newValue: string } }
   | {
-    type: 'CHANGE_FORM_NAME'
-    payload: { lang: 'en' | 'is'; newValue: string }
-  }
+      type: 'CHANGE_FORM_NAME'
+      payload: { lang: 'en' | 'is'; newValue: string }
+    }
   | { type: 'CHANGE_APPLICATION_DAYS_TO_REMOVE'; payload: { value: number } }
   | { type: 'CHANGE_INVALIDATION_DATE'; payload: { value: Date } }
   | {
-    type: 'CHANGE_STOP_PROGRESS_ON_VALIDATING_SCREEN'
-    payload: { value: boolean; update: (updatedForm: FormSystemForm) => void }
-  }
+      type: 'CHANGE_STOP_PROGRESS_ON_VALIDATING_SCREEN'
+      payload: { value: boolean; update: (updatedForm: FormSystemForm) => void }
+    }
   | { type: 'CHANGE_FORM_SETTINGS'; payload: { newForm: FormSystemForm } }
   | {
-    type: 'TOGGLE_DEPENDENCY'
-    payload: {
-      activeId: string
-      itemId: string
-      update: (updatedForm: FormSystemForm) => void
+      type: 'TOGGLE_DEPENDENCY'
+      payload: {
+        activeId: string
+        itemId: string
+        update: (updatedForm: FormSystemForm) => void
+      }
     }
-  }
   | {
-    type: 'TOGGLE_MULTI_SET'
-    payload: {
-      checked: boolean
-      update: (updatedActiveItem?: ActiveItem) => void
+      type: 'TOGGLE_MULTI_SET'
+      payload: {
+        checked: boolean
+        update: (updatedActiveItem?: ActiveItem) => void
+      }
     }
-  }
   | {
-    type: 'CHANGE_CERTIFICATION'
-    payload: {
-      certificate: FormSystemFormCertificationTypeDto
-      checked: boolean
+      type: 'CHANGE_CERTIFICATION'
+      payload: {
+        certificate: FormSystemFormCertificationTypeDto
+        checked: boolean
+      }
     }
-  }
 
 type InputSettingsActions =
   | {
-    type: 'SET_MESSAGE_WITH_LINK_SETTINGS'
-    payload: {
-      property: 'buttonText' | 'url' | 'hasLink'
-      value?: string
-      checked?: boolean
-      lang?: 'is' | 'en'
-      update?: (updatedActiveItem?: ActiveItem) => void
+      type: 'SET_MESSAGE_WITH_LINK_SETTINGS'
+      payload: {
+        property: 'buttonText' | 'url' | 'hasLink'
+        value?: string
+        checked?: boolean
+        lang?: 'is' | 'en'
+        update?: (updatedActiveItem?: ActiveItem) => void
+      }
     }
-  }
   | {
-    type: 'SET_FILE_UPLOAD_SETTINGS'
-    payload: {
-      property: 'isMulti' | 'fileMaxSize' | 'maxFiles' | 'fileTypes'
-      checked?: boolean
-      value?: string | number
-      update: (updatedActiveItem?: ActiveItem) => void
+      type: 'SET_FILE_UPLOAD_SETTINGS'
+      payload: {
+        property: 'isMulti' | 'fileMaxSize' | 'maxFiles' | 'fileTypes'
+        checked?: boolean
+        value?: string | number
+        update: (updatedActiveItem?: ActiveItem) => void
+      }
     }
-  }
   | {
-    type: 'SET_FIELD_SETTINGS'
-    payload: {
-      property: 'isLarge'
-      value: boolean
-      update: (updatedActiveItem?: ActiveItem) => void
+      type: 'SET_FIELD_SETTINGS'
+      payload: {
+        property: 'isLarge'
+        value: boolean
+        update: (updatedActiveItem?: ActiveItem) => void
+      }
     }
-  }
   | {
-    type: 'SET_LIST_ITEM_SELECTED'
-    payload: {
-      id: UniqueIdentifier
+      type: 'SET_LIST_ITEM_SELECTED'
+      payload: {
+        id: UniqueIdentifier
+      }
     }
-  }
   | {
-    type: 'REMOVE_LIST_ITEM'
-    payload: {
-      id: UniqueIdentifier
+      type: 'REMOVE_LIST_ITEM'
+      payload: {
+        id: UniqueIdentifier
+      }
     }
-  }
   | {
-    type: 'CHANGE_LIST_ITEM'
-    payload: {
-      property: 'label' | 'description'
-      lang: 'is' | 'en'
-      value: string
-      id: UniqueIdentifier
+      type: 'CHANGE_LIST_ITEM'
+      payload: {
+        property: 'label' | 'description'
+        lang: 'is' | 'en'
+        value: string
+        id: UniqueIdentifier
+      }
     }
-  }
-  | { type: 'ADD_LIST_ITEM', payload: { newListItem: FormSystemListItem } }
+  | { type: 'ADD_LIST_ITEM'; payload: { newListItem: FormSystemListItem } }
   | {
-    type: 'SET_LIST_TYPE'
-    payload: {
-      listType: string
-      update: (updatedActiveItem?: ActiveItem) => void
+      type: 'SET_LIST_TYPE'
+      payload: {
+        listType: string
+        update: (updatedActiveItem?: ActiveItem) => void
+      }
     }
-  }
 
 export type ControlAction =
   | ActiveItemActions
@@ -413,9 +413,7 @@ export const controlReducer = (
               ? (updatedList as FormSystemScreen[])
               : form.screens,
           fields:
-            type === 'Field'
-              ? (updatedList as FormSystemField[])
-              : form.fields,
+            type === 'Field' ? (updatedList as FormSystemField[]) : form.fields,
         },
       }
     }
@@ -545,7 +543,9 @@ export const controlReducer = (
 
     case 'CHANGE_CERTIFICATION': {
       const { certificate, checked } = action.payload
-      const updatedCertifications = checked ? [...form.certificationTypes ?? [], certificate] : form.certificationTypes?.filter((c) => c?.id !== certificate.id)
+      const updatedCertifications = checked
+        ? [...(form.certificationTypes ?? []), certificate]
+        : form.certificationTypes?.filter((c) => c?.id !== certificate.id)
       return {
         ...state,
         form: {
@@ -567,11 +567,11 @@ export const controlReducer = (
           [property]: property === 'hasLink' ? checked : value,
           ...(property === 'buttonText'
             ? {
-              buttonText: {
-                ...field.fieldSettings?.buttonText,
-                [lang]: value,
-              },
-            }
+                buttonText: {
+                  ...field.fieldSettings?.buttonText,
+                  [lang]: value,
+                },
+              }
             : {}),
         },
       }
@@ -586,9 +586,7 @@ export const controlReducer = (
         },
         form: {
           ...form,
-          fields: fields?.map((i) =>
-            i?.id === field.id ? newField : i,
-          ),
+          fields: fields?.map((i) => (i?.id === field.id ? newField : i)),
         },
       }
     }
@@ -612,8 +610,8 @@ export const controlReducer = (
             property === 'fileTypes'
               ? updateFileTypesArray()
               : property === 'isMulti'
-                ? checked
-                : value,
+              ? checked
+              : value,
         },
       }
       update({ type: 'Field', data: newField })
@@ -625,9 +623,7 @@ export const controlReducer = (
         },
         form: {
           ...form,
-          fields: fields?.map((i) =>
-            i?.id === field.id ? newField : i,
-          ),
+          fields: fields?.map((i) => (i?.id === field.id ? newField : i)),
         },
       }
     }
@@ -650,9 +646,7 @@ export const controlReducer = (
         },
         form: {
           ...form,
-          fields: fields?.map((i) =>
-            i?.id === field.id ? newField : i,
-          ),
+          fields: fields?.map((i) => (i?.id === field.id ? newField : i)),
         },
       }
     }
@@ -679,9 +673,7 @@ export const controlReducer = (
         },
         form: {
           ...form,
-          fields: fields?.map((i) =>
-            i?.id === field.id ? newField : i,
-          ),
+          fields: fields?.map((i) => (i?.id === field.id ? newField : i)),
         },
       }
     }
@@ -691,7 +683,10 @@ export const controlReducer = (
       const list = field.list ?? []
       const newField = {
         ...field,
-        list: list.filter((l: FormSystemListItem | null | undefined): l is FormSystemListItem => l !== null && l !== undefined && l.id !== id),
+        list: list.filter(
+          (l: FormSystemListItem | null | undefined): l is FormSystemListItem =>
+            l !== null && l !== undefined && l.id !== id,
+        ),
       }
       return {
         ...state,
@@ -701,9 +696,7 @@ export const controlReducer = (
         },
         form: {
           ...form,
-          fields: fields?.map((i) =>
-            i?.id === field.id ? newField : i,
-          ),
+          fields: fields?.map((i) => (i?.id === field.id ? newField : i)),
         },
       }
     }
@@ -723,9 +716,7 @@ export const controlReducer = (
         },
         form: {
           ...form,
-          fields: fields?.map((i) =>
-            i?.id === field.id ? newField : i,
-          ),
+          fields: fields?.map((i) => (i?.id === field.id ? newField : i)),
         },
       }
     }
@@ -745,12 +736,14 @@ export const controlReducer = (
 
       const newField = {
         ...field,
-        list: list.filter(l => l !== null).map((l: FormSystemListItem) => {
-          if (l.id === id) {
-            return newListItem
-          }
-          return l
-        })
+        list: list
+          .filter((l) => l !== null)
+          .map((l: FormSystemListItem) => {
+            if (l.id === id) {
+              return newListItem
+            }
+            return l
+          }),
       }
 
       return {
@@ -761,9 +754,7 @@ export const controlReducer = (
         },
         form: {
           ...form,
-          fields: fields?.map((i) =>
-            i?.id === field.id ? newField : i,
-          ),
+          fields: fields?.map((i) => (i?.id === field.id ? newField : i)),
         },
       }
     }
@@ -786,9 +777,7 @@ export const controlReducer = (
         },
         form: {
           ...form,
-          fields: fields?.map((f) =>
-            f?.id === field.id ? newField : f,
-          ),
+          fields: fields?.map((f) => (f?.id === field.id ? newField : f)),
         },
       }
     }
@@ -824,7 +813,7 @@ export const controlReducer = (
         ...state,
         form: {
           ...form,
-          screens: arrayMove(updatedScreens, activeIndex, activeIndex)
+          screens: arrayMove(updatedScreens, activeIndex, activeIndex),
         },
       }
     }
@@ -847,11 +836,7 @@ export const controlReducer = (
             ...state,
             form: {
               ...form,
-              screens: arrayMove(
-                updatedScreens,
-                activeIndex,
-                overIndex - 1,
-              ),
+              screens: arrayMove(updatedScreens, activeIndex, overIndex - 1),
             },
           }
         }
@@ -859,7 +844,7 @@ export const controlReducer = (
           ...state,
           form: {
             ...form,
-            screens: arrayMove(updatedScreens, activeIndex, overIndex)
+            screens: arrayMove(updatedScreens, activeIndex, overIndex),
           },
         }
       }
@@ -882,7 +867,7 @@ export const controlReducer = (
         ...state,
         form: {
           ...form,
-          fields: arrayMove(updatedFields, activeIndex, overIndex)
+          fields: arrayMove(updatedFields, activeIndex, overIndex),
         },
       }
     }
@@ -905,11 +890,7 @@ export const controlReducer = (
             ...state,
             form: {
               ...form,
-              fields: arrayMove(
-                updatedFields,
-                activeIndex,
-                overIndex - 1,
-              )
+              fields: arrayMove(updatedFields, activeIndex, overIndex - 1),
             },
           }
         }
@@ -917,7 +898,7 @@ export const controlReducer = (
           ...state,
           form: {
             ...form,
-            fields: arrayMove(updatedFields, activeIndex, overIndex)
+            fields: arrayMove(updatedFields, activeIndex, overIndex),
           },
         }
       }
@@ -933,15 +914,13 @@ export const controlReducer = (
       const activeIndex = list.findIndex(
         (listItem) => listItem?.id === activeId,
       )
-      const overIndex = list.findIndex(
-        (listItem) => listItem?.id === overId,
-      )
+      const overIndex = list.findIndex((listItem) => listItem?.id === overId)
 
       const newField: FormSystemField = {
         ...fieldItem,
         list: arrayMove<FormSystemListItem>(list, activeIndex, overIndex).map(
           (l: FormSystemListItem, i: number) => ({ ...l, displayOrder: i }),
-        )
+        ),
       }
       return {
         ...state,

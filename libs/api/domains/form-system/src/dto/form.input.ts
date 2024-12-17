@@ -47,6 +47,30 @@ export class GetAllFormsInput {
   organizationId?: string
 }
 
+@InputType('FormSystemFormUrlInput')
+export class FormUrlInput {
+  @Field(() => String, { nullable: true })
+  id?: string
+
+  @Field(() => String, { nullable: true })
+  organizationUrlId?: string
+
+  @Field(() => String, { nullable: true })
+  url?: string
+
+  @Field(() => Boolean, { nullable: true })
+  isXroad?: boolean
+
+  @Field(() => Boolean, { nullable: true })
+  isTest?: boolean
+
+  @Field(() => String, { nullable: true })
+  type?: string
+
+  @Field(() => String, { nullable: true })
+  method?: string
+}
+
 @InputType('FormSystemUpdateFormDtoInput')
 export class UpdateFormDtoInput {
   @Field(() => String, { nullable: true })
@@ -75,6 +99,12 @@ export class UpdateFormDtoInput {
 
   @Field(() => [DependencyInput], { nullable: 'itemsAndList' })
   dependencies?: DependencyInput[]
+
+  @Field(() => String, { nullable: true })
+  status?: string
+
+  @Field(() => [FormUrlInput], { nullable: true })
+  urls?: FormUrlInput[]
 }
 
 @InputType('FormSystemUpdateFormInput')
@@ -141,6 +171,12 @@ export class FormInput {
 
   @Field(() => [DependencyInput], { nullable: 'itemsAndList' })
   dependencies?: DependencyInput[]
+
+  @Field(() => String, { nullable: true })
+  status?: string
+
+  @Field(() => [FormUrlInput], { nullable: 'itemsAndList' })
+  urls?: FormUrlInput[]
 }
 
 @InputType('FormSystemFormResponseInput')

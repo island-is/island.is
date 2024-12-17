@@ -12,13 +12,8 @@ import { useIntl } from 'react-intl'
 import { m } from '@island.is/form-system/ui'
 
 export const MessageWithLinkSettings = () => {
-  const {
-    control,
-    controlDispatch,
-    focus,
-    setFocus,
-    updateActiveItem,
-  } = useContext(ControlContext)
+  const { control, controlDispatch, focus, setFocus, updateActiveItem } =
+    useContext(ControlContext)
   const currentItem = control.activeItem.data as FormSystemField
   const { fieldSettings } = currentItem
   const { formatMessage } = useIntl()

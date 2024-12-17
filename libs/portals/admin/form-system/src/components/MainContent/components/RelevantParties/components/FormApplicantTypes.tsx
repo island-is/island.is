@@ -1,5 +1,5 @@
-import { FormSystemFormApplicant } from "@island.is/api/schema"
-import { Dispatch, SetStateAction, useContext } from "react"
+import { FormSystemFormApplicant } from '@island.is/api/schema'
+import { Dispatch, SetStateAction, useContext } from 'react'
 import {
   Box,
   GridColumn as Column,
@@ -8,24 +8,29 @@ import {
   Stack,
   Text,
 } from '@island.is/island-ui/core'
-import { useIntl } from "react-intl"
-import { ControlContext } from "../../../../../context/ControlContext"
-import { useMutation } from "@apollo/client"
-import { UPDATE_APPLICANT } from "@island.is/form-system/graphql"
+import { useIntl } from 'react-intl'
+import { ControlContext } from '../../../../../context/ControlContext'
+import { useMutation } from '@apollo/client'
+import { UPDATE_APPLICANT } from '@island.is/form-system/graphql'
 import { m } from '@island.is/form-system/ui'
-
 
 interface Props {
   formApplicantsTypes: FormSystemFormApplicant[]
   setFormApplicantTypes: Dispatch<SetStateAction<FormSystemFormApplicant[]>>
 }
 
-export const FormApplicantTypes = ({ formApplicantsTypes, setFormApplicantTypes }: Props) => {
+export const FormApplicantTypes = ({
+  formApplicantsTypes,
+  setFormApplicantTypes,
+}: Props) => {
   const { formatMessage } = useIntl()
   const { focus, setFocus, applicantTypes } = useContext(ControlContext)
   const [updateApplicant] = useMutation(UPDATE_APPLICANT)
 
-  const onBlurHandler = (currentString: string, applicant: FormSystemFormApplicant) => {
+  const onBlurHandler = (
+    currentString: string,
+    applicant: FormSystemFormApplicant,
+  ) => {
     if (currentString !== focus) {
       try {
         updateApplicant({
@@ -33,10 +38,10 @@ export const FormApplicantTypes = ({ formApplicantsTypes, setFormApplicantTypes 
             input: {
               id: applicant.id,
               updateFormApplicantTypeDto: {
-                name: applicant.name
-              }
-            }
-          }
+                name: applicant.name,
+              },
+            },
+          },
         })
         setFocus('')
       } catch (e) {
@@ -47,7 +52,9 @@ export const FormApplicantTypes = ({ formApplicantsTypes, setFormApplicantTypes 
 
   const getApplicantTypeLabel = (type?: string) => {
     if (!type) return ''
-    const applicantType = applicantTypes?.find(applicant => applicant?.id === type)
+    const applicantType = applicantTypes?.find(
+      (applicant) => applicant?.id === type,
+    )
     return applicantType?.description?.is ?? ''
   }
 
@@ -59,7 +66,11 @@ export const FormApplicantTypes = ({ formApplicantsTypes, setFormApplicantTypes 
             <Row>
               <Column>
                 <Box marginBottom={1}>
-                  <Text variant="h4">{getApplicantTypeLabel(applicantType?.applicantTypeId as string)}</Text>
+                  <Text variant="h4">
+                    {getApplicantTypeLabel(
+                      applicantType?.applicantTypeId as string,
+                    )}
+                  </Text>
                 </Box>
               </Column>
             </Row>

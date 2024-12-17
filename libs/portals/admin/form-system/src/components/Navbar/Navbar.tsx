@@ -25,7 +25,10 @@ import { ItemType } from '../../lib/utils/interfaces'
 import { removeTypename } from '../../lib/utils/removeTypename'
 import { useIntl } from 'react-intl'
 import { NavComponent } from '../NavComponent/NavComponent'
-import { CREATE_SECTION, UPDATE_SECTION_DISPLAY_ORDER } from '@island.is/form-system/graphql'
+import {
+  CREATE_SECTION,
+  UPDATE_SECTION_DISPLAY_ORDER,
+} from '@island.is/form-system/graphql'
 import { useMutation } from '@apollo/client'
 import { m, SectionTypes } from '@island.is/form-system/ui'
 
@@ -84,7 +87,7 @@ export const Navbar = () => {
             createSectionDto: {
               formId: form.id,
               displayOrder: sections?.length ?? 0,
-            }
+            },
           },
         },
       })
@@ -97,24 +100,26 @@ export const Navbar = () => {
             ) as FormSystemSection,
           },
         })
-        const updatedSections = sections?.map(s => {
+        const updatedSections = sections?.map((s) => {
           return {
-            id: s?.id
+            id: s?.id,
           }
         })
         updateDisplayOrder({
           variables: {
             input: {
               updateSectionsDisplayOrderDto: {
-                sectionsDisplayOrderDto: [...(updatedSections ?? []), { id: newSection.data?.formSystemCreateSection.id }]
-              }
-            }
-          }
+                sectionsDisplayOrderDto: [
+                  ...(updatedSections ?? []),
+                  { id: newSection.data?.formSystemCreateSection.id },
+                ],
+              },
+            },
+          },
         })
       }
     } catch (err) {
       console.error('Error creating section:', err.message)
-
     }
   }
 
@@ -122,13 +127,13 @@ export const Navbar = () => {
     const data =
       type === 'Section'
         ? sections?.find(
-          (item: Maybe<FormSystemSection> | undefined) => item?.id === id,
-        )
+            (item: Maybe<FormSystemSection> | undefined) => item?.id === id,
+          )
         : type === 'Screen'
-          ? screens?.find(
+        ? screens?.find(
             (item: Maybe<FormSystemScreen> | undefined) => item?.id === id,
           )
-          : fields?.find(
+        : fields?.find(
             (item: Maybe<FormSystemField> | undefined) => item?.id === id,
           )
     if (id === baseSettingsStep.id) {
@@ -248,7 +253,9 @@ export const Navbar = () => {
             size="small"
             onClick={() => {
               setInSettings(false)
-              const section = sections?.find((s) => s?.sectionType === SectionTypes.INPUT)
+              const section = sections?.find(
+                (s) => s?.sectionType === SectionTypes.INPUT,
+              )
               if (section) {
                 controlDispatch({
                   type: 'SET_ACTIVE_ITEM',
@@ -352,9 +359,9 @@ export const Navbar = () => {
                   type={activeItem.type}
                   data={
                     activeItem.data as
-                    | FormSystemScreen
-                    | FormSystemSection
-                    | FormSystemField
+                      | FormSystemScreen
+                      | FormSystemSection
+                      | FormSystemField
                   }
                   active={activeItem.data?.id === activeItem.data?.id}
                   focusComponent={focusComponent}

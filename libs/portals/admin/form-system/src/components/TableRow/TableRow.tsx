@@ -13,9 +13,7 @@ import { AnimatePresence, motion } from 'framer-motion'
 import { useNavigate } from 'react-router-dom'
 import { TranslationTag } from '../TranslationTag/TranslationTag'
 import { FormSystemPaths } from '../../lib/paths'
-import {
-  ApplicationTemplateStatus,
-} from '../../lib/utils/interfaces'
+import { ApplicationTemplateStatus } from '../../lib/utils/interfaces'
 import { useIntl } from 'react-intl'
 import { m } from '@island.is/form-system/ui'
 
@@ -50,7 +48,7 @@ export const TableRow = ({
   state,
   isHeader,
   translated,
-  slug
+  slug,
 }: Props) => {
   const [isOpen, setIsOpen] = useState(false)
   const navigate = useNavigate()
@@ -92,7 +90,7 @@ export const TableRow = ({
       style={{ cursor: '' }}
     >
       <Row key={id}>
-        <Column span="5/12" >
+        <Column span="5/12">
           <ColumnText text={name ? name : ''} />
         </Column>
         <Column span="2/12">
@@ -153,7 +151,7 @@ export const TableRow = ({
                   title: 'Export',
                 },
                 {
-                  title: 'Json'
+                  title: 'Json',
                 },
               ]}
             />

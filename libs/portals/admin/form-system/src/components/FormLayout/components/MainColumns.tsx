@@ -1,6 +1,5 @@
-import { Box } from "@island.is/island-ui/core"
-import { MainContent } from "../../MainContent/MainContent"
-
+import { Box } from '@island.is/island-ui/core'
+import { MainContent } from '../../MainContent/MainContent'
 
 export const MainContentColumn = () => {
   return (

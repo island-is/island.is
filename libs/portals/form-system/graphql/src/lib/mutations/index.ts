@@ -24,4 +24,3 @@ export { DELETE_APPLICANT } from './deleteApplicant'
 export { UPDATE_APPLICANT } from './updateApplicant'
 export { CREATE_CERTIFICATION } from './createCertification'
 export { DELETE_CERTIFICATION } from './deleteCertification'
-

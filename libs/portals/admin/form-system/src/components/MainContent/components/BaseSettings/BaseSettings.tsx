@@ -12,13 +12,8 @@ import { useIntl } from 'react-intl'
 import { m } from '@island.is/form-system/ui'
 
 export const BaseSettings = () => {
-  const {
-    control,
-    controlDispatch,
-    setFocus,
-    focus,
-    formUpdate
-  } = useContext(ControlContext)
+  const { control, controlDispatch, setFocus, focus, formUpdate } =
+    useContext(ControlContext)
   const { form } = control
   const { formatMessage } = useIntl()
   return (
@@ -106,13 +101,18 @@ export const BaseSettings = () => {
         <Column>
           <Checkbox
             label={formatMessage(m.allowProgress)}
-            checked={form.stopProgressOnValidatingScreen !== null && form.stopProgressOnValidatingScreen !== undefined ? form.stopProgressOnValidatingScreen : false}
+            checked={
+              form.stopProgressOnValidatingScreen !== null &&
+              form.stopProgressOnValidatingScreen !== undefined
+                ? form.stopProgressOnValidatingScreen
+                : false
+            }
             onChange={(e) => {
               controlDispatch({
                 type: 'CHANGE_STOP_PROGRESS_ON_VALIDATING_SCREEN',
                 payload: {
                   value: e.target.checked,
-                  update: formUpdate
+                  update: formUpdate,
                 },
               })
             }}

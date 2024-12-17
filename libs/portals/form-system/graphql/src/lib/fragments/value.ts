@@ -5,7 +5,7 @@ export const ValueFragment = gql`
     text
     number
     date
-    kennitala
+    nationalId
     name
     address
     postalCode
@@ -13,6 +13,7 @@ export const ValueFragment = gql`
     jobTitle
     altName
     homestayNumber
+    propertyNumber
     totalDays
     totalAmount
     year
@@ -22,6 +23,14 @@ export const ValueFragment = gql`
       amount
       days
     }
+    listValue
+    email
+    iskNumber
+    checkboxValue
+    phoneNumber
+    bankAccount
+    time
+    s3Key
   }
 `
 

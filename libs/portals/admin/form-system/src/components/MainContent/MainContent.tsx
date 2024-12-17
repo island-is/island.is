@@ -19,13 +19,8 @@ import { RelevantParties } from './components/RelevantParties/RelevantParties'
 import { m, SectionTypes } from '@island.is/form-system/ui'
 
 export const MainContent = () => {
-  const {
-    control,
-    controlDispatch,
-    updateActiveItem,
-    setFocus,
-    focus
-  } = useContext(ControlContext)
+  const { control, controlDispatch, updateActiveItem, setFocus, focus } =
+    useContext(ControlContext)
   const { activeItem } = control
   const [openPreview, setOpenPreview] = useState(false)
   const { formatMessage } = useIntl()
@@ -34,13 +29,15 @@ export const MainContent = () => {
       {activeItem.type === 'Field' ? (
         <FieldContent />
       ) : activeItem.type === 'Section' &&
-        (activeItem.data as FormSystemSection).id === "BaseSettings" ? (
+        (activeItem.data as FormSystemSection).id === 'BaseSettings' ? (
         <BaseSettings />
       ) : activeItem.type === 'Section' &&
-        (activeItem.data as FormSystemSection).sectionType === SectionTypes.PREMISES ? (
+        (activeItem.data as FormSystemSection).sectionType ===
+          SectionTypes.PREMISES ? (
         <Premises />
       ) : activeItem.type === 'Section' &&
-        (activeItem.data as FormSystemSection).sectionType === SectionTypes.PARTIES ? (
+        (activeItem.data as FormSystemSection).sectionType ===
+          SectionTypes.PARTIES ? (
         <RelevantParties />
       ) : openPreview ? (
         <PreviewStepOrGroup setOpenPreview={setOpenPreview} />
@@ -94,14 +91,17 @@ export const MainContent = () => {
                 <Checkbox
                   name="multi"
                   label={formatMessage(m.allowMultiple)}
-                  checked={(activeItem.data as FormSystemScreen).multiset !== 0 && (activeItem.data as FormSystemScreen).multiset !== null}
+                  checked={
+                    (activeItem.data as FormSystemScreen).multiset !== 0 &&
+                    (activeItem.data as FormSystemScreen).multiset !== null
+                  }
                   onChange={(e) =>
                     controlDispatch({
                       type: 'TOGGLE_MULTI_SET',
                       payload: {
                         checked: e.target.checked,
                         update: updateActiveItem,
-                      }
+                      },
                     })
                   }
                 />

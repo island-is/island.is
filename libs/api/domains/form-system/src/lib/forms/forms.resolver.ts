@@ -9,7 +9,13 @@ import { CodeOwners } from '@island.is/shared/constants'
 import { UseGuards } from '@nestjs/common'
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql'
 import { FormsService } from './forms.service'
-import { CreateFormInput, DeleteFormInput, GetFormInput, GetAllFormsInput, UpdateFormInput } from '../../dto/form.input'
+import {
+  CreateFormInput,
+  DeleteFormInput,
+  GetFormInput,
+  GetAllFormsInput,
+  UpdateFormInput,
+} from '../../dto/form.input'
 import { FormResponse } from '../../models/form.model'
 
 @Resolver()
@@ -17,7 +23,7 @@ import { FormResponse } from '../../models/form.model'
 @CodeOwner(CodeOwners.Advania)
 @Audit({ namespace: '@island.is/api/form-system' })
 export class FormsResolver {
-  constructor(private readonly formsService: FormsService) { }
+  constructor(private readonly formsService: FormsService) {}
 
   @Mutation(() => FormResponse, {
     name: 'formSystemCreateForm',

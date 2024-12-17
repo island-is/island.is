@@ -8,8 +8,6 @@ import { useMutation } from '@apollo/client'
 import { useIntl } from 'react-intl'
 import { m } from '@island.is/form-system/ui'
 
-
-
 export const Forms = () => {
   const navigate = useNavigate()
   const { forms } = useLoaderData() as FormsLoaderResponse
@@ -29,7 +27,11 @@ export const Forms = () => {
               size="medium"
               onClick={async () => {
                 const { data } = await formSystemCreateFormMutation({
-                  variables: { input: { organizationId: 'a4b0db68-e169-416a-8ad9-e46b73ce2d39' } },
+                  variables: {
+                    input: {
+                      organizationId: 'a4b0db68-e169-416a-8ad9-e46b73ce2d39',
+                    },
+                  },
                 })
                 navigate(
                   FormSystemPaths.Form.replace(

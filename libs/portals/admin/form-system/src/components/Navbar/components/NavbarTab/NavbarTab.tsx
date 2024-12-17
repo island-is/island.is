@@ -21,7 +21,9 @@ export const NavbarTab = () => {
             [styles.selected]: !inSettings,
           })}
           onClick={() => {
-            const section = sections?.find((s) => s?.sectionType === SectionTypes.INPUT)
+            const section = sections?.find(
+              (s) => s?.sectionType === SectionTypes.INPUT,
+            )
             controlDispatch({
               type: 'SET_ACTIVE_ITEM',
               payload: {

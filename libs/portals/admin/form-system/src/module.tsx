@@ -33,7 +33,7 @@ export const formSystemModule: PortalModule = {
         path: FormSystemPaths.Form,
         element: <Form />,
         loader: formLoader(props),
-      }
+      },
     ]
   },
 }

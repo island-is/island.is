@@ -19,7 +19,7 @@ export const Banknumber = ({ item }: Props) => {
   const inputRefs = [
     useRef<HTMLInputElement | HTMLTextAreaElement>(),
     useRef<HTMLInputElement | HTMLTextAreaElement>(),
-    useRef<HTMLInputElement | HTMLTextAreaElement>()
+    useRef<HTMLInputElement | HTMLTextAreaElement>(),
   ]
 
   const { formatMessage } = useIntl()

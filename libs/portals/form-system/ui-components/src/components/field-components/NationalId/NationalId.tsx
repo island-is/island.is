@@ -3,7 +3,6 @@ import { FormSystemField } from '@island.is/api/schema'
 import { useIntl } from 'react-intl'
 import { m } from '../../../lib/messages'
 
-
 interface Props {
   item: FormSystemField
 }

@@ -13,12 +13,24 @@ export const FieldSettings = () => {
   const currentItem = control.activeItem.data as FormSystemField
   return (
     <>
-      {currentItem.fieldType === FieldTypesEnum.MESSAGE && <MessageWithLinkSettings />}
-      {currentItem.fieldType === FieldTypesEnum.DOCUMENT && <FileUploadSettings />}
-      {currentItem.fieldType === FieldTypesEnum.TEXTBOX && <TextFieldSettings />}
-      {currentItem.fieldType === FieldTypesEnum.DROPDOWN_LIST && <ListSettings />}
-      {currentItem.fieldType === FieldTypesEnum.RADIO_BUTTONS && <ListSettings />}
-      {currentItem.fieldType === FieldTypesEnum.CHECKBOX && <ToggleConnection />}
+      {currentItem.fieldType === FieldTypesEnum.MESSAGE && (
+        <MessageWithLinkSettings />
+      )}
+      {currentItem.fieldType === FieldTypesEnum.DOCUMENT && (
+        <FileUploadSettings />
+      )}
+      {currentItem.fieldType === FieldTypesEnum.TEXTBOX && (
+        <TextFieldSettings />
+      )}
+      {currentItem.fieldType === FieldTypesEnum.DROPDOWN_LIST && (
+        <ListSettings />
+      )}
+      {currentItem.fieldType === FieldTypesEnum.RADIO_BUTTONS && (
+        <ListSettings />
+      )}
+      {currentItem.fieldType === FieldTypesEnum.CHECKBOX && (
+        <ToggleConnection />
+      )}
     </>
   )
 }

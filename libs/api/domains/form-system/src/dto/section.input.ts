@@ -1,4 +1,4 @@
-import { Field, InputType, Int, registerEnumType } from '@nestjs/graphql'
+import { Field, InputType, Int } from '@nestjs/graphql'
 import { LanguageTypeInput } from './languageType.input'
 import { ScreenInput } from './screen.input'
 

@@ -49,17 +49,15 @@ export const FileUpload = ({ item }: Props) => {
       name="fileUpload"
       fileList={fileList}
       header={item?.name?.is ?? ''}
-      description={`${formatMessage(
-        m.previewAllowedFileTypes,
-      )}: ${types?.map((f: string) => `${f} `)}`}
+      description={`${formatMessage(m.previewAllowedFileTypes)}: ${types?.map(
+        (f: string) => `${f} `,
+      )}`}
       buttonLabel={formatMessage(m.fileUploadButton)}
       onChange={onChange}
       onRemove={onRemove}
       errorMessage={fileList.length > 0 ? error : undefined}
       accept={
-        types?.map(
-          (t: string) => fileTypes[t as keyof typeof fileTypes],
-        ) ?? []
+        types?.map((t: string) => fileTypes[t as keyof typeof fileTypes]) ?? []
       }
       showFileSize
       maxSize={item?.fieldSettings?.fileMaxSize ?? 1}

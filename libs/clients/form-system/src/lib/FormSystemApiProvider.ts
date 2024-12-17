@@ -14,7 +14,6 @@ import {
   FormApplicantTypesApi,
   FormCertificationTypesApi,
   ValuesApi,
-
 } from '../../gen/fetch'
 
 const provideApi = <T>(

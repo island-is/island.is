@@ -1,13 +1,16 @@
-import { useContext, useState } from "react"
-import { ControlContext } from "../../../../context/ControlContext"
-import { Stack, Checkbox, Box, Text } from "@island.is/island-ui/core"
-import { useIntl } from "react-intl"
-import { CREATE_APPLICANT, DELETE_APPLICANT } from "@island.is/form-system/graphql"
-import { useMutation } from "@apollo/client"
-import { FormSystemFormApplicant } from "@island.is/api/schema"
+import { useContext, useState } from 'react'
+import { ControlContext } from '../../../../context/ControlContext'
+import { Stack, Checkbox, Box, Text } from '@island.is/island-ui/core'
+import { useIntl } from 'react-intl'
+import {
+  CREATE_APPLICANT,
+  DELETE_APPLICANT,
+} from '@island.is/form-system/graphql'
+import { useMutation } from '@apollo/client'
+import { FormSystemFormApplicant } from '@island.is/api/schema'
 import { ApplicantTypesEnum, m } from '@island.is/form-system/ui'
-import { removeTypename } from "../../../../lib/utils/removeTypename"
-import { FormApplicantTypes } from "./components/FormApplicantTypes"
+import { removeTypename } from '../../../../lib/utils/removeTypename'
+import { FormApplicantTypes } from './components/FormApplicantTypes'
 
 const applicantTypeGroups = {
   individual: [ApplicantTypesEnum.INDIVIDUAL],
@@ -31,11 +34,18 @@ export const RelevantParties = () => {
   const { control, applicantTypes } = useContext(ControlContext)
   const { formatMessage } = useIntl()
   const { applicantTypes: applicants, id: formId } = control.form
-  const [formApplicants, setFormApplicants] = useState<FormSystemFormApplicant[]>(
-    applicants?.filter((applicant): applicant is FormSystemFormApplicant => applicant !== null) ?? []
+  const [formApplicants, setFormApplicants] = useState<
+    FormSystemFormApplicant[]
+  >(
+    applicants?.filter(
+      (applicant): applicant is FormSystemFormApplicant => applicant !== null,
+    ) ?? [],
   )
 
-  const handleApplicantChange = async (typesArray: string[], checked: boolean) => {
+  const handleApplicantChange = async (
+    typesArray: string[],
+    checked: boolean,
+  ) => {
     if (checked) {
       try {
         const newApplicants = await Promise.all(
@@ -51,7 +61,7 @@ export const RelevantParties = () => {
               },
             })
             return removeTypename(newApplicant.data.formSystemCreateApplicant)
-          })
+          }),
         )
         setFormApplicants([...formApplicants, ...newApplicants])
       } catch (e) {
@@ -62,20 +72,22 @@ export const RelevantParties = () => {
         await Promise.all(
           typesArray.map(async (applicantType) => {
             const applicant = formApplicants.find(
-              (a) => a.applicantTypeId === applicantType
+              (a) => a.applicantTypeId === applicantType,
             )
             if (applicant) {
               await deleteApplicant({
                 variables: { input: { id: applicant.id } },
               })
             }
-          })
+          }),
         )
         setFormApplicants(
           formApplicants.filter(
             (applicant) =>
-              applicant.applicantTypeId !== undefined && applicant.applicantTypeId !== null && !typesArray.includes(applicant.applicantTypeId)
-          )
+              applicant.applicantTypeId !== undefined &&
+              applicant.applicantTypeId !== null &&
+              !typesArray.includes(applicant.applicantTypeId),
+          ),
         )
       } catch (e) {
         console.error(e)
@@ -91,37 +103,81 @@ export const RelevantParties = () => {
       case 1:
         handleApplicantChange(applicantTypeGroups.individualDelegation, checked)
         break
-      case 2: {
-        if (checked) {
-          if (formApplicants.some(applicant => applicant.id === ApplicantTypesEnum.LEGAL_ENTITY)) {
-            handleApplicantChange([ApplicantTypesEnum.INDIVIDUAL_WITH_DELEGATION_FROM_LEGAL_ENTITY], checked)
+      case 2:
+        {
+          if (checked) {
+            if (
+              formApplicants.some(
+                (applicant) => applicant.id === ApplicantTypesEnum.LEGAL_ENTITY,
+              )
+            ) {
+              handleApplicantChange(
+                [
+                  ApplicantTypesEnum.INDIVIDUAL_WITH_DELEGATION_FROM_LEGAL_ENTITY,
+                ],
+                checked,
+              )
+            } else {
+              handleApplicantChange(
+                applicantTypeGroups.legalEntityDelegation,
+                checked,
+              )
+            }
           } else {
-            handleApplicantChange(applicantTypeGroups.legalEntityDelegation, checked)
-          }
-        } else {
-          if (!formApplicants.some(applicant => applicant.id === ApplicantTypesEnum.INDIVIDUAL_WITH_PROCURATION)) {
-            handleApplicantChange(applicantTypeGroups.legalEntityDelegation, checked)
-          } else {
-            handleApplicantChange([ApplicantTypesEnum.INDIVIDUAL_WITH_DELEGATION_FROM_LEGAL_ENTITY], checked)
+            if (
+              !formApplicants.some(
+                (applicant) =>
+                  applicant.id ===
+                  ApplicantTypesEnum.INDIVIDUAL_WITH_PROCURATION,
+              )
+            ) {
+              handleApplicantChange(
+                applicantTypeGroups.legalEntityDelegation,
+                checked,
+              )
+            } else {
+              handleApplicantChange(
+                [
+                  ApplicantTypesEnum.INDIVIDUAL_WITH_DELEGATION_FROM_LEGAL_ENTITY,
+                ],
+                checked,
+              )
+            }
           }
         }
-      }
         break
-      case 3: {
-        if (checked) {
-          if (formApplicants.some(applicant => applicant.id === ApplicantTypesEnum.LEGAL_ENTITY)) {
-            handleApplicantChange([ApplicantTypesEnum.INDIVIDUAL_WITH_PROCURATION], checked)
+      case 3:
+        {
+          if (checked) {
+            if (
+              formApplicants.some(
+                (applicant) => applicant.id === ApplicantTypesEnum.LEGAL_ENTITY,
+              )
+            ) {
+              handleApplicantChange(
+                [ApplicantTypesEnum.INDIVIDUAL_WITH_PROCURATION],
+                checked,
+              )
+            } else {
+              handleApplicantChange(applicantTypeGroups.procuration, checked)
+            }
           } else {
-            handleApplicantChange(applicantTypeGroups.procuration, checked)
-          }
-        } else {
-          if (!formApplicants.some(applicant => applicant.id === ApplicantTypesEnum.INDIVIDUAL_WITH_DELEGATION_FROM_LEGAL_ENTITY)) {
-            handleApplicantChange(applicantTypeGroups.procuration, checked)
-          } else {
-            handleApplicantChange([ApplicantTypesEnum.INDIVIDUAL_WITH_PROCURATION], checked)
+            if (
+              !formApplicants.some(
+                (applicant) =>
+                  applicant.id ===
+                  ApplicantTypesEnum.INDIVIDUAL_WITH_DELEGATION_FROM_LEGAL_ENTITY,
+              )
+            ) {
+              handleApplicantChange(applicantTypeGroups.procuration, checked)
+            } else {
+              handleApplicantChange(
+                [ApplicantTypesEnum.INDIVIDUAL_WITH_PROCURATION],
+                checked,
+              )
+            }
           }
         }
-      }
         break
       default:
         break
@@ -141,7 +197,9 @@ export const RelevantParties = () => {
               <Checkbox
                 key={index}
                 label={applicant?.description?.is}
-                checked={formApplicants.some(a => a.applicantTypeId === applicant?.id)}
+                checked={formApplicants.some(
+                  (a) => a.applicantTypeId === applicant?.id,
+                )}
                 onChange={(e) => handleCheckboxChange(index, e.target.checked)}
               />
             )

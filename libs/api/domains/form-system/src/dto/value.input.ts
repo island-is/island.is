@@ -24,7 +24,7 @@ export class ValueInput {
   date?: Date
 
   @Field(() => String, { nullable: true })
-  kennitala?: string
+  nationalId?: string
 
   @Field(() => String, { nullable: true })
   name?: string
@@ -47,6 +47,9 @@ export class ValueInput {
   @Field(() => String, { nullable: true })
   homestayNumber?: string
 
+  @Field(() => String, { nullable: true })
+  propertyNumber?: string
+
   @Field(() => Int, { nullable: true })
   totalDays?: number
 
@@ -59,8 +62,44 @@ export class ValueInput {
   @Field(() => Boolean, { nullable: true })
   isNullReport?: boolean
 
-  @Field(() => [MonthInput], { nullable: true })
+  @Field(() => [MonthInput], { nullable: 'itemsAndList' })
   months?: MonthInput[]
+
+  @Field(() => String, { nullable: true })
+  listValue?: string
+
+  @Field(() => String, { nullable: true })
+  email?: string
+
+  @Field(() => String, { nullable: true })
+  iskNumber?: string
+
+  @Field(() => Boolean, { nullable: true })
+  checkboxValue?: boolean
+
+  @Field(() => String, { nullable: true })
+  phoneNumber?: string
+
+  @Field(() => String, { nullable: true })
+  bankAccount?: string
+
+  @Field(() => String, { nullable: true })
+  time?: string
+
+  @Field(() => String, { nullable: true })
+  s3Key?: string
+}
+
+@InputType('FormSystemApplicationEventDtoInput')
+export class ApplicationEventDtoInput {
+  @Field(() => Date, { nullable: true })
+  created?: Date
+
+  @Field(() => String, { nullable: true })
+  eventType?: string
+
+  @Field(() => Boolean, { nullable: true })
+  isFileEvent?: boolean
 }
 
 @InputType('FormSystemValueDtoInput')
@@ -73,4 +112,7 @@ export class ValueDtoInput {
 
   @Field(() => ValueInput, { nullable: true })
   json?: ValueInput
+
+  @Field(() => [ApplicationEventDtoInput], { nullable: 'itemsAndList' })
+  events?: ApplicationEventDtoInput[]
 }

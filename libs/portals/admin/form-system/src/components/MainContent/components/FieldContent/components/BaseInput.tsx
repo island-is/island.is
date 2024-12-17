@@ -27,7 +27,9 @@ export const BaseInput = () => {
   const { activeItem } = control
   const currentItem = activeItem.data as FormSystemField
   const selectList = fieldTypesSelectObject()
-  const defaultValue = fieldTypes?.find(fieldType => fieldType?.id === currentItem.fieldType)
+  const defaultValue = fieldTypes?.find(
+    (fieldType) => fieldType?.id === currentItem.fieldType,
+  )
   const defaultOption: Option<string> | undefined = defaultValue
     ? { value: defaultValue.id ?? '', label: defaultValue.name?.is ?? '' }
     : undefined

@@ -13,7 +13,7 @@ export const TextInput = ({ item }: Props) => {
       label={item?.name?.is ?? ''}
       name="text"
       textarea={fieldSettings?.isLarge ?? false}
-      required={item?.isRequired ?? false}
+      required={item.isRequired ?? false}
     />
   )
 }

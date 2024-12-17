@@ -1,6 +1,10 @@
 import { useContext, useEffect, useMemo, useState } from 'react'
 import { ControlContext } from '../../../../../../context/ControlContext'
-import { FormSystemField, FormSystemListItem, Maybe } from '@island.is/api/schema'
+import {
+  FormSystemField,
+  FormSystemListItem,
+  Maybe,
+} from '@island.is/api/schema'
 import {
   GridRow as Row,
   GridColumn as Column,
@@ -17,7 +21,7 @@ import {
   PointerSensor,
   useSensor,
   useSensors,
-  UniqueIdentifier
+  UniqueIdentifier,
 } from '@dnd-kit/core'
 import { NavbarSelectStatus } from '../../../../../../lib/utils/interfaces'
 import { ListItem } from './components/ListItem'
@@ -25,24 +29,25 @@ import { SortableContext } from '@dnd-kit/sortable'
 import { createPortal } from 'react-dom'
 import { useIntl } from 'react-intl'
 import { useMutation } from '@apollo/client'
-import { CREATE_LIST_ITEM, UPDATE_LIST_ITEM, UPDATE_LIST_ITEM_DISPLAY_ORDER } from '@island.is/form-system/graphql'
+import {
+  CREATE_LIST_ITEM,
+  UPDATE_LIST_ITEM,
+  UPDATE_LIST_ITEM_DISPLAY_ORDER,
+} from '@island.is/form-system/graphql'
 import { removeTypename } from '../../../../../../lib/utils/removeTypename'
 import { m } from '@island.is/form-system/ui'
 
 export const ListBuilder = () => {
   const [createListItem] = useMutation(CREATE_LIST_ITEM)
-  const [updateListItemDisplayOrder] = useMutation(UPDATE_LIST_ITEM_DISPLAY_ORDER)
+  const [updateListItemDisplayOrder] = useMutation(
+    UPDATE_LIST_ITEM_DISPLAY_ORDER,
+  )
   const [updateListItem] = useMutation(UPDATE_LIST_ITEM)
-  const {
-    control,
-    controlDispatch,
-    setSelectStatus,
-    setInListBuilder,
-  } = useContext(ControlContext)
+  const { control, controlDispatch, setSelectStatus, setInListBuilder } =
+    useContext(ControlContext)
   const currentItem = control.activeItem.data as FormSystemField
   const { activeListItem } = control
-  const listItems =
-    currentItem?.list ?? ([] as FormSystemListItem[])
+  const listItems = currentItem?.list ?? ([] as FormSystemListItem[])
   const listItemIds = useMemo(
     () =>
       listItems
@@ -53,7 +58,9 @@ export const ListBuilder = () => {
         .map((l: FormSystemListItem) => l?.id as UniqueIdentifier),
     [listItems],
   )
-  const [connecting, setConnecting] = useState<boolean[]>(listItems.map(() => false))
+  const [connecting, setConnecting] = useState<boolean[]>(
+    listItems.map(() => false),
+  )
 
   const { formatMessage } = useIntl()
 
@@ -73,15 +80,17 @@ export const ListBuilder = () => {
             createListItemDto: {
               fieldId: currentItem.id,
               displayOrder: listItems.length,
-            }
-          }
-        }
+            },
+          },
+        },
       })
       controlDispatch({
         type: 'ADD_LIST_ITEM',
         payload: {
-          newListItem: removeTypename(newListItem.data.formSystemCreateListItem)
-        }
+          newListItem: removeTypename(
+            newListItem.data.formSystemCreateListItem,
+          ),
+        },
       })
       setConnecting((prev) => [...prev, false])
     } catch (e) {
@@ -113,7 +122,6 @@ export const ListBuilder = () => {
     })
   }
 
-
   const onDragEnd = () => {
     controlDispatch({
       type: 'SET_ACTIVE_LIST_ITEM',
@@ -126,13 +134,15 @@ export const ListBuilder = () => {
         input: {
           updateListItemsDisplayOrderDto: {
             listItemsDisplayOrderDto: listItems
-              .filter((l): l is FormSystemListItem => l !== null && l !== undefined)
+              .filter(
+                (l): l is FormSystemListItem => l !== null && l !== undefined,
+              )
               .map((l) => {
                 return {
                   id: l.id,
                 }
               }),
-          }
+          },
         },
       },
     })
@@ -155,9 +165,9 @@ export const ListBuilder = () => {
             id: id,
             updateListItemDto: {
               isSelected: checked,
-            }
-          }
-        }
+            },
+          },
+        },
       })
     }
     if (checked) {
@@ -169,9 +179,9 @@ export const ListBuilder = () => {
               id: otherSelected.id,
               updateListItemDto: {
                 isSelected: false,
-              }
-            }
-          }
+              },
+            },
+          },
         })
       }
     }

@@ -1,5 +1,6 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql'
 import { Month } from './month.model'
+import { ApplicationEventDto } from './applications.model'
 
 @ObjectType('FormSystemValue')
 export class Value {
@@ -13,7 +14,7 @@ export class Value {
   date?: Date
 
   @Field(() => String, { nullable: true })
-  kennitala?: string
+  nationalId?: string
 
   @Field(() => String, { nullable: true })
   name?: string
@@ -36,6 +37,9 @@ export class Value {
   @Field(() => String, { nullable: true })
   homestayNumber?: string
 
+  @Field(() => String, { nullable: true })
+  propertyNumber?: string
+
   @Field(() => Int, { nullable: true })
   totalDays?: number
 
@@ -48,8 +52,32 @@ export class Value {
   @Field(() => Boolean, { nullable: true })
   isNullReport?: boolean
 
-  @Field(() => [Month], { nullable: true })
+  @Field(() => [Month], { nullable: 'itemsAndList' })
   months?: Month[]
+
+  @Field(() => String, { nullable: true })
+  listValue?: string
+
+  @Field(() => String, { nullable: true })
+  email?: string
+
+  @Field(() => String, { nullable: true })
+  iskNumber?: string
+
+  @Field(() => Boolean, { nullable: true })
+  checkboxValue?: boolean
+
+  @Field(() => String, { nullable: true })
+  phoneNumber?: string
+
+  @Field(() => String, { nullable: true })
+  bankAccount?: string
+
+  @Field(() => String, { nullable: true })
+  time?: string
+
+  @Field(() => String, { nullable: true })
+  s3Key?: string
 }
 
 @ObjectType('FormSystemValueDto')
@@ -62,4 +90,7 @@ export class ValueDto {
 
   @Field(() => Value, { nullable: true })
   json?: Value
+
+  @Field(() => [ApplicationEventDto], { nullable: 'itemsAndList' })
+  events?: ApplicationEventDto[]
 }

@@ -16,10 +16,9 @@ import {
   List,
   HomestayOverview,
   m,
-  FieldTypesEnum
+  FieldTypesEnum,
 } from '@island.is/form-system/ui'
 import { useIntl } from 'react-intl'
-
 
 interface Props {
   data: FormSystemField
@@ -59,7 +58,9 @@ export const Preview = ({ data }: Props) => {
       {type === FieldTypesEnum.CHECKBOX && <Checkbox item={data} />}
       {type === FieldTypesEnum.PHONE_NUMBER && <PhoneNumber item={data} />}
       {type === FieldTypesEnum.TIME_INPUT && <TimeInput item={data} />}
-      {type === FieldTypesEnum.PROPERTY_NUMBER && <PropertyNumber item={data} />}
+      {type === FieldTypesEnum.PROPERTY_NUMBER && (
+        <PropertyNumber item={data} />
+      )}
       {type === FieldTypesEnum.HOMESTAY_OVERVIEW && <HomestayOverview />}
     </Box>
   )

@@ -9,7 +9,10 @@ import {
 } from '@island.is/auth-nest-tools'
 import { Audit } from '@island.is/nest/audit'
 import { CertificationsService } from './certification.service'
-import { CreateCertificationInput, DeleteCertificationInput } from '../../dto/certification.input'
+import {
+  CreateCertificationInput,
+  DeleteCertificationInput,
+} from '../../dto/certification.input'
 import { FormCertificationTypeDto } from '../../models/certification.model'
 
 @Resolver()
@@ -17,7 +20,7 @@ import { FormCertificationTypeDto } from '../../models/certification.model'
 @CodeOwner(CodeOwners.Advania)
 @Audit({ namespace: '@island.is/api/form-system' })
 export class CertificationsResolver {
-  constructor(private readonly certificationsService: CertificationsService) { }
+  constructor(private readonly certificationsService: CertificationsService) {}
 
   @Mutation(() => FormCertificationTypeDto, {
     name: 'formSystemCreateCertification',
@@ -32,7 +35,7 @@ export class CertificationsResolver {
 
   @Mutation(() => Boolean, {
     name: 'formSystemDeleteCertification',
-    nullable: true
+    nullable: true,
   })
   async deleteCertification(
     @Args('input', { type: () => DeleteCertificationInput })

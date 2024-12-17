@@ -222,7 +222,7 @@ export const m = defineMessages({
   },
   phoneNumber: {
     id: 'portals-admin.form-system:phone-number',
-    defaultMessage: 'Símanúmer'
+    defaultMessage: 'Símanúmer',
   },
   // Labels and placeholders
   maxFileSize: {
@@ -447,27 +447,28 @@ export const m = defineMessages({
   },
   homestayOverviewRadio: {
     id: 'portals-admin-form-system:homestay-overview-radio',
-    defaultMessage: 'Var eignin eitthvað í útleigu á almanaksárinu sem er valið?'
+    defaultMessage:
+      'Var eignin eitthvað í útleigu á almanaksárinu sem er valið?',
   },
   yes: {
     id: 'portals-admin-form-system:yes',
-    defaultMessage: 'Já'
+    defaultMessage: 'Já',
   },
   no: {
     id: 'portals-admin-form-system:no',
-    defaultMessage: 'Nei'
+    defaultMessage: 'Nei',
   },
   amountIn: {
     id: 'portals-admin-form-system:amount-in',
-    defaultMessage: 'Upphæð í'
+    defaultMessage: 'Upphæð í',
   },
   totalDays: {
     id: 'portals-admin-form-system:total-days',
-    defaultMessage: 'Heildarfjöldi daga'
+    defaultMessage: 'Heildarfjöldi daga',
   },
   totalAmount: {
     id: 'portals-admin-form-system:total-amount',
-    defaultMessage: 'Heildarupphæð'
+    defaultMessage: 'Heildarupphæð',
   },
   // Error messages
   invalidEmail: {

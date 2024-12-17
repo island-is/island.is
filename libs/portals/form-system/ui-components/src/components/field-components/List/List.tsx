@@ -24,7 +24,7 @@ export const List = ({ item }: Props) => {
   const mapToListItems = (items: any[]): ListItem[] =>
     items?.map((item) => ({
       label: item?.label?.is ?? '',
-      value: item?.label?.is ?? ''
+      value: item?.label?.is ?? '',
     })) ?? []
 
   console.log('item', item)
@@ -36,7 +36,7 @@ export const List = ({ item }: Props) => {
       required={item.isRequired ?? false}
       placeholder={
         listTypePlaceholder[
-        item.fieldSettings?.listType as keyof typeof listTypePlaceholder
+          item.fieldSettings?.listType as keyof typeof listTypePlaceholder
         ] ?? 'Select an option'
       }
     />

@@ -5,9 +5,13 @@ import { ControlContext } from '../../../context/ControlContext'
 import { removeTypename } from '../../../lib/utils/removeTypename'
 import { useIntl } from 'react-intl'
 import { useMutation } from '@apollo/client'
-import { CREATE_FIELD, CREATE_SCREEN, DELETE_FIELD, DELETE_SCREEN } from '@island.is/form-system/graphql'
+import {
+  CREATE_FIELD,
+  CREATE_SCREEN,
+  DELETE_FIELD,
+  DELETE_SCREEN,
+} from '@island.is/form-system/graphql'
 import { FieldTypesEnum, m } from '@island.is/form-system/ui'
-
 
 export const NavButtons = () => {
   const { control, controlDispatch } = useContext(ControlContext)
@@ -22,12 +26,12 @@ export const NavButtons = () => {
   const containsGroupOrInput = (): boolean | undefined => {
     const { type } = activeItem
     if (type === 'Section') {
-      return screens?.some((screen) => screen?.sectionId === activeItem?.data?.id)
+      return screens?.some(
+        (screen) => screen?.sectionId === activeItem?.data?.id,
+      )
     }
     if (type === 'Screen') {
-      return fields?.some(
-        (field) => field?.screenId === activeItem?.data?.id,
-      )
+      return fields?.some((field) => field?.screenId === activeItem?.data?.id)
     }
     return false
   }
@@ -44,8 +48,8 @@ export const NavButtons = () => {
           input: {
             createScreenDto: {
               sectionId: activeItem?.data?.id,
-              displayOrder: screens?.length
-            }
+              displayOrder: screens?.length,
+            },
           },
         },
       })
@@ -66,8 +70,8 @@ export const NavButtons = () => {
             createFieldDto: {
               screenId: activeItem?.data?.id,
               fieldType: FieldTypesEnum.TEXTBOX,
-              displayOrder: fields?.length ?? 0
-            }
+              displayOrder: fields?.length ?? 0,
+            },
           },
         },
       })

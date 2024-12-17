@@ -15,7 +15,10 @@ import { useIntl } from 'react-intl'
 import * as styles from './ListItem.css'
 import { getTranslation } from '../../../../../../../lib/utils/getTranslation'
 import { useMutation } from '@apollo/client'
-import { DELETE_LIST_ITEM, UPDATE_LIST_ITEM } from '@island.is/form-system/graphql'
+import {
+  DELETE_LIST_ITEM,
+  UPDATE_LIST_ITEM,
+} from '@island.is/form-system/graphql'
 import { FieldTypesEnum, m } from '@island.is/form-system/ui'
 
 interface Props {
@@ -31,15 +34,10 @@ export const ListItem = ({
   connecting,
   index,
   setConnecting,
-  toggleSelected
+  toggleSelected,
 }: Props) => {
-  const {
-    control,
-    controlDispatch,
-    setFocus,
-    focus,
-    setSelectStatus,
-  } = useContext(ControlContext)
+  const { control, controlDispatch, setFocus, focus, setSelectStatus } =
+    useContext(ControlContext)
   const { activeItem } = control
   const currentItem = activeItem.data as FormSystemField
   const isRadio = currentItem.fieldType === FieldTypesEnum.RADIO_BUTTONS
@@ -76,9 +74,9 @@ export const ListItem = ({
               label: listItem.label,
               description: listItem.description,
               isSelected: listItem.isSelected,
-            }
-          }
-        }
+            },
+          },
+        },
       })
     } catch (e) {
       console.error('Error updating list item', e)
@@ -135,7 +133,7 @@ export const ListItem = ({
               controlDispatch({
                 type: 'SET_LIST_ITEM_SELECTED',
                 payload: {
-                  id: listItem.id ?? ''
+                  id: listItem.id ?? '',
                 },
               })
             }}
@@ -156,8 +154,8 @@ export const ListItem = ({
                 variables: {
                   input: {
                     id: listItem.id ?? '',
-                  }
-                }
+                  },
+                },
               })
             }}
           >
@@ -185,7 +183,7 @@ export const ListItem = ({
                   property: 'label',
                   lang: 'is',
                   value: e.target.value,
-                  id: listItem.id ?? ''
+                  id: listItem.id ?? '',
                 },
               })
             }
@@ -207,7 +205,7 @@ export const ListItem = ({
                   property: 'label',
                   lang: 'en',
                   value: e.target.value,
-                  id: listItem.id ?? ''
+                  id: listItem.id ?? '',
                 },
               })
             }
@@ -216,14 +214,16 @@ export const ListItem = ({
                 label: 'Translate',
                 name: 'reader',
                 onClick: async () => {
-                  const translation = await getTranslation(listItem?.label?.is ?? '')
+                  const translation = await getTranslation(
+                    listItem?.label?.is ?? '',
+                  )
                   controlDispatch({
                     type: 'CHANGE_LIST_ITEM',
                     payload: {
                       property: 'label',
                       lang: 'en',
                       value: translation ?? '',
-                      id: listItem.id ?? ''
+                      id: listItem.id ?? '',
                     },
                   })
                 },
@@ -251,7 +251,7 @@ export const ListItem = ({
                     property: 'description',
                     lang: 'is',
                     value: e.target.value,
-                    id: listItem.id ?? ''
+                    id: listItem.id ?? '',
                   },
                 })
               }
@@ -273,7 +273,7 @@ export const ListItem = ({
                     property: 'description',
                     lang: 'en',
                     value: e.target.value,
-                    id: listItem.id ?? ''
+                    id: listItem.id ?? '',
                   },
                 })
               }
@@ -291,7 +291,7 @@ export const ListItem = ({
                         property: 'description',
                         lang: 'en',
                         value: translation ?? '',
-                        id: listItem.id ?? ''
+                        id: listItem.id ?? '',
                       },
                     })
                   },
