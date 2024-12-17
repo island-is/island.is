@@ -16,8 +16,6 @@ import {
   PageTitle,
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
-import { NotificationType } from '@island.is/judicial-system-web/src/graphql/schema'
-import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { isDefenderStepValid } from '@island.is/judicial-system-web/src/utils/validate'
 
 import SelectCivilClaimantAdvocate from './SelectCivilClaimantAdvocate'
@@ -28,18 +26,17 @@ const Advocates = () => {
   const { workingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
   const router = useRouter()
-  const { sendNotification, isSendingNotification } = useCase()
+
   const { formatMessage } = useIntl()
 
   const handleNavigationTo = useCallback(
     async (destination: string) => {
-      await sendNotification(workingCase.id, NotificationType.ADVOCATE_ASSIGNED)
       router.push(`${destination}/${workingCase.id}`)
     },
-    [workingCase.id, sendNotification, router],
+    [workingCase.id, router],
   )
 
-  const stepIsValid = !isSendingNotification && isDefenderStepValid(workingCase)
+  const stepIsValid = isDefenderStepValid(workingCase)
   const hasCivilClaimants = (workingCase.civilClaimants?.length ?? 0) > 0
 
   return (
@@ -102,7 +99,7 @@ const Advocates = () => {
         <FormFooter
           nextButtonIcon="arrowForward"
           previousUrl={`${constants.INDICTMENTS_SUBPOENA_ROUTE}/${workingCase.id}`}
-          nextIsLoading={isLoadingWorkingCase || isSendingNotification}
+          nextIsLoading={isLoadingWorkingCase}
           nextButtonText={formatMessage(core.continue)}
           nextUrl={`${constants.INDICTMENTS_CONCLUSION_ROUTE}/${workingCase.id}`}
           nextIsDisabled={!stepIsValid}

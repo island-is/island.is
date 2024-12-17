@@ -88,6 +88,7 @@ import HousingBenefitCalculator from '../components/connected/HousingBenefitCalc
 import JourneymanList from '../components/connected/syslumenn/TableLists/JourneymanList/JourneymanList'
 import ProfessionRights from '../components/connected/syslumenn/TableLists/ProfessionRights/ProfessionRights'
 import { UmsCostOfLivingCalculator } from '../components/connected/UmbodsmadurSkuldara'
+import { WHODASCalculator } from '../components/connected/WHODAS/Calculator'
 import FeaturedEvents from '../components/FeaturedEvents/FeaturedEvents'
 import FeaturedSupportQNAs from '../components/FeaturedSupportQNAs/FeaturedSupportQNAs'
 import { EmbedSlice } from '../components/Organization/Slice/EmbedSlice/EmbedSlice'
@@ -199,6 +200,9 @@ export const webRenderConnectedComponent = (
         <BenefitsOfDigitalProcessesCalculator slice={slice} />
       )
       break
+    case 'WHODAS/Calculator':
+      connectedComponent = <WHODASCalculator slice={slice} />
+      break
     default:
       connectedComponent = renderConnectedComponent(slice)
   }
@@ -298,7 +302,7 @@ export const webRichText = (
   activeLocale?: Locale,
 ) => {
   return richText(
-    slices as SliceType[],
+    (slices ?? []) as SliceType[],
     {
       renderComponent: {
         ...defaultRenderComponentObject,

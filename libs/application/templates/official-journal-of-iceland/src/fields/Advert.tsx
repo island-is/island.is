@@ -1,4 +1,3 @@
-import { useCallback, useState } from 'react'
 import { InputFields, OJOIFieldBaseProps } from '../lib/types'
 import { Box } from '@island.is/island-ui/core'
 import { FormGroup } from '../components/form/FormGroup'
@@ -11,41 +10,46 @@ import { OJOIInputController } from '../components/input/OJOIInputController'
 import { OJOIHtmlController } from '../components/input/OJOIHtmlController'
 import { useFormContext } from 'react-hook-form'
 import { useApplication } from '../hooks/useUpdateApplication'
+import set from 'lodash/set'
+import { HTMLEditor } from '../components/htmlEditor/HTMLEditor'
+import { getAdvertMarkup } from '../lib/utils'
 
-type Props = OJOIFieldBaseProps & {
-  timeStamp: string
-}
-
-export const Advert = ({ application, timeStamp }: Props) => {
+export const Advert = ({ application }: OJOIFieldBaseProps) => {
   const { setValue } = useFormContext()
   const { application: currentApplication } = useApplication({
     applicationId: application.id,
   })
   const { departments, loading: loadingDepartments } = useDepartments()
   const {
-    useLazyTypes,
+    getLazyTypes,
     types,
     loading: loadingTypes,
   } = useTypes({
-    initalDepartmentId: application.answers?.advert?.departmentId,
+    initalDepartmentId: application.answers?.advert?.department?.id,
   })
 
-  const [localTypeId, setLocalTypeId] = useState<string | undefined>(
-    application.answers?.advert?.typeId,
-  )
-  const handleDepartmentChange = useCallback(
-    (value: string) => {
-      // eslint-disable-next-line react-hooks/rules-of-hooks
-      useLazyTypes({
-        params: {
-          department: value,
-          pageSize: 100,
-        },
-      })
-      setLocalTypeId(undefined)
+  const titlePreview = getAdvertMarkup({
+    type: currentApplication.answers.advert?.type?.title,
+    title: currentApplication.answers.advert?.title,
+  })
+
+  const departmentOptions = departments?.map((d) => ({
+    label: d.title,
+    value: {
+      id: d.id,
+      title: d.title,
+      slug: d.slug,
     },
-    [useLazyTypes],
-  )
+  }))
+
+  const typeOptions = types?.map((d) => ({
+    label: d.title,
+    value: {
+      id: d.id,
+      title: d.title,
+      slug: d.slug,
+    },
+  }))
 
   return (
     <>
@@ -53,31 +57,37 @@ export const Advert = ({ application, timeStamp }: Props) => {
         <Box className={styles.inputWrapper}>
           <OJOISelectController
             applicationId={application.id}
-            name={InputFields.advert.departmentId}
+            name={InputFields.advert.department}
             label={advert.inputs.department.label}
             placeholder={advert.inputs.department.placeholder}
             loading={loadingDepartments}
-            options={departments?.map((d) => ({
-              label: d.title,
-              value: d.id,
-            }))}
-            onChange={(value) => handleDepartmentChange(value)}
+            options={departmentOptions}
+            defaultValue={application.answers?.advert?.department}
+            onBeforeChange={(answers) => {
+              setValue(InputFields.advert.type, null)
+              set(answers, InputFields.advert.type, null)
+            }}
+            onChange={(value) =>
+              getLazyTypes({
+                variables: {
+                  params: {
+                    department: value.id,
+                    pageSize: 100,
+                  },
+                },
+              })
+            }
           />
         </Box>
         <Box className={styles.inputWrapper}>
           <OJOISelectController
             applicationId={application.id}
-            name={InputFields.advert.typeId}
+            name={InputFields.advert.type}
             label={advert.inputs.type.label}
             placeholder={advert.inputs.type.placeholder}
             loading={loadingTypes}
             disabled={!types}
-            defaultValue={localTypeId}
-            options={types?.map((d) => ({
-              label: d.title,
-              value: d.id,
-            }))}
-            onChange={(value) => setLocalTypeId(value)}
+            options={typeOptions}
           />
         </Box>
         <Box>
@@ -88,6 +98,15 @@ export const Advert = ({ application, timeStamp }: Props) => {
             defaultValue={application.answers?.advert?.title}
             placeholder={advert.inputs.title.placeholder}
             textarea={true}
+            maxLength={600}
+          />
+        </Box>
+        <Box>
+          <HTMLEditor
+            name="preview.title"
+            config={{ toolbar: false }}
+            readOnly={true}
+            value={titlePreview}
           />
         </Box>
       </FormGroup>
@@ -107,7 +126,6 @@ export const Advert = ({ application, timeStamp }: Props) => {
             applicationId={application.id}
             name={InputFields.advert.html}
             defaultValue={currentApplication.answers?.advert?.html}
-            editorKey={timeStamp}
             // we have use setValue from useFormContext to update the value
             // because this is not a controlled component
             onChange={(value) => setValue(InputFields.advert.html, value)}

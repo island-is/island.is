@@ -32,6 +32,7 @@ export interface DefaultHeaderProps {
   imageObjectPosition?: 'left' | 'center' | 'right'
   className?: string
   titleClassName?: string
+  logoImageClassName?: string
   logoAltText?: string
   isSubpage?: boolean
 }
@@ -55,6 +56,7 @@ export const DefaultHeader: React.FC<
   imageObjectPosition = 'center',
   className,
   titleClassName,
+  logoImageClassName,
   logoAltText,
   titleSectionPaddingLeft,
   isSubpage,
@@ -85,10 +87,16 @@ export const DefaultHeader: React.FC<
                   className={cn(styles.logoContainer, {
                     [styles.logoContainerSubpage]: isSubpage,
                   })}
-                  borderRadius="circle"
+                  borderRadius="full"
                   background="white"
                 >
-                  <img className={styles.logo} src={logo} alt={logoAltText} />
+                  <img
+                    className={
+                      logoImageClassName ? logoImageClassName : styles.logo
+                    }
+                    src={logo}
+                    alt={logoAltText}
+                  />
                 </Box>
               </LinkWrapper>
             </div>
@@ -136,11 +144,17 @@ export const DefaultHeader: React.FC<
                       className={cn(styles.logoContainerMobile, {
                         [styles.logoContainerMobileSubpage]: isSubpage,
                       })}
-                      borderRadius="circle"
+                      borderRadius="full"
                       background="white"
                     >
                       <img
-                        className={isSubpage ? styles.logoSubpage : styles.logo}
+                        className={
+                          isSubpage
+                            ? styles.logoSubpage
+                            : logoImageClassName
+                            ? logoImageClassName
+                            : styles.logo
+                        }
                         src={logo}
                         alt={logoAltText}
                       />

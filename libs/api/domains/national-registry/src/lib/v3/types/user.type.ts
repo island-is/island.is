@@ -24,7 +24,7 @@ export interface User {
     code?: string | null
     lastUpdated?: string | null
     streetAddress?: string | null
-    city: string
+    city?: string | null
     postalCode?: string | null
   } | null
   birthPlace: {

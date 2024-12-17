@@ -12,6 +12,8 @@ import {
   EducationDetailsItemNotFinished,
 } from '../../shared/types'
 import { ApplicationTypes } from '@island.is/university-gateway'
+import { OtherDocumentsReview } from './OtherDocumentsReview'
+import { getChosenProgram } from '../../utils'
 
 export const Review: FC<FieldBaseProps> = ({
   application,
@@ -31,15 +33,21 @@ export const Review: FC<FieldBaseProps> = ({
   const educationNotFinished = answers.educationDetails
     .notFinishedDetails as EducationDetailsItemNotFinished
 
+  const chosenProgram = getChosenProgram(application.externalData, answers)
+  const showOtherDocuments =
+    !!chosenProgram &&
+    chosenProgram.extraApplicationFields &&
+    chosenProgram.extraApplicationFields.length > 0
+
   return (
     <Box>
-      <Divider />
       <ProgramReview
         field={field}
         application={application}
         route={Routes.PROGRAMINFORMATION}
         goToScreen={goToScreen}
       />
+
       <Divider />
       <ApplicantReview
         field={field}
@@ -47,6 +55,7 @@ export const Review: FC<FieldBaseProps> = ({
         route={Routes.USERINFORMATION}
         goToScreen={goToScreen}
       />
+
       <Divider />
       {educationOptionChosen &&
         educationOptionChosen === ApplicationTypes.EXEMPTION && (
@@ -87,7 +96,17 @@ export const Review: FC<FieldBaseProps> = ({
           goToScreen={goToScreen}
         />
       )}
-      <Divider />
+
+      {showOtherDocuments && <Divider />}
+      {showOtherDocuments && (
+        <OtherDocumentsReview
+          field={field}
+          application={application}
+          route={Routes.OTHERDOCUMENTS}
+          goToScreen={goToScreen}
+          extraApplicationFields={chosenProgram.extraApplicationFields}
+        />
+      )}
     </Box>
   )
 }

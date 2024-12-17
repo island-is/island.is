@@ -13,7 +13,7 @@ const formerInsurance = z.object({
   country: z.string().min(1),
   personalId: z.string().min(1),
   institution: z.string().min(1),
-  confirmationOfResidencyDocument: FileSchema.optional(),
+  confirmationOfResidencyDocument: z.array(FileSchema).optional(),
   entitlement: z.nativeEnum(YesOrNo).optional(),
   entitlementReason: z.string().optional(),
 })

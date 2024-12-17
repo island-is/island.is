@@ -10,6 +10,7 @@ export const DIVIDENDS_IN_FOREIGN_BANKS =
 export const ISK = 'IKR'
 export const INCOME = 'Atvinnutekjur'
 export const INCOME_PLANS_CLOSED = 'INCOME_PLANS_CLOSED'
+export const NO_ACTIVE_APPLICATIONS = 'NO_ACTIVE_APPLICATIONS'
 
 export enum RatioType {
   YEARLY = 'yearly',

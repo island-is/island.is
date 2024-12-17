@@ -75,7 +75,7 @@ Run on whenever you check out a branch:
 
 ```bash
 yarn install
-yarn infra install
+(cd infra/ && yarn install)
 yarn codegen
 ```
 

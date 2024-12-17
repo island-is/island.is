@@ -58,7 +58,14 @@
       "get": {
         "operationId": "MeVaccinationController_getVaccinationsForDiseases",
         "description": "Get overview of vaccinations for a user",
-        "parameters": [],
+        "parameters": [
+          {
+            "name": "locale",
+            "required": false,
+            "in": "query",
+            "schema": { "enum": ["en", "is"], "type": "string" }
+          }
+        ],
         "responses": {
           "200": {
             "description": "",
@@ -120,6 +127,12 @@
             "in": "path",
             "description": "id of the disease",
             "schema": { "type": "string" }
+          },
+          {
+            "name": "locale",
+            "required": false,
+            "in": "query",
+            "schema": { "enum": ["en", "is"], "type": "string" }
           }
         ],
         "responses": {
@@ -584,7 +597,7 @@
             "schema": { "type": "string" }
           },
           {
-            "name": "age",
+            "name": "agePatient",
             "required": true,
             "in": "query",
             "schema": { "type": "number" }
@@ -597,6 +610,12 @@
           },
           {
             "name": "rejected",
+            "required": true,
+            "in": "query",
+            "schema": { "type": "array", "items": { "type": "string" } }
+          },
+          {
+            "name": "vaccineCodes",
             "required": true,
             "in": "query",
             "schema": { "type": "array", "items": { "type": "string" } }
@@ -807,6 +826,7 @@
           "diseaseId": { "type": "string" },
           "order": { "type": "number" },
           "type": { "type": "object" },
+          "vaccineCodes": { "type": "string" },
           "cond1Type": { "type": "string" },
           "cond1Min": { "type": "number" },
           "cond1Max": { "type": "number" },
@@ -846,6 +866,7 @@
           "description": { "type": "string" },
           "isFeatured": { "type": "boolean" },
           "isVisible": { "type": "boolean" },
+          "hideIfNoVaccinations": { "type": "boolean" },
           "vaccines": {
             "type": "array",
             "items": { "$ref": "#/components/schemas/VaccineDiseaseDto" }
@@ -864,6 +885,7 @@
           "name",
           "isFeatured",
           "isVisible",
+          "hideIfNoVaccinations",
           "vaccines",
           "rules",
           "translations"
@@ -877,6 +899,11 @@
           "description": { "type": "string" },
           "isFeatured": { "type": "boolean" },
           "isVisible": { "type": "boolean" },
+          "hideIfNoVaccinations": { "type": "boolean" },
+          "vaccines": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/VaccineDiseaseDto" }
+          },
           "rules": {
             "type": "array",
             "items": { "$ref": "#/components/schemas/DiseaseRuleDto" }
@@ -892,6 +919,7 @@
         "properties": {
           "order": { "type": "number" },
           "type": { "type": "object" },
+          "vaccineCodes": { "type": "string" },
           "cond1Type": { "type": "string" },
           "cond1Min": { "type": "number" },
           "cond1Max": { "type": "number" },
@@ -921,6 +949,7 @@
           "diseaseId": { "type": "string" },
           "order": { "type": "number" },
           "type": { "type": "object" },
+          "vaccineCodes": { "type": "string" },
           "cond1Type": { "type": "string" },
           "cond1Min": { "type": "number" },
           "cond1Max": { "type": "number" },

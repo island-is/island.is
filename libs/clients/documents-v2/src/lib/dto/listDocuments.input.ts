@@ -4,10 +4,11 @@ export type ListDocumentsInputDto = {
   dateFrom?: Date
   dateTo?: Date
   categoryId?: string
+  hiddenCategoryIds?: string
   typeId?: string
   subjectContains?: string
   archived?: boolean
-  sortBy?: 'Date' | 'Category' | 'Type' | 'Sender' | 'Subject'
+  sortBy?: 'Date' | 'Category' | 'Type' | 'Sender' | 'Subject' | 'Publication'
   order?: 'Ascending' | 'Descending'
   opened?: boolean
   page?: number

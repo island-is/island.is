@@ -1,6 +1,5 @@
-import { SkeletonLoader } from '@island.is/island-ui/core'
+import { Input, SkeletonLoader } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { InputController } from '@island.is/shared/form-fields'
 import { MessageDescriptor } from 'react-intl'
 import { OJOI_INPUT_HEIGHT } from '../../lib/constants'
 import { useApplication } from '../../hooks/useUpdateApplication'
@@ -15,6 +14,7 @@ type Props = {
   applicationId: string
   disabled?: boolean
   textarea?: boolean
+  maxLength?: number
   onChange?: (value: string) => void
 }
 
@@ -27,6 +27,7 @@ export const OJOIInputController = ({
   applicationId,
   disabled,
   textarea,
+  maxLength,
   onChange,
 }: Props) => {
   const { formatMessage: f } = useLocale()
@@ -60,7 +61,7 @@ export const OJOIInputController = ({
   }
 
   return (
-    <InputController
+    <Input
       id={name}
       name={name}
       label={labelText}
@@ -71,6 +72,8 @@ export const OJOIInputController = ({
       disabled={disabled}
       textarea={textarea}
       rows={4}
+      maxLength={maxLength}
+      required={false}
       onChange={(e) =>
         debouncedOnUpdateApplicationHandler(
           handleChange(e.target.value),

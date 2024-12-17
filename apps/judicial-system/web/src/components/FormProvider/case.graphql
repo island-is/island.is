@@ -25,10 +25,17 @@ query Case($input: CaseQueryInput!) {
       requestedDefenderChoice
       requestedDefenderNationalId
       requestedDefenderName
+      isDefenderChoiceConfirmed
+      caseFilesSharedWithDefender
       serviceRequirement
       verdictViewDate
       verdictAppealDeadline
+      verdictAppealDate
+      isVerdictAppealDeadlineExpired
       subpoenaType
+      isSentToPrisonAdmin
+      sentToPrisonAdminDate
+      punishmentType
       subpoenas {
         id
         created
@@ -38,6 +45,7 @@ query Case($input: CaseQueryInput!) {
         comment
         defenderNationalId
         caseId
+        defendantId
         subpoenaId
       }
     }
@@ -209,6 +217,7 @@ query Case($input: CaseQueryInput!) {
       lawsBroken
       incidentDescription
       legalArguments
+      indictmentCountSubtypes
     }
     requestDriversLicenseSuspension
     appealState
@@ -310,6 +319,44 @@ query Case($input: CaseQueryInput!) {
         id
         name
       }
+      defendants {
+        id
+        noNationalId
+        nationalId
+        name
+        gender
+        address
+        citizenship
+        defenderName
+        defenderNationalId
+        defenderEmail
+        defenderPhoneNumber
+        defenderChoice
+        defendantPlea
+        requestedDefenderChoice
+        requestedDefenderNationalId
+        requestedDefenderName
+        isDefenderChoiceConfirmed
+        caseFilesSharedWithDefender
+        serviceRequirement
+        verdictViewDate
+        verdictAppealDeadline
+        verdictAppealDate
+        isVerdictAppealDeadlineExpired
+        subpoenaType
+        punishmentType
+        subpoenas {
+          id
+          created
+          serviceStatus
+          serviceDate
+          servedBy
+          comment
+          defenderNationalId
+          caseId
+          subpoenaId
+        }
+      }
       caseFiles {
         id
         created
@@ -340,6 +387,7 @@ query Case($input: CaseQueryInput!) {
       spokespersonEmail
       spokespersonPhoneNumber
       caseFilesSharedWithSpokesperson
+      isSpokespersonConfirmed
     }
     civilDemands
     hasCivilClaims

@@ -442,6 +442,27 @@ export const m = defineMessages({
     defaultMessage: 'Opna fyrir úrvinnslu',
     description: '',
   },
+  collectionReviewedTitle: {
+    id: 'admin-portal.signature-collection:collectionReviewedTitle',
+    defaultMessage: 'Meðmælasöfnun vegna framboðs til Alþingis lokið',
+    description: '',
+  },
+  collectionReviewedMessage: {
+    id: 'admin-portal.signature-collection:collectionReviewedMessage',
+    defaultMessage:
+      'Nú hefur úrvinnslu verið lokið á öllum listum í öllum kjördæmum.',
+    description: '',
+  },
+  collectionProcessedTitle: {
+    id: 'admin-portal.signature-collection:collectionProcessedTitle',
+    defaultMessage: 'Úrvinnsla meðmælasöfnunar lokið',
+    description: '',
+  },
+  collectionProcessedMessage: {
+    id: 'admin-portal.signature-collection:collectionReviewedTitle',
+    defaultMessage: 'Nú er hægt að framlengja stökum listum.',
+    description: '',
+  },
   listReviewedModalDescription: {
     id: 'admin-portal.signature-collection:listReviewedModalDescription#markdown',
     defaultMessage:
@@ -480,9 +501,19 @@ export const m = defineMessages({
     defaultMessage: 'Úrvinnslu lokið',
     description: '',
   },
+  toggleReviewSuccessToggleBack: {
+    id: 'admin-portal.signature-collection:toggleReviewSuccessToggleBack',
+    defaultMessage: 'Tókst að opna fyrir úrvinnslu',
+    description: '',
+  },
   lockList: {
     id: 'admin-portal.signature-collection:lockList',
     defaultMessage: 'Læsa söfnun',
+    description: '',
+  },
+  listOpen: {
+    id: 'admin-portal.signature-collection:listOpened',
+    defaultMessage: 'Söfnun í gangi',
     description: '',
   },
   listLocked: {
@@ -684,7 +715,7 @@ export const m = defineMessages({
     description: '',
   },
   editPaperNumberError: {
-    id: 'admin-portal.signature-collection:editPaperNumberSuccess',
+    id: 'admin-portal.signature-collection:editPaperNumberError',
     defaultMessage: 'Ekki tókst að breyta blaðsíðunúmeri',
     description: '',
   },
@@ -731,6 +762,11 @@ export const m = defineMessages({
   paperSigneeError: {
     id: 'admin-portal.signature-collection:paperSigneeError',
     defaultMessage: 'Ekki tókst að skrá meðmæli',
+    description: '',
+  },
+  paperSigneeErrorAlreadySigned: {
+    id: 'admin-portal.signature-collection:paperSigneeErrorAlreadySigned',
+    defaultMessage: 'Kennitala er þegar á lista',
     description: '',
   },
 })

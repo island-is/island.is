@@ -573,4 +573,23 @@ export class SignatureCollectionClientService {
 
     return mapListSummary(summary)
   }
+
+  async updateSignaturePageNumber(
+    auth: Auth,
+    signatureId: string,
+    pageNumber: number,
+  ): Promise<Success> {
+    try {
+      const res = await this.getApiWithAuth(
+        this.signatureApi,
+        auth,
+      ).medmaeliIDUpdateBlsPatch({
+        iD: parseInt(signatureId),
+        blsNr: pageNumber,
+      })
+      return { success: res.bladsidaNr === pageNumber }
+    } catch {
+      return { success: false }
+    }
+  }
 }

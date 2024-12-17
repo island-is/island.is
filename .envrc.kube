@@ -4,7 +4,7 @@ set -euo pipefail
 
 for c in kubectx kubectl aws; do
   if ! command -v "$c" >/dev/null; then
-    echo "$c not installed"
+    echo "Optional dependency $c not installed. Aborting automatic kube configuration"
     return
   fi
 done
@@ -12,6 +12,10 @@ done
 set-kubectx() {
   : "${AWS_PROFILE:=}"
   if kubectx | grep -q "${AWS_PROFILE##islandis-}"; then
+    return
+  fi
+  if [[ -z "${AWS_PROFILE}" ]]; then
+    echo "No AWS_PROFILE set" >&2
     return
   fi
   echo "Setting kube context..." >&2

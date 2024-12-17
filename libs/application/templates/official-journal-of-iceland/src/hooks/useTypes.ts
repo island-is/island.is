@@ -1,10 +1,11 @@
-import { NetworkStatus, useQuery } from '@apollo/client'
+import { useLazyQuery, useQuery } from '@apollo/client'
 import { OfficialJournalOfIcelandAdvertsTypesResponse } from '@island.is/api/schema'
 
 import { TYPES_QUERY } from '../graphql/queries'
 
 type UseTypesParams = {
   initalDepartmentId?: string
+  onCompleted?: (data: TypesResponse) => void
   pageSize?: number
   page?: number
 }
@@ -23,6 +24,7 @@ type TypesVariables = {
 
 export const useTypes = ({
   initalDepartmentId: departmentId,
+  onCompleted,
 }: UseTypesParams) => {
   const params: TypesVariables['params'] = {}
 
@@ -38,20 +40,35 @@ export const useTypes = ({
     params.pageSize = 1000
   }
 
-  const { data, loading, error, refetch, networkStatus } = useQuery<
-    TypesResponse,
-    TypesVariables
-  >(TYPES_QUERY, {
-    variables: {
-      params: params,
+  const { data, loading, error } = useQuery<TypesResponse, TypesVariables>(
+    TYPES_QUERY,
+    {
+      variables: {
+        params: params,
+      },
+      onCompleted: onCompleted,
     },
-    notifyOnNetworkStatusChange: true,
+  )
+
+  const [
+    getLazyTypes,
+    { data: lazyTypes, loading: lazyTypesLoading, error: lazyTypesError },
+  ] = useLazyQuery<TypesResponse, TypesVariables>(TYPES_QUERY, {
+    fetchPolicy: 'network-only',
   })
 
+  const currentTypes = lazyTypes
+    ? lazyTypes.officialJournalOfIcelandTypes.types
+    : data?.officialJournalOfIcelandTypes.types
+
   return {
-    useLazyTypes: refetch,
-    types: data?.officialJournalOfIcelandTypes.types,
-    loading: loading || networkStatus === NetworkStatus.refetch,
+    lazyTypes: lazyTypes?.officialJournalOfIcelandTypes.types,
+    lazyTypesLoading,
+    lazyTypesError,
+    getLazyTypes,
+    types: currentTypes,
+    initalTypes: data?.officialJournalOfIcelandTypes.types,
+    loading: loading || lazyTypesLoading,
     error,
   }
 }

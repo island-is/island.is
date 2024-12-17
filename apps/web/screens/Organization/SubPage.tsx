@@ -1,5 +1,4 @@
-import { Locale } from '@island.is/shared/types'
-import { useRouter } from 'next/router'
+import { NextRouter, useRouter } from 'next/router'
 import { ParsedUrlQuery } from 'querystring'
 
 import { SliceType } from '@island.is/island-ui/contentful'
@@ -14,6 +13,7 @@ import {
   Stack,
   Text,
 } from '@island.is/island-ui/core'
+import { Locale } from '@island.is/shared/types'
 import {
   getThemeConfig,
   OrganizationWrapper,
@@ -27,6 +27,7 @@ import {
 import { SLICE_SPACING } from '@island.is/web/constants'
 import {
   ContentLanguage,
+  OrganizationPage,
   Query,
   QueryGetNamespaceArgs,
   QueryGetOrganizationPageArgs,
@@ -39,10 +40,11 @@ import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import { useI18n } from '@island.is/web/i18n'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { CustomNextError } from '@island.is/web/units/errors'
+import { extractNamespaceFromOrganization } from '@island.is/web/utils/extractNamespaceFromOrganization'
 import { webRichText } from '@island.is/web/utils/richText'
 import { safelyExtractPathnameFromUrl } from '@island.is/web/utils/safelyExtractPathnameFromUrl'
 
-import { Screen } from '../../types'
+import { Screen, ScreenContext } from '../../types'
 import {
   GET_NAMESPACE_QUERY,
   GET_ORGANIZATION_PAGE_QUERY,
@@ -60,46 +62,16 @@ export interface SubPageProps {
   customContentfulIds?: (string | undefined)[]
 }
 
-const SubPage: Screen<SubPageProps> = ({
-  organizationPage,
+export const SubPageContent = ({
   subpage,
   namespace,
-  locale,
-  customContent,
-  customBreadcrumbItems,
-  customContentfulIds,
-  backLink,
+  organizationPage,
+  subpageTitleVariant = 'h1',
+}: Pick<SubPageProps, 'subpage' | 'organizationPage' | 'namespace'> & {
+  subpageTitleVariant?: 'h1' | 'h2'
 }) => {
-  const router = useRouter()
-  const { activeLocale } = useI18n()
-
   const n = useNamespace(namespace)
-  const { linkResolver } = useLinkResolver()
-
-  const contentfulIds = customContentfulIds
-    ? customContentfulIds
-    : [organizationPage?.id, subpage?.id]
-
-  useContentfulId(...contentfulIds)
-
-  const pathname = new URL(router.asPath, 'https://island.is').pathname
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore make web strict
-  const navList: NavigationItem[] = organizationPage?.menuLinks.map(
-    ({ primaryLink, childrenLinks }) => ({
-      title: primaryLink?.text,
-      href: primaryLink?.url,
-      active:
-        primaryLink?.url === pathname ||
-        childrenLinks.some((link) => link.url === pathname),
-      items: childrenLinks.map(({ text, url }) => ({
-        title: text,
-        href: url,
-        active: url === pathname,
-      })),
-    }),
-  )
-
+  const { activeLocale } = useI18n()
   const content = (
     <>
       {subpage?.showTableOfContents && (
@@ -147,6 +119,147 @@ const SubPage: Screen<SubPageProps> = ({
       </GridRow>
     </>
   )
+  return (
+    <>
+      <GridContainer>
+        <Box paddingTop={4}>
+          <GridRow>
+            <GridColumn span={['9/9', '9/9', '7/9']} offset={['0', '0', '1/9']}>
+              <GridContainer>
+                <GridRow>
+                  <GridColumn
+                    span={[
+                      '12/12',
+                      '12/12',
+                      subpage?.links?.length ? '7/12' : '12/12',
+                    ]}
+                  >
+                    <>
+                      <Box className="rs_read" marginBottom={2}>
+                        <Text
+                          variant={subpageTitleVariant}
+                          as={subpageTitleVariant}
+                        >
+                          {subpage?.title}
+                        </Text>
+                      </Box>
+                      <Box
+                        display="flex"
+                        alignItems="center"
+                        columnGap={2}
+                        rowGap={2}
+                        marginBottom={3}
+                        flexWrap="wrap"
+                      >
+                        <Webreader
+                          marginTop={0}
+                          marginBottom={0}
+                          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                          // @ts-ignore make web strict
+                          readId={null}
+                          readClass="rs_read"
+                        />
+                        {subpage?.signLanguageVideo?.url && (
+                          <SignLanguageButton
+                            videoUrl={subpage.signLanguageVideo.url}
+                            videoThumbnailImageUrl={
+                              subpage.signLanguageVideo.thumbnailImageUrl
+                            }
+                            content={
+                              <>
+                                <Box className="rs_read" marginBottom={2}>
+                                  <Text variant="h2">{subpage.title}</Text>
+                                </Box>
+                                {content}
+                                {renderSlices(
+                                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                                  // @ts-ignore make web strict
+                                  subpage.slices,
+                                  subpage.sliceCustomRenderer,
+                                  subpage.sliceExtraText,
+                                  namespace,
+                                  organizationPage?.slug,
+                                )}
+                              </>
+                            }
+                          />
+                        )}
+                      </Box>
+                    </>
+                  </GridColumn>
+                </GridRow>
+                {content}
+              </GridContainer>
+            </GridColumn>
+          </GridRow>
+        </Box>
+      </GridContainer>
+      <Stack space={SLICE_SPACING}>
+        {renderSlices(
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore make web strict
+          subpage.slices,
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore make web strict
+          subpage.sliceCustomRenderer,
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore make web strict
+          subpage.sliceExtraText,
+          namespace,
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore make web strict
+          organizationPage.slug,
+        )}
+      </Stack>
+    </>
+  )
+}
+
+export const getSubpageNavList = (
+  organizationPage: OrganizationPage | null | undefined,
+  router: NextRouter,
+): NavigationItem[] => {
+  const pathname = new URL(router.asPath, 'https://island.is').pathname
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore make web strict
+  return organizationPage?.menuLinks.map(({ primaryLink, childrenLinks }) => ({
+    title: primaryLink?.text,
+    href: primaryLink?.url,
+    active:
+      primaryLink?.url === pathname ||
+      childrenLinks.some((link) => link.url === pathname),
+    items: childrenLinks.map(({ text, url }) => ({
+      title: text,
+      href: url,
+      active: url === pathname,
+    })),
+  }))
+}
+
+type SubPageScreenContext = ScreenContext & {
+  organizationPage?: Query['getOrganizationPage']
+}
+
+const SubPage: Screen<SubPageProps, SubPageScreenContext> = ({
+  organizationPage,
+  subpage,
+  namespace,
+  locale,
+  customContent,
+  customBreadcrumbItems,
+  customContentfulIds,
+  backLink,
+}) => {
+  const router = useRouter()
+
+  const n = useNamespace(namespace)
+  const { linkResolver } = useLinkResolver()
+
+  const contentfulIds = customContentfulIds
+    ? customContentfulIds
+    : [organizationPage?.id, subpage?.id]
+
+  useContentfulId(...contentfulIds)
 
   return (
     <OrganizationWrapper
@@ -183,100 +296,29 @@ const SubPage: Screen<SubPageProps> = ({
       }
       navigationData={{
         title: n('navigationTitle', 'Efnisyfirlit'),
-        items: navList,
+        items: getSubpageNavList(organizationPage, router),
       }}
     >
-      <GridContainer>
-        <Box paddingTop={4}>
-          <GridRow>
-            <GridColumn span={['9/9', '9/9', '7/9']} offset={['0', '0', '1/9']}>
-              <GridContainer>
-                <GridRow>
-                  <GridColumn
-                    span={[
-                      '12/12',
-                      '12/12',
-                      subpage?.links?.length ? '7/12' : '12/12',
-                    ]}
-                  >
-                    {customContent ? (
-                      customContent
-                    ) : (
-                      <>
-                        <Box className="rs_read" marginBottom={2}>
-                          <Text variant="h1" as="h1">
-                            {subpage?.title}
-                          </Text>
-                        </Box>
-                        <Box
-                          display="flex"
-                          alignItems="center"
-                          columnGap={2}
-                          rowGap={2}
-                          marginBottom={3}
-                          flexWrap="wrap"
-                        >
-                          <Webreader
-                            marginTop={0}
-                            marginBottom={0}
-                            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                            // @ts-ignore make web strict
-                            readId={null}
-                            readClass="rs_read"
-                          />
-                          {subpage?.signLanguageVideo?.url && (
-                            <SignLanguageButton
-                              videoUrl={subpage.signLanguageVideo.url}
-                              videoThumbnailImageUrl={
-                                subpage.signLanguageVideo.thumbnailImageUrl
-                              }
-                              content={
-                                <>
-                                  <Box className="rs_read" marginBottom={2}>
-                                    <Text variant="h2">{subpage.title}</Text>
-                                  </Box>
-                                  {content}
-                                  {renderSlices(
-                                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                                    // @ts-ignore make web strict
-                                    subpage.slices,
-                                    subpage.sliceCustomRenderer,
-                                    subpage.sliceExtraText,
-                                    namespace,
-                                    organizationPage?.slug,
-                                  )}
-                                </>
-                              }
-                            />
-                          )}
-                        </Box>
-                      </>
-                    )}
-                  </GridColumn>
-                </GridRow>
-                {!customContent && content}
-              </GridContainer>
-            </GridColumn>
-          </GridRow>
-        </Box>
-      </GridContainer>
-      <Stack space={SLICE_SPACING}>
-        {renderSlices(
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          // @ts-ignore make web strict
-          subpage.slices,
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          // @ts-ignore make web strict
-          subpage.sliceCustomRenderer,
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          // @ts-ignore make web strict
-          subpage.sliceExtraText,
-          namespace,
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          // @ts-ignore make web strict
-          organizationPage.slug,
-        )}
-      </Stack>
+      {customContent ? (
+        <GridContainer>
+          <Box paddingTop={4}>
+            <GridRow>
+              <GridColumn
+                span={['9/9', '9/9', '7/9']}
+                offset={['0', '0', '1/9']}
+              >
+                {customContent}
+              </GridColumn>
+            </GridRow>
+          </Box>
+        </GridContainer>
+      ) : (
+        <SubPageContent
+          subpage={subpage}
+          namespace={namespace}
+          organizationPage={organizationPage}
+        />
+      )}
     </OrganizationWrapper>
   )
 }
@@ -329,7 +371,13 @@ const renderSlices = (
   }
 }
 
-SubPage.getProps = async ({ apolloClient, locale, query, req }) => {
+SubPage.getProps = async ({
+  apolloClient,
+  locale,
+  query,
+  req,
+  organizationPage,
+}) => {
   const pathname = safelyExtractPathnameFromUrl(req.url)
 
   const { slug, subSlug } = getSlugAndSubSlug(query, pathname)
@@ -342,15 +390,19 @@ SubPage.getProps = async ({ apolloClient, locale, query, req }) => {
     },
     namespace,
   ] = await Promise.all([
-    apolloClient.query<Query, QueryGetOrganizationPageArgs>({
-      query: GET_ORGANIZATION_PAGE_QUERY,
-      variables: {
-        input: {
-          slug: slug as string,
-          lang: locale as ContentLanguage,
+    !organizationPage
+      ? apolloClient.query<Query, QueryGetOrganizationPageArgs>({
+          query: GET_ORGANIZATION_PAGE_QUERY,
+          variables: {
+            input: {
+              slug: slug as string,
+              lang: locale as ContentLanguage,
+            },
+          },
+        })
+      : {
+          data: { getOrganizationPage: organizationPage },
         },
-      },
-    }),
     apolloClient.query<Query, QueryGetOrganizationSubpageArgs>({
       query: GET_ORGANIZATION_SUBPAGE_QUERY,
       variables: {
@@ -389,12 +441,17 @@ SubPage.getProps = async ({ apolloClient, locale, query, req }) => {
     )
   }
 
+  const organizationNamespace = extractNamespaceFromOrganization(
+    getOrganizationPage.organization,
+  )
+
   return {
     organizationPage: getOrganizationPage,
     subpage: getOrganizationSubpage,
     namespace,
     showSearchInHeader: false,
     locale: locale as Locale,
+    customTopLoginButtonItem: organizationNamespace?.customTopLoginButtonItem,
     ...getThemeConfig(
       getOrganizationPage?.theme,
       getOrganizationPage?.organization,
@@ -404,7 +461,7 @@ SubPage.getProps = async ({ apolloClient, locale, query, req }) => {
 
 const getSlugAndSubSlug = (query: ParsedUrlQuery, pathname: string) => {
   const path = pathname?.split('/') ?? []
-  let { slug, subSlug } = query
+  let [slug, subSlug] = (query.slugs as string[]) ?? []
 
   if (!slug && path.length >= 2) {
     // The slug is the next-last index in the path, i.e. "syslumenn" in the case of "/s/syslumenn/utgefid-efni"
@@ -412,7 +469,7 @@ const getSlugAndSubSlug = (query: ParsedUrlQuery, pathname: string) => {
   }
   if (!subSlug && path.length > 0) {
     // The subslug is the last index in the path, i.e. "utgefid-efni" in the case of "/s/syslumenn/utgefid-efni"
-    subSlug = path.pop()
+    subSlug = path.pop() as string
   }
 
   return { slug, subSlug }

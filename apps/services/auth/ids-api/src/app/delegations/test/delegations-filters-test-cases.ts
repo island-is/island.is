@@ -11,8 +11,8 @@ import {
   TestCase,
 } from './delegations-filters-types'
 
-const person1 = createNationalId('person')
-const person2 = createNationalId('person')
+const person1 = createNationalId('residentAdult')
+const person2 = createNationalId('residentAdult')
 const company1 = createNationalId('company')
 const company2 = createNationalId('company')
 

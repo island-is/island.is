@@ -1,5 +1,5 @@
 import archiver from 'archiver'
-import { Includeable, Op, OrderItem } from 'sequelize'
+import { Includeable, Op } from 'sequelize'
 import { Writable } from 'stream'
 
 import {
@@ -20,11 +20,12 @@ import {
   CaseAppealState,
   CaseFileCategory,
   CaseFileState,
+  CaseNotificationType,
   CaseState,
-  DateType,
-  EventType,
-  NotificationType,
-  StringType,
+  dateTypes,
+  defendantEventTypes,
+  eventTypes,
+  stringTypes,
   UserRole,
 } from '@island.is/judicial-system/types'
 
@@ -34,6 +35,7 @@ import {
   CivilClaimant,
   CivilClaimantService,
   Defendant,
+  DefendantEventLog,
   DefendantService,
 } from '../defendant'
 import { EventLog } from '../event-log'
@@ -119,10 +121,6 @@ export interface LimitedAccessUpdateCase
     | 'appealRulingDecision'
   > {}
 
-const eventTypes = Object.values(EventType)
-const dateTypes = Object.values(DateType)
-const stringTypes = Object.values(StringType)
-
 export const include: Includeable[] = [
   { model: Institution, as: 'prosecutorsOffice' },
   { model: Institution, as: 'court' },
@@ -186,11 +184,31 @@ export const include: Includeable[] = [
         order: [['created', 'DESC']],
         separate: true,
       },
+      {
+        model: DefendantEventLog,
+        as: 'eventLogs',
+        required: false,
+        where: { eventType: defendantEventTypes },
+        order: [['created', 'DESC']],
+        separate: true,
+      },
     ],
     separate: true,
   },
-  { model: IndictmentCount, as: 'indictmentCounts' },
-  { model: CivilClaimant, as: 'civilClaimants' },
+  {
+    model: CivilClaimant,
+    as: 'civilClaimants',
+    required: false,
+    order: [['created', 'ASC']],
+    separate: true,
+  },
+  {
+    model: IndictmentCount,
+    as: 'indictmentCounts',
+    required: false,
+    order: [['created', 'ASC']],
+    separate: true,
+  },
   {
     model: CaseFile,
     as: 'caseFiles',
@@ -216,14 +234,16 @@ export const include: Includeable[] = [
         CaseFileCategory.PROSECUTOR_CASE_FILE,
         CaseFileCategory.DEFENDANT_CASE_FILE,
         CaseFileCategory.CIVIL_CLAIM,
+        CaseFileCategory.SENT_TO_PRISON_ADMIN_FILE,
       ],
     },
+    separate: true,
   },
   {
     model: EventLog,
     as: 'eventLogs',
     required: false,
-    where: { eventType: { [Op.in]: eventTypes } },
+    where: { eventType: eventTypes },
     order: [['created', 'DESC']],
     separate: true,
   },
@@ -231,13 +251,16 @@ export const include: Includeable[] = [
     model: DateLog,
     as: 'dateLogs',
     required: false,
-    where: { dateType: { [Op.in]: dateTypes } },
+    where: { dateType: dateTypes },
+    order: [['created', 'DESC']],
+    separate: true,
   },
   {
     model: CaseString,
     as: 'caseStrings',
     required: false,
-    where: { stringType: { [Op.in]: stringTypes } },
+    where: { stringType: stringTypes },
+    separate: true,
   },
   { model: Case, as: 'mergeCase', attributes },
   {
@@ -272,12 +295,6 @@ export const include: Includeable[] = [
   },
 ]
 
-export const order: OrderItem[] = [
-  [{ model: IndictmentCount, as: 'indictmentCounts' }, 'created', 'ASC'],
-  [{ model: CivilClaimant, as: 'civilClaimants' }, 'created', 'ASC'],
-  [{ model: DateLog, as: 'dateLogs' }, 'created', 'DESC'],
-]
-
 @Injectable()
 export class LimitedAccessCaseService {
   constructor(
@@ -294,7 +311,6 @@ export class LimitedAccessCaseService {
     const theCase = await this.caseModel.findOne({
       attributes,
       include,
-      order,
       where: {
         id: caseId,
         state: { [Op.not]: CaseState.DELETED },
@@ -358,7 +374,7 @@ export class LimitedAccessCaseService {
         type: MessageType.NOTIFICATION,
         user,
         caseId: theCase.id,
-        body: { type: NotificationType.APPEAL_TO_COURT_OF_APPEALS },
+        body: { type: CaseNotificationType.APPEAL_TO_COURT_OF_APPEALS },
       })
     }
 
@@ -367,7 +383,7 @@ export class LimitedAccessCaseService {
         type: MessageType.NOTIFICATION,
         user,
         caseId: theCase.id,
-        body: { type: NotificationType.APPEAL_WITHDRAWN },
+        body: { type: CaseNotificationType.APPEAL_WITHDRAWN },
       })
     }
 
@@ -382,7 +398,7 @@ export class LimitedAccessCaseService {
         type: MessageType.NOTIFICATION,
         user,
         caseId: theCase.id,
-        body: { type: NotificationType.APPEAL_STATEMENT },
+        body: { type: CaseNotificationType.APPEAL_STATEMENT },
       })
     }
 

@@ -15,7 +15,6 @@ import {
   ADULT_STUDENT1,
 } from './__mock-data__/my-family'
 import { MMSApi } from '@island.is/clients/mms'
-import { S3Service } from './s3.service'
 import {
   NationalRegistryV3ClientConfig,
   NationalRegistryV3ClientModule,
@@ -24,6 +23,7 @@ import {
 import { Student } from './education.type'
 import { ConfigModule } from '@nestjs/config'
 import { XRoadConfig } from '@island.is/nest/config'
+import { AwsModule } from '@island.is/nest/aws'
 
 const config = {
   fileDownloadBucket: '',
@@ -39,13 +39,13 @@ describe('EducationService', () => {
       imports: [
         LoggingModule,
         NationalRegistryV3ClientModule,
+        AwsModule,
         ConfigModule.forRoot({
           isGlobal: true,
           load: [XRoadConfig, NationalRegistryV3ClientConfig],
         }),
       ],
       providers: [
-        S3Service,
         {
           provide: MMSApi,
           useValue: new MMSApi(config.xroad),

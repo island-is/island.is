@@ -360,9 +360,9 @@ export class SignatureCollectionAdminClientService {
   ): Promise<Success> {
     try {
       const res = await this.getApiWithAuth(
-        this.signatureApi,
+        this.adminApi,
         auth,
-      ).medmaeliIDUpdateBlsPatch({
+      ).adminMedmaeliIDUpdateBlsPatch({
         iD: parseInt(signatureId),
         blsNr: pageNumber,
       })

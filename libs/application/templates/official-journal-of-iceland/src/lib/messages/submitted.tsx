@@ -12,6 +12,11 @@ export const submitted = {
       defaultMessage: 'Fara til baka á mínar síður',
       description: 'Return to service portal button text',
     },
+    newApplication: {
+      id: 'ojoi.application:submitted.general.newApplication',
+      defaultMessage: 'Ný umsókn',
+      description: 'New application button text',
+    },
     section: {
       id: 'ojoi.application:submitted.general.section',
       defaultMessage: 'Staðfesting',

@@ -14,7 +14,7 @@ export const getStreetRegistrationInformation = (
   const licensePlateSize = getValueViaPath(
     answers,
     'machine.streetRegistration.size',
-  ) as 'A' | 'B' | 'D'
+  ) as '1' | '2' | '3'
 
   return registerToTraffic === YES
     ? [
@@ -22,9 +22,9 @@ export const getStreetRegistrationInformation = (
           licensePlate.labels.streetRegistration,
         )}: ${formatMessage(information.labels.radioButtons.radioOptionYes)}`,
         `${formatMessage(licensePlate.labels.plateSize)}: ${
-          licensePlateSize === 'A'
+          licensePlateSize === '1'
             ? formatMessage(licensePlate.labels.plate110)
-            : licensePlateSize === 'B'
+            : licensePlateSize === '2'
             ? formatMessage(licensePlate.labels.plate200)
             : formatMessage(licensePlate.labels.plate155)
         }`,

@@ -1,15 +1,15 @@
-import { service, ServiceBuilder, ref } from '../../../infra/src/dsl/dsl'
+import { ServiceBuilder, ref, service } from '../../../infra/src/dsl/dsl'
 import {
   Base,
   Client,
+  DistrictCommissionersLicenses,
+  DistrictCommissionersPCard,
   Education,
   Finance,
   HealthInsurance,
   UniversityCareers,
   Vehicles,
   WorkMachines,
-  DistrictCommissionersLicenses,
-  DistrictCommissionersPCard,
 } from '../../../infra/src/dsl/xroad'
 
 export const serviceSetup = (services: {
@@ -58,6 +58,15 @@ export const serviceSetup = (services: {
     )
     .ingress({
       primary: {
+        extraAnnotations: {
+          dev: {
+            'nginx.ingress.kubernetes.io/enable-global-auth': 'false',
+          },
+          staging: {
+            'nginx.ingress.kubernetes.io/enable-global-auth': 'false',
+          },
+          prod: {},
+        },
         host: {
           dev: ['api'],
           staging: ['api'],
@@ -69,7 +78,11 @@ export const serviceSetup = (services: {
     })
     .liveness('download/v1/liveness')
     .readiness('download/v1/readiness')
-    .grantNamespaces('islandis', 'nginx-ingress-external')
+    .grantNamespaces(
+      'islandis',
+      'nginx-ingress-external',
+      'services-bff-portals-admin',
+    )
     .resources({
       limits: { cpu: '400m', memory: '512Mi' },
       requests: { cpu: '200m', memory: '256Mi' },

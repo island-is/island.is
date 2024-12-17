@@ -42,7 +42,7 @@ export const review = {
     },
     documents: {
       id: 'uni.application:review.labels.documents#markdown',
-      defaultMessage: '**Önnur fylgigögn**',
+      defaultMessage: '**Fylgigögn**',
       description: 'documents review label',
     },
     otherDocuments: {

@@ -4,8 +4,6 @@ import { AnnouncementOfDeathModule } from './announcement-of-death/announcement-
 import { AnnouncementOfDeathService } from './announcement-of-death/announcement-of-death.service'
 import { ChildrenResidenceChangeModuleV2 } from './children-residence-change-v2/children-residence-change.module'
 import { ChildrenResidenceChangeServiceV2 } from './children-residence-change-v2/children-residence-change.service'
-import { ChildrenResidenceChangeModule } from './children-residence-change/children-residence-change.module'
-import { ChildrenResidenceChangeService } from './children-residence-change/children-residence-change.service'
 import { ComplaintsToAlthingiOmbudsmanTemplateModule } from './complaints-to-althingi-ombudsman/complaints-to-althingi-ombudsman.module'
 import { ComplaintsToAlthingiOmbudsmanTemplateService } from './complaints-to-althingi-ombudsman/complaints-to-althingi-ombudsman.service'
 import { CriminalRecordSubmissionModule } from './criminal-record-submission/criminal-record-submission.module'
@@ -136,6 +134,8 @@ import { HealthInsuranceDeclarationModule } from './health-insurance-declaration
 import { HealthInsuranceDeclarationService } from './health-insurance-declaration/health-insurance-declaration.service'
 import { NewPrimarySchoolModule } from './new-primary-school/new-primary-school.module'
 import { NewPrimarySchoolService } from './new-primary-school/new-primary-school.service'
+import { WorkAccidentNotificationTemplateModule } from './aosh/work-accident-notification/work-accident-notification.module'
+import { WorkAccidentNotificationTemplateService } from './aosh/work-accident-notification/work-accident-notification.service'
 import { IdCardModule } from './id-card/id-card.module'
 import { IdCardService } from './id-card/id-card.service'
 import { ParliamentaryListCreationModule } from './signature-collection/parliamentary-list-creation/parliamentary-list-creation.module'
@@ -211,10 +211,10 @@ export const modules = [
   IdCardModule,
   HealthInsuranceDeclarationModule,
   NewPrimarySchoolModule,
+  WorkAccidentNotificationTemplateModule,
   ParliamentaryListCreationModule,
   ParliamentaryListSigningModule,
   ParentalLeaveModule,
-  ChildrenResidenceChangeModule,
   SocialInsuranceAdministrationModule,
 ]
 
@@ -227,7 +227,6 @@ export const services = [
   DocumentProviderOnboardingService,
   InstitutionCollaborationService,
   HealthInsuranceService,
-  ChildrenResidenceChangeService,
   ChildrenResidenceChangeServiceV2,
   LoginServiceService,
   FundingGovernmentProjectsService,
@@ -288,6 +287,7 @@ export const services = [
   IdCardService,
   HealthInsuranceDeclarationService,
   NewPrimarySchoolService,
+  WorkAccidentNotificationTemplateService,
   ParliamentaryListCreationService,
   ParliamentaryListSigningService,
 ]

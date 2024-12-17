@@ -58,6 +58,9 @@ export const DelegationsIncoming = () => {
       ) : (
         <Stack space={3}>
           {delegations.map((delegation) => {
+            if (delegation.type === AuthDelegationType.LegalGuardianMinor)
+              return null
+
             const isCustom = delegation.type === AuthDelegationType.Custom
             const isGeneralMandate =
               delegation.type === AuthDelegationType.GeneralMandate

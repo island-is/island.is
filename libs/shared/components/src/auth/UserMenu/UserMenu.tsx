@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react'
 import { Box, Hidden } from '@island.is/island-ui/core'
-import { useAuth } from '@island.is/auth/react'
+import { useAuth } from '@island.is/react-spa/bff'
+import { useEffect, useState } from 'react'
 import { UserButton } from './UserButton'
 import { UserDropdown } from './UserDropdown'
 import { UserLanguageSwitcher } from './UserLanguageSwitcher'
@@ -52,19 +52,16 @@ export const UserMenu = ({
     <Box display="flex" position="relative" height="full">
       {showLanguageSwitcher && (
         <Hidden below="md">
-          <UserLanguageSwitcher user={user} />
+          <UserLanguageSwitcher />
         </Hidden>
       )}
       <UserButton
-        user={user}
         onClick={handleClick}
         small={small}
         iconOnlyMobile={iconOnlyMobile}
         userMenuOpen={userMenuOpen}
       />
-
       <UserDropdown
-        user={user}
         dropdownState={dropdownState}
         setDropdownState={setDropdownState}
         onLogout={() => {

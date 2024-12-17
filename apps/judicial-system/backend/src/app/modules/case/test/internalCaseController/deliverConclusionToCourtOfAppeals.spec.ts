@@ -1,8 +1,8 @@
 import { uuid } from 'uuidv4'
 
 import {
+  CaseNotificationType,
   CaseType,
-  NotificationType,
   User,
 } from '@island.is/judicial-system/types'
 
@@ -33,7 +33,10 @@ describe('InternalCaseController - Deliver conclusion to court of appeals', () =
     appealCaseNumber,
     appealRulingDecision,
     notifications: [
-      { type: NotificationType.APPEAL_COMPLETED, created: appealRulingDate },
+      {
+        type: CaseNotificationType.APPEAL_COMPLETED,
+        created: appealRulingDate,
+      },
     ],
   } as Case
 

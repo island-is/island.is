@@ -1,4 +1,4 @@
-import { useAuth } from '@island.is/auth/react'
+import { DocumentsScope } from '@island.is/auth/scopes'
 import {
   Box,
   Button,
@@ -12,13 +12,14 @@ import {
 import { helperStyles, theme } from '@island.is/island-ui/theme'
 import { useLocale } from '@island.is/localization'
 import { PortalPageLoader } from '@island.is/portals/core'
+import { useUserInfo } from '@island.is/react-spa/bff'
 import { useFeatureFlagClient } from '@island.is/react/feature-flags'
 import {
   LinkResolver,
   ServicePortalPaths,
   m,
-} from '@island.is/service-portal/core'
-import { DocumentsPaths } from '@island.is/service-portal/documents'
+} from '@island.is/portals/my-pages/core'
+import { DocumentsPaths } from '@island.is/portals/my-pages/documents'
 import { UserLanguageSwitcher, UserMenu } from '@island.is/shared/components'
 import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
@@ -26,7 +27,6 @@ import { useWindowSize } from 'react-use'
 import NotificationButton from '../Notifications/NotificationButton'
 import Sidemenu from '../Sidemenu/Sidemenu'
 import * as styles from './Header.css'
-import { DocumentsScope } from '@island.is/auth/scopes'
 export type MenuTypes = 'side' | 'user' | 'notifications' | undefined
 
 interface Props {
@@ -38,7 +38,7 @@ export const Header = ({ position }: Props) => {
   const { width } = useWindowSize()
   const ref = useRef<HTMLButtonElement>(null)
   const isMobile = width < theme.breakpoints.md
-  const { userInfo: user } = useAuth()
+  const user = useUserInfo()
 
   // Notification feature flag. Remove after feature is live.
   const [enableNotificationFlag, setEnableNotificationFlag] =
@@ -130,7 +130,7 @@ export const Header = ({ position }: Props) => {
                         />
                       )}
 
-                      {user && <UserLanguageSwitcher user={user} />}
+                      {user && <UserLanguageSwitcher />}
 
                       <Box className={styles.overview} marginRight={[1, 1, 2]}>
                         <Button

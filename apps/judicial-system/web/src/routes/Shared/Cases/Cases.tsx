@@ -10,7 +10,7 @@ import {
   isIndictmentCase,
   isProsecutionUser,
   isPublicProsecutor,
-  isRestrictionCase,
+  isRequestCase,
 } from '@island.is/judicial-system/types'
 import {
   core,
@@ -215,7 +215,7 @@ export const Cases: FC = () => {
   } = useFilter(allActiveCases, allPastCases, user)
 
   const canDeleteCase = (caseToDelete: CaseListEntry) =>
-    (isRestrictionCase(caseToDelete.type) &&
+    (isRequestCase(caseToDelete.type) &&
       (caseToDelete.state === CaseState.NEW ||
         caseToDelete.state === CaseState.DRAFT ||
         caseToDelete.state === CaseState.SUBMITTED ||
@@ -347,11 +347,7 @@ export const Cases: FC = () => {
             )}
             <SectionHeading title={formatMessage(tables.completedCasesTitle)} />
             {loading || pastCases.length > 0 ? (
-              <PastCasesTable
-                cases={pastCases}
-                loading={loading || isFiltering}
-                testid="pastCasesTable"
-              />
+              <PastCasesTable cases={pastCases} />
             ) : (
               <div className={styles.infoContainer}>
                 <AlertMessage

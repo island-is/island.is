@@ -7,29 +7,35 @@ import {
   Inject,
   Injectable,
   InternalServerErrorException,
-  NotImplementedException,
+  NotFoundException,
 } from '@nestjs/common'
 import { InjectConnection, InjectModel } from '@nestjs/sequelize'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
-import { MessageService, MessageType } from '@island.is/judicial-system/message'
+import {
+  Message,
+  MessageService,
+  MessageType,
+} from '@island.is/judicial-system/message'
 import {
   CaseFileCategory,
-  DefenderChoice,
   isFailedServiceStatus,
   isSuccessfulServiceStatus,
   isTrafficViolationCase,
-  NotificationType,
+  ServiceStatus,
+  SubpoenaNotificationType,
   type User as TUser,
 } from '@island.is/judicial-system/types'
 
 import { Case } from '../case/models/case.model'
 import { PdfService } from '../case/pdf.service'
+import { DefendantService } from '../defendant/defendant.service'
 import { Defendant } from '../defendant/models/defendant.model'
+import { EventService } from '../event'
 import { FileService } from '../file'
-import { PoliceService } from '../police'
+import { PoliceService, SubpoenaInfo } from '../police'
 import { User } from '../user'
 import { UpdateSubpoenaDto } from './dto/updateSubpoena.dto'
 import { DeliverResponse } from './models/deliver.response'
@@ -52,18 +58,41 @@ export const include: Includeable[] = [
   },
   { model: Defendant, as: 'defendant' },
 ]
+
+const subpoenaInfoKeys: Array<keyof SubpoenaInfo> = [
+  'serviceStatus',
+  'comment',
+  'servedBy',
+  'defenderNationalId',
+  'serviceDate',
+]
+
+const isNewValueSetAndDifferent = (
+  newValue: unknown,
+  oldValue: unknown,
+): boolean => Boolean(newValue) && newValue !== oldValue
+
+export const isSubpoenaInfoChanged = (
+  newSubpoenaInfo: SubpoenaInfo,
+  oldSubpoenaInfo: SubpoenaInfo,
+) =>
+  subpoenaInfoKeys.some((key) =>
+    isNewValueSetAndDifferent(newSubpoenaInfo[key], oldSubpoenaInfo[key]),
+  )
+
 @Injectable()
 export class SubpoenaService {
   constructor(
     @InjectConnection() private readonly sequelize: Sequelize,
     @InjectModel(Subpoena) private readonly subpoenaModel: typeof Subpoena,
-    @InjectModel(Defendant) private readonly defendantModel: typeof Defendant,
     private readonly pdfService: PdfService,
     private readonly messageService: MessageService,
     @Inject(forwardRef(() => PoliceService))
     private readonly policeService: PoliceService,
     @Inject(forwardRef(() => FileService))
     private readonly fileService: FileService,
+    private readonly eventService: EventService,
+    private readonly defendantService: DefendantService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
@@ -101,10 +130,44 @@ export class SubpoenaService {
     }
   }
 
+  private async addMessagesForSubpoenaUpdateToQueue(
+    subpoena: Subpoena,
+    serviceStatus?: ServiceStatus,
+  ): Promise<void> {
+    let message: Message | undefined = undefined
+
+    if (serviceStatus && serviceStatus !== subpoena.serviceStatus) {
+      if (isSuccessfulServiceStatus(serviceStatus)) {
+        message = {
+          type: MessageType.SUBPOENA_NOTIFICATION,
+          caseId: subpoena.caseId,
+          elementId: [subpoena.defendantId, subpoena.id],
+          body: {
+            type: SubpoenaNotificationType.SERVICE_SUCCESSFUL,
+          },
+        }
+      } else if (isFailedServiceStatus(serviceStatus)) {
+        message = {
+          type: MessageType.SUBPOENA_NOTIFICATION,
+          caseId: subpoena.caseId,
+          elementId: [subpoena.defendantId, subpoena.id],
+          body: {
+            type: SubpoenaNotificationType.SERVICE_FAILED,
+          },
+        }
+      }
+    }
+
+    if (!message) {
+      return
+    }
+
+    return this.messageService.sendMessagesToQueue([message])
+  }
+
   async update(
     subpoena: Subpoena,
     update: UpdateSubpoenaDto,
-    transaction?: Transaction,
   ): Promise<Subpoena> {
     const {
       defenderChoice,
@@ -118,89 +181,103 @@ export class SubpoenaService {
       requestedDefenderName,
     } = update
 
-    const notificationType = isSuccessfulServiceStatus(serviceStatus)
-      ? NotificationType.SERVICE_SUCCESSFUL
-      : isFailedServiceStatus(serviceStatus)
-      ? NotificationType.SERVICE_FAILED
-      : defenderChoice === DefenderChoice.CHOOSE && defenderNationalId
-      ? NotificationType.DEFENDANT_SELECTED_DEFENDER
-      : undefined
+    await this.sequelize.transaction(async (transaction) => {
+      const [numberOfAffectedRows] = await this.subpoenaModel.update(update, {
+        where: { id: subpoena.id },
+        returning: true,
+        transaction,
+      })
 
-    const [numberOfAffectedRows] = await this.subpoenaModel.update(update, {
-      where: { subpoenaId: subpoena.subpoenaId },
-      returning: true,
-      transaction,
-    })
-    let defenderAffectedRows = 0
-
-    if (
-      defenderChoice ||
-      defenderNationalId ||
-      requestedDefenderChoice ||
-      requestedDefenderNationalId
-    ) {
-      const defendantUpdate: Partial<Defendant> = {
-        defenderChoice,
-        defenderNationalId,
-        defenderName,
-        defenderEmail,
-        defenderPhoneNumber,
-        requestedDefenderChoice,
-        requestedDefenderNationalId,
-        requestedDefenderName,
+      if (numberOfAffectedRows > 1) {
+        // Tolerate failure, but log error
+        this.logger.error(
+          `Unexpected number of rows ${numberOfAffectedRows} affected when updating subpoena`,
+        )
       }
 
-      const [defenderUpdateAffectedRows] = await this.defendantModel.update(
-        defendantUpdate,
-        {
-          where: { id: subpoena.defendantId },
-          transaction,
-        },
-      )
+      if (
+        subpoena.case &&
+        subpoena.defendant &&
+        (defenderChoice ||
+          defenderNationalId ||
+          defenderName ||
+          defenderEmail ||
+          defenderPhoneNumber ||
+          requestedDefenderChoice ||
+          requestedDefenderNationalId ||
+          requestedDefenderName)
+      ) {
+        // If there is a change in the defender choice after the judge has confirmed the choice,
+        // we need to set the isDefenderChoiceConfirmed to false
+        const resetDefenderChoiceConfirmed =
+          subpoena.defendant?.isDefenderChoiceConfirmed &&
+          ((defenderChoice &&
+            subpoena.defendant?.defenderChoice !== defenderChoice) ||
+            (defenderNationalId &&
+              subpoena.defendant?.defenderNationalId !== defenderNationalId))
 
-      defenderAffectedRows = defenderUpdateAffectedRows
-    }
-
-    if (numberOfAffectedRows < 1 && defenderAffectedRows < 1) {
-      this.logger.error(
-        `Unexpected number of rows ${numberOfAffectedRows} affected when updating subpoena`,
-      )
-    }
-
-    if (notificationType) {
-      this.messageService
-        .sendMessagesToQueue([
+        // Færa message handling í defendant service
+        await this.defendantService.updateRestricted(
+          subpoena.case,
+          subpoena.defendant,
           {
-            type: MessageType.SUBPOENA_NOTIFICATION,
-            body: {
-              type: notificationType,
-              subpoena,
-            },
+            defenderChoice,
+            defenderNationalId,
+            defenderName,
+            defenderEmail,
+            defenderPhoneNumber,
+            requestedDefenderChoice,
+            requestedDefenderNationalId,
+            requestedDefenderName,
           },
-        ])
-        .catch((reason) =>
-          // Tolerate failure, but log
-          this.logger.error('Failed to dispatch notifications', { reason }),
+          resetDefenderChoiceConfirmed ? false : undefined,
+          transaction,
         )
+      }
+    })
+
+    // No need to wait for this to finish
+    await this.addMessagesForSubpoenaUpdateToQueue(subpoena, serviceStatus)
+
+    if (
+      update.serviceStatus &&
+      update.serviceStatus !== subpoena.serviceStatus &&
+      subpoena.case
+    ) {
+      this.eventService.postEvent(
+        'SUBPOENA_SERVICE_STATUS',
+        subpoena.case,
+        false,
+        { Staða: Subpoena.serviceStatusText(update.serviceStatus) },
+      )
     }
 
-    const updatedSubpoena = await this.findBySubpoenaId(subpoena.subpoenaId)
-
-    return updatedSubpoena
+    return this.findById(subpoena.id)
   }
 
-  async findBySubpoenaId(subpoenaId?: string): Promise<Subpoena> {
-    if (!subpoenaId) {
-      throw new Error('Missing subpoena id')
-    }
-
+  async findById(subpoenaId: string): Promise<Subpoena> {
     const subpoena = await this.subpoenaModel.findOne({
       include,
-      where: { subpoenaId },
+      where: { id: subpoenaId },
     })
 
     if (!subpoena) {
-      throw new Error(`Subpoena with subpoena id ${subpoenaId} not found`)
+      throw new NotFoundException(`Subpoena ${subpoenaId} does not exist`)
+    }
+
+    return subpoena
+  }
+
+  async findBySubpoenaId(policeSubpoenaId?: string): Promise<Subpoena> {
+    const subpoena = await this.subpoenaModel.findOne({
+      include,
+      where: { subpoenaId: policeSubpoenaId },
+    })
+
+    if (!subpoena) {
+      throw new NotFoundException(
+        `Subpoena with police subpoena id ${policeSubpoenaId} does not exist`,
+      )
     }
 
     return subpoena
@@ -261,24 +338,47 @@ export class SubpoenaService {
         { where: { id: subpoena.id } },
       )
 
-      if (numberOfAffectedRows < 1) {
+      if (numberOfAffectedRows !== 1) {
         this.logger.error(
           `Unexpected number of rows (${numberOfAffectedRows}) affected when updating subpoena for subpoena ${subpoena.id}`,
         )
       }
 
+      this.logger.info(
+        `Subpoena ${createdSubpoena.subpoenaId} delivered to police`,
+      )
+
       return { delivered: true }
     } catch (error) {
-      if (error instanceof NotImplementedException) {
-        this.logger.info(
-          'Failed to deliver subpoena to police due to lack of implementation',
-          error,
-        )
-        return { delivered: true }
-      } else {
-        this.logger.error('Error delivering subpoena to police', error)
-        return { delivered: false }
-      }
+      this.logger.error('Error delivering subpoena to police', error)
+
+      return { delivered: false }
     }
+  }
+
+  async getSubpoena(subpoena: Subpoena, user?: TUser): Promise<Subpoena> {
+    if (!subpoena.subpoenaId) {
+      // The subpoena has not been delivered to the police
+      return subpoena
+    }
+
+    if (subpoena.serviceStatus) {
+      // The subpoena has already been served to the defendant
+      return subpoena
+    }
+
+    // We don't know if the subpoena has been served to the defendant
+    // so we need to check the police service
+    const subpoenaInfo = await this.policeService.getSubpoenaStatus(
+      subpoena.subpoenaId,
+      user,
+    )
+
+    if (!isSubpoenaInfoChanged(subpoenaInfo, subpoena)) {
+      // The subpoena has not changed
+      return subpoena
+    }
+
+    return this.update(subpoena, subpoenaInfo)
   }
 }

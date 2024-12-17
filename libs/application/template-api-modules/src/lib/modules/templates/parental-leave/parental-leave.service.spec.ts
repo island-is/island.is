@@ -41,7 +41,7 @@ import { NationalRegistryClientService } from '@island.is/clients/national-regis
 import { PaymentService } from '@island.is/application/api/payment'
 import { sharedModuleConfig } from '../../shared/shared.config'
 import { ApplicationService } from '@island.is/application/api/core'
-import { AwsService } from '@island.is/nest/aws'
+import { S3Service } from '@island.is/nest/aws'
 
 const nationalId = '1234564321'
 let id = 0
@@ -239,7 +239,7 @@ describe('ParentalLeaveService', () => {
           useValue: {},
         },
         {
-          provide: AwsService,
+          provide: S3Service,
           useValue: {},
         },
         SharedTemplateApiService,
@@ -278,6 +278,95 @@ describe('ParentalLeaveService', () => {
           from: '2025-03-12',
           to: '2025-09-11',
           ratio: 'D144',
+          approved: false,
+          paid: false,
+          rightsCodePeriod: rights,
+        },
+      ])
+    })
+    it('Should return date_of_birth_months if actualDateOfBirth, useLength is NO and endDateAdjustLength includes YES', async () => {
+      const application = createApplication()
+
+      set(application, 'answers.periods', [
+        {
+          ratio: '100',
+          endDate: '2025-07-16',
+          startDate: '2025-07-02',
+          useLength: 'no',
+          firstPeriodStart: 'actualDateOfBirth',
+          endDateAdjustLength: ['yes'],
+        },
+        {
+          ratio: '100',
+          endDate: '2025-07-31',
+          startDate: '2025-07-17',
+          useLength: 'no',
+          firstPeriodStart: 'specificDate',
+        },
+      ])
+      const periods = get(application.answers, 'periods') as object as Period[]
+      const rights = 'M-S-GR,ORLOF-FBF'
+
+      const res = parentalLeaveService.createPeriodsDTO(periods, true, rights)
+
+      expect(res).toEqual([
+        {
+          from: 'date_of_birth_months',
+          to: '2025-07-16',
+          ratio: 'D15',
+          approved: false,
+          paid: false,
+          rightsCodePeriod: rights,
+        },
+        {
+          from: '2025-07-17',
+          to: '2025-07-31',
+          ratio: 'D14',
+          approved: false,
+          paid: false,
+          rightsCodePeriod: rights,
+        },
+      ])
+    })
+
+    it('Should return date_of_birth if actualDateOfBirth, useLength is NO and endDateAdjustLength does not include YES', async () => {
+      const application = createApplication()
+
+      set(application, 'answers.periods', [
+        {
+          ratio: '100',
+          endDate: '2025-07-16',
+          startDate: '2025-07-02',
+          useLength: 'no',
+          firstPeriodStart: 'actualDateOfBirth',
+          endDateAdjustLength: [],
+        },
+        {
+          ratio: '100',
+          endDate: '2025-07-31',
+          startDate: '2025-07-17',
+          useLength: 'no',
+          firstPeriodStart: 'specificDate',
+        },
+      ])
+      const periods = get(application.answers, 'periods') as object as Period[]
+      const rights = 'M-S-GR,ORLOF-FBF'
+
+      const res = parentalLeaveService.createPeriodsDTO(periods, true, rights)
+
+      expect(res).toEqual([
+        {
+          from: 'date_of_birth',
+          to: '2025-07-16',
+          ratio: 'D15',
+          approved: false,
+          paid: false,
+          rightsCodePeriod: rights,
+        },
+        {
+          from: '2025-07-17',
+          to: '2025-07-31',
+          ratio: 'D14',
           approved: false,
           paid: false,
           rightsCodePeriod: rights,
