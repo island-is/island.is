@@ -12,7 +12,6 @@
  */
 
 export * from './Card/Card'
-export * from './PlazaCard/PlazaCard'
 export * from './Header/Header'
 export * from './SearchInput/SearchInput'
 export * from './LanguageToggler/LanguageToggler'
