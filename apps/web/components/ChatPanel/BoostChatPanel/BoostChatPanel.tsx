@@ -68,6 +68,13 @@ export const BoostChatPanel: React.FC<
         )
 
         setShowButton(true)
+
+        const queryParam = new URLSearchParams(window.location.search).get(
+          'wa_lid',
+        )
+        if (queryParam && ['t10', 't11'].includes(queryParam)) {
+          window.boost.chatPanel.show()
+        }
       })
 
       el.src = boostChatPanelEndpoints[endpoint].url
