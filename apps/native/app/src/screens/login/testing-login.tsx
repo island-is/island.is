@@ -1,4 +1,3 @@
-import { Button, dynamicColor, font } from '@ui'
 import React, { useEffect, useState } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
 import {
@@ -15,6 +14,8 @@ import {
 } from 'react-native'
 import { NavigationFunctionComponent } from 'react-native-navigation'
 import styled from 'styled-components/native'
+
+import { Button, dynamicColor, font } from '../../ui'
 import logo from '../../assets/logo/logo-64w.png'
 import testinglogo from '../../assets/logo/testing-logo-64w.png'
 import { environments, isTestingApp, useConfig } from '../../config'
