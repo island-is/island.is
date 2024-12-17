@@ -5,6 +5,8 @@ import { Dependency } from '../../../../dataTypes/dependency.model'
 import { ApplicationStatus } from '../../../../enums/applicationStatus'
 import { ApplicationEvent } from '../applicationEvent.model'
 import { ApplicationEventDto } from './applicationEvent.dto'
+import { ValueDto } from './value.dto'
+// import { ValueDto } from '../../../values/models/dto/value.dto'
 
 export class ApplicationDto {
   @ApiPropertyOptional()
@@ -48,4 +50,7 @@ export class ApplicationDto {
 
   @ApiPropertyOptional({ type: [SectionDto] })
   sections?: SectionDto[]
+
+  @ApiPropertyOptional({ type: [ValueDto] })
+  files?: ValueDto[]
 }

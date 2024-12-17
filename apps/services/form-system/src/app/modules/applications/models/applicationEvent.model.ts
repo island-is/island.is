@@ -9,7 +9,7 @@ import {
 } from 'sequelize-typescript'
 import { CreationOptional } from 'sequelize'
 import { Application } from './application.model'
-import { Value } from '../../values/models/value.model'
+import { Value } from './value.model'
 
 @Table({ tableName: 'application_event' })
 export class ApplicationEvent extends Model<ApplicationEvent> {

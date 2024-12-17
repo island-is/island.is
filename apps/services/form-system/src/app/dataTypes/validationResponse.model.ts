@@ -1,20 +1,22 @@
+import { LanguageType } from './languageType.model'
+
 export class ScreenValidationResponse {
-  screenValidationPassed!: boolean
+  isValid!: boolean
   screenId!: string
   applicationId!: string
-  screenMessage!: string
-  fields!: FieldValidationResponse[]
+  message!: LanguageType
+  fields!: FieldValidation[]
 }
 
-export class FieldValidationResponse {
-  fieldValidationPassed!: boolean
+export class FieldValidation {
+  isValid!: boolean
   fieldId!: string
-  fieldMessage!: string
-  values!: ValueValidationResponse[]
+  message!: LanguageType
+  values!: ValueValidation[]
 }
 
-export class ValueValidationResponse {
-  valueValidationPassed!: boolean
+export class ValueValidation {
+  isValid!: boolean
   valueId!: string
-  valueMessage!: string
+  message!: LanguageType
 }

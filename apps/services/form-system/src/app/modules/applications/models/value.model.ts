@@ -11,8 +11,8 @@ import {
 } from 'sequelize-typescript'
 import { Field } from '../../fields/models/field.model'
 import { ValueType } from '../../../dataTypes/valueTypes/valueType.model'
-import { ApplicationEvent } from '../../applications/models/applicationEvent.model'
-import { Application } from '../../applications/models/application.model'
+import { ApplicationEvent } from './applicationEvent.model'
+import { Application } from './application.model'
 import { FieldTypesEnum } from '../../../dataTypes/fieldTypes/fieldTypes.enum'
 
 @Table({ tableName: 'value' })

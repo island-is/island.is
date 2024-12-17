@@ -13,7 +13,7 @@ import { Form } from '../../forms/models/form.model'
 import { Dependency } from '../../../dataTypes/dependency.model'
 import { ApplicationEvent } from './applicationEvent.model'
 import { Organization } from '../../organizations/models/organization.model'
-import { Value } from '../../values/models/value.model'
+import { Value } from './value.model'
 import { ApplicationStatus } from '../../../enums/applicationStatus'
 
 @Table({ tableName: 'application' })
