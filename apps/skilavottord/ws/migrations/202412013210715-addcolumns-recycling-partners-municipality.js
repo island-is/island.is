@@ -1,20 +1,27 @@
-//add number plate & deregistered info change
+const { DataTypes } = require('sequelize')
+
 module.exports = {
-  up: (queryInterface) => {
-    return queryInterface.sequelize.query(`
-      BEGIN;
-        ALTER TABLE recycling_partner ADD COLUMN is_municipality BOOLEAN NOT NULL DEFAULT FALSE
-        ALTER TABLE recycling_partner ADD COLUMN municipality_id VARCHAR(50)
-        CREATE INDEX idx_recycling_partner_is_municipality ON recycling_partner(is_municipality);
-      COMMIT;
-    `)
+  up: async (queryInterface) => {
+    await queryInterface.addColumn('recycling_partner', 'is_municipality', {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: false,
+    })
+    await queryInterface.addColumn('recycling_partner', 'municipality_id', {
+      type: DataTypes.STRING(50),
+      allowNull: true,
+    })
+    await queryInterface.addIndex('recycling_partner', ['is_municipality'], {
+      name: 'idx_recycling_partner_is_municipality',
+    })
   },
 
-  down: (queryInterface) => {
-    return queryInterface.sequelize.query(`
-      ALTER TABLE recycling_partner DROP COLUMN is_municipality;
-      ALTER TABLE recycling_partner DROP COLUMN municipality_id;
-      DROP INDEX idx_recycling_partner_is_municipality;
-    `)
+  down: async (queryInterface) => {
+    await queryInterface.removeIndex(
+      'recycling_partner',
+      'idx_recycling_partner_is_municipality',
+    )
+    await queryInterface.removeColumn('recycling_partner', 'is_municipality')
+    await queryInterface.removeColumn('recycling_partner', 'municipality_id')
   },
 }
