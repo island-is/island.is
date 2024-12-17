@@ -58,4 +58,9 @@ export const strings = defineMessages({
     defaultMessage: 'Áritað sektarboð',
     description: 'Notaður sem texti í sektarboð í Refsitegund',
   },
+  sentToPrisonAdminFileTitle: {
+    id: 'judicial.system.core:indictment_overview.sent_to_prison_admin_file_title',
+    defaultMessage: 'Fullnusta',
+    description: 'Titill á til fullnustu skjali',
+  },
 })
