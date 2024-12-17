@@ -33,3 +33,10 @@ export const changeButton = style({
   bottom: '0',
   right: '0',
 })
+
+export const fileLinks = style({
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'flex-start',
+  fontSize: '.8rem',
+})

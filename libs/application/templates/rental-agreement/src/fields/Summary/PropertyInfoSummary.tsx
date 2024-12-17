@@ -1,4 +1,4 @@
-import { GridColumn, GridRow } from '@island.is/island-ui/core'
+import { GridColumn, GridRow, Link, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { RentalAgreement } from '../../lib/dataSchema'
 import {
@@ -14,7 +14,7 @@ import { summary } from '../../lib/messages'
 import { KeyValue } from './KeyValue'
 import { SummarySection } from './SummarySection'
 import { Divider } from './Divider'
-import { gridRow } from './summaryStyles.css'
+import { fileLinks, gridRow } from './summaryStyles.css'
 
 type Props = {
   answers: RentalAgreement
@@ -150,16 +150,33 @@ export const PropertyInfoSummary = ({ answers }: Props) => {
 
       {
         /* Only show the file upload section if the user has uploaded files */
-        answers.condition.resultsFiles && (
+        answers.condition.resultsFiles.length > 0 && (
           <>
             <GridRow className={gridRow}>
               <GridColumn span={['12/12']}>
-                <KeyValue
-                  label={summary.fileUploadLabel}
-                  value={answers.condition.resultsFiles
-                    .map((file) => file.name)
-                    .join(', ')}
-                />
+                <Text
+                  variant={'small'}
+                  as={'label'}
+                  fontWeight="semiBold"
+                  marginBottom={1}
+                >
+                  {formatMessage(summary.fileUploadLabel)}
+                </Text>
+
+                <ul>
+                  {answers.condition.resultsFiles.map((file) => (
+                    <li className={fileLinks} key={file.name}>
+                      <Link
+                        underline="small"
+                        underlineVisibility="hover"
+                        color="blue400"
+                        href={'http://localhost:4242/umsoknir/leigusamningur'}
+                      >
+                        {file.name}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
               </GridColumn>
             </GridRow>
 
