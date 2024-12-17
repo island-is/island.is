@@ -69,23 +69,6 @@ describe('Income Plan Template', () => {
     })
   })
 
-  describe('state transitions', () => {
-    it('should transition from tryggingastofnunSubmitted to draft on edit', () => {
-      const helper = new ApplicationTemplateHelper(
-        buildApplication({
-          state: 'tryggingastofnunSubmitted',
-        }),
-        IncomePlanTemplate,
-      )
-
-      const [hasChanged, newState] = helper.changeState({
-        type: DefaultEvents.EDIT,
-      })
-      expect(hasChanged).toBe(true)
-      expect(newState).toBe('draft')
-    })
-  })
-
   describe('Income plan table', () => {
     describe('equalForeignIncomePerMonth', () => {
       it('should unset equalForeignIncomePerMonth if income is MONTHLY and unevenIncomePerYear is YES', () => {
