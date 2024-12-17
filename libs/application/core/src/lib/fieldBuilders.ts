@@ -48,6 +48,7 @@ import {
   FieldsRepeaterField,
   AccordionField,
   BankAccountField,
+  TitleField,
 } from '@island.is/application/types'
 import { Locale } from '@island.is/shared/types'
 import { Colors } from '@island.is/island-ui/theme'
@@ -398,17 +399,38 @@ export const buildFileUploadField = (
 
 export const buildDividerField = (data: {
   condition?: Condition
-  title?: FormText
   color?: Colors
   marginBottom?: BoxProps['marginBottom']
   marginTop?: BoxProps['marginTop']
 }): DividerField => {
-  const { title, color, condition, marginTop, marginBottom } = data
+  const { color, condition, marginTop, marginBottom } = data
   return {
     id: '',
     children: undefined,
     type: FieldTypes.DIVIDER,
     component: FieldComponents.DIVIDER,
+    doesNotRequireAnswer: true,
+    title: '',
+    color,
+    condition,
+    marginTop,
+    marginBottom,
+  }
+}
+
+export const buildTitleField = (data: {
+  condition?: Condition
+  title?: FormText
+  color?: Colors
+  marginBottom?: BoxProps['marginBottom']
+  marginTop?: BoxProps['marginTop']
+}): TitleField => {
+  const { title, color, condition, marginTop, marginBottom } = data
+  return {
+    id: '',
+    children: undefined,
+    type: FieldTypes.TITLE,
+    component: FieldComponents.TITLE,
     doesNotRequireAnswer: true,
     title: title ?? '',
     color,

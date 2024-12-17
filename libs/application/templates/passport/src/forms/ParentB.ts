@@ -1,11 +1,11 @@
 import {
   buildDataProviderItem,
-  buildDividerField,
   buildExternalDataProvider,
   buildForm,
   buildMultiField,
   buildSection,
   buildSubmitField,
+  buildTitleField,
   getValueViaPath,
 } from '@island.is/application/core'
 import {
@@ -51,7 +51,7 @@ export const ParentB: Form = buildForm({
             },
           }),
           children: [
-            buildDividerField({
+            buildTitleField({
               title: ' ',
             }),
           ],

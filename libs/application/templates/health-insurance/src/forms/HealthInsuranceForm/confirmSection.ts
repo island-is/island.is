@@ -1,13 +1,13 @@
 import {
   buildCheckboxField,
   buildCustomField,
-  buildDividerField,
   buildFileUploadField,
   buildMultiField,
   buildRadioField,
   buildSection,
   buildSubmitField,
   buildTextField,
+  buildTitleField,
 } from '@island.is/application/core'
 import { m } from '../../lib/messages/messages'
 import { FILE_SIZE_LIMIT, YES } from '../../utils/constants'
@@ -62,7 +62,7 @@ export const confirmSection = buildSection({
             value: YES,
           },
         }),
-        buildDividerField({
+        buildTitleField({
           title: ' ',
           color: 'transparent',
           condition: {

@@ -1,11 +1,11 @@
 import {
-  buildDividerField,
   buildForm,
   buildMultiField,
   buildSection,
   buildDescriptionField,
   buildTextField,
   buildSubmitField,
+  buildTitleField,
 } from '@island.is/application/core'
 import {
   Form,
@@ -29,7 +29,7 @@ export const ReviewApplication: Form = buildForm({
           title: m.reviewTitle,
           children: [
             //Error in dev tools, missing keys on divider fields...
-            buildDividerField({ title: m.applicantTitle }),
+            buildTitleField({ title: m.applicantTitle }),
             buildTextField({
               id: 'applicant.nationalId',
               title: m.applicantNationalId,
@@ -53,7 +53,7 @@ export const ReviewApplication: Form = buildForm({
               placeholder: '000-0000',
             }),
             //Error in dev tools, missing keys on divider fields...
-            buildDividerField({
+            buildTitleField({
               title: m.administrativeContactTitle,
             }),
             buildTextField({
@@ -74,7 +74,7 @@ export const ReviewApplication: Form = buildForm({
               placeholder: '000-0000',
             }),
             //Error in dev tools, missing keys on divider fields...
-            buildDividerField({ title: m.technicalContactTitle }),
+            buildTitleField({ title: m.technicalContactTitle }),
             buildTextField({
               id: 'technicalContact.name',
               title: m.technicalContactName,
@@ -93,7 +93,7 @@ export const ReviewApplication: Form = buildForm({
               placeholder: '000-0000',
             }),
             //Error in dev tools, missing keys on divider fields...
-            buildDividerField({ title: m.helpDeskTitle }),
+            buildTitleField({ title: m.helpDeskTitle }),
             buildTextField({
               id: 'helpDesk.email',
               title: m.helpDeskEmail,

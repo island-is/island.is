@@ -269,6 +269,7 @@ export enum FieldTypes {
   DISPLAY = 'DISPLAY',
   ACCORDION = 'ACCORDION',
   BANK_ACCOUNT = 'BANK_ACCOUNT',
+  TITLE = 'TITLE'
 }
 
 export enum FieldComponents {
@@ -306,6 +307,7 @@ export enum FieldComponents {
   DISPLAY = 'DisplayFormField',
   ACCORDION = 'AccordionFormField',
   BANK_ACCOUNT = 'BankAccountFormField',
+  TITLE = 'TitleFormField'
 }
 
 export interface CheckboxField extends InputField {
@@ -455,6 +457,13 @@ export interface DividerField extends BaseField {
   readonly type: FieldTypes.DIVIDER
   readonly color?: Colors
   component: FieldComponents.DIVIDER
+}
+
+export interface TitleField extends BaseField {
+  readonly type: FieldTypes.TITLE
+  readonly color?: Colors
+  titleVariant?: TitleVariants
+  component: FieldComponents.TITLE
 }
 
 export interface KeyValueField extends BaseField {
@@ -834,3 +843,4 @@ export type Field =
   | DisplayField
   | AccordionField
   | BankAccountField
+  | TitleField

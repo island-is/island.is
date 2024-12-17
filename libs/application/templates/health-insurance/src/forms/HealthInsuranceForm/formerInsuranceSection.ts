@@ -1,14 +1,13 @@
 import {
   buildAlertMessageField,
   buildDescriptionField,
-  buildDividerField,
   buildFileUploadField,
   buildMultiField,
   buildRadioField,
   buildSection,
   buildSelectField,
   buildTextField,
-  getValueViaPath,
+  buildTitleField,
 } from '@island.is/application/core'
 import { m } from '../../lib/messages/messages'
 import { FormValue } from '@island.is/application/types'
@@ -89,7 +88,7 @@ export const formerInsuranceSection = buildSection({
             return requireConfirmationOfResidency(formerCountry)
           },
         }),
-        buildDividerField({
+        buildTitleField({
           title: ' ',
           color: 'transparent',
         }),
