@@ -1,24 +1,24 @@
-import { ApiProperty } from '@nestjs/swagger'
-import { IsNotEmpty, IsNumber, IsString } from 'class-validator'
+// import { ApiProperty } from '@nestjs/swagger'
+// import { IsNotEmpty, IsNumber, IsString } from 'class-validator'
 
-export class CreateValueDto {
-  @IsNotEmpty()
-  @IsNumber()
-  @ApiProperty()
-  order!: number
+// export class CreateValueDto {
+//   @IsNotEmpty()
+//   @IsNumber()
+//   @ApiProperty()
+//   order!: number
 
-  @IsNotEmpty()
-  @IsString()
-  @ApiProperty()
-  fieldId!: string
+//   @IsNotEmpty()
+//   @IsString()
+//   @ApiProperty()
+//   fieldId!: string
 
-  @IsNotEmpty()
-  @IsString()
-  @ApiProperty()
-  fieldType!: string
+//   @IsNotEmpty()
+//   @IsString()
+//   @ApiProperty()
+//   fieldType!: string
 
-  @IsNotEmpty()
-  @IsString()
-  @ApiProperty()
-  applicationId!: string
-}
+//   @IsNotEmpty()
+//   @IsString()
+//   @ApiProperty()
+//   applicationId!: string
+// }

@@ -11,7 +11,7 @@ import {
 } from 'sequelize-typescript'
 import { Screen } from '../../screens/models/screen.model'
 import { LanguageType } from '../../../dataTypes/languageType.model'
-import { Value } from '../../values/models/value.model'
+import { Value } from '../../applications/models/value.model'
 import { FieldSettings } from '../../../dataTypes/fieldSettings/fieldSettings.model'
 import { ListItem } from '../../listItems/models/listItem.model'
 import { FieldTypesEnum } from '../../../dataTypes/fieldTypes/fieldTypes.enum'

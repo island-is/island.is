@@ -89,15 +89,12 @@ export class ApplicationsController {
   })
   @ApiParam({ name: 'screenId', type: String })
   @ApiBody({ type: ApplicationDto })
-  @Post('/validateScreen:screenId')
-  async validateScreen(
+  @Post('/submitScreen:screenId')
+  async submitScreen(
     @Param('screenId') screenId: string,
     @Body() applicationDto: ApplicationDto,
   ): Promise<ScreenValidationResponse> {
-    return await this.applicationsService.validateScreen(
-      screenId,
-      applicationDto,
-    )
+    return await this.applicationsService.submitScreen(screenId, applicationDto)
   }
 
   @ApiOperation({ summary: 'Get all applications belonging to organization' })

@@ -5,9 +5,10 @@ import { Application } from './application.model'
 import { FieldDto } from '../../fields/models/dto/field.dto'
 import { ScreenDto } from '../../screens/models/dto/screen.dto'
 import { SectionDto } from '../../sections/models/dto/section.dto'
-import { ValueDto } from '../../values/models/dto/value.dto'
+// import { ValueDto } from '../../values/models/dto/value.dto'
 import { Dependency } from '../../../dataTypes/dependency.model'
-import { ApplicationMinimalDto } from './dto/applicationMinimal.dto'
+import { ValueDto } from './dto/value.dto'
+// import { ApplicationMinimalDto } from './dto/applicationMinimal.dto'
 
 @Injectable()
 export class ApplicationMapper {
@@ -80,8 +81,8 @@ export class ApplicationMapper {
   mapApplicationToApplicationMinimalDto(
     application: Application,
     form: Form | null,
-  ): ApplicationMinimalDto {
-    const applicationMinimalDto: ApplicationMinimalDto = {
+  ): ApplicationDto {
+    const applicationMinimalDto: ApplicationDto = {
       id: application.id,
       isTest: application.isTest,
       dependencies: application.dependencies,
