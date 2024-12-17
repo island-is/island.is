@@ -16,7 +16,7 @@ export const checkboxSubsection = buildSubSection({
         buildCheckboxField({
           id: 'checkbox',
           title: 'Full width checkboxes',
-          options: checkboxOptions, // Importing options from utils makes the templatemuch more readable
+          options: checkboxOptions, // Importing options from utils makes the template much more readable
         }),
         buildCheckboxField({
           id: 'checkboxHalf',
