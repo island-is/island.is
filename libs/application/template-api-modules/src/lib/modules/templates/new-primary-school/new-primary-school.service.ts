@@ -13,7 +13,6 @@ import { TemplateApiModuleActionProps } from '../../../types'
 import { BaseTemplateApiService } from '../../base-template-api.service'
 import { transformApplicationToNewPrimarySchoolDTO } from './new-primary-school.utils'
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
-import { isRunningInProduction } from '../parental-leave/constants'
 
 @Injectable()
 export class NewPrimarySchoolService extends BaseTemplateApiService {
@@ -39,7 +38,7 @@ export class NewPrimarySchoolService extends BaseTemplateApiService {
   }
 
   async getChildren({ auth }: TemplateApiModuleActionProps) {
-    if (!isRunningInProduction) {
+    if (isRunningOnEnvironment('dev')) {
       if (auth.nationalId === '0101303019') {
         return [
           {

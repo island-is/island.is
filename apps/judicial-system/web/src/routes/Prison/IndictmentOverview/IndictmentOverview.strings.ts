@@ -26,4 +26,41 @@ export const strings = defineMessages({
     defaultMessage: 'Dómur',
     description: 'Titill á Dómur hluta',
   },
+  punishmentTypeTitle: {
+    id: 'judicial.system.core:indictment_overview.punishment_type_title',
+    defaultMessage: 'Refsitegund',
+    description: 'Titill á Refsitegund',
+  },
+  punishmentTypeImprisonment: {
+    id: 'judicial.system.core:indictment_overview.punishment_type_imprisonment',
+    defaultMessage: 'Óskilorðsbundið',
+    description:
+      'Notaður sem texti í óskilorðsbundið valmöguleika í Refsitegund',
+  },
+  punishmentTypeProbation: {
+    id: 'judicial.system.core:indictment_overview.punishment_type_probation',
+    defaultMessage: 'Skilorðsbundið',
+    description:
+      'Notaður sem texti í skilorðsbundið valmöguleika í Refsitegund',
+  },
+  punishmentTypeFine: {
+    id: 'judicial.system.core:indictment_overview.punishment_type_fine',
+    defaultMessage: 'Sekt',
+    description: 'Notaður sem texti í sekt valmöguleika í Refsitegund',
+  },
+  punishmentTypeIndictmentRulingDecisionFine: {
+    id: 'judicial.system.core:indictment_overview.punishment_type_indictment_ruling_decision_fine',
+    defaultMessage: 'Viðurlagaákvörðun',
+    description: 'Notaður sem texti í viðurlagaákvörðun í Refsitegund',
+  },
+  punishmentTypeSignedFineInvitation: {
+    id: 'judicial.system.core:indictment_overview.punishment_type_signed_fine_invitation',
+    defaultMessage: 'Áritað sektarboð',
+    description: 'Notaður sem texti í sektarboð í Refsitegund',
+  },
+  sentToPrisonAdminFileTitle: {
+    id: 'judicial.system.core:indictment_overview.sent_to_prison_admin_file_title',
+    defaultMessage: 'Fullnusta',
+    description: 'Titill á til fullnustu skjali',
+  },
 })
