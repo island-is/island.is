@@ -28,8 +28,8 @@ const getObjectPrefix = (prefix: string, el: string): string => {
   return el
 }
 
-describe('Locales tests', () => {
-  /* it('should contain the same keys for all translations', () => {
+xdescribe('Locales tests', () => {
+  it('should contain the same keys for all translations', () => {
     const getKeys: any = (obj: any, prefix = '') => {
       if (!isObject(obj) && !isArray(obj)) {
         return prefix
@@ -51,11 +51,11 @@ describe('Locales tests', () => {
     TRANSLATIONS.filter((t) => t !== DEFAULT_TRANSLATION).forEach((t) => {
       expect(getKeys(t)).toEqual(defaultKeys)
     })
-  })*/
-  /*it('should pass typechecking for all translations', () => {
+  })
+  it('should pass typechecking for all translations', () => {
     TRANSLATIONS.forEach((t) => {
       const asTranslation = t as Translation
       expect(asTranslation).not.toBeNull()
     })
-  })*/
+  })
 })
