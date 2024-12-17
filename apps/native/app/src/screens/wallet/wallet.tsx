@@ -30,6 +30,7 @@ import { isIos } from '../../utils/devices'
 import { getRightButtons } from '../../utils/get-main-root'
 import { testIDs } from '../../utils/test-ids'
 import { WalletItem } from './components/wallet-item'
+import { useLocale } from '../../hooks/use-locale'
 
 type FlatListItem =
   | GenericUserLicense
@@ -112,6 +113,7 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
           GenericLicenseType.HuntingLicense,
         ],
       },
+      locale: useLocale(),
     },
     fetchPolicy: 'cache-first',
   })

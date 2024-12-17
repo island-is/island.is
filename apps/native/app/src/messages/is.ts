@@ -403,6 +403,8 @@ export const is = {
     'Þú getur ekki bætt við skírteinum á þetta tæki.',
   'walletPass.errorNotConnectedNoBarcode':
     'Ekki er hægt að skanna skírteini nema að tækið sé nettengt.',
+  'walletPass.validLicense': 'Í gildi',
+  'walletPass.expiredLicense': 'Útrunnið',
 
   // wallet passport
   'walletPassport.screenTitle': 'Vegabréf',

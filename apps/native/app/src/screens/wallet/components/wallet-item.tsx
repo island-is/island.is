@@ -88,6 +88,7 @@ export const WalletItem = React.memo(
             <SafeAreaView>
               <LicenseCard
                 nativeID={`license-${item?.license?.type}_source`}
+                title={item?.payload?.metadata?.name ?? ''}
                 type={item?.license?.type}
                 date={new Date(Number(item.fetch.updated))}
                 status={

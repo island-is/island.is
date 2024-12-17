@@ -144,18 +144,6 @@ const ImgWrap = styled.View`
   width: 72px;
 `
 
-// Todo when we know the status type add to intl
-const statusIcon: StatusStyles = {
-  NOT_VALID: {
-    text: 'Ekki í gildi',
-    icon: IconStatusNonVerified,
-  },
-  VALID: {
-    text: 'Í gildi',
-    icon: IconStatusVerified,
-  },
-}
-
 const LicenseCardPresets: Record<LicenseType, CardPreset> = {
   DriversLicense: {
     title: 'Ökuskírteini (IS)',
@@ -297,7 +285,6 @@ export function LicenseCard({
   const theme = useTheme()
 
   const intl = useIntl()
-  const variant = statusIcon[status]
   const preset = type
     ? LicenseCardPresets[type]
     : LicenseCardPresets.DriversLicense
@@ -326,16 +313,24 @@ export function LicenseCard({
           <Title numberOfLines={1} ellipsizeMode="tail" color={textColor}>
             {title}
           </Title>
-          {variant && (
-            <ValidationWrap>
-              <Image
-                source={variant.icon as ImageSourcePropType}
-                resizeMode="contain"
-                style={{ width: 15, height: 15, marginRight: 8 }}
-              />
-              <Validation color={textColor}>{variant.text}</Validation>
-            </ValidationWrap>
-          )}
+
+          <ValidationWrap>
+            <Image
+              source={
+                status === 'VALID' ? IconStatusVerified : IconStatusNonVerified
+              }
+              resizeMode="contain"
+              style={{ width: 15, height: 15, marginRight: 8 }}
+            />
+            <Validation color={textColor}>
+              {intl.formatMessage({
+                id:
+                  status === 'VALID'
+                    ? 'walletPass.validLicense'
+                    : 'walletPass.expiredLicense',
+              })}
+            </Validation>
+          </ValidationWrap>
           {date && (
             <TimeStamp color={textColor}>
               {type === CustomLicenseType.Passport

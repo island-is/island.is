@@ -266,6 +266,8 @@ export const en: TranslatedMessages = {
     'You cannot add passes on this device.',
   'walletPass.errorNotConnectedNoBarcode':
     'Not possible to scan barcode if the device is not connected to the internet.',
+  'walletPass.validLicense': 'Valid',
+  'walletPass.expiredLicense': 'Expired',
 
   // wallet passport
   'walletPassport.screenTitle': 'Passport',
