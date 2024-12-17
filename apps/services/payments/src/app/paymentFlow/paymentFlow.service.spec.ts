@@ -1,9 +1,10 @@
 import { PaymentFlowService } from './paymentFlow.service'
-import { PaymentInformation, PaymentMethod } from '../../types'
+import { PaymentMethod } from '../../types'
 
 import { TestApp } from '@island.is/testing/nest'
 
 import { setupTestApp } from '../../../test/setup'
+import { CreatePaymentFlowInput } from './dtos/createPaymentFlow.input'
 
 describe('PaymentFlowService', () => {
   let app: TestApp
@@ -21,9 +22,15 @@ describe('PaymentFlowService', () => {
 
   describe('createPaymentFlow', () => {
     it('should create flow', async () => {
-      const paymentInfo: Omit<PaymentInformation, 'id'> = {
+      const paymentInfo: CreatePaymentFlowInput = {
         availablePaymentMethods: [PaymentMethod.CARD],
-        productIds: ['test'],
+        charges: [
+          {
+            chargeItemCode: '123',
+            chargeType: 'A',
+            quantity: 1,
+          },
+        ],
         payerNationalId: '1234567890',
         onSuccessUrl: 'http://localhost:3333/success',
         onUpdateUrl: 'http://localhost:3333/update',

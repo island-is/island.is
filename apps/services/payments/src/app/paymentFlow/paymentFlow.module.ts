@@ -6,13 +6,13 @@ import { ChargeFjsV2ClientModule } from '@island.is/clients/charge-fjs-v2'
 
 import { PaymentFlowController } from './paymentFlow.controller'
 import { PaymentFlowService } from './paymentFlow.service'
-import { PaymentFlow } from './models/paymentFlow.model'
+import { PaymentFlow, PaymentFlowCharge } from './models/paymentFlow.model'
 import { CompanyRegistryClientModule } from '@island.is/clients/rsk/company-registry'
 import { NationalRegistryV3ClientModule } from '@island.is/clients/national-registry-v3'
 
 @Module({
   imports: [
-    SequelizeModule.forFeature([PaymentFlow]),
+    SequelizeModule.forFeature([PaymentFlow, PaymentFlowCharge]),
     FeatureFlagModule,
     ChargeFjsV2ClientModule,
     NationalRegistryV3ClientModule,

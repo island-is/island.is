@@ -1,0 +1,87 @@
+'use strict'
+
+module.exports = {
+  async up(queryInterface, Sequelize) {
+    await queryInterface.bulkDelete('payment_flow', {
+      product_ids: { [Sequelize.Op.ne]: null },
+    })
+
+    await queryInterface.removeColumn('payment_flow', 'product_ids')
+
+    await queryInterface.createTable('payment_flow_charge', {
+      id: {
+        type: Sequelize.UUID,
+        allowNull: false,
+        defaultValue: Sequelize.DataTypes.UUIDV4,
+        primaryKey: true,
+      },
+      payment_flow_id: {
+        type: Sequelize.UUID,
+        allowNull: false,
+        references: {
+          model: 'payment_flow',
+          key: 'id',
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'CASCADE',
+      },
+      charge_type: {
+        type: Sequelize.STRING,
+        allowNull: false,
+      },
+      charge_item_code: {
+        type: Sequelize.STRING,
+        allowNull: false,
+      },
+      price: {
+        type: Sequelize.INTEGER,
+        allowNull: true,
+      },
+      quantity: {
+        type: Sequelize.INTEGER,
+        allowNull: true,
+      },
+      created: {
+        type: Sequelize.DATE,
+        allowNull: false,
+        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
+      },
+      modified: {
+        type: Sequelize.DATE,
+        allowNull: false,
+        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
+      },
+    })
+  },
+
+  async down(queryInterface, Sequelize) {
+    await queryInterface.addColumn('payment_flow', 'product_ids', {
+      type: Sequelize.ARRAY(Sequelize.STRING),
+      allowNull: true, // allow null while the migration is running
+    })
+
+    const paymentFlows = await queryInterface.sequelize.query(
+      `SELECT id FROM payment_flow`,
+      { type: Sequelize.QueryTypes.SELECT },
+    )
+
+    for (const flow of paymentFlows) {
+      const charges = await queryInterface.sequelize.query(
+        `SELECT chargeItemCode FROM payment_flow_charge WHERE payment_flow_id = :id`,
+        { replacements: { id: flow.id }, type: Sequelize.QueryTypes.SELECT },
+      )
+      const productIds = charges.map((charge) => charge.chargeItemCode)
+      await queryInterface.sequelize.query(
+        `UPDATE payment_flow SET product_ids = :productIds WHERE id = :id`,
+        { replacements: { productIds, id: flow.id } },
+      )
+    }
+
+    await queryInterface.changeColumn('payment_flow', 'product_ids', {
+      type: Sequelize.ARRAY(Sequelize.STRING),
+      allowNull: false, // disallow null after the migration
+    })
+
+    await queryInterface.dropTable('payment_flow_charge')
+  },
+}

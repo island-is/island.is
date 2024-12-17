@@ -6,18 +6,23 @@ import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { ChargeFjsV2ClientService } from '@island.is/clients/charge-fjs-v2'
 
-import { PaymentFlow } from './models/paymentFlow.model'
+import { PaymentFlow, PaymentFlowCharge } from './models/paymentFlow.model'
 
-import { PaymentInformation, PaymentMethod } from '../../types'
+import { PaymentMethod } from '../../types'
 import { GetPaymentFlowDTO } from './dtos/getPaymentFlow.dto'
 import { NationalRegistryV3ClientService } from '@island.is/clients/national-registry-v3'
 import { CompanyRegistryClientService } from '@island.is/clients/rsk/company-registry'
+import { CreatePaymentFlowInput } from './dtos/createPaymentFlow.input'
+
+import { environment } from '../../environments'
 
 @Injectable()
 export class PaymentFlowService {
   constructor(
     @InjectModel(PaymentFlow)
     private readonly paymentFlowModel: typeof PaymentFlow,
+    @InjectModel(PaymentFlowCharge)
+    private readonly paymentFlowChargeModel: typeof PaymentFlowCharge,
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
     private chargeFjsV2ClientService: ChargeFjsV2ClientService,
@@ -26,15 +31,23 @@ export class PaymentFlowService {
   ) {}
 
   async createPaymentUrl(
-    paymentInfo: Omit<PaymentInformation, 'id'>,
+    paymentInfo: CreatePaymentFlowInput,
   ): Promise<{ url: string }> {
     try {
-      const result = await this.paymentFlowModel.create({
+      const paymentFlow = await this.paymentFlowModel.create({
         ...paymentInfo,
+        charges: [],
       })
 
+      const charges = paymentInfo.charges.map((charge) => ({
+        ...charge,
+        paymentFlowId: paymentFlow.id,
+      }))
+
+      await this.paymentFlowChargeModel.bulkCreate(charges)
+
       return {
-        url: `http://localhost:3333/payments/${result.id}`,
+        url: `${environment.islandis.origin}/greida/is/${paymentFlow.id}`,
       }
     } catch (e) {
       this.logger.error('Failed to create payment url', e)
@@ -42,25 +55,41 @@ export class PaymentFlowService {
     }
   }
 
-  private async getPaymentFlowCharges(
+  private async getPaymentFlowChargeDetails(
     organisationId: string,
-    productIds: string[],
+    charges: PaymentFlowCharge[],
   ) {
     const { item } =
       await this.chargeFjsV2ClientService.getCatalogByPerformingOrg(
         organisationId,
       )
 
-    const charges = item.filter(
-      (product) =>
-        productIds.includes(product.chargeItemCode) &&
-        product.performingOrgID === organisationId,
-    )
+    const filteredChargeInformation = []
+
+    for (const product of item) {
+      const matchingCharge = charges.find(
+        (c) => c.chargeItemCode === product.chargeItemCode,
+      )
+
+      if (!matchingCharge) {
+        continue
+      }
+
+      const price = matchingCharge.price ?? product.priceAmount
+
+      filteredChargeInformation.push({
+        ...product,
+        priceAmount: price * matchingCharge.quantity,
+      })
+    }
 
     return {
       charges,
-      firstProductTitle: charges?.[0]?.chargeItemName ?? null,
-      totalPrice: charges.reduce((acc, charge) => acc + charge.priceAmount, 0),
+      firstProductTitle: filteredChargeInformation?.[0]?.chargeItemName ?? null,
+      totalPrice: filteredChargeInformation.reduce(
+        (acc, charge) => acc + charge.priceAmount,
+        0,
+      ),
     }
   }
 
@@ -92,32 +121,38 @@ export class PaymentFlowService {
 
   async getPaymentInfo(id: string): Promise<GetPaymentFlowDTO | null> {
     try {
-      const result = (
+      const paymentFlow = (
         await this.paymentFlowModel.findOne({
           where: {
             id,
           },
+          include: [
+            {
+              model: PaymentFlowCharge,
+            },
+          ],
         })
       )?.toJSON()
 
-      if (!result) {
+      if (!paymentFlow) {
         throw new Error('Payment flow not found')
       }
 
-      const paymentDetails = await this.getPaymentFlowCharges(
-        result.organisationId,
-        result.productIds,
+      const paymentDetails = await this.getPaymentFlowChargeDetails(
+        paymentFlow.organisationId,
+        paymentFlow.charges,
       )
 
-      const payerName = await this.getPayerName(result.payerNationalId)
+      const payerName = await this.getPayerName(paymentFlow.payerNationalId)
 
       return {
-        ...result,
-        productTitle: result.productTitle ?? paymentDetails.firstProductTitle,
+        ...paymentFlow,
+        productTitle:
+          paymentFlow.productTitle ?? paymentDetails.firstProductTitle,
         productPrice: paymentDetails.totalPrice,
         payerName,
         availablePaymentMethods:
-          result.availablePaymentMethods as PaymentMethod[],
+          paymentFlow.availablePaymentMethods as PaymentMethod[],
       }
     } catch (e) {
       this.logger.error('Failed to get payment flow', e)

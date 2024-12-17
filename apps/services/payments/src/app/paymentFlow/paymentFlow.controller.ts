@@ -11,7 +11,6 @@ import { ApiTags } from '@nestjs/swagger'
 import { Documentation } from '@island.is/nest/swagger'
 
 import { PaymentFlowService } from './paymentFlow.service'
-import { PaymentInformation } from '../../types'
 import { CreatePaymentFlowDTO } from './dtos/createPaymentFlow.dto'
 import { GetPaymentFlowDTO } from './dtos/getPaymentFlow.dto'
 import {
@@ -19,6 +18,7 @@ import {
   FeatureFlagGuard,
   Features,
 } from '@island.is/nest/feature-flags'
+import { CreatePaymentFlowInput } from './dtos/createPaymentFlow.input'
 
 type CreatePaymentUrlResponse = { url: string }
 
@@ -45,13 +45,12 @@ export class PaymentFlowController {
 
   @Post()
   @Documentation({
-    description:
-      'Creates a new PaymentFlow initialised with PaymentInformation.',
+    description: 'Creates a new PaymentFlow.',
     response: { status: 200, type: CreatePaymentFlowDTO },
   })
   createPaymentUrl(
-    @Body() paymentInfo: Omit<PaymentInformation, 'id'>,
-  ): Promise<CreatePaymentUrlResponse> {
+    @Body() paymentInfo: CreatePaymentFlowInput,
+  ): Promise<CreatePaymentFlowDTO> {
     return this.paymentFlowService.createPaymentUrl(paymentInfo)
   }
 }

@@ -8,11 +8,83 @@ import {
   Column,
   CreatedAt,
   DataType,
+  ForeignKey,
+  HasMany,
   Model,
   PrimaryKey,
   Table,
   UpdatedAt,
 } from 'sequelize-typescript'
+
+@Table({
+  tableName: 'payment_flow_charge',
+})
+export class PaymentFlowCharge extends Model<
+  InferAttributes<PaymentFlowCharge>,
+  InferCreationAttributes<PaymentFlowCharge>
+> {
+  @ApiProperty()
+  @PrimaryKey
+  @Column({
+    type: DataType.UUID,
+    allowNull: false,
+    defaultValue: DataType.UUIDV4,
+  })
+  id!: CreationOptional<string>
+
+  @ApiProperty()
+  @ForeignKey(() => PaymentFlow)
+  @Column({
+    type: DataType.UUID,
+    allowNull: false,
+    field: 'payment_flow_id',
+  })
+  paymentFlowId!: string
+
+  @ApiProperty()
+  @Column({
+    type: DataType.STRING,
+    allowNull: false,
+    field: 'charge_type',
+  })
+  chargeType!: string
+
+  @ApiProperty()
+  @Column({
+    type: DataType.STRING,
+    allowNull: false,
+    field: 'charge_item_code',
+  })
+  chargeItemCode!: string
+
+  @ApiProperty()
+  @Column({
+    type: DataType.FLOAT,
+    allowNull: true,
+  })
+  price?: number
+
+  @ApiProperty()
+  @Column({
+    type: DataType.INTEGER,
+    allowNull: false,
+  })
+  quantity!: number
+
+  @CreatedAt
+  @Column({
+    type: DataType.DATE,
+    allowNull: false,
+  })
+  created!: CreationOptional<Date>
+
+  @UpdatedAt
+  @Column({
+    type: DataType.DATE,
+    allowNull: false,
+  })
+  modified!: CreationOptional<Date>
+}
 
 @Table({
   tableName: 'payment_flow',
@@ -29,14 +101,6 @@ export class PaymentFlow extends Model<
     defaultValue: DataType.UUIDV4,
   })
   id!: CreationOptional<string>
-
-  @ApiProperty({ type: [String] })
-  @Column({
-    type: DataType.ARRAY(DataType.STRING),
-    allowNull: false,
-    field: 'product_ids',
-  })
-  productIds!: string[]
 
   @ApiPropertyOptional()
   @Column({
@@ -61,6 +125,10 @@ export class PaymentFlow extends Model<
     field: 'payer_national_id',
   })
   payerNationalId!: string
+
+  @ApiProperty({ type: [PaymentFlowCharge] }) // Link to the charges model
+  @HasMany(() => PaymentFlowCharge, 'paymentFlowId')
+  charges!: PaymentFlowCharge[]
 
   @ApiProperty({ type: [String] })
   @Column({

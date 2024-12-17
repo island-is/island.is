@@ -26,6 +26,11 @@ export const serviceSetup = (): ServiceBuilder<'services-payments'> =>
         staging: 'https://identity-server.staging01.devland.is',
         prod: 'https://innskra.island.is',
       },
+      ISLANDIS_URL: {
+        dev: 'https://beta.dev01.devland.is',
+        staging: 'https://beta.staging01.devland.is',
+        prod: 'https://island.is',
+      },
     })
     .secrets({
       IDENTITY_SERVER_CLIENT_SECRET:

@@ -1,13 +1,10 @@
 import request from 'supertest'
 
-import { PaymentFlowController } from './paymentFlow.controller'
-
 import { PaymentMethod } from '../../types'
 import { TestApp } from '@island.is/testing/nest'
 
-import { CreatePaymentFlowDTO } from './dtos/createPaymentFlow.dto'
-
 import { setupTestApp } from '../../../test/setup'
+import { CreatePaymentFlowInput } from './dtos/createPaymentFlow.input'
 
 describe('PaymentFlowController', () => {
   let app: TestApp
@@ -24,8 +21,14 @@ describe('PaymentFlowController', () => {
 
   describe('createPaymentUrl', () => {
     it('should create a string url with correct initialisation', async () => {
-      const payload = {
-        productIds: ['product-id'],
+      const payload: CreatePaymentFlowInput = {
+        charges: [
+          {
+            chargeItemCode: '123',
+            chargeType: 'A',
+            quantity: 1,
+          },
+        ],
         payerNationalId: '1234567890',
         availablePaymentMethods: [PaymentMethod.CARD, PaymentMethod.INVOICE],
         onSuccessUrl: 'https://www.island.is/greida/success',
@@ -34,8 +37,6 @@ describe('PaymentFlowController', () => {
         organisationId: 'organization-id',
         invoiceId: 'todo',
       }
-
-      // prump
 
       const response = await server.post('/v1/payments').send(payload)
 
