@@ -1,3 +1,6 @@
+import format from 'date-fns/format'
+import localeEN from 'date-fns/locale/en-GB'
+import localeIS from 'date-fns/locale/is'
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { parseAsString, parseAsStringEnum } from 'next-usequerystate'
 
@@ -25,6 +28,11 @@ interface Item {
   fullUrl: string
   title: string
   description: string | null | undefined
+}
+
+const localeMap = {
+  is: localeIS,
+  en: localeEN,
 }
 
 const CONTENT_TYPES = ['news', 'genericList', 'event']
@@ -63,6 +71,9 @@ export default async function handler(
     ? (req.query.lang as Locale)
     : defaultLanguage
   const organization = req.query?.organization as string | undefined
+  const organizationSubpageSlug = req.query?.organizationsubpageslug as
+    | string
+    | undefined
 
   const contentType = parseAsStringEnum(CONTENT_TYPES)
     .withDefault('news')
@@ -92,7 +103,7 @@ export default async function handler(
     itemString = (news?.data?.getNews?.items ?? [])
       .map((item) =>
         generateItemString({
-          date: new Date(item.date).toUTCString(),
+          date: item.date ? new Date(item.date).toUTCString() : '',
           description: item.intro,
           fullUrl: `${baseUrl}${
             organization
@@ -134,7 +145,16 @@ export default async function handler(
         generateItemString({
           title: item.title,
           description: '',
-          fullUrl: `${baseUrl}`, // TODO
+          fullUrl:
+            organization && organizationSubpageSlug && item.slug
+              ? `${baseUrl}${
+                  linkResolver(
+                    'organizationsubpagelistitem',
+                    [organization, organizationSubpageSlug, item.slug],
+                    locale,
+                  ).href
+                }`
+              : '',
           date: item.date ? new Date(item.date).toUTCString() : '',
         }),
       )
@@ -157,10 +177,20 @@ export default async function handler(
     })
 
     itemString = (events.data.getEvents?.items ?? [])
-      .map((item) =>
-        generateItemString({
+      .map((item) => {
+        const formattedStartDate = format(
+          new Date(item.startDate),
+          'dd. MMMM yyyy',
+          {
+            locale: localeMap[locale],
+          },
+        )
+
+        return generateItemString({
           title: item.title,
-          description: item.location.useFreeText ? item.location.freeText : '',
+          description: `${formattedStartDate} ${
+            item.time.startTime as string
+          } ${item.time.endTime ? '-' : ''} ${item.time.endTime as string}`,
           fullUrl: organization
             ? `${baseUrl}${
                 linkResolver(
@@ -173,8 +203,8 @@ export default async function handler(
           date: item.firstPublishedAt
             ? new Date(item.firstPublishedAt).toUTCString()
             : '',
-        }),
-      )
+        })
+      })
       .join('')
   }
 
