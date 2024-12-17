@@ -384,7 +384,7 @@ export const IndictmentCount: FC<Props> = ({
   const [legalArgumentsErrorMessage, setLegalArgumentsErrorMessage] =
     useState<string>('')
 
-  const subtypes = indictmentCount.policeCaseNumber
+  const subtypes: IndictmentSubtype[] = indictmentCount.policeCaseNumber
     ? workingCase.indictmentSubtypes[indictmentCount.policeCaseNumber]
     : []
 
