@@ -622,7 +622,7 @@ export const OrganizationHeader: React.FC<
       return (
         <DefaultHeader
           {...defaultProps}
-          background="linear-gradient(271deg, #FF1500 5.72%, #DB0B00 91.04%)"
+          background="linear-gradient(271deg, #C00B02 5.72%, #DB0B00 91.04%)"
         />
       )
     default:
