@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react'
 import { Application } from '@island.is/application/types'
-import { getValueViaPath } from '@island.is/application/core'
 
 type Props = {
   application: Application
