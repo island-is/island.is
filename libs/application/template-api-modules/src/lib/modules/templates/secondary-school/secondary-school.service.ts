@@ -68,8 +68,6 @@ export class SecondarySchoolService extends BaseTemplateApiService {
     const answers = application.answers as SecondarySchoolAnswers
 
     // If we are past the registration date for any of the selected programs, dont allow delete
-    //TODOx should rather trust validation from api (either separate endpoint or they throw error on delete),
-    // in case user accidentally set applicationType=OTHER, and not FRESHMAN and it is june 1
     if (getEndOfDayUTC(getFirstRegistrationEndDate(answers)) < new Date()) {
       throw new TemplateApiError(
         {
