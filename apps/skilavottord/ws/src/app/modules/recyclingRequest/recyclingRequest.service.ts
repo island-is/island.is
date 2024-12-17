@@ -51,7 +51,6 @@ export class RecyclingRequestService {
     const disposalStationId =
       await this.recyclingPartnerService.getPayingPartnerId(disposalStation)
 
-    console.log('disposalStationId', disposalStationId)
     try {
       const { restAuthUrl, restDeRegUrl, restUsername, restPassword } =
         environment.samgongustofa
