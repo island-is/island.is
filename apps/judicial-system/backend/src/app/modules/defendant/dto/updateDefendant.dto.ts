@@ -15,6 +15,7 @@ import {
   DefendantPlea,
   DefenderChoice,
   Gender,
+  PunishmentType,
   ServiceRequirement,
   SubpoenaType,
 } from '@island.is/judicial-system/types'
@@ -149,4 +150,9 @@ export class UpdateDefendantDto {
   @IsBoolean()
   @ApiPropertyOptional({ type: Boolean })
   readonly isSentToPrisonAdmin?: boolean
+
+  @IsOptional()
+  @IsEnum(PunishmentType)
+  @ApiPropertyOptional({ enum: PunishmentType })
+  readonly punishmentType?: PunishmentType
 }
