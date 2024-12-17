@@ -262,7 +262,7 @@ export const VehicleRadioFormField: FC<React.PropsWithChildren<Props>> = ({
   }
 
   return (
-    <div>
+    <Box marginTop={field.marginTop} marginBottom={field.marginBottom}>
       <RadioController
         id={radioControllerId}
         largeButtons
@@ -279,6 +279,6 @@ export const VehicleRadioFormField: FC<React.PropsWithChildren<Props>> = ({
           }
         />
       )}
-    </div>
+    </Box>
   )
 }
