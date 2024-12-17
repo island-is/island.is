@@ -1,13 +1,12 @@
+import { IntlShape } from 'react-intl'
 import format from 'date-fns/format'
 import localeEn from 'date-fns/locale/en-GB'
 import localeIS from 'date-fns/locale/is'
 
-import { FormatMessage } from '@island.is/localization'
 import { Locale } from '@island.is/shared/types'
 import { Grant, GrantStatus } from '@island.is/web/graphql/schema'
 
 import { m } from './messages'
-import { IntlFormatters, IntlShape } from 'react-intl'
 
 interface Status {
   applicationStatus: 'open' | 'closed' | 'unknown'
@@ -18,7 +17,7 @@ interface Status {
 const formatDate = (
   date: Date,
   locale: Locale,
-  stringFormat = 'dd.MMMM yyyy',
+  stringFormat = 'dd. MMMM yyyy',
 ) =>
   format(date, stringFormat, {
     locale: locale === 'is' ? localeIS : localeEn,

@@ -10,6 +10,7 @@ import {
   Box,
   Breadcrumbs,
   Divider,
+  Hidden,
   Stack,
   Text,
 } from '@island.is/island-ui/core'
@@ -108,7 +109,9 @@ const GrantSinglePage: CustomScreen<GrantSingleProps> = ({ grant, locale }) => {
             </Text>
             <Text variant="default">{grant.description}</Text>
           </Box>
-
+          <Hidden above="sm">
+            <GrantSidebar locale={locale} grant={grant} />
+          </Hidden>
           <ActionCard
             heading={grant.name}
             text={
@@ -121,6 +124,7 @@ const GrantSinglePage: CustomScreen<GrantSingleProps> = ({ grant, locale }) => {
             backgroundColor="blue"
             cta={{
               disabled: !grant.applicationUrl?.slug,
+              size: 'small',
               label:
                 grant.applicationButtonLabel ?? formatMessage(m.single.apply),
               onClick: () => router.push(grant.applicationUrl?.slug ?? ''),
@@ -128,7 +132,7 @@ const GrantSinglePage: CustomScreen<GrantSingleProps> = ({ grant, locale }) => {
               iconType: 'outline',
             }}
           />
-          <AlertBanner description={status?.note} />
+          {status?.note && <AlertBanner description={status?.note} />}
           {grant.specialEmphasis?.length ? (
             <>
               <Box className="rs_read">

@@ -6,6 +6,10 @@ export const m = {
       id: 'web.grants:general.seeMore',
       defaultMessage: 'Skoða nánar',
     },
+    goBack: {
+      id: 'web.grants:general.goBack',
+      defaultMessage: 'Til baka',
+    },
   }),
   search: defineMessages({
     search: {
@@ -74,7 +78,7 @@ export const m = {
     },
     applicationWasOpenToAndWith: {
       id: 'web.grants:search.applicationWasOpenToAndWith',
-      defaultMessage: 'Frestur var til og með {arg}',
+      defaultMessage: 'Frestur var til {arg}',
     },
     applicationAlwaysOpen: {
       id: 'web.grants:search.applicationAlwaysOpen',

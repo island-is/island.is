@@ -1,5 +1,6 @@
-import { useMemo } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
+import { useWindowSize } from 'react-use'
 
 import {
   Box,
@@ -9,7 +10,7 @@ import {
   Stack,
   Text,
 } from '@island.is/island-ui/core'
-import { useLocale } from '@island.is/localization'
+import { theme } from '@island.is/island-ui/theme'
 import { Locale } from '@island.is/shared/types'
 import { isDefined } from '@island.is/shared/utils'
 import { InstitutionPanel } from '@island.is/web/components'
@@ -18,6 +19,7 @@ import { LinkType, useLinkResolver } from '@island.is/web/hooks'
 
 import { m } from '../messages'
 import { generateStatusTag, parseStatus } from '../utils'
+import * as styles from './Grant.css'
 
 interface Props {
   grant: Grant
@@ -41,13 +43,38 @@ const generateLine = (heading: string, content?: React.ReactNode) => {
 const generateSidebarPanel = (
   data: Array<React.ReactElement>,
   background: BoxProps['background'],
+  isMobile: boolean,
+  flexDirection: BoxProps['flexDirection'] = 'column',
 ) => {
   if (!data.length) {
     return undefined
   }
   return (
-    <Box background={background} padding={3} borderRadius="standard">
-      <Stack space={2}>{data}</Stack>
+    <Box background={background} padding={3} borderRadius="large">
+      {isMobile ? (
+        <Box
+          width="full"
+          flexDirection={flexDirection}
+          display="flex"
+          flexWrap="wrap"
+          columnGap={2}
+        >
+          {data.map((item) => {
+            return (
+              <Box
+                display="flex"
+                key={item.key}
+                style={{ flex: 1 }}
+                marginBottom={1}
+              >
+                {item}
+              </Box>
+            )
+          })}
+        </Box>
+      ) : (
+        <Stack space={2}>{data}</Stack>
+      )}
     </Box>
   )
 }
@@ -55,7 +82,37 @@ const generateSidebarPanel = (
 export const GrantSidebar = ({ grant, locale }: Props) => {
   const { linkResolver } = useLinkResolver()
   const { formatMessage } = useIntl()
+  const [isMobile, setIsMobile] = useState(false)
+  const { width } = useWindowSize()
 
+  useEffect(() => {
+    if (width < theme.breakpoints.md) {
+      return setIsMobile(true)
+    }
+    setIsMobile(false)
+  }, [width])
+
+  const goBackToDashboard = () => {
+    if (isMobile) return
+    return (
+      <Box printHidden className={styles.noUnderline}>
+        <LinkV2 href={'/styrkjatorg/styrkir'}>
+          <Button
+            preTextIcon="arrowBack"
+            preTextIconType="filled"
+            size="small"
+            type="button"
+            variant="text"
+            truncate
+            as="span"
+            unfocusable
+          >
+            {formatMessage(m.general.goBack)}
+          </Button>
+        </LinkV2>
+      </Box>
+    )
+  }
   const status = useMemo(
     () => parseStatus(grant, formatMessage, locale),
     [grant, formatMessage, locale],
@@ -83,6 +140,23 @@ export const GrantSidebar = ({ grant, locale }: Props) => {
           ) : undefined,
         ),
         generateLine(
+          formatMessage(m.single.status),
+          grant?.status ? (
+            <Text variant="medium">
+              {
+                generateStatusTag(status.applicationStatus, formatMessage)
+                  ?.label
+              }
+            </Text>
+          ) : undefined,
+        ),
+        generateLine(
+          formatMessage(m.single.deadline),
+          status.deadlineStatus ? (
+            <Text variant="medium">{status.deadlineStatus}</Text>
+          ) : undefined,
+        ),
+        generateLine(
           formatMessage(m.single.category),
           grant?.categoryTags ? (
             <Text variant="medium">
@@ -97,17 +171,6 @@ export const GrantSidebar = ({ grant, locale }: Props) => {
           formatMessage(m.single.type),
           grant?.typeTag?.title ? (
             <Text variant="medium">{grant.typeTag?.title}</Text>
-          ) : undefined,
-        ),
-        generateLine(
-          formatMessage(m.single.status),
-          grant?.status ? (
-            <Text variant="medium">
-              {
-                generateStatusTag(status.applicationStatus, formatMessage)
-                  ?.label
-              }
-            </Text>
           ) : undefined,
         ),
       ].filter(isDefined) ?? [],
@@ -128,7 +191,13 @@ export const GrantSidebar = ({ grant, locale }: Props) => {
               href={f.url}
               underlineVisibility="hover"
             >
-              <Button icon="download" iconType="outline" variant="text">
+              <Button
+                icon="download"
+                iconType="outline"
+                variant="text"
+                size="small"
+                as="span"
+              >
                 {f.title}
               </Button>
             </LinkV2>
@@ -153,10 +222,11 @@ export const GrantSidebar = ({ grant, locale }: Props) => {
               underlineVisibility="hover"
             >
               <Button
-                size="medium"
                 icon="link"
                 iconType="outline"
                 variant="text"
+                size="small"
+                as="span"
               >
                 {link.text}
               </Button>
@@ -168,19 +238,22 @@ export const GrantSidebar = ({ grant, locale }: Props) => {
   )
 
   return (
-    <Stack space={3}>
-      <InstitutionPanel
-        institutionTitle={formatMessage(m.single.provider)}
-        institution={
-          grant.fund?.parentOrganization.title ??
-          formatMessage(m.single.unknownInstitution)
-        }
-        img={grant.fund?.parentOrganization.logo?.url}
-        locale={locale}
-      />
-      {generateSidebarPanel(detailPanelData, 'blue100')}
-      {generateSidebarPanel(filesPanelData, 'red100')}
-      {generateSidebarPanel(supportLinksPanelData, 'purple100')}
-    </Stack>
+    <>
+      {goBackToDashboard()}
+      <Stack space={3}>
+        <InstitutionPanel
+          institutionTitle={formatMessage(m.single.provider)}
+          institution={
+            grant.fund?.parentOrganization.title ??
+            formatMessage(m.single.unknownInstitution)
+          }
+          img={grant.fund?.parentOrganization.logo?.url}
+          locale={locale}
+        />
+        {generateSidebarPanel(detailPanelData, 'blue100', isMobile, 'row')}
+        {generateSidebarPanel(filesPanelData, 'red100', isMobile)}
+        {generateSidebarPanel(supportLinksPanelData, 'purple100', isMobile)}
+      </Stack>
+    </>
   )
 }
