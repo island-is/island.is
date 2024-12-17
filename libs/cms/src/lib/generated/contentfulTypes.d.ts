@@ -2398,10 +2398,21 @@ export interface ILinkGroupFields {
   name: string
 
   /** Primary Link */
-  primaryLink: ILink | IOrganizationSubpage | IProjectSubpage
+  primaryLink:
+    | ILink
+    | IOrganizationSubpage
+    | IProjectSubpage
+    | IOrganizationParentSubpage
 
   /** Children Links */
-  childrenLinks?: (ILink | IProjectSubpage | IOrganizationSubpage)[] | undefined
+  childrenLinks?:
+    | (
+        | ILink
+        | IProjectSubpage
+        | IOrganizationSubpage
+        | IOrganizationParentSubpage
+      )[]
+    | undefined
 }
 
 export interface ILinkGroup extends Entry<ILinkGroupFields> {
@@ -3120,6 +3131,9 @@ export interface IOrganizationFields {
 
   /** Kennitala */
   kennitala?: string | undefined
+
+  /** Alert Banner */
+  alertBanner?: IAlertBanner | undefined
 }
 
 export interface IOrganization extends Entry<IOrganizationFields> {
@@ -3179,7 +3193,6 @@ export interface IOrganizationPageFields {
         | ISectionWithImage
         | IChartNumberBox
         | ILatestGenericListItems
-        | ILatestNewsSlice
       )[]
     | undefined
 
@@ -3198,7 +3211,6 @@ export interface IOrganizationPageFields {
         | ITimeline
         | ITwoColumnText
         | ILatestEventsSlice
-        | IOverviewLinks
       )[]
     | undefined
 
@@ -3443,11 +3455,8 @@ export interface IOrganizationTag extends Entry<IOrganizationTagFields> {
 }
 
 export interface IOverviewLinksFields {
-  /** Internal Title */
+  /** Title */
   title?: string | undefined
-
-  /** Displayed Title */
-  displayedTitle?: string | undefined
 
   /** Overview Links */
   overviewLinks?: IIntroLinkImage[] | undefined
@@ -4089,7 +4098,6 @@ export interface ISliceConnectedComponentFields {
     | 'Starfsrettindi/ProfessionRights'
     | 'VMST/ParentalLeaveCalculator'
     | 'DigitalIceland/BenefitsOfDigitalProcesses'
-    | 'WHODAS/Calculator'
     | undefined
 
   /** Localized JSON */
