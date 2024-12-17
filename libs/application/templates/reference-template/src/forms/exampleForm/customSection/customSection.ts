@@ -30,7 +30,7 @@ export const customSection = buildSection({
           {
             id: 'customComponent',
             title: 'The custom component',
-            component: 'TestCustomComponent',
+            component: 'ExampleCustomComponent',
           },
           {
             someData: ['foo', 'bar', 'baz'],

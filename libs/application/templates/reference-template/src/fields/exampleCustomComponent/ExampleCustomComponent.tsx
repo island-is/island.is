@@ -1,6 +1,6 @@
 import { FieldBaseProps } from '@island.is/application/types'
 import { useLocale } from '@island.is/localization'
-import * as styles from './TestCustomComponent.css'
+import * as styles from './ExampleCustomComponent.css'
 import { Box, Text } from '@island.is/island-ui/core'
 import { m } from '../../lib/messages'
 
@@ -12,7 +12,7 @@ interface Props {
   }
 }
 
-export const TestCustomComponent = ({
+export const ExampleCustomComponent = ({
   application,
   field,
 }: Props & FieldBaseProps) => {
