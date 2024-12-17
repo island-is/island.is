@@ -110,7 +110,7 @@ export const ServicePortalDocumentsV3 = () => {
             >
               <GoBack display="inline" noUnderline marginBottom={0} />
               <Box
-                borderRadius={'circle'}
+                borderRadius="full"
                 display={'inlineBlock'}
                 marginY={0}
                 marginX={1}

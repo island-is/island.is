@@ -80,7 +80,7 @@ const NotificationButton = ({
       />
       {data?.userNotificationsOverview?.data.length ? (
         <Box
-          borderRadius="circle"
+          borderRadius="full"
           className={cn({ [styles.badge]: showBadge })}
         />
       ) : undefined}

@@ -233,6 +233,7 @@ export const MockUserNotificationsConfig: ConfigType<
   emailFromAddress: 'development@island.is',
   isConfigured: true,
   servicePortalClickActionUrl: 'https://island.is/minarsidur',
+  servicePortalBffLoginUrl: 'https://island.is/bff/login',
   redis: {
     nodes: ['node'],
     ssl: false,

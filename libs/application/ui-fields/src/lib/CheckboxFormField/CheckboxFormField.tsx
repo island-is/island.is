@@ -41,6 +41,8 @@ export const CheckboxFormField = ({
     required,
     onSelect,
     spacing,
+    marginTop,
+    marginBottom,
   } = field
   const { formatMessage, lang: locale } = useLocale()
 
@@ -50,7 +52,7 @@ export const CheckboxFormField = ({
   )
 
   return (
-    <div>
+    <Box marginTop={marginTop} marginBottom={marginBottom}>
       {showFieldName && (
         <Text variant="h4">
           {formatTextWithLocale(
@@ -79,6 +81,7 @@ export const CheckboxFormField = ({
           disabled={disabled}
           large={large}
           name={`${id}`}
+          split={width === 'half' ? '1/2' : '1/1'}
           onSelect={onSelect}
           backgroundColor={backgroundColor}
           defaultValue={
@@ -106,6 +109,6 @@ export const CheckboxFormField = ({
           )}
         />
       </Box>
-    </div>
+    </Box>
   )
 }
