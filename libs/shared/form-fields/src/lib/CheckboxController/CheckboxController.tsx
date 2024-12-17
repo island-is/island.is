@@ -44,7 +44,7 @@ export const CheckboxController: FC<
   error,
   id,
   name = id,
-  large = true,
+  large,
   strong,
   options = [],
   split = '1/1',
