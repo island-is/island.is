@@ -1,34 +1,32 @@
-import React, { FC, useContext, useEffect, useRef } from 'react'
-import Link from 'next/link'
-import { useRouter } from 'next/router'
 import { useQuery } from '@apollo/client'
 import gql from 'graphql-tag'
+import Link from 'next/link'
+import { useRouter } from 'next/router'
+import React, { FC, useContext, useEffect, useRef } from 'react'
 
 import {
   Box,
-  Stack,
-  Text,
   BreadcrumbsDeprecated as Breadcrumbs,
   Button,
   GridColumn,
   LoadingDots,
+  Stack,
+  Text,
 } from '@island.is/island-ui/core'
 
-import { useI18n } from '@island.is/skilavottord-web/i18n'
-import { UserContext } from '@island.is/skilavottord-web/context'
 import { hasPermission } from '@island.is/skilavottord-web/auth/utils'
 import {
-  Sidenav,
   NotFound,
   PartnerPageLayout,
+  Sidenav,
 } from '@island.is/skilavottord-web/components'
+import { UserContext } from '@island.is/skilavottord-web/context'
 import {
-  RecyclingPartner,
-  RecyclingRequest,
-  Vehicle,
   Query,
   Role,
+  Vehicle,
 } from '@island.is/skilavottord-web/graphql/schema'
+import { useI18n } from '@island.is/skilavottord-web/i18n'
 import { BASE_PATH } from '@island.is/skilavottord/consts'
 import { CarsTable } from './components/CarsTable'
 
