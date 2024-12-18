@@ -19,9 +19,6 @@ on:
       - 'charts/**'
       - 'infra/**'
       - '**/infra/**'
-    branches-ignore:
-      - 'unicorn*'
-      - 'feature/unicorn*'
 
 defaults:
   run:

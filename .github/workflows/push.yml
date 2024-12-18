@@ -20,9 +20,6 @@ on:
       - opened
       - synchronize
       - labeled
-    branches-ignore:
-      - 'unicorn*'
-      - 'feature/unicorn*'
 
 defaults:
   run:
