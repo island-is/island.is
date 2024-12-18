@@ -357,8 +357,7 @@ export const isTrafficViolationStepValidIndictments = (
   const isOtherIndictmentCountsValid =
     nonTrafficViolationIndictmentCounts.every(
       (indictmentCount) =>
-        indictmentCount.indictmentCountSubtypes &&
-        indictmentCount.indictmentCountSubtypes.length > 0,
+        indictmentCount.incidentDescription && indictmentCount.legalArguments,
     )
 
   return isTrafficViolationIndictmentCountsValid && isOtherIndictmentCountsValid
