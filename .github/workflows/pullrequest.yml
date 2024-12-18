@@ -7,7 +7,6 @@ on:
       - 'feature/unicorn*'
   workflow_dispatch: {}
 
-
 defaults:
   run:
     shell: bash

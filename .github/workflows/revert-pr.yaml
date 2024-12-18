@@ -18,7 +18,6 @@ on:
       - synchronize
       - labeled
 
-
 permissions:
   contents: write
   pull-requests: write
