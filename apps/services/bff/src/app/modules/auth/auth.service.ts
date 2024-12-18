@@ -103,12 +103,10 @@ export class AuthService {
    */
   public async updateTokenCache(
     tokenResponse: TokenResponse,
-    loginAttemptData?: Record<string, LoginAttemptData>,
   ): Promise<CachedTokenResponse> {
     const userProfile: IdTokenClaims = jwtDecode(tokenResponse.id_token)
 
     const value: CachedTokenResponse = {
-      loginAttemptData,
       ...tokenResponse,
       // Encrypt the access and refresh tokens before saving them to the cache
       // to prevent unauthorized access to the tokens if cached service is compromised.
@@ -270,26 +268,11 @@ export class AuthService {
 
     // Check if older session exists
     if (sid) {
-      const currentCacheKey = this.cacheService.createSessionKeyType(
-        'current',
-        sid,
-      )
-
-      const currentCacheData = await this.cacheService.get<CachedTokenResponse>(
-        currentCacheKey,
-        false,
-      )
-
-      const oldLoginAttemptData =
-        currentCacheData?.loginAttemptData?.[loginAttemptCacheKey]
-
-      if (oldLoginAttemptData) {
-        return this.redirectWithError(res, {
-          statusCode: 409, // Conflict
-          code: LOGIN_ATTEMPT_FAILED_ACTIVE_SESSION,
-          message: 'Multiple sessions detected!',
-        })
-      }
+      return this.redirectWithError(res, {
+        statusCode: 409, // Conflict
+        code: LOGIN_ATTEMPT_FAILED_ACTIVE_SESSION,
+        message: 'Multiple sessions detected!',
+      })
     }
 
     this.logger.warn(this.cacheService.createKeyError(loginAttemptCacheKey))
@@ -365,9 +348,7 @@ export class AuthService {
         codeVerifier: loginAttemptData.codeVerifier,
       })
 
-      const updatedTokenResponse = await this.updateTokenCache(tokenResponse, {
-        [loginAttemptCacheKey]: loginAttemptData,
-      })
+      const updatedTokenResponse = await this.updateTokenCache(tokenResponse)
 
       // Clean up the login attempt from the cache since we have a successful login.
       this.cacheService.delete(loginAttemptCacheKey).catch((err) => {

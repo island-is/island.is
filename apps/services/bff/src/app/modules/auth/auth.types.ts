@@ -20,10 +20,6 @@ export type CachedTokenResponse = Omit<
 
   encryptedAccessToken: string
   encryptedRefreshToken: string
-
-  loginAttemptData?: {
-    [key: string]: LoginAttemptData
-  }
 }
 
 export type LoginAttemptData = {
