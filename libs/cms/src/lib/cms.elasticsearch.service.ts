@@ -525,12 +525,14 @@ export class CmsElasticsearchService {
 
     const size = input.size ?? 10
 
-    const sort: ('_score' | sortRule)[] = [
+    const sort: sortRule[] = [
       {
         [SortField.RELEASE_DATE]: {
           order: SortDirection.DESC,
         },
       },
+      // Sort items with equal values by ascending title order
+      { 'title.sort': { order: SortDirection.ASC } },
     ]
 
     if (input.tags && input.tags.length > 0 && input.tagGroups) {
@@ -726,7 +728,6 @@ export class CmsElasticsearchService {
         size,
         from: (page - 1) * size,
       })
-
     return {
       total: grantListResponse.body.hits.total.value,
       items: grantListResponse.body.hits.hits.map<Grant>((response) =>
