@@ -4,9 +4,6 @@ import {
   buildSubSection,
   buildTableRepeaterField,
 } from '@island.is/application/core'
-import { selectOptions } from '../../../utils/options'
-import { input } from 'libs/island-ui/core/src/lib/Input/Input.mixins'
-import { name } from 'libs/island-ui/core/src/lib/FormStepper/FormStepperSection.css'
 
 export const tableRepeaterSubsection = buildSubSection({
   id: 'repeater',
