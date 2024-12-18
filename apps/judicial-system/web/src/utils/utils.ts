@@ -147,28 +147,3 @@ export const shouldUseAppealWithdrawnRoutes = (theCase: Case): boolean => {
       !theCase.appealJudge3)
   )
 }
-
-/**
- * Returns true if all values in the given object have only one item.
- *
- * Example:
- * const items = {
- *   '123-123-123': ['item1'],
- *   '234-234-234': ['item2']
- * }
- *
- * const result = hasOnlyOneItemValues(items)
- * console.log(result) // true
- *
- * @param items - The object containing the subarrays to check.
- * @returns {boolean} - True if all values have only one item, false otherwise.
- */
-export const hasOnlyOneItemValues = (
-  items?: Record<string, string[]>,
-): boolean => {
-  if (!items || Object.keys(items).length === 0) {
-    return false
-  }
-
-  return Object.values(items).every((subArray) => subArray.length === 1)
-}

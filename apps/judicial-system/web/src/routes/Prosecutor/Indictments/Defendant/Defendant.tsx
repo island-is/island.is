@@ -114,7 +114,7 @@ const Defendant = () => {
   } = useDefendants()
   const router = useRouter()
 
-  const { updateIndictmentCount } = useIndictmentCounts()
+  const { updateIndictmentCount, deleteIndictmentCount } = useIndictmentCounts()
 
   const [policeCases, setPoliceCases] = useState<PoliceCase[]>([])
 
@@ -248,6 +248,12 @@ const Defendant = () => {
       workingCase,
       setWorkingCase,
     )
+
+    const indictmentCountId = workingCase.indictmentCounts?.[index]?.id
+
+    if (indictmentCountId) {
+      deleteIndictmentCount(workingCase.id, indictmentCountId)
+    }
   }
 
   const handleUpdatePoliceCase = (

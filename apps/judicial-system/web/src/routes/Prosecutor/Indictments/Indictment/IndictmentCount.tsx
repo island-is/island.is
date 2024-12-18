@@ -43,7 +43,6 @@ import {
   UpdateIndictmentCount,
   useIndictmentCounts,
 } from '@island.is/judicial-system-web/src/utils/hooks'
-import { hasOnlyOneItemValues } from '@island.is/judicial-system-web/src/utils/utils'
 
 import { Substances as SubstanceChoices } from './Substances/Substances'
 import { indictmentCount as strings } from './IndictmentCount.strings'
@@ -290,7 +289,7 @@ export const getIncidentDescription = (
   indictmentCount: TIndictmentCount,
   formatMessage: IntlShape['formatMessage'],
   crimeScene?: CrimeScene,
-  subtypes?: Record<string, IndictmentSubtype[]>,
+  subtypesRecord?: Record<string, IndictmentSubtype[]>,
 ) => {
   const {
     offenses,
@@ -308,23 +307,19 @@ export const getIncidentDescription = (
   const vehicleRegistration =
     vehicleRegistrationNumber || '[Skráningarnúmer ökutækis]'
 
-  const hasSingleSubtype = hasOnlyOneItemValues(subtypes)
-
-  const singleSubType =
-    (policeCaseNumber && subtypes?.[policeCaseNumber]?.[0]) || undefined
-
-  const trafficViolationSubtype =
-    singleSubType === IndictmentSubtype.TRAFFIC_VIOLATION
+  const subtypes =
+    (subtypesRecord && policeCaseNumber && subtypesRecord[policeCaseNumber]) ||
+    []
 
   if (
-    !hasSingleSubtype &&
+    subtypes.length > 1 &&
     (!indictmentCountSubtypes?.length || indictmentCountSubtypes.length === 0)
   ) {
     return ''
   }
 
   if (
-    (hasSingleSubtype && trafficViolationSubtype) ||
+    isTrafficViolationIndictmentCount(policeCaseNumber, subtypesRecord) ||
     (indictmentCountSubtypes?.length === 1 &&
       indictmentCountSubtypes[0] === IndictmentSubtype.TRAFFIC_VIOLATION)
   ) {
@@ -346,9 +341,9 @@ export const getIncidentDescription = (
     })
   }
 
-  if (hasSingleSubtype) {
+  if (subtypes.length === 1) {
     return formatMessage(strings.indictmentDescriptionSubtypesAutofill, {
-      subtypes: singleSubType ? indictmentSubtypes[singleSubType] : '',
+      subtypes: indictmentSubtypes[subtypes[0]],
       date: incidentDate,
     })
   }
@@ -547,7 +542,7 @@ export const IndictmentCount: FC<Props> = ({
         />
       </Box>
       <Box marginBottom={2}>
-        {subtypes.length > 1 && (
+        {subtypes?.length > 1 && (
           <>
             <Box marginBottom={3}>
               <IndictmentInfo
