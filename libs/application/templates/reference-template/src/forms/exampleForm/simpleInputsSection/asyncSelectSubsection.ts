@@ -1,9 +1,8 @@
-import { buildAsyncSelectField } from '@island.is/application/core'
-import { Context, Option } from '@island.is/application/types'
 import {
+  buildAsyncSelectField,
   buildMultiField,
   buildSubSection,
-} from 'libs/application/core/src/lib/formBuilders'
+} from '@island.is/application/core'
 import { FriggSchoolsByMunicipality } from '../../../utils/types'
 import { friggSchoolsByMunicipalityQuery } from '../../../graphql/sampleQuery'
 
