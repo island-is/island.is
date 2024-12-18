@@ -465,8 +465,8 @@ export const buildKeyValueField = (data: {
     paddingX,
     paddingY,
     paddingBottom,
-    marginTop, 
-    marginBottom
+    marginTop,
+    marginBottom,
   } = data
 
   return {
