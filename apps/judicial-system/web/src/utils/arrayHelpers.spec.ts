@@ -29,7 +29,7 @@ describe('arrayHelpers', () => {
     })
   })
 
-  describe('isEmptyArray', () => {
+  describe('isNonEmptyArray', () => {
     const testCases = [
       { input: undefined, expected: false },
       { input: null, expected: false },
