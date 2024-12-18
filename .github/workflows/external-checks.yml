@@ -3,7 +3,7 @@ name: External checks
 on:
   pull_request:
     branches-ignore:
-      - 'feature/unicorn*'
+      - 'feature/unicorn-app'
   workflow_dispatch: {}
 
 defaults:
