@@ -7,15 +7,12 @@ import { m } from '../../lib/messages'
 interface Props {
   field: {
     props: {
-      someData: string[]
+      someData: Array<string>
     }
   }
 }
 
-export const ExampleCustomComponent = ({
-  application,
-  field,
-}: Props & FieldBaseProps) => {
+export const ExampleCustomComponent = ({ field }: Props & FieldBaseProps) => {
   const { formatMessage } = useLocale()
   const { someData } = field.props
   if (!someData) return null
