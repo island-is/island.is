@@ -14,11 +14,11 @@ import {
   AccidentNotifTypes,
   YesOrNo,
 } from '../types'
-import { isFatalAccident } from './isFatalAccident'
 import {
   isReportingOnBehalfOfEmployee,
   isReportingOnBehalfSelf,
 } from './reportingUtils'
+import { isFatalAccident } from './accidentUtils'
 
 export const hasAttachment = (attachment: Array<FileType> | undefined) =>
   attachment && attachment.length > 0

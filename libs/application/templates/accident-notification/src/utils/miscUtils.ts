@@ -1,7 +1,7 @@
 import { AccidentNotificationConfirmation } from '@island.is/api/schema'
 import { getValueViaPath } from '@island.is/application/core'
 import { FormValue, YES } from '@island.is/application/types'
-import { isReportingOnBehalfOfEmployee } from './reportingUtils'
+import { isReportingOnBehalfOfEmployee as isReportingOnBehalfOfEmployeeOrginal } from './reportingUtils'
 import {
   GeneralWorkplaceAccidentLocationEnum,
   ProfessionalAthleteAccidentLocationEnum,
@@ -10,9 +10,15 @@ import {
   WorkAccidentTypeEnum,
   YesOrNo,
 } from '../types'
-import { isHomeActivitiesAccident } from './accidentUtils'
+import {
+  getInjuredPersonInformation as getInjuredPersonInformationOrginal,
+  isHomeActivitiesAccident,
+} from './accidentUtils'
 import { AccidentNotificationAnswers } from '..'
-import { isOfWorkAccidentType } from './occupationUtils'
+import {
+  getWorkplaceData as getWorkplaceDataOrginal,
+  isOfWorkAccidentType,
+} from './occupationUtils'
 
 export const formatPhonenumber = (value: string) => {
   const splitAt = (index: number) => (x: string) =>
@@ -113,4 +119,16 @@ export const shouldRequestReview = (
   const isEitherHomeOrAgriculture = ishome || isAgriculture
 
   return !isEitherHomeOrAgriculture
+}
+
+export const isReportingOnBehalfOfEmployee = (answers: FormValue) => {
+  return isReportingOnBehalfOfEmployeeOrginal(answers)
+}
+
+export const getWorkplaceData = (answers: FormValue) => {
+  return getWorkplaceDataOrginal(answers)
+}
+
+export const getInjuredPersonInformation = (answers: FormValue) => {
+  return getInjuredPersonInformationOrginal(answers)
 }
