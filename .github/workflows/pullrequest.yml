@@ -4,6 +4,7 @@ on:
   pull_request:
     branches-ignore:
       - 'uni-pr'
+      - 'feature/unicorn-app'
   workflow_dispatch: {}
 
 defaults:
