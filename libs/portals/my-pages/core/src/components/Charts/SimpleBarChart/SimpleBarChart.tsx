@@ -112,6 +112,8 @@ export const SimpleBarChart = ({
                     fill={theme.color.blue400}
                     barSize={16}
                     radius={[20, 20, 0, 0]}
+                    name={tooltip?.labels?.[item.datakey] || item.datakey}
+                    aria-label={`Bar chart data for ${item.datakey}`}
                   />
                 ))}
               </BarChart>

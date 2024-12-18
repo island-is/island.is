@@ -102,7 +102,7 @@ export const RenderLegend = ({ payload, title, labels }: CustomLegendProps) => {
       justifyContent={'flexEnd'}
     >
       {[...payload.values()].map((item) => (
-        <Box display="flex" as="li">
+        <Box display="flex" as="li" key={item.value}>
           <Box
             alignSelf={'center'}
             className={styles.dot}

@@ -54,8 +54,6 @@ const VehicleBulkMileageTable = ({ vehicles, loading }: Props) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [formValues])
 
-  console.log(rows)
-
   return (
     <Box>
       <form>

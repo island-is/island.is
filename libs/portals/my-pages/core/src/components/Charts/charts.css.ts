@@ -15,7 +15,7 @@ export const list = style({
 export const dot = style({
   width: '12px',
   height: '12px',
-  border: '3px',
+  borderWidth: '3px',
   borderStyle: 'solid',
   borderRadius: '12px',
   marginRight: '2px',

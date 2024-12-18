@@ -310,7 +310,7 @@ export const vehicleMessage = defineMessages({
   },
   lastRegistration: {
     id: 'sp.vehicles:last-registration',
-    defaultMessage: 'Síðasta staða',
+    defaultMessage: 'Síðasta skráning',
   },
   lastStatus: {
     id: 'sp.vehicles:last-status',
