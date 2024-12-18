@@ -1,6 +1,6 @@
 import { FormValue } from '@island.is/application/types'
 import { AccidentTypeEnum, WhoIsTheNotificationForEnum } from '../types'
-import { getAccidentTypeOptions } from './getAccidentTypeOptions'
+import { getAccidentTypeOptions } from './getOptions'
 
 describe('getAccidentTypeOptions', () => {
   const onBehalfOfEmployee: FormValue = {
