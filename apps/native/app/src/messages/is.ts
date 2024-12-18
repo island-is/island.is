@@ -405,6 +405,8 @@ export const is = {
     'Ekki er hægt að skanna skírteini nema að tækið sé nettengt.',
   'walletPass.validLicense': 'Í gildi',
   'walletPass.expiredLicense': 'Útrunnið',
+  'walletPass.passportNumber': 'Númer vegabréfs: {licenseNumber}',
+  'walletPass.licenseNumber': 'Skírteinisnúmer: {licenseNumber}',
 
   // wallet passport
   'walletPassport.screenTitle': 'Vegabréf',

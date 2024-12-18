@@ -15,29 +15,16 @@ import { ExpirationProgressBar } from '../../../components/progress-bar/expirati
 import { GenericLicenseType } from '../../../graphql/types/schema'
 import { isString } from '../../../utils/is-string'
 import { prefixBase64 } from '../../../utils/prefix-base-64'
-import BackgroundADR from '../../assets/card/adr-bg.png'
-import LogoCoatOfArms from '../../assets/card/agency-logo.png'
 import IconStatusNonVerified from '../../assets/card/danger.png'
 import IconStatusVerified from '../../assets/card/is-verified.png'
-import CoatOfArms from '../../assets/card/logo-coat-of-arms.png'
-import BackgroundDriversLicense from '../../assets/card/okuskirteini.png'
-import DisabilityLicenseBg from '../../assets/card/ororka_bg.png'
-import BackgroundPCardLicense from '../../assets/card/p-card.png'
-import BackgroundPassport from '../../assets/card/passport-bg.png'
-import LogoEhic from '../../assets/card/sjukratryggingar.png'
-import BackgroundWeaponLicense from '../../assets/card/skotvopnaleyfi.png'
-import LogoRegistersIceland from '../../assets/card/thjodskra-logo.png'
-import DisabilityLicenseLogo from '../../assets/card/tryggingastofnun_logo.png'
-import LogoEnvironmentAgency from '../../assets/card/ust-logo.png'
-import BackgroundHuntingCard from '../../assets/card/veidikort-bg.png'
-import LogoAOSH from '../../assets/card/vinnueftirlitid-logo.png'
-import BackgroundVinnuvelar from '../../assets/card/vinnuvelar-bg.png'
-import { dynamicColor, theme } from '../../utils'
-import { font } from '../../utils/font'
+import {
+  LicenseCardPresets,
+  LICENSE_CARD_ROW_GAP,
+  CustomLicenseType,
+} from './license-list-card'
+import { dynamicColor } from '../../utils'
 import { Typography } from '../typography/typography'
 import { screenWidth } from '../../../utils/dimensions'
-
-export const LICENSE_CARD_ROW_GAP = theme.spacing.p2
 
 const Host = styled(Animated.View)`
   position: relative;
@@ -99,41 +86,20 @@ const Base64Image = styled.Image`
   border-radius: ${({ theme: { border } }) => border.radius.large};
 `
 
-const Title = styled.Text<{ color: string }>`
-  margin-bottom: 8px;
-
-  ${font({
-    fontWeight: '600',
-    color: (props) => props.color,
-  })}
+const Title = styled(Typography)<{ color: string }>`
+  margin-bottom: ${({ theme }) => theme.spacing[1]}px;
 `
 
 const ValidationWrap = styled.View`
   display: flex;
   flex-flow: row;
-  margin-bottom: 4px;
+  margin-bottom: ${({ theme }) => theme.spacing.smallGutter}px;
 `
 
 const OfflineMessage = styled(Typography)`
   padding: ${({ theme }) => theme.spacing[3]}px;
   text-align: center;
   max-width: 95%;
-`
-
-const Validation = styled.Text<{ color: string }>`
-  ${font({
-    fontWeight: '600',
-    fontSize: 13,
-    lineHeight: 15,
-    color: (props) => props.color,
-  })}
-`
-
-const TimeStamp = styled.Text<{ color: string }>`
-  ${font({
-    fontSize: 13,
-    color: (props) => props.color,
-  })}
 `
 
 const ImgWrap = styled.View`
@@ -144,112 +110,7 @@ const ImgWrap = styled.View`
   width: 72px;
 `
 
-const LicenseCardPresets: Record<LicenseType, CardPreset> = {
-  DriversLicense: {
-    title: 'Ökuskírteini (IS)',
-    logo: LogoCoatOfArms,
-    backgroundImage: BackgroundDriversLicense,
-    backgroundColor: '#F5E4EC',
-    barcode: {
-      background: '#F5EAEF',
-      overlay: '#F0DDE5',
-    },
-  },
-  AdrLicense: {
-    title: 'ADR skírteini',
-    logo: LogoAOSH,
-    backgroundImage: BackgroundADR,
-    backgroundColor: '#F2FAEC',
-    barcode: {
-      background: '#FAFDF7',
-      overlay: '#F4FCEE',
-    },
-  },
-  MachineLicense: {
-    title: 'Vinnuvélaskírteini',
-    logo: LogoAOSH,
-    backgroundImage: BackgroundVinnuvelar,
-    backgroundColor: '#C5E6AF',
-    barcode: {
-      background: '#DEF1D1',
-      overlay: '#C8E6B3',
-    },
-  },
-  FirearmLicense: {
-    title: 'Skotvopnaleyfi',
-    logo: CoatOfArms,
-    backgroundImage: BackgroundWeaponLicense,
-    backgroundColor: '#EBEBF2',
-    barcode: {
-      background: '#FDFDF7',
-      overlay: '#FAFAEB',
-    },
-  },
-  HuntingLicense: {
-    title: 'Veiðikort',
-    logo: LogoEnvironmentAgency,
-    backgroundImage: BackgroundHuntingCard,
-    backgroundColor: '#E2EDFF',
-    barcode: {
-      background: '#DBECF4',
-      overlay: '#B3D3E3',
-    },
-  },
-  Ehic: {
-    title: 'Evrópska sjúkratryggingakortið',
-    logo: LogoEhic,
-    backgroundImage: BackgroundPassport,
-    backgroundColor: '#E2EDFF',
-  },
-  DisabilityLicense: {
-    title: 'Örorkuskírteini',
-    logo: DisabilityLicenseLogo,
-    backgroundImage: DisabilityLicenseBg,
-    backgroundColor: '#C5D5C8',
-    barcode: {
-      background: '#D7E3D7',
-      overlay: '#A0BAA2',
-    },
-  },
-  PCard: {
-    title: 'Stæðiskort',
-    logo: LogoCoatOfArms,
-    backgroundImage: BackgroundPCardLicense,
-    backgroundColor: '#F2F7FF',
-  },
-  Passport: {
-    title: 'Almennt vegabréf',
-    logo: LogoRegistersIceland,
-    backgroundImage: BackgroundPassport,
-    backgroundColor: '#fff',
-  },
-}
-
-export enum CustomLicenseType {
-  Passport = 'Passport',
-}
-
 type LicenseType = GenericLicenseType | CustomLicenseType
-
-type CardPreset = {
-  title: string
-  logo: ImageSourcePropType
-  backgroundImage: ImageSourcePropType
-  backgroundColor: string
-  barcode?: {
-    background: string
-    overlay: string
-  }
-}
-
-type StatusStyle = {
-  text: string
-  icon: ImageSourcePropType
-}
-
-type StatusStyles = {
-  [key: string]: StatusStyle
-}
 
 interface LicenseCardProps {
   status: 'VALID' | 'NOT_VALID'
@@ -310,7 +171,12 @@ export function LicenseCard({
       />
       <ContentContainer>
         <Content>
-          <Title numberOfLines={1} ellipsizeMode="tail" color={textColor}>
+          <Title
+            numberOfLines={1}
+            ellipsizeMode="tail"
+            color={textColor}
+            variant="heading5"
+          >
             {title}
           </Title>
 
@@ -322,17 +188,17 @@ export function LicenseCard({
               resizeMode="contain"
               style={{ width: 15, height: 15, marginRight: 8 }}
             />
-            <Validation color={textColor}>
+            <Typography color={textColor} variant="eyebrow">
               {intl.formatMessage({
                 id:
                   status === 'VALID'
                     ? 'walletPass.validLicense'
                     : 'walletPass.expiredLicense',
               })}
-            </Validation>
+            </Typography>
           </ValidationWrap>
           {date && (
-            <TimeStamp color={textColor}>
+            <Typography variant="body3" color={textColor}>
               {type === CustomLicenseType.Passport
                 ? intl.formatMessage({ id: 'walletPass.expirationDate' })
                 : intl.formatMessage({ id: 'walletPass.lastUpdate' })}
@@ -345,7 +211,7 @@ export function LicenseCard({
                   {...{ dateStyle: 'short', timeStyle: 'short' }}
                 />
               )}
-            </TimeStamp>
+            </Typography>
           )}
         </Content>
         {logo && (

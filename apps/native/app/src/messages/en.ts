@@ -268,6 +268,8 @@ export const en: TranslatedMessages = {
     'Not possible to scan barcode if the device is not connected to the internet.',
   'walletPass.validLicense': 'Valid',
   'walletPass.expiredLicense': 'Expired',
+  'walletPass.passportNumber': 'Passport number: {licenseNumber}',
+  'walletPass.licenseNumber': 'License number: {licenseNumber}',
 
   // wallet passport
   'walletPassport.screenTitle': 'Passport',

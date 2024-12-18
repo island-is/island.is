@@ -393,7 +393,7 @@ export const WalletPassScreen: NavigationFunctionComponent<{
         <LicenseCard
           nativeID={`license-${licenseType}_destination`}
           type={licenseType}
-          title={data?.payload?.metadata?.name ?? ''}
+          title={data?.payload?.metadata?.name ?? undefined}
           logo={
             isBarcodeEnabled &&
             data?.license?.type === GenericLicenseType.DriversLicense
