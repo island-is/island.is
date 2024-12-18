@@ -4,8 +4,6 @@ import { BaseTemplateApiService } from '../../base-template-api.service'
 import {
   ApplicationTypes,
   ApplicationWithAttachments,
-  NationalRegistryParent,
-  YES,
 } from '@island.is/application/types'
 import {
   ApplicationType as SecondarySchoolApplicationType,
@@ -14,8 +12,6 @@ import {
   SecondarySchoolAnswers,
 } from '@island.is/application/templates/secondary-school'
 import {
-  ApplicationContact,
-  ApplicationSelectionSchool,
   SecondarySchool,
   SecondarySchoolClient,
 } from '@island.is/clients/secondary-school'
@@ -24,7 +20,11 @@ import { error } from '@island.is/application/templates/secondary-school'
 import { S3Service } from '@island.is/nest/aws'
 import { SharedTemplateApiService } from '../../shared'
 import { logger } from '@island.is/logging'
-import { getRecipients } from './utils'
+import {
+  getCleanContacts,
+  getCleanSchoolSelection,
+  getRecipients,
+} from './utils'
 import {
   generateApplicationRejectedEmail,
   generateApplicationSubmittedEmail,
@@ -85,6 +85,12 @@ export class SecondarySchoolService extends BaseTemplateApiService {
     await this.secondarySchoolClient.delete(auth, application.id)
 
     // Send email to applicant and all contacts
+    await this.sendEmailAboutDeleteApplication(application)
+  }
+
+  private async sendEmailAboutDeleteApplication(
+    application: ApplicationWithAttachments,
+  ) {
     const recipientList = getRecipients(application.answers)
     for (let i = 0; i < recipientList.length; i++) {
       if (recipientList[i].email) {
@@ -108,138 +114,17 @@ export class SecondarySchoolService extends BaseTemplateApiService {
     application,
     auth,
   }: TemplateApiModuleActionProps): Promise<string> {
-    // Get clean array of contacts
-    const contacts: ApplicationContact[] = []
-
-    // Parents
-    const parents =
-      (application.externalData.nationalRegistryParents
-        .data as NationalRegistryParent[]) || []
-    const parentsAnswers =
-      getValueViaPath<SecondarySchoolAnswers['custodians']>(
-        application.answers,
-        'custodians',
-      ) || []
-    for (let i = 0; i < parents.length; i++) {
-      if (parents[i].nationalId) {
-        contacts.push({
-          nationalId: parents[i].nationalId,
-          name: `${parents[i].givenName} ${parents[i].familyName}`,
-          phone: parentsAnswers[i]?.phone || '',
-          email: parentsAnswers[i]?.email || '',
-          address: parents[i].legalDomicile?.streetAddress,
-          postalCode: parents[i].legalDomicile?.postalCode || undefined,
-          city: parents[i].legalDomicile?.locality || undefined,
-        })
-      }
-    }
-
-    // Other contacts
-    const otherContacts =
-      getValueViaPath<SecondarySchoolAnswers['otherContacts']>(
-        application.answers,
-        'otherContacts',
-      ) || []
-    for (let i = 0; i < otherContacts.length; i++) {
-      if (otherContacts[i].include) {
-        contacts.push({
-          nationalId: otherContacts[i].nationalId || '',
-          name: otherContacts[i].name || '',
-          phone: otherContacts[i].phone || '',
-          email: otherContacts[i].email || '',
-        })
-      }
-    }
-
-    // Get list of selected school and program ids with priority
-    const selection = getValueViaPath<SecondarySchoolAnswers['selection']>(
-      application.answers,
-      'selection',
-    )
-    const schools: ApplicationSelectionSchool[] = []
-    let schoolPriority = 0
-    if (selection?.first?.school?.id && selection?.first?.firstProgram?.id) {
-      schools.push({
-        priority: schoolPriority++,
-        schoolId: selection?.first.school.id,
-        programs: [
-          {
-            priority: 0,
-            programId: selection?.first.firstProgram.id,
-          },
-          {
-            priority: 1,
-            programId: selection?.first.secondProgram?.include
-              ? selection?.first.secondProgram.id || ''
-              : '',
-          },
-        ].filter((x) => !!x.programId),
-        thirdLanguageCode: selection?.first.thirdLanguage?.code || undefined,
-        nordicLanguageCode: selection?.first.nordicLanguage?.code || undefined,
-        requestDormitory: selection?.first.requestDormitory?.includes(YES),
-      })
-    }
-    if (
-      selection?.second?.include &&
-      selection?.second?.school?.id &&
-      selection?.second?.firstProgram?.id
-    ) {
-      schools.push({
-        priority: schoolPriority++,
-        schoolId: selection?.second.school.id,
-        programs: [
-          {
-            priority: 0,
-            programId: selection?.second.firstProgram.id,
-          },
-          {
-            priority: 1,
-            programId: selection?.second.secondProgram?.include
-              ? selection?.second.secondProgram.id || ''
-              : '',
-          },
-        ].filter((x) => !!x.programId),
-        thirdLanguageCode: selection?.second.thirdLanguage?.code || undefined,
-        nordicLanguageCode: selection?.second.nordicLanguage?.code || undefined,
-        requestDormitory: selection?.second.requestDormitory?.includes(YES),
-      })
-    }
-    if (
-      selection?.third?.include &&
-      selection?.third?.school?.id &&
-      selection?.third?.firstProgram?.id
-    ) {
-      schools.push({
-        priority: schoolPriority++,
-        schoolId: selection?.third.school.id,
-        programs: [
-          {
-            priority: 0,
-            programId: selection?.third.firstProgram.id,
-          },
-          {
-            priority: 1,
-            programId: selection?.third.secondProgram?.include
-              ? selection?.third.secondProgram.id || ''
-              : '',
-          },
-        ].filter((x) => !!x.programId),
-        thirdLanguageCode: selection?.third.thirdLanguage?.code || undefined,
-        nordicLanguageCode: selection?.third.nordicLanguage?.code || undefined,
-        requestDormitory: selection?.third.requestDormitory?.includes(YES),
-      })
-    }
-
+    // Get values from answers
     const applicant = getValueViaPath<SecondarySchoolAnswers['applicant']>(
       application.answers,
       'applicant',
     )
-
     const applicationType = getValueViaPath<SecondarySchoolApplicationType>(
       application.answers,
       'applicationType',
     )
-
+    const contacts = getCleanContacts(application)
+    const schoolSelection = getCleanSchoolSelection(application)
     const extraInformation = getValueViaPath<
       SecondarySchoolAnswers['extraInformation']
     >(application.answers, 'extraInformation')
@@ -255,7 +140,7 @@ export class SecondarySchoolService extends BaseTemplateApiService {
       city: applicant?.city || '',
       isFreshman: applicationType === SecondarySchoolApplicationType.FRESHMAN,
       contacts: contacts,
-      schools: schools,
+      schools: schoolSelection,
       nativeLanguageCode: extraInformation?.nativeLanguageCode,
       otherDescription: extraInformation?.otherDescription,
       attachments: await Promise.all(
@@ -271,6 +156,15 @@ export class SecondarySchoolService extends BaseTemplateApiService {
       ),
     })
 
+    // Send email to applicant and all contacts
+    await this.sendEmailAboutSubmitApplication(application)
+
+    return applicationId
+  }
+
+  private async sendEmailAboutSubmitApplication(
+    application: ApplicationWithAttachments,
+  ) {
     // Send email to applicant and all contacts
     const recipientList = getRecipients(application.answers)
     for (let i = 0; i < recipientList.length; i++) {
@@ -289,8 +183,6 @@ export class SecondarySchoolService extends BaseTemplateApiService {
           })
       }
     }
-
-    return applicationId
   }
 
   private async getAttachmentAsBase64(
