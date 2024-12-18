@@ -217,11 +217,18 @@ export const PrisonCases: FC = () => {
               ),
             },
             {
-              cell: () => (
-                <Tag variant="purple" outlined disabled truncate>
-                  {'Nýtt'}
-                </Tag>
-              ),
+              cell: (row) =>
+                row.defendants &&
+                row.defendants.length > 0 &&
+                row.defendants[0].openedByPrisonAdminDate ? (
+                  <Tag variant="blue" outlined disabled truncate>
+                    {'Móttekið'}
+                  </Tag>
+                ) : (
+                  <Tag variant="purple" outlined disabled truncate>
+                    {'Nýtt'}
+                  </Tag>
+                ),
             },
           ]}
           generateContextMenuItems={(row) => [openCaseInNewTabMenuItem(row.id)]}

@@ -417,6 +417,16 @@ export const caseListInclude: Includeable[] = [
     as: 'defendants',
     required: false,
     order: [['created', 'ASC']],
+    include: [
+      {
+        model: DefendantEventLog,
+        as: 'eventLogs',
+        required: false,
+        where: { eventType: defendantEventTypes },
+        order: [['created', 'DESC']],
+        separate: true,
+      },
+    ],
     separate: true,
   },
   {
