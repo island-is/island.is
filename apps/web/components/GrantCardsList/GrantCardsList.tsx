@@ -1,8 +1,9 @@
 import format from 'date-fns/format'
 import localeEN from 'date-fns/locale/en-GB'
 import localeIS from 'date-fns/locale/is'
+import { useRouter } from 'next/router'
 
-import { Box, InfoCardGrid } from '@island.is/island-ui/core'
+import { ActionCard, Box, InfoCardGrid } from '@island.is/island-ui/core'
 import { Locale } from '@island.is/shared/types'
 import { isDefined } from '@island.is/shared/utils'
 import {
@@ -39,6 +40,7 @@ const containsTimePart = (date: string) => date.includes('T')
 const GrantCardsList = ({ slice }: SliceProps) => {
   const { activeLocale } = useI18n()
   const { linkResolver } = useLinkResolver()
+  const router = useRouter()
 
   const namespace = slice.namespace
 
@@ -104,6 +106,23 @@ const GrantCardsList = ({ slice }: SliceProps) => {
       default:
         return
     }
+  }
+
+  if (slice.resolvedGrantsList?.items.length === 1) {
+    const grant = slice.resolvedGrantsList.items[0]
+    return (
+      <ActionCard
+        heading={grant.name}
+        backgroundColor="blue"
+        cta={{
+          disabled: !grant.applicationUrl?.slug,
+          label: grant.applicationButtonLabel ?? getTranslationString('apply'),
+          onClick: () => router.push(grant.applicationUrl?.slug ?? ''),
+          icon: 'open',
+          iconType: 'outline',
+        }}
+      />
+    )
   }
 
   const cards = slice.resolvedGrantsList?.items

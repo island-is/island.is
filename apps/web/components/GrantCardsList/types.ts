@@ -1,6 +1,7 @@
 export type TranslationKeys = Partial<
   Record<
     | 'seeMore'
+    | 'apply'
     | 'applicationOpen'
     | 'applicationClosed'
     | 'applicationOpensSoon'
