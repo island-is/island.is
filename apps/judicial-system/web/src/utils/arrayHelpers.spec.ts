@@ -20,7 +20,7 @@ describe('arrayHelpers', () => {
       { input: undefined, expected: false },
       { input: null, expected: false },
       { input: [], expected: true },
-      { input: [1], expected: true },
+      { input: [1], expected: false },
     ]
     testCases.forEach(({ input, expected }) => {
       it(`should return ${expected} for input ${input}`, () => {
