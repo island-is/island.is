@@ -1,13 +1,12 @@
+import { IntlShape } from 'react-intl'
 import format from 'date-fns/format'
 import localeEn from 'date-fns/locale/en-GB'
 import localeIS from 'date-fns/locale/is'
 
-import { FormatMessage } from '@island.is/localization'
 import { Locale } from '@island.is/shared/types'
 import { Grant, GrantStatus } from '@island.is/web/graphql/schema'
 
 import { m } from './messages'
-import { IntlFormatters, IntlShape } from 'react-intl'
 
 interface Status {
   applicationStatus: 'open' | 'closed' | 'unknown'
@@ -19,10 +18,16 @@ const formatDate = (
   date: Date,
   locale: Locale,
   stringFormat = 'dd.MMMM yyyy',
-) =>
-  format(date, stringFormat, {
-    locale: locale === 'is' ? localeIS : localeEn,
-  })
+): string | undefined => {
+  try {
+    return format(date, stringFormat, {
+      locale: locale === 'is' ? localeIS : localeEn,
+    })
+  } catch (e) {
+    console.warn('Error formatting date')
+    return
+  }
+}
 
 export const containsTimePart = (date: string) => date.includes('T')
 
@@ -33,15 +38,18 @@ export const parseStatus = (
 ): Status => {
   switch (grant.status) {
     case GrantStatus.Closed: {
+      const date = grant.dateTo
+        ? formatDate(new Date(grant.dateTo), locale)
+        : undefined
       return {
         applicationStatus: 'closed',
-        deadlineStatus: grant.dateTo
+        deadlineStatus: date
           ? formatMessage(
-              containsTimePart(grant.dateTo)
+              containsTimePart(date)
                 ? m.search.applicationWasOpenToAndWith
                 : m.search.applicationWasOpenTo,
               {
-                arg: formatDate(new Date(grant.dateTo), locale),
+                arg: date,
               },
             )
           : formatMessage(m.search.applicationClosed),
@@ -49,22 +57,28 @@ export const parseStatus = (
       }
     }
     case GrantStatus.ClosedOpeningSoon: {
+      const date = grant.dateFrom
+        ? formatDate(new Date(grant.dateFrom), locale)
+        : undefined
       return {
         applicationStatus: 'closed',
-        deadlineStatus: grant.dateFrom
+        deadlineStatus: date
           ? formatMessage(m.search.applicationOpensAt, {
-              arg: formatDate(new Date(grant.dateFrom), locale),
+              arg: date,
             })
           : formatMessage(m.search.applicationClosed),
         note: grant.statusText ?? undefined,
       }
     }
     case GrantStatus.ClosedOpeningSoonWithEstimation: {
+      const date = grant.dateFrom
+        ? formatDate(new Date(grant.dateFrom), locale, 'MMMM yyyy')
+        : undefined
       return {
         applicationStatus: 'closed',
-        deadlineStatus: grant.dateFrom
+        deadlineStatus: date
           ? formatMessage(m.search.applicationEstimatedOpensAt, {
-              arg: formatDate(new Date(grant.dateFrom), locale, 'MMMM yyyy'),
+              arg: date,
             })
           : formatMessage(m.search.applicationClosed),
         note: grant.statusText ?? undefined,
@@ -85,15 +99,18 @@ export const parseStatus = (
       }
     }
     case GrantStatus.Open: {
+      const date = grant.dateTo
+        ? formatDate(new Date(grant.dateTo), locale, 'dd.MMMM.')
+        : undefined
       return {
         applicationStatus: 'open',
-        deadlineStatus: grant.dateTo
+        deadlineStatus: date
           ? formatMessage(
-              containsTimePart(grant.dateTo)
+              containsTimePart(date)
                 ? m.search.applicationOpensToWithDay
                 : m.search.applicationOpensTo,
               {
-                arg: formatDate(new Date(grant.dateTo), locale, 'dd.MMMM.'),
+                arg: date,
               },
             )
           : formatMessage(m.search.applicationOpen),
