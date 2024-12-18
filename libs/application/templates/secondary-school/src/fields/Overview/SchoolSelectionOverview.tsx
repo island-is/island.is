@@ -7,6 +7,7 @@ import { SecondarySchoolAnswers } from '../..'
 import { getTranslatedProgram } from '../../utils'
 import { ReviewGroup } from '../../components/ReviewGroup'
 import { Routes, States } from '../../lib/constants'
+import { getValueViaPath } from '@island.is/application/core'
 
 export const SchoolSelectionOverview: FC<FieldBaseProps> = ({
   application,
@@ -14,7 +15,10 @@ export const SchoolSelectionOverview: FC<FieldBaseProps> = ({
 }) => {
   const { formatMessage, lang } = useLocale()
 
-  const answers = application.answers as SecondarySchoolAnswers
+  const selection = getValueViaPath<SecondarySchoolAnswers['selection']>(
+    application.answers,
+    'selection',
+  )
 
   const onClick = (page: string) => {
     if (goToScreen) goToScreen(page)
@@ -30,100 +34,83 @@ export const SchoolSelectionOverview: FC<FieldBaseProps> = ({
       <Box>
         <GridRow>
           {/* First selection */}
-          <GridColumn
-            span={answers?.selection?.second?.include ? '1/2' : '1/1'}
-          >
-            {answers?.selection?.second?.include && (
+          <GridColumn span={selection?.second?.include ? '1/2' : '1/1'}>
+            {selection?.second?.include && (
               <Text variant="h5">
                 {formatMessage(overview.selection.firstSubtitle)}
               </Text>
             )}
-            <Text>{answers?.selection?.first?.school?.name}</Text>
+            <Text>{selection?.first?.school?.name}</Text>
             <Text>
               {formatMessage(overview.selection.firstProgramLabel)}:{' '}
-              {getTranslatedProgram(
-                lang,
-                answers?.selection?.first?.firstProgram,
-              )}
+              {getTranslatedProgram(lang, selection?.first?.firstProgram)}
             </Text>
-            {!!answers?.selection?.first?.secondProgram?.include && (
+            {!!selection?.first?.secondProgram?.include && (
               <Text>
                 {formatMessage(overview.selection.secondProgramLabel)}:{' '}
-                {getTranslatedProgram(
-                  lang,
-                  answers?.selection?.first?.secondProgram,
-                )}
+                {getTranslatedProgram(lang, selection?.first?.secondProgram)}
               </Text>
             )}
-            {!!answers?.selection?.first?.thirdLanguage?.code && (
-              <Text>{answers?.selection?.first?.thirdLanguage?.name}</Text>
+            {!!selection?.first?.thirdLanguage?.code && (
+              <Text>{selection?.first?.thirdLanguage?.name}</Text>
             )}
-            {!!answers?.selection?.first?.nordicLanguage?.code && (
-              <Text>{answers?.selection?.first?.nordicLanguage?.name}</Text>
+            {!!selection?.first?.nordicLanguage?.code && (
+              <Text>{selection?.first?.nordicLanguage?.name}</Text>
             )}
           </GridColumn>
 
           {/* Second selection */}
-          {answers?.selection?.second?.include && (
+          {selection?.second?.include && (
             <GridColumn span="1/2">
               <Text variant="h5">
                 {formatMessage(overview.selection.secondSubtitle)}
               </Text>
-              <Text>{answers?.selection?.second?.school?.name}</Text>
+              <Text>{selection?.second?.school?.name}</Text>
               <Text>
                 {formatMessage(overview.selection.firstProgramLabel)}:{' '}
-                {getTranslatedProgram(
-                  lang,
-                  answers?.selection?.second?.firstProgram,
-                )}
+                {getTranslatedProgram(lang, selection?.second?.firstProgram)}
               </Text>
-              {!!answers?.selection?.second?.secondProgram?.include && (
+              {!!selection?.second?.secondProgram?.include && (
                 <Text>
                   {formatMessage(overview.selection.secondProgramLabel)}:{' '}
-                  {getTranslatedProgram(
-                    lang,
-                    answers?.selection?.second?.secondProgram,
-                  )}
+                  {getTranslatedProgram(lang, selection?.second?.secondProgram)}
                 </Text>
               )}
-              {!!answers?.selection?.second?.thirdLanguage?.code && (
-                <Text>{answers?.selection?.second?.thirdLanguage?.name}</Text>
+              {!!selection?.second?.thirdLanguage?.code && (
+                <Text>{selection?.second?.thirdLanguage?.name}</Text>
               )}{' '}
-              {!!answers?.selection?.second?.nordicLanguage?.code && (
-                <Text>{answers?.selection?.second?.nordicLanguage?.name}</Text>
+              {!!selection?.second?.nordicLanguage?.code && (
+                <Text>{selection?.second?.nordicLanguage?.name}</Text>
               )}
             </GridColumn>
           )}
 
           {/* Third selection */}
-          {answers?.selection?.third?.include && (
+          {selection?.third?.include && (
             <Box marginTop={2}>
               <GridColumn span="1/2">
                 <Text variant="h5">
                   {formatMessage(overview.selection.thirdSubtitle)}
                 </Text>
-                <Text>{answers?.selection?.third?.school?.name}</Text>
+                <Text>{selection?.third?.school?.name}</Text>
                 <Text>
                   {formatMessage(overview.selection.firstProgramLabel)}:{' '}
-                  {getTranslatedProgram(
-                    lang,
-                    answers?.selection?.third?.firstProgram,
-                  )}
+                  {getTranslatedProgram(lang, selection?.third?.firstProgram)}
                 </Text>
-                {!!answers?.selection?.third?.secondProgram?.include && (
+                {!!selection?.third?.secondProgram?.include && (
                   <Text>
                     {formatMessage(overview.selection.secondProgramLabel)}:{' '}
                     {getTranslatedProgram(
                       lang,
-                      answers?.selection?.third?.secondProgram,
+                      selection?.third?.secondProgram,
                     )}
                   </Text>
                 )}
-                {!!answers?.selection?.third?.thirdLanguage?.code && (
-                  <Text>{answers?.selection?.third?.thirdLanguage?.name}</Text>
+                {!!selection?.third?.thirdLanguage?.code && (
+                  <Text>{selection?.third?.thirdLanguage?.name}</Text>
                 )}
-                {!!answers?.selection?.third?.nordicLanguage?.code && (
-                  <Text>{answers?.selection?.third?.nordicLanguage?.name}</Text>
+                {!!selection?.third?.nordicLanguage?.code && (
+                  <Text>{selection?.third?.nordicLanguage?.name}</Text>
                 )}
               </GridColumn>
               <GridColumn span="1/2"></GridColumn>

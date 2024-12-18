@@ -1,9 +1,9 @@
-import { SecondarySchoolAnswers } from '@island.is/application/templates/secondary-school'
 import { Message } from '@island.is/email-service'
 import { EmailTemplateGeneratorProps } from '../../../../types'
 import { EmailRecipient } from '../types'
 import { pathToAsset } from '../utils'
 import { ApplicationConfigurations } from '@island.is/application/types'
+import { getValueViaPath } from '@island.is/application/core'
 
 export type ApplicationSubmittedEmail = (
   props: EmailTemplateGeneratorProps,
@@ -18,12 +18,16 @@ export const generateApplicationSubmittedEmail: ApplicationSubmittedEmail = (
     application,
     options: { email, clientLocationOrigin },
   } = props
-  const answers = application.answers as SecondarySchoolAnswers
-
   if (!recipient.email) throw new Error('Recipient email was undefined')
 
-  const applicantName = answers.applicant.name
-  const applicantNationalId = answers.applicant.nationalId
+  const applicantNationalId = getValueViaPath<string>(
+    application.answers,
+    'applicant.nationalId',
+  )
+  const applicantName = getValueViaPath<string>(
+    application.answers,
+    'applicant.name',
+  )
 
   const subject = 'Umsókn um framhaldsskóla - Umsókn send'
 

@@ -7,6 +7,7 @@ import { useLocale } from '@island.is/localization'
 import { formatKennitala, formatPhoneNumber } from '../../utils'
 import { ReviewGroup } from '../../components/ReviewGroup'
 import { Routes, States } from '../../lib/constants'
+import { getValueViaPath } from '@island.is/application/core'
 
 export const ApplicantOverview: FC<FieldBaseProps> = ({
   application,
@@ -14,7 +15,10 @@ export const ApplicantOverview: FC<FieldBaseProps> = ({
 }) => {
   const { formatMessage } = useLocale()
 
-  const answers = application.answers as SecondarySchoolAnswers
+  const applicant = getValueViaPath<SecondarySchoolAnswers['applicant']>(
+    application.answers,
+    'applicant',
+  )
 
   const onClick = (page: string) => {
     if (goToScreen) goToScreen(page)
@@ -31,17 +35,17 @@ export const ApplicantOverview: FC<FieldBaseProps> = ({
       <Box>
         <GridRow>
           <GridColumn>
-            <Text>{answers?.applicant?.name}</Text>
-            <Text>{formatKennitala(answers?.applicant?.nationalId)}</Text>
-            <Text>{answers?.applicant?.address}</Text>
+            <Text>{applicant?.name}</Text>
+            <Text>{formatKennitala(applicant?.nationalId)}</Text>
+            <Text>{applicant?.address}</Text>
             <Text>
-              {answers?.applicant?.postalCode} {answers?.applicant?.city}
+              {applicant?.postalCode} {applicant?.city}
             </Text>
             <Text>
               {formatMessage(overview.applicant.phoneLabel)}:{' '}
-              {formatPhoneNumber(answers?.applicant?.phoneNumber)}
+              {formatPhoneNumber(applicant?.phoneNumber)}
             </Text>
-            <Text>{answers?.applicant?.email}</Text>
+            <Text>{applicant?.email}</Text>
           </GridColumn>
         </GridRow>
       </Box>

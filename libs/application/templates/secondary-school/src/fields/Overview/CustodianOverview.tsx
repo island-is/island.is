@@ -18,15 +18,24 @@ export const CustodianOverview: FC<FieldBaseProps> = ({
 }) => {
   const { formatMessage } = useLocale()
 
-  const answers = application.answers as SecondarySchoolAnswers
-
   const parents =
     getValueViaPath<NationalRegistryParent[]>(
       application.externalData,
       'nationalRegistryParents.data',
     ) || []
 
-  const otherContacts = (answers?.otherContacts || []).filter((x) => x.include)
+  const custodians =
+    getValueViaPath<SecondarySchoolAnswers['custodians']>(
+      application.answers,
+      'custodians',
+    ) || []
+
+  const otherContacts = (
+    getValueViaPath<SecondarySchoolAnswers['otherContacts']>(
+      application.answers,
+      'otherContacts',
+    ) || []
+  ).filter((x) => x.include)
 
   const onClick = (page: string) => {
     if (goToScreen) goToScreen(page)
@@ -58,9 +67,9 @@ export const CustodianOverview: FC<FieldBaseProps> = ({
                 </Text>
                 <Text>
                   {formatMessage(overview.custodian.phoneLabel)}:{' '}
-                  {formatPhoneNumber(answers?.custodians[index]?.phone)}
+                  {formatPhoneNumber(custodians[index]?.phone)}
                 </Text>
-                <Text>{answers?.custodians[index]?.email}</Text>
+                <Text>{custodians[index]?.email}</Text>
               </GridColumn>
             ))}
             {parents.length % 2 !== 0 && <GridColumn span="1/2"></GridColumn>}

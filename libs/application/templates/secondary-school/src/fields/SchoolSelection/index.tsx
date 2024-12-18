@@ -70,46 +70,44 @@ export const SchoolSelection: FC<FieldBaseProps> = (props) => {
   }
 
   const checkSchoolDuplicate = () => {
-    const updatedAnswers = getValues() as SecondarySchoolAnswers
+    const updatedSelection = getValueViaPath<
+      SecondarySchoolAnswers['selection']
+    >(getValues(), 'selection')
 
-    const schoolIds: string[] = [
-      updatedAnswers?.selection?.first?.school?.id || '',
-    ]
+    const schoolIds: string[] = [updatedSelection?.first?.school?.id || '']
 
     if (includeSecondSelection)
-      schoolIds.push(updatedAnswers?.selection?.second?.school?.id || '')
+      schoolIds.push(updatedSelection?.second?.school?.id || '')
 
     if (includeThirdSelection)
-      schoolIds.push(updatedAnswers?.selection?.third?.school?.id || '')
+      schoolIds.push(updatedSelection?.third?.school?.id || '')
 
     return hasDuplicates(schoolIds.filter((x) => !!x))
   }
 
   const checkProgramDuplicate = () => {
-    const updatedAnswers = getValues() as SecondarySchoolAnswers
+    const updatedSelection = getValueViaPath<
+      SecondarySchoolAnswers['selection']
+    >(getValues(), 'selection')
 
     const programIds: string[] = [
-      updatedAnswers?.selection?.first?.firstProgram?.id || '',
+      updatedSelection?.first?.firstProgram?.id || '',
     ]
-    if (updatedAnswers?.selection?.first?.secondProgram?.include) {
-      programIds.push(updatedAnswers?.selection?.first?.secondProgram?.id || '')
+    if (updatedSelection?.first?.secondProgram?.include) {
+      programIds.push(updatedSelection?.first?.secondProgram?.id || '')
     }
 
     if (includeSecondSelection) {
-      programIds.push(updatedAnswers?.selection?.second?.firstProgram?.id || '')
-      if (updatedAnswers?.selection?.second?.secondProgram?.include) {
-        programIds.push(
-          updatedAnswers?.selection?.second?.secondProgram?.id || '',
-        )
+      programIds.push(updatedSelection?.second?.firstProgram?.id || '')
+      if (updatedSelection?.second?.secondProgram?.include) {
+        programIds.push(updatedSelection?.second?.secondProgram?.id || '')
       }
     }
 
     if (includeThirdSelection) {
-      programIds.push(updatedAnswers?.selection?.third?.firstProgram?.id || '')
-      if (updatedAnswers?.selection?.third?.secondProgram?.include) {
-        programIds.push(
-          updatedAnswers?.selection?.third?.secondProgram?.id || '',
-        )
+      programIds.push(updatedSelection?.third?.firstProgram?.id || '')
+      if (updatedSelection?.third?.secondProgram?.include) {
+        programIds.push(updatedSelection?.third?.secondProgram?.id || '')
       }
     }
 

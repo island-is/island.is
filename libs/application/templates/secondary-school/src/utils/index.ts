@@ -60,14 +60,18 @@ export const hasDuplicates = (arr: string[]): boolean => {
 }
 
 const getRegistrationEndDates = (formValue: FormValue): Date[] => {
-  const answers = formValue as SecondarySchoolAnswers
+  const selection = getValueViaPath<SecondarySchoolAnswers['selection']>(
+    formValue,
+    'selection',
+  )
+
   return [
-    answers?.selection?.first?.firstProgram?.registrationEndDate,
-    answers?.selection?.first?.secondProgram?.registrationEndDate,
-    answers?.selection?.second?.firstProgram?.registrationEndDate,
-    answers?.selection?.second?.secondProgram?.registrationEndDate,
-    answers?.selection?.third?.firstProgram?.registrationEndDate,
-    answers?.selection?.third?.secondProgram?.registrationEndDate,
+    selection?.first?.firstProgram?.registrationEndDate,
+    selection?.first?.secondProgram?.registrationEndDate,
+    selection?.second?.firstProgram?.registrationEndDate,
+    selection?.second?.secondProgram?.registrationEndDate,
+    selection?.third?.firstProgram?.registrationEndDate,
+    selection?.third?.secondProgram?.registrationEndDate,
   ]
     .filter((x) => !!x)
     .map((x) => (x ? new Date(x) : new Date()))
