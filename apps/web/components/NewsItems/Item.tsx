@@ -70,7 +70,7 @@ export const Item = ({
               <Text
                 color={colorVariant === 'blue' ? 'blue600' : undefined}
                 as="h3"
-                variant="h2"
+                variant="h3"
                 title={heading}
               >
                 {heading}
