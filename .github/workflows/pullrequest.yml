@@ -3,8 +3,7 @@ name: Monorepo pipeline - pull request
 on:
   pull_request:
     branches-ignore:
-      - 'unicorn*'
-      - 'feature/unicorn*'
+      - 'uni-pr'
   workflow_dispatch: {}
 
 defaults:

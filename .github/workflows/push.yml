@@ -6,8 +6,7 @@ on:
       - 'main'
       - 'release/**'
       - 'pre-release/**'
-      - '!unicorn-pipe-rel3'
-      - '!feature/unicorn-app'
+      - '!uni-pr'
     paths-ignore:
       - '**/*.md'
     tags:
@@ -16,7 +15,7 @@ on:
   create:
   pull_request:
     branches:
-      - '!unicorn-pipe-rel3'
+      - '!uni-pr'
     types:
       - opened
       - synchronize

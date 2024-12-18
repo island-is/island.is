@@ -15,7 +15,8 @@ on:
   workflow_dispatch: {}
   pull_request:
     branches:
-      - '!unicorn-pipe-rel3'
+      - '!uni-pr'
+      - '!feature/unicorn-app'
     paths:
       - 'charts/**'
       - 'infra/**'
