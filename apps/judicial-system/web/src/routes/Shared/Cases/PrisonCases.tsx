@@ -32,8 +32,7 @@ import {
   getDurationDate,
 } from '@island.is/judicial-system-web/src/components/Table'
 import Table from '@island.is/judicial-system-web/src/components/Table/Table'
-import { strings as tagCaseStateStrings } from '@island.is/judicial-system-web/src/components/TagCaseState/TagCaseState.strings'
-import { getPrisonCaseStatusTag } from '@island.is/judicial-system-web/src/components/Tags/utils'
+import { getPrisonCaseStateTag } from '@island.is/judicial-system-web/src/components/Tags/utils'
 import {
   CaseListEntry,
   CaseState,
@@ -228,7 +227,7 @@ export const PrisonCases: FC = () => {
                     ? CaseState.RECEIVED
                     : CaseState.NEW
                 const prisonCaseStateTag =
-                  getPrisonCaseStatusTag(prisonCaseState)
+                  getPrisonCaseStateTag(prisonCaseState)
 
                 return (
                   <CaseTag
