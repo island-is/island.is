@@ -42,6 +42,8 @@ export const DisplayFormField = ({ field, application }: Props) => {
       display="flex"
       flexDirection="column"
       alignItems={halfWidthOwnline ? 'flexEnd' : undefined}
+      marginTop={field.marginTop}
+      marginBottom={field.marginBottom}
     >
       <Box
         width={halfWidthOwnline ? 'half' : 'full'}
