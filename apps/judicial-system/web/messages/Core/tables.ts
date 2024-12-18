@@ -114,7 +114,7 @@ export const tables = defineMessages({
     description: 'Notaður sem titill fyrir dómstóll dálk í lista yfir mál.',
   },
   punishmentType: {
-    id: 'judicial.system.core:tables.punishmentType',
+    id: 'judicial.system.core:tables.punishment_type',
     defaultMessage: 'Refsitegund',
     description: 'Notaður sem titill fyrir refsitegund dálk í lista yfir mál.',
   },

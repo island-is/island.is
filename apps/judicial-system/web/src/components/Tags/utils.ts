@@ -142,7 +142,7 @@ export const getPunishmentTypeTag = (
       case PunishmentType.SIGNED_FINE_INVITATION:
         return strings.punishmentTypeSignedFineInvitation
       default:
-        return strings.unknown 
+        return strings.unknown
     }
   }
 
