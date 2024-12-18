@@ -9,7 +9,7 @@ import {
 } from '@island.is/application/types'
 import {
   ApplicationType as SecondarySchoolApplicationType,
-  getEndOfDayUTC,
+  getEndOfDayUTCDate,
   getFirstRegistrationEndDate,
   SecondarySchoolAnswers,
 } from '@island.is/application/templates/secondary-school'
@@ -69,7 +69,7 @@ export class SecondarySchoolService extends BaseTemplateApiService {
   }: TemplateApiModuleActionProps): Promise<void> {
     // If we are past the registration date for any of the selected programs, dont allow delete
     if (
-      getEndOfDayUTC(getFirstRegistrationEndDate(application.answers)) <
+      getEndOfDayUTCDate(getFirstRegistrationEndDate(application.answers)) <
       new Date()
     ) {
       throw new TemplateApiError(

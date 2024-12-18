@@ -8,8 +8,7 @@ import {
 } from '@island.is/application/core'
 import { userInformation } from '../../../lib/messages'
 import { Application } from '@island.is/application/types'
-import { getParent, getHasParent } from '../../../utils'
-import { Routes } from '../../../lib/constants'
+import { getParent, getHasParent, Routes } from '../../../utils'
 
 export const custodianSubSection = buildSubSection({
   id: 'custodianSubSection',

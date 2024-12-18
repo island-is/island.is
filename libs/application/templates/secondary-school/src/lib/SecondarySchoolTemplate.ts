@@ -16,7 +16,6 @@ import {
   corePendingActionMessages,
   pruneAfterDays,
 } from '@island.is/application/core'
-import { Events, States, Roles, ApiActions } from './constants'
 import {
   application as applicationMessage,
   externalData,
@@ -30,7 +29,14 @@ import {
   UserProfileApi,
 } from '../dataProviders'
 import { Features } from '@island.is/feature-flags'
-import { getEndOfDayUTC, getLastRegistrationEndDate } from '../utils'
+import {
+  Events,
+  States,
+  Roles,
+  ApiActions,
+  getEndOfDayUTCDate,
+  getLastRegistrationEndDate,
+} from '../utils'
 import { AuthDelegationType } from '@island.is/shared/types'
 import { ApiScope } from '@island.is/auth/scopes'
 
@@ -49,7 +55,7 @@ const pruneInDaysAfterRegistrationCloses = (
   date.setDate(date.getDate() + days)
 
   // set time to right before midnight
-  return getEndOfDayUTC(date)
+  return getEndOfDayUTCDate(date)
 }
 
 const template: ApplicationTemplate<

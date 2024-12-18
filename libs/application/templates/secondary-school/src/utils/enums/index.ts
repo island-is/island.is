@@ -24,3 +24,13 @@ export enum Routes {
   EXTRA_INFORMATION = 'extraInformationMultiField',
   SCHOOL = 'schoolMultiField',
 }
+
+export enum ApplicationType {
+  FRESHMAN = 'FRESHMAN',
+  GENERAL_APPLICATION = 'GENERAL_APPLICATION',
+}
+
+export enum ConclusionView {
+  DEFAULT = 'DEFAULT',
+  OVERVIEW = 'OVERVIEW',
+}

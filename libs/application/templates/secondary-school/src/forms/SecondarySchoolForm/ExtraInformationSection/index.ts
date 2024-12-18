@@ -9,8 +9,12 @@ import {
 } from '@island.is/application/core'
 import { error, extraInformation } from '../../../lib/messages'
 import { getAllLanguageCodes } from '@island.is/shared/utils'
-import { FILE_SIZE_LIMIT, FILE_TYPES_ALLOWED } from '../../../shared'
-import { getEndOfDayUTC, getFirstRegistrationEndDate } from '../../../utils'
+import {
+  FILE_SIZE_LIMIT,
+  FILE_TYPES_ALLOWED,
+  getEndOfDayUTCDate,
+  getFirstRegistrationEndDate,
+} from '../../../utils'
 
 export const extraInformationSection = buildSection({
   id: 'extraInformationSection',
@@ -28,7 +32,8 @@ export const extraInformationSection = buildSection({
           message: error.errorPastRegistrationDateDescription,
           condition: (answers) => {
             return (
-              getEndOfDayUTC(getFirstRegistrationEndDate(answers)) < new Date()
+              getEndOfDayUTCDate(getFirstRegistrationEndDate(answers)) <
+              new Date()
             )
           },
         }),

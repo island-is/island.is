@@ -4,9 +4,8 @@ import { Box, GridColumn, GridRow, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { overview } from '../../lib/messages'
 import { SecondarySchoolAnswers } from '../..'
-import { getTranslatedProgram } from '../../utils'
+import { getTranslatedProgram, Routes, States } from '../../utils'
 import { ReviewGroup } from '../../components/ReviewGroup'
-import { Routes, States } from '../../lib/constants'
 import { getValueViaPath } from '@island.is/application/core'
 
 export const SchoolSelectionOverview: FC<FieldBaseProps> = ({

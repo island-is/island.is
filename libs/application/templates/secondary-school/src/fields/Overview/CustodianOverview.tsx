@@ -7,9 +7,8 @@ import { Box, GridColumn, GridRow, Text } from '@island.is/island-ui/core'
 import { SecondarySchoolAnswers } from '../..'
 import { overview } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
-import { formatKennitala, formatPhoneNumber } from '../../utils'
+import { formatKennitala, formatPhoneNumber, Routes, States } from '../../utils'
 import { ReviewGroup } from '../../components/ReviewGroup'
-import { Routes, States } from '../../lib/constants'
 import { getValueViaPath } from '@island.is/application/core'
 
 export const CustodianOverview: FC<FieldBaseProps> = ({

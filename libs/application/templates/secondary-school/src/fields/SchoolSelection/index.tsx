@@ -6,8 +6,7 @@ import { school } from '../../lib/messages'
 import { getValueViaPath } from '@island.is/application/core'
 import { useFormContext } from 'react-hook-form'
 import { SelectionItem } from './selectionItem'
-import { ApplicationType } from '../../shared'
-import { hasDuplicates } from '../../utils'
+import { ApplicationType, hasDuplicates } from '../../utils'
 import { SecondarySchoolAnswers } from '../..'
 
 export const SchoolSelection: FC<FieldBaseProps> = (props) => {

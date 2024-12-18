@@ -7,16 +7,11 @@ import {
 } from '@island.is/shared/form-fields'
 import { FC, useState, useCallback, useEffect } from 'react'
 import { school } from '../../lib/messages'
-import {
-  ApplicationType,
-  Language,
-  Program,
-  SecondarySchool,
-} from '../../shared'
+import { Language, Program, SecondarySchool } from '../../shared'
+import { ApplicationType, getTranslatedProgram } from '../../utils'
 import { Controller, useFormContext } from 'react-hook-form'
 import { getValueViaPath } from '@island.is/application/core'
 import { useLazyProgramList } from '../../hooks/useLazyProgramList'
-import { getTranslatedProgram } from '../../utils'
 
 type Option = {
   value: string

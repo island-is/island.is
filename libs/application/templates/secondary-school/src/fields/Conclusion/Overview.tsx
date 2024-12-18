@@ -13,7 +13,7 @@ import { SchoolSelectionOverview } from '../Overview/SchoolSelectionOverview'
 import { ExtraInformationOverview } from '../Overview/ExtraInformationOverview'
 import { useLocale } from '@island.is/localization'
 import { conclusion, overview } from '../../lib/messages'
-import { ConclusionView } from '../../shared'
+import { ConclusionView } from '../../utils'
 
 interface Props {
   setView: (view: ConclusionView) => void

@@ -7,7 +7,7 @@ import {
 } from '@island.is/application/core'
 import { error, overview } from '../../../lib/messages'
 import { DefaultEvents } from '@island.is/application/types'
-import { getEndOfDayUTC, getFirstRegistrationEndDate } from '../../../utils'
+import { getEndOfDayUTCDate, getFirstRegistrationEndDate } from '../../../utils'
 
 export const overviewSection = buildSection({
   id: 'overviewSection',
@@ -25,7 +25,8 @@ export const overviewSection = buildSection({
           message: error.errorPastRegistrationDateDescription,
           condition: (answers) => {
             return (
-              getEndOfDayUTC(getFirstRegistrationEndDate(answers)) < new Date()
+              getEndOfDayUTCDate(getFirstRegistrationEndDate(answers)) <
+              new Date()
             )
           },
         }),

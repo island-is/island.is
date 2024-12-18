@@ -5,7 +5,7 @@ import { useLocale } from '@island.is/localization'
 import { overview } from '../../lib/messages'
 import { SecondarySchoolAnswers } from '../..'
 import { ReviewGroup } from '../../components/ReviewGroup'
-import { Routes, States } from '../../lib/constants'
+import { Routes, States } from '../../utils'
 import { getLanguageByCode } from '@island.is/shared/utils'
 import { getValueViaPath } from '@island.is/application/core'
 

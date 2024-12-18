@@ -5,7 +5,7 @@ import {
 } from '@island.is/application/types'
 import { FC } from 'react'
 import { Box, Button, Text } from '@island.is/island-ui/core'
-import { ApplicationType, ConclusionView } from '../../shared'
+import { ApplicationType, ConclusionView } from '../../utils'
 import { useLocale } from '@island.is/localization'
 import { conclusion } from '../../lib/messages'
 import {
