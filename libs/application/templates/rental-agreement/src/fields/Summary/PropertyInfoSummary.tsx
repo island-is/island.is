@@ -1,9 +1,10 @@
-import { GridColumn, GridRow, Link, Text } from '@island.is/island-ui/core'
+import { GridColumn, Link, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { RentalAgreement } from '../../lib/dataSchema'
 import {
   RentalHousingCategoryClass,
   RentalHousingConditionInspector,
+  Routes,
 } from '../../lib/constants'
 import {
   getPropertyTypeOptions,
@@ -13,14 +14,32 @@ import {
 import { summary } from '../../lib/messages'
 import { KeyValue } from './KeyValue'
 import { SummarySection } from './SummarySection'
-import { Divider } from './Divider'
-import { fileLinks, gridRow } from './summaryStyles.css'
+import { fileLink, fileLinksList } from './summaryStyles.css'
+import { SummaryCardRow } from './components/SummaryCardRow'
 
 type Props = {
   answers: RentalAgreement
+  goToScreen?: (id: string) => void
+  categoryRoute?: Routes
+  propertyInfoRoute?: Routes
+  propertyDescriptionRoute?: Routes
+  specialProvisionsRoute?: Routes
+  propertyConditionRoute?: Routes
+  fileUploadRoute?: Routes
+  fireProtectionsRoute?: Routes
 }
 
-export const PropertyInfoSummary = ({ answers }: Props) => {
+export const PropertyInfoSummary = ({
+  answers,
+  goToScreen,
+  categoryRoute,
+  propertyInfoRoute,
+  propertyDescriptionRoute,
+  specialProvisionsRoute,
+  propertyConditionRoute,
+  fileUploadRoute,
+  fireProtectionsRoute,
+}: Props) => {
   const { formatMessage } = useLocale()
 
   const propertyType = (answer: string) => {
@@ -43,8 +62,8 @@ export const PropertyInfoSummary = ({ answers }: Props) => {
 
   return (
     <SummarySection sectionLabel={formatMessage(summary.propertyInfoHeader)}>
-      <GridRow className={gridRow}>
-        <GridColumn span={['12/12', '4/12']}>
+      <SummaryCardRow editAction={goToScreen} route={categoryRoute}>
+        <GridColumn span={['12/12', '6/12', '6/12', '6/12', '4/12']}>
           <KeyValue
             label={summary.propertyTypeLabel}
             value={
@@ -53,6 +72,32 @@ export const PropertyInfoSummary = ({ answers }: Props) => {
             }
           />
         </GridColumn>
+        <GridColumn span={['12/12', '6/12', '6/12', '6/12', '4/12']}>
+          <KeyValue
+            label={summary.propertyClassLabel}
+            value={
+              propertyClass(answers.registerProperty.categoryClass as string) ||
+              '-'
+            }
+          />
+        </GridColumn>
+        {answers.registerProperty.categoryClass ===
+          RentalHousingCategoryClass.SPECIAL_GROUPS &&
+          answers.registerProperty.categoryClassGroup && (
+            <GridColumn span={['12/12', '12/12', '12/12', '12/12', '4/12']}>
+              <KeyValue
+                label={summary.propertyClassGroupLabel}
+                value={
+                  propertyClassGroup(
+                    answers.registerProperty.categoryClassGroup as string,
+                  ) || '-'
+                }
+              />
+            </GridColumn>
+          )}
+      </SummaryCardRow>
+
+      <SummaryCardRow editAction={goToScreen} route={propertyInfoRoute}>
         <GridColumn span={['12/12', '4/12']}>
           <KeyValue
             label={summary.PropertyNumOfRoomsLabel}
@@ -65,62 +110,28 @@ export const PropertyInfoSummary = ({ answers }: Props) => {
             value={answers.registerProperty.size || '-'}
           />
         </GridColumn>
-      </GridRow>
+      </SummaryCardRow>
 
-      <Divider />
-
-      <GridRow className={gridRow}>
-        <GridColumn span={['12/12', '4/12']}>
-          <KeyValue
-            label={summary.propertyClassLabel}
-            value={
-              propertyClass(answers.registerProperty.categoryClass as string) ||
-              '-'
-            }
-          />
-        </GridColumn>
-        {answers.registerProperty.categoryClass ===
-          RentalHousingCategoryClass.SPECIAL_GROUPS &&
-          answers.registerProperty.categoryClassGroup && (
-            <GridColumn span={['12/12', '4/12']}>
-              <KeyValue
-                label={summary.propertyClassGroupLabel}
-                value={
-                  propertyClassGroup(
-                    answers.registerProperty.categoryClassGroup as string,
-                  ) || '-'
-                }
-              />
-            </GridColumn>
-          )}
-      </GridRow>
-
-      <Divider />
-
-      <GridRow className={gridRow}>
+      <SummaryCardRow editAction={goToScreen} route={propertyDescriptionRoute}>
         <GridColumn span={['12/12']}>
           <KeyValue
             label={summary.propertyDescriptionLabel}
             value={answers.specialProvisions.descriptionInput || '-'}
           />
         </GridColumn>
-      </GridRow>
+      </SummaryCardRow>
 
-      <Divider />
-
-      <GridRow className={gridRow}>
+      <SummaryCardRow editAction={goToScreen} route={specialProvisionsRoute}>
         <GridColumn span={['12/12']}>
           <KeyValue
             label={summary.PropertySpecialProvisionsLabel}
             value={answers.specialProvisions.rulesInput || '-'}
           />
         </GridColumn>
-      </GridRow>
+      </SummaryCardRow>
 
-      <Divider />
-
-      <GridRow className={gridRow}>
-        <GridColumn span={['12/12', '4/12']}>
+      <SummaryCardRow editAction={goToScreen} route={propertyConditionRoute}>
+        <GridColumn span={['12/12', '12/12', '12/12', '12/12', '4/12']}>
           <KeyValue
             label={summary.propertyConditionInspectorLabel}
             value={
@@ -129,7 +140,7 @@ export const PropertyInfoSummary = ({ answers }: Props) => {
               answers.condition.inspectorName
                 ? `${formatMessage(
                     summary.propertyConditionInspectorValuePrefix,
-                  )}${answers.condition.inspectorName}`
+                  )}: ${answers.condition.inspectorName}`
                 : `${formatMessage(
                     summary.propertyConditionInspectorValuePrefix,
                   )}${formatMessage(
@@ -138,79 +149,77 @@ export const PropertyInfoSummary = ({ answers }: Props) => {
             }
           />
         </GridColumn>
-        <GridColumn span={['12/12', '8/12']}>
+        <GridColumn span={['12/12', '12/12', '12/12', '12/12', '8/12']}>
           <KeyValue
             label={summary.propertyConditionDescriptionLabel}
             value={answers.condition.resultsDescription || '-'}
           />
         </GridColumn>
-      </GridRow>
-
-      <Divider />
+      </SummaryCardRow>
 
       {
         /* Only show the file upload section if the user has uploaded files */
         answers.condition.resultsFiles.length > 0 && (
-          <>
-            <GridRow className={gridRow}>
-              <GridColumn span={['12/12']}>
-                <Text
-                  variant={'small'}
-                  as={'label'}
-                  fontWeight="semiBold"
-                  marginBottom={1}
-                >
-                  {formatMessage(summary.fileUploadLabel)}
-                </Text>
-
-                <ul>
-                  {answers.condition.resultsFiles.map((file) => (
-                    <li className={fileLinks} key={file.name}>
-                      <Link
-                        underline="small"
-                        underlineVisibility="hover"
-                        color="blue400"
-                        href={'http://localhost:4242/umsoknir/leigusamningur'}
-                      >
-                        {file.name}
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              </GridColumn>
-            </GridRow>
-
-            <Divider />
-          </>
+          <SummaryCardRow editAction={goToScreen} route={fileUploadRoute}>
+            <GridColumn span={['12/12']}>
+              <Text
+                variant={'small'}
+                as={'label'}
+                fontWeight="semiBold"
+                marginBottom={1}
+              >
+                {formatMessage(summary.fileUploadLabel)}
+              </Text>
+              <ul className={fileLinksList}>
+                {answers.condition.resultsFiles.map((file) => (
+                  <li key={file.name} className={fileLink}>
+                    <Link
+                      underline="small"
+                      underlineVisibility="hover"
+                      color="blue400"
+                      // TODO: Change this to the correct URL
+                      href={'http://localhost:4242/umsoknir/leigusamningur'}
+                    >
+                      {file.name}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </GridColumn>
+          </SummaryCardRow>
         )
       }
 
-      <GridRow className={gridRow}>
-        <GridColumn span={['12/12', '6/12', '3/12']}>
+      <SummaryCardRow
+        editAction={goToScreen}
+        route={fireProtectionsRoute}
+        isLast={true}
+      >
+        <GridColumn span={['12/12', '6/12', '6/12', '6/12', '3/12']}>
           <KeyValue
             label={summary.fireProtectionsSmokeDetectorsLabel}
             value={answers.fireProtections.smokeDetectors || '-'}
           />
         </GridColumn>
-        <GridColumn span={['12/12', '6/12', '3/12']}>
+        <GridColumn span={['12/12', '6/12', '6/12', '6/12', '3/12']}>
           <KeyValue
             label={summary.fireProtectionsFireExtinguisherLabel}
             value={answers.fireProtections.fireExtinguisher || '-'}
           />
         </GridColumn>
-        <GridColumn span={['12/12', '6/12', '3/12']}>
+        <GridColumn span={['12/12', '6/12', '6/12', '6/12', '3/12']}>
           <KeyValue
             label={summary.fireProtectionsExitsLabel}
             value={answers.fireProtections.exits || '-'}
           />
         </GridColumn>
-        <GridColumn span={['12/12', '6/12', '3/12']}>
+        <GridColumn span={['12/12', '6/12', '6/12', '6/12', '3/12']}>
           <KeyValue
             label={summary.fireProtectionsFireBlanketLabel}
             value={answers.fireProtections.fireBlanket || '-'}
           />
         </GridColumn>
-      </GridRow>
+      </SummaryCardRow>
     </SummarySection>
   )
 }

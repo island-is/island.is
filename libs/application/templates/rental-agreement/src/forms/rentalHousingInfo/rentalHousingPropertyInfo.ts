@@ -98,7 +98,7 @@ export const RentalHousingPropertyInfo: SubSection = buildSubSection({
     buildMultiField({
       id: 'registerProperty.summary',
       title: '',
-      condition: (answers) => Boolean(answers.registerPropertyInfoAddress),
+      condition: (answers) => Boolean(answers.registerProperty),
       children: [
         buildStaticTableField({
           title: messagesSummary.pageTitle,

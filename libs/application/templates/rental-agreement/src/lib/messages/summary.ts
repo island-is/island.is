@@ -73,6 +73,31 @@ export const summary = defineMessages({
     defaultMessage: 'Tegund',
     description: 'Security type label',
   },
+  securityTypeInstitutionLabel: {
+    id: 'ra.application:summary.securityTypeInstitutionLabel',
+    defaultMessage: 'Nafn stofnunar',
+    description: 'Bank guarantee label',
+  },
+  securityTypeThirdPartyGuaranteeLabel: {
+    id: 'ra.application:summary.securityTypeThirdPartyGuaranteeLabel',
+    defaultMessage: 'Nafn ábyrgðaraðila',
+    description: 'Insurance label',
+  },
+  securityTypeInsuranceLabel: {
+    id: 'ra.application:summary.securityTypeInsuranceLabel',
+    defaultMessage: 'Nafn tryggingarfélags',
+    description: 'Insurance label',
+  },
+  securityTypeMutualFundLabel: {
+    id: 'ra.application:summary.securityTypeMutualFundLabel',
+    defaultMessage: 'Nafn samtryggingasjóðs',
+    description: 'Mutual fund label',
+  },
+  securityTypeOtherLabel: {
+    id: 'ra.application:summary.securityTypeOtherLabel',
+    defaultMessage: 'Tegund Tryggingar',
+    description: 'Other label',
+  },
 
   // Payment & indexation
   paymentDateOptionsLabel: {
@@ -131,12 +156,12 @@ export const summary = defineMessages({
   },
   electricityMeterNumberLabel: {
     id: 'ra.application:summary.electricityMeterNumberLabel',
-    defaultMessage: 'Rafmagnsmælir nr.',
+    defaultMessage: 'Rafmagnsmælir',
     description: 'Electricity meter label',
   },
   heatingCostMeterNumberLabel: {
     id: 'ra.application:summary.heatingCostMeterNumberLabel',
-    defaultMessage: 'Hitamælir nr.',
+    defaultMessage: 'Hitamælir',
     description: 'Meter number label',
   },
   meterStatusLabel: {

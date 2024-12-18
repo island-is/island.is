@@ -6,15 +6,22 @@ import { KeyValue } from './KeyValue'
 import { SummaryCard } from './components/SummaryCard'
 import { SummaryCardRow } from './components/SummaryCardRow'
 import { Routes } from '../../lib/constants'
-import { FieldBaseProps } from '@island.is/application/types'
 import { RentalAgreement } from '../../lib/dataSchema'
 
+type Props = {
+  answers: RentalAgreement
+  goToScreen?: (id: string) => void
+  landlordsRoute?: Routes
+  tenantsRoute?: Routes
+}
+
 export const ApplicantsSummary = ({
-  application,
+  answers,
   goToScreen,
-}: FieldBaseProps) => {
+  landlordsRoute,
+  tenantsRoute,
+}: Props) => {
   const { formatMessage } = useLocale()
-  const answers = application.answers as RentalAgreement
 
   const landlordListWithoutRepresentatives = answers.landlordInfo.table.filter(
     (landlord) =>
@@ -41,7 +48,7 @@ export const ApplicantsSummary = ({
             <SummaryCardRow
               key={landlord.nationalIdWithName?.nationalId}
               editAction={goToScreen}
-              route={Routes.LANDLORDINFORMATION}
+              route={landlordsRoute}
             >
               <GridColumn span={['12/12']}>
                 <KeyValue
@@ -56,13 +63,13 @@ export const ApplicantsSummary = ({
                   gap={'smallGutter'}
                 />
               </GridColumn>
-              <GridColumn span={['12/12', '6/12']}>
+              <GridColumn span={['12/12', '8/12']}>
                 <KeyValue
                   label={summary.emailLabel}
                   value={landlord.email || ''}
                 />
               </GridColumn>
-              <GridColumn span={['12/12', '6/12']}>
+              <GridColumn span={['12/12', '4/12']}>
                 <KeyValue
                   label={summary.phoneNumberLabel}
                   value={formatPhoneNumber(landlord.phone || '-')}
@@ -85,7 +92,7 @@ export const ApplicantsSummary = ({
             <SummaryCardRow
               key={tenant.nationalIdWithName?.nationalId}
               editAction={goToScreen}
-              route={Routes.TENANTINFORMATION}
+              route={tenantsRoute}
             >
               <GridColumn span={['12/12']}>
                 <KeyValue
@@ -100,13 +107,13 @@ export const ApplicantsSummary = ({
                   gap={'smallGutter'}
                 />
               </GridColumn>
-              <GridColumn span={['12/12', '6/12']}>
+              <GridColumn span={['12/12', '8/12']}>
                 <KeyValue
                   label={summary.emailLabel}
                   value={tenant.email || '-'}
                 />
               </GridColumn>
-              <GridColumn span={['12/12', '6/12']}>
+              <GridColumn span={['12/12', '4/12']}>
                 <KeyValue
                   label={summary.phoneNumberLabel}
                   value={formatPhoneNumber(tenant.phone || '-')}

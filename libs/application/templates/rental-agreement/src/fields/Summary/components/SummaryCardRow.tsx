@@ -9,7 +9,7 @@ import { Routes } from '../../../lib/constants'
 interface SummaryCardProps {
   children: ReactNode
   editAction?: (id: string) => void
-  route: Routes
+  route?: Routes
   isChangeButton?: boolean
   isLast?: boolean
 }
@@ -19,7 +19,7 @@ export const SummaryCardRow = ({
   isChangeButton = true,
   editAction,
   route,
-  isLast,
+  isLast = false,
 }: SummaryCardProps) => {
   const { formatMessage } = useLocale()
 
@@ -27,7 +27,7 @@ export const SummaryCardRow = ({
     <>
       <GridRow className={gridRow}>
         {children}
-        {isChangeButton && (
+        {isChangeButton && editAction && route && (
           <div className={changeButton}>
             <Button
               variant="ghost"

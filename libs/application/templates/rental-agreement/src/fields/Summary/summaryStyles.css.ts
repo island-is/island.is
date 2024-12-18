@@ -30,13 +30,18 @@ export const divider = style({
 
 export const changeButton = style({
   position: 'absolute',
-  bottom: '0',
-  right: '0',
+  top: '18px',
+  right: '12px',
 })
 
-export const fileLinks = style({
+export const fileLinksList = style({
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'flex-start',
+  gap: '.4rem',
+  paddingTop: '.4rem',
+})
+
+export const fileLink = style({
   fontSize: '.8rem',
 })

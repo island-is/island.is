@@ -1,7 +1,7 @@
-import { Divider, GridColumn, GridRow } from '@island.is/island-ui/core'
+import { GridColumn } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { RentalAgreement } from '../../lib/dataSchema'
-import { RentOtherFeesPayeeOptions } from '../../lib/constants'
+import { RentOtherFeesPayeeOptions, Routes } from '../../lib/constants'
 import {
   formatCurrency,
   formatDate,
@@ -10,13 +10,15 @@ import {
 import { summary } from '../../lib/messages'
 import { KeyValue } from './KeyValue'
 import { SummarySection } from './SummarySection'
-import { gridRow } from './summaryStyles.css'
+import { SummaryCardRow } from './components/SummaryCardRow'
 
 type Props = {
   answers: RentalAgreement
+  goToScreen?: (id: string) => void
+  route?: Routes
 }
 
-export const OtherFeesSummary = ({ answers }: Props) => {
+export const OtherFeesSummary = ({ answers, goToScreen, route }: Props) => {
   const { formatMessage } = useLocale()
 
   const otherFeesPayee = (answer: string) => {
@@ -25,10 +27,27 @@ export const OtherFeesSummary = ({ answers }: Props) => {
     return matchingOption ? matchingOption.label : '-'
   }
 
+  const tenantPaysHouseFund =
+    answers.rentOtherFees.housingFund === RentOtherFeesPayeeOptions.TENANT
+  const tenantPaysElectricity =
+    answers.rentOtherFees.electricityCost === RentOtherFeesPayeeOptions.TENANT
+  const tenantPaysHeating =
+    answers.rentOtherFees.heatingCost === RentOtherFeesPayeeOptions.TENANT
+
+  console.log('isTenantPayinhHouseFund', tenantPaysHouseFund)
+  console.log('isTenantPayingElectricity', tenantPaysElectricity)
+  console.log('isTenantPayingHeating', tenantPaysHeating)
+
   return (
     <SummarySection sectionLabel={formatMessage(summary.otherCostsHeader)}>
-      <GridRow className={gridRow}>
-        <GridColumn span={['12/12', '4/12']}>
+      <SummaryCardRow
+        editAction={goToScreen}
+        route={route}
+        isLast={
+          !tenantPaysHouseFund && !tenantPaysElectricity && !tenantPaysHeating
+        }
+      >
+        <GridColumn span={['12/12', '6/12', '6/12', '6/12', '4/12']}>
           <KeyValue
             label={summary.electricityCostLabel}
             value={
@@ -37,7 +56,7 @@ export const OtherFeesSummary = ({ answers }: Props) => {
             }
           />
         </GridColumn>
-        <GridColumn span={['12/12', '4/12']}>
+        <GridColumn span={['12/12', '6/12', '6/12', '6/12', '4/12']}>
           <KeyValue
             label={summary.heatingCostLabel}
             value={
@@ -45,7 +64,7 @@ export const OtherFeesSummary = ({ answers }: Props) => {
             }
           />
         </GridColumn>
-        <GridColumn span={['12/12', '4/12']}>
+        <GridColumn span={['12/12', '6/12', '6/12', '6/12', '4/12']}>
           <KeyValue
             label={summary.houseFundLabel}
             value={
@@ -53,94 +72,87 @@ export const OtherFeesSummary = ({ answers }: Props) => {
             }
           />
         </GridColumn>
-      </GridRow>
+      </SummaryCardRow>
 
-      {answers.rentOtherFees.electricityCost ===
-        RentOtherFeesPayeeOptions.TENANT && (
-        <>
-          <Divider />
-
-          <GridRow className={gridRow}>
-            <GridColumn span={['12/12', '4/12']}>
-              <KeyValue
-                label={summary.electricityMeterNumberLabel}
-                value={answers.rentOtherFees.electricityCostMeterNumber || '-'}
-              />
-            </GridColumn>
-            <GridColumn span={['12/12', '4/12']}>
-              <KeyValue
-                label={summary.meterStatusLabel}
-                value={answers.rentOtherFees.electricityCostMeterStatus || '-'}
-              />
-            </GridColumn>
-            <GridColumn span={['12/12', '4/12']}>
-              <KeyValue
-                label={summary.dateOfMeterReadingLabel}
-                value={
-                  (answers.rentOtherFees.electricityCostMeterStatusDate &&
-                    formatDate(
-                      answers.rentOtherFees.electricityCostMeterStatusDate.toString(),
-                    )) ||
-                  '-'
-                }
-              />
-            </GridColumn>
-          </GridRow>
-        </>
+      {tenantPaysElectricity && (
+        <SummaryCardRow
+          editAction={goToScreen}
+          route={route}
+          isLast={!tenantPaysHouseFund && !tenantPaysHeating}
+        >
+          <GridColumn span={['12/12', '6/12', '6/12', '6/12', '4/12']}>
+            <KeyValue
+              label={summary.electricityMeterNumberLabel}
+              value={answers.rentOtherFees.electricityCostMeterNumber || '-'}
+            />
+          </GridColumn>
+          <GridColumn span={['12/12', '6/12', '6/12', '6/12', '4/12']}>
+            <KeyValue
+              label={summary.meterStatusLabel}
+              value={answers.rentOtherFees.electricityCostMeterStatus || '-'}
+            />
+          </GridColumn>
+          <GridColumn span={['12/12', '6/12', '6/12', '6/12', '4/12']}>
+            <KeyValue
+              label={summary.dateOfMeterReadingLabel}
+              value={
+                (answers.rentOtherFees.electricityCostMeterStatusDate &&
+                  formatDate(
+                    answers.rentOtherFees.electricityCostMeterStatusDate.toString(),
+                  )) ||
+                '-'
+              }
+            />
+          </GridColumn>
+        </SummaryCardRow>
       )}
 
-      {answers.rentOtherFees.heatingCost ===
-        RentOtherFeesPayeeOptions.TENANT && (
-        <>
-          <Divider />
-
-          <GridRow className={gridRow}>
-            <GridColumn span={['12/12', '4/12']}>
-              <KeyValue
-                label={summary.heatingCostMeterNumberLabel}
-                value={answers.rentOtherFees.heatingCostMeterNumber || '-'}
-              />
-            </GridColumn>
-            <GridColumn span={['12/12', '4/12']}>
-              <KeyValue
-                label={summary.meterStatusLabel}
-                value={answers.rentOtherFees.heatingCostMeterStatus || '-'}
-              />
-            </GridColumn>
-            <GridColumn span={['12/12', '4/12']}>
-              <KeyValue
-                label={summary.dateOfMeterReadingLabel}
-                value={
-                  (answers.rentOtherFees.heatingCostMeterStatusDate &&
-                    formatDate(
-                      answers.rentOtherFees.heatingCostMeterStatusDate.toString(),
-                    )) ||
-                  '-'
-                }
-              />
-            </GridColumn>
-          </GridRow>
-        </>
+      {tenantPaysHeating && (
+        <SummaryCardRow
+          editAction={goToScreen}
+          route={route}
+          isLast={!tenantPaysHouseFund}
+        >
+          <GridColumn span={['12/12', '6/12', '6/12', '6/12', '4/12']}>
+            <KeyValue
+              label={summary.heatingCostMeterNumberLabel}
+              value={answers.rentOtherFees.heatingCostMeterNumber || '-'}
+            />
+          </GridColumn>
+          <GridColumn span={['12/12', '6/12', '6/12', '6/12', '4/12']}>
+            <KeyValue
+              label={summary.meterStatusLabel}
+              value={answers.rentOtherFees.heatingCostMeterStatus || '-'}
+            />
+          </GridColumn>
+          <GridColumn span={['12/12', '6/12', '6/12', '6/12', '4/12']}>
+            <KeyValue
+              label={summary.dateOfMeterReadingLabel}
+              value={
+                (answers.rentOtherFees.heatingCostMeterStatusDate &&
+                  formatDate(
+                    answers.rentOtherFees.heatingCostMeterStatusDate.toString(),
+                  )) ||
+                '-'
+              }
+            />
+          </GridColumn>
+        </SummaryCardRow>
       )}
 
-      {answers.rentOtherFees.housingFund ===
-        RentOtherFeesPayeeOptions.TENANT && (
-        <>
-          <Divider />
-
-          <GridRow className={gridRow}>
-            <GridColumn span={['12/12', '4/12']}>
-              <KeyValue
-                label={summary.houseFundAmountLabel}
-                value={
-                  formatCurrency(
-                    answers.rentOtherFees.housingFundAmount as string,
-                  ) || '-'
-                }
-              />
-            </GridColumn>
-          </GridRow>
-        </>
+      {tenantPaysHouseFund && (
+        <SummaryCardRow editAction={goToScreen} route={route} isLast={true}>
+          <GridColumn span={['12/12']}>
+            <KeyValue
+              label={summary.houseFundAmountLabel}
+              value={
+                formatCurrency(
+                  answers.rentOtherFees.housingFundAmount as string,
+                ) || '-'
+              }
+            />
+          </GridColumn>
+        </SummaryCardRow>
       )}
     </SummarySection>
   )

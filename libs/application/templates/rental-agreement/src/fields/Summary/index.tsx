@@ -15,9 +15,12 @@ import { ApplicantsRepresentativesSummary } from './ApplicantsRepresentativesSum
 import { SummarySection } from './SummarySection'
 import { ApplicantsSummary } from './ApplicantsSummary'
 import { summaryWrap } from './summaryStyles.css'
+import { Routes } from '../../lib/constants'
 
-export const Summary: FC<React.PropsWithChildren<FieldBaseProps>> = (props) => {
-  const { application, field } = props
+export const Summary: FC<React.PropsWithChildren<FieldBaseProps>> = ({
+  ...props
+}) => {
+  const { application, field, goToScreen } = props
   const { formatMessage } = useLocale()
 
   const answers = application.answers as RentalAgreement
@@ -30,14 +33,42 @@ export const Summary: FC<React.PropsWithChildren<FieldBaseProps>> = (props) => {
         </Text>
         <Text marginBottom={5}>{formatMessage(summary.pageDescription)}</Text>
       </Box>
-      <ApplicantsSummary application={application} field={field} />
+      <ApplicantsSummary
+        answers={answers}
+        goToScreen={goToScreen || (() => {})}
+        landlordsRoute={Routes.LANDLORDINFORMATION}
+        tenantsRoute={Routes.TENANTINFORMATION}
+      />
       <ApplicantsRepresentativesSummary
         application={application}
         field={field}
+        goToScreen={goToScreen || (() => {})}
+        landlordsRoute={Routes.LANDLORDINFORMATION}
+        tenantsRoute={Routes.TENANTINFORMATION}
       />
-      <RentalInfoSummary answers={answers} />
-      <PropertyInfoSummary answers={answers} />
-      <OtherFeesSummary answers={answers} />
+      <RentalInfoSummary
+        answers={answers}
+        goToScreen={goToScreen}
+        rentalPeriodRoute={Routes.RENTALPERIOD}
+        rentalAmountRoute={Routes.RENTALAMOUNT}
+        securityDepositRoute={Routes.SECURITYDEPOSIT}
+      />
+      <PropertyInfoSummary
+        answers={answers}
+        goToScreen={goToScreen}
+        categoryRoute={Routes.PROPERTYCATEGORY}
+        propertyInfoRoute={Routes.PROPERTYINFORMATION}
+        propertyDescriptionRoute={Routes.SPECIALPROVISIONS}
+        specialProvisionsRoute={Routes.SPECIALPROVISIONS}
+        propertyConditionRoute={Routes.CONDITION}
+        fileUploadRoute={Routes.CONDITION}
+        fireProtectionsRoute={Routes.FIREPROTECTIONS}
+      />
+      <OtherFeesSummary
+        answers={answers}
+        goToScreen={goToScreen}
+        route={Routes.OTHERFEES}
+      />
       <SummarySection
         sectionLabel={formatMessage(summary.shareLinkLabel)}
         tooltipText={formatMessage(summary.shareLinkTooltip)}
