@@ -6,6 +6,9 @@ on:
       - 'main'
       - 'release/**'
       - 'pre-release/**'
+    branches-ignore:
+      - 'unicorn*'
+      - 'feature/unicorn*'
     paths-ignore:
       - '**/*.md'
     tags:
@@ -17,6 +20,9 @@ on:
       - opened
       - synchronize
       - labeled
+    branches-ignore:
+      - 'unicorn*'
+      - 'feature/unicorn*'
 
 defaults:
   run:

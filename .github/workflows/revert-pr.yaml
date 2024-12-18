@@ -8,11 +8,18 @@ on:
       - completed
     branches:
       - main
+    branches-ignore:
+      - 'unicorn*'
+      - 'feature/unicorn*'
   pull_request:
     types:
       - opened
       - synchronize
       - labeled
+    branches-ignore:
+      - 'unicorn*'
+      - 'feature/unicorn*'
+
 
 permissions:
   contents: write
