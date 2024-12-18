@@ -8,7 +8,6 @@ import {
   buildRedirectToServicePortalField,
 } from '@island.is/application/core'
 import { Application, Form, FormModes } from '@island.is/application/types'
-import { m } from '../../lib/messages'
 import { ApiActions } from '../../shared'
 import { introSection } from './introSection/introSection'
 import { simpleInputsSection } from './simpleInputsSection'
@@ -19,6 +18,7 @@ import { overviewSection } from './overviewSection/overviewSection'
 import { noInputFieldsSection } from './noInputFieldsSection'
 import { Logo } from '../../components/Logo/Logo'
 import { tablesAndRepeatersSection } from './tablesAndRepeatersSection'
+import { m } from '../../lib/messages'
 
 export const ExampleForm: Form = buildForm({
   id: 'ExampleFormDraft',
@@ -56,9 +56,9 @@ export const ExampleForm: Form = buildForm({
             }),
             buildDescriptionField({
               id: 'overview',
-              title: 'Takk fyrir að sækja um',
+              title: 'Thank you for applying',
               description:
-                'Með því að smella á "Senda" hér að neðan, þá sendist umsóknin inn til úrvinnslu. Við látum þig vita þegar hún er samþykkt eða henni er hafnað.',
+                'By clicking "Submit" below, the application will be sent for processing. We will let you know when it is accepted or rejected.',
             }),
           ],
         }),

@@ -22,7 +22,7 @@ export const conditionsSubsection = buildSubSection({
           id: 'conditionsDescription',
           title: '',
           description:
-            'Hægt er að skilyrða bæði staka reiti og texta eða heil section/subsection',
+            'It is possible to condition both single fields and text or an entire section/subsection',
           marginBottom: 2,
         }),
         buildDescriptionField({
@@ -35,7 +35,7 @@ export const conditionsSubsection = buildSubSection({
           id: 'conditionsDescription3',
           title: '',
           description:
-            'Birting á hverju sem er getur því verið háð svörum frá notanda í umsókninni eða eftir utanaðkomandi gögnum sem eru sótt og sett í external data',
+            'The visibility of everything can be dependent on the users answers in the application or data that has been fetched and placed in externalData.',
           marginBottom: 2,
         }),
         buildCheckboxField({
@@ -43,7 +43,7 @@ export const conditionsSubsection = buildSubSection({
           title: 'Skilyrði fyrir staka reiti',
           options: [
             {
-              label: 'Hakaðu í þetta box til að sjá auka reit bistast',
+              label: 'Check this box to see an extra field appear',
               value: YES,
             },
           ],
@@ -60,7 +60,7 @@ export const conditionsSubsection = buildSubSection({
           id: 'conditionsTextField',
           variant: 'textarea',
           rows: 8,
-          title: 'Þessi reitur er bara í boði ef hakað er í boxið hér að ofan',
+          title: 'This field is only available if the box above is checked',
         }),
         buildCheckboxField({
           id: 'conditions2Checkbox',
@@ -68,7 +68,7 @@ export const conditionsSubsection = buildSubSection({
           options: [
             {
               label:
-                'Hakaðu í þetta box til að sjá nýtt subsection birtast í stepper ------>',
+                'Check this box to see a new subsection appear in the stepper ------>',
               value: YES,
             },
           ],

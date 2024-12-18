@@ -40,7 +40,7 @@ export const Prerequisites: Form = buildForm({
       children: [
         buildExternalDataProvider({
           id: 'approveExternalData',
-          title: 'Utanaðkomandi gögn',
+          title: 'External data',
           dataProviders: [
             buildDataProviderItem({
               provider: UserProfileApi,
@@ -54,8 +54,8 @@ export const Prerequisites: Form = buildForm({
             }),
             buildDataProviderItem({
               provider: NationalRegistryApi,
-              title: 'Þjóðskrá',
-              subTitle: 'Upplýsingar um þig í Þjóðskrá.',
+              title: 'National Registry',
+              subTitle: 'Information about you in the National Registry.',
             }),
             buildDataProviderItem({
               provider: MyMockProvider,

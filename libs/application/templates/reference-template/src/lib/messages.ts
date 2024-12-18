@@ -3,7 +3,7 @@ import { defineMessages } from 'react-intl'
 export const m = defineMessages({
   conditionsSection: {
     id: 'example.application:conditions.section',
-    defaultMessage: 'Skilyrði',
+    defaultMessage: 'Conditions',
     description: 'Some description',
   },
   institutionName: {
@@ -13,124 +13,79 @@ export const m = defineMessages({
   },
   name: {
     id: 'example.application:name',
-    defaultMessage: 'Umsókn',
-    description: `Application's name`,
-  },
-  nameApplicationNeverWorkedBefore: {
-    id: 'example.application:name.application.never.worked.before',
-    defaultMessage: 'Umsókn - Aldrei unnið áður',
+    defaultMessage: 'Application',
     description: `Application's name`,
   },
   nameApplicationWithValue: {
     id: 'example.application:name.application.with.value',
-    defaultMessage: 'Umsókn {value}',
+    defaultMessage: 'Application {value}',
     description: `Application's name with value`,
   },
   draftTitle: {
     id: 'example.application:draft.title',
-    defaultMessage: 'Drög',
+    defaultMessage: 'Draft',
     description: 'First state title',
   },
   draftDescription: {
     id: 'example.application:draft.description',
-    defaultMessage: 'Notendur hafa ekkert að gera á þessu stigi',
+    defaultMessage: 'Users have nothing to do at this stage',
     description: 'Description of the state',
   },
   introSection: {
     id: 'example.application:intro.section',
-    defaultMessage: 'Upplýsingar',
+    defaultMessage: 'Information',
     description: 'Some description',
   },
   introTitle: {
     id: 'example.application:intro.title',
-    defaultMessage: 'Velkomin',
+    defaultMessage: 'Welcome',
     description: 'Some description',
   },
   introDescription: {
     id: 'example.application:intro.description',
     defaultMessage:
-      'Þessi umsókn sýnir hvernig á að smíða umsókn. Hver umsókn skiptist niður í nokkur form og eru mismunandi form sýnd eftir stöðu umsóknarinnar og/eða hlutverki notandans. Formið sem umsóknin er að birta núna er "exampleForm" og núna er umsóknin í stöðunni "draft" og merkir það að þú hafir komist í gegnum fyrsta formið "prerequisitesForm" þar sem staðan var "prerequisites".',
+      'This application shows how to build an application and what components are available. Each application is split into a few different forms that are loaded depending on the application state and/or the user role. Right now the application is showing the "exampleForm" and the application state is "draft". This means that you got through the first form "prerequisitesForm" where the state was "prerequisites".',
     description: 'Some description',
   },
   introDescription2: {
     id: 'example.application:intro.description2',
     defaultMessage:
-      'Í Þessu formi er farið yfir allar mögulegar einingar sem kerfið býður upp á og sýndar eru mismunandi stillingar sem að láta einingarnar birtast eða hegða sér á mismunandi vegu.',
+      'This form covers all possible components that the application system offers and they are shown with different settings that results in the components appearing or behaving in different ways.',
     description: 'Some description',
   },
   about: {
     id: 'example.application:about',
-    defaultMessage: 'Um þig',
+    defaultMessage: 'About you',
     description: 'Some description',
   },
   personName: {
     id: 'example.application:person.name',
-    defaultMessage: 'Nafn',
+    defaultMessage: 'Name',
     description: 'Some description',
   },
   nationalId: {
     id: 'example.application:person.nationalId',
-    defaultMessage: 'Kennitala',
+    defaultMessage: 'National ID',
     description: 'Some description',
   },
   age: {
     id: 'example.application:person.age',
-    defaultMessage: 'Aldur',
+    defaultMessage: 'Age',
     description: 'Some description',
   },
   email: {
     id: 'example.application:person.email',
-    defaultMessage: 'Netfang',
+    defaultMessage: 'Email',
     description: 'Some description',
   },
   phoneNumber: {
     id: 'example.application:person.phoneNumber',
-    defaultMessage: 'Símanúmer',
-    description: 'Some description',
-  },
-  career: {
-    id: 'example.application:career',
-    defaultMessage: 'Starfsferill',
-    description: 'Some description',
-  },
-  history: {
-    id: 'example.application:history',
-    defaultMessage: 'Hvar hefur þú unnið áður?',
-    description: 'Some description',
-  },
-  careerIndustry: {
-    id: 'example.application:career.industry',
-    defaultMessage: 'Starfsgeiri',
-    description: 'Some description',
-  },
-  careerIndustryDescription: {
-    id: 'example.application:career.industryDescription',
-    defaultMessage: 'Í hvaða geira hefur þú unnið?',
-    description: 'Some description',
-  },
-  careerHistory: {
-    id: 'example.application:careerHistory',
-    defaultMessage: 'Hefurðu unnið yfir höfuð einhvern tímann áður?',
-    description: 'Some description',
-  },
-  careerHistoryCompanies: {
-    id: 'example.application:careerHistoryCompanies',
-    defaultMessage: 'Hefurðu unnið fyrir eftirfarandi aðila?',
-    description: 'Some description',
-  },
-  future: {
-    id: 'example.application:future',
-    defaultMessage: 'Hvar langar þig að vinna?',
-    description: 'Some description',
-  },
-  dreamJob: {
-    id: 'example.application:dreamJob',
-    defaultMessage: 'Einhver draumavinnustaður?',
+    defaultMessage: 'Phone number',
     description: 'Some description',
   },
   assigneeTitle: {
     id: 'example.application:assigneeTitle',
-    defaultMessage: 'Hver á að fara yfir?',
+    defaultMessage: 'Who should review?',
     description: 'Some description',
   },
   assignee: {
@@ -140,12 +95,12 @@ export const m = defineMessages({
   },
   yesOptionLabel: {
     id: 'example.application:yes.option.label',
-    defaultMessage: 'Já',
+    defaultMessage: 'Yes',
     description: 'Some description',
   },
   noOptionLabel: {
     id: 'example.application:no.option.label',
-    defaultMessage: 'Nei',
+    defaultMessage: 'No',
     description: 'Some description',
   },
   governmentOptionLabel: {
@@ -161,29 +116,18 @@ export const m = defineMessages({
   },
   dataSchemePhoneNumber: {
     id: 'example.application:dataSchema.phoneNumber',
-    defaultMessage: 'Símanúmerið þarf að vera gilt.',
+    defaultMessage: 'Phone number must be valid.',
     description: 'Error message when phone number is invalid.',
   },
   dataSchemeNationalId: {
     id: 'example.application:dataSchema.national.id',
-    defaultMessage: 'Kennitala þarf að vera gild.',
+    defaultMessage: 'National ID must be valid.',
     description: 'Error message when the kennitala is invalid.',
-  },
-  careerHistoryOther: {
-    id: 'example.application:careerHistory.other',
-    defaultMessage: 'Hvern hefur þú unnið fyrir áður?',
-    description: 'Some description',
-  },
-  careerHistoryOtherError: {
-    id: 'example.application:careerHistory.othertError',
-    defaultMessage:
-      'Vinsamlegast tilgreindu fyrir hvern þú hefur unnið fyrir áður?',
-    description: 'Some description',
   },
   approvedByReviewerError: {
     id: 'example.application:approvedByReviewerError',
     defaultMessage:
-      'Vinsamlegast tilgreindu hvort umsóknin sé samþykkt eða ekki',
+      'Please indicate whether the application is approved or not',
     description: 'Some description',
   },
   regularTextExample: {
@@ -259,31 +203,31 @@ export const m = defineMessages({
   validationDescription: {
     id: 'example.application:validation.description#markdown',
     defaultMessage:
-      'Einhver field bjóða upp á að setja gildið `required: true`, sem nýtir innbyggða virkni í `html` og getur verið afvirkjað með því að skoða DOM-ið fyrir síðuna.\n\n Almennt er best að setja allt sem verður að vera fyllt út eða verður að vera fyllt út á ákveðinn hátt í `/lib/dataSchema.ts`. Fyrir validation skal nota *zod*.',
+      'Any field can have the value `required: true`, which uses the built-in functionality of `html` and can be disabled by inspecting the DOM for the page.\n\n Generally, it is best to put everything that needs to be filled out or needs to be filled out in a certain way in `/lib/dataSchema.ts`. For validation, use *zod*.',
     description: 'Validation description',
   },
   validationDescription3: {
     id: 'example.application:validation.description3#markdown',
     defaultMessage:
-      'Ef valkostir í field eru allir í einu `enum`, þá skal nota `z.nativeEnum()` í zod validation til að sleppa við að lista upp alla hvern valkost í enum-inu eins og þarf að gera ef stuðst er við `z.enum()` ',
+      'If the options in a field are all in one `enum`, then use `z.nativeEnum()` in zod validation to skip listing all the options in the enum as is required when using `z.enum()`.',
     description: 'Validation description',
   },
   conditionsDescription2: {
     id: 'example.application:conditions.description2#markdown',
     defaultMessage:
-      'Þetta er gert á sama hátt í báðum tilvikum. Allt ætti að geta tekið inn `condition` sem parameter og condition tekur inn fall `(answers, externalData) => { ... }` sem skilar `true` eða `false`',
+      'This is done in the same way in both cases. Everything should be able to take in `condition` as a parameter and condition takes in a function `(answers, externalData) => { ... }` that returns `true` or `false`.',
     description: 'Validation description',
   },
   descriptionFieldDescription: {
     id: 'example.application:descriptionFieldDescription',
     defaultMessage:
-      'Allur texti sem birtist í umsóknum ætti að koma úr `lib/messages.ts`. Þessum texta er svo hlaðið upp í contentful með því að keyra `yarn nx run <template-name>:extract-strings`, þar sem `<template-name>` er nafnið á umsókninni eins og það er skrifað í `project.json` í viðeigandi template. Fyrir þessa umsókn er þetta `yarn nx run application-templates-reference-template:extract-strings`. Í contentfull sér skilastjóri eða starfsmaður stofnunar um að setja inn enskar þýðingar og uppfæra textan frá því sem forritari setur inn í defaultMessage.',
+      'All text that appears in applications should come from `lib/messages.ts`. This text is then loaded into contentful by running `yarn nx run <template-name>:extract-strings`, where `<template-name>` is the name of the application as it is written in `project.json` in the relevant template. For this application it is `yarn nx run application-templates-reference-template:extract-strings`. In contentful, the content manager or administrator of the organization is responsible for adding English translations and updating the text from what the developer puts in `defaultMessage`.',
     description: 'Description field description',
   },
   descriptionFieldDescription2: {
     id: 'example.application:descriptionFieldDescription2',
     defaultMessage:
-      'Hér eru listaðir upp allir möguleikar á texta frá buildDescriptionField. Flestir þeirra tengjast því að bæta við  `#markdown` í id-ið til að geta notað markdown í textanum. Einnig er hægt að setja breytur inn í texta og stýra fyrirsagnastærð',
+      'Here is a list of all the options for text from buildDescriptionField. Most of them are related to adding `#markdown` to the id to be able to use markdown in the text. It is also possible to put variables into the text and control title font sizes.',
     description: 'Description field description',
   },
 })

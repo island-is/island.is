@@ -6,7 +6,7 @@ import { actionCardSubsection } from './actionCardSubsection'
 import { keyValueSubsection } from './keyValueSubsection'
 export const noInputFieldsSection = buildSection({
   id: 'noInputFieldsSection',
-  title: 'Fields með engin input',
+  title: 'Fields without inputs',
   children: [
     descriptionSubsection,
     dividerSubsection,

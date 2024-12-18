@@ -17,7 +17,7 @@ export const fieldsRepeaterSubsection = buildSubSection({
           id: 'fieldsRepeaterDescription',
           title: '',
           description:
-            'FieldsRepeater virkar svipað og tableRepeater, að því leiti að inni í honum er skilgreint eitthvað sett af field-um til að fylla út í og þetta sett er hægt að endurtaka eins oft og þarf. Munurinn er að í tableRepeater fara gildin inn í töflu en í fieldsRepeater þá sjást alltaf öll field sem búið er að búa til.',
+            'FieldsRepeater works similarly to tableRepeater, in that it contains a set of fields to fill out and this set can be repeated as many times as needed. The difference is that in tableRepeater, the values go into a table, while in fieldsRepeater, all fields created are always visible.',
         }),
         buildFieldsRepeaterField({
           id: 'fieldsRepeater',

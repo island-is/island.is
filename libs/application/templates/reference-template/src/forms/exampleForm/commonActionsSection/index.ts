@@ -6,7 +6,7 @@ import { validationSubsection } from './validadionSubsection'
 
 export const commonActionsSection = buildSection({
   id: 'commonActions',
-  title: 'Algengar aðgerðir',
+  title: 'Common actions',
   children: [
     getDataFromExternalDataSubsection,
     validationSubsection,

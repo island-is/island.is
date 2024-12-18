@@ -15,13 +15,13 @@ export const conditions2Subsection = buildSubSection({
     return checkbox2Value ? checkbox2Value[0] === YES : false
   },
   id: 'condition2Subsection',
-  title: 'Þetta section er skilyrt',
+  title: 'This section is conditional',
   children: [
     buildDescriptionField({
       id: 'condition2Description',
-      title: 'Þessi skjár sést byggt á fyrri svörum',
+      title: 'This screens visibility is based in previous answers',
       description:
-        'Með þessari virkni getur umsóknin greinst í sundur og safnað mismunandi gögnum fyrir mismunandi svör notenda',
+        'With this functionality, the application can branch and collect different data for different users',
     }),
   ],
 })

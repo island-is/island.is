@@ -20,14 +20,14 @@ export const tableRepeaterSubsection = buildSubSection({
           id: 'tableRepeaterDescription',
           title: '',
           description:
-            'Í table repeater smíðar þú lítið form sem notandinn fyllir út og svörunum er síðan raðað inn í töflu. Aðeins eitt eintak af þessu formi er sýnilegt á hverjum tímapunkti. Í töflunni er hægt að eyða línum og breyta, hægt er að afvirkja þessa möguleika. Einnig er hægt að setja gögn inn í töfluna út frá answers eða external data svipað og í staticTable.',
+            'In the table repeater, you create a small form that the user fills out and the answers are then sorted into a table. Only one instance of this form is visible at a time. In the table, you can delete and edit rows, and you can disable this functionality. You can also insert data into the table from answers or external data, similar to staticTable.',
           marginBottom: 2,
         }),
         buildDescriptionField({
           id: 'tableRepeaterDescription2',
           title: '',
           description:
-            'Í table repeater er í boði að nota input, select, radio, checkbox, date, nationalIdWithName og phone.',
+            'In the table repeater, you can use input, select, radio, checkbox, date, nationalIdWithName and phone.',
         }),
         buildTableRepeaterField({
           id: 'tableRepeater',

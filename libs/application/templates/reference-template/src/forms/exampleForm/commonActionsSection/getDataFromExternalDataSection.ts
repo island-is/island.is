@@ -16,12 +16,12 @@ export const getDataFromExternalDataSubsection = buildSubSection({
       children: [
         buildDescriptionField({
           id: 'externalDataSuccessTitle',
-          title: 'Dæmi um að gögn séu sótt úr external data',
+          title: 'Example of data being fetched from external data',
           marginBottom: [4],
         }),
         buildDescriptionField({
           id: 'externalDataSuccessDescription',
-          title: 'Gildi frá data provider',
+          title: 'Value from data provider',
           titleVariant: 'h4',
           description: (application: Application) => {
             const value = getValueViaPath<string>(
@@ -29,7 +29,7 @@ export const getDataFromExternalDataSubsection = buildSubSection({
               'getReferenceData.data.referenceData.applicantName',
             )
 
-            return value ?? 'Fannst ekki'
+            return value ?? 'Not found'
           },
         }),
         buildDescriptionField({
@@ -41,20 +41,20 @@ export const getDataFromExternalDataSubsection = buildSubSection({
               'getReferenceData.data.referenceData.numbers',
             )
 
-            return value ? `${value}` : 'Fannst ekki'
+            return value ? `${value}` : 'Not found'
           },
           marginBottom: [2],
         }),
         buildDescriptionField({
           id: 'externalDataSuccessDescriptionMock',
-          title: 'Gildi frá mock data provider',
+          title: 'Value from mock data provider',
           titleVariant: 'h4',
           description: (application: Application) => {
             const value = getValueViaPath<string>(
               application.externalData,
               'referenceMock.data.mockObject.mockString',
             )
-            return value ?? 'Fannst ekki'
+            return value ?? 'Not found'
           },
         }),
       ],

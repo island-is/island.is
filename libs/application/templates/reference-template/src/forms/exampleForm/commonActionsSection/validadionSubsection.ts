@@ -26,11 +26,11 @@ export const validationSubsection = buildSubSection({
           id: 'validationDescriptionField2',
           title: '',
           description:
-            'Allir reitir á þessari síðu eru með validation sem verður að fylla út til að halda áfram',
+            'All fields on this page have validation that must be filled out to continue',
         }),
         buildTextField({
           id: 'validation.validationTextField',
-          title: 'Verður að vera 3 stafir eða meira',
+          title: 'Must be 3 characters or more',
           required: true, // Adds the red star to the field
         }),
         buildDescriptionField({

@@ -20,7 +20,7 @@ export const displayFieldSubsection = buildSubSection({
           id: 'displayFieldDescription',
           title: '',
           description:
-            'Display field er bara read only input field bak við tjöldin. Það sem er sérstakt við display field fram yfir input er að value tekur við falli sem hlustar á breytingar í answers og uppfærist því jafn óðum og fyllt er inn í aðra reiti. ',
+            'Display field is just a read only input field behind the scenes. What is special about the display field is that the value takes a function that listens to changes in answers and updates the value accordingly. This is useful for displaying sums, multiples or anything else that is calculated from other fields.',
         }),
         buildTextField({
           id: 'input1',
