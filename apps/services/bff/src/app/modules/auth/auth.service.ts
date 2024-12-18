@@ -18,15 +18,14 @@ import { IdTokenClaims } from '@island.is/shared/types'
 import { Algorithm, decode, verify } from 'jsonwebtoken'
 import { v4 as uuid } from 'uuid'
 import { BffConfig } from '../../bff.config'
-import { SESSION_COOKIE_NAME } from '../../constants/cookies'
 import { FIVE_SECONDS_IN_MS } from '../../constants/time'
 import { CryptoService } from '../../services/crypto.service'
 import { PKCEService } from '../../services/pkce.service'
+import { SessionCookieService } from '../../services/sessionCookie.service'
 import {
   CreateErrorQueryStrArgs,
   createErrorQueryStr,
 } from '../../utils/create-error-query-str'
-import { getCookieOptions } from '../../utils/get-cookie-options'
 import { validateUri } from '../../utils/validate-uri'
 import { CacheService } from '../cache/cache.service'
 import { IdsService } from '../ids/ids.service'
@@ -52,6 +51,7 @@ export class AuthService {
     private readonly cacheService: CacheService,
     private readonly idsService: IdsService,
     private readonly cryptoService: CryptoService,
+    private readonly sessionCookieService: SessionCookieService,
   ) {
     this.baseUrl = this.config.ids.issuer
   }
@@ -266,7 +266,7 @@ export class AuthService {
     res: Response
     loginAttemptCacheKey: string
   }) {
-    const sid = req.cookies[SESSION_COOKIE_NAME]
+    const sid = this.sessionCookieService.get(req)
 
     // Check if older session exists
     if (sid) {
@@ -376,17 +376,16 @@ export class AuthService {
 
       // Clear any existing session cookie first
       // This prevents multiple session cookies being set.
-      res.clearCookie(SESSION_COOKIE_NAME, getCookieOptions())
+      this.sessionCookieService.clear(res)
 
       // Create session cookie with successful login session id
-      res.cookie(
-        SESSION_COOKIE_NAME,
-        updatedTokenResponse.userProfile.sid,
-        getCookieOptions(),
-      )
+      this.sessionCookieService.set({
+        res,
+        value: updatedTokenResponse.userProfile.sid,
+      })
 
       // Check if there is an old session cookie and clean up the cache
-      const oldSessionCookie = req.cookies[SESSION_COOKIE_NAME]
+      const oldSessionCookie = this.sessionCookieService.get(req)
 
       if (
         oldSessionCookie &&
@@ -442,7 +441,7 @@ export class AuthService {
     res: Response
     query: LogoutDto
   }) {
-    const sidCookie = req.cookies[SESSION_COOKIE_NAME]
+    const sidCookie = this.sessionCookieService.get(req)
 
     if (!sidCookie) {
       this.logger.error('Logout failed: No session cookie found')
@@ -452,7 +451,9 @@ export class AuthService {
 
     if (sidCookie !== query.sid) {
       this.logger.error(
-        `Logout failed: Cookie sid "${sidCookie}" does not match the session id in query param "${query.sid}"`,
+        `Logout failed: Cookie "${this.cacheService.createKeyError(
+          sidCookie,
+        )}" does not match the session id in query param "sid"`,
       )
 
       return this.redirectWithError(res, {
@@ -490,7 +491,7 @@ export class AuthService {
      * - Delete the current login from the cache
      * - Clear the session cookie
      */
-    res.clearCookie(SESSION_COOKIE_NAME, getCookieOptions())
+    this.sessionCookieService.clear(res)
 
     this.cacheService
       .delete(currentLoginCacheKey)

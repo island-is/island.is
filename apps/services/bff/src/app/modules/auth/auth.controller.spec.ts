@@ -13,6 +13,7 @@ import {
   mockedTokensResponse as tokensResponse,
 } from '../../../../test/sharedConstants'
 import { BffConfig } from '../../bff.config'
+import { CryptoService } from '../../services/crypto.service'
 import { IdsService } from '../ids/ids.service'
 import { ParResponse } from '../ids/ids.types'
 
@@ -70,6 +71,8 @@ describe('AuthController', () => {
   let server: request.SuperTest<request.Test>
   let mockConfig: ConfigType<typeof BffConfig>
   let baseUrlWithKey: string
+  let cryptoService: CryptoService
+  let encryptedSid: string
 
   beforeAll(async () => {
     const app = await setupTestServer({
@@ -81,8 +84,13 @@ describe('AuthController', () => {
           .useValue(mockIdsService),
     })
 
+    cryptoService = app.get<CryptoService>(CryptoService)
     mockConfig = app.get<ConfigType<typeof BffConfig>>(BffConfig.KEY)
+
     baseUrlWithKey = `${mockConfig.clientBaseUrl}${mockConfig.clientBasePath}`
+
+    // Encrypt the session ID for cookie
+    encryptedSid = cryptoService.encrypt(SID_VALUE, true)
 
     server = request(app.getHttpServer())
   })
@@ -311,7 +319,7 @@ describe('AuthController', () => {
         const loginAttempt = setCacheSpy.mock.calls[0]
 
         // Assert - First request should cache the login attempt
-        expect(setCacheSpy.mock.calls[0]).toContain(
+        expect(loginAttempt[0]).toContain(
           `attempt::${mockConfig.name}::${SID_VALUE}`,
         )
         expect(loginAttempt[1]).toMatchObject({
@@ -322,15 +330,14 @@ describe('AuthController', () => {
         // Then make a callback to the login endpoint
         const res = await server
           .get('/callbacks/login')
-          .set('Cookie', [`${SESSION_COOKIE_NAME}=${SID_VALUE}`])
+          .set('Cookie', [`${SESSION_COOKIE_NAME}=${encryptedSid}`])
           .query({ code, state: SID_VALUE })
 
         const currentLogin = setCacheSpy.mock.calls[1]
 
         // Assert
         expect(setCacheSpy).toHaveBeenCalled()
-
-        expect(currentLogin[0]).toContain(
+        expect(currentLogin[0]).toBe(
           `current::${mockConfig.name}::${SID_VALUE}`,
         )
         // Check if the cache contains the correct values for the current login
@@ -357,7 +364,7 @@ describe('AuthController', () => {
 
       await server
         .get('/callbacks/login')
-        .set('Cookie', [`${SESSION_COOKIE_NAME}=${SID_VALUE}`])
+        .set('Cookie', [`${SESSION_COOKIE_NAME}=${encryptedSid}`])
         .query({ code: 'some_code', state: SID_VALUE })
       const res = await server.get('/logout')
 
@@ -387,7 +394,12 @@ describe('AuthController', () => {
       const res = await server
         .get('/logout')
         .query({ sid: SID_VALUE })
-        .set('Cookie', [`${SESSION_COOKIE_NAME}=invalid_uuid`])
+        .set('Cookie', [
+          `${SESSION_COOKIE_NAME}=${cryptoService.encrypt(
+            'invalid_uuid',
+            true,
+          )}`,
+        ])
 
       // Assert
       expect(res.status).toEqual(HttpStatus.FOUND)
@@ -410,13 +422,13 @@ describe('AuthController', () => {
 
       await server
         .get('/callbacks/login')
-        .set('Cookie', [`${SESSION_COOKIE_NAME}=${SID_VALUE}`])
+        .set('Cookie', [`${SESSION_COOKIE_NAME}=${encryptedSid}`])
         .query({ code: 'some_code', state: SID_VALUE })
 
       const res = await server
         .get('/logout')
         .query({ sid: SID_VALUE })
-        .set('Cookie', [`${SESSION_COOKIE_NAME}=${SID_VALUE}`])
+        .set('Cookie', [`${SESSION_COOKIE_NAME}=${encryptedSid}`])
 
       // Assert
       expect(revokeRefreshTokenSpy).toHaveBeenCalled()
@@ -445,7 +457,7 @@ describe('AuthController', () => {
 
     it('should throw 400 if logout_token is missing from body', async () => {
       // Act
-      const res = await await server.post('/callbacks/logout')
+      const res = await server.post('/callbacks/logout')
 
       // Assert
       expect(res.status).toEqual(HttpStatus.BAD_REQUEST)
@@ -514,7 +526,7 @@ describe('AuthController', () => {
 
       await server
         .get('/callbacks/login')
-        .set('Cookie', [`${SESSION_COOKIE_NAME}=${SID_VALUE}`])
+        .set('Cookie', [`${SESSION_COOKIE_NAME}=${encryptedSid}`])
         .query({ code: 'some_code', state: SID_VALUE })
 
       const res = await server
@@ -574,7 +586,7 @@ describe('AuthController', () => {
       // Act - Try to complete second login
       const res = await server
         .get('/callbacks/login')
-        .set('Cookie', [`${SESSION_COOKIE_NAME}=${SID_VALUE}`])
+        .set('Cookie', [`${SESSION_COOKIE_NAME}=${encryptedSid}`])
         .query({ code, state: SID_VALUE })
 
       // Assert

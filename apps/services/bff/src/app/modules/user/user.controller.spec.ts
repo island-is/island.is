@@ -11,6 +11,7 @@ import {
   mockedTokensResponse as tokensResponse,
 } from '../../../../test/sharedConstants'
 import { BffConfig } from '../../bff.config'
+import { CryptoService } from '../../services/crypto.service'
 import { TokenRefreshService } from '../auth/token-refresh.service'
 import { IdsService } from '../ids/ids.service'
 
@@ -70,6 +71,8 @@ describe('UserController', () => {
   let app: INestApplication
   let server: request.SuperTest<request.Test>
   let mockConfig: ConfigType<typeof BffConfig>
+  let cryptoService: CryptoService
+  let encryptedSid: string
 
   beforeAll(async () => {
     app = await setupTestServer({
@@ -83,7 +86,12 @@ describe('UserController', () => {
           .useValue(mockIdsService),
     })
 
+    cryptoService = app.get<CryptoService>(CryptoService)
     mockConfig = app.get<ConfigType<typeof BffConfig>>(BffConfig.KEY)
+
+    // Encrypt the session ID for cookie
+    encryptedSid = cryptoService.encrypt(SID_VALUE, true)
+
     server = request(app.getHttpServer())
   })
 
@@ -111,7 +119,7 @@ describe('UserController', () => {
       // Act
       const res = await server
         .get('/user')
-        .set('Cookie', [`${SESSION_COOKIE_NAME}=${SID_VALUE}`])
+        .set('Cookie', [`${SESSION_COOKIE_NAME}=${encryptedSid}`])
 
       // Assert
       expect(res.status).toEqual(HttpStatus.UNAUTHORIZED)
@@ -128,7 +136,7 @@ describe('UserController', () => {
       await server.get('/login')
       const callbackRes = await server
         .get('/callbacks/login')
-        .set('Cookie', [`${SESSION_COOKIE_NAME}=${SID_VALUE}`])
+        .set('Cookie', [`${SESSION_COOKIE_NAME}=${encryptedSid}`])
         .query({ code: 'some_code', state: SID_VALUE })
 
       expect(callbackRes.status).toBe(HttpStatus.FOUND)
@@ -136,7 +144,7 @@ describe('UserController', () => {
       // Act - Get user data
       const res = await server
         .get('/user')
-        .set('Cookie', [`${SESSION_COOKIE_NAME}=${SID_VALUE}`])
+        .set('Cookie', [`${SESSION_COOKIE_NAME}=${encryptedSid}`])
 
       // Assert
       expect(res.status).toEqual(HttpStatus.OK)
@@ -161,7 +169,7 @@ describe('UserController', () => {
       await server.get('/login')
       await server
         .get('/callbacks/login')
-        .set('Cookie', [`${SESSION_COOKIE_NAME}=${SID_VALUE}`])
+        .set('Cookie', [`${SESSION_COOKIE_NAME}=${encryptedSid}`])
         .query({ code: 'some_code', state: SID_VALUE })
 
       // Set expired token in cache
@@ -178,7 +186,7 @@ describe('UserController', () => {
       const res = await server
         .get('/user')
         .query({ refresh: 'true' })
-        .set('Cookie', [`${SESSION_COOKIE_NAME}=${SID_VALUE}`])
+        .set('Cookie', [`${SESSION_COOKIE_NAME}=${encryptedSid}`])
 
       // Assert
       expect(mockTokenRefreshService.refreshToken).toHaveBeenCalledWith({
@@ -203,7 +211,7 @@ describe('UserController', () => {
       await server.get('/login')
       await server
         .get('/callbacks/login')
-        .set('Cookie', [`${SESSION_COOKIE_NAME}=${SID_VALUE}`])
+        .set('Cookie', [`${SESSION_COOKIE_NAME}=${encryptedSid}`])
         .query({ code: 'some_code', state: SID_VALUE })
 
       // Set expired token in cache
@@ -220,7 +228,7 @@ describe('UserController', () => {
       const res = await server
         .get('/user')
         .query({ refresh: 'false' })
-        .set('Cookie', [`${SESSION_COOKIE_NAME}=${SID_VALUE}`])
+        .set('Cookie', [`${SESSION_COOKIE_NAME}=${encryptedSid}`])
 
       // Assert
       expect(mockTokenRefreshService.refreshToken).not.toHaveBeenCalled()
@@ -242,7 +250,7 @@ describe('UserController', () => {
       await server.get('/login')
       await server
         .get('/callbacks/login')
-        .set('Cookie', [`${SESSION_COOKIE_NAME}=${SID_VALUE}`])
+        .set('Cookie', [`${SESSION_COOKIE_NAME}=${encryptedSid}`])
         .query({ code: 'some_code', state: SID_VALUE })
 
       // Set valid (not expired) token in cache
@@ -259,7 +267,7 @@ describe('UserController', () => {
       const res = await server
         .get('/user')
         .query({ refresh: 'true' })
-        .set('Cookie', [`${SESSION_COOKIE_NAME}=${SID_VALUE}`])
+        .set('Cookie', [`${SESSION_COOKIE_NAME}=${encryptedSid}`])
 
       // Assert
       expect(mockTokenRefreshService.refreshToken).not.toHaveBeenCalled()
@@ -326,7 +334,7 @@ describe('UserController', () => {
         const res = await server
           .get('/user')
           .query({ refresh: testCase.refresh.toString() })
-          .set('Cookie', [`${SESSION_COOKIE_NAME}=${SID_VALUE}`])
+          .set('Cookie', [`${SESSION_COOKIE_NAME}=${encryptedSid}`])
 
         // Assert
         if (testCase.shouldCallRefresh) {
