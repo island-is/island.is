@@ -7,6 +7,7 @@ on:
       - 'release/**'
       - 'pre-release/**'
       - '!uni-pr'
+      - '!feature/unicorn-app'
     paths-ignore:
       - '**/*.md'
     tags:
@@ -16,6 +17,7 @@ on:
   pull_request:
     branches:
       - '!uni-pr'
+      - '!feature/unicorn-app'
     types:
       - opened
       - synchronize
