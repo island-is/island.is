@@ -119,3 +119,17 @@ export const getIndictmentRulingDecisionTag = (
       return { color: 'darkerBlue', text: strings.complete }
   }
 }
+
+export const getPrisonCaseStatusTag = (prisonCaseState: CaseState): {
+  color: TagVariant
+  text: { id: string; defaultMessage: string; description: string }
+} => {
+  switch (prisonCaseState) {
+    case CaseState.NEW:
+      return { color: 'purple', text: strings.new }
+    case CaseState.RECEIVED:
+      return { color: 'blue', text: strings.received }
+    default:
+      return { color: 'darkerBlue', text: strings.complete }
+  }
+}

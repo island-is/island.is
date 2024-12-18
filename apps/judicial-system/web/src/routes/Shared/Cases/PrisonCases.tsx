@@ -14,6 +14,7 @@ import {
   titles,
 } from '@island.is/judicial-system-web/messages'
 import {
+  CaseTag,
   Logo,
   PageHeader,
   SectionHeading,
@@ -31,6 +32,8 @@ import {
   getDurationDate,
 } from '@island.is/judicial-system-web/src/components/Table'
 import Table from '@island.is/judicial-system-web/src/components/Table/Table'
+import { strings as tagCaseStateStrings } from '@island.is/judicial-system-web/src/components/TagCaseState/TagCaseState.strings'
+import { getPrisonCaseStatusTag } from '@island.is/judicial-system-web/src/components/Tags/utils'
 import {
   CaseListEntry,
   CaseState,
@@ -217,18 +220,23 @@ export const PrisonCases: FC = () => {
               ),
             },
             {
-              cell: (row) =>
-                row.defendants &&
-                row.defendants.length > 0 &&
-                row.defendants[0].openedByPrisonAdminDate ? (
-                  <Tag variant="blue" outlined disabled truncate>
-                    {'Móttekið'}
-                  </Tag>
-                ) : (
-                  <Tag variant="purple" outlined disabled truncate>
-                    {'Nýtt'}
-                  </Tag>
-                ),
+              cell: (row) => {
+                const prisonCaseState =
+                  row.defendants &&
+                  row.defendants?.length > 0 &&
+                  row.defendants[0].openedByPrisonAdminDate
+                    ? CaseState.RECEIVED
+                    : CaseState.NEW
+                const prisonCaseStateTag =
+                  getPrisonCaseStatusTag(prisonCaseState)
+
+                return (
+                  <CaseTag
+                    color={prisonCaseStateTag.color}
+                    text={formatMessage(prisonCaseStateTag.text)}
+                  />
+                )
+              },
             },
           ]}
           generateContextMenuItems={(row) => [openCaseInNewTabMenuItem(row.id)]}
