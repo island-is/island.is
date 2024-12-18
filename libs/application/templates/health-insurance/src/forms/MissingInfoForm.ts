@@ -40,7 +40,6 @@ export const MissingInfoForm: Form = buildForm({
             }),
             buildTitleField({
               title: m.missingInfoAnswersTitle,
-              color: 'dark400',
             }),
             buildCustomField({
               id: 'missingInfo.date',
@@ -59,7 +58,6 @@ export const MissingInfoForm: Form = buildForm({
             }),
             buildTitleField({
               title: m.previousAnswersTitle,
-              color: 'dark400',
             }),
             buildCustomField({
               id: 'submittedData',
