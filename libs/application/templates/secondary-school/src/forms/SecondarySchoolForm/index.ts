@@ -1,6 +1,5 @@
-import { buildForm, buildSection } from '@island.is/application/core'
+import { buildForm } from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
-import { conclusion, externalData } from '../../lib/messages'
 import { userInformationSection } from './UserInformationSection'
 import { Logo } from '../../assets/Logo'
 import { schoolSection } from './SchoolSection'
@@ -15,19 +14,9 @@ export const SecondarySchoolForm: Form = buildForm({
   renderLastScreenButton: true,
   renderLastScreenBackButton: true,
   children: [
-    buildSection({
-      id: 'externalData',
-      title: externalData.dataProvider.sectionTitle,
-      children: [],
-    }),
     userInformationSection,
     schoolSection,
     extraInformationSection,
     overviewSection,
-    buildSection({
-      id: 'conclusion',
-      title: conclusion.general.sectionTitle,
-      children: [],
-    }),
   ],
 })

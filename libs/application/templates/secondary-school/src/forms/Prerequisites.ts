@@ -7,14 +7,7 @@ import {
 } from '@island.is/application/core'
 import { DefaultEvents, Form, FormModes } from '@island.is/application/types'
 import { Logo } from '../assets/Logo'
-import {
-  conclusion,
-  externalData,
-  extraInformation,
-  overview,
-  school,
-  userInformation,
-} from '../lib/messages'
+import { externalData } from '../lib/messages'
 import {
   NationalRegistryParentsApi,
   NationalRegistryUserApi,
@@ -75,31 +68,6 @@ export const Prerequisites: Form = buildForm({
           ],
         }),
       ],
-    }),
-    buildSection({
-      id: 'userInformationSection',
-      title: userInformation.general.sectionTitle,
-      children: [],
-    }),
-    buildSection({
-      id: 'schoolSection',
-      title: school.general.sectionTitle,
-      children: [],
-    }),
-    buildSection({
-      id: 'extraInformationSection',
-      title: extraInformation.general.sectionTitle,
-      children: [],
-    }),
-    buildSection({
-      id: 'overviewSection',
-      title: overview.general.sectionTitle,
-      children: [],
-    }),
-    buildSection({
-      id: 'conclusion',
-      title: conclusion.general.sectionTitle,
-      children: [],
     }),
   ],
 })
