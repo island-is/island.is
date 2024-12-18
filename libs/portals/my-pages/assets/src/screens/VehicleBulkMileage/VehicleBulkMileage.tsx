@@ -178,7 +178,7 @@ const VehicleBulkMileage = () => {
                 labelClose={formatMessage(m.closeFilter)}
                 variant="popover"
                 onFilterClear={() => {
-                  console.log('clear')
+                  setFilterValue(false)
                 }}
                 align="left"
                 reverse

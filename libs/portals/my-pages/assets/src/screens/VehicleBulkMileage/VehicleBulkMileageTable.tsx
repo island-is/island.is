@@ -78,7 +78,7 @@ const VehicleBulkMileageTable = ({ vehicles, loading }: Props) => {
                   <td>
                     <Box marginTop={2}>
                       <Text variant="medium" fontWeight="semiBold">
-                        Samtals:
+                        {formatMessage(vehicleMessage.total)}
                       </Text>
                     </Box>
                   </td>

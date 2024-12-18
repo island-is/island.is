@@ -542,6 +542,10 @@ export const vehicleMessage = defineMessages({
     id: 'sp.vehicles:total-weight',
     defaultMessage: 'Heildarþyngd',
   },
+  total: {
+    id: 'sp.vehicles:total',
+    defaultMessage: 'Samtals:',
+  },
   width: {
     id: 'sp.vehicles:width',
     defaultMessage: 'Breidd',
