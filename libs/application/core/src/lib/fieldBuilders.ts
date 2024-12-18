@@ -48,6 +48,7 @@ import {
   AccordionField,
   BankAccountField,
   TitleField,
+  TitleVariants,
 } from '@island.is/application/types'
 import { Locale } from '@island.is/shared/types'
 import { Colors } from '@island.is/island-ui/theme'
@@ -420,11 +421,12 @@ export const buildDividerField = (data: {
 export const buildTitleField = (data: {
   condition?: Condition
   title?: FormText
+  titleVariant?: TitleVariants
   color?: Colors
   marginBottom?: BoxProps['marginBottom']
   marginTop?: BoxProps['marginTop']
 }): TitleField => {
-  const { title, color, condition, marginTop, marginBottom } = data
+  const { title, titleVariant, color, condition, marginTop, marginBottom } = data
   return {
     id: '',
     children: undefined,
@@ -432,6 +434,7 @@ export const buildTitleField = (data: {
     component: FieldComponents.TITLE,
     doesNotRequireAnswer: true,
     title: title ?? '',
+    titleVariant: titleVariant,
     color,
     condition,
     marginTop,
