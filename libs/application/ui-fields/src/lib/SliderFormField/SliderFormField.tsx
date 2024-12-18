@@ -24,7 +24,6 @@ export const SliderFormField: FC<
     id,
     min,
     max,
-    title,
     trackStyle,
     calculateCellStyle,
     showLabel,
@@ -39,6 +38,8 @@ export const SliderFormField: FC<
     snap,
     step,
     saveAsString,
+    marginTop,
+    marginBottom,
   } = field
   const { clearErrors, setValue } = useFormContext()
   const { formatMessage } = useLocale()
@@ -64,49 +65,41 @@ export const SliderFormField: FC<
   )
 
   return (
-    <Box marginTop={field.marginTop} marginBottom={field.marginBottom}>
+    <Box marginTop={marginTop} marginBottom={marginBottom}>
       <Controller
         name={field.id}
         defaultValue={
-          Number(getValueViaPath(application.answers, field.id)) ||
+          Number(getValueViaPath(application.answers, id)) ||
           getDefaultValue(field, application) ||
-          field.min
+          min
         }
         render={({ field: { onChange, value } }) => (
           <Slider
-            min={field.min}
+            min={min}
             max={finalMax}
-            step={field.step}
-            snap={field.snap}
-            trackStyle={field.trackStyle}
-            calculateCellStyle={field.calculateCellStyle}
-            showLabel={field.showLabel}
-            showMinMaxLabels={field.showMinMaxLabels}
-            showRemainderOverlay={field.showRemainderOverlay}
-            showProgressOverlay={field.showProgressOverlay}
-            showToolTip={field.showToolTip}
+            step={step}
+            snap={snap}
+            trackStyle={trackStyle}
+            calculateCellStyle={calculateCellStyle}
+            showLabel={showLabel}
+            showMinMaxLabels={showMinMaxLabels}
+            showRemainderOverlay={showRemainderOverlay}
+            showProgressOverlay={showProgressOverlay}
+            showToolTip={showToolTip}
             label={{
-              singular: formatText(
-                field.label.singular,
-                application,
-                formatMessage,
-              ),
-              plural: formatText(
-                field.label.plural,
-                application,
-                formatMessage,
-              ),
+              singular: formatText(label.singular, application, formatMessage),
+              plural: formatText(label.plural, application, formatMessage),
             }}
-            rangeDates={field.rangeDates}
+            rangeDates={rangeDates}
             currentIndex={Number(value)}
             onChange={(val) => {
-              clearErrors(field.id)
-              const value = field.saveAsString ? String(val) : val
+              clearErrors(id)
+              const value = saveAsString ? String(val) : val
               onChange(value)
-              setValue(field.id, value)
+              setValue(id, value)
             }}
-            onChangeEnd={field.onChangeEnd}
-            labelMultiplier={field.labelMultiplier}
+            onChangeEnd={onChangeEnd}
+            labelMultiplier={labelMultiplier}
           />
         )}
       />
