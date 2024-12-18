@@ -8,7 +8,7 @@ import { Form, FormModes } from '@island.is/application/types'
 
 export const PendingReview: Form = buildForm({
   id: 'ExamplePending',
-  title: 'Í vinnslu',
+  title: 'In review',
   mode: FormModes.IN_PROGRESS,
   children: [
     buildMultiField({
@@ -16,15 +16,15 @@ export const PendingReview: Form = buildForm({
       children: [
         buildDescriptionField({
           id: 'waitingToAssign',
-          title: 'Í bið',
-          description: 'Beðið eftir umsjón.',
+          title: 'In review',
+          description: 'Waiting for review.',
         }),
         buildSubmitField({
           id: 'submitWaiting',
           placement: 'footer',
-          title: 'Halda áfram',
+          title: 'Continue',
           refetchApplicationAfterSubmit: true,
-          actions: [{ event: 'SUBMIT', name: 'Halda áfram', type: 'primary' }],
+          actions: [{ event: 'SUBMIT', name: 'Continue', type: 'primary' }],
         }),
       ],
     }),
