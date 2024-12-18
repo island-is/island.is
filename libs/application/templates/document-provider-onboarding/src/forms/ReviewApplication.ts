@@ -29,7 +29,7 @@ export const ReviewApplication: Form = buildForm({
           title: m.reviewTitle,
           children: [
             //Error in dev tools, missing keys on divider fields...
-            buildTitleField({ title: m.applicantTitle }),
+            buildTitleField({ title: m.applicantTitle, color: 'blue400' }),
             buildTextField({
               id: 'applicant.nationalId',
               title: m.applicantNationalId,
@@ -55,6 +55,7 @@ export const ReviewApplication: Form = buildForm({
             //Error in dev tools, missing keys on divider fields...
             buildTitleField({
               title: m.administrativeContactTitle,
+              color: 'blue400'
             }),
             buildTextField({
               id: 'administrativeContact.name',
@@ -74,7 +75,7 @@ export const ReviewApplication: Form = buildForm({
               placeholder: '000-0000',
             }),
             //Error in dev tools, missing keys on divider fields...
-            buildTitleField({ title: m.technicalContactTitle }),
+            buildTitleField({ title: m.technicalContactTitle , color: 'blue400' }),
             buildTextField({
               id: 'technicalContact.name',
               title: m.technicalContactName,
@@ -93,7 +94,7 @@ export const ReviewApplication: Form = buildForm({
               placeholder: '000-0000',
             }),
             //Error in dev tools, missing keys on divider fields...
-            buildTitleField({ title: m.helpDeskTitle }),
+            buildTitleField({ title: m.helpDeskTitle, color: 'blue400' }),
             buildTextField({
               id: 'helpDesk.email',
               title: m.helpDeskEmail,

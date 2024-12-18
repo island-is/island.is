@@ -119,6 +119,7 @@ export const machineSubSection = buildSubSection({
         }),
         buildTitleField({
           title: information.general.dividerTitle,
+          color: 'blue400'
         }),
         buildTextField({
           id: 'contact.name',

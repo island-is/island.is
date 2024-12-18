@@ -25,7 +25,7 @@ export const ReviewApplication: Form = buildForm({
           id: 'about',
           title: m.about,
           children: [
-            buildTitleField({ title: 'Umsækjandi' }),
+            buildTitleField({ title: 'Umsækjandi', color: 'blue400' }),
             buildTextField({
               id: 'person.name',
               title: m.personName,
@@ -55,7 +55,7 @@ export const ReviewApplication: Form = buildForm({
               disabled: true,
               width: 'half',
             }),
-            buildTitleField({ title: 'Atvinna' }),
+            buildTitleField({ title: 'Atvinna', color: 'blue400' }),
             buildRadioField({
               id: 'careerHistory',
               title: m.careerHistory,
