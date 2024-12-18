@@ -35,6 +35,7 @@ import {
   TempIndictmentCount as TIndictmentCount,
 } from '@island.is/judicial-system-web/src/types'
 import {
+  isTrafficViolationIndictmentCount,
   removeErrorMessageIfValid,
   validateAndSetErrorMessage,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
@@ -471,6 +472,33 @@ export const IndictmentCount: FC<Props> = ({
     })
   }
 
+  const shouldShowTrafficViolationFields = () => {
+    if (isTrafficViolationCase(workingCase)) {
+      return true
+    }
+
+    const policeCaseNumber = indictmentCount.policeCaseNumber
+
+    if (
+      isTrafficViolationIndictmentCount(
+        policeCaseNumber,
+        workingCase.indictmentSubtypes,
+      )
+    ) {
+      return true
+    }
+
+    if (
+      indictmentCount?.indictmentCountSubtypes?.includes(
+        IndictmentSubtype.TRAFFIC_VIOLATION,
+      )
+    ) {
+      return true
+    }
+
+    return false
+  }
+
   return (
     <BlueBox>
       {onDelete && (
@@ -563,11 +591,7 @@ export const IndictmentCount: FC<Props> = ({
           </>
         )}
       </Box>
-      {(isTrafficViolationCase(workingCase) ||
-        (indictmentCount?.indictmentCountSubtypes?.includes(
-          IndictmentSubtype.TRAFFIC_VIOLATION,
-        ) ??
-          false)) && (
+      {shouldShowTrafficViolationFields() && (
         <>
           <SectionHeading
             heading="h4"

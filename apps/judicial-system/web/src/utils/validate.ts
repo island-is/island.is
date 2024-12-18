@@ -21,6 +21,7 @@ import {
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
+import { isTrafficViolationIndictmentCount } from './formHelper'
 import { isBusiness } from './utils'
 
 export type Validation =
@@ -332,16 +333,10 @@ export const isTrafficViolationStepValidIndictments = (
     partition(workingCase.indictmentCounts, (indictmentCount) => {
       const policeCaseNumber = indictmentCount.policeCaseNumber
 
-      if (
-        policeCaseNumber &&
-        workingCase.indictmentSubtypes[policeCaseNumber].length === 1 &&
-        workingCase.indictmentSubtypes[policeCaseNumber][0] ===
-          IndictmentSubtype.TRAFFIC_VIOLATION
-      ) {
-        return true
-      }
-
-      return false
+      return isTrafficViolationIndictmentCount(
+        policeCaseNumber,
+        workingCase.indictmentSubtypes,
+      )
     })
 
   // Some indictment counts have selected traffic violation while other have not
