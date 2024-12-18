@@ -9,7 +9,7 @@ export const actionCardSubsection = buildSubSection({
   children: [
     buildActionCardListField({
       id: 'actionCardList',
-      title: 'Action cards with buttons',
+      title: 'Action card',
       items: (application, lang) => {
         return [
           {

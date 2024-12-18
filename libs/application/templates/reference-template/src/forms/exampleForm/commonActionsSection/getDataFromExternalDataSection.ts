@@ -12,13 +12,8 @@ export const getDataFromExternalDataSubsection = buildSubSection({
   children: [
     buildMultiField({
       id: 'externalDataSuccess',
-      title: '',
+      title: 'Example of data being fetched from external data',
       children: [
-        buildDescriptionField({
-          id: 'externalDataSuccessTitle',
-          title: 'Example of data being fetched from external data',
-          marginBottom: [4],
-        }),
         buildDescriptionField({
           id: 'externalDataSuccessDescription',
           title: 'Value from data provider',

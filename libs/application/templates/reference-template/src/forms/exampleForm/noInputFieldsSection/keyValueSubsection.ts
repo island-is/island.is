@@ -22,7 +22,7 @@ export const keyValueSubsection = buildSubSection({
           divider: true,
         }),
         buildKeyValueField({
-          label: 'Key value displax flex',
+          label: 'Key value display flex',
           value: ['Value', 'Value 2', 'Value 3'],
           divider: true,
           display: 'flex',

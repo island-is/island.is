@@ -14,6 +14,7 @@ import { NotificationsService } from '../../../notification/notifications.servic
 import { NotificationType } from '../../../notification/notificationsTemplates'
 
 const TWO_HOURS_IN_SECONDS = 2 * 60 * 60
+
 @Injectable()
 export class ReferenceTemplateService extends BaseTemplateApiService {
   constructor(
@@ -26,10 +27,10 @@ export class ReferenceTemplateService extends BaseTemplateApiService {
   async getReferenceData({ application, auth }: TemplateApiModuleActionProps) {
     await new Promise((resolve) => setTimeout(resolve, 2000))
 
-    const applicantName = getValueViaPath(
+    const applicantName = getValueViaPath<string>(
       application.externalData,
       'nationalRegistry.data.fullName',
-    ) as string
+    )
 
     this.notificationsService.sendNotification({
       type: NotificationType.ChildrenResidenceChange,
@@ -38,15 +39,15 @@ export class ReferenceTemplateService extends BaseTemplateApiService {
         sender: auth.nationalId,
       },
       args: {
-        applicantName,
+        applicantName: applicantName || '',
         applicationId: application.id,
       },
     })
 
-    const name = getValueViaPath(
+    const name = getValueViaPath<string>(
       application.externalData,
       'nationalRegistry.data.fullName',
-    ) as string
+    )
 
     return {
       referenceData: {

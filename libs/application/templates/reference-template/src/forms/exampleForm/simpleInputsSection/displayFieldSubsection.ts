@@ -59,25 +59,25 @@ export const displayFieldSubsection = buildSubSection({
 
         buildTextField({
           id: 'input4',
-          title: 'Upphæð leigu',
+          title: 'Rent amount',
           variant: 'currency',
           width: 'half',
           rightAlign: true,
         }),
         buildRadioField({
           id: 'radioFieldForDisplayField',
-          title: 'Trygging fyrir íbúð',
+          title: 'Apartment insurance',
           width: 'half',
           options: [
-            { label: 'Einföld leiga', value: '1' },
-            { label: 'Tvöföld leiga', value: '2' },
-            { label: 'Þreföld leiga', value: '3' },
-            { label: 'Önnur upphæð', value: 'other' },
+            { label: 'Single rent', value: '1' },
+            { label: 'Double rent', value: '2' },
+            { label: 'Triple rent', value: '3' },
+            { label: 'Other', value: 'other' },
           ],
         }),
         buildDisplayField({
           id: 'displayField2',
-          title: 'Upphæð leigu',
+          title: 'Insurance amount',
           variant: 'currency',
           rightAlign: true,
           value: (answers) => {

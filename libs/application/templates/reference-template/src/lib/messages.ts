@@ -203,7 +203,7 @@ export const m = defineMessages({
   validationDescription: {
     id: 'example.application:validation.description#markdown',
     defaultMessage:
-      'Any field can have the value `required: true`, which uses the built-in functionality of `html` and can be disabled by inspecting the DOM for the page.\n\n Generally, it is best to put everything that needs to be filled out or needs to be filled out in a certain way in `/lib/dataSchema.ts`. For validation, use *zod*.',
+      'Any input field can have the value `required: true`, which uses the built-in functionality of `html` and can be disabled by inspecting the DOM for the page.\n\n Generally, it is best to put everything that needs to be filled out or needs to be filled out in a certain way in `/lib/dataSchema.ts`. For validation, use *zod*.',
     description: 'Validation description',
   },
   validationDescription3: {
@@ -221,7 +221,7 @@ export const m = defineMessages({
   descriptionFieldDescription: {
     id: 'example.application:descriptionFieldDescription',
     defaultMessage:
-      'All text that appears in applications should come from `lib/messages.ts`. This text is then loaded into contentful by running `yarn nx run <template-name>:extract-strings`, where `<template-name>` is the name of the application as it is written in `project.json` in the relevant template. For this application it is `yarn nx run application-templates-reference-template:extract-strings`. In contentful, the content manager or administrator of the organization is responsible for adding English translations and updating the text from what the developer puts in `defaultMessage`.',
+      'All text that appear in applications should come from `lib/messages.ts`. This text is then loaded into contentful by running `yarn nx run <template-name>:extract-strings`, where `<template-name>` is the name of the application as it is written in `project.json` in the relevant template. For this application it is `yarn nx run application-templates-reference-template:extract-strings`. In Contentful, the content manager or administrator of the organization is responsible for adding English translations and updating the text from what the developer puts in `defaultMessage`.',
     description: 'Description field description',
   },
   descriptionFieldDescription2: {
