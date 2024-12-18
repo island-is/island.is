@@ -1810,8 +1810,8 @@ namespaces:
     - 'services-sessions'
     - 'contentful-apps'
     - 'services-university-gateway'
-    - 'portals-my-pages'
     - 'unicorn-app'
+    - 'portals-my-pages'
 portals-admin:
   enabled: true
   env:
