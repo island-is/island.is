@@ -3,9 +3,9 @@ import { FormatMessage } from '@island.is/localization'
 import { AccidentNotification } from '../lib/dataSchema'
 import {
   AttachmentsEnum,
-  ChoiceEnum,
   PowerOfAttorneyUploadEnum,
   WhoIsTheNotificationForEnum,
+  YesOrNo,
 } from '../types'
 import {
   getAttachmentTitles,
@@ -56,10 +56,10 @@ describe('getErrorMessageForMissingDocuments', () => {
 
 describe('hasReceivedAllDocuments', () => {
   const testCases = [
-    { who: WhoIsTheNotificationForEnum.ME, fatal: ChoiceEnum.NO },
-    { who: WhoIsTheNotificationForEnum.JURIDICALPERSON, fatal: ChoiceEnum.NO },
-    { who: WhoIsTheNotificationForEnum.POWEROFATTORNEY, fatal: ChoiceEnum.YES },
-    { who: WhoIsTheNotificationForEnum.POWEROFATTORNEY, fatal: ChoiceEnum.NO },
+    { who: WhoIsTheNotificationForEnum.ME, fatal: YesOrNo.NO },
+    { who: WhoIsTheNotificationForEnum.JURIDICALPERSON, fatal: YesOrNo.NO },
+    { who: WhoIsTheNotificationForEnum.POWEROFATTORNEY, fatal: YesOrNo.YES },
+    { who: WhoIsTheNotificationForEnum.POWEROFATTORNEY, fatal: YesOrNo.NO },
   ]
   it.each(testCases)(
     'should return true when all documents are received',
@@ -91,7 +91,7 @@ const getMissingDocuments = (): FormValue => ({
   whoIsTheNotificationFor: {
     answer: WhoIsTheNotificationForEnum.POWEROFATTORNEY,
   },
-  wasTheAccidentFatal: ChoiceEnum.YES,
+  wasTheAccidentFatal: YesOrNo.YES,
   injuryCertificate: {
     answer: AttachmentsEnum.SENDCERTIFICATELATER,
   },
@@ -114,7 +114,7 @@ const getNoMissingDocuments = (): FormValue => ({
   whoIsTheNotificationFor: {
     answer: WhoIsTheNotificationForEnum.POWEROFATTORNEY,
   },
-  wasTheAccidentFatal: ChoiceEnum.YES,
+  wasTheAccidentFatal: YesOrNo.YES,
   injuryCertificate: {
     answer: AttachmentsEnum.SENDCERTIFICATELATER,
   },
@@ -247,7 +247,7 @@ describe('returnMissingDocumentsList', () => {
       whoIsTheNotificationFor: {
         answer: WhoIsTheNotificationForEnum.POWEROFATTORNEY,
       },
-      wasTheAccidentFatal: ChoiceEnum.YES,
+      wasTheAccidentFatal: YesOrNo.YES,
       injuryCertificate: {
         answer: AttachmentsEnum.SENDCERTIFICATELATER,
       },
