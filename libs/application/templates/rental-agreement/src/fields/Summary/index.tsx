@@ -35,14 +35,14 @@ export const Summary: FC<React.PropsWithChildren<FieldBaseProps>> = ({
       </Box>
       <ApplicantsSummary
         answers={answers}
-        goToScreen={goToScreen || (() => {})}
+        goToScreen={goToScreen}
         landlordsRoute={Routes.LANDLORDINFORMATION}
         tenantsRoute={Routes.TENANTINFORMATION}
       />
       <ApplicantsRepresentativesSummary
         application={application}
         field={field}
-        goToScreen={goToScreen || (() => {})}
+        goToScreen={goToScreen}
         landlordsRoute={Routes.LANDLORDINFORMATION}
         tenantsRoute={Routes.TENANTINFORMATION}
       />

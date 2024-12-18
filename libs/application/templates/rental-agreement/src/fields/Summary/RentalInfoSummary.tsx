@@ -1,4 +1,4 @@
-import { GridColumn, GridRow } from '@island.is/island-ui/core'
+import { GridColumn } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { RentalAgreement } from '../../lib/dataSchema'
 import {
@@ -16,11 +16,9 @@ import {
   getSecurityAmountOptions,
   getSecurityDepositTypeOptions,
 } from '../../lib/utils'
-import { rentalPeriod, summary } from '../../lib/messages'
+import { summary } from '../../lib/messages'
 import { KeyValue } from './KeyValue'
 import { SummarySection } from './SummarySection'
-import { Divider } from './Divider'
-import { gridRow } from './summaryStyles.css'
 import { SummaryCardRow } from './components/SummaryCardRow'
 
 type Props = {
