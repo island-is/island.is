@@ -2,6 +2,7 @@ import { TagVariant } from '@island.is/island-ui/core'
 import {
   isDistrictCourtUser,
   isPublicProsecutorUser,
+  PunishmentType,
 } from '@island.is/judicial-system/types'
 
 import {
@@ -117,5 +118,36 @@ export const getIndictmentRulingDecisionTag = (
       return { color: 'rose', text: strings.indictmentWithdrawal }
     default:
       return { color: 'darkerBlue', text: strings.complete }
+  }
+}
+
+export const getPunishmentTypeTag = (
+  punishmentType?: PunishmentType | null,
+): {
+  color: TagVariant
+  text: { id: string; defaultMessage: string; description: string }
+} | null => {
+  if (!punishmentType) return null
+
+  const getPunishmentTypeLabel = (punishmentType?: PunishmentType | null) => {
+    switch (punishmentType) {
+      case PunishmentType.IMPRISONMENT:
+        return strings.punishmentTypeImprisonment
+      case PunishmentType.PROBATION:
+        return strings.punishmentTypeProbation
+      case PunishmentType.FINE:
+        return strings.punishmentTypeFine
+      case PunishmentType.INDICTMENT_RULING_DECISION_FINE:
+        return strings.punishmentTypeIndictmentRulingDecisionFine
+      case PunishmentType.SIGNED_FINE_INVITATION:
+        return strings.punishmentTypeSignedFineInvitation
+      default:
+        return strings.unknown 
+    }
+  }
+
+  return {
+    color: 'red' as TagVariant,
+    text: getPunishmentTypeLabel(punishmentType),
   }
 }
