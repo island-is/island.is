@@ -6,9 +6,8 @@ on:
       - 'main'
       - 'release/**'
       - 'pre-release/**'
-    branches-ignore:
-      - 'unicorn*'
-      - 'feature/unicorn*'
+      - '!unicorn*'
+      - '!feature/unicorn*'
     paths:
       - 'charts/**'
       - 'infra/**'

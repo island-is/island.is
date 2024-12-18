@@ -8,9 +8,8 @@ on:
       - completed
     branches:
       - main
-    branches-ignore:
-      - 'unicorn*'
-      - 'feature/unicorn*'
+      - '!unicorn*'
+      - '!feature/unicorn*'
   pull_request:
     types:
       - opened
