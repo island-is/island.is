@@ -718,7 +718,7 @@ export class CmsElasticsearchService {
       })
     }
 
-    /*if (funds) {
+    if (funds) {
       must.push({
         nested: {
           path: 'tags',
@@ -740,7 +740,7 @@ export class CmsElasticsearchService {
           },
         },
       })
-      }*/
+    }
 
     const grantListResponse: ApiResponse<SearchResponse<MappedData>> =
       await this.elasticService.findByQuery(index, {
