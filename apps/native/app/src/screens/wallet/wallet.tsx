@@ -13,8 +13,16 @@ import SpotlightSearch from 'react-native-spotlight-search'
 import { useTheme } from 'styled-components/native'
 import { useNavigationComponentDidAppear } from 'react-native-navigation-hooks'
 
-import { Alert, EmptyList, GeneralCardSkeleton, TopLine } from '../../ui'
+import {
+  Alert,
+  Button,
+  EmptyList,
+  GeneralCardSkeleton,
+  TopLine,
+  Typography,
+} from '../../ui'
 import illustrationSrc from '../../assets/illustrations/le-retirement-s3.png'
+import refreshIcon from '../../assets/icons/refresh.png'
 import { BottomTabsIndicator } from '../../components/bottom-tabs-indicator/bottom-tabs-indicator'
 import {
   GenericLicenseType,
@@ -141,6 +149,12 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
 
     return []
   }, [res])
+
+  const lastUpdated = licenseItems.find((item) => item.fetch.updated)?.fetch
+    .updated
+  const lastUpdatedFormatted = lastUpdated
+    ? intl.formatDate(new Date(parseInt(lastUpdated, 10)))
+    : undefined
 
   // indexing list for spotlight search IOS
   useEffect(() => {
@@ -283,6 +297,30 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
                   resizeMode="contain"
                 />
               }
+            />
+          </View>
+        }
+        ListFooterComponent={
+          <View
+            style={{
+              justifyContent: 'center',
+              alignItems: 'center',
+              marginTop: theme.spacing[1],
+            }}
+          >
+            {lastUpdatedFormatted && (
+              <Typography variant="body3">
+                {intl.formatMessage(
+                  { id: 'wallet.lastUpdated' },
+                  { date: lastUpdatedFormatted },
+                )}
+              </Typography>
+            )}
+            <Button
+              onPress={() => onRefresh()}
+              title={intl.formatMessage({ id: 'wallet.update' })}
+              isTransparent={true}
+              icon={refreshIcon}
             />
           </View>
         }

@@ -385,6 +385,8 @@ export const is = {
   'wallet.emptyListTitle': 'Hér eru engin skírteini sem stendur',
   'wallet.emptyListDescription':
     'Þegar þú færð t.d. ökuskírteini, skotvopnaleyfi eða veiðikort frá hinu opinbera birtast þau hér.',
+  'wallet.lastUpdated': 'Síðast uppfært: {date}',
+  'wallet.update': 'Uppfæra',
 
   // wallet pass
   'walletPass.screenTitle': 'Skírteini',

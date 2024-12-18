@@ -249,6 +249,8 @@ export const en: TranslatedMessages = {
   'wallet.emptyListTitle': 'There are currently no documents',
   'wallet.emptyListDescription':
     'When you get e.g. driving licenses, firearms licenses or fishing licenses from the government, they appear here.',
+  'wallet.lastUpdated': 'Last updated: {date}',
+  'wallet.update': 'Update',
 
   // wallet pass
   'walletPass.screenTitle': 'Pass',
