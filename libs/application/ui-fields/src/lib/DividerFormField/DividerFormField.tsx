@@ -13,8 +13,8 @@ export const DividerFormField: FC<
 
   return (
     <Box
-      paddingTop={ useDividerLine ? 2 : 0 }
-      paddingBottom={ useDividerLine ? 2 : 0 }
+      paddingTop={useDividerLine ? 2 : 0}
+      paddingBottom={useDividerLine ? 2 : 0}
       marginTop={marginTop}
       marginBottom={marginBottom}
     >
