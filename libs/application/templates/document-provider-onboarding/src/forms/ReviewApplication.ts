@@ -28,7 +28,6 @@ export const ReviewApplication: Form = buildForm({
           id: 'review',
           title: m.reviewTitle,
           children: [
-            //Error in dev tools, missing keys on divider fields...
             buildTitleField({ title: m.applicantTitle, color: 'blue400' }),
             buildTextField({
               id: 'applicant.nationalId',
@@ -52,7 +51,6 @@ export const ReviewApplication: Form = buildForm({
               format: '###-####',
               placeholder: '000-0000',
             }),
-            //Error in dev tools, missing keys on divider fields...
             buildTitleField({
               title: m.administrativeContactTitle,
               color: 'blue400'
@@ -93,7 +91,6 @@ export const ReviewApplication: Form = buildForm({
               format: '###-####',
               placeholder: '000-0000',
             }),
-            //Error in dev tools, missing keys on divider fields...
             buildTitleField({ title: m.helpDeskTitle, color: 'blue400' }),
             buildTextField({
               id: 'helpDesk.email',
@@ -107,7 +104,6 @@ export const ReviewApplication: Form = buildForm({
               format: '###-####',
               placeholder: '000-0000',
             }),
-            //Error in dev tools, missing keys on radio controller...
             buildSubmitField({
               id: 'approvedByReviewer',
               title: m.reviewQuestion,

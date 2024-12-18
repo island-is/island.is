@@ -88,15 +88,12 @@ export const formerInsuranceSection = buildSection({
             return requireConfirmationOfResidency(formerCountry)
           },
         }),
-        buildTitleField({
-          title: ' ',
-          color: 'transparent',
-        }),
         buildDescriptionField({
           id: 'formerInsurance.entitlementDescription',
           title: '',
           description: m.formerInsuranceEntitlement,
           tooltip: m.formerInsuranceEntitlementTooltip,
+          marginTop: 5,
           condition: (answers: FormValue) => formerInsuranceCondition(answers),
         }),
         buildRadioField({

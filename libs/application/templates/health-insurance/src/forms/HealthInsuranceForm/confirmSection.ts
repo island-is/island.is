@@ -56,15 +56,7 @@ export const confirmSection = buildSection({
           uploadHeader: m.fileUploadHeader,
           uploadDescription: m.fileUploadDescription,
           uploadButtonLabel: m.fileUploadButton,
-          condition: {
-            questionId: 'hasAdditionalInfo',
-            comparator: Comparators.EQUALS,
-            value: YES,
-          },
-        }),
-        buildTitleField({
-          title: ' ',
-          color: 'transparent',
+          marginBottom: 5,
           condition: {
             questionId: 'hasAdditionalInfo',
             comparator: Comparators.EQUALS,

@@ -269,7 +269,7 @@ export enum FieldTypes {
   DISPLAY = 'DISPLAY',
   ACCORDION = 'ACCORDION',
   BANK_ACCOUNT = 'BANK_ACCOUNT',
-  TITLE = 'TITLE',
+  TITLE = 'TITLE'
 }
 
 export enum FieldComponents {
@@ -307,7 +307,7 @@ export enum FieldComponents {
   DISPLAY = 'DisplayFormField',
   ACCORDION = 'AccordionFormField',
   BANK_ACCOUNT = 'BankAccountFormField',
-  TITLE = 'TitleFormField',
+  TITLE = 'TitleFormField'
 }
 
 export interface CheckboxField extends InputField {
