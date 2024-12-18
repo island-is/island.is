@@ -186,7 +186,7 @@ export const PrisonCases: FC = () => {
             },
             {
               title: formatMessage(tables.punishmentType),
-              sortable: { isSortable: true, key: 'defendants' },
+              sortable: { isSortable: true, key: 'defendantsPunishmentType' },
             },
             {
               title: capitalize(formatMessage(tables.sentencingDate)),

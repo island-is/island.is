@@ -30,6 +30,7 @@ query Cases {
       isSentToPrisonAdmin
       punishmentType
     }
+    defendantsPunishmentType
     courtDate
     isValidToDateInThePast
     initialRulingDate
