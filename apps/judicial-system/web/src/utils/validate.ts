@@ -344,8 +344,6 @@ export const isTrafficViolationStepValidIndictments = (
       return false
     })
 
-  console.log(onlyTrafficViolationIndictmentCounts, otherIndictmentCounts)
-
   // Some indictment counts have selected traffic violation while other have not
   const [
     indictmentCountsWithSelectedTrafficViolation,
