@@ -23,10 +23,28 @@ export const application = defineMessages({
     description:
       'Description of application state/status when the application is in progress',
   },
-  actionCardDone: {
+  actionCardCompleted: {
     id: 'ss.application:actionCardDone',
     defaultMessage: 'Móttekin',
     description:
-      'Description of application state/status when application is processed',
+      'Description of application state/status when application is completed',
+  },
+  stateMetaNamePrerequisites: {
+    id: 'ss.application:stateMetaNamePrerequisites',
+    defaultMessage: 'Skilyrði',
+    description:
+      'Meta name of application state when the application is in prerequisites',
+  },
+  stateMetaNameDraft: {
+    id: 'ss.application:stateMetaNameDraft',
+    defaultMessage: 'Umsókn um framhaldsskóla',
+    description:
+      'Meta name of application state when the application is in draft',
+  },
+  stateMetaNameCompleted: {
+    id: 'ss.application:stateMetaNameCompleted',
+    defaultMessage: 'Completed',
+    description:
+      'Meta name of application state when the application is in completed',
   },
 })

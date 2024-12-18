@@ -8,6 +8,7 @@ import {
   Application,
   DefaultEvents,
   defineTemplateApi,
+  FormModes,
 } from '@island.is/application/types'
 import {
   EphemeralStateLifeCycle,
@@ -16,7 +17,11 @@ import {
   pruneAfterDays,
 } from '@island.is/application/core'
 import { Events, States, Roles, ApiActions } from './constants'
-import { application, application as applicationMessage } from './messages'
+import {
+  application as applicationMessage,
+  externalData,
+  overview,
+} from './messages'
 import { SecondarySchoolSchema } from './dataSchema'
 import {
   NationalRegistryParentsApi,
@@ -53,7 +58,7 @@ const template: ApplicationTemplate<
   Events
 > = {
   type: ApplicationTypes.SECONDARY_SCHOOL,
-  name: application.name,
+  name: applicationMessage.name,
   institution: applicationMessage.institutionName,
   translationNamespaces: [
     ApplicationConfigurations.SecondarySchool.translation,
@@ -71,9 +76,9 @@ const template: ApplicationTemplate<
     states: {
       [States.PREREQUISITES]: {
         meta: {
-          name: 'Skilyrði',
+          name: applicationMessage.stateMetaNamePrerequisites.defaultMessage,
           progress: 0,
-          status: 'draft',
+          status: FormModes.DRAFT,
           actionCard: {
             tag: {
               label: applicationMessage.actionCardPrerequisites,
@@ -100,7 +105,7 @@ const template: ApplicationTemplate<
               actions: [
                 {
                   event: DefaultEvents.SUBMIT,
-                  name: 'Staðfesta',
+                  name: externalData.dataProvider.submitButton,
                   type: 'primary',
                 },
               ],
@@ -121,8 +126,8 @@ const template: ApplicationTemplate<
       },
       [States.DRAFT]: {
         meta: {
-          name: 'Umsókn um framhaldsskóla',
-          status: 'draft',
+          name: applicationMessage.stateMetaNameDraft.defaultMessage,
+          status: FormModes.DRAFT,
           actionCard: {
             tag: {
               label: applicationMessage.actionCardDraft,
@@ -149,7 +154,7 @@ const template: ApplicationTemplate<
               actions: [
                 {
                   event: DefaultEvents.SUBMIT,
-                  name: 'Staðfesta',
+                  name: overview.buttons.confirm,
                   type: 'primary',
                 },
               ],
@@ -164,8 +169,8 @@ const template: ApplicationTemplate<
       },
       [States.COMPLETED]: {
         meta: {
-          name: 'Completed',
-          status: 'completed',
+          name: applicationMessage.stateMetaNameCompleted.defaultMessage,
+          status: FormModes.COMPLETED,
           lifecycle: {
             shouldBeListed: true,
             shouldBePruned: true,
@@ -180,7 +185,7 @@ const template: ApplicationTemplate<
           }),
           actionCard: {
             tag: {
-              label: applicationMessage.actionCardDone,
+              label: applicationMessage.actionCardCompleted,
               variant: 'blueberry',
             },
             pendingAction: {
