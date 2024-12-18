@@ -1,4 +1,6 @@
-import { validate } from './validate'
+import faker from 'faker'
+
+import { isTrafficViolationStepValidIndictments, validate } from './validate'
 
 describe('Validate police casenumber format', () => {
   test('should fail if not in correct form', () => {
@@ -295,4 +297,16 @@ describe('Validate vehicle registration number', () => {
       expect(result.errorMessage).toEqual('Dæmi: AB123')
     },
   )
+})
+
+describe.only('isTrafficViolationStepValidIndictments', () => {
+  test('should return false if there are no demands in a case', () => {
+    const theCase = {
+      id: faker.datatype.uuid(),
+      demands: null,
+    }
+
+    const result = isTrafficViolationStepValidIndictments(theCase)
+    expect(result).toEqual(false)
+  })
 })
