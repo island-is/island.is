@@ -119,7 +119,6 @@ export const tableRepeaterSubsection = buildSubSection({
             format: {
               input: (value) => `${value} - custom format`,
               nationalIdWithName: (value) => {
-                console.log(value)
                 return `${value} - custom format`
               },
             },
