@@ -111,6 +111,12 @@ export const userInformation = {
       defaultMessage: 'Tengiliður',
       description: 'Title of other contact page',
     },
+    description: {
+      id: 'ss.application:userInformation.otherContact.description',
+      defaultMessage:
+        'Vinsamlegast farðu yfir hvort allar upplýsingar séu réttar',
+      description: 'Description of other contact page',
+    },
     subtitle: {
       id: 'ss.application:userInformation.otherContact.subtitle',
       defaultMessage: 'Aðrir tengiliðir',

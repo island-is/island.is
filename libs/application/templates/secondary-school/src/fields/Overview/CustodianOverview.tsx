@@ -29,22 +29,34 @@ export const CustodianOverview: FC<FieldBaseProps> = ({
       'custodians',
     ) || []
 
+  const mainOtherContact = getValueViaPath<
+    SecondarySchoolAnswers['mainOtherContact']
+  >(application.answers, 'mainOtherContact')
+
   const otherContacts = (
     getValueViaPath<SecondarySchoolAnswers['otherContacts']>(
       application.answers,
       'otherContacts',
     ) || []
-  ).filter((x) => x.include)
+  ).filter((x) => !!x.person.nationalId)
 
   const onClick = (page: string) => {
     if (goToScreen) goToScreen(page)
   }
 
+  const hasParent = !!parents[0]
+  const showMainOtherContact = !!mainOtherContact?.nationalId
+  const showOtherContacts = !!otherContacts.length
+
   return (
     <ReviewGroup
       handleClick={() => onClick(Routes.CUSTODIAN)}
       editMessage={formatMessage(overview.general.editMessage)}
-      title={formatMessage(overview.custodian.subtitle)}
+      title={formatMessage(
+        hasParent
+          ? overview.custodian.subtitle
+          : overview.otherContact.subtitle,
+      )}
       isEditable={application.state === States.DRAFT}
     >
       <Box>
@@ -53,7 +65,8 @@ export const CustodianOverview: FC<FieldBaseProps> = ({
             {parents.map((parent, index) => (
               <GridColumn span="1/2">
                 <Text variant="h5">
-                  {formatMessage(overview.custodian.subtitle)} {index + 1}
+                  {formatMessage(overview.custodian.subtitle)}{' '}
+                  {parents.length > 1 ? index + 1 : ''}
                 </Text>
                 <Text>
                   {parent.givenName} {parent.familyName}
@@ -75,26 +88,39 @@ export const CustodianOverview: FC<FieldBaseProps> = ({
           </GridRow>
         )}
 
-        {!!otherContacts.length && (
+        {(showMainOtherContact || showOtherContacts) && (
           <GridRow marginTop={3}>
-            {otherContacts.map((otherContact, index) => (
-              <GridColumn span="1/2">
+            {showMainOtherContact && (
+              <GridColumn span={showOtherContacts ? '1/2' : '1/1'}>
                 <Text variant="h5">
-                  {formatMessage(overview.otherContact.subtitle)}{' '}
-                  {otherContacts.length > 0 ? index + 1 : ''}
+                  {formatMessage(overview.otherContact.label)}{' '}
+                  {otherContacts.length > 0 ? '1' : ''}
                 </Text>
-                <Text>{otherContact.name}</Text>
-                <Text>{formatKennitala(otherContact.nationalId)}</Text>
+                <Text>{mainOtherContact.name}</Text>
+                <Text>{formatKennitala(mainOtherContact.nationalId)}</Text>
                 <Text>
                   {formatMessage(overview.otherContact.phoneLabel)}:{' '}
-                  {formatPhoneNumber(otherContact.phone)}
+                  {formatPhoneNumber(mainOtherContact.phone)}
                 </Text>
-                <Text>{otherContact.email}</Text>
+                <Text>{mainOtherContact.email}</Text>
               </GridColumn>
-            ))}
-            {otherContacts.length % 2 !== 0 && (
-              <GridColumn span="1/2"></GridColumn>
             )}
+            {showOtherContacts &&
+              otherContacts.map((otherContact, index) => (
+                <GridColumn span="1/2">
+                  <Text variant="h5">
+                    {formatMessage(overview.otherContact.label)}{' '}
+                    {mainOtherContact?.nationalId ? index + 2 : ''}
+                  </Text>
+                  <Text>{otherContact.person.name}</Text>
+                  <Text>{formatKennitala(otherContact.person.nationalId)}</Text>
+                  <Text>
+                    {formatMessage(overview.otherContact.phoneLabel)}:{' '}
+                    {formatPhoneNumber(otherContact.phone)}
+                  </Text>
+                  <Text>{otherContact.email}</Text>
+                </GridColumn>
+              ))}
           </GridRow>
         )}
       </Box>

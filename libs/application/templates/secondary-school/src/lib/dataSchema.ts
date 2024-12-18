@@ -8,57 +8,51 @@ const FileDocumentSchema = z.object({
   key: z.string(),
 })
 
-const CustodianSchema = z
-  .object({
-    nationalId: z.string().optional(),
-    name: z.string().optional(),
-    email: z.string().optional(),
-    phone: z.string().optional(),
-  })
-  .refine(
-    ({ nationalId, email }) => {
-      if (!nationalId) return true
-      return !!email
-    },
-    { path: ['email'] },
-  )
-  .refine(
-    ({ nationalId, phone }) => {
-      if (!nationalId) return true
-      return !!phone
-    },
-    { path: ['phone'] },
-  )
+const CustodianSchema = z.object({
+  nationalId: z.string().min(1),
+  name: z.string(),
+  email: z.string().min(1),
+  phone: z.string().min(1),
+})
 
-const OtherContactSchema = z
+const MainOtherContactSchema = z
   .object({
-    include: z.boolean(),
+    required: z.boolean(),
     nationalId: z.string().optional(),
     name: z.string().optional(),
     email: z.string().optional(),
     phone: z.string().optional(),
   })
   .refine(
-    ({ include, nationalId }) => {
-      if (!include) return true
+    ({ required, nationalId }) => {
+      if (!required) return true
       return !!nationalId
     },
     { path: ['nationalId'] },
   )
   .refine(
-    ({ include, email }) => {
-      if (!include) return true
+    ({ required, email }) => {
+      if (!required) return true
       return !!email
     },
     { path: ['email'] },
   )
   .refine(
-    ({ include, phone }) => {
-      if (!include) return true
+    ({ required, phone }) => {
+      if (!required) return true
       return !!phone
     },
     { path: ['phone'] },
   )
+
+const OtherContactSchema = z.object({
+  person: z.object({
+    nationalId: z.string().min(1),
+    name: z.string(),
+  }),
+  email: z.string().min(1),
+  phone: z.string().min(1),
+})
 
 const SelectionSchema = z
   .object({
@@ -131,7 +125,8 @@ export const SecondarySchoolSchema = z.object({
   }),
   applicationType: z.nativeEnum(ApplicationType),
   custodians: z.array(CustodianSchema).max(2),
-  otherContacts: z.array(OtherContactSchema).max(2),
+  mainOtherContact: MainOtherContactSchema,
+  otherContacts: z.array(OtherContactSchema).max(1),
   selection: z.object({
     first: SelectionSchema,
     second: SelectionSchema.optional(),

@@ -51,8 +51,13 @@ export const overview = {
   otherContact: defineMessages({
     subtitle: {
       id: 'ss.application:overview.otherContact.subtitle',
-      defaultMessage: 'Aðrir tengiliðir',
+      defaultMessage: 'Tengiliður',
       description: 'Other contact subtitle',
+    },
+    label: {
+      id: 'ss.application:overview.otherContact.label',
+      defaultMessage: 'Tengiliður',
+      description: 'Other contact label',
     },
     phoneLabel: {
       id: 'ss.application:overview.otherContact.phoneLabel',

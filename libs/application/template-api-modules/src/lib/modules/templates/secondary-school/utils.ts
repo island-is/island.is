@@ -49,20 +49,31 @@ export const getRecipients = (answers: FormValue): Array<EmailRecipient> => {
     }
   }
 
+  // Main other contact
+  const mainOtherContact = getValueViaPath<
+    SecondarySchoolAnswers['mainOtherContact']
+  >(answers, 'mainOtherContact')
+  if (mainOtherContact?.nationalId) {
+    recipientList.push({
+      nationalId: mainOtherContact.nationalId,
+      name: mainOtherContact.name || '',
+      email: mainOtherContact.email || '',
+    })
+  }
+
   // Other contacts
-  const otherContacts =
+  const otherContacts = (
     getValueViaPath<SecondarySchoolAnswers['otherContacts']>(
       answers,
       'otherContacts',
     ) || []
+  ).filter((x) => !!x.person.nationalId)
   for (let i = 0; i < otherContacts.length; i++) {
-    if (otherContacts[i].include) {
-      recipientList.push({
-        nationalId: otherContacts[i].nationalId || '',
-        name: otherContacts[i].name || '',
-        email: otherContacts[i].email || '',
-      })
-    }
+    recipientList.push({
+      nationalId: otherContacts[i].person.nationalId,
+      name: otherContacts[i].person.name || '',
+      email: otherContacts[i].email || '',
+    })
   }
 
   return recipientList
@@ -96,21 +107,32 @@ export const getCleanContacts = (
     }
   }
 
+  // Main other contact
+  const mainOtherContact = getValueViaPath<
+    SecondarySchoolAnswers['mainOtherContact']
+  >(application.answers, 'mainOtherContact')
+  if (mainOtherContact?.nationalId)
+    result.push({
+      nationalId: mainOtherContact.nationalId,
+      name: mainOtherContact.name || '',
+      phone: mainOtherContact.phone || '',
+      email: mainOtherContact.email || '',
+    })
+
   // Other contacts
-  const otherContacts =
+  const otherContacts = (
     getValueViaPath<SecondarySchoolAnswers['otherContacts']>(
       application.answers,
       'otherContacts',
     ) || []
+  ).filter((x) => !!x.person.nationalId)
   for (let i = 0; i < otherContacts.length; i++) {
-    if (otherContacts[i].include) {
-      result.push({
-        nationalId: otherContacts[i].nationalId || '',
-        name: otherContacts[i].name || '',
-        phone: otherContacts[i].phone || '',
-        email: otherContacts[i].email || '',
-      })
-    }
+    result.push({
+      nationalId: otherContacts[i].person.nationalId,
+      name: otherContacts[i].person.name || '',
+      phone: otherContacts[i].phone || '',
+      email: otherContacts[i].email || '',
+    })
   }
 
   return result

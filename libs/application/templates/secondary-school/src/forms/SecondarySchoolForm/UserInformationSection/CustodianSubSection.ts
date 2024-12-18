@@ -1,10 +1,13 @@
 import {
-  buildCustomField,
   buildDescriptionField,
+  buildFieldsRepeaterField,
+  buildHiddenInput,
   buildMultiField,
+  buildNationalIdWithNameField,
   buildPhoneField,
   buildSubSection,
   buildTextField,
+  getValueViaPath,
 } from '@island.is/application/core'
 import { userInformation } from '../../../lib/messages'
 import { Application } from '@island.is/application/types'
@@ -23,6 +26,10 @@ export const custodianSubSection = buildSubSection({
         getHasParent(application.externalData, 0)
           ? userInformation.custodian.pageTitle
           : userInformation.otherContact.pageTitle,
+      description: (application) =>
+        getHasParent(application.externalData, 0)
+          ? ''
+          : userInformation.otherContact.description,
       children: [
         // Custodian 1
         buildDescriptionField({
@@ -81,19 +88,19 @@ export const custodianSubSection = buildSubSection({
             return `${parent?.legalDomicile?.postalCode} ${parent?.legalDomicile?.locality}`
           },
         }),
+        buildPhoneField({
+          id: 'custodians[0].phone',
+          title: userInformation.custodian.phone,
+          width: 'half',
+          required: true,
+          condition: (_, externalData) => getHasParent(externalData, 0),
+        }),
         buildTextField({
           id: 'custodians[0].email',
           title: userInformation.custodian.email,
           backgroundColor: 'blue',
           width: 'half',
           variant: 'email',
-          required: true,
-          condition: (_, externalData) => getHasParent(externalData, 0),
-        }),
-        buildPhoneField({
-          id: 'custodians[0].phone',
-          title: userInformation.custodian.phone,
-          width: 'half',
           required: true,
           condition: (_, externalData) => getHasParent(externalData, 0),
         }),
@@ -155,6 +162,13 @@ export const custodianSubSection = buildSubSection({
             return `${parent?.legalDomicile?.postalCode} ${parent?.legalDomicile?.locality}`
           },
         }),
+        buildPhoneField({
+          id: 'custodians[1].phone',
+          title: userInformation.custodian.phone,
+          width: 'half',
+          required: true,
+          condition: (_, externalData) => getHasParent(externalData, 1),
+        }),
         buildTextField({
           id: 'custodians[1].email',
           title: userInformation.custodian.email,
@@ -164,20 +178,60 @@ export const custodianSubSection = buildSubSection({
           required: true,
           condition: (_, externalData) => getHasParent(externalData, 1),
         }),
-        buildPhoneField({
-          id: 'custodians[1].phone',
-          title: userInformation.custodian.phone,
-          width: 'half',
-          required: true,
-          condition: (_, externalData) => getHasParent(externalData, 1),
-        }),
 
         // Other contact
-        buildCustomField({
-          component: 'OtherContacts',
-          id: 'otherContacts',
+        buildHiddenInput({
+          id: 'mainOtherContact.required',
+          defaultValue: (application: Application) => {
+            return getHasParent(application.externalData, 0) ? false : true
+          },
+        }),
+        buildNationalIdWithNameField({
+          id: 'mainOtherContact',
           title: '',
-          description: '',
+          required: true,
+          showPhoneField: true,
+          showEmailField: true,
+          phoneRequired: true,
+          emailRequired: true,
+          phoneLabel: userInformation.otherContact.phone,
+          emailLabel: userInformation.otherContact.email,
+          condition: (answers) => {
+            return (
+              getValueViaPath<boolean>(answers, 'mainOtherContact.required') ||
+              false
+            )
+          },
+        }),
+        buildFieldsRepeaterField({
+          id: 'otherContacts',
+          title: userInformation.otherContact.subtitle,
+          titleVariant: 'h5',
+          formTitleNumbering: 'none',
+          addItemButtonText: userInformation.otherContact.addButtonLabel,
+          removeItemButtonText: userInformation.otherContact.removeButtonLabel,
+          minRows: 0,
+          maxRows: 1,
+          fields: {
+            person: {
+              component: 'nationalIdWithName',
+              required: true,
+            },
+            phone: {
+              component: 'phone',
+              label: userInformation.otherContact.phone,
+              enableCountrySelector: true,
+              required: true,
+              width: 'half',
+            },
+            email: {
+              component: 'input',
+              label: userInformation.otherContact.email,
+              type: 'email',
+              required: true,
+              width: 'half',
+            },
+          },
         }),
       ],
     }),
