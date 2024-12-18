@@ -122,9 +122,9 @@ export const m = defineMessages({
     id: 'sp.social-insurance-maintenance:income-plan-link-text',
     defaultMessage: 'Hvað er tekjuáætlun?',
   },
-  incomePlanTemporarilyUnavailable: {
-    id: 'sp.social-insurance-maintenance:income-plan-temporarily-unavailable',
+  paymentPlanTemporarilyUnavailable: {
+    id: 'sp.social-insurance-maintenance:payment-plan-temporarily-unavailable',
     defaultMessage:
-      'Bráðabirgðatekjuáætlun 2025 verður tilbúin seinni part desember',
+      'Bráðabirgðagreiðsluáætlun 2025 verður tilbúin seinni part desember',
   },
 })
