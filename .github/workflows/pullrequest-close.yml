@@ -4,6 +4,9 @@ on:
   pull_request:
     types:
       - closed
+    branches-ignore:
+      - 'unicorn*'
+      - 'feature/unicorn*'
 
 defaults:
   run:
