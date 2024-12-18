@@ -59,6 +59,7 @@ export const GET_EVENTS_QUERY = gql`
         title
         slug
         startDate
+        firstPublishedAt
         time {
           startTime
           endTime
