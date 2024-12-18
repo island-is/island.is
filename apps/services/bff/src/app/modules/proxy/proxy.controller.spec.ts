@@ -11,6 +11,7 @@ import {
   mockedTokensResponse as tokensResponse,
 } from '../../../../test/sharedConstants'
 import { BffConfig } from '../../bff.config'
+import { CryptoService } from '../../services/crypto.service'
 import { hasTimestampExpiredInMS } from '../../utils/has-timestamp-expired-in-ms'
 import { IdsService } from '../ids/ids.service'
 import { TokenResponse } from '../ids/ids.types'
@@ -60,6 +61,8 @@ describe('ProxyController', () => {
   let server: request.SuperTest<request.Test>
   let capturedArgs: ExecuteStreamRequestArgs
   let mockConfig: ConfigType<typeof BffConfig>
+  let cryptoService: CryptoService
+  let encryptedSid: string
 
   beforeAll(async () => {
     const app = await setupTestServer({
@@ -78,7 +81,12 @@ describe('ProxyController', () => {
           ),
     })
 
+    cryptoService = app.get<CryptoService>(CryptoService)
     mockConfig = app.get<ConfigType<typeof BffConfig>>(BffConfig.KEY)
+
+    // Encrypt the session ID for cookie
+    encryptedSid = cryptoService.encrypt(SID_VALUE, true)
+
     server = request(app.getHttpServer())
   })
 
@@ -123,7 +131,7 @@ describe('ProxyController', () => {
       const res = await server
         .get('/api')
         .query({ url: allowedExternalApiUrl })
-        .set('Cookie', [`${SESSION_COOKIE_NAME}=${SID_VALUE}`])
+        .set('Cookie', [`${SESSION_COOKIE_NAME}=${encryptedSid}`])
 
       // Assert
       expect(res.status).toEqual(HttpStatus.UNAUTHORIZED)
@@ -135,13 +143,13 @@ describe('ProxyController', () => {
 
       await server
         .get('/callbacks/login')
-        .set('Cookie', [`${SESSION_COOKIE_NAME}=${SID_VALUE}`])
+        .set('Cookie', [`${SESSION_COOKIE_NAME}=${encryptedSid}`])
         .query({ code: 'some_code', state: SID_VALUE })
 
       const res = await server
         .get('/api')
         .query({ url: allowedExternalApiUrl })
-        .set('Cookie', [`${SESSION_COOKIE_NAME}=${SID_VALUE}`])
+        .set('Cookie', [`${SESSION_COOKIE_NAME}=${encryptedSid}`])
 
       // Assert
       expect(res.status).toEqual(HttpStatus.OK)
@@ -169,12 +177,12 @@ describe('ProxyController', () => {
 
       await server
         .get('/callbacks/login')
-        .set('Cookie', [`${SESSION_COOKIE_NAME}=${SID_VALUE}`])
+        .set('Cookie', [`${SESSION_COOKIE_NAME}=${encryptedSid}`])
         .query({ code: 'some_code', state: SID_VALUE })
 
       const res = await server
         .post('/api/graphql')
-        .set('Cookie', [`${SESSION_COOKIE_NAME}=${SID_VALUE}`])
+        .set('Cookie', [`${SESSION_COOKIE_NAME}=${encryptedSid}`])
 
       // Assert
       expect(res.status).toEqual(HttpStatus.OK)
@@ -187,12 +195,12 @@ describe('ProxyController', () => {
 
       await server
         .get('/callbacks/login')
-        .set('Cookie', [`${SESSION_COOKIE_NAME}=${SID_VALUE}`])
+        .set('Cookie', [`${SESSION_COOKIE_NAME}=${encryptedSid}`])
         .query({ code: 'some_code', state: SID_VALUE })
 
       const res = await server
         .post('/api/graphql?op=test')
-        .set('Cookie', [`${SESSION_COOKIE_NAME}=${SID_VALUE}`])
+        .set('Cookie', [`${SESSION_COOKIE_NAME}=${encryptedSid}`])
 
       // Assert
       expect(res.status).toEqual(HttpStatus.OK)
@@ -217,12 +225,12 @@ describe('ProxyController', () => {
       await server.get('/login')
       await server
         .get('/callbacks/login')
-        .set('Cookie', [`${SESSION_COOKIE_NAME}=${SID_VALUE}`])
+        .set('Cookie', [`${SESSION_COOKIE_NAME}=${encryptedSid}`])
         .query({ code: 'some_code', state: SID_VALUE })
 
       const res = await server
         .post('/api/graphql')
-        .set('Cookie', [`${SESSION_COOKIE_NAME}=${SID_VALUE}`])
+        .set('Cookie', [`${SESSION_COOKIE_NAME}=${encryptedSid}`])
 
       // Assert
       expect(mockIdsService.refreshToken).toHaveBeenCalled()
@@ -251,12 +259,12 @@ describe('ProxyController', () => {
       await server.get('/login')
       await server
         .get('/callbacks/login')
-        .set('Cookie', [`${SESSION_COOKIE_NAME}=${SID_VALUE}`])
+        .set('Cookie', [`${SESSION_COOKIE_NAME}=${encryptedSid}`])
         .query({ code: 'some_code', state: SID_VALUE })
 
       const res = await server
         .post('/api/graphql')
-        .set('Cookie', [`${SESSION_COOKIE_NAME}=${SID_VALUE}`])
+        .set('Cookie', [`${SESSION_COOKIE_NAME}=${encryptedSid}`])
 
       // Assert
       expect(mockIdsService.refreshToken).toHaveBeenCalled()
@@ -297,12 +305,12 @@ describe('ProxyController', () => {
       await server.get('/login')
       await server
         .get('/callbacks/login')
-        .set('Cookie', [`${SESSION_COOKIE_NAME}=${SID_VALUE}`])
+        .set('Cookie', [`${SESSION_COOKIE_NAME}=${encryptedSid}`])
         .query({ code: 'some_code', state: SID_VALUE })
 
       const res = await server
         .post('/api/graphql')
-        .set('Cookie', [`${SESSION_COOKIE_NAME}=${SID_VALUE}`])
+        .set('Cookie', [`${SESSION_COOKIE_NAME}=${encryptedSid}`])
 
       // Assert
       expect(mockIdsService.refreshToken).not.toHaveBeenCalled()

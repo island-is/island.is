@@ -126,7 +126,7 @@ export class TokenRefreshService {
 
     // We've made all attempts (~15 attempts in 3 seconds total) and still no success
     this.logger.warn(
-      `Polling timed out for token refresh completion for session ${sid}`,
+      'Polling timed out for token refresh completion for session id (sid)',
     )
 
     return false
@@ -215,7 +215,7 @@ export class TokenRefreshService {
     })
 
     if (!updatedTokenResponse) {
-      this.logger.warn(`Token refresh failed for sid: ${sid}`)
+      this.logger.warn('Token refresh failed')
     }
 
     return updatedTokenResponse
