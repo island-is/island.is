@@ -9,7 +9,6 @@ import {
   Stack,
   Text,
 } from '@island.is/island-ui/core'
-import { useLocale } from '@island.is/localization'
 import { Locale } from '@island.is/shared/types'
 import { isDefined } from '@island.is/shared/utils'
 import { InstitutionPanel } from '@island.is/web/components'
