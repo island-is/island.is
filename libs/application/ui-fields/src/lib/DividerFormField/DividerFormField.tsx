@@ -13,9 +13,10 @@ export const DividerFormField: FC<
   }>
 > = ({ field, application }) => {
   const { formatMessage, lang: locale } = useLocale()
+  const { marginTop, marginBottom } = field
   if (field.title) {
     return (
-      <Box marginTop={5} marginBottom={1}>
+      <Box marginTop={marginTop ?? 5} marginBottom={marginBottom ?? 1}>
         <Text variant="h5" color={field.color ?? 'blue400'}>
           {formatTextWithLocale(
             field.title,
@@ -29,7 +30,12 @@ export const DividerFormField: FC<
   }
 
   return (
-    <Box paddingTop={2} paddingBottom={2}>
+    <Box
+      paddingTop={2}
+      paddingBottom={2}
+      marginTop={marginTop}
+      marginBottom={marginBottom}
+    >
       <Divider />
     </Box>
   )

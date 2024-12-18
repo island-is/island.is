@@ -61,7 +61,7 @@ export const AsyncSelectFormField: FC<React.PropsWithChildren<Props>> = ({
   }, [loadOptions])
 
   return (
-    <div>
+    <Box marginTop={field.marginTop} marginBottom={field.marginBottom}>
       {description && (
         <FieldDescription
           description={formatTextWithLocale(
@@ -113,6 +113,6 @@ export const AsyncSelectFormField: FC<React.PropsWithChildren<Props>> = ({
           isMulti={isMulti}
         />
       </Box>
-    </div>
+    </Box>
   )
 }
