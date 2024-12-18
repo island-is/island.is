@@ -4,17 +4,19 @@ import {
   DefendantPlea,
   DefenderChoice,
   Gender,
+  PunishmentType,
   ServiceRequirement,
   SubpoenaType,
 } from '@island.is/judicial-system/types'
 
-import { Subpoena } from './subpoena.model'
+import { Subpoena } from '../../subpoena'
 
 registerEnumType(Gender, { name: 'Gender' })
 registerEnumType(DefendantPlea, { name: 'DefendantPlea' })
 registerEnumType(ServiceRequirement, { name: 'ServiceRequirement' })
 registerEnumType(DefenderChoice, { name: 'DefenderChoice' })
 registerEnumType(SubpoenaType, { name: 'SubpoenaType' })
+registerEnumType(PunishmentType, { name: 'PunishmentType' })
 
 @ObjectType()
 export class Defendant {
@@ -107,4 +109,7 @@ export class Defendant {
 
   @Field(() => String, { nullable: true })
   readonly sentToPrisonAdminDate?: string
+
+  @Field(() => PunishmentType, { nullable: true })
+  readonly punishmentType?: PunishmentType
 }

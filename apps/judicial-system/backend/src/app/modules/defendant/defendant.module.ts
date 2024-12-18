@@ -13,6 +13,7 @@ import { CivilClaimantService } from './civilClaimant.service'
 import { DefendantController } from './defendant.controller'
 import { DefendantService } from './defendant.service'
 import { InternalDefendantController } from './internalDefendant.controller'
+import { LimitedAccessDefendantController } from './limitedAccessDefendant.controller'
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { InternalDefendantController } from './internalDefendant.controller'
     DefendantController,
     InternalDefendantController,
     CivilClaimantController,
+    LimitedAccessDefendantController,
   ],
   providers: [DefendantService, CivilClaimantService],
   exports: [DefendantService, CivilClaimantService],

@@ -51,6 +51,20 @@ interface PropertyValidation {
   }
 }
 
+interface LawyerUpdate {
+  defenderName: string | null
+  defenderNationalId: string | null
+  defenderEmail: string | null
+  defenderPhoneNumber: string | null
+}
+
+interface SpokespersonUpdate {
+  spokespersonName: string | null
+  spokespersonNationalId: string | null
+  spokespersonEmail: string | null
+  spokespersonPhoneNumber: string | null
+}
+
 type InputType =
   | 'defenderEmail'
   | 'defenderPhoneNumber'
@@ -123,18 +137,18 @@ const InputAdvocate: FC<Props> = ({
       isCivilClaim: boolean,
       clientId?: string | null,
     ) => {
-      let updatedLawyer = {
-        defenderName: '',
-        defenderNationalId: '',
-        defenderEmail: '',
-        defenderPhoneNumber: '',
+      let updatedLawyer: LawyerUpdate = {
+        defenderName: null,
+        defenderNationalId: null,
+        defenderEmail: null,
+        defenderPhoneNumber: null,
       }
 
-      let updatedSpokesperson = {
-        spokespersonName: '',
-        spokespersonNationalId: '',
-        spokespersonEmail: '',
-        spokespersonPhoneNumber: '',
+      let updatedSpokesperson: SpokespersonUpdate = {
+        spokespersonName: null,
+        spokespersonNationalId: null,
+        spokespersonEmail: null,
+        spokespersonPhoneNumber: null,
       }
 
       if (selectedOption) {
@@ -147,16 +161,16 @@ const InputAdvocate: FC<Props> = ({
         )
         updatedLawyer = {
           defenderName: lawyer ? lawyer.name : label,
-          defenderNationalId: lawyer ? lawyer.nationalId : '',
-          defenderEmail: lawyer ? lawyer.email : '',
-          defenderPhoneNumber: lawyer ? lawyer.phoneNr : '',
+          defenderNationalId: lawyer ? lawyer.nationalId : null,
+          defenderEmail: lawyer ? lawyer.email : null,
+          defenderPhoneNumber: lawyer ? lawyer.phoneNr : null,
         }
 
         updatedSpokesperson = {
           spokespersonName: lawyer ? lawyer.name : label,
-          spokespersonNationalId: lawyer ? lawyer.nationalId : '',
-          spokespersonEmail: lawyer ? lawyer.email : '',
-          spokespersonPhoneNumber: lawyer ? lawyer.phoneNr : '',
+          spokespersonNationalId: lawyer ? lawyer.nationalId : null,
+          spokespersonEmail: lawyer ? lawyer.email : null,
+          spokespersonPhoneNumber: lawyer ? lawyer.phoneNr : null,
         }
       }
 
@@ -226,17 +240,17 @@ const InputAdvocate: FC<Props> = ({
     switch (property) {
       case 'defenderEmail': {
         return {
-          defenderEmail: value,
+          defenderEmail: value || null,
         }
       }
       case 'defenderPhoneNumber': {
-        return { defenderPhoneNumber: value }
+        return { defenderPhoneNumber: value || null }
       }
       case 'spokespersonEmail': {
-        return { spokespersonEmail: value }
+        return { spokespersonEmail: value || null }
       }
       case 'spokespersonPhoneNumber': {
-        return { spokespersonPhoneNumber: value }
+        return { spokespersonPhoneNumber: value || null }
       }
     }
   }, [])
