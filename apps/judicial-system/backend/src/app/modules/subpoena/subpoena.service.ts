@@ -283,6 +283,13 @@ export class SubpoenaService {
     return subpoena
   }
 
+  async findByCaseId(caseId: string): Promise<Subpoena[]> {
+    return this.subpoenaModel.findAll({
+      include,
+      where: { caseId },
+    })
+  }
+
   async getIndictmentPdf(theCase: Case): Promise<Buffer> {
     if (isTrafficViolationCase(theCase)) {
       return await this.pdfService.getIndictmentPdf(theCase)
@@ -355,7 +362,33 @@ export class SubpoenaService {
       return { delivered: false }
     }
   }
+  async revokeSubpoenaFromPolice(
+    theCase: Case,
+    subpoena: Subpoena,
+    user: TUser,
+  ): Promise<DeliverResponse> {
+    if (!subpoena.subpoenaId) {
+      this.logger.warn(
+        `Attempted to revoke a subpoena with id ${subpoena.id} that had not been delivered to the police`,
+      )
+      return { delivered: true }
+    }
 
+    const subpoenaRevoked = await this.policeService.revokeSubpoena(
+      theCase,
+      subpoena,
+      user,
+    )
+
+    if (subpoenaRevoked) {
+      this.logger.info(
+        `Subpoena ${subpoena.subpoenaId} successfully revoked from police`,
+      )
+      return { delivered: true }
+    } else {
+      return { delivered: false }
+    }
+  }
   async getSubpoena(subpoena: Subpoena, user?: TUser): Promise<Subpoena> {
     if (!subpoena.subpoenaId) {
       // The subpoena has not been delivered to the police
