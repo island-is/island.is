@@ -8,8 +8,8 @@ import {
 import {
   DefendantEventType,
   isIndictmentCase,
+  isPrisonAdminUser,
   User,
-  UserRole,
 } from '@island.is/judicial-system/types'
 
 import { DefendantEventLog, DefendantService } from '../../defendant'
@@ -30,9 +30,10 @@ const hasValidOpenByPrisonAdminEvent = (
   return (
     sentToPrisonAdminDate &&
     openedByPrisonAdminDate &&
-    sentToPrisonAdminDate < openedByPrisonAdminDate
+    sentToPrisonAdminDate <= openedByPrisonAdminDate
   )
 }
+
 @Injectable()
 export class DefendantIndictmentAccessedInterceptor implements NestInterceptor {
   constructor(private readonly defendantService: DefendantService) {}
@@ -44,13 +45,10 @@ export class DefendantIndictmentAccessedInterceptor implements NestInterceptor {
 
     if (
       isIndictmentCase(theCase.type) &&
-      user.role === UserRole.PRISON_SYSTEM_STAFF
+      isPrisonAdminUser(user)
     ) {
-      const defendants = theCase.defendants?.filter(
-        ({ isSentToPrisonAdmin }) => isSentToPrisonAdmin,
-      )
-      const defendantsIndictmentNotOpened = defendants?.filter(
-        ({ eventLogs = [] }) => !hasValidOpenByPrisonAdminEvent(eventLogs),
+      const defendantsIndictmentNotOpened = theCase.defendants?.filter(
+        ({ isSentToPrisonAdmin, eventLogs = [] }) => isSentToPrisonAdmin && !hasValidOpenByPrisonAdminEvent(eventLogs),
       )
 
       // create new events for all defendants that prison admin has not accessed according to defendant event logs
