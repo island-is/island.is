@@ -54,7 +54,7 @@ export const ParentB: Form = buildForm({
           children: [
             buildDividerField({
               marginTop: 5,
-              useDividerLine: false
+              useDividerLine: false,
             }),
           ],
         }),

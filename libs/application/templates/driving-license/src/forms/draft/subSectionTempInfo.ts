@@ -48,7 +48,7 @@ export const subSectionTempInfo = buildSubSection({
         }),
         buildDividerField({
           marginTop: 5,
-          useDividerLine: false
+          useDividerLine: false,
         }),
         buildKeyValueField({
           label: m.informationFullName,
