@@ -120,7 +120,7 @@ export const ActionCard: React.FC<React.PropsWithChildren<ActionCardProps>> = ({
           alignItems="center"
           flexShrink={0}
           marginRight={[2, 3]}
-          borderRadius="circle"
+          borderRadius="full"
           background="blue100"
           className={cn(styles.avatar, styles.image)}
         >
@@ -144,7 +144,7 @@ export const ActionCard: React.FC<React.PropsWithChildren<ActionCardProps>> = ({
           alignItems="center"
           flexShrink={0}
           marginRight={[2, 3]}
-          borderRadius="circle"
+          borderRadius="full"
         >
           <img className={styles.image} src={image.url} alt="" />
         </Box>
@@ -158,7 +158,7 @@ export const ActionCard: React.FC<React.PropsWithChildren<ActionCardProps>> = ({
           alignItems="center"
           flexShrink={0}
           marginRight={[2, 3]}
-          borderRadius="circle"
+          borderRadius="full"
           background={image.active ? 'white' : 'blue100'}
           className={cn(styles.avatar, styles.image)}
         >

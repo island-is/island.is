@@ -7,12 +7,13 @@ import { cemeteryFinancialStatementSection } from './cemeteryFinancialStatementS
 import Logo from '../../components/Logo'
 import { clientInfoSection } from './clientInfoSection'
 import { overviewSection } from './overviewSection'
+import { conclusionSection } from './conclusionSection/conclusionSection'
 
 export const FinancialStatementCemeteryForm: Form = buildForm({
   id: 'FinancialStatementCemeteryForm',
   title: m.applicationTitle,
   mode: FormModes.DRAFT,
-  renderLastScreenButton: false,
+  renderLastScreenButton: true,
   logo: Logo,
   children: [
     clientInfoSection,
@@ -20,5 +21,6 @@ export const FinancialStatementCemeteryForm: Form = buildForm({
     cemeteryCaretekerSection,
     cemeteryFinancialStatementSection,
     overviewSection,
+    conclusionSection,
   ],
 })

@@ -446,6 +446,7 @@ export const EditChange = (props: EditChangeProp) => {
             } as Regulation
           }
           baseName={'' as RegName}
+          asBase={draft.type.value === 'base'}
         />
       )}
       <GridContainer>

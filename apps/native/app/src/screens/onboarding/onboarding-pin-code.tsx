@@ -1,4 +1,3 @@
-import { CancelButton, dynamicColor, font } from '@ui'
 import React, { useEffect, useState } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { Image, SafeAreaView, View } from 'react-native'
@@ -8,6 +7,8 @@ import {
   NavigationFunctionComponent,
 } from 'react-native-navigation'
 import styled from 'styled-components/native'
+
+import { CancelButton, dynamicColor, font } from '../../ui'
 import logo from '../../assets/logo/logo-64w.png'
 import { PinKeypad } from '../../components/pin-keypad/pin-keypad'
 import { VisualizedPinCode } from '../../components/visualized-pin-code/visualized-pin-code'
