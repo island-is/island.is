@@ -1,5 +1,5 @@
 import { useParams } from 'react-router-dom'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { InputController } from '@island.is/shared/form-fields'
 import { useForm } from 'react-hook-form'
 import {
@@ -36,6 +36,7 @@ import * as styles from './VehicleMileage.css'
 import { Problem } from '@island.is/react-spa/shared'
 import { VehicleMileageDetail } from '@island.is/api/schema'
 import format from 'date-fns/format'
+import { Features, useFeatureFlagClient } from '@island.is/react/feature-flags'
 
 const ORIGIN_CODE = 'ISLAND.IS'
 
@@ -63,6 +64,22 @@ const VehicleMileage = () => {
     formState: { errors },
     reset,
   } = useForm<FormData>()
+
+  const [showChart, setShowChart] = useState<boolean>(false)
+  const featureFlagClient = useFeatureFlagClient()
+  useEffect(() => {
+    const isFlagEnabled = async () => {
+      const ffEnabled = await featureFlagClient.getValue(
+        Features.isServicePortalVehicleBulkMileageSubdataPageEnabled,
+        false,
+      )
+      if (ffEnabled) {
+        setShowChart(ffEnabled as boolean)
+      }
+    }
+    isFlagEnabled()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   const clearAll = () => {
     // Clear form, state and errors on success.
@@ -403,29 +420,31 @@ const VehicleMileage = () => {
                   </GridColumn>
                 </GridRow>
               </GridContainer>
-              <Box width="full">
-                <SimpleBarChart
-                  data={parseChartData(details)}
-                  datakeys={['date', 'mileage']}
-                  bars={[
-                    {
+              {showChart && (
+                <Box width="full">
+                  <SimpleBarChart
+                    data={parseChartData(details)}
+                    datakeys={['date', 'mileage']}
+                    bars={[
+                      {
+                        datakey: 'mileage',
+                      },
+                    ]}
+                    xAxis={{
+                      datakey: 'date',
+                    }}
+                    yAxis={{
                       datakey: 'mileage',
-                    },
-                  ]}
-                  xAxis={{
-                    datakey: 'date',
-                  }}
-                  yAxis={{
-                    datakey: 'mileage',
-                    label: 'Km.',
-                  }}
-                  tooltip={{
-                    labels: {
-                      mileage: formatMessage(messages.odometer),
-                    },
-                  }}
-                />
-              </Box>
+                      label: 'Km.',
+                    }}
+                    tooltip={{
+                      labels: {
+                        mileage: formatMessage(messages.odometer),
+                      },
+                    }}
+                  />
+                </Box>
+              )}
             </>
           )}
         </Stack>
