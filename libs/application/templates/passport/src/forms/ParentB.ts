@@ -1,5 +1,6 @@
 import {
   buildDataProviderItem,
+  buildDividerField,
   buildExternalDataProvider,
   buildForm,
   buildMultiField,
@@ -51,8 +52,9 @@ export const ParentB: Form = buildForm({
             },
           }),
           children: [
-            buildTitleField({
-              title: ' ',
+            buildDividerField({
+              marginTop: 5,
+              useDividerLine: false
             }),
           ],
         }),

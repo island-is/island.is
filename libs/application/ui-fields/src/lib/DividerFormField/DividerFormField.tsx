@@ -9,16 +9,16 @@ export const DividerFormField: FC<
     application: Application
   }>
 > = ({ field }) => {
-  const { marginTop, marginBottom } = field
+  const { useDividerLine, marginTop, marginBottom } = field
 
   return (
     <Box
-      paddingTop={2}
-      paddingBottom={2}
+      paddingTop={ useDividerLine ? 2 : 0 }
+      paddingBottom={ useDividerLine ? 2 : 0 }
       marginTop={marginTop}
       marginBottom={marginBottom}
     >
-      <Divider />
+      {useDividerLine && <Divider />}
     </Box>
   )
 }

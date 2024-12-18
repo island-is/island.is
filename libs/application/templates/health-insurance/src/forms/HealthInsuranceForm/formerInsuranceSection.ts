@@ -1,6 +1,7 @@
 import {
   buildAlertMessageField,
   buildDescriptionField,
+  buildDividerField,
   buildFileUploadField,
   buildMultiField,
   buildRadioField,
@@ -88,12 +89,15 @@ export const formerInsuranceSection = buildSection({
             return requireConfirmationOfResidency(formerCountry)
           },
         }),
+        buildDividerField({
+          marginTop: 5,
+          useDividerLine: false,
+        }),
         buildDescriptionField({
           id: 'formerInsurance.entitlementDescription',
           title: '',
           description: m.formerInsuranceEntitlement,
           tooltip: m.formerInsuranceEntitlementTooltip,
-          marginTop: 5,
           condition: (answers: FormValue) => formerInsuranceCondition(answers),
         }),
         buildRadioField({

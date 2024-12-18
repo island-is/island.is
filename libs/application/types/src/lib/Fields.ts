@@ -455,7 +455,7 @@ export interface SubmitField extends BaseField {
 
 export interface DividerField extends BaseField {
   readonly type: FieldTypes.DIVIDER
-  readonly color?: Colors
+  useDividerLine?: boolean
   component: FieldComponents.DIVIDER
 }
 

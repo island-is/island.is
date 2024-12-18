@@ -72,7 +72,6 @@ export const ReviewApplication: Form = buildForm({
               format: '###-####',
               placeholder: '000-0000',
             }),
-            //Error in dev tools, missing keys on divider fields...
             buildTitleField({
               title: m.technicalContactTitle,
               color: 'blue400',

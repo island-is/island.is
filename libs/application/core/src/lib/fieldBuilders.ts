@@ -399,11 +399,11 @@ export const buildFileUploadField = (
 
 export const buildDividerField = (data: {
   condition?: Condition
-  color?: Colors
+  useDividerLine?: boolean
   marginBottom?: BoxProps['marginBottom']
   marginTop?: BoxProps['marginTop']
 }): DividerField => {
-  const { color, condition, marginTop, marginBottom } = data
+  const { useDividerLine = true, condition, marginTop, marginBottom } = data
   return {
     id: '',
     children: undefined,
@@ -411,7 +411,7 @@ export const buildDividerField = (data: {
     component: FieldComponents.DIVIDER,
     doesNotRequireAnswer: true,
     title: '',
-    color,
+    useDividerLine,
     condition,
     marginTop,
     marginBottom,

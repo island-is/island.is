@@ -34,20 +34,21 @@ export const subSectionTempInfo = buildSubSection({
         buildKeyValueField({
           label: m.drivingLicenseTypeRequested,
           value: m.applicationForTempLicenseTitle,
-          marginBottom: 5,
           condition: (answers) => answers.applicationFor === B_TEMP,
         }),
         buildKeyValueField({
           label: m.drivingLicenseTypeRequested,
           value: m.applicationForBELicenseTitle,
-          marginBottom: 5,
           condition: (answers) => answers.applicationFor === BE,
         }),
         buildKeyValueField({
           label: m.drivingLicenseTypeRequested,
           value: m.applicationForRenewalLicenseDescription,
-          marginBottom: 5,
           condition: (answers) => answers.applicationFor === B_FULL_RENEWAL_65,
+        }),
+        buildDividerField({
+          marginTop: 5,
+          useDividerLine: false
         }),
         buildKeyValueField({
           label: m.informationFullName,
