@@ -10,7 +10,7 @@ import {
   buildTextField,
 } from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
-import { m } from '../lib/messages'
+import { m } from '../../lib/messages'
 
 export const ReviewApplication: Form = buildForm({
   id: 'ExampleInReview',
@@ -58,7 +58,7 @@ export const ReviewApplication: Form = buildForm({
             buildDividerField({ title: 'Atvinna' }),
             buildRadioField({
               id: 'careerHistory',
-              title: m.careerHistory,
+              title: 'def',
               width: 'half',
               disabled: true,
               options: [
@@ -68,7 +68,7 @@ export const ReviewApplication: Form = buildForm({
             }),
             buildCheckboxField({
               id: 'careerHistoryDetails.careerHistoryCompanies',
-              title: m.careerHistoryCompanies,
+              title: 'abc',
               disabled: true,
               width: 'half',
               options: [
@@ -81,17 +81,17 @@ export const ReviewApplication: Form = buildForm({
             buildTextField({
               id: 'careerHistoryDetails.careerHistoryOther',
               disabled: true,
-              title: m.careerHistoryOther,
+              title: 'ghi',
             }),
             buildTextField({
               id: 'dreamJob',
-              title: m.dreamJob,
+              title: 'jkl',
               disabled: true,
             }),
             buildSubmitField({
               id: 'approvedByReviewer',
               placement: 'screen',
-              title: 'Samþykkirðu þessa umsókn?',
+              title: 'Do yo uapprove this application?',
               actions: [
                 { event: 'APPROVE', name: 'Samþykkja', type: 'primary' },
                 { event: 'REJECT', name: 'Hafna', type: 'reject' },
@@ -103,7 +103,7 @@ export const ReviewApplication: Form = buildForm({
           id: 'final',
           title: 'Takk fyrir',
           description:
-            'Úrvinnslu þinni er lokið. Umsókn er komin áfram í ferlinu.',
+            'Your processing is complete. The application has been forwarded to the next step.',
         }),
       ],
     }),

@@ -8,8 +8,8 @@ export const PendingReview: Form = buildForm({
   children: [
     buildDescriptionField({
       id: 'inReview',
-      title: 'Í vinnslu',
-      description: 'Umsókn þín um ökunám er nú í vinnslu. ',
+      title: 'In review',
+      description: 'Your application is now in review. ',
     }),
   ],
 })

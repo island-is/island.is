@@ -8,8 +8,8 @@ export const Rejected: Form = buildForm({
   children: [
     buildDescriptionField({
       id: 'rejected',
-      title: 'Því miður...',
-      description: 'Umsókn þinni verið hafnað! Það er frekar leiðinlegt.',
+      title: 'Sorry...',
+      description: 'Your application has been rejected! It is pretty sad.',
     }),
   ],
 })
