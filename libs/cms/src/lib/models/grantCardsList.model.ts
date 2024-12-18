@@ -2,7 +2,6 @@ import { Field, ObjectType, ID, registerEnumType } from '@nestjs/graphql'
 
 import { IGrantCardsList } from '../generated/contentfulTypes'
 import { CacheField } from '@island.is/nest/graphql'
-import { mapFund } from './fund.model'
 import { SystemMetadata } from '@island.is/shared/types'
 import { GrantList } from './grantList.model'
 import { GraphQLJSONObject } from 'graphql-type-json'
