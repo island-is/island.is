@@ -50,7 +50,9 @@ export const extraInformationSection = buildSection({
           placeholder: extraInformation.nativeLanguage.selectPlaceholder,
           width: 'full',
           options: () => {
-            const languages = getAllLanguageCodes()
+            const languages = getAllLanguageCodes().filter(
+              (x) => x.code !== 'is',
+            )
             return languages.map((language) => {
               return {
                 label: language.name,
