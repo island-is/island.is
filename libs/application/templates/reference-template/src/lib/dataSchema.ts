@@ -100,7 +100,7 @@ const careerHistoryDetailsSchema = z
   })
   .partial()
   .refine((data) => careerHistoryCompaniesValidation(data), {
-    params: m.careerHistoryOtherError,
+    params: m.regularTextExample,
     path: ['careerHistoryOther'],
   })
 

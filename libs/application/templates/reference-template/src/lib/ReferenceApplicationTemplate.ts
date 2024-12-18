@@ -65,7 +65,7 @@ const determineMessageFromApplicationAnswers = (application: Application) => {
   )
 
   if (careerHistory === 'no') {
-    return m.nameApplicationNeverWorkedBefore
+    return 'abcdef'
   }
   if (careerIndustry) {
     return {
