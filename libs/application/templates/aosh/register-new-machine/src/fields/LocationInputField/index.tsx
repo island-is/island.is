@@ -17,10 +17,11 @@ export const LocationInputField: FC<React.PropsWithChildren<FieldBaseProps>> = (
   const [displayError, setDisplayError] = useState<boolean>(false)
   const watchMachine = watch('machine.aboutMachine') as AboutMachine
   const location = watch(field.id) as string
+  const categoryValue = 'Fólkslyftur og vörulyftur'
 
   setBeforeSubmitCallback?.(async () => {
     if (
-      watchMachine.category?.nameIs === 'Fólkslyftur og vörulyftur' &&
+      watchMachine.category?.nameIs === categoryValue &&
       location.length === 0
     ) {
       setDisplayError(true)
@@ -35,7 +36,7 @@ export const LocationInputField: FC<React.PropsWithChildren<FieldBaseProps>> = (
         id={field.id}
         label={formatMessage(machine.labels.basicMachineInformation.location)}
         backgroundColor="blue"
-        required={watchMachine.category?.nameIs === 'Fólkslyftur og vörulyftur'}
+        required={watchMachine.category?.nameIs === categoryValue}
         maxLength={255}
         onChange={() => setDisplayError(false)}
         error={
