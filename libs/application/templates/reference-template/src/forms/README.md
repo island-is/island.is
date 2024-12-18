@@ -3,7 +3,7 @@
 This folder contains all the forms that are used by the application.
 
 At minimum there should be a prerequisites form, application form and a confirmation form to reflect the possible states of an application.
-For more complecated applications you could have different forms depending on the user type and you could have more states like approved, rejected, waiting to assign...
+For more complicated applications you could have different forms depending on the user type and you could have more states like approved, rejected, waiting to assign...
 
 ## Organization
 
