@@ -8,11 +8,11 @@ on:
       - completed
     branches:
       - main
-      - '!unicorn-pipe-rel3'
+      - '!uni-pr'
       - '!feature/unicorn-app'
   pull_request:
     branches:
-      - '!unicorn-pipe-rel3'
+      - '!uni-pr'
     types:
       - opened
       - synchronize

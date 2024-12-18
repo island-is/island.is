@@ -5,8 +5,7 @@ on:
     types:
       - closed
     branches-ignore:
-      - 'unicorn*'
-      - 'feature/unicorn*'
+      - 'uni-pr'
 
 defaults:
   run:
