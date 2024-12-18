@@ -19,6 +19,7 @@ import {
   LifeEventPage,
   QueryGetArticleCategoriesArgs,
   QueryGetFrontpageArgs,
+  QueryGetNewsArgs,
 } from '@island.is/web/graphql/schema'
 import { useNamespace } from '@island.is/web/hooks'
 import { useI18n } from '@island.is/web/i18n'
