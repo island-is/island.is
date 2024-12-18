@@ -129,12 +129,7 @@ export const SecondarySchoolSchema = z.object({
     phoneRequired: true,
     emailRequired: true,
   }),
-  applicationType: z.object({
-    type: z.enum([
-      ApplicationType.FRESHMAN,
-      ApplicationType.GENERAL_APPLICATION,
-    ]),
-  }),
+  applicationType: z.nativeEnum(ApplicationType),
   custodians: z.array(CustodianSchema).max(2),
   otherContacts: z.array(OtherContactSchema).max(2),
   selection: z.object({

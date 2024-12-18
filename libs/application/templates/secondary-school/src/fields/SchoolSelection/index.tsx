@@ -15,10 +15,8 @@ export const SchoolSelection: FC<FieldBaseProps> = (props) => {
   const { setValue, getValues } = useFormContext()
 
   const isFreshman =
-    getValueViaPath<ApplicationType>(
-      application.answers,
-      'applicationType.type',
-    ) === ApplicationType.FRESHMAN
+    getValueViaPath<ApplicationType>(application.answers, 'applicationType') ===
+    ApplicationType.FRESHMAN
 
   const [schoolDuplicateError, setSchoolDuplicateError] =
     useState<boolean>(false)

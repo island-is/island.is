@@ -35,7 +35,7 @@ export const personalSubSection = buildSubSection({
         }),
         buildRadioField({
           title: '',
-          id: 'applicationType.type',
+          id: 'applicationType',
           options: [
             {
               value: ApplicationType.FRESHMAN,

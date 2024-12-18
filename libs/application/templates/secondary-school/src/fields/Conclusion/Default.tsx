@@ -26,10 +26,8 @@ export const ConclusionDefault: FC<
   const { formatMessage } = useLocale()
 
   const isFreshman =
-    getValueViaPath<ApplicationType>(
-      application.answers,
-      'applicationType.type',
-    ) === ApplicationType.FRESHMAN
+    getValueViaPath<ApplicationType>(application.answers, 'applicationType') ===
+    ApplicationType.FRESHMAN
 
   return (
     <Box>
