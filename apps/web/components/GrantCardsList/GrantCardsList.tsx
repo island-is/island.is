@@ -23,7 +23,7 @@ interface SliceProps {
 const formatDate = (
   date: Date,
   locale: Locale,
-  stringFormat = 'dd.MMMM yyyy',
+  stringFormat = 'dd. MMMM yyyy',
 ): string | undefined => {
   try {
     return format(date, stringFormat, {
@@ -88,7 +88,7 @@ const GrantCardsList = ({ slice }: SliceProps) => {
       }
       case GrantStatus.Open: {
         const date = grant.dateTo
-          ? formatDate(new Date(grant.dateTo), activeLocale, 'dd.MMMM.')
+          ? formatDate(new Date(grant.dateTo), activeLocale, 'dd. MMMM.')
           : undefined
         return date
           ? getTranslationString(
