@@ -6,8 +6,8 @@ on:
       - 'main'
       - 'release/**'
       - 'pre-release/**'
-      - '!unicorn*'
-      - '!feature/unicorn*'
+      - '!unicorn-pipe-rel3'
+      - '!feature/unicorn-app'
     paths-ignore:
       - '**/*.md'
     tags:
