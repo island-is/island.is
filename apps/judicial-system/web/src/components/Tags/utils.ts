@@ -120,7 +120,9 @@ export const getIndictmentRulingDecisionTag = (
   }
 }
 
-export const getPrisonCaseStatusTag = (prisonCaseState: CaseState): {
+export const getPrisonCaseStatusTag = (
+  prisonCaseState: CaseState,
+): {
   color: TagVariant
   text: { id: string; defaultMessage: string; description: string }
 } => {

@@ -43,12 +43,10 @@ export class DefendantIndictmentAccessedInterceptor implements NestInterceptor {
     const user: User = request.user
     const theCase: Case = request.case
 
-    if (
-      isIndictmentCase(theCase.type) &&
-      isPrisonAdminUser(user)
-    ) {
+    if (isIndictmentCase(theCase.type) && isPrisonAdminUser(user)) {
       const defendantsIndictmentNotOpened = theCase.defendants?.filter(
-        ({ isSentToPrisonAdmin, eventLogs = [] }) => isSentToPrisonAdmin && !hasValidOpenByPrisonAdminEvent(eventLogs),
+        ({ isSentToPrisonAdmin, eventLogs = [] }) =>
+          isSentToPrisonAdmin && !hasValidOpenByPrisonAdminEvent(eventLogs),
       )
 
       // create new events for all defendants that prison admin has not accessed according to defendant event logs
