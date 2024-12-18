@@ -1,4 +1,6 @@
 // TODO: Add tests
+import partition from 'lodash/partition'
+
 import {
   IndictmentSubtype,
   isIndictmentCase,
@@ -19,9 +21,7 @@ import {
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
-import { hasOnlyOneItemValues, isBusiness } from './utils'
-import { indictmentCount } from '../routes/Prosecutor/Indictments/Indictment/IndictmentCount.strings'
-import { flatten, partition } from 'lodash'
+import { isBusiness } from './utils'
 
 export type Validation =
   | 'empty'
