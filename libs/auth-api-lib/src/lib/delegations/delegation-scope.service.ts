@@ -27,8 +27,10 @@ import { DelegationDelegationType } from './models/delegation-delegation-type.mo
 import { DelegationScope } from './models/delegation-scope.model'
 import { DelegationTypeModel } from './models/delegation-type.model'
 import { Delegation } from './models/delegation.model'
+import { ApiScopeInfo } from './delegations-incoming.service'
 
 import type { User } from '@island.is/auth-nest-tools'
+import filterByCustomScopeRule from './utils/filterByScopeCustomScopeRule'
 
 @Injectable()
 export class DelegationScopeService {
@@ -222,7 +224,17 @@ export class DelegationScopeService {
           },
         ],
       })
-      .then((apiScopes) => apiScopes.map((apiScope) => apiScope.name))
+      .then((apiScopes) =>
+        apiScopes
+          .filter((scope) =>
+            // Remove scopes that are not allowed for the delegation type
+            filterByCustomScopeRule(
+              scope,
+              this.delegationConfig.customScopeRules,
+            ),
+          )
+          .map((apiScope) => apiScope.name),
+      )
   }
 
   private async findAllNationalRegistryScopes(): Promise<string[]> {
