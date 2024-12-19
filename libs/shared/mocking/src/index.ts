@@ -1,4 +1,4 @@
-export { default as faker } from 'faker'
+export { faker } from '@faker-js/faker'
 export * from './utils/slugify'
 export * from './utils/factory'
 export * from './utils/simpleFactory'

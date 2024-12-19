@@ -1,5 +1,5 @@
 import { ApiScopeDTO } from '@island.is/auth-api-lib'
-import * as faker from 'faker'
+import { faker } from '@faker-js/faker'
 
 /**
  * Private helper to create ApiScope with random values.
@@ -7,9 +7,9 @@ import * as faker from 'faker'
 const createRandomApiScope = (): ApiScopeDTO => {
   return {
     enabled: true,
-    name: faker.random.word(),
-    displayName: faker.random.word(),
-    description: faker.random.word(),
+    name: faker.word.sample(),
+    displayName: faker.word.sample(),
+    description: faker.word.sample(),
     order: 0,
     showInDiscoveryDocument: true,
     required: false,
@@ -21,7 +21,7 @@ const createRandomApiScope = (): ApiScopeDTO => {
     automaticDelegationGrant: false,
     alsoForDelegatedUser: false,
     grantToPersonalRepresentatives: false,
-    domainName: faker.random.word(),
+    domainName: faker.word.sample(),
   }
 }
 
