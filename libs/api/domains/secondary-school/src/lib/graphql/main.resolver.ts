@@ -6,8 +6,8 @@ import {
   IdsUserGuard,
   Scopes,
   ScopesGuard,
-  User,
 } from '@island.is/auth-nest-tools'
+import type { User } from '@island.is/auth-nest-tools'
 import { SecondarySchoolApi } from '../secondarySchool.service'
 import { SecondarySchoolProgram } from './models'
 
