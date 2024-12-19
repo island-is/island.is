@@ -60,6 +60,9 @@ export enum Features {
   //New License service fetch enabled
   licensesV2 = 'isLicensesV2Enabled',
 
+  //Is vehicle bulk mileage graph enabled?
+  isServicePortalVehicleBulkMileageSubdataPageEnabled = 'isServicePortalVehicleBulkMileageSubdataPageEnabled',
+
   //Possible universities
   isUniversityOfAkureyriEnabled = 'isUniversityOfAkureyriEnabled',
   isAgriculturalUniversityOfIcelandEnabled = 'isAgriculturalUniversityOfIcelandEnabled',
