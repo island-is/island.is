@@ -172,17 +172,17 @@ export const Item = ({
   }
   if (component === 'radio') {
     DefaultValue =
-      (getValueViaPath(application.answers, id) as string[]) ??
+      getValueViaPath<Array<string>>(application.answers, id) ??
       getDefaultValue(item, application, activeValues)
   }
   if (component === 'checkbox') {
     DefaultValue =
-      (getValueViaPath(application.answers, id) as string[]) ??
+      getValueViaPath<Array<string>>(application.answers, id) ??
       getDefaultValue(item, application, activeValues)
   }
   if (component === 'date') {
     DefaultValue =
-      (getValueViaPath(application.answers, id) as string) ??
+      getValueViaPath<string>(application.answers, id) ??
       getDefaultValue(item, application, activeValues)
   }
 
@@ -216,6 +216,7 @@ export const Item = ({
         }}
         application={application}
         defaultValue={DefaultValue}
+        large={true}
         {...props}
       />
     </GridColumn>
