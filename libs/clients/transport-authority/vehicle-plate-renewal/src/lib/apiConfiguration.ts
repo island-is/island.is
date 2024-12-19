@@ -16,6 +16,7 @@ const configFactory = (
   fetchApi: createEnhancedFetch({
     name: 'clients-transport-authority-vehicle-plate-renewal',
     organizationSlug: 'samgongustofa',
+    timeout: config.fetchTimeout,
     autoAuth: idsClientConfig?.isConfigured
       ? {
           mode: 'tokenExchange',
