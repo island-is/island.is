@@ -1,21 +1,18 @@
 import { z } from 'zod'
-import {
-  YES,
-  NO,
-  B_FULL_RENEWAL_65,
-  BE,
-  B_TEMP,
-  B_FULL,
-  B_ADVANCED,
-  AdvancedLicense,
-} from './constants'
+import { License, AdvancedLicense, Pickup } from './constants'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
-import { Pickup } from './types'
+import { NO, YES } from '@island.is/application/core'
 
 const isValidPhoneNumber = (phoneNumber: string) => {
   const phone = parsePhoneNumberFromString(phoneNumber, 'IS')
   return phone && phone.isValid()
 }
+
+const fileSchema = z.object({
+  key: z.string(),
+  name: z.string(),
+  url: z.string().optional(),
+})
 
 export const dataSchema = z.object({
   type: z.array(z.enum(['car', 'trailer', 'motorcycle'])).nonempty(),
@@ -34,10 +31,8 @@ export const dataSchema = z.object({
     isDisabled: z.enum([YES, NO]),
     hasOtherDiseases: z.enum([YES, NO]),
   }),
-  //TODO: Remove when RLS/SGS supports health certificate in BE license
-  healthDeclarationValidForBELicense: z
-    .array(z.string())
-    .refine((v) => v === undefined || v.length === 0),
+  healthDeclarationFileUpload: z.array(fileSchema),
+  healthDeclarationFileUpload65: z.array(fileSchema).nonempty(),
   contactGlassesMismatch: z.boolean(),
   willBringQualityPhoto: z.union([
     z.array(z.enum([YES, NO])).nonempty(),
@@ -45,7 +40,13 @@ export const dataSchema = z.object({
   ]),
   requirementsMet: z.boolean().refine((v) => v),
   certificate: z.array(z.enum([YES, NO])).nonempty(),
-  applicationFor: z.enum([B_FULL, B_TEMP, BE, B_FULL_RENEWAL_65, B_ADVANCED]),
+  applicationFor: z.enum([
+    License.B_FULL,
+    License.B_TEMP,
+    License.BE,
+    License.B_FULL_RENEWAL_65,
+    License.B_ADVANCED,
+  ]),
   advancedLicense: z
     .array(z.enum(Object.values(AdvancedLicense) as [string, ...string[]]))
     .nonempty()

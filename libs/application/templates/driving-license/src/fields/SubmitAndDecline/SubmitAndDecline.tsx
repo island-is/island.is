@@ -1,21 +1,12 @@
 import React, { FC, useEffect, useState } from 'react'
 import { useMutation } from '@apollo/client'
-import { formatText } from '@island.is/application/core'
-import {
-  CustomField,
-  FieldBaseProps,
-  DefaultEvents,
-} from '@island.is/application/types'
+import { DefaultEvents, FieldBaseProps } from '@island.is/application/types'
 import { Box, Button, LoadingDots, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { SUBMIT_APPLICATION } from '@island.is/application/graphql'
 import { m } from '../../lib/messages'
 
-interface Props extends FieldBaseProps {
-  field: CustomField
-}
-
-export const SubmitAndDecline: FC<React.PropsWithChildren<Props>> = ({
+export const SubmitAndDecline: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   error,
   application,
   refetch,
@@ -57,14 +48,10 @@ export const SubmitAndDecline: FC<React.PropsWithChildren<Props>> = ({
   if (submitError) {
     return (
       <Box>
-        <Text variant="h3">
-          {formatText(m.submitErrorTitle, application, formatMessage)}
-        </Text>
-        <Text marginBottom="p2">
-          {formatText(m.submitErrorMessage, application, formatMessage)}
-        </Text>
+        <Text variant="h3">{formatMessage(m.submitErrorTitle)}</Text>
+        <Text marginBottom="p2">{formatMessage(m.submitErrorMessage)}</Text>
         <Button onClick={() => refetch?.()}>
-          {formatText(m.submitErrorButtonCaption, application, formatMessage)}
+          {formatMessage(m.submitErrorButtonCaption)}
         </Button>
       </Box>
     )

@@ -1,29 +1,95 @@
-import { DefaultEvents } from '@island.is/application/types'
+import { DefaultEvents, FormValue } from '@island.is/application/types'
+import { m } from './messages'
+
+export enum License {
+  B_FULL = 'B-full',
+  B_TEMP = 'B-temp',
+  B_FULL_RENEWAL_65 = 'B-full-renewal-65',
+  B_ADVANCED = 'B-advanced',
+  BE = 'BE',
+}
+
+export type Events =
+  | { type: DefaultEvents.SUBMIT }
+  | { type: DefaultEvents.PAYMENT }
+  | { type: DefaultEvents.APPROVE }
+  | { type: DefaultEvents.REJECT }
+  | { type: DefaultEvents.ABORT }
+
+export enum Roles {
+  APPLICANT = 'applicant',
+}
+
+export enum States {
+  DRAFT = 'draft',
+  DONE = 'done',
+  PAYMENT = 'payment',
+  DECLINED = 'declined',
+  PREREQUISITES = 'prerequisites',
+}
 
 export enum ApiActions {
   submitApplication = 'submitApplication',
   createCharge = 'createCharge',
 }
 
-export const B_FULL = 'B-full'
-export const B_TEMP = 'B-temp'
-export const B_FULL_RENEWAL_65 = 'B-full-renewal-65'
-export const B_ADVANCED = 'B-advanced'
-export const BE = 'BE'
-export const DELIVERY_FEE = 'deliveryFee'
-
-export enum LicenseTypes {
-  'B_FULL' = 'B-full',
-  'B_TEMP' = 'B-temp',
-  'B_FULL_RENEWAL_65' = 'B-full-renewal-65',
-  'BE' = 'BE',
-  'B_ADVANCED' = 'B-advanced',
-}
-
 export enum Pickup {
   'POST' = 'post',
   'DISTRICT' = 'district',
 }
+
+export interface DrivingLicenseFormConfig {
+  allowFakeData?: boolean
+  allowPickLicense?: boolean
+  allowBELicense?: boolean
+  allow65Renewal?: boolean
+  allowAdvanced?: boolean
+}
+
+export type ConditionFn = (answer: FormValue) => boolean
+
+export const healthDeclarationQuestions = [
+  {
+    id: 'healthDeclaration.usesContactGlasses',
+    label: m.healthDeclaration1,
+  },
+  {
+    id: 'healthDeclaration.hasReducedPeripheralVision',
+    label: m.healthDeclaration2,
+  },
+  {
+    id: 'healthDeclaration.hasEpilepsy',
+    label: m.healthDeclaration3,
+  },
+  {
+    id: 'healthDeclaration.hasHeartDisease',
+    label: m.healthDeclaration4,
+  },
+  {
+    id: 'healthDeclaration.hasMentalIllness',
+    label: m.healthDeclaration5,
+  },
+  {
+    id: 'healthDeclaration.usesMedicalDrugs',
+    label: m.healthDeclaration6,
+  },
+  {
+    id: 'healthDeclaration.isAlcoholic',
+    label: m.healthDeclaration7,
+  },
+  {
+    id: 'healthDeclaration.hasDiabetes',
+    label: m.healthDeclaration8,
+  },
+  {
+    id: 'healthDeclaration.isDisabled',
+    label: m.healthDeclaration9,
+  },
+  {
+    id: 'healthDeclaration.hasOtherDiseases',
+    label: m.healthDeclaration10,
+  },
+]
 
 export enum AdvancedLicenseGroupCodes {
   'C1' = 'C1',
@@ -143,11 +209,13 @@ export const organizedAdvancedLicenseMap = advancedLicenseMap.reduce<
   return acc
 }, {})
 
+export const DELIVERY_FEE = 'deliveryFee'
+
 export const CHARGE_ITEM_CODES: Record<string, string> = {
-  [B_TEMP]: 'AY114',
-  [B_FULL]: 'AY110',
-  [B_FULL_RENEWAL_65]: 'AY113',
-  [BE]: 'AY115',
+  [License.B_TEMP]: 'AY114',
+  [License.B_FULL]: 'AY110',
+  [License.B_FULL_RENEWAL_65]: 'AY113',
+  [License.BE]: 'AY115',
   [DELIVERY_FEE]: 'AY145',
 }
 
@@ -168,42 +236,23 @@ export const codesExtendedLicenseCategories = [
 ]
 export const remarksCannotRenew65 = ['400', '450', '95']
 
-export type DrivingLicenseApplicationFor =
-  | typeof B_FULL
-  | typeof B_TEMP
-  | typeof B_FULL_RENEWAL_65
-  | typeof BE
-
-export type Events =
-  | { type: DefaultEvents.SUBMIT }
-  | { type: DefaultEvents.PAYMENT }
-  | { type: DefaultEvents.APPROVE }
-  | { type: DefaultEvents.REJECT }
-  | { type: DefaultEvents.ABORT }
-
-export enum Roles {
-  APPLICANT = 'applicant',
+export type DrivingLicense = {
+  currentLicense: string | null
+  remarks?: {
+    code: string
+    description: string
+  }[]
+  categories: {
+    nr: string
+    validToCode: number
+    issued?: string
+  }[]
 }
-
-export enum States {
-  DRAFT = 'draft',
-  DONE = 'done',
-  PAYMENT = 'payment',
-  DECLINED = 'declined',
-  PREREQUISITES = 'prerequisites',
-}
-
-export const YES = 'yes'
-export const NO = 'no'
-
-type FakeCurrentLicense = 'none' | 'temp' | 'full' | 'BE'
-type YesOrNo = 'yes' | 'no'
-
 export interface DrivingLicenseFakeData {
-  useFakeData?: YesOrNo
-  qualityPhoto?: YesOrNo
-  currentLicense?: FakeCurrentLicense
-  remarks?: YesOrNo
+  useFakeData?: 'yes' | 'no'
+  qualityPhoto?: 'yes' | 'no'
+  remarks?: 'yes' | 'no'
+  currentLicense?: 'none' | 'temp' | 'full' | 'BE'
   howManyDaysHaveYouLivedInIceland: string | number
   age: number
 }

@@ -6,21 +6,22 @@ import {
   buildSubSection,
   getValueViaPath,
   buildDescriptionField,
+  NO,
+  YES,
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
-import { HasQualityPhotoData } from '../../lib/types'
-import { B_FULL, NO, YES, B_FULL_RENEWAL_65 } from '../../lib/constants'
+import { License } from '../../lib/constants'
 import {
   hasNoDrivingLicenseInOtherCountry,
   isApplicationForCondition,
   isVisible,
-} from '../../lib/utils'
+} from '../../lib/utils/formUtils'
 
 export const subSectionQualityPhoto = buildSubSection({
   id: 'photoStep',
   title: m.applicationQualityPhotoTitle,
   condition: isVisible(
-    isApplicationForCondition([B_FULL, B_FULL_RENEWAL_65]),
+    isApplicationForCondition([License.B_FULL, License.B_FULL_RENEWAL_65]),
     hasNoDrivingLicenseInOtherCountry,
   ),
   children: [
@@ -29,8 +30,10 @@ export const subSectionQualityPhoto = buildSubSection({
       title: m.qualityPhotoTitle,
       condition: (_, externalData) => {
         return (
-          getValueViaPath<HasQualityPhotoData>(externalData, 'qualityPhoto')
-            ?.data?.hasQualityPhoto === true
+          getValueViaPath<{ data: { hasQualityPhoto: boolean } }>(
+            externalData,
+            'qualityPhoto',
+          )?.data?.hasQualityPhoto === true
         )
       },
       children: [
@@ -62,8 +65,10 @@ export const subSectionQualityPhoto = buildSubSection({
       title: m.qualityPhotoTitle,
       condition: (_, externalData) => {
         return (
-          getValueViaPath<HasQualityPhotoData>(externalData, 'qualityPhoto')
-            ?.data?.hasQualityPhoto === false
+          getValueViaPath<{ data: { hasQualityPhoto: boolean } }>(
+            externalData,
+            'qualityPhoto',
+          )?.data?.hasQualityPhoto === false
         )
       },
       children: [

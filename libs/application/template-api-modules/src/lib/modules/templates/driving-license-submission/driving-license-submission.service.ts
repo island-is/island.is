@@ -11,6 +11,7 @@ import { TemplateApiModuleActionProps } from '../../../types'
 import { coreErrorMessages, getValueViaPath } from '@island.is/application/core'
 import {
   ApplicationTypes,
+  ApplicationWithAttachments,
   FormValue,
   InstitutionNationalIds,
 } from '@island.is/application/types'
@@ -30,6 +31,7 @@ import {
   DrivingLicenseSchema,
 } from './utils/healthDeclarationMapper'
 import { formatPhoneNumber } from './utils'
+import { S3Service } from '@island.is/nest/aws'
 
 const calculateNeedsHealthCert = (healthDeclaration = {}) => {
   return !!Object.values(healthDeclaration).find((val) => val === 'yes')
@@ -41,6 +43,7 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private readonly drivingLicenseService: DrivingLicenseService,
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
+    private readonly s3Service: S3Service,
   ) {
     super(ApplicationTypes.DRIVING_LICENSE)
   }
@@ -95,7 +98,7 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
 
     let result
     try {
-      result = await this.createLicense(nationalId, answers, auth)
+      result = await this.createLicense(nationalId, answers, auth, application)
     } catch (e) {
       this.log('error', 'Creating license failed', {
         e,
@@ -136,6 +139,7 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
     nationalId: string,
     answers: FormValue,
     auth: User,
+    application: ApplicationWithAttachments,
   ): Promise<NewDrivingLicenseResult> {
     const applicationFor =
       getValueViaPath<'B-full' | 'B-temp' | 'BE' | 'B-full-renewal-65'>(
@@ -218,6 +222,17 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
       )
       const email = getValueViaPath<string>(answers, 'email')
       const phone = getValueViaPath<string>(answers, 'phone')
+      const attachedFile = (getValueViaPath<{ key: string; name: string }[]>(
+        answers,
+        'healthDeclarationFileUpload',
+      ) ?? [{ key: '', name: '' }])[0]
+
+      const filename = (
+        application.attachments as {
+          [key: string]: string
+        }
+      )[attachedFile.key]
+
       return this.drivingLicenseService.applyForBELicense(
         nationalId,
         auth.authorization,
@@ -226,6 +241,12 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
           instructorSSN: instructorSSN ?? '',
           primaryPhoneNumber: phone ?? '',
           studentEmail: email ?? '',
+          healthDeclarationFileUpload: {
+            base64: attachedFile.key
+              ? await this.getBase64EncodedAttachment(filename)
+              : '',
+            filename: attachedFile.name,
+          },
         },
       )
     }
@@ -276,12 +297,20 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
   }
 
   async glassesCheck({ auth }: TemplateApiModuleActionProps): Promise<boolean> {
-    const licences: DriverLicenseWithoutImages[] =
+    const licenses: DriverLicenseWithoutImages[] =
       await this.drivingLicenseService.getAllDriverLicenses(auth.authorization)
-    const hasGlasses: boolean = licences.some((license) => {
+    const hasGlasses: boolean = licenses.some((license) => {
       // Visual impairments comments on driving licenses are prefixed with "01."
       return !!license.comments?.some((comment) => comment.nr?.includes('01.'))
     })
     return hasGlasses
+  }
+
+  private async getBase64EncodedAttachment(fileName?: string): Promise<string> {
+    if (!fileName) {
+      return ''
+    }
+    const file = await this.s3Service.getFileContent(fileName, 'base64')
+    return file ?? ''
   }
 }
