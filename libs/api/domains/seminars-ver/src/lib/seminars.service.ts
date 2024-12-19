@@ -25,18 +25,11 @@ export class SeminarsService {
     nationalIds: Array<string>,
     courseID: number,
   ): Promise<Array<IndividualDTO>> {
-    const tmp = this.seminarsService.checkIndividuals(
+    const individuals = this.seminarsService.checkIndividuals(
       auth,
       nationalIds,
       courseID,
     )
-    const tmp2 = (await tmp).map((x, i) => {
-      let neww = x
-      if (i === 0) {
-        neww = { ...x, mayTakeCourse: false }
-      }
-      return neww
-    })
-    return tmp2
+    return individuals
   }
 }

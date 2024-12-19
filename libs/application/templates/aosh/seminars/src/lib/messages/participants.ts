@@ -67,5 +67,26 @@ export const participants = {
       defaultMessage: 'Sækja csv sniðmát',
       description: 'participants csv button text',
     },
+    addParticipantButtonText: {
+      id: 'aosh.sem.application:participants.labels.addParticipantButtonText',
+      defaultMessage: 'Skrá fleiri þátttakendur',
+      description: 'participants add more button text',
+    },
+    validityError: {
+      id: 'aosh.sem.application:participants.labels.validityError',
+      defaultMessage:
+        'Sumir þátttakendur eru ekki gjaldgengir á þetta námskeið. Vinsamlegast hafið samband við þjónustuver ef þörf er á frekari upplýsingum.',
+      description: 'participants validity error text',
+    },
+    removeInvalidParticipantsButtonText: {
+      id: 'aosh.sem.application:participants.labels.removeInvalidParticipantsButtonText',
+      defaultMessage: 'Fjarlægja ógjaldgenga þátttakendur',
+      description: 'participants remove invalid participants button text',
+    },
+    tableError: {
+      id: 'aosh.sem.application:participants.labels.tableError',
+      defaultMessage: 'Vinsamlegast fjarlægðu ógjaldgenga þáttakendur',
+      description: 'participants table error message',
+    },
   }),
 }
