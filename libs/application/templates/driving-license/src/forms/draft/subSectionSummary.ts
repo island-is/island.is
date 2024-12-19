@@ -7,28 +7,25 @@ import {
   buildDividerField,
   buildSubSection,
   getValueViaPath,
+  YES,
 } from '@island.is/application/core'
 import { DefaultEvents, StaticText } from '@island.is/application/types'
 import { NationalRegistryUser, TeacherV4 } from '../../types/schema'
 import { m } from '../../lib/messages'
-import { format as formatKennitala } from 'kennitala'
+import { format as formatNationalId } from 'kennitala'
 import { StudentAssessment } from '@island.is/api/schema'
 import {
-  B_FULL,
-  B_FULL_RENEWAL_65,
-  B_TEMP,
-  BE,
+  License,
   CHARGE_ITEM_CODES,
   DELIVERY_FEE,
-  YES,
+  Pickup,
 } from '../../lib/constants'
 import {
   hasNoDrivingLicenseInOtherCountry,
   isApplicationForCondition,
   needsHealthCertificateCondition,
-} from '../../lib/utils'
+} from '../../lib/utils/formUtils'
 import { formatPhoneNumber } from '@island.is/application/ui-components'
-import { Pickup } from '../../lib/types'
 
 export const subSectionSummary = buildSubSection({
   id: 'overview',
@@ -57,11 +54,11 @@ export const subSectionSummary = buildSubSection({
         buildKeyValueField({
           label: m.overviewSubType,
           value: ({ answers: { applicationFor } }) =>
-            applicationFor === B_TEMP
+            applicationFor === License.B_TEMP
               ? m.applicationForTempLicenseTitle
-              : applicationFor === BE
+              : applicationFor === License.BE
               ? m.applicationForBELicenseTitle
-              : applicationFor === B_FULL_RENEWAL_65
+              : applicationFor === License.B_FULL_RENEWAL_65
               ? m.applicationForRenewalLicenseTitle
               : m.applicationForFullLicenseTitle,
         }),
@@ -76,7 +73,7 @@ export const subSectionSummary = buildSubSection({
           label: m.overviewNationalId,
           width: 'half',
           value: ({ externalData: { nationalRegistry } }) =>
-            formatKennitala(
+            formatNationalId(
               (nationalRegistry.data as NationalRegistryUser).nationalId,
             ),
         }),
@@ -108,12 +105,12 @@ export const subSectionSummary = buildSubSection({
             (nationalRegistry.data as NationalRegistryUser).address?.city,
         }),
         buildDividerField({
-          condition: isApplicationForCondition(B_TEMP),
+          condition: isApplicationForCondition(License.B_TEMP),
         }),
         buildKeyValueField({
           label: m.overviewTeacher,
           width: 'half',
-          condition: isApplicationForCondition(B_TEMP),
+          condition: isApplicationForCondition(License.B_TEMP),
           value: ({
             externalData: {
               drivingAssessment,
@@ -121,7 +118,7 @@ export const subSectionSummary = buildSubSection({
             },
             answers,
           }) => {
-            if (answers.applicationFor === B_TEMP) {
+            if (answers.applicationFor === License.B_TEMP) {
               const teacher = (data as TeacherV4[]).find(
                 ({ nationalId }) =>
                   getValueViaPath(answers, 'drivingInstructor') === nationalId,
@@ -130,30 +127,6 @@ export const subSectionSummary = buildSubSection({
             }
             return (drivingAssessment.data as StudentAssessment).teacherName
           },
-        }),
-        buildDividerField({
-          condition: needsHealthCertificateCondition(YES),
-        }),
-        buildDescriptionField({
-          id: 'bringalong',
-          title: m.overviewBringAlongTitle,
-          titleVariant: 'h4',
-          description: '',
-          condition: needsHealthCertificateCondition(YES),
-        }),
-        buildCheckboxField({
-          id: 'certificate',
-          title: '',
-          large: false,
-          backgroundColor: 'white',
-          defaultValue: [],
-          options: [
-            {
-              value: YES,
-              label: m.overviewBringCertificateData,
-            },
-          ],
-          condition: needsHealthCertificateCondition(YES),
         }),
         buildDividerField({}),
         buildKeyValueField({
@@ -174,7 +147,7 @@ export const subSectionSummary = buildSubSection({
               chargeItemCode: string
             }[]
 
-            const DEFAULT_ITEM_CODE = CHARGE_ITEM_CODES[B_FULL]
+            const DEFAULT_ITEM_CODE = CHARGE_ITEM_CODES[License.B_FULL]
 
             const targetCode =
               typeof application.answers.applicationFor === 'string'

@@ -18,6 +18,7 @@ import { DrivingLicenseService } from '@island.is/api/domains/driving-license'
 import { ConfigService } from '@nestjs/config'
 import { ConfigModule } from '@island.is/nest/config'
 import { createApplication } from '@island.is/application/testing'
+import { S3Service } from '@island.is/nest/aws'
 
 describe('DrivingLicenseSubmissionService', () => {
   let drivingLicenseSubmissionService: DrivingLicenseSubmissionService
@@ -34,6 +35,10 @@ describe('DrivingLicenseSubmissionService', () => {
         DrivingLicenseSubmissionService,
         EmailService,
         AdapterService,
+        {
+          provide: S3Service,
+          useClass: jest.fn(() => {}),
+        },
         {
           provide: DrivingLicenseService,
           useClass: jest.fn(() => ({
