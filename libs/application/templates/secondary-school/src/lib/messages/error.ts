@@ -40,4 +40,15 @@ export const error = defineMessages({
       'Ekki er hægt að senda inn umsókn, þar sem umsóknartímabilinu hefur lokið',
     description: 'Error past registration date title',
   },
+  errorSubmitApplicationTitle: {
+    id: 'ss.application:error.errorSubmitApplicationTitle',
+    defaultMessage: 'Ekki er tókst að senda inn umsókn',
+    description: 'Error submit application title',
+  },
+  errorSubmitApplicationDescription: {
+    id: 'ss.application:error.errorSubmitApplicationDescription',
+    defaultMessage:
+      'Ekki tókst að senda inn umsókn, vinsamlegast reyndu síðar..',
+    description: 'Error submit application description',
+  },
 })

@@ -130,31 +130,42 @@ export class SecondarySchoolService extends BaseTemplateApiService {
     >(application.answers, 'extraInformation')
 
     // Submit the application
-    const applicationId = await this.secondarySchoolClient.create(auth, {
-      nationalId: auth.nationalId,
-      name: applicant?.name || '',
-      phone: applicant?.phoneNumber || '',
-      email: applicant?.email || '',
-      address: applicant?.address || '',
-      postalCode: applicant?.postalCode || '',
-      city: applicant?.city || '',
-      isFreshman: applicationType === SecondarySchoolApplicationType.FRESHMAN,
-      contacts: contacts,
-      schools: schoolSelection,
-      nativeLanguageCode: extraInformation?.nativeLanguageCode,
-      otherDescription: extraInformation?.otherDescription,
-      attachments: await Promise.all(
-        (extraInformation?.supportingDocuments || []).map(
-          async (attachment) => {
-            const fileContent = await this.getAttachmentAsBase64(
-              application,
-              attachment,
-            )
-            return { fileContent }
-          },
+    let applicationId: string | undefined
+    try {
+      applicationId = await this.secondarySchoolClient.create(auth, {
+        nationalId: auth.nationalId,
+        name: applicant?.name || '',
+        phone: applicant?.phoneNumber || '',
+        email: applicant?.email || '',
+        address: applicant?.address || '',
+        postalCode: applicant?.postalCode || '',
+        city: applicant?.city || '',
+        isFreshman: applicationType === SecondarySchoolApplicationType.FRESHMAN,
+        contacts: contacts,
+        schools: schoolSelection,
+        nativeLanguageCode: extraInformation?.nativeLanguageCode,
+        otherDescription: extraInformation?.otherDescription,
+        attachments: await Promise.all(
+          (extraInformation?.supportingDocuments || []).map(
+            async (attachment) => {
+              const fileContent = await this.getAttachmentAsBase64(
+                application,
+                attachment,
+              )
+              return { fileContent }
+            },
+          ),
         ),
-      ),
-    })
+      })
+    } catch (e) {
+      throw new TemplateApiError(
+        {
+          title: error.errorSubmitApplicationTitle,
+          summary: error.errorSubmitApplicationDescription,
+        },
+        500,
+      )
+    }
 
     // Send email to applicant and all contacts
     await this.sendEmailAboutSubmitApplication(application)

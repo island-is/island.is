@@ -35,7 +35,7 @@ export const conclusion = {
       description: 'Conclusion accordion title',
     },
     accordionTextFreshman: {
-      id: 'ss.application:conclusion.general.accordionTextFreshman',
+      id: 'ss.application:conclusion.general.accordionTextFreshman#markdown',
       defaultMessage:
         `* **xx. júní 2025**` +
         `\n\n Umsóknartímabili lýkur. Ekki verður farið að vinna úr umsóknum fyrr en eftir þessa dagsetningu. Ef þú af einhverjum ástæðum vilt gera breytingar þarftu að eyða núverandi umsókn og gera nýja áður en tímabilinu lýkur.\n` +
@@ -44,7 +44,7 @@ export const conclusion = {
       description: 'Conclusion accordion text freshman',
     },
     accordionTextGeneral: {
-      id: 'ss.application:conclusion.general.accordionTextGeneral',
+      id: 'ss.application:conclusion.general.accordionTextGeneral#markdown',
       defaultMessage:
         `* **aa. júní 2025**` +
         `\n\n Umsóknartímabili lýkur. Ekki verður farið að vinna úr umsóknum fyrr en eftir þessa dagsetningu. Ef þú af einhverjum ástæðum vilt gera breytingar þarftu að eyða núverandi umsókn og gera nýja áður en tímabilinu lýkur.\n` +

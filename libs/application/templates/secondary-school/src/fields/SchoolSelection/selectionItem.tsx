@@ -34,8 +34,10 @@ export const SelectionItem: FC<FieldBaseProps> = (props) => {
     ApplicationType.FRESHMAN
 
   // options for dropdowns
-  const schoolOptions = application.externalData.schools
-    .data as SecondarySchool[]
+  const schoolOptions = getValueViaPath<SecondarySchool[]>(
+    application.externalData,
+    'schools.data',
+  )
   const [programOptions, setProgramOptions] = useState<Program[]>([])
   const [thirdLanguageOptions, setThirdLanguageOptions] = useState<Language[]>(
     [],
@@ -103,7 +105,7 @@ export const SelectionItem: FC<FieldBaseProps> = (props) => {
 
           // initialize values in dropdowns:
 
-          const schoolInfo = schoolOptions.find((x) => x.id === schoolIdAnswer)
+          const schoolInfo = schoolOptions?.find((x) => x.id === schoolIdAnswer)
 
           const firstProgramInfo = programs.find(
             (x) => x.id === firstProgramIdAnswer,
@@ -170,7 +172,7 @@ export const SelectionItem: FC<FieldBaseProps> = (props) => {
     setValueSchool(option?.value)
 
     const schoolId = option.value
-    const schoolInfo = schoolOptions.find((x) => x.id === schoolId)
+    const schoolInfo = schoolOptions?.find((x) => x.id === schoolId)
 
     setIsLoadingPrograms(true)
     getProgramListCallback(schoolId)
@@ -200,7 +202,7 @@ export const SelectionItem: FC<FieldBaseProps> = (props) => {
   }
 
   const setValueSchool = (schoolId: string | undefined) => {
-    const schoolInfo = schoolOptions.find((x) => x.id === schoolId)
+    const schoolInfo = schoolOptions?.find((x) => x.id === schoolId)
     setValue(`${props.field.id}.school.id`, schoolInfo?.id)
     setValue(`${props.field.id}.school.name`, schoolInfo?.name)
   }
@@ -256,7 +258,7 @@ export const SelectionItem: FC<FieldBaseProps> = (props) => {
           label={formatMessage(school.selection.schoolLabel)}
           backgroundColor="blue"
           required
-          options={schoolOptions.map((school) => {
+          options={(schoolOptions || []).map((school) => {
             return {
               label: school.name,
               value: school.id,
