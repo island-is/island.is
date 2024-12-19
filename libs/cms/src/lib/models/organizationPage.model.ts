@@ -86,6 +86,9 @@ export class OrganizationPage {
 
   @CacheField(() => OrganizationPageTopLevelNavigation, { nullable: true })
   topLevelNavigation?: OrganizationPageTopLevelNavigation | null
+
+  @Field(() => Boolean, { nullable: true })
+  canBeFoundInSearchResults?: boolean
 }
 
 export const mapOrganizationPage = ({
@@ -144,5 +147,6 @@ export const mapOrganizationPage = ({
       ? mapImage(fields.defaultHeaderImage)
       : undefined,
     topLevelNavigation,
+    canBeFoundInSearchResults: fields.canBeFoundInSearchResults ?? true,
   }
 }

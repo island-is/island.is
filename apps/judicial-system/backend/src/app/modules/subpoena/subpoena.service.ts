@@ -31,6 +31,7 @@ import {
 
 import { Case } from '../case/models/case.model'
 import { PdfService } from '../case/pdf.service'
+import { CourtDocumentFolder, CourtService } from '../court'
 import { DefendantService } from '../defendant/defendant.service'
 import { Defendant } from '../defendant/models/defendant.model'
 import { EventService } from '../event'
@@ -93,6 +94,7 @@ export class SubpoenaService {
     private readonly fileService: FileService,
     private readonly eventService: EventService,
     private readonly defendantService: DefendantService,
+    private readonly courtService: CourtService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
@@ -361,6 +363,41 @@ export class SubpoenaService {
 
       return { delivered: false }
     }
+  }
+
+  async deliverSubpoenaToCourt(
+    theCase: Case,
+    defendant: Defendant,
+    subpoena: Subpoena,
+    user: TUser,
+  ): Promise<DeliverResponse> {
+    return this.pdfService
+      .getSubpoenaPdf(theCase, defendant, subpoena)
+      .then(async (pdf) => {
+        const fileName = `Fyrirkall - ${defendant.name}`
+
+        return this.courtService.createDocument(
+          user,
+          theCase.id,
+          theCase.courtId,
+          theCase.courtCaseNumber,
+          CourtDocumentFolder.SUBPOENA_DOCUMENTS,
+          fileName,
+          `${fileName}.pdf`,
+          'application/pdf',
+          pdf,
+        )
+      })
+      .then(() => ({ delivered: true }))
+      .catch((reason) => {
+        // Tolerate failure, but log error
+        this.logger.warn(
+          `Failed to upload subpoena ${subpoena.id} pdf to court for defendant ${defendant.id} of case ${theCase.id}`,
+          { reason },
+        )
+
+        return { delivered: false }
+      })
   }
   async deliverSubpoenaRevokedToPolice(
     theCase: Case,
