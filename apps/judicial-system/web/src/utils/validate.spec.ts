@@ -1,12 +1,11 @@
 import faker from 'faker'
 
-import { isTrafficViolationStepValidIndictments, validate } from './validate'
 import {
   Case,
   IndictmentCountOffense,
   IndictmentSubtype,
 } from '../graphql/schema'
-import { getLegalArguments } from '../routes/Prosecutor/Indictments/Indictment/IndictmentCount'
+import { isTrafficViolationStepValidIndictments, validate } from './validate'
 
 describe('Validate police casenumber format', () => {
   test('should fail if not in correct form', () => {
@@ -348,8 +347,8 @@ describe('isTrafficViolationStepValidIndictments', () => {
       hasCivilClaims: true,
       civilDemands: faker.lorem.sentence(),
       indictmentSubtypes: {
-        ['1234']: [IndictmentSubtype.TRAFFIC_VIOLATION],
-        ['5678']: [IndictmentSubtype.TRAFFIC_VIOLATION],
+        '1234': [IndictmentSubtype.TRAFFIC_VIOLATION],
+        '5678': [IndictmentSubtype.TRAFFIC_VIOLATION],
       },
       indictmentCounts: [
         {
@@ -384,8 +383,8 @@ describe('isTrafficViolationStepValidIndictments', () => {
       hasCivilClaims: true,
       civilDemands: faker.lorem.sentence(),
       indictmentSubtypes: {
-        ['1234']: [IndictmentSubtype.TRAFFIC_VIOLATION],
-        ['5678']: [IndictmentSubtype.TRAFFIC_VIOLATION],
+        '1234': [IndictmentSubtype.TRAFFIC_VIOLATION],
+        '5678': [IndictmentSubtype.TRAFFIC_VIOLATION],
       },
       indictmentCounts: [
         {
@@ -420,8 +419,8 @@ describe('isTrafficViolationStepValidIndictments', () => {
       hasCivilClaims: true,
       civilDemands: faker.lorem.sentence(),
       indictmentSubtypes: {
-        ['1234']: [IndictmentSubtype.BODILY_INJURY],
-        ['5678']: [
+        '1234': [IndictmentSubtype.BODILY_INJURY],
+        '5678': [
           IndictmentSubtype.TRAFFIC_VIOLATION,
           IndictmentSubtype.AGGRAVATED_ASSAULT,
         ],
