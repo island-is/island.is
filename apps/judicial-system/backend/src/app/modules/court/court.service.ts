@@ -579,12 +579,12 @@ export class CourtService {
     try {
       const subject = `${courtName} - ${courtCaseNumber} - upplýsingar`
 
-      const sanitizedPoliceCaseNumber = policeCaseNumber?.replace(/-/g, '')
+      policeCaseNumber = policeCaseNumber?.replace(/-/g, '')
 
       const content = JSON.stringify({
         receivedByCourtDate,
         indictmentDate,
-        sanitizedPoliceCaseNumber,
+        policeCaseNumber,
         subtypes,
         defendants,
         prosecutor,

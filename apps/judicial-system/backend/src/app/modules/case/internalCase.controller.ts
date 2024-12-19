@@ -581,6 +581,35 @@ export class InternalCaseController {
   )
   @Post(
     `case/:caseId/${
+      messageEndpoint[MessageType.DELIVERY_TO_POLICE_SIGNED_COURT_RECORD]
+    }`,
+  )
+  @ApiOkResponse({
+    type: DeliverResponse,
+    description: 'Delivers a signed court record to police',
+  })
+  deliverSignedCourtRecordToPolice(
+    @Param('caseId') caseId: string,
+    @CurrentCase() theCase: Case,
+    @Body() deliverDto: DeliverDto,
+  ): Promise<DeliverResponse> {
+    this.logger.debug(
+      `Delivering the signed court record for case ${caseId} to police`,
+    )
+
+    return this.internalCaseService.deliverSignedCourtRecordToPolice(
+      theCase,
+      deliverDto.user,
+    )
+  }
+
+  @UseGuards(
+    CaseExistsGuard,
+    new CaseTypeGuard([...restrictionCases, ...investigationCases]),
+    CaseCompletedGuard,
+  )
+  @Post(
+    `case/:caseId/${
       messageEndpoint[MessageType.DELIVERY_TO_POLICE_SIGNED_RULING]
     }`,
   )

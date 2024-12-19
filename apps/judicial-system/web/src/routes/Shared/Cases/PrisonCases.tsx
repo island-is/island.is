@@ -3,7 +3,10 @@ import { useIntl } from 'react-intl'
 import partition from 'lodash/partition'
 
 import { AlertMessage, Box, Tag, Text } from '@island.is/island-ui/core'
-import { capitalize } from '@island.is/judicial-system/formatters'
+import {
+  capitalize,
+  districtCourtAbbreviation,
+} from '@island.is/judicial-system/formatters'
 import {
   core,
   errors,
@@ -11,6 +14,7 @@ import {
   titles,
 } from '@island.is/judicial-system-web/messages'
 import {
+  CaseTag,
   Logo,
   PageHeader,
   SectionHeading,
@@ -28,6 +32,7 @@ import {
   getDurationDate,
 } from '@island.is/judicial-system-web/src/components/Table'
 import Table from '@island.is/judicial-system-web/src/components/Table/Table'
+import { getPrisonCaseStateTag } from '@island.is/judicial-system-web/src/components/Tags/utils'
 import {
   CaseListEntry,
   CaseState,
@@ -166,6 +171,10 @@ export const PrisonCases: FC = () => {
           thead={[
             {
               title: formatMessage(tables.caseNumber),
+              sortable: {
+                isSortable: true,
+                key: 'courtCaseNumber',
+              },
             },
             {
               title: capitalize(formatMessage(core.defendant, { suffix: 'i' })),
@@ -182,13 +191,21 @@ export const PrisonCases: FC = () => {
           data={cases}
           columns={[
             {
-              cell: (row) => (
-                <CourtCaseNumber
-                  courtCaseNumber={row.courtCaseNumber ?? ''}
-                  policeCaseNumbers={row.policeCaseNumbers ?? []}
-                  appealCaseNumber={row.appealCaseNumber ?? ''}
-                />
-              ),
+              cell: (row) => {
+                const courtAbbreviation = districtCourtAbbreviation(
+                  row.court?.name,
+                )
+
+                return (
+                  <CourtCaseNumber
+                    courtCaseNumber={`${
+                      courtAbbreviation ? `${courtAbbreviation}: ` : ''
+                    }${row.courtCaseNumber ?? ''}`}
+                    policeCaseNumbers={row.policeCaseNumbers ?? []}
+                    appealCaseNumber={row.appealCaseNumber ?? ''}
+                  />
+                )
+              },
             },
             {
               cell: (row) => <DefendantInfo defendants={row.defendants} />,
@@ -202,11 +219,23 @@ export const PrisonCases: FC = () => {
               ),
             },
             {
-              cell: () => (
-                <Tag variant="purple" outlined disabled truncate>
-                  {'Nýtt'}
-                </Tag>
-              ),
+              cell: (row) => {
+                const prisonCaseState =
+                  row.defendants &&
+                  row.defendants?.length > 0 &&
+                  row.defendants[0].openedByPrisonAdminDate
+                    ? CaseState.RECEIVED
+                    : CaseState.NEW
+                const prisonCaseStateTag =
+                  getPrisonCaseStateTag(prisonCaseState)
+
+                return (
+                  <CaseTag
+                    color={prisonCaseStateTag.color}
+                    text={formatMessage(prisonCaseStateTag.text)}
+                  />
+                )
+              },
             },
           ]}
           generateContextMenuItems={(row) => [openCaseInNewTabMenuItem(row.id)]}
