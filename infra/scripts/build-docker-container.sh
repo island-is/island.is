@@ -8,8 +8,10 @@ DOCKER_IMAGE="${DOCKER_REGISTRY}helm-config"
 DOCKER_TAG=$1
 
 # shellcheck disable=SC2086
-docker build -f "$DIR"/Dockerfile ${EXTRA_DOCKER_BUILD_ARGS:-} -t "$DOCKER_IMAGE":"${DOCKER_TAG}" "$DIR"/../..
+CI=true docker build --load -f "$DIR"/Dockerfile ${EXTRA_DOCKER_BUILD_ARGS:-} -t "$DOCKER_IMAGE":"${DOCKER_TAG}" --target="${BUILD_TARGET:-runner}" "$DIR"/../..
 
 if [[ "true" = "$PUBLISH" ]]; then
   docker push "$DOCKER_IMAGE":"${DOCKER_TAG}"
 fi
+
+echo "Successfully built docker image '$DOCKER_IMAGE:${DOCKER_TAG}'"
