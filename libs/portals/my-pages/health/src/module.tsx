@@ -59,7 +59,7 @@ const OrganDonation = lazy(() =>
 )
 
 const OrganDonationRegistration = lazy(() =>
-  import('./screens/OrganDonationRegistration/RegistrationForm'),
+  import('./screens/OrganDonation/components/RegistrationForm'),
 )
 
 const Vaccinations = lazy(() =>

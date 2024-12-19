@@ -28,14 +28,20 @@ export class HealthDirectorateService {
     if (data === null) {
       return null
     }
+    const hasExceptionComment: boolean =
+      data.exceptionComment !== undefined && data.exceptionComment.length > 0
+    const hasExceptions: boolean =
+      data.exceptions !== undefined && data.exceptions.length > 0
     const donorStatus: Donor = {
-      isDonor: data?.isDonor ?? true,
+      isDonor: data.isDonor,
       limitations: {
         hasLimitations:
-          ((data?.exceptions?.length ?? 0) > 0 && data?.isDonor) ?? false,
-        limitedOrgansList: data?.exceptions,
-        comment: data?.exceptionComment,
+          ((hasExceptionComment || hasExceptions) && data.isDonor) ?? false,
+        limitedOrgansList: data.exceptions,
+        comment: data.exceptionComment,
       },
+      isMinor: data.isMinor ?? false,
+      isTemporaryResident: data.isTemporaryResident ?? false,
     }
     return donorStatus
   }
@@ -62,11 +68,15 @@ export class HealthDirectorateService {
     input: DonorInput,
     locale: Locale,
   ): Promise<void> {
+    const filteredList =
+      input.organLimitations?.filter((item) => item !== 'other') ?? []
+
     return await this.organDonationApi.updateOrganDonation(
       auth,
       {
         isDonor: input.isDonor,
-        exceptions: input.organLimitations ?? [],
+        exceptions: filteredList,
+        exceptionComment: input.comment,
       },
       locale === 'is' ? organLocale.Is : organLocale.En,
     )

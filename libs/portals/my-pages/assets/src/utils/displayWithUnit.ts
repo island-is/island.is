@@ -5,8 +5,16 @@ export const displayWithUnit = (
   unit: 'kg' | 'cc' | 'hö' | 'mm' | 'g/km' | 'km',
   formatNumber?: boolean,
 ) => {
-  if (value) {
-    return `${formatNumber ? numberFormat(+value) : value} ${unit}`
+  //Explict checking because 0 is falsy.
+  if (value === null || value === undefined) {
+    return ''
   }
-  return ''
+
+  const number = +value
+
+  if (Number.isNaN(number)) {
+    return ''
+  }
+
+  return `${formatNumber ? numberFormat(number) : value} ${unit}`
 }
