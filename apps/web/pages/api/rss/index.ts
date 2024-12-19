@@ -180,7 +180,7 @@ export default async function handler(
       .map((item) => {
         const formattedStartDate = format(
           new Date(item.startDate),
-          'dd. MMMM yyyy',
+          'd. MMMM yyyy',
           {
             locale: localeMap[locale],
           },
