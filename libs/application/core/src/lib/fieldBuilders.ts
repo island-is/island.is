@@ -426,7 +426,8 @@ export const buildTitleField = (data: {
   marginBottom?: BoxProps['marginBottom']
   marginTop?: BoxProps['marginTop']
 }): TitleField => {
-  const { title, titleVariant, color, condition, marginTop, marginBottom } = data
+  const { title, titleVariant, color, condition, marginTop, marginBottom } =
+    data
   return {
     id: '',
     children: undefined,
