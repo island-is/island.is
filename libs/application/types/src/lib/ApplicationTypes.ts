@@ -78,6 +78,7 @@ export enum ApplicationTypes {
   NEW_PRIMARY_SCHOOL = 'NewPrimarySchool',
   WORK_ACCIDENT_NOTIFICATION = 'WorkAccidentNotification',
   MACHINE_REGISTRATION = 'MachineRegistration',
+  SEMINAR_REGISTRATION = 'SeminarRegistration',
 }
 
 export const ApplicationConfigurations = {
@@ -400,5 +401,9 @@ export const ApplicationConfigurations = {
   [ApplicationTypes.MACHINE_REGISTRATION]: {
     slug: 'nyskraning-taekis',
     translation: ['aosh.rnm.application'],
+  },
+  [ApplicationTypes.SEMINAR_REGISTRATION]: {
+    slug: 'vinnueftirlitid-namskeid',
+    translation: ['aosh.sr.application'],
   },
 }

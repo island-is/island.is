@@ -1,0 +1,5 @@
+export * from './lib/seminars.module'
+export * from '../gen/fetch'
+export * from './lib/seminars.config'
+export * from './lib/seminars.service'
+export * from './lib/seminars.types'

@@ -266,6 +266,7 @@ export enum FieldTypes {
   VEHICLE_RADIO = 'VEHICLE_RADIO',
   STATIC_TABLE = 'STATIC_TABLE',
   SLIDER = 'SLIDER',
+  INFORMATION_CARD = 'INFORMATION_CARD',
   DISPLAY = 'DISPLAY',
   ACCORDION = 'ACCORDION',
   BANK_ACCOUNT = 'BANK_ACCOUNT',
@@ -303,6 +304,7 @@ export enum FieldComponents {
   VEHICLE_RADIO = 'VehicleRadioFormField',
   STATIC_TABLE = 'StaticTableFormField',
   SLIDER = 'SliderFormField',
+  INFORMATION_CARD = 'InformationCardFormField',
   DISPLAY = 'DisplayFormField',
   ACCORDION = 'AccordionFormField',
   BANK_ACCOUNT = 'BankAccountFormField',
@@ -469,6 +471,16 @@ export interface KeyValueField extends BaseField {
   paddingBottom?: BoxProps['padding']
 }
 
+export interface InformationCardField extends BaseField {
+  readonly type: FieldTypes.INFORMATION_CARD
+  component: FieldComponents.INFORMATION_CARD
+  items: MaybeWithApplicationAndFieldAndLocale<
+    Array<{ label: FormText; value: FormText | FormTextArray }>
+  >
+  paddingX?: BoxProps['padding']
+  paddingY?: BoxProps['padding']
+}
+
 export interface CustomField extends BaseField {
   readonly type: FieldTypes.CUSTOM
   readonly component: string
@@ -515,6 +527,8 @@ export interface LinkField extends BaseField {
   component: FieldComponents.LINK
   s3key?: FormText
   link?: FormText
+  variant?: 'ghost' | 'text'
+  justifyContent?: 'flexStart' | 'center' | 'flexEnd'
   iconProps?: Pick<IconProps, 'icon' | 'type'>
 }
 
@@ -819,6 +833,7 @@ export type Field =
   | VehicleRadioField
   | StaticTableField
   | SliderField
+  | InformationCardField
   | DisplayField
   | AccordionField
   | BankAccountField

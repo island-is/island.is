@@ -18,6 +18,7 @@ import {
   whiteSpace as whiteSpaceStyle,
   textAlign as textAlignStyle,
   capitalizeFirstLetter as capitalizeFirstLetterStyle,
+  disabledText,
 } from './Text.css'
 import { TestSupport } from '@island.is/island-ui/utils'
 
@@ -61,6 +62,7 @@ export interface TextProps {
   capitalizeFirstLetter?: boolean
   translate?: 'yes' | 'no'
   textAlign?: 'left' | 'right' | 'center' | 'justify'
+  disabled?: boolean
 }
 
 type GetTextStylesProps = Pick<
@@ -74,6 +76,7 @@ type GetTextStylesProps = Pick<
   | 'whiteSpace'
   | 'textAlign'
   | 'capitalizeFirstLetter'
+  | 'disabled'
 >
 
 export const getTextStyles = ({
@@ -86,6 +89,7 @@ export const getTextStyles = ({
   whiteSpace,
   textAlign,
   capitalizeFirstLetter,
+  disabled,
 }: GetTextStylesProps) =>
   cn(base, {
     [variantStyles[variant!]]: variant,
@@ -99,6 +103,7 @@ export const getTextStyles = ({
     [whiteSpaceStyle[whiteSpace!]]: whiteSpace,
     [textAlignStyle[textAlign!]]: textAlign,
     [capitalizeFirstLetterStyle]: capitalizeFirstLetter,
+    [disabledText]: disabled,
   })
 
 export const Text = forwardRef<HTMLElement, TextProps & TestSupport>(
@@ -125,6 +130,7 @@ export const Text = forwardRef<HTMLElement, TextProps & TestSupport>(
       dataTestId,
       capitalizeFirstLetter,
       translate,
+      disabled,
     },
     ref,
   ) => {
@@ -154,6 +160,7 @@ export const Text = forwardRef<HTMLElement, TextProps & TestSupport>(
         ref={ref}
         title={title}
         translate={translate}
+        disabled={disabled}
       >
         {React.Children.map<React.ReactNode, React.ReactNode>(
           children,

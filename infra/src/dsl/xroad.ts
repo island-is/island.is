@@ -240,6 +240,16 @@ export const AdrAndMachine = new XroadConf({
   },
 })
 
+export const SeminarsVer = new XroadConf({
+  env: {
+    XROAD_SEMINARS_VER_PATH: {
+      dev: 'IS-DEV/GOV/10013/Vinnueftirlitid-Protected/namskeid',
+      staging: 'IS-TEST/GOV/4201810439/Vinnueftirlitid-Protected/namskeid',
+      prod: 'IS/GOV/4201810439/Vinnueftirlitid-Protected/namskeid',
+    },
+  },
+})
+
 export const WorkAccidents = new XroadConf({
   env: {
     XROAD_WORK_ACCIDENT_PATH: {
