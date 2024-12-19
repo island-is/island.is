@@ -144,6 +144,7 @@ export const MAIN_TYPES_QUERY = gql`
         hasPreviousPage
         nextPage
         previousPage
+      }
     }
   }
 `

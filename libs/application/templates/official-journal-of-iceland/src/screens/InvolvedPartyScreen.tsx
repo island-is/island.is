@@ -90,21 +90,20 @@ export const InvolvedPartyScreen = ({
             />
           )}
         </Stack>
-        <Box width="half">
-          <OJOISelectController
-            disabled={disableSelect}
-            loading={loading}
-            name={InputFields.advert.involvedPartyId}
-            label={f(involvedParty.general.section)}
-            options={options}
-            applicationId={application.id}
-            defaultValue={defaultValue}
-            placeholder={involvedParty.inputs.select.placeholder}
-            onChange={() => {
-              setSubmitButtonDisabled && setSubmitButtonDisabled(false)
-            }}
-          />
-        </Box>
+        <OJOISelectController
+          half={true}
+          disabled={disableSelect}
+          loading={loading}
+          name={InputFields.advert.involvedPartyId}
+          label={f(involvedParty.general.section)}
+          options={options}
+          applicationId={application.id}
+          defaultValue={defaultValue}
+          placeholder={involvedParty.inputs.select.placeholder}
+          onChange={() => {
+            setSubmitButtonDisabled && setSubmitButtonDisabled(false)
+          }}
+        />
       </Box>
     </FormScreen>
   )
