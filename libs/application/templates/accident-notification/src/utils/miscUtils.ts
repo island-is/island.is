@@ -1,4 +1,3 @@
-import { AccidentNotificationConfirmation } from '@island.is/api/schema'
 import { getValueViaPath } from '@island.is/application/core'
 import { FormValue, YES } from '@island.is/application/types'
 import { isReportingOnBehalfOfEmployee as isReportingOnBehalfOfEmployeeOrginal } from './reportingUtils'
@@ -28,10 +27,14 @@ export const formatPhonenumber = (value: string) => {
 }
 
 export const hasReceivedConfirmation = (answers: FormValue) => {
+  // The fetched value is actually typed as AccidentNotificationConfirmation, but importing that type breaks when codegen is run after cleanup
   const accidentConfirmations = getValueViaPath(
     answers,
     'accidentStatus.receivedConfirmations',
-  ) as AccidentNotificationConfirmation
+  ) as {
+    InjuredOrRepresentativeParty: boolean | undefined
+    CompanyParty: boolean | undefined
+  }
 
   // if juridical person then the injured or the power of attorney holder has to confirm
   if (isReportingOnBehalfOfEmployee(answers)) {
