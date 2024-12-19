@@ -20,10 +20,8 @@ import {
   MessageType,
 } from '@island.is/judicial-system/message'
 import {
-  CaseFileCategory,
   isFailedServiceStatus,
   isSuccessfulServiceStatus,
-  isTrafficViolationCase,
   ServiceStatus,
   SubpoenaNotificationType,
   type User as TUser,
@@ -283,27 +281,6 @@ export class SubpoenaService {
     return subpoena
   }
 
-  async getIndictmentPdf(theCase: Case): Promise<Buffer> {
-    if (isTrafficViolationCase(theCase)) {
-      return await this.pdfService.getIndictmentPdf(theCase)
-    }
-
-    const indictmentCaseFile = theCase.caseFiles?.find(
-      (caseFile) =>
-        caseFile.category === CaseFileCategory.INDICTMENT && caseFile.key,
-    )
-
-    if (!indictmentCaseFile) {
-      // This shouldn't ever happen
-      this.logger.error(
-        `No indictment found for case ${theCase.id} so cannot deliver subpoena to police`,
-      )
-      throw new Error(`No indictment found for case ${theCase.id}`)
-    }
-
-    return await this.fileService.getCaseFileFromS3(theCase, indictmentCaseFile)
-  }
-
   async deliverSubpoenaToPolice(
     theCase: Case,
     defendant: Defendant,
@@ -317,7 +294,7 @@ export class SubpoenaService {
         subpoena,
       )
 
-      const indictmentPdf = await this.getIndictmentPdf(theCase)
+      const indictmentPdf = await this.pdfService.getIndictmentPdf(theCase)
 
       const createdSubpoena = await this.policeService.createSubpoena(
         theCase,
