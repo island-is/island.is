@@ -28,7 +28,7 @@ export const participantsSection = buildSection({
             name: {
               component: 'input',
               label: 'Nafn',
-              width: 'full',
+              width: 'half',
             },
             nationalId: {
               component: 'input',
