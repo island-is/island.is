@@ -2,7 +2,7 @@ import { FC } from 'react'
 import { MessageDescriptor, useIntl } from 'react-intl'
 import { AnimatePresence } from 'framer-motion'
 
-import { Tag, Text } from '@island.is/island-ui/core'
+import { Box, Tag, Text } from '@island.is/island-ui/core'
 import {
   capitalize,
   districtCourtAbbreviation,
@@ -82,6 +82,12 @@ const CasesReviewed: FC<Props> = ({ loading, cases }) => {
     )
   }
 
+  const hasDefendantAppealedVerdict = (
+    defendants: CaseListEntry['defendants'],
+  ) => {
+    return defendants?.some((defendant) => Boolean(defendant.verdictAppealDate))
+  }
+
   return (
     <>
       <SectionHeading title={formatMessage(strings.title)} />
@@ -147,14 +153,25 @@ const CasesReviewed: FC<Props> = ({ loading, cases }) => {
                 },
                 {
                   cell: (row) => (
-                    <Tag variant="darkerBlue" outlined disabled truncate>
-                      {row.indictmentReviewDecision &&
-                        indictmentReviewDecisionMapping(
-                          row.indictmentReviewDecision,
-                          row.indictmentRulingDecision ===
-                            CaseIndictmentRulingDecision.FINE,
-                        )}
-                    </Tag>
+                    <>
+                      <Box marginRight={1}>
+                        <Tag variant="darkerBlue" outlined disabled truncate>
+                          {row.indictmentReviewDecision &&
+                            indictmentReviewDecisionMapping(
+                              row.indictmentReviewDecision,
+                              row.indictmentRulingDecision ===
+                                CaseIndictmentRulingDecision.FINE,
+                            )}
+                        </Tag>
+                      </Box>
+                      {hasDefendantAppealedVerdict(row.defendants) && (
+                        <Box marginTop={1}>
+                          <Tag variant="red" outlined disabled truncate>
+                            {formatMessage(strings.tagDefendantAppealedVerdict)}
+                          </Tag>
+                        </Box>
+                      )}
+                    </>
                   ),
                 },
                 {
