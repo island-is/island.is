@@ -7,15 +7,15 @@ import {
   buildFileUploadField,
 } from '@island.is/application/core'
 import { getApplicationAnswers, getInspectorOptions } from '../../lib/utils'
-import { RentalHousingConditionInspector } from '../../lib/constants'
+import { RentalHousingConditionInspector, Routes } from '../../lib/constants'
 import { housingCondition } from '../../lib/messages'
 
 export const RentalHousingCondition = buildSubSection({
-  id: 'condition',
+  id: Routes.CONDITION,
   title: housingCondition.subSectionName,
   children: [
     buildMultiField({
-      id: 'condition.pageTitle',
+      id: Routes.CONDITION,
       title: housingCondition.pageTitle,
       description: housingCondition.pageDescription,
       children: [

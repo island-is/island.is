@@ -7,7 +7,7 @@ import {
   getValueViaPath,
 } from '@island.is/application/core'
 import { FormValue } from '@island.is/application/types'
-import { TRUE } from '../../lib/constants'
+import { Routes, TRUE } from '../../lib/constants'
 import { rentalPeriod } from '../../lib/messages'
 
 const rentalPeriodIsDefinite = (answers: FormValue) => {
@@ -20,11 +20,11 @@ const rentalPeriodIsDefinite = (answers: FormValue) => {
 }
 
 export const RentalPeriodDetails = buildSubSection({
-  id: 'rentalPeriod',
+  id: Routes.RENTALPERIOD,
   title: rentalPeriod.subSectionName,
   children: [
     buildMultiField({
-      id: 'rentalPeriod.details',
+      id: Routes.RENTALPERIOD,
       title: rentalPeriod.pageTitle,
       description: rentalPeriod.pageDescription,
       children: [

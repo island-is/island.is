@@ -11,7 +11,9 @@ export const summaryNoBorder = style({
 })
 
 export const gridRow = style({
+  position: 'relative',
   display: 'flex',
+  paddingRight: '100px',
 })
 
 export const divider = style({
@@ -24,4 +26,22 @@ export const divider = style({
       display: 'none',
     },
   },
+})
+
+export const changeButton = style({
+  position: 'absolute',
+  top: '18px',
+  right: '12px',
+})
+
+export const fileLinksList = style({
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'flex-start',
+  gap: '.4rem',
+  paddingTop: '.4rem',
+})
+
+export const fileLink = style({
+  fontSize: '.8rem',
 })

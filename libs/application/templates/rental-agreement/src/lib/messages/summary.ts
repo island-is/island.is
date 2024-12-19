@@ -17,6 +17,11 @@ export const summary = defineMessages({
       'Vinsamlegast farðu yfir gögnin hér að neðan til að staðfesta að réttar upplýsingar hafi verið gefnar upp. ',
     description: 'Description of the summary page',
   },
+  changeSectionButtonLabel: {
+    id: 'ra.application:summary.changeSectionButtonLabel',
+    defaultMessage: 'Breyta',
+    description: 'Change section button label',
+  },
 
   // Property address
   rentalPropertyIdPrefix: {
@@ -58,10 +63,40 @@ export const summary = defineMessages({
     defaultMessage: 'Trygging',
     description: 'Security deposit label',
   },
+  securityDepositNotRequired: {
+    id: 'ra.application:summary.securityDepositNotRequired',
+    defaultMessage: 'Ekki krafist',
+    description: 'Security deposit not required',
+  },
   securityTypeLabel: {
     id: 'ra.application:summary.securityTypeLabel',
     defaultMessage: 'Tegund',
     description: 'Security type label',
+  },
+  securityTypeInstitutionLabel: {
+    id: 'ra.application:summary.securityTypeInstitutionLabel',
+    defaultMessage: 'Nafn stofnunar',
+    description: 'Bank guarantee label',
+  },
+  securityTypeThirdPartyGuaranteeLabel: {
+    id: 'ra.application:summary.securityTypeThirdPartyGuaranteeLabel',
+    defaultMessage: 'Nafn ábyrgðaraðila',
+    description: 'Insurance label',
+  },
+  securityTypeInsuranceLabel: {
+    id: 'ra.application:summary.securityTypeInsuranceLabel',
+    defaultMessage: 'Nafn tryggingarfélags',
+    description: 'Insurance label',
+  },
+  securityTypeMutualFundLabel: {
+    id: 'ra.application:summary.securityTypeMutualFundLabel',
+    defaultMessage: 'Nafn samtryggingasjóðs',
+    description: 'Mutual fund label',
+  },
+  securityTypeOtherLabel: {
+    id: 'ra.application:summary.securityTypeOtherLabel',
+    defaultMessage: 'Tegund Tryggingar',
+    description: 'Other label',
   },
 
   // Payment & indexation
@@ -121,12 +156,12 @@ export const summary = defineMessages({
   },
   electricityMeterNumberLabel: {
     id: 'ra.application:summary.electricityMeterNumberLabel',
-    defaultMessage: 'Rafmagnsmælir nr.',
+    defaultMessage: 'Rafmagnsmælir',
     description: 'Electricity meter label',
   },
   heatingCostMeterNumberLabel: {
     id: 'ra.application:summary.heatingCostMeterNumberLabel',
-    defaultMessage: 'Hitamælir nr.',
+    defaultMessage: 'Hitamælir',
     description: 'Meter number label',
   },
   meterStatusLabel: {

@@ -5,13 +5,14 @@ import {
   buildTextField,
 } from '@island.is/application/core'
 import { specialProvisions } from '../../lib/messages'
+import { Routes } from '../../lib/constants'
 
 export const RentalHousingSpecialProvisions = buildSubSection({
-  id: 'specialProvisions',
+  id: Routes.SPECIALPROVISIONS,
   title: specialProvisions.subsection.name,
   children: [
     buildMultiField({
-      id: 'specialProvisions.details',
+      id: Routes.SPECIALPROVISIONS,
       title: specialProvisions.subsection.pageTitle,
       description: specialProvisions.subsection.pageDescription,
       children: [

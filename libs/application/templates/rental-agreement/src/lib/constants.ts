@@ -15,6 +15,19 @@ export enum Roles {
   APPLICANT = 'applicant',
 }
 
+export enum Routes {
+  LANDLORDINFORMATION = 'landlordInfo',
+  TENANTINFORMATION = 'tenantInfo',
+  PROPERTYINFORMATION = 'registerProperty.info',
+  PROPERTYCATEGORY = 'registerProperty.category',
+  SPECIALPROVISIONS = 'specialProvisions',
+  CONDITION = 'condition',
+  FIREPROTECTIONS = 'fireProtections',
+  RENTALPERIOD = 'rentalPeriod',
+  RENTALAMOUNT = 'rentalAmount',
+  SECURITYDEPOSIT = 'securityDeposit',
+  OTHERFEES = 'otherFees',
+}
 export const IS_REPRESENTATIVE = 'isRepresentative'
 
 export enum AnswerOptions {

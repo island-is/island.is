@@ -1,7 +1,13 @@
-import { GridColumn, GridRow } from '@island.is/island-ui/core'
+import { GridColumn } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { RentalAgreement } from '../../lib/dataSchema'
-import { SecurityDepositAmountOptions, TRUE } from '../../lib/constants'
+import {
+  AnswerOptions,
+  Routes,
+  SecurityDepositAmountOptions,
+  SecurityDepositTypeOptions,
+  TRUE,
+} from '../../lib/constants'
 import {
   formatCurrency,
   formatDate,
@@ -13,15 +19,31 @@ import {
 import { summary } from '../../lib/messages'
 import { KeyValue } from './KeyValue'
 import { SummarySection } from './SummarySection'
-import { Divider } from './Divider'
-import { gridRow } from './summaryStyles.css'
+import { SummaryCardRow } from './components/SummaryCardRow'
 
 type Props = {
   answers: RentalAgreement
+  goToScreen?: (id: string) => void
+  rentalPeriodRoute?: Routes
+  rentalAmountRoute?: Routes
+  securityDepositRoute?: Routes
 }
 
-export const RentalInfoSummary = ({ answers }: Props) => {
+export const RentalInfoSummary = ({
+  answers,
+  goToScreen,
+  rentalAmountRoute,
+  rentalPeriodRoute,
+  securityDepositRoute,
+}: Props) => {
   const { formatMessage } = useLocale()
+
+  const isSecurityDepositRequired =
+    answers.rentalAmount.isPaymentInsuranceRequired?.includes(AnswerOptions.YES)
+  const isSecurityDepositAmount =
+    answers.securityDeposit?.securityAmount ||
+    answers.securityDeposit?.securityAmountOther
+  const isSecurityDepositType = answers.securityDeposit?.securityType
 
   const securityDepositType = (answer: string) => {
     const options = getSecurityDepositTypeOptions()
@@ -69,7 +91,7 @@ export const RentalInfoSummary = ({ answers }: Props) => {
   return (
     <SummarySection>
       {/* Property Address */}
-      <GridRow className={gridRow}>
+      <SummaryCardRow isChangeButton={false}>
         <GridColumn span={['12/12']}>
           <KeyValue
             label={`${answers.registerProperty.address}, ${answers.registerProperty.municipality}`}
@@ -84,12 +106,10 @@ export const RentalInfoSummary = ({ answers }: Props) => {
             valueAs="p"
           />
         </GridColumn>
-      </GridRow>
-
-      <Divider />
+      </SummaryCardRow>
 
       {/* Rental period */}
-      <GridRow className={gridRow}>
+      <SummaryCardRow editAction={goToScreen} route={rentalPeriodRoute}>
         <GridColumn span={['12/12', '4/12']}>
           <KeyValue
             label={summary.rentalPeriodStartDateLabel}
@@ -115,43 +135,16 @@ export const RentalInfoSummary = ({ answers }: Props) => {
             }
           />
         </GridColumn>
-      </GridRow>
+      </SummaryCardRow>
 
-      <Divider />
-
-      {/* Rental amount and security deposit */}
-      <GridRow className={gridRow}>
+      {/* Rental amount */}
+      <SummaryCardRow editAction={goToScreen} route={rentalAmountRoute}>
         <GridColumn span={['12/12', '4/12']}>
           <KeyValue
             label={summary.rentalAmountLabel}
             value={formatCurrency(answers.rentalAmount.amount) || '-'}
           />
         </GridColumn>
-        <GridColumn span={['12/12', '4/12']}>
-          <KeyValue
-            label={summary.securityDepositLabel}
-            value={
-              securityDepositAmount(answers.securityDeposit.securityAmount) ||
-              '-'
-            }
-          />
-        </GridColumn>
-        <GridColumn span={['12/12', '4/12']}>
-          <KeyValue
-            label={summary.securityTypeLabel}
-            value={
-              securityDepositType(
-                answers.securityDeposit.securityType as string,
-              ) || '-'
-            }
-          />
-        </GridColumn>
-      </GridRow>
-
-      <Divider />
-
-      {/* Rent due date and index */}
-      <GridRow className={gridRow}>
         <GridColumn span={['12/12', '4/12']}>
           <KeyValue
             label={summary.paymentDateOptionsLabel}
@@ -163,22 +156,84 @@ export const RentalInfoSummary = ({ answers }: Props) => {
         </GridColumn>
         {answers.rentalAmount.isIndexConnected?.includes(TRUE) &&
           answers.rentalAmount.indexTypes && (
-            <>
-              <GridColumn span={['12/12', '4/12']}>
-                <KeyValue
-                  label={summary.indexTypeLabel}
-                  value={indexType(answers.rentalAmount.indexTypes) || '-'}
-                />
-              </GridColumn>
-              <GridColumn span={['12/12', '4/12']}>
-                <KeyValue
-                  label={summary.indexValueLabel}
-                  value={answers.rentalAmount.indexValue || '-'}
-                />
-              </GridColumn>
-            </>
+            <GridColumn span={['12/12', '4/12']}>
+              <KeyValue
+                label={summary.indexTypeLabel}
+                value={indexType(answers.rentalAmount.indexTypes) || '-'}
+              />
+            </GridColumn>
           )}
-      </GridRow>
+      </SummaryCardRow>
+
+      {/* Security deposit */}
+      {isSecurityDepositRequired && (
+        <SummaryCardRow editAction={goToScreen} route={securityDepositRoute}>
+          <GridColumn span={['12/12', '4/12']}>
+            <KeyValue
+              label={summary.securityDepositLabel}
+              value={
+                isSecurityDepositAmount
+                  ? securityDepositAmount(
+                      answers.securityDeposit.securityAmount,
+                    )
+                  : '-'
+              }
+            />
+          </GridColumn>
+          <GridColumn span={['12/12', '4/12']}>
+            <KeyValue
+              label={summary.securityTypeLabel}
+              value={
+                isSecurityDepositType
+                  ? securityDepositType(
+                      answers.securityDeposit.securityType as string,
+                    )
+                  : '-'
+              }
+            />
+          </GridColumn>
+          {answers.securityDeposit.securityType !==
+            SecurityDepositTypeOptions.CAPITAL && (
+            <GridColumn span={['12/12', '4/12']}>
+              {answers.securityDeposit.securityType ===
+                SecurityDepositTypeOptions.BANK_GUARANTEE && (
+                <KeyValue
+                  label={summary.securityTypeInstitutionLabel}
+                  value={answers.securityDeposit.bankGuaranteeInfo || '-'}
+                />
+              )}
+              {answers.securityDeposit.securityType ===
+                SecurityDepositTypeOptions.THIRD_PARTY_GUARANTEE && (
+                <KeyValue
+                  label={summary.securityTypeThirdPartyGuaranteeLabel}
+                  value={answers.securityDeposit.thirdPartyGuaranteeInfo || '-'}
+                />
+              )}
+              {answers.securityDeposit.securityType ===
+                SecurityDepositTypeOptions.INSURANCE_COMPANY && (
+                <KeyValue
+                  label={summary.securityTypeInsuranceLabel}
+                  value={answers.securityDeposit.insuranceCompanyInfo || '-'}
+                />
+              )}
+              {answers.securityDeposit.securityType ===
+                SecurityDepositTypeOptions.MUTUAL_FUND && (
+                <KeyValue
+                  label={summary.securityTypeMutualFundLabel}
+                  value={answers.securityDeposit.mutualFundInfo || '-'}
+                />
+              )}
+              {answers.securityDeposit.securityType ===
+                SecurityDepositTypeOptions.OTHER && (
+                <KeyValue
+                  label={summary.securityTypeOtherLabel}
+                  value={answers.securityDeposit.otherInfo || '-'}
+                />
+              )}
+            </GridColumn>
+          )}
+        </SummaryCardRow>
+      )}
     </SummarySection>
   )
 }

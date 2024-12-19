@@ -1,23 +1,27 @@
-import { Fragment } from 'react'
-import { GridColumn, GridRow } from '@island.is/island-ui/core'
-import { formatPhoneNumber } from '@island.is/application/ui-components'
+import { FC } from 'react'
+import { GridColumn } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { RentalAgreement } from '../../lib/dataSchema'
 import { summary } from '../../lib/messages'
-import { formatNationalId } from '../../lib/utils'
+import { formatNationalId, formatPhoneNumber } from '../../lib/utils'
 import { KeyValue } from './KeyValue'
 import { SummarySection } from './SummarySection'
-import { Divider } from './Divider'
-import { gridRow } from './summaryStyles.css'
+import { FieldBaseProps } from '@island.is/application/types'
+import { SummaryCardRow } from './components/SummaryCardRow'
+import { Routes } from '../../lib/constants'
 
-type Props = {
-  answers: RentalAgreement
+interface Props extends FieldBaseProps {
+  goToScreen?: (id: string) => void
+  landlordsRoute?: Routes
+  tenantsRoute?: Routes
 }
 
-export const ApplicantsRepresentativesSummary = ({ answers }: Props) => {
+export const ApplicantsRepresentativesSummary: FC<Props> = ({ ...props }) => {
   const { formatMessage } = useLocale()
+  const { application, goToScreen, landlordsRoute, tenantsRoute } = props
+  const answers = application.answers as RentalAgreement
 
-  const landlordListHasRepresentatives = answers.landlordInfo.table?.some(
+  const landlordListHasRepresentatives = answers.landlordInfo.table.some(
     (landlord) =>
       landlord.isRepresentative && landlord.isRepresentative.length > 0,
   )
@@ -43,36 +47,38 @@ export const ApplicantsRepresentativesSummary = ({ answers }: Props) => {
           >
             {landlordRepresentatives?.map((landlordRep) => {
               return (
-                <Fragment key={landlordRep.nationalIdWithName.nationalId}>
-                  <GridRow className={gridRow}>
-                    <GridColumn span={['12/12']}>
-                      <KeyValue
-                        labelVariant="h5"
-                        labelAs="p"
-                        label={landlordRep.nationalIdWithName.name as string}
-                        value={`${formatMessage(
-                          summary.nationalIdLabel,
-                        )}${formatNationalId(
-                          landlordRep.nationalIdWithName.nationalId || '-',
-                        )}`}
-                        gap={'smallGutter'}
-                      />
-                    </GridColumn>
-                    <GridColumn span={['12/12', '6/12']}>
-                      <KeyValue
-                        label={summary.emailLabel}
-                        value={landlordRep.email || '-'}
-                      />
-                    </GridColumn>
-                    <GridColumn span={['12/12', '6/12']}>
-                      <KeyValue
-                        label={summary.phoneNumberLabel}
-                        value={formatPhoneNumber(landlordRep.phone || '-')}
-                      />
-                    </GridColumn>
-                  </GridRow>
-                  <Divider />
-                </Fragment>
+                <SummaryCardRow
+                  key={landlordRep.nationalIdWithName?.nationalId}
+                  editAction={goToScreen}
+                  route={landlordsRoute}
+                >
+                  <GridColumn span={['12/12']}>
+                    <KeyValue
+                      labelVariant="h5"
+                      labelAs="p"
+                      label={landlordRep.nationalIdWithName?.name as string}
+                      value={`${formatMessage(
+                        summary.nationalIdLabel,
+                      )}${formatNationalId(
+                        landlordRep.nationalIdWithName?.nationalId || '-',
+                      )}`}
+                      gap={'smallGutter'}
+                    />
+                  </GridColumn>
+
+                  <GridColumn span={['12/12', '8/12']}>
+                    <KeyValue
+                      label={summary.emailLabel}
+                      value={landlordRep.email || '-'}
+                    />
+                  </GridColumn>
+                  <GridColumn span={['12/12', '4/12']}>
+                    <KeyValue
+                      label={summary.phoneNumberLabel}
+                      value={formatPhoneNumber(landlordRep.phone || '-')}
+                    />
+                  </GridColumn>
+                </SummaryCardRow>
               )
             })}
           </SummarySection>
@@ -85,36 +91,37 @@ export const ApplicantsRepresentativesSummary = ({ answers }: Props) => {
           >
             {tenantRepresentatives.map((tenantRep) => {
               return (
-                <Fragment key={tenantRep.nationalIdWithName.nationalId}>
-                  <GridRow className={gridRow}>
-                    <GridColumn span={['12/12']}>
-                      <KeyValue
-                        labelVariant="h5"
-                        labelAs="p"
-                        label={tenantRep.nationalIdWithName.name as string}
-                        value={`${formatMessage(
-                          summary.nationalIdLabel,
-                        )}${formatNationalId(
-                          tenantRep.nationalIdWithName.nationalId || '-',
-                        )}`}
-                        gap={'smallGutter'}
-                      />
-                    </GridColumn>
-                    <GridColumn span={['12/12', '6/12']}>
-                      <KeyValue
-                        label={summary.emailLabel}
-                        value={tenantRep.email || '-'}
-                      />
-                    </GridColumn>
-                    <GridColumn span={['12/12', '6/12']}>
-                      <KeyValue
-                        label={summary.phoneNumberLabel}
-                        value={formatPhoneNumber(tenantRep.phone || '-')}
-                      />
-                    </GridColumn>
-                  </GridRow>
-                  <Divider />
-                </Fragment>
+                <SummaryCardRow
+                  key={tenantRep.nationalIdWithName?.nationalId}
+                  editAction={props.goToScreen}
+                  route={tenantsRoute}
+                >
+                  <GridColumn span={['12/12']}>
+                    <KeyValue
+                      labelVariant="h5"
+                      labelAs="p"
+                      label={tenantRep.nationalIdWithName?.name as string}
+                      value={`${formatMessage(
+                        summary.nationalIdLabel,
+                      )}${formatNationalId(
+                        tenantRep.nationalIdWithName?.nationalId || '-',
+                      )}`}
+                      gap={'smallGutter'}
+                    />
+                  </GridColumn>
+                  <GridColumn span={['12/12', '8/12']}>
+                    <KeyValue
+                      label={summary.emailLabel}
+                      value={tenantRep.email || '-'}
+                    />
+                  </GridColumn>
+                  <GridColumn span={['12/12', '4/12']}>
+                    <KeyValue
+                      label={summary.phoneNumberLabel}
+                      value={formatPhoneNumber(tenantRep.phone || '-')}
+                    />
+                  </GridColumn>
+                </SummaryCardRow>
               )
             })}
           </SummarySection>

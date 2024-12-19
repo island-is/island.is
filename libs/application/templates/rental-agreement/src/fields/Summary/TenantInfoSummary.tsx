@@ -37,10 +37,12 @@ export const TenantInfoSummary = ({ answers }: Props) => {
                 <KeyValue
                   labelVariant="h5"
                   labelAs="p"
-                  label={tenant.name as string}
+                  label={tenant.nationalIdWithName?.name as string}
                   value={`${formatMessage(
                     summary.nationalIdLabel,
-                  )}${formatNationalId(tenant.nationalId || '-')}`}
+                  )}${formatNationalId(
+                    tenant.nationalIdWithName?.nationalId || '-',
+                  )}`}
                 />
               </GridColumn>
               <GridColumn span={['12/12', '6/12']}>
