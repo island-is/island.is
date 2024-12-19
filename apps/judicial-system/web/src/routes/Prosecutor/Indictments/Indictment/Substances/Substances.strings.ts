@@ -1,6 +1,13 @@
 import { defineMessages } from 'react-intl'
 
 export const substances = defineMessages({
+  substanceTitle: {
+    id: 'judicial.system.core:substances.title',
+    defaultMessage:
+      '{substanceType, select, ILLEGAL_DRUGS_DRIVING {Fíkniefni} PRESCRIPTION_DRUGS_DRIVING {Lyf} other {Efni}}',
+    description:
+      'Notaður sem titill á "veldu" lista á ákæruliða skrefi í ákærum.',
+  },
   substanceLabel: {
     id: 'judicial.system.core:substances.label',
     defaultMessage:

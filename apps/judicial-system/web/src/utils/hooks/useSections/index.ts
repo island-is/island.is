@@ -35,7 +35,7 @@ import {
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
 import { stepValidations, stepValidationsType } from '../../formHelper'
-import { shouldUseAppealWithdrawnRoutes } from '../../stepHelper'
+import { shouldUseAppealWithdrawnRoutes } from '../../utils'
 
 const validateFormStepper = (
   isActiveSubSectionValid: boolean,
