@@ -216,6 +216,7 @@ export const Item = ({
         }}
         application={application}
         defaultValue={DefaultValue}
+        large={true}
         {...props}
       />
     </GridColumn>
