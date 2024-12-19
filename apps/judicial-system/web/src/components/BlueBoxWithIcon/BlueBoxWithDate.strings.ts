@@ -99,4 +99,9 @@ export const strings = defineMessages({
     defaultMessage: 'Afturkalla',
     description: 'Notaður sem texti fyrir aðgerðina að afturkalla mál',
   },
+  revokeAppeal: {
+    id: 'judicial.system.core:blue_box_with_date.revoke_appeal',
+    defaultMessage: 'Afturkalla áfrýjun',
+    description: 'Notaður sem texti fyrir aðgerðina að afturkalla áfrýjun',
+  },
 })
