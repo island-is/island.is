@@ -23,6 +23,30 @@ export class VehicleService {
     after: string,
     filter?: { requestType?: RecyclingRequestTypes; partnerId?: string },
   ) {
+    let partnerIds = []
+
+    // Get all sub recycling partners of the municipality
+    // else get all
+    if (filter.partnerId) {
+      // Get all sub recycling partners of the municipality
+      try {
+        const subRecyclingPartners = await RecyclingPartnerModel.findAll({
+          where: { municipalityId: filter.partnerId },
+          attributes: ['companyId'],
+        })
+
+        partnerIds = [
+          filter.partnerId,
+          ...subRecyclingPartners.map((partner) => partner.companyId),
+        ]
+      } catch (error) {
+        this.logger.error('Failed to fetch sub-partners:', error)
+        throw new Error('Failed to process municipality partners')
+      }
+    } else {
+      partnerIds = null
+    }
+
     return paginate<VehicleModel>({
       Model: this.vehicleModel,
       limit: first,
@@ -34,9 +58,9 @@ export class VehicleService {
           model: RecyclingRequestModel,
           where: {
             ...(filter.requestType ? { requestType: filter.requestType } : {}),
-            ...(filter.partnerId
+            ...(partnerIds
               ? {
-                  recyclingPartnerId: filter.partnerId,
+                  recyclingPartnerId: partnerIds,
                 }
               : {}),
           },

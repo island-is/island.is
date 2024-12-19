@@ -29,6 +29,7 @@ import {
 import { useI18n } from '@island.is/skilavottord-web/i18n'
 import { BASE_PATH } from '@island.is/skilavottord/consts'
 import { CarsTable } from './components/CarsTable'
+import PageHeader from '@island.is/skilavottord-web/components/PageHeader/PageHeader'
 
 export const SkilavottordRecyclingPartnerVehiclesQuery = gql`
   query skilavottordRecyclingPartnerVehiclesQuery($after: String!) {
@@ -167,10 +168,7 @@ const Overview: FC<React.PropsWithChildren<unknown>> = () => {
               </Link>
               <span>{t.title}</span>
             </Breadcrumbs>
-            <Stack space={2}>
-              <Text variant="h1">{t.title}</Text>
-              <Text variant="intro">{t.info}</Text>
-            </Stack>
+            <PageHeader title={t.title} info={t.info} />
             <Box marginTop={4}>
               <Button onClick={handleDeregister}>{t.buttons.deregister}</Button>
             </Box>

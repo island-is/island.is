@@ -16,17 +16,17 @@ See role description further down.
 ### Dev
 
 - [Dev - role: company](https://beta.dev01.devland.is/app/skilavottord/deregister-vehicle)
-- [Dev - role: fund](https://beta.dev01.devland.is/app/skilavottord/recycled-vehicles)
+- [Dev - role: fund/municipality](https://beta.dev01.devland.is/app/skilavottord/recycled-vehicles)
 
 ### Staging
 
 - [Staging - role: company](https://beta.staging01.devland.is/app/skilavottord/deregister-vehicle)
-- [Staging - role: fund](https://beta.staging01.devland.is/app/skilavottord/recycled-vehicles)
+- [Staging - role: fund/municipality](https://beta.staging01.devland.is/app/skilavottord/recycled-vehicles)
 
 ### Prod
 
 - [Prod - role: company](https://island.is/app/skilavottord/deregister-vehicle)
-- [Prod - role: fund](https://island.is/app/skilavottord/recycled-vehicles)
+- [Prod - role: fund/municipality](https://island.is/app/skilavottord/recycled-vehicles)
 
 ## Getting started
 
@@ -106,7 +106,7 @@ URL:
 If users are registered as an employee of a recycling company, they can log in
 here to deregister vehicles that citizens have marked for recycling.
 
-### Fund frontend
+### Fund/municipality frontend
 
 URL:
 [https://island.is/app/skilavottord/recycled-vehicles](https://island.is/app/skilavottord/recycled-vehicles)
