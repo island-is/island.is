@@ -81,12 +81,8 @@ export const TableRepeaterFormField: FC<Props> = ({
   const staticData = getStaticTableData?.(application)
   const canAddItem = maxRows ? savedFields.length < maxRows : true
 
-  console.log('tableItems', tableItems)
-  console.log('values', values)
-
   // check for components that might need some custom value mapping
   const customMappedValues = handleCustomMappedValues(tableItems, values)
-  console.log('customMappedValues', customMappedValues)
 
   const handleSaveItem = async (index: number) => {
     const isValid = await methods.trigger(`${data.id}[${index}]`, {
@@ -290,7 +286,7 @@ export const TableRepeaterFormField: FC<Props> = ({
             </Box>
           )}
         </Stack>
-        {error && typeof error === 'string' && fields.length === 0 && (
+        {error && typeof error === 'string' && (
           <Box marginTop={3}>
             <AlertMessage type="error" title={error} />
           </Box>

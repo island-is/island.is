@@ -6,15 +6,20 @@ import {
   UploadFile,
   UploadFileStatus,
 } from '@island.is/island-ui/core'
-import { FieldBaseProps } from '@island.is/application/types'
-import { FC, useCallback, useEffect, useState } from 'react'
+import {
+  FieldBaseProps,
+  FieldComponents,
+  FieldTypes,
+} from '@island.is/application/types'
+import { FC, useCallback, useState } from 'react'
 import { FILE_SIZE_LIMIT } from '../../lib/constants'
 import { parse } from 'csv-parse'
 import { Participant } from '../../shared/types'
 import { participants as participantMessages } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
 import { useLazyAreIndividualsValid } from '../../hooks/useLazyAreIndividualsValid'
-import { formatText, getValueViaPath } from '@island.is/application/core'
+import { getValueViaPath } from '@island.is/application/core'
+import { DescriptionFormField } from '@island.is/application/ui-fields'
 
 interface IndexableObject {
   [index: number]: Array<string>
@@ -26,20 +31,24 @@ const predefinedHeaders: IndexableObject = {
   3: ['sími', 'phone'],
 }
 
-const parseDataToParticipantList = (csvInput: string): Participant => {
+const parseDataToParticipantList = (csvInput: string): Participant | null => {
   const values = csvInput.split(';')
+  const hasNoEmptyValues =
+    !!values[0] && !!values[1] && !!values[2] && !!values[3]
+  if (!hasNoEmptyValues) {
+    return null
+  }
   const nationalIdWithoutHyphen = values[1].replace('-', '')
-  // TODO check if fields are empty og input is empty
   return {
     name: values[0],
     nationalId: nationalIdWithoutHyphen,
     email: values[2],
     phoneNumber: values[3],
+    disabled: false,
   }
 }
 
 const checkHeaders = (headers: string): boolean => {
-  console.log('headers', headers)
   const values = headers.split(';')
   let validHeaders = true
   values.map((value, index) => {
@@ -54,18 +63,12 @@ const checkHeaders = (headers: string): boolean => {
 export const Participants: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   error,
   application,
-  setBeforeSubmitCallback,
 }) => {
-  const { setValue, getValues } = useFormContext()
+  const { setValue } = useFormContext()
   const { formatMessage } = useLocale()
   const [fileState, setFileState] = useState<Array<UploadFile>>([])
-  const [uploadError, setUploadError] = useState<string>('')
   const [participantList, setParticipantList] = useState<Array<Participant>>([])
-
-  // setBeforeSubmitCallback?.(async () => {
-  //   setValue('participantList', participantList)
-  //   return [true, null]
-  // })
+  const [foundNotValid, setFoundNotValid] = useState<boolean>(false)
 
   const getAreIndividualsValid = useLazyAreIndividualsValid()
   const getIsCompanyValidCallback = useCallback(
@@ -96,11 +99,15 @@ export const Participants: FC<React.PropsWithChildren<FieldBaseProps>> = ({
         }
         const answerValue: Array<Participant> = data.map(
           (value: Array<string>) => {
-            return parseDataToParticipantList(value[0])
+            const participantList = parseDataToParticipantList(value[0])
+            if (participantList === null) {
+              setValue('participantCsvError', true)
+              return []
+            } else {
+              return parseDataToParticipantList(value[0])
+            }
           },
         )
-        const currentParticipantList = getValues('participantList')
-        const combinedParticipants = [...currentParticipantList, ...answerValue]
 
         const fileWithSuccessStatus: UploadFile = props[0]
         Object.assign(fileWithSuccessStatus, {
@@ -108,11 +115,11 @@ export const Participants: FC<React.PropsWithChildren<FieldBaseProps>> = ({
         })
         setValue('participantCsvError', false)
         setFileState([fileWithSuccessStatus])
-        setParticipantList(combinedParticipants)
-        updateValidity(combinedParticipants)
+        setParticipantList(answerValue)
+        updateValidity(answerValue)
       })
     }
-    reader.readAsText(props[0] as Blob)
+    reader.readAsText(props[0] as unknown as Blob)
     return
   }
 
@@ -129,15 +136,21 @@ export const Participants: FC<React.PropsWithChildren<FieldBaseProps>> = ({
         nationalIds,
         parseInt(seminarId),
       )
-      const updatedParticipantList = participants.map((x) => {
-        const participantInRes = res.areIndividualsValid.filter(
-          (z) => z.nationalID === x.nationalId,
-        )
-        return { ...x, disabled: participantInRes[0].mayTakeCourse }
-      })
 
-      setParticipantList(updatedParticipantList)
+      let tmpNotValid = false
+      const updatedParticipantList: Array<Participant> = participants.map(
+        (x) => {
+          const participantInRes = res.areIndividualsValid.filter(
+            (z) => z.nationalID === x.nationalId,
+          )
+          if (!participantInRes[0].mayTakeCourse) tmpNotValid = true
+          return { ...x, disabled: !participantInRes[0].mayTakeCourse }
+        },
+      )
+      if (tmpNotValid) setValue('participantValidityError', true)
+      setFoundNotValid(tmpNotValid)
       setValue('participantList', updatedParticipantList)
+      setParticipantList(updatedParticipantList)
     }
   }
 
@@ -165,8 +178,48 @@ export const Participants: FC<React.PropsWithChildren<FieldBaseProps>> = ({
     document.body.removeChild(a)
   }
 
+  const removeInvalidParticipants = () => {
+    const validParticipants = participantList.filter(
+      (x) => x.disabled === false,
+    )
+    setValue('participantList', validParticipants)
+    setParticipantList(validParticipants)
+    setValue('participantValidityError', false)
+    setFoundNotValid(false)
+  }
+
   return (
     <Box>
+      {foundNotValid && (
+        <Box display="flex" justifyContent="flexEnd" marginTop={2}>
+          <Button
+            onClick={removeInvalidParticipants}
+            variant="ghost"
+            size="default"
+            icon="trash"
+            iconType="outline"
+            colorScheme="destructive"
+          >
+            {formatMessage(
+              participantMessages.labels.removeInvalidParticipantsButtonText,
+            )}
+          </Button>
+        </Box>
+      )}
+      <Box marginTop={2}>
+        {DescriptionFormField({
+          application: application,
+          showFieldName: true,
+          field: {
+            id: 'title',
+            title: participantMessages.labels.csvDescription,
+            titleVariant: 'h5',
+            type: FieldTypes.DESCRIPTION,
+            component: FieldComponents.DESCRIPTION,
+            children: undefined,
+          },
+        })}
+      </Box>
       <Box marginTop={1} marginBottom={4}>
         <Button
           onClick={onCsvButtonClick}
@@ -190,7 +243,7 @@ export const Participants: FC<React.PropsWithChildren<FieldBaseProps>> = ({
             onChange={(e) => changeFile(e)}
             onRemove={() => removeFile()}
             onUploadRejection={rejectFile}
-            errorMessage={uploadError || error}
+            errorMessage={error}
             multiple={false}
             accept={['text/csv']}
             maxSize={FILE_SIZE_LIMIT}

@@ -1,8 +1,6 @@
 import {
   buildAlertMessageField,
   buildCustomField,
-  buildDescriptionField,
-  buildLinkField,
   buildMultiField,
   buildSection,
   buildTableRepeaterField,
@@ -11,7 +9,6 @@ import {
 
 import { participants as participantMessages } from '../../../lib/messages'
 import { FormValue } from '@island.is/application/types'
-import { Application } from '@island.is/api/schema'
 
 export const participantsSection = buildSection({
   id: 'participants',
@@ -24,7 +21,9 @@ export const participantsSection = buildSection({
       children: [
         buildTableRepeaterField({
           id: 'participantList',
-          title: 'test',
+          title: '',
+          addItemButtonText:
+            participantMessages.labels.addParticipantButtonText,
           fields: {
             name: {
               component: 'input',
@@ -48,11 +47,20 @@ export const participantsSection = buildSection({
             },
           },
         }),
-        buildDescriptionField({
-          id: '',
-          title: participantMessages.labels.csvDescription,
-          titleVariant: 'h5',
-          marginTop: 2,
+        buildAlertMessageField({
+          id: 'participantList.validityError',
+          title: '',
+          message: participantMessages.labels.validityError,
+          alertType: 'warning',
+          doesNotRequireAnswer: true,
+          condition: (answers: FormValue, _) => {
+            const hasError = getValueViaPath(
+              answers,
+              'participantValidityError',
+              false,
+            ) as boolean
+            return hasError
+          },
         }),
         buildCustomField({
           id: 'participantCSV',

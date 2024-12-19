@@ -160,8 +160,18 @@ export const SeminarAnswersSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
   applicant: UserInformationSchema,
   paymentArrangement: PaymentArrangementSchema,
-  participantList: z.array(ParticipantSchema),
+  participantList: z.array(ParticipantSchema).refine(
+    (pList) => {
+      const hasDisabled = pList.filter((x) => x.disabled === true)
+      return hasDisabled.length === 0
+    },
+    {
+      message:
+        'Vinsamlegast fjarlægðu ógjaldgenga notendur áður en haldið er áfram',
+    },
+  ),
   participantCsvError: z.boolean().optional(),
+  participantValidityError: z.boolean().optional(),
 })
 
 export type SeminarAnswers = z.TypeOf<typeof SeminarAnswersSchema>
