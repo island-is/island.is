@@ -1814,14 +1814,11 @@ export interface IGrantFields {
   /** Description  */
   grantDescription?: string | undefined
 
-  /** Grant Application ID */
+  /** Grant reference ID */
   grantApplicationId?: string | undefined
 
-  /** Application Deadline Status */
-  grantApplicationDeadlineStatus?: string | undefined
-
-  /** Application Url */
-  granApplicationUrl?: ILinkUrl | undefined
+  /** Fund */
+  grantFund: IFund
 
   /** Special emphasis */
   grantSpecialEmphasis?: Document | undefined
@@ -1832,13 +1829,16 @@ export interface IGrantFields {
   /** How to apply? */
   grantHowToApply?: Document | undefined
 
-  /** Application deadline */
-  grantApplicationDeadline?: Document | undefined
-
   /** Application hints */
   grantApplicationHints?: Document | undefined
 
-  /** Open from */
+  /** Application url */
+  granApplicationUrl?: ILinkUrl | undefined
+
+  /** Application button label */
+  grantButtonLabel?: string | undefined
+
+  /** Date from */
   grantDateFrom?: string | undefined
 
   /** Open from hour */
@@ -1874,9 +1874,6 @@ export interface IGrantFields {
 
   /** Type tag */
   grantTypeTag?: IGenericTag | undefined
-
-  /** Fund */
-  grantFund: IFund
 }
 
 /** Grant is a part of "Styrkjatorg". */
@@ -3245,12 +3242,16 @@ export interface IOrganizationPageFields {
     | 'thjodskjalasafn'
     | 'faggilding'
     | 'standalone'
+    | 'rannis'
 
   /** Theme Properties */
   themeProperties?: Record<string, any> | undefined
 
   /** Sitemap */
   sitemap?: ISitemap | undefined
+
+  /** Can be found in search results */
+  canBeFoundInSearchResults?: boolean | undefined
 }
 
 export interface IOrganizationPage extends Entry<IOrganizationPageFields> {

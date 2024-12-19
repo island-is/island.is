@@ -9,7 +9,6 @@ import {
   Stack,
   Text,
 } from '@island.is/island-ui/core'
-import { useLocale } from '@island.is/localization'
 import { Locale } from '@island.is/shared/types'
 import { isDefined } from '@island.is/shared/utils'
 import { InstitutionPanel } from '@island.is/web/components'
@@ -97,12 +96,6 @@ export const GrantSidebar = ({ grant, locale }: Props) => {
           formatMessage(m.single.type),
           grant?.typeTag?.title ? (
             <Text variant="medium">{grant.typeTag?.title}</Text>
-          ) : undefined,
-        ),
-        generateLine(
-          formatMessage(m.single.deadline),
-          status.deadlineStatus ? (
-            <Text variant="medium">{status.deadlineStatus}</Text>
           ) : undefined,
         ),
         generateLine(

@@ -355,6 +355,17 @@ export class BackendService extends DataSource<{ req: Request }> {
     )
   }
 
+  limitedAccessUpdateDefendant(
+    caseId: string,
+    defendantId: string,
+    updateDefendant: unknown,
+  ): Promise<Defendant> {
+    return this.patch(
+      `case/${caseId}/limitedAccess/defendant/${defendantId}`,
+      updateDefendant,
+    )
+  }
+
   deleteDefendant(
     caseId: string,
     defendantId: string,

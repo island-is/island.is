@@ -625,6 +625,13 @@ export const translationStrings = defineMessages({
     defaultMessage: 'Eftir 1. september 2025',
     description: 'Eftir 1. september 2025',
   },
+  after1stSeptember2025IconUrl: {
+    id: 'web.pensionCalculator:after1stSeptember2025IconUrl',
+    defaultMessage:
+      'https://images.ctfassets.net/8k0h54kbe6bj/5RIwKVet87Nm4ycltkzjnX/9c594855a9b2f90dde63766ee87a09ca/58dd40fbf365769d984be22a9b64bc29.png',
+    description:
+      'Mynd vinstra megin við titil "Reiknivél örorku- og endurhæfingargreiðslna eftir 1. september 2025"',
+  },
   after1stSeptember2025Calculate: {
     id: 'web.pensionCalculator:after1stSeptember2025Calculate',
     defaultMessage: 'Reikna',

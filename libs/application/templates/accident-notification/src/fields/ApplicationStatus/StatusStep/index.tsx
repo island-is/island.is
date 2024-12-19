@@ -1,10 +1,29 @@
-import { Box, Button, Tag, Text } from '@island.is/island-ui/core'
+import { Box, Button, Tag, TagVariant, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import React, { FC } from 'react'
 import * as styles from './ReviewSection.css'
-import { ReviewSectionProps } from './types'
+import { MessageDescriptor } from 'react-intl'
 
-export const StatusStep: FC<React.PropsWithChildren<ReviewSectionProps>> = ({
+export type ActionProps = {
+  title: string
+  description: string
+  fileNames?: string
+  actionButtonTitle: string
+  hasActionButtonIcon?: boolean
+  showAlways?: boolean
+  cta?: () => void
+}
+
+type Props = {
+  title: string
+  description: string
+  hasActionMessage: boolean
+  action?: ActionProps
+  visible?: boolean
+  tagText: MessageDescriptor | string
+  tagVariant: TagVariant
+}
+
+export const StatusStep = ({
   title,
   description,
   tagVariant = 'blue',
@@ -12,7 +31,7 @@ export const StatusStep: FC<React.PropsWithChildren<ReviewSectionProps>> = ({
   hasActionMessage,
   action,
   visible = true,
-}) => {
+}: Props) => {
   const { formatMessage } = useLocale()
   const handleOnCTAButtonClick = () => {
     action?.cta && action.cta()
