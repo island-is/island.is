@@ -57,6 +57,7 @@ export interface AsyncSearchProps {
   errorMessage?: string
   hasError?: boolean
   white?: boolean
+  isCompanySearch?: boolean
   onSubmit?: (
     inputValue: string,
     selectedOption: AsyncSearchOption | null,
@@ -83,6 +84,7 @@ export const AsyncSearch = forwardRef<HTMLInputElement, AsyncSearchProps>(
       white,
       required,
       closeMenuOnSubmit,
+      isCompanySearch,
       onChange,
       onSubmit,
       onInputValueChange,
@@ -224,6 +226,7 @@ export const AsyncSearch = forwardRef<HTMLInputElement, AsyncSearchProps>(
               label={label}
               required={required}
               labelProps={getLabelProps()}
+              isCompanySearch={isCompanySearch}
               menuProps={{
                 ...getMenuProps(),
                 isOpen,
@@ -287,6 +290,7 @@ export interface AsyncSearchInputProps {
   loading?: boolean
   children?: ReactNode
   skipContext?: boolean
+  isCompanySearch?: boolean
 }
 
 export const AsyncSearchInput = forwardRef<
@@ -310,6 +314,7 @@ export const AsyncSearchInput = forwardRef<
       errorMessage,
       skipContext,
       dataTestId,
+      isCompanySearch,
     },
     ref,
   ) => {
@@ -360,6 +365,7 @@ export const AsyncSearchInput = forwardRef<
             data-testid={dataTestId}
             color={inputColor}
             isOpen={isOpen}
+            isCompanySearch={isCompanySearch}
             ref={ref}
             hasError={hasError}
           />
