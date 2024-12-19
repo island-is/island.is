@@ -142,6 +142,8 @@ import { ParliamentaryListCreationModule } from './signature-collection/parliame
 import { ParliamentaryListCreationService } from './signature-collection/parliamentary-list-creation/parliamentary-list-creation.service'
 import { ParliamentaryListSigningModule } from './signature-collection/parliamentary-list-signing/parliamentary-list-signing.module'
 import { ParliamentaryListSigningService } from './signature-collection/parliamentary-list-signing/parliamentary-list-signing.service'
+import { SecondarySchoolModule } from './secondary-school/secondary-school.module'
+import { SecondarySchoolService } from './secondary-school/secondary-school.service'
 
 export const dynamicModules = [GeneralPetitionModule]
 
@@ -216,6 +218,7 @@ export const modules = [
   ParliamentaryListSigningModule,
   ParentalLeaveModule,
   SocialInsuranceAdministrationModule,
+  SecondarySchoolModule,
 ]
 
 export const services = [
@@ -290,4 +293,5 @@ export const services = [
   WorkAccidentNotificationTemplateService,
   ParliamentaryListCreationService,
   ParliamentaryListSigningService,
+  SecondarySchoolService,
 ]
