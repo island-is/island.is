@@ -112,7 +112,6 @@ export const UploadedFile = ({
   }, [file.status, defaultBackgroundColor])
 
   const statusIcon = (status?: UploadFileStatus): IconTypes => {
-    console.log('status', status)
     switch (status) {
       case 'error':
         return 'close'
