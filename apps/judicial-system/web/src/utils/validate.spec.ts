@@ -1,6 +1,12 @@
 import faker from 'faker'
 
 import { isTrafficViolationStepValidIndictments, validate } from './validate'
+import {
+  Case,
+  IndictmentCountOffense,
+  IndictmentSubtype,
+} from '../graphql/schema'
+import { getLegalArguments } from '../routes/Prosecutor/Indictments/Indictment/IndictmentCount'
 
 describe('Validate police casenumber format', () => {
   test('should fail if not in correct form', () => {
@@ -299,14 +305,148 @@ describe('Validate vehicle registration number', () => {
   )
 })
 
-describe.only('isTrafficViolationStepValidIndictments', () => {
+describe('isTrafficViolationStepValidIndictments', () => {
   test('should return false if there are no demands in a case', () => {
-    const theCase = {
+    const theCase: Case = {
       id: faker.datatype.uuid(),
       demands: null,
     }
 
     const result = isTrafficViolationStepValidIndictments(theCase)
     expect(result).toEqual(false)
+  })
+
+  test('should return false if there are civil claims in a case but no civil demands', () => {
+    const theCase: Case = {
+      id: faker.datatype.uuid(),
+      demands: faker.lorem.paragraph(),
+      hasCivilClaims: true,
+      civilDemands: null,
+    }
+
+    const result = isTrafficViolationStepValidIndictments(theCase)
+    expect(result).toEqual(false)
+  })
+
+  test('should return false if there are no indictment subtypes in a case', () => {
+    const theCase: Case = {
+      id: faker.datatype.uuid(),
+      demands: faker.lorem.paragraph(),
+      hasCivilClaims: true,
+      civilDemands: faker.lorem.paragraph(),
+      indictmentSubtypes: null,
+    }
+
+    const result = isTrafficViolationStepValidIndictments(theCase)
+    expect(result).toEqual(false)
+  })
+
+  test('should return true if all indictment counts are pure traffic violations and all of them are valid', () => {
+    const theCase: Case = {
+      id: faker.datatype.uuid(),
+      demands: faker.lorem.sentence(),
+      hasCivilClaims: true,
+      civilDemands: faker.lorem.sentence(),
+      indictmentSubtypes: {
+        ['1234']: [IndictmentSubtype.TRAFFIC_VIOLATION],
+        ['5678']: [IndictmentSubtype.TRAFFIC_VIOLATION],
+      },
+      indictmentCounts: [
+        {
+          id: faker.datatype.uuid(),
+          policeCaseNumber: '1234',
+          offenses: [IndictmentCountOffense.DRIVING_WITHOUT_LICENCE],
+          vehicleRegistrationNumber: 'VV111',
+          lawsBroken: [[1], [2]],
+          incidentDescription: faker.lorem.sentence(),
+          legalArguments: faker.lorem.sentence(),
+        },
+        {
+          id: faker.datatype.uuid(),
+          policeCaseNumber: '5678',
+          offenses: [IndictmentCountOffense.DRIVING_WITHOUT_LICENCE],
+          vehicleRegistrationNumber: 'VV111',
+          lawsBroken: [[1], [2]],
+          incidentDescription: faker.lorem.sentence(),
+          legalArguments: faker.lorem.sentence(),
+        },
+      ],
+    }
+
+    const result = isTrafficViolationStepValidIndictments(theCase)
+    expect(result).toEqual(true)
+  })
+
+  test('should return false if all indictment counts are pure traffic violations and one of them is invalid', () => {
+    const theCase: Case = {
+      id: faker.datatype.uuid(),
+      demands: faker.lorem.sentence(),
+      hasCivilClaims: true,
+      civilDemands: faker.lorem.sentence(),
+      indictmentSubtypes: {
+        ['1234']: [IndictmentSubtype.TRAFFIC_VIOLATION],
+        ['5678']: [IndictmentSubtype.TRAFFIC_VIOLATION],
+      },
+      indictmentCounts: [
+        {
+          id: faker.datatype.uuid(),
+          policeCaseNumber: '1234',
+          offenses: [IndictmentCountOffense.DRIVING_WITHOUT_LICENCE],
+          vehicleRegistrationNumber: 'VV111',
+          lawsBroken: [[1], [2]],
+          incidentDescription: faker.lorem.sentence(),
+          legalArguments: faker.lorem.sentence(),
+        },
+        {
+          id: faker.datatype.uuid(),
+          policeCaseNumber: '5678',
+          offenses: [], // offences must have at least one value
+          vehicleRegistrationNumber: 'VV111',
+          lawsBroken: [[1], [2]],
+          incidentDescription: faker.lorem.sentence(),
+          legalArguments: faker.lorem.sentence(),
+        },
+      ],
+    }
+
+    const result = isTrafficViolationStepValidIndictments(theCase)
+    expect(result).toEqual(false)
+  })
+
+  test('should return true if one indictment count has selected traffic violation and another has not', () => {
+    const theCase: Case = {
+      id: faker.datatype.uuid(),
+      demands: faker.lorem.sentence(),
+      hasCivilClaims: true,
+      civilDemands: faker.lorem.sentence(),
+      indictmentSubtypes: {
+        ['1234']: [IndictmentSubtype.BODILY_INJURY],
+        ['5678']: [
+          IndictmentSubtype.TRAFFIC_VIOLATION,
+          IndictmentSubtype.AGGRAVATED_ASSAULT,
+        ],
+      },
+      indictmentCounts: [
+        {
+          id: faker.datatype.uuid(),
+          policeCaseNumber: '1234',
+          incidentDescription: faker.lorem.sentence(),
+          legalArguments: faker.lorem.sentence(),
+        },
+        {
+          id: faker.datatype.uuid(),
+          policeCaseNumber: '5678',
+          offenses: [IndictmentCountOffense.DRIVING_WITHOUT_LICENCE], // offences must have at least one value
+          vehicleRegistrationNumber: 'VV111',
+          lawsBroken: [[1], [2]],
+          incidentDescription: faker.lorem.sentence(),
+          legalArguments: faker.lorem.sentence(),
+          indictmentCountSubtypes: [IndictmentSubtype.TRAFFIC_VIOLATION],
+        },
+      ],
+    }
+
+    const result = isTrafficViolationStepValidIndictments(theCase)
+    expect(result).toEqual(true)
   })
 })
