@@ -11,7 +11,7 @@ import { join } from 'path'
 import { rootDir } from '../consts'
 import { logger } from '../../common'
 
-const mapServiceToNXname = async (serviceName: string) => {
+export const mapServiceToNXname = async (serviceName: string) => {
   const projectRootPath = join(__dirname, '..', '..', '..', '..')
   const projects = globSync(['apps/*/project.json', 'apps/*/*/project.json'], {
     cwd: projectRootPath,
@@ -100,6 +100,7 @@ export const getLocalrunValueFile = async (
         `echo "Starting ${name} in $PWD"`,
         `yarn nx serve ${serviceNXName}`, // Log start message and start the service
       ],
+      port: runtime.ports[name],
     }
   }
 
@@ -108,6 +109,7 @@ export const getLocalrunValueFile = async (
     dockerComposeServices,
     [`${firstService}.env`]: dockerComposeServices[firstService]?.env,
   })
+
   await Promise.all(
     Object.entries(dockerComposeServices).map(
       async ([name, svc]: [string, LocalrunService]) => {
@@ -143,6 +145,7 @@ export const getLocalrunValueFile = async (
       },
     ),
   )
+
   const mocksConfigs = Object.entries(runtime.mocks).reduce(
     (acc, [name, target]) => {
       return {
@@ -182,6 +185,7 @@ export const getLocalrunValueFile = async (
     },
     { ports: [] as number[], configs: [] as any[] },
   )
+
   const defaultMountebankConfig = 'mountebank-imposter-config.json'
   logger.debug('Writing default mountebank config to file', {
     defaultMountebankConfig,
@@ -222,7 +226,11 @@ export const getLocalrunValueFile = async (
     dockerComposeServices,
   })
   for (const [name, service] of Object.entries(dockerComposeServices)) {
-    renderedServices[name] = { commands: service.commands, env: service.env }
+    renderedServices[name] = {
+      commands: service.commands,
+      env: service.env,
+      port: service.port,
+    }
     logger.debug(`Docker command for ${name}:`, { command: service.commands })
   }
   return {

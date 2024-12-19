@@ -33,5 +33,5 @@ This command automates the configuration setup, ensuring that the correct enviro
 - `--dependencies`: Specify dependencies to load.
 - `--json`: Output results in JSON format.
 - `--dry`: Run a dry preview without applying changes.
-- `--no-secrets`: Skip updating secrets.
+- `--skip-secrets`: Skip updating secrets.
 - `--proxies`: Enable proxies if required for local development.
