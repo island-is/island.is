@@ -200,17 +200,6 @@ export const paymentArrangementSection = buildSection({
           condition: (answers: FormValue, externalData: ExternalData) =>
             isCompanyType(externalData) || isCompany(answers),
         }),
-        // TODO: Only visibile if company is not blacklisted
-        // buildAlertMessageField({
-        //   id: 'paymentArrangement.contactOrganizationAlert',
-        //   title: '',
-        //   message: paymentArrangement.labels.contactOrganizationAlert,
-        //   alertType: 'error',
-        //   marginTop: 5,
-        //   doesNotRequireAnswer: true,
-        //   condition: (answers: FormValue, externalData: ExternalData) =>
-        //     isCompanyType(externalData) || isCompany(answers),
-        // }),
         buildDescriptionField({
           id: 'paymentArrangement.explanationWithPayment',
           title: paymentArrangement.labels.explanationWithPayment,
