@@ -1,4 +1,5 @@
 import { useMemo } from 'react'
+import { useIntl } from 'react-intl'
 
 import {
   Box,
@@ -8,7 +9,6 @@ import {
   Stack,
   Text,
 } from '@island.is/island-ui/core'
-import { useLocale } from '@island.is/localization'
 import { Locale } from '@island.is/shared/types'
 import { isDefined } from '@island.is/shared/utils'
 import { InstitutionPanel } from '@island.is/web/components'
@@ -16,7 +16,7 @@ import { Grant } from '@island.is/web/graphql/schema'
 import { LinkType, useLinkResolver } from '@island.is/web/hooks'
 
 import { m } from '../messages'
-import { generateStatusTag } from '../utils'
+import { generateStatusTag, parseStatus } from '../utils'
 
 interface Props {
   grant: Grant
@@ -41,7 +41,7 @@ const generateSidebarPanel = (
   data: Array<React.ReactElement>,
   background: BoxProps['background'],
 ) => {
-  if (!data) {
+  if (!data.length) {
     return undefined
   }
   return (
@@ -53,7 +53,12 @@ const generateSidebarPanel = (
 
 export const GrantSidebar = ({ grant, locale }: Props) => {
   const { linkResolver } = useLinkResolver()
-  const { formatMessage } = useLocale()
+  const { formatMessage } = useIntl()
+
+  const status = useMemo(
+    () => parseStatus(grant, formatMessage, locale),
+    [grant, formatMessage, locale],
+  )
 
   const detailPanelData = useMemo(
     () =>
@@ -94,21 +99,18 @@ export const GrantSidebar = ({ grant, locale }: Props) => {
           ) : undefined,
         ),
         generateLine(
-          formatMessage(m.single.deadline),
-          grant?.applicationDeadlineStatus ? (
-            <Text variant="medium">{grant.applicationDeadlineStatus}</Text>
-          ) : undefined,
-        ),
-        generateLine(
           formatMessage(m.single.status),
           grant?.status ? (
             <Text variant="medium">
-              {generateStatusTag(grant.status, formatMessage)?.label}
+              {
+                generateStatusTag(status.applicationStatus, formatMessage)
+                  ?.label
+              }
             </Text>
           ) : undefined,
         ),
       ].filter(isDefined) ?? [],
-    [grant, formatMessage, linkResolver],
+    [grant, formatMessage, linkResolver, status],
   )
 
   const filesPanelData = useMemo(

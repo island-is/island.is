@@ -1,5 +1,5 @@
 import { FormatMessage } from '@island.is/localization'
-import { YES } from '../constants'
+import { YES } from './constants'
 import { AccidentNotification } from '../lib/dataSchema'
 import { AttachmentsEnum, WhoIsTheNotificationForEnum } from '../types'
 import {
