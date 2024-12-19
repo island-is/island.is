@@ -91,10 +91,18 @@ export class GrantsSyncService implements CmsSyncProvider<IGrant> {
             }
           })
 
+          if (mapped.fund) {
+            tags.push({
+              type: 'fund',
+              key: mapped.fund.id,
+              value: mapped.fund.title,
+            })
+          }
+
           if (mapped.fund?.parentOrganization?.slug) {
             tags.push({
-              key: mapped.fund.parentOrganization.slug,
               type: 'organization',
+              key: mapped.fund.parentOrganization.slug,
               value: mapped.fund.parentOrganization.title,
             })
           }
