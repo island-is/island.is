@@ -188,7 +188,7 @@ const IndictmentCaseFilesList: FC<Props> = ({
             <PdfButton
               caseId={workingCase.id}
               connectedCaseParentId={connectedCaseParentId}
-              title={formatMessage(caseFiles.trafficViolationIndictmentTitle)}
+              title={formatMessage(caseFiles.indictmentTitle)}
               pdfType="indictment"
               renderAs="row"
             />
