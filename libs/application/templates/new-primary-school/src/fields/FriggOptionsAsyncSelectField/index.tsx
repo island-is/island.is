@@ -30,7 +30,7 @@ const FriggOptionsAsyncSelectField: FC<
 > = ({ error, field, application }) => {
   const { lang } = useLocale()
   const { title, props, defaultValue, id } = field
-  const { isMulti = true, optionsType, placeholder } = props
+  const { isMulti = false, optionsType, placeholder } = props
 
   return (
     <AsyncSelectFormField
@@ -58,7 +58,7 @@ const FriggOptionsAsyncSelectField: FC<
             },
           })
 
-          return (
+          const options =
             data?.friggOptions?.flatMap(({ options }) =>
               options.flatMap(({ value, key }) => {
                 let content = value.find(
@@ -72,7 +72,16 @@ const FriggOptionsAsyncSelectField: FC<
                 return { value: key ?? '', label: content ?? '' }
               }),
             ) ?? []
+
+          const otherIndex = options.findIndex(
+            (option) => option.value === 'other',
           )
+
+          if (otherIndex >= 0) {
+            options.push(options.splice(otherIndex, 1)[0])
+          }
+
+          return options
         },
         isMulti,
         backgroundColor: 'blue',
