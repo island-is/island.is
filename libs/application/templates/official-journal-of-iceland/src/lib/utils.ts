@@ -388,3 +388,13 @@ export const convertNumberToRoman = (num: number) => {
   const roman = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X']
   return roman[num - 1]
 }
+
+export const cleanTypename = (obj: {
+  __typename?: string
+  id: string
+  title: string
+  slug: string
+}) => {
+  const { __typename: _, ...rest } = obj
+  return rest
+}
