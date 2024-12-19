@@ -100,6 +100,10 @@ const DetailPanel: React.FC<DetailPanelProps> = ({
             fluid
             type="button"
             onClick={() => router.push(grant.applicationUrl?.slug ?? '')}
+            disabled={
+              status?.applicationStatus === 'closed' ||
+              status?.applicationStatus === 'unknown'
+            }
           >
             {formatMessage(m.single.apply)}
           </Button>

@@ -125,7 +125,9 @@ const GrantSinglePage: CustomScreen<GrantSingleProps> = ({ grant, locale }) => {
               }
               backgroundColor="blue"
               cta={{
-                disabled: !grant.applicationUrl?.slug,
+                disabled:
+                  status?.applicationStatus === 'closed' ||
+                  status?.applicationStatus === 'unknown',
                 size: 'small',
                 label:
                   grant.applicationButtonLabel ?? formatMessage(m.single.apply),
