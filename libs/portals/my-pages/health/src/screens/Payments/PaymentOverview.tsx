@@ -1,5 +1,4 @@
 import {
-  AlertMessage,
   Box,
   DatePicker,
   SkeletonLoader,
@@ -16,7 +15,6 @@ import {
   DownloadFileButtons,
   UserInfoLine,
   amountFormat,
-  formSubmit,
   m,
 } from '@island.is/portals/my-pages/core'
 import { messages } from '../../lib/messages'
@@ -86,10 +84,6 @@ export const PaymentOverview = () => {
         },
       },
     })
-  }
-
-  const onFetchDocument = (url: string) => {
-    formSubmit(url)
   }
 
   useEffect(() => {
@@ -209,9 +203,6 @@ export const PaymentOverview = () => {
                         <T.HeadData>
                           {formatMessage(messages.insuranceShare)}
                         </T.HeadData>
-                        <T.HeadData>
-                          {formatMessage(messages.paymentDocument)}
-                        </T.HeadData>
                       </tr>
                     </T.Head>
                     <T.Body>
@@ -228,21 +219,6 @@ export const PaymentOverview = () => {
                             </T.Data>
                             <T.Data>
                               {amountFormat(item.insuranceAmount ?? 0)}
-                            </T.Data>
-                            <T.Data>
-                              <Button
-                                iconType="outline"
-                                onClick={() =>
-                                  item.downloadUrl
-                                    ? onFetchDocument(item?.downloadUrl)
-                                    : undefined
-                                }
-                                variant="text"
-                                icon="open"
-                                size="small"
-                              >
-                                {formatMessage(messages.fetchDocument)}
-                              </Button>
                             </T.Data>
                           </tr>
                         )

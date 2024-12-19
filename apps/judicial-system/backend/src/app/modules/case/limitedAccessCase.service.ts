@@ -234,6 +234,7 @@ export const include: Includeable[] = [
         CaseFileCategory.PROSECUTOR_CASE_FILE,
         CaseFileCategory.DEFENDANT_CASE_FILE,
         CaseFileCategory.CIVIL_CLAIM,
+        CaseFileCategory.SENT_TO_PRISON_ADMIN_FILE,
       ],
     },
     separate: true,

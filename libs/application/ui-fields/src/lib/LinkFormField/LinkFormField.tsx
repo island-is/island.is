@@ -36,9 +36,15 @@ export const LinkFormField = ({ field, application }: Props) => {
     }
     return () => ''
   }
+  const { marginTop = 2, marginBottom = 2 } = field
 
   return (
-    <Box marginY={2} display="flex" justifyContent={justifyContent}>
+    <Box
+      marginTop={marginTop}
+      marginBottom={marginBottom}
+      display="flex"
+      justifyContent={justifyContent}
+    >
       <Button
         colorScheme="default"
         icon={field.iconProps?.icon ?? 'download'}
