@@ -1,14 +1,14 @@
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
+import { ApiPropertyOptional } from '@nestjs/swagger'
 import { LanguageType } from '../../../../dataTypes/languageType.model'
-import { IsNotEmpty, IsOptional, ValidateNested } from 'class-validator'
+import { IsOptional, ValidateNested } from 'class-validator'
 import { Type } from 'class-transformer'
 
 export class UpdateSectionDto {
-  @IsNotEmpty()
+  @IsOptional()
   @ValidateNested()
   @Type(() => LanguageType)
-  @ApiProperty({ type: LanguageType })
-  name!: LanguageType
+  @ApiPropertyOptional({ type: LanguageType })
+  name?: LanguageType
 
   @IsOptional()
   @ValidateNested()
