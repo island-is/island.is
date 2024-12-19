@@ -1,50 +1,33 @@
 import { Injectable } from '@nestjs/common'
 import { ApolloError } from 'apollo-server-express'
 
+import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
+import { handle204 } from '@island.is/clients/middlewares'
 import {
   ActorLocaleLocaleEnum,
-  ConfirmationDtoResponse,
   UserProfileApi,
 } from '@island.is/clients/user-profile'
-import { handle204 } from '@island.is/clients/middlewares'
-import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
-import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 
-import { DeleteIslykillSettings } from './models/deleteIslykillSettings.model'
-import { UpdateUserProfileInput } from './dto/updateUserProfileInput'
-import { CreateUserProfileInput } from './dto/createUserProfileInput'
-import { CreateSmsVerificationInput } from './dto/createSmsVerificationInput'
 import { CreateEmailVerificationInput } from './dto/createEmalVerificationInput'
-import { ConfirmSmsVerificationInput } from './dto/confirmSmsVerificationInput'
-import { ConfirmEmailVerificationInput } from './dto/confirmEmailVerificationInput'
+import { CreateSmsVerificationInput } from './dto/createSmsVerificationInput'
+import { CreateUserProfileInput } from './dto/createUserProfileInput'
 import { DeleteIslykillValueInput } from './dto/deleteIslykillValueInput'
-import { UserProfile } from './userProfile.model'
-import { UserDeviceTokenInput } from './dto/userDeviceTokenInput'
-import { UserProfileServiceV1 } from './V1/userProfile.service'
-import { UserProfileServiceV2 } from './V2/userProfile.service'
 import { UpdateActorProfileInput } from './dto/updateActorProfileInput'
+import { UpdateUserProfileInput } from './dto/updateUserProfileInput'
+import { UserDeviceTokenInput } from './dto/userDeviceTokenInput'
+import { DeleteIslykillSettings } from './models/deleteIslykillSettings.model'
+import { UserProfile } from './userProfile.model'
+import { UserProfileServiceV2 } from './V2/userProfile.service'
 
 @Injectable()
 export class UserProfileService {
   constructor(
     private userProfileApi: UserProfileApi,
     private userProfileServiceV2: UserProfileServiceV2,
-    private userProfileServiceV1: UserProfileServiceV1,
-    private featureFlagService: FeatureFlagService,
   ) {}
 
   userProfileApiWithAuth(auth: Auth) {
     return this.userProfileApi.withMiddleware(new AuthMiddleware(auth))
-  }
-
-  private async getService(user: User) {
-    const isV2 = await this.featureFlagService.getValue(
-      Features.isIASSpaPagesEnabled,
-      false,
-      user,
-    )
-
-    return isV2 ? this.userProfileServiceV2 : this.userProfileServiceV1
   }
 
   async getUserProfileLocale(user: User) {
@@ -59,38 +42,6 @@ export class UserProfileService {
       nationalId: user.nationalId,
       locale: locale?.locale === ActorLocaleLocaleEnum.En ? 'en' : 'is',
     }
-  }
-
-  async getUserProfile(user: User) {
-    const service = await this.getService(user)
-
-    return service.getUserProfile(user)
-  }
-
-  async createUserProfile(
-    input: CreateUserProfileInput,
-    user: User,
-  ): Promise<UserProfile> {
-    const service = await this.getService(user)
-
-    return service.createUserProfile(input, user)
-  }
-
-  async updateMeUserProfile(
-    input: UpdateUserProfileInput,
-    user: User,
-  ): Promise<UserProfile> {
-    const service = await this.getService(user)
-
-    return service.updateMeUserProfile(input, user)
-  }
-
-  async updateUserProfile(
-    nationalId: string,
-    input: UpdateUserProfileInput,
-    user: User,
-  ): Promise<UserProfile> {
-    return this.userProfileServiceV2.updateUserProfile(input, user, nationalId)
   }
 
   async deleteIslykillValue(
@@ -115,46 +66,44 @@ export class UserProfileService {
     }
   }
 
+  async getUserProfile(user: User) {
+    return this.userProfileServiceV2.getUserProfile(user)
+  }
+
+  async createUserProfile(
+    input: CreateUserProfileInput,
+    user: User,
+  ): Promise<UserProfile> {
+    return this.userProfileServiceV2.createUserProfile(input, user)
+  }
+
+  async updateMeUserProfile(
+    input: UpdateUserProfileInput,
+    user: User,
+  ): Promise<UserProfile> {
+    return this.userProfileServiceV2.updateMeUserProfile(input, user)
+  }
+
+  async updateUserProfile(
+    nationalId: string,
+    input: UpdateUserProfileInput,
+    user: User,
+  ): Promise<UserProfile> {
+    return this.userProfileServiceV2.updateUserProfile(input, user, nationalId)
+  }
+
   async createSmsVerification(
     input: CreateSmsVerificationInput,
     user: User,
   ): Promise<void> {
-    const service = await this.getService(user)
-
-    return service.createSmsVerification(input, user)
+    return this.userProfileServiceV2.createSmsVerification(input, user)
   }
 
   async createEmailVerification(
     input: CreateEmailVerificationInput,
     user: User,
   ): Promise<void> {
-    const service = await this.getService(user)
-
-    return service.createEmailVerification(input, user)
-  }
-
-  async resendEmailVerification(user: User): Promise<void> {
-    const service = await this.getService(user)
-
-    return service.resendEmailVerification(user)
-  }
-
-  async confirmSms(
-    input: ConfirmSmsVerificationInput,
-    user: User,
-  ): Promise<ConfirmationDtoResponse> {
-    const service = await this.getService(user)
-
-    return service.confirmSms(input, user)
-  }
-
-  async confirmEmail(
-    input: ConfirmEmailVerificationInput,
-    user: User,
-  ): Promise<ConfirmationDtoResponse> {
-    const service = await this.getService(user)
-
-    return service.confirmEmail(input, user)
+    return this.userProfileServiceV2.createEmailVerification(input, user)
   }
 
   addDeviceToken(input: UserDeviceTokenInput, user: User) {
