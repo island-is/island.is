@@ -305,4 +305,5 @@ export enum DebtTypes {
   PropertyFees = 'Fasteignagjöld',
   OtherDebts = 'Aðrar skuldir',
   PublicCharges = 'Opinber gjöld',
+  InsuranceInstitute = 'Tryggingarstofnun ríkisins',
 }
