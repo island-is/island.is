@@ -180,6 +180,8 @@ const Table: FC<TableProps> = (props) => {
     switch (column) {
       case 'defendants':
         return entry.defendants?.[0]?.name ?? ''
+      case 'defendantsPunishmentType':
+        return entry.defendants?.[0]?.punishmentType ?? ''
       case 'courtCaseNumber':
         return courtAbbreviation
           ? `${courtAbbreviation}: ${entry.courtCaseNumber}`
