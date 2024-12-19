@@ -1,5 +1,5 @@
 import assert from 'assert'
-import faker from 'faker'
+import { faker } from '@faker-js/faker'
 import differenceWith from 'lodash/differenceWith'
 import shuffle from 'lodash/shuffle'
 import request from 'supertest'
@@ -395,7 +395,7 @@ describe('DomainsController', () => {
         return endpoint
       }
       const factory = new FixtureFactory(app)
-      const domain = await factory.createDomain({ name: faker.random.word() })
+      const domain = await factory.createDomain({ name: faker.word.sample() })
       return endpoint.replace(':domain', encodeURIComponent(domain.name))
     }
 
