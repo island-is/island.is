@@ -28,7 +28,7 @@ type Props<T> = {
   loading?: boolean
   applicationId: string
   disabled?: boolean
-  half?: boolean
+  width?: 'full' | 'half'
   onBeforeChange?: (answers: OJOIApplication['answers'], value: T) => void
   onChange?: (value: T) => void
 }
@@ -42,7 +42,7 @@ export const OJOISelectController = <T,>({
   loading,
   applicationId,
   disabled,
-  half = false,
+  width = 'full',
   onBeforeChange,
   onChange,
 }: Props<T>) => {
@@ -82,7 +82,7 @@ export const OJOISelectController = <T,>({
   })
 
   return (
-    <Box width={half && isSmOrSmaller ? 'full' : 'half'}>
+    <Box width={isSmOrSmaller ? 'full' : width}>
       {loading ? (
         <SkeletonLoader
           borderRadius="standard"

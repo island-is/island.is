@@ -60,7 +60,7 @@ export const Advert = ({ application }: OJOIFieldBaseProps) => {
       <FormGroup>
         <Stack space={[2, 2, 3]}>
           <OJOISelectController
-            half={true}
+            width="half"
             applicationId={application.id}
             name={InputFields.advert.department}
             label={advert.inputs.department.label}
@@ -85,7 +85,7 @@ export const Advert = ({ application }: OJOIFieldBaseProps) => {
           />
 
           <OJOISelectController
-            half={true}
+            width="half"
             applicationId={application.id}
             name={InputFields.advert.mainType}
             label={advert.inputs.mainType.label}
@@ -104,7 +104,7 @@ export const Advert = ({ application }: OJOIFieldBaseProps) => {
 
           {currentTypes.length > 1 && (
             <OJOISelectController
-              half={true}
+              width="half"
               applicationId={application.id}
               name={InputFields.advert.type}
               label={advert.inputs.type.label}

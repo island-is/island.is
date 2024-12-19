@@ -91,7 +91,7 @@ export const InvolvedPartyScreen = ({
           )}
         </Stack>
         <OJOISelectController
-          half={true}
+          width="half"
           disabled={disableSelect}
           loading={loading}
           name={InputFields.advert.involvedPartyId}
