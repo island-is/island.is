@@ -6,7 +6,6 @@ import { useRouter } from 'next/router'
 import { SliceType } from '@island.is/island-ui/contentful'
 import {
   ActionCard,
-  AlertBanner,
   Box,
   Breadcrumbs,
   Divider,
@@ -15,7 +14,7 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { Locale } from '@island.is/shared/types'
-import { GrantWrapper } from '@island.is/web/components'
+import { GrantWrapper, InstitutionPanel } from '@island.is/web/components'
 import {
   ContentLanguage,
   CustomPageUniqueIdentifier,
@@ -36,7 +35,9 @@ import SidebarLayout from '../../Layouts/SidebarLayout'
 import { GET_GRANT_QUERY } from '../../queries'
 import { m } from '../messages'
 import { generateStatusTag, parseStatus } from '../utils'
-import { GrantSidebar } from './GrantSidebar'
+import DetailPanel from './GrantSidebar/DetailPanel'
+import ExtraPanel from './GrantSidebar/ExtraPanel'
+import { GrantSidebar } from './GrantSidebar/GrantSidebar'
 
 const GrantSinglePage: CustomScreen<GrantSingleProps> = ({ grant, locale }) => {
   const { formatMessage } = useIntl()
@@ -110,32 +111,34 @@ const GrantSinglePage: CustomScreen<GrantSingleProps> = ({ grant, locale }) => {
             <Text variant="default">{grant.description}</Text>
           </Box>
           <Hidden above="sm">
-            <GrantSidebar locale={locale} grant={grant} />
+            <DetailPanel grant={grant} locale={locale} button />
           </Hidden>
-          <ActionCard
-            heading={grant.name}
-            text={
-              status
-                ? generateStatusTag(status.applicationStatus, formatMessage)
-                    ?.label +
-                  (status.deadlineStatus ? ' / ' + status.deadlineStatus : '')
-                : ''
-            }
-            backgroundColor="blue"
-            cta={{
-              disabled: !grant.applicationUrl?.slug,
-              size: 'small',
-              label:
-                grant.applicationButtonLabel ?? formatMessage(m.single.apply),
-              onClick: () => router.push(grant.applicationUrl?.slug ?? ''),
-              icon: 'open',
-              iconType: 'outline',
-            }}
-          />
-          {status?.note && <AlertBanner description={status?.note} />}
+          <Hidden below="md">
+            <ActionCard
+              heading={grant.name}
+              text={
+                status
+                  ? generateStatusTag(status.applicationStatus, formatMessage)
+                      ?.label +
+                    (status.deadlineStatus ? ' / ' + status.deadlineStatus : '')
+                  : ''
+              }
+              backgroundColor="blue"
+              cta={{
+                disabled: !grant.applicationUrl?.slug,
+                size: 'small',
+                label:
+                  grant.applicationButtonLabel ?? formatMessage(m.single.apply),
+                onClick: () => router.push(grant.applicationUrl?.slug ?? ''),
+                icon: 'open',
+                iconType: 'outline',
+              }}
+            />
+          </Hidden>
           {grant.specialEmphasis?.length ? (
             <>
               <Box className="rs_read">
+                {status?.note && <Text fontWeight="medium">{status.note}</Text>}
                 {webRichText(
                   grant.specialEmphasis as SliceType[],
                   undefined,
@@ -185,6 +188,20 @@ const GrantSinglePage: CustomScreen<GrantSingleProps> = ({ grant, locale }) => {
               )}
             </Box>
           ) : undefined}
+          <Hidden above="md">
+            <ExtraPanel grant={grant} />
+          </Hidden>
+          <Hidden above="md">
+            <InstitutionPanel
+              institutionTitle={formatMessage(m.single.provider)}
+              institution={
+                grant.fund?.parentOrganization.title ??
+                formatMessage(m.single.unknownInstitution)
+              }
+              img={grant.fund?.parentOrganization.logo?.url}
+              locale={locale}
+            />
+          </Hidden>
         </Stack>
       </SidebarLayout>
     </GrantWrapper>
