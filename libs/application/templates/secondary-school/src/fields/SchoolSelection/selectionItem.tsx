@@ -7,8 +7,13 @@ import {
 } from '@island.is/shared/form-fields'
 import { FC, useState, useCallback, useEffect } from 'react'
 import { school } from '../../lib/messages'
-import { Language, Program, SecondarySchool } from '../../shared'
-import { ApplicationType, getTranslatedProgram } from '../../utils'
+import {
+  ApplicationType,
+  getTranslatedProgram,
+  Language,
+  Program,
+  SecondarySchool,
+} from '../../utils'
 import { Controller, useFormContext } from 'react-hook-form'
 import { getValueViaPath } from '@island.is/application/core'
 import { useLazyProgramList } from '../../hooks/useLazyProgramList'

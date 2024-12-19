@@ -1,5 +1,6 @@
 export * from './constants'
 export * from './enums'
+export * from './types'
 export * from './getParent'
 export * from './format'
 export * from './getDate'
