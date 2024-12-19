@@ -54,9 +54,9 @@ export const OrganRegistrationForm = () => {
       (item) => item.id,
     )
 
-  if (exceptionComment && exceptionComment?.length > 0) {
-    selectedLimitations?.push('other')
-  }
+  const updatedLimitations = selectedLimitations
+    ? [...selectedLimitations, ...(exceptionComment?.length ? ['other'] : [])]
+    : []
   const donorStatus = isDonor
     ? hasLimitations
       ? OPT_IN_EXCEPTIONS
@@ -163,7 +163,7 @@ export const OrganRegistrationForm = () => {
                 radioValue === OPT_IN_EXCEPTIONS && (
                   <Limitations
                     data={allLimitations}
-                    selected={selectedLimitations ?? []}
+                    selected={updatedLimitations ?? []}
                     exceptionComment={exceptionComment ?? undefined}
                   />
                 )}
