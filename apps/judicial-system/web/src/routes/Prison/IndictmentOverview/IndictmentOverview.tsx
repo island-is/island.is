@@ -81,6 +81,13 @@ const IndictmentOverview = () => {
               })}
             </Text>
           )}
+          {defendant?.openedByPrisonAdminDate && (
+            <Text variant="h4" as="h3">
+              {formatMessage(strings.indictmentReceivedTitle, {
+                date: formatDate(defendant.openedByPrisonAdminDate, 'PPP'),
+              })}
+            </Text>
+          )}
         </Box>
         <Box marginBottom={5}>
           <InfoCardClosedIndictment displayVerdictViewDate />

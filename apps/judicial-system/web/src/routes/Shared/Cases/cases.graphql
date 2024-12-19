@@ -28,6 +28,7 @@ query Cases {
       defenderChoice
       verdictViewDate
       isSentToPrisonAdmin
+      openedByPrisonAdminDate
     }
     courtDate
     isValidToDateInThePast

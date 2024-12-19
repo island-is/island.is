@@ -57,6 +57,9 @@ export const DefenderCasesTable: FC<Props> = ({
     ) {
       return entry.defendants[0].name ?? ''
     }
+    if (column === 'courtDate') {
+      return entry.courtDate
+    }
     return entry.created
   }
   const { sortedData, requestSort, getClassNamesFor, isActiveColumn } = useSort(
@@ -129,9 +132,13 @@ export const DefenderCasesTable: FC<Props> = ({
                 </th>
               ) : (
                 <th>
-                  <Text fontWeight="regular">
-                    {formatMessage(tables.hearingArrangementDate)}
-                  </Text>
+                  <SortButton
+                    title={formatMessage(tables.hearingArrangementDate)}
+                    onClick={() => requestSort('courtDate')}
+                    sortAsc={getClassNamesFor('courtDate') === 'ascending'}
+                    sortDes={getClassNamesFor('courtDate') === 'descending'}
+                    isActive={isActiveColumn('courtDate')}
+                  />
                 </th>
               )}
               <th></th>
