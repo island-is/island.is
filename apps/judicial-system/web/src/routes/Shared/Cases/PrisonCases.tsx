@@ -32,7 +32,10 @@ import {
   getDurationDate,
 } from '@island.is/judicial-system-web/src/components/Table'
 import Table from '@island.is/judicial-system-web/src/components/Table/Table'
-import { getPrisonCaseStateTag,getPunishmentTypeTag } from '@island.is/judicial-system-web/src/components/Tags/utils'
+import {
+  getPrisonCaseStateTag,
+  getPunishmentTypeTag,
+} from '@island.is/judicial-system-web/src/components/Tags/utils'
 import {
   CaseListEntry,
   CaseState,
