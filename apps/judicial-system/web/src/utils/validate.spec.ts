@@ -5,7 +5,7 @@ import {
   IndictmentCountOffense,
   IndictmentSubtype,
 } from '../graphql/schema'
-import { isTrafficViolationStepValidIndictments, validate } from './validate'
+import { isIndictmentStepValid, validate } from './validate'
 
 describe('Validate police casenumber format', () => {
   test('should fail if not in correct form', () => {
@@ -311,7 +311,7 @@ describe('isTrafficViolationStepValidIndictments', () => {
       demands: null,
     }
 
-    const result = isTrafficViolationStepValidIndictments(theCase)
+    const result = isIndictmentStepValid(theCase)
     expect(result).toEqual(false)
   })
 
@@ -323,7 +323,7 @@ describe('isTrafficViolationStepValidIndictments', () => {
       civilDemands: null,
     }
 
-    const result = isTrafficViolationStepValidIndictments(theCase)
+    const result = isIndictmentStepValid(theCase)
     expect(result).toEqual(false)
   })
 
@@ -336,7 +336,7 @@ describe('isTrafficViolationStepValidIndictments', () => {
       indictmentSubtypes: null,
     }
 
-    const result = isTrafficViolationStepValidIndictments(theCase)
+    const result = isIndictmentStepValid(theCase)
     expect(result).toEqual(false)
   })
 
@@ -372,7 +372,7 @@ describe('isTrafficViolationStepValidIndictments', () => {
       ],
     }
 
-    const result = isTrafficViolationStepValidIndictments(theCase)
+    const result = isIndictmentStepValid(theCase)
     expect(result).toEqual(true)
   })
 
@@ -408,7 +408,7 @@ describe('isTrafficViolationStepValidIndictments', () => {
       ],
     }
 
-    const result = isTrafficViolationStepValidIndictments(theCase)
+    const result = isIndictmentStepValid(theCase)
     expect(result).toEqual(false)
   })
 
@@ -445,7 +445,7 @@ describe('isTrafficViolationStepValidIndictments', () => {
       ],
     }
 
-    const result = isTrafficViolationStepValidIndictments(theCase)
+    const result = isIndictmentStepValid(theCase)
     expect(result).toEqual(true)
   })
 })

@@ -256,7 +256,7 @@ export const stepValidations = (): stepValidationsType => {
     [constants.INDICTMENTS_PROCESSING_ROUTE]: (theCase: Case) =>
       validations.isProcessingStepValidIndictments(theCase),
     [constants.INDICTMENTS_TRAFFIC_VIOLATION_ROUTE]: (theCase: Case) =>
-      validations.isTrafficViolationStepValidIndictments(theCase),
+      validations.isIndictmentStepValid(theCase),
     [constants.INDICTMENTS_CASE_FILES_ROUTE]: () => true,
     [constants.INDICTMENTS_SUMMARY_ROUTE]: () => true,
     [constants.RESTRICTION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE]: (
