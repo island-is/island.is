@@ -123,6 +123,8 @@ interface LicenseCardProps {
   backgroundImage?: ImageSourcePropType
   backgroundColor?: string
   showBarcodeOfflineMessage?: boolean
+  loading?: boolean
+  error?: boolean
   barcode?: {
     value?: string | null
     loading?: boolean
@@ -141,6 +143,8 @@ export function LicenseCard({
   type,
   barcode,
   showBarcodeOfflineMessage,
+  loading,
+  error,
   ...props
 }: LicenseCardProps) {
   const theme = useTheme()
@@ -181,21 +185,41 @@ export function LicenseCard({
           </Title>
 
           <ValidationWrap>
-            <Image
-              source={
-                status === 'VALID' ? IconStatusVerified : IconStatusNonVerified
-              }
-              resizeMode="contain"
-              style={{ width: 15, height: 15, marginRight: 8 }}
-            />
-            <Typography color={textColor} variant="eyebrow">
-              {intl.formatMessage({
-                id:
-                  status === 'VALID'
-                    ? 'walletPass.validLicense'
-                    : 'walletPass.expiredLicense',
-              })}
-            </Typography>
+            {loading ? (
+              <Skeleton
+                active
+                height={16}
+                style={{ width: 62, borderRadius: 4, opacity: 0.5 }}
+              />
+            ) : (
+              <>
+                <Image
+                  source={
+                    error
+                      ? IconStatusNonVerified
+                      : status === 'VALID'
+                      ? IconStatusVerified
+                      : IconStatusNonVerified
+                  }
+                  resizeMode="contain"
+                  style={{
+                    width: 15,
+                    height: 15,
+                    marginRight: 8,
+                    tintColor: error && theme.color.yellow600,
+                  }}
+                />
+                <Typography color={textColor} variant="eyebrow">
+                  {intl.formatMessage({
+                    id: error
+                      ? 'walletPass.errorFetchingLicense'
+                      : status === 'VALID'
+                      ? 'walletPass.validLicense'
+                      : 'walletPass.expiredLicense',
+                  })}
+                </Typography>
+              </>
+            )}
           </ValidationWrap>
           {date && (
             <Typography variant="body3" color={textColor}>
@@ -224,7 +248,7 @@ export function LicenseCard({
           </ImgWrap>
         )}
       </ContentContainer>
-      {showBarcodeView && (
+      {showBarcodeView && !error && (
         <BarcodeWrapper minHeight={barcode?.height}>
           {!barcode.loading && barcode?.value ? (
             <BarcodeContainer>
@@ -259,14 +283,16 @@ export function LicenseCard({
           )}
         </BarcodeWrapper>
       )}
-      {showBarcodeOfflineMessage && !showBarcodeView && (
+      {(error || (showBarcodeOfflineMessage && !showBarcodeView)) && (
         <BarcodeWrapper minHeight={barcodeHeight}>
           <BarcodeContainer
             style={{ backgroundColor: 'rgba(255,255,255,0.4)' }}
           >
             <OfflineMessage variant="body3" style={{ opacity: 1 }}>
               {intl.formatMessage({
-                id: 'walletPass.errorNotConnectedNoBarcode',
+                id: error
+                  ? 'walletPass.barcodeErrorFailedToFetch'
+                  : 'walletPass.barcodeErrorNotConnected',
               })}
             </OfflineMessage>
           </BarcodeContainer>

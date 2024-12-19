@@ -403,12 +403,14 @@ export const is = {
     'Tókst ekki að sækja eða bæta við skírteini.',
   'walletPass.errorNotPossibleOnThisDevice':
     'Þú getur ekki bætt við skírteinum á þetta tæki.',
-  'walletPass.errorNotConnectedNoBarcode':
+  'walletPass.barcodeErrorNotConnected':
     'Ekki er hægt að skanna skírteini nema að tækið sé nettengt.',
+  'walletPass.barcodeErrorFailedToFetch': 'Ekki tókst að sækja barkóða',
   'walletPass.validLicense': 'Í gildi',
   'walletPass.expiredLicense': 'Útrunnið',
   'walletPass.passportNumber': 'Númer vegabréfs: {licenseNumber}',
   'walletPass.licenseNumber': 'Skírteinisnúmer: {licenseNumber}',
+  'walletPass.errorFetchingLicense': 'Ekki tókst að uppfæra',
 
   // wallet passport
   'walletPassport.screenTitle': 'Vegabréf',
