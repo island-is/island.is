@@ -3,7 +3,7 @@ import { whoIsTheNotificationFor } from '../../../lib/messages'
 import {
   whoIsTheNotificationForOptions,
   whoIsTheNotificationForProcureOptions,
-} from '../../../utils/getWhoIstheNotificationForOptions'
+} from '../../../utils/getOptions'
 
 export const whoIsTheNotificationForMultiField = buildMultiField({
   id: 'whoIsTheNotificationFor',
