@@ -19,6 +19,7 @@ import {
 import {
   CrimeScene,
   IndictmentSubtype,
+  isTrafficViolationCase,
   offenseSubstances,
   Substance,
   SubstanceMap,
@@ -34,6 +35,7 @@ import {
   TempIndictmentCount as TIndictmentCount,
 } from '@island.is/judicial-system-web/src/types'
 import {
+  isTrafficViolationIndictmentCount,
   removeErrorMessageIfValid,
   validateAndSetErrorMessage,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
@@ -41,7 +43,6 @@ import {
   UpdateIndictmentCount,
   useIndictmentCounts,
 } from '@island.is/judicial-system-web/src/utils/hooks'
-import { hasOnlyOneItemInSubArrays } from '@island.is/judicial-system-web/src/utils/utils'
 
 import { Substances as SubstanceChoices } from './Substances/Substances'
 import { indictmentCount as strings } from './IndictmentCount.strings'
@@ -288,7 +289,7 @@ export const getIncidentDescription = (
   indictmentCount: TIndictmentCount,
   formatMessage: IntlShape['formatMessage'],
   crimeScene?: CrimeScene,
-  subtypes?: Record<string, IndictmentSubtype[]>,
+  subtypesRecord?: Record<string, IndictmentSubtype[]>,
 ) => {
   const {
     offenses,
@@ -306,23 +307,19 @@ export const getIncidentDescription = (
   const vehicleRegistration =
     vehicleRegistrationNumber || '[Skráningarnúmer ökutækis]'
 
-  const hasSingleSubtype = hasOnlyOneItemInSubArrays(subtypes)
-
-  const singleSubType =
-    (policeCaseNumber && subtypes?.[policeCaseNumber]?.[0]) || undefined
-
-  const trafficViolationSubtype =
-    singleSubType === IndictmentSubtype.TRAFFIC_VIOLATION
+  const subtypes =
+    (subtypesRecord && policeCaseNumber && subtypesRecord[policeCaseNumber]) ||
+    []
 
   if (
-    !hasSingleSubtype &&
+    subtypes.length > 1 &&
     (!indictmentCountSubtypes?.length || indictmentCountSubtypes.length === 0)
   ) {
     return ''
   }
 
   if (
-    (hasSingleSubtype && trafficViolationSubtype) ||
+    isTrafficViolationIndictmentCount(policeCaseNumber, subtypesRecord) ||
     (indictmentCountSubtypes?.length === 1 &&
       indictmentCountSubtypes[0] === IndictmentSubtype.TRAFFIC_VIOLATION)
   ) {
@@ -344,9 +341,9 @@ export const getIncidentDescription = (
     })
   }
 
-  if (hasSingleSubtype) {
+  if (subtypes.length === 1) {
     return formatMessage(strings.indictmentDescriptionSubtypesAutofill, {
-      subtypes: singleSubType ? indictmentSubtypes[singleSubType] : '',
+      subtypes: indictmentSubtypes[subtypes[0]],
       date: incidentDate,
     })
   }
@@ -383,7 +380,7 @@ export const IndictmentCount: FC<Props> = ({
   const [legalArgumentsErrorMessage, setLegalArgumentsErrorMessage] =
     useState<string>('')
 
-  const subtypes = indictmentCount.policeCaseNumber
+  const subtypes: IndictmentSubtype[] = indictmentCount.policeCaseNumber
     ? workingCase.indictmentSubtypes[indictmentCount.policeCaseNumber]
     : []
 
@@ -464,19 +461,38 @@ export const IndictmentCount: FC<Props> = ({
       indictmentCountSubtypes: Array.from(currentSubtypes),
       ...(!currentSubtypes.has(IndictmentSubtype.TRAFFIC_VIOLATION) && {
         offenses: [],
+        substances: {},
+        vehicleRegistrationNumber: null,
       }),
     })
   }
 
-  const hasSingleSubtype = hasOnlyOneItemInSubArrays(subtypes)
+  const shouldShowTrafficViolationFields = () => {
+    if (isTrafficViolationCase(workingCase)) {
+      return true
+    }
 
-  const singleSubType =
-    (indictmentCount.policeCaseNumber &&
-      subtypes?.[indictmentCount.policeCaseNumber]?.[0]) ||
-    undefined
+    const policeCaseNumber = indictmentCount.policeCaseNumber
 
-  const trafficViolationSubtype =
-    singleSubType === IndictmentSubtype.TRAFFIC_VIOLATION
+    if (
+      isTrafficViolationIndictmentCount(
+        policeCaseNumber,
+        workingCase.indictmentSubtypes,
+      )
+    ) {
+      return true
+    }
+
+    if (
+      indictmentCount?.indictmentCountSubtypes?.includes(
+        IndictmentSubtype.TRAFFIC_VIOLATION,
+      )
+    ) {
+      return true
+    }
+
+    return false
+  }
 
   return (
     <BlueBox>
@@ -526,7 +542,7 @@ export const IndictmentCount: FC<Props> = ({
         />
       </Box>
       <Box marginBottom={2}>
-        {subtypes.length > 1 && (
+        {subtypes?.length > 1 && (
           <>
             <Box marginBottom={3}>
               <IndictmentInfo
@@ -570,11 +586,7 @@ export const IndictmentCount: FC<Props> = ({
           </>
         )}
       </Box>
-      {((hasSingleSubtype && trafficViolationSubtype) ||
-        (indictmentCount?.indictmentCountSubtypes?.includes(
-          IndictmentSubtype.TRAFFIC_VIOLATION,
-        ) ??
-          false)) && (
+      {shouldShowTrafficViolationFields() && (
         <>
           <SectionHeading
             heading="h4"

@@ -11,12 +11,7 @@ import {
 
 import * as formatters from './formatters'
 import { validateAndSendToServer } from './formHelper'
-import {
-  getAppealEndDate,
-  getShortGender,
-  hasOnlyOneItemInSubArrays,
-  hasSentNotification,
-} from './utils'
+import { getAppealEndDate, getShortGender, hasSentNotification } from './utils'
 
 describe('Formatters utils', () => {
   describe('Parse time', () => {
@@ -440,61 +435,6 @@ describe('Utils', () => {
 
       // Assert
       expect(spy).not.toHaveBeenCalled()
-    })
-  })
-
-  describe('hasOnlyOneItemInSubArrays', () => {
-    test('should return true if all subarrays in the given object have only one item', () => {
-      // Arrange
-      const indictmentSubtypes = {
-        '123-123-123': ['item1'],
-        '234-234-234': ['item2'],
-      }
-
-      // Act
-      const result = hasOnlyOneItemInSubArrays(indictmentSubtypes)
-
-      // Assert
-      expect(result).toEqual(true)
-    })
-
-    test('should return false if any subarray in the given object has more than one item', () => {
-      // Arrange
-      const indictmentSubtypes = {
-        '123-123-123': ['item1', 'item2'],
-        '234-234-234': ['item3'],
-      }
-
-      // Act
-      const result = hasOnlyOneItemInSubArrays(indictmentSubtypes)
-
-      // Assert
-      expect(result).toEqual(false)
-    })
-
-    test('should return false if the given object is empty', () => {
-      // Arrange
-      const indictmentSubtypes: Record<string, string[]> = {}
-
-      // Act
-      const result = hasOnlyOneItemInSubArrays(indictmentSubtypes)
-
-      // Assert
-      expect(result).toEqual(false)
-    })
-
-    test('should return false if any subarray is the given object has no items', () => {
-      // Arrange
-      const indictmentSubtypes = {
-        '123-123-123': [],
-        '234-234-234': [],
-      }
-
-      // Act
-      const result = hasOnlyOneItemInSubArrays(indictmentSubtypes)
-
-      // Assert
-      expect(result).toEqual(false)
     })
   })
 })

@@ -2,6 +2,10 @@ import { SetStateAction } from 'react'
 import compareAsc from 'date-fns/compareAsc'
 
 import * as constants from '@island.is/judicial-system/consts'
+import {
+  IndictmentSubtype,
+  IndictmentSubtypeMap,
+} from '@island.is/judicial-system/types'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
 import { replaceTabs } from './formatters'
@@ -315,4 +319,23 @@ export const findFirstInvalidStep = (steps: string[], theCase: Case) => {
     stepsToCheck.find(([, validationFn]) => !validationFn(theCase)) ?? []
 
   return key
+}
+
+export const isTrafficViolationIndictmentCount = (
+  policeCaseNumber?: string | null,
+  indictmentSubtypes?: IndictmentSubtypeMap,
+) => {
+  if (!policeCaseNumber || !indictmentSubtypes) {
+    return false
+  }
+
+  if (
+    indictmentSubtypes[policeCaseNumber].length === 1 &&
+    indictmentSubtypes[policeCaseNumber][0] ===
+      IndictmentSubtype.TRAFFIC_VIOLATION
+  ) {
+    return true
+  }
+
+  return false
 }

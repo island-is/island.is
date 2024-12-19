@@ -30,7 +30,6 @@ import {
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 import {
-  UpdateIndictmentCount,
   useCase,
   useDefendants,
   useIndictmentCounts,
@@ -115,7 +114,7 @@ const Defendant = () => {
   } = useDefendants()
   const router = useRouter()
 
-  const { updateIndictmentCount } = useIndictmentCounts()
+  const { updateIndictmentCount, deleteIndictmentCount } = useIndictmentCounts()
 
   const [policeCases, setPoliceCases] = useState<PoliceCase[]>([])
 
@@ -249,6 +248,12 @@ const Defendant = () => {
       workingCase,
       setWorkingCase,
     )
+
+    const indictmentCountId = workingCase.indictmentCounts?.[index]?.id
+
+    if (indictmentCountId) {
+      deleteIndictmentCount(workingCase.id, indictmentCountId)
+    }
   }
 
   const handleUpdatePoliceCase = (
