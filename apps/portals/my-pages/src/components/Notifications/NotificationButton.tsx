@@ -28,7 +28,7 @@ const NotificationButton = ({
   const [hasMarkedLocally, setHasMarkedLocally] = useState(false)
   const [markAllAsSeen] = useMarkAllNotificationsAsSeenMutation()
   const { width } = useWindowSize()
-  const isMobile = width < theme.breakpoints.md
+  const isMobile = width < theme.breakpoints.lg
   const ref = useRef<HTMLButtonElement>(null)
 
   const { data, refetch } = useGetUserNotificationsOverviewQuery({
