@@ -38,6 +38,8 @@ const exhaustiveCheck = (param: never) => {
         return GeneralMandate
       case AuthDelegationType.LegalRepresentative:
         return LegalRepresentativeDelegation
+      case AuthDelegationType.ExecutiveDirector:
+        return ExecutiveDirectorDelegation
       default:
         exhaustiveCheck(delegation.type)
     }
@@ -80,6 +82,11 @@ export class LegalGuardianMinorDelegation extends Delegation {}
   implements: Delegation,
 })
 export class ProcuringHolderDelegation extends Delegation {}
+
+@ObjectType('AuthExecutiveDirectorDelegation', {
+  implements: Delegation,
+})
+export class ExecutiveDirectorDelegation extends Delegation {}
 
 @ObjectType('AuthPersonalRepresentativeDelegation', {
   implements: Delegation,
