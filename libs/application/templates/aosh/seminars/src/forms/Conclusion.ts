@@ -14,7 +14,17 @@ export const Conclusion: Form = buildForm({
     buildFormConclusionSection({
       sectionTitle: conclusion.general.sectionTitle,
       multiFieldTitle: conclusion.general.pageTitle,
-      alertTitle: conclusion.default.alertTitle, // TODO: Add seminar name from answers
+      alertTitle: (application) => {
+        const seminarName = getValueViaPath(
+          application.externalData,
+          'seminar.data.name',
+          '',
+        )
+        return {
+          id: conclusion.default.alertTitle.id,
+          values: { seminar: seminarName },
+        }
+      },
       alertMessage: '',
       expandableHeader: conclusion.default.accordionTitle,
       expandableIntro: '',
