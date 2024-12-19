@@ -39,6 +39,7 @@ import { getRightButtons } from '../../utils/get-main-root'
 import { testIDs } from '../../utils/test-ids'
 import { WalletItem } from './components/wallet-item'
 import { useLocale } from '../../hooks/use-locale'
+import { useFeatureFlag } from '../../contexts/feature-flag-provider'
 
 type FlatListItem =
   | GenericUserLicense
@@ -105,6 +106,7 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
   const scrollY = useRef(new Animated.Value(0)).current
   const { dismiss, dismissed } = usePreferencesStore()
   const [hiddenContent, setHiddenContent] = useState(isIos)
+  const isBarcodeEnabled = useFeatureFlag('isBarcodeEnabled', false)
 
   // Query list of licenses
   const res = useListLicensesQuery({
@@ -272,7 +274,7 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
           },
         )}
         ListHeaderComponent={
-          isIos ? (
+          isIos && !isBarcodeEnabled ? (
             <View style={{ marginBottom: 16 }}>
               <Alert
                 type="info"
