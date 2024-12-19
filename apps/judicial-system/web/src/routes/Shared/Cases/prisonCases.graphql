@@ -27,6 +27,7 @@ query PrisonCases {
       noNationalId
       defenderChoice
       punishmentType
+      openedByPrisonAdminDate
     }
     courtDate
     isValidToDateInThePast

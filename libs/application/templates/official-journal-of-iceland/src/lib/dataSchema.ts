@@ -69,6 +69,9 @@ const advertSchema = z
   .object({
     department: baseEntitySchema.optional(),
     type: baseEntitySchema.optional().nullable(),
+    mainType: baseEntitySchema
+      .extend({ types: z.array(baseEntitySchema).optional() })
+      .optional(),
     title: z.string().optional(),
     html: z.string().optional(),
     requestedDate: z.string().optional(),
