@@ -116,7 +116,10 @@ export class InternalCaseController {
     )
   }
 
-  @UseGuards(CaseExistsGuard)
+  @UseGuards(
+    CaseExistsGuard,
+    new CaseTypeGuard([...restrictionCases, ...investigationCases]),
+  )
   @Post(
     `case/:caseId/${messageEndpoint[MessageType.DELIVERY_TO_COURT_PROSECUTOR]}`,
   )

@@ -1,7 +1,7 @@
 import { PoliceSubpoenaExistsGuard } from '../../guards/policeSubpoenaExists.guard'
 import { InternalSubpoenaController } from '../../internalSubpoena.controller'
 
-describe('InternalSubpoenaController - Update subpoena  guards', () => {
+describe('InternalSubpoenaController - Update subpoena guards', () => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let guards: any[]
 

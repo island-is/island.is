@@ -34,6 +34,7 @@ export enum CourtDocumentFolder {
   CASE_DOCUMENTS = 'Gögn málsins',
   COURT_DOCUMENTS = 'Dómar, úrskurðir og Þingbók',
   APPEAL_DOCUMENTS = 'Kæra til Landsréttar',
+  SUBPOENA_DOCUMENTS = 'Boðanir',
 }
 
 export type Subtype = Exclude<CaseType, CaseType.INDICTMENT> | IndictmentSubtype
@@ -342,6 +343,7 @@ export class CourtService {
 
       return await this.courtClientService.createCase(courtId, {
         caseType: isIndictment ? 'S - Ákærumál' : 'R - Rannsóknarmál',
+        // TODO: send a list of subtypes when CourtService supports it
         subtype: courtSubtype as string,
         status: 'Skráð',
         receivalDate: formatISO(receivalDate, { representation: 'date' }),

@@ -898,7 +898,19 @@ describe('CaseController - Update', () => {
           elementId: [defendantId1, subpoenaId1],
         },
         {
+          type: MessageType.DELIVERY_TO_COURT_SUBPOENA,
+          user,
+          caseId: theCase.id,
+          elementId: [defendantId1, subpoenaId1],
+        },
+        {
           type: MessageType.DELIVERY_TO_POLICE_SUBPOENA,
+          user,
+          caseId: theCase.id,
+          elementId: [defendantId2, subpoenaId2],
+        },
+        {
+          type: MessageType.DELIVERY_TO_COURT_SUBPOENA,
           user,
           caseId: theCase.id,
           elementId: [defendantId2, subpoenaId2],

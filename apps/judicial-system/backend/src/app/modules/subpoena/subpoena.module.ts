@@ -4,6 +4,7 @@ import { SequelizeModule } from '@nestjs/sequelize'
 import { MessageModule } from '@island.is/judicial-system/message'
 
 import { CaseModule } from '../case/case.module'
+import { CourtModule } from '../court/court.module'
 import { DefendantModule } from '../defendant/defendant.module'
 import { Defendant } from '../defendant/models/defendant.model'
 import { EventModule } from '../event/event.module'
@@ -23,6 +24,7 @@ import { SubpoenaService } from './subpoena.service'
     forwardRef(() => MessageModule),
     forwardRef(() => EventModule),
     forwardRef(() => DefendantModule),
+    CourtModule,
     SequelizeModule.forFeature([Subpoena, Defendant]),
   ],
   controllers: [
