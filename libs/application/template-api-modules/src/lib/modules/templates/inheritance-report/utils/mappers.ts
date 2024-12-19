@@ -157,6 +157,7 @@ export const expandAnswers = (
             deceasedShare: gun.deceasedShare ?? '',
             deceasedShareEnabled: gun.deceasedShareEnabled ?? [],
             deceasedShareAmount: gun.deceasedShareAmount ?? 0,
+            enabled: gun.enabled ?? true,
           }
         }),
         total: answers.assets.guns?.total ?? 0,
@@ -199,6 +200,7 @@ export const expandAnswers = (
             deceasedShare: realEstate.deceasedShare ?? '0',
             deceasedShareEnabled: realEstate.deceasedShareEnabled ?? [],
             deceasedShareAmount: realEstate.deceasedShareAmount ?? 0,
+            enabled: realEstate.enabled ?? true,
           }
         }),
         total: answers.assets.realEstate?.total ?? 0,
@@ -227,6 +229,7 @@ export const expandAnswers = (
             deceasedShare: vehicle.deceasedShare ?? '0',
             deceasedShareEnabled: vehicle.deceasedShareEnabled ?? [],
             deceasedShareAmount: vehicle?.deceasedShareAmount ?? 0,
+            enabled: vehicle.enabled ?? true,
           }
         }),
         total: answers.assets.vehicles?.total ?? 0,
