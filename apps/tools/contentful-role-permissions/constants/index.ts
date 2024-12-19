@@ -35,6 +35,7 @@ export const DEFAULT_EDITABLE_ENTRY_TYPE_IDS = [
   'genericTag',
   'genericTagGroup',
   'graphCard',
+  'grantCardsList',
   'latestNewsSlice',
   'linkGroup',
   'menuLink',
