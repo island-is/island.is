@@ -23,6 +23,7 @@
 **/*.log
 **/tmp/
 **/temp/
+**/.next/
 
 # Outputs
 **/dist/
