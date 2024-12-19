@@ -74,7 +74,7 @@ describe('InternalSubpoenaController - Deliver subpoena to police', () => {
         defendant,
         subpoena,
       )
-      // TODO: complege tests when all indictments are generated
+      // TODO: complete tests when all indictments are generated
     })
   })
 })
