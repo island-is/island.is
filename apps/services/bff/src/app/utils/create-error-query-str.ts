@@ -1,17 +1,22 @@
 export type CreateErrorQueryStrArgs = {
-  code: number
-  error: string
+  statusCode: number
+  message?: string
+  code?: string
 }
 
 /**
- * This utility function creates a query string with the bff_error and bff_error_description parameters
+ * This utility function creates a query string with the error details
  */
 export const createErrorQueryStr = ({
+  statusCode,
   code,
-  error,
+  message,
 }: CreateErrorQueryStrArgs) => {
   return new URLSearchParams({
-    bff_error_code: code.toString(),
-    bff_error_description: error,
+    bff_error_status_code: statusCode.toString(),
+    ...(message && {
+      bff_error_message: message,
+    }),
+    ...(code && { bff_error_code: code }),
   }).toString()
 }
