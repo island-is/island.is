@@ -362,7 +362,7 @@ export class SubpoenaService {
       return { delivered: false }
     }
   }
-  async revokeSubpoenaFromPolice(
+  async deliverSubpoenaRevokedToPolice(
     theCase: Case,
     subpoena: Subpoena,
     user: TUser,

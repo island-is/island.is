@@ -117,7 +117,7 @@ export class InternalSubpoenaController {
       `Delivering subpoena revocation of ${subpoenaId} to police for defendant ${defendantId} of case ${caseId}`,
     )
 
-    return this.subpoenaService.revokeSubpoenaFromPolice(
+    return this.subpoenaService.deliverSubpoenaRevokedToPolice(
       theCase,
       subpoena,
       deliverDto.user,
