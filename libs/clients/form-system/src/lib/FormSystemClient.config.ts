@@ -12,10 +12,8 @@ export const FormSystemClientConfig = defineConfig({
     return {
       // TODO: Switch to .required() when we have a value in all environments.
       basePath:
-        env.optional(
-          'FORM_SYSTEM_API_BASE_PATH',
-          'https://profun.island.is/umsoknarkerfi',
-        ) ?? '',
+        env.optional('FORM_SYSTEM_API_BASE_PATH', 'http://172.19.80.1:3434') ??
+        '',
     }
   },
 })

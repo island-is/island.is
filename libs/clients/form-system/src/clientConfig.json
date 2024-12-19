@@ -1,79 +1,196 @@
 {
-  "openapi": "3.0.1",
-  "info": {
-    "title": "UmsóknarkerfiWebAPI",
-    "version": "1.0"
-  },
-  "servers": [
-    {
-      "url": "/umsoknarkerfi"
-    }
-  ],
+  "openapi": "3.0.0",
   "paths": {
-    "/api/Files": {
-      "post": {
-        "tags": ["Files"],
-        "requestBody": {
-          "content": {
-            "multipart/form-data": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "files": {
-                    "type": "array",
-                    "items": {
+    "/liveness": {
+      "get": {
+        "operationId": "InfraController_liveness",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Liveness"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["internal"]
+      }
+    },
+    "/version": {
+      "get": {
+        "operationId": "InfraController_version",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Version"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["internal"]
+      }
+    },
+    "/health/check": {
+      "get": {
+        "operationId": "HealthController_check",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "The Health Check is successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
                       "type": "string",
-                      "format": "binary"
+                      "example": "ok"
+                    },
+                    "info": {
+                      "type": "object",
+                      "example": {
+                        "database": {
+                          "status": "up"
+                        }
+                      },
+                      "additionalProperties": {
+                        "type": "object",
+                        "properties": {
+                          "status": {
+                            "type": "string"
+                          }
+                        },
+                        "additionalProperties": {
+                          "type": "string"
+                        }
+                      },
+                      "nullable": true
+                    },
+                    "error": {
+                      "type": "object",
+                      "example": {},
+                      "additionalProperties": {
+                        "type": "object",
+                        "properties": {
+                          "status": {
+                            "type": "string"
+                          }
+                        },
+                        "additionalProperties": {
+                          "type": "string"
+                        }
+                      },
+                      "nullable": true
+                    },
+                    "details": {
+                      "type": "object",
+                      "example": {
+                        "database": {
+                          "status": "up"
+                        }
+                      },
+                      "additionalProperties": {
+                        "type": "object",
+                        "properties": {
+                          "status": {
+                            "type": "string"
+                          }
+                        },
+                        "additionalProperties": {
+                          "type": "string"
+                        }
+                      }
                     }
                   }
                 }
-              },
-              "encoding": {
-                "files": {
-                  "style": "form"
-                }
               }
             }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Success"
-          }
-        }
-      }
-    },
-    "/api/Forms/Organization/{organizationId}": {
-      "get": {
-        "tags": ["Forms"],
-        "parameters": [
-          {
-            "name": "organizationId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
+          },
+          "503": {
+            "description": "The Health Check is not successful",
             "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/FormListResponse"
-                }
-              },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/FormListResponse"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/FormListResponse"
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "error"
+                    },
+                    "info": {
+                      "type": "object",
+                      "example": {
+                        "database": {
+                          "status": "up"
+                        }
+                      },
+                      "additionalProperties": {
+                        "type": "object",
+                        "properties": {
+                          "status": {
+                            "type": "string"
+                          }
+                        },
+                        "additionalProperties": {
+                          "type": "string"
+                        }
+                      },
+                      "nullable": true
+                    },
+                    "error": {
+                      "type": "object",
+                      "example": {
+                        "redis": {
+                          "status": "down",
+                          "message": "Could not connect"
+                        }
+                      },
+                      "additionalProperties": {
+                        "type": "object",
+                        "properties": {
+                          "status": {
+                            "type": "string"
+                          }
+                        },
+                        "additionalProperties": {
+                          "type": "string"
+                        }
+                      },
+                      "nullable": true
+                    },
+                    "details": {
+                      "type": "object",
+                      "example": {
+                        "database": {
+                          "status": "up"
+                        },
+                        "redis": {
+                          "status": "down",
+                          "message": "Could not connect"
+                        }
+                      },
+                      "additionalProperties": {
+                        "type": "object",
+                        "properties": {
+                          "status": {
+                            "type": "string"
+                          }
+                        },
+                        "additionalProperties": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
                 }
               }
             }
@@ -81,1603 +198,1626 @@
         }
       }
     },
-    "/api/Forms/{formId}": {
-      "get": {
-        "tags": ["Forms"],
-        "parameters": [
-          {
-            "name": "formId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/FormResponse"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/FormResponse"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/FormResponse"
-                }
-              }
-            }
-          }
-        }
-      },
-      "put": {
-        "tags": ["Forms"],
-        "parameters": [
-          {
-            "name": "formId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/FormUpdateDto"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/FormUpdateDto"
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/FormUpdateDto"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Success"
-          }
-        }
-      },
-      "delete": {
-        "tags": ["Forms"],
-        "parameters": [
-          {
-            "name": "formId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success"
-          }
-        }
-      }
-    },
-    "/api/Forms/{organizationId}": {
+    "/organizations": {
       "post": {
-        "tags": ["Forms"],
-        "parameters": [
-          {
-            "name": "organizationId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/FormResponse"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/FormResponse"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/FormResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/Forms/{formId}/settings": {
-      "put": {
-        "tags": ["Forms"],
-        "parameters": [
-          {
-            "name": "formId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
+        "operationId": "OrganizationsController_create",
+        "summary": "Create an organization",
+        "parameters": [],
         "requestBody": {
+          "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/FormSettingsUpdateDto"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/FormSettingsUpdateDto"
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/FormSettingsUpdateDto"
+                "$ref": "#/components/schemas/CreateOrganizationDto"
               }
             }
           }
         },
         "responses": {
-          "200": {
-            "description": "Success"
-          }
-        }
-      }
-    },
-    "/api/Groups/{groupId}": {
-      "get": {
-        "tags": ["Groups"],
-        "parameters": [
-          {
-            "name": "groupId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
+          "201": {
+            "description": "Create an organization",
             "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/GroupDto"
-                }
-              },
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GroupDto"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GroupDto"
-                }
-              }
-            }
-          }
-        }
-      },
-      "delete": {
-        "tags": ["Groups"],
-        "parameters": [
-          {
-            "name": "groupId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success"
-          }
-        }
-      },
-      "put": {
-        "tags": ["Groups"],
-        "parameters": [
-          {
-            "name": "groupId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/GroupUpdateDto"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/GroupUpdateDto"
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/GroupUpdateDto"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Success"
-          }
-        }
-      }
-    },
-    "/api/Groups": {
-      "post": {
-        "tags": ["Groups"],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/GroupCreationDto"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/GroupCreationDto"
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/GroupCreationDto"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/GroupDto"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GroupDto"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GroupDto"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/Inputs/{inputId}": {
-      "get": {
-        "tags": ["Inputs"],
-        "parameters": [
-          {
-            "name": "inputId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/InputDto"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/InputDto"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/InputDto"
-                }
-              }
-            }
-          }
-        }
-      },
-      "put": {
-        "tags": ["Inputs"],
-        "parameters": [
-          {
-            "name": "inputId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/InputUpdateDto"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/InputUpdateDto"
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/InputUpdateDto"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Success"
-          }
-        }
-      },
-      "delete": {
-        "tags": ["Inputs"],
-        "parameters": [
-          {
-            "name": "inputId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success"
-          }
-        }
-      }
-    },
-    "/api/Inputs": {
-      "post": {
-        "tags": ["Inputs"],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/InputCreationDto"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/InputCreationDto"
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/InputCreationDto"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/InputDto"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/InputDto"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/InputDto"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/Organizations": {
-      "post": {
-        "tags": ["Organizations"],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/OrganizationCreationDto"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/OrganizationCreationDto"
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/OrganizationCreationDto"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/OrganizationDto"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/OrganizationDto"
-                }
-              },
-              "text/json": {
                 "schema": {
                   "$ref": "#/components/schemas/OrganizationDto"
                 }
               }
             }
           }
-        }
+        },
+        "tags": ["organizations"]
+      },
+      "get": {
+        "operationId": "OrganizationsController_findAll",
+        "summary": "Get all Organizations",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": "Get all Organizations",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrganizationsResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["organizations"]
       }
     },
-    "/api/Services/Fasteign/{fasteignanumer}": {
+    "/organizations/{id}": {
       "get": {
-        "tags": ["Services"],
+        "operationId": "OrganizationsController_findOne",
+        "summary": "Get an organization by id",
         "parameters": [
           {
-            "name": "fasteignanumer",
-            "in": "path",
+            "name": "id",
             "required": true,
+            "in": "path",
             "schema": {
               "type": "string"
             }
           }
         ],
         "responses": {
-          "200": {
-            "description": "Success",
+          "201": {
+            "description": "Get an organization by id",
             "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/FasteignanumerInputFields"
-                }
-              },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/FasteignanumerInputFields"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/FasteignanumerInputFields"
+                  "$ref": "#/components/schemas/OrganizationDto"
                 }
               }
             }
           }
-        }
+        },
+        "tags": ["organizations"]
       }
     },
-    "/api/Services/IdngreinarMeistara": {
-      "get": {
-        "tags": ["Services"],
+    "/forms": {
+      "post": {
+        "operationId": "FormsController_create",
+        "summary": "Create new form",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateFormDto"
+              }
+            }
+          }
+        },
         "responses": {
-          "200": {
-            "description": "Success",
+          "201": {
+            "description": "Create new form",
             "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/FellilistiInputSettings"
-                }
-              },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/FellilistiInputSettings"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/FellilistiInputSettings"
+                  "$ref": "#/components/schemas/FormResponseDto"
                 }
               }
             }
           }
-        }
+        },
+        "tags": ["forms"]
       }
     },
-    "/api/Services/Skraningarflokkar": {
+    "/forms/organization/{organizationId}": {
       "get": {
-        "tags": ["Services"],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/FellilistiInputSettings"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/FellilistiInputSettings"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/FellilistiInputSettings"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/Services/Sveitarfelog": {
-      "get": {
-        "tags": ["Services"],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/FellilistiInputSettings"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/FellilistiInputSettings"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/FellilistiInputSettings"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/Services/Postnumer": {
-      "get": {
-        "tags": ["Services"],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/FellilistiInputSettings"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/FellilistiInputSettings"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/FellilistiInputSettings"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/Services/Lond": {
-      "get": {
-        "tags": ["Services"],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/FellilistiInputSettings"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/FellilistiInputSettings"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/FellilistiInputSettings"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/Steps/{stepId}": {
-      "get": {
-        "tags": ["Steps"],
+        "operationId": "FormsController_findAll",
+        "summary": "Get all forms belonging to organization",
         "parameters": [
           {
-            "name": "stepId",
-            "in": "path",
+            "name": "organizationId",
             "required": true,
+            "in": "path",
             "schema": {
-              "type": "integer",
-              "format": "int32"
+              "type": "string"
             }
           }
         ],
         "responses": {
-          "200": {
-            "description": "Success",
+          "201": {
+            "description": "Get all forms belonging to organization",
             "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/StepDto"
-                }
-              },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/StepDto"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/StepDto"
+                  "$ref": "#/components/schemas/FormResponseDto"
                 }
               }
             }
           }
-        }
-      },
-      "delete": {
-        "tags": ["Steps"],
+        },
+        "tags": ["forms"]
+      }
+    },
+    "/forms/{id}": {
+      "get": {
+        "operationId": "FormsController_findOne",
+        "summary": "Get form by idd",
         "parameters": [
           {
-            "name": "stepId",
-            "in": "path",
+            "name": "id",
             "required": true,
+            "in": "path",
             "schema": {
-              "type": "integer",
-              "format": "int32"
+              "type": "string"
             }
           }
         ],
         "responses": {
-          "200": {
-            "description": "Success"
+          "201": {
+            "description": "Get form by id",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FormResponseDto"
+                }
+              }
+            }
           }
-        }
+        },
+        "tags": ["forms"]
       },
       "put": {
-        "tags": ["Steps"],
+        "operationId": "FormsController_updateForm",
+        "summary": "Update form",
         "parameters": [
           {
-            "name": "stepId",
-            "in": "path",
+            "name": "id",
             "required": true,
+            "in": "path",
             "schema": {
-              "type": "integer",
-              "format": "int32"
+              "type": "string"
             }
           }
         ],
         "requestBody": {
+          "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/StepUpdateDto"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/StepUpdateDto"
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/StepUpdateDto"
+                "$ref": "#/components/schemas/UpdateFormDto"
               }
             }
           }
         },
         "responses": {
-          "200": {
-            "description": "Success"
+          "201": {
+            "description": "Update form"
           }
-        }
+        },
+        "tags": ["forms"]
+      },
+      "delete": {
+        "operationId": "FormsController_delete",
+        "summary": "Delete form",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Delete field"
+          }
+        },
+        "tags": ["forms"]
       }
     },
-    "/api/Steps": {
+    "/forms/changePublished/{id}": {
+      "put": {
+        "operationId": "FormsController_changePublishedForm",
+        "summary": "Change published form",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Change published form",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FormResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["forms"]
+      }
+    },
+    "/forms/publish/{id}": {
+      "put": {
+        "operationId": "FormsController_publish",
+        "summary": "Publish form",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Publish form",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FormResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["forms"]
+      }
+    },
+    "/sections": {
       "post": {
-        "tags": ["Steps"],
+        "operationId": "SectionsController_create",
+        "summary": "Creates a new section",
+        "parameters": [],
         "requestBody": {
+          "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/StepCreationDto"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/StepCreationDto"
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/StepCreationDto"
+                "$ref": "#/components/schemas/CreateSectionDto"
               }
             }
           }
         },
         "responses": {
-          "200": {
-            "description": "Success",
+          "201": {
+            "description": "Creates a new section",
             "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/StepDto"
-                }
-              },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/StepDto"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/StepDto"
+                  "$ref": "#/components/schemas/SectionDto"
                 }
               }
             }
           }
-        }
+        },
+        "tags": ["sections"]
+      },
+      "put": {
+        "operationId": "SectionsController_updateDisplayOrder",
+        "summary": "Update display order of sections",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateSectionsDisplayOrderDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "Update display order of sections"
+          }
+        },
+        "tags": ["sections"]
+      }
+    },
+    "/sections/{id}": {
+      "put": {
+        "operationId": "SectionsController_update",
+        "summary": "Updates a section",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateSectionDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Updates a section"
+          }
+        },
+        "tags": ["sections"]
+      },
+      "delete": {
+        "operationId": "SectionsController_delete",
+        "summary": "Delete section by id",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Delete section by id"
+          }
+        },
+        "tags": ["sections"]
+      }
+    },
+    "/screens": {
+      "post": {
+        "operationId": "ScreensController_create",
+        "summary": "Creates a new screen",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateScreenDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Creates a new screen",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScreenDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["screens"]
+      },
+      "put": {
+        "operationId": "ScreensController_updateDisplayOrder",
+        "summary": "Update display order of screens",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateScreensDisplayOrderDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "Update display order of screens"
+          }
+        },
+        "tags": ["screens"]
+      }
+    },
+    "/screens/{id}": {
+      "put": {
+        "operationId": "ScreensController_update",
+        "summary": "Updates screen",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateScreenDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Updates a screen",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScreenDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["screens"]
+      },
+      "delete": {
+        "operationId": "ScreensController_delete",
+        "summary": "Delete screen by id",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Delete screen by id"
+          }
+        },
+        "tags": ["screens"]
+      }
+    },
+    "/fields": {
+      "post": {
+        "operationId": "FieldsController_create",
+        "summary": "Create a field",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateFieldDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Create a field",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FieldDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["fields"]
+      },
+      "put": {
+        "operationId": "FieldsController_updateDisplayOrder",
+        "summary": "Update display order of fields",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateFieldsDisplayOrderDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "Update display order of fields"
+          }
+        },
+        "tags": ["fields"]
+      }
+    },
+    "/fields/{id}": {
+      "put": {
+        "operationId": "FieldsController_update",
+        "summary": "Update field",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateFieldDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "Update field"
+          }
+        },
+        "tags": ["fields"]
+      },
+      "delete": {
+        "operationId": "FieldsController_delete",
+        "summary": "Delete field by id",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Delete field by id"
+          }
+        },
+        "tags": ["fields"]
+      }
+    },
+    "/listItems": {
+      "post": {
+        "operationId": "ListItemsController_create",
+        "summary": "Create a list item",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateListItemDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Create a list item",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListItemDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["list items"]
+      },
+      "put": {
+        "operationId": "ListItemsController_updateDisplayOrder",
+        "summary": "Update display order of list items",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateListItemsDisplayOrderDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "Update display order of list items"
+          }
+        },
+        "tags": ["list items"]
+      }
+    },
+    "/listItems/{id}": {
+      "put": {
+        "operationId": "ListItemsController_update",
+        "summary": "Update list item",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateListItemDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "Update list item"
+          }
+        },
+        "tags": ["list items"]
+      },
+      "delete": {
+        "operationId": "ListItemsController_delete",
+        "summary": "Delete list item",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Delete of list items"
+          }
+        },
+        "tags": ["list items"]
+      }
+    },
+    "/applications/{id}": {
+      "get": {
+        "operationId": "ApplicationsController_getApplication",
+        "summary": "Get an application by id",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Get an application by id",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApplicationDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["applications"]
+      },
+      "put": {
+        "operationId": "ApplicationsController_update",
+        "summary": "Update application dependencies",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateApplicationDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "Update application dependencies"
+          }
+        },
+        "tags": ["applications"]
+      }
+    },
+    "/applications/{slug}": {
+      "post": {
+        "operationId": "ApplicationsController_create",
+        "summary": "Create new application",
+        "parameters": [
+          {
+            "name": "slug",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateApplicationDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Create new application",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApplicationDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["applications"]
+      }
+    },
+    "/applications/submit/{id}": {
+      "post": {
+        "operationId": "ApplicationsController_submit",
+        "summary": "Submit application",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Submit application"
+          }
+        },
+        "tags": ["applications"]
+      }
+    },
+    "/applications/validateScreen": {
+      "post": {
+        "operationId": "ApplicationsController_validateScreen",
+        "summary": "validate and save input values of a screen",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ScreenDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "validate and save input values of a screen"
+          }
+        },
+        "tags": ["applications"]
+      }
+    },
+    "/applications/organization/{organizationId}": {
+      "get": {
+        "operationId": "ApplicationsController_findAll",
+        "summary": "Get all applications belonging to organization",
+        "parameters": [
+          {
+            "name": "organizationId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "limit",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "isTest",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Get all applications belonging to organization",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApplicationListDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["applications"]
+      }
+    },
+    "/values": {
+      "post": {
+        "operationId": "ValuesController_create",
+        "summary": "Creates a new value",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateValueDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Creates a new value",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValueDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["values"]
+      }
+    },
+    "/values/{id}": {
+      "put": {
+        "operationId": "ValuesController_update",
+        "summary": "Update a value",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateValueDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Update a value",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValueDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["values"]
+      },
+      "delete": {
+        "operationId": "ValuesController_delete",
+        "summary": "Delete value by id",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Delete value by id"
+          }
+        },
+        "tags": ["values"]
+      }
+    },
+    "/formApplicantTypes": {
+      "post": {
+        "operationId": "FormApplicantTypesController_create",
+        "summary": "Add form applicant type",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateFormApplicantTypeDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Add form applicant type",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FormApplicantTypeDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["form applicant types"]
+      }
+    },
+    "/formApplicantTypes/{id}": {
+      "put": {
+        "operationId": "FormApplicantTypesController_update",
+        "summary": "Update form applicant",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateFormApplicantTypeDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Update form applicant"
+          }
+        },
+        "tags": ["form applicant types"]
+      },
+      "delete": {
+        "operationId": "FormApplicantTypesController_delete",
+        "summary": "Delete form applicant",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Delete form applicant"
+          }
+        },
+        "tags": ["form applicant types"]
+      }
+    },
+    "/formCertificationTypes": {
+      "post": {
+        "operationId": "FormCertificationTypesController_create",
+        "summary": "Add form certification type",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateFormCertificationTypeDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Add form certification type",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FormCertificationTypeDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["form certification types"]
+      }
+    },
+    "/formCertificationTypes/{id}": {
+      "delete": {
+        "operationId": "FormCertificationTypesController_delete",
+        "summary": "Remove form certification type",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Remove form certification type"
+          }
+        },
+        "tags": ["form certification types"]
+      }
+    },
+    "/formUrls": {
+      "post": {
+        "operationId": "FormUrlsController_create",
+        "summary": "Add form url",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateFormUrlDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Add form url",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FormUrlDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["form urls"]
+      }
+    },
+    "/formUrls/{id}": {
+      "delete": {
+        "operationId": "FormUrlsController_delete",
+        "summary": "Remove form url",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Remove form url"
+          }
+        },
+        "tags": ["form urls"]
+      }
+    },
+    "/organizationCertificationTypes": {
+      "post": {
+        "operationId": "OrganizationCertificationTypesController_create",
+        "summary": "Add organization certification type",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateOrganizationCertificationTypeDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Add organization certification type",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrganizationCertificationTypeDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["organization certification types"]
+      }
+    },
+    "/organizationCertificationTypes/{id}": {
+      "delete": {
+        "operationId": "OrganizationCertificationTypesController_delete",
+        "summary": "Remove organization certification type",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Remove organization certification type"
+          }
+        },
+        "tags": ["organization certification types"]
+      }
+    },
+    "/organizationFieldTypes": {
+      "post": {
+        "operationId": "OrganizationFieldTypesController_create",
+        "summary": "Add organization field type",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateOrganizationFieldTypeDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Add organization field type",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrganizationFieldTypeDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["organization field types"]
+      }
+    },
+    "/organizationFieldTypes/{id}": {
+      "delete": {
+        "operationId": "OrganizationFieldTypesController_delete",
+        "summary": "Remove organization field type",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Remove organization field type"
+          }
+        },
+        "tags": ["organization field types"]
+      }
+    },
+    "/organizationListTypes": {
+      "post": {
+        "operationId": "OrganizationListTypesController_create",
+        "summary": "Add organization list type",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateOrganizationListTypeDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Add organization list type",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrganizationListTypeDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["organization list types"]
+      }
+    },
+    "/organizationListTypes/{id}": {
+      "delete": {
+        "operationId": "OrganizationListTypesController_delete",
+        "summary": "Remove organization list type",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Remove organization list type"
+          }
+        },
+        "tags": ["organization list types"]
+      }
+    },
+    "/organizationUrls": {
+      "post": {
+        "operationId": "OrganizationUrlsController_create",
+        "summary": "Add organization url",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateOrganizationUrlDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Add organization url",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrganizationUrlDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["organization urls"]
+      }
+    },
+    "/organizationUrls/{id}": {
+      "put": {
+        "operationId": "OrganizationUrlsController_update",
+        "summary": "Update an organization url",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateOrganizationUrlDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Update an organization url"
+          }
+        },
+        "tags": ["organization urls"]
+      },
+      "delete": {
+        "operationId": "OrganizationUrlsController_delete",
+        "summary": "Remove organization url",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Remove organization url"
+          }
+        },
+        "tags": ["organization urls"]
       }
     }
   },
+  "info": {
+    "title": "Form System API",
+    "description": "This is an API for formbuilder and form-rendering (application) system",
+    "version": "1.0",
+    "contact": {}
+  },
+  "tags": [],
+  "servers": [
+    {
+      "url": "http://localhost:3434"
+    }
+  ],
   "components": {
     "schemas": {
-      "ApplicantTypeDto": {
+      "Liveness": {
         "type": "object",
         "properties": {
-          "id": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "guid": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "type": {
-            "type": "string",
-            "nullable": true
-          },
-          "name": {
-            "$ref": "#/components/schemas/LanguageType"
-          },
-          "description": {
-            "$ref": "#/components/schemas/LanguageType"
-          },
-          "nameSuggestions": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/ApplicantTypeNameSuggestionDto"
-            },
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "ApplicantTypeNameSuggestionDto": {
-        "type": "object",
-        "properties": {
-          "nameSuggestion": {
-            "$ref": "#/components/schemas/LanguageType"
-          },
-          "applicantTypeId": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "guid": {
-            "type": "string",
-            "format": "uuid"
-          }
-        },
-        "additionalProperties": false
-      },
-      "ApplicantTypeUpdateDto": {
-        "type": "object",
-        "properties": {
-          "formId": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "applicantTypeId": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "guid": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "name": {
-            "$ref": "#/components/schemas/LanguageType"
-          },
-          "type": {
-            "type": "string",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "BaseInputFields": {
-        "type": "object",
-        "additionalProperties": false
-      },
-      "BaseInputSettings": {
-        "type": "object",
-        "additionalProperties": false
-      },
-      "DocumentTypeDto": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "guid": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "type": {
-            "type": "string",
-            "nullable": true
-          },
-          "name": {
-            "$ref": "#/components/schemas/LanguageType"
-          },
-          "description": {
-            "$ref": "#/components/schemas/LanguageType"
-          }
-        },
-        "additionalProperties": false
-      },
-      "DocumentTypeUpdateDto": {
-        "type": "object",
-        "properties": {
-          "formId": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "documentTypeId": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "guid": {
-            "type": "string",
-            "format": "uuid"
-          }
-        },
-        "additionalProperties": false
-      },
-      "EExternalEndpointEnvironment": {
-        "enum": ["development", "production"],
-        "type": "string"
-      },
-      "EExternalEndpointType": {
-        "enum": ["submit", "validation"],
-        "type": "string"
-      },
-      "ExternalEndpointDto": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "guid": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "url": {
-            "type": "string",
-            "nullable": true
-          },
-          "type": {
-            "$ref": "#/components/schemas/EExternalEndpointType"
-          },
-          "environment": {
-            "$ref": "#/components/schemas/EExternalEndpointEnvironment"
-          }
-        },
-        "additionalProperties": false
-      },
-      "FasteignanumerInputFields": {
-        "type": "object",
-        "properties": {
-          "fasteignanumer": {
-            "type": "string",
-            "nullable": true
-          },
-          "heimilisfang": {
-            "type": "string",
-            "nullable": true
-          },
-          "stadur": {
-            "type": "string",
-            "nullable": true
-          },
-          "sveitarfelag": {
-            "type": "string",
-            "nullable": true
-          },
-          "land": {
-            "type": "string",
-            "nullable": true
-          },
-          "merking": {
-            "type": "string",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "FellilistiInputSettings": {
-        "type": "object",
-        "properties": {
-          "listType": {
-            "type": "string",
-            "nullable": true
-          },
-          "list": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/Listagildi"
-            },
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "FormApplicantTypeDto": {
-        "type": "object",
-        "properties": {
-          "formId": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "applicantTypeId": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "guid": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "name": {
-            "$ref": "#/components/schemas/LanguageType"
-          },
-          "type": {
-            "type": "string",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "FormDto": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "guid": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "name": {
-            "$ref": "#/components/schemas/LanguageType"
-          },
-          "organization": {
-            "$ref": "#/components/schemas/OrganizationDto"
-          },
-          "created": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "lastChanged": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "invalidationDate": {
-            "type": "string",
-            "format": "date-time",
-            "nullable": true
-          },
-          "dependencies": {
-            "type": "object",
-            "additionalProperties": {
-              "type": "array",
-              "items": {
-                "type": "string",
-                "format": "uuid"
-              },
-              "nullable": true
-            },
-            "nullable": true
-          },
-          "documentTypes": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/DocumentTypeDto"
-            },
-            "nullable": true
-          },
-          "formApplicantTypes": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/FormApplicantTypeDto"
-            },
-            "nullable": true
-          },
-          "completedMessage": {
-            "$ref": "#/components/schemas/LanguageType"
-          },
-          "isTranslated": {
+          "ok": {
             "type": "boolean"
-          },
-          "stopProgressOnValidatingStep": {
-            "type": "boolean"
-          },
-          "applicationsDaysToRemove": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "steps": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/StepDto"
-            },
-            "nullable": true
-          },
-          "stepsList": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/StepDto"
-            },
-            "nullable": true
-          },
-          "groupsList": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/GroupDto"
-            },
-            "nullable": true
-          },
-          "inputsList": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/InputDto"
-            },
-            "nullable": true
           }
         },
-        "additionalProperties": false
+        "required": ["ok"]
       },
-      "FormListResponse": {
+      "Version": {
         "type": "object",
         "properties": {
-          "forms": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/FormDto"
-            },
-            "nullable": true
+          "version": {
+            "type": "string"
           }
         },
-        "additionalProperties": false
-      },
-      "FormResponse": {
-        "type": "object",
-        "properties": {
-          "form": {
-            "$ref": "#/components/schemas/FormDto"
-          },
-          "documentTypes": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/DocumentTypeDto"
-            },
-            "nullable": true
-          },
-          "inputTypes": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/InputTypeDto"
-            },
-            "nullable": true
-          },
-          "applicantTypes": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/ApplicantTypeDto"
-            },
-            "nullable": true
-          },
-          "listTypes": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/ListTypeDto"
-            },
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "FormSettingsUpdateDto": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "guid": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "name": {
-            "$ref": "#/components/schemas/LanguageType"
-          },
-          "lastChanged": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "invalidationDate": {
-            "type": "string",
-            "format": "date-time",
-            "nullable": true
-          },
-          "dependencies": {
-            "type": "object",
-            "additionalProperties": {
-              "type": "array",
-              "items": {
-                "type": "string",
-                "format": "uuid"
-              },
-              "nullable": true
-            },
-            "nullable": true
-          },
-          "formDocumentTypes": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/DocumentTypeUpdateDto"
-            },
-            "nullable": true
-          },
-          "formApplicantTypes": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/ApplicantTypeUpdateDto"
-            },
-            "nullable": true
-          },
-          "completedMessage": {
-            "$ref": "#/components/schemas/LanguageType"
-          },
-          "isTranslated": {
-            "type": "boolean"
-          },
-          "stopProgressOnValidatingStep": {
-            "type": "boolean"
-          },
-          "applicationsDaysToRemove": {
-            "type": "integer",
-            "format": "int32"
-          }
-        },
-        "additionalProperties": false
-      },
-      "FormUpdateDto": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "guid": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "name": {
-            "$ref": "#/components/schemas/LanguageType"
-          },
-          "lastChanged": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "invalidationDate": {
-            "type": "string",
-            "format": "date-time",
-            "nullable": true
-          },
-          "stopProgressOnValidatingStep": {
-            "type": "boolean"
-          },
-          "isTranslated": {
-            "type": "boolean"
-          },
-          "dependencies": {
-            "type": "object",
-            "additionalProperties": {
-              "type": "array",
-              "items": {
-                "type": "string",
-                "format": "uuid"
-              },
-              "nullable": true
-            },
-            "nullable": true
-          },
-          "applicationsDaysToRemove": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "completedMessage": {
-            "$ref": "#/components/schemas/LanguageType"
-          },
-          "stepsList": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/StepUpdateDto"
-            },
-            "nullable": true
-          },
-          "groupsList": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/GroupUpdateDto"
-            },
-            "nullable": true
-          },
-          "inputsList": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/InputUpdateDto"
-            },
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "GroupCreationDto": {
-        "type": "object",
-        "properties": {
-          "displayOrder": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "stepId": {
-            "type": "integer",
-            "format": "int32"
-          }
-        },
-        "additionalProperties": false
-      },
-      "GroupDto": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "name": {
-            "$ref": "#/components/schemas/LanguageType"
-          },
-          "guid": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "displayOrder": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "isHidden": {
-            "type": "boolean"
-          },
-          "inputs": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/InputDto"
-            },
-            "nullable": true
-          },
-          "stepId": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "multiSet": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "stepGuid": {
-            "type": "string",
-            "format": "uuid"
-          }
-        },
-        "additionalProperties": false
-      },
-      "GroupUpdateDto": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "name": {
-            "$ref": "#/components/schemas/LanguageType"
-          },
-          "guid": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "displayOrder": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "multiSet": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "stepId": {
-            "type": "integer",
-            "format": "int32"
-          }
-        },
-        "additionalProperties": false
-      },
-      "InputCreationDto": {
-        "type": "object",
-        "properties": {
-          "displayOrder": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "groupId": {
-            "type": "integer",
-            "format": "int32"
-          }
-        },
-        "additionalProperties": false
-      },
-      "InputDto": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "name": {
-            "$ref": "#/components/schemas/LanguageType"
-          },
-          "description": {
-            "$ref": "#/components/schemas/LanguageType"
-          },
-          "isRequired": {
-            "type": "boolean"
-          },
-          "displayOrder": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "groupId": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "isHidden": {
-            "type": "boolean"
-          },
-          "type": {
-            "type": "string",
-            "nullable": true
-          },
-          "guid": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "isPartOfMultiSet": {
-            "type": "boolean"
-          },
-          "groupGuid": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "inputFields": {
-            "$ref": "#/components/schemas/BaseInputFields"
-          },
-          "inputSettings": {
-            "$ref": "#/components/schemas/BaseInputSettings"
-          }
-        },
-        "additionalProperties": false
-      },
-      "InputTypeDto": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "guid": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "type": {
-            "type": "string",
-            "nullable": true
-          },
-          "name": {
-            "$ref": "#/components/schemas/LanguageType"
-          },
-          "description": {
-            "$ref": "#/components/schemas/LanguageType"
-          },
-          "inputFields": {
-            "$ref": "#/components/schemas/BaseInputFields"
-          },
-          "inputSettings": {
-            "$ref": "#/components/schemas/BaseInputSettings"
-          }
-        },
-        "additionalProperties": false
-      },
-      "InputUpdateDto": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "name": {
-            "$ref": "#/components/schemas/LanguageType"
-          },
-          "description": {
-            "$ref": "#/components/schemas/LanguageType"
-          },
-          "isRequired": {
-            "type": "boolean"
-          },
-          "isHidden": {
-            "type": "boolean"
-          },
-          "displayOrder": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "isPartOfMultiSet": {
-            "type": "boolean"
-          },
-          "type": {
-            "type": "string",
-            "nullable": true
-          },
-          "inputSettings": {
-            "$ref": "#/components/schemas/BaseInputSettings"
-          },
-          "groupId": {
-            "type": "integer",
-            "format": "int32"
-          }
-        },
-        "additionalProperties": false
+        "required": ["version"]
       },
       "LanguageType": {
         "type": "object",
         "properties": {
           "is": {
             "type": "string",
-            "nullable": true
+            "default": ""
           },
           "en": {
             "type": "string",
-            "nullable": true
+            "default": ""
           }
         },
-        "additionalProperties": false
+        "required": ["is", "en"]
       },
-      "ListTypeDto": {
+      "CreateOrganizationDto": {
         "type": "object",
         "properties": {
-          "id": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "guid": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "type": {
-            "type": "string",
-            "nullable": true
-          },
           "name": {
             "$ref": "#/components/schemas/LanguageType"
           },
-          "description": {
+          "nationalId": {
+            "type": "string"
+          }
+        },
+        "required": ["name", "nationalId"]
+      },
+      "Dependency": {
+        "type": "object",
+        "properties": {
+          "parentProp": {
+            "type": "string"
+          },
+          "childProps": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "isSelected": {
+            "type": "boolean"
+          }
+        },
+        "required": ["parentProp", "childProps", "isSelected"]
+      },
+      "FormCertificationTypeDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "certificationTypeId": {
+            "type": "string"
+          }
+        },
+        "required": ["id", "certificationTypeId"]
+      },
+      "FormApplicantTypeDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "applicantTypeId": {
+            "type": "string"
+          },
+          "name": {
             "$ref": "#/components/schemas/LanguageType"
           }
         },
-        "additionalProperties": false
+        "required": ["id", "applicantTypeId", "name"]
       },
-      "Listagildi": {
+      "FormUrlDto": {
         "type": "object",
         "properties": {
-          "guid": {
+          "id": {
+            "type": "string"
+          },
+          "organizationUrlId": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string"
+          },
+          "isXroad": {
+            "type": "boolean"
+          },
+          "isTest": {
+            "type": "boolean"
+          },
+          "type": {
+            "type": "string"
+          },
+          "method": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "organizationUrlId",
+          "url",
+          "isXroad",
+          "isTest",
+          "type",
+          "method"
+        ]
+      },
+      "FieldSettings": {
+        "type": "object",
+        "properties": {
+          "minValue": {
+            "type": "number"
+          },
+          "maxValue": {
+            "type": "number"
+          },
+          "minLength": {
+            "type": "number"
+          },
+          "maxLength": {
+            "type": "number"
+          },
+          "minDate": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "maxDate": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "minAmount": {
+            "type": "number"
+          },
+          "maxAmount": {
+            "type": "number"
+          },
+          "year": {
+            "type": "number"
+          },
+          "hasLink": {
+            "type": "boolean"
+          },
+          "url": {
+            "type": "string"
+          },
+          "buttonText": {
+            "$ref": "#/components/schemas/LanguageType"
+          },
+          "isLarge": {
+            "type": "boolean"
+          },
+          "hasPropertyInput": {
+            "type": "boolean"
+          },
+          "hasPropertyList": {
+            "type": "boolean"
+          },
+          "listType": {
             "type": "string",
-            "format": "uuid",
-            "nullable": true
+            "enum": [
+              "9e1600f7-7d25-4997-9e8d-16e6d15cd901",
+              "2cd6cda1-ab72-4746-bb38-16b95b89ae75",
+              "1df24f32-1481-4775-81eb-0cf0a5eb9328",
+              "7aa0396f-2574-40cb-8ea4-299a5b62b22d",
+              "7bfc3703-af37-455b-b9a1-8b612f46184b",
+              "f50779b3-464c-42e3-9cc3-8914886f9bf7"
+            ]
+          },
+          "fileTypes": {
+            "type": "string"
+          },
+          "fileMaxSize": {
+            "type": "number"
+          },
+          "maxFiles": {
+            "type": "number"
+          },
+          "timeInterval": {
+            "type": "string"
+          }
+        }
+      },
+      "ListItemDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
           },
           "label": {
             "$ref": "#/components/schemas/LanguageType"
@@ -1686,136 +1826,226 @@
             "$ref": "#/components/schemas/LanguageType"
           },
           "value": {
-            "type": "string",
-            "nullable": true
+            "type": "string"
           },
           "displayOrder": {
-            "type": "integer",
-            "format": "int32"
+            "type": "number"
           },
           "isSelected": {
             "type": "boolean"
           }
         },
-        "additionalProperties": false
+        "required": ["id", "label", "value", "displayOrder", "isSelected"]
       },
-      "OrganizationCreationDto": {
+      "Month": {
         "type": "object",
         "properties": {
-          "name": {
-            "$ref": "#/components/schemas/LanguageType"
+          "month": {
+            "type": "number"
+          },
+          "amount": {
+            "type": "number"
+          },
+          "days": {
+            "type": "array",
+            "items": {
+              "type": "number"
+            }
+          }
+        }
+      },
+      "ValueType": {
+        "type": "object",
+        "properties": {
+          "text": {
+            "type": "string"
+          },
+          "number": {
+            "type": "number"
+          },
+          "date": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "listValue": {
+            "type": "string"
           },
           "nationalId": {
-            "type": "string",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "OrganizationDto": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "guid": {
-            "type": "string",
-            "format": "uuid"
+            "type": "string"
           },
           "name": {
-            "$ref": "#/components/schemas/LanguageType"
+            "type": "string"
           },
-          "nationalId": {
-            "type": "string",
-            "nullable": true
+          "address": {
+            "type": "string"
           },
-          "inputTypes": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/InputTypeDto"
-            },
-            "nullable": true
+          "postalCode": {
+            "type": "string"
           },
-          "documentTypes": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/DocumentTypeDto"
-            },
-            "nullable": true
+          "municipality": {
+            "type": "string"
           },
-          "applicantTypes": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/ApplicantTypeDto"
-            },
-            "nullable": true
+          "jobTitle": {
+            "type": "string"
           },
-          "listTypes": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/ListTypeDto"
-            },
-            "nullable": true
+          "altName": {
+            "type": "string"
           },
-          "forms": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/FormDto"
-            },
-            "nullable": true
+          "homestayNumber": {
+            "type": "string"
           },
-          "externalEndpoints": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/ExternalEndpointDto"
-            },
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "StepCreationDto": {
-        "type": "object",
-        "properties": {
-          "formId": {
-            "type": "integer",
-            "format": "int32"
+          "propertyNumber": {
+            "type": "string"
           },
-          "displayOrder": {
-            "type": "integer",
-            "format": "int32"
-          }
-        },
-        "additionalProperties": false
-      },
-      "StepDto": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "integer",
-            "format": "int32"
+          "totalDays": {
+            "type": "number"
           },
-          "guid": {
-            "type": "string",
-            "format": "uuid"
+          "totalAmount": {
+            "type": "number"
           },
-          "displayOrder": {
-            "type": "integer",
-            "format": "int32"
+          "year": {
+            "type": "number"
           },
-          "name": {
-            "$ref": "#/components/schemas/LanguageType"
-          },
-          "type": {
-            "type": "string",
-            "nullable": true
-          },
-          "waitingText": {
-            "$ref": "#/components/schemas/LanguageType"
-          },
-          "callRuleset": {
+          "isNullReport": {
             "type": "boolean"
+          },
+          "months": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Month"
+            }
+          },
+          "email": {
+            "type": "string"
+          },
+          "iskNumber": {
+            "type": "string"
+          },
+          "checkboxValue": {
+            "type": "boolean"
+          },
+          "phoneNumber": {
+            "type": "string"
+          },
+          "bankAccount": {
+            "type": "string"
+          },
+          "time": {
+            "type": "string"
+          },
+          "s3Key": {
+            "type": "string"
+          }
+        }
+      },
+      "ApplicationEventDto": {
+        "type": "object",
+        "properties": {
+          "created": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "eventType": {
+            "type": "string"
+          },
+          "isFileEvent": {
+            "type": "boolean"
+          }
+        }
+      },
+      "ValueDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "order": {
+            "type": "number"
+          },
+          "json": {
+            "$ref": "#/components/schemas/ValueType"
+          },
+          "events": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ApplicationEventDto"
+            }
+          }
+        },
+        "required": ["id", "order", "events"]
+      },
+      "FieldDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "screenId": {
+            "type": "string"
+          },
+          "name": {
+            "$ref": "#/components/schemas/LanguageType"
+          },
+          "displayOrder": {
+            "type": "number"
+          },
+          "description": {
+            "$ref": "#/components/schemas/LanguageType"
+          },
+          "isPartOfMultiset": {
+            "type": "boolean"
+          },
+          "isRequired": {
+            "type": "boolean"
+          },
+          "isHidden": {
+            "type": "boolean"
+          },
+          "fieldSettings": {
+            "$ref": "#/components/schemas/FieldSettings"
+          },
+          "fieldType": {
+            "type": "string"
+          },
+          "list": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ListItemDto"
+            }
+          },
+          "values": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ValueDto"
+            }
+          }
+        },
+        "required": [
+          "id",
+          "screenId",
+          "name",
+          "displayOrder",
+          "description",
+          "isPartOfMultiset",
+          "isRequired",
+          "isHidden",
+          "fieldType"
+        ]
+      },
+      "ScreenDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "sectionId": {
+            "type": "string"
+          },
+          "name": {
+            "$ref": "#/components/schemas/LanguageType"
+          },
+          "displayOrder": {
+            "type": "number"
           },
           "isHidden": {
             "type": "boolean"
@@ -1823,46 +2053,879 @@
           "isCompleted": {
             "type": "boolean"
           },
-          "groups": {
+          "multiset": {
+            "type": "number"
+          },
+          "callRuleset": {
+            "type": "boolean"
+          },
+          "fields": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/GroupDto"
-            },
-            "nullable": true
+              "$ref": "#/components/schemas/FieldDto"
+            }
           }
         },
-        "additionalProperties": false
+        "required": [
+          "id",
+          "sectionId",
+          "name",
+          "displayOrder",
+          "isHidden",
+          "isCompleted",
+          "multiset",
+          "callRuleset"
+        ]
       },
-      "StepUpdateDto": {
+      "SectionDto": {
         "type": "object",
         "properties": {
           "id": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "guid": {
-            "type": "string",
-            "format": "uuid"
+            "type": "string"
           },
           "name": {
             "$ref": "#/components/schemas/LanguageType"
           },
-          "type": {
-            "type": "string",
-            "nullable": true
+          "sectionType": {
+            "type": "string"
           },
           "displayOrder": {
-            "type": "integer",
-            "format": "int32"
+            "type": "number"
           },
           "waitingText": {
             "$ref": "#/components/schemas/LanguageType"
           },
-          "callRuleset": {
+          "isHidden": {
+            "type": "boolean"
+          },
+          "isCompleted": {
+            "type": "boolean"
+          },
+          "screens": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ScreenDto"
+            }
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "sectionType",
+          "displayOrder",
+          "isHidden",
+          "isCompleted"
+        ]
+      },
+      "FormDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "organizationId": {
+            "type": "string"
+          },
+          "name": {
+            "$ref": "#/components/schemas/LanguageType"
+          },
+          "slug": {
+            "type": "string"
+          },
+          "invalidationDate": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "created": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "modified": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "isTranslated": {
+            "type": "boolean"
+          },
+          "applicationDaysToRemove": {
+            "type": "number"
+          },
+          "derivedFrom": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "stopProgressOnValidatingScreen": {
+            "type": "boolean"
+          },
+          "completedMessage": {
+            "$ref": "#/components/schemas/LanguageType"
+          },
+          "dependencies": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Dependency"
+            }
+          },
+          "certificationTypes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FormCertificationTypeDto"
+            }
+          },
+          "applicantTypes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FormApplicantTypeDto"
+            }
+          },
+          "urls": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FormUrlDto"
+            }
+          },
+          "sections": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SectionDto"
+            }
+          },
+          "screens": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ScreenDto"
+            }
+          },
+          "fields": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FieldDto"
+            }
+          }
+        },
+        "required": [
+          "id",
+          "organizationId",
+          "name",
+          "slug",
+          "created",
+          "modified",
+          "isTranslated",
+          "applicationDaysToRemove",
+          "derivedFrom",
+          "status",
+          "stopProgressOnValidatingScreen"
+        ]
+      },
+      "OrganizationDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "$ref": "#/components/schemas/LanguageType"
+          },
+          "nationalId": {
+            "type": "string"
+          },
+          "forms": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FormDto"
+            }
+          }
+        },
+        "required": ["id", "name", "nationalId"]
+      },
+      "OrganizationsResponseDto": {
+        "type": "object",
+        "properties": {
+          "organizations": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OrganizationDto"
+            }
+          }
+        },
+        "required": ["organizations"]
+      },
+      "CreateFormDto": {
+        "type": "object",
+        "properties": {
+          "organizationId": {
+            "type": "string"
+          }
+        },
+        "required": ["organizationId"]
+      },
+      "FieldType": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "$ref": "#/components/schemas/LanguageType"
+          },
+          "description": {
+            "$ref": "#/components/schemas/LanguageType"
+          },
+          "isCommon": {
+            "type": "boolean"
+          },
+          "fieldSettings": {
+            "$ref": "#/components/schemas/FieldSettings"
+          },
+          "values": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ValueDto"
+            }
+          }
+        },
+        "required": ["id", "name", "description", "isCommon"]
+      },
+      "CertificationType": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "$ref": "#/components/schemas/LanguageType"
+          },
+          "description": {
+            "$ref": "#/components/schemas/LanguageType"
+          },
+          "isCommon": {
             "type": "boolean"
           }
         },
-        "additionalProperties": false
+        "required": ["id", "name", "description", "isCommon"]
+      },
+      "ApplicantType": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "description": {
+            "$ref": "#/components/schemas/LanguageType"
+          },
+          "name": {
+            "$ref": "#/components/schemas/LanguageType"
+          },
+          "nameSuggestions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/LanguageType"
+            }
+          }
+        },
+        "required": ["id", "description"]
+      },
+      "ListType": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "$ref": "#/components/schemas/LanguageType"
+          },
+          "description": {
+            "$ref": "#/components/schemas/LanguageType"
+          },
+          "isCommon": {
+            "type": "boolean"
+          }
+        },
+        "required": ["id", "name", "description", "isCommon"]
+      },
+      "OrganizationUrlDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string"
+          },
+          "isXroad": {
+            "type": "boolean"
+          },
+          "isTest": {
+            "type": "boolean"
+          },
+          "type": {
+            "type": "string"
+          },
+          "method": {
+            "type": "string"
+          }
+        },
+        "required": ["id", "url", "isXroad", "isTest", "type", "method"]
+      },
+      "FormResponseDto": {
+        "type": "object",
+        "properties": {
+          "form": {
+            "$ref": "#/components/schemas/FormDto"
+          },
+          "fieldTypes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FieldType"
+            }
+          },
+          "certificationTypes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CertificationType"
+            }
+          },
+          "applicantTypes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ApplicantType"
+            }
+          },
+          "listTypes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ListType"
+            }
+          },
+          "urls": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OrganizationUrlDto"
+            }
+          },
+          "forms": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FormDto"
+            }
+          }
+        }
+      },
+      "UpdateFormDto": {
+        "type": "object",
+        "properties": {
+          "organizationId": {
+            "type": "string"
+          },
+          "name": {
+            "$ref": "#/components/schemas/LanguageType"
+          },
+          "slug": {
+            "type": "string"
+          },
+          "invalidationDate": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "isTranslated": {
+            "type": "boolean"
+          },
+          "applicationDaysToRemove": {
+            "type": "number"
+          },
+          "stopProgressOnValidatingScreen": {
+            "type": "boolean"
+          },
+          "completedMessage": {
+            "$ref": "#/components/schemas/LanguageType"
+          },
+          "dependencies": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Dependency"
+            }
+          }
+        }
+      },
+      "CreateSectionDto": {
+        "type": "object",
+        "properties": {
+          "formId": {
+            "type": "string"
+          },
+          "displayOrder": {
+            "type": "number"
+          }
+        },
+        "required": ["formId", "displayOrder"]
+      },
+      "UpdateSectionDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "$ref": "#/components/schemas/LanguageType"
+          },
+          "waitingText": {
+            "$ref": "#/components/schemas/LanguageType"
+          }
+        }
+      },
+      "SectionDisplayOrderDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          }
+        },
+        "required": ["id"]
+      },
+      "UpdateSectionsDisplayOrderDto": {
+        "type": "object",
+        "properties": {
+          "sectionsDisplayOrderDto": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SectionDisplayOrderDto"
+            }
+          }
+        },
+        "required": ["sectionsDisplayOrderDto"]
+      },
+      "CreateScreenDto": {
+        "type": "object",
+        "properties": {
+          "sectionId": {
+            "type": "string"
+          },
+          "displayOrder": {
+            "type": "number"
+          }
+        },
+        "required": ["sectionId", "displayOrder"]
+      },
+      "UpdateScreenDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "$ref": "#/components/schemas/LanguageType"
+          },
+          "multiset": {
+            "type": "number"
+          },
+          "callRuleset": {
+            "type": "boolean"
+          }
+        }
+      },
+      "ScreenDisplayOrderDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "sectionId": {
+            "type": "string"
+          }
+        },
+        "required": ["id", "sectionId"]
+      },
+      "UpdateScreensDisplayOrderDto": {
+        "type": "object",
+        "properties": {
+          "screensDisplayOrderDto": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ScreenDisplayOrderDto"
+            }
+          }
+        },
+        "required": ["screensDisplayOrderDto"]
+      },
+      "CreateFieldDto": {
+        "type": "object",
+        "properties": {
+          "screenId": {
+            "type": "string"
+          },
+          "fieldType": {
+            "type": "string"
+          },
+          "displayOrder": {
+            "type": "number"
+          }
+        },
+        "required": ["screenId", "fieldType", "displayOrder"]
+      },
+      "UpdateFieldDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "$ref": "#/components/schemas/LanguageType"
+          },
+          "description": {
+            "$ref": "#/components/schemas/LanguageType"
+          },
+          "isPartOfMultiset": {
+            "type": "boolean"
+          },
+          "isRequired": {
+            "type": "boolean"
+          },
+          "fieldSettings": {
+            "$ref": "#/components/schemas/FieldSettings"
+          },
+          "fieldType": {
+            "type": "string"
+          }
+        }
+      },
+      "FieldDisplayOrderDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "screenId": {
+            "type": "string"
+          }
+        },
+        "required": ["id", "screenId"]
+      },
+      "UpdateFieldsDisplayOrderDto": {
+        "type": "object",
+        "properties": {
+          "fieldsDisplayOrderDto": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FieldDisplayOrderDto"
+            }
+          }
+        },
+        "required": ["fieldsDisplayOrderDto"]
+      },
+      "CreateListItemDto": {
+        "type": "object",
+        "properties": {
+          "fieldId": {
+            "type": "string"
+          },
+          "displayOrder": {
+            "type": "number"
+          }
+        },
+        "required": ["fieldId", "displayOrder"]
+      },
+      "UpdateListItemDto": {
+        "type": "object",
+        "properties": {
+          "label": {
+            "$ref": "#/components/schemas/LanguageType"
+          },
+          "description": {
+            "$ref": "#/components/schemas/LanguageType"
+          },
+          "value": {
+            "type": "string"
+          },
+          "isSelected": {
+            "type": "boolean"
+          }
+        }
+      },
+      "ListItemDisplayOrderDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          }
+        },
+        "required": ["id"]
+      },
+      "UpdateListItemsDisplayOrderDto": {
+        "type": "object",
+        "properties": {
+          "listItemsDisplayOrderDto": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ListItemDisplayOrderDto"
+            }
+          }
+        },
+        "required": ["listItemsDisplayOrderDto"]
+      },
+      "ApplicationDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "organizationName": {
+            "$ref": "#/components/schemas/LanguageType"
+          },
+          "formId": {
+            "type": "string"
+          },
+          "formName": {
+            "$ref": "#/components/schemas/LanguageType"
+          },
+          "isTest": {
+            "type": "boolean"
+          },
+          "slug": {
+            "type": "string"
+          },
+          "created": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "modified": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "submittedAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "dependencies": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Dependency"
+            }
+          },
+          "completed": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "status": {
+            "type": "string"
+          },
+          "events": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ApplicationEventDto"
+            }
+          },
+          "sections": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SectionDto"
+            }
+          }
+        }
+      },
+      "CreateApplicationDto": {
+        "type": "object",
+        "properties": {
+          "isTest": {
+            "type": "boolean"
+          }
+        },
+        "required": ["isTest"]
+      },
+      "UpdateApplicationDto": {
+        "type": "object",
+        "properties": {
+          "dependencies": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Dependency"
+            }
+          },
+          "completed": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "ApplicationListDto": {
+        "type": "object",
+        "properties": {
+          "applications": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ApplicationDto"
+            }
+          },
+          "total": {
+            "type": "number"
+          }
+        }
+      },
+      "CreateValueDto": {
+        "type": "object",
+        "properties": {
+          "order": {
+            "type": "number"
+          },
+          "fieldId": {
+            "type": "string"
+          },
+          "fieldType": {
+            "type": "string"
+          },
+          "applicationId": {
+            "type": "string"
+          }
+        },
+        "required": ["order", "fieldId", "fieldType", "applicationId"]
+      },
+      "UpdateValueDto": {
+        "type": "object",
+        "properties": {
+          "json": {
+            "$ref": "#/components/schemas/ValueType"
+          }
+        },
+        "required": ["json"]
+      },
+      "CreateFormApplicantTypeDto": {
+        "type": "object",
+        "properties": {
+          "formId": {
+            "type": "string"
+          },
+          "applicantTypeId": {
+            "type": "string"
+          }
+        },
+        "required": ["formId", "applicantTypeId"]
+      },
+      "UpdateFormApplicantTypeDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "$ref": "#/components/schemas/LanguageType"
+          }
+        },
+        "required": ["name"]
+      },
+      "CreateFormCertificationTypeDto": {
+        "type": "object",
+        "properties": {
+          "formId": {
+            "type": "string"
+          },
+          "certificationTypeId": {
+            "type": "string"
+          }
+        },
+        "required": ["formId", "certificationTypeId"]
+      },
+      "CreateFormUrlDto": {
+        "type": "object",
+        "properties": {
+          "formId": {
+            "type": "string"
+          },
+          "organizationUrlId": {
+            "type": "string"
+          }
+        },
+        "required": ["formId", "organizationUrlId"]
+      },
+      "CreateOrganizationCertificationTypeDto": {
+        "type": "object",
+        "properties": {
+          "organizationId": {
+            "type": "string"
+          },
+          "certificationTypeId": {
+            "type": "string"
+          }
+        },
+        "required": ["organizationId", "certificationTypeId"]
+      },
+      "OrganizationCertificationTypeDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "certificationTypeId": {
+            "type": "string"
+          }
+        },
+        "required": ["id", "certificationTypeId"]
+      },
+      "CreateOrganizationFieldTypeDto": {
+        "type": "object",
+        "properties": {
+          "organizationId": {
+            "type": "string"
+          },
+          "fieldTypeId": {
+            "type": "string"
+          }
+        },
+        "required": ["organizationId", "fieldTypeId"]
+      },
+      "OrganizationFieldTypeDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "fieldTypeId": {
+            "type": "string"
+          }
+        },
+        "required": ["id", "fieldTypeId"]
+      },
+      "CreateOrganizationListTypeDto": {
+        "type": "object",
+        "properties": {
+          "organizationId": {
+            "type": "string"
+          },
+          "listTypeId": {
+            "type": "string"
+          }
+        },
+        "required": ["organizationId", "listTypeId"]
+      },
+      "OrganizationListTypeDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "listTypeId": {
+            "type": "string"
+          }
+        },
+        "required": ["id", "listTypeId"]
+      },
+      "CreateOrganizationUrlDto": {
+        "type": "object",
+        "properties": {
+          "organizationId": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          }
+        },
+        "required": ["organizationId", "type"]
+      },
+      "UpdateOrganizationUrlDto": {
+        "type": "object",
+        "properties": {
+          "url": {
+            "type": "string"
+          },
+          "isXroad": {
+            "type": "boolean"
+          },
+          "method": {
+            "type": "string"
+          }
+        }
       }
     }
   }
