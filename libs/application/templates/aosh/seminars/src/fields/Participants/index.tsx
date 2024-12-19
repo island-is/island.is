@@ -1,4 +1,4 @@
-import { Controller, useFormContext } from 'react-hook-form'
+import { Controller, useFormContext, useWatch } from 'react-hook-form'
 import {
   Box,
   Button,
@@ -11,7 +11,7 @@ import {
   FieldComponents,
   FieldTypes,
 } from '@island.is/application/types'
-import { FC, useCallback, useState } from 'react'
+import { FC, useCallback, useEffect, useState } from 'react'
 import { FILE_SIZE_LIMIT } from '../../lib/constants'
 import { parse } from 'csv-parse'
 import { Participant } from '../../shared/types'
@@ -20,6 +20,8 @@ import { useLocale } from '@island.is/localization'
 import { useLazyAreIndividualsValid } from '../../hooks/useLazyAreIndividualsValid'
 import { getValueViaPath } from '@island.is/application/core'
 import { DescriptionFormField } from '@island.is/application/ui-fields'
+import { isValidEmail, isValidPhoneNumber } from '../../utils'
+import * as kennitala from 'kennitala'
 
 interface IndexableObject {
   [index: number]: Array<string>
@@ -70,6 +72,10 @@ export const Participants: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   const [participantList, setParticipantList] = useState<Array<Participant>>([])
   const [foundNotValid, setFoundNotValid] = useState<boolean>(false)
 
+  const participantListWatch: Array<Participant> = useWatch({
+    name: 'participantList',
+  })
+
   const getAreIndividualsValid = useLazyAreIndividualsValid()
   const getIsCompanyValidCallback = useCallback(
     async (nationalIds: Array<string>, courseID: number) => {
@@ -116,7 +122,7 @@ export const Participants: FC<React.PropsWithChildren<FieldBaseProps>> = ({
         setValue('participantCsvError', false)
         setFileState([fileWithSuccessStatus])
         setParticipantList(answerValue)
-        updateValidity(answerValue)
+        setValue('participantList', answerValue)
       })
     }
     reader.readAsText(props[0] as unknown as Blob)
@@ -147,12 +153,34 @@ export const Participants: FC<React.PropsWithChildren<FieldBaseProps>> = ({
           return { ...x, disabled: !participantInRes[0].mayTakeCourse }
         },
       )
+      console.log('updatedParticipantList', updatedParticipantList)
       if (tmpNotValid) setValue('participantValidityError', true)
       setFoundNotValid(tmpNotValid)
-      setValue('participantList', updatedParticipantList)
       setParticipantList(updatedParticipantList)
     }
   }
+
+  useEffect(() => {
+    if (participantListWatch) {
+      if (
+        participantListWatch[participantListWatch.length - 1].name &&
+        participantListWatch[participantListWatch.length - 1].email &&
+        isValidEmail(
+          participantListWatch[participantListWatch.length - 1].email,
+        ) &&
+        participantListWatch[participantListWatch.length - 1].nationalId &&
+        kennitala.isValid(
+          participantListWatch[participantListWatch.length - 1].nationalId,
+        ) &&
+        participantListWatch[participantListWatch.length - 1].phoneNumber &&
+        isValidPhoneNumber(
+          participantListWatch[participantListWatch.length - 1].phoneNumber,
+        )
+      ) {
+        updateValidity(participantListWatch)
+      }
+    }
+  }, [participantListWatch])
 
   const removeFile = () => {
     setFileState([])

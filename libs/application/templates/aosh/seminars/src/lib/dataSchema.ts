@@ -151,8 +151,14 @@ export const ParticipantSchema = z.object({
       (nationalId) =>
         nationalId && nationalId.length !== 0 && kennitala.isValid(nationalId),
     ),
-  email: z.string().min(1),
-  phoneNumber: z.string().min(1),
+  email: z
+    .string()
+    .min(1)
+    .refine((x) => isValidEmail(x)),
+  phoneNumber: z
+    .string()
+    .min(1)
+    .refine((x) => isValidPhoneNumber(x)),
   disabled: z.boolean().optional(),
 })
 
