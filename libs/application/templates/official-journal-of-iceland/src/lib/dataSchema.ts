@@ -43,6 +43,12 @@ export const regularSignatureSchema = z
   .array(regularSignatureItemSchema)
   .optional()
 
+export const baseEntitySchema = z.object({
+  id: z.string(),
+  title: z.string(),
+  slug: z.string(),
+})
+
 export const signatureInstitutionSchema = z.enum(['institution', 'date'])
 
 export const committeeSignatureSchema = regularSignatureItemSchema
@@ -61,13 +67,15 @@ export const channelSchema = z
 
 const advertSchema = z
   .object({
-    departmentId: z.string().optional(),
-    typeName: z.string().optional(),
-    typeId: z.string().optional(),
+    department: baseEntitySchema.optional(),
+    type: baseEntitySchema.optional().nullable(),
+    mainType: baseEntitySchema
+      .extend({ types: z.array(baseEntitySchema).optional() })
+      .optional(),
     title: z.string().optional(),
     html: z.string().optional(),
     requestedDate: z.string().optional(),
-    categories: z.array(z.string()).optional(),
+    categories: z.array(baseEntitySchema).optional(),
     channels: z.array(channelSchema).optional(),
     message: z.string().optional(),
     additions: additionSchema.optional(),
@@ -78,6 +86,8 @@ const miscSchema = z
   .object({
     signatureType: z.string().optional(),
     selectedTemplate: z.string().optional(),
+    asDocument: z.boolean().optional(),
+    asRoman: z.boolean().optional(),
   })
   .partial()
 
@@ -108,16 +118,16 @@ export const partialSchema = z.object({
 // We make properties optional to throw custom error messages
 export const advertValidationSchema = z.object({
   advert: z.object({
-    departmentId: z
-      .string()
+    department: baseEntitySchema
       .optional()
-      .refine((value) => value && value.length > 0, {
+      .nullable()
+      .refine((value) => value !== null && value !== undefined, {
         params: error.missingDepartment,
       }),
-    typeId: z
-      .string()
+    type: baseEntitySchema
       .optional()
-      .refine((value) => value && value.length > 0, {
+      .nullable()
+      .refine((value) => value !== null && value !== undefined, {
         params: error.missingType,
       }),
     title: z
@@ -137,17 +147,17 @@ export const advertValidationSchema = z.object({
 
 export const previewValidationSchema = z.object({
   advert: z.object({
-    departmentId: z
-      .string()
+    department: baseEntitySchema
       .optional()
-      .refine((value) => value && value.length > 0, {
-        params: error.missingPreviewDepartment,
+      .nullable()
+      .refine((value) => value !== null && value !== undefined, {
+        params: error.missingDepartment,
       }),
-    typeId: z
-      .string()
+    type: baseEntitySchema
       .optional()
-      .refine((value) => value && value.length > 0, {
-        params: error.missingPreviewType,
+      .nullable()
+      .refine((value) => value !== null && value !== undefined, {
+        params: error.missingType,
       }),
     title: z
       .string()
@@ -173,7 +183,7 @@ export const publishingValidationSchema = z.object({
       params: error.missingRequestedDate,
     }),
   categories: z
-    .array(z.string())
+    .array(baseEntitySchema)
     .optional()
     .refine((value) => Array.isArray(value) && value.length > 0, {
       params: error.noCategorySelected,

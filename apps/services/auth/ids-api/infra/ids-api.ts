@@ -1,4 +1,9 @@
-import { json, service, ServiceBuilder } from '../../../../../infra/src/dsl/dsl'
+import {
+  CodeOwners,
+  json,
+  service,
+  ServiceBuilder,
+} from '../../../../../infra/src/dsl/dsl'
 import {
   Base,
   Client,
@@ -27,6 +32,7 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-ids-api'> => {
   return service('services-auth-ids-api')
     .namespace(namespace)
     .image(imageName)
+    .codeOwner(CodeOwners.Aranja)
     .env({
       IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/auth-api',
       IDENTITY_SERVER_ISSUER_URL: {
@@ -94,6 +100,11 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-ids-api'> => {
         staging: 'digitaliceland',
         dev: 'digitaliceland',
       },
+      ALSO_USE_FAKE_USER_API: {
+        dev: 'true',
+        staging: 'false',
+        prod: 'false',
+      },
     })
     .secrets({
       ZENDESK_CONTACT_FORM_EMAIL: '/k8s/api/ZENDESK_CONTACT_FORM_EMAIL',
@@ -131,7 +142,7 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-ids-api'> => {
       min: 2,
       max: 15,
     })
-    .grantNamespaces('nginx-ingress-external', 'user-notification')
+    .grantNamespaces('nginx-ingress-external', 'user-notification', 'datadog')
 }
 
 const cleanupId = 'services-auth-ids-api-cleanup'

@@ -22,6 +22,7 @@ import {
   shouldShowCustomSpouseShare,
   valueToNumber,
 } from '../../lib/utils/helpers'
+import { PREPAID_INHERITANCE } from '../../lib/constants'
 
 export const heirs = buildSection({
   id: 'heirs',
@@ -81,7 +82,10 @@ export const heirs = buildSection({
         buildMultiField({
           id: 'heirs',
           title: m.heirsAndPartition,
-          description: m.heirsAndPartitionDescription,
+          description: ({ answers }) =>
+            answers.applicationFor === PREPAID_INHERITANCE
+              ? m.heirsAndPartitionPrePaidDescription
+              : m.heirsAndPartitionDescription,
           children: [
             buildDescriptionField({
               id: 'heirs.total',

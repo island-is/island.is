@@ -28,12 +28,19 @@ query Cases {
       defenderChoice
       verdictViewDate
       isSentToPrisonAdmin
+      punishmentType
+      openedByPrisonAdminDate
     }
+    defendantsPunishmentType
     courtDate
     isValidToDateInThePast
     initialRulingDate
     rulingDate
     rulingSignatureDate
+    court {
+      id
+      name
+    }
     judge {
       id
       created

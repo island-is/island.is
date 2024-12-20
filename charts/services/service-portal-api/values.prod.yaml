@@ -21,6 +21,7 @@ enabled: true
 env:
   AUTH_DELEGATION_API_URL: 'https://auth-delegation-api.internal.innskra.island.is'
   AUTH_DELEGATION_MACHINE_CLIENT_SCOPE: '["@island.is/auth/delegations/index:system"]'
+  CODE_OWNER: 'aranja'
   DB_HOST: 'postgres-applications.internal'
   DB_NAME: 'service_portal_api'
   DB_REPLICAS_HOST: 'postgres-applications.internal'

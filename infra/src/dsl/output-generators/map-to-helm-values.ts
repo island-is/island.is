@@ -75,7 +75,6 @@ const serializeService: SerializeMethod<HelmService> = async (
       maxUnavailable: 1,
     },
     healthCheck: {
-      port: serviceDef.healthPort,
       liveness: {
         path: serviceDef.liveness.path,
         initialDelaySeconds: serviceDef.liveness.initialDelaySeconds,
@@ -92,6 +91,10 @@ const serializeService: SerializeMethod<HelmService> = async (
   if (!hackListForNonExistentTracer.includes(serviceDef.name)) {
     result.env.NODE_OPTIONS += ' -r dd-trace/init'
   }
+  // add healthCheck port if set in the service
+  if (serviceDef.healthPort) {
+    result.healthCheck.port = serviceDef.healthPort
+  }
   // command and args
   if (serviceDef.cmds) {
     result.command = [serviceDef.cmds]
@@ -106,17 +109,25 @@ const serializeService: SerializeMethod<HelmService> = async (
   result.resources = serviceDef.resources
 
   // replicas
-  if (serviceDef.replicaCount) {
+  if (env1.type == 'staging' && service.name.indexOf('search-indexer') == -1) {
     result.replicaCount = {
-      min: serviceDef.replicaCount.min,
-      max: serviceDef.replicaCount.max,
-      default: serviceDef.replicaCount.default,
+      min: 1,
+      max: 3,
+      default: 1,
     }
   } else {
-    result.replicaCount = {
-      min: env1.defaultMinReplicas,
-      max: env1.defaultMaxReplicas,
-      default: env1.defaultMinReplicas,
+    if (serviceDef.replicaCount) {
+      result.replicaCount = {
+        min: serviceDef.replicaCount.min,
+        max: serviceDef.replicaCount.max,
+        default: serviceDef.replicaCount.default,
+      }
+    } else {
+      result.replicaCount = {
+        min: env1.defaultMinReplicas,
+        max: env1.defaultMaxReplicas,
+        default: env1.defaultMinReplicas,
+      }
     }
   }
 
@@ -413,7 +424,6 @@ function serializeContainerRuns(
     let result: ContainerRunHelm = {
       command: [c.command],
       args: c.args,
-      image: c.image,
       resources: {
         limits: {
           memory: '256Mi',
@@ -424,6 +434,9 @@ function serializeContainerRuns(
           cpu: '50m',
         },
       },
+    }
+    if (c.image) {
+      result.image = c.image
     }
     if (c.resources) {
       result.resources = c.resources

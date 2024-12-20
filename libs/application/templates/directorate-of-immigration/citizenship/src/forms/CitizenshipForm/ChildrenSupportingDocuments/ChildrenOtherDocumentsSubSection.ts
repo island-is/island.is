@@ -12,10 +12,9 @@ import { supportingDocuments } from '../../../lib/messages'
 import { Application, FormValue } from '@island.is/application/types'
 import { Citizenship } from '../../../lib/dataSchema'
 import {
+  getSelectedCustodyChild,
   getSelectedIndividualAge,
   getSelectedIndividualName,
-  getSelectedCustodyChildren,
-  getSelectedCustodyChild,
 } from '../../../utils'
 import { Routes } from '../../../lib/constants'
 import { FILE_TYPES_ALLOWED, MIN_AGE_WRITTEN_CONSENT } from '../../../shared'
@@ -50,16 +49,17 @@ export const ChildrenOtherDocumentsSubSection = (index: number) =>
             titleVariant: 'h5',
             title: '',
           }),
-          buildCustomField(
-            {
-              id: `${Routes.CHILDSUPPORTINGDOCUMENTS}[${index}].nationalId`,
-              title: '',
-              component: 'HiddenTextInput',
+          buildHiddenInput({
+            id: `${Routes.CHILDSUPPORTINGDOCUMENTS}[${index}].nationalId`,
+            defaultValue: (application: Application) => {
+              const selectedChild = getSelectedCustodyChild(
+                application.externalData,
+                application.answers,
+                index,
+              )
+              return selectedChild?.nationalId
             },
-            {
-              index: index,
-            },
-          ),
+          }),
           buildFileUploadField({
             id: `${Routes.CHILDSUPPORTINGDOCUMENTS}[${index}].birthCertificate`,
             title:

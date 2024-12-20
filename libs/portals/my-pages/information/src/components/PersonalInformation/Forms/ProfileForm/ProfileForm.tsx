@@ -1,7 +1,5 @@
 import React, { FC, useEffect, useState } from 'react'
 
-import { useAuth } from '@island.is/auth/react'
-import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   GridColumn,
   GridContainer,
@@ -9,6 +7,7 @@ import {
   Input,
   PhoneInput,
 } from '@island.is/island-ui/core'
+import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   FeatureFlagClient,
   Features,
@@ -20,19 +19,20 @@ import {
   useUserProfile,
 } from '@island.is/portals/my-pages/graphql'
 
+import { useUserInfo } from '@island.is/react-spa/bff'
 import { msg } from '../../../../lib/messages'
 import { bankInfoObject } from '../../../../utils/bankInfoHelper'
-import { OnboardingIntro } from './components/Intro'
-import { InputSection } from './components/InputSection'
-import { InputEmail } from './components/Inputs/Email'
-import { InputPhone } from './components/Inputs/Phone'
 import { DropModal } from './components/DropModal'
+import { InputSection } from './components/InputSection'
 import { BankInfoForm } from './components/Inputs/BankInfoForm'
+import { InputEmail } from './components/Inputs/Email'
 import { Nudge } from './components/Inputs/Nudge'
 import { PaperMail } from './components/Inputs/PaperMail'
+import { InputPhone } from './components/Inputs/Phone'
 import { ReadOnlyWithLinks } from './components/Inputs/ReadOnlyWithLinks'
-import { DropModalType } from './types/form'
+import { OnboardingIntro } from './components/Intro'
 import { useConfirmNudgeMutation } from './confirmNudge.generated'
+import { DropModalType } from './types/form'
 
 enum IdsUserProfileLinks {
   EMAIL = '/app/user-profile/email',
@@ -66,39 +66,23 @@ export const ProfileForm: FC<React.PropsWithChildren<Props>> = ({
   const [internalLoading, setInternalLoading] = useState(false)
   const [showPaperMail, setShowPaperMail] = useState(false)
   const [showDropModal, setShowDropModal] = useState<DropModalType>()
-  const [v2UserProfileEnabled, setV2UserProfileEnabled] = useState(false)
   const { deleteIslykillValue, loading: deleteLoading } =
     useDeleteIslykillValue()
-  const { authority, userInfo } = useAuth()
+  const userInfo = useUserInfo()
   const { data: userProfile, loading: userLoading, refetch } = useUserProfile()
   const featureFlagClient: FeatureFlagClient = useFeatureFlagClient()
   const { formatMessage } = useLocale()
   const [confirmNudge] = useConfirmNudgeMutation()
   const isCompany = userInfo?.profile?.subjectType === 'legalEntity'
 
-  const isV2UserProfileEnabled = async () => {
-    const ffEnabled = await featureFlagClient.getValue(
-      Features.isIASSpaPagesEnabled,
-      false,
-    )
-
-    if (ffEnabled) {
-      setV2UserProfileEnabled(!isCompany)
-    }
-  }
-
-  /* Should disable email and phone input with deeplink to IDS */
-  useEffect(() => {
-    isV2UserProfileEnabled()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
-
   /**
    * Creates a link to the IDS user profile page.
    * By setting the state to update, the user will exit the onboarding process after updating the desired field.
    */
   const getIDSLink = (linkPath: IdsUserProfileLinks) => {
-    return `${authority}${linkPath}?state=update&returnUrl=${encodeURIComponent(
+    return `${
+      userInfo.profile.iss
+    }${linkPath}?state=update&returnUrl=${encodeURIComponent(
       window.location.toString(),
     )}`
   }
@@ -208,7 +192,7 @@ export const ProfileForm: FC<React.PropsWithChildren<Props>> = ({
             loading={userLoading}
           >
             {!userLoading &&
-              (v2UserProfileEnabled ? (
+              (!isCompany ? (
                 <ReadOnlyWithLinks
                   input={
                     <Input
@@ -267,7 +251,7 @@ export const ProfileForm: FC<React.PropsWithChildren<Props>> = ({
             loading={userLoading}
           >
             {!userLoading &&
-              (v2UserProfileEnabled ? (
+              (!isCompany ? (
                 <ReadOnlyWithLinks
                   input={
                     <PhoneInput

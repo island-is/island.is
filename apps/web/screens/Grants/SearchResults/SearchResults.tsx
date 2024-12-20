@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { ReactNode, useCallback, useEffect, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useWindowSize } from 'react-use'
 import debounce from 'lodash/debounce'
@@ -16,6 +16,7 @@ import {
   BreadCrumbItem,
   Breadcrumbs,
   FilterInput,
+  Pagination,
   Text,
 } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
@@ -55,9 +56,11 @@ export interface SearchState {
   organization?: Array<string>
 }
 
+const PAGE_SIZE = 8
+
 const GrantsSearchResultsPage: CustomScreen<GrantsHomeProps> = ({
   locale,
-  initialGrants,
+  initialGrantList,
   tags,
 }) => {
   const { formatMessage } = useIntl()
@@ -67,7 +70,12 @@ const GrantsSearchResultsPage: CustomScreen<GrantsHomeProps> = ({
   const parentUrl = linkResolver('styrkjatorg', [], locale).href
   const currentUrl = linkResolver('styrkjatorgsearch', [], locale).href
 
-  const [grants, setGrants] = useState<Array<Grant>>(initialGrants ?? [])
+  const [grants, setGrants] = useState<Array<Grant>>(
+    initialGrantList?.items ?? [],
+  )
+  const [totalHits, setTotalHits] = useState<number | undefined>(
+    initialGrantList?.total ?? 0,
+  )
   const [searchState, setSearchState] = useState<SearchState>()
   const [initialRender, setInitialRender] = useState<boolean>(true)
 
@@ -89,7 +97,7 @@ const GrantsSearchResultsPage: CustomScreen<GrantsHomeProps> = ({
     const organizations = searchParams.getAll('organization')
 
     setSearchState({
-      page: page ? Number.parseInt(page) : undefined,
+      page: page ? Number.parseInt(page) : 1,
       query: searchParams.get('query') ?? undefined,
       status: statuses.length ? statuses : undefined,
       category: categories.length ? categories : undefined,
@@ -97,6 +105,13 @@ const GrantsSearchResultsPage: CustomScreen<GrantsHomeProps> = ({
       organization: organizations.length ? organizations : undefined,
     })
   }, [])
+
+  const totalPages = useMemo(() => {
+    if (!totalHits) {
+      return
+    }
+    return totalHits > PAGE_SIZE ? Math.ceil(totalHits / PAGE_SIZE) : 1
+  }, [totalHits])
 
   const updateUrl = useCallback(() => {
     if (!searchState) {
@@ -134,7 +149,7 @@ const GrantsSearchResultsPage: CustomScreen<GrantsHomeProps> = ({
           organizations: searchState?.organization,
           page: searchState?.page,
           search: searchState?.query,
-          size: 8,
+          size: PAGE_SIZE,
           statuses: searchState?.status,
           types: searchState?.type,
         },
@@ -143,6 +158,7 @@ const GrantsSearchResultsPage: CustomScreen<GrantsHomeProps> = ({
       .then((res) => {
         if (res.data) {
           setGrants(res.data.getGrants.items)
+          setTotalHits(res.data.getGrants.total)
         } else if (res.error) {
           setGrants([])
           console.error('Error fetching grants', res.error)
@@ -199,7 +215,7 @@ const GrantsSearchResultsPage: CustomScreen<GrantsHomeProps> = ({
 
   const onResetFilter = () => {
     setSearchState({
-      page: undefined,
+      page: 1,
       query: undefined,
       status: undefined,
       category: undefined,
@@ -210,18 +226,18 @@ const GrantsSearchResultsPage: CustomScreen<GrantsHomeProps> = ({
   }
 
   const hitsMessage = useMemo(() => {
-    if (!grants) {
+    if (!totalHits) {
       return
     }
-    if (grants.length === 1) {
+    if (totalHits === 1) {
       return formatMessage(m.search.resultFound, {
-        arg: <strong>{grants.length}</strong>,
+        arg: <strong>{totalHits}</strong>,
       })
     }
     return formatMessage(m.search.resultsFound, {
-      arg: <strong>{grants.length}</strong>,
+      arg: <strong>{totalHits}</strong>,
     })
-  }, [formatMessage, grants])
+  }, [formatMessage, totalHits])
 
   return (
     <GrantWrapper
@@ -290,6 +306,28 @@ const GrantsSearchResultsPage: CustomScreen<GrantsHomeProps> = ({
                 locale={locale}
               />
             </Box>
+            {totalPages && totalPages > 1 ? (
+              <Box marginTop={2} marginBottom={0}>
+                <Pagination
+                  variant="purple"
+                  page={searchState?.page ?? 1}
+                  itemsPerPage={PAGE_SIZE}
+                  totalItems={totalHits}
+                  totalPages={totalPages}
+                  renderLink={(page, className, children) => (
+                    <Box
+                      cursor="pointer"
+                      className={className}
+                      onClick={() => {
+                        updateSearchStateValue('page', page)
+                      }}
+                    >
+                      {children}
+                    </Box>
+                  )}
+                />
+              </Box>
+            ) : undefined}
           </SidebarLayout>
         )}
         {isMobile && (
@@ -335,19 +373,19 @@ const GrantsSearchResultsPage: CustomScreen<GrantsHomeProps> = ({
 
 interface GrantsHomeProps {
   locale: Locale
-  initialGrants?: Array<Grant>
+  initialGrantList?: GrantList
   tags?: Array<GenericTag>
 }
 
 const GrantsSearchResults: CustomScreen<GrantsHomeProps> = ({
-  initialGrants,
+  initialGrantList,
   tags,
   customPageData,
   locale,
 }) => {
   return (
     <GrantsSearchResultsPage
-      initialGrants={initialGrants}
+      initialGrantList={initialGrantList}
       tags={tags}
       locale={locale}
       customPageData={customPageData}
@@ -404,8 +442,9 @@ GrantsSearchResults.getProps = async ({ apolloClient, locale, query }) => {
       },
     }),
   ])
+
   return {
-    initialGrants: getGrants.items,
+    initialGrantList: getGrants,
     tags: getGenericTagsInTagGroups ?? undefined,
     locale: locale as Locale,
     themeConfig: {
