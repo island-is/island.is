@@ -200,6 +200,9 @@
       "@island.is/api/domains/rights-portal": [
         "libs/api/domains/rights-portal/src/index.ts"
       ],
+      "@island.is/api/domains/seminars-ver": [
+        "libs/api/domains/seminars-ver/src/index.ts"
+      ],
       "@island.is/api/domains/sessions": [
         "libs/api/domains/sessions/src/index.ts"
       ],
@@ -299,6 +302,9 @@
       ],
       "@island.is/application/templates/aosh/request-for-inspection": [
         "libs/application/templates/aosh/request-for-inspection/src/index.ts"
+      ],
+      "@island.is/application/templates/aosh/seminars": [
+        "libs/application/templates/aosh/seminars/src/index.ts"
       ],
       "@island.is/application/templates/aosh/street-registration": [
         "libs/application/templates/aosh/street-registration/src/index.ts"
@@ -752,6 +758,9 @@
       "@island.is/clients/rsk/personal-tax-return": [
         "libs/clients/rsk/personal-tax-return/src/index.ts"
       ],
+      "@island.is/clients/seminars-ver": [
+        "libs/clients/seminars-ver/src/index.ts"
+      ],
       "@island.is/clients/sessions": ["libs/clients/sessions/src/index.ts"],
       "@island.is/clients/ship-registry": [
         "libs/clients/ship-registry/src/index.ts"
@@ -1130,6 +1139,7 @@
       "@island.is/user-monitoring": ["libs/user-monitoring/src/index.ts"],
       "@island.is/web/*": ["apps/web/*"],
       "@island.is/web/component*": ["apps/web/component*/real.ts"],
+      "api/domains/aosh": ["libs/api/domains/aosh/src/index.ts"],
       "api/domains/financial-statement-cemetery": [
         "libs/api/domains/financial-statement-cemetery/src/index.ts"
       ],
