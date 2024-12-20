@@ -61,6 +61,13 @@ const BlueBoxWithDate: FC<Props> = (props) => {
   const serviceRequired =
     defendant.serviceRequirement === ServiceRequirement.REQUIRED
 
+  const shouldHideDatePickers = Boolean(
+    defendant.verdictAppealDate ||
+      defendant.isVerdictAppealDeadlineExpired ||
+      defendant.isSentToPrisonAdmin ||
+      isFine,
+  )
+
   const handleDateChange = (
     date: Date | undefined,
     valid: boolean,
@@ -281,9 +288,8 @@ const BlueBoxWithDate: FC<Props> = (props) => {
             ))}
         </AnimatePresence>
         <AnimatePresence mode="wait">
-          {defendant.verdictAppealDate ||
-          defendant.isVerdictAppealDeadlineExpired ||
-          isFine ? null : !serviceRequired || defendant.verdictViewDate ? (
+          {shouldHideDatePickers ? null : !serviceRequired ||
+            defendant.verdictViewDate ? (
             <motion.div
               key="defendantAppealDate"
               variants={appealDateVariants}
