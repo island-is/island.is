@@ -14,6 +14,10 @@ export enum AnswerOption {
   NO = 'no',
 }
 
+export const DEPARTMENT_A = 'a-deild'
+export const DEPARTMENT_B = 'b-deild'
+export const DEPARTMENT_C = 'c-deild'
+
 export enum ApplicationAttachmentType {
   ORIGINAL = 'frumrit',
   ADDITIONS = 'fylgiskjol',
