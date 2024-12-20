@@ -1,4 +1,4 @@
-import { style } from '@vanilla-extract/css'
+import { globalStyle, style } from '@vanilla-extract/css'
 
 export const infoCardSmall = style({
   maxWidth: 310,
@@ -17,4 +17,10 @@ export const infoCardWide = style({
 
 export const wideTitleBox = style({
   flexGrow: 2,
+})
+
+export const iconBox = style({})
+
+globalStyle(`${iconBox} > svg`, {
+  minWidth: 24,
 })
