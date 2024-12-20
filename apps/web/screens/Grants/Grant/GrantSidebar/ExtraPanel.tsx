@@ -70,11 +70,11 @@ const ExtraPanel: React.FC<ExtraPanelProps> = ({ grant }) => {
     [grant.files, supportLinksPanelData],
   )
 
-  return (
+  return filesPanelData.length > 0 ? (
     <Box background={'red100'} padding={3} borderRadius="large">
       <Stack space={2}>{filesPanelData}</Stack>
     </Box>
-  )
+  ) : null
 }
 
 export default ExtraPanel

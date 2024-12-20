@@ -171,12 +171,19 @@ export const DetailedInfoCard = ({
   }
 
   return (
-    <>
-      {renderHeader()}
-      {renderContent()}
+    <Box
+      display="flex"
+      justifyContent="spaceBetween"
+      flexDirection="column"
+      height="full"
+    >
+      <div>
+        {renderHeader()}
+        {renderContent()}
+      </div>
       <Box marginTop={3} display="flex" justifyContent="spaceBetween">
         {renderTags()}
       </Box>
-    </>
+    </Box>
   )
 }
