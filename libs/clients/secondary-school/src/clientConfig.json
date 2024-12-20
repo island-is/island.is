@@ -248,7 +248,7 @@
     "/v1/schools/{schoolId}/programmes": {
       "get": {
         "tags": ["Schools"],
-        "summary": "[GET] Get a list of programmes.",
+        "summary": "[GET] Get a list of programmes for a school.",
         "parameters": [
           {
             "name": "schoolId",
@@ -256,6 +256,12 @@
             "description": "(required) SchoolId.",
             "required": true,
             "schema": { "type": "string", "format": "uuid" }
+          },
+          {
+            "name": "onlyFreshmenEnabled",
+            "in": "query",
+            "description": "(optional) Boolean to filter only freshmen enabled programmes.",
+            "schema": { "type": "boolean" }
           },
           {
             "name": "rowOffset",
@@ -429,6 +435,7 @@
         "type": "object",
         "properties": {
           "id": { "type": "string", "format": "uuid" },
+          "applicationDate": { "type": "string", "format": "date-time" },
           "createdDate": { "type": "string", "format": "date-time" },
           "updatedDate": { "type": "string", "format": "date-time" },
           "speakingLanguage": { "$ref": "#/components/schemas/LanguageDto" },
@@ -489,7 +496,8 @@
           "id": { "type": "string", "format": "uuid" },
           "name": { "type": "string", "nullable": true },
           "nameEnglish": { "type": "string", "nullable": true },
-          "code": { "type": "string", "nullable": true }
+          "code": { "type": "string", "nullable": true },
+          "available": { "type": "boolean" }
         },
         "additionalProperties": false
       },
@@ -519,21 +527,15 @@
         "properties": {
           "id": { "type": "string", "format": "uuid" },
           "title": { "type": "string", "nullable": true },
+          "code": { "type": "string", "nullable": true },
           "titleEnglish": { "type": "string", "nullable": true },
-          "credits": { "type": "integer", "format": "int32", "nullable": true },
           "description": { "type": "string", "nullable": true },
-          "evaluation": { "type": "string", "nullable": true },
-          "schoolId": { "type": "string", "format": "uuid", "nullable": true },
-          "registryStartDate": {
-            "type": "string",
-            "format": "date-time",
-            "nullable": true
-          },
           "registryEndDate": {
             "type": "string",
             "format": "date-time",
             "nullable": true
-          }
+          },
+          "schoolId": { "type": "string", "format": "uuid", "nullable": true }
         },
         "additionalProperties": false
       },

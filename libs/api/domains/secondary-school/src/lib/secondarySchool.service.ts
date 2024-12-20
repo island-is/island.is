@@ -10,7 +10,8 @@ export class SecondarySchoolApi {
   async getProgramsBySchoolId(
     auth: User,
     schoolId: string,
+    isFreshman: boolean,
   ): Promise<SecondarySchoolProgram[]> {
-    return this.secondarySchoolClient.getPrograms(auth, schoolId)
+    return this.secondarySchoolClient.getPrograms(auth, schoolId, isFreshman)
   }
 }

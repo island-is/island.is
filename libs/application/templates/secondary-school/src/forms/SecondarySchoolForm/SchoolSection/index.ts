@@ -16,9 +16,6 @@ export const schoolSection = buildSection({
       title: school.general.pageTitle,
       description: school.general.description,
       children: [
-        buildHiddenInput({ id: 'selection.first' }),
-        buildHiddenInput({ id: 'selection.second' }),
-        buildHiddenInput({ id: 'selection.third' }),
         buildCustomField({
           component: 'SchoolSelection',
           id: 'selection',

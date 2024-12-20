@@ -40,23 +40,28 @@ export class SecondarySchoolClient {
       nordicLanguages: getAllLanguageCodes().filter((x) =>
         ['sv', 'no', 'fi'].includes(x.code),
       ),
-      allowRequestDormitory: false,
+      allowRequestDormitory: true,
     }))
   }
 
-  async getPrograms(auth: User, schoolId: string): Promise<Program[]> {
+  async getPrograms(
+    auth: User,
+    schoolId: string,
+    isFreshman: boolean,
+  ): Promise<Program[]> {
     const res = await this.schoolsApiWithAuth(
       auth,
     ).v1SchoolsSchoolIdProgrammesGet({
       schoolId,
+      onlyFreshmenEnabled: isFreshman,
       rowOffset: undefined,
       fetchSize: undefined,
     })
 
     return res.map((program) => ({
       id: program.id || '',
-      nameIs: program.title || '',
-      nameEn: program.titleEnglish || '',
+      nameIs: `${program.title || ''} - ${program.code}`,
+      nameEn: `${program.titleEnglish || ''} - ${program.code}`,
       registrationEndDate: program.registryEndDate || new Date(),
     }))
   }

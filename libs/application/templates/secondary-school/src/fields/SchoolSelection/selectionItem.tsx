@@ -45,6 +45,8 @@ export const SelectionItem: FC<FieldBaseProps> = (props) => {
   const [nordicLanguageOptions, setNordicLanguageOptions] = useState<
     Language[]
   >([])
+  const [allowRequestDormitory, setAllowRequestDormitory] =
+    useState<boolean>(false)
 
   // state variables for values in dropdown that use Controller + Select
   const [selectedFirstProgram, setSelectedFirstProgram] =
@@ -84,10 +86,11 @@ export const SelectionItem: FC<FieldBaseProps> = (props) => {
     async (schoolId: string) => {
       const { data } = await getProgramList({
         schoolId,
+        isFreshman,
       })
       return data
     },
-    [getProgramList],
+    [getProgramList, isFreshman],
   )
 
   // initialize values and options in dropdowns
@@ -147,10 +150,11 @@ export const SelectionItem: FC<FieldBaseProps> = (props) => {
             })
           }
 
-          // initialize options in dropdowns:
+          // initialize options in dropdowns and checkbox visibility
           setProgramOptions(programs)
           setThirdLanguageOptions(schoolInfo?.thirdLanguages || [])
           setNordicLanguageOptions(schoolInfo?.nordicLanguages || [])
+          setAllowRequestDormitory(schoolInfo?.allowRequestDormitory || false)
         })
         .catch((error) => console.error(error))
         .finally(() => {
@@ -190,10 +194,11 @@ export const SelectionItem: FC<FieldBaseProps> = (props) => {
         setValueNordicLanguage(undefined)
         setValueRequestDormitoryEmpty()
 
-        // update options in dropdowns
+        // update options in dropdowns and checkbox visibility
         setProgramOptions(programs)
         setThirdLanguageOptions(schoolInfo?.thirdLanguages || [])
         setNordicLanguageOptions(schoolInfo?.nordicLanguages || [])
+        setAllowRequestDormitory(schoolInfo?.allowRequestDormitory || false)
       })
       .catch((error) => console.error(error))
       .finally(() => {
@@ -399,22 +404,24 @@ export const SelectionItem: FC<FieldBaseProps> = (props) => {
         </Box>
       )}
 
-      <Box marginTop={2}>
-        <CheckboxController
-          id={`${props.field.id}.requestDormitory`}
-          backgroundColor="blue"
-          large
-          spacing={2}
-          options={[
-            {
-              label: formatMessage(
-                school.selection.requestDormitoryCheckboxLabel,
-              ),
-              value: YES,
-            },
-          ]}
-        />
-      </Box>
+      {allowRequestDormitory && (
+        <Box marginTop={2}>
+          <CheckboxController
+            id={`${props.field.id}.requestDormitory`}
+            backgroundColor="blue"
+            large
+            spacing={2}
+            options={[
+              {
+                label: formatMessage(
+                  school.selection.requestDormitoryCheckboxLabel,
+                ),
+                value: YES,
+              },
+            ]}
+          />
+        </Box>
+      )}
     </Box>
   )
 }

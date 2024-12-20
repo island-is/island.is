@@ -8,6 +8,7 @@ export type SecondarySchool = {
   name: string
   thirdLanguages: Language[]
   nordicLanguages: Language[]
+  allowRequestDormitory: boolean
 }
 
 export type Program = {

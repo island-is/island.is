@@ -10,6 +10,7 @@ export const useLazyProgramList = () => {
     },
     {
       schoolId: string
+      isFreshman: boolean
     }
   >(
     gql`

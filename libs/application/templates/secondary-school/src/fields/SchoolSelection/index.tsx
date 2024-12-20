@@ -12,7 +12,7 @@ import { SecondarySchoolAnswers } from '../..'
 export const SchoolSelection: FC<FieldBaseProps> = (props) => {
   const { formatMessage } = useLocale()
   const { application, setBeforeSubmitCallback } = props
-  const { setValue, getValues } = useFormContext()
+  const { setValue, getValues, register } = useFormContext()
 
   const isFreshman =
     getValueViaPath<ApplicationType>(application.answers, 'applicationType') ===
@@ -135,9 +135,20 @@ export const SchoolSelection: FC<FieldBaseProps> = (props) => {
   // non-freshman has second selection as optional, and third selection is hidden (not available)
   useEffect(() => {
     setValue(`${props.field.id}.first.include`, true)
-    if (isFreshman) setValue(`${props.field.id}.second.include`, true)
-    if (!isFreshman) setValue(`${props.field.id}.third.include`, false)
-  }, [isFreshman, props.field.id, setValue])
+    if (isFreshman) {
+      setValue(`${props.field.id}.second.include`, true)
+      setValue(
+        `${props.field.id}.third.include`,
+        getValues(`${props.field.id}.third.include`),
+      )
+    } else {
+      setValue(
+        `${props.field.id}.second.include`,
+        getValues(`${props.field.id}.second.include`),
+      )
+      setValue(`${props.field.id}.third.include`, false)
+    }
+  }, [isFreshman, props.field.id, setValue, getValues])
 
   return (
     <Box>
@@ -275,6 +286,10 @@ export const SchoolSelection: FC<FieldBaseProps> = (props) => {
           />
         </Box>
       )}
+
+      <input type="hidden" {...register(`${props.field.id}.first`)} />
+      <input type="hidden" {...register(`${props.field.id}.second`)} />
+      <input type="hidden" {...register(`${props.field.id}.third`)} />
     </Box>
   )
 }

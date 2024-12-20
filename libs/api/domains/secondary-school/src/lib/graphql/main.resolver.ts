@@ -20,8 +20,13 @@ export class MainResolver {
   @Query(() => [SecondarySchoolProgram])
   async secondarySchoolProgramsBySchoolId(
     @Args('schoolId', { type: () => String }) schoolId: string,
+    @Args('isFreshman', { type: () => Boolean }) isFreshman: boolean,
     @CurrentUser() user: User,
   ) {
-    return await this.secondarySchoolApi.getProgramsBySchoolId(user, schoolId)
+    return await this.secondarySchoolApi.getProgramsBySchoolId(
+      user,
+      schoolId,
+      isFreshman,
+    )
   }
 }
