@@ -220,7 +220,11 @@ export class DelegationsIncomingCustomService {
     const customApiScopes = clientAllowedApiScopes.filter(
       (s) =>
         !s.isAccessControlled &&
-        filterByCustomScopeRule(s, this.delegationConfig.customScopeRules) &&
+        filterByCustomScopeRule(
+          s,
+          [AuthDelegationType.GeneralMandate],
+          this.delegationConfig.customScopeRules,
+        ) &&
         s.supportedDelegationTypes?.some((dt) =>
           supportedDelegationTypes.includes(
             dt.delegationType as AuthDelegationType,

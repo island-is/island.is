@@ -230,6 +230,7 @@ export class DelegationScopeService {
             // Remove scopes that are not allowed for the delegation type
             filterByCustomScopeRule(
               scope,
+              [AuthDelegationType.GeneralMandate],
               this.delegationConfig.customScopeRules,
             ),
           )
