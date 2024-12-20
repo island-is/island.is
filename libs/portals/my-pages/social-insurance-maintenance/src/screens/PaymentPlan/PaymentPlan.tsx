@@ -76,7 +76,7 @@ const PaymentPlan = () => {
             </Box>
             <Box>
               <Text variant="small" marginTop={5} marginBottom={2}>
-                {formatMessage(m.maintenanceFooter)}
+                {formatMessage(m.maintenanceFooter)}{' '}
                 {formatMessage(m.maintenanceFooterLink, {
                   // eslint-disable-next-line @typescript-eslint/no-explicit-any
                   link: (str: any) => (
@@ -86,6 +86,9 @@ const PaymentPlan = () => {
                     />
                   ),
                 })}
+              </Text>
+              <Text variant="small" marginBottom={2}>
+                {formatMessage(m.maintenanceFooterTemporaryWarning)}
               </Text>
             </Box>
           </>
