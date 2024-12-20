@@ -5,8 +5,8 @@ import {
   buildTextField,
 } from '@island.is/application/core'
 import { juridicalPerson } from '../../../lib/messages'
-import { isReportingOnBehalfOfEmployee } from '../../../utils'
-import { YES } from '../../../utils/constants'
+import { isReportingOnBehalfOfEmployee } from '../../../utils/reportingUtils'
+import { YES } from '@island.is/application/types'
 
 export const juridicalPersonCompanySubSection = buildSubSection({
   id: 'juridicalPerson.company',

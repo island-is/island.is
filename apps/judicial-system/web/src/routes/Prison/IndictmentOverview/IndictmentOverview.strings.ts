@@ -14,7 +14,12 @@ export const strings = defineMessages({
   indictmentCompletedTitle: {
     id: 'judicial.system.core:indictment_overview.indictment_completed_title',
     defaultMessage: 'Dómsuppkvaðning {date}',
-    description: 'Titill á yfirliti ákæru fyrir fangelsi',
+    description: 'Undirtitill á yfirliti ákæru fyrir fangelsi',
+  },
+  indictmentReceivedTitle: {
+    id: 'judicial.system.core:indictment_overview.indictment_received_title',
+    defaultMessage: 'Móttekið {date}',
+    description: 'Undirtitill á yfirliti ákæru fyrir fangelsi',
   },
   infoCardDefendantsTitle: {
     id: 'judicial.system.core:indictment_overview.info_card_defendants_title',
@@ -57,5 +62,10 @@ export const strings = defineMessages({
     id: 'judicial.system.core:indictment_overview.punishment_type_signed_fine_invitation',
     defaultMessage: 'Áritað sektarboð',
     description: 'Notaður sem texti í sektarboð í Refsitegund',
+  },
+  sentToPrisonAdminFileTitle: {
+    id: 'judicial.system.core:indictment_overview.sent_to_prison_admin_file_title',
+    defaultMessage: 'Fullnusta',
+    description: 'Titill á til fullnustu skjali',
   },
 })

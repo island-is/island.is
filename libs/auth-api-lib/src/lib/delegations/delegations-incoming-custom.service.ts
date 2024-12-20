@@ -26,6 +26,7 @@ import { Delegation } from './models/delegation.model'
 import { NationalRegistryV3FeatureService } from './national-registry-v3-feature.service'
 import { DelegationValidity } from './types/delegationValidity'
 import { getScopeValidityWhereClause } from './utils/scopes'
+import filterByCustomScopeRule from './utils/filterByScopeCustomScopeRule'
 
 type FindAllValidIncomingOptions = {
   nationalId: string
@@ -182,20 +183,6 @@ export class DelegationsIncomingCustomService {
     })
   }
 
-  private filterByCustomScopeRule(scope: ApiScopeInfo) {
-    const foundCSR = this.delegationConfig.customScopeRules.find(
-      (csr) => csr.scopeName === scope.name,
-    )
-
-    if (!foundCSR) {
-      return true
-    }
-
-    return foundCSR.onlyForDelegationType.includes(
-      AuthDelegationType.GeneralMandate,
-    )
-  }
-
   /**
    * Finds all companies that have a general mandate for the user.
    * @param user
@@ -233,7 +220,11 @@ export class DelegationsIncomingCustomService {
     const customApiScopes = clientAllowedApiScopes.filter(
       (s) =>
         !s.isAccessControlled &&
-        this.filterByCustomScopeRule(s) &&
+        filterByCustomScopeRule(
+          s,
+          [AuthDelegationType.GeneralMandate],
+          this.delegationConfig.customScopeRules,
+        ) &&
         s.supportedDelegationTypes?.some((dt) =>
           supportedDelegationTypes.includes(
             dt.delegationType as AuthDelegationType,
