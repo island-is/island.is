@@ -7,10 +7,8 @@ import {
   SortableTable,
   formatDate,
 } from '@island.is/portals/my-pages/core'
-import { HealthTable as VaccinationsDetailTable } from '../../../components/Table/HealthTable'
 import { messages } from '../../../lib/messages'
 import { tagSelector } from '../../../utils/tagSelector'
-import { DetailHeader, DetailRow } from '../../../utils/types'
 
 interface Props {
   data?: Array<HealthDirectorateVaccination>
