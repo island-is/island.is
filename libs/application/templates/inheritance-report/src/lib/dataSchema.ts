@@ -55,6 +55,7 @@ const assetSchema = ({ withShare }: { withShare?: boolean } = {}) =>
             .refine((v) => (withShare ? validateAssetNumber(v) : true)),
           description: z.string(),
           propertyValuation: z.string(),
+          enabled: z.boolean(),
           ...(withShare ? { share: z.string() } : {}),
           ...deceasedShare,
         })
