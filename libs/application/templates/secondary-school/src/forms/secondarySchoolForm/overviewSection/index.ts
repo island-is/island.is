@@ -40,7 +40,6 @@ export const overviewSection = buildSection({
           id: 'submit',
           placement: 'footer',
           title: overview.buttons.confirm,
-          refetchApplicationAfterSubmit: true,
           actions: [
             {
               event: DefaultEvents.SUBMIT,

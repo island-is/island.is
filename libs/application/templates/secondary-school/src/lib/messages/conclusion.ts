@@ -54,6 +54,11 @@ export const conclusion = {
     },
   }),
   overview: defineMessages({
+    pageTitle: {
+      id: 'ss.application:conclusion.overview.pageTitle',
+      defaultMessage: 'Umsóknin þín',
+      description: 'Title of conclusion overview page',
+    },
     alertTitle: {
       id: 'ss.application:conclusion.overview.alertTitle',
       defaultMessage: 'Athugið',
@@ -64,18 +69,6 @@ export const conclusion = {
       defaultMessage:
         'Umsóknartímabili lýkur xx. júní. Ekki verður farið að vinna úr umsóknum fyrr en eftir þessa dagsetningu. Ef þú af einhverjum ástæðum vilt gera breytingar þarftu að eyða núverandi umsókn og gera nýja áður en tímabilinu lýkur.',
       description: 'Conclusion overview alert message',
-    },
-  }),
-  buttons: defineMessages({
-    back: {
-      id: 'ss.application:conclusion.buttons.back',
-      defaultMessage: 'Til baka',
-      description: 'Back button in conclusion',
-    },
-    overview: {
-      id: 'ss.application:conclusion.buttons.overview',
-      defaultMessage: 'Skoða yfirlit',
-      description: 'Overview button in conclusion',
     },
   }),
 }

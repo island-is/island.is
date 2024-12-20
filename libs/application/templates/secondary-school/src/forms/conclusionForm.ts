@@ -1,6 +1,8 @@
 import {
+  buildAlertMessageField,
   buildCustomField,
   buildForm,
+  buildMultiField,
   buildSection,
 } from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
@@ -12,16 +14,30 @@ export const Conclusion: Form = buildForm({
   title: '',
   logo: Logo,
   mode: FormModes.COMPLETED,
+  renderLastScreenButton: true,
+  renderLastScreenBackButton: true,
   children: [
     buildSection({
       id: 'conclusionSection',
       title: conclusion.general.sectionTitle,
       children: [
-        buildCustomField({
-          component: 'Conclusion',
-          id: 'conclusion',
-          title: '',
-          description: '',
+        buildMultiField({
+          id: 'conclusionMultiField',
+          title: conclusion.overview.pageTitle,
+          children: [
+            buildAlertMessageField({
+              id: 'conclusionAlertMessage',
+              alertType: 'info',
+              title: conclusion.overview.alertTitle,
+              message: conclusion.overview.alertMessage,
+            }),
+            buildCustomField({
+              component: 'Overview',
+              id: 'conclusion',
+              title: '',
+              description: '',
+            }),
+          ],
         }),
       ],
     }),
