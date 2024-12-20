@@ -1,12 +1,12 @@
-import { useLocale, useNamespaces } from '@island.is/localization'
+import { RightsPortalHealthCenterRecord } from '@island.is/api/schema'
 import { Box, Table as T, Text } from '@island.is/island-ui/core'
+import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   DownloadFileButtons,
   formatDate,
   m,
 } from '@island.is/portals/my-pages/core'
 import { messages } from '../../lib/messages'
-import { RightsPortalHealthCenterRecord } from '@island.is/api/schema'
 import { exportHealthCenterFile } from '../../utils/FileBreakdown'
 
 interface Props {

@@ -1,45 +1,47 @@
 import {
+  RightsPortalDrugBill,
+  RightsPortalDrugBillLine,
+  RightsPortalDrugPeriod,
+} from '@island.is/api/schema'
+import {
   Box,
-  Text,
-  Select,
-  Stack,
   Button,
-  SkeletonLoader,
-  Table as T,
-  LinkV2,
   Hyphen,
+  hyphenateText,
+  LinkV2,
+  Select,
+  SkeletonLoader,
+  Stack,
+  Table as T,
+  Text,
 } from '@island.is/island-ui/core'
+import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   DownloadFileButtons,
   ExpandHeader,
   ExpandRow,
   LinkResolver,
+  SortableTable,
   UserInfoLine,
   amountFormat,
   m,
 } from '@island.is/portals/my-pages/core'
-import { useLocale, useNamespaces } from '@island.is/localization'
-import { messages } from '../../lib/messages'
-import {
-  useGetDrugBillLineItemLazyQuery,
-  useGetDrugsBillsLazyQuery,
-  useGetDrugsDataQuery,
-} from './Medicine.generated'
-import {
-  RightsPortalDrugBillLine,
-  RightsPortalDrugBill,
-  RightsPortalDrugPeriod,
-} from '@island.is/api/schema'
+import { Problem } from '@island.is/react-spa/shared'
 import { useEffect, useState } from 'react'
-import * as styles from './Medicine.css'
-import { CONTENT_GAP, DATE_FORMAT, SECTION_GAP } from './constants'
-import { MedicineWrapper } from './wrapper/MedicineWrapper'
+import { messages } from '../../lib/messages'
 import { HealthPaths } from '../../lib/paths'
 import {
   exportMedicineBill,
   exportMedicineFile,
 } from '../../utils/FileBreakdown'
-import { Problem } from '@island.is/react-spa/shared'
+import * as styles from './Medicine.css'
+import {
+  useGetDrugBillLineItemLazyQuery,
+  useGetDrugsBillsLazyQuery,
+  useGetDrugsDataQuery,
+} from './Medicine.generated'
+import { CONTENT_GAP, DATE_FORMAT, SECTION_GAP } from '../../utils/constants'
+import { MedicinePaymentParticipationWrapper } from './wrapper/MedicinePaymentParticipationWrapper'
 
 export const MedicinePurchase = () => {
   useNamespaces('sp.health')
@@ -97,7 +99,9 @@ export const MedicinePurchase = () => {
   }, [data])
 
   return (
-    <MedicineWrapper pathname={HealthPaths.HealthMedicinePurchase}>
+    <MedicinePaymentParticipationWrapper
+      pathname={HealthPaths.HealthMedicinePurchase}
+    >
       <Box marginBottom={SECTION_GAP}>
         <Text variant="h5" marginBottom={1}>
           {formatMessage(messages.medicinePurchaseTitle)}
@@ -474,6 +478,101 @@ export const MedicinePurchase = () => {
                   )
                 })}
               </T.Table>
+              <SortableTable
+                labels={{
+                  date: formatMessage(m.date),
+                  explanationNote: formatMessage(m.explanationNote),
+                  price: hyphenateText(
+                    formatMessage(messages.medicinePaymentParticipationPrice),
+                    {},
+                  ),
+                  paidByCustomer: formatMessage(
+                    messages.medicinePaidByCustomer,
+                  ),
+                }}
+                expandable
+                items={
+                  bills.map((bill, index) => ({
+                    id: bill.id ?? `bill-${index}`,
+                    date: formatDateFns(bill.date, DATE_FORMAT),
+                    explanationNote: bill.description ?? '',
+                    price: amountFormat(bill.totalCopaymentAmount ?? 0),
+                    paidByCustomer: amountFormat(bill.totalCustomerAmount ?? 0),
+                    onExpandCallback: () => {
+                      if (bill?.id && selectedPeriod?.id) {
+                        setSelectedLineItem(bill.id)
+                        lineItemQuery({
+                          variables: {
+                            input: {
+                              billId: bill.id,
+                              paymentPeriodId: selectedPeriod.id,
+                            },
+                          },
+                          onCompleted: (data) => {
+                            if (bill && bill.id) {
+                              fetchedLineItems.set(
+                                bill.id,
+                                data.rightsPortalDrugBillLines,
+                              )
+                            }
+                          },
+                        })
+                      }
+                    },
+                    children: (
+                      <SortableTable
+                        inner
+                        labels={{
+                          medicine: formatMessage(messages.medicineDrugName),
+                          strength: formatMessage(messages.medicineStrength),
+                          quantity: formatMessage(messages.medicineQuantity),
+                          units: formatMessage(messages.medicineAmount),
+                          salesPrice: formatMessage(messages.medicineSalePrice),
+                          copaymentAmount: formatMessage(
+                            messages.medicinePaymentParticipationPrice,
+                          ),
+                          excessAmount: formatMessage(
+                            messages.medicineExcessPrice,
+                          ),
+                          customerAmount: formatMessage(
+                            messages.medicinePaidByCustomer,
+                          ),
+                        }}
+                        items={
+                          [...fetchedLineItems].flatMap((item, j) => {
+                            const [billId, lineItems] = item
+                            if (billId === bill.id) {
+                              return lineItems.map((lineItem, k) => ({
+                                id: `${j}-${k}`,
+                                medicine: lineItem.drugName,
+                                strength: lineItem.strength,
+                                quantity: lineItem.quantity,
+                                units: lineItem.units,
+                                salesPrice: amountFormat(
+                                  lineItem.salesPrice ?? 0,
+                                ),
+                                copaymentAmount: amountFormat(
+                                  lineItem.copaymentAmount ?? 0,
+                                ),
+                                excessAmount: amountFormat(
+                                  lineItem.excessAmount ?? 0,
+                                ),
+                                customerAmount: amountFormat(
+                                  lineItem.customerAmount ?? 0,
+                                ),
+                              }))
+                            } else return []
+                          }) ?? []
+                        }
+                        defaultSortByKey="medicine"
+                        mobileTitleKey="medicine"
+                      />
+                    ),
+                  })) ?? []
+                }
+                defaultSortByKey="date"
+                mobileTitleKey="explanationNote"
+              />
             </>
           )
         )}
@@ -494,7 +593,7 @@ export const MedicinePurchase = () => {
           />
         ) : undefined}
       </Box>
-    </MedicineWrapper>
+    </MedicinePaymentParticipationWrapper>
   )
 }
 

@@ -1,3 +1,4 @@
+import { RightsPortalDentist } from '@island.is/api/schema'
 import {
   AlertMessage,
   Box,
@@ -8,23 +9,21 @@ import {
   Stack,
   Table as T,
 } from '@island.is/island-ui/core'
+import { useLocale, useNamespaces } from '@island.is/localization'
+import { IntroWrapper, m } from '@island.is/portals/my-pages/core'
+import { Problem } from '@island.is/react-spa/shared'
+import { useEffect, useRef, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { useDebounce } from 'react-use'
+import { RegisterModal } from '../../components/RegisterModal'
+import { messages } from '../../lib/messages'
+import { HealthPaths } from '../../lib/paths'
+import * as styles from './DentistRegistration.css'
 import {
   useGetDentistStatusQuery,
   useGetPaginatedDentistsQuery,
   useRegisterDentistMutation,
 } from './DentistRegistration.generated'
-import { m } from '@island.is/portals/my-pages/core'
-import { IntroHeader } from '@island.is/portals/core'
-import { useLocale, useNamespaces } from '@island.is/localization'
-import { messages } from '../../lib/messages'
-import { useEffect, useRef, useState } from 'react'
-import { useDebounce } from 'react-use'
-import { useNavigate } from 'react-router-dom'
-import { HealthPaths } from '../../lib/paths'
-import { RightsPortalDentist } from '@island.is/api/schema'
-import { RegisterModal } from '../../components/RegisterModal'
-import * as styles from './DentistRegistration.css'
-import { Problem } from '@island.is/react-spa/shared'
 
 const DEFAULT_PAGE_SIZE = 12
 const DEFAULT_PAGE_NUMBER = 1
@@ -131,11 +130,10 @@ export const DentistRegistration = () => {
     )
 
   return (
-    <Box paddingY={2}>
-      <IntroHeader
-        title={formatMessage(messages.dentistRegisterationPageTitle)}
-        intro={formatMessage(messages.dentistRegisterationPageDescription)}
-      />
+    <IntroWrapper
+      title={formatMessage(messages.dentistRegisterationPageTitle)}
+      intro={formatMessage(messages.dentistRegisterationPageDescription)}
+    >
       {errorTransfering && (
         <Box paddingBottom={4} ref={errorBoxRef}>
           <AlertMessage
@@ -256,7 +254,7 @@ export const DentistRegistration = () => {
           </Box>
         </>
       )}
-    </Box>
+    </IntroWrapper>
   )
 }
 
