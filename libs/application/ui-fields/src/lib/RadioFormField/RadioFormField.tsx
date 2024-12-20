@@ -50,11 +50,13 @@ export const RadioFormField: FC<React.PropsWithChildren<Props>> = ({
     [options, application, locale],
   )
 
+  const paddingTop = field.space ?? 2
+
   return (
     <Box
       marginTop={marginTop}
       marginBottom={marginBottom}
-      paddingTop={field.space}
+      paddingTop={paddingTop}
       role="region"
       aria-labelledby={id + 'title'}
     >
@@ -80,7 +82,7 @@ export const RadioFormField: FC<React.PropsWithChildren<Props>> = ({
         />
       )}
 
-      <Box marginTop={2}>
+      <Box>
         <RadioController
           largeButtons={largeButtons}
           backgroundColor={backgroundColor}
@@ -114,6 +116,8 @@ export const RadioFormField: FC<React.PropsWithChildren<Props>> = ({
           }))}
           onSelect={field.onSelect}
           hasIllustration={hasIllustration}
+          paddingBottom={0}
+          paddingTop={2}
         />
       </Box>
     </Box>
