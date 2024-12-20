@@ -11,6 +11,7 @@ import {
   extractStringsFromObject,
   pruneNonSearchableSliceUnionFields,
   removeEntryHyperlinkFields,
+  extractChildEntryIds,
 } from './utils'
 
 @Injectable()
@@ -86,6 +87,9 @@ export class SubArticleSyncService implements CmsSyncProvider<ISubArticle> {
             mapped.body.map(pruneNonSearchableSliceUnionFields),
           )
 
+          // Tag the document with the ids of its children so we can later look up what document a child belongs to
+          const childEntryIds = extractChildEntryIds(entry)
+
           return {
             _id: mapped.id,
             title: mapped.title,
@@ -102,6 +106,10 @@ export class SubArticleSyncService implements CmsSyncProvider<ISubArticle> {
                 value: entry.fields?.parent?.fields?.category?.fields?.title,
                 type: 'category',
               },
+              ...childEntryIds.map((id) => ({
+                key: id,
+                type: 'hasChildEntryWithId',
+              })),
             ],
           }
         } catch (error) {

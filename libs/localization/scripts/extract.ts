@@ -30,7 +30,7 @@ if (!CONTENTFUL_MANAGEMENT_ACCESS_TOKEN) {
 
 const client = createClient({ accessToken: CONTENTFUL_MANAGEMENT_ACCESS_TOKEN })
 
-const format = spawn.sync('npx', [
+const format = spawn.sync('yarn', [
   'formatjs',
   'extract',
   '--out-file',

@@ -16,6 +16,7 @@ import {
   formatNationalId,
   formatPhoneNumber,
   indictmentSubtypes,
+  normalizeAndFormatNationalId,
   readableIndictmentSubtypes,
   sanitize,
   splitStringByComma,
@@ -216,6 +217,30 @@ describe('formatNationalId', () => {
 
     // Assert
     expect(res).toBe('ekki skráð')
+  })
+})
+
+describe('normalizeAndFormatNationalId', () => {
+  test('should format national id with dash', () => {
+    // Arrange
+    const nationalId = '123456-7890'
+
+    // Act
+    const res = normalizeAndFormatNationalId(nationalId)
+
+    // Assert
+    expect(res).toEqual(['1234567890', '123456-7890'])
+  })
+
+  test('should format national id without dash', () => {
+    // Arrange
+    const nationalId = '1234567890'
+
+    // Act
+    const res = normalizeAndFormatNationalId(nationalId)
+
+    // Assert
+    expect(res).toEqual(['1234567890', '123456-7890'])
   })
 })
 

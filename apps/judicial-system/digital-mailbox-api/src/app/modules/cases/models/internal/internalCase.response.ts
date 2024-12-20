@@ -3,6 +3,8 @@ import {
   DefenderChoice,
   Gender,
   Institution,
+  ServiceStatus,
+  SubpoenaType,
   User,
 } from '@island.is/judicial-system/types'
 
@@ -28,6 +30,11 @@ interface Defendant {
   defenderEmail?: string
   defenderPhoneNumber?: string
   defenderChoice?: DefenderChoice
+  subpoenas?: Subpoena[]
+  requestedDefenderChoice?: DefenderChoice
+  requestedDefenderNationalId?: string
+  requestedDefenderName?: string
+  subpoenaType?: SubpoenaType
 }
 
 interface DateLog {
@@ -36,4 +43,10 @@ interface DateLog {
   dateType: DateType
   date: Date
   location?: string
+}
+
+interface Subpoena {
+  id: string
+  subpoenaId: string
+  serviceStatus?: ServiceStatus
 }

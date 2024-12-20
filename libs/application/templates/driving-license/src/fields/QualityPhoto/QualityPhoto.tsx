@@ -3,7 +3,6 @@ import React, { FC } from 'react'
 import {
   Box,
   Text,
-  ContentBlock,
   AlertMessage,
   SkeletonLoader,
 } from '@island.is/island-ui/core'

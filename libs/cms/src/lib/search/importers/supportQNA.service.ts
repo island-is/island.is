@@ -12,6 +12,7 @@ import {
   numberOfProcessEntries,
   numberOfLinks,
   pruneNonSearchableSliceUnionFields,
+  extractChildEntryIds,
 } from './utils'
 
 @Injectable()
@@ -96,6 +97,15 @@ export class SupportQNASyncService implements CmsSyncProvider<ISupportQna> {
               key: entry.fields.subCategory.fields.slug,
               value: entry.fields.subCategory.fields.title,
               type: 'subcategory',
+            })
+          }
+
+          // Tag the document with the ids of its children so we can later look up what document a child belongs to
+          const childEntryIds = extractChildEntryIds(entry)
+          for (const id of childEntryIds) {
+            tags.push({
+              key: id,
+              type: 'hasChildEntryWithId',
             })
           }
 

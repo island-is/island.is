@@ -5,6 +5,7 @@ import {
   MedmaelasofnunApi,
   MedmaeliApi,
   FrambodApi,
+  AdminApi as AdminClient,
 } from '../../gen/fetch'
 import { SignatureCollectionClientConfig } from './signature-collection.config'
 import { IdsClientConfig, XRoadConfig } from '@island.is/nest/config'
@@ -15,6 +16,7 @@ export class AdminListApi extends MedmaelalistarApi {}
 export class AdminCollectionApi extends MedmaelasofnunApi {}
 export class AdminSignatureApi extends MedmaeliApi {}
 export class AdminCandidateApi extends FrambodApi {}
+export class AdminApi extends AdminClient {}
 
 export class ManagerConfig extends Configuration {}
 export class ManagerListApi extends MedmaelalistarApi {}
@@ -74,6 +76,7 @@ export const exportedApis = [
     AdminCollectionApi,
     AdminSignatureApi,
     AdminCandidateApi,
+    AdminApi,
   ].map((Api) => ({
     provide: Api,
     useFactory: (

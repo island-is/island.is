@@ -15,6 +15,8 @@ import {
 import type { User } from '@island.is/judicial-system/types'
 
 import { BackendService } from '../backend'
+import { CreateCivilClaimantFileInput } from './dto/createCivilClaimantFile.input'
+import { CreateDefendantFileInput } from './dto/createDefendantFile.input'
 import { CreateFileInput } from './dto/createFile.input'
 import { CreatePresignedPostInput } from './dto/createPresignedPost.input'
 import { DeleteFileInput } from './dto/deleteFile.input'
@@ -76,6 +78,58 @@ export class LimitedAccessFileResolver {
     )
   }
 
+  @Mutation(() => CaseFile)
+  limitedAccessCreateDefendantFile(
+    @Args('input', { type: () => CreateDefendantFileInput })
+    input: CreateDefendantFileInput,
+    @CurrentGraphQlUser() user: User,
+    @Context('dataSources')
+    { backendService }: { backendService: BackendService },
+  ): Promise<CaseFile> {
+    const { caseId, defendantId, ...createFile } = input
+
+    this.logger.debug(
+      `Creating a file for case ${caseId} and defendant ${defendantId}`,
+    )
+
+    return this.auditTrailService.audit(
+      user.id,
+      AuditedAction.CREATE_FILE,
+      backendService.limitedAccessCreateDefendantCaseFile(
+        caseId,
+        createFile,
+        defendantId,
+      ),
+      (file) => file.id,
+    )
+  }
+
+  @Mutation(() => CaseFile)
+  limitedAccessCreateCivilClaimantFile(
+    @Args('input', { type: () => CreateCivilClaimantFileInput })
+    input: CreateCivilClaimantFileInput,
+    @CurrentGraphQlUser() user: User,
+    @Context('dataSources')
+    { backendService }: { backendService: BackendService },
+  ): Promise<CaseFile> {
+    const { caseId, civilClaimantId, ...createFile } = input
+
+    this.logger.debug(
+      `Creating a file for case ${caseId} and civil claimant ${civilClaimantId}`,
+    )
+
+    return this.auditTrailService.audit(
+      user.id,
+      AuditedAction.CREATE_FILE,
+      backendService.limitedAccessCreateCivilClaimantCaseFile(
+        caseId,
+        createFile,
+        civilClaimantId,
+      ),
+      (file) => file.id,
+    )
+  }
+
   @Query(() => SignedUrl, { nullable: true })
   limitedAccessGetSignedUrl(
     @Args('input', { type: () => GetSignedUrlInput })
@@ -84,14 +138,18 @@ export class LimitedAccessFileResolver {
     @Context('dataSources')
     { backendService }: { backendService: BackendService },
   ): Promise<SignedUrl> {
-    const { caseId, id } = input
+    const { caseId, id, mergedCaseId } = input
 
     this.logger.debug(`Getting a signed url for file ${id} of case ${caseId}`)
 
     return this.auditTrailService.audit(
       user.id,
       AuditedAction.GET_SIGNED_URL,
-      backendService.limitedAccessGetCaseFileSignedUrl(caseId, id),
+      backendService.limitedAccessGetCaseFileSignedUrl(
+        caseId,
+        id,
+        mergedCaseId,
+      ),
       id,
     )
   }

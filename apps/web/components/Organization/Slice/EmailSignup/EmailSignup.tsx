@@ -12,18 +12,19 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { FormField } from '@island.is/web/components'
-import { FormFieldType } from '../../../Form/Form'
 import {
   EmailSignup as EmailSignupSchema,
   EmailSignupInputField,
   EmailSignupSubscriptionMutation,
   EmailSignupSubscriptionMutationVariables,
 } from '@island.is/web/graphql/schema'
-import { EMAIL_SIGNUP_MUTATION } from '@island.is/web/screens/queries'
 import { useNamespace } from '@island.is/web/hooks'
+import { useI18n } from '@island.is/web/i18n'
+import { EMAIL_SIGNUP_MUTATION } from '@island.is/web/screens/queries'
 import { isValidEmail } from '@island.is/web/utils/isValidEmail'
 import { isValidNationalId } from '@island.is/web/utils/isValidNationalId'
 
+import { FormFieldType } from '../../../Form/Form'
 import * as styles from './EmailSignup.css'
 
 type SubmitResponse = {
@@ -50,6 +51,7 @@ interface EmailSignupProps {
 
 const EmailSignup = ({ slice, marginLeft }: EmailSignupProps) => {
   const n = useNamespace(slice.translations ?? {})
+  const { activeLocale } = useI18n()
   const formFields = useMemo(
     () =>
       slice.formFields?.filter(
@@ -79,7 +81,9 @@ const EmailSignup = ({ slice, marginLeft }: EmailSignupProps) => {
       if (field?.required && !value) {
         newErrors[fieldName] = n(
           'fieldIsRequired',
-          'Þennan reit þarf að fylla út',
+          activeLocale === 'is'
+            ? 'Þennan reit þarf að fylla út'
+            : 'This field is required',
         )
       } else if (
         field?.type === FormFieldType.EMAIL &&
@@ -87,7 +91,9 @@ const EmailSignup = ({ slice, marginLeft }: EmailSignupProps) => {
       ) {
         newErrors[fieldName] = n(
           'invalidEmail',
-          'Vinsamlegast sláðu inn gilt netfang',
+          activeLocale === 'is'
+            ? 'Vinsamlegast sláðu inn gilt netfang'
+            : 'Please enter a valid email address',
         )
       } else if (
         field?.type === FormFieldType.CHECKBOXES &&
@@ -97,7 +103,9 @@ const EmailSignup = ({ slice, marginLeft }: EmailSignupProps) => {
       ) {
         newErrors[fieldName] = n(
           'fieldIsRequired',
-          'Þennan reit þarf að fylla út',
+          activeLocale === 'is'
+            ? 'Þennan reit þarf að fylla út'
+            : 'This field is required',
         )
       } else if (
         field?.type === FormFieldType.NATIONAL_ID &&
@@ -106,7 +114,9 @@ const EmailSignup = ({ slice, marginLeft }: EmailSignupProps) => {
       ) {
         newErrors[fieldName] = n(
           'formInvalidNationalId',
-          'Þetta er ekki gild kennitala.',
+          activeLocale === 'is'
+            ? 'Þetta er ekki gild kennitala.'
+            : 'This is not valid national id.',
         )
       }
     }
@@ -143,10 +153,17 @@ const EmailSignup = ({ slice, marginLeft }: EmailSignupProps) => {
         if (result?.data?.emailSignupSubscription?.subscribed) {
           setSubmitResponse({
             type: 'success',
-            title: n('submitSuccessTitle', 'Skráning tókst') as string,
+            title: n(
+              'submitSuccessTitle',
+              activeLocale === 'is'
+                ? 'Skráning tókst'
+                : 'Registration was successful',
+            ) as string,
             message: n(
               'submitSuccessMessage',
-              'Þú þarft að fara í pósthólfið þitt og samþykkja umsóknina. Takk fyrir',
+              activeLocale === 'is'
+                ? 'Þú þarft að fara í tölvupóstinn þinn og samþykkja umsóknina. Takk fyrir'
+                : 'You need to go to your email and confirm the subscription. Thank you',
             ) as string,
           })
         } else {
@@ -155,7 +172,9 @@ const EmailSignup = ({ slice, marginLeft }: EmailSignupProps) => {
             title: '',
             message: n(
               'submitFailureMessage',
-              'Ekki tókst að skrá þig á póstlistann, reynið aftur síðar',
+              activeLocale === 'is'
+                ? 'Ekki tókst að skrá þig á póstlistann, reynið aftur síðar'
+                : 'Unable to subscribe to the mailing list, please try again later',
             ) as string,
           })
         }
@@ -166,7 +185,9 @@ const EmailSignup = ({ slice, marginLeft }: EmailSignupProps) => {
           title: '',
           message: n(
             'submitError',
-            'Villa kom upp við skráningu á póstlista',
+            activeLocale === 'is'
+              ? 'Villa kom upp við skráningu á póstlista'
+              : 'An error occurred while registering to the mailing list',
           ) as string,
         })
       })
@@ -279,7 +300,10 @@ const EmailSignup = ({ slice, marginLeft }: EmailSignupProps) => {
             <GridColumn span="1/1">
               <Box width="full" display="flex" justifyContent="flexEnd">
                 <Button disabled={loading} type="submit">
-                  {n('submitButtonText', 'Skrá')}
+                  {n(
+                    'submitButtonText',
+                    activeLocale === 'is' ? 'Skrá' : 'Submit',
+                  )}
                 </Button>
               </Box>
             </GridColumn>

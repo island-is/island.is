@@ -8,34 +8,11 @@ import {
   SyncOptions,
   SyncResponse,
 } from '@island.is/content-search-indexer/types'
-import { ArticleSyncService } from './importers/article.service'
-import { SubArticleSyncService } from './importers/subArticle.service'
 import { ContentfulService } from './contentful.service'
-import { AnchorPageSyncService } from './importers/anchorPage.service'
-import { LifeEventPageSyncService } from './importers/lifeEventPage.service'
-import { ArticleCategorySyncService } from './importers/articleCategory.service'
-import { NewsSyncService } from './importers/news.service'
 import { Entry } from 'contentful'
 import { ElasticService, SearchInput } from '@island.is/content-search-toolkit'
-import { AdgerdirPageSyncService } from './importers/adgerdirPage'
-import { MenuSyncService } from './importers/menu.service'
-import { GroupedMenuSyncService } from './importers/groupedMenu.service'
 import { getElasticsearchIndex } from '@island.is/content-search-index-manager'
-import { OrganizationPageSyncService } from './importers/organizationPage.service'
-import { OrganizationSubpageSyncService } from './importers/organizationSubpage.service'
-import { FrontpageSyncService } from './importers/frontpage.service'
-import { SupportQNASyncService } from './importers/supportQNA.service'
-import { LinkSyncService } from './importers/link.service'
-import { ProjectPageSyncService } from './importers/projectPage.service'
-import { EnhancedAssetSyncService } from './importers/enhancedAsset.service'
-import { VacancySyncService } from './importers/vacancy.service'
-import { ServiceWebPageSyncService } from './importers/serviceWebPage.service'
-import { EventSyncService } from './importers/event.service'
-import { ManualSyncService } from './importers/manual.service'
-import { ManualChapterItemSyncService } from './importers/manualChapterItem.service'
-import { CustomPageSyncService } from './importers/customPage.service'
-import { GenericListItemSyncService } from './importers/genericListItem.service'
-import { TeamListSyncService } from './importers/teamList.service'
+import { MappingService } from './mapping.service'
 
 export interface PostSyncOptions {
   folderHash: string
@@ -56,62 +33,11 @@ export interface CmsSyncProvider<T, ProcessOutput = any> {
 
 @Injectable()
 export class CmsSyncService implements ContentSearchImporter<PostSyncOptions> {
-  private contentSyncProviders: CmsSyncProvider<any>[]
   constructor(
-    private readonly newsSyncService: NewsSyncService,
-    private readonly articleCategorySyncService: ArticleCategorySyncService,
-    private readonly articleSyncService: ArticleSyncService,
-    private readonly subArticleSyncService: SubArticleSyncService,
-    private readonly anchorPageSyncService: AnchorPageSyncService,
-    private readonly lifeEventPageSyncService: LifeEventPageSyncService,
-    private readonly adgerdirPageSyncService: AdgerdirPageSyncService,
     private readonly contentfulService: ContentfulService,
-    private readonly menuSyncService: MenuSyncService,
-    private readonly groupedMenuSyncService: GroupedMenuSyncService,
-    private readonly organizationPageSyncService: OrganizationPageSyncService,
-    private readonly organizationSubpageSyncService: OrganizationSubpageSyncService,
-    private readonly projectPageSyncService: ProjectPageSyncService,
-    private readonly frontpageSyncService: FrontpageSyncService,
-    private readonly supportQNASyncService: SupportQNASyncService,
-    private readonly linkSyncService: LinkSyncService,
-    private readonly enhancedAssetService: EnhancedAssetSyncService,
+    private readonly mappingService: MappingService,
     private readonly elasticService: ElasticService,
-    private readonly vacancyService: VacancySyncService,
-    private readonly serviceWebPageSyncService: ServiceWebPageSyncService,
-    private readonly eventSyncService: EventSyncService,
-    private readonly manualSyncService: ManualSyncService,
-    private readonly manualChapterItemSyncService: ManualChapterItemSyncService,
-    private readonly customPageSyncService: CustomPageSyncService,
-    private readonly genericListItemSyncService: GenericListItemSyncService,
-    private readonly teamListSyncService: TeamListSyncService,
-  ) {
-    this.contentSyncProviders = [
-      this.articleSyncService,
-      this.subArticleSyncService,
-      this.anchorPageSyncService,
-      this.lifeEventPageSyncService,
-      this.articleCategorySyncService,
-      this.newsSyncService,
-      this.adgerdirPageSyncService,
-      this.menuSyncService,
-      this.groupedMenuSyncService,
-      this.organizationPageSyncService,
-      this.organizationSubpageSyncService,
-      this.projectPageSyncService,
-      this.frontpageSyncService,
-      this.supportQNASyncService,
-      this.linkSyncService,
-      this.enhancedAssetService,
-      this.vacancyService,
-      this.serviceWebPageSyncService,
-      this.eventSyncService,
-      this.manualSyncService,
-      this.manualChapterItemSyncService,
-      this.customPageSyncService,
-      this.genericListItemSyncService,
-      this.teamListSyncService,
-    ]
-  }
+  ) {}
 
   private async getLastFolderHash(elasticIndex: string): Promise<string> {
     logger.info('Getting folder hash from index', {
@@ -159,40 +85,64 @@ export class CmsSyncService implements ContentSearchImporter<PostSyncOptions> {
     return hashResult.hash.toString()
   }
 
+  async getNextSyncToken(syncType: SyncOptions['syncType']) {
+    if (syncType === 'fromLast') {
+      return ''
+    }
+
+    let nextPageToken: string | undefined = ''
+    let nextSyncToken = ''
+
+    // We don't get the next sync token until we've reached the last page
+    while (!nextSyncToken) {
+      const response = await this.contentfulService.getSyncData({
+        initial: true,
+        nextPageToken,
+      })
+      nextPageToken = response.nextPageToken
+      nextSyncToken = response.nextSyncToken
+    }
+    return nextSyncToken
+  }
+
   // this is triggered from ES indexer service
   async doSync(
     options: SyncOptions,
   ): Promise<SyncResponse<PostSyncOptions> | null> {
     logger.info('Doing cms sync', options)
-    let cmsSyncOptions: SyncOptions
+    let cmsSyncOptions: SyncOptions = options
 
     /**
      * We don't want full sync to run every time we start a new pod
      * We want full sync to run once when the first pod initializes the first container
      * and then never again until a new index is deployed
      */
-    let folderHash
+    let folderHash = options.folderHash
+
     if (options.syncType === 'initialize') {
       const { elasticIndex = getElasticsearchIndex(options.locale) } = options
-
-      folderHash = await this.getModelsFolderHash()
-      const lastFolderHash = await this.getLastFolderHash(elasticIndex)
-      if (folderHash !== lastFolderHash) {
-        logger.info(
-          'Folder and index folder hash do not match, running full sync',
-          { locale: options.locale },
-        )
-        cmsSyncOptions = { ...options, syncType: 'full' }
-      } else {
-        logger.info('Folder and index folder hash match, skipping sync', {
-          locale: options.locale,
-        })
-        // we skip import if it is not needed
-        return null
+      cmsSyncOptions = { ...options, syncType: 'full' }
+      if (folderHash === undefined) {
+        folderHash = await this.getModelsFolderHash()
+        const lastFolderHash = await this.getLastFolderHash(elasticIndex)
+        if (folderHash !== lastFolderHash) {
+          logger.info(
+            'Folder and index folder hash do not match, running full sync',
+            { locale: options.locale },
+          )
+        } else {
+          logger.info('Folder and index folder hash match, skipping sync', {
+            locale: options.locale,
+          })
+          // we skip import if it is not needed
+          return null
+        }
       }
     } else if (options.syncType === 'full') {
       cmsSyncOptions = options
-      folderHash = await this.getModelsFolderHash() // we know full will update all models so we can set the folder hash here
+      if (folderHash === undefined) {
+        folderHash = await this.getModelsFolderHash() // we know full will update all models so we can set the folder hash here
+      }
     } else {
       cmsSyncOptions = options
       folderHash = '' // this will always be a partial update so we don't want to update folder hash
@@ -204,12 +154,7 @@ export class CmsSyncService implements ContentSearchImporter<PostSyncOptions> {
     logger.info('Got sync data')
 
     // import data from all providers
-    const importableData = this.contentSyncProviders.map(
-      (contentSyncProvider) => {
-        const data = contentSyncProvider.processSyncData(items)
-        return contentSyncProvider.doMapping(data)
-      },
-    )
+    const importableData = this.mappingService.mapData(items)
 
     return {
       add: flatten(importableData),

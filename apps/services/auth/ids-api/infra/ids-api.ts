@@ -1,4 +1,9 @@
-import { json, service, ServiceBuilder } from '../../../../../infra/src/dsl/dsl'
+import {
+  CodeOwners,
+  json,
+  service,
+  ServiceBuilder,
+} from '../../../../../infra/src/dsl/dsl'
 import {
   Base,
   Client,
@@ -27,6 +32,7 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-ids-api'> => {
   return service('services-auth-ids-api')
     .namespace(namespace)
     .image(imageName)
+    .codeOwner(CodeOwners.Aranja)
     .env({
       IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/auth-api',
       IDENTITY_SERVER_ISSUER_URL: {
@@ -83,8 +89,28 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-ids-api'> => {
         // Origin for Android prod app
         'android:apk-key-hash:EsLTUu5kaY7XPmMl2f7nbq4amu-PNzdYu3FecNf90wU',
       ]),
+      SYSLUMENN_HOST: {
+        dev: 'https://api.syslumenn.is/staging',
+        staging: 'https://api.syslumenn.is/staging',
+        prod: 'https://api.syslumenn.is/api',
+      },
+      SYSLUMENN_TIMEOUT: '3000',
+      ZENDESK_CONTACT_FORM_SUBDOMAIN: {
+        prod: 'digitaliceland',
+        staging: 'digitaliceland',
+        dev: 'digitaliceland',
+      },
+      ALSO_USE_FAKE_USER_API: {
+        dev: 'true',
+        staging: 'false',
+        prod: 'false',
+      },
     })
     .secrets({
+      ZENDESK_CONTACT_FORM_EMAIL: '/k8s/api/ZENDESK_CONTACT_FORM_EMAIL',
+      ZENDESK_CONTACT_FORM_TOKEN: '/k8s/api/ZENDESK_CONTACT_FORM_TOKEN',
+      ZENDESK_WEBHOOK_SECRET_GENERAL_MANDATE:
+        '/k8s/services-auth/ZENDESK_WEBHOOK_SECRET_GENERAL_MANDATE',
       IDENTITY_SERVER_CLIENT_SECRET:
         '/k8s/services-auth/IDENTITY_SERVER_CLIENT_SECRET',
       NOVA_URL: '/k8s/services-auth/NOVA_URL',
@@ -92,6 +118,8 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-ids-api'> => {
       NOVA_PASSWORD: '/k8s/services-auth/NOVA_PASSWORD',
       NATIONAL_REGISTRY_B2C_CLIENT_SECRET:
         '/k8s/services-auth/NATIONAL_REGISTRY_B2C_CLIENT_SECRET',
+      SYSLUMENN_USERNAME: '/k8s/services-auth/SYSLUMENN_USERNAME',
+      SYSLUMENN_PASSWORD: '/k8s/services-auth/SYSLUMENN_PASSWORD',
     })
     .xroad(Base, Client, RskProcuring, NationalRegistryAuthB2C)
     .readiness('/health/check')
@@ -114,6 +142,7 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-ids-api'> => {
       min: 2,
       max: 15,
     })
+    .grantNamespaces('nginx-ingress-external', 'user-notification', 'datadog')
 }
 
 const cleanupId = 'services-auth-ids-api-cleanup'

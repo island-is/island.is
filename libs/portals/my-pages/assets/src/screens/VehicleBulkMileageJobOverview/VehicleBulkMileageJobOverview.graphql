@@ -1,0 +1,14 @@
+query getRequestsStatus {
+  vehicleBulkMileageRegistrationJobHistory {
+    history {
+      guid
+      reportingPersonNationalId
+      reportingPersonName
+      originCode
+      originName
+      dateRequested
+      dateStarted
+      dateFinished
+    }
+  }
+}

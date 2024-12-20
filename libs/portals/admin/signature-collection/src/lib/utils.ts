@@ -11,10 +11,20 @@ export const countryAreas = [
   { value: 'Austfirðingafjórðungur', label: 'Austfirðingafjórðungur' },
 ]
 
-export type Filters = {
+export const signeeTypes = [
+  { value: 'paper', label: 'Af blaði' },
+  { value: 'digital', label: 'Rafræn' },
+]
+
+export type FiltersOverview = {
   area: Array<string>
   candidate: Array<string>
   input: string
+}
+
+export type FiltersSigneeType = {
+  signeeType: Array<string>
+  pageNumber: Array<string>
 }
 
 export enum ListStatus {

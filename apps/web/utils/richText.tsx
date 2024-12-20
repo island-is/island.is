@@ -4,6 +4,8 @@ import { IntlConfig, IntlProvider } from 'react-intl'
 import {
   FaqList,
   type FaqListProps,
+  Image,
+  type ImageProps,
   renderConnectedComponent,
   richText,
   SectionWithImage,
@@ -79,12 +81,14 @@ import {
 import { useI18n } from '@island.is/web/i18n'
 
 import AdministrationOfOccupationalSafetyAndHealthCourses from '../components/connected/AdministrationOfOccupationalSafetyAndHealthCourses/AdministrationOfOccupationalSafetyAndHealthCourses'
+import { BenefitsOfDigitalProcessesCalculator } from '../components/connected/BenefitsOfDigitalProcessesCalculator/BenefitsOfDigitalProcessesCalculator'
 import { MonthlyStatistics } from '../components/connected/electronicRegistrationStatistics'
 import { GrindavikResidentialPropertyPurchaseCalculator } from '../components/connected/GrindavikResidentialPropertyPurchaseCalculator'
 import HousingBenefitCalculator from '../components/connected/HousingBenefitCalculator/HousingBenefitCalculator/HousingBenefitCalculator'
 import JourneymanList from '../components/connected/syslumenn/TableLists/JourneymanList/JourneymanList'
 import ProfessionRights from '../components/connected/syslumenn/TableLists/ProfessionRights/ProfessionRights'
 import { UmsCostOfLivingCalculator } from '../components/connected/UmbodsmadurSkuldara'
+import { WHODASCalculator } from '../components/connected/WHODAS/Calculator'
 import FeaturedEvents from '../components/FeaturedEvents/FeaturedEvents'
 import FeaturedSupportQNAs from '../components/FeaturedSupportQNAs/FeaturedSupportQNAs'
 import { EmbedSlice } from '../components/Organization/Slice/EmbedSlice/EmbedSlice'
@@ -191,6 +195,14 @@ export const webRenderConnectedComponent = (
     case 'VMST/ParentalLeaveCalculator':
       connectedComponent = <ParentalLeaveCalculator slice={slice} />
       break
+    case 'DigitalIceland/BenefitsOfDigitalProcesses':
+      connectedComponent = (
+        <BenefitsOfDigitalProcessesCalculator slice={slice} />
+      )
+      break
+    case 'WHODAS/Calculator':
+      connectedComponent = <WHODASCalculator slice={slice} />
+      break
     default:
       connectedComponent = renderConnectedComponent(slice)
   }
@@ -273,6 +285,11 @@ const defaultRenderComponent = {
       variant={slice.variant as 'accordion' | 'card'}
     />
   ),
+  Image: (slice: ImageProps) => {
+    const thumbnailUrl = slice?.url ? slice.url + '?w=50' : ''
+    const url = slice?.url ? slice.url + '?w=800' : ''
+    return <Image {...slice} thumbnail={thumbnailUrl} url={url} />
+  },
 }
 
 export const webRichText = (
@@ -285,7 +302,7 @@ export const webRichText = (
   activeLocale?: Locale,
 ) => {
   return richText(
-    slices as SliceType[],
+    (slices ?? []) as SliceType[],
     {
       renderComponent: {
         ...defaultRenderComponentObject,

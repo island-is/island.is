@@ -2,64 +2,45 @@ import { Box, Icon, Text } from '@island.is/island-ui/core'
 import * as styles from './Comments.css'
 import { useLocale } from '@island.is/localization'
 import { comments } from '../../lib/messages/comments'
-import { countDaysAgo } from '../../lib/utils'
-export type Props = {
-  as?: 'div' | 'li'
-  date?: string
-  from?: string
-  task?: string
-  comment?: string
-  type?: 'sent' | 'received'
-}
+import { OjoiCommentDirection, OjoiaComment } from '@island.is/api/schema'
+export type Props = OjoiaComment
 
 export const Comment = ({
-  as = 'li',
-  date,
-  from,
-  task,
+  id,
+  age,
+  title,
+  direction,
+  creator,
+  receiver,
   comment,
-  type,
-}: Props) => {
-  const Wrapper = as
-
-  const { formatMessage } = useLocale()
-
-  const daysAgo = date ? countDaysAgo(new Date(date)) : null
-
-  const many = formatMessage(comments.dates.xDaysAgo, {
-    days: daysAgo,
-  })
-
-  const yesterDay = formatMessage(comments.dates.yesterday)
-  const today = formatMessage(comments.dates.today)
-
-  const msg = daysAgo === 0 ? today : daysAgo === 1 ? yesterDay : many
+}: OjoiaComment) => {
+  const { formatMessage: f } = useLocale()
 
   return (
-    <Wrapper className={styles.comment}>
+    <li key={id} className={styles.comment}>
       <Box className={styles.iconColumn}>
-        {type && (
-          <Box className={styles.iconWrapper}>
-            <Icon
-              useStroke={true}
-              icon={type === 'received' ? 'arrowForward' : 'arrowBack'}
-              type="filled"
-              color="white"
-            />
-          </Box>
-        )}
+        <Box className={styles.iconWrapper}>
+          <Icon
+            useStroke={true}
+            icon={
+              direction === OjoiCommentDirection.RECEIVED
+                ? 'arrowBack'
+                : 'arrowForward'
+            }
+            type="filled"
+            color="white"
+          />
+        </Box>
       </Box>
       <Box className={styles.contentColumn}>
-        {from && (
-          <Text>
-            <strong>{from}</strong> {task && `${task}`}
-          </Text>
-        )}
+        <Text>
+          <strong>{creator ? creator : f(comments.unknownUser.name)}</strong>{' '}
+          {title && `${title}`}
+          {receiver && ` ${receiver}`}
+        </Text>
         <Text>{comment}</Text>
       </Box>
-      <Box className={styles.dateColumn}>
-        {daysAgo !== null && <Text truncate>{msg}</Text>}
-      </Box>
-    </Wrapper>
+      <Box className={styles.dateColumn}>{age}</Box>
+    </li>
   )
 }

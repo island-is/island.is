@@ -146,7 +146,7 @@ export class WorkMachinesResolver {
   }
 
   @Scopes(ApiScope.vinnueftirlitid)
-  @Query(() => Category)
+  @Query(() => [Category])
   @Audit()
   async getMachineParentCategoryByTypeAndModel(
     @CurrentUser() auth: User,

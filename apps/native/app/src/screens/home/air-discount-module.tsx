@@ -1,3 +1,9 @@
+import React from 'react'
+import { FormattedMessage, useIntl } from 'react-intl'
+import { Image, SafeAreaView, TouchableOpacity } from 'react-native'
+import styled, { useTheme } from 'styled-components/native'
+import { ApolloError } from '@apollo/client'
+
 import {
   Typography,
   Heading,
@@ -5,21 +11,14 @@ import {
   ViewPager,
   EmptyCard,
   GeneralCardSkeleton,
-} from '@ui'
-
-import React from 'react'
-import { FormattedMessage, useIntl } from 'react-intl'
-import { Image, SafeAreaView, TouchableOpacity } from 'react-native'
-import styled, { useTheme } from 'styled-components/native'
-import { ApolloError } from '@apollo/client'
-
+  AirDiscountCard,
+} from '../../ui'
 import illustrationSrc from '../../assets/illustrations/le-jobs-s2.png'
 import { navigateTo } from '../../lib/deep-linking'
 import {
   GetAirDiscountQuery,
   useGetAirDiscountQuery,
 } from '../../graphql/types/schema'
-import { AirDiscountCard } from '@ui/lib/card/air-discount-card'
 import { screenWidth } from '../../utils/dimensions'
 
 const Host = styled.View`
@@ -75,6 +74,7 @@ const AirDiscountModule = React.memo(
     )
 
     const count = discounts?.length ?? 0
+    const viewPagerItemWidth = screenWidth - theme.spacing[2] * 4
 
     const items = discounts?.slice(0, 3).map(({ discountCode, user }) => (
       <AirDiscountCard
@@ -92,7 +92,7 @@ const AirDiscountModule = React.memo(
         style={
           count > 1
             ? {
-                width: screenWidth - theme.spacing[2] * 4,
+                width: viewPagerItemWidth,
                 marginLeft: theme.spacing[2],
               }
             : {
@@ -151,7 +151,9 @@ const AirDiscountModule = React.memo(
                 />
               )}
               {count === 1 && items}
-              {count >= 2 && <ViewPager>{items}</ViewPager>}
+              {count >= 2 && (
+                <ViewPager itemWidth={viewPagerItemWidth}>{items}</ViewPager>
+              )}
             </>
           )}
         </Host>

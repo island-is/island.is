@@ -43,6 +43,11 @@ import { SignedUrl } from './models/signedUrl.model'
 import { UploadFileToCourtResponse } from './models/uploadFileToCourt.response'
 import { fileModuleConfig } from './file.config'
 
+interface CreateFile extends CreateFileDto {
+  defendantId?: string
+  civilClaimantId?: string
+}
+
 // File keys have the following format:
 // <uuid>/<uuid>/<filename>
 // As uuid-s have length 36, the filename starts at position 82 in the key.
@@ -143,12 +148,12 @@ export class FileService {
         courtDocumentFolder = CourtDocumentFolder.INDICTMENT_DOCUMENTS
         break
       case CaseFileCategory.COURT_RECORD:
-        courtDocumentFolder = CourtDocumentFolder.COURT_DOCUMENTS
-        break
       case CaseFileCategory.RULING:
         courtDocumentFolder = CourtDocumentFolder.COURT_DOCUMENTS
         break
       case CaseFileCategory.CASE_FILE:
+      case CaseFileCategory.PROSECUTOR_CASE_FILE:
+      case CaseFileCategory.DEFENDANT_CASE_FILE:
       case undefined:
       case null:
         courtDocumentFolder = CourtDocumentFolder.CASE_DOCUMENTS
@@ -337,7 +342,7 @@ export class FileService {
 
   async createCaseFile(
     theCase: Case,
-    createFile: CreateFileDto,
+    createFile: CreateFile,
     user: User,
   ): Promise<CaseFile> {
     const { key } = createFile
@@ -383,6 +388,25 @@ export class FileService {
         },
       ])
     }
+
+    if (
+      isIndictmentCase(theCase.type) &&
+      file.category &&
+      [
+        CaseFileCategory.PROSECUTOR_CASE_FILE,
+        CaseFileCategory.DEFENDANT_CASE_FILE,
+      ].includes(file.category)
+    ) {
+      await this.messageService.sendMessagesToQueue([
+        {
+          type: MessageType.DELIVERY_TO_COURT_CASE_FILE,
+          user,
+          caseId: theCase.id,
+          elementId: file.id,
+        },
+      ])
+    }
+
     return file
   }
 
@@ -405,6 +429,7 @@ export class FileService {
     theCase: Case,
     file: CaseFile,
     timeToLive?: number,
+    useFreshSession = false,
   ): Promise<string> {
     if (this.shouldGetConfirmedDocument(file, theCase)) {
       return this.awsS3Service.getConfirmedIndictmentCaseSignedUrl(
@@ -414,10 +439,16 @@ export class FileService {
         (content: Buffer) =>
           this.confirmIndictmentCaseFile(theCase, file, content),
         timeToLive,
+        useFreshSession,
       )
     }
 
-    return this.awsS3Service.getSignedUrl(theCase.type, file.key, timeToLive)
+    return this.awsS3Service.getSignedUrl(
+      theCase.type,
+      file.key,
+      timeToLive,
+      useFreshSession,
+    )
   }
 
   async getCaseFileSignedUrl(
@@ -559,6 +590,7 @@ export class FileService {
       theCase,
       file,
       this.config.robotS3TimeToLiveGet,
+      true,
     )
 
     return this.courtService

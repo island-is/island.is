@@ -41,6 +41,13 @@ export const comments = {
       description: 'Post comment failed message',
     },
   }),
+  unknownUser: defineMessages({
+    name: {
+      id: 'ojoi.application:comments.unknownUser.name',
+      defaultMessage: 'Óþekktur notandi',
+      description: 'Unknown user name',
+    },
+  }),
   dates: defineMessages({
     today: {
       id: 'ojoi.application:comments.dates.today',

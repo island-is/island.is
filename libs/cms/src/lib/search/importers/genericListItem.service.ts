@@ -2,10 +2,12 @@ import { MappedData } from '@island.is/content-search-indexer/types'
 import { logger } from '@island.is/logging'
 import { Injectable } from '@nestjs/common'
 import { Entry } from 'contentful'
+import { documentToPlainTextString } from '@contentful/rich-text-plain-text-renderer'
 import { ILink, IGenericListItem } from '../../generated/contentfulTypes'
 import { CmsSyncProvider, processSyncDataInput } from '../cmsSync.service'
 import { mapGenericListItem } from '../../models/genericListItem.model'
 import {
+  extractChildEntryIds,
   extractStringsFromObject,
   pruneNonSearchableSliceUnionFields,
 } from './utils'
@@ -32,11 +34,28 @@ export class GenericListItemSyncService
         try {
           const mapped = mapGenericListItem(entry)
 
-          const content = extractStringsFromObject(
-            mapped.cardIntro.map(pruneNonSearchableSliceUnionFields),
-            100,
-            2,
-          )
+          const contentSections: string[] = []
+
+          if (entry.fields.cardIntro) {
+            contentSections.push(
+              documentToPlainTextString(entry.fields.cardIntro),
+            )
+          }
+          if (mapped.content) {
+            contentSections.push(
+              extractStringsFromObject(
+                mapped.content.map(pruneNonSearchableSliceUnionFields),
+                100,
+                2,
+              ),
+            )
+          }
+
+          for (const tag of mapped.filterTags ?? []) {
+            contentSections.push(tag.title)
+          }
+
+          const content = contentSections.join(' ')
 
           const tags: MappedData['tags'] =
             mapped.filterTags?.map((tag) => ({
@@ -52,6 +71,15 @@ export class GenericListItemSyncService
           }
           if (mapped.slug) {
             tags.push({ type: 'slug', key: mapped.slug })
+          }
+
+          // Tag the document with the ids of its children so we can later look up what document a child belongs to
+          const childEntryIds = extractChildEntryIds(entry)
+          for (const id of childEntryIds) {
+            tags.push({
+              key: id,
+              type: 'hasChildEntryWithId',
+            })
           }
 
           return {

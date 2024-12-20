@@ -40,7 +40,13 @@ Sign into AWS
 
 ```bash
 aws sso login
+
 ```
+
+make sure these are set if testing s3 locally
+export AWS_ACCESS_KEY_ID=AWS_ACCESS_KEY_ID_EXAMPLE
+export AWS_SECRET_ACCESS_KEY=AWS_SECRET_ACCESS_KEY_EXAMPLE
+export AWS_SESSION_TOKEN=AWS_SESSION_TOKEN_EXAMPLE
 
 Then run application using this command
 

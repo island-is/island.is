@@ -87,6 +87,13 @@ export class EndorsementList extends Model {
 
   @ApiProperty()
   @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  ownerName?: string
+
+  @ApiProperty()
+  @Column({
     type: DataType.BOOLEAN,
     allowNull: false,
   })
@@ -118,4 +125,15 @@ export class EndorsementList extends Model {
   })
   @UpdatedAt
   readonly modified!: Date
+
+  @ApiProperty({
+    type: Number,
+    description: 'The number of endorsements in the list',
+  })
+  @Column({
+    type: DataType.INTEGER,
+    allowNull: false,
+    defaultValue: 0,
+  })
+  endorsementCount!: number
 }

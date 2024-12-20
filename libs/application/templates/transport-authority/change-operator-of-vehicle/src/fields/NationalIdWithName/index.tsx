@@ -56,12 +56,6 @@ export const NationalIdWithName: FC<
   let nationalIdFieldErrors: string | undefined
   if (errorMessage && nationalIdDefaultValue?.length === 0) {
     nationalIdFieldErrors = errorMessage
-  } else if (
-    kennitala.isValid(nationalIdInput) &&
-    !kennitala.isCompany(nationalIdInput) &&
-    kennitala.info(nationalIdInput).age < 18
-  ) {
-    nationalIdFieldErrors = formatMessage(error.minAgeNotFulfilled)
   } else if (!errorMessage) {
     nationalIdFieldErrors = getErrorViaPath(errors, nationaIdField)
   }

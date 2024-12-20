@@ -1,33 +1,41 @@
-import { Injectable } from '@nestjs/common'
 import { Auth, AuthMiddleware, type User } from '@island.is/auth-nest-tools'
-import { KeyOption, KeyOptionsManagementApi, DefaultApi } from '../../gen/fetch'
+import { Injectable } from '@nestjs/common'
+import {
+  FormDto,
+  FriggApi,
+  KeyOption,
+  OrganizationModel,
+  FormSubmitSuccessModel,
+  UserModel,
+} from '../../gen/fetch'
 
 @Injectable()
 export class FriggClientService {
-  constructor(
-    private readonly keyOptionsManagementApi: KeyOptionsManagementApi,
-    private readonly defaultApi: DefaultApi,
-  ) {}
+  constructor(private readonly friggApi: FriggApi) {}
 
-  private keyOptionsManagementApiWithAuth = (user: User) =>
-    this.keyOptionsManagementApi.withMiddleware(
-      new AuthMiddleware(user as Auth),
-    )
+  private friggApiWithAuth = (user: User) =>
+    this.friggApi.withMiddleware(new AuthMiddleware(user as Auth))
 
-  private defaultApiWithAuth = (user: User) =>
-    this.defaultApi.withMiddleware(new AuthMiddleware(user as Auth))
-
-  async getHealth(user: User): Promise<void> {
-    return this.defaultApiWithAuth(user).health()
-  }
-
-  async getAllKeyOptions(user: User, type: string): Promise<KeyOption[]> {
-    return this.keyOptionsManagementApiWithAuth(user).getAllKeyOptions({
-      type,
+  async getAllKeyOptions(
+    user: User,
+    type: string | undefined,
+  ): Promise<KeyOption[]> {
+    return await this.friggApiWithAuth(user).getAllKeyOptions({
+      type: type,
     })
   }
 
-  async getTypes(user: User): Promise<void> {
-    return this.keyOptionsManagementApiWithAuth(user).getTypes()
+  async getAllSchoolsByMunicipality(user: User): Promise<OrganizationModel[]> {
+    return await this.friggApiWithAuth(user).getAllSchoolsByMunicipality()
+  }
+
+  async getUserById(user: User, childNationalId: string): Promise<UserModel> {
+    return await this.friggApiWithAuth(user).getUserBySourcedId({
+      nationalId: childNationalId,
+    })
+  }
+
+  sendApplication(user: User, form: FormDto): Promise<FormSubmitSuccessModel> {
+    return this.friggApiWithAuth(user).submitForm({ formDto: form })
   }
 }

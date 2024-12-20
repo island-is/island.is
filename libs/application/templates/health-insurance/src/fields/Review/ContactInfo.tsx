@@ -1,4 +1,3 @@
-import React, { FC } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { formatText, getValueViaPath } from '@island.is/application/core'
 import {
@@ -10,16 +9,14 @@ import {
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { FieldDescription } from '@island.is/shared/form-fields'
-import { m } from '../../forms/messages'
+import { m } from '../../lib/messages/messages'
 import {
   ExternalDataNationalRegistry,
   ExternalDataUserProfile,
   ReviewFieldProps,
-} from '../../types'
+} from '../../utils/types'
 
-const ContactInfo: FC<React.PropsWithChildren<ReviewFieldProps>> = ({
-  application,
-}) => {
+export const ContactInfo = ({ application }: ReviewFieldProps) => {
   const { register } = useFormContext()
   const { formatMessage } = useLocale()
 
@@ -133,5 +130,3 @@ const ContactInfo: FC<React.PropsWithChildren<ReviewFieldProps>> = ({
     </Box>
   )
 }
-
-export default ContactInfo

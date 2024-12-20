@@ -39,3 +39,13 @@ export const serviceSetup = (): ServiceBuilder<'skilavottord-ws'> =>
       },
     })
     .grantNamespaces('application-system')
+    .resources({
+      limits: {
+        cpu: '400m',
+        memory: '512Mi',
+      },
+      requests: {
+        cpu: '40m',
+        memory: '256Mi',
+      },
+    })

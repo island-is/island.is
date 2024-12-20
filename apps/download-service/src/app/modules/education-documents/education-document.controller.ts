@@ -1,15 +1,3 @@
-import {
-  Body,
-  Controller,
-  Header,
-  Post,
-  Res,
-  Param,
-  UseGuards,
-} from '@nestjs/common'
-import { ApiOkResponse } from '@nestjs/swagger'
-import { Response } from 'express'
-import { ApiScope } from '@island.is/auth/scopes'
 import type { User } from '@island.is/auth-nest-tools'
 import {
   CurrentUser,
@@ -17,14 +5,17 @@ import {
   Scopes,
   ScopesGuard,
 } from '@island.is/auth-nest-tools'
-import { AuditService } from '@island.is/nest/audit'
-import { GetEducationGraduationDocumentDto } from './dto/getEducationGraduationDocument'
+import { ApiScope } from '@island.is/auth/scopes'
 import {
   UniversityCareersClientService,
   UniversityIdShort,
+  UniversityShortIdMap,
 } from '@island.is/clients/university-careers'
+import { AuditService } from '@island.is/nest/audit'
 import { Locale } from '@island.is/shared/types'
-import { UniversityShortIdMap } from '@island.is/clients/university-careers'
+import { Controller, Header, Param, Post, Res, UseGuards } from '@nestjs/common'
+import { ApiOkResponse } from '@nestjs/swagger'
+import { Response } from 'express'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(ApiScope.education)
@@ -48,16 +39,10 @@ export class EducationController {
     @Param('university') uni: UniversityIdShort,
     @CurrentUser()
     user: User,
-    @Body() resource: GetEducationGraduationDocumentDto,
     @Res() res: Response,
   ) {
-    const authUser: User = {
-      ...user,
-      authorization: `Bearer ${resource.__accessToken}`,
-    }
-
     const documentResponse = await this.universitiesApi.getStudentTrackPdf(
-      authUser,
+      user,
       parseInt(trackNumber),
       UniversityShortIdMap[uni],
       lang as Locale,
@@ -78,10 +63,10 @@ export class EducationController {
         'Content-Disposition',
         `inline; filename=${user.nationalId}-skoli-${UniversityShortIdMap[uni]}-brautskraning-${trackNumber}.pdf`,
       )
-      res.header('Content-Type: application/pdf')
-      res.header('Pragma: no-cache')
-      res.header('Cache-Control: no-cache')
-      res.header('Cache-Control: nmax-age=0')
+      res.header('Content-Type', 'application/pdf')
+      res.header('Pragma', 'no-cache')
+      res.header('Cache-Control', 'no-cache')
+      res.header('Cache-Control', 'nmax-age=0')
       return res.status(200).end(buffer)
     }
     return res.end()

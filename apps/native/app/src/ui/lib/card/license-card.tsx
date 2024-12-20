@@ -1,5 +1,3 @@
-import { Barcode } from '@ui/lib/barcode/barcode'
-import { Skeleton } from '@ui/lib/skeleton/skeleton'
 import React from 'react'
 import { FormattedDate, useIntl } from 'react-intl'
 import {
@@ -10,6 +8,9 @@ import {
   ViewStyle,
 } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
+
+import { Barcode } from '../barcode/barcode'
+import { Skeleton } from '../skeleton/skeleton'
 import { ExpirationProgressBar } from '../../../components/progress-bar/expiration-progress-bar'
 import { GenericLicenseType } from '../../../graphql/types/schema'
 import { isString } from '../../../utils/is-string'
@@ -33,6 +34,8 @@ import LogoAOSH from '../../assets/card/vinnueftirlitid-logo.png'
 import BackgroundVinnuvelar from '../../assets/card/vinnuvelar-bg.png'
 import { dynamicColor, theme } from '../../utils'
 import { font } from '../../utils/font'
+import { Typography } from '../typography/typography'
+import { screenWidth } from '../../../utils/dimensions'
 
 export const LICENSE_CARD_ROW_GAP = theme.spacing.p2
 
@@ -109,6 +112,12 @@ const ValidationWrap = styled.View`
   display: flex;
   flex-flow: row;
   margin-bottom: 4px;
+`
+
+const OfflineMessage = styled(Typography)`
+  padding: ${({ theme }) => theme.spacing[3]}px;
+  text-align: center;
+  max-width: 95%;
 `
 
 const Validation = styled.Text<{ color: string }>`
@@ -264,6 +273,7 @@ interface LicenseCardProps {
   logo?: ImageSourcePropType | string
   backgroundImage?: ImageSourcePropType
   backgroundColor?: string
+  showBarcodeOfflineMessage?: boolean
   barcode?: {
     value?: string | null
     loading?: boolean
@@ -281,6 +291,7 @@ export function LicenseCard({
   status,
   type,
   barcode,
+  showBarcodeOfflineMessage,
   ...props
 }: LicenseCardProps) {
   const theme = useTheme()
@@ -298,6 +309,10 @@ export function LicenseCard({
   const showBarcodeView =
     status === 'VALID' &&
     !!((barcode && barcode?.value) || (barcode?.loading && !barcode?.value))
+
+  const barcodeWidth =
+    screenWidth - theme.spacing[4] * 2 - theme.spacing.smallGutter * 2
+  const barcodeHeight = barcodeWidth / 3
 
   return (
     <Host>
@@ -381,6 +396,19 @@ export function LicenseCard({
               style={{ flex: 1 }}
             />
           )}
+        </BarcodeWrapper>
+      )}
+      {showBarcodeOfflineMessage && !showBarcodeView && (
+        <BarcodeWrapper minHeight={barcodeHeight}>
+          <BarcodeContainer
+            style={{ backgroundColor: 'rgba(255,255,255,0.4)' }}
+          >
+            <OfflineMessage variant="body3" style={{ opacity: 1 }}>
+              {intl.formatMessage({
+                id: 'walletPass.errorNotConnectedNoBarcode',
+              })}
+            </OfflineMessage>
+          </BarcodeContainer>
         </BarcodeWrapper>
       )}
     </Host>

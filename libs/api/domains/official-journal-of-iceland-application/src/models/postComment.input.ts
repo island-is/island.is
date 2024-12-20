@@ -1,8 +1,8 @@
-import { Field, InputType } from '@nestjs/graphql'
+import { Field, ID, InputType } from '@nestjs/graphql'
 
-@InputType('OfficialJournalOfIcelandApplicationPostCommentInput')
+@InputType('OJOIAPostCommentInput')
 export class PostCommentInput {
-  @Field(() => String, { description: 'Application ID' })
+  @Field(() => ID)
   id!: string
 
   @Field()

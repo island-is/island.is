@@ -34,7 +34,7 @@ export const Rejected: Form = buildForm({
       expandableDescription: (application: Application) => {
         const guardian = getValueViaPath(
           application.answers,
-          `${Routes.APPLICATIONINFORMATION}.firstGuardianName`,
+          `${Routes.FIRSTGUARDIANINFORMATION}.name`,
           '',
         ) as string
         return {

@@ -10,6 +10,7 @@ export enum ApiScope {
   internal = '@island.is/internal',
   internalProcuring = '@island.is/internal:procuring',
   meDetails = '@island.is/me:details',
+  lawAndOrder = '@island.is/law-and-order',
   licenses = '@island.is/licenses',
   licensesVerify = '@island.is/licenses:verify',
   company = '@island.is/company',

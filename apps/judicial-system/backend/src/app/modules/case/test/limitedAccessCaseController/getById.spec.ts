@@ -1,6 +1,6 @@
 import { uuid } from 'uuidv4'
 
-import type { User } from '@island.is/judicial-system/types'
+import { type User, UserRole } from '@island.is/judicial-system/types'
 
 import { createTestingCaseModule } from '../createTestingCaseModule'
 
@@ -14,14 +14,18 @@ interface Then {
   error: Error
 }
 
-type GivenWhenThen = (caseId: string, theCase: Case) => Promise<Then>
+type GivenWhenThen = (
+  caseId: string,
+  theCase: Case,
+  user?: User,
+) => Promise<Then>
 
 describe('LimitedAccessCaseController - Get by id', () => {
   let givenWhenThen: GivenWhenThen
   const openedBeforeDate = randomDate()
   const openedNowDate = randomDate()
   const caseId = uuid()
-  const user = { id: uuid() } as User
+  const defaultUser = { id: uuid() } as User
 
   let mockCaseModel: typeof Case
 
@@ -42,7 +46,11 @@ describe('LimitedAccessCaseController - Get by id', () => {
     const mockFindOne = mockCaseModel.findOne as jest.Mock
     mockFindOne.mockResolvedValue(updatedCase)
 
-    givenWhenThen = async (caseId: string, theCase: Case) => {
+    givenWhenThen = async (
+      caseId: string,
+      theCase: Case,
+      user = defaultUser,
+    ) => {
       const then = {} as Then
 
       try {
@@ -79,11 +87,11 @@ describe('LimitedAccessCaseController - Get by id', () => {
 
   describe('case exists and has not been opened by defender before', () => {
     const theCase = { id: caseId } as Case
-
+    const user = { ...defaultUser, role: UserRole.DEFENDER } as User
     let then: Then
 
     beforeEach(async () => {
-      then = await givenWhenThen(caseId, theCase)
+      then = await givenWhenThen(caseId, theCase, user)
     })
 
     it('should update openedByDefender and return case', () => {

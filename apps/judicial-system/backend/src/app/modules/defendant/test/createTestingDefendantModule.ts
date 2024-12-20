@@ -10,31 +10,39 @@ import {
 } from '@island.is/judicial-system/auth'
 import { MessageService } from '@island.is/judicial-system/message'
 
-import { CaseService, PdfService } from '../../case'
+import { CaseService } from '../../case'
 import { CourtService } from '../../court'
 import { UserService } from '../../user'
+import { CivilClaimantController } from '../civilClaimant.controller'
+import { CivilClaimantService } from '../civilClaimant.service'
 import { DefendantController } from '../defendant.controller'
 import { DefendantService } from '../defendant.service'
 import { InternalDefendantController } from '../internalDefendant.controller'
+import { LimitedAccessDefendantController } from '../limitedAccessDefendant.controller'
+import { CivilClaimant } from '../models/civilClaimant.model'
 import { Defendant } from '../models/defendant.model'
+import { DefendantEventLog } from '../models/defendantEventLog.model'
 
 jest.mock('@island.is/judicial-system/message')
 jest.mock('../../user/user.service')
 jest.mock('../../court/court.service')
 jest.mock('../../case/case.service')
-jest.mock('../../case/pdf.service')
 
 export const createTestingDefendantModule = async () => {
   const defendantModule = await Test.createTestingModule({
     imports: [ConfigModule.forRoot({ load: [sharedAuthModuleConfig] })],
-    controllers: [DefendantController, InternalDefendantController],
+    controllers: [
+      DefendantController,
+      LimitedAccessDefendantController,
+      InternalDefendantController,
+      CivilClaimantController,
+    ],
     providers: [
       SharedAuthModule,
       MessageService,
       UserService,
       CourtService,
       CaseService,
-      PdfService,
       {
         provide: LOGGER_PROVIDER,
         useValue: {
@@ -54,7 +62,30 @@ export const createTestingDefendantModule = async () => {
           findByPk: jest.fn(),
         },
       },
+      {
+        provide: getModelToken(CivilClaimant),
+        useValue: {
+          findOne: jest.fn(),
+          findAll: jest.fn(),
+          create: jest.fn(),
+          update: jest.fn(),
+          destroy: jest.fn(),
+          findByPk: jest.fn(),
+        },
+      },
+      {
+        provide: getModelToken(DefendantEventLog),
+        useValue: {
+          findOne: jest.fn(),
+          findAll: jest.fn(),
+          create: jest.fn(),
+          update: jest.fn(),
+          destroy: jest.fn(),
+          findByPk: jest.fn(),
+        },
+      },
       DefendantService,
+      CivilClaimantService,
     ],
   }).compile()
 
@@ -63,8 +94,6 @@ export const createTestingDefendantModule = async () => {
   const userService = defendantModule.get<UserService>(UserService)
 
   const courtService = defendantModule.get<CourtService>(CourtService)
-
-  const pdfService = defendantModule.get<PdfService>(PdfService)
 
   const defendantModel = await defendantModule.resolve<typeof Defendant>(
     getModelToken(Defendant),
@@ -81,16 +110,35 @@ export const createTestingDefendantModule = async () => {
       InternalDefendantController,
     )
 
+  const limitedAccessDefendantController =
+    defendantModule.get<LimitedAccessDefendantController>(
+      LimitedAccessDefendantController,
+    )
+
+  const civilClaimantModel = await defendantModule.resolve<
+    typeof CivilClaimant
+  >(getModelToken(CivilClaimant))
+
+  const civilClaimantService =
+    defendantModule.get<CivilClaimantService>(CivilClaimantService)
+
+  const civilClaimantController = defendantModule.get<CivilClaimantController>(
+    CivilClaimantController,
+  )
+
   defendantModule.close()
 
   return {
     messageService,
     userService,
     courtService,
-    pdfService,
     defendantModel,
     defendantService,
     defendantController,
     internalDefendantController,
+    limitedAccessDefendantController,
+    civilClaimantService,
+    civilClaimantController,
+    civilClaimantModel,
   }
 }

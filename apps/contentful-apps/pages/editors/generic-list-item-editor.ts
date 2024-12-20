@@ -1,3 +1,3 @@
-import { GenericListItemEditor } from '../../components/lists/GenericListItemEditor/GenericListItemEditor'
+import { GenericListItemEditor } from '../../components/editors/lists/GenericListItemEditor/GenericListItemEditor'
 
 export default GenericListItemEditor

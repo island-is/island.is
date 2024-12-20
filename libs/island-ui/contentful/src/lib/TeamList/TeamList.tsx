@@ -159,18 +159,20 @@ const TeamMemberAccordionList = ({
             labelUse="div"
           >
             <GridRow rowGap={1}>
-              <GridColumn span={['1/1', '1/1', '1/1', '1/1', '3/12']}>
-                <TeamMemberImageUrlProvider
-                  member={member}
-                  consumer={(imageUrl) => (
-                    <img
-                      src={imageUrl}
-                      className={styles.teamMemberImage}
-                      alt=""
-                    />
-                  )}
-                />
-              </GridColumn>
+              {member.image?.url && (
+                <GridColumn span={['1/1', '1/1', '1/1', '1/1', '3/12']}>
+                  <TeamMemberImageUrlProvider
+                    member={member}
+                    consumer={(imageUrl) => (
+                      <img
+                        src={imageUrl}
+                        className={styles.teamMemberImage}
+                        alt=""
+                      />
+                    )}
+                  />
+                </GridColumn>
+              )}
               <GridColumn span={['1/1', '1/1', '1/1', '1/1', '9/12']}>
                 <Stack space={1}>
                   {member.email && (

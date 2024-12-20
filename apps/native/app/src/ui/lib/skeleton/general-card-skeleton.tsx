@@ -18,7 +18,7 @@ export const GeneralCardSkeleton = ({ height }: { height: number }) => {
       overlayOpacity={1}
       height={height}
       style={{
-        borderRadius: theme.spacing[2],
+        borderRadius: 16,
         marginBottom: theme.spacing[2],
       }}
     />

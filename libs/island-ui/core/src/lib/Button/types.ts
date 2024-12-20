@@ -33,7 +33,7 @@ type UtilityButtonType = {
 
 export type ButtonSizes = Exclude<
   keyof typeof styles.size,
-  'utility' | 'textSmall'
+  'utility' | 'textSmall' | 'text'
 >
 
 export type ButtonTypes =

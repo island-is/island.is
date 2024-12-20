@@ -42,6 +42,7 @@ interface Props {
   inputMode?: InputProps['inputMode']
   max?: number
   min?: number
+  step?: string
 }
 
 interface ChildParams {
@@ -88,6 +89,7 @@ export const InputController = forwardRef(
       inputMode,
       max,
       min,
+      step,
     } = props
     const renderChildInput = (c: ChildParams & TestSupport) => {
       const { value, onChange, ...props } = c
@@ -246,6 +248,7 @@ export const InputController = forwardRef(
             ref={ref}
             min={min}
             max={max}
+            step={step}
             {...props}
           />
         )

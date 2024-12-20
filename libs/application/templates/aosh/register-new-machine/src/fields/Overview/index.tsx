@@ -4,7 +4,7 @@ import {
   FieldTypes,
 } from '@island.is/application/types'
 import { FC } from 'react'
-import { AlertMessage, Box } from '@island.is/island-ui/core'
+import { Box } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { ReviewGroup } from '../components/ReviewGroup'
 import { KeyValueFormField } from '@island.is/application/ui-fields'
@@ -15,7 +15,6 @@ import {
   overview,
 } from '../../lib/messages'
 import {
-  canMaybeRegisterToTraffic,
   canRegisterToTraffic,
   getBasicMachineInformation,
   getPersonInformationForOverview,
@@ -29,7 +28,7 @@ export const Overview: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   ...props
 }) => {
   const { application, goToScreen } = props
-  const { formatMessage } = useLocale()
+  const { formatMessage, lang } = useLocale()
 
   const onClick = (page: string) => {
     if (goToScreen) goToScreen(page)
@@ -67,7 +66,7 @@ export const Overview: FC<React.PropsWithChildren<FieldBaseProps>> = ({
               label: information.labels.owner.title,
               value: isOwnerOtherThanImporter(application.answers)
                 ? getPersonInformationForOverview(
-                    'importerInformation.owner',
+                    'ownerInformation.owner',
                     application.answers,
                     formatMessage,
                   )
@@ -115,6 +114,7 @@ export const Overview: FC<React.PropsWithChildren<FieldBaseProps>> = ({
             value: getBasicMachineInformation(
               application.answers,
               formatMessage,
+              lang,
             ),
           }}
         />
@@ -133,7 +133,11 @@ export const Overview: FC<React.PropsWithChildren<FieldBaseProps>> = ({
             component: FieldComponents.KEY_VALUE,
             title: '',
             label: machine.labels.technicalMachineInformation.overviewTitle,
-            value: getTechnicalInformation(application.answers),
+            value: getTechnicalInformation(
+              application.answers,
+              formatMessage,
+              lang,
+            ),
           }}
         />
       </ReviewGroup>
@@ -159,14 +163,6 @@ export const Overview: FC<React.PropsWithChildren<FieldBaseProps>> = ({
             }}
           />
         </ReviewGroup>
-      )}
-
-      {canMaybeRegisterToTraffic(application.answers) && (
-        <AlertMessage
-          type="warning"
-          title={formatMessage(overview.labels.alertMessageTitle)}
-          message={formatMessage(overview.labels.alertMessageMessage)}
-        />
       )}
     </Box>
   )

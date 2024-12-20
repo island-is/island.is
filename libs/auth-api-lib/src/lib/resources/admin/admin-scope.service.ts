@@ -27,7 +27,10 @@ import { User } from '@island.is/auth-nest-tools'
 import { AdminPortalScope } from '@island.is/auth/scopes'
 import { AuthDelegationType } from '@island.is/shared/types'
 import { ApiScopeDelegationType } from '../models/api-scope-delegation-type.model'
-import { filterPersonalRepresentative } from '../utils/personalRepresentativeFilter'
+import {
+  delegationTypeSuperUserFilter,
+  SUPER_USER_DELEGATION_TYPES,
+} from '../utils/filters'
 
 /**
  * This is a service that is used to access the admin scopes
@@ -165,7 +168,7 @@ export class AdminScopeService {
         // Remove defined super admin fields
         ...omit(input, superUserScopeFields),
         // Remove personal representative from delegation types since it is not allowed for non-super admins
-        supportedDelegationTypes: filterPersonalRepresentative(
+        supportedDelegationTypes: delegationTypeSuperUserFilter(
           input.supportedDelegationTypes ?? [],
         ),
       }
@@ -409,14 +412,11 @@ export class AdminScopeService {
       ...(input.removedDelegationTypes ?? []),
     ]
 
-    const isPersonalRepresentativeUpdate = allDelegationTypes.some(
-      (delegationType) =>
-        delegationType.startsWith(
-          `${AuthDelegationType.PersonalRepresentative}:`,
-        ),
+    const hasSuperUserDelegationType = allDelegationTypes.some(
+      (delegationType) => SUPER_USER_DELEGATION_TYPES.includes(delegationType),
     )
 
-    if (isPersonalRepresentativeUpdate && !isSuperUser) {
+    if (!isSuperUser && hasSuperUserDelegationType) {
       return false
     }
 
@@ -458,7 +458,11 @@ export class AdminScopeService {
       AuthDelegationType.Custom,
     )
 
-    // create delegation type rows
+    if (allowExplicitDelegationGrant) {
+      delegationTypes.push(AuthDelegationType.GeneralMandate)
+    }
+
+    // add delegation type rows
     await Promise.all(
       delegationTypes.map((delegationType) =>
         this.apiScopeDelegationType.upsert(
@@ -530,6 +534,10 @@ export class AdminScopeService {
     )
       ? false
       : undefined
+
+    if (delegationTypes.includes(AuthDelegationType.Custom)) {
+      delegationTypes.push(AuthDelegationType.GeneralMandate)
+    }
 
     // remove delegation type rows
     await Promise.all(

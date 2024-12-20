@@ -36,6 +36,12 @@ import {
 } from '@island.is/application/templates/social-insurance-administration/pension-supplement'
 
 import {
+  ChildInformation,
+  getApplicationAnswers as getDBApplicationAnswers,
+  getApplicationExternalData as getDBApplicationExternalData,
+} from '@island.is/application/templates/social-insurance-administration/death-benefits'
+
+import {
   INCOME,
   getApplicationAnswers as getIPApplicationAnswers,
   getApplicationExternalData as getIPApplicationExternalData,
@@ -303,6 +309,77 @@ export const transformApplicationToPensionSupplementDTO = (
   }
 
   return pensionSupplementDTO
+}
+
+export const transformApplicationToDeathBenefitsDTO = (
+  application: Application,
+  uploads: Attachment[],
+): ApplicationDTO => {
+  const {
+    applicantPhonenumber,
+    comment,
+    bankAccountType,
+    bank,
+    iban,
+    swift,
+    bankName,
+    bankAddress,
+    currency,
+    paymentInfo,
+    personalAllowance,
+    personalAllowanceUsage,
+    spouseAllowance,
+    spouseAllowanceUsage,
+    taxLevel,
+    deceasedSpouseNationalId,
+  } = getDBApplicationAnswers(application.answers)
+  const { bankInfo, userProfileEmail, children } = getDBApplicationExternalData(
+    application.externalData,
+  )
+
+  const deathBenefitsDTO: ApplicationDTO = {
+    deceasedNationalId: deceasedSpouseNationalId,
+    childrenNationalIds: children.map(({ nationalId }) => nationalId),
+    spouseTaxCardUsage: {
+      usecard: spouseAllowance === YES,
+      ratio: YES === spouseAllowance ? +spouseAllowanceUsage : 0,
+    },
+    applicantInfo: {
+      email: userProfileEmail,
+      phonenumber: applicantPhonenumber,
+    },
+    period: {
+      year: new Date().getFullYear(),
+      month: new Date().getMonth() + 1,
+    },
+    comment,
+    applicationId: application.id,
+    uploads,
+    ...(!shouldNotUpdateBankAccount(bankInfo, paymentInfo) && {
+      ...((bankAccountType === undefined ||
+        bankAccountType === BankAccountType.ICELANDIC) && {
+        domesticBankInfo: {
+          bank: formatBank(bank),
+        },
+      }),
+      ...(bankAccountType === BankAccountType.FOREIGN && {
+        foreignBankInfo: {
+          iban: iban.replace(/[\s]+/g, ''),
+          swift: swift.replace(/[\s]+/g, ''),
+          foreignBankName: bankName,
+          foreignBankAddress: bankAddress,
+          foreignCurrency: currency,
+        },
+      }),
+    }),
+    taxInfo: {
+      personalAllowance: YES === personalAllowance,
+      personalAllowanceUsage:
+        YES === personalAllowance ? +personalAllowanceUsage : 0,
+      taxLevel: +taxLevel,
+    },
+  }
+  return deathBenefitsDTO
 }
 
 export const transformApplicationToIncomePlanDTO = (

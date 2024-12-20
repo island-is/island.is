@@ -1,4 +1,7 @@
-const MILLISECONDS_TO_EXPIRY = 28 * 24 * 60 * 60 * 1000
+const DAYS_TO_MILLISECONDS = 24 * 60 * 60 * 1000
+export const VERDICT_APPEAL_WINDOW_DAYS = 28
+export const FINE_APPEAL_WINDOW_DAYS = 3
+const getDays = (days: number) => days * DAYS_TO_MILLISECONDS
 
 /*
   This function takes an array of verdict info tuples:
@@ -10,6 +13,7 @@ const MILLISECONDS_TO_EXPIRY = 28 * 24 * 60 * 60 * 1000
 */
 export const getIndictmentVerdictAppealDeadlineStatus = (
   verdictInfo?: [boolean, Date | undefined][],
+  isFine?: boolean,
 ): [boolean, boolean] => {
   if (
     !verdictInfo ||
@@ -32,5 +36,10 @@ export const getIndictmentVerdictAppealDeadlineStatus = (
     new Date(0),
   )
 
-  return [true, Date.now() > newestViewDate.getTime() + MILLISECONDS_TO_EXPIRY]
+  return [
+    true,
+    Date.now() >
+      newestViewDate.getTime() +
+        getDays(isFine ? FINE_APPEAL_WINDOW_DAYS : VERDICT_APPEAL_WINDOW_DAYS),
+  ]
 }

@@ -1,10 +1,11 @@
-import { Box, Button } from '@island.is/island-ui/core'
+import { Box, Button, Icon } from '@island.is/island-ui/core'
 import { useApplication } from '../../hooks/useUpdateApplication'
 import { InputFields } from '../../lib/types'
 import { MINIMUM_REGULAR_SIGNATURE_MEMBER_COUNT } from '../../lib/constants'
 import set from 'lodash/set'
 import * as styles from './Signatures.css'
 import { getRegularAnswers } from '../../lib/utils'
+import { useFormContext } from 'react-hook-form'
 
 type Props = {
   applicationId: string
@@ -20,6 +21,8 @@ export const RemoveRegularMember = ({
   const { updateApplication, application, isLoading } = useApplication({
     applicationId,
   })
+
+  const { setValue } = useFormContext()
 
   const onRemoveMember = () => {
     const { currentAnswers, signature } = getRegularAnswers(application.answers)
@@ -45,19 +48,21 @@ export const RemoveRegularMember = ({
           updatedRegularSignature,
         )
 
+        setValue(InputFields.signature.regular, updatedRegularSignature)
+
         updateApplication(updatedAnswers)
       }
     }
   }
 
   return (
-    <Box className={styles.removeInputGroup}>
+    <Box display="flex" flexDirection="column" justifyContent="flexEnd">
       <Button
-        disabled={memberIndex < MINIMUM_REGULAR_SIGNATURE_MEMBER_COUNT}
         loading={isLoading}
         variant="utility"
         icon="trash"
         iconType="outline"
+        disabled={memberIndex < MINIMUM_REGULAR_SIGNATURE_MEMBER_COUNT}
         onClick={() => onRemoveMember()}
       />
     </Box>

@@ -7,13 +7,16 @@ set -euo pipefail
 : "${TEST_PROJECT:=everything}"
 : "${TEST_RESULTS_S3:=}"
 : "${TEST_FILTER:=$*}"
+: "${DD_ENV:=ci}"
+: "${DD_SERVICE:=system-e2e}"
+NODE_OPTIONS="${NODE_OPTIONS:-} -r dd-trace/ci/init"
 
 if [[ "$*" =~ --project ]]; then
   TEST_PROJECT="$(echo "$*" | grep -oP -- '--project[= ](\S+)')"
   TEST_PROJECT="${TEST_PROJECT##--project?}"
 fi
 
-export TEST_PROJECT TEST_ENVIRONMENT TEST_TYPE TEST_RESULTS_S3 TEST_FILTER
+export TEST_PROJECT TEST_ENVIRONMENT TEST_TYPE TEST_RESULTS_S3 TEST_FILTER DD_ENV DD_SERVICE NODE_OPTIONS
 
 DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)"
 
@@ -21,6 +24,8 @@ echo "Current test environment: ${TEST_ENVIRONMENT}"
 echo "Playwright args: $*"
 echo "Playwright project: $TEST_PROJECT"
 echo "Playwright version: $(yarn playwright --version)"
+echo "Node version: $(node --version)"
+echo "Node options: $NODE_OPTIONS"
 
 TEST_EXIT_CODE=0
 yarn playwright test -c src --project="$TEST_PROJECT" "$@" || TEST_EXIT_CODE=$?

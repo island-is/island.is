@@ -20,7 +20,7 @@ export class EmailSignup {
   formFields?: FormField[]
 
   @Field({ nullable: true })
-  signupType?: 'mailchimp' | 'zenter'
+  signupType?: 'mailchimp' | 'zenter' | 'campaign monitor'
 
   @Field(() => GraphQLJSON, { nullable: true })
   configuration?: Record<string, unknown>

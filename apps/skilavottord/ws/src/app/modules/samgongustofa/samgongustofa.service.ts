@@ -347,23 +347,49 @@ export class SamgongustofaService {
       )
 
       if (result.status === 200) {
-        // Get the latest registered traffic data
-        const traffic = Object.values(result.data).reduce(
-          (prev: Traffic, current: Traffic) =>
-            new Date(prev.useDate) > new Date(current.useDate) ? prev : current,
-          {} as Traffic,
-        ) as Traffic
+        if (result.data.length) {
+          // Get the latest registered traffic data
+          const traffic = Object.values(result.data).reduce(
+            (prev: Traffic, current: Traffic) =>
+              new Date(prev.useDate) > new Date(current.useDate)
+                ? prev
+                : current,
+            {} as Traffic,
+          ) as Traffic
 
-        logger.info(
-          `car-recycling: Got traffic data for ${getShortPermno(permno)}`,
-          {
-            outInStatus: traffic.outInStatus,
-            useStatus: traffic.useStatus,
-            useStatusName: traffic.useStatusName,
-          },
+          logger.info(
+            `car-recycling: Got traffic data for ${getShortPermno(permno)}`,
+            {
+              permno: getShortPermno(traffic.permno),
+              outInStatus: traffic.outInStatus,
+              useStatus: traffic.useStatus,
+              useStatusName: traffic.useStatusName,
+            },
+          )
+
+          //
+          if (!traffic.outInStatus) {
+            logger.warn(
+              `car-recycling: No traffic data being returned for ${getShortPermno(
+                permno,
+              )}`,
+              { dataFromServer: result.data },
+            )
+          }
+
+          return traffic
+        }
+
+        logger.warn(
+          `car-recycling: No traffic data found for ${getShortPermno(permno)}`,
         )
 
-        return traffic
+        return {
+          permno,
+          outInStatus: '',
+          useStatus: '',
+          useStatusName: '',
+        } as Traffic
       }
 
       throw new Error(

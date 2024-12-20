@@ -16,6 +16,7 @@ interface Props {
   customId?: string
   customNationalIdLabel?: string
   customNameLabel?: string
+  needsAgeValidation?: boolean
   onNationalIdChange?: (s: string) => void
   onNameChange?: (s: string) => void
   nationalIdDefaultValue?: string
@@ -30,6 +31,7 @@ export const NationalIdWithName: FC<
   customId = '',
   customNationalIdLabel = '',
   customNameLabel = '',
+  needsAgeValidation = true,
   field,
   application,
   onNationalIdChange,
@@ -49,6 +51,7 @@ export const NationalIdWithName: FC<
   const [nationalIdInput, setNationalIdInput] = useState('')
   const nameField = `${usedId}.name`
   const nationaIdField = `${usedId}.nationalId`
+
   const nameFieldErrors = errorMessage
     ? nameDefaultValue?.length === 0
       ? errorMessage
@@ -61,6 +64,7 @@ export const NationalIdWithName: FC<
   } else if (
     kennitala.isValid(nationalIdInput) &&
     !kennitala.isCompany(nationalIdInput) &&
+    needsAgeValidation &&
     kennitala.info(nationalIdInput).age < 18
   ) {
     nationalIdFieldErrors = formatMessage(error.minAgeNotFulfilled)

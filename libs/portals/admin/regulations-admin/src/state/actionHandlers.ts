@@ -135,6 +135,10 @@ export const actionHandlers: {
     }
   },
 
+  SET_MINISTRY: (state, { value }) => {
+    updateFieldValue(state.draft.ministry, value || undefined)
+  },
+
   SET_IMPACT: (state, { impactId }) => {
     if (impactId) {
       Object.entries(state.draft.impacts).forEach(([key, impacts]) => {

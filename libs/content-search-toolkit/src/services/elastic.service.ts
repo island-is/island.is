@@ -42,6 +42,9 @@ type RankResultMap<T extends string> = Record<string, RankEvaluationResponse<T>>
 
 const { elastic } = environment
 
+const INITIAL_DELAY = 500
+const MAX_RETRY_COUNT = 3
+
 @Injectable()
 export class ElasticService {
   private client: Client | null = null
@@ -65,7 +68,7 @@ export class ElasticService {
   }
 
   // this can partially succeed
-  async bulk(index: string, documents: SyncRequest, refresh = false) {
+  async bulk(index: string, documents: SyncRequest) {
     logger.info('Processing documents', {
       index,
       added: documents.add.length,
@@ -103,37 +106,53 @@ export class ElasticService {
       return false
     }
 
-    await this.bulkRequest(index, requests, refresh)
+    await this.bulkRequest(index, requests)
   }
 
-  async bulkRequest(
-    index: string,
-    requests: Record<string, unknown>[],
-    refresh = false,
-  ) {
+  async bulkRequest(index: string, requests: Record<string, unknown>[]) {
+    const chunkSize = 14
+    let delay = INITIAL_DELAY
+    let retries = MAX_RETRY_COUNT
+
     try {
-      // elasticsearch does not like big requests (above 5mb) so we limit the size to X entries just in case
       const client = await this.getClient()
 
-      let requestChunk = getValidBulkRequestChunk(requests)
+      // elasticsearch does not like big requests (above 5mb) so we limit the size to X entries just in case
+      let requestChunk = getValidBulkRequestChunk(requests, chunkSize)
 
       while (requestChunk.length) {
-        // wait for request b4 continuing
-        const response = await client.bulk({
-          index: index,
-          body: requestChunk,
-          refresh: refresh ? 'true' : undefined,
-        })
-
-        // not all errors are thrown log if the response has any errors
-        if (response.body.errors) {
-          // Filter HUGE request object
-          filterDoc(response)
-          logger.error('Failed to import some documents in bulk import', {
-            response,
+        try {
+          const response = await client.bulk({
+            index: index,
+            body: requestChunk,
           })
+
+          // not all errors are thrown log if the response has any errors
+          if (response.body.errors) {
+            // Filter HUGE request object
+            filterDoc(response)
+            logger.error('Failed to import some documents in bulk import', {
+              response,
+            })
+          }
+          requestChunk = getValidBulkRequestChunk(requests, chunkSize)
+          delay = INITIAL_DELAY
+          retries = MAX_RETRY_COUNT
+        } catch (e) {
+          if (e?.statusCode === 429 && retries > 0) {
+            logger.info('Retrying Elasticsearch bulk request...', {
+              retriesLeft: retries - 1,
+              delay,
+            })
+            await new Promise((resolve) => {
+              setTimeout(resolve, delay)
+            })
+            delay *= 2
+            retries -= 1
+          } else {
+            throw e
+          }
         }
-        requestChunk = getValidBulkRequestChunk(requests)
       }
 
       return true

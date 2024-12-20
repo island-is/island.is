@@ -260,6 +260,15 @@ export class ApplicationAdminStatisticsSerializer
   }
 
   async serializeArray(applications: ApplicationsStatistics[], locale: Locale) {
-    return Promise.all(applications.map((item) => this.serialize(item, locale)))
+    return (
+      await Promise.allSettled(
+        applications.map((item) => this.serialize(item, locale)),
+      )
+    )
+      .filter(
+        (item): item is PromiseFulfilledResult<Record<string, any>> =>
+          item.status === 'fulfilled',
+      )
+      .map((item) => item.value)
   }
 }

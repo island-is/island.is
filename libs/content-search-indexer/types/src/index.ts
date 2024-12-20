@@ -31,6 +31,7 @@ export interface SyncOptions {
   syncType: 'full' | 'fromLast' | 'initialize'
   elasticIndex?: string
   nextPageToken?: string
+  folderHash?: string
 }
 
 export interface SyncResponse<PostSyncOptionsType = any> {
@@ -41,6 +42,7 @@ export interface SyncResponse<PostSyncOptionsType = any> {
 }
 
 export interface ContentSearchImporter<postSyncOptions = any> {
+  getNextSyncToken?: (syncType: SyncOptions['syncType']) => Promise<string>
   doSync: (
     options: SyncOptions,
   ) => Promise<SyncResponse<postSyncOptions> | null>

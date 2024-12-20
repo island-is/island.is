@@ -258,7 +258,15 @@ export class NationalRegistryService {
   }
 
   async getRelations(authUser: AuthUser): Promise<Array<string>> {
-    return this.personApi.getCustodyChildren(authUser)
+    try {
+      return this.personApi.getCustodyChildren(authUser)
+    } catch (e) {
+      this.logger.info('getRelations custodychildren not successful', {
+        category: 'ads-backend',
+        e,
+      })
+      throw e
+    }
   }
 
   async getCustodians(
@@ -298,6 +306,9 @@ export class NationalRegistryService {
     const response = await this.personApi.getIndividual(nationalId)
 
     if (!response) {
+      this.logger.info('getUser individual not found', {
+        category: 'ads-backend',
+      })
       return null
     }
 

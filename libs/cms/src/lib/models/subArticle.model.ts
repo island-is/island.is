@@ -5,6 +5,7 @@ import { ISubArticle } from '../generated/contentfulTypes'
 import { mapDocument, SliceUnion } from '../unions/slice.union'
 import { ArticleReference, mapArticleReference } from './articleReference'
 import { EmbeddedVideo, mapEmbeddedVideo } from './embeddedVideo.model'
+import { mapStepper, Stepper } from './stepper.model'
 
 @ObjectType()
 export class SubArticle {
@@ -28,6 +29,9 @@ export class SubArticle {
 
   @CacheField(() => EmbeddedVideo, { nullable: true })
   signLanguageVideo?: EmbeddedVideo | null
+
+  @CacheField(() => Stepper, { nullable: true })
+  stepper?: Stepper | null
 }
 
 export const mapSubArticle = ({
@@ -52,5 +56,6 @@ export const mapSubArticle = ({
     signLanguageVideo: fields.signLanguageVideo
       ? mapEmbeddedVideo(fields.signLanguageVideo)
       : null,
+    stepper: fields.stepper ? mapStepper(fields.stepper) : null,
   }
 }

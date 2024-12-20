@@ -59,7 +59,7 @@ export const MachineAnswersSchema = z.object({
       },
       { path: ['phone'] },
     ),
-  approveExternalData: z.boolean(),
+  approveExternalData: z.boolean().refine((v) => v),
   location: z
     .object({
       address: z.string().optional(),

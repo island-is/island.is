@@ -17,4 +17,9 @@ export const indictment = defineMessages({
     defaultMessage: 'ÁKÆRA',
     description: 'Notaður sem heading á ákæru PDF',
   },
+  civilDemandsHeading: {
+    id: 'judicial.system.backend:pdf.indictment.civil_demands_heading',
+    defaultMessage: 'Einkaréttarkrafa:',
+    description: 'Notaður sem titill á einkaréttarkröfu í ákæru PDF',
+  },
 })

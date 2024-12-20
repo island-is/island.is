@@ -15,6 +15,7 @@ import {
   numberOfLinks,
   removeEntryHyperlinkFields,
   pruneNonSearchableSliceUnionFields,
+  extractChildEntryIds,
 } from './utils'
 
 interface MetaData {
@@ -180,6 +181,14 @@ export class ArticleSyncService implements CmsSyncProvider<IArticle> {
           const processEntryCount =
             (hasMainProcessEntry ? 1 : 0) + numberOfProcessEntries(mapped.body)
 
+          // Tag the document with the ids of its children so we can later look up what document a child belongs to
+          const childEntryIds = extractChildEntryIds(entry)
+
+          const keywords = mapped.keywords ?? []
+          if (mapped.intro) {
+            keywords.push(mapped.intro)
+          }
+
           return {
             _id: mapped.id,
             title: mapped.title,
@@ -195,6 +204,10 @@ export class ArticleSyncService implements CmsSyncProvider<IArticle> {
             ]),
             response: JSON.stringify({ ...mapped, typename: 'Article' }),
             tags: [
+              ...childEntryIds.map((id) => ({
+                key: id,
+                type: 'hasChildEntryWithId',
+              })),
               {
                 key: entry.fields?.group?.fields?.slug ?? '',
                 value: entry.fields?.group?.fields?.title,
@@ -242,6 +255,11 @@ export class ArticleSyncService implements CmsSyncProvider<IArticle> {
               ...contentfulTags.map((tag) => ({
                 key: tag,
                 type: 'contentfultag',
+              })),
+              ...keywords.map((keyword) => ({
+                key: keyword,
+                value: keyword,
+                type: 'keyword',
               })),
             ],
             dateCreated: entry.sys.createdAt,

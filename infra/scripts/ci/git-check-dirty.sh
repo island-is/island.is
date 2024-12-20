@@ -34,4 +34,3 @@ if [[ $(git diff --stat "$abs_path") != '' ]]; then
 else
   echo "found no unstaged files from $action, nothing to commit"
 fi
-

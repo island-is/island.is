@@ -27,12 +27,20 @@ query Cases {
       noNationalId
       defenderChoice
       verdictViewDate
+      isSentToPrisonAdmin
+      punishmentType
+      openedByPrisonAdminDate
     }
+    defendantsPunishmentType
     courtDate
     isValidToDateInThePast
     initialRulingDate
     rulingDate
     rulingSignatureDate
+    court {
+      id
+      name
+    }
     judge {
       id
       created

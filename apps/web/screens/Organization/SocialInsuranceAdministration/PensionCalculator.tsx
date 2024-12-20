@@ -1,4 +1,4 @@
-import { PropsWithChildren, useMemo, useState } from 'react'
+import { PropsWithChildren, useEffect, useMemo, useState } from 'react'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
 import { useIntl } from 'react-intl'
 import add from 'date-fns/add'
@@ -40,6 +40,7 @@ import { useLinkResolver } from '@island.is/web/hooks'
 import { useI18n } from '@island.is/web/i18n'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { CustomNextError } from '@island.is/web/units/errors'
+import { extractNamespaceFromOrganization } from '@island.is/web/utils/extractNamespaceFromOrganization'
 
 import {
   CustomScreen,
@@ -49,6 +50,7 @@ import {
   GET_ORGANIZATION_PAGE_QUERY,
   GET_ORGANIZATION_QUERY,
 } from '../../queries'
+import { PensionCalculatorTitle } from './PensionCalculatorTitle'
 import { PensionCalculatorWrapper } from './PensionCalculatorWrapper'
 import { translationStrings } from './translationStrings'
 import {
@@ -56,6 +58,8 @@ import {
   convertToQueryParams,
   extractSlug,
   getDateOfCalculationsOptions,
+  is2025FormPreviewActive,
+  NEW_SYSTEM_TAKES_PLACE_DATE,
 } from './utils'
 import * as styles from './PensionCalculator.css'
 
@@ -69,7 +73,10 @@ const hasDisabilityAssessment = (
 ) => {
   return (
     typeOfBasePension === BasePensionType.Disability ||
-    typeOfBasePension === BasePensionType.Rehabilitation
+    typeOfBasePension === BasePensionType.Rehabilitation ||
+    typeOfBasePension === BasePensionType.NewSystemDisability ||
+    typeOfBasePension === BasePensionType.NewSystemPartialDisability ||
+    typeOfBasePension === BasePensionType.NewSystemMedicalAndRehabilitation
   )
 }
 
@@ -130,11 +137,23 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
     defaultValues,
   })
 
+  const [dateOfCalculations, setDateOfCalculations] = useQueryState(
+    'dateOfCalculations',
+    {
+      defaultValue:
+        methods.formState.defaultValues?.dateOfCalculations ??
+        dateOfCalculationsOptions[0].value,
+    },
+  )
+
   const currencyInputMaxLength =
     customPageData?.configJson?.currencyInputMaxLength ?? 14
 
-  const maxMonthPensionDelay =
-    customPageData?.configJson?.maxMonthPensionDelay ?? 156
+  const maxMonthPensionDelayIfBornAfter1951 =
+    customPageData?.configJson?.maxMonthPensionDelayIfBornAfter1951 ?? 156
+
+  const maxMonthPensionDelayIfBorn1951OrEarlier =
+    customPageData?.configJson?.maxMonthPensionDelayIfBorn1951OrEarlier ?? 60
 
   const [loadingResultPage, setLoadingResultPage] = useState(false)
   const [hasLivedAbroad, setHasLivedAbroad] = useState(
@@ -156,7 +175,52 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
       ? 12 * 7
       : 12 * 2
 
+  const maxMonthPensionDelay =
+    typeof birthYear === 'number' && birthYear < 1952
+      ? maxMonthPensionDelayIfBorn1951OrEarlier
+      : maxMonthPensionDelayIfBornAfter1951
+
+  const allCalculatorsOptions = useMemo(() => {
+    const options = [...dateOfCalculationsOptions]
+
+    if (is2025FormPreviewActive(customPageData)) {
+      options.unshift({
+        label: formatMessage(translationStrings.form2025PreviewLabel),
+        value: NEW_SYSTEM_TAKES_PLACE_DATE.toISOString(),
+      })
+    }
+
+    return options
+  }, [customPageData, dateOfCalculationsOptions, formatMessage])
+
+  const isNewSystemActive =
+    is2025FormPreviewActive(customPageData) &&
+    dateOfCalculations === NEW_SYSTEM_TAKES_PLACE_DATE.toISOString()
+
   const basePensionTypeOptions = useMemo<Option<BasePensionType>[]>(() => {
+    if (isNewSystemActive) {
+      const options = [
+        {
+          label: formatMessage(
+            translationStrings.basePensionNewSystemDisabilityLabel,
+          ),
+          value: BasePensionType.NewSystemDisability,
+        },
+        {
+          label: formatMessage(
+            translationStrings.basePensionNewSystemPartialDisabilityLabel,
+          ),
+          value: BasePensionType.NewSystemPartialDisability,
+        },
+        {
+          label: formatMessage(
+            translationStrings.basePensionNewSystemMedicalAndRehabilitation,
+          ),
+          value: BasePensionType.NewSystemMedicalAndRehabilitation,
+        },
+      ]
+      return options
+    }
     const options = [
       {
         label: formatMessage(translationStrings.basePensionRetirementLabel),
@@ -181,9 +245,10 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
         value: BasePensionType.HalfRetirement,
       },
     ]
+
     options.sort(sortAlpha('label'))
     return options
-  }, [formatMessage])
+  }, [formatMessage, isNewSystemActive])
 
   const hasSpouseOptions = useMemo<Option<boolean>[]>(() => {
     return [
@@ -255,15 +320,6 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
       },
     ]
   }, [formatMessage])
-
-  const [dateOfCalculations, setDateOfCalculations] = useQueryState(
-    'dateOfCalculations',
-    {
-      defaultValue:
-        methods.formState.defaultValues?.dateOfCalculations ??
-        dateOfCalculationsOptions[0].value,
-    },
-  )
 
   const { linkResolver } = useLinkResolver()
 
@@ -346,6 +402,30 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
     ]
   }, [formatMessage])
 
+  // Make sure we never enter an invalid state
+  useEffect(() => {
+    if (isNewSystemActive) {
+      if (
+        typeOfBasePension !== BasePensionType.NewSystemDisability &&
+        typeOfBasePension !== BasePensionType.NewSystemPartialDisability &&
+        typeOfBasePension !== BasePensionType.NewSystemMedicalAndRehabilitation
+      ) {
+        methods.setValue(
+          'typeOfBasePension',
+          BasePensionType.NewSystemDisability,
+        )
+      }
+    } else {
+      if (
+        typeOfBasePension === BasePensionType.NewSystemDisability ||
+        typeOfBasePension === BasePensionType.NewSystemPartialDisability ||
+        typeOfBasePension === BasePensionType.NewSystemMedicalAndRehabilitation
+      ) {
+        methods.setValue('typeOfBasePension', BasePensionType.Retirement)
+      }
+    }
+  }, [isNewSystemActive, methods, typeOfBasePension])
+
   const birthYearOptions = useMemo<Option<number>[]>(() => {
     const today = new Date()
     const options: Option<number>[] = []
@@ -386,6 +466,7 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
       const minYear = add(defaultPensionDate, {
         months: -maxMonthPensionHurry,
       }).getFullYear()
+
       const maxYear = add(defaultPensionDate, {
         months: maxMonthPensionDelay,
       }).getFullYear()
@@ -401,28 +482,44 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
     return options
   }, [defaultPensionDate, maxMonthPensionDelay, maxMonthPensionHurry])
 
-  const title = `${formatMessage(translationStrings.mainTitle)} ${
-    dateOfCalculationsOptions.find((o) => o.value === dateOfCalculations)
-      ?.label ?? dateOfCalculationsOptions[0].label
-  }`
+  const title = `${formatMessage(
+    isNewSystemActive
+      ? translationStrings.form2025PreviewMainTitle
+      : translationStrings.mainTitle,
+  )}`
+  const titlePostfix = `${(
+    allCalculatorsOptions.find((o) => o.value === dateOfCalculations)?.label ??
+    dateOfCalculationsOptions[0].label
+  ).toLowerCase()}`
+
+  const titleVariant = isNewSystemActive ? 'h2' : 'h1'
 
   const startMonthOptions = useMemo(() => {
-    if (
-      startYear === startYearOptions?.[0]?.value &&
-      typeof birthMonth === 'number' &&
-      typeof startMonth === 'number'
-    ) {
-      if (startMonth < birthMonth + 1) {
-        methods.setValue('startMonth', birthMonth + 1)
-      }
-      return monthOptions.filter(({ value }) => value >= birthMonth + 1)
+    if (!defaultPensionDate) {
+      return monthOptions
     }
+
+    if (startYear === startYearOptions[0]?.value) {
+      const minMonth = add(defaultPensionDate, {
+        months: -maxMonthPensionHurry,
+      }).getMonth()
+      return monthOptions.filter((month) => month.value >= minMonth)
+    }
+
+    if (startYear === startYearOptions[startYearOptions.length - 1]?.value) {
+      const maxMonth = add(defaultPensionDate, {
+        months: maxMonthPensionDelay,
+      }).getMonth()
+
+      return monthOptions.filter((month) => month.value <= maxMonth)
+    }
+
     return monthOptions
   }, [
-    birthMonth,
-    methods,
+    defaultPensionDate,
+    maxMonthPensionDelay,
+    maxMonthPensionHurry,
     monthOptions,
-    startMonth,
     startYear,
     startYearOptions,
   ])
@@ -458,9 +555,12 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
             >
               <Box paddingY={5}>
                 <Stack space={3}>
-                  <Text variant="h1" as="h1">
-                    {title}
-                  </Text>
+                  <PensionCalculatorTitle
+                    isNewSystemActive={isNewSystemActive}
+                    title={title}
+                    titlePostfix={titlePostfix}
+                    titleVariant={titleVariant}
+                  />
                   <Text>{formatMessage(translationStrings.isTurnedOff)}</Text>
                 </Stack>
               </Box>
@@ -481,9 +581,12 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
                     <Stack space={3}>
                       <Stack space={3}>
                         <Box paddingTop={6}>
-                          <Text variant="h1" as="h1">
-                            {title}
-                          </Text>
+                          <PensionCalculatorTitle
+                            isNewSystemActive={isNewSystemActive}
+                            title={title}
+                            titlePostfix={titlePostfix}
+                            titleVariant={titleVariant}
+                          />
                         </Box>
                       </Stack>
                       <Box
@@ -514,10 +617,31 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
                               translationStrings.dateOfCalculationsPlaceholder,
                             )}
                             size="sm"
-                            options={dateOfCalculationsOptions}
+                            options={allCalculatorsOptions}
                             onSelect={(option) => {
                               if (option) {
                                 setDateOfCalculations(option.value)
+                                if (isNewSystemActive) {
+                                  if (
+                                    option.value ===
+                                    NEW_SYSTEM_TAKES_PLACE_DATE.toISOString()
+                                  ) {
+                                    // Date is being moved to the new system date
+                                    methods.setValue(
+                                      'typeOfBasePension',
+                                      BasePensionType.NewSystemDisability,
+                                    )
+                                  } else if (
+                                    dateOfCalculations ===
+                                    NEW_SYSTEM_TAKES_PLACE_DATE.toISOString()
+                                  ) {
+                                    // Date is being moved from new system date
+                                    methods.setValue(
+                                      'typeOfBasePension',
+                                      BasePensionType.Retirement,
+                                    )
+                                  }
+                                }
                               }
                             }}
                           />
@@ -585,20 +709,16 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
                                     translationStrings.birthMonthPlaceholder,
                                   )}
                                   onSelect={(option) => {
-                                    if (option.value > 10) {
-                                      methods.setValue('startMonth', 0)
-                                      if (startYear) {
-                                        methods.setValue(
-                                          'startYear',
-                                          startYear + 1,
-                                        )
-                                      }
-                                    } else {
-                                      methods.setValue(
-                                        'startMonth',
-                                        option.value + 1,
-                                      )
-                                    }
+                                    methods.setValue(
+                                      'startMonth',
+                                      option.value > 10 ? 0 : option.value + 1,
+                                    )
+                                    methods.setValue(
+                                      'startYear',
+                                      birthYear +
+                                        defaultPensionAge +
+                                        (option.value > 10 ? 1 : 0),
+                                    )
                                   }}
                                 />
                               </Box>
@@ -679,6 +799,55 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
                                       placeholder={formatMessage(
                                         translationStrings.startYearPlaceholder,
                                       )}
+                                      onSelect={(option) => {
+                                        if (!defaultPensionDate) {
+                                          return
+                                        }
+                                        if (
+                                          option.value ===
+                                          startYearOptions[0]?.value
+                                        ) {
+                                          const minMonth = add(
+                                            defaultPensionDate,
+                                            {
+                                              months: -maxMonthPensionHurry,
+                                            },
+                                          ).getMonth()
+                                          if (
+                                            typeof startMonth === 'number' &&
+                                            startMonth < minMonth
+                                          ) {
+                                            methods.setValue(
+                                              'startMonth',
+                                              minMonth,
+                                            )
+                                          }
+                                        }
+
+                                        if (
+                                          option.value ===
+                                          startYearOptions[
+                                            startYearOptions.length - 1
+                                          ]?.value
+                                        ) {
+                                          const maxMonth = add(
+                                            defaultPensionDate,
+                                            {
+                                              months: maxMonthPensionDelay,
+                                            },
+                                          ).getMonth()
+
+                                          if (
+                                            typeof startMonth === 'number' &&
+                                            startMonth > maxMonth
+                                          ) {
+                                            methods.setValue(
+                                              'startMonth',
+                                              maxMonth,
+                                            )
+                                          }
+                                        }
+                                      }}
                                     />
                                   </Box>
                                 </Inline>
@@ -764,6 +933,10 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
                             {(typeOfBasePension ===
                               BasePensionType.Disability ||
                               typeOfBasePension ===
+                                BasePensionType.NewSystemDisability ||
+                              typeOfBasePension ===
+                                BasePensionType.NewSystemPartialDisability ||
+                              typeOfBasePension ===
                                 BasePensionType.Rehabilitation) && (
                               <Box className={styles.inputContainer}>
                                 <InputController
@@ -775,7 +948,11 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
                                   }
                                   label={formatMessage(
                                     typeOfBasePension ===
-                                      BasePensionType.Disability
+                                      BasePensionType.Disability ||
+                                      typeOfBasePension ===
+                                        BasePensionType.NewSystemDisability ||
+                                      typeOfBasePension ===
+                                        BasePensionType.NewSystemPartialDisability
                                       ? translationStrings.ageOfFirst75DisabilityAssessment
                                       : translationStrings.ageOfFirst75RehabilitationAssessment,
                                   )}
@@ -1237,10 +1414,14 @@ PensionCalculator.getProps = async ({
       : dateOfCalculationsOptions[0].value,
   }
 
+  const organizationNamespace =
+    extractNamespaceFromOrganization(getOrganization)
+
   return {
     organizationPage: getOrganizationPage,
     organization: getOrganization,
     defaultValues,
+    customTopLoginButtonItem: organizationNamespace?.customTopLoginButtonItem,
     dateOfCalculationsOptions,
     ...getThemeConfig(
       getOrganizationPage?.theme,

@@ -1,4 +1,5 @@
 import { Cache as CacheManager } from 'cache-manager'
+import { LOGGER_PROVIDER } from '@island.is/logging'
 import { Test } from '@nestjs/testing'
 import { User } from '../../user.model'
 import { UserService } from '../../user.service'
@@ -48,6 +49,12 @@ describe('UserService', () => {
           useClass: jest.fn(() => ({
             get: () => ({}),
             set: () => ({}),
+          })),
+        },
+        {
+          provide: LOGGER_PROVIDER,
+          useClass: jest.fn(() => ({
+            error: () => ({}),
           })),
         },
       ],

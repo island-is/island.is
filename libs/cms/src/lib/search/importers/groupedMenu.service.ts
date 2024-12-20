@@ -6,6 +6,7 @@ import { IGroupedMenu } from '../../generated/contentfulTypes'
 import { mapGroupedMenu } from '../../models/groupedMenu.model'
 
 import { CmsSyncProvider, processSyncDataInput } from '../cmsSync.service'
+import { extractChildEntryIds } from './utils'
 
 @Injectable()
 export class GroupedMenuSyncService implements CmsSyncProvider<IGroupedMenu> {
@@ -25,6 +26,10 @@ export class GroupedMenuSyncService implements CmsSyncProvider<IGroupedMenu> {
       .map<MappedData | boolean>((entry) => {
         try {
           const mapped = mapGroupedMenu(entry)
+
+          // Tag the document with the ids of its children so we can later look up what document a child belongs to
+          const childEntryIds = extractChildEntryIds(entry)
+
           return {
             _id: mapped.id,
             title: mapped.title,
@@ -32,6 +37,10 @@ export class GroupedMenuSyncService implements CmsSyncProvider<IGroupedMenu> {
             response: JSON.stringify({ ...mapped, typename: 'GroupedMenu' }),
             dateCreated: entry.sys.createdAt,
             dateUpdated: new Date().getTime().toString(),
+            tags: childEntryIds.map((id) => ({
+              key: id,
+              type: 'hasChildEntryWithId',
+            })),
           }
         } catch (error) {
           logger.warn('Failed to import grouped menu', {

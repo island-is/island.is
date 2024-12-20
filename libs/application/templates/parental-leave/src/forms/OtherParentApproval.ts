@@ -12,8 +12,10 @@ import { Form, FormModes, Application } from '@island.is/application/types'
 import Logo from '../assets/Logo'
 import { YES } from '../constants'
 import { otherParentApprovalFormMessages } from '../lib/messages'
-import { currentDateStartTime } from '../lib/parentalLeaveTemplateUtils'
-import { getApplicationAnswers } from '../lib/parentalLeaveUtils'
+import {
+  getApplicationAnswers,
+  getLastDayOfLastMonth,
+} from '../lib/parentalLeaveUtils'
 
 export const OtherParentApproval: Form = buildForm({
   id: 'OtherParentApprovalForParentalLeave',
@@ -94,10 +96,14 @@ export const OtherParentApproval: Form = buildForm({
               title: otherParentApprovalFormMessages.warning,
               titleVariant: 'h4',
               description: otherParentApprovalFormMessages.startDateInThePast,
-              condition: (answers) =>
-                new Date(
+              condition: (answers) => {
+                const lastDateOfLastMonth = getLastDayOfLastMonth()
+                const startDateTime = new Date(
                   getApplicationAnswers(answers).periods[0].startDate,
-                ).getTime() < currentDateStartTime(),
+                ).getTime()
+
+                return startDateTime <= lastDateOfLastMonth.getTime()
+              },
             }),
             buildSubmitField({
               id: 'submit',
@@ -113,10 +119,14 @@ export const OtherParentApproval: Form = buildForm({
                   name: coreMessages.buttonApprove,
                   type: 'primary',
                   event: 'APPROVE',
-                  condition: (answers) =>
-                    new Date(
+                  condition: (answers) => {
+                    const lastDateOfLastMonth = getLastDayOfLastMonth()
+                    const startDateTime = new Date(
                       getApplicationAnswers(answers).periods[0].startDate,
-                    ).getTime() >= currentDateStartTime(),
+                    ).getTime()
+
+                    return startDateTime > lastDateOfLastMonth.getTime()
+                  },
                 },
               ],
             }),

@@ -10,7 +10,7 @@ import { RegularSignature } from '../components/signatures/Regular'
 import { useApplication } from '../hooks/useUpdateApplication'
 import set from 'lodash/set'
 import { HTMLEditor } from '../components/htmlEditor/HTMLEditor'
-import { getSignatureMarkup } from '../lib/utils'
+import { getSignaturesMarkup } from '../lib/utils'
 
 export const Signatures = ({ application }: OJOIFieldBaseProps) => {
   const { formatMessage: f } = useLocale()
@@ -71,7 +71,7 @@ export const Signatures = ({ application }: OJOIFieldBaseProps) => {
         <HTMLEditor
           name="signaturePreview"
           key={selectedTab}
-          value={getSignatureMarkup({
+          value={getSignaturesMarkup({
             signatures: currentApplication.answers.signatures,
             type: selectedTab as SignatureTypes,
           })}

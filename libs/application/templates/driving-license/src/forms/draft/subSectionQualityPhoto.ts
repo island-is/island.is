@@ -20,7 +20,7 @@ export const subSectionQualityPhoto = buildSubSection({
   id: 'photoStep',
   title: m.applicationQualityPhotoTitle,
   condition: isVisible(
-    isApplicationForCondition(B_FULL || B_FULL_RENEWAL_65),
+    isApplicationForCondition([B_FULL, B_FULL_RENEWAL_65]),
     hasNoDrivingLicenseInOtherCountry,
   ),
   children: [

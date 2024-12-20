@@ -109,9 +109,9 @@ export const mapList = (
   const area = mapArea(areas)
   const numberOfSignatures = list.fjoldiMedmaela ?? 0
 
-  const isActive = endTime > new Date()
+  const isActive = !list.listaLokad
   const isExtended = endTime > collection.sofnunEnd
-  const reviewed = list.lokadHandvirkt ?? false
+  const reviewed = list.urvinnslaLokid ?? false
 
   return {
     id: list.id?.toString() ?? '',

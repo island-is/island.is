@@ -16,24 +16,49 @@ import {
   messageEndpoint,
   MessageType,
 } from '@island.is/judicial-system/message'
+import { indictmentCases } from '@island.is/judicial-system/types'
 
-import { Case, CaseHasExistedGuard, CurrentCase } from '../case'
+import { Case, CaseHasExistedGuard, CaseTypeGuard, CurrentCase } from '../case'
+import {
+  CivilClaimant,
+  CivilClaimantExistsGuard,
+  CurrentCivilClaimant,
+  CurrentDefendant,
+  Defendant,
+  DefendantExistsGuard,
+} from '../defendant'
+import { SubpoenaExistsGuard } from '../subpoena'
 import { CaseNotificationDto } from './dto/caseNotification.dto'
+import { CivilClaimantNotificationDto } from './dto/civilClaimantNotification.dto'
+import { DefendantNotificationDto } from './dto/defendantNotification.dto'
+import { IndictmentCaseNotificationDto } from './dto/indictmentCaseNotification.dto'
 import { InstitutionNotificationDto } from './dto/institutionNotification.dto'
-import { NotificationDto } from './dto/notification.dto'
+import {
+  EventNotificationDispatchDto,
+  NotificationDispatchDto,
+} from './dto/notificationDispatch.dto'
+import { SubpoenaNotificationDto } from './dto/subpoenaNotification.dto'
 import { DeliverResponse } from './models/deliver.response'
-import { InstitutionNotificationService } from './institutionNotification.service'
-import { InternalNotificationService } from './internalNotification.service'
+import { CaseNotificationService } from './services/caseNotification/caseNotification.service'
+import { CivilClaimantNotificationService } from './services/civilClaimantNotification/civilClaimantNotification.service'
+import { DefendantNotificationService } from './services/defendantNotification/defendantNotification.service'
+import { IndictmentCaseNotificationService } from './services/indictmentCaseNotification/indictmentCaseNotification.service'
+import { InstitutionNotificationService } from './services/institutionNotification/institutionNotification.service'
+import { SubpoenaNotificationService } from './services/subpoenaNotification/subpoenaNotification.service'
 import { NotificationDispatchService } from './notificationDispatch.service'
 
-@UseGuards(TokenGuard)
 @Controller('api/internal')
 @ApiTags('internal notifications')
+@UseGuards(TokenGuard)
 export class InternalNotificationController {
   constructor(
-    private readonly internalNotificationService: InternalNotificationService,
+    private readonly caseNotificationService: CaseNotificationService,
     private readonly notificationDispatchService: NotificationDispatchService,
     private readonly institutionNotificationService: InstitutionNotificationService,
+    private readonly subpoenaNotificationService: SubpoenaNotificationService,
+    private readonly defendantNotificationService: DefendantNotificationService,
+    private readonly civilClaimantNotificationService: CivilClaimantNotificationService,
+    private readonly indictmentCaseNotificationService: IndictmentCaseNotificationService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
@@ -41,7 +66,7 @@ export class InternalNotificationController {
   @UseGuards(CaseHasExistedGuard)
   @ApiCreatedResponse({
     type: DeliverResponse,
-    description: 'Sends a new notification for an existing case',
+    description: 'Sends a case notification for an existing case',
   })
   sendCaseNotification(
     @Param('caseId') caseId: string,
@@ -49,22 +74,129 @@ export class InternalNotificationController {
     @Body() notificationDto: CaseNotificationDto,
   ): Promise<DeliverResponse> {
     this.logger.debug(
-      `Sending ${notificationDto.type} notification for case ${caseId}`,
+      `Sending ${notificationDto.type} case notification for case ${caseId}`,
     )
 
-    return this.internalNotificationService.sendCaseNotification(
+    return this.caseNotificationService.sendCaseNotification(
       notificationDto.type,
       theCase,
       notificationDto.user,
     )
   }
 
-  @Post(messageEndpoint[MessageType.NOTIFICATION])
+  @Post(
+    `case/:caseId/${messageEndpoint[MessageType.INDICTMENT_CASE_NOTIFICATION]}`,
+  )
+  @UseGuards(CaseHasExistedGuard, new CaseTypeGuard(indictmentCases))
   @ApiCreatedResponse({
     type: DeliverResponse,
-    description: 'Sends a new notification',
+    description: 'Sends a case notification for an existing indictment case',
   })
-  sendNotification(
+  sendIndictmentCaseNotification(
+    @Param('caseId') caseId: string,
+    @CurrentCase() theCase: Case,
+    @Body() notificationDto: IndictmentCaseNotificationDto,
+  ): Promise<DeliverResponse> {
+    this.logger.debug(
+      `Sending ${notificationDto.type} indictment case notification for case ${caseId}`,
+    )
+
+    return this.indictmentCaseNotificationService.sendIndictmentCaseNotification(
+      notificationDto.type,
+      theCase,
+    )
+  }
+
+  @Post(
+    `case/:caseId/${
+      messageEndpoint[MessageType.SUBPOENA_NOTIFICATION]
+    }/:defendantId/:subpoenaId`,
+  )
+  @UseGuards(CaseHasExistedGuard, DefendantExistsGuard, SubpoenaExistsGuard)
+  @ApiCreatedResponse({
+    type: DeliverResponse,
+    description: 'Sends a subpoena notification for an existing subpoena',
+  })
+  sendSubpoenaNotification(
+    @Param('caseId') caseId: string,
+    @Param('defendantId') defendantId: string,
+    @Param('subpoenaId') subpoenaId: string,
+    @CurrentCase() theCase: Case,
+    @Body() notificationDto: SubpoenaNotificationDto,
+  ): Promise<DeliverResponse> {
+    this.logger.debug(
+      `Sending ${notificationDto.type} subpoena notification for subpoena ${subpoenaId} of defendant ${defendantId} and case ${caseId}`,
+    )
+
+    return this.subpoenaNotificationService.sendSubpoenaNotification(
+      notificationDto.type,
+      theCase,
+    )
+  }
+
+  @Post(
+    `case/:caseId/${
+      messageEndpoint[MessageType.DEFENDANT_NOTIFICATION]
+    }/:defendantId`,
+  )
+  @UseGuards(CaseHasExistedGuard, DefendantExistsGuard)
+  @ApiCreatedResponse({
+    type: DeliverResponse,
+    description:
+      'Sends defendant related notifications for an existing defendant',
+  })
+  sendDefendantNotification(
+    @Param('caseId') caseId: string,
+    @Param('defendantId') defendantId: string,
+    @CurrentCase() theCase: Case,
+    @CurrentDefendant() defendant: Defendant,
+    @Body() notificationDto: DefendantNotificationDto,
+  ): Promise<DeliverResponse> {
+    this.logger.debug(
+      `Sending ${notificationDto.type} defendant notification for defendant ${defendantId} and case ${caseId}`,
+    )
+
+    return this.defendantNotificationService.sendDefendantNotification(
+      notificationDto.type,
+      theCase,
+      defendant,
+    )
+  }
+
+  @Post(
+    `case/:caseId/${
+      messageEndpoint[MessageType.CIVIL_CLAIMANT_NOTIFICATION]
+    }/:civilClaimantId`,
+  )
+  @UseGuards(CaseHasExistedGuard, CivilClaimantExistsGuard)
+  @ApiCreatedResponse({
+    type: DeliverResponse,
+    description: 'Sends civil claimant related notifications',
+  })
+  sendCivilClaimantNotification(
+    @Param('caseId') caseId: string,
+    @Param('civilClaimantId') civilClaimantId: string,
+    @CurrentCase() theCase: Case,
+    @CurrentCivilClaimant() civilClaimant: CivilClaimant,
+    @Body() notificationDto: CivilClaimantNotificationDto,
+  ): Promise<DeliverResponse> {
+    this.logger.debug(
+      `Sending ${notificationDto.type} notification for civil claimant ${civilClaimantId} and case ${caseId}`,
+    )
+
+    return this.civilClaimantNotificationService.sendCivilClaimantNotification(
+      notificationDto.type,
+      civilClaimant,
+      theCase,
+    )
+  }
+
+  @Post(messageEndpoint[MessageType.INSTITUTION_NOTIFICATION])
+  @ApiCreatedResponse({
+    type: DeliverResponse,
+    description: 'Sends an institution notification',
+  })
+  sendInstitutionNotification(
     @Body() notificationDto: InstitutionNotificationDto,
   ): Promise<DeliverResponse> {
     this.logger.debug(`Sending ${notificationDto.type} notification`)
@@ -75,13 +207,37 @@ export class InternalNotificationController {
     )
   }
 
+  @Post(
+    `case/:caseId/${messageEndpoint[MessageType.EVENT_NOTIFICATION_DISPATCH]}`,
+  )
+  @UseGuards(CaseHasExistedGuard)
+  @ApiCreatedResponse({
+    type: DeliverResponse,
+    description:
+      'Dispatches notifications in response to events logged in event log',
+  })
+  dispatchEventNotification(
+    @Param('caseId') caseId: string,
+    @CurrentCase() theCase: Case,
+    @Body() notificationDto: EventNotificationDispatchDto,
+  ): Promise<DeliverResponse> {
+    this.logger.debug(
+      `Dispatching ${notificationDto.type} event notification for case ${caseId}`,
+    )
+
+    return this.notificationDispatchService.dispatchEventNotification(
+      notificationDto.type,
+      theCase,
+    )
+  }
+
   @Post(messageEndpoint[MessageType.NOTIFICATION_DISPATCH])
   @ApiCreatedResponse({
     type: DeliverResponse,
     description: 'Dispatches notifications',
   })
   dispatchNotification(
-    @Body() notificationDto: NotificationDto,
+    @Body() notificationDto: NotificationDispatchDto,
   ): Promise<DeliverResponse> {
     this.logger.debug(`Dispatching ${notificationDto.type} notification`)
 

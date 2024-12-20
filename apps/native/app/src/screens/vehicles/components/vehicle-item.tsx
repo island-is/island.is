@@ -1,9 +1,10 @@
-import { Label, VehicleCard } from '@ui'
 import React from 'react'
 import { FormattedDate, FormattedMessage } from 'react-intl'
 import { SafeAreaView, TouchableHighlight, View, ViewStyle } from 'react-native'
-import { useTheme } from 'styled-components/native'
-import { ListVehiclesQuery } from '../../../graphql/types/schema'
+import styled, { useTheme } from 'styled-components/native'
+
+import { Label, VehicleCard } from '../../../ui'
+import { ListVehiclesV2Query } from '../../../graphql/types/schema'
 import { navigateTo } from '../../../lib/deep-linking'
 
 function differenceInMonths(a: Date, b: Date) {
@@ -11,8 +12,13 @@ function differenceInMonths(a: Date, b: Date) {
 }
 
 type VehicleListItem = NonNullable<
-  NonNullable<ListVehiclesQuery['vehiclesList']>['vehicleList']
+  NonNullable<ListVehiclesV2Query['vehiclesListV2']>['vehicleList']
 >[0]
+
+const Cell = styled(TouchableHighlight)`
+  margin-bottom: ${({ theme }) => theme.spacing[2]}px;
+  border-radius: ${({ theme }) => theme.border.radius.extraLarge};
+`
 
 export const VehicleItem = React.memo(
   ({
@@ -26,8 +32,8 @@ export const VehicleItem = React.memo(
     style?: ViewStyle
   }) => {
     const theme = useTheme()
-    const nextInspection = item?.nextInspection?.nextInspectionDate
-      ? new Date(item?.nextInspection.nextInspectionDate)
+    const nextInspection = item?.nextMainInspection
+      ? new Date(item?.nextMainInspection)
       : null
 
     const isInspectionDeadline =
@@ -39,25 +45,21 @@ export const VehicleItem = React.memo(
 
     return (
       <View style={{ paddingHorizontal: theme.spacing[2], ...style }}>
-        <TouchableHighlight
+        <Cell
           underlayColor={
             theme.isDark ? theme.shades.dark.shade100 : theme.color.blue100
           }
-          style={{
-            marginBottom: theme.spacing[2],
-            borderRadius: theme.border.radius.extraLarge,
-          }}
           onPress={() => {
             navigateTo(`/vehicle/`, {
               id: item.permno,
-              title: item.type,
+              title: item.make,
             })
           }}
         >
           <SafeAreaView>
             <VehicleCard
-              title={item.type}
-              color={item.color}
+              title={item.make}
+              color={item.colorName}
               number={item.regno}
               minHeight={minHeight}
               label={
@@ -78,7 +80,7 @@ export const VehicleItem = React.memo(
               }
             />
           </SafeAreaView>
-        </TouchableHighlight>
+        </Cell>
       </View>
     )
   },

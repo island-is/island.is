@@ -39,17 +39,10 @@ import {
 } from '@island.is/judicial-system/formatters'
 import type { User } from '@island.is/judicial-system/types'
 import {
-  CaseAppealDecision,
-  CaseAppealRulingDecision,
-  CaseAppealState,
-  CaseDecision,
   CaseState,
-  CaseTransition,
   CaseType,
   indictmentCases,
   investigationCases,
-  isIndictmentCase,
-  isRestrictionCase,
   restrictionCases,
   UserRole,
 } from '@island.is/judicial-system/types'
@@ -77,8 +70,10 @@ import { CurrentCase } from './guards/case.decorator'
 import { CaseCompletedGuard } from './guards/caseCompleted.guard'
 import { CaseExistsGuard } from './guards/caseExists.guard'
 import { CaseReadGuard } from './guards/caseRead.guard'
+import { CaseTransitionGuard } from './guards/caseTransition.guard'
 import { CaseTypeGuard } from './guards/caseType.guard'
 import { CaseWriteGuard } from './guards/caseWrite.guard'
+import { MergedCaseExistsGuard } from './guards/mergedCaseExists.guard'
 import {
   courtOfAppealsAssistantTransitionRule,
   courtOfAppealsAssistantUpdateRule,
@@ -99,6 +94,10 @@ import {
   prosecutorUpdateRule,
   publicProsecutorStaffUpdateRule,
 } from './guards/rolesRules'
+import {
+  CaseInterceptor,
+  CasesInterceptor,
+} from './interceptors/case.interceptor'
 import { CaseListInterceptor } from './interceptors/caseList.interceptor'
 import { CompletedAppealAccessedInterceptor } from './interceptors/completedAppealAccessed.interceptor'
 import { Case } from './models/case.model'
@@ -140,6 +139,7 @@ export class CaseController {
 
   @UseGuards(JwtAuthGuard, RolesGuard)
   @RolesRules(prosecutorRule, prosecutorRepresentativeRule)
+  @UseInterceptors(CaseInterceptor)
   @Post('case')
   @ApiCreatedResponse({ type: Case, description: 'Creates a new case' })
   async create(
@@ -167,6 +167,7 @@ export class CaseController {
     courtOfAppealsAssistantUpdateRule,
     publicProsecutorStaffUpdateRule,
   )
+  @UseInterceptors(CaseInterceptor)
   @Patch('case/:caseId')
   @ApiOkResponse({ type: Case, description: 'Updates an existing case' })
   async update(
@@ -273,7 +274,13 @@ export class CaseController {
     return this.caseService.update(theCase, update, user) as Promise<Case> // Never returns undefined
   }
 
-  @UseGuards(JwtAuthGuard, CaseExistsGuard, RolesGuard, CaseWriteGuard)
+  @UseGuards(
+    JwtAuthGuard,
+    CaseExistsGuard,
+    RolesGuard,
+    CaseWriteGuard,
+    CaseTransitionGuard,
+  )
   @RolesRules(
     prosecutorTransitionRule,
     prosecutorRepresentativeTransitionRule,
@@ -284,6 +291,7 @@ export class CaseController {
     courtOfAppealsRegistrarTransitionRule,
     courtOfAppealsAssistantTransitionRule,
   )
+  @UseInterceptors(CaseInterceptor)
   @Patch('case/:caseId/state')
   @ApiOkResponse({
     type: Case,
@@ -297,125 +305,13 @@ export class CaseController {
   ): Promise<Case> {
     this.logger.debug(`Transitioning case ${caseId}`)
 
-    const states = transitionCase(
-      transition.transition,
-      theCase.type,
-      theCase.state,
-      theCase.appealState,
-    )
-
-    let update: UpdateCase = states
-
-    switch (transition.transition) {
-      case CaseTransition.DELETE:
-        update.parentCaseId = null
-        break
-      case CaseTransition.SUBMIT:
-        if (isIndictmentCase(theCase.type)) {
-          update.indictmentDeniedExplanation = null
-        }
-        break
-      case CaseTransition.ACCEPT:
-      case CaseTransition.REJECT:
-      case CaseTransition.DISMISS:
-      case CaseTransition.COMPLETE:
-        update.rulingDate = isIndictmentCase(theCase.type)
-          ? nowFactory()
-          : theCase.courtEndTime
-
-        // Handle appealed in court
-        if (
-          !theCase.appealState && // don't appeal twice
-          (theCase.prosecutorAppealDecision === CaseAppealDecision.APPEAL ||
-            theCase.accusedAppealDecision === CaseAppealDecision.APPEAL)
-        ) {
-          if (theCase.prosecutorAppealDecision === CaseAppealDecision.APPEAL) {
-            update.prosecutorPostponedAppealDate = nowFactory()
-          } else {
-            update.accusedPostponedAppealDate = nowFactory()
-          }
-
-          update = {
-            ...update,
-            ...transitionCase(
-              CaseTransition.APPEAL,
-              theCase.type,
-              states.state ?? theCase.state,
-              states.appealState ?? theCase.appealState,
-            ),
-          }
-        }
-        break
-      case CaseTransition.REOPEN:
-        update.rulingDate = null
-        update.courtRecordSignatoryId = null
-        update.courtRecordSignatureDate = null
-        break
-      // TODO: Consider changing the names of the postponed appeal date variables
-      // as they are now also used when the case is appealed in court
-      case CaseTransition.APPEAL:
-        // The only roles that can appeal a case here are prosecutor roles
-        update.prosecutorPostponedAppealDate = nowFactory()
-        break
-      case CaseTransition.RECEIVE_APPEAL:
-        update.appealReceivedByCourtDate = nowFactory()
-        break
-      case CaseTransition.COMPLETE_APPEAL:
-        if (
-          isRestrictionCase(theCase.type) &&
-          theCase.state === CaseState.ACCEPTED &&
-          (theCase.decision === CaseDecision.ACCEPTING ||
-            theCase.decision === CaseDecision.ACCEPTING_PARTIALLY)
-        ) {
-          if (
-            theCase.appealRulingDecision === CaseAppealRulingDecision.CHANGED ||
-            theCase.appealRulingDecision ===
-              CaseAppealRulingDecision.CHANGED_SIGNIFICANTLY
-          ) {
-            // The court of appeals has modified the ruling of a restriction case
-            update.validToDate = theCase.appealValidToDate
-            update.isCustodyIsolation = theCase.isAppealCustodyIsolation
-            update.isolationToDate = theCase.appealIsolationToDate
-          } else if (
-            theCase.appealRulingDecision === CaseAppealRulingDecision.REPEAL
-          ) {
-            // The court of appeals has repealed the ruling of a restriction case
-            update.validToDate = nowFactory()
-          }
-        }
-        break
-      case CaseTransition.WITHDRAW_APPEAL:
-        // We only want to set the appeal ruling decision if the
-        // case has already been received.
-        // Otherwise the court of appeals never knew of the appeal in
-        // the first place so it remains withdrawn without a decision.
-        if (
-          !theCase.appealRulingDecision &&
-          theCase.appealState === CaseAppealState.RECEIVED
-        ) {
-          update.appealRulingDecision = CaseAppealRulingDecision.DISCONTINUED
-        }
-        break
-      case CaseTransition.ASK_FOR_CONFIRMATION:
-        update.indictmentReturnedExplanation = null
-        break
-      case CaseTransition.RETURN_INDICTMENT:
-        update.courtCaseNumber = null
-        update.indictmentHash = null
-        break
-      case CaseTransition.ASK_FOR_CANCELLATION:
-        if (theCase.indictmentDecision) {
-          throw new ForbiddenException(
-            `Cannot ask for cancellation of an indictment that is already in progress at the district court`,
-          )
-        }
-    }
+    const update = transitionCase(transition.transition, theCase, user)
 
     const updatedCase = await this.caseService.update(
       theCase,
       update,
       user,
-      states.state !== CaseState.DELETED,
+      update.state !== CaseState.DELETED,
     )
 
     // No need to wait
@@ -438,13 +334,13 @@ export class CaseController {
     prisonSystemStaffRule,
     defenderRule,
   )
+  @UseInterceptors(CaseListInterceptor)
   @Get('cases')
   @ApiOkResponse({
     type: Case,
     isArray: true,
     description: 'Gets all existing cases',
   })
-  @UseInterceptors(CaseListInterceptor)
   getAll(@CurrentHttpUser() user: User): Promise<Case[]> {
     this.logger.debug('Getting all cases')
 
@@ -463,9 +359,9 @@ export class CaseController {
     courtOfAppealsRegistrarRule,
     courtOfAppealsAssistantRule,
   )
+  @UseInterceptors(CompletedAppealAccessedInterceptor, CaseInterceptor)
   @Get('case/:caseId')
-  @ApiOkResponse({ type: Case, description: 'Gets an existing case' })
-  @UseInterceptors(CompletedAppealAccessedInterceptor)
+  @ApiOkResponse({ type: Case, description: 'Gets an existing case by id' })
   getById(@Param('caseId') caseId: string, @CurrentCase() theCase: Case): Case {
     this.logger.debug(`Getting case ${caseId} by id`)
 
@@ -478,6 +374,7 @@ export class CaseController {
     districtCourtRegistrarRule,
     districtCourtAssistantRule,
   )
+  @UseInterceptors(CasesInterceptor)
   @Get('case/:caseId/connectedCases')
   @ApiOkResponse({ type: [Case], description: 'Gets all connected cases' })
   async getConnectedCases(
@@ -541,6 +438,7 @@ export class CaseController {
     CaseExistsGuard,
     new CaseTypeGuard(indictmentCases),
     CaseReadGuard,
+    MergedCaseExistsGuard,
   )
   @RolesRules(
     prosecutorRule,
@@ -550,7 +448,10 @@ export class CaseController {
     districtCourtRegistrarRule,
     districtCourtAssistantRule,
   )
-  @Get('case/:caseId/caseFilesRecord/:policeCaseNumber')
+  @Get([
+    'case/:caseId/caseFilesRecord/:policeCaseNumber',
+    'case/:caseId/mergedCase/:mergedCaseId/caseFilesRecord/:policeCaseNumber',
+  ])
   @ApiOkResponse({
     content: { 'application/pdf': {} },
     description:
@@ -697,6 +598,7 @@ export class CaseController {
     CaseExistsGuard,
     new CaseTypeGuard(indictmentCases),
     CaseReadGuard,
+    MergedCaseExistsGuard,
   )
   @RolesRules(
     prosecutorRule,
@@ -706,7 +608,10 @@ export class CaseController {
     districtCourtRegistrarRule,
     districtCourtAssistantRule,
   )
-  @Get('case/:caseId/indictment')
+  @Get([
+    'case/:caseId/indictment',
+    'case/:caseId/mergedCase/:mergedCaseId/indictment',
+  ])
   @Header('Content-Type', 'application/pdf')
   @ApiOkResponse({
     content: { 'application/pdf': {} },
@@ -872,6 +777,7 @@ export class CaseController {
     CaseReadGuard,
   )
   @RolesRules(prosecutorRule)
+  @UseInterceptors(CaseInterceptor)
   @Post('case/:caseId/extend')
   @ApiCreatedResponse({
     type: Case,
@@ -901,6 +807,7 @@ export class CaseController {
     districtCourtRegistrarRule,
     districtCourtAssistantRule,
   )
+  @UseInterceptors(CaseInterceptor)
   @Post('case/:caseId/court')
   @ApiCreatedResponse({
     type: Case,

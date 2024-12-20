@@ -60,7 +60,7 @@ export const AccordionSlice: React.FC<React.PropsWithChildren<SliceProps>> = ({
           ))}
         {slice.type === 'accordion_minimal' && (
           <Box paddingTop={4}>
-            <Accordion>
+            <Accordion singleExpand={false}>
               {(slice.accordionItems ?? []).map((item) => (
                 <AccordionItem
                   key={item.id}

@@ -1,0 +1,5 @@
+mutation DeleteCivilClaimant($input: DeleteCivilClaimantInput!) {
+  deleteCivilClaimant(input: $input) {
+    deleted
+  }
+}

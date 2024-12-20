@@ -21,6 +21,7 @@ import {
   ParliamentaryCollectionApi,
   CandidateApi,
   ParliamentaryIdentityApi,
+  IsDelegatedToCompanyApi,
 } from '../dataProviders'
 import { AuthDelegationType } from '@island.is/shared/types'
 
@@ -81,6 +82,7 @@ const createListTemplate: ApplicationTemplate<
                 CandidateApi,
                 ParliamentaryCollectionApi,
                 ParliamentaryIdentityApi,
+                IsDelegatedToCompanyApi,
               ],
             },
           ],

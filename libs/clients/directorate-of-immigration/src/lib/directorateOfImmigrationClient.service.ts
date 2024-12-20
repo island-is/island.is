@@ -209,59 +209,83 @@ export class DirectorateOfImmigrationClient {
     applicationId = applicationId.replace(/["]/g, '')
 
     // applicant: submit travel document and other supporting attachment
+
     const attachmentList: {
       attachmentType: AttachmentType
-      fileList: { filename: string; base64: string; countryId?: string }[]
-    }[] = [
-      {
+      fileName: string
+      fileLink: string
+      countryCode?: string
+    }[] = []
+
+    application.passport.file.map((file) => {
+      attachmentList.push({
         attachmentType: AttachmentType.Passport,
-        fileList: application.passport.file || [],
-      },
-      {
+        fileName: file.filename,
+        fileLink: file.fileUrl,
+      })
+    })
+
+    application.supportingDocuments.birthCertificate?.map((file) => {
+      attachmentList.push({
         attachmentType: AttachmentType.BirtCertificate,
-        fileList: application.supportingDocuments.birthCertificate || [],
-      },
-      {
+        fileName: file.filename,
+        fileLink: file.fileUrl,
+      })
+    })
+
+    application.supportingDocuments.subsistenceCertificate.map((file) => {
+      attachmentList.push({
         attachmentType: AttachmentType.ProofOfFinancialCapabilityApplicant,
-        fileList: application.supportingDocuments.subsistenceCertificate || [],
-      },
-      {
-        attachmentType: AttachmentType.ProofOfFinancialCapabilityMunicipality,
-        fileList:
-          application.supportingDocuments.subsistenceCertificateForTown || [],
-      },
-      {
-        attachmentType: AttachmentType.DomicileHistory,
-        fileList:
-          application.supportingDocuments.certificateOfLegalResidenceHistory ||
-          [],
-      },
-      {
-        attachmentType: AttachmentType.ConfirmationIcelandicLanguage,
-        fileList:
-          application.supportingDocuments.icelandicTestCertificate || [],
-      },
-      {
-        attachmentType: AttachmentType.CriminalRecord,
-        fileList: application.supportingDocuments.criminalRecord || [],
-      },
-    ]
-    for (let j = 0; j < attachmentList.length; j++) {
-      const file = attachmentList[j]
-      for (let k = 0; k < file.fileList.length; k++) {
-        await this.applicationAttachmentApiWithAuth(
-          auth,
-        ).apiApplicationAttachmentApplicationIdPost({
-          applicationId,
-          applicationAttachmentNewModel: {
-            attachmentType: file.attachmentType,
-            fileName: file.fileList[k].filename,
-            base64Contents: file.fileList[k].base64,
-            countryCode: file.fileList[k].countryId,
-          },
+        fileName: file.filename,
+        fileLink: file.fileUrl,
+      })
+    })
+
+    application.supportingDocuments.subsistenceCertificateForTown.map(
+      (file) => {
+        attachmentList.push({
+          attachmentType: AttachmentType.ProofOfFinancialCapabilityMunicipality,
+          fileName: file.filename,
+          fileLink: file.fileUrl,
         })
-      }
-    }
+      },
+    )
+
+    application.supportingDocuments.certificateOfLegalResidenceHistory.map(
+      (file) => {
+        attachmentList.push({
+          attachmentType: AttachmentType.DomicileHistory,
+          fileName: file.filename,
+          fileLink: file.fileUrl,
+        })
+      },
+    )
+
+    application.supportingDocuments.icelandicTestCertificate.map((file) => {
+      attachmentList.push({
+        attachmentType: AttachmentType.ConfirmationIcelandicLanguage,
+        fileName: file.filename,
+        fileLink: file.fileUrl,
+      })
+    })
+
+    application.supportingDocuments.criminalRecord.map((file) => {
+      attachmentList.push({
+        attachmentType: AttachmentType.CriminalRecord,
+        fileName: file.filename,
+        fileLink: file.fileUrl,
+        countryCode: file.countryId,
+      })
+    })
+
+    await this.applicationAttachmentApiWithAuth(
+      auth,
+    ).apiApplicationAttachmentFileLinkNewItemsApplicationIdPost({
+      applicationId,
+      applicationAttachmentArrayFileLinkNewModel: {
+        applicationAttachments: attachmentList,
+      },
+    })
 
     // selected children: create application and submit information
     for (let i = 0; i < application.selectedChildren.length; i++) {
@@ -290,8 +314,11 @@ export class DirectorateOfImmigrationClient {
           parentApplicationId: applicationId,
           applicant: {
             icelandicIDNO: childInfo.nationalId,
-            givenName: childInfo.givenName,
-            surName: childInfo.familyName,
+            givenName:
+              childInfo.givenName ||
+              childInfo.fullName.split(' ').slice(0, -1).join(' '),
+            surName:
+              childInfo.familyName || childInfo.fullName.split(' ').pop(),
           },
           travelDocuments: childPassportInfo
             ? [
@@ -328,45 +355,59 @@ export class DirectorateOfImmigrationClient {
         )
       const childAttachmentList: {
         attachmentType: AttachmentType
-        fileList: { filename: string; base64: string }[]
-      }[] = [
-        {
+        fileName: string
+        fileLink: string
+        countryCode?: string
+      }[] = []
+
+      childPassportInfo?.file.map((file) => {
+        childAttachmentList.push({
           attachmentType: AttachmentType.Passport,
-          fileList: childPassportInfo?.file || [],
-        },
-        {
+          fileName: file.filename,
+          fileLink: file.fileUrl,
+        })
+      })
+
+      childSupportingDocuments?.birthCertificate?.map((file) => {
+        childAttachmentList.push({
           attachmentType: AttachmentType.BirtCertificate,
-          fileList: childSupportingDocuments?.birthCertificate || [],
-        },
-        {
+          fileName: file.filename,
+          fileLink: file.fileUrl,
+        })
+      })
+
+      childSupportingDocuments?.writtenConsentFromChild?.map((file) => {
+        childAttachmentList.push({
           attachmentType: AttachmentType.WrittenConfirmationChild,
-          fileList: childSupportingDocuments?.writtenConsentFromChild || [],
-        },
-        {
+          fileName: file.filename,
+          fileLink: file.fileUrl,
+        })
+      })
+
+      childSupportingDocuments?.writtenConsentFromOtherParent?.map((file) => {
+        childAttachmentList.push({
           attachmentType: AttachmentType.ConfirmationOtherParent,
-          fileList:
-            childSupportingDocuments?.writtenConsentFromOtherParent || [],
-        },
-        {
+          fileName: file.filename,
+          fileLink: file.fileUrl,
+        })
+      })
+
+      childSupportingDocuments?.custodyDocuments?.map((file) => {
+        childAttachmentList.push({
           attachmentType: AttachmentType.CustodyDocuments,
-          fileList: childSupportingDocuments?.custodyDocuments || [],
+          fileName: file.filename,
+          fileLink: file.fileUrl,
+        })
+      })
+
+      await this.applicationAttachmentApiWithAuth(
+        auth,
+      ).apiApplicationAttachmentFileLinkNewItemsApplicationIdPost({
+        applicationId: childApplicationId,
+        applicationAttachmentArrayFileLinkNewModel: {
+          applicationAttachments: childAttachmentList,
         },
-      ]
-      for (let j = 0; j < childAttachmentList.length; j++) {
-        const file = childAttachmentList[j]
-        for (let k = 0; k < file.fileList.length; k++) {
-          await this.applicationAttachmentApiWithAuth(
-            auth,
-          ).apiApplicationAttachmentApplicationIdPost({
-            applicationId: childApplicationId,
-            applicationAttachmentNewModel: {
-              attachmentType: file.attachmentType,
-              fileName: file.fileList[k].filename,
-              base64Contents: file.fileList[k].base64,
-            },
-          })
-        }
-      }
+      })
 
       applicationIdList.push(childApplicationId)
     }

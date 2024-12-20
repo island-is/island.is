@@ -14,9 +14,10 @@ import { useLimitedAccessGetSignedUrlLazyQuery } from './limitedAccessGetSigendU
 
 interface Parameters {
   caseId: string
+  connectedCaseParentId?: string
 }
 
-const useFileList = ({ caseId }: Parameters) => {
+const useFileList = ({ caseId, connectedCaseParentId }: Parameters) => {
   const { limitedAccess } = useContext(UserContext)
   const { setWorkingCase } = useContext(FormContext)
   const { formatMessage } = useIntl()
@@ -100,9 +101,23 @@ const useFileList = ({ caseId }: Parameters) => {
     () => (fileId: string) => {
       const query = limitedAccess ? limitedAccessGetSignedUrl : getSignedUrl
 
-      query({ variables: { input: { id: fileId, caseId } } })
+      query({
+        variables: {
+          input: {
+            id: fileId,
+            caseId: connectedCaseParentId ?? caseId,
+            mergedCaseId: connectedCaseParentId && caseId,
+          },
+        },
+      })
     },
-    [caseId, getSignedUrl, limitedAccess, limitedAccessGetSignedUrl],
+    [
+      caseId,
+      connectedCaseParentId,
+      getSignedUrl,
+      limitedAccess,
+      limitedAccessGetSignedUrl,
+    ],
   )
 
   const dismissFileNotFound = () => {

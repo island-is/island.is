@@ -24,10 +24,12 @@ export class NotificationDispatchService {
     notification,
     nationalId,
     messageId,
+    notificationId,
   }: {
     notification: Notification
     nationalId: string
     messageId: string
+    notificationId?: number | null
   }): Promise<void> {
     const tokens = await this.getDeviceTokens(nationalId, messageId)
 
@@ -42,7 +44,12 @@ export class NotificationDispatchService {
 
     for (const token of tokens) {
       try {
-        await this.sendNotificationToToken(notification, token, messageId)
+        await this.sendNotificationToToken(
+          notification,
+          token,
+          messageId,
+          notificationId,
+        )
       } catch (error) {
         await this.handleSendError(error, nationalId, token, messageId)
       }
@@ -82,6 +89,7 @@ export class NotificationDispatchService {
     notification: Notification,
     token: string,
     messageId: string,
+    notificationId?: number | null,
   ): Promise<void> {
     const message = {
       token,
@@ -92,6 +100,7 @@ export class NotificationDispatchService {
       data: {
         messageId,
         clickActionUrl: notification.clickActionUrl,
+        ...(notificationId && { notificationId: String(notificationId) }),
       },
     }
 

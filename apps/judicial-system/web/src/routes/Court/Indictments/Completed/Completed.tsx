@@ -3,10 +3,10 @@ import { useIntl } from 'react-intl'
 import router from 'next/router'
 
 import {
+  Accordion,
   Box,
   InputFileUpload,
   RadioButton,
-  Text,
   UploadFile,
 } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
@@ -14,15 +14,19 @@ import { core, titles } from '@island.is/judicial-system-web/messages'
 import {
   BlueBox,
   ConnectedCaseFilesAccordionItem,
+  CourtCaseInfo,
   FormContentContainer,
   FormContext,
   FormFooter,
   IndictmentCaseFilesList,
+  // IndictmentsLawsBrokenAccordionItem, NOTE: Temporarily hidden while list of laws broken is not complete
   InfoCardClosedIndictment,
   Modal,
   PageHeader,
   PageLayout,
+  PageTitle,
   SectionHeading,
+  useIndictmentsLawsBroken,
 } from '@island.is/judicial-system-web/src/components'
 import {
   CaseFileCategory,
@@ -48,6 +52,7 @@ const Completed: FC = () => {
     useUploadFiles(workingCase.caseFiles)
   const { handleUpload, handleRemove } = useS3Upload(workingCase.id)
   const { createEventLog } = useEventLog()
+  const lawsBroken = useIndictmentsLawsBroken(workingCase)
   const [modalVisible, setModalVisible] =
     useState<'SENT_TO_PUBLIC_PROSECUTOR'>()
 
@@ -56,11 +61,11 @@ const Completed: FC = () => {
   )
 
   const handleNextButtonClick = useCallback(async () => {
-    const allSucceeded = await handleUpload(
+    const uploadResult = await handleUpload(
       uploadFiles.filter((file) => file.percent === 0),
       updateUploadFile,
     )
-    if (!allSucceeded) {
+    if (uploadResult !== 'ALL_SUCCEEDED') {
       return
     }
 
@@ -126,6 +131,10 @@ const Completed: FC = () => {
         )
       : true
 
+  const hasLawsBroken = lawsBroken.size > 0
+  const hasMergeCases =
+    workingCase.mergedCases && workingCase.mergedCases.length > 0
+
   return (
     <PageLayout
       workingCase={workingCase}
@@ -135,21 +144,34 @@ const Completed: FC = () => {
     >
       <PageHeader title={formatMessage(titles.court.indictments.completed)} />
       <FormContentContainer>
-        <Box marginBottom={7}>
-          <Text as="h1" variant="h1">
-            {formatMessage(strings.heading)}
-          </Text>
-        </Box>
+        <PageTitle>{formatMessage(strings.heading)}</PageTitle>
+        <CourtCaseInfo workingCase={workingCase} />
         <Box marginBottom={5} component="section">
           <InfoCardClosedIndictment />
         </Box>
-        {workingCase.mergedCases &&
-          workingCase.mergedCases.length > 0 &&
-          workingCase.mergedCases.map((mergedCase) => (
-            <Box marginBottom={5} key={mergedCase.id}>
-              <ConnectedCaseFilesAccordionItem connectedCase={mergedCase} />
-            </Box>
-          ))}
+        {(hasLawsBroken || hasMergeCases) && (
+          <Box marginBottom={5}>
+            {/*
+            NOTE: Temporarily hidden while list of laws broken is not complete in
+            indictment cases
+            
+            {hasLawsBroken && (
+              <IndictmentsLawsBrokenAccordionItem workingCase={workingCase} />
+            )} */}
+            {hasMergeCases && (
+              <Accordion>
+                {workingCase.mergedCases?.map((mergedCase) => (
+                  <Box key={mergedCase.id}>
+                    <ConnectedCaseFilesAccordionItem
+                      connectedCaseParentId={workingCase.id}
+                      connectedCase={mergedCase}
+                    />
+                  </Box>
+                ))}
+              </Accordion>
+            )}
+          </Box>
+        )}
         <Box marginBottom={5} component="section">
           <IndictmentCaseFilesList workingCase={workingCase} />
         </Box>
@@ -269,6 +291,9 @@ const Completed: FC = () => {
                     large
                     backgroundColor="white"
                     label={formatMessage(strings.serviceRequirementNotRequired)}
+                    tooltip={formatMessage(
+                      strings.serviceRequirementNotRequiredTooltip,
+                    )}
                   />
                 </BlueBox>
               </Box>

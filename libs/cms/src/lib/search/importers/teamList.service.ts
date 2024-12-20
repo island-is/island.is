@@ -1,9 +1,11 @@
-import { MappedData } from '@island.is/content-search-indexer/types'
-import { logger } from '@island.is/logging'
 import { Injectable } from '@nestjs/common'
+import { logger } from '@island.is/logging'
+import type { MappedData } from '@island.is/content-search-indexer/types'
+import { documentToPlainTextString } from '@contentful/rich-text-plain-text-renderer'
 import type { ITeamList } from '../../generated/contentfulTypes'
-import { CmsSyncProvider, processSyncDataInput } from '../cmsSync.service'
 import { mapTeamList } from '../../models/teamList.model'
+import type { CmsSyncProvider, processSyncDataInput } from '../cmsSync.service'
+import { extractChildEntryIds } from './utils'
 
 @Injectable()
 export class TeamListSyncService implements CmsSyncProvider<ITeamList> {
@@ -20,11 +22,27 @@ export class TeamListSyncService implements CmsSyncProvider<ITeamList> {
 
     const teamMembers: MappedData[] = []
 
+    const dateUpdated = new Date().getTime().toString()
+
     for (const teamListEntry of entries) {
       const teamList = mapTeamList(teamListEntry)
       for (const member of teamList.teamMembers ?? []) {
         try {
-          const content = member.name ? member.name : undefined
+          const memberEntry = teamListEntry.fields.teamMembers?.find(
+            (m) => m.sys.id === member.id,
+          )
+          const contentSection: string[] = []
+
+          contentSection.push(
+            memberEntry?.fields?.intro
+              ? documentToPlainTextString(memberEntry.fields.intro)
+              : '',
+          )
+          if (member.title) {
+            contentSection.push(member.title)
+          }
+
+          const content = contentSection.join(' ')
           teamMembers.push({
             _id: member.id,
             title: member.name,
@@ -54,6 +72,22 @@ export class TeamListSyncService implements CmsSyncProvider<ITeamList> {
       }
     }
 
-    return teamMembers
+    return teamMembers.concat(
+      // Append the team list document tagged with the ids of its members so we can later look up what list a member belongs to
+      entries.map((teamListEntry) => {
+        const childEntryIds = extractChildEntryIds(teamListEntry)
+        return {
+          _id: teamListEntry.sys.id,
+          title: teamListEntry.fields.title ?? '',
+          type: 'webTeamList',
+          dateCreated: teamListEntry.sys.createdAt,
+          dateUpdated: dateUpdated,
+          tags: childEntryIds.map((id) => ({
+            key: id,
+            type: 'hasChildEntryWithId',
+          })),
+        }
+      }),
+    )
   }
 }

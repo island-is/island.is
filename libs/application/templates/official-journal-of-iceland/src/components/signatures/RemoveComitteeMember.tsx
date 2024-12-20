@@ -5,6 +5,7 @@ import { MINIMUM_COMMITTEE_SIGNATURE_MEMBER_COUNT } from '../../lib/constants'
 import set from 'lodash/set'
 import * as styles from './Signatures.css'
 import { getCommitteeAnswers, isCommitteeSignature } from '../../lib/utils'
+import { useFormContext } from 'react-hook-form'
 
 type Props = {
   applicationId: string
@@ -18,6 +19,8 @@ export const RemoveCommitteeMember = ({
   const { updateApplication, application, isLoading } = useApplication({
     applicationId,
   })
+
+  const { setValue } = useFormContext()
 
   const onRemoveMember = () => {
     const { currentAnswers, signature } = getCommitteeAnswers(
@@ -36,12 +39,14 @@ export const RemoveCommitteeMember = ({
         updatedCommitteeSignature,
       )
 
+      setValue(InputFields.signature.committee, updatedCommitteeSignature)
+
       updateApplication(updatedAnswers)
     }
   }
 
   return (
-    <Box className={styles.removeInputGroup}>
+    <Box display="flex" flexDirection="column" justifyContent="flexEnd">
       <Button
         disabled={memberIndex < MINIMUM_COMMITTEE_SIGNATURE_MEMBER_COUNT}
         loading={isLoading}

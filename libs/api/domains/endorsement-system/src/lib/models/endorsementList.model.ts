@@ -1,7 +1,6 @@
 import { Field, ObjectType, ID } from '@nestjs/graphql'
 import graphqlTypeJson from 'graphql-type-json'
 import { EndorsementListTagsEnum } from '../enums/endorsementListTags.enum'
-import { CacheField } from '@island.is/nest/graphql'
 
 @ObjectType()
 export class EndorsementList {
@@ -23,10 +22,10 @@ export class EndorsementList {
   @Field()
   adminLock!: boolean
 
-  @CacheField(() => [EndorsementListTagsEnum])
+  @Field(() => [EndorsementListTagsEnum])
   tags!: EndorsementListTagsEnum[]
 
-  @CacheField(() => graphqlTypeJson)
+  @Field(() => graphqlTypeJson)
   meta!: object
 
   @Field()

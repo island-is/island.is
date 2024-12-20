@@ -217,3 +217,45 @@ export const pruneNonSearchableSliceUnionFields = (
   }
   return slice
 }
+
+export const extractChildEntryIds = <T>(rootNode: {
+  fields: T
+  sys: { id: string }
+}): string[] => {
+  const childIds: string[] = []
+
+  // Keys that don't lead to an entry id if traversed further down
+  const skippedKeys = ['contentType', 'space', 'environment']
+
+  const extractChildEntryIdsRecursive = (
+    node: T,
+    visited = new Set(),
+    keyAbove = '',
+  ) => {
+    if (!node || visited.has(node)) return
+
+    visited.add(node)
+
+    for (const key in node) {
+      const value = node[key]
+      if (
+        typeof value === 'string' &&
+        keyAbove === 'sys' &&
+        key === 'id' &&
+        value !== rootNode.sys.id // The root node is not it's own child
+      ) {
+        childIds.push(value)
+      } else if (
+        typeof value === 'object' &&
+        value !== null &&
+        !skippedKeys.includes(key)
+      ) {
+        extractChildEntryIdsRecursive(value as T, visited, key)
+      }
+    }
+  }
+
+  extractChildEntryIdsRecursive(rootNode.fields)
+
+  return childIds
+}

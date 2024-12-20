@@ -205,6 +205,7 @@ export type RegulationPdfInput = {
   comments: HTMLText
   name?: RegName
   publishedDate?: ISODate
+  ministry?: string
 }
 
 /** API response from regulation API */

@@ -9,13 +9,17 @@ import {
 } from '@island.is/judicial-system/consts'
 import {
   CaseDecision,
+  CaseIndictmentRulingDecision,
+  CaseNotificationType,
   CaseState,
   CaseType,
-  NotificationType,
   User,
 } from '@island.is/judicial-system/types'
 
-import { createTestingNotificationModule } from '../createTestingNotificationModule'
+import {
+  createTestingNotificationModule,
+  createTestUsers,
+} from '../createTestingNotificationModule'
 
 import { Case } from '../../../case'
 import { Defendant, DefendantService } from '../../../defendant'
@@ -40,8 +44,9 @@ describe('InternalNotificationController - Send ruling notifications', () => {
   const userId = uuid()
   const notificationDto: CaseNotificationDto = {
     user: { id: userId } as User,
-    type: NotificationType.RULING,
+    type: CaseNotificationType.RULING,
   }
+  const { testProsecutor } = createTestUsers(['testProsecutor'])
 
   let mockEmailService: EmailService
   let mockConfig: ConfigType<typeof notificationModuleConfig>
@@ -49,7 +54,8 @@ describe('InternalNotificationController - Send ruling notifications', () => {
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    process.env.PRISON_EMAIL = 'prisonEmail@email.com,prisonEmail2@email.com'
+    process.env.PRISON_EMAIL =
+      'prisonEmail@omnitrix.is,prisonEmail2@omnitrix.is'
 
     const {
       emailService,
@@ -81,12 +87,17 @@ describe('InternalNotificationController - Send ruling notifications', () => {
 
   describe('email to prosecutor for indictment case', () => {
     const caseId = uuid()
-    const prosecutor = { name: 'Lögmaður', email: 'logmadur@gmail.com' }
+
+    const prosecutor = {
+      name: testProsecutor.name,
+      email: testProsecutor.email,
+    }
     const theCase = {
       id: caseId,
       type: CaseType.INDICTMENT,
       courtCaseNumber: '007-2022-07',
       court: { name: 'Héraðsdómur Reykjavíkur' },
+      indictmentRulingDecision: CaseIndictmentRulingDecision.MERGE,
       prosecutor,
     } as Case
 
@@ -101,7 +112,7 @@ describe('InternalNotificationController - Send ruling notifications', () => {
         expect.objectContaining({
           to: [{ name: prosecutor.name, address: prosecutor.email }],
           subject: 'Máli lokið 007-2022-07',
-          html: `Máli 007-2022-07 hjá Héraðsdómi Reykjavíkur hefur verið lokið.<br /><br />Niðurstaða: Ekki skráð<br /><br />Skjöl málsins eru aðgengileg á ${expectedLink}yfirlitssíðu málsins í Réttarvörslugátt</a>.`,
+          html: `Máli 007-2022-07 hjá Héraðsdómi Reykjavíkur hefur verið lokið.<br /><br />Niðurstaða: Sameinað<br /><br />Skjöl málsins eru aðgengileg á ${expectedLink}yfirlitssíðu málsins í Réttarvörslugátt</a>.`,
         }),
       )
     })
@@ -109,7 +120,10 @@ describe('InternalNotificationController - Send ruling notifications', () => {
 
   describe('email to prosecutor for restriction case', () => {
     const caseId = uuid()
-    const prosecutor = { name: 'Lögmaður', email: 'logmadur@gmail.com' }
+    const prosecutor = {
+      name: testProsecutor.name,
+      email: testProsecutor.email,
+    }
     const theCase = {
       id: caseId,
       state: CaseState.ACCEPTED,
@@ -126,8 +140,7 @@ describe('InternalNotificationController - Send ruling notifications', () => {
     it('should send email to prosecutor', () => {
       const expectedLink = `<a href="${mockConfig.clientUrl}${SIGNED_VERDICT_OVERVIEW_ROUTE}/${caseId}">`
       expect(mockEmailService.sendEmail).toHaveBeenCalledTimes(2)
-      expect(mockEmailService.sendEmail).toHaveBeenNthCalledWith(
-        1,
+      expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
         expect.objectContaining({
           to: [{ name: prosecutor.name, address: prosecutor.email }],
           subject: 'Úrskurður í máli 007-2022-07',
@@ -139,7 +152,10 @@ describe('InternalNotificationController - Send ruling notifications', () => {
 
   describe('email to prosecutor for modified ruling restriction case', () => {
     const caseId = uuid()
-    const prosecutor = { name: 'Lögmaður', email: 'logmadur@gmail.com' }
+    const prosecutor = {
+      name: testProsecutor.name,
+      email: testProsecutor.email,
+    }
     const theCase = {
       id: caseId,
       type: CaseType.CUSTODY,
@@ -157,10 +173,9 @@ describe('InternalNotificationController - Send ruling notifications', () => {
     it('should send email to prosecutor', () => {
       const expectedLink = `<a href="${mockConfig.clientUrl}${SIGNED_VERDICT_OVERVIEW_ROUTE}/${caseId}">`
       expect(mockEmailService.sendEmail).toHaveBeenCalledTimes(2)
-      expect(mockEmailService.sendEmail).toHaveBeenNthCalledWith(
-        1,
+      expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
         expect.objectContaining({
-          to: [{ name: prosecutor.name, address: prosecutor.email }],
+          to: [{ name: testProsecutor.name, address: testProsecutor.email }],
           subject: 'Úrskurður í máli 007-2022-07 leiðréttur',
           html: `Dómari hefur leiðrétt úrskurð í máli 007-2022-07 hjá Héraðsdómi Reykjavíkur.<br /><br />Skjöl málsins eru aðgengileg á ${expectedLink}yfirlitssíðu málsins í Réttarvörslugátt</a>.`,
         }),

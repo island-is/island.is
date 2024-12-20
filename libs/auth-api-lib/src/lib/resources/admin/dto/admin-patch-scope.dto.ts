@@ -3,6 +3,7 @@ import { IsArray, IsBoolean, IsOptional, ValidateNested } from 'class-validator'
 import { Type } from 'class-transformer'
 
 import { TranslatedValueDto } from '../../../translation/dto/translated-value.dto'
+import { AuthDelegationType } from '@island.is/shared/types'
 
 export class AdminPatchScopeDto {
   @ApiPropertyOptional({
@@ -84,6 +85,13 @@ export class AdminPatchScopeDto {
   @IsBoolean()
   @IsOptional()
   @ApiPropertyOptional({
+    example: false,
+  })
+  automaticDelegationGrant?: boolean
+
+  @IsBoolean()
+  @IsOptional()
+  @ApiPropertyOptional({
     deprecated: true,
     description: 'Use addedDelegationTypes or removedDelegationTypes instead',
   })
@@ -95,7 +103,7 @@ export class AdminPatchScopeDto {
     type: [String],
     example: ['Custom'],
   })
-  addedDelegationTypes?: string[]
+  addedDelegationTypes?: AuthDelegationType[]
 
   @IsArray()
   @IsOptional()
@@ -103,7 +111,7 @@ export class AdminPatchScopeDto {
     type: [String],
     example: ['Custom'],
   })
-  removedDelegationTypes?: string[]
+  removedDelegationTypes?: AuthDelegationType[]
 }
 
 /**

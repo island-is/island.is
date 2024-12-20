@@ -88,7 +88,7 @@ export type RegulationPageTexts = Partial<
     | 'historyTitle' // 'Breytingasaga reglugerðar ${name}'
     | 'historyStart' // 'Stofnreglugerð gefin út'
     | 'historyStartAmending' // 'Reglugerðin gefin út'
-    | 'historyChange' // 'Breytt af ${name}'
+    | 'historyChange' // 'Breytt með ${name}'
     | 'historyCancel' // 'Brottfelld af ${name}'
     | 'historyCurrentVersion' // 'Núgildandi útgáfa'
     | 'historyPastSplitter' // 'Gildandi breytingar'

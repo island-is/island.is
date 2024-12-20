@@ -10,10 +10,18 @@ import {
 } from '../nationalRegistry'
 import type { User as AuthUser } from '@island.is/auth-nest-tools'
 import { info } from 'kennitala'
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
 
 const ONE_WEEK = 604800 // seconds
 const CACHE_KEY = 'userService'
 const MAX_AGE_LIMIT = 18
+
+const DEFAULT_FUND: Fund = {
+  credit: 2,
+  total: 2,
+  used: 0,
+}
 
 interface CustodianCache {
   custodians: Array<NationalRegistryUser | null>
@@ -24,6 +32,8 @@ export class UserService {
   constructor(
     private readonly flightService: FlightService,
     private readonly nationalRegistryService: NationalRegistryService,
+    @Inject(LOGGER_PROVIDER)
+    private readonly logger: Logger,
     @Inject(CACHE_MANAGER) private readonly cacheManager: CacheManager,
   ) {}
 
@@ -38,6 +48,7 @@ export class UserService {
   private async getFund(
     user: NationalRegistryUser,
     auth?: AuthUser,
+    isManual?: boolean,
   ): Promise<Fund> {
     const { used, unused, total } =
       await this.flightService.countThisYearsFlightLegsByNationalId(
@@ -45,7 +56,7 @@ export class UserService {
       )
     let meetsADSRequirements = false
 
-    if (this.flightService.isADSPostalCode(user.postalcode)) {
+    if (this.flightService.isADSPostalCode(user.postalcode) || isManual) {
       meetsADSRequirements = true
     } else if (info(user.nationalId).age < MAX_AGE_LIMIT) {
       // NationalId is a minor and doesn't live in ADS postal codes.
@@ -91,20 +102,33 @@ export class UserService {
     nationalId: string,
     model: new (user: NationalRegistryUser, fund: Fund) => T,
     auth: AuthUser,
+    isExplicit?: boolean,
+    isManual?: boolean,
   ): Promise<T | null> {
     const user = await this.nationalRegistryService.getUser(nationalId, auth)
     if (!user) {
       return null
     }
-    const fund = await this.getFund(user, auth)
+    if (isExplicit) {
+      return new model(user, DEFAULT_FUND)
+    }
+    const fund = await this.getFund(user, auth, isManual)
     return new model(user, fund)
   }
 
   async getUserInfoByNationalId(
     nationalId: string,
     auth: AuthUser,
+    isExplicit?: boolean,
+    isManual?: boolean,
   ): Promise<User | null> {
-    return this.getUserByNationalId<User>(nationalId, User, auth)
+    return this.getUserByNationalId<User>(
+      nationalId,
+      User,
+      auth,
+      isExplicit,
+      isManual,
+    )
   }
 
   async getMultipleUsersByNationalIdArray(
@@ -118,9 +142,13 @@ export class UserService {
     const result = (await Promise.all(allUsers)).filter(Boolean) as Array<User>
 
     if (!result || result.length === 0) {
-      throw new Error(
-        'Could not find NationalRegistry records of neither User or relatives.',
+      this.logger.warn(
+        'National Registry records for the user or their relatives could not be found.',
+        {
+          category: 'ads-backend',
+        },
       )
+      return []
     }
 
     return result

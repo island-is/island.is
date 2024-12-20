@@ -50,17 +50,17 @@ export interface CitizenshipApplication {
     passportNumber: string
     passportTypeId: number
     countryOfIssuerId: string
-    file: { filename: string; base64: string }[]
+    file: { filename: string; fileUrl: string }[]
   }
   supportingDocuments: {
-    birthCertificate?: { filename: string; base64: string }[]
-    subsistenceCertificate: { filename: string; base64: string }[]
-    subsistenceCertificateForTown: { filename: string; base64: string }[]
-    certificateOfLegalResidenceHistory: { filename: string; base64: string }[]
-    icelandicTestCertificate: { filename: string; base64: string }[]
+    birthCertificate?: { filename: string; fileUrl: string }[]
+    subsistenceCertificate: { filename: string; fileUrl: string }[]
+    subsistenceCertificateForTown: { filename: string; fileUrl: string }[]
+    certificateOfLegalResidenceHistory: { filename: string; fileUrl: string }[]
+    icelandicTestCertificate: { filename: string; fileUrl: string }[]
     criminalRecord: {
       filename: string
-      base64: string
+      fileUrl: string
       countryId: string
     }[]
   }
@@ -77,13 +77,13 @@ export interface CitizenshipApplication {
     passportNumber: string
     passportTypeId: number
     countryIdOfIssuer: string
-    file: { filename: string; base64: string }[]
+    file: { filename: string; fileUrl: string }[]
   }[]
   childrenSupportingDocuments: {
     nationalId: string
-    birthCertificate: { filename: string; base64: string }[]
-    writtenConsentFromChild?: { filename: string; base64: string }[]
-    writtenConsentFromOtherParent?: { filename: string; base64: string }[]
-    custodyDocuments: { filename: string; base64: string }[]
+    birthCertificate: { filename: string; fileUrl: string }[]
+    writtenConsentFromChild?: { filename: string; fileUrl: string }[]
+    writtenConsentFromOtherParent?: { filename: string; fileUrl: string }[]
+    custodyDocuments: { filename: string; fileUrl: string }[]
   }[]
 }

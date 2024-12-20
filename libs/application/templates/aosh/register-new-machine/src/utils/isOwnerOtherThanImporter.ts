@@ -4,7 +4,7 @@ import { FormValue, NO, YES } from '@island.is/application/types'
 export const isOwnerOtherThanImporter = (answers: FormValue) => {
   const isOwnerOtherThanImporter = getValueViaPath(
     answers,
-    'importerInformation.isOwnerOtherThanImporter',
+    'ownerInformation.isOwnerOtherThanImporter',
     NO,
   ) as typeof NO | typeof YES
 

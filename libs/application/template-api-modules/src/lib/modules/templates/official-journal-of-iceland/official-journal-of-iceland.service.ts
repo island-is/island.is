@@ -34,9 +34,12 @@ export class OfficialJournalOfIcelandTemaplateService extends BaseTemplateApiSer
 
   async postApplication({ application, auth }: Props): Promise<boolean> {
     try {
-      return await this.ojoiApplicationService.postApplication({
-        id: application.id,
-      })
+      return await this.ojoiApplicationService.postApplication(
+        {
+          id: application.id,
+        },
+        auth,
+      )
     } catch (error) {
       return false
     }

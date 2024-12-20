@@ -9,6 +9,7 @@ import {
 } from '../../lib/constants'
 import { getEmptyMember, getRegularAnswers } from '../../lib/utils'
 import set from 'lodash/set'
+import { useFormContext } from 'react-hook-form'
 
 type Props = {
   applicationId: string
@@ -20,6 +21,8 @@ export const AddRegularMember = ({ applicationId, signatureIndex }: Props) => {
   const { updateApplication, application, isLoading } = useApplication({
     applicationId,
   })
+
+  const { setValue } = useFormContext()
 
   const onAddMember = () => {
     const { signature, currentAnswers } = getRegularAnswers(
@@ -46,6 +49,8 @@ export const AddRegularMember = ({ applicationId, signatureIndex }: Props) => {
           InputFields.signature.regular,
           updatedRegularSignature,
         )
+
+        setValue(InputFields.signature.regular, updatedRegularSignature)
 
         updateApplication(updatedAnswers)
       }

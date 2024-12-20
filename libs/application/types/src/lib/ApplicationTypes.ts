@@ -8,7 +8,6 @@ export enum ApplicationTypes {
   PARENTAL_LEAVE = 'ParentalLeave',
   DOCUMENT_PROVIDER_ONBOARDING = 'DocumentProviderOnboarding',
   HEALTH_INSURANCE = 'HealthInsurance',
-  CHILDREN_RESIDENCE_CHANGE = 'ChildrenResidenceChange',
   CHILDREN_RESIDENCE_CHANGE_V2 = 'ChildrenResidenceChangeV2',
   DATA_PROTECTION_AUTHORITY_COMPLAINT = 'DataProtectionAuthorityComplaint',
   LOGIN_SERVICE = 'LoginService',
@@ -33,6 +32,7 @@ export enum ApplicationTypes {
   FINANCIAL_STATEMENT_CEMETERY = 'FinancialStatementCemetery',
   FINANCIAL_STATEMENTS_INAO = 'FinancialStatementsInao',
   FINANCIAL_STATEMENT_INDIVIDUAL_ELECTION = 'FinancialStatementIndividualElection',
+  FINANCIAL_STATEMENT_POLITICAL_PARTY = 'FinancialStatementPoliticalParty',
   OPERATING_LICENSE = 'OperatingLicense',
   ESTATE = 'Estate',
   DRIVING_LICENSE_DUPLICATE = 'DrivingLicenseDuplicate',
@@ -63,6 +63,7 @@ export enum ApplicationTypes {
   HEALTHCARE_WORK_PERMIT = 'HealthcareWorkPermit',
   PENSION_SUPPLEMENT = 'PensionSupplement',
   TRANSFER_OF_MACHINE_OWNERSHIP = 'TransferOfMachineOwnership',
+  DEATH_BENEFITS = 'DeathBenefits',
   UNIVERSITY = 'University',
   HOME_SUPPORT = 'HomeSupport',
   CHANGE_MACHINE_SUPERVISOR = 'ChangeMachineSupervisor',
@@ -75,6 +76,7 @@ export enum ApplicationTypes {
   STREET_REGISTRATION = 'StreetRegistration',
   INCOME_PLAN = 'IncomePlan',
   NEW_PRIMARY_SCHOOL = 'NewPrimarySchool',
+  WORK_ACCIDENT_NOTIFICATION = 'WorkAccidentNotification',
   MACHINE_REGISTRATION = 'MachineRegistration',
 }
 
@@ -114,10 +116,6 @@ export const ApplicationConfigurations = {
   [ApplicationTypes.HEALTH_INSURANCE]: {
     slug: 'sjukratryggingar',
     translation: 'hi.application',
-  },
-  [ApplicationTypes.CHILDREN_RESIDENCE_CHANGE]: {
-    slug: 'breytt-logheimili-barns-old',
-    translation: 'crc.application',
   },
   [ApplicationTypes.CHILDREN_RESIDENCE_CHANGE_V2]: {
     slug: 'breytt-logheimili-barns',
@@ -209,7 +207,7 @@ export const ApplicationConfigurations = {
   },
   [ApplicationTypes.FINANCIAL_STATEMENT_CEMETERY]: {
     slug: 'skil-arsreikninga-kirkjugardar',
-    translation: 'fsck.application',
+    translation: 'fsc.application',
   },
   [ApplicationTypes.FINANCIAL_STATEMENTS_INAO]: {
     slug: 'skilarsreikninga',
@@ -218,6 +216,10 @@ export const ApplicationConfigurations = {
   [ApplicationTypes.FINANCIAL_STATEMENT_INDIVIDUAL_ELECTION]: {
     slug: 'skil-arsreikninga-einstaklingsframbod',
     translation: 'fsie.application',
+  },
+  [ApplicationTypes.FINANCIAL_STATEMENT_POLITICAL_PARTY]: {
+    slug: 'skil-arsreikninga-stjornmalaflokkar',
+    translation: 'fspp.application',
   },
   [ApplicationTypes.OPERATING_LICENSE]: {
     slug: 'rekstrarleyfi',
@@ -339,6 +341,10 @@ export const ApplicationConfigurations = {
     slug: 'eigendaskipti-taekis',
     translation: 'aosh.tmo.application',
   },
+  [ApplicationTypes.DEATH_BENEFITS]: {
+    slug: 'danarbaetur',
+    translation: ['db.application', 'sia.application', 'uiForms.application'],
+  },
   [ApplicationTypes.HOME_SUPPORT]: {
     slug: 'heimastudningur',
     translation: ['hst.application', 'uiForms.application'],
@@ -363,6 +369,10 @@ export const ApplicationConfigurations = {
     slug: 'beidni-um-skodun-taekis',
     translation: 'aosh.rifm.application',
   },
+  [ApplicationTypes.WORK_ACCIDENT_NOTIFICATION]: {
+    slug: 'tilkynning-um-vinnuslys',
+    translation: 'aosh.wan.application',
+  },
   [ApplicationTypes.OFFICIAL_JOURNAL_OF_ICELAND]: {
     slug: 'stjornartidindi',
     translation: 'ojoi.application',
@@ -385,7 +395,7 @@ export const ApplicationConfigurations = {
   },
   [ApplicationTypes.NEW_PRIMARY_SCHOOL]: {
     slug: 'nyr-grunnskoli',
-    translation: ['dess.nps.application', 'uiForms.application'],
+    translation: ['nps.application', 'uiForms.application'],
   },
   [ApplicationTypes.MACHINE_REGISTRATION]: {
     slug: 'nyskraning-taekis',

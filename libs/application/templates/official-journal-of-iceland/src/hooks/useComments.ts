@@ -1,5 +1,5 @@
 import { useMutation, useQuery } from '@apollo/client'
-import { OfficialJournalOfIcelandApplicationGetCommentsResponse } from '@island.is/api/schema'
+import { OjoiaGetCommentsResponse } from '@island.is/api/schema'
 import { POST_COMMENT_MUTATION, GET_COMMENTS_QUERY } from '../graphql/queries'
 
 type Props = {
@@ -7,15 +7,15 @@ type Props = {
 }
 
 type CommentsResponse = {
-  officialJournalOfIcelandApplicationGetComments: OfficialJournalOfIcelandApplicationGetCommentsResponse
+  OJOIAGetComments: OjoiaGetCommentsResponse
 }
 
-type AddCommentVariables = {
+export type AddCommentVariables = {
   comment: string
 }
 
 type PostCommentResponse = {
-  officialJournalOfIcelandApplicationPostComment: {
+  OJOIAPostComment: {
     success: boolean
   }
 }
@@ -29,6 +29,7 @@ export const useComments = ({ applicationId }: Props) => {
           id: applicationId,
         },
       },
+      fetchPolicy: 'no-cache',
     },
   )
 
@@ -45,7 +46,7 @@ export const useComments = ({ applicationId }: Props) => {
     },
   })
 
-  const addComment = (variables: AddCommentVariables) => {
+  const addComment = (variables: AddCommentVariables, cb?: () => void) => {
     addCommentMutation({
       variables: {
         input: {
@@ -54,16 +55,18 @@ export const useComments = ({ applicationId }: Props) => {
         },
       },
     })
+
+    cb && cb()
   }
 
   return {
-    comments: data?.officialJournalOfIcelandApplicationGetComments.comments,
+    comments: data?.OJOIAGetComments.comments,
     loading,
     error,
+    refetchComments: refetch,
     addComment,
     addCommentLoading,
     addCommentError,
-    addCommentSuccess:
-      addCommentSuccess?.officialJournalOfIcelandApplicationPostComment.success,
+    addCommentSuccess: addCommentSuccess?.OJOIAPostComment.success,
   }
 }

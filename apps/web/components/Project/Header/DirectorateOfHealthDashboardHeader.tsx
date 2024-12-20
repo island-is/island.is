@@ -18,7 +18,7 @@ export const DirectorateOfHealthDashboardHeader: React.FC<
   React.PropsWithChildren<DirectorateOfHealthDashboardHeaderProps>
 > = ({ projectPage }) => {
   const namespace = useMemo(() => {
-    return JSON.parse(projectPage?.namespace?.fields ?? '{}')
+    return JSON.parse(projectPage?.namespace?.fields || '{}')
   }, [projectPage?.namespace?.fields])
   const { activeLocale } = useI18n()
 

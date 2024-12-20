@@ -2,10 +2,19 @@ import { Inject } from '@nestjs/common'
 import axios from 'axios'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
+import { ZendeskServiceConfig } from './zendesk.config'
+import type { ConfigType } from '@island.is/nest/config'
 
-export const ZENDESK_OPTIONS = 'ZENDESK_OPTIONS'
+export enum TicketStatus {
+  Open = 'open',
+  Pending = 'pending',
+  Solved = 'solved',
+  Closed = 'closed',
+  New = 'new',
+  OnHold = 'on-hold',
+}
 
-export type Ticket = {
+export type SubmitTicketInput = {
   subject?: string
   message: string
   requesterId?: number
@@ -16,6 +25,13 @@ export type User = {
   name: string
   email: string
   id: number
+}
+
+export type Ticket = {
+  id: string
+  status: TicketStatus | string
+  custom_fields: Array<{ id: number; value: string }>
+  tags: Array<string>
 }
 
 export interface ZendeskServiceOptions {
@@ -29,16 +45,16 @@ export class ZendeskService {
   params: object
 
   constructor(
-    @Inject(ZENDESK_OPTIONS)
-    private readonly options: ZendeskServiceOptions,
+    @Inject(ZendeskServiceConfig.KEY)
+    private readonly config: ConfigType<typeof ZendeskServiceConfig>,
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
   ) {
     const token = Buffer.from(
-      `${this.options.email}/token:${this.options.token}`,
+      `${this.config.formEmail}/token:${this.config.formToken}`,
     ).toString('base64')
 
-    this.api = `https://${options.subdomain}.zendesk.com/api/v2`
+    this.api = `https://${config.subdomain}.zendesk.com/api/v2`
 
     this.params = {
       headers: {
@@ -121,7 +137,7 @@ export class ZendeskService {
     subject,
     requesterId,
     tags = [],
-  }: Ticket): Promise<boolean> {
+  }: SubmitTicketInput): Promise<boolean> {
     const newTicket = JSON.stringify({
       ticket: {
         requester_id: requesterId,
@@ -145,5 +161,24 @@ export class ZendeskService {
     }
 
     return true
+  }
+
+  async getTicket(ticketId: string): Promise<Ticket> {
+    try {
+      const response = await axios.get(`${this.api}/tickets/${ticketId}.json`, {
+        ...this.params,
+      })
+
+      return response.data.ticket
+    } catch (e) {
+      const errMsg = 'Failed to get Zendesk ticket'
+      const description = e.response.data.description
+
+      this.logger.error(errMsg, {
+        message: description,
+      })
+
+      throw new Error(`${errMsg}: ${description}`)
+    }
   }
 }

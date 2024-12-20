@@ -16,9 +16,21 @@ import {
 import { OJOI_INPUT_HEIGHT } from '../lib/constants'
 import { AddComment } from '../components/comments/AddComment'
 
-export const Comments = ({ application }: OJOIFieldBaseProps) => {
+type Props = OJOIFieldBaseProps & {
+  canAddComment?: boolean
+}
+
+export const Comments = ({ application, canAddComment = true }: Props) => {
   const { formatMessage: f } = useLocale()
-  const { comments, loading, error } = useComments({
+  const {
+    comments,
+    loading,
+    error,
+    addComment,
+    addCommentLoading,
+    addCommentSuccess,
+    addCommentError,
+  } = useComments({
     applicationId: application.id,
   })
 
@@ -45,7 +57,7 @@ export const Comments = ({ application }: OJOIFieldBaseProps) => {
             message={f(errorMessages.fetchCommentsFailedMessage)}
           />
         )}
-        {!showCommentsList && (
+        {!showCommentsList && !error && (
           <AlertMessage
             type="info"
             title={f(commentMessages.warnings.noCommentsTitle)}
@@ -62,18 +74,17 @@ export const Comments = ({ application }: OJOIFieldBaseProps) => {
             paddingBottom={5}
             background="blue100"
           >
-            <CommentsList
-              comments={comments?.map((comment) => ({
-                task: comment.task.title,
-                comment: comment.task.comment as string,
-                from: comment.task.from ?? undefined,
-                date: comment.createdAt,
-                type: 'received', // TODO: Implement sent comments
-              }))}
-            />
+            <CommentsList comments={comments} />
           </Box>
         )}
-        <AddComment applicationId={application.id} />
+        {canAddComment && (
+          <AddComment
+            addComment={addComment}
+            addCommentError={addCommentError}
+            addCommentLoading={addCommentLoading}
+            addCommentSuccess={addCommentSuccess}
+          />
+        )}
       </Stack>
     </FormGroup>
   )

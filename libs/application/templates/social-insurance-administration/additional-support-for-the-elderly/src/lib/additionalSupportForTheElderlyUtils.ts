@@ -1,5 +1,17 @@
 import { getValueViaPath } from '@island.is/application/core'
 import {
+  BankAccountType,
+  MONTHS,
+  TaxLevelOptions,
+} from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
+import {
+  AdditionalInformation,
+  Attachments,
+  BankInfo,
+  FileType,
+  PaymentInfo,
+} from '@island.is/application/templates/social-insurance-administration-core/types'
+import {
   Application,
   ExternalData,
   YesOrNo,
@@ -7,22 +19,17 @@ import {
 import addMonths from 'date-fns/addMonths'
 import subMonths from 'date-fns/subMonths'
 import { AttachmentLabel, AttachmentTypes } from './constants'
-import {
-  FileType,
-  Attachments,
-  AdditionalInformation,
-  BankInfo,
-  PaymentInfo,
-} from '@island.is/application/templates/social-insurance-administration-core/types'
-import {
-  BankAccountType,
-  TaxLevelOptions,
-} from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
 
 export const getApplicationAnswers = (answers: Application['answers']) => {
   const selectedYear = getValueViaPath(answers, 'period.year') as string
 
   const selectedMonth = getValueViaPath(answers, 'period.month') as string
+
+  const selectedYearHiddenInput = getValueViaPath(
+    answers,
+    'period.hiddenInput',
+  ) as string
+
   const applicantPhonenumber = getValueViaPath(
     answers,
     'applicant.phoneNumber',
@@ -86,6 +93,7 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     applicantPhonenumber,
     selectedYear,
     selectedMonth,
+    selectedYearHiddenInput,
     comment,
     additionalAttachments,
     additionalAttachmentsRequired,
@@ -228,6 +236,24 @@ export const getAvailableYears = () => {
       }
     },
   )
+}
+
+// returns available months for selected year, since available period is
+// 3 months back in time and 6 months in the future.
+export const getAvailableMonths = (selectedYear: string) => {
+  if (!selectedYear) return []
+
+  const threeMonthsBackInTime = subMonths(new Date(), 3)
+  const sixMonthsInTheFuture = addMonths(new Date(), 6)
+
+  let months = MONTHS
+  if (threeMonthsBackInTime.getFullYear().toString() === selectedYear) {
+    months = months.slice(threeMonthsBackInTime.getMonth() + 1, months.length)
+  } else if (sixMonthsInTheFuture.getFullYear().toString() === selectedYear) {
+    months = months.slice(0, sixMonthsInTheFuture.getMonth() + 1)
+  }
+
+  return months
 }
 
 export const isEligible = (externalData: ExternalData): boolean => {

@@ -1,8 +1,8 @@
 import {
   buildDescriptionField,
   buildForm,
-  buildHiddenInput,
   buildMultiField,
+  buildRadioField,
   buildSection,
   buildSubmitField,
   buildTextField,
@@ -20,7 +20,7 @@ export const Draft: Form = buildForm({
   title: '',
   mode: FormModes.DRAFT,
   renderLastScreenButton: true,
-  renderLastScreenBackButton: true,
+  renderLastScreenBackButton: false,
   logo: Logo,
   children: [
     buildSection({
@@ -33,6 +33,60 @@ export const Draft: Form = buildForm({
       title: m.dataCollection,
       children: [],
     }),
+    /* section used for testing purposes */
+    buildSection({
+      id: 'selectCandidateSection',
+      title: m.selectCandidate,
+      condition: (_, externalData) => {
+        const lists = getValueViaPath(
+          externalData,
+          'getList.data',
+          [],
+        ) as SignatureCollectionList[]
+        return lists.length > 1
+      },
+      children: [
+        buildMultiField({
+          id: 'selectCandidateSection',
+          title: m.selectCandidate,
+          description: m.selectCandidateDescription,
+          children: [
+            buildRadioField({
+              id: 'listId',
+              title: '',
+              defaultValue: '',
+              required: true,
+              options: ({
+                externalData: {
+                  getList: { data },
+                },
+              }) => {
+                return (data as SignatureCollectionList[]).map((list) => ({
+                  value: list.id,
+                  label: list.candidate.name,
+                  disabled:
+                    list.maxReached || new Date(list.endTime) < new Date(),
+                  tag: list.maxReached
+                    ? {
+                        label: m.selectCandidateMaxReached.defaultMessage,
+                        variant: 'red',
+                        outlined: true,
+                      }
+                    : new Date(list.endTime) < new Date()
+                    ? {
+                        label: m.selectCandidateListExpired.defaultMessage,
+                        variant: 'red',
+                        outlined: true,
+                      }
+                    : undefined,
+                }))
+              },
+            }),
+          ],
+        }),
+      ],
+    }),
+    /* ------------------------------- */
     buildSection({
       id: 'signListInformationSection',
       title: m.information,
@@ -47,24 +101,7 @@ export const Draft: Form = buildForm({
               title: m.listHeader,
               titleVariant: 'h3',
             }),
-            buildHiddenInput({
-              id: 'listId',
-              defaultValue: ({ answers, externalData }: Application) => {
-                const lists = getValueViaPath(
-                  externalData,
-                  'getList.data',
-                  [],
-                ) as SignatureCollectionList[]
 
-                const initialQuery = getValueViaPath(
-                  answers,
-                  'initialQuery',
-                  '',
-                )
-
-                return lists.find((x) => x.candidate.id === initialQuery)?.id
-              },
-            }),
             buildTextField({
               id: 'list.name',
               title: m.listName,
@@ -83,7 +120,11 @@ export const Draft: Form = buildForm({
                   '',
                 )
 
-                return lists.find((x) => x.candidate.id === initialQuery)?.title
+                return lists.find((list) =>
+                  initialQuery
+                    ? list.candidate.id === initialQuery
+                    : list.id === answers.listId,
+                )?.candidate?.name
               },
             }),
             buildTextField({
@@ -104,8 +145,11 @@ export const Draft: Form = buildForm({
                   '',
                 )
 
-                return lists.find((x) => x.candidate.id === initialQuery)
-                  ?.candidate?.partyBallotLetter
+                return lists.find((list) =>
+                  initialQuery
+                    ? list.candidate.id === initialQuery
+                    : list.id === answers.listId,
+                )?.candidate?.partyBallotLetter
               },
             }),
             buildDescriptionField({

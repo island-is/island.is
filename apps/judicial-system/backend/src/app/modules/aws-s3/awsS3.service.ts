@@ -125,13 +125,18 @@ export class AwsS3Service {
     caseType: CaseType,
     key?: string,
     timeToLive?: number,
+    useFreshSession = false,
   ): Promise<string> {
     if (!key) {
       throw new Error('Key is required')
     }
 
     return new Promise((resolve, reject) => {
-      this.s3.getSignedUrl(
+      const s3 = useFreshSession
+        ? new S3({ region: this.config.region })
+        : this.s3
+
+      s3.getSignedUrl(
         'getObject',
         {
           Bucket: this.config.bucket,
@@ -155,6 +160,7 @@ export class AwsS3Service {
     force: boolean,
     confirmContent: (content: Buffer) => Promise<string | undefined>,
     timeToLive?: number,
+    useFreshSession = false,
   ): Promise<string> {
     if (!key) {
       throw new Error('Key is required')
@@ -167,7 +173,12 @@ export class AwsS3Service {
     const confirmedKey = formatConfirmedIndictmentCaseKey(key)
 
     if (!force && (await this.objectExists(caseType, confirmedKey))) {
-      return this.getSignedUrl(caseType, confirmedKey, timeToLive)
+      return this.getSignedUrl(
+        caseType,
+        confirmedKey,
+        timeToLive,
+        useFreshSession,
+      )
     }
 
     const confirmedContent = await this.getObject(caseType, key).then(
@@ -175,11 +186,11 @@ export class AwsS3Service {
     )
 
     if (!confirmedContent) {
-      return this.getSignedUrl(caseType, key, timeToLive)
+      return this.getSignedUrl(caseType, key, timeToLive, useFreshSession)
     }
 
     return this.putObject(caseType, confirmedKey, confirmedContent).then(() =>
-      this.getSignedUrl(caseType, confirmedKey, timeToLive),
+      this.getSignedUrl(caseType, confirmedKey, timeToLive, useFreshSession),
     )
   }
 

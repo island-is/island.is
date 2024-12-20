@@ -154,7 +154,11 @@ export const calculatePeriodLength = (
   start: Date,
   end: Date,
   percentage = 1,
+  months?: number,
 ) => {
+  if (months) {
+    return months * 30
+  }
   if (end < start) {
     throw errorMessages.periodsEndDateBeforeStartDate
   }

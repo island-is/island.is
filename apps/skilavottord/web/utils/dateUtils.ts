@@ -20,6 +20,11 @@ export const getTime = (dateTime: string) => {
 }
 
 export const getYear = (dateTime: string) => {
+  // if null return empty string instead of 1970
+  if (!dateTime) {
+    return ''
+  }
+
   const date = new Date(dateTime)
   return format(date, 'yyyy')
 }

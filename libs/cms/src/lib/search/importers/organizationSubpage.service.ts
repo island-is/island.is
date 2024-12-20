@@ -9,6 +9,7 @@ import { IOrganizationSubpage } from '../../generated/contentfulTypes'
 import {
   extractStringsFromObject,
   pruneNonSearchableSliceUnionFields,
+  extractChildEntryIds,
 } from './utils'
 
 @Injectable()
@@ -21,7 +22,12 @@ export class OrganizationSubpageSyncService
         entry.sys.contentType.sys.id === 'organizationSubpage' &&
         !!entry.fields.title &&
         !!entry.fields.slug &&
-        !!entry.fields.organizationPage?.fields?.slug,
+        !!entry.fields.organizationPage?.fields?.slug &&
+        // Standalone organization pages have their own search, we don't want subpages there to be found in the global search
+        entry.fields.organizationPage.fields.theme !== 'standalone' &&
+        // Subpage should not be searchable if the organization frontpage isn't searchable
+        (entry.fields.organizationPage.fields.canBeFoundInSearchResults ??
+          true),
     )
   }
 
@@ -48,6 +54,10 @@ export class OrganizationSubpageSyncService
           const content = extractStringsFromObject(
             (mapped.description ?? []).map(pruneNonSearchableSliceUnionFields),
           )
+
+          // Tag the document with the ids of its children so we can later look up what document a child belongs to
+          const childEntryIds = extractChildEntryIds(entry)
+
           return {
             _id: mapped.id,
             title: mapped.title,
@@ -67,6 +77,10 @@ export class OrganizationSubpageSyncService
                 key: entry.fields?.organizationPage.fields?.slug,
                 type: 'organization',
               },
+              ...childEntryIds.map((id) => ({
+                key: id,
+                type: 'hasChildEntryWithId',
+              })),
             ],
             dateCreated: entry.sys.createdAt,
             dateUpdated: new Date().getTime().toString(),

@@ -20,16 +20,27 @@ export const subpoena = defineMessages({
       'Notaður sem texti í áfram takka á Fyrirkall skrefi í dómaraflæði í ákærum.',
   },
   modalTitle: {
-    id: 'judicial.system.core:subpoena.modal_title_v2',
-    defaultMessage:
-      'Viltu senda sækjanda {courtDateHasChanged, select, true {nýtt } other {}}boð í þingfestingu?',
+    id: 'judicial.system.core:subpoena.modal_title_v3',
+    defaultMessage: 'Viltu senda fyrirkall?',
     description: 'Notaður sem titill í modal glugga á Fyrirkallsskjá í ákærum.',
   },
+  modalText: {
+    id: 'judicial.system.core:subpoena.modal_message',
+    defaultMessage:
+      'Ákæra og fyrirkall verða send til ákæranda.\nÁkærða verður birt ákæran og fyrirkallið rafrænt á island.is',
+    description: 'Notað sem skilaboð í modal glugga á Fyrirkallsskjá í ákærum',
+  },
   modalPrimaryButtonText: {
-    id: 'judicial.system.core:subpoena.modal_primary_button_text',
-    defaultMessage: 'Senda boð',
+    id: 'judicial.system.core:subpoena.modal_primary_button_text_v2',
+    defaultMessage: 'Já, senda núna',
     description:
       'Notaður sem texti í staðfesta takka í modal glugga á Fyrirkallsskjá í ákærum.',
+  },
+  modalSecondaryButtonText: {
+    id: 'judicial.system.core:subpoena.modal_secondary_button_text',
+    defaultMessage: 'Hætta við',
+    description:
+      'Notaður sem texti í hætta takka í modal glugga á Fyrirkallsskjá í ákærum.',
   },
   subpoenaTypeTitle: {
     id: 'judicial.system.core:subpoena.subpoena_type_title',
@@ -48,5 +59,11 @@ export const subpoena = defineMessages({
     defaultMessage: 'Handtökufyrirkall',
     description:
       'Notaður sem texti fyrir Handtökufyrirkall valkost á Fyrirkalls skjá í dómaraflæði í ákærum.',
+  },
+  newSubpoenaButtonText: {
+    id: 'judicial.system.core:subpoena.new_subpoena_button_text',
+    defaultMessage: 'Nýtt fyrirkall',
+    description:
+      'Notaður sem texti á takka sem býður notanda að búa til nýtt fyrirkall.',
   },
 })

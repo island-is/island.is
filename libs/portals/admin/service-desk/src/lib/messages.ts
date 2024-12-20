@@ -65,9 +65,21 @@ export const m = defineMessages({
     id: 'admin-portal.service-desk:info',
     defaultMessage: 'Upplýsingar: ',
   },
+  notifications: {
+    id: 'admin-portal.service-desk:notifications',
+    defaultMessage: 'Tilkynningar: ',
+  },
+  loadMore: {
+    id: 'admin-portal.service-desk:load-more',
+    defaultMessage: 'Sjá meira',
+  },
   email: {
     id: 'admin-portal.service-desk:email',
     defaultMessage: 'Netfang',
+  },
+  delete: {
+    id: 'admin-portal.service-desk:delete-email',
+    defaultMessage: 'Eyða',
   },
   phone: {
     id: 'admin-portal.service-desk:phone',
@@ -138,5 +150,13 @@ export const m = defineMessages({
   noUsersFound: {
     id: 'admin-portal.service-desk:no-users-found',
     defaultMessage: 'Engir notendur fundust',
+  },
+  noEmail: {
+    id: 'admin-portal.service-desk:no-email',
+    defaultMessage: 'Ekkert netfang skráð',
+  },
+  noMobilePhone: {
+    id: 'admin-portal.service-desk:no-mobile-phone',
+    defaultMessage: 'Ekkert símanúmer skráð',
   },
 })

@@ -13,12 +13,17 @@ import {
   DefendantModule,
   EventModule,
   InstitutionModule,
+  SubpoenaModule,
   UserModule,
 } from '../index'
 import { Notification } from './models/notification.model'
-import { InstitutionNotificationService } from './institutionNotification.service'
+import { CaseNotificationService } from './services/caseNotification/caseNotification.service'
+import { CivilClaimantNotificationService } from './services/civilClaimantNotification/civilClaimantNotification.service'
+import { DefendantNotificationService } from './services/defendantNotification/defendantNotification.service'
+import { IndictmentCaseNotificationService } from './services/indictmentCaseNotification/indictmentCaseNotification.service'
+import { InstitutionNotificationService } from './services/institutionNotification/institutionNotification.service'
+import { SubpoenaNotificationService } from './services/subpoenaNotification/subpoenaNotification.service'
 import { InternalNotificationController } from './internalNotification.controller'
-import { InternalNotificationService } from './internalNotification.service'
 import { NotificationController } from './notification.controller'
 import { NotificationService } from './notification.service'
 import { NotificationDispatchService } from './notificationDispatch.service'
@@ -31,6 +36,7 @@ import { NotificationDispatchService } from './notificationDispatch.service'
     MessageModule,
     InstitutionModule,
     UserModule,
+    forwardRef(() => SubpoenaModule),
     forwardRef(() => CaseModule),
     forwardRef(() => CourtModule),
     forwardRef(() => EventModule),
@@ -39,10 +45,14 @@ import { NotificationDispatchService } from './notificationDispatch.service'
   ],
   controllers: [NotificationController, InternalNotificationController],
   providers: [
-    NotificationService,
-    InternalNotificationService,
-    NotificationDispatchService,
+    CaseNotificationService,
+    CivilClaimantNotificationService,
+    DefendantNotificationService,
+    IndictmentCaseNotificationService,
     InstitutionNotificationService,
+    NotificationService,
+    NotificationDispatchService,
+    SubpoenaNotificationService,
   ],
 })
 export class NotificationModule {}
