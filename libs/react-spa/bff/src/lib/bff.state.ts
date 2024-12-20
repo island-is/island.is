@@ -1,4 +1,5 @@
 import { BffUser } from '@island.is/shared/types'
+import { BffError } from './BffError'
 
 // Defining the possible states for authentication
 export type BffState =
@@ -23,7 +24,7 @@ type NonLoggedInAuthState = Exclude<BffState, 'logged-in'>
 export interface BffReducerStateBase {
   authState: BffState
   isAuthenticated: boolean
-  error?: Error | null
+  error?: BffError | null
 }
 
 // State when the user is not logged in
@@ -57,7 +58,7 @@ export type Action =
         | ActionType.SWITCH_USER
     }
   | { type: ActionType.SIGNIN_SUCCESS; payload: BffUser }
-  | { type: ActionType.ERROR; payload: Error }
+  | { type: ActionType.ERROR; payload: BffError }
 
 /**
  * Helper function to reset user-related state when switching users or logging out
