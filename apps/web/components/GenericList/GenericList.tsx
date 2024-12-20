@@ -30,6 +30,7 @@ import {
   GenericListItem,
   GenericListItemResponse,
   GenericTag,
+  GetGenericListItemsInputOrderBy,
   GetGenericListItemsQueryVariables,
   Query,
 } from '@island.is/web/graphql/schema'
@@ -578,6 +579,7 @@ interface GenericListWrapperProps {
   searchInputPlaceholder?: string | null
   itemType?: string | null
   filterTags?: GenericTag[] | null
+  defaultOrder?: GetGenericListItemsInputOrderBy
 }
 
 export const GenericListWrapper = ({
@@ -585,6 +587,7 @@ export const GenericListWrapper = ({
   filterTags,
   itemType,
   searchInputPlaceholder,
+  defaultOrder,
 }: GenericListWrapperProps) => {
   const searchQueryId = `${id}q`
   const pageQueryId = `${id}page`
@@ -647,6 +650,7 @@ export const GenericListWrapper = ({
               queryString: searchValue,
               tags,
               tagGroups,
+              orderBy: defaultOrder,
             },
           },
         })
