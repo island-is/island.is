@@ -6,12 +6,10 @@ import {
   buildTextField,
 } from '@island.is/application/core'
 import { representativeInfo, schoolInfo } from '../../../lib/messages'
-import {
-  isInjuredAndRepresentativeOfCompanyOrInstitute,
-  isInternshipStudiesAccident,
-  isReportingOnBehalfOfEmployee,
-  isStudiesAccident,
-} from '../../../utils'
+import { isStudiesAccident } from '../../../utils/accidentUtils'
+import { isInternshipStudiesAccident } from '../../../utils/occupationUtils'
+import { isReportingOnBehalfOfEmployee } from '../../../utils/reportingUtils'
+import { isInjuredAndRepresentativeOfCompanyOrInstitute } from '../../../utils/miscUtils'
 
 // School information if school accident
 export const schoolInfoSubSection = buildSubSection({
