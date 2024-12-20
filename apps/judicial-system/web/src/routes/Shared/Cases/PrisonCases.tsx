@@ -32,13 +32,17 @@ import {
   getDurationDate,
 } from '@island.is/judicial-system-web/src/components/Table'
 import Table from '@island.is/judicial-system-web/src/components/Table/Table'
-import { getPrisonCaseStateTag } from '@island.is/judicial-system-web/src/components/Tags/utils'
+import {
+  getPrisonCaseStateTag,
+  getPunishmentTypeTag,
+} from '@island.is/judicial-system-web/src/components/Tags/utils'
 import {
   CaseListEntry,
   CaseState,
   CaseType,
   InstitutionType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { isNonEmptyArray } from '@island.is/judicial-system-web/src/utils/arrayHelpers'
 
 import { usePrisonCasesQuery } from './prisonCases.generated'
 import { cases as m } from './Cases.strings'
@@ -184,6 +188,10 @@ export const PrisonCases: FC = () => {
               title: formatMessage(tables.court),
             },
             {
+              title: formatMessage(tables.punishmentType),
+              sortable: { isSortable: true, key: 'defendantsPunishmentType' },
+            },
+            {
               title: capitalize(formatMessage(tables.sentencingDate)),
             },
             { title: formatMessage(tables.state) },
@@ -212,6 +220,20 @@ export const PrisonCases: FC = () => {
             },
             {
               cell: (row) => <ColumnCaseType type={row.type} />,
+            },
+            {
+              cell: (row) => {
+                const punishmentType = isNonEmptyArray(row.defendants)
+                  ? row.defendants[0].punishmentType
+                  : undefined
+                const punishmentTypeTag = getPunishmentTypeTag(punishmentType)
+                return punishmentTypeTag ? (
+                  <CaseTag
+                    color={punishmentTypeTag.color}
+                    text={formatMessage(punishmentTypeTag.text)}
+                  />
+                ) : null
+              },
             },
             {
               cell: (row) => (
