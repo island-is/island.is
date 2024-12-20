@@ -1,3 +1,3 @@
-export * from './SchoolSelection'
-export * from './Overview'
-export * from './Conclusion'
+export * from './schoolSelection'
+export * from './overview'
+export * from './conclusion'

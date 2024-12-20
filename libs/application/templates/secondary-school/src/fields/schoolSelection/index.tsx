@@ -5,7 +5,7 @@ import { FC, useEffect, useState } from 'react'
 import { school } from '../../lib/messages'
 import { getValueViaPath } from '@island.is/application/core'
 import { useFormContext } from 'react-hook-form'
-import { SelectionItem } from './selectionItem'
+import { SelectionItem } from './SelectionItem'
 import { ApplicationType, hasDuplicates } from '../../utils'
 import { SecondarySchoolAnswers } from '../..'
 

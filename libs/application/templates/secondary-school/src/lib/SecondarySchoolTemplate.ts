@@ -105,7 +105,7 @@ const template: ApplicationTemplate<
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/Prerequisites').then((module) =>
+                import('../forms/prerequisitesForm').then((module) =>
                   Promise.resolve(module.Prerequisites),
                 ),
               actions: [
@@ -154,7 +154,7 @@ const template: ApplicationTemplate<
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/SecondarySchoolForm/index').then((module) =>
+                import('../forms/secondarySchoolForm/index').then((module) =>
                   Promise.resolve(module.SecondarySchoolForm),
                 ),
               actions: [
@@ -203,7 +203,7 @@ const template: ApplicationTemplate<
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/Conclusion').then((module) =>
+                import('../forms/conclusionForm').then((module) =>
                   Promise.resolve(module.Conclusion),
                 ),
               read: 'all',

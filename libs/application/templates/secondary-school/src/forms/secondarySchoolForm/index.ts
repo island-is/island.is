@@ -1,10 +1,10 @@
 import { buildForm } from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
-import { userInformationSection } from './UserInformationSection'
+import { userInformationSection } from './userInformationSection'
+import { schoolSection } from './schoolSection'
+import { extraInformationSection } from './extraInformationSection'
+import { overviewSection } from './overviewSection'
 import { Logo } from '../../assets/Logo'
-import { schoolSection } from './SchoolSection'
-import { extraInformationSection } from './ExtraInformationSection'
-import { overviewSection } from './OverviewSection'
 
 export const SecondarySchoolForm: Form = buildForm({
   id: 'SecondarySchoolFormDraft',
