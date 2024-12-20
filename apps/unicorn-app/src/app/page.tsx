@@ -6,7 +6,7 @@ export default function Index() {
           <div id="welcome">
             <h1>
               <span role="img" aria-label="unicorn">
-                Welcome unicorn 🦄 Q-Test2
+                Welcome unicorn 🦄 Q-Test 6
               </span>
             </h1>
           </div>
