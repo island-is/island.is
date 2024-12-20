@@ -17,11 +17,7 @@ import { isString } from '../../../utils/is-string'
 import { prefixBase64 } from '../../../utils/prefix-base-64'
 import IconStatusNonVerified from '../../assets/card/danger.png'
 import IconStatusVerified from '../../assets/card/is-verified.png'
-import {
-  LicenseCardPresets,
-  LICENSE_CARD_ROW_GAP,
-  CustomLicenseType,
-} from './license-list-card'
+import { LicenseCardPresets, CustomLicenseType } from './license-list-card'
 import { dynamicColor } from '../../utils'
 import { Typography } from '../typography/typography'
 import { screenWidth } from '../../../utils/dimensions'
@@ -30,7 +26,6 @@ const Host = styled(Animated.View)`
   position: relative;
   min-height: 104px;
   padding: ${({ theme }) => theme.spacing[2]}px;
-  row-gap: ${LICENSE_CARD_ROW_GAP}px;
   border-radius: ${({ theme }) => theme.border.radius.extraLarge};
   overflow: hidden;
   justify-content: center;
@@ -189,7 +184,12 @@ export function LicenseCard({
               <Skeleton
                 active
                 height={16}
-                style={{ width: 62, borderRadius: 4, opacity: 0.5 }}
+                style={{
+                  width: 62,
+                  borderRadius: 4,
+                  opacity: 0.5,
+                  marginBottom: theme.spacing.smallGutter,
+                }}
               />
             ) : (
               <>
