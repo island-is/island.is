@@ -43,4 +43,9 @@ export class GetGrantsInput {
   @IsArray()
   @IsOptional()
   organizations?: string[]
+
+  @Field(() => [String], { nullable: true })
+  @IsArray()
+  @IsOptional()
+  funds?: string[]
 }
