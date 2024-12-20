@@ -34,20 +34,19 @@ export const getRecipients = (answers: FormValue): Array<EmailRecipient> => {
   }
 
   // Custodians
-  const custodians =
+  const custodians = (
     getValueViaPath<SecondarySchoolAnswers['custodians']>(
       answers,
       'custodians',
     ) || []
-  for (let i = 0; i < custodians.length; i++) {
-    if (custodians[i].nationalId) {
-      recipientList.push({
-        nationalId: custodians[i].nationalId || '',
-        name: custodians[i].name || '',
-        email: custodians[i].email || '',
-      })
-    }
-  }
+  ).filter((x) => !!x.nationalId)
+  custodians.forEach((custodian) => {
+    recipientList.push({
+      nationalId: custodian.nationalId,
+      name: custodian.name || '',
+      email: custodian.email || '',
+    })
+  })
 
   // Main other contact
   const mainOtherContact = getValueViaPath<
@@ -68,13 +67,13 @@ export const getRecipients = (answers: FormValue): Array<EmailRecipient> => {
       'otherContacts',
     ) || []
   ).filter((x) => !!x.person.nationalId)
-  for (let i = 0; i < otherContacts.length; i++) {
+  otherContacts.forEach((otherContact) => {
     recipientList.push({
-      nationalId: otherContacts[i].person.nationalId,
-      name: otherContacts[i].person.name || '',
-      email: otherContacts[i].email || '',
+      nationalId: otherContact.person.nationalId,
+      name: otherContact.person.name || '',
+      email: otherContact.email || '',
     })
-  }
+  })
 
   return recipientList
 }
@@ -85,27 +84,26 @@ export const getCleanContacts = (
   const result: ApplicationContact[] = []
 
   // Parents
-  const parents =
+  const parents = (
     (application.externalData.nationalRegistryParents
       .data as NationalRegistryParent[]) || []
+  ).filter((x) => !!x.nationalId)
   const parentsAnswers =
     getValueViaPath<SecondarySchoolAnswers['custodians']>(
       application.answers,
       'custodians',
     ) || []
-  for (let i = 0; i < parents.length; i++) {
-    if (parents[i].nationalId) {
-      result.push({
-        nationalId: parents[i].nationalId,
-        name: `${parents[i].givenName} ${parents[i].familyName}`,
-        phone: parentsAnswers[i]?.phone || '',
-        email: parentsAnswers[i]?.email || '',
-        address: parents[i].legalDomicile?.streetAddress,
-        postalCode: parents[i].legalDomicile?.postalCode || undefined,
-        city: parents[i].legalDomicile?.locality || undefined,
-      })
-    }
-  }
+  parents.forEach((parent, index) => {
+    result.push({
+      nationalId: parent.nationalId,
+      name: `${parent.givenName} ${parent.familyName}`,
+      phone: parentsAnswers[index]?.phone || '',
+      email: parentsAnswers[index]?.email || '',
+      address: parent.legalDomicile?.streetAddress,
+      postalCode: parent.legalDomicile?.postalCode || undefined,
+      city: parent.legalDomicile?.locality || undefined,
+    })
+  })
 
   // Main other contact
   const mainOtherContact = getValueViaPath<
@@ -126,14 +124,14 @@ export const getCleanContacts = (
       'otherContacts',
     ) || []
   ).filter((x) => !!x.person.nationalId)
-  for (let i = 0; i < otherContacts.length; i++) {
+  otherContacts.forEach((otherContact) => {
     result.push({
-      nationalId: otherContacts[i].person.nationalId,
-      name: otherContacts[i].person.name || '',
-      phone: otherContacts[i].phone || '',
-      email: otherContacts[i].email || '',
+      nationalId: otherContact.person.nationalId,
+      name: otherContact.person.name || '',
+      phone: otherContact.phone || '',
+      email: otherContact.email || '',
     })
-  }
+  })
 
   return result
 }
@@ -143,83 +141,40 @@ export const getCleanSchoolSelection = (
 ): ApplicationSelectionSchool[] => {
   const result: ApplicationSelectionSchool[] = []
 
-  const selection = getValueViaPath<SecondarySchoolAnswers['selection']>(
-    application.answers,
-    'selection',
-  )
-
   let schoolPriority = 0
-  if (selection?.first?.school?.id && selection?.first?.firstProgram?.id) {
-    result.push({
-      priority: schoolPriority++,
-      schoolId: selection?.first.school.id,
-      programs: [
-        {
-          priority: 0,
-          programId: selection?.first.firstProgram.id,
-        },
-        {
-          priority: 1,
-          programId: selection?.first.secondProgram?.include
-            ? selection?.first.secondProgram.id || ''
-            : '',
-        },
-      ].filter((x) => !!x.programId),
-      thirdLanguageCode: selection?.first.thirdLanguage?.code || undefined,
-      nordicLanguageCode: selection?.first.nordicLanguage?.code || undefined,
-      requestDormitory: selection?.first.requestDormitory?.includes(YES),
-    })
-  }
-  if (
-    selection?.second?.include &&
-    selection?.second?.school?.id &&
-    selection?.second?.firstProgram?.id
-  ) {
-    result.push({
-      priority: schoolPriority++,
-      schoolId: selection?.second.school.id,
-      programs: [
-        {
-          priority: 0,
-          programId: selection?.second.firstProgram.id,
-        },
-        {
-          priority: 1,
-          programId: selection?.second.secondProgram?.include
-            ? selection?.second.secondProgram.id || ''
-            : '',
-        },
-      ].filter((x) => !!x.programId),
-      thirdLanguageCode: selection?.second.thirdLanguage?.code || undefined,
-      nordicLanguageCode: selection?.second.nordicLanguage?.code || undefined,
-      requestDormitory: selection?.second.requestDormitory?.includes(YES),
-    })
-  }
-  if (
-    selection?.third?.include &&
-    selection?.third?.school?.id &&
-    selection?.third?.firstProgram?.id
-  ) {
-    result.push({
-      priority: schoolPriority++,
-      schoolId: selection?.third.school.id,
-      programs: [
-        {
-          priority: 0,
-          programId: selection?.third.firstProgram.id,
-        },
-        {
-          priority: 1,
-          programId: selection?.third.secondProgram?.include
-            ? selection?.third.secondProgram.id || ''
-            : '',
-        },
-      ].filter((x) => !!x.programId),
-      thirdLanguageCode: selection?.third.thirdLanguage?.code || undefined,
-      nordicLanguageCode: selection?.third.nordicLanguage?.code || undefined,
-      requestDormitory: selection?.third.requestDormitory?.includes(YES),
-    })
-  }
+
+  const selectionKeys = ['first', 'second', 'third']
+  selectionKeys.forEach((selectionKey) => {
+    const selectionItem = getValueViaPath<
+      SecondarySchoolAnswers['selection']['first']
+    >(application.answers, `selection.${selectionKey}`)
+
+    if (
+      (selectionItem?.include || selectionKey === 'first') &&
+      selectionItem?.school?.id &&
+      selectionItem?.firstProgram?.id
+    ) {
+      result.push({
+        priority: schoolPriority++,
+        schoolId: selectionItem.school.id,
+        programs: [
+          {
+            priority: 0,
+            programId: selectionItem.firstProgram.id,
+          },
+          {
+            priority: 1,
+            programId: selectionItem.secondProgram?.include
+              ? selectionItem.secondProgram.id || ''
+              : '',
+          },
+        ].filter((x) => !!x.programId),
+        thirdLanguageCode: selectionItem.thirdLanguage?.code || undefined,
+        nordicLanguageCode: selectionItem.nordicLanguage?.code || undefined,
+        requestDormitory: selectionItem.requestDormitory?.includes(YES),
+      })
+    }
+  })
 
   return result
 }

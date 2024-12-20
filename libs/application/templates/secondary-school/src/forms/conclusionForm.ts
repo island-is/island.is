@@ -2,8 +2,10 @@ import {
   buildAlertMessageField,
   buildCustomField,
   buildForm,
+  buildMessageWithLinkButtonField,
   buildMultiField,
   buildSection,
+  coreMessages,
 } from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
 import { conclusion } from '../lib/messages'
@@ -36,6 +38,14 @@ export const Conclusion: Form = buildForm({
               id: 'conclusion',
               title: '',
               description: '',
+            }),
+            buildMessageWithLinkButtonField({
+              id: 'conclusionBottomLink',
+              title: '',
+              url: '/minarsidur/umsoknir',
+              buttonTitle: coreMessages.openServicePortalButtonTitle,
+              message: coreMessages.openServicePortalMessageText,
+              marginBottom: [4, 4, 12],
             }),
           ],
         }),

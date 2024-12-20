@@ -91,13 +91,14 @@ export class SecondarySchoolService extends BaseTemplateApiService {
   private async sendEmailAboutDeleteApplication(
     application: ApplicationWithAttachments,
   ) {
-    const recipientList = getRecipients(application.answers)
-    for (let i = 0; i < recipientList.length; i++) {
-      if (recipientList[i].email) {
-        await this.sharedTemplateAPIService
+    const recipientList = getRecipients(application.answers).filter(
+      (x) => !!x.email,
+    )
+    await Promise.all(
+      recipientList.map((recipient) =>
+        this.sharedTemplateAPIService
           .sendEmail(
-            (props) =>
-              generateApplicationRejectedEmail(props, recipientList[i]),
+            (props) => generateApplicationRejectedEmail(props, recipient),
             application,
           )
           .catch((e) => {
@@ -105,9 +106,9 @@ export class SecondarySchoolService extends BaseTemplateApiService {
               `Error sending email in deleteApplication for applicationID: ${application.id}`,
               e,
             )
-          })
-      }
-    }
+          }),
+      ),
+    )
   }
 
   async submitApplication({
@@ -178,12 +179,11 @@ export class SecondarySchoolService extends BaseTemplateApiService {
   ) {
     // Send email to applicant and all contacts
     const recipientList = getRecipients(application.answers)
-    for (let i = 0; i < recipientList.length; i++) {
-      if (recipientList[i].email) {
-        await this.sharedTemplateAPIService
+    await Promise.all(
+      recipientList.map((recipient) =>
+        this.sharedTemplateAPIService
           .sendEmail(
-            (props) =>
-              generateApplicationSubmittedEmail(props, recipientList[i]),
+            (props) => generateApplicationSubmittedEmail(props, recipient),
             application,
           )
           .catch((e) => {
@@ -191,9 +191,9 @@ export class SecondarySchoolService extends BaseTemplateApiService {
               `Error sending email in submitApplication for applicationID: ${application.id}`,
               e,
             )
-          })
-      }
-    }
+          }),
+      ),
+    )
   }
 
   private async getAttachmentAsBase64(

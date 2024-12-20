@@ -29,7 +29,7 @@ export const generateApplicationRejectedEmail: ApplicationRejectedEmail = (
     'applicant.name',
   )
 
-  const subject = 'Umsókn um framhaldsskóla - Umsókn eydd'
+  const subject = 'Umsókn um framhaldsskóla - Umsókn eytt'
 
   const message =
     `<span>Umsókn nemandans</span><br/>` +
