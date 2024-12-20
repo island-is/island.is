@@ -1,6 +1,7 @@
 name: Validate code in the merge queue
 
 on:
+  push:
   pull_request:
     types:
       - closed
@@ -9,6 +10,8 @@ on:
 jobs:
   validate-pr:
     runs-on: ubuntu-latest
+    outputs:
+          READY_FOR_MERGE: ${{ steps.validate-pr.outputs.result }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -21,5 +24,6 @@ jobs:
       - name: Run slow CI (emulated by a long sleep)
         run: |
           sleep 300
-          ls askdjfhs
-          exit 1
+      - name: Ready for merge
+        run: echo "READY_FOR_MERGE=true" >> $GITHUB_OUTPUT
+
