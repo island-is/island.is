@@ -3,6 +3,7 @@ import { ApiScopeInfo } from '../delegations-incoming.service'
 
 export default function filterByCustomScopeRule(
   scope: ApiScopeInfo,
+  filterOutForDelegationType: AuthDelegationType[],
   customScopeRules: {
     scopeName: string
     onlyForDelegationType: string[]
@@ -14,7 +15,7 @@ export default function filterByCustomScopeRule(
     return true
   }
 
-  return foundCSR.onlyForDelegationType.includes(
-    AuthDelegationType.GeneralMandate,
+  return foundCSR.onlyForDelegationType.some((type) =>
+    filterOutForDelegationType.includes(type as AuthDelegationType),
   )
 }
