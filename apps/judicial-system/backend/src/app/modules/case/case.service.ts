@@ -1460,8 +1460,11 @@ export class CaseService {
       [CaseState.SUBMITTED, CaseState.RECEIVED].includes(updatedCase.state)
     ) {
       const isJudgeChanged =
+        updatedCase.judge?.email &&
         updatedCase.judge?.nationalId !== theCase.judge?.nationalId
+
       const isRegistrarChanged =
+        updatedCase.registrar?.email &&
         updatedCase.registrar?.nationalId !== theCase.registrar?.nationalId
 
       if (isJudgeChanged) {
