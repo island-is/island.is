@@ -660,19 +660,6 @@ export type FieldsRepeaterField = BaseField & {
    */
   minRows?: number
   maxRows?: number
-  table?: {
-    /**
-     * List of strings to render,
-     * if not provided it will be auto generated from the fields
-     */
-    header?: StaticText[]
-    /**
-     * List of field id's to render,
-     * if not provided it will be auto generated from the fields
-     */
-    rows?: string[]
-    format?: Record<string, (value: string) => string | StaticText>
-  }
 }
 
 export type AccordionItem = {
@@ -758,6 +745,7 @@ export interface SliderField extends BaseField {
   readonly type: FieldTypes.SLIDER
   readonly color?: Colors
   component: FieldComponents.SLIDER
+  titleVariant?: TitleVariants
   min: number
   max: MaybeWithApplicationAndField<number>
   step?: number

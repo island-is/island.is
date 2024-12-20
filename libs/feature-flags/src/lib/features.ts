@@ -64,6 +64,9 @@ export enum Features {
   //Is social administration payment plan 2025 enabled?
   isServicePortalPaymentPlan2025Enabled = 'isServicePortalPaymentPlan2025Enabled',
 
+  //Is vehicle bulk mileage graph enabled?
+  isServicePortalVehicleBulkMileageSubdataPageEnabled = 'isServicePortalVehicleBulkMileageSubdataPageEnabled',
+
   //Possible universities
   isUniversityOfAkureyriEnabled = 'isUniversityOfAkureyriEnabled',
   isAgriculturalUniversityOfIcelandEnabled = 'isAgriculturalUniversityOfIcelandEnabled',
