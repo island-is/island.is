@@ -50,7 +50,7 @@ const findTrait = <T>(
  *   type: 'Person',
  *
  *   // Lazy values
- *   name: () => faker.name.findName(),
+ *   name: () => faker.person.fullName(),
  *
  *   // Dependent values
  *   slug: ({ title }) => faker.helpers.slugify(title),
@@ -58,7 +58,7 @@ const findTrait = <T>(
  *   // Traits
  *   $traits: {
  *     kid: {
- *       age: () => faker.datatype.number({min: 6, max: 16}),
+ *       age: () => faker.number.int({ min: 6, max: 16 }),
  *     },
  *     noSlug: {
  *       slug: null,

@@ -1,5 +1,5 @@
 import { expect } from '@playwright/test'
-import faker from 'faker'
+import { faker } from '@faker-js/faker'
 import { urls } from '../../../support/urls'
 import { verifyRequestCompletion } from '../../../support/api-tools'
 import { test } from '../utils/judicialSystemTest'
@@ -41,7 +41,7 @@ test.describe.serial('Search warrant tests', () => {
     await page.locator('#type').click()
     await page.locator('#react-select-type-option-0').click()
     await page.getByRole('checkbox').first().check()
-    await page.locator('input[name=inputName]').fill(faker.name.findName())
+    await page.locator('input[name=inputName]').fill(faker.person.fullName())
     await page.locator('input[name=accusedAddress]').fill('Einhversstaðar 1')
     await page.locator('#defendantGender').click()
     await page.locator('#react-select-defendantGender-option-0').click()

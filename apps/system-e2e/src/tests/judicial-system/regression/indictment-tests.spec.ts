@@ -1,5 +1,5 @@
 import { expect } from '@playwright/test'
-import faker from 'faker'
+import { faker } from '@faker-js/faker'
 import { urls } from '../../../support/urls'
 import { verifyRequestCompletion } from '../../../support/api-tools'
 import { test } from '../utils/judicialSystemTest'
@@ -13,7 +13,7 @@ test.use({ baseURL: urls.judicialSystemBaseUrl })
 
 test.describe.serial('Indictment tests', () => {
   let caseId = ''
-  const accusedName = faker.name.findName()
+  const accusedName = faker.person.fullName()
 
   test('prosecutor should create a new indictment case', async ({
     prosecutorPage,

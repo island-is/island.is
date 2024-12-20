@@ -1,7 +1,7 @@
 import { getModelToken } from '@nestjs/sequelize'
 import addMonths from 'date-fns/addMonths'
 import subMonths from 'date-fns/subMonths'
-import faker from 'faker'
+import { faker } from '@faker-js/faker'
 import request, { SuperTest, Test } from 'supertest'
 
 import { ApiScope, UserProfileScope } from '@island.is/auth/scopes'

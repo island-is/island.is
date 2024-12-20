@@ -12000,6 +12000,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@faker-js/faker@npm:9.2.0":
+  version: 9.2.0
+  resolution: "@faker-js/faker@npm:9.2.0"
+  checksum: 7cbff7363f198c24aa1a25499f200a25506f80df577a419ae878b6bdd4aa901ecfe071ae3bbecf8afafa5542c825623d55f5884d44db7b12420c898241332cd1
+  languageName: node
+  linkType: hard
+
 "@fal-works/esbuild-plugin-global-externals@npm:^2.1.2":
   version: 2.1.2
   resolution: "@fal-works/esbuild-plugin-global-externals@npm:2.1.2"
@@ -21834,13 +21841,6 @@ __metadata:
     "@types/qs": "*"
     "@types/serve-static": "*"
   checksum: 43f3ed2cea6e5e83c7c1098c5152f644e975fd764443717ff9c812a1518416a9e7e9f824ffe852c118888cbfb994ed023cad08331f49b19ced469bb185cdd5cd
-  languageName: node
-  linkType: hard
-
-"@types/faker@npm:5.5.3":
-  version: 5.5.3
-  resolution: "@types/faker@npm:5.5.3"
-  checksum: f43b04da142c372893e123d61e62417e6c7775eb00886d5687e0e41398a88ec0f73600a6e7f7e28b471172a4cf8efd1fb9209609b35bb14373dbc4bbf4541e9c
   languageName: node
   linkType: hard
 
@@ -34348,13 +34348,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"faker@npm:5.5.3":
-  version: 5.5.3
-  resolution: "faker@npm:5.5.3"
-  checksum: 684fd64c8d3897e54248f95b4f6319f75d97691b8500cd13adf4af2c28f9204f766c1d1aaa6b41338f0beaaa87256c3132f8708a1a8f189d122b92f6b98081c3
-  languageName: node
-  linkType: hard
-
 "fast-copy@npm:^2.1.0":
   version: 2.1.1
   resolution: "fast-copy@npm:2.1.1"
@@ -39093,6 +39086,7 @@ __metadata:
     "@dnd-kit/core": 6.1.0
     "@dnd-kit/sortable": 8.0.0
     "@elastic/elasticsearch": 7.7.1
+    "@faker-js/faker": 9.2.0
     "@formatjs/cli": 6.3.11
     "@formatjs/intl-datetimeformat": 4.1.6
     "@formatjs/intl-locale": 2.4.33
@@ -39183,7 +39177,6 @@ __metadata:
     "@types/crypto-js": 4.0.1
     "@types/escape-html": 1.0.0
     "@types/express": 4.17.17
-    "@types/faker": 5.5.3
     "@types/folder-hash": 3.3.0
     "@types/graphql": 14.5.0
     "@types/http-cache-semantics": 4.0.1
@@ -39301,7 +39294,6 @@ __metadata:
     eslint-plugin-storybook: ^0.6.12
     express: 4.18.2
     express-validator: 6.14.0
-    faker: 5.5.3
     fetch-mock: 9.10.7
     firebase-admin: 11.5.0
     folder-hash: 4.0.0
