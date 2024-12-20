@@ -34,7 +34,7 @@ import { AwsS3Service } from '../aws-s3'
 import { Case } from '../case'
 import { Defendant } from '../defendant/models/defendant.model'
 import { EventService } from '../event'
-import { SubpoenaService } from '../subpoena'
+import { Subpoena, SubpoenaService } from '../subpoena'
 import { UploadPoliceCaseFileDto } from './dto/uploadPoliceCaseFile.dto'
 import { CreateSubpoenaResponse } from './models/createSubpoena.response'
 import { PoliceCaseFile } from './models/policeCaseFile.model'
@@ -682,6 +682,56 @@ export class PoliceService {
       )
 
       throw error
+    }
+  }
+
+  async revokeSubpoena(
+    workingCase: Case,
+    subpoena: Subpoena,
+    user: User,
+  ): Promise<boolean> {
+    const { name: actor } = user
+
+    const subpoenaId = subpoena.subpoenaId
+
+    try {
+      const res = await this.fetchPoliceCaseApi(
+        `${this.xRoadPath}/InvalidateCourtSummon?sekGuid=${subpoenaId}`,
+        {
+          method: 'POST',
+          headers: {
+            accept: '*/*',
+            'X-Road-Client': this.config.clientId,
+            'X-API-KEY': this.config.policeApiKey,
+          },
+          agent: this.agent,
+        } as RequestInit,
+      )
+
+      if (res.ok) {
+        return true
+      }
+
+      throw await res.text()
+    } catch (error) {
+      this.logger.error(
+        `Failed revoke subpoena with id ${subpoenaId} for case ${workingCase.id} from police`,
+        {
+          error,
+        },
+      )
+
+      this.eventService.postErrorEvent(
+        'Failed to revoke subpoena from police',
+        {
+          caseId: workingCase.id,
+          subpoenaId,
+          actor,
+        },
+        error,
+      )
+
+      return false
     }
   }
 }
