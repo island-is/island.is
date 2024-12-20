@@ -579,7 +579,7 @@ interface GenericListWrapperProps {
   searchInputPlaceholder?: string | null
   itemType?: string | null
   filterTags?: GenericTag[] | null
-  defaultOrder?: GetGenericListItemsInputOrderBy
+  defaultOrder?: GetGenericListItemsInputOrderBy | null
 }
 
 export const GenericListWrapper = ({
