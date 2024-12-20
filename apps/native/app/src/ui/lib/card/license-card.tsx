@@ -1,5 +1,5 @@
 import React from 'react'
-import { FormattedDate, useIntl } from 'react-intl'
+import { FormattedDate, FormattedTime, useIntl } from 'react-intl'
 import {
   Animated,
   Image,
@@ -73,6 +73,7 @@ const BackgroundImage = styled.ImageBackground<{ color: string }>`
 const Content = styled.View`
   flex-shrink: 1;
   justify-content: center;
+  margin-bottom: ${({ theme }) => theme.spacing[1]}px;
 `
 
 const Base64Image = styled.Image`
@@ -230,10 +231,11 @@ export function LicenseCard({
               {type === CustomLicenseType.Passport ? (
                 <FormattedDate value={date} {...{ dateStyle: 'short' }} />
               ) : (
-                <FormattedDate
-                  value={date}
-                  {...{ dateStyle: 'short', timeStyle: 'short' }}
-                />
+                <>
+                  <FormattedTime value={date} />
+                  {' - '}
+                  <FormattedDate value={date} {...{ dateStyle: 'short' }} />
+                </>
               )}
             </Typography>
           )}

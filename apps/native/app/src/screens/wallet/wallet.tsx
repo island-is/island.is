@@ -203,7 +203,7 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
       if (item.__typename === 'Skeleton') {
         return (
           <View style={{ paddingHorizontal: theme.spacing[2] }}>
-            <GeneralCardSkeleton height={104} />
+            <GeneralCardSkeleton height={80} />
           </View>
         )
       }
