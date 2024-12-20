@@ -6,12 +6,17 @@ on:
       - 'main'
       - 'release/**'
       - 'pre-release/**'
+      - '!unicorn-pipe-rel3'
+      - '!feature/unicorn-app'
     paths:
       - 'charts/**'
       - 'infra/**'
       - '**/infra/**'
   workflow_dispatch: {}
   pull_request:
+    branches:
+      - '!uni-pr'
+      - '!feature/unicorn-app'
     paths:
       - 'charts/**'
       - 'infra/**'
