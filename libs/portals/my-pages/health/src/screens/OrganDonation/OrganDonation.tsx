@@ -43,8 +43,8 @@ const OrganDonation = () => {
       iAmOrganDonorWithExceptionsText: formatMessage(
         m.iAmOrganDonorWithExceptionsText,
       ),
-      iAmNotOrganDonorText: formatMessage(m.iAmOrganDonorText),
-      iAmOrganDonorText: formatMessage(m.iAmNotOrganDonorText),
+      iAmNotOrganDonorText: formatMessage(m.iAmNotOrganDonorText),
+      iAmOrganDonorText: formatMessage(m.iAmOrganDonorText),
       iAmOrganDonorWithExceptions: formatMessage(m.iAmOrganDonorWithExceptions),
       iAmOrganDonor: formatMessage(m.iAmOrganDonor),
       iAmNotOrganDonor: formatMessage(m.iAmNotOrganDonor),
