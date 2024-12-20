@@ -1,15 +1,17 @@
-import React, { FC, useEffect } from 'react'
+import React, { FC, useContext, useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 
 import { Option } from '@island.is/island-ui/core'
 import { ModalProps } from '@island.is/skilavottord-web/components'
 import {
   AccessControl,
-  UpdateAccessControlInput,
   Role,
+  UpdateAccessControlInput,
 } from '@island.is/skilavottord-web/graphql/schema'
 
+import { getPartnerId } from '@island.is/skilavottord-web/utils/accessUtils'
 import { AccessControlModal } from '../AccessControlModal/AccessControlModal'
+import { UserContext } from '@island.is/skilavottord-web/context'
 
 interface AccessControlUpdateProps
   extends Omit<
@@ -20,6 +22,7 @@ interface AccessControlUpdateProps
   recyclingPartners: Option[]
   roles: Option[]
   currentPartner?: AccessControl
+  municipalities: Option[]
 }
 
 export const AccessControlUpdate: FC<
@@ -33,6 +36,7 @@ export const AccessControlUpdate: FC<
   recyclingPartners,
   roles,
   currentPartner,
+  municipalities,
 }) => {
   const {
     control,
@@ -44,6 +48,8 @@ export const AccessControlUpdate: FC<
     mode: 'onChange',
   })
 
+  const { user } = useContext(UserContext)
+
   useEffect(() => {
     reset({
       ...currentPartner,
@@ -52,18 +58,27 @@ export const AccessControlUpdate: FC<
         (option) =>
           option.value === currentPartner?.recyclingPartner?.companyId,
       ),
+      municipalityId: municipalities.find(
+        (option) =>
+          option.value === currentPartner?.recyclingPartner?.companyId,
+      ),
     })
-  }, [currentPartner])
+  }, [currentPartner, municipalities, recyclingPartners, reset, roles])
 
   const handleOnSubmit = handleSubmit(
-    ({ nationalId, name, role, partnerId, email, phone }) => {
+    ({ nationalId, name, role, partnerId, email, phone, municipalityId }) => {
       return onSubmit({
         nationalId,
         name,
         email,
         phone,
         role: role.value,
-        partnerId: partnerId?.value || null,
+        partnerId: getPartnerId(
+          user,
+          municipalityId?.value,
+          partnerId?.value,
+          role.value,
+        ),
       })
     },
   )
@@ -79,8 +94,13 @@ export const AccessControlUpdate: FC<
       roles={roles}
       control={control}
       errors={errors}
-      partnerIdRequired={watch('role')?.value === Role.recyclingCompanyAdmin}
+      partnerIdRequired={
+        watch('role')?.value === Role.recyclingCompanyAdmin ||
+        watch('role')?.value === Role.recyclingCompany
+      }
       nationalIdDisabled
+      currentPartner={currentPartner}
+      municipalities={municipalities}
     />
   )
 }
