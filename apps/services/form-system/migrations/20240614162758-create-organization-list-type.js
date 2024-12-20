@@ -1,5 +1,3 @@
-'use strict'
-
 module.exports = {
   async up(queryInterface, Sequelize) {
     return queryInterface.sequelize.transaction((t) =>
@@ -33,10 +31,7 @@ module.exports = {
           list_type_id: {
             type: Sequelize.UUID,
             allowNull: false,
-            references: {
-              model: 'list_type',
-              key: 'id',
-            },
+            defaultValue: Sequelize.UUIDV4,
           },
         },
         { transaction: t },

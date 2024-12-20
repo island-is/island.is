@@ -10,7 +10,7 @@ export class SectionDto {
   @ApiProperty({ type: LanguageType })
   name!: LanguageType
 
-  @ApiProperty({ enum: SectionTypes })
+  @ApiProperty()
   sectionType!: string
 
   @ApiProperty()
