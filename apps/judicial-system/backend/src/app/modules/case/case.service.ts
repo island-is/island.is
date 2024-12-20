@@ -1468,9 +1468,6 @@ export class CaseService {
         updatedCase.registrar &&
         updatedCase.registrar.email &&
         updatedCase.registrar.nationalId !== theCase.registrar?.nationalId
-      console.log('isRegistrarChange', {
-        isRegistrarChanged: updatedCase.registrar,
-      })
 
       if (isJudgeChanged) {
         await this.addMessagesForDistrictCourtJudgeAssignedToQueue(
