@@ -11,6 +11,7 @@ import {
   CourtSessionType,
   IndictmentCaseReviewDecision,
   IndictmentDecision,
+  PunishmentType,
 } from '@island.is/judicial-system/types'
 
 import { Defendant } from '../../defendant'
@@ -142,4 +143,10 @@ export class CaseListEntry {
 
   @Field(() => String, { nullable: true })
   readonly indictmentCompletedDate?: string
+
+  // TEMP: Use with caution! This key will never be populated.
+  // It was added to bypass table component type checks for a required custom sort key
+  // until we have a resolution on how to handle multiple defendants in the case list
+  @Field(() => PunishmentType, { nullable: true })
+  readonly defendantsPunishmentType?: PunishmentType
 }

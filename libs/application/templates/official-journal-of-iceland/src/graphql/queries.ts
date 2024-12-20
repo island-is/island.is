@@ -117,6 +117,38 @@ export const ADVERT_QUERY = gql`
   }
 `
 
+export const MAIN_TYPES_QUERY = gql`
+  query AdvertMainTypes($params: OfficialJournalOfIcelandMainTypesInput!) {
+    officialJournalOfIcelandMainTypes(params: $params) {
+      mainTypes {
+        id
+        title
+        slug
+        department {
+          id
+          title
+          slug
+        }
+        types {
+          id
+          title
+          slug
+        }
+      }
+      paging {
+        page
+        pageSize
+        totalPages
+        totalItems
+        hasNextPage
+        hasPreviousPage
+        nextPage
+        previousPage
+      }
+    }
+  }
+`
+
 export const TYPES_QUERY = gql`
   query AdvertTypes($params: OfficialJournalOfIcelandTypesInput!) {
     officialJournalOfIcelandTypes(params: $params) {
