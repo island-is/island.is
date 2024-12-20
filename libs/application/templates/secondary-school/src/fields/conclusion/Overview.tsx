@@ -7,10 +7,10 @@ import {
   Divider,
   Text,
 } from '@island.is/island-ui/core'
-import { ApplicantOverview } from '../Overview/ApplicantOverview'
-import { CustodianOverview } from '../Overview/CustodianOverview'
-import { SchoolSelectionOverview } from '../Overview/SchoolSelectionOverview'
-import { ExtraInformationOverview } from '../Overview/ExtraInformationOverview'
+import { ApplicantOverview } from '../overview/ApplicantOverview'
+import { CustodianOverview } from '../overview/CustodianOverview'
+import { SchoolSelectionOverview } from '../overview/SchoolSelectionOverview'
+import { ExtraInformationOverview } from '../overview/ExtraInformationOverview'
 import { useLocale } from '@island.is/localization'
 import { conclusion, overview } from '../../lib/messages'
 import { ConclusionView } from '../../utils'
