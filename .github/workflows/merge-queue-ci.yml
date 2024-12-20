@@ -20,6 +20,5 @@ jobs:
           git status
       - name: Run slow CI (emulated by a long sleep)
         run: |
-          sleep 300
-          ls askdjfhs
-          exit 1
+          sleep 150
+
