@@ -56,11 +56,16 @@ export const renderers = {
 const findUpstreamDependencies = (
   runtime: UpstreamDependencyTracer,
   svc: ServiceBuilder<any> | string,
-  { dryRun = false, level = 0, noUpdateSecrets = false } = {},
+  {
+    dryRun = false,
+    level = 0,
+    skipSecrets = false,
+    dockerCompose = false,
+  } = {},
 ): string[] => {
   logger.debug('findUpstreamDependencies', {
     svc,
-    options: { dryRun, level, noUpdateSecrets },
+    options: { dryRun, level, skipSecrets, dockerCompose },
   })
   if (level > MAX_LEVEL_DEPENDENCIES)
     throw new Error(
@@ -86,11 +91,11 @@ export const withUpstreamDependencies = async <T extends ServiceOutputType>(
   habitat: ServiceBuilder<any>[],
   services: ServiceBuilder<any>[],
   serializer: OutputFormat<T>,
-  { dryRun = false, noUpdateSecrets = false } = {},
+  { dryRun = false, skipSecrets = false } = {},
 ): Promise<ServiceBuilder<any>[]> => {
   logger.debug('withUpstreamDependencies', {
     services,
-    options: { dryRun, noUpdateSecrets },
+    options: { dryRun, skipSecrets },
   })
   const dependencyTracer = new UpstreamDependencyTracer()
   const localHabitat = cloneDeep(habitat)
@@ -108,7 +113,7 @@ export const withUpstreamDependencies = async <T extends ServiceOutputType>(
     .map((s) =>
       findUpstreamDependencies(dependencyTracer, s, {
         dryRun,
-        noUpdateSecrets,
+        skipSecrets,
       }),
     )
     .flatMap((x) => x)
@@ -120,7 +125,7 @@ export const withUpstreamDependencies = async <T extends ServiceOutputType>(
     .includes('application-system-api')
     ? findUpstreamDependencies(dependencyTracer, 'api', {
         dryRun,
-        noUpdateSecrets,
+        skipSecrets,
       }).concat(['api'])
     : []
 
