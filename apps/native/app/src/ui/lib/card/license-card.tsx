@@ -250,7 +250,7 @@ export function LicenseCard({
           </ImgWrap>
         )}
       </ContentContainer>
-      {showBarcodeView && !error && (
+      {showBarcodeView && !showBarcodeOfflineMessage && !error && (
         <BarcodeWrapper minHeight={barcode?.height}>
           {!barcode.loading && barcode?.value ? (
             <BarcodeContainer>
@@ -285,7 +285,7 @@ export function LicenseCard({
           )}
         </BarcodeWrapper>
       )}
-      {(error || (showBarcodeOfflineMessage && !showBarcodeView)) && (
+      {(error || showBarcodeOfflineMessage) && (
         <BarcodeWrapper minHeight={barcodeHeight}>
           <BarcodeContainer
             style={{ backgroundColor: 'rgba(255,255,255,0.4)' }}
