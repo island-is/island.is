@@ -3,16 +3,19 @@ import * as styles from './charts.css'
 import cn from 'classnames'
 import { LegendProps, TooltipProps } from 'recharts'
 import { Box, Text } from '@island.is/island-ui/core'
+import { isDefined } from '@island.is/shared/utils'
 
 interface AxisTickProps {
   x?: number
   y?: number
   className?: string
   payload?: { value: string }
+  valueFormat?: (arg: number) => string
 }
 
 interface CustomTooltipProps extends TooltipProps<number, string> {
   valueLabels?: Record<string, string>
+  valueFormat?: (arg: number) => string
 }
 
 export const CustomTooltip = ({
@@ -20,25 +23,34 @@ export const CustomTooltip = ({
   active,
   label,
   valueLabels,
+  valueFormat,
 }: CustomTooltipProps) => {
   if (active && payload && payload.length) {
     return (
       <Box className={cn(styles.tooltip)}>
         <Text variant="small">{label}</Text>
-        {payload.map((item, index) => (
-          <Box as="li" className={cn(styles.list)} key={`item-${index}`}>
-            <div
-              className={cn(styles.dot)}
-              style={{
-                border: '3px solid ' + item.color,
-              }}
-            />
-            <Text variant="small">
-              {valueLabels && item.name ? valueLabels[item.name] : item.name} :
-              {item.value}
-            </Text>
-          </Box>
-        ))}
+        {payload
+          .map((item, index) => {
+            if (!item.value) return null
+
+            return (
+              <Box as="li" className={cn(styles.list)} key={`item-${index}`}>
+                <div
+                  className={cn(styles.dot)}
+                  style={{
+                    border: '3px solid ' + item.color,
+                  }}
+                />
+                <Text variant="small">
+                  {valueLabels && item.dataKey
+                    ? valueLabels[item.dataKey]
+                    : item.name}
+                  : {valueFormat ? valueFormat(item.value) : item.value}
+                </Text>
+              </Box>
+            )
+          })
+          .filter(isDefined)}
       </Box>
     )
   }

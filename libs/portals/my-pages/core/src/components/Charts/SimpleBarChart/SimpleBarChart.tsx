@@ -21,6 +21,7 @@ import { theme } from '@island.is/island-ui/theme'
 interface Axis {
   label?: string
   datakey: string
+  valueFormat?: (arg: number) => string
 }
 
 interface BarType {
@@ -29,6 +30,7 @@ interface BarType {
 
 interface TooltipType {
   labels: Record<string, string>
+  valueFormat?: (arg: number) => string
 }
 
 interface GraphDataProps {
@@ -96,7 +98,12 @@ export const SimpleBarChart = ({
                 />
                 <YAxis stroke="#CCDFFF" tick={<CustomizedAxisTick />} />
                 <Tooltip
-                  content={<CustomTooltip valueLabels={tooltip?.labels} />}
+                  content={
+                    <CustomTooltip
+                      valueLabels={tooltip?.labels}
+                      valueFormat={tooltip?.valueFormat}
+                    />
+                  }
                 />
                 <Legend
                   iconType="circle"
