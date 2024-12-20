@@ -6,6 +6,7 @@ on:
       - closed
     branches-ignore:
       - 'uni-pr'
+      - 'feature/unicorn-app'
 
 defaults:
   run:
