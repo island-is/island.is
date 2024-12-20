@@ -5,6 +5,7 @@ import { VehiclesScope } from '@island.is/auth/scopes'
 const schema = z.object({
   xroadPath: z.string(),
   scope: z.array(z.string()),
+  fetchTimeout: z.number().int(),
 })
 
 export const VehiclePrintingClientConfig = defineConfig<z.infer<typeof schema>>(
@@ -18,6 +19,8 @@ export const VehiclePrintingClientConfig = defineConfig<z.infer<typeof schema>>(
           'IS-DEV/GOV/10017/Samgongustofa-Protected/Vehicle-Printing-V1',
         ),
         scope: [VehiclesScope.vehicle], // TODO: Change to new scope when it has been created
+        fetchTimeout:
+          env.optionalJSON('XROAD_VEHICLE_PRINTING_TIMEOUT') ?? 30000,
       }
     },
   },
