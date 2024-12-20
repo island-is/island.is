@@ -17,7 +17,7 @@ import {
   UpdateCase,
   useCase,
 } from '@island.is/judicial-system-web/src/utils/hooks'
-import { hasSentNotification } from '@island.is/judicial-system-web/src/utils/stepHelper'
+import { hasSentNotification } from '@island.is/judicial-system-web/src/utils/utils'
 
 import { strings } from './CourtArrangements.string'
 
