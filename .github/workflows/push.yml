@@ -6,8 +6,6 @@ on:
       - 'main'
       - 'release/**'
       - 'pre-release/**'
-      - '!uni-pr'
-      - '!feature/unicorn-app'
     paths-ignore:
       - '**/*.md'
     tags:
@@ -15,9 +13,6 @@ on:
   workflow_dispatch:
   create:
   pull_request:
-    branches:
-      - '!uni-pr'
-      - '!feature/unicorn-app'
     types:
       - opened
       - synchronize
