@@ -4,21 +4,27 @@ import {
   FieldTypes,
 } from '@island.is/application/types'
 import { Box } from '@island.is/island-ui/core'
-import { FC } from 'react'
+import { FC, useCallback, useEffect } from 'react'
 import { CurrentVehiclesAndRecords } from '../../shared'
 import {
   FindVehicleFormField,
   VehicleRadioFormField,
+  VehicleSelectFormField,
 } from '@island.is/application/ui-fields'
 import { information, error } from '../../lib/messages'
 import { useLazyVehicleDetails } from '../../hooks/useLazyVehicleDetails'
-import { ApolloQueryResult } from '@apollo/client'
-import { VehicleSelectField } from './VehicleSelectField'
+import { ApolloQueryResult, useMutation } from '@apollo/client'
+import { useFormContext } from 'react-hook-form'
+import { UPDATE_APPLICATION } from '@island.is/application/graphql'
+import { useLocale } from '@island.is/localization'
 
 export const VehiclesField: FC<React.PropsWithChildren<FieldBaseProps>> = (
   props,
 ) => {
+  const { locale } = useLocale()
+  const { setValue } = useFormContext()
   const { application } = props
+  const [updateApplication] = useMutation(UPDATE_APPLICATION)
   const currentVehicleList = application.externalData.currentVehicleList
     .data as CurrentVehiclesAndRecords
 
@@ -34,6 +40,27 @@ export const VehiclesField: FC<React.PropsWithChildren<FieldBaseProps>> = (
       return result.data.vehiclePlateOrderChecksByPermno // Adjust based on your query
     }
   }
+
+  const updateData = useCallback(async () => {
+    await updateApplication({
+      variables: {
+        input: {
+          id: application.id,
+          answers: {
+            ownerCoOwners: [],
+          },
+        },
+        locale,
+      },
+    })
+  }, [application.id, locale, updateApplication])
+
+  useEffect(() => {
+    setValue('plateSize.frontPlateSize', [])
+    setValue('plateSize.rearPlateSize', [])
+    updateData()
+  }, [setValue, updateData])
+
   return (
     <Box paddingTop={2}>
       {currentVehicleList.totalRecords > 20 ? (
@@ -61,9 +88,26 @@ export const VehiclesField: FC<React.PropsWithChildren<FieldBaseProps>> = (
           }}
         />
       ) : currentVehicleList.totalRecords > 5 ? (
-        <VehicleSelectField
-          currentVehicleList={currentVehicleList.vehicles}
+        <VehicleSelectFormField
           {...props}
+          field={{
+            id: 'pickVehicle',
+            title: information.labels.pickVehicle.title,
+            type: FieldTypes.VEHICLE_SELECT,
+            component: FieldComponents.VEHICLE_SELECT,
+            children: undefined,
+            itemType: 'VEHICLE',
+            itemList: currentVehicleList?.vehicles,
+            getDetails: createGetVehicleDetailsWrapper(getVehicleDetails),
+            shouldValidateErrorMessages: true,
+            inputLabelText: information.labels.pickVehicle.vehicle,
+            inputPlaceholderText: information.labels.pickVehicle.placeholder,
+            alertMessageErrorTitle:
+              information.labels.pickVehicle.hasErrorTitle,
+            validationErrorFallbackMessage:
+              error.validationFallbackErrorMessage,
+            inputErrorMessage: error.requiredValidVehicle,
+          }}
         />
       ) : (
         <VehicleRadioFormField
@@ -76,6 +120,7 @@ export const VehiclesField: FC<React.PropsWithChildren<FieldBaseProps>> = (
             children: undefined,
             itemType: 'VEHICLE',
             itemList: currentVehicleList?.vehicles,
+            shouldValidateErrorMessages: true,
             alertMessageErrorTitle:
               information.labels.pickVehicle.hasErrorTitle,
             validationErrorFallbackMessage:
