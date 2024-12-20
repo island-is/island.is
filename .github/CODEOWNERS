@@ -384,6 +384,11 @@ codemagic.yaml                                                                  
 /libs/application/templates/university/                                                                   @island-is/origo
 /libs/application/template-api-modules/src/lib/modules/templates/university/                              @island-is/origo
 
+/libs/application/templates/secondary-school/                                                             @island-is/origo
+/libs/application/template-api-modules/src/lib/modules/templates/secondary-school/                        @island-is/origo
+/libs/api/domains/secondary-school/                                                                       @island-is/origo
+/libs/clients/secondary-school/                                                                           @island-is/origo
+
 # DevOps
 /.github/                                                                                                 @island-is/devops
 /.githooks/                                                                                               @island-is/devops

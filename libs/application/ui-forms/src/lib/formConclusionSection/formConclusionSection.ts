@@ -7,7 +7,7 @@ import {
   buildSection,
   coreMessages,
 } from '@island.is/application/core'
-import { FormText, StaticText } from '@island.is/application/types'
+import { Condition, FormText, StaticText } from '@island.is/application/types'
 import { conclusion } from './messages'
 
 type Props = Partial<{
@@ -29,6 +29,7 @@ type Props = Partial<{
   bottomButtonLink: string
   bottomButtonLabel: StaticText
   bottomButtonMessage: FormText
+  condition?: Condition
 }>
 
 /**
@@ -67,6 +68,7 @@ export const buildFormConclusionSection = ({
   bottomButtonLink = '/minarsidur/umsoknir',
   bottomButtonLabel = coreMessages.openServicePortalButtonTitle,
   bottomButtonMessage = coreMessages.openServicePortalMessageText,
+  condition,
 }: Props) => {
   const expandableDescriptionField = accordion
     ? [
@@ -83,6 +85,7 @@ export const buildFormConclusionSection = ({
   return buildSection({
     id: 'uiForms.conclusionSection',
     title: sectionTitle,
+    condition,
     children: [
       buildMultiField({
         id: 'uiForms.conclusionMultifield',
