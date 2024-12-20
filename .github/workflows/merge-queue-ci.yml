@@ -9,8 +9,6 @@ on:
 jobs:
   validate-pr:
     runs-on: ubuntu-latest
-    outputs:
-          READY_FOR_MERGE: ${{ steps.validate-pr.outputs.result }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -22,7 +20,5 @@ jobs:
           git status
       - name: Run slow CI (emulated by a long sleep)
         run: |
-          sleep 300
-      - name: Ready for merge
-        run: echo "READY_FOR_MERGE=true" >> $GITHUB_OUTPUT
+          sleep 150
 
