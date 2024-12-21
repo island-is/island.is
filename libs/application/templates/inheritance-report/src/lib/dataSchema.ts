@@ -676,6 +676,14 @@ export const inheritanceReportSchema = z.object({
   }),
 
   heirsAdditionalInfo: z.string().optional(),
+  heirsAdditionalInfoPrivateTransferFiles: z
+    .object({ key: z.string(), name: z.string() })
+    .array()
+    .optional(),
+  heirsAdditionalInfoFilesOtherDocuments: z
+    .object({ key: z.string(), name: z.string() })
+    .array()
+    .optional(),
 
   spouse: z
     .object({
