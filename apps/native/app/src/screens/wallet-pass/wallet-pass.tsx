@@ -136,6 +136,8 @@ const { useNavigationOptions, getNavigationOptions } =
     },
   )
 
+const BARCODE_MAX_WIDTH = 500
+
 export const WalletPassScreen: NavigationFunctionComponent<{
   id: string
   item?: GenericUserLicense
@@ -170,9 +172,13 @@ export const WalletPassScreen: NavigationFunctionComponent<{
     isBarcodeEnabled && pkPassAllowed && !data?.payload?.metadata?.expired
   const licenseType = data?.license?.type
   const barcodeWidth =
-    screenWidth - theme.spacing[4] * 2 - theme.spacing.smallGutter * 2
+    screenWidth > 760
+      ? BARCODE_MAX_WIDTH // For tablets - make sure barcode is not huge
+      : screenWidth - theme.spacing[4] * 2 - theme.spacing.smallGutter * 2
   const barcodeHeight = barcodeWidth / 3
   const updated = data?.fetch?.updated
+
+  console.log(screenWidth)
 
   const { loading } = res
 
