@@ -178,8 +178,6 @@ export const WalletPassScreen: NavigationFunctionComponent<{
   const barcodeHeight = barcodeWidth / 3
   const updated = data?.fetch?.updated
 
-  console.log(screenWidth)
-
   const { loading } = res
 
   const informationTopSpacing =
