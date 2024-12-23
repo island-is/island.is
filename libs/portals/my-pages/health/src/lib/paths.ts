@@ -35,4 +35,7 @@ export enum HealthPaths {
 
   HealthReferences = '/heilsa/tilvisanir',
   HealthReferencesDetail = '/heilsa/tilvisanir/:type',
+
+  HealthWaitlists = '/heilsa/waitlists',
+  HealthWaitlistsDetail = '/heilsa/waitlists/:type',
 }

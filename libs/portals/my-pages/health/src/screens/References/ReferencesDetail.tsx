@@ -1,6 +1,5 @@
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
-  ActionCard,
   HEALTH_DIRECTORATE_SLUG,
   InfoLine,
   InfoLineStack,
@@ -8,8 +7,6 @@ import {
 } from '@island.is/portals/my-pages/core'
 import React from 'react'
 import { messages } from '../../lib/messages'
-import { Stack } from '@island.is/island-ui/core'
-import { HealthPaths } from '../../lib/paths'
 
 const ReferencesDetail: React.FC = () => {
   useNamespaces('sp.health')
