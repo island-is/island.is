@@ -330,15 +330,15 @@ export const isTrafficViolationStepValidIndictments = (
     return workingCase.indictmentCounts?.every(isValidTrafficViolation) ?? false
   }
 
-  let isValid = false
-
-  for (const indictmentCount of workingCase.indictmentCounts || []) {
-    isValid = isTrafficViolation(indictmentCount)
-      ? isValidTrafficViolation(indictmentCount)
-      : isValidNonTrafficViolation(indictmentCount)
+  if (!workingCase.indictmentCounts?.length) {
+    return false
   }
 
-  return isValid
+  return workingCase.indictmentCounts.every((indictmentCount) =>
+    isTrafficViolation(indictmentCount)
+      ? isValidTrafficViolation(indictmentCount)
+      : isValidNonTrafficViolation(indictmentCount),
+  )
 }
 
 export const isPoliceDemandsStepValidRC = (workingCase: Case): boolean => {
