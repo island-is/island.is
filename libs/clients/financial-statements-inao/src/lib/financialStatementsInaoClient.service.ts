@@ -162,7 +162,7 @@ export class FinancialStatementsInaoClientService {
     return res
   }
 
-  async getElections(nationalId: string): Promise<Election[] | null> {
+  async getElections(): Promise<Election[] | null> {
     const url = `${this.basePath}/star_elections`
     const data = await this.getData(url)
 
@@ -180,9 +180,7 @@ export class FinancialStatementsInaoClientService {
         }
       })
 
-    return elections.filter((x) =>
-      hasReachedAge(nationalId, x.electionDate, x.minimumAge),
-    )
+    return elections
   }
 
   async getElectionInfo(electionId: string): Promise<ElectionInfo | null> {
