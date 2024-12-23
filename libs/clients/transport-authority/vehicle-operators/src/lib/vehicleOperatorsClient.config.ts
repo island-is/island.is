@@ -5,6 +5,7 @@ import { VehiclesScope } from '@island.is/auth/scopes'
 const schema = z.object({
   xroadPath: z.string(),
   scope: z.array(z.string()),
+  fetchTimeout: z.number().int(),
 })
 
 export const VehicleOperatorsClientConfig = defineConfig<
@@ -19,6 +20,8 @@ export const VehicleOperatorsClientConfig = defineConfig<
         'IS-DEV/GOV/10017/Samgongustofa-Protected/Vehicle-Operators-V3',
       ),
       scope: [VehiclesScope.vehicle], // TODO: Change to new scope when it has been created
+      fetchTimeout:
+        env.optionalJSON('XROAD_VEHICLE_OPERATORS_TIMEOUT') ?? 30000,
     }
   },
 })
