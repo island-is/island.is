@@ -209,6 +209,8 @@ const templates: Record<ApplicationTypes, () => Promise<unknown>> = {
     import('@island.is/application/templates/new-primary-school'),
   [ApplicationTypes.MACHINE_REGISTRATION]: () =>
     import('@island.is/application/templates/aosh/register-new-machine'),
+  [ApplicationTypes.RENTAL_AGREEMENT]: () =>
+    import('@island.is/application/templates/rental-agreement'),
 }
 
 export default templates
