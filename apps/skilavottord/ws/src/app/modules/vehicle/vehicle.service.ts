@@ -1,14 +1,15 @@
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+import { paginate } from '@island.is/nest/pagination'
 import { Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
-import { paginate } from '@island.is/nest/pagination'
+import { RecyclingPartnerModel } from '../recyclingPartner'
+import { MunicipalityModel } from '../municipality/municipality.model'
 import {
   RecyclingRequestModel,
   RecyclingRequestTypes,
 } from '../recyclingRequest'
-import { RecyclingPartnerModel } from '../recyclingPartner'
 import { VehicleModel } from './vehicle.model'
-import type { Logger } from '@island.is/logging'
-import { LOGGER_PROVIDER } from '@island.is/logging'
 
 @Injectable()
 export class VehicleService {
@@ -23,6 +24,31 @@ export class VehicleService {
     after: string,
     filter?: { requestType?: RecyclingRequestTypes; partnerId?: string },
   ) {
+    let partnerIds = []
+
+    // Get all sub recycling partners of the municipality
+    // else get all
+    if (filter.partnerId) {
+      try {
+        const recyclingPartners = await RecyclingPartnerModel.findAll({
+          where: {
+            municipalityId: filter.partnerId,
+          },
+          attributes: ['companyId', 'companyName', 'municipalityId'],
+        })
+
+        partnerIds = [
+          filter.partnerId,
+          ...recyclingPartners.map((partner) => partner.companyId),
+        ]
+      } catch (error) {
+        this.logger.error('Failed to fetch sub-partners:', error)
+        throw new Error('Failed to process municipality partners')
+      }
+    } else {
+      partnerIds = null
+    }
+
     return paginate<VehicleModel>({
       Model: this.vehicleModel,
       limit: first,
@@ -34,15 +60,25 @@ export class VehicleService {
           model: RecyclingRequestModel,
           where: {
             ...(filter.requestType ? { requestType: filter.requestType } : {}),
-            ...(filter.partnerId
+            ...(partnerIds
               ? {
-                  recyclingPartnerId: filter.partnerId,
+                  recyclingPartnerId: partnerIds,
                 }
               : {}),
           },
           include: [
             {
               model: RecyclingPartnerModel,
+              attributes: ['companyId', 'companyName', 'municipalityId'],
+              required: false, // Allows for left join
+              include: [
+                {
+                  model: MunicipalityModel,
+                  attributes: ['companyName'],
+                  as: 'municipality',
+                  required: false,
+                },
+              ],
             },
           ],
         },
