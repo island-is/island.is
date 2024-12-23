@@ -361,7 +361,14 @@
       "label": "Search for reg nr",
       "placeholder": "Search for reg nr"
     },
-    "table": ["Reg nr", "Model", "Year", "Company", "Deregistered"]
+    "table": [
+      "Reg nr",
+      "Model",
+      "Year",
+      "Company",
+      "Municipality",
+      "Deregistered"
+    ]
   },
   "recyclingFundSidenav": {
     "title": "Service",

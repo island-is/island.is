@@ -361,7 +361,14 @@
       "label": "Leita að skráningarnúmeri",
       "placeholder": "Leita að skráningarnúmeri"
     },
-    "table": ["Skráningar nr.", "Undirtegund", "Ár", "Fyrirtæki", "Afskráð"]
+    "table": [
+      "Skráningar nr.",
+      "Undirtegund",
+      "Ár",
+      "Fyrirtæki",
+      "Sveitarfélag",
+      "Afskráð"
+    ]
   },
   "recyclingFundSidenav": {
     "title": "Úrvinnslusjóður",

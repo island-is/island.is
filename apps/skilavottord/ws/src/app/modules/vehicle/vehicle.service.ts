@@ -1,14 +1,15 @@
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+import { paginate } from '@island.is/nest/pagination'
 import { Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
-import { paginate } from '@island.is/nest/pagination'
+import { RecyclingPartnerModel } from '../recyclingPartner'
+import { MunicipalityModel } from '../municipality/municipality.model'
 import {
   RecyclingRequestModel,
   RecyclingRequestTypes,
 } from '../recyclingRequest'
-import { RecyclingPartnerModel } from '../recyclingPartner'
 import { VehicleModel } from './vehicle.model'
-import type { Logger } from '@island.is/logging'
-import { LOGGER_PROVIDER } from '@island.is/logging'
 
 @Injectable()
 export class VehicleService {
@@ -28,16 +29,17 @@ export class VehicleService {
     // Get all sub recycling partners of the municipality
     // else get all
     if (filter.partnerId) {
-      // Get all sub recycling partners of the municipality
       try {
-        const subRecyclingPartners = await RecyclingPartnerModel.findAll({
-          where: { municipalityId: filter.partnerId },
-          attributes: ['companyId'],
+        const recyclingPartners = await RecyclingPartnerModel.findAll({
+          where: {
+            municipalityId: filter.partnerId,
+          },
+          attributes: ['companyId', 'companyName', 'municipalityId'],
         })
 
         partnerIds = [
           filter.partnerId,
-          ...subRecyclingPartners.map((partner) => partner.companyId),
+          ...recyclingPartners.map((partner) => partner.companyId),
         ]
       } catch (error) {
         this.logger.error('Failed to fetch sub-partners:', error)
@@ -67,6 +69,16 @@ export class VehicleService {
           include: [
             {
               model: RecyclingPartnerModel,
+              attributes: ['companyId', 'companyName', 'municipalityId'],
+              required: false, // Allows for left join
+              include: [
+                {
+                  model: MunicipalityModel,
+                  attributes: ['companyName'],
+                  as: 'municipality',
+                  required: false,
+                },
+              ],
             },
           ],
         },

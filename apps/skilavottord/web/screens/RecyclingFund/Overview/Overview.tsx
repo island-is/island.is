@@ -40,8 +40,17 @@ export const SkilavottordVehiclesQuery = gql`
         createdAt
         recyclingRequests {
           id
+          recyclingPartnerId
           nameOfRequestor
           createdAt
+          recyclingPartner {
+            companyId
+            companyName
+            municipalityId
+            municipality {
+              companyName
+            }
+          }
         }
       }
     }
@@ -50,6 +59,7 @@ export const SkilavottordVehiclesQuery = gql`
 
 const Overview: FC<React.PropsWithChildren<unknown>> = () => {
   const { user } = useContext(UserContext)
+  console.log('user', user)
   const {
     t: { recyclingFundOverview: t, routes },
   } = useI18n()

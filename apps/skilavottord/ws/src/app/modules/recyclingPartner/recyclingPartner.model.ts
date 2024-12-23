@@ -1,16 +1,17 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
 import {
+  BelongsTo,
   Column,
+  CreatedAt,
   DataType,
   Model,
-  Table,
-  CreatedAt,
-  UpdatedAt,
-  HasMany,
   PrimaryKey,
+  Table,
+  UpdatedAt,
 } from 'sequelize-typescript'
 
 import { RecyclingRequestModel } from '../recyclingRequest'
+import { MunicipalityModel } from '../municipality/municipality.model'
 
 @ObjectType('RecyclingPartner')
 @Table({ tableName: 'recycling_partner' })
@@ -114,6 +115,11 @@ export class RecyclingPartnerModel extends Model<RecyclingPartnerModel> {
   municipalityId?: string
 
   @Field(() => [RecyclingRequestModel])
-  @HasMany(() => RecyclingRequestModel)
   recyclingRequests?: typeof RecyclingRequestModel[]
+  @Field(() => MunicipalityModel, { nullable: true })
+  @BelongsTo(() => MunicipalityModel, {
+    foreignKey: 'municipality_id',
+    as: 'municipality',
+  })
+  municipality?: MunicipalityModel
 }
