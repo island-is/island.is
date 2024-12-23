@@ -17,11 +17,11 @@ module.exports = {
   },
 
   down: async (queryInterface) => {
-    await queryInterface.removeIndex(
+    /* await queryInterface.removeIndex(
       'recycling_partner',
       'idx_recycling_partner_is_municipality',
     )
     await queryInterface.removeColumn('recycling_partner', 'is_municipality')
-    await queryInterface.removeColumn('recycling_partner', 'municipality_id')
+    await queryInterface.removeColumn('recycling_partner', 'municipality_id')*/
   },
 }
