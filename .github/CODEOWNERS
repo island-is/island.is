@@ -18,6 +18,7 @@
 /libs/portals/admin/                                                                                      @island-is/aranja
 /libs/portals/core/                                                                                       @island-is/aranja @island-is/hugsmidjan
 /libs/shared/connected/                                                                                   @island-is/stefna
+/libs/shared/types/src/lib/api-cms-domain.ts                                                              @island-is/stefna
 
 /*                                                                                                        @island-is/core
 /libs/api/domains/identity/                                                                               @island-is/core
