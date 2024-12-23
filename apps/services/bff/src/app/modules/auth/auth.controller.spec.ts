@@ -6,11 +6,11 @@ import jwt from 'jsonwebtoken'
 import request from 'supertest'
 import { setupTestServer } from '../../../../test/setupTestServer'
 import {
-    ALGORITM_TYPE,
-    SESSION_COOKIE_NAME,
-    SID_VALUE,
-    getLoginSearchParmsFn,
-    mockedTokensResponse as tokensResponse,
+  ALGORITM_TYPE,
+  SESSION_COOKIE_NAME,
+  SID_VALUE,
+  getLoginSearchParmsFn,
+  mockedTokensResponse as tokensResponse,
 } from '../../../../test/sharedConstants'
 import { BffConfig } from '../../bff.config'
 import { IdsService } from '../ids/ids.service'
