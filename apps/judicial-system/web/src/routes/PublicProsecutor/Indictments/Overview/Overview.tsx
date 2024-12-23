@@ -128,7 +128,8 @@ export const Overview = () => {
               CaseIndictmentRulingDecision.FINE
             }
             onChange={(decision: IndictmentCaseReviewDecision) => {
-              const isChanged = decision !== workingCase.indictmentReviewDecision
+              const isChanged =
+                decision !== workingCase.indictmentReviewDecision
               setIsReviewedDecisionChanged(isChanged)
             }}
           />
