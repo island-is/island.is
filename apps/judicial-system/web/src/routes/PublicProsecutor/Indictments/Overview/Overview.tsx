@@ -1,13 +1,11 @@
-import { useCallback, useContext, useMemo, useState } from 'react'
+import { useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
-import { Box, Option, Select, Text } from '@island.is/island-ui/core'
+import { Box, Option } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
-import { formatDate } from '@island.is/judicial-system/formatters'
 import { core, titles } from '@island.is/judicial-system-web/messages'
 import {
-  BlueBox,
   BlueBoxWithDate,
   CourtCaseInfo,
   FormContentContainer,
@@ -20,21 +18,16 @@ import {
   PageHeader,
   PageLayout,
   PageTitle,
-  SectionHeading,
-  // useIndictmentsLawsBroken, NOTE: Temporarily hidden while list of laws broken is not complete
-  UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import { useProsecutorSelectionUsersQuery } from '@island.is/judicial-system-web/src/components/ProsecutorSelection/prosecutorSelectionUsers.generated'
-import { CaseIndictmentRulingDecision } from '@island.is/judicial-system-web/src/graphql/schema'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 
+import { IndictmentReviewerSelector } from './IndictmentReviewerSelector'
 import { strings } from './Overview.strings'
 type VisibleModal = 'REVIEWER_ASSIGNED'
 
 export const Overview = () => {
   const router = useRouter()
   const { formatMessage: fm } = useIntl()
-  const { user } = useContext(UserContext)
   const { updateCase } = useCase()
   const { workingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
@@ -61,29 +54,6 @@ export const Overview = () => {
     (destination: string) => router.push(`${destination}/${workingCase.id}`),
     [router, workingCase.id],
   )
-
-  const { data, loading } = useProsecutorSelectionUsersQuery({
-    fetchPolicy: 'no-cache',
-    errorPolicy: 'all',
-  })
-
-  const publicProsecutors = useMemo(() => {
-    if (!data?.users || !user) {
-      return []
-    }
-    return data.users.reduce(
-      (acc: { label: string; value: string }[], prosecutor) => {
-        if (prosecutor.institution?.id === user?.institution?.id) {
-          acc.push({
-            label: prosecutor.name ?? '',
-            value: prosecutor.id,
-          })
-        }
-        return acc
-      },
-      [],
-    )
-  }, [data?.users, user])
 
   return (
     <PageLayout
@@ -122,48 +92,11 @@ export const Overview = () => {
           <IndictmentCaseFilesList workingCase={workingCase} />
         </Box>
         {!workingCase.indictmentReviewDecision && (
-          <Box marginBottom={5}>
-            <SectionHeading
-              title={fm(strings.reviewerTitle)}
-              description={
-                <Text variant="eyebrow">
-                  {fm(strings.reviewerSubtitle, {
-                    isFine:
-                      workingCase.indictmentRulingDecision ===
-                      CaseIndictmentRulingDecision.FINE,
-                    indictmentAppealDeadline: formatDate(
-                      workingCase.indictmentAppealDeadline,
-                    ),
-                    appealDeadlineIsInThePast:
-                      workingCase.indictmentVerdictAppealDeadlineExpired,
-                  })}
-                </Text>
-              }
-            />
-            <BlueBox>
-              <Select
-                name="reviewer"
-                label={fm(strings.reviewerLabel)}
-                placeholder={fm(strings.reviewerPlaceholder)}
-                value={
-                  selectedIndictmentReviewer
-                    ? selectedIndictmentReviewer
-                    : workingCase.indictmentReviewer
-                    ? {
-                        label: workingCase.indictmentReviewer.name || '',
-                        value: workingCase.indictmentReviewer.id,
-                      }
-                    : undefined
-                }
-                options={publicProsecutors}
-                onChange={(value) => {
-                  setSelectedIndictmentReviewer(value as Option<string>)
-                }}
-                isDisabled={loading}
-                required
-              />
-            </BlueBox>
-          </Box>
+          <IndictmentReviewerSelector
+            workingCase={workingCase}
+            selectedIndictmentReviewer={selectedIndictmentReviewer}
+            setSelectedIndictmentReviewer={setSelectedIndictmentReviewer}
+          />
         )}
       </FormContentContainer>
       <FormContentContainer isFooter>

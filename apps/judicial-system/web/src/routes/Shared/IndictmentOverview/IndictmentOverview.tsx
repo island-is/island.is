@@ -117,6 +117,7 @@ const IndictmentOverview: FC = () => {
     isCompletedCase(workingCase.state) &&
     workingCase.indictmentReviewer?.id === user?.id &&
     Boolean(!workingCase.indictmentReviewDecision)
+  console.log({ shouldDisplayReviewDecision })
 
   const canAddFiles =
     !isCompletedCase(workingCase.state) &&
