@@ -40,6 +40,7 @@ import { useOfflineStore } from '../../stores/offline-store'
 import { useLocale } from '../../hooks/use-locale'
 
 const INFORMATION_BASE_TOP_SPACING = 70
+export const BARCODE_MAX_WIDTH = 500
 
 const getImageFromRawData = (rawData: string) => {
   try {
@@ -136,8 +137,6 @@ const { useNavigationOptions, getNavigationOptions } =
     },
   )
 
-const BARCODE_MAX_WIDTH = 500
-
 export const WalletPassScreen: NavigationFunctionComponent<{
   id: string
   item?: GenericUserLicense
@@ -165,16 +164,16 @@ export const WalletPassScreen: NavigationFunctionComponent<{
 
   const data = res.data?.genericLicense ?? item
   const fields = data?.payload?.data ?? []
+  const isTablet = screenWidth > 760
   const pkPassAllowed =
     data?.license?.pkpass &&
     data?.license?.pkpassStatus === GenericUserLicensePkPassStatus.Available
   const allowLicenseBarcode =
     isBarcodeEnabled && pkPassAllowed && !data?.payload?.metadata?.expired
   const licenseType = data?.license?.type
-  const barcodeWidth =
-    screenWidth > 760
-      ? BARCODE_MAX_WIDTH // For tablets - make sure barcode is not huge
-      : screenWidth - theme.spacing[4] * 2 - theme.spacing.smallGutter * 2
+  const barcodeWidth = isTablet
+    ? BARCODE_MAX_WIDTH // For tablets - make sure barcode is not huge
+    : screenWidth - theme.spacing[4] * 2 - theme.spacing.smallGutter * 2
   const barcodeHeight = barcodeWidth / 3
   const updated = data?.fetch?.updated
 
@@ -427,7 +426,9 @@ export const WalletPassScreen: NavigationFunctionComponent<{
         contentInset={{
           bottom:
             informationTopSpacing || (!isConnected && isBarcodeEnabled)
-              ? 162
+              ? isTablet
+                ? 340
+                : 162
               : 0,
         }}
         key={key}

@@ -21,6 +21,7 @@ import { LicenseCardPresets, CustomLicenseType } from './license-list-card'
 import { dynamicColor } from '../../utils'
 import { Typography } from '../typography/typography'
 import { screenWidth } from '../../../utils/dimensions'
+import { BARCODE_MAX_WIDTH } from '../../../screens/wallet-pass/wallet-pass'
 
 const Host = styled(Animated.View)`
   position: relative;
@@ -151,6 +152,7 @@ export function LicenseCard({
     ? LicenseCardPresets[type]
     : LicenseCardPresets.DriversLicense
   const title = props.title ?? preset?.title
+  const isTablet = screenWidth > 760
   const logo = props.logo ?? preset?.logo
   const backgroundImage = props.backgroundImage ?? preset?.backgroundImage
   const backgroundColor = props.backgroundColor ?? preset?.backgroundColor
@@ -159,8 +161,9 @@ export function LicenseCard({
     status === 'VALID' &&
     !!((barcode && barcode?.value) || (barcode?.loading && !barcode?.value))
 
-  const barcodeWidth =
-    screenWidth - theme.spacing[4] * 2 - theme.spacing.smallGutter * 2
+  const barcodeWidth = isTablet
+    ? BARCODE_MAX_WIDTH
+    : screenWidth - theme.spacing[4] * 2 - theme.spacing.smallGutter * 2
   const barcodeHeight = barcodeWidth / 3
 
   return (
