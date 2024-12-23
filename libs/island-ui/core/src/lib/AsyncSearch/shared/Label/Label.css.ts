@@ -6,7 +6,7 @@ export const label = style({
   color: theme.color.blue400,
   top: 8,
   left: 8,
-  fontWeight: theme.typography.semiBold,
+  fontWeight: theme.typography.medium,
   fontSize: 14,
   lineHeight: 1.142857,
 })
