@@ -1,5 +1,8 @@
 // TODO: Add tests
+import partition from 'lodash/partition'
+
 import {
+  IndictmentSubtype,
   isIndictmentCase,
   isTrafficViolationCase,
 } from '@island.is/judicial-system/types'
@@ -11,13 +14,15 @@ import {
   CaseType,
   DateLog,
   DefenderChoice,
+  IndictmentCount,
   IndictmentDecision,
   SessionArrangements,
   User,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
-import { isBusiness } from './stepHelper'
+import { isTrafficViolationIndictmentCount } from './formHelper'
+import { isBusiness } from './utils'
 
 export type Validation =
   | 'empty'
@@ -294,13 +299,66 @@ export const isProcessingStepValidIndictments = (
   )
 }
 
-export const isTrafficViolationStepValidIndictments = (
-  workingCase: Case,
-): boolean => {
-  return Boolean(
+export const isIndictmentStepValid = (workingCase: Case): boolean => {
+  const hasValidDemands = Boolean(
     workingCase.demands &&
       (!workingCase.hasCivilClaims || workingCase.civilDemands),
   )
+
+  if (!workingCase.indictmentSubtypes || !hasValidDemands) {
+    return false
+  }
+
+  const validateIndictmentCount = (indictmentCount: IndictmentCount) =>
+    indictmentCount.policeCaseNumber &&
+    indictmentCount.offenses &&
+    indictmentCount.offenses?.length > 0 &&
+    indictmentCount.vehicleRegistrationNumber &&
+    indictmentCount.lawsBroken &&
+    indictmentCount.incidentDescription &&
+    indictmentCount.legalArguments
+
+  // All indictment counts are traffic violations
+  if (isTrafficViolationCase(workingCase)) {
+    const hasValidTrafficViolationIndictmentCounts =
+      workingCase.indictmentCounts?.every(validateIndictmentCount) ?? false
+
+    return hasValidTrafficViolationIndictmentCounts
+  }
+
+  // Some indictment counts are traffic violations while others are not
+  const [onlyTrafficViolationIndictmentCounts, otherIndictmentCounts] =
+    partition(workingCase.indictmentCounts, (indictmentCount) => {
+      const policeCaseNumber = indictmentCount.policeCaseNumber
+
+      return isTrafficViolationIndictmentCount(
+        policeCaseNumber,
+        workingCase.indictmentSubtypes,
+      )
+    })
+
+  // Some indictment counts have selected traffic violation while other have not
+  const [
+    indictmentCountsWithSelectedTrafficViolation,
+    nonTrafficViolationIndictmentCounts,
+  ] = partition(otherIndictmentCounts, (indictmentCount) =>
+    indictmentCount.indictmentCountSubtypes?.includes(
+      IndictmentSubtype.TRAFFIC_VIOLATION,
+    ),
+  )
+
+  const isTrafficViolationIndictmentCountsValid = [
+    ...onlyTrafficViolationIndictmentCounts,
+    ...indictmentCountsWithSelectedTrafficViolation,
+  ].every(validateIndictmentCount)
+
+  const isOtherIndictmentCountsValid =
+    nonTrafficViolationIndictmentCounts.every(
+      (indictmentCount) =>
+        indictmentCount.incidentDescription && indictmentCount.legalArguments,
+    )
+
+  return isTrafficViolationIndictmentCountsValid && isOtherIndictmentCountsValid
 }
 
 export const isPoliceDemandsStepValidRC = (workingCase: Case): boolean => {
@@ -583,13 +641,4 @@ export const isCourtOfAppealWithdrawnCaseStepValid = (
   return validate([
     [workingCase.appealCaseNumber, ['empty', 'appeal-case-number-format']],
   ]).isValid
-}
-
-export const isCaseFilesStepValidIndictments = (workingCase: Case): boolean => {
-  return Boolean(
-    isTrafficViolationCase(workingCase) ||
-      workingCase.caseFiles?.some(
-        (file) => file.category === CaseFileCategory.INDICTMENT,
-      ),
-  )
 }
