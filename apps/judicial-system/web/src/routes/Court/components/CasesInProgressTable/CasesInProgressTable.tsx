@@ -9,9 +9,8 @@ import {
 import { useIntl } from 'react-intl'
 import { AnimatePresence } from 'framer-motion'
 
-import { Box, Tag, toast } from '@island.is/island-ui/core'
+import { Box, toast } from '@island.is/island-ui/core'
 import { capitalize } from '@island.is/judicial-system/formatters'
-import { isSuccessfulServiceStatus } from '@island.is/judicial-system/types'
 import { core, errors, tables } from '@island.is/judicial-system-web/messages'
 import {
   FormContext,
