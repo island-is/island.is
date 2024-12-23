@@ -1,4 +1,4 @@
-import { style, styleVariants } from '@vanilla-extract/css'
+import { style, styleVariants, keyframes } from '@vanilla-extract/css'
 import { theme } from '@island.is/island-ui/theme'
 
 export const divider = style({
@@ -68,7 +68,7 @@ export const menuBtn = style({
   cursor: 'pointer',
   outline: 'none',
   borderRadius: 8,
-  padding: theme.spacing[1],
+  padding: `${theme.spacing['p2']}px ${theme.spacing[2]}px`,
   transition: 'box-shadow .25s, color .25s, background-color .25s',
   ':focus': {
     boxShadow: `inset 0 0 0 3px ${theme.color.mint400}`,
@@ -135,8 +135,8 @@ export const dropdownIcon = style({
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
-  height: 24,
-  width: 24,
+  height: 40,
+  width: 40,
   borderRadius: '50%',
 })
 
@@ -160,4 +160,50 @@ export const transition = style({
       opacity: 1,
     },
   },
+})
+
+export const menuDialog = style({
+  '::before': {
+    content: '',
+    position: 'absolute',
+    top: 0,
+    bottom: -1,
+    zIndex: -1,
+    left: `-${theme.spacing[2]}px`,
+    right: `-${theme.spacing[2]}px`,
+    background: theme.color.blue100,
+    borderBottom: `1px solid ${theme.color.blue200}`,
+  },
+})
+
+export const mobileNav = style({
+  zIndex: 1500,
+  opacity: 1,
+  backgroundColor: theme.color.blue100,
+  height: '100%',
+})
+
+export const shakeKeyframe = keyframes({
+  from: {
+    transform: 'translateX(0)',
+  },
+  '25%': {
+    transform: 'translateX(-1px)',
+  },
+  '45%': {
+    transform: 'translateX(1px)',
+  },
+  '55%': {
+    transform: 'translateX(-1px)',
+  },
+  '75%': {
+    transform: 'translateX(1px)',
+  },
+  to: {
+    transform: 'translateX(0)',
+  },
+})
+
+export const shake = style({
+  animation: `${shakeKeyframe} 0.5s`,
 })

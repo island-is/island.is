@@ -122,7 +122,7 @@ export const NarrowLayout = ({
       >
         <ContentBreadcrumbs />
         {isMobile && subNavItems && subNavItems.length > 0 && (
-          <Box paddingBottom={3} width="full">
+          <Box paddingBottom={3} width="full" className={styles.mobileNav}>
             <Navigation
               renderLink={(link, item) => {
                 return item?.href ? (
