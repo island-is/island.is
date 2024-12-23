@@ -194,6 +194,21 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
     }
   }, [])
 
+  // Using the onRefresh function when pressing the update button in ios is buggy,
+  // it scrolls the list half out of view when done - so we do it manually instead
+  const programaticScrollWhenRefreshing = () => {
+    flatListRef.current?.scrollToOffset({ offset: -300, animated: true })
+    res
+      .refetch()
+      .then(() => {
+        // Ofsetting to 0 scrolls the top of the list out of view, so we offset to -150
+        flatListRef.current?.scrollToOffset({ offset: -150, animated: true })
+      })
+      .catch(() => {
+        flatListRef.current?.scrollToOffset({ offset: -150, animated: true })
+      })
+  }
+
   useNavigationComponentDidAppear(() => {
     setHiddenContent(false)
   }, componentId)
@@ -319,7 +334,9 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
               </Typography>
             )}
             <Button
-              onPress={() => onRefresh()}
+              onPress={() =>
+                isIos ? programaticScrollWhenRefreshing() : onRefresh()
+              }
               title={intl.formatMessage({ id: 'wallet.update' })}
               isTransparent={true}
               icon={refreshIcon}
