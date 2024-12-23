@@ -1,15 +1,15 @@
+import { RightsPortalDentistBill } from '@island.is/api/schema'
+import { Box, LoadingDots, Table as T, Text } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
-  m,
-  formatDate,
   amountFormat,
   DownloadFileButtons,
+  formatDate,
+  m,
 } from '@island.is/portals/my-pages/core'
-import { Box, LoadingDots, Table as T, Text } from '@island.is/island-ui/core'
-import { messages } from '../../lib/messages'
-import { RightsPortalDentistBill } from '@island.is/api/schema'
-import { exportDentistFile } from '../../utils/FileBreakdown'
 import { Problem } from '@island.is/react-spa/shared'
+import { messages } from '../../lib/messages'
+import { exportDentistFile } from '../../utils/FileBreakdown'
 
 interface Props {
   bills: Array<RightsPortalDentistBill>
