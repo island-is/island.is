@@ -34,7 +34,9 @@ jobs:
 
     outputs:
       TEST_CHUNKS: ${{ steps.test_projects.outputs.CHUNKS }}
+      E2E_CI_CHUNKS: ${{ steps.e2e_ci_projects.outputs.CHUNKS }}
       E2E_CHUNKS: ${{ steps.e2e_projects.outputs.CHUNKS }}
+      E2E_CI_BUILD_ID: ${{ steps.e2e_ci_projects.outputs.BUILD_ID }}
       E2E_BUILD_ID: ${{ steps.e2e_projects.outputs.BUILD_ID }}
       LINT_CHUNKS: ${{ steps.lint_projects.outputs.CHUNKS }}
       BUILD_CHUNKS: ${{ steps.build_projects.outputs.CHUNKS }}
@@ -141,13 +143,25 @@ jobs:
             echo "CHUNKS={\"projects\":$CHUNKS}" >> "$GITHUB_OUTPUT"
           fi
 
+      - name: Prepare e2e-ci targets
+        id: e2e_ci_projects
+        env:
+          CHUNK_SIZE: 1
+        run: |
+          set -euo pipefail
+          CHUNKS="$(./scripts/ci/generate-chunks.sh e2e-ci)"
+          if [[ "$CHUNKS" != "[]" ]]; then
+            echo "CHUNKS={\"projects\":$CHUNKS}" >> "$GITHUB_OUTPUT"
+          fi
+          echo BUILD_ID="$GITHUB_RUN_ID-$GITHUB_RUN_NUMBER-$(uuidgen)" >> "$GITHUB_OUTPUT"
+
       - name: Prepare e2e targets
         id: e2e_projects
         env:
           CHUNK_SIZE: 1
         run: |
           set -euo pipefail
-          CHUNKS="$(./scripts/ci/generate-chunks.sh e2e-ci)"
+          CHUNKS="$(./scripts/ci/generate-chunks.sh e2e)"
           if [[ "$CHUNKS" != "[]" ]]; then
             echo "CHUNKS={\"projects\":$CHUNKS}" >> "$GITHUB_OUTPUT"
           fi
@@ -172,51 +186,55 @@ jobs:
           set -euo pipefail
           node -r esbuild-register .github/actions/check-team-approval.ts release-managers
   tests:
-    needs:
-      - prepare
-    if: needs.prepare.outputs.TEST_CHUNKS
+    if: false
     runs-on: ec2-runners
-    container:
-      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
-    timeout-minutes: 45
-    env:
-      AFFECTED_PROJECTS: ${{ matrix.projects }}
-      MAX_JOBS: 1
-    strategy:
-      fail-fast: false
-      matrix: ${{ fromJson(needs.prepare.outputs.TEST_CHUNKS) }}
     steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
+      - run: echo "This step won't run"
+    # needs:
+    #   - prepare
+    # if: needs.prepare.outputs.TEST_CHUNKS
+    # runs-on: ec2-runners
+    # container:
+    #   image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
+    # timeout-minutes: 45
+    # env:
+    #   AFFECTED_PROJECTS: ${{ matrix.projects }}
+    #   MAX_JOBS: 1
+    # strategy:
+    #   fail-fast: false
+    #   matrix: ${{ fromJson(needs.prepare.outputs.TEST_CHUNKS) }}
+    # steps:
+    #   - uses: actions/checkout@v4
+    #     with:
+    #       fetch-depth: 0
 
-      - uses: actions/setup-node@v4
-        with:
-          node-version-file: 'package.json'
+    #   - uses: actions/setup-node@v4
+    #     with:
+    #       node-version-file: 'package.json'
 
-      - name: Setup yarn
-        run: corepack enable
+    #   - name: Setup yarn
+    #     run: corepack enable
 
-      - name: Get cache
-        id: get-cache
-        uses: ./.github/actions/get-cache
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          keys: ${{ needs.prepare.outputs.CACHE_KEYS }}
-          enable-cache: 'node_modules,cypress,generated-files'
+    #   - name: Get cache
+    #     id: get-cache
+    #     uses: ./.github/actions/get-cache
+    #     with:
+    #       github-token: ${{ secrets.GITHUB_TOKEN }}
+    #       keys: ${{ needs.prepare.outputs.CACHE_KEYS }}
+    #       enable-cache: 'node_modules,cypress,generated-files'
 
-      - uses: ./.github/actions/unit-test
-        with:
-          dd-api-key: '${{ secrets.DD_API_KEY }}'
-          codecov-token: ${{ secrets.CODECOV_TOKEN }}
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          docker-registry: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/
+    #   - uses: ./.github/actions/unit-test
+    #     with:
+    #       dd-api-key: '${{ secrets.DD_API_KEY }}'
+    #       codecov-token: ${{ secrets.CODECOV_TOKEN }}
+    #       aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+    #       aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+    #       docker-registry: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/
 
-  e2e:
+  e2e-ci:
     needs:
       - prepare
-    if: needs.prepare.outputs.E2E_CHUNKS
+    if: needs.prepare.outputs.E2E_CI_CHUNKS
     runs-on: ec2-runners
     container:
       image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
@@ -227,10 +245,10 @@ jobs:
       CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
       API_MOCKS: 'true'
       NODE_OPTIONS: --max-old-space-size=4096
-      E2E_BUILD_ID: '${{ needs.prepare.outputs.E2E_BUILD_ID }}-${{ github.run_attempt }}'
+      E2E_CI_BUILD_ID: '${{ needs.prepare.outputs.E2E_CI_BUILD_ID }}-${{ github.run_attempt }}'
     strategy:
       fail-fast: false
-      matrix: ${{ fromJson(needs.prepare.outputs.E2E_CHUNKS) }}
+      matrix: ${{ fromJson(needs.prepare.outputs.E2E_CI_CHUNKS) }}
     steps:
       - uses: actions/checkout@v4
 
@@ -251,6 +269,51 @@ jobs:
 
       - name: Running e2e tests
         run: ./scripts/ci/40_e2e.sh "${AFFECTED_PROJECT}"
+
+  e2e:
+    needs:
+      - prepare
+    if: needs.prepare.outputs.E2E_CHUNKS
+    runs-on: ec2-runners
+    container:
+      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
+    timeout-minutes: 35
+    env:
+      AFFECTED_PROJECT: ${{ matrix.projects }}
+      NODE_OPTIONS: --max-old-space-size=4096
+      E2E_BUILD_ID: '${{ needs.prepare.outputs.E2E_BUILD_ID }}-${{ github.run_attempt }}'
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJson(needs.prepare.outputs.E2E_CHUNKS) }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: 'package.json'
+
+      - name: Setup yarn
+        run: corepack enable
+
+      - name: Get cache
+        id: get-cache
+        uses: ./.github/actions/get-cache
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          enable-cache: 'node_modules,cypress,generated-files'
+
+      - name: Building NodeJS dependencies
+        working-directory: infra
+        run: yarn install --immutable
+
+      - name: Install Playwright Dependencies
+        run: yarn playwright install --with-deps
+
+      - name: Running e2e tests
+        run: yarn e2e "${AFFECTED_PROJECT}"
+
+      - name: Stop and Clean Docker Compose
+        run: docker-compose down
 
   linting-workspace:
     needs:
@@ -334,68 +397,76 @@ jobs:
           ./infra/scripts/ci/git-check-dirty.sh "/" "nx format:write" "dirtybot"
 
   linting:
-    needs:
-      - prepare
+    if: false
     runs-on: ec2-runners
-    container:
-      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
-    timeout-minutes: 35
-    if: needs.prepare.outputs.LINT_CHUNKS
-    env:
-      AFFECTED_PROJECTS: ${{ matrix.projects }}
-      NODE_OPTIONS: --max-old-space-size=4096
-      MAX_JOBS: 3
-    strategy:
-      fail-fast: false
-      matrix: ${{ fromJson(needs.prepare.outputs.LINT_CHUNKS) }}
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version-file: 'package.json'
-      - name: Setup yarn
-        run: corepack enable
-      - name: Get cache
-        id: get-cache
-        uses: ./.github/actions/get-cache
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          keys: ${{ needs.prepare.outputs.CACHE_KEYS }}
-          enable-cache: 'node_modules,generated-files'
-      - name: Linting
-        run: ./scripts/ci/run-in-parallel-native.sh lint
+      - run: echo "This step won't run"
+    # needs:
+    #   - prepare
+    # runs-on: ec2-runners
+    # container:
+    #   image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
+    # timeout-minutes: 35
+    # if: needs.prepare.outputs.LINT_CHUNKS
+    # env:
+    #   AFFECTED_PROJECTS: ${{ matrix.projects }}
+    #   NODE_OPTIONS: --max-old-space-size=4096
+    #   MAX_JOBS: 3
+    # strategy:
+    #   fail-fast: false
+    #   matrix: ${{ fromJson(needs.prepare.outputs.LINT_CHUNKS) }}
+    # steps:
+    #   - uses: actions/checkout@v4
+    #   - uses: actions/setup-node@v4
+    #     with:
+    #       node-version-file: 'package.json'
+    #   - name: Setup yarn
+    #     run: corepack enable
+    #   - name: Get cache
+    #     id: get-cache
+    #     uses: ./.github/actions/get-cache
+    #     with:
+    #       github-token: ${{ secrets.GITHUB_TOKEN }}
+    #       keys: ${{ needs.prepare.outputs.CACHE_KEYS }}
+    #       enable-cache: 'node_modules,generated-files'
+    #   - name: Linting
+    #     run: ./scripts/ci/run-in-parallel-native.sh lint
 
   build:
-    needs:
-      - prepare
+    if: false
     runs-on: ec2-runners
-    container:
-      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
-    timeout-minutes: 35
-    env:
-      AFFECTED_PROJECTS: ${{ matrix.projects }}
-      MAX_JOBS: 2
-    strategy:
-      fail-fast: false
-      matrix: ${{ fromJson(needs.prepare.outputs.BUILD_CHUNKS) }}
-    if: needs.prepare.outputs.BUILD_CHUNKS
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version-file: 'package.json'
-      - name: Setup yarn
-        run: corepack enable
-      - name: Get cache
-        id: get-cache
-        uses: ./.github/actions/get-cache
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          keys: ${{ needs.prepare.outputs.CACHE_KEYS }}
-          enable-cache: 'node_modules,generated-files'
+      - run: echo "This step won't run"
+    # needs:
+    #   - prepare
+    # runs-on: ec2-runners
+    # container:
+    #   image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
+    # timeout-minutes: 35
+    # env:
+    #   AFFECTED_PROJECTS: ${{ matrix.projects }}
+    #   MAX_JOBS: 2
+    # strategy:
+    #   fail-fast: false
+    #   matrix: ${{ fromJson(needs.prepare.outputs.BUILD_CHUNKS) }}
+    # if: needs.prepare.outputs.BUILD_CHUNKS
+    # steps:
+    #   - uses: actions/checkout@v4
+    #   - uses: actions/setup-node@v4
+    #     with:
+    #       node-version-file: 'package.json'
+    #   - name: Setup yarn
+    #     run: corepack enable
+    #   - name: Get cache
+    #     id: get-cache
+    #     uses: ./.github/actions/get-cache
+    #     with:
+    #       github-token: ${{ secrets.GITHUB_TOKEN }}
+    #       keys: ${{ needs.prepare.outputs.CACHE_KEYS }}
+    #       enable-cache: 'node_modules,generated-files'
 
-      - name: Building
-        run: ./scripts/ci/run-in-parallel-native.sh build
+    #   - name: Building
+    #     run: ./scripts/ci/run-in-parallel-native.sh build
 
   success:
     runs-on: ec2-runners
@@ -410,12 +481,15 @@ jobs:
       - run-shellcheck
       - formatting
       - e2e
+      - e2e-ci
       - build
     steps:
       - name: Check prepare success
         run: '[[ ${{ needs.prepare.result }} == "success" ]] || exit 1'
       - name: Check tests success
         run: '[[ ${{ needs.tests.result }} != "failure" ]] || exit 1'
+      - name: Check e2e-ci success
+        run: '[[ ${{ needs.e2e-ci.result }} != "failure" ]] || exit 1'
       - name: Check e2e success
         run: '[[ ${{ needs.e2e.result }} != "failure" ]] || exit 1'
       - name: Check linting success

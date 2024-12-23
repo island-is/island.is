@@ -27,14 +27,24 @@ export const serviceSetup = (services: {
     .env({
       BASEPATH: '/consultation-portal',
       ENVIRONMENT: ref((h) => h.env.type),
-      API_URL: ref((h) => `http://${h.svc(services.api)}`),
+      API_URL: {
+        local: ref((h) => {
+          const url = `http://${h.svc(services.api)}`
+          const port = new URL(url).port
+          console.log(`http://api:${port}`)
+          return `http://api:${port}`
+        }),
+        dev: ref((h) => `http://${h.svc(services.api)}`),
+        staging: ref((h) => `http://${h.svc(services.api)}`),
+        prod: ref((h) => `http://${h.svc(services.api)}`),
+      },
       IDENTITY_SERVER_ISSUER_DOMAIN: {
         dev: 'identity-server.dev01.devland.is',
         staging: 'identity-server.staging01.devland.is',
         prod: 'innskra.island.is',
       },
       NEXTAUTH_URL: {
-        local: 'http://localhost:4200/samradsgatt/api/auth',
+        local: 'http://api:4200/samradsgatt/api/auth',
         dev: 'https://beta.dev01.devland.is/samradsgatt/api/auth',
         staging: 'https://beta.staging01.devland.is/samradsgatt/api/auth',
         prod: 'https://island.is/samradsgatt/api/auth',
