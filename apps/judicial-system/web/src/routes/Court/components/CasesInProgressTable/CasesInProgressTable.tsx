@@ -161,7 +161,7 @@ const CasesInProgressTable: FC<CasesInProgressTableProps> = (props) => {
                       isCourtRole={true}
                       courtDate={row.courtDate}
                       indictmentDecision={row.indictmentDecision}
-                      defendants={row.defendants as Defendant[]}
+                      defendants={row.defendants}
                     />
                   ),
                 },

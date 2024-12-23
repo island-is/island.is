@@ -186,7 +186,7 @@ export const DefenderCasesTable: FC<Props> = ({
                       courtDate={column.courtDate}
                       indictmentDecision={column.indictmentDecision}
                       indictmentRulingDecision={column.indictmentRulingDecision}
-                      defendants={column.defendants as Defendant[]}
+                      defendants={column.defendants}
                     />
                   </Box>
                   {column.appealState && (

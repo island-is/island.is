@@ -35,7 +35,7 @@ interface Props {
   defendants?: Defendant[] | null
 }
 
-const haveAllDefendantsBeenServiced = (
+const haveAllSubpoenasBeenServiced = (
   defendants?: Defendant[] | null,
 ): boolean => {
   if (!defendants) {
@@ -43,11 +43,8 @@ const haveAllDefendantsBeenServiced = (
   }
 
   return defendants.every((defendant) => {
-    if (!defendant.subpoenas || defendant.subpoenas.length === 0) {
-      return true
-    }
-
-    return defendant.subpoenas.some((subpoena) =>
+    // if at least one subpoena for each defendant was serviced, we return true
+    return defendant.subpoenas?.some((subpoena) =>
       isSuccessfulServiceStatus(subpoena.serviceStatus),
     )
   })
@@ -94,7 +91,7 @@ export const mapCaseStateToTagVariant = (
       }
     case CaseState.RECEIVED: {
       if (isIndictmentCase(caseType)) {
-        if (!haveAllDefendantsBeenServiced(defendants)) {
+        if (scheduledDate && !haveAllSubpoenasBeenServiced(defendants)) {
           return {
             color: 'red',
             text: formatMessage(strings.notYetServiced),
