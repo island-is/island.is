@@ -251,9 +251,8 @@ export class AuthService {
    *
    * Recovery process:
    * 1. Checks if there's an existing active session (via session cookie)
-   * 2. If a session exists, looks for the original login attempt data in that session
-   * 3. If found, returns a 409 Conflict indicating multiple session attempt
-   * 4. If no recovery is possible, redirects to error page
+   * 2. If a session exists, returns a 409 Conflict indicating multiple session attempt
+   * 3. If no recovery is possible, redirects to error page and log as warning
    */
   private async handleMissingLoginAttempt({
     req,
