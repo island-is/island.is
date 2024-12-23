@@ -192,7 +192,6 @@ export class InheritanceReportService extends BaseTemplateApiService {
         '[inherhitance-report]: Failed to get file content - ',
         e,
       )
-      console.log('[inherhitance-report]: Failed to get file content - ', e)
       return 'err'
     }
   }
