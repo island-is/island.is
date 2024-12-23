@@ -86,7 +86,7 @@ export const PoliceCaseInfo: FC<Props> = ({
   const [policeCaseNumberErrorMessage, setPoliceCaseNumberErrorMessage] =
     useState<string>('')
 
-  const subtypesArray = [...(subtypes || [])]
+  const subtypesArray = subtypes || []
 
   useEffect(() => {
     if (policeCaseNumbers[index] !== originalPoliceCaseNumber) {
