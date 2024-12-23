@@ -2,7 +2,6 @@ import fs from 'fs'
 import { DynamicModule } from '@nestjs/common'
 
 import { createEnhancedFetch } from '@island.is/clients/middlewares'
-import { logger } from '@island.is/logging'
 
 import { Configuration, IslyklarApi } from '../../gen/fetch'
 
@@ -14,52 +13,38 @@ export interface IslykillApiModuleConfig {
 
 export class IslykillApiModule {
   static register(config: IslykillApiModuleConfig): DynamicModule {
-    function lykillError(errorMsg: any) {
-      logger.error(errorMsg)
+    if (!config.cert) {
+      throw new Error('IslykillApiModule certificate not provided')
+    }
+    if (!config.passphrase) {
+      throw new Error('IslykillApiModule passphrase not provided')
     }
 
-    let pfx: Buffer | undefined
+    let pfx: Buffer
     try {
-      if (!config.cert) {
-        throw Error('IslykillApiModule certificate not provided')
-      }
-
-      const data = fs.readFileSync(config.cert, {
-        encoding: 'base64',
-      })
-
+      const data = fs.readFileSync(config.cert, { encoding: 'base64' })
       pfx = Buffer.from(data, 'base64')
     } catch (err) {
-      lykillError(err)
+      throw new Error(`Failed to read certificate: ${err}`)
     }
 
-    if (!config.passphrase) {
-      logger.error('IslykillApiModule secret not provided.')
-    }
-    const passphrase = config.passphrase
+    const enhancedFetch = createEnhancedFetch({
+      name: 'clients-islykill',
+      organizationSlug: 'stafraent-island',
+      timeout: 20000,
+      clientCertificate: { pfx, passphrase: config.passphrase },
+    })
+
+    const api = new IslyklarApi(
+      new Configuration({
+        basePath: config.basePath,
+        fetchApi: enhancedFetch,
+      }),
+    )
 
     return {
       module: IslykillApiModule,
-      providers: [
-        {
-          provide: IslyklarApi,
-          useFactory: () =>
-            new IslyklarApi(
-              new Configuration({
-                basePath: config.basePath,
-                fetchApi: createEnhancedFetch({
-                  name: 'clients-islykill',
-                  organizationSlug: 'stafraent-island',
-                  timeout: 20000,
-                  clientCertificate: pfx && {
-                    pfx,
-                    passphrase,
-                  },
-                }),
-              }),
-            ),
-        },
-      ],
+      providers: [{ provide: IslyklarApi, useFactory: () => api }],
       exports: [IslyklarApi],
     }
   }
