@@ -771,6 +771,7 @@ export interface ICustomPageFields {
     | 'OfficialJournalOfIceland'
     | 'Vacancies'
     | 'Grants'
+    | 'DirectorateOfLabourMyPages'
     | undefined
 
   /** Alert Banner */
