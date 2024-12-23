@@ -2,6 +2,7 @@ import faker from 'faker'
 
 import {
   Case,
+  CaseType,
   IndictmentCountOffense,
   IndictmentSubtype,
 } from '../graphql/schema'
@@ -382,6 +383,7 @@ describe('isTrafficViolationStepValidIndictments', () => {
       demands: faker.lorem.sentence(),
       hasCivilClaims: true,
       civilDemands: faker.lorem.sentence(),
+      type: CaseType.INDICTMENT,
       indictmentSubtypes: {
         '1234': [IndictmentSubtype.TRAFFIC_VIOLATION],
         '5678': [IndictmentSubtype.TRAFFIC_VIOLATION],
@@ -418,6 +420,7 @@ describe('isTrafficViolationStepValidIndictments', () => {
       demands: faker.lorem.sentence(),
       hasCivilClaims: true,
       civilDemands: faker.lorem.sentence(),
+      type: CaseType.INDICTMENT,
       indictmentSubtypes: {
         '1234': [IndictmentSubtype.BODILY_INJURY],
         '5678': [
