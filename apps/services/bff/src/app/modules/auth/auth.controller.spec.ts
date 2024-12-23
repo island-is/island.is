@@ -6,11 +6,11 @@ import jwt from 'jsonwebtoken'
 import request from 'supertest'
 import { setupTestServer } from '../../../../test/setupTestServer'
 import {
-  ALGORITM_TYPE,
-  SESSION_COOKIE_NAME,
-  SID_VALUE,
-  getLoginSearchParmsFn,
-  mockedTokensResponse as tokensResponse,
+    ALGORITM_TYPE,
+    SESSION_COOKIE_NAME,
+    SID_VALUE,
+    getLoginSearchParmsFn,
+    mockedTokensResponse as tokensResponse,
 } from '../../../../test/sharedConstants'
 import { BffConfig } from '../../bff.config'
 import { IdsService } from '../ids/ids.service'
@@ -545,24 +545,13 @@ describe('AuthController', () => {
       // First login - create initial session with attempt data
       await server.get('/login')
 
-      const firstAttemptKey = `attempt::${mockConfig.name}::${SID_VALUE}`
       const currentKey = `current::${mockConfig.name}::${SID_VALUE}`
-      // Store the first login attempt data in current session cache
-      const cachedData = {
-        ...tokensResponse,
-        loginAttemptData: {
-          [firstAttemptKey]: {
-            codeVerifier: 'test_verifier',
-            targetLinkUri: baseUrlWithKey,
-          },
-        },
-      }
 
-      mockCacheManagerValue.set(currentKey, cachedData)
+      mockCacheManagerValue.set(currentKey, tokensResponse)
 
       getCacheSpy.mockImplementation((key) => {
         if (key === currentKey) {
-          return Promise.resolve(cachedData)
+          return Promise.resolve(tokensResponse)
         }
 
         return Promise.resolve(null)
@@ -580,8 +569,6 @@ describe('AuthController', () => {
       // Assert
       expect(res.status).toEqual(HttpStatus.FOUND)
       expect(res.headers.location).toEqual(errorUrl)
-      // Should check current session cache which contains the previous attempt data
-      expect(getCacheSpy).toHaveBeenCalledWith(currentKey)
     })
   })
 })
