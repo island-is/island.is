@@ -308,7 +308,7 @@ export const isTrafficViolationStepValidIndictments = (
     return false
   }
 
-  const validateTrafficViolation = (indictmentCount: IndictmentCount) =>
+  const isValidTrafficViolation = (indictmentCount: IndictmentCount) =>
     Boolean(indictmentCount.policeCaseNumber) &&
     Boolean(indictmentCount.offenses && indictmentCount.offenses?.length > 0) &&
     Boolean(indictmentCount.vehicleRegistrationNumber) &&
@@ -316,7 +316,7 @@ export const isTrafficViolationStepValidIndictments = (
     Boolean(indictmentCount.incidentDescription) &&
     Boolean(indictmentCount.legalArguments)
 
-  const validateNonTrafficViolation = (indictmentCount: IndictmentCount) =>
+  const isValidNonTrafficViolation = (indictmentCount: IndictmentCount) =>
     Boolean(indictmentCount.incidentDescription) &&
     Boolean(indictmentCount.legalArguments)
 
@@ -327,17 +327,15 @@ export const isTrafficViolationStepValidIndictments = (
 
   // All indictment counts are traffic violations
   if (isTrafficViolationCase(workingCase)) {
-    return (
-      workingCase.indictmentCounts?.every(validateTrafficViolation) ?? false
-    )
+    return workingCase.indictmentCounts?.every(isValidTrafficViolation) ?? false
   }
 
   let isValid = false
 
   for (const indictmentCount of workingCase.indictmentCounts || []) {
     isValid = isTrafficViolation(indictmentCount)
-      ? validateTrafficViolation(indictmentCount)
-      : validateNonTrafficViolation(indictmentCount)
+      ? isValidTrafficViolation(indictmentCount)
+      : isValidNonTrafficViolation(indictmentCount)
   }
 
   return isValid
