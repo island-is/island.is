@@ -5,11 +5,13 @@ import { Tag, TagVariant } from '@island.is/island-ui/core'
 import {
   isIndictmentCase,
   isInvestigationCase,
+  isSuccessfulServiceStatus,
 } from '@island.is/judicial-system/types'
 import {
   CaseIndictmentRulingDecision,
   CaseState,
   CaseType,
+  Defendant,
   IndictmentDecision,
   User,
 } from '@island.is/judicial-system-web/src/graphql/schema'
@@ -30,6 +32,25 @@ interface Props {
     indictmentReviewer?: User | null, // TODO: Refactor so we have a more generalized interface for the info passed in to the component
   ) => { color: TagVariant; text: string }
   indictmentDecision?: IndictmentDecision | null
+  defendants?: Defendant[] | null
+}
+
+const haveAllDefendantsBeenServiced = (
+  defendants?: Defendant[] | null,
+): boolean => {
+  if (!defendants) {
+    return false
+  }
+
+  return defendants.every((defendant) => {
+    if (!defendant.subpoenas || defendant.subpoenas.length === 0) {
+      return true
+    }
+
+    return defendant.subpoenas.some((subpoena) =>
+      isSuccessfulServiceStatus(subpoena.serviceStatus),
+    )
+  })
 }
 
 export const mapIndictmentCaseStateToTagVariant = (
@@ -59,6 +80,7 @@ export const mapCaseStateToTagVariant = (
   isCourtRole?: boolean,
   indictmentRulingDecision?: CaseIndictmentRulingDecision | null,
   indictmentDecision?: IndictmentDecision | null,
+  defendants?: Defendant[] | null,
 ): { color: TagVariant; text: string } => {
   switch (state) {
     case CaseState.NEW:
@@ -70,24 +92,33 @@ export const mapCaseStateToTagVariant = (
         color: 'purple',
         text: formatMessage(isCourtRole ? strings.new : strings.sent),
       }
-    case CaseState.RECEIVED:
-      switch (indictmentDecision) {
-        case IndictmentDecision.POSTPONING:
-        case IndictmentDecision.SCHEDULING:
-        case IndictmentDecision.COMPLETING:
-          return { color: 'mint', text: formatMessage(strings.scheduled) }
-        case IndictmentDecision.POSTPONING_UNTIL_VERDICT:
+    case CaseState.RECEIVED: {
+      if (isIndictmentCase(caseType)) {
+        if (!haveAllDefendantsBeenServiced(defendants)) {
           return {
-            color: 'mint',
-            text: formatMessage(strings.postponedUntilVerdict),
+            color: 'red',
+            text: formatMessage(strings.notYetServiced),
           }
-        case IndictmentDecision.REDISTRIBUTING:
-          return { color: 'blue', text: formatMessage(strings.reassignment) }
+        }
+        switch (indictmentDecision) {
+          case IndictmentDecision.POSTPONING:
+          case IndictmentDecision.SCHEDULING:
+          case IndictmentDecision.COMPLETING:
+            return { color: 'mint', text: formatMessage(strings.scheduled) }
+          case IndictmentDecision.POSTPONING_UNTIL_VERDICT:
+            return {
+              color: 'mint',
+              text: formatMessage(strings.postponedUntilVerdict),
+            }
+          case IndictmentDecision.REDISTRIBUTING:
+            return { color: 'blue', text: formatMessage(strings.reassignment) }
+        }
       }
 
       return scheduledDate
         ? { color: 'mint', text: formatMessage(strings.scheduled) }
         : { color: 'blueberry', text: formatMessage(strings.received) }
+    }
 
     case CaseState.ACCEPTED:
       return isIndictmentCase(caseType) || isValidToDateInThePast
@@ -129,6 +160,7 @@ const TagCaseState: FC<Props> = (props) => {
     indictmentRulingDecision,
     customMapCaseStateToTag,
     indictmentDecision,
+    defendants,
   } = props
 
   const tagVariant = customMapCaseStateToTag
@@ -142,6 +174,7 @@ const TagCaseState: FC<Props> = (props) => {
         isCourtRole,
         indictmentRulingDecision,
         indictmentDecision,
+        defendants,
       )
 
   if (!tagVariant) return null

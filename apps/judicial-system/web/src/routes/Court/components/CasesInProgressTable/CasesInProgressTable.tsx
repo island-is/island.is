@@ -9,8 +9,9 @@ import {
 import { useIntl } from 'react-intl'
 import { AnimatePresence } from 'framer-motion'
 
-import { Box, toast } from '@island.is/island-ui/core'
+import { Box, Tag, toast } from '@island.is/island-ui/core'
 import { capitalize } from '@island.is/judicial-system/formatters'
+import { isSuccessfulServiceStatus } from '@island.is/judicial-system/types'
 import { core, errors, tables } from '@island.is/judicial-system-web/messages'
 import {
   FormContext,
@@ -35,6 +36,7 @@ import {
   CaseListEntry,
   CaseState,
   CaseTransition,
+  Defendant,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
@@ -158,6 +160,7 @@ const CasesInProgressTable: FC<CasesInProgressTableProps> = (props) => {
                       isCourtRole={true}
                       courtDate={row.courtDate}
                       indictmentDecision={row.indictmentDecision}
+                      defendants={row.defendants as Defendant[]}
                     />
                   ),
                 },
