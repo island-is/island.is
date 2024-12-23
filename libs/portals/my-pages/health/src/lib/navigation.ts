@@ -140,6 +140,17 @@ export const healthNavigation: PortalNavigationItem = {
         },
       ],
     },
+    {
+      name: messages.references,
+      path: HealthPaths.HealthReferences,
+      children: [
+        {
+          name: messages.references,
+          path: HealthPaths.HealthReferencesDetail,
+          navHide: true,
+        },
+      ],
+    },
   ],
   description: m.healthDescription,
 }

@@ -6,6 +6,7 @@ import { PortalModule } from '@island.is/portals/core'
 import { messages as hm } from './lib/messages'
 import { m } from '@island.is/portals/my-pages/core'
 import { Navigate } from 'react-router-dom'
+import ReferencesDetail from './screens/References/ReferencesDetail'
 
 const HealthOverview = lazy(() =>
   import('./screens/HealthOverview/HealthOverview'),
@@ -65,6 +66,8 @@ const OrganDonationRegistration = lazy(() =>
 const Vaccinations = lazy(() =>
   import('./screens/Vaccinations/VaccinationsWrapper'),
 )
+
+const References = lazy(() => import('./screens/References/References'))
 
 export const healthModule: PortalModule = {
   name: 'Heilsa',
@@ -221,6 +224,20 @@ export const healthModule: PortalModule = {
       key: 'HealthVaccinations',
       enabled: userInfo.scopes.includes(ApiScope.healthVaccinations),
       element: <Vaccinations />,
+    },
+    {
+      name: hm.references,
+      path: HealthPaths.HealthReferences,
+      key: 'HealthReferences',
+      enabled: true, //TODO: Add scopeuserInfo.scopes.includes(ApiScope.healthReferences),
+      element: <References />,
+    },
+    {
+      name: hm.references,
+      path: HealthPaths.HealthReferencesDetail,
+      key: 'HealthReferences',
+      enabled: true, //TODO: Add scopeuserInfo.scopes.includes(ApiScope.healthReferences),
+      element: <ReferencesDetail />,
     },
   ],
 }

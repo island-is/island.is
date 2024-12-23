@@ -1189,4 +1189,16 @@ export const messages = defineMessages({
     id: 'sp.health:medicine-payment-participation',
     defaultMessage: 'Greiðsluþátttaka',
   },
+  references: {
+    id: 'sp.health:references',
+    defaultMessage: 'Tilvísanir',
+  },
+  referencesIntro: {
+    id: 'sp.health:references-intro',
+    defaultMessage: 'Hér finnur þú tilvísanir ...',
+  },
+  organizationWebsite: {
+    id: 'sp.health:references-org-website',
+    defaultMessage: 'Vefur stofnunar',
+  },
 })
