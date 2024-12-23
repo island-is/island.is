@@ -25,7 +25,10 @@ import {
   SortButton,
   TableSkeleton,
 } from '@island.is/judicial-system-web/src/components/Table'
-import { CaseListEntry } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  CaseListEntry,
+  Defendant,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   useCaseList,
   useSort,
@@ -183,6 +186,7 @@ export const DefenderCasesTable: FC<Props> = ({
                       courtDate={column.courtDate}
                       indictmentDecision={column.indictmentDecision}
                       indictmentRulingDecision={column.indictmentRulingDecision}
+                      defendants={column.defendants as Defendant[]}
                     />
                   </Box>
                   {column.appealState && (

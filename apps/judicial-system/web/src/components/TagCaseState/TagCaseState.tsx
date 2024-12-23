@@ -100,19 +100,19 @@ export const mapCaseStateToTagVariant = (
             text: formatMessage(strings.notYetServiced),
           }
         }
-        switch (indictmentDecision) {
-          case IndictmentDecision.POSTPONING:
-          case IndictmentDecision.SCHEDULING:
-          case IndictmentDecision.COMPLETING:
-            return { color: 'mint', text: formatMessage(strings.scheduled) }
-          case IndictmentDecision.POSTPONING_UNTIL_VERDICT:
-            return {
-              color: 'mint',
-              text: formatMessage(strings.postponedUntilVerdict),
-            }
-          case IndictmentDecision.REDISTRIBUTING:
-            return { color: 'blue', text: formatMessage(strings.reassignment) }
-        }
+      }
+      switch (indictmentDecision) {
+        case IndictmentDecision.POSTPONING:
+        case IndictmentDecision.SCHEDULING:
+        case IndictmentDecision.COMPLETING:
+          return { color: 'mint', text: formatMessage(strings.scheduled) }
+        case IndictmentDecision.POSTPONING_UNTIL_VERDICT:
+          return {
+            color: 'mint',
+            text: formatMessage(strings.postponedUntilVerdict),
+          }
+        case IndictmentDecision.REDISTRIBUTING:
+          return { color: 'blue', text: formatMessage(strings.reassignment) }
       }
 
       return scheduledDate
