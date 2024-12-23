@@ -3,18 +3,17 @@ import { InjectModel } from '@nestjs/sequelize'
 import { ListItem } from './models/listItem.model'
 import { ListItemDto } from './models/dto/listItem.dto'
 import { CreateListItemDto } from './models/dto/createListItem.dto'
-import { FieldSettingsService } from '../fieldSettings/fieldSettings.service'
-import { ListItemMapper } from './models/listItem.mapper'
 import { UpdateListItemDto } from './models/dto/updateListItem.dto'
 import { UpdateListItemsDisplayOrderDto } from './models/dto/updateListItemsDisplayOrder.dto'
+import defaults from 'lodash/defaults'
+import pick from 'lodash/pick'
+import zipObject from 'lodash/zipObject'
 
 @Injectable()
 export class ListItemsService {
   constructor(
     @InjectModel(ListItem)
     private readonly listItemModel: typeof ListItem,
-    private readonly fieldSettingsService: FieldSettingsService,
-    private listItemMapper: ListItemMapper,
   ) {}
 
   async findById(id: string): Promise<ListItem> {
@@ -28,16 +27,25 @@ export class ListItemsService {
   }
 
   async create(createListItem: CreateListItemDto): Promise<ListItemDto> {
-    const fieldSettings = await this.fieldSettingsService.findByFieldId(
-      createListItem.fieldId,
-    )
-
-    const listItem = await this.listItemModel.create({
-      fieldSettingsId: fieldSettings.id,
+    const newListItem = await this.listItemModel.create({
+      fieldId: createListItem.fieldId,
       displayOrder: createListItem.displayOrder,
     } as ListItem)
 
-    return this.listItemMapper.mapListItemToListItemDto(listItem)
+    const keys = [
+      'id',
+      'label',
+      'description',
+      'value',
+      'displayOrder',
+      'isSelected',
+    ]
+    const listItemDto: ListItemDto = defaults(
+      pick(newListItem, keys),
+      zipObject(keys, Array(keys.length).fill(null)),
+    ) as ListItemDto
+
+    return listItemDto
   }
 
   async update(
@@ -46,11 +54,7 @@ export class ListItemsService {
   ): Promise<void> {
     const listItem = await this.findById(id)
 
-    this.listItemMapper.mapUpdateListItemDtoToListItem(
-      listItem,
-      updateListItemDto,
-    )
-    listItem.modified = new Date()
+    Object.assign(listItem, updateListItemDto)
 
     await listItem.save()
   }

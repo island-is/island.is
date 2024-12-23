@@ -30,29 +30,16 @@ export class SectionsService {
     return sectionDto
   }
 
-  async update(
-    id: string,
-    updateSectionDto: UpdateSectionDto,
-  ): Promise<SectionDto> {
+  async update(id: string, updateSectionDto: UpdateSectionDto): Promise<void> {
     const section = await this.sectionModel.findByPk(id)
 
     if (!section) {
       throw new NotFoundException(`Section with id '${id}' not found`)
     }
 
-    section.name = updateSectionDto.name
-    section.waitingText = updateSectionDto.waitingText
-    section.modified = new Date()
+    Object.assign(section, updateSectionDto)
 
     await section.save()
-
-    const keys = ['id', 'name', 'sectionType', 'displayOrder', 'waitingText']
-    const sectionDto: SectionDto = defaults(
-      pick(section, keys),
-      zipObject(keys, Array(keys.length).fill(null)),
-    ) as SectionDto
-
-    return sectionDto
   }
 
   async updateDisplayOrder(
