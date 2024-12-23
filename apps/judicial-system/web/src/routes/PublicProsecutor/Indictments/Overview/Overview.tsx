@@ -4,6 +4,10 @@ import { useRouter } from 'next/router'
 
 import { Box, Option } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
+import {
+  CaseIndictmentRulingDecision,
+  IndictmentCaseReviewDecision,
+} from '@island.is/judicial-system/types'
 import { core, titles } from '@island.is/judicial-system-web/messages'
 import {
   BlueBoxWithDate,
@@ -21,9 +25,9 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 
+import { ReviewDecision } from '../../components/ReviewDecision/ReviewDecision'
 import { IndictmentReviewerSelector } from './IndictmentReviewerSelector'
 import { strings } from './Overview.strings'
-type VisibleModal = 'REVIEWER_ASSIGNED'
 
 export const Overview = () => {
   const router = useRouter()
@@ -33,7 +37,17 @@ export const Overview = () => {
     useContext(FormContext)
   const [selectedIndictmentReviewer, setSelectedIndictmentReviewer] =
     useState<Option<string> | null>()
-  const [modalVisible, setModalVisible] = useState<VisibleModal>()
+  const [isReviewedDecisionChanged, setIsReviewedDecisionChanged] =
+    useState<boolean>(false)
+
+  // modal states
+  const [showReviewerAssignedModal, setShowReviewerAssignedModal] =
+    useState<boolean>(false)
+  const [
+    showConfirmChangedProsecutorDecisionModal,
+    setShowConfirmChangedProsecutorDecisionModal,
+  ] = useState<boolean>(false)
+
   // const lawsBroken = useIndictmentsLawsBroken(workingCase) NOTE: Temporarily hidden while list of laws broken is not complete
 
   const assignReviewer = async () => {
@@ -47,7 +61,7 @@ export const Overview = () => {
       return
     }
 
-    setModalVisible('REVIEWER_ASSIGNED')
+    setShowReviewerAssignedModal(true)
   }
 
   const handleNavigationTo = useCallback(
@@ -91,30 +105,63 @@ export const Overview = () => {
         <Box component="section" marginBottom={5}>
           <IndictmentCaseFilesList workingCase={workingCase} />
         </Box>
-        {!workingCase.indictmentReviewDecision && (
+        {!workingCase.indictmentReviewDecision ? (
           <IndictmentReviewerSelector
             workingCase={workingCase}
             selectedIndictmentReviewer={selectedIndictmentReviewer}
             setSelectedIndictmentReviewer={setSelectedIndictmentReviewer}
           />
+        ) : (
+          <ReviewDecision
+            caseId={workingCase.id}
+            currentDecision={workingCase.indictmentReviewDecision}
+            indictmentAppealDeadline={
+              workingCase.indictmentAppealDeadline ?? ''
+            }
+            indictmentAppealDeadlineIsInThePast={
+              workingCase.indictmentVerdictAppealDeadlineExpired ?? false
+            }
+            modalVisible={showConfirmChangedProsecutorDecisionModal}
+            setModalVisible={setShowConfirmChangedProsecutorDecisionModal}
+            isFine={
+              workingCase.indictmentRulingDecision ===
+              CaseIndictmentRulingDecision.FINE
+            }
+            onChange={(decision: IndictmentCaseReviewDecision) => {
+              const isChanged = decision !== workingCase.indictmentReviewDecision
+              setIsReviewedDecisionChanged(isChanged)
+            }}
+          />
         )}
       </FormContentContainer>
       <FormContentContainer isFooter>
-        <FormFooter
-          nextButtonIcon="arrowForward"
-          previousUrl={constants.CASES_ROUTE}
-          nextIsLoading={isLoadingWorkingCase}
-          nextIsDisabled={
-            !selectedIndictmentReviewer ||
-            selectedIndictmentReviewer.value ===
-              workingCase.indictmentReviewer?.id ||
-            isLoadingWorkingCase
-          }
-          onNextButtonClick={assignReviewer}
-          nextButtonText={fm(core.continue)}
-        />
+        {!workingCase.indictmentReviewDecision ? (
+          <FormFooter
+            nextButtonIcon="arrowForward"
+            previousUrl={constants.CASES_ROUTE}
+            nextIsLoading={isLoadingWorkingCase}
+            nextIsDisabled={
+              !selectedIndictmentReviewer ||
+              selectedIndictmentReviewer.value ===
+                workingCase.indictmentReviewer?.id ||
+              isLoadingWorkingCase
+            }
+            onNextButtonClick={assignReviewer}
+            nextButtonText={fm(core.continue)}
+          />
+        ) : (
+          <FormFooter
+            previousUrl={constants.CASES_ROUTE}
+            nextIsLoading={isLoadingWorkingCase}
+            nextIsDisabled={!isReviewedDecisionChanged}
+            onNextButtonClick={() =>
+              setShowConfirmChangedProsecutorDecisionModal(true)
+            }
+            nextButtonText={fm(strings.changeReviewedDecisionButtonText)}
+          />
+        )}
       </FormContentContainer>
-      {modalVisible === 'REVIEWER_ASSIGNED' && (
+      {showReviewerAssignedModal && (
         <Modal
           title={fm(strings.reviewerAssignedModalTitle)}
           text={fm(strings.reviewerAssignedModalText, {

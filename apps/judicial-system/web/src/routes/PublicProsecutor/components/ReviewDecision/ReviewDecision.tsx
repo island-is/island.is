@@ -5,7 +5,10 @@ import { useRouter } from 'next/router'
 import { Box, RadioButton, Text } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
-import { isPublicProsecutor } from '@island.is/judicial-system/types'
+import {
+  isPublicProsecutor,
+  isPublicProsecutorUser,
+} from '@island.is/judicial-system/types'
 import {
   BlueBox,
   Modal,
@@ -20,23 +23,27 @@ import * as styles from './ReviewDecision.css'
 
 interface Props {
   caseId: string
+  currentDecision?: IndictmentCaseReviewDecision
   indictmentAppealDeadline?: string
   indictmentAppealDeadlineIsInThePast?: boolean
   modalVisible?: boolean
   setModalVisible: Dispatch<SetStateAction<boolean>>
   isFine: boolean
   onSelect?: () => void
+  onChange?: (decision: IndictmentCaseReviewDecision) => void
 }
 
 export const ReviewDecision: FC<Props> = (props) => {
   const {
     caseId,
+    currentDecision,
     indictmentAppealDeadline,
     indictmentAppealDeadlineIsInThePast,
     modalVisible,
     setModalVisible,
     isFine,
     onSelect,
+    onChange,
   } = props
 
   const { user } = useContext(UserContext)
@@ -45,7 +52,7 @@ export const ReviewDecision: FC<Props> = (props) => {
   const { updateCase } = useCase()
   const [indictmentReviewDecision, setIndictmentReviewDecision] = useState<
     IndictmentCaseReviewDecision | undefined
-  >(undefined)
+  >(currentDecision)
 
   const handleReviewDecision = async () => {
     if (!indictmentReviewDecision) {
@@ -74,7 +81,7 @@ export const ReviewDecision: FC<Props> = (props) => {
     },
   ]
 
-  if (!isPublicProsecutor(user)) {
+  if (!(isPublicProsecutor(user) || isPublicProsecutorUser(user))) {
     return null
   }
 
@@ -104,6 +111,7 @@ export const ReviewDecision: FC<Props> = (props) => {
                 checked={indictmentReviewDecision === item.value}
                 onChange={() => {
                   onSelect && onSelect()
+                  onChange && onChange(item.value)
                   setIndictmentReviewDecision(item.value)
                 }}
                 backgroundColor="white"
