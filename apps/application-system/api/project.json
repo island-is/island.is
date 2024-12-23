@@ -88,6 +88,11 @@
             "glob": "*",
             "input": "libs/application/template-api-modules/src/lib/modules/templates/aosh/transfer-of-machine-ownership/emailGenerators/assets",
             "output": "./aosh-transfer-of-machine-ownership-assets"
+          },
+          {
+            "glob": "*",
+            "input": "libs/application/template-api-modules/src/lib/modules/templates/secondary-school/emailGenerators/assets",
+            "output": "./secondary-school-assets"
           }
         ],
         "webpackConfig": "apps/application-system/api/webpack.config.js",
