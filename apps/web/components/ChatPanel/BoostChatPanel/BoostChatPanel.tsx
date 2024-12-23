@@ -42,6 +42,7 @@ export const BoostChatPanel: React.FC<
                   window.sessionStorage.getItem(
                     boostChatPanelEndpoints[endpoint].conversationKey,
                   ) ?? null,
+                startLanguage: 'en-US',
               },
             },
           },
