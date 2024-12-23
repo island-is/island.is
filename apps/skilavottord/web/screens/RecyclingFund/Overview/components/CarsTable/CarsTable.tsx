@@ -28,22 +28,22 @@ export const CarsTable: FC<React.PropsWithChildren<TableProps>> = ({
         {vehicles.map(
           ({ vehicleId, vehicleType, newregDate, recyclingRequests }) => {
             return recyclingRequests?.map(
-              ({ createdAt, nameOfRequestor, recyclingPartner }) => {
+              ({ createdAt, nameOfRequestor, recyclingPartner }, index) => {
                 const modelYear = getYear(newregDate)
                 const deregistrationDate = getDate(createdAt)
                 return (
-                  <Row key={vehicleId}>
+                  <Row key={`${vehicleId}-${index}`}>
                     <Data>
                       <Text variant="eyebrow">{vehicleId}</Text>
                     </Data>
                     <Data>{vehicleType}</Data>
-                    <Data>{modelYear}</Data>
+                    <Data>{modelYear ?? ''}</Data>
                     <Data>{nameOfRequestor}</Data>
                     <Data>
                       {recyclingPartner?.municipality?.companyName ??
                         nameOfRequestor}
                     </Data>
-                    <Data>{deregistrationDate}</Data>
+                    <Data>{deregistrationDate ?? ''}</Data>
                   </Row>
                 )
               },
