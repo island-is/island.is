@@ -14,7 +14,7 @@ export const mockDisabilityLicense = (
   {
     type: 'Value',
     label: 'Útgefandi',
-    value: faker.name.title(),
+    value: faker.person.jobTitle(),
   },
   {
     type: 'Value',
