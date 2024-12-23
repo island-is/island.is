@@ -2,8 +2,8 @@ import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { Test, TestingModule } from '@nestjs/testing'
 import crypto from 'crypto'
-import { CryptoService } from './crypto.service'
 import { BffConfig } from '../bff.config'
+import { CryptoService } from './crypto.service'
 
 const DECRYPTED_TEXT = 'Hello, World!'
 
@@ -87,6 +87,57 @@ describe('CryptoService', () => {
       const decryptedText = service.decrypt(encryptedText)
 
       expect(decryptedText).toBe(DECRYPTED_TEXT)
+    })
+  })
+
+  describe('skipAlgorithmPrefix', () => {
+    const testText = 'Hello, World!'
+
+    it('should encrypt and decrypt with algorithm prefix (default behavior)', () => {
+      // Act - Encrypt the test text
+      const encrypted = service.encrypt(testText)
+
+      // Assert - Verify the encrypted format includes algorithm prefix
+      expect(encrypted.startsWith('aes-256-cbc:')).toBe(true)
+      expect(encrypted.split(':').length).toBe(3)
+
+      // Act - Decrypt the encrypted text
+      const decrypted = service.decrypt(encrypted)
+
+      // Assert - Verify the decrypted text matches original
+      expect(decrypted).toBe(testText)
+    })
+
+    it('should encrypt and decrypt without algorithm prefix', () => {
+      // Act - Encrypt the test text without algorithm prefix
+      const encrypted = service.encrypt(testText, true)
+
+      // Assert - Verify the encrypted format excludes algorithm prefix
+      expect(encrypted.startsWith('aes-256-cbc:')).toBe(false)
+      expect(encrypted.split(':').length).toBe(2)
+
+      // Act - Decrypt the encrypted text without algorithm prefix
+      const decrypted = service.decrypt(encrypted, true)
+
+      // Assert - Verify the decrypted text matches original
+      expect(decrypted).toBe(testText)
+    })
+
+    it('should fail to decrypt when skipAlgorithmPrefix flag doesnt match the format', () => {
+      // Arrange - Create encrypted texts in both formats
+      const encryptedWithPrefix = service.encrypt(testText)
+      const encryptedWithoutPrefix = service.encrypt(testText, true)
+
+      // Act & Assert - Try to decrypt with mismatched prefix settings
+      // Should throw error when trying to decrypt with-prefix text using without-prefix mode
+      expect(() => service.decrypt(encryptedWithPrefix, true)).toThrow(
+        'Failed to decrypt the text.',
+      )
+
+      // Should throw error when trying to decrypt without-prefix text using with-prefix mode
+      expect(() => service.decrypt(encryptedWithoutPrefix)).toThrow(
+        'Failed to decrypt the text.',
+      )
     })
   })
 })

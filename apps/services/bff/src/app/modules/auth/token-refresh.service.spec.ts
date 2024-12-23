@@ -178,9 +178,7 @@ describe('TokenRefreshService', () => {
       //
       expect(cachedTokenResponse).toBe(null)
 
-      expect(mockLogger.warn).toHaveBeenCalledWith(
-        `Token refresh failed for sid: ${testSid}`,
-      )
+      expect(mockLogger.warn).toHaveBeenCalledWith('Token refresh failed')
     })
 
     it('should prevent concurrent refresh token requests', async () => {
