@@ -545,6 +545,13 @@ export class ApplicationController {
       return updatedApplication
     }
 
+    await this.auditService.audit({
+      auth: user,
+      action: 'assignApplication',
+      resources: existingApplication.id,
+      meta: { assignees },
+    })
+
     return existingApplication
   }
 
