@@ -308,47 +308,32 @@ export const isTrafficViolationStepValidIndictments = (
     return false
   }
 
-  const validateTrafficViolation = (indictmentCount: IndictmentCount) => {
-    return (
-      Boolean(indictmentCount.policeCaseNumber) &&
-      Boolean(
-        indictmentCount.offenses && indictmentCount.offenses?.length > 0,
-      ) &&
-      Boolean(indictmentCount.vehicleRegistrationNumber) &&
-      Boolean(indictmentCount.lawsBroken) &&
-      Boolean(indictmentCount.incidentDescription) &&
-      Boolean(indictmentCount.legalArguments)
-    )
-  }
-
-  const validateNonTrafficViolation = (indictmentCount: IndictmentCount) =>
-    Boolean(indictmentCount.incidentDescription) &&
-    Boolean(indictmentCount.legalArguments)
+  const isValidIndictmentCount = (indictmentCount: IndictmentCount) =>
+    isTrafficViolation(indictmentCount)
+      ? Boolean(
+          indictmentCount.policeCaseNumber &&
+            indictmentCount.offenses?.length &&
+            indictmentCount.vehicleRegistrationNumber &&
+            indictmentCount.lawsBroken &&
+            indictmentCount.incidentDescription &&
+            indictmentCount.legalArguments,
+        )
+      : Boolean(
+          indictmentCount.incidentDescription && indictmentCount.legalArguments,
+        )
 
   const isTrafficViolation = (indictmentCount: IndictmentCount) =>
     indictmentCount.indictmentCountSubtypes?.includes(
       IndictmentSubtype.TRAFFIC_VIOLATION,
     )
 
-  console.log(isTrafficViolationCase(workingCase))
-
-  // All indictment counts are traffic violations
+  // If all indictment counts are traffic violations, validate them all
   if (isTrafficViolationCase(workingCase)) {
-    const hasValidTrafficViolationIndictmentCounts =
-      workingCase.indictmentCounts?.every(validateTrafficViolation) ?? false
-
-    return hasValidTrafficViolationIndictmentCounts
+    return workingCase.indictmentCounts?.every(isValidIndictmentCount) ?? false
   }
 
-  let isValid = false
-
-  for (const indictmentCount of workingCase.indictmentCounts || []) {
-    isValid = isTrafficViolation(indictmentCount)
-      ? validateTrafficViolation(indictmentCount)
-      : validateNonTrafficViolation(indictmentCount)
-  }
-
-  return isValid
+  // Otherwise, validate each indictment count
+  return workingCase.indictmentCounts?.some(isValidIndictmentCount) ?? false
 }
 
 export const isPoliceDemandsStepValidRC = (workingCase: Case): boolean => {
