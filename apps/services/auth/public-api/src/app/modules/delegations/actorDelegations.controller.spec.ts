@@ -793,7 +793,10 @@ describe('ActorDelegationsController', () => {
               await clientDelegationTypeModel.destroy({
                 where: {
                   clientId: client.clientId,
-                  delegationType: AuthDelegationType.LegalGuardian,
+                  delegationType: [
+                    AuthDelegationType.LegalGuardian,
+                    AuthDelegationType.LegalGuardianMinor,
+                  ],
                 },
               })
 
