@@ -22,7 +22,6 @@ import { ConfirmationModal, isConfirmProsecutorDecisionModal } from '../utils'
 import { strings } from './ReviewDecision.strings'
 import * as styles from './ReviewDecision.css'
 
-
 interface Props {
   caseId: string
   currentDecision?: IndictmentCaseReviewDecision
@@ -35,14 +34,13 @@ interface Props {
   onChange?: (decision: IndictmentCaseReviewDecision) => void
 }
 
-
 export const ReviewDecision: FC<Props> = (props) => {
   const {
     caseId,
     currentDecision,
     indictmentAppealDeadline,
     indictmentAppealDeadlineIsInThePast,
-    modalVisible, 
+    modalVisible,
     setModalVisible,
     isFine,
     onSelect,
