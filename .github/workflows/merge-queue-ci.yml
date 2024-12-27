@@ -1,9 +1,6 @@
 name: Validate code in the merge queue
 
 on:
-  pull_request:
-    types:
-      - closed
   merge_group:
 
 jobs:
@@ -20,4 +17,4 @@ jobs:
           git status
       - name: Run slow CI (emulated by a long sleep)
         run: |
-          sleep 150
+          sleep 20
