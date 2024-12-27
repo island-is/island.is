@@ -84,8 +84,8 @@ const Defendants: FC<Props> = ({ workingCase }) => {
 
 const Prosecutor: FC<Props> = ({ workingCase }) => {
   const { formatMessage } = useIntl()
-  if (!workingCase.prosecutorsOffice?.name) return null;
-  
+  if (!workingCase.prosecutorsOffice?.name) return null
+
   return (
     <Entry
       label={formatMessage(core.prosecutor)}
@@ -114,9 +114,13 @@ export const ProsecutorCaseInfo: FC<Props & { hideCourt?: boolean }> = ({
   )
 }
 
-export const ProsecutorAndDefendantsEntries: FC<Props> = ({ workingCase }: { workingCase: Case; }) => (
+export const ProsecutorAndDefendantsEntries: FC<Props> = ({
+  workingCase,
+}: {
+  workingCase: Case
+}) => (
   <>
-    <Prosecutor workingCase={workingCase}/>
+    <Prosecutor workingCase={workingCase} />
     <Defendants workingCase={workingCase} />
   </>
 )
@@ -145,7 +149,7 @@ export const CourtCaseInfo: FC<Props> = ({ workingCase }) => {
           </Text>
         </Box>
       ) : (
-        <ProsecutorAndDefendantsEntries workingCase={workingCase}/>
+        <ProsecutorAndDefendantsEntries workingCase={workingCase} />
       )}
     </Box>
   )
