@@ -26,10 +26,14 @@ import {
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 
 import { ReviewDecision } from '../../components/ReviewDecision/ReviewDecision'
-import { CONFIRM_PROSECUTOR_DECISION, ConfirmationModal, isReviewerAssignedModal, REVIEWER_ASSIGNED } from '../../components/utils'
+import {
+  CONFIRM_PROSECUTOR_DECISION,
+  ConfirmationModal,
+  isReviewerAssignedModal,
+  REVIEWER_ASSIGNED,
+} from '../../components/utils'
 import { IndictmentReviewerSelector } from './IndictmentReviewerSelector'
 import { strings } from './Overview.strings'
-
 
 export const Overview = () => {
   const router = useRouter()
@@ -42,7 +46,9 @@ export const Overview = () => {
   const [isReviewedDecisionChanged, setIsReviewedDecisionChanged] =
     useState<boolean>(false)
 
-  const [confirmationModal, setConfirmationModal] = useState<ConfirmationModal | undefined>();
+  const [confirmationModal, setConfirmationModal] = useState<
+    ConfirmationModal | undefined
+  >()
 
   // const lawsBroken = useIndictmentsLawsBroken(workingCase) NOTE: Temporarily hidden while list of laws broken is not complete
 
@@ -123,7 +129,9 @@ export const Overview = () => {
               workingCase.indictmentRulingDecision ===
               CaseIndictmentRulingDecision.FINE
             }
-            onChange={(decision: IndictmentCaseReviewDecision) => {
+            onSelect={(decision?: IndictmentCaseReviewDecision) => {
+              if (!decision) return
+
               const isDecisionChanged =
                 decision !== workingCase.indictmentReviewDecision
               setIsReviewedDecisionChanged(isDecisionChanged)

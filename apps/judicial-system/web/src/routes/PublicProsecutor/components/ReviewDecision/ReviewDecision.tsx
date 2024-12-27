@@ -22,7 +22,6 @@ import { ConfirmationModal, isConfirmProsecutorDecisionModal } from '../utils'
 import { strings } from './ReviewDecision.strings'
 import * as styles from './ReviewDecision.css'
 
-
 interface Props {
   caseId: string
   currentDecision?: IndictmentCaseReviewDecision
@@ -31,10 +30,8 @@ interface Props {
   modalVisible?: ConfirmationModal
   setModalVisible: Dispatch<SetStateAction<ConfirmationModal | undefined>>
   isFine: boolean
-  onSelect?: () => void
-  onChange?: (decision: IndictmentCaseReviewDecision) => void
+  onSelect?: (decision?: IndictmentCaseReviewDecision) => void
 }
-
 
 export const ReviewDecision: FC<Props> = (props) => {
   const {
@@ -42,11 +39,10 @@ export const ReviewDecision: FC<Props> = (props) => {
     currentDecision,
     indictmentAppealDeadline,
     indictmentAppealDeadlineIsInThePast,
-    modalVisible, 
+    modalVisible,
     setModalVisible,
     isFine,
     onSelect,
-    onChange,
   } = props
 
   const { user } = useContext(UserContext)
@@ -113,8 +109,8 @@ export const ReviewDecision: FC<Props> = (props) => {
                 value={item.value}
                 checked={indictmentReviewDecision === item.value}
                 onChange={() => {
-                  onSelect && onSelect()
-                  onChange && onChange(item.value)
+                  onSelect && onSelect(item.value)
+                  // onChange && onChange(item.value)
                   setIndictmentReviewDecision(item.value)
                 }}
                 backgroundColor="white"
