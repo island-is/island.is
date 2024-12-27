@@ -223,10 +223,14 @@ const AccessControl: FC<React.PropsWithChildren<unknown>> = () => {
     return <NotFound />
   }
 
-  const accessControls =
+  let accessControls =
     accessControlsData?.skilavottordAccessControls ||
     accessControlsData?.skilavottordAccessControlsByRecyclingPartner ||
     []
+
+  accessControls = [...accessControls].sort((a, b) =>
+    a.name.localeCompare(b.name),
+  )
 
   const partners =
     recyclingPartnerData?.skilavottordAllRecyclingPartners ||
