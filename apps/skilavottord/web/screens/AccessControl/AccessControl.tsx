@@ -258,7 +258,7 @@ const AccessControl: FC<React.PropsWithChildren<unknown>> = () => {
       !hasDeveloperRole(user?.role) ? role !== Role.developer : role,
     )
     .filter((role) => {
-      if (hasMunicipalityRole(Role.municipality)) {
+      if (hasMunicipalityRole(user?.role)) {
         return (
           role === Role.recyclingCompany ||
           role === Role.recyclingCompanyAdmin ||
@@ -272,6 +272,7 @@ const AccessControl: FC<React.PropsWithChildren<unknown>> = () => {
       label: getRoleTranslation(role as Role, activeLocale),
       value: role,
     }))
+    .sort((a, b) => a.label.localeCompare(b.label))
 
   const handleCreateAccessControlCloseModal = () =>
     setIsCreateAccessControlModalVisible(false)
