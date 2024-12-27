@@ -241,6 +241,7 @@ const AccessControl: FC<React.PropsWithChildren<unknown>> = () => {
         : partner.companyName,
       value: partner.companyId,
     }))
+    .sort((a, b) => a.label.localeCompare(b.label))
 
   const municipalities = filterInternalPartners(partners)
     .filter((partner) => {
@@ -250,6 +251,7 @@ const AccessControl: FC<React.PropsWithChildren<unknown>> = () => {
       label: partner.companyName,
       value: partner.companyId,
     }))
+    .sort((a, b) => a.label.localeCompare(b.label))
 
   const roles = Object.keys(AccessControlRole)
     .filter((role) =>

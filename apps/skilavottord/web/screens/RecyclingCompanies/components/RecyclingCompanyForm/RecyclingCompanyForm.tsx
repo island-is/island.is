@@ -4,7 +4,7 @@ import { Control, Controller, FieldError } from 'react-hook-form'
 import { FieldValues } from 'react-hook-form/dist/types'
 import { DeepMap } from 'react-hook-form/dist/types/utils'
 
-import { useQuery } from '@apollo/client'
+import { gql, useQuery } from '@apollo/client'
 import {
   Box,
   Button,
@@ -23,7 +23,6 @@ import {
 import UserContext from '@island.is/skilavottord-web/context/UserContext'
 import { Query } from '@island.is/skilavottord-web/graphql/schema'
 import { useI18n } from '@island.is/skilavottord-web/i18n'
-import { SkilavottordRecyclingPartnersQuery } from '../../RecyclingCompanies'
 
 interface RecyclingCompanyForm {
   onSubmit: (
@@ -35,6 +34,15 @@ interface RecyclingCompanyForm {
   editView?: boolean
   isMunicipalityPage?: boolean | undefined
 }
+
+export const SkilavottordAllMunicipalitiesQuery = gql`
+  query skilavottordAllMunicipalitiesQuery {
+    skilavottordAllMunicipalities {
+      companyId
+      companyName
+    }
+  }
+`
 
 const RecyclingCompanyForm: FC<
   React.PropsWithChildren<RecyclingCompanyForm>
@@ -53,17 +61,16 @@ const RecyclingCompanyForm: FC<
   } = useI18n()
 
   const { data } =
-    useQuery<Query>(SkilavottordRecyclingPartnersQuery, {
-      skip: isMunicipalityPage,
-      variables: { isMunicipalityPage: true },
+    useQuery<Query>(SkilavottordAllMunicipalitiesQuery, {
+      fetchPolicy: 'cache-and-network',
     }) || []
 
-  const municipalities = data?.skilavottordRecyclingPartners.map(
-    (municipality) => ({
+  const municipalities = data?.skilavottordAllMunicipalities
+    .map((municipality) => ({
       label: municipality.companyName,
       value: municipality.companyId,
-    }),
-  )
+    }))
+    .sort((a, b) => a.label.localeCompare(b.label))
 
   return (
     <form onSubmit={onSubmit}>
