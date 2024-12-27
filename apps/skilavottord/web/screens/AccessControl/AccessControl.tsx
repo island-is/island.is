@@ -90,6 +90,7 @@ export const CreateSkilavottordAccessControlMutation = gql`
         companyId
         companyName
         municipalityId
+        isMunicipality
       }
     }
   }
