@@ -26,8 +26,10 @@ import {
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 
 import { ReviewDecision } from '../../components/ReviewDecision/ReviewDecision'
+import { CONFIRM_PROSECUTOR_DECISION, ConfirmationModal, isReviewerAssignedModal, REVIEWER_ASSIGNED } from '../../components/utils'
 import { IndictmentReviewerSelector } from './IndictmentReviewerSelector'
 import { strings } from './Overview.strings'
+
 
 export const Overview = () => {
   const router = useRouter()
@@ -40,13 +42,7 @@ export const Overview = () => {
   const [isReviewedDecisionChanged, setIsReviewedDecisionChanged] =
     useState<boolean>(false)
 
-  // modal states
-  const [showReviewerAssignedModal, setShowReviewerAssignedModal] =
-    useState<boolean>(false)
-  const [
-    showConfirmChangedProsecutorDecisionModal,
-    setShowConfirmChangedProsecutorDecisionModal,
-  ] = useState<boolean>(false)
+  const [confirmationModal, setConfirmationModal] = useState<ConfirmationModal | undefined>();
 
   // const lawsBroken = useIndictmentsLawsBroken(workingCase) NOTE: Temporarily hidden while list of laws broken is not complete
 
@@ -61,7 +57,7 @@ export const Overview = () => {
       return
     }
 
-    setShowReviewerAssignedModal(true)
+    setConfirmationModal(REVIEWER_ASSIGNED)
   }
 
   const handleNavigationTo = useCallback(
@@ -121,16 +117,16 @@ export const Overview = () => {
             indictmentAppealDeadlineIsInThePast={
               workingCase.indictmentVerdictAppealDeadlineExpired ?? false
             }
-            modalVisible={showConfirmChangedProsecutorDecisionModal}
-            setModalVisible={setShowConfirmChangedProsecutorDecisionModal}
+            modalVisible={confirmationModal}
+            setModalVisible={setConfirmationModal}
             isFine={
               workingCase.indictmentRulingDecision ===
               CaseIndictmentRulingDecision.FINE
             }
             onChange={(decision: IndictmentCaseReviewDecision) => {
-              const isChanged =
+              const isDecisionChanged =
                 decision !== workingCase.indictmentReviewDecision
-              setIsReviewedDecisionChanged(isChanged)
+              setIsReviewedDecisionChanged(isDecisionChanged)
             }}
           />
         )}
@@ -156,13 +152,13 @@ export const Overview = () => {
             nextIsLoading={isLoadingWorkingCase}
             nextIsDisabled={!isReviewedDecisionChanged}
             onNextButtonClick={() =>
-              setShowConfirmChangedProsecutorDecisionModal(true)
+              setConfirmationModal(CONFIRM_PROSECUTOR_DECISION)
             }
             nextButtonText={fm(strings.changeReviewedDecisionButtonText)}
           />
         )}
       </FormContentContainer>
-      {showReviewerAssignedModal && (
+      {isReviewerAssignedModal(confirmationModal) && (
         <Modal
           title={fm(strings.reviewerAssignedModalTitle)}
           text={fm(strings.reviewerAssignedModalText, {

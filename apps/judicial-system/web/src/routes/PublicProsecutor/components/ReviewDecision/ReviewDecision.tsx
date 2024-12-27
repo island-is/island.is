@@ -18,20 +18,23 @@ import {
 import { IndictmentCaseReviewDecision } from '@island.is/judicial-system-web/src/graphql/schema'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 
+import { ConfirmationModal, isConfirmProsecutorDecisionModal } from '../utils'
 import { strings } from './ReviewDecision.strings'
 import * as styles from './ReviewDecision.css'
+
 
 interface Props {
   caseId: string
   currentDecision?: IndictmentCaseReviewDecision
   indictmentAppealDeadline?: string
   indictmentAppealDeadlineIsInThePast?: boolean
-  modalVisible?: boolean
-  setModalVisible: Dispatch<SetStateAction<boolean>>
+  modalVisible?: ConfirmationModal
+  setModalVisible: Dispatch<SetStateAction<ConfirmationModal | undefined>>
   isFine: boolean
   onSelect?: () => void
   onChange?: (decision: IndictmentCaseReviewDecision) => void
 }
+
 
 export const ReviewDecision: FC<Props> = (props) => {
   const {
@@ -39,7 +42,7 @@ export const ReviewDecision: FC<Props> = (props) => {
     currentDecision,
     indictmentAppealDeadline,
     indictmentAppealDeadlineIsInThePast,
-    modalVisible,
+    modalVisible, 
     setModalVisible,
     isFine,
     onSelect,
@@ -121,7 +124,7 @@ export const ReviewDecision: FC<Props> = (props) => {
           })}
         </div>
       </BlueBox>
-      {modalVisible && (
+      {isConfirmProsecutorDecisionModal(modalVisible) && (
         <Modal
           title={fm(strings.reviewModalTitle)}
           text={fm(
@@ -132,9 +135,9 @@ export const ReviewDecision: FC<Props> = (props) => {
           )}
           primaryButtonText={fm(strings.reviewModalPrimaryButtonText)}
           secondaryButtonText={fm(strings.reviewModalSecondaryButtonText)}
-          onClose={() => setModalVisible(false)}
+          onClose={() => setModalVisible(undefined)}
           onPrimaryButtonClick={handleReviewDecision}
-          onSecondaryButtonClick={() => setModalVisible(false)}
+          onSecondaryButtonClick={() => setModalVisible(undefined)}
         />
       )}
     </Box>

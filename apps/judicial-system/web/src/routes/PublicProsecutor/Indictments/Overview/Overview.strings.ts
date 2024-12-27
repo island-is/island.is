@@ -39,9 +39,8 @@ export const strings = defineMessages({
     description: 'Notaður sem texti í tilkynningaglugga um yfirlesara.',
   },
   changeReviewedDecisionButtonText: {
-    id: 'judicial.system.core:public_prosecutor.indictments.overview.change_Reviewed_decision_button_text',
-    defaultMessage: 'Breyta ákvörðun?',
-    description:
-      'Notaður sem texti í staðfestingartakka þegar ákvörðun ríkissaksóknara er breytt.',
+    id: 'judicial.system.core:public_prosecutor.indictments.overview.change_reviewed_decision_button_text',
+    defaultMessage:'Breyta ákvörðun?',
+    description: 'Notaður sem texti fyrir staðfestingartakka þegar ákvörðun ríkissaksóknara er breytt.',
   },
 })
