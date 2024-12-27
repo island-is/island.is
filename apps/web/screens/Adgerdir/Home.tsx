@@ -23,16 +23,14 @@ import {
 } from '@island.is/web/components'
 import {
   ContentLanguage,
+  GetArticleCategoriesQuery,
+  GetGroupedMenuQuery,
   Query,
   QueryGetAdgerdirPagesArgs,
   QueryGetAdgerdirTagsArgs,
+  QueryGetArticleCategoriesArgs,
   QueryGetGroupedMenuArgs,
   QueryGetNamespaceArgs,
-} from '@island.is/web/graphql/schema'
-import {
-  GetArticleCategoriesQuery,
-  GetGroupedMenuQuery,
-  QueryGetArticleCategoriesArgs,
 } from '@island.is/web/graphql/schema'
 import { useNamespace } from '@island.is/web/hooks'
 import { LinkType, useLinkResolver } from '@island.is/web/hooks/useLinkResolver'

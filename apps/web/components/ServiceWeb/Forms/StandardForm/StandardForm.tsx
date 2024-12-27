@@ -30,12 +30,13 @@ import {
   InputController,
 } from '@island.is/shared/form-fields'
 import { sortAlpha } from '@island.is/shared/utils'
-import { Organizations, SupportCategory } from '@island.is/web/graphql/schema'
 import {
   ContentLanguage,
   GetSupportSearchResultsQuery,
   GetSupportSearchResultsQueryVariables,
+  Organizations,
   SearchableContentTypes,
+  SupportCategory,
   SupportQna,
 } from '@island.is/web/graphql/schema'
 import { useNamespace } from '@island.is/web/hooks'
