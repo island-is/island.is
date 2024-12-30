@@ -80,7 +80,7 @@ const InfoCardClosedIndictment: FC<Props> = (props) => {
                   ...(workingCase.indictmentReviewDecision
                     ? [indictmentReviewDecision]
                     : []),
-                  ...(indictmentReviewedDate
+                  ...(reviewedDate
                     ? [indictmentReviewedDate(reviewedDate)]
                     : []),
                 ],
