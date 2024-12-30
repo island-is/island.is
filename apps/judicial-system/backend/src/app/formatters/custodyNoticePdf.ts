@@ -99,7 +99,7 @@ const constructCustodyNoticePdf = (
       ? formatGender(theCase.defendants[0].gender)
       : 'Ekki skráð',
   )
-  
+
   addEmptyLines(doc, 2)
   setLineGap(doc, 8)
   addMediumText(
