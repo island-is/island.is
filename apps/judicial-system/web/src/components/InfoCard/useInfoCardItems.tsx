@@ -134,7 +134,7 @@ const useInfoCardItems = () => {
 
   const offenses: Item = {
     id: 'offenses-item',
-    title: formatMessage(strings.offence),
+    title: formatMessage(strings.offense),
     values: [
       <>
         {readableIndictmentSubtypes(
@@ -172,9 +172,9 @@ const useInfoCardItems = () => {
     ],
   }
 
-  const offence: Item = {
-    id: 'offence-item',
-    title: formatMessage(strings.offence),
+  const offense: Item = {
+    id: 'offense-item',
+    title: formatMessage(strings.offense),
     values: [
       <>
         {readableIndictmentSubtypes(
@@ -370,7 +370,7 @@ const useInfoCardItems = () => {
     judge,
     caseType,
     registrar,
-    offence,
+    offense,
     requestedCourtDate,
     mergeCase,
     mergedCasePoliceCaseNumbers,

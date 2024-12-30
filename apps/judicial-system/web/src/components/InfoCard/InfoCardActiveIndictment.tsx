@@ -50,9 +50,7 @@ const InfoCardActiveIndictment: React.FC<Props> = (props) => {
           columns: 2,
         },
         ...(workingCase.mergedCases && workingCase.mergedCases.length > 0
-          ? workingCase.mergedCases.map((mergedCase) => {
-            console.log({mergedCase})
-            return ({
+          ? workingCase.mergedCases.map((mergedCase) => ({
               id: mergedCase.id,
               items: [
                 mergedCasePoliceCaseNumbers(mergedCase),
@@ -62,7 +60,7 @@ const InfoCardActiveIndictment: React.FC<Props> = (props) => {
                 mergedCaseCourt(mergedCase),
               ],
               columns: 2,
-            })})
+            }))
           : []),
       ]}
     />
