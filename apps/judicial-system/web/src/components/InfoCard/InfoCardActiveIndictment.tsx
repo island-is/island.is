@@ -17,7 +17,7 @@ const InfoCardActiveIndictment: React.FC<Props> = (props) => {
     prosecutor,
     policeCaseNumbers,
     court,
-    offences,
+    offenses,
     mergedCasePoliceCaseNumbers,
     mergedCaseCourtCaseNumber,
     mergedCaseProsecutor,
@@ -45,12 +45,14 @@ const InfoCardActiveIndictment: React.FC<Props> = (props) => {
             prosecutor(workingCase.type),
             policeCaseNumbers,
             court,
-            offences,
+            offenses,
           ],
           columns: 2,
         },
         ...(workingCase.mergedCases && workingCase.mergedCases.length > 0
-          ? workingCase.mergedCases.map((mergedCase) => ({
+          ? workingCase.mergedCases.map((mergedCase) => {
+            console.log({mergedCase})
+            return ({
               id: mergedCase.id,
               items: [
                 mergedCasePoliceCaseNumbers(mergedCase),
@@ -60,7 +62,7 @@ const InfoCardActiveIndictment: React.FC<Props> = (props) => {
                 mergedCaseCourt(mergedCase),
               ],
               columns: 2,
-            }))
+            })})
           : []),
       ]}
     />

@@ -132,8 +132,8 @@ const useInfoCardItems = () => {
     values: [workingCase.courtCaseNumber],
   }
 
-  const offences: Item = {
-    id: 'offences-item',
+  const offenses: Item = {
+    id: 'offenses-item',
     title: formatMessage(strings.offence),
     values: [
       <>
@@ -366,7 +366,7 @@ const useInfoCardItems = () => {
     policeCaseNumbers,
     court,
     courtCaseNumber,
-    offences,
+    offenses,
     judge,
     caseType,
     registrar,
