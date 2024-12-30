@@ -53,7 +53,7 @@ export const strings = {
     id: 'judicial.system.indictments:processing.civil_demands_title',
     defaultMessage: 'Einkaréttarkrafa',
     description:
-      'Notaður sem titill á Einkaréttarkrafa svæði á ákæra skrefi í ákærum.',
+      'Notaður sem titill á bótakröfusvæði á Málsmeðferðarskjánum.',
   },
   isCivilClaim: defineMessage({
     id: 'judicial.system.indictments:processing.is_civil_claim',
