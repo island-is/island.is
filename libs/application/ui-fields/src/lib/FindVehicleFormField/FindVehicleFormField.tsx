@@ -159,6 +159,8 @@ export const FindVehicleFormField: FC<React.PropsWithChildren<Props>> = ({
     isMachine,
     isEnergyFunds,
     energyFundsMessages,
+    marginTop,
+    marginBottom,
   } = field
 
   const [plate, setPlate] = useState<string>(
@@ -355,7 +357,7 @@ export const FindVehicleFormField: FC<React.PropsWithChildren<Props>> = ({
   }, [isLoading])
 
   return (
-    <Box>
+    <Box marginTop={field.marginTop} marginBottom={field.marginBottom}>
       <Box display="flex" alignItems="center">
         <Box flexGrow={1} marginRight={2}>
           <InputController

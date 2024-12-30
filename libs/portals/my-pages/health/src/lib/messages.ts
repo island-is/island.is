@@ -1024,9 +1024,21 @@ export const messages = defineMessages({
     defaultMessage:
       'Textareitur má ekki vera tómur sé þessi valkostur valinn. ',
   },
+  organMinor: {
+    id: 'sp.health:organ-minor',
+    defaultMessage: 'Til að geta gerst líffæragjafi þarftu að vera 18 ára.',
+  },
+  organTemporaryNationalId: {
+    id: 'sp.health:organ-temporary-national-id',
+    defaultMessage: 'Líffæragjöf er ekki heimiluð á kerfiskennitölur.',
+  },
   other: {
     id: 'sp.health:other-lower-case',
     defaultMessage: 'annað',
+  },
+  otherPascalCase: {
+    id: 'sp.health:other',
+    defaultMessage: 'Annað',
   },
   registrationComplete: {
     id: 'sp.health:registration-complete',

@@ -23,7 +23,6 @@ export type CachedTokenResponse = Omit<
 }
 
 export type LoginAttemptData = {
-  targetLinkUri?: string
+  targetLinkUri: string
   codeVerifier: string
-  originUrl: string
 }

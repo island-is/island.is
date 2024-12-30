@@ -28,6 +28,8 @@ export const FileUploadFormField = ({
     maxSize,
     maxSizeErrorText,
     forImageUpload,
+    marginTop,
+    marginBottom,
   } = field
   const { formatMessage } = useLocale()
   const { watch } = useFormContext()
@@ -47,7 +49,7 @@ export const FileUploadFormField = ({
   }
 
   return (
-    <div>
+    <Box marginTop={marginTop} marginBottom={marginBottom}>
       {introduction && (
         <FieldDescription
           description={formatText(introduction, application, formatMessage)}
@@ -81,6 +83,6 @@ export const FileUploadFormField = ({
           onRemove={onFileRemoveWhenInAnswers}
         />
       </Box>
-    </div>
+    </Box>
   )
 }
