@@ -1,19 +1,30 @@
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { useDebounce } from 'react-use'
-import { FieldExtensionSDK } from '@contentful/app-sdk'
-import { Stack, Text, TextInput } from '@contentful/f36-components'
+import type { EntryProps } from 'contentful-management'
+import type { FieldExtensionSDK } from '@contentful/app-sdk'
+import { Spinner, Stack, Text, TextInput } from '@contentful/f36-components'
 import { useCMA, useSDK } from '@contentful/react-apps-toolkit'
 import slugify from '@sindresorhus/slugify'
 
 import { CONTENTFUL_ENVIRONMENT, CONTENTFUL_SPACE } from '../../constants'
 
 const DEBOUNCE_TIME = 100
+
 const config = {
   environmentId: CONTENTFUL_ENVIRONMENT,
   spaceId: CONTENTFUL_SPACE,
 }
 
-const OrganizationSubpageSlugField = () => {
+interface OrganizationSubpageSlugFieldProps {
+  fetchSubpagesWithSameSlug: (
+    slug: string,
+    organizationPageId: string,
+  ) => Promise<EntryProps[]>
+}
+
+const OrganizationSubpageSlugField = ({
+  fetchSubpagesWithSameSlug,
+}: OrganizationSubpageSlugFieldProps) => {
   const sdk = useSDK<FieldExtensionSDK>()
   const cma = useCMA()
   const [value, setValue] = useState(sdk.field?.getValue() ?? '')
@@ -73,32 +84,12 @@ const OrganizationSubpageSlugField = () => {
         setIsValid(true)
         return
       }
-      const subpagesWithSameSlug =
-        (
-          await cma.entry.getMany({
-            ...config,
-            query: {
-              locale: sdk.field.locale,
-              content_type: 'organizationSubpage',
-              'fields.slug': value,
-              'sys.id[ne]': sdk.entry.getSys().id,
-              'sys.archivedVersion[exists]': false,
-              limit: 1000,
-            },
-          })
-        )?.items ?? []
-
-      if (
-        subpagesWithSameSlug.some(
-          (subpage) =>
-            subpage.fields.organizationPage?.[sdk.locales.default]?.sys?.id ===
-            organizationPageId,
-        )
-      ) {
-        setIsValid(false)
-        return
-      }
-      setIsValid(true)
+      const subpagesWithSameSlug = await fetchSubpagesWithSameSlug(
+        value,
+        organizationPageId,
+      )
+      console.log(subpagesWithSameSlug)
+      setIsValid(subpagesWithSameSlug.length === 0)
     },
     DEBOUNCE_TIME,
     [value, organizationPageId],
@@ -140,4 +131,109 @@ const OrganizationSubpageSlugField = () => {
   )
 }
 
-export default OrganizationSubpageSlugField
+const Wrapper = () => {
+  const sdk = useSDK<FieldExtensionSDK>()
+  const cma = useCMA()
+
+  const [state, setState] = useState<
+    | { type: 'loading'; data: null }
+    | { type: 'page'; data: null }
+    | { type: 'childPage'; data: EntryProps }
+  >({ type: 'loading', data: null })
+
+  useEffect(() => {
+    const start = async () => {
+      try {
+        const response = await cma.entry.getMany({
+          query: {
+            content_type: 'organizationParentSubpage',
+            include: 1,
+            links_to_entry: sdk.ids.entry,
+            'sys.archivedAt[exists]': false,
+          },
+        })
+        if (response.items.length > 0) {
+          setState({ type: 'childPage', data: response.items[0] })
+        } else {
+          setState({ type: 'page', data: null })
+        }
+      } catch {
+        setState({ type: 'page', data: null })
+      }
+    }
+
+    start()
+  }, [cma.entry, sdk.ids.entry])
+
+  const fetchSubpagesWithSameSlug = useCallback(
+    async (slug: string, organizationPageId: string) => {
+      // TODO: Filter-a út org subpages sem eru með parent subpage fyrir ofan sig
+      const [parentSubpagesResponse, organizationSubpagesResponse] =
+        await Promise.all([
+          cma.entry.getMany({
+            ...config,
+            query: {
+              content_type: 'organizationParentSubpage',
+              'fields.slug': slug,
+              'sys.archivedVersion[exists]': false,
+              'fields.organizationPage.sys.id': organizationPageId,
+              limit: 1000,
+            },
+          }),
+          cma.entry.getMany({
+            ...config,
+            query: {
+              content_type: 'organizationSubpage',
+              'fields.slug': slug,
+              'sys.id[ne]': sdk.entry.getSys().id,
+              'sys.archivedVersion[exists]': false,
+              'fields.organizationPage.sys.id': organizationPageId,
+              limit: 1000,
+            },
+          }),
+        ])
+
+      return [
+        ...parentSubpagesResponse.items,
+        ...organizationSubpagesResponse.items,
+      ]
+    },
+    [cma.entry, sdk.entry],
+  )
+
+  const fetchChildSubpagesWithSameSlug = useCallback(
+    async (slug: string, organizationPageId: string) => {
+      // TODO: sækja öll hin börnin og bera saman slugs
+      const items =
+        (
+          await cma.entry.getMany({
+            ...config,
+            query: {
+              content_type: 'organizationSubpage',
+              'fields.slug': slug,
+              'sys.id[ne]': sdk.entry.getSys().id,
+              'sys.archivedVersion[exists]': false,
+              'fields.organizationPage.sys.id': organizationPageId,
+              limit: 1000,
+            },
+          })
+        )?.items ?? []
+      return items
+    },
+    [cma.entry, sdk.entry],
+  )
+
+  if (state.type === 'loading') return <Spinner />
+
+  return (
+    <OrganizationSubpageSlugField
+      fetchSubpagesWithSameSlug={
+        state.type === 'childPage'
+          ? fetchChildSubpagesWithSameSlug
+          : fetchSubpagesWithSameSlug
+      }
+    />
+  )
+}
+
+export default Wrapper
