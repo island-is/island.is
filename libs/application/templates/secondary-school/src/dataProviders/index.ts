@@ -5,6 +5,12 @@ export {
   UserProfileApi,
 } from '@island.is/application/types'
 
+export const StudentInfoApi = defineTemplateApi({
+  action: 'getStudentInfo',
+  externalDataId: 'studentInfo',
+  namespace: 'SecondarySchool',
+})
+
 export const SchoolsApi = defineTemplateApi({
   action: 'getSchools',
   externalDataId: 'schools',

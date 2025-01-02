@@ -5,6 +5,7 @@ export type Events = { type: DefaultEvents.SUBMIT | DefaultEvents.ABORT }
 export enum States {
   PREREQUISITES = 'prerequisites',
   DRAFT = 'draft',
+  SUBMITTED = 'submitted',
   COMPLETED = 'completed',
 }
 

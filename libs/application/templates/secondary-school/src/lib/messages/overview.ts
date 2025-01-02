@@ -122,7 +122,7 @@ export const overview = {
   buttons: defineMessages({
     confirm: {
       id: 'ss.application:overview.buttons.confirm',
-      defaultMessage: 'Áfram',
+      defaultMessage: 'Senda umsókn',
       description: 'Continue',
     },
   }),

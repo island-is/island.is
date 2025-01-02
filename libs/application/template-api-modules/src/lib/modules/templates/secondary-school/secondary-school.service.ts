@@ -7,13 +7,13 @@ import {
 } from '@island.is/application/types'
 import {
   ApplicationType as SecondarySchoolApplicationType,
-  getEndOfDayUTCDate,
-  getFirstRegistrationEndDate,
   SecondarySchoolAnswers,
+  States as SecondarySchoolStates,
 } from '@island.is/application/templates/secondary-school'
 import {
   SecondarySchool,
   SecondarySchoolClient,
+  Student,
 } from '@island.is/clients/secondary-school'
 import { TemplateApiError } from '@island.is/nest/problem'
 import { error } from '@island.is/application/templates/secondary-school'
@@ -41,6 +41,12 @@ export class SecondarySchoolService extends BaseTemplateApiService {
     super(ApplicationTypes.SECONDARY_SCHOOL)
   }
 
+  async getStudentInfo({
+    auth,
+  }: TemplateApiModuleActionProps): Promise<Student> {
+    return this.secondarySchoolClient.getStudentInfo(auth)
+  }
+
   async getSchools({
     auth,
   }: TemplateApiModuleActionProps): Promise<SecondarySchool[]> {
@@ -50,7 +56,7 @@ export class SecondarySchoolService extends BaseTemplateApiService {
   async validateCanCreate({
     auth,
   }: TemplateApiModuleActionProps): Promise<void> {
-    const canCreate = this.secondarySchoolClient.validateCanCreate(auth)
+    const canCreate = await this.secondarySchoolClient.validateCanCreate(auth)
 
     if (!canCreate) {
       throw new TemplateApiError(
@@ -67,25 +73,36 @@ export class SecondarySchoolService extends BaseTemplateApiService {
     application,
     auth,
   }: TemplateApiModuleActionProps): Promise<void> {
-    // If we are past the registration date for any of the selected programs, dont allow delete
+    const externalApplicationId = getValueViaPath<string>(
+      application.externalData,
+      'submitApplication.data',
+    )
+
     if (
-      getEndOfDayUTCDate(getFirstRegistrationEndDate(application.answers)) <
-      new Date()
+      application.state === SecondarySchoolStates.SUBMITTED &&
+      externalApplicationId
     ) {
-      throw new TemplateApiError(
-        {
-          title: error.errorDeletePastRegistrationEndTitle,
-          summary: error.errorDeletePastRegistrationEndDescription,
-        },
-        500,
+      const canDelete = await this.secondarySchoolClient.validateCanDelete(
+        auth,
+        externalApplicationId,
       )
+      if (!canDelete) {
+        throw new TemplateApiError(
+          {
+            title: error.errorDeleteTitle,
+            summary: error.errorDeleteDescription,
+          },
+          500,
+        )
+      }
+
+      // Delete the application
+      await this.secondarySchoolClient.delete(auth, externalApplicationId)
+
+      // Send email to applicant and all contacts
+      // TODOx while testing
+      // await this.sendEmailAboutDeleteApplication(application)
     }
-
-    // Delete the application
-    await this.secondarySchoolClient.delete(auth, application.id)
-
-    // Send email to applicant and all contacts
-    await this.sendEmailAboutDeleteApplication(application)
   }
 
   private async sendEmailAboutDeleteApplication(
@@ -153,7 +170,11 @@ export class SecondarySchoolService extends BaseTemplateApiService {
                 application,
                 attachment,
               )
-              return { fileContent }
+              return {
+                fileName: attachment.name,
+                fileContent,
+                contentType: `application/${attachment.name.split('.').pop()}`,
+              }
             },
           ),
         ),
@@ -169,7 +190,8 @@ export class SecondarySchoolService extends BaseTemplateApiService {
     }
 
     // Send email to applicant and all contacts
-    await this.sendEmailAboutSubmitApplication(application)
+    // TODOx while testing
+    // await this.sendEmailAboutSubmitApplication(application)
 
     return applicationId
   }

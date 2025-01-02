@@ -12,6 +12,7 @@ import {
   NationalRegistryParentsApi,
   NationalRegistryUserApi,
   SchoolsApi,
+  StudentInfoApi,
   UserProfileApi,
 } from '../dataProviders'
 
@@ -64,6 +65,10 @@ export const Prerequisites: Form = buildForm({
               provider: SchoolsApi,
               title: externalData.educationalCareer.title,
               subTitle: externalData.educationalCareer.subTitle,
+            }),
+            buildDataProviderItem({
+              provider: StudentInfoApi,
+              title: '',
             }),
           ],
         }),

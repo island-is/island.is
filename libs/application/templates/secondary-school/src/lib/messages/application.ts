@@ -23,8 +23,14 @@ export const application = defineMessages({
     description:
       'Description of application state/status when the application is in progress',
   },
+  actionCardSubmitted: {
+    id: 'ss.application:actionCardSubmitted',
+    defaultMessage: 'Innsend',
+    description:
+      'Description of application state/status when application is submitted',
+  },
   actionCardCompleted: {
-    id: 'ss.application:actionCardDone',
+    id: 'ss.application:actionCardCompleted',
     defaultMessage: 'Móttekin',
     description:
       'Description of application state/status when application is completed',
@@ -40,6 +46,12 @@ export const application = defineMessages({
     defaultMessage: 'Umsókn um framhaldsskóla',
     description:
       'Meta name of application state when the application is in draft',
+  },
+  stateMetaNameSubmitted: {
+    id: 'ss.application:stateMetaNameSubmitted',
+    defaultMessage: 'Submitted',
+    description:
+      'Meta name of application state when the application is in submitted',
   },
   stateMetaNameCompleted: {
     id: 'ss.application:stateMetaNameCompleted',

@@ -4,7 +4,12 @@ import {
   IdsClientConfig,
   XRoadConfig,
 } from '@island.is/nest/config'
-import { SchoolsApi, ApplicationsApi, Configuration } from '../../gen/fetch'
+import {
+  SchoolsApi,
+  ApplicationsApi,
+  Configuration,
+  StudentsApi,
+} from '../../gen/fetch'
 import { SecondarySchoolClientConfig } from './secondarySchoolClient.config'
 
 const configFactory = (
@@ -34,27 +39,29 @@ const configFactory = (
   basePath,
 })
 
-export const exportedApis = [SchoolsApi, ApplicationsApi].map((Api) => ({
-  provide: Api,
-  useFactory: (
-    xRoadConfig: ConfigType<typeof XRoadConfig>,
-    config: ConfigType<typeof SecondarySchoolClientConfig>,
-    idsClientConfig: ConfigType<typeof IdsClientConfig>,
-  ) => {
-    return new Api(
-      new Configuration(
-        configFactory(
-          xRoadConfig,
-          config,
-          idsClientConfig,
-          `${xRoadConfig.xRoadBasePath}/r1/${config.xroadPath}`,
+export const exportedApis = [ApplicationsApi, SchoolsApi, StudentsApi].map(
+  (Api) => ({
+    provide: Api,
+    useFactory: (
+      xRoadConfig: ConfigType<typeof XRoadConfig>,
+      config: ConfigType<typeof SecondarySchoolClientConfig>,
+      idsClientConfig: ConfigType<typeof IdsClientConfig>,
+    ) => {
+      return new Api(
+        new Configuration(
+          configFactory(
+            xRoadConfig,
+            config,
+            idsClientConfig,
+            `${xRoadConfig.xRoadBasePath}/r1/${config.xroadPath}`,
+          ),
         ),
-      ),
-    )
-  },
-  inject: [
-    XRoadConfig.KEY,
-    SecondarySchoolClientConfig.KEY,
-    IdsClientConfig.KEY,
-  ],
-}))
+      )
+    },
+    inject: [
+      XRoadConfig.KEY,
+      SecondarySchoolClientConfig.KEY,
+      IdsClientConfig.KEY,
+    ],
+  }),
+)

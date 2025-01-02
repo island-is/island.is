@@ -17,19 +17,25 @@
               "text/plain": {
                 "schema": {
                   "type": "array",
-                  "items": { "$ref": "#/components/schemas/ApplicationDto" }
+                  "items": {
+                    "$ref": "#/components/schemas/ApplicationReturnDto"
+                  }
                 }
               },
               "application/json": {
                 "schema": {
                   "type": "array",
-                  "items": { "$ref": "#/components/schemas/ApplicationDto" }
+                  "items": {
+                    "$ref": "#/components/schemas/ApplicationReturnDto"
+                  }
                 }
               },
               "text/json": {
                 "schema": {
                   "type": "array",
-                  "items": { "$ref": "#/components/schemas/ApplicationDto" }
+                  "items": {
+                    "$ref": "#/components/schemas/ApplicationReturnDto"
+                  }
                 }
               }
             }
@@ -362,6 +368,44 @@
           }
         }
       }
+    },
+    "/v1/students/info": {
+      "get": {
+        "tags": ["Students"],
+        "summary": "[GET] Fetch student information",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": { "$ref": "#/components/schemas/StudentInfoDto" }
+              },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/StudentInfoDto" }
+              },
+              "text/json": {
+                "schema": { "$ref": "#/components/schemas/StudentInfoDto" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/students/isfreshman": {
+      "get": {
+        "tags": ["Students"],
+        "summary": "[GET] Check if student is a freshman",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": { "schema": { "type": "boolean" } },
+              "application/json": { "schema": { "type": "boolean" } },
+              "text/json": { "schema": { "type": "boolean" } }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -371,6 +415,11 @@
         "properties": {
           "applicantNationalId": { "type": "string", "nullable": true },
           "applicantName": { "type": "string", "nullable": true },
+          "attachments": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/AttachmentDto" },
+            "nullable": true
+          },
           "isFreshman": { "type": "boolean" },
           "phoneNumber": { "type": "string", "nullable": true },
           "email": { "type": "string", "nullable": true },
@@ -383,11 +432,6 @@
             "nullable": true
           },
           "speakingLanguage": { "type": "string", "nullable": true },
-          "hasDisabilityDiagnosis": { "type": "boolean" },
-          "disabilityDiagnosisDescription": {
-            "type": "string",
-            "nullable": true
-          },
           "otherInformation": { "type": "string", "nullable": true },
           "applicationChoices": {
             "type": "array",
@@ -431,13 +475,14 @@
         },
         "additionalProperties": false
       },
-      "ApplicationDto": {
+      "ApplicationReturnDto": {
         "type": "object",
         "properties": {
           "id": { "type": "string", "format": "uuid" },
           "applicationDate": { "type": "string", "format": "date-time" },
           "createdDate": { "type": "string", "format": "date-time" },
           "updatedDate": { "type": "string", "format": "date-time" },
+          "status": { "$ref": "#/components/schemas/ApplicationStatus" },
           "speakingLanguage": { "$ref": "#/components/schemas/LanguageDto" },
           "applicationChoices": {
             "type": "array",
@@ -448,6 +493,11 @@
           },
           "currentApplicantStatus": {
             "$ref": "#/components/schemas/CurrentApplicantStatus"
+          },
+          "attachments": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/AttachmentReturnDto" },
+            "nullable": true
           },
           "applicantNationalId": { "type": "string", "nullable": true },
           "applicantName": { "type": "string", "nullable": true },
@@ -462,12 +512,28 @@
             "items": { "$ref": "#/components/schemas/NextOfKinDto" },
             "nullable": true
           },
-          "hasDisabilityDiagnosis": { "type": "boolean" },
-          "disabilityDiagnosisDescription": {
-            "type": "string",
-            "nullable": true
-          },
           "otherInformation": { "type": "string", "nullable": true }
+        },
+        "additionalProperties": false
+      },
+      "ApplicationStatus": {
+        "enum": ["NewApplication", "Rejected", "Accepted", "PaymentPending"],
+        "type": "string"
+      },
+      "AttachmentDto": {
+        "type": "object",
+        "properties": {
+          "fileName": { "type": "string", "nullable": true },
+          "fileContent": { "type": "string", "nullable": true },
+          "contentType": { "type": "string", "nullable": true }
+        },
+        "additionalProperties": false
+      },
+      "AttachmentReturnDto": {
+        "type": "object",
+        "properties": {
+          "fileName": { "type": "string", "nullable": true },
+          "contentType": { "type": "string", "nullable": true }
         },
         "additionalProperties": false
       },
@@ -548,6 +614,7 @@
           "postCode": { "type": "string", "nullable": true },
           "address": { "type": "string", "nullable": true },
           "municipality": { "type": "string", "nullable": true },
+          "availableDormitory": { "type": "boolean" },
           "abbreviation": { "type": "string", "nullable": true },
           "email": { "type": "string", "nullable": true },
           "phoneNumber": { "type": "string", "nullable": true },
@@ -555,6 +622,19 @@
           "thirdLanguages": {
             "type": "array",
             "items": { "$ref": "#/components/schemas/LanguageDto" },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "StudentInfoDto": {
+        "type": "object",
+        "properties": {
+          "isFreshman": { "type": "boolean" },
+          "hasActiveApplication": { "type": "boolean" },
+          "applications": {
+            "type": "array",
+            "items": { "type": "string", "format": "uuid" },
             "nullable": true
           }
         },

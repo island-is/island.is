@@ -26,6 +26,7 @@ import {
   NationalRegistryParentsApi,
   NationalRegistryUserApi,
   SchoolsApi,
+  StudentInfoApi,
   UserProfileApi,
 } from '../dataProviders'
 import { Features } from '@island.is/feature-flags'
@@ -92,8 +93,8 @@ const template: ApplicationTemplate<
             },
             historyLogs: [
               {
-                logMessage: coreHistoryMessages.applicationStarted,
                 onEvent: DefaultEvents.SUBMIT,
+                logMessage: coreHistoryMessages.applicationStarted,
               },
             ],
           },
@@ -122,6 +123,7 @@ const template: ApplicationTemplate<
                 NationalRegistryParentsApi,
                 UserProfileApi,
                 SchoolsApi,
+                StudentInfoApi,
               ],
             },
           ],
@@ -141,8 +143,8 @@ const template: ApplicationTemplate<
             },
             historyLogs: [
               {
-                logMessage: coreHistoryMessages.applicationSent,
                 onEvent: DefaultEvents.SUBMIT,
+                logMessage: coreHistoryMessages.applicationSent,
               },
             ],
           },
@@ -170,13 +172,13 @@ const template: ApplicationTemplate<
           ],
         },
         on: {
-          [DefaultEvents.SUBMIT]: { target: States.COMPLETED },
+          [DefaultEvents.SUBMIT]: { target: States.SUBMITTED },
         },
       },
-      [States.COMPLETED]: {
+      [States.SUBMITTED]: {
         meta: {
-          name: applicationMessage.stateMetaNameCompleted.defaultMessage,
-          status: FormModes.COMPLETED,
+          name: applicationMessage.stateMetaNameSubmitted.defaultMessage,
+          status: FormModes.IN_PROGRESS,
           lifecycle: {
             shouldBeListed: true,
             shouldBePruned: true,
@@ -189,6 +191,49 @@ const template: ApplicationTemplate<
           onDelete: defineTemplateApi({
             action: ApiActions.deleteApplication,
           }),
+          actionCard: {
+            tag: {
+              label: applicationMessage.actionCardSubmitted,
+              variant: 'blueberry',
+            },
+            historyLogs: [
+              {
+                onEvent: DefaultEvents.SUBMIT,
+                logMessage: coreHistoryMessages.applicationReceived,
+              },
+            ],
+            pendingAction: {
+              title: corePendingActionMessages.waitingForReviewTitle,
+              content: corePendingActionMessages.waitingForReviewDescription,
+              displayStatus: 'info',
+            },
+          },
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/conclusionForm').then((module) =>
+                  Promise.resolve(module.Conclusion),
+                ),
+              read: 'all',
+              delete: true,
+            },
+          ],
+        },
+        on: {
+          [DefaultEvents.SUBMIT]: { target: States.COMPLETED },
+        },
+      },
+      [States.COMPLETED]: {
+        meta: {
+          name: applicationMessage.stateMetaNameCompleted.defaultMessage,
+          status: FormModes.COMPLETED,
+          lifecycle: {
+            shouldBeListed: true,
+            shouldBePruned: true,
+            whenToPrune: (application: Application) =>
+              pruneInDaysAfterRegistrationCloses(application, 3 * 30),
+          },
           actionCard: {
             tag: {
               label: applicationMessage.actionCardCompleted,
@@ -207,7 +252,6 @@ const template: ApplicationTemplate<
                   Promise.resolve(module.Conclusion),
                 ),
               read: 'all',
-              delete: true,
             },
           ],
         },

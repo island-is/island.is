@@ -1,3 +1,7 @@
+export type Student = {
+  isFreshman: boolean
+}
+
 export type Language = {
   code: string
   name: string

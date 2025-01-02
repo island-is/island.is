@@ -3,10 +3,12 @@ import {
   buildMultiField,
   buildRadioField,
   buildSubSection,
+  getValueViaPath,
 } from '@island.is/application/core'
 import { userInformation } from '../../../lib/messages'
 import { applicantInformationMultiField } from '@island.is/application/ui-forms'
-import { ApplicationType, Routes } from '../../../utils'
+import { ApplicationType, Routes, Student } from '../../../utils'
+import { Application } from '@island.is/application/types'
 
 export const personalSubSection = buildSubSection({
   id: 'personalSubSection',
@@ -47,6 +49,13 @@ export const personalSubSection = buildSubSection({
                 userInformation.applicationType.generalApplicationOptionTitle,
             },
           ],
+          defaultValue: (application: Application) => {
+            const studentInfo = getValueViaPath<Student>(
+              application.externalData,
+              'studentInfo.data',
+            )
+            if (studentInfo?.isFreshman) return ApplicationType.FRESHMAN
+          },
           width: 'full',
         }),
       ],

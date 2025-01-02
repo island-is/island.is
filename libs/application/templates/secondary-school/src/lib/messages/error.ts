@@ -17,17 +17,16 @@ export const error = defineMessages({
       'Þú ert með aðra opna umsókn í gangi, vinsamlegast eyðið henni áður en opnað er nýja umsókn',
     description: 'Error validate can create description',
   },
-  errorDeletePastRegistrationEndTitle: {
-    id: 'ss.application:error.errorDeletePastRegistrationEndTitle',
+  errorDeleteTitle: {
+    id: 'ss.application:error.errorDeleteTitle',
     defaultMessage: 'Ekki er hægt að eyða umsókn',
-    description: 'Error delete application past registration end date title',
+    description: 'Error delete application title',
   },
-  errorDeletePastRegistrationEndDescription: {
-    id: 'ss.application:error.errorDeletePastRegistrationEndDescription',
+  errorDeleteDescription: {
+    id: 'ss.application:error.errorDeleteDescription',
     defaultMessage:
       'Ekki er hægt að eyða umsókn eftir að skráningartímabili lýkur',
-    description:
-      'Error delete application past registration end date description',
+    description: 'Error delete application description',
   },
   errorPastRegistrationDateTitle: {
     id: 'ss.application:error.errorPastRegistrationDateTitle',

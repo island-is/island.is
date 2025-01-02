@@ -1,3 +1,7 @@
+export interface Student {
+  isFreshman: boolean
+}
+
 export interface Language {
   code: string
   name: string
@@ -43,7 +47,9 @@ export interface ApplicationSelectionSchool {
 }
 
 export interface ApplicationAttachment {
+  fileName: string
   fileContent: string
+  contentType: string
 }
 
 export interface Application {

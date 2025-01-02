@@ -1,26 +1,37 @@
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { Injectable } from '@nestjs/common'
-import { SchoolsApi, ApplicationsApi } from '../../gen/fetch/apis'
+import { SchoolsApi, ApplicationsApi, StudentsApi } from '../../gen/fetch/apis'
 import {
   Application,
   Program,
   SecondarySchool,
+  Student,
 } from './secondarySchoolClient.types'
 import { getAllLanguageCodes } from '@island.is/shared/utils'
 
 @Injectable()
 export class SecondarySchoolClient {
   constructor(
-    private readonly schoolsApi: SchoolsApi,
     private readonly applicationsApi: ApplicationsApi,
+    private readonly schoolsApi: SchoolsApi,
+    private readonly studentsApi: StudentsApi,
   ) {}
+
+  private applicationsApiWithAuth(auth: Auth) {
+    return this.applicationsApi.withMiddleware(new AuthMiddleware(auth))
+  }
 
   private schoolsApiWithAuth(auth: Auth) {
     return this.schoolsApi.withMiddleware(new AuthMiddleware(auth))
   }
 
-  private applicationsApiWithAuth(auth: Auth) {
-    return this.applicationsApi.withMiddleware(new AuthMiddleware(auth))
+  private studentsApiWithAuth(auth: Auth) {
+    return this.studentsApi.withMiddleware(new AuthMiddleware(auth))
+  }
+
+  async getStudentInfo(auth: User): Promise<Student> {
+    const studentInfo = await this.studentsApiWithAuth(auth).v1StudentsInfoGet()
+    return { isFreshman: studentInfo?.isFreshman || false }
   }
 
   async getSchools(auth: User): Promise<SecondarySchool[]> {
@@ -40,7 +51,7 @@ export class SecondarySchoolClient {
       nordicLanguages: getAllLanguageCodes().filter((x) =>
         ['sv', 'no', 'fi'].includes(x.code),
       ),
-      allowRequestDormitory: true,
+      allowRequestDormitory: school.availableDormitory || false,
     }))
   }
 
@@ -67,18 +78,27 @@ export class SecondarySchoolClient {
   }
 
   async validateCanCreate(auth: User): Promise<boolean> {
-    const res = await this.applicationsApiWithAuth(auth).v1ApplicationsGet()
-    return res.length === 0
+    // const studentInfo = await this.studentsApiWithAuth(auth).v1StudentsInfoGet()
+    // return !studentInfo?.hasActiveApplication
+    //TODOx for testing
+    return true
   }
 
-  async delete(auth: User, applicationId: string): Promise<void> {
-    this.applicationsApiWithAuth(auth).v1ApplicationsApplicationIdDelete({
-      applicationId,
-    })
+  async validateCanDelete(auth: User, applicationId: string): Promise<boolean> {
+    // TODOx waiting for API
+    return true
+  }
+
+  async delete(auth: User, externalId: string): Promise<void> {
+    return this.applicationsApiWithAuth(auth).v1ApplicationsApplicationIdDelete(
+      {
+        applicationId: externalId,
+      },
+    )
   }
 
   async create(auth: User, application: Application): Promise<string> {
-    const applicationId = await this.applicationsApiWithAuth(
+    let applicationId = await this.applicationsApiWithAuth(
       auth,
     ).v1ApplicationsPost({
       applicationBaseDto: {
@@ -111,25 +131,13 @@ export class SecondarySchoolClient {
           northernLanguage: school.nordicLanguageCode,
           requestDormitory: school.requestDormitory,
         })),
+        attachments: application.attachments,
       },
     })
 
-    if (application.attachments.length > 0) {
-      await this.applicationsApiWithAuth(
-        auth,
-      ).v1ApplicationsApplicationIdAttachmentsPatch({
-        applicationId,
-        files: application.attachments
-          .filter((x) => !!x)
-          .map((x) => this.base64ToBlob(x.fileContent)),
-      })
-    }
+    // clean applicationId and remove double quotes that is added by the openapi generator (bug in generator)
+    applicationId = applicationId.replace(/"/g, '')
 
     return applicationId
-  }
-
-  private base64ToBlob(base64: string): Blob {
-    const byteCharacters = Buffer.from(base64, 'base64')
-    return new Blob([byteCharacters])
   }
 }

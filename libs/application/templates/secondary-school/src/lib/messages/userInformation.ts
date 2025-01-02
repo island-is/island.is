@@ -37,6 +37,7 @@ export const userInformation = {
       defaultMessage: 'Tegund umsækjanda',
       description: 'Application typa subtitle',
     },
+    //TODOx vantar betri texta á radio
     freshmanOptionTitle: {
       id: 'ss.application:userInformation.applicationType.freshmanOptionTitle',
       defaultMessage: 'Nýnemi (að koma beint úr grunnskóla)',
