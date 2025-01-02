@@ -1,6 +1,9 @@
 name: Unicorn CI/CD pipeline
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - qtest21
   create:
   pull_request:
     types:
