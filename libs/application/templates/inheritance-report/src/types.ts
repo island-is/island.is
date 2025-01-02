@@ -203,7 +203,7 @@ export interface BankAccountsData extends DeceasedShare {
   exchangeRateOrInterest: string
   propertyNumber: string
   assetNumber: string
-  propertyValuation: string
+  amount: string
   foreignBankAccount?: ('yes' | 'no')[]
   taxFreeInheritance: number
   enabled?: boolean
@@ -305,4 +305,5 @@ export enum DebtTypes {
   PropertyFees = 'Fasteignagjöld',
   OtherDebts = 'Aðrar skuldir',
   PublicCharges = 'Opinber gjöld',
+  InsuranceInstitute = 'Tryggingarstofnun ríkisins',
 }

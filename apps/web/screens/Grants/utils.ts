@@ -17,7 +17,7 @@ interface Status {
 const formatDate = (
   date: Date,
   locale: Locale,
-  stringFormat = 'dd.MMMM yyyy',
+  stringFormat = 'dd. MMMM yyyy',
 ): string | undefined => {
   try {
     return format(date, stringFormat, {
@@ -100,7 +100,7 @@ export const parseStatus = (
     }
     case GrantStatus.Open: {
       const date = grant.dateTo
-        ? formatDate(new Date(grant.dateTo), locale, 'dd.MMMM.')
+        ? formatDate(new Date(grant.dateTo), locale, 'dd. MMMM.')
         : undefined
       return {
         applicationStatus: 'open',
