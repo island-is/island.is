@@ -4,7 +4,7 @@ on:
   merge_group:
 
 jobs:
-  validate-pr:
+  check-ready-for-merge-queue:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
