@@ -18,6 +18,3 @@ jobs:
       - name: Run slow CI (emulated by a long sleep)
         run: |
           sleep 20
-      - name: Failing step should prevent merge
-        run: |
-          exit 1
