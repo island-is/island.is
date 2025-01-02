@@ -1,10 +1,10 @@
 import React, { FC, useMemo } from 'react'
-
 import {
   formatText,
   buildFieldOptions,
   getValueViaPath,
   buildFieldRequired,
+  formatTextWithLocale,
 } from '@island.is/application/core'
 import { FieldBaseProps, SelectField } from '@island.is/application/types'
 import { Box } from '@island.is/island-ui/core'
@@ -15,6 +15,7 @@ import {
 import { useLocale } from '@island.is/localization'
 
 import { getDefaultValue } from '../../getDefaultValue'
+import { Locale } from '@island.is/shared/types'
 
 interface Props extends FieldBaseProps {
   field: SelectField
@@ -36,19 +37,26 @@ export const SelectFormField: FC<React.PropsWithChildren<Props>> = ({
     backgroundColor,
     required = false,
     isMulti,
+    marginTop,
+    marginBottom,
   } = field
-  const { formatMessage } = useLocale()
+  const { formatMessage, lang: locale } = useLocale()
 
   const finalOptions = useMemo(
-    () => buildFieldOptions(options, application, field),
-    [options, application, field],
+    () => buildFieldOptions(options, application, field, locale),
+    [options, application, field, locale],
   )
 
   return (
-    <div>
+    <Box marginTop={marginTop} marginBottom={marginBottom}>
       {description && (
         <FieldDescription
-          description={formatText(description, application, formatMessage)}
+          description={formatTextWithLocale(
+            description,
+            application,
+            locale as Locale,
+            formatMessage,
+          )}
         />
       )}
 
@@ -60,7 +68,12 @@ export const SelectFormField: FC<React.PropsWithChildren<Props>> = ({
               getDefaultValue(field, application)) ||
             (required ? '' : undefined)
           }
-          label={formatText(title, application, formatMessage)}
+          label={formatTextWithLocale(
+            title,
+            application,
+            locale as Locale,
+            formatMessage,
+          )}
           name={id}
           disabled={disabled}
           error={error}
@@ -85,6 +98,6 @@ export const SelectFormField: FC<React.PropsWithChildren<Props>> = ({
           onSelect={onSelect}
         />
       </Box>
-    </div>
+    </Box>
   )
 }

@@ -2,17 +2,22 @@ import { useCallback, useContext } from 'react'
 import { useIntl } from 'react-intl'
 import router from 'next/router'
 
-import { Box, InputFileUpload, Text } from '@island.is/island-ui/core'
+import { Box, InputFileUpload } from '@island.is/island-ui/core'
 import { fileExtensionWhitelist } from '@island.is/island-ui/core/types'
 import * as constants from '@island.is/judicial-system/consts'
-import { isTrafficViolationCase } from '@island.is/judicial-system/types'
+import {
+  Feature,
+  isTrafficViolationCase,
+} from '@island.is/judicial-system/types'
 import { titles } from '@island.is/judicial-system-web/messages'
 import {
+  FeatureContext,
   FormContentContainer,
   FormContext,
   FormFooter,
   PageHeader,
   PageLayout,
+  PageTitle,
   PdfButton,
   ProsecutorCaseInfo,
   SectionHeading,
@@ -28,6 +33,7 @@ import * as strings from './CaseFiles.strings'
 const CaseFiles = () => {
   const { workingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
+  const { features } = useContext(FeatureContext)
   const { formatMessage } = useIntl()
   const {
     uploadFiles,
@@ -40,7 +46,9 @@ const CaseFiles = () => {
     workingCase.id,
   )
 
-  const isTrafficViolationCaseCheck = isTrafficViolationCase(workingCase)
+  const isTrafficViolationCaseCheck =
+    features.includes(Feature.MULTIPLE_INDICTMENT_SUBTYPES) ||
+    isTrafficViolationCase(workingCase)
 
   const stepIsValid =
     (isTrafficViolationCaseCheck ||
@@ -67,11 +75,7 @@ const CaseFiles = () => {
         title={formatMessage(titles.prosecutor.indictments.caseFiles)}
       />
       <FormContentContainer>
-        <Box marginBottom={7}>
-          <Text as="h1" variant="h1">
-            {formatMessage(strings.caseFiles.heading)}
-          </Text>
-        </Box>
+        <PageTitle>{formatMessage(strings.caseFiles.heading)}</PageTitle>
         <ProsecutorCaseInfo workingCase={workingCase} />
         {!isTrafficViolationCaseCheck && (
           <Box component="section" marginBottom={5}>

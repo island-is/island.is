@@ -13,7 +13,7 @@ import {
 import { createTestingCaseModule } from '../createTestingCaseModule'
 
 import { randomDate } from '../../../../test'
-import { AwsS3Service } from '../../../aws-s3'
+import { FileService } from '../../../file'
 import { PoliceDocumentType, PoliceService } from '../../../police'
 import { Case } from '../../models/case.model'
 import { DeliverResponse } from '../../models/deliver.response'
@@ -29,19 +29,19 @@ describe('InternalCaseController - Deliver appeal to police', () => {
   const userId = uuid()
   const user = { id: userId } as User
 
-  let mockAwsS3Service: AwsS3Service
+  let mockFileService: FileService
   let mockPoliceService: PoliceService
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const { awsS3Service, policeService, internalCaseController } =
+    const { fileService, policeService, internalCaseController } =
       await createTestingCaseModule()
 
-    mockAwsS3Service = awsS3Service
+    mockFileService = fileService
     mockPoliceService = policeService
 
-    const mockGetGeneratedObject = awsS3Service.getObject as jest.Mock
-    mockGetGeneratedObject.mockRejectedValue(new Error('Some error'))
+    const mockGetCaseFileFromS3 = fileService.getCaseFileFromS3 as jest.Mock
+    mockGetCaseFileFromS3.mockRejectedValue(new Error('Some error'))
     const mockUpdatePoliceCase = mockPoliceService.updatePoliceCase as jest.Mock
     mockUpdatePoliceCase.mockRejectedValue(new Error('Some error'))
 
@@ -66,8 +66,8 @@ describe('InternalCaseController - Deliver appeal to police', () => {
     const defendantNationalId = '0123456789'
     const validToDate = randomDate()
     const caseConclusion = 'test conclusion'
-    const appealRulingKey = uuid()
     const appealRulingPdf = 'test appeal ruling'
+    const caseFile = { id: uuid(), category: CaseFileCategory.APPEAL_RULING }
     const theCase = {
       id: caseId,
       origin: CaseOrigin.LOKE,
@@ -79,16 +79,15 @@ describe('InternalCaseController - Deliver appeal to police', () => {
       defendants: [{ nationalId: defendantNationalId }],
       validToDate,
       conclusion: caseConclusion,
-      caseFiles: [
-        { key: appealRulingKey, category: CaseFileCategory.APPEAL_RULING },
-      ],
+      caseFiles: [caseFile],
     } as Case
 
     let then: Then
 
     beforeEach(async () => {
-      const mockGetGeneratedObject = mockAwsS3Service.getObject as jest.Mock
-      mockGetGeneratedObject.mockResolvedValueOnce(appealRulingPdf)
+      const mockGetCaseFileFromS3 =
+        mockFileService.getCaseFileFromS3 as jest.Mock
+      mockGetCaseFileFromS3.mockResolvedValueOnce(appealRulingPdf)
       const mockUpdatePoliceCase =
         mockPoliceService.updatePoliceCase as jest.Mock
       mockUpdatePoliceCase.mockResolvedValueOnce(true)
@@ -96,9 +95,9 @@ describe('InternalCaseController - Deliver appeal to police', () => {
       then = await givenWhenThen(caseId, theCase)
     })
     it('should update the police case', async () => {
-      expect(mockAwsS3Service.getObject).toHaveBeenCalledWith(
-        caseType,
-        appealRulingKey,
+      expect(mockFileService.getCaseFileFromS3).toHaveBeenCalledWith(
+        theCase,
+        caseFile,
       )
       expect(mockPoliceService.updatePoliceCase).toHaveBeenCalledWith(
         user,

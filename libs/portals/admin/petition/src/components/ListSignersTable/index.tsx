@@ -15,7 +15,6 @@ import {
   EndorsementList,
   PaginatedEndorsementResponse,
 } from '@island.is/api/schema'
-import { getCSV } from '../ExportList/downloadCSV'
 
 const ListSignersTable = (data: {
   listId: string
@@ -44,12 +43,7 @@ const ListSignersTable = (data: {
     <Box marginTop={12}>
       <Box display="flex" justifyContent="spaceBetween" marginBottom={3}>
         <Text variant="h3">{formatMessage(m.petitionsOverview)}</Text>
-        <ExportList
-          petition={data.petition}
-          petitionSigners={data.petitionSigners}
-          petitionId={data.listId}
-          onGetCSV={() => getCSV(data.petitionSigners, 'Undirskriftalisti')}
-        />
+        <ExportList petitionId={data.listId} />
       </Box>
       <Stack space={3}>
         <T.Table>

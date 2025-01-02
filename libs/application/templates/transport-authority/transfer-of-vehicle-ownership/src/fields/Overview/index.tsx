@@ -5,17 +5,11 @@ import {
   Text,
   Divider,
   Button,
-  AlertMessage,
   InputError,
 } from '@island.is/island-ui/core'
 import { ReviewScreenProps } from '../../shared'
 import { useLocale } from '@island.is/localization'
-import {
-  applicationCheck,
-  overview,
-  review,
-  error as errorMsg,
-} from '../../lib/messages'
+import { overview, review, error as errorMsg } from '../../lib/messages'
 import { States } from '../../lib/constants'
 import {
   VehicleSection,
@@ -27,7 +21,8 @@ import {
 } from './sections'
 import {
   getApproveAnswers,
-  hasReviewerApproved,
+  canReviewerApprove,
+  canReviewerReApprove,
   isLastReviewer,
 } from '../../utils'
 import { RejectConfirmationModal } from './RejectConfirmationModal'
@@ -35,14 +30,10 @@ import {
   APPLICATION_APPLICATION,
   SUBMIT_APPLICATION,
 } from '@island.is/application/graphql'
-import { gql, useLazyQuery, useMutation } from '@apollo/client'
+import { useLazyQuery, useMutation } from '@apollo/client'
 import { getValueViaPath } from '@island.is/application/core'
-import {
-  OwnerChangeAnswers,
-  OwnerChangeValidationMessage,
-} from '@island.is/api/schema'
-import { VALIDATE_VEHICLE_OWNER_CHANGE } from '../../graphql/queries'
 import { TransferOfVehicleOwnershipAnswers } from '../..'
+import { ValidationErrorMessages } from '../ValidationErrorMessages'
 
 export const Overview: FC<
   React.PropsWithChildren<FieldBaseProps & ReviewScreenProps>
@@ -71,11 +62,14 @@ export const Overview: FC<
   const [submitApplication, { error }] = useMutation(SUBMIT_APPLICATION, {
     onError: (e) => {
       console.error(e, e.message)
+      setButtonLoading(false)
       return
     },
   })
 
-  const [loading, setLoading] = useState(false)
+  const [buttonLoading, setButtonLoading] = useState(false)
+  const [shouldLoadValidation, setShouldLoadValidation] = useState(false)
+  const [validationErrorFound, setValidationErrorFound] = useState(false)
 
   const isBuyer =
     (getValueViaPath(answers, 'buyer.nationalId', '') as string) ===
@@ -142,32 +136,16 @@ export const Overview: FC<
           })
 
           if (resSubmit?.data) {
-            setLoading(false)
+            setButtonLoading(false)
             setStep && setStep('conclusion')
           }
         } else {
-          setLoading(false)
+          setButtonLoading(false)
           setStep && setStep('conclusion')
         }
       }
     }
   }
-
-  const [validateVehicleThenApproveAndSubmit, { data }] = useLazyQuery<
-    any,
-    { answers: OwnerChangeAnswers }
-  >(
-    gql`
-      ${VALIDATE_VEHICLE_OWNER_CHANGE}
-    `,
-    {
-      onCompleted: async (data) => {
-        if (!data?.vehicleOwnerChangeValidation?.hasError) {
-          await doApproveAndSubmit()
-        }
-      },
-    },
-  )
 
   const onBackButtonClick = () => {
     setStep && setStep('states')
@@ -182,65 +160,10 @@ export const Overview: FC<
       setNoInsuranceError(true)
     } else {
       setNoInsuranceError(false)
-      setLoading(true)
 
-      if (isBuyer) {
-        // Need to get updated application, in case buyer has changed co-owner
-        const applicationInfo = await getApplicationInfo({
-          variables: {
-            input: {
-              id: application.id,
-            },
-            locale: 'is',
-          },
-          fetchPolicy: 'no-cache',
-        })
-        const updatedApplication = applicationInfo?.data?.applicationApplication
-
-        if (updatedApplication) {
-          const currentAnswers: OwnerChangeAnswers = updatedApplication.answers
-
-          validateVehicleThenApproveAndSubmit({
-            variables: {
-              answers: {
-                pickVehicle: {
-                  plate: currentAnswers?.pickVehicle?.plate,
-                },
-                vehicle: {
-                  date: currentAnswers?.vehicle?.date,
-                  salePrice: currentAnswers?.vehicle?.salePrice,
-                },
-                vehicleMileage: {
-                  value: answers?.vehicleMileage?.value,
-                },
-                seller: {
-                  email: currentAnswers?.seller?.email,
-                  nationalId: currentAnswers?.seller?.nationalId,
-                },
-                buyer: {
-                  email: currentAnswers?.buyer?.email,
-                  nationalId: currentAnswers?.buyer?.nationalId,
-                },
-                buyerCoOwnerAndOperator:
-                  currentAnswers?.buyerCoOwnerAndOperator?.map((x) => ({
-                    nationalId: x.nationalId || '',
-                    email: x.email || '',
-                    type: x.type,
-                    wasRemoved: x.wasRemoved,
-                  })),
-                buyerMainOperator: currentAnswers?.buyerMainOperator
-                  ? {
-                      nationalId: currentAnswers.buyerMainOperator.nationalId,
-                    }
-                  : null,
-                insurance: insurance ? { value: insurance } : null,
-              },
-            },
-          })
-        }
-      } else {
-        await doApproveAndSubmit()
-      }
+      setButtonLoading(true)
+      setShouldLoadValidation(true)
+      await doApproveAndSubmit()
     }
   }
 
@@ -278,52 +201,19 @@ export const Overview: FC<
           noInsuranceError={noInsuranceError}
         />
 
-        {error && (
+        {!buttonLoading && shouldLoadValidation && (
+          <ValidationErrorMessages
+            {...props}
+            showErrorOnly={true}
+            setValidationErrorFound={setValidationErrorFound}
+          />
+        )}
+
+        {!validationErrorFound && error && (
           <InputError
             errorMessage={errorMsg.submitApplicationError.defaultMessage}
           />
         )}
-
-        {data?.vehicleOwnerChangeValidation?.hasError &&
-        data.vehicleOwnerChangeValidation.errorMessages.length > 0 ? (
-          <Box>
-            <AlertMessage
-              type="error"
-              title={formatMessage(applicationCheck.validation.alertTitle)}
-              message={
-                <Box component="span" display="block">
-                  <ul>
-                    {data.vehicleOwnerChangeValidation.errorMessages.map(
-                      (error: OwnerChangeValidationMessage) => {
-                        const message = formatMessage(
-                          getValueViaPath(
-                            applicationCheck.validation,
-                            error?.errorNo || '',
-                          ),
-                        )
-                        const defaultMessage = error.defaultMessage
-                        const fallbackMessage =
-                          formatMessage(
-                            applicationCheck.validation.fallbackErrorMessage,
-                          ) +
-                          ' - ' +
-                          error?.errorNo
-
-                        return (
-                          <li key={error.errorNo}>
-                            <Text variant="small">
-                              {message || defaultMessage || fallbackMessage}
-                            </Text>
-                          </li>
-                        )
-                      },
-                    )}
-                  </ul>
-                </Box>
-              }
-            />
-          </Box>
-        ) : null}
 
         <Box marginTop={14}>
           <Divider />
@@ -331,7 +221,7 @@ export const Overview: FC<
             <Button variant="ghost" onClick={onBackButtonClick}>
               {formatMessage(review.buttons.back)}
             </Button>
-            {!hasReviewerApproved(reviewerNationalId, application.answers) &&
+            {canReviewerApprove(reviewerNationalId, application.answers) &&
               application.state !== States.COMPLETED && (
                 <Box display="flex" justifyContent="flexEnd" flexWrap="wrap">
                   <Box marginLeft={3}>
@@ -346,12 +236,24 @@ export const Overview: FC<
                   <Box marginLeft={3}>
                     <Button
                       icon="checkmark"
-                      loading={loading}
+                      loading={buttonLoading}
                       onClick={onApproveButtonClick}
                     >
                       {formatMessage(review.buttons.approve)}
                     </Button>
                   </Box>
+                </Box>
+              )}
+            {canReviewerReApprove(reviewerNationalId, application.answers) &&
+              application.state !== States.COMPLETED && (
+                <Box display="flex" justifyContent="flexEnd" flexWrap="wrap">
+                  <Button
+                    icon="reload"
+                    loading={buttonLoading}
+                    onClick={onApproveButtonClick}
+                  >
+                    {formatMessage(review.buttons.tryAgain)}
+                  </Button>
                 </Box>
               )}
           </Box>

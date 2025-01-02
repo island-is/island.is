@@ -3,7 +3,10 @@ import { useIntl } from 'react-intl'
 import partition from 'lodash/partition'
 
 import { AlertMessage, Box, Tag, Text } from '@island.is/island-ui/core'
-import { capitalize } from '@island.is/judicial-system/formatters'
+import {
+  capitalize,
+  districtCourtAbbreviation,
+} from '@island.is/judicial-system/formatters'
 import {
   core,
   errors,
@@ -11,6 +14,7 @@ import {
   titles,
 } from '@island.is/judicial-system-web/messages'
 import {
+  CaseTag,
   Logo,
   PageHeader,
   SectionHeading,
@@ -29,11 +33,16 @@ import {
 } from '@island.is/judicial-system-web/src/components/Table'
 import Table from '@island.is/judicial-system-web/src/components/Table/Table'
 import {
+  getPrisonCaseStateTag,
+  getPunishmentTypeTag,
+} from '@island.is/judicial-system-web/src/components/Tags/utils'
+import {
   CaseListEntry,
   CaseState,
   CaseType,
   InstitutionType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { isNonEmptyArray } from '@island.is/judicial-system-web/src/utils/arrayHelpers'
 
 import { usePrisonCasesQuery } from './prisonCases.generated'
 import { cases as m } from './Cases.strings'
@@ -109,7 +118,13 @@ export const PrisonCases: FC = () => {
               cell: (row) => <DefendantInfo defendants={row.defendants} />,
             },
             {
-              cell: (row) => <ColumnCaseType type={row.type} />,
+              cell: (row) => (
+                <ColumnCaseType
+                  type={row.type}
+                  decision={row.decision}
+                  parentCaseId={row.parentCaseId}
+                />
+              ),
             },
             {
               cell: (row) => <CreatedDate created={row.created} />,
@@ -160,6 +175,10 @@ export const PrisonCases: FC = () => {
           thead={[
             {
               title: formatMessage(tables.caseNumber),
+              sortable: {
+                isSortable: true,
+                key: 'courtCaseNumber',
+              },
             },
             {
               title: capitalize(formatMessage(core.defendant, { suffix: 'i' })),
@@ -169,6 +188,10 @@ export const PrisonCases: FC = () => {
               title: formatMessage(tables.court),
             },
             {
+              title: formatMessage(tables.punishmentType),
+              sortable: { isSortable: true, key: 'defendantsPunishmentType' },
+            },
+            {
               title: capitalize(formatMessage(tables.sentencingDate)),
             },
             { title: formatMessage(tables.state) },
@@ -176,13 +199,21 @@ export const PrisonCases: FC = () => {
           data={cases}
           columns={[
             {
-              cell: (row) => (
-                <CourtCaseNumber
-                  courtCaseNumber={row.courtCaseNumber ?? ''}
-                  policeCaseNumbers={row.policeCaseNumbers ?? []}
-                  appealCaseNumber={row.appealCaseNumber ?? ''}
-                />
-              ),
+              cell: (row) => {
+                const courtAbbreviation = districtCourtAbbreviation(
+                  row.court?.name,
+                )
+
+                return (
+                  <CourtCaseNumber
+                    courtCaseNumber={`${
+                      courtAbbreviation ? `${courtAbbreviation}: ` : ''
+                    }${row.courtCaseNumber ?? ''}`}
+                    policeCaseNumbers={row.policeCaseNumbers ?? []}
+                    appealCaseNumber={row.appealCaseNumber ?? ''}
+                  />
+                )
+              },
             },
             {
               cell: (row) => <DefendantInfo defendants={row.defendants} />,
@@ -191,16 +222,42 @@ export const PrisonCases: FC = () => {
               cell: (row) => <ColumnCaseType type={row.type} />,
             },
             {
+              cell: (row) => {
+                const punishmentType = isNonEmptyArray(row.defendants)
+                  ? row.defendants[0].punishmentType
+                  : undefined
+                const punishmentTypeTag = getPunishmentTypeTag(punishmentType)
+                return punishmentTypeTag ? (
+                  <CaseTag
+                    color={punishmentTypeTag.color}
+                    text={formatMessage(punishmentTypeTag.text)}
+                  />
+                ) : null
+              },
+            },
+            {
               cell: (row) => (
                 <CreatedDate created={row.indictmentCompletedDate} />
               ),
             },
             {
-              cell: () => (
-                <Tag variant="purple" outlined disabled truncate>
-                  {'Nýtt'}
-                </Tag>
-              ),
+              cell: (row) => {
+                const prisonCaseState =
+                  row.defendants &&
+                  row.defendants?.length > 0 &&
+                  row.defendants[0].openedByPrisonAdminDate
+                    ? CaseState.RECEIVED
+                    : CaseState.NEW
+                const prisonCaseStateTag =
+                  getPrisonCaseStateTag(prisonCaseState)
+
+                return (
+                  <CaseTag
+                    color={prisonCaseStateTag.color}
+                    text={formatMessage(prisonCaseStateTag.text)}
+                  />
+                )
+              },
             },
           ]}
           generateContextMenuItems={(row) => [openCaseInNewTabMenuItem(row.id)]}

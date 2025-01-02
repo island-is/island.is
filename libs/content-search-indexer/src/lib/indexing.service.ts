@@ -14,7 +14,6 @@ import {
   getElasticsearchIndex,
 } from '@island.is/content-search-index-manager'
 import { environment } from '../environments/environment'
-import { CacheInvalidationService } from './cache-invalidation.service'
 
 type SyncStatus = {
   running?: boolean
@@ -28,7 +27,6 @@ export class IndexingService {
   constructor(
     private readonly elasticService: ElasticService,
     private readonly cmsSyncService: CmsSyncService,
-    private readonly cacheInvalidationService: CacheInvalidationService,
   ) {
     // add importer service to this array to make it import
     this.importers = [this.cmsSyncService]
@@ -63,8 +61,6 @@ export class IndexingService {
       let nextPageToken: string | undefined = undefined
       let postSyncOptions: SyncResponse['postSyncOptions']
 
-      const isIncrementalUpdate = syncType === 'fromLast'
-
       // Fetch initial page specifically in case importing is skipped (no need to wait for a new sync token if we don't need it)
       {
         const importerResponse = await importer.doSync({
@@ -85,19 +81,7 @@ export class IndexingService {
           postSyncOptions: importerResponsePostSyncOptions,
           ...elasticData
         } = importerResponse
-        await this.elasticService.bulk(
-          elasticIndex,
-          elasticData,
-          isIncrementalUpdate,
-        )
-
-        // Invalidate cached pages in the background if we are performing an incremental update
-        if (isIncrementalUpdate) {
-          this.cacheInvalidationService.invalidateCache(
-            elasticData.add,
-            options.locale,
-          )
-        }
+        await this.elasticService.bulk(elasticIndex, elasticData)
 
         nextPageToken = importerResponseNextPageToken
         postSyncOptions = importerResponsePostSyncOptions
@@ -125,19 +109,7 @@ export class IndexingService {
               postSyncOptions: importerResponsePostSyncOptions,
               ...elasticData
             } = importerResponse
-            await this.elasticService.bulk(
-              elasticIndex,
-              elasticData,
-              isIncrementalUpdate,
-            )
-
-            // Invalidate cached pages in the background if we are performing an incremental update
-            if (isIncrementalUpdate) {
-              this.cacheInvalidationService.invalidateCache(
-                elasticData.add,
-                options.locale,
-              )
-            }
+            await this.elasticService.bulk(elasticIndex, elasticData)
 
             nextPageToken = importerResponseNextPageToken
             postSyncOptions = importerResponsePostSyncOptions

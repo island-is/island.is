@@ -1,13 +1,19 @@
-import { FieldBaseProps } from '@island.is/application/types'
+import {
+  FieldBaseProps,
+  FieldComponents,
+  FieldTypes,
+} from '@island.is/application/types'
 import { Box } from '@island.is/island-ui/core'
 import { FC, useCallback, useEffect } from 'react'
 import { PlateOwnership } from '../../shared'
 import { PlateSelectField } from './PlateSelectField'
-import { PlateRadioField } from './PlateRadioField'
 import { useMutation } from '@apollo/client'
 import { UPDATE_APPLICATION } from '@island.is/application/graphql'
 import { useLocale } from '@island.is/localization'
 import { useFormContext } from 'react-hook-form'
+import { VehicleRadioFormField } from '@island.is/application/ui-fields'
+import { applicationCheck, error, information } from '../../lib/messages'
+import { checkCanRenew } from '../../utils'
 
 export const PlateField: FC<React.PropsWithChildren<FieldBaseProps>> = (
   props,
@@ -47,9 +53,25 @@ export const PlateField: FC<React.PropsWithChildren<FieldBaseProps>> = (
           {...props}
         />
       ) : (
-        <PlateRadioField
-          myPlateOwnershipList={myPlateOwnershipList}
+        <VehicleRadioFormField
           {...props}
+          field={{
+            id: 'pickPlate',
+            title: information.labels.pickPlate.title,
+            type: FieldTypes.VEHICLE_RADIO,
+            component: FieldComponents.VEHICLE_RADIO,
+            children: undefined,
+            itemType: 'PLATE',
+            itemList: myPlateOwnershipList,
+            shouldValidateRenewal: true,
+            alertMessageErrorTitle: information.labels.pickPlate.hasErrorTitle,
+            validationErrorMessages: applicationCheck.validation,
+            validationErrorFallbackMessage:
+              applicationCheck.validation.fallbackErrorMessage,
+            inputErrorMessage: error.requiredValidPlate,
+            renewalExpiresAtTag: information.labels.pickPlate.expiresTag,
+            validateRenewal: (item) => checkCanRenew(item as PlateOwnership),
+          }}
         />
       )}
     </Box>

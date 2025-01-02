@@ -30,8 +30,9 @@ import {
   UserProfileApi,
   VinnueftirlitidPaymentCatalogApi,
   MachinesApi,
+  MockableVinnueftirlitidPaymentCatalogApi,
 } from '../dataProviders'
-import { getChargeItemCodes, hasReviewerApproved } from '../utils'
+import { getChargeItems, hasReviewerApproved } from '../utils'
 import { buildPaymentState } from '@island.is/application/utils'
 import { ApiScope } from '@island.is/auth/scopes'
 import { getBuyerNationalId } from '../utils/getBuyerNationalid'
@@ -138,6 +139,7 @@ const template: ApplicationTemplate<
               api: [
                 IdentityApi,
                 UserProfileApi,
+                MockableVinnueftirlitidPaymentCatalogApi,
                 VinnueftirlitidPaymentCatalogApi,
                 MachinesApi,
               ],
@@ -199,7 +201,7 @@ const template: ApplicationTemplate<
       },
       [States.PAYMENT]: buildPaymentState({
         organizationId: InstitutionNationalIds.VINNUEFTIRLITID,
-        chargeItemCodes: getChargeItemCodes,
+        chargeItems: getChargeItems,
         submitTarget: States.REVIEW,
         onExit: [
           defineTemplateApi({
@@ -214,6 +216,9 @@ const template: ApplicationTemplate<
         meta: {
           name: 'Tilkynning um eigendaskipti að ökutæki',
           status: 'inprogress',
+          onDelete: defineTemplateApi({
+            action: ApiActions.deleteApplication,
+          }),
           actionCard: {
             tag: {
               label: applicationMessage.actionCardDraft,

@@ -2,10 +2,11 @@ import { FieldBaseProps, ImageField } from '@island.is/application/types'
 import { Box, Text } from '@island.is/island-ui/core'
 import * as styles from './ImageFormField.css'
 import { useLocale } from '@island.is/localization'
-import { formatText } from '@island.is/application/core'
+import { formatTextWithLocale } from '@island.is/application/core'
 import { theme } from '@island.is/island-ui/theme'
 import { useWindowSize } from 'react-use'
 import { useEffect, useState } from 'react'
+import { Locale } from '@island.is/shared/types'
 
 interface Props extends FieldBaseProps {
   field: ImageField
@@ -50,7 +51,7 @@ export const ImageFormField = ({ field, application }: Props) => {
     useState<string>()
   const [imageWidthForScreenWidth, setImageWidthForScreenWidth] =
     useState<string>()
-  const { formatMessage } = useLocale()
+  const { formatMessage, lang: locale } = useLocale()
   const { width } = useWindowSize()
 
   const { imageWidth, imagePosition, image: Image } = field
@@ -94,7 +95,12 @@ export const ImageFormField = ({ field, application }: Props) => {
       {field.title && (
         <Box marginBottom={1}>
           <Text variant={field.titleVariant ?? 'h4'}>
-            {formatText(field.title, application, formatMessage)}
+            {formatTextWithLocale(
+              field.title,
+              application,
+              locale as Locale,
+              formatMessage,
+            )}
           </Text>
         </Box>
       )}

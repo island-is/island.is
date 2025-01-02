@@ -1,7 +1,7 @@
 import { ChangeCoOwnerOfVehicleAnswers } from '@island.is/application/templates/transport-authority/change-co-owner-of-vehicle'
 import { Message } from '@island.is/email-service'
 import { EmailTemplateGeneratorProps } from '../../../../../types'
-import { EmailRecipient } from '../types'
+import { EmailRecipient, RejectType } from '../types'
 import { getRoleNameById } from '../change-co-owner-of-vehicle.utils'
 import { pathToAsset } from '../change-co-owner-of-vehicle.utils'
 import { ApplicationConfigurations } from '@island.is/application/types'
@@ -10,12 +10,14 @@ export type ApplicationRejectedEmail = (
   props: EmailTemplateGeneratorProps,
   recipient: EmailRecipient,
   rejectedBy: EmailRecipient | undefined,
+  rejectType: RejectType,
 ) => Message
 
 export const generateApplicationRejectedEmail: ApplicationRejectedEmail = (
   props,
   recipient,
   rejectedBy,
+  rejectType,
 ): Message => {
   const {
     application,
@@ -32,6 +34,21 @@ export const generateApplicationRejectedEmail: ApplicationRejectedEmail = (
   const rejectedByStr = `${rejectedBy.name}, kt. ${
     rejectedBy.ssn
   } (${getRoleNameById(rejectedBy.role)})`
+
+  let message =
+    `<span>Góðan dag,</span><br/><br/>` +
+    `<span>Beiðni um breytingu á meðeigendum á ökutækinu ${permno} hefur verið afturkölluð, `
+  if (rejectType === RejectType.REJECT) {
+    message += `þar sem eftirfarandi aðilar staðfestu ekki:`
+  } else if (rejectType === RejectType.DELETE) {
+    message += `þar sem seljandinn eyddi umsókn:`
+  }
+  message +=
+    `</span><br/>` +
+    `<ul><li><p>${rejectedByStr}</p></li></ul>` +
+    `<span>Til þess að skrá breytingu á meðeigendum rafrænt verður að byrja ferlið að upp á nýtt á umsóknarvef island.is: island.is/umsoknir, ásamt því að allir aðilar þurfa að staðfesta rafrænt innan gefins tímafrests.</span><br/>` +
+    `<span>Þessi tilkynning á aðeins við um rafræna umsókn af umsóknarvef island.is en ekki um umsókn sem skilað hefur verið inn til Samgöngustofu á pappír.</span><br/>` +
+    `<span>Vinsamlegast hafið samband við Þjónustuver Samgöngustofu (afgreidsla@samgongustofa.is) ef nánari upplýsinga er þörf.</span>`
 
   return {
     from: {
@@ -64,13 +81,7 @@ export const generateApplicationRejectedEmail: ApplicationRejectedEmail = (
         {
           component: 'Copy',
           context: {
-            copy:
-              `<span>Góðan dag,</span><br/><br/>` +
-              `<span>Beiðni um breytingu á meðeigendum á ökutækinu ${permno} hefur verið afturkölluð þar sem eftirfarandi aðilar staðfestu ekki:</span><br/>` +
-              `<ul><li><p>${rejectedByStr}</p></li></ul>` +
-              `<span>Til þess að skrá breytingu á meðeigendum rafrænt verður að byrja ferlið að upp á nýtt á umsóknarvef island.is: island.is/umsoknir, ásamt því að allir aðilar þurfa að staðfesta rafrænt innan gefins tímafrests.</span><br/>` +
-              `<span>Þessi tilkynning á aðeins við um rafræna umsókn af umsóknarvef island.is en ekki um umsókn sem skilað hefur verið inn til Samgöngustofu á pappír.</span><br/>` +
-              `<span>Vinsamlegast hafið samband við Þjónustuver Samgöngustofu (afgreidsla@samgongustofa.is) ef nánari upplýsinga er þörf.</span>`,
+            copy: message,
           },
         },
         {

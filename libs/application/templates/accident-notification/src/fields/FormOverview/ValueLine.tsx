@@ -1,22 +1,17 @@
 import { Box, Bullet, BulletList, Text } from '@island.is/island-ui/core'
 import { Colors } from '@island.is/island-ui/theme'
 import { useLocale } from '@island.is/localization'
-import React, { FC } from 'react'
 import { MessageDescriptor } from 'react-intl'
 import * as styles from './FormOverview.css'
 import cn from 'classnames'
 
-interface ValueLineProps {
+type ValueLineProps = {
   label: string | MessageDescriptor
   value: string | MessageDescriptor
   color?: Colors
 }
 
-export const ValueLine: FC<React.PropsWithChildren<ValueLineProps>> = ({
-  label,
-  value,
-  color,
-}) => {
+export const ValueLine = ({ label, value, color }: ValueLineProps) => {
   const { formatMessage } = useLocale()
 
   return (
@@ -32,10 +27,7 @@ interface FileValueLineProps {
   files: MessageDescriptor[] | undefined
 }
 
-export const FileValueLine: FC<React.PropsWithChildren<FileValueLineProps>> = ({
-  label,
-  files,
-}) => {
+export const FileValueLine = ({ label, files }: FileValueLineProps) => {
   const { formatMessage } = useLocale()
 
   return (

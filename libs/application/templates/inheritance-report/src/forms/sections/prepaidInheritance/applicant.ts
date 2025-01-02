@@ -16,11 +16,11 @@ export const prePaidApplicant = buildSection({
     buildMultiField({
       id: 'prePaidApplicant',
       title: m.applicantsInfo,
-      description: m.applicantsInfoSubtitle,
+      description: m.applicantsPrePaidInfoSubtitle,
       children: [
         buildNationalIdWithNameField({
           id: 'prePaidApplicant',
-          title: m.name,
+          title: '',
           width: 'full',
           required: true,
         }),

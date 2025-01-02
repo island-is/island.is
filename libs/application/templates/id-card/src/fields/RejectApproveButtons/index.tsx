@@ -1,21 +1,21 @@
-import { FC, useState } from 'react'
-import { DefaultEvents, FieldBaseProps } from '@island.is/application/types'
-import { Box, Divider, Button } from '@island.is/island-ui/core'
-import { RejectConfirmationModal } from './RejectConfirmationModal'
-import { review } from '../../lib/messages'
-import { useLocale } from '@island.is/localization'
 import { useMutation } from '@apollo/client'
-import { SUBMIT_APPLICATION } from '@island.is/application/graphql'
-import { useAuth } from '@island.is/auth/react'
 import { getValueViaPath } from '@island.is/application/core'
+import { SUBMIT_APPLICATION } from '@island.is/application/graphql'
+import { DefaultEvents, FieldBaseProps } from '@island.is/application/types'
+import { Box, Button, Divider } from '@island.is/island-ui/core'
+import { useLocale } from '@island.is/localization'
+import { useUserInfo } from '@island.is/react-spa/bff'
+import { FC, useState } from 'react'
 import { Routes } from '../../lib/constants'
+import { review } from '../../lib/messages'
+import { RejectConfirmationModal } from './RejectConfirmationModal'
 
 export const RejectApproveButtons: FC<
   React.PropsWithChildren<FieldBaseProps>
 > = (props) => {
   const { formatMessage } = useLocale()
   const { application, refetch, goToScreen } = props
-  const { userInfo } = useAuth()
+  const userInfo = useUserInfo()
   const [rejectModalVisibility, setRejectModalVisibility] =
     useState<boolean>(false)
   const [loading, setLoading] = useState(false)

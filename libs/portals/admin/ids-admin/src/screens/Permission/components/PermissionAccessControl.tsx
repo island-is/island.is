@@ -22,14 +22,20 @@ export const PermissionAccessControl = () => {
   const { formatMessage } = useLocale()
   const { selectedPermission, permission } = usePermission()
   const { isSuperAdmin } = useSuperAdmin()
-  const { isAccessControlled, grantToAuthenticatedUser } = selectedPermission
+  const {
+    isAccessControlled,
+    grantToAuthenticatedUser,
+    automaticDelegationGrant,
+  } = selectedPermission
 
   const [inputValues, setInputValues] = useEnvironmentState<{
     isAccessControlled: boolean
     grantToAuthenticatedUser: boolean
+    automaticDelegationGrant: boolean
   }>({
     isAccessControlled,
     grantToAuthenticatedUser,
+    automaticDelegationGrant,
   })
 
   return (
@@ -39,6 +45,7 @@ export const PermissionAccessControl = () => {
       inSync={checkEnvironmentsSync(permission.environments, [
         'isAccessControlled',
         'grantToAuthenticatedUser',
+        'automaticDelegationGrant',
       ])}
     >
       <Stack space={3}>
@@ -70,6 +77,19 @@ export const PermissionAccessControl = () => {
           }}
           {...commonProps}
         />
+        <Checkbox
+          label={formatMessage(m.automaticDelegationGrant)}
+          subLabel={formatMessage(m.automaticDelegationGrantDescription)}
+          name="automaticDelegationGrant"
+          checked={inputValues.automaticDelegationGrant}
+          onChange={(e) => {
+            setInputValues({
+              ...inputValues,
+              automaticDelegationGrant: e.target.checked,
+            })
+          }}
+          {...commonProps}
+        ></Checkbox>
       </Stack>
     </FormCard>
   )

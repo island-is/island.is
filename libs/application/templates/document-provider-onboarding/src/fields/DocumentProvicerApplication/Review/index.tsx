@@ -1,12 +1,17 @@
 import React, { FC } from 'react'
 import { useFormContext } from 'react-hook-form'
-import { formatText, getValueViaPath } from '@island.is/application/core'
+import {
+  formatText,
+  formatTextWithLocale,
+  getValueViaPath,
+} from '@island.is/application/core'
 import { FieldBaseProps } from '@island.is/application/types'
 import { Box, GridColumn, GridRow, Input } from '@island.is/island-ui/core'
 import { FieldDescription } from '@island.is/shared/form-fields'
 import { useLocale } from '@island.is/localization'
 
 import { m } from '../../../lib/messages'
+import { Locale } from '@island.is/shared/types'
 
 const Review: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   field,
@@ -14,7 +19,7 @@ const Review: FC<React.PropsWithChildren<FieldBaseProps>> = ({
 }) => {
   const { description } = field
   const { register } = useFormContext()
-  const { formatMessage } = useLocale()
+  const { formatMessage, lang: locale } = useLocale()
 
   const getValue = (id: string) => {
     return getValueViaPath(application.answers, id) as string
@@ -24,7 +29,12 @@ const Review: FC<React.PropsWithChildren<FieldBaseProps>> = ({
     <div>
       {description && (
         <FieldDescription
-          description={formatText(description, application, formatMessage)}
+          description={formatTextWithLocale(
+            description,
+            application,
+            locale as Locale,
+            formatMessage,
+          )}
         />
       )}
       {/* helpdeskContact Workaround */}

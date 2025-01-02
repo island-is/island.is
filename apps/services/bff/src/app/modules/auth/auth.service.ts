@@ -9,14 +9,14 @@ import {
   UnauthorizedException,
 } from '@nestjs/common'
 import { ConfigType } from '@nestjs/config'
-import { CookieOptions, Request, Response } from 'express'
+import type { Request, Response } from 'express'
 import jwksClient from 'jwks-rsa'
 import { jwtDecode } from 'jwt-decode'
 
+import { LOGIN_ATTEMPT_FAILED_ACTIVE_SESSION } from '@island.is/shared/constants'
 import { IdTokenClaims } from '@island.is/shared/types'
-import { decode, verify, Algorithm } from 'jsonwebtoken'
+import { Algorithm, decode, verify } from 'jsonwebtoken'
 import { v4 as uuid } from 'uuid'
-import { environment } from '../../../environment'
 import { BffConfig } from '../../bff.config'
 import { SESSION_COOKIE_NAME } from '../../constants/cookies'
 import { FIVE_SECONDS_IN_MS } from '../../constants/time'
@@ -26,11 +26,12 @@ import {
   CreateErrorQueryStrArgs,
   createErrorQueryStr,
 } from '../../utils/create-error-query-str'
+import { getCookieOptions } from '../../utils/get-cookie-options'
 import { validateUri } from '../../utils/validate-uri'
 import { CacheService } from '../cache/cache.service'
 import { IdsService } from '../ids/ids.service'
 import { LogoutTokenPayload, TokenResponse } from '../ids/ids.types'
-import { CachedTokenResponse } from './auth.types'
+import { CachedTokenResponse, LoginAttemptData } from './auth.types'
 import { CallbackLoginDto } from './dto/callback-login.dto'
 import { CallbackLogoutDto } from './dto/callback-logout.dto'
 import { LoginDto } from './dto/login.dto'
@@ -55,23 +56,12 @@ export class AuthService {
     this.baseUrl = this.config.ids.issuer
   }
 
-  private getCookieOptions(): CookieOptions {
-    return {
-      httpOnly: true,
-      secure: true,
-      // The lax setting allows cookies to be sent on top-level navigations (such as redirects),
-      // while still providing some protection against CSRF attacks.
-      sameSite: 'lax',
-      path: environment.keyPath,
-    }
-  }
-
   /**
    * Creates the client base URL with the path appended.
    */
   private createClientBaseUrl() {
     const baseUrl = new URL(this.config.clientBaseUrl)
-    baseUrl.pathname = `${baseUrl.pathname}${environment.keyPath}`
+    baseUrl.pathname = `${baseUrl.pathname}${this.config.clientBasePath}`
       // Prevent potential issues with malformed URLs.
       .replace('//', '/')
 
@@ -81,8 +71,13 @@ export class AuthService {
   /**
    * Redirects the user to the client base URL with an error query string.
    */
-  private createClientBaseUrlWithError(args: CreateErrorQueryStrArgs) {
-    return `${this.createClientBaseUrl()}?${createErrorQueryStr(args)}`
+  private createClientBaseUrlWithError(
+    args: CreateErrorQueryStrArgs,
+    targetUrl?: string,
+  ) {
+    const baseUrl = targetUrl ?? this.createClientBaseUrl()
+
+    return `${baseUrl}?${createErrorQueryStr(args)}`
   }
 
   /**
@@ -90,12 +85,17 @@ export class AuthService {
    */
   private redirectWithError(
     res: Response,
-    args?: Partial<CreateErrorQueryStrArgs>,
+    args?: Partial<CreateErrorQueryStrArgs> & { targetUrl?: string },
   ) {
-    const code = args?.code || 500
-    const error = args?.error || 'Login failed!'
+    const statusCode = args?.statusCode || 500
+    const message = args?.message || 'Login failed!'
 
-    return res.redirect(this.createClientBaseUrlWithError({ code, error }))
+    return res.redirect(
+      this.createClientBaseUrlWithError(
+        { code: args?.code, message, statusCode },
+        args?.targetUrl,
+      ),
+    )
   }
 
   /**
@@ -175,7 +175,7 @@ export class AuthService {
       )
 
       return this.redirectWithError(res, {
-        code: 400,
+        statusCode: 400,
       })
     }
 
@@ -193,11 +193,12 @@ export class AuthService {
       await this.cacheService.save({
         key: this.cacheService.createSessionKeyType('attempt', attemptLoginId),
         value: {
-          // Fallback if targetLinkUri is not provided
-          originUrl: this.createClientBaseUrl(),
           // Code verifier to be used in the callback
           codeVerifier,
-          targetLinkUri,
+          targetLinkUri:
+            targetLinkUri ??
+            // Fallback if targetLinkUri is not provided
+            this.createClientBaseUrl(),
         },
         ttl: this.config.cacheLoginAttemptTTLms,
       })
@@ -212,12 +213,8 @@ export class AuthService {
           prompt,
         })
 
-        if (parResponse.type === 'error') {
-          throw parResponse.data
-        }
-
         searchParams = new URLSearchParams({
-          request_uri: parResponse.data.request_uri,
+          request_uri: parResponse.request_uri,
           client_id: this.config.ids.clientId,
         })
       } else {
@@ -237,8 +234,49 @@ export class AuthService {
     } catch (error) {
       this.logger.error('Login failed: ', error)
 
-      return this.redirectWithError(res)
+      return this.redirectWithError(res, {
+        targetUrl: targetLinkUri,
+      })
     }
+  }
+
+  /**
+   * Handles cases where a login attempt cache entry is not found during the callback phase.
+   * This typically occurs in one of these scenarios:
+   *
+   * 1. The login attempt cache has expired (TTL exceeded).
+   * 2. The cache entry was deleted.
+   * 3. The user attempted to reuse a callback URL after a successful login
+   *    (e.g., by using browser back button after logging in)
+   *
+   * Recovery process:
+   * 1. Checks if there's an existing active session (via session cookie)
+   * 2. If a session exists, returns a 409 Conflict indicating multiple session attempt
+   * 3. If no recovery is possible, redirects to error page and log as warning
+   */
+  private async handleMissingLoginAttempt({
+    req,
+    res,
+    loginAttemptCacheKey,
+  }: {
+    req: Request
+    res: Response
+    loginAttemptCacheKey: string
+  }) {
+    const sid = req.cookies[SESSION_COOKIE_NAME]
+
+    // Check if older session exists
+    if (sid) {
+      return this.redirectWithError(res, {
+        statusCode: 409, // Conflict
+        code: LOGIN_ATTEMPT_FAILED_ACTIVE_SESSION,
+        message: 'Multiple sessions detected!',
+      })
+    }
+
+    this.logger.warn(this.cacheService.createKeyError(loginAttemptCacheKey))
+
+    return this.redirectWithError(res)
   }
 
   /**
@@ -266,8 +304,8 @@ export class AuthService {
       this.logger.error('Callback login IDS invalid request: ', idsError)
 
       return this.redirectWithError(res, {
-        code: 500,
-        error: idsError,
+        statusCode: 500,
+        message: idsError,
       })
     }
 
@@ -279,44 +317,52 @@ export class AuthService {
       )
 
       return this.redirectWithError(res, {
-        code: 400,
+        statusCode: 400,
+      })
+    }
+
+    const loginAttemptCacheKey = this.cacheService.createSessionKeyType(
+      'attempt',
+      query.state,
+    )
+    // Get login attempt data from the cache
+    const loginAttemptData = await this.cacheService.get<LoginAttemptData>(
+      loginAttemptCacheKey,
+      // Do not throw an error if the key is not found
+      false,
+    )
+
+    if (!loginAttemptData) {
+      return this.handleMissingLoginAttempt({
+        req,
+        res,
+        loginAttemptCacheKey,
       })
     }
 
     try {
-      // Get login attempt from cache
-      const loginAttemptData = await this.cacheService.get<{
-        targetLinkUri?: string
-        codeVerifier: string
-        originUrl: string
-      }>(this.cacheService.createSessionKeyType('attempt', query.state))
-
       // Get tokens and user information from the authorization code
       const tokenResponse = await this.idsService.getTokens({
         code: query.code,
         codeVerifier: loginAttemptData.codeVerifier,
       })
 
-      if (tokenResponse.type === 'error') {
-        throw tokenResponse.data
-      }
-
-      const updatedTokenResponse = await this.updateTokenCache(
-        tokenResponse.data,
-      )
+      const updatedTokenResponse = await this.updateTokenCache(tokenResponse)
 
       // Clean up the login attempt from the cache since we have a successful login.
-      this.cacheService
-        .delete(this.cacheService.createSessionKeyType('attempt', query.state))
-        .catch((err) => {
-          this.logger.warn(err)
-        })
+      this.cacheService.delete(loginAttemptCacheKey).catch((err) => {
+        this.logger.warn(err)
+      })
+
+      // Clear any existing session cookie first
+      // This prevents multiple session cookies being set.
+      res.clearCookie(SESSION_COOKIE_NAME, getCookieOptions())
 
       // Create session cookie with successful login session id
       res.cookie(
         SESSION_COOKIE_NAME,
         updatedTokenResponse.userProfile.sid,
-        this.getCookieOptions(),
+        getCookieOptions(),
       )
 
       // Check if there is an old session cookie and clean up the cache
@@ -349,13 +395,13 @@ export class AuthService {
         }
       }
 
-      return res.redirect(
-        loginAttemptData.targetLinkUri || loginAttemptData.originUrl,
-      )
+      return res.redirect(loginAttemptData.targetLinkUri)
     } catch (error) {
       this.logger.error('Callback login failed: ', error)
 
-      return this.redirectWithError(res)
+      return this.redirectWithError(res, {
+        targetUrl: loginAttemptData?.targetLinkUri,
+      })
     }
   }
 
@@ -390,8 +436,8 @@ export class AuthService {
       )
 
       return this.redirectWithError(res, {
-        code: 400,
-        error: 'Logout failed!',
+        statusCode: 400,
+        message: 'Logout failed!',
       })
     }
 
@@ -424,7 +470,7 @@ export class AuthService {
      * - Delete the current login from the cache
      * - Clear the session cookie
      */
-    res.clearCookie(SESSION_COOKIE_NAME, this.getCookieOptions())
+    res.clearCookie(SESSION_COOKIE_NAME, getCookieOptions())
 
     this.cacheService
       .delete(currentLoginCacheKey)
@@ -492,10 +538,6 @@ export class AuthService {
 
   async callbackLogout(res: Response, body: CallbackLogoutDto) {
     const logoutToken = body.logout_token
-
-    this.logger.info('Callback backchannel logout initiated', {
-      logoutToken,
-    })
 
     if (!logoutToken) {
       const errorMessage = 'No param "logout_token" provided!'

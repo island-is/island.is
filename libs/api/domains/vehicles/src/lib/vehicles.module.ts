@@ -11,6 +11,7 @@ import { FeatureFlagModule } from '@island.is/nest/feature-flags'
 import { BulkMileageService } from './services/bulkMileage.service'
 import { VehiclesV3Resolver } from './resolvers/vehicleV3.resolver'
 import { VehiclesBulkMileageResolver } from './resolvers/bulkMileage.resolver'
+import { CmsTranslationsModule } from '@island.is/cms-translations'
 
 @Module({
   providers: [
@@ -26,6 +27,7 @@ import { VehiclesBulkMileageResolver } from './resolvers/bulkMileage.resolver'
     VehiclesClientModule,
     VehiclesMileageClientModule,
     AuthModule,
+    CmsTranslationsModule,
     FeatureFlagModule,
   ],
   exports: [VehiclesService],
