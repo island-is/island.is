@@ -20,8 +20,9 @@ const ReferencesDetail: React.FC = () => {
       serviceProviderTooltip={formatMessage(
         messages.landlaeknirVaccinationsTooltip,
       )}
+      marginBottom={6}
     >
-      <InfoLineStack space={2}>
+      <InfoLineStack space={1}>
         <InfoLine label="Tilvísun fyrir" content="Sjúkraþjálfun" />
         <InfoLine
           label="Útgefandi"

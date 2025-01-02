@@ -29,8 +29,9 @@ const WaitlistsDetail: React.FC = () => {
           </Button>
         </LinkResolver>,
       ]}
+      marginBottom={6}
     >
-      <InfoLineStack space={2}>
+      <InfoLineStack space={1}>
         <InfoLine label="Biðlisti" content="Liðskiptiaðgerð á hné" />
         <InfoLine
           label="Stofnun"
