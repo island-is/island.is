@@ -193,10 +193,18 @@ export const messages = defineMessages({
     defaultMessage:
       'Ekki tókst að sækja gögn frá Sjúkratryggingum. Vinsamlegast reyndu aftur síðar.',
   },
+  myHealthOverview: {
+    id: 'sp.health:my-health-overview',
+    defaultMessage: 'Mitt heilsuyfirlit',
+  },
+  overviewTitle: {
+    id: 'sp.health:overview-title',
+    defaultMessage: 'Yfirlit',
+  },
   overviewIntro: {
     id: 'sp.health:overview-intro',
     defaultMessage:
-      'Hér fyrir neðan eru þín gögn sem hafa verið sótt frá þjóðskrá. Þú hefur kost á að gera breytingar á eftirfarandi upplýsingum ef þú kýst.',
+      'Hér getur þú séð yfirlit yfir grunnupplýsingar þínar í Heilsu, tímabókanir, skráningar, stöðu á listum og mælingar.',
   },
   hasHealthInsurance: {
     id: 'sp.health:has-health-insurance',
@@ -332,6 +340,10 @@ export const messages = defineMessages({
     id: 'sp.health:dentist-transfer-success-info',
     defaultMessage: 'Þú hefur verið skráður á tannlækninn {name}.',
   },
+  healthCenter: {
+    id: 'sp.health:health-center',
+    defaultMessage: 'Heilsugæsla',
+  },
   healthCenterTitle: {
     id: 'sp.health:health-center-title',
     defaultMessage: 'Skráð heilsugæsla',
@@ -410,10 +422,6 @@ export const messages = defineMessages({
   physicalTherapy: {
     id: 'sp.health:physical-therapy',
     defaultMessage: 'Sjúkraþjálfun',
-  },
-  overviewTitle: {
-    id: 'sp.health:overview-title',
-    defaultMessage: 'Yfirlit',
   },
   speechTherapy: {
     id: 'sp.health:speech-therapy',
