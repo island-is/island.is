@@ -1,10 +1,8 @@
 import { useEffect, useState } from 'react'
 import { useWindowSize } from 'react-use'
 
-import { GridColumn, GridContainer, GridRow, Stack } from '../..'
+import { Inline, Stack } from '../..'
 import { theme } from '@island.is/island-ui/theme'
-
-import chunk from 'lodash/chunk'
 
 import { InfoCard, InfoCardProps } from './InfoCard'
 
@@ -27,9 +25,11 @@ export const InfoCardGrid = ({ cards, variant, columns }: Props) => {
     setIsMobile(false)
   }, [width])
 
-  if (columns === 1) {
+  console.log(columns)
+
+  if (columns === 1 || isMobile) {
     return (
-      <Stack space={2}>
+      <Stack space={3}>
         {cards.map((c) => (
           <InfoCard key={c.id} variant={variant} size={'large'} {...c} />
         ))}
@@ -37,24 +37,16 @@ export const InfoCardGrid = ({ cards, variant, columns }: Props) => {
     )
   }
 
-  const cardNodes = cards.map((c, index) => (
-    <GridColumn span="5/12">
-      <InfoCard
-        key={`${c.title}-${index}`}
-        variant={variant}
-        size={columns === 3 ? 'small' : 'medium'}
-        {...c}
-      />
-    </GridColumn>
-  ))
-
-  const nodeChunks = chunk(cardNodes, columns)
-
   return (
-    <GridContainer>
-      {nodeChunks.map((column) => (
-        <GridRow rowGap={1}>{column}</GridRow>
+    <Inline space={3}>
+      {cards.map((c, index) => (
+        <InfoCard
+          key={`${c.title}-${index}`}
+          variant={variant}
+          size={columns === 3 ? 'small' : 'medium'}
+          {...c}
+        />
       ))}
-    </GridContainer>
+    </Inline>
   )
 }

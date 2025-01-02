@@ -6,7 +6,7 @@ import { theme } from '@island.is/island-ui/theme'
 import { DetailedInfoCard, DetailedProps } from './DetailedInfoCard'
 import { SimpleInfoCard } from './SimpleInfoCard'
 import * as styles from './InfoCard.css'
-import { Box, FocusableBox, LinkV2 } from '../..'
+import { Box, BoxProps, FocusableBox, LinkV2 } from '../..'
 
 export interface BaseProps {
   id: string
@@ -14,6 +14,7 @@ export interface BaseProps {
   description: string
   eyebrow: string
   size: 'large' | 'medium' | 'small'
+  borderColor?: BoxProps['borderColor']
   link: {
     label: string
     href: string
@@ -29,18 +30,6 @@ export type InfoCardProps =
     })
 
 export const InfoCard = ({ size, ...restOfProps }: InfoCardProps) => {
-  const [isMobile, setIsMobile] = useState<boolean>(false)
-  const { width } = useWindowSize()
-
-  useEffect(() => {
-    if (width < theme.breakpoints.md) {
-      return setIsMobile(true)
-    }
-    setIsMobile(false)
-  }, [width])
-
-  const cardSize = isMobile ? 'small' : size
-
   return (
     <FocusableBox
       className={
@@ -54,17 +43,17 @@ export const InfoCard = ({ size, ...restOfProps }: InfoCardProps) => {
       component={LinkV2}
       href={restOfProps.link.href}
       background={size === 'small' ? 'yellow100' : 'white'}
-      borderColor="white"
+      borderColor={restOfProps.borderColor ?? 'white'}
       color="blue"
       borderWidth="standard"
       width="full"
       borderRadius="large"
     >
-      <Box width="full" paddingX={4} paddingY={3}>
+      <Box width="full" padding={2}>
         {restOfProps.variant === 'detailed' ? (
-          <DetailedInfoCard size={cardSize} {...restOfProps} />
+          <DetailedInfoCard size={size} {...restOfProps} />
         ) : (
-          <SimpleInfoCard size={cardSize} {...restOfProps} />
+          <SimpleInfoCard size={size} {...restOfProps} />
         )}
       </Box>
     </FocusableBox>
