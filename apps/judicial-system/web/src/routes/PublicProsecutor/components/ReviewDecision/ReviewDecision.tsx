@@ -110,7 +110,6 @@ export const ReviewDecision: FC<Props> = (props) => {
                 checked={indictmentReviewDecision === item.value}
                 onChange={() => {
                   onSelect && onSelect(item.value)
-                  // onChange && onChange(item.value)
                   setIndictmentReviewDecision(item.value)
                 }}
                 backgroundColor="white"

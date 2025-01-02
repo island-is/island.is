@@ -71,6 +71,15 @@ export const Overview = () => {
     [router, workingCase.id],
   )
 
+  const onSelect = (decision?: IndictmentCaseReviewDecision) => {
+    if (!decision) {
+      return
+    }
+
+    const isDecisionChanged = decision !== workingCase.indictmentReviewDecision
+    setIsReviewedDecisionChanged(isDecisionChanged)
+  }
+
   return (
     <PageLayout
       workingCase={workingCase}
@@ -129,13 +138,7 @@ export const Overview = () => {
               workingCase.indictmentRulingDecision ===
               CaseIndictmentRulingDecision.FINE
             }
-            onSelect={(decision?: IndictmentCaseReviewDecision) => {
-              if (!decision) return
-
-              const isDecisionChanged =
-                decision !== workingCase.indictmentReviewDecision
-              setIsReviewedDecisionChanged(isDecisionChanged)
-            }}
+            onSelect={onSelect}
           />
         )}
       </FormContentContainer>
