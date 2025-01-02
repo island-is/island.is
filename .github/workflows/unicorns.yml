@@ -29,7 +29,7 @@ jobs:
         run: |
           echo "$GITHUB_CONTEXT"
   check-ready-for-merge-queue:
-    name: Is PR approved
+    name: Ready for mergequeue
     runs-on: ubuntu-latest
     outputs:
       IS_APPROVED: ${{ steps.check-approved.outputs.result }}
