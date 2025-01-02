@@ -289,7 +289,7 @@ const useInfoCardItems = () => {
     ],
   }
 
-  const indictmentReviewedDate = (date?: string | null): Item => ({
+  const indictmentReviewedDate = (date: string): Item => ({
     id: 'indictment-reviewed-date-item',
     title: formatMessage(strings.indictmentReviewedDateTitle),
     values: [formatDate(date, 'PP')],
