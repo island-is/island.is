@@ -84,7 +84,9 @@ const Defendants: FC<Props> = ({ workingCase }) => {
 
 const Prosecutor: FC<Props> = ({ workingCase }) => {
   const { formatMessage } = useIntl()
-  if (!workingCase.prosecutorsOffice?.name) return null
+  if (!workingCase.prosecutorsOffice?.name) {
+    return null
+  }
 
   return (
     <Entry
