@@ -1439,7 +1439,7 @@ export class CaseNotificationService extends BaseNotificationService {
     recipientName?: string,
     recipientEmail?: string,
   ): Promise<Recipient> {
-    const courtCaseNumber =  theCase.courtCaseNumber ?? 'NONE'
+    const courtCaseNumber = theCase.courtCaseNumber ?? 'NONE'
     const policeCaseNumbers = theCase.policeCaseNumbers.join(', ')
 
     const subject = this.formatMessage(

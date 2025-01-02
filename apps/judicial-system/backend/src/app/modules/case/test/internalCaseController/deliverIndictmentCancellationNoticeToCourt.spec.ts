@@ -25,8 +25,8 @@ describe('InternalCaseController - Deliver indictment cancellation notice to cou
   const courtName = uuid()
   const courtCaseNumber = uuid()
   const prosecutorsOffice = uuid()
-  const policeCase1 = '007-2022-01';
-  const policeCase2 = '007-2022-02';
+  const policeCase1 = '007-2022-01'
+  const policeCase2 = '007-2022-02'
 
   const policeCaseNumbers = [policeCase1, policeCase2]
 

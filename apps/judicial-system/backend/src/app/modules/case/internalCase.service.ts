@@ -672,7 +672,8 @@ export class InternalCaseService {
   ): Promise<DeliverResponse> {
     await this.refreshFormatMessage()
 
-    const courtCaseNumber = (withCourtCaseNumber && theCase.courtCaseNumber) || 'NONE'
+    const courtCaseNumber =
+      (withCourtCaseNumber && theCase.courtCaseNumber) || 'NONE'
     const policeCaseNumbers = theCase.policeCaseNumbers.join(', ')
 
     return this.courtService
@@ -690,7 +691,7 @@ export class InternalCaseService {
             {
               prosecutorsOffice: theCase.creatingProsecutor?.institution?.name,
               courtCaseNumber,
-              policeCaseNumbers
+              policeCaseNumbers,
             },
           )} ${this.formatMessage(notifications.emailTail)}`,
         ),
