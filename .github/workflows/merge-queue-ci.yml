@@ -5,6 +5,7 @@ on:
 
 jobs:
   check-ready-for-merge-queue:
+    name: Ready for mergequeue
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -18,3 +19,6 @@ jobs:
       - name: Run slow CI (emulated by a long sleep)
         run: |
           sleep 20
+      - name: Failing step should prevent merge
+        run: |
+          exit 1
