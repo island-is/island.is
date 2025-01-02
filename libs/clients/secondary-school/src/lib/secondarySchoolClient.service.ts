@@ -96,9 +96,7 @@ export class SecondarySchoolClient {
   }
 
   async create(auth: User, application: Application): Promise<string> {
-    let applicationId = await this.applicationsApiWithAuth(
-      auth,
-    ).v1ApplicationsPost({
+    const result = await this.applicationsApiWithAuth(auth).v1ApplicationsPost({
       applicationBaseDto: {
         applicantNationalId: application.nationalId,
         applicantName: application.name,
@@ -133,8 +131,7 @@ export class SecondarySchoolClient {
       },
     })
 
-    // clean applicationId and remove double quotes that is added by the openapi generator (bug in generator)
-    applicationId = applicationId.replace(/"/g, '')
+    const applicationId = result.id || ''
 
     return applicationId
   }

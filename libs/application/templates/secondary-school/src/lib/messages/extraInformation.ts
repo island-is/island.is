@@ -78,7 +78,7 @@ export const extraInformation = {
     },
     fileUploadDescription: {
       id: 'ss.application:extraInformation.supportingDocuments.fileUploadDescription',
-      defaultMessage: 'Tekið er við skjölum með endingu: .pdf, .docx, .rtf',
+      defaultMessage: 'Tekið er við skjölum með endingu: .pdf',
       description: 'Supporting documents file upload title',
     },
     fileUploadButtonLabel: {
