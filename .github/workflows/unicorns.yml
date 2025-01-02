@@ -30,6 +30,12 @@ jobs:
           echo "$GITHUB_CONTEXT"
   check-ready-for-merge-queue:
     name: Ready for mergequeue
+    # The only way to set different required status checks to a pre-queue and a post-queue ,
+    # (i.e. before merging and in merge queue), is to have two jobs with the same name, one that triggers on pull_request,
+    # and another on merge_group.
+    # The 'Ready for mergequeue' which is triggered on pull_request here is a required status to be able to merge
+    # The 'Ready for mergequeue' triggered on merge_group (merge-queue-ci.yml) will block merging untill it has completed with success.
+    # (https://medium.com/@kojoru/how-to-set-up-merge-queues-in-github-actions-59381e5f435a)
     runs-on: ubuntu-latest
     outputs:
       IS_APPROVED: ${{ steps.check-approved.outputs.result }}
