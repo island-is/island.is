@@ -23,4 +23,4 @@ jobs:
           git status
       - name: Run slow CI (emulated by a long sleep)
         run: |
-          sleep 20
+          sleep 300
