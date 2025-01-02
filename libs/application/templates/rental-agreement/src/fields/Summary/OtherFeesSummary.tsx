@@ -8,9 +8,9 @@ import {
   getRentalOtherFeesPayeeOptions,
 } from '../../lib/utils'
 import { summary } from '../../lib/messages'
-import { KeyValue } from './KeyValue'
-import { SummarySection } from './SummarySection'
+import { KeyValue } from './components/KeyValue'
 import { SummaryCardRow } from './components/SummaryCardRow'
+import { SummaryCard } from './components/SummaryCard'
 
 type Props = {
   answers: RentalAgreement
@@ -34,12 +34,8 @@ export const OtherFeesSummary = ({ answers, goToScreen, route }: Props) => {
   const tenantPaysHeating =
     answers.rentOtherFees.heatingCost === RentOtherFeesPayeeOptions.TENANT
 
-  console.log('isTenantPayinhHouseFund', tenantPaysHouseFund)
-  console.log('isTenantPayingElectricity', tenantPaysElectricity)
-  console.log('isTenantPayingHeating', tenantPaysHeating)
-
   return (
-    <SummarySection sectionLabel={formatMessage(summary.otherCostsHeader)}>
+    <SummaryCard cardLabel={formatMessage(summary.otherCostsHeader)}>
       <SummaryCardRow
         editAction={goToScreen}
         route={route}
@@ -47,7 +43,7 @@ export const OtherFeesSummary = ({ answers, goToScreen, route }: Props) => {
           !tenantPaysHouseFund && !tenantPaysElectricity && !tenantPaysHeating
         }
       >
-        <GridColumn span={['12/12', '6/12', '6/12', '6/12', '4/12']}>
+        <GridColumn span={['12/12', '6/12', '6/12', '4/12', '4/12']}>
           <KeyValue
             label={summary.electricityCostLabel}
             value={
@@ -56,7 +52,7 @@ export const OtherFeesSummary = ({ answers, goToScreen, route }: Props) => {
             }
           />
         </GridColumn>
-        <GridColumn span={['12/12', '6/12', '6/12', '6/12', '4/12']}>
+        <GridColumn span={['12/12', '6/12', '6/12', '4/12', '4/12']}>
           <KeyValue
             label={summary.heatingCostLabel}
             value={
@@ -64,7 +60,7 @@ export const OtherFeesSummary = ({ answers, goToScreen, route }: Props) => {
             }
           />
         </GridColumn>
-        <GridColumn span={['12/12', '6/12', '6/12', '6/12', '4/12']}>
+        <GridColumn span={['12/12', '6/12', '6/12', '4/12', '4/12']}>
           <KeyValue
             label={summary.houseFundLabel}
             value={
@@ -80,19 +76,19 @@ export const OtherFeesSummary = ({ answers, goToScreen, route }: Props) => {
           route={route}
           isLast={!tenantPaysHouseFund && !tenantPaysHeating}
         >
-          <GridColumn span={['12/12', '6/12', '6/12', '6/12', '4/12']}>
+          <GridColumn span={['12/12', '6/12', '6/12', '4/12', '4/12']}>
             <KeyValue
               label={summary.electricityMeterNumberLabel}
               value={answers.rentOtherFees.electricityCostMeterNumber || '-'}
             />
           </GridColumn>
-          <GridColumn span={['12/12', '6/12', '6/12', '6/12', '4/12']}>
+          <GridColumn span={['12/12', '6/12', '6/12', '4/12', '4/12']}>
             <KeyValue
               label={summary.meterStatusLabel}
               value={answers.rentOtherFees.electricityCostMeterStatus || '-'}
             />
           </GridColumn>
-          <GridColumn span={['12/12', '6/12', '6/12', '6/12', '4/12']}>
+          <GridColumn span={['12/12', '6/12', '6/12', '4/12', '4/12']}>
             <KeyValue
               label={summary.dateOfMeterReadingLabel}
               value={
@@ -113,19 +109,19 @@ export const OtherFeesSummary = ({ answers, goToScreen, route }: Props) => {
           route={route}
           isLast={!tenantPaysHouseFund}
         >
-          <GridColumn span={['12/12', '6/12', '6/12', '6/12', '4/12']}>
+          <GridColumn span={['12/12', '6/12', '6/12', '4/12', '4/12']}>
             <KeyValue
               label={summary.heatingCostMeterNumberLabel}
               value={answers.rentOtherFees.heatingCostMeterNumber || '-'}
             />
           </GridColumn>
-          <GridColumn span={['12/12', '6/12', '6/12', '6/12', '4/12']}>
+          <GridColumn span={['12/12', '6/12', '6/12', '4/12', '4/12']}>
             <KeyValue
               label={summary.meterStatusLabel}
               value={answers.rentOtherFees.heatingCostMeterStatus || '-'}
             />
           </GridColumn>
-          <GridColumn span={['12/12', '6/12', '6/12', '6/12', '4/12']}>
+          <GridColumn span={['12/12', '6/12', '6/12', '4/12', '4/12']}>
             <KeyValue
               label={summary.dateOfMeterReadingLabel}
               value={
@@ -154,6 +150,6 @@ export const OtherFeesSummary = ({ answers, goToScreen, route }: Props) => {
           </GridColumn>
         </SummaryCardRow>
       )}
-    </SummarySection>
+    </SummaryCard>
   )
 }

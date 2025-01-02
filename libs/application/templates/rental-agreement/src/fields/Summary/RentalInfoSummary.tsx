@@ -1,5 +1,8 @@
 import { GridColumn } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
+import { SummaryCard } from './components/SummaryCard'
+import { SummaryCardRow } from './components/SummaryCardRow'
+import { KeyValue } from './components/KeyValue'
 import { RentalAgreement } from '../../lib/dataSchema'
 import {
   AnswerOptions,
@@ -17,9 +20,6 @@ import {
   getSecurityDepositTypeOptions,
 } from '../../lib/utils'
 import { summary } from '../../lib/messages'
-import { KeyValue } from './KeyValue'
-import { SummarySection } from './SummarySection'
-import { SummaryCardRow } from './components/SummaryCardRow'
 
 type Props = {
   answers: RentalAgreement
@@ -89,7 +89,7 @@ export const RentalInfoSummary = ({
   }
 
   return (
-    <SummarySection>
+    <SummaryCard>
       {/* Property Address */}
       <SummaryCardRow isChangeButton={false}>
         <GridColumn span={['12/12']}>
@@ -234,6 +234,6 @@ export const RentalInfoSummary = ({
           )}
         </SummaryCardRow>
       )}
-    </SummarySection>
+    </SummaryCard>
   )
 }

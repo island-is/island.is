@@ -45,3 +45,13 @@ export const fileLinksList = style({
 export const fileLink = style({
   fontSize: '.8rem',
 })
+
+export const alertMessageList = style({
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '.4rem',
+})
+
+export const alertMessageListItem = style({
+  paddingTop: '.4rem',
+})

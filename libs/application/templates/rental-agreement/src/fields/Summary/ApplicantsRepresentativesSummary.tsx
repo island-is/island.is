@@ -4,11 +4,11 @@ import { useLocale } from '@island.is/localization'
 import { RentalAgreement } from '../../lib/dataSchema'
 import { summary } from '../../lib/messages'
 import { formatNationalId, formatPhoneNumber } from '../../lib/utils'
-import { KeyValue } from './KeyValue'
-import { SummarySection } from './SummarySection'
+import { KeyValue } from './components/KeyValue'
 import { FieldBaseProps } from '@island.is/application/types'
 import { SummaryCardRow } from './components/SummaryCardRow'
 import { Routes } from '../../lib/constants'
+import { SummaryCard } from './components/SummaryCard'
 
 interface Props extends FieldBaseProps {
   goToScreen?: (id: string) => void
@@ -42,8 +42,8 @@ export const ApplicantsRepresentativesSummary: FC<Props> = ({ ...props }) => {
     return (
       <>
         {landlordListHasRepresentatives ? (
-          <SummarySection
-            sectionLabel={formatMessage(summary.landlordsRepresentativeLabel)}
+          <SummaryCard
+            cardLabel={formatMessage(summary.landlordsRepresentativeLabel)}
           >
             {landlordRepresentatives?.map((landlordRep) => {
               return (
@@ -81,13 +81,13 @@ export const ApplicantsRepresentativesSummary: FC<Props> = ({ ...props }) => {
                 </SummaryCardRow>
               )
             })}
-          </SummarySection>
+          </SummaryCard>
         ) : (
           ''
         )}
         {tenantListHasRepresentatives ? (
-          <SummarySection
-            sectionLabel={formatMessage(summary.tenantsRepresentativeLabel)}
+          <SummaryCard
+            cardLabel={formatMessage(summary.tenantsRepresentativeLabel)}
           >
             {tenantRepresentatives.map((tenantRep) => {
               return (
@@ -124,7 +124,7 @@ export const ApplicantsRepresentativesSummary: FC<Props> = ({ ...props }) => {
                 </SummaryCardRow>
               )
             })}
-          </SummarySection>
+          </SummaryCard>
         ) : (
           ''
         )}

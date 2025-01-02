@@ -1,7 +1,7 @@
 import { ReactNode } from 'react'
 import { useLocale } from '@island.is/localization'
 import { Button, GridRow } from '@island.is/island-ui/core'
-import { Divider } from '../Divider'
+import { Divider } from './Divider'
 import { gridRow, changeButton } from '../summaryStyles.css'
 import { summary } from '../../../lib/messages'
 import { Routes } from '../../../lib/constants'
