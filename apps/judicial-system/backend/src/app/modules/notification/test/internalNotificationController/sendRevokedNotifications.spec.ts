@@ -51,7 +51,7 @@ describe('InternalNotificationController - Send revoked notifications for indict
     creatingProsecutor: { institution: { name: prosecutorsOfficeName } },
     court: { name: courtName },
     courtCaseNumber,
-    policeCaseNumbers
+    policeCaseNumbers,
   }
 
   let mockEmailService: EmailService
