@@ -5,6 +5,7 @@ on:
 
 jobs:
   check-ready-for-merge-queue:
+    name: Ready for mergequeue
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
