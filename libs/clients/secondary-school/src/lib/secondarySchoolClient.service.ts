@@ -78,14 +78,12 @@ export class SecondarySchoolClient {
   }
 
   async validateCanCreate(auth: User): Promise<boolean> {
-    // const studentInfo = await this.studentsApiWithAuth(auth).v1StudentsInfoGet()
-    // return !studentInfo?.hasActiveApplication
-    //TODOx for testing
-    return true
+    const studentInfo = await this.studentsApiWithAuth(auth).v1StudentsInfoGet()
+    return !studentInfo?.hasActiveApplication
   }
 
   async validateCanDelete(auth: User, applicationId: string): Promise<boolean> {
-    // TODOx waiting for API
+    // Note: waiting for endpoint in API
     return true
   }
 

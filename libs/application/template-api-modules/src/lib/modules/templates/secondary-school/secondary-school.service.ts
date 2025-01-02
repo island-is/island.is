@@ -100,8 +100,7 @@ export class SecondarySchoolService extends BaseTemplateApiService {
       await this.secondarySchoolClient.delete(auth, externalApplicationId)
 
       // Send email to applicant and all contacts
-      // TODOx while testing
-      // await this.sendEmailAboutDeleteApplication(application)
+      await this.sendEmailAboutDeleteApplication(application)
     }
   }
 
@@ -190,8 +189,7 @@ export class SecondarySchoolService extends BaseTemplateApiService {
     }
 
     // Send email to applicant and all contacts
-    // TODOx while testing
-    // await this.sendEmailAboutSubmitApplication(application)
+    await this.sendEmailAboutSubmitApplication(application)
 
     return applicationId
   }
