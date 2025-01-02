@@ -24,4 +24,3 @@ jobs:
       - name: Display info
         run: |
           echo "TODO Build affected, run tests, create a PR to release branch"
-
