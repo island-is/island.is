@@ -9,6 +9,9 @@ export class Payment {
   @Field(() => Int)
   totalYearCumulativeAmount!: number
 
+  @Field({ nullable: true })
+  markWithAsterisk?: boolean
+
   @Field(() => [PaymentMonth])
   monthlyPaymentHistory!: Array<PaymentMonth>
 }
