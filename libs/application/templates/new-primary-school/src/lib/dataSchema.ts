@@ -118,6 +118,9 @@ export const dataSchema = z.object({
         path: ['transferOfLegalDomicile', 'postalCode'],
       },
     ),
+  school: z.object({
+    applyForNeighbourhoodSchool: z.enum([YES, NO]),
+  }),
   schools: z.object({
     newSchool: z.object({
       municipality: z.string(),
