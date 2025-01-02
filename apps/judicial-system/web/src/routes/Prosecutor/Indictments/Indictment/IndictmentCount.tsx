@@ -131,10 +131,10 @@ const getLawsBroken = (
 
   let lawsBroken: [number, number][] = []
 
-  offenses.forEach((offence) => {
-    lawsBroken = lawsBroken.concat(offenseLawsMap[offence])
+  offenses.forEach((offense) => {
+    lawsBroken = lawsBroken.concat(offenseLawsMap[offense])
 
-    if (offence === IndictmentCountOffense.DRUNK_DRIVING) {
+    if (offense === IndictmentCountOffense.DRUNK_DRIVING) {
       lawsBroken = lawsBroken.concat(
         ((substances && substances.ALCOHOL) || '') >= '1,20'
           ? offenseLawsMap.DRUNK_DRIVING_MAJOR
