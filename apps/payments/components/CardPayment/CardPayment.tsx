@@ -5,7 +5,7 @@ import { Box, Input } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 
 import { PaymentContainer } from '../PaymentContainer/PaymentContainer'
-import { card, cardError } from '../../messages'
+import { card, cardValidationError } from '../../messages'
 import { useState } from 'react'
 import { validateCardCVC, validateCardExpiry } from './CardPayment.utils'
 
@@ -45,10 +45,10 @@ export const CardPayment = () => {
           name={'card'}
           control={control}
           rules={{
-            required: formatMessage(cardError.cardNumber),
+            required: formatMessage(cardValidationError.cardNumber),
             validate: (value) => {
               if (value.length < 15) {
-                return formatMessage(cardError.cardNumberTooShort)
+                return formatMessage(cardValidationError.cardNumberTooShort)
               }
               return true
             },
@@ -86,7 +86,7 @@ export const CardPayment = () => {
               name={'cardExpiry'}
               control={control}
               rules={{
-                required: formatMessage(cardError.cardExpiry),
+                required: formatMessage(cardValidationError.cardExpiry),
                 validate: (value) => validateCardExpiry(value, formatMessage),
               }}
               render={({ field }) => (
@@ -116,7 +116,7 @@ export const CardPayment = () => {
               name={'cardCVC'}
               control={control}
               rules={{
-                required: formatMessage(cardError.cardCVC),
+                required: formatMessage(cardValidationError.cardCVC),
                 validate: (value) => validateCardCVC(value, formatMessage),
               }}
               render={({ field }) => (

@@ -1,29 +1,17 @@
-import { Box, Button, Icon, Table, Text } from '@island.is/island-ui/core'
+import { Box, Button, Table } from '@island.is/island-ui/core'
 
 import { PageCard } from '../../../components/PageCard/PageCard'
+import { PaymentHeader } from '../../../components/PaymentHeader/PaymentHeader'
 
 export default function PaymentSuccessPage() {
   return (
     <PageCard
-      headerColorScheme="success"
       headerSlot={
-        <Box
-          width="full"
-          display="flex"
-          flexDirection="column"
-          justifyContent="center"
-          alignItems="center"
-          rowGap={[0, 1]}
-        >
-          <Icon
-            type="filled"
-            icon="checkmarkCircle"
-            color="mint400"
-            size="large"
-          />
-          <Text variant="h3">Greiðsla tókst</Text>
-          <Text>Kvittun verður send í pósthólfið</Text>
-        </Box>
+        <PaymentHeader
+          title="Greiðsla tókst"
+          subTitle="Kvittun verður send í pósthólfið"
+          type="success"
+        />
       }
       bodySlot={
         <>

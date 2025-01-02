@@ -23,6 +23,11 @@ import { getConfigcatClient } from '../../../clients/configcat'
 import { card, generic, genericError, invoice } from '../../../messages'
 import { ThreeDSecure } from '../../../components/ThreeDSecure/ThreeDSecure'
 import { useRouter } from 'next/router'
+import {
+  getErrorTitleAndMessage,
+  PaymentError,
+} from '../../../utils/error/error'
+import { CardErrorCode } from 'apps/payments/utils/error/constants'
 
 interface PaymentPageProps {
   locale: string
@@ -162,6 +167,7 @@ export default function PaymentPage({
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isProcessingPayment, setIsProcessingPayment] = useState(false)
   const [threeDSecureData, setThreeDSecureData] = useState(null)
+  const [paymentError, setPaymentError] = useState<PaymentError | null>(null)
 
   const invalidFlowSetup =
     !organization ||
@@ -172,7 +178,7 @@ export default function PaymentPage({
   const payWithCard = async (data: Record<string, unknown>) => {
     const { card, cardExpiry, cardCVC } = data
 
-    // Verify fields
+    // TODO Verify fields?
     if (!card || !cardExpiry || typeof cardExpiry !== 'string' || !cardCVC) {
       return
     }
@@ -233,24 +239,33 @@ export default function PaymentPage({
     setSelectedPaymentMethod(paymentMethod)
   }
 
+  const hasPaymentError = paymentError !== null
+  const canRenderMainFlow = !invalidFlowSetup && !hasPaymentError
+
+  const { errorTitle, errorMessage } = getErrorTitleAndMessage(
+    invalidFlowSetup,
+    paymentError,
+  )
+
   return (
     <>
       <PageCard
         headerSlot={
-          !invalidFlowSetup ? (
+          canRenderMainFlow ? (
             <PaymentHeader
-              organizationTitle={organization?.title}
-              organizationImageSrc={organization?.logo?.url}
-              organizationImageAlt={organization?.logo?.title}
+              title={organization?.title}
+              imageSrc={organization?.logo?.url}
+              imageAlt={organization?.logo?.title}
               amount={productInformation.amount}
-              productTitle={productInformation.title}
+              subTitle={productInformation.title}
+              type="primary"
             />
           ) : (
-            <PaymentHeader organizationTitle="Villa" />
+            <PaymentHeader title={formatMessage(errorTitle)} type="warning" />
           )
         }
         bodySlot={
-          !invalidFlowSetup ? (
+          canRenderMainFlow ? (
             <FormProvider {...methods}>
               <form onSubmit={methods.handleSubmit(onSubmit)}>
                 <Box display="flex" flexDirection="column" rowGap={[2, 3]}>
@@ -290,12 +305,22 @@ export default function PaymentPage({
               </form>
             </FormProvider>
           ) : (
-            <Box display="flex" flexDirection="column">
-              <p>{formatMessage(genericError.fetchFailed)}</p>
+            <Box display="flex" flexDirection="column" rowGap={3}>
+              <Box display="flex" flexDirection="column" textAlign="center">
+                <p>{formatMessage(errorMessage)}</p>
+              </Box>
+              {!invalidFlowSetup && (
+                <Button
+                  variant="ghost"
+                  fluid
+                  onClick={() => setPaymentError(null)}
+                >
+                  {formatMessage(generic.back)}
+                </Button>
+              )}
             </Box>
           )
         }
-        headerColorScheme="primary"
       />
       <ModalBase
         baseId="3ds"

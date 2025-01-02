@@ -21,12 +21,32 @@ export const generic = defineMessages({
     defaultMessage: 'English',
     description: 'English',
   },
+  back: {
+    id: 'payments.generic:back',
+    defaultMessage: 'Til baka',
+    description: 'Back',
+  },
 })
 
 export const genericError = defineMessages({
+  title: {
+    id: 'payments.genericError:title',
+    defaultMessage: 'Eitthvað fór úrskeiðis',
+    description: 'Something went wrong',
+  },
+  description: {
+    id: 'payments.genericError:description',
+    defaultMessage: 'Vinsamlegast reynið aftur',
+    description: 'Please try again',
+  },
+  fetchFailedTitle: {
+    id: 'payments.generic:fetchFailedTitle',
+    defaultMessage: 'Greiðsluflæði fannst ekki',
+    description: 'Failed to fetch data for flow',
+  },
   fetchFailed: {
     id: 'payments.generic:fetchFailed',
-    defaultMessage: 'Ekki tókst að sækja upplýsingar um greiðsluflæði',
+    defaultMessage: '[Lengri skýring um hvað fór úrskeiðis]',
     description: 'Failed to fetch data for flow',
   },
   genericError: {

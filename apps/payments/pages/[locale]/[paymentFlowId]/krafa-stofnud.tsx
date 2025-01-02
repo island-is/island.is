@@ -1,33 +1,17 @@
-import { Box, Button, Icon, Table, Text } from '@island.is/island-ui/core'
+import { Box, Button, Table } from '@island.is/island-ui/core'
 
 import { PageCard } from '../../../components/PageCard/PageCard'
+import { PaymentHeader } from '../../../components/PaymentHeader/PaymentHeader'
 
 export default function PaymentSuccessPage() {
   return (
     <PageCard
-      headerColorScheme="success"
       headerSlot={
-        <Box
-          width="full"
-          display="flex"
-          flexDirection="column"
-          justifyContent="center"
-          alignItems="center"
-          textAlign="center"
-          rowGap={[0, 1]}
-        >
-          <Icon
-            type="filled"
-            icon="checkmarkCircle"
-            color="mint400"
-            size="large"
-          />
-          <Text variant="h3">Krafa stofnuð</Text>
-          <Text>
-            [Einhver texti um að krafa hafi verið stofnuð og mögulega send í
-            netbanka]
-          </Text>
-        </Box>
+        <PaymentHeader
+          title="Krafa stofnuð"
+          subTitle="[Einhver texti um að krafa hafi verið stofnuð og mögulega send í netbanka]"
+          type="success"
+        />
       }
       bodySlot={
         <>

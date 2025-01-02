@@ -7,30 +7,10 @@ import { generic } from '../../messages'
 
 type PageCardWrapperProps = {
   headerSlot: React.ReactNode
-  headerColorScheme: 'primary' | 'success' | 'warning' | 'error'
   bodySlot: React.ReactNode
 }
 
-const getHeaderBackgroundClassName = (
-  colorScheme: PageCardWrapperProps['headerColorScheme'],
-) => {
-  switch (colorScheme) {
-    case 'primary':
-      return styles.purpleBackground
-    case 'success':
-      return styles.greenBackground
-    case 'warning':
-      return styles.yellowBackground
-    case 'error':
-      return styles.redBackground
-  }
-}
-
-export const PageCard = ({
-  headerSlot,
-  bodySlot,
-  headerColorScheme = 'primary',
-}: PageCardWrapperProps) => {
+export const PageCard = ({ headerSlot, bodySlot }: PageCardWrapperProps) => {
   const { locale, formatMessage, changeLanguage } = useLocale()
 
   const handleLanguageChange = () => {
@@ -47,17 +27,8 @@ export const PageCard = ({
         className={styles.container}
       >
         <Box className={styles.cardContainer} height="full" flexGrow={1}>
-          <Box
-            paddingX={[3, 4]}
-            paddingY={[3, 4]}
-            className={getHeaderBackgroundClassName(headerColorScheme)}
-            flexDirection="row"
-            display="flex"
-            justifyContent="spaceBetween"
-            alignItems="center"
-          >
-            {headerSlot}
-          </Box>
+          {headerSlot}
+
           <Box
             paddingX={[3, 4]}
             paddingY={[3, 4]}

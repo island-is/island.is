@@ -48,26 +48,6 @@ export const cardContainer = style({
   }),
 })
 
-export const blueBackground = style({
-  backgroundColor: theme.color.blue100,
-})
-
-export const yellowBackground = style({
-  backgroundColor: theme.color.yellow100,
-})
-
-export const purpleBackground = style({
-  backgroundColor: theme.color.purple100,
-})
-
-export const redBackground = style({
-  backgroundColor: theme.color.red100,
-})
-
-export const greenBackground = style({
-  backgroundColor: theme.color.mint100,
-})
-
 const logoSize = 40
 const logoOffset = logoSize / 2
 
