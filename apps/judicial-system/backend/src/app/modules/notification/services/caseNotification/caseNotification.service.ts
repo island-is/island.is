@@ -1439,24 +1439,28 @@ export class CaseNotificationService extends BaseNotificationService {
     recipientName?: string,
     recipientEmail?: string,
   ): Promise<Recipient> {
+    const courtCaseNumber =  theCase.courtCaseNumber ?? 'NONE'
+    const policeCaseNumbers = theCase.policeCaseNumbers.join(', ')
+
     const subject = this.formatMessage(
       notifications.courtRevokedIndictmentEmail.subject,
       {
-        courtCaseNumber: theCase.courtCaseNumber ?? 'NONE',
+        courtCaseNumber,
       },
     )
     const body = this.formatMessage(
       notifications.courtRevokedIndictmentEmail.body,
       {
         prosecutorsOffice: theCase.creatingProsecutor?.institution?.name,
-        courtCaseNumber: theCase.courtCaseNumber ?? 'NONE',
+        courtCaseNumber,
+        policeCaseNumbers,
       },
     )
 
     return this.sendEmail(subject, body, recipientName, recipientEmail)
   }
 
-  private async sendRevodeNotificationsForIndictmentCase(
+  private async sendRevokeNotificationsForIndictmentCase(
     theCase: Case,
   ): Promise<DeliverResponse> {
     const promises: Promise<Recipient>[] = []
@@ -1534,7 +1538,7 @@ export class CaseNotificationService extends BaseNotificationService {
     if (isRequestCase(theCase.type)) {
       return this.sendRevokedNotificationsForRequestCase(theCase)
     } else {
-      return this.sendRevodeNotificationsForIndictmentCase(theCase)
+      return this.sendRevokeNotificationsForIndictmentCase(theCase)
     }
   }
   //#endregion
