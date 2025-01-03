@@ -698,6 +698,10 @@ export class CaseNotificationService extends BaseNotificationService {
     const official =
       role === UserRole.DISTRICT_COURT_JUDGE ? theCase.judge : theCase.registrar
 
+    if (!official?.email) {
+      return Promise.resolve({ success: false })
+    }
+
     return this.sendEmail(
       this.formatMessage(notifications.courtOfficialAssignedEmail.subject, {
         courtCaseNumber: theCase.courtCaseNumber,
