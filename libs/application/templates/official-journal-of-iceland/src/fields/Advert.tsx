@@ -85,6 +85,7 @@ export const Advert = ({ application }: OJOIFieldBaseProps) => {
           />
 
           <OJOISelectController
+            controller={true}
             width="half"
             applicationId={application.id}
             name={InputFields.advert.mainType}
@@ -93,12 +94,10 @@ export const Advert = ({ application }: OJOIFieldBaseProps) => {
             loading={mainTypeLoading}
             options={mainTypeOptions}
             onBeforeChange={(answers, value) => {
-              if (value.types.length === 1) {
-                const cleaned = cleanTypename(value.types[0])
-                set(answers, InputFields.advert.type, cleaned)
-              } else {
-                set(answers, InputFields.advert.type, null)
-              }
+              const typeValue =
+                value.types.length === 1 ? cleanTypename(value.types[0]) : null
+              set(answers, InputFields.advert.type, typeValue)
+              setValue(InputFields.advert.type, typeValue)
             }}
           />
 
@@ -136,6 +135,7 @@ export const Advert = ({ application }: OJOIFieldBaseProps) => {
       <FormGroup title={advert.headings.materialForPublication}>
         <Stack space={[2, 2, 3]}>
           <OJOISelectController
+            width="half"
             name={InputFields.misc.selectedTemplate}
             label={advert.inputs.template.label}
             placeholder={advert.inputs.template.placeholder}
