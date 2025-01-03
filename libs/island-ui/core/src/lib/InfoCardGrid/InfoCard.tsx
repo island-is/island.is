@@ -1,8 +1,3 @@
-import { useEffect, useState } from 'react'
-import { useWindowSize } from 'react-use'
-
-import { theme } from '@island.is/island-ui/theme'
-
 import { DetailedInfoCard, DetailedProps } from './DetailedInfoCard'
 import { SimpleInfoCard } from './SimpleInfoCard'
 import * as styles from './InfoCard.css'
@@ -13,6 +8,7 @@ export interface BaseProps {
   title: string
   description: string
   eyebrow: string
+  background?: BoxProps['background']
   size: 'large' | 'medium' | 'small'
   borderColor?: BoxProps['borderColor']
   link: {

@@ -74,7 +74,8 @@ export const Basic = () => (
   <Box paddingY={[1, 2]} backgroundColor="red">
     <InfoCardGrid
       variant="detailed"
-      columns={1}
+      cardsBackground={'red'}
+      columns={2}
       cards={generateCards(8, 'detailed')}
     />
   </Box>
