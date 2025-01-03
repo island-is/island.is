@@ -1,27 +1,35 @@
 import { Controller, Get, Param, Post, VERSION_NEUTRAL } from '@nestjs/common'
-import { ApiTags } from '@nestjs/swagger'
+import {
+  ApiCreatedResponse,
+  ApiOperation,
+  ApiParam,
+  ApiTags,
+} from '@nestjs/swagger'
 import { ApplicationsService } from './applications.service'
 import { ApplicationDto } from './models/dto/application.dto'
-import { Documentation } from '@island.is/nest/swagger'
 
 @ApiTags('applications')
 @Controller({ path: 'applications', version: ['1', VERSION_NEUTRAL] })
 export class ApplicationsController {
   constructor(private readonly applicationsService: ApplicationsService) {}
 
-  @Get()
-  @Documentation({
-    description: 'Get application preview',
-    response: { status: 200, type: ApplicationDto },
+  @ApiOperation({ summary: 'Get an application by id' })
+  @ApiCreatedResponse({
+    description: 'Get an application by id',
+    type: ApplicationDto,
   })
-  getPreview(@Param('formId') formId: string): ApplicationDto {
-    return this.applicationsService.getPreview(formId)
+  @ApiParam({ name: 'id', type: String })
+  @Get()
+  async getApplication(@Param('id') id: string): Promise<ApplicationDto> {
+    return this.applicationsService.getApplication(id)
   }
 
-  @Documentation({
+  @ApiOperation({ summary: 'Create new application' })
+  @ApiCreatedResponse({
     description: 'Create new application',
-    response: { status: 200, type: ApplicationDto },
+    type: ApplicationDto,
   })
+  @ApiParam({ name: 'slug', type: String })
   @Post(':slug')
   async create(@Param('slug') slug: string): Promise<ApplicationDto> {
     return this.applicationsService.create(slug)
