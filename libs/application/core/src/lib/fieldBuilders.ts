@@ -43,6 +43,7 @@ import {
   SliderField,
   MaybeWithApplication,
   MaybeWithApplicationAndFieldAndLocale,
+  InformationCardField,
   DisplayField,
   FieldsRepeaterField,
   AccordionField,
@@ -498,6 +499,20 @@ export const buildSubmitField = (data: {
   }
 }
 
+export const buildFieldItems = (
+  maybeItems: MaybeWithApplicationAndFieldAndLocale<
+    Array<{ label: FormText; value: FormText | FormTextArray }>
+  >,
+  application: Application,
+  field: Field,
+  locale: Locale,
+): Array<{ label: FormText; value: FormText | FormTextArray }> => {
+  if (typeof maybeItems === 'function') {
+    return maybeItems(application, field, locale)
+  }
+  return maybeItems
+}
+
 export const buildFieldOptions = (
   maybeOptions: MaybeWithApplicationAndFieldAndLocale<Option[]>,
   application: Application,
@@ -604,12 +619,20 @@ export const buildAlertMessageField = (
 export const buildLinkField = (
   data: Omit<LinkField, 'type' | 'component' | 'children'>,
 ): LinkField => {
-  const { s3key, link, iconProps } = data
+  const {
+    s3key,
+    link,
+    iconProps,
+    variant = 'ghost',
+    justifyContent = 'flexStart',
+  } = data
   return {
     ...extractCommonFields(data),
     s3key,
     link,
     iconProps,
+    variant,
+    justifyContent,
     children: undefined,
     type: FieldTypes.LINK,
     component: FieldComponents.LINK,
@@ -980,6 +1003,33 @@ export const buildSliderField = (
   }
 }
 
+export const buildInformationFormField = (data: {
+  width?: FieldWidth
+  colSpan?: SpanType
+  condition?: Condition
+  items: MaybeWithApplicationAndFieldAndLocale<
+    Array<{ label: FormText; value: FormText | FormTextArray }>
+  >
+  paddingX?: BoxProps['padding']
+  paddingY?: BoxProps['padding']
+}): InformationCardField => {
+  const { condition, width = 'full', colSpan, paddingX, paddingY, items } = data
+
+  return {
+    id: '',
+    title: '',
+    children: undefined,
+    doesNotRequireAnswer: true,
+    condition,
+    width,
+    colSpan,
+    type: FieldTypes.INFORMATION_CARD,
+    component: FieldComponents.INFORMATION_CARD,
+    items,
+    paddingX,
+    paddingY,
+  }
+}
 export const buildDisplayField = (
   data: Omit<DisplayField, 'type' | 'component' | 'children'>,
 ): DisplayField => {

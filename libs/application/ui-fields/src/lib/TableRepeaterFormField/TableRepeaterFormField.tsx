@@ -216,7 +216,10 @@ export const TableRepeaterFormField: FC<Props> = ({
                       </Box>
                     </T.Data>
                     {tableRows.map((item, idx) => (
-                      <T.Data key={`${item}-${idx}`}>
+                      <T.Data
+                        key={`${item}-${idx}`}
+                        disabled={values[index].disabled}
+                      >
                         {formatTableValue(
                           item,
                           customMappedValues.length
@@ -283,7 +286,7 @@ export const TableRepeaterFormField: FC<Props> = ({
             </Box>
           )}
         </Stack>
-        {error && typeof error === 'string' && fields.length === 0 && (
+        {error && typeof error === 'string' && (
           <Box marginTop={3}>
             <AlertMessage type="error" title={error} />
           </Box>
