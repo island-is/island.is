@@ -58,7 +58,6 @@ export class IndictmentCaseNotificationService extends BaseNotificationService {
   ) {
     const promises: Promise<Recipient>[] = []
 
-    console.log({to})
     for (const recipient of to) {
       if (recipient.email && recipient.name) {
         promises.push(
@@ -148,7 +147,6 @@ export class IndictmentCaseNotificationService extends BaseNotificationService {
       },
     )
 
-    console.log('her')
     return this.sendEmails(
       theCase,
       IndictmentCaseNotificationType.CRIMINAL_RECORD_FILES_UPLOADED,

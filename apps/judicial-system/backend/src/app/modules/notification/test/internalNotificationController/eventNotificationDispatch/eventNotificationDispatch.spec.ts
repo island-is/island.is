@@ -75,8 +75,6 @@ describe('InternalNotificationController - Dispatch event notifications', () => 
         { type: notificationType },
       )
 
-    console.log({ result })
-
     expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith(
       expectedMessages,
     )
