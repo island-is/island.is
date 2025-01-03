@@ -38,10 +38,13 @@ describe('IndictmentCaseService', () => {
 
   beforeEach(async () => {
     process.env.PUBLIC_PROSECUTOR_CRIMINAL_RECORDS_EMAIL =
-    'publicProsecutor@omnitrix.is'
+      'publicProsecutor@omnitrix.is'
 
-    const { emailService, notificationConfig, indictmentCaseNotificationService } =
-      await createTestingNotificationModule()
+    const {
+      emailService,
+      notificationConfig,
+      indictmentCaseNotificationService,
+    } = await createTestingNotificationModule()
 
     mockEmailService = emailService
     mockConfig = notificationConfig
