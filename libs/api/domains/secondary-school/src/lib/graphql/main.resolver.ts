@@ -23,7 +23,7 @@ export class MainResolver {
     @Args('isFreshman', { type: () => Boolean }) isFreshman: boolean,
     @CurrentUser() user: User,
   ) {
-    return await this.secondarySchoolApi.getProgramsBySchoolId(
+    return this.secondarySchoolApi.getProgramsBySchoolId(
       user,
       schoolId,
       isFreshman,
