@@ -62,14 +62,6 @@ export const RentalPeriodAmount = buildSubSection({
           options: getRentalAmountIndexTypes(),
           defaultValue: RentalAmountIndexTypes.CONSUMER_PRICE_INDEX,
           condition: rentalAmountConnectedToIndex,
-          width: 'half',
-        }),
-        buildTextField({
-          id: 'rentalAmount.indexValue',
-          title: rentalAmount.indexValueLabel,
-          placeholder: rentalAmount.indexValuePlaceholder,
-          width: 'half',
-          condition: rentalAmountConnectedToIndex,
         }),
         buildCheckboxField({
           id: 'rentalAmount.isIndexConnected',

@@ -4,8 +4,8 @@ import {
   buildSection,
   buildSubmitField,
 } from '@island.is/application/core'
-import { UserProfileApi, NationalRegistryUserApi } from '../../dataProviders'
 import { DefaultEvents } from '@island.is/application/types'
+import { UserProfileApi, NationalRegistryUserApi } from '../../dataProviders'
 import { prerequisites } from '../../lib/messages'
 
 export const externalData = buildSection({

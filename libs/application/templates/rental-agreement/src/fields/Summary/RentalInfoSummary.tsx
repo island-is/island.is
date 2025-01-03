@@ -16,10 +16,10 @@ import {
   getSecurityAmountOptions,
   getSecurityDepositTypeOptions,
 } from '../../lib/utils'
-import { summary } from '../../lib/messages'
-import { KeyValue } from './KeyValue'
-import { SummarySection } from './SummarySection'
+import { SummaryCard } from './components/SummaryCard'
 import { SummaryCardRow } from './components/SummaryCardRow'
+import { KeyValue } from './components/KeyValue'
+import { summary } from '../../lib/messages'
 
 type Props = {
   answers: RentalAgreement
@@ -89,7 +89,7 @@ export const RentalInfoSummary = ({
   }
 
   return (
-    <SummarySection>
+    <SummaryCard>
       {/* Property Address */}
       <SummaryCardRow isChangeButton={false}>
         <GridColumn span={['12/12']}>
@@ -234,6 +234,6 @@ export const RentalInfoSummary = ({
           )}
         </SummaryCardRow>
       )}
-    </SummarySection>
+    </SummaryCard>
   )
 }

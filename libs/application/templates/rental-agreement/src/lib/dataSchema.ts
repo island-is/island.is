@@ -22,11 +22,6 @@ const isValidMeterStatus = (value: string) => {
   return meterStatusRegex.test(value)
 }
 
-const isValidIndexValue = (value: string) => {
-  const indexValueRegex = /^\d{1,10}(\.\d{3})*(,\d)?$/
-  return indexValueRegex.test(value)
-}
-
 const checkIfNegative = (inputNumber: string) => {
   if (Number(inputNumber) < 0) {
     return false
@@ -258,25 +253,6 @@ const rentalAmount = z
     isPaymentInsuranceRequired: z.string().array().optional(),
   })
   .superRefine((data, ctx) => {
-    if (data.isIndexConnected && data.isIndexConnected.includes(TRUE)) {
-      if (!data.indexValue?.trim().length) {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          message: 'Custom error message',
-          params: m.rentalAmount.indexValueRequiredError,
-          path: ['indexValue'],
-        })
-      }
-      if (data.indexValue && !isValidIndexValue(data.indexValue)) {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          message: 'Custom error message',
-          params: m.rentalAmount.indexValueValidationError,
-          path: ['indexValue'],
-        })
-      }
-    }
-
     if (
       data.paymentDateOptions &&
       data.paymentDateOptions.includes(RentalAmountPaymentDateOptions.OTHER) &&
