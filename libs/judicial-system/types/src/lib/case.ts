@@ -371,6 +371,12 @@ export const hasIndictmentCaseBeenSubmittedToCourt = (
   )
 }
 
+export const getStatementDeadline = (appealReceived: Date): string => {
+  return new Date(
+    new Date(appealReceived).setDate(appealReceived.getDate() + 1),
+  ).toISOString()
+}
+
 export const isTrafficViolationCase = (theCase: {
   type?: CaseType | null
   indictmentSubtypes?: IndictmentSubtypeMap
@@ -396,12 +402,6 @@ export const isTrafficViolationCase = (theCase: {
       (val) => val === IndictmentSubtype.TRAFFIC_VIOLATION,
     )
   )
-}
-
-export const getStatementDeadline = (appealReceived: Date): string => {
-  return new Date(
-    new Date(appealReceived).setDate(appealReceived.getDate() + 1),
-  ).toISOString()
 }
 
 export const isIndictmentCaseState = (
