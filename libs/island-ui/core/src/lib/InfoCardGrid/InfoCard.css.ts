@@ -4,7 +4,7 @@ import { globalStyle, style } from '@vanilla-extract/css'
 const gridContainerBase = {
   display: 'grid',
   gap: theme.spacing[3],
-  placeItems: 'center',
+  justifyContent: 'stretch',
 }
 
 export const gridContainerOneColumn = style({
