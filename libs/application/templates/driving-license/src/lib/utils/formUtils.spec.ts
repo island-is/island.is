@@ -1,5 +1,4 @@
 import { createApplication } from '@island.is/application/testing'
-import { NO, YES } from '../constants'
 import {
   isVisible,
   isApplicationForCondition,
@@ -7,6 +6,7 @@ import {
   allowFakeCondition,
   hasCompletedPrerequisitesStep,
 } from './formUtils'
+import { NO, YES } from '@island.is/application/core'
 
 describe('isVisible', () => {
   it('returns true when all functions return true', () => {

@@ -5,18 +5,15 @@ import {
   getValueViaPath,
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
-import { LicenseTypes } from '../../lib/constants'
+import { License } from '../../lib/constants'
 
 export const sectionAdvancedLicenseSelection = buildSubSection({
   id: 'sectionAdvancedLicenseSelection',
   title: m.applicationForAdvancedLicenseTitle,
   condition: (answers) => {
-    const applicationFor = getValueViaPath<LicenseTypes>(
-      answers,
-      'applicationFor',
-    )
+    const applicationFor = getValueViaPath<string>(answers, 'applicationFor')
 
-    return applicationFor != null && applicationFor === LicenseTypes.B_ADVANCED
+    return applicationFor != null && applicationFor === License.B_ADVANCED
   },
   children: [
     buildMultiField({
