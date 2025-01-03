@@ -1,15 +1,20 @@
+import {
+  BadRequestException,
+  ConflictException,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common'
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql'
-import { ConflictException, NotFoundException } from '@nestjs/common'
 
 import { Authorize, Role } from '../auth'
 
-import { RecyclingPartnerModel } from './recyclingPartner.model'
-import { RecyclingPartnerService } from './recyclingPartner.service'
 import {
   CreateRecyclingPartnerInput,
   RecyclingPartnerInput,
   UpdateRecyclingPartnerInput,
 } from './recyclingPartner.input'
+import { RecyclingPartnerModel } from './recyclingPartner.model'
+import { RecyclingPartnerService } from './recyclingPartner.service'
 
 @Authorize()
 @Resolver(() => RecyclingPartnerModel)
@@ -17,11 +22,37 @@ export class RecyclingPartnerResolver {
   constructor(private recyclingPartnerService: RecyclingPartnerService) {}
 
   @Authorize({
-    roles: [Role.developer, Role.recyclingFund],
+    roles: [Role.developer, Role.recyclingFund, Role.municipality],
   })
-  @Query(() => [RecyclingPartnerModel])
-  async skilavottordAllRecyclingPartners(): Promise<RecyclingPartnerModel[]> {
+  @Query(() => [RecyclingPartnerModel], {
+    name: 'skilavottordAllRecyclingPartners',
+  })
+  async getAllRecyclingPartners(): Promise<RecyclingPartnerModel[]> {
     return this.recyclingPartnerService.findAll()
+  }
+
+  @Authorize({
+    roles: [Role.developer, Role.recyclingFund, Role.municipality],
+  })
+  @Query(() => [RecyclingPartnerModel], {
+    name: 'skilavottordRecyclingPartners',
+  })
+  async skilavottordRecyclingPartners(
+    @Args('isMunicipalityPage', { type: () => Boolean, nullable: true })
+    isMunicipalityPage: boolean,
+    @Args('municipalityId', { type: () => String, nullable: true })
+    municipalityId: string | null,
+  ): Promise<RecyclingPartnerModel[]> {
+    try {
+      return this.recyclingPartnerService.findRecyclingPartners(
+        isMunicipalityPage,
+        municipalityId,
+      )
+    } catch (error) {
+      throw new InternalServerErrorException(
+        `Failed to fetch recycling partners: ${error.message}`,
+      )
+    }
   }
 
   @Query(() => [RecyclingPartnerModel])
@@ -32,7 +63,7 @@ export class RecyclingPartnerResolver {
   }
 
   @Authorize({
-    roles: [Role.developer, Role.recyclingFund],
+    roles: [Role.developer, Role.recyclingFund, Role.municipality],
   })
   @Query(() => RecyclingPartnerModel)
   async skilavottordRecyclingPartner(
@@ -43,7 +74,7 @@ export class RecyclingPartnerResolver {
   }
 
   @Authorize({
-    roles: [Role.developer, Role.recyclingFund],
+    roles: [Role.developer, Role.recyclingFund, Role.municipality],
   })
   @Mutation(() => RecyclingPartnerModel)
   async createSkilavottordRecyclingPartner(
@@ -64,7 +95,7 @@ export class RecyclingPartnerResolver {
   }
 
   @Authorize({
-    roles: [Role.developer, Role.recyclingFund],
+    roles: [Role.developer, Role.recyclingFund, Role.municipality],
   })
   @Mutation(() => RecyclingPartnerModel)
   async updateSkilavottordRecyclingPartner(

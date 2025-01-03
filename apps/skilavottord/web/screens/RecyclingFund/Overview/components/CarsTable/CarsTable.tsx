@@ -1,7 +1,7 @@
-import React, { FC } from 'react'
-import { Stack, Table as T, Text } from '@island.is/island-ui/core'
-import { getDate, getYear } from '@island.is/skilavottord-web/utils'
+import { Table as T, Text } from '@island.is/island-ui/core'
 import { Vehicle } from '@island.is/skilavottord-web/graphql/schema'
+import { getDate, getYear } from '@island.is/skilavottord-web/utils'
+import React, { FC } from 'react'
 
 interface TableProps {
   titles: string[]
@@ -27,21 +27,27 @@ export const CarsTable: FC<React.PropsWithChildren<TableProps>> = ({
       <Body>
         {vehicles.map(
           ({ vehicleId, vehicleType, newregDate, recyclingRequests }) => {
-            return recyclingRequests?.map(({ createdAt, nameOfRequestor }) => {
-              const modelYear = getYear(newregDate)
-              const deregistrationDate = getDate(createdAt)
-              return (
-                <Row key={vehicleId}>
-                  <Data>
-                    <Text variant="eyebrow">{vehicleId}</Text>
-                  </Data>
-                  <Data>{vehicleType}</Data>
-                  <Data>{modelYear}</Data>
-                  <Data>{nameOfRequestor}</Data>
-                  <Data>{deregistrationDate}</Data>
-                </Row>
-              )
-            })
+            return recyclingRequests?.map(
+              ({ createdAt, nameOfRequestor, recyclingPartner }, index) => {
+                const modelYear = getYear(newregDate)
+                const deregistrationDate = getDate(createdAt)
+                return (
+                  <Row key={`${vehicleId}-${index}`}>
+                    <Data>
+                      <Text variant="eyebrow">{vehicleId}</Text>
+                    </Data>
+                    <Data>{vehicleType}</Data>
+                    <Data>{modelYear ?? ''}</Data>
+                    <Data>{nameOfRequestor}</Data>
+                    <Data>
+                      {recyclingPartner?.municipality?.companyName ??
+                        nameOfRequestor}
+                    </Data>
+                    <Data>{deregistrationDate ?? ''}</Data>
+                  </Row>
+                )
+              },
+            )
           },
         )}
       </Body>

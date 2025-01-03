@@ -63,6 +63,7 @@ export class AccessControlModel extends Model<AccessControlModel> {
   })
   recyclingLocation?: string
 
+  @Field({ nullable: true })
   @ForeignKey(() => RecyclingPartnerModel)
   @Column({
     type: DataType.STRING,
