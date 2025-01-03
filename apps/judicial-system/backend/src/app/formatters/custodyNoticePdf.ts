@@ -6,6 +6,7 @@ import {
   capitalize,
   formatDate,
   formatDOB,
+  formatGender,
   lowercase,
 } from '@island.is/judicial-system/formatters'
 import { SessionArrangements } from '@island.is/judicial-system/types'
@@ -80,14 +81,25 @@ const constructCustodyNoticePdf = (
     )
   }
 
+  addNormalText(doc, 'Lögheimili/dvalarstaður: ', 'Helvetica', true)
   addNormalText(
     doc,
     theCase.defendants &&
       theCase.defendants.length > 0 &&
       theCase.defendants[0].address
       ? theCase.defendants[0].address
-      : 'Heimili ekki skráð',
+      : 'Ekki skráð',
   )
+  addNormalText(doc, 'Kyn: ', 'Helvetica', true)
+  addNormalText(
+    doc,
+    theCase.defendants &&
+      theCase.defendants.length > 0 &&
+      theCase.defendants[0].gender
+      ? formatGender(theCase.defendants[0].gender)
+      : 'Ekki skráð',
+  )
+
   addEmptyLines(doc, 2)
   setLineGap(doc, 8)
   addMediumText(
