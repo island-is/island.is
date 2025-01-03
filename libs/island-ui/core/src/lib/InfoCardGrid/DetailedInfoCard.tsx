@@ -15,6 +15,7 @@ import { isDefined } from '@island.is/shared/utils'
 import { BaseProps } from './InfoCard'
 import { ActionCardProps } from '../ActionCard/types'
 
+import * as styles from './InfoCard.css'
 const eyebrowColor = 'blueberry600'
 
 export type DetailedProps = BaseProps & {
@@ -66,13 +67,13 @@ export const DetailedInfoCard = ({
               display="flex"
               flexDirection={'row'}
               alignItems="center"
+              className={styles.iconBox}
             >
               <Icon
                 icon={d.icon}
                 size="medium"
                 type="outline"
                 color="blue400"
-                useStroke
               />
               <Box marginLeft={2}>
                 <Text variant="medium">{d.text}</Text>
@@ -170,12 +171,19 @@ export const DetailedInfoCard = ({
   }
 
   return (
-    <>
-      {renderHeader()}
-      {renderContent()}
+    <Box
+      display="flex"
+      justifyContent="spaceBetween"
+      flexDirection="column"
+      height="full"
+    >
+      <div>
+        {renderHeader()}
+        {renderContent()}
+      </div>
       <Box marginTop={3} display="flex" justifyContent="spaceBetween">
         {renderTags()}
       </Box>
-    </>
+    </Box>
   )
 }
