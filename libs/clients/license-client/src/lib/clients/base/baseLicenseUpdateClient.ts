@@ -3,10 +3,11 @@ import { Injectable } from '@nestjs/common'
 import {
   Pass,
   PassDataInput,
+  Result,
   RevokePassData,
   SmartSolutionsApi,
 } from '@island.is/clients/smartsolutions'
-import { PassVerificationData, Result } from '../licenseClient.type'
+import { PassVerificationData } from '../../licenseClient.type'
 
 @Injectable()
 export abstract class BaseLicenseUpdateClient {
