@@ -1,15 +1,23 @@
+import { RightsPortalDentistBill } from '@island.is/api/schema'
+import {
+  Box,
+  Hidden,
+  LoadingDots,
+  Table as T,
+  Text,
+} from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
-  m,
-  formatDate,
   amountFormat,
   DownloadFileButtons,
+  formatDate,
+  m,
+  NestedLines,
 } from '@island.is/portals/my-pages/core'
-import { Box, LoadingDots, Table as T, Text } from '@island.is/island-ui/core'
-import { messages } from '../../lib/messages'
-import { RightsPortalDentistBill } from '@island.is/api/schema'
-import { exportDentistFile } from '../../utils/FileBreakdown'
 import { Problem } from '@island.is/react-spa/shared'
+import { messages } from '../../lib/messages'
+import { exportDentistFile } from '../../utils/FileBreakdown'
+import { MobileTable } from '@island.is/portals/my-pages/core'
 
 interface Props {
   bills: Array<RightsPortalDentistBill>
@@ -54,91 +62,142 @@ const BillsTable = ({ bills, loading = false }: Props) => {
   return (
     <Box marginTop="containerGutter">
       {loading && <LoadingDots />}
-      <T.Table>
-        <T.Head>
-          <T.Row>
-            <T.HeadData>
-              <Text variant="medium" fontWeight="medium">
-                {formatMessage(m.number)}
-              </Text>
-            </T.HeadData>
-            <T.HeadData>
-              <Text variant="medium" fontWeight="medium">
-                {formatMessage(m.date)}
-              </Text>
-            </T.HeadData>
-            <T.HeadData>
-              <Text variant="medium" fontWeight="medium">
-                {formatMessage(messages.repaid)}
-              </Text>
-            </T.HeadData>
-            <T.HeadData>
-              <Text variant="medium" fontWeight="medium">
-                {formatMessage(messages.dentistCharge)}
-              </Text>
-            </T.HeadData>
-            <T.HeadData>
-              <Text variant="medium" fontWeight="medium">
-                {formatMessage(messages.amountRefundedByInsurance)}
-              </Text>
-            </T.HeadData>
-          </T.Row>
-        </T.Head>
-        <T.Body>
-          {bills.map((rowItem, index) => (
-            <T.Row key={index}>
+
+      <Hidden below="md">
+        <T.Table>
+          <T.Head>
+            <T.Row>
+              <T.HeadData>
+                <Text variant="medium" fontWeight="medium">
+                  {formatMessage(m.number)}
+                </Text>
+              </T.HeadData>
+              <T.HeadData>
+                <Text variant="medium" fontWeight="medium">
+                  {formatMessage(m.date)}
+                </Text>
+              </T.HeadData>
+              <T.HeadData>
+                <Text variant="medium" fontWeight="medium">
+                  {formatMessage(messages.repaid)}
+                </Text>
+              </T.HeadData>
+              <T.HeadData>
+                <Text variant="medium" fontWeight="medium">
+                  {formatMessage(messages.dentistCharge)}
+                </Text>
+              </T.HeadData>
+              <T.HeadData>
+                <Text variant="medium" fontWeight="medium">
+                  {formatMessage(messages.amountRefundedByInsurance)}
+                </Text>
+              </T.HeadData>
+            </T.Row>
+          </T.Head>
+          <T.Body>
+            {bills.map((rowItem, index) => (
+              <T.Row key={index}>
+                <T.Data>
+                  <Text variant="medium">{rowItem.number}</Text>
+                </T.Data>
+                <T.Data>
+                  <Text variant="medium">
+                    {rowItem.date ? formatDate(rowItem.date) : ''}
+                  </Text>
+                </T.Data>
+                <T.Data>
+                  <Text variant="medium">
+                    {rowItem.refundDate ? formatDate(rowItem.refundDate) : ''}
+                  </Text>
+                </T.Data>
+                <T.Data>
+                  <Text variant="medium">
+                    {rowItem.amount ? amountFormat(rowItem.amount) : ''}
+                  </Text>
+                </T.Data>
+                <T.Data>
+                  <Text variant="medium">
+                    {rowItem.coveredAmount
+                      ? amountFormat(rowItem.coveredAmount)
+                      : ''}
+                  </Text>
+                </T.Data>
+              </T.Row>
+            ))}
+            <T.Row key="total-row">
               <T.Data>
-                <Text variant="medium">{rowItem.number}</Text>
+                <Text variant="medium" fontWeight="semiBold">
+                  {formatMessage(m.total)}
+                </Text>
               </T.Data>
+              <T.Data></T.Data>
+              <T.Data></T.Data>
               <T.Data>
-                <Text variant="medium">
-                  {rowItem.date ? formatDate(rowItem.date) : ''}
+                <Text variant="medium" fontWeight="semiBold">
+                  {totalBills.totalCharge
+                    ? amountFormat(totalBills.totalCharge)
+                    : ''}
                 </Text>
               </T.Data>
               <T.Data>
-                <Text variant="medium">
-                  {rowItem.refundDate ? formatDate(rowItem.refundDate) : ''}
-                </Text>
-              </T.Data>
-              <T.Data>
-                <Text variant="medium">
-                  {rowItem.amount ? amountFormat(rowItem.amount) : ''}
-                </Text>
-              </T.Data>
-              <T.Data>
-                <Text variant="medium">
-                  {rowItem.coveredAmount
-                    ? amountFormat(rowItem.coveredAmount)
+                <Text variant="medium" fontWeight="semiBold">
+                  {totalBills.totalCovered
+                    ? amountFormat(totalBills.totalCovered)
                     : ''}
                 </Text>
               </T.Data>
             </T.Row>
-          ))}
-          <T.Row key={'total-row'}>
-            <T.Data>
-              <Text variant="medium" fontWeight="semiBold">
-                {formatMessage(m.total)}
-              </Text>
-            </T.Data>
-            <T.Data></T.Data>
-            <T.Data></T.Data>
-            <T.Data>
-              <Text variant="medium" fontWeight="semiBold">
-                {totalBills.totalCharge
+          </T.Body>
+        </T.Table>
+      </Hidden>
+      <Hidden above="sm">
+        <MobileTable
+          rows={bills.map((item) => ({
+            title:
+              formatMessage(m.number) + ': ' + item.number?.toString() || '',
+            data: [
+              {
+                title: formatMessage(m.date),
+                content: item.date ? formatDate(item.date) : '',
+              },
+              {
+                title: formatMessage(messages.repaid),
+                content: item.refundDate ? formatDate(item.refundDate) : '',
+              },
+              {
+                title: formatMessage(messages.dentistCharge),
+                content: item.amount ? amountFormat(item.amount) : '',
+              },
+              {
+                title: formatMessage(messages.amountRefundedByInsurance),
+                content: item.coveredAmount
+                  ? amountFormat(item.coveredAmount)
+                  : '',
+              },
+            ],
+          }))}
+        />
+        <Box marginTop={4}>
+          <Text variant="eyebrow">{formatMessage(m.total)}</Text>
+          <NestedLines
+            data={[
+              {
+                title: formatMessage(messages.dentistCharge),
+                value: totalBills.totalCharge
                   ? amountFormat(totalBills.totalCharge)
-                  : ''}
-              </Text>{' '}
-            </T.Data>
-            <T.Data>
-              <Text variant="medium" fontWeight="semiBold">
-                {totalBills.totalCovered
+                  : '',
+              },
+              {
+                title: formatMessage(messages.amountRefundedByInsurance),
+                value: totalBills.totalCovered
                   ? amountFormat(totalBills.totalCovered)
-                  : ''}
-              </Text>{' '}
-            </T.Data>
-          </T.Row>
-        </T.Body>
-      </T.Table>
+                  : '',
+              },
+            ]}
+          />
+        </Box>
+      </Hidden>
+
       <DownloadFileButtons
         BoxProps={{
           paddingTop: 2,

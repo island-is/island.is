@@ -1,17 +1,17 @@
+import { RightsPortalAidOrNutritionType } from '@island.is/api/schema'
 import { Box, SkeletonLoader, Tabs, Text } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
-  IntroHeader,
+  IntroWrapper,
   SJUKRATRYGGINGAR_SLUG,
 } from '@island.is/portals/my-pages/core'
-import { messages } from '../../lib/messages'
-import { useGetAidsAndNutritionQuery } from './AidsAndNutrition.generated'
-import { RightsPortalAidOrNutritionType } from '@island.is/api/schema'
 import { Problem } from '@island.is/react-spa/shared'
-import Aids from './Aids'
-import Nutrition from './Nutrition'
 import { isDefined } from '@island.is/shared/utils'
-import { CONTENT_GAP_SM } from '../Medicine/constants'
+import { messages } from '../../lib/messages'
+import { CONTENT_GAP_SM } from '../../utils/constants'
+import Aids from './Aids'
+import { useGetAidsAndNutritionQuery } from './AidsAndNutrition.generated'
+import Nutrition from './Nutrition'
 
 const AidsAndNutrition = () => {
   useNamespaces('sp.health')
@@ -47,14 +47,13 @@ const AidsAndNutrition = () => {
   ].filter(isDefined)
 
   return (
-    <Box marginBottom={[6, 6, 10]}>
-      <IntroHeader
-        title={formatMessage(messages.aidsAndNutritionTitle)}
-        intro={formatMessage(messages.aidsAndNutritionDescription)}
-        serviceProviderSlug={SJUKRATRYGGINGAR_SLUG}
-        serviceProviderTooltip={formatMessage(messages.healthTooltip)}
-      />
-
+    <IntroWrapper
+      marginBottom={[6, 6, 10]}
+      title={formatMessage(messages.aidsAndNutritionTitle)}
+      intro={formatMessage(messages.aidsAndNutritionDescription)}
+      serviceProviderSlug={SJUKRATRYGGINGAR_SLUG}
+      serviceProviderTooltip={formatMessage(messages.healthTooltip)}
+    >
       {error && <Problem error={error} noBorder={false} />}
 
       {loading && !error && (
@@ -94,7 +93,7 @@ const AidsAndNutrition = () => {
           )}
         </Box>
       )}
-    </Box>
+    </IntroWrapper>
   )
 }
 

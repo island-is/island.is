@@ -1,18 +1,17 @@
 import { RightsPortalAidOrNutrition } from '@island.is/api/schema'
+import { Box, Text } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   DownloadFileButtons,
-  ExpandHeader,
-  ExpandRow,
   LinkButton,
-  NestedTable,
+  SortableTable,
   amountFormat,
   formatDate,
   m,
 } from '@island.is/portals/my-pages/core'
 import { messages } from '../../lib/messages'
 import { exportNutritionFile } from '../../utils/FileBreakdown'
-import { Box, Table as T, Text } from '@island.is/island-ui/core'
+import NestedInfoLines from '../MedicinePrescriptions/components/NestedInfoLines/NestedInfoLines'
 
 interface Props {
   data: Array<RightsPortalAidOrNutrition>
@@ -25,64 +24,55 @@ const Nutrition = ({ data }: Props) => {
   return (
     <Box>
       <Box marginTop={2}>
-        <T.Table>
-          <ExpandHeader
-            data={[
-              { value: '' },
-              { value: formatMessage(messages.name) },
-              { value: formatMessage(messages.maxAmountPerMonth) },
-              {
-                value: formatMessage(
-                  messages.insuranceRatioOrInitialApplicantPayment,
-                ),
-              },
-              { value: formatMessage(messages.availableRefund) },
-              { value: formatMessage(messages.nextAvailableRefund) },
-            ]}
-          />
-          <T.Body>
-            {data.map((rowItem, idx) => (
-              <ExpandRow
-                key={`nutrition-table-row-${idx}`}
+        <SortableTable
+          expandable
+          labels={{
+            name: formatMessage(messages.name),
+            maxAmountPerMonth: formatMessage(messages.maxAmountPerMonth),
+            insuranceRatioOrInitialApplicantPayment: formatMessage(
+              messages.insuranceRatioOrInitialApplicantPayment,
+            ),
+            availableRefund: formatMessage(messages.availableRefund),
+            nextAvailableRefund: formatMessage(messages.nextAvailableRefund),
+          }}
+          defaultSortByKey="name"
+          mobileTitleKey="name"
+          items={data.map((rowItem, idx) => ({
+            id: rowItem.id ?? idx,
+            name: rowItem.name ?? '',
+            maxAmountPerMonth: rowItem.maxMonthlyAmount
+              ? amountFormat(rowItem.maxMonthlyAmount)
+              : '',
+            insuranceRatioOrInitialApplicantPayment:
+              rowItem.refund.type === 'amount'
+                ? rowItem.refund.value
+                  ? amountFormat(rowItem.refund.value)
+                  : ''
+                : rowItem.refund.value
+                ? `${rowItem.refund.value}%`
+                : '',
+            availableRefund: rowItem.available ?? '',
+            nextAvailableRefund: rowItem.nextAllowedMonth ?? '',
+            children: (
+              <NestedInfoLines
                 data={[
-                  { value: rowItem.name ?? '' },
                   {
-                    value: rowItem.maxMonthlyAmount
-                      ? amountFormat(rowItem.maxMonthlyAmount)
+                    title: formatMessage(messages.availableTo),
+                    value: rowItem.validUntil
+                      ? formatDate(rowItem.validUntil)
                       : '',
                   },
                   {
-                    value:
-                      rowItem.refund.type === 'amount'
-                        ? rowItem.refund.value
-                          ? amountFormat(rowItem.refund.value)
-                          : ''
-                        : rowItem.refund.value
-                        ? `${rowItem.refund.value}%`
-                        : '',
+                    title: formatMessage(messages.extraDetail),
+                    value: rowItem.explanation ?? '',
                   },
-                  { value: rowItem.available ?? '' },
-                  { value: rowItem.nextAllowedMonth ?? '' },
                 ]}
-              >
-                <NestedTable
-                  data={[
-                    {
-                      title: formatMessage(messages.availableTo),
-                      value: rowItem.validUntil
-                        ? formatDate(rowItem.validUntil)
-                        : '',
-                    },
-                    {
-                      title: formatMessage(messages.extraDetail),
-                      value: rowItem.explanation ?? '',
-                    },
-                  ]}
-                />
-              </ExpandRow>
-            ))}
-          </T.Body>
-        </T.Table>
+                width="full"
+              />
+            ),
+          }))}
+        />
+
         <DownloadFileButtons
           BoxProps={{
             paddingTop: 2,
