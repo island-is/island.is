@@ -16,7 +16,7 @@ export const healthNavigation: PortalNavigationItem = {
       path: HealthPaths.HealthRoot,
     },
     {
-      name: messages.overviewTitle,
+      name: messages.myHealthOverview,
       path: HealthPaths.HealthOverview,
     },
     {
