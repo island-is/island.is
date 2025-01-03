@@ -11,11 +11,7 @@ import {
 
 import * as formatters from './formatters'
 import { validateAndSendToServer } from './formHelper'
-import {
-  getAppealEndDate,
-  getShortGender,
-  hasSentNotification,
-} from './stepHelper'
+import { getAppealEndDate, getShortGender, hasSentNotification } from './utils'
 
 describe('Formatters utils', () => {
   describe('Parse time', () => {
@@ -137,7 +133,7 @@ describe('Formatters utils', () => {
   })
 })
 
-describe('Step helper', () => {
+describe('Utils', () => {
   describe('insertAt', () => {
     test('should insert a string at a certain position into another string', () => {
       // Arrange
@@ -329,6 +325,70 @@ describe('Step helper', () => {
       // Assert
       expect(res).toEqual(false)
     })
+
+    test('should return false if no notification is found of a specific notification type', () => {
+      // Arrange
+      const email = faker.internet.email()
+      const n: Notification[] = [
+        {
+          id: faker.datatype.uuid(),
+          created: faker.date.future().toISOString(),
+          caseId: faker.datatype.uuid(),
+          type: NotificationType.COURT_DATE,
+          recipients: [
+            {
+              success: true,
+              address: email,
+            },
+          ],
+        },
+      ]
+      const nt = NotificationType.REVOKED
+
+      // Act
+      const res = hasSentNotification(nt, n).hasSent
+
+      // Assert
+      expect(res).toEqual(false)
+    })
+
+    test('should return true if the latest notification has been sent successfully', () => {
+      // Arrange
+      const email = faker.internet.email()
+      const n: Notification[] = [
+        {
+          id: faker.datatype.uuid(),
+          created: faker.date.future().toISOString(),
+          caseId: faker.datatype.uuid(),
+          type: NotificationType.COURT_DATE,
+          recipients: [
+            {
+              success: true,
+              address: email,
+            },
+          ],
+        },
+        {
+          id: faker.datatype.uuid(),
+          created: faker.date.past().toISOString(),
+          caseId: faker.datatype.uuid(),
+          type: NotificationType.COURT_DATE,
+          recipients: [
+            {
+              success: true,
+              address: email,
+            },
+          ],
+        },
+      ]
+      const nt = NotificationType.COURT_DATE
+
+      // Act
+      const res = hasSentNotification(nt, n).hasSent
+
+      // Assert
+      expect(res).toEqual(true)
+    })
   })
 
   describe('validateAndSendToServer', () => {
@@ -376,69 +436,5 @@ describe('Step helper', () => {
       // Assert
       expect(spy).not.toHaveBeenCalled()
     })
-  })
-
-  test('should return false if no notification is found of a spesific notification type', () => {
-    // Arrange
-    const email = faker.internet.email()
-    const n: Notification[] = [
-      {
-        id: faker.datatype.uuid(),
-        created: faker.date.future().toISOString(),
-        caseId: faker.datatype.uuid(),
-        type: NotificationType.COURT_DATE,
-        recipients: [
-          {
-            success: true,
-            address: email,
-          },
-        ],
-      },
-    ]
-    const nt = NotificationType.REVOKED
-
-    // Act
-    const res = hasSentNotification(nt, n).hasSent
-
-    // Assert
-    expect(res).toEqual(false)
-  })
-
-  test('should return true if the latest notification has been sent successfully', () => {
-    // Arrange
-    const email = faker.internet.email()
-    const n: Notification[] = [
-      {
-        id: faker.datatype.uuid(),
-        created: faker.date.future().toISOString(),
-        caseId: faker.datatype.uuid(),
-        type: NotificationType.COURT_DATE,
-        recipients: [
-          {
-            success: true,
-            address: email,
-          },
-        ],
-      },
-      {
-        id: faker.datatype.uuid(),
-        created: faker.date.past().toISOString(),
-        caseId: faker.datatype.uuid(),
-        type: NotificationType.COURT_DATE,
-        recipients: [
-          {
-            success: true,
-            address: email,
-          },
-        ],
-      },
-    ]
-    const nt = NotificationType.COURT_DATE
-
-    // Act
-    const res = hasSentNotification(nt, n).hasSent
-
-    // Assert
-    expect(res).toEqual(true)
   })
 })
