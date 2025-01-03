@@ -49,6 +49,11 @@ export const strings = {
     description:
       'Notaður sem texti í "Nei" valmöguleikanum við einkaréttarkröfu á Málsmeðferðarskjánum.',
   }),
+  civilDemandsTitle: {
+    id: 'judicial.system.indictments:processing.civil_demands_title',
+    defaultMessage: 'Einkaréttarkrafa',
+    description: 'Notaður sem titill á bótakröfusvæði á Málsmeðferðarskjánum.',
+  },
   isCivilClaim: defineMessage({
     id: 'judicial.system.indictments:processing.is_civil_claim',
     defaultMessage: 'Er bótakrafa?',

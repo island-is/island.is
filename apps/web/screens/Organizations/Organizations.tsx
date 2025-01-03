@@ -273,6 +273,7 @@ const OrganizationPage: Screen<OrganizationProps> = ({
                       tagOptions={{
                         hyphenate: true,
                         textLeft: true,
+                        truncate: true,
                       }}
                       {...(organization?.logo?.url && {
                         src: organization.logo.url,

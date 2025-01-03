@@ -65,7 +65,7 @@ interface Props {
   workingCase: Case
 }
 
-export const Defendants: FC<Props> = ({ workingCase }) => {
+const Defendants: FC<Props> = ({ workingCase }) => {
   const { defendants, type } = workingCase
   const { formatMessage } = useIntl()
 
@@ -82,12 +82,16 @@ export const Defendants: FC<Props> = ({ workingCase }) => {
   )
 }
 
-export const Prosecutor: FC<Props> = ({ workingCase }) => {
+const Prosecutor: FC<Props> = ({ workingCase }) => {
   const { formatMessage } = useIntl()
+  if (!workingCase.prosecutorsOffice?.name) {
+    return null
+  }
+
   return (
     <Entry
       label={formatMessage(core.prosecutor)}
-      value={workingCase.prosecutorsOffice?.name ?? ''}
+      value={workingCase.prosecutorsOffice.name}
     />
   )
 }
@@ -111,6 +115,17 @@ export const ProsecutorCaseInfo: FC<Props & { hideCourt?: boolean }> = ({
     </Box>
   )
 }
+
+export const ProsecutorAndDefendantsEntries: FC<Props> = ({
+  workingCase,
+}: {
+  workingCase: Case
+}) => (
+  <>
+    <Prosecutor workingCase={workingCase} />
+    <Defendants workingCase={workingCase} />
+  </>
+)
 
 export const CourtCaseInfo: FC<Props> = ({ workingCase }) => {
   const { formatMessage } = useIntl()
@@ -136,15 +151,7 @@ export const CourtCaseInfo: FC<Props> = ({ workingCase }) => {
           </Text>
         </Box>
       ) : (
-        <>
-          {workingCase.prosecutorsOffice?.name && (
-            <Entry
-              label={formatMessage(core.prosecutor)}
-              value={workingCase.prosecutorsOffice.name}
-            />
-          )}
-          <Defendants workingCase={workingCase} />
-        </>
+        <ProsecutorAndDefendantsEntries workingCase={workingCase} />
       )}
     </Box>
   )

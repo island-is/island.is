@@ -384,6 +384,7 @@ const Processing: FC = () => {
           component="section"
           marginBottom={workingCase.hasCivilClaims === true ? 5 : 10}
         >
+          <SectionHeading title={formatMessage(strings.civilDemandsTitle)} />
           <BlueBox>
             <SectionHeading
               title={formatMessage(strings.isCivilClaim)}
