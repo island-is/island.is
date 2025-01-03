@@ -215,25 +215,46 @@ export const SubPageContent = ({
   )
 }
 
+const generateNavigationItems = (
+  organizationPage: OrganizationPage | null | undefined,
+  pathname: string,
+): NavigationItem[] => {
+  const links = (organizationPage?.menuLinks ?? []).map(
+    ({ primaryLink, childrenLinks }) => ({
+      title: primaryLink?.text ?? '',
+      href: primaryLink?.url,
+      active:
+        primaryLink?.url === pathname ||
+        childrenLinks.some((link) => link.url === pathname),
+      items: childrenLinks.map(({ text, url }) => ({
+        title: text,
+        href: url,
+        active: url === pathname,
+      })),
+    }),
+  )
+  return links
+}
+
 export const getSubpageNavList = (
   organizationPage: OrganizationPage | null | undefined,
   router: NextRouter,
+  depthOfMatch: number | null = null,
 ): NavigationItem[] => {
   const pathname = new URL(router.asPath, 'https://island.is').pathname
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore make web strict
-  return organizationPage?.menuLinks.map(({ primaryLink, childrenLinks }) => ({
-    title: primaryLink?.text,
-    href: primaryLink?.url,
-    active:
-      primaryLink?.url === pathname ||
-      childrenLinks.some((link) => link.url === pathname),
-    items: childrenLinks.map(({ text, url }) => ({
-      title: text,
-      href: url,
-      active: url === pathname,
-    })),
-  }))
+  if (!depthOfMatch) {
+    return generateNavigationItems(organizationPage, pathname)
+  }
+
+  const items = generateNavigationItems(
+    organizationPage,
+    pathname
+      .split('/')
+      .slice(0, depthOfMatch + 1) // Add one to account for the starting '/'
+      .join('/'),
+  )
+
+  return items
 }
 
 type SubPageScreenContext = ScreenContext & {
