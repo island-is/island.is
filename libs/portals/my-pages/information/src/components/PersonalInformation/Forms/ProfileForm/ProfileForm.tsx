@@ -66,7 +66,6 @@ export const ProfileForm: FC<React.PropsWithChildren<Props>> = ({
   const [internalLoading, setInternalLoading] = useState(false)
   const [showPaperMail, setShowPaperMail] = useState(false)
   const [showDropModal, setShowDropModal] = useState<DropModalType>()
-  const [v2UserProfileEnabled, setV2UserProfileEnabled] = useState(false)
   const { deleteIslykillValue, loading: deleteLoading } =
     useDeleteIslykillValue()
   const userInfo = useUserInfo()
@@ -75,23 +74,6 @@ export const ProfileForm: FC<React.PropsWithChildren<Props>> = ({
   const { formatMessage } = useLocale()
   const [confirmNudge] = useConfirmNudgeMutation()
   const isCompany = userInfo?.profile?.subjectType === 'legalEntity'
-
-  const isV2UserProfileEnabled = async () => {
-    const ffEnabled = await featureFlagClient.getValue(
-      Features.isIASSpaPagesEnabled,
-      false,
-    )
-
-    if (ffEnabled) {
-      setV2UserProfileEnabled(!isCompany)
-    }
-  }
-
-  /* Should disable email and phone input with deeplink to IDS */
-  useEffect(() => {
-    isV2UserProfileEnabled()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
 
   /**
    * Creates a link to the IDS user profile page.
@@ -210,7 +192,7 @@ export const ProfileForm: FC<React.PropsWithChildren<Props>> = ({
             loading={userLoading}
           >
             {!userLoading &&
-              (v2UserProfileEnabled ? (
+              (!isCompany ? (
                 <ReadOnlyWithLinks
                   input={
                     <Input
@@ -269,7 +251,7 @@ export const ProfileForm: FC<React.PropsWithChildren<Props>> = ({
             loading={userLoading}
           >
             {!userLoading &&
-              (v2UserProfileEnabled ? (
+              (!isCompany ? (
                 <ReadOnlyWithLinks
                   input={
                     <PhoneInput

@@ -125,12 +125,13 @@ export const expandAnswers = (
         data: (answers.assets.bankAccounts?.data ?? []).map((account) => {
           return {
             assetNumber: account.assetNumber ?? '',
-            propertyValuation: account.propertyValuation ?? '',
+            amount: account.amount ?? '',
             exchangeRateOrInterest: account.exchangeRateOrInterest ?? '',
             foreignBankAccount: account?.foreignBankAccount ?? [],
             deceasedShare: account.deceasedShare ?? '',
             deceasedShareEnabled: account.deceasedShareEnabled ?? [],
             deceasedShareAmount: account.deceasedShareAmount ?? 0,
+            enabled: account.enabled ?? true,
           }
         }),
         total: answers.assets.bankAccounts?.total ?? 0,
@@ -144,6 +145,7 @@ export const expandAnswers = (
             deceasedShare: claim.deceasedShare ?? '',
             deceasedShareEnabled: claim.deceasedShareEnabled ?? [],
             deceasedShareAmount: claim.deceasedShareAmount ?? 0,
+            enabled: claim.enabled ?? true,
           }
         }),
         total: answers.assets.claims?.total ?? 0,
@@ -157,6 +159,7 @@ export const expandAnswers = (
             deceasedShare: gun.deceasedShare ?? '',
             deceasedShareEnabled: gun.deceasedShareEnabled ?? [],
             deceasedShareAmount: gun.deceasedShareAmount ?? 0,
+            enabled: gun.enabled ?? true,
           }
         }),
         total: answers.assets.guns?.total ?? 0,
@@ -199,6 +202,7 @@ export const expandAnswers = (
             deceasedShare: realEstate.deceasedShare ?? '0',
             deceasedShareEnabled: realEstate.deceasedShareEnabled ?? [],
             deceasedShareAmount: realEstate.deceasedShareAmount ?? 0,
+            enabled: realEstate.enabled ?? true,
           }
         }),
         total: answers.assets.realEstate?.total ?? 0,
@@ -214,6 +218,7 @@ export const expandAnswers = (
             deceasedShare: stock?.deceasedShare ?? '',
             deceasedShareEnabled: stock?.deceasedShareEnabled ?? [],
             deceasedShareAmount: stock?.deceasedShareAmount ?? 0,
+            enabled: stock.enabled ?? true,
           }
         }),
         total: answers.assets.stocks?.total ?? 0,
@@ -227,6 +232,7 @@ export const expandAnswers = (
             deceasedShare: vehicle.deceasedShare ?? '0',
             deceasedShareEnabled: vehicle.deceasedShareEnabled ?? [],
             deceasedShareAmount: vehicle?.deceasedShareAmount ?? 0,
+            enabled: vehicle.enabled ?? true,
           }
         }),
         total: answers.assets.vehicles?.total ?? 0,

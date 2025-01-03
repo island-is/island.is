@@ -47,6 +47,7 @@ query LimitedAccessCase($input: CaseQueryInput!) {
       subpoenaType
       isSentToPrisonAdmin
       sentToPrisonAdminDate
+      openedByPrisonAdminDate
       punishmentType
       subpoenas {
         id
@@ -228,6 +229,18 @@ query LimitedAccessCase($input: CaseQueryInput!) {
       }
       policeCaseNumbers
       indictmentSubtypes
+      court {
+        id
+        name
+      }
+      judge {
+        id
+        name
+      }
+      prosecutorsOffice {
+        id
+        name
+      }
     }
     hasCivilClaims
     civilClaimants {
