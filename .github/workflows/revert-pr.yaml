@@ -8,7 +8,11 @@ on:
       - completed
     branches:
       - main
+      - '!uni-pr'
+      - '!feature/unicorn-app'
   pull_request:
+    branches:
+      - '!uni-pr'
     types:
       - opened
       - synchronize

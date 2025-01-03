@@ -1,0 +1,26 @@
+name: Validate code in the merge queue
+
+on:
+  merge_group:
+
+jobs:
+  check-ready-for-merge-queue:
+    name: Ready for mergequeue
+    # The only way to set different required status checks to a pre-queue and a post-queue ,
+    # (i.e. before merging and in merge queue), is to have two jobs with the same name, one that triggers on pull_request,
+    # and another on merge_group.
+    # The 'Ready for mergequeue' which is triggered on pull_request (unicorn.yml) is a required status to be able to merge
+    # The 'Ready for mergequeue' triggered on merge_group here will block merging untill it has completed with success.
+    # (https://medium.com/@kojoru/how-to-set-up-merge-queues-in-github-actions-59381e5f435a)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Dump GitHub context
+        env:
+          GITHUB_CONTEXT: ${{ toJson(github) }}
+        run: |
+          echo "$GITHUB_CONTEXT"
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Display info
+        run: |
+          echo "TODO Build affected, run tests, create a PR to release branch"
