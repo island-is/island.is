@@ -708,11 +708,21 @@ export const m = defineMessages({
   },
   stocksFaceValue: {
     id: 'ir.application:stocksFaceValue',
+    defaultMessage: 'Nafnverð á dánardegi',
+    description: '',
+  },
+  stocksFaceValuePrePaid: {
+    id: 'ir.application:stocksFaceValuePrePaid',
     defaultMessage: 'Nafnverð',
     description: '',
   },
   stocksRateOfChange: {
     id: 'ir.application:stocksRateOfChange',
+    defaultMessage: 'Gengi á dánardegi',
+    description: '',
+  },
+  stocksRateOfChangePrePaid: {
+    id: 'ir.application:stocksRateOfChangePrePaid',
     defaultMessage: 'Gengi',
     description: '',
   },

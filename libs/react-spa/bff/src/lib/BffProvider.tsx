@@ -235,14 +235,10 @@ export const BffProvider = ({
     setSessionExpiredScreen(true)
   }, [])
 
-  const onRetry = useCallback(() => {
-    window.location.href = applicationBasePath
-  }, [applicationBasePath])
-
-  const onKeepCurrentUser = useCallback(() => {
+  const onRetry = () => {
     BffError.removeBffErrorParamsFromURL()
-    onRetry()
-  }, [onRetry])
+    window.location.reload()
+  }
 
   const renderContent = () => {
     if (mockedInitialState) {
@@ -260,7 +256,7 @@ export const BffProvider = ({
       return (
         <BffDoubleSessionModal
           onSwitchUser={switchUser}
-          onKeepCurrentUser={onKeepCurrentUser}
+          onKeepCurrentUser={onRetry}
         />
       )
     }

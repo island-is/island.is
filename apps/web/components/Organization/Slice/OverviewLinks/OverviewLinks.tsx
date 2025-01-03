@@ -55,23 +55,18 @@ export const OverviewLinksSlice: React.FC<
                     key={index}
                     direction={leftImage ? 'row' : 'rowReverse'}
                   >
-                    <GridColumn span={['8/8', '3/8', '4/8', '3/8']}>
-                      <Box
-                        width="full"
-                        position="relative"
-                        paddingLeft={leftImage ? undefined : [0, 0, 0, 0, 6]}
-                        paddingRight={leftImage ? [10, 0, 0, 0, 6] : [10, 0]}
-                      >
-                        {/**
-                         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                         // @ts-expect-error make web strict */}
-                        <Image
-                          url={image?.url + '?w=774&fm=webp&q=80'}
-                          thumbnail={image?.url + '?w=50&fm=webp&q=80'}
-                          {...image}
-                        />
-                      </Box>
-                    </GridColumn>
+                    {image?.url && (
+                      <GridColumn span={['8/8', '3/8', '4/8', '3/8']}>
+                        <Box
+                          width="full"
+                          position="relative"
+                          paddingLeft={leftImage ? undefined : [0, 0, 0, 0, 6]}
+                          paddingRight={leftImage ? [10, 0, 0, 0, 6] : [10, 0]}
+                        >
+                          <img src={`${image.url}?w=774&fm=webp&q=80`} alt="" />
+                        </Box>
+                      </GridColumn>
+                    )}
                     <GridColumn span={['8/8', '5/8', '4/8', '5/8']}>
                       <Box
                         display="flex"

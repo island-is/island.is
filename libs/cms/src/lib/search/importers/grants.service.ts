@@ -17,13 +17,11 @@ import { isDefined } from '@island.is/shared/utils'
 @Injectable()
 export class GrantsSyncService implements CmsSyncProvider<IGrant> {
   processSyncData(entries: processSyncDataInput<IGrant>) {
-    // only process grants that we consider not to be empty and dont have circular structures
+    // only process grants that we consider not to be empty
     return entries.filter(
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (entry: Entry<any>): entry is IGrant =>
-        entry.sys.contentType.sys.id === 'grant' &&
-        entry.fields.grantName &&
-        !isCircular(entry),
+        entry.sys.contentType.sys.id === 'grant' && entry.fields.grantName,
     )
   }
 

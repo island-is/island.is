@@ -47,7 +47,7 @@ export const PaymentChargeOverviewFormField: FC<
   )
 
   return (
-    <Box>
+    <Box marginTop={field.marginTop} marginBottom={field.marginBottom}>
       <Box>
         <Text variant="h5">
           {formatText(field.forPaymentLabel, application, formatMessage)}
