@@ -45,6 +45,7 @@ const MobileTableRow: React.FC<Props> = ({
       padding={inner ? 1 : 0}
       paddingTop={3}
       marginTop={first ? 0 : 3}
+      marginBottom={extended ? 2 : 0}
       position="relative"
       background={
         extended || background === 'blue'

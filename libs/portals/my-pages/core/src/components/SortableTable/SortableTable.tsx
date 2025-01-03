@@ -11,7 +11,7 @@ import { useMemo, useState } from 'react'
 import { useWindowSize } from 'react-use'
 import { ExpandHeader } from '../ExpandableTable'
 import { HeaderButton } from './HeaderButton'
-import MobileTable from './Mobile/MobileTable'
+import { MobileTable } from '../MobileTable/MobileTable'
 import * as styles from './SortableTable.css'
 import { TableRow } from './TableRow'
 import { SortableData, SortableTableProps } from './types'
@@ -22,15 +22,19 @@ import { useSortableData } from './useSortableData'
  * It supports expandable rows and custom headers.
  *
  * @param {SortableTableProps} props - The properties for the SortableTable component.
- * @param {Array} props.items - The data items to be displayed in the table.
+ * @param {Array<SortableData>} props.items - The data items to be displayed in the table.
  * @param {Function} props.requestSort - Function to request sorting of the table.
  * @param {Object} props.sortConfig - Configuration object for sorting.
  * @param {string} [props.defaultSortByKey] - The default key to sort by.
  * @param {boolean} [props.expandable] - Flag to indicate if the table rows are expandable.
- * @param {Object} props.labels - Labels for the table headers.
+ * @param {Record<string, string>} props.labels - Labels for the table headers.
  * @param {string} [props.title] - Title of the table.
  * @param {boolean} [props.tagOutlined] - Flag to indicate if tags should be outlined.
- * @param {Object} [props.footer] - Footer data for the table.
+ * @param {Record<string, string>} [props.footer] - Footer data for the table.
+ * @param {string} [props.mobileTitleKey] - Key for the title in mobile view.
+ * @param {string} [props.inner] - Inner content for the table.
+ * @param {string} [props.align] - Alignment for the table headers and data.
+ * @param {number} [props.ellipsisLength] - Length for ellipsis in table data.
  *
  * @returns {JSX.Element} The rendered SortableTable component.
  *
@@ -45,6 +49,10 @@ import { useSortableData } from './useSortableData'
  *   title="My Table"
  *   tagOutlined={false}
  *   footer={footerData}
+ *   mobileTitleKey="name"
+ *   inner="Some inner content"
+ *   align="left"
+ *   ellipsisLength={20}
  * />
  *
  * @remarks
