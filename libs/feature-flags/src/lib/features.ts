@@ -78,7 +78,6 @@ export enum Features {
   licenseServiceDrivingLicencePhotoCheckDisabled = 'isLicenseServiceDrivingLicencePhotoCheckDisabled',
 
   //Use new modal for health
-  isServicePortalDentistRegistrationModalV2Enabled = 'isServicePortalDentistRegistrationModalV2Enabled',
   isServicePortalHealthCenterRegistrationModalV2Enabled = 'isServicePortalHealthCenterRegistrationModalV2Enabled',
 
   //Enable intellectual properties fetch
