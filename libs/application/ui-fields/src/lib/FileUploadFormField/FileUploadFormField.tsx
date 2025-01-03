@@ -36,8 +36,9 @@ export const FileUploadFormField = ({
   const currentValue = watch(id)
 
   const onFileRemoveWhenInAnswers = (fileToRemove: UploadFile) => {
+    const answers = structuredClone(application.answers)
     const updatedAnswers = set(
-      application.answers,
+      answers,
       id,
       currentValue.filter((x: UploadFile) => x.key !== fileToRemove.key),
     )

@@ -121,48 +121,50 @@ export const Overview = () => {
         <Box component="section" marginBottom={5}>
           <IndictmentCaseFilesList workingCase={workingCase} />
         </Box>
-        <Box marginBottom={5}>
-          <SectionHeading
-            title={fm(strings.reviewerTitle)}
-            description={
-              <Text variant="eyebrow">
-                {fm(strings.reviewerSubtitle, {
-                  isFine:
-                    workingCase.indictmentRulingDecision ===
-                    CaseIndictmentRulingDecision.FINE,
-                  indictmentAppealDeadline: formatDate(
-                    workingCase.indictmentAppealDeadline,
-                  ),
-                  appealDeadlineIsInThePast:
-                    workingCase.indictmentVerdictAppealDeadlineExpired,
-                })}
-              </Text>
-            }
-          />
-          <BlueBox>
-            <Select
-              name="reviewer"
-              label={fm(strings.reviewerLabel)}
-              placeholder={fm(strings.reviewerPlaceholder)}
-              value={
-                selectedIndictmentReviewer
-                  ? selectedIndictmentReviewer
-                  : workingCase.indictmentReviewer
-                  ? {
-                      label: workingCase.indictmentReviewer.name || '',
-                      value: workingCase.indictmentReviewer.id,
-                    }
-                  : undefined
+        {!workingCase.indictmentReviewDecision && (
+          <Box marginBottom={5}>
+            <SectionHeading
+              title={fm(strings.reviewerTitle)}
+              description={
+                <Text variant="eyebrow">
+                  {fm(strings.reviewerSubtitle, {
+                    isFine:
+                      workingCase.indictmentRulingDecision ===
+                      CaseIndictmentRulingDecision.FINE,
+                    indictmentAppealDeadline: formatDate(
+                      workingCase.indictmentAppealDeadline,
+                    ),
+                    appealDeadlineIsInThePast:
+                      workingCase.indictmentVerdictAppealDeadlineExpired,
+                  })}
+                </Text>
               }
-              options={publicProsecutors}
-              onChange={(value) => {
-                setSelectedIndictmentReviewer(value as Option<string>)
-              }}
-              isDisabled={loading}
-              required
             />
-          </BlueBox>
-        </Box>
+            <BlueBox>
+              <Select
+                name="reviewer"
+                label={fm(strings.reviewerLabel)}
+                placeholder={fm(strings.reviewerPlaceholder)}
+                value={
+                  selectedIndictmentReviewer
+                    ? selectedIndictmentReviewer
+                    : workingCase.indictmentReviewer
+                    ? {
+                        label: workingCase.indictmentReviewer.name || '',
+                        value: workingCase.indictmentReviewer.id,
+                      }
+                    : undefined
+                }
+                options={publicProsecutors}
+                onChange={(value) => {
+                  setSelectedIndictmentReviewer(value as Option<string>)
+                }}
+                isDisabled={loading}
+                required
+              />
+            </BlueBox>
+          </Box>
+        )}
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter

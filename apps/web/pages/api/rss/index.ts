@@ -77,7 +77,7 @@ export default async function handler(
 
   const contentType = parseAsStringEnum(CONTENT_TYPES)
     .withDefault('news')
-    .parseServerSide(req.query?.contentType) as 'news' | 'genericList' | 'event'
+    .parseServerSide(req.query?.contenttype) as 'news' | 'genericList' | 'event'
 
   const apolloClient = initApollo({}, locale)
 
@@ -180,7 +180,7 @@ export default async function handler(
       .map((item) => {
         const formattedStartDate = format(
           new Date(item.startDate),
-          'dd. MMMM yyyy',
+          'd. MMMM yyyy',
           {
             locale: localeMap[locale],
           },

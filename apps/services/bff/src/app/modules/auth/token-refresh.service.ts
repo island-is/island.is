@@ -81,10 +81,10 @@ export class TokenRefreshService {
         ttl: TokenRefreshService.MAX_POLL_TIME,
       })
 
-      const newTokens = await this.idsService.refreshToken(
+      const newTokenCache = await this.idsService.refreshToken(
         encryptedRefreshToken,
       )
-      tokenResponse = await this.authService.updateTokenCache(newTokens)
+      tokenResponse = await this.authService.updateTokenCache(newTokenCache)
     } catch (error) {
       this.logger.warn('Failed to refresh tokens: ', error)
     } finally {
