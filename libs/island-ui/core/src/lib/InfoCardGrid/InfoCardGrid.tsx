@@ -1,11 +1,10 @@
 import { useEffect, useState } from 'react'
 import { useWindowSize } from 'react-use'
 
-import { BoxProps, GridColumn, GridContainer, GridRow, Stack } from '../..'
+import { Box, BoxProps } from '../..'
 import { theme } from '@island.is/island-ui/theme'
 
-import chunk from 'lodash/chunk'
-
+import * as styles from './InfoCard.css'
 import { InfoCard, InfoCardProps } from './InfoCard'
 
 export type InfoCardItemProps = Omit<
@@ -18,11 +17,32 @@ interface Props {
   variant?: 'detailed' | 'simple'
   columns?: 1 | 2 | 3
   cardsBackground?: BoxProps['background']
+  cardsBorder?: BoxProps['borderColor']
+}
+
+type CardSize = 'small' | 'medium' | 'large'
+
+const mapColumnCountToCardSize = (
+  columns: Props['columns'],
+  isMobile?: boolean,
+): CardSize => {
+  if (isMobile) {
+    return 'large'
+  }
+  switch (columns) {
+    case 1:
+      return 'large'
+    case 2:
+      return 'medium'
+    default:
+      return 'small'
+  }
 }
 
 export const InfoCardGrid = ({
   cards,
   cardsBackground,
+  cardsBorder,
   variant,
   columns,
 }: Props) => {
@@ -30,47 +50,34 @@ export const InfoCardGrid = ({
   const { width } = useWindowSize()
 
   useEffect(() => {
-    if (width < theme.breakpoints.md) {
+    if (width < theme.breakpoints.sm) {
       return setIsMobile(true)
     }
     setIsMobile(false)
   }, [width])
 
-  if (columns === 1) {
-    return (
-      <Stack space={2}>
-        {cards.map((c) => (
-          <InfoCard
-            key={c.id}
-            variant={variant}
-            size={'large'}
-            background={cardsBackground}
-            {...c}
-          />
-        ))}
-      </Stack>
-    )
-  }
-
-  const cardNodes = cards.map((c, index) => (
-    <GridColumn span="5/12">
-      <InfoCard
-        key={`${c.title}-${index}`}
-        background={cardsBackground}
-        variant={variant}
-        size={columns === 3 ? 'small' : 'medium'}
-        {...c}
-      />
-    </GridColumn>
-  ))
-
-  const nodeChunks = chunk(cardNodes, columns)
+  const cardSize = mapColumnCountToCardSize(columns, isMobile)
 
   return (
-    <GridContainer>
-      {nodeChunks.map((column) => (
-        <GridRow rowGap={1}>{column}</GridRow>
+    <Box
+      className={
+        cardSize === 'small'
+          ? styles.gridContainerThreeColumn
+          : cardSize === 'medium'
+          ? styles.gridContainerTwoColumn
+          : styles.gridContainerOneColumn
+      }
+    >
+      {cards.map((c, index) => (
+        <InfoCard
+          key={`${c.title}-${index}`}
+          background={cardsBackground}
+          borderColor={cardsBorder}
+          variant={variant}
+          size={isMobile ? 'medium' : cardSize}
+          {...c}
+        />
       ))}
-    </GridContainer>
+    </Box>
   )
 }

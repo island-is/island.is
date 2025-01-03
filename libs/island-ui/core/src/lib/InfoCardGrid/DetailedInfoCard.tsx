@@ -1,7 +1,6 @@
 import {
   Box,
   GridColumn,
-  GridContainer,
   GridRow,
   Icon,
   IconMapIcon,
@@ -76,9 +75,7 @@ export const DetailedInfoCard = ({
                 color="blue400"
               />
               <Box marginLeft={2}>
-                <Text variant="medium" max>
-                  {d.text}
-                </Text>
+                <Text variant="small">{d.text}</Text>
               </Box>
             </Box>
           ))}
