@@ -32,20 +32,18 @@ export const SimpleInfoCard = ({
   const renderContent = () => {
     if (size === 'large') {
       return (
-        <GridContainer>
-          <GridRow direction="row">
-            <GridColumn span="12/12">
-              <Text variant="h3" color="blue400">
-                {title}
-              </Text>
-              {description && (
-                <Box flexGrow={1} marginTop={1}>
-                  <Text>{description}</Text>
-                </Box>
-              )}
-            </GridColumn>
-          </GridRow>
-        </GridContainer>
+        <GridRow direction="row">
+          <GridColumn span="12/12">
+            <Text variant="h3" color="blue400">
+              {title}
+            </Text>
+            {description && (
+              <Box flexGrow={1} marginTop={1}>
+                <Text>{description}</Text>
+              </Box>
+            )}
+          </GridColumn>
+        </GridRow>
       )
     }
     return (
