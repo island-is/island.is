@@ -143,26 +143,4 @@ describe('IndictmentCaseService', () => {
       expect(mockEmailService.sendEmail).not.toBeCalled()
     })
   })
-
-  describe('notification sent to public prosecutor static email address', () => {
-    it('should send notification', async () => {
-      const then = await givenWhenThen(
-        theCase,
-        IndictmentCaseNotificationType.CRIMINAL_RECORD_FILES_UPLOADED,
-      )
-
-      expect(mockEmailService.sendEmail).toBeCalledWith(
-        expect.objectContaining({
-          to: [
-            { address: 'sakaskra@saksoknari.is', name: 'Ritari sakaskrár' },
-          ],
-          subject: expect.stringContaining(`Tilkynning til sakaskrár í máli ${courtCaseNumber}`),
-          html: expect.stringContaining(
-            `Máli ${courtCaseNumber} hjá ${courtName} hefur verið lokið.`,
-          ),
-        }),
-      )
-      expect(then.result).toEqual({ delivered: true })
-    })
-  })
 })

@@ -18,6 +18,7 @@ import {
   IndictmentCaseNotificationType,
 } from '@island.is/judicial-system/types'
 
+import { notifications } from '../../../../messages'
 import { Case } from '../../../case'
 import { EventService } from '../../../event'
 import { BaseNotificationService } from '../../baseNotification.service'
@@ -57,6 +58,7 @@ export class IndictmentCaseNotificationService extends BaseNotificationService {
   ) {
     const promises: Promise<Recipient>[] = []
 
+    console.log({to})
     for (const recipient of to) {
       if (recipient.email && recipient.name) {
         promises.push(
@@ -146,6 +148,7 @@ export class IndictmentCaseNotificationService extends BaseNotificationService {
       },
     )
 
+    console.log('her')
     return this.sendEmails(
       theCase,
       IndictmentCaseNotificationType.CRIMINAL_RECORD_FILES_UPLOADED,
@@ -153,8 +156,10 @@ export class IndictmentCaseNotificationService extends BaseNotificationService {
       formattedBody,
       [
         {
-          name: 'Ritari sakaskrár',
-          email: 'sakaskra@saksoknari.is',
+          name: this.formatMessage(
+            notifications.emailNames.publicProsecutorCriminalRecords,
+          ),
+          email: this.config.email.publicProsecutorCriminalRecordsEmail,
         },
       ],
     )

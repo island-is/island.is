@@ -16,9 +16,11 @@ import { InternalNotificationController } from '../../../internalNotification.co
 describe('InternalNotificationController - Dispatch event notifications', () => {
   const theCase = {
     id: uuid(),
-    caseFiles: [{
-        category: CaseFileCategory.CRIMINAL_RECORD_UPDATE
-    }] as CaseFile[],
+    caseFiles: [
+      {
+        category: CaseFileCategory.CRIMINAL_RECORD_UPDATE,
+      },
+    ] as CaseFile[],
   } as Case
 
   let mockMessageService: MessageService
