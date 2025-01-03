@@ -190,7 +190,7 @@ export const getBankAccountsDataRow = (answers: FormValue): RowType[] => {
   )?.bankAccounts?.data.filter((item) => item.enabled)
 
   const data = (values ?? []).map((item) => {
-    const propertyValuation = roundedValueToNumber(item.propertyValuation)
+    const propertyValuation = roundedValueToNumber(item.amount)
 
     const isForeign = item.foreignBankAccount?.length
 
