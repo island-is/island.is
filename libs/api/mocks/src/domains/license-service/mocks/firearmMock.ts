@@ -10,37 +10,37 @@ const firearmPropertyDataField = () =>
       {
         type: 'Value',
         label: 'Staða skotvopns',
-        value: faker.random.word(),
+        value: faker.word.sample(),
       },
       {
         type: 'Value',
         label: 'Tegund',
-        value: faker.random.word(),
+        value: faker.word.sample(),
       },
       {
         type: 'Value',
         label: 'Heiti',
-        value: faker.random.word(),
+        value: faker.word.sample(),
       },
       {
         type: 'Value',
         label: 'Númer',
-        value: faker.datatype.number(1000000000).toString(),
+        value: faker.number.int(1000000000).toString(),
       },
       {
         type: 'Value',
         label: 'Landsnúmer',
-        value: faker.datatype.number(99999999).toString(),
+        value: faker.number.int(99999999).toString(),
       },
       {
         type: 'Value',
         label: 'Hlaupvídd',
-        value: faker.datatype.number(50).toString(),
+        value: faker.number.int(50).toString(),
       },
       {
         type: 'Value',
         label: 'Takmarkanir',
-        value: faker.random.word(),
+        value: faker.word.sample(),
       },
     ],
   })
@@ -48,8 +48,8 @@ const firearmPropertyDataField = () =>
 const firearmRightsDataField = () =>
   factory<GenericLicenseDataField>({
     type: 'Category',
-    name: faker.random.alpha({ count: 1, upcase: true }),
-    label: faker.random.word(),
+    name: faker.string.alpha({ length: 1, casing: 'upper' }),
+    label: faker.word.sample(),
     description: faker.lorem.paragraph(),
     value: '',
   })
@@ -86,16 +86,13 @@ export const mockFirearmLicense = (
   {
     type: 'Group',
     label: 'Réttindaflokkar',
-    fields: generateDataField(
-      firearmRightsDataField,
-      faker.datatype.number(10),
-    ),
+    fields: generateDataField(firearmRightsDataField, faker.number.int(10)),
   },
   {
     type: 'Table',
     label: 'Skotvopn í eigu leyfishafa',
     fields: faker.datatype.boolean()
-      ? generateDataField(firearmPropertyDataField, faker.datatype.number(250))
+      ? generateDataField(firearmPropertyDataField, faker.number.int(250))
       : [],
   },
 ]

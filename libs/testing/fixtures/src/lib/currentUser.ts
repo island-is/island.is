@@ -1,4 +1,4 @@
-import * as faker from 'faker'
+import { faker } from '@faker-js/faker'
 
 import { User } from '@island.is/auth-nest-tools'
 import {
@@ -39,8 +39,8 @@ export const createCurrentUser = (user: UserOptions = {}): User => {
   return {
     nationalId: user.nationalId ?? createNationalId(user.nationalIdType),
     scope: user.scope ?? [],
-    authorization: user.authorization ?? faker.random.word(),
-    client: user.client ?? faker.random.word(),
+    authorization: user.authorization ?? faker.word.sample(),
+    client: user.client ?? faker.word.sample(),
     delegationType,
     actor,
     audkenniSimNumber: user.audkenniSimNumber,

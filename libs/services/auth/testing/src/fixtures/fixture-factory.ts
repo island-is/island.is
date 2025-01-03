@@ -1,7 +1,7 @@
 import { getModelToken } from '@nestjs/sequelize'
 import addYears from 'date-fns/addYears'
 import startOfDay from 'date-fns/startOfDay'
-import faker from 'faker'
+import { faker } from '@faker-js/faker'
 import { Model } from 'sequelize'
 
 import {
@@ -91,10 +91,10 @@ export class FixtureFactory {
     )
 
     const domain = await this.get(Domain).create({
-      name: name ?? faker.random.word(),
+      name: name ?? faker.word.sample(),
       description: description ?? faker.lorem.sentence(),
       nationalId: nationalId ?? createNationalId('company'),
-      organisationLogoKey: organisationLogoKey ?? faker.random.word(),
+      organisationLogoKey: organisationLogoKey ?? faker.word.sample(),
     })
     domain.scopes = await Promise.all(
       apiScopes.map((apiScope, order) =>
@@ -202,9 +202,9 @@ export class FixtureFactory {
   ): Promise<IdentityResource> {
     const [identityResource, _] = await this.get(IdentityResource).upsert({
       enabled: createIdentityResource.enabled ?? true,
-      name: createIdentityResource.name ?? faker.random.word(),
-      displayName: createIdentityResource.displayName ?? faker.random.word(),
-      description: createIdentityResource.description ?? faker.random.word(),
+      name: createIdentityResource.name ?? faker.word.sample(),
+      displayName: createIdentityResource.displayName ?? faker.word.sample(),
+      description: createIdentityResource.description ?? faker.word.sample(),
       showInDiscoveryDocument:
         createIdentityResource.showInDiscoveryDocument ?? true,
       required: createIdentityResource.required ?? false,
@@ -243,8 +243,8 @@ export class FixtureFactory {
   }: CreateClientClaim): Promise<ClientClaim> {
     return this.get(ClientClaim).create({
       clientId,
-      type: type ?? faker.random.word(),
-      value: value ?? faker.random.word(),
+      type: type ?? faker.word.sample(),
+      value: value ?? faker.word.sample(),
     })
   }
 
@@ -254,7 +254,7 @@ export class FixtureFactory {
   }: CreateClientGrantType): Promise<ClientGrantType> {
     return this.get(ClientGrantType).create({
       clientId,
-      grantType: grantType ?? faker.random.word(),
+      grantType: grantType ?? faker.word.sample(),
     })
   }
 
@@ -267,13 +267,13 @@ export class FixtureFactory {
     ...apiScope
   }: CreateApiScope = {}): Promise<ApiScope> {
     if (!domainName) {
-      domainName = (await this.createDomain({ name: faker.random.word() })).name
+      domainName = (await this.createDomain({ name: faker.word.sample() })).name
     }
     const createdScope = await this.get(ApiScope).create({
       enabled: apiScope.enabled ?? true,
-      name: apiScope.name ?? faker.random.word(),
-      displayName: apiScope.displayName ?? faker.random.word(),
-      description: apiScope.description ?? faker.random.word(),
+      name: apiScope.name ?? faker.word.sample(),
+      displayName: apiScope.displayName ?? faker.word.sample(),
+      description: apiScope.description ?? faker.word.sample(),
       order: apiScope.order ?? 0,
       showInDiscoveryDocument: apiScope.showInDiscoveryDocument ?? true,
       required: apiScope.required ?? false,
@@ -335,13 +335,13 @@ export class FixtureFactory {
     ...data
   }: CreateApiScopeGroup = {}): Promise<ApiScopeGroup> {
     if (!domainName) {
-      domainName = (await this.createDomain({ name: faker.random.word() })).name
+      domainName = (await this.createDomain({ name: faker.word.sample() })).name
     }
     const group = await this.get(ApiScopeGroup).create({
-      id: data.id ?? faker.datatype.uuid(),
-      name: data.name ?? faker.random.word(),
-      displayName: data.displayName ?? faker.random.word(),
-      description: data.description ?? faker.random.word(),
+      id: data.id ?? faker.string.uuid(),
+      name: data.name ?? faker.word.sample(),
+      displayName: data.displayName ?? faker.word.sample(),
+      description: data.description ?? faker.word.sample(),
       order: data.order ?? 0,
       domainName,
     })
@@ -380,12 +380,12 @@ export class FixtureFactory {
     referenceId,
   }: CreateCustomDelegation): Promise<Delegation> {
     const delegation = await this.get(Delegation).create({
-      id: faker.datatype.uuid(),
+      id: faker.string.uuid(),
       fromNationalId: fromNationalId ?? createNationalId(),
       toNationalId: toNationalId ?? createNationalId('person'),
       domainName,
-      fromDisplayName: fromName ?? faker.name.findName(),
-      toName: faker.name.findName(),
+      fromDisplayName: fromName ?? faker.person.fullName(),
+      toName: faker.person.fullName(),
       referenceId: referenceId ?? undefined,
     })
 
@@ -417,7 +417,7 @@ export class FixtureFactory {
     delegationId: string
   }): Promise<DelegationScope> {
     const scope = await this.get(DelegationScope).create({
-      id: faker.datatype.uuid(),
+      id: faker.string.uuid(),
       delegationId,
       scopeName,
       validFrom: validFrom ?? startOfDay(new Date()),
@@ -434,12 +434,12 @@ export class FixtureFactory {
       PersonalRepresentativeRightType,
     ).findCreateFind({
       where: {
-        code: rightType?.code ?? faker.random.word(),
+        code: rightType?.code ?? faker.word.sample(),
       },
       defaults: {
         validFrom: rightType?.validFrom ?? startOfDay(new Date()),
         validTo: rightType?.validTo ?? addYears(new Date(), 1),
-        description: rightType?.description ?? faker.random.words(3),
+        description: rightType?.description ?? faker.word.words(3),
       },
     })
 
@@ -486,7 +486,7 @@ export class FixtureFactory {
     id?: string | null
   }) {
     return this.get(PersonalRepresentativeRight).create({
-      id: id ?? faker.datatype.uuid(),
+      id: id ?? faker.string.uuid(),
       personalRepresentativeId,
       rightTypeCode,
     })
@@ -502,7 +502,7 @@ export class FixtureFactory {
     id?: string | null
   }) {
     return this.get(PersonalRepresentativeDelegationTypeModel).create({
-      id: id ?? faker.datatype.uuid(),
+      id: id ?? faker.string.uuid(),
       personalRepresentativeId: personalRepresentativeId,
       delegationTypeId: delegationTypeCode,
     })
@@ -537,18 +537,18 @@ export class FixtureFactory {
     const [personalRepresentativeType] = await this.get(
       PersonalRepresentativeType,
     ).findCreateFind({
-      where: { code: type?.code ?? faker.random.word() },
+      where: { code: type?.code ?? faker.word.sample() },
       defaults: {
         validTo: type?.validTo ?? addYears(new Date(), 1),
-        name: type?.name ?? faker.random.word(),
-        description: type?.description ?? faker.random.words(3),
+        name: type?.name ?? faker.word.sample(),
+        description: type?.description ?? faker.word.words(3),
       },
     })
 
     const personalRepresentative = await this.get(
       PersonalRepresentative,
     ).create({
-      id: faker.datatype.uuid(),
+      id: faker.string.uuid(),
       nationalIdRepresentedPerson: fromNationalId ?? createNationalId(),
       nationalIdPersonalRepresentative:
         toNationalId ?? createNationalId('person'),
@@ -647,11 +647,11 @@ export class FixtureFactory {
   }
 
   async createUserIdentity({
-    providerName = faker.random.word(),
-    providerSubjectId = faker.datatype.uuid(),
-    subjectId = faker.datatype.uuid(),
+    providerName = faker.word.sample(),
+    providerSubjectId = faker.string.uuid(),
+    subjectId = faker.string.uuid(),
     active = true,
-    name = faker.name.findName(),
+    name = faker.person.fullName(),
   }: CreateUserIdentity) {
     return this.get(UserIdentity).create({
       providerName,
@@ -663,12 +663,12 @@ export class FixtureFactory {
   }
 
   async createClaim({
-    type = faker.random.word(),
-    value = faker.random.word(),
-    subjectId = faker.datatype.uuid(),
-    valueType = faker.random.word(),
-    issuer = faker.random.word(),
-    originalIssuer = faker.random.word(),
+    type = faker.word.sample(),
+    value = faker.word.sample(),
+    subjectId = faker.string.uuid(),
+    valueType = faker.word.sample(),
+    issuer = faker.word.sample(),
+    originalIssuer = faker.word.sample(),
   }: CreateClaim) {
     return this.get(Claim).create({
       type,
@@ -681,9 +681,9 @@ export class FixtureFactory {
   }
 
   async createDelegationProvider({
-    id = faker.random.word(),
-    name = faker.random.word(),
-    description = faker.random.words(3),
+    id = faker.word.sample(),
+    name = faker.word.sample(),
+    description = faker.word.words(3),
   }: CreateDelegationProvider) {
     const [provider] = await this.get(DelegationProviderModel).findCreateFind({
       where: { id },
@@ -694,9 +694,9 @@ export class FixtureFactory {
   }
 
   async createDelegationType({
-    id = faker.random.word(),
-    name = faker.random.word(),
-    description = faker.random.words(3),
+    id = faker.word.sample(),
+    name = faker.word.sample(),
+    description = faker.word.words(3),
     providerId,
   }: CreateDelegationType) {
     const delegationProvider = await this.createDelegationProvider({

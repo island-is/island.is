@@ -16,10 +16,10 @@ export const store = createStore(() => {
   )
 
   const outgoingDelegations = customDelegation.list(5, {
-    domain: () => faker.random.arrayElement(domains),
+    domain: () => faker.helpers.arrayElement(domains),
     scopes: ({ domain }) => {
       const scopes = delegationScope.list(4, {
-        apiScope: () => faker.random.arrayElement(scopesByDomain[domain.name]),
+        apiScope: () => faker.helpers.arrayElement(scopesByDomain[domain.name]),
       })
       return uniqBy(scopes, 'apiScope')
     },

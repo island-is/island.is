@@ -5,7 +5,7 @@ import {
   getConnectionToken,
 } from '@nestjs/sequelize'
 import assert from 'assert'
-import faker from 'faker'
+import { faker } from '@faker-js/faker'
 import { Sequelize } from 'sequelize-typescript'
 
 import {
@@ -40,11 +40,11 @@ import { UserIdentity } from './models/user-identity.model'
 })
 class TestModule {}
 
-const subjectId = faker.datatype.uuid()
+const subjectId = faker.string.uuid()
 const claimBase: Omit<ClaimDto, 'type' | 'value'> = {
-  valueType: faker.random.word(),
-  issuer: faker.random.word(),
-  originalIssuer: faker.random.word(),
+  valueType: faker.word.sample(),
+  issuer: faker.word.sample(),
+  originalIssuer: faker.word.sample(),
 }
 
 describe('UserIdentitiesServices', () => {
@@ -72,9 +72,9 @@ describe('UserIdentitiesServices', () => {
 
     const createdIdentity = await userIdentitiesService.create({
       subjectId,
-      name: faker.name.findName(),
-      providerName: faker.random.word(),
-      providerSubjectId: faker.datatype.uuid(),
+      name: faker.person.fullName(),
+      providerName: faker.word.sample(),
+      providerSubjectId: faker.string.uuid(),
       active: true,
     })
     assert(createdIdentity)
@@ -94,7 +94,7 @@ describe('UserIdentitiesServices', () => {
       {
         ...claimBase,
         type: 'name',
-        value: faker.name.findName(),
+        value: faker.person.fullName(),
       },
       {
         ...claimBase,
@@ -142,12 +142,12 @@ describe('UserIdentitiesServices', () => {
       const mockClaim1: ClaimDto = {
         ...claimBase,
         type: 'name',
-        value: faker.name.findName(),
+        value: faker.person.fullName(),
       }
       const mockClaim2: ClaimDto = {
         ...claimBase,
         type: 'name',
-        value: faker.name.findName(),
+        value: faker.person.fullName(),
       }
 
       // Act
@@ -174,14 +174,14 @@ describe('UserIdentitiesServices', () => {
   })
 
   describe('findOrCreateSubjectId', () => {
-    const userIdentitySubjectId1 = faker.datatype.uuid()
+    const userIdentitySubjectId1 = faker.string.uuid()
     const toNationalId = createNationalId('person')
 
     beforeAll(async () => {
       // User identity with audkenni provider
       await userIdentitiesService.create({
         subjectId: userIdentitySubjectId1,
-        name: faker.name.findName(),
+        name: faker.person.fullName(),
         providerName: audkenniProvider,
         providerSubjectId: `IS-${toNationalId}`,
         active: true,
@@ -211,12 +211,12 @@ describe('UserIdentitiesServices', () => {
     it('should return subjectId if delegation exists', async () => {
       // Arrange
       const fromNationalId = createNationalId('person')
-      const userIdentitySubjectId2 = faker.datatype.uuid()
+      const userIdentitySubjectId2 = faker.string.uuid()
 
       // User identity with delegation provider
       await userIdentitiesService.create({
         subjectId: userIdentitySubjectId2,
-        name: faker.name.findName(),
+        name: faker.person.fullName(),
         providerName: delegationProvider,
         providerSubjectId: `IS-${fromNationalId}`,
         active: true,
@@ -227,9 +227,9 @@ describe('UserIdentitiesServices', () => {
         subjectId: userIdentitySubjectId2,
         type: actorSubjectIdType,
         value: userIdentitySubjectId1,
-        valueType: faker.random.word(),
-        issuer: faker.random.word(),
-        originalIssuer: faker.random.word(),
+        valueType: faker.word.sample(),
+        issuer: faker.word.sample(),
+        originalIssuer: faker.word.sample(),
       })
 
       // Act

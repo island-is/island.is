@@ -1,4 +1,4 @@
-import faker from 'faker'
+import { faker } from '@faker-js/faker'
 import { createNationalId } from '@island.is/testing/fixtures'
 import { Domain } from '@island.is/auth-api-lib'
 import { CreateApiScope } from './types'
@@ -16,7 +16,7 @@ export const createDomain = ({
   nationalId,
 }: Partial<CreateDomain> = {}): CreateDomain => {
   return {
-    name: name ?? faker.random.word(),
+    name: name ?? faker.word.sample(),
     description: description ?? faker.lorem.sentence(),
     nationalId: nationalId ?? createNationalId('company'),
   }
