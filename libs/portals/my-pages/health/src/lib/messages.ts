@@ -1194,4 +1194,28 @@ export const messages = defineMessages({
     id: 'sp.health:medicine-payment-participation',
     defaultMessage: 'Greiðsluþátttaka',
   },
+  references: {
+    id: 'sp.health:references',
+    defaultMessage: 'Tilvísanir',
+  },
+  referencesIntro: {
+    id: 'sp.health:references-intro',
+    defaultMessage: 'Hér finnur þú tilvísanir ...',
+  },
+  organizationWebsite: {
+    id: 'sp.health:references-org-website',
+    defaultMessage: 'Vefur stofnunar',
+  },
+  waitlists: {
+    id: 'sp.health:waitlists',
+    defaultMessage: 'Biðlistar',
+  },
+  waitlistsIntro: {
+    id: 'sp.health:waitlists-intro',
+    defaultMessage: 'Hér finnur þú biðlista ...',
+  },
+  moreDetail: {
+    id: 'sp.health:more-detail',
+    defaultMessage: 'Nánar um ferlið',
+  },
 })
