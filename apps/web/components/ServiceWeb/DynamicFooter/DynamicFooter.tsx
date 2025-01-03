@@ -1,6 +1,7 @@
 import { OrganizationFooter, ServiceWebFooter } from '@island.is/web/components'
 import { Organization } from '@island.is/web/graphql/schema'
 import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
+import { shouldShowInstitutionContactBanner } from '@island.is/web/screens/ServiceWeb/utils'
 
 interface DynamicFooterProps {
   organization: Organization
@@ -21,7 +22,9 @@ export const DynamicFooter = ({
     return null
   }
 
-  const contactLink = linkResolver('servicewebcontact', [slug]).href
+  const contactLink = shouldShowInstitutionContactBanner(slug)
+    ? linkResolver('servicewebcontact', [slug]).href
+    : namespace?.serviceWebContactLink
 
   return organization?.footerItems?.length > 0 ? (
     <OrganizationFooter organizations={[organization]} />
@@ -31,6 +34,7 @@ export const DynamicFooter = ({
       logoSrc={organization?.logo?.url}
       phone={organization?.phone}
       contactLink={contactLink}
+      contactLinkLabel={namespace?.serviceWebContactLinkLabel}
       namespace={namespace}
     />
   )
