@@ -18,7 +18,7 @@ export class MainResolver {
 
   @Scopes(ApiScope.menntamalastofnun)
   @Query(() => [SecondarySchoolProgram])
-  async secondarySchoolProgramsBySchoolId(
+  secondarySchoolProgramsBySchoolId(
     @Args('schoolId', { type: () => String }) schoolId: string,
     @Args('isFreshman', { type: () => Boolean }) isFreshman: boolean,
     @CurrentUser() user: User,
