@@ -54,7 +54,9 @@ export const getRealEstateDataRow = (answers: FormValue): RowType[] => {
 }
 
 export const getVehiclesDataRow = (answers: FormValue): RowType[] => {
-  const values = (answers.assets as unknown as EstateAssets)?.vehicles?.data
+  const values = (
+    answers.assets as unknown as EstateAssets
+  )?.vehicles?.data.filter((item) => item.enabled)
 
   const data = (values ?? []).map((item) => {
     const propertyValuation = roundedValueToNumber(item.propertyValuation)
@@ -86,7 +88,9 @@ export const getVehiclesDataRow = (answers: FormValue): RowType[] => {
 }
 
 export const getGunsDataRow = (answers: FormValue): RowType[] => {
-  const values = (answers.assets as unknown as EstateAssets)?.guns?.data
+  const values = (answers.assets as unknown as EstateAssets)?.guns?.data.filter(
+    (item) => item.enabled,
+  )
 
   const data = (values ?? []).map((item) => {
     const propertyValuation = roundedValueToNumber(item.propertyValuation)
@@ -147,7 +151,9 @@ export const getInventoryDataRow = (answers: FormValue): RowType[] => {
 }
 
 export const getStocksDataRow = (answers: FormValue): RowType[] => {
-  const values = (answers.assets as unknown as EstateAssets)?.stocks?.data
+  const values = (
+    answers.assets as unknown as EstateAssets
+  )?.stocks?.data.filter((item) => item.enabled)
 
   const data = (values ?? []).map((item) => {
     const items: RowItemsType = [
