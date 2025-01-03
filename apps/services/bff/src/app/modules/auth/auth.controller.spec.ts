@@ -2,6 +2,7 @@ import { ConfigType } from '@island.is/nest/config'
 import { LOGIN_ATTEMPT_FAILED_ACTIVE_SESSION } from '@island.is/shared/constants'
 import { CACHE_MANAGER } from '@nestjs/cache-manager'
 import { HttpStatus, INestApplication } from '@nestjs/common'
+import type { Request, Response } from 'express'
 import jwt from 'jsonwebtoken'
 import request from 'supertest'
 import { setupTestServer } from '../../../../test/setupTestServer'
@@ -13,7 +14,7 @@ import {
   mockedTokensResponse as tokensResponse,
 } from '../../../../test/sharedConstants'
 import { BffConfig } from '../../bff.config'
-import { CryptoService } from '../../services/crypto.service'
+import { SessionCookieService } from '../../services/sessionCookie.service'
 import { IdsService } from '../ids/ids.service'
 import { ParResponse } from '../ids/ids.types'
 
@@ -71,8 +72,19 @@ describe('AuthController', () => {
   let server: request.SuperTest<request.Test>
   let mockConfig: ConfigType<typeof BffConfig>
   let baseUrlWithKey: string
-  let cryptoService: CryptoService
-  let encryptedSid: string
+  let sessionCookieService: SessionCookieService
+  let hashedSid: string
+
+  // Mock Response object
+  const mockResponse: Partial<Response> = {
+    cookie: jest.fn(),
+    clearCookie: jest.fn(),
+  }
+
+  // Mock Request object
+  const mockRequest: Partial<Request> = {
+    cookies: {},
+  }
 
   beforeAll(async () => {
     const app = await setupTestServer({
@@ -84,13 +96,24 @@ describe('AuthController', () => {
           .useValue(mockIdsService),
     })
 
-    cryptoService = app.get<CryptoService>(CryptoService)
+    sessionCookieService = app.get<SessionCookieService>(SessionCookieService)
     mockConfig = app.get<ConfigType<typeof BffConfig>>(BffConfig.KEY)
 
     baseUrlWithKey = `${mockConfig.clientBaseUrl}${mockConfig.clientBasePath}`
 
-    // Encrypt the session ID for cookie
-    encryptedSid = cryptoService.encrypt(SID_VALUE, true)
+    // Set the hashed SID
+    sessionCookieService.set({
+      res: mockResponse as Response,
+      value: SID_VALUE,
+    })
+
+    // Capture the hashed value from the mock cookie call
+    hashedSid = (mockResponse.cookie as jest.Mock).mock.calls[0][1]
+
+    // Set up the mock request cookies for subsequent get() calls
+    mockRequest.cookies = {
+      [SESSION_COOKIE_NAME]: hashedSid,
+    }
 
     server = request(app.getHttpServer())
   })
@@ -330,7 +353,7 @@ describe('AuthController', () => {
         // Then make a callback to the login endpoint
         const res = await server
           .get('/callbacks/login')
-          .set('Cookie', [`${SESSION_COOKIE_NAME}=${encryptedSid}`])
+          .set('Cookie', [`${SESSION_COOKIE_NAME}=${hashedSid}`])
           .query({ code, state: SID_VALUE })
 
         const currentLogin = setCacheSpy.mock.calls[1]
@@ -338,7 +361,7 @@ describe('AuthController', () => {
         // Assert
         expect(setCacheSpy).toHaveBeenCalled()
         expect(currentLogin[0]).toBe(
-          `current::${mockConfig.name}::${SID_VALUE}`,
+          `current::${mockConfig.name}::${hashedSid}`,
         )
         // Check if the cache contains the correct values for the current login
         expect(currentLogin[1]).toMatchObject(tokensResponse)
@@ -364,7 +387,7 @@ describe('AuthController', () => {
 
       await server
         .get('/callbacks/login')
-        .set('Cookie', [`${SESSION_COOKIE_NAME}=${encryptedSid}`])
+        .set('Cookie', [`${SESSION_COOKIE_NAME}=${hashedSid}`])
         .query({ code: 'some_code', state: SID_VALUE })
       const res = await server.get('/logout')
 
@@ -394,12 +417,7 @@ describe('AuthController', () => {
       const res = await server
         .get('/logout')
         .query({ sid: SID_VALUE })
-        .set('Cookie', [
-          `${SESSION_COOKIE_NAME}=${cryptoService.encrypt(
-            'invalid_uuid',
-            true,
-          )}`,
-        ])
+        .set('Cookie', [`${SESSION_COOKIE_NAME}=invalid_uuid`])
 
       // Assert
       expect(res.status).toEqual(HttpStatus.FOUND)
@@ -422,13 +440,13 @@ describe('AuthController', () => {
 
       await server
         .get('/callbacks/login')
-        .set('Cookie', [`${SESSION_COOKIE_NAME}=${encryptedSid}`])
+        .set('Cookie', [`${SESSION_COOKIE_NAME}=${hashedSid}`])
         .query({ code: 'some_code', state: SID_VALUE })
 
       const res = await server
         .get('/logout')
         .query({ sid: SID_VALUE })
-        .set('Cookie', [`${SESSION_COOKIE_NAME}=${encryptedSid}`])
+        .set('Cookie', [`${SESSION_COOKIE_NAME}=${hashedSid}`])
 
       // Assert
       expect(revokeRefreshTokenSpy).toHaveBeenCalled()
@@ -526,7 +544,7 @@ describe('AuthController', () => {
 
       await server
         .get('/callbacks/login')
-        .set('Cookie', [`${SESSION_COOKIE_NAME}=${encryptedSid}`])
+        .set('Cookie', [`${SESSION_COOKIE_NAME}=${hashedSid}`])
         .query({ code: 'some_code', state: SID_VALUE })
 
       const res = await server
@@ -557,7 +575,7 @@ describe('AuthController', () => {
       // First login - create initial session with attempt data
       await server.get('/login')
 
-      const currentKey = `current::${mockConfig.name}::${SID_VALUE}`
+      const currentKey = `current::${mockConfig.name}::${hashedSid}`
 
       mockCacheManagerValue.set(currentKey, tokensResponse)
 
@@ -575,7 +593,7 @@ describe('AuthController', () => {
       // Act - Try to complete second login
       const res = await server
         .get('/callbacks/login')
-        .set('Cookie', [`${SESSION_COOKIE_NAME}=${encryptedSid}`])
+        .set('Cookie', [`${SESSION_COOKIE_NAME}=${hashedSid}`])
         .query({ code, state: SID_VALUE })
 
       // Assert

@@ -107,7 +107,7 @@ export class ProxyService {
         hasTimestampExpiredInMS(cachedTokenResponse.accessTokenExp)
       ) {
         cachedTokenResponse = await this.tokenRefreshService.refreshToken({
-          sid,
+          cacheKey: sid,
           encryptedRefreshToken: cachedTokenResponse.encryptedRefreshToken,
         })
       }

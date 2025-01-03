@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common'
 import { CryptoService } from '../../services/crypto.service'
+import { CryptoKeyService } from '../../services/cryptoKey.service'
 import { ErrorService } from '../../services/error.service'
 import { SessionCookieService } from '../../services/sessionCookie.service'
 import { AuthModule } from '../auth/auth.module'
@@ -18,6 +19,7 @@ import { UserService } from './user.service'
     TokenRefreshService,
     ErrorService,
     SessionCookieService,
+    CryptoKeyService,
   ],
 })
 export class UserModule {}

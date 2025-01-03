@@ -66,7 +66,7 @@ export class UserService {
         refresh
       ) {
         cachedTokenResponse = await this.tokenRefreshService.refreshToken({
-          sid,
+          cacheKey: sid,
           encryptedRefreshToken: cachedTokenResponse.encryptedRefreshToken,
         })
       }

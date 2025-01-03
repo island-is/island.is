@@ -98,9 +98,9 @@ export class TokenRefreshService {
    * Waits for an ongoing refresh operation to complete
    * Uses polling with a maximum wait time
    *
-   * @param sid Session ID
+   * @param cacheKey Cached key for tracking refresh status
    */
-  private async waitForRefreshCompletion(sid: string): Promise<boolean> {
+  private async waitForRefreshCompletion(cacheKey: string): Promise<boolean> {
     let attempts = 0
     // Calculate how many attempts we should make
     // maxAttempts = 3000 / 200 = ~15 ish attempts
@@ -109,7 +109,7 @@ export class TokenRefreshService {
 
     while (attempts < maxAttempts) {
       const refreshTokenInProgress = await this.cacheService.get<boolean>(
-        this.createRefreshTokenKey(sid),
+        this.createRefreshTokenKey(cacheKey),
         false,
       )
 
@@ -179,14 +179,14 @@ export class TokenRefreshService {
    */
 
   public async refreshToken({
-    sid,
+    cacheKey,
     encryptedRefreshToken,
   }: {
-    sid: string
+    cacheKey: string
     encryptedRefreshToken: string
   }): Promise<CachedTokenResponse | null> {
-    const refreshTokenKey = this.createRefreshTokenKey(sid)
-    const tokenResponseKey = this.createTokenResponseKey(sid)
+    const refreshTokenKey = this.createRefreshTokenKey(cacheKey)
+    const tokenResponseKey = this.createTokenResponseKey(cacheKey)
 
     // Check if refresh is already in progress
     const refreshTokenInProgress = await this.cacheService.get<boolean>(
@@ -195,7 +195,7 @@ export class TokenRefreshService {
     )
 
     if (refreshTokenInProgress) {
-      const refreshCompleted = await this.waitForRefreshCompletion(sid)
+      const refreshCompleted = await this.waitForRefreshCompletion(cacheKey)
 
       if (refreshCompleted) {
         const cachedToken = await this.getTokenFromCache(tokenResponseKey)

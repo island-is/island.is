@@ -125,7 +125,10 @@ export class AuthService {
 
     // Save the tokenResponse to the cache
     await this.cacheService.save({
-      key: this.cacheService.createSessionKeyType('current', userProfile.sid),
+      key: this.cacheService.createSessionKeyType(
+        'current',
+        this.sessionCookieService.hash(userProfile.sid),
+      ),
       value,
       ttl: this.config.cacheUserProfileTTLms,
     })
@@ -364,16 +367,20 @@ export class AuthService {
         value: updatedTokenResponse.userProfile.sid,
       })
 
-      // Check if there is an old session cookie and clean up the cache
-      const oldSessionCookie = this.sessionCookieService.get(req)
+      // Check if there is an old session cookie
+      const oldHashedSessionCookie = this.sessionCookieService.get(req)
 
       if (
-        oldSessionCookie &&
-        oldSessionCookie !== updatedTokenResponse.userProfile.sid
+        oldHashedSessionCookie &&
+        // Check if the old session cookie is different from the new one
+        !this.sessionCookieService.verify(
+          req,
+          updatedTokenResponse.userProfile.sid,
+        )
       ) {
         const oldSessionCacheKey = this.cacheService.createSessionKeyType(
           'current',
-          oldSessionCookie,
+          oldHashedSessionCookie,
         )
 
         const oldSessionData = await this.cacheService.get<CachedTokenResponse>(
@@ -429,7 +436,9 @@ export class AuthService {
       return res.redirect(this.config.logoutRedirectUri)
     }
 
-    if (sidCookie !== query.sid) {
+    const hashedQuerySid = this.sessionCookieService.hash(query.sid)
+
+    if (sidCookie !== hashedQuerySid) {
       this.logger.error(
         `Logout failed: Cookie "${this.cacheService.createKeyError(
           sidCookie,
@@ -444,7 +453,7 @@ export class AuthService {
 
     const currentLoginCacheKey = this.cacheService.createSessionKeyType(
       'current',
-      query.sid,
+      hashedQuerySid,
     )
 
     const cachedTokenResponse =
@@ -554,7 +563,7 @@ export class AuthService {
       // Create cache key and retrieve cached token response
       const cacheKey = this.cacheService.createSessionKeyType(
         'current',
-        payload.sid,
+        this.sessionCookieService.hash(payload.sid),
       )
       const cachedTokenResponse =
         await this.cacheService.get<CachedTokenResponse>(
