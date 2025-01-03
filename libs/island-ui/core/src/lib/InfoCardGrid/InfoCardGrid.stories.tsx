@@ -96,7 +96,7 @@ const generateCards = (count: number, variant: 'simple' | 'detailed') => {
   )
 }
 
-export const Default: Story = {
+export const DetailedOneColumn: Story = {
   args: {
     variant: 'detailed',
     cards: generateCards(4, 'detailed'),
