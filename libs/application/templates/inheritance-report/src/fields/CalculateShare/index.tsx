@@ -110,7 +110,7 @@ export const CalculateShare: FC<React.PropsWithChildren<FieldBaseProps>> = ({
     const bankAccounts: CalcShared = (
       (answers.assets as unknown as EstateAssets)?.bankAccounts?.data ?? []
     ).map((item) => {
-      const propertyValuation = valueToNumber(item.amount)
+      const propertyValuation = valueToNumber(item.propertyValuation)
       const exchangeRateOrInterest = valueToNumber(item.exchangeRateOrInterest)
       const deceasedShare = valueToNumber(item.deceasedShare)
       const value = propertyValuation + exchangeRateOrInterest
