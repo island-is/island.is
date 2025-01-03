@@ -1,13 +1,13 @@
 import { FC } from 'react'
 import { GridColumn } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
+import { FieldBaseProps } from '@island.is/application/types'
 import { RentalAgreement } from '../../lib/dataSchema'
 import { summary } from '../../lib/messages'
+import { Routes } from '../../lib/constants'
 import { formatNationalId, formatPhoneNumber } from '../../lib/utils'
 import { KeyValue } from './components/KeyValue'
-import { FieldBaseProps } from '@island.is/application/types'
 import { SummaryCardRow } from './components/SummaryCardRow'
-import { Routes } from '../../lib/constants'
 import { SummaryCard } from './components/SummaryCard'
 
 interface Props extends FieldBaseProps {

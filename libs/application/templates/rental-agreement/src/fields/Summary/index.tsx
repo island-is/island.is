@@ -1,6 +1,10 @@
 import { FC, useEffect } from 'react'
 import { useLocale } from '@island.is/localization'
 import {
+  ApplicationConfigurations,
+  FieldBaseProps,
+} from '@island.is/application/types'
+import {
   AlertMessage,
   Box,
   Bullet,
@@ -8,13 +12,8 @@ import {
   Button,
   Text,
 } from '@island.is/island-ui/core'
-import {
-  ApplicationConfigurations,
-  FieldBaseProps,
-} from '@island.is/application/types'
 import { CopyLink } from '@island.is/application/ui-components'
 import { RentalAgreement } from '../../lib/dataSchema'
-import { summary } from '../../lib/messages'
 import { Routes } from '../../lib/constants'
 import { ApplicantsRepresentativesSummary } from './ApplicantsRepresentativesSummary'
 import { ApplicantsSummary } from './ApplicantsSummary'
@@ -22,7 +21,9 @@ import { OtherFeesSummary } from './OtherFeesSummary'
 import { PropertyInfoSummary } from './PropertyInfoSummary'
 import { RentalInfoSummary } from './RentalInfoSummary'
 import { SummaryCard } from './components/SummaryCard'
+
 import { summaryWrap } from './summaryStyles.css'
+import { summary } from '../../lib/messages'
 
 export const Summary: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   ...props

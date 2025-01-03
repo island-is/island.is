@@ -7,10 +7,10 @@ import {
   formatDate,
   getRentalOtherFeesPayeeOptions,
 } from '../../lib/utils'
-import { summary } from '../../lib/messages'
 import { KeyValue } from './components/KeyValue'
 import { SummaryCardRow } from './components/SummaryCardRow'
 import { SummaryCard } from './components/SummaryCard'
+import { summary } from '../../lib/messages'
 
 type Props = {
   answers: RentalAgreement

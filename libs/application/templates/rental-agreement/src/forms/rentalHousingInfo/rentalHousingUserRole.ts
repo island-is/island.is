@@ -3,9 +3,8 @@ import {
   buildMultiField,
   buildRadioField,
 } from '@island.is/application/core'
-
-import { userRole } from '../../lib/messages'
 import { getUserRoleOptions } from '../../lib/utils'
+import { userRole } from '../../lib/messages'
 
 export const RentalHousingUserRole = buildSubSection({
   id: 'userRole',

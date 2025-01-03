@@ -1,12 +1,12 @@
 import { GridColumn } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { summary } from '../../lib/messages'
+import { RentalAgreement } from '../../lib/dataSchema'
+import { Routes } from '../../lib/constants'
 import { formatNationalId, formatPhoneNumber } from '../../lib/utils'
 import { KeyValue } from './components/KeyValue'
 import { SummaryCard } from './components/SummaryCard'
 import { SummaryCardRow } from './components/SummaryCardRow'
-import { Routes } from '../../lib/constants'
-import { RentalAgreement } from '../../lib/dataSchema'
+import { summary } from '../../lib/messages'
 
 type Props = {
   answers: RentalAgreement

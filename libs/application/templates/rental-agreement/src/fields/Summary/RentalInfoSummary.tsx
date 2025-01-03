@@ -1,8 +1,5 @@
 import { GridColumn } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { SummaryCard } from './components/SummaryCard'
-import { SummaryCardRow } from './components/SummaryCardRow'
-import { KeyValue } from './components/KeyValue'
 import { RentalAgreement } from '../../lib/dataSchema'
 import {
   AnswerOptions,
@@ -19,6 +16,9 @@ import {
   getSecurityAmountOptions,
   getSecurityDepositTypeOptions,
 } from '../../lib/utils'
+import { SummaryCard } from './components/SummaryCard'
+import { SummaryCardRow } from './components/SummaryCardRow'
+import { KeyValue } from './components/KeyValue'
 import { summary } from '../../lib/messages'
 
 type Props = {

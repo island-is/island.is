@@ -11,11 +11,12 @@ import {
   getPropertyClassOptions,
   getPropertyClassGroupOptions,
 } from '../../lib/utils'
-import { summary } from '../../lib/messages'
 import { KeyValue } from './components/KeyValue'
-import { fileLink, fileLinksList } from './summaryStyles.css'
 import { SummaryCardRow } from './components/SummaryCardRow'
 import { SummaryCard } from './components/SummaryCard'
+
+import { fileLink, fileLinksList } from './summaryStyles.css'
+import { summary } from '../../lib/messages'
 
 type Props = {
   answers: RentalAgreement
