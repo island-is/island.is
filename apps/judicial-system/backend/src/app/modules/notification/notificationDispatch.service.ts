@@ -3,12 +3,12 @@ import {
   Injectable,
   InternalServerErrorException,
 } from '@nestjs/common'
-import { ConfigType } from '@nestjs/config'
 
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 
 import { MessageService, MessageType } from '@island.is/judicial-system/message'
 import {
+  CaseFileCategory,
   EventNotificationType,
   IndictmentCaseNotificationType,
   InstitutionNotificationType,
@@ -71,7 +71,7 @@ export class NotificationDispatchService {
   private async dispatchIndictmentSentToPublicProsecutorNotifications(
     theCase: Case,
   ): Promise<void> {
-    return this.messageService.sendMessagesToQueue([
+    const messages = [
       {
         type: MessageType.INDICTMENT_CASE_NOTIFICATION,
         caseId: theCase.id,
@@ -79,7 +79,20 @@ export class NotificationDispatchService {
           type: IndictmentCaseNotificationType.INDICTMENT_VERDICT_INFO,
         },
       },
-    ])
+    ]
+    const hasCriminalRecordFiles = theCase.caseFiles?.some(
+      (file) => file.category === CaseFileCategory.CRIMINAL_RECORD_UPDATE,
+    )
+    if (hasCriminalRecordFiles) {
+      messages.push({
+        type: MessageType.INDICTMENT_CASE_NOTIFICATION,
+        caseId: theCase.id,
+        body: {
+          type: IndictmentCaseNotificationType.CRIMINAL_RECORD_FILES_UPLOADED,
+        },
+      })
+    }
+    return this.messageService.sendMessagesToQueue(messages)
   }
 
   async dispatchEventNotification(

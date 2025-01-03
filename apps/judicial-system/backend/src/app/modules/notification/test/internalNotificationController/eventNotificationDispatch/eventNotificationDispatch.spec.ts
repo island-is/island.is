@@ -2,6 +2,7 @@ import { uuid } from 'uuidv4'
 
 import { MessageService, MessageType } from '@island.is/judicial-system/message'
 import {
+  CaseFileCategory,
   EventNotificationType,
   IndictmentCaseNotificationType,
 } from '@island.is/judicial-system/types'
@@ -9,10 +10,19 @@ import {
 import { createTestingNotificationModule } from '../../createTestingNotificationModule'
 
 import { Case } from '../../../../case'
+import { CaseFile } from '../../../../file'
 import { InternalNotificationController } from '../../../internalNotification.controller'
 
 describe('InternalNotificationController - Dispatch event notifications', () => {
-  const theCase = { id: uuid() } as Case
+  const theCase = {
+    id: uuid(),
+    caseFiles: [
+      {
+        category: CaseFileCategory.CRIMINAL_RECORD_UPDATE,
+      },
+    ] as CaseFile[],
+  } as Case
+
   let mockMessageService: MessageService
   let internalNotificationController: InternalNotificationController
 
@@ -32,23 +42,32 @@ describe('InternalNotificationController - Dispatch event notifications', () => 
     {
       notificationType:
         EventNotificationType.INDICTMENT_SENT_TO_PUBLIC_PROSECUTOR,
-      expectedMessage: {
-        type: MessageType.INDICTMENT_CASE_NOTIFICATION,
-        caseId: theCase.id,
-        body: {
-          type: IndictmentCaseNotificationType.INDICTMENT_VERDICT_INFO,
+      expectedMessages: [
+        {
+          type: MessageType.INDICTMENT_CASE_NOTIFICATION,
+          caseId: theCase.id,
+          body: {
+            type: IndictmentCaseNotificationType.INDICTMENT_VERDICT_INFO,
+          },
         },
-      },
+        {
+          type: MessageType.INDICTMENT_CASE_NOTIFICATION,
+          caseId: theCase.id,
+          body: {
+            type: IndictmentCaseNotificationType.CRIMINAL_RECORD_FILES_UPLOADED,
+          },
+        },
+      ],
     },
   ]
 
   it.each(
-    notificationScenarios.map(({ notificationType, expectedMessage }) => ({
+    notificationScenarios.map(({ notificationType, expectedMessages }) => ({
       notificationType,
-      expectedMessage,
-      description: `should send message to queue for notification type ${notificationType}`,
+      expectedMessages,
+      description: `should send messages to queue for notification type ${notificationType}`,
     })),
-  )('$description', async ({ notificationType, expectedMessage }) => {
+  )('$description', async ({ notificationType, expectedMessages }) => {
     const result =
       await internalNotificationController.dispatchEventNotification(
         theCase.id,
@@ -56,9 +75,9 @@ describe('InternalNotificationController - Dispatch event notifications', () => 
         { type: notificationType },
       )
 
-    expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
-      expectedMessage,
-    ])
+    expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith(
+      expectedMessages,
+    )
     expect(result).toEqual({ delivered: true })
   })
 

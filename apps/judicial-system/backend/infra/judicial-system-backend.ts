@@ -74,6 +74,8 @@ export const serviceSetup = (): ServiceBuilder<'judicial-system-backend'> =>
       PRISON_ADMIN_EMAIL: '/k8s/judicial-system/PRISON_ADMIN_EMAIL',
       PRISON_ADMIN_INDICTMENT_EMAILS:
         '/k8s/judicial-system/PRISON_ADMIN_INDICTMENT_EMAILS',
+      PUBLIC_PROSECUTOR_CRIMINAL_RECORDS_EMAIL:
+        '/k8s/judicial-system/PUBLIC_PROSECUTOR_CRIMINAL_RECORDS_EMAIL',
       AUTH_JWT_SECRET: '/k8s/judicial-system/AUTH_JWT_SECRET',
       ADMIN_USERS: '/k8s/judicial-system/ADMIN_USERS',
       BACKEND_ACCESS_TOKEN: '/k8s/judicial-system/BACKEND_ACCESS_TOKEN',

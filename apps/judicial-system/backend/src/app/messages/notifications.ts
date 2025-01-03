@@ -781,6 +781,11 @@ export const notifications = {
       defaultMessage: 'Landsréttur',
       description: 'Nafn á Landsrétti í tölvupóstum',
     },
+    publicProsecutorCriminalRecords: {
+      id: 'judicial.system.backend:notifications.email_names.public_prosecutor_criminal_records',
+      defaultMessage: 'Ritari sakaskrár',
+      description: 'Nafn á ritara sakaskrá í tölvupóstum',
+    },
   }),
   COAJudgeAssigned: defineMessages({
     subject: {
