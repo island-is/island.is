@@ -11,6 +11,7 @@ import {
 } from '@island.is/judicial-system/types'
 import { titles } from '@island.is/judicial-system-web/messages'
 import {
+  CourtCaseInfo,
   FormContentContainer,
   FormContext,
   FormFooter,
@@ -112,6 +113,7 @@ const ReceptionAndAssignment = () => {
             </Box>
           )}
         <PageTitle>{formatMessage(strings.title)}</PageTitle>
+        <CourtCaseInfo workingCase={workingCase} />
         <Box component="section" marginBottom={6}>
           <CourtCaseNumber />
         </Box>

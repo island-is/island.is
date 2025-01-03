@@ -221,7 +221,7 @@ export const inheritanceReportSchema = z.object({
           .object({
             foreignBankAccount: z.array(z.enum([YES])).optional(),
             assetNumber: z.string().refine((v) => v),
-            amount: z.string().refine((v) => v),
+            propertyValuation: z.string().refine((v) => v),
             exchangeRateOrInterest: z.string().refine((v) => v),
             enabled: z.boolean(),
             ...deceasedShare,
