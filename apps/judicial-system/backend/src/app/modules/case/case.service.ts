@@ -860,6 +860,7 @@ export class CaseService {
         type: MessageType.DELIVERY_TO_COURT_INDICTMENT_CANCELLATION_NOTICE,
         user,
         caseId: theCase.id,
+        // Q: Why do we have to pass this flag? Why can't we rely on the court case numbers not being defined on the case object?
         body: { withCourtCaseNumber: false },
       })
     }

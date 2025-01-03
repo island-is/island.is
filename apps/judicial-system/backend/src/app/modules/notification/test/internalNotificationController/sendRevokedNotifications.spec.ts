@@ -35,6 +35,8 @@ describe('InternalNotificationController - Send revoked notifications for indict
   const prosecutorsOfficeName = uuid()
   const courtName = uuid()
   const courtCaseNumber = uuid()
+  const policeCaseNumbers = ['007-2022-01']
+
   const theCase = {
     id: caseId,
     judge: { name: judge.name, email: judge.email },
@@ -49,6 +51,7 @@ describe('InternalNotificationController - Send revoked notifications for indict
     creatingProsecutor: { institution: { name: prosecutorsOfficeName } },
     court: { name: courtName },
     courtCaseNumber,
+    policeCaseNumbers,
   }
 
   let mockEmailService: EmailService

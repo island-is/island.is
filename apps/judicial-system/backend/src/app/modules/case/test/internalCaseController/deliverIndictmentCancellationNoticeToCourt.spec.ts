@@ -25,6 +25,10 @@ describe('InternalCaseController - Deliver indictment cancellation notice to cou
   const courtName = uuid()
   const courtCaseNumber = uuid()
   const prosecutorsOffice = uuid()
+  const policeCase1 = '007-2022-01'
+  const policeCase2 = '007-2022-02'
+
+  const policeCaseNumbers = [policeCase1, policeCase2]
 
   const theCase = {
     id: caseId,
@@ -32,6 +36,7 @@ describe('InternalCaseController - Deliver indictment cancellation notice to cou
     creatingProsecutor: { institution: { name: prosecutorsOffice } },
     court: { name: courtName },
     courtCaseNumber,
+    policeCaseNumbers,
   } as Case
 
   let mockCourtService: CourtService
@@ -88,7 +93,7 @@ describe('InternalCaseController - Deliver indictment cancellation notice to cou
     })
   })
 
-  describe('deliver cancellation notice without court case number', () => {
+  describe('deliver cancellation notice with police case numbers', () => {
     let then: Then
 
     beforeAll(async () => {
@@ -104,7 +109,7 @@ describe('InternalCaseController - Deliver indictment cancellation notice to cou
         courtName,
         courtCaseNumber,
         'Ákæra afturkölluð',
-        `${prosecutorsOffice} hefur afturkallað ákæru í máli sem ekki hefur enn fengið málsnúmer. Hægt er að nálgast yfirlitssíðu málsins á rettarvorslugatt.island.is.`,
+        `${prosecutorsOffice} hefur afturkallað ákæru í máli ${policeCase1}, ${policeCase2}. Hægt er að nálgast yfirlitssíðu málsins á rettarvorslugatt.island.is.`,
       )
 
       expect(then.result).toEqual({ delivered: true })
