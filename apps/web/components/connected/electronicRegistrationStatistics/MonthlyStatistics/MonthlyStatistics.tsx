@@ -3,7 +3,6 @@ import { Bar, BarChart, Legend, Tooltip, XAxis, YAxis } from 'recharts'
 import { useQuery } from '@apollo/client'
 
 import { BrokenDownRegistrationStatisticResponse } from '@island.is/api/domains/electronic-registration-statistics'
-import { ConnectedComponent } from '@island.is/api/schema'
 import {
   Box,
   GridColumn,
@@ -12,13 +11,13 @@ import {
   LoadingDots,
   Select,
 } from '@island.is/island-ui/core'
+import { ConnectedComponent } from '@island.is/web/graphql/schema'
 import { useNamespace } from '@island.is/web/hooks'
 
 import { GET_BROKEN_DOWN_ELECTRONIC_REGISTRATION_STATISTICS_QUERY } from '../queries'
+import { CustomLegend } from './CustomLegend'
 import { CustomTooltip } from './CustomTooltip'
 import { extractRegistrationTypesFromData } from './utils'
-import { CustomLegend } from './CustomLegend'
-
 import * as styles from './MonthlyStatistics.css'
 
 type QueryType = {

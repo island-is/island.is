@@ -1,62 +1,61 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React from 'react'
 import NextLink from 'next/link'
-import {
-  Box,
-  ContentBlock,
-  Text,
-  Stack,
-  GridColumn,
-  Hidden,
-  GridRow,
-  GridContainer,
-  ColorSchemeContext,
-} from '@island.is/island-ui/core'
-import { withMainLayout } from '@island.is/web/layouts/main'
+
 import { Slice as SliceType } from '@island.is/island-ui/contentful'
 import {
-  RichText,
-  HeadWithSocialSharing,
+  Box,
+  ColorSchemeContext,
+  ContentBlock,
+  GridColumn,
+  GridContainer,
+  GridRow,
+  Hidden,
+  Stack,
+  Text,
+} from '@island.is/island-ui/core'
+import { Locale } from '@island.is/shared/types'
+import {
   Header,
+  HeadWithSocialSharing,
   Main,
+  RichText,
 } from '@island.is/web/components'
-import AdgerdirArticles from './components/AdgerdirArticles/AdgerdirArticles'
-import GroupedPages from './components/GroupedPages/GroupedPages'
-import CardsSlider from './components/CardsSlider/CardsSlider'
-import FeaturedNews from './components/FeaturedNews/FeaturedNews'
-import { ColorSchemeContext as CovidColorSchemeContext } from './components/UI/ColorSchemeContext/ColorSchemeContext'
-import { useI18n } from '@island.is/web/i18n'
 import {
-  Query,
-  QueryGetNamespaceArgs,
   ContentLanguage,
-  QueryGetAdgerdirPagesArgs,
-  QueryGetAdgerdirTagsArgs,
-  QueryGetGroupedMenuArgs,
-} from '@island.is/api/schema'
-import {
-  GET_ADGERDIR_TAGS_QUERY,
-  GET_NAMESPACE_QUERY,
-  GET_ADGERDIR_PAGES_QUERY,
-  GET_ADGERDIR_FRONTPAGE_QUERY,
-  GET_CATEGORIES_QUERY,
-} from '../queries'
-import { Screen } from '../../types'
-import { useNamespace } from '@island.is/web/hooks'
-import { Breadcrumbs } from './components/UI/Breadcrumbs/Breadcrumbs'
-import {
   GetArticleCategoriesQuery,
   GetGroupedMenuQuery,
+  Query,
+  QueryGetAdgerdirPagesArgs,
+  QueryGetAdgerdirTagsArgs,
   QueryGetArticleCategoriesArgs,
+  QueryGetGroupedMenuArgs,
+  QueryGetNamespaceArgs,
 } from '@island.is/web/graphql/schema'
-import { GET_GROUPED_MENU_QUERY } from '../queries/Menu'
-import { Locale } from '@island.is/shared/types'
+import { useNamespace } from '@island.is/web/hooks'
+import { LinkType, useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
+import { useI18n } from '@island.is/web/i18n'
+import { withMainLayout } from '@island.is/web/layouts/main'
 import {
   formatMegaMenuCategoryLinks,
   formatMegaMenuLinks,
 } from '@island.is/web/utils/processMenuData'
-import { useLinkResolver, LinkType } from '@island.is/web/hooks/useLinkResolver'
 
+import { Screen } from '../../types'
+import {
+  GET_ADGERDIR_FRONTPAGE_QUERY,
+  GET_ADGERDIR_PAGES_QUERY,
+  GET_ADGERDIR_TAGS_QUERY,
+  GET_CATEGORIES_QUERY,
+  GET_NAMESPACE_QUERY,
+} from '../queries'
+import { GET_GROUPED_MENU_QUERY } from '../queries/Menu'
+import AdgerdirArticles from './components/AdgerdirArticles/AdgerdirArticles'
+import CardsSlider from './components/CardsSlider/CardsSlider'
+import FeaturedNews from './components/FeaturedNews/FeaturedNews'
+import GroupedPages from './components/GroupedPages/GroupedPages'
+import { Breadcrumbs } from './components/UI/Breadcrumbs/Breadcrumbs'
+import { ColorSchemeContext as CovidColorSchemeContext } from './components/UI/ColorSchemeContext/ColorSchemeContext'
 import * as covidStyles from './components/UI/styles/styles.css'
 
 interface HomeProps {
