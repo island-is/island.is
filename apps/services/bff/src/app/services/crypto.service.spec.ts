@@ -2,8 +2,9 @@ import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { Test, TestingModule } from '@nestjs/testing'
 import crypto from 'crypto'
-import { CryptoService } from './crypto.service'
 import { BffConfig } from '../bff.config'
+import { CryptoService } from './crypto.service'
+import { CryptoKeyService } from './cryptoKey.service'
 
 const DECRYPTED_TEXT = 'Hello, World!'
 
@@ -30,6 +31,7 @@ const createModule = async (config = validConfig): Promise<TestingModule> => {
   return Test.createTestingModule({
     providers: [
       CryptoService,
+      CryptoKeyService,
       { provide: LOGGER_PROVIDER, useValue: mockLogger },
       { provide: BffConfig.KEY, useValue: config },
     ],

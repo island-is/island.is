@@ -18,8 +18,8 @@ import {
   AGENT_DEFAULT_FREE_SOCKET_TIMEOUT,
   AGENT_DEFAULT_MAX_SOCKETS,
 } from '@island.is/shared/constants'
-import { SESSION_COOKIE_NAME } from '../../constants/cookies'
 import { ErrorService } from '../../services/error.service'
+import { SessionCookieService } from '../../services/sessionCookie.service'
 import { hasTimestampExpiredInMS } from '../../utils/has-timestamp-expired-in-ms'
 import { validateUri } from '../../utils/validate-uri'
 import { CachedTokenResponse } from '../auth/auth.types'
@@ -69,6 +69,7 @@ export class ProxyService {
     private readonly cryptoService: CryptoService,
     private readonly tokenRefreshService: TokenRefreshService,
     private readonly errorService: ErrorService,
+    private readonly sessionCookieService: SessionCookieService,
   ) {}
 
   /**
@@ -83,7 +84,7 @@ export class ProxyService {
     req: Request
     res: Response
   }): Promise<string> {
-    const sid = req.cookies[SESSION_COOKIE_NAME]
+    const sid = this.sessionCookieService.get(req)
 
     if (!sid) {
       throw new UnauthorizedException()
@@ -106,7 +107,7 @@ export class ProxyService {
         hasTimestampExpiredInMS(cachedTokenResponse.accessTokenExp)
       ) {
         cachedTokenResponse = await this.tokenRefreshService.refreshToken({
-          sid,
+          cacheKey: sid,
           encryptedRefreshToken: cachedTokenResponse.encryptedRefreshToken,
         })
       }

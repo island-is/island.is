@@ -1,6 +1,7 @@
 import { ConfigType } from '@island.is/nest/config'
 import { CACHE_MANAGER } from '@nestjs/cache-manager'
 import { HttpStatus, INestApplication } from '@nestjs/common'
+import type { Request, Response } from 'express'
 import request from 'supertest'
 
 import { setupTestServer } from '../../../../test/setupTestServer'
@@ -11,6 +12,7 @@ import {
   mockedTokensResponse as tokensResponse,
 } from '../../../../test/sharedConstants'
 import { BffConfig } from '../../bff.config'
+import { SessionCookieService } from '../../services/sessionCookie.service'
 import { TokenRefreshService } from '../auth/token-refresh.service'
 import { IdsService } from '../ids/ids.service'
 
@@ -70,6 +72,19 @@ describe('UserController', () => {
   let app: INestApplication
   let server: request.SuperTest<request.Test>
   let mockConfig: ConfigType<typeof BffConfig>
+  let sessionCookieService: SessionCookieService
+  let hashedSid: string
+
+  // Mock Response object
+  const mockResponse: Partial<Response> = {
+    cookie: jest.fn(),
+    clearCookie: jest.fn(),
+  }
+
+  // Mock Request object
+  const mockRequest: Partial<Request> = {
+    cookies: {},
+  }
 
   beforeAll(async () => {
     app = await setupTestServer({
@@ -83,13 +98,31 @@ describe('UserController', () => {
           .useValue(mockIdsService),
     })
 
+    sessionCookieService = app.get<SessionCookieService>(SessionCookieService)
     mockConfig = app.get<ConfigType<typeof BffConfig>>(BffConfig.KEY)
+
+    // Set the hashed SID
+    sessionCookieService.set({
+      res: mockResponse as Response,
+      value: SID_VALUE,
+    })
+
+    // Capture the hashed value from the mock cookie call
+    hashedSid = (mockResponse.cookie as jest.Mock).mock.calls[0][1]
+
+    // Set up the mock request cookies for subsequent get() calls
+    mockRequest.cookies = {
+      [SESSION_COOKIE_NAME]: hashedSid,
+    }
+
     server = request(app.getHttpServer())
   })
 
   afterEach(() => {
     mockCacheStore.clear()
     jest.clearAllMocks()
+    // Reset mocks
+    mockRequest.cookies = {}
   })
 
   afterAll(async () => {
@@ -111,7 +144,7 @@ describe('UserController', () => {
       // Act
       const res = await server
         .get('/user')
-        .set('Cookie', [`${SESSION_COOKIE_NAME}=${SID_VALUE}`])
+        .set('Cookie', [`${SESSION_COOKIE_NAME}=${hashedSid}`])
 
       // Assert
       expect(res.status).toEqual(HttpStatus.UNAUTHORIZED)
@@ -128,7 +161,7 @@ describe('UserController', () => {
       await server.get('/login')
       const callbackRes = await server
         .get('/callbacks/login')
-        .set('Cookie', [`${SESSION_COOKIE_NAME}=${SID_VALUE}`])
+        .set('Cookie', [`${SESSION_COOKIE_NAME}=${hashedSid}`])
         .query({ code: 'some_code', state: SID_VALUE })
 
       expect(callbackRes.status).toBe(HttpStatus.FOUND)
@@ -136,7 +169,7 @@ describe('UserController', () => {
       // Act - Get user data
       const res = await server
         .get('/user')
-        .set('Cookie', [`${SESSION_COOKIE_NAME}=${SID_VALUE}`])
+        .set('Cookie', [`${SESSION_COOKIE_NAME}=${hashedSid}`])
 
       // Assert
       expect(res.status).toEqual(HttpStatus.OK)
@@ -161,7 +194,7 @@ describe('UserController', () => {
       await server.get('/login')
       await server
         .get('/callbacks/login')
-        .set('Cookie', [`${SESSION_COOKIE_NAME}=${SID_VALUE}`])
+        .set('Cookie', [`${SESSION_COOKIE_NAME}=${hashedSid}`])
         .query({ code: 'some_code', state: SID_VALUE })
 
       // Set expired token in cache
@@ -170,7 +203,7 @@ describe('UserController', () => {
         accessTokenExp: Date.now() - 1000, // Expired token
       }
       mockCacheStore.set(
-        `current::${mockConfig.name}::${SID_VALUE}`,
+        `current::${mockConfig.name}::${hashedSid}`,
         expiredTokenResponse,
       )
 
@@ -178,11 +211,11 @@ describe('UserController', () => {
       const res = await server
         .get('/user')
         .query({ refresh: 'true' })
-        .set('Cookie', [`${SESSION_COOKIE_NAME}=${SID_VALUE}`])
+        .set('Cookie', [`${SESSION_COOKIE_NAME}=${hashedSid}`])
 
       // Assert
       expect(mockTokenRefreshService.refreshToken).toHaveBeenCalledWith({
-        sid: SID_VALUE,
+        cacheKey: hashedSid,
         encryptedRefreshToken: expiredTokenResponse.encryptedRefreshToken,
       })
       expect(res.status).toEqual(HttpStatus.OK)
@@ -203,7 +236,7 @@ describe('UserController', () => {
       await server.get('/login')
       await server
         .get('/callbacks/login')
-        .set('Cookie', [`${SESSION_COOKIE_NAME}=${SID_VALUE}`])
+        .set('Cookie', [`${SESSION_COOKIE_NAME}=${hashedSid}`])
         .query({ code: 'some_code', state: SID_VALUE })
 
       // Set expired token in cache
@@ -212,7 +245,7 @@ describe('UserController', () => {
         accessTokenExp: Date.now() - 1000, // Expired token
       }
       mockCacheStore.set(
-        `current::${mockConfig.name}::${SID_VALUE}`,
+        `current::${mockConfig.name}::${hashedSid}`,
         expiredTokenResponse,
       )
 
@@ -220,7 +253,7 @@ describe('UserController', () => {
       const res = await server
         .get('/user')
         .query({ refresh: 'false' })
-        .set('Cookie', [`${SESSION_COOKIE_NAME}=${SID_VALUE}`])
+        .set('Cookie', [`${SESSION_COOKIE_NAME}=${hashedSid}`])
 
       // Assert
       expect(mockTokenRefreshService.refreshToken).not.toHaveBeenCalled()
@@ -242,7 +275,7 @@ describe('UserController', () => {
       await server.get('/login')
       await server
         .get('/callbacks/login')
-        .set('Cookie', [`${SESSION_COOKIE_NAME}=${SID_VALUE}`])
+        .set('Cookie', [`${SESSION_COOKIE_NAME}=${hashedSid}`])
         .query({ code: 'some_code', state: SID_VALUE })
 
       // Set valid (not expired) token in cache
@@ -251,7 +284,7 @@ describe('UserController', () => {
         accessTokenExp: Date.now() + 1000, // Future expiration
       }
       mockCacheStore.set(
-        `current::${mockConfig.name}::${SID_VALUE}`,
+        `current::${mockConfig.name}::${hashedSid}`,
         validTokenResponse,
       )
 
@@ -259,7 +292,7 @@ describe('UserController', () => {
       const res = await server
         .get('/user')
         .query({ refresh: 'true' })
-        .set('Cookie', [`${SESSION_COOKIE_NAME}=${SID_VALUE}`])
+        .set('Cookie', [`${SESSION_COOKIE_NAME}=${hashedSid}`])
 
       // Assert
       expect(mockTokenRefreshService.refreshToken).not.toHaveBeenCalled()
@@ -317,7 +350,7 @@ describe('UserController', () => {
               : Date.now() + 1000, // Not expired
           }
           mockCacheStore.set(
-            `current::${mockConfig.name}::${SID_VALUE}`,
+            `current::${mockConfig.name}::${hashedSid}`,
             tokenResponse,
           )
         }
@@ -326,7 +359,7 @@ describe('UserController', () => {
         const res = await server
           .get('/user')
           .query({ refresh: testCase.refresh.toString() })
-          .set('Cookie', [`${SESSION_COOKIE_NAME}=${SID_VALUE}`])
+          .set('Cookie', [`${SESSION_COOKIE_NAME}=${hashedSid}`])
 
         // Assert
         if (testCase.shouldCallRefresh) {

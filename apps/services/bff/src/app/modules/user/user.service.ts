@@ -2,9 +2,9 @@ import { Injectable, UnauthorizedException } from '@nestjs/common'
 import type { Request, Response } from 'express'
 
 import { BffUser } from '@island.is/shared/types'
-import { SESSION_COOKIE_NAME } from '../../constants/cookies'
 
 import { ErrorService } from '../../services/error.service'
+import { SessionCookieService } from '../../services/sessionCookie.service'
 import { hasTimestampExpiredInMS } from '../../utils/has-timestamp-expired-in-ms'
 import { CachedTokenResponse } from '../auth/auth.types'
 import { TokenRefreshService } from '../auth/token-refresh.service'
@@ -16,6 +16,7 @@ export class UserService {
     private readonly cacheService: CacheService,
     private readonly tokenRefreshService: TokenRefreshService,
     private readonly errorService: ErrorService,
+    private readonly sessionCookieService: SessionCookieService,
   ) {}
 
   /**
@@ -40,7 +41,7 @@ export class UserService {
     res: Response
     refresh: boolean
   }): Promise<BffUser> {
-    const sid = req.cookies[SESSION_COOKIE_NAME]
+    const sid = this.sessionCookieService.get(req)
 
     if (!sid) {
       throw new UnauthorizedException()
@@ -65,7 +66,7 @@ export class UserService {
         refresh
       ) {
         cachedTokenResponse = await this.tokenRefreshService.refreshToken({
-          sid,
+          cacheKey: sid,
           encryptedRefreshToken: cachedTokenResponse.encryptedRefreshToken,
         })
       }

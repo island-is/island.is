@@ -7,6 +7,8 @@ import { BffConfig } from '../../bff.config'
 
 @Injectable()
 export class CacheService {
+  private separator = '::'
+
   constructor(
     @Inject(CACHE_MANAGER)
     private readonly cacheManager: CacheManager,
@@ -15,8 +17,27 @@ export class CacheService {
     private readonly config: ConfigType<typeof BffConfig>,
   ) {}
 
+  /**
+   * If the key is in pattern of "{type}::{name}::{sid}" and contains a session id,
+   * it will be removed from key to ensure leaking session id to logs.
+   * otherwise the key will be returned as is.
+   *
+   * @example
+   * keyWithoutSid('attempt::some_name::1234') // attempt::some_name
+   *
+   * @example
+   * keyWithoutSid('some_name::1234') // some_name::1234
+   */
+  private keyWithoutSid(key: string) {
+    if (key.split(this.separator).length !== 3) {
+      return key
+    }
+
+    return key.split(this.separator).slice(0, 2).join(this.separator)
+  }
+
   public createKeyError(key: string) {
-    return `Cache key "${key}" not found.`
+    return `Cache key "${this.keyWithoutSid(key)}" not found.`
   }
 
   /**
@@ -30,7 +51,7 @@ export class CacheService {
    * createSessionKeyType('current', '1234') // current::{bffName}::1234
    */
   public createSessionKeyType(type: 'attempt' | 'current', sid: string) {
-    return `${type}::${this.config.name}::${sid}`
+    return `${type}${this.separator}${this.config.name}${this.separator}${sid}`
   }
 
   public async save({
@@ -68,7 +89,9 @@ export class CacheService {
     try {
       await this.cacheManager.del(key)
     } catch (error) {
-      throw new Error(`Failed to delete key "${key}" from cache.`)
+      throw new Error(
+        `Failed to delete key "${this.keyWithoutSid(key)}" from cache.`,
+      )
     }
   }
 }
