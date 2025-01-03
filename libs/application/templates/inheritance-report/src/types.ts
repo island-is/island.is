@@ -203,7 +203,7 @@ export interface BankAccountsData extends DeceasedShare {
   exchangeRateOrInterest: string
   propertyNumber: string
   assetNumber: string
-  amount: string
+  propertyValuation: string
   foreignBankAccount?: ('yes' | 'no')[]
   taxFreeInheritance: number
   enabled?: boolean
