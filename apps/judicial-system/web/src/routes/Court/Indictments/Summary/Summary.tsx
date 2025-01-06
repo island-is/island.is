@@ -21,10 +21,7 @@ import {
   SectionHeading,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import {
-  Defendants,
-  Prosecutor,
-} from '@island.is/judicial-system-web/src/components/CaseInfo/CaseInfo'
+import { ProsecutorAndDefendantsEntries } from '@island.is/judicial-system-web/src/components/CaseInfo/CaseInfo'
 import {
   CaseFile,
   CaseFileCategory,
@@ -129,8 +126,7 @@ const Summary: FC = () => {
           </Text>
         </Box>
         <Box component="section" marginBottom={2}>
-          <Prosecutor workingCase={workingCase} />
-          <Defendants workingCase={workingCase} />
+          <ProsecutorAndDefendantsEntries workingCase={workingCase} />
         </Box>
         <Box component="section" marginBottom={6}>
           <InfoCardClosedIndictment />

@@ -1,6 +1,5 @@
 import React, { useContext } from 'react'
 
-import { LifeEventPage, QueryGetNewsArgs } from '@island.is/api/schema'
 import { Box } from '@island.is/island-ui/core'
 import { Locale } from '@island.is/shared/types'
 import {
@@ -17,8 +16,10 @@ import {
   GetArticleCategoriesQuery,
   GetFrontpageQuery,
   GetNewsQuery,
+  LifeEventPage,
   QueryGetArticleCategoriesArgs,
   QueryGetFrontpageArgs,
+  QueryGetNewsArgs,
 } from '@island.is/web/graphql/schema'
 import { useNamespace } from '@island.is/web/hooks'
 import { useI18n } from '@island.is/web/i18n'
