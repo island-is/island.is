@@ -71,7 +71,11 @@ export const ParticipantsOverviewExpandableTable = ({ data }: Props) => {
       {data.length > MAX_ROWS && (
         <Box display="flex" justifyContent="center" marginY={2}>
           <Button variant="text" onClick={handleExpandTable} size="small">
-            {isExpanded ? 'Sjá færri' : 'Sjá fleiri'}
+            {formatMessage(
+              isExpanded
+                ? participants.labels.seeLess
+                : participants.labels.seeMore,
+            )}
           </Button>
         </Box>
       )}

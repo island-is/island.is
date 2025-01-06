@@ -88,5 +88,15 @@ export const participants = {
       defaultMessage: 'Vinsamlegast fjarlægðu ógjaldgenga þáttakendur',
       description: 'participants table error message',
     },
+    seeLess: {
+      id: 'aosh.sem.application:participants.labels.seeLess',
+      defaultMessage: 'Sjá færri',
+      description: 'participants table see less',
+    },
+    seeMore: {
+      id: 'aosh.sem.application:participants.labels.seeMore',
+      defaultMessage: 'Sjá fleiri',
+      description: 'participants table see more',
+    },
   }),
 }

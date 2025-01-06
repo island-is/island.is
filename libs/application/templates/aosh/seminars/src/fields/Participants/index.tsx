@@ -138,7 +138,6 @@ export const Participants: FC<React.PropsWithChildren<FieldBaseProps>> = ({
         'initialQuery',
         '',
       ) as string
-      // console.log('seminarId', seminarId)
       const res = await getIsCompanyValidCallback(nationalIds, seminarId)
 
       let tmpNotValid = false

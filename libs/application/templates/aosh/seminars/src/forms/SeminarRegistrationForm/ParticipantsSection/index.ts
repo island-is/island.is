@@ -27,22 +27,22 @@ export const participantsSection = buildSection({
           fields: {
             name: {
               component: 'input',
-              label: 'Nafn',
+              label: participantMessages.labels.name,
               width: 'half',
             },
             nationalId: {
               component: 'input',
-              label: 'Kennitala',
+              label: participantMessages.labels.nationalId,
               width: 'half',
             },
             email: {
               component: 'input',
-              label: 'Netfang',
+              label: participantMessages.labels.email,
               width: 'half',
             },
             phoneNumber: {
               component: 'input',
-              label: 'Símanúmer',
+              label: participantMessages.labels.phoneNumber,
               width: 'half',
             },
           },
