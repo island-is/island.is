@@ -4,6 +4,9 @@ inputs:
   github-token:
     description: 'GitHub token'
     required: true
+  cache-url:
+    description: 'Cache URL'
+    default: 'https://cache.dev01.devland.is/'
   enable-cache:
     description: 'Enable cache'
     default: ''
@@ -18,14 +21,15 @@ runs:
   using: 'composite'
   steps:
     - name: Adding required env vars
-      uses: actions/github-script@v7
+      shell: bash
       env:
-        github-token: ${{ inputs.GITHUB_TOKEN }}
-      with:
-        script: |
-          core.exportVariable('ACTIONS_CACHE_URL', 'https://cache.dev01.devland.is/')
-          core.exportVariable('ACTIONS_RUNTIME_TOKEN', process.env['ACTIONS_RUNTIME_TOKEN'])
-          core.exportVariable('ACTIONS_RUNTIME_URL', process.env['ACTIONS_RUNTIME_URL'])
+        CACHE_URL: ${{ !github.event.localrun && inputs.cache-url }}
+      run: |
+        if [[ -z "$CACHE_URL" ]]; then
+          echo "ACTIONS_CACHE_URL=$CACHE_URL" >> $GITHUB_ENV
+        fi
+        echo "ACTIONS_RUNTIME_TOKEN=$ACTIONS_RUNTIME_TOKEN" >> $GITHUB_ENV
+        echo "ACTIONS_RUNTIME_URL=$ACTIONS_RUNTIME_URL" >> $GITHUB_ENV
     - name: Get cache
       id: prepare
       shell: bash
