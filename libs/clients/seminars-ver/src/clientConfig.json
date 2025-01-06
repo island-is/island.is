@@ -112,8 +112,8 @@
             "name": "courseID",
             "in": "query",
             "schema": {
-              "type": "integer",
-              "format": "int64"
+              "type": "string",
+              "format": "uuid"
             }
           },
           {

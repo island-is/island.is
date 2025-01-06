@@ -53,7 +53,7 @@ export class SeminarsClientService {
   async checkIndividuals(
     auth: User,
     nationalIds: Array<string>,
-    courseID: number,
+    courseID: string,
   ): Promise<Array<IndividualDTO>> {
     return await this.individualApiWithAuth(auth).apiIndividualGet({
       courseID,

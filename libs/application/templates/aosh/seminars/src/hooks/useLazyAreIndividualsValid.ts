@@ -10,7 +10,7 @@ export const useLazyAreIndividualsValid = () => {
     },
     {
       nationalIds: Array<string>
-      courseID: number
+      courseID: string
     }
   >(
     gql`
