@@ -32,7 +32,7 @@ export const BoostChatPanel: React.FC<
       const el = document.createElement('script')
       el.addEventListener('load', () => {
         const settings = {
-          language: activeLocale === 'is' ? 'is-IS' : 'en-US',
+          language: 'en-US',
           chatPanel: {
             ...config.chatPanel,
             styling: {
