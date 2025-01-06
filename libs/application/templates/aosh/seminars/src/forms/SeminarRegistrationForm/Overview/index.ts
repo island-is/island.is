@@ -2,7 +2,6 @@ import {
   buildCustomField,
   buildMultiField,
   buildSection,
-  buildStaticTableField,
   buildSubmitField,
 } from '@island.is/application/core'
 import { overview } from '../../../lib/messages'

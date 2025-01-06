@@ -1,5 +1,4 @@
 import {
-  buildAlertMessageField,
   buildCompanySearchField,
   buildCustomField,
   buildDescriptionField,
