@@ -153,7 +153,6 @@ export const Participants: FC<React.PropsWithChildren<FieldBaseProps>> = ({
           return { ...x, disabled: !participantInRes[0].mayTakeCourse }
         },
       )
-      console.log('updatedParticipantList', updatedParticipantList)
       if (tmpNotValid) setValue('participantValidityError', true)
       setFoundNotValid(tmpNotValid)
       setParticipantList(updatedParticipantList)
