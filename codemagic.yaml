@@ -138,8 +138,7 @@ workflows:
       - $HOME/Library/Developer/Xcode/DerivedData/**/Build/**/*.app
       - $HOME/Library/Developer/Xcode/DerivedData/**/Build/**/*.dSYM
     publishing:
-      <<: *ios_publishing
-      <<: *slack_errors
+      <<: [*ios_publishing, *slack_errors]
 
   dev-app-ios:
     <<: *base
@@ -204,8 +203,7 @@ workflows:
     artifacts: &android_artifacts
       - android/app/build/outputs/**/*.aab
     publishing:
-      <<: *android_publishing
-      <<: *slack_errors
+      <<: [*android_publishing, *slack_errors]
 
   dev-app-android:
     <<: *base
@@ -232,5 +230,4 @@ workflows:
       - *build_android
     artifacts: *android_artifacts
     publishing:
-      <<: *android_publishing
-      <<: *slack_errors
+      <<: [*android_publishing, *slack_errors]
