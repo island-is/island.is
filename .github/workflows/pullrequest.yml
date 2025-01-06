@@ -51,6 +51,17 @@ jobs:
       - name: Setup yarn
         run: corepack enable
 
+      - name: Install java
+        run: |
+          set -euo pipefail
+          if ! command -v java 2>/dev/null; then
+            apt-get update
+            apt-get install -y openjdk-17-jdk
+          else
+            echo "Java already installed"
+          fi
+          java --version
+
       - name: Check node version
         run: |
           set -euo pipefail
