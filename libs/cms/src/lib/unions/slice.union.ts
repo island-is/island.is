@@ -48,6 +48,7 @@ import {
   IFeaturedEvents,
   IGenericList,
   ILatestGenericListItems,
+  IFeaturedLinks,
 } from '../generated/contentfulTypes'
 import { Image, mapImage } from '../models/image.model'
 import { Asset, mapAsset } from '../models/asset.model'
@@ -145,6 +146,7 @@ import {
   LatestGenericListItems,
   mapLatestGenericListItems,
 } from '../models/latestGenericListItems.model'
+import { FeaturedLinks, mapFeaturedLinks } from '../models/featuredLinks.model'
 
 export type SliceTypes =
   | ITimeline
@@ -192,6 +194,7 @@ export type SliceTypes =
   | IFeaturedEvents
   | IGenericList
   | ILatestGenericListItems
+  | IFeaturedLinks
 
 export const SliceUnion = createUnionType({
   name: 'Slice',
@@ -244,6 +247,7 @@ export const SliceUnion = createUnionType({
     FeaturedEvents,
     GenericList,
     LatestGenericListItems,
+    FeaturedLinks,
   ],
   resolveType: (document) => document.typename, // typename is appended to request on indexing
 })
@@ -341,6 +345,8 @@ export const mapSliceUnion = (slice: SliceTypes): typeof SliceUnion => {
       return mapGenericList(slice as IGenericList)
     case 'latestGenericListItems':
       return mapLatestGenericListItems(slice as ILatestGenericListItems)
+    case 'featuredLinks':
+      return mapFeaturedLinks(slice as IFeaturedLinks)
     default:
       throw new ApolloError(`Can not convert to slice: ${contentType}`)
   }

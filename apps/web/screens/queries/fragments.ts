@@ -921,6 +921,18 @@ export const slices = gql`
     }
   }
 
+  fragment FeaturedLinksFields on FeaturedLinks {
+    title
+    links {
+      title
+      attention
+      thing {
+        slug
+        type
+      }
+    }
+  }
+
   fragment BaseSlices on Slice {
     ...TimelineFields
     ...StoryFields
