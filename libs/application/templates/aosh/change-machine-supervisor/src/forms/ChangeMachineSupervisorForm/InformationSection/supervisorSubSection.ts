@@ -1,12 +1,12 @@
 import {
   buildCheckboxField,
-  buildDividerField,
   buildMultiField,
   buildNationalIdWithNameField,
   buildPhoneField,
   buildSubSection,
   buildSubmitField,
   buildTextField,
+  buildTitleField,
   getValueViaPath,
 } from '@island.is/application/core'
 import { information } from '../../../lib/messages'
@@ -73,7 +73,7 @@ export const supervisorSubSection = buildSubSection({
           },
           required: true,
         }),
-        buildDividerField({
+        buildTitleField({
           title: location.general.title,
           color: 'black',
         }),
