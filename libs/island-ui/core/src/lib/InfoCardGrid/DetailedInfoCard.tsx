@@ -1,7 +1,6 @@
 import {
   Box,
   GridColumn,
-  GridContainer,
   GridRow,
   Icon,
   IconMapIcon,
@@ -76,7 +75,7 @@ export const DetailedInfoCard = ({
                 color="blue400"
               />
               <Box marginLeft={2}>
-                <Text variant="medium">{d.text}</Text>
+                <Text variant="small">{d.text}</Text>
               </Box>
             </Box>
           ))}
@@ -98,7 +97,12 @@ export const DetailedInfoCard = ({
               return null
             }
             return (
-              <Tag key={`${tag.label}-${index}`} disabled variant={tag.variant}>
+              <Tag
+                outlined
+                key={`${tag.label}-${index}`}
+                disabled
+                variant={tag.variant}
+              >
                 {tag.label}
               </Tag>
             )
@@ -138,21 +142,21 @@ export const DetailedInfoCard = ({
   const renderContent = () => {
     if (size === 'large') {
       return (
-        <GridContainer>
-          <GridRow direction="row">
-            <GridColumn span="8/12">
-              <Text variant="h3" color="blue400">
-                {title}
-              </Text>
-              {description && (
-                <Box flexGrow={1} marginTop={1}>
-                  <Text>{description}</Text>
-                </Box>
-              )}
-            </GridColumn>
-            <GridColumn span="4/12">{renderDetails()}</GridColumn>
-          </GridRow>
-        </GridContainer>
+        <GridRow direction="row">
+          <GridColumn span="8/12">
+            <Text variant="h3" color="blue400">
+              {title}
+            </Text>
+            {description && (
+              <Box flexGrow={1} marginTop={1}>
+                <Text variant="medium" fontWeight="light">
+                  {description}
+                </Text>
+              </Box>
+            )}
+          </GridColumn>
+          <GridColumn span="4/12">{renderDetails()}</GridColumn>
+        </GridRow>
       )
     }
     return (
@@ -162,7 +166,9 @@ export const DetailedInfoCard = ({
         </Text>
         {description && (
           <Box marginTop={1}>
-            <Text>{description}</Text>
+            <Text variant="medium" fontWeight="light">
+              {description}
+            </Text>
           </Box>
         )}
         {renderDetails()}
