@@ -1175,6 +1175,9 @@ export const OrganizationWrapper: React.FC<
 
   const n = useNamespace(namespace)
 
+  const indexableBySearchEngine =
+    organizationPage.canBeFoundInSearchResults ?? true
+
   return (
     <>
       <HeadWithSocialSharing
@@ -1184,7 +1187,11 @@ export const OrganizationWrapper: React.FC<
         imageContentType={pageFeaturedImage?.contentType}
         imageWidth={pageFeaturedImage?.width?.toString()}
         imageHeight={pageFeaturedImage?.height?.toString()}
-      />
+      >
+        {!indexableBySearchEngine && (
+          <meta name="robots" content="noindex, nofollow" />
+        )}
+      </HeadWithSocialSharing>
       <OrganizationHeader
         organizationPage={organizationPage}
         isSubpage={isSubpage}

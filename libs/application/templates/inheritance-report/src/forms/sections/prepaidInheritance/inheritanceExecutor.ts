@@ -26,7 +26,7 @@ export const inheritanceExecutor = buildSection({
         }),
         buildNationalIdWithNameField({
           id: 'executors.executor',
-          title: m.name,
+          title: '',
           required: true,
         }),
         buildTextField({
@@ -73,7 +73,7 @@ export const inheritanceExecutor = buildSection({
         }),
         buildNationalIdWithNameField({
           id: 'executors.spouse',
-          title: m.name,
+          title: '',
           required: true,
           condition: (answers) =>
             !!((answers.executors as any)?.includeSpouse as Array<string>)

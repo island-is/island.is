@@ -3,6 +3,7 @@ import {
   NestedFullTable,
   SimpleBarChart,
   formatDate,
+  numberFormat,
 } from '@island.is/portals/my-pages/core'
 import { Box, Text, Button } from '@island.is/island-ui/core'
 import { AssetsPaths } from '../../lib/paths'
@@ -137,6 +138,7 @@ export const VehicleBulkMileageSubData = ({
             labels: {
               mileage: formatMessage(vehicleMessage.odometer),
             },
+            valueFormat: (arg: number) => `${numberFormat(arg)} km`,
           }}
         />
       ) : undefined}
