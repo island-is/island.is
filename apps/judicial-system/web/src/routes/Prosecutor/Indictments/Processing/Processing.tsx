@@ -112,6 +112,7 @@ const Processing: FC = () => {
         )
       }
 
+      console.log({destination})
       router.push(`${destination}/${workingCase.id}`)
     },
     [router, setWorkingCase, transitionCase, workingCase],
@@ -668,12 +669,14 @@ const Processing: FC = () => {
           nextButtonIcon="arrowForward"
           previousUrl={`${constants.INDICTMENTS_CASE_FILE_ROUTE}/${workingCase.id}`}
           nextIsDisabled={!stepIsValid}
-          onNextButtonClick={() =>
-            handleNavigationTo(
-              isTrafficViolationCaseCheck
-                ? constants.INDICTMENTS_TRAFFIC_VIOLATION_ROUTE
-                : constants.INDICTMENTS_CASE_FILES_ROUTE,
-            )
+          onNextButtonClick={() => {
+              // TODO: currently for e2e tests, this is failing on dev
+              return handleNavigationTo(
+                isTrafficViolationCaseCheck
+                  ? constants.INDICTMENTS_TRAFFIC_VIOLATION_ROUTE
+                  : constants.INDICTMENTS_CASE_FILES_ROUTE,
+              )
+            }
           }
         />
       </FormContentContainer>
