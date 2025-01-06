@@ -15,6 +15,7 @@ import { mapVaccinationStatus } from './utils/mappers'
 import { Logger } from '@island.is/logging'
 import { HealthDirectorateHealthService } from '@island.is/clients/health-directorate'
 import { Waitlists } from './models/waitlists.model'
+import { Referrals } from './models/referrals.model'
 
 @Injectable()
 export class HealthDirectorateService {
@@ -145,13 +146,50 @@ export class HealthDirectorateService {
     waitlists.waitlists = data.map((item) => {
       return {
         id: item.id,
-        lastUpdated: item.lastUpdated?.toString(),
+        lastUpdated: item.lastUpdated
+          ? new Date(item.lastUpdated?.toString())
+          : undefined,
         name: item.name,
-        waitBeganDate: item.waitBeganDate?.toString(),
+        waitBeganDate: item.waitBeganDate
+          ? new Date(item.waitBeganDate?.toString())
+          : undefined,
         statusDisplay: item.statusDisplay?.toString(),
       }
     })
 
     return waitlists
+  }
+
+  /* Referrals */
+  async getReferrals(auth: Auth, locale: Locale): Promise<Referrals | null> {
+    const data = await this.healthApi.getReferrals(auth, locale)
+
+    if (!data) {
+      return null
+    }
+
+    const referrals: Referrals = {
+      Referrals: data.map((item) => {
+        return {
+          id: item.id,
+          serviceType: item.serviceType,
+          serviceName: item.serviceName,
+          createdDate: item.createdDate
+            ? new Date(item.createdDate?.toString())
+            : undefined,
+          validUntilDate: item.validUntilDate
+            ? new Date(item.validUntilDate?.toString())
+            : undefined,
+          stateValue: item.stateValue,
+          stateDisplay: item.stateDisplay,
+          assignedProviderId: item.assignedProviderId,
+          reason: item.reasonForReferral,
+          fromContactInfo: item.fromContactInfo,
+          toContactInfo: item.toContactInfo,
+        }
+      }),
+    }
+
+    return referrals
   }
 }

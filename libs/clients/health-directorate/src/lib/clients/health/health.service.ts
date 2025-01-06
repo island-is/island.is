@@ -64,9 +64,54 @@ export class HealthDirectorateHealthService {
     auth: Auth,
     locale: string,
   ): Promise<Array<ReferralDto> | null> {
-    const referrals = await this.referralsApiWithAuth(auth)
-      .meReferralControllerGetReferralsV1({ locale: this.mapLocale(locale) })
-      .catch(handle404)
+    const referrals: ReferralDto[] = [
+      {
+        id: '1',
+        serviceType: 'Þjálfun (serviceType)', // not used
+        serviceName: 'Sjúkraþjálfun',
+        createdDate: new Date(),
+        validUntilDate: new Date(),
+        stateValue: 1, // not used
+        stateDisplay: 'Virk tilvísun',
+        assignedProviderId: '1', // not used
+        reasonForReferral: 'Meiðsli á hné',
+        fromContactInfo: {
+          name: 'Jón Jónsson',
+          profession: 'Heimilislæknir',
+          department: 'Heilsugæslan Miðbæ',
+        },
+        toContactInfo: {
+          name: 'Opin tilvísun',
+          profession: '',
+          department: '',
+        },
+      },
+      {
+        id: '2',
+        serviceType: 'Ofnæmi (serviceType)', // not used
+        serviceName: 'Ofnæmislæknir',
+        createdDate: new Date(),
+        validUntilDate: new Date(),
+        stateValue: 1, // not used
+        stateDisplay: 'Óvirk tilvísun',
+        assignedProviderId: '1', // not used
+        reasonForReferral: 'Ofnæmisviðbrögð í húð',
+        fromContactInfo: {
+          name: 'Jón Jónsson',
+          profession: 'Heimilislæknir',
+          department: 'Heilsugæslan Miðbæ',
+        },
+        toContactInfo: {
+          name: 'Sigurður Kjartansson',
+          profession: 'Ofnæmislækningar',
+          department: 'Domus barnalæknar',
+        },
+      },
+    ]
+
+    // await this.referralsApiWithAuth(auth)
+    //   .meReferralControllerGetReferralsV1({ locale: this.mapLocale(locale) })
+    //   .catch(handle404)
 
     if (!referrals) {
       this.logger.debug('No referrals returned', {

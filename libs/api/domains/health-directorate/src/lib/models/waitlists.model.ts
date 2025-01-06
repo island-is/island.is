@@ -8,11 +8,11 @@ export class Waitlist {
   @Field()
   name!: string
 
-  @Field({ nullable: true })
-  waitBeganDate?: string
+  @Field(() => Date, { nullable: true })
+  waitBeganDate?: Date
 
-  @Field({ nullable: true })
-  lastUpdated?: string
+  @Field(() => Date, { nullable: true })
+  lastUpdated?: Date
 
   @Field({ nullable: true })
   organizationName?: string

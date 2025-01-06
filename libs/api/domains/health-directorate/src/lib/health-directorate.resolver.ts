@@ -28,6 +28,7 @@ import {
   Features,
 } from '@island.is/nest/feature-flags'
 import { Waitlists } from './models/waitlists.model'
+import { Referrals } from './models/referrals.model'
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
 @Audit({ namespace: '@island.is/api/health-directorate' })
 @Resolver(() => OrganDonation)
@@ -92,7 +93,7 @@ export class HealthDirectorateResolver {
   }
 
   /* Waitlists */
-  @Query(() => [Waitlists], {
+  @Query(() => Waitlists, {
     name: 'healthDirectorateWaitlists',
   })
   @Audit()
@@ -102,5 +103,18 @@ export class HealthDirectorateResolver {
     @CurrentUser() user: User,
   ): Promise<Waitlists | null> {
     return this.api.getWaitlists(user, locale)
+  }
+
+  /* Referrals */
+  @Query(() => Referrals, {
+    name: 'healthDirectorateReferrals',
+  })
+  @Audit()
+  getReferalls(
+    @Args('locale', { type: () => String, nullable: true })
+    locale: Locale = 'is',
+    @CurrentUser() user: User,
+  ): Promise<Referrals | null> {
+    return this.api.getReferrals(user, locale)
   }
 }
