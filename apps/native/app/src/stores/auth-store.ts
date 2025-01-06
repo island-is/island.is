@@ -9,6 +9,8 @@ import {
 import Keychain from 'react-native-keychain'
 import createUse from 'zustand'
 import create, { State } from 'zustand/vanilla'
+import { Navigation } from 'react-native-navigation'
+
 import { bundleId, getConfig } from '../config'
 import { getIntl } from '../contexts/i18n-provider'
 import { getApolloClientAsync } from '../graphql/client'
@@ -23,6 +25,7 @@ import {
   DeletePasskeyMutation,
   DeletePasskeyMutationVariables,
 } from '../graphql/types/schema'
+import { getAppRoot } from '../utils/lifecycle/get-app-root'
 
 const KEYCHAIN_AUTH_KEY = `@islandis_${bundleId}`
 const INVALID_REFRESH_TOKEN_ERROR = 'invalid_grant'
@@ -137,7 +140,7 @@ export const authStore = create<AuthStore>((set, get) => ({
       return userInfo
     }
   },
-  async refresh() {
+  async refresh(skipLogout = false) {
     const appAuthConfig = getAppAuthConfig()
     const refreshToken = get().authorizeResult?.refreshToken
 
@@ -145,9 +148,20 @@ export const authStore = create<AuthStore>((set, get) => ({
       return
     }
 
-    const newAuthorizeResult = await authRefresh(appAuthConfig, {
-      refreshToken,
-    })
+    let newAuthorizeResult
+    try {
+      newAuthorizeResult = await authRefresh(appAuthConfig, {
+        refreshToken,
+      })
+    } catch (e) {
+      if (!skipLogout) {
+        // Add && isLogoutError(e) to if (check if error is INVALID_REFRESH_TOKEN_ERROR or UNAUTHORIZED_USER_INFO?)
+        Alert.alert('Error', 'Your session has expired. Please log in again.') // TODO add to intl and find better error message?
+        await get().logout()
+        Navigation.setRoot({ root: await getAppRoot() })
+      }
+      throw e
+    }
 
     const authorizeResult = {
       ...get().authorizeResult,
