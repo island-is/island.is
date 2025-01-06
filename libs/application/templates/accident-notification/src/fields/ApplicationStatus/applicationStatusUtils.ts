@@ -1,16 +1,33 @@
-import { FormatMessage, FormValue } from '@island.is/application/types'
+import {
+  FormatMessage,
+  FormValue,
+  TagVariant,
+} from '@island.is/application/types'
 import { inReview } from '../../lib/messages'
-import { AccidentNotificationStatusEnum, Steps } from './StatusStep/types'
+import { AccidentNotificationStatusEnum } from './StatusStep/types'
 import { getValueViaPath } from '@island.is/application/core'
 import { ReviewApprovalEnum } from '../../types'
 import { AccidentNotificationStatus } from '@island.is/api/schema'
 import {
-  hasReceivedAllDocuments,
+  hasReceivedConfirmation,
   isInjuredAndRepresentativeOfCompanyOrInstitute,
   shouldRequestReview,
-} from '../../utils'
-import { hasReceivedConfirmation } from '../../utils/hasReceivedConfirmation'
+} from '../../utils/miscUtils'
+
 import { AccidentNotificationAnswers } from '../..'
+import { MessageDescriptor } from 'react-intl'
+import { ActionProps } from './StatusStep'
+import { hasReceivedAllDocuments } from '../../utils/documentUtils'
+
+type Steps = {
+  title: string
+  description: string
+  hasActionMessage: boolean
+  action?: ActionProps
+  visible?: boolean
+  tagText: MessageDescriptor | string
+  tagVariant: TagVariant
+}
 
 export const tagMapperApplicationStatus = {
   [AccidentNotificationStatusEnum.ACCEPTED]: {

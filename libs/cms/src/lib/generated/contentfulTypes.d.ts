@@ -1598,6 +1598,9 @@ export interface IGenericListFields {
 
   /** Filter Tags */
   filterTags?: IGenericTag[] | undefined
+
+  /** Order By */
+  orderBy?: 'Date' | 'Title' | 'Publish Date' | undefined
 }
 
 /** A list of items which can be embedded into rich text */
@@ -3286,6 +3289,9 @@ export interface IOrganizationPageFields {
 
   /** Sitemap */
   sitemap?: ISitemap | undefined
+
+  /** Can be found in search results */
+  canBeFoundInSearchResults?: boolean | undefined
 }
 
 export interface IOrganizationPage extends Entry<IOrganizationPageFields> {
