@@ -699,7 +699,7 @@ export class CaseNotificationService extends BaseNotificationService {
       role === UserRole.DISTRICT_COURT_JUDGE ? theCase.judge : theCase.registrar
 
     if (!official?.email) {
-      return Promise.resolve({ success: false })
+      return Promise.resolve({ success: true })
     }
 
     return this.sendEmail(
