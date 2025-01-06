@@ -40,7 +40,7 @@ export const strings = defineMessages({
   },
   changeReviewedDecisionButtonText: {
     id: 'judicial.system.core:public_prosecutor.indictments.overview.change_reviewed_decision_button_text',
-    defaultMessage: 'Breyta ákvörðun?',
+    defaultMessage: 'Breyta ákvörðun',
     description:
       'Notaður sem texti fyrir staðfestingartakka þegar ákvörðun ríkissaksóknara er breytt.',
   },
