@@ -4,10 +4,12 @@ export * from './lib/clients/occupational-license/gen/fetch/models'
 export {
   HealthDirectorateVaccinationsClientConfig,
   HealthDirectorateOrganDonationClientConfig,
+  HealthDirectorateHealthClientConfig,
   HealthDirectorateClientConfig,
-  HealthDirectorateClientService,
   HealthDirectorateOrganDonationService,
   HealthDirectorateVaccinationsService,
+  HealthDirectorateClientService,
+  HealthDirectorateHealthService,
   OrganDonorDto,
   Locale,
   organLocale,

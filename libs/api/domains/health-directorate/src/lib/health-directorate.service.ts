@@ -12,12 +12,17 @@ import { Donor, DonorInput, Organ } from './models/organ-donation.model'
 
 import { Vaccination, Vaccinations } from './models/vaccinations.model'
 import { mapVaccinationStatus } from './utils/mappers'
+import { Logger } from '@island.is/logging'
+import { HealthDirectorateHealthService } from '@island.is/clients/health-directorate'
+import { Waitlists } from './models/waitlists.model'
 
 @Injectable()
 export class HealthDirectorateService {
   constructor(
     private readonly vaccinationApi: HealthDirectorateVaccinationsService,
     private readonly organDonationApi: HealthDirectorateOrganDonationService,
+    private readonly healthApi: HealthDirectorateHealthService,
+    private readonly logger: Logger,
   ) {}
 
   /* Organ Donation */
@@ -124,5 +129,29 @@ export class HealthDirectorateService {
         }
       }) ?? []
     return { vaccinations }
+  }
+
+  /* Waitlists */
+  async getWaitlists(auth: Auth, locale: Locale): Promise<Waitlists | null> {
+    const data = await this.healthApi.getWaitlists(auth, locale)
+
+    if (!data) {
+      return null
+    }
+    const waitlists: Waitlists = {
+      waitlists: [],
+    }
+
+    waitlists.waitlists = data.map((item) => {
+      return {
+        id: item.id,
+        lastUpdated: item.lastUpdated?.toString(),
+        name: item.name,
+        waitBeganDate: item.waitBeganDate?.toString(),
+        statusDisplay: item.statusDisplay?.toString(),
+      }
+    })
+
+    return waitlists
   }
 }

@@ -7,10 +7,10 @@ const schema = z.object({
 })
 
 // TODO: Swithc out for correct values when available on dev
-export const HealthDirectorateVaccinationsClientConfig = defineConfig<
+export const HealthDirectorateHealthClientConfig = defineConfig<
   z.infer<typeof schema>
 >({
-  name: 'HealthDirectorateVaccinationsClientConfig',
+  name: 'HealthDirectorateHealthClientConfig',
   schema,
   load(env) {
     return {

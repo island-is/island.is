@@ -6,3 +6,7 @@ export {
   OrganDonorDto,
   Locale as organLocale,
 } from './organ-donation'
+export {
+  HealthDirectorateHealthClientConfig,
+  HealthDirectorateHealthService,
+} from './health'

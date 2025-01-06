@@ -83,11 +83,32 @@ export class HealthDirectorateHealthService {
     auth: Auth,
     locale: string,
   ): Promise<Array<WaitingListEntryDto> | null> {
-    const waitlists = await this.waitingListsApiWithAuth(auth)
-      .meWaitingListControllerGetWaitingListEntriesV1({
-        locale: this.mapLocale(locale),
-      })
-      .catch(handle404)
+    const waitlists: WaitingListEntryDto[] = [
+      {
+        id: '1',
+        name: 'Liðskiptaaðgerð á hné',
+        organizationName: 'Landspítalinn' as unknown as object,
+        statusDisplay: 'Samþykktur á lista' as unknown as object,
+        statusId: '1' as unknown as object,
+        lastUpdated: '23.11.2023' as unknown as object,
+        waitBeganDate: '08.10.2023' as unknown as object,
+      },
+      {
+        id: '2',
+        name: 'Hjúkrunarheimili',
+        organizationName: 'Sóltún hjúkrunarheimili' as unknown as object,
+        statusDisplay: 'Umsókn í vinnslu' as unknown as object,
+        statusId: '2' as unknown as object,
+        lastUpdated: '12.09.2024' as unknown as object,
+        waitBeganDate: '01.02.2022' as unknown as object,
+      },
+    ]
+
+    // await this.waitingListsApiWithAuth(auth)
+    //   .meWaitingListControllerGetWaitingListEntriesV1({
+    //     locale: this.mapLocale(locale),
+    //   })
+    //   .catch(handle404)
 
     if (!waitlists) {
       this.logger.debug('No waitlists returned', {
