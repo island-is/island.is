@@ -78,7 +78,7 @@ export const Participants: FC<React.PropsWithChildren<FieldBaseProps>> = ({
 
   const getAreIndividualsValid = useLazyAreIndividualsValid()
   const getIsCompanyValidCallback = useCallback(
-    async (nationalIds: Array<string>, courseID: number) => {
+    async (nationalIds: Array<string>, courseID: string) => {
       const { data } = await getAreIndividualsValid({
         nationalIds,
         courseID,
@@ -138,10 +138,8 @@ export const Participants: FC<React.PropsWithChildren<FieldBaseProps>> = ({
         'initialQuery',
         '',
       ) as string
-      const res = await getIsCompanyValidCallback(
-        nationalIds,
-        parseInt(seminarId),
-      )
+      // console.log('seminarId', seminarId)
+      const res = await getIsCompanyValidCallback(nationalIds, seminarId)
 
       let tmpNotValid = false
       const updatedParticipantList: Array<Participant> = participants.map(
