@@ -7,9 +7,6 @@ inputs:
   enable-cache:
     description: 'Enable cache'
     default: ''
-  cache-url:
-    description: 'URL to cache to/from'
-    default: 'https://cache.dev01.devland.is/'
   keys:
     description: 'Keys'
     default: 'false'
@@ -20,21 +17,13 @@ outputs:
 runs:
   using: 'composite'
   steps:
-    - name: Debug inputs
-      uses: actions/github-script@v7
-      with:
-        github-token: ${{ inputs.github-token }}
-        script: |
-          console.log(JSON.stringify(inputs, null, 2))
-
     - name: Adding required env vars
       uses: actions/github-script@v7
       env:
-        ACTIONS_CACHE_URL: ${{ inputs.cache-url }}
+        github-token: ${{ inputs.GITHUB_TOKEN }}
       with:
-        github-token: ${{ inputs.github-token }}
         script: |
-          core.exportVariable('ACTIONS_CACHE_URL', process.env['ACTIONS_CACHE_URL'])
+          core.exportVariable('ACTIONS_CACHE_URL', 'https://cache.dev01.devland.is/')
           core.exportVariable('ACTIONS_RUNTIME_TOKEN', process.env['ACTIONS_RUNTIME_TOKEN'])
           core.exportVariable('ACTIONS_RUNTIME_URL', process.env['ACTIONS_RUNTIME_URL'])
     - name: Get cache
