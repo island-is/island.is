@@ -17,9 +17,6 @@ export class Referral {
   @Field(() => ID)
   id!: string
 
-  @Field()
-  serviceType!: string
-
   @Field({ nullable: true })
   serviceName?: string
 
@@ -29,14 +26,8 @@ export class Referral {
   @Field(() => Date, { nullable: true })
   validUntilDate?: Date
 
-  @Field(() => Int, { nullable: true })
-  stateValue?: number
-
   @Field({ nullable: true })
   stateDisplay?: string
-
-  @Field({ nullable: true })
-  assignedProviderId?: string
 
   @Field({ nullable: true })
   reason?: string

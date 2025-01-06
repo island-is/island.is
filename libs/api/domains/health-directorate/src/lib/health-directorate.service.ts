@@ -172,7 +172,6 @@ export class HealthDirectorateService {
       Referrals: data.map((item) => {
         return {
           id: item.id,
-          serviceType: item.serviceType,
           serviceName: item.serviceName,
           createdDate: item.createdDate
             ? new Date(item.createdDate?.toString())
@@ -180,9 +179,7 @@ export class HealthDirectorateService {
           validUntilDate: item.validUntilDate
             ? new Date(item.validUntilDate?.toString())
             : undefined,
-          stateValue: item.stateValue,
           stateDisplay: item.stateDisplay,
-          assignedProviderId: item.assignedProviderId,
           reason: item.reasonForReferral,
           fromContactInfo: item.fromContactInfo,
           toContactInfo: item.toContactInfo,
