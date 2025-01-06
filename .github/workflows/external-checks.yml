@@ -8,6 +8,9 @@ defaults:
   run:
     shell: bash
 
+env:
+  RUNNER_IMAGE: 'ghcr.io/actions/actions-runner:latest'
+
 jobs:
   codeowners-check:
     name: Lint CODEOWNERS
@@ -15,7 +18,7 @@ jobs:
     env:
       CHECK: 'false'
     container:
-      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
+      image: ${{ github.env.RUNNER_IMAGE }}
 
     steps:
       - uses: actions/checkout@v4
