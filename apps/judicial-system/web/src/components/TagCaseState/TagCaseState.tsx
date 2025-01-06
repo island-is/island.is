@@ -84,12 +84,15 @@ export const mapCaseStateToTagVariant = (
         text: formatMessage(isCourtRole ? strings.new : strings.sent),
       }
     case CaseState.RECEIVED: {
-      if (isIndictmentCase(caseType) && defendants) {
-        if (scheduledDate && !haveAllSubpoenasBeenServiced(defendants)) {
-          return {
-            color: 'red',
-            text: formatMessage(strings.notYetServiced),
-          }
+      if (
+        isIndictmentCase(caseType) &&
+        defendants &&
+        scheduledDate &&
+        !haveAllSubpoenasBeenServiced(defendants)
+      ) {
+        return {
+          color: 'red',
+          text: formatMessage(strings.notYetServiced),
         }
       }
       switch (indictmentDecision) {
