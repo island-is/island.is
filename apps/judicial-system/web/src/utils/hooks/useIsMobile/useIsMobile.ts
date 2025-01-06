@@ -5,6 +5,11 @@ const useIsMobile = () => {
 
   useEffect(() => {
     const checkMobile = () => {
+      // Check for SSR
+      if (!window) {
+        return false
+      }
+
       const userAgent = navigator.userAgent
       const mobileRegex =
         /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i
