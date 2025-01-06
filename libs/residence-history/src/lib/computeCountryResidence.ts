@@ -2,6 +2,7 @@ import { DAY } from './constants'
 import addYears from 'date-fns/addYears'
 import compareDesc from 'date-fns/compareDesc'
 import { Residence } from './types'
+import { addDays } from 'date-fns'
 
 /**
  * Compute a summary of how many days you've spent as a resident of each country in
@@ -19,7 +20,7 @@ export const computeCountryResidence = (history: Residence[]) => {
     compareDesc(new Date(a), new Date(b)),
   )
 
-  const yearAgo = addYears(new Date(), -1).getTime()
+  const yearAgo = addDays(new Date(), -365).getTime()
 
   let lastTime = Date.now()
 
