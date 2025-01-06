@@ -30,13 +30,16 @@ import type { User as TUser } from '@island.is/judicial-system/types'
 import {
   CaseState,
   CaseType,
+  DefendantEventType,
   indictmentCases,
   investigationCases,
   restrictionCases,
+  UserRole,
 } from '@island.is/judicial-system/types'
 
 import { nowFactory } from '../../factories'
 import { defenderRule, prisonSystemStaffRule } from '../../guards'
+import { DefendantService } from '../defendant'
 import { EventService } from '../event'
 import { User } from '../user'
 import { TransitionCaseDto } from './dto/transitionCase.dto'
@@ -57,6 +60,7 @@ import {
 } from './guards/rolesRules'
 import { CaseInterceptor } from './interceptors/case.interceptor'
 import { CompletedAppealAccessedInterceptor } from './interceptors/completedAppealAccessed.interceptor'
+import { DefendantIndictmentAccessedInterceptor } from './interceptors/defendantIndictmentAccessed.interceptor'
 import { LimitedAccessCaseFileInterceptor } from './interceptors/limitedAccessCaseFile.interceptor'
 import { Case } from './models/case.model'
 import { transitionCase } from './state/case.state'
@@ -84,6 +88,7 @@ export class LimitedAccessCaseController {
   )
   @RolesRules(prisonSystemStaffRule, defenderRule)
   @UseInterceptors(
+    DefendantIndictmentAccessedInterceptor,
     CompletedAppealAccessedInterceptor,
     LimitedAccessCaseFileInterceptor,
     CaseInterceptor,
@@ -100,7 +105,7 @@ export class LimitedAccessCaseController {
   ): Promise<Case> {
     this.logger.debug(`Getting limitedAccess case ${caseId} by id`)
 
-    if (!theCase.openedByDefender) {
+    if (user.role === UserRole.DEFENDER && !theCase.openedByDefender) {
       const updated = await this.limitedAccessCaseService.update(
         theCase,
         { openedByDefender: nowFactory() },

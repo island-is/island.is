@@ -28,8 +28,11 @@ query Cases {
       defenderChoice
       verdictViewDate
       isSentToPrisonAdmin
+      punishmentType
+      openedByPrisonAdminDate
       verdictAppealDate
     }
+    defendantsPunishmentType
     courtDate
     isValidToDateInThePast
     initialRulingDate
