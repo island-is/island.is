@@ -1,4 +1,4 @@
-import { GridColumn, Link, Text } from '@island.is/island-ui/core'
+import { Box, GridColumn, Link, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { RentalAgreement } from '../../lib/dataSchema'
 import {
@@ -11,11 +11,12 @@ import {
   getPropertyClassOptions,
   getPropertyClassGroupOptions,
 } from '../../lib/utils'
-import { summary } from '../../lib/messages'
-import { KeyValue } from './KeyValue'
-import { SummarySection } from './SummarySection'
-import { fileLink, fileLinksList } from './summaryStyles.css'
+import { KeyValue } from './components/KeyValue'
 import { SummaryCardRow } from './components/SummaryCardRow'
+import { SummaryCard } from './components/SummaryCard'
+
+import { fileLink, fileLinksList } from './summaryStyles.css'
+import { summary } from '../../lib/messages'
 
 type Props = {
   answers: RentalAgreement
@@ -61,7 +62,7 @@ export const PropertyInfoSummary = ({
   }
 
   return (
-    <SummarySection sectionLabel={formatMessage(summary.propertyInfoHeader)}>
+    <SummaryCard cardLabel={formatMessage(summary.propertyInfoHeader)}>
       <SummaryCardRow editAction={goToScreen} route={categoryRoute}>
         <GridColumn span={['12/12', '6/12', '6/12', '6/12', '4/12']}>
           <KeyValue
@@ -162,29 +163,31 @@ export const PropertyInfoSummary = ({
         answers.condition.resultsFiles.length > 0 && (
           <SummaryCardRow editAction={goToScreen} route={fileUploadRoute}>
             <GridColumn span={['12/12']}>
-              <Text
-                variant={'small'}
-                as={'label'}
-                fontWeight="semiBold"
-                marginBottom={1}
-              >
-                {formatMessage(summary.fileUploadLabel)}
-              </Text>
-              <ul className={fileLinksList}>
-                {answers.condition.resultsFiles.map((file) => (
-                  <li key={file.name} className={fileLink}>
-                    <Link
-                      underline="small"
-                      underlineVisibility="hover"
-                      color="blue400"
-                      // TODO: Change this to the correct URL
-                      href={'http://localhost:4242/umsoknir/leigusamningur'}
-                    >
-                      {file.name}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
+              <Box paddingY={'p2'}>
+                <Text
+                  variant={'small'}
+                  as={'label'}
+                  fontWeight="semiBold"
+                  marginBottom={1}
+                >
+                  {formatMessage(summary.fileUploadLabel)}
+                </Text>
+                <ul className={fileLinksList}>
+                  {answers.condition.resultsFiles.map((file) => (
+                    <li key={file.name} className={fileLink}>
+                      <Link
+                        underline="small"
+                        underlineVisibility="hover"
+                        color="blue400"
+                        // TODO: Change this to the correct URL
+                        href={'http://localhost:4242/umsoknir/leigusamningur'}
+                      >
+                        {file.name}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </Box>
             </GridColumn>
           </SummaryCardRow>
         )
@@ -220,6 +223,6 @@ export const PropertyInfoSummary = ({
           />
         </GridColumn>
       </SummaryCardRow>
-    </SummarySection>
+    </SummaryCard>
   )
 }

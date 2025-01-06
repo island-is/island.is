@@ -331,4 +331,27 @@ export const summary = defineMessages({
     defaultMessage: 'Afrita hlekk',
     description: 'Share link copy button label',
   },
+
+  // Alert message for missing information
+  alertMissingInfoTitle: {
+    id: 'ra.application:summary.alertMissingInfoTitle',
+    defaultMessage:
+      'Ekki er hægt að halda áfram í undirritun fyrr en eftirfarandi upplýsingar hafa verið fylltar út:',
+    description: 'Missing information alert title',
+  },
+  alertMissingInfoFireProtections: {
+    id: 'ra.application:summary.alertMissingInfoFireProtections',
+    defaultMessage: 'Staða brunavarna í húsnæðinu',
+    description: 'Missing information alert fire protections',
+  },
+  alertMissingInfoCondition: {
+    id: 'ra.application:summary.alertMissingInfoCondition',
+    defaultMessage: 'Ástand húsnæðis',
+    description: 'Missing information alert condition',
+  },
+  alertMissingInfoOtherFees: {
+    id: 'ra.application:summary.alertMissingInfoOtherFees',
+    defaultMessage: 'Önnur gjöld',
+    description: 'Missing information alert other fees',
+  },
 })

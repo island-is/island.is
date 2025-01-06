@@ -4,8 +4,8 @@ import {
   buildDescriptionField,
   buildTextField,
 } from '@island.is/application/core'
-import { housingFireProtections } from '../../lib/messages'
 import { Routes } from '../../lib/constants'
+import { housingFireProtections } from '../../lib/messages'
 
 export const RentalHousingFireProtections = buildSubSection({
   id: Routes.FIREPROTECTIONS,
