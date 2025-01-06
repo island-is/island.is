@@ -36,7 +36,7 @@ export class SeminarsResolver {
   async areIndividualsValid(
     @CurrentUser() auth: User,
     @Args('nationalIds', { type: () => [String] }) nationalIds: Array<string>,
-    @Args('courseID', { type: () => Number }) courseID: number,
+    @Args('courseID', { type: () => String }) courseID: string,
   ) {
     return this.seminarsService.checkIndividuals(auth, nationalIds, courseID)
   }
