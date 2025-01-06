@@ -1,4 +1,5 @@
 import { defineConfig } from '@island.is/nest/config'
+import { MMSScope } from '@island.is/auth/scopes'
 import * as z from 'zod'
 
 const schema = z.object({
@@ -16,7 +17,7 @@ export const SecondarySchoolClientConfig = defineConfig<z.infer<typeof schema>>(
           'XROAD_SECONDARY_SCHOOL_PATH',
           'IS-DEV/GOV/10066/MMS-Protected/umsoknagatt',
         ),
-        scope: [],
+        scope: [MMSScope.framhaldsskolaumsokn],
       }
     },
   },
