@@ -651,6 +651,7 @@ export class CmsElasticsearchService {
       categories,
       types,
       organizations,
+      funds,
     }: GetGrantsInput,
   ): Promise<GrantList> {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -738,6 +739,30 @@ export class CmsElasticsearchService {
                 {
                   terms: {
                     'tags.key': organizations,
+                  },
+                },
+                {
+                  term: {
+                    'tags.type': 'organization',
+                  },
+                },
+              ],
+            },
+          },
+        },
+      })
+    }
+
+    if (funds) {
+      must.push({
+        nested: {
+          path: 'tags',
+          query: {
+            bool: {
+              must: [
+                {
+                  terms: {
+                    'tags.key': funds,
                   },
                 },
                 {

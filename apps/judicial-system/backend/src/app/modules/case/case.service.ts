@@ -1069,7 +1069,7 @@ export class CaseService {
     )
   }
 
-  private addMessagesForRevokedIndictmentCaseToQueue(
+  private async addMessagesForRevokedIndictmentCaseToQueue(
     theCase: Case,
     user: TUser,
   ): Promise<void> {
@@ -1082,6 +1082,21 @@ export class CaseService {
         caseId: theCase.id,
         body: { withCourtCaseNumber: true },
       })
+    }
+
+    const subpoenasToRevoke = await this.subpoenaService.findByCaseId(
+      theCase.id,
+    )
+
+    if (subpoenasToRevoke?.length > 0) {
+      messages.push(
+        ...subpoenasToRevoke.map((subpoena) => ({
+          type: MessageType.DELIVERY_TO_POLICE_SUBPOENA_REVOCATION,
+          user,
+          caseId: theCase.id,
+          elementId: [subpoena.defendantId, subpoena.id],
+        })),
+      )
     }
 
     return this.messageService.sendMessagesToQueue(messages)
@@ -1467,9 +1482,14 @@ export class CaseService {
       [CaseState.SUBMITTED, CaseState.RECEIVED].includes(updatedCase.state)
     ) {
       const isJudgeChanged =
-        updatedCase.judge?.nationalId !== theCase.judge?.nationalId
+        updatedCase.judge &&
+        updatedCase.judge.email &&
+        updatedCase.judge.nationalId !== theCase.judge?.nationalId
+
       const isRegistrarChanged =
-        updatedCase.registrar?.nationalId !== theCase.registrar?.nationalId
+        updatedCase.registrar &&
+        updatedCase.registrar.email &&
+        updatedCase.registrar.nationalId !== theCase.registrar?.nationalId
 
       if (isJudgeChanged) {
         await this.addMessagesForDistrictCourtJudgeAssignedToQueue(

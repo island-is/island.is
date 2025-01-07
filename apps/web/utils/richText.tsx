@@ -66,6 +66,7 @@ import {
   FeaturedSupportQnAs as FeaturedSupportQNAsSchema,
   Form as FormSchema,
   GenericList as GenericListSchema,
+  GrantCardsList as GrantCardsListSchema,
   MultipleStatistics as MultipleStatisticsSchema,
   OneColumnText,
   OverviewLinks as OverviewLinksSliceSchema,
@@ -91,6 +92,7 @@ import { UmsCostOfLivingCalculator } from '../components/connected/UmbodsmadurSk
 import { WHODASCalculator } from '../components/connected/WHODAS/Calculator'
 import FeaturedEvents from '../components/FeaturedEvents/FeaturedEvents'
 import FeaturedSupportQNAs from '../components/FeaturedSupportQNAs/FeaturedSupportQNAs'
+import { GrantCardsList } from '../components/GrantCardsList'
 import { EmbedSlice } from '../components/Organization/Slice/EmbedSlice/EmbedSlice'
 
 interface TranslationNamespaceProviderProps {
@@ -276,6 +278,7 @@ const defaultRenderComponent = {
       itemType={slice.itemType}
       filterTags={slice.filterTags}
       defaultOrder={slice.defaultOrder}
+      showSearchInput={slice.showSearchInput ?? true}
     />
   ),
   TeamList: (slice: TeamList) => (
@@ -291,6 +294,9 @@ const defaultRenderComponent = {
     const url = slice?.url ? slice.url + '?w=800' : ''
     return <Image {...slice} thumbnail={thumbnailUrl} url={url} />
   },
+  GrantCardsList: (slice: GrantCardsListSchema) => (
+    <GrantCardsList slice={slice} />
+  ),
 }
 
 export const webRichText = (
