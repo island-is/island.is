@@ -39,12 +39,12 @@ export const userInformation = {
     },
     freshmanOptionTitle: {
       id: 'ss.application:userInformation.applicationType.freshmanOptionTitle',
-      defaultMessage: 'Nýnemi (að koma beint úr grunnskóla)',
+      defaultMessage: 'Útskrifast úr grunnskóla í vor',
       description: 'Freshman option title',
     },
     generalApplicationOptionTitle: {
       id: 'ss.application:userInformation.applicationType.generalApplicationOptionTitle',
-      defaultMessage: 'Aðrir',
+      defaultMessage: 'Lauk grunnskóla fyrir ári eða meira',
       description: 'General application option title',
     },
   }),

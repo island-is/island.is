@@ -82,11 +82,6 @@ export class SecondarySchoolClient {
     return !studentInfo?.hasActiveApplication
   }
 
-  async validateCanDelete(auth: User, applicationId: string): Promise<boolean> {
-    // Note: waiting for endpoint in API
-    return true
-  }
-
   async delete(auth: User, externalId: string): Promise<void> {
     return this.applicationsApiWithAuth(auth).v1ApplicationsApplicationIdDelete(
       {

@@ -6,10 +6,12 @@ import {
   buildMultiField,
   buildSection,
   coreMessages,
+  getValueViaPath,
 } from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
 import { conclusion } from '../lib/messages'
 import { Logo } from '../assets/Logo'
+import { ApplicationType } from '../utils'
 
 export const Conclusion: Form = buildForm({
   id: 'ConclusionForm',
@@ -31,7 +33,29 @@ export const Conclusion: Form = buildForm({
               id: 'conclusionAlertMessage',
               alertType: 'info',
               title: conclusion.overview.alertTitle,
-              message: conclusion.overview.alertMessage,
+              message: conclusion.overview.alertMessageFreshman,
+              condition: (answers) => {
+                return (
+                  getValueViaPath<ApplicationType>(
+                    answers,
+                    'applicationType',
+                  ) === ApplicationType.FRESHMAN
+                )
+              },
+            }),
+            buildAlertMessageField({
+              id: 'conclusionAlertMessage',
+              alertType: 'info',
+              title: conclusion.overview.alertTitle,
+              message: conclusion.overview.alertMessageGeneral,
+              condition: (answers) => {
+                return (
+                  getValueViaPath<ApplicationType>(
+                    answers,
+                    'applicationType',
+                  ) !== ApplicationType.FRESHMAN
+                )
+              },
             }),
             buildCustomField({
               component: 'Overview',
