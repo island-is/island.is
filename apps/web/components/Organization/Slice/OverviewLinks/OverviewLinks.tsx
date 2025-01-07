@@ -1,9 +1,8 @@
 import React from 'react'
 
-import { Image, SliceType } from '@island.is/island-ui/contentful'
+import { SliceType } from '@island.is/island-ui/contentful'
 import {
   Box,
-  BoxProps,
   Button,
   GridColumn,
   GridContainer,
@@ -117,19 +116,22 @@ export const OverviewLinksSlice: React.FC<
                 )
               },
             )}
+            {slice.link?.url && slice.link?.text && (
+              <Box textAlign="right">
+                <Link href={slice.link.url}>
+                  <Button
+                    icon="arrowForward"
+                    iconType="filled"
+                    type="button"
+                    variant="text"
+                    unfocusable={true}
+                  >
+                    {slice.link.text}
+                  </Button>
+                </Link>
+              </Box>
+            )}
           </Stack>
-          {slice.link && (
-            <Link href="#">
-              <Button
-                icon="arrowForward"
-                iconType="filled"
-                type="button"
-                variant="text"
-              >
-                {slice.link.text}
-              </Button>
-            </Link>
-          )}
         </Box>
       </GridContainer>
     </section>

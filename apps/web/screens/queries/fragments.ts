@@ -497,6 +497,16 @@ export const slices = gql`
     __typename
     id
     hasBorderAbove
+    cardLinks {
+      title
+      content {
+        ...HtmlFields
+      }
+      link {
+        text
+        url
+      }
+    }
     overviewLinks {
       title
       intro {

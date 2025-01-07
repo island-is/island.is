@@ -3461,11 +3461,14 @@ export interface IOrganizationTag extends Entry<IOrganizationTagFields> {
 }
 
 export interface IOverviewLinksFields {
-  /** Title */
+  /** Internal Title */
   title?: string | undefined
 
+  /** Displayed Title */
+  displayedTitle?: string | undefined
+
   /** Overview Links */
-  overviewLinks?: IIntroLinkImage[] | undefined
+  overviewLinks?: (IIntroLinkImage | IOneColumnText)[] | undefined
 
   /** Link */
   link?: ILink | undefined
