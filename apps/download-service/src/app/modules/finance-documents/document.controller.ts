@@ -39,7 +39,7 @@ export class FinanceDocumentController {
     @CurrentUser() user: User,
     @Res() res: Response,
     @Param('pdfId') pdfId: string,
-    @Query('action') action: string,
+    @Query('action') action?: string,
   ) {
     const documentResponse =
       action === 'annualDoc'
