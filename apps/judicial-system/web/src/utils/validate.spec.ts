@@ -1,12 +1,4 @@
-import faker from 'faker'
-
-import {
-  Case,
-  CaseType,
-  IndictmentCountOffense,
-  IndictmentSubtype,
-} from '../graphql/schema'
-import { isTrafficViolationStepValidIndictments, validate } from './validate'
+import { validate } from './validate'
 
 describe('Validate police casenumber format', () => {
   test('should fail if not in correct form', () => {
