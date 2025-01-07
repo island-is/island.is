@@ -932,6 +932,7 @@ export const slices = gql`
     searchInputPlaceholder
     itemType
     defaultOrder
+    showSearchInput
     filterTags {
       id
       title
