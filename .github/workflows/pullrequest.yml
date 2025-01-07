@@ -73,7 +73,7 @@ jobs:
           set -euo pipefail
           node -v
           yarn --version
-          ls -l `which node`
+          ls -l "$(which node)"
       - name: Checking out relevant branches
         run: |
           set -euo pipefail
