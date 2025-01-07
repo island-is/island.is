@@ -320,8 +320,7 @@ export const getIncidentDescription = (
 
   if (
     isTrafficViolationIndictmentCount(policeCaseNumber, subtypesRecord) ||
-    (indictmentCountSubtypes?.length === 1 &&
-      indictmentCountSubtypes[0] === IndictmentSubtype.TRAFFIC_VIOLATION)
+    indictmentCountSubtypes?.includes(IndictmentSubtype.TRAFFIC_VIOLATION)
   ) {
     if (!offenses || offenses.length === 0) {
       return ''
