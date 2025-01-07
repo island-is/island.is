@@ -41,6 +41,13 @@ jobs:
       BUILD_CHUNKS: ${{ steps.build_projects.outputs.CHUNKS }}
       CACHE_KEYS: ${{ steps.get-cache.outputs.keys }}
     steps:
+      - name: Debug home etc.
+        run: |
+          echo "User: HOME=$HOME, PWD=$PWD, id=$(id)"
+          ls -lah "$HOME" || true
+          mkdir -p "$HOME"
+          mkdir -p "$HOME/.test/foo/bar/"
+          ls -lah "$HOME"
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
