@@ -1,11 +1,11 @@
-import { theme } from '@island.is/island-ui/theme'
+import React, { ReactNode, FC, AllHTMLAttributes } from 'react'
 import cn from 'classnames'
-import React, { AllHTMLAttributes, FC, ReactNode } from 'react'
+import { theme } from '@island.is/island-ui/theme'
 
-import { TestSupport } from '@island.is/island-ui/utils'
 import { useBoxStyles, UseBoxStylesProps } from '../Box/useBoxStyles'
 import { getTextStyles, TextProps } from '../Text/Text'
 import * as styles from './Table.css'
+import { TestSupport } from '@island.is/island-ui/utils'
 
 type DataField = {
   children?: ReactNode
