@@ -135,6 +135,7 @@ export class VehicleOperatorsClient {
             permno: permno,
             endDate: new Date(),
             reportingPersonIdNumber: auth.nationalId,
+            mileage: mileage,
           },
         })
       } catch (e) {
