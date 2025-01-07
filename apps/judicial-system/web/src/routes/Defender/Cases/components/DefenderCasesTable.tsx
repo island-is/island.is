@@ -82,9 +82,9 @@ export const DefenderCasesTable: FC<Props> = ({
           {
             cell: (row) => (
               <CourtCaseNumber
-                courtCaseNumber={row.courtCaseNumber ?? ''}
-                policeCaseNumbers={row.policeCaseNumbers ?? []}
-                appealCaseNumber={row.appealCaseNumber ?? ''}
+                courtCaseNumber={row.courtCaseNumber}
+                policeCaseNumbers={row.policeCaseNumbers}
+                appealCaseNumber={row.appealCaseNumber}
               />
             ),
           },
