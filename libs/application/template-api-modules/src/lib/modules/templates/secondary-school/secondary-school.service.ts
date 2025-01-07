@@ -120,7 +120,7 @@ export class SecondarySchoolService extends BaseTemplateApiService {
     )
     const applicationType = getValueViaPath<SecondarySchoolApplicationType>(
       application.answers,
-      'applicationType',
+      'applicationType.value',
     )
     const contacts = getCleanContacts(application)
     const schoolSelection = getCleanSchoolSelection(application)

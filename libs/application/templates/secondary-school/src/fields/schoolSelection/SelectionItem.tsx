@@ -30,8 +30,10 @@ export const SelectionItem: FC<FieldBaseProps> = (props) => {
   const [isLoadingPrograms, setIsLoadingPrograms] = useState<boolean>(false)
 
   const isFreshman =
-    getValueViaPath<ApplicationType>(application.answers, 'applicationType') ===
-    ApplicationType.FRESHMAN
+    getValueViaPath<ApplicationType>(
+      application.answers,
+      'applicationType.value',
+    ) === ApplicationType.FRESHMAN
 
   // options for dropdowns
   const schoolOptions = getValueViaPath<SecondarySchool[]>(

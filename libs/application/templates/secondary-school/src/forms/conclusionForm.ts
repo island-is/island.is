@@ -38,7 +38,7 @@ export const Conclusion: Form = buildForm({
                 return (
                   getValueViaPath<ApplicationType>(
                     answers,
-                    'applicationType',
+                    'applicationType.value',
                   ) === ApplicationType.FRESHMAN
                 )
               },
@@ -52,7 +52,7 @@ export const Conclusion: Form = buildForm({
                 return (
                   getValueViaPath<ApplicationType>(
                     answers,
-                    'applicationType',
+                    'applicationType.value',
                   ) !== ApplicationType.FRESHMAN
                 )
               },
