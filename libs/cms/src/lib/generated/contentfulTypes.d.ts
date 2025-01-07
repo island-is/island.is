@@ -1598,6 +1598,9 @@ export interface IGenericListFields {
 
   /** Filter Tags */
   filterTags?: IGenericTag[] | undefined
+
+  /** Order By */
+  orderBy?: 'Date' | 'Title' | 'Publish Date' | undefined
 }
 
 /** A list of items which can be embedded into rich text */
@@ -1838,7 +1841,7 @@ export interface IGrantFields {
   /** Application button label */
   grantButtonLabel?: string | undefined
 
-  /** Date from */
+  /** Open from */
   grantDateFrom?: string | undefined
 
   /** Open from hour */
@@ -1888,6 +1891,43 @@ export interface IGrant extends Entry<IGrantFields> {
     contentType: {
       sys: {
         id: 'grant'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
+export interface IGrantCardsListFields {
+  /** Title */
+  grantCardListTitle: string
+
+  /** Display title? */
+  grantCardsListDisplayTitle?: boolean | undefined
+
+  /** Funds */
+  grantCardListFunds?: IFund[] | undefined
+
+  /** Max number of cards */
+  grantCardsListMaxNumberOfCards?: number | undefined
+
+  /** Sorting */
+  grantCardsListSorting?:
+    | 'Alphabetical'
+    | 'Most recently updated first'
+    | undefined
+}
+
+export interface IGrantCardsList extends Entry<IGrantCardsListFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'grantCardsList'
         linkType: 'ContentType'
         type: 'Link'
       }
@@ -5327,6 +5367,7 @@ export type CONTENT_TYPE =
   | 'genericTag'
   | 'genericTagGroup'
   | 'grant'
+  | 'grantCardsList'
   | 'graphCard'
   | 'groupedMenu'
   | 'hnippTemplate'
