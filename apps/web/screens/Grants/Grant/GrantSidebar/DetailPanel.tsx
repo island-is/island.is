@@ -94,7 +94,12 @@ const DetailPanel: React.FC<DetailPanelProps> = ({
     [grant, formatMessage, linkResolver, status],
   )
   return (
-    <Box background={'blue100'} padding={3} borderRadius="large">
+    <Box
+      background={'blue100'}
+      padding={3}
+      borderRadius="large"
+      marginBottom={3}
+    >
       <Stack space={2}>{detailPanelData}</Stack>
       {button && (
         <Box marginTop={2}>
