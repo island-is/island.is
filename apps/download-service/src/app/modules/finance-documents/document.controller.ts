@@ -39,10 +39,10 @@ export class FinanceDocumentController {
     @CurrentUser() user: User,
     @Res() res: Response,
     @Param('pdfId') pdfId: string,
-    @Query('annualDoc') annualDoc: string,
+    @Query('action') action: string,
   ) {
     const documentResponse =
-      annualDoc === 'true'
+      action === 'annualDoc'
         ? await this.financeService.getAnnualStatusDocument(
             user.nationalId,
             pdfId,
