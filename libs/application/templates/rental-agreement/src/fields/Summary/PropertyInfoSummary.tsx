@@ -1,4 +1,12 @@
-import { Box, GridColumn, Link, Text } from '@island.is/island-ui/core'
+import {
+  Box,
+  Button,
+  GridColumn,
+  Icon,
+  Link,
+  Text,
+  UploadFile,
+} from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { RentalAgreement } from '../../lib/dataSchema'
 import {
@@ -18,7 +26,7 @@ import { SummaryCard } from './components/SummaryCard'
 import { fileLink, fileLinksList } from './summaryStyles.css'
 import { summary } from '../../lib/messages'
 
-type Props = {
+interface Props {
   answers: RentalAgreement
   goToScreen?: (id: string) => void
   categoryRoute?: Routes
@@ -60,6 +68,10 @@ export const PropertyInfoSummary = ({
     const matchingOption = options.find((option) => option.value === answer)
     return matchingOption ? matchingOption.label : '-'
   }
+
+  const uploadFiles = answers.condition.resultsFiles as UploadFile[]
+
+  console.log('UploadFiles: ', uploadFiles)
 
   return (
     <SummaryCard cardLabel={formatMessage(summary.propertyInfoHeader)}>
@@ -158,40 +170,44 @@ export const PropertyInfoSummary = ({
         </GridColumn>
       </SummaryCardRow>
 
-      {
-        /* Only show the file upload section if the user has uploaded files */
-        answers.condition.resultsFiles.length > 0 && (
-          <SummaryCardRow editAction={goToScreen} route={fileUploadRoute}>
-            <GridColumn span={['12/12']}>
-              <Box paddingY={'p2'}>
-                <Text
-                  variant={'small'}
-                  as={'label'}
-                  fontWeight="semiBold"
-                  marginBottom={1}
-                >
-                  {formatMessage(summary.fileUploadLabel)}
-                </Text>
-                <ul className={fileLinksList}>
-                  {answers.condition.resultsFiles.map((file) => (
-                    <li key={file.name} className={fileLink}>
-                      <Link
-                        underline="small"
-                        underlineVisibility="hover"
-                        color="blue400"
-                        // TODO: Change this to the correct URL
-                        href={'http://localhost:4242/umsoknir/leigusamningur'}
-                      >
-                        {file.name}
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              </Box>
-            </GridColumn>
-          </SummaryCardRow>
-        )
-      }
+      {uploadFiles.length > 0 && (
+        <SummaryCardRow editAction={goToScreen} route={fileUploadRoute}>
+          <GridColumn span={['12/12']}>
+            <Box paddingY={'p2'}>
+              <Text
+                variant={'small'}
+                as={'label'}
+                fontWeight="semiBold"
+                marginBottom={1}
+              >
+                {formatMessage(summary.fileUploadLabel)}
+              </Text>
+              <ul className={fileLinksList}>
+                {uploadFiles.map((file) => (
+                  <li key={file.name} className={fileLink}>
+                    <Button
+                      key={file.name}
+                      icon="download"
+                      variant="text"
+                      size="small"
+                      iconType="outline"
+                      truncate={true}
+                      onClick={() => {
+                        console.log('FileName:', file.name)
+                        console.log('FileKey:', file.key)
+                        // TODO: Implement download file url
+                        window.open(file.key)
+                      }}
+                    >
+                      {file.name}
+                    </Button>
+                  </li>
+                ))}
+              </ul>
+            </Box>
+          </GridColumn>
+        </SummaryCardRow>
+      )}
 
       <SummaryCardRow
         editAction={goToScreen}
