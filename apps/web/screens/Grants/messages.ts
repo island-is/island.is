@@ -246,7 +246,7 @@ export const m = {
       defaultMessage: 'Lýsing á atvinnulífi',
     },
     grantCategoryEnergyTransitionDescription: {
-      id: 'web.grants:home.grantCategoryEnergyTransition',
+      id: 'web.grants:home.grantCategoryEnergyTransitionDescription',
       defaultMessage: 'Lýsing á orkuskiptum',
     },
   }),
