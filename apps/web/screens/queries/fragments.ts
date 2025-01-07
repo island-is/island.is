@@ -873,6 +873,7 @@ export const slices = gql`
     id
     searchInputPlaceholder
     itemType
+    defaultOrder
     filterTags {
       id
       title

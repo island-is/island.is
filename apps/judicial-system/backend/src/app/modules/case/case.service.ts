@@ -426,6 +426,13 @@ export const caseListInclude: Includeable[] = [
         order: [['created', 'DESC']],
         separate: true,
       },
+      {
+        model: Subpoena,
+        as: 'subpoenas',
+        required: false,
+        order: [['created', 'DESC']],
+        separate: true,
+      },
     ],
     separate: true,
   },
@@ -1460,9 +1467,14 @@ export class CaseService {
       [CaseState.SUBMITTED, CaseState.RECEIVED].includes(updatedCase.state)
     ) {
       const isJudgeChanged =
-        updatedCase.judge?.nationalId !== theCase.judge?.nationalId
+        updatedCase.judge &&
+        updatedCase.judge.email &&
+        updatedCase.judge.nationalId !== theCase.judge?.nationalId
+
       const isRegistrarChanged =
-        updatedCase.registrar?.nationalId !== theCase.registrar?.nationalId
+        updatedCase.registrar &&
+        updatedCase.registrar.email &&
+        updatedCase.registrar.nationalId !== theCase.registrar?.nationalId
 
       if (isJudgeChanged) {
         await this.addMessagesForDistrictCourtJudgeAssignedToQueue(
