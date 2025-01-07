@@ -12,7 +12,6 @@
  */
 
 export * from './Card/Card'
-export * from './PlazaCard/PlazaCard'
 export * from './Header/Header'
 export * from './SearchInput/SearchInput'
 export * from './LanguageToggler/LanguageToggler'
@@ -71,7 +70,6 @@ export * from './Login/LoginTexts.types'
 export * from './IconTitleCard/IconTitleCard'
 export * from './SearchSection/SearchSection'
 export * from './CategoryItems/CategoryItems'
-export * from './NewLinks/NewLinks'
 export * from './NewsItems/NewsItems'
 export * from './GridItems/GridItems'
 export * from './LifeEventsSection/LifeEventsSection'

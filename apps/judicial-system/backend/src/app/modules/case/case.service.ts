@@ -45,6 +45,7 @@ import {
   eventTypes,
   isCompletedCase,
   isIndictmentCase,
+  isInvestigationCase,
   isRequestCase,
   isTrafficViolationCase,
   notificationTypes,
@@ -409,12 +410,30 @@ export const include: Includeable[] = [
 ]
 
 export const caseListInclude: Includeable[] = [
+  { model: Institution, as: 'court' },
   { model: Institution, as: 'prosecutorsOffice' },
   {
     model: Defendant,
     as: 'defendants',
     required: false,
     order: [['created', 'ASC']],
+    include: [
+      {
+        model: DefendantEventLog,
+        as: 'eventLogs',
+        required: false,
+        where: { eventType: defendantEventTypes },
+        order: [['created', 'DESC']],
+        separate: true,
+      },
+      {
+        model: Subpoena,
+        as: 'subpoenas',
+        required: false,
+        order: [['created', 'DESC']],
+        separate: true,
+      },
+    ],
     separate: true,
   },
   {
@@ -685,6 +704,34 @@ export class CaseService {
     ])
   }
 
+  private addMessagesForDistrictCourtJudgeAssignedToQueue(
+    theCase: Case,
+    user: TUser,
+  ): Promise<void> {
+    return this.messageService.sendMessagesToQueue([
+      {
+        type: MessageType.NOTIFICATION,
+        user,
+        caseId: theCase.id,
+        body: { type: CaseNotificationType.DISTRICT_COURT_JUDGE_ASSIGNED },
+      },
+    ])
+  }
+
+  private addMessagesForDistrictCourtRegistrarAssignedToQueue(
+    theCase: Case,
+    user: TUser,
+  ): Promise<void> {
+    return this.messageService.sendMessagesToQueue([
+      {
+        type: MessageType.NOTIFICATION,
+        user,
+        caseId: theCase.id,
+        body: { type: CaseNotificationType.DISTRICT_COURT_REGISTRAR_ASSIGNED },
+      },
+    ])
+  }
+
   private addMessagesForReceivedCaseToQueue(
     theCase: Case,
     user: TUser,
@@ -775,12 +822,16 @@ export class CaseService {
           CaseFileCategory.CRIMINAL_RECORD,
           CaseFileCategory.COST_BREAKDOWN,
           CaseFileCategory.CASE_FILE,
+          CaseFileCategory.PROSECUTOR_CASE_FILE,
+          CaseFileCategory.DEFENDANT_CASE_FILE,
         ]
       : [
           CaseFileCategory.INDICTMENT,
           CaseFileCategory.CRIMINAL_RECORD,
           CaseFileCategory.COST_BREAKDOWN,
           CaseFileCategory.CASE_FILE,
+          CaseFileCategory.PROSECUTOR_CASE_FILE,
+          CaseFileCategory.DEFENDANT_CASE_FILE,
         ]
 
     const deliverCaseFileToCourtMessages =
@@ -840,7 +891,25 @@ export class CaseService {
       this.getDeliverProsecutorToCourtMessages(theCase, user),
     )
   }
+  private addMessagesForSignedCourtRecordToQueue(
+    theCase: Case,
+    user: TUser,
+  ): Promise<void> {
+    const messages = []
 
+    if (
+      theCase.origin === CaseOrigin.LOKE &&
+      isInvestigationCase(theCase.type)
+    ) {
+      messages.push({
+        type: MessageType.DELIVERY_TO_POLICE_SIGNED_COURT_RECORD,
+        user,
+        caseId: theCase.id,
+      })
+    }
+
+    return this.messageService.sendMessagesToQueue(messages)
+  }
   private addMessagesForSignedRulingToQueue(
     theCase: Case,
     user: TUser,
@@ -927,12 +996,10 @@ export class CaseService {
           (caseFile) =>
             caseFile.state === CaseFileState.STORED_IN_RVG &&
             caseFile.key &&
-            caseFile.category === CaseFileCategory.RULING &&
-            theCase.indictmentRulingDecision &&
-            [
-              CaseIndictmentRulingDecision.RULING,
-              CaseIndictmentRulingDecision.DISMISSAL,
-            ].includes(theCase.indictmentRulingDecision),
+            caseFile.category &&
+            [CaseFileCategory.COURT_RECORD, CaseFileCategory.RULING].includes(
+              caseFile.category,
+            ),
         )
         .map((caseFile) => ({
           type: MessageType.DELIVERY_TO_COURT_CASE_FILE,
@@ -1002,7 +1069,7 @@ export class CaseService {
     )
   }
 
-  private addMessagesForRevokedIndictmentCaseToQueue(
+  private async addMessagesForRevokedIndictmentCaseToQueue(
     theCase: Case,
     user: TUser,
   ): Promise<void> {
@@ -1015,6 +1082,21 @@ export class CaseService {
         caseId: theCase.id,
         body: { withCourtCaseNumber: true },
       })
+    }
+
+    const subpoenasToRevoke = await this.subpoenaService.findByCaseId(
+      theCase.id,
+    )
+
+    if (subpoenasToRevoke?.length > 0) {
+      messages.push(
+        ...subpoenasToRevoke.map((subpoena) => ({
+          type: MessageType.DELIVERY_TO_POLICE_SUBPOENA_REVOCATION,
+          user,
+          caseId: theCase.id,
+          elementId: [subpoena.defendantId, subpoena.id],
+        })),
+      )
     }
 
     return this.messageService.sendMessagesToQueue(messages)
@@ -1252,18 +1334,29 @@ export class CaseService {
             (defendant) => defendant.id === updatedDefendant.id,
           )?.subpoenas?.[0]?.id !== updatedDefendant.subpoenas?.[0]?.id,
       )
-      .map((updatedDefendant) => ({
-        type: MessageType.DELIVERY_TO_POLICE_SUBPOENA,
-        user,
-        caseId: theCase.id,
-        elementId: [
-          updatedDefendant.id,
-          updatedDefendant.subpoenas?.[0].id ?? '',
-        ],
-      }))
+      .map((updatedDefendant) => [
+        {
+          type: MessageType.DELIVERY_TO_POLICE_SUBPOENA,
+          user,
+          caseId: theCase.id,
+          elementId: [
+            updatedDefendant.id,
+            updatedDefendant.subpoenas?.[0].id ?? '',
+          ],
+        },
+        {
+          type: MessageType.DELIVERY_TO_COURT_SUBPOENA,
+          user,
+          caseId: theCase.id,
+          elementId: [
+            updatedDefendant.id,
+            updatedDefendant.subpoenas?.[0].id ?? '',
+          ],
+        },
+      ])
 
     if (messages && messages.length > 0) {
-      return this.messageService.sendMessagesToQueue(messages)
+      return this.messageService.sendMessagesToQueue(messages.flat())
     }
   }
 
@@ -1366,7 +1459,10 @@ export class CaseService {
           await this.addMessagesForCourtCaseConnectionToQueue(updatedCase, user)
         }
       } else {
-        if (updatedCase.prosecutorId !== theCase.prosecutorId) {
+        if (
+          !isIndictment &&
+          updatedCase.prosecutorId !== theCase.prosecutorId
+        ) {
           // New prosecutor
           await this.addMessagesForProsecutorChangeToQueue(updatedCase, user)
         }
@@ -1378,6 +1474,35 @@ export class CaseService {
           // New defender email
           await this.addMessagesForDefenderEmailChangeToQueue(updatedCase, user)
         }
+      }
+    }
+
+    if (
+      isIndictment &&
+      [CaseState.SUBMITTED, CaseState.RECEIVED].includes(updatedCase.state)
+    ) {
+      const isJudgeChanged =
+        updatedCase.judge &&
+        updatedCase.judge.email &&
+        updatedCase.judge.nationalId !== theCase.judge?.nationalId
+
+      const isRegistrarChanged =
+        updatedCase.registrar &&
+        updatedCase.registrar.email &&
+        updatedCase.registrar.nationalId !== theCase.registrar?.nationalId
+
+      if (isJudgeChanged) {
+        await this.addMessagesForDistrictCourtJudgeAssignedToQueue(
+          updatedCase,
+          user,
+        )
+      }
+
+      if (isRegistrarChanged) {
+        await this.addMessagesForDistrictCourtRegistrarAssignedToQueue(
+          updatedCase,
+          user,
+        )
       }
     }
 
@@ -1895,6 +2020,8 @@ export class CaseService {
         user,
         false,
       )
+
+      await this.addMessagesForSignedCourtRecordToQueue(theCase, user)
 
       return { documentSigned: true }
     } catch (error) {

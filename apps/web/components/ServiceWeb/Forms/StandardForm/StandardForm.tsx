@@ -10,7 +10,6 @@ import { useDebounce } from 'react-use'
 import { useLazyQuery } from '@apollo/client'
 import slugify from '@sindresorhus/slugify'
 
-import { Organizations, SupportCategory } from '@island.is/api/schema'
 import {
   Box,
   Button,
@@ -26,13 +25,18 @@ import {
   Stack,
   Text,
 } from '@island.is/island-ui/core'
-import { InputController } from '@island.is/shared/form-fields'
+import {
+  CheckboxController,
+  InputController,
+} from '@island.is/shared/form-fields'
 import { sortAlpha } from '@island.is/shared/utils'
 import {
   ContentLanguage,
   GetSupportSearchResultsQuery,
   GetSupportSearchResultsQueryVariables,
+  Organizations,
   SearchableContentTypes,
+  SupportCategory,
   SupportQna,
 } from '@island.is/web/graphql/schema'
 import { useNamespace } from '@island.is/web/hooks'
@@ -42,6 +46,7 @@ import { GET_SUPPORT_SEARCH_RESULTS_QUERY } from '@island.is/web/screens/queries
 import {
   FiskistofaCategories,
   SjukratryggingarCategories,
+  VinnueftirlitidCategories,
 } from '@island.is/web/screens/ServiceWeb/Forms/utils'
 import { getServiceWebSearchTagQuery } from '@island.is/web/screens/ServiceWeb/utils'
 
@@ -93,6 +98,14 @@ const labels: Record<string, string> = {
   malsnumer_ef_til_stadar: 'Málsnúmer (ef til staðar)',
   faedingardagur_eda_kennitala_malsadila: 'Fæðingardagur/Kennitala málsaðila',
   skipaskrarnumer: 'Skipaskrárnúmer',
+  vinnuvelanumer_kaupanda: 'Vinnuvélanúmer kaupanda',
+  vinnuvelanumer_seljanda: 'Vinnuvélanúmer seljanda',
+  vinnuvelanumer_vegna_skodunar: 'Vinnuvélanúmer vegna skoðunar',
+  stadsetning_taekis: 'Staðsetning tækis',
+  stadsetning_verkstadar: 'Staðsetning verkstaðar',
+  nafn_fyrirtaekis: 'Nafn fyrirtækis',
+  starfsstod: 'Starfsstöð',
+  oska_eftir_vernd_uppljostrara: 'Óska eftir vernd uppljóstrara',
 }
 
 // these should be skipped in the message itself
@@ -147,6 +160,35 @@ const BasicInput = ({
           },
         }),
       }}
+      // The docs tell us to spread the response of the register function even though it's return type is void
+      // https://react-hook-form.com/api/useformcontext/
+      {...(register(name) as unknown as object)}
+    />
+  )
+}
+
+interface BasicCheckboxProps {
+  name: keyof typeof labels
+  label: string
+}
+
+const BasicCheckbox = ({ name, label }: BasicCheckboxProps) => {
+  const {
+    formState: { errors },
+    register,
+  } = useFormContext()
+
+  return (
+    <CheckboxController
+      id={name}
+      name={name}
+      error={errors?.[name]?.message as string}
+      options={[
+        {
+          label,
+          value: 'Já', // This value only gets sent in an email so it can be in only one locale
+        },
+      ]}
       // The docs tell us to spread the response of the register function even though it's return type is void
       // https://react-hook-form.com/api/useformcontext/
       {...(register(name) as unknown as object)}
@@ -482,6 +524,129 @@ export const StandardForm = ({
           </GridColumn>
         )
         break
+      case VinnueftirlitidCategories.NAMSKEID:
+      case VinnueftirlitidCategories.VINNUSLYS:
+      case VinnueftirlitidCategories.VINNUVELARETTINDI:
+      case VinnueftirlitidCategories.VINNUVERND:
+      case VinnueftirlitidCategories.MARKADSEFTIRLIT:
+      case VinnueftirlitidCategories.EKKO_OG_SAMSKIPTI:
+      case VinnueftirlitidCategories.LOG_OG_REGLUGERDIR:
+      case VinnueftirlitidCategories.LEYFI_OG_UMSAGNIR:
+      case VinnueftirlitidCategories.ONNUR_THJONUSTA:
+        fields = (
+          <GridColumn paddingBottom={3}>
+            <BasicCheckbox
+              name="oska_eftir_vernd_uppljostrara"
+              label={fn(
+                'oska_eftir_vernd_uppljostrara',
+                'label',
+                'Óska eftir vernd uppljóstrara',
+              )}
+            />
+          </GridColumn>
+        )
+        break
+      case VinnueftirlitidCategories.SKRANING_OG_SKODUN_VINNUVELA:
+        fields = (
+          <>
+            <GridColumn paddingBottom={3}>
+              <BasicCheckbox
+                name="oska_eftir_vernd_uppljostrara"
+                label={fn(
+                  'oska_eftir_vernd_uppljostrara',
+                  'label',
+                  'Óska eftir vernd uppljóstrara',
+                )}
+              />
+            </GridColumn>
+            <GridColumn span="12/12" paddingBottom={3}>
+              <BasicInput
+                name="vinnuvelanumer_kaupanda"
+                label={fn(
+                  'vinnuvelanumer_kaupanda',
+                  'label',
+                  'Vinnuvélanúmer kaupanda',
+                )}
+              />
+            </GridColumn>
+            <GridColumn span="12/12" paddingBottom={3}>
+              <BasicInput
+                name="vinnuvelanumer_seljanda"
+                label={fn(
+                  'vinnuvelanumer_seljanda',
+                  'label',
+                  'Vinnuvélanúmer seljanda',
+                )}
+              />
+            </GridColumn>
+            <GridColumn span="12/12" paddingBottom={3}>
+              <BasicInput
+                name="vinnuvelanumer_vegna_skodunar"
+                label={fn(
+                  'vinnuvelanumer_vegna_skodunar',
+                  'label',
+                  'Vinnuvélanúmer vegna skoðunar',
+                )}
+              />
+            </GridColumn>
+            <GridColumn span="12/12" paddingBottom={3}>
+              <BasicInput
+                name="stadsetning_taekis"
+                label={fn('stadsetning_taekis', 'label', 'Staðsetning tækis')}
+              />
+            </GridColumn>
+          </>
+        )
+        break
+      case VinnueftirlitidCategories.MANNVIRKJAGERD:
+        fields = (
+          <>
+            <GridColumn paddingBottom={3}>
+              <BasicCheckbox
+                name="oska_eftir_vernd_uppljostrara"
+                label={fn(
+                  'oska_eftir_vernd_uppljostrara',
+                  'label',
+                  'Óska eftir vernd uppljóstrara',
+                )}
+              />
+            </GridColumn>
+            <GridColumn span="12/12" paddingBottom={3}>
+              <BasicInput
+                name="stadsetning_verkstadar"
+                label={fn(
+                  'stadsetning_verkstadar',
+                  'label',
+                  'Staðsetning verkstaðar',
+                )}
+              />
+            </GridColumn>
+          </>
+        )
+        break
+      case VinnueftirlitidCategories.VINNUADSTADA:
+        fields = (
+          <>
+            <GridColumn paddingBottom={3}>
+              <BasicInput
+                name="nafn_fyrirtaekis"
+                requiredMessage={fn(
+                  'nafn_fyrirtaekis',
+                  'requiredMessage',
+                  'Nafn fyrirtækis vantar',
+                )}
+                label={fn('nafn_fyrirtaekis', 'label', 'Nafn fyrirtækis')}
+              />
+            </GridColumn>
+            <GridColumn span="12/12" paddingBottom={3}>
+              <BasicInput
+                name="starfsstod"
+                label={fn('starfsstod', 'label', 'Starfsstöð')}
+              />
+            </GridColumn>
+          </>
+        )
+        break
       default:
         break
     }
@@ -571,7 +736,11 @@ export const StandardForm = ({
         const label = labels[k]
         const value = values[k]
 
-        if (label && value) {
+        if (
+          label &&
+          ((Array.isArray(value) && value.length > 0) ||
+            (!Array.isArray(value) && Boolean(value)))
+        ) {
           message += `${label}:\n${value}\n\n`
         }
 

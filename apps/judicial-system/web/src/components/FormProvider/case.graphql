@@ -35,6 +35,8 @@ query Case($input: CaseQueryInput!) {
       subpoenaType
       isSentToPrisonAdmin
       sentToPrisonAdminDate
+      openedByPrisonAdminDate
+      punishmentType
       subpoenas {
         id
         created
@@ -44,6 +46,7 @@ query Case($input: CaseQueryInput!) {
         comment
         defenderNationalId
         caseId
+        defendantId
         subpoenaId
       }
     }
@@ -215,6 +218,7 @@ query Case($input: CaseQueryInput!) {
       lawsBroken
       incidentDescription
       legalArguments
+      indictmentCountSubtypes
     }
     requestDriversLicenseSuspension
     appealState
@@ -341,6 +345,7 @@ query Case($input: CaseQueryInput!) {
         verdictAppealDate
         isVerdictAppealDeadlineExpired
         subpoenaType
+        punishmentType
         subpoenas {
           id
           created

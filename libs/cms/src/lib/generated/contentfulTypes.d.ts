@@ -1598,6 +1598,12 @@ export interface IGenericListFields {
 
   /** Filter Tags */
   filterTags?: IGenericTag[] | undefined
+
+  /** Order By */
+  orderBy?: 'Date' | 'Title' | 'Publish Date' | undefined
+
+  /** Show Search Input */
+  showSearchInput?: boolean | undefined
 }
 
 /** A list of items which can be embedded into rich text */
@@ -1814,14 +1820,11 @@ export interface IGrantFields {
   /** Description  */
   grantDescription?: string | undefined
 
-  /** Grant Application ID */
+  /** Grant reference ID */
   grantApplicationId?: string | undefined
 
-  /** Application Deadline Status */
-  grantApplicationDeadlineStatus?: string | undefined
-
-  /** Application Url */
-  granApplicationUrl?: ILinkUrl | undefined
+  /** Fund */
+  grantFund: IFund
 
   /** Special emphasis */
   grantSpecialEmphasis?: Document | undefined
@@ -1832,35 +1835,51 @@ export interface IGrantFields {
   /** How to apply? */
   grantHowToApply?: Document | undefined
 
-  /** Application deadline */
-  grantApplicationDeadline?: Document | undefined
-
   /** Application hints */
   grantApplicationHints?: Document | undefined
 
-  /** Date from */
+  /** Application url */
+  granApplicationUrl?: ILinkUrl | undefined
+
+  /** Application button label */
+  grantButtonLabel?: string | undefined
+
+  /** Open from */
   grantDateFrom?: string | undefined
 
-  /** Date to */
+  /** Open from hour */
+  grantOpenFromHour?: number | undefined
+
+  /** Open to */
   grantDateTo?: string | undefined
 
-  /** Is open? */
-  grantIsOpen?: boolean | undefined
+  /** Open to hour */
+  grantOpenToHour?: number | undefined
+
+  /** From date is estimated */
+  grantFromDateIsEstimated?: boolean | undefined
 
   /** Status */
-  grantStatus: 'open' | 'closed' | 'see_description'
+  grantStatus:
+    | 'Automatic'
+    | 'Always open'
+    | 'Open with note'
+    | 'Closed with note'
+
+  /** Status Note */
+  grantStatusNote?: string | undefined
 
   /** Files */
   grantFiles?: Asset[] | undefined
+
+  /** Support links */
+  grantSupportLinks?: ILink[] | undefined
 
   /** Category tags */
   grantCategoryTags?: IGenericTag[] | undefined
 
   /** Type tag */
   grantTypeTag?: IGenericTag | undefined
-
-  /** Fund */
-  grantFund: IFund
 }
 
 /** Grant is a part of "Styrkjatorg". */
@@ -1875,6 +1894,43 @@ export interface IGrant extends Entry<IGrantFields> {
     contentType: {
       sys: {
         id: 'grant'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
+export interface IGrantCardsListFields {
+  /** Title */
+  grantCardListTitle: string
+
+  /** Display title? */
+  grantCardsListDisplayTitle?: boolean | undefined
+
+  /** Funds */
+  grantCardListFunds?: IFund[] | undefined
+
+  /** Max number of cards */
+  grantCardsListMaxNumberOfCards?: number | undefined
+
+  /** Sorting */
+  grantCardsListSorting?:
+    | 'Alphabetical'
+    | 'Most recently updated first'
+    | undefined
+}
+
+export interface IGrantCardsList extends Entry<IGrantCardsListFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'grantCardsList'
         linkType: 'ContentType'
         type: 'Link'
       }
@@ -2127,6 +2183,9 @@ export interface ILatestGenericListItemsFields {
 
   /** See more link text */
   seeMoreLinkText?: string | undefined
+
+  /** Item Count */
+  itemCount?: number | undefined
 }
 
 export interface ILatestGenericListItems
@@ -2345,10 +2404,21 @@ export interface ILinkGroupFields {
   name: string
 
   /** Primary Link */
-  primaryLink: ILink | IOrganizationSubpage | IProjectSubpage
+  primaryLink:
+    | ILink
+    | IOrganizationSubpage
+    | IProjectSubpage
+    | IOrganizationParentSubpage
 
   /** Children Links */
-  childrenLinks?: (ILink | IProjectSubpage | IOrganizationSubpage)[] | undefined
+  childrenLinks?:
+    | (
+        | ILink
+        | IProjectSubpage
+        | IOrganizationSubpage
+        | IOrganizationParentSubpage
+      )[]
+    | undefined
 }
 
 export interface ILinkGroup extends Entry<ILinkGroupFields> {
@@ -3215,12 +3285,16 @@ export interface IOrganizationPageFields {
     | 'thjodskjalasafn'
     | 'faggilding'
     | 'standalone'
+    | 'rannis'
 
   /** Theme Properties */
   themeProperties?: Record<string, any> | undefined
 
   /** Sitemap */
   sitemap?: ISitemap | undefined
+
+  /** Can be found in search results */
+  canBeFoundInSearchResults?: boolean | undefined
 }
 
 export interface IOrganizationPage extends Entry<IOrganizationPageFields> {
@@ -5296,6 +5370,7 @@ export type CONTENT_TYPE =
   | 'genericTag'
   | 'genericTagGroup'
   | 'grant'
+  | 'grantCardsList'
   | 'graphCard'
   | 'groupedMenu'
   | 'hnippTemplate'

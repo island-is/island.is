@@ -13,6 +13,7 @@ import type { Request, Response } from 'express'
 import jwksClient from 'jwks-rsa'
 import { jwtDecode } from 'jwt-decode'
 
+import { LOGIN_ATTEMPT_FAILED_ACTIVE_SESSION } from '@island.is/shared/constants'
 import { IdTokenClaims } from '@island.is/shared/types'
 import { Algorithm, decode, verify } from 'jsonwebtoken'
 import { v4 as uuid } from 'uuid'
@@ -86,11 +87,14 @@ export class AuthService {
     res: Response,
     args?: Partial<CreateErrorQueryStrArgs> & { targetUrl?: string },
   ) {
-    const code = args?.code || 500
-    const error = args?.error || 'Login failed!'
+    const statusCode = args?.statusCode || 500
+    const message = args?.message || 'Login failed!'
 
     return res.redirect(
-      this.createClientBaseUrlWithError({ code, error }, args?.targetUrl),
+      this.createClientBaseUrlWithError(
+        { code: args?.code, message, statusCode },
+        args?.targetUrl,
+      ),
     )
   }
 
@@ -171,7 +175,7 @@ export class AuthService {
       )
 
       return this.redirectWithError(res, {
-        code: 400,
+        statusCode: 400,
       })
     }
 
@@ -189,11 +193,12 @@ export class AuthService {
       await this.cacheService.save({
         key: this.cacheService.createSessionKeyType('attempt', attemptLoginId),
         value: {
-          // Fallback if targetLinkUri is not provided
-          originUrl: this.createClientBaseUrl(),
           // Code verifier to be used in the callback
           codeVerifier,
-          targetLinkUri,
+          targetLinkUri:
+            targetLinkUri ??
+            // Fallback if targetLinkUri is not provided
+            this.createClientBaseUrl(),
         },
         ttl: this.config.cacheLoginAttemptTTLms,
       })
@@ -236,6 +241,45 @@ export class AuthService {
   }
 
   /**
+   * Handles cases where a login attempt cache entry is not found during the callback phase.
+   * This typically occurs in one of these scenarios:
+   *
+   * 1. The login attempt cache has expired (TTL exceeded).
+   * 2. The cache entry was deleted.
+   * 3. The user attempted to reuse a callback URL after a successful login
+   *    (e.g., by using browser back button after logging in)
+   *
+   * Recovery process:
+   * 1. Checks if there's an existing active session (via session cookie)
+   * 2. If a session exists, returns a 409 Conflict indicating multiple session attempt
+   * 3. If no recovery is possible, redirects to error page and log as warning
+   */
+  private async handleMissingLoginAttempt({
+    req,
+    res,
+    loginAttemptCacheKey,
+  }: {
+    req: Request
+    res: Response
+    loginAttemptCacheKey: string
+  }) {
+    const sid = req.cookies[SESSION_COOKIE_NAME]
+
+    // Check if older session exists
+    if (sid) {
+      return this.redirectWithError(res, {
+        statusCode: 409, // Conflict
+        code: LOGIN_ATTEMPT_FAILED_ACTIVE_SESSION,
+        message: 'Multiple sessions detected!',
+      })
+    }
+
+    this.logger.warn(this.cacheService.createKeyError(loginAttemptCacheKey))
+
+    return this.redirectWithError(res)
+  }
+
+  /**
    * Callback for the login flow
    * This method is called from the identity server after the user has logged in
    * and the authorization code has been issued.
@@ -260,8 +304,8 @@ export class AuthService {
       this.logger.error('Callback login IDS invalid request: ', idsError)
 
       return this.redirectWithError(res, {
-        code: 500,
-        error: idsError,
+        statusCode: 500,
+        message: idsError,
       })
     }
 
@@ -273,18 +317,30 @@ export class AuthService {
       )
 
       return this.redirectWithError(res, {
-        code: 400,
+        statusCode: 400,
       })
     }
 
-    let loginAttemptData: LoginAttemptData | undefined
+    const loginAttemptCacheKey = this.cacheService.createSessionKeyType(
+      'attempt',
+      query.state,
+    )
+    // Get login attempt data from the cache
+    const loginAttemptData = await this.cacheService.get<LoginAttemptData>(
+      loginAttemptCacheKey,
+      // Do not throw an error if the key is not found
+      false,
+    )
+
+    if (!loginAttemptData) {
+      return this.handleMissingLoginAttempt({
+        req,
+        res,
+        loginAttemptCacheKey,
+      })
+    }
 
     try {
-      // Get login attempt from cache
-      loginAttemptData = await this.cacheService.get<LoginAttemptData>(
-        this.cacheService.createSessionKeyType('attempt', query.state),
-      )
-
       // Get tokens and user information from the authorization code
       const tokenResponse = await this.idsService.getTokens({
         code: query.code,
@@ -294,11 +350,9 @@ export class AuthService {
       const updatedTokenResponse = await this.updateTokenCache(tokenResponse)
 
       // Clean up the login attempt from the cache since we have a successful login.
-      this.cacheService
-        .delete(this.cacheService.createSessionKeyType('attempt', query.state))
-        .catch((err) => {
-          this.logger.warn(err)
-        })
+      this.cacheService.delete(loginAttemptCacheKey).catch((err) => {
+        this.logger.warn(err)
+      })
 
       // Clear any existing session cookie first
       // This prevents multiple session cookies being set.
@@ -341,9 +395,7 @@ export class AuthService {
         }
       }
 
-      return res.redirect(
-        loginAttemptData.targetLinkUri || loginAttemptData.originUrl,
-      )
+      return res.redirect(loginAttemptData.targetLinkUri)
     } catch (error) {
       this.logger.error('Callback login failed: ', error)
 
@@ -384,8 +436,8 @@ export class AuthService {
       )
 
       return this.redirectWithError(res, {
-        code: 400,
-        error: 'Logout failed!',
+        statusCode: 400,
+        message: 'Logout failed!',
       })
     }
 

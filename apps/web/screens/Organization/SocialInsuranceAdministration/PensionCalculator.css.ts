@@ -46,3 +46,7 @@ export const yearSelectContainer = style({
     md: { width: '204px' },
   }),
 })
+
+export const noWrap = style({
+  flexWrap: 'nowrap',
+})

@@ -1,7 +1,19 @@
-import { buildForm } from '@island.is/application/core'
-import { Form, FormModes } from '@island.is/application/types'
+import {
+  buildDataProviderItem,
+  buildExternalDataProvider,
+  buildForm,
+  buildSection,
+  buildSubmitField,
+  coreMessages,
+} from '@island.is/application/core'
+import { DefaultEvents, Form, FormModes } from '@island.is/application/types'
 import Logo from '../../components/Logo'
-import { prerequisitesSection } from './prerequsitesSection'
+import {
+  CurrentUserTypeProvider,
+  IdentityApiProvider,
+  UserInfoApi,
+} from '../../dataProviders'
+import { m } from '../../lib/messages'
 
 export const PrerequisitesForm: Form = buildForm({
   id: 'PrerequisitesForm',
@@ -9,5 +21,47 @@ export const PrerequisitesForm: Form = buildForm({
   mode: FormModes.NOT_STARTED,
   renderLastScreenButton: true,
   logo: Logo,
-  children: [prerequisitesSection],
+  children: [
+    buildSection({
+      id: 'ExternalDataSection',
+      title: '',
+      children: [
+        buildExternalDataProvider({
+          id: 'approveExternalData',
+          title: m.dataCollectionTitleUserCemetery,
+          checkboxLabel: m.dataCollectionCheckboxLabel,
+          dataProviders: [
+            buildDataProviderItem({
+              provider: IdentityApiProvider,
+              title: m.dataCollectionNationalRegistryTitle,
+              subTitle: m.dataCollectionNationalRegistrySubtitle,
+            }),
+            buildDataProviderItem({
+              provider: UserInfoApi,
+              title: m.dataCollectionUserProfileTitle,
+              subTitle: m.dataCollectionUserProfileSubtitle,
+            }),
+            buildDataProviderItem({
+              provider: CurrentUserTypeProvider,
+              title: m.dataCollectionUserFinancialInfoTitle,
+              subTitle: m.dataCollectionUserFinancialInfo,
+            }),
+          ],
+          submitField: buildSubmitField({
+            id: 'submit',
+            placement: 'footer',
+            title: '',
+            refetchApplicationAfterSubmit: true,
+            actions: [
+              {
+                event: DefaultEvents.SUBMIT,
+                name: coreMessages.buttonNext,
+                type: 'primary',
+              },
+            ],
+          }),
+        }),
+      ],
+    }),
+  ],
 })

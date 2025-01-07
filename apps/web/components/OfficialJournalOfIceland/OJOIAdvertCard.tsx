@@ -66,7 +66,7 @@ export const OJOIAdvertCard = ({
         marginTop={2}
         rowGap={1}
       >
-        {categories && categories.length && (
+        {categories && categories.length > 0 && (
           <Box display="flex" rowGap={1} columnGap={1} flexWrap="wrap">
             {categories.map((cat) => {
               return (
