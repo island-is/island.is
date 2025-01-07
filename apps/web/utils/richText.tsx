@@ -276,7 +276,7 @@ const defaultRenderComponent = {
       itemType={slice.itemType}
       filterTags={slice.filterTags}
       defaultOrder={slice.defaultOrder}
-      showSearchInput={slice.showSearchInput}
+      showSearchInput={slice.showSearchInput ?? true}
     />
   ),
   TeamList: (slice: TeamList) => (
