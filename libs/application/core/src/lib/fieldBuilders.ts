@@ -21,7 +21,6 @@ import {
   FormTextArray,
   KeyValueField,
   LinkField,
-  MaybeWithApplicationAndField,
   MessageWithLinkButtonField,
   Option,
   PaymentChargeOverviewField,
@@ -48,6 +47,8 @@ import {
   FieldsRepeaterField,
   AccordionField,
   BankAccountField,
+  TitleField,
+  TitleVariants,
 } from '@island.is/application/types'
 import { Locale } from '@island.is/shared/types'
 import { Colors } from '@island.is/island-ui/theme'
@@ -398,19 +399,43 @@ export const buildFileUploadField = (
 
 export const buildDividerField = (data: {
   condition?: Condition
-  title?: FormText
-  color?: Colors
+  useDividerLine?: boolean
   marginBottom?: BoxProps['marginBottom']
   marginTop?: BoxProps['marginTop']
 }): DividerField => {
-  const { title, color, condition, marginTop, marginBottom } = data
+  const { useDividerLine = true, condition, marginTop, marginBottom } = data
   return {
     id: '',
     children: undefined,
     type: FieldTypes.DIVIDER,
     component: FieldComponents.DIVIDER,
     doesNotRequireAnswer: true,
+    title: '',
+    useDividerLine,
+    condition,
+    marginTop,
+    marginBottom,
+  }
+}
+
+export const buildTitleField = (data: {
+  condition?: Condition
+  title?: FormText
+  titleVariant?: TitleVariants
+  color?: Colors
+  marginBottom?: BoxProps['marginBottom']
+  marginTop?: BoxProps['marginTop']
+}): TitleField => {
+  const { title, titleVariant, color, condition, marginTop, marginBottom } =
+    data
+  return {
+    id: '',
+    children: undefined,
+    type: FieldTypes.TITLE,
+    component: FieldComponents.TITLE,
+    doesNotRequireAnswer: true,
     title: title ?? '',
+    titleVariant: titleVariant,
     color,
     condition,
     marginTop,
@@ -429,6 +454,8 @@ export const buildKeyValueField = (data: {
   paddingX?: BoxProps['padding']
   paddingY?: BoxProps['padding']
   paddingBottom?: BoxProps['padding']
+  marginTop?: BoxProps['marginTop']
+  marginBottom?: BoxProps['marginBottom']
 }): KeyValueField => {
   const {
     label,
@@ -441,6 +468,8 @@ export const buildKeyValueField = (data: {
     paddingX,
     paddingY,
     paddingBottom,
+    marginTop,
+    marginBottom,
   } = data
 
   return {
@@ -460,6 +489,8 @@ export const buildKeyValueField = (data: {
     paddingX,
     paddingY,
     paddingBottom,
+    marginTop,
+    marginBottom,
   }
 }
 
@@ -586,6 +617,7 @@ export const buildExpandableDescriptionField = (
     component: FieldComponents.EXPANDABLE_DESCRIPTION,
   }
 }
+
 export const buildAlertMessageField = (
   data: Omit<AlertMessageField, 'type' | 'component' | 'children'>,
 ): AlertMessageField => {
@@ -842,7 +874,6 @@ export const buildFieldsRepeaterField = (
 ): FieldsRepeaterField => {
   const {
     fields,
-    table,
     title,
     titleVariant,
     formTitle,
@@ -861,7 +892,6 @@ export const buildFieldsRepeaterField = (
     type: FieldTypes.FIELDS_REPEATER,
     component: FieldComponents.FIELDS_REPEATER,
     fields,
-    table,
     title,
     titleVariant,
     formTitle,
@@ -923,9 +953,12 @@ export const buildStaticTableField = (
 }
 
 export const buildSliderField = (
-  data: Omit<SliderField, 'type' | 'component' | 'children' | 'title'>,
+  data: Omit<SliderField, 'type' | 'component' | 'children'>,
 ): SliderField => {
   const {
+    id,
+    title,
+    titleVariant = 'h2',
     condition,
     min = 0,
     max = 10,
@@ -933,28 +966,29 @@ export const buildSliderField = (
     snap = true,
     trackStyle,
     calculateCellStyle,
-    showLabel = false,
-    showMinMaxLabels = false,
     showRemainderOverlay = true,
     showProgressOverlay = true,
     showToolTip = false,
     label,
+    showLabel = false,
+    showMinMaxLabels = false,
     rangeDates,
     currentIndex,
     onChange,
     onChangeEnd,
     labelMultiplier = 1,
-    id,
     saveAsString,
     marginTop,
     marginBottom,
   } = data
   return {
-    title: '',
+    component: FieldComponents.SLIDER,
     id,
+    title,
+    titleVariant,
+    condition,
     children: undefined,
     type: FieldTypes.SLIDER,
-    component: FieldComponents.SLIDER,
     min,
     max,
     step,
@@ -972,7 +1006,6 @@ export const buildSliderField = (
     onChange,
     onChangeEnd,
     labelMultiplier,
-    condition,
     saveAsString,
     marginTop,
     marginBottom,
