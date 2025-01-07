@@ -7,7 +7,14 @@ import { errors as errorMessages } from '@island.is/judicial-system-web/messages
 
 export const useGetLawyers = (): Lawyer[] => {
   const { formatMessage } = useIntl()
-  const fetcher = (url: string) => fetch(url).then((res) => res.json())
+  const fetcher = (url: string) =>
+    fetch(url).then((res) => {
+      if (!res.ok) {
+        throw new Error('Failed to get lawyers from lawyer registry')
+      }
+
+      return res.json()
+    })
 
   const { data, error } = useSWR<Lawyer[]>(
     '/api/defender/lawyerRegistry',
@@ -32,7 +39,16 @@ export const useGetLawyer = (
   nationalId?: string | null,
   shouldFetch?: boolean,
 ): Lawyer | undefined => {
-  const fetcher = (url: string) => fetch(url).then((res) => res.json())
+  const fetcher = (url: string) =>
+    fetch(url).then((res) => {
+      if (!res.ok) {
+        throw new Error(
+          `Failed to get lawyer with nationalId ${nationalId} from lawyer registry`,
+        )
+      }
+
+      return res.json()
+    })
 
   const { data } = useSWR<Lawyer>(
     nationalId && shouldFetch
