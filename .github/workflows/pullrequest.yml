@@ -47,9 +47,11 @@ jobs:
           mkdir -p "$HOME"
           mkdir -p "$HOME/.test/foo/bar/"
           ls -lah "$HOME"
+
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
+
       - uses: actions/setup-node@v4
         with:
           node-version-file: 'package.json'
@@ -63,6 +65,7 @@ jobs:
           node -v
           yarn --version
           ls -l "$(which node)"
+
       - name: Checking out relevant branches
         run: |
           set -euo pipefail
