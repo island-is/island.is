@@ -9,4 +9,6 @@ export {
 export {
   HealthDirectorateHealthClientConfig,
   HealthDirectorateHealthService,
+  PrescribedItemDtoRenewalBlockedReasonEnum,
+  PrescribedItemDtoRenewalStatusEnum,
 } from './health'

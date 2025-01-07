@@ -1,17 +1,21 @@
-import { AuthMiddleware, Auth } from '@island.is/auth-nest-tools'
+import { Auth, AuthMiddleware } from '@island.is/auth-nest-tools'
 import { handle404 } from '@island.is/clients/middlewares'
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
 import { Inject, Injectable } from '@nestjs/common'
 import {
+  DispensationDto,
+  Locale,
+  MeDispensationsApi,
+  MePrescriptionsApi,
   MeReferralsApi,
   MeWaitingListsApi,
-  MeDispensationsApi,
+  PrescribedItemDto,
+  PrescribedItemDtoRenewalBlockedReasonEnum,
+  PrescribedItemDtoRenewalStatusEnum,
   ReferralDto,
-  Locale,
-  DispensationDto,
   WaitingListEntryDto,
 } from './gen/fetch'
-import { LOGGER_PROVIDER } from '@island.is/logging'
-import type { Logger } from '@island.is/logging'
 
 const LOG_CATEGORY = 'health-directorate-health-api'
 
@@ -22,6 +26,7 @@ export class HealthDirectorateHealthService {
     private readonly referralsApi: MeReferralsApi,
     private readonly waitingListsApi: MeWaitingListsApi,
     private readonly dispensationsApi: MeDispensationsApi,
+    private readonly prescriptionsApi: MePrescriptionsApi,
   ) {}
 
   private referralsApiWithAuth(auth: Auth) {
@@ -34,6 +39,10 @@ export class HealthDirectorateHealthService {
 
   private dispensationsApiWithAuth(auth: Auth) {
     return this.dispensationsApi.withMiddleware(new AuthMiddleware(auth))
+  }
+
+  private prescriptionsApiWithAuth(auth: Auth) {
+    return this.prescriptionsApi.withMiddleware(new AuthMiddleware(auth))
   }
 
   private mapLocale(locale: string): Locale {
@@ -57,6 +66,151 @@ export class HealthDirectorateHealthService {
     }
 
     return dispensations
+  }
+
+  public async getPrescriptions(
+    auth: Auth,
+    locale: string,
+  ): Promise<Array<PrescribedItemDto> | null> {
+    const prescriptions: PrescribedItemDto[] = [
+      {
+        prescribedItemId: 2,
+        prescriptionId: 2,
+        prescriberId: '2',
+        prescriberName: 'Dr. Jane Smith' as unknown as object,
+        issueDate: new Date('2023-02-01'),
+        expiryDate: new Date('2023-11-30'),
+        productId: '2',
+        productName: 'Ibuprofen' as unknown as object,
+        productType: 'Capsule' as unknown as object,
+        productForm: 'Oral' as unknown as object,
+        productUrl: 'http://example.com/product/2' as unknown as object,
+        productStrength: '200mg' as unknown as object,
+        productQuantity: '20' as unknown as object,
+        dosageInstructions:
+          'Take one capsule every 8 hours' as unknown as object,
+        indication: 'Inflammation' as unknown as object,
+        totalPrescribedAmount: '20' as unknown as object,
+        totalPrescribedAmountDisplay: '20 capsules' as unknown as object,
+        isRegiment: false as unknown as object,
+        isRenewable: true,
+        renewalBlockedReason:
+          PrescribedItemDtoRenewalBlockedReasonEnum.IsRegiment,
+        renewalStatus: PrescribedItemDtoRenewalStatusEnum.NUMBER_0,
+        amountRemaining: 15,
+        amountRemainingUnit: 'capsules',
+        amountRemainingDisplay: '15 capsules',
+        percentageRemaining: 75,
+        isFullyDispensed: false,
+        dispensations: [
+          {
+            id: 3,
+            dispensingAgentId: 2,
+            dispensingAgentName: 'Pharmacy B',
+            dispensationDate: new Date(),
+            dispensedItemsCount: 5,
+            dispensedItems: [
+              {
+                productId: '2',
+                productName: 'Ibuprofen' as unknown as object,
+                productStrength: '200mg' as unknown as object,
+                dispensedAmount: '5' as unknown as object,
+                dispensedAmountDisplay: '5 capsules' as unknown as object,
+                numberOfPackages: '1' as unknown as object,
+              },
+            ],
+          },
+        ],
+      },
+      {
+        prescribedItemId: 3,
+        prescriptionId: 3,
+        prescriberId: '3',
+        prescriberName: 'Dr. Emily Johnson' as unknown as object,
+        issueDate: new Date('2023-03-01'),
+        expiryDate: new Date('2023-10-31'),
+        productId: '3',
+        productName: 'Amoxicillin' as unknown as object,
+        productType: 'Tablet' as unknown as object,
+        productForm: 'Oral' as unknown as object,
+        productUrl: 'http://example.com/product/3' as unknown as object,
+        productStrength: '500mg' as unknown as object,
+        productQuantity: '40' as unknown as object,
+        dosageInstructions:
+          'Take one tablet every 12 hours' as unknown as object,
+        indication: 'Bacterial infection' as unknown as object,
+        totalPrescribedAmount: '40' as unknown as object,
+        totalPrescribedAmountDisplay: '40 tablets' as unknown as object,
+        isRegiment: false as unknown as object,
+        isRenewable: true,
+        renewalBlockedReason:
+          PrescribedItemDtoRenewalBlockedReasonEnum.IsRegiment,
+        renewalStatus: PrescribedItemDtoRenewalStatusEnum.NUMBER_0,
+        amountRemaining: 30,
+        amountRemainingUnit: 'tablets',
+        amountRemainingDisplay: '30 tablets',
+        percentageRemaining: 75,
+        isFullyDispensed: false,
+        dispensations: [
+          {
+            id: 4,
+            dispensingAgentId: 3,
+            dispensingAgentName: 'Pharmacy C',
+            dispensationDate: new Date(),
+            dispensedItemsCount: 10,
+            dispensedItems: [
+              {
+                productId: '3',
+                productName: 'Amoxicillin' as unknown as object,
+                productStrength: '500mg' as unknown as object,
+                dispensedAmount: '10' as unknown as object,
+                dispensedAmountDisplay: '10 tablets' as unknown as object,
+                numberOfPackages: '1' as unknown as object,
+              },
+              {
+                productId: '3',
+                productName: 'Amoxicillin' as unknown as object,
+                productStrength: '500mg' as unknown as object,
+                dispensedAmount: '10' as unknown as object,
+                dispensedAmountDisplay: '10 tablets' as unknown as object,
+                numberOfPackages: '1' as unknown as object,
+              },
+              {
+                productId: '3',
+                productName: 'Amoxicillin' as unknown as object,
+                productStrength: '500mg' as unknown as object,
+                dispensedAmount: '10' as unknown as object,
+                dispensedAmountDisplay: '10 tablets' as unknown as object,
+                numberOfPackages: '1' as unknown as object,
+              },
+              {
+                productId: '3',
+                productName: 'Amoxicillin' as unknown as object,
+                productStrength: '500mg' as unknown as object,
+                dispensedAmount: '10' as unknown as object,
+                dispensedAmountDisplay: '10 tablets' as unknown as object,
+                numberOfPackages: '1' as unknown as object,
+              },
+            ],
+          },
+        ],
+      },
+    ]
+
+    // await this.prescriptionsApiWithAuth(
+    //   auth,
+    // ).mePrescriptionControllerGetPrescriptionsV1({
+    //   locale: this.mapLocale(locale),
+    // })
+
+    if (!prescriptions) {
+      this.logger.debug('No prescriptions returned', {
+        category: LOG_CATEGORY,
+      })
+      return null
+    }
+
+    return prescriptions
   }
 
   /* Tilvísanir */

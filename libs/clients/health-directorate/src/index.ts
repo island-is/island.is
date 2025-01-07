@@ -15,4 +15,6 @@ export {
   organLocale,
   VaccinationDto,
   DiseaseVaccinationDtoVaccinationStatusEnum,
+  PrescribedItemDtoRenewalBlockedReasonEnum,
+  PrescribedItemDtoRenewalStatusEnum,
 } from './lib/clients'

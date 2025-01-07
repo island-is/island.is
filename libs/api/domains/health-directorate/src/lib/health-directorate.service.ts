@@ -1,21 +1,26 @@
-import { Injectable } from '@nestjs/common'
+import { Auth } from '@island.is/auth-nest-tools'
 import {
-  HealthDirectorateVaccinationsService,
   HealthDirectorateOrganDonationService,
+  HealthDirectorateVaccinationsService,
   OrganDonorDto,
   VaccinationDto,
   organLocale,
 } from '@island.is/clients/health-directorate'
-import { Auth } from '@island.is/auth-nest-tools'
 import type { Locale } from '@island.is/shared/types'
+import { Injectable } from '@nestjs/common'
 import { Donor, DonorInput, Organ } from './models/organ-donation.model'
 
-import { Vaccination, Vaccinations } from './models/vaccinations.model'
-import { mapVaccinationStatus } from './utils/mappers'
-import { Logger } from '@island.is/logging'
 import { HealthDirectorateHealthService } from '@island.is/clients/health-directorate'
-import { Waitlists } from './models/waitlists.model'
-import { Referrals } from './models/referrals.model'
+import { Logger } from '@island.is/logging'
+import { Prescription, Prescriptions } from './models/prescriptions'
+import { Referral, Referrals } from './models/referrals.model'
+import { Vaccination, Vaccinations } from './models/vaccinations.model'
+import { Waitlist, Waitlists } from './models/waitlists.model'
+import {
+  mapPrescriptionRenewalBlockedReason,
+  mapPrescriptionRenewalStatus,
+  mapVaccinationStatus,
+} from './utils/mappers'
 
 @Injectable()
 export class HealthDirectorateService {
@@ -97,12 +102,12 @@ export class HealthDirectorateService {
       auth,
       locale === 'is' ? 'is' : 'en',
     )
-    if (data === null) {
+    if (!data) {
       return null
     }
 
     const vaccinations: Array<Vaccination> =
-      data?.map((item) => {
+      data.map((item) => {
         return {
           id: item.diseaseId,
           name: item.diseaseName,
@@ -129,6 +134,7 @@ export class HealthDirectorateService {
           ),
         }
       }) ?? []
+
     return { vaccinations }
   }
 
@@ -139,25 +145,23 @@ export class HealthDirectorateService {
     if (!data) {
       return null
     }
-    const waitlists: Waitlists = {
-      waitlists: [],
-    }
+    const waitlists: Array<Waitlist> =
+      data.map((item) => {
+        return {
+          id: item.id,
+          lastUpdated: item.lastUpdated
+            ? new Date(item.lastUpdated?.toString())
+            : undefined,
+          name: item.name,
+          waitBeganDate: item.waitBeganDate
+            ? new Date(item.waitBeganDate?.toString())
+            : undefined,
+          organizationName: item.organizationName.toString(),
+          statusDisplay: item.statusDisplay?.toString(),
+        }
+      }) ?? []
 
-    waitlists.waitlists = data.map((item) => {
-      return {
-        id: item.id,
-        lastUpdated: item.lastUpdated
-          ? new Date(item.lastUpdated?.toString())
-          : undefined,
-        name: item.name,
-        waitBeganDate: item.waitBeganDate
-          ? new Date(item.waitBeganDate?.toString())
-          : undefined,
-        statusDisplay: item.statusDisplay?.toString(),
-      }
-    })
-
-    return waitlists
+    return { waitlists }
   }
 
   /* Referrals */
@@ -168,8 +172,8 @@ export class HealthDirectorateService {
       return null
     }
 
-    const referrals: Referrals = {
-      Referrals: data.map((item) => {
+    const referrals: Array<Referral> =
+      data.map((item) => {
         return {
           id: item.id,
           serviceName: item.serviceName,
@@ -184,9 +188,78 @@ export class HealthDirectorateService {
           fromContactInfo: item.fromContactInfo,
           toContactInfo: item.toContactInfo,
         }
-      }),
-    }
+      }) ?? []
 
-    return referrals
+    return { referrals }
+  }
+
+  /* Prescriptions */
+  async getPrescriptions(
+    auth: Auth,
+    locale: Locale,
+  ): Promise<Prescriptions | null> {
+    const data = await this.healthApi.getPrescriptions(auth, locale)
+
+    if (!data) {
+      return null
+    }
+    const prescriptions: Array<Prescription> =
+      data.map((item) => {
+        return {
+          prescribedItemId: item.prescribedItemId.toString(),
+          prescriptionId: item.prescriptionId,
+          prescriberId: item.prescriberId,
+          prescriberName: item.prescriberName.toString(),
+          issueDate: item.issueDate,
+          expiryDate: item.expiryDate,
+          productId: item.productId,
+          productName: item.productName?.toString(),
+          productType: item.productType?.toString(),
+          productForm: item.productForm?.toString(),
+          productUrl: item.productUrl?.toString(),
+          productStrength: item.productStrength?.toString(),
+          productQuantity: item.productQuantity?.toString(),
+          dosageInstructions: item.dosageInstructions?.toString(),
+          indication: item.indication?.toString(),
+          totalPrescribedAmount: item.totalPrescribedAmount?.toString(),
+          totalPrescribedAmountDisplay:
+            item.totalPrescribedAmountDisplay?.toString(),
+          isRegiment: item.isRegiment ? true : false,
+          isRenewable: item.isRenewable,
+          renewalBlockedReason: item.renewalBlockedReason
+            ? mapPrescriptionRenewalBlockedReason(item.renewalBlockedReason)
+            : undefined,
+          renewalStatus: item.renewalStatus
+            ? mapPrescriptionRenewalStatus(item.renewalStatus)
+            : undefined,
+          amountRemaining: item.amountRemaining,
+          amountRemainingUnit: item.amountRemainingUnit,
+          amountRemainingDisplay: item.amountRemainingDisplay,
+          percentageRemaining: item.percentageRemaining,
+          isFullyDispensed: item.isFullyDispensed,
+          dispensations: item.dispensations.map((item) => {
+            return {
+              id: item.id.toString(),
+              dispensingAgentId: item.dispensingAgentId.toString(),
+              dispensingAgentName: item.dispensingAgentName,
+              dispensationDate: item.dispensationDate,
+              dispensedItemsCount: item.dispensedItemsCount,
+              dispensedItems: item.dispensedItems.map((item) => {
+                return {
+                  productId: item.productId,
+                  productName: item.productName?.toString(),
+                  productStrength: item.productStrength?.toString(),
+                  dispensedAmount: item.dispensedAmount?.toString(),
+                  dispensedAmountDisplay:
+                    item.dispensedAmountDisplay?.toString(),
+                  numberOfPackages: item.numberOfPackages?.toString(),
+                }
+              }),
+            }
+          }),
+        }
+      }) ?? []
+
+    return { prescriptions }
   }
 }

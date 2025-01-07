@@ -1,4 +1,4 @@
-import { Field, ID, Int, ObjectType } from '@nestjs/graphql'
+import { Field, ID, ObjectType } from '@nestjs/graphql'
 
 @ObjectType('HealthDirectorateReferralContact')
 export class ReferralContact {
@@ -32,15 +32,15 @@ export class Referral {
   @Field({ nullable: true })
   reason?: string
 
-  @Field({ nullable: true })
-  fromContactInfo?: ReferralContact
+  @Field()
+  fromContactInfo!: ReferralContact
 
-  @Field({ nullable: true })
-  toContactInfo?: ReferralContact
+  @Field()
+  toContactInfo!: ReferralContact
 }
 
 @ObjectType('HealthDirectorateReferrals')
 export class Referrals {
   @Field(() => [Referral])
-  Referrals!: Referral[]
+  referrals!: Referral[]
 }

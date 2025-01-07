@@ -5,13 +5,14 @@ import {
   LazyDuringDevScope,
   XRoadConfig,
 } from '@island.is/nest/config'
-import { HealthDirectorateHealthClientConfig } from './health.config'
 import {
   Configuration,
+  MeDispensationsApi,
   MePrescriptionsApi,
   MeReferralsApi,
   MeWaitingListsApi,
 } from './gen/fetch'
+import { HealthDirectorateHealthClientConfig } from './health.config'
 
 const sharedApiConfig = {
   provide: 'HealthApiProviderConfiguration',
@@ -53,6 +54,7 @@ export const exportedHealthApis = [
   MeWaitingListsApi,
   MeReferralsApi,
   MePrescriptionsApi,
+  MeDispensationsApi,
 ].map((Api) => ({
   provide: Api,
   useFactory: (configuration: Configuration) => {
