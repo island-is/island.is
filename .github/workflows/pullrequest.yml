@@ -71,8 +71,9 @@ jobs:
           set -euo pipefail
           set -x
           # Create branches locally from remote
-          git branch {,origin/}"$GITHUB_HEAD_REF"
-          git branch {,origin/}"$GITHUB_BASE_REF"
+          for b in "$GITHUB_HEAD_REF" "$GITHUB_BASE_REF"; do
+            git rev-parse --verify "$b" || git branch {,origin/}"$b"
+          done
           # Verify current sha
           git rev-parse --verify "$GITHUB_SHA"
           # Set git user for later commits
