@@ -12,7 +12,6 @@ export const DEFAULT_EDITABLE_ENTRY_TYPE_IDS = [
   'enhancedAsset',
   'faqList',
   'featuredArticles',
-  'footerItem',
   'introLinkImage',
   'link',
   'linkUrl',
@@ -70,4 +69,5 @@ export const DEFAULT_READ_ONLY_ENTRY_IDS = [
   'organizationTag',
   'uiConfiguration',
   'featuredSupportQNAs',
+  'footerItem',
 ]
