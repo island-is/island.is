@@ -78,11 +78,11 @@ jobs:
         run: |
           set -euo pipefail
           set -x
-          # Creat branch locally from remote
-          git branch {,origin/}"$GITHUB_HEAD_REF" || true
+          # Create branches locally from remote
+          git branch {,origin/}"$GITHUB_HEAD_REF"
           # Verify required branches
-          git rev-parse --verify "$GITHUB_HEAD_REF"
-          git rev-parse --verify "$GITHUB_BASE_REF"
+          git branch {,origin/}"$GITHUB_HEAD_REF"
+          git branch {,origin/}"$GITHUB_BASE_REF"
           git rev-parse --verify "$GITHUB_SHA"
           # Set git user for later commits
           git config --global user.email "ci@island.is"
