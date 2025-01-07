@@ -11,6 +11,7 @@ import { m } from './messages'
 interface Status {
   applicationStatus: 'open' | 'closed' | 'unknown'
   deadlineStatus: string
+  deadlinePeriod?: string
   note?: string
 }
 
@@ -54,6 +55,13 @@ export const parseStatus = (
             )
           : formatMessage(m.search.applicationClosed),
         note: grant.statusText ?? undefined,
+        deadlinePeriod:
+          grant.dateFrom && grant.dateTo
+            ? `${format(new Date(grant.dateFrom), 'dd.MM.yyyy')} - ${format(
+                new Date(grant.dateTo),
+                'dd.MM.yyyy',
+              )}`
+            : undefined,
       }
     }
     case GrantStatus.ClosedOpeningSoon: {
@@ -68,6 +76,13 @@ export const parseStatus = (
             })
           : formatMessage(m.search.applicationClosed),
         note: grant.statusText ?? undefined,
+        deadlinePeriod:
+          grant.dateFrom && grant.dateTo
+            ? `${format(new Date(grant.dateFrom), 'dd.MM.yyyy')} - ${format(
+                new Date(grant.dateTo),
+                'dd.MM.yyyy',
+              )}`
+            : undefined,
       }
     }
     case GrantStatus.ClosedOpeningSoonWithEstimation: {
@@ -115,6 +130,13 @@ export const parseStatus = (
             )
           : formatMessage(m.search.applicationOpen),
         note: grant.statusText ?? undefined,
+        deadlinePeriod:
+          grant.dateFrom && grant.dateTo
+            ? `${format(new Date(grant.dateFrom), 'dd.MM.yyyy')} - ${format(
+                new Date(grant.dateTo),
+                'dd.MM.yyyy',
+              )}`
+            : undefined,
       }
     }
     case GrantStatus.OpenWithNote: {

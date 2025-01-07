@@ -37,6 +37,7 @@ export const InstitutionPanel = ({
         padding={[3, 3, 4]}
         display="flex"
         alignItems="center"
+        marginTop={3}
       >
         <Box
           display={imgContainerDisplay}

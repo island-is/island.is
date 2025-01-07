@@ -56,18 +56,21 @@ const DetailPanel: React.FC<DetailPanelProps> = ({
         generateLine(
           formatMessage(m.single.status),
           grant?.status ? (
-            <Text variant="medium">
-              {
-                generateStatusTag(status.applicationStatus, formatMessage)
-                  ?.label
-              }
-            </Text>
+            <>
+              <Text variant="medium">
+                {
+                  generateStatusTag(status.applicationStatus, formatMessage)
+                    ?.label
+                }
+              </Text>
+              <Text variant="medium">{status.deadlineStatus}</Text>
+            </>
           ) : undefined,
         ),
         generateLine(
-          formatMessage(m.single.deadline),
-          status.deadlineStatus ? (
-            <Text variant="medium">{status.deadlineStatus}</Text>
+          formatMessage(m.single.deadlinePeriod),
+          status.deadlinePeriod ? (
+            <Text variant="medium">{status.deadlinePeriod}</Text>
           ) : undefined,
         ),
         generateLine(
