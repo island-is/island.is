@@ -510,19 +510,17 @@ export const IndictmentCount: FC<Props> = ({
         </Box>
       )}
       <Box marginBottom={2}>
-        <InputMask
-          mask={[/[A-Z]/i, /[A-Z]/i, /[A-Z]|[0-9]/i, /[0-9]/, /[0-9]/]}
-          maskPlaceholder={null}
+        <Input
+          name="vehicleRegistrationNumber"
+          autoComplete="off"
+          label={formatMessage(strings.vehicleRegistrationNumberLabel)}
+          placeholder={formatMessage(
+            strings.vehicleRegistrationNumberPlaceholder,
+          )}
           value={indictmentCount.vehicleRegistrationNumber ?? ''}
-          beforeMaskedStateChange={({ nextState }) => {
-            let { value } = nextState
-            value = value.toUpperCase()
-
-            return { ...nextState, value }
-          }}
           onChange={(event) => {
             removeErrorMessageIfValid(
-              ['empty', 'vehicle-registration-number'],
+              ['empty'],
               event.target.value,
               vehicleRegistrationNumberErrorMessage,
               setVehicleRegistrationNumberErrorMessage,
@@ -538,7 +536,7 @@ export const IndictmentCount: FC<Props> = ({
           }}
           onBlur={async (event) => {
             validateAndSetErrorMessage(
-              ['empty', 'vehicle-registration-number'],
+              ['empty'],
               event.target.value,
               setVehicleRegistrationNumberErrorMessage,
             )
@@ -547,19 +545,10 @@ export const IndictmentCount: FC<Props> = ({
               vehicleRegistrationNumber: event.target.value,
             })
           }}
-        >
-          <Input
-            name="vehicleRegistrationNumber"
-            autoComplete="off"
-            label={formatMessage(strings.vehicleRegistrationNumberLabel)}
-            placeholder={formatMessage(
-              strings.vehicleRegistrationNumberPlaceholder,
-            )}
-            errorMessage={vehicleRegistrationNumberErrorMessage}
-            hasError={vehicleRegistrationNumberErrorMessage !== ''}
-            required
-          />
-        </InputMask>
+          errorMessage={vehicleRegistrationNumberErrorMessage}
+          hasError={vehicleRegistrationNumberErrorMessage !== ''}
+          required
+        />
       </Box>
       <Box marginBottom={2}>
         <Select
