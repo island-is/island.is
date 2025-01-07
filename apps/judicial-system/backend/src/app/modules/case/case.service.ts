@@ -868,7 +868,7 @@ export class CaseService {
         user,
         caseId: theCase.id,
         // Upon case cancellation, we send the same notification type to:
-        // (1) relevant court emails 
+        // (1) relevant court emails
         // (2) court system (via robot).
         //
         // When a case is revoked without a court case number, we send email (1).
