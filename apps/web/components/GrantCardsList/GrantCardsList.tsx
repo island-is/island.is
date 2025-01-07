@@ -184,12 +184,7 @@ const GrantCardsList = ({ slice }: SliceProps) => {
 
   return (
     <Box padding={1} borderColor="blue100" borderRadius="large">
-      <InfoCardGrid
-        columns={1}
-        cardsBorder="blue200"
-        variant="detailed"
-        cards={cards ?? []}
-      />
+      <InfoCardGrid columns={1} variant="detailed" cards={cards ?? []} />
     </Box>
   )
 }
