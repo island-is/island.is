@@ -19,6 +19,9 @@ export const computeCountryResidence = (history: Residence[]) => {
     compareDesc(new Date(a), new Date(b)),
   )
 
+  // There is the function addYears available but it's not being used
+  // to avoid the edge case of leap years, but rather to keep the
+  // check constant/static over an interval of time
   const yearAgo = addDays(new Date(), -365).getTime()
 
   let lastTime = Date.now()
