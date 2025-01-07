@@ -2,6 +2,7 @@ import { Field, ObjectType } from '@nestjs/graphql'
 import { IFeaturedLinks } from '../generated/contentfulTypes'
 import { Featured, mapFeatured } from './featured.model'
 import { CacheField } from '@island.is/nest/graphql'
+import { SystemMetadata } from '@island.is/shared/types'
 
 @ObjectType()
 export class FeaturedLinks {
@@ -9,12 +10,13 @@ export class FeaturedLinks {
   title?: string
 
   @CacheField(() => [Featured], { nullable: true })
-  links?: Featured[] | null
+  featuredLinks?: Featured[] | null
 }
 
 export const mapFeaturedLinks = ({
   fields,
-}: IFeaturedLinks): FeaturedLinks => ({
+}: IFeaturedLinks): SystemMetadata<FeaturedLinks> => ({
+  typename: 'FeaturedLinks',
   title: fields.displayedTitle ?? '',
-  links: fields.links ? fields.links.map(mapFeatured) : [],
+  featuredLinks: fields.links ? fields.links.map(mapFeatured) : [],
 })

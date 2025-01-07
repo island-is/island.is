@@ -922,8 +922,9 @@ export const slices = gql`
   }
 
   fragment FeaturedLinksFields on FeaturedLinks {
+    __typename
     title
-    links {
+    featuredLinks {
       title
       attention
       thing {
@@ -978,6 +979,7 @@ export const slices = gql`
     ...FeaturedEventsFields
     ...GenericListFields
     ...LatestGenericListItemsFields
+    ...FeaturedLinksFields
   }
 
   fragment AllSlices on Slice {
