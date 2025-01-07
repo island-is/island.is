@@ -276,95 +276,94 @@ describe('DrivingLicenseService', () => {
     })
   })
 
-  // TODOx temporary to make feature deploy work
-  // describe('getApplicationEligibility', () => {
-  //   it('all checks should pass for applicable students', async () => {
-  //     const response = await service.getApplicationEligibility(
-  //       MOCK_USER,
-  //       MOCK_NATIONAL_ID,
-  //       'B-full',
-  //     )
+  describe('getApplicationEligibility', () => {
+    it('all checks should pass for applicable students', async () => {
+      const response = await service.getApplicationEligibility(
+        MOCK_USER,
+        MOCK_NATIONAL_ID,
+        'B-full',
+      )
 
-  //     expect(response).toStrictEqual({
-  //       isEligible: true,
-  //       requirements: [
-  //         {
-  //           key: 'DrivingAssessmentMissing',
-  //           requirementMet: true,
-  //         },
-  //         {
-  //           key: 'DrivingSchoolMissing',
-  //           requirementMet: true,
-  //         },
-  //         {
-  //           key: 'CurrentLocalResidency',
-  //           daysOfResidency,
-  //           requirementMet: true,
-  //         },
-  //         {
-  //           key: 'DeniedByService',
-  //           requirementMet: true,
-  //         },
-  //       ],
-  //     })
-  //   })
+      expect(response).toStrictEqual({
+        isEligible: true,
+        requirements: [
+          {
+            key: 'DrivingAssessmentMissing',
+            requirementMet: true,
+          },
+          {
+            key: 'DrivingSchoolMissing',
+            requirementMet: true,
+          },
+          {
+            key: 'CurrentLocalResidency',
+            daysOfResidency,
+            requirementMet: true,
+          },
+          {
+            key: 'DeniedByService',
+            requirementMet: true,
+          },
+        ],
+      })
+    })
 
-  //   it('all checks should pass for applicable students for temporary license', async () => {
-  //     const response = await service.getApplicationEligibility(
-  //       MOCK_USER,
-  //       MOCK_NATIONAL_ID,
-  //       'B-temp',
-  //     )
+    it('all checks should pass for applicable students for temporary license', async () => {
+      const response = await service.getApplicationEligibility(
+        MOCK_USER,
+        MOCK_NATIONAL_ID,
+        'B-temp',
+      )
 
-  //     expect(response).toStrictEqual({
-  //       isEligible: true,
-  //       requirements: [
-  //         {
-  //           key: 'LocalResidency',
-  //           daysOfResidency,
-  //           requirementMet: true,
-  //         },
-  //         {
-  //           key: 'DeniedByService',
-  //           requirementMet: true,
-  //         },
-  //       ],
-  //     })
-  //   })
+      expect(response).toStrictEqual({
+        isEligible: true,
+        requirements: [
+          {
+            key: 'LocalResidency',
+            daysOfResidency,
+            requirementMet: true,
+          },
+          {
+            key: 'DeniedByService',
+            requirementMet: true,
+          },
+        ],
+      })
+    })
 
-  //   it('checks should fail for non-applicable students', async () => {
-  //     const MOCK_USER_COPY = { ...MOCK_USER }
-  //     MOCK_USER_COPY.authorization = MOCK_TOKEN_EXPIRED
-  //     const response = await service.getApplicationEligibility(
-  //       MOCK_USER_COPY,
-  //       MOCK_NATIONAL_ID_EXPIRED,
-  //       'B-full',
-  //     )
+    it('checks should fail for non-applicable students', async () => {
+      const MOCK_USER_COPY = { ...MOCK_USER }
+      MOCK_USER_COPY.authorization = MOCK_TOKEN_EXPIRED
+      const response = await service.getApplicationEligibility(
+        MOCK_USER_COPY,
+        MOCK_NATIONAL_ID_EXPIRED,
+        'B-full',
+      )
 
-  //     expect(response).toStrictEqual({
-  //       isEligible: false,
-  //       requirements: [
-  //         {
-  //           key: 'DrivingAssessmentMissing',
-  //           requirementMet: true,
-  //         },
-  //         {
-  //           key: 'DrivingSchoolMissing',
-  //           requirementMet: false,
-  //         },
-  //         {
-  //           key: 'CurrentLocalResidency',
-  //           daysOfResidency,
-  //           requirementMet: true,
-  //         },
-  //         {
-  //           key: 'DeniedByService',
-  //           requirementMet: false,
-  //         },
-  //       ],
-  //     })
-  //   })
-  // })
+      expect(response).toStrictEqual({
+        isEligible: false,
+        requirements: [
+          {
+            key: 'DrivingAssessmentMissing',
+            requirementMet: true,
+          },
+          {
+            key: 'DrivingSchoolMissing',
+            requirementMet: false,
+          },
+          {
+            key: 'CurrentLocalResidency',
+            daysOfResidency,
+            requirementMet: true,
+          },
+          {
+            key: 'DeniedByService',
+            requirementMet: false,
+          },
+        ],
+      })
+    })
+  })
 
   describe('newDrivingAssessment', () => {
     it('teacher should be able to create a driving assessment', async () => {
