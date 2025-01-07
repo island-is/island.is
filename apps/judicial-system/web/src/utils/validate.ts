@@ -32,7 +32,6 @@ export type Validation =
   | 'date-format'
   | 'R-case-number'
   | 'S-case-number'
-  | 'vehicle-registration-number'
   | 'appeal-case-number-format'
 
 type ValidateItem = 'valid' | [string | undefined | null, Validation[]]
@@ -94,12 +93,6 @@ const getRegexByValidation = (validation: Validation) => {
       return {
         regex: new RegExp(/^S-[0-9]{1,5}\/[0-9]{4}$/),
         errorMessage: `Dæmi: S-1234/${new Date().getFullYear()}`,
-      }
-    }
-    case 'vehicle-registration-number': {
-      return {
-        regex: new RegExp(/^[A-Z]{2}([A-Z]{1}|[0-9]{1})[0-9]{2}$/),
-        errorMessage: 'Dæmi: AB123',
       }
     }
     case 'appeal-case-number-format': {

@@ -155,7 +155,7 @@ describe('getIncidentDescriptionReason', () => {
     )
   })
 
-  test('should return a description with illegal drugs as third offence', () => {
+  test('should return a description with illegal drugs as third offense', () => {
     const offenses = [
       offense.DRIVING_WITHOUT_LICENCE,
       offense.DRUNK_DRIVING,
