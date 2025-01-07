@@ -125,4 +125,38 @@ export class InternalSubpoenaController {
       deliverDto.user,
     )
   }
+
+  @UseGuards(
+    CaseExistsGuard,
+    new CaseTypeGuard(indictmentCases),
+    DefendantExistsGuard,
+    SubpoenaExistsGuard,
+  )
+  @Post(
+    `case/:caseId/${
+      messageEndpoint[MessageType.DELIVERY_TO_POLICE_SUBPOENA_REVOCATION]
+    }/:defendantId/:subpoenaId`,
+  )
+  @ApiOkResponse({
+    type: DeliverResponse,
+    description: 'Delivers subpoena revocation to police',
+  })
+  deliverSubpoenaRevokedToPolice(
+    @Param('caseId') caseId: string,
+    @Param('defendantId') defendantId: string,
+    @Param('subpoenaId') subpoenaId: string,
+    @CurrentCase() theCase: Case,
+    @CurrentSubpoena() subpoena: Subpoena,
+    @Body() deliverDto: DeliverDto,
+  ): Promise<DeliverResponse> {
+    this.logger.debug(
+      `Delivering subpoena revocation of ${subpoenaId} to police for defendant ${defendantId} of case ${caseId}`,
+    )
+
+    return this.subpoenaService.deliverSubpoenaRevokedToPolice(
+      theCase,
+      subpoena,
+      deliverDto.user,
+    )
+  }
 }
