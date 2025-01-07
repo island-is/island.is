@@ -1,12 +1,12 @@
 import { Box, Button, Table as T } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { useState } from 'react'
-import { ParticipantType } from '../../lib/dataSchema'
+import { Participant } from '../../shared/types'
 import { formatPhoneNumber } from '../../utils'
 import { participants } from '../../lib/messages'
 
 interface Props {
-  data: ParticipantType[]
+  data: Participant[]
 }
 
 const TableRow = ({ line }: { line: string[] }) => {

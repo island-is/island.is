@@ -17,7 +17,7 @@ const UserSchemaBase = z.object({
   name: z.string().min(1),
 })
 
-const PaymentArrangementSchema = z
+export const PaymentArrangementSchema = z
   .object({
     individualOrCompany: z.enum([
       IndividualOrCompany.individual,
@@ -179,7 +179,3 @@ export const SeminarAnswersSchema = z.object({
   participantCsvError: z.boolean().optional(),
   participantValidityError: z.boolean().optional(),
 })
-
-export type SeminarAnswers = z.TypeOf<typeof SeminarAnswersSchema>
-export type PaymentArrangementType = z.TypeOf<typeof PaymentArrangementSchema>
-export type ParticipantType = z.TypeOf<typeof ParticipantSchema>

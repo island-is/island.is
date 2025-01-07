@@ -5,7 +5,7 @@ import {
   FormValue,
 } from '@island.is/application/types'
 import { format as formatKennitala } from 'kennitala'
-import { PaymentArrangementType } from '../lib/dataSchema'
+import { PaymentArrangementType } from '../shared/types'
 import { IndividualOrCompany, PaymentOptions } from '../shared/contstants'
 import { paymentArrangement } from '../lib/messages'
 import { formatPhoneNumber } from './formatPhoneNumber'

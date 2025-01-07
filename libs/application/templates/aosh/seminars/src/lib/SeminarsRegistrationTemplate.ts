@@ -32,7 +32,7 @@ import { application as applicationMessage } from './messages'
 import { ApiActions, PaymentOptions } from '../shared/contstants'
 import { buildPaymentState } from '@island.is/application/utils'
 import { getChargeItems, isCompany } from '../utils'
-// import { ApiScope } from '@island.is/auth/scopes'
+import { ApiScope } from '@island.is/auth/scopes'
 
 const template: ApplicationTemplate<
   ApplicationContext,
@@ -47,7 +47,6 @@ const template: ApplicationTemplate<
   initialQueryParameter: 'seminarId',
   dataSchema: SeminarAnswersSchema,
   allowedDelegations: [
-    // TODO what delegations are allowed?
     {
       type: AuthDelegationType.ProcurationHolder,
     },
@@ -55,7 +54,7 @@ const template: ApplicationTemplate<
       type: AuthDelegationType.Custom,
     },
   ],
-  // requiredScopes: [ApiScope.vinnueftirlitid], // TODO til hvers er þetta?
+  requiredScopes: [ApiScope.vinnueftirlitid],
   featureFlag: Features.SeminarRegistrationEnabled,
   allowMultipleApplicationsInDraft: true,
   stateMachineConfig: {
@@ -170,12 +169,6 @@ const template: ApplicationTemplate<
         organizationId: InstitutionNationalIds.VINNUEFTIRLITID,
         chargeItems: getChargeItems,
         submitTarget: States.COMPLETED,
-        // onExit: [
-        //   defineTemplateApi({
-        //     action: ApiActions.submitApplication,
-        //     triggerEvent: DefaultEvents.SUBMIT,
-        //   }),
-        // ],
       }),
       [States.COMPLETED]: {
         meta: {

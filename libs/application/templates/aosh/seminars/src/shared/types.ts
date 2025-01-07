@@ -1,4 +1,10 @@
 import { z } from 'zod'
-import { ParticipantSchema } from '../lib/dataSchema'
+import {
+  ParticipantSchema,
+  PaymentArrangementSchema,
+  SeminarAnswersSchema,
+} from '../lib/dataSchema'
 
+export type SeminarAnswers = z.TypeOf<typeof SeminarAnswersSchema>
+export type PaymentArrangementType = z.TypeOf<typeof PaymentArrangementSchema>
 export type Participant = z.TypeOf<typeof ParticipantSchema>

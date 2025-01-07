@@ -16,7 +16,7 @@ import {
 } from '../../utils'
 import { ParticipantsOverviewExpandableTable } from '../Components/ParticipantsOverviewExpandableTable'
 import { getValueViaPath } from '@island.is/application/core'
-import { ParticipantType } from '../../lib/dataSchema'
+import { Participant } from '../../shared/types'
 
 export const Overview: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   ...props
@@ -94,7 +94,7 @@ export const Overview: FC<React.PropsWithChildren<FieldBaseProps>> = ({
       >
         <ParticipantsOverviewExpandableTable
           data={
-            getValueViaPath<ParticipantType[]>(
+            getValueViaPath<Participant[]>(
               application.answers,
               'participantList',
             ) ?? []
