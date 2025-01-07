@@ -839,7 +839,7 @@ export const notifications = {
     body: {
       id: 'judicial.system.backend:notifications.court_revoked_indictment_email.body_v1',
       defaultMessage:
-        '{prosecutorsOffice} hefur afturkallað ákæru í máli {courtCaseNumber, select, NONE {{policeCaseNumbers}} other {{courtCaseNumber}}}.',
+        '{prosecutorsOffice} hefur afturkallað ákæru í máli {caseNumber}.',
       description: 'Texti í pósti til dómstóls þegar ákæra er afturkölluð',
     },
   }),

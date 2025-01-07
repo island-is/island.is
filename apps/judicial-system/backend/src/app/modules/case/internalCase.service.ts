@@ -672,9 +672,8 @@ export class InternalCaseService {
   ): Promise<DeliverResponse> {
     await this.refreshFormatMessage()
 
-    const courtCaseNumber =
-      (withCourtCaseNumber && theCase.courtCaseNumber) || 'NONE'
-    const policeCaseNumbers = theCase.policeCaseNumbers.join(', ')
+    const courtCaseNumber = withCourtCaseNumber && theCase.courtCaseNumber
+    const caseNumber = courtCaseNumber || theCase.policeCaseNumbers.join(', ')
 
     return this.courtService
       .updateIndictmentCaseWithCancellationNotice(
@@ -683,15 +682,14 @@ export class InternalCaseService {
         theCase.court?.name,
         theCase.courtCaseNumber,
         this.formatMessage(notifications.courtRevokedIndictmentEmail.subject, {
-          courtCaseNumber,
+          courtCaseNumber: courtCaseNumber || 'NONE',
         }),
         stripHtmlTags(
           `${this.formatMessage(
             notifications.courtRevokedIndictmentEmail.body,
             {
               prosecutorsOffice: theCase.creatingProsecutor?.institution?.name,
-              courtCaseNumber,
-              policeCaseNumbers,
+              caseNumber,
             },
           )} ${this.formatMessage(notifications.emailTail)}`,
         ),
