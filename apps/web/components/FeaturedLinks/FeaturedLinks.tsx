@@ -11,21 +11,29 @@ export const FeaturedLinks = ({ links }: FeaturedLinksProps) => {
   return (
     <Inline space={2}>
       {links.map(({ title, attention, thing }) => {
-        const cardUrl = linkResolver(thing?.type as LinkType, [
-          thing?.slug as string,
-        ])
-        return cardUrl?.href && cardUrl?.href.length > 0 ? (
+        if (!thing?.type || !thing?.slug) {
+          return (
+            <Tag key={title} variant="blue" attention={attention}>
+              {title}
+            </Tag>
+          )
+        }
+        const cardUrl = linkResolver(thing.type as LinkType, [thing.slug])
+        if (!cardUrl?.href) {
+          return (
+            <Tag key={title} variant="blue" attention={attention}>
+              {title}
+            </Tag>
+          )
+        }
+
+        return (
           <Tag
             key={title}
             {...(cardUrl.href.startsWith('/')
               ? {
                   CustomLink: ({ children, ...props }) => (
-                    <LinkV2
-                      key={title}
-                      {...props}
-                      {...cardUrl}
-                      dataTestId="featured-link"
-                    >
+                    <LinkV2 {...props} {...cardUrl} dataTestId="featured-link">
                       {children}
                     </LinkV2>
                   ),
@@ -34,10 +42,6 @@ export const FeaturedLinks = ({ links }: FeaturedLinksProps) => {
             variant="blue"
             attention={attention}
           >
-            {title}
-          </Tag>
-        ) : (
-          <Tag key={title} variant="blue" attention={attention}>
             {title}
           </Tag>
         )
