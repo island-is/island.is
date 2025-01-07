@@ -40,12 +40,11 @@ jobs:
       BUILD_CHUNKS: ${{ steps.build_projects.outputs.CHUNKS }}
       CACHE_KEYS: ${{ steps.get-cache.outputs.keys }}
     steps:
+      # Creates homedir if missing (e.g. when set to /tmp/runner/ when running locally with act)
       - name: Debug home etc.
         run: |
           echo "User: HOME=$HOME, PWD=$PWD, id=$(id)"
-          ls -lah "$HOME" || true
           mkdir -p "$HOME"
-          mkdir -p "$HOME/.test/foo/bar/"
           ls -lah "$HOME"
 
       - uses: actions/checkout@v4
@@ -90,8 +89,8 @@ jobs:
       # https://github.blog/changelog/2020-10-08-github-actions-ability-to-change-retention-days-for-artifacts-and-logs/
       - name: Keep PR run event
         uses: actions/upload-artifact@b18b1d32f3f31abcdc29dee3f2484801fe7822f4
-        # Don't run locally
-        if: ${{ github.actor != 'nektos/act' }}
+        # Don't run this step locally
+        if: ${{ !github.event.localrun }}
         with:
           name: pr-event
           path: event.json
@@ -129,6 +128,7 @@ jobs:
       - name: Check user permissions
         uses: actions-cool/check-user-permission@v2
         id: check-permission
+        # This fails locally without a token, and only prevents "admin" label usage
         continue-on-error: true
 
       - name: Set magic env if test-everything label is set
