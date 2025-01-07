@@ -1,5 +1,4 @@
 import { DAY } from './constants'
-import addYears from 'date-fns/addYears'
 import compareDesc from 'date-fns/compareDesc'
 import { Residence } from './types'
 import { addDays } from 'date-fns'
