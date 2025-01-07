@@ -7,13 +7,14 @@ ROOT="$DIR/../.."
 tempRepo=$(mktemp -d 2>/dev/null || mktemp -d -t 'mytmpdir')
 cp -r "$ROOT/.github/actions/dist/." "$tempRepo"
 
-LAST_GOOD_BUILD=$(DEBUG="*,-simple-git" REPO_ROOT="$ROOT" node "$tempRepo/main.js")
-if echo "$LAST_GOOD_BUILD" | grep -q 'full_rebuild_needed'; then
+if ! LAST_GOOD_BUILD=$(DEBUG="*,-simple-git" REPO_ROOT="$ROOT" node "$tempRepo/main.js") ||
+  (echo "$LAST_GOOD_BUILD" | grep -q 'full_rebuild_needed'); then
+  >&2 echo "Stickman failed or no last good build found"
   export NX_AFFECTED_ALL=true
   echo "NX_AFFECTED_ALL=$NX_AFFECTED_ALL" >>"$GITHUB_ENV"
   exit 0
 fi
-echo "Stickman done"
+>&2 echo "Stickman done"
 LAST_GOOD_BUILD_SHA=$(echo "$LAST_GOOD_BUILD" | jq -r '.sha')
 LAST_GOOD_BUILD_BRANCH=$(echo "$LAST_GOOD_BUILD" | jq -r '.branch')
 LAST_GOOD_BUILD_RUN_NUMBER=$(echo "$LAST_GOOD_BUILD" | jq -r '.run_number')
