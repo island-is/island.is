@@ -31,7 +31,7 @@ export class GenericList {
   @CacheField(() => GetGenericListItemsInputOrderBy, { nullable: true })
   defaultOrder?: GetGenericListItemsInputOrderBy
 
-  @CacheField({ nullable: true })
+  @Field(() => Boolean, { nullable: true })
   showSearchInput?: boolean
 }
 
