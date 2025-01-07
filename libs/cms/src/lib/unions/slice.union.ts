@@ -49,6 +49,7 @@ import {
   IGenericList,
   ILatestGenericListItems,
   IFeaturedLinks,
+  IGrantCardsList,
 } from '../generated/contentfulTypes'
 import { Image, mapImage } from '../models/image.model'
 import { Asset, mapAsset } from '../models/asset.model'
@@ -147,6 +148,10 @@ import {
   mapLatestGenericListItems,
 } from '../models/latestGenericListItems.model'
 import { FeaturedLinks, mapFeaturedLinks } from '../models/featuredLinks.model'
+import {
+  GrantCardsList,
+  mapGrantCardsList,
+} from '../models/grantCardsList.model'
 
 export type SliceTypes =
   | ITimeline
@@ -193,6 +198,7 @@ export type SliceTypes =
   | IChartNumberBox
   | IFeaturedEvents
   | IGenericList
+  | IGrantCardsList
   | ILatestGenericListItems
   | IFeaturedLinks
 
@@ -248,6 +254,7 @@ export const SliceUnion = createUnionType({
     GenericList,
     LatestGenericListItems,
     FeaturedLinks,
+    GrantCardsList,
   ],
   resolveType: (document) => document.typename, // typename is appended to request on indexing
 })
@@ -347,6 +354,8 @@ export const mapSliceUnion = (slice: SliceTypes): typeof SliceUnion => {
       return mapLatestGenericListItems(slice as ILatestGenericListItems)
     case 'featuredLinks':
       return mapFeaturedLinks(slice as IFeaturedLinks)
+    case 'grantCardsList':
+      return mapGrantCardsList(slice as IGrantCardsList)
     default:
       throw new ApolloError(`Can not convert to slice: ${contentType}`)
   }
