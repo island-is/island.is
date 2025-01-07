@@ -23,13 +23,11 @@ runs:
     - name: Adding required env vars
       shell: bash
       env:
-        CACHE_URL: ${{ !github.event.localrun && inputs.cache-url }}
+        CACHE_URL: ${{ github.event.localrun && env.ACTIONS_CACHE_URL || inputs.cache-url }}
       run: |
-        if [[ -z "$CACHE_URL" ]]; then
-          echo "ACTIONS_CACHE_URL=$CACHE_URL" >> $GITHUB_ENV
-        fi
-        echo "ACTIONS_RUNTIME_TOKEN=$ACTIONS_RUNTIME_TOKEN" >> $GITHUB_ENV
-        echo "ACTIONS_RUNTIME_URL=$ACTIONS_RUNTIME_URL" >> $GITHUB_ENV
+        echo "ACTIONS_CACHE_URL=$CACHE_URL" >>"$GITHUB_ENV"
+        echo "ACTIONS_RUNTIME_TOKEN=$ACTIONS_RUNTIME_TOKEN" >>"$GITHUB_ENV"
+        echo "ACTIONS_RUNTIME_URL=$ACTIONS_RUNTIME_URL" >>"$GITHUB_ENV"
     - name: Get cache
       id: prepare
       shell: bash
@@ -41,8 +39,8 @@ runs:
         # This is because of a weird bug where Github would write as root to .cache
         export COREPACK_HOME="$HOME/.corepack-cache"
         export CYPRESS_CACHE_FOLDER="$HOME/.cypress-cache"
-        echo COREPACK_HOME="$COREPACK_HOME" >> $GITHUB_ENV
-        echo CYPRESS_CACHE_FOLDER="$CYPRESS_CACHE_FOLDER" >> $GITHUB_ENV
+        echo "COREPACK_HOME=$COREPACK_HOME" >> $GITHUB_ENV
+        echo "CYPRESS_CACHE_FOLDER=$CYPRESS_CACHE_FOLDER" >> $GITHUB_ENV
         cd scripts/ci/cache
         npx yarn install --immutable
         node cache-action.mjs
