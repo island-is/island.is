@@ -923,6 +923,7 @@ export const slices = gql`
 
   fragment FeaturedLinksFields on FeaturedLinks {
     __typename
+    id
     title
     featuredLinks {
       title
