@@ -1,7 +1,7 @@
 import { DAY } from './constants'
 import compareDesc from 'date-fns/compareDesc'
 import { Residence } from './types'
-import { addDays } from 'date-fns'
+import addDays from 'date-fns/addDays'
 
 /**
  * Compute a summary of how many days you've spent as a resident of each country in
