@@ -10,6 +10,7 @@ import {
   useWithdrawAppealMenuOption,
   WithdrawAppealContextMenuModal,
 } from '@island.is/judicial-system-web/src/components'
+import { useContextMenu } from '@island.is/judicial-system-web/src/components/ContextMenu/ContextMenu'
 import {
   ColumnCaseType,
   CourtCaseNumber,
@@ -18,10 +19,8 @@ import {
   DefendantInfo,
   getDurationDate,
 } from '@island.is/judicial-system-web/src/components/Table'
-import { CaseListEntry } from '@island.is/judicial-system-web/src/graphql/schema'
-
 import Table from '@island.is/judicial-system-web/src/components/Table/Table'
-import { useContextMenu } from '@island.is/judicial-system-web/src/components/ContextMenu/ContextMenu'
+import { CaseListEntry } from '@island.is/judicial-system-web/src/graphql/schema'
 
 interface Props {
   cases: CaseListEntry[]
@@ -43,7 +42,7 @@ export const DefenderCasesTable: FC<Props> = ({
   } = useWithdrawAppealMenuOption()
 
   return (
-    <Box>
+    <>
       <Table
         thead={[
           {
@@ -104,25 +103,23 @@ export const DefenderCasesTable: FC<Props> = ({
           { cell: (row) => <CreatedDate created={row.created} /> },
           {
             cell: (row) => (
-              <>
-                <Box display="flex" columnGap={1} rowGap={1} flexWrap="wrap">
-                  <TagCaseState
-                    caseState={row.state}
-                    caseType={row.type}
-                    isValidToDateInThePast={row.isValidToDateInThePast}
-                    courtDate={row.courtDate}
-                    indictmentDecision={row.indictmentDecision}
-                    indictmentRulingDecision={row.indictmentRulingDecision}
-                    defendants={row.defendants}
+              <Box display="flex" columnGap={1} rowGap={1} flexWrap="wrap">
+                <TagCaseState
+                  caseState={row.state}
+                  caseType={row.type}
+                  isValidToDateInThePast={row.isValidToDateInThePast}
+                  courtDate={row.courtDate}
+                  indictmentDecision={row.indictmentDecision}
+                  indictmentRulingDecision={row.indictmentRulingDecision}
+                  defendants={row.defendants}
+                />
+                {row.appealState && (
+                  <TagAppealState
+                    appealState={row.appealState}
+                    appealRulingDecision={row.appealRulingDecision}
                   />
-                  {row.appealState && (
-                    <TagAppealState
-                      appealState={row.appealState}
-                      appealRulingDecision={row.appealRulingDecision}
-                    />
-                  )}
-                </Box>
-              </>
+                )}
+              </Box>
             ),
           },
           {
@@ -155,7 +152,7 @@ export const DefenderCasesTable: FC<Props> = ({
           onClose={() => setCaseToWithdraw(undefined)}
         />
       )}
-    </Box>
+    </>
   )
 }
 
