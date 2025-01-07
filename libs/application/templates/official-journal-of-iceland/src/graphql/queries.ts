@@ -356,3 +356,9 @@ export const GET_PDF_QUERY = gql`
     }
   }
 `
+
+export const POST_APPLICATION_MUTATION = gql`
+  mutation OJOIAPostApplication($input: OJOIAIdInput!) {
+    OJOIAPostApplication(input: $input)
+  }
+`
