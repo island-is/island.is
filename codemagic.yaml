@@ -19,23 +19,6 @@ definitions:
     CM_CLONE_DEPTH: 200
     NODE_OPTIONS: '--max-old-space-size=8192'
   scripts:
-    - name: Check version change
-      script: |
-        CURRENT_VERSION=$(grep -m1 'version:' pubspec.yaml | awk '{print $2}')
-        PREVIOUS_VERSION=$(git show HEAD~1:pubspec.yaml | grep -m1 'version:' | awk '{print $2}')
-        if [ "$CURRENT_VERSION" != "$PREVIOUS_VERSION" ]; then
-          echo "Version changed from $PREVIOUS_VERSION to $CURRENT_VERSION"
-          echo "VERSION_CHANGED=true" >> $CM_ENV
-        else
-          echo "Version unchanged"
-          echo "VERSION_CHANGED=false" >> $CM_ENV
-        fi
-    - name: Conditional Publishing
-      script: |
-        if ! [ "$VERSION_CHANGED" = "true" ]; then
-          echo "Version unchanged, skipping publishing"
-          exit 1
-        fi
     - &check_changes
       name: Check changes since last build
       working_directory: .
@@ -155,7 +138,8 @@ workflows:
       - $HOME/Library/Developer/Xcode/DerivedData/**/Build/**/*.app
       - $HOME/Library/Developer/Xcode/DerivedData/**/Build/**/*.dSYM
     publishing:
-      <<: [*ios_publishing, *slack_errors]
+      <<: *ios_publishing
+      <<: *slack_errors
 
   dev-app-ios:
     <<: *base
@@ -220,7 +204,8 @@ workflows:
     artifacts: &android_artifacts
       - android/app/build/outputs/**/*.aab
     publishing:
-      <<: [*android_publishing, *slack_errors]
+      <<: *android_publishing
+      <<: *slack_errors
 
   dev-app-android:
     <<: *base
@@ -247,4 +232,5 @@ workflows:
       - *build_android
     artifacts: *android_artifacts
     publishing:
-      <<: [*android_publishing, *slack_errors]
+      <<: *android_publishing
+      <<: *slack_errors
