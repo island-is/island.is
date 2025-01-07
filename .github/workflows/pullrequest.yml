@@ -425,7 +425,6 @@ jobs:
     runs-on: ec2-runners
     container:
       image: ${{ github.env.RUNNER_IMAGE }}
-    if: ${{ !cancelled() }}
     needs:
       - prepare
       - linting-workspace
