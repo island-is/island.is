@@ -7,9 +7,11 @@ import { errors as errorMessages } from '@island.is/judicial-system-web/messages
 
 export const useGetLawyers = (): Lawyer[] => {
   const { formatMessage } = useIntl()
+  const fetcher = (url: string) => fetch(url).then((res) => res.json())
+
   const { data, error } = useSWR<Lawyer[]>(
     '/api/defender/lawyerRegistry',
-    (url: string) => fetch(url).then((res) => res.json()),
+    fetcher,
     {
       revalidateIfStale: false,
       revalidateOnFocus: false,
@@ -30,14 +32,13 @@ export const useGetLawyer = (
   nationalId?: string | null,
   shouldFetch?: boolean,
 ): Lawyer | undefined => {
-  const fetchWithNationalId = (url: string) =>
-    fetch(url).then((res) => res.json())
+  const fetcher = (url: string) => fetch(url).then((res) => res.json())
 
   const { data } = useSWR<Lawyer>(
     nationalId && shouldFetch
-      ? [`/api/defender/lawyerRegistry/${nationalId}`, nationalId]
+      ? `/api/defender/lawyerRegistry/${nationalId}`
       : null,
-    fetchWithNationalId,
+    fetcher,
     {
       revalidateIfStale: false,
       revalidateOnFocus: false,
