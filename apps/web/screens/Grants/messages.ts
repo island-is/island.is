@@ -245,5 +245,9 @@ export const m = {
       id: 'web.grants:home.grantCategoryBusinessDescription',
       defaultMessage: 'Lýsing á atvinnulífi',
     },
+    grantCategoryEnergyTransitionDescription: {
+      id: 'web.grants:home.grantCategoryEnergyTransition',
+      defaultMessage: 'Lýsing á orkuskiptum',
+    },
   }),
 }
