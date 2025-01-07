@@ -37,16 +37,14 @@ if [[ "$BUILD_REF" != "$LAST_GOOD_BUILD_SHA" ]]; then
 fi
 
 # Generate a Docker tag based on the last good build details
-LAST_GOOD_BUILD_DOCKER_BRANCH_TAG="$(echo "${LAST_GOOD_BUILD_BRANCH}" | tr "/." "-")"
-export LAST_GOOD_BUILD_DOCKER_TAG="${LAST_GOOD_BUILD_DOCKER_BRANCH_TAG:0:45}_${LAST_GOOD_BUILD_SHA:0:10}_${LAST_GOOD_BUILD_RUN_NUMBER}"
+LAST_GOOD_BUILD_DOCKER_BRANCH_TAG=$(echo "${LAST_GOOD_BUILD_BRANCH}" | tr "/." "-")
+export LAST_GOOD_BUILD_DOCKER_TAG=${LAST_GOOD_BUILD_DOCKER_BRANCH_TAG:0:45}_${LAST_GOOD_BUILD_SHA:0:10}_${LAST_GOOD_BUILD_RUN_NUMBER}
 
 # If the build reference is invalid, report an error to Slack
 if [[ "$BUILD_REF" == "null" || "$BUILD_REF" == "" ]]; then
   curl -X POST -H 'Content-type: application/json' --data "{\"text\":\"Change detection failed for $HTML_URL\"}" "$ISSUE_REPORTING_SLACK_WEBHOOK_URL"
   exit 1
 fi
-
-# Export the base reference for further use
 export BASE="$BUILD_REF"
 
 # Log the Docker tag of the last successful build
