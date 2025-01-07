@@ -4,12 +4,7 @@ import { Octokit } from '@octokit/rest'
 import { SimpleGit } from './simple-git'
 import { join } from 'path'
 ;(async () => {
-  const octokit = new Octokit(
-    // For local development
-    {
-      auth: process.env.GITHUB_TOKEN,
-    },
-  )
+  const octokit = new Octokit()
 
   const runner = new LocalRunner(octokit)
   let git = new SimpleGit(join(__dirname, '..', '..'), '/bin/bash')

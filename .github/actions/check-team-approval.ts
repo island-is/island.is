@@ -13,12 +13,7 @@ const pullNumber = GITHUB_REF?.split('/')[2]
 
 console.log(`Checking reviews on PR #${pullNumber}`)
 
-const octokit = new Octokit(
-  // For local development
-  {
-    auth: process.env.GITHUB_TOKEN,
-  },
-)
+const octokit = new Octokit()
 
 const fetchTeamMembers = async (teamName: string): Promise<Set<string>> => {
   try {
