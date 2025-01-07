@@ -11,6 +11,11 @@ export const coreMessages = defineMessages({
     defaultMessage: 'Til baka',
     description: 'Back',
   },
+  buttonServicePortal: {
+    id: 'application.system:button.buttonServicePortal',
+    defaultMessage: 'Til baka á mínar síður',
+    description: 'Service portal',
+  },
   buttonSubmit: {
     id: 'application.system:button.submit',
     defaultMessage: 'Senda',

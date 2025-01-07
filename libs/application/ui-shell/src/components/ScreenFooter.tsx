@@ -25,6 +25,7 @@ interface FooterProps {
   renderLastScreenButton?: boolean
   shouldLastScreenButtonSubmit?: boolean
   renderLastScreenBackButton?: boolean
+  renderLastScreenServicePortalButton?: boolean
   submitButtonDisabled?: boolean
   nextButtonText?: FormText
   canGoBack: boolean
@@ -67,6 +68,7 @@ export const ScreenFooter: FC<React.PropsWithChildren<FooterProps>> = ({
   submitField,
   renderLastScreenButton,
   renderLastScreenBackButton,
+  renderLastScreenServicePortalButton,
   submitButtonDisabled,
   nextButtonText,
   canGoBack,
@@ -76,6 +78,10 @@ export const ScreenFooter: FC<React.PropsWithChildren<FooterProps>> = ({
   const hasSubmitField = submitField !== undefined
   const isLastScreen = activeScreenIndex === numberOfScreens - 1
   const showGoBack = canGoBack && (!isLastScreen || renderLastScreenBackButton)
+  const showOpenServicePortal =
+    !showGoBack && renderLastScreenServicePortalButton
+
+  const servicePortalUrl = `/minarsidur/umsoknir#${application.id}`
 
   if (
     (isLastScreen && !renderLastScreenButton) ||
@@ -190,6 +196,19 @@ export const ScreenFooter: FC<React.PropsWithChildren<FooterProps>> = ({
                 {formatMessage(coreMessages.buttonBack)}
               </Button>
             )}
+
+            {showOpenServicePortal && (
+              <Button
+                variant="ghost"
+                data-testid="step-back"
+                onClick={() => {
+                  window.open(servicePortalUrl, '_self')
+                }}
+                disabled={!canProceed || loading}
+              >
+                {formatMessage(coreMessages.buttonServicePortal)}
+              </Button>
+            )}
           </Box>
           <Box display={['inlineFlex', 'none']} padding={2} paddingLeft="none">
             {showGoBack && (
@@ -199,6 +218,19 @@ export const ScreenFooter: FC<React.PropsWithChildren<FooterProps>> = ({
                 variant="ghost"
                 icon="arrowBack"
                 onClick={goBack}
+                disabled={!canProceed || loading}
+              />
+            )}
+
+            {showOpenServicePortal && (
+              <Button
+                circle
+                data-testid="step-back"
+                variant="ghost"
+                icon="arrowBack"
+                onClick={() => {
+                  window.open(servicePortalUrl, '_self')
+                }}
                 disabled={!canProceed || loading}
               />
             )}

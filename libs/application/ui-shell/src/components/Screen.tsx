@@ -74,6 +74,7 @@ type ScreenProps = {
   screen: FormScreen
   renderLastScreenButton?: boolean
   renderLastScreenBackButton?: boolean
+  renderLastScreenServicePortalButton?: boolean
   goToScreen: (id: string) => void
   setUpdateForbidden: (value: boolean) => void
   canGoBack: boolean
@@ -106,6 +107,7 @@ const Screen: FC<React.PropsWithChildren<ScreenProps>> = ({
   currentDraftScreen,
   renderLastScreenButton,
   renderLastScreenBackButton,
+  renderLastScreenServicePortalButton,
   screen,
   sections,
   canGoBack,
@@ -414,6 +416,9 @@ const Screen: FC<React.PropsWithChildren<ScreenProps>> = ({
           application={application}
           renderLastScreenButton={renderLastScreenButton}
           renderLastScreenBackButton={renderLastScreenBackButton}
+          renderLastScreenServicePortalButton={
+            renderLastScreenServicePortalButton
+          }
           activeScreenIndex={activeScreenIndex}
           numberOfScreens={numberOfScreens}
           mode={mode}

@@ -65,6 +65,7 @@ export const FormShell: FC<
     mode = FormModes.DRAFT,
     renderLastScreenButton,
     renderLastScreenBackButton,
+    renderLastScreenServicePortalButton,
   } = state.form
   const showProgressTag = mode !== FormModes.DRAFT
   const currentScreen = screens[activeScreen]
@@ -150,6 +151,9 @@ export const FormShell: FC<
                   numberOfScreens={screens.length}
                   renderLastScreenButton={renderLastScreenButton}
                   renderLastScreenBackButton={renderLastScreenBackButton}
+                  renderLastScreenServicePortalButton={
+                    renderLastScreenServicePortalButton
+                  }
                   currentDraftScreen={getDraftSectionCurrentScreen()}
                   totalDraftScreens={getDraftSectionTotalScreens()}
                   screen={currentScreen}

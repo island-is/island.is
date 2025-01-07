@@ -82,6 +82,7 @@ export interface Form {
   logo?: FormComponent
   mode?: FormModes
   renderLastScreenBackButton?: boolean
+  renderLastScreenServicePortalButton?: boolean
   renderLastScreenButton?: boolean
   title: StaticText
   type: FormItemTypes.FORM
