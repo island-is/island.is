@@ -28,7 +28,6 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  RUNNER_IMAGE: 'ghcr.io/actions/actions-runner:latest'
   DOCKER_REGISTRY: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/
   DOCKER_BASE_IMAGE_REGISTRY: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/ecr-public
   SPINNAKER_URL: https://spinnaker-gate.shared.devland.is
@@ -44,7 +43,7 @@ jobs:
     name: Check if job should run
     runs-on: ec2-runners
     container:
-      image: ${{ github.env.RUNNER_IMAGE }}
+      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
     env:
       CREATE_PATTERNS: ^release/
       PRE_RELEASE_PATTERN: ^pre-release/
@@ -146,7 +145,7 @@ jobs:
   prepare:
     runs-on: ec2-runners
     container:
-      image: ${{ github.env.RUNNER_IMAGE }}
+      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
     timeout-minutes: 90
 
     if: needs.pre-checks.outputs.PRE_CHECK
@@ -445,7 +444,7 @@ jobs:
     if: needs.prepare.outputs.TEST_CHUNKS
     runs-on: ec2-runners
     container:
-      image: ${{ github.env.RUNNER_IMAGE }}
+      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
     timeout-minutes: 35
     env:
       AFFECTED_PROJECTS: ${{ matrix.projects }}
@@ -487,7 +486,7 @@ jobs:
       - prepare
     runs-on: ec2-runners
     container:
-      image: ${{ github.env.RUNNER_IMAGE }}
+      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
     timeout-minutes: 35
     if: needs.prepare.outputs.BUILD_CHUNKS
     env:
@@ -636,7 +635,7 @@ jobs:
     #    if: needs.prepare.outputs.IMAGES && needs.pre-checks.outputs.PRE_CHECK != 'push'
     runs-on: ec2-runners
     container:
-      image: ${{ github.env.RUNNER_IMAGE }}
+      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
     timeout-minutes: 5
     env:
       FEATURE_NAME: ${{ needs.pre-checks.outputs.FEATURE_NAME }}
@@ -694,7 +693,7 @@ jobs:
   retag-unaffected:
     runs-on: ec2-runners
     container:
-      image: ${{ github.env.RUNNER_IMAGE }}
+      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
     timeout-minutes: 5
     if: ${{ !cancelled() && needs.pre-checks.result == 'success' && needs.prepare.result != 'skipped' }}
     needs:
@@ -725,7 +724,7 @@ jobs:
   deploy:
     runs-on: ec2-runners
     container:
-      image: ${{ github.env.RUNNER_IMAGE }}
+      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
     if: ${{ !cancelled() && needs.retag-unaffected.result == 'success' && needs.helm-docker-build.result != 'failure' }}
     needs:
       - retag-unaffected
@@ -781,7 +780,7 @@ jobs:
   push-success:
     runs-on: ec2-runners
     container:
-      image: ${{ github.env.RUNNER_IMAGE }}
+      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
     if: ${{ !cancelled() }}
     needs:
       - pre-checks
@@ -805,7 +804,7 @@ jobs:
   failure-notification:
     runs-on: ec2-runners
     container:
-      image: ${{ github.env.RUNNER_IMAGE }}
+      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
     if: failure() && needs.pre-checks.outputs.PRE_CHECK && needs.pre-checks.outputs.PRE_CHECK != 'feature-deploy'
     needs:
       - pre-checks
@@ -828,7 +827,7 @@ jobs:
     if: github.ref == 'ref/heads/main'
     runs-on: ec2-runners
     container:
-      image: ${{ github.env.RUNNER_IMAGE }}
+      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
     steps:
       - name: Checkout
         uses: actions/checkout@v3

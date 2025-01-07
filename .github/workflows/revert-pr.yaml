@@ -19,7 +19,6 @@ permissions:
   pull-requests: write
 
 env:
-  RUNNER_IMAGE: 'ghcr.io/actions/actions-runner:latest'
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
 jobs:
@@ -28,7 +27,7 @@ jobs:
     if: ${{ github.event.workflow_run.conclusion == 'failure' }}
     runs-on: ec2-runners
     container:
-      image: ${{ github.env.RUNNER_IMAGE }}
+      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
     outputs:
       PR_NUMBER: ${{ steps.fetch-pr.outputs.PR_NUMBER }}
     steps:
@@ -74,7 +73,7 @@ jobs:
     if: ${{ needs.detect-failure.outputs.PR_NUMBER && github.event.workflow_run.conclusion == 'failure' }}
     runs-on: ec2-runners
     container:
-      image: ${{ github.env.RUNNER_IMAGE }}
+      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
     steps:
       - name: Debug
         run: |
@@ -91,7 +90,7 @@ jobs:
     name: Manual PR revert
     runs-on: ec2-runners
     container:
-      image: ${{ github.env.RUNNER_IMAGE }}
+      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
     if: ${{ github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'revert') && (github.event.pull_request.merged == true || github.event.pull_request.draft == true) && github.actor != 'github-actions' }}
     steps:
       - name: Debug
