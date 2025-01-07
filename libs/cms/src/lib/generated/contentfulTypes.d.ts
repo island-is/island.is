@@ -1601,6 +1601,9 @@ export interface IGenericListFields {
 
   /** Order By */
   orderBy?: 'Date' | 'Title' | 'Publish Date' | undefined
+
+  /** Show Search Input */
+  showSearchInput?: boolean | undefined
 }
 
 /** A list of items which can be embedded into rich text */
