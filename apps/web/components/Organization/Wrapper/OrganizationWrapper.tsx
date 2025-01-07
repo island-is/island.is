@@ -682,6 +682,7 @@ export const OrganizationExternalLinks: React.FC<
                   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                   // @ts-ignore make web strict
                   variant={variant}
+                  unfocusable
                   icon={isSjukratryggingar ? 'lockClosed' : 'open'}
                   iconType="outline"
                   size="medium"
