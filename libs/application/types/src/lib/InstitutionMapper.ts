@@ -399,4 +399,9 @@ export const institutionMapper = {
     slug: InstitutionTypes.VINNUEFTIRLITID,
     contentfulId: InstitutionContentfulIds.VINNUEFTIRLITID,
   },
+  [ApplicationTypes.TRAINING_LICENSE_ON_A_WORK_MACHINE]: {
+    nationalId: InstitutionNationalIds.VINNUEFTIRLITID,
+    slug: InstitutionTypes.VINNUEFTIRLITID,
+    contentfulId: InstitutionContentfulIds.VINNUEFTIRLITID,
+  },
 }
