@@ -3,12 +3,12 @@ import {
   ApplicationTemplate,
   ApplicationTypes,
   ApplicationContext,
-  ApplicationRole,
   ApplicationStateSchema,
   Application,
   DefaultEvents,
   defineTemplateApi,
   FormModes,
+  InstitutionNationalIds,
 } from '@island.is/application/types'
 import {
   EphemeralStateLifeCycle,
@@ -40,6 +40,8 @@ import {
 } from '../utils'
 import { AuthDelegationType } from '@island.is/shared/types'
 import { ApiScope } from '@island.is/auth/scopes'
+import { assign } from 'xstate'
+import set from 'lodash/set'
 
 const pruneInDaysAfterRegistrationCloses = (
   application: Application,
@@ -176,6 +178,8 @@ const template: ApplicationTemplate<
         },
       },
       [States.SUBMITTED]: {
+        entry: ['assignToInstitution'],
+        exit: ['clearAssignees'],
         meta: {
           name: applicationMessage.stateMetaNameSubmitted.defaultMessage,
           status: FormModes.IN_PROGRESS,
@@ -218,6 +222,15 @@ const template: ApplicationTemplate<
               read: 'all',
               delete: true,
             },
+            {
+              id: Roles.ORGINISATION_REVIEWER,
+              formLoader: () =>
+                import('../forms/conclusionForm').then((module) =>
+                  Promise.resolve(module.Conclusion),
+                ),
+              read: 'all',
+              write: 'all',
+            },
           ],
         },
         on: {
@@ -258,14 +271,31 @@ const template: ApplicationTemplate<
       },
     },
   },
-  mapUserToRole(
-    id: string,
-    application: Application,
-  ): ApplicationRole | undefined {
-    if (id === application.applicant) {
+  mapUserToRole: (nationalId: string, application: Application) => {
+    if (nationalId === application.applicant) {
       return Roles.APPLICANT
+    } else if (
+      nationalId === InstitutionNationalIds.MIDSTOD_MENNTUNAR_SKOLATHJONUSTU
+    ) {
+      return Roles.ORGINISATION_REVIEWER
     }
     return undefined
+  },
+  stateMachineOptions: {
+    actions: {
+      assignToInstitution: assign((context) => {
+        const { application } = context
+        set(application, 'assignees', [
+          InstitutionNationalIds.MIDSTOD_MENNTUNAR_SKOLATHJONUSTU,
+        ])
+        return context
+      }),
+      clearAssignees: assign((context) => {
+        const { application } = context
+        set(application, 'assignees', [])
+        return context
+      }),
+    },
   },
 }
 
