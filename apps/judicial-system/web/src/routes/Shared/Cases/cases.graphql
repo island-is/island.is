@@ -35,6 +35,7 @@ query Cases {
         serviceStatus
         subpoenaId
       }
+      verdictAppealDate
     }
     defendantsPunishmentType
     courtDate
