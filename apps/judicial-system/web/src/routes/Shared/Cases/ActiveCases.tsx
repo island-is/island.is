@@ -17,7 +17,10 @@ import {
   DefendantInfo,
 } from '@island.is/judicial-system-web/src/components/Table'
 import Table from '@island.is/judicial-system-web/src/components/Table/Table'
-import { CaseListEntry } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  CaseListEntry,
+  Defendant,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 
 interface Props {
   cases: CaseListEntry[]
@@ -105,6 +108,7 @@ const ActiveCases: FC<Props> = (props) => {
               courtDate={row.courtDate}
               indictmentDecision={row.indictmentDecision}
               indictmentRulingDecision={row.indictmentRulingDecision}
+              defendants={row.defendants}
             />
           ),
         },
