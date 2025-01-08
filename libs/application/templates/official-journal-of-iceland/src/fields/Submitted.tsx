@@ -40,7 +40,12 @@ export const Submitted = (props: OJOIFieldBaseProps) => {
   const slug =
     ApplicationConfigurations[ApplicationTypes.OFFICIAL_JOURNAL_OF_ICELAND].slug
 
-  const { createApplication } = useApplication({
+  const {
+    createApplication,
+    postApplication,
+    postApplicationError,
+    postApplicationLoading,
+  } = useApplication({
     applicationId: props.application.id,
   })
 
@@ -111,7 +116,18 @@ export const Submitted = (props: OJOIFieldBaseProps) => {
               title={formatMessage(submitted.errors.caseErrorTitle)}
               message={formatMessage(submitted.errors.caseErrorMessage)}
             />
-            <Inline justifyContent="flexEnd">
+            {postApplicationError && (
+              <AlertMessage
+                type="error"
+                title={formatMessage(
+                  submitted.errors.postApplicationErrorTitle,
+                )}
+                message={formatMessage(
+                  submitted.errors.postApplicationErrorMessage,
+                )}
+              />
+            )}
+            <Inline justifyContent="spaceBetween">
               <Button
                 variant="ghost"
                 size="small"
@@ -119,6 +135,20 @@ export const Submitted = (props: OJOIFieldBaseProps) => {
                 onClick={() => window.location.reload()}
               >
                 {formatMessage(submitted.buttons.reload)}
+              </Button>
+              <Button
+                loading={postApplicationLoading}
+                disabled={!!postApplicationError}
+                size="small"
+                icon="arrowUp"
+                iconType="outline"
+                onClick={() =>
+                  postApplication(props.application.id, () =>
+                    window.location.reload(),
+                  )
+                }
+              >
+                Senda inn umsókn
               </Button>
             </Inline>
           </Stack>
