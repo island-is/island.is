@@ -43,6 +43,7 @@ interface NationalIdWithNameProps {
   showPhoneField?: boolean
   showEmailField?: boolean
   error?: string
+  clearOnChange?: string[]
 }
 
 export const NationalIdWithName: FC<
@@ -72,6 +73,7 @@ export const NationalIdWithName: FC<
   showPhoneField = false,
   showEmailField = false,
   error,
+  clearOnChange,
 }) => {
   const fieldId = customId.length > 0 ? customId : id
   const nameField = `${fieldId}.name`
@@ -226,6 +228,7 @@ export const NationalIdWithName: FC<
             required={required}
             backgroundColor="blue"
             onChange={debounce((v) => {
+              console.log('clearOnChange nationalId', clearOnChange)
               setNationalIdInput(v.target.value.replace(/\W/g, ''))
               onNationalIdChange &&
                 onNationalIdChange(v.target.value.replace(/\W/g, ''))
@@ -233,6 +236,7 @@ export const NationalIdWithName: FC<
             loading={searchPersons ? queryLoading : companyQueryLoading}
             error={nationalIdFieldErrors}
             disabled={disabled}
+            clearOnChange={clearOnChange}
           />
         </GridColumn>
         <GridColumn span={['1/1', '1/1', '1/1', '1/2']} paddingTop={2}>
