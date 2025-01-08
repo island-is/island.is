@@ -420,6 +420,38 @@ export const newPrimarySchoolMessages: MessageDir = {
       description: 'Step sibling',
     },
 
+    // Current school
+    currentSchoolSubSectionTitle: {
+      id: 'nps.application:primary.school.current.school.sub.section.title',
+      defaultMessage: 'Upplýsingar um núverandi skóla',
+      description: 'Current school',
+    },
+    currentSchoolInfo: {
+      id: 'nps.application:primary.school.current.school.info',
+      defaultMessage: 'Núverandi skóli',
+      description: 'Current School information',
+    },
+    grade: {
+      id: 'nps.application:primary.school.current.school.grade',
+      defaultMessage: 'Bekkur',
+      description: 'Current school grade',
+    },
+    supervisingTeacher: {
+      id: 'nps.application:primary.school.current.school.supervising.teacher',
+      defaultMessage: 'Umsjónarkennari',
+      description: 'Supervising teacher',
+    },
+    prosperityContact: {
+      id: 'nps.application:primary.school.current.school.prosperity.contact',
+      defaultMessage: 'Tengiliður farsældar',
+      description: 'Prosperity contact',
+    },
+    caseManager: {
+      id: 'nps.application:primary.school.current.school.case.manager',
+      defaultMessage: 'Málastjóri í lögheimilisskóla',
+      description: 'Case manager',
+    },
+
     // Apply to a new school
     newSchoolSubSectionTitle: {
       id: 'nps.application:primary.school.new.school.sub.section.title',
