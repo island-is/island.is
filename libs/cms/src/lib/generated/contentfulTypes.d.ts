@@ -1255,6 +1255,34 @@ export interface IFeaturedEvents extends Entry<IFeaturedEventsFields> {
   }
 }
 
+export interface IFeaturedLinksFields {
+  /** Internal Title */
+  internalTitle?: string | undefined
+
+  /** Displayed Title */
+  displayedTitle?: string | undefined
+
+  /** Links */
+  links?: IFeatured[] | undefined
+}
+
+export interface IFeaturedLinks extends Entry<IFeaturedLinksFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'featuredLinks'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
 export interface IFeaturedSupportQnAsFields {
   /** Title */
   title?: string | undefined
