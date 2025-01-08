@@ -21,7 +21,7 @@ const initDdRum = (params: DdRumInitParams) => {
     sampleRate: 100,
     sessionReplaySampleRate: 0,
     trackInteractions: false,
-    allowedTracingOrigins: [
+    allowedTracingUrls: [
       'https://island.is',
       /https:\/\/.*\.island\.is/,
       /https:\/\/.*\.devland\.is/,
