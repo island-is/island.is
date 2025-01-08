@@ -25,7 +25,6 @@ runs:
       env:
         CACHE_URL: ${{ github.event.localrun && env.ACTIONS_CACHE_URL || inputs.cache-url }}
       run: |
-        set -euo pipefail
         set -x
         echo "ACTIONS_CACHE_URL=$CACHE_URL" >>"$GITHUB_ENV"
         echo "ACTIONS_RUNTIME_TOKEN=$ACTIONS_RUNTIME_TOKEN" >>"$GITHUB_ENV"
