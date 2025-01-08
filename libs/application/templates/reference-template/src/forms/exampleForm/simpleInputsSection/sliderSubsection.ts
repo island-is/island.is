@@ -1,4 +1,5 @@
 import {
+  buildDividerField,
   buildMultiField,
   buildSliderField,
   buildSubSection,
@@ -13,14 +14,25 @@ export const sliderSubsection = buildSubSection({
       title: '',
       children: [
         buildSliderField({
-          id: 'basicSlider',
+          id: 'basicSlider1',
           title: 'Basic slider',
           min: 1,
           max: 10,
-          trackStyle: { gridTemplateRows: 5 },
+        }),
+        buildDividerField({ title: 'Some text'}),
+        buildDividerField({ marginTop: 5, marginBottom: 5}),
+        buildDividerField({ title: 'Some text'}),
+        buildSliderField({
+          id: 'basicSlider2',
+          title: 'Basic slider',
+          min: 1,
+          max: 10,
+          showLabel: true,
+          showToolTip: true,
+          trackStyle: { gridTemplateRows: 10 },
           calculateCellStyle: () => {
             return {
-              background: 'ccccd8',
+              background: '#fff2f6',
             }
           },
           label: {
@@ -28,6 +40,146 @@ export const sliderSubsection = buildSubSection({
             plural: 'days',
           },
         }),
+        buildDividerField({ title: 'Some text'}),
+        buildDividerField({ marginTop: 5, marginBottom: 5}),
+        buildDividerField({ title: 'Some text'}),
+        buildSliderField({
+          id: 'giveRights.giveDays',
+          title: '',
+          label: {
+            singular: 'day',
+            plural: 'days',
+          },
+          min: 1,
+          max: 10,
+          step: 1,
+          defaultValue: 1,
+          showMinMaxLabels: true,
+          showToolTip: true,
+          showRemainderOverlay: true,
+          showProgressOverlay: true,
+          trackStyle: { gridTemplateRows: 8 },
+          rangeDates: {
+            start: {
+              date: new Date('2024-01-01'),
+              message: 'Start date',
+            },
+            end: {
+              date: new Date('2024-01-10'),
+              message: 'End date',
+            },
+          },
+          calculateCellStyle: () => {
+            return {
+              background: '#421c63',
+            }
+          },
+          saveAsString: true,
+          marginBottom: 5,
+        }),
+        buildSliderField({
+          id: 'giveRights.giveDays',
+          title: '',
+          label: {
+            singular: 'day',
+            plural: 'days',
+          },
+          min: 1,
+          max: 10,
+          step: 1,
+          defaultValue: 1,
+          showMinMaxLabels: true,
+          showToolTip: true,
+          showRemainderOverlay: true,
+          showProgressOverlay: false,
+          trackStyle: { gridTemplateRows: 8 },
+          rangeDates: {
+            start: {
+              date: new Date('2024-01-01'),
+              message: 'Start date',
+            },
+            end: {
+              date: new Date('2024-01-10'),
+              message: 'End date',
+            },
+          },
+          calculateCellStyle: () => {
+            return {
+              background: '#421c63',
+            }
+          },
+          saveAsString: true,
+          marginBottom: 5,
+        }),
+        buildSliderField({
+          id: 'giveRights.giveDays',
+          title: '',
+          label: {
+            singular: 'day',
+            plural: 'days',
+          },
+          min: 1,
+          max: 10,
+          step: 1,
+          defaultValue: 1,
+          showMinMaxLabels: true,
+          showToolTip: true,
+          showRemainderOverlay: false,
+          showProgressOverlay: true,
+          trackStyle: { gridTemplateRows: 8 },
+          rangeDates: {
+            start: {
+              date: new Date('2024-01-01'),
+              message: 'Start date',
+            },
+            end: {
+              date: new Date('2024-01-10'),
+              message: 'End date',
+            },
+          },
+          calculateCellStyle: () => {
+            return {
+              background: '#421c63',
+            }
+          },
+          saveAsString: true,
+          marginBottom: 5,
+        }),
+        buildSliderField({
+          id: 'giveRights.giveDays',
+          title: '',
+          label: {
+            singular: 'day',
+            plural: 'days',
+          },
+          min: 1,
+          max: 10,
+          step: 1,
+          defaultValue: 1,
+          showMinMaxLabels: true,
+          showToolTip: true,
+          showRemainderOverlay: false,
+          showProgressOverlay: false,
+          trackStyle: { gridTemplateRows: 8 },
+          rangeDates: {
+            start: {
+              date: new Date('2024-01-01'),
+              message: 'Start date',
+            },
+            end: {
+              date: new Date('2024-01-10'),
+              message: 'End date',
+            },
+          },
+          calculateCellStyle: () => {
+            return {
+              background: '#421c63',
+            }
+          },
+          saveAsString: true,
+          marginBottom: 5,
+        }),
+        /*
         buildSliderField({
           id: 'basicSliderWithLabels',
           title: 'Slider with labels',
@@ -127,7 +279,7 @@ export const sliderSubsection = buildSubSection({
               background: 'ccccd8',
             }
           },
-        }),
+        }),*/
       ],
     }),
   ],

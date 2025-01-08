@@ -52,22 +52,25 @@ interface TrackProps {
   step?: number
   snap?: boolean
   trackStyle?: CSSProperties
-  calculateCellStyle: (index: number) => CSSProperties
+  calculateCellStyle?: (index: number) => CSSProperties
   showLabel?: boolean
   showMinMaxLabels?: boolean
   showRemainderOverlay?: boolean
   showProgressOverlay?: boolean
   showToolTip?: boolean
-  label: {
+  label?: {
     singular: string
     plural: string
   }
   rangeDates?: {
     start: {
-      date: string
+      date: string | Date
       message: string
     }
-    end: { date: string; message: string }
+    end: { 
+      date: string | Date
+      message: string 
+    }
   }
   currentIndex: number
   onChange?: (index: number) => void
@@ -195,8 +198,8 @@ const Slider = ({
       }
     }
     return count <= 1
-      ? `${selectedAmount.toLocaleString('is-IS')} ${label.singular}`
-      : `${selectedAmount.toLocaleString('is-IS')} ${label.plural}`
+      ? `${selectedAmount.toLocaleString('is-IS')} ${label?.singular}`
+      : `${selectedAmount.toLocaleString('is-IS')} ${label?.plural}`
   }
 
   const onKeyDown = (event: React.KeyboardEvent) => {
@@ -231,9 +234,57 @@ const Slider = ({
     onChangeEnd?.(newIndex)
   }
 
+  const hasAllRequiredForMinMaxLabels = () => {
+    if(showMinMaxLabels)
+    {
+      if(hasValidLabels())
+        return true
+
+      throw new Error('The labels object has to be defined if you want to show the min max labels')
+    }
+    return false
+  }
+
+  const hasAllRequiredForTooltip = () => {
+    if(showToolTip)
+    {
+      if(hasValidLabels())
+        return true
+
+      throw new Error('The labels object has to be defined if you want to show the tooltip')
+    }
+    return false
+  }
+
+  const hasValidLabels= () => {
+    return label && label.singular && label.plural
+  }
+
+  const hasAllRequiredForLabels = () => {
+    if(showLabel)
+    {
+      if(hasValidLabels())
+        return true
+
+      throw new Error('The labels object has to be defined if you want to show them')
+    }
+    
+    return false
+  }
+
+  const formatDates = (date: string | Date | undefined): string => {
+    if(date === undefined)
+      return ''
+
+    if(typeof date === 'string') 
+      return date
+    
+    return date.toLocaleDateString('is-IS')
+  }
+  
   return (
     <Box>
-      {showMinMaxLabels && (
+      {hasAllRequiredForMinMaxLabels() && (
         <Box display="flex" justifyContent="spaceBetween" width="full">
           <Text color="blue400" variant="eyebrow">
             {formatTooltip(min)}
@@ -243,7 +294,7 @@ const Slider = ({
           </Text>
         </Box>
       )}
-      {showLabel && (
+      {hasAllRequiredForLabels() && (
         <Text variant="h4" as="p">
           {formatTooltip(currentIndex)}
         </Text>
@@ -262,12 +313,12 @@ const Slider = ({
             <Box
               className={styles.TrackCell}
               key={index}
-              style={calculateCellStyle(index)}
+              style={calculateCellStyle?.(index)}
               onClick={(e) => onCellClick(index, e)}
             />
           )
         })}
-        {showToolTip && (
+        {hasAllRequiredForTooltip() && (
           <Tooltip style={tooltipStyle} atEnd={currentIndex === max}>
             {formatTooltip(currentIndex, max)}
           </Tooltip>
@@ -310,7 +361,7 @@ const Slider = ({
               </Text>
 
               <Text color="blue400" variant="eyebrow" fontWeight="semiBold">
-                {rangeDates.start.date}
+                {formatDates(rangeDates.start.date)}
               </Text>
             </Box>
 
@@ -320,7 +371,7 @@ const Slider = ({
               </Text>
 
               <Text color="blue400" variant="eyebrow" fontWeight="semiBold">
-                {rangeDates.end.date}
+                {formatDates(rangeDates.end.date)}
               </Text>
             </Box>
           </>

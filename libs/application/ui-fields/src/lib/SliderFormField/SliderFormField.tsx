@@ -86,7 +86,7 @@ export const SliderFormField: FC<
             showRemainderOverlay={showRemainderOverlay}
             showProgressOverlay={showProgressOverlay}
             showToolTip={showToolTip}
-            label={{
+            label={label && {
               singular: formatText(label.singular, application, formatMessage),
               plural: formatText(label.plural, application, formatMessage),
             }}
