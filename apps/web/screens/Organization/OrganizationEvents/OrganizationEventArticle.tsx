@@ -76,7 +76,7 @@ const EventItemImage = ({
         className={styles.image}
         src={
           eventItem.contentImage?.url
-            ? eventItem.contentImage?.url + '?w=774&fm=webp&q=80'
+            ? eventItem.contentImage?.url + '?w=1000&fm=webp&q=80'
             : ''
         }
         alt=""
@@ -268,7 +268,11 @@ const OrganizationEventArticle: Screen<
                 renderComponent: {
                   Image: (slice: ImageSchema) => (
                     <Box className={styles.clearBoth}>
-                      <Image {...slice} thumbnail={slice.url + '?w=50'} />
+                      <Image
+                        {...slice}
+                        thumbnail={slice.url + '?w=50'}
+                        url={slice.url + '?w=1000'}
+                      />
                     </Box>
                   ),
                 },

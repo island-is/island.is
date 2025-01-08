@@ -278,6 +278,7 @@ const defaultRenderComponent = {
       itemType={slice.itemType}
       filterTags={slice.filterTags}
       defaultOrder={slice.defaultOrder}
+      showSearchInput={slice.showSearchInput ?? true}
     />
   ),
   TeamList: (slice: TeamList) => (
@@ -290,7 +291,7 @@ const defaultRenderComponent = {
   ),
   Image: (slice: ImageProps) => {
     const thumbnailUrl = slice?.url ? slice.url + '?w=50' : ''
-    const url = slice?.url ? slice.url + '?w=800' : ''
+    const url = slice?.url ? slice.url + '?w=1000' : ''
     return <Image {...slice} thumbnail={thumbnailUrl} url={url} />
   },
   GrantCardsList: (slice: GrantCardsListSchema) => (
