@@ -2,12 +2,12 @@ import {
   buildCheckboxField,
   buildCustomField,
   buildDescriptionField,
-  buildDividerField,
   buildFileUploadField,
   buildForm,
   buildMultiField,
   buildSection,
   buildSubmitField,
+  buildTitleField,
   getValueViaPath,
 } from '@island.is/application/core'
 import { Application, Form, FormModes, YES } from '@island.is/application/types'
@@ -38,9 +38,8 @@ export const MissingInfoForm: Form = buildForm({
                 getValueViaPath<string>(application.answers, 'agentComments') ??
                 m.agentCommentsEmpty,
             }),
-            buildDividerField({
+            buildTitleField({
               title: m.missingInfoAnswersTitle,
-              color: 'dark400',
             }),
             buildCustomField({
               id: 'missingInfo.date',
@@ -57,9 +56,8 @@ export const MissingInfoForm: Form = buildForm({
               title: '',
               introduction: '',
             }),
-            buildDividerField({
+            buildTitleField({
               title: m.previousAnswersTitle,
-              color: 'dark400',
             }),
             buildCustomField({
               id: 'submittedData',

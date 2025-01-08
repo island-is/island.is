@@ -30,6 +30,9 @@ export class GenericList {
 
   @CacheField(() => GetGenericListItemsInputOrderBy, { nullable: true })
   defaultOrder?: GetGenericListItemsInputOrderBy
+
+  @Field(() => Boolean, { nullable: true })
+  showSearchInput?: boolean
 }
 
 const mapItemType = (itemType?: IGenericListFields['itemType']) =>
@@ -60,4 +63,5 @@ export const mapGenericList = ({
   itemType: mapItemType(fields.itemType),
   filterTags: fields.filterTags ? fields.filterTags.map(mapGenericTag) : [],
   defaultOrder: mapOrderBy(fields.orderBy),
+  showSearchInput: fields.showSearchInput ?? true,
 })

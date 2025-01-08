@@ -427,6 +427,13 @@ export const caseListInclude: Includeable[] = [
         order: [['created', 'DESC']],
         separate: true,
       },
+      {
+        model: Subpoena,
+        as: 'subpoenas',
+        required: false,
+        order: [['created', 'DESC']],
+        separate: true,
+      },
     ],
     separate: true,
   },
@@ -861,6 +868,17 @@ export class CaseService {
         type: MessageType.DELIVERY_TO_COURT_INDICTMENT_CANCELLATION_NOTICE,
         user,
         caseId: theCase.id,
+        // Upon case cancellation, we send the same notification type to:
+        // (1) relevant court emails
+        // (2) court system (via robot).
+        //
+        // When a case is revoked without a court case number, we send email (1).
+        // The court must then add the case number in the system, triggering notification (2) for full cancellation.
+        //
+        // The court system requires a case number before posting data via robot, so it must be added despite the cancellation.
+        // Notifications (1) and (2) must match, thus we use the flag below to ensure the same message is sent.
+        // Without the flag, email (2) would get notification including the court case number.
+        // For more context: https://github.com/island-is/island.is/pull/17385/files#r1904268032
         body: { withCourtCaseNumber: false },
       })
     }
@@ -1063,7 +1081,7 @@ export class CaseService {
     )
   }
 
-  private addMessagesForRevokedIndictmentCaseToQueue(
+  private async addMessagesForRevokedIndictmentCaseToQueue(
     theCase: Case,
     user: TUser,
   ): Promise<void> {
@@ -1076,6 +1094,21 @@ export class CaseService {
         caseId: theCase.id,
         body: { withCourtCaseNumber: true },
       })
+    }
+
+    const subpoenasToRevoke = await this.subpoenaService.findByCaseId(
+      theCase.id,
+    )
+
+    if (subpoenasToRevoke?.length > 0) {
+      messages.push(
+        ...subpoenasToRevoke.map((subpoena) => ({
+          type: MessageType.DELIVERY_TO_POLICE_SUBPOENA_REVOCATION,
+          user,
+          caseId: theCase.id,
+          elementId: [subpoena.defendantId, subpoena.id],
+        })),
+      )
     }
 
     return this.messageService.sendMessagesToQueue(messages)
@@ -1461,9 +1494,14 @@ export class CaseService {
       [CaseState.SUBMITTED, CaseState.RECEIVED].includes(updatedCase.state)
     ) {
       const isJudgeChanged =
-        updatedCase.judge?.nationalId !== theCase.judge?.nationalId
+        updatedCase.judge &&
+        updatedCase.judge.email &&
+        updatedCase.judge.nationalId !== theCase.judge?.nationalId
+
       const isRegistrarChanged =
-        updatedCase.registrar?.nationalId !== theCase.registrar?.nationalId
+        updatedCase.registrar &&
+        updatedCase.registrar.email &&
+        updatedCase.registrar.nationalId !== theCase.registrar?.nationalId
 
       if (isJudgeChanged) {
         await this.addMessagesForDistrictCourtJudgeAssignedToQueue(
