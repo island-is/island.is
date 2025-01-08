@@ -203,6 +203,8 @@ export const renderSlice = (
           }
           itemType={(slice as GenericListSchema).itemType}
           filterTags={(slice as GenericListSchema).filterTags}
+          defaultOrder={(slice as GenericListSchema).defaultOrder}
+          showSearchInput={(slice as GenericListSchema).showSearchInput ?? true}
         />
       )
     case 'TeamList':
