@@ -1,38 +1,39 @@
+import { RightsPortalPaymentOverview } from '@island.is/api/schema'
 import {
   Box,
-  DatePicker,
-  SkeletonLoader,
-  Stack,
-  Text,
-  Table as T,
   Button,
-  Select,
+  DatePicker,
+  GridColumn,
   GridContainer,
   GridRow,
-  GridColumn,
+  Select,
+  SkeletonLoader,
+  Stack,
+  Table as T,
+  Text,
 } from '@island.is/island-ui/core'
+import { useLocale } from '@island.is/localization'
 import {
   DownloadFileButtons,
+  StackWithBottomDivider,
   UserInfoLine,
   amountFormat,
   m,
 } from '@island.is/portals/my-pages/core'
-import { messages } from '../../lib/messages'
-import { useLocale } from '@island.is/localization'
+import { Problem } from '@island.is/react-spa/shared'
+import { isDefined } from '@island.is/shared/utils'
+import sub from 'date-fns/sub'
 import { useEffect, useState } from 'react'
+import { messages } from '../../lib/messages'
+import { HealthPaths } from '../../lib/paths'
 import { CONTENT_GAP, SECTION_GAP } from '../../utils/constants'
+import { exportPaymentOverviewFile } from '../../utils/FileBreakdown'
 import * as styles from './Payments.css'
 import {
   useGetPaymentOverviewLazyQuery,
   useGetPaymentOverviewServiceTypesQuery,
 } from './Payments.generated'
-import sub from 'date-fns/sub'
-import { isDefined } from '@island.is/shared/utils'
-import { RightsPortalPaymentOverview } from '@island.is/api/schema'
 import { PaymentsWrapper } from './wrapper/PaymentsWrapper'
-import { HealthPaths } from '../../lib/paths'
-import { exportPaymentOverviewFile } from '../../utils/FileBreakdown'
-import { Problem } from '@island.is/react-spa/shared'
 
 export const PaymentOverview = () => {
   const { formatMessage, formatDateFns, lang } = useLocale()
@@ -104,7 +105,7 @@ export const PaymentOverview = () => {
             borderBottomWidth="standard"
             borderColor="blueberry200"
           >
-            <Stack dividers="blueberry200" space={1}>
+            <StackWithBottomDivider space={2}>
               <UserInfoLine
                 title={formatMessage(messages.statusOfRights)}
                 titlePadding={2}
@@ -115,7 +116,7 @@ export const PaymentOverview = () => {
                 label={formatMessage(messages.debit)}
                 content={amountFormat(overview?.debt ?? 0)}
               />
-            </Stack>
+            </StackWithBottomDivider>
           </Box>
 
           <Stack space={[CONTENT_GAP, SECTION_GAP]}>

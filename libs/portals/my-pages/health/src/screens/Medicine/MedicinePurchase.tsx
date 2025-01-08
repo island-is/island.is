@@ -7,29 +7,28 @@ import {
   Box,
   Button,
   Hyphen,
-  hyphenateText,
   LinkV2,
   Select,
   SkeletonLoader,
-  Stack,
   Table as T,
   Text,
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
+  amountFormat,
   DownloadFileButtons,
   ExpandHeader,
   ExpandRow,
   LinkResolver,
-  SortableTable,
-  UserInfoLine,
-  amountFormat,
   m,
+  StackWithBottomDivider,
+  UserInfoLine,
 } from '@island.is/portals/my-pages/core'
 import { Problem } from '@island.is/react-spa/shared'
 import { useEffect, useState } from 'react'
 import { messages } from '../../lib/messages'
 import { HealthPaths } from '../../lib/paths'
+import { CONTENT_GAP, DATE_FORMAT, SECTION_GAP } from '../../utils/constants'
 import {
   exportMedicineBill,
   exportMedicineFile,
@@ -40,7 +39,6 @@ import {
   useGetDrugsBillsLazyQuery,
   useGetDrugsDataQuery,
 } from './Medicine.generated'
-import { CONTENT_GAP, DATE_FORMAT, SECTION_GAP } from '../../utils/constants'
 import { MedicinePaymentParticipationWrapper } from './wrapper/MedicinePaymentParticipationWrapper'
 
 export const MedicinePurchase = () => {
@@ -170,12 +168,11 @@ export const MedicinePurchase = () => {
             marginBottom={SECTION_GAP}
             borderColor="blue200"
           >
-            <Text variant="eyebrow" color="purple600" marginBottom={1}>
+            <Text variant="eyebrow" color="purple400" marginBottom={1}>
               {formatMessage(messages.periodStatus)}
             </Text>
-            <Stack dividers="blueberry200" space={0}>
+            <StackWithBottomDivider space={2}>
               <UserInfoLine
-                paddingY={3}
                 label={formatMessage(messages.period)}
                 content={
                   formatDatePeriod(
@@ -185,12 +182,10 @@ export const MedicinePurchase = () => {
                 }
               />
               <UserInfoLine
-                paddingY={3}
                 label={formatMessage(messages.medicinePaymentStatus)}
                 content={amountFormat(selectedPeriod?.paymentStatus ?? 0)}
               />
               <UserInfoLine
-                paddingY={3}
                 label={formatMessage(messages.medicineStep)}
                 content={
                   formatMessage(messages.medicineStepStatus, {
@@ -199,7 +194,7 @@ export const MedicinePurchase = () => {
                   }) ?? ''
                 }
               />
-            </Stack>
+            </StackWithBottomDivider>
           </Box>
         </Box>
       )}
