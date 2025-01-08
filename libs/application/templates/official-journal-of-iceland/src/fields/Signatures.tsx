@@ -30,8 +30,6 @@ export const Signatures = ({ application }: OJOIFieldBaseProps) => {
     involvedPartyId: application.answers.advert?.involvedPartyId ?? '',
   })
 
-  console.log(lastSignature)
-
   const tabs = [
     {
       id: SignatureTypes.REGULAR,
