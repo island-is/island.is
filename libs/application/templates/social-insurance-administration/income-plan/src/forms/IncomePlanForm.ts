@@ -72,7 +72,7 @@ export const IncomePlanForm: Form = buildForm({
               id: 'incomePlanTable',
               title: incomePlanFormMessage.info.section,
               description: (application: Application) => {
-                const { latestIncomePlan } = getApplicationExternalData(
+                const { incomePlanConditions, latestIncomePlan } = getApplicationExternalData(
                   application.externalData,
                 )
                 const hasLatestIncomePlan = !isEmpty(latestIncomePlan)
@@ -84,7 +84,7 @@ export const IncomePlanForm: Form = buildForm({
                 return {
                   ...baseMessage,
                   values: {
-                    incomePlanYear: latestIncomePlan.year,
+                    incomePlanYear: incomePlanConditions.incomePlanYear,
                   },
                 }
               },
