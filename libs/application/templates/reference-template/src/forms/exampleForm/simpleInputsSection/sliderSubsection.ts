@@ -3,6 +3,7 @@ import {
   buildMultiField,
   buildSliderField,
   buildSubSection,
+  buildTitleField,
 } from '@island.is/application/core'
 
 export const sliderSubsection = buildSubSection({
@@ -19,9 +20,9 @@ export const sliderSubsection = buildSubSection({
           min: 1,
           max: 10,
         }),
-        buildDividerField({ title: 'Some text'}),
+        buildTitleField({title: 'Some text' }),
         buildDividerField({ marginTop: 5, marginBottom: 5}),
-        buildDividerField({ title: 'Some text'}),
+        buildTitleField({ title: 'Some text'}),
         buildSliderField({
           id: 'basicSlider2',
           title: 'Basic slider',
@@ -40,9 +41,9 @@ export const sliderSubsection = buildSubSection({
             plural: 'days',
           },
         }),
-        buildDividerField({ title: 'Some text'}),
+        buildTitleField({ title: 'Some text'}),
         buildDividerField({ marginTop: 5, marginBottom: 5}),
-        buildDividerField({ title: 'Some text'}),
+        buildTitleField({ title: 'Some text'}),
         buildSliderField({
           id: 'giveRights.giveDays',
           title: '',

@@ -84,7 +84,7 @@ const Slider = ({
   max,
   step = 0.5,
   snap = true,
-  trackStyle,
+  trackStyle = { gridTemplateRows: 8 },
   calculateCellStyle,
   showLabel = false,
   showMinMaxLabels = false,
