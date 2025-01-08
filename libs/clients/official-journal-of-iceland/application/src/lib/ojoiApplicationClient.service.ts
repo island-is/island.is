@@ -171,6 +171,9 @@ export class OfficialJournalOfIcelandApplicationClientService {
     )
   }
 
+  getApplicationAdvertTemplates = (auth: Auth) =>
+    this.ojoiApplicationApiWithAuth(auth).getApplicationAdvertTemplates()
+
   async getUserInvolvedParties(params: GetInvolvedPartiesRequest, auth: Auth) {
     try {
       const data = await this.ojoiApplicationApiWithAuth(

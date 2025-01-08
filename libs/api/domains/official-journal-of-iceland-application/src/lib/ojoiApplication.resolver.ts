@@ -28,6 +28,7 @@ import { GetUserInvolvedPartiesInput } from '../models/getUserInvolvedParties.in
 import { OJOIAIdInput } from '../models/id.input'
 import { OJOIAApplicationCaseResponse } from '../models/applicationCase.response'
 import { GetPdfResponse } from '../models/getPdf.response'
+import { OJOIApplicationAdvertTemplatesResponse } from '../models/applicationAdvertTemplates.response'
 
 @Scopes(ApiScope.internal)
 @UseGuards(IdsUserGuard, ScopesGuard)
@@ -121,6 +122,13 @@ export class OfficialJournalOfIcelandApplicationResolver {
     @CurrentUser() user: User,
   ) {
     return this.ojoiApplicationService.deleteApplicationAttachment(input, user)
+  }
+
+  @Query(() => OJOIApplicationAdvertTemplatesResponse, {
+    name: 'officialJournalOfIcelandApplicationAdvertTemplates',
+  })
+  getAdvertTemplates(@CurrentUser() user: User) {
+    return this.ojoiApplicationService.getAdvertTemplates(user)
   }
 
   @Query(() => GetUserInvolvedPartiesResponse, {

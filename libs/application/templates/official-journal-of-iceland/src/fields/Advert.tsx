@@ -13,6 +13,7 @@ import set from 'lodash/set'
 import { HTMLEditor } from '../components/htmlEditor/HTMLEditor'
 import { cleanTypename, getAdvertMarkup } from '../lib/utils'
 import { DEPARTMENT_A } from '../lib/constants'
+import { useAdvertTemplateTypes } from '../hooks/useAdvertTemplates'
 
 export const Advert = ({ application }: OJOIFieldBaseProps) => {
   const { setValue } = useFormContext()
@@ -21,6 +22,8 @@ export const Advert = ({ application }: OJOIFieldBaseProps) => {
   })
 
   const { departments, loading: loadingDepartments } = useDepartments()
+  const { templateTypes, loading: loadingTemplateTypes } =
+    useAdvertTemplateTypes()
 
   const defaultDepartment =
     application.answers?.advert?.department?.id || DEPARTMENT_A
@@ -54,6 +57,13 @@ export const Advert = ({ application }: OJOIFieldBaseProps) => {
     type: currentApplication.answers.advert?.type?.title,
     title: currentApplication.answers.advert?.title,
   })
+
+  const templateOptions = templateTypes?.map((tt) => ({
+    label: tt,
+    value: tt,
+  }))
+
+  console.log(templateTypes)
 
   return (
     <Stack space={[2, 2, 3]}>
@@ -140,7 +150,7 @@ export const Advert = ({ application }: OJOIFieldBaseProps) => {
             label={advert.inputs.template.label}
             placeholder={advert.inputs.template.placeholder}
             applicationId={application.id}
-            disabled={true}
+            options={templateOptions}
           />
 
           <OJOIHtmlController

@@ -171,6 +171,14 @@ export const TYPES_QUERY = gql`
   }
 `
 
+export const ADVERT_TEMPLATES_QUERY = gql`
+  query AdvertTypes {
+    officialJournalOfIcelandApplicationAdvertTemplates {
+      templateTypes
+    }
+  }
+`
+
 export const DEPARTMENT_QUERY = gql`
   query AdvertDepartment($params: OfficialJournalOfIcelandAdvertSingleParams!) {
     officialJournalOfIcelandDepartment(params: $params) {

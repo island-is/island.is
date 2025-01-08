@@ -26,6 +26,7 @@ import {
 import { OJOIAApplicationCaseResponse } from '../models/applicationCase.response'
 import { GetPdfResponse } from '../models/getPdf.response'
 import { OJOIAIdInput } from '../models/id.input'
+import { OJOIApplicationAdvertTemplatesResponse } from '../models/applicationAdvertTemplates.response'
 
 const LOG_CATEGORY = 'official-journal-of-iceland-application'
 
@@ -261,6 +262,17 @@ export class OfficialJournalOfIcelandApplicationService {
       })
 
       throw error
+    }
+  }
+
+  async getAdvertTemplates(
+    user: User,
+  ): Promise<OJOIApplicationAdvertTemplatesResponse> {
+    const data =
+      await this.ojoiApplicationService.getApplicationAdvertTemplates(user)
+
+    return {
+      templateTypes: data.types,
     }
   }
 }
