@@ -75,8 +75,7 @@ export const transformApplicationToNewPrimarySchoolDTO = (
       ? siblings.map((sibling) => ({
           name: sibling.fullName,
           nationalId: sibling.nationalId,
-          // TODO: Siblings relation valmöguleikar eru ekki í key-options endapunktinum => Júní ætlar að bæta því við (Þurfum að passa að þeir valmöguleikar komi ekki upp í dropdown á aðstandenda síðunni)
-          role: sibling.relation,
+          role: 'sibling',
         }))
       : []),
   ]

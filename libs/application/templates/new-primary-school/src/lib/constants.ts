@@ -38,12 +38,6 @@ export enum ReasonForApplicationOptions {
   OTHER_REASONS = 'otherReasons',
 }
 
-export enum SiblingRelationOptions {
-  SIBLING = 'sibling',
-  HALF_SIBLING = 'halfSibling',
-  STEP_SIBLING = 'stepSibling',
-}
-
 export enum OptionsType {
   PRONOUN = 'pronoun',
   GENDER = 'gender',

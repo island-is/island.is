@@ -17,10 +17,7 @@ import {
   SelectOption,
   SiblingsRow,
 } from '../types'
-import {
-  ReasonForApplicationOptions,
-  SiblingRelationOptions,
-} from './constants'
+import { ReasonForApplicationOptions } from './constants'
 import { newPrimarySchoolMessages } from './messages'
 
 export const getApplicationAnswers = (answers: Application['answers']) => {
@@ -288,28 +285,6 @@ export const getReasonForApplicationOptionLabel = (
     reasonForApplicationOptions.find((option) => option.value === value)
       ?.label ?? ''
   )
-}
-
-export const getSiblingRelationOptions = () => [
-  {
-    value: SiblingRelationOptions.SIBLING,
-    label: newPrimarySchoolMessages.primarySchool.siblingsRelationSibling,
-  },
-  {
-    value: SiblingRelationOptions.HALF_SIBLING,
-    label: newPrimarySchoolMessages.primarySchool.halfSiblingsRelationSibling,
-  },
-  {
-    value: SiblingRelationOptions.STEP_SIBLING,
-    label: newPrimarySchoolMessages.primarySchool.stepSiblingsRelationSibling,
-  },
-]
-
-export const getSiblingRelationOptionLabel = (
-  value: SiblingRelationOptions,
-) => {
-  const relationOptions = getSiblingRelationOptions()
-  return relationOptions.find((option) => option.value === value)?.label ?? ''
 }
 
 export const getSelectedOptionLabel = (
