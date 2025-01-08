@@ -3,11 +3,7 @@ import faker from 'faker'
 import { urls } from '../../../support/urls'
 import { verifyRequestCompletion } from '../../../support/api-tools'
 import { test } from '../utils/judicialSystemTest'
-import {
-  randomPoliceCaseNumber,
-  getDaysFromNow,
-  uploadDocument,
-} from '../utils/helpers'
+import { randomPoliceCaseNumber, getDaysFromNow } from '../utils/helpers'
 
 test.use({ baseURL: urls.judicialSystemBaseUrl })
 
@@ -20,6 +16,7 @@ test.describe.serial('Indictment tests', () => {
   }) => {
     const page = prosecutorPage
     const today = getDaysFromNow()
+    const policeCaseNumber = randomPoliceCaseNumber()
 
     // Case list
     await page.goto('/krofur')
@@ -29,9 +26,10 @@ test.describe.serial('Indictment tests', () => {
 
     // New indictment case
     await page.getByTestId('policeCaseNumber0').click()
-    await page.getByTestId('policeCaseNumber0').fill(randomPoliceCaseNumber())
+    await page.getByTestId('policeCaseNumber0').fill(policeCaseNumber)
+
     await page.getByText('Sakarefni *Veldu sakarefni').click()
-    await page.locator('#react-select-case-type-option-0').click()
+    await page.getByRole('option', { name: 'Umferðarlagabrot' }).click()
     await page.getByPlaceholder('Sláðu inn vettvang').click()
     await page.getByPlaceholder('Sláðu inn vettvang').fill('Reykjavík')
     await page.locator('input[id=arrestDate]').fill(today)
@@ -87,33 +85,37 @@ test.describe.serial('Indictment tests', () => {
       verifyRequestCompletion(page, '/api/graphql', 'Case'),
     ])
 
+    // Indictment
+    await expect(page).toHaveURL(`/akaera/akaera/${caseId}`)
+
+    await page.getByText('LÖKE málsnúmer *Veldu málsnú').click()
+    await page.getByRole('option', { name: `${policeCaseNumber}` }).click()
+
+    await page.getByPlaceholder('AB123').click()
+    await page.getByPlaceholder('AB123').fill('AB123')
+
+    await Promise.all([
+      page.getByText('Brot *Veldu brot').click(),
+      page.getByRole('option', { name: 'Sviptingarakstur' }).click(),
+      verifyRequestCompletion(page, '/api/graphql', 'UpdateCase'),
+    ])
+
+    await Promise.all([
+      page.getByLabel('Krefjast sviptingarKrefjast').check(),
+      verifyRequestCompletion(page, '/api/graphql', 'UpdateCase'),
+    ])
+
+    await Promise.all([
+      page.getByTestId('continueButton').click(),
+      verifyRequestCompletion(page, '/api/graphql', 'Case'),
+    ])
+
     // Case files
     await expect(page).toHaveURL(`/akaera/domskjol/${caseId}`)
-
-    await uploadDocument(
-      page,
-      async () => {
-        await page
-          .getByText(
-            'Ákæra *Dragðu gögn hingað til að hlaða uppVelja gögn til að hlaða upp',
-          )
-          .click()
-      },
-      'TestAkaera.pdf',
-    )
-    await uploadDocument(
-      page,
-      async () => {
-        await page
-          .getByText(
-            'SakavottorðDragðu gögn hingað til að hlaða uppVelja gögn til að hlaða upp',
-          )
-          .click()
-      },
-      'TestSakavottord.pdf',
-    )
-
-    await Promise.all([page.getByTestId('continueButton').click()])
+    await Promise.all([
+      page.getByTestId('continueButton').click(),
+      verifyRequestCompletion(page, '/api/graphql', 'Case'),
+    ])
 
     // Overview
     await expect(page).toHaveURL(`/akaera/stadfesta/${caseId}`)
