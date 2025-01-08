@@ -2,7 +2,6 @@ import React from 'react'
 import {
   Box,
   Button,
-  FocusableBox,
   Hidden,
   Link,
   Tag,
@@ -16,7 +15,6 @@ type CardWithFeaturedItemsProps = {
   heading: string
   imgSrc: string
   imgAlt?: string
-  href: string | null
   dataTestId?: string
   buttonTitle?: string
   featuredItems: Featured[]
@@ -71,14 +69,12 @@ export const CardWithFeaturedItems = ({
   heading,
   imgSrc,
   imgAlt = '',
-  href,
   dataTestId,
   featuredItems,
   buttonTitle,
 }: CardWithFeaturedItemsProps) => {
   return (
-    <FocusableBox
-      href={href ?? undefined}
+    <Box
       background="purple100"
       borderRadius="large"
       color="purple"
@@ -87,6 +83,7 @@ export const CardWithFeaturedItems = ({
       justifyContent="spaceBetween"
       padding={3}
       flexDirection={['columnReverse', 'row']}
+      display="flex"
     >
       <Box display="flex" flexDirection="column" justifyContent="spaceBetween">
         <Box>
@@ -115,7 +112,7 @@ export const CardWithFeaturedItems = ({
       <Box display="flex" justifyContent="center" alignItems="center">
         <img src={imgSrc} alt={imgAlt} className={styles.image} />
       </Box>
-    </FocusableBox>
+    </Box>
   )
 }
 
