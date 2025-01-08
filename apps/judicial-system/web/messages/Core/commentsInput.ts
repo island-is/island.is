@@ -1,4 +1,6 @@
-export const commentsInput = {
+import { defineMessages } from 'react-intl'
+
+export const commentsInput = defineMessages({
   heading: {
     id: 'judicial.system.core:comments_input.heading',
     defaultMessage: 'Athugasemdir vegna málsmeðferðar',
@@ -8,7 +10,7 @@ export const commentsInput = {
   tooltip: {
     id: 'judicial.system.core:comments_input.tooltip',
     defaultMessage:
-      'Hér er hægt að skrá athugasemdir til dómara og dómritara um hagnýt atriði sem tengjast fyrirtökunni eða málsmeðferðinni, og eru ekki hluti af sjálfri kröfunni.',
+      'Hér er hægt að skrá athugasemdir til dómara og dómritara um hagnýt atriði sem tengjast fyrirtökunni eða málsmeðferðinni.',
     description:
       'Notaður sem upplýsingatexti í upplýsingasvæði við "athugasemdir vegna málsmeðferðar" titlinn í öllum málategundum',
   },
@@ -25,4 +27,4 @@ export const commentsInput = {
     description:
       'Notaður sem skýritexti í textaboxi fyrir "athugasemdir vegna málsmeðferðar" í öllum málategundum.',
   },
-}
+})

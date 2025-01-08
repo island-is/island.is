@@ -143,4 +143,14 @@ export class OfficialJournalOfIcelandApplicationResolver {
   ) {
     return this.ojoiApplicationService.getApplicationCase(input.id, user)
   }
+
+  @Mutation(() => Boolean, {
+    name: 'OJOIAPostApplication',
+  })
+  postApplication(
+    @Args('input') input: OJOIAIdInput,
+    @CurrentUser() user: User,
+  ) {
+    return this.ojoiApplicationService.postApplication(input, user)
+  }
 }

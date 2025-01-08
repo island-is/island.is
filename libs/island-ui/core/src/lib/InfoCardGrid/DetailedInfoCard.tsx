@@ -1,7 +1,6 @@
 import {
   Box,
   GridColumn,
-  GridContainer,
   GridRow,
   Icon,
   IconMapIcon,
@@ -15,6 +14,7 @@ import { isDefined } from '@island.is/shared/utils'
 import { BaseProps } from './InfoCard'
 import { ActionCardProps } from '../ActionCard/types'
 
+import * as styles from './InfoCard.css'
 const eyebrowColor = 'blueberry600'
 
 export type DetailedProps = BaseProps & {
@@ -66,16 +66,16 @@ export const DetailedInfoCard = ({
               display="flex"
               flexDirection={'row'}
               alignItems="center"
+              className={styles.iconBox}
             >
               <Icon
                 icon={d.icon}
                 size="medium"
                 type="outline"
                 color="blue400"
-                useStroke
               />
               <Box marginLeft={2}>
-                <Text variant="medium">{d.text}</Text>
+                <Text variant="small">{d.text}</Text>
               </Box>
             </Box>
           ))}
@@ -97,7 +97,12 @@ export const DetailedInfoCard = ({
               return null
             }
             return (
-              <Tag key={`${tag.label}-${index}`} disabled variant={tag.variant}>
+              <Tag
+                outlined
+                key={`${tag.label}-${index}`}
+                disabled
+                variant={tag.variant}
+              >
                 {tag.label}
               </Tag>
             )
@@ -137,21 +142,21 @@ export const DetailedInfoCard = ({
   const renderContent = () => {
     if (size === 'large') {
       return (
-        <GridContainer>
-          <GridRow direction="row">
-            <GridColumn span="8/12">
-              <Text variant="h3" color="blue400">
-                {title}
-              </Text>
-              {description && (
-                <Box flexGrow={1} marginTop={1}>
-                  <Text>{description}</Text>
-                </Box>
-              )}
-            </GridColumn>
-            <GridColumn span="4/12">{renderDetails()}</GridColumn>
-          </GridRow>
-        </GridContainer>
+        <GridRow direction="row">
+          <GridColumn span="8/12">
+            <Text variant="h3" color="blue400">
+              {title}
+            </Text>
+            {description && (
+              <Box flexGrow={1} marginTop={1}>
+                <Text variant="medium" fontWeight="light">
+                  {description}
+                </Text>
+              </Box>
+            )}
+          </GridColumn>
+          <GridColumn span="4/12">{renderDetails()}</GridColumn>
+        </GridRow>
       )
     }
     return (
@@ -161,7 +166,9 @@ export const DetailedInfoCard = ({
         </Text>
         {description && (
           <Box marginTop={1}>
-            <Text>{description}</Text>
+            <Text variant="medium" fontWeight="light">
+              {description}
+            </Text>
           </Box>
         )}
         {renderDetails()}
@@ -170,12 +177,19 @@ export const DetailedInfoCard = ({
   }
 
   return (
-    <>
-      {renderHeader()}
-      {renderContent()}
+    <Box
+      display="flex"
+      justifyContent="spaceBetween"
+      flexDirection="column"
+      height="full"
+    >
+      <div>
+        {renderHeader()}
+        {renderContent()}
+      </div>
       <Box marginTop={3} display="flex" justifyContent="spaceBetween">
         {renderTags()}
       </Box>
-    </>
+    </Box>
   )
 }
