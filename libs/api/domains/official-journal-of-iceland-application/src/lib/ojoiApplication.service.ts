@@ -26,6 +26,8 @@ import {
 import { OJOIAApplicationCaseResponse } from '../models/applicationCase.response'
 import { GetPdfResponse } from '../models/getPdf.response'
 import { OJOIAIdInput } from '../models/id.input'
+import { GetInvolvedPartySignaturesInput } from '../models/getInvolvedPartySignatures.input'
+import { GetInvolvedPartySignaturesResponse } from '../models/getInvolvedPartySignatures.response'
 
 const LOG_CATEGORY = 'official-journal-of-iceland-application'
 
@@ -257,6 +259,25 @@ export class OfficialJournalOfIcelandApplicationService {
       this.logger.error('Failed to get pdf', {
         category: LOG_CATEGORY,
         applicationId: input.id,
+        error: error,
+      })
+
+      throw error
+    }
+  }
+
+  async getInvolvedPartySignatures(
+    input: GetInvolvedPartySignaturesInput,
+    user: User,
+  ): Promise<GetInvolvedPartySignaturesResponse> {
+    try {
+      return await this.ojoiApplicationService.getSignaturesForInvolvedParty(
+        input,
+        user,
+      )
+    } catch (error) {
+      this.logger.error('Failed to get signatures for involved party', {
+        category: LOG_CATEGORY,
         error: error,
       })
 

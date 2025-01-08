@@ -148,6 +148,45 @@ export const MAIN_TYPES_QUERY = gql`
     }
   }
 `
+export const INVOLVED_PARTY_SIGNATURES_QUERY = gql`
+  query InvolvedPartySignatures(
+    $params: OfficialJournalOfIcelandApplicationInvolvedPartySignaturesInput!
+  ) {
+    officialJournalOfIcelandApplicationGetInvolvedPartySignatures(
+      params: $params
+    ) {
+      id
+      additionalSignature
+      chairman {
+        text
+        textAbove
+        textAfter
+        textBefore
+        textBelow
+      }
+      date
+      html
+      institution
+      involvedParty {
+        id
+        slug
+        title
+      }
+      members {
+        text
+        textAbove
+        textAfter
+        textBefore
+        textBelow
+      }
+      type {
+        id
+        slug
+        title
+      }
+    }
+  }
+`
 
 export const TYPES_QUERY = gql`
   query AdvertTypes($params: OfficialJournalOfIcelandTypesInput!) {

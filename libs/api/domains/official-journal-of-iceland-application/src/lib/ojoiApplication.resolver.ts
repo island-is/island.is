@@ -28,6 +28,8 @@ import { GetUserInvolvedPartiesInput } from '../models/getUserInvolvedParties.in
 import { OJOIAIdInput } from '../models/id.input'
 import { OJOIAApplicationCaseResponse } from '../models/applicationCase.response'
 import { GetPdfResponse } from '../models/getPdf.response'
+import { GetInvolvedPartySignaturesResponse } from '../models/getInvolvedPartySignatures.response'
+import { GetInvolvedPartySignaturesInput } from '../models/getInvolvedPartySignatures.input'
 
 @Scopes(ApiScope.internal)
 @UseGuards(IdsUserGuard, ScopesGuard)
@@ -152,5 +154,15 @@ export class OfficialJournalOfIcelandApplicationResolver {
     @CurrentUser() user: User,
   ) {
     return this.ojoiApplicationService.postApplication(input, user)
+  }
+
+  @Query(() => GetInvolvedPartySignaturesResponse, {
+    name: 'officialJournalOfIcelandApplicationGetInvolvedPartySignatures',
+  })
+  getInvolvedPartySignatures(
+    @Args('input') input: GetInvolvedPartySignaturesInput,
+    @CurrentUser() user: User,
+  ) {
+    return this.ojoiApplicationService.getInvolvedPartySignatures(input, user)
   }
 }

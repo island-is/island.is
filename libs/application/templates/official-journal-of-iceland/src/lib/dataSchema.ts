@@ -73,6 +73,7 @@ const advertSchema = z
       .extend({ types: z.array(baseEntitySchema).optional() })
       .optional(),
     title: z.string().optional(),
+    involvedPartyId: z.string().optional(),
     html: z.string().optional(),
     requestedDate: z.string().optional(),
     categories: z.array(baseEntitySchema).optional(),

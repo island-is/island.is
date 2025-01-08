@@ -4,13 +4,14 @@ import { InputFields, OJOIFieldBaseProps } from '../lib/types'
 import { signatures } from '../lib/messages/signatures'
 import { useState } from 'react'
 import { SignatureType, SignatureTypes } from '../lib/constants'
-import { Tabs } from '@island.is/island-ui/core'
+import { Box, Button, Tabs } from '@island.is/island-ui/core'
 import { CommitteeSignature } from '../components/signatures/Committee'
 import { RegularSignature } from '../components/signatures/Regular'
 import { useApplication } from '../hooks/useUpdateApplication'
 import set from 'lodash/set'
 import { HTMLEditor } from '../components/htmlEditor/HTMLEditor'
 import { getSignaturesMarkup } from '../lib/utils'
+import { useLastSignature } from '../hooks/useLastSignature'
 
 export const Signatures = ({ application }: OJOIFieldBaseProps) => {
   const { formatMessage: f } = useLocale()
@@ -24,6 +25,12 @@ export const Signatures = ({ application }: OJOIFieldBaseProps) => {
     (application.answers?.misc?.signatureType as SignatureType) ??
       SignatureTypes.REGULAR,
   )
+
+  const { lastSignature, loading, error } = useLastSignature({
+    involvedPartyId: application.answers.advert?.involvedPartyId ?? '',
+  })
+
+  console.log(lastSignature)
 
   const tabs = [
     {
@@ -59,6 +66,18 @@ export const Signatures = ({ application }: OJOIFieldBaseProps) => {
         title={f(signatures.general.title)}
         intro={f(signatures.general.intro)}
       >
+        <Box marginTop={2}>
+          <Button
+            onClick={() => console.log('click')}
+            disabled
+            variant="utility"
+            size="small"
+            icon="copy"
+            iconType="outline"
+          >
+            {'Afrita seinustu undirskrift'}
+          </Button>
+        </Box>
         <Tabs
           selected={selectedTab}
           tabs={tabs}
