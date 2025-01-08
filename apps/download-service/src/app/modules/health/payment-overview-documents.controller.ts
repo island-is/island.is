@@ -43,12 +43,10 @@ export class HealthPaymentsOverviewController {
     )
 
     if (!featureAllowed) {
-      return res.status(403).end(
-        JSON.stringify({
-          statusCode: 403,
-          message: 'Not allowed',
-        }),
-      )
+      return res.status(403).json({
+        statusCode: 403,
+        message: 'Not allowed',
+      })
     }
 
     const documentResponse = await this.paymentApi
@@ -65,12 +63,10 @@ export class HealthPaymentsOverviewController {
       })
 
       if (!documentResponse.data)
-        return res.status(404).end(
-          JSON.stringify({
-            statusCode: 404,
-            message: 'Document not found',
-          }),
-        )
+        return res.status(404).json({
+          statusCode: 404,
+          message: 'Document not found',
+        })
 
       const buffer = Buffer.from(documentResponse.data, 'base64')
 
@@ -82,7 +78,7 @@ export class HealthPaymentsOverviewController {
       res.header('Content-Type', 'application/pdf')
       res.header('Pragma', 'no-cache')
       res.header('Cache-Control', 'no-cache')
-      res.header('Cache-Control', 'nmax-age=0')
+      res.header('Cache-Control', 'max-age=0')
       return res.status(200).end(buffer)
     }
     return res.end()
