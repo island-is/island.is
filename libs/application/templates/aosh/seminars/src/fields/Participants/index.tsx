@@ -158,20 +158,15 @@ export const Participants: FC<React.PropsWithChildren<FieldBaseProps>> = ({
 
   useEffect(() => {
     if (participantListWatch) {
+      const lastItemIndex = participantListWatch.length - 1
       if (
-        participantListWatch[participantListWatch.length - 1].name &&
-        participantListWatch[participantListWatch.length - 1].email &&
-        isValidEmail(
-          participantListWatch[participantListWatch.length - 1].email,
-        ) &&
-        participantListWatch[participantListWatch.length - 1].nationalId &&
-        kennitala.isValid(
-          participantListWatch[participantListWatch.length - 1].nationalId,
-        ) &&
-        participantListWatch[participantListWatch.length - 1].phoneNumber &&
-        isValidPhoneNumber(
-          participantListWatch[participantListWatch.length - 1].phoneNumber,
-        )
+        participantListWatch[lastItemIndex].name &&
+        participantListWatch[lastItemIndex].email &&
+        isValidEmail(participantListWatch[lastItemIndex].email) &&
+        participantListWatch[lastItemIndex].nationalId &&
+        kennitala.isValid(participantListWatch[lastItemIndex].nationalId) &&
+        participantListWatch[lastItemIndex].phoneNumber &&
+        isValidPhoneNumber(participantListWatch[lastItemIndex].phoneNumber)
       ) {
         updateValidity(participantListWatch)
       }
@@ -187,9 +182,7 @@ export const Participants: FC<React.PropsWithChildren<FieldBaseProps>> = ({
     return
   }
 
-  const csvFile = `data:text/csv;charset=utf-8,nafn;kennitala;netfang;sími
-      PRUFA;010130-3019;prufa@prufa.is;8889999
-      PRUFA 2;111111-1119;prufa2@prufa.is;1283499`
+  const csvFile = `data:text/csv;charset=utf-8,nafn;kennitala;netfang;sími`
 
   const onCsvButtonClick = () => {
     const encodeUri = encodeURI(csvFile)
