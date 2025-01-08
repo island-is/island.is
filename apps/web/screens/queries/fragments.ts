@@ -980,6 +980,20 @@ export const slices = gql`
     }
   }
 
+  fragment FeaturedLinksFields on FeaturedLinks {
+    __typename
+    id
+    title
+    featuredLinks {
+      title
+      attention
+      thing {
+        slug
+        type
+      }
+    }
+  }
+
   fragment BaseSlices on Slice {
     ...TimelineFields
     ...StoryFields
@@ -1025,6 +1039,7 @@ export const slices = gql`
     ...FeaturedEventsFields
     ...GenericListFields
     ...LatestGenericListItemsFields
+    ...FeaturedLinksFields
     ...GrantCardsListFields
   }
 
