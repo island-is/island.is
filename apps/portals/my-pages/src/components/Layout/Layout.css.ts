@@ -24,18 +24,7 @@ export const btn = style({})
 export const mobileNav = style({
   position: 'sticky',
   top: 0,
-  zIndex: 1400,
-  // '::before': {
-  //   content: '',
-  //   position: 'absolute',
-  //   top: 0,
-  //   bottom: 23,
-  //   zIndex: -1,
-  //   left: `-${theme.spacing[2]}px`,
-  //   right: `-${theme.spacing[2]}px`,
-  //   background: theme.color.blue100,
-  //   borderBottom: `1px solid ${theme.color.blue200}`,
-  // },
+  zIndex: 99,
 })
 
 globalStyle(`${btn} > span`, {
