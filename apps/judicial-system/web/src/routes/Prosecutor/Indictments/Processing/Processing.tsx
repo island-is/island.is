@@ -76,6 +76,8 @@ const Processing: FC = () => {
     deleteCivilClaimant,
   } = useCivilClaimants()
   const router = useRouter()
+
+  // TODO: currently for e2e tests, this is failing locally due to this feature flag
   const isTrafficViolationCaseCheck =
     features.includes(Feature.MULTIPLE_INDICTMENT_SUBTYPES) ||
     isTrafficViolationCase(workingCase)
@@ -112,7 +114,6 @@ const Processing: FC = () => {
         )
       }
 
-      console.log({destination})
       router.push(`${destination}/${workingCase.id}`)
     },
     [router, setWorkingCase, transitionCase, workingCase],
@@ -669,14 +670,12 @@ const Processing: FC = () => {
           nextButtonIcon="arrowForward"
           previousUrl={`${constants.INDICTMENTS_CASE_FILE_ROUTE}/${workingCase.id}`}
           nextIsDisabled={!stepIsValid}
-          onNextButtonClick={() => {
-              // TODO: currently for e2e tests, this is failing on dev
-              return handleNavigationTo(
-                isTrafficViolationCaseCheck
-                  ? constants.INDICTMENTS_TRAFFIC_VIOLATION_ROUTE
-                  : constants.INDICTMENTS_CASE_FILES_ROUTE,
-              )
-            }
+          onNextButtonClick={() =>
+            handleNavigationTo(
+              isTrafficViolationCaseCheck
+                ? constants.INDICTMENTS_TRAFFIC_VIOLATION_ROUTE
+                : constants.INDICTMENTS_CASE_FILES_ROUTE,
+            )
           }
         />
       </FormContentContainer>

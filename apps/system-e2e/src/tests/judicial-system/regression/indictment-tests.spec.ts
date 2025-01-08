@@ -88,8 +88,6 @@ test.describe.serial('Indictment tests', () => {
     ])
 
     // Case files
-    const currentURL = await page.url();
-    console.log('Current URL:', currentURL); 
     await expect(page).toHaveURL(`/akaera/domskjol/${caseId}`)
 
     await uploadDocument(
