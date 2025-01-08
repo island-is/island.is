@@ -83,7 +83,7 @@ export const IncomePlanForm: Form = buildForm({
                 return {
                   ...baseMessage,
                   values: {
-                    incomePlanYear: incomePlanConditions.incomePlanYear,
+                    incomePlanYear: incomePlanConditions?.incomePlanYear ?? new Date().getFullYear(),
                   },
                 }
               },
