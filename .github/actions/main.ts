@@ -14,11 +14,7 @@ const FULL_REBUILD_NEEDED = 'full_rebuild_needed'
     console.log(FULL_REBUILD_NEEDED)
     return
   }
-  const runner = new LocalRunner(
-    new Octokit({
-      auth: process.env.GITHUB_TOKEN,
-    }),
-  )
+  const runner = new LocalRunner(new Octokit())
   let git = new SimpleGit(process.env.REPO_ROOT!, process.env.SHELL!)
 
   const diffWeight = (s: string[]) => s.length
