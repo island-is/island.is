@@ -10,7 +10,6 @@ import { useDebounce } from 'react-use'
 import { useLazyQuery } from '@apollo/client'
 import slugify from '@sindresorhus/slugify'
 
-import { Organizations, SupportCategory } from '@island.is/api/schema'
 import {
   Box,
   Button,
@@ -35,7 +34,9 @@ import {
   ContentLanguage,
   GetSupportSearchResultsQuery,
   GetSupportSearchResultsQueryVariables,
+  Organizations,
   SearchableContentTypes,
+  SupportCategory,
   SupportQna,
 } from '@island.is/web/graphql/schema'
 import { useNamespace } from '@island.is/web/hooks'

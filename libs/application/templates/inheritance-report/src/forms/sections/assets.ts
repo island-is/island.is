@@ -494,13 +494,19 @@ export const assets = buildSection({
                     format: '######-####',
                   },
                   {
-                    title: m.stocksFaceValue,
+                    title: {
+                      [ESTATE_INHERITANCE]: m.stocksFaceValue,
+                      [PREPAID_INHERITANCE]: m.stocksFaceValuePrePaid,
+                    },
                     id: 'amount',
                     currency: true,
                     required: true,
                   },
                   {
-                    title: m.stocksRateOfChange,
+                    title: {
+                      [ESTATE_INHERITANCE]: m.stocksRateOfChange,
+                      [PREPAID_INHERITANCE]: m.stocksRateOfChangePrePaid,
+                    },
                     id: 'exchangeRateOrInterest',
                     type: 'currency',
                     required: true,
