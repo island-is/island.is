@@ -10,6 +10,13 @@ import {
 import { Link, mapLink } from './link.model'
 import { IntroLinkImage, mapIntroLinkImage } from './introLinkImage.model'
 import { OneColumnText, mapOneColumnText } from './oneColumnText.model'
+import { documentToPlainTextString } from '@contentful/rich-text-plain-text-renderer'
+
+@ObjectType('OverviewLinksCardLink')
+class CardLink extends OneColumnText {
+  @Field({ nullable: true })
+  contentString?: string
+}
 
 @ObjectType()
 export class OverviewLinks {
@@ -19,8 +26,8 @@ export class OverviewLinks {
   @CacheField(() => [IntroLinkImage])
   overviewLinks!: Array<IntroLinkImage>
 
-  @CacheField(() => [OneColumnText], { nullable: true })
-  cardLinks?: Array<OneColumnText> | null
+  @CacheField(() => [CardLink], { nullable: true })
+  cardLinks?: Array<CardLink> | null
 
   @CacheField(() => Link, { nullable: true })
   link!: Link | null
@@ -40,7 +47,15 @@ export const mapOverviewLinks = ({
     .map((link) => mapIntroLinkImage(link as IIntroLinkImage)),
   cardLinks: (fields.overviewLinks ?? [])
     .filter((link) => link.sys.contentType.sys.id === 'oneColumnText')
-    .map((link) => mapOneColumnText(link as IOneColumnText)),
+    .map((link) => {
+      const oneColumnText = link as IOneColumnText
+      return {
+        ...mapOneColumnText(oneColumnText),
+        contentString: oneColumnText.fields.content
+          ? documentToPlainTextString(oneColumnText.fields.content)
+          : '',
+      }
+    }),
   link: fields.link ? mapLink(fields.link) : null,
   hasBorderAbove: fields.hasBorderAbove ?? true,
 })

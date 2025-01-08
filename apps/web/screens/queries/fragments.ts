@@ -499,6 +499,14 @@ export const slices = gql`
     hasBorderAbove
     cardLinks {
       title
+      contentString
+      link {
+        text
+        url
+      }
+    }
+    cardLinks {
+      title
       content {
         ...HtmlFields
       }
