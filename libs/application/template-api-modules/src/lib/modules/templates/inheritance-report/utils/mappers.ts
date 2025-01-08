@@ -131,6 +131,7 @@ export const expandAnswers = (
             deceasedShare: account.deceasedShare ?? '',
             deceasedShareEnabled: account.deceasedShareEnabled ?? [],
             deceasedShareAmount: account.deceasedShareAmount ?? 0,
+            enabled: account.enabled ?? true,
           }
         }),
         total: answers.assets.bankAccounts?.total ?? 0,
@@ -144,6 +145,7 @@ export const expandAnswers = (
             deceasedShare: claim.deceasedShare ?? '',
             deceasedShareEnabled: claim.deceasedShareEnabled ?? [],
             deceasedShareAmount: claim.deceasedShareAmount ?? 0,
+            enabled: claim.enabled ?? true,
           }
         }),
         total: answers.assets.claims?.total ?? 0,
@@ -216,6 +218,7 @@ export const expandAnswers = (
             deceasedShare: stock?.deceasedShare ?? '',
             deceasedShareEnabled: stock?.deceasedShareEnabled ?? [],
             deceasedShareAmount: stock?.deceasedShareAmount ?? 0,
+            enabled: stock.enabled ?? true,
           }
         }),
         total: answers.assets.stocks?.total ?? 0,
