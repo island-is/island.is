@@ -24,12 +24,8 @@ export class AppService {
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
-  async run() {
-    this.logger.info('Scheduler starting')
-
-    const startTime = now()
-
-    this.messageService
+  private addMessagesForIndictmentsWaitingForConfirmationToQueue() {
+    return this.messageService
       .sendMessagesToQueue([
         {
           type: MessageType.NOTIFICATION_DISPATCH,
@@ -42,6 +38,10 @@ export class AppService {
         // Tolerate failure, but log
         this.logger.error('Failed to dispatch notifications', { reason }),
       )
+  }
+
+  private async archiveCases() {
+    const startTime = now()
 
     let done = false
 
@@ -76,6 +76,13 @@ export class AppService {
       !done &&
       minutesBetween(startTime, now()) < this.config.timeToLiveMinutes
     )
+  }
+
+  async run() {
+    this.logger.info('Scheduler starting')
+
+    await this.addMessagesForIndictmentsWaitingForConfirmationToQueue()
+    await this.archiveCases()
 
     this.logger.info('Scheduler done')
   }
