@@ -4077,7 +4077,6 @@ export interface ISliceConnectedComponentFields {
     | 'Skilavottord/CompanyList'
     | 'Skilavottord/CompanyListConnected'
     | 'Undirskriftalistar/PetitionLists'
-    | 'ElectronicRegistrations/MonthlyStatistics'
     | 'LatestNewsCard'
     | 'Fiskistofa/ShipSearch'
     | 'Fiskistofa/ShipSearchSidebarInput'
