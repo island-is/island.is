@@ -6,7 +6,6 @@ import differenceInMonths from 'date-fns/differenceInMonths'
 import { useRouter } from 'next/router'
 import { useQueryState } from 'next-usequerystate'
 
-import { CustomPageUniqueIdentifier } from '@island.is/api/schema'
 import {
   Box,
   Button,
@@ -26,6 +25,7 @@ import {
 import { sortAlpha } from '@island.is/shared/utils'
 import { getThemeConfig, MarkdownText } from '@island.is/web/components'
 import {
+  CustomPageUniqueIdentifier,
   Organization,
   OrganizationPage,
   Query,
