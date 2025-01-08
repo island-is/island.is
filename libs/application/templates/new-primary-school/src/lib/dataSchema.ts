@@ -137,7 +137,18 @@ export const dataSchema = z.object({
     .refine((r) => r === undefined || r.length > 0, {
       params: errorMessages.siblingsRequired,
     }),
-  startDate: z.string(),
+  startingSchool: z
+    .object({
+      startDate: z.string(),
+      endDate: z.string(),
+    })
+    .refine(
+      ({ startDate, endDate }) => new Date(startDate) <= new Date(endDate),
+      {
+        path: ['endDate'],
+        params: errorMessages.endDateMessage,
+      },
+    ),
   languages: z
     .object({
       nativeLanguage: z.string(),

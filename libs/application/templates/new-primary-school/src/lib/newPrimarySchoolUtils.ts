@@ -95,7 +95,20 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     NO,
   ) as YesOrNo
 
-  const startDate = getValueViaPath(answers, 'startDate') as string
+  const startDate = getValueViaPath(
+    answers,
+    'startingSchool.startDate',
+  ) as string
+
+  const startDateHiddenInput = getValueViaPath(answers, 'startDate.hiddenInput')
+
+  const temporaryStay = getValueViaPath(
+    answers,
+    'startingSchool.temporaryStay',
+    NO,
+  ) as YesOrNo
+
+  const endDate = getValueViaPath(answers, 'startingSchool.endDate') as string
 
   const schoolMunicipality = getValueViaPath(
     answers,
@@ -131,6 +144,9 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     specialSupport,
     requestMeeting,
     startDate,
+    startDateHiddenInput,
+    temporaryStay,
+    endDate,
     schoolMunicipality,
     selectedSchool,
     newSchoolHiddenInput,
@@ -218,6 +234,18 @@ export const getSelectedChild = (application: Application) => {
     return child.nationalId === childNationalId
   })
   return selectedChild
+}
+
+export const getSiblings = (application: Application) => {
+  const { children } = getApplicationExternalData(application.externalData)
+  const selectedChild = getSelectedChild(application)
+  const siblings = children
+    .filter((child) => child.nationalId !== selectedChild?.nationalId)
+    .map((child) => ({
+      fullName: child.fullName,
+      nationalId: child.nationalId,
+    }))
+  return siblings
 }
 
 export const getOtherParent = (
@@ -358,3 +386,8 @@ export const getCurrentSchoolName = (application: Application) => {
     .map((membership) => membership.organization)
     .find((organization) => organization?.id === primaryOrgId)?.name
 }
+
+// export const getNewSchoolType = (answers) => {
+//   const { selectedSchool } = getApplicationAnswers(answers)
+//   selectedSchool.
+// }

@@ -445,6 +445,21 @@ export const newPrimarySchoolMessages: MessageDir = {
       description:
         'We want to welcome the schoolchild properly. To be able to prepare for its arrival, please select a date for the first school day.',
     },
+    endDateDescription: {
+      id: 'nps.application:primary.school.end.date.description',
+      defaultMessage: 'Vinsamlegast skráið áætlaðan lokadag',
+      description: 'Please provide an end date',
+    },
+    endDateTitle: {
+      id: 'nps.application:primary.school.end.date.title',
+      defaultMessage: 'Lokadagur',
+      description: 'End date',
+    },
+    temporaryStay: {
+      id: 'nps.application:primary.school.temporary.stay',
+      defaultMessage: 'Er skóladvölin tímabundin?',
+      description: 'Is the school stay temporary?',
+    },
   }),
 
   differentNeeds: defineMessages({
@@ -691,5 +706,10 @@ export const errorMessages = defineMessages({
       'Eingöngu sá sem er með lögheimilisforsjá hefur heimild til að sækja um fyrir barn. \n\nÞjóðskrá skráir hver eða hverjir teljast foreldrar barns og hver fari með forsjárskyldur þess. Upplýsingar um skráningu forsjár og lögheimilisforeldris má nálgast hér: [Foreldrar og forsjá | Þjóðskrá (skra.is)](https://www.skra.is/folk/skraning-barns/foreldrar-og-forsja/)\n\nUpplýsingum um tengsl á milli barna og foreldra auk forsjáraðila eru einnig aðgengilegar á [Mínum síðum á Ísland.is](https://island.is/minarsidur)',
     description:
       'Only the person who has legal custody has the authority to apply for a child.\n\nThe National Registry records who or which individuals are considered to be the parents of a child and who has custody responsibilities. Information on registering custody and legal guardianship can be found here: [Parents and Custody | National Registry (skra.is)](https://www.skra.is/folk/skraning-barns/foreldrar-og-forsja/)\n\nInformation about the relationship between children and parents, as well as custody authorities, is also available on [My Pages on Ísland.is](https://island.is/minarsidur)',
+  },
+  endDateMessage: {
+    id: 'nps.application:end.date.less.than.start.date',
+    defaultMessage: 'Lokadagur má ekki vera fyrir byrjunardag',
+    description: 'End date cannot be before start date',
   },
 })
