@@ -191,7 +191,6 @@ export const SchoolSelection: FC<FieldBaseProps> = (props) => {
           <Text variant="h5">
             {formatMessage(school.secondSelection.addSubtitle)}
           </Text>
-          <Text>{formatMessage(school.thirdSelection.addDescription)}</Text>
         </Box>
       )}
       {!isFreshman && (
