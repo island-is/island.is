@@ -77,6 +77,20 @@ export class InternalCaseController {
     return this.internalCaseService.archive()
   }
 
+  @Get('cases/arraignmentDate/:arraignmentDate')
+  @ApiOkResponse({
+    type: Case,
+    isArray: true,
+    description: 'Fetch all cases that have court arrangement for a given date',
+  })
+  getCasesAtArraignmentDate(@Param('date') date: Date): Promise<Case[]> {
+    this.logger.debug(
+      `Getting all cases that have court arrangement at ${date}`,
+    )
+
+    return this.internalCaseService.getAllCasesAtArraignmentDate(date)
+  }
+
   @Get('cases/indictments/defendant/:defendantNationalId')
   @ApiOkResponse({
     type: Case,

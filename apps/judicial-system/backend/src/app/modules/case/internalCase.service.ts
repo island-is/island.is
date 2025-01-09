@@ -27,6 +27,7 @@ import {
   CaseOrigin,
   CaseState,
   CaseType,
+  dateTypes,
   EventType,
   isIndictmentCase,
   isProsecutionUser,
@@ -518,6 +519,23 @@ export class InternalCaseService {
     this.eventService.postEvent('ARCHIVE', theCase)
 
     return { caseArchived: true }
+  }
+
+  async getAllCasesAtArraignmentDate(date: Date): Promise<Case[]> {
+    const cases = this.caseModel.findAll({
+      include: [
+        {
+          model: DateLog,
+          as: 'dateLogs',
+          where: {
+            date_type: 'ARRAIGNMENT_DATE', // or court date?
+            date: date,
+          },
+          required: true,
+        },
+      ],
+    })
+    return cases
   }
 
   async deliverProsecutorToCourt(

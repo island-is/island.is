@@ -39,6 +39,7 @@ const errorEmojis = [
   ':x:',
 ]
 
+// TODO: Add fyrirtökur schedule
 const caseEvent: Record<CaseEvent, string> = {
   [CaseTransition.ACCEPT]: ':white_check_mark: Samþykkt',
   [CaseTransition.APPEAL]: ':judge: Kæra',
