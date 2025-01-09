@@ -1,4 +1,4 @@
-import { useQuery } from '@apollo/client'
+import { useLazyQuery, useQuery } from '@apollo/client'
 import { OfficialJournalOfIcelandApplicationInvolvedPartySignaturesResponse } from '@island.is/api/schema'
 import { INVOLVED_PARTY_SIGNATURES_QUERY } from '../graphql/queries'
 
@@ -29,4 +29,15 @@ export const useLastSignature = ({ involvedPartyId }: Props) => {
     error,
     loading,
   }
+}
+
+export const useLastSignatureLazy = ({ involvedPartyId }: Props) => {
+  return useLazyQuery<LastSignaturesResponse>(INVOLVED_PARTY_SIGNATURES_QUERY, {
+    variables: {
+      input: {
+        involvedPartyId: involvedPartyId,
+      },
+    },
+    fetchPolicy: 'no-cache',
+  })
 }

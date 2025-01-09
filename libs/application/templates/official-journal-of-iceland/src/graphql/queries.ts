@@ -150,19 +150,19 @@ export const MAIN_TYPES_QUERY = gql`
 `
 export const INVOLVED_PARTY_SIGNATURES_QUERY = gql`
   query InvolvedPartySignatures(
-    $params: OfficialJournalOfIcelandApplicationInvolvedPartySignaturesInput!
+    $input: OfficialJournalOfIcelandApplicationInvolvedPartySignaturesInput!
   ) {
     officialJournalOfIcelandApplicationGetInvolvedPartySignatures(
-      params: $params
+      input: $input
     ) {
       id
       additionalSignature
       chairman {
-        text
-        textAbove
-        textAfter
-        textBefore
-        textBelow
+        name
+        above
+        after
+        before
+        below
       }
       date
       html
@@ -173,11 +173,11 @@ export const INVOLVED_PARTY_SIGNATURES_QUERY = gql`
         title
       }
       members {
-        text
-        textAbove
-        textAfter
-        textBefore
-        textBelow
+        name
+        above
+        after
+        before
+        below
       }
       type {
         id

@@ -10,19 +10,19 @@ export class Institution extends InvolvededParty {}
 @ObjectType('OfficialJournalOfIcelandApplicationSignatureMember')
 export class SignatureMember {
   @Field()
-  text!: string
+  name!: string
 
   @Field({ nullable: true })
-  textAbove?: string
+  above?: string
 
   @Field({ nullable: true })
-  textBefore?: string
+  before?: string
 
   @Field({ nullable: true })
-  textBelow?: string
+  below?: string
 
   @Field({ nullable: true })
-  textAfter?: string
+  after?: string
 }
 
 @ObjectType(

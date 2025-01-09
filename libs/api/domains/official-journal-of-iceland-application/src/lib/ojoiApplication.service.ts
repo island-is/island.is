@@ -271,10 +271,31 @@ export class OfficialJournalOfIcelandApplicationService {
     user: User,
   ): Promise<GetInvolvedPartySignaturesResponse> {
     try {
-      return await this.ojoiApplicationService.getSignaturesForInvolvedParty(
-        input,
-        user,
-      )
+      const data =
+        await this.ojoiApplicationService.getSignaturesForInvolvedParty(
+          input,
+          user,
+        )
+
+      return {
+        ...data,
+        chairman: data.chairman
+          ? {
+              name: data.chairman.text ?? undefined,
+              above: data.chairman.textAbove ?? undefined,
+              before: data.chairman.textBefore ?? undefined,
+              below: data.chairman.textBelow ?? undefined,
+              after: data.chairman.textAfter ?? undefined,
+            }
+          : undefined,
+        members: data.members.map((member) => ({
+          name: member.text ?? undefined,
+          above: member.textAbove ?? undefined,
+          before: member.textBefore ?? undefined,
+          below: member.textBelow ?? undefined,
+          after: member.textAfter ?? undefined,
+        })),
+      }
     } catch (error) {
       this.logger.error('Failed to get signatures for involved party', {
         category: LOG_CATEGORY,
