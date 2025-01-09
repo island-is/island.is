@@ -228,7 +228,6 @@ export const NationalIdWithName: FC<
             required={required}
             backgroundColor="blue"
             onChange={debounce((v) => {
-              console.log('clearOnChange nationalId', clearOnChange)
               setNationalIdInput(v.target.value.replace(/\W/g, ''))
               onNationalIdChange &&
                 onNationalIdChange(v.target.value.replace(/\W/g, ''))
