@@ -27,7 +27,7 @@ import {
   NationalRegistryUserApi,
   SchoolsApi,
   StudentInfoApi,
-  UserProfileApi,
+  UserProfileApiWithValidation,
 } from '../dataProviders'
 import { Features } from '@island.is/feature-flags'
 import {
@@ -123,7 +123,7 @@ const template: ApplicationTemplate<
               api: [
                 NationalRegistryUserApi,
                 NationalRegistryParentsApi,
-                UserProfileApi,
+                UserProfileApiWithValidation,
                 SchoolsApi,
                 StudentInfoApi,
               ],
