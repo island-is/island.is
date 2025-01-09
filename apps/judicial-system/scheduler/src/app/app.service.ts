@@ -78,9 +78,8 @@ export class AppService {
     )
   }
 
-  private async postDailyArraignmentsSummary() {
-// TODO: set to new Date()
-    const today = new Date(2025, 0, 8)
+  private async postDailyHearingArrangementSummary() {
+    const today = new Date()
     try {
       const res = await fetch(
         `${this.config.backendUrl}/api/internal/cases/postHearingArrangements/${today}`,
@@ -109,7 +108,7 @@ export class AppService {
 
     await this.addMessagesForIndictmentsWaitingForConfirmationToQueue()
     await this.archiveCases()
-    await this.postDailyArraignmentsSummary()
+    await this.postDailyHearingArrangementSummary()
 
     this.logger.info('Scheduler done')
   }
