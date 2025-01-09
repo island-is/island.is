@@ -174,8 +174,13 @@ export const OverviewLinksSlice: React.FC<
     >
       <GridContainer>
         {slice.hasBorderAbove && <BorderAbove />}
-        {cardView && <CardView slice={slice} />}
-        {!cardView && <ImageView slice={slice} />}
+        <Stack space={3}>
+          {Boolean(slice.titleAbove) && (
+            <Text variant="h3">{slice.titleAbove}</Text>
+          )}
+          {cardView && <CardView slice={slice} />}
+          {!cardView && <ImageView slice={slice} />}
+        </Stack>
       </GridContainer>
     </section>
   )

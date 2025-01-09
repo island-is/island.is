@@ -23,6 +23,9 @@ export class OverviewLinks {
   @Field(() => ID)
   id!: string
 
+  @Field({ nullable: true })
+  titleAbove?: string
+
   @CacheField(() => [IntroLinkImage])
   overviewLinks!: Array<IntroLinkImage>
 
@@ -42,6 +45,7 @@ export const mapOverviewLinks = ({
 }: IOverviewLinks): SystemMetadata<OverviewLinks> => ({
   typename: 'OverviewLinks',
   id: sys.id,
+  title: fields.displayedTitle ?? '',
   overviewLinks: (fields.overviewLinks ?? [])
     .filter((link) => link.sys.contentType.sys.id === 'introLinkImage')
     .map((link) => mapIntroLinkImage(link as IIntroLinkImage)),
