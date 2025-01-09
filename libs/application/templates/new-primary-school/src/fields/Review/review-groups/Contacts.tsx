@@ -18,17 +18,17 @@ import {
 } from '../../../lib/newPrimarySchoolUtils'
 import { ReviewGroupProps } from './props'
 
-export const Relatives = ({
+export const Contacts = ({
   application,
   editable,
   goToScreen,
 }: ReviewGroupProps) => {
   const { formatMessage } = useLocale()
-  const { relatives } = getApplicationAnswers(application.answers)
+  const { contacts } = getApplicationAnswers(application.answers)
 
   const relationFriggOptions = useFriggOptions(OptionsType.RELATION)
 
-  const rows = relatives.map((r) => {
+  const rows = contacts.map((r) => {
     return [
       r.fullName,
       formatPhoneNumber(removeCountryCode(r.phoneNumber ?? '')),
@@ -40,17 +40,16 @@ export const Relatives = ({
   return (
     <ReviewGroup
       isEditable={editable}
-      editAction={() => goToScreen?.('relatives')}
+      editAction={() => goToScreen?.('contacts')}
     >
       <GridRow>
         <GridColumn span={['12/12', '12/12', '12/12', '12/12']}>
           <Label>
             {formatMessage(
-              newPrimarySchoolMessages.childrenNParents
-                .relativesSubSectionTitle,
+              newPrimarySchoolMessages.childrenNParents.contactsSubSectionTitle,
             )}
           </Label>
-          {relatives?.length > 0 && (
+          {contacts?.length > 0 && (
             <Box paddingTop={3}>
               <StaticTableFormField
                 application={application}
@@ -58,7 +57,7 @@ export const Relatives = ({
                   type: FieldTypes.STATIC_TABLE,
                   component: FieldComponents.STATIC_TABLE,
                   children: undefined,
-                  id: 'relativesTable',
+                  id: 'contactsTable',
                   title: '',
                   header: [
                     newPrimarySchoolMessages.shared.fullName,
