@@ -26,12 +26,14 @@ import {
 } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import { Locale } from '@island.is/shared/types'
+import { NewsCard } from '@island.is/web/components'
 import {
   GenericListItem,
   GenericListItemResponse,
   GenericTag,
   GetGenericListItemsInputOrderBy,
   GetGenericListItemsQueryVariables,
+  Image as ImageSchema,
   Query,
 } from '@island.is/web/graphql/schema'
 import { useWindowSize } from '@island.is/web/hooks/useViewport'
@@ -133,6 +135,8 @@ export const ClickableItem = ({ item, baseUrl }: ClickableItemProps) => {
 
   let icon: IconProps['icon'] | null = null
 
+  const image = item.image ?? null
+
   let href = item.slug ? `${pathname}/${item.slug}` : undefined
   if (item.assetUrl) {
     href = item.assetUrl
@@ -143,6 +147,25 @@ export const ClickableItem = ({ item, baseUrl }: ClickableItemProps) => {
   }
 
   const filterTags = item.filterTags ?? []
+
+  if (image) {
+    return (
+      <NewsCard
+        title={item.title}
+        introduction={
+          item.cardIntro?.length > 0 && (
+            <Box>{webRichText(item.cardIntro ?? [])}</Box>
+          )
+        }
+        href={href ?? ''}
+        image={item.image as ImageSchema}
+        readMoreText=""
+        titleTextColor="blue400"
+        date={item.date ?? ''}
+        dateTextColor="purple400"
+      />
+    )
+  }
 
   return (
     <FocusableBox
