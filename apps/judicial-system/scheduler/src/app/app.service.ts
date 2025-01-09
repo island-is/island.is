@@ -78,39 +78,30 @@ export class AppService {
     )
   }
 
-  // New arraignments can be added with only few hour notice
-  // Maybe we should then also send an updated summary alert when arraignment is added today
   private async postDailyArraignmentsSummary() {
-    // Fetch all court arrangement happening today
-    const getCasesAtArraignmentDate = async () => {
-      const today = new Date()
-
-      try {
-        const res = await fetch(
-          `${this.config.backendUrl}/api/internal/cases/arraignmentDate/${today}`,
-          {
-            method: 'GET',
-            headers: {
-              'Content-Type': 'application/json',
-              authorization: `Bearer ${this.config.backendAccessToken}`,
-            },
+// TODO: set to new Date()
+    const today = new Date(2025, 0, 8)
+    try {
+      const res = await fetch(
+        `${this.config.backendUrl}/api/internal/cases/postHearingArrangements/${today}`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            authorization: `Bearer ${this.config.backendAccessToken}`,
           },
+        },
+      )
+
+      if (!res.ok) {
+        throw new BadGatewayException(
+          'Unexpected error occurred while fetching cases',
         )
-
-        if (!res.ok) {
-          throw new BadGatewayException(
-            'Unexpected error occurred while fetching cases',
-          )
-        }
-        return res.json()
-        // send the aggregated notification for the cases: eventService -> new endpoint
-      } catch (error) {
-        throw new BadGatewayException(`Failed to fetch cases: ${error.message}`)
       }
+      return res.json()
+    } catch (error) {
+      throw new BadGatewayException(`Failed to fetch cases: ${error.message}`)
     }
-
-    const cases = await getCasesAtArraignmentDate()
-    console.log({cases})
   }
 
   async run() {

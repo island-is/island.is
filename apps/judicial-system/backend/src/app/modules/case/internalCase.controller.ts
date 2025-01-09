@@ -77,18 +77,23 @@ export class InternalCaseController {
     return this.internalCaseService.archive()
   }
 
-  @Get('cases/arraignmentDate/:arraignmentDate')
+  @Post('cases/postHearingArrangements/:date')
   @ApiOkResponse({
     type: Case,
     isArray: true,
-    description: 'Fetch all cases that have court arrangement for a given date',
+    description:
+      'Fetch all cases that have court hearing arrangements for a given date',
   })
-  getCasesAtArraignmentDate(@Param('date') date: Date): Promise<Case[]> {
+  async postHearingArrangements(@Param('date') date: Date): Promise<Case[]> {
     this.logger.debug(
-      `Getting all cases that have court arrangement at ${date}`,
+      `Post internal summary of all cases that have court hearing arrangement at ${date}`,
     )
 
-    return this.internalCaseService.getAllCasesAtArraignmentDate(date)
+    const cases = await this.internalCaseService.getCaseHearingArrangements(
+      date,
+    )
+    await this.eventService.postDailyHearingArrangementEvents(date, cases)
+    return cases
   }
 
   @Get('cases/indictments/defendant/:defendantNationalId')
