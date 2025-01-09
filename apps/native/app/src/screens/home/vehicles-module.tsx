@@ -1,3 +1,9 @@
+import React, { useMemo } from 'react'
+import { FormattedMessage, useIntl } from 'react-intl'
+import { Image, SafeAreaView, TouchableOpacity } from 'react-native'
+import styled, { useTheme } from 'styled-components/native'
+import { ApolloError } from '@apollo/client'
+
 import {
   Typography,
   Heading,
@@ -5,14 +11,7 @@ import {
   ViewPager,
   EmptyCard,
   GeneralCardSkeleton,
-} from '@ui'
-
-import React, { useMemo } from 'react'
-import { FormattedMessage, useIntl } from 'react-intl'
-import { Image, SafeAreaView, TouchableOpacity } from 'react-native'
-import styled, { useTheme } from 'styled-components/native'
-import { ApolloError } from '@apollo/client'
-
+} from '../../ui'
 import illustrationSrc from '../../assets/illustrations/le-moving-s4.png'
 import { navigateTo } from '../../lib/deep-linking'
 import { VehicleItem } from '../vehicles/components/vehicle-item'

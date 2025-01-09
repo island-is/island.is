@@ -83,4 +83,9 @@ export const strings = defineMessages({
     defaultMessage: 'Afturkallað',
     description: 'Notað sem merki þegar mál í stöðu "Afturkallað" í málalista',
   },
+  notYetServiced: {
+    id: 'judicial.system.core:tag_case_state.not_yet_serviced',
+    defaultMessage: 'Óbirt',
+    description: 'Notað sem merki þegar mál í stöðu "Óbirt" í málalista',
+  },
 })

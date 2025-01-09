@@ -183,10 +183,6 @@ export const useEligibility = (
 
     const requirements = [
       ...eligibility,
-      {
-        key: RequirementKey.HasNoPhoto,
-        requirementMet: hasQualityPhoto,
-      },
       ...(hasExtendedLicense
         ? [
             {

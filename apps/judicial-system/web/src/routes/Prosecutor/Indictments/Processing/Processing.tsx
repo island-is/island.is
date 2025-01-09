@@ -76,6 +76,8 @@ const Processing: FC = () => {
     deleteCivilClaimant,
   } = useCivilClaimants()
   const router = useRouter()
+
+  // TODO: currently for e2e tests, this is failing locally due to this feature flag
   const isTrafficViolationCaseCheck =
     features.includes(Feature.MULTIPLE_INDICTMENT_SUBTYPES) ||
     isTrafficViolationCase(workingCase)
@@ -384,6 +386,7 @@ const Processing: FC = () => {
           component="section"
           marginBottom={workingCase.hasCivilClaims === true ? 5 : 10}
         >
+          <SectionHeading title={formatMessage(strings.civilDemandsTitle)} />
           <BlueBox>
             <SectionHeading
               title={formatMessage(strings.isCivilClaim)}
