@@ -73,7 +73,7 @@ const config: PlaywrightTestConfig = {
       use: {
         /* Slows down execution in ms */
         launchOptions: {
-          slowMo: 1000,
+          slowMo: 200,
         },
       },
     },
