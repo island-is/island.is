@@ -70,19 +70,6 @@ export const Conclusion: Form = buildForm({
               buttonTitle: coreMessages.openServicePortalButtonTitle,
               message: coreMessages.openServicePortalMessageText,
             }),
-            buildSubmitField({
-              id: 'submit',
-              placement: 'footer',
-              title: '',
-              refetchApplicationAfterSubmit: true,
-              actions: [
-                {
-                  event: DefaultEvents.EDIT,
-                  name: conclusion.overview.editButton,
-                  type: 'signSubtle',
-                },
-              ],
-            }),
           ],
         }),
       ],

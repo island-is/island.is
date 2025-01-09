@@ -49,11 +49,7 @@ const submitButtonConfig: Record<CallToAction['type'], SubmitButton> = {
     colorScheme: 'light',
     variant: 'ghost',
   },
-  signSubtle: {
-    icon: 'pencil',
-    colorScheme: 'light',
-    variant: 'ghost',
-  },
+
   reject: {
     icon: 'close',
     colorScheme: 'destructive',
