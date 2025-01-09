@@ -80,10 +80,7 @@ export const NationalIdWithName: FC<
   const phoneField = `${fieldId}.phone`
 
   const { formatMessage } = useLocale()
-  const {
-    setValue,
-    formState: { errors },
-  } = useFormContext()
+  const { setValue } = useFormContext()
   const [nationalIdInput, setNationalIdInput] = useState('')
   const [personName, setPersonName] = useState('')
   const [companyName, setCompanyName] = useState('')
@@ -95,10 +92,13 @@ export const NationalIdWithName: FC<
     if (!error || typeof error !== 'object') return undefined
 
     const errorList = error as Record<string, unknown>[]
-    if (!Array.isArray(errorList)) return undefined
-
-    const fieldError = errorList[id as any]
-    return typeof fieldError === 'string' ? fieldError : undefined
+    if (!Array.isArray(errorList)) {
+      const fieldError = getValueViaPath<any>(errorList, id)
+      return typeof fieldError === 'string' ? fieldError : undefined
+    } else {
+      const fieldError = errorList[id as any]
+      return typeof fieldError === 'string' ? fieldError : undefined
+    }
   }
 
   // get national id validation errors
@@ -265,7 +265,8 @@ export const NationalIdWithName: FC<
                   : undefined
                 : undefined
             }
-            disabled
+            disabled={disabled}
+            readOnly={!disabled}
           />
         </GridColumn>
       </GridRow>

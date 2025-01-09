@@ -9,13 +9,13 @@ import { ApiScope } from '@island.is/auth/scopes'
 import { FinanceClientService } from '@island.is/clients/finance'
 import { AuditService } from '@island.is/nest/audit'
 import {
-  Body,
   Controller,
   Header,
   Param,
   Post,
   Res,
   UseGuards,
+  Query,
 } from '@nestjs/common'
 import { ApiOkResponse } from '@nestjs/swagger'
 import { Response } from 'express'
@@ -39,19 +39,20 @@ export class FinanceDocumentController {
     @CurrentUser() user: User,
     @Res() res: Response,
     @Param('pdfId') pdfId: string,
-    @Body('annualDoc') annualDoc?: string,
+    @Query('action') action?: string,
   ) {
-    const documentResponse = annualDoc
-      ? await this.financeService.getAnnualStatusDocument(
-          user.nationalId,
-          pdfId,
-          user,
-        )
-      : await this.financeService.getFinanceDocument(
-          user.nationalId,
-          pdfId,
-          user,
-        )
+    const documentResponse =
+      action === 'annualDoc'
+        ? await this.financeService.getAnnualStatusDocument(
+            user.nationalId,
+            pdfId,
+            user,
+          )
+        : await this.financeService.getFinanceDocument(
+            user.nationalId,
+            pdfId,
+            user,
+          )
 
     const documentBase64 = documentResponse?.docment?.document
 
