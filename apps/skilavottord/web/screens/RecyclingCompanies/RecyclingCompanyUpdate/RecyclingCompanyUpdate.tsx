@@ -2,7 +2,7 @@ import { useMutation, useQuery } from '@apollo/client'
 import gql from 'graphql-tag'
 import NextLink from 'next/link'
 import { useRouter } from 'next/router'
-import React, { FC, useContext } from 'react'
+import React, { FC, useContext, useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 
 import {
@@ -126,7 +126,7 @@ const RecyclingCompanyUpdate: FC<React.PropsWithChildren<unknown>> = () => {
   let activeSection = 2
   let route = routes.recyclingCompanies.baseRoute
 
-  React.useEffect(() => {
+  useEffect(() => {
     setValue('isMunicipality', isMunicipalityPage)
   }, [isMunicipalityPage, setValue])
 

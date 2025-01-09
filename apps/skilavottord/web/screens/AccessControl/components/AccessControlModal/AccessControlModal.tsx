@@ -40,7 +40,6 @@ interface AccessControlModalProps
   nationalIdDisabled?: boolean
   partnerIdRequired?: boolean
   municipalities?: Option[]
-
   currentPartner?: AccessControl
 }
 

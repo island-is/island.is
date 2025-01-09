@@ -12,6 +12,7 @@ type Page =
 
 export const hasDeveloperRole = (role: Role | undefined) =>
   role === Role.developer
+
 export const hasMunicipalityRole = (role: Role | undefined) =>
   role === Role.municipality
 

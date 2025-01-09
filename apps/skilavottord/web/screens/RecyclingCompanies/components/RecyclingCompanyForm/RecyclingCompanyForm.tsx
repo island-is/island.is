@@ -206,7 +206,6 @@ const RecyclingCompanyForm: FC<
               />
             </GridColumn>
           </GridRow>
-
           <GridRow>
             <GridColumn
               span={['12/12', '12/12', '12/12', '6/12']}
@@ -284,7 +283,6 @@ const RecyclingCompanyForm: FC<
               />
             </GridColumn>
           </GridRow>
-
           {!isMunicipalityPage && (
             <GridRow>
               <GridColumn span="12/12">
@@ -344,7 +342,7 @@ const RecyclingCompanyForm: FC<
               />
             </GridColumn>
           </GridRow>
-          <div
+          <Box
             style={{
               display:
                 user?.role && hasDeveloperRole(user.role) ? 'block' : 'none',
@@ -369,7 +367,7 @@ const RecyclingCompanyForm: FC<
                 />
               </GridColumn>
             </GridRow>
-          </div>
+          </Box>
         </Stack>
       </GridContainer>
       <Box display="flex" justifyContent="spaceBetween" marginTop={7}>

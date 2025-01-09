@@ -39,7 +39,6 @@ export class AccessControlService {
     // Get all sub recycling partners of the municipality
     // else get all
     if (partnerId) {
-      // Get all sub recycling partners of the municipality
       const subRecyclingPartners = await RecyclingPartnerModel.findAll({
         where: { municipalityId: partnerId },
       })
