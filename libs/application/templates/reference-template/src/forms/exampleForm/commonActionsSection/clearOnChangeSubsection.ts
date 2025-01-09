@@ -27,7 +27,8 @@ export const clearOnChangeSubsection = buildSubSection({
           id: 'descriptionField',
           title: '',
           description: `Clear on change allows a field to clear other fields when its value or selection changes. 
-            Below are some examples of fields that will clear the bottom field when changed.`,
+            Below are some examples of fields that will clear the bottom field when changed. 
+            Note that the fields that are cleared can be anywhere in the application, not just on the same screen.`,
         }),
         buildDescriptionField({
           id: 'descriptionField2',
