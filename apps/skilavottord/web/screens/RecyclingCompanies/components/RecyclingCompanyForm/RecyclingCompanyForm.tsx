@@ -60,10 +60,14 @@ const RecyclingCompanyForm: FC<
     t: { recyclingCompanies: t },
   } = useI18n()
 
-  const { data } =
+  const { data, error, loading } =
     useQuery<Query>(SkilavottordAllMunicipalitiesQuery, {
       fetchPolicy: 'cache-and-network',
     }) || []
+
+  if (error) {
+    console.error('Failed to fetch municipalities:', error)
+  }
 
   const municipalities = data?.skilavottordAllMunicipalities
     .map((municipality) => ({
@@ -381,7 +385,7 @@ const RecyclingCompanyForm: FC<
           </Button>
         )}
 
-        <Button icon="save" type="submit">
+        <Button icon="save" type="submit" disabled={loading}>
           {t.recyclingCompany.form.buttons.confirm}
         </Button>
       </Box>
