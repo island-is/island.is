@@ -291,7 +291,7 @@ export const coreMessages = defineMessages({
   },
   openServicePortalButtonTitle: {
     id: 'application.system:openServicePortal.buttonTitle',
-    defaultMessage: 'Aftur á Mínar síður',
+    defaultMessage: 'Opna Mínar síður',
     description: 'Button text for form builder component, go to service portal',
   },
   copyLinkSuccessToast: {
