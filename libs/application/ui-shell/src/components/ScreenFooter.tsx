@@ -49,7 +49,6 @@ const submitButtonConfig: Record<CallToAction['type'], SubmitButton> = {
     colorScheme: 'light',
     variant: 'ghost',
   },
-
   reject: {
     icon: 'close',
     colorScheme: 'destructive',
