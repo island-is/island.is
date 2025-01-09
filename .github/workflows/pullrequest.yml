@@ -87,7 +87,7 @@ jobs:
       - name: Keep PR run event
         uses: actions/upload-artifact@b18b1d32f3f31abcdc29dee3f2484801fe7822f4
         # Don't run this step locally
-        if: ${{ !github.event.localrun }}
+        if: ${{ !env.ACT }}
         with:
           name: pr-event
           path: event.json
