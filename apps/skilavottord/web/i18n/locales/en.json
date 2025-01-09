@@ -493,7 +493,9 @@
           "municipality": {
             "label": "Municipality",
             "placeholder": "Municipality",
-            "required": "Municipality is required"
+            "rules": {
+              "required": "Municipality is required"
+            }
           }
         },
         "buttons": {

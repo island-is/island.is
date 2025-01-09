@@ -28,7 +28,7 @@ const getObjectPrefix = (prefix: string, el: string): string => {
   return el
 }
 
-xdescribe('Locales tests', () => {
+describe('Locales tests', () => {
   it('should contain the same keys for all translations', () => {
     const getKeys: any = (obj: any, prefix = '') => {
       if (!isObject(obj) && !isArray(obj)) {
