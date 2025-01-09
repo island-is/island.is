@@ -85,8 +85,10 @@ export const getCleanContacts = (
 
   // Parents
   const parents = (
-    (application.externalData.nationalRegistryParents
-      .data as NationalRegistryParent[]) || []
+    getValueViaPath<NationalRegistryParent[]>(
+      application.externalData,
+      'nationalRegistryParents.data',
+    ) || []
   ).filter((x) => !!x.nationalId)
   const parentsAnswers =
     getValueViaPath<SecondarySchoolAnswers['custodians']>(
