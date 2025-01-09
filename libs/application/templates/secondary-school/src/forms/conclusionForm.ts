@@ -5,11 +5,10 @@ import {
   buildMessageWithLinkButtonField,
   buildMultiField,
   buildSection,
-  buildSubmitField,
   coreMessages,
   getValueViaPath,
 } from '@island.is/application/core'
-import { DefaultEvents, Form, FormModes } from '@island.is/application/types'
+import { Form, FormModes } from '@island.is/application/types'
 import { conclusion } from '../lib/messages'
 import { Logo } from '../assets/Logo'
 import { ApplicationType } from '../utils'
@@ -19,7 +18,6 @@ export const Conclusion: Form = buildForm({
   title: '',
   logo: Logo,
   mode: FormModes.IN_PROGRESS,
-  renderLastScreenButton: true,
   children: [
     buildSection({
       id: 'conclusionSection',
@@ -69,6 +67,7 @@ export const Conclusion: Form = buildForm({
               url: '/minarsidur/umsoknir',
               buttonTitle: coreMessages.openServicePortalButtonTitle,
               message: coreMessages.openServicePortalMessageText,
+              marginBottom: [4, 4, 12],
             }),
           ],
         }),
