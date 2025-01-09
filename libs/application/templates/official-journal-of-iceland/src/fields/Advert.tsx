@@ -13,7 +13,7 @@ import set from 'lodash/set'
 import { HTMLEditor } from '../components/htmlEditor/HTMLEditor'
 import { cleanTypename, getAdvertMarkup } from '../lib/utils'
 import { DEPARTMENT_A } from '../lib/constants'
-import { useAdvertTemplateTypes } from '../hooks/useAdvertTemplates'
+import { useAdvertTemplateTypes } from '../hooks/useAdvertTemplateTypes'
 
 export const Advert = ({ application }: OJOIFieldBaseProps) => {
   const { setValue } = useFormContext()

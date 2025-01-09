@@ -3,16 +3,18 @@ import { ADVERT_TEMPLATES_QUERY } from '../graphql/queries'
 import { OfficialJournalOfIcelandApplicationAdvertTemplatesResponse } from '@island.is/api/schema'
 
 type TemplatesResponse = {
-  officialJournalOfIcelandAdvertTemplates: OfficialJournalOfIcelandApplicationAdvertTemplatesResponse
+  officialJournalOfIcelandApplicationAdvertTemplates: OfficialJournalOfIcelandApplicationAdvertTemplatesResponse
 }
 
 export const useAdvertTemplateTypes = () => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { data, error, loading } = useQuery<TemplatesResponse>(
     ADVERT_TEMPLATES_QUERY,
   )
 
   return {
-    templateTypes: data?.officialJournalOfIcelandAdvertTemplates.templateTypes,
+    templateTypes:
+      data?.officialJournalOfIcelandApplicationAdvertTemplates.templateTypes,
     error,
     loading,
   }
