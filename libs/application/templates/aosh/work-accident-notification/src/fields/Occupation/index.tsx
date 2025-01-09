@@ -141,6 +141,8 @@ export const Occupation: FC<
   }
 
   const onChangeMajorGroup = (value?: EventOption) => {
+    setValue(`employee[${idx}].victimsOccupation`, undefined)
+
     if (!value || !value.value || !value.label) return
     const selectedGroup: Options = {
       value: value.value,

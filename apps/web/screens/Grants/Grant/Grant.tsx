@@ -190,9 +190,11 @@ const GrantSinglePage: CustomScreen<GrantSingleProps> = ({ grant, locale }) => {
               )}
             </Box>
           ) : undefined}
-          <Hidden above="md">
-            <ExtraPanel grant={grant} />
-          </Hidden>
+          {(grant.files || grant.supportLinks) && (
+            <Hidden above="md">
+              <ExtraPanel grant={grant} />
+            </Hidden>
+          )}
           <Hidden above="md">
             <InstitutionPanel
               institutionTitle={formatMessage(m.single.provider)}
