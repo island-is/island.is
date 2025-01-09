@@ -8,7 +8,6 @@ import {
   getDaysFromNow,
   randomIndictmentCourtCaseNumber,
   chooseDocument,
-  verifyUpload,
 } from '../utils/helpers'
 
 test.use({ baseURL: urls.judicialSystemBaseUrl })
