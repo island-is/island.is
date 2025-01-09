@@ -6,8 +6,10 @@ import {
 import {
   Box,
   Button,
+  Hidden,
   Hyphen,
   LinkV2,
+  LoadingDots,
   Select,
   SkeletonLoader,
   Table as T,
@@ -22,6 +24,8 @@ import {
   LinkResolver,
   m,
   StackWithBottomDivider,
+  MobileTable,
+  NestedLines,
   UserInfoLine,
 } from '@island.is/portals/my-pages/core'
 import { Problem } from '@island.is/react-spa/shared'
@@ -237,242 +241,365 @@ export const MedicinePurchase = () => {
               <Text marginBottom={CONTENT_GAP} variant="h5">
                 {formatMessage(messages.medicineBills)}
               </Text>
-              <T.Table data-testid="invoices">
-                <ExpandHeader
-                  data={[
-                    { value: '' },
-                    { value: formatMessage(m.date) },
-                    { value: formatMessage(m.explanationNote) },
-                    {
-                      value: (
-                        <Hyphen>
-                          {formatMessage(
-                            messages.medicinePaymentParticipationPrice,
-                          )}
-                        </Hyphen>
-                      ),
-                    },
-                    { value: formatMessage(messages.medicinePaidByCustomer) },
-                  ]}
-                />
-                {bills.map((bill, i) => {
-                  return (
-                    <T.Body key={i}>
-                      <ExpandRow
-                        expandWhenLoadingFinished={true}
-                        loading={
-                          lineItemLoading && bill.id === selectedLineItem
-                        }
-                        data={[
-                          { value: formatDateFns(bill.date, DATE_FORMAT) },
-                          { value: bill.description ?? '' },
-                          {
-                            value: amountFormat(bill.totalCopaymentAmount ?? 0),
-                          },
-                          {
-                            value: amountFormat(bill.totalCustomerAmount ?? 0),
-                          },
-                        ]}
-                        onExpandCallback={() => {
-                          if (bill?.id && selectedPeriod?.id) {
-                            setSelectedLineItem(bill.id)
-                            lineItemQuery({
-                              variables: {
-                                input: {
-                                  billId: bill.id,
-                                  paymentPeriodId: selectedPeriod.id,
-                                },
-                              },
-                              onCompleted: (data) => {
-                                if (bill && bill.id) {
-                                  fetchedLineItems.set(
-                                    bill.id,
-                                    data.rightsPortalDrugBillLines,
-                                  )
-                                }
-                              },
-                            })
+              <Hidden below="md">
+                <T.Table data-testid="invoices">
+                  <ExpandHeader
+                    data={[
+                      { value: '' },
+                      { value: formatMessage(m.date) },
+                      { value: formatMessage(m.explanationNote) },
+                      {
+                        value: (
+                          <Hyphen>
+                            {formatMessage(
+                              messages.medicinePaymentParticipationPrice,
+                            )}
+                          </Hyphen>
+                        ),
+                      },
+                      { value: formatMessage(messages.medicinePaidByCustomer) },
+                    ]}
+                  />
+                  {bills.map((bill, i) => {
+                    return (
+                      <T.Body key={i}>
+                        <ExpandRow
+                          expandWhenLoadingFinished={true}
+                          loading={
+                            lineItemLoading && bill.id === selectedLineItem
                           }
-                        }}
-                      >
-                        <Box
-                          padding={CONTENT_GAP}
-                          paddingBottom={SECTION_GAP}
-                          background="blue100"
+                          data={[
+                            { value: formatDateFns(bill.date, DATE_FORMAT) },
+                            { value: bill.description ?? '' },
+                            {
+                              value: amountFormat(
+                                bill.totalCopaymentAmount ?? 0,
+                              ),
+                            },
+                            {
+                              value: amountFormat(
+                                bill.totalCustomerAmount ?? 0,
+                              ),
+                            },
+                          ]}
+                          onExpandCallback={() => {
+                            if (bill?.id && selectedPeriod?.id) {
+                              setSelectedLineItem(bill.id)
+                              lineItemQuery({
+                                variables: {
+                                  input: {
+                                    billId: bill.id,
+                                    paymentPeriodId: selectedPeriod.id,
+                                  },
+                                },
+                                onCompleted: (data) => {
+                                  if (bill && bill.id) {
+                                    fetchedLineItems.set(
+                                      bill.id,
+                                      data.rightsPortalDrugBillLines,
+                                    )
+                                  }
+                                },
+                              })
+                            }
+                          }}
                         >
-                          <Text variant="h5" marginBottom={1}>
-                            {formatMessage(messages.medicineDrugLines)}
-                          </Text>
-                          <T.Table>
-                            <T.Head>
-                              <T.Row>
-                                <T.HeadData text={{ lineHeight: 'xs' }}>
-                                  <span className={styles.subTableHeaderText}>
-                                    {formatMessage(messages.medicineDrugName)}
-                                  </span>
-                                </T.HeadData>
-                                <T.HeadData text={{ lineHeight: 'xs' }}>
-                                  <span className={styles.subTableHeaderText}>
-                                    {formatMessage(messages.medicineStrength)}
-                                  </span>
-                                </T.HeadData>
-                                <T.HeadData text={{ lineHeight: 'xs' }}>
-                                  <span className={styles.subTableHeaderText}>
-                                    {formatMessage(messages.medicineQuantity)}
-                                  </span>
-                                </T.HeadData>
-                                <T.HeadData text={{ lineHeight: 'xs' }}>
-                                  <span className={styles.subTableHeaderText}>
-                                    {formatMessage(messages.medicineAmount)}
-                                  </span>
-                                </T.HeadData>
-                                <T.HeadData text={{ lineHeight: 'xs' }}>
-                                  <span className={styles.subTableHeaderText}>
-                                    {formatMessage(messages.medicineSalePrice)}
-                                  </span>
-                                </T.HeadData>
-                                <T.HeadData text={{ lineHeight: 'xs' }}>
-                                  <span className={styles.subTableHeaderText}>
-                                    <Hyphen>
+                          <Box
+                            padding={CONTENT_GAP}
+                            paddingBottom={SECTION_GAP}
+                            background="blue100"
+                          >
+                            <Text variant="h5" marginBottom={1}>
+                              {formatMessage(messages.medicineDrugLines)}
+                            </Text>
+                            <T.Table>
+                              <T.Head>
+                                <T.Row>
+                                  <T.HeadData text={{ lineHeight: 'xs' }}>
+                                    <span className={styles.subTableHeaderText}>
+                                      {formatMessage(messages.medicineDrugName)}
+                                    </span>
+                                  </T.HeadData>
+                                  <T.HeadData text={{ lineHeight: 'xs' }}>
+                                    <span className={styles.subTableHeaderText}>
+                                      {formatMessage(messages.medicineStrength)}
+                                    </span>
+                                  </T.HeadData>
+                                  <T.HeadData text={{ lineHeight: 'xs' }}>
+                                    <span className={styles.subTableHeaderText}>
+                                      {formatMessage(messages.medicineQuantity)}
+                                    </span>
+                                  </T.HeadData>
+                                  <T.HeadData text={{ lineHeight: 'xs' }}>
+                                    <span className={styles.subTableHeaderText}>
+                                      {formatMessage(messages.medicineAmount)}
+                                    </span>
+                                  </T.HeadData>
+                                  <T.HeadData text={{ lineHeight: 'xs' }}>
+                                    <span className={styles.subTableHeaderText}>
                                       {formatMessage(
-                                        messages.medicinePaymentParticipationPrice,
+                                        messages.medicineSalePrice,
                                       )}
-                                    </Hyphen>
-                                  </span>
-                                </T.HeadData>
-                                <T.HeadData text={{ lineHeight: 'xs' }}>
-                                  <span className={styles.subTableHeaderText}>
-                                    <Hyphen>
+                                    </span>
+                                  </T.HeadData>
+                                  <T.HeadData text={{ lineHeight: 'xs' }}>
+                                    <span className={styles.subTableHeaderText}>
+                                      <Hyphen>
+                                        {formatMessage(
+                                          messages.medicinePaymentParticipationPrice,
+                                        )}
+                                      </Hyphen>
+                                    </span>
+                                  </T.HeadData>
+                                  <T.HeadData text={{ lineHeight: 'xs' }}>
+                                    <span className={styles.subTableHeaderText}>
+                                      <Hyphen>
+                                        {formatMessage(
+                                          messages.medicineExcessPrice,
+                                        )}
+                                      </Hyphen>
+                                    </span>
+                                  </T.HeadData>
+                                  <T.HeadData text={{ lineHeight: 'xs' }}>
+                                    <span className={styles.subTableHeaderText}>
                                       {formatMessage(
-                                        messages.medicineExcessPrice,
+                                        messages.medicinePaidByCustomer,
                                       )}
-                                    </Hyphen>
-                                  </span>
-                                </T.HeadData>
-                                <T.HeadData text={{ lineHeight: 'xs' }}>
-                                  <span className={styles.subTableHeaderText}>
-                                    {formatMessage(
-                                      messages.medicinePaidByCustomer,
-                                    )}
-                                  </span>
-                                </T.HeadData>
-                              </T.Row>
-                            </T.Head>
-                            <T.Body>
-                              {[...fetchedLineItems].map((item, j) => {
-                                const [billId, lineItems] = item
+                                    </span>
+                                  </T.HeadData>
+                                </T.Row>
+                              </T.Head>
+                              <T.Body>
+                                {[...fetchedLineItems].map((item, j) => {
+                                  const [billId, lineItems] = item
 
-                                if (billId !== bill.id) return null
-                                return lineItems.map((lineItem, k) => {
-                                  return (
-                                    <T.Row key={`${i}-${j}-${k}`}>
-                                      <T.Data>{lineItem.drugName}</T.Data>
-                                      <T.Data>{lineItem.strength}</T.Data>
-                                      <T.Data>{lineItem.quantity}</T.Data>
-                                      <T.Data>{lineItem.units}</T.Data>
-                                      <T.Data>
-                                        {amountFormat(lineItem.salesPrice ?? 0)}
-                                      </T.Data>
-                                      <T.Data>
-                                        {amountFormat(
-                                          lineItem.copaymentAmount ?? 0,
-                                        )}
-                                      </T.Data>
-                                      <T.Data>
-                                        {amountFormat(
-                                          lineItem.excessAmount ?? 0,
-                                        )}
-                                      </T.Data>
-                                      <T.Data>
-                                        {amountFormat(
-                                          lineItem.customerAmount ?? 0,
-                                        )}
-                                      </T.Data>
-                                    </T.Row>
-                                  )
-                                })
-                              })}
-                            </T.Body>
-                            <T.Foot>
-                              <T.Row>
-                                <T.Data>
-                                  <span className={styles.subTableHeaderText}>
-                                    {formatMessage(m.total)}
-                                  </span>
-                                </T.Data>
-                                <T.Data></T.Data>
-                                <T.Data></T.Data>
-                                <T.Data></T.Data>
-                                <T.Data></T.Data>
-                                <T.Data>
-                                  <span className={styles.subTableHeaderText}>
-                                    {amountFormat(
-                                      bill.totalCopaymentAmount ?? 0,
-                                    )}
-                                  </span>
-                                </T.Data>
-                                <T.Data>
-                                  <span className={styles.subTableHeaderText}>
-                                    {amountFormat(bill.totalExcessAmount ?? 0)}
-                                  </span>
-                                </T.Data>
-                                <T.Data>
-                                  <span className={styles.subTableHeaderText}>
-                                    {amountFormat(
-                                      bill.totalCustomerAmount ?? 0,
-                                    )}
-                                  </span>
-                                </T.Data>
-                              </T.Row>
-                            </T.Foot>
-                          </T.Table>
-
-                          <DownloadFileButtons
-                            BoxProps={{
-                              paddingX: 2,
-                              paddingTop: 2,
-                              background: 'blue100',
-                            }}
-                            buttons={[
-                              {
-                                text: formatMessage(m.getAsExcel),
-                                onClick: () =>
-                                  exportMedicineFile(
-                                    [
-                                      formatDateFns(bill.date, DATE_FORMAT),
-                                      bill.description ?? '',
-                                      amountFormat(
+                                  if (billId !== bill.id) return null
+                                  return lineItems.map((lineItem, k) => {
+                                    return (
+                                      <T.Row key={`${i}-${j}-${k}`}>
+                                        <T.Data>{lineItem.drugName}</T.Data>
+                                        <T.Data>{lineItem.strength}</T.Data>
+                                        <T.Data>{lineItem.quantity}</T.Data>
+                                        <T.Data>{lineItem.units}</T.Data>
+                                        <T.Data>
+                                          {amountFormat(
+                                            lineItem.salesPrice ?? 0,
+                                          )}
+                                        </T.Data>
+                                        <T.Data>
+                                          {amountFormat(
+                                            lineItem.copaymentAmount ?? 0,
+                                          )}
+                                        </T.Data>
+                                        <T.Data>
+                                          {amountFormat(
+                                            lineItem.excessAmount ?? 0,
+                                          )}
+                                        </T.Data>
+                                        <T.Data>
+                                          {amountFormat(
+                                            lineItem.customerAmount ?? 0,
+                                          )}
+                                        </T.Data>
+                                      </T.Row>
+                                    )
+                                  })
+                                })}
+                              </T.Body>
+                              <T.Foot>
+                                <T.Row>
+                                  <T.Data>
+                                    <span className={styles.subTableHeaderText}>
+                                      {formatMessage(m.total)}
+                                    </span>
+                                  </T.Data>
+                                  <T.Data></T.Data>
+                                  <T.Data></T.Data>
+                                  <T.Data></T.Data>
+                                  <T.Data></T.Data>
+                                  <T.Data>
+                                    <span className={styles.subTableHeaderText}>
+                                      {amountFormat(
                                         bill.totalCopaymentAmount ?? 0,
-                                      ),
-                                      amountFormat(
-                                        bill.totalCustomerAmount ?? 0,
-                                      ),
-                                    ],
-                                    [...fetchedLineItems].filter(
-                                      (lItem) => lItem[0] === bill.id,
-                                    )?.[0]?.[1] ?? [],
-                                    {
-                                      part: amountFormat(
-                                        bill.totalCopaymentAmount ?? 0,
-                                      ),
-                                      excess: amountFormat(
+                                      )}
+                                    </span>
+                                  </T.Data>
+                                  <T.Data>
+                                    <span className={styles.subTableHeaderText}>
+                                      {amountFormat(
                                         bill.totalExcessAmount ?? 0,
-                                      ),
-                                      customer: amountFormat(
+                                      )}
+                                    </span>
+                                  </T.Data>
+                                  <T.Data>
+                                    <span className={styles.subTableHeaderText}>
+                                      {amountFormat(
                                         bill.totalCustomerAmount ?? 0,
-                                      ),
-                                    },
-                                    'xlsx',
+                                      )}
+                                    </span>
+                                  </T.Data>
+                                </T.Row>
+                              </T.Foot>
+                            </T.Table>
+
+                            <DownloadFileButtons
+                              BoxProps={{
+                                paddingX: 2,
+                                paddingTop: 2,
+                                background: 'blue100',
+                              }}
+                              buttons={[
+                                {
+                                  text: formatMessage(m.getAsExcel),
+                                  onClick: () =>
+                                    exportMedicineFile(
+                                      [
+                                        formatDateFns(bill.date, DATE_FORMAT),
+                                        bill.description ?? '',
+                                        amountFormat(
+                                          bill.totalCopaymentAmount ?? 0,
+                                        ),
+                                        amountFormat(
+                                          bill.totalCustomerAmount ?? 0,
+                                        ),
+                                      ],
+                                      [...fetchedLineItems].filter(
+                                        (lItem) => lItem[0] === bill.id,
+                                      )?.[0]?.[1] ?? [],
+                                      {
+                                        part: amountFormat(
+                                          bill.totalCopaymentAmount ?? 0,
+                                        ),
+                                        excess: amountFormat(
+                                          bill.totalExcessAmount ?? 0,
+                                        ),
+                                        customer: amountFormat(
+                                          bill.totalCustomerAmount ?? 0,
+                                        ),
+                                      },
+                                      'xlsx',
+                                    ),
+                                },
+                              ]}
+                            />
+                          </Box>
+                        </ExpandRow>
+                      </T.Body>
+                    )
+                  })}
+                </T.Table>
+              </Hidden>
+              <Hidden above="sm">
+                <MobileTable
+                  rows={bills.map((bill) => ({
+                    title: bill.description ?? '',
+                    data: [
+                      {
+                        title: formatMessage(m.date),
+                        content: formatDateFns(bill.date, DATE_FORMAT),
+                      },
+                      {
+                        title: formatMessage(
+                          messages.medicinePaymentParticipationPrice,
+                        ),
+                        content: amountFormat(bill.totalCopaymentAmount ?? 0),
+                      },
+                      {
+                        title: formatMessage(messages.medicinePaidByCustomer),
+                        content: amountFormat(bill.totalCustomerAmount ?? 0),
+                      },
+                    ],
+                    onExpandCallback: () => {
+                      if (bill?.id && selectedPeriod?.id) {
+                        setSelectedLineItem(bill.id)
+                        lineItemQuery({
+                          variables: {
+                            input: {
+                              billId: bill.id,
+                              paymentPeriodId: selectedPeriod.id,
+                            },
+                          },
+                          onCompleted: (data) => {
+                            if (bill && bill.id) {
+                              fetchedLineItems.set(
+                                bill.id,
+                                data.rightsPortalDrugBillLines,
+                              )
+                            }
+                          },
+                        })
+                      }
+                    },
+                    children: lineItemLoading ? (
+                      <LoadingDots />
+                    ) : bill.id ? (
+                      fetchedLineItems
+                        .get(bill.id)
+                        ?.map((lineItem, lineIndex) => {
+                          return (
+                            <NestedLines
+                              key={`${bill.id}-${lineIndex}`}
+                              data={[
+                                {
+                                  title: formatMessage(
+                                    messages.medicineDrugName,
                                   ),
-                              },
-                            ]}
-                          />
-                        </Box>
-                      </ExpandRow>
-                    </T.Body>
-                  )
-                })}
-              </T.Table>
+                                  value: lineItem.drugName ?? '',
+                                },
+                                {
+                                  title: formatMessage(
+                                    messages.medicineStrength,
+                                  ),
+                                  value: lineItem.strength ?? '',
+                                },
+                                {
+                                  title: formatMessage(
+                                    messages.medicineQuantity,
+                                  ),
+                                  value: lineItem.quantity ?? '',
+                                },
+                                {
+                                  title: formatMessage(messages.medicineAmount),
+                                  value: lineItem.units ?? '',
+                                },
+                                {
+                                  title: formatMessage(
+                                    messages.medicineSalePrice,
+                                  ),
+                                  value: amountFormat(lineItem.salesPrice ?? 0),
+                                },
+                                {
+                                  title: formatMessage(
+                                    messages.medicinePaymentParticipationPrice,
+                                  ),
+                                  value: amountFormat(
+                                    lineItem.copaymentAmount ?? 0,
+                                  ),
+                                },
+                                {
+                                  title: formatMessage(
+                                    messages.medicineExcessPrice,
+                                  ),
+                                  value: amountFormat(
+                                    lineItem.excessAmount ?? 0,
+                                  ),
+                                },
+                                {
+                                  title: formatMessage(
+                                    messages.medicinePaidByCustomer,
+                                  ),
+                                  value: amountFormat(
+                                    lineItem.customerAmount ?? 0,
+                                  ),
+                                },
+                              ]}
+                            />
+                          )
+                        })
+                    ) : null,
+                  }))}
+                />
+              </Hidden>
             </>
           )
         )}

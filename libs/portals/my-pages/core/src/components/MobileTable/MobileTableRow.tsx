@@ -12,7 +12,12 @@ export interface TableRow {
     content?: React.ReactElement | JSX.Element | string
   }[]
   action?: React.ReactElement | JSX.Element | string
-  children?: React.ReactElement | null
+  children?:
+    | React.ReactElement
+    | JSX.Element
+    | null
+    | Array<React.ReactElement | JSX.Element>
+  onExpandCallback?: () => void
 }
 interface Props {
   tableRow: TableRow
@@ -64,12 +69,15 @@ const MobileTableRow: React.FC<Props> = ({
         <Text variant="h4" as="h2" color="blue400">
           {tableRow.title}
         </Text>
-        {!inner && tableRow.children && (
+        {!inner && (tableRow.children || tableRow.onExpandCallback) && (
           <Box marginLeft={1}>
             <Button
               circle
               icon={extended ? 'remove' : 'add'}
-              onClick={() => setExtended(!extended)}
+              onClick={() => {
+                if (tableRow.onExpandCallback) tableRow.onExpandCallback()
+                setExtended(!extended)
+              }}
               colorScheme="light"
             />
           </Box>
