@@ -5,6 +5,7 @@ import React, {
   ReactNode,
   createContext,
   ReactElement,
+  useRef,
 } from 'react'
 import cn from 'classnames'
 import AnimateHeight from 'react-animate-height'
@@ -434,7 +435,8 @@ const MobileButton = ({
   mobileNavigationButtonOpenLabel,
 }: MobileButtonProps) => {
   const [isShaking, setIsShaking] = useState(false)
-  const time = 60000 // 1 minute
+  const time = 15000 // 15 seconds
+  const idleTimerRef = useRef<NodeJS.Timeout | null>(null)
 
   useEffect(() => {
     const handleIdle = () => {
@@ -442,18 +444,22 @@ const MobileButton = ({
       setTimeout(() => setIsShaking(false), 1000) // Stop shaking after 1 second
     }
 
-    const idleTimer = setTimeout(handleIdle, time)
-
     const resetTimer = () => {
-      clearTimeout(idleTimer)
-      setTimeout(handleIdle, time)
+      if (idleTimerRef.current) {
+        clearTimeout(idleTimerRef.current)
+      }
+      idleTimerRef.current = setTimeout(handleIdle, time)
     }
+
+    resetTimer() // Initialize the timer
 
     window.addEventListener('mousemove', resetTimer)
     window.addEventListener('keydown', resetTimer)
 
     return () => {
-      clearTimeout(idleTimer)
+      if (idleTimerRef.current) {
+        clearTimeout(idleTimerRef.current)
+      }
       window.removeEventListener('mousemove', resetTimer)
       window.removeEventListener('keydown', resetTimer)
     }

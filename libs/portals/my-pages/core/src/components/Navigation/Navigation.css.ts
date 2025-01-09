@@ -71,6 +71,9 @@ export const menuBtn = style({
   borderRadius: 8,
   padding: `${theme.spacing['p2']}px ${theme.spacing[2]}px`,
   transition: 'box-shadow .25s, color .25s, background-color .25s',
+  ':focus-visible': {
+    boxShadow: `0 0 0 3px ${theme.color.blue400}`,
+  },
 })
 
 export const listItem = style({
