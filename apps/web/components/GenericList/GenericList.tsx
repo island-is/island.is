@@ -160,6 +160,8 @@ export const ClickableItem = ({ item, baseUrl }: ClickableItemProps) => {
         href={href ?? ''}
         image={item.image as ImageSchema}
         readMoreText=""
+        titleAs="h3"
+        titleVariant="h3"
         titleTextColor="blue400"
         date={item.date ?? ''}
         dateTextColor="purple400"
