@@ -7,7 +7,7 @@ import { errors as errorMessages } from '@island.is/judicial-system-web/messages
 
 export const useGetLawyers = (): Lawyer[] => {
   const { formatMessage } = useIntl()
-  const fetcher = (url: string) =>
+  const fetcher = (url: string): Promise<Lawyer[]> =>
     fetch(url).then((res) => {
       if (!res.ok) {
         throw new Error('Failed to get lawyers from lawyer registry')
@@ -39,7 +39,7 @@ export const useGetLawyer = (
   nationalId?: string | null,
   shouldFetch?: boolean,
 ): Lawyer | undefined => {
-  const fetcher = (url: string) =>
+  const fetcher = (url: string): Promise<Lawyer> =>
     fetch(url).then((res) => {
       if (!res.ok) {
         throw new Error(
