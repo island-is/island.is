@@ -33,6 +33,7 @@ import {
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import { Validation } from '@island.is/judicial-system-web/src/utils/validate'
 
+import { useLawyerRegistry } from '../LawyerRegistryProvider/LawyerRegistryProvider'
 import { strings } from './Input.strings'
 
 interface Props {
@@ -100,7 +101,7 @@ const InputAdvocate: FC<Props> = ({
 }) => {
   const { workingCase, setWorkingCase } = useContext(FormContext)
   const { formatMessage } = useIntl()
-  const lawyers = useGetLawyers()
+  const { lawyers } = useLawyerRegistry()
   const { updateCase, setAndSendCaseToServer } = useCase()
   const { updateDefendant, updateDefendantState, setAndSendDefendantToServer } =
     useDefendants()
@@ -123,7 +124,7 @@ const InputAdvocate: FC<Props> = ({
 
   const options = useMemo(
     () =>
-      lawyers.map((l: Lawyer) => ({
+      lawyers?.map((l: Lawyer) => ({
         label: `${l.name}${l.practice ? ` (${l.practice})` : ''}`,
         value: l.email,
       })),
@@ -156,7 +157,7 @@ const InputAdvocate: FC<Props> = ({
 
         onAdvocateNotFound && onAdvocateNotFound(defenderNotFound || false)
 
-        const lawyer = lawyers.find(
+        const lawyer = lawyers?.find(
           (l: Lawyer) => l.email === (value as string),
         )
         updatedLawyer = {
