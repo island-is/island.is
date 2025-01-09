@@ -8,7 +8,6 @@ import {
 import {
   ApplicationType as SecondarySchoolApplicationType,
   SecondarySchoolAnswers,
-  States as SecondarySchoolStates,
 } from '@island.is/application/templates/secondary-school'
 import {
   SecondarySchool,
