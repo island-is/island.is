@@ -146,6 +146,10 @@ export const m = {
       id: 'web.grants:single.deadline',
       defaultMessage: 'Umsóknir',
     },
+    deadlinePeriod: {
+      id: 'web.grants:single.deadlinePeriod',
+      defaultMessage: 'Umsóknartímabil',
+    },
     status: {
       id: 'web.grants:single.status',
       defaultMessage: 'Staða',
@@ -244,6 +248,10 @@ export const m = {
     grantCategoryBusinessDescription: {
       id: 'web.grants:home.grantCategoryBusinessDescription',
       defaultMessage: 'Lýsing á atvinnulífi',
+    },
+    grantCategoryEnergyTransitionDescription: {
+      id: 'web.grants:home.grantCategoryEnergyTransitionDescription',
+      defaultMessage: 'Lýsing á orkuskiptum',
     },
   }),
 }
