@@ -75,12 +75,13 @@ const Aids = ({ data }: Props) => {
           mobileTitleKey="aidsName"
           items={data.map((rowItem, idx) => ({
             id: rowItem.id ?? idx,
-            aidsName: rowItem.name.split('/').join(' / '),
+            aidsName: rowItem.name ? rowItem.name.split('/').join(' / ') : '',
             maxUnitRefund: rowItem.maxUnitRefund ?? '',
-            insuranceRatio:
-              rowItem.refund.type === 'amount'
+            insuranceRatio: rowItem.refund
+              ? rowItem.refund.type === 'amount'
                 ? amountFormat(rowItem.refund.value)
-                : `${rowItem.refund.value}%`,
+                : `${rowItem.refund.value}%`
+              : '',
             availableRefund: rowItem.available ?? '',
             nextAvailableRefund: rowItem.nextAllowedMonth ?? '',
             lastNode: rowItem.expiring

@@ -21,9 +21,9 @@ import * as styles from './RenewPrescriptionModal.css'
 
 interface Props {
   id: string
-  activePrescription?: Prescription
+  activePrescription: Prescription
   toggleClose?: boolean
-  isVisible?: boolean
+  isVisible: boolean
 }
 
 interface RenewFormData {
@@ -54,13 +54,21 @@ const RenewPrescriptionModal: React.FC<Props> = ({
     setModalVisible(false)
   }
 
-  const submitForm = async (e?: React.FormEvent<HTMLFormElement>) => {
+  const submitForm = async (
+    e: React.FormEvent<HTMLFormElement> | undefined,
+  ) => {
     // TODO: Implement form submission when service is ready
-    e && e.preventDefault()
-    const formData2 = e && new FormData(e.currentTarget)
-    const data = formData2 && Object.fromEntries((formData2 as any).entries())
-    setFormData(null)
-    setModalVisible(false)
+    e?.preventDefault()
+    try {
+      if (!e) return
+      const formData2 = e && new FormData(e.currentTarget)
+      const data = formData2 && Object.fromEntries((formData2 as any).entries())
+      setFormData(null)
+      setModalVisible(false)
+    } catch (e) {
+      //TODO: Add error handling
+      console.error('Error submitting form:', e)
+    }
   }
 
   return (

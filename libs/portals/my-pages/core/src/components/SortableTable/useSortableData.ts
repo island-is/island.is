@@ -1,27 +1,26 @@
 import { useMemo, useState } from 'react'
 import { ConfigType } from './types'
 
-export const useSortableData = <T>(
+export const useSortableData = <T extends Record<string, unknown>>(
   items: T[],
   config: ConfigType = { direction: 'ascending', key: '' },
 ) => {
   const [sortConfig, setSortConfig] = useState<ConfigType>(config)
 
   const sortedItems = useMemo(() => {
-    const sortableItems = [...items]
-    if (sortConfig.key !== '') {
-      sortableItems.sort((a, b) => {
-        const keyA = a[sortConfig.key as keyof T] as string | undefined
-        const keyB = b[sortConfig.key as keyof T] as string | undefined
-        if (keyA === undefined || keyB === undefined) {
-          return 0
-        }
-        return sortConfig.direction === 'ascending'
-          ? keyA.localeCompare(keyB, undefined, { numeric: true })
-          : keyA.localeCompare(keyB, undefined, { numeric: true }) * -1
-      })
-    }
-    return sortableItems
+    if (sortConfig.key === '') return items
+
+    return [...items].sort((a, b) => {
+      const keyA = a[sortConfig.key as keyof T]
+      const keyB = b[sortConfig.key as keyof T]
+
+      if (!(typeof keyA === 'string') || !(typeof keyB === 'string')) {
+        return 0
+      }
+
+      const multiplier = sortConfig.direction === 'ascending' ? 1 : -1
+      return keyA.localeCompare(keyB, undefined, { numeric: true }) * multiplier
+    })
   }, [items, sortConfig])
 
   const requestSort = (key: string) => {

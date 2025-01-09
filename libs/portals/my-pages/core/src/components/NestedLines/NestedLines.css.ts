@@ -25,10 +25,6 @@ export const white = style({
   background: theme.color.white,
 })
 
-export const blue = style({
-  background: theme.color.white,
-})
-
 export const titleCol = style({
   paddingLeft: theme.spacing[1],
   fontSize: '14px',

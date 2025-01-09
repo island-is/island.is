@@ -5,17 +5,18 @@ import {
   Tag,
   Text,
 } from '@island.is/island-ui/core'
-import { theme } from '@island.is/island-ui/theme'
 import { isDefined } from 'class-validator'
 import { useMemo, useState } from 'react'
-import { useWindowSize } from 'react-use'
+import useIsMobile from '../../hooks/useIsMobile/useIsMobile'
 import { ExpandHeader } from '../ExpandableTable'
-import { HeaderButton } from './HeaderButton'
 import { MobileTable } from '../MobileTable/MobileTable'
+import { HeaderButton } from './HeaderButton'
 import * as styles from './SortableTable.css'
 import { TableRow } from './TableRow'
 import { SortableData, SortableTableProps } from './types'
 import { useSortableData } from './useSortableData'
+import { useWindowSize } from 'react-use'
+import { theme } from '@island.is/island-ui/theme'
 
 /**
  * SortableTable component renders a table that can be sorted and is responsive to different screen sizes.
@@ -77,16 +78,19 @@ export const SortableTable = (props: SortableTableProps) => {
       .flat()
       .filter((value, index, self) => self.indexOf(value) === index)
 
+    // If expandable, remove the last item and add an empty string at the beginning
     if (props.expandable) {
       headerItems.unshift('')
       headerItems.pop()
     }
+    // If there is a subtitle in the first column, remove the last item
     if (props.items.find((item) => item.subTitleFirstCol)) {
       headerItems.pop()
     }
     setHeaderSorted(headerItems)
   }, [props.items])
 
+  // Filter out the mobile title key from the header
   const mobileHeaderData = headerSorted
     .filter((headItem) => headItem !== props.mobileTitleKey)
     .map((headItem) => props.labels[headItem])
@@ -104,6 +108,7 @@ export const SortableTable = (props: SortableTableProps) => {
           inner={props.inner}
           header={props.title ?? ''}
           rows={items.map((item) => {
+            // Destructure the item object and remove some values not relative for the data mapping
             const {
               id,
               tag,
@@ -112,6 +117,7 @@ export const SortableTable = (props: SortableTableProps) => {
               subTitleFirstCol,
               ...itemObject
             } = item
+            // Remove the key that matches the "mobileTitleKey"
             const valueItems = Object.entries(itemObject)
               .filter(([key]) => key !== props.mobileTitleKey)
               .map(([, value]) => value)
@@ -122,7 +128,11 @@ export const SortableTable = (props: SortableTableProps) => {
                 : undefined,
               data: valueItems
                 .map((valueItem, valueIndex) => {
-                  if (tag && valueItems.length - 1 === valueIndex) {
+                  if (
+                    tag &&
+                    valueItems.length - 1 === valueIndex &&
+                    typeof valueItem === 'string'
+                  ) {
                     return {
                       title: valueItem ?? '',
                       content: (
@@ -137,7 +147,7 @@ export const SortableTable = (props: SortableTableProps) => {
                       action = (
                         <AlertMessage type="info" message={lastNode.label} />
                       )
-                    } else if (lastNode.type === 'action') {
+                    } else if (lastNode.type === 'action' && lastNode.action) {
                       action = (
                         <div className={styles.btnContainer}>
                           <Button

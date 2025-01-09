@@ -15,8 +15,8 @@ export interface TableRow {
   children?:
     | React.ReactElement
     | JSX.Element
-    | null
     | Array<React.ReactElement | JSX.Element>
+    | null
   onExpandCallback?: () => void
 }
 interface Props {
@@ -86,25 +86,25 @@ const MobileTableRow: React.FC<Props> = ({
       {/* Map through data */}
       <Box marginBottom={2}>
         <Stack space={1}>
-          {tableRow.data.map((item, index) => {
-            const { title, content } = item
-            // eslint-disable-next-line array-callback-return
-            if (!isDefined(content)) return
-            return (
-              <Box key={index} display="flex" flexDirection="row">
-                <Box width="half" display="flex" alignItems="center">
-                  <Text fontWeight="semiBold" variant="default">
-                    {title}
-                  </Text>
+          {tableRow.data
+            .filter((item) => isDefined(item.content))
+            .map((item, index) => {
+              const { title, content } = item
+              return (
+                <Box key={index} display="flex" flexDirection="row">
+                  <Box width="half" display="flex" alignItems="center">
+                    <Text fontWeight="semiBold" variant="default">
+                      {title}
+                    </Text>
+                  </Box>
+                  <Box width="half">
+                    <Text variant="default" fontWeight="regular">
+                      {content}
+                    </Text>
+                  </Box>
                 </Box>
-                <Box width="half">
-                  <Text variant="default" fontWeight="regular">
-                    {content}
-                  </Text>
-                </Box>
-              </Box>
-            )
-          })}
+              )
+            })}
         </Stack>
       </Box>
       <Box width="full" marginY={1}>

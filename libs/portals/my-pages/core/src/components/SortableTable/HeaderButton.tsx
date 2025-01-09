@@ -23,7 +23,10 @@ export const HeaderButton = ({
     onClick={() => requestSort(headItem)}
     className={styles.btn}
     style={{ textAlign: align }}
-    key={`head-${headItem}-${index}`}
+    key={`header-${headItem}-${index}-${sortConfig.direction}`}
+    aria-label={`Sort by ${labels[headItem] || headItem} ${
+      sortConfig.key === headItem ? `(${sortConfig.direction})` : ''
+    }`}
   >
     {labels[headItem] || ''}
     {sortConfig.key === headItem && (
