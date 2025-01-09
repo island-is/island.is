@@ -489,6 +489,11 @@
             "rules": {
               "required": "Active is required"
             }
+          },
+          "municipality": {
+            "label": "Municipality",
+            "placeholder": "Municipality",
+            "required": "Municipality is required"
           }
         },
         "buttons": {
