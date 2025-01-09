@@ -3,7 +3,13 @@ import faker from 'faker'
 import { urls } from '../../../support/urls'
 import { verifyRequestCompletion } from '../../../support/api-tools'
 import { test } from '../utils/judicialSystemTest'
-import { randomPoliceCaseNumber, getDaysFromNow } from '../utils/helpers'
+import {
+  randomPoliceCaseNumber,
+  getDaysFromNow,
+  randomIndictmentCourtCaseNumber,
+  chooseDocument,
+  verifyUpload,
+} from '../utils/helpers'
 
 test.use({ baseURL: urls.judicialSystemBaseUrl })
 
@@ -16,6 +22,7 @@ test.describe.serial('Indictment tests', () => {
   }) => {
     const page = prosecutorPage
     const today = getDaysFromNow()
+
     const policeCaseNumber = randomPoliceCaseNumber()
 
     // Case list
@@ -68,36 +75,51 @@ test.describe.serial('Indictment tests', () => {
     ])
 
     // Processing
+
     await Promise.all([
       expect(page).toHaveURL(`/akaera/malsmedferd/${caseId}`),
       verifyRequestCompletion(page, '/api/graphql', 'Case'),
     ])
+
     await Promise.all([
       page.getByText('Játar sök').click(),
       verifyRequestCompletion(page, '/api/graphql', 'UpdateDefendant'),
     ])
+
     await Promise.all([
       page.getByText('Nei').last().click(),
       verifyRequestCompletion(page, '/api/graphql', 'UpdateCase'),
     ])
+
     await Promise.all([
       page.getByTestId('continueButton').click(),
       verifyRequestCompletion(page, '/api/graphql', 'Case'),
     ])
-
     // Indictment
-    await expect(page).toHaveURL(`/akaera/akaera/${caseId}`)
+
+    await Promise.all([
+      expect(page).toHaveURL(`/akaera/akaera/${caseId}`),
+      verifyRequestCompletion(page, '/api/graphql', 'CreateIndictmentCount'),
+    ])
 
     await page.getByText('LÖKE málsnúmer *Veldu málsnú').click()
-    await page.getByRole('option', { name: `${policeCaseNumber}` }).click()
 
-    await page.getByPlaceholder('AB123').click()
+    await Promise.all([
+      page.getByRole('option', { name: `${policeCaseNumber}` }).click(),
+      verifyRequestCompletion(page, '/api/graphql', 'UpdateIndictmentCount'),
+    ])
+
     await page.getByPlaceholder('AB123').fill('AB123')
+
+    await Promise.all([
+      page.keyboard.press('Tab'),
+      verifyRequestCompletion(page, '/api/graphql', 'UpdateIndictmentCount'),
+    ])
 
     await Promise.all([
       page.getByText('Brot *Veldu brot').click(),
       page.getByRole('option', { name: 'Sviptingarakstur' }).click(),
-      verifyRequestCompletion(page, '/api/graphql', 'UpdateCase'),
+      verifyRequestCompletion(page, '/api/graphql', 'UpdateIndictmentCount'),
     ])
 
     await Promise.all([
@@ -146,5 +168,122 @@ test.describe.serial('Indictment tests', () => {
       page.getByTestId('modalPrimaryButton').click(),
       verifyRequestCompletion(page, '/api/graphql', 'TransitionCase'),
     ])
+  })
+
+  test('judge should receive indictment case', async ({ judgePage }) => {
+    const page = judgePage
+    const nextWeek = getDaysFromNow(7)
+
+    // Case list
+    await page.goto('/krofur')
+    await page.getByText(accusedName).click()
+
+    // Indictment Overview
+    await expect(page).toHaveURL(`domur/akaera/yfirlit/${caseId}`)
+
+    await Promise.all([
+      page.getByTestId('continueButton').click(),
+      verifyRequestCompletion(page, '/api/graphql', 'Case'),
+    ])
+
+    // Reception and assignment
+    await expect(page).toHaveURL(`domur/akaera/mottaka/${caseId}`)
+
+    await page
+      .getByTestId('courtCaseNumber')
+      .fill(randomIndictmentCourtCaseNumber())
+    await page.keyboard.press('Tab')
+
+    await page.getByText('Veldu dómara/aðstoðarmann').click()
+    await page
+      .getByTestId('select-judge')
+      .getByText('Test Dómari')
+      .last()
+      .click()
+
+    await Promise.all([
+      page.getByTestId('continueButton').click(),
+      verifyRequestCompletion(page, '/api/graphql', 'Case'),
+    ])
+
+    // Subpoena
+    await expect(page).toHaveURL(`domur/akaera/fyrirkall/${caseId}`)
+
+    await page
+      .locator('label')
+      .filter({ hasText: 'Útivistarfyrirkall' })
+      .click()
+
+    await page.locator('input[id=courtDate]').fill(nextWeek)
+    await page.keyboard.press('Escape')
+
+    await page.getByTestId('courtDate-time').fill('11:00')
+    await page.getByTestId('courtroom').press('Tab')
+
+    await page.getByTestId('courtroom').fill('12')
+    await page.getByTestId('courtroom').press('Tab')
+
+    await page.getByTestId('continueButton').click()
+    await page.getByTestId('modalPrimaryButton').click()
+
+    // Advocates and civil claimants
+    await expect(page).toHaveURL(`domur/akaera/malflytjendur/${caseId}`)
+
+    await page
+      .locator('label')
+      .filter({ hasText: 'Ákærði óskar ekki eftir að sé' })
+      .click()
+    await page.getByRole('button', { name: 'Staðfesta val' }).click()
+    await page.getByTestId('modalPrimaryButton').click()
+
+    await Promise.all([
+      page.getByTestId('continueButton').click(),
+      verifyRequestCompletion(page, '/api/graphql', 'Case'),
+    ])
+
+    // Conclusion
+    await expect(page).toHaveURL(`domur/akaera/nidurstada/${caseId}`)
+
+    await page.locator('label').filter({ hasText: 'Lokið' }).click()
+    await page.locator('label').filter({ hasText: 'Dómur' }).click()
+
+    await chooseDocument(
+      page,
+      async () => {
+        await page
+          .getByRole('button', { name: 'Velja gögn til að hlaða upp' })
+          .nth(1)
+          .click()
+      },
+      'TestThingbok.pdf',
+    )
+    await chooseDocument(
+      page,
+      async () => {
+        await page
+          .getByRole('button', { name: 'Velja gögn til að hlaða upp' })
+          .nth(2)
+          .click()
+      },
+      'TestDomur.pdf',
+    )
+
+    await Promise.all([
+      page.getByTestId('continueButton').click(),
+      verifyRequestCompletion(page, '/api/graphql', 'Case'),
+    ])
+
+    // Summary
+    await expect(page).toHaveURL(`domur/akaera/samantekt/${caseId}`)
+
+    await page.getByTestId('continueButton').click()
+    await page.getByTestId('modalPrimaryButton').click()
+
+    // Completed case overview
+    await expect(page).toHaveURL(`domur/akaera/lokid/${caseId}`)
+
+    await page.getByText('Birta skal dómfellda dóminn').click()
+    await page.getByTestId('continueButton').click()
+    await page.getByTestId('modalPrimaryButton').click()
   })
 })
