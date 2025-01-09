@@ -1,15 +1,15 @@
+import { useState } from 'react'
 import { getValueViaPath } from '@island.is/application/core'
 import { DefaultEvents, FieldBaseProps } from '@island.is/application/types'
 import { Box, Button, Divider, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { InputController } from '@island.is/shared/form-fields'
-import React, { FC, useState } from 'react'
 import { inReview, overview, thirdPartyComment } from '../../lib/messages'
 import { ReviewApprovalEnum } from '../../types'
 import { FormOverview } from '../FormOverview'
 import { ConfirmationModal } from './ConfirmationModal'
 
-interface FormOverviewInReviewProps {
+type Props = {
   field: {
     props: {
       isAssignee: boolean
@@ -17,9 +17,12 @@ interface FormOverviewInReviewProps {
   }
 }
 
-export const FormOverviewInReview: FC<
-  React.PropsWithChildren<FormOverviewInReviewProps & FieldBaseProps>
-> = ({ application, field, refetch, goToScreen }) => {
+export const FormOverviewInReview = ({
+  application,
+  field,
+  refetch,
+  goToScreen,
+}: Props & FieldBaseProps) => {
   const isAssignee = field?.props?.isAssignee || false
   const { formatMessage } = useLocale()
   const reviewApproval = getValueViaPath(

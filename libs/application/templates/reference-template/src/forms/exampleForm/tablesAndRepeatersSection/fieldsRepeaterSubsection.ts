@@ -23,7 +23,7 @@ export const fieldsRepeaterSubsection = buildSubSection({
           id: 'fieldsRepeater',
           title: 'Fields Repeater',
           formTitle: 'Title for each form',
-          width: 'half',
+          width: 'full',
           fields: {
             input: {
               component: 'input',

@@ -14,7 +14,12 @@ export const strings = defineMessages({
   indictmentCompletedTitle: {
     id: 'judicial.system.core:indictment_overview.indictment_completed_title',
     defaultMessage: 'Dómsuppkvaðning {date}',
-    description: 'Titill á yfirliti ákæru fyrir fangelsi',
+    description: 'Undirtitill á yfirliti ákæru fyrir fangelsi',
+  },
+  indictmentReceivedTitle: {
+    id: 'judicial.system.core:indictment_overview.indictment_received_title',
+    defaultMessage: 'Móttekið {date}',
+    description: 'Undirtitill á yfirliti ákæru fyrir fangelsi',
   },
   infoCardDefendantsTitle: {
     id: 'judicial.system.core:indictment_overview.info_card_defendants_title',
