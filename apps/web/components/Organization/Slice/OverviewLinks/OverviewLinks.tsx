@@ -119,11 +119,15 @@ interface CardViewProps {
 const CardView = ({ slice }: CardViewProps) => {
   return (
     <Stack space={3}>
-      {(slice.cardLinks ?? [])
-        .filter((item) => item.link?.url && item.link.text)
-        .map((item, index) => (
-          <OneColumnTextComponent key={index} item={item} />
-        ))}
+      <GridRow rowGap={3}>
+        {(slice.cardLinks ?? [])
+          .filter((item) => item.link?.url && item.link.text)
+          .map((item, index) => (
+            <GridColumn key={index} span={['1/1', '1/1', '1/1', '1/1', '1/2']}>
+              <OneColumnTextComponent item={item} />
+            </GridColumn>
+          ))}
+      </GridRow>
       {slice.link?.url && slice.link?.text && (
         <Box textAlign="right">
           <Link href={slice.link.url}>
