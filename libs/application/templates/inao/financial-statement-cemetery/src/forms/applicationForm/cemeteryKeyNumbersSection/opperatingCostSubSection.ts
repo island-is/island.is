@@ -12,7 +12,7 @@ import {
   sumExpenses,
   sumIncome,
   sumOperatingResults,
-} from '../../../utils/helpers'
+} from '../../../utils/sums'
 
 export const opperatingCostSubSection = buildSubSection({
   id: 'operatingCost',
@@ -24,9 +24,9 @@ export const opperatingCostSubSection = buildSubSection({
       description: m.fillOutAppopriate,
       children: [
         buildCustomField({
-          id: 'cemetryIncomeLimit',
+          id: 'fetchDataBasedOnYear',
           title: '',
-          component: 'CemeteryIncomeLimit',
+          component: 'FetchDataBasedOnSelectedYear',
         }),
         // Income
         buildDescriptionField({

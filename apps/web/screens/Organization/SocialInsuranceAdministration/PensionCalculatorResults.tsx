@@ -1,4 +1,4 @@
-import { Fragment, useState } from 'react'
+import { Fragment, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
 
 import {
@@ -51,6 +51,7 @@ import {
   GET_ORGANIZATION_QUERY,
 } from '../../queries'
 import { GET_PENSION_CALCULATION } from '../../queries/PensionCalculator'
+import { PensionCalculatorTitle } from './PensionCalculatorTitle'
 import { PensionCalculatorWrapper } from './PensionCalculatorWrapper'
 import { translationStrings } from './translationStrings'
 import {
@@ -58,7 +59,9 @@ import {
   convertToQueryParams,
   extractSlug,
   getDateOfCalculationsOptions,
+  is2025FormPreviewActive,
   is2025PreviewActive,
+  NEW_SYSTEM_TAKES_PLACE_DATE,
 } from './utils'
 import * as styles from './PensionCalculatorResults.css'
 
@@ -285,11 +288,36 @@ const PensionCalculatorResults: CustomScreen<PensionCalculatorResultsProps> = ({
 
   const highlightedItems2025 = calculation2025.highlightedItems ?? []
 
-  const title = `${formatMessage(translationStrings.mainTitle)} ${
-    dateOfCalculationsOptions.find(
+  const allCalculatorsOptions = useMemo(() => {
+    const options = [...dateOfCalculationsOptions]
+
+    if (is2025FormPreviewActive(customPageData)) {
+      options.unshift({
+        label: formatMessage(translationStrings.form2025PreviewLabel),
+        value: NEW_SYSTEM_TAKES_PLACE_DATE.toISOString(),
+      })
+    }
+
+    return options
+  }, [customPageData, dateOfCalculationsOptions, formatMessage])
+
+  const isNewSystemActive =
+    is2025FormPreviewActive(customPageData) &&
+    calculationInput.dateOfCalculations ===
+      NEW_SYSTEM_TAKES_PLACE_DATE.toISOString()
+
+  const title = `${formatMessage(
+    isNewSystemActive
+      ? translationStrings.form2025PreviewMainTitle
+      : translationStrings.mainTitle,
+  )}`
+  const titlePostfix = `${(
+    allCalculatorsOptions.find(
       (o) => o.value === calculationInput.dateOfCalculations,
-    )?.label ?? ''
-  }`
+    )?.label ?? dateOfCalculationsOptions[0].label
+  ).toLowerCase()}`
+
+  const titleVariant = isNewSystemActive ? 'h2' : 'h1'
 
   const calculationIsPresent =
     typeof calculation.groups?.length === 'number' &&
@@ -334,9 +362,12 @@ const PensionCalculatorResults: CustomScreen<PensionCalculatorResultsProps> = ({
                 >
                   <Box paddingY={5}>
                     <Stack space={3}>
-                      <Text variant="h1" as="h1">
-                        {title}
-                      </Text>
+                      <PensionCalculatorTitle
+                        isNewSystemActive={isNewSystemActive}
+                        title={title}
+                        titlePostfix={titlePostfix}
+                        titleVariant={titleVariant}
+                      />
                       <Text>
                         {formatMessage(translationStrings.isTurnedOff)}
                       </Text>
@@ -357,9 +388,12 @@ const PensionCalculatorResults: CustomScreen<PensionCalculatorResultsProps> = ({
                   <Box paddingY={6}>
                     <Stack space={5}>
                       <Stack space={2}>
-                        <Text variant="h1" as="h1">
-                          {title}
-                        </Text>
+                        <PensionCalculatorTitle
+                          isNewSystemActive={isNewSystemActive}
+                          title={title}
+                          titlePostfix={titlePostfix}
+                          titleVariant={titleVariant}
+                        />
                         <Box className={styles.textMaxWidth}>
                           <Text>
                             {formatMessage(

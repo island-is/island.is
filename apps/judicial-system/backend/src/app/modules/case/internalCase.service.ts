@@ -307,6 +307,13 @@ export class InternalCaseService {
     )
   }
 
+  private getSignedCourtRecordPdf(theCase: Case) {
+    return this.awsS3Service.getGeneratedRequestCaseObject(
+      theCase.type,
+      `${theCase.id}/courtRecord.pdf`,
+    )
+  }
+
   private async deliverSignedRulingPdfToCourt(
     theCase: Case,
     user: TUser,
@@ -606,6 +613,7 @@ export class InternalCaseService {
           ? {
               name: theCase.prosecutor.name,
               nationalId: theCase.prosecutor.nationalId,
+              email: theCase.prosecutor.email,
             }
           : undefined,
       )
@@ -664,6 +672,9 @@ export class InternalCaseService {
   ): Promise<DeliverResponse> {
     await this.refreshFormatMessage()
 
+    const courtCaseNumber = withCourtCaseNumber && theCase.courtCaseNumber
+    const caseNumber = courtCaseNumber || theCase.policeCaseNumbers.join(', ')
+
     return this.courtService
       .updateIndictmentCaseWithCancellationNotice(
         user,
@@ -671,16 +682,14 @@ export class InternalCaseService {
         theCase.court?.name,
         theCase.courtCaseNumber,
         this.formatMessage(notifications.courtRevokedIndictmentEmail.subject, {
-          courtCaseNumber:
-            (withCourtCaseNumber && theCase.courtCaseNumber) || 'NONE',
+          courtCaseNumber: courtCaseNumber || 'NONE',
         }),
         stripHtmlTags(
           `${this.formatMessage(
             notifications.courtRevokedIndictmentEmail.body,
             {
               prosecutorsOffice: theCase.creatingProsecutor?.institution?.name,
-              courtCaseNumber:
-                (withCourtCaseNumber && theCase.courtCaseNumber) || 'NONE',
+              caseNumber,
             },
           )} ${this.formatMessage(notifications.emailTail)}`,
         ),
@@ -1099,6 +1108,32 @@ export class InternalCaseService {
     return { delivered }
   }
 
+  async deliverSignedCourtRecordToPolice(
+    theCase: Case,
+    user: TUser,
+  ): Promise<DeliverResponse> {
+    const delivered = await this.getSignedCourtRecordPdf(theCase)
+      .then((pdf) =>
+        this.deliverCaseToPoliceWithFiles(theCase, user, [
+          {
+            type: PoliceDocumentType.RVTB,
+            courtDocument: Base64.btoa(pdf.toString('binary')),
+          },
+        ]),
+      )
+      .catch((reason) => {
+        // Tolerate failure, but log error
+        this.logger.error(
+          `Failed to deliver signed court record for case ${theCase.id} to police`,
+          { reason },
+        )
+
+        return false
+      })
+
+    return { delivered }
+  }
+
   async deliverSignedRulingToPolice(
     theCase: Case,
     user: TUser,
@@ -1115,7 +1150,7 @@ export class InternalCaseService {
       .catch((reason) => {
         // Tolerate failure, but log error
         this.logger.error(
-          `Failed to deliver sigend ruling for case ${theCase.id} to police`,
+          `Failed to deliver signed ruling for case ${theCase.id} to police`,
           { reason },
         )
 

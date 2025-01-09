@@ -5,6 +5,7 @@ import {
   AdvertEntity,
   AdvertMainCategory,
   AdvertType,
+  AdvertMainType,
 } from './advert.model'
 import { AdvertPaging } from './advert-paging.model'
 
@@ -78,4 +79,13 @@ export class AdvertsResponse {
 export class AdvertResponse {
   @Field(() => Advert)
   advert?: Advert
+}
+
+@ObjectType('OfficialJournalOfIcelandMainTypesResponse')
+export class MainTypesResponse {
+  @Field(() => [AdvertMainType])
+  mainTypes!: AdvertMainType[]
+
+  @Field(() => AdvertPaging)
+  paging!: AdvertPaging
 }
