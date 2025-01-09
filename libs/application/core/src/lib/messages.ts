@@ -285,13 +285,13 @@ export const coreMessages = defineMessages({
   openServicePortalMessageText: {
     id: 'application.system:openServicePortal.messageText',
     defaultMessage:
-      'Upplýsingar í mínum síðum og í appi hefur þú aðgang að margvíslegum upplýsingum s.s stafrænt pósthólf, þínar upplýsingar, fjármál, umsóknir, menntun, fasteignir, ökutæki, skírteini, starfsleyfi ofl.',
+      'Á Mínum síðum Ísland.is getur þú nálgast stöðu umsóknarinnar ásamt öðrum upplýsingum.',
     description:
       'Text for form builder component left side of button to go to the service portal',
   },
   openServicePortalButtonTitle: {
     id: 'application.system:openServicePortal.buttonTitle',
-    defaultMessage: 'Áfram',
+    defaultMessage: 'Aftur á Mínar síður',
     description: 'Button text for form builder component, go to service portal',
   },
   copyLinkSuccessToast: {
