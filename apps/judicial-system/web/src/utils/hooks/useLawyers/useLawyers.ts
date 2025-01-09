@@ -39,6 +39,8 @@ export const useGetLawyer = (
   nationalId?: string | null,
   shouldFetch?: boolean,
 ): Lawyer | undefined => {
+  const { formatMessage } = useIntl()
+
   const fetcher = (url: string): Promise<Lawyer> =>
     fetch(url).then((res) => {
       if (!res.ok) {
@@ -50,7 +52,7 @@ export const useGetLawyer = (
       return res.json()
     })
 
-  const { data } = useSWR<Lawyer>(
+  const { data, error } = useSWR<Lawyer>(
     nationalId && shouldFetch
       ? `/api/defender/lawyerRegistry/${nationalId}`
       : null,
@@ -62,6 +64,11 @@ export const useGetLawyer = (
       errorRetryCount: 2,
     },
   )
+
+  if (error) {
+    toast.error(formatMessage(errorMessages.fetchLawyer))
+    return undefined
+  }
 
   return data
 }
