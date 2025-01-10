@@ -72,17 +72,17 @@ export class SecondarySchoolService extends BaseTemplateApiService {
     application,
     auth,
   }: TemplateApiModuleActionProps): Promise<void> {
-    const externalApplicationId =
-      getValueViaPath<string>(
-        application.externalData,
-        'submitApplication.data',
-      ) || ''
+    const externalApplicationId = getValueViaPath<string>(
+      application.externalData,
+      'submitApplication.data',
+    )
+    if (externalApplicationId) {
+      // Delete the application in MMS
+      await this.secondarySchoolClient.delete(auth, externalApplicationId)
 
-    // Delete the application in MMS
-    await this.secondarySchoolClient.delete(auth, externalApplicationId)
-
-    // Send email to applicant and all contacts
-    await this.sendEmailAboutDeleteApplication(application)
+      // If that succeeded, send email to applicant and custodians
+      await this.sendEmailAboutDeleteApplication(application)
+    }
   }
 
   private async sendEmailAboutDeleteApplication(

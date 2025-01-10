@@ -1,6 +1,8 @@
 import { DefaultEvents } from '@island.is/application/types'
 
-export type Events = { type: DefaultEvents.SUBMIT | DefaultEvents.ABORT }
+export type Events = {
+  type: DefaultEvents.SUBMIT | DefaultEvents.ABORT | DefaultEvents.EDIT
+}
 
 export enum States {
   PREREQUISITES = 'prerequisites',

@@ -151,9 +151,6 @@ const template: ApplicationTemplate<
             ],
           },
           lifecycle: pruneAfterDays(7),
-          onExit: defineTemplateApi({
-            action: ApiActions.validateCanCreate,
-          }),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -164,7 +161,7 @@ const template: ApplicationTemplate<
               actions: [
                 {
                   event: DefaultEvents.SUBMIT,
-                  name: overview.buttons.confirm,
+                  name: overview.buttons.submit,
                   type: 'primary',
                 },
               ],
@@ -192,6 +189,10 @@ const template: ApplicationTemplate<
           onEntry: defineTemplateApi({
             action: ApiActions.submitApplication,
           }),
+          onExit: defineTemplateApi({
+            action: ApiActions.deleteApplication,
+            triggerEvent: DefaultEvents.EDIT,
+          }),
           onDelete: defineTemplateApi({
             action: ApiActions.deleteApplication,
           }),
@@ -201,6 +202,10 @@ const template: ApplicationTemplate<
               variant: 'blueberry',
             },
             historyLogs: [
+              {
+                onEvent: DefaultEvents.EDIT,
+                logMessage: applicationMessage.historyAplicationEdited,
+              },
               {
                 onEvent: DefaultEvents.SUBMIT,
                 logMessage: coreHistoryMessages.applicationReceived,
@@ -216,24 +221,21 @@ const template: ApplicationTemplate<
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/conclusionForm').then((module) =>
-                  Promise.resolve(module.Conclusion),
+                import('../forms/submittedForm').then((module) =>
+                  Promise.resolve(module.Submitted),
                 ),
               read: 'all',
               delete: true,
             },
             {
               id: Roles.ORGINISATION_REVIEWER,
-              formLoader: () =>
-                import('../forms/conclusionForm').then((module) =>
-                  Promise.resolve(module.Conclusion),
-                ),
               read: 'all',
               write: 'all',
             },
           ],
         },
         on: {
+          [DefaultEvents.EDIT]: { target: States.DRAFT },
           [DefaultEvents.SUBMIT]: { target: States.COMPLETED },
         },
       },
@@ -261,8 +263,8 @@ const template: ApplicationTemplate<
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/conclusionForm').then((module) =>
-                  Promise.resolve(module.Conclusion),
+                import('../forms/completedForm').then((module) =>
+                  Promise.resolve(module.Completed),
                 ),
               read: 'all',
             },
