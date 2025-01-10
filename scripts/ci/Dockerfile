@@ -68,7 +68,7 @@ ENV NODE_ENV=production
 
 # Adding user for running the app
 RUN addgroup runners && \
-  useradd --create-home --gid runners --shell /usr/sbin/nologin runner
+  adduser runner --disabled-password --ingroup runners
 
 
 FROM base-node AS base-node-with-pg
