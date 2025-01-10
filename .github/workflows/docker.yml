@@ -80,6 +80,7 @@ jobs:
         uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: ${{ vars.AWS_ECR_ROLE }}
+          role-session-name: docker-build
           aws-region: ${{ vars.AWS_REGION }}
 
       - name: Log in to Amazon ECR
