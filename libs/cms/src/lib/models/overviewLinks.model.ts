@@ -45,7 +45,7 @@ export const mapOverviewLinks = ({
 }: IOverviewLinks): SystemMetadata<OverviewLinks> => ({
   typename: 'OverviewLinks',
   id: sys.id,
-  title: fields.displayedTitle ?? '',
+  titleAbove: fields.displayedTitle ?? '',
   overviewLinks: (fields.overviewLinks ?? [])
     .filter((link) => link.sys.contentType.sys.id === 'introLinkImage')
     .map((link) => mapIntroLinkImage(link as IIntroLinkImage)),
