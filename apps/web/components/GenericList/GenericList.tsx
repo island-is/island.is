@@ -91,7 +91,7 @@ export const NonClickableItem = ({ item }: ItemProps) => {
           <Stack space={0}>
             {item.date && (
               <Text variant="eyebrow" color="purple400">
-                {format(new Date(item.date), 'dd.MM.yyyy')}
+                {format(new Date(item.date), 'do MMMM yyyy')}
               </Text>
             )}
             <Text variant="h3" as="span" color="dark400">
@@ -186,7 +186,7 @@ export const ClickableItem = ({ item, baseUrl }: ClickableItemProps) => {
                 <Box className={styles.clickableItemTopRowContainer}>
                   <Inline space={2} justifyContent="spaceBetween">
                     <Text variant="eyebrow" color="purple400">
-                      {format(new Date(item.date), 'dd.MM.yyyy')}
+                      {format(new Date(item.date), 'do MMMM yyyy')}
                     </Text>
                     {icon && (
                       <Icon

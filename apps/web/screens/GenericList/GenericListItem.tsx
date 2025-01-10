@@ -36,7 +36,7 @@ const GenericListItemPage: Screen<GenericListItemPageProps> = ({
         <Stack space={1}>
           {item.date && (
             <Text variant="eyebrow">
-              {format(new Date(item.date), 'dd.MM.yyyy')}
+              {format(new Date(item.date), 'do MMMM yyyy')}
             </Text>
           )}
           <Stack space={1}>
