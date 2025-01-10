@@ -48,9 +48,11 @@ export class SecondarySchoolClient {
           code: language.code || '',
           name: language.name || '',
         })) || [],
-      nordicLanguages: getAllLanguageCodes().filter((x) =>
-        ['sv', 'no', 'fi'].includes(x.code),
-      ),
+      nordicLanguages:
+        school.nordicLanguages?.map((language) => ({
+          code: language.code || '',
+          name: language.name || '',
+        })) || [],
       allowRequestDormitory: school.availableDormitory || false,
     }))
   }
