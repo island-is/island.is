@@ -1,6 +1,6 @@
 import { Type } from '@nestjs/common'
 import { getConnectionToken, getModelToken } from '@nestjs/sequelize'
-import faker from 'faker'
+import { faker } from '@faker-js/faker'
 import { Sequelize } from 'sequelize-typescript'
 
 import {
@@ -51,7 +51,7 @@ describe('DelegationsIndexService', () => {
   let delegationScopeModel: typeof DelegationScope
   let userIdentitiesService: UserIdentitiesService
 
-  const userIdentitySubjectId1 = faker.datatype.uuid()
+  const userIdentitySubjectId1 = faker.string.uuid()
 
   const setup = async (testCase: TestCase) => {
     await truncate(sequelize)
@@ -82,7 +82,7 @@ describe('DelegationsIndexService', () => {
     // Create user identity for user with audkenni provider
     await factory.createUserIdentity({
       subjectId: userIdentitySubjectId1,
-      name: faker.name.findName(),
+      name: faker.person.fullName(),
       providerName: audkenniProvider,
       providerSubjectId: `IS-${user.nationalId}`,
       active: true,
@@ -125,7 +125,7 @@ describe('DelegationsIndexService', () => {
       .mockImplementation(async (nationalId: string) =>
         createNationalRegistryUser({
           nationalId,
-          name: faker.name.findName(),
+          name: faker.person.fullName(),
         }),
       )
 
@@ -634,12 +634,12 @@ describe('DelegationsIndexService', () => {
 
     it('should fetch subjectId if userIdentity exits', async () => {
       const fromNationalId = testCase.customDelegations[0].fromNationalId
-      const userIdentitySubjectId2 = faker.datatype.uuid()
+      const userIdentitySubjectId2 = faker.string.uuid()
 
       // User identity with delegation provider
       await factory.createUserIdentity({
         subjectId: userIdentitySubjectId2,
-        name: faker.name.findName(),
+        name: faker.person.fullName(),
         providerName: delegationProvider,
         providerSubjectId: `IS-${fromNationalId}`,
         active: true,
@@ -650,9 +650,9 @@ describe('DelegationsIndexService', () => {
         subjectId: userIdentitySubjectId2,
         type: actorSubjectIdType,
         value: userIdentitySubjectId1,
-        valueType: faker.random.word(),
-        issuer: faker.random.word(),
-        originalIssuer: faker.random.word(),
+        valueType: faker.word.sample(),
+        issuer: faker.word.sample(),
+        originalIssuer: faker.word.sample(),
       })
 
       // Act

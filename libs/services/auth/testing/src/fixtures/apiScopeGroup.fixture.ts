@@ -1,5 +1,5 @@
 import { ApiScopeGroupDTO } from '@island.is/auth-api-lib'
-import faker from 'faker'
+import { faker } from '@faker-js/faker'
 import { CreateApiScope } from './types'
 
 export type CreateApiScopeGroup = Partial<ApiScopeGroupDTO> & {
@@ -19,11 +19,11 @@ export const createApiScopeGroup = ({
   domainName,
 }: CreateApiScopeGroupOptions): Required<CreateApiScopeGroup> => {
   return {
-    id: id ?? faker.datatype.uuid(),
-    name: name ?? faker.random.word(),
-    domainName: domainName ?? faker.random.word(),
+    id: id ?? faker.string.uuid(),
+    name: name ?? faker.word.sample(),
+    domainName: domainName ?? faker.word.sample(),
     order: order ?? 0,
-    displayName: displayName ?? faker.random.word(),
+    displayName: displayName ?? faker.word.sample(),
     description: description ?? faker.lorem.sentence(),
     apiScopes: [],
   }

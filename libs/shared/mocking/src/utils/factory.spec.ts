@@ -1,4 +1,4 @@
-import faker from 'faker'
+import { faker } from '@faker-js/faker'
 import { factory } from './factory'
 
 interface Obj {
@@ -25,7 +25,7 @@ describe('factory', () => {
     // Arrange
     const createObj = factory<Obj>({
       title: 'Hello',
-      age: () => faker.datatype.number(),
+      age: () => faker.number.int(),
     })
 
     // Act

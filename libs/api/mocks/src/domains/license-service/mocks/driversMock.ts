@@ -31,7 +31,7 @@ const qualifications = [
 const driversRightsDataField = () =>
   factory<GenericLicenseDataField>({
     type: 'Category',
-    name: faker.random.arrayElement(qualifications),
+    name: faker.helpers.arrayElement(qualifications),
     fields: [
       {
         type: 'Value',
@@ -46,7 +46,7 @@ const driversRightsDataField = () =>
       {
         type: 'Value',
         label: 'Athugasemd',
-        value: faker.datatype.boolean() ? faker.random.words() : '',
+        value: faker.datatype.boolean() ? faker.word.words() : '',
       },
     ],
   })
@@ -68,7 +68,7 @@ export const mockDriversLicense = (
   {
     type: 'Value',
     label: 'Útgáfustaður',
-    value: faker.address.city(),
+    value: faker.location.city(),
   },
   {
     type: 'Value',
@@ -83,9 +83,6 @@ export const mockDriversLicense = (
   {
     type: 'Group',
     label: 'Réttindaflokkar',
-    fields: generateDataField(
-      driversRightsDataField,
-      faker.datatype.number(10),
-    ),
+    fields: generateDataField(driversRightsDataField, faker.number.int(10)),
   },
 ]

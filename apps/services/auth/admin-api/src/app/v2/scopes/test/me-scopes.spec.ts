@@ -257,17 +257,17 @@ interface CreateTestCase {
 const mockedCreateApiScope = createMockedApiScopes(1)[0]
 
 const createInput = {
-  name: `${TENANT_ID}/${faker.random.word()}`,
+  name: `${TENANT_ID}/${faker.word.sample()}`,
   displayName: [
     {
       locale: 'is',
-      value: faker.random.word(),
+      value: faker.word.sample(),
     },
   ],
   description: [
     {
       locale: 'is',
-      value: faker.random.words(),
+      value: faker.word.sample(),
     },
   ],
 }

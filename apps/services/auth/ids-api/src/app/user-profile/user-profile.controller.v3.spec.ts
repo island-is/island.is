@@ -1,4 +1,4 @@
-import * as faker from 'faker'
+import { faker } from '@faker-js/faker'
 // TODO: Rename this file when v2 tests are deleted
 import request from 'supertest'
 
@@ -40,24 +40,24 @@ const mockNationalRegistry = (
 
 function createCompany(): CompanyExtendedInfo {
   return {
-    name: faker.company.companyName(),
+    name: faker.company.name(),
     address: {
       type: CompanyAddressType.address,
-      streetAddress: faker.address.streetAddress(),
-      locality: faker.address.city(),
-      postalCode: faker.address.zipCode(),
-      region: faker.address.state(),
-      municipalityNumber: faker.random.word(),
+      streetAddress: faker.location.streetAddress(),
+      locality: faker.location.city(),
+      postalCode: faker.location.zipCode(),
+      region: faker.location.state(),
+      municipalityNumber: faker.word.sample(),
       isPostbox: faker.datatype.boolean(),
       country: 'US',
     },
     legalDomicile: {
       type: CompanyAddressType.legalDomicile,
-      streetAddress: faker.address.streetAddress(),
-      locality: faker.address.city(),
-      postalCode: faker.address.zipCode(),
-      region: faker.address.state(),
-      municipalityNumber: faker.random.word(),
+      streetAddress: faker.location.streetAddress(),
+      locality: faker.location.city(),
+      postalCode: faker.location.zipCode(),
+      region: faker.location.state(),
+      municipalityNumber: faker.word.sample(),
       isPostbox: faker.datatype.boolean(),
       country: 'US',
     },
@@ -66,18 +66,16 @@ function createCompany(): CompanyExtendedInfo {
     relatedParty: [],
     vat: [],
     nationalId: createNationalId('company'),
-    status: faker.random.word(),
+    status: faker.word.sample(),
   } as CompanyExtendedInfo
 }
 
 function createUserProfile({ isRestricted = false }): UserProfileDto {
   return {
-    nationalId: faker.datatype.string(),
+    nationalId: faker.string.sample(),
     email: faker.internet.email(),
-    mobilePhoneNumber: faker.phone.phoneNumber(),
-    locale: faker.random.arrayElement(
-      Object.values(UserProfileLocaleEnum) as UserProfileLocaleEnum[],
-    ),
+    mobilePhoneNumber: faker.phone.number(),
+    locale: faker.helpers.enumValue(UserProfileLocaleEnum),
     mobilePhoneNumberVerified: faker.datatype.boolean(),
     emailVerified: faker.datatype.boolean(),
     documentNotifications: faker.datatype.boolean(),
@@ -158,7 +156,7 @@ describe('UserProfileController', () => {
         // Arrange
         const userProfile = createUserProfile({})
         const individual = createNationalRegistryV3User({
-          kyn: { kynKodi: faker.random.arrayElement(['1', '3']) },
+          kyn: { kynKodi: faker.helpers.arrayElement(['1', '3']) },
         })
         mocked(
           app.get(V2MeApi).meUserProfileControllerFindUserProfile,
@@ -241,7 +239,7 @@ describe('UserProfileController', () => {
       it('should support female gender', async () => {
         // Arrange
         const individual = createNationalRegistryV3User({
-          kyn: { kynKodi: faker.random.arrayElement(['2', '4']) },
+          kyn: { kynKodi: faker.helpers.arrayElement(['2', '4']) },
         })
         mockNationalRegistry(
           app.get(NationalRegistryV3ClientService),
@@ -261,7 +259,7 @@ describe('UserProfileController', () => {
       it('should support non-binary gender', async () => {
         // Arrange
         const individual = createNationalRegistryV3User({
-          kyn: { kynKodi: faker.random.arrayElement(['7', '8']) },
+          kyn: { kynKodi: faker.helpers.arrayElement(['7', '8']) },
         })
         mockNationalRegistry(
           app.get(NationalRegistryV3ClientService),
@@ -284,9 +282,9 @@ describe('UserProfileController', () => {
       const individual = createNationalRegistryV3User({
         itarupplysingar: {
           adsetur: {
-            husHeiti: faker.address.streetName(),
-            postnumer: faker.address.zipCode(),
-            poststod: faker.address.city(),
+            husHeiti: faker.location.street(),
+            postnumer: faker.location.zipCode(),
+            poststod: faker.location.city(),
           },
         },
       })
@@ -313,7 +311,7 @@ describe('UserProfileController', () => {
 
     it('should return country if registered', async () => {
       // Arrange
-      const country = faker.address.country()
+      const country = faker.location.country()
       const individual = createNationalRegistryV3User({
         itarupplysingar: {
           adsetur: {

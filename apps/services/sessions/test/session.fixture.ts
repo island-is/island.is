@@ -1,4 +1,4 @@
-import faker from 'faker'
+import { faker } from '@faker-js/faker'
 
 import { createNationalId, NationalIdType } from '@island.is/testing/fixtures'
 
@@ -14,13 +14,13 @@ export interface CreateSessionDtoOptions {
 export const createSessionDto = (
   options?: CreateSessionDtoOptions,
 ): CreateSessionDto => ({
-  sessionId: faker.datatype.uuid(),
+  sessionId: faker.string.uuid(),
   actorNationalId: options?.actorNationalId ?? createNationalId('person'),
   subjectNationalId:
     options?.subjectNationalId ??
     createNationalId(options?.subjectType ?? 'person'),
-  clientId: faker.random.word(),
-  timestamp: options?.timestamp ?? faker.datatype.datetime(),
+  clientId: faker.word.sample(),
+  timestamp: options?.timestamp ?? faker.date.anytime(),
   userAgent: faker.internet.userAgent(),
   ip: faker.internet.ip(),
 })

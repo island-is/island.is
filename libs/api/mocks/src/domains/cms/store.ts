@@ -23,19 +23,19 @@ export const store = createStore(() => {
 
   // Create articles, groups and subgroups in every category.
   const articles = articleCategories.reduce<Article[]>((articles, category) => {
-    const groups = articleGroup.list(faker.datatype.number({ min: 2, max: 4 }))
+    const groups = articleGroup.list(faker.number.int({ min: 2, max: 4 }))
 
     for (const group of groups) {
       const subGroups =
-        faker.datatype.number(4) === 0
+        faker.number.int(4) === 0
           ? []
-          : articleSubgroup.list(faker.datatype.number({ min: 2, max: 4 }))
+          : articleSubgroup.list(faker.number.int({ min: 2, max: 4 }))
 
       const groupArticles = article.list(subGroups.length * 2 + 2, {
         group,
         category,
         subgroup: () =>
-          subGroups.length > 0 ? faker.random.arrayElement(subGroups) : null,
+          subGroups.length > 0 ? faker.helpers.arrayElement(subGroups) : null,
       })
       articles = articles.concat(groupArticles)
     }
@@ -51,11 +51,11 @@ export const store = createStore(() => {
   const newsList = orderBy(news.list(12), ['date'], ['desc'])
 
   const anchorPages = anchorPage.list(6, {
-    category: () => faker.random.arrayElement(articleCategories),
+    category: () => faker.helpers.arrayElement(articleCategories),
   })
 
   const lifeEventsPages = lifeEventPage.list(6, {
-    category: () => faker.random.arrayElement(articleCategories),
+    category: () => faker.helpers.arrayElement(articleCategories),
   })
 
   const frontpage = {

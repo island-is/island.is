@@ -13,9 +13,10 @@ export const domain = factory<AuthDomain>({
   name: () => `@${faker.internet.domainName()}`,
   description: () => faker.lorem.paragraph(),
   nationalId: () => createNationalId('company'),
-  displayName: () => faker.company.companyName(),
+  displayName: () => faker.company.name(),
   organisationLogoKey: ({ displayName }) => displayName,
-  organisationLogoUrl: () => faker.image.business(16, 16),
+  organisationLogoUrl: () =>
+    faker.image.urlLoremFlickr({ category: 'business', height: 16, width: 16 }),
 })
 
 export const apiScope = factory<AuthApiScope>({
@@ -25,28 +26,28 @@ export const apiScope = factory<AuthApiScope>({
 })
 
 export const delegationScope = factory<AuthDelegationScope>({
-  id: () => faker.datatype.uuid(),
+  id: () => faker.string.uuid(),
   apiScope: () => apiScope(),
   displayName: ({ apiScope }) => apiScope!.displayName,
   name: ({ apiScope }) => apiScope!.name,
 })
 
 export const customDelegation = factory<AuthCustomDelegation>({
-  id: () => faker.datatype.uuid(),
+  id: () => faker.string.uuid(),
   from: () => ({
     nationalId: createNationalId('person'),
-    name: faker.name.findName(),
+    name: faker.person.fullName(),
     type: 'Person',
   }),
   domain: () => domain(),
   to: () => ({
     nationalId: createNationalId('person'),
-    name: faker.name.findName(),
+    name: faker.person.fullName(),
     type: 'Person',
   }),
   createdBy: () => ({
     nationalId: createNationalId('person'),
-    name: faker.name.findName(),
+    name: faker.person.fullName(),
     type: 'Person',
   }),
   type: 'Custom',

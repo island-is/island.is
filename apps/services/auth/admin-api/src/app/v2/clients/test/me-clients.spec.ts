@@ -1,5 +1,5 @@
 import { getModelToken } from '@nestjs/sequelize'
-import faker from 'faker'
+import { faker } from '@faker-js/faker'
 import request from 'supertest'
 
 import {
@@ -72,11 +72,11 @@ const createTestClientData = async (app: TestApp, user: User) => {
     redirectUris: [faker.internet.url()],
     postLogoutRedirectUris: [faker.internet.url()],
     allowedGrantTypes: [],
-    claims: [{ type: faker.random.word(), value: faker.random.word() }],
+    claims: [{ type: faker.word.sample(), value: faker.word.sample() }],
     supportedDelegationTypes: [],
   })
   const [translation] = await fixtureFactory.createTranslations(client, 'en', {
-    clientName: faker.random.word(),
+    clientName: faker.word.sample(),
   })
 
   return {

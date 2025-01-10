@@ -30,11 +30,11 @@ function generateKey(user: User | null, locale: Locale): MockKey {
 }
 
 export function generateMockNotification(user: User | null): Notification {
-  const uuid = faker.datatype.uuid()
+  const uuid = faker.string.uuid()
   const isRead = faker.datatype.boolean()
   const sent = faker.date.past()
-  const num = faker.datatype.number(1000)
-  const senderId = faker.datatype.string(10)
+  const num = faker.number.int(1000)
+  const senderId = faker.string.sample(10)
 
   return {
     id: num,

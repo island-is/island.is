@@ -1,4 +1,4 @@
-import * as faker from 'faker'
+import { faker } from '@faker-js/faker'
 
 import {
   EnhancedFetchTestEnv,
@@ -30,10 +30,10 @@ describe('EnhancedFetch', () => {
   it('adds authentication header', async () => {
     // Arrange
     const mockUser = {
-      nationalId: faker.helpers.replaceSymbolWithNumber('##########'),
+      nationalId: faker.string.numeric(10),
       scope: [],
-      authorization: faker.random.word(),
-      client: faker.random.word(),
+      authorization: faker.word.sample(),
+      client: faker.word.sample(),
     }
 
     // Act

@@ -1,4 +1,4 @@
-import * as faker from 'faker'
+import { faker } from '@faker-js/faker'
 
 import { NationalRegistryClientPerson } from '@island.is/shared/types'
 
@@ -6,9 +6,9 @@ import { createNationalId } from './nationalId'
 
 const createRandomNationalRegistryUser = (): NationalRegistryClientPerson => {
   const [givenName, middleName, familyName] = [
-    faker.name.firstName(),
-    faker.name.middleName(),
-    faker.name.lastName(),
+    faker.person.firstName(),
+    faker.person.middleName(),
+    faker.person.lastName(),
   ]
   const name = `${givenName} ${middleName} ${familyName}`
 
@@ -19,20 +19,24 @@ const createRandomNationalRegistryUser = (): NationalRegistryClientPerson => {
     middleName,
     familyName,
     fullName: name,
-    genderCode: faker.datatype.number({ min: 1, max: 8 }).toString(),
+    genderCode: faker.number.int({ min: 1, max: 8 }).toString(),
     exceptionFromDirectMarketing: faker.datatype.boolean(),
-    birthdate: faker.date.past(100),
+    birthdate: faker.date.past({ years: 100 }),
     legalDomicile: {
-      streetAddress: faker.address.streetName(),
-      postalCode: faker.address.zipCode(),
-      locality: faker.address.city(),
-      municipalityNumber: faker.address.cityPrefix(),
+      streetAddress: faker.location.street(),
+      postalCode: faker.location.zipCode(),
+      locality: faker.location.city(),
+      municipalityNumber: faker.helpers.arrayElement(
+        faker.definitions.location.city_prefix,
+      ),
     },
     residence: {
-      streetAddress: faker.address.streetName(),
-      postalCode: faker.address.zipCode(),
-      locality: faker.address.city(),
-      municipalityNumber: faker.address.cityPrefix(),
+      streetAddress: faker.location.street(),
+      postalCode: faker.location.zipCode(),
+      locality: faker.location.city(),
+      municipalityNumber: faker.helpers.arrayElement(
+        faker.definitions.location.city_prefix,
+      ),
     },
   }
 }

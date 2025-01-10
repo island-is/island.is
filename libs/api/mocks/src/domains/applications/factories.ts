@@ -7,10 +7,10 @@ import {
 import { Application } from '../../types'
 
 export const application = factory<Application>({
-  id: () => faker.datatype.uuid(),
+  id: () => faker.string.uuid(),
   created: () => faker.date.past().toISOString(),
   modified: () => faker.date.past().toISOString(),
-  applicant: () => faker.random.alphaNumeric(10),
+  applicant: () => faker.string.alphanumeric(10),
   assignees: [],
   applicantActors: [],
   state: 'draft',
@@ -35,7 +35,7 @@ export const externalData = factory<DataProviderResult>({
       data: () => ({
         email: faker.internet.email(),
         emailVerified: true,
-        mobilePhoneNumber: faker.phone.phoneNumber('###-####'),
+        mobilePhoneNumber: faker.helpers.fromRegExp('[0-9]{3}-[0-9]{4}'),
         mobilePhoneNumberVerified: true,
       }),
     },

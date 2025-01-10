@@ -1,4 +1,4 @@
-import faker from 'faker'
+import { faker } from '@faker-js/faker'
 
 /**
  * Factory helper which slugs another field on the factory.

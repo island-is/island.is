@@ -1,6 +1,6 @@
 import { IntlProvider } from 'react-intl'
-import faker from 'faker'
 import { ApolloClient, ApolloProvider, InMemoryCache } from '@apollo/client'
+import { faker } from '@faker-js/faker'
 import { renderHook } from '@testing-library/react'
 
 import { UserProvider } from '@island.is/judicial-system-web/src/components'
@@ -39,11 +39,11 @@ describe('useSections getSections', () => {
   const u: User = {
     created: faker.date.past().toISOString(),
     modified: faker.date.past().toISOString(),
-    id: faker.datatype.uuid(),
+    id: faker.string.uuid(),
     nationalId: '0000000000',
-    name: faker.name.firstName(),
-    title: faker.name.jobType(),
-    mobileNumber: faker.phone.phoneNumber(),
+    name: faker.person.firstName(),
+    title: faker.person.jobType(),
+    mobileNumber: faker.phone.number(),
     role: UserRole.PROSECUTOR,
     email: faker.internet.email(),
     active: true,
@@ -51,8 +51,8 @@ describe('useSections getSections', () => {
     institution: {
       created: faker.date.past().toISOString(),
       modified: faker.date.past().toISOString(),
-      id: faker.datatype.uuid(),
-      name: faker.company.companyName(),
+      id: faker.string.uuid(),
+      name: faker.company.name(),
       active: true,
       type: InstitutionType.PROSECUTORS_OFFICE,
     },
@@ -78,7 +78,7 @@ describe('useSections getSections', () => {
       type: CaseType.CUSTODY,
       created: faker.date.past().toISOString(),
       modified: faker.date.past().toISOString(),
-      id: faker.datatype.uuid(),
+      id: faker.string.uuid(),
       state: CaseState.DRAFT,
       policeCaseNumbers: [],
     }
@@ -105,7 +105,7 @@ describe('useSections getSections', () => {
       type: CaseType.CUSTODY,
       created: faker.date.past().toISOString(),
       modified: faker.date.past().toISOString(),
-      id: faker.datatype.uuid(),
+      id: faker.string.uuid(),
       state: CaseState.ACCEPTED,
       policeCaseNumbers: [],
       appealState: CaseAppealState.COMPLETED,
@@ -132,7 +132,7 @@ describe('useSections getSections', () => {
       type: CaseType.INDICTMENT,
       created: faker.date.past().toISOString(),
       modified: faker.date.past().toISOString(),
-      id: faker.datatype.uuid(),
+      id: faker.string.uuid(),
       state: CaseState.RECEIVED,
       policeCaseNumbers: [],
     }
@@ -150,7 +150,7 @@ describe('useSections getSections', () => {
       type: CaseType.INDICTMENT,
       created: faker.date.past().toISOString(),
       modified: faker.date.past().toISOString(),
-      id: faker.datatype.uuid(),
+      id: faker.string.uuid(),
       state: CaseState.WAITING_FOR_CANCELLATION,
       policeCaseNumbers: [],
     }

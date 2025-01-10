@@ -1,4 +1,4 @@
-import faker from 'faker'
+import { faker } from '@faker-js/faker'
 
 import { CurrentUserDocument } from '@island.is/judicial-system-web/src/components/UserProvider/currentUser.generated'
 import {
@@ -204,15 +204,15 @@ export const mockUser = (userRole: UserRole): User => {
 
 export const mockCaseFile = (category?: CaseFileCategory): CaseFile => {
   return {
-    caseId: faker.datatype.uuid(),
+    caseId: faker.string.uuid(),
     category: category ?? CaseFileCategory.CASE_FILE,
     chapter: null,
     created: faker.date.past().toISOString(),
     displayDate: faker.date.past().toISOString(),
-    id: faker.datatype.uuid(),
+    id: faker.string.uuid(),
     key: faker.lorem.paragraph(3).replace(' ', ''),
     modified: faker.date.past().toISOString(),
-    name: faker.random.word(),
+    name: faker.word.sample(),
     orderWithinChapter: null,
     policeCaseNumber: '123123213',
     policeFileId: '123123123',

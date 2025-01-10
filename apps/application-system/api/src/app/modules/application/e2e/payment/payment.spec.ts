@@ -61,11 +61,11 @@ class MockPaymentService {
   async findCatalogChargeItems() {
     return [
       {
-        performingOrgID: faker.datatype.number(),
-        chargeType: faker.random.word(),
+        performingOrgID: faker.number.int(),
+        chargeType: faker.word.sample(),
         chargeItemCode: TARGET_CHARGE_ITEM_CODE,
-        chargeItemName: faker.random.word(),
-        priceAmount: faker.datatype.number(),
+        chargeItemName: faker.word.sample(),
+        priceAmount: faker.number.int(),
       },
     ]
   }

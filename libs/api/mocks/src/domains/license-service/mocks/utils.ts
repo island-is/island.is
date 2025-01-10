@@ -1,4 +1,4 @@
-import faker from 'faker'
+import { faker } from '@faker-js/faker'
 import { GenericLicenseDataField } from '../../../types'
 
 export const maybeExpired = () =>
@@ -15,13 +15,5 @@ export const generateDataField = (
   factory: () => () => GenericLicenseDataField,
   count: number,
 ) => {
-  const values = []
-
-  // Factory keeps returning the same faker values,
-  // this generates different values at least
-  for (let i = 0; i < count; i++) {
-    const value = factory()()
-    values.push(value)
-  }
-  return values
+  return faker.helpers.multiple(() => factory(), { count })
 }

@@ -8,7 +8,7 @@ import { TestApp, setupApp, truncate } from '@island.is/testing/nest'
 import { FixtureFactory } from '../../../../../test/fixtureFactory'
 import { SequelizeConfigService } from '../../../../sequelizeConfig.service'
 import { AppModule } from '../../../app.module'
-import faker from 'faker'
+import { faker } from '@faker-js/faker'
 import { ModeOfDelivery } from '@island.is/university-gateway'
 
 const currentUser = createCurrentUser()
@@ -83,7 +83,7 @@ describe('ProgramController', () => {
     })
 
     it('should not find program', async () => {
-      const randomId = faker.datatype.uuid()
+      const randomId = faker.string.uuid()
 
       const result = await server.get(`/v1/programs/${randomId}`)
 

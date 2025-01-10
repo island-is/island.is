@@ -1,6 +1,6 @@
 import { Type } from '@nestjs/common'
 import { getConnectionToken } from '@nestjs/sequelize'
-import faker from 'faker'
+import { faker } from '@faker-js/faker'
 import { Sequelize } from 'sequelize-typescript'
 import request from 'supertest'
 
@@ -51,7 +51,7 @@ describe('DelegationsController', () => {
           .mockImplementation(async (nationalId: string) =>
             createNationalRegistryUser({
               nationalId,
-              name: faker.name.findName(),
+              name: faker.person.fullName(),
             }),
           )
         nationalRegistryV3Api = app.get(NationalRegistryV3ClientService)
