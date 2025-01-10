@@ -28,6 +28,7 @@ describe('AppService - Run', () => {
   beforeEach(() => {
     mockNow.mockClear()
     mockFetch.mockClear()
+
     mockNow.mockReturnValue(new Date('2020-01-01T00:01:00.000Z'))
 
     givenWhenThen = async (): Promise<Then> => {
@@ -75,7 +76,7 @@ describe('AppService - Run', () => {
           body: { type: 'INDICTMENTS_WAITING_FOR_CONFIRMATION' },
         },
       ])
-      expect(fetch).toHaveBeenCalledTimes(3)
+      expect(fetch).toHaveBeenCalledTimes(4)
       expect(fetch).toHaveBeenCalledWith(
         `${appModuleConfig().backendUrl}/api/internal/cases/archive`,
         {
@@ -102,8 +103,8 @@ describe('AppService - Run', () => {
       await givenWhenThen()
     })
 
-    it('should call the backend twice', () => {
-      expect(fetch).toHaveBeenCalledTimes(2)
+    it('should call the backend three times', () => {
+      expect(fetch).toHaveBeenCalledTimes(3)
     })
   })
 
