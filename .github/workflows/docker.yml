@@ -65,7 +65,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: ${{ secrets.DOCKERHUB_USERNAME }}/${{ matrix.project }}
+          images: ${{ env.repository }}/${{ matrix.project }}
           tags: |
             type=ref,event=branch
             type=semver,pattern={{version}}
@@ -74,7 +74,7 @@ jobs:
         uses: docker/build-push-action@v4
         with:
           context: .
-          file: Dockerfile
-          push: true
+          file: scripts/ci/Dockerfile
+          push: ${{ !!env.ACT }}
           labels: ${{ steps.meta.outputs.labels }}
           tags: ${{ steps.meta.outputs.tags }}
