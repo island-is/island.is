@@ -62,7 +62,8 @@ ENV NODE_ENV=production
 WORKDIR /webapp
 
 # Adding user for running the app
-RUN addgroup runners && adduser -D runner -G runners
+RUN addgroup runners && \
+  adduser runner --disabled-password --ingroup runners
 
 FROM output-base AS output-base-with-pg
 
