@@ -45,4 +45,17 @@ export const externalData = {
         'In order to apply for this application we need your email and phone number',
     },
   }),
+  ver: defineMessages({
+    generalErrorTitle: {
+      id: 'aosh.sem.application:externalData.ver.generalErrorTitle',
+      defaultMessage: 'Villa í umsókn',
+      description: 'General error title when fetching data from VER',
+    },
+    generalError: {
+      id: 'aosh.sem.application:externalData.ver.generalError',
+      defaultMessage:
+        'Ekki tókst að sækja gögn til VER, vinsamlegast reynið síðar',
+      description: 'General error when fetching data from VER',
+    },
+  }),
 }

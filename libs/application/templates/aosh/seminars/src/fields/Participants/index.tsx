@@ -129,49 +129,49 @@ export const Participants: FC<React.PropsWithChildren<FieldBaseProps>> = ({
     return
   }
 
-  const updateValidity = async (participants: Array<Participant>) => {
-    const nationalIds = participants.map((x) => x.nationalId)
+  // const updateValidity = async (participants: Array<Participant>) => {
+  //   const nationalIds = participants.map((x) => x.nationalId)
 
-    if (nationalIds.length > 0) {
-      const seminarId = getValueViaPath(
-        application.answers,
-        'initialQuery',
-        '',
-      ) as string
-      const res = await getIsCompanyValidCallback(nationalIds, seminarId)
+  //   if (nationalIds.length > 0) {
+  //     const seminarId = getValueViaPath(
+  //       application.answers,
+  //       'initialQuery',
+  //       '',
+  //     ) as string
+  //     const res = await getIsCompanyValidCallback(nationalIds, seminarId)
 
-      let tmpNotValid = false
-      const updatedParticipantList: Array<Participant> = participants.map(
-        (x) => {
-          const participantInRes = res.areIndividualsValid.filter(
-            (z) => z.nationalID === x.nationalId,
-          )
-          if (!participantInRes[0].mayTakeCourse) tmpNotValid = true
-          return { ...x, disabled: !participantInRes[0].mayTakeCourse }
-        },
-      )
-      if (tmpNotValid) setValue('participantValidityError', true)
-      setFoundNotValid(tmpNotValid)
-      setParticipantList(updatedParticipantList)
-    }
-  }
+  //     let tmpNotValid = false
+  //     const updatedParticipantList: Array<Participant> = participants.map(
+  //       (x) => {
+  //         const participantInRes = res.areIndividualsValid.filter(
+  //           (z) => z.nationalID === x.nationalId,
+  //         )
+  //         if (!participantInRes[0].mayTakeCourse) tmpNotValid = true
+  //         return { ...x, disabled: !participantInRes[0].mayTakeCourse }
+  //       },
+  //     )
+  //     if (tmpNotValid) setValue('participantValidityError', true)
+  //     setFoundNotValid(tmpNotValid)
+  //     setParticipantList(updatedParticipantList)
+  //   }
+  // }
 
-  useEffect(() => {
-    if (participantListWatch) {
-      const lastItemIndex = participantListWatch.length - 1
-      if (
-        participantListWatch[lastItemIndex].name &&
-        participantListWatch[lastItemIndex].email &&
-        isValidEmail(participantListWatch[lastItemIndex].email) &&
-        participantListWatch[lastItemIndex].nationalId &&
-        kennitala.isValid(participantListWatch[lastItemIndex].nationalId) &&
-        participantListWatch[lastItemIndex].phoneNumber &&
-        isValidPhoneNumber(participantListWatch[lastItemIndex].phoneNumber)
-      ) {
-        updateValidity(participantListWatch)
-      }
-    }
-  }, [participantListWatch])
+  // useEffect(() => {
+  //   if (participantListWatch) {
+  //     const lastItemIndex = participantListWatch.length - 1
+  //     if (
+  //       participantListWatch[lastItemIndex].name &&
+  //       participantListWatch[lastItemIndex].email &&
+  //       isValidEmail(participantListWatch[lastItemIndex].email) &&
+  //       participantListWatch[lastItemIndex].nationalId &&
+  //       kennitala.isValid(participantListWatch[lastItemIndex].nationalId) &&
+  //       participantListWatch[lastItemIndex].phoneNumber &&
+  //       isValidPhoneNumber(participantListWatch[lastItemIndex].phoneNumber)
+  //     ) {
+  //       updateValidity(participantListWatch)
+  //     }
+  //   }
+  // }, [participantListWatch])
 
   const removeFile = () => {
     setFileState([])

@@ -40,15 +40,17 @@ export const WatchCompanyNationalId: FC<
     return [false, '']
   })
 
-  return isCompanyValid ? null : (
-    <Box marginTop={5}>
-      <AlertMessage
-        type="error"
-        title=""
-        message={formatMessage(
-          paymentArrangement.labels.contactOrganizationAlert,
-        )}
-      />
-    </Box>
+  return (
+    !isCompanyValid && (
+      <Box marginTop={5}>
+        <AlertMessage
+          type="error"
+          title=""
+          message={formatMessage(
+            paymentArrangement.labels.contactOrganizationAlert,
+          )}
+        />
+      </Box>
+    )
   )
 }

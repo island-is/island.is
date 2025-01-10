@@ -41,4 +41,14 @@ export const application = defineMessages({
     description:
       'Description of application state/status when the application is in prerequisites',
   },
+  submissionErrorTitle: {
+    id: 'aosh.sem.application:submissionErrorTitle',
+    defaultMessage: 'Villa í umsókn',
+    description: 'Submission error title',
+  },
+  submissionError: {
+    id: 'aosh.sem.application:submissionError',
+    defaultMessage: 'Ekki tókst að skrá námskeið, vinsamlegast reynið síðar',
+    description: 'Submission error description',
+  },
 })

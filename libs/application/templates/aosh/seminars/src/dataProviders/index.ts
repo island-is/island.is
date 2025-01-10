@@ -21,7 +21,6 @@ export const MockableVinnueftirlitidPaymentCatalogApi =
     params: {
       organizationId: InstitutionNationalIds.VINNUEFTIRLITID,
     },
-    externalDataId: 'payment',
   })
 
 export const IdentityApi = IdentityApiProvider.configure({
