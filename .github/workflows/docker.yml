@@ -11,6 +11,10 @@ on:
         description: 'Comma-separated list of project names to build.'
         required: true
 
+defaults:
+  run:
+    shell: bash -euxo pipefail {0}
+
 jobs:
   prepare_matrix:
     runs-on: ubuntu-latest
