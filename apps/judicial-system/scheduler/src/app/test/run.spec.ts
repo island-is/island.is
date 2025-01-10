@@ -87,6 +87,18 @@ describe('AppService - Run', () => {
           },
         },
       )
+      expect(fetch).toHaveBeenCalledWith(
+        `${
+          appModuleConfig().backendUrl
+        }/api/internal/cases/postHearingArrangements/${new Date('2020-01-01T00:01:00.000Z')}`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            authorization: `Bearer ${appModuleConfig().backendAccessToken}`,
+          },
+        },
+      )
     })
   })
 
@@ -103,8 +115,17 @@ describe('AppService - Run', () => {
       await givenWhenThen()
     })
 
-    it('should call the backend three times', () => {
-      expect(fetch).toHaveBeenCalledTimes(3)
+    it('should attempt archiving twice', () => {
+      expect(fetch).toHaveBeenNthCalledWith(
+        1,
+        `${appModuleConfig().backendUrl}/api/internal/cases/archive`,
+        expect.any(Object),
+      )
+      expect(fetch).toHaveBeenNthCalledWith(
+        2,
+        `${appModuleConfig().backendUrl}/api/internal/cases/archive`,
+        expect.any(Object),
+      )
     })
   })
 
