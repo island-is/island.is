@@ -30,6 +30,10 @@ import {
 import { api } from '@island.is/judicial-system-web/src/services'
 
 import { useGeoLocation, useGetLawyer } from '../../utils/hooks'
+import {
+  Database,
+  useIndexedDB,
+} from '../../utils/hooks/useIndexedDB/useIndexedDB'
 import MarkdownWrapper from '../MarkdownWrapper/MarkdownWrapper'
 import { UserContext } from '../UserProvider/UserProvider'
 import { header } from './Header.strings'
@@ -77,6 +81,8 @@ const HeaderContainer = () => {
   const { practice, email, phoneNr } =
     useGetLawyer(user?.nationalId, isDefenceUser(user)) ?? {}
   const { countryCode } = useGeoLocation()
+
+  const { isDBConnecting } = useIndexedDB(Database.name, [Database.lawyerTable])
 
   useEffect(() => {
     setIsRobot(countryCode !== 'IS')

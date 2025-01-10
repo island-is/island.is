@@ -29,7 +29,7 @@ export const LawyerRegistryContext = createContext<LawyerRegistryContext>({
 
 export const LawyerRegistryProvider: FC<PropsWithChildren> = ({ children }) => {
   const { data: lawyers, error } = useSWR<Lawyer[]>(
-    '/api/defender/lawyerRegistry!',
+    '/api/defender/lawyerRegistry',
     fetcher,
     { shouldRetryOnError: false },
   )
