@@ -66,8 +66,29 @@ jobs:
       - name: Check out repo
         uses: actions/checkout@v4
 
+      - name: Configure AWS Credentials
+        if: ${{ !env.ACT && env.PUSH_REGISTRY && env.PUSH_REGISTRY != 'ghcr.io' }}
+        id: aws-creds
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ECR_ROLE }}
+          aws-region: ${{ vars.AWS_REGION }}
+          role-session-name: github-actions
+
+      - name: Log in to Amazon ECR
+        if: ${{ steps.aws-creds.conclusion == 'success' }}
+        id: ecr-login
+        uses: aws-actions/amazon-ecr-login@v3
+
+      - name: Push Docker Image to ECR
+        if: ${{ env.PUSH_REGISTRY && env.PUSH_REGISTRY != 'ghcr.io' }}
+        run: |
+          set -euo pipefail
+          echo "Pushing image to ECR"
+          docker push "${{ env.PUSH_REGISTRY }}/${{ github.repository }}/${{ matrix.project }}:${{ steps.meta.outputs.tags }}"
+
       - name: Log in to Docker
-        if: ${{ !env.ACT }}
+        if: ${{ !env.ACT && env.PUSH_REGISTRY == 'ghcr.io' }}
         uses: docker/login-action@v3
         with:
           registry: ghcr.io
