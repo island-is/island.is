@@ -80,7 +80,7 @@ export class AppService {
 
   private async postDailyHearingArrangementSummary() {
     const today = now()
-  try {
+    try {
       const res = await fetch(
         `${this.config.backendUrl}/api/internal/cases/postHearingArrangements/${today}`,
         {

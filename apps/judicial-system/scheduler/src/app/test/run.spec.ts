@@ -90,7 +90,9 @@ describe('AppService - Run', () => {
       expect(fetch).toHaveBeenCalledWith(
         `${
           appModuleConfig().backendUrl
-        }/api/internal/cases/postHearingArrangements/${new Date('2020-01-01T00:01:00.000Z')}`,
+        }/api/internal/cases/postHearingArrangements/${new Date(
+          '2020-01-01T00:01:00.000Z',
+        )}`,
         {
           method: 'POST',
           headers: {
