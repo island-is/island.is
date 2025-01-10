@@ -47,6 +47,10 @@ jobs:
       matrix: ${{ fromJson(needs.prepare_matrix.outputs.matrix) }}
 
     steps:
+      - name: Debug inputs
+        run: |
+          echo "Matrix: ${{ toJSON(matrix) }}"
+
       - name: Check out repo
         uses: actions/checkout@v3
 
