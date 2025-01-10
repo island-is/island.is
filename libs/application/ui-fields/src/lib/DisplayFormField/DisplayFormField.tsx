@@ -22,6 +22,7 @@ export const DisplayFormField = ({ field, application }: Props) => {
     suffix,
     rightAlign = false,
     halfWidthOwnline = false,
+    clearOnChange,
   } = field
   const { watch, setValue } = useFormContext()
   const allValues = watch()
@@ -90,6 +91,7 @@ export const DisplayFormField = ({ field, application }: Props) => {
               ? undefined
               : variant
           }
+          clearOnChange={clearOnChange}
         />
       </Box>
     </Box>

@@ -7,7 +7,7 @@ module.exports = {
       [
         {
           id: 'a1fd62db-18a6-4741-88eb-a7b7a7e05833',
-          vehicle_id: 'ftm-522',
+          vehicle_id: 'VM006',
           request_type: 'xxxxxxx',
           name_of_requestor: 'xxxxxxx',
           recycling_partner_id: '8888888888',
@@ -16,7 +16,7 @@ module.exports = {
         },
         {
           id: 'b1fd62db-18a6-4741-88eb-a7b7a7e05833',
-          vehicle_id: 'mhs-583',
+          vehicle_id: 'LT579',
           request_type: 'xxxxxxx',
           name_of_requestor: 'xxxxxxx',
           recycling_partner_id: '9999999999',
@@ -25,7 +25,7 @@ module.exports = {
         },
         {
           id: 'c1fd62db-18a6-4741-88eb-a7b7a7e05833',
-          vehicle_id: 'aes-135',
+          vehicle_id: 'AE135',
           request_type: 'xxxxxxx',
           name_of_requestor: 'xxxxxxx',
           recycling_partner_id: null,
@@ -43,7 +43,7 @@ module.exports = {
         },
         {
           id: 'a3fd62db-18a6-4741-88eb-a7b7a7e05833',
-          vehicle_id: 'aes-135',
+          vehicle_id: 'AE135',
           request_type: 'pendingRecycle',
           recycling_partner_id: null,
           name_of_requestor: 'xxxxxxx',
@@ -52,7 +52,7 @@ module.exports = {
         },
         {
           id: 'a4fd62db-18a6-4741-88eb-a7b7a7e05833',
-          vehicle_id: 'aes-135',
+          vehicle_id: 'AE135',
           request_type: 'handOver',
           name_of_requestor: 'xxxxxxx',
           recycling_partner_id: null,
@@ -61,7 +61,7 @@ module.exports = {
         },
         {
           id: 'a5fd62db-18a6-4741-88eb-a7b7a7e05833',
-          vehicle_id: 'ftm-522',
+          vehicle_id: 'FT522',
           request_type: 'pendingRecycle',
           name_of_requestor: 'xxxxxxx',
           recycling_partner_id: null,
