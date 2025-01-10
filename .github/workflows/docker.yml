@@ -88,13 +88,6 @@ jobs:
         id: ecr-login
         uses: aws-actions/amazon-ecr-login@v2
 
-      - name: Push Docker Image to ECR
-        if: ${{ env.PUSH_REGISTRY && env.PUSH_REGISTRY != 'ghcr.io' }}
-        run: |
-          set -euo pipefail
-          echo "Pushing image to ECR"
-          docker push "${{ env.PUSH_REGISTRY }}/${{ github.repository }}/${{ matrix.project }}:${{ steps.meta.outputs.tags }}"
-
       - name: Log in to Docker
         if: ${{ !env.ACT && env.PUSH_REGISTRY == 'ghcr.io' }}
         uses: docker/login-action@v3
