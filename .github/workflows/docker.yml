@@ -103,6 +103,13 @@ jobs:
           # Infix a slash when PUSH_REGISTRY is non-empty
           images: |
             ${{ env.PUSH_REGISTRY }}${{ env.PUSH_REGISTRY && '/' || '' }}${{ github.repository }}/${{ matrix.project }}
+          tags: |
+            type=ref,event=branch
+            # Git SHA
+            type=sha,format=short
+            type=sha,format=long
+            # SemVer by tag (e.g. v1.2.3)
+            type=semver,pattern={{version}}
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v6
