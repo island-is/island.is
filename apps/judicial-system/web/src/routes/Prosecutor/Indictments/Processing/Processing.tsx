@@ -81,6 +81,8 @@ const Processing: FC = () => {
     setAndSendCivilClaimantToServer,
   } = useCivilClaimants()
   const router = useRouter()
+
+  // TODO: currently for e2e tests, this is failing locally due to this feature flag
   const isTrafficViolationCaseCheck =
     features.includes(Feature.MULTIPLE_INDICTMENT_SUBTYPES) ||
     isTrafficViolationCase(workingCase)

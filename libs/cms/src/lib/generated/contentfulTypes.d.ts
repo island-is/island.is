@@ -771,6 +771,7 @@ export interface ICustomPageFields {
     | 'OfficialJournalOfIceland'
     | 'Vacancies'
     | 'Grants'
+    | 'DirectorateOfLabourMyPages'
     | undefined
 
   /** Alert Banner */
@@ -1247,6 +1248,34 @@ export interface IFeaturedEvents extends Entry<IFeaturedEventsFields> {
     contentType: {
       sys: {
         id: 'featuredEvents'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
+export interface IFeaturedLinksFields {
+  /** Internal Title */
+  internalTitle?: string | undefined
+
+  /** Displayed Title */
+  displayedTitle?: string | undefined
+
+  /** Links */
+  links?: IFeatured[] | undefined
+}
+
+export interface IFeaturedLinks extends Entry<IFeaturedLinksFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'featuredLinks'
         linkType: 'ContentType'
         type: 'Link'
       }
