@@ -99,7 +99,6 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          context: git
           images: |
             ${{ env.PUSH_REGISTRY }}/${{ github.repository }}/${{ matrix.project }}
           tags: |
