@@ -11,6 +11,10 @@ on:
         description: 'Comma-separated list of project names to build.'
         required: true
 
+concurrency:
+  group: docker-build-${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
+
 defaults:
   run:
     shell: bash -euo pipefail {0}
