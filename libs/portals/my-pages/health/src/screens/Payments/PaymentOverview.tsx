@@ -76,7 +76,7 @@ export const PaymentOverview = () => {
     )
     .filter(isDefined)
 
-  const [enabledMileageFlag, setEnabledMileageFlag] = useState<boolean>(false)
+  const [enabledDocumentFlag, setEnabledDocumentFlag] = useState<boolean>(false)
   const featureFlagClient = useFeatureFlagClient()
   useEffect(() => {
     const isFlagEnabled = async () => {
@@ -85,7 +85,7 @@ export const PaymentOverview = () => {
         false,
       )
       if (ffEnabled) {
-        setEnabledMileageFlag(ffEnabled as boolean)
+        setEnabledDocumentFlag(ffEnabled as boolean)
       }
     }
     isFlagEnabled()
@@ -225,7 +225,7 @@ export const PaymentOverview = () => {
                         <T.HeadData>
                           {formatMessage(messages.insuranceShare)}
                         </T.HeadData>
-                        {enabledMileageFlag ? (
+                        {enabledDocumentFlag ? (
                           <T.HeadData>
                             {formatMessage(messages.paymentDocument)}
                           </T.HeadData>
@@ -247,7 +247,7 @@ export const PaymentOverview = () => {
                             <T.Data>
                               {amountFormat(item.insuranceAmount ?? 0)}
                             </T.Data>
-                            {enabledMileageFlag ? (
+                            {enabledDocumentFlag ? (
                               <T.Data>
                                 <Button
                                   iconType="outline"
