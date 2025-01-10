@@ -13,7 +13,11 @@ on:
 
 defaults:
   run:
-    shell: bash -euxo pipefail {0}
+    shell: bash -euo pipefail {0}
+
+env:
+  PUSH_REGISTRY: ${{ vars.PUSH_REGISTRY }}
+  DOCKER_REGISTRY: ${{ vars.DOCKER_REGISTRY || 'docker.io' }}
 
 jobs:
   prepare_matrix:
@@ -26,16 +30,23 @@ jobs:
       - name: Create matrix from input
         id: set-matrix
         run: |
-          set -x
 
+          # Create a list of objects of the form:
+          # [
+          #   {
+          #     "name": "services-my-service",
+          #     "docker": "next|nest|mytype"
+          #   },
+          #   ...
+          # ]
           echo "matrix=$(git ls-files '**/project.json' |
             xargs cat | \
             jq -s -c '{ include: [
-                .[]
-                | {
-                    project: .name,
-                    docker: (.targets | keys | map(select(startswith("docker-"))) | map(sub("^docker-"; "")) | .[])
-                  }
+              .[]
+              | {
+                  project: .name,
+                  docker: (.targets | keys | map(select(startswith("docker-"))) | map(sub("^docker-"; "")) | .[])
+                }
               ]
             }')" >>"$GITHUB_OUTPUT"
 
@@ -43,8 +54,9 @@ jobs:
     runs-on: ubuntu-latest
     needs: prepare_matrix
     strategy:
-      fail-fast: false
+      fail-fast: true
       matrix: ${{ fromJson(needs.prepare_matrix.outputs.matrix) }}
+      max-parallel: 1
 
     steps:
       - name: Debug inputs
@@ -52,9 +64,10 @@ jobs:
           echo "Matrix: ${{ toJSON(matrix) }}"
 
       - name: Check out repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Log in to Docker
+        if: ${{ !env.ACT }}
         uses: docker/login-action@v3
         with:
           registry: ghcr.io
@@ -65,16 +78,21 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: ${{ env.repository }}/${{ matrix.project }}
+          context: git
+          images: |
+            ${{ env.PUSH_REGISTRY }}/${{ github.repository }}/${{ matrix.project }}
           tags: |
             type=ref,event=branch
             type=semver,pattern={{version}}
 
       - name: Build and push Docker image
-        uses: docker/build-push-action@v4
+        uses: docker/build-push-action@v6
         with:
           context: .
           file: scripts/ci/Dockerfile
-          push: ${{ !!env.ACT }}
+          push: ${{ !env.ACT }}
           labels: ${{ steps.meta.outputs.labels }}
           tags: ${{ steps.meta.outputs.tags }}
+          build-args: |
+            NODE_IMAGE_TAG=latest
+            DOCKER_REGISTRY=${{ env.DOCKER_REGISTRY }}
