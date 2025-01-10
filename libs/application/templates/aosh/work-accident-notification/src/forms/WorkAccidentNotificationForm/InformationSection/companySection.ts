@@ -160,6 +160,7 @@ export const companySection = buildSubSection({
           title: information.labels.company.phonenumber,
           width: 'half',
           required: true,
+          enableCountrySelector: true,
           defaultValue: (application: Application) =>
             getValueViaPath<string>(
               application.externalData,
