@@ -27,7 +27,6 @@ import {
   CaseOrigin,
   CaseState,
   CaseType,
-  dateTypes,
   EventType,
   isIndictmentCase,
   isProsecutionUser,
@@ -522,8 +521,8 @@ export class InternalCaseService {
   }
 
   async getCaseHearingArrangements(date: Date): Promise<Case[]> {
-    const startOfDay = new Date(date.setHours(0, 0, 0, 0)) // Set to 00:00:00
-    const endOfDay = new Date(date.setHours(23, 59, 59, 999)) // Set to 23:59:59
+    const startOfDay = new Date(date.setHours(0, 0, 0, 0))
+    const endOfDay = new Date(date.setHours(23, 59, 59, 999))
 
     return this.caseModel.findAll({
       include: [
