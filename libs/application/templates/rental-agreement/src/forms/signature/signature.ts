@@ -1,13 +1,31 @@
 import {
   buildActionCardListField,
+  buildCheckboxField,
   buildDescriptionField,
   buildMultiField,
   buildSection,
   buildStaticTableField,
+  buildSubmitField,
+  getValueViaPath,
 } from '@island.is/application/core'
-import { signature } from '../../lib/messages'
+import { FormValue } from '@island.is/application/types'
 import { RentalAgreement } from '../../lib/dataSchema'
 import { formatNationalId, formatPhoneNumber } from '../../lib/utils'
+import { TRUE } from '../../lib/constants'
+import { signature } from '../../lib/messages'
+
+const continueToSignatureStatementIsTrue = (answers: FormValue) => {
+  const continueToSignatureStatement = getValueViaPath(
+    answers,
+    'signature.statement',
+    [],
+  ) as string[]
+  return (
+    continueToSignatureStatement && continueToSignatureStatement.includes(TRUE)
+  )
+}
+
+console.log(!!continueToSignatureStatementIsTrue)
 
 export const Signature = buildSection({
   id: 'signature',
@@ -57,11 +75,32 @@ export const Signature = buildSection({
             ])
           },
         }),
+        buildCheckboxField({
+          id: 'signature.statement',
+          title: '',
+          options: [
+            {
+              value: TRUE,
+              label:
+                'Ég skil að ekki er hægt að gera breytingar á samningi eftir að búið er að senda í undirritun.',
+            },
+          ],
+          large: true,
+          marginTop: 9,
+        }),
         buildActionCardListField({
           id: 'actionCardList',
-          title: 'Action cards with buttons',
-          marginTop: 12,
-          items: () => {
+          title: '',
+          marginTop: 4,
+          items: (application) => {
+            const continueToSignatureStatement = getValueViaPath(
+              application.answers,
+              'signature.statement',
+              [],
+            ) as string[]
+            const isSignatureStatementChecked =
+              continueToSignatureStatementIsTrue(application.answers)
+            console.log(isSignatureStatementChecked)
             return [
               {
                 backgroundColor: 'blue',
@@ -69,17 +108,33 @@ export const Signature = buildSection({
                 headingVariant: 'h3',
                 buttonType: 'primary',
                 cta: {
+                  disabled: !isSignatureStatementChecked,
                   label: 'Senda í undirritun',
                   variant: 'primary',
                   icon: 'pencil',
                   onClick: () => {
-                    // TODO: Create function to open modal with button to Taktikal signing
-                    console.log('Should open modal with signing button')
+                    // TODO: Create function to send to Taktikal signing and go to last screen (done)
+                    console.log('Send to signing')
                   },
                 },
               },
             ]
           },
+        }),
+        buildSubmitField({
+          id: 'submit',
+          title: 'submit',
+          placement: 'footer',
+          actions: [
+            {
+              event: 'SUBMIT',
+              name: 'Senda í undirritun',
+              type: 'sign',
+              condition: () => {
+                return false
+              },
+            },
+          ],
         }),
       ],
     }),
