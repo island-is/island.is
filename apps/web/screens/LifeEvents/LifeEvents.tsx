@@ -104,6 +104,7 @@ const LifeEvents: Screen<Props> = ({ lifeEvents, namespace }) => {
                 heading={shortTitle ?? title}
                 imgSrc={tinyThumbnail?.url ?? ''}
                 dataTestId={'lifeevent-card-with-featured-items'}
+                href={linkResolver(typename as LinkType, [slug]).href}
                 featuredItems={featured ?? []}
                 buttonTitle={
                   seeMoreText && seeMoreText !== ''

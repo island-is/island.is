@@ -8,6 +8,7 @@ type CardWithFeaturedItemsProps = {
   heading: string
   imgSrc: string
   imgAlt?: string
+  href: string | null
   dataTestId?: string
   buttonTitle?: string
   featuredItems: Featured[]
@@ -62,6 +63,7 @@ export const CardWithFeaturedItems = ({
   heading,
   imgSrc,
   imgAlt = '',
+  href,
   dataTestId,
   featuredItems,
   buttonTitle,
@@ -89,7 +91,7 @@ export const CardWithFeaturedItems = ({
             <FeaturedItemsLinks featuredItems={featuredItems} />
           )}
         </Box>
-        <Box>
+        <Link href={href ?? ''} skipTab>
           <Button
             variant="text"
             as="span"
@@ -100,7 +102,7 @@ export const CardWithFeaturedItems = ({
           >
             {buttonTitle || ''}
           </Button>
-        </Box>
+        </Link>
       </Box>
       <Box display="flex" justifyContent="center" alignItems="center">
         <img src={imgSrc} alt={imgAlt} className={styles.image} />

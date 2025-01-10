@@ -68,6 +68,11 @@ export const LifeEventsSection = ({
                 heading={lifeEvent.shortTitle || lifeEvent.title}
                 imgSrc={lifeEvent.tinyThumbnail?.url ?? ''}
                 dataTestId={'lifeevent-card-with-featured-items'}
+                href={
+                  linkResolver(lifeEvent.__typename as LinkType, [
+                    lifeEvent.slug,
+                  ]).href
+                }
                 featuredItems={lifeEvent.featured}
                 buttonTitle={
                   lifeEvent.seeMoreText && lifeEvent.seeMoreText !== ''
