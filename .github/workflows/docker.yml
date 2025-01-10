@@ -100,8 +100,9 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
+          # Infix a slash when PUSH_REGISTRY is non-empty
           images: |
-            ${{ env.PUSH_REGISTRY }}/${{ github.repository }}/${{ matrix.project }}
+            ${{ env.PUSH_REGISTRY }}${{ env.PUSH_REGISTRY && '/' || '' }}${{ github.repository }}/${{ matrix.project }}
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v6
