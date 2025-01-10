@@ -27,7 +27,10 @@ import { OJOIAApplicationCaseResponse } from '../models/applicationCase.response
 import { GetPdfResponse } from '../models/getPdf.response'
 import { OJOIAIdInput } from '../models/id.input'
 import { GetInvolvedPartySignaturesInput } from '../models/getInvolvedPartySignatures.input'
-import { GetInvolvedPartySignaturesResponse } from '../models/getInvolvedPartySignatures.response'
+import {
+  InvolvedPartySignaturesCommittee,
+  InvolvedPartySignaturesRegular,
+} from '../models/getInvolvedPartySignatures.response'
 
 const LOG_CATEGORY = 'official-journal-of-iceland-application'
 
@@ -269,7 +272,9 @@ export class OfficialJournalOfIcelandApplicationService {
   async getInvolvedPartySignatures(
     input: GetInvolvedPartySignaturesInput,
     user: User,
-  ): Promise<GetInvolvedPartySignaturesResponse> {
+  ): Promise<
+    InvolvedPartySignaturesCommittee | InvolvedPartySignaturesRegular
+  > {
     try {
       const data =
         await this.ojoiApplicationService.getSignaturesForInvolvedParty(

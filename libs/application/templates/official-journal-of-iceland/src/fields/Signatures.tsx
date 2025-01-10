@@ -1,10 +1,18 @@
 import { useLocale } from '@island.is/localization'
 import { FormGroup } from '../components/form/FormGroup'
-import { InputFields, OJOIFieldBaseProps } from '../lib/types'
+import {
+  Answers,
+  InputFields,
+  OJOIFieldBaseProps,
+  Signature,
+  SignatureItem,
+  SignatureItemWithChairman,
+  SignatureMember,
+} from '../lib/types'
 import { signatures } from '../lib/messages/signatures'
 import { useState } from 'react'
 import { SignatureType, SignatureTypes } from '../lib/constants'
-import { Box, Button, SkeletonLoader, Tabs } from '@island.is/island-ui/core'
+import { Box, Button, Tabs } from '@island.is/island-ui/core'
 import { CommitteeSignature } from '../components/signatures/Committee'
 import { RegularSignature } from '../components/signatures/Regular'
 import { useApplication } from '../hooks/useUpdateApplication'
@@ -13,6 +21,9 @@ import { HTMLEditor } from '../components/htmlEditor/HTMLEditor'
 import { getSignaturesMarkup } from '../lib/utils'
 import { useLastSignature } from '../hooks/useLastSignature'
 import { useFormContext } from 'react-hook-form'
+import { LoadingTab } from '../components/tab/LoadingTab'
+import { OfficialJournalOfIcelandApplicationSignatureMember } from '@island.is/api/schema'
+import { isDefined } from '@island.is/shared/utils'
 
 export const Signatures = ({ application }: OJOIFieldBaseProps) => {
   const { formatMessage: f } = useLocale()
@@ -39,51 +50,79 @@ export const Signatures = ({ application }: OJOIFieldBaseProps) => {
     {
       id: SignatureTypes.REGULAR,
       label: f(signatures.tabs.regular),
-      content: updateLoading ? (
-        <SkeletonLoader />
-      ) : (
-        <RegularSignature applicationId={application.id} />
+      content: (
+        <LoadingTab loading={updateLoading}>
+          <RegularSignature applicationId={application.id} />
+        </LoadingTab>
       ),
     },
     {
       id: SignatureTypes.COMMITTEE,
       label: f(signatures.tabs.committee),
-      content: updateLoading ? (
-        <SkeletonLoader />
-      ) : (
-        <CommitteeSignature applicationId={application.id} />
+      content: (
+        <LoadingTab loading={updateLoading}>
+          <CommitteeSignature applicationId={application.id} />
+        </LoadingTab>
       ),
     },
   ]
 
-  const currentAnswers = structuredClone(currentApplication.answers)
+  const currentAnswers: Answers = structuredClone(currentApplication.answers)
 
   const onCopyLastSignatureClick = () => {
-    if (lastSignature?.type?.slug === 'hefdbundin-undirritun') {
-      const signatureToSet = [
-        {
-          date: lastSignature.date,
-          institution: lastSignature.institution,
-          members: lastSignature.members?.map((member) => ({
-            name: member.name,
-            above: member.above ?? '',
-            below: member.below ?? '',
-            after: member.after ?? '',
-            before: member.before ?? '',
-          })),
-          html: lastSignature.html,
-        },
-      ]
-
-      const updatedAnswers = set(
-        currentAnswers,
-        InputFields.signature.regular,
-        signatureToSet,
-      )
-
-      setValue(InputFields.signature.regular, signatureToSet)
-      updateApplication(updatedAnswers, refetchApplication)
+    if (!lastSignature) {
+      return
     }
+
+    const isCommitteeSignature =
+      lastSignature?.__typename ===
+      'OfficialJournalOfIcelandApplicationInvolvedPartySignaturesCommittee'
+
+    const mapSignatureMember = (
+      member?: OfficialJournalOfIcelandApplicationSignatureMember,
+    ): SignatureMember | undefined => {
+      if (!member) {
+        return undefined
+      }
+      return {
+        name: member.name,
+        above: member.above ?? '',
+        below: member.below ?? '',
+        after: member.after ?? '',
+        before: member.before ?? '',
+      }
+    }
+    const signatureToSet: SignatureItem | SignatureItemWithChairman = {
+      date: lastSignature.date,
+      institution: lastSignature.institution,
+      members: lastSignature?.members
+        .map((m) => mapSignatureMember(m))
+        .filter(isDefined),
+      html: lastSignature.html ?? undefined,
+    }
+
+    const signature: Signature = {
+      signatures: {
+        ...(isCommitteeSignature
+          ? {
+              committee: {
+                ...signatureToSet,
+                chairman: mapSignatureMember(
+                  lastSignature?.chairman ?? undefined,
+                ),
+              },
+            }
+          : { regular: [signatureToSet] }),
+      },
+    }
+
+    setValue(
+      isCommitteeSignature
+        ? InputFields.signature.committee
+        : InputFields.signature.regular,
+      signature,
+    )
+    updateApplication(signature, refetchApplication)
   }
 
   const onTabChangeHandler = (tabId: string) => {

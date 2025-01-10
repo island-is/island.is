@@ -1,4 +1,5 @@
 import { gql } from '@apollo/client'
+import { signatureMembers } from './fragments'
 
 export const GET_PRICE_QUERY = gql`
   query GetPrice($id: String!) {
@@ -155,15 +156,9 @@ export const INVOLVED_PARTY_SIGNATURES_QUERY = gql`
     officialJournalOfIcelandApplicationGetInvolvedPartySignatures(
       input: $input
     ) {
+      __typename
       id
       additionalSignature
-      chairman {
-        name
-        above
-        after
-        before
-        below
-      }
       date
       html
       institution
@@ -173,19 +168,16 @@ export const INVOLVED_PARTY_SIGNATURES_QUERY = gql`
         title
       }
       members {
-        name
-        above
-        after
-        before
-        below
+        ...SignatureMember
       }
-      type {
-        id
-        slug
-        title
+      ... on OfficialJournalOfIcelandApplicationInvolvedPartySignaturesCommittee {
+        chairman {
+          ...SignatureMember
+        }
       }
     }
   }
+  ${signatureMembers}
 `
 
 export const TYPES_QUERY = gql`

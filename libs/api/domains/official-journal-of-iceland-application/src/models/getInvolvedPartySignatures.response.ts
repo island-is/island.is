@@ -1,8 +1,5 @@
-import { Field, ID, ObjectType } from '@nestjs/graphql'
+import { Field, ID, InterfaceType, ObjectType } from '@nestjs/graphql'
 import { InvolvededParty } from './getUserInvolvedParties.response'
-
-@ObjectType('OfficialJournalOfIcelandApplicationSignatureType')
-export class SignatureType extends InvolvededParty {}
 
 @ObjectType('OfficialJournalOfIcelandApplicationInstitution')
 export class Institution extends InvolvededParty {}
@@ -25,34 +22,52 @@ export class SignatureMember {
   after?: string
 }
 
-@ObjectType(
-  'OfficialJournalOfIcelandApplicationInvolvedPartySignaturesResponse',
-)
-export class GetInvolvedPartySignaturesResponse {
+@InterfaceType('OfficialJournalOfIcelandApplicationInvolvedPartySignatures', {
+  resolveType(res) {
+    if (res.chairman) {
+      return InvolvedPartySignaturesCommittee
+    }
+    return InvolvedPartySignaturesRegular
+  },
+})
+export abstract class InvolvedPartySignatures {
   @Field(() => ID)
   id!: string
 
-  @Field({ nullable: true })
-  institution?: string
+  @Field()
+  institution!: string
 
-  @Field({ nullable: true })
-  date?: string
-
-  @Field(() => SignatureType, { nullable: true })
-  type?: SignatureType
+  @Field()
+  date!: string
 
   @Field(() => Institution, { nullable: true })
   involvedParty?: Institution
 
-  @Field(() => [SignatureMember], { nullable: true })
-  members?: Array<SignatureMember>
-
-  @Field(() => SignatureMember, { nullable: true })
-  chairman?: SignatureMember
+  @Field(() => [SignatureMember])
+  members!: Array<SignatureMember>
 
   @Field({ nullable: true })
   additionalSignature?: string
 
   @Field({ nullable: true })
   html?: string
+}
+
+@ObjectType(
+  'OfficialJournalOfIcelandApplicationInvolvedPartySignaturesRegular',
+  {
+    implements: () => InvolvedPartySignatures,
+  },
+)
+export class InvolvedPartySignaturesRegular extends InvolvedPartySignatures {}
+
+@ObjectType(
+  'OfficialJournalOfIcelandApplicationInvolvedPartySignaturesCommittee',
+  {
+    implements: () => InvolvedPartySignatures,
+  },
+)
+export class InvolvedPartySignaturesCommittee extends InvolvedPartySignatures {
+  @Field(() => SignatureMember)
+  chairman!: SignatureMember
 }
