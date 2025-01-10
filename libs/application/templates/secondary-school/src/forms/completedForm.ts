@@ -14,7 +14,7 @@ export const Completed: Form = buildForm({
   id: 'ConclusionForm',
   title: '',
   logo: Logo,
-  mode: FormModes.IN_PROGRESS,
+  mode: FormModes.COMPLETED,
   children: [
     buildSection({
       id: 'conclusionSection',
