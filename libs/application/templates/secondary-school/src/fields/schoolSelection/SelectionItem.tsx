@@ -380,12 +380,14 @@ export const SelectionItem: FC<FieldBaseProps> = (props) => {
                 isLoading={isLoadingPrograms}
                 isDisabled={isLoadingPrograms}
                 value={selectedNordicLanguage}
-                options={nordicLanguageOptions.map((language) => {
-                  return {
-                    label: language.name,
-                    value: language.code,
-                  }
-                })}
+                options={nordicLanguageOptions
+                  .filter((x) => x.code !== 'da')
+                  .map((language) => {
+                    return {
+                      label: language.name,
+                      value: language.code,
+                    }
+                  })}
                 onChange={(option: Option | null) => {
                   onChange(option?.value)
                   setSelectedNordicLanguage(option)
