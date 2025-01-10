@@ -32,6 +32,7 @@ export enum Features {
   IncomePlanEnabled = 'isIncomePlanEnabled',
   rentalAgreement = 'isRentalAgreementEnabled',
   WorkAccidentNotificationEnabled = 'isWorkAccidentNotificationEnabled',
+  SecondarySchoolEnabled = 'isSecondarySchoolEnabled',
 
   // Application System Delegations active
   applicationSystemDelegations = 'applicationSystemDelegations',
