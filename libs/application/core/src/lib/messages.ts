@@ -41,6 +41,16 @@ export const coreMessages = defineMessages({
     defaultMessage: 'Bæta við',
     description: 'Add button',
   },
+  buttonRemove: {
+    id: 'application.system:button.remove',
+    defaultMessage: 'Fjarlægja',
+    description: 'Remove button',
+  },
+  buttonCancel: {
+    id: 'application.system:button.cancel',
+    defaultMessage: 'Hætta við',
+    description: 'Cancel button',
+  },
   cardButtonInProgress: {
     id: 'application.system:card.button.inProgress',
     defaultMessage: 'Opna umsókn',
@@ -135,6 +145,16 @@ export const coreMessages = defineMessages({
     id: 'application.system:create.error.application.message',
     defaultMessage: 'Ekki tókst að búa til umsókn af gerðinni: {type}',
     description: 'Failed to create application of type: {type}',
+  },
+  nationalId: {
+    id: 'application.system:nationalId',
+    defaultMessage: 'Kennitala',
+    description: 'National ID',
+  },
+  name: {
+    id: 'application.system:name',
+    defaultMessage: 'Nafn',
+    description: 'Name',
   },
   applications: {
     id: 'application.system:applications',
@@ -297,6 +317,21 @@ export const coreDefaultFieldMessages = defineMessages({
     id: 'application.system:core.default.fileUpload.buttonLabel',
     defaultMessage: 'Veljið skjöl til að hlaða upp',
     description: 'Default file upload button label',
+  },
+  defaultBankAccountBankNumber: {
+    id: 'application.system:core.default.bankAccount.bankNumber',
+    defaultMessage: 'Bankanúmer',
+    description: 'Bank account bank number',
+  },
+  defaultBankAccountLedger: {
+    id: 'application.system:core.default.bankAccount.ledger',
+    defaultMessage: 'Höfuðbók',
+    description: 'Bank account ledger',
+  },
+  defaultBankAccountAccountNumber: {
+    id: 'application.system:core.default.bankAccount.accountNumber',
+    defaultMessage: 'Reikningsnúmer',
+    description: 'Bank account account number',
   },
   defaultDownloadButtonTitle: {
     id: 'application.system:core.default.pdfLinkButtonField.downloadButtonTitle',
@@ -723,6 +758,11 @@ export const coreErrorMessages = defineMessages({
     id: 'application.system:core.fetch.data.idCardApplicationRequirementsNotMet',
     defaultMessage: 'Þú uppfyllir ekki skilyrði fyrir umsókn um nafnskírteini',
     description: 'Requirements for id card application not met',
+  },
+  drivingLicenseBookActiveBookNotFound: {
+    id: 'application.system:core.fetch.data.drivingLicenseBookActiveBookNotFound',
+    defaultMessage: 'Ekki fannst virk ökunámsbók',
+    description: 'Did not find active student book',
   },
 })
 

@@ -7,6 +7,7 @@ import {
 import { m } from '../../lib/messages'
 import { DrivingLicense } from '../../lib/types'
 import {
+  B_ADVANCED,
   B_FULL,
   B_FULL_RENEWAL_65,
   B_TEMP,
@@ -17,6 +18,7 @@ import {
 export const sectionApplicationFor = (
   allowBELicense = false,
   allow65Renewal = false,
+  allowAdvanced = false,
 ) =>
   buildSubSection({
     id: 'applicationFor',
@@ -74,15 +76,13 @@ export const sectionApplicationFor = (
               let options = [
                 {
                   label: m.applicationForTempLicenseTitle,
-                  subLabel:
-                    m.applicationForTempLicenseDescription.defaultMessage,
+                  subLabel: m.applicationForTempLicenseDescription,
                   value: B_TEMP,
                   disabled: !!currentLicense,
                 },
                 {
                   label: m.applicationForFullLicenseTitle,
-                  subLabel:
-                    m.applicationForFullLicenseDescription.defaultMessage,
+                  subLabel: m.applicationForFullLicenseDescription,
                   value: B_FULL,
                   disabled: !currentLicense,
                 },
@@ -91,8 +91,7 @@ export const sectionApplicationFor = (
               if (allow65Renewal) {
                 options = options.concat({
                   label: m.applicationForRenewalLicenseTitle,
-                  subLabel:
-                    m.applicationForRenewalLicenseDescription.defaultMessage,
+                  subLabel: m.applicationForRenewalLicenseDescription,
                   value: B_FULL_RENEWAL_65,
                   disabled: !currentLicense || age < 65,
                 })
@@ -101,7 +100,7 @@ export const sectionApplicationFor = (
               if (allowBELicense) {
                 options = options.concat({
                   label: m.applicationForBELicenseTitle,
-                  subLabel: m.applicationForBELicenseDescription.defaultMessage,
+                  subLabel: m.applicationForBELicenseDescription,
                   value: BE,
                   disabled:
                     !currentLicense ||
@@ -112,6 +111,17 @@ export const sectionApplicationFor = (
                     !categories?.some(
                       (c) => c.nr.toUpperCase() === 'B' && c.validToCode !== 8,
                     ),
+                })
+              }
+
+              if (allowAdvanced) {
+                options = options.concat({
+                  label: m.applicationForAdvancedLicenseTitle,
+                  subLabel: m.applicationForAdvancedLicenseDescription,
+                  value: B_ADVANCED,
+                  disabled: !categories?.some(
+                    (c) => c.nr.toUpperCase() === 'B' && c.validToCode !== 8,
+                  ),
                 })
               }
 

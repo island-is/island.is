@@ -20,7 +20,7 @@ export async function getSsmParams(
     chunks.map((Names) =>
       client.getParameters({ Names, WithDecryption: true }),
     ),
-  )
+  ).catch(handleCredentialsProviderError)
   const params = allParams
     .map(({ Parameters }) =>
       Object.fromEntries(Parameters!.map((p) => [p.Name, p.Value])),
@@ -34,4 +34,14 @@ export async function getSsmParams(
     params,
   })
   return params
+}
+
+function handleCredentialsProviderError(err: Error): never {
+  if (err.name === 'CredentialsProviderError') {
+    console.error(
+      'Could not load AWS credentials from any providers. Did you forget to configure environment variables, aws profile or run `aws sso login`?',
+    )
+    process.exit(1)
+  }
+  throw err
 }

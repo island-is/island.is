@@ -3,7 +3,8 @@ import { Test } from '@nestjs/testing'
 import { TestingModuleBuilder } from '@nestjs/testing/testing-module.builder'
 
 import { InfraModule, HealthCheckOptions } from '@island.is/infra-nest-server'
-import bodyParser from 'body-parser'
+
+import cookieParser from 'cookie-parser'
 
 type CleanUp = () => Promise<void> | undefined
 
@@ -73,6 +74,8 @@ export const testServer = async ({
   if (beforeServerStart) {
     await beforeServerStart(app)
   }
+
+  app.use(cookieParser())
 
   await app.init()
 

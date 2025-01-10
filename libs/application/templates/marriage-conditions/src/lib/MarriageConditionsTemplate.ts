@@ -26,6 +26,7 @@ import {
 } from './getApplicationFeatureFlags'
 import {
   DistrictCommissionersPaymentCatalogApi,
+  MockableDistrictCommissionersPaymentCatalogApi,
   MaritalStatusApi,
   ReligionCodesApi,
 } from '../dataProviders'
@@ -92,6 +93,7 @@ const MarriageConditionsTemplate: ApplicationTemplate<
                 MaritalStatusApi,
                 ReligionCodesApi,
                 DistrictCommissionersPaymentCatalogApi,
+                MockableDistrictCommissionersPaymentCatalogApi,
               ],
               delete: true,
             },
@@ -111,7 +113,7 @@ const MarriageConditionsTemplate: ApplicationTemplate<
       },
       [States.PAYMENT]: buildPaymentState({
         organizationId: InstitutionNationalIds.SYSLUMENN,
-        chargeItemCodes: ['AY129'],
+        chargeItems: [{ code: 'AY129' }],
         submitTarget: States.SPOUSE_CONFIRM,
       }),
       [States.SPOUSE_CONFIRM]: {
@@ -159,6 +161,7 @@ const MarriageConditionsTemplate: ApplicationTemplate<
                 MaritalStatusApi,
                 ReligionCodesApi,
                 DistrictCommissionersPaymentCatalogApi,
+                MockableDistrictCommissionersPaymentCatalogApi,
               ],
             },
           ],

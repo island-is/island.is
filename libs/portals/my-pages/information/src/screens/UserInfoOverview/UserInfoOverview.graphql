@@ -1,0 +1,20 @@
+query UserInfoOverview($useFakeData: Boolean) {
+  nationalRegistryPerson(useFakeData: $useFakeData) {
+    nationalId
+    name {
+      fullName
+    }
+    spouse {
+      nationalId
+      fullName
+    }
+    childCustody {
+      nationalId
+      fullName
+    }
+    biologicalChildren {
+      nationalId
+      fullName
+    }
+  }
+}

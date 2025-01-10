@@ -3,7 +3,7 @@ import { Editor, EditorFileUploader } from '@island.is/regulations-tools/Editor'
 import { useEffect, useRef, useState } from 'react'
 import { Controller } from 'react-hook-form'
 import { classes, editorWrapper, errorStyle } from './HTMLEditor.css'
-import { Box, Text } from '@island.is/island-ui/core'
+import { Box, Stack, Text } from '@island.is/island-ui/core'
 type Props = {
   title?: string
   name: string
@@ -13,6 +13,7 @@ type Props = {
   onChange?: (value: HTMLText) => void
   error?: string
   readOnly?: boolean
+  controller?: boolean
 }
 
 export const HTMLEditor = ({
@@ -24,6 +25,7 @@ export const HTMLEditor = ({
   onChange,
   hideWarnings,
   readOnly = false,
+  controller = true,
 }: Props) => {
   const [initialValue, setInitalValue] = useState(value)
   const valueRef = useRef(() => value)
@@ -42,18 +44,14 @@ export const HTMLEditor = ({
     throw new Error('Not implemented')
   }
 
-  return (
+  return controller ? (
     <Controller
       name={name}
       defaultValue={initialValue}
       render={({ field: { onChange: updateFormValue, value } }) => {
         return (
-          <>
-            {title && (
-              <Text marginBottom={2} variant="h5">
-                {title}
-              </Text>
-            )}
+          <Stack space={[2, 2, 3]}>
+            {title && <Text variant="h5">{title}</Text>}
             <Box
               className={editorWrapper({
                 error: !!error,
@@ -78,9 +76,39 @@ export const HTMLEditor = ({
               />
             </Box>
             {error && <div className={errorStyle}>{error}</div>}
-          </>
+          </Stack>
         )
       }}
     />
+  ) : (
+    <>
+      {title && (
+        <Text marginBottom={2} variant="h5">
+          {title}
+        </Text>
+      )}
+      <Box
+        className={editorWrapper({
+          error: !!error,
+        })}
+      >
+        <Editor
+          readOnly={readOnly}
+          hideWarnings={hideWarnings}
+          elmRef={editorRef}
+          config={config}
+          fileUploader={fileUploader}
+          valueRef={valueRef}
+          classes={classes}
+          onChange={() => {
+            onChange && onChange(valueRef.current())
+          }}
+          onBlur={() => {
+            onChange && onChange(valueRef.current())
+          }}
+        />
+      </Box>
+      {error && <div className={errorStyle}>{error}</div>}
+    </>
   )
 }

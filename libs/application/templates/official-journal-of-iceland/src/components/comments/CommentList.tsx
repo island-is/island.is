@@ -1,11 +1,11 @@
 import { SkeletonLoader } from '@island.is/island-ui/core'
-import type { Props as CommentProps } from './Comment'
 import { Comment } from './Comment'
 import * as styles from './Comments.css'
 import { OJOI_INPUT_HEIGHT } from '../../lib/constants'
+import { OjoiaComment } from '@island.is/api/schema'
 
 type Props = {
-  comments?: CommentProps[]
+  comments?: Array<OjoiaComment>
   loading?: boolean
 }
 
@@ -24,7 +24,7 @@ export const CommentsList = ({ comments, loading }: Props) => {
   return (
     <ul className={styles.commentsList}>
       {comments?.map((comment, index) => (
-        <Comment key={index} {...comment} as="li" />
+        <Comment key={index} {...comment} />
       ))}
     </ul>
   )

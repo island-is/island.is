@@ -8,11 +8,4 @@ export const payment = {
       description: 'Payment section title',
     },
   }),
-  labels: defineMessages({
-    forPayment: {
-      id: 'mc.application:payment.labels.forPayment',
-      defaultMessage: 'Til greiðslu',
-      description: 'Payment for payment label',
-    },
-  }),
 }

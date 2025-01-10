@@ -75,7 +75,9 @@ const EditPage = ({
                   label={formatMessage(m.paperNumber)}
                   value={newPage}
                   size="sm"
-                  onChange={(e) => setNewPage(Number(e.target.value))}
+                  onChange={(e) =>
+                    setNewPage(Number(e.target.value.replace(/\D/g, '')))
+                  }
                   backgroundColor="blue"
                 />
                 <Input

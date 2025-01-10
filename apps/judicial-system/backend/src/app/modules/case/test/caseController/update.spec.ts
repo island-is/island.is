@@ -6,6 +6,7 @@ import {
   CaseDecision,
   CaseFileCategory,
   CaseFileState,
+  CaseNotificationType,
   CaseOrigin,
   CaseState,
   CaseType,
@@ -13,7 +14,6 @@ import {
   indictmentCases,
   InstitutionType,
   investigationCases,
-  NotificationType,
   restrictionCases,
   StringType,
   User,
@@ -459,23 +459,6 @@ describe('CaseController - Update', () => {
       it('should post to queue', () => {
         expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
           {
-            type: MessageType.DELIVERY_TO_COURT_PROSECUTOR,
-            user,
-            caseId,
-          },
-          {
-            type: MessageType.DELIVERY_TO_COURT_DEFENDANT,
-            user,
-            caseId,
-            elementId: defendantId1,
-          },
-          {
-            type: MessageType.DELIVERY_TO_COURT_DEFENDANT,
-            user,
-            caseId,
-            elementId: defendantId2,
-          },
-          {
             type: MessageType.DELIVERY_TO_COURT_CASE_FILES_RECORD,
             user,
             caseId,
@@ -541,7 +524,7 @@ describe('CaseController - Update', () => {
             type: MessageType.NOTIFICATION,
             user,
             caseId,
-            body: { type: NotificationType.MODIFIED },
+            body: { type: CaseNotificationType.MODIFIED },
           },
           { type: MessageType.DELIVERY_TO_POLICE_CASE, user, caseId },
         ])
@@ -598,7 +581,7 @@ describe('CaseController - Update', () => {
             type: MessageType.NOTIFICATION,
             user,
             caseId,
-            body: { type: NotificationType.APPEAL_STATEMENT },
+            body: { type: CaseNotificationType.APPEAL_STATEMENT },
           },
         ])
       })
@@ -904,7 +887,7 @@ describe('CaseController - Update', () => {
           type: MessageType.NOTIFICATION,
           user,
           caseId,
-          body: { type: NotificationType.COURT_DATE },
+          body: { type: CaseNotificationType.COURT_DATE },
         },
       ])
       expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
@@ -915,7 +898,19 @@ describe('CaseController - Update', () => {
           elementId: [defendantId1, subpoenaId1],
         },
         {
+          type: MessageType.DELIVERY_TO_COURT_SUBPOENA,
+          user,
+          caseId: theCase.id,
+          elementId: [defendantId1, subpoenaId1],
+        },
+        {
           type: MessageType.DELIVERY_TO_POLICE_SUBPOENA,
+          user,
+          caseId: theCase.id,
+          elementId: [defendantId2, subpoenaId2],
+        },
+        {
+          type: MessageType.DELIVERY_TO_COURT_SUBPOENA,
           user,
           caseId: theCase.id,
           elementId: [defendantId2, subpoenaId2],
@@ -950,7 +945,7 @@ describe('CaseController - Update', () => {
           type: MessageType.NOTIFICATION,
           user,
           caseId,
-          body: { type: NotificationType.COURT_DATE },
+          body: { type: CaseNotificationType.COURT_DATE },
         },
       ])
     })

@@ -4,6 +4,7 @@ import {
   buildRadioField,
   getValueViaPath,
   buildSelectField,
+  buildCustomField,
 } from '@island.is/application/core'
 import { information } from '../../../lib/messages'
 import { Routes } from '../../../lib/constants'
@@ -118,6 +119,11 @@ export const ModeOfDeliverySubSection = buildSubSection({
                 }
               })
           },
+        }),
+        buildCustomField({
+          id: `${Routes.MODEOFDELIVERYINFORMATION}.chosenModeHiddenValidation`,
+          title: '',
+          component: 'HiddenValidation',
         }),
         buildSelectField({
           id: `${Routes.MODEOFDELIVERYINFORMATION}.location`,

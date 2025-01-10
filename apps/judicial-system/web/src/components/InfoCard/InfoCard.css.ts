@@ -23,3 +23,21 @@ export const twoCols = style({
     },
   },
 })
+
+export const renderDivider = style({
+  position: 'relative',
+  marginBottom: theme.spacing[3],
+  '::after': {
+    content: "''",
+    position: 'absolute',
+    top: -theme.spacing[1],
+    display: 'block',
+    width: '64px',
+    height: '2px',
+    backgroundColor: theme.color.blue200,
+  },
+})
+
+export const last = style({
+  marginBottom: theme.spacing[0],
+})

@@ -1,4 +1,4 @@
-import { Box } from '@island.is/island-ui/core'
+import { Box, Stack } from '@island.is/island-ui/core'
 import * as styles from './Signatures.css'
 import { useApplication } from '../../hooks/useUpdateApplication'
 import { useLocale } from '@island.is/localization'
@@ -92,37 +92,19 @@ export const CommitteeMember = ({
     return null
   }
 
-  const getMemberCount = () => {
-    const { signature } = getCommitteeAnswers(application.answers)
-
-    if (signature) {
-      return signature.members?.length ?? 0
-    }
-
-    return 0
-  }
-
-  const isLast = memberIndex === getMemberCount() - 1
-
   return (
-    <Box className={styles.committeeInputGroup}>
-      <Box
-        className={
-          isLast ? styles.committeInputWrapperLast : styles.committeInputWrapper
+    <Stack space={2}>
+      <SignatureMember
+        name={`signature.committee.member.name.${memberIndex}`}
+        label={f(signatures.inputs.name.label)}
+        defaultValue={member.name}
+        onChange={(e) =>
+          debouncedOnUpdateApplicationHandler(
+            handleMemberChange(e.target.value, 'name', memberIndex),
+          )
         }
-      >
-        <Box flexGrow={1}>
-          <SignatureMember
-            name={`signature.committee.member.name.${memberIndex}`}
-            label={f(signatures.inputs.name.label)}
-            defaultValue={member.name}
-            onChange={(e) =>
-              debouncedOnUpdateApplicationHandler(
-                handleMemberChange(e.target.value, 'name', memberIndex),
-              )
-            }
-          />
-        </Box>
+      />
+      <Box display="flex" columnGap={2}>
         <Box flexGrow={1}>
           <SignatureMember
             name={`signature.committee.member.below.${memberIndex}`}
@@ -135,11 +117,12 @@ export const CommitteeMember = ({
             }
           />
         </Box>
+
         <RemoveCommitteeMember
           applicationId={applicationId}
           memberIndex={memberIndex}
         />
       </Box>
-    </Box>
+    </Stack>
   )
 }

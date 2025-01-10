@@ -3,6 +3,7 @@ import { useMemo, useState } from 'react'
 import { SkeletonLoader, Stack, Box } from '@island.is/island-ui/core'
 import sortBy from 'lodash/sortBy'
 import {
+  AuthCustomDelegation,
   AuthDelegationDirection,
   AuthDelegationType,
 } from '@island.is/api/schema'
@@ -11,10 +12,9 @@ import { m } from '../../../lib/messages'
 import { AccessDeleteModal } from '../../access/AccessDeleteModal/AccessDeleteModal'
 import { AccessCard } from '../../access/AccessCard'
 import { DelegationsEmptyState } from '../DelegationsEmptyState'
-import { DelegationIncomingModal } from './DelegationIncomingModal/DelegationIncomingModal'
-import { useAuthDelegationsIncomingQuery } from './DelegationIncomingModal/DelegationIncomingModal.generated'
 import { AuthCustomDelegationIncoming } from '../../../types/customDelegation'
-import { DelegationPaths } from '../../../lib/paths'
+import { DelegationViewModal } from '../DelegationViewModal'
+import { useAuthDelegationsIncomingQuery } from './DelegationIncoming.generated'
 
 export const DelegationsIncoming = () => {
   const { formatMessage, lang = 'is' } = useLocale()
@@ -57,8 +57,15 @@ export const DelegationsIncoming = () => {
         />
       ) : (
         <Stack space={3}>
-          {delegations.map(
-            (delegation) =>
+          {delegations.map((delegation) => {
+            if (delegation.type === AuthDelegationType.LegalGuardianMinor)
+              return null
+
+            const isCustom = delegation.type === AuthDelegationType.Custom
+            const isGeneralMandate =
+              delegation.type === AuthDelegationType.GeneralMandate
+
+            return (
               delegation.from && (
                 <AccessCard
                   key={
@@ -66,23 +73,30 @@ export const DelegationsIncoming = () => {
                       ? delegation.id
                       : `${delegation.type}-${delegation.from.nationalId}`
                   }
-                  delegation={delegation}
-                  onDelete={(delegation) => {
-                    setDelegationDelete(
-                      delegation as AuthCustomDelegationIncoming,
-                    )
-                  }}
-                  onView={(delegation) => {
-                    setDelegationView(
-                      delegation as AuthCustomDelegationIncoming,
-                    )
-                  }}
-                  direction="incoming"
+                  delegation={delegation as AuthCustomDelegation}
+                  onDelete={
+                    isCustom
+                      ? (delegation) => {
+                          setDelegationDelete(
+                            delegation as AuthCustomDelegationIncoming,
+                          )
+                        }
+                      : undefined
+                  }
+                  onView={
+                    isCustom || isGeneralMandate
+                      ? (delegation) => {
+                          setDelegationView(
+                            delegation as AuthCustomDelegationIncoming,
+                          )
+                        }
+                      : undefined
+                  }
                   variant="incoming"
-                  href={`${DelegationPaths.Delegations}/${delegation.id}`}
                 />
-              ),
-          )}
+              )
+            )
+          })}
         </Stack>
       )}
       <AccessDeleteModal
@@ -100,10 +114,11 @@ export const DelegationsIncoming = () => {
         isVisible={!!delegationDelete}
         delegation={delegationDelete as AuthCustomDelegationIncoming}
       />
-      <DelegationIncomingModal
+      <DelegationViewModal
         onClose={() => setDelegationView(null)}
         isVisible={!!delegationView}
-        delegation={delegationView as AuthCustomDelegationIncoming}
+        delegation={delegationView ?? undefined}
+        direction={'incoming'}
       />
     </Box>
   )

@@ -30,6 +30,7 @@ interface Organization {
 interface OrganizationsStore extends State {
   organizations: Organization[]
   getOrganizationLogoUrl(forName: string, size?: number): ImageSourcePropType
+  getOrganizationNameBySlug(slug: string): string
   actions: any
 }
 
@@ -71,6 +72,10 @@ export const organizationsStore = create<OrganizationsStore>(
           'https://images.ctfassets.net/8k0h54kbe6bj/6XhCz5Ss17OVLxpXNVDxAO/d3d6716bdb9ecdc5041e6baf68b92ba6/coat_of_arms.svg'
         const uri = `${url}?w=${size}&h=${size}&fit=pad&fm=png`
         return { uri }
+      },
+      getOrganizationNameBySlug(slug: string) {
+        const org = get().organizations.find((o) => o.slug === slug)
+        return org?.title ?? ''
       },
       actions: {
         updateOriganizations: async () => {

@@ -1,5 +1,4 @@
 import request from 'supertest'
-import bodyParser from 'body-parser'
 
 import {
   getRequestMethod,
@@ -12,8 +11,11 @@ import { User } from '@island.is/auth-nest-tools'
 import { FixtureFactory } from '@island.is/services/auth/testing'
 import { createCurrentUser } from '@island.is/testing/fixtures'
 import { DelegationAdminScopes } from '@island.is/auth/scopes'
-import { DelegationDTO, SequelizeConfigService } from '@island.is/auth-api-lib'
-import { DelegationAdminCustomService } from '@island.is/auth-api-lib'
+import {
+  DelegationAdminCustomService,
+  DelegationDTO,
+  SequelizeConfigService,
+} from '@island.is/auth-api-lib'
 
 import { AppModule } from '../../../app.module'
 import { includeRawBodyMiddleware } from '@island.is/infra-nest-server'
@@ -159,7 +161,16 @@ describe('withoutAuth and permissions', () => {
 
       jest
         .spyOn(delegationAdminService, 'createDelegationByZendeskId')
-        .mockImplementation(() => Promise.resolve())
+        .mockImplementation(() =>
+          Promise.resolve({
+            id: '123',
+            fromNationalId: '1234567890',
+            fromName: 'Test',
+            toNationalId: '0987654321',
+            toName: 'Test',
+            createdByNationalId: '0101010101',
+          } as DelegationDTO),
+        )
     })
 
     afterEach(() => {

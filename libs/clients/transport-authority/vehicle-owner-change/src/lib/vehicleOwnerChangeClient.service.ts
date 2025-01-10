@@ -1,20 +1,32 @@
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { Injectable } from '@nestjs/common'
-import { ReturnTypeMessage } from '../../gen/fetch'
 import { OwnerChangeApi } from '../../gen/fetch/apis'
 import {
   NewestOwnerChange,
   OwnerChange,
   OwnerChangeValidation,
 } from './vehicleOwnerChangeClient.types'
-import { getDateAtTimestamp } from './vehicleOwnerChangeClient.utils'
+import {
+  ErrorMessage,
+  getCleanErrorMessagesFromTryCatch,
+  getDateAtTimestamp,
+} from './vehicleOwnerChangeClient.utils'
+import { MileageReadingApi } from '@island.is/clients/vehicles-mileage'
+import { logger } from '@island.is/logging'
 
 @Injectable()
 export class VehicleOwnerChangeClient {
-  constructor(private readonly ownerchangeApi: OwnerChangeApi) {}
+  constructor(
+    private readonly ownerchangeApi: OwnerChangeApi,
+    private readonly mileageReadingApi: MileageReadingApi,
+  ) {}
 
   private ownerchangeApiWithAuth(auth: Auth) {
     return this.ownerchangeApi.withMiddleware(new AuthMiddleware(auth))
+  }
+
+  private mileageReadingApiWithAuth(auth: Auth) {
+    return this.mileageReadingApi.withMiddleware(new AuthMiddleware(auth))
   }
 
   public async validateVehicleForOwnerChange(
@@ -23,7 +35,24 @@ export class VehicleOwnerChangeClient {
   ): Promise<OwnerChangeValidation> {
     // Note: since the vehiclecheck endpoint is funky, we will instead just use the personcheck endpoint
     // and send in dummy data where needed
+
     const todayStr = new Date().toISOString()
+
+    // Get current mileage reading
+    let currentMileage = 0
+    try {
+      const mileageReadings = await this.mileageReadingApiWithAuth(
+        auth,
+      ).getMileageReading({ permno })
+      currentMileage = mileageReadings?.[0]?.mileage || 0
+    } catch (e) {
+      logger.error(e)
+      return {
+        hasError: true,
+        errorMessages: [{ defaultMessage: e.message }],
+      }
+    }
+
     return await this.validateAllForOwnerChange(auth, {
       permno: permno,
       seller: {
@@ -40,6 +69,7 @@ export class VehicleOwnerChangeClient {
       insuranceCompanyCode: null,
       operators: null,
       coOwners: null,
+      mileage: currentMileage + 1,
     })
   }
 
@@ -49,7 +79,7 @@ export class VehicleOwnerChangeClient {
   ): Promise<OwnerChangeValidation> {
     const useGroup = '000'
 
-    let errorList: ReturnTypeMessage[] | undefined
+    let errorMessages: ErrorMessage[] | undefined
 
     try {
       // Note: If insurance company has not been supplied (we have not required the user to fill in at this point),
@@ -67,7 +97,7 @@ export class VehicleOwnerChangeClient {
         ownerChange.dateOfPurchaseTimestamp,
       )
 
-      // Note: we have manually changed this endpoint to void, since the messages we want only
+      // Note: we have manually changed this endpoint to void (in clientConfig), since the messages we want only
       // come with error code 400. If this function returns an array of ReturnTypeMessage, then
       // we will get an error with code 204, since the openapi generator tries to convert empty result
       // into an array of ReturnTypeMessage
@@ -92,44 +122,14 @@ export class VehicleOwnerChangeClient {
         },
       })
     } catch (e) {
-      // Note: We need to wrap in try-catch to get the error messages, because if this action results in error,
-      // we get 4xx error (instead of 200 with error messages) with the errorList in this field
-      // ("body.Errors" for input validation, and "body" for data validation (in database)),
-      // that is of the same class as 200 result schema
-      if (e?.body?.Errors && Array.isArray(e.body.Errors)) {
-        errorList = e.body.Errors as ReturnTypeMessage[]
-      } else if (e?.body && Array.isArray(e.body)) {
-        errorList = e.body as ReturnTypeMessage[]
-      } else {
-        throw e
-      }
+      // Note: We had to wrap in try-catch to get the error messages, because if this action results in error,
+      // we get 4xx error (instead of 200 with error messages) with the error messages in the body
+      errorMessages = getCleanErrorMessagesFromTryCatch(e)
     }
 
-    const warnSeverityError = 'E'
-    const warnSeverityLock = 'L'
-    errorList = errorList?.filter(
-      (x) =>
-        x.errorMess &&
-        (x.warnSever === warnSeverityError || x.warnSever === warnSeverityLock),
-    )
-
     return {
-      hasError: !!errorList?.length,
-      errorMessages: errorList?.map((item) => {
-        let errorNo = item.warningSerialNumber?.toString()
-
-        // Note: For vehicle locks, we need to do some special parsing since
-        // the error number (warningSerialNumber) is always -1 for locks,
-        // but the number is included in the errorMess field (value before the first space)
-        if (item.warnSever === warnSeverityLock) {
-          errorNo = item.errorMess?.split(' ')[0]
-        }
-
-        return {
-          errorNo: (item.warnSever || '_') + errorNo,
-          defaultMessage: item.errorMess,
-        }
-      }),
+      hasError: !!errorMessages?.length,
+      errorMessages: errorMessages,
     }
   }
 
@@ -160,7 +160,7 @@ export class VehicleOwnerChangeClient {
   public async saveOwnerChange(
     auth: User,
     ownerChange: OwnerChange,
-  ): Promise<void> {
+  ): Promise<OwnerChangeValidation> {
     const useGroup = '000'
 
     // Note: API throws error if timestamp is 00:00:00, so we will use
@@ -170,31 +170,42 @@ export class VehicleOwnerChangeClient {
       ownerChange.dateOfPurchaseTimestamp,
     )
 
-    await this.ownerchangeApiWithAuth(auth).rootPost({
-      apiVersion: '2.0',
-      apiVersion2: '2.0',
-      postOwnerChange: {
-        permno: ownerChange.permno,
-        sellerPersonIdNumber: ownerChange.seller.ssn,
-        sellerEmail: ownerChange.seller.email,
-        buyerPersonIdNumber: ownerChange.buyer.ssn,
-        buyerEmail: ownerChange.buyer.email,
-        dateOfPurchase: purchaseDate,
-        saleAmount: ownerChange.saleAmount,
-        insuranceCompanyCode: ownerChange.insuranceCompanyCode || '',
-        useGroup: useGroup,
-        operatorEmail: ownerChange.operators?.find((x) => x.isMainOperator)
-          ?.email,
-        operators: ownerChange.operators?.map((operator) => ({
-          personIdNumber: operator.ssn,
-          mainOperator: operator.isMainOperator ? 1 : 0,
-        })),
-        coOwners: ownerChange.coOwners?.map((coOwner) => ({
-          personIdNumber: coOwner.ssn,
-        })),
-        reportingPersonIdNumber: auth.nationalId,
-        mileage: ownerChange.mileage,
-      },
-    })
+    let errorMessages: ErrorMessage[] | undefined
+
+    try {
+      await this.ownerchangeApiWithAuth(auth).rootPost({
+        apiVersion: '2.0',
+        apiVersion2: '2.0',
+        postOwnerChange: {
+          permno: ownerChange.permno,
+          sellerPersonIdNumber: ownerChange.seller.ssn,
+          sellerEmail: ownerChange.seller.email,
+          buyerPersonIdNumber: ownerChange.buyer.ssn,
+          buyerEmail: ownerChange.buyer.email,
+          dateOfPurchase: purchaseDate,
+          saleAmount: ownerChange.saleAmount,
+          insuranceCompanyCode: ownerChange.insuranceCompanyCode || '',
+          useGroup: useGroup,
+          operatorEmail: ownerChange.operators?.find((x) => x.isMainOperator)
+            ?.email,
+          operators: ownerChange.operators?.map((operator) => ({
+            personIdNumber: operator.ssn,
+            mainOperator: operator.isMainOperator ? 1 : 0,
+          })),
+          coOwners: ownerChange.coOwners?.map((coOwner) => ({
+            personIdNumber: coOwner.ssn,
+          })),
+          reportingPersonIdNumber: auth.nationalId,
+          mileage: ownerChange.mileage,
+        },
+      })
+    } catch (e) {
+      errorMessages = getCleanErrorMessagesFromTryCatch(e)
+    }
+
+    return {
+      hasError: !!errorMessages?.length,
+      errorMessages: errorMessages,
+    }
   }
 }

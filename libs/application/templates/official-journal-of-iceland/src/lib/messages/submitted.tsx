@@ -12,10 +12,46 @@ export const submitted = {
       defaultMessage: 'Fara til baka á mínar síður',
       description: 'Return to service portal button text',
     },
+    newApplication: {
+      id: 'ojoi.application:submitted.general.newApplication',
+      defaultMessage: 'Ný umsókn',
+      description: 'New application button text',
+    },
     section: {
       id: 'ojoi.application:submitted.general.section',
       defaultMessage: 'Staðfesting',
       description: 'Section title of the submitted screen',
+    },
+  }),
+  buttons: defineMessages({
+    reload: {
+      id: 'ojoi.application:submitted.general.reload',
+      defaultMessage: 'Endurhlaða',
+      description: 'Reload button text',
+    },
+  }),
+  errors: defineMessages({
+    caseErrorTitle: {
+      id: 'ojoi.application:submitted.errors.caseErrorTitle',
+      defaultMessage: 'Ekki tókst að sækja gögn um málið',
+      description: 'Case error message',
+    },
+    caseErrorMessage: {
+      id: 'ojoi.application:submitted.errors.caseErrorMessage',
+      defaultMessage:
+        'Vinsamlegast reynið aftur síðar eða hafið samband við Stjórnartíðindi',
+      description: 'Case error message',
+    },
+    postApplicationErrorTitle: {
+      id: 'ojoi.application:submitted.errors.postApplicationErrorTitle',
+      defaultMessage: 'Ekki tókst að senda inn umsókn',
+      description: 'Post application error message',
+    },
+    postApplicationErrorMessage: {
+      id: 'ojoi.application:submitted.errors.postApplicationErrorMessage',
+      defaultMessage:
+        'Vinsamlegast reynið aftur síðar eða hafið samband við Stjórnartíðindi',
+      description: 'Post application error message',
     },
   }),
   bullets: defineMessages({

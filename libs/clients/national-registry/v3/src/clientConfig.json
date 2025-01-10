@@ -24,8 +24,8 @@
                 "examples": {
                   "Grunnpakki": {
                     "value": {
-                      "nafn": "Jón Jónsson",
                       "kennitala": "1234567890",
+                      "nafn": "Jón Jónsson",
                       "tegundKennitolu": "Kennitala á Þjóðskrá",
                       "tegundEinstaklingsNr": 1,
                       "tegundEinstaklingsLysing": "Kennitala á Þjóðskrá",
@@ -43,8 +43,8 @@
                   },
                   "Allir pakkar": {
                     "value": {
-                      "nafn": "Jón Jónsson",
                       "kennitala": "1234567890",
+                      "nafn": "Jón Jónsson",
                       "tegundKennitolu": "Kennitala á Þjóðskrá",
                       "tegundEinstaklingsNr": 1,
                       "tegundEinstaklingsLysing": "Kennitala á Þjóðskrá",
@@ -167,8 +167,8 @@
                   },
                   "Kerfiskennitölur - Grunnpakki": {
                     "value": {
-                      "nafn": "Jens Larson",
                       "kennitala": "1122335000",
+                      "nafn": "Jens Larson",
                       "tegundKennitolu": "Kerfiskennitala",
                       "tegundEinstaklingsNr": 2,
                       "tegundEinstaklingsLysing": "Kerfiskennitala",
@@ -186,8 +186,8 @@
                   },
                   "Kerfiskennitölur - Allir pakkar": {
                     "value": {
-                      "nafn": "Jens Larson",
                       "kennitala": "1122335000",
+                      "nafn": "Jens Larson",
                       "tegundKennitolu": "Kerfiskennitala",
                       "tegundEinstaklingsNr": 2,
                       "tegundEinstaklingsLysing": "Kerfiskennitala",
@@ -207,14 +207,14 @@
                         "rikisfangLand": "Danmörk"
                       },
                       "nyskraningDagsetning": {
-                        "nyskraningDagur": "2023-12-05T16:21:19.5180577+00:00"
+                        "nyskraningDagur": "2024-10-31T10:33:19.2136626+00:00"
                       }
                     }
                   },
                   "Látnir - grunnpakki": {
                     "value": {
-                      "nafn": "Jóna Jónsdóttir",
                       "kennitala": "1122335678",
+                      "nafn": "Jóna Jónsdóttir",
                       "tegundKennitolu": "Kennitala á Þjóðskrá",
                       "tegundEinstaklingsNr": 3,
                       "tegundEinstaklingsLysing": "Lést",
@@ -225,8 +225,8 @@
                   },
                   "Látnir - allir pakkar": {
                     "value": {
-                      "nafn": "Jóna Jónsdóttir",
                       "kennitala": "1122335678",
+                      "nafn": "Jóna Jónsdóttir",
                       "tegundKennitolu": "Kennitala á Þjóðskrá",
                       "tegundEinstaklingsNr": 3,
                       "tegundEinstaklingsLysing": "Lést",
@@ -295,8 +295,8 @@
                 "examples": {
                   "Grunnpakki": {
                     "value": {
-                      "nafn": "Jón Jónsson",
                       "kennitala": "1234567890",
+                      "nafn": "Jón Jónsson",
                       "tegundKennitolu": "Kennitala á Þjóðskrá",
                       "tegundEinstaklingsNr": 1,
                       "tegundEinstaklingsLysing": "Kennitala á Þjóðskrá",
@@ -1132,8 +1132,8 @@
                 "examples": {
                   "Grunnpakki": {
                     "value": {
-                      "nafn": "Jón Jónsson",
                       "kennitala": "1234567890",
+                      "nafn": "Jón Jónsson",
                       "tegundKennitolu": "Kennitala á Þjóðskrá",
                       "tegundEinstaklingsNr": 1,
                       "tegundEinstaklingsLysing": "Kennitala á Þjóðskrá",

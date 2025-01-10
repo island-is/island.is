@@ -15,6 +15,7 @@ import {
   QualitySignatureResult,
   NewBEDrivingLicenseInput,
   DrivinglicenseDuplicateValidityStatus,
+  PostRenewal65AndOverInput,
 } from './drivingLicense.type'
 import {
   CanApplyErrorCodeBFull,
@@ -513,8 +514,10 @@ export class DrivingLicenseService {
 
   async renewDrivingLicense65AndOver(
     auth: User['authorization'],
+    input: PostRenewal65AndOverInput,
   ): Promise<NewDrivingLicenseResult> {
     const response = await this.drivingLicenseApi.postRenewLicenseOver65({
+      input,
       auth: auth,
     })
     return {

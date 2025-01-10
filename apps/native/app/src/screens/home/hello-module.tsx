@@ -1,11 +1,10 @@
-import { Typography, Skeleton } from '@ui'
 import * as FileSystem from 'expo-file-system'
-
 import React, { useEffect } from 'react'
 import { FormattedMessage } from 'react-intl'
 import { Image, SafeAreaView } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
+import { Typography, Skeleton } from '../../ui'
 import { useAuthStore } from '../../stores/auth-store'
 import { usePreferencesStore } from '../../stores/preferences-store'
 import { useGetFrontPageImageQuery } from '../../graphql/types/schema'
@@ -17,6 +16,11 @@ const Host = styled.View`
 const ImageWrapper = styled.View`
   margin-top: ${({ theme }) => theme.spacing[3]}px;
 `
+
+const getFileExtension = (url: string): string => {
+  const extension = url.split('.').pop()
+  return extension ? `.${extension}` : ''
+}
 
 export const HelloModule = React.memo(() => {
   const theme = useTheme()
@@ -31,8 +35,12 @@ export const HelloModule = React.memo(() => {
   const cacheDirectory = `${FileSystem.cacheDirectory}homeScreenImages`
 
   // Need to add extension to the title due to an issue in react native https://github.com/facebook/react-native/issues/42234
+  const fileExtension = image?.getFrontpage?.imageMobile?.url
+    ? getFileExtension(image?.getFrontpage?.imageMobile?.url)
+    : ''
+
   const titleWithExtension = image?.getFrontpage?.imageMobile?.title
-    ? `${image?.getFrontpage?.imageMobile?.title}.jpg`
+    ? `${image?.getFrontpage?.imageMobile?.title}${fileExtension}`
     : undefined
 
   const handleImage = async () => {

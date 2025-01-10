@@ -9,7 +9,7 @@ import { Field, RecordObject, SubmitField } from './Fields'
 import { Condition } from './Condition'
 import { Application, FormValue } from './Application'
 import { TestSupport } from '@island.is/island-ui/utils'
-
+import { Locale } from '@island.is/shared/types'
 export type BeforeSubmitCallback = () => Promise<[true, null] | [false, string]>
 
 export type SetBeforeSubmitCallback = (
@@ -32,6 +32,23 @@ export type StaticText = StaticTextObject | string
 export type FormText =
   | StaticText
   | ((application: Application) => StaticText | null | undefined)
+
+export type FormTextWithLocale =
+  | StaticText
+  | ((
+      application: Application,
+      locale: Locale,
+    ) => StaticText | null | undefined)
+
+export type FormComponent =
+  | React.FC<React.PropsWithChildren<unknown>>
+  | ((
+      application: Application,
+    ) =>
+      | React.FC<React.PropsWithChildren<any>>
+      | React.FunctionComponentElement<any>
+      | null
+      | undefined)
 
 export type FormTextArray =
   | StaticText[]
@@ -62,7 +79,7 @@ export interface Form {
   children: FormChildren[]
   icon?: string
   id: string
-  logo?: React.FC<React.PropsWithChildren<unknown>>
+  logo?: FormComponent
   mode?: FormModes
   renderLastScreenBackButton?: boolean
   renderLastScreenButton?: boolean
@@ -85,7 +102,7 @@ export interface FormItem extends TestSupport {
   readonly id?: string
   condition?: Condition
   readonly type: string
-  readonly title: FormText
+  readonly title: FormTextWithLocale
   readonly nextButtonText?: FormText
 }
 
@@ -93,11 +110,13 @@ export interface Section extends FormItem {
   type: FormItemTypes.SECTION
   children: SectionChildren[]
   draftPageNumber?: number
+  tabTitle?: FormTextWithLocale
 }
 
 export interface SubSection extends FormItem {
   type: FormItemTypes.SUB_SECTION
   children: FormLeaf[]
+  tabTitle?: FormTextWithLocale
 }
 
 export interface Repeater extends FormItem {
@@ -167,7 +186,9 @@ export interface FieldBaseProps<TAnswers = FormValue> {
   field: Field
   application: Application<TAnswers>
   showFieldName?: boolean
+  clearOnChange?: string[]
   goToScreen?: (id: string) => void
+  answerQuestions?: (answers: FormValue) => void
   refetch?: () => void
   setBeforeSubmitCallback?: SetBeforeSubmitCallback
   setFieldLoadingState?: SetFieldLoadingState

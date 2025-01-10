@@ -1,53 +1,53 @@
-import React, { useEffect, useState } from 'react'
 import {
-  Box,
-  Stack,
   AlertMessage,
+  Box,
   Checkbox,
+  DatePicker,
   GridColumn,
   GridRow,
+  Icon,
   Input,
   Select,
-  DatePicker,
+  Stack,
   toast,
-  Icon,
 } from '@island.is/island-ui/core'
-import { BackButton } from '@island.is/portals/admin/core'
 import { useLocale } from '@island.is/localization'
+import { BackButton } from '@island.is/portals/admin/core'
+import React, { useEffect, useState } from 'react'
 
+import { Identity } from '@island.is/api/schema'
 import { IntroHeader, m as coreMessages } from '@island.is/portals/core'
-import { m } from '../../lib/messages'
-import { DelegationAdminPaths } from '../../lib/paths'
-import NumberFormat from 'react-number-format'
+import {
+  DelegationsFormFooter,
+  useDynamicShadow,
+} from '@island.is/portals/shared-modules/delegations'
+import { useUserInfo } from '@island.is/react-spa/bff'
+import { replaceParams } from '@island.is/react-spa/shared'
+import { AuthDelegationType } from '@island.is/shared/types'
+import { maskString, unmaskString } from '@island.is/shared/utils'
+import cn from 'classnames'
 import startOfDay from 'date-fns/startOfDay'
+import kennitala from 'kennitala'
+import debounce from 'lodash/debounce'
+import NumberFormat from 'react-number-format'
 import {
   Form,
-  redirect,
   useActionData,
   useNavigate,
   useSearchParams,
   useSubmit,
 } from 'react-router-dom'
+import { CreateDelegationConfirmModal } from '../../components/CreateDelegationConfirmModal'
+import { FORM_ERRORS } from '../../constants/errors'
+import { m } from '../../lib/messages'
+import { DelegationAdminPaths } from '../../lib/paths'
 import { CreateDelegationResult } from './CreateDelegation.action'
 import * as styles from './CreateDelegation.css'
 import { useIdentityLazyQuery } from './CreateDelegation.generated'
-import debounce from 'lodash/debounce'
-import cn from 'classnames'
-import {
-  DelegationsFormFooter,
-  useDynamicShadow,
-} from '@island.is/portals/shared-modules/delegations'
-import { CreateDelegationConfirmModal } from '../../components/CreateDelegationConfirmModal'
-import { Identity } from '@island.is/api/schema'
-import kennitala from 'kennitala'
-import { maskString, unmaskString } from '@island.is/shared/utils'
-import { useAuth } from '@island.is/auth/react'
-import { replaceParams } from '@island.is/react-spa/shared'
-import { FORM_ERRORS } from '../../constants/errors'
 
 const CreateDelegationScreen = () => {
   const { formatMessage } = useLocale()
-  const { userInfo } = useAuth()
+  const userInfo = useUserInfo()
 
   const navigate = useNavigate()
   const [searchParams, setSearchParams] = useSearchParams()
@@ -60,7 +60,7 @@ const CreateDelegationScreen = () => {
   const [isConfirmed, setIsConfirmed] = React.useState(false)
   const [fromNationalId, setFromNationalId] = React.useState('')
   const [toNationalId, setToNationalId] = React.useState('')
-
+  const [loading, setLoading] = React.useState(false)
   const fromInputRef = React.useRef<HTMLInputElement>(null)
   const toInputRef = React.useRef<HTMLInputElement>(null)
   const formRef = React.useRef<HTMLFormElement>(null)
@@ -70,8 +70,8 @@ const CreateDelegationScreen = () => {
 
   const typeOptions = [
     {
-      label: formatMessage(m.typeGeneral),
-      value: 'general', // Todo: change to correct enum value, yet to be created
+      label: formatMessage(m.generalMandateLabel),
+      value: AuthDelegationType.GeneralMandate,
     },
   ]
 
@@ -82,6 +82,8 @@ const CreateDelegationScreen = () => {
         userInfo?.profile.nationalId ?? '',
       )
       successToast()
+      setLoading(false)
+      setShowConfirmModal(false)
       navigate(
         replaceParams({
           href: DelegationAdminPaths.DelegationAdmin,
@@ -105,7 +107,9 @@ const CreateDelegationScreen = () => {
       setIsConfirmed(true)
       setShowConfirmModal(true)
     } else {
+      setLoading(false)
       setIsConfirmed(false)
+      setShowConfirmModal(false)
     }
   }, [actionData])
 
@@ -408,15 +412,16 @@ const CreateDelegationScreen = () => {
                   title=""
                   message={
                     // if problem title is object extract code and use it as key
-                    actionData?.problem?.title
+                    FORM_ERRORS[
+                      actionData?.problem?.title as keyof typeof FORM_ERRORS
+                    ]
                       ? formatMessage(
                           FORM_ERRORS[
                             actionData?.problem
                               ?.title as keyof typeof FORM_ERRORS
                           ],
                         )
-                      : actionData?.problem?.detail ||
-                        formatMessage(m.errorDefault)
+                      : formatMessage(m.errorDefault)
                   }
                   type="error"
                 />
@@ -431,13 +436,14 @@ const CreateDelegationScreen = () => {
         toIdentity={toIdentity}
         data={actionData?.data}
         isVisible={showConfirmModal}
+        loading={loading}
         onClose={() => {
           setIsConfirmed(false)
           setShowConfirmModal(false)
         }}
         onConfirm={() => {
           submit(formRef.current)
-          setShowConfirmModal(false)
+          setLoading(true)
         }}
       />
     </Stack>

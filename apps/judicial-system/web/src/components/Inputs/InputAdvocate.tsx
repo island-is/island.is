@@ -12,7 +12,7 @@ import { useIntl } from 'react-intl'
 import { SingleValue } from 'react-select'
 
 import { Box, Input, Select } from '@island.is/island-ui/core'
-import { type Lawyer } from '@island.is/judicial-system/types'
+import { AdvocateType, type Lawyer } from '@island.is/judicial-system/types'
 import { FormContext } from '@island.is/judicial-system-web/src/components'
 import {
   ReactSelectOption,
@@ -39,7 +39,7 @@ interface Props {
   onAdvocateNotFound?: (advocateNotFound: boolean) => void
   disabled?: boolean | null
   clientId?: string | null
-  advocateType?: 'defender' | 'spokesperson' | 'legal_rights_protector'
+  advocateType?: AdvocateType
   isCivilClaim?: boolean
 }
 
@@ -49,6 +49,20 @@ interface PropertyValidation {
     errorMessage: string
     setErrorMessage: Dispatch<SetStateAction<string>>
   }
+}
+
+interface LawyerUpdate {
+  defenderName: string | null
+  defenderNationalId: string | null
+  defenderEmail: string | null
+  defenderPhoneNumber: string | null
+}
+
+interface SpokespersonUpdate {
+  spokespersonName: string | null
+  spokespersonNationalId: string | null
+  spokespersonEmail: string | null
+  spokespersonPhoneNumber: string | null
 }
 
 type InputType =
@@ -123,18 +137,18 @@ const InputAdvocate: FC<Props> = ({
       isCivilClaim: boolean,
       clientId?: string | null,
     ) => {
-      let updatedLawyer = {
-        defenderName: '',
-        defenderNationalId: '',
-        defenderEmail: '',
-        defenderPhoneNumber: '',
+      let updatedLawyer: LawyerUpdate = {
+        defenderName: null,
+        defenderNationalId: null,
+        defenderEmail: null,
+        defenderPhoneNumber: null,
       }
 
-      let updatedSpokesperson = {
-        spokespersonName: '',
-        spokespersonNationalId: '',
-        spokespersonEmail: '',
-        spokespersonPhoneNumber: '',
+      let updatedSpokesperson: SpokespersonUpdate = {
+        spokespersonName: null,
+        spokespersonNationalId: null,
+        spokespersonEmail: null,
+        spokespersonPhoneNumber: null,
       }
 
       if (selectedOption) {
@@ -147,16 +161,16 @@ const InputAdvocate: FC<Props> = ({
         )
         updatedLawyer = {
           defenderName: lawyer ? lawyer.name : label,
-          defenderNationalId: lawyer ? lawyer.nationalId : '',
-          defenderEmail: lawyer ? lawyer.email : '',
-          defenderPhoneNumber: lawyer ? lawyer.phoneNr : '',
+          defenderNationalId: lawyer ? lawyer.nationalId : null,
+          defenderEmail: lawyer ? lawyer.email : null,
+          defenderPhoneNumber: lawyer ? lawyer.phoneNr : null,
         }
 
         updatedSpokesperson = {
           spokespersonName: lawyer ? lawyer.name : label,
-          spokespersonNationalId: lawyer ? lawyer.nationalId : '',
-          spokespersonEmail: lawyer ? lawyer.email : '',
-          spokespersonPhoneNumber: lawyer ? lawyer.phoneNr : '',
+          spokespersonNationalId: lawyer ? lawyer.nationalId : null,
+          spokespersonEmail: lawyer ? lawyer.email : null,
+          spokespersonPhoneNumber: lawyer ? lawyer.phoneNr : null,
         }
       }
 
@@ -226,17 +240,17 @@ const InputAdvocate: FC<Props> = ({
     switch (property) {
       case 'defenderEmail': {
         return {
-          defenderEmail: value,
+          defenderEmail: value || null,
         }
       }
       case 'defenderPhoneNumber': {
-        return { defenderPhoneNumber: value }
+        return { defenderPhoneNumber: value || null }
       }
       case 'spokespersonEmail': {
-        return { spokespersonEmail: value }
+        return { spokespersonEmail: value || null }
       }
       case 'spokespersonPhoneNumber': {
-        return { spokespersonPhoneNumber: value }
+        return { spokespersonPhoneNumber: value || null }
       }
     }
   }, [])
@@ -319,7 +333,7 @@ const InputAdvocate: FC<Props> = ({
           icon="search"
           options={options}
           label={
-            advocateType === 'legal_rights_protector'
+            advocateType === AdvocateType.LEGAL_RIGHTS_PROTECTOR
               ? formatMessage(strings.spokespersonNameLabel)
               : formatMessage(strings.nameLabel, {
                   sessionArrangements: workingCase.sessionArrangements,
@@ -367,7 +381,7 @@ const InputAdvocate: FC<Props> = ({
           name="defenderEmail"
           autoComplete="off"
           label={
-            advocateType === 'legal_rights_protector'
+            advocateType === AdvocateType.LEGAL_RIGHTS_PROTECTOR
               ? formatMessage(strings.spokespersonEmailLabel)
               : formatMessage(strings.emailLabel, {
                   sessionArrangements: workingCase.sessionArrangements,
@@ -481,7 +495,7 @@ const InputAdvocate: FC<Props> = ({
           name="defenderPhoneNumber"
           autoComplete="off"
           label={
-            advocateType === 'legal_rights_protector'
+            advocateType === AdvocateType.LEGAL_RIGHTS_PROTECTOR
               ? formatMessage(strings.spokespersonPhoneNumberLabel)
               : formatMessage(strings.phoneNumberLabel, {
                   sessionArrangements: workingCase.sessionArrangements,

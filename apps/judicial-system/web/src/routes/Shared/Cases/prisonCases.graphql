@@ -26,6 +26,8 @@ query PrisonCases {
       name
       noNationalId
       defenderChoice
+      punishmentType
+      openedByPrisonAdminDate
     }
     courtDate
     isValidToDateInThePast
@@ -43,6 +45,10 @@ query PrisonCases {
       email
       role
       active
+    }
+    court {
+      id
+      name
     }
     prosecutor {
       id

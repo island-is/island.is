@@ -1,6 +1,15 @@
-import { IsBoolean, IsOptional, IsString } from 'class-validator'
+import { Transform } from 'class-transformer'
+import {
+  IsBoolean,
+  IsOptional,
+  IsString,
+  MaxLength,
+  MinLength,
+} from 'class-validator'
 
 import { ApiPropertyOptional } from '@nestjs/swagger'
+
+import { nationalIdTransformer } from '../../../transformers'
 
 export class UpdateCivilClaimantDto {
   @IsOptional()
@@ -10,13 +19,17 @@ export class UpdateCivilClaimantDto {
 
   @IsOptional()
   @IsString()
+  @MinLength(10)
+  @MaxLength(10)
+  @Transform(nationalIdTransformer)
   @ApiPropertyOptional({ type: String })
-  readonly name?: string
+  readonly nationalId?: string
 
   @IsOptional()
   @IsString()
+  @MaxLength(255)
   @ApiPropertyOptional({ type: String })
-  readonly nationalId?: string
+  readonly name?: string
 
   @IsOptional()
   @IsBoolean()
@@ -30,21 +43,27 @@ export class UpdateCivilClaimantDto {
 
   @IsOptional()
   @IsString()
+  @MinLength(10)
+  @MaxLength(10)
+  @Transform(nationalIdTransformer)
   @ApiPropertyOptional({ type: String })
   readonly spokespersonNationalId?: string
 
   @IsOptional()
   @IsString()
+  @MaxLength(255)
   @ApiPropertyOptional({ type: String })
   readonly spokespersonName?: string
 
   @IsOptional()
   @IsString()
+  @MaxLength(255)
   @ApiPropertyOptional({ type: String })
   readonly spokespersonEmail?: string
 
   @IsOptional()
   @IsString()
+  @MaxLength(255)
   @ApiPropertyOptional({ type: String })
   readonly spokespersonPhoneNumber?: string
 
@@ -52,4 +71,9 @@ export class UpdateCivilClaimantDto {
   @IsBoolean()
   @ApiPropertyOptional({ type: Boolean })
   readonly caseFilesSharedWithSpokesperson?: boolean
+
+  @IsOptional()
+  @IsBoolean()
+  @ApiPropertyOptional({ type: Boolean })
+  readonly isSpokespersonConfirmed?: boolean
 }

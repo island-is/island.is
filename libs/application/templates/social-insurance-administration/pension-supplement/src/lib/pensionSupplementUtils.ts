@@ -1,23 +1,23 @@
 import { getValueViaPath } from '@island.is/application/core'
+import {
+  BankAccountType,
+  MONTHS,
+} from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
+import {
+  Attachments,
+  BankInfo,
+  FileType,
+} from '@island.is/application/templates/social-insurance-administration-core/types'
 import { Application, ExternalData, Option } from '@island.is/application/types'
+import addMonths from 'date-fns/addMonths'
+import subYears from 'date-fns/subYears'
+import { PensionSupplementAttachments } from '../types'
 import {
   ApplicationReason,
   AttachmentLabel,
   AttachmentTypes,
 } from './constants'
 import { pensionSupplementFormMessage } from './messages'
-import subYears from 'date-fns/subYears'
-import addMonths from 'date-fns/addMonths'
-import {
-  Attachments,
-  BankInfo,
-  FileType,
-} from '@island.is/application/templates/social-insurance-administration-core/types'
-import {
-  BankAccountType,
-  MONTHS,
-} from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
-import { PensionSupplementAttachments } from '../types'
 
 export const getApplicationAnswers = (answers: Application['answers']) => {
   const applicantPhonenumber = getValueViaPath(
@@ -33,6 +33,11 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
   const selectedYear = getValueViaPath(answers, 'period.year') as string
 
   const selectedMonth = getValueViaPath(answers, 'period.month') as string
+
+  const selectedYearHiddenInput = getValueViaPath(
+    answers,
+    'period.hiddenInput',
+  ) as string
 
   const additionalAttachments = getValueViaPath(
     answers,
@@ -106,6 +111,7 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     applicationReason,
     selectedYear,
     selectedMonth,
+    selectedYearHiddenInput,
     additionalAttachments,
     additionalAttachmentsRequired,
     comment,

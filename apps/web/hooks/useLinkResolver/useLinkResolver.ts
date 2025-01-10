@@ -107,6 +107,10 @@ export const routesTemplate = {
     is: '/s/tryggingastofnun/reiknivel',
     en: '/en/o/social-insurance-administration/calculator',
   },
+  directorateoflabourmypages: {
+    is: '/s/vinnumalastofnun/minar-sidur',
+    en: '/en/o/directorate-of-labour/my-pages',
+  },
   digitalicelandservices: {
     is: '/s/stafraent-island/thjonustur',
     en: '/en/o/digital-iceland/island-services',
@@ -306,6 +310,18 @@ export const routesTemplate = {
   undirskriftalistar: {
     is: '/undirskriftalistar',
     en: '/en/petitions',
+  },
+  styrkjatorg: {
+    is: '/styrkjatorg',
+    en: '',
+  },
+  styrkjatorgsearch: {
+    is: '/styrkjatorg/styrkir',
+    en: '',
+  },
+  styrkjatorggrant: {
+    is: '/styrkjatorg/styrkur/[id]',
+    en: '',
   },
 }
 

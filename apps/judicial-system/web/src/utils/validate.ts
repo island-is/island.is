@@ -30,7 +30,6 @@ export type Validation =
   | 'date-format'
   | 'R-case-number'
   | 'S-case-number'
-  | 'vehicle-registration-number'
   | 'appeal-case-number-format'
 
 type ValidateItem = 'valid' | [string | undefined | null, Validation[]]
@@ -92,12 +91,6 @@ const getRegexByValidation = (validation: Validation) => {
       return {
         regex: new RegExp(/^S-[0-9]{1,5}\/[0-9]{4}$/),
         errorMessage: `Dæmi: S-1234/${new Date().getFullYear()}`,
-      }
-    }
-    case 'vehicle-registration-number': {
-      return {
-        regex: new RegExp(/^[A-Z]{2}([A-Z]{1}|[0-9]{1})[0-9]{2}$/),
-        errorMessage: 'Dæmi: AB123',
       }
     }
     case 'appeal-case-number-format': {
@@ -262,10 +255,9 @@ export const isHearingArrangementsStepValidIC = (
 export const isProcessingStepValidIndictments = (
   workingCase: Case,
 ): boolean => {
-  const defendantsAreValid = () =>
-    workingCase.defendants?.every((defendant) => {
-      return validate([[defendant.defendantPlea, ['empty']]]).isValid
-    })
+  const defendantsAreValid = workingCase.defendants?.every(
+    (defendant) => validate([[defendant.defendantPlea, ['empty']]]).isValid,
+  )
 
   const hasCivilClaimSelected =
     workingCase.hasCivilClaims !== null &&
@@ -275,9 +267,14 @@ export const isProcessingStepValidIndictments = (
     ? workingCase.civilClaimants?.every(
         (civilClaimant) =>
           civilClaimant.name &&
-          (civilClaimant.noNationalId ||
-            (civilClaimant.nationalId &&
-              civilClaimant.nationalId.replace('-', '').length === 10)),
+          validate([
+            [
+              civilClaimant.nationalId,
+              civilClaimant.noNationalId
+                ? ['date-of-birth']
+                : ['empty', 'national-id'],
+            ],
+          ]).isValid,
       )
     : true
 
@@ -286,7 +283,7 @@ export const isProcessingStepValidIndictments = (
       workingCase.court &&
       hasCivilClaimSelected &&
       allCivilClaimantsAreValid &&
-      defendantsAreValid(),
+      defendantsAreValid,
   )
 }
 
@@ -469,6 +466,8 @@ export const isDefenderStepValid = (workingCase: Case): boolean => {
     workingCase.defendants?.every((defendant) => {
       return (
         defendant.defenderChoice === DefenderChoice.WAIVE ||
+        defendant.defenderChoice === DefenderChoice.DELAY ||
+        !defendant.defenderChoice ||
         validate([
           [defendant.defenderName, ['empty']],
           [defendant.defenderEmail, ['email-format']],
@@ -581,12 +580,9 @@ export const isCourtOfAppealWithdrawnCaseStepValid = (
 
 export const isCaseFilesStepValidIndictments = (workingCase: Case): boolean => {
   return Boolean(
-    (isTrafficViolationCase(workingCase) ||
+    isTrafficViolationCase(workingCase) ||
       workingCase.caseFiles?.some(
         (file) => file.category === CaseFileCategory.INDICTMENT,
-      )) &&
-      workingCase.caseFiles?.some(
-        (file) => file.category === CaseFileCategory.CRIMINAL_RECORD,
       ),
   )
 }

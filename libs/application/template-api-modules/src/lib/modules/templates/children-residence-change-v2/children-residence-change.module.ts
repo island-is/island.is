@@ -1,23 +1,20 @@
-import { DynamicModule } from '@nestjs/common'
-import { BaseTemplateAPIModuleConfig } from '../../../types'
+import { Module } from '@nestjs/common'
 import { ChildrenResidenceChangeServiceV2 } from './children-residence-change.service'
 import { SyslumennClientModule } from '@island.is/clients/syslumenn'
 import { NationalRegistryClientModule } from '@island.is/clients/national-registry-v2'
 import { SharedTemplateAPIModule } from '../../shared'
 import { SmsModule } from '@island.is/nova-sms'
+import { ApplicationsNotificationsModule } from '../../../notification/notifications.module'
 
-export class ChildrenResidenceChangeModuleV2 {
-  static register(config: BaseTemplateAPIModuleConfig): DynamicModule {
-    return {
-      module: ChildrenResidenceChangeModuleV2,
-      imports: [
-        SyslumennClientModule,
-        SharedTemplateAPIModule.register(config),
-        SmsModule,
-        NationalRegistryClientModule,
-      ],
-      providers: [ChildrenResidenceChangeServiceV2],
-      exports: [ChildrenResidenceChangeServiceV2],
-    }
-  }
-}
+@Module({
+  imports: [
+    SyslumennClientModule,
+    SharedTemplateAPIModule,
+    SmsModule,
+    NationalRegistryClientModule,
+    ApplicationsNotificationsModule,
+  ],
+  providers: [ChildrenResidenceChangeServiceV2],
+  exports: [ChildrenResidenceChangeServiceV2],
+})
+export class ChildrenResidenceChangeModuleV2 {}

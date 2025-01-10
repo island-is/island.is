@@ -18,6 +18,7 @@ import { MessageService } from '@island.is/judicial-system/message'
 
 import { AwsS3Service } from '../../aws-s3'
 import { CourtService } from '../../court'
+import { CivilClaimantService } from '../../defendant'
 import { DefendantService } from '../../defendant'
 import { EventService } from '../../event'
 import { FileService } from '../../file'
@@ -45,6 +46,7 @@ jest.mock('../../user/user.service')
 jest.mock('../../file/file.service')
 jest.mock('../../aws-s3/awsS3.service')
 jest.mock('../../defendant/defendant.service')
+jest.mock('../../defendant/civilClaimant.service')
 jest.mock('../../indictment-count/indictmentCount.service')
 
 export const createTestingCaseModule = async () => {
@@ -70,6 +72,7 @@ export const createTestingCaseModule = async () => {
       EventService,
       SigningService,
       DefendantService,
+      CivilClaimantService,
       IndictmentCountService,
       {
         provide: IntlService,
@@ -148,6 +151,9 @@ export const createTestingCaseModule = async () => {
 
   const defendantService = caseModule.get<DefendantService>(DefendantService)
 
+  const civilClaimantService =
+    caseModule.get<CivilClaimantService>(CivilClaimantService)
+
   const indictmentCountService = caseModule.get<IndictmentCountService>(
     IndictmentCountService,
   )
@@ -174,6 +180,9 @@ export const createTestingCaseModule = async () => {
 
   const caseService = caseModule.get<CaseService>(CaseService)
 
+  const internalCaseService =
+    caseModule.get<InternalCaseService>(InternalCaseService)
+
   const limitedAccessCaseService = caseModule.get<LimitedAccessCaseService>(
     LimitedAccessCaseService,
   )
@@ -197,6 +206,7 @@ export const createTestingCaseModule = async () => {
     fileService,
     awsS3Service,
     defendantService,
+    civilClaimantService,
     indictmentCountService,
     logger,
     sequelize,
@@ -206,6 +216,7 @@ export const createTestingCaseModule = async () => {
     caseStringModel,
     caseConfig,
     caseService,
+    internalCaseService,
     limitedAccessCaseService,
     caseController,
     internalCaseController,

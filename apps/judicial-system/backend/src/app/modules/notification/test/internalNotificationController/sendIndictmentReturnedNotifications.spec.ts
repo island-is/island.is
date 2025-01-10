@@ -3,12 +3,15 @@ import { uuid } from 'uuidv4'
 import { EmailService } from '@island.is/email-service'
 
 import {
+  CaseNotificationType,
   CaseType,
-  NotificationType,
   User,
 } from '@island.is/judicial-system/types'
 
-import { createTestingNotificationModule } from '../createTestingNotificationModule'
+import {
+  createTestingNotificationModule,
+  createTestUsers,
+} from '../createTestingNotificationModule'
 
 import { Case } from '../../../case'
 import { CaseNotificationDto } from '../../dto/caseNotification.dto'
@@ -27,10 +30,10 @@ type GivenWhenThen = (
 ) => Promise<Then>
 
 describe('InternalNotificationController - Send indictment returned notification', () => {
+  const { prosecutor } = createTestUsers(['prosecutor'])
   const userId = uuid()
   const caseId = uuid()
-  const prosecutorName = uuid()
-  const prosecutorEmail = uuid()
+
   const policeCaseNumbers = [uuid(), uuid()]
   const courtName = uuid()
 
@@ -63,13 +66,13 @@ describe('InternalNotificationController - Send indictment returned notification
 
     const notificationDto: CaseNotificationDto = {
       user: { id: userId } as User,
-      type: NotificationType.INDICTMENT_RETURNED,
+      type: CaseNotificationType.INDICTMENT_RETURNED,
     }
 
     const theCase = {
       id: caseId,
       type: CaseType.INDICTMENT,
-      prosecutor: { name: prosecutorName, email: prosecutorEmail },
+      prosecutor: { name: prosecutor.name, email: prosecutor.email },
       policeCaseNumbers,
       court: { name: courtName },
     } as Case
@@ -81,7 +84,7 @@ describe('InternalNotificationController - Send indictment returned notification
     it('should send notifications to prosecutor', () => {
       expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
         expect.objectContaining({
-          to: [{ name: prosecutorName, address: prosecutorEmail }],
+          to: [{ name: prosecutor.name, address: prosecutor.email }],
           subject: `Ákæra endursend í máli ${policeCaseNumbers[0]}`,
           html: `${courtName} hefur endursent ákæru vegna lögreglumáls ${policeCaseNumbers[0]}. Þú getur nálgast samantekt málsins á <a href="http://localhost:4200/akaera/stadfesta/${caseId}">yfirlitssíðu málsins í Réttarvörslugátt.</a>`,
         }),

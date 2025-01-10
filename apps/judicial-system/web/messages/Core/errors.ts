@@ -43,8 +43,8 @@ export const errors = defineMessages({
       'Notaður sem villuskilaboð þegar ekki gengur að eyða kröfuhafa',
   },
   createCase: {
-    id: 'judicial.system.core:errors.create_case',
-    defaultMessage: 'Upp kom villa við að stofnun máls',
+    id: 'judicial.system.core:errors.create_case_v1',
+    defaultMessage: 'Upp kom villa við stofnun máls',
     description: 'Notaður sem villuskilaboð þegar ekki gengur að stofna mál',
   },
   updateCase: {
@@ -156,5 +156,16 @@ export const errors = defineMessages({
     defaultMessage: 'Vinsamlegast reyndu aftur síðar',
     description:
       'Notaður sem villuskilaboð þegar tekst að sækja stöðu birtingar',
+  },
+  invalidDate: {
+    id: 'judicial.system.core:errors.invalid_date',
+    defaultMessage: 'Dagsetning ekki rétt slegin inn',
+    description: 'Notaður sem villuskilaboð þegar dagsetning er ekki löggild',
+  },
+  uploadFailed: {
+    id: 'judicial.system.core:errors.upload_failed',
+    defaultMessage: 'Upp kom villa við að hlaða upp skjali',
+    description:
+      'Notaður sem villuskilaboð þegar ekki tekst að hlaða upp skjali',
   },
 })

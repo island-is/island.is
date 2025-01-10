@@ -2,9 +2,16 @@ import { uuid } from 'uuidv4'
 
 import { EmailService } from '@island.is/email-service'
 
-import { NotificationType, User } from '@island.is/judicial-system/types'
+import {
+  CaseNotificationType,
+  NotificationType,
+  User,
+} from '@island.is/judicial-system/types'
 
-import { createTestingNotificationModule } from '../createTestingNotificationModule'
+import {
+  createTestingNotificationModule,
+  createTestUsers,
+} from '../createTestingNotificationModule'
 
 import { Case } from '../../../case'
 import { CaseNotificationDto } from '../../dto/caseNotification.dto'
@@ -25,16 +32,17 @@ describe('InternalNotificationController - Send defendants not updated at court 
   const userId = uuid()
   const notificationDto: CaseNotificationDto = {
     user: { id: userId } as User,
-    type: NotificationType.DEFENDANTS_NOT_UPDATED_AT_COURT,
+    type: CaseNotificationType.DEFENDANTS_NOT_UPDATED_AT_COURT,
   }
+
+  const { registrar } = createTestUsers(['registrar', 'defender'])
   const caseId = uuid()
   const courtCaseNumber = uuid()
-  const registrarName = uuid()
-  const registrarEmail = uuid()
+
   const theCase = {
     id: caseId,
     courtCaseNumber,
-    registrar: { name: registrarName, email: registrarEmail },
+    registrar: { name: registrar.name, email: registrar.email },
   } as Case
 
   let mockEmailService: EmailService
@@ -72,7 +80,7 @@ describe('InternalNotificationController - Send defendants not updated at court 
     it('should send email', () => {
       expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
         expect.objectContaining({
-          to: [{ name: registrarName, address: registrarEmail }],
+          to: [{ name: registrar.name, address: registrar.email }],
           subject: `Skráning varnaraðila/verjenda í máli ${courtCaseNumber}`,
           html: `Ekki tókst að skrá varnaraðila/verjendur í máli ${courtCaseNumber} í Auði. Yfirfara þarf málið í Auði og skrá rétta aðila áður en því er lokað.`,
         }),
@@ -92,7 +100,7 @@ describe('InternalNotificationController - Send defendants not updated at court 
           notifications: [
             {
               type: NotificationType.DEFENDANTS_NOT_UPDATED_AT_COURT,
-              recipients: [{ address: registrarEmail, success: true }],
+              recipients: [{ address: registrar.email, success: true }],
             },
           ],
         } as Case,

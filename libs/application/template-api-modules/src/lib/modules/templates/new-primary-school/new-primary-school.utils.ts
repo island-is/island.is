@@ -46,7 +46,7 @@ export const transformApplicationToNewPrimarySchoolDTO = (
       },
       email: parents.parent1.email,
       phone: parents.parent1.phoneNumber,
-      role: 'parent',
+      role: 'guardian',
     },
     ...(parents.parent2
       ? [
@@ -59,7 +59,7 @@ export const transformApplicationToNewPrimarySchoolDTO = (
             },
             email: parents.parent2.email,
             phone: parents.parent2.phoneNumber,
-            role: 'parent',
+            role: 'guardian',
           },
         ]
       : []),

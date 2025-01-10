@@ -1,3 +1,5 @@
+import { CodeOwner } from '@island.is/nest/core'
+import { CodeOwners } from '@island.is/shared/constants'
 import { Query, Args, Resolver } from '@nestjs/graphql'
 import {
   CurrentUser,
@@ -12,6 +14,7 @@ import { UseGuards } from '@nestjs/common'
 
 @Resolver()
 @UseGuards(IdsUserGuard)
+@CodeOwner(CodeOwners.Advania)
 @Audit({ namespace: '@island.is/api/form-system' })
 export class FormSystemServicesResolver {
   constructor(private readonly formSystemServices: FormSystemService) {}

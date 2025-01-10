@@ -95,7 +95,7 @@
   "targetDefaults": {
     "build": {
       "dependsOn": ["^build"],
-      "inputs": ["production", "^production"]
+      "inputs": ["production", "^production", "DevOps"]
     },
     "e2e": {
       "inputs": ["default", "^production"]
@@ -151,6 +151,16 @@
       {
         "runtime": "node --version"
       }
+    ],
+    "DevOps": ["CI", "Dockerfiles", "{workspaceRoot}/scripts/**/*"],
+    "CI": [
+      "{workspaceRoot}/.github/actions/",
+      "{workspaceRoot}/.github/workflows/",
+      "{workspaceRoot}/**/.dockerignore"
+    ],
+    "Dockerfiles": [
+      "{workspaceRoot}/**/Dockerfile",
+      "{workspaceRoot}/**/Dockerfile.*"
     ],
     "sharedGlobals": [
       "{workspaceRoot}/eslint-local-rules.js",

@@ -11,6 +11,7 @@ export const CommentsScreen = (props: OJOIFieldBaseProps) => {
     <FormScreen
       title={f(comments.general.title)}
       intro={f(comments.general.intro)}
+      goToScreen={props.goToScreen}
     >
       <Comments {...props} />
     </FormScreen>
