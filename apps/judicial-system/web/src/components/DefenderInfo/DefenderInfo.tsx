@@ -1,5 +1,5 @@
 import { Dispatch, FC, SetStateAction, useContext, useState } from 'react'
-import { useIntl } from 'react-intl'
+import { MessageDescriptor, useIntl } from 'react-intl'
 
 import { Box, RadioButton, Text, Tooltip } from '@island.is/island-ui/core'
 import {
@@ -14,7 +14,7 @@ import {
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
-import { useCase } from '../../utils/hooks'
+import { UpdateCase, useCase } from '../../utils/hooks'
 import RequiredStar from '../RequiredStar/RequiredStar'
 import { UserContext } from '../UserProvider/UserProvider'
 import { BlueBox, InputAdvocate, SectionHeading } from '..'
@@ -28,25 +28,35 @@ interface Props {
 
 const DefenderInfo: FC<Props> = ({ workingCase, setWorkingCase }) => {
   const { formatMessage } = useIntl()
-  const { setAndSendCaseToServer } = useCase()
+  const { updateCase, setAndSendCaseToServer } = useCase()
   const { user } = useContext(UserContext)
 
   const [defenderNotFound, setDefenderNotFound] = useState<boolean>(false)
 
   const getSectionTitle = () => {
+    let message: MessageDescriptor
+
     if (isRestrictionCase(workingCase.type)) {
       if (isProsecutionUser(user)) {
-        return defenderInfo.restrictionCases.sections.defender.heading
+        message = defenderInfo.restrictionCases.sections.defender.heading
       } else {
-        return defenderInfo.restrictionCases.sections.defender.title
+        message = defenderInfo.restrictionCases.sections.defender.title
       }
     } else {
       if (isProsecutionUser(user)) {
-        return defenderInfo.investigationCases.sections.defender.heading
+        message = defenderInfo.investigationCases.sections.defender.heading
       } else {
-        return defenderInfo.investigationCases.sections.defender.title
+        message = defenderInfo.investigationCases.sections.defender.title
       }
     }
+
+    return formatMessage(message, {
+      defenderType:
+        workingCase.sessionArrangements ===
+        SessionArrangements.ALL_PRESENT_SPOKESPERSON
+          ? 'Talsmaður'
+          : 'Verjandi',
+    })
   }
 
   const renderTooltip = () => {
@@ -79,21 +89,50 @@ const DefenderInfo: FC<Props> = ({ workingCase, setWorkingCase }) => {
     }
   }
 
+  const handleSetAndSendCaseToServer = (update: UpdateCase) => {
+    setAndSendCaseToServer([update], workingCase, setWorkingCase)
+  }
+
+  const handleAdvocateChange = (
+    defenderName: string | null,
+    defenderNationalId: string | null,
+    defenderEmail: string | null,
+    defenderPhoneNumber: string | null,
+  ) => {
+    handleSetAndSendCaseToServer({
+      defenderName,
+      defenderNationalId,
+      defenderEmail,
+      defenderPhoneNumber,
+      force: true,
+    })
+  }
+
   return (
     <>
-      <SectionHeading
-        title={formatMessage(getSectionTitle(), {
-          defenderType:
-            workingCase.sessionArrangements ===
-            SessionArrangements.ALL_PRESENT_SPOKESPERSON
-              ? 'Talsmaður'
-              : 'Verjandi',
-        })}
-        tooltip={renderTooltip()}
-      />
+      <SectionHeading title={getSectionTitle()} tooltip={renderTooltip()} />
       {defenderNotFound && <DefenderNotFound />}
       <BlueBox>
-        <InputAdvocate onAdvocateNotFound={setDefenderNotFound} />
+        <InputAdvocate
+          advocateType="defender"
+          name={workingCase.defenderName}
+          email={workingCase.defenderEmail}
+          phoneNumber={workingCase.defenderPhoneNumber}
+          onAdvocateChange={handleAdvocateChange}
+          onAdvocateNotFound={setDefenderNotFound}
+          onEmailChange={(defenderEmail: string | null) =>
+            setWorkingCase((prev) => ({ ...prev, defenderEmail }))
+          }
+          onEmailSave={(defenderEmail: string | null) =>
+            updateCase(workingCase.id, { defenderEmail })
+          }
+          onPhoneNumberChange={(defenderPhoneNumber: string | null) =>
+            setWorkingCase((prev) => ({ ...prev, defenderPhoneNumber }))
+          }
+          onPhoneNumberSave={(defenderPhoneNumber: string | null) =>
+            updateCase(workingCase.id, { defenderPhoneNumber })
+          }
+        />
         {isProsecutionUser(user) && (
           <>
             <Text variant="h4" marginTop={2} marginBottom={2}>
@@ -122,17 +161,11 @@ const DefenderInfo: FC<Props> = ({ workingCase, setWorkingCase }) => {
                   RequestSharedWithDefender.READY_FOR_COURT
                 }
                 onChange={() => {
-                  setAndSendCaseToServer(
-                    [
-                      {
-                        requestSharedWithDefender:
-                          RequestSharedWithDefender.READY_FOR_COURT,
-                        force: true,
-                      },
-                    ],
-                    workingCase,
-                    setWorkingCase,
-                  )
+                  handleSetAndSendCaseToServer({
+                    requestSharedWithDefender:
+                      RequestSharedWithDefender.READY_FOR_COURT,
+                    force: true,
+                  })
                 }}
                 large
                 backgroundColor="white"
@@ -155,17 +188,11 @@ const DefenderInfo: FC<Props> = ({ workingCase, setWorkingCase }) => {
                   RequestSharedWithDefender.COURT_DATE
                 }
                 onChange={() => {
-                  setAndSendCaseToServer(
-                    [
-                      {
-                        requestSharedWithDefender:
-                          RequestSharedWithDefender.COURT_DATE,
-                        force: true,
-                      },
-                    ],
-                    workingCase,
-                    setWorkingCase,
-                  )
+                  handleSetAndSendCaseToServer({
+                    requestSharedWithDefender:
+                      RequestSharedWithDefender.COURT_DATE,
+                    force: true,
+                  })
                 }}
                 large
                 backgroundColor="white"
@@ -188,17 +215,11 @@ const DefenderInfo: FC<Props> = ({ workingCase, setWorkingCase }) => {
                   RequestSharedWithDefender.NOT_SHARED
                 }
                 onChange={() => {
-                  setAndSendCaseToServer(
-                    [
-                      {
-                        requestSharedWithDefender:
-                          RequestSharedWithDefender.NOT_SHARED,
-                        force: true,
-                      },
-                    ],
-                    workingCase,
-                    setWorkingCase,
-                  )
+                  handleSetAndSendCaseToServer({
+                    requestSharedWithDefender:
+                      RequestSharedWithDefender.NOT_SHARED,
+                    force: true,
+                  })
                 }}
                 large
                 backgroundColor="white"
