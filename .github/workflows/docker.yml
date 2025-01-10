@@ -75,9 +75,8 @@ jobs:
         id: aws-creds
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          role-to-assume: ${{ secrets.AWS_ECR_ROLE }}
+          role-to-assume: ${{ vars.AWS_ECR_ROLE }}
           aws-region: ${{ vars.AWS_REGION }}
-          role-session-name: github-actions
 
       - name: Log in to Amazon ECR
         if: ${{ steps.aws-creds.conclusion == 'success' }}
