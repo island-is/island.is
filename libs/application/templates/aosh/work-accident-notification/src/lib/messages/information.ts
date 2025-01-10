@@ -137,7 +137,7 @@ export const information = {
       },
       descriptionField: {
         id: 'aosh.wan.application:information.workhealth.descriptionField',
-        defaultMessage: 'Vinnuverndarstarf',
+        defaultMessage: 'Vinnuverndarstörf',
         description: 'H5 of workhealth information page',
       },
       errorAlert: {
@@ -146,6 +146,16 @@ export const information = {
           "Vinsamlegast veldu a.m.k einn valmöguleika, ef ekkert á við veldu 'engin'",
         description:
           'error alert on workhealth information page when user attempt to navigate forwards without choosing an option',
+      },
+      pageTitle: {
+        id: 'aosh.wan.application:information.workhealth.pageTitle',
+        defaultMessage: 'Vinnuvernd',
+        description: 'Title of workhealth information page',
+      },
+      pageDescription: {
+        id: 'aosh.wan.application:information.workhealth.pageDescription',
+        defaultMessage: 'Öryggis- og heilbrigðisstarfsemi fyrirtækisins.',
+        description: 'Description of workhealth information page',
       },
     },
     projectPurchase: {
@@ -176,6 +186,16 @@ export const information = {
         id: 'aosh.wan.application:information.projectPurchase.name',
         defaultMessage: 'Nafn',
         description: 'Name, in project purchase section',
+      },
+      pageTitle: {
+        id: 'aosh.wan.application:information.projectPurchase.pageTitle',
+        defaultMessage: 'Verkkaupi',
+        description: 'Title of project purchase information page',
+      },
+      pageDescription: {
+        id: 'aosh.wan.application:information.projectPurchase.pageDescription',
+        defaultMessage: 'Verkkaupi',
+        description: 'Description of project purchase information page',
       },
     },
   },

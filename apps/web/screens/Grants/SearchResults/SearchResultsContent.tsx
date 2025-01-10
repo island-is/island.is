@@ -7,7 +7,7 @@ import { Box, Button, InfoCardGrid, Text } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import { Locale } from '@island.is/shared/types'
 import { isDefined } from '@island.is/shared/utils'
-import { Grant } from '@island.is/web/graphql/schema'
+import { Grant, GrantStatus } from '@island.is/web/graphql/schema'
 import { useLinkResolver } from '@island.is/web/hooks'
 
 import { m } from '../messages'
@@ -97,7 +97,14 @@ export const SearchResultsContent = ({ grants, subheader, locale }: Props) => {
                     ).href,
                   },
                   detailLines: [
-                    grant.dateFrom && grant.dateTo
+                    {
+                      icon: 'time' as const,
+                      text: status.deadlineStatus,
+                    },
+                    grant.status !==
+                      GrantStatus.ClosedOpeningSoonWithEstimation &&
+                    grant.dateFrom &&
+                    grant.dateTo
                       ? {
                           icon: 'calendar' as const,
                           text: `${format(
@@ -106,10 +113,6 @@ export const SearchResultsContent = ({ grants, subheader, locale }: Props) => {
                           )} - ${format(new Date(grant.dateTo), 'dd.MM.yyyy')}`,
                         }
                       : null,
-                    {
-                      icon: 'time' as const,
-                      text: status.deadlineStatus,
-                    },
                     grant.categoryTags
                       ? {
                           icon: 'informationCircle' as const,
