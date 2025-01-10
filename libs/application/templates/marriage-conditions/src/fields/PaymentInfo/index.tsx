@@ -50,10 +50,6 @@ export const PaymentInfo: FC<
     (payment) => payment.chargeItemCode === 'AY128',
   )
 
-  // const marriageConditionsCode = paymentCatalog?.find(
-  //   (payment) => payment.chargeItemCode === 'AY129',
-  // )
-
   const applicantHasBirthCertificate = getValueViaPath<boolean>(
     application.answers,
     'applicant.hasBirthCertificate',
@@ -70,7 +66,6 @@ export const PaymentInfo: FC<
   const prices = {
     birthCertificate: nrOfBirthCerts * (birthCertCode?.priceAmount ?? 0),
     maritalCertificate: 2 * (maritalCertCode?.priceAmount ?? 0),
-    // marriageConditions: marriageConditionsCode?.priceAmount ?? 0,
     surveyCertificate: surveyCertCode?.priceAmount ?? 0,
   }
   const totalPrice =
