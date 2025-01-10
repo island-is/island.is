@@ -97,7 +97,6 @@ export class AppService {
           'Unexpected error occurred while fetching cases',
         )
       }
-      return res.json()
     } catch (error) {
       throw new BadGatewayException(`Failed to fetch cases: ${error.message}`)
     }

@@ -39,7 +39,6 @@ const errorEmojis = [
   ':x:',
 ]
 
-// TODO: Add fyrirtökur schedule
 const caseEvent: Record<CaseEvent, string> = {
   [CaseTransition.ACCEPT]: ':white_check_mark: Samþykkt',
   [CaseTransition.APPEAL]: ':judge: Kæra',
@@ -190,7 +189,7 @@ export class EventService {
     const arrangementSummary =
       arrangementTexts.length > 0
         ? arrangementTexts.join('\n')
-        : 'Engar fyrirtökur á dagskrá'
+        : '>Engar fyrirtökur á dagskrá'
 
     try {
       if (!this.config.url) {

@@ -84,7 +84,7 @@ export class InternalCaseController {
     description:
       'Fetch all cases that have court hearing arrangements for a given date',
   })
-  async postHearingArrangements(@Param('date') date: Date): Promise<Case[]> {
+  async postHearingArrangements(@Param('date') date: Date): Promise<void> {
     this.logger.debug(
       `Post internal summary of all cases that have court hearing arrangement at ${date}`,
     )
@@ -93,7 +93,6 @@ export class InternalCaseController {
       date,
     )
     await this.eventService.postDailyHearingArrangementEvents(date, cases)
-    return cases
   }
 
   @Get('cases/indictments/defendant/:defendantNationalId')
