@@ -82,7 +82,7 @@ jobs:
       - name: Log in to Amazon ECR
         if: ${{ steps.aws-creds.conclusion == 'success' }}
         id: ecr-login
-        uses: aws-actions/amazon-ecr-login@v3
+        uses: aws-actions/amazon-ecr-login@v2
 
       - name: Push Docker Image to ECR
         if: ${{ env.PUSH_REGISTRY && env.PUSH_REGISTRY != 'ghcr.io' }}
