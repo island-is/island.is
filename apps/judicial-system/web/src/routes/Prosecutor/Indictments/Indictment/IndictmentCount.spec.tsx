@@ -282,6 +282,32 @@ describe('getIncidentDescription', () => {
         offenses: [offense.DRUNK_DRIVING],
         indictmentCountSubtypes: [
           IndictmentSubtype.CUSTOMS_VIOLATION,
+          IndictmentSubtype.THEFT,
+        ],
+      },
+      formatMessage,
+      {},
+      {
+        '123-123-123': [
+          IndictmentSubtype.CUSTOMS_VIOLATION,
+          IndictmentSubtype.THEFT,
+        ],
+      },
+    )
+
+    expect(result).toBe(
+      'fyrir [tollalagabrot, þjófnaður] með því að hafa, [Dagsetning]',
+    )
+  })
+
+  test('should return the traffic violation description when there are multiple subtypes, all are selected and one is a traffic violation', () => {
+    const result = getIncidentDescription(
+      {
+        id: 'testId',
+        policeCaseNumber: '123-123-123',
+        offenses: [offense.DRUNK_DRIVING],
+        indictmentCountSubtypes: [
+          IndictmentSubtype.CUSTOMS_VIOLATION,
           IndictmentSubtype.TRAFFIC_VIOLATION,
         ],
       },
@@ -296,7 +322,7 @@ describe('getIncidentDescription', () => {
     )
 
     expect(result).toBe(
-      'fyrir [tollalagabrot, umferðarlagabrot] með því að hafa, [Dagsetning]',
+      'fyrir umferðarlagabrot með því að hafa, [Dagsetning], ekið bifreiðinni [Skráningarnúmer ökutækis] undir áhrifum áfengis um [Vettvangur], þar sem lögregla stöðvaði aksturinn.',
     )
   })
 })
