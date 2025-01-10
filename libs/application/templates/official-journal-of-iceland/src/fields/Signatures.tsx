@@ -155,7 +155,7 @@ export const Signatures = ({ application }: OJOIFieldBaseProps) => {
             disabled={!lastSignature}
             iconType="outline"
           >
-            {'Afrita seinustu undirskrift'}
+            {f(signatures.buttons.copyLastSignature)}
           </Button>
         </Box>
         <Tabs
