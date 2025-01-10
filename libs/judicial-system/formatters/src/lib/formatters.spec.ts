@@ -7,6 +7,7 @@ import {
 } from '@island.is/judicial-system/types'
 
 import {
+  applyDativeCaseToCourtName,
   capitalize,
   displayFirstPlusRemaining,
   formatAppeal,
@@ -412,3 +413,28 @@ describe('sanitize', () => {
     expect(r).toBe('blabla.pdf')
   })
 })
+
+describe('applyDativeCaseToCourtName', () => {
+  test('should return dative case if court name contains "dómur"', () => {
+    // Arrange
+    const courtName = 'Héraðsdómur Reykjavíkur'
+
+    // Act
+    const result = applyDativeCaseToCourtName(courtName)
+
+    // Assert
+    expect(result).toBe('Héraðsdómi Reykjavíkur')
+  })
+
+  test('should return the same court name if it does not contain "dómur"', () => {
+    // Arrange
+    const courtName = 'Bull'
+
+    // Act
+    const result = applyDativeCaseToCourtName(courtName)
+
+    // Assert
+    expect(result).toBe(courtName)
+  })
+})
+
