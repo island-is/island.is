@@ -6,8 +6,7 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { isDefined } from 'class-validator'
-import { useMemo, useState } from 'react'
-import useIsMobile from '../../hooks/useIsMobile/useIsMobile'
+import { useEffect, useState } from 'react'
 import { ExpandHeader } from '../ExpandableTable'
 import { MobileTable } from '../MobileTable/MobileTable'
 import { HeaderButton } from './HeaderButton'
@@ -72,7 +71,7 @@ export const SortableTable = (props: SortableTableProps) => {
   const isMobile = width < theme.breakpoints.md
   const [headerSorted, setHeaderSorted] = useState<string[]>([])
 
-  useMemo(() => {
+  useEffect(() => {
     const headerItems = props.items
       .map(({ id, tag, lastNode, ...restItems }) => Object.keys(restItems))
       .flat()
@@ -88,7 +87,7 @@ export const SortableTable = (props: SortableTableProps) => {
       headerItems.pop()
     }
     setHeaderSorted(headerItems)
-  }, [props.items])
+  }, [props.items, props.expandable])
 
   // Filter out the mobile title key from the header
   const mobileHeaderData = headerSorted
@@ -239,6 +238,7 @@ export const SortableTable = (props: SortableTableProps) => {
                   text={{ fontWeight: 'semiBold' }}
                   borderColor="white"
                   key="footer-empty"
+                  unselectable="on"
                 >
                   {/* Empty cell at index 0 */}
                 </T.Data>
