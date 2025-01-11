@@ -125,10 +125,18 @@ export class SecondarySchoolClient {
       attachments: application.attachments,
     }
 
-    const result = await this.applicationsApiWithAuth(auth).v1ApplicationsPost({
-      applicationBaseDto,
-    })
-
-    return result.id || ''
+    try {
+      const result = await this.applicationsApiWithAuth(
+        auth,
+      ).v1ApplicationsPost({
+        applicationBaseDto,
+      })
+      if (!result.id) {
+        throw new Error('Application creation failed: No ID returned')
+      }
+      return result.id
+    } catch (error) {
+      throw new Error(`Failed to create application: ${error.message}`)
+    }
   }
 }
