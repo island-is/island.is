@@ -22,14 +22,16 @@ import {
   formatPhoneNumber,
 } from '@island.is/judicial-system/formatters'
 import {
+  Lawyer,
   isAdminUser,
   isCourtOfAppealsUser,
   isDefenceUser,
   isPrisonSystemUser,
+  isProsecutionUser,
 } from '@island.is/judicial-system/types'
 import { api } from '@island.is/judicial-system-web/src/services'
 
-import { useGeoLocation, useGetLawyer } from '../../utils/hooks'
+import { useGeoLocation, useGetLawyer, useGetLawyers } from '../../utils/hooks'
 import {
   Database,
   useIndexedDB,
@@ -73,16 +75,51 @@ const Container: FC<PropsWithChildren> = ({ children }) => {
   )
 }
 
+const getLawyerByName = (
+  db: IDBDatabase | null,
+  nationalId?: string | null,
+): Promise<Lawyer> | null => {
+  if (!db || !nationalId) {
+    return null
+  }
+  const transaction = db.transaction(Database.lawyerTable)
+  const store = transaction.objectStore(Database.lawyerTable)
+
+  return new Promise((resolve, reject) => {
+    const request = store.get('0103893139')
+    request.onsuccess = () => resolve(request.result)
+    request.onerror = () => reject(request.error)
+  })
+}
+
 const HeaderContainer = () => {
   const { formatMessage } = useIntl()
   const { isAuthenticated, user } = useContext(UserContext)
   const [isRobot, setIsRobot] = useState<boolean>()
+  const [lawyer, setLawyer] = useState<Lawyer | null>(null)
 
-  const { practice, email, phoneNr } =
-    useGetLawyer(user?.nationalId, isDefenceUser(user)) ?? {}
   const { countryCode } = useGeoLocation()
 
-  const { isDBConnecting } = useIndexedDB(Database.name, [Database.lawyerTable])
+  const lawyers = useGetLawyers(isDefenceUser(user))
+
+  const { isDBConnecting, db } = useIndexedDB(
+    Database.name,
+    Database.lawyerTable,
+    lawyers,
+  )
+
+  useEffect(() => {
+    const fetchLawyer = async () => {
+      try {
+        const data = await getLawyerByName(db, user?.nationalId)
+        setLawyer(data)
+      } catch (error) {
+        console.error('Failed to fetch customer:', error)
+      }
+    }
+
+    fetchLawyer()
+  }, [db])
 
   useEffect(() => {
     setIsRobot(countryCode !== 'IS')
@@ -170,8 +207,8 @@ const HeaderContainer = () => {
                     <Box marginBottom={2}>
                       <Text>
                         {capitalize(
-                          isDefenceUser(user)
-                            ? practice
+                          isDefenceUser(user) && lawyer
+                            ? lawyer.practice
                             : user.institution?.name,
                         )}
                       </Text>
@@ -179,12 +216,18 @@ const HeaderContainer = () => {
                     <Box marginBottom={2}>
                       <Text>
                         {formatPhoneNumber(
-                          isDefenceUser(user) ? phoneNr : user.mobileNumber,
+                          isDefenceUser(user) && lawyer
+                            ? lawyer.phoneNr
+                            : user.mobileNumber,
                         )}
                       </Text>
                     </Box>
                     <Box>
-                      <Text>{isDefenceUser(user) ? email : user.email}</Text>
+                      <Text>
+                        {isDefenceUser(user) && lawyer
+                          ? lawyer.email
+                          : user.email}
+                      </Text>
                     </Box>
                   </Box>
                 </div>

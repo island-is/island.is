@@ -5,7 +5,7 @@ import { toast } from '@island.is/island-ui/core'
 import { type Lawyer } from '@island.is/judicial-system/types'
 import { errors as errorMessages } from '@island.is/judicial-system-web/messages'
 
-export const useGetLawyers = (): Lawyer[] => {
+export const useGetLawyers = (shouldFetch?: boolean): Lawyer[] => {
   const { formatMessage } = useIntl()
   const fetcher = (url: string): Promise<Lawyer[]> =>
     fetch(url).then((res) => {
@@ -17,13 +17,13 @@ export const useGetLawyers = (): Lawyer[] => {
     })
 
   const { data, error } = useSWR<Lawyer[]>(
-    '/api/defender/lawyerRegistry',
+    shouldFetch ? '/api/defender/lawyerRegistry' : null,
     fetcher,
     {
       revalidateIfStale: false,
       revalidateOnFocus: false,
       revalidateOnReconnect: false,
-      errorRetryCount: 2,
+      shouldRetryOnError: false,
     },
   )
 

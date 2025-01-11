@@ -1,29 +1,49 @@
-import { useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
+import { useGetLawyers } from '../useLawyers/useLawyers'
+import { Lawyer, isProsecutionUser } from '@island.is/judicial-system/types'
+import { UserContext } from '@island.is/judicial-system-web/src/components'
 
 export const Database = {
   name: 'lawyer-registry',
   lawyerTable: 'lawyers-table',
 }
 
-export const useIndexedDB = (databaseName: string, tableNames: string[]) => {
+export const useIndexedDB = (
+  databaseName: string,
+  tableName: string,
+  lawyers: Lawyer[],
+) => {
   const [db, setDB] = useState<IDBDatabase | null>(null)
   const [isDBConnecting, setIsDBConnecting] = useState<boolean>(false)
+  const { user } = useContext(UserContext)
 
   useEffect(() => {
     const initDB = () => {
+      if (lawyers.length === 0) {
+        return
+      }
+
       const request = window.indexedDB.open(databaseName, 3)
 
       request.onupgradeneeded = () => {
         const db = request.result
-
-        tableNames.forEach((tableName) => {
-          if (!db.objectStoreNames.contains(tableName)) {
-            db.createObjectStore(tableName, {
-              autoIncrement: true,
-              keyPath: 'id',
-            })
-          }
+        const objectStore = db.createObjectStore(tableName, {
+          autoIncrement: true,
+          keyPath: 'nationalId',
         })
+
+        objectStore.createIndex('name', 'name', { unique: false })
+
+        objectStore.transaction.oncomplete = () => {
+          // Store values in the newly created objectStore.
+          const lawyerRegistryObjectStore = db
+            .transaction(tableName, 'readwrite')
+            .objectStore(tableName)
+
+          lawyers.forEach((lawyer) => {
+            lawyerRegistryObjectStore.add(lawyer)
+          })
+        }
       }
 
       request.onerror = () => {
@@ -40,7 +60,7 @@ export const useIndexedDB = (databaseName: string, tableNames: string[]) => {
     if (!db) {
       initDB()
     }
-  }, [databaseName, db, tableNames])
+  }, [databaseName, db, tableName, lawyers])
 
-  return { isDBConnecting }
+  return { isDBConnecting, db }
 }
