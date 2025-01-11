@@ -228,7 +228,7 @@ const template: ApplicationTemplate<
               delete: true,
             },
             {
-              id: Roles.ORGINISATION_REVIEWER,
+              id: Roles.ORGANISATION_REVIEWER,
               read: 'all',
               write: 'all',
             },
@@ -279,7 +279,7 @@ const template: ApplicationTemplate<
     } else if (
       nationalId === InstitutionNationalIds.MIDSTOD_MENNTUNAR_SKOLATHJONUSTU
     ) {
-      return Roles.ORGINISATION_REVIEWER
+      return Roles.ORGANISATION_REVIEWER
     }
     return undefined
   },

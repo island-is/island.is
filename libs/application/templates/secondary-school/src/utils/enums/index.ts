@@ -13,7 +13,7 @@ export enum States {
 
 export enum Roles {
   APPLICANT = 'applicant',
-  ORGINISATION_REVIEWER = 'mms',
+  ORGANISATION_REVIEWER = 'mms',
 }
 
 export enum ApiActions {
