@@ -168,6 +168,10 @@ export const SchoolSelection: FC<FieldBaseProps> = (props) => {
             ...props.field,
             id: `${props.field.id}.first`,
           }}
+          otherFieldIds={[
+            `${props.field.id}.second`,
+            `${props.field.id}.third`,
+          ]}
         />
       </Box>
 
@@ -184,6 +188,10 @@ export const SchoolSelection: FC<FieldBaseProps> = (props) => {
               ...props.field,
               id: `${props.field.id}.second`,
             }}
+            otherFieldIds={[
+              `${props.field.id}.first`,
+              `${props.field.id}.third`,
+            ]}
           />
         </Box>
       ) : (
@@ -234,6 +242,10 @@ export const SchoolSelection: FC<FieldBaseProps> = (props) => {
                   ...props.field,
                   id: `${props.field.id}.third`,
                 }}
+                otherFieldIds={[
+                  `${props.field.id}.first`,
+                  `${props.field.id}.second`,
+                ]}
               />
             </Box>
           ) : (
