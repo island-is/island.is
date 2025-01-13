@@ -1,6 +1,5 @@
 import {
   buildCustomField,
-  buildHiddenInput,
   buildMultiField,
   buildSection,
 } from '@island.is/application/core'
