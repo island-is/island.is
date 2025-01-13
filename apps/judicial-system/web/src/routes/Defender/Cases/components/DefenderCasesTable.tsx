@@ -1,7 +1,7 @@
 import { FC } from 'react'
 import { useIntl } from 'react-intl'
 
-import { Box, Text } from '@island.is/island-ui/core'
+import { Text } from '@island.is/island-ui/core'
 import { capitalize } from '@island.is/judicial-system/formatters'
 import { core, tables } from '@island.is/judicial-system-web/messages'
 import {
@@ -20,6 +20,7 @@ import {
   getDurationDate,
 } from '@island.is/judicial-system-web/src/components/Table'
 import Table from '@island.is/judicial-system-web/src/components/Table/Table'
+import TagContainer from '@island.is/judicial-system-web/src/components/Tags/TagContainer/TagContainer'
 import { CaseListEntry } from '@island.is/judicial-system-web/src/graphql/schema'
 
 interface Props {
@@ -103,7 +104,7 @@ export const DefenderCasesTable: FC<Props> = ({
           { cell: (row) => <CreatedDate created={row.created} /> },
           {
             cell: (row) => (
-              <Box display="flex" columnGap={1} rowGap={1} flexWrap="wrap">
+              <TagContainer>
                 <TagCaseState
                   caseState={row.state}
                   caseType={row.type}
@@ -119,7 +120,7 @@ export const DefenderCasesTable: FC<Props> = ({
                     appealRulingDecision={row.appealRulingDecision}
                   />
                 )}
-              </Box>
+              </TagContainer>
             ),
           },
           {

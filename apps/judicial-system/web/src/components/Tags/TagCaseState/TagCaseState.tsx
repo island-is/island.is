@@ -1,7 +1,7 @@
 import { FC } from 'react'
 import { IntlShape, useIntl } from 'react-intl'
 
-import { Tag, TagVariant } from '@island.is/island-ui/core'
+import { Box, Tag, TagVariant } from '@island.is/island-ui/core'
 import {
   isIndictmentCase,
   isInvestigationCase,
