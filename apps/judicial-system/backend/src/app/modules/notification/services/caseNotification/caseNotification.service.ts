@@ -876,7 +876,9 @@ export class CaseNotificationService extends BaseNotificationService {
       isIndictmentCase(theCase.type)
         ? this.formatMessage(notifications.caseCompleted.prosecutorBody, {
             courtCaseNumber: theCase.courtCaseNumber,
-            courtName: theCase.court?.name ? applyDativeCaseToCourtName(theCase.court?.name) : '',
+            courtName: theCase.court?.name
+              ? applyDativeCaseToCourtName(theCase.court?.name)
+              : '',
             caseIndictmentRulingDecision:
               getHumanReadableCaseIndictmentRulingDecision(
                 theCase.indictmentRulingDecision,
@@ -914,7 +916,9 @@ export class CaseNotificationService extends BaseNotificationService {
       isIndictmentCase(theCase.type)
         ? this.formatMessage(notifications.caseCompleted.defenderBody, {
             courtCaseNumber: theCase.courtCaseNumber,
-            courtName: theCase.court?.name ? applyDativeCaseToCourtName(theCase.court?.name) : '',
+            courtName: theCase.court?.name
+              ? applyDativeCaseToCourtName(theCase.court?.name)
+              : '',
             caseIndictmentRulingDecision:
               getHumanReadableCaseIndictmentRulingDecision(
                 theCase.indictmentRulingDecision,
