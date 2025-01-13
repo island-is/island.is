@@ -321,13 +321,12 @@ const Slider = ({
 
   let requiredMarginTop: BoxProps['marginTop'] = 0
   requiredMarginTop = hasAllRequiredForTooltip() ? 10 : 0
-  if(hasAllRequiredForTooltip()) {
+  if (hasAllRequiredForTooltip()) {
     requiredMarginTop = hasAllRequiredForMinMaxLabels() ? 8 : requiredMarginTop
     requiredMarginTop = hasAllRequiredForLabels() ? 6 : requiredMarginTop
   }
-  
-  if(showRemainderOverlay && calculateCellStyle === undefined) 
-  {
+
+  if (showRemainderOverlay && calculateCellStyle === undefined) {
     // Add a default background color here if none is defined
     calculateCellStyle = () => {
       return {
@@ -337,7 +336,7 @@ const Slider = ({
   }
 
   return (
-    <Box marginTop={requiredMarginTop}> 
+    <Box marginTop={requiredMarginTop}>
       {hasAllRequiredForMinMaxLabels() && (
         <Box display="flex" justifyContent="spaceBetween" width="full">
           <Text color={textColorValues.themeColorName} variant="eyebrow">
