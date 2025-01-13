@@ -5,21 +5,21 @@ import {
   buildMessageWithLinkButtonField,
   buildMultiField,
   buildSection,
+  buildSubmitField,
   coreMessages,
   getValueViaPath,
 } from '@island.is/application/core'
-import { Form, FormModes } from '@island.is/application/types'
+import { DefaultEvents, Form, FormModes } from '@island.is/application/types'
 import { conclusion } from '../lib/messages'
 import { Logo } from '../assets/Logo'
 import { ApplicationType } from '../utils'
 
-export const Conclusion: Form = buildForm({
+export const Submitted: Form = buildForm({
   id: 'ConclusionForm',
   title: '',
   logo: Logo,
-  mode: FormModes.COMPLETED,
+  mode: FormModes.IN_PROGRESS,
   renderLastScreenButton: true,
-  renderLastScreenBackButton: true,
   children: [
     buildSection({
       id: 'conclusionSection',
@@ -38,7 +38,7 @@ export const Conclusion: Form = buildForm({
                 return (
                   getValueViaPath<ApplicationType>(
                     answers,
-                    'applicationType',
+                    'applicationType.value',
                   ) === ApplicationType.FRESHMAN
                 )
               },
@@ -52,7 +52,7 @@ export const Conclusion: Form = buildForm({
                 return (
                   getValueViaPath<ApplicationType>(
                     answers,
-                    'applicationType',
+                    'applicationType.value',
                   ) !== ApplicationType.FRESHMAN
                 )
               },
@@ -69,7 +69,19 @@ export const Conclusion: Form = buildForm({
               url: '/minarsidur/umsoknir',
               buttonTitle: coreMessages.openServicePortalButtonTitle,
               message: coreMessages.openServicePortalMessageText,
-              marginBottom: [4, 4, 12],
+            }),
+            buildSubmitField({
+              id: 'submit',
+              placement: 'footer',
+              title: '',
+              refetchApplicationAfterSubmit: true,
+              actions: [
+                {
+                  event: DefaultEvents.EDIT,
+                  name: conclusion.overview.editButton,
+                  type: 'signSubtle',
+                },
+              ],
             }),
           ],
         }),
