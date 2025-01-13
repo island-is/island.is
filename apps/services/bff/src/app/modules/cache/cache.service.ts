@@ -18,22 +18,20 @@ export class CacheService {
   ) {}
 
   /**
-   * If the key is in pattern of "{type}::{name}::{sid}" and contains a session id,
-   * it will be removed from key to ensure leaking session id to logs.
-   * otherwise the key will be returned as is.
+   * If the key contains multiple parts separated by separator,
+   * it will keep only the first two parts to ensure no session id or other sensitive data is leaked to logs.
+   * If the key has less than two parts, it will return the key as is.
    *
    * @example
    * keyWithoutSid('attempt::some_name::1234') // attempt::some_name
-   *
-   * @example
+   * keyWithoutSid('attempt::some_name::1234::extra') // attempt::some_name
    * keyWithoutSid('some_name::1234') // some_name::1234
+   * keyWithoutSid('some_name') // some_name
    */
-  private keyWithoutSid(key: string) {
-    if (key.split(this.separator).length !== 3) {
-      return key
-    }
+  private keyWithoutSid(key: string): string {
+    const parts = key.split(this.separator)
 
-    return key.split(this.separator).slice(0, 2).join(this.separator)
+    return parts.length >= 2 ? parts.slice(0, 2).join(this.separator) : key
   }
 
   public createKeyError(key: string) {
