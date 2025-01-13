@@ -11,13 +11,14 @@ import { m } from './messages'
 interface Status {
   applicationStatus: 'open' | 'closed' | 'unknown'
   deadlineStatus: string
+  deadlinePeriod?: string
   note?: string
 }
 
 const formatDate = (
   date: Date,
   locale: Locale,
-  stringFormat = 'dd.MMMM yyyy',
+  stringFormat = 'dd. MMMM yyyy',
 ): string | undefined => {
   try {
     return format(date, stringFormat, {
@@ -26,6 +27,21 @@ const formatDate = (
   } catch (e) {
     console.warn('Error formatting date')
     return
+  }
+}
+
+const formatDeadlinePeriod = (
+  dateFrom: string,
+  dateTo: string,
+): string | undefined => {
+  try {
+    return `${format(new Date(dateFrom), 'dd.MM.yyyy')} - ${format(
+      new Date(dateTo),
+      'dd.MM.yyyy',
+    )}`
+  } catch (e) {
+    console.warn('Error formatting deadline period:', e)
+    return undefined
   }
 }
 
@@ -54,6 +70,10 @@ export const parseStatus = (
             )
           : formatMessage(m.search.applicationClosed),
         note: grant.statusText ?? undefined,
+        deadlinePeriod:
+          grant.dateFrom && grant.dateTo
+            ? formatDeadlinePeriod(grant.dateFrom, grant.dateTo)
+            : undefined,
       }
     }
     case GrantStatus.ClosedOpeningSoon: {
@@ -68,6 +88,10 @@ export const parseStatus = (
             })
           : formatMessage(m.search.applicationClosed),
         note: grant.statusText ?? undefined,
+        deadlinePeriod:
+          grant.dateFrom && grant.dateTo
+            ? formatDeadlinePeriod(grant.dateFrom, grant.dateTo)
+            : undefined,
       }
     }
     case GrantStatus.ClosedOpeningSoonWithEstimation: {
@@ -100,7 +124,7 @@ export const parseStatus = (
     }
     case GrantStatus.Open: {
       const date = grant.dateTo
-        ? formatDate(new Date(grant.dateTo), locale, 'dd.MMMM.')
+        ? formatDate(new Date(grant.dateTo), locale, 'dd. MMMM.')
         : undefined
       return {
         applicationStatus: 'open',
@@ -115,6 +139,10 @@ export const parseStatus = (
             )
           : formatMessage(m.search.applicationOpen),
         note: grant.statusText ?? undefined,
+        deadlinePeriod:
+          grant.dateFrom && grant.dateTo
+            ? formatDeadlinePeriod(grant.dateFrom, grant.dateTo)
+            : undefined,
       }
     }
     case GrantStatus.OpenWithNote: {

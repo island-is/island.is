@@ -1,20 +1,29 @@
-import { style } from '@vanilla-extract/css'
+import { theme } from '@island.is/island-ui/theme'
+import { globalStyle, style } from '@vanilla-extract/css'
 
-export const infoCardSmall = style({
-  maxWidth: 310,
-  minHeight: 450,
+const gridContainerBase = {
+  display: 'grid',
+  gap: theme.spacing[3],
+  justifyContent: 'stretch',
+}
+
+export const gridContainerOneColumn = style({
+  ...gridContainerBase,
+  gridTemplateColumns: '1fr',
 })
 
-export const infoCard = style({
-  maxWidth: 477,
-  minHeight: 432,
+export const gridContainerTwoColumn = style({
+  ...gridContainerBase,
+  gridTemplateColumns: '1fr 1fr',
 })
 
-export const infoCardWide = style({
-  maxWidth: 978,
-  minHeight: 318,
+export const gridContainerThreeColumn = style({
+  ...gridContainerBase,
+  gridTemplateColumns: '1fr 1fr 1fr',
 })
 
-export const wideTitleBox = style({
-  flexGrow: 2,
+export const iconBox = style({})
+
+globalStyle(`${iconBox} > svg`, {
+  minWidth: 24,
 })

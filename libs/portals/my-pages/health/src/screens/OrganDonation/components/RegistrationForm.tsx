@@ -14,7 +14,7 @@ import {
 } from '@island.is/portals/my-pages/core'
 import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { messages } from '../../..'
+import { messages } from '../../../lib/messages'
 import { HealthPaths } from '../../../lib/paths'
 import * as styles from '../OrganDonation.css'
 import {
@@ -87,7 +87,7 @@ export const OrganRegistrationForm = () => {
     const formData = new FormData(e.currentTarget)
     const data = Object.fromEntries(formData.entries())
     const idKey = 'selected-limitations-'
-    const otherLimitations = data['otherLimitatons'].toString()
+    const otherLimitations = data['otherLimitatons']?.toString()
     const limitations = Object.keys(data)
       .filter((key) => key.includes(idKey))
       .map((key) => key.replace(idKey, '').toLowerCase())

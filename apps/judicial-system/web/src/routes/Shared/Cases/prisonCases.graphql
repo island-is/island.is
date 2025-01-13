@@ -26,6 +26,7 @@ query PrisonCases {
       name
       noNationalId
       defenderChoice
+      punishmentType
       openedByPrisonAdminDate
     }
     courtDate

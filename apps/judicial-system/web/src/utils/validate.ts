@@ -21,7 +21,6 @@ import {
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
-import { isTrafficViolationIndictmentCount } from './formHelper'
 import { isBusiness } from './utils'
 
 export type Validation =
@@ -35,7 +34,6 @@ export type Validation =
   | 'date-format'
   | 'R-case-number'
   | 'S-case-number'
-  | 'vehicle-registration-number'
   | 'appeal-case-number-format'
 
 type ValidateItem = 'valid' | [string | undefined | null, Validation[]]
@@ -97,12 +95,6 @@ const getRegexByValidation = (validation: Validation) => {
       return {
         regex: new RegExp(/^S-[0-9]{1,5}\/[0-9]{4}$/),
         errorMessage: `Dæmi: S-1234/${new Date().getFullYear()}`,
-      }
-    }
-    case 'vehicle-registration-number': {
-      return {
-        regex: new RegExp(/^[A-Z]{2}([A-Z]{1}|[0-9]{1})[0-9]{2}$/),
-        errorMessage: 'Dæmi: AB123',
       }
     }
     case 'appeal-case-number-format': {
@@ -299,7 +291,9 @@ export const isProcessingStepValidIndictments = (
   )
 }
 
-export const isIndictmentStepValid = (workingCase: Case): boolean => {
+export const isTrafficViolationStepValidIndictments = (
+  workingCase: Case,
+): boolean => {
   const hasValidDemands = Boolean(
     workingCase.demands &&
       (!workingCase.hasCivilClaims || workingCase.civilDemands),
@@ -309,56 +303,37 @@ export const isIndictmentStepValid = (workingCase: Case): boolean => {
     return false
   }
 
-  const validateIndictmentCount = (indictmentCount: IndictmentCount) =>
-    indictmentCount.policeCaseNumber &&
-    indictmentCount.offenses &&
-    indictmentCount.offenses?.length > 0 &&
-    indictmentCount.vehicleRegistrationNumber &&
-    indictmentCount.lawsBroken &&
-    indictmentCount.incidentDescription &&
-    indictmentCount.legalArguments
+  const isValidTrafficViolation = (indictmentCount: IndictmentCount) =>
+    Boolean(indictmentCount.policeCaseNumber) &&
+    Boolean(indictmentCount.offenses && indictmentCount.offenses?.length > 0) &&
+    Boolean(indictmentCount.vehicleRegistrationNumber) &&
+    Boolean(indictmentCount.lawsBroken) &&
+    Boolean(indictmentCount.incidentDescription) &&
+    Boolean(indictmentCount.legalArguments)
+
+  const isValidNonTrafficViolation = (indictmentCount: IndictmentCount) =>
+    Boolean(indictmentCount.incidentDescription) &&
+    Boolean(indictmentCount.legalArguments)
+
+  const isTrafficViolation = (indictmentCount: IndictmentCount) =>
+    indictmentCount.indictmentCountSubtypes?.includes(
+      IndictmentSubtype.TRAFFIC_VIOLATION,
+    )
 
   // All indictment counts are traffic violations
   if (isTrafficViolationCase(workingCase)) {
-    const hasValidTrafficViolationIndictmentCounts =
-      workingCase.indictmentCounts?.every(validateIndictmentCount) ?? false
-
-    return hasValidTrafficViolationIndictmentCounts
+    return workingCase.indictmentCounts?.every(isValidTrafficViolation) ?? false
   }
 
-  // Some indictment counts are traffic violations while others are not
-  const [onlyTrafficViolationIndictmentCounts, otherIndictmentCounts] =
-    partition(workingCase.indictmentCounts, (indictmentCount) => {
-      const policeCaseNumber = indictmentCount.policeCaseNumber
+  if (!workingCase.indictmentCounts?.length) {
+    return false
+  }
 
-      return isTrafficViolationIndictmentCount(
-        policeCaseNumber,
-        workingCase.indictmentSubtypes,
-      )
-    })
-
-  // Some indictment counts have selected traffic violation while other have not
-  const [
-    indictmentCountsWithSelectedTrafficViolation,
-    nonTrafficViolationIndictmentCounts,
-  ] = partition(otherIndictmentCounts, (indictmentCount) =>
-    indictmentCount.indictmentCountSubtypes?.includes(
-      IndictmentSubtype.TRAFFIC_VIOLATION,
-    ),
+  return workingCase.indictmentCounts.every((indictmentCount) =>
+    isTrafficViolation(indictmentCount)
+      ? isValidTrafficViolation(indictmentCount)
+      : isValidNonTrafficViolation(indictmentCount),
   )
-
-  const isTrafficViolationIndictmentCountsValid = [
-    ...onlyTrafficViolationIndictmentCounts,
-    ...indictmentCountsWithSelectedTrafficViolation,
-  ].every(validateIndictmentCount)
-
-  const isOtherIndictmentCountsValid =
-    nonTrafficViolationIndictmentCounts.every(
-      (indictmentCount) =>
-        indictmentCount.incidentDescription && indictmentCount.legalArguments,
-    )
-
-  return isTrafficViolationIndictmentCountsValid && isOtherIndictmentCountsValid
 }
 
 export const isPoliceDemandsStepValidRC = (workingCase: Case): boolean => {

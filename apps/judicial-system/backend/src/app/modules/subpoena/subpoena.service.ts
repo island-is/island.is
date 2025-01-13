@@ -20,8 +20,10 @@ import {
   MessageType,
 } from '@island.is/judicial-system/message'
 import {
+  CaseFileCategory,
   isFailedServiceStatus,
   isSuccessfulServiceStatus,
+  isTrafficViolationCase,
   ServiceStatus,
   SubpoenaNotificationType,
   type User as TUser,
@@ -29,6 +31,7 @@ import {
 
 import { Case } from '../case/models/case.model'
 import { PdfService } from '../case/pdf.service'
+import { CourtDocumentFolder, CourtService } from '../court'
 import { DefendantService } from '../defendant/defendant.service'
 import { Defendant } from '../defendant/models/defendant.model'
 import { EventService } from '../event'
@@ -91,6 +94,7 @@ export class SubpoenaService {
     private readonly fileService: FileService,
     private readonly eventService: EventService,
     private readonly defendantService: DefendantService,
+    private readonly courtService: CourtService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
@@ -281,6 +285,34 @@ export class SubpoenaService {
     return subpoena
   }
 
+  async findByCaseId(caseId: string): Promise<Subpoena[]> {
+    return this.subpoenaModel.findAll({
+      include,
+      where: { caseId },
+    })
+  }
+
+  async getIndictmentPdf(theCase: Case): Promise<Buffer> {
+    if (isTrafficViolationCase(theCase)) {
+      return await this.pdfService.getIndictmentPdf(theCase)
+    }
+
+    const indictmentCaseFile = theCase.caseFiles?.find(
+      (caseFile) =>
+        caseFile.category === CaseFileCategory.INDICTMENT && caseFile.key,
+    )
+
+    if (!indictmentCaseFile) {
+      // This shouldn't ever happen
+      this.logger.error(
+        `No indictment found for case ${theCase.id} so cannot deliver subpoena to police`,
+      )
+      throw new Error(`No indictment found for case ${theCase.id}`)
+    }
+
+    return await this.fileService.getCaseFileFromS3(theCase, indictmentCaseFile)
+  }
+
   async deliverSubpoenaToPolice(
     theCase: Case,
     defendant: Defendant,
@@ -333,6 +365,67 @@ export class SubpoenaService {
     }
   }
 
+  async deliverSubpoenaToCourt(
+    theCase: Case,
+    defendant: Defendant,
+    subpoena: Subpoena,
+    user: TUser,
+  ): Promise<DeliverResponse> {
+    return this.pdfService
+      .getSubpoenaPdf(theCase, defendant, subpoena)
+      .then(async (pdf) => {
+        const fileName = `Fyrirkall - ${defendant.name}`
+
+        return this.courtService.createDocument(
+          user,
+          theCase.id,
+          theCase.courtId,
+          theCase.courtCaseNumber,
+          CourtDocumentFolder.SUBPOENA_DOCUMENTS,
+          fileName,
+          `${fileName}.pdf`,
+          'application/pdf',
+          pdf,
+        )
+      })
+      .then(() => ({ delivered: true }))
+      .catch((reason) => {
+        // Tolerate failure, but log error
+        this.logger.warn(
+          `Failed to upload subpoena ${subpoena.id} pdf to court for defendant ${defendant.id} of case ${theCase.id}`,
+          { reason },
+        )
+
+        return { delivered: false }
+      })
+  }
+  async deliverSubpoenaRevokedToPolice(
+    theCase: Case,
+    subpoena: Subpoena,
+    user: TUser,
+  ): Promise<DeliverResponse> {
+    if (!subpoena.subpoenaId) {
+      this.logger.warn(
+        `Attempted to revoke a subpoena with id ${subpoena.id} that had not been delivered to the police`,
+      )
+      return { delivered: true }
+    }
+
+    const subpoenaRevoked = await this.policeService.revokeSubpoena(
+      theCase,
+      subpoena,
+      user,
+    )
+
+    if (subpoenaRevoked) {
+      this.logger.info(
+        `Subpoena ${subpoena.subpoenaId} successfully revoked from police`,
+      )
+      return { delivered: true }
+    } else {
+      return { delivered: false }
+    }
+  }
   async getSubpoena(subpoena: Subpoena, user?: TUser): Promise<Subpoena> {
     if (!subpoena.subpoenaId) {
       // The subpoena has not been delivered to the police

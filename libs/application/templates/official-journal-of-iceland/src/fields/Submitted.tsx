@@ -1,11 +1,13 @@
 import { FormGroup } from '../components/form/FormGroup'
 import { InputFields, OJOIFieldBaseProps } from '../lib/types'
 import {
+  AlertMessage,
   Box,
   Button,
   Inline,
   LinkV2,
   SkeletonLoader,
+  Stack,
   Tag,
 } from '@island.is/island-ui/core'
 import { submitted } from '../lib/messages/submitted'
@@ -38,11 +40,20 @@ export const Submitted = (props: OJOIFieldBaseProps) => {
   const slug =
     ApplicationConfigurations[ApplicationTypes.OFFICIAL_JOURNAL_OF_ICELAND].slug
 
-  const { createApplication } = useApplication({
+  const {
+    createApplication,
+    postApplication,
+    postApplicationError,
+    postApplicationLoading,
+  } = useApplication({
     applicationId: props.application.id,
   })
 
-  const { caseData, loading } = useApplicationCase({
+  const {
+    caseData,
+    loading,
+    error: caseError,
+  } = useApplicationCase({
     applicationId: props.application.id,
   })
 
@@ -98,43 +109,79 @@ export const Submitted = (props: OJOIFieldBaseProps) => {
             repeat={1}
             height={OJOI_INPUT_HEIGHT / 2}
           />
+        ) : caseError ? (
+          <Stack space={[2, 2, 3]}>
+            <AlertMessage
+              type="error"
+              title={formatMessage(submitted.errors.caseErrorTitle)}
+              message={formatMessage(submitted.errors.caseErrorMessage)}
+            />
+            {postApplicationError && (
+              <AlertMessage
+                type="error"
+                title={formatMessage(
+                  submitted.errors.postApplicationErrorTitle,
+                )}
+                message={formatMessage(
+                  submitted.errors.postApplicationErrorMessage,
+                )}
+              />
+            )}
+            <Inline justifyContent="spaceBetween">
+              <Button
+                variant="ghost"
+                size="small"
+                icon="reload"
+                onClick={() => window.location.reload()}
+              >
+                {formatMessage(submitted.buttons.reload)}
+              </Button>
+              <Button
+                loading={postApplicationLoading}
+                disabled={!!postApplicationError}
+                size="small"
+                icon="arrowUp"
+                iconType="outline"
+                onClick={() =>
+                  postApplication(props.application.id, () =>
+                    window.location.reload(),
+                  )
+                }
+              >
+                Senda inn umsókn
+              </Button>
+            </Inline>
+          </Stack>
         ) : (
-          <Inline space={1} flexWrap="wrap">
-            <Tag disabled outlined variant="blue">
-              {caseData?.status}
-            </Tag>
-            <Tag disabled outlined variant="blueberry">
-              {caseData?.department}
-            </Tag>
-            <Tag disabled outlined variant="darkerBlue">
-              {caseData?.type}
-            </Tag>
-            {caseData?.categories?.map((category, i) => (
-              <Tag disabled outlined variant="purple" key={i}>
-                {category}
+          <Stack space={[2, 2, 3]}>
+            <Inline space={1} flexWrap="wrap">
+              <Tag disabled outlined variant="blue">
+                {caseData?.status}
               </Tag>
-            ))}
-          </Inline>
+              <Tag disabled outlined variant="blueberry">
+                {caseData?.department}
+              </Tag>
+              <Tag disabled outlined variant="darkerBlue">
+                {caseData?.type}
+              </Tag>
+              {caseData?.categories?.map((category, i) => (
+                <Tag disabled outlined variant="purple" key={i}>
+                  {category}
+                </Tag>
+              ))}
+            </Inline>
+            <Box border="standard" borderRadius="large">
+              <HTMLEditor
+                name="submitted.document"
+                readOnly={true}
+                hideWarnings={true}
+                value={caseData?.html as HTMLText}
+                config={{ toolbar: false }}
+              />
+            </Box>
+          </Stack>
         )}
       </Box>
-      {loading ? (
-        <SkeletonLoader
-          repeat={3}
-          space={2}
-          height={OJOI_INPUT_HEIGHT}
-          borderRadius="large"
-        />
-      ) : (
-        <Box border="standard" borderRadius="large">
-          <HTMLEditor
-            name="submitted.document"
-            readOnly={true}
-            hideWarnings={true}
-            value={caseData?.html as HTMLText}
-            config={{ toolbar: false }}
-          />
-        </Box>
-      )}
       <Box display="flex" marginY={4} justifyContent="spaceBetween">
         <Button
           loading={updateLoading}
