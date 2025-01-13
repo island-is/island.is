@@ -249,7 +249,7 @@ export const Menu = ({
               <Box
                 paddingTop={4}
                 paddingRight={[0, 0, 6, 6, 15]}
-                paddingBottom={[4, 4, 4, 4, 20]}
+                paddingBottom={[4, 4, 4, 4, 15]}
                 display="flex"
                 justifyContent="flexEnd"
                 position="relative"

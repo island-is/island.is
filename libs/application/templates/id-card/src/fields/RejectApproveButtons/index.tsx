@@ -71,7 +71,7 @@ export const RejectApproveButtons: FC<
 
   return (
     <>
-      <Box marginTop={14}>
+      <Box marginTop={13}>
         <Divider />
         <Box display="flex" justifyContent="spaceBetween" paddingY={5}>
           <Button variant="ghost" onClick={onBackButtonClick}>

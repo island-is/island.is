@@ -139,7 +139,7 @@ export const SearchResultsContent = ({ grants, subheader, locale }: Props) => {
           borderRadius="lg"
           borderColor="blue200"
           flexDirection={['columnReverse', 'columnReverse', 'row']}
-          columnGap={[2, 4, 8, 8, 20]}
+          columnGap={[2, 4, 8, 8, 15]}
           paddingY={[5, 8]}
           paddingX={[3, 3, 5, 10]}
           rowGap={[7, 7, 0]}

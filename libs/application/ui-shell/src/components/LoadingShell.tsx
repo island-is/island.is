@@ -10,7 +10,7 @@ export const LoadingShell = () => (
     alignItems="center"
     justifyContent="center"
     width="full"
-    paddingBottom={20}
+    paddingBottom={15}
     className={styles.root}
   >
     <LoadingDots large />

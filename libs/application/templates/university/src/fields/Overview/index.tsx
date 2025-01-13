@@ -109,7 +109,7 @@ export const Overview: FC<FieldBaseProps> = ({
         />
       )}
 
-      <Box marginTop={14}>
+      <Box marginTop={13}>
         <Divider />
         <Box display="flex" justifyContent="spaceBetween" paddingY={5}>
           {universityResponse && application.state === States.PENDING_STUDENT && (
