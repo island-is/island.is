@@ -28,12 +28,7 @@ export const externalData = {
       defaultMessage: 'Velja lögaðila sem slysið er skráð á',
       description: 'First heading of announcement page',
     },
-    announcementHeadingSecond: {
-      id: 'aosh.wan.application:externalData.dataProvider.announcementHeadingSecond',
-      defaultMessage:
-        'Ef engin kennitala fyrirtækis er skráð í reitinn hér fyrir neðan þá verður slysið skráð á {notandi}',
-      description: 'Second heading of announcement page',
-    },
+
     announcementDescription: {
       id: 'aosh.wan.application:externalData.dataProvider.announcementDescription',
       defaultMessage: `Vinsamlega athugaðu að þú ert innskráð/ur sem einstaklingur. 
@@ -45,9 +40,7 @@ export const externalData = {
         sem reka eigin starfsemi á sinni eigin kennitölu. 
         \n Ef þú ert að skrá þessa tilkynningu fyrir hönd fyrirtækis þá væri æskilegra 
         að þú værir innskráður á vefinn með auðkenni viðkomandi fyrirtækis eða með umboð 
-        frá fyrirtækinu til að skrá vinnuslys fyrir hönd þess. Þú getur hins vegar skráð 
-        kennitölu fyrirtækisins hér fyrir neðan og sent þessa tilkynningu til 
-        Vinnueftirlitsins en athugaðu að þú munt ekki hafa aðgang að neinum upplýsingum 
+        frá fyrirtækinu til að skrá vinnuslys fyrir hönd þess. Athugaðu að þú munt ekki hafa aðgang að neinum upplýsingum 
         um aðrar tilkynningar fyrirtækisins.`,
       description: 'Announcement description following prerequisites',
     },
