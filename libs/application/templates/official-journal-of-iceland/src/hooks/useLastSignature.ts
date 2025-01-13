@@ -22,6 +22,7 @@ export const useLastSignature = ({ involvedPartyId }: Props) => {
       variables: {
         input: {
           involvedPartyId: involvedPartyId,
+          skip: !involvedPartyId,
         },
       },
       fetchPolicy: 'no-cache',
