@@ -4718,6 +4718,9 @@ export interface ITeamListFields {
 
   /** Variant */
   variant?: 'card' | 'accordion' | undefined
+
+  /** Show Search Input */
+  showSearchInput?: boolean | undefined
 }
 
 /** list of team members */
