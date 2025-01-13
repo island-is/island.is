@@ -26,6 +26,7 @@ import { useNamespace } from '@island.is/web/hooks'
 import { useI18n } from '@island.is/web/i18n'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { CustomNextError } from '@island.is/web/units/errors'
+import { extractNamespaceFromOrganization } from '@island.is/web/utils/extractNamespaceFromOrganization'
 import { getOrganizationSidebarNavigationItems } from '@island.is/web/utils/organization'
 import { webRichText } from '@island.is/web/utils/richText'
 
@@ -159,9 +160,14 @@ MyPages.getProps = async ({ apolloClient, locale }) => {
     throw new CustomNextError(404, 'Organization page not found')
   }
 
+  const organizationNamespace = extractNamespaceFromOrganization(
+    getOrganizationPage.organization,
+  )
+
   return {
     organizationPage: getOrganizationPage,
     namespace,
+    customTopLoginButtonItem: organizationNamespace?.customTopLoginButtonItem,
   }
 }
 

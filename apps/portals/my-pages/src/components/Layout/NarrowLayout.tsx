@@ -1,16 +1,12 @@
 import { ReactNode } from 'react'
-import {
-  Box,
-  Navigation,
-  NavigationItem,
-  Icon,
-} from '@island.is/island-ui/core'
+import { Box, NavigationItem, Icon } from '@island.is/island-ui/core'
 import ContentBreadcrumbs from '../../components/ContentBreadcrumbs/ContentBreadcrumbs'
 import {
   m,
   ServicePortalNavigationItem,
   ModuleAlertBannerSection,
   GoBack,
+  Navigation,
 } from '@island.is/portals/my-pages/core'
 import { useLocale } from '@island.is/localization'
 import { useWindowSize } from 'react-use'
@@ -101,11 +97,10 @@ export const NarrowLayout = ({
                     )
                   }}
                   asSpan
-                  baseId={'service-portal-navigation'}
+                  baseId="service-portal-navigation"
                   title={formatMessage(activeParent?.name ?? m.tableOfContents)}
                   items={subNavItems ?? []}
                   expand
-                  expandOnActivation
                   titleIcon={activeParent?.icon}
                 />
               </Box>
@@ -122,7 +117,7 @@ export const NarrowLayout = ({
       >
         <ContentBreadcrumbs />
         {isMobile && subNavItems && subNavItems.length > 0 && (
-          <Box paddingBottom={3} width="full">
+          <Box paddingBottom={3} width="full" className={styles.mobileNav}>
             <Navigation
               renderLink={(link, item) => {
                 return item?.href ? (
@@ -132,7 +127,7 @@ export const NarrowLayout = ({
                 )
               }}
               asSpan
-              baseId={'service-portal-mobile-navigation'}
+              baseId="service-portal-mobile-navigation"
               title={
                 activeParent?.name
                   ? formatMessage(activeParent?.name)
