@@ -1,3 +1,6 @@
+import { pruneAfterDays } from '@island.is/application/core'
+import { Features } from '@island.is/feature-flags'
+import { AuthDelegationType } from '@island.is/shared/types'
 import {
   Application,
   ApplicationTemplate,
@@ -7,16 +10,12 @@ import {
   DefaultEvents,
   UserProfileApi,
 } from '@island.is/application/types'
-import { pruneAfterDays } from '@island.is/application/core'
-import { Features } from '@island.is/feature-flags'
 import { States, Roles } from './constants'
 import { dataSchema } from './dataSchema'
 import {
   NationalRegistryUserApi,
   NationalRegistrySpouseApi,
 } from '../dataProviders'
-import { AuthDelegationType } from '@island.is/shared/types'
-import { assign } from 'xstate'
 
 type Events = { type: DefaultEvents.SUBMIT } | { type: DefaultEvents.EDIT }
 
