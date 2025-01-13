@@ -48,33 +48,6 @@ export const getRecipients = (answers: FormValue): Array<EmailRecipient> => {
     })
   })
 
-  // Main other contact
-  const mainOtherContact = getValueViaPath<
-    SecondarySchoolAnswers['mainOtherContact']
-  >(answers, 'mainOtherContact')
-  if (mainOtherContact?.nationalId) {
-    recipientList.push({
-      nationalId: mainOtherContact.nationalId,
-      name: mainOtherContact.name || '',
-      email: mainOtherContact.email || '',
-    })
-  }
-
-  // Other contacts
-  const otherContacts = (
-    getValueViaPath<SecondarySchoolAnswers['otherContacts']>(
-      answers,
-      'otherContacts',
-    ) || []
-  ).filter((x) => !!x.person.nationalId)
-  otherContacts.forEach((otherContact) => {
-    recipientList.push({
-      nationalId: otherContact.person.nationalId,
-      name: otherContact.person.name || '',
-      email: otherContact.email || '',
-    })
-  })
-
   return recipientList
 }
 

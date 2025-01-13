@@ -18,6 +18,9 @@ export class TeamList {
 
   @CacheField(() => [GenericTag], { nullable: true })
   filterTags?: GenericTag[]
+
+  @Field(() => Boolean, { nullable: true })
+  showSearchInput?: boolean
 }
 
 export const mapTeamList = ({
@@ -60,5 +63,6 @@ export const mapTeamList = ({
     teamMembers,
     variant: fields.variant === 'accordion' ? 'accordion' : 'card',
     filterTags,
+    showSearchInput: fields.showSearchInput ?? true,
   }
 }
