@@ -28,10 +28,17 @@ export const useScrollDirection = () => {
       }
     }
 
+    const handleTouchMove = () => {
+      // Call handleScroll on touchmove to ensure state updates during touch
+      handleScroll()
+    }
+
     window.addEventListener('scroll', handleScroll, { passive: true })
+    window.addEventListener('touchmove', handleTouchMove, { passive: true })
 
     return () => {
       window.removeEventListener('scroll', handleScroll)
+      window.removeEventListener('touchmove', handleTouchMove)
     }
   }, [])
 

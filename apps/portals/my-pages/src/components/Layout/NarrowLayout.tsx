@@ -1,23 +1,23 @@
-import { ReactNode, useEffect, useRef, useState } from 'react'
-import { Box, NavigationItem, Icon } from '@island.is/island-ui/core'
-import ContentBreadcrumbs from '../../components/ContentBreadcrumbs/ContentBreadcrumbs'
-import {
-  m,
-  ServicePortalNavigationItem,
-  ModuleAlertBannerSection,
-  GoBack,
-  Navigation,
-} from '@island.is/portals/my-pages/core'
-import { useLocale } from '@island.is/localization'
-import { useWindowSize } from 'react-use'
-import SidebarLayout from './SidebarLayout'
-import Sticky from '../Sticky/Sticky'
-import { Link as ReactLink } from 'react-router-dom'
+import { Box, Icon, NavigationItem } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
-import * as styles from './Layout.css'
+import { useLocale } from '@island.is/localization'
 import { PortalNavigationItem } from '@island.is/portals/core'
 import { SERVICE_PORTAL_HEADER_HEIGHT_SM } from '@island.is/portals/my-pages/constants'
-import { useScrollDirection } from '../../lib/hooks/useScrollDirection'
+import {
+  GoBack,
+  m,
+  ModuleAlertBannerSection,
+  Navigation,
+  ServicePortalNavigationItem,
+  useScrollDirection,
+} from '@island.is/portals/my-pages/core'
+import { ReactNode } from 'react'
+import { Link as ReactLink } from 'react-router-dom'
+import { useWindowSize } from 'react-use'
+import ContentBreadcrumbs from '../../components/ContentBreadcrumbs/ContentBreadcrumbs'
+import Sticky from '../Sticky/Sticky'
+import * as styles from './Layout.css'
+import SidebarLayout from './SidebarLayout'
 
 interface NarrowLayoutProps {
   activeParent?: PortalNavigationItem

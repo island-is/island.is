@@ -17,6 +17,7 @@ import {
   LinkResolver,
   ServicePortalPaths,
   m,
+  useScrollDirection,
 } from '@island.is/portals/my-pages/core'
 import { DocumentsPaths } from '@island.is/portals/my-pages/documents'
 import { useUserInfo } from '@island.is/react-spa/bff'
@@ -26,7 +27,6 @@ import cn from 'classnames'
 import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useWindowSize } from 'react-use'
-import { useScrollDirection } from '../../lib/hooks/useScrollDirection'
 import NotificationButton from '../Notifications/NotificationButton'
 import Sidemenu from '../Sidemenu/Sidemenu'
 import * as styles from './Header.css'
@@ -99,13 +99,10 @@ export const Header = ({ position }: Props) => {
       <PortalPageLoader />
       {/*  Inline style to dynamicly change position of header because of alert banners */}
       <header
-        className={cn(
-          {
-            [styles.fixedHeader]: scrollDirection === 'up',
-            [styles.hideHeader]: scrollDirection === 'down' && isScrolled,
-          },
-          styles.header,
-        )}
+        className={cn(styles.header, {
+          [styles.fixedHeader]: scrollDirection === 'up',
+          [styles.hideHeader]: scrollDirection === 'down' && isScrolled,
+        })}
         style={{
           top: position,
         }}

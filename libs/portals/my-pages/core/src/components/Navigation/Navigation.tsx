@@ -23,6 +23,7 @@ import AnimateHeight from 'react-animate-height'
 import { Menu, MenuButton, MenuStateReturn, useMenuState } from 'reakit/Menu'
 
 import * as styles from './Navigation.css'
+import { useScrolledPassed } from '../../hooks/useScrolledPassed/useScrolledPassed'
 
 type NavigationContextProps = {
   baseId: string
@@ -268,41 +269,9 @@ export const Navigation: FC<React.PropsWithChildren<NavigationProps>> = ({
       </Box>
     </Box>
   )
-  const [isScrolled, setIsScrolled] = useState(false)
-  const lastScrollY = useRef(0) // To track the last scroll position
 
-  useEffect(() => {
-    const handleScroll = () => {
-      const element = document.getElementById('menuDialog-mobile-test')
-      const scrollY = window.scrollY
-
-      if (element) {
-        const rect = element.getBoundingClientRect()
-
-        // Check if the user scrolled past the element or is scrolling up
-        if (scrollY <= rect.top) setIsScrolled(false)
-        else if (rect.top <= 0 || scrollY < lastScrollY.current) {
-          setIsScrolled(true)
-        }
-      }
-
-      // Update the last scroll position
-      lastScrollY.current = scrollY
-    }
-
-    const handleTouchMove = () => {
-      // Call handleScroll on touchmove to ensure state updates during touch
-      handleScroll()
-    }
-
-    window.addEventListener('scroll', handleScroll)
-    window.addEventListener('touchmove', handleTouchMove, { passive: true })
-
-    return () => {
-      window.removeEventListener('scroll', handleScroll)
-      window.removeEventListener('touchmove', handleTouchMove)
-    }
-  }, [])
+  const mobileId = 'menuDialog-mobile-test'
+  const isScrolled = useScrolledPassed(mobileId)
 
   return (
     <NavigationContext.Provider
@@ -318,7 +287,7 @@ export const Navigation: FC<React.PropsWithChildren<NavigationProps>> = ({
             [styles.scrolledMenuVisible]: isScrolled,
             [styles.scrolledMenuHidden]: !isScrolled,
           })}
-          id="menuDialog-mobile-test"
+          id={mobileId}
         >
           <MenuButton
             {...menu}
