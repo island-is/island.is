@@ -59,7 +59,9 @@ export abstract class InvolvedPartySignatures {
     implements: () => InvolvedPartySignatures,
   },
 )
-export class InvolvedPartySignaturesRegular extends InvolvedPartySignatures {}
+export class InvolvedPartySignaturesRegular
+  extends InvolvedPartySignatures
+  implements InvolvedPartySignatures {}
 
 @ObjectType(
   'OfficialJournalOfIcelandApplicationInvolvedPartySignaturesCommittee',
@@ -67,7 +69,10 @@ export class InvolvedPartySignaturesRegular extends InvolvedPartySignatures {}
     implements: () => InvolvedPartySignatures,
   },
 )
-export class InvolvedPartySignaturesCommittee extends InvolvedPartySignatures {
+export class InvolvedPartySignaturesCommittee
+  extends InvolvedPartySignatures
+  implements InvolvedPartySignatures
+{
   @Field(() => SignatureMember)
   chairman!: SignatureMember
 }

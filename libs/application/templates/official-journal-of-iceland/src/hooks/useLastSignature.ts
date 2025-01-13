@@ -5,18 +5,21 @@ import {
   OfficialJournalOfIcelandApplicationInvolvedPartySignaturesRegular,
 } from '@island.is/api/schema'
 
+type LastSignatureResponse = {
+  officialJournalOfIcelandApplicationInvolvedPartySignatures: {
+    success: boolean
+    data:
+      | OfficialJournalOfIcelandApplicationInvolvedPartySignaturesCommittee
+      | OfficialJournalOfIcelandApplicationInvolvedPartySignaturesRegular
+  }
+}
+
 type Props = {
   involvedPartyId?: string
 }
 
-type LastSignaturesResponse = {
-  officialJournalOfIcelandApplicationGetInvolvedPartySignatures:
-    | OfficialJournalOfIcelandApplicationInvolvedPartySignaturesRegular
-    | OfficialJournalOfIcelandApplicationInvolvedPartySignaturesCommittee
-}
-
 export const useLastSignature = ({ involvedPartyId }: Props) => {
-  const { data, loading, error } = useQuery<LastSignaturesResponse>(
+  const { data, loading, error, refetch } = useQuery<LastSignatureResponse>(
     INVOLVED_PARTY_SIGNATURES_QUERY,
     {
       variables: {
@@ -31,14 +34,15 @@ export const useLastSignature = ({ involvedPartyId }: Props) => {
 
   return {
     lastSignature:
-      data?.officialJournalOfIcelandApplicationGetInvolvedPartySignatures,
+      data?.officialJournalOfIcelandApplicationInvolvedPartySignatures.data,
     error,
     loading,
+    refetch,
   }
 }
 
 export const useLastSignatureLazy = ({ involvedPartyId }: Props) => {
-  return useLazyQuery<LastSignaturesResponse>(INVOLVED_PARTY_SIGNATURES_QUERY, {
+  return useLazyQuery<LastSignatureResponse>(INVOLVED_PARTY_SIGNATURES_QUERY, {
     variables: {
       input: {
         involvedPartyId: involvedPartyId,

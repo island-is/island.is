@@ -153,26 +153,32 @@ export const INVOLVED_PARTY_SIGNATURES_QUERY = gql`
   query InvolvedPartySignatures(
     $input: OfficialJournalOfIcelandApplicationInvolvedPartySignaturesInput!
   ) {
-    officialJournalOfIcelandApplicationGetInvolvedPartySignatures(
-      input: $input
-    ) {
+    officialJournalOfIcelandApplicationInvolvedPartySignatures(input: $input) {
       __typename
-      id
-      additionalSignature
-      date
-      html
-      institution
-      involvedParty {
+      success
+      data {
+        __typename
         id
-        slug
-        title
-      }
-      members {
-        ...SignatureMember
-      }
-      ... on OfficialJournalOfIcelandApplicationInvolvedPartySignaturesCommittee {
-        chairman {
+        additionalSignature
+        date
+        html
+        institution
+        involvedParty {
+          id
+          slug
+          title
+        }
+        members {
           ...SignatureMember
+        }
+        ... on OfficialJournalOfIcelandApplicationInvolvedPartySignaturesRegular {
+          __typename
+        }
+        ... on OfficialJournalOfIcelandApplicationInvolvedPartySignaturesCommittee {
+          __typename
+          chairman {
+            ...SignatureMember
+          }
         }
       }
     }

@@ -1,7 +1,6 @@
 import { useLocale } from '@island.is/localization'
 import { FormGroup } from '../components/form/FormGroup'
 import {
-  Answers,
   InputFields,
   OJOIFieldBaseProps,
   Signature,
@@ -21,7 +20,6 @@ import { HTMLEditor } from '../components/htmlEditor/HTMLEditor'
 import { getSignaturesMarkup } from '../lib/utils'
 import { useLastSignature } from '../hooks/useLastSignature'
 import { useFormContext } from 'react-hook-form'
-import { LoadingTab } from '../components/tab/LoadingTab'
 import { OfficialJournalOfIcelandApplicationSignatureMember } from '@island.is/api/schema'
 import { isDefined } from '@island.is/shared/utils'
 
@@ -30,7 +28,6 @@ export const Signatures = ({ application }: OJOIFieldBaseProps) => {
   const { setValue } = useFormContext()
   const {
     updateApplication,
-    updateLoading,
     application: currentApplication,
     refetchApplication,
   } = useApplication({
@@ -50,24 +47,14 @@ export const Signatures = ({ application }: OJOIFieldBaseProps) => {
     {
       id: SignatureTypes.REGULAR,
       label: f(signatures.tabs.regular),
-      content: (
-        <LoadingTab loading={updateLoading}>
-          <RegularSignature applicationId={application.id} />
-        </LoadingTab>
-      ),
+      content: <RegularSignature applicationId={application.id} />,
     },
     {
       id: SignatureTypes.COMMITTEE,
       label: f(signatures.tabs.committee),
-      content: (
-        <LoadingTab loading={updateLoading}>
-          <CommitteeSignature applicationId={application.id} />
-        </LoadingTab>
-      ),
+      content: <CommitteeSignature applicationId={application.id} />,
     },
   ]
-
-  const currentAnswers: Answers = structuredClone(currentApplication.answers)
 
   const onCopyLastSignatureClick = () => {
     if (!lastSignature) {
@@ -75,7 +62,7 @@ export const Signatures = ({ application }: OJOIFieldBaseProps) => {
     }
 
     const isCommitteeSignature =
-      lastSignature?.__typename ===
+      lastSignature.__typename ===
       'OfficialJournalOfIcelandApplicationInvolvedPartySignaturesCommittee'
 
     const mapSignatureMember = (

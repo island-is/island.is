@@ -4,4 +4,7 @@ import { Field, InputType } from '@nestjs/graphql'
 export class GetInvolvedPartySignaturesInput {
   @Field()
   involvedPartyId!: string
+
+  @Field({ nullable: true })
+  skip?: boolean
 }

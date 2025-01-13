@@ -27,6 +27,7 @@ import { OJOIAApplicationCaseResponse } from '../models/applicationCase.response
 import { GetPdfResponse } from '../models/getPdf.response'
 import { OJOIAIdInput } from '../models/id.input'
 import { GetInvolvedPartySignaturesInput } from '../models/getInvolvedPartySignatures.input'
+import { SignaturesResponse } from '../models/involvedPartySignatureResponse.response'
 import {
   InvolvedPartySignaturesCommittee,
   InvolvedPartySignaturesRegular,
@@ -272,9 +273,19 @@ export class OfficialJournalOfIcelandApplicationService {
   async getInvolvedPartySignatures(
     input: GetInvolvedPartySignaturesInput,
     user: User,
-  ): Promise<
-    InvolvedPartySignaturesCommittee | InvolvedPartySignaturesRegular
-  > {
+  ): Promise<SignaturesResponse> {
+    if (input.skip) {
+      this.logger.info(
+        'Skip set to true, skipping function call and returning undefined',
+        {
+          category: LOG_CATEGORY,
+        },
+      )
+      return {
+        success: true,
+      }
+    }
+
     try {
       const data =
         await this.ojoiApplicationService.getSignaturesForInvolvedParty(
@@ -282,24 +293,43 @@ export class OfficialJournalOfIcelandApplicationService {
           user,
         )
 
-      return {
-        ...data,
-        chairman: data.chairman
-          ? {
-              name: data.chairman.text ?? undefined,
-              above: data.chairman.textAbove ?? undefined,
-              before: data.chairman.textBefore ?? undefined,
-              below: data.chairman.textBelow ?? undefined,
-              after: data.chairman.textAfter ?? undefined,
-            }
-          : undefined,
-        members: data.members.map((member) => ({
-          name: member.text ?? undefined,
-          above: member.textAbove ?? undefined,
-          before: member.textBefore ?? undefined,
-          below: member.textBelow ?? undefined,
-          after: member.textAfter ?? undefined,
-        })),
+      if (data.chairman) {
+        const signatureData: InvolvedPartySignaturesCommittee = {
+          ...data,
+          chairman: {
+            name: data.chairman.text ?? undefined,
+            above: data.chairman.textAbove ?? undefined,
+            before: data.chairman.textBefore ?? undefined,
+            below: data.chairman.textBelow ?? undefined,
+            after: data.chairman.textAfter ?? undefined,
+          },
+          members: data.members.map((member) => ({
+            name: member.text ?? undefined,
+            above: member.textAbove ?? undefined,
+            before: member.textBefore ?? undefined,
+            below: member.textBelow ?? undefined,
+            after: member.textAfter ?? undefined,
+          })),
+        }
+
+        return {
+          success: true,
+          data: signatureData,
+        }
+      } else {
+        return {
+          success: true,
+          data: {
+            ...data,
+            members: data.members.map((member) => ({
+              name: member.text ?? undefined,
+              above: member.textAbove ?? undefined,
+              before: member.textBefore ?? undefined,
+              below: member.textBelow ?? undefined,
+              after: member.textAfter ?? undefined,
+            })),
+          },
+        }
       }
     } catch (error) {
       this.logger.error('Failed to get signatures for involved party', {
