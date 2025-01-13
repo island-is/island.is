@@ -1,6 +1,4 @@
 // TODO: Add tests
-import partition from 'lodash/partition'
-
 import {
   IndictmentSubtype,
   isIndictmentCase,
