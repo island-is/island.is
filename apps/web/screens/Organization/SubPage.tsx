@@ -1,4 +1,4 @@
-import { useRouter } from 'next/router'
+import { NextRouter, useRouter } from 'next/router'
 import { ParsedUrlQuery } from 'querystring'
 
 import { SliceType } from '@island.is/island-ui/contentful'
@@ -27,6 +27,7 @@ import {
 import { SLICE_SPACING } from '@island.is/web/constants'
 import {
   ContentLanguage,
+  OrganizationPage,
   Query,
   QueryGetNamespaceArgs,
   QueryGetOrganizationPageArgs,
@@ -214,6 +215,48 @@ export const SubPageContent = ({
   )
 }
 
+const generateNavigationItems = (
+  organizationPage: OrganizationPage | null | undefined,
+  pathname: string,
+): NavigationItem[] => {
+  const links = (organizationPage?.menuLinks ?? []).map(
+    ({ primaryLink, childrenLinks }) => ({
+      title: primaryLink?.text ?? '',
+      href: primaryLink?.url,
+      active:
+        primaryLink?.url === pathname ||
+        childrenLinks.some((link) => link.url === pathname),
+      items: childrenLinks.map(({ text, url }) => ({
+        title: text,
+        href: url,
+        active: url === pathname,
+      })),
+    }),
+  )
+  return links
+}
+
+export const getSubpageNavList = (
+  organizationPage: OrganizationPage | null | undefined,
+  router: NextRouter,
+  depthOfMatch: number | null = null,
+): NavigationItem[] => {
+  const pathname = new URL(router.asPath, 'https://island.is').pathname
+  if (!depthOfMatch) {
+    return generateNavigationItems(organizationPage, pathname)
+  }
+
+  const items = generateNavigationItems(
+    organizationPage,
+    pathname
+      .split('/')
+      .slice(0, depthOfMatch + 1) // Add one to account for the starting '/'
+      .join('/'),
+  )
+
+  return items
+}
+
 type SubPageScreenContext = ScreenContext & {
   organizationPage?: Query['getOrganizationPage']
 }
@@ -238,24 +281,6 @@ const SubPage: Screen<SubPageProps, SubPageScreenContext> = ({
     : [organizationPage?.id, subpage?.id]
 
   useContentfulId(...contentfulIds)
-
-  const pathname = new URL(router.asPath, 'https://island.is').pathname
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore make web strict
-  const navList: NavigationItem[] = organizationPage?.menuLinks.map(
-    ({ primaryLink, childrenLinks }) => ({
-      title: primaryLink?.text,
-      href: primaryLink?.url,
-      active:
-        primaryLink?.url === pathname ||
-        childrenLinks.some((link) => link.url === pathname),
-      items: childrenLinks.map(({ text, url }) => ({
-        title: text,
-        href: url,
-        active: url === pathname,
-      })),
-    }),
-  )
 
   return (
     <OrganizationWrapper
@@ -292,7 +317,7 @@ const SubPage: Screen<SubPageProps, SubPageScreenContext> = ({
       }
       navigationData={{
         title: n('navigationTitle', 'Efnisyfirlit'),
-        items: navList,
+        items: getSubpageNavList(organizationPage, router),
       }}
     >
       {customContent ? (

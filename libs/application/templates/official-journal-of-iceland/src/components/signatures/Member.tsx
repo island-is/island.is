@@ -22,6 +22,7 @@ export const SignatureMember = ({
       size="sm"
       backgroundColor="blue"
       defaultValue={defaultValue}
+      maxLength={100}
       onChange={onChange}
     />
   )

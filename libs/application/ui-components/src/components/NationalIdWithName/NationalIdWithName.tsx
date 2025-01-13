@@ -1,11 +1,7 @@
 import { FC, useEffect, useState } from 'react'
 import { GridRow, GridColumn } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import {
-  coreErrorMessages,
-  getErrorViaPath,
-  getValueViaPath,
-} from '@island.is/application/core'
+import { coreErrorMessages, getValueViaPath } from '@island.is/application/core'
 import { Application, StaticText } from '@island.is/application/types'
 import { gql, useLazyQuery } from '@apollo/client'
 import {
@@ -13,7 +9,10 @@ import {
   Query,
   RskCompanyInfoInput,
 } from '@island.is/api/schema'
-import { InputController } from '@island.is/shared/form-fields'
+import {
+  InputController,
+  PhoneInputController,
+} from '@island.is/shared/form-fields'
 import { useFormContext } from 'react-hook-form'
 import * as kennitala from 'kennitala'
 import debounce from 'lodash/debounce'
@@ -27,14 +26,24 @@ interface NationalIdWithNameProps {
   customId?: string
   customNationalIdLabel?: StaticText
   customNameLabel?: StaticText
+  phoneLabel?: StaticText
+  emailLabel?: StaticText
+  phoneRequired?: boolean
+  emailRequired?: boolean
   onNationalIdChange?: (s: string) => void
   onNameChange?: (s: string) => void
   nationalIdDefaultValue?: string
   nameDefaultValue?: string
+  phoneDefaultValue?: string
+  emailDefaultValue?: string
   errorMessage?: string
   minAgePerson?: number
   searchPersons?: boolean
   searchCompanies?: boolean
+  showPhoneField?: boolean
+  showEmailField?: boolean
+  error?: string
+  clearOnChange?: string[]
 }
 
 export const NationalIdWithName: FC<
@@ -46,35 +55,53 @@ export const NationalIdWithName: FC<
   required,
   customId = '',
   customNationalIdLabel = '',
+  phoneLabel = '',
+  emailLabel = '',
+  phoneRequired = false,
+  emailRequired = false,
   customNameLabel = '',
   onNationalIdChange,
   onNameChange,
   nationalIdDefaultValue,
   nameDefaultValue,
+  phoneDefaultValue,
+  emailDefaultValue,
   errorMessage,
   minAgePerson,
   searchPersons = true,
   searchCompanies = false,
+  showPhoneField = false,
+  showEmailField = false,
+  error,
+  clearOnChange,
 }) => {
   const fieldId = customId.length > 0 ? customId : id
   const nameField = `${fieldId}.name`
   const nationalIdField = `${fieldId}.nationalId`
+  const emailField = `${fieldId}.email`
+  const phoneField = `${fieldId}.phone`
 
   const { formatMessage } = useLocale()
-  const {
-    setValue,
-    formState: { errors },
-  } = useFormContext()
+  const { setValue } = useFormContext()
   const [nationalIdInput, setNationalIdInput] = useState('')
   const [personName, setPersonName] = useState('')
   const [companyName, setCompanyName] = useState('')
 
-  // get name validation errors
-  const nameFieldErrors = errorMessage
-    ? nameDefaultValue?.length === 0
-      ? errorMessage
-      : undefined
-    : getErrorViaPath(errors, nameField)
+  const getFieldErrorString = (
+    error: unknown,
+    id: string,
+  ): string | undefined => {
+    if (!error || typeof error !== 'object') return undefined
+
+    const errorList = error as Record<string, unknown>[]
+    if (!Array.isArray(errorList)) {
+      const fieldError = getValueViaPath<any>(errorList, id)
+      return typeof fieldError === 'string' ? fieldError : undefined
+    } else {
+      const fieldError = errorList[id as any]
+      return typeof fieldError === 'string' ? fieldError : undefined
+    }
+  }
 
   // get national id validation errors
   let nationalIdFieldErrors: string | undefined
@@ -91,7 +118,7 @@ export const NationalIdWithName: FC<
       { minAge: minAgePerson },
     )
   } else if (!errorMessage) {
-    nationalIdFieldErrors = getErrorViaPath(errors, nationalIdField)
+    nationalIdFieldErrors = getFieldErrorString(error, 'nationalId')
   }
 
   // get default values
@@ -101,6 +128,12 @@ export const NationalIdWithName: FC<
   const defaultName = nameDefaultValue
     ? nameDefaultValue
     : getValueViaPath(application.answers, nameField, '')
+  const defaultPhone = phoneDefaultValue
+    ? phoneDefaultValue
+    : getValueViaPath<string>(application.answers, phoneField, '')
+  const defaultEmail = emailDefaultValue
+    ? emailDefaultValue
+    : getValueViaPath<string>(application.answers, emailField, '')
 
   // query to get name by national id
   const [getIdentity, { data, loading: queryLoading, error: queryError }] =
@@ -180,62 +213,97 @@ export const NationalIdWithName: FC<
   }, [personName, companyName, setValue, nameField, application.answers])
 
   return (
-    <GridRow>
-      <GridColumn span={['1/1', '1/1', '1/1', '1/2']} paddingTop={2}>
-        <InputController
-          id={nationalIdField}
-          label={
-            customNationalIdLabel
-              ? formatMessage(customNationalIdLabel)
-              : formatMessage(coreErrorMessages.nationalRegistryNationalId)
-          }
-          defaultValue={defaultNationalId}
-          format="######-####"
-          required={required}
-          backgroundColor="blue"
-          onChange={debounce((v) => {
-            setNationalIdInput(v.target.value.replace(/\W/g, ''))
-            onNationalIdChange &&
-              onNationalIdChange(v.target.value.replace(/\W/g, ''))
-          })}
-          loading={searchPersons ? queryLoading : companyQueryLoading}
-          error={nationalIdFieldErrors}
-          disabled={disabled}
-        />
-      </GridColumn>
-      <GridColumn span={['1/1', '1/1', '1/1', '1/2']} paddingTop={2}>
-        <InputController
-          id={nameField}
-          defaultValue={defaultName}
-          label={
-            customNameLabel
-              ? formatMessage(customNameLabel)
-              : formatMessage(coreErrorMessages.nationalRegistryName)
-          }
-          required={required}
-          error={
-            searchPersons
-              ? queryError || data?.identity === null
-                ? formatMessage(
-                    coreErrorMessages.nationalRegistryNameNotFoundForNationalId,
-                  )
-                : nameFieldErrors && !data
-                ? nameFieldErrors
+    <>
+      <GridRow>
+        <GridColumn span={['1/1', '1/1', '1/1', '1/2']} paddingTop={2}>
+          <InputController
+            id={nationalIdField}
+            label={
+              customNationalIdLabel
+                ? formatMessage(customNationalIdLabel)
+                : formatMessage(coreErrorMessages.nationalRegistryNationalId)
+            }
+            defaultValue={defaultNationalId}
+            format="######-####"
+            required={required}
+            backgroundColor="blue"
+            onChange={debounce((v) => {
+              setNationalIdInput(v.target.value.replace(/\W/g, ''))
+              onNationalIdChange &&
+                onNationalIdChange(v.target.value.replace(/\W/g, ''))
+            })}
+            loading={searchPersons ? queryLoading : companyQueryLoading}
+            error={nationalIdFieldErrors}
+            disabled={disabled}
+            clearOnChange={clearOnChange}
+          />
+        </GridColumn>
+        <GridColumn span={['1/1', '1/1', '1/1', '1/2']} paddingTop={2}>
+          <InputController
+            id={nameField}
+            defaultValue={defaultName}
+            label={
+              customNameLabel
+                ? formatMessage(customNameLabel)
+                : formatMessage(coreErrorMessages.nationalRegistryName)
+            }
+            required={required}
+            error={
+              searchPersons
+                ? queryError || data?.identity === null
+                  ? formatMessage(
+                      coreErrorMessages.nationalRegistryNameNotFoundForNationalId,
+                    )
+                  : getFieldErrorString(error, 'name') && !data
+                  ? getFieldErrorString(error, 'name')
+                  : undefined
+                : searchCompanies
+                ? companyQueryError ||
+                  companyData?.companyRegistryCompany === null
+                  ? formatMessage(
+                      coreErrorMessages.nationalRegistryNameNotFoundForNationalId,
+                    )
+                  : getFieldErrorString(error, 'name') && !companyData
+                  ? getFieldErrorString(error, 'name')
+                  : undefined
                 : undefined
-              : searchCompanies
-              ? companyQueryError ||
-                companyData?.companyRegistryCompany === null
-                ? formatMessage(
-                    coreErrorMessages.nationalRegistryNameNotFoundForNationalId,
-                  )
-                : nameFieldErrors && !companyData
-                ? nameFieldErrors
-                : undefined
-              : undefined
-          }
-          disabled
-        />
-      </GridColumn>
-    </GridRow>
+            }
+            disabled={disabled}
+            readOnly={!disabled}
+          />
+        </GridColumn>
+      </GridRow>
+      {(showPhoneField || showEmailField) && (
+        <GridRow>
+          {showPhoneField && (
+            <GridColumn span={['1/1', '1/1', '1/1', '1/2']} paddingTop={2}>
+              <PhoneInputController
+                id={phoneField}
+                label={formatMessage(phoneLabel)}
+                defaultValue={defaultPhone}
+                required={phoneRequired}
+                backgroundColor="blue"
+                error={getFieldErrorString(error, 'phone')}
+                disabled={disabled}
+              />
+            </GridColumn>
+          )}
+          {showEmailField && (
+            <GridColumn span={['1/1', '1/1', '1/1', '1/2']} paddingTop={2}>
+              <InputController
+                id={emailField}
+                label={formatMessage(emailLabel)}
+                defaultValue={defaultEmail}
+                type="email"
+                required={emailRequired}
+                backgroundColor="blue"
+                error={getFieldErrorString(error, 'email')}
+                disabled={disabled}
+              />
+            </GridColumn>
+          )}
+        </GridRow>
+      )}
+    </>
   )
 }

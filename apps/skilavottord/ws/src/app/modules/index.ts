@@ -7,3 +7,4 @@ export { RecyclingRequestModule } from './recyclingRequest/recyclingRequest.modu
 export { SamgongustofaModule } from './samgongustofa/samgongustofa.module'
 export { VehicleModule } from './vehicle/vehicle.module'
 export { VehicleOwnerModule } from './vehicleOwner/vehicleOwner.module'
+export { MunicipalityModule } from './municipality/municipality.module'

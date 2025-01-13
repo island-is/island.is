@@ -7,6 +7,7 @@ export {
   DefendantPlea,
   ServiceRequirement,
   ServiceStatus,
+  PunishmentType,
   isSuccessfulServiceStatus,
   isFailedServiceStatus,
 } from './lib/defendant'
@@ -19,6 +20,8 @@ export {
   NotificationDispatchType,
   DefendantNotificationType,
   CivilClaimantNotificationType,
+  IndictmentCaseNotificationType,
+  EventNotificationType,
   notificationTypes,
 } from './lib/notification'
 export type { Institution } from './lib/institution'

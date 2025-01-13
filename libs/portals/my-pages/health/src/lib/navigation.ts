@@ -87,29 +87,47 @@ export const healthNavigation: PortalNavigationItem = {
       path: HealthPaths.HealthMedicine,
       children: [
         {
-          name: messages.medicinePurchaseTitle,
-          path: HealthPaths.HealthMedicinePurchase,
-          navHide: true,
+          name: messages.medicinePrescriptions,
+          path: HealthPaths.HealthMedicinePrescription,
+        },
+
+        {
+          name: messages.medicineDelegation,
+          path: HealthPaths.HealthMedicineDelegation,
         },
         {
-          name: messages.medicineCalculatorTitle,
-          path: HealthPaths.HealthMedicineCalculator,
-          activeIfExact: true,
-          navHide: true,
-        },
-        {
-          name: messages.medicineLicenseIntroTitle,
-          path: HealthPaths.HealthMedicineCertificates,
-          activeIfExact: true,
-          navHide: true,
+          name: messages.medicinePaymentParticipation,
+          path: HealthPaths.HealthMedicinePaymentParticipation,
           children: [
             {
-              name: messages.medicineLicenseTitle,
-              path: HealthPaths.HealthMedicineCertificate,
+              name: messages.medicinePurchaseTitle,
+              path: HealthPaths.HealthMedicinePurchase,
+              activeIfExact: true,
+              navHide: true,
+            },
+            {
+              name: messages.medicineCalculatorTitle,
+              path: HealthPaths.HealthMedicineCalculator,
               activeIfExact: true,
               navHide: true,
             },
           ],
+        },
+        {
+          name: messages.medicineLicenseTitle,
+          path: HealthPaths.HealthMedicineCertificates,
+          children: [
+            {
+              name: messages.medicineLicenseTitle,
+              path: HealthPaths.HealthMedicineCertificate,
+              navHide: true,
+              breadcrumbHide: true,
+            },
+          ],
+        },
+        {
+          name: messages.medicinePrescriptionHistory,
+          path: HealthPaths.HealthMedicinePrescriptionHistory,
         },
       ],
     },

@@ -43,7 +43,7 @@ const caseEvent: Record<CaseEvent, string> = {
   [CaseTransition.ACCEPT]: ':white_check_mark: Samþykkt',
   [CaseTransition.APPEAL]: ':judge: Kæra',
   ARCHIVE: ':file_cabinet: Sett í geymslu',
-  [CaseTransition.ASK_FOR_CANCELLATION]: ':interrobang: Beðið um aftuköllun',
+  [CaseTransition.ASK_FOR_CANCELLATION]: ':interrobang: Beðið um afturköllun',
   [CaseTransition.ASK_FOR_CONFIRMATION]: ':question: Beðið um staðfestingu',
   [CaseTransition.COMPLETE]: ':white_check_mark: Lokið',
   [CaseTransition.COMPLETE_APPEAL]: ':white_check_mark: Kæru lokið',

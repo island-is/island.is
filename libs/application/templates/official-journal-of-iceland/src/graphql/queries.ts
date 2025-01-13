@@ -117,6 +117,38 @@ export const ADVERT_QUERY = gql`
   }
 `
 
+export const MAIN_TYPES_QUERY = gql`
+  query AdvertMainTypes($params: OfficialJournalOfIcelandMainTypesInput!) {
+    officialJournalOfIcelandMainTypes(params: $params) {
+      mainTypes {
+        id
+        title
+        slug
+        department {
+          id
+          title
+          slug
+        }
+        types {
+          id
+          title
+          slug
+        }
+      }
+      paging {
+        page
+        pageSize
+        totalPages
+        totalItems
+        hasNextPage
+        hasPreviousPage
+        nextPage
+        previousPage
+      }
+    }
+  }
+`
+
 export const TYPES_QUERY = gql`
   query AdvertTypes($params: OfficialJournalOfIcelandTypesInput!) {
     officialJournalOfIcelandTypes(params: $params) {
@@ -322,5 +354,11 @@ export const GET_PDF_QUERY = gql`
     OJOIAGetPdf(input: $input) {
       pdf
     }
+  }
+`
+
+export const POST_APPLICATION_MUTATION = gql`
+  mutation OJOIAPostApplication($input: OJOIAIdInput!) {
+    OJOIAPostApplication(input: $input)
   }
 `

@@ -34,7 +34,7 @@ export const attachments = {
     },
     asAttachment: {
       id: 'ojoi.application:attachments.buttons.additionType.asAttachment',
-      defaultMessage: 'Hlaða upp skjölum',
+      defaultMessage: 'Bæta við viðauka',
       description: 'Label of the button to upload attachments',
     },
     removeAddition: {
