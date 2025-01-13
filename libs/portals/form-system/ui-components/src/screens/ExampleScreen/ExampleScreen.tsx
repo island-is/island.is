@@ -1,4 +1,3 @@
-import { useAuth } from '@island.is/auth/react'
 import { useLocale, useLocalizedQuery } from '@island.is/localization'
 import { useNavigate, useParams } from 'react-router-dom'
 

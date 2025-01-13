@@ -161,7 +161,7 @@ const externalContractsTests = externalContractsTestsSetup()
 export const Services: EnvironmentServices = {
   prod: [
     appSystemApi,
-    appSystemForm, @
+    appSystemForm,
     servicePortal,
     servicePortalApi,
     adminPortal,

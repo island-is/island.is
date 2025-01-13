@@ -1,6 +1,5 @@
 import { RetryLink } from '@apollo/client/link/retry'
 import { onError } from '@apollo/client/link/error'
-import { authLink } from '@island.is/auth/react'
 import fetch from 'cross-fetch'
 import {
   ApolloClient,
@@ -30,7 +29,7 @@ export const initializeClient = (baseApiUrl: string) => {
   })
 
   return new ApolloClient({
-    link: ApolloLink.from([retryLink, errorLink, authLink, httpLink]),
+    link: ApolloLink.from([retryLink, errorLink, httpLink]),
     cache: new InMemoryCache(),
   })
 }
