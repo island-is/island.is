@@ -203,6 +203,9 @@
       "@island.is/api/domains/seminars-ver": [
         "libs/api/domains/seminars-ver/src/index.ts"
       ],
+      "@island.is/api/domains/secondary-school": [
+        "libs/api/domains/secondary-school/src/index.ts"
+      ],
       "@island.is/api/domains/sessions": [
         "libs/api/domains/sessions/src/index.ts"
       ],
@@ -495,6 +498,9 @@
       "@island.is/application/templates/reference-template": [
         "libs/application/templates/reference-template/src/index.ts"
       ],
+      "@island.is/application/templates/secondary-school": [
+        "libs/application/templates/secondary-school/src/index.ts"
+      ],
       "@island.is/application/templates/signature-collection/parliamentary-list-creation": [
         "libs/application/templates/signature-collection/parliamentary-list-creation/src/index.ts"
       ],
@@ -760,6 +766,9 @@
       ],
       "@island.is/clients/seminars-ver": [
         "libs/clients/seminars-ver/src/index.ts"
+      ],
+      "@island.is/clients/secondary-school": [
+        "libs/clients/secondary-school/src/index.ts"
       ],
       "@island.is/clients/sessions": ["libs/clients/sessions/src/index.ts"],
       "@island.is/clients/ship-registry": [

@@ -63,6 +63,7 @@ import { sharedModuleConfig } from '@island.is/application/template-api-modules'
 import { UserNotificationClientConfig } from '@island.is/clients/user-notification'
 import { NationalRegistryV3ClientConfig } from '@island.is/clients/national-registry-v3'
 import { SeminarsClientConfig } from '@island.is/clients/seminars-ver'
+import { SecondarySchoolClientConfig } from '@island.is/clients/secondary-school'
 
 @Module({
   imports: [
@@ -125,6 +126,7 @@ import { SeminarsClientConfig } from '@island.is/clients/seminars-ver'
         UserNotificationClientConfig,
         NationalRegistryV3ClientConfig,
         SeminarsClientConfig,
+        SecondarySchoolClientConfig,
       ],
     }),
   ],
