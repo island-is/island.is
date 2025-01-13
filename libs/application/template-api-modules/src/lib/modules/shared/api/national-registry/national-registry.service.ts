@@ -11,6 +11,7 @@ import {
   NationalRegistryParent,
   NationalRegistryMaritalTitle,
   BirthplaceParameters,
+  MunicipalityCodeParameters,
 } from '@island.is/application/types'
 import { BaseTemplateApiService } from '../../../base-template-api.service'
 import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
@@ -469,6 +470,18 @@ export class NationalRegistryService extends BaseTemplateApiService {
     )
   }
 
+  async getBirthPlaceMunicipalityCode(
+    municipality?: string,
+  ): Promise<string | null> {
+    if (!municipality) {
+      return ''
+    }
+    const birthplace = await this.nationalRegistryApi.getMunicipalityCodeName(
+      municipality,
+    )
+    return birthplace
+  }
+
   async getBirthplace({
     auth,
     params,
@@ -489,11 +502,14 @@ export class NationalRegistryService extends BaseTemplateApiService {
       }
     }
 
+    const municipalityName = await this.getBirthPlaceMunicipalityCode('99RO')
+
     return (
       birthplace && {
         dateOfBirth: birthplace.birthdate,
         location: birthplace.locality,
         municipalityCode: birthplace.municipalityNumber,
+        municipalityName: municipalityName || '',
       }
     )
   }

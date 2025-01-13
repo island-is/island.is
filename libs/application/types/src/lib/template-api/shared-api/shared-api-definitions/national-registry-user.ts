@@ -21,6 +21,10 @@ export interface BirthplaceParameters {
   validateNotEmpty: boolean
 }
 
+export interface MunicipalityCodeParameters {
+  municipality?: string
+}
+
 export const NationalRegistryUserApi =
   defineTemplateApi<NationalRegistryParameters>({
     action: 'nationalRegistry',
