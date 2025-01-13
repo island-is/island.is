@@ -14,7 +14,7 @@ import {
 } from '@island.is/portals/my-pages/core'
 import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { messages } from '../../..'
+import { messages } from '../../../lib/messages'
 import { HealthPaths } from '../../../lib/paths'
 import * as styles from '../OrganDonation.css'
 import {
