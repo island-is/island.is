@@ -1,18 +1,17 @@
 import { Box, Table as T, Text } from '@island.is/island-ui/core'
 import { EmptyTable, LinkButton } from '@island.is/portals/my-pages/core'
-import { useNamespaces } from '@island.is/localization'
 import { Markdown } from '@island.is/shared/components'
-import { messages as m } from '../../../lib/messages'
-import { DetailTable } from '../../../utils/types'
+import { messages as m } from '../../lib/messages'
+import { DetailTable } from '../../utils/types'
 
-import * as styles from './VaccinationsTable.css'
+import * as styles from '../../screens/Vaccinations/tables/VaccinationsTable.css'
 
-export const VaccinationsDetailTable = ({
+export const HealthTable = ({
   footerText,
   headerData,
   rowData,
+  noDataMessage,
 }: DetailTable) => {
-  useNamespaces('sp.health')
   return (
     <Box padding={3} background="blue100">
       <T.Table
