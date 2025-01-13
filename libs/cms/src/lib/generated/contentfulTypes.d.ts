@@ -1684,6 +1684,12 @@ export interface IGenericListItemFields {
 
   /** External Link */
   externalLink?: ILinkUrl | undefined
+
+  /** Image */
+  image?: Asset | undefined
+
+  /** Full Width Image In Content */
+  fullWidthImageInContent?: boolean | undefined
 }
 
 /** An item that belongs to a generic list */
