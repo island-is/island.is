@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from 'react'
 export const useScrollDirection = () => {
   const [scrollDirection, setScrollDirection] = useState<'up' | 'down'>('down')
   const lastScrollTop = useRef(0) // Tracks the last scroll position
-  const ticking = useRef(false) // To throttle scroll events
+  const ticking = useRef(false) // To throttle scroll eventss
 
   useEffect(() => {
     const handleScroll = () => {
