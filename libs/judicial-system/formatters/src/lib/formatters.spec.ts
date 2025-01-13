@@ -437,4 +437,3 @@ describe('applyDativeCaseToCourtName', () => {
     expect(result).toBe(courtName)
   })
 })
-
