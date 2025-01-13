@@ -361,13 +361,22 @@
       "label": "Search for reg nr",
       "placeholder": "Search for reg nr"
     },
-    "table": ["Reg nr", "Model", "Year", "Company", "Deregistered"]
+    "table": [
+      "Reg nr",
+      "Model",
+      "Year",
+      "Company",
+      "Municipality",
+      "Deregistered"
+    ]
   },
   "recyclingFundSidenav": {
     "title": "Service",
+    "municipalityTitle": "Municipality",
     "recycled": "Recycled cars",
     "companies": "Recycling companies",
-    "accessControl": "Access Control"
+    "accessControl": "Access Control",
+    "municipalities": "Municipalities"
   },
   "recyclingCompanies": {
     "title": "Recycling companies",
@@ -390,7 +399,8 @@
     },
     "buttons": {
       "add": "Add recycling company",
-      "view": "View"
+      "view": "View",
+      "addMunicipality": "Add municipality"
     },
     "recyclingCompany": {
       "view": {
@@ -409,32 +419,32 @@
       "form": {
         "inputs": {
           "companyId": {
-            "label": "Company ID",
-            "placeholder": "Company ID",
+            "label": "ID",
+            "placeholder": "ID",
             "rules": {
-              "required": "Company ID is required"
+              "required": "ID is required"
             }
           },
           "companyName": {
-            "label": "Company name",
-            "placeholder": "Company name",
+            "label": "Name",
+            "placeholder": "Name",
             "rules": {
-              "required": "Company name is required"
+              "required": "Name is required"
             }
           },
           "nationalId": {
-            "label": "Company national ID",
-            "placeholder": "Company national ID",
+            "label": "National ID",
+            "placeholder": "National ID",
             "rules": {
-              "required": "Company national ID is required",
+              "required": "National ID is required",
               "validate": "National ID is incorrect"
             }
           },
           "email": {
-            "label": "Company email",
-            "placeholder": "Company email",
+            "label": "Email",
+            "placeholder": "Email",
             "rules": {
-              "required": "Company email is required",
+              "required": "Email is required",
               "validate": "Invalid email"
             }
           },
@@ -478,6 +488,13 @@
             "placeholder": "Active",
             "rules": {
               "required": "Active is required"
+            }
+          },
+          "municipality": {
+            "label": "Municipality",
+            "placeholder": "Municipality",
+            "rules": {
+              "required": "Municipality is required"
             }
           }
         },
@@ -575,6 +592,13 @@
           "rules": {
             "required": "Partner is required"
           }
+        },
+        "municipality": {
+          "label": "Municipality",
+          "placeholder": "Municipality",
+          "rules": {
+            "required": "Municipality is required"
+          }
         }
       },
       "buttons": {
@@ -627,6 +651,29 @@
       "baseRoute": "/en/company-info",
       "add": "/en/company-info/edit",
       "edit": "/en/company-info/add"
+    },
+    "municipalities": {
+      "baseRoute": "/en/municipalities",
+      "add": "/en/municipalities/add",
+      "edit": "/en/municipalities/[id]"
+    }
+  },
+  "municipalities": {
+    "title": "Municipalities",
+    "municipality": {
+      "view": {
+        "title": "Municipality",
+        "breadcrumb": "View",
+        "info": "You can update the municipality. Please confirm that the information are correct.",
+        "updated": "Updated",
+        "deleted": "Deleted"
+      },
+      "add": {
+        "title": "Add municipality",
+        "breadcrumb": "Add new",
+        "info": "Adding a new municipality will make it available to access control. Please verify that the municipality information is correct.",
+        "added": "Added"
+      }
     }
   }
 }
