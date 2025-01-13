@@ -18,4 +18,5 @@ export interface DetailTable {
   headerData: Array<DetailHeader>
   rowData?: Array<Array<DetailRow>>
   footerText: Array<string>
+  noDataMessage?: string
 }
