@@ -275,16 +275,18 @@ export const Navigation: FC<React.PropsWithChildren<NavigationProps>> = ({
       const element = document.getElementById('menuDialog-mobile-test')
       if (element) {
         const rect = element.getBoundingClientRect()
-
-        setIsScrolled(rect.top === 0)
+        // Check if the element's top is above the viewport top
+        setIsScrolled(rect.top <= 0)
       }
     }
 
     window.addEventListener('scroll', handleScroll)
+
+    // Clean up the event listener on component unmount
     return () => {
       window.removeEventListener('scroll', handleScroll)
     }
-  }, [baseId, isScrolled])
+  }, []) // No need for dependencies here
 
   return (
     <NavigationContext.Provider
@@ -296,7 +298,7 @@ export const Navigation: FC<React.PropsWithChildren<NavigationProps>> = ({
           alignItems="center"
           borderRadius="large"
           position="relative"
-          className={isScrolled ? styles.menuDialog : ''}
+          className={isScrolled ? styles.scrolledMenu : ''}
           id="menuDialog-mobile-test"
         >
           <MenuButton

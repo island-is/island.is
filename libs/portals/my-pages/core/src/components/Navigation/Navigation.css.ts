@@ -167,7 +167,7 @@ const stretchKeyframe = keyframes({
     transform: 'scaleX(1)',
   },
 })
-export const menuDialog = style({
+export const scrolledMenu = style({
   '::before': {
     content: '',
     position: 'absolute',
