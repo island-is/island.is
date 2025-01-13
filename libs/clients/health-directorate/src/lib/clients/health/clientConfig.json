@@ -246,11 +246,11 @@
         "properties": {
           "id": { "type": "string" },
           "name": { "type": "string" },
-          "waitBeganDate": { "type": "object" },
-          "lastUpdated": { "type": "object" },
-          "statusId": { "type": "object" },
-          "statusDisplay": { "type": "object" },
-          "organizationName": { "type": "object" }
+          "waitBeganDate": { "format": "date-time", "type": "string" },
+          "lastUpdated": { "format": "date-time", "type": "string" },
+          "statusId": { "type": "number" },
+          "statusDisplay": { "type": "string" },
+          "organizationName": { "type": "string" }
         },
         "required": [
           "id",
@@ -299,7 +299,7 @@
           "serviceType": { "type": "string" },
           "serviceName": { "type": "string" },
           "createdDate": { "format": "date-time", "type": "string" },
-          "validUntilDate": { "type": "object" },
+          "validUntilDate": { "format": "date-time", "type": "string" },
           "stateValue": { "type": "number" },
           "stateDisplay": { "type": "string" },
           "assignedProviderId": { "type": "string" },
