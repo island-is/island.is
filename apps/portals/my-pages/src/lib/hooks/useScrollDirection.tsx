@@ -28,11 +28,12 @@ export const useScrollDirection = () => {
       }
     }
 
-    window.addEventListener('scroll', handleScroll)
+    window.addEventListener('scroll', handleScroll, { passive: true })
+
     return () => {
       window.removeEventListener('scroll', handleScroll)
     }
-  }, []) // No dependencies needed
+  }, [])
 
   return scrollDirection
 }

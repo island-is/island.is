@@ -1,12 +1,13 @@
-import { globalStyle, style, styleVariants } from '@vanilla-extract/css'
+import { theme } from '@island.is/island-ui/theme'
 import {
   SERVICE_PORTAL_HEADER_HEIGHT_LG,
   SERVICE_PORTAL_HEADER_HEIGHT_SM,
   zIndex,
 } from '@island.is/portals/my-pages/constants'
-import { theme, themeUtils } from '@island.is/island-ui/theme'
+import { globalStyle, style } from '@vanilla-extract/css'
 
 export const header = style({
+  position: 'relative',
   zIndex: zIndex.header,
   display: 'flex',
   alignItems: 'center',
@@ -14,13 +15,25 @@ export const header = style({
   height: SERVICE_PORTAL_HEADER_HEIGHT_SM,
   margin: '0 auto',
   backgroundColor: theme.color.blue100,
+  transform: 'translateY(0)',
   '@media': {
     [`screen and (min-width: ${theme.breakpoints.lg}px)`]: {
       height: SERVICE_PORTAL_HEADER_HEIGHT_LG,
-      position: 'fixed',
     },
   },
-  transition: 'all 250ms ease-in-out',
+})
+
+export const fixedHeader = style({
+  position: 'fixed',
+  transform: 'translateY(0)',
+  top: 0,
+  transition: 'transform 450ms cubic-bezier(0.4, 0.0, 0.2, 1)',
+})
+
+export const hideHeader = style({
+  position: 'fixed',
+  transform: 'translateY(-100%)',
+  top: 0,
 })
 
 export const placeholder = style({

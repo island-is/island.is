@@ -1,26 +1,26 @@
-import React, {
-  FC,
-  useState,
-  useEffect,
-  ReactNode,
-  createContext,
-  ReactElement,
-  useRef,
-} from 'react'
-import cn from 'classnames'
-import AnimateHeight from 'react-animate-height'
-import { useMenuState, Menu, MenuButton, MenuStateReturn } from 'reakit/Menu'
-import { theme, Colors } from '@island.is/island-ui/theme'
 import {
-  Text,
   Box,
   BoxProps,
   FocusableBox,
   Icon,
   IconProps,
   ModalBase,
+  Text,
   VisuallyHidden,
 } from '@island.is/island-ui/core'
+import { Colors, theme } from '@island.is/island-ui/theme'
+import cn from 'classnames'
+import React, {
+  createContext,
+  FC,
+  ReactElement,
+  ReactNode,
+  useEffect,
+  useRef,
+  useState,
+} from 'react'
+import AnimateHeight from 'react-animate-height'
+import { Menu, MenuButton, MenuStateReturn, useMenuState } from 'reakit/Menu'
 
 import * as styles from './Navigation.css'
 
@@ -269,24 +269,40 @@ export const Navigation: FC<React.PropsWithChildren<NavigationProps>> = ({
     </Box>
   )
   const [isScrolled, setIsScrolled] = useState(false)
+  const lastScrollY = useRef(0) // To track the last scroll position
 
   useEffect(() => {
     const handleScroll = () => {
       const element = document.getElementById('menuDialog-mobile-test')
+      const scrollY = window.scrollY
+
       if (element) {
         const rect = element.getBoundingClientRect()
-        // Check if the element's top is above the viewport top
-        setIsScrolled(rect.top <= 0)
+
+        // Check if the user scrolled past the element or is scrolling up
+        if (scrollY <= rect.top) setIsScrolled(false)
+        else if (rect.top <= 0 || scrollY < lastScrollY.current) {
+          setIsScrolled(true)
+        }
       }
+
+      // Update the last scroll position
+      lastScrollY.current = scrollY
+    }
+
+    const handleTouchMove = () => {
+      // Call handleScroll on touchmove to ensure state updates during touch
+      handleScroll()
     }
 
     window.addEventListener('scroll', handleScroll)
+    window.addEventListener('touchmove', handleTouchMove, { passive: true })
 
-    // Clean up the event listener on component unmount
     return () => {
       window.removeEventListener('scroll', handleScroll)
+      window.removeEventListener('touchmove', handleTouchMove)
     }
-  }, []) // No need for dependencies here
+  }, [])
 
   return (
     <NavigationContext.Provider
@@ -298,7 +314,10 @@ export const Navigation: FC<React.PropsWithChildren<NavigationProps>> = ({
           alignItems="center"
           borderRadius="large"
           position="relative"
-          className={isScrolled ? styles.scrolledMenu : ''}
+          className={cn(styles.scrolledMenu, {
+            [styles.scrolledMenuVisible]: isScrolled,
+            [styles.scrolledMenuHidden]: !isScrolled,
+          })}
           id="menuDialog-mobile-test"
         >
           <MenuButton

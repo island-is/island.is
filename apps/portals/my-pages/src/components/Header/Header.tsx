@@ -12,24 +12,26 @@ import {
 import { helperStyles, theme } from '@island.is/island-ui/theme'
 import { useLocale } from '@island.is/localization'
 import { PortalPageLoader } from '@island.is/portals/core'
-import { useUserInfo } from '@island.is/react-spa/bff'
-import { useFeatureFlagClient } from '@island.is/react/feature-flags'
+import { SERVICE_PORTAL_HEADER_HEIGHT_SM } from '@island.is/portals/my-pages/constants'
 import {
   LinkResolver,
   ServicePortalPaths,
   m,
 } from '@island.is/portals/my-pages/core'
 import { DocumentsPaths } from '@island.is/portals/my-pages/documents'
+import { useUserInfo } from '@island.is/react-spa/bff'
+import { useFeatureFlagClient } from '@island.is/react/feature-flags'
 import { UserLanguageSwitcher, UserMenu } from '@island.is/shared/components'
+import cn from 'classnames'
 import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useWindowSize } from 'react-use'
+import { useScrollDirection } from '../../lib/hooks/useScrollDirection'
 import NotificationButton from '../Notifications/NotificationButton'
 import Sidemenu from '../Sidemenu/Sidemenu'
 import * as styles from './Header.css'
-import { useScrollDirection } from '../../lib/hooks/useScrollDirection'
-export type MenuTypes = 'side' | 'user' | 'notifications' | undefined
 
+export type MenuTypes = 'side' | 'user' | 'notifications' | undefined
 interface Props {
   position: number
 }
@@ -66,15 +68,46 @@ export const Header = ({ position }: Props) => {
     DocumentsScope.main,
   )
 
+  const [isScrolled, setIsScrolled] = useState<boolean>(false)
+  const headerHeight = ref.current?.offsetHeight || 0
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY >= SERVICE_PORTAL_HEADER_HEIGHT_SM) {
+        setIsScrolled(true)
+      } else {
+        setIsScrolled(false)
+      }
+    }
+
+    const handleTouchMove = () => {
+      // Call handleScroll on touchmove to ensure state updates during touch
+      handleScroll()
+    }
+
+    window.addEventListener('scroll', handleScroll, { passive: true })
+    window.addEventListener('touchmove', handleTouchMove, { passive: true })
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll)
+      window.removeEventListener('touchmove', handleTouchMove)
+    }
+  }, [headerHeight])
+
   return (
     <div className={styles.placeholder}>
       <PortalPageLoader />
       {/*  Inline style to dynamicly change position of header because of alert banners */}
       <header
-        className={styles.header}
+        className={cn(
+          {
+            [styles.fixedHeader]: scrollDirection === 'up',
+            [styles.hideHeader]: scrollDirection === 'down' && isScrolled,
+          },
+          styles.header,
+        )}
         style={{
           top: position,
-          position: scrollDirection === 'up' ? 'fixed' : 'relative',
         }}
       >
         <GridContainer>

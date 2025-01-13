@@ -159,6 +159,7 @@ export const transition = style({
     },
   },
 })
+
 const stretchKeyframe = keyframes({
   '0%': {
     transform: 'scaleX(0)',
@@ -167,7 +168,18 @@ const stretchKeyframe = keyframes({
     transform: 'scaleX(1)',
   },
 })
+
+const shrinkKeyframe = keyframes({
+  '0%': {
+    transform: 'scaleX(1)',
+  },
+  '100%': {
+    transform: 'scaleX(0)',
+  },
+})
+
 export const scrolledMenu = style({
+  position: 'relative',
   '::before': {
     content: '',
     position: 'absolute',
@@ -178,7 +190,21 @@ export const scrolledMenu = style({
     right: `-${theme.spacing[2]}px`,
     background: theme.color.blue100,
     borderBottom: `1px solid ${theme.color.blue200}`,
-    animation: `${stretchKeyframe} 0.35s ease-in-out`,
+    transform: 'scaleX(0)', // Initial state
+    transformOrigin: 'left',
+    transition: 'transform 0.75s ease-in-out',
+  },
+})
+
+export const scrolledMenuVisible = style({
+  '::before': {
+    animation: `${stretchKeyframe} 0.75s ease-in-out forwards`, // Appear animation
+  },
+})
+
+export const scrolledMenuHidden = style({
+  '::before': {
+    animation: `${shrinkKeyframe} 0.75s ease-in-out forwards`, // Disappear animation
   },
 })
 
