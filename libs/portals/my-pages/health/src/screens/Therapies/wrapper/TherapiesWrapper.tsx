@@ -1,17 +1,16 @@
-import { useLocale } from '@island.is/localization'
+import { ApolloError } from '@apollo/client'
 import { Box } from '@island.is/island-ui/core'
+import { useLocale } from '@island.is/localization'
 import {
   EmptyState,
-  ErrorScreen,
-  IntroHeader,
+  IntroWrapper,
   SJUKRATRYGGINGAR_SLUG,
   TabNavigation,
   m,
 } from '@island.is/portals/my-pages/core'
+import { Problem } from '@island.is/react-spa/shared'
 import { messages } from '../../../lib/messages'
 import { healthNavigation } from '../../../lib/navigation'
-import { ApolloError } from '@apollo/client'
-import { Problem } from '@island.is/react-spa/shared'
 
 type Props = {
   children: React.ReactNode
@@ -29,13 +28,13 @@ export const TherapiesWrapper = ({
   const { formatMessage } = useLocale()
 
   return (
-    <Box marginBottom={[6, 6, 10]}>
-      <IntroHeader
-        title={formatMessage(messages.therapyTitle)}
-        intro={formatMessage(messages.therapyDescription)}
-        serviceProviderSlug={SJUKRATRYGGINGAR_SLUG}
-        serviceProviderTooltip={formatMessage(messages.healthTooltip)}
-      />
+    <IntroWrapper
+      marginBottom={[6, 6, 10]}
+      title={formatMessage(messages.therapyTitle)}
+      intro={formatMessage(messages.therapyDescription)}
+      serviceProviderSlug={SJUKRATRYGGINGAR_SLUG}
+      serviceProviderTooltip={formatMessage(messages.healthTooltip)}
+    >
       <TabNavigation
         label={formatMessage(messages.therapyTitle)}
         pathname={pathname}
@@ -58,6 +57,6 @@ export const TherapiesWrapper = ({
 
         {!error && children && <Box>{children}</Box>}
       </Box>
-    </Box>
+    </IntroWrapper>
   )
 }

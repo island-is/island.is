@@ -43,6 +43,7 @@ interface NationalIdWithNameProps {
   showPhoneField?: boolean
   showEmailField?: boolean
   error?: string
+  clearOnChange?: string[]
 }
 
 export const NationalIdWithName: FC<
@@ -72,6 +73,7 @@ export const NationalIdWithName: FC<
   showPhoneField = false,
   showEmailField = false,
   error,
+  clearOnChange,
 }) => {
   const fieldId = customId.length > 0 ? customId : id
   const nameField = `${fieldId}.name`
@@ -80,10 +82,7 @@ export const NationalIdWithName: FC<
   const phoneField = `${fieldId}.phone`
 
   const { formatMessage } = useLocale()
-  const {
-    setValue,
-    formState: { errors },
-  } = useFormContext()
+  const { setValue } = useFormContext()
   const [nationalIdInput, setNationalIdInput] = useState('')
   const [personName, setPersonName] = useState('')
   const [companyName, setCompanyName] = useState('')
@@ -95,10 +94,13 @@ export const NationalIdWithName: FC<
     if (!error || typeof error !== 'object') return undefined
 
     const errorList = error as Record<string, unknown>[]
-    if (!Array.isArray(errorList)) return undefined
-
-    const fieldError = errorList[id as any]
-    return typeof fieldError === 'string' ? fieldError : undefined
+    if (!Array.isArray(errorList)) {
+      const fieldError = getValueViaPath<any>(errorList, id)
+      return typeof fieldError === 'string' ? fieldError : undefined
+    } else {
+      const fieldError = errorList[id as any]
+      return typeof fieldError === 'string' ? fieldError : undefined
+    }
   }
 
   // get national id validation errors
@@ -233,6 +235,7 @@ export const NationalIdWithName: FC<
             loading={searchPersons ? queryLoading : companyQueryLoading}
             error={nationalIdFieldErrors}
             disabled={disabled}
+            clearOnChange={clearOnChange}
           />
         </GridColumn>
         <GridColumn span={['1/1', '1/1', '1/1', '1/2']} paddingTop={2}>
@@ -265,7 +268,8 @@ export const NationalIdWithName: FC<
                   : undefined
                 : undefined
             }
-            disabled
+            disabled={disabled}
+            readOnly={!disabled}
           />
         </GridColumn>
       </GridRow>
