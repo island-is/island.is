@@ -25,17 +25,19 @@ import {
   isAdminUser,
   isCourtOfAppealsUser,
   isDefenceUser,
+  isDistrictCourtUser,
   isPrisonSystemUser,
   isProsecutionUser,
   Lawyer,
 } from '@island.is/judicial-system/types'
 import { api } from '@island.is/judicial-system-web/src/services'
 
-import { useGeoLocation, useGetLawyer, useGetLawyers } from '../../utils/hooks'
+import { useGeoLocation, useGetLawyers } from '../../utils/hooks'
 import {
   Database,
   useIndexedDB,
 } from '../../utils/hooks/useIndexedDB/useIndexedDB'
+import { getLawyerByNationalId } from '../../utils/stepHelper'
 import MarkdownWrapper from '../MarkdownWrapper/MarkdownWrapper'
 import { UserContext } from '../UserProvider/UserProvider'
 import { header } from './Header.strings'
@@ -75,23 +77,6 @@ const Container: FC<PropsWithChildren> = ({ children }) => {
   )
 }
 
-const getLawyerByName = (
-  db: IDBDatabase | null,
-  nationalId?: string | null,
-): Promise<Lawyer> | null => {
-  if (!db || !nationalId) {
-    return null
-  }
-  const transaction = db.transaction(Database.lawyerTable)
-  const store = transaction.objectStore(Database.lawyerTable)
-
-  return new Promise((resolve, reject) => {
-    const request = store.get(nationalId)
-    request.onsuccess = () => resolve(request.result)
-    request.onerror = () => reject(request.error)
-  })
-}
-
 const HeaderContainer = () => {
   const { formatMessage } = useIntl()
   const { isAuthenticated, user } = useContext(UserContext)
@@ -111,7 +96,7 @@ const HeaderContainer = () => {
   useEffect(() => {
     const fetchLawyer = async () => {
       try {
-        const data = await getLawyerByName(db, user?.nationalId)
+        const data = await getLawyerByNationalId(db, user?.nationalId)
         setLawyer(data)
       } catch (error) {
         console.error('Failed to fetch customer:', error)

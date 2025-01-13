@@ -1,4 +1,4 @@
-import { FC } from 'react'
+import { FC, useEffect, useState } from 'react'
 import { IntlShape, MessageDescriptor, useIntl } from 'react-intl'
 
 import { AlertMessage, Box, LoadingDots, Text } from '@island.is/island-ui/core'
@@ -10,7 +10,12 @@ import {
   Subpoena,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
-import { useGetLawyer, useSubpoena } from '../../utils/hooks'
+import { useSubpoena } from '../../utils/hooks'
+import {
+  Database,
+  useIndexedDB,
+} from '../../utils/hooks/useIndexedDB/useIndexedDB'
+import { getLawyerByNationalId } from '../../utils/stepHelper'
 import { strings } from './ServiceAnnouncement.strings'
 
 const mapServiceStatusTitle = (
@@ -93,20 +98,46 @@ interface ServiceAnnouncementProps {
 
 const ServiceAnnouncement: FC<ServiceAnnouncementProps> = (props) => {
   const { subpoena: localSubpoena, defendantName } = props
+  const [lawyer, setLawyer] = useState<Lawyer>()
 
   const { subpoena, subpoenaLoading } = useSubpoena(localSubpoena)
 
   const { formatMessage } = useIntl()
 
-  const lawyer = useGetLawyer(
-    subpoena?.defenderNationalId,
-    subpoena?.serviceStatus === ServiceStatus.DEFENDER,
+  const { db } = useIndexedDB(
+    Database.name,
+    Database.lawyerTable,
+    [], // TODO: FIX,
   )
 
   const title = mapServiceStatusTitle(subpoena?.serviceStatus)
   const messages = subpoena
     ? mapServiceStatusMessages(subpoena, formatMessage, lawyer)
     : []
+
+  useEffect(() => {
+    const fetchLawyer = async () => {
+      try {
+        if (
+          !subpoena?.defenderNationalId ||
+          subpoena?.serviceStatus !== ServiceStatus.DEFENDER
+        ) {
+          return
+        }
+
+        const data = await getLawyerByNationalId(
+          db,
+          subpoena.defenderNationalId,
+        )
+
+        setLawyer(data ?? undefined)
+      } catch (error) {
+        console.error('Failed to fetch customer:', error)
+      }
+    }
+
+    fetchLawyer()
+  }, [db, subpoena?.defenderNationalId, subpoena?.serviceStatus])
 
   return subpoenaLoading ? (
     <Box display="flex" justifyContent="center" paddingY={5}>

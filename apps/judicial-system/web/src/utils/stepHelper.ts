@@ -3,6 +3,7 @@ import parseISO from 'date-fns/parseISO'
 
 import { TagVariant } from '@island.is/island-ui/core'
 import { formatDate } from '@island.is/judicial-system/formatters'
+import { Lawyer } from '@island.is/judicial-system/types'
 import {
   CaseAppealState,
   CaseCustodyRestrictions,
@@ -12,6 +13,8 @@ import {
   NotificationType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
+
+import { Database } from './hooks/useIndexedDB/useIndexedDB'
 
 export const getShortGender = (gender?: Gender): string => {
   switch (gender) {
@@ -146,4 +149,21 @@ export const shouldUseAppealWithdrawnRoutes = (theCase: Case): boolean => {
       !theCase.appealJudge2 ||
       !theCase.appealJudge3)
   )
+}
+
+export const getLawyerByNationalId = (
+  db: IDBDatabase | null,
+  nationalId?: string | null,
+): Promise<Lawyer> | null => {
+  if (!db || !nationalId) {
+    return null
+  }
+  const transaction = db.transaction(Database.lawyerTable)
+  const store = transaction.objectStore(Database.lawyerTable)
+
+  return new Promise((resolve, reject) => {
+    const request = store.get(nationalId)
+    request.onsuccess = () => resolve(request.result)
+    request.onerror = () => reject(request.error)
+  })
 }

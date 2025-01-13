@@ -10,7 +10,7 @@ export {
   useUploadFiles,
   default as useS3Upload,
 } from './useS3Upload/useS3Upload'
-export { useGetLawyers, useGetLawyer } from './useLawyers/useLawyers'
+export { useGetLawyers } from './useLawyers/useLawyers'
 export { default as useDeb } from './useDeb'
 export { default as useViewport } from './useViewport/useViewport'
 export { default as useOnceOn } from './useOnceOn'

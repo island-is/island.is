@@ -21,10 +21,6 @@ export const useIndexedDB = (
 
   useEffect(() => {
     const initDB = () => {
-      if (lawyers.length === 0) {
-        return
-      }
-
       const request = window.indexedDB.open(databaseName, 3)
 
       request.onupgradeneeded = () => {
