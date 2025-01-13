@@ -13,6 +13,7 @@ import { DeepMap } from 'react-hook-form/dist/types/utils'
 import { Box, Button, Option, Select, Stack } from '@island.is/island-ui/core'
 import { InputController } from '@island.is/shared/form-fields'
 import {
+  hasDeveloperRole,
   hasMunicipalityRole,
   hasRecyclingFundRole,
 } from '@island.is/skilavottord-web/auth/utils'
@@ -90,7 +91,10 @@ export const AccessControlModal: FC<
         setShowCompaniesSelection(true)
       }
       setShowMunicipalitiesSelection(false)
-    } else if (hasRecyclingFundRole(user?.role)) {
+    } else if (
+      hasRecyclingFundRole(user?.role) ||
+      hasDeveloperRole(user?.role)
+    ) {
       if (e && e.value === Role.municipality) {
         setShowCompaniesSelection(false)
         setShowMunicipalitiesSelection(true)
