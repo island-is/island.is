@@ -426,7 +426,7 @@ describe('applyDativeCaseToCourtName', () => {
     expect(result).toBe('Héraðsdómi Reykjavíkur')
   })
 
-  test('should return the same court name if it does not contain "dómur"', () => {
+  test('should return the same court name if name does not contain "dómur"', () => {
     // Arrange
     const courtName = 'Bull'
 
