@@ -27,11 +27,7 @@ import { OJOIAApplicationCaseResponse } from '../models/applicationCase.response
 import { GetPdfResponse } from '../models/getPdf.response'
 import { OJOIAIdInput } from '../models/id.input'
 import { GetInvolvedPartySignaturesInput } from '../models/getInvolvedPartySignatures.input'
-import { SignaturesResponse } from '../models/involvedPartySignatureResponse.response'
-import {
-  InvolvedPartySignaturesCommittee,
-  InvolvedPartySignaturesRegular,
-} from '../models/getInvolvedPartySignatures.response'
+import { InvolvedPartySignatures } from '../models/getInvolvedPartySignatures.response'
 
 const LOG_CATEGORY = 'official-journal-of-iceland-application'
 
@@ -273,19 +269,7 @@ export class OfficialJournalOfIcelandApplicationService {
   async getInvolvedPartySignatures(
     input: GetInvolvedPartySignaturesInput,
     user: User,
-  ): Promise<SignaturesResponse> {
-    if (input.skip) {
-      this.logger.info(
-        'Skip set to true, skipping function call and returning undefined',
-        {
-          category: LOG_CATEGORY,
-        },
-      )
-      return {
-        success: true,
-      }
-    }
-
+  ): Promise<InvolvedPartySignatures> {
     try {
       const data =
         await this.ojoiApplicationService.getSignaturesForInvolvedParty(
@@ -293,9 +277,16 @@ export class OfficialJournalOfIcelandApplicationService {
           user,
         )
 
-      if (data.chairman) {
-        const signatureData: InvolvedPartySignaturesCommittee = {
-          ...data,
+      return {
+        ...data,
+        members: data.members.map((member) => ({
+          name: member.text ?? undefined,
+          above: member.textAbove ?? undefined,
+          before: member.textBefore ?? undefined,
+          below: member.textBelow ?? undefined,
+          after: member.textAfter ?? undefined,
+        })),
+        ...(data?.chairman && {
           chairman: {
             name: data.chairman.text ?? undefined,
             above: data.chairman.textAbove ?? undefined,
@@ -303,33 +294,7 @@ export class OfficialJournalOfIcelandApplicationService {
             below: data.chairman.textBelow ?? undefined,
             after: data.chairman.textAfter ?? undefined,
           },
-          members: data.members.map((member) => ({
-            name: member.text ?? undefined,
-            above: member.textAbove ?? undefined,
-            before: member.textBefore ?? undefined,
-            below: member.textBelow ?? undefined,
-            after: member.textAfter ?? undefined,
-          })),
-        }
-
-        return {
-          success: true,
-          data: signatureData,
-        }
-      } else {
-        return {
-          success: true,
-          data: {
-            ...data,
-            members: data.members.map((member) => ({
-              name: member.text ?? undefined,
-              above: member.textAbove ?? undefined,
-              before: member.textBefore ?? undefined,
-              below: member.textBelow ?? undefined,
-              after: member.textAfter ?? undefined,
-            })),
-          },
-        }
+        }),
       }
     } catch (error) {
       this.logger.error('Failed to get signatures for involved party', {

@@ -5,27 +5,24 @@ import {
   OfficialJournalOfIcelandApplicationInvolvedPartySignaturesRegular,
 } from '@island.is/api/schema'
 
-type LastSignatureResponse = {
-  officialJournalOfIcelandApplicationInvolvedPartySignatures: {
-    success: boolean
-    data:
-      | OfficialJournalOfIcelandApplicationInvolvedPartySignaturesCommittee
-      | OfficialJournalOfIcelandApplicationInvolvedPartySignaturesRegular
-  }
-}
-
 type Props = {
   involvedPartyId?: string
 }
 
+type LastSignatureResponse = {
+  officialJournalOfIcelandApplicationInvolvedPartySignatures:
+    | OfficialJournalOfIcelandApplicationInvolvedPartySignaturesRegular
+    | OfficialJournalOfIcelandApplicationInvolvedPartySignaturesCommittee
+}
+
 export const useLastSignature = ({ involvedPartyId }: Props) => {
-  const { data, loading, error, refetch } = useQuery<LastSignatureResponse>(
+  const { data, loading, error } = useQuery<LastSignatureResponse>(
     INVOLVED_PARTY_SIGNATURES_QUERY,
     {
+      skip: !involvedPartyId,
       variables: {
         input: {
           involvedPartyId: involvedPartyId,
-          skip: !involvedPartyId,
         },
       },
       fetchPolicy: 'no-cache',
@@ -34,10 +31,9 @@ export const useLastSignature = ({ involvedPartyId }: Props) => {
 
   return {
     lastSignature:
-      data?.officialJournalOfIcelandApplicationInvolvedPartySignatures.data,
+      data?.officialJournalOfIcelandApplicationInvolvedPartySignatures,
     error,
     loading,
-    refetch,
   }
 }
 

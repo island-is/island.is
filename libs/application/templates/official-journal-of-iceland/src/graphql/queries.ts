@@ -155,30 +155,22 @@ export const INVOLVED_PARTY_SIGNATURES_QUERY = gql`
   ) {
     officialJournalOfIcelandApplicationInvolvedPartySignatures(input: $input) {
       __typename
-      success
-      data {
-        __typename
+      id
+      additionalSignature
+      date
+      html
+      institution
+      involvedParty {
         id
-        additionalSignature
-        date
-        html
-        institution
-        involvedParty {
-          id
-          slug
-          title
-        }
-        members {
+        slug
+        title
+      }
+      members {
+        ...SignatureMember
+      }
+      ... on OfficialJournalOfIcelandApplicationInvolvedPartySignaturesCommittee {
+        chairman {
           ...SignatureMember
-        }
-        ... on OfficialJournalOfIcelandApplicationInvolvedPartySignaturesRegular {
-          __typename
-        }
-        ... on OfficialJournalOfIcelandApplicationInvolvedPartySignaturesCommittee {
-          __typename
-          chairman {
-            ...SignatureMember
-          }
         }
       }
     }
