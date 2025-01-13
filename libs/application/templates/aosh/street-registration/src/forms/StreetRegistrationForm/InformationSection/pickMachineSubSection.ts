@@ -13,7 +13,6 @@ import {
   mustInspectBeforeStreetRegistration,
 } from '../../../utils/getSelectedMachine'
 import { useLocale } from '@island.is/localization'
-import { Application } from '@island.is/application/types'
 
 export const pickMachineSubSection = buildSubSection({
   id: 'pickMachine',

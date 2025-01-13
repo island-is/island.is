@@ -282,7 +282,7 @@ export const FindVehicleFormField: FC<React.PropsWithChildren<Props>> = ({
         : null
 
       if (
-        (statusKey === 'inspectBeforeRegistration' && !machineDisabled) ||
+        statusKey === 'inspectBeforeRegistration' ||
         statusKey === 'unavailableTypeForRegistration'
       ) {
         machineDetails = {
