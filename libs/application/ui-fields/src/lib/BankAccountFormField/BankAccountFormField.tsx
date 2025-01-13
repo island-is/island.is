@@ -13,7 +13,8 @@ interface Props extends FieldBaseProps {
 }
 export const BankAccountFormField = ({ field, application }: Props) => {
   const { formatMessage, lang: locale } = useLocale()
-  const { marginBottom, marginTop, title, titleVariant, id } = field
+  const { marginBottom, marginTop, title, titleVariant, id, clearOnChange } =
+    field
   const bankNumber = formatText(
     coreDefaultFieldMessages.defaultBankAccountBankNumber,
     application,
@@ -49,6 +50,7 @@ export const BankAccountFormField = ({ field, application }: Props) => {
               format="####"
               backgroundColor="blue"
               autoFocus
+              clearOnChange={clearOnChange}
             />
           </Box>
         </GridColumn>
@@ -61,6 +63,7 @@ export const BankAccountFormField = ({ field, application }: Props) => {
               placeholder="00"
               format="##"
               backgroundColor="blue"
+              clearOnChange={clearOnChange}
             />
           </Box>
         </GridColumn>
@@ -73,6 +76,7 @@ export const BankAccountFormField = ({ field, application }: Props) => {
               placeholder="000000"
               format="######"
               backgroundColor="blue"
+              clearOnChange={clearOnChange}
             />
           </Box>
         </GridColumn>

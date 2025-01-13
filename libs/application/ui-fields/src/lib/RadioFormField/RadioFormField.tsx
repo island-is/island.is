@@ -42,6 +42,7 @@ export const RadioFormField: FC<React.PropsWithChildren<Props>> = ({
     widthWithIllustration,
     marginTop,
     marginBottom,
+    clearOnChange,
   } = field
   const { formatMessage, lang: locale } = useLocale()
 
@@ -118,6 +119,7 @@ export const RadioFormField: FC<React.PropsWithChildren<Props>> = ({
           hasIllustration={hasIllustration}
           paddingBottom={0}
           paddingTop={2}
+          clearOnChange={clearOnChange}
         />
       </Box>
     </Box>
