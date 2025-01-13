@@ -34,30 +34,48 @@ export class VerdictsClientService {
       items: (
         (response.items?.filter(
           (item) =>
+            Boolean(item.id) &&
             Boolean(item.title) &&
             Boolean(item.court) &&
             Boolean(item.caseNumber) &&
-            Boolean(item.verdictDate),
+            Boolean(item.verdictDate) &&
+            Boolean(item.presentings),
         ) ?? []) as (DetailedVerdictData & {
+          id: string
           title: string
           court: string
           caseNumber: string
           verdictDate: Date
+          presentings: string
         })[]
       ).map((item) => ({
+        id: item.id,
         title: item.title,
         court: item.court,
         caseNumber: item.caseNumber,
         verdictDate: item.verdictDate,
-        presidentJudge: item.judges?.find((judge) => judge.isPresident),
+        presidentJudge: item.judges?.find((judge) =>
+          Boolean(judge?.isPresident),
+        ),
         keywords: item.keywords ?? [],
+        presentings: item.presentings,
       })),
     }
   }
 
   async getSingleVerdictById(id: string) {
-    return this.verdictApi.getVerdict({
+    const response = await this.verdictApi.getVerdict({
       id,
     })
+
+    if (!response.item?.title) {
+      return null
+    }
+
+    return {
+      item: {
+        title: response.item.title,
+      },
+    }
   }
 }

@@ -2,6 +2,7 @@ import { parseAsString, useQueryState } from 'next-usequerystate'
 
 import {
   Box,
+  Divider,
   FocusableBox,
   GridColumn,
   GridContainer,
@@ -63,7 +64,7 @@ const VerdictsList: Screen<VerdictsListProps> = ({ items }) => {
               <GridColumn key={item.title} span="1/1">
                 <FocusableBox
                   height="full"
-                  href={'/test'}
+                  href={`/domar/${item.id}`}
                   background="white"
                   borderRadius="large"
                   borderColor="blue200"
@@ -80,17 +81,23 @@ const VerdictsList: Screen<VerdictsListProps> = ({ items }) => {
                           </Text>
                         </GridColumn>
                         <GridColumn span={['5/12', '5/12', '3/12']}>
-                          {item.verdictDate && (
-                            <Text textAlign="right">
-                              {format(
-                                new Date(item.verdictDate),
-                                'd. MMM yyyy',
-                              )}
-                            </Text>
-                          )}
+                          <Stack space={0}>
+                            {item.verdictDate && (
+                              <Text variant="medium" textAlign="right">
+                                {format(
+                                  new Date(item.verdictDate),
+                                  'd. MMM yyyy',
+                                )}
+                              </Text>
+                            )}
+                            {item.court && (
+                              <Text variant="medium" textAlign="right">
+                                {item.court}
+                              </Text>
+                            )}
+                          </Stack>
                         </GridColumn>
                       </GridRow>
-
                       <Stack space={0}>
                         <GridRow>
                           <GridColumn>
@@ -105,11 +112,23 @@ const VerdictsList: Screen<VerdictsListProps> = ({ items }) => {
                           </GridColumn>
                         </GridRow>
                       </Stack>
-
                       <GridRow>
                         <GridColumn>
                           <Text variant="small" color="dark300">
                             {item.keywords.join('. ')}
+                          </Text>
+                        </GridColumn>
+                      </GridRow>
+
+                      <Divider />
+
+                      <GridRow>
+                        <GridColumn>
+                          <Text variant="small">
+                            <Text color="blue400" variant="medium" as="span">
+                              Reifun:
+                            </Text>{' '}
+                            {item.presentings}
                           </Text>
                         </GridColumn>
                       </GridRow>

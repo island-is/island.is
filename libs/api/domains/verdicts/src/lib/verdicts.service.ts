@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common'
 import { VerdictsClientService } from '@island.is/clients/verdicts'
 import { VerdictsInput } from './dto/verdicts.input'
-import { VerdictsResponse } from './dto/verdicts.response'
+import { VerdictByIdResponse, VerdictsResponse } from './dto/verdicts.response'
+import { VerdictByIdInput } from './dto/verdictById.input'
 
 @Injectable()
 export class VerdictsService {
@@ -15,5 +16,15 @@ export class VerdictsService {
       items: response.items,
       input,
     }
+  }
+
+  async getVerdictById(
+    input: VerdictByIdInput,
+  ): Promise<VerdictByIdResponse | null> {
+    const response = await this.verdictsClientService.getSingleVerdictById(
+      input.id,
+    )
+
+    return response
   }
 }
