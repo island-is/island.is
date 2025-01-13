@@ -2,6 +2,7 @@ import { parseAsString, useQueryState } from 'next-usequerystate'
 
 import {
   Box,
+  Breadcrumbs,
   Divider,
   FocusableBox,
   GridColumn,
@@ -42,6 +43,7 @@ const VerdictsList: Screen<VerdictsListProps> = ({ items }) => {
     <Box paddingBottom={5}>
       <GridContainer>
         <Stack space={3}>
+          <Breadcrumbs items={[{ title: 'Ísland.is', href: '/' }]} />
           <Text variant="h1" as="h1">
             Dómar og úrskurðir
           </Text>
@@ -76,39 +78,34 @@ const VerdictsList: Screen<VerdictsListProps> = ({ items }) => {
                     <Stack space={2}>
                       <GridRow rowGap={3}>
                         <GridColumn span={['7/12', '7/12', '9/12']}>
-                          <Text color="blue400" fontWeight="semiBold">
+                          <Text variant="h5" color="blue400">
                             {item.caseNumber}
                           </Text>
                         </GridColumn>
                         <GridColumn span={['5/12', '5/12', '3/12']}>
-                          <Stack space={0}>
-                            {item.verdictDate && (
-                              <Text variant="medium" textAlign="right">
-                                {format(
-                                  new Date(item.verdictDate),
-                                  'd. MMM yyyy',
-                                )}
-                              </Text>
-                            )}
-                            {item.court && (
-                              <Text variant="medium" textAlign="right">
-                                {item.court}
-                              </Text>
-                            )}
-                          </Stack>
+                          {item.verdictDate && (
+                            <Text variant="medium" textAlign="right">
+                              {format(
+                                new Date(item.verdictDate),
+                                'd. MMM yyyy',
+                              )}
+                            </Text>
+                          )}
                         </GridColumn>
                       </GridRow>
                       <Stack space={0}>
                         <GridRow>
                           <GridColumn>
-                            <Text>{item.court}</Text>
-                            <Text>
+                            <Text color="blue400" variant="medium">
+                              {item.court}
+                            </Text>
+                            <Text color="blue400" variant="medium">
                               {item.presidentJudge?.name}{' '}
                               {item.presidentJudge?.title}
                             </Text>
                           </GridColumn>
                           <GridColumn>
-                            <Text>{item.title}</Text>
+                            <Text variant="small">{item.title}</Text>
                           </GridColumn>
                         </GridRow>
                       </Stack>

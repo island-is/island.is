@@ -1,10 +1,24 @@
 import { Injectable } from '@nestjs/common'
+import { NodeHtmlMarkdown } from 'node-html-markdown'
+import sanitizeHtml from 'sanitize-html'
+import { richTextFromMarkdown } from '@contentful/rich-text-from-markdown'
 
 import {
   GetVerdictsOperationRequest,
   VerdictApi,
   type DetailedVerdictData,
 } from '../../gen/fetch/'
+
+const convertHtmlToContentfulRichText = async (html: string, id?: string) => {
+  const sanitizedHtml = sanitizeHtml(html)
+  const markdown = NodeHtmlMarkdown.translate(sanitizedHtml)
+  const richText = await richTextFromMarkdown(markdown)
+  return {
+    __typename: 'Html',
+    document: richText,
+    id,
+  }
+}
 
 @Injectable()
 export class VerdictsClientService {
@@ -68,13 +82,15 @@ export class VerdictsClientService {
       id,
     })
 
-    if (!response.item?.title) {
+    if (!response.item?.verdictHtml) {
       return null
     }
 
     return {
       item: {
-        title: response.item.title,
+        content: await convertHtmlToContentfulRichText(
+          response.item.verdictHtml,
+        ),
       },
     }
   }

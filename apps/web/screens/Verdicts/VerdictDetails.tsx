@@ -1,4 +1,5 @@
-import { Box } from '@island.is/island-ui/core'
+import { SliceType } from '@island.is/island-ui/contentful'
+import { Box, Breadcrumbs, GridContainer } from '@island.is/island-ui/core'
 import type {
   GetVerdictByIdQuery,
   GetVerdictByIdQueryVariables,
@@ -6,6 +7,7 @@ import type {
 import { withMainLayout } from '@island.is/web/layouts/main'
 import type { Screen } from '@island.is/web/types'
 import { CustomNextError } from '@island.is/web/units/errors'
+import { webRichText } from '@island.is/web/utils/richText'
 
 import { GET_VERDICT_BY_ID_QUERY } from '../queries/Verdicts'
 
@@ -14,7 +16,19 @@ interface VerdictDetailsProps {
 }
 
 const VerdictDetails: Screen<VerdictDetailsProps> = ({ item }) => {
-  return <Box paddingBottom={5}>Hello world {JSON.stringify(item)}</Box>
+  return (
+    <Box paddingBottom={5}>
+      <GridContainer>
+        <Breadcrumbs
+          items={[
+            { title: 'Ísland.is', href: '/' },
+            { title: 'Dómar', href: '/domar' },
+          ]}
+        />
+        {webRichText([item.content] as SliceType[])}
+      </GridContainer>
+    </Box>
+  )
 }
 
 VerdictDetails.getProps = async ({ apolloClient, query }) => {
