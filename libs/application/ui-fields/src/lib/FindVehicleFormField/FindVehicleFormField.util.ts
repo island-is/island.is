@@ -44,10 +44,32 @@ export const mustInspectBeforeStreetRegistration = (
   externalData: ExternalData,
   regNumber: string,
 ) => {
-  const inspectBeforeTypes = getValueViaPath(
+  const inspectBeforeTypes = getValueViaPath<string[]>(
     externalData,
     'typesMustInspectBeforeRegistration.data',
     [],
-  ) as string[]
+  )
   return inspectBeforeTypes?.includes(regNumber.substring(0, 2)) || false
+}
+
+export const isInvalidRegistrationType = (
+  externalData: ExternalData,
+  regNumber: string,
+) => {
+  const validTypes = getValueViaPath<string[]>(
+    externalData,
+    'availableRegistrationTypes.data',
+    [],
+  )
+  const inspectBeforeTypes = getValueViaPath<string[]>(
+    externalData,
+    'typesMustInspectBeforeRegistration.data',
+    [],
+  )
+
+  const regType = regNumber.substring(0, 2)
+
+  return (
+    !validTypes?.includes(regType) && !inspectBeforeTypes?.includes(regType)
+  )
 }
