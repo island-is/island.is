@@ -22,12 +22,12 @@ import {
   formatPhoneNumber,
 } from '@island.is/judicial-system/formatters'
 import {
-  Lawyer,
   isAdminUser,
   isCourtOfAppealsUser,
   isDefenceUser,
   isPrisonSystemUser,
   isProsecutionUser,
+  Lawyer,
 } from '@island.is/judicial-system/types'
 import { api } from '@island.is/judicial-system-web/src/services'
 
@@ -86,7 +86,7 @@ const getLawyerByName = (
   const store = transaction.objectStore(Database.lawyerTable)
 
   return new Promise((resolve, reject) => {
-    const request = store.get('0103893139')
+    const request = store.get(nationalId)
     request.onsuccess = () => resolve(request.result)
     request.onerror = () => reject(request.error)
   })
@@ -119,7 +119,7 @@ const HeaderContainer = () => {
     }
 
     fetchLawyer()
-  }, [db])
+  }, [db, user?.nationalId])
 
   useEffect(() => {
     setIsRobot(countryCode !== 'IS')

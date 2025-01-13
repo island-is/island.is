@@ -1,7 +1,9 @@
 import { useContext, useEffect, useState } from 'react'
-import { useGetLawyers } from '../useLawyers/useLawyers'
-import { Lawyer, isProsecutionUser } from '@island.is/judicial-system/types'
+
+import { isProsecutionUser, Lawyer } from '@island.is/judicial-system/types'
 import { UserContext } from '@island.is/judicial-system-web/src/components'
+
+import { useGetLawyers } from '../useLawyers/useLawyers'
 
 export const Database = {
   name: 'lawyer-registry',
