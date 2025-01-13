@@ -464,6 +464,92 @@ export const newPrimarySchoolMessages: MessageDir = {
         "Icelandic is not spoken in the child's immediate environment",
     },
 
+    // Allergies and intolerances
+    allergiesAndIntolerancesSubSectionTitle: {
+      id: 'nps.application:different.needs.allergies.and.intolerances.sub.section.title',
+      defaultMessage: 'Ofnæmi og óþol',
+      description: 'Allergies and intolerances',
+    },
+    allergiesAndIntolerancesDescription: {
+      id: 'nps.application:different.needs.allergies.and.intolerances.description',
+      defaultMessage:
+        'Er barnið með ofnæmi eða óþol sem starfsfólk skóla þarf að vera meðvitað um?',
+      description:
+        'Does the child have any allergies or intolerances that school staff need to be aware of?',
+    },
+    hasFoodAllergiesOrIntolerances: {
+      id: 'nps.application:different.needs.allergies.and.intolerances.has.food.allergies.or.intolerances',
+      defaultMessage: 'Barnið er með fæðuofnæmi eða -óþol',
+      description: 'The child has food allergies or intolerances',
+    },
+    typeOfFoodAllergiesOrIntolerances: {
+      id: 'nps.application:different.needs.allergies.and.intolerances.type.of.food.allergies.or.intolerances',
+      defaultMessage: 'Tegund fæðuofnæmis eða -óþols',
+      description: 'Type of food allergies or intolerances',
+    },
+    typeOfFoodAllergiesOrIntolerancesPlaceholder: {
+      id: 'nps.application:different.needs.allergies.and.intolerances.type.of.food.allergies.or.intolerances.placeholder',
+      defaultMessage: 'Veldu tegund fæðuofnæmis eða -óþols',
+      description: 'Select type of food allergies or intolerances',
+    },
+    hasOtherAllergies: {
+      id: 'nps.application:different.needs.allergies.and.intolerances.has.other.allergies',
+      defaultMessage: 'Barnið er með annað ofnæmi',
+      description: 'The child has other allergies',
+    },
+    typeOfOtherAllergies: {
+      id: 'nps.application:different.needs.allergies.and.intolerances.type.of.other.allergies',
+      defaultMessage: 'Tegund ofnæmis',
+      description: 'Type of allergies',
+    },
+    typeOfOtherAllergiesPlaceholder: {
+      id: 'nps.application:different.needs.allergies.and.intolerances.type.of.other.allergies.placeholder',
+      defaultMessage: 'Veldu tegund ofnæmis',
+      description: 'Select type of allergies',
+    },
+    allergiesCertificateAlertMessage: {
+      id: 'nps.application:different.needs.allergies.and.intolerances.allergies.certificate.alert.message',
+      defaultMessage:
+        'Athugið að skóli getur óskað eftir vottorði til staðfestingar á ofnæmi.',
+      description:
+        'Please note that the school may request a certificate to confirm allergies.',
+    },
+    usesEpiPen: {
+      id: 'nps.application:different.needs.allergies.and.intolerances.uses.epi.pen',
+      defaultMessage:
+        'Þarf barnið að hafa tiltækan adrenalínpenna (epi-pen) vegna ofnæmis?',
+      description:
+        'Does the child need to have an epi-pen available for allergies?',
+    },
+    hasConfirmedMedicalDiagnoses: {
+      id: 'nps.application:different.needs.allergies.and.intolerances.has.confirmed.medical.diagnoses',
+      defaultMessage:
+        'Hefur barnið staðfestar læknisfræðilegar greiningar sem mikilvægt er að skólinn kunni að bregðast rétt við?',
+      description:
+        'Does the child have confirmed medical diagnoses that are important for the school to be able to respond appropriately?',
+    },
+    hasConfirmedMedicalDiagnosesDescription: {
+      id: 'nps.application:different.needs.allergies.and.intolerances.has.confirmed.medical.diagnoses.description',
+      defaultMessage:
+        'Hér er átt við greiningar eins og flogaveiki, sykursýki eða blóðstorknunarsjúkdóm',
+      description:
+        'This refers to diagnoses such as epilepsy, diabetes, or blood clotting disorders.',
+    },
+    requestMedicationAssistance: {
+      id: 'nps.application:different.needs.allergies.and.intolerances.request.medication.assistance',
+      defaultMessage:
+        'Er óskað eftir aðstoð við barn vegna lyfjagjafar á skólatíma?',
+      description:
+        'Is assistance requested for a child due to medication administration during school hours?',
+    },
+    schoolNurseAlertMessage: {
+      id: 'nps.application:different.needs.allergies.and.intolerances.school.nurse.alert.message',
+      defaultMessage:
+        'Skólahjúkrunarfræðingur mun setja sig í samband við þig til að tryggja rétta skráningu upplýsinga og miðlun þeirra til starfsfólks skóla.',
+      description:
+        'The school nurse will contact you to ensure proper recording of information and its dissemination to school staff.',
+    },
+
     // Support
     supportSubSectionTitle: {
       id: 'nps.application:different.needs.support.sub.section.title',
@@ -572,6 +658,21 @@ export const newPrimarySchoolMessages: MessageDir = {
       defaultMessage: '{grade}. bekkur',
       description: '{grade} grade',
     },
+    foodAllergiesOrIntolerances: {
+      id: 'nps.application:overview.food.allergies.or.intolerances',
+      defaultMessage: 'Fæðuofnæmi eða -óþol',
+      description: 'Food allergies or intolerances',
+    },
+    otherAllergies: {
+      id: 'nps.application:overview.other.allergies',
+      defaultMessage: 'Annað ofnæmi',
+      description: 'Other allergies',
+    },
+    usesEpiPen: {
+      id: 'nps.application:overview.other.allergies',
+      defaultMessage: 'Notar adrenalínpenna (epi-pen) vegna ofnæmis',
+      description: 'Uses an epi-pen for allergies',
+    },
   }),
 
   conclusion: defineMessages({
@@ -654,5 +755,15 @@ export const errorMessages = defineMessages({
       'Eingöngu sá sem er með lögheimilisforsjá hefur heimild til að sækja um fyrir barn. \n\nÞjóðskrá skráir hver eða hverjir teljast foreldrar barns og hver fari með forsjárskyldur þess. Upplýsingar um skráningu forsjár og lögheimilisforeldris má nálgast hér: [Foreldrar og forsjá | Þjóðskrá (skra.is)](https://www.skra.is/folk/skraning-barns/foreldrar-og-forsja/)\n\nUpplýsingum um tengsl á milli barna og foreldra auk forsjáraðila eru einnig aðgengilegar á [Mínum síðum á Ísland.is](https://island.is/minarsidur)',
     description:
       'Only the person who has legal custody has the authority to apply for a child.\n\nThe National Registry records who or which individuals are considered to be the parents of a child and who has custody responsibilities. Information on registering custody and legal guardianship can be found here: [Parents and Custody | National Registry (skra.is)](https://www.skra.is/folk/skraning-barns/foreldrar-og-forsja/)\n\nInformation about the relationship between children and parents, as well as custody authorities, is also available on [My Pages on Ísland.is](https://island.is/minarsidur)',
+  },
+  foodAllergiesOrIntolerancesRequired: {
+    id: 'nps.application:error.food.allergies.or.intolerances.required',
+    defaultMessage: 'Það þarf að velja a.m.k eitt fæðuofnæmi eða -óþol',
+    description: 'At least one food allergy or intolerance must be selected',
+  },
+  otherAllergiesRequired: {
+    id: 'nps.application:error.other.allergies.required',
+    defaultMessage: 'Það þarf að velja a.m.k eitt ofnæmi',
+    description: 'At least one allergy must be selected',
   },
 })
