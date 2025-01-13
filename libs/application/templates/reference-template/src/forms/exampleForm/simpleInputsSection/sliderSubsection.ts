@@ -15,7 +15,7 @@ export const sliderSubsection = buildSubSection({
       id: 'basicSlider1',
       title: '',
       children: [
-        buildTitleField({title: 'Minimal slider field'}),
+        buildTitleField({ title: 'Minimal slider field' }),
         buildSliderField({
           id: 'basicSlider',
           title: 'Basic slider',
@@ -24,7 +24,9 @@ export const sliderSubsection = buildSubSection({
         }),
         buildDividerField({ useDividerLine: false }),
 
-        buildTitleField({title: 'Minimal slider field with default background'}),
+        buildTitleField({
+          title: 'Minimal slider field with default background',
+        }),
         buildSliderField({
           id: 'basicSliderWithDefaultBackground',
           title: 'Basic slider',
@@ -34,7 +36,9 @@ export const sliderSubsection = buildSubSection({
         }),
         buildDividerField({ useDividerLine: false }),
 
-        buildTitleField({title: 'Minimal slider field with custom background'}),
+        buildTitleField({
+          title: 'Minimal slider field with custom background',
+        }),
         buildSliderField({
           id: 'basicSliderWithCustomBackground',
           title: 'Basic slider',
@@ -48,7 +52,7 @@ export const sliderSubsection = buildSubSection({
         }),
         buildDividerField({ useDividerLine: false }),
 
-        buildTitleField({title: 'Minimal slider field with tooltip'}),
+        buildTitleField({ title: 'Minimal slider field with tooltip' }),
         buildSliderField({
           id: 'basicSliderTooltip',
           title: 'Basic slider',
@@ -62,7 +66,7 @@ export const sliderSubsection = buildSubSection({
         }),
         buildDividerField({ useDividerLine: false }),
 
-        buildTitleField({title: 'Thick slider field with tooltip'}),
+        buildTitleField({ title: 'Thick slider field with tooltip' }),
         buildSliderField({
           id: 'thickSliderTooltip',
           title: 'Basic slider',
@@ -77,7 +81,9 @@ export const sliderSubsection = buildSubSection({
         }),
         buildDividerField({ useDividerLine: false }),
 
-        buildTitleField({title: 'Slider field with different colors and label'}),
+        buildTitleField({
+          title: 'Slider field with different colors and label',
+        }),
         buildSliderField({
           id: 'basicSliderColorLabels',
           title: 'Basic slider',
@@ -154,8 +160,11 @@ export const sliderSubsection = buildSubSection({
           },
         }),
         buildDividerField({ useDividerLine: false }),
-        
-        buildTitleField({title: 'Slider field with different colors, all labels and different default value'}),
+
+        buildTitleField({
+          title:
+            'Slider field with different colors, all labels and different default value',
+        }),
         buildSliderField({
           id: 'basicSliderAllLabelsDefaultValue',
           title: 'Basic slider',
@@ -189,7 +198,7 @@ export const sliderSubsection = buildSubSection({
               background: theme.color.blue200,
             }
           },
-          saveAsString: true
+          saveAsString: true,
         }),
         buildDividerField({ useDividerLine: false }),
       ],
