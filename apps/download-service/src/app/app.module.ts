@@ -51,7 +51,6 @@ import {
   WorkMachinesClientConfig,
   WorkMachinesClientModule,
 } from '@island.is/clients/work-machines'
-import { HealthPaymentsOverviewController } from './modules/health/payment-overview-documents.controller'
 import {
   RightsPortalClientConfig,
   RightsPortalClientModule,
@@ -70,7 +69,6 @@ import {
     RegulationDocumentsController,
     WorkMachinesController,
     OccupationalLicensesController,
-    HealthPaymentsOverviewController,
   ],
   imports: [
     AuditModule.forRoot(environment.audit),

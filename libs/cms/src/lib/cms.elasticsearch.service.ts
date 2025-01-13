@@ -39,7 +39,10 @@ import {
   getElasticsearchIndex,
 } from '@island.is/content-search-index-manager'
 import { CustomPage } from './models/customPage.model'
-import { GetGenericListItemsInput } from './dto/getGenericListItems.input'
+import {
+  GetGenericListItemsInput,
+  GetGenericListItemsInputOrderBy,
+} from './dto/getGenericListItems.input'
 import { GenericListItemResponse } from './models/genericListItemResponse.model'
 import { GetCustomSubpageInput } from './dto/getCustomSubpage.input'
 import { GetGenericListItemBySlugInput } from './dto/getGenericListItemBySlug.input'
@@ -47,11 +50,8 @@ import { GenericListItem } from './models/genericListItem.model'
 import { GetTeamMembersInput } from './dto/getTeamMembers.input'
 import { TeamMemberResponse } from './models/teamMemberResponse.model'
 import { GetGrantsInput } from './dto/getGrants.input'
-import { Grant, GrantStatus } from './models/grant.model'
+import { Grant } from './models/grant.model'
 import { GrantList } from './models/grantList.model'
-import { logger } from '@island.is/logging'
-import { IGrantFields } from './generated/contentfulTypes'
-import { isDefined } from '@island.is/shared/utils'
 
 @Injectable()
 export class CmsElasticsearchService {
@@ -473,6 +473,7 @@ export class CmsElasticsearchService {
     tags?: string[]
     tagGroups?: Record<string, string[]>
     type: ListItemType
+    orderBy?: GetGenericListItemsInputOrderBy
   }): Promise<
     ListItemType extends 'webGenericListItem'
       ? Omit<GenericListItemResponse, 'input'>
@@ -528,13 +529,46 @@ export class CmsElasticsearchService {
 
     const size = input.size ?? 10
 
-    const sort: ('_score' | sortRule)[] = [
-      {
-        [SortField.RELEASE_DATE]: {
-          order: SortDirection.DESC,
+    let sort: sortRule[] = []
+
+    if (
+      !input.orderBy ||
+      input.orderBy === GetGenericListItemsInputOrderBy.DATE
+    ) {
+      sort = [
+        {
+          [SortField.RELEASE_DATE]: {
+            order: SortDirection.DESC,
+          },
         },
-      },
-    ]
+        { 'title.sort': { order: SortDirection.ASC } },
+        { dateCreated: { order: SortDirection.DESC } },
+      ]
+    }
+
+    if (input.orderBy === GetGenericListItemsInputOrderBy.TITLE) {
+      sort = [
+        { 'title.sort': { order: SortDirection.ASC } },
+        {
+          [SortField.RELEASE_DATE]: {
+            order: SortDirection.DESC,
+          },
+        },
+        { dateCreated: { order: SortDirection.DESC } },
+      ]
+    }
+
+    if (input.orderBy === GetGenericListItemsInputOrderBy.PUBLISH_DATE) {
+      sort = [
+        { dateCreated: { order: SortDirection.DESC } },
+        { 'title.sort': { order: SortDirection.ASC } },
+        {
+          [SortField.RELEASE_DATE]: {
+            order: SortDirection.DESC,
+          },
+        },
+      ]
+    }
 
     if (input.tags && input.tags.length > 0 && input.tagGroups) {
       must = must.concat(
@@ -614,10 +648,10 @@ export class CmsElasticsearchService {
       search,
       page = 1,
       size = 8,
-      statuses,
       categories,
       types,
       organizations,
+      funds,
     }: GetGrantsInput,
   ): Promise<GrantList> {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -709,7 +743,7 @@ export class CmsElasticsearchService {
                 },
                 {
                   term: {
-                    'tags.type': 'fund',
+                    'tags.type': 'organization',
                   },
                 },
               ],
@@ -719,7 +753,7 @@ export class CmsElasticsearchService {
       })
     }
 
-    if (statuses) {
+    if (funds) {
       must.push({
         nested: {
           path: 'tags',
@@ -728,12 +762,12 @@ export class CmsElasticsearchService {
               must: [
                 {
                   terms: {
-                    'tags.key': statuses,
+                    'tags.key': funds,
                   },
                 },
                 {
                   term: {
-                    'tags.type': 'status',
+                    'tags.type': 'fund',
                   },
                 },
               ],
@@ -754,7 +788,6 @@ export class CmsElasticsearchService {
         size,
         from: (page - 1) * size,
       })
-
     return {
       total: grantListResponse.body.hits.total.value,
       items: grantListResponse.body.hits.hits.map<Grant>((response) =>

@@ -618,6 +618,13 @@ export const OrganizationHeader: React.FC<
           logoImageClassName={styles.logoLarge}
         />
       )
+    case 'rannis':
+      return (
+        <DefaultHeader
+          {...defaultProps}
+          background="linear-gradient(271deg, #C00B02 5.72%, #DB0B00 91.04%)"
+        />
+      )
     default:
       return <DefaultHeader {...defaultProps} />
   }
@@ -672,10 +679,10 @@ export const OrganizationExternalLinks: React.FC<
                 pureChildren={true}
               >
                 <Button
-                  as="a"
                   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                   // @ts-ignore make web strict
                   variant={variant}
+                  unfocusable
                   icon={isSjukratryggingar ? 'lockClosed' : 'open'}
                   iconType="outline"
                   size="medium"
@@ -1168,6 +1175,9 @@ export const OrganizationWrapper: React.FC<
 
   const n = useNamespace(namespace)
 
+  const indexableBySearchEngine =
+    organizationPage.canBeFoundInSearchResults ?? true
+
   return (
     <>
       <HeadWithSocialSharing
@@ -1177,7 +1187,11 @@ export const OrganizationWrapper: React.FC<
         imageContentType={pageFeaturedImage?.contentType}
         imageWidth={pageFeaturedImage?.width?.toString()}
         imageHeight={pageFeaturedImage?.height?.toString()}
-      />
+      >
+        {!indexableBySearchEngine && (
+          <meta name="robots" content="noindex, nofollow" />
+        )}
+      </HeadWithSocialSharing>
       <OrganizationHeader
         organizationPage={organizationPage}
         isSubpage={isSubpage}

@@ -22,6 +22,7 @@ export const DisplayFormField = ({ field, application }: Props) => {
     suffix,
     rightAlign = false,
     halfWidthOwnline = false,
+    clearOnChange,
   } = field
   const { watch, setValue } = useFormContext()
   const allValues = watch()
@@ -42,6 +43,8 @@ export const DisplayFormField = ({ field, application }: Props) => {
       display="flex"
       flexDirection="column"
       alignItems={halfWidthOwnline ? 'flexEnd' : undefined}
+      marginTop={field.marginTop}
+      marginBottom={field.marginBottom}
     >
       <Box
         width={halfWidthOwnline ? 'half' : 'full'}
@@ -88,6 +91,7 @@ export const DisplayFormField = ({ field, application }: Props) => {
               ? undefined
               : variant
           }
+          clearOnChange={clearOnChange}
         />
       </Box>
     </Box>

@@ -25,7 +25,10 @@ import {
   SortButton,
   TableSkeleton,
 } from '@island.is/judicial-system-web/src/components/Table'
-import { CaseListEntry } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  CaseListEntry,
+  Defendant,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   useCaseList,
   useSort,
@@ -56,6 +59,9 @@ export const DefenderCasesTable: FC<Props> = ({
       entry.defendants.length > 0
     ) {
       return entry.defendants[0].name ?? ''
+    }
+    if (column === 'courtDate') {
+      return entry.courtDate
     }
     return entry.created
   }
@@ -129,9 +135,13 @@ export const DefenderCasesTable: FC<Props> = ({
                 </th>
               ) : (
                 <th>
-                  <Text fontWeight="regular">
-                    {formatMessage(tables.hearingArrangementDate)}
-                  </Text>
+                  <SortButton
+                    title={formatMessage(tables.hearingArrangementDate)}
+                    onClick={() => requestSort('courtDate')}
+                    sortAsc={getClassNamesFor('courtDate') === 'ascending'}
+                    sortDes={getClassNamesFor('courtDate') === 'descending'}
+                    isActive={isActiveColumn('courtDate')}
+                  />
                 </th>
               )}
               <th></th>
@@ -176,6 +186,7 @@ export const DefenderCasesTable: FC<Props> = ({
                       courtDate={column.courtDate}
                       indictmentDecision={column.indictmentDecision}
                       indictmentRulingDecision={column.indictmentRulingDecision}
+                      defendants={column.defendants}
                     />
                   </Box>
                   {column.appealState && (

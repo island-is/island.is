@@ -280,6 +280,7 @@ export class NationalRegistryService extends BaseTemplateApiService {
           nationalId: parentOneDetails.nationalId,
           givenName: parentOneDetails.givenName,
           familyName: parentOneDetails.familyName,
+          legalDomicile: parentOneDetails.legalDomicile,
         }
       : null
     const parentTwo: NationalRegistryParent | null = parentTwoDetails
@@ -287,6 +288,7 @@ export class NationalRegistryService extends BaseTemplateApiService {
           nationalId: parentTwoDetails.nationalId,
           givenName: parentTwoDetails.givenName,
           familyName: parentTwoDetails.familyName,
+          legalDomicile: parentTwoDetails.legalDomicile,
         }
       : null
 

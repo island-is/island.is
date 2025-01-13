@@ -40,6 +40,7 @@ export const AsyncSelectFormField: FC<React.PropsWithChildren<Props>> = ({
     isSearchable,
     isMulti,
     required = false,
+    clearOnChange,
   } = field
   const { formatMessage, lang: locale } = useLocale()
   const apolloClient = useApolloClient()
@@ -61,7 +62,7 @@ export const AsyncSelectFormField: FC<React.PropsWithChildren<Props>> = ({
   }, [loadOptions])
 
   return (
-    <div>
+    <Box marginTop={field.marginTop} marginBottom={field.marginBottom}>
       {description && (
         <FieldDescription
           description={formatTextWithLocale(
@@ -111,8 +112,9 @@ export const AsyncSelectFormField: FC<React.PropsWithChildren<Props>> = ({
           backgroundColor={backgroundColor}
           isSearchable={isSearchable}
           isMulti={isMulti}
+          clearOnChange={clearOnChange}
         />
       </Box>
-    </div>
+    </Box>
   )
 }
