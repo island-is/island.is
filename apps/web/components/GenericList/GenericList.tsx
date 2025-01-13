@@ -26,12 +26,14 @@ import {
 } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import { Locale } from '@island.is/shared/types'
+import { NewsCard } from '@island.is/web/components'
 import {
   GenericListItem,
   GenericListItemResponse,
   GenericTag,
   GetGenericListItemsInputOrderBy,
   GetGenericListItemsQueryVariables,
+  Image as ImageSchema,
   Query,
 } from '@island.is/web/graphql/schema'
 import { useWindowSize } from '@island.is/web/hooks/useViewport'
@@ -89,7 +91,7 @@ export const NonClickableItem = ({ item }: ItemProps) => {
           <Stack space={0}>
             {item.date && (
               <Text variant="eyebrow" color="purple400">
-                {format(new Date(item.date), 'dd.MM.yyyy')}
+                {format(new Date(item.date), 'do MMMM yyyy')}
               </Text>
             )}
             <Text variant="h3" as="span" color="dark400">
@@ -144,6 +146,27 @@ export const ClickableItem = ({ item, baseUrl }: ClickableItemProps) => {
 
   const filterTags = item.filterTags ?? []
 
+  if (item.image) {
+    return (
+      <NewsCard
+        title={item.title}
+        introduction={
+          item.cardIntro?.length > 0 && (
+            <Box>{webRichText(item.cardIntro ?? [])}</Box>
+          )
+        }
+        href={href ?? ''}
+        image={item.image as ImageSchema}
+        readMoreText=""
+        titleAs="h3"
+        titleVariant="h3"
+        titleTextColor="blue400"
+        date={item.date ?? ''}
+        dateTextColor="purple400"
+      />
+    )
+  }
+
   return (
     <FocusableBox
       padding={[2, 2, 3]}
@@ -161,7 +184,7 @@ export const ClickableItem = ({ item, baseUrl }: ClickableItemProps) => {
                 <Box className={styles.clickableItemTopRowContainer}>
                   <Inline space={2} justifyContent="spaceBetween">
                     <Text variant="eyebrow" color="purple400">
-                      {format(new Date(item.date), 'dd.MM.yyyy')}
+                      {format(new Date(item.date), 'do MMMM yyyy')}
                     </Text>
                     {icon && (
                       <Icon
