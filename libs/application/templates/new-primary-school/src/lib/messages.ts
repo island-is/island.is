@@ -669,7 +669,7 @@ export const newPrimarySchoolMessages: MessageDir = {
       description: 'Other allergies',
     },
     usesEpiPen: {
-      id: 'nps.application:overview.other.allergies',
+      id: 'nps.application:overview.uses.epi.pen',
       defaultMessage: 'Notar adrenalínpenna (epi-pen) vegna ofnæmis',
       description: 'Uses an epi-pen for allergies',
     },

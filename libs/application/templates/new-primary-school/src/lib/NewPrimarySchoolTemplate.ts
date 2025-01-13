@@ -230,18 +230,18 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
         const { hasFoodAllergiesOrIntolerances, hasOtherAllergies } =
           getApplicationAnswers(application.answers)
 
-        if (!hasFoodAllergiesOrIntolerances.includes(YES)) {
+        if (!hasFoodAllergiesOrIntolerances?.includes(YES)) {
           unset(
             application.answers,
             'allergiesAndIntolerances.foodAllergiesOrIntolerances',
           )
         }
-        if (!hasOtherAllergies.includes(YES)) {
+        if (!hasOtherAllergies?.includes(YES)) {
           unset(application.answers, 'allergiesAndIntolerances.otherAllergies')
         }
         if (
-          !hasFoodAllergiesOrIntolerances.includes(YES) &&
-          !hasOtherAllergies.includes(YES)
+          !hasFoodAllergiesOrIntolerances?.includes(YES) &&
+          !hasOtherAllergies?.includes(YES)
         ) {
           unset(application.answers, 'allergiesAndIntolerances.usesEpiPen')
         }
