@@ -44,6 +44,10 @@ import {
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { ReviewDecision } from '../../PublicProsecutor/components/ReviewDecision/ReviewDecision'
+import {
+  CONFIRM_PROSECUTOR_DECISION,
+  ConfirmationModal,
+} from '../../PublicProsecutor/components/utils'
 import { strings } from './IndictmentOverview.strings'
 
 interface ServiceAnnouncementProps {
@@ -105,7 +109,9 @@ const IndictmentOverview: FC = () => {
   const latestDate = workingCase.courtDate ?? workingCase.arraignmentDate
   const caseIsClosed = isCompletedCase(workingCase.state)
 
-  const [modalVisible, setModalVisible] = useState<boolean>(false)
+  const [modalVisible, setModalVisible] = useState<
+    ConfirmationModal | undefined
+  >()
   const [isReviewDecisionSelected, setIsReviewDecisionSelected] =
     useState(false)
 
@@ -303,7 +309,7 @@ const IndictmentOverview: FC = () => {
           previousUrl={`${constants.CASES_ROUTE}`}
           hideNextButton={!shouldDisplayReviewDecision}
           nextButtonText={formatMessage(strings.completeReview)}
-          onNextButtonClick={() => setModalVisible(true)}
+          onNextButtonClick={() => setModalVisible(CONFIRM_PROSECUTOR_DECISION)}
           nextIsDisabled={!isReviewDecisionSelected}
         />
       </FormContentContainer>

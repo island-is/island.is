@@ -41,6 +41,9 @@ export const CheckboxFormField = ({
     required,
     onSelect,
     spacing,
+    marginTop,
+    marginBottom,
+    clearOnChange,
   } = field
   const { formatMessage, lang: locale } = useLocale()
 
@@ -50,7 +53,7 @@ export const CheckboxFormField = ({
   )
 
   return (
-    <div>
+    <Box marginTop={marginTop} marginBottom={marginBottom}>
       {showFieldName && (
         <Text variant="h4">
           {formatTextWithLocale(
@@ -105,8 +108,9 @@ export const CheckboxFormField = ({
               }),
             }),
           )}
+          clearOnChange={clearOnChange}
         />
       </Box>
-    </div>
+    </Box>
   )
 }

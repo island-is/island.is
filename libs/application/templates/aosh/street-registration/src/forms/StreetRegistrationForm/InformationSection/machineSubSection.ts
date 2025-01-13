@@ -4,8 +4,8 @@ import {
   buildTextField,
   buildDateField,
   buildSubSection,
-  buildDividerField,
   buildPhoneField,
+  buildTitleField,
 } from '@island.is/application/core'
 import { information } from '../../../lib/messages'
 import { getSelectedMachine } from '../../../utils/getSelectedMachine'
@@ -117,8 +117,9 @@ export const machineSubSection = buildSubSection({
           },
           defaultValue: new Date().toISOString().substring(0, 10),
         }),
-        buildDividerField({
+        buildTitleField({
           title: information.general.dividerTitle,
+          color: 'blue400',
         }),
         buildTextField({
           id: 'contact.name',

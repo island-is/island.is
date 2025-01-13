@@ -30,6 +30,7 @@ export const VehicleRadioFormField: FC<React.PropsWithChildren<Props>> = ({
   application,
   field,
   errors,
+  clearOnChange,
 }) => {
   const { formatMessage, formatDateFns } = useLocale()
   const { setValue } = useFormContext()
@@ -262,13 +263,14 @@ export const VehicleRadioFormField: FC<React.PropsWithChildren<Props>> = ({
   }
 
   return (
-    <div>
+    <Box marginTop={field.marginTop} marginBottom={field.marginBottom}>
       <RadioController
         id={radioControllerId}
         largeButtons
         backgroundColor="blue"
         onSelect={onRadioControllerSelect}
         options={options}
+        clearOnChange={clearOnChange}
       />
 
       {!selectedValue?.length && !!errors?.[field.id] && (
@@ -279,6 +281,6 @@ export const VehicleRadioFormField: FC<React.PropsWithChildren<Props>> = ({
           }
         />
       )}
-    </div>
+    </Box>
   )
 }
