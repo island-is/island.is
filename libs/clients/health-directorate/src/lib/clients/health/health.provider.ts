@@ -14,7 +14,7 @@ import {
 } from './gen/fetch'
 import { HealthDirectorateHealthClientConfig } from './health.config'
 
-const sharedApiConfig = {
+export const sharedApiConfig = {
   provide: 'HealthApiProviderConfiguration',
   scope: LazyDuringDevScope,
   useFactory: (

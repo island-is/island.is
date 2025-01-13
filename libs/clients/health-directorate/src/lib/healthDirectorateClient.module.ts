@@ -9,7 +9,10 @@ import { HealthDirectorateClientService } from './clients/occupational-license/h
 import { HealthDirectorateVaccinationsService } from './clients/vaccinations/vaccinations.service'
 import { HealthDirectorateOrganDonationService } from './clients/organ-donation/organDonation.service'
 import { HealthDirectorateHealthService } from './clients/health'
-import { exportedHealthApis } from './clients/health/health.provider'
+import {
+  exportedHealthApis,
+  sharedApiConfig,
+} from './clients/health/health.provider'
 
 @Module({
   providers: [
@@ -22,11 +25,13 @@ import { exportedHealthApis } from './clients/health/health.provider'
     VaccinationsApiProvider,
     ...exportedHealthApis,
     ...exportedApis,
+    sharedApiConfig,
   ],
   exports: [
     HealthDirectorateClientService,
     HealthDirectorateVaccinationsService,
     HealthDirectorateOrganDonationService,
+    HealthDirectorateHealthService,
   ],
 })
 export class HealthDirectorateClientModule {}

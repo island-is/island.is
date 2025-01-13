@@ -7,11 +7,11 @@ import {
   organLocale,
 } from '@island.is/clients/health-directorate'
 import type { Locale } from '@island.is/shared/types'
-import { Injectable } from '@nestjs/common'
+import { Inject, Injectable } from '@nestjs/common'
 import { Donor, DonorInput, Organ } from './models/organ-donation.model'
 
 import { HealthDirectorateHealthService } from '@island.is/clients/health-directorate'
-import { Logger } from '@island.is/logging'
+import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { Prescription, Prescriptions } from './models/prescriptions'
 import { Referral, Referrals } from './models/referrals.model'
 import { Vaccination, Vaccinations } from './models/vaccinations.model'
@@ -28,7 +28,7 @@ export class HealthDirectorateService {
     private readonly vaccinationApi: HealthDirectorateVaccinationsService,
     private readonly organDonationApi: HealthDirectorateOrganDonationService,
     private readonly healthApi: HealthDirectorateHealthService,
-    private readonly logger: Logger,
+    @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
   /* Organ Donation */

@@ -5,7 +5,7 @@ import {
   PrescribedItemRenewalStatusEnum,
 } from './enums'
 
-@ObjectType('HealthDirectorateWaitlist')
+@ObjectType('HealthDirectoratePrescription')
 export class Prescription {
   @Field()
   prescribedItemId!: string
