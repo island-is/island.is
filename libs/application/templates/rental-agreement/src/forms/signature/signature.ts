@@ -25,8 +25,6 @@ const continueToSignatureStatementIsTrue = (answers: FormValue) => {
   )
 }
 
-console.log(!!continueToSignatureStatementIsTrue)
-
 export const Signature = buildSection({
   id: 'signature',
   title: signature.sectionName,
@@ -100,7 +98,6 @@ export const Signature = buildSection({
             ) as string[]
             const isSignatureStatementChecked =
               continueToSignatureStatementIsTrue(application.answers)
-            console.log(isSignatureStatementChecked)
             return [
               {
                 backgroundColor: 'blue',

@@ -71,8 +71,6 @@ export const PropertyInfoSummary = ({
 
   const uploadFiles = answers.condition.resultsFiles as UploadFile[]
 
-  console.log('UploadFiles: ', uploadFiles)
-
   return (
     <SummaryCard cardLabel={formatMessage(summary.propertyInfoHeader)}>
       <SummaryCardRow editAction={goToScreen} route={categoryRoute}>
@@ -193,8 +191,6 @@ export const PropertyInfoSummary = ({
                       iconType="outline"
                       truncate={true}
                       onClick={() => {
-                        console.log('FileName:', file.name)
-                        console.log('FileKey:', file.key)
                         // TODO: Implement download file url
                         window.open(file.key)
                       }}
