@@ -87,9 +87,6 @@ export const NationalIdWithName: FC<
   const [personName, setPersonName] = useState('')
   const [companyName, setCompanyName] = useState('')
 
-  console.log('searchPersons', searchPersons)
-  console.log('searchCompanies', searchCompanies)
-
   const getFieldErrorString = (
     error: unknown,
     id: string,
