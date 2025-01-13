@@ -200,11 +200,11 @@
       "@island.is/api/domains/rights-portal": [
         "libs/api/domains/rights-portal/src/index.ts"
       ],
-      "@island.is/api/domains/seminars-ver": [
-        "libs/api/domains/seminars-ver/src/index.ts"
-      ],
       "@island.is/api/domains/secondary-school": [
         "libs/api/domains/secondary-school/src/index.ts"
+      ],
+      "@island.is/api/domains/seminars-ver": [
+        "libs/api/domains/seminars-ver/src/index.ts"
       ],
       "@island.is/api/domains/sessions": [
         "libs/api/domains/sessions/src/index.ts"
@@ -764,11 +764,11 @@
       "@island.is/clients/rsk/personal-tax-return": [
         "libs/clients/rsk/personal-tax-return/src/index.ts"
       ],
-      "@island.is/clients/seminars-ver": [
-        "libs/clients/seminars-ver/src/index.ts"
-      ],
       "@island.is/clients/secondary-school": [
         "libs/clients/secondary-school/src/index.ts"
+      ],
+      "@island.is/clients/seminars-ver": [
+        "libs/clients/seminars-ver/src/index.ts"
       ],
       "@island.is/clients/sessions": ["libs/clients/sessions/src/index.ts"],
       "@island.is/clients/ship-registry": [
