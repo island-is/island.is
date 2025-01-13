@@ -1,9 +1,6 @@
-import { useContext, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 
-import { isProsecutionUser, Lawyer } from '@island.is/judicial-system/types'
-import { UserContext } from '@island.is/judicial-system-web/src/components'
-
-import { useGetLawyers } from '../useLawyers/useLawyers'
+import { Lawyer } from '@island.is/judicial-system/types'
 
 export const Database = {
   name: 'lawyer-registry',
@@ -17,7 +14,6 @@ export const useIndexedDB = (
 ) => {
   const [db, setDB] = useState<IDBDatabase | null>(null)
   const [isDBConnecting, setIsDBConnecting] = useState<boolean>(false)
-  const { user } = useContext(UserContext)
 
   useEffect(() => {
     const initDB = () => {
