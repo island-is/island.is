@@ -7,7 +7,6 @@ import {
 import { theme, themeUtils } from '@island.is/island-ui/theme'
 
 export const header = style({
-  position: 'relative',
   zIndex: zIndex.header,
   display: 'flex',
   alignItems: 'center',

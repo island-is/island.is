@@ -27,6 +27,7 @@ import { useWindowSize } from 'react-use'
 import NotificationButton from '../Notifications/NotificationButton'
 import Sidemenu from '../Sidemenu/Sidemenu'
 import * as styles from './Header.css'
+import { useScrollDirection } from '../../lib/hooks/useScrollDirection'
 export type MenuTypes = 'side' | 'user' | 'notifications' | undefined
 
 interface Props {
@@ -40,10 +41,13 @@ export const Header = ({ position }: Props) => {
   const isMobile = width < theme.breakpoints.md
   const user = useUserInfo()
 
+  const scrollDirection = useScrollDirection()
+
   // Notification feature flag. Remove after feature is live.
   const [enableNotificationFlag, setEnableNotificationFlag] =
     useState<boolean>(false)
   const featureFlagClient = useFeatureFlagClient()
+
   useEffect(() => {
     const isFlagEnabled = async () => {
       const ffEnabled = await featureFlagClient.getValue(
@@ -66,7 +70,13 @@ export const Header = ({ position }: Props) => {
     <div className={styles.placeholder}>
       <PortalPageLoader />
       {/*  Inline style to dynamicly change position of header because of alert banners */}
-      <header className={styles.header} style={{ top: position }}>
+      <header
+        className={styles.header}
+        style={{
+          top: position,
+          position: scrollDirection === 'up' ? 'fixed' : 'relative',
+        }}
+      >
         <GridContainer>
           <GridRow>
             <GridColumn span="12/12" paddingTop={4} paddingBottom={4}>

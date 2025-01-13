@@ -1,4 +1,4 @@
-import { ReactNode } from 'react'
+import { ReactNode, useEffect, useRef, useState } from 'react'
 import { Box, NavigationItem, Icon } from '@island.is/island-ui/core'
 import ContentBreadcrumbs from '../../components/ContentBreadcrumbs/ContentBreadcrumbs'
 import {
@@ -16,6 +16,8 @@ import { Link as ReactLink } from 'react-router-dom'
 import { theme } from '@island.is/island-ui/theme'
 import * as styles from './Layout.css'
 import { PortalNavigationItem } from '@island.is/portals/core'
+import { SERVICE_PORTAL_HEADER_HEIGHT_SM } from '@island.is/portals/my-pages/constants'
+import { useScrollDirection } from '../../lib/hooks/useScrollDirection'
 
 interface NarrowLayoutProps {
   activeParent?: PortalNavigationItem
@@ -36,6 +38,10 @@ export const NarrowLayout = ({
 
   const { width } = useWindowSize()
   const isMobile = width < theme.breakpoints.md
+
+  const scrollDirection = useScrollDirection()
+  const stickyHeight =
+    scrollDirection === 'up' ? SERVICE_PORTAL_HEADER_HEIGHT_SM : 0
 
   const mapChildren = (item: ServicePortalNavigationItem): SubNavItemType => {
     if (item.children) {
@@ -117,7 +123,12 @@ export const NarrowLayout = ({
       >
         <ContentBreadcrumbs />
         {isMobile && subNavItems && subNavItems.length > 0 && (
-          <Box paddingBottom={3} width="full" className={styles.mobileNav}>
+          <Box
+            paddingBottom={3}
+            width="full"
+            className={styles.mobileNav}
+            style={{ top: stickyHeight }}
+          >
             <Navigation
               renderLink={(link, item) => {
                 return item?.href ? (
