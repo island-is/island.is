@@ -10,10 +10,7 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
-import {
-  AdvocateType,
-  isTrafficViolationCase,
-} from '@island.is/judicial-system/types'
+import { AdvocateType } from '@island.is/judicial-system/types'
 import { core, titles } from '@island.is/judicial-system-web/messages'
 import {
   BlueBox,
@@ -74,7 +71,6 @@ const Processing: FC = () => {
   } = useCivilClaimants()
   const router = useRouter()
 
-  const isTrafficViolationCaseCheck = isTrafficViolationCase(workingCase)
   const [civilClaimantNationalIdUpdate, setCivilClaimantNationalIdUpdate] =
     useState<{ nationalId: string | null; civilClaimantId: string }>()
   const [hasCivilClaimantChoice, setHasCivilClaimantChoice] =
