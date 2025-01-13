@@ -19,6 +19,7 @@ export const header = style({
   '@media': {
     [`screen and (min-width: ${theme.breakpoints.lg}px)`]: {
       height: SERVICE_PORTAL_HEADER_HEIGHT_LG,
+      position: 'fixed',
     },
   },
 })

@@ -127,6 +127,7 @@ export const NarrowLayout = ({
             paddingBottom={3}
             width="full"
             className={styles.mobileNav}
+            className={styles.mobileNav}
             style={{ top: stickyHeight }}
           >
             <Navigation
@@ -138,6 +139,7 @@ export const NarrowLayout = ({
                 )
               }}
               asSpan
+              baseId="service-portal-mobile-navigation"
               baseId="service-portal-mobile-navigation"
               title={
                 activeParent?.name
