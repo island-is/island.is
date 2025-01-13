@@ -1,13 +1,5 @@
 import React from 'react'
-import {
-  Box,
-  Button,
-  FocusableBox,
-  Hidden,
-  Link,
-  Tag,
-  Text,
-} from '@island.is/island-ui/core'
+import { Box, Button, Hidden, Link, Tag, Text } from '@island.is/island-ui/core'
 import * as styles from './CardWithFeaturedItems.css'
 import { LinkType, useLinkResolver } from '@island.is/web/hooks'
 import { Featured } from '@island.is/web/graphql/schema'
@@ -77,8 +69,7 @@ export const CardWithFeaturedItems = ({
   buttonTitle,
 }: CardWithFeaturedItemsProps) => {
   return (
-    <FocusableBox
-      href={href ?? undefined}
+    <Box
       background="purple100"
       borderRadius="large"
       color="purple"
@@ -87,6 +78,7 @@ export const CardWithFeaturedItems = ({
       justifyContent="spaceBetween"
       padding={3}
       flexDirection={['columnReverse', 'row']}
+      display="flex"
     >
       <Box display="flex" flexDirection="column" justifyContent="spaceBetween">
         <Box>
@@ -99,7 +91,7 @@ export const CardWithFeaturedItems = ({
             <FeaturedItemsLinks featuredItems={featuredItems} />
           )}
         </Box>
-        <Box>
+        <Link href={href ?? ''} skipTab>
           <Button
             variant="text"
             as="span"
@@ -110,12 +102,12 @@ export const CardWithFeaturedItems = ({
           >
             {buttonTitle || ''}
           </Button>
-        </Box>
+        </Link>
       </Box>
       <Box display="flex" justifyContent="center" alignItems="center">
         <img src={imgSrc} alt={imgAlt} className={styles.image} />
       </Box>
-    </FocusableBox>
+    </Box>
   )
 }
 

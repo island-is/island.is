@@ -43,6 +43,7 @@ export const CheckboxFormField = ({
     spacing,
     marginTop,
     marginBottom,
+    clearOnChange,
   } = field
   const { formatMessage, lang: locale } = useLocale()
 
@@ -107,6 +108,7 @@ export const CheckboxFormField = ({
               }),
             }),
           )}
+          clearOnChange={clearOnChange}
         />
       </Box>
     </Box>

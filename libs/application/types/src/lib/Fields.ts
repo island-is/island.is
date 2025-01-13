@@ -103,6 +103,8 @@ export type RepeaterItem = {
   phoneRequired?: boolean
   showEmailField?: boolean
   emailRequired?: boolean
+  searchCompanies?: boolean
+  searchPersons?: boolean
   readonly?:
     | boolean
     | ((
@@ -222,6 +224,7 @@ export interface BaseField extends FormItem {
   doesNotRequireAnswer?: boolean
   marginBottom?: BoxProps['marginBottom']
   marginTop?: BoxProps['marginTop']
+  clearOnChange?: string[]
 
   // TODO use something like this for non-schema validation?
   // validate?: (formValue: FormValue, context?: object) => boolean
@@ -269,6 +272,7 @@ export enum FieldTypes {
   DISPLAY = 'DISPLAY',
   ACCORDION = 'ACCORDION',
   BANK_ACCOUNT = 'BANK_ACCOUNT',
+  TITLE = 'TITLE',
 }
 
 export enum FieldComponents {
@@ -306,6 +310,7 @@ export enum FieldComponents {
   DISPLAY = 'DisplayFormField',
   ACCORDION = 'AccordionFormField',
   BANK_ACCOUNT = 'BankAccountFormField',
+  TITLE = 'TitleFormField',
 }
 
 export interface CheckboxField extends InputField {
@@ -453,8 +458,15 @@ export interface SubmitField extends BaseField {
 
 export interface DividerField extends BaseField {
   readonly type: FieldTypes.DIVIDER
-  readonly color?: Colors
+  useDividerLine?: boolean
   component: FieldComponents.DIVIDER
+}
+
+export interface TitleField extends BaseField {
+  readonly type: FieldTypes.TITLE
+  readonly color?: Colors
+  titleVariant?: TitleVariants
+  component: FieldComponents.TITLE
 }
 
 export interface KeyValueField extends BaseField {
@@ -574,6 +586,12 @@ export interface NationalIdWithNameField extends InputField {
   minAgePerson?: number
   searchPersons?: boolean
   searchCompanies?: boolean
+  showPhoneField?: boolean
+  showEmailField?: boolean
+  phoneRequired?: boolean
+  emailRequired?: boolean
+  phoneLabel?: StaticText
+  emailLabel?: StaticText
   titleVariant?: TitleVariants
 }
 
@@ -822,3 +840,4 @@ export type Field =
   | DisplayField
   | AccordionField
   | BankAccountField
+  | TitleField
