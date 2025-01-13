@@ -977,6 +977,12 @@ export const slices = gql`
         }
         slug
         assetUrl
+        image {
+          url
+          title
+          width
+          height
+        }
       }
     }
   }
