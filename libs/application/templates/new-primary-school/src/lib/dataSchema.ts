@@ -76,7 +76,7 @@ export const dataSchema = z.object({
     }),
   reasonForApplication: z
     .object({
-      reason: z.nativeEnum(ReasonForApplicationOptions),
+      reason: z.string(),
       movingAbroad: z
         .object({
           country: z.string().optional(),
@@ -100,7 +100,7 @@ export const dataSchema = z.object({
     )
     .refine(
       ({ reason, transferOfLegalDomicile }) =>
-        reason === ReasonForApplicationOptions.TRANSFER_OF_LEGAL_DOMICILE
+        reason === ReasonForApplicationOptions.MOVING_MUNICIPALITY
           ? transferOfLegalDomicile &&
             transferOfLegalDomicile.streetAddress.length > 0
           : true,
@@ -110,7 +110,7 @@ export const dataSchema = z.object({
     )
     .refine(
       ({ reason, transferOfLegalDomicile }) =>
-        reason === ReasonForApplicationOptions.TRANSFER_OF_LEGAL_DOMICILE
+        reason === ReasonForApplicationOptions.MOVING_MUNICIPALITY
           ? transferOfLegalDomicile &&
             transferOfLegalDomicile.postalCode.length > 0
           : true,

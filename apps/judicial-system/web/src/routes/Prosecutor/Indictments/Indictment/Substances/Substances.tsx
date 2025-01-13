@@ -6,6 +6,7 @@ import {
   offenseSubstances,
   Substance as SubstanceEnum,
 } from '@island.is/judicial-system/types'
+import { SectionHeading } from '@island.is/judicial-system-web/src/components'
 import { IndictmentCountOffense } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   ReactSelectOption,
@@ -65,6 +66,13 @@ export const Substances: FC<Props> = ({
 
   return (
     <Box marginBottom={2}>
+      <SectionHeading
+        title={formatMessage(strings.substanceTitle, {
+          substanceType: indictmentCountOffenseType,
+        })}
+        heading="h4"
+        marginBottom={2}
+      />
       <Box marginBottom={2}>
         <Select
           name={`${indictmentCountOffenseType}-offense-type`}

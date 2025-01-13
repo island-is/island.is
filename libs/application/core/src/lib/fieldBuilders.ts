@@ -47,6 +47,8 @@ import {
   FieldsRepeaterField,
   AccordionField,
   BankAccountField,
+  TitleField,
+  TitleVariants,
 } from '@island.is/application/types'
 import { Locale } from '@island.is/shared/types'
 import { Colors } from '@island.is/island-ui/theme'
@@ -74,6 +76,7 @@ const extractCommonFields = (
     nextButtonText,
     marginBottom,
     marginTop,
+    clearOnChange,
   } = data
 
   return {
@@ -89,6 +92,7 @@ const extractCommonFields = (
     nextButtonText,
     marginBottom,
     marginTop,
+    clearOnChange,
   }
 }
 
@@ -397,19 +401,43 @@ export const buildFileUploadField = (
 
 export const buildDividerField = (data: {
   condition?: Condition
-  title?: FormText
-  color?: Colors
+  useDividerLine?: boolean
   marginBottom?: BoxProps['marginBottom']
   marginTop?: BoxProps['marginTop']
 }): DividerField => {
-  const { title, color, condition, marginTop, marginBottom } = data
+  const { useDividerLine = true, condition, marginTop, marginBottom } = data
   return {
     id: '',
     children: undefined,
     type: FieldTypes.DIVIDER,
     component: FieldComponents.DIVIDER,
     doesNotRequireAnswer: true,
+    title: '',
+    useDividerLine,
+    condition,
+    marginTop,
+    marginBottom,
+  }
+}
+
+export const buildTitleField = (data: {
+  condition?: Condition
+  title?: FormText
+  titleVariant?: TitleVariants
+  color?: Colors
+  marginBottom?: BoxProps['marginBottom']
+  marginTop?: BoxProps['marginTop']
+}): TitleField => {
+  const { title, titleVariant, color, condition, marginTop, marginBottom } =
+    data
+  return {
+    id: '',
+    children: undefined,
+    type: FieldTypes.TITLE,
+    component: FieldComponents.TITLE,
+    doesNotRequireAnswer: true,
     title: title ?? '',
+    titleVariant: titleVariant,
     color,
     condition,
     marginTop,
@@ -428,6 +456,8 @@ export const buildKeyValueField = (data: {
   paddingX?: BoxProps['padding']
   paddingY?: BoxProps['padding']
   paddingBottom?: BoxProps['padding']
+  marginTop?: BoxProps['marginTop']
+  marginBottom?: BoxProps['marginBottom']
 }): KeyValueField => {
   const {
     label,
@@ -440,6 +470,8 @@ export const buildKeyValueField = (data: {
     paddingX,
     paddingY,
     paddingBottom,
+    marginTop,
+    marginBottom,
   } = data
 
   return {
@@ -459,6 +491,8 @@ export const buildKeyValueField = (data: {
     paddingX,
     paddingY,
     paddingBottom,
+    marginTop,
+    marginBottom,
   }
 }
 
@@ -761,6 +795,12 @@ export const buildNationalIdWithNameField = (
     minAgePerson,
     searchPersons,
     searchCompanies,
+    showPhoneField,
+    showEmailField,
+    phoneRequired,
+    emailRequired,
+    phoneLabel,
+    emailLabel,
     titleVariant,
     description,
   } = data
@@ -778,6 +818,12 @@ export const buildNationalIdWithNameField = (
     minAgePerson,
     searchPersons,
     searchCompanies,
+    showPhoneField,
+    showEmailField,
+    phoneRequired,
+    emailRequired,
+    phoneLabel,
+    emailLabel,
     children: undefined,
     type: FieldTypes.NATIONAL_ID_WITH_NAME,
     component: FieldComponents.NATIONAL_ID_WITH_NAME,
