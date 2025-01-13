@@ -1,10 +1,7 @@
 import { computeCountryResidence } from './computeCountryResidence'
 import { DAY } from './constants'
-import isLeapYear from 'date-fns/isLeapYear'
 
 jest.useFakeTimers()
-
-const dayCountThisYear = isLeapYear(new Date()) ? 366 : 365
 
 const d = new Date().getTime()
 
@@ -22,7 +19,8 @@ describe('computeCountryResidence()', () => {
     ])
 
     expect(report).toMatchObject({
-      IS: dayCountThisYear,
+      IS: 365, // Even on leap years the date function explicitly counts 365 to avoid edge cases
+      // This is only for testing anyways
     })
   })
 
@@ -50,7 +48,7 @@ describe('computeCountryResidence()', () => {
     ])
 
     expect(report).toMatchObject({
-      US: dayCountThisYear,
+      US: 365,
     })
   })
 
@@ -94,7 +92,7 @@ describe('computeCountryResidence()', () => {
     ])
 
     expect(report).toMatchObject({
-      IS: dayCountThisYear - 100,
+      IS: 365 - 100,
       US: 100,
     })
   })
@@ -124,7 +122,7 @@ describe('computeCountryResidence()', () => {
     ])
 
     expect(report).toMatchObject({
-      IS: dayCountThisYear - 100,
+      IS: 365 - 100,
       US: 100,
     })
   })
