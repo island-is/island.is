@@ -25,10 +25,7 @@ import {
   SortButton,
   TableSkeleton,
 } from '@island.is/judicial-system-web/src/components/Table'
-import {
-  CaseListEntry,
-  Defendant,
-} from '@island.is/judicial-system-web/src/graphql/schema'
+import { CaseListEntry } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   useCaseList,
   useSort,

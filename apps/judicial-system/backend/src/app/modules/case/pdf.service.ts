@@ -1,7 +1,6 @@
 import CryptoJS from 'crypto-js'
 
 import {
-  BadRequestException,
   forwardRef,
   Inject,
   Injectable,
