@@ -135,8 +135,6 @@ export const ClickableItem = ({ item, baseUrl }: ClickableItemProps) => {
 
   let icon: IconProps['icon'] | null = null
 
-  const image = item.image ?? null
-
   let href = item.slug ? `${pathname}/${item.slug}` : undefined
   if (item.assetUrl) {
     href = item.assetUrl
@@ -148,7 +146,7 @@ export const ClickableItem = ({ item, baseUrl }: ClickableItemProps) => {
 
   const filterTags = item.filterTags ?? []
 
-  if (image) {
+  if (item.image) {
     return (
       <NewsCard
         title={item.title}
