@@ -1,14 +1,11 @@
 import { useMutation } from '@apollo/client'
-import { useAuth } from '@island.is/auth/react'
 import { useLocale, useLocalizedQuery } from '@island.is/localization'
 import { Params, useNavigate, useParams } from 'react-router-dom'
 import { CREATE_APPLICATION, CREATE_FORM } from '@island.is/form-system/graphql'
 
 export const FormsScreen = () => {
-  const { userInfo } = useAuth()
   const { formatMessage } = useLocale()
   const navigate = useNavigate()
-  const nationalId = userInfo?.profile?.nationalId
 
   // Get the slug and send it to the backend with the user nationalId to either get a [formGuids] or create a new form
   // If the user has no forms, create a new form
@@ -18,9 +15,6 @@ export const FormsScreen = () => {
 
   // use the slug to make a query to the backend to get the formGuids
 
-  if (!nationalId) {
-    return
-  }
 
   // const {
   //   data,
