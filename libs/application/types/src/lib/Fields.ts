@@ -780,6 +780,8 @@ export interface SliderField extends BaseField {
   labelMultiplier?: number
   id: string
   saveAsString?: boolean
+  textColor?: Colors
+  progressOverlayColor?: Colors
 }
 
 export interface DisplayField extends BaseField {

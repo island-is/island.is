@@ -1,18 +1,21 @@
-import { Box, Text } from '@island.is/island-ui/core'
+import { Box, BoxProps, Text } from '@island.is/island-ui/core'
 import useComponentSize from '@rehooks/component-size'
 import React, { CSSProperties, FC, useEffect, useRef, useState } from 'react'
 import { useDrag } from './utils'
 import * as styles from './Slider.css'
+import { Colors, theme } from '@island.is/island-ui/theme'
 
 interface TooltipProps {
   style?: CSSProperties
   atEnd?: boolean
+  textColorOverwrite?: string
 }
 
 const Tooltip: FC<React.PropsWithChildren<TooltipProps>> = ({
   style,
   atEnd = false,
   children,
+  textColorOverwrite = theme.color.blue400
 }) => (
   <Box
     data-test="slider-tooltip"
@@ -22,13 +25,28 @@ const Tooltip: FC<React.PropsWithChildren<TooltipProps>> = ({
     <Box
       className={styles.TooltipBox}
       style={{
-        transform: `translateX(${atEnd ? -85 : -50}%)`,
+        transform: `translateX(${atEnd ? -88 : -50}%)`,
+        color: textColorOverwrite
       }}
     >
       {children}
     </Box>
   </Box>
 )
+
+interface ColorValues {
+  hexColor: string
+  themeColorName: Colors
+}
+
+const getColorValues = (color: Colors): ColorValues => {
+  const hexColor = color.startsWith('#') ? color : theme.color[color]
+  const themeColorName = color.startsWith('#') 
+  ? Object.entries(theme.color).find(([_, value]) => value === color)?.[0] as Colors 
+  : color
+
+  return {hexColor, themeColorName}
+}
 
 const useLatest = <T extends number>(value: T) => {
   const ref = useRef<T>()
@@ -77,6 +95,8 @@ interface TrackProps {
   onChangeEnd?(index: number): void
 
   labelMultiplier?: number
+  textColor?: Colors
+  progressOverlayColor?: Colors
 }
 
 const Slider = ({
@@ -88,7 +108,7 @@ const Slider = ({
   calculateCellStyle,
   showLabel = false,
   showMinMaxLabels = false,
-  showRemainderOverlay = true,
+  showRemainderOverlay = false,
   showProgressOverlay = true,
   showToolTip = false,
   label,
@@ -97,6 +117,8 @@ const Slider = ({
   onChange,
   onChangeEnd,
   labelMultiplier = 1,
+  textColor = theme.color.blue400,
+  progressOverlayColor = theme.color.mint400
 }: TrackProps) => {
   const [isDragging, setIsDragging] = useState(false)
   const ref = useRef(null)
@@ -141,19 +163,78 @@ const Slider = ({
     }
   }, [isDragging, x])
 
-  const tooltipStyle = { transform: `translateX(${x}px)`, marginBottom: '30px' }
+  const hasAllRequiredForMinMaxLabels = () => {
+    if(showMinMaxLabels)
+    {
+      if(hasValidLabels())
+        return true
+
+      throw new Error('The labels object has to be defined if you want to show the min max labels')
+    }
+    return false
+  }
+
+  const hasAllRequiredForTooltip = () => {
+    if(showToolTip)
+    {
+      if(hasValidLabels())
+        return true
+
+      throw new Error('The labels object has to be defined if you want to show the tooltip')
+    }
+    return false
+  }
+
+  const hasValidLabels= () => {
+    return label && label.singular && label.plural
+  }
+
+  const hasAllRequiredForLabels = () => {
+    if(showLabel)
+    {
+      if(hasValidLabels())
+        return true
+
+      throw new Error('The labels object has to be defined if you want to show them')
+    }
+    
+    return false
+  }
+
+  const formatDates = (date: string | Date | undefined): string => {
+    if(date === undefined)
+      return ''
+
+    if(typeof date === 'string') 
+      return date
+    
+    return date.toLocaleDateString('is-IS')
+  }
+
+  const hasAllLabels = hasAllRequiredForTooltip() && hasAllRequiredForMinMaxLabels() && hasAllRequiredForTooltip()
+
+  const tooltipStyle = { 
+    transform: `translateX(${x}px)`, 
+    marginBottom: hasAllLabels ? '60px' : '30px',
+  }
+
+
   const thumbStyle = {
     transform: `translateX(${dragX.current == null ? x : dragX.current}px)`,
     transition: isDragging ? 'none' : '',
     touchAction: 'none',
+    '--thumb-color': getColorValues(progressOverlayColor).hexColor,
   }
+
   const remainderStyle = {
     left: `${dragX.current == null ? x : dragX.current}px`,
     transition: isDragging ? 'none' : '',
   }
+
   const progressStyle = {
     right: `${dragX.current == null ? x : dragX.current}px`,
     transition: isDragging ? 'none' : '',
+    background: getColorValues(progressOverlayColor).hexColor
   }
 
   const dragBind = useDrag({
@@ -234,68 +315,37 @@ const Slider = ({
     onChangeEnd?.(newIndex)
   }
 
-  const hasAllRequiredForMinMaxLabels = () => {
-    if(showMinMaxLabels)
-    {
-      if(hasValidLabels())
-        return true
-
-      throw new Error('The labels object has to be defined if you want to show the min max labels')
-    }
-    return false
-  }
-
-  const hasAllRequiredForTooltip = () => {
-    if(showToolTip)
-    {
-      if(hasValidLabels())
-        return true
-
-      throw new Error('The labels object has to be defined if you want to show the tooltip')
-    }
-    return false
-  }
-
-  const hasValidLabels= () => {
-    return label && label.singular && label.plural
-  }
-
-  const hasAllRequiredForLabels = () => {
-    if(showLabel)
-    {
-      if(hasValidLabels())
-        return true
-
-      throw new Error('The labels object has to be defined if you want to show them')
-    }
-    
-    return false
-  }
-
-  const formatDates = (date: string | Date | undefined): string => {
-    if(date === undefined)
-      return ''
-
-    if(typeof date === 'string') 
-      return date
-    
-    return date.toLocaleDateString('is-IS')
-  }
+  const textColorValues = getColorValues(textColor)
+  let requiredMarginTop = 0
+  requiredMarginTop = hasAllRequiredForTooltip() ? 10 : 0
+  requiredMarginTop += hasAllRequiredForMinMaxLabels() ? -2 : 0
+  requiredMarginTop += hasAllRequiredForLabels() ? -2 : 0
   
+
+  if(showRemainderOverlay && calculateCellStyle === undefined) 
+  {
+    console.log('defaulting to dark200')
+    calculateCellStyle = () => {
+      return {
+        background: theme.color.dark200
+      }
+    }
+  }
+
   return (
-    <Box>
+    <Box marginTop={requiredMarginTop as any}> 
       {hasAllRequiredForMinMaxLabels() && (
         <Box display="flex" justifyContent="spaceBetween" width="full">
-          <Text color="blue400" variant="eyebrow">
+          <Text color={textColorValues.themeColorName} variant="eyebrow">
             {formatTooltip(min)}
           </Text>
-          <Text color="blue400" variant="eyebrow">
+          <Text color={textColorValues.themeColorName} variant="eyebrow">
             {formatTooltip(max)}
           </Text>
         </Box>
       )}
       {hasAllRequiredForLabels() && (
-        <Text variant="h4" as="p">
+        <Text variant="h4" as="p" color={textColorValues.themeColorName}>
           {formatTooltip(currentIndex)}
         </Text>
       )}
@@ -319,7 +369,7 @@ const Slider = ({
           )
         })}
         {hasAllRequiredForTooltip() && (
-          <Tooltip style={tooltipStyle} atEnd={currentIndex === max}>
+          <Tooltip style={tooltipStyle} atEnd={currentIndex === max} textColorOverwrite={textColorValues.hexColor}>
             {formatTooltip(currentIndex, max)}
           </Tooltip>
         )}
@@ -356,21 +406,21 @@ const Slider = ({
         {rangeDates && (
           <>
             <Box>
-              <Text color="blue400" variant="eyebrow">
+              <Text color={textColorValues.themeColorName} variant="eyebrow">
                 {rangeDates.start.message}
               </Text>
 
-              <Text color="blue400" variant="eyebrow" fontWeight="semiBold">
+              <Text color={textColorValues.themeColorName} variant="eyebrow" fontWeight="semiBold">
                 {formatDates(rangeDates.start.date)}
               </Text>
             </Box>
 
             <Box textAlign="right">
-              <Text color="blue400" variant="eyebrow">
+              <Text color={textColorValues.themeColorName} variant="eyebrow">
                 {rangeDates.end.message}
               </Text>
 
-              <Text color="blue400" variant="eyebrow" fontWeight="semiBold">
+              <Text color={textColorValues.themeColorName} variant="eyebrow" fontWeight="semiBold">
                 {formatDates(rangeDates.end.date)}
               </Text>
             </Box>

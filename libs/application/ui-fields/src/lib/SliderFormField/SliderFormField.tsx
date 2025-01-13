@@ -38,6 +38,8 @@ export const SliderFormField: FC<
     snap,
     step,
     saveAsString,
+    textColor,
+    progressOverlayColor,
     marginTop,
     marginBottom,
   } = field
@@ -100,6 +102,8 @@ export const SliderFormField: FC<
             }}
             onChangeEnd={onChangeEnd}
             labelMultiplier={labelMultiplier}
+            textColor={textColor}
+            progressOverlayColor={progressOverlayColor}
           />
         )}
       />
