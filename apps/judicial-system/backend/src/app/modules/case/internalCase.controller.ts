@@ -77,20 +77,16 @@ export class InternalCaseController {
     return this.internalCaseService.archive()
   }
 
-  @Post('cases/postHearingArrangements/:date')
-  @ApiOkResponse({
-    type: Case,
-    isArray: true,
-    description:
-      'Fetch all cases that have court hearing arrangements for a given date',
-  })
-  async postHearingArrangements(@Param('date') date: Date): Promise<void> {
+  @Post('cases/postHearingArrangements')
+  async postHearingArrangements(
+    @Body() { date }: { date: Date },
+  ): Promise<void> {
     this.logger.debug(
       `Post internal summary of all cases that have court hearing arrangement at ${date}`,
     )
 
     const cases = await this.internalCaseService.getCaseHearingArrangements(
-      date,
+      new Date(date),
     )
     await this.eventService.postDailyHearingArrangementEvents(date, cases)
   }
