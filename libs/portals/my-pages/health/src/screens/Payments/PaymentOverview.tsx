@@ -11,10 +11,12 @@ import {
   GridRow,
   GridColumn,
 } from '@island.is/island-ui/core'
+import { Features, useFeatureFlagClient } from '@island.is/react/feature-flags'
 import {
   DownloadFileButtons,
   UserInfoLine,
   amountFormat,
+  formSubmit,
   m,
 } from '@island.is/portals/my-pages/core'
 import { messages } from '../../lib/messages'
@@ -74,6 +76,22 @@ export const PaymentOverview = () => {
     )
     .filter(isDefined)
 
+  const [enabledDocumentFlag, setEnabledDocumentFlag] = useState<boolean>(false)
+  const featureFlagClient = useFeatureFlagClient()
+  useEffect(() => {
+    const isFlagEnabled = async () => {
+      const ffEnabled = await featureFlagClient.getValue(
+        Features.healthPaymentOverview,
+        false,
+      )
+      if (ffEnabled) {
+        setEnabledDocumentFlag(ffEnabled as boolean)
+      }
+    }
+    isFlagEnabled()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
   const onFetchBills = () => {
     lazyOverviewQuery({
       variables: {
@@ -84,6 +102,10 @@ export const PaymentOverview = () => {
         },
       },
     })
+  }
+
+  const onFetchDocument = (url: string) => {
+    formSubmit(url)
   }
 
   useEffect(() => {
@@ -203,6 +225,11 @@ export const PaymentOverview = () => {
                         <T.HeadData>
                           {formatMessage(messages.insuranceShare)}
                         </T.HeadData>
+                        {enabledDocumentFlag ? (
+                          <T.HeadData>
+                            {formatMessage(messages.paymentDocument)}
+                          </T.HeadData>
+                        ) : undefined}
                       </tr>
                     </T.Head>
                     <T.Body>
@@ -220,6 +247,23 @@ export const PaymentOverview = () => {
                             <T.Data>
                               {amountFormat(item.insuranceAmount ?? 0)}
                             </T.Data>
+                            {enabledDocumentFlag ? (
+                              <T.Data>
+                                <Button
+                                  iconType="outline"
+                                  onClick={() =>
+                                    item.downloadUrl
+                                      ? onFetchDocument(item?.downloadUrl)
+                                      : undefined
+                                  }
+                                  variant="text"
+                                  icon="open"
+                                  size="small"
+                                >
+                                  {formatMessage(messages.fetchDocument)}
+                                </Button>
+                              </T.Data>
+                            ) : undefined}
                           </tr>
                         )
                       })}
