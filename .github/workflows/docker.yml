@@ -93,9 +93,15 @@ jobs:
           # repository: '${{ github.repository }}/${{ matrix.project }}'
           repository: '${{ matrix.project }}'
         run: |
+          image_repository="$registry$repository"
           echo "Labels: ${{ toJSON(github.event.pull_request.labels) }}"
           echo "Matrix: ${{ toJSON(matrix) }}"
-          echo image_repository="$registry$repository" >>"$GITHUB_OUTPUT"
+          echo image_repository="$image_repository" >>"$GITHUB_OUTPUT"
+          if [[ ${{ github.event.localrun == 'true' }} ]]; then
+            echo build_cache="type=local,src=./build-cache" >>"$GITHUB_OUTPUT"
+          else
+            echo build_cache="type=registry,ref=$image_repository:cache" >>"$GITHUB_OUTPUT"
+          fi
 
       - name: Check out repo
         uses: actions/checkout@v4
@@ -159,8 +165,8 @@ jobs:
           build-args: |
             NODE_IMAGE_TAG=latest
             DOCKER_REGISTRY=${{ env.DOCKER_REGISTRY }}
-          cache-from: type=registry,ref=${{ steps.inputs.image_repository }}:cache
-          cache-to: type=registry,ref=${{ steps.inputs.image_repository }}:cache,mode=max
+          # cache-from: ${{ steps.inputs.outputs.build_cache }}
+          # cache-to: ${{ steps.inputs.outputs.build_cache }},mode=max
 
   status:
     name: Collect statuses
