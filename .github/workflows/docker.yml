@@ -22,13 +22,11 @@ defaults:
 env:
   PUSH_REGISTRY: ${{ vars.PUSH_REGISTRY }}
   DOCKER_REGISTRY: ${{ vars.DOCKER_REGISTRY || 'docker.io' }}
-  NODE_IMAGE_TAG: ${{ vars.NODE_IMAGE_TAG || 'latest' }}
-  RUNNER: ${{ vars.RUNNER || 'ubuntu-latest' }}
 
 jobs:
   prepare_matrix:
     name: Prepare workflow Docker build
-    runs-on: ${{ env.RUNNER }}
+    runs-on: ubuntu-latest
     outputs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}
     steps:
@@ -38,7 +36,7 @@ jobs:
         id: set-matrix
         env:
           # Check for 'small debug' label
-          small_debug: ${{ github.event.pull_request.labels.*.name == 'small debug' }}
+          small_debug: ${{ github.event.pull_request.labels.*.name == 'small-debug' }}
         run: |
           if [[ ${small_debug} == true ]]; then
             output="matrix=$(
@@ -75,7 +73,7 @@ jobs:
 
   build:
     name: Build ${{ matrix.project }}
-    runs-on: ${{ env.RUNNER }}
+    runs-on: ubuntu-latest
     needs: prepare_matrix
     strategy:
       fail-fast: true
@@ -157,14 +155,14 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           tags: ${{ steps.meta.outputs.tags }}
           build-args: |
-            NODE_IMAGE_TAG=${{ env.NODE_IMAGE_TAG }}
+            NODE_IMAGE_TAG=latest
             DOCKER_REGISTRY=${{ env.DOCKER_REGISTRY }}
           cache-from: type=registry,ref=${{ env.PUSH_REGISTRY }}/${{ matrix.project }}:cache
           cache-to: type=registry,ref=${{ env.PUSH_REGISTRY }}/${{ matrix.project }}:cache,mode=max
 
   status:
     name: Collect statuses
-    runs-on: ${{ env.RUNNER }}
+    runs-on: ubuntu-latest
     if: ${{ always() }}
     needs:
       - prepare_matrix
