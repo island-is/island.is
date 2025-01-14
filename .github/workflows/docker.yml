@@ -37,7 +37,6 @@ jobs:
         env:
           localrun: ${{ !!github.event.localrun }}
         run: |
-          echo "event: ${{ toJSON(github.event) }}"
           if [[ ${localrun} == true ]]; then
             output="matrix=$(
               echo '{
