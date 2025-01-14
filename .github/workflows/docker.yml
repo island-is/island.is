@@ -24,13 +24,21 @@ env:
   DOCKER_REGISTRY: ${{ vars.DOCKER_REGISTRY || 'docker.io' }}
 
 jobs:
-  prepare_matrix:
+  prepare:
     name: Prepare workflow Docker build
     runs-on: ubuntu-latest
     outputs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}
+      node_image_tag: ${{ steps.build-args.outputs.node_image_tag }}
+      docker_registry: ${{ steps.build-args.outputs.docker_registry }}
     steps:
       - uses: actions/checkout@v4
+
+      - name: Build arg prep
+        id: build-args
+        run: |
+          echo node_image_tag="$(./scripts/ci/get-node-version.mjs)" >>"$GITHUB_OUTPUT"
+          echo docker_registry="${DOCKER_REGISTRY}" >>"$GITHUB_OUTPUT"
 
       - name: Create matrix from input
         id: set-matrix
@@ -73,10 +81,10 @@ jobs:
   build:
     name: Build ${{ matrix.project }}
     runs-on: ubuntu-latest
-    needs: prepare_matrix
+    needs: prepare
     strategy:
       fail-fast: true
-      matrix: ${{ fromJson(needs.prepare_matrix.outputs.matrix) }}
+      matrix: ${{ fromJson(needs.prepare.outputs.matrix) }}
 
     permissions:
       id-token: write # This is required for requesting the JWT
@@ -163,8 +171,8 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           target: output-${{ matrix.docker }}
           build-args: |
-            NODE_IMAGE_TAG=latest
-            DOCKER_REGISTRY=${{ env.DOCKER_REGISTRY }}
+            NODE_IMAGE_TAG=${{ needs.prepare.outputs.node_image_tag }}
+            DOCKER_REGISTRY=${{ needs.prepare.outputs.docker_registry }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
           # cache-from: ${{ steps.inputs.outputs.build_cache }}
@@ -175,7 +183,7 @@ jobs:
     runs-on: ubuntu-latest
     if: ${{ always() }}
     needs:
-      - prepare_matrix
+      - prepare
       - build
     steps:
       - name: Check statuses
