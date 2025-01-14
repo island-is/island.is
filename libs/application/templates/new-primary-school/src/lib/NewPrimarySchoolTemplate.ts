@@ -15,6 +15,7 @@ import {
   DefaultEvents,
   NationalRegistryUserApi,
   UserProfileApi,
+  YES,
   defineTemplateApi,
 } from '@island.is/application/types'
 import { Features } from '@island.is/feature-flags'
@@ -92,6 +93,7 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
           'clearApplicationIfReasonForApplication',
           'clearPlaceOfResidence',
           'clearLanguages',
+          'clearAllergiesAndIntolerances',
         ],
         meta: {
           name: States.DRAFT,
@@ -182,10 +184,10 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
           unset(application.answers, 'reasonForApplication.movingAbroad')
         }
 
-        // Clear transferOfLegalDomicile if "Transfer of legal domicile" is not selected as reason for application
+        // Clear transferOfLegalDomicile if "Moving legal domicile" is not selected as reason for application
         if (
           reasonForApplication !==
-          ReasonForApplicationOptions.TRANSFER_OF_LEGAL_DOMICILE
+          ReasonForApplicationOptions.MOVING_MUNICIPALITY
         ) {
           unset(
             application.answers,
@@ -193,10 +195,10 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
           )
         }
 
-        // Clear siblings if "Siblings in the same primary school" is not selected as reason for application
+        // Clear siblings if "Siblings in the same school" is not selected as reason for application
         if (
           reasonForApplication !==
-          ReasonForApplicationOptions.SIBLINGS_IN_THE_SAME_PRIMARY_SCHOOL
+          ReasonForApplicationOptions.SIBLINGS_IN_SAME_SCHOOL
         ) {
           unset(application.answers, 'siblings')
         }
@@ -220,6 +222,28 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
         if (otherLanguagesSpokenDaily === NO) {
           unset(application.answers, 'languages.otherLanguages')
           unset(application.answers, 'languages.icelandicNotSpokenAroundChild')
+        }
+        return context
+      }),
+      clearAllergiesAndIntolerances: assign((context) => {
+        const { application } = context
+        const { hasFoodAllergiesOrIntolerances, hasOtherAllergies } =
+          getApplicationAnswers(application.answers)
+
+        if (!hasFoodAllergiesOrIntolerances?.includes(YES)) {
+          unset(
+            application.answers,
+            'allergiesAndIntolerances.foodAllergiesOrIntolerances',
+          )
+        }
+        if (!hasOtherAllergies?.includes(YES)) {
+          unset(application.answers, 'allergiesAndIntolerances.otherAllergies')
+        }
+        if (
+          !hasFoodAllergiesOrIntolerances?.includes(YES) &&
+          !hasOtherAllergies?.includes(YES)
+        ) {
+          unset(application.answers, 'allergiesAndIntolerances.usesEpiPen')
         }
         return context
       }),

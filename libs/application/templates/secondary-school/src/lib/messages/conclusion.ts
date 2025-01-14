@@ -76,5 +76,10 @@ export const conclusion = {
         'Umsóknartímabili lýkur aa. júní. Ekki verður farið að vinna úr umsóknum fyrr en eftir þessa dagsetningu. Ef þú af einhverjum ástæðum vilt gera breytingar þarftu að gera það áður en tímabilinu lýkur.',
       description: 'Conclusion overview alert message',
     },
+    editButton: {
+      id: 'ss.application:conclusion.overview.editButton',
+      defaultMessage: 'Eyða umsókn og opna nýja',
+      description: 'Conclusion overview edit button',
+    },
   }),
 }

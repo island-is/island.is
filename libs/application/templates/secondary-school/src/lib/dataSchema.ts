@@ -123,7 +123,7 @@ export const SecondarySchoolSchema = z.object({
     phoneRequired: true,
     emailRequired: true,
   }),
-  applicationType: z.nativeEnum(ApplicationType),
+  applicationType: z.object({ value: z.nativeEnum(ApplicationType) }),
   custodians: z.array(CustodianSchema).max(2),
   mainOtherContact: MainOtherContactSchema,
   otherContacts: z.array(OtherContactSchema).max(1),

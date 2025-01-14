@@ -26,6 +26,8 @@ import {
 import { OJOIAApplicationCaseResponse } from '../models/applicationCase.response'
 import { GetPdfResponse } from '../models/getPdf.response'
 import { OJOIAIdInput } from '../models/id.input'
+import { GetInvolvedPartySignaturesInput } from '../models/getInvolvedPartySignatures.input'
+import { InvolvedPartySignatures } from '../models/getInvolvedPartySignatures.response'
 
 const LOG_CATEGORY = 'official-journal-of-iceland-application'
 
@@ -257,6 +259,46 @@ export class OfficialJournalOfIcelandApplicationService {
       this.logger.error('Failed to get pdf', {
         category: LOG_CATEGORY,
         applicationId: input.id,
+        error: error,
+      })
+
+      throw error
+    }
+  }
+
+  async getInvolvedPartySignatures(
+    input: GetInvolvedPartySignaturesInput,
+    user: User,
+  ): Promise<InvolvedPartySignatures> {
+    try {
+      const data =
+        await this.ojoiApplicationService.getSignaturesForInvolvedParty(
+          input,
+          user,
+        )
+
+      return {
+        ...data,
+        members: data.members.map((member) => ({
+          name: member.text ?? undefined,
+          above: member.textAbove ?? undefined,
+          before: member.textBefore ?? undefined,
+          below: member.textBelow ?? undefined,
+          after: member.textAfter ?? undefined,
+        })),
+        ...(data?.chairman && {
+          chairman: {
+            name: data.chairman.text ?? undefined,
+            above: data.chairman.textAbove ?? undefined,
+            before: data.chairman.textBefore ?? undefined,
+            below: data.chairman.textBelow ?? undefined,
+            after: data.chairman.textAfter ?? undefined,
+          },
+        }),
+      }
+    } catch (error) {
+      this.logger.error('Failed to get signatures for involved party', {
+        category: LOG_CATEGORY,
         error: error,
       })
 
