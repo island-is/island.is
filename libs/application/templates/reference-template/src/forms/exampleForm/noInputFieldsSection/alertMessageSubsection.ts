@@ -17,7 +17,7 @@ export const alertMessageSubsection = buildSubSection({
           id: 'alertMessagesDescription',
           title: '',
           description:
-            'Alert messages are used to display important information to the user. Choose the alertType based in the information you want the user to focus on.',
+            'Alert messages are used to display important information to the user. Choose the alertType based on the information you want the user to focus on.',
           width: 'full',
         }),
         buildDescriptionField({
