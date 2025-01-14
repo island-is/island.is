@@ -18,23 +18,32 @@ export const header = style({
   transform: 'translateY(0)',
   '@media': {
     [`screen and (min-width: ${theme.breakpoints.lg}px)`]: {
+      position: 'relative',
       height: SERVICE_PORTAL_HEADER_HEIGHT_LG,
     },
   },
 })
 
 export const fixedHeader = style({
-  position: 'fixed',
-  transform: 'translateY(0)',
-  top: 0,
-  transition: 'transform 550ms cubic-bezier(0.4, 0.0, 0.2, 1)',
+  '@media': {
+    [`screen and (max-width: ${theme.breakpoints.md}px)`]: {
+      position: 'fixed',
+      transform: 'translateY(0)',
+      top: 0,
+      transition: 'transform 550ms cubic-bezier(0.4, 0.0, 0.2, 1)',
+    },
+  },
 })
 
 export const hideHeader = style({
-  position: 'fixed',
-  transform: 'translateY(-100%)',
-  transition: 'transform 550ms cubic-bezier(0.4, 0.0, 0.2, 1)',
-  top: 0,
+  '@media': {
+    [`screen and (max-width: ${theme.breakpoints.md}px)`]: {
+      position: 'fixed',
+      transform: 'translateY(-100%)',
+      transition: 'transform 550ms cubic-bezier(0.4, 0.0, 0.2, 1)',
+      top: 0,
+    },
+  },
 })
 
 export const placeholder = style({
