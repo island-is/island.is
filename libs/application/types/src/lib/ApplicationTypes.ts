@@ -405,7 +405,7 @@ export const ApplicationConfigurations = {
   },
   [ApplicationTypes.SEMINAR_REGISTRATION]: {
     slug: 'vinnueftirlitid-namskeid',
-    translation: ['aosh.sr.application'],
+    translation: ['aosh.sem.application'],
   },
   [ApplicationTypes.SECONDARY_SCHOOL]: {
     slug: 'framhaldsskoli',

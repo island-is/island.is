@@ -30,13 +30,13 @@ export class SeminarsClientService {
     this.individualApi.withMiddleware(new AuthMiddleware(user as Auth))
 
   async getSeminar(auth: User, courseId: string): Promise<CourseDTO> {
-    return await this.courseApiWithAuth(auth).apiCourseCourseIdGet({
+    return this.courseApiWithAuth(auth).apiCourseCourseIdGet({
       courseId,
     })
   }
 
   async isCompanyValid(auth: User, nationalId: string): Promise<CompanyDTO> {
-    return await this.companyApiWithAuth(auth).apiCompanyGet({
+    return this.companyApiWithAuth(auth).apiCompanyGet({
       nationalId,
     })
   }
@@ -45,9 +45,7 @@ export class SeminarsClientService {
     auth: User,
     registration: ApiRegistrationPostRequest,
   ): Promise<void> {
-    return await this.registrationApiWithAuth(auth).apiRegistrationPost(
-      registration,
-    )
+    return this.registrationApiWithAuth(auth).apiRegistrationPost(registration)
   }
 
   async checkIndividuals(
@@ -55,7 +53,7 @@ export class SeminarsClientService {
     nationalIds: Array<string>,
     courseID: string,
   ): Promise<Array<IndividualDTO>> {
-    return await this.individualApiWithAuth(auth).apiIndividualGet({
+    return this.individualApiWithAuth(auth).apiIndividualGet({
       courseID,
       nationalIds,
     })

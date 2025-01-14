@@ -129,54 +129,49 @@ export const Participants: FC<React.PropsWithChildren<FieldBaseProps>> = ({
     return
   }
 
-  const updateValidity = async (participants: Array<Participant>) => {
-    const nationalIds = participants.map((x) => x.nationalId)
+  // const updateValidity = async (participants: Array<Participant>) => {
+  //   const nationalIds = participants.map((x) => x.nationalId)
 
-    if (nationalIds.length > 0) {
-      const seminarId = getValueViaPath(
-        application.answers,
-        'initialQuery',
-        '',
-      ) as string
-      const res = await getIsCompanyValidCallback(nationalIds, seminarId)
+  //   if (nationalIds.length > 0) {
+  //     const seminarId = getValueViaPath(
+  //       application.answers,
+  //       'initialQuery',
+  //       '',
+  //     ) as string
+  //     const res = await getIsCompanyValidCallback(nationalIds, seminarId)
 
-      let tmpNotValid = false
-      const updatedParticipantList: Array<Participant> = participants.map(
-        (x) => {
-          const participantInRes = res.areIndividualsValid.filter(
-            (z) => z.nationalID === x.nationalId,
-          )
-          if (!participantInRes[0].mayTakeCourse) tmpNotValid = true
-          return { ...x, disabled: !participantInRes[0].mayTakeCourse }
-        },
-      )
-      if (tmpNotValid) setValue('participantValidityError', true)
-      setFoundNotValid(tmpNotValid)
-      setParticipantList(updatedParticipantList)
-    }
-  }
+  //     let tmpNotValid = false
+  //     const updatedParticipantList: Array<Participant> = participants.map(
+  //       (x) => {
+  //         const participantInRes = res.areIndividualsValid.filter(
+  //           (z) => z.nationalID === x.nationalId,
+  //         )
+  //         if (!participantInRes[0].mayTakeCourse) tmpNotValid = true
+  //         return { ...x, disabled: !participantInRes[0].mayTakeCourse }
+  //       },
+  //     )
+  //     if (tmpNotValid) setValue('participantValidityError', true)
+  //     setFoundNotValid(tmpNotValid)
+  //     setParticipantList(updatedParticipantList)
+  //   }
+  // }
 
-  useEffect(() => {
-    if (participantListWatch) {
-      if (
-        participantListWatch[participantListWatch.length - 1].name &&
-        participantListWatch[participantListWatch.length - 1].email &&
-        isValidEmail(
-          participantListWatch[participantListWatch.length - 1].email,
-        ) &&
-        participantListWatch[participantListWatch.length - 1].nationalId &&
-        kennitala.isValid(
-          participantListWatch[participantListWatch.length - 1].nationalId,
-        ) &&
-        participantListWatch[participantListWatch.length - 1].phoneNumber &&
-        isValidPhoneNumber(
-          participantListWatch[participantListWatch.length - 1].phoneNumber,
-        )
-      ) {
-        updateValidity(participantListWatch)
-      }
-    }
-  }, [participantListWatch])
+  // useEffect(() => {
+  //   if (participantListWatch) {
+  //     const lastItemIndex = participantListWatch.length - 1
+  //     if (
+  //       participantListWatch[lastItemIndex].name &&
+  //       participantListWatch[lastItemIndex].email &&
+  //       isValidEmail(participantListWatch[lastItemIndex].email) &&
+  //       participantListWatch[lastItemIndex].nationalId &&
+  //       kennitala.isValid(participantListWatch[lastItemIndex].nationalId) &&
+  //       participantListWatch[lastItemIndex].phoneNumber &&
+  //       isValidPhoneNumber(participantListWatch[lastItemIndex].phoneNumber)
+  //     ) {
+  //       updateValidity(participantListWatch)
+  //     }
+  //   }
+  // }, [participantListWatch])
 
   const removeFile = () => {
     setFileState([])
@@ -187,9 +182,7 @@ export const Participants: FC<React.PropsWithChildren<FieldBaseProps>> = ({
     return
   }
 
-  const csvFile = `data:text/csv;charset=utf-8,nafn;kennitala;netfang;sími
-      PRUFA;010130-3019;prufa@prufa.is;8889999
-      PRUFA 2;111111-1119;prufa2@prufa.is;1283499`
+  const csvFile = `data:text/csv;charset=utf-8,nafn;kennitala;netfang;sími`
 
   const onCsvButtonClick = () => {
     const encodeUri = encodeURI(csvFile)

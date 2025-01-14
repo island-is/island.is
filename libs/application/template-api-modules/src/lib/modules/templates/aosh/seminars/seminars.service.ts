@@ -11,7 +11,11 @@ import {
 } from '@island.is/clients/seminars-ver'
 import { TemplateApiError } from '@island.is/nest/problem'
 import { getValueViaPath } from '@island.is/application/core'
-
+import {
+  externalData as externalDataMessages,
+  application as applicationMessages,
+  IndividualOrCompany,
+} from '@island.is/application/templates/aosh/seminars'
 @Injectable()
 export class SeminarsTemplateService extends BaseTemplateApiService {
   constructor(
@@ -33,23 +37,12 @@ export class SeminarsTemplateService extends BaseTemplateApiService {
         this.logger.warn('[seminars-service]: Error fetching data from AOSH')
         throw new TemplateApiError(
           {
-            summary:
-              'Ekki tókst að sækja gögn til VER, vinsamlegast reynið síðar',
-            title: 'Villa í umsókn',
+            summary: externalDataMessages.ver.generalError,
+            title: externalDataMessages.ver.generalErrorTitle,
           },
           400,
         )
       })
-
-    if (!data) {
-      throw new TemplateApiError(
-        {
-          summary: `Ekkert námskeið fannst með þessu númeri: ${seminarQueryId}.`,
-          title: 'Villa í umsókn',
-        },
-        400,
-      )
-    }
 
     return data
   }
@@ -58,7 +51,15 @@ export class SeminarsTemplateService extends BaseTemplateApiService {
     application,
     auth,
   }: TemplateApiModuleActionProps): Promise<void> {
-    const answers = application.answers as unknown as SeminarAnswers
+    const paymentArrangement = getValueViaPath<
+      SeminarAnswers['paymentArrangement']
+    >(application.answers, 'paymentArrangement')
+
+    const participantList = getValueViaPath<SeminarAnswers['participantList']>(
+      application.answers,
+      'participantList',
+    )
+
     const seminarQueryId =
       getValueViaPath<string>(application.answers, `initialQuery`) ?? ''
     const chargeId =
@@ -66,35 +67,39 @@ export class SeminarsTemplateService extends BaseTemplateApiService {
         application.externalData,
         'createCharge.data.id',
       ) ?? ''
-    await this.seminarsClientService
+    const res = await this.seminarsClientService
       .registerSeminar(auth, {
         courseRegistrationCreateDTO: {
           courseId: seminarQueryId,
           paymentContact: {
             email:
-              answers.paymentArrangement.individualOrCompany === 'company'
-                ? answers.paymentArrangement.contactInfo?.email
-                : answers.paymentArrangement.individualInfo?.email,
+              paymentArrangement?.individualOrCompany ===
+              IndividualOrCompany.company
+                ? paymentArrangement?.contactInfo?.email
+                : paymentArrangement?.individualInfo?.email,
             phoneNumber:
-              answers.paymentArrangement.individualOrCompany === 'company'
-                ? answers.paymentArrangement.contactInfo?.phone
-                : answers.paymentArrangement.individualInfo?.phone,
+              paymentArrangement?.individualOrCompany ===
+              IndividualOrCompany.company
+                ? paymentArrangement?.contactInfo?.phone
+                : paymentArrangement?.individualInfo?.phone,
           },
           paymentInfo: {
             paymentType:
-              answers.paymentArrangement.individualOrCompany === 'company'
-                ? answers.paymentArrangement.paymentOptions === 'cashOnDelivery'
+              paymentArrangement?.individualOrCompany ===
+              IndividualOrCompany.company
+                ? paymentArrangement?.paymentOptions === 'cashOnDelivery'
                   ? 'card'
                   : 'invoice'
                 : 'card',
             companyNationalId:
-              answers.paymentArrangement.individualOrCompany === 'company'
-                ? answers.paymentArrangement.companyInfo?.nationalId
+              paymentArrangement?.individualOrCompany ===
+              IndividualOrCompany.company
+                ? paymentArrangement?.companyInfo?.nationalId
                 : '',
             paymentId: chargeId,
-            paymentExplanation: answers.paymentArrangement.explanation ?? '',
+            paymentExplanation: paymentArrangement?.explanation ?? '',
           },
-          students: answers.participantList.map((participants) => ({
+          students: participantList?.map((participants) => ({
             name: participants.name,
             nationalId: participants.nationalId,
             email: participants.email,
@@ -106,12 +111,12 @@ export class SeminarsTemplateService extends BaseTemplateApiService {
         this.logger.warn('[seminars-service]: Error registering seminar')
         throw new TemplateApiError(
           {
-            summary: 'Ekki tókst að skrá námskeið, vinsamlegast reynið síðar',
-            title: 'Villa í umsókn',
+            summary: applicationMessages.submissionError,
+            title: applicationMessages.submissionErrorTitle,
           },
           400,
         )
       })
-    return
+    return res
   }
 }

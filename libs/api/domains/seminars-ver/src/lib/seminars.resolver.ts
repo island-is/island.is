@@ -16,11 +16,11 @@ import { IndividualValidationItem } from './models/individualValidation'
 
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
 @Resolver()
+@Scopes(ApiScope.vinnueftirlitid)
 @Audit({ namespace: '@island.is/api/seminars-ver' })
 export class SeminarsResolver {
   constructor(private readonly seminarsService: SeminarsService) {}
 
-  @Scopes(ApiScope.vinnueftirlitid)
   @Query(() => CompanyValidationItem, { name: 'seminarsVerIsCompanyValid' })
   @Audit()
   async isCompanyValid(
@@ -30,7 +30,6 @@ export class SeminarsResolver {
     return this.seminarsService.isCompanyValid(auth, nationalId)
   }
 
-  @Scopes(ApiScope.vinnueftirlitid)
   @Query(() => [IndividualValidationItem])
   @Audit()
   async areIndividualsValid(

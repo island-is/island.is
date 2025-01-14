@@ -18,6 +18,7 @@ import { DefaultEvents } from '@island.is/application/types'
 export const prerequisitesSection = buildSection({
   id: 'externalData',
   title: '',
+  tabTitle: 'Gagnaöflun',
   children: [
     buildExternalDataProvider({
       id: 'approveExternalData',

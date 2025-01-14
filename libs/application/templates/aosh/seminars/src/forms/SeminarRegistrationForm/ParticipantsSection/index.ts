@@ -64,7 +64,7 @@ export const participantsSection = buildSection({
         }),
         buildCustomField({
           id: 'participantCSV',
-          title: 'prufa',
+          title: '',
           doesNotRequireAnswer: true,
           component: 'Participants',
         }),
