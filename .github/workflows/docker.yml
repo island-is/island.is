@@ -179,15 +179,21 @@ jobs:
           # Debug inputs
           echo "$dependencies" | jq
 
+          echo "# Summary report" >>"$GITHUB_SUMMARY"
+          echo "|job|result|" >>"$GITHUB_SUMMARY"
+          echo "|---|------|" >>"$GITHUB_SUMMARY"
+          success=true
           # Loop through each job and ensure .result == "success"
           for job in $(echo "$dependencies" | jq -r 'keys[]'); do
             result=$(echo "$dependencies" | jq -r ".[\"$job\"].result")
             echo "Job $job => $result"
-
+            echo "|$job|$result|" >>"$GITHUB_SUMMARY"
             if [ "$result" != "success" ]; then
-              echo "Dependency $job failed."
-              exit 1
+              success=false
             fi
           done
+          if [[ success != true ]]; then
+            exit 1
+          fi
 
           echo "All dependencies succeeded!"
