@@ -35,6 +35,18 @@ jobs:
       - name: Create matrix from input
         id: set-matrix
         run: |
+          set -x
+          output="matrix=$(
+            echo '{
+              "include":[
+                {"project":"web","docker":"next"},
+                {"project":"api","docker":"nest"},
+                {"project":"service-portal","docker":"static"}
+              ]
+            }' | jq -c
+          )"
+          echo "$output" >>"$GITHUB_OUTPUT"
+          exit 0
 
           # Create a list of objects of the form:
           # [
