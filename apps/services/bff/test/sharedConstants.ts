@@ -4,7 +4,7 @@ import {
   TokenResponse,
 } from '../src/app/modules/ids/ids.types'
 
-export const SESSION_COOKIE_NAME = `${process.env.BFF_NAME?.toLowerCase()}-sid`
+export const SESSION_COOKIE_NAME = `${process.env.BFF_NAME?.toLowerCase() ?? 'test'}-sid`
 export const ALGORITM_TYPE = 'HS256'
 export const SID_VALUE = 'fake_uuid'
 
