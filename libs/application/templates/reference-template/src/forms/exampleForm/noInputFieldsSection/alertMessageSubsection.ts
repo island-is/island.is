@@ -75,7 +75,7 @@ export const alertMessageSubsection = buildSubSection({
           id: 'alertMessageSuccess',
           title: 'Success Alert message',
           message:
-            'Something that went successfully, like application submition',
+            'Something that went successfully, like application submission',
           alertType: 'success',
         }),
         buildAlertMessageField({
