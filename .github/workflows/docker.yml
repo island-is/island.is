@@ -21,7 +21,6 @@ defaults:
 
 env:
   PUSH_REGISTRY: ${{ vars.PUSH_REGISTRY }}
-  DOCKER_REGISTRY: ${{ vars.DOCKER_REGISTRY || 'docker.io' }}
 
 jobs:
   prepare:
@@ -38,7 +37,6 @@ jobs:
         id: build-args
         run: |
           echo node_image_tag="$(./scripts/ci/get-node-version.mjs)" >>"$GITHUB_OUTPUT"
-          echo docker_registry="${DOCKER_REGISTRY}" >>"$GITHUB_OUTPUT"
 
       - name: Create matrix from input
         id: set-matrix
@@ -172,7 +170,6 @@ jobs:
           target: output-${{ matrix.docker }}
           build-args: |
             NODE_IMAGE_TAG=${{ needs.prepare.outputs.node_image_tag }}
-            DOCKER_REGISTRY=${{ needs.prepare.outputs.docker_registry }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
           # cache-from: ${{ steps.inputs.outputs.build_cache }}
