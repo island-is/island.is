@@ -23,6 +23,7 @@ const dropdownBase: StyleWithSelectors = {
   left: spacing[0],
   borderRadius: 'unset',
   maxHeight: `calc(100vh - ${theme.headerHeight.small}px)`,
+  height: '100vh',
 }
 
 const dropdownBaseMD: StyleWithSelectors = {

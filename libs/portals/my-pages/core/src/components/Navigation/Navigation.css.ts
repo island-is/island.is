@@ -191,7 +191,7 @@ export const scrolledMenu = style({
     background: theme.color.blue100,
     borderBottom: `1px solid ${theme.color.blue200}`,
     transform: 'scaleX(0)', // Initial state
-    transformOrigin: 'left',
+    transformOrigin: 'top',
     transition: 'transform 0.75s ease-in-out',
   },
 })

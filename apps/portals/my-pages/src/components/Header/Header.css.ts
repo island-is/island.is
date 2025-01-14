@@ -27,12 +27,13 @@ export const fixedHeader = style({
   position: 'fixed',
   transform: 'translateY(0)',
   top: 0,
-  transition: 'transform 450ms cubic-bezier(0.4, 0.0, 0.2, 1)',
+  transition: 'transform 550ms cubic-bezier(0.4, 0.0, 0.2, 1)',
 })
 
 export const hideHeader = style({
   position: 'fixed',
   transform: 'translateY(-100%)',
+  transition: 'transform 550ms cubic-bezier(0.4, 0.0, 0.2, 1)',
   top: 0,
 })
 

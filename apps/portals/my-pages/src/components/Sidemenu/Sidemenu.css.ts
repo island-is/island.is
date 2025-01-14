@@ -6,6 +6,7 @@ import {
   styleVariants,
 } from '@vanilla-extract/css'
 import { StyleWithSelectors } from '@vanilla-extract/css/dist/declarations/src/types'
+import { createGlobalTheme } from '@vanilla-extract/css'
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const wrapperAnimation = keyframes({
@@ -105,6 +106,7 @@ const dropdownBase: StyleWithSelectors = {
   right: spacing[0],
   left: spacing[0],
   borderRadius: 'unset',
+  height: '100vh',
   maxHeight: `calc(100vh - ${theme.headerHeight.small}px)`,
 }
 
@@ -206,4 +208,12 @@ export const itemText = style({
 export const overviewIcon = style({
   height: 40,
   width: 40,
+})
+
+const sidemenuOpen = createGlobalTheme(':root', {
+  sidemenuOpen: 'false',
+})
+
+globalStyle(`html[data-sidemenu-open="true"]`, {
+  overflow: 'hidden',
 })
