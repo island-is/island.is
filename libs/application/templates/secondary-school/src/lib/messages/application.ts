@@ -21,7 +21,7 @@ export const application = defineMessages({
     id: 'ss.application:actionCardDraft',
     defaultMessage: 'Í vinnslu',
     description:
-      'Description of application state/status when the application is in progress',
+      'Description of application state/status when the application is in draft',
   },
   actionCardSubmitted: {
     id: 'ss.application:actionCardSubmitted',
@@ -37,13 +37,13 @@ export const application = defineMessages({
   },
   stateMetaNamePrerequisites: {
     id: 'ss.application:stateMetaNamePrerequisites',
-    defaultMessage: 'Skilyrði',
+    defaultMessage: 'Prerequisites',
     description:
       'Meta name of application state when the application is in prerequisites',
   },
   stateMetaNameDraft: {
     id: 'ss.application:stateMetaNameDraft',
-    defaultMessage: 'Umsókn um framhaldsskóla',
+    defaultMessage: 'Draft',
     description:
       'Meta name of application state when the application is in draft',
   },
@@ -58,5 +58,10 @@ export const application = defineMessages({
     defaultMessage: 'Completed',
     description:
       'Meta name of application state when the application is in completed',
+  },
+  historyAplicationEdited: {
+    id: 'ss.application:historyAplicationEdited',
+    defaultMessage: 'Umsókn dregin tilbaka (breyting)',
+    description: 'History application edited',
   },
 })

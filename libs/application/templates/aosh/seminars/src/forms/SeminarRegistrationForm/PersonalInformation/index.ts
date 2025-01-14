@@ -29,11 +29,11 @@ export const personalInformationSection = buildSection({
             const nationalIdPath = isCompanyType(application.externalData)
               ? 'identity.data.actor.nationalId'
               : 'identity.data.nationalId'
-            const nationalId = getValueViaPath(
+            const nationalId = getValueViaPath<string>(
               application.externalData,
               nationalIdPath,
               undefined,
-            ) as string | undefined
+            )
 
             return nationalId
           },
@@ -48,11 +48,11 @@ export const personalInformationSection = buildSection({
             const namePath = isCompanyType(application.externalData)
               ? 'identity.data.actor.name'
               : 'identity.data.name'
-            const name = getValueViaPath(
+            const name = getValueViaPath<string>(
               application.externalData,
               namePath,
               undefined,
-            ) as string | undefined
+            )
 
             return name
           },

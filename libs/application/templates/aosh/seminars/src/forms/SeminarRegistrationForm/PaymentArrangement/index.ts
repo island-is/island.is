@@ -140,11 +140,11 @@ export const paymentArrangementSection = buildSection({
           required: true,
           format: '######-####',
           defaultValue: (application: Application) => {
-            const nationalId = getValueViaPath(
+            const nationalId = getValueViaPath<string>(
               application.externalData,
               'identity.data.nationalId',
               undefined,
-            ) as string | undefined
+            )
 
             return nationalId
           },
@@ -158,11 +158,11 @@ export const paymentArrangementSection = buildSection({
           readOnly: true,
           required: true,
           defaultValue: (application: Application) => {
-            const name = getValueViaPath(
+            const name = getValueViaPath<string>(
               application.externalData,
               'identity.data.name',
               undefined,
-            ) as string | undefined
+            )
 
             return name
           },

@@ -107,6 +107,8 @@ export type RepeaterItem = {
   phoneRequired?: boolean
   showEmailField?: boolean
   emailRequired?: boolean
+  searchCompanies?: boolean
+  searchPersons?: boolean
   readonly?:
     | boolean
     | ((

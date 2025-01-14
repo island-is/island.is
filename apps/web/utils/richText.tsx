@@ -283,6 +283,7 @@ const defaultRenderComponent = {
       teamMembers={slice.teamMembers as TeamListProps['teamMembers']}
       filterTags={slice.filterTags}
       variant={slice.variant as 'accordion' | 'card'}
+      showSearchInput={slice.showSearchInput ?? true}
     />
   ),
   Image: (slice: ImageProps) => {

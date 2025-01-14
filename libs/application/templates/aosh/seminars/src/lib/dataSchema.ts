@@ -19,13 +19,8 @@ const UserSchemaBase = z.object({
 
 export const PaymentArrangementSchema = z
   .object({
-    individualOrCompany: z.enum([
-      IndividualOrCompany.individual,
-      IndividualOrCompany.company,
-    ]),
-    paymentOptions: z
-      .enum([PaymentOptions.cashOnDelivery, PaymentOptions.putIntoAccount])
-      .optional(),
+    individualOrCompany: z.nativeEnum(IndividualOrCompany),
+    paymentOptions: z.nativeEnum(PaymentOptions).optional(),
     companyInfo: z
       .object({
         nationalId: z.string().optional(),
