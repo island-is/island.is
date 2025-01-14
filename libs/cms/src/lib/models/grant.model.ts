@@ -12,6 +12,7 @@ import { Link, mapLink } from './link.model'
 import format from 'date-fns/format'
 import addHours from 'date-fns/addHours'
 import { isValidDate } from '@island.is/shared/utils'
+import { logger } from '@island.is/logging'
 
 export enum GrantStatus {
   CLOSED,
@@ -90,8 +91,15 @@ export class Grant {
 const parseStatus = (fields: IGrantFields): GrantStatus => {
   switch (fields.grantStatus) {
     case 'Automatic': {
-      const parsedDateTo = new Date(fields.grantDateTo ?? '')
-      const parsedDateFrom = new Date(fields.grantDateFrom ?? '')
+      const dateTo = parseDate(fields.grantDateTo, fields.grantOpenToHour)
+      const dateFrom = parseDate(fields.grantDateFrom, fields.grantOpenFromHour)
+
+      if (!dateTo || !dateFrom) {
+        return GrantStatus.INVALID
+      }
+
+      const parsedDateTo = new Date(dateTo)
+      const parsedDateFrom = new Date(dateFrom)
 
       if (!isValidDate(parsedDateTo) || !isValidDate(parsedDateFrom)) {
         return GrantStatus.INVALID
@@ -100,12 +108,12 @@ const parseStatus = (fields: IGrantFields): GrantStatus => {
       const today = new Date()
 
       //opens soon!
-      if (today <= parsedDateFrom) {
+      if (today < parsedDateFrom) {
         return fields.grantFromDateIsEstimated
           ? GrantStatus.CLOSED_OPENING_SOON_WITH_ESTIMATION
           : GrantStatus.CLOSED_OPENING_SOON
       }
-      if (today <= parsedDateTo) {
+      if (today < parsedDateTo) {
         return GrantStatus.OPEN
       }
       return GrantStatus.CLOSED
@@ -129,7 +137,7 @@ const parseDate = (date?: string, time?: number): string | undefined => {
   if (!time) {
     return format(parsedDate, 'yyyy-MM-dd')
   }
-  return addHours(new Date(date), time).toISOString()
+  return addHours(parsedDate, time).toISOString()
 }
 
 export const mapGrant = ({ fields, sys }: IGrant): Grant => {
