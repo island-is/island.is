@@ -321,7 +321,7 @@ const Slider = ({
 
   let requiredMarginTop: BoxProps['marginTop'] = 0
   requiredMarginTop = hasAllRequiredForTooltip() ? 10 : 0
-  if(hasAllRequiredForTooltip()) {
+  if (hasAllRequiredForTooltip()) {
     // If there is a tooltip and we are using all labels, we can reduce the amount of margin top we need
     // because the labels themselves will provide some space
     requiredMarginTop = hasAllRequiredForLabels() ? 6 : requiredMarginTop
