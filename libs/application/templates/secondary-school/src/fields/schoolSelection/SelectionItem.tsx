@@ -11,6 +11,7 @@ import {
   ApplicationType,
   getTranslatedProgram,
   Language,
+  LANGUAGE_CODE_DANISH,
   Program,
   SecondarySchool,
 } from '../../utils'
@@ -397,7 +398,7 @@ export const SelectionItem: FC<FieldBaseProps & SelectionItemProps> = (
                 isDisabled={isLoadingPrograms}
                 value={selectedNordicLanguage}
                 options={nordicLanguageOptions
-                  .filter((x) => x.code !== 'da')
+                  .filter((x) => x.code !== LANGUAGE_CODE_DANISH)
                   .map((language) => {
                     return {
                       label: language.name,
