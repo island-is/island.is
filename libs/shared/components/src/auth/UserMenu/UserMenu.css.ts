@@ -31,6 +31,7 @@ const dropdownBaseMD: StyleWithSelectors = {
   width: 358,
   borderRadius: theme.border.radius.large,
   filter: 'drop-shadow(0px 4px 70px rgba(0, 97, 255, 0.1))',
+  height: 'auto',
 }
 
 export const dropdown = style({
