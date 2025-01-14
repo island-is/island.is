@@ -1083,21 +1083,20 @@ export class CaseService {
       })
     }
 
-    // Commented out temporarily because police endpoint is not ready to receive revocation
-    // const subpoenasToRevoke = await this.subpoenaService.findByCaseId(
-    //   theCase.id,
-    // )
+    const subpoenasToRevoke = await this.subpoenaService.findByCaseId(
+      theCase.id,
+    )
 
-    // if (subpoenasToRevoke?.length > 0) {
-    //   messages.push(
-    //     ...subpoenasToRevoke.map((subpoena) => ({
-    //       type: MessageType.DELIVERY_TO_POLICE_SUBPOENA_REVOCATION,
-    //       user,
-    //       caseId: theCase.id,
-    //       elementId: [subpoena.defendantId, subpoena.id],
-    //     })),
-    //   )
-    // }
+    if (subpoenasToRevoke?.length > 0) {
+      messages.push(
+        ...subpoenasToRevoke.map((subpoena) => ({
+          type: MessageType.DELIVERY_TO_POLICE_SUBPOENA_REVOCATION,
+          user,
+          caseId: theCase.id,
+          elementId: [subpoena.defendantId, subpoena.id],
+        })),
+      )
+    }
 
     return this.messageService.sendMessagesToQueue(messages)
   }
