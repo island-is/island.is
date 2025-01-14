@@ -29,6 +29,7 @@ import {
 } from './utils'
 import { Item } from './TableRepeaterItem'
 import { Locale } from '@island.is/shared/types'
+import { useApolloClient } from '@apollo/client/react'
 
 interface Props extends FieldBaseProps {
   field: TableRepeaterField
@@ -57,12 +58,33 @@ export const TableRepeaterFormField: FC<Props> = ({
     editButtonTooltipText = coreMessages.editFieldText,
     editField = false,
     maxRows,
+    onSubmitLoad,
   } = data
+
+  const apolloClient = useApolloClient()
 
   const items = Object.keys(rawItems).map((key) => ({
     id: key,
     ...rawItems[key],
   }))
+
+  const load = async () => {
+    if (onSubmitLoad) {
+      try {
+        const submitResponse = await onSubmitLoad({
+          apolloClient,
+          application,
+          tableItems: values,
+        })
+
+        submitResponse.dictinaryOfItems.map((x) => {
+          methods.setValue(x.path, x.value)
+        })
+      } catch {
+        // TODO catch error
+      }
+    }
+  }
 
   const { formatMessage, lang: locale } = useLocale()
   const methods = useFormContext()
@@ -91,6 +113,7 @@ export const TableRepeaterFormField: FC<Props> = ({
 
     if (isValid) {
       setActiveIndex(-1)
+      load()
     }
   }
 
@@ -218,7 +241,9 @@ export const TableRepeaterFormField: FC<Props> = ({
                     {tableRows.map((item, idx) => (
                       <T.Data
                         key={`${item}-${idx}`}
-                        disabled={values[index].disabled}
+                        disabled={
+                          values[index].disabled === 'true' ? true : false
+                        }
                       >
                         {formatTableValue(
                           item,

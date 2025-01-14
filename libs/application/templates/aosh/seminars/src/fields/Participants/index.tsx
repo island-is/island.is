@@ -1,4 +1,4 @@
-import { Controller, useFormContext, useWatch } from 'react-hook-form'
+import { Controller, useFormContext } from 'react-hook-form'
 import {
   Box,
   Button,
@@ -11,17 +11,13 @@ import {
   FieldComponents,
   FieldTypes,
 } from '@island.is/application/types'
-import { FC, useCallback, useEffect, useState } from 'react'
+import { FC, useState } from 'react'
 import { FILE_SIZE_LIMIT } from '../../lib/constants'
 import { parse } from 'csv-parse'
 import { Participant } from '../../shared/types'
 import { participants as participantMessages } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
-import { useLazyAreIndividualsValid } from '../../hooks/useLazyAreIndividualsValid'
-import { getValueViaPath } from '@island.is/application/core'
 import { DescriptionFormField } from '@island.is/application/ui-fields'
-import { isValidEmail, isValidPhoneNumber } from '../../utils'
-import * as kennitala from 'kennitala'
 
 interface IndexableObject {
   [index: number]: Array<string>
@@ -46,7 +42,7 @@ const parseDataToParticipantList = (csvInput: string): Participant | null => {
     nationalId: nationalIdWithoutHyphen,
     email: values[2],
     phoneNumber: values[3],
-    disabled: false,
+    disabled: 'false',
   }
 }
 
@@ -71,22 +67,6 @@ export const Participants: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   const [fileState, setFileState] = useState<Array<UploadFile>>([])
   const [participantList, setParticipantList] = useState<Array<Participant>>([])
   const [foundNotValid, setFoundNotValid] = useState<boolean>(false)
-
-  const participantListWatch: Array<Participant> = useWatch({
-    name: 'participantList',
-  })
-
-  const getAreIndividualsValid = useLazyAreIndividualsValid()
-  const getIsCompanyValidCallback = useCallback(
-    async (nationalIds: Array<string>, courseID: string) => {
-      const { data } = await getAreIndividualsValid({
-        nationalIds,
-        courseID,
-      })
-      return data
-    },
-    [getAreIndividualsValid],
-  )
 
   const changeFile = (props: Array<UploadFile>) => {
     const reader = new FileReader()
@@ -129,50 +109,6 @@ export const Participants: FC<React.PropsWithChildren<FieldBaseProps>> = ({
     return
   }
 
-  // const updateValidity = async (participants: Array<Participant>) => {
-  //   const nationalIds = participants.map((x) => x.nationalId)
-
-  //   if (nationalIds.length > 0) {
-  //     const seminarId = getValueViaPath(
-  //       application.answers,
-  //       'initialQuery',
-  //       '',
-  //     ) as string
-  //     const res = await getIsCompanyValidCallback(nationalIds, seminarId)
-
-  //     let tmpNotValid = false
-  //     const updatedParticipantList: Array<Participant> = participants.map(
-  //       (x) => {
-  //         const participantInRes = res.areIndividualsValid.filter(
-  //           (z) => z.nationalID === x.nationalId,
-  //         )
-  //         if (!participantInRes[0].mayTakeCourse) tmpNotValid = true
-  //         return { ...x, disabled: !participantInRes[0].mayTakeCourse }
-  //       },
-  //     )
-  //     if (tmpNotValid) setValue('participantValidityError', true)
-  //     setFoundNotValid(tmpNotValid)
-  //     setParticipantList(updatedParticipantList)
-  //   }
-  // }
-
-  // useEffect(() => {
-  //   if (participantListWatch) {
-  //     const lastItemIndex = participantListWatch.length - 1
-  //     if (
-  //       participantListWatch[lastItemIndex].name &&
-  //       participantListWatch[lastItemIndex].email &&
-  //       isValidEmail(participantListWatch[lastItemIndex].email) &&
-  //       participantListWatch[lastItemIndex].nationalId &&
-  //       kennitala.isValid(participantListWatch[lastItemIndex].nationalId) &&
-  //       participantListWatch[lastItemIndex].phoneNumber &&
-  //       isValidPhoneNumber(participantListWatch[lastItemIndex].phoneNumber)
-  //     ) {
-  //       updateValidity(participantListWatch)
-  //     }
-  //   }
-  // }, [participantListWatch])
-
   const removeFile = () => {
     setFileState([])
   }
@@ -197,7 +133,7 @@ export const Participants: FC<React.PropsWithChildren<FieldBaseProps>> = ({
 
   const removeInvalidParticipants = () => {
     const validParticipants = participantList.filter(
-      (x) => x.disabled === false,
+      (x) => x.disabled === 'false',
     )
     setValue('participantList', validParticipants)
     setParticipantList(validParticipants)

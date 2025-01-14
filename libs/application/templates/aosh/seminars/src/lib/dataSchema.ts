@@ -159,7 +159,7 @@ export const ParticipantSchema = z.object({
     .string()
     .min(1)
     .refine((x) => isValidPhoneNumber(x)),
-  disabled: z.boolean().optional(),
+  disabled: z.string().optional(),
 })
 
 export const SeminarAnswersSchema = z.object({
@@ -168,7 +168,7 @@ export const SeminarAnswersSchema = z.object({
   paymentArrangement: PaymentArrangementSchema,
   participantList: z.array(ParticipantSchema).refine(
     (pList) => {
-      const hasDisabled = pList.filter((x) => x.disabled === true)
+      const hasDisabled = pList.filter((x) => x.disabled === 'true')
       return hasDisabled.length === 0
     },
     {

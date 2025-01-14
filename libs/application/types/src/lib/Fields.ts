@@ -50,6 +50,10 @@ export type Context = {
   apolloClient: ApolloClient<object>
 }
 
+export type TableContext = Context & {
+  tableItems: Array<any>
+}
+
 export type TagVariant =
   | 'blue'
   | 'darkerBlue'
@@ -647,6 +651,9 @@ export type TableRepeaterField = BaseField & {
   editField?: boolean
   titleVariant?: TitleVariants
   fields: Record<string, RepeaterItem>
+  onSubmitLoad?(c: TableContext): Promise<{
+    dictinaryOfItems: Array<{ path: string; value: string }>
+  }>
   /**
    * Maximum rows that can be added to the table.
    * When the maximum is reached, the button to add a new row is disabled.

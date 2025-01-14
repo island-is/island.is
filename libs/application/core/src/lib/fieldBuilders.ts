@@ -885,6 +885,7 @@ export const buildTableRepeaterField = (
     editField,
     getStaticTableData,
     maxRows,
+    onSubmitLoad,
   } = data
 
   return {
@@ -903,6 +904,7 @@ export const buildTableRepeaterField = (
     editField,
     getStaticTableData,
     maxRows,
+    onSubmitLoad,
   }
 }
 
