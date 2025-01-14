@@ -97,21 +97,6 @@ export enum FiskistofaCategories {
   VEIDIHEIMILDIR = '1agbWJCHTDVfVR4yQZPaEK',
 }
 
-export enum VinnueftirlitidCategories {
-  NAMSKEID = '41SeTRazu0qKIixRhWpDLA',
-  SKRANING_OG_SKODUN_VINNUVELA = '1ulMblBQwDkfSNgh2NyKpw',
-  VINNUSLYS = '3VY4skpcXo7XyniStyxrVc',
-  VINNUVELARETTINDI = '1AkjZQc1CO6hMPXYaLSqTw',
-  VINNUVERND = '4Wmxb25h9R7L0kuYsz19jG',
-  MARKADSEFTIRLIT = '61OI7gY23wC80mRRA4yrbA',
-  MANNVIRKJAGERD = '7fLoJqpyojUHgdDofIpqlU',
-  EKKO_OG_SAMSKIPTI = '3SAlg8Xt7AKBQFrGUCTkG1',
-  VINNUADSTADA = '7FPsjPxRHA2aIOUXY3Xr3V',
-  LOG_OG_REGLUGERDIR = '7vb5yId3HMigcXEDMYN9uN',
-  LEYFI_OG_UMSAGNIR = '7nLIjBeO5EovoPYwINWoyv',
-  ONNUR_THJONUSTA = 'fdkCIdREoNlYmgkr37DTl',
-}
-
 export const filterSupportCategories = (
   supportCategories: SupportCategory[] | undefined,
   slug: string,

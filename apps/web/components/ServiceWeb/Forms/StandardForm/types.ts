@@ -1,14 +1,12 @@
 import type {
   FiskistofaCategories,
   SjukratryggingarCategories,
-  VinnueftirlitidCategories,
 } from '@island.is/web/screens/ServiceWeb/Forms/utils'
 
 export type CategoryId =
   | SyslumennCategories
   | SjukratryggingarCategories
   | FiskistofaCategories
-  | VinnueftirlitidCategories
 
 export enum SyslumennCategories {
   FJOLSKYLDUMAL = '4vQ4htPOAZvzcXBcjx06SH',
