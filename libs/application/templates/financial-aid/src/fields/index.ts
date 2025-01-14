@@ -1,4 +1,3 @@
-export { default as InRelationshipForm } from './InRelationshipForm/InRelationshipForm'
 export { default as AboutForm } from './AboutForm/AboutForm'
 export { default as ChildrenForm } from './ChildrenForm/ChildrenForm'
 export { default as ChildrenFilesForm } from './ChildrenFilesForm/ChildrenFilesForm'

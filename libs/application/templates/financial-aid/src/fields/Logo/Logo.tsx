@@ -15,7 +15,7 @@ const withLogo =
     useEffect(() => {
       const getLogo = async () => {
         const svgLogo = await import(
-          `../../svg/${
+          `../../assets/svg/${
             logoKeyFromMunicipalityCode[
               municipality ? municipality.municipalityId : ''
             ]
