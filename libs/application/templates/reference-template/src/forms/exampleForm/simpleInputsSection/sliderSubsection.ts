@@ -168,7 +168,9 @@ export const sliderSubsection = buildSubSection({
         }),
         buildDividerField({ useDividerLine: false }),
 
-        buildTitleField({title: 'Slider field with different colors and all labels'}),
+        buildTitleField({
+          title: 'Slider field with different colors and all labels',
+        }),
         buildSliderField({
           id: 'basicSliderAllLabels',
           title: 'Basic slider',

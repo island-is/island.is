@@ -326,9 +326,8 @@ const Slider = ({
     // because the labels themselves will provide some space
     requiredMarginTop = hasAllRequiredForLabels() ? 6 : requiredMarginTop
   }
-  
-  if(showRemainderOverlay && calculateCellStyle === undefined) 
-  {
+
+  if (showRemainderOverlay && calculateCellStyle === undefined) {
     // Add a default background color here if none is defined
     calculateCellStyle = () => {
       return {
@@ -338,7 +337,7 @@ const Slider = ({
   }
 
   return (
-    <Box marginTop={requiredMarginTop}> 
+    <Box marginTop={requiredMarginTop}>
       {hasAllRequiredForMinMaxLabels() && (
         <Box display="flex" justifyContent="spaceBetween" width="full">
           <Text color={textColorValues.themeColorName} variant="eyebrow">
