@@ -691,4 +691,28 @@ export class SyslumennService {
           delegation.gildirTil > startOfDay(new Date())),
     )
   }
+
+  async hasElectronicID(
+    nationalId: string,
+    phoneNumber: string,
+  ): Promise<boolean> {
+    const { id, api } = await this.createApi()
+    const res = await api.kannaRafraenSkilrikiGet({
+      audkenni: id,
+      kennitala: nationalId,
+      simi: phoneNumber,
+    })
+
+    return res?.stada === 'Í lagi'
+  }
+
+  async checkIfBirthCertificateExists(nationalId: string): Promise<boolean> {
+    const { id, api } = await this.createApi()
+    const res = await api.kannaKonnunarvottordGet({
+      audkenni: id,
+      kennitala: nationalId,
+    })
+
+    return res.stada ?? false
+  }
 }

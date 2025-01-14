@@ -146,6 +146,10 @@ export const m = {
       id: 'web.grants:single.deadline',
       defaultMessage: 'Umsóknir',
     },
+    deadlinePeriod: {
+      id: 'web.grants:single.deadlinePeriod',
+      defaultMessage: 'Umsóknartímabil',
+    },
     status: {
       id: 'web.grants:single.status',
       defaultMessage: 'Staða',
