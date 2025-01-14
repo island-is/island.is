@@ -86,9 +86,18 @@ jobs:
       contents: read # This is required for actions/checkout
 
     steps:
-      - name: Debug inputs
+      - name: Prepare and debug inputs
+        id: inputs
+        env:
+          # Append a slash when PUSH_REGISTRY is non-empty
+          registry: "${{ env.PUSH_REGISTRY }}${{ env.PUSH_REGISTRY && '/' || '' }}"
+          # We don't use a repository prefix, just the raw project
+          # repository: '${{ github.repository }}/${{ matrix.project }}'
+          repository: '${{ matrix.project }}'
         run: |
+          echo "Labels: ${{ toJSON(github.event.pull_request.labels) }}"
           echo "Matrix: ${{ toJSON(matrix) }}"
+          echo image_repository="$registry$repository" >>"$GITHUB_OUTPUT"
 
       - name: Check out repo
         uses: actions/checkout@v4
@@ -130,12 +139,6 @@ jobs:
       - name: Generate Docker metadata
         id: meta
         uses: docker/metadata-action@v5
-        env:
-          # Append a slash when PUSH_REGISTRY is non-empty
-          registry: "${{ env.PUSH_REGISTRY }}${{ env.PUSH_REGISTRY && '/' || '' }}"
-          # We don't use a repository prefix, just the raw project
-          # repository: '${{ github.repository }}/${{ matrix.project }}'
-          repository: '${{ matrix.project }}'
         with:
           images: |
             ${{ env.registry }}${{ env.repository }}
@@ -158,8 +161,8 @@ jobs:
           build-args: |
             NODE_IMAGE_TAG=latest
             DOCKER_REGISTRY=${{ env.DOCKER_REGISTRY }}
-          cache-from: type=registry,ref=${{ env.PUSH_REGISTRY }}/${{ matrix.project }}:cache
-          cache-to: type=registry,ref=${{ env.PUSH_REGISTRY }}/${{ matrix.project }}:cache,mode=max
+          cache-from: type=registry,ref=${{ steps.inputs.image_repository }}:cache
+          cache-to: type=registry,ref=${{ steps.inputs.image_repository }}:cache,mode=max
 
   status:
     name: Collect statuses
