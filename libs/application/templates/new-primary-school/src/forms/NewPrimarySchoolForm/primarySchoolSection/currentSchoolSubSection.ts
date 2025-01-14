@@ -34,7 +34,7 @@ export const currentSchoolSubSection = buildSubSection({
         }),
         buildCustomField({
           id: 'currentSchool.grade',
-          title: newPrimarySchoolMessages.primarySchool.grade,
+          title: newPrimarySchoolMessages.overview.grade,
           width: 'half',
           disabled: true,
           component: 'Grade',

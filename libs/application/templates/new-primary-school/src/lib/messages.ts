@@ -424,17 +424,12 @@ export const newPrimarySchoolMessages: MessageDir = {
     currentSchoolSubSectionTitle: {
       id: 'nps.application:primary.school.current.school.sub.section.title',
       defaultMessage: 'Upplýsingar um núverandi skóla',
-      description: 'Current school',
+      description: 'Information about current school',
     },
     currentSchoolInfo: {
       id: 'nps.application:primary.school.current.school.info',
       defaultMessage: 'Núverandi skóli',
-      description: 'Current School information',
-    },
-    grade: {
-      id: 'nps.application:primary.school.current.school.grade',
-      defaultMessage: 'Bekkur',
-      description: 'Current school grade',
+      description: 'Current school',
     },
 
     // Apply to a new school
