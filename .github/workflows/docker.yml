@@ -170,10 +170,6 @@ jobs:
           target: output-${{ matrix.docker }}
           build-args: |
             NODE_IMAGE_TAG=${{ needs.prepare.outputs.node_image_tag }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
-          # cache-from: ${{ steps.inputs.outputs.build_cache }}
-          # cache-to: ${{ steps.inputs.outputs.build_cache }},mode=max
 
   status:
     name: Collect statuses
