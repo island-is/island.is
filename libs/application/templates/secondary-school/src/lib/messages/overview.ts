@@ -120,10 +120,10 @@ export const overview = {
     },
   }),
   buttons: defineMessages({
-    confirm: {
-      id: 'ss.application:overview.buttons.confirm',
+    submit: {
+      id: 'ss.application:overview.buttons.submit',
       defaultMessage: 'Senda umsókn',
-      description: 'Continue',
+      description: 'Submit application button',
     },
   }),
 }
