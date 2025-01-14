@@ -116,7 +116,7 @@ const GrantCardsList = ({ slice }: SliceProps) => {
 
   const grantItems = slice.resolvedGrantsList?.items ?? []
 
-  if (grantItems.length !== 1) {
+  if (grantItems.length === 1) {
     const grant = grantItems[0]
 
     const cardText = `${getTranslationString(
@@ -213,7 +213,7 @@ const GrantCardsList = ({ slice }: SliceProps) => {
     .filter(isDefined)
 
   return (
-    <Box padding={1} borderColor="blue100" borderRadius="large">
+    <>
       {slice.displayTitle && (
         <Box marginBottom={2}>
           <Text variant="h3" as="span" color="dark400">
@@ -227,7 +227,7 @@ const GrantCardsList = ({ slice }: SliceProps) => {
         variant="detailed"
         cards={cards ?? []}
       />
-    </Box>
+    </>
   )
 }
 
