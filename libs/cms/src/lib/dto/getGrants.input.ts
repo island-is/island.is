@@ -1,7 +1,18 @@
 import { IsArray, IsInt, IsOptional, IsString } from 'class-validator'
-import { Field, InputType, Int } from '@nestjs/graphql'
+import { Field, InputType, Int, registerEnumType } from '@nestjs/graphql'
 import { ElasticsearchIndexLocale } from '@island.is/content-search-index-manager'
 import { GrantStatus } from '../models/grant.model'
+import { CacheField } from '@island.is/nest/graphql'
+import { SortField } from '@island.is/content-search-toolkit'
+
+export enum GrantsSortBy {
+  ALPHABETICAL,
+  RECENTLY_UPDATED,
+}
+
+registerEnumType(GrantsSortBy, {
+  name: 'GetGrantsInputSortByEnum',
+})
 
 @InputType()
 export class GetGrantsInput {
@@ -23,6 +34,10 @@ export class GetGrantsInput {
   @IsInt()
   @IsOptional()
   size?: number = 8
+
+  @CacheField(() => GrantsSortBy, { nullable: true })
+  @IsOptional()
+  sort?: GrantsSortBy
 
   @Field(() => [String], { nullable: true })
   @IsArray()
