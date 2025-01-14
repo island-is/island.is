@@ -1,24 +1,43 @@
 import {
+  buildAlertMessageField,
   buildDescriptionField,
+  buildImageField,
   buildMultiField,
   buildSection,
 } from '@island.is/application/core'
 import { Section } from '@island.is/application/types'
-import { application } from '../lib/messages'
+import { signingForm } from '../lib/messages/signingForm'
+import RA from '../assets/RA'
 
 export const Signing: Section = buildSection({
   id: 'signing',
-  title: application.signingSectionName,
+  title: signingForm.sectionName,
   children: [
     buildMultiField({
-      id: 'signing.info',
-      title: 'Undirritun',
-      description: 'Vinsamlegast undirritið samninginn',
+      id: 'signingForm.info',
+      title: signingForm.pageTitle,
+      description: '',
       children: [
+        buildAlertMessageField({
+          id: 'signingForm.alert',
+          alertType: 'success',
+          title: signingForm.alertMessageSuccess,
+          marginTop: 0,
+        }),
         buildDescriptionField({
-          id: 'signing.description',
-          title: 'Undirritun',
-          description: 'Vinsamlegast undirritið samninginn',
+          id: 'signingForm.description',
+          title: signingForm.pageInfoTitle,
+          titleVariant: 'h3',
+          description: signingForm.pageInfoDescription,
+          marginBottom: 8,
+        }),
+        buildImageField({
+          id: 'signingForm.image',
+          title: '',
+          width: 'full',
+          image: RA,
+          imagePosition: 'center',
+          alt: 'Undirritun',
         }),
       ],
     }),

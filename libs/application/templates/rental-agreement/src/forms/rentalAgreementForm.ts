@@ -7,7 +7,8 @@ import { RentalPeriod } from './rentalPeriod'
 import { Summary } from './summary/summary'
 
 import { application } from '../lib/messages'
-import { Signature } from './signature/signature'
+import { SignatureInfo } from './signatureInfo/signatureInfo'
+import { Signing } from './signing'
 
 export const RentalAgreementForm: Form = buildForm({
   id: 'RentalAgreementApplication',
@@ -16,5 +17,5 @@ export const RentalAgreementForm: Form = buildForm({
   mode: FormModes.DRAFT,
   renderLastScreenButton: true,
   renderLastScreenBackButton: true,
-  children: [RentalHousingInfo, RentalPeriod, Summary, Signature],
+  children: [RentalHousingInfo, RentalPeriod, Summary, SignatureInfo, Signing],
 })
