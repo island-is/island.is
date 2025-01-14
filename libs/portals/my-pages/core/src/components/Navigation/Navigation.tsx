@@ -271,7 +271,16 @@ export const Navigation: FC<React.PropsWithChildren<NavigationProps>> = ({
   )
 
   const mobileId = 'menuDialog-mobile-test'
-  const isScrolled = useScrolledPassed(mobileId)
+  const [isScrolled, setIsScrolled] = useState<boolean | undefined>(undefined)
+  const scrolled = useScrolledPassed(mobileId)
+
+  useEffect(() => {
+    if (scrolled) {
+      setIsScrolled(true)
+    } else if (isScrolled && !scrolled) {
+      setIsScrolled(false)
+    }
+  }, [scrolled])
 
   return (
     <NavigationContext.Provider
@@ -285,7 +294,7 @@ export const Navigation: FC<React.PropsWithChildren<NavigationProps>> = ({
           position="relative"
           className={cn(styles.scrolledMenu, {
             [styles.scrolledMenuVisible]: isScrolled,
-            [styles.scrolledMenuHidden]: !isScrolled,
+            [styles.scrolledMenuHidden]: isScrolled === false,
           })}
           id={mobileId}
         >
