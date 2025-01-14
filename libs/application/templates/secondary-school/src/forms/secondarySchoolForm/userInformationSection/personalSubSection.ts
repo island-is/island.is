@@ -1,5 +1,7 @@
 import {
+  buildAlertMessageField,
   buildDescriptionField,
+  buildHiddenInput,
   buildMultiField,
   buildRadioField,
   buildSubSection,
@@ -8,7 +10,6 @@ import {
 import { userInformation } from '../../../lib/messages'
 import { applicantInformationMultiField } from '@island.is/application/ui-forms'
 import { ApplicationType, Routes, Student } from '../../../utils'
-import { Application } from '@island.is/application/types'
 
 export const personalSubSection = buildSubSection({
   id: 'personalSubSection',
@@ -31,13 +32,27 @@ export const personalSubSection = buildSubSection({
         }).children,
         buildDescriptionField({
           id: 'applicationTypeInfo.subtitle',
+          condition: (_, externalData) => {
+            const studentInfo = getValueViaPath<Student>(
+              externalData,
+              'studentInfo.data',
+            )
+            return !studentInfo?.isFreshman
+          },
           title: userInformation.applicationType.subtitle,
           titleVariant: 'h5',
           space: 3,
         }),
         buildRadioField({
           title: '',
-          id: 'applicationType',
+          id: 'applicationType.value',
+          condition: (_, externalData) => {
+            const studentInfo = getValueViaPath<Student>(
+              externalData,
+              'studentInfo.data',
+            )
+            return !studentInfo?.isFreshman
+          },
           options: [
             {
               value: ApplicationType.FRESHMAN,
@@ -49,14 +64,38 @@ export const personalSubSection = buildSubSection({
                 userInformation.applicationType.generalApplicationOptionTitle,
             },
           ],
-          defaultValue: (application: Application) => {
+          width: 'full',
+        }),
+        buildHiddenInput({
+          id: 'applicationType.value',
+          condition: (_, externalData) => {
             const studentInfo = getValueViaPath<Student>(
-              application.externalData,
+              externalData,
               'studentInfo.data',
             )
-            if (studentInfo?.isFreshman) return ApplicationType.FRESHMAN
+            return !!studentInfo?.isFreshman
           },
-          width: 'full',
+          defaultValue: ApplicationType.FRESHMAN,
+        }),
+        buildAlertMessageField({
+          id: 'applicationTypeAlertMessage',
+          alertType: 'warning',
+          title: '',
+          message: userInformation.applicationType.alertMessage,
+          condition: (answers, externalData) => {
+            const isFreshmanAnswers =
+              getValueViaPath<ApplicationType>(
+                answers,
+                'applicationType.value',
+              ) === ApplicationType.FRESHMAN
+
+            const isFreshmanExternalData = getValueViaPath<Student>(
+              externalData,
+              'studentInfo.data',
+            )?.isFreshman
+
+            return isFreshmanAnswers && !isFreshmanExternalData
+          },
         }),
       ],
     }),
