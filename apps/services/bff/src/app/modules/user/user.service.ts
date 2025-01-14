@@ -41,7 +41,7 @@ export class UserService {
     res: Response
     refresh: boolean
   }): Promise<BffUser> {
-    const sid = this.sessionCookieService.get(req)
+    const sid = this.sessionCookieService.get({ req, res })
 
     if (!sid) {
       throw new UnauthorizedException()
@@ -79,6 +79,7 @@ export class UserService {
     } catch (error) {
       return this.errorService.handleAuthorizedError({
         error,
+        req,
         res,
         tokenResponseKey,
         operation: `${UserService.name}.getUser`,

@@ -1,7 +1,7 @@
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { Inject, Injectable, UnauthorizedException } from '@nestjs/common'
-import type { Response } from 'express'
+import type { Request, Response } from 'express'
 import { CacheService } from '../modules/cache/cache.service'
 import { SessionCookieService } from './sessionCookie.service'
 
@@ -57,11 +57,13 @@ export class ErrorService {
    * @throws UnauthorizedException after cleanup is complete
    */
   async handleAuthorizedError({
+    req,
     res,
     operation,
     error,
     tokenResponseKey,
   }: {
+    req: Request
     res: Response
     operation: string
     error: unknown
@@ -79,7 +81,7 @@ export class ErrorService {
         error,
       )
 
-      this.sessionCookieService.clear(res)
+      this.sessionCookieService.clear({ req, res })
       await this.cacheService.delete(tokenResponseKey)
 
       throw new UnauthorizedException()

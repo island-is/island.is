@@ -266,7 +266,7 @@ export class AuthService {
     res: Response
     loginAttemptCacheKey: string
   }) {
-    const sid = this.sessionCookieService.get(req)
+    const sid = this.sessionCookieService.get({ req, res })
 
     // Check if older session exists
     if (sid) {
@@ -359,7 +359,7 @@ export class AuthService {
 
       // Clear any existing session cookie first
       // This prevents multiple session cookies being set.
-      this.sessionCookieService.clear(res)
+      this.sessionCookieService.clear({ req, res })
 
       // Create session cookie with successful login session id
       this.sessionCookieService.set({
@@ -368,7 +368,7 @@ export class AuthService {
       })
 
       // Check if there is an old session cookie
-      const oldHashedSessionCookie = this.sessionCookieService.get(req)
+      const oldHashedSessionCookie = this.sessionCookieService.get({ req, res })
 
       if (
         oldHashedSessionCookie &&
@@ -428,7 +428,7 @@ export class AuthService {
     res: Response
     query: LogoutDto
   }) {
-    const sidCookie = this.sessionCookieService.get(req)
+    const sidCookie = this.sessionCookieService.get({ req, res })
 
     if (!sidCookie) {
       this.logger.error('Logout failed: No session cookie found')
@@ -480,7 +480,7 @@ export class AuthService {
      * - Delete the current login from the cache
      * - Clear the session cookie
      */
-    this.sessionCookieService.clear(res)
+    this.sessionCookieService.clear({ req, res })
 
     this.cacheService
       .delete(currentLoginCacheKey)

@@ -11,6 +11,7 @@ import { SessionCookieService } from './sessionCookie.service'
 
 const mockLogger = {
   error: jest.fn(),
+  info: jest.fn(),
 } as unknown as Logger
 
 const validConfig = {
@@ -41,6 +42,7 @@ describe('SessionCookieService', () => {
 
     mockRequest = {
       cookies: {},
+      headers: {},
     }
   })
 
@@ -48,25 +50,79 @@ describe('SessionCookieService', () => {
     jest.clearAllMocks()
   })
 
+  describe('getAllSidCookies', () => {
+    it('should return empty array when no cookies present', () => {
+      // Act
+      const result = service.getAllSidCookies(mockRequest as Request)
+
+      // Assert
+      expect(result).toEqual([])
+    })
+
+    it('should return all session cookies when multiple are present', () => {
+      // Arrange
+      if (mockRequest.headers) {
+        mockRequest.headers.cookie = `${SESSION_COOKIE_NAME}=value1; ${SESSION_COOKIE_NAME}=value2`
+      }
+
+      // Act
+      const result = service.getAllSidCookies(mockRequest as Request)
+
+      // Assert
+      expect(result).toEqual(['value1', 'value2'])
+    })
+  })
+
   describe('get', () => {
     it('should return undefined when cookie is not present', () => {
       // Act
-      const result = service.get(mockRequest as Request)
+      const result = service.get({ req: mockRequest as Request })
 
       // Assert
       expect(result).toBeUndefined()
     })
 
-    it('should return cookie value when present', () => {
+    it('should return most recent cookie when multiple cookies are present', () => {
       // Arrange
-      const cookieValue = 'test-cookie-value'
-      mockRequest.cookies = { [SESSION_COOKIE_NAME]: cookieValue }
+      if (mockRequest.headers) {
+        mockRequest.headers.cookie = `${SESSION_COOKIE_NAME}=value1; ${SESSION_COOKIE_NAME}=value2`
+      }
+
+      mockRequest.cookies = { [SESSION_COOKIE_NAME]: 'value2' }
 
       // Act
-      const result = service.get(mockRequest as Request)
+      const result = service.get({
+        req: mockRequest as Request,
+        res: mockResponse as Response,
+      })
 
       // Assert
-      expect(result).toBe(cookieValue)
+      expect(result).toBe('value2')
+      expect(mockLogger.info).toHaveBeenCalledWith(
+        'Multiple session cookies found:',
+        expect.any(Object),
+      )
+    })
+
+    it('should clear older cookies when multiple cookies are present and response object is provided', () => {
+      // Arrange
+      if (mockRequest.headers) {
+        mockRequest.headers.cookie = `${SESSION_COOKIE_NAME}=value1; ${SESSION_COOKIE_NAME}=value2`
+      }
+
+      mockRequest.cookies = { [SESSION_COOKIE_NAME]: 'value2' }
+
+      // Act
+      service.get({
+        req: mockRequest as Request,
+        res: mockResponse as Response,
+      })
+
+      // Assert
+      expect(mockResponse.clearCookie).toHaveBeenCalledWith(
+        SESSION_COOKIE_NAME,
+        getCookieOptions(),
+      )
     })
   })
 
@@ -141,14 +197,23 @@ describe('SessionCookieService', () => {
   })
 
   describe('clear', () => {
-    it('should clear the session cookie', () => {
+    it('should clear all session cookies', () => {
+      // Arrange
+      if (mockRequest.headers) {
+        mockRequest.headers.cookie = `${SESSION_COOKIE_NAME}=value1; ${SESSION_COOKIE_NAME}=value2`
+      }
+
       // Act
-      service.clear(mockResponse as Response)
+      service.clear({
+        req: mockRequest as Request,
+        res: mockResponse as Response,
+      })
 
       // Assert
+      expect(mockResponse.clearCookie).toHaveBeenCalledTimes(2)
       expect(mockResponse.clearCookie).toHaveBeenCalledWith(
         SESSION_COOKIE_NAME,
-        expect.any(Object),
+        getCookieOptions(),
       )
     })
   })

@@ -84,7 +84,7 @@ export class ProxyService {
     req: Request
     res: Response
   }): Promise<string> {
-    const sid = this.sessionCookieService.get(req)
+    const sid = this.sessionCookieService.get({ req, res })
 
     if (!sid) {
       throw new UnauthorizedException()
@@ -122,6 +122,7 @@ export class ProxyService {
     } catch (error) {
       return this.errorService.handleAuthorizedError({
         error,
+        req,
         res,
         tokenResponseKey,
         operation: `${ProxyService.name}.getAccessToken`,
