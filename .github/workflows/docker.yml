@@ -144,7 +144,7 @@ jobs:
         uses: docker/metadata-action@v5
         with:
           images: |
-            ${{ env.registry }}${{ env.repository }}
+            ${{ steps.inputs.outputs.image_repository }}
           tags: |
             type=ref,event=branch
             # Git SHA
