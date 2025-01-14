@@ -1,2 +1,7 @@
 export * from './application'
 export * from './externalData'
+export * from './information'
+export * from './conclusion'
+export * from './certificateOfTenure'
+export * from './assigneeInformation'
+export * from './overview'

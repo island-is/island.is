@@ -104,7 +104,7 @@ const template: ApplicationTemplate<
       },
       [States.DRAFT]: {
         meta: {
-          name: 'Tilkynning um eigendaskipti að tæki',
+          name: 'Kennsluréttindi á vinnuvél',
           status: 'draft',
           actionCard: {
             tag: {
@@ -119,24 +119,25 @@ const template: ApplicationTemplate<
             ],
           },
           lifecycle: EphemeralStateLifeCycle,
-          // roles: [
-          //   {
-          //     id: Roles.APPLICANT,
-          //     formLoader: () =>
-          //       import('../forms/RegisterMachineForm/index').then((module) =>
-          //         Promise.resolve(module.RegisterNewMachineForm),
-          //       ),
-          //     actions: [
-          //       {
-          //         event: DefaultEvents.SUBMIT,
-          //         name: 'Staðfesta',
-          //         type: 'primary',
-          //       },
-          //     ],
-          //     write: 'all',
-          //     delete: true,
-          //   },
-          // ],
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/TrainingLicenseOnAWorkMachineForm/index').then(
+                  (module) =>
+                    Promise.resolve(module.TrainingLicenseOnAWorkMachineForm),
+                ),
+              // actions: [
+              //   {
+              //     event: DefaultEvents.SUBMIT,
+              //     name: 'Staðfesta',
+              //     type: 'primary',
+              //   },
+              // ],
+              write: 'all',
+              delete: true,
+            },
+          ],
         },
         on: {
           [DefaultEvents.SUBMIT]: { target: States.COMPLETED },
