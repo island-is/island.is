@@ -149,6 +149,8 @@ jobs:
           build-args: |
             NODE_IMAGE_TAG=latest
             DOCKER_REGISTRY=${{ env.DOCKER_REGISTRY }}
+          cache-from: type=registry,ref=${{ env.PUSH_REGISTRY }}/${{ matrix.project }}:cache
+          cache-to: type=registry,ref=${{ env.PUSH_REGISTRY }}/${{ matrix.project }}:cache,mode=max
 
   status:
     name: Collect statuses
