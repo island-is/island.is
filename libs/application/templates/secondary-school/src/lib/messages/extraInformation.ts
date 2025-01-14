@@ -4,12 +4,12 @@ export const extraInformation = {
   general: defineMessages({
     sectionTitle: {
       id: 'ss.application:extraInformation.general.sectionTitle',
-      defaultMessage: 'Viðbótaupplýsingar',
+      defaultMessage: 'Viðbótarupplýsingar',
       description: 'Title of extra information section',
     },
     pageTitle: {
       id: 'ss.application:extraInformation.general.pageTitle',
-      defaultMessage: 'Viðbótaupplýsingar',
+      defaultMessage: 'Viðbótarupplýsingar',
       description: 'Title of extra information page',
     },
     description: {
@@ -52,11 +52,6 @@ export const extraInformation = {
       id: 'ss.application:extraInformation.other.textareaLabel',
       defaultMessage: 'Annað',
       description: 'Other textarea label',
-    },
-    textareaPlaceholder: {
-      id: 'ss.application:extraInformation.other.textareaPlaceholder',
-      defaultMessage: 'Placeholder ef það þarf',
-      description: 'Other textarea placeholder',
     },
   }),
   supportingDocuments: defineMessages({
