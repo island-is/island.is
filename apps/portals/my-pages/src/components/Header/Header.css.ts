@@ -7,7 +7,7 @@ import {
 import { globalStyle, style } from '@vanilla-extract/css'
 
 export const header = style({
-  position: 'relative',
+  position: 'fixed',
   zIndex: zIndex.header,
   display: 'flex',
   alignItems: 'center',
@@ -19,7 +19,6 @@ export const header = style({
   '@media': {
     [`screen and (min-width: ${theme.breakpoints.lg}px)`]: {
       height: SERVICE_PORTAL_HEADER_HEIGHT_LG,
-      position: 'fixed',
     },
   },
 })
