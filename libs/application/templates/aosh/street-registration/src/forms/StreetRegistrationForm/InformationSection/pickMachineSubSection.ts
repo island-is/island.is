@@ -6,13 +6,36 @@ import {
   getValueViaPath,
 } from '@island.is/application/core'
 import { information } from '../../../lib/messages'
-import { MachinesWithTotalCount } from '@island.is/clients/work-machines'
+import {
+  MachineDto,
+  MachinesWithTotalCount,
+} from '@island.is/clients/work-machines'
 import {
   isInvalidRegistrationType,
   isMachineDisabled,
   mustInspectBeforeStreetRegistration,
 } from '../../../utils/getSelectedMachine'
 import { useLocale } from '@island.is/localization'
+import { ExternalData } from '@island.is/application/types'
+import { MessageDescriptor } from 'react-intl'
+
+const getTagLabel = (
+  externalData: ExternalData,
+  machine: MachineDto,
+  formatMessage: (message: MessageDescriptor) => string,
+): string => {
+  if (
+    mustInspectBeforeStreetRegistration(externalData, machine?.regNumber || '')
+  ) {
+    return formatMessage(
+      information.labels.pickMachine.inspectBeforeRegistration,
+    )
+  }
+  if (isInvalidRegistrationType(externalData, machine?.regNumber || '')) {
+    return formatMessage(information.labels.pickMachine.invalidRegistrationType)
+  }
+  return machine?.status || ''
+}
 
 export const pickMachineSubSection = buildSubSection({
   id: 'pickMachine',
@@ -53,23 +76,11 @@ export const pickMachineSubSection = buildSubSection({
                   machine?.disabled ||
                   isMachineDisabled(externalData, machine?.regNumber || '')
                     ? {
-                        label: mustInspectBeforeStreetRegistration(
-                          application?.externalData,
-                          machine?.regNumber || '',
-                        )
-                          ? useLocale().formatMessage(
-                              information.labels.pickMachine
-                                .inspectBeforeRegistration,
-                            )
-                          : isInvalidRegistrationType(
-                              externalData,
-                              machine?.regNumber || '',
-                            )
-                          ? useLocale().formatMessage(
-                              information.labels.pickMachine
-                                .invalidRegistrationType,
-                            )
-                          : machine?.status || '',
+                        label: getTagLabel(
+                          externalData,
+                          machine,
+                          useLocale().formatMessage,
+                        ),
                         variant: 'red',
                         outlined: true,
                       }
