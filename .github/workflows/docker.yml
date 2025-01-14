@@ -35,11 +35,10 @@ jobs:
       - name: Create matrix from input
         id: set-matrix
         env:
-          # Check for 'small debug' label
-          small_debug: ${{ github.event.pull_request.labels.*.name == 'small debug' }}
-          localrun: ${{ github.event.localrun }}
+          localrun: ${{ !!github.event.localrun }}
         run: |
-          if [[ ${small_debug} == true ]] || [[ ${localrun} == true ]]; then
+          echo "event: ${{ toJSON(github.event) }}"
+          if [[ ${localrun} == true ]]; then
             output="matrix=$(
               echo '{
                 "include":[
