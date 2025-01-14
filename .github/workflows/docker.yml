@@ -140,3 +140,31 @@ jobs:
           build-args: |
             NODE_IMAGE_TAG=latest
             DOCKER_REGISTRY=${{ env.DOCKER_REGISTRY }}
+
+  status:
+    name: Collect statuses
+    runs-on: ubuntu-latest
+    if: ${{ always() }}
+    needs:
+      - prepare_matrix
+      - build
+    steps:
+      - name: Check statuses
+        env:
+          dependencies: ${{ toJSON(needs) }}
+        run: |
+          # Debug inputs
+          echo "$dependencies" | jq
+
+          # Loop through each job and ensure .result == "success"
+          for job in $(echo "$dependencies" | jq -r 'keys[]'); do
+            result=$(echo "$dependencies" | jq -r ".[\"$job\"].result")
+            echo "Job $job => $result"
+
+            if [ "$result" != "success" ]; then
+              echo "Dependency $job failed."
+              exit 1
+            fi
+          done
+
+          echo "All dependencies succeeded!"
