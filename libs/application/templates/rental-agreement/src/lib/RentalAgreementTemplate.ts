@@ -1,3 +1,6 @@
+import { pruneAfterDays } from '@island.is/application/core'
+import { Features } from '@island.is/feature-flags'
+import { AuthDelegationType } from '@island.is/shared/types'
 import {
   Application,
   ApplicationTemplate,
@@ -7,15 +10,12 @@ import {
   DefaultEvents,
   UserProfileApi,
 } from '@island.is/application/types'
-import { pruneAfterDays } from '@island.is/application/core'
-import { Features } from '@island.is/feature-flags'
 import { States, Roles } from './constants'
 import { dataSchema } from './dataSchema'
 import {
   NationalRegistryUserApi,
   NationalRegistrySpouseApi,
 } from '../dataProviders'
-import { AuthDelegationType } from '@island.is/shared/types'
 
 type Events = { type: DefaultEvents.SUBMIT } | { type: DefaultEvents.EDIT }
 
@@ -38,7 +38,7 @@ const RentalAgreementTemplate: ApplicationTemplate<
           name: States.PREREQUISITES,
           progress: 0,
           status: 'draft',
-          lifecycle: pruneAfterDays(1),
+          lifecycle: pruneAfterDays(30),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -68,7 +68,7 @@ const RentalAgreementTemplate: ApplicationTemplate<
         meta: {
           name: States.DRAFT,
           status: 'draft',
-          lifecycle: pruneAfterDays(1),
+          lifecycle: pruneAfterDays(30),
           roles: [
             {
               id: Roles.APPLICANT,
