@@ -27,6 +27,7 @@ export const RentalHousingLandlordInfo = buildSubSection({
             nationalIdWithName: {
               component: 'nationalIdWithName',
               required: true,
+              searchCompanies: true,
             },
             phone: {
               component: 'phone',
