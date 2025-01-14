@@ -164,6 +164,8 @@ jobs:
           build-args: |
             NODE_IMAGE_TAG=latest
             DOCKER_REGISTRY=${{ env.DOCKER_REGISTRY }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
           # cache-from: ${{ steps.inputs.outputs.build_cache }}
           # cache-to: ${{ steps.inputs.outputs.build_cache }},mode=max
 
