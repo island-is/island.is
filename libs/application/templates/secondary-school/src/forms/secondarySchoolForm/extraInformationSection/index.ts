@@ -49,6 +49,7 @@ export const extraInformationSection = buildSection({
           title: extraInformation.nativeLanguage.selectLabel,
           placeholder: extraInformation.nativeLanguage.selectPlaceholder,
           width: 'full',
+          doesNotRequireAnswer: true,
           options: () => {
             const languages = getAllLanguageCodes().filter(
               (x) => x.code !== 'is',
