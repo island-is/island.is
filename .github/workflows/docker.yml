@@ -34,18 +34,23 @@ jobs:
 
       - name: Create matrix from input
         id: set-matrix
+        env:
+          # Check for 'small debug' label
+          small_debug: ${{ github.event.pull_request.labels.*.name == 'small-debug' }}
         run: |
-          output="matrix=$(
-            echo '{
-              "include":[
-                {"project":"web","docker":"next"},
-                {"project":"api","docker":"nest"},
-                {"project":"service-portal","docker":"static"}
-              ]
-            }' | jq -c
-          )"
-          echo "$output" >>"$GITHUB_OUTPUT"
-          exit 0
+          if [[ ${small_debug} == true ]]; then
+            output="matrix=$(
+              echo '{
+                "include":[
+                  {"project":"web","docker":"next"},
+                  {"project":"api","docker":"nest"},
+                  {"project":"service-portal","docker":"static"}
+                ]
+              }' | jq -c
+            )"
+            echo "$output" >>"$GITHUB_OUTPUT"
+            exit 0
+          fi
 
           # Create a list of objects of the form:
           # [
