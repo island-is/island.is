@@ -37,8 +37,9 @@ jobs:
         env:
           # Check for 'small debug' label
           small_debug: ${{ github.event.pull_request.labels.*.name == 'small-debug' }}
+          localrun: ${{ env.ACT }}
         run: |
-          if [[ ${small_debug} == true ]]; then
+          if [[ ${small_debug} == true ]] || [[ -n ${localrun} ]]; then
             output="matrix=$(
               echo '{
                 "include":[
