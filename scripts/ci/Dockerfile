@@ -48,7 +48,8 @@ ENV APP=${APP}
 ENV NODE_ENV=production
 ENV NODE_OPTIONS="--max-old-space-size=8192"
 
-RUN yarn run build ${APP} --prod
+RUN yarn nx run-many --targets=codegen/backend-schema,codegen/frontend-client --projects ${APP} && \
+  yarn run build ${APP} --prod
 
 
 # This is base image for containers that are to be deployed
