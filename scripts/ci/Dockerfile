@@ -55,10 +55,8 @@ ARG APP
 ENV NODE_ENV=production
 ENV NODE_OPTIONS="--max-old-space-size=8192"
 
-RUN yarn nx run-many --target=build --projects="${APP}" --prod --parallel=8
-SHELL ["/bin/bash", "-euo", "pipefail", "-c"]
-RUN project_root="$(yarn nx show project ${APP} --json | jq -r '.root')" && \
-  mv "dist/$project_root" /dist/
+RUN yarn nx run-many --targets=codegen/backend-schema,codegen/frontend-client --projects ${APP} && \
+  yarn run build ${APP} --prod
 
 
 # This is base image for containers that are to be deployed
