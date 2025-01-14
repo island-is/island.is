@@ -307,12 +307,6 @@ describe('CaseController - Create court case', () => {
       policeCaseNumbers: [policeCaseNumber1, policeCaseNumber2],
       caseFiles: [
         {
-          id: indictmentId,
-          key: uuid(),
-          state: CaseFileState.STORED_IN_RVG,
-          category: CaseFileCategory.INDICTMENT,
-        },
-        {
           id: criminalRecordId,
           key: uuid(),
           state: CaseFileState.STORED_IN_RVG,
@@ -365,12 +359,6 @@ describe('CaseController - Create court case', () => {
           type: MessageType.DELIVERY_TO_COURT_CASE_FILE,
           user,
           caseId,
-          elementId: indictmentId,
-        },
-        {
-          type: MessageType.DELIVERY_TO_COURT_CASE_FILE,
-          user,
-          caseId,
           elementId: criminalRecordId,
         },
         {
@@ -384,6 +372,11 @@ describe('CaseController - Create court case', () => {
           user,
           caseId,
           elementId: uncategorisedId,
+        },
+        {
+          type: MessageType.DELIVERY_TO_COURT_INDICTMENT,
+          user,
+          caseId,
         },
       ])
     })

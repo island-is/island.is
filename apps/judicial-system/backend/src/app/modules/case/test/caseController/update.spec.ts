@@ -416,12 +416,6 @@ describe('CaseController - Update', () => {
         policeCaseNumbers: [policeCaseNumber1, policeCaseNumber2],
         caseFiles: [
           {
-            id: indictmentId,
-            key: uuid(),
-            state: CaseFileState.STORED_IN_RVG,
-            category: CaseFileCategory.INDICTMENT,
-          },
-          {
             id: criminalRecordId,
             key: uuid(),
             state: CaseFileState.STORED_IN_RVG,
