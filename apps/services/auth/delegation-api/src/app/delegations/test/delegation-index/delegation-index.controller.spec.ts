@@ -1,4 +1,6 @@
 import { getModelToken } from '@nestjs/sequelize'
+import addYears from 'date-fns/addYears'
+import kennitala from 'kennitala'
 import request from 'supertest'
 
 import { DelegationIndex } from '@island.is/auth-api-lib'
@@ -15,8 +17,6 @@ import {
 import { TestApp } from '@island.is/testing/nest'
 
 import { setupWithAuth } from '../../../../../test/setup'
-import kennitala from 'kennitala'
-import addYears from 'date-fns/addYears'
 
 const path = '/v1/delegation-index/.id'
 const testNationalId = createNationalId('person')
@@ -423,6 +423,7 @@ describe('DelegationIndexController', () => {
   describe('PUT for Legal guardians', () => {
     let app: TestApp
     let server: request.SuperTest<request.Test>
+    let factory: FixtureFactory
 
     let delegationIndexModel: typeof DelegationIndex
     const delegationProvider = AuthDelegationProvider.NationalRegistry
@@ -439,6 +440,8 @@ describe('DelegationIndexController', () => {
       server = request(app.getHttpServer())
 
       delegationIndexModel = app.get(getModelToken(DelegationIndex))
+      factory = new FixtureFactory(app)
+      await factory.createAllDelegationTypes()
     })
 
     afterAll(async () => {
