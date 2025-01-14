@@ -55,7 +55,7 @@ export const alertMessageSubsection = buildSubSection({
           id: 'alertMessageWarning',
           title: 'Warning Alert message',
           message:
-            'Somthing that the user should be aware of but not necessarily act on.',
+            'Something that the user should be aware of but not necessarily act on.',
           alertType: 'warning',
         }),
         buildAlertMessageField({
