@@ -54,12 +54,12 @@ export const participantsSection = buildSection({
           alertType: 'warning',
           doesNotRequireAnswer: true,
           condition: (answers: FormValue, _) => {
-            const hasError = getValueViaPath(
+            const hasError = getValueViaPath<boolean>(
               answers,
               'participantValidityError',
               false,
-            ) as boolean
-            return hasError
+            )
+            return !!hasError
           },
         }),
         buildCustomField({
@@ -75,12 +75,12 @@ export const participantsSection = buildSection({
           alertType: 'error',
           doesNotRequireAnswer: true,
           condition: (answers: FormValue, _) => {
-            const hasError = getValueViaPath(
+            const hasError = getValueViaPath<boolean>(
               answers,
               'participantCsvError',
               false,
-            ) as boolean
-            return hasError
+            )
+            return !!hasError
           },
         }),
       ],
