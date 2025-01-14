@@ -25,14 +25,14 @@ export const sliderSubsection = buildSubSection({
         buildDividerField({ useDividerLine: false }),
 
         buildTitleField({
-          title: 'Minimal slider field with default background',
+          title: 'Minimal slider field without default background',
         }),
         buildSliderField({
           id: 'basicSliderWithDefaultBackground',
           title: 'Basic slider',
           min: 1,
           max: 10,
-          showRemainderOverlay: true,
+          showRemainderOverlay: false,
         }),
         buildDividerField({ useDividerLine: false }),
 
@@ -44,6 +44,7 @@ export const sliderSubsection = buildSubSection({
           title: 'Basic slider',
           min: 1,
           max: 10,
+          showRemainderOverlay: false,
           calculateCellStyle: () => {
             return {
               background: theme.color.black,
@@ -95,6 +96,11 @@ export const sliderSubsection = buildSubSection({
           label: {
             singular: 'day',
             plural: 'days',
+          },
+          calculateCellStyle: () => {
+            return {
+              background: theme.color.red600,
+            }
           },
         }),
         buildDividerField({ useDividerLine: false }),
@@ -181,7 +187,6 @@ export const sliderSubsection = buildSubSection({
           showLabel: true,
           showMinMaxLabels: true,
           showToolTip: true,
-          showRemainderOverlay: true,
           label: {
             singular: 'day',
             plural: 'days',
@@ -216,7 +221,6 @@ export const sliderSubsection = buildSubSection({
           showLabel: true,
           showMinMaxLabels: true,
           showToolTip: true,
-          showRemainderOverlay: true,
           label: {
             singular: 'day',
             plural: 'days',

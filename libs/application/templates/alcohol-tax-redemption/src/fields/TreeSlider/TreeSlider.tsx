@@ -60,7 +60,6 @@ export const TreeSlider = () => {
                 currentIndex={numberOfTrees}
                 showMinMaxLabels
                 showToolTip
-                showRemainderOverlay={true}
                 trackStyle={{ gridTemplateRows: 10 }}
                 onChange={(newValue: number) => {
                   if (!isNaN(newValue)) {

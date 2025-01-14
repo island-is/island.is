@@ -1236,7 +1236,6 @@ export const ParentalLeaveForm: Form = buildForm({
                     getMultipleBirthRequestDays(application.answers),
                   showMinMaxLabels: true,
                   showToolTip: true,
-                  showRemainderOverlay: true,
                   trackStyle: { gridTemplateRows: 8 },
                   calculateCellStyle: () => {
                     return {
@@ -1330,7 +1329,6 @@ export const ParentalLeaveForm: Form = buildForm({
                   defaultValue: 1,
                   showMinMaxLabels: true,
                   showToolTip: true,
-                  showRemainderOverlay: true,
                   trackStyle: { gridTemplateRows: 8 },
                   calculateCellStyle: () => {
                     return {
@@ -1380,7 +1378,6 @@ export const ParentalLeaveForm: Form = buildForm({
                   defaultValue: 1,
                   showMinMaxLabels: true,
                   showToolTip: true,
-                  showRemainderOverlay: true,
                   trackStyle: { gridTemplateRows: 8 },
                   calculateCellStyle: () => {
                     return {

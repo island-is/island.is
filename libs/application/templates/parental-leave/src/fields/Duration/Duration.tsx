@@ -157,7 +157,6 @@ export const Duration: FC<React.PropsWithChildren<FieldBaseProps>> = ({
                 })}
                 showMinMaxLabels
                 showToolTip
-                showRemainderOverlay={true}
                 label={{
                   singular: formatMessage(
                     parentalLeaveFormMessages.shared.month,

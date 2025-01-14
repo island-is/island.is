@@ -110,7 +110,7 @@ const Slider = ({
   calculateCellStyle,
   showLabel = false,
   showMinMaxLabels = false,
-  showRemainderOverlay = false,
+  showRemainderOverlay = true,
   showProgressOverlay = true,
   showToolTip = false,
   label,

@@ -966,7 +966,7 @@ export const buildSliderField = (
     snap = true,
     trackStyle,
     calculateCellStyle,
-    showRemainderOverlay = false,
+    showRemainderOverlay = true,
     showProgressOverlay = true,
     showToolTip = false,
     label,

@@ -60,7 +60,6 @@ export const PlanSlider = ({
               currentIndex={value / multiplier || stateValue / multiplier}
               showMinMaxLabels
               showToolTip
-              showRemainderOverlay={true}
               trackStyle={{ gridTemplateRows: 5 }}
               calculateCellStyle={() => {
                 return {
