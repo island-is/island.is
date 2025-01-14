@@ -150,6 +150,45 @@ export const dataSchema = z.object({
         params: errorMessages.languagesRequired,
       },
     ),
+  allergiesAndIntolerances: z
+    .object({
+      hasFoodAllergiesOrIntolerances: z.array(z.string()),
+      foodAllergiesOrIntolerances: z.array(z.string()).optional(),
+      hasOtherAllergies: z.array(z.string()),
+      otherAllergies: z.array(z.string()).optional(),
+      usesEpiPen: z.string().optional(),
+      hasConfirmedMedicalDiagnoses: z.enum([YES, NO]),
+      requestMedicationAssistance: z.enum([YES, NO]),
+    })
+    .refine(
+      ({ hasFoodAllergiesOrIntolerances, foodAllergiesOrIntolerances }) =>
+        hasFoodAllergiesOrIntolerances.includes(YES)
+          ? !!foodAllergiesOrIntolerances &&
+            foodAllergiesOrIntolerances.length > 0
+          : true,
+      {
+        path: ['foodAllergiesOrIntolerances'],
+        params: errorMessages.foodAllergiesOrIntolerancesRequired,
+      },
+    )
+    .refine(
+      ({ hasOtherAllergies, otherAllergies }) =>
+        hasOtherAllergies.includes(YES)
+          ? !!otherAllergies && otherAllergies.length > 0
+          : true,
+      {
+        path: ['otherAllergies'],
+        params: errorMessages.otherAllergiesRequired,
+      },
+    )
+    .refine(
+      ({ hasFoodAllergiesOrIntolerances, hasOtherAllergies, usesEpiPen }) =>
+        hasFoodAllergiesOrIntolerances.includes(YES) ||
+        hasOtherAllergies.includes(YES)
+          ? !!usesEpiPen
+          : true,
+      { path: ['usesEpiPen'] },
+    ),
   support: z.object({
     developmentalAssessment: z.enum([YES, NO]),
     specialSupport: z.enum([YES, NO]),

@@ -75,6 +75,41 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     'languages.icelandicNotSpokenAroundChild',
   ) as string[]
 
+  const hasFoodAllergiesOrIntolerances = getValueViaPath(
+    answers,
+    'allergiesAndIntolerances.hasFoodAllergiesOrIntolerances',
+  ) as string[]
+
+  const foodAllergiesOrIntolerances = getValueViaPath(
+    answers,
+    'allergiesAndIntolerances.foodAllergiesOrIntolerances',
+  ) as string[]
+
+  const hasOtherAllergies = getValueViaPath(
+    answers,
+    'allergiesAndIntolerances.hasOtherAllergies',
+  ) as string[]
+
+  const otherAllergies = getValueViaPath(
+    answers,
+    'allergiesAndIntolerances.otherAllergies',
+  ) as string[]
+
+  const usesEpiPen = getValueViaPath(
+    answers,
+    'allergiesAndIntolerances.usesEpiPen',
+  ) as YesOrNo
+
+  const hasConfirmedMedicalDiagnoses = getValueViaPath(
+    answers,
+    'allergiesAndIntolerances.hasConfirmedMedicalDiagnoses',
+  ) as YesOrNo
+
+  const requestMedicationAssistance = getValueViaPath(
+    answers,
+    'allergiesAndIntolerances.requestMedicationAssistance',
+  ) as YesOrNo
+
   const developmentalAssessment = getValueViaPath(
     answers,
     'support.developmentalAssessment',
@@ -123,6 +158,13 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     otherLanguagesSpokenDaily,
     otherLanguages,
     icelandicNotSpokenAroundChild,
+    hasFoodAllergiesOrIntolerances,
+    foodAllergiesOrIntolerances,
+    hasOtherAllergies,
+    otherAllergies,
+    usesEpiPen,
+    hasConfirmedMedicalDiagnoses,
+    requestMedicationAssistance,
     developmentalAssessment,
     specialSupport,
     requestMeeting,
