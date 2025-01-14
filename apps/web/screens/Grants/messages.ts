@@ -174,6 +174,10 @@ export const m = {
       id: 'web.grants:single.howToApply',
       defaultMessage: 'Hvernig er sótt um?',
     },
+    answeringQuestions: {
+      id: 'web.grants:single.answeringQuestions',
+      defaultMessage: 'Svör við spurningum',
+    },
   }),
   home: defineMessages({
     title: {

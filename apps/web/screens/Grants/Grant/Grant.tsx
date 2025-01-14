@@ -181,6 +181,24 @@ const GrantSinglePage: CustomScreen<GrantSingleProps> = ({ grant, locale }) => {
             </>
           ) : undefined}
 
+          {grant.answeringQuestions?.length ? (
+            <>
+              <Box>
+                <Text variant="h3">
+                  {formatMessage(m.single.answeringQuestions)}
+                </Text>
+                <Box className="rs_read">
+                  {webRichText(
+                    grant.answeringQuestions as SliceType[],
+                    undefined,
+                    locale,
+                  )}
+                </Box>
+              </Box>
+              <Divider />
+            </>
+          ) : undefined}
+
           {grant.applicationHints?.length ? (
             <Box className="rs_read">
               {webRichText(

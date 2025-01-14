@@ -58,6 +58,9 @@ export class Grant {
   howToApply?: Array<typeof SliceUnion>
 
   @CacheField(() => [SliceUnion])
+  answeringQuestions?: Array<typeof SliceUnion>
+
+  @CacheField(() => [SliceUnion])
   applicationHints?: Array<typeof SliceUnion>
 
   @Field({ nullable: true })
@@ -161,6 +164,12 @@ export const mapGrant = ({ fields, sys }: IGrant): Grant => {
       : [],
     applicationHints: fields.grantApplicationHints
       ? mapDocument(fields.grantApplicationHints, sys.id + ':application-hints')
+      : [],
+    answeringQuestions: fields.grantAnsweringQuestions
+      ? mapDocument(
+          fields.grantAnsweringQuestions,
+          sys.id + ':answering-questions',
+        )
       : [],
     dateFrom: parseDate(fields.grantDateFrom, fields.grantOpenFromHour),
     dateTo: parseDate(fields.grantDateTo, fields.grantOpenToHour),
