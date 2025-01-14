@@ -117,10 +117,15 @@ jobs:
       - name: Generate Docker metadata
         id: meta
         uses: docker/metadata-action@v5
+        env:
+          # Append a slash when PUSH_REGISTRY is non-empty
+          registry: "${{ env.PUSH_REGISTRY }}${{ env.PUSH_REGISTRY && '/' || '' }}"
+          # We don't use a repository prefix, just the raw project
+          # repository: '${{ github.repository }}/${{ matrix.project }}'
+          repository: '${{ matrix.project }}'
         with:
-          # Infix a slash when PUSH_REGISTRY is non-empty
           images: |
-            ${{ env.PUSH_REGISTRY }}${{ env.PUSH_REGISTRY && '/' || '' }}${{ github.repository }}/${{ matrix.project }}
+            ${{ env.registry }}${{ env.repository }}
           tags: |
             type=ref,event=branch
             # Git SHA
