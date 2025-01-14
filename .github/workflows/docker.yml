@@ -80,7 +80,7 @@ jobs:
       fail-fast: true
       matrix: ${{ fromJson(needs.prepare_matrix.outputs.matrix) }}
       # Run maximum when on main/release
-      max-parallel: ${{ (github.ref == 'refs/heads/main' || github.event.localrun) && 0 || 1 }}
+      max-parallel: ${{ (github.ref == 'refs/heads/main' || github.event.localrun) && '0' || '1' }}
 
     permissions:
       id-token: write # This is required for requesting the JWT
