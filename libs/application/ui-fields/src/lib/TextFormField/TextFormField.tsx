@@ -50,6 +50,7 @@ export const TextFormField: FC<React.PropsWithChildren<Props>> = ({
     marginBottom,
     marginTop,
     onChange = () => undefined,
+    clearOnChange,
   } = field
   const { clearErrors } = useFormContext()
   const { formatMessage, lang: locale } = useLocale()
@@ -113,6 +114,7 @@ export const TextFormField: FC<React.PropsWithChildren<Props>> = ({
           max={max}
           min={min}
           step={step}
+          clearOnChange={clearOnChange}
         />
       </Box>
     </Box>

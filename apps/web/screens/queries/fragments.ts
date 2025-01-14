@@ -293,6 +293,7 @@ export const slices = gql`
         ...ImageFields
       }
     }
+    showSearchInput
   }
 
   fragment ContactUsFields on ContactUs {
@@ -932,6 +933,7 @@ export const slices = gql`
     searchInputPlaceholder
     itemType
     defaultOrder
+    showSearchInput
     filterTags {
       id
       title
@@ -975,6 +977,26 @@ export const slices = gql`
         }
         slug
         assetUrl
+        image {
+          url
+          title
+          width
+          height
+        }
+      }
+    }
+  }
+
+  fragment FeaturedLinksFields on FeaturedLinks {
+    __typename
+    id
+    title
+    featuredLinks {
+      title
+      attention
+      thing {
+        slug
+        type
       }
     }
   }
@@ -1024,6 +1046,7 @@ export const slices = gql`
     ...FeaturedEventsFields
     ...GenericListFields
     ...LatestGenericListItemsFields
+    ...FeaturedLinksFields
     ...GrantCardsListFields
   }
 

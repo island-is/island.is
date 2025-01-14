@@ -32,6 +32,7 @@ export enum Features {
   IncomePlanEnabled = 'isIncomePlanEnabled',
   WorkAccidentNotificationEnabled = 'isWorkAccidentNotificationEnabled',
   TrainingLicenseOnAWorkMachineEnabled = 'isTrainingLicenseOnAWorkMachineEnabled',
+  SecondarySchoolEnabled = 'isSecondarySchoolEnabled',
 
   // Application System Delegations active
   applicationSystemDelegations = 'applicationSystemDelegations',
@@ -54,6 +55,7 @@ export enum Features {
   isServicePortalDocumentsV3PageEnabled = 'isServicePortalDocumentsV3PageEnabled',
   //Occupational License Health directorate fetch enabled
   occupationalLicensesHealthDirectorate = 'isHealthDirectorateOccupationalLicenseEnabled',
+  healthPaymentOverview = 'isHealthPaymentsDocumentOverviewEnabled',
 
   //Occupational License Health directorate fetch enabled
   occupationalLicensesV2 = 'isOccupationalLicensesV2Enabled',

@@ -161,6 +161,7 @@ export const FindVehicleFormField: FC<React.PropsWithChildren<Props>> = ({
     energyFundsMessages,
     marginTop,
     marginBottom,
+    clearOnChange,
   } = field
 
   const [plate, setPlate] = useState<string>(
@@ -388,6 +389,7 @@ export const FindVehicleFormField: FC<React.PropsWithChildren<Props>> = ({
               },
             }}
             maxLength={isMachine ? 7 : 5}
+            clearOnChange={clearOnChange}
           />
         </Box>
         <Button onClick={findVehicleByPlate} disabled={buttonDisabled}>
