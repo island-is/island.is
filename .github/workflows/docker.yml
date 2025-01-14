@@ -35,7 +35,6 @@ jobs:
       - name: Create matrix from input
         id: set-matrix
         run: |
-          set -x
           output="matrix=$(
             echo '{
               "include":[
