@@ -65,7 +65,7 @@ jobs:
               .[]
               | {
                   project: .name,
-                  docker: (.targets | keys | map(select(startswith("docker-"))) | map(sub("^docker-"; "")) | .[])
+                  docker: (.targets | keys | map(select(startswith("docker-") and . != "docker-native")) | map(sub("^docker-"; "")) | .[])
                 }
               ]
             }')" >>"$GITHUB_OUTPUT"
