@@ -124,7 +124,9 @@ export const sliderSubsection = buildSubSection({
         }),
         buildDividerField({ useDividerLine: false }),
 
-        buildTitleField({title: 'Slider field with different colors and min max label'}),
+        buildTitleField({
+          title: 'Slider field with different colors and min max label',
+        }),
         buildSliderField({
           id: 'basicSliderColorMinMaxLabels',
           title: 'Basic slider',
@@ -140,7 +142,10 @@ export const sliderSubsection = buildSubSection({
         }),
         buildDividerField({ useDividerLine: false }),
 
-        buildTitleField({title: 'Slider field with different colors, min max label and tooltip'}),
+        buildTitleField({
+          title:
+            'Slider field with different colors, min max label and tooltip',
+        }),
         buildSliderField({
           id: 'basicSliderColorMinMaxLabelsTooltip',
           title: 'Basic slider',
@@ -157,7 +162,9 @@ export const sliderSubsection = buildSubSection({
         }),
         buildDividerField({ useDividerLine: false }),
 
-        buildTitleField({title: 'Slider field with different colors and both labels'}),
+        buildTitleField({
+          title: 'Slider field with different colors and both labels',
+        }),
         buildSliderField({
           id: 'basicSliderColorBothLabels',
           title: 'Basic slider',
