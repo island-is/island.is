@@ -506,14 +506,12 @@ export const slices = gql`
         url
       }
     }
-    cardLinks {
-      title
-      content {
-        ...HtmlFields
-      }
-      link {
-        text
-        url
+    linkData {
+      variant
+      categoryCardItems {
+        title
+        description
+        href
       }
     }
     overviewLinks {

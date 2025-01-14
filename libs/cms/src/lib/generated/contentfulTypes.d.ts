@@ -3468,13 +3468,16 @@ export interface IOverviewLinksFields {
   displayedTitle?: string | undefined
 
   /** Overview Links */
-  overviewLinks?: (IIntroLinkImage | IOneColumnText)[] | undefined
+  overviewLinks?: IIntroLinkImage[] | undefined
 
   /** Link */
   link?: ILink | undefined
 
   /** Has Border Above */
   hasBorderAbove?: boolean | undefined
+
+  /** Link Data */
+  linkData?: Record<string, any> | undefined
 }
 
 export interface IOverviewLinks extends Entry<IOverviewLinksFields> {
