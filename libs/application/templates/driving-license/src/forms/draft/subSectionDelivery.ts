@@ -1,6 +1,5 @@
 import {
   buildDescriptionField,
-  buildHiddenInputWithWatchedValue,
   buildMultiField,
   buildRadioField,
   buildSelectField,
@@ -13,7 +12,8 @@ import {
 } from '../../lib/utils'
 
 import { Jurisdiction } from '@island.is/clients/driving-license'
-import { B_FULL_RENEWAL_65, Pickup } from '../../lib/constants'
+import { B_FULL_RENEWAL_65 } from '../../lib/constants'
+import { Pickup } from '../../lib/types'
 
 export const subSectionDelivery = buildSubSection({
   id: 'user',

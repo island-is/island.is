@@ -6,4 +6,5 @@ export interface VehicleDto extends VehicleMiniDto {
   markedForRecycling?: boolean // used for displaying selected vehicles in overview
   colorName?: string
   requiresMileageRegistration?: boolean
+  modelYear?: number
 }

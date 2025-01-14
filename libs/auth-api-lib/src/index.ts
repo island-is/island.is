@@ -47,6 +47,7 @@ export * from './lib/delegations/dto/delegation-index.dto'
 export * from './lib/delegations/dto/paginated-delegation-provider.dto'
 export * from './lib/delegations/dto/delegation-provider.dto'
 export * from './lib/delegations/dto/merged-delegation.dto'
+export * from './lib/delegations/dto/zendesk-webhook-input.dto'
 export * from './lib/delegations/models/delegation.model'
 export * from './lib/delegations/models/delegation.model'
 export * from './lib/delegations/models/delegation-scope.model'
@@ -60,6 +61,7 @@ export * from './lib/delegations/utils/scopes'
 export * from './lib/delegations/admin/delegation-admin-custom.service'
 export * from './lib/delegations/constants/names'
 export * from './lib/delegations/constants/zendesk'
+export * from './lib/delegations/national-registry-v3-feature.service'
 
 // Resources module
 export * from './lib/resources/resources.module'
@@ -186,6 +188,7 @@ export * from './lib/personal-representative/dto/paginated-personal-representati
 export * from './lib/personal-representative/dto/personal-representative-scope-permission.dto'
 export * from './lib/clients/admin/dto/admin-create-client.dto'
 export * from './lib/clients/admin/dto/admin-client.dto'
+export { isUnderXAge } from './lib/delegations/utils/isUnderXAge'
 
 // Passkeys core module
 export * from './lib/passkeys-core/passkeys-core.module'

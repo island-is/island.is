@@ -18,8 +18,8 @@ import {
   NationalRegistryUserApi,
   UserProfileApi,
 } from '../dataProviders'
-import { m } from './messages'
-import Logo from '../assets/Logo'
+import { m } from '../lib/messages/messages'
+import { Logo } from '../assets/Logo'
 import { prerequisitesFailed } from '../healthInsuranceUtils'
 
 export const PrerequisitesForm: Form = buildForm({
@@ -68,11 +68,13 @@ export const PrerequisitesForm: Form = buildForm({
               subTitle: m.dataProvidersMoreInfo,
             }),
             buildDataProviderItem({
+              id: 'userProfile',
               provider: UserProfileApi,
               title: '',
               subTitle: '',
             }),
             buildDataProviderItem({
+              id: 'healthInsurance',
               provider: HealthInsuranceApi,
               title: '',
               subTitle: '',
@@ -82,7 +84,7 @@ export const PrerequisitesForm: Form = buildForm({
         buildMultiField({
           id: 'externalDataSuccessPrerequisites',
           title: m.prerequisiteCheckScreenTitle,
-          condition: (formValue: FormValue, externalData: ExternalData) => {
+          condition: (_formValue: FormValue, externalData: ExternalData) => {
             return !prerequisitesFailed(externalData)
           },
           children: [
@@ -110,7 +112,7 @@ export const PrerequisitesForm: Form = buildForm({
         buildMultiField({
           id: 'externalDataFailedPrerequisites',
           title: m.prerequisiteCheckScreenTitle,
-          condition: (formValue: FormValue, externalData: ExternalData) => {
+          condition: (_formValue: FormValue, externalData: ExternalData) => {
             return prerequisitesFailed(externalData)
           },
           children: [

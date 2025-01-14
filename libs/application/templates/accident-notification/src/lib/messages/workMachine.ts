@@ -19,15 +19,15 @@ export const workMachine = {
     },
   }),
   labels: defineMessages({
-    desriptionOfMachine: {
-      id: 'an.application:workMachine.labels.desriptionOfMachine',
+    descriptionOfMachine: {
+      id: 'an.application:workMachine.labels.descriptionOfMachine',
       defaultMessage: 'Upplýsingar um vinnuvél',
       description: 'Desription of machine',
     },
   }),
   placeholder: defineMessages({
-    desriptionOfMachine: {
-      id: 'an.application:workMachine.placeholder.desriptionOfMachine',
+    descriptionOfMachine: {
+      id: 'an.application:workMachine.placeholder.descriptionOfMachine',
       defaultMessage: 'Heiti á vinnuvél, og vinnuvélanúmer ef þekkt',
       description: 'Desription of machine',
     },

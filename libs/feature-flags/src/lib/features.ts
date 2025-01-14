@@ -16,29 +16,22 @@ export enum Features {
   alcoholTaxRedemption = 'isAlcoholTaxRedemptionEnabled',
   consultationPortalApplication = 'isConsultationPortalEnabled',
   childrenResidenceChangeV2 = 'isChildrenResidenceChangeV2Enabled',
-  citizenship = 'isCitizenshipEnabled',
-  energyFunds = 'isEnergyFundsEnabled',
   complaintsToAlthingiOmbudsman = 'isComplaintToAlthingiOmbudsmanEnabled',
-  healthcareLicenseCertificate = 'isHealthcareLicenseCertificateEnabled',
-  healthcareWorkPermit = 'ishealthcareworkpermitenabled',
-  pensionSupplementApplication = 'isPensionSupplementEnable',
-  transferOfMachineOwnership = 'isTransferOfMachineOwnershipEnabled',
   university = 'isUniversityEnabled',
   homeSupport = 'isHomeSupportEnabled',
-  ChangeMachineSupervisor = 'isChangeMachineSupervisorEnabled',
-  DeregisterMachine = 'isDeregisterMachineEnabled',
   grindavikHousingBuyout = 'isGrindavikHousingBuyoutEnabled',
-  RequestInspection = 'isRequestInspectionForMachineEnabled',
   officialJournalOfIceland = 'isOfficialJournalOfIcelandEnabled',
   idCardApplication = 'isIdCardApplicationEnabled',
-  StreetRegistration = 'isStreetRegistrationEnabled',
   HealthInsuranceDeclaration = 'isHealthInsuranceDeclarationEnabled',
   newPrimarySchool = 'isNewPrimarySchoolEnabled',
-  registerNewMachine = 'isRegisterNewMachineEnabled',
   FinancialStatementCemetery = 'isFinancialStatementCemeteryEnabled',
   ParliamentaryElectionApplication = 'isParliamentaryElectionApplicationEnabled',
   FinancialStatementIndividualElectionEnabled = 'isFinancialStatementIndividualElectionEnabled',
+  deathBenefits = 'isdeathbenefitsapplicationenabled',
+  FinancialStatementPoliticalPartyEnabled = 'isFinancialStatementPoliticalPartyEnabled',
   IncomePlanEnabled = 'isIncomePlanEnabled',
+  WorkAccidentNotificationEnabled = 'isWorkAccidentNotificationEnabled',
+  SecondarySchoolEnabled = 'isSecondarySchoolEnabled',
 
   // Application System Delegations active
   applicationSystemDelegations = 'applicationSystemDelegations',
@@ -53,17 +46,27 @@ export enum Features {
   servicePortalVehicleBulkMileagePageEnabled = 'isServicePortalVehicleBulkMileagePageEnabled',
   servicePortalSocialInsurancePageEnabled = 'isServicePortalSocialInsurancePageEnabled',
   servicePortalSocialInsuranceIncomePlanPageEnabled = 'isServicePortalSocialInsuranceIncomePlanPageEnabled',
-
+  servicePortalHealthVaccinationsPageEnabled = 'isServicePortalHealthVaccinationsPageEnabled',
+  servicePortalHealthOrganDonationPageEnabled = 'isServicePortalHealthOrganDonationPageEnabled',
   ServicePortalNotificationsEnabled = 'isServicePortalNotificationsPageEnabled',
-
+  servicePortalLawAndOrderModuleEnabled = 'isServicePortalLawAndOrderModuleEnabled',
+  servicePortalDocumentsActionsEnabled = 'isServicePortalDocumentsActionsEnabled',
+  isServicePortalDocumentsV3PageEnabled = 'isServicePortalDocumentsV3PageEnabled',
   //Occupational License Health directorate fetch enabled
   occupationalLicensesHealthDirectorate = 'isHealthDirectorateOccupationalLicenseEnabled',
+  healthPaymentOverview = 'isHealthPaymentsDocumentOverviewEnabled',
 
   //Occupational License Health directorate fetch enabled
   occupationalLicensesV2 = 'isOccupationalLicensesV2Enabled',
 
   //New License service fetch enabled
   licensesV2 = 'isLicensesV2Enabled',
+
+  //Is social administration payment plan 2025 enabled?
+  isServicePortalPaymentPlan2025Enabled = 'isServicePortalPaymentPlan2025Enabled',
+
+  //Is vehicle bulk mileage graph enabled?
+  isServicePortalVehicleBulkMileageSubdataPageEnabled = 'isServicePortalVehicleBulkMileageSubdataPageEnabled',
 
   //Possible universities
   isUniversityOfAkureyriEnabled = 'isUniversityOfAkureyriEnabled',
@@ -111,6 +114,9 @@ export enum Features {
 
   // General mandate delegation type
   isGeneralMandateDelegationEnabled = 'isGeneralMandateDelegationEnabled',
+
+  // Should auth api use national registry v3 for checking deceased status
+  isNationalRegistryV3DeceasedStatusEnabled = 'isNationalRegistryV3DeceasedStatusEnabled',
 }
 
 export enum ServerSideFeature {

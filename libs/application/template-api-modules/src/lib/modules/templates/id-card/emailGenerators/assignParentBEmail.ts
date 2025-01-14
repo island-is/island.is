@@ -16,10 +16,9 @@ export const generateAssignParentBApplicationEmail: EmailTemplateGenerator = (
     options: { email, clientLocationOrigin },
   } = props
 
-  // TODO: Might need to change data schema url
   const otherParentEmail = get(
     application.answers,
-    'applicantInformation.secondGuardianEmail',
+    'secondGuardianInformation.email',
   )
   const childName = get(
     application.answers,
@@ -27,7 +26,7 @@ export const generateAssignParentBApplicationEmail: EmailTemplateGenerator = (
   )
   const applicantName = get(
     application.answers,
-    'applicantInformation.firstGuardianName',
+    'firstGuardianInformation.name',
   )
 
   if (!otherParentEmail) {

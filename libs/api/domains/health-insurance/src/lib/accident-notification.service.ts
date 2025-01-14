@@ -1,7 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
-import { DocumentApi } from '@island.is/clients/icelandic-health-insurance/health-insurance'
 import {
   HealthInsuranceAccidentNotificationAttachmentTypes as AttachmentTypes,
   HealthInsuranceAccidentNotificationConfirmationTypes as ConfirmationTypes,
@@ -12,6 +11,8 @@ import {
   AccidentNotificationConfirmation,
   AccidentNotificationStatus,
 } from './graphql/models'
+import { AccidentreportsApi } from '@island.is/clients/icelandic-health-insurance/rights-portal'
+import { Auth, AuthMiddleware } from '@island.is/auth-nest-tools'
 
 const mapStatus = (statusId: number) => {
   switch (statusId) {
@@ -55,26 +56,34 @@ const mapConfirmationType = (confirmationTypeId: number | undefined) => {
 @Injectable()
 export class AccidentNotificationService {
   constructor(
-    private readonly accidentNotificationApi: DocumentApi,
+    private readonly accidentReportsApi: AccidentreportsApi,
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
   ) {}
 
+  private accidentsReportsApiWithAuth(auth: Auth) {
+    return this.accidentReportsApi.withMiddleware(new AuthMiddleware(auth))
+  }
+
   async getAccidentNotificationStatus(
+    auth: Auth,
     ihiDocumentID: number,
   ): Promise<AccidentNotificationStatus | null> {
-    this.logger.log('starting call to get accident', ihiDocumentID)
-    const accidentStatus =
-      await this.accidentNotificationApi.documentGetAccidentStatus({
-        ihiDocumentID: ihiDocumentID,
-      })
+    this.logger.debug('starting call to get accident', ihiDocumentID)
+
+    const accidentStatus = await this.accidentsReportsApiWithAuth(
+      auth,
+    ).getAccidentReportStatus({
+      reportId: ihiDocumentID,
+    })
+
     if (!accidentStatus) return null
     return {
-      numberIHI: accidentStatus.numberIHI,
+      numberIHI: accidentStatus.requestId,
       status: accidentStatus.status ? mapStatus(accidentStatus.status) : '',
       receivedAttachments: accidentStatus.attachments
         ?.map((x) => ({
-          [mapAttachmentType(x.attachmentType)]: !!x.isReceived,
+          [mapAttachmentType(x.type)]: !!x.received,
         }))
         .reduce(
           (prev, curr) => ({ ...prev, ...curr }),
@@ -82,7 +91,7 @@ export class AccidentNotificationService {
         ) as AccidentNotificationAttachment,
       receivedConfirmations: accidentStatus.confirmations
         ?.map((x) => ({
-          [mapConfirmationType(x.confirmationType)]: !!x.isReceived,
+          [mapConfirmationType(x.party)]: !!x.received,
         }))
         .reduce(
           (prev, curr) => ({ ...prev, ...curr }),

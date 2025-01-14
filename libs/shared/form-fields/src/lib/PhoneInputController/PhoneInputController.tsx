@@ -1,7 +1,14 @@
 import React, { forwardRef } from 'react'
 import { InputBackgroundColor, PhoneInput } from '@island.is/island-ui/core'
-import { Controller, Control, RegisterOptions } from 'react-hook-form'
+import {
+  Controller,
+  Control,
+  RegisterOptions,
+  useFormContext,
+} from 'react-hook-form'
 import { TestSupport } from '@island.is/island-ui/utils'
+import { Locale } from '@island.is/shared/types'
+import { clearInputsOnChange } from '@island.is/shared/utils'
 
 interface Props {
   autoFocus?: boolean
@@ -12,6 +19,7 @@ interface Props {
   error?: string
   id: string
   label?: string
+  locale?: Locale
   name?: string
   onChange?: (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
@@ -26,6 +34,7 @@ interface Props {
   autoComplete?: 'off' | 'on'
   allowedCountryCodes?: string[]
   disableDropdown?: boolean
+  clearOnChange?: string[]
 }
 
 interface ChildParams {
@@ -47,6 +56,7 @@ export const PhoneInputController = forwardRef(
       error,
       id,
       label,
+      locale,
       name = id,
       placeholder,
       control,
@@ -62,7 +72,9 @@ export const PhoneInputController = forwardRef(
       autoComplete,
       allowedCountryCodes,
       disableDropdown,
+      clearOnChange,
     } = props
+    const { setValue } = useFormContext()
 
     function renderChildInput(c: ChildParams & TestSupport) {
       const { value, onChange, ...props } = c
@@ -79,6 +91,7 @@ export const PhoneInputController = forwardRef(
           data-testid={dataTestId}
           placeholder={placeholder}
           label={label}
+          locale={locale}
           value={value}
           defaultValue={defaultValue}
           autoComplete={autoComplete}
@@ -95,6 +108,9 @@ export const PhoneInputController = forwardRef(
           ) => {
             if (onInputChange) {
               onInputChange(e)
+            }
+            if (clearOnChange) {
+              clearInputsOnChange(clearOnChange, setValue)
             }
           }}
           {...props}

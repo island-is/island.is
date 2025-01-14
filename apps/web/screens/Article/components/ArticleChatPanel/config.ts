@@ -1,5 +1,4 @@
 import { Locale } from '@island.is/shared/types'
-
 import {
   LiveChatIncChatPanelProps,
   WatsonChatPanelProps,
@@ -60,7 +59,7 @@ export const watsonConfig: Record<
       serviceInstanceID: 'bc3d8312-d862-4750-b8bf-529db282050a',
       showLauncher: false,
       carbonTheme: 'g10',
-      namespaceKey: 'default',
+      namespaceKey: 'samgongustofa',
       onLoad(instance) {
         setupOneScreenWatsonChatBot(
           instance,
@@ -219,9 +218,9 @@ export const watsonConfig: Record<
     // Útlendingastofnun - Organization
     // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/77rXck3sISbMsUv7BO1PG2
     '77rXck3sISbMsUv7BO1PG2': {
-      integrationID: '89a03e83-5c73-4642-b5ba-cd3771ceca54',
+      integrationID: '9e320784-ad44-4da9-9eb3-f305057a196a',
       region: 'eu-gb',
-      serviceInstanceID: 'bc3d8312-d862-4750-b8bf-529db282050a',
+      serviceInstanceID: '2529638b-503c-4374-955c-0310139ec177',
       showLauncher: false,
       carbonTheme: 'g10',
       namespaceKey: 'default',
@@ -288,7 +287,7 @@ export const watsonConfig: Record<
       serviceInstanceID: 'bc3d8312-d862-4750-b8bf-529db282050a',
       showLauncher: false,
       carbonTheme: 'g10',
-      namespaceKey: 'default',
+      namespaceKey: 'samgongustofa',
     },
   },
   is: {
@@ -299,7 +298,7 @@ export const watsonConfig: Record<
       serviceInstanceID: 'bc3d8312-d862-4750-b8bf-529db282050a',
       showLauncher: false,
       carbonTheme: 'g10',
-      namespaceKey: 'default',
+      namespaceKey: 'samgongustofa',
     },
 
     // Uppfletting í ökutækjaskrá
@@ -310,7 +309,7 @@ export const watsonConfig: Record<
       serviceInstanceID: 'bc3d8312-d862-4750-b8bf-529db282050a',
       showLauncher: false,
       carbonTheme: 'g10',
-      namespaceKey: 'default',
+      namespaceKey: 'samgongustofa',
       onLoad(instance) {
         setupOneScreenWatsonChatBot(
           instance,
@@ -328,7 +327,7 @@ export const watsonConfig: Record<
       serviceInstanceID: 'bc3d8312-d862-4750-b8bf-529db282050a',
       showLauncher: false,
       carbonTheme: 'g10',
-      namespaceKey: 'default',
+      namespaceKey: 'samgongustofa',
       onLoad(instance) {
         setupOneScreenWatsonChatBot(
           instance,
@@ -346,7 +345,7 @@ export const watsonConfig: Record<
       serviceInstanceID: 'bc3d8312-d862-4750-b8bf-529db282050a',
       showLauncher: false,
       carbonTheme: 'g10',
-      namespaceKey: 'default',
+      namespaceKey: 'samgongustofa',
       onLoad(instance) {
         setupOneScreenWatsonChatBot(
           instance,

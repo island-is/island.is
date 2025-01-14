@@ -22,20 +22,20 @@ import format from 'date-fns/format'
 import { signatureCollectionNavigation } from '../../lib/navigation'
 import {
   CollectionStatus,
-  Filters,
+  FiltersOverview,
   countryAreas,
   pageSize,
 } from '../../lib/utils'
 import { format as formatNationalId } from 'kennitala'
 import electionsCommitteeLogo from '../../../assets/electionsCommittee.svg'
 import nationalRegistryLogo from '../../../assets/nationalRegistry.svg'
-import ActionCompleteCollectionProcessing from './components/completeCollectionProcessing'
 import ListInfo from '../../shared-components/listInfoAlert'
 import EmptyState from '../../shared-components/emptyState'
 import ReviewCandidates from './components/reviewCandidates'
 import CompareLists from '../../shared-components/compareLists'
 import { ListsLoaderReturn } from '../../loaders/AllLists.loader'
 import CreateCollection from '../../shared-components/createCollection'
+import ActionCompleteCollectionProcessing from '../../shared-components/completeCollectionProcessing'
 
 const Lists = ({ allowedToProcess }: { allowedToProcess: boolean }) => {
   const { formatMessage } = useLocale()
@@ -48,7 +48,7 @@ const Lists = ({ allowedToProcess }: { allowedToProcess: boolean }) => {
   const [page, setPage] = useState(1)
   // hasInReview is used to check if any list is in review
   const [hasInReview, setHasInReview] = useState(false)
-  const [filters, setFilters] = useState<Filters>({
+  const [filters, setFilters] = useState<FiltersOverview>({
     area: [],
     candidate: [],
     input: '',
@@ -221,7 +221,10 @@ const Lists = ({ allowedToProcess }: { allowedToProcess: boolean }) => {
                 {lists?.length > 0 &&
                   allowedToProcess &&
                   collectionStatus === CollectionStatus.InInitialReview && (
-                    <CreateCollection collectionId={collection?.id} />
+                    <CreateCollection
+                      collectionId={collection?.id}
+                      areaId={undefined}
+                    />
                   )}
               </Box>
             </GridColumn>
@@ -265,7 +268,7 @@ const Lists = ({ allowedToProcess }: { allowedToProcess: boolean }) => {
                         tag={
                           list.reviewed
                             ? {
-                                label: m.confirmListReviewed.defaultMessage,
+                                label: formatMessage(m.confirmListReviewed),
                                 variant: 'mint',
                                 outlined: false,
                               }

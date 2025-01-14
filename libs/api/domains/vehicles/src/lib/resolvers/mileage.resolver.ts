@@ -7,7 +7,7 @@ import {
   ResolveField,
   Resolver,
 } from '@nestjs/graphql'
-import { UseGuards } from '@nestjs/common'
+import { Inject, UseGuards } from '@nestjs/common'
 import {
   IdsUserGuard,
   ScopesGuard,
@@ -34,6 +34,10 @@ import {
   Features,
 } from '@island.is/nest/feature-flags'
 import { mileageDetailConstructor } from '../utils/helpers'
+import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
+import { VehicleMileagePostResponse } from '../models/v3/postVehicleMileageResponse.model'
+import { VehiclesMileageUpdateError } from '../models/v3/vehicleMileageResponseError.model'
+import { VehicleMileagePutResponse } from '../models/v3/putVehicleMileageResponse.model'
 
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
 @FeatureFlag(Features.servicePortalVehicleMileagePageEnabled)
@@ -41,7 +45,10 @@ import { mileageDetailConstructor } from '../utils/helpers'
 @Audit({ namespace: '@island.is/api/vehicles' })
 @Scopes(ApiScope.vehicles)
 export class VehiclesMileageResolver {
-  constructor(private readonly vehiclesService: VehiclesService) {}
+  constructor(
+    private readonly vehiclesService: VehiclesService,
+    @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
+  ) {}
 
   @Query(() => VehicleMileageOverview, {
     name: 'vehicleMileageDetails',
@@ -88,9 +95,53 @@ export class VehiclesMileageResolver {
       mileage: Number(input.mileage ?? input.mileageNumber),
     })
 
-    if (!res?.length) return undefined
+    if (!res) {
+      return
+    }
 
-    return mileageDetailConstructor(res[0])
+    return mileageDetailConstructor(res)
+  }
+
+  @Mutation(() => VehicleMileagePostResponse, {
+    name: 'vehicleMileagePostV2',
+    nullable: true,
+  })
+  @Audit()
+  async postVehicleMileageReadingV2(
+    @Args('input') input: PostVehicleMileageInput,
+    @CurrentUser() user: User,
+  ) {
+    const res = await this.vehiclesService.postMileageReadingV2(user, {
+      ...input,
+      mileage: Number(input.mileage ?? input.mileageNumber),
+    })
+
+    if (!res || res instanceof VehiclesMileageUpdateError) {
+      return res
+    }
+
+    return mileageDetailConstructor(res)
+  }
+
+  @Mutation(() => VehicleMileagePutResponse, {
+    name: 'vehicleMileagePutV2',
+    nullable: true,
+  })
+  @Audit()
+  async putVehicleMileageReadingV2(
+    @Args('input') input: PutVehicleMileageInput,
+    @CurrentUser() user: User,
+  ) {
+    const res = await this.vehiclesService.putMileageReadingV2(user, {
+      ...input,
+      mileage: Number(input.mileage ?? input.mileageNumber),
+    })
+
+    if (!res || res instanceof VehiclesMileageUpdateError) {
+      return res
+    }
+
+    return mileageDetailConstructor(res)
   }
 
   @ResolveField('canRegisterMileage', () => Boolean, {

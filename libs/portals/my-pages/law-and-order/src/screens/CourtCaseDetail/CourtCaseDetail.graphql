@@ -1,0 +1,26 @@
+query GetCourtCase($input: LawAndOrderCourtCaseInput!, $locale: String!) {
+  lawAndOrderCourtCaseDetail(input: $input, locale: $locale) {
+    texts {
+      intro
+      footnote
+    }
+    data {
+      id
+      hasBeenServed
+      caseNumberTitle
+      groups {
+        label
+        items {
+          label
+          value
+          link
+          action {
+            type
+            title
+            data
+          }
+        }
+      }
+    }
+  }
+}

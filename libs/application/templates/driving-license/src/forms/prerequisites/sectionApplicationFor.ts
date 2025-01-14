@@ -7,6 +7,7 @@ import {
 import { m } from '../../lib/messages'
 import { DrivingLicense } from '../../lib/types'
 import {
+  B_ADVANCED,
   B_FULL,
   B_FULL_RENEWAL_65,
   B_TEMP,
@@ -17,6 +18,7 @@ import {
 export const sectionApplicationFor = (
   allowBELicense = false,
   allow65Renewal = false,
+  allowAdvanced = false,
 ) =>
   buildSubSection({
     id: 'applicationFor',
@@ -43,7 +45,7 @@ export const sectionApplicationFor = (
                 'currentLicense.data',
               ) ?? { categories: null }
 
-              const age =
+              let age =
                 getValueViaPath<number>(
                   app.externalData,
                   'nationalRegistry.data.age',
@@ -53,6 +55,7 @@ export const sectionApplicationFor = (
                 app.answers,
                 'fakeData',
               )
+
               if (fakeData?.useFakeData === 'yes') {
                 currentLicense = fakeData.currentLicense ?? null
                 categories =
@@ -66,20 +69,20 @@ export const sectionApplicationFor = (
                         { nr: 'BE', validToCode: 9 },
                       ]
                     : []
+
+                age = fakeData?.age
               }
 
               let options = [
                 {
                   label: m.applicationForTempLicenseTitle,
-                  subLabel:
-                    m.applicationForTempLicenseDescription.defaultMessage,
+                  subLabel: m.applicationForTempLicenseDescription,
                   value: B_TEMP,
                   disabled: !!currentLicense,
                 },
                 {
                   label: m.applicationForFullLicenseTitle,
-                  subLabel:
-                    m.applicationForFullLicenseDescription.defaultMessage,
+                  subLabel: m.applicationForFullLicenseDescription,
                   value: B_FULL,
                   disabled: !currentLicense,
                 },
@@ -88,19 +91,16 @@ export const sectionApplicationFor = (
               if (allow65Renewal) {
                 options = options.concat({
                   label: m.applicationForRenewalLicenseTitle,
-                  subLabel:
-                    m.applicationForRenewalLicenseDescription.defaultMessage,
+                  subLabel: m.applicationForRenewalLicenseDescription,
                   value: B_FULL_RENEWAL_65,
-                  disabled:
-                    !currentLicense ||
-                    (fakeData && fakeData.age ? fakeData.age < 65 : age < 65),
+                  disabled: !currentLicense || age < 65,
                 })
               }
 
               if (allowBELicense) {
                 options = options.concat({
                   label: m.applicationForBELicenseTitle,
-                  subLabel: m.applicationForBELicenseDescription.defaultMessage,
+                  subLabel: m.applicationForBELicenseDescription,
                   value: BE,
                   disabled:
                     !currentLicense ||
@@ -111,6 +111,17 @@ export const sectionApplicationFor = (
                     !categories?.some(
                       (c) => c.nr.toUpperCase() === 'B' && c.validToCode !== 8,
                     ),
+                })
+              }
+
+              if (allowAdvanced) {
+                options = options.concat({
+                  label: m.applicationForAdvancedLicenseTitle,
+                  subLabel: m.applicationForAdvancedLicenseDescription,
+                  value: B_ADVANCED,
+                  disabled: !categories?.some(
+                    (c) => c.nr.toUpperCase() === 'B' && c.validToCode !== 8,
+                  ),
                 })
               }
 

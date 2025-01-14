@@ -97,7 +97,7 @@ export class PassportService extends BaseTemplateApiService {
       auth,
       id,
       InstitutionNationalIds.SYSLUMENN,
-      [chargeItemCode],
+      [{ code: chargeItemCode }],
     )
     // last chance to validate before the user receives a dummy
     if (!response?.paymentUrl) {
@@ -180,7 +180,7 @@ export class PassportService extends BaseTemplateApiService {
           guid: application.id,
           appliedForPersonId: auth.nationalId,
           priority: service.type === 'regular' ? 0 : 1,
-          deliveryName: service.dropLocation,
+          deliveryName: undefined, // intentionally undefined deprecated
           contactInfo: {
             phoneAtHome: personalInfo.phoneNumber,
             phoneAtWork: personalInfo.phoneNumber,
@@ -195,7 +195,7 @@ export class PassportService extends BaseTemplateApiService {
           guid: application.id,
           appliedForPersonId: childsPersonalInfo.nationalId,
           priority: service.type === 'regular' ? 0 : 1,
-          deliveryName: service.dropLocation,
+          deliveryName: undefined, // intentionally undefined deprecated
           approvalA: {
             personId: childsPersonalInfo.guardian1.nationalId.replace('-', ''),
             name: childsPersonalInfo.guardian1.name,

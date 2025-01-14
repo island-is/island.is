@@ -43,6 +43,18 @@ export const strings = defineMessages({
     id: 'judicial.system.indictments:indictment_case_files_list.subpoena_button_text_v2',
     defaultMessage: 'Fyrirkall {name} {date}.pdf',
     description:
-      'Notaður sem texti á PDF takka til að sækja firyrkall í ákærum.',
+      'Notaður sem texti á PDF takka til að sækja fyrirkall í ákærum.',
+  },
+  serviceCertificateButtonText: {
+    id: 'judicial.system.indictments:indictment_case_files_list.service_certificate_button_text',
+    defaultMessage: 'Birtingarvottorð {name}.pdf',
+    description:
+      'Notaður sem texti á PDF takka til að sækja birtingarvottorð í ákærum.',
+  },
+  sentToPrisonAdmin: {
+    id: 'judicial.system.core:indictment_case_files_list.sent_to_prison_admin',
+    defaultMessage: 'Fullnusta',
+    description:
+      'Notaður sem titill á fullnusta hluta á dómskjalaskjá í ákærum.',
   },
 })

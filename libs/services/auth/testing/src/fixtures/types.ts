@@ -37,11 +37,14 @@ export type CreateCustomDelegationScope = Optional<
 export type CreateCustomDelegation = Optional<
   Pick<
     DelegationDTO,
-    'toNationalId' | 'fromNationalId' | 'fromName' | 'referenceId'
+    | 'toNationalId'
+    | 'fromNationalId'
+    | 'fromName'
+    | 'referenceId'
+    | 'domainName'
   >,
-  'toNationalId' | 'fromNationalId' | 'fromName' | 'referenceId'
+  'toNationalId' | 'fromNationalId' | 'fromName' | 'referenceId' | 'domainName'
 > & {
-  domainName: string
   scopes?: CreateCustomDelegationScope[]
 }
 

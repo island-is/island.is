@@ -5,7 +5,6 @@ import {
   districtCourtAssistantRule,
   districtCourtJudgeRule,
   districtCourtRegistrarRule,
-  prisonSystemStaffRule,
   prosecutorRepresentativeRule,
   prosecutorRule,
   publicProsecutorStaffRule,
@@ -24,7 +23,7 @@ describe('FileController - Get case file signed url rules', () => {
   })
 
   it('should give permission to roles', () => {
-    expect(rules).toHaveLength(10)
+    expect(rules).toHaveLength(9)
     expect(rules).toContain(prosecutorRule)
     expect(rules).toContain(prosecutorRepresentativeRule)
     expect(rules).toContain(publicProsecutorStaffRule)
@@ -34,6 +33,5 @@ describe('FileController - Get case file signed url rules', () => {
     expect(rules).toContain(courtOfAppealsJudgeRule)
     expect(rules).toContain(courtOfAppealsRegistrarRule)
     expect(rules).toContain(courtOfAppealsAssistantRule)
-    expect(rules).toContain(prisonSystemStaffRule)
   })
 })

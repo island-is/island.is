@@ -2,10 +2,14 @@ import PDFDocument from 'pdfkit'
 
 import { FormatMessage } from '@island.is/cms-translations'
 
+import { getIntro } from '@island.is/judicial-system/consts'
 import {
+  capitalize,
   formatDate,
   formatDOB,
+  getWordByGender,
   lowercase,
+  Word,
 } from '@island.is/judicial-system/formatters'
 import { SubpoenaType } from '@island.is/judicial-system/types'
 
@@ -22,6 +26,7 @@ import {
   addMediumText,
   addNormalRightAlignedText,
   addNormalText,
+  Confirmation,
   setTitle,
 } from './pdfHelpers'
 
@@ -33,6 +38,7 @@ export const createSubpoena = (
   arraignmentDate?: Date,
   location?: string,
   subpoenaType?: SubpoenaType,
+  confirmation?: Confirmation,
 ): Promise<Buffer> => {
   const doc = new PDFDocument({
     size: 'A4',
@@ -46,12 +52,13 @@ export const createSubpoena = (
   })
 
   const sinc: Buffer[] = []
+  const intro = getIntro(defendant.gender)
 
   doc.on('data', (chunk) => sinc.push(chunk))
 
   setTitle(doc, formatMessage(strings.title))
 
-  if (subpoena) {
+  if (confirmation) {
     addEmptyLines(doc, 5)
   }
 
@@ -109,7 +116,12 @@ export const createSubpoena = (
     'Times-Roman',
   )
   addEmptyLines(doc)
-  addNormalText(doc, 'Ákærði: ', 'Times-Bold', true)
+  addNormalText(
+    doc,
+    `${capitalize(getWordByGender(Word.AKAERDI, defendant.gender))}: `,
+    'Times-Bold',
+    true,
+  )
   addNormalText(doc, defendant.name || 'Nafn ekki skráð', 'Times-Roman')
   addEmptyLines(doc, 2)
 
@@ -135,32 +147,27 @@ export const createSubpoena = (
 
   addNormalText(doc, formatMessage(strings.type), 'Times-Roman')
   addEmptyLines(doc)
-  addNormalText(doc, formatMessage(strings.intro), 'Times-Bold')
+  addNormalText(doc, formatMessage(intro.intro), 'Times-Bold')
 
   if (subpoenaType) {
     addNormalText(
       doc,
       formatMessage(
         subpoenaType === SubpoenaType.ABSENCE
-          ? strings.absenceIntro
-          : strings.arrestIntro,
+          ? intro.absenceIntro
+          : intro.arrestIntro,
       ),
       'Times-Bold',
     )
   }
 
   addEmptyLines(doc)
-  addNormalText(doc, formatMessage(strings.deadline), 'Times-Roman')
+  addNormalText(doc, formatMessage(intro.deadline), 'Times-Roman')
 
   addFooter(doc)
 
-  if (subpoena) {
-    addConfirmation(doc, {
-      actor: theCase.judge?.name || '',
-      title: theCase.judge?.title,
-      institution: theCase.judge?.institution?.name || '',
-      date: subpoena.created,
-    })
+  if (confirmation) {
+    addConfirmation(doc, confirmation)
   }
 
   doc.end()

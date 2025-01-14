@@ -1,19 +1,24 @@
 import {
+  buildCheckboxField,
   buildCustomField,
-  buildDividerField,
+  buildDescriptionField,
   buildFileUploadField,
   buildForm,
   buildMultiField,
   buildSection,
   buildSubmitField,
+  buildTitleField,
+  getValueViaPath,
 } from '@island.is/application/core'
-import { Form, FormModes } from '@island.is/application/types'
+import { Application, Form, FormModes, YES } from '@island.is/application/types'
 import { buildFormConclusionSection } from '@island.is/application/ui-forms'
-import { m } from './messages'
+import { m } from '../lib/messages/messages'
+import { Logo } from '../assets/Logo'
 
 export const MissingInfoForm: Form = buildForm({
   id: 'HealthInsuranceReview',
   title: m.formTitle,
+  logo: Logo,
   mode: FormModes.IN_PROGRESS,
   children: [
     buildSection({
@@ -25,14 +30,16 @@ export const MissingInfoForm: Form = buildForm({
           title: m.missingInfoSection,
           description: '',
           children: [
-            buildCustomField({
+            buildDescriptionField({
               id: 'description',
-              title: 'Agent comments',
-              component: 'AgentComment',
+              title: m.agentCommentsTitle,
+              titleVariant: 'h4',
+              description: (application: Application) =>
+                getValueViaPath<string>(application.answers, 'agentComments') ??
+                m.agentCommentsEmpty,
             }),
-            buildDividerField({
+            buildTitleField({
               title: m.missingInfoAnswersTitle,
-              color: 'dark400',
             }),
             buildCustomField({
               id: 'missingInfo.date',
@@ -49,19 +56,23 @@ export const MissingInfoForm: Form = buildForm({
               title: '',
               introduction: '',
             }),
-            buildDividerField({
+            buildTitleField({
               title: m.previousAnswersTitle,
-              color: 'dark400',
             }),
             buildCustomField({
               id: 'submittedData',
               title: '',
               component: 'Review',
             }),
-            buildCustomField({
+            buildCheckboxField({
               id: 'confirmMissingInfo',
               title: '',
-              component: 'ConfirmCheckbox',
+              options: [
+                {
+                  value: YES,
+                  label: m.confirmCorrectInfo,
+                },
+              ],
             }),
             buildSubmitField({
               id: 'submit',

@@ -1,4 +1,5 @@
 import { gql } from '@apollo/client'
+import { signatureMembers } from './fragments'
 
 export const GET_PRICE_QUERY = gql`
   query GetPrice($id: String!) {
@@ -115,6 +116,66 @@ export const ADVERT_QUERY = gql`
       }
     }
   }
+`
+
+export const MAIN_TYPES_QUERY = gql`
+  query AdvertMainTypes($params: OfficialJournalOfIcelandMainTypesInput!) {
+    officialJournalOfIcelandMainTypes(params: $params) {
+      mainTypes {
+        id
+        title
+        slug
+        department {
+          id
+          title
+          slug
+        }
+        types {
+          id
+          title
+          slug
+        }
+      }
+      paging {
+        page
+        pageSize
+        totalPages
+        totalItems
+        hasNextPage
+        hasPreviousPage
+        nextPage
+        previousPage
+      }
+    }
+  }
+`
+export const INVOLVED_PARTY_SIGNATURES_QUERY = gql`
+  query InvolvedPartySignatures(
+    $input: OfficialJournalOfIcelandApplicationInvolvedPartySignaturesInput!
+  ) {
+    officialJournalOfIcelandApplicationInvolvedPartySignatures(input: $input) {
+      __typename
+      id
+      additionalSignature
+      date
+      html
+      institution
+      involvedParty {
+        id
+        slug
+        title
+      }
+      members {
+        ...SignatureMember
+      }
+      ... on OfficialJournalOfIcelandApplicationInvolvedPartySignaturesCommittee {
+        chairman {
+          ...SignatureMember
+        }
+      }
+    }
+  }
+  ${signatureMembers}
 `
 
 export const TYPES_QUERY = gql`
@@ -281,39 +342,52 @@ export const DELETE_APPLICATION_ATTACHMENT_MUTATION = gql`
 `
 
 export const GET_COMMENTS_QUERY = gql`
-  query GetComments(
-    $input: OfficialJournalOfIcelandApplicationGetCommentsInput!
-  ) {
-    officialJournalOfIcelandApplicationGetComments(input: $input) {
+  query GetComments($input: OJOIAGetCommentsInput!) {
+    OJOIAGetComments(input: $input) {
       comments {
-        createdAt
-        type {
-          title
-        }
-        task {
-          from
-          to
-          title {
-            title
-          }
-          comment
-        }
-        status {
-          id
-          title
-          slug
-        }
+        id
+        age
+        title
+        direction
+        comment
+        creator
+        receiver
       }
     }
   }
 `
 
 export const POST_COMMENT_MUTATION = gql`
-  mutation AddComment(
-    $input: OfficialJournalOfIcelandApplicationPostCommentInput!
-  ) {
-    officialJournalOfIcelandApplicationPostComment(input: $input) {
+  mutation AddComment($input: OJOIAPostCommentInput!) {
+    OJOIAPostComment(input: $input) {
       success
     }
+  }
+`
+
+export const GET_APPLICATION_CASE_QUERY = gql`
+  query GetApplicationCase($input: OJOIAIdInput!) {
+    OJOIAGetApplicationCase(input: $input) {
+      department
+      type
+      status
+      communicationStatus
+      categories
+      html
+    }
+  }
+`
+
+export const GET_PDF_QUERY = gql`
+  query GetPdf($input: OJOIAIdInput!) {
+    OJOIAGetPdf(input: $input) {
+      pdf
+    }
+  }
+`
+
+export const POST_APPLICATION_MUTATION = gql`
+  mutation OJOIAPostApplication($input: OJOIAIdInput!) {
+    OJOIAPostApplication(input: $input)
   }
 `

@@ -844,22 +844,12 @@ const Auctions: Screen<AuctionsProps> = ({
                   <Text variant="h3">{auction.lotName}</Text>
 
                   {/* Real Estate link */}
-                  {auction.lotId &&
-                    auction.lotType === LOT_TYPES.REAL_ESTATE && (
-                      <LotLink
-                        prefix={n(
-                          'auctionRealEstateNumberPrefix',
-                          'Fasteign nr. ',
-                        )}
-                        linkText={auction.lotId}
-                        href={(
-                          n(
-                            'realEstateRegistryLinkTemplate',
-                            'https://fasteignaskra.is/default.aspx?pageid=d5db1b6d-0650-11e6-943c-005056851dd2&selector=streetname&streetname={{ID}}&submitbutton=Leita',
-                          ) as string
-                        ).replace('{{ID}}', auction.lotId)}
-                      />
-                    )}
+                  {auction.lotId && auction.lotType === LOT_TYPES.REAL_ESTATE && (
+                    <Text paddingTop={2} paddingBottom={1}>
+                      {n('auctionRealEstateNumberPrefix', 'Fasteign nr. ')}
+                      {auction.lotId}
+                    </Text>
+                  )}
 
                   {/* Vehicle link */}
                   {auction.lotId && auction.lotType === LOT_TYPES.VEHICLE && (
@@ -1110,17 +1100,23 @@ Auctions.getProps = async ({ apolloClient, locale, req, res }) => {
       ),
   ])
 
+  const usingDefaultHeader: boolean = namespace['usingDefaultHeader'] ?? false
+
   return {
     organizationPage: getOrganizationPage,
     subpage: getOrganizationSubpage,
     syslumennAuctions: getSyslumennAuctions,
     namespace,
     showSearchInHeader: false,
+    themeConfig: !usingDefaultHeader
+      ? {
+          headerButtonColorScheme: 'negative',
+          headerColorScheme: 'white',
+        }
+      : {},
   }
 }
 
 export default withMainLayout(Auctions, {
-  headerButtonColorScheme: 'negative',
-  headerColorScheme: 'white',
   footerVersion: 'organization',
 })

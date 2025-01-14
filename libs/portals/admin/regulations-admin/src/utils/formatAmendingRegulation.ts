@@ -4,17 +4,20 @@ import {
   GroupedDraftImpactForms,
   RegDraftForm,
 } from '../state/types'
-import format from 'date-fns/format'
-import is from 'date-fns/locale/is'
 import compact from 'lodash/compact'
 import flatten from 'lodash/flatten'
 import uniq from 'lodash/uniq'
 import {
   allSameDay,
+  containsAnyTitleClass,
   extractArticleTitleDisplay,
+  formatDate,
+  getArticleTitleType,
+  getArticleTypeText,
   getTextWithSpaces,
   groupElementsByArticleTitleFromDiv,
   hasAnyChange,
+  hasSubtitle,
   isGildisTaka,
   removeRegPrefix,
   updateAppendixWording,
@@ -24,7 +27,7 @@ import { getDeletionOrAddition } from './getDeletionOrAddition'
 // ----------------------------------------------------------------------
 const PREFIX = 'Reglugerð um '
 const PREFIX_AMENDING = 'breytingu á reglugerð nr. '
-const PREFIX_REPEALING = 'brottfellingu á reglugerð nr. '
+const PREFIX_REPEALING = 'brottfellingu reglugerðar nr. '
 
 const formatAffectedAndPlaceAffectedAtEnd = (
   groups: {
@@ -50,18 +53,6 @@ const formatAffectedAndPlaceAffectedAtEnd = (
     }
 
     return ''
-  }
-
-  const formatDate = (date: Date) => {
-    const newDate = new Date(date)
-    if (newDate) {
-      const formattedDate = format(new Date(date), 'dd. MMMM yyyy', {
-        locale: is,
-      })
-      return formattedDate.replace(/^0+/, '') // Remove leading zeros
-    } else {
-      return ''
-    }
   }
 
   const extractArticleNumber = (str: string): number | null => {
@@ -216,13 +207,21 @@ export const formatAmendingRegBody = (
     const testGroup: {
       arr: HTMLText[]
       original?: HTMLText[]
-      title: string
+      titleObject: {
+        text: string
+        hasSubtitle: boolean
+        type: 'article' | 'chapter' | 'subchapter'
+      }
       isDeletion?: boolean
       isAddition?: boolean
     } = {
       arr: [],
       original: [],
-      title: '',
+      titleObject: {
+        text: '',
+        hasSubtitle: false,
+        type: 'article',
+      },
       isDeletion: undefined,
       isAddition: undefined,
     }
@@ -231,16 +230,19 @@ export const formatAmendingRegBody = (
       let pushHtml = '' as HTMLText
 
       let isParagraph = false
-      let isArticleTitle = false
+      let isSectionTitle = false
       let isNumberList = false
       let isLetterList = false
-      if (element.classList.contains('article__title')) {
+      const containsAnyTitle = containsAnyTitleClass(element)
+      if (containsAnyTitle) {
         const clone = element.cloneNode(true)
 
         const textContent = getTextWithSpaces(clone)
         articleTitle = extractArticleTitleDisplay(textContent)
-        testGroup.title = articleTitle
-        isArticleTitle = true
+        testGroup.titleObject.hasSubtitle = hasSubtitle(textContent)
+        testGroup.titleObject.type = getArticleTitleType(element)
+        testGroup.titleObject.text = articleTitle
+        isSectionTitle = true
         paragraph = 0 // Reset paragraph count for the new article
       } else if (element.nodeName.toLowerCase() === 'p') {
         paragraph++
@@ -262,7 +264,7 @@ export const formatAmendingRegBody = (
       const elementType =
         isLetterList || isNumberList
           ? 'lidur'
-          : isArticleTitle
+          : isSectionTitle
           ? 'greinTitle'
           : undefined
 
@@ -288,7 +290,7 @@ export const formatAmendingRegBody = (
             // Paragraph was deleted
             pushHtml =
               `<p>${paragraph}. mgr. ${articleTitle} ${regNameDisplay} fellur brott.</p>` as HTMLText
-          } else if (isArticleTitle) {
+          } else if (isSectionTitle) {
             // Title was deleted
             pushHtml =
               `<p>Fyrirsögn ${articleTitle} ${regNameDisplay} fellur brott.</p>` as HTMLText
@@ -317,7 +319,7 @@ export const formatAmendingRegBody = (
                     paragraph - 1
                   }. mgr. ${articleTitle} ${regNameDisplay} kemur ný málsgrein sem orðast svo:</p><p>${newText}</p>` as HTMLText)
                 : (`<p>Á undan 1. mgr. ${articleTitle} ${regNameDisplay} kemur ný málsgrein svohljóðandi: </p><p>${newText}</p>` as HTMLText)
-          } else if (isArticleTitle) {
+          } else if (isSectionTitle) {
             // Title was added
             testGroup.original?.push(`<p>${newText}</p>` as HTMLText)
             pushHtml =
@@ -350,7 +352,7 @@ export const formatAmendingRegBody = (
           // Change detected. Not additon, not deletion.
           testGroup.isDeletion = false
           testGroup.isAddition = false
-          if (isArticleTitle) {
+          if (isSectionTitle) {
             // Title was changed
             pushHtml =
               `<p>Fyrirsögn ${articleTitle} ${regNameDisplay} breytist og orðast svo:</p><p>${newText}</p>` as HTMLText
@@ -378,7 +380,7 @@ export const formatAmendingRegBody = (
       }
     })
     if (testGroup.isDeletion === true) {
-      const articleTitleNumber = testGroup.title
+      const articleTitleNumber = testGroup.titleObject.text
 
       additionArray.push([
         `<p>${articleTitleNumber} ${regNameDisplay} fellur brott.</p>` as HTMLText,
@@ -389,7 +391,7 @@ export const formatAmendingRegBody = (
       if (prevArticle.length > 0) {
         prevArticleTitle = prevArticle[0]?.innerText
       }
-      const articleTitleNumber = testGroup.title
+      const articleTitleNumber = testGroup.titleObject.text
       const originalTextArray = testGroup.original?.length
         ? flatten(testGroup.original)
         : []
@@ -408,8 +410,13 @@ export const formatAmendingRegBody = (
           : ''
       }
 
+      const articleTypeText = getArticleTypeText(testGroup.titleObject.type)
       additionArray.push([
-        `<p>Á eftir ${prevArticleTitleNumber} ${regNameDisplay} kemur ný grein, ${articleTitleNumber}, ásamt fyrirsögn, svohljóðandi:</p> ${articleDisplayText}` as HTMLText,
+        `<p>Á eftir ${prevArticleTitleNumber} ${regNameDisplay} kemur ${articleTypeText}, ${
+          articleTitleNumber ? articleTitleNumber + ',' : ''
+        }${
+          testGroup.titleObject.hasSubtitle ? ' ásamt fyrirsögn,' : ''
+        } svohljóðandi:</p> ${articleDisplayText}` as HTMLText,
       ])
     } else {
       additionArray.push(testGroup.arr)

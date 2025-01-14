@@ -19,16 +19,24 @@ import {
   RolesRules,
 } from '@island.is/judicial-system/auth'
 
-import { prosecutorRepresentativeRule, prosecutorRule } from '../../guards'
+import {
+  districtCourtAssistantRule,
+  districtCourtJudgeRule,
+  districtCourtRegistrarRule,
+  prosecutorRepresentativeRule,
+  prosecutorRule,
+} from '../../guards'
 import { Case, CaseExistsGuard, CaseWriteGuard, CurrentCase } from '../case'
 import { UpdateCivilClaimantDto } from './dto/updateCivilClaimant.dto'
+import { CurrentCivilClaimant } from './guards/civilClaimaint.decorator'
+import { CivilClaimantExistsGuard } from './guards/civilClaimantExists.guard'
 import { CivilClaimant } from './models/civilClaimant.model'
 import { DeleteCivilClaimantResponse } from './models/deleteCivilClaimant.response'
 import { CivilClaimantService } from './civilClaimant.service'
 
-@UseGuards(JwtAuthGuard, RolesGuard)
 @Controller('api/case/:caseId/civilClaimant')
 @ApiTags('civilClaimants')
+@UseGuards(JwtAuthGuard, RolesGuard)
 export class CivilClaimantController {
   constructor(
     private readonly civilClaimantService: CivilClaimantService,
@@ -36,7 +44,13 @@ export class CivilClaimantController {
   ) {}
 
   @UseGuards(CaseExistsGuard, CaseWriteGuard)
-  @RolesRules(prosecutorRule, prosecutorRepresentativeRule)
+  @RolesRules(
+    prosecutorRule,
+    prosecutorRepresentativeRule,
+    districtCourtJudgeRule,
+    districtCourtRegistrarRule,
+    districtCourtAssistantRule,
+  )
   @Post()
   @ApiCreatedResponse({
     type: CivilClaimant,
@@ -51,8 +65,14 @@ export class CivilClaimantController {
     return this.civilClaimantService.create(theCase)
   }
 
-  @UseGuards(CaseExistsGuard, CaseWriteGuard)
-  @RolesRules(prosecutorRule, prosecutorRepresentativeRule)
+  @UseGuards(CaseExistsGuard, CaseWriteGuard, CivilClaimantExistsGuard)
+  @RolesRules(
+    prosecutorRule,
+    prosecutorRepresentativeRule,
+    districtCourtJudgeRule,
+    districtCourtRegistrarRule,
+    districtCourtAssistantRule,
+  )
   @Patch(':civilClaimantId')
   @ApiOkResponse({
     type: CivilClaimant,
@@ -61,19 +81,20 @@ export class CivilClaimantController {
   async update(
     @Param('caseId') caseId: string,
     @Param('civilClaimantId') civilClaimantId: string,
+    @CurrentCivilClaimant() civilClaimant: CivilClaimant,
     @Body() updateCivilClaimantDto: UpdateCivilClaimantDto,
   ): Promise<CivilClaimant> {
     this.logger.debug(
-      `Updating civil claimant ${civilClaimantId} in case ${caseId}`,
+      `Updating civil claimant ${civilClaimantId} of case ${caseId}`,
     )
     return this.civilClaimantService.update(
       caseId,
-      civilClaimantId,
+      civilClaimant,
       updateCivilClaimantDto,
     )
   }
 
-  @UseGuards(CaseExistsGuard, CaseWriteGuard)
+  @UseGuards(CaseExistsGuard, CaseWriteGuard, CivilClaimantExistsGuard)
   @RolesRules(prosecutorRule, prosecutorRepresentativeRule)
   @Delete(':civilClaimantId')
   @ApiOkResponse({
@@ -84,7 +105,9 @@ export class CivilClaimantController {
     @Param('caseId') caseId: string,
     @Param('civilClaimantId') civilClaimantId: string,
   ): Promise<DeleteCivilClaimantResponse> {
-    this.logger.debug(`Deleting civil claimant ${civilClaimantId}`)
+    this.logger.debug(
+      `Deleting civil claimant ${civilClaimantId} of case ${caseId}`,
+    )
 
     const deleted = await this.civilClaimantService.delete(
       caseId,

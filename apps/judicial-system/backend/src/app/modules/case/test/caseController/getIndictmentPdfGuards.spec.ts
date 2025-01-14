@@ -1,5 +1,3 @@
-import { CanActivate } from '@nestjs/common'
-
 import { JwtAuthGuard, RolesGuard } from '@island.is/judicial-system/auth'
 import { indictmentCases } from '@island.is/judicial-system/types'
 

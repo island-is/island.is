@@ -15,6 +15,7 @@ import {
   Modal,
   PageHeader,
   PageLayout,
+  PageTitle,
   useCourtArrangements,
 } from '@island.is/judicial-system-web/src/components'
 import {
@@ -27,10 +28,15 @@ import {
   useCase,
   useOnceOn,
 } from '@island.is/judicial-system-web/src/utils/hooks'
-import { hasSentNotification } from '@island.is/judicial-system-web/src/utils/stepHelper'
+import { hasSentNotification } from '@island.is/judicial-system-web/src/utils/utils'
 import { isCourtHearingArrangemenstStepValidRC } from '@island.is/judicial-system-web/src/utils/validate'
 
 import { rcHearingArrangements as m } from './HearingArrangements.strings'
+
+enum ModalButtonLoading {
+  PRIMARY = 'PRIMARY',
+  SECONDARY = 'SECONDARY',
+}
 
 export const HearingArrangements = () => {
   const {
@@ -42,6 +48,8 @@ export const HearingArrangements = () => {
   } = useContext(FormContext)
 
   const [navigateTo, setNavigateTo] = useState<keyof stepValidationsType>()
+  const [modalButtonLoading, setModalButtonLoading] =
+    useState<ModalButtonLoading>()
 
   const {
     setAndSendCaseToServer,
@@ -155,11 +163,7 @@ export const HearingArrangements = () => {
             />
           </Box>
         )}
-        <Box marginBottom={7}>
-          <Text as="h1" variant="h1">
-            {formatMessage(m.title)}
-          </Text>
-        </Box>
+        <PageTitle>{formatMessage(m.title)}</PageTitle>
         <CourtCaseInfo workingCase={workingCase} />
         <Box component="section" marginBottom={8}>
           <Box marginBottom={2}>
@@ -212,13 +216,23 @@ export const HearingArrangements = () => {
               courtDateHasChanged,
             },
           )}
-          isPrimaryButtonLoading={isSendingNotification}
+          isPrimaryButtonLoading={
+            isSendingNotification &&
+            modalButtonLoading === ModalButtonLoading.PRIMARY
+          }
+          isSecondaryButtonLoading={
+            isSendingNotification &&
+            modalButtonLoading === ModalButtonLoading.SECONDARY
+          }
           onSecondaryButtonClick={() => {
-            sendNotification(workingCase.id, NotificationType.COURT_DATE, true)
+            setModalButtonLoading(ModalButtonLoading.SECONDARY)
 
+            sendNotification(workingCase.id, NotificationType.COURT_DATE, true)
             router.push(`${navigateTo}/${workingCase.id}`)
           }}
           onPrimaryButtonClick={async () => {
+            setModalButtonLoading(ModalButtonLoading.PRIMARY)
+
             const notificationSent = await sendNotification(
               workingCase.id,
               NotificationType.COURT_DATE,

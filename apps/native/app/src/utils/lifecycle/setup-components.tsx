@@ -25,6 +25,9 @@ import { LoginScreen } from '../../screens/login/login'
 import { TestingLoginScreen } from '../../screens/login/testing-login'
 import { MoreScreen } from '../../screens/more/more'
 import { PasskeyScreen } from '../../screens/passkey/passkey'
+import { UpdateAppScreen } from '../../screens/update-app/update-app'
+import { HealthOverviewScreen } from '../../screens/health/health-overview'
+import { VaccinationsScreen } from '../../screens/vaccinations/vaccinations'
 import { PersonalInfoScreen } from '../../screens/more/personal-info'
 import { NotificationsScreen } from '../../screens/notifications/notifications'
 import { OnboardingBiometricsScreen } from '../../screens/onboarding/onboarding-biometrics'
@@ -103,6 +106,8 @@ export function registerAllComponents() {
   registerComponent(CR.InboxFilterScreen, InboxFilterScreen)
   registerComponent(CR.AirDiscountScreen, AirDiscountScreen)
   registerComponent(CR.PasskeyScreen, PasskeyScreen)
+  registerComponent(CR.UpdateAppScreen, UpdateAppScreen)
+  registerComponent(CR.HealthOverviewScreen, HealthOverviewScreen)
   registerComponent(CR.HomeOptionsScreen, HomeOptionsScreen)
   registerComponent(CR.ApplicationsCompletedScreen, ApplicationsCompletedScreen)
   registerComponent(
@@ -113,6 +118,7 @@ export function registerAllComponents() {
     CR.ApplicationsIncompleteScreen,
     ApplicationsIncompleteScreen,
   )
+  registerComponent(CR.VaccinationsScreen, VaccinationsScreen)
 
   // Overlay
   registerComponent(CR.OfflineBanner, OfflineBanner)

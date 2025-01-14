@@ -8,8 +8,10 @@ import {
   InputError,
   InputBackgroundColor,
   TagVariant,
+  BoxProps,
 } from '@island.is/island-ui/core'
 import { TestSupport } from '@island.is/island-ui/utils'
+import { clearInputsOnChange } from '@island.is/shared/utils'
 
 interface Option extends TestSupport {
   value: string
@@ -39,6 +41,9 @@ interface Props {
   backgroundColor?: InputBackgroundColor
   onSelect?: (s: string) => void
   hasIllustration?: boolean
+  paddingBottom?: BoxProps['paddingBottom']
+  paddingTop?: BoxProps['paddingTop']
+  clearOnChange?: string[]
 }
 
 export const RadioController: FC<React.PropsWithChildren<Props>> = ({
@@ -54,6 +59,9 @@ export const RadioController: FC<React.PropsWithChildren<Props>> = ({
   split = '1/1',
   smallScreenSplit = '1/1',
   hasIllustration = false,
+  paddingBottom = 2,
+  paddingTop = 0,
+  clearOnChange,
 }) => {
   const { clearErrors, setValue } = useFormContext()
 
@@ -66,7 +74,8 @@ export const RadioController: FC<React.PropsWithChildren<Props>> = ({
           {options.map((option, index) => (
             <GridColumn
               span={[smallScreenSplit, split]}
-              paddingBottom={2}
+              paddingBottom={paddingBottom}
+              paddingTop={paddingTop}
               key={`option-${option.value}`}
             >
               <RadioButton
@@ -79,6 +88,9 @@ export const RadioController: FC<React.PropsWithChildren<Props>> = ({
                   onChange(target.value)
                   onSelect(target.value)
                   setValue(id, target.value)
+                  if (clearOnChange) {
+                    clearInputsOnChange(clearOnChange, setValue)
+                  }
                 }}
                 checked={option.value === value}
                 dataTestId={option.dataTestId}
@@ -97,7 +109,11 @@ export const RadioController: FC<React.PropsWithChildren<Props>> = ({
           ))}
 
           {error && (
-            <GridColumn span={['1/1', split]} paddingBottom={2}>
+            <GridColumn
+              span={['1/1', split]}
+              paddingBottom={paddingBottom}
+              paddingTop={paddingTop}
+            >
               <InputError errorMessage={error} />
             </GridColumn>
           )}

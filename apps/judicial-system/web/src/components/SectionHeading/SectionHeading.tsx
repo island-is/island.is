@@ -8,7 +8,7 @@ interface Props {
   title: string
   required?: boolean
   tooltip?: ReactNode
-  description?: ReactNode
+  description?: ReactNode | string
   marginBottom?: ResponsiveProp<Space | 'auto'>
   heading?: 'h1' | 'h2' | 'h3' | 'h4' | 'h5'
 }
@@ -29,7 +29,15 @@ const SectionHeading: FC<Props> = ({
       {tooltip && ' '}
       {tooltip && <Box component="span">{tooltip}</Box>}
     </Text>
-    {description && <Text marginTop={1}>{description}</Text>}
+    {description && (
+      <Box component="span" marginTop={1}>
+        {typeof description === 'string' ? (
+          <Text>{description}</Text>
+        ) : (
+          description
+        )}
+      </Box>
+    )}
   </Box>
 )
 

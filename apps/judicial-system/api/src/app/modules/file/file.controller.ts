@@ -182,19 +182,21 @@ export class FileController {
   getSubpoenaPdf(
     @Param('id') id: string,
     @Param('defendantId') defendantId: string,
-    @Param('subpoenaId') subpoenaId: string,
     @CurrentHttpUser() user: User,
     @Req() req: Request,
     @Res() res: Response,
+    @Param('subpoenaId') subpoenaId?: string,
     @Query('arraignmentDate') arraignmentDate?: string,
     @Query('location') location?: string,
     @Query('subpoenaType') subpoenaType?: SubpoenaType,
   ): Promise<Response> {
     this.logger.debug(
-      `Getting the subpoena for defendant ${defendantId} of case ${id} as a pdf document`,
+      `Getting subpoena ${
+        subpoenaId ?? 'draft'
+      } for defendant ${defendantId} of case ${id} as a pdf document`,
     )
 
-    const subpoenaIdInjection = subpoenaId ? `/${subpoenaId}` : ''
+    const subpoenaIdInjection = subpoenaId ? `/${subpoenaId}/pdf` : ''
     const queryInjection = arraignmentDate
       ? `?arraignmentDate=${arraignmentDate}&location=${location}&subpoenaType=${subpoenaType}`
       : ''
@@ -204,6 +206,31 @@ export class FileController {
       AuditedAction.GET_SUBPOENA_PDF,
       id,
       `defendant/${defendantId}/subpoena${subpoenaIdInjection}${queryInjection}`,
+      req,
+      res,
+      'pdf',
+    )
+  }
+
+  @Get('serviceCertificate/:defendantId/:subpoenaId')
+  @Header('Content-Type', 'application/pdf')
+  getServiceCertificatePdf(
+    @Param('id') id: string,
+    @Param('defendantId') defendantId: string,
+    @Param('subpoenaId') subpoenaId: string,
+    @CurrentHttpUser() user: User,
+    @Req() req: Request,
+    @Res() res: Response,
+  ): Promise<Response> {
+    this.logger.debug(
+      `Getting service certificate for subpoena ${subpoenaId} of defendant ${defendantId} and case ${id} as a pdf document`,
+    )
+
+    return this.fileService.tryGetFile(
+      user.id,
+      AuditedAction.GET_SERVICE_CERTIFICATE_PDF,
+      id,
+      `defendant/${defendantId}/subpoena/${subpoenaId}/serviceCertificate`,
       req,
       res,
       'pdf',

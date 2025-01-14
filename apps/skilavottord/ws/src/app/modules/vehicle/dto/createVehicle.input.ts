@@ -14,8 +14,8 @@ export class CreateVehicleInput {
   @Field()
   make!: string
 
-  @Field()
-  firstRegistrationDate!: Date
+  @Field({ nullable: true })
+  firstRegistrationDate: Date
 
   @Field()
   color!: string

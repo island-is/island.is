@@ -1,16 +1,15 @@
-import format from 'date-fns/format'
-import is from 'date-fns/locale/is'
-
 import { LinkV2, Table as T, Text } from '@island.is/island-ui/core'
 import { Locale } from '@island.is/shared/types'
 import { OfficialJournalOfIcelandAdvertsResponse } from '@island.is/web/graphql/schema'
 import { useLinkResolver } from '@island.is/web/hooks'
 
+import { formatDate } from './OJOIUtils'
+
 export const OJOISearchListView = ({
   adverts,
   locale,
 }: {
-  adverts: OfficialJournalOfIcelandAdvertsResponse['adverts']
+  adverts?: OfficialJournalOfIcelandAdvertsResponse['adverts']
   locale: Locale
 }) => {
   const { linkResolver } = useLinkResolver()
@@ -27,13 +26,11 @@ export const OJOISearchListView = ({
         </T.Row>
       </T.Head>
       <T.Body>
-        {adverts.map((ad) => (
+        {adverts?.map((ad) => (
           <T.Row key={ad.id}>
             <T.Data>
               <Text variant="small" whiteSpace="nowrap">
-                {format(new Date(ad.publicationDate), 'dd.MM.yyyy', {
-                  locale: is,
-                })}
+                {formatDate(ad.publicationDate)}
               </Text>
             </T.Data>
             <T.Data>

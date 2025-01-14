@@ -293,6 +293,7 @@ export const slices = gql`
         ...ImageFields
       }
     }
+    showSearchInput
   }
 
   fragment ContactUsFields on ContactUs {
@@ -792,6 +793,64 @@ export const slices = gql`
     aspectRatio
   }
 
+  fragment GrantCardsListFields on GrantCardsList {
+    __typename
+    id
+    title
+    displayTitle
+    namespace
+    resolvedGrantsList {
+      total
+      items {
+        id
+        name
+        description
+        applicationId
+        applicationUrl {
+          slug
+          type
+        }
+        dateFrom
+        dateTo
+        status
+        statusText
+        categoryTags {
+          id
+          title
+          genericTagGroup {
+            title
+          }
+        }
+        typeTag {
+          id
+          title
+          genericTagGroup {
+            title
+          }
+        }
+        fund {
+          id
+          title
+          link {
+            slug
+            type
+          }
+          featuredImage {
+            id
+            url
+          }
+          parentOrganization {
+            id
+            title
+            logo {
+              url
+            }
+          }
+        }
+      }
+    }
+  }
+
   fragment LatestEventsSliceFields on LatestEventsSlice {
     title
     events {
@@ -842,6 +901,7 @@ export const slices = gql`
       sourceDataKey
       interval
       stackId
+      values
     }
     sourceData
     flipAxis
@@ -872,6 +932,8 @@ export const slices = gql`
     id
     searchInputPlaceholder
     itemType
+    defaultOrder
+    showSearchInput
     filterTags {
       id
       title
@@ -915,6 +977,26 @@ export const slices = gql`
         }
         slug
         assetUrl
+        image {
+          url
+          title
+          width
+          height
+        }
+      }
+    }
+  }
+
+  fragment FeaturedLinksFields on FeaturedLinks {
+    __typename
+    id
+    title
+    featuredLinks {
+      title
+      attention
+      thing {
+        slug
+        type
       }
     }
   }
@@ -964,6 +1046,8 @@ export const slices = gql`
     ...FeaturedEventsFields
     ...GenericListFields
     ...LatestGenericListItemsFields
+    ...FeaturedLinksFields
+    ...GrantCardsListFields
   }
 
   fragment AllSlices on Slice {

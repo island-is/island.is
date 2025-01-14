@@ -8,6 +8,7 @@ fragment AuthCustomDelegationOutgoing on AuthCustomDelegation {
     apiScope(lang: $lang) {
       ...AuthApiScope
       group {
+        name
         displayName
       }
     }
@@ -24,7 +25,12 @@ query AuthDelegationsOutgoing($input: AuthDelegationsInput!, $lang: String) {
   authDelegations(input: $input) {
     id
     type
+    validTo
     to {
+      nationalId
+      name
+    }
+    from {
       nationalId
       name
     }

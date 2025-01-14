@@ -4,7 +4,11 @@ import { Box, GridColumn, GridRow, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
 import { Property, PropertyField } from '../../lib/constants'
-import { formatText, getValueViaPath } from '@island.is/application/core'
+import {
+  formatTextWithLocale,
+  getValueViaPath,
+} from '@island.is/application/core'
+import { Locale } from '@island.is/shared/types'
 
 interface PropTypes extends FieldBaseProps {
   field: CustomField
@@ -13,7 +17,7 @@ interface PropTypes extends FieldBaseProps {
 export const PropertyOverviewRepeater: FC<
   React.PropsWithChildren<PropTypes>
 > = ({ field, application }) => {
-  const { formatMessage } = useLocale()
+  const { formatMessage, lang: locale } = useLocale()
   const { title } = field
   const { id } = field.props as { id: string }
   const fields = getValueViaPath(application.answers, id) as Property[]
@@ -25,7 +29,12 @@ export const PropertyOverviewRepeater: FC<
           field={item}
           index={index}
           key={index + item.propertyNumber}
-          title={formatText(title, application, formatMessage)}
+          title={formatTextWithLocale(
+            title,
+            application,
+            locale as Locale,
+            formatMessage,
+          )}
         />
       ))}
     </Box>

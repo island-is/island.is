@@ -1,6 +1,12 @@
 import { defineMessages } from 'react-intl'
 
 export const m = {
+  breadcrumb: defineMessages({
+    frontpage: {
+      id: 'web.ojoi.breadcrumb.frontpage',
+      defaultMessage: 'Ísland.is',
+    },
+  }),
   general: defineMessages({
     seeMore: {
       id: 'web.ojoi:general.seeMore',
@@ -35,6 +41,10 @@ export const m = {
       id: 'web.ojoi:home.mainCategories',
       defaultMessage: 'Yfirflokkar',
     },
+    latestAdverts: {
+      id: 'web.ojoi:home.latestAdverts',
+      defaultMessage: 'Nýjustu auglýsingar',
+    },
     allCategories: {
       id: 'web.ojoi:home.allCategories',
       defaultMessage: 'Málaflokkar A-Ö',
@@ -42,6 +52,32 @@ export const m = {
   }),
 
   search: defineMessages({
+    emptySearchResult: {
+      id: 'web.ojoi:search.emptySearchResult',
+      defaultMessage: 'Engin mál fundust',
+    },
+    errorFetchingAdvertsTitle: {
+      id: 'web.ojoi:search.errorFetchingAdvertsTitle',
+      defaultMessage: 'Ekki tókst að sækja auglýsingar',
+    },
+    errorFetchingCategoriesTitle: {
+      id: 'web.ojoi:search.errorFetchingCategoriesTitle',
+      defaultMessage: 'Ekki tókst að sækja málaflokka',
+    },
+    errorFetchingCategoriesMessage: {
+      id: 'web.ojoi:search.errorFetchingCategoriesMessage',
+      defaultMessage:
+        'Ekki náðist samband við vefþjónustur Stjórnartíðinda, reynið aftur síðar.',
+    },
+    errorFetchingAdvertsMessage: {
+      id: 'web.ojoi:search.errorFetchingAdvertsMessage',
+      defaultMessage:
+        'Ekki náðist samband við vefþjónustur Stjórnartíðinda, reynið aftur síðar.',
+    },
+    breadcrumbTitle: {
+      id: 'web.ojoi:search.breadcrumbTitle',
+      defaultMessage: 'Leitarniðurstöður',
+    },
     title: {
       id: 'web.ojoi:search.title',
       defaultMessage: 'Leit í Stjórnartíðindum',
@@ -150,6 +186,10 @@ export const m = {
   }),
 
   categories: defineMessages({
+    breadcrumbTitle: {
+      id: 'web.ojoi:categories.breadcrumbTitle',
+      defaultMessage: 'Málaflokkar',
+    },
     title: {
       id: 'web.ojoi:categories.title',
       defaultMessage: 'Málaflokkar Stjórnartíðinda',
@@ -243,6 +283,41 @@ export const m = {
     getPdf: {
       id: 'web.ojoi:advert.getPdf',
       defaultMessage: 'Sækja PDF',
+    },
+  }),
+
+  casesInProgress: defineMessages({
+    title: {
+      id: 'web.ojoi:casesInProgress.title',
+      defaultMessage: 'Mál í vinnslu',
+    },
+    description: {
+      id: 'web.ojoi:casesInProgress.description',
+      defaultMessage: 'Listi yfir mál sem hafa ekki verið gefin út.',
+    },
+    notFoundMessage: {
+      id: 'web.ojoi:casesInProgress.notFoundMessage',
+      defaultMessage: 'Engin mál í vinnslu',
+    },
+    createdAt: {
+      id: 'web.ojoi:casesInProgress.createdAt',
+      defaultMessage: 'Innsending',
+    },
+    status: {
+      id: 'web.ojoi:casesInProgress.status',
+      defaultMessage: 'Staða',
+    },
+    requestedPublicationDate: {
+      id: 'web.ojoi:casesInProgress.requestedPublicationDate',
+      defaultMessage: 'Áætl. útgáfud.',
+    },
+    advertTitle: {
+      id: 'web.ojoi:casesInProgress.advertTitle',
+      defaultMessage: 'Heiti',
+    },
+    involvedParty: {
+      id: 'web.ojoi:casesInProgress.involvedParty',
+      defaultMessage: 'Stofnun',
     },
   }),
 }

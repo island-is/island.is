@@ -16,34 +16,19 @@ export type Events =
   | { type: DefaultEvents.ASSIGN }
   | { type: DefaultEvents.EDIT }
 
+export enum ApiModuleActions {
+  getChildInformation = 'getChildInformation',
+  sendApplication = 'sendApplication',
+}
+
 export enum Roles {
   APPLICANT = 'applicant',
 }
 
-export type Option = {
-  value: string
-  label: string
-}
-
-export enum RelationOptions {
-  GRANDPARENT = 'grandparent',
-  SIBLING = 'sibling',
-  STEPPARENT = 'stepparent',
-  RELATIVE = 'relative',
-  FRIEND_OR_OTHER = 'friendOrOther',
-}
-
 export enum ReasonForApplicationOptions {
-  TRANSFER_OF_LEGAL_DOMICILE = 'transferOfLegalDomicile',
-  STUDY_STAY_FOR_PARENTS = 'studyStayForParents',
-  PARENTS_PARLIAMENTARY_MEMBERSHIP = 'parentsParliamentaryMembership',
-  TEMPORARY_FROSTER = 'temporaryFoster',
-  EXPERT_SERVICE = 'expertService',
-  SICKLY = 'sickly',
-  LIVES_IN_TWO_HOMES = 'livesInTwoHomes',
-  SIBLINGS_IN_THE_SAME_PRIMARY_SCHOOL = 'siblingsInTheSamePrimarySchool',
+  MOVING_MUNICIPALITY = 'movingMuniciplaity',
   MOVING_ABROAD = 'movingAbroad',
-  OTHER_REASONS = 'otherReasons',
+  SIBLINGS_IN_SAME_SCHOOL = 'SiblingsInSameSchool',
 }
 
 export enum SiblingRelationOptions {
@@ -52,30 +37,27 @@ export enum SiblingRelationOptions {
   STEP_SIBLING = 'stepSibling',
 }
 
-export enum FoodAllergiesOptions {
-  EGG_ALLERGY = 'eggAllergy',
-  FISH_ALLERGY = 'fishAllergy',
-  PENUT_ALLERGY = 'peanutAllergy',
-  WHEAT_ALLERGY = 'wheatAllergy',
-  MILK_ALLERGY = 'milkAllergy',
-  OTHER = 'other',
-}
-
-export enum FoodIntolerancesOptions {
-  LACTOSE_INTOLERANCE = 'lactoseIntolerance',
-  GLUTEN_INTOLERANCE = 'glutenIntolerance',
-  MSG_INTOLERANCE = 'msgIntolerance',
-  OTHER = 'other',
-}
-
-export enum Gender {
-  FEMALE = 'FEMALE',
-  MALE = 'MALE',
-  OTHER = 'OTHER',
-}
-
 export enum OptionsType {
-  ALLERGRY = 'allergy',
+  PRONOUN = 'pronoun',
+  GENDER = 'gender',
   INTOLERANCE = 'intolerence',
-  REASON = 'rejectionReason',
+  REASON = 'registrationReason',
+  RELATION = 'relation',
+  ALLERGY = 'allergy',
+}
+
+export enum MembershipRole {
+  Admin = 'admin',
+  Guardian = 'guardian',
+  Parent = 'parent',
+  Principal = 'principal',
+  Relative = 'relative',
+  Student = 'student',
+  Teacher = 'teacher',
+}
+
+export enum MembershipOrganizationType {
+  Municipality = 'municipality',
+  National = 'national',
+  School = 'school',
 }

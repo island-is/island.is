@@ -47,7 +47,7 @@ yarn nx run services-university-gateway:codegen/backend-schema
 
 ### Worker
 
-This service is for running scheduled tasks. Currently, fetching programs and courses from university APIs and adding data to out database.
+This service is for running scheduled tasks. Currently, fetching programs from university APIs and adding data to out database.
 
 ## Running locally
 

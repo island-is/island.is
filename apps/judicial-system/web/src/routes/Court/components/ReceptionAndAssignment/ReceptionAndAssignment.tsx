@@ -2,7 +2,7 @@ import { useCallback, useContext } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
-import { AlertMessage, Box, Text } from '@island.is/island-ui/core'
+import { AlertMessage, Box } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import {
   isIndictmentCase,
@@ -11,14 +11,16 @@ import {
 } from '@island.is/judicial-system/types'
 import { titles } from '@island.is/judicial-system-web/messages'
 import {
+  CourtCaseInfo,
   FormContentContainer,
   FormContext,
   FormFooter,
   PageHeader,
   PageLayout,
+  PageTitle,
 } from '@island.is/judicial-system-web/src/components'
 import { Gender } from '@island.is/judicial-system-web/src/graphql/schema'
-import { getDefendantPleaText } from '@island.is/judicial-system-web/src/utils/stepHelper'
+import { getDefendantPleaText } from '@island.is/judicial-system-web/src/utils/utils'
 import { isReceptionAndAssignmentStepValid } from '@island.is/judicial-system-web/src/utils/validate'
 
 import CourtCaseNumber from '../CourtCaseNumber/CourtCaseNumber'
@@ -110,11 +112,8 @@ const ReceptionAndAssignment = () => {
               />
             </Box>
           )}
-        <Box marginBottom={7}>
-          <Text as="h1" variant="h1">
-            {formatMessage(strings.title)}
-          </Text>
-        </Box>
+        <PageTitle>{formatMessage(strings.title)}</PageTitle>
+        <CourtCaseInfo workingCase={workingCase} />
         <Box component="section" marginBottom={6}>
           <CourtCaseNumber />
         </Box>

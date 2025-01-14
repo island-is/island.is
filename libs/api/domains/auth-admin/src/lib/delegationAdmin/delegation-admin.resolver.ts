@@ -91,6 +91,17 @@ export class DelegationAdminResolver {
     return identityLoader.load(customDelegation.toNationalId)
   }
 
+  @ResolveField('createdBy', () => Identity, { nullable: true })
+  resolveCreatedByIdentity(
+    @Loader(IdentityLoader) identityLoader: IdentityDataLoader,
+    @Parent() customDelegation: DelegationDTO,
+  ) {
+    if (!customDelegation.createdByNationalId) {
+      return null
+    }
+    return identityLoader.load(customDelegation.createdByNationalId)
+  }
+
   @ResolveField('validTo', () => Date, { nullable: true })
   resolveValidTo(@Parent() delegation: DelegationDTO): Date | undefined {
     if (!delegation.validTo) {

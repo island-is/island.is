@@ -42,9 +42,17 @@ export class CarRecyclingService extends BaseTemplateApiService {
   async createVehicle(auth: User, vehicle: VehicleDto) {
     if (vehicle && vehicle.permno) {
       let mileage = 0
+      let modelYear = null
 
       if (vehicle.mileage) {
         mileage = +vehicle.mileage.trim().replace(/\./g, '')
+      }
+
+      // Support the newRegistrationDate, for now, to keep backwards compatibility
+      if (vehicle.newRegistrationDate) {
+        modelYear = new Date(vehicle.newRegistrationDate)
+      } else if (vehicle.modelYear) {
+        modelYear = new Date(vehicle.modelYear, 0, 1)
       }
 
       return await this.carRecyclingService.createVehicle(
@@ -53,7 +61,7 @@ export class CarRecyclingService extends BaseTemplateApiService {
         mileage,
         vehicle.vin || '',
         vehicle.make || '',
-        vehicle.firstRegistrationDate || new Date(),
+        modelYear,
         vehicle.color || '',
       )
     }

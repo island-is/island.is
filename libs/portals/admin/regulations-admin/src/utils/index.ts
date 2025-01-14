@@ -1,8 +1,12 @@
 import { getHolidays } from 'fridagar'
 import { ISODate, toISODate } from '@island.is/regulations'
-import { startOfDay, addDays } from 'date-fns/esm'
+import startOfDay from 'date-fns/startOfDay'
+import addDays from 'date-fns/addDays'
+import isBefore from 'date-fns/isBefore'
+import { editorMsgs } from '../lib/messages'
 
 import { StringOption as Option } from '@island.is/island-ui/core'
+import { MessageDescriptor } from 'react-intl'
 
 // ---------------------------------------------------------------------------
 
@@ -33,12 +37,12 @@ export const isWorkday = (date: Date): boolean => {
 export const getMinPublishDate = (fastTrack: boolean, signatureDate?: Date) => {
   let d = new Date()
   // Shift forward one day if the time is 14:00 or later.
-  if (d.getHours() > 14) {
+  if (d.getHours() > 14 && fastTrack) {
     d = addDays(d, 1)
   }
   // only fastTracked regulations may request today and/or a holiday
   if (!fastTrack) {
-    d = getNextWorkday(addDays(d, 1))
+    d = getWorkdayMinimumDate(10)
   }
   const minDate = startOfDay(d)
 
@@ -107,3 +111,78 @@ export const emptyOption = (label?: string, disabled?: boolean): Option => ({
   label: label ? `– ${label} –` : '—',
   disabled,
 })
+
+// ---------------------------------------------------------------------------
+
+// Show warning if gildistökudagur(effectiveDate) is before útgáfudagur(idealPublishDate).
+// Only a warning, it is allowed, rarely used but possible.
+export const hasPublishEffectiveWarning = (
+  effective?: Date,
+  publish?: Date,
+  fastTrack?: boolean,
+): boolean => {
+  if (!publish) {
+    return false
+  }
+
+  const today = new Date()
+  const nextWorkdayToday = getNextWorkday(today)
+
+  if (effective) {
+    const nextWorkdayEffective = getNextWorkday(effective)
+
+    // Warning if effective date is before publish date
+    if (isBefore(nextWorkdayEffective, publish)) {
+      return true
+    }
+
+    // Warning if effective date is before next workday and fastTrack is active
+    if (fastTrack && isBefore(nextWorkdayEffective, nextWorkdayToday)) {
+      return true
+    }
+  } else {
+    // Warning if no effective date is set and fastTrack is active or publish date is after next workday
+    if (fastTrack || isBefore(nextWorkdayToday, publish)) {
+      return true
+    }
+  }
+
+  return false
+}
+
+export const getDateOverviewWarning = (
+  effective?: Date,
+  publish?: Date,
+  fastTrack?: boolean,
+): MessageDescriptor[] => {
+  const arr = []
+
+  const startPublishDate = publish ? startOfDay(publish) : undefined
+  const startEffectiveDate = effective ? startOfDay(effective) : undefined
+  const startToday = startOfDay(new Date())
+
+  const minimumPublishDateNoFastTrack = startOfDay(getWorkdayMinimumDate(10))
+  if (hasPublishEffectiveWarning(effective, publish, fastTrack)) {
+    arr.push(editorMsgs.publishEffectiveWarning)
+  }
+
+  if (!fastTrack) {
+    if (
+      startPublishDate &&
+      isBefore(startPublishDate, minimumPublishDateNoFastTrack) &&
+      !isBefore(startPublishDate, startToday)
+    ) {
+      arr.push(editorMsgs.publishDateEarlyFast)
+    }
+  }
+
+  if (startPublishDate && isBefore(startPublishDate, startToday)) {
+    arr.push(editorMsgs.publishDateEarly)
+  }
+
+  if (startEffectiveDate && isBefore(startEffectiveDate, startToday)) {
+    arr.push(editorMsgs.effectiveDateEarly)
+  }
+
+  return arr
+}

@@ -80,6 +80,8 @@ export interface Period {
   rightCodePeriod?: string
   paid?: boolean
   approved?: boolean
+  months?: number
+  endDateAdjustLength?: string[]
 }
 
 export interface Payment {

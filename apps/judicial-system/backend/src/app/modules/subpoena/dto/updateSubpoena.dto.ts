@@ -1,19 +1,36 @@
-import { IsBoolean, IsEnum, IsOptional, IsString } from 'class-validator'
+import { Transform, Type } from 'class-transformer'
+import {
+  IsDate,
+  IsEnum,
+  IsOptional,
+  IsString,
+  MaxLength,
+  MinLength,
+} from 'class-validator'
 
 import { ApiPropertyOptional } from '@nestjs/swagger'
 
-import { DefenderChoice } from '@island.is/judicial-system/types'
+import { DefenderChoice, ServiceStatus } from '@island.is/judicial-system/types'
+
+import { nationalIdTransformer } from '../../../transformers'
 
 export class UpdateSubpoenaDto {
   @IsOptional()
-  @IsBoolean()
-  @ApiPropertyOptional({ type: Boolean })
-  readonly acknowledged?: boolean
+  @IsEnum(ServiceStatus)
+  @ApiPropertyOptional({ enum: ServiceStatus })
+  readonly serviceStatus?: ServiceStatus
 
   @IsOptional()
   @IsString()
+  @MaxLength(255)
   @ApiPropertyOptional({ type: String })
-  readonly registeredBy?: string
+  readonly servedBy?: string
+
+  @IsOptional()
+  @Type(() => Date)
+  @IsDate()
+  @ApiPropertyOptional({ type: Date })
+  readonly serviceDate?: Date
 
   @IsOptional()
   @IsString()
@@ -27,21 +44,46 @@ export class UpdateSubpoenaDto {
 
   @IsOptional()
   @IsString()
+  @MinLength(10)
+  @MaxLength(10)
+  @Transform(nationalIdTransformer)
   @ApiPropertyOptional({ type: String })
   readonly defenderNationalId?: string
 
   @IsOptional()
   @IsString()
+  @MaxLength(255)
   @ApiPropertyOptional({ type: String })
   readonly defenderName?: string
 
   @IsOptional()
   @IsString()
+  @MaxLength(255)
   @ApiPropertyOptional({ type: String })
   readonly defenderEmail?: string
 
   @IsOptional()
   @IsString()
+  @MaxLength(255)
   @ApiPropertyOptional({ type: String })
   readonly defenderPhoneNumber?: string
+
+  @IsOptional()
+  @IsEnum(DefenderChoice)
+  @ApiPropertyOptional({ enum: DefenderChoice })
+  readonly requestedDefenderChoice?: DefenderChoice
+
+  @IsOptional()
+  @IsString()
+  @MinLength(10)
+  @MaxLength(10)
+  @Transform(nationalIdTransformer)
+  @ApiPropertyOptional({ type: String })
+  readonly requestedDefenderNationalId?: string
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(255)
+  @ApiPropertyOptional({ type: String })
+  readonly requestedDefenderName?: string
 }

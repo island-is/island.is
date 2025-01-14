@@ -5,7 +5,9 @@ import {
   NationalRegistryUserApi,
   UserProfileApi,
   ReligionCodesApi,
+  MockableDistrictCommissionersPaymentCatalogApi,
   DistrictCommissionersPaymentCatalogApi,
+  BirthCertificateApi,
 } from '../../dataProviders'
 import { m } from '../../lib/messages'
 
@@ -26,6 +28,11 @@ export const dataCollection = [
     subTitle: m.dataCollectionMaritalStatusDescription,
   }),
   buildDataProviderItem({
+    provider: BirthCertificateApi,
+    title: m.dataCollectionBirthCertificateTitle,
+    subTitle: m.dataCollectionBirthCertificateDescription,
+  }),
+  buildDataProviderItem({
     provider: DistrictsApi,
     title: '',
   }),
@@ -36,6 +43,11 @@ export const dataCollection = [
   }),
   buildDataProviderItem({
     provider: DistrictCommissionersPaymentCatalogApi,
+    title: '',
+    subTitle: '',
+  }),
+  buildDataProviderItem({
+    provider: MockableDistrictCommissionersPaymentCatalogApi,
     title: '',
     subTitle: '',
   }),

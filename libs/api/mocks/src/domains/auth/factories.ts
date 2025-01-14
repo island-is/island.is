@@ -44,6 +44,11 @@ export const customDelegation = factory<AuthCustomDelegation>({
     name: faker.name.findName(),
     type: 'Person',
   }),
+  createdBy: () => ({
+    nationalId: createNationalId('person'),
+    name: faker.name.findName(),
+    type: 'Person',
+  }),
   type: 'Custom',
   provider: 'delegationdb',
   scopes: () => delegationScope.list(5),

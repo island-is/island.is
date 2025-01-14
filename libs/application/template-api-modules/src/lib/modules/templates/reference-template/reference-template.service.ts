@@ -10,27 +10,47 @@ import {
 import { ApplicationTypes } from '@island.is/application/types'
 import { BaseTemplateApiService } from '../../base-template-api.service'
 import { TemplateApiError } from '@island.is/nest/problem'
+import { NotificationsService } from '../../../notification/notifications.service'
+import { NotificationType } from '../../../notification/notificationsTemplates'
 
 const TWO_HOURS_IN_SECONDS = 2 * 60 * 60
 @Injectable()
 export class ReferenceTemplateService extends BaseTemplateApiService {
   constructor(
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
+    private readonly notificationsService: NotificationsService,
   ) {
     super(ApplicationTypes.EXAMPLE)
   }
 
-  async getReferenceData({ application }: TemplateApiModuleActionProps) {
+  async getReferenceData({ application, auth }: TemplateApiModuleActionProps) {
     await new Promise((resolve) => setTimeout(resolve, 2000))
+
+    const applicantName = getValueViaPath(
+      application.externalData,
+      'nationalRegistry.data.fullName',
+    ) as string
+
+    this.notificationsService.sendNotification({
+      type: NotificationType.ChildrenResidenceChange,
+      messageParties: {
+        recipient: auth.nationalId,
+        sender: auth.nationalId,
+      },
+      args: {
+        applicantName,
+        applicationId: application.id,
+      },
+    })
 
     const name = getValueViaPath(
       application.externalData,
-      'nationalRegistry.data.name',
+      'nationalRegistry.data.fullName',
     ) as string
 
     return {
       referenceData: {
-        name,
+        applicantName,
         some: 'data',
         numbers: 123,
       },

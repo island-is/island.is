@@ -45,11 +45,6 @@ const validateAssetNumber = (assetNumber: string) => {
   return assetNumberPattern.test(assetNumber)
 }
 
-const validateDebtBankAccount = (assetNumber: string) => {
-  const assetNumberPattern = /^\d{4}-\d{2}-\d{6}|\d{12}$/
-  return assetNumberPattern.test(assetNumber)
-}
-
 const assetSchema = ({ withShare }: { withShare?: boolean } = {}) =>
   z
     .object({
@@ -60,6 +55,7 @@ const assetSchema = ({ withShare }: { withShare?: boolean } = {}) =>
             .refine((v) => (withShare ? validateAssetNumber(v) : true)),
           description: z.string(),
           propertyValuation: z.string(),
+          enabled: z.boolean(),
           ...(withShare ? { share: z.string() } : {}),
           ...deceasedShare,
         })
@@ -227,6 +223,7 @@ export const inheritanceReportSchema = z.object({
             assetNumber: z.string().refine((v) => v),
             propertyValuation: z.string().refine((v) => v),
             exchangeRateOrInterest: z.string().refine((v) => v),
+            enabled: z.boolean(),
             ...deceasedShare,
           })
           .refine(
@@ -252,6 +249,7 @@ export const inheritanceReportSchema = z.object({
             description: z.string(),
             assetNumber: z.string(),
             propertyValuation: z.string().refine((v) => v),
+            enabled: z.boolean(),
             ...deceasedShare,
           })
           .refine(
@@ -289,6 +287,7 @@ export const inheritanceReportSchema = z.object({
             amount: z.string(),
             exchangeRateOrInterest: z.string(),
             value: z.string().refine((v) => v),
+            enabled: z.boolean(),
             ...deceasedShare,
           })
           .refine(
@@ -503,6 +502,7 @@ export const inheritanceReportSchema = z.object({
       rent: z.string().optional(),
       food: z.string().optional(),
       tombstone: z.string().optional(),
+      service: z.string().optional(),
       hasOther: z.array(z.enum([YES])).optional(),
       other: z.string().optional(),
       otherDetails: z.string().optional(),
@@ -676,6 +676,14 @@ export const inheritanceReportSchema = z.object({
   }),
 
   heirsAdditionalInfo: z.string().optional(),
+  heirsAdditionalInfoPrivateTransferFiles: z
+    .object({ key: z.string(), name: z.string() })
+    .array()
+    .optional(),
+  heirsAdditionalInfoFilesOtherDocuments: z
+    .object({ key: z.string(), name: z.string() })
+    .array()
+    .optional(),
 
   spouse: z
     .object({

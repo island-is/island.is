@@ -61,7 +61,6 @@ export class ProgramService {
           'costInformationIs',
           'costInformationEn',
           'allowThirdLevelQualification',
-          'courses',
           'extraApplicationFields',
         ],
       },
@@ -154,7 +153,6 @@ export class ProgramService {
           'costPerYear',
           'iscedCode',
           'tmpActive',
-          'courses',
         ],
       },
       include: [

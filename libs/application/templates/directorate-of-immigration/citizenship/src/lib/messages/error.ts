@@ -58,4 +58,9 @@ export const error = defineMessages({
     defaultMessage: 'Útgáfudagsetning verður að vera á undan gildistíma',
     description: 'Passport date validation error',
   },
+  fileUploadRequired: {
+    id: 'doi.cs.application:error.fileUploadRequired',
+    defaultMessage: 'Vinsamlegast veldu skrá',
+    description: 'File upload validation error',
+  },
 })

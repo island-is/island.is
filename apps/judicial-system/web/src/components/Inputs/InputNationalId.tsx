@@ -50,15 +50,14 @@ const InputNationalId: FC<Props> = (props) => {
     const inputValidator = validate([
       [
         evt.target.value,
-
         isDateOfBirth ? ['date-of-birth'] : ['empty', 'national-id'],
       ],
     ])
 
-    if (!required) {
-      onBlur(inputValue)
-    } else if (inputValidator.isValid) {
+    if (inputValidator.isValid) {
       setErrorMessage(undefined)
+      onBlur(inputValue)
+    } else if (!required && !evt.target.value) {
       onBlur(inputValue)
     } else {
       setErrorMessage(inputValidator.errorMessage)
@@ -77,7 +76,7 @@ const InputNationalId: FC<Props> = (props) => {
   useEffect(() => {
     setErrorMessage(undefined)
     setInputValue(value ?? '')
-  }, [value])
+  }, [value, isDateOfBirth])
 
   return (
     <InputMask

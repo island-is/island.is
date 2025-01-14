@@ -32,7 +32,7 @@ export interface ITestCaseOptions {
   fromRepresentative?: CreatePersonalRepresentativeDelegation[]
   scopes?: string[]
   scopeAccess?: [string, string][]
-  expectedFrom: string[]
+  expectedFrom: { nationalId: string; type: AuthDelegationType }[]
   representativeRights?: string[]
 }
 
@@ -49,7 +49,7 @@ export class TestCase {
   scopes: string[]
   scopesOtherDomain: string[]
   scopeAccess: [string, string][]
-  expectedFrom: string[]
+  expectedFrom: { nationalId: string; type: AuthDelegationType }[]
 
   constructor(client: CreateClient, options: ITestCaseOptions) {
     this.client = client

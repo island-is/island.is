@@ -18,7 +18,6 @@ import {
 } from '@island.is/application/core'
 import { Events, States, Roles } from './constants'
 import { application as applicationMessage } from './messages'
-import { Features } from '@island.is/feature-flags'
 import { ApiActions } from '../shared'
 import { EnergyFundsSchema } from './dataSchema'
 import { ApiScope } from '@island.is/auth/scopes'
@@ -52,7 +51,6 @@ const template: ApplicationTemplate<
   institution: applicationMessage.institutionName,
   translationNamespaces: [ApplicationConfigurations.EnergyFunds.translation],
   dataSchema: EnergyFundsSchema,
-  featureFlag: Features.energyFunds,
   allowedDelegations: [
     {
       type: AuthDelegationType.ProcurationHolder,

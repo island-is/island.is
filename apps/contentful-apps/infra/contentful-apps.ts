@@ -12,13 +12,6 @@ export const serviceSetup = (): ServiceBuilder<'contentful-apps'> =>
           prod: 'contentful-apps',
         },
         paths: ['/'],
-        extraAnnotations: {
-          dev: {
-            'nginx.ingress.kubernetes.io/enable-global-auth': 'false',
-          },
-          staging: {},
-          prod: {},
-        },
       },
     })
     .replicaCount({

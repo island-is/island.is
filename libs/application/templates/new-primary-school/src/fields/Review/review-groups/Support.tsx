@@ -18,6 +18,7 @@ export const Support = ({
     <ReviewGroup
       isEditable={editable}
       editAction={() => goToScreen?.('support')}
+      isLast={true}
     >
       <Stack space={2}>
         <GridRow>

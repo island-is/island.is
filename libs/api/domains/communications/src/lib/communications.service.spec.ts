@@ -5,7 +5,11 @@ import {
 } from '@island.is/email-service'
 import { LoggingModule } from '@island.is/logging'
 import { Test } from '@nestjs/testing'
-import { ZendeskModule, ZendeskService } from '@island.is/clients/zendesk'
+import {
+  ZendeskModule,
+  ZendeskService,
+  ZendeskServiceConfig,
+} from '@island.is/clients/zendesk'
 import { CommunicationsService } from './communications.service'
 import { ContactUsInput } from './dto/contactUs.input'
 import { TellUsAStoryInput } from './dto/tellUsAStory.input'
@@ -56,16 +60,17 @@ describe('communicationsService', () => {
       imports: [
         LoggingModule,
         EmailModule,
-        ZendeskModule.register({
-          email: 'email',
-          token: 'token',
-          subdomain: 'subdomain',
-        }),
+        ZendeskModule,
         CmsModule,
         FileStorageModule,
         ConfigModule.forRoot({
           isGlobal: true,
-          load: [FileStorageConfig, CommunicationsConfig, emailModuleConfig],
+          load: [
+            FileStorageConfig,
+            CommunicationsConfig,
+            emailModuleConfig,
+            ZendeskServiceConfig,
+          ],
         }),
       ],
       providers: [CommunicationsService],

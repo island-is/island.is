@@ -57,7 +57,7 @@ export const m = defineMessages({
     description: 'Some description',
   },
   dataCollectionUserProfileTitle: {
-    id: 'cr.application:dataCollection.dataCollectionUserProfileTitle',
+    id: 'pa.application:dataCollection.dataCollectionUserProfileTitle',
     defaultMessage: 'Netfang og símanúmer',
     description: 'Some description',
   },
@@ -68,7 +68,7 @@ export const m = defineMessages({
     description: 'Some description',
   },
   dataCollectionIdentityDocumentTitle: {
-    id: 'cr.application:dataCollection.dataCollectionIdentityDocumentTitle',
+    id: 'pa.application:dataCollection.dataCollectionIdentityDocumentTitle',
     defaultMessage: 'Skilríkjaskrá',
     description: 'Identity document provider title',
   },
@@ -170,20 +170,25 @@ export const m = defineMessages({
       'Ég er handhafi örorkuskírteinis og vil láta fletta upp örorkuskírteini mínu hjá Tryggingastofnun fyrir lægra gjald á vegabréfi.',
     description: 'Some description',
   },
-  noDisabiltiyRecordInfoMessage: {
-    id: 'pa.application:noDisabiltiyRecordInfoMessage',
+  noDisabilityRecordInfoMessage: {
+    id: 'pa.application:noDisabilityRecordInfoMessage',
     defaultMessage: 'Þú ert ekki handhafi örorkuskírteinis',
     description: 'Some description',
   },
-  disabiltiyRecordInfoMessage: {
-    id: 'pa.application:disabiltiyRecordInfoMessage',
+  disabilityRecordInfoMessage: {
+    id: 'pa.application:disabilityRecordInfoMessage',
     defaultMessage: 'Þú ert handhafi örorkuskírteinis',
     description: 'Some description',
   },
-  disabiltiyRecordError: {
-    id: 'pa.application:disabiltiyRecordError',
+  disabilityRecordError: {
+    id: 'pa.application:disabilityRecordError',
     defaultMessage:
       'Eitthvað fór úrskeiðis við að ná sambandi, vinsamlegast reyndu aftur síðar',
+    description: 'Some description',
+  },
+  child: {
+    id: 'pa.application:child',
+    defaultMessage: 'Barn',
     description: 'Some description',
   },
   parent1: {
@@ -251,22 +256,6 @@ export const m = defineMessages({
   serviceTypeExpressPriceWithDiscount: {
     id: 'pa.application:service.type.express.price.withDiscount',
     defaultMessage: '12.000 kr.',
-    description: 'Some description',
-  },
-  dropLocation: {
-    id: 'pa.application:service.dropLocation',
-    defaultMessage: 'Afhendingarstaður',
-    description: 'Some description',
-  },
-  dropLocationDescription: {
-    id: 'pa.application:service.dropLocation.description',
-    defaultMessage:
-      'Fljótlegast er að sækja vegabréf hjá Þjóðskrá Íslands í Borgartúni 21, 105 Reykjavík. Á öðrum afhendingarstöðum getur afhending tekið allt að 6 - 10 daga.',
-    description: 'Some description',
-  },
-  dropLocationPlaceholder: {
-    id: 'pa.application:service.dropLocation.placeholder',
-    defaultMessage: 'Veldu afhendingarstað',
     description: 'Some description',
   },
 

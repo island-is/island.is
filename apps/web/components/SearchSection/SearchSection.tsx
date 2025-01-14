@@ -1,25 +1,23 @@
 import React, { ReactNode, useEffect, useState } from 'react'
 import { useWindowSize } from 'react-use'
 import dynamic from 'next/dynamic'
+
 import {
-  Text,
+  Box,
+  GridColumn,
   GridContainer,
   GridRow,
-  GridColumn,
-  Box,
   Stack,
-  Inline,
-  Tag,
-  Link,
+  Text,
 } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
+import { TestSupport } from '@island.is/island-ui/utils'
 import { Locale } from '@island.is/shared/types'
-import { SearchInput } from '@island.is/web/components'
-import { LinkType, useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
+import { FeaturedLinks, SearchInput } from '@island.is/web/components'
 import { GetFrontpageQuery } from '@island.is/web/graphql/schema'
+import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 
 import * as styles from './SearchSection.css'
-import { TestSupport } from '@island.is/island-ui/utils'
 
 const DefaultIllustration = dynamic(() => import('./Illustration'), {
   ssr: false,
@@ -106,50 +104,7 @@ export const SearchSection = ({
                   dataTestId="search-box"
                   colored
                 />
-                <Inline space={2}>
-                  {featured.map(
-                    ({
-                      title,
-                      attention,
-                      thing,
-                    }: {
-                      title: string
-                      attention: boolean
-                      thing: any
-                    }) => {
-                      const cardUrl = linkResolver(thing?.type as LinkType, [
-                        thing?.slug,
-                      ])
-                      return cardUrl?.href && cardUrl?.href.length > 0 ? (
-                        <Tag
-                          key={title}
-                          {...(cardUrl.href.startsWith('/')
-                            ? {
-                                CustomLink: ({ children, ...props }) => (
-                                  <Link
-                                    key={title}
-                                    {...props}
-                                    {...cardUrl}
-                                    dataTestId="featured-link"
-                                  >
-                                    {children}
-                                  </Link>
-                                ),
-                              }
-                            : { href: cardUrl.href })}
-                          variant="blue"
-                          attention={attention}
-                        >
-                          {title}
-                        </Tag>
-                      ) : (
-                        <Tag key={title} variant="blue" attention={attention}>
-                          {title}
-                        </Tag>
-                      )
-                    },
-                  )}
-                </Inline>
+                <FeaturedLinks links={featured} />
               </Stack>
             </Box>
           </GridColumn>

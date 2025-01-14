@@ -47,6 +47,12 @@ export const propertySearch = {
       defaultMessage: 'Eign með þessu númeri fannst ekki.',
       description: 'Property not found alert message',
     },
+    propertyApiError: {
+      id: 'mc.application:propertySearch.labels.propertyApiError',
+      defaultMessage:
+        'Ekki tókst að sækja upplýsingar, vinsamlegast reynið aftur síðar.',
+      description: 'Error connection to API alert message',
+    },
     propertyNumber: {
       id: 'mc.application:propertySearch.labels.propertyNumber',
       defaultMessage: 'Fastanúmer',

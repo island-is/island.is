@@ -1,6 +1,6 @@
 import React from 'react'
 import styled from 'styled-components/native'
-import { font } from '../../utils/font'
+import { Typography } from '../typography/typography'
 
 const Host = styled.View`
   display: flex;
@@ -14,23 +14,19 @@ const TextContainer = styled.View`
   flex: 1;
 `
 
-const Text = styled.Text`
-  ${font({
-    fontWeight: '600',
-    fontSize: 20,
-  })}
-`
-
 interface HeadingProps {
   children: React.ReactNode
   button?: React.ReactNode
+  small?: boolean
 }
 
-export function Heading({ children, button }: HeadingProps) {
+export function Heading({ children, button, small = false }: HeadingProps) {
   return (
     <Host>
       <TextContainer>
-        <Text>{children}</Text>
+        <Typography variant={small ? 'heading5' : 'heading3'}>
+          {children}
+        </Typography>
       </TextContainer>
       {button}
     </Host>
