@@ -99,6 +99,25 @@ export const sliderSubsection = buildSubSection({
         }),
         buildDividerField({ useDividerLine: false }),
 
+        buildTitleField({
+          title: 'Slider field with different colors, label and tooltip',
+        }),
+        buildSliderField({
+          id: 'basicSliderColorLabelsAndTooltip',
+          title: 'Basic slider',
+          min: 1,
+          max: 10,
+          textColor: theme.color.red600,
+          progressOverlayColor: theme.color.yellow600,
+          showLabel: true,
+          showToolTip: true,
+          label: {
+            singular: 'day',
+            plural: 'days',
+          },
+        }),
+        buildDividerField({ useDividerLine: false }),
+
         buildTitleField({title: 'Slider field with different colors and min max label'}),
         buildSliderField({
           id: 'basicSliderColorMinMaxLabels',
@@ -108,6 +127,23 @@ export const sliderSubsection = buildSubSection({
           textColor: theme.color.red600,
           progressOverlayColor: theme.color.yellow600,
           showMinMaxLabels: true,
+          label: {
+            singular: 'day',
+            plural: 'days',
+          },
+        }),
+        buildDividerField({ useDividerLine: false }),
+
+        buildTitleField({title: 'Slider field with different colors, min max label and tooltip'}),
+        buildSliderField({
+          id: 'basicSliderColorMinMaxLabelsTooltip',
+          title: 'Basic slider',
+          min: 1,
+          max: 10,
+          textColor: theme.color.red600,
+          progressOverlayColor: theme.color.yellow600,
+          showMinMaxLabels: true,
+          showToolTip: true,
           label: {
             singular: 'day',
             plural: 'days',

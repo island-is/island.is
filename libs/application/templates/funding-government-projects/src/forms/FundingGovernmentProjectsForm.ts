@@ -139,6 +139,7 @@ export const FundingGovernmentProjectsForm: Form = buildForm({
                 ),
               showMinMaxLabels: true,
               showToolTip: true,
+              showRemainderOverlay: true,
               trackStyle: { gridTemplateRows: 5 },
               calculateCellStyle: () => {
                 return {
