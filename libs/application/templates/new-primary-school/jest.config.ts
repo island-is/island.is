@@ -11,6 +11,6 @@ export default {
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
   coverageDirectory:
-    '<rootDir>/coverage/libs/application/templates/reference-template',
-  displayName: 'application-templates-reference-template',
+    '<rootDir>/coverage/libs/application/templates/new-primary-school',
+  displayName: 'application-templates-new-primary-school',
 }

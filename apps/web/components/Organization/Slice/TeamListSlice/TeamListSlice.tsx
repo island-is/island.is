@@ -17,11 +17,13 @@ const ITEMS_PER_PAGE = 10
 interface TeamMemberListWrapperProps {
   id: string
   filterTags?: GenericTag[] | null
+  showSearchInput?: boolean
 }
 
 export const TeamMemberListWrapper = ({
   id,
   filterTags,
+  showSearchInput,
 }: TeamMemberListWrapperProps) => {
   const searchQueryId = `${id}q`
   const pageQueryId = `${id}page`
@@ -93,6 +95,7 @@ export const TeamMemberListWrapper = ({
       pageQueryId={pageQueryId}
       searchQueryId={searchQueryId}
       tagQueryId={tagQueryId}
+      showSearchInput={showSearchInput}
     >
       <TeamList
         teamMembers={items as TeamListProps['teamMembers']}
@@ -109,6 +112,7 @@ export const TeamMemberListWrapper = ({
 interface TeamListSliceProps extends TeamListProps {
   id: string
   filterTags?: GenericTag[] | null
+  showSearchInput?: boolean
 }
 
 export const TeamListSlice = ({
@@ -116,9 +120,16 @@ export const TeamListSlice = ({
   variant,
   filterTags,
   id,
+  showSearchInput = true,
 }: TeamListSliceProps) => {
   if (variant === 'accordion') {
-    return <TeamMemberListWrapper id={id} filterTags={filterTags} />
+    return (
+      <TeamMemberListWrapper
+        id={id}
+        filterTags={filterTags}
+        showSearchInput={showSearchInput}
+      />
+    )
   }
   return <TeamList teamMembers={teamMembers} variant="card" />
 }

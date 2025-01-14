@@ -144,6 +144,8 @@ import { ParliamentaryListSigningModule } from './signature-collection/parliamen
 import { ParliamentaryListSigningService } from './signature-collection/parliamentary-list-signing/parliamentary-list-signing.service'
 import { SeminarsTemplateService } from './aosh/seminars/seminars.service'
 import { SeminarsTemplateModule } from './aosh/seminars/seminars.module'
+import { SecondarySchoolModule } from './secondary-school/secondary-school.module'
+import { SecondarySchoolService } from './secondary-school/secondary-school.service'
 
 export const dynamicModules = [GeneralPetitionModule]
 
@@ -219,6 +221,7 @@ export const modules = [
   ParentalLeaveModule,
   SocialInsuranceAdministrationModule,
   SeminarsTemplateModule,
+  SecondarySchoolModule,
 ]
 
 export const services = [
@@ -294,4 +297,5 @@ export const services = [
   ParliamentaryListCreationService,
   ParliamentaryListSigningService,
   SeminarsTemplateService,
+  SecondarySchoolService,
 ]

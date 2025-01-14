@@ -1,29 +1,47 @@
 import { useLocale } from '@island.is/localization'
 import { FormGroup } from '../components/form/FormGroup'
-import { InputFields, OJOIFieldBaseProps } from '../lib/types'
+import {
+  InputFields,
+  OJOIFieldBaseProps,
+  Signature,
+  SignatureItem,
+  SignatureItemWithChairman,
+  SignatureMember,
+} from '../lib/types'
 import { signatures } from '../lib/messages/signatures'
 import { useState } from 'react'
 import { SignatureType, SignatureTypes } from '../lib/constants'
-import { Tabs } from '@island.is/island-ui/core'
+import { Box, Button, Tabs } from '@island.is/island-ui/core'
 import { CommitteeSignature } from '../components/signatures/Committee'
 import { RegularSignature } from '../components/signatures/Regular'
 import { useApplication } from '../hooks/useUpdateApplication'
 import set from 'lodash/set'
 import { HTMLEditor } from '../components/htmlEditor/HTMLEditor'
 import { getSignaturesMarkup } from '../lib/utils'
+import { useLastSignature } from '../hooks/useLastSignature'
+import { useFormContext } from 'react-hook-form'
+import { OfficialJournalOfIcelandApplicationSignatureMember } from '@island.is/api/schema'
+import { isDefined } from '@island.is/shared/utils'
 
 export const Signatures = ({ application }: OJOIFieldBaseProps) => {
   const { formatMessage: f } = useLocale()
-  const { updateApplication, application: currentApplication } = useApplication(
-    {
-      applicationId: application.id,
-    },
-  )
+  const { setValue } = useFormContext()
+  const {
+    updateApplication,
+    application: currentApplication,
+    refetchApplication,
+  } = useApplication({
+    applicationId: application.id,
+  })
 
   const [selectedTab, setSelectedTab] = useState<SignatureType>(
     (application.answers?.misc?.signatureType as SignatureType) ??
       SignatureTypes.REGULAR,
   )
+
+  const { lastSignature } = useLastSignature({
+    involvedPartyId: application.answers.advert?.involvedPartyId ?? '',
+  })
 
   const tabs = [
     {
@@ -37,6 +55,62 @@ export const Signatures = ({ application }: OJOIFieldBaseProps) => {
       content: <CommitteeSignature applicationId={application.id} />,
     },
   ]
+
+  const onCopyLastSignatureClick = () => {
+    if (!lastSignature) {
+      return
+    }
+
+    const isCommitteeSignature =
+      lastSignature.__typename ===
+      'OfficialJournalOfIcelandApplicationInvolvedPartySignaturesCommittee'
+
+    const mapSignatureMember = (
+      member?: OfficialJournalOfIcelandApplicationSignatureMember,
+    ): SignatureMember | undefined => {
+      if (!member) {
+        return undefined
+      }
+      return {
+        name: member.name,
+        above: member.above ?? '',
+        below: member.below ?? '',
+        after: member.after ?? '',
+        before: member.before ?? '',
+      }
+    }
+    const signatureToSet: SignatureItem | SignatureItemWithChairman = {
+      date: lastSignature.date,
+      institution: lastSignature.institution,
+      members: lastSignature?.members
+        .map((m) => mapSignatureMember(m))
+        .filter(isDefined),
+      html: lastSignature.html ?? undefined,
+    }
+
+    const signature: Signature = {
+      signatures: {
+        ...(isCommitteeSignature
+          ? {
+              committee: {
+                ...signatureToSet,
+                chairman: mapSignatureMember(
+                  lastSignature?.chairman ?? undefined,
+                ),
+              },
+            }
+          : { regular: [signatureToSet] }),
+      },
+    }
+
+    setValue(
+      isCommitteeSignature
+        ? InputFields.signature.committee
+        : InputFields.signature.regular,
+      signature,
+    )
+    updateApplication(signature, refetchApplication)
+  }
 
   const onTabChangeHandler = (tabId: string) => {
     if (Object.values(SignatureTypes).includes(tabId as SignatureTypes)) {
@@ -59,6 +133,18 @@ export const Signatures = ({ application }: OJOIFieldBaseProps) => {
         title={f(signatures.general.title)}
         intro={f(signatures.general.intro)}
       >
+        <Box marginTop={2}>
+          <Button
+            onClick={() => onCopyLastSignatureClick()}
+            variant="utility"
+            size="small"
+            icon="copy"
+            disabled={!lastSignature}
+            iconType="outline"
+          >
+            {f(signatures.buttons.copyLastSignature)}
+          </Button>
+        </Box>
         <Tabs
           selected={selectedTab}
           tabs={tabs}
