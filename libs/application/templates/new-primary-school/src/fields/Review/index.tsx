@@ -16,14 +16,15 @@ import { ReasonForApplicationOptions, States } from '../../lib/constants'
 import { newPrimarySchoolMessages } from '../../lib/messages'
 import { getApplicationAnswers } from '../../lib/newPrimarySchoolUtils'
 
+import { AllergiesAndIntolerances } from './review-groups/AllergiesAndIntolerances'
 import { Child } from './review-groups/Child'
 import { Languages } from './review-groups/Languages'
 import { Parents } from './review-groups/Parents'
 import { ReasonForApplication } from './review-groups/ReasonForApplication'
 import { Contacts } from './review-groups/Contacts'
+import { School } from './review-groups/School'
 import { Siblings } from './review-groups/Siblings'
 import { Support } from './review-groups/Support'
-import { School } from './review-groups/School'
 
 interface ReviewScreenProps {
   application: Application
@@ -160,11 +161,12 @@ export const Review: FC<ReviewScreenProps> = ({
       {reasonForApplication !== ReasonForApplicationOptions.MOVING_ABROAD && (
         <>
           {reasonForApplication ===
-            ReasonForApplicationOptions.SIBLINGS_IN_THE_SAME_PRIMARY_SCHOOL && (
+            ReasonForApplicationOptions.SIBLINGS_IN_SAME_SCHOOL && (
             <Siblings {...childProps} />
           )}
           <School {...childProps} />
           <Languages {...childProps} />
+          <AllergiesAndIntolerances {...childProps} />
           <Support {...childProps} />
         </>
       )}

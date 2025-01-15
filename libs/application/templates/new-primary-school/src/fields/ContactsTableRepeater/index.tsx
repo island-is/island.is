@@ -22,7 +22,9 @@ const ContactsTableRepeater: FC<React.PropsWithChildren<FieldBaseProps>> = ({
 }) => {
   const { id, title } = field
 
-  const relationFriggOptions = useFriggOptions(OptionsType.RELATION)
+  const { options: relationFriggOptions } = useFriggOptions(
+    OptionsType.RELATION,
+  )
 
   return (
     <TableRepeaterFormField

@@ -103,6 +103,8 @@ export type RepeaterItem = {
   phoneRequired?: boolean
   showEmailField?: boolean
   emailRequired?: boolean
+  searchCompanies?: boolean
+  searchPersons?: boolean
   readonly?:
     | boolean
     | ((
@@ -222,6 +224,7 @@ export interface BaseField extends FormItem {
   doesNotRequireAnswer?: boolean
   marginBottom?: BoxProps['marginBottom']
   marginTop?: BoxProps['marginTop']
+  clearOnChange?: string[]
 
   // TODO use something like this for non-schema validation?
   // validate?: (formValue: FormValue, context?: object) => boolean

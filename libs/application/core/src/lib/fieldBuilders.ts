@@ -76,6 +76,7 @@ const extractCommonFields = (
     nextButtonText,
     marginBottom,
     marginTop,
+    clearOnChange,
   } = data
 
   return {
@@ -91,6 +92,7 @@ const extractCommonFields = (
     nextButtonText,
     marginBottom,
     marginTop,
+    clearOnChange,
   }
 }
 

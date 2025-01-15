@@ -293,6 +293,7 @@ export const slices = gql`
         ...ImageFields
       }
     }
+    showSearchInput
   }
 
   fragment ContactUsFields on ContactUs {
@@ -976,6 +977,12 @@ export const slices = gql`
         }
         slug
         assetUrl
+        image {
+          url
+          title
+          width
+          height
+        }
       }
     }
   }
