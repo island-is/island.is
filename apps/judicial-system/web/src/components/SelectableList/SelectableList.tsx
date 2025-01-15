@@ -81,7 +81,6 @@ const SelectableList: FC<Props> = (props) => {
   const [selectableItems, setSelectableItems] = useState<SelectableItem[]>([])
   const [isHandlingCTA, setIsHandlingCTA] = useState<boolean>()
 
-  console.log({ items, selectableItems })
   useEffect(() => {
     if (!items) {
       return
