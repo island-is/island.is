@@ -56,7 +56,7 @@ const SelectConnectedCase: FC<Props> = ({ workingCase, setWorkingCase }) => {
 
   // For now we only want to allow cases with a single defendant to be able to merge
   // in to another case
-  const mergeAllowed = workingCase.defendants?.length === 1 ? true : false
+  const mergeAllowed = workingCase.defendants?.length === 1
 
   const defaultConnectedCase = connectedCases?.find(
     (connectedCase) =>
@@ -64,44 +64,50 @@ const SelectConnectedCase: FC<Props> = ({ workingCase, setWorkingCase }) => {
       connectedCase.value === workingCase.mergeCase?.id,
   )
 
-  return !mergeAllowed ? (
-    <AlertMessage
-      type={'warning'}
-      title={formatMessage(strings.cannotBeMergedTitle)}
-      message={formatMessage(strings.cannotBeMergedMessage)}
-    />
-  ) : connectedCasesLoading ? (
-    <Box
-      textAlign="center"
-      paddingY={2}
-      paddingX={3}
-      marginBottom={2}
-      key="loading-dots"
-    >
-      <LoadingDots />
-    </Box>
-  ) : connectedCases?.length === 0 ? (
-    <AlertMessage
-      type={'warning'}
-      title={formatMessage(strings.noConnectedCasesTitle)}
-      message={formatMessage(strings.noConnectedCasesMessage)}
-    />
-  ) : (
-    <Select
-      name="connectedCase"
-      label={formatMessage(strings.connectedCaseLabel)}
-      options={connectedCases}
-      value={defaultConnectedCase}
-      placeholder={formatMessage(strings.connectedCasePlaceholder)}
-      onChange={(selectedOption) => {
-        if (!selectedOption) {
-          return
-        }
-        setConnectedCase(selectedOption.value as string)
-      }}
-      isDisabled={connectedCasesLoading}
-    />
-  )
+  if (!mergeAllowed) {
+    return (
+      <AlertMessage
+        type="warning"
+        title={formatMessage(strings.cannotBeMergedTitle)}
+        message={formatMessage(strings.cannotBeMergedMessage)}
+      />
+    )
+  } else if (connectedCasesLoading) {
+    return (
+      <Box
+        textAlign="center"
+        paddingY={2}
+        paddingX={3}
+        marginBottom={2}
+        key="loading-dots"
+      >
+        <LoadingDots />
+      </Box>
+    )
+  } else {
+    return connectedCases.length === 0 ? (
+      <AlertMessage
+        type="warning"
+        title={formatMessage(strings.noConnectedCasesTitle)}
+        message={formatMessage(strings.noConnectedCasesMessage)}
+      />
+    ) : (
+      <Select
+        name="connectedCase"
+        label={formatMessage(strings.connectedCaseLabel)}
+        options={connectedCases}
+        value={defaultConnectedCase}
+        placeholder={formatMessage(strings.connectedCasePlaceholder)}
+        onChange={(selectedOption) => {
+          if (!selectedOption) {
+            return
+          }
+          setConnectedCase(selectedOption.value as string)
+        }}
+        isDisabled={connectedCasesLoading}
+      />
+    )
+  }
 }
 
 export default SelectConnectedCase
