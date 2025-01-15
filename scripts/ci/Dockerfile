@@ -21,6 +21,7 @@ RUN apk add --update --no-cache python3 build-base gcc git jq openjdk21 py3-dist
 
 WORKDIR /build
 
+# Add intermediate step for debugging system dependencies
 FROM sys-deps AS deps
 
 # Adding and installing packages
