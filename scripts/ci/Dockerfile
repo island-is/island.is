@@ -10,8 +10,6 @@ ARG DOCKER_IMAGE_REGISTRY=${DOCKER_ECR_REGISTRY%/docker}
 # Alias DOCKER_IMAGE_REGISTRY to DOCKER_REGISTRY for backwards compatibility
 ARG DOCKER_REGISTRY=${DOCKER_IMAGE_REGISTRY}/docker
 ARG NODE_IMAGE_TAG=20-alpine
-ARG APP_HOME
-ARG APP_DIST_HOME=dist/${APP_HOME}
 ARG APP
 
 
@@ -47,7 +45,6 @@ FROM src AS builder
 
 # Stage-specific ARGs
 ARG APP
-ARG APP_DIST_HOME
 ENV APP=${APP}
 ENV NODE_OPTIONS="--max-old-space-size=8192"
 
@@ -55,9 +52,14 @@ RUN yarn codegen --projects ${APP}
 ENV NODE_ENV=production
 RUN yarn run build --prod ${APP}
 
+RUN cp -a "dist/$(yarn nx show project ${APP} --json | jq -r '.root')" /dist
+
 
 # This is base image for containers that are to be deployed
-FROM ${DOCKER_REGISTRY}/library/node:${NODE_VERSION}-bookworm-slim AS base-node
+FROM ${DOCKER_REGISTRY}/library/node:${NODE_IMAGE_TAG} AS output-base
+ARG APP
+ENV APP=${APP}
+ENV NODE_ENV=production
 
 ENV NODE_ENV=production
 
@@ -89,8 +91,7 @@ ARG GIT_BRANCH
 ARG GIT_COMMIT_SHA
 ARG GIT_REPOSITORY_URL
 
-COPY --from=builder /dist ./
-RUN ls -lah . main.*
+COPY --from=builder /dist /webapp/
 
 ENV GIT_BRANCH=${GIT_BRANCH} GIT_COMMIT_SHA=${GIT_COMMIT_SHA} GIT_REPOSITORY_URL=${GIT_REPOSITORY_URL}
 ENV DD_GIT_BRANCH=${GIT_BRANCH} DD_GIT_COMMIT_SHA=${GIT_COMMIT_SHA} DD_GIT_REPOSITORY_URL=${GIT_REPOSITORY_URL}
@@ -103,6 +104,7 @@ FROM base-node-with-pg AS output-next
 WORKDIR /webapp
 
 # Stage-specific ARGs
+ARG APP
 ARG GIT_BRANCH
 ARG GIT_COMMIT_SHA
 ARG GIT_REPOSITORY_URL
@@ -110,9 +112,8 @@ ARG GIT_REPOSITORY_URL
 ENV PORT=4200
 
 # TODO: smallify
-COPY --from=deps /build/node_modules ./node_modules
-COPY --from=builder /dist ./
-RUN ls -lah . main.*
+COPY --from=deps /build/node_modules /webapp/node_modules
+COPY --from=builder /dist /webapp/
 
 ENV GIT_BRANCH=${GIT_BRANCH} GIT_COMMIT_SHA=${GIT_COMMIT_SHA} GIT_REPOSITORY_URL=${GIT_REPOSITORY_URL}
 ENV DD_GIT_BRANCH=${GIT_BRANCH} DD_GIT_COMMIT_SHA=${GIT_COMMIT_SHA} DD_GIT_REPOSITORY_URL=${GIT_REPOSITORY_URL}
@@ -124,6 +125,7 @@ ENTRYPOINT [ "node", "main.js" ]
 FROM ${DOCKER_REGISTRY}/library/nginx:1.21-alpine AS base-static
 
 # Stage-specific ARGs
+ARG APP
 ARG GIT_BRANCH
 ARG GIT_COMMIT_SHA
 ARG GIT_REPOSITORY_URL
@@ -137,7 +139,6 @@ COPY scripts/dockerfile-assets/nginx/* /etc/nginx/templates
 COPY scripts/dockerfile-assets/bash/extract-environment.sh /docker-entrypoint.d
 COPY scripts/dockerfile-assets/bash/extract-environment.js /docker-entrypoint.d
 COPY --from=builder /dist /usr/share/nginx/html
-RUN ls -lah .
 
 ENV GIT_BRANCH=${GIT_BRANCH} GIT_COMMIT_SHA=${GIT_COMMIT_SHA} GIT_REPOSITORY_URL=${GIT_REPOSITORY_URL}
 ENV DD_GIT_BRANCH=${GIT_BRANCH} DD_GIT_COMMIT_SHA=${GIT_COMMIT_SHA} DD_GIT_REPOSITORY_URL=${GIT_REPOSITORY_URL}
@@ -150,6 +151,7 @@ ENV BASEPATH=/
 FROM base-node AS base-jest
 
 # Stage-specific ARGs
+ARG APP
 ARG GIT_BRANCH
 ARG GIT_COMMIT_SHA
 ARG GIT_REPOSITORY_URL
@@ -159,12 +161,7 @@ RUN npm install -g jest
 # hadolint ignore=DL3059
 RUN echo 'module.exports = {};' > jest.config.js
 
-
-FROM base-jest AS output-jest
-WORKDIR /webapp
-
-COPY --from=builder /dist ./
-RUN ls -lah .
+COPY --from=builder /dist /webapp/
 
 USER runner
 
@@ -189,13 +186,27 @@ FROM base-playwright AS output-playwright
 WORKDIR /testing
 
 # Stage-specific ARGs
-ARG APP_HOME
+ARG APP
+ARG APP_HOME=apps/system-e2e
 ARG PLAYWRIGHT_BROWSER=chromium
 ARG GIT_BRANCH
 ARG GIT_COMMIT_SHA
 ARG GIT_REPOSITORY_URL
 
-COPY .yarnrc.yml ${APP_HOME}/package.json ./
+# TODO: remove awscli dependency (157 MB extra)
+
+# hadolint ignore=DL3008
+RUN apt-get update -y && apt-get install -y zip awscli && apt-get purge
+
+WORKDIR /testing
+
+COPY --from=builder /dist .
+COPY ${APP_HOME}/package.json .
+RUN chown -R pwuser:pwuser .
+
+USER pwuser
+COPY .yarnrc.yml ./
+RUN mkdir ./.yarn
 COPY .yarn/releases ./.yarn/releases
 
 RUN yarn install && \
@@ -209,6 +220,27 @@ ENV GIT_BRANCH=${GIT_BRANCH} GIT_COMMIT_SHA=${GIT_COMMIT_SHA} GIT_REPOSITORY_URL
 ENV DD_GIT_BRANCH=${GIT_BRANCH} DD_GIT_COMMIT_SHA=${GIT_COMMIT_SHA} DD_GIT_REPOSITORY_URL=${GIT_REPOSITORY_URL}
 LABEL branch=${GIT_BRANCH}
 LABEL commit=${GIT_COMMIT_SHA}
+ENTRYPOINT ["./entrypoint.sh"]
+
+
+FROM playwright-base AS output-local
+
+# Stage-specific ARGs
+ARG APP
+ARG APP_DIST_HOME
+ARG APP_HOME=apps/system-e2e
+ARG GIT_BRANCH
+ARG GIT_COMMIT_SHA
+ARG GIT_REPOSITORY_URL
+
+WORKDIR ${APP_DIST_HOME}
+
+# node user exists in the base image
+RUN mkdir -p /out \
+  && chown node:node /out
+
+COPY --chown=pwuser:pwuser --chmod=0755 ${APP_HOME}/entrypoint.sh .
+
 USER pwuser
 ENTRYPOINT [ "./entrypoint.sh" ]
 
