@@ -1,11 +1,10 @@
 import { lazy } from 'react'
-
 import { ApiScope } from '@island.is/auth/scopes'
-import { HealthPaths } from './lib/paths'
 import { PortalModule } from '@island.is/portals/core'
-import { messages as hm } from './lib/messages'
 import { m } from '@island.is/portals/my-pages/core'
 import { Navigate } from 'react-router-dom'
+import { messages as hm } from './lib/messages'
+import { HealthPaths } from './lib/paths'
 
 const HealthOverview = lazy(() =>
   import('./screens/HealthOverview/HealthOverview'),
@@ -33,6 +32,16 @@ const MedicinePurchase = lazy(() =>
 
 const MedicineLicence = lazy(() => import('./screens/Medicine/MedicineLicense'))
 
+const MedicineCalculator = lazy(() =>
+  import('./screens/MedicineCalculator/MedicineCalculator'),
+)
+
+const MedicinePrescriptions = lazy(() =>
+  import('./screens/MedicinePrescriptions/MedicinePrescriptions'),
+)
+const MedicinePrescriptionHistory = lazy(() =>
+  import('./screens/MedicinePrescriptions/MedicinePrescriptionHistory'),
+)
 const HealthCenterRegistration = lazy(() =>
   import('./screens/HealthCenterRegistration/HealthCenterRegistration'),
 )
@@ -41,12 +50,12 @@ const DentistRegistration = lazy(() =>
   import('./screens/DentistRegistration/DentistRegistration'),
 )
 
-const MedicineCalculator = lazy(() =>
-  import('./screens/Medicine/MedicineCalculator'),
-)
-
 const MedicineCertificate = lazy(() =>
   import('./screens/MedicineCertificate/MedicineCertificate'),
+)
+
+const MedicineDelegation = lazy(() =>
+  import('./screens/MedicineDelegation/MedicineDelegation'),
 )
 
 const PaymentParticipation = lazy(() =>
@@ -65,6 +74,8 @@ const OrganDonationRegistration = lazy(() =>
 const Vaccinations = lazy(() =>
   import('./screens/Vaccinations/VaccinationsWrapper'),
 )
+
+const MEDICINE_LANDLAEKNIR_FLAG = 'HealthMedicineLandlaeknir'
 
 export const healthModule: PortalModule = {
   name: 'Heilsa',
@@ -154,7 +165,37 @@ export const healthModule: PortalModule = {
       name: hm.medicineTitle,
       path: HealthPaths.HealthMedicine,
       enabled: userInfo.scopes.includes(ApiScope.healthMedicines),
-      element: <Navigate to={HealthPaths.HealthMedicinePurchase} replace />,
+      element: (
+        <Navigate to={HealthPaths.HealthMedicinePaymentParticipation} replace />
+      ),
+    },
+    {
+      name: hm.medicinePrescriptions,
+      path: HealthPaths.HealthMedicinePrescription,
+      key: MEDICINE_LANDLAEKNIR_FLAG,
+      enabled: userInfo.scopes.includes(ApiScope.healthMedicines),
+      element: <MedicinePrescriptions />,
+    },
+    {
+      name: hm.medicinePrescriptionHistory,
+      path: HealthPaths.HealthMedicinePrescriptionHistory,
+      key: MEDICINE_LANDLAEKNIR_FLAG,
+      enabled: userInfo.scopes.includes(ApiScope.healthMedicines),
+      element: <MedicinePrescriptionHistory />,
+    },
+    // Commented out because not ready yet
+    // {
+    //   name: hm.medicineDelegation,
+    //   path: HealthPaths.HealthMedicineDelegation,
+    //   key: MEDICINE_LANDLAEKNIR_FLAG,
+    //   enabled: userInfo.scopes.includes(ApiScope.healthMedicines),
+    //   element: <MedicineDelegation />,
+    // },
+    {
+      name: hm.medicinePaymentParticipation,
+      path: HealthPaths.HealthMedicinePaymentParticipation,
+      enabled: userInfo.scopes.includes(ApiScope.healthMedicines),
+      element: <MedicinePurchase />,
     },
     {
       name: hm.medicinePurchaseTitle,
@@ -180,6 +221,7 @@ export const healthModule: PortalModule = {
       enabled: userInfo.scopes.includes(ApiScope.healthMedicines),
       element: <MedicineCertificate />,
     },
+
     {
       name: hm.healthCenterRegistrationTitle,
       path: HealthPaths.HealthCenterRegistration,

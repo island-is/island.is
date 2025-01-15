@@ -20,10 +20,7 @@ import {
   MarriageConditionsFakeData,
 } from '@island.is/application/templates/marriage-conditions/types'
 import { BaseTemplateApiService } from '../../base-template-api.service'
-import {
-  ApplicationTypes,
-  InstitutionNationalIds,
-} from '@island.is/application/types'
+import { ApplicationTypes } from '@island.is/application/types'
 import { NationalRegistryXRoadService } from '@island.is/api/domains/national-registry-x-road'
 import { TemplateApiError } from '@island.is/nest/problem'
 import { coreErrorMessages, getValueViaPath } from '@island.is/application/core'
@@ -52,6 +49,33 @@ export class MarriageConditionsSubmissionService extends BaseTemplateApiService 
     const spouse = await this.nationalRegistryService.getSpouse(auth.nationalId)
     const maritalStatus = spouse?.maritalStatus || '1'
     return this.handleReturn(maritalStatus)
+  }
+
+  async birthCertificate({
+    auth,
+    application,
+  }: TemplateApiModuleActionProps): Promise<{ hasBirthCertificate: boolean }> {
+    const fakeData = getValueViaPath<MarriageConditionsFakeData>(
+      application.answers,
+      'fakeData',
+    )
+
+    if (fakeData?.useFakeData === YES) {
+      const lastFour = auth.nationalId.slice(-4)
+      return {
+        hasBirthCertificate: [
+          '3019', // Gervimaður Afríka
+          '2399', // Gervimaður Færeyjar
+        ].includes(lastFour),
+      }
+    }
+
+    const res = await this.syslumennService.checkIfBirthCertificateExists(
+      auth.nationalId,
+    )
+    return {
+      hasBirthCertificate: res,
+    }
   }
 
   private formatMaritalStatus(maritalCode: string): string {
@@ -86,7 +110,24 @@ export class MarriageConditionsSubmissionService extends BaseTemplateApiService 
     }
   }
 
-  async assignSpouse({ application, auth }: TemplateApiModuleActionProps) {
+  async assignSpouse({ application }: TemplateApiModuleActionProps) {
+    await this.sharedTemplateAPIService.sendEmail(
+      generateAssignOtherSpouseApplicationEmail,
+      application,
+    )
+  }
+
+  async submitApplication({ application, auth }: TemplateApiModuleActionProps) {
+    const {
+      applicant,
+      spouse,
+      witness1,
+      witness2,
+      personalInfo,
+      spousePersonalInfo,
+      ceremony,
+    } = application.answers as MarriageConditionsAnswers
+
     const isPayment = await this.sharedTemplateAPIService.getPaymentStatus(
       auth,
       application.id,
@@ -97,23 +138,6 @@ export class MarriageConditionsSubmissionService extends BaseTemplateApiService 
         success: false,
       }
     }
-
-    await this.sharedTemplateAPIService.sendEmail(
-      generateAssignOtherSpouseApplicationEmail,
-      application,
-    )
-  }
-
-  async submitApplication({ application }: TemplateApiModuleActionProps) {
-    const {
-      applicant,
-      spouse,
-      witness1,
-      witness2,
-      personalInfo,
-      spousePersonalInfo,
-      ceremony,
-    } = application.answers as MarriageConditionsAnswers
     const personMapper = [
       {
         type: PersonTypes.APPLICANT,

@@ -25,6 +25,12 @@ export const GET_GENERIC_LIST_ITEMS_QUERY = gql`
         slug
         assetUrl
         externalUrl
+        image {
+          url
+          title
+          width
+          height
+        }
       }
       total
     }
@@ -43,6 +49,13 @@ export const GET_GENERIC_LIST_ITEM_BY_SLUG_QUERY = gql`
         ...AllSlices
         ${nestedFields}
       }
+      image {
+        url
+        title
+        width
+        height
+      }
+      fullWidthImageInContent
     }
   }
   ${slices}
