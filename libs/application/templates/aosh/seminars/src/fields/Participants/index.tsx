@@ -4,7 +4,6 @@ import {
   Button,
   InputFileUpload,
   UploadFile,
-  UploadFileStatus,
 } from '@island.is/island-ui/core'
 import {
   FieldBaseProps,
@@ -14,7 +13,7 @@ import {
 import { FC, useState } from 'react'
 import { FILE_SIZE_LIMIT } from '../../lib/constants'
 import { parse } from 'csv-parse'
-import { Participant } from '../../shared/types'
+import { FileUploadStatus, Participant } from '../../shared/types'
 import { participants as participantMessages } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
 import { DescriptionFormField } from '@island.is/application/ui-fields'
@@ -71,7 +70,15 @@ export const Participants: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   const changeFile = (props: Array<UploadFile>) => {
     const reader = new FileReader()
     reader.onload = function (e) {
-      const csvData = reader.result as string
+      if (typeof reader.result !== 'string') {
+        setValue('participantCsvError', true)
+        throw new TypeError(
+          `Expected reader.result to be a string, but got ${
+            reader.result === null ? 'null' : typeof reader.result
+          }.`,
+        )
+      }
+      const csvData = reader.result
       parse(csvData, (err, data) => {
         if (err) {
           rejectFile()
@@ -97,7 +104,7 @@ export const Participants: FC<React.PropsWithChildren<FieldBaseProps>> = ({
 
         const fileWithSuccessStatus: UploadFile = props[0]
         Object.assign(fileWithSuccessStatus, {
-          status: 'done' as UploadFileStatus,
+          status: FileUploadStatus.done,
         })
         setValue('participantCsvError', false)
         setFileState([fileWithSuccessStatus])
