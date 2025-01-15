@@ -152,11 +152,16 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
     return []
   }, [res])
 
-  const lastUpdated = licenseItems.find((item) => item.fetch.updated)?.fetch
-    .updated
-  const lastUpdatedFormatted = lastUpdated
-    ? intl.formatDate(new Date(parseInt(lastUpdated, 10)))
-    : undefined
+  const lastUpdatedFormatted = useMemo(() => {
+    const lastUpdated = licenseItems.find((item) => item.fetch.updated)?.fetch
+      .updated
+
+    return lastUpdated
+      ? intl.formatDate(new Date(parseInt(lastUpdated, 10)))
+      : undefined
+  }, [licenseItems])
+
+  console.log(lastUpdatedFormatted)
 
   // indexing list for spotlight search IOS
   useEffect(() => {
@@ -196,7 +201,7 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
 
   // Using the onRefresh function when pressing the update button in ios is buggy,
   // it scrolls the list half out of view when done - so we do it manually instead
-  const programaticScrollWhenRefreshing = () => {
+  const programmaticScrollWhenRefreshing = () => {
     flatListRef.current?.scrollToOffset({ offset: -300, animated: true })
     res
       .refetch()
@@ -335,7 +340,7 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
             )}
             <Button
               onPress={() =>
-                isIos ? programaticScrollWhenRefreshing() : onRefresh()
+                isIos ? programmaticScrollWhenRefreshing() : onRefresh()
               }
               title={intl.formatMessage({ id: 'wallet.update' })}
               isTransparent={true}

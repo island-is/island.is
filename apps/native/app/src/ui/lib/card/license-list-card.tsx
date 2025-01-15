@@ -189,14 +189,14 @@ type CardPreset = {
 }
 
 interface LicenseCardProps {
-  title?: string
+  title?: string | null
   nativeID?: string
   style?: StyleProp<ViewStyle>
   type?: LicenseType
   logo?: ImageSourcePropType | string
   backgroundImage?: ImageSourcePropType
   backgroundColor?: string
-  licenseNumber?: string
+  licenseNumber?: string | null
 }
 
 export function LicenseListCard({

@@ -83,11 +83,9 @@ export const WalletItem = React.memo(
             <SafeAreaView>
               <LicenseListCard
                 nativeID={`license-${item?.license?.type}_source`}
-                title={item?.payload?.metadata?.name ?? undefined}
+                title={item?.payload?.metadata?.name}
                 type={item?.license?.type}
-                licenseNumber={
-                  item?.payload?.metadata?.licenseNumber ?? undefined
-                }
+                licenseNumber={item?.payload?.metadata?.licenseNumber}
               />
             </SafeAreaView>
           </Pressable>
