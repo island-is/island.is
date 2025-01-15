@@ -1,4 +1,4 @@
-import { globalStyle, style } from '@vanilla-extract/css'
+import { style } from '@vanilla-extract/css'
 
 export const dialogDisclosure = style({
   width: '100%',
@@ -14,10 +14,4 @@ export const popoverContainer = style({
   maxWidth: 360,
   width: '100%',
   overflowY: 'auto',
-})
-
-export const largeButton = style({})
-
-globalStyle(`${largeButton} > span`, {
-  height: '100%',
 })
