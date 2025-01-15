@@ -1,7 +1,7 @@
 import { buildForm } from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
 import Logo from '../assets/Logo'
-import { Signing } from './signing'
+import { Signing } from './signing/signing'
 import { application } from '../lib/messages'
 
 export const SigningForm: Form = buildForm({

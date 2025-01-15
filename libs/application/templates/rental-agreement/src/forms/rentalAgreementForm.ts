@@ -8,7 +8,7 @@ import { Summary } from './summary/summary'
 
 import { application } from '../lib/messages'
 import { SignatureInfo } from './signatureInfo/signatureInfo'
-import { Signing } from './signing'
+import { Signing } from './signing/signing'
 
 export const RentalAgreementForm: Form = buildForm({
   id: 'RentalAgreementApplication',

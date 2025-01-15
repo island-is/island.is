@@ -1,6 +1,6 @@
 import { defineMessages } from 'react-intl'
 
-export const signingForm = defineMessages({
+export const signing = defineMessages({
   sectionName: {
     id: 'ra.application:signingForm.sectionName',
     defaultMessage: 'Undirritunarferli',

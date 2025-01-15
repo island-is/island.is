@@ -6,33 +6,35 @@ import {
   buildSection,
 } from '@island.is/application/core'
 import { Section } from '@island.is/application/types'
-import { signingForm } from '../lib/messages/signingForm'
-import RA from '../assets/RA'
+import { signing } from '../../lib/messages/signing'
+
+import RA from '../../assets/RA'
 
 export const Signing: Section = buildSection({
   id: 'signing',
-  title: signingForm.sectionName,
+  title: signing.sectionName,
   children: [
     buildMultiField({
-      id: 'signingForm.info',
-      title: signingForm.pageTitle,
+      id: 'signing.info',
+      title: signing.pageTitle,
       description: '',
       children: [
         buildAlertMessageField({
-          id: 'signingForm.alert',
+          id: 'signing.alert',
           alertType: 'success',
-          title: signingForm.alertMessageSuccess,
+          title: signing.alertMessageSuccess,
           marginTop: 0,
+          marginBottom: 6,
         }),
         buildDescriptionField({
-          id: 'signingForm.description',
-          title: signingForm.pageInfoTitle,
+          id: 'signing.description',
+          title: signing.pageInfoTitle,
           titleVariant: 'h3',
-          description: signingForm.pageInfoDescription,
+          description: signing.pageInfoDescription,
           marginBottom: 8,
         }),
         buildImageField({
-          id: 'signingForm.image',
+          id: 'signing.image',
           title: '',
           width: 'full',
           image: RA,
