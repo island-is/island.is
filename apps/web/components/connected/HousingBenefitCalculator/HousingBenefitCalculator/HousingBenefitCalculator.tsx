@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { Controller, useForm } from 'react-hook-form'
+import { Controller, FormProvider, useForm } from 'react-hook-form'
 import { useIntl } from 'react-intl'
 import { useLazyQuery } from '@apollo/client'
 
@@ -48,6 +48,7 @@ const HousingBenefitCalculator = ({ slice }: HousingBenefitCalculatorProps) => {
   const updateInputState = (key: keyof InputState, value: string | number) => {
     setInputState((prevState) => ({ ...prevState, [key]: value }))
   }
+  const methods = useForm()
 
   const { control, getValues } = useForm()
 
@@ -133,7 +134,7 @@ const HousingBenefitCalculator = ({ slice }: HousingBenefitCalculatorProps) => {
   }, [])
 
   return (
-    <Box>
+    <FormProvider {...methods}>
       <Box
         background="blue100"
         paddingY={[3, 3, 5]}
@@ -317,7 +318,7 @@ const HousingBenefitCalculator = ({ slice }: HousingBenefitCalculatorProps) => {
           message={formatMessage(translationStrings.errorOccurredMessage)}
         />
       )}
-    </Box>
+    </FormProvider>
   )
 }
 

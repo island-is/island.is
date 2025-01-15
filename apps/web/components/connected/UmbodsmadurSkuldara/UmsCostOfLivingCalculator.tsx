@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { Control, Controller, useForm } from 'react-hook-form'
+import { Control, Controller, FormProvider, useForm } from 'react-hook-form'
 import { useIntl } from 'react-intl'
 import { PropsValue } from 'react-select'
 import { useQuery } from '@apollo/client/react'
@@ -265,7 +265,7 @@ const UmsCostOfLivingCalculator = () => {
   }
 
   return (
-    <Box>
+    <FormProvider {...methods}>
       <Box
         background="blue100"
         paddingY={[3, 3, 6]}
@@ -416,7 +416,7 @@ const UmsCostOfLivingCalculator = () => {
           </Stack>
         )}
       </Box>
-    </Box>
+    </FormProvider>
   )
 }
 

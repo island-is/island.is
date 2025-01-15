@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { Controller, useForm } from 'react-hook-form'
+import { Controller, FormProvider, useForm } from 'react-hook-form'
 import { useIntl } from 'react-intl'
 import { useLazyQuery } from '@apollo/client'
 
@@ -14,11 +14,9 @@ import {
 } from '@island.is/island-ui/core'
 import { InputController } from '@island.is/shared/form-fields'
 import {
-  ConnectedComponent,
   GetSpecificHousingBenefitSupportCalculationQuery,
   GetSpecificHousingBenefitSupportCalculationQueryVariables,
 } from '@island.is/web/graphql/schema'
-import { useNamespace } from '@island.is/web/hooks'
 import { GET_SPECIFIC_HOUSING_BENEFIT_SUPPORT_CALCULATION } from '@island.is/web/screens/queries/HousingBenefitCalculator'
 import { formatCurrency } from '@island.is/web/utils/currency'
 
@@ -42,6 +40,7 @@ const SpecificHousingBenefitSupportCalculator = () => {
   const updateInputState = (key: keyof InputState, value: string | number) => {
     setInputState((prevState) => ({ ...prevState, [key]: value }))
   }
+  const methods = useForm()
 
   const { control, getValues } = useForm()
 
@@ -105,7 +104,7 @@ const SpecificHousingBenefitSupportCalculator = () => {
   }, [])
 
   return (
-    <Box>
+    <FormProvider {...methods}>
       <Box
         background="blue100"
         paddingY={[3, 3, 5]}
@@ -226,7 +225,7 @@ const SpecificHousingBenefitSupportCalculator = () => {
           message={formatMessage(translationStrings.errorOccurredMessage)}
         />
       )}
-    </Box>
+    </FormProvider>
   )
 }
 
