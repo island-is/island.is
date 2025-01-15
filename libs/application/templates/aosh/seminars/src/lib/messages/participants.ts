@@ -78,6 +78,11 @@ export const participants = {
         'Sumir þátttakendur eru ekki gjaldgengir á þetta námskeið. Vinsamlegast hafið samband við þjónustuver ef þörf er á frekari upplýsingum.',
       description: 'participants validity error text',
     },
+    tableRepeaterLoadErrorMessage: {
+      id: 'aosh.sem.application:participants.labels.tableRepeaterLoadErrorMessage',
+      defaultMessage: 'Villa við að sannreyna þáttakendur',
+      description: 'participant validation error from table',
+    },
     removeInvalidParticipantsButtonText: {
       id: 'aosh.sem.application:participants.labels.removeInvalidParticipantsButtonText',
       defaultMessage: 'Fjarlægja ógjaldgenga þátttakendur',
@@ -97,6 +102,26 @@ export const participants = {
       id: 'aosh.sem.application:participants.labels.seeMore',
       defaultMessage: 'Sjá fleiri',
       description: 'participants table see more',
+    },
+    csvErrorLabel: {
+      id: 'aosh.sem.application:participants.labels.csvErrorLabel#markdown',
+      defaultMessage: 'Villa í CSV skjali fyrir línu: ',
+      description: 'csv upload label',
+    },
+    csvSsnInputError: {
+      id: 'aosh.sem.application:participants.labels.csvSsnInputError',
+      defaultMessage: 'Kennitala ekki rétt',
+      description: 'csv upload ssn error label',
+    },
+    csvEmailInputError: {
+      id: 'aosh.sem.application:participants.labels.csvEmailInputError',
+      defaultMessage: 'Netfang ekki rétt',
+      description: 'csv upload email error label',
+    },
+    csvPhoneNumberInputError: {
+      id: 'aosh.sem.application:participants.labels.csvPhoneNumberInputError',
+      defaultMessage: 'Símanúmer ekki rétt',
+      description: 'csv upload phone number error label',
     },
   }),
 }

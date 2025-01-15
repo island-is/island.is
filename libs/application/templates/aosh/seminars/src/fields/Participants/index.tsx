@@ -1,5 +1,6 @@
 import { Controller, useFormContext } from 'react-hook-form'
 import {
+  AlertMessage,
   Box,
   Button,
   InputFileUpload,
@@ -13,10 +14,11 @@ import {
 import { FC, useState } from 'react'
 import { FILE_SIZE_LIMIT } from '../../lib/constants'
 import { parse } from 'csv-parse'
-import { FileUploadStatus, Participant } from '../../shared/types'
+import { CSVError, FileUploadStatus, Participant } from '../../shared/types'
 import { participants as participantMessages } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
 import { DescriptionFormField } from '@island.is/application/ui-fields'
+import { validateFields } from '../../utils'
 
 interface IndexableObject {
   [index: number]: Array<string>
@@ -48,7 +50,7 @@ const parseDataToParticipantList = (csvInput: string): Participant | null => {
 const checkHeaders = (headers: string): boolean => {
   const values = headers.split(';')
   let validHeaders = true
-  values.map((value, index) => {
+  values.forEach((value, index) => {
     if (!predefinedHeaders[index].includes(value)) {
       validHeaders = false
     }
@@ -66,6 +68,7 @@ export const Participants: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   const [fileState, setFileState] = useState<Array<UploadFile>>([])
   const [participantList, setParticipantList] = useState<Array<Participant>>([])
   const [foundNotValid, setFoundNotValid] = useState<boolean>(false)
+  const [csvInputError, setCsvInputError] = useState<Array<CSVError>>([])
 
   const changeFile = (props: Array<UploadFile>) => {
     const reader = new FileReader()
@@ -90,26 +93,38 @@ export const Participants: FC<React.PropsWithChildren<FieldBaseProps>> = ({
           rejectFile()
           return
         }
+        const errorListFromAnswers: Array<CSVError> = []
         const answerValue: Array<Participant> = data.map(
-          (value: Array<string>) => {
+          (value: Array<string>, index: number) => {
             const participantList = parseDataToParticipantList(value[0])
             if (participantList === null) {
               setValue('participantCsvError', true)
               return []
             } else {
-              return parseDataToParticipantList(value[0])
+              const errorMessages = validateFields(value[0])
+              if (errorMessages.length > 0) {
+                errorListFromAnswers.push({
+                  itemIndex: index,
+                  errorList: errorMessages,
+                })
+              }
+              return participantList
             }
           },
         )
-
-        const fileWithSuccessStatus: UploadFile = props[0]
-        Object.assign(fileWithSuccessStatus, {
-          status: FileUploadStatus.done,
-        })
-        setValue('participantCsvError', false)
-        setFileState([fileWithSuccessStatus])
-        setParticipantList(answerValue)
-        setValue('participantList', answerValue)
+        if (errorListFromAnswers.length > 0) {
+          setCsvInputError(errorListFromAnswers)
+        } else {
+          setCsvInputError([])
+          const fileWithSuccessStatus: UploadFile = props[0]
+          Object.assign(fileWithSuccessStatus, {
+            status: FileUploadStatus.done,
+          })
+          setValue('participantCsvError', false)
+          setFileState([fileWithSuccessStatus])
+          setParticipantList(answerValue)
+          setValue('participantList', answerValue)
+        }
       })
     }
     reader.readAsText(props[0] as unknown as Blob)
@@ -210,6 +225,21 @@ export const Participants: FC<React.PropsWithChildren<FieldBaseProps>> = ({
           />
         )}
       />
+
+      {csvInputError.length > 0 &&
+        csvInputError.map((csvError: CSVError) => {
+          let messageString = `${formatMessage(
+            participantMessages.labels.csvErrorLabel,
+          )} ${csvError.itemIndex + 1}`
+          console.log('csvError.errorList', csvError.errorList)
+          csvError.errorList.forEach((errorString) => {
+            messageString = messageString.concat(
+              ' ',
+              formatMessage(errorString),
+            )
+          })
+          return <AlertMessage type="error" message={messageString} />
+        })}
     </Box>
   )
 }

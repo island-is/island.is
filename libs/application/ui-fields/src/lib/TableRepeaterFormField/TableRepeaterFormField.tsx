@@ -59,9 +59,11 @@ export const TableRepeaterFormField: FC<Props> = ({
     editField = false,
     maxRows,
     onSubmitLoad,
+    loadErrorMessage,
   } = data
 
   const apolloClient = useApolloClient()
+  const [loadError, setLoadError] = useState<boolean>(false)
 
   const items = Object.keys(rawItems).map((key) => ({
     id: key,
@@ -71,17 +73,18 @@ export const TableRepeaterFormField: FC<Props> = ({
   const load = async () => {
     if (onSubmitLoad) {
       try {
+        setLoadError(false)
         const submitResponse = await onSubmitLoad({
           apolloClient,
           application,
           tableItems: values,
         })
 
-        submitResponse.dictinaryOfItems.map((x) => {
+        submitResponse.dictinaryOfItems.forEach((x) => {
           methods.setValue(x.path, x.value)
         })
       } catch {
-        // TODO catch error
+        setLoadError(true)
       }
     }
   }
@@ -314,6 +317,14 @@ export const TableRepeaterFormField: FC<Props> = ({
         {error && typeof error === 'string' && (
           <Box marginTop={3}>
             <AlertMessage type="error" title={error} />
+          </Box>
+        )}
+        {loadError && loadErrorMessage && (
+          <Box marginTop={3}>
+            <AlertMessage
+              type="error"
+              title={formatText(loadErrorMessage, application, formatMessage)}
+            />
           </Box>
         )}
       </Box>

@@ -30,6 +30,8 @@ export const participantsSection = buildSection({
           title: '',
           addItemButtonText:
             participantMessages.labels.addParticipantButtonText,
+          loadErrorMessage:
+            participantMessages.labels.tableRepeaterLoadErrorMessage,
           onSubmitLoad: async ({ apolloClient, application, tableItems }) => {
             const courseID =
               getValueViaPath<string>(

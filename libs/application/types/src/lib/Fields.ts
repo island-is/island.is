@@ -656,6 +656,7 @@ export type TableRepeaterField = BaseField & {
   onSubmitLoad?(c: TableContext): Promise<{
     dictinaryOfItems: Array<{ path: string; value: string }>
   }>
+  loadErrorMessage?: StaticText
   /**
    * Maximum rows that can be added to the table.
    * When the maximum is reached, the button to add a new row is disabled.
