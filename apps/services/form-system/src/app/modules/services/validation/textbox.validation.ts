@@ -1,11 +1,6 @@
 import { BadRequestException } from '@nestjs/common'
-import { ValueType } from '../../../dataTypes/valueTypes/valueType.model'
-import { FieldSettings } from '../../../dataTypes/fieldSettings/fieldSettings.model'
 import { FieldDto } from '../../fields/models/dto/field.dto'
-import {
-  FieldValidation,
-  ScreenValidationResponse,
-} from '../../../dataTypes/validationResponse.model'
+import { FieldValidation } from '../../../dataTypes/validationResponse.model'
 
 export class TextboxValidation {
   static validate(field: FieldDto): FieldValidation {

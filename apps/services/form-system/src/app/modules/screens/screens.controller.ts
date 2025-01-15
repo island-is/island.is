@@ -52,21 +52,6 @@ export class ScreensController {
     return await this.screensService.update(id, updateScreenDto)
   }
 
-  // @ApiOperation({ summary: 'Submit screen' })
-  // @ApiCreatedResponse({
-  //   description: 'submit screen',
-  //   type: String,
-  // })
-  // @ApiBody({ type: ScreenDto })
-  // @ApiParam({ name: 'applicationId', type: String })
-  // @Put('/submit/:applicationId')
-  // async submit(
-  //   @Param('applicationId') applicationId: string,
-  //   @Body() screenDto: ScreenDto,
-  // ): Promise<string> {
-  //   return await this.screensService.submit(applicationId, screenDto)
-  // }
-
   @ApiOperation({ summary: 'Update display order of screens' })
   @ApiNoContentResponse({
     description: 'Update display order of screens',
