@@ -1,12 +1,10 @@
-import format from 'date-fns/format'
-import sub from 'date-fns/sub'
-import { useEffect, useState } from 'react'
 import {
   Accordion,
   AccordionItem,
   Box,
   Button,
   DatePicker,
+  Filter,
   FilterInput,
   FilterMultiChoice,
   Hidden,
@@ -16,28 +14,29 @@ import {
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   DynamicWrapper,
+  FJARSYSLAN_SLUG,
   FootNote,
   m,
-  Filter,
-  FJARSYSLAN_SLUG,
 } from '@island.is/portals/my-pages/core'
+import format from 'date-fns/format'
+import sub from 'date-fns/sub'
+import { useEffect, useState } from 'react'
 import { m as messages } from '../../lib/messages'
 
+import { Problem } from '@island.is/react-spa/shared'
 import DropdownExport from '../../components/DropdownExport/DropdownExport'
 import FinanceTransactionsTable from '../../components/FinanceTransactionsTable/FinanceTransactionsTable'
 import { exportHreyfingarFile } from '../../utils/filesHreyfingar'
 import { transactionFilter } from '../../utils/simpleFilter'
 import * as styles from '../Finance.css'
 import {
-  CustomerChargeType,
-  CustomerRecords,
-} from './FinanceTransactionsData.types'
-import FinanceIntro from '../../components/FinanceIntro'
-import {
   useGetCustomerChargeTypeQuery,
   useGetCustomerRecordsLazyQuery,
 } from './FinanceTransactions.generated'
-import { Problem } from '@island.is/react-spa/shared'
+import {
+  CustomerChargeType,
+  CustomerRecords,
+} from './FinanceTransactionsData.types'
 
 const FinanceTransactions = () => {
   useNamespaces('sp.finance-transactions')
@@ -140,30 +139,6 @@ const FinanceTransactions = () => {
                   backgroundColor="blue"
                 />
               }
-              additionalFilters={
-                <>
-                  <Button
-                    colorScheme="default"
-                    icon="print"
-                    iconType="filled"
-                    onClick={() => window.print()}
-                    preTextIconType="filled"
-                    size="default"
-                    type="button"
-                    variant="utility"
-                  >
-                    {formatMessage(m.print)}
-                  </Button>
-                  <DropdownExport
-                    onGetCSV={() =>
-                      exportHreyfingarFile(recordsDataArray, 'csv')
-                    }
-                    onGetExcel={() =>
-                      exportHreyfingarFile(recordsDataArray, 'xlsx')
-                    }
-                  />
-                </>
-              }
               onFilterClear={clearAllFilters}
             >
               <FilterMultiChoice
@@ -241,6 +216,27 @@ const FinanceTransactions = () => {
                 </Box>
               </Box>
             </Filter>
+
+            <>
+              <Button
+                colorScheme="default"
+                icon="print"
+                iconType="filled"
+                onClick={() => window.print()}
+                preTextIconType="filled"
+                size="default"
+                type="button"
+                variant="utility"
+              >
+                {formatMessage(m.print)}
+              </Button>
+              <DropdownExport
+                onGetCSV={() => exportHreyfingarFile(recordsDataArray, 'csv')}
+                onGetExcel={() =>
+                  exportHreyfingarFile(recordsDataArray, 'xlsx')
+                }
+              />
+            </>
           </Hidden>
 
           <Box marginTop={2}>

@@ -1,8 +1,8 @@
-import { useEffect, useRef, useState } from 'react'
 import {
   AlertBanner,
   Box,
   Button,
+  Filter,
   FilterInput,
   FilterMultiChoice,
   FilterMultiChoiceProps,
@@ -12,27 +12,24 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import {
-  m,
-  Filter,
-  DownloadFileButtons,
-} from '@island.is/portals/my-pages/core'
+import { DownloadFileButtons, m } from '@island.is/portals/my-pages/core'
+import { useEffect, useRef, useState } from 'react'
 import { exportPeriodBreakdownFile } from '../../utils/filesPeriodBreakdown'
 
+import { useFinanceTransactionPeriodsState } from '../../components/FinanceTransactionPeriods/FinanceTransactionPeriodsContext'
+import { m as messages } from '../../lib/messages'
 import {
   useGetAssessmentYearsQuery,
   useGetChargeTypesByYearLazyQuery,
   useGetChargeTypesDetailsByYearLazyQuery,
 } from '../../screens/FinanceTransactionPeriods/FinanceTransactionPeriods.generated'
-import FinanceTransactionPeriodsTable from './FinanceTransactionPeriodsTable'
 import { transactionPeriodFilter } from '../../utils/simpleFilter'
-import { useFinanceTransactionPeriodsState } from '../../components/FinanceTransactionPeriods/FinanceTransactionPeriodsContext'
+import FinanceTransactionPeriodsTable from './FinanceTransactionPeriodsTable'
 import {
   ChargeTypesByYear,
   ChargeTypesDetailsByYear,
 } from './FinanceTransactionPeriodsTypes'
 import FinanceTransactionSelectedPeriod from './FinanceTransactionSelectedPeriod'
-import { m as messages } from '../../lib/messages'
 
 const DEFAULT_CHARGE_TYPE = '**' // ** finds all charge types
 
@@ -167,20 +164,6 @@ const FinanceTransactionPeriodsFilter = () => {
                 backgroundColor="blue"
               />
             }
-            additionalFilters={
-              <Button
-                colorScheme="default"
-                icon="print"
-                iconType="filled"
-                onClick={() => window.print()}
-                preTextIconType="filled"
-                size="default"
-                type="button"
-                variant="utility"
-              >
-                {formatMessage(m.print)}
-              </Button>
-            }
             onFilterClear={clearAllFilters}
           >
             <FilterMultiChoice
@@ -217,6 +200,19 @@ const FinanceTransactionPeriodsFilter = () => {
               ]}
             />
           </Filter>
+
+          <Button
+            colorScheme="default"
+            icon="print"
+            iconType="filled"
+            onClick={() => window.print()}
+            preTextIconType="filled"
+            size="default"
+            type="button"
+            variant="utility"
+          >
+            {formatMessage(m.print)}
+          </Button>
         </Box>
       </Hidden>
 
