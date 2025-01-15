@@ -7,7 +7,6 @@ import { Dependency } from '../../../../dataTypes/dependency.model'
 import { FormApplicantTypeDto } from '../../../formApplicantTypes/models/dto/formApplicantType.dto'
 import { FormCertificationTypeDto } from '../../../formCertificationTypes/models/dto/formCertificationType.dto'
 import { FormUrlDto } from '../../../formUrls/models/dto/formUrl.dto'
-import { FormStatus } from '../../../../enums/formStatus'
 
 export class FormDto {
   @ApiProperty()
@@ -32,10 +31,10 @@ export class FormDto {
   modified!: Date
 
   @ApiProperty()
-  isTranslated!: boolean
+  beenPublished!: boolean
 
-  // @ApiProperty()
-  // isPublished!: boolean
+  @ApiProperty()
+  isTranslated!: boolean
 
   @ApiProperty()
   applicationDaysToRemove!: number

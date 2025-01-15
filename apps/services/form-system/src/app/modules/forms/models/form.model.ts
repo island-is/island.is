@@ -7,7 +7,6 @@ import {
   HasMany,
   Model,
   Table,
-  Unique,
   UpdatedAt,
 } from 'sequelize-typescript'
 import { Section } from '../../sections/models/section.model'
@@ -68,14 +67,14 @@ export class Form extends Model<Form> {
     allowNull: false,
     defaultValue: false,
   })
-  isTranslated!: boolean
+  beenPublished!: boolean
 
-  // @Column({
-  //   type: DataType.BOOLEAN,
-  //   allowNull: false,
-  //   defaultValue: false,
-  // })
-  // isPublished!: boolean
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: false,
+    defaultValue: false,
+  })
+  isTranslated!: boolean
 
   @Column({
     type: DataType.INTEGER,

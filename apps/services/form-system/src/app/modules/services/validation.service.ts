@@ -6,8 +6,6 @@ import {
 import { ScreenDto } from '../screens/models/dto/screen.dto'
 import { FieldTypesEnum } from '../../dataTypes/fieldTypes/fieldTypes.enum'
 import { TextboxValidation } from './validation/textbox.validation'
-import { ValueType } from '../../dataTypes/valueTypes/valueType.model'
-import { Field } from '../fields/models/field.model'
 import { FieldDto } from '../fields/models/dto/field.dto'
 
 @Injectable()
@@ -26,56 +24,12 @@ export class ValidationService {
         screenValidationResponse.isValid = false
         screenValidationResponse.fields.push(fieldValidation)
       }
-      // if (!isValid) {
-      //   screenValidationResponse.isValid = false
-      //   screenValidationResponse.fields.push({
-      //     isValid: false,
-      //     fieldId: field.id,
-      //     message: {
-      //       en: `Validation failed for field ${field.id}`,
-      //       is: `Validation failed for field ${field.id}`,
-      //     },
-      //   })
-      //   screenValidationResponse.values.push({
-      //     isValid: false,
-      //     valueId: value.id,
-      //     message: {
-      //       en: `Validation failed for value ${value.id}`,
-      //       is: `Validation failed for value ${value.id}`,
-      //     },
-      //   })
-      // }
     })
-
-    // screenDto.fields?.forEach((field) => {
-    //   field.values?.forEach((value) => {
-    //     const isValid = this.validateValue(value.json, field)
-    //     if (!isValid) {
-    //       screenValidationResponse.isValid = false
-    //       screenValidationResponse.errors.push({
-    //         fieldId: field.id,
-    //         message: `Validation failed for field ${field.id}`,
-    //   })
-    // }})}
-
-    // screenDto.fields.forEach((field) => {
-    //   const { json } = field
-    //   const isValid = this.validateValue(json, field)
-    //   if (!isValid) {
-    //     screenValidationResponse.isValid = false
-    //     screenValidationResponse.errors.push({
-    //       fieldId: field.id,
-    //       message: `Validation failed for field ${field.id}`,
-    //     })
-    //   }
-    // })
 
     return screenValidationResponse
   }
 
   private validateValue(field: FieldDto): FieldValidation {
-    // const { isRequired, fieldSettings, fieldType } = field
-
     switch (field.fieldType) {
       case FieldTypesEnum.TEXTBOX:
         return TextboxValidation.validate(field)

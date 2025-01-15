@@ -5,10 +5,8 @@ import { Application } from './application.model'
 import { FieldDto } from '../../fields/models/dto/field.dto'
 import { ScreenDto } from '../../screens/models/dto/screen.dto'
 import { SectionDto } from '../../sections/models/dto/section.dto'
-// import { ValueDto } from '../../values/models/dto/value.dto'
 import { Dependency } from '../../../dataTypes/dependency.model'
 import { ValueDto } from './dto/value.dto'
-// import { ApplicationMinimalDto } from './dto/applicationMinimal.dto'
 
 @Injectable()
 export class ApplicationMapper {

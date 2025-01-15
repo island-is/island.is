@@ -30,10 +30,6 @@ export class ScreensService {
     return screenDto
   }
 
-  // async submit(applicationId: string, screenDto: ScreenDto): Promise<string> {
-  //   return 'Submit screen'
-  // }
-
   async update(
     id: string,
     updateScreenDto: UpdateScreenDto,
@@ -53,7 +49,6 @@ export class ScreensService {
       'sectionId',
       'name',
       'displayOrder',
-      // 'isHidden',
       'multiset',
       'callRuleset',
     ]

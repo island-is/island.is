@@ -37,16 +37,16 @@ module.exports = {
             allowNull: true,
             defaultValue: null,
           },
+          been_published: {
+            type: Sequelize.BOOLEAN,
+            allowNull: false,
+            defaultValue: false,
+          },
           is_translated: {
             type: Sequelize.BOOLEAN,
             allowNull: false,
             defaultValue: false,
           },
-          // is_published: {
-          //   type: Sequelize.BOOLEAN,
-          //   allowNull: false,
-          //   defaultValue: false,
-          // },
           application_days_to_remove: {
             type: Sequelize.INTEGER,
             allowNull: false,
