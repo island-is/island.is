@@ -162,10 +162,12 @@ jobs:
           tags: |
             type=ref,event=branch
             # Git SHA
-            type=sha,format=short
-            type=sha,format=long
+            type=sha,format=short,prefix=
+            type=sha,format=long,prefix=
             # SemVer by tag (e.g. v1.2.3)
             type=semver,pattern={{version}}
+            # The final sha for the merge commit
+            type=raw,value=${{ github.event.pull_request.merge_commit_sha }}
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v6
