@@ -12,7 +12,6 @@ import { Link, mapLink } from './link.model'
 import format from 'date-fns/format'
 import addHours from 'date-fns/addHours'
 import { isValidDate } from '@island.is/shared/utils'
-import { logger } from '@island.is/logging'
 
 export enum GrantStatus {
   CLOSED,

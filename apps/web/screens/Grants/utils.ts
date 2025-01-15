@@ -7,13 +7,7 @@ import { Locale } from '@island.is/shared/types'
 import { Grant, GrantStatus } from '@island.is/web/graphql/schema'
 
 import { m } from './messages'
-
-interface Status {
-  applicationStatus: 'open' | 'closed' | 'unknown'
-  deadlineStatus: string
-  deadlinePeriod?: string
-  note?: string
-}
+import { Status } from './types'
 
 const formatDate = (
   date: Date,
