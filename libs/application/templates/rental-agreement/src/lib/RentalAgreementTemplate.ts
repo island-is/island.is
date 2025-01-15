@@ -67,6 +67,7 @@ const RentalAgreementTemplate: ApplicationTemplate<
       [States.DRAFT]: {
         meta: {
           name: States.DRAFT,
+          progress: 75,
           status: 'draft',
           lifecycle: pruneAfterDays(30),
           roles: [
@@ -76,16 +77,22 @@ const RentalAgreementTemplate: ApplicationTemplate<
                 import('../forms/rentalAgreementForm').then((module) =>
                   Promise.resolve(module.RentalAgreementForm),
                 ),
+              actions: [
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: 'Staðfesta',
+                  type: 'primary',
+                },
+              ],
               write: 'all',
               read: 'all',
               delete: true,
             },
           ],
         },
-
         on: {
           [DefaultEvents.SUBMIT]: {
-            target: 'draft',
+            target: States.DRAFT,
           },
         },
       },

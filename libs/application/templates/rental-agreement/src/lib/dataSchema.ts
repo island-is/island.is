@@ -494,6 +494,15 @@ const rentOtherFees = z
     return true
   })
 
+const signature = z.object({
+  statement: z
+    .string()
+    .array()
+    .refine((x) => x.includes(TRUE), {
+      params: m.signatureInfo.statementError,
+    }),
+})
+
 export const dataSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
   applicant: z.object({
@@ -506,13 +515,14 @@ export const dataSchema = z.object({
   landlordInfo,
   tenantInfo,
   registerProperty,
-  specialProvisions,
   rentalPeriod,
   rentalAmount,
-  rentOtherFees,
-  securityDeposit,
+  specialProvisions,
   condition,
   fireProtections,
+  securityDeposit,
+  rentOtherFees,
+  signature,
 })
 
 export type RentalAgreement = z.TypeOf<typeof dataSchema>
