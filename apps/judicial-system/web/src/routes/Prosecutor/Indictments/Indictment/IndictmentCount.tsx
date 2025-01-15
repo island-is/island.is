@@ -312,8 +312,10 @@ export const getIncidentDescription = (
     []
 
   if (
-    subtypes.length > 1 &&
-    (!indictmentCountSubtypes?.length || indictmentCountSubtypes.length === 0)
+    subtypes.length === 0 ||
+    (subtypes.length > 1 &&
+      (!indictmentCountSubtypes?.length ||
+        indictmentCountSubtypes.length === 0))
   ) {
     return ''
   }
@@ -342,7 +344,7 @@ export const getIncidentDescription = (
 
   if (subtypes.length === 1) {
     return formatMessage(strings.indictmentDescriptionSubtypesAutofill, {
-      subtypes: subtypes[0],
+      subtypes: indictmentSubtypes[subtypes[0]],
       date: incidentDate,
     })
   }

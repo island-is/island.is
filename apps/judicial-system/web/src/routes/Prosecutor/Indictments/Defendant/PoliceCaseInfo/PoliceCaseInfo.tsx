@@ -223,9 +223,16 @@ export const PoliceCaseInfo: FC<Props> = ({
             const subtypes = [...subtypesArray, indictmentSubtype]
 
             updatePoliceCase(index, { subtypes })
-            updateIndictmentCount(policeCaseNumbers[index], crimeScene || {}, {
-              [policeCaseNumbers[index]]: subtypes,
-            })
+
+            if (subtypes.length === 1) {
+              updateIndictmentCount(
+                policeCaseNumbers[index],
+                crimeScene || {},
+                {
+                  [policeCaseNumbers[index]]: subtypes,
+                },
+              )
+            }
           }}
           value={null}
           required
@@ -244,6 +251,10 @@ export const PoliceCaseInfo: FC<Props> = ({
               <Tag
                 variant="darkerBlue"
                 onClick={() => {
+                  const remainingSubtypes = subtypes.filter(
+                    (s) => s !== subtype,
+                  )
+
                   updatePoliceCase(index, {
                     policeCaseNumber: policeCaseNumbers[index],
                     subtypes: subtypes.filter((s) => s !== subtype),
@@ -253,11 +264,8 @@ export const PoliceCaseInfo: FC<Props> = ({
                     policeCaseNumbers[index],
                     crimeScene || {},
                     {
-                      [policeCaseNumbers[index]]: subtypes.filter(
-                        (s) =>
-                          s !== subtype &&
-                          indictmentCount?.indictmentCountSubtypes?.includes(s),
-                      ),
+                      [policeCaseNumbers[index]]:
+                        remainingSubtypes.length === 1 ? remainingSubtypes : [],
                     },
                   )
                 }}
