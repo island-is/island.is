@@ -34,7 +34,6 @@ export const RentalPeriodDetails = buildSubSection({
           placeholder: rentalPeriod.startDatePlaceholder,
           required: true,
         }),
-
         buildDateField({
           id: 'rentalPeriod.endDate',
           title: rentalPeriod.endDateTitle,
@@ -53,7 +52,6 @@ export const RentalPeriodDetails = buildSubSection({
           ],
           spacing: 0,
         }),
-
         buildDescriptionField({
           id: 'rentalPeriod.termination',
           title: rentalPeriod.terminationLabel,

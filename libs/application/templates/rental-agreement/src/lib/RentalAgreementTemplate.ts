@@ -9,6 +9,7 @@ import {
   ApplicationStateSchema,
   DefaultEvents,
   UserProfileApi,
+  ApplicationConfigurations,
 } from '@island.is/application/types'
 import { States, Roles } from './constants'
 import { dataSchema } from './dataSchema'
@@ -27,6 +28,9 @@ const RentalAgreementTemplate: ApplicationTemplate<
   type: ApplicationTypes.RENTAL_AGREEMENT,
   name: 'Leigusamningur',
   institution: 'Húsnæðis- og mannvirkjastofnun',
+  translationNamespaces: [
+    ApplicationConfigurations.RentalAgreement.translation,
+  ],
   dataSchema,
   featureFlag: Features.rentalAgreement,
   allowedDelegations: [{ type: AuthDelegationType.GeneralMandate }],

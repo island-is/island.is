@@ -7,7 +7,7 @@ import {
   RentalHousingCategoryTypes,
   RentalHousingConditionInspector,
   RentalAmountPaymentDateOptions,
-  RentOtherFeesPayeeOptions,
+  OtherFeesPayeeOptions,
   SecurityDepositTypeOptions,
   SecurityDepositAmountOptions,
   UserRole,
@@ -71,20 +71,19 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
       'rentalAmount.paymentDateOptions',
     )
 
-  const rentOtherFeesHousingFund = getValueViaPath<RentOtherFeesPayeeOptions>(
+  const otherFeesHousingFund = getValueViaPath<OtherFeesPayeeOptions>(
     answers,
-    'rentOtherFees.housingFund',
+    'otherFees.housingFund',
   )
 
-  const rentOtherFeesElectricityCost =
-    getValueViaPath<RentOtherFeesPayeeOptions>(
-      answers,
-      'rentOtherFees.electricityCost',
-    )
-
-  const rentOtherFeesHeatingCost = getValueViaPath<RentOtherFeesPayeeOptions>(
+  const otherFeesElectricityCost = getValueViaPath<OtherFeesPayeeOptions>(
     answers,
-    'rentOtherFees.heatingCost',
+    'otherFees.electricityCost',
+  )
+
+  const otherFeesHeatingCost = getValueViaPath<OtherFeesPayeeOptions>(
+    answers,
+    'otherFees.heatingCost',
   )
 
   return {
@@ -93,9 +92,9 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     inspectorOptions,
     rentalAmountIndexTypesOptions,
     rentalAmountPaymentDateOptions,
-    rentOtherFeesElectricityCost,
-    rentOtherFeesHeatingCost,
-    rentOtherFeesHousingFund,
+    otherFeesElectricityCost,
+    otherFeesHeatingCost,
+    otherFeesHousingFund,
   }
 }
 
@@ -244,13 +243,24 @@ export const getSecurityAmountOptions = () => [
   },
 ]
 
-export const getRentalOtherFeesPayeeOptions = () => [
+export const getOtherFeesPayeeOptions = () => [
   {
-    value: RentOtherFeesPayeeOptions.LANDLORD,
+    value: OtherFeesPayeeOptions.LANDLORD,
     label: m.otherFees.paidByLandlordLabel,
   },
   {
-    value: RentOtherFeesPayeeOptions.TENANT,
+    value: OtherFeesPayeeOptions.TENANT,
+    label: m.otherFees.paidByTenantLabel,
+  },
+]
+
+export const getOtherFeesHousingFeesPayeeOptions = () => [
+  {
+    value: OtherFeesPayeeOptions.LANDLORD_OR_NOT_APPLICABLE,
+    label: m.otherFees.housingFundPayedByLandlordLabel,
+  },
+  {
+    value: OtherFeesPayeeOptions.TENANT,
     label: m.otherFees.paidByTenantLabel,
   },
 ]
