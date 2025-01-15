@@ -31,12 +31,6 @@ export enum ReasonForApplicationOptions {
   SIBLINGS_IN_SAME_SCHOOL = 'SiblingsInSameSchool',
 }
 
-export enum SiblingRelationOptions {
-  SIBLING = 'sibling',
-  HALF_SIBLING = 'halfSibling',
-  STEP_SIBLING = 'stepSibling',
-}
-
 export enum OptionsType {
   PRONOUN = 'pronoun',
   GENDER = 'gender',

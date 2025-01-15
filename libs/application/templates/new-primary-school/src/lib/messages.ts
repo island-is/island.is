@@ -372,21 +372,6 @@ export const newPrimarySchoolMessages: MessageDir = {
       defaultMessage: 'Eyða systkini',
       description: 'Remove sibling',
     },
-    siblingsRelationSibling: {
-      id: 'nps.application:primary.school.siblings.relation.sibling',
-      defaultMessage: 'Alsystkini',
-      description: 'Sibling',
-    },
-    halfSiblingsRelationSibling: {
-      id: 'nps.application:primary.school.siblings.relation.half.sibling',
-      defaultMessage: 'Hálfsystkini',
-      description: 'Half sibling',
-    },
-    stepSiblingsRelationSibling: {
-      id: 'nps.application:primary.school.siblings.relation.step.sibling',
-      defaultMessage: 'Stjúpsystkini',
-      description: 'Step sibling',
-    },
 
     // Apply to a new school
     newSchoolSubSectionTitle: {
