@@ -56,10 +56,21 @@ const PoliceCaseFiles: FC<Props> = ({
     <Box marginBottom={5}>
       {workingCase.origin === CaseOrigin.LOKE && (
         <SelectableList
-          items={policeCaseFileList?.map((p) => ({
-            id: p.id,
-            name: p.name,
-          }))}
+          items={policeCaseFileList?.map((p) => {
+            const invalid = !p.name.endsWith('.pdf')
+            return {
+              id: p.id,
+              name: p.name,
+              ...(invalid
+                ? {
+                    invalid,
+                    tooltipText: formatMessage(
+                      strings.invalidPoliceCaseFileFromLOKE,
+                    ),
+                  }
+                : {}),
+            }
+          })}
           CTAButton={{
             onClick: onUpload,
             label: formatMessage(strings.uploadButtonLabel),
