@@ -6,7 +6,9 @@ const { exec } = require('./utils')
  * Because get-files-touched-by.sh cannot get files from nx cache
  * we skip the cache on PR and Push pipelines
  */
-const skipCache = process.argv && process.argv[2] === '--skip-cache'
+process.argv = process.argv.map((arg) =>
+  arg == '--skip-cache' ? '--skip-nx-cache' : arg,
+)
 
 /**
  * We need to create this file manually with a dummy content because
@@ -30,23 +32,18 @@ const main = async () => {
   if (!schemaExists) {
     await promisify(writeFile)(SCHEMA_PATH, 'export default () => {}')
   }
-
-  for (const target of TARGETS) {
-    console.log(`--> Running command for ${target}\n`)
-
-    try {
-      await exec(
-        `nx run-many --target=${target} --all --parallel=${nxParallel} --maxParallel=${nxMaxParallel} $NX_OPTIONS`,
-        {
-          env: skipCache
-            ? { ...process.env, NX_OPTIONS: '--skip-nx-cache' }
-            : process.env,
-        },
-      )
-    } catch (err) {
-      console.error(`Error running command: ${err.message}`)
-      process.exit(err.code || 1)
-    }
+  try {
+    await exec(
+      `nx run-many --target=${TARGETS.join(
+        ',',
+      )} --all --parallel --maxParallel=6 $NX_OPTIONS ${process.argv
+        .slice(2)
+        .join(' ')}`,
+      { env: process.env },
+    )
+  } catch (err) {
+    console.error(`Error running command: ${err.message}`)
+    process.exit(err.code || 1)
   }
 }
 
