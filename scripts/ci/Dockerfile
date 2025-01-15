@@ -49,7 +49,7 @@ RUN yarn codegen --projects ${APP}
 ENV NODE_ENV=production
 RUN yarn run build --prod ${APP}
 
-SHELL ["/bin/bash", "-o", "pipefail", "-c"]
+SHELL ["/bin/ash", "-o", "pipefail", "-c"]
 RUN cp -a "dist/$(yarn nx show project ${APP} --json | jq -r '.root')" /dist
 
 
