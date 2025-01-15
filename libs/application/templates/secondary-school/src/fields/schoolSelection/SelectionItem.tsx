@@ -46,8 +46,6 @@ export const SelectionItem: FC<FieldBaseProps & SelectionItemProps> = (
   const schoolOptions = getValueViaPath<SecondarySchool[]>(
     application.externalData,
     'schools.data',
-  )?.filter((x) =>
-    isFreshman ? x.isOpenForAdmissionFreshman : x.isOpenForAdmissionGeneral,
   )
   const [programOptions, setProgramOptions] = useState<Program[]>([])
   const [thirdLanguageOptions, setThirdLanguageOptions] = useState<Language[]>(
@@ -279,7 +277,13 @@ export const SelectionItem: FC<FieldBaseProps & SelectionItemProps> = (
           backgroundColor="blue"
           required
           options={(schoolOptions || [])
-            .filter((x) => !otherSchoolIds.includes(x.id))
+            .filter(
+              (x) =>
+                (isFreshman
+                  ? x.isOpenForAdmissionFreshman
+                  : x.isOpenForAdmissionGeneral) &&
+                !otherSchoolIds.includes(x.id),
+            )
             .map((school) => {
               return {
                 label: school.name,
