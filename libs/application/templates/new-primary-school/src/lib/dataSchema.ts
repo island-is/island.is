@@ -154,6 +154,30 @@ export const dataSchema = z.object({
         params: errorMessages.languagesRequired,
       },
     ),
+  freeSchoolMeal: z
+    .object({
+      acceptFreeSchoolLunch: z.enum([YES, NO]),
+      hasSpecialNeeds: z.string().optional(),
+      specialNeedsType: z.string().optional(),
+    })
+    .refine(
+      ({ acceptFreeSchoolLunch, hasSpecialNeeds }) =>
+        acceptFreeSchoolLunch === YES
+          ? !!hasSpecialNeeds && hasSpecialNeeds.length > 0
+          : true,
+      {
+        path: ['hasSpecialNeeds'],
+      },
+    )
+    .refine(
+      ({ acceptFreeSchoolLunch, hasSpecialNeeds, specialNeedsType }) =>
+        acceptFreeSchoolLunch === YES && hasSpecialNeeds === YES
+          ? !!specialNeedsType && specialNeedsType.length > 0
+          : true,
+      {
+        path: ['specialNeedsType'],
+      },
+    ),
   allergiesAndIntolerances: z
     .object({
       hasFoodAllergiesOrIntolerances: z.array(z.string()),

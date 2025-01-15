@@ -79,6 +79,21 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     'languages.icelandicNotSpokenAroundChild',
   ) as string[]
 
+  const acceptFreeSchoolLunch = getValueViaPath(
+    answers,
+    'freeSchoolMeal.acceptFreeSchoolLunch',
+  ) as YesOrNo
+
+  const hasSpecialNeeds = getValueViaPath(
+    answers,
+    'freeSchoolMeal.hasSpecialNeeds',
+  ) as YesOrNo
+
+  const specialNeedsType = getValueViaPath(
+    answers,
+    'freeSchoolMeal.specialNeedsType',
+  ) as string
+
   const hasFoodAllergiesOrIntolerances = getValueViaPath(
     answers,
     'allergiesAndIntolerances.hasFoodAllergiesOrIntolerances',
@@ -162,6 +177,9 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     otherLanguagesSpokenDaily,
     otherLanguages,
     icelandicNotSpokenAroundChild,
+    acceptFreeSchoolLunch,
+    hasSpecialNeeds,
+    specialNeedsType,
     hasFoodAllergiesOrIntolerances,
     foodAllergiesOrIntolerances,
     hasOtherAllergies,
