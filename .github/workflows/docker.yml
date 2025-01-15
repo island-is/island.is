@@ -169,7 +169,7 @@ jobs:
             # The final sha for the merge commit
             type=raw,value=${{ github.event.pull_request.merge_commit_sha }}
 
-      - name: Build and push Docker image
+      - name: Docker build/cache deps
         uses: docker/build-push-action@v6
         with:
           context: .
@@ -177,7 +177,7 @@ jobs:
           push: false
           # labels: ${{ steps.meta.outputs.labels }}
           # tags: ${{ steps.meta.outputs.tags }}
-          target: sys-deps
+          target: deps
           build-args: |
             NODE_IMAGE_TAG=${{ needs.prepare.outputs.node_image_tag }}
           cache-from: ${{ steps.inputs.outputs.build_cache }}
@@ -194,6 +194,7 @@ jobs:
           target: output-${{ matrix.docker }}
           build-args: |
             NODE_IMAGE_TAG=${{ needs.prepare.outputs.node_image_tag }}
+            APP=${{ matrix.project }}
           cache-from: ${{ steps.inputs.outputs.build_cache }}
           # cache-to: ${{ steps.inputs.outputs.build_cache }}
 
