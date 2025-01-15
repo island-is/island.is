@@ -32,6 +32,8 @@ jobs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}
       node_image_tag: ${{ steps.build-args.outputs.node_image_tag }}
       docker_registry: ${{ steps.build-args.outputs.docker_registry }}
+      merge_commit_sha: ${{ steps.merge-commit.outputs.merge_commit_sha }}
+      merge_commit_sha_short: ${{ steps.merge-commit.outputs.merge_commit_sha_short }}
     steps:
       - uses: actions/checkout@v4
 
@@ -39,6 +41,27 @@ jobs:
         id: build-args
         run: |
           echo node_image_tag="$(./scripts/ci/get-node-version.mjs)" >>"$GITHUB_OUTPUT"
+
+      - name: Compute merge commit
+        id: merge-commit
+        run: |
+          # Create a temporary merge commit
+          MERGE_BASE="$(git merge-base HEAD origin/main)"
+          TEMP_BRANCH="temp_merge_$(date +%s)"
+          git checkout -b "$TEMP_BRANCH" "$MERGE_BASE"
+          git merge --no-commit --no-ff HEAD@{1}
+
+          # Get the tree object of the merge result
+          TREE_OBJECT="$(git write-tree)"
+
+          # Create a temporary merge commit
+          MERGE_COMMIT_SHA="$(git commit-tree $TREE_OBJECT -p HEAD -p HEAD@{1} -m "Temporary merge commit for tagging")"
+          echo merge_commit_sha="$MERGE_COMMIT_SHA" >>"$GITHUB_OUTPUT"
+          echo merge_commit_sha_short="${MERGE_COMMIT_SHA:0:7}" >>"$GITHUB_OUTPUT"
+
+          # Clean up the temporary branch
+          git checkout -
+          git branch -D $TEMP_BRANCH
 
       - name: Create matrix from input
         id: set-matrix
@@ -168,6 +191,7 @@ jobs:
             type=semver,pattern={{version}}
             # The final sha for the merge commit
             type=raw,value=${{ github.event.pull_request.merge_commit_sha }}
+            type=raw,value=${{ needs.prepare.outputs.merge_commit_sha_short }}
 
       - name: Docker build/cache deps
         uses: docker/build-push-action@v6
