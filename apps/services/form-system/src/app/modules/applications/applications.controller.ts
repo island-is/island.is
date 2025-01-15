@@ -21,17 +21,13 @@ import { ApplicationDto } from './models/dto/application.dto'
 import { CreateApplicationDto } from './models/dto/createApplication.dto'
 import { UpdateApplicationDto } from './models/dto/updateApplication.dto'
 import { ApplicationListDto } from './models/dto/applicationList.dto'
-import { ScreenDto } from '../screens/models/dto/screen.dto'
 import { ScreenValidationResponse } from '../../dataTypes/validationResponse.model'
 import { ValidationService } from '../services/validation.service'
 
 @ApiTags('applications')
 @Controller({ path: 'applications', version: ['1', VERSION_NEUTRAL] })
 export class ApplicationsController {
-  constructor(
-    private readonly applicationsService: ApplicationsService,
-    private readonly validationService: ValidationService,
-  ) {}
+  constructor(private readonly applicationsService: ApplicationsService) {}
 
   @ApiOperation({ summary: 'Get an application by id' })
   @ApiCreatedResponse({

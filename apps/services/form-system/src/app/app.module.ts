@@ -13,7 +13,6 @@ import { SectionsModule } from './modules/sections/sections.module'
 import { SequelizeConfigService } from './sequelizeConfig.service'
 import { ListItemsModule } from './modules/listItems/listItems.module'
 import { ApplicationsModule } from './modules/applications/applications.module'
-// import { ValuesModule } from './modules/values/values.module'
 import { FormApplicantTypesModule } from './modules/formApplicantTypes/formApplicantTypes.module'
 import { FormCertificationTypesModule } from './modules/formCertificationTypes/formCertificationTypes.module'
 import { OrganizationCertificationTypesModule } from './modules/organizationCertificationTypes/organizationCertificationTypes.module'
@@ -37,7 +36,6 @@ import { ServicesModule } from './modules/services/services.module'
     FieldsModule,
     ListItemsModule,
     ApplicationsModule,
-    // ValuesModule,
     FormApplicantTypesModule,
     FormCertificationTypesModule,
     FormUrlsModule,

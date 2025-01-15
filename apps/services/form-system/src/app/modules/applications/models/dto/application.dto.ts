@@ -2,11 +2,8 @@ import { ApiPropertyOptional } from '@nestjs/swagger'
 import { SectionDto } from '../../../sections/models/dto/section.dto'
 import { LanguageType } from '../../../../dataTypes/languageType.model'
 import { Dependency } from '../../../../dataTypes/dependency.model'
-import { ApplicationStatus } from '../../../../enums/applicationStatus'
-import { ApplicationEvent } from '../applicationEvent.model'
 import { ApplicationEventDto } from './applicationEvent.dto'
 import { ValueDto } from './value.dto'
-// import { ValueDto } from '../../../values/models/dto/value.dto'
 
 export class ApplicationDto {
   @ApiPropertyOptional()

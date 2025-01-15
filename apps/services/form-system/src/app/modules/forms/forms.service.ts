@@ -48,7 +48,7 @@ import { OrganizationUrl } from '../organizationUrls/models/organizationUrl.mode
 import { FormUrl } from '../formUrls/models/formUrl.model'
 import { FormUrlDto } from '../formUrls/models/dto/formUrl.dto'
 import { FormStatus } from '../../enums/formStatus'
-import { Op, UUIDV4 } from 'sequelize'
+import { Op } from 'sequelize'
 import { v4 as uuidV4 } from 'uuid'
 import { Sequelize } from 'sequelize-typescript'
 
@@ -92,7 +92,7 @@ export class FormsService {
       'created',
       'modified',
       'isTranslated',
-      // 'isPublished',
+      'beenPublished',
       'status',
       'applicationDaysToRemove',
       'stopProgressOnValidatingScreen',
@@ -140,6 +140,7 @@ export class FormsService {
     }
 
     const newForm: Form = await this.formModel.create({
+      name: { is: 'Nýtt', en: 'New' },
       organizationId: organizationId,
       status: FormStatus.IN_DEVELOPMENT,
     } as Form)
@@ -193,7 +194,6 @@ export class FormsService {
       where: {
         slug: form.slug,
         status: FormStatus.PUBLISHED,
-        // isPublished: true,
         id: { [Op.ne]: form.derivedFrom },
       },
     })
@@ -205,7 +205,6 @@ export class FormsService {
     }
 
     form.status = FormStatus.PUBLISHED
-    // form.isPublished = true
 
     if (form.derivedFrom) {
       const derivedFromForm = await this.formModel.findByPk(form.derivedFrom)
@@ -215,7 +214,6 @@ export class FormsService {
       }
 
       derivedFromForm.status = FormStatus.UNPUBLISHED_BECAUSE_CHANGED
-      // derivedFromForm.isPublished = false
 
       await this.sequelize.transaction(async (transaction) => {
         await form.save({ transaction })
@@ -449,7 +447,7 @@ export class FormsService {
       'created',
       'modified',
       'isTranslated',
-      // 'isPublished',
+      'beenPublished',
       'status',
       'applicationDaysToRemove',
       'stopProgressOnValidatingScreen',
@@ -634,7 +632,6 @@ export class FormsService {
 
     const newForm = existingForm.toJSON()
     newForm.id = uuidV4()
-    // newForm.isPublished = false
     newForm.status = isDerived
       ? FormStatus.PUBLISHED_BEING_CHANGED
       : FormStatus.IN_DEVELOPMENT
@@ -642,6 +639,7 @@ export class FormsService {
     newForm.modified = new Date()
     newForm.derivedFrom = isDerived ? existingForm.id : ''
     newForm.identifier = isDerived ? existingForm.identifier : uuidV4()
+    newForm.beenPublished = false
 
     const sections: Section[] = []
     const screens: Screen[] = []
