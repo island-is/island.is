@@ -25,6 +25,7 @@ export const PrerequisitesForm: Form = buildForm({
     buildSection({
       id: 'ExternalDataSection',
       title: '',
+      tabTitle: m.dataCollectionTitle,
       children: [
         buildExternalDataProvider({
           id: 'approveExternalData',
