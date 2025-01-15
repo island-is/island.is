@@ -44,11 +44,13 @@ jobs:
 
       - name: Compute merge commit
         id: merge-commit
+        if: ${{ !github.event.localrun }}
+        continue-on-error: true
         run: |
           # Create a temporary merge commit
-          MERGE_BASE="$(git merge-base HEAD main)"
+          MERGE_BASE="$(git merge-base HEAD "${{ github.base_ref }}")"
           TEMP_BRANCH="temp-merge-$(date +%s)"
-          git checkout -b "$TEMP_BRANCH" "$MERGE_BASE"
+          git checkout -f -b "$TEMP_BRANCH" "$MERGE_BASE"
           git merge --no-commit --no-ff HEAD@{1}
 
           # Get the tree object of the merge result
@@ -60,7 +62,7 @@ jobs:
           echo merge-commit-sha-short="${MERGE_COMMIT_SHA:0:7}" >>"$GITHUB_OUTPUT"
 
           # Clean up the temporary branch
-          git checkout -
+          git checkout ${{ github.sha }}
           git branch -D $TEMP_BRANCH
 
       - name: Create matrix from input
