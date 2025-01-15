@@ -202,9 +202,11 @@ export const ProfileForm: FC<React.PropsWithChildren<Props>> = ({
                       size="xs"
                       label={formatMessage(msg.email)}
                       readOnly
-                      {...(userProfile?.emailVerified && {
-                        icon: { name: 'checkmark' },
-                      })}
+                      icon={
+                        userProfile?.emailVerified
+                          ? { name: 'checkmark' }
+                          : undefined
+                      }
                     />
                   }
                   link={{
@@ -261,9 +263,11 @@ export const ProfileForm: FC<React.PropsWithChildren<Props>> = ({
                       value={parseNumber(userProfile?.mobilePhoneNumber || '')}
                       size="xs"
                       readOnly
-                      {...(userProfile?.mobilePhoneNumberVerified && {
-                        icon: { name: 'checkmark' },
-                      })}
+                      icon={
+                        userProfile?.mobilePhoneNumberVerified
+                          ? { name: 'checkmark' }
+                          : undefined
+                      }
                     />
                   }
                   link={{
