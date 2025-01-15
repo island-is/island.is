@@ -7,6 +7,7 @@ import {
   Checkbox,
   Filter,
   FilterMultiChoice,
+  Inline,
   Select,
   Stack,
 } from '@island.is/island-ui/core'
@@ -77,7 +78,7 @@ const HousingBenefitsFilter = ({
   }, [currentYear, currentMonth])
 
   return (
-    <>
+    <Inline space={2}>
       <Filter
         variant="popover"
         align="left"
@@ -223,7 +224,7 @@ const HousingBenefitsFilter = ({
           exportHousingBenefitFiles(payments?.data ?? [], 'xlsx')
         }
       />
-    </>
+    </Inline>
   )
 }
 

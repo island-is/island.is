@@ -12,7 +12,6 @@ import {
   DatePicker,
   Filter,
   FilterInput,
-  Hidden,
   Inline,
   Pagination,
   SkeletonLoader,
@@ -191,19 +190,20 @@ const DocumentScreen = ({
                   </Box>
                 </Box>
               </Filter>
-
-              <Button
-                colorScheme="default"
-                icon="print"
-                iconType="filled"
-                onClick={() => window.print()}
-                preTextIconType="filled"
-                size="default"
-                type="button"
-                variant="utility"
-              >
-                {formatMessage(m.print)}
-              </Button>
+              <Box>
+                <Button
+                  colorScheme="default"
+                  icon="print"
+                  iconType="filled"
+                  onClick={() => window.print()}
+                  preTextIconType="filled"
+                  size="default"
+                  type="button"
+                  variant="utility"
+                >
+                  {formatMessage(m.print)}
+                </Button>
+              </Box>
 
               <DropdownExport
                 onGetCSV={() =>
