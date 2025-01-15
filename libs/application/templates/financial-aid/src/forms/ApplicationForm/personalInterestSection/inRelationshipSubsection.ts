@@ -10,7 +10,7 @@ import { Routes } from '../../../lib/constants'
 import * as m from '../../../lib/messages'
 import { NationalRegistrySpouse } from '@island.is/api/schema'
 
-export const inARelationshipSubsection = buildSubSection({
+export const inRelationshipSubsection = buildSubSection({
   condition: (_, externalData) => {
     const spouseData = getValueViaPath<NationalRegistrySpouse>(
       externalData,
@@ -23,16 +23,16 @@ export const inARelationshipSubsection = buildSubSection({
   id: Routes.INRELATIONSHIP,
   children: [
     buildMultiField({
-      id: 'inARelationshipMultiField',
+      id: 'inRelationshipMultiField',
       title: m.inRelationship.general.pageTitle,
       children: [
         buildDescriptionField({
-          id: 'inARelationshipDescriptionIntro',
+          id: 'inRelationshipDescriptionIntro',
           title: '',
           description: m.inRelationship.general.intro,
         }),
         buildDescriptionField({
-          id: 'inARelationshipDescription',
+          id: 'inRelationshipDescription',
           title: '',
           description: m.inRelationship.general.description,
         }),

@@ -8,13 +8,13 @@ import { ExternalData } from '../../../lib/types'
 import * as m from '../../../lib/messages'
 import { Routes } from '../../../lib/constants'
 import { ApplicantChildCustodyInformation } from '@island.is/application/types'
-import { inARelationshipSubsection } from './inARelationshipSubsection'
+import { inRelationshipSubsection } from './inRelationshipSubsection'
 
 export const personalInterestSection = buildSection({
   id: 'personalInterest',
   title: m.section.personalInterest,
   children: [
-    inARelationshipSubsection,
+    inRelationshipSubsection,
     buildSubSection({
       condition: (_, externalData) =>
         (externalData as unknown as ExternalData).nationalRegistrySpouse.data ==
