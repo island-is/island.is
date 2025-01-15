@@ -35,8 +35,7 @@ export const SelectionItem: FC<FieldBaseProps & SelectionItemProps> = (
   const { application, setFieldLoadingState } = props
   const { setValue, watch } = useFormContext()
   const [isLoadingPrograms, setIsLoadingPrograms] = useState<boolean>(false)
-  const [includeSecondProgram, setIncludeSecondProgram] =
-    useState<boolean>(true)
+  const [showSecondProgram, setShowSecondProgram] = useState<boolean>(true)
 
   const isFreshman =
     getValueViaPath<ApplicationType>(
@@ -259,9 +258,9 @@ export const SelectionItem: FC<FieldBaseProps & SelectionItemProps> = (
 
   // default set include=true for second program if freshman
   useEffect(() => {
-    const include = isFreshman && programOptions.length !== 1
-    setValue(`${props.field.id}.secondProgram.include`, include)
-    setIncludeSecondProgram(include)
+    const showSecondProgram = isFreshman && programOptions.length !== 1
+    setValue(`${props.field.id}.secondProgram.include`, showSecondProgram)
+    setShowSecondProgram(showSecondProgram)
   }, [isFreshman, programOptions.length, props.field.id, setValue])
 
   useEffect(() => {
@@ -330,7 +329,7 @@ export const SelectionItem: FC<FieldBaseProps & SelectionItemProps> = (
         />
       </Box>
 
-      {includeSecondProgram && (
+      {showSecondProgram && (
         <Box marginTop={2}>
           <Controller
             name={`${props.field.id}.secondProgram.id`}
