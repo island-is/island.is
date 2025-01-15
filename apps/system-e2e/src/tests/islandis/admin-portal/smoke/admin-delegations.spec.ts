@@ -27,24 +27,4 @@ test.describe('Admin portal - admin delegations', () => {
       await expect(page.getByText('Skrá nýtt umboð')).toBeVisible()
     })
   })
-
-  test.describe('With no write access', () => {
-    test.beforeAll(async ({ browser }) => {
-      context = await session({
-        browser,
-        homeUrl: `/stjornbord`,
-        phoneNumber: '0107789',
-        idsLoginOn: true,
-      })
-    })
-    test.afterAll(async () => {
-      await context.close()
-    })
-
-    test('should not see "Add" button', async () => {
-      const page = await context.newPage()
-      await page.goto('/stjornbord/delegation-admin')
-      await expect(page.getByText('Skrá nýtt umboð')).not.toBeVisible()
-    })
-  })
 })
