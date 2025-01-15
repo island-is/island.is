@@ -6,9 +6,7 @@ const { exec } = require('./utils')
  * Because get-files-touched-by.sh cannot get files from nx cache
  * we skip the cache on PR and Push pipelines
  */
-process.argv = process.argv.map((arg) =>
-  arg == '--skip-cache' ? '--skip-nx-cache' : arg,
-)
+const skipCache = process.argv && process.argv[2] === '--skip-cache'
 
 /**
  * We need to create this file manually with a dummy content because
@@ -38,12 +36,12 @@ const main = async () => {
 
     try {
       await exec(
-        `nx run-many --target=${TARGETS.join(
-          ',',
-        )} --parallel --maxParallel=6 $NX_OPTIONS ${process.argv
-          .slice(2)
-          .join(' ')}`,
-        { env: process.env },
+        `nx run-many --target=${target} --all --parallel --maxParallel=6 $NX_OPTIONS`,
+        {
+          env: skipCache
+            ? { ...process.env, NX_OPTIONS: '--skip-nx-cache' }
+            : process.env,
+        },
       )
     } catch (err) {
       console.error(`Error running command: ${err.message}`)
