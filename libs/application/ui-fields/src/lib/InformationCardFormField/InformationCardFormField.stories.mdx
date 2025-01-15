@@ -8,7 +8,7 @@ import {
 } from '@storybook/addon-docs'
 import { dedent } from 'ts-dedent'
 
-import { KeyValueFormField } from './KeyValueFormField'
+import { InformationCardFormField } from './InformationCardFormField'
 
 export const createMockApplication = (data = {}) => ({
   id: '123',
@@ -24,22 +24,34 @@ export const createMockApplication = (data = {}) => ({
 })
 
 <Meta
-  title="Application System/KeyValueFormField"
-  component={KeyValueFormField}
+  title="Application System/InformationCardFormField"
+  component={InformationCardFormField}
 />
 
-# KeyValueFormField
+# InformationCardFormField
 
 ### Usage in a template
 
-You can create a KeyValueFormField using the following function `buildKeyValueField`.
+You can create a InformationCardFormField using the following function `buildInformationFormField`.
 
 <Source
   language="typescript"
   code={dedent(`
-    buildKeyValueField({
-      label: 'Label',
-      value: 'Value',
+    buildInformationFormField({
+      paddingX: 3,
+      paddingY: 3,
+      items: (application) => {
+        return [
+          {
+                label: 'Test label 1',
+                value: 'Test value 1',
+              },
+              {
+                label: 'Test label 2',
+                value: 'Test value 2,
+              },
+        ]
+      }
     })`)}
 />
 
@@ -47,20 +59,32 @@ The previous configuration object will result in the following component:
 
 <Canvas>
   <Story name="Default">
-    <KeyValueFormField
+    <InformationCardFormField
       application={createMockApplication()}
       field={{
-        label: 'Label',
-        value: 'Value',
+        paddingX: 3,
+        paddingY: 3,
+        items: (application) => {
+          return [
+            {
+                  label: 'Test label 1',
+                  value: 'Test value 1',
+                },
+                {
+                  label: 'Test label 2',
+                  value: 'Test value 2,
+                },
+          ]
+        }
       }}
     />
   </Story>
 </Canvas>
 
-You can also use this field into a custom component by using `<KeyValueFormField field={...} />` with the configuration object defined above.
+You can also use this field into a custom component by using `<InformationCardFormField field={...} />` with the configuration object defined above.
 
 # Props
 
-## KeyValueFormField
+## InformationCardFormField
 
-<ArgsTable of={KeyValueFormField} />
+<ArgsTable of={InformationCardFormField} />
