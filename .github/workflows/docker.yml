@@ -98,17 +98,16 @@ jobs:
           # We don't use a repository prefix, just the raw project
           # repository: '${{ github.repository }}/${{ matrix.project }}'
           repository: '${{ matrix.project }}'
+          localrun: ${{ github.event.localrun }}
         run: |
           image_repository="$registry$repository"
           echo "Labels: ${{ toJSON(github.event.pull_request.labels) }}"
           echo "Matrix: ${{ toJSON(matrix) }}"
           echo image_repository="$image_repository" >>"$GITHUB_OUTPUT"
-          if [[ ${{ github.event.localrun == 'true' }} ]]; then
-            cache_dir="/tmp/docker-build-cache"
-            mkdir -p "$cache_dir"
-            echo build_cache="type=local,src=$cache_dir,dest=$cache_dir" >>"$GITHUB_OUTPUT"
+          if [[ "$localrun" == true ]]; then
+            echo build_cache="type=local,src=/tmp,dest=/tmp,mode=max" >>"$GITHUB_OUTPUT"
           else
-            echo build_cache="type=registry,ref=$image_repository:cache" >>"$GITHUB_OUTPUT"
+            echo build_cache="type=registry,ref=$image_repository:cache,mode=max" >>"$GITHUB_OUTPUT"
           fi
 
       - name: Check out repo
@@ -171,11 +170,11 @@ jobs:
           push: ${{ !github.event.localrun }}
           labels: ${{ steps.meta.outputs.labels }}
           tags: ${{ steps.meta.outputs.tags }}
-          target: output-${{ matrix.docker }}
+          target: sys-deps #output-${{ matrix.docker }}
           build-args: |
             NODE_IMAGE_TAG=${{ needs.prepare.outputs.node_image_tag }}
           cache-from: ${{ steps.inputs.outputs.build_cache }}
-          cache-to: ${{ steps.inputs.outputs.build_cache }},mode=min
+          cache-to: ${{ steps.inputs.outputs.build_cache }}
 
   status:
     name: Collect statuses
@@ -201,7 +200,7 @@ jobs:
             result=$(echo "$dependencies" | jq -r ".[\"$job\"].result")
             echo "Job $job => $result"
             echo "|$job|$result $([[ "$result" == "success" ]] && echo "✅" || echo "❌")|" >>"$GITHUB_STEP_SUMMARY"
-            if [ "$result" != "success" ]; then
+            if [[ "$result" != "success" ]]; then
               success=false
             fi
           done
