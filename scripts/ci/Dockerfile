@@ -45,11 +45,11 @@ FROM src AS builder
 ARG APP
 ARG APP_DIST_HOME
 ENV APP=${APP}
-ENV NODE_ENV=production
 ENV NODE_OPTIONS="--max-old-space-size=8192"
 
-RUN yarn codegen --projects ${APP} && \
-  yarn run build --prod ${APP}
+RUN yarn codegen --projects ${APP}
+ENV NODE_ENV=production
+RUN yarn run build --prod ${APP}
 
 
 # This is base image for containers that are to be deployed
