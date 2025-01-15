@@ -32,18 +32,23 @@ const main = async () => {
   if (!schemaExists) {
     await promisify(writeFile)(SCHEMA_PATH, 'export default () => {}')
   }
-  try {
-    await exec(
-      `nx run-many --target=${TARGETS.join(
-        ',',
-      )} --parallel --maxParallel=6 $NX_OPTIONS ${process.argv
-        .slice(2)
-        .join(' ')}`,
-      { env: process.env },
-    )
-  } catch (err) {
-    console.error(`Error running command: ${err.message}`)
-    process.exit(err.code || 1)
+
+  for (const target of TARGETS) {
+    console.log(`--> Running command for ${target}\n`)
+
+    try {
+      await exec(
+        `nx run-many --target=${TARGETS.join(
+          ',',
+        )} --parallel --maxParallel=6 $NX_OPTIONS ${process.argv
+          .slice(2)
+          .join(' ')}`,
+        { env: process.env },
+      )
+    } catch (err) {
+      console.error(`Error running command: ${err.message}`)
+      process.exit(err.code || 1)
+    }
   }
 }
 
