@@ -37,6 +37,7 @@ describe('DrivingLicenseSubmissionService', () => {
         AdapterService,
         {
           provide: S3Service,
+          // eslint-disable-next-line @typescript-eslint/no-empty-function
           useClass: jest.fn(() => {}),
         },
         {
