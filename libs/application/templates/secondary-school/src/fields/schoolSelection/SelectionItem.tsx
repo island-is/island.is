@@ -46,6 +46,8 @@ export const SelectionItem: FC<FieldBaseProps & SelectionItemProps> = (
   const schoolOptions = getValueViaPath<SecondarySchool[]>(
     application.externalData,
     'schools.data',
+  )?.filter((x) =>
+    isFreshman ? x.isOpenForAdmissionFreshman : x.isOpenForAdmissionGeneral,
   )
   const [programOptions, setProgramOptions] = useState<Program[]>([])
   const [thirdLanguageOptions, setThirdLanguageOptions] = useState<Language[]>(
