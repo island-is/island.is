@@ -230,6 +230,12 @@ const Conclusion: FC = () => {
     }
   }, [workingCase.indictmentDecision])
 
+  useEffect(() => {
+    if (workingCase.mergeCaseNumber) {
+      setMergeCaseNumber(workingCase.mergeCaseNumber)
+    }
+  }, [workingCase.mergeCaseNumber])
+
   const stepIsValid = () => {
     // Do not leave any downloads unfinished
     if (!allFilesDoneOrError) {
@@ -272,7 +278,6 @@ const Conclusion: FC = () => {
                   file.status === 'done',
               ) &&
                 (workingCase.mergeCase?.id ||
-                  workingCase.mergeCaseNumber ||
                   validate([[mergeCaseNumber, ['empty', 'S-case-number']]])
                     .isValid),
             )
@@ -522,13 +527,14 @@ const Conclusion: FC = () => {
                     <SelectConnectedCase
                       workingCase={workingCase}
                       setWorkingCase={setWorkingCase}
+                      mergeCaseNumber={mergeCaseNumber}
                     />
                   </Box>
                   <Input
                     name="mergeCaseNumber"
                     label={formatMessage(strings.mergeCaseNumberLabel)}
                     autoComplete="off"
-                    value={mergeCaseNumber || workingCase.mergeCaseNumber || ''}
+                    value={mergeCaseNumber}
                     placeholder={formatMessage(
                       strings.mergeCaseNumberPlaceholder,
                     )}

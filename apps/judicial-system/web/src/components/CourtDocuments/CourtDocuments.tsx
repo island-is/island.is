@@ -1,15 +1,8 @@
 import { Dispatch, FC, SetStateAction, useState } from 'react'
 import { useIntl } from 'react-intl'
-import Select, {
-  ClearIndicatorProps,
-  components,
-  DropdownIndicatorProps,
-  OptionProps,
-  PlaceholderProps,
-  SingleValueProps,
-} from 'react-select'
+import Select from 'react-select'
 
-import { Box, IconDeprecated, Tag, Text } from '@island.is/island-ui/core'
+import { Box, Tag, Text } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import { formatRequestCaseType } from '@island.is/judicial-system/formatters'
 import { CourtDocument } from '@island.is/judicial-system/types'
@@ -23,6 +16,7 @@ import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 
 import IconButton from '../IconButton/IconButton'
 import MultipleValueList from '../MultipleValueList/MultipleValueList'
+import { ClearIndicator } from '../SelectComponents/SelectComponents'
 import * as styles from './CourtDocuments.css'
 
 interface Props {
@@ -50,55 +44,6 @@ const CourtDocuments: FC<Props> = ({ workingCase, setWorkingCase }) => {
       label: formatMessage(courtDocuments.whoFiled.court),
     },
   ]
-
-  const DropdownIndicator = (
-    props: DropdownIndicatorProps<ReactSelectOption>,
-  ) => {
-    return (
-      <components.DropdownIndicator {...props}>
-        <IconDeprecated
-          type="cheveron"
-          width={12}
-          height={12}
-          color="blue400"
-        />
-      </components.DropdownIndicator>
-    )
-  }
-
-  const Placeholder = (props: PlaceholderProps<ReactSelectOption>) => {
-    return (
-      <components.Placeholder {...props}>
-        <Text color="dark300" variant="small">
-          {props.children}
-        </Text>
-      </components.Placeholder>
-    )
-  }
-
-  const SingleValue = (props: SingleValueProps<ReactSelectOption>) => {
-    return (
-      <components.SingleValue {...props}>
-        <Text variant="small">{props.children}</Text>
-      </components.SingleValue>
-    )
-  }
-
-  const Option = (props: OptionProps<ReactSelectOption>) => {
-    return (
-      <components.Option {...props}>
-        <Text variant="small">{props.children}</Text>
-      </components.Option>
-    )
-  }
-
-  const ClearIndicator = (props: ClearIndicatorProps<ReactSelectOption>) => {
-    return (
-      <components.ClearIndicator {...props}>
-        <IconDeprecated type="close" width={12} height={12} color="blue400" />
-      </components.ClearIndicator>
-    )
-  }
 
   const handleRemoveDocument = (index: number) => {
     const updatedCourtDocuments = workingCase.courtDocuments?.filter(

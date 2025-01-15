@@ -1,5 +1,6 @@
 import { Dispatch, FC, SetStateAction } from 'react'
 import { useIntl } from 'react-intl'
+import { SingleValue } from 'react-select'
 
 import {
   AlertMessage,
@@ -18,9 +19,14 @@ type ConnectedCaseOption = ReactSelectOption & { connectedCase: Case }
 interface Props {
   workingCase: Case
   setWorkingCase: Dispatch<SetStateAction<Case>>
+  mergeCaseNumber?: string | null
 }
 
-const SelectConnectedCase: FC<Props> = ({ workingCase, setWorkingCase }) => {
+const SelectConnectedCase: FC<Props> = ({
+  workingCase,
+  setWorkingCase,
+  mergeCaseNumber,
+}) => {
   const { formatMessage } = useIntl()
 
   const { data: connectedCasesData, loading: connectedCasesLoading } =
@@ -32,12 +38,10 @@ const SelectConnectedCase: FC<Props> = ({ workingCase, setWorkingCase }) => {
       },
     })
 
-  const setConnectedCase = async (connectedCaseId: string) => {
+  const setConnectedCase = async (connectedCaseId: string | null) => {
     setWorkingCase((prevWorkingCase) => ({
       ...prevWorkingCase,
-      mergeCase: {
-        id: connectedCaseId,
-      },
+      mergeCase: connectedCaseId ? { id: connectedCaseId } : null,
     }))
   }
 
@@ -99,12 +103,10 @@ const SelectConnectedCase: FC<Props> = ({ workingCase, setWorkingCase }) => {
         value={defaultConnectedCase}
         placeholder={formatMessage(strings.connectedCasePlaceholder)}
         onChange={(selectedOption) => {
-          if (!selectedOption) {
-            return
-          }
-          setConnectedCase(selectedOption.value as string)
+          setConnectedCase((selectedOption?.value as string) || null)
         }}
-        isDisabled={connectedCasesLoading}
+        isDisabled={connectedCasesLoading || Boolean(mergeCaseNumber)}
+        isClearable
       />
     )
   }

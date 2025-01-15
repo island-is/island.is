@@ -17,6 +17,7 @@ import {
   ValueContainer,
   MultiValue,
   MultiValueLabel,
+  ClearIndicator,
   customStyles,
 } from './Components'
 import { Option as OptionType, SelectProps } from './Select.types'
@@ -63,8 +64,6 @@ export const Select = <
       }
     : undefined
   const [currentValue, setCurrentValue] = React.useState('')
-
-  const ClearIndicator = hideSelectedOptions ? () => null : undefined
 
   return isCreatable ? (
     <div
@@ -119,6 +118,7 @@ export const Select = <
           Option,
           MultiValue,
           MultiValueLabel,
+          ClearIndicator,
         }}
         isClearable
         backspaceRemovesValue
@@ -181,7 +181,7 @@ export const Select = <
           Option,
           MultiValue,
           MultiValueLabel,
-          ClearIndicator: ClearIndicator,
+          ClearIndicator,
         }}
         isClearable={isClearable}
         backspaceRemovesValue={isClearable}
