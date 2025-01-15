@@ -25,7 +25,7 @@ env:
 jobs:
   prepare:
     name: Prepare workflow Docker build
-    runs-on: ubuntu-latest
+    runs-on: ec2-runners
     outputs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}
       node_image_tag: ${{ steps.build-args.outputs.node_image_tag }}
@@ -79,7 +79,7 @@ jobs:
 
   build:
     name: Build ${{ matrix.project }}
-    runs-on: ubuntu-latest
+    runs-on: ec2-runners
     needs: prepare
     strategy:
       fail-fast: true
@@ -179,7 +179,7 @@ jobs:
 
   status:
     name: Collect statuses
-    runs-on: ubuntu-latest
+    runs-on: ec2-runners
     if: ${{ !cancelled() }}
     needs:
       - prepare
