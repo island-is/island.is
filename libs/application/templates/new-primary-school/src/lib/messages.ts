@@ -478,7 +478,7 @@ export const newPrimarySchoolMessages: MessageDir = {
         "The child is entitled to a free school meal. In order for the school to be able to meet the child's nutritional needs while at the same time preventing food waste, we need information about the child's food environment.",
     },
     acceptFreeSchoolLunch: {
-      id: 'nps.application:different.needs.free.school.meal.accept.fre.school.lunch',
+      id: 'nps.application:different.needs.free.school.meal.accept.free.school.lunch',
       defaultMessage:
         'Viltu þiggja gjaldfrjálsa máltíð í hádeginu fyrir barnið þitt?',
       description:
