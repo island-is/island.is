@@ -46,7 +46,7 @@ jobs:
         id: merge-commit
         run: |
           # Create a temporary merge commit
-          MERGE_BASE="$(git merge-base HEAD origin/main)"
+          MERGE_BASE="$(git merge-base HEAD main)"
           TEMP_BRANCH="temp-merge-$(date +%s)"
           git checkout -b "$TEMP_BRANCH" "$MERGE_BASE"
           git merge --no-commit --no-ff HEAD@{1}
