@@ -6,7 +6,7 @@ ARG DOCKER_ECR_REGISTRY=public.ecr.aws/docker
 ARG DOCKER_IMAGE_REGISTRY=${DOCKER_ECR_REGISTRY%/docker}
 # Alias DOCKER_IMAGE_REGISTRY to DOCKER_REGISTRY for backwards compatibility
 ARG DOCKER_REGISTRY=${DOCKER_IMAGE_REGISTRY}/docker
-ARG NODE_IMAGE_TAG
+ARG NODE_IMAGE_TAG=20-alpine
 ARG APP_HOME
 ARG APP_DIST_HOME=dist/${APP_HOME}
 ARG APP
@@ -15,7 +15,9 @@ ARG APP
 FROM ${DOCKER_REGISTRY}/library/node:${NODE_IMAGE_TAG} AS deps
 
 # hadolint ignore=DL3018
-RUN apk add -U git
+RUN apk add --update --no-cache python3 build-base gcc git jq && \
+  rm -rf /var/cache/apk/* && \
+  ln -sf /usr/bin/python3 /usr/bin/python
 
 WORKDIR /build
 
@@ -23,16 +25,12 @@ WORKDIR /build
 COPY package.json yarn.lock .yarnrc.yml ./
 COPY apps/native/app/package.json ./apps/native/app/
 COPY .yarn/ ./.yarn
-# hadolint ignore=DL3018
-RUN apk add --update --no-cache python3 build-base gcc && ln -sf /usr/bin/python3 /usr/bin/python
-RUN CI=true yarn install --immutable
+
+RUN CI=true yarn install --immutable && \
+  yarn cache clean
 
 # Image with source code
 FROM deps AS src
-
-RUN wget -O /tmp/jq-linux64 https://github.com/stedolan/jq/releases/download/jq-1.6/jq-linux64 && \
-  chmod a+x /tmp/jq-linux64 && \
-  mv /tmp/jq-linux64 /usr/bin/jq
 
 # image with the source code
 COPY . .
@@ -126,9 +124,8 @@ ARG GIT_REPOSITORY_URL
 
 RUN mkdir -p /etc/nginx/templates
 # hadolint ignore=DL3018
-RUN apk update && \
-  apk upgrade && \
-  apk add bash nodejs
+RUN apk add --no-cache bash nodejs && \
+  rm -rf /var/cache/apk/*
 
 COPY scripts/dockerfile-assets/nginx/* /etc/nginx/templates
 COPY scripts/dockerfile-assets/bash/extract-environment.sh /docker-entrypoint.d
