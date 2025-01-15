@@ -498,14 +498,6 @@ export const slices = gql`
     id
     titleAbove
     hasBorderAbove
-    cardLinks {
-      title
-      contentString
-      link {
-        text
-        url
-      }
-    }
     linkData {
       variant
       categoryCardItems {

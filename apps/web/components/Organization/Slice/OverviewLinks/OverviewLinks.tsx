@@ -14,10 +14,10 @@ import {
 } from '@island.is/island-ui/core'
 import { BorderAbove } from '@island.is/web/components'
 import { SLICE_SPACING } from '@island.is/web/constants'
-import type {
-  IntroLinkImage,
-  OverviewLinks,
-  OverviewLinksCardLink,
+import {
+  type IntroLinkImage,
+  type OverviewLinks,
+  OverviewLinksLinkDataVariant,
 } from '@island.is/web/graphql/schema'
 import { LinkType, useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import { webRichText } from '@island.is/web/utils/richText'
@@ -98,20 +98,6 @@ const IntroLinkImageComponent = ({
   )
 }
 
-interface OneColumnTextComponentProps {
-  item: OverviewLinksCardLink
-}
-
-const OneColumnTextComponent = ({ item }: OneColumnTextComponentProps) => {
-  return (
-    <CategoryCard
-      heading={item.title}
-      text={item.contentString ?? ''}
-      href={item.link?.url as string}
-    />
-  )
-}
-
 interface CardViewProps {
   slice: OverviewLinks
 }
@@ -120,11 +106,15 @@ const CardView = ({ slice }: CardViewProps) => {
   return (
     <Stack space={3}>
       <GridRow rowGap={3}>
-        {(slice.cardLinks ?? [])
-          .filter((item) => item.link?.url && item.link.text)
+        {(slice.linkData?.categoryCardItems ?? [])
+          .filter((item) => item.href && item.title)
           .map((item, index) => (
             <GridColumn key={index} span={['1/1', '1/1', '1/1', '1/1', '1/2']}>
-              <OneColumnTextComponent item={item} />
+              <CategoryCard
+                heading={item.title}
+                text={item.description}
+                href={item.href}
+              />
             </GridColumn>
           ))}
       </GridRow>
@@ -164,7 +154,8 @@ const ImageView = ({ slice }: ImageViewProps) => {
 export const OverviewLinksSlice: React.FC<
   React.PropsWithChildren<SliceProps>
 > = ({ slice }) => {
-  const cardView = slice.overviewLinks.length > (slice.cardLinks?.length ?? 0)
+  const cardView =
+    slice.linkData?.variant === OverviewLinksLinkDataVariant.CategoryCard
 
   return (
     <section
