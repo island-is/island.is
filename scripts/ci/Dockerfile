@@ -12,14 +12,16 @@ ARG APP_DIST_HOME=dist/${APP_HOME}
 ARG APP
 
 # Base image for dependencies
-FROM ${DOCKER_REGISTRY}/library/node:${NODE_IMAGE_TAG} AS deps
+FROM ${DOCKER_REGISTRY}/library/node:${NODE_IMAGE_TAG} AS sys-deps
 
 # hadolint ignore=DL3018
-RUN apk add --update --no-cache python3 build-base gcc git jq openjdk21 && \
+RUN apk add --update --no-cache python3 build-base gcc git jq openjdk21 py3-distutils-extra && \
   rm -rf /var/cache/apk/* && \
   ln -sf /usr/bin/python3 /usr/bin/python
 
 WORKDIR /build
+
+FROM sys-deps AS deps
 
 # Adding and installing packages
 COPY package.json yarn.lock .yarnrc.yml ./
@@ -46,8 +48,8 @@ ENV APP=${APP}
 ENV NODE_ENV=production
 ENV NODE_OPTIONS="--max-old-space-size=8192"
 
-RUN yarn nx run-many --targets=codegen/backend-schema,codegen/frontend-client --projects ${APP} && \
-  yarn run build ${APP} --prod
+RUN yarn codegen --projects ${APP} && \
+  yarn run build --prod ${APP}
 
 
 # This is base image for containers that are to be deployed
