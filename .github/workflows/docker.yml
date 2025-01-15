@@ -30,24 +30,24 @@ jobs:
       image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
     outputs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}
-      node_image_tag: ${{ steps.build-args.outputs.node_image_tag }}
-      docker_registry: ${{ steps.build-args.outputs.docker_registry }}
-      merge_commit_sha: ${{ steps.merge-commit.outputs.merge_commit_sha }}
-      merge_commit_sha_short: ${{ steps.merge-commit.outputs.merge_commit_sha_short }}
+      node-image-tag: ${{ steps.build-args.outputs.node-image-tag }}
+      docker-registry: ${{ steps.build-args.outputs.docker-registry }}
+      merge-commit-sha: ${{ steps.merge-commit.outputs.merge-commit-sha }}
+      merge-commit-sha-short: ${{ steps.merge-commit.outputs.merge-commit-sha-short }}
     steps:
       - uses: actions/checkout@v4
 
       - name: Build arg prep
         id: build-args
         run: |
-          echo node_image_tag="$(./scripts/ci/get-node-version.mjs)" >>"$GITHUB_OUTPUT"
+          echo node-image-tag="$(./scripts/ci/get-node-version.mjs)" >>"$GITHUB_OUTPUT"
 
       - name: Compute merge commit
         id: merge-commit
         run: |
           # Create a temporary merge commit
           MERGE_BASE="$(git merge-base HEAD origin/main)"
-          TEMP_BRANCH="temp_merge_$(date +%s)"
+          TEMP_BRANCH="temp-merge-$(date +%s)"
           git checkout -b "$TEMP_BRANCH" "$MERGE_BASE"
           git merge --no-commit --no-ff HEAD@{1}
 
@@ -56,8 +56,8 @@ jobs:
 
           # Create a temporary merge commit
           MERGE_COMMIT_SHA="$(git commit-tree $TREE_OBJECT -p HEAD -p HEAD@{1} -m "Temporary merge commit for tagging")"
-          echo merge_commit_sha="$MERGE_COMMIT_SHA" >>"$GITHUB_OUTPUT"
-          echo merge_commit_sha_short="${MERGE_COMMIT_SHA:0:7}" >>"$GITHUB_OUTPUT"
+          echo merge-commit-sha="$MERGE_COMMIT_SHA" >>"$GITHUB_OUTPUT"
+          echo merge-commit-sha-short="${MERGE_COMMIT_SHA:0:7}" >>"$GITHUB_OUTPUT"
 
           # Clean up the temporary branch
           git checkout -
@@ -128,14 +128,14 @@ jobs:
           repository: '${{ matrix.project }}'
           localrun: ${{ github.event.localrun }}
         run: |
-          image_repository="$registry$repository"
+          IMAGE_REPOSITORY="$registry$repository"
           echo "Labels: ${{ toJSON(github.event.pull_request.labels) }}"
           echo "Matrix: ${{ toJSON(matrix) }}"
-          echo image_repository="$image_repository" >>"$GITHUB_OUTPUT"
+          echo image-repository="$IMAGE_REPOSITORY" >>"$GITHUB_OUTPUT"
           if [[ "$localrun" == true ]]; then
-            echo build_cache="type=local,src=/tmp,dest=/tmp,mode=max" >>"$GITHUB_OUTPUT"
+            echo build-cache="type=local,src=/tmp,dest=/tmp,mode=max" >>"$GITHUB_OUTPUT"
           else
-            echo build_cache="type=registry,image-manifest=true,oci-mediatypes=true,ref=$image_repository:cache,mode=max" >>"$GITHUB_OUTPUT"
+            echo build-cache="type=registry,image-manifest=true,oci-mediatypes=true,ref=$IMAGE_REPOSITORY:cache,mode=max" >>"$GITHUB_OUTPUT"
           fi
 
       - name: Check out repo
@@ -181,7 +181,7 @@ jobs:
         uses: docker/metadata-action@v5
         with:
           images: |
-            ${{ steps.inputs.outputs.image_repository }}
+            ${{ steps.inputs.outputs.image-repository }}
           tags: |
             type=ref,event=branch
             # Git SHA
@@ -191,7 +191,8 @@ jobs:
             type=semver,pattern={{version}}
             # The final sha for the merge commit
             type=raw,value=${{ github.event.pull_request.merge_commit_sha }}
-            type=raw,value=${{ needs.prepare.outputs.merge_commit_sha_short }}
+            type=raw,value=${{ needs.prepare.outputs.merge-commit-sha }}
+            type=raw,value=${{ needs.prepare.outputs.merge-commit-sha-short }}
 
       - name: Docker build/cache deps
         uses: docker/build-push-action@v6
@@ -203,9 +204,9 @@ jobs:
           # tags: ${{ steps.meta.outputs.tags }}
           target: deps
           build-args: |
-            NODE_IMAGE_TAG=${{ needs.prepare.outputs.node_image_tag }}
-          cache-from: ${{ steps.inputs.outputs.build_cache }}
-          cache-to: ${{ steps.inputs.outputs.build_cache }}
+            NODE_IMAGE_TAG=${{ needs.prepare.outputs.node-image-tag }}
+          cache-from: ${{ steps.inputs.outputs.build-cache }}
+          cache-to: ${{ steps.inputs.outputs.build-cache }}
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v6
@@ -217,10 +218,10 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           target: output-${{ matrix.docker }}
           build-args: |
-            NODE_IMAGE_TAG=${{ needs.prepare.outputs.node_image_tag }}
+            NODE_IMAGE_TAG=${{ needs.prepare.outputs.node-image-tag }}
             APP=${{ matrix.project }}
-          cache-from: ${{ steps.inputs.outputs.build_cache }}
-          # cache-to: ${{ steps.inputs.outputs.build_cache }}
+          cache-from: ${{ steps.inputs.outputs.build-cache }}
+          # cache-to: ${{ steps.inputs.outputs.build-cache }}
 
   status:
     name: Collect statuses
