@@ -36,7 +36,7 @@ export const Summary: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   const isFireProtectionsPresent =
     answers.fireProtections.smokeDetectors &&
     answers.fireProtections.fireExtinguisher &&
-    answers.fireProtections.exits
+    answers.fireProtections.emergencyExits
 
   const isConditionPresent = answers.condition.resultsDescription
 

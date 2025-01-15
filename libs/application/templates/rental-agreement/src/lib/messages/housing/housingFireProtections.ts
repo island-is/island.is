@@ -49,4 +49,21 @@ export const housingFireProtections = defineMessages({
     defaultMessage: 'Eldvarnarteppi',
     description: 'Fire blanket label',
   },
+
+  // dataSchema
+  smokeDetectorMinRequiredError: {
+    id: 'ra.application:housingFireProtections.smokeDetectorMinRequiredError',
+    defaultMessage: 'Reykskynjarar þurfa að vera a.m.k. 1 á hverja 80m2',
+    description: 'Smoke detectors min 1 per 80 square meters',
+  },
+  fireExtinguisherNullError: {
+    id: 'ra.application:housingFireProtections.fireExtinguisherNullError',
+    defaultMessage: 'Það þarf að vera a.m.k. eitt slökkvitæki í eigninni',
+    description: 'Fire extinguisher 0 error',
+  },
+  emergencyExitNullError: {
+    id: 'ra.application:housingFireProtections.emergencyExitNullError',
+    defaultMessage: 'Það þarf að vera a.m.k. ein flóttaleið úr eigninni',
+    description: 'Emergency exit 0 error',
+  },
 })

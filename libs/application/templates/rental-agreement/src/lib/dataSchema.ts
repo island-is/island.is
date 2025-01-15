@@ -30,6 +30,16 @@ const checkIfNegative = (inputNumber: string) => {
   }
 }
 
+const approveExternalData = z.boolean().refine((v) => v)
+
+const applicant = z.object({
+  nationalId: z
+    .string()
+    .refine((val) => (val ? kennitala.isValid(val) : false), {
+      params: m.dataSchema.nationalId,
+    }),
+})
+
 const fileSchema = z.object({
   name: z.string(),
   key: z.string(),
@@ -279,12 +289,48 @@ const condition = z.object({
   resultsFiles: z.array(fileSchema),
 })
 
-const fireProtections = z.object({
-  smokeDetectors: z.string().optional(),
-  fireExtinguisher: z.string().optional(),
-  exits: z.string().optional(),
-  fireBlanket: z.string().optional(),
-})
+const fireProtections = z
+  .object({
+    smokeDetectors: z.string().optional(),
+    fireExtinguisher: z.string().optional(),
+    emergencyExits: z.string().optional(),
+    fireBlanket: z.string().optional(),
+    propertySize: z.string().optional(),
+  })
+  .superRefine((data, ctx) => {
+    const propertySizeString = data.propertySize?.replace(',', '.') || ''
+    const numberOfSmokeDetectors = Number(data.smokeDetectors)
+    const requiredSmokeDetectors = Math.ceil(Number(propertySizeString) / 80)
+    if (
+      data.smokeDetectors &&
+      numberOfSmokeDetectors < requiredSmokeDetectors
+    ) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'Custom error message',
+        params: m.housingFireProtections.smokeDetectorMinRequiredError,
+        path: ['smokeDetectors'],
+      })
+    }
+
+    if (data.fireExtinguisher && Number(data.fireExtinguisher) < 1) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'Custom error message',
+        params: m.housingFireProtections.fireExtinguisherNullError,
+        path: ['fireExtinguisher'],
+      })
+    }
+
+    if (data.emergencyExits && Number(data.emergencyExits) < 1) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'Custom error message',
+        params: m.housingFireProtections.emergencyExitNullError,
+        path: ['emergencyExits'],
+      })
+    }
+  })
 
 const securityDeposit = z
   .object({
@@ -495,14 +541,8 @@ const rentOtherFees = z
   })
 
 export const dataSchema = z.object({
-  approveExternalData: z.boolean().refine((v) => v),
-  applicant: z.object({
-    nationalId: z
-      .string()
-      .refine((val) => (val ? kennitala.isValid(val) : false), {
-        params: m.dataSchema.nationalId,
-      }),
-  }),
+  approveExternalData,
+  applicant,
   landlordInfo,
   tenantInfo,
   registerProperty,
