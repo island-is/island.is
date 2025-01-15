@@ -24,6 +24,11 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
 
   const childInfo = getValueViaPath(answers, 'childInfo') as ChildInformation
 
+  const usePronounAndPreferredName = getValueViaPath(
+    answers,
+    'childInfo.usePronounAndPreferredName',
+  ) as string[]
+
   const differentPlaceOfResidence = getValueViaPath(
     answers,
     'childInfo.differentPlaceOfResidence',
@@ -146,6 +151,7 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
   return {
     childNationalId,
     childInfo,
+    usePronounAndPreferredName,
     differentPlaceOfResidence,
     parents,
     relatives,

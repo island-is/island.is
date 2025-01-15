@@ -223,16 +223,36 @@ export const newPrimarySchoolMessages: MessageDir = {
       defaultMessage: 'Veldu fornafn',
       description: 'Select pronoun',
     },
+    usePronounAndPreferredName: {
+      id: 'nps.application:childrenNParents.child.info.use.pronoun.and.preferred.name',
+      defaultMessage:
+        'Barnið kýs að vera ávarpað með öðru nafni og/eða persónufornafni en hann eða hún',
+      description:
+        'The child prefers to be addressed by a name and/or personal pronoun other than he or she',
+    },
+    preferredNameTooltip: {
+      id: 'nps.application:childrenNParents.child.info.preferred.name.tooltip',
+      defaultMessage:
+        'Forsjáraðilar geta óskað eftir breytingu á skráðu kyni og nafni barns hjá Þjóðskrá eða barnið sjálft sé það orðið 15 ára. Ef sú breyting er ótímabært má breyta nafni barnsins hér og skrá það nafn sem barn hefur valið sér.',
+      description:
+        "Guardians can request a change to a child's registered gender and name with the National Registry, or the child themselves if they have reached the age of 15. If the change is premature, the child's name can be changed here and the name the child has chosen can be registered.",
+    },
     differentPlaceOfResidence: {
       id: 'nps.application:childrenNParents.child.info.different.place.of.residence',
-      defaultMessage: 'Er dvalarstaður barns annað en skráð lögheimili?',
+      defaultMessage: 'Er aðsetur barns annað en skráð lögheimili?',
       description:
-        "Is the child's place of residence different from the registered legal domicile?",
+        "Is the child's temporary residence different from the registered legal domicile?",
+    },
+    differentPlaceOfResidenceDescription: {
+      id: 'nps.application:childrenNParents.child.info.different.place.of.residence.description',
+      defaultMessage: 'Aðsetur er tímabundin búseta barns í öðru húsnæði',
+      description:
+        "Temporary residence is a child's place of residence in another home.",
     },
     childInfoPlaceOfResidence: {
       id: 'nps.application:childrenNParents.child.info.place.of.residence',
-      defaultMessage: 'Dvalarstaður barns',
-      description: "Child's place of residence",
+      defaultMessage: 'Aðsetur barns',
+      description: "Child's temporary residence",
     },
 
     // Parents/guardians

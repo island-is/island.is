@@ -1,5 +1,6 @@
 import {
   buildActionCardListField,
+  buildCheckboxField,
   buildCustomField,
   buildDescriptionField,
   buildMultiField,
@@ -71,8 +72,28 @@ export const childInfoSubSection = buildSubSection({
           defaultValue: (application: Application) =>
             getApplicationExternalData(application.externalData).applicantCity,
         }),
+        buildCheckboxField({
+          id: 'childInfo.usePronounAndPreferredName',
+          title: '',
+          options: [
+            {
+              value: YES,
+              label:
+                newPrimarySchoolMessages.childrenNParents
+                  .usePronounAndPreferredName,
+            },
+          ],
+        }),
         buildTextField({
           id: 'childInfo.preferredName',
+          tooltip:
+            newPrimarySchoolMessages.childrenNParents.preferredNameTooltip,
+          condition: (answers) => {
+            const { usePronounAndPreferredName } =
+              getApplicationAnswers(answers)
+
+            return usePronounAndPreferredName?.includes(YES)
+          },
           title:
             newPrimarySchoolMessages.childrenNParents.childInfoPreferredName,
           defaultValue: (application: Application) =>
@@ -83,6 +104,12 @@ export const childInfoSubSection = buildSubSection({
           {
             id: 'childInfo.pronouns',
             title: newPrimarySchoolMessages.childrenNParents.childInfoPronouns,
+            condition: (answers) => {
+              const { usePronounAndPreferredName } =
+                getApplicationAnswers(answers)
+
+              return usePronounAndPreferredName?.includes(YES)
+            },
             component: 'FriggOptionsAsyncSelectField',
             defaultValue: (application: Application) =>
               getApplicationExternalData(application.externalData)
@@ -100,6 +127,9 @@ export const childInfoSubSection = buildSubSection({
           id: 'childInfo.differentPlaceOfResidence',
           title:
             newPrimarySchoolMessages.childrenNParents.differentPlaceOfResidence,
+          description:
+            newPrimarySchoolMessages.childrenNParents
+              .differentPlaceOfResidenceDescription,
           width: 'half',
           required: true,
           space: 4,
