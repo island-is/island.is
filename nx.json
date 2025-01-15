@@ -49,10 +49,11 @@
     },
     "@nx/react": {
       "application": {
+        "babel": true,
         "style": "scss",
         "linter": "eslint",
-        "pascalCaseFiles": true,
-        "babel": true
+        "bundler": "webpack",
+        "pascalCaseFiles": true
       },
       "component": {
         "style": "scss"
