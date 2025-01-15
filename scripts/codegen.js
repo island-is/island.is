@@ -36,7 +36,7 @@ const main = async () => {
     await exec(
       `nx run-many --target=${TARGETS.join(
         ',',
-      )} --all --parallel --maxParallel=6 $NX_OPTIONS ${process.argv
+      )} --parallel --maxParallel=6 $NX_OPTIONS ${process.argv
         .slice(2)
         .join(' ')}`,
       { env: process.env },
