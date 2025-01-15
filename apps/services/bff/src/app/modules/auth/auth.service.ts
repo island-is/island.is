@@ -13,19 +13,19 @@ import type { Request, Response } from 'express'
 import jwksClient from 'jwks-rsa'
 import { jwtDecode } from 'jwt-decode'
 
+import { LOGIN_ATTEMPT_FAILED_ACTIVE_SESSION } from '@island.is/shared/constants'
 import { IdTokenClaims } from '@island.is/shared/types'
 import { Algorithm, decode, verify } from 'jsonwebtoken'
 import { v4 as uuid } from 'uuid'
 import { BffConfig } from '../../bff.config'
-import { SESSION_COOKIE_NAME } from '../../constants/cookies'
 import { FIVE_SECONDS_IN_MS } from '../../constants/time'
 import { CryptoService } from '../../services/crypto.service'
 import { PKCEService } from '../../services/pkce.service'
+import { SessionCookieService } from '../../services/sessionCookie.service'
 import {
   CreateErrorQueryStrArgs,
   createErrorQueryStr,
 } from '../../utils/create-error-query-str'
-import { getCookieOptions } from '../../utils/get-cookie-options'
 import { validateUri } from '../../utils/validate-uri'
 import { CacheService } from '../cache/cache.service'
 import { IdsService } from '../ids/ids.service'
@@ -51,6 +51,7 @@ export class AuthService {
     private readonly cacheService: CacheService,
     private readonly idsService: IdsService,
     private readonly cryptoService: CryptoService,
+    private readonly sessionCookieService: SessionCookieService,
   ) {
     this.baseUrl = this.config.ids.issuer
   }
@@ -86,11 +87,14 @@ export class AuthService {
     res: Response,
     args?: Partial<CreateErrorQueryStrArgs> & { targetUrl?: string },
   ) {
-    const code = args?.code || 500
-    const error = args?.error || 'Login failed!'
+    const statusCode = args?.statusCode || 500
+    const message = args?.message || 'Login failed!'
 
     return res.redirect(
-      this.createClientBaseUrlWithError({ code, error }, args?.targetUrl),
+      this.createClientBaseUrlWithError(
+        { code: args?.code, message, statusCode },
+        args?.targetUrl,
+      ),
     )
   }
 
@@ -121,7 +125,10 @@ export class AuthService {
 
     // Save the tokenResponse to the cache
     await this.cacheService.save({
-      key: this.cacheService.createSessionKeyType('current', userProfile.sid),
+      key: this.cacheService.createSessionKeyType(
+        'current',
+        this.sessionCookieService.hash(userProfile.sid),
+      ),
       value,
       ttl: this.config.cacheUserProfileTTLms,
     })
@@ -171,7 +178,7 @@ export class AuthService {
       )
 
       return this.redirectWithError(res, {
-        code: 400,
+        statusCode: 400,
       })
     }
 
@@ -189,11 +196,12 @@ export class AuthService {
       await this.cacheService.save({
         key: this.cacheService.createSessionKeyType('attempt', attemptLoginId),
         value: {
-          // Fallback if targetLinkUri is not provided
-          originUrl: this.createClientBaseUrl(),
           // Code verifier to be used in the callback
           codeVerifier,
-          targetLinkUri,
+          targetLinkUri:
+            targetLinkUri ??
+            // Fallback if targetLinkUri is not provided
+            this.createClientBaseUrl(),
         },
         ttl: this.config.cacheLoginAttemptTTLms,
       })
@@ -236,6 +244,45 @@ export class AuthService {
   }
 
   /**
+   * Handles cases where a login attempt cache entry is not found during the callback phase.
+   * This typically occurs in one of these scenarios:
+   *
+   * 1. The login attempt cache has expired (TTL exceeded).
+   * 2. The cache entry was deleted.
+   * 3. The user attempted to reuse a callback URL after a successful login
+   *    (e.g., by using browser back button after logging in)
+   *
+   * Recovery process:
+   * 1. Checks if there's an existing active session (via session cookie)
+   * 2. If a session exists, returns a 409 Conflict indicating multiple session attempt
+   * 3. If no recovery is possible, redirects to error page and log as warning
+   */
+  private async handleMissingLoginAttempt({
+    req,
+    res,
+    loginAttemptCacheKey,
+  }: {
+    req: Request
+    res: Response
+    loginAttemptCacheKey: string
+  }) {
+    const sid = this.sessionCookieService.get(req)
+
+    // Check if older session exists
+    if (sid) {
+      return this.redirectWithError(res, {
+        statusCode: 409, // Conflict
+        code: LOGIN_ATTEMPT_FAILED_ACTIVE_SESSION,
+        message: 'Multiple sessions detected!',
+      })
+    }
+
+    this.logger.warn(this.cacheService.createKeyError(loginAttemptCacheKey))
+
+    return this.redirectWithError(res)
+  }
+
+  /**
    * Callback for the login flow
    * This method is called from the identity server after the user has logged in
    * and the authorization code has been issued.
@@ -260,8 +307,8 @@ export class AuthService {
       this.logger.error('Callback login IDS invalid request: ', idsError)
 
       return this.redirectWithError(res, {
-        code: 500,
-        error: idsError,
+        statusCode: 500,
+        message: idsError,
       })
     }
 
@@ -273,7 +320,7 @@ export class AuthService {
       )
 
       return this.redirectWithError(res, {
-        code: 400,
+        statusCode: 400,
       })
     }
 
@@ -289,9 +336,11 @@ export class AuthService {
     )
 
     if (!loginAttemptData) {
-      this.logger.warn(this.cacheService.createKeyError(loginAttemptCacheKey))
-
-      return this.redirectWithError(res)
+      return this.handleMissingLoginAttempt({
+        req,
+        res,
+        loginAttemptCacheKey,
+      })
     }
 
     try {
@@ -304,33 +353,34 @@ export class AuthService {
       const updatedTokenResponse = await this.updateTokenCache(tokenResponse)
 
       // Clean up the login attempt from the cache since we have a successful login.
-      this.cacheService
-        .delete(this.cacheService.createSessionKeyType('attempt', query.state))
-        .catch((err) => {
-          this.logger.warn(err)
-        })
+      this.cacheService.delete(loginAttemptCacheKey).catch((err) => {
+        this.logger.warn(err)
+      })
 
       // Clear any existing session cookie first
       // This prevents multiple session cookies being set.
-      res.clearCookie(SESSION_COOKIE_NAME, getCookieOptions())
+      this.sessionCookieService.clear(res)
 
       // Create session cookie with successful login session id
-      res.cookie(
-        SESSION_COOKIE_NAME,
-        updatedTokenResponse.userProfile.sid,
-        getCookieOptions(),
-      )
+      this.sessionCookieService.set({
+        res,
+        value: updatedTokenResponse.userProfile.sid,
+      })
 
-      // Check if there is an old session cookie and clean up the cache
-      const oldSessionCookie = req.cookies[SESSION_COOKIE_NAME]
+      // Check if there is an old session cookie
+      const oldHashedSessionCookie = this.sessionCookieService.get(req)
 
       if (
-        oldSessionCookie &&
-        oldSessionCookie !== updatedTokenResponse.userProfile.sid
+        oldHashedSessionCookie &&
+        // Check if the old session cookie is different from the new one
+        !this.sessionCookieService.verify(
+          req,
+          updatedTokenResponse.userProfile.sid,
+        )
       ) {
         const oldSessionCacheKey = this.cacheService.createSessionKeyType(
           'current',
-          oldSessionCookie,
+          oldHashedSessionCookie,
         )
 
         const oldSessionData = await this.cacheService.get<CachedTokenResponse>(
@@ -351,9 +401,7 @@ export class AuthService {
         }
       }
 
-      return res.redirect(
-        loginAttemptData.targetLinkUri || loginAttemptData.originUrl,
-      )
+      return res.redirect(loginAttemptData.targetLinkUri)
     } catch (error) {
       this.logger.error('Callback login failed: ', error)
 
@@ -380,7 +428,7 @@ export class AuthService {
     res: Response
     query: LogoutDto
   }) {
-    const sidCookie = req.cookies[SESSION_COOKIE_NAME]
+    const sidCookie = this.sessionCookieService.get(req)
 
     if (!sidCookie) {
       this.logger.error('Logout failed: No session cookie found')
@@ -388,20 +436,24 @@ export class AuthService {
       return res.redirect(this.config.logoutRedirectUri)
     }
 
-    if (sidCookie !== query.sid) {
+    const hashedQuerySid = this.sessionCookieService.hash(query.sid)
+
+    if (sidCookie !== hashedQuerySid) {
       this.logger.error(
-        `Logout failed: Cookie sid "${sidCookie}" does not match the session id in query param "${query.sid}"`,
+        `Logout failed: Cookie "${this.cacheService.createKeyError(
+          sidCookie,
+        )}" does not match the session id in query param "sid"`,
       )
 
       return this.redirectWithError(res, {
-        code: 400,
-        error: 'Logout failed!',
+        statusCode: 400,
+        message: 'Logout failed!',
       })
     }
 
     const currentLoginCacheKey = this.cacheService.createSessionKeyType(
       'current',
-      query.sid,
+      hashedQuerySid,
     )
 
     const cachedTokenResponse =
@@ -428,7 +480,7 @@ export class AuthService {
      * - Delete the current login from the cache
      * - Clear the session cookie
      */
-    res.clearCookie(SESSION_COOKIE_NAME, getCookieOptions())
+    this.sessionCookieService.clear(res)
 
     this.cacheService
       .delete(currentLoginCacheKey)
@@ -511,7 +563,7 @@ export class AuthService {
       // Create cache key and retrieve cached token response
       const cacheKey = this.cacheService.createSessionKeyType(
         'current',
-        payload.sid,
+        this.sessionCookieService.hash(payload.sid),
       )
       const cachedTokenResponse =
         await this.cacheService.get<CachedTokenResponse>(

@@ -26,29 +26,16 @@ export enum Roles {
 }
 
 export enum ReasonForApplicationOptions {
-  TRANSFER_OF_LEGAL_DOMICILE = 'transferOfLegalDomicile',
-  STUDY_STAY_FOR_PARENTS = 'studyStayForParents',
-  PARENTS_PARLIAMENTARY_MEMBERSHIP = 'parentsParliamentaryMembership',
-  TEMPORARY_FROSTER = 'temporaryFoster',
-  EXPERT_SERVICE = 'expertService',
-  SICKLY = 'sickly',
-  LIVES_IN_TWO_HOMES = 'livesInTwoHomes',
-  SIBLINGS_IN_THE_SAME_PRIMARY_SCHOOL = 'siblingsInTheSamePrimarySchool',
+  MOVING_MUNICIPALITY = 'movingMuniciplaity',
   MOVING_ABROAD = 'movingAbroad',
-  OTHER_REASONS = 'otherReasons',
-}
-
-export enum SiblingRelationOptions {
-  SIBLING = 'sibling',
-  HALF_SIBLING = 'halfSibling',
-  STEP_SIBLING = 'stepSibling',
+  SIBLINGS_IN_SAME_SCHOOL = 'SiblingsInSameSchool',
 }
 
 export enum OptionsType {
   PRONOUN = 'pronoun',
   GENDER = 'gender',
   INTOLERANCE = 'intolerence',
-  REASON = 'rejectionReason',
+  REASON = 'registrationReason',
   RELATION = 'relation',
   ALLERGY = 'allergy',
 }

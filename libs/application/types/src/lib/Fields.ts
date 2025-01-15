@@ -26,8 +26,6 @@ import { TestSupport } from '@island.is/island-ui/utils'
 import { MessageDescriptor } from 'react-intl'
 import { Locale } from '@island.is/shared/types'
 
-type Space = keyof typeof theme.spacing
-
 export type RecordObject<T = unknown> = Record<string, T>
 export type MaybeWithApplication<T> = T | ((application: Application) => T)
 export type MaybeWithApplicationAndField<T> =
@@ -89,6 +87,8 @@ export type RepeaterItem = {
    */
   displayInTable?: boolean
   label?: StaticText
+  phoneLabel?: StaticText
+  emailLabel?: StaticText
   placeholder?: StaticText
   options?: TableRepeaterOptions
   backgroundColor?: 'blue' | 'white'
@@ -99,6 +99,12 @@ export type RepeaterItem = {
     activeField?: Record<string, string>,
   ) => boolean
   dataTestId?: string
+  showPhoneField?: boolean
+  phoneRequired?: boolean
+  showEmailField?: boolean
+  emailRequired?: boolean
+  searchCompanies?: boolean
+  searchPersons?: boolean
   readonly?:
     | boolean
     | ((
@@ -216,6 +222,9 @@ export interface BaseField extends FormItem {
   isPartOfRepeater?: boolean
   defaultValue?: MaybeWithApplicationAndField<unknown>
   doesNotRequireAnswer?: boolean
+  marginBottom?: BoxProps['marginBottom']
+  marginTop?: BoxProps['marginTop']
+  clearOnChange?: string[]
 
   // TODO use something like this for non-schema validation?
   // validate?: (formValue: FormValue, context?: object) => boolean
@@ -263,6 +272,7 @@ export enum FieldTypes {
   DISPLAY = 'DISPLAY',
   ACCORDION = 'ACCORDION',
   BANK_ACCOUNT = 'BANK_ACCOUNT',
+  TITLE = 'TITLE',
 }
 
 export enum FieldComponents {
@@ -300,6 +310,7 @@ export enum FieldComponents {
   DISPLAY = 'DisplayFormField',
   ACCORDION = 'AccordionFormField',
   BANK_ACCOUNT = 'BankAccountFormField',
+  TITLE = 'TitleFormField',
 }
 
 export interface CheckboxField extends InputField {
@@ -334,8 +345,6 @@ export interface DescriptionField extends BaseField {
   tooltip?: FormText
   titleTooltip?: FormText
   space?: BoxProps['paddingTop']
-  marginBottom?: BoxProps['marginBottom']
-  marginTop?: BoxProps['marginTop']
   titleVariant?: TitleVariants
 }
 
@@ -449,8 +458,15 @@ export interface SubmitField extends BaseField {
 
 export interface DividerField extends BaseField {
   readonly type: FieldTypes.DIVIDER
-  readonly color?: Colors
+  useDividerLine?: boolean
   component: FieldComponents.DIVIDER
+}
+
+export interface TitleField extends BaseField {
+  readonly type: FieldTypes.TITLE
+  readonly color?: Colors
+  titleVariant?: TitleVariants
+  component: FieldComponents.TITLE
 }
 
 export interface KeyValueField extends BaseField {
@@ -488,8 +504,6 @@ export interface MessageWithLinkButtonField extends BaseField {
   url: string
   buttonTitle: FormText
   message: FormText
-  marginTop?: ResponsiveProp<Space>
-  marginBottom?: ResponsiveProp<Space>
 }
 
 export interface ExpandableDescriptionField extends BaseField {
@@ -505,8 +519,6 @@ export interface AlertMessageField extends BaseField {
   component: FieldComponents.ALERT_MESSAGE
   alertType?: 'default' | 'warning' | 'error' | 'info' | 'success'
   message?: FormText
-  marginTop?: ResponsiveProp<Space>
-  marginBottom?: ResponsiveProp<Space>
   links?: AlertMessageLink[]
 }
 
@@ -538,8 +550,6 @@ export interface ImageField extends BaseField {
   component: FieldComponents.IMAGE
   image: React.FunctionComponent<React.SVGProps<SVGSVGElement>> | string
   alt?: string
-  marginTop?: ResponsiveProp<Space>
-  marginBottom?: ResponsiveProp<Space>
   titleVariant?: TitleVariants
   imageWidth?: ImageWidthProps | Array<ImageWidthProps>
   imagePosition?: ImagePositionProps | Array<ImagePositionProps>
@@ -576,9 +586,13 @@ export interface NationalIdWithNameField extends InputField {
   minAgePerson?: number
   searchPersons?: boolean
   searchCompanies?: boolean
+  showPhoneField?: boolean
+  showEmailField?: boolean
+  phoneRequired?: boolean
+  emailRequired?: boolean
+  phoneLabel?: StaticText
+  emailLabel?: StaticText
   titleVariant?: TitleVariants
-  marginTop?: ResponsiveProp<Space>
-  marginBottom?: ResponsiveProp<Space>
 }
 
 type Modify<T, R> = Omit<T, keyof R> & R
@@ -591,8 +605,6 @@ export type ActionCardListField = BaseField & {
     lang: Locale,
   ) => ApplicationActionCardProps[]
   space?: BoxProps['paddingTop']
-  marginBottom?: BoxProps['marginBottom']
-  marginTop?: BoxProps['marginTop']
 }
 
 export type ApplicationActionCardProps = Modify<
@@ -621,8 +633,6 @@ export type TableRepeaterField = BaseField & {
   removeButtonTooltipText?: StaticText
   editButtonTooltipText?: StaticText
   editField?: boolean
-  marginTop?: ResponsiveProp<Space>
-  marginBottom?: ResponsiveProp<Space>
   titleVariant?: TitleVariants
   fields: Record<string, RepeaterItem>
   /**
@@ -655,8 +665,6 @@ export type FieldsRepeaterField = BaseField & {
   removeItemButtonText?: StaticText
   addItemButtonText?: StaticText
   saveItemButtonText?: StaticText
-  marginTop?: ResponsiveProp<Space>
-  marginBottom?: ResponsiveProp<Space>
   fields: Record<string, RepeaterItem>
   /**
    * Maximum rows that can be added to the table.
@@ -664,19 +672,6 @@ export type FieldsRepeaterField = BaseField & {
    */
   minRows?: number
   maxRows?: number
-  table?: {
-    /**
-     * List of strings to render,
-     * if not provided it will be auto generated from the fields
-     */
-    header?: StaticText[]
-    /**
-     * List of field id's to render,
-     * if not provided it will be auto generated from the fields
-     */
-    rows?: string[]
-    format?: Record<string, (value: string) => string | StaticText>
-  }
 }
 
 export type AccordionItem = {
@@ -689,15 +684,11 @@ export interface AccordionField extends BaseField {
   accordionItems:
     | Array<AccordionItem>
     | ((application: Application) => Array<AccordionItem>)
-  marginTop?: ResponsiveProp<Space>
-  marginBottom?: ResponsiveProp<Space>
   titleVariant?: TitleVariants
 }
 export interface BankAccountField extends BaseField {
   readonly type: FieldTypes.BANK_ACCOUNT
   component: FieldComponents.BANK_ACCOUNT
-  marginTop?: ResponsiveProp<Space>
-  marginBottom?: ResponsiveProp<Space>
   titleVariant?: TitleVariants
 }
 
@@ -756,8 +747,6 @@ export interface StaticTableField extends BaseField {
   component: FieldComponents.STATIC_TABLE
   header: StaticText[] | ((application: Application) => StaticText[])
   rows: StaticText[][] | ((application: Application) => StaticText[][])
-  marginTop?: ResponsiveProp<Space>
-  marginBottom?: ResponsiveProp<Space>
   titleVariant?: TitleVariants
   summary?:
     | { label: StaticText; value: StaticText }[]
@@ -768,6 +757,7 @@ export interface SliderField extends BaseField {
   readonly type: FieldTypes.SLIDER
   readonly color?: Colors
   component: FieldComponents.SLIDER
+  titleVariant?: TitleVariants
   min: number
   max: MaybeWithApplicationAndField<number>
   step?: number
@@ -804,8 +794,6 @@ export interface SliderField extends BaseField {
 export interface DisplayField extends BaseField {
   readonly type: FieldTypes.DISPLAY
   component: FieldComponents.DISPLAY
-  marginTop?: ResponsiveProp<Space>
-  marginBottom?: ResponsiveProp<Space>
   titleVariant?: TitleVariants
   suffix?: MessageDescriptor | string
   rightAlign?: boolean
@@ -852,3 +840,4 @@ export type Field =
   | DisplayField
   | AccordionField
   | BankAccountField
+  | TitleField

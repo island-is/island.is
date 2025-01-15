@@ -69,7 +69,11 @@ const advertSchema = z
   .object({
     department: baseEntitySchema.optional(),
     type: baseEntitySchema.optional().nullable(),
+    mainType: baseEntitySchema
+      .extend({ types: z.array(baseEntitySchema).optional() })
+      .optional(),
     title: z.string().optional(),
+    involvedPartyId: z.string().optional(),
     html: z.string().optional(),
     requestedDate: z.string().optional(),
     categories: z.array(baseEntitySchema).optional(),
@@ -100,10 +104,12 @@ export const partialSchema = z.object({
   advert: advertSchema.optional(),
   signatures: z
     .object({
-      additionalSignature: z.object({
-        committee: z.string().optional(),
-        regular: z.string().optional(),
-      }),
+      additionalSignature: z
+        .object({
+          committee: z.string().optional(),
+          regular: z.string().optional(),
+        })
+        .optional(),
       regular: z.array(regularSignatureItemSchema).optional(),
       committee: committeeSignatureSchema.optional(),
     })

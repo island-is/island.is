@@ -674,15 +674,15 @@ export const en: TranslatedMessages = {
 
   // health - organ donation
   'health.organDonation': 'Organ Donation',
-  'health.organDonation.change': 'Breyta afstöðu',
-  'health.organDonation.isDonor': 'Ég er líffæragjafi',
+  'health.organDonation.change': 'Change selection',
+  'health.organDonation.isDonor': 'I am an organ donor',
   'health.organDonation.isDonorWithLimitations':
-    'Ég heimila líffæragjöf, með takmörkunum.',
-  'health.organDonation.isNotDonor': 'Ég heimila ekki líffæragjöf',
+    'I allow organ donation, with restrictions.',
+  'health.organDonation.isNotDonor': 'I forbid organ donation',
   'health.organDonation.isDonorDescription':
-    'Öll líffærin mín má nota til ígræðslu.',
+    'My organs can all be used for transplantation.',
   'health.organDonation.isNotDonorDescription':
-    'Engin líffæri má nota til ígræðslu.',
+    'No organs can be used for transplantation.',
   'health.organDonation.isDonorWithLimitationsDescription':
-    'Öll líffærin mín má nota til ígræðslu fyrir utan: {limitations}.',
+    'All organs can be used for transplantation except: {limitations}.',
 }
