@@ -43,6 +43,7 @@ jobs:
         env:
           localrun: ${{ !!github.event.localrun }}
         run: |
+          # Run smaller sample than all affected when running locally
           if [[ ${localrun} == true ]]; then
             output="matrix=$(
               echo '{
