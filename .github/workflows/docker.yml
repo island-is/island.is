@@ -112,7 +112,7 @@ jobs:
           if [[ "$localrun" == true ]]; then
             echo build_cache="type=local,src=/tmp,dest=/tmp,mode=max" >>"$GITHUB_OUTPUT"
           else
-            echo build_cache="type=registry,ref=$image_repository:cache,mode=max" >>"$GITHUB_OUTPUT"
+            echo build_cache="type=registry,image-manifest=true,oci-mediatypes=true,ref=$image_repository:cache,mode=max" >>"$GITHUB_OUTPUT"
           fi
 
       - name: Check out repo
