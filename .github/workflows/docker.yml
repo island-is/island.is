@@ -104,7 +104,9 @@ jobs:
           echo "Matrix: ${{ toJSON(matrix) }}"
           echo image_repository="$image_repository" >>"$GITHUB_OUTPUT"
           if [[ ${{ github.event.localrun == 'true' }} ]]; then
-            echo build_cache="type=local,src=./build-cache" >>"$GITHUB_OUTPUT"
+            cache_dir="/tmp/docker-build-cache"
+            mkdir -p "$cache_dir"
+            echo build_cache="type=local,src=$cache_dir,dest=$cache_dir" >>"$GITHUB_OUTPUT"
           else
             echo build_cache="type=registry,ref=$image_repository:cache" >>"$GITHUB_OUTPUT"
           fi
@@ -172,6 +174,8 @@ jobs:
           target: output-${{ matrix.docker }}
           build-args: |
             NODE_IMAGE_TAG=${{ needs.prepare.outputs.node_image_tag }}
+          cache-from: ${{ steps.inputs.outputs.build_cache }}
+          cache-to: ${{ steps.inputs.outputs.build_cache }},mode=min
 
   status:
     name: Collect statuses
