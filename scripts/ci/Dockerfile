@@ -9,21 +9,19 @@ ARG DOCKER_ECR_REGISTRY=public.ecr.aws/docker
 ARG DOCKER_IMAGE_REGISTRY=${DOCKER_ECR_REGISTRY%/docker}
 # Alias DOCKER_IMAGE_REGISTRY to DOCKER_REGISTRY for backwards compatibility
 ARG DOCKER_REGISTRY=${DOCKER_IMAGE_REGISTRY}/docker
-ARG NODE_VERSION=20
+ARG NODE_IMAGE_TAG=20-alpine
+ARG APP_HOME
+ARG APP_DIST_HOME=dist/${APP_HOME}
 ARG APP
 
 
 # Base image for dependencies
 FROM ${DOCKER_REGISTRY}/library/node:${NODE_VERSION}-bookworm-slim AS base-deps
 
-# Install system dependencies
-# hadolint ignore=DL3008
-RUN apt-get update && \
-  apt-get install -y --no-install-recommends \
-  build-essential gcc git jq openjdk-17-jdk pkgconf python3 python3-distutils && \
-  ln -sf /usr/bin/python3 /usr/bin/python && \
-  apt-get clean && \
-  rm -rf /var/lib/apt/lists/*
+# hadolint ignore=DL3018
+RUN apk add --update --no-cache python3 build-base gcc git jq && \
+  rm -rf /var/cache/apk/* && \
+  ln -sf /usr/bin/python3 /usr/bin/python
 
 
 # Add intermediate step for debugging system dependencies
@@ -34,11 +32,8 @@ COPY package.json yarn.lock .yarnrc.yml ./
 COPY apps/native/app/package.json ./apps/native/app/
 COPY .yarn/ ./.yarn
 
-# hadolint ignore=DL3060
-RUN --mount=type=cache,target=.yarn/cache \
-  # Cache-mount the relatively frequently changing caches
-  CI=true yarn install --immutable
-
+RUN CI=true yarn install --immutable && \
+  yarn cache clean
 
 # Image with source code
 FROM deps AS src
@@ -135,9 +130,6 @@ RUN mkdir -p /etc/nginx/templates
 # hadolint ignore=DL3018
 RUN apk add --no-cache bash nodejs && \
   rm -rf /var/cache/apk/*
-
-
-FROM base-static AS output-static
 
 COPY scripts/dockerfile-assets/nginx/* /etc/nginx/templates
 COPY scripts/dockerfile-assets/bash/extract-environment.sh /docker-entrypoint.d
