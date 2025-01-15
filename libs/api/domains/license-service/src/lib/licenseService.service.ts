@@ -44,10 +44,14 @@ import { LicenseCollection } from './dto/GenericLicenseCollection.dto'
 import isAfter from 'date-fns/isAfter'
 import { isJSON, isJWT } from 'class-validator'
 import {
+  BARCODE_EXPIRE_TIME_IN_SEC,
   BarcodeService,
   TOKEN_EXPIRED_ERROR,
 } from '@island.is/services/license'
 import { UserAgent } from '@island.is/nest/core'
+import { ProblemError } from '@island.is/nest/problem'
+import { ProblemType } from '@island.is/shared/problem'
+import { coreErrorMessages } from '@island.is/application/core'
 
 const LOG_CATEGORY = 'license-service'
 
@@ -478,6 +482,19 @@ export class LicenseService {
     const licenseType = this.mapLicenseType(genericUserLicenseType)
     const client = await this.getClient<typeof licenseType>(licenseType)
 
+    const activeBarcodeSession = await this.barcodeService.getSessionCache(`activeSession:${licenseType}-${user.sub}`)
+
+    if (activeBarcodeSession && activeBarcodeSession !== user.sid) {
+      // If the user has an active session for the license type, we should not create a new barcode
+      this.logger.info(
+        `User has an active session for license: ${licenseType}`,
+      )
+
+      throw new ProblemError({
+        type: ProblemType.BAD_SUBJECT,
+        title: `User has an active session for license type: ${licenseType}`,
+      })
+    }
     if (
       genericUserLicense.license.pkpassStatus !==
       GenericUserLicensePkPassStatus.Available
@@ -518,6 +535,7 @@ export class LicenseService {
         licenseType,
         extraData,
       }),
+      this.barcodeService.setSessionCache(`activeSession:${licenseType}-${user.sub}`, user.sid!),
     ])
 
     return tokenPayload
