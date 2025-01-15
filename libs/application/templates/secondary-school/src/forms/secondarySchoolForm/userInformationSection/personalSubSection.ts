@@ -105,7 +105,7 @@ export const personalSubSection = buildSubSection({
           },
         }),
 
-        // Validation for whether there is any school open for admission depending on the application type selected above
+        // Validation for whether there are any schools open for admission depending on the application type selected above
         buildHiddenInput({
           id: 'applicationType.isOpenForAdmissionFreshman',
           condition: (_, externalData) => {

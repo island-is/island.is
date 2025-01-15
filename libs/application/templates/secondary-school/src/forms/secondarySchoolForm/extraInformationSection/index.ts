@@ -77,6 +77,7 @@ export const extraInformationSection = buildSection({
           variant: 'textarea',
           rows: 5,
           title: extraInformation.other.textareaLabel,
+          placeholder: extraInformation.other.textareaPlaceholder,
         }),
 
         // Supporting documents

@@ -135,6 +135,7 @@ export const SecondarySchoolSchema = z.object({
           return isOpenForAdmissionFreshman
         else if (value === ApplicationType.GENERAL_APPLICATION)
           return isOpenForAdmissionGeneral
+        return true
       },
     ),
   custodians: z.array(CustodianSchema).max(2),

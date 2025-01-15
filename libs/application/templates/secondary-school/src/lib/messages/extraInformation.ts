@@ -53,6 +53,11 @@ export const extraInformation = {
       defaultMessage: 'Annað',
       description: 'Other textarea label',
     },
+    textareaPlaceholder: {
+      id: 'ss.application:extraInformation.other.textareaPlaceholder',
+      defaultMessage: ' ',
+      description: 'Other textarea placeholder',
+    },
   }),
   supportingDocuments: defineMessages({
     subtitle: {
