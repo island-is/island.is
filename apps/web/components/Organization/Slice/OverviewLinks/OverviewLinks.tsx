@@ -120,13 +120,12 @@ const CardView = ({ slice }: CardViewProps) => {
       </GridRow>
       {slice.link?.url && slice.link?.text && (
         <Box textAlign="right">
-          <Link href={slice.link.url}>
+          <Link href={slice.link.url} skipTab>
             <Button
               icon="arrowForward"
               iconType="filled"
               type="button"
               variant="text"
-              unfocusable={true}
             >
               {slice.link.text}
             </Button>
@@ -166,7 +165,7 @@ export const OverviewLinksSlice: React.FC<
       <GridContainer>
         {slice.hasBorderAbove && <BorderAbove />}
         <Stack space={3}>
-          {Boolean(slice.titleAbove) && (
+          {Boolean(slice.titleAbove) && cardView && (
             <Text variant="h3">{slice.titleAbove}</Text>
           )}
           {cardView && <CardView slice={slice} />}
