@@ -26,6 +26,8 @@ jobs:
   prepare:
     name: Prepare workflow Docker build
     runs-on: ec2-runners
+    container:
+      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
     outputs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}
       node_image_tag: ${{ steps.build-args.outputs.node_image_tag }}
@@ -80,6 +82,8 @@ jobs:
   build:
     name: Build ${{ matrix.project }}
     runs-on: ec2-runners
+    container:
+      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
     needs: prepare
     strategy:
       fail-fast: true
@@ -180,6 +184,8 @@ jobs:
   status:
     name: Collect statuses
     runs-on: ec2-runners
+    container:
+      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
     if: ${{ !cancelled() }}
     needs:
       - prepare
