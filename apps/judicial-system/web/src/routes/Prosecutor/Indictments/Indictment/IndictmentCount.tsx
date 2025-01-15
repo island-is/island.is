@@ -342,7 +342,7 @@ export const getIncidentDescription = (
 
   if (subtypes.length === 1) {
     return formatMessage(strings.indictmentDescriptionSubtypesAutofill, {
-      subtypes: indictmentSubtypes[subtypes[0]],
+      subtypes: subtypes[0],
       date: incidentDate,
     })
   }

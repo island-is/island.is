@@ -223,6 +223,9 @@ export const PoliceCaseInfo: FC<Props> = ({
             const subtypes = [...subtypesArray, indictmentSubtype]
 
             updatePoliceCase(index, { subtypes })
+            updateIndictmentCount(policeCaseNumbers[index], crimeScene || {}, {
+              [policeCaseNumbers[index]]: subtypes,
+            })
           }}
           value={null}
           required
