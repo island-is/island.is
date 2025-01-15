@@ -26,6 +26,7 @@ export const RentalHousingTenantInfo = buildSubSection({
             nationalIdWithName: {
               component: 'nationalIdWithName',
               required: true,
+              searchCompanies: true,
             },
             phone: {
               component: 'phone',

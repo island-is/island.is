@@ -9,6 +9,7 @@ export enum States {
   ONEACCEPTED = 'oneAccepted',
   TWOACCEPTED = 'twoAccepted',
   SIGNING = 'signing',
+  COMPLETED = 'completed',
 }
 
 export enum Roles {

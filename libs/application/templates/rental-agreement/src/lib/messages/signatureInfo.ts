@@ -1,6 +1,6 @@
 import { defineMessages } from 'react-intl'
 
-export const signature = defineMessages({
+export const signatureInfo = defineMessages({
   sectionName: {
     id: 'ra.application:signture.sectionName',
     defaultMessage: 'Undirritun',
@@ -47,5 +47,24 @@ export const signature = defineMessages({
     id: 'ra.application:signture.tableHeaderEmail',
     defaultMessage: 'Netfang',
     description: 'Header for the email column in signature table',
+  },
+  statementLabel: {
+    id: 'ra.application:signture.statementLabel',
+    defaultMessage:
+      'Ég skil að ekki er hægt að gera breytingar á samningi eftir að búið er að senda í undirritun.',
+    description: 'Label for the statement checkbox',
+  },
+  submitButtonText: {
+    id: 'ra.application:signture.submitButtonText',
+    defaultMessage: 'Senda í undirritun',
+    description: 'Text on the page submit button',
+  },
+
+  // dataSchema errors
+  statementError: {
+    id: 'ra.application:signture.statementError',
+    defaultMessage:
+      'Þú þarft að samþykkja skilyrði undirritunar til að halda áfram',
+    description: 'Error message when statement is not checked',
   },
 })
