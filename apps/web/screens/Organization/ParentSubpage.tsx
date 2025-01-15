@@ -9,7 +9,7 @@ import {
   TableOfContents,
   Text,
 } from '@island.is/island-ui/core'
-import { OrganizationWrapper } from '@island.is/web/components'
+import { getThemeConfig, OrganizationWrapper } from '@island.is/web/components'
 import { Query } from '@island.is/web/graphql/schema'
 import { useLinkResolver, useNamespace } from '@island.is/web/hooks'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
@@ -68,7 +68,7 @@ const OrganizationParentSubpage: Screen<
       ]}
       navigationData={{
         title: n('navigationTitle', 'Efnisyfirlit'),
-        items: getSubpageNavList(organizationPage, router),
+        items: getSubpageNavList(organizationPage, router, 3),
       }}
     >
       <Box paddingTop={4}>
@@ -118,6 +118,15 @@ const OrganizationParentSubpage: Screen<
   )
 }
 
-OrganizationParentSubpage.getProps = getProps
+OrganizationParentSubpage.getProps = async (context) => {
+  const props = await getProps(context)
+  return {
+    ...props,
+    ...getThemeConfig(
+      props.organizationPage.theme,
+      props.organizationPage.organization,
+    ),
+  }
+}
 
 export default withMainLayout(OrganizationParentSubpage)

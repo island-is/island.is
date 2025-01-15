@@ -7,6 +7,7 @@ import {
   buildTextField,
   buildSubSection,
   buildPhoneField,
+  buildTitleField,
 } from '@island.is/application/core'
 import {
   Application,

@@ -1,11 +1,11 @@
 import {
-  buildDividerField,
   buildForm,
   buildMultiField,
   buildSection,
   buildDescriptionField,
   buildTextField,
   buildSubmitField,
+  buildTitleField,
 } from '@island.is/application/core'
 import {
   Form,
@@ -28,8 +28,7 @@ export const ReviewApplication: Form = buildForm({
           id: 'review',
           title: m.reviewTitle,
           children: [
-            //Error in dev tools, missing keys on divider fields...
-            buildDividerField({ title: m.applicantTitle }),
+            buildTitleField({ title: m.applicantTitle, color: 'blue400' }),
             buildTextField({
               id: 'applicant.nationalId',
               title: m.applicantNationalId,
@@ -52,9 +51,9 @@ export const ReviewApplication: Form = buildForm({
               format: '###-####',
               placeholder: '000-0000',
             }),
-            //Error in dev tools, missing keys on divider fields...
-            buildDividerField({
+            buildTitleField({
               title: m.administrativeContactTitle,
+              color: 'blue400',
             }),
             buildTextField({
               id: 'administrativeContact.name',
@@ -73,8 +72,10 @@ export const ReviewApplication: Form = buildForm({
               format: '###-####',
               placeholder: '000-0000',
             }),
-            //Error in dev tools, missing keys on divider fields...
-            buildDividerField({ title: m.technicalContactTitle }),
+            buildTitleField({
+              title: m.technicalContactTitle,
+              color: 'blue400',
+            }),
             buildTextField({
               id: 'technicalContact.name',
               title: m.technicalContactName,
@@ -92,8 +93,7 @@ export const ReviewApplication: Form = buildForm({
               format: '###-####',
               placeholder: '000-0000',
             }),
-            //Error in dev tools, missing keys on divider fields...
-            buildDividerField({ title: m.helpDeskTitle }),
+            buildTitleField({ title: m.helpDeskTitle, color: 'blue400' }),
             buildTextField({
               id: 'helpDesk.email',
               title: m.helpDeskEmail,
@@ -106,7 +106,6 @@ export const ReviewApplication: Form = buildForm({
               format: '###-####',
               placeholder: '000-0000',
             }),
-            //Error in dev tools, missing keys on radio controller...
             buildSubmitField({
               id: 'approvedByReviewer',
               title: m.reviewQuestion,

@@ -55,7 +55,7 @@ export class NewPrimarySchoolService extends BaseTemplateApiService {
         '6666666669',
       ]
       if (
-        isRunningOnEnvironment('local') &&
+        (isRunningOnEnvironment('local') || isRunningOnEnvironment('dev')) &&
         validChildren.includes(child.nationalId)
       ) {
         return true

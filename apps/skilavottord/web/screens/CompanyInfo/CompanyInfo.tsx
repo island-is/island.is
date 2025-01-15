@@ -25,6 +25,7 @@ import {
   Role,
 } from '@island.is/skilavottord-web/graphql/schema'
 import { BASE_PATH } from '@island.is/skilavottord/consts'
+import PageHeader from '@island.is/skilavottord-web/components/PageHeader/PageHeader'
 
 const SkilavottordAllActiveRecyclingPartnersQuery = gql`
   query skilavottordAllActiveRecyclingPartnersQuery {
@@ -101,10 +102,8 @@ const CompanyInfo: FC<React.PropsWithChildren<unknown>> = () => {
             </Link>
             <span>{t.title}</span>
           </Breadcrumbs>
-          <Stack space={2}>
-            <Text variant="h1">{t.title}</Text>
-            <Text variant="intro">{t.info}</Text>
-          </Stack>
+          <PageHeader title={t.title} info={t.info} />
+
           <Text marginTop={4} variant="h3">
             {t.subtitles.location}
           </Text>
