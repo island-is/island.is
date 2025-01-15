@@ -18,6 +18,7 @@ export const FormFragment = gql`
     created
     modified
     isTranslated
+    beenPublished
     applicationDaysToRemove
     derivedFrom
     stopProgressOnValidatingScreen

@@ -35,11 +35,11 @@ export const m = defineMessages({
   },
   applicationName: {
     id: 'portals-admin.form-system:application-name',
-    defaultMessage: 'Heiti umsóknar',
+    defaultMessage: 'Heiti umsóknarforms',
   },
   applicationNameEnglish: {
     id: 'portals-admin.form-system:application-name-english',
-    defaultMessage: 'Heiti umsóknar á ensku',
+    defaultMessage: 'Heiti umsóknarforms á ensku',
   },
   description: {
     id: 'portals-admin.form-system:description',
@@ -376,10 +376,6 @@ export const m = defineMessages({
   copy: {
     id: 'portals-admin.form-system:copy',
     defaultMessage: 'Afrita',
-  },
-  translateToEnglish: {
-    id: 'portals-admin.form-system:translate-to-english',
-    defaultMessage: 'Þýðing enska',
   },
   getUrl: {
     id: 'portals-admin.form-system:get-url',

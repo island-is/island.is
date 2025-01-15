@@ -44,6 +44,7 @@ export class FormsService {
   }
 
   async createForm(auth: User, input: CreateFormInput): Promise<FormResponse> {
+    console.log('auth', auth)
     const response = await this.formsApiWithAuth(auth)
       .formsControllerCreate({
         createFormDto: input as CreateFormDto,

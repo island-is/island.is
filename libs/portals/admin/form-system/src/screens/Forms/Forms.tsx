@@ -63,6 +63,7 @@ export const Forms = () => {
                 isHeader={false}
                 translated={f?.isTranslated ?? false}
                 slug={f?.slug ?? ''}
+                beenPublished={f?.beenPublished ?? false}
               />
             )
           })}

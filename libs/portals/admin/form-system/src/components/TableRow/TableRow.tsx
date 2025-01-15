@@ -28,6 +28,7 @@ interface Props {
   isHeader: boolean
   translated?: boolean
   slug?: string
+  beenPublished?: boolean
 }
 
 interface ColumnTextProps {
@@ -49,6 +50,7 @@ export const TableRow = ({
   isHeader,
   translated,
   slug,
+  beenPublished,
 }: Props) => {
   const [isOpen, setIsOpen] = useState(false)
   const navigate = useNavigate()
@@ -145,10 +147,7 @@ export const TableRow = ({
                   title: formatMessage(m.copy),
                 },
                 {
-                  title: formatMessage(m.translateToEnglish),
-                },
-                {
-                  title: 'Export',
+                  title: formatMessage(m.delete),
                 },
                 {
                   title: 'Json',

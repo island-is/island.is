@@ -73,6 +73,9 @@ export class Form {
   @Field(() => Boolean, { nullable: true })
   isTranslated?: boolean
 
+  @Field(() => Boolean, { nullable: true })
+  beenPublished?: boolean
+
   @Field(() => Int, { nullable: true })
   applicationDaysToRemove?: number
 

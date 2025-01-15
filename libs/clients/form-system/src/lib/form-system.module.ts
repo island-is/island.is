@@ -9,7 +9,6 @@ import {
   OrganizationsApiProvider,
   ScreensApiProvider,
   SectionsApiProvider,
-  ValuesProvider,
 } from './FormSystemApiProvider'
 import {
   ApplicationsApi,
@@ -21,7 +20,6 @@ import {
   OrganizationsApi,
   ScreensApi,
   SectionsApi,
-  ValuesApi,
 } from '../../gen/fetch'
 
 @Module({
@@ -36,7 +34,6 @@ import {
     SectionsApiProvider,
     FormApplicantProvider,
     CertificationsProvider,
-    ValuesProvider,
   ],
   exports: [
     ApplicationsApi,
@@ -48,7 +45,6 @@ import {
     SectionsApi,
     FormApplicantTypesApi,
     FormCertificationTypesApi,
-    ValuesApi,
   ],
 })
 export class FormSystemClientModule {}
