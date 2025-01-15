@@ -83,6 +83,7 @@ jobs:
     strategy:
       fail-fast: true
       matrix: ${{ fromJson(needs.prepare.outputs.matrix) }}
+      max-parallel: 1
 
     permissions:
       id-token: write # This is required for requesting the JWT
@@ -147,6 +148,7 @@ jobs:
 
       - name: Generate Docker metadata
         id: meta
+        if: ${{ !github.event.localrun }}
         uses: docker/metadata-action@v5
         with:
           images: |
@@ -174,7 +176,7 @@ jobs:
   status:
     name: Collect statuses
     runs-on: ubuntu-latest
-    if: ${{ always() }}
+    if: ${{ !cancelled() }}
     needs:
       - prepare
       - build
