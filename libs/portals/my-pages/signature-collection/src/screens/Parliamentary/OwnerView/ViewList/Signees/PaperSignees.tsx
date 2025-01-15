@@ -14,7 +14,7 @@ import { useIdentityQuery } from '@island.is/portals/my-pages/graphql'
 import * as nationalId from 'kennitala'
 import { useEffect, useState } from 'react'
 import { InputController } from '@island.is/shared/form-fields'
-import { useForm } from 'react-hook-form'
+import { FormProvider, useForm } from 'react-hook-form'
 import { m } from '../../../../../lib/messages'
 import { useGetCanSign } from '../../../../../hooks'
 import { useMutation } from '@apollo/client'
@@ -30,7 +30,9 @@ export const PaperSignees = ({
 }) => {
   useNamespaces('sp.signatureCollection')
   const { formatMessage } = useLocale()
-  const { control, reset } = useForm()
+
+  const methods = useForm()
+  const { control, reset } = methods
 
   const [nationalIdInput, setNationalIdInput] = useState('')
   const [nationalIdTypo, setNationalIdTypo] = useState(false)
@@ -94,109 +96,111 @@ export const PaperSignees = ({
 
   return (
     <Box marginTop={8}>
-      <Box display="flex" justifyContent={'spaceBetween'}>
-        <Text variant="h4" marginBottom={2}>
-          {formatMessage(m.paperSigneesHeader) + ' '}
-          <Tooltip
-            placement="bottom"
-            text={formatMessage(m.paperSigneesTooltip)}
-          />
-        </Text>
-        <Box>
-          <Button
-            variant="text"
-            size="small"
-            icon="reload"
-            onClick={() => onClearForm()}
-          >
-            {formatMessage(m.paperSigneesClearButton)}
-          </Button>
-        </Box>
-      </Box>
-
-      <Box
-        background={'blue100'}
-        height="full"
-        padding={3}
-        border="standard"
-        borderRadius="standard"
-      >
-        <GridContainer>
-          <GridRow marginBottom={3}>
-            <GridColumn span={['12/12', '8/12']}>
-              <InputController
-                control={control}
-                id="nationalId"
-                name="nationalId"
-                label={formatMessage(m.signeeNationalId)}
-                format="######-####"
-                required
-                defaultValue={nationalIdInput}
-                onChange={(e) => {
-                  setNationalIdInput(e.target.value.replace(/\W/g, ''))
-                }}
-                error={nationalIdTypo ? ' ' : undefined}
-                loading={loading || loadingCanSign}
-                icon={name && canSign ? 'checkmark' : undefined}
-              />
-            </GridColumn>
-            <GridColumn span={['12/12', '4/12']}>
-              <Box marginTop={[3, 0]}>
-                <Input
-                  id="page"
-                  name="page"
-                  type="number"
-                  required
-                  label={formatMessage(m.paperNumber)}
-                  value={page}
-                  onChange={(e) => setPage(e.target.value)}
-                />
-              </Box>
-            </GridColumn>
-          </GridRow>
-          <GridRow marginBottom={3}>
-            <GridColumn span={'12/12'}>
-              <Input
-                id="name"
-                name="name"
-                label={formatMessage(m.paperSigneeName)}
-                backgroundColor="white"
-                value={!loadingCanSign ? name : ''}
-                readOnly
-              />
-            </GridColumn>
-          </GridRow>
-          <Box display={'flex'} justifyContent={'flexEnd'}>
+      <FormProvider {...methods}>
+        <Box display="flex" justifyContent={'spaceBetween'}>
+          <Text variant="h4" marginBottom={2}>
+            {formatMessage(m.paperSigneesHeader) + ' '}
+            <Tooltip
+              placement="bottom"
+              text={formatMessage(m.paperSigneesTooltip)}
+            />
+          </Text>
+          <Box>
             <Button
-              variant="ghost"
+              variant="text"
               size="small"
-              disabled={!canSign || !page}
-              onClick={() => upload()}
-              loading={uploadingPaperSignature}
+              icon="reload"
+              onClick={() => onClearForm()}
             >
-              {formatMessage(m.signPaperSigneeButton)}
+              {formatMessage(m.paperSigneesClearButton)}
             </Button>
           </Box>
-        </GridContainer>
-      </Box>
-      {nationalIdTypo && (
-        <Box marginTop={5}>
-          <AlertMessage
-            type="error"
-            title={formatMessage(m.paperSigneeTypoTitle)}
-            message={formatMessage(m.paperSigneeTypoMessage)}
-          />
         </Box>
-      )}
-      {name && !loadingCanSign && !canSign && (
-        <Box marginTop={5}>
-          <AlertMessage
-            type="error"
-            title={formatMessage(m.paperSigneeCantSignTitle)}
-            message={formatMessage(m.paperSigneeCantSignMessage)}
-          />
+
+        <Box
+          background={'blue100'}
+          height="full"
+          padding={3}
+          border="standard"
+          borderRadius="standard"
+        >
+          <GridContainer>
+            <GridRow marginBottom={3}>
+              <GridColumn span={['12/12', '8/12']}>
+                <InputController
+                  control={control}
+                  id="nationalId"
+                  name="nationalId"
+                  label={formatMessage(m.signeeNationalId)}
+                  format="######-####"
+                  required
+                  defaultValue={nationalIdInput}
+                  onChange={(e) => {
+                    setNationalIdInput(e.target.value.replace(/\W/g, ''))
+                  }}
+                  error={nationalIdTypo ? ' ' : undefined}
+                  loading={loading || loadingCanSign}
+                  icon={name && canSign ? 'checkmark' : undefined}
+                />
+              </GridColumn>
+              <GridColumn span={['12/12', '4/12']}>
+                <Box marginTop={[3, 0]}>
+                  <Input
+                    id="page"
+                    name="page"
+                    type="number"
+                    required
+                    label={formatMessage(m.paperNumber)}
+                    value={page}
+                    onChange={(e) => setPage(e.target.value)}
+                  />
+                </Box>
+              </GridColumn>
+            </GridRow>
+            <GridRow marginBottom={3}>
+              <GridColumn span={'12/12'}>
+                <Input
+                  id="name"
+                  name="name"
+                  label={formatMessage(m.paperSigneeName)}
+                  backgroundColor="white"
+                  value={!loadingCanSign ? name : ''}
+                  readOnly
+                />
+              </GridColumn>
+            </GridRow>
+            <Box display={'flex'} justifyContent={'flexEnd'}>
+              <Button
+                variant="ghost"
+                size="small"
+                disabled={!canSign || !page}
+                onClick={() => upload()}
+                loading={uploadingPaperSignature}
+              >
+                {formatMessage(m.signPaperSigneeButton)}
+              </Button>
+            </Box>
+          </GridContainer>
         </Box>
-      )}
+        {nationalIdTypo && (
+          <Box marginTop={5}>
+            <AlertMessage
+              type="error"
+              title={formatMessage(m.paperSigneeTypoTitle)}
+              message={formatMessage(m.paperSigneeTypoMessage)}
+            />
+          </Box>
+        )}
+        {name && !loadingCanSign && !canSign && (
+          <Box marginTop={5}>
+            <AlertMessage
+              type="error"
+              title={formatMessage(m.paperSigneeCantSignTitle)}
+              message={formatMessage(m.paperSigneeCantSignMessage)}
+            />
+          </Box>
+        )}
+      </FormProvider>
     </Box>
   )
 }
