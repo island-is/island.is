@@ -5,7 +5,7 @@ import { IconMapIcon } from '@island.is/island-ui/core'
 import { Box, Icon, StatusColor, Text } from '@island.is/island-ui/core'
 import { Colors } from '@island.is/island-ui/theme'
 
-import { fileSize } from '../../utils/stepHelper'
+import { fileSize } from '../../utils/utils'
 import IconButton from '../IconButton/IconButton'
 import * as styles from './CaseFile.css'
 

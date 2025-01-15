@@ -89,6 +89,7 @@ export const childInfoSubSection = buildSubSection({
             placeholder:
               newPrimarySchoolMessages.childrenNParents
                 .childInfoPronounsPlaceholder,
+            isMulti: true,
           },
         ),
         buildRadioField({
