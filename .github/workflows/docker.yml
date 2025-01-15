@@ -171,7 +171,7 @@ jobs:
           push: ${{ !github.event.localrun }}
           labels: ${{ steps.meta.outputs.labels }}
           tags: ${{ steps.meta.outputs.tags }}
-          target: sys-deps #output-${{ matrix.docker }}
+          target: output-${{ matrix.docker }}
           build-args: |
             NODE_IMAGE_TAG=${{ needs.prepare.outputs.node_image_tag }}
           # cache-from: ${{ steps.inputs.outputs.build_cache }}
