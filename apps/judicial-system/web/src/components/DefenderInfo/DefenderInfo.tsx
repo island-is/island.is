@@ -34,29 +34,34 @@ const DefenderInfo: FC<Props> = ({ workingCase, setWorkingCase }) => {
   const [defenderNotFound, setDefenderNotFound] = useState<boolean>(false)
 
   const getSectionTitle = () => {
-    let message: MessageDescriptor
-
     if (isRestrictionCase(workingCase.type)) {
       if (isProsecutionUser(user)) {
-        message = defenderInfo.restrictionCases.sections.defender.heading
+        return formatMessage(
+          defenderInfo.restrictionCases.sections.defender.heading,
+        )
       } else {
-        message = defenderInfo.restrictionCases.sections.defender.title
+        return formatMessage(
+          defenderInfo.restrictionCases.sections.defender.title,
+        )
       }
     } else {
       if (isProsecutionUser(user)) {
-        message = defenderInfo.investigationCases.sections.defender.heading
+        return formatMessage(
+          defenderInfo.investigationCases.sections.defender.heading,
+        )
       } else {
-        message = defenderInfo.investigationCases.sections.defender.title
+        return formatMessage(
+          defenderInfo.investigationCases.sections.defender.title,
+          {
+            defenderType:
+              workingCase.sessionArrangements ===
+              SessionArrangements.ALL_PRESENT_SPOKESPERSON
+                ? 'Talsmaður'
+                : 'Verjandi',
+          },
+        )
       }
     }
-
-    return formatMessage(message, {
-      defenderType:
-        workingCase.sessionArrangements ===
-        SessionArrangements.ALL_PRESENT_SPOKESPERSON
-          ? 'Talsmaður'
-          : 'Verjandi',
-    })
   }
 
   const renderTooltip = () => {
