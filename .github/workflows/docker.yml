@@ -189,16 +189,24 @@ jobs:
           images: |
             ${{ steps.inputs.outputs.image-repository }}
           tags: |
+            # Edge without prefix should only be used on `main`, so as not to conflict with type=sha
+            # type=edge
+            type=edge,prefix=edge-
+            # SemVer by tag (e.g. v1.2.3)
+            type=semver,pattern={{version}}
+            type=pep440,pattern={{version}}
+            # PR branch/name
             type=ref,event=branch
+            type=ref,event=push
+            type=ref,event=pull_request
+            type=ref,event=workflow_dispatch
             # Git SHA
             type=sha,format=short,prefix=
             type=sha,format=long,prefix=
-            # SemVer by tag (e.g. v1.2.3)
-            type=semver,pattern={{version}}
             # The final sha for the merge commit
-            type=raw,value=${{ github.event.pull_request.merge_commit_sha }}
-            type=raw,value=${{ needs.prepare.outputs.merge-commit-sha }}
-            type=raw,value=${{ needs.prepare.outputs.merge-commit-sha-short }}
+            type=raw,value=mcgh-${{ github.event.pull_request.merge_commit_sha }}
+            type=raw,value=mc-${{ needs.prepare.outputs.merge-commit-sha }}
+            type=raw,value=mc-${{ needs.prepare.outputs.merge-commit-sha-short }}
 
       - name: Docker build/cache deps
         uses: docker/build-push-action@v6
