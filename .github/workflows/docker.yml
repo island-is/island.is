@@ -42,7 +42,7 @@ jobs:
         id: build-args
         run: |
           echo node-image-tag="$(./scripts/ci/get-node-version.mjs)" >>"$GITHUB_OUTPUT"
-          yarn info --json @playwright/test | jq -r '.children.Version | "playwright-image-tag=v\(.)"-focal' >>"$GITHUB_OUTPUT"
+          yarn info --json @playwright/test | jq -r '.children.Version | "playwright-image-tag=v\(.)-focal"' >>"$GITHUB_OUTPUT"
 
       - name: Compute merge commit
         id: merge-commit
@@ -77,6 +77,7 @@ jobs:
             output="matrix=$(
               echo '{
                 "include":[
+                  {"project":"system-e2e","docker":"playwright"},
                   {"project":"web","docker":"next"},
                   {"project":"api","docker":"nest"},
                   {"project":"service-portal","docker":"static"}
@@ -115,6 +116,7 @@ jobs:
     strategy:
       fail-fast: ${{ !!github.event.localrun }}
       matrix: ${{ fromJson(needs.prepare.outputs.matrix) }}
+      max-parallel: ${{ github.event.localrun && 1 || 0 }}
 
     permissions:
       id-token: write # This is required for requesting the JWT
