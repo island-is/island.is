@@ -16,7 +16,6 @@ import {
   formatGrade,
   getApplicationAnswers,
   getApplicationExternalData,
-  getCurrentSchoolName,
 } from '../../../lib/newPrimarySchoolUtils'
 import { FriggSchoolsByMunicipalityQuery } from '../../../types/schema'
 import { ReviewGroupProps } from './props'
@@ -65,14 +64,6 @@ export const School = ({
               <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
                 <DataValue
                   label={formatMessage(
-                    newPrimarySchoolMessages.overview.currentSchool,
-                  )}
-                  value={getCurrentSchoolName(application)}
-                />
-              </GridColumn>
-              <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
-                <DataValue
-                  label={formatMessage(
                     newPrimarySchoolMessages.overview.selectedSchool,
                   )}
                   value={selectedSchoolName || ''}
@@ -83,8 +74,6 @@ export const School = ({
                   }
                 />
               </GridColumn>
-            </GridRow>
-            <GridRow rowGap={2}>
               <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
                 <DataValue
                   label={formatMessage(newPrimarySchoolMessages.overview.grade)}
@@ -96,6 +85,8 @@ export const School = ({
                   )}
                 />
               </GridColumn>
+            </GridRow>
+            <GridRow rowGap={2}>
               <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
                 <DataValue
                   label={formatMessage(newPrimarySchoolMessages.shared.date)}

@@ -15,12 +15,12 @@ export const currentSchoolSubSection = buildSubSection({
   title: newPrimarySchoolMessages.primarySchool.currentSchoolSubSectionTitle,
   children: [
     buildMultiField({
-      id: 'school',
+      id: 'currentSchool',
       title:
         newPrimarySchoolMessages.primarySchool.currentSchoolSubSectionTitle,
       children: [
         buildDescriptionField({
-          id: 'currentSchool',
+          id: 'currentSchool.description',
           title: newPrimarySchoolMessages.primarySchool.currentSchoolInfo,
           titleVariant: 'h4',
         }),
