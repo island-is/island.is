@@ -9,13 +9,30 @@ owner="${3:-github actions}"
 check_mode="${CHECK_MODE:-}"
 run_mode="${RUN_MODE:-}"
 
-while getopts "p:a:o:cr" opt; do
+while getopts "p:a:o:crh" opt; do
   case $opt in
   p) abs_path="$DIR/$OPTARG" ;;
   a) action="$OPTARG" ;;
   o) owner="$OPTARG" ;;
   c) check_mode=true ;;
   r) run_mode=true ;;
+  h)
+    cat <<EOF
+Usage:
+  $0 <path> <action> <owner>
+  $0 [options]
+
+  The options -p, -a, -o are required if using the second form
+
+Options:
+  -p <path> path to the file to check
+  -a <action> action to run
+  -o <owner> owner to commit as
+  -c check mode
+  -r run mode
+EOF
+    exit 0
+    ;;
   *) echo "Invalid option: -$OPTARG" >&2 ;;
   esac
 done
