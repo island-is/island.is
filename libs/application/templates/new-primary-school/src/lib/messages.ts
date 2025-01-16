@@ -423,30 +423,67 @@ export const newPrimarySchoolMessages: MessageDir = {
       defaultMessage:
         'Til að hægt sé að koma til móts við þarfir barnsins þarf skólinn að vita hvaða tungumál eru töluð í nærumhverfi þess. Veldu þau tungumál, eitt eða fleiri sem töluð eru dagsdaglega á heimilinu í samskiptum við eða í kringum barn.',
       description:
-        "In order to meet the child's needs, the school needs to know which languages ​​are spoken in their immediate environment. Choose the languages, one or more, that are spoken daily at home in communication with or around a child.",
+        "In order to meet the child's needs, the school needs to know which languages are used in communication with the child in the family's daily life.",
     },
-    childNativeLanguage: {
-      id: 'nps.application:different.needs.child.native.language',
-      defaultMessage: 'Hvert er móðurmál barnsins?',
-      description: "What is the child's native language?",
+
+    languageEnvTitle: {
+      id: 'nps.application:different.needs.language.environment.title',
+      defaultMessage: 'Tungumálaumhverfi',
+      description: 'Language environment',
     },
-    otherLanguagesSpokenDaily: {
-      id: 'nps.application:different.needs.other.languages.spoken.daily',
+    languageEnvPlaceholder: {
+      id: 'nps.application:different.needs.language.env.placeholder',
+      defaultMessage: 'Veldu það sem best á við',
+      description: 'Choose what best applies',
+    },
+    onlyIcelandicOption: {
+      id: 'nps.application:different.needs.language.only.icelandic.option',
+      defaultMessage: 'Aðeins töluð íslenska',
+      description: 'Only Icelandic spoken',
+    },
+    icelandicAndOtherOption: {
+      id: 'nps.application:different.needs.language.icelandic.and.other.option',
+      defaultMessage: 'Töluð íslenska og annað/önnur tungumál',
+      description: 'Icelandic and other language(s) spoken',
+    },
+    onlyForeignOption: {
+      id: 'nps.application:different.needs.language.only.foreign.option',
+      defaultMessage: 'Aðeins töluð önnur tungumál en íslenska',
+      description: 'Only other languages spoken, not Icelandic',
+    },
+    languagesDescription: {
+      id: 'nps.application:different.needs.languages.description',
       defaultMessage:
-        'Eru önnur tungumál en móðurmál töluð daglega á heimili barnsins?',
+        'Raðaðu tungumálunum eftir því hvaða tungumál er mest er notað. Það sem er mest notað er nr. 1 og svo koll af kolli.',
       description:
-        "Are languages ​​other than the native language spoken daily in the child's home?",
+        'Rank the languages according to which language is used the most. The most used language is number 1, and so on.',
     },
-    languagePlaceholder: {
-      id: 'nps.application:different.needs.language.placeholder',
+    languageSelectionTitle: {
+      id: 'nps.application:different.needs.language.selection.title',
+      defaultMessage: 'Tungumál {no}',
+      description: 'Language {no}',
+    },
+    languageSelectionPlaceholder: {
+      id: 'nps.application:different.needs.language.selection.placeholder',
       defaultMessage: 'Veldu tungumál',
-      description: 'Choose a language',
+      description: 'Choose language',
     },
-    icelandicNotSpokenAroundChild: {
-      id: 'nps.application:different.needs.icelandic.not.spoken.around.child',
-      defaultMessage: 'Það er ekki töluð íslenska í nærumhverfi barnsins',
+    childLanguageTitle: {
+      id: 'nps.application:different.needs.child.language.title',
+      defaultMessage:
+        'Á hverjum af þessum tungumálum sem þú hefur valið finnst barninu sjálfu best að tjá sig á?',
       description:
-        "Icelandic is not spoken in the child's immediate environment",
+        'In which of these languages that you have chosen does the child feel most comfortable expressing themselves?',
+    },
+    signLanguage: {
+      id: 'nps.application:different.needs.sign.language',
+      defaultMessage: 'Notar barnið táknmál?',
+      description: 'Does the child use sign language?',
+    },
+    interpreter: {
+      id: 'nps.application:different.needs.interpreter',
+      defaultMessage: 'Þurfa foreldrar túlk?',
+      description: 'Do the parents need an interpreter?',
     },
 
     // Allergies and intolerances
@@ -606,7 +643,7 @@ export const newPrimarySchoolMessages: MessageDir = {
     parents: {
       id: 'nps.application:overview.parents',
       defaultMessage: 'Foreldri/forsjáraðili',
-      description: 'Parent/guardian',
+      description: 'Parent / guardian',
     },
     nativeLanguage: {
       id: 'nps.application:overview.native.language',

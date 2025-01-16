@@ -17,7 +17,12 @@ import {
   SelectOption,
   SiblingsRow,
 } from '../types'
-import { ReasonForApplicationOptions } from './constants'
+import {
+  ReasonForApplicationOptions,
+  LanguageEnvironmentOptions,
+} from './constants'
+
+import { newPrimarySchoolMessages } from './messages'
 
 export const getApplicationAnswers = (answers: Application['answers']) => {
   const childNationalId = getValueViaPath(answers, 'childNationalId') as string
@@ -55,25 +60,53 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
 
   const siblings = getValueViaPath(answers, 'siblings') as SiblingsRow[]
 
-  const nativeLanguage = getValueViaPath(
+  const languageEnvironment = getValueViaPath(
     answers,
-    'languages.nativeLanguage',
+    'languages.languageEnvironment',
   ) as string
 
-  const otherLanguagesSpokenDaily = getValueViaPath(
+  const signLanguage = getValueViaPath(
     answers,
-    'languages.otherLanguagesSpokenDaily',
+    'languages.signLanguage',
   ) as YesOrNo
 
-  const otherLanguages = getValueViaPath(
-    answers,
-    'languages.otherLanguages',
-  ) as string[]
+  const language1 = getValueViaPath(answers, 'languages.language1') as string
 
-  const icelandicNotSpokenAroundChild = getValueViaPath(
+  const language2 = getValueViaPath(answers, 'languages.language2') as string
+
+  const language3 = getValueViaPath(answers, 'languages.language3') as string
+
+  const language4 = getValueViaPath(answers, 'languages.language4') as string
+
+  const language1HiddenInput = getValueViaPath(
     answers,
-    'languages.icelandicNotSpokenAroundChild',
-  ) as string[]
+    'languages.hiddenLanguage1Input',
+  ) as string
+
+  const language2HiddenInput = getValueViaPath(
+    answers,
+    'languages.hiddenLanguage2Input',
+  ) as string
+
+  const language3HiddenInput = getValueViaPath(
+    answers,
+    'languages.hiddenLanguage3Input',
+  ) as string
+
+  const language4HiddenInput = getValueViaPath(
+    answers,
+    'languages.hiddenLanguage4Input',
+  ) as string
+
+  const childLanguage = getValueViaPath(
+    answers,
+    'languages.childLanguage',
+  ) as string
+
+  const interpreter = getValueViaPath(
+    answers,
+    'languages.interpreter',
+  ) as YesOrNo
 
   const hasFoodAllergiesOrIntolerances = getValueViaPath(
     answers,
@@ -154,10 +187,14 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     reasonForApplicationStreetAddress,
     reasonForApplicationPostalCode,
     siblings,
-    nativeLanguage,
-    otherLanguagesSpokenDaily,
-    otherLanguages,
-    icelandicNotSpokenAroundChild,
+    languageEnvironment,
+    language1,
+    language2,
+    language3,
+    language4,
+    childLanguage,
+    signLanguage,
+    interpreter,
     hasFoodAllergiesOrIntolerances,
     foodAllergiesOrIntolerances,
     hasOtherAllergies,
@@ -172,6 +209,10 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     schoolMunicipality,
     selectedSchool,
     newSchoolHiddenInput,
+    language1HiddenInput,
+    language2HiddenInput,
+    language3HiddenInput,
+    language4HiddenInput,
   }
 }
 
@@ -319,4 +360,31 @@ export const getCurrentSchoolName = (application: Application) => {
   return childMemberships
     .map((membership) => membership.organization)
     .find((organization) => organization?.id === primaryOrgId)?.name
+}
+
+export const getLanguageEnvironments = () => {
+  return [
+    {
+      value: LanguageEnvironmentOptions.ONLY_ICELANDIC,
+      label: newPrimarySchoolMessages.differentNeeds.onlyIcelandicOption,
+    },
+    {
+      value: LanguageEnvironmentOptions.ICELANDIC_AND_OTHER,
+      label: newPrimarySchoolMessages.differentNeeds.icelandicAndOtherOption,
+    },
+    {
+      value: LanguageEnvironmentOptions.ONLY_FOREIGN,
+      label: newPrimarySchoolMessages.differentNeeds.onlyForeignOption,
+    },
+  ]
+}
+
+export const hasOtherLanguages = (answers: FormValue) => {
+  const { languageEnvironment } = getApplicationAnswers(answers)
+
+  if (!languageEnvironment) {
+    return false
+  }
+
+  return languageEnvironment !== LanguageEnvironmentOptions.ONLY_ICELANDIC
 }

@@ -55,3 +55,9 @@ export enum MembershipOrganizationType {
   National = 'national',
   School = 'school',
 }
+
+export enum LanguageEnvironmentOptions {
+  ONLY_ICELANDIC = 'onlyIcelandic',
+  ICELANDIC_AND_OTHER = 'icelandicAndOther',
+  ONLY_FOREIGN = 'onlyForeign',
+}

@@ -17,15 +17,13 @@ export const Languages = ({
   goToScreen,
 }: ReviewGroupProps) => {
   const { formatMessage } = useLocale()
-  const {
-    nativeLanguage,
-    otherLanguagesSpokenDaily,
-    otherLanguages,
-    icelandicNotSpokenAroundChild,
-  } = getApplicationAnswers(application.answers)
+  const { interpreter } = getApplicationAnswers(application.answers)
 
-  const icelandicSelected =
-    nativeLanguage === 'is' || otherLanguages?.includes('is')
+  const icelandicSelected = true
+  //TODO: BK
+  //  nativeLanguage === 'is' || otherLanguages?.includes('is')
+  const nativeLanguage = 'is'
+  const otherLanguages = ['is']
 
   return (
     <ReviewGroup
@@ -47,14 +45,13 @@ export const Languages = ({
           <GridColumn span={['12/12', '12/12', '12/12', '12/12']}>
             <RadioValue
               label={formatMessage(
-                newPrimarySchoolMessages.differentNeeds
-                  .otherLanguagesSpokenDaily,
+                newPrimarySchoolMessages.differentNeeds.interpreter,
               )}
-              value={otherLanguagesSpokenDaily}
+              value={interpreter}
             />
           </GridColumn>
         </GridRow>
-        {otherLanguagesSpokenDaily === YES && (
+        {true && ( //otherLanguagesSpokenDaily
           <>
             <GridRow>
               <GridColumn span={['12/12', '12/12', '12/12', '12/12']}>
@@ -70,8 +67,8 @@ export const Languages = ({
                 />
               </GridColumn>
             </GridRow>
-            {!icelandicSelected &&
-              icelandicNotSpokenAroundChild?.includes(YES) && (
+            {!icelandicSelected && // icelandicNotSpokenAroundChild
+              true && (
                 <GridRow>
                   <GridColumn span={['12/12', '12/12', '12/12', '12/12']}>
                     <DataValue

@@ -90,6 +90,7 @@ export class NewPrimarySchoolService extends BaseTemplateApiService {
   }
 
   async sendApplication({ auth, application }: TemplateApiModuleActionProps) {
+    return true
     const newPrimarySchoolDTO =
       transformApplicationToNewPrimarySchoolDTO(application)
 

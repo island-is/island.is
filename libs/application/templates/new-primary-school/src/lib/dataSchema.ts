@@ -2,7 +2,11 @@ import { NO, YES } from '@island.is/application/types'
 import * as kennitala from 'kennitala'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { z } from 'zod'
-import { ReasonForApplicationOptions } from './constants'
+import {
+  ReasonForApplicationOptions,
+  LanguageEnvironmentOptions,
+} from './constants'
+
 import { errorMessages } from './messages'
 
 const validatePhoneNumber = (value: string) => {
@@ -136,20 +140,19 @@ export const dataSchema = z.object({
   startDate: z.string(),
   languages: z
     .object({
-      nativeLanguage: z.string(),
-      otherLanguagesSpokenDaily: z.enum([YES, NO]),
-      otherLanguages: z.array(z.string()).optional(),
+      languageEnvironment: z.string(),
+      signLanguage: z.enum([YES, NO]),
+      interpreter: z.enum([YES, NO]),
+      language1: z.string().optional(),
+      language2: z.string().optional(),
+      language3: z.string().optional(),
+      language4: z.string().optional(),
+      childLanguage: z.string().optional(),
     })
-    .refine(
-      ({ otherLanguagesSpokenDaily, otherLanguages }) =>
-        otherLanguagesSpokenDaily === YES
-          ? !!otherLanguages && otherLanguages.length > 0
-          : true,
-      {
-        path: ['otherLanguages'],
-        params: errorMessages.languagesRequired,
-      },
-    ),
+    .refine(({ language1, language2 }) => !!language1 && !!language2, {
+      path: ['childLanguage'],
+      params: errorMessages.languagesRequired,
+    }),
   allergiesAndIntolerances: z
     .object({
       hasFoodAllergiesOrIntolerances: z.array(z.string()),

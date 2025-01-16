@@ -24,10 +24,14 @@ export const transformApplicationToNewPrimarySchoolDTO = (
     reasonForApplicationStreetAddress,
     reasonForApplicationPostalCode,
     selectedSchool,
-    nativeLanguage,
-    otherLanguagesSpokenDaily,
-    otherLanguages,
-    icelandicNotSpokenAroundChild,
+    language1,
+    language2,
+    language3,
+    language4,
+    childLanguage,
+    languageEnvironment,
+    signLanguage,
+    interpreter,
     developmentalAssessment,
     specialSupport,
     startDate,
@@ -80,7 +84,9 @@ export const transformApplicationToNewPrimarySchoolDTO = (
   ]
 
   let noIcelandic: boolean
-  if (otherLanguagesSpokenDaily === YES) {
+
+  // TODO: BK
+  /*if (otherLanguagesSpokenDaily === YES) {
     if (nativeLanguage === 'is' || otherLanguages?.includes('is')) {
       noIcelandic = false
     } else {
@@ -88,7 +94,7 @@ export const transformApplicationToNewPrimarySchoolDTO = (
     }
   } else {
     noIcelandic = nativeLanguage !== 'is'
-  }
+  } */
 
   const newPrimarySchoolDTO: FormDto = {
     type: FormDtoTypeEnum.Registration,
@@ -140,10 +146,11 @@ export const transformApplicationToNewPrimarySchoolDTO = (
             hasDiagnoses: developmentalAssessment === YES,
           },
           language: {
-            nativeLanguage: nativeLanguage,
-            noIcelandic,
-            otherLanguages:
-              otherLanguagesSpokenDaily === YES ? otherLanguages : undefined,
+            //TODO: BK
+            nativeLanguage: childLanguage,
+            noIcelandic: false,
+            otherLanguages: undefined,
+            // otherLanguagesSpokenDaily === YES ? otherLanguages : undefined,
           },
         }
       : {}),
