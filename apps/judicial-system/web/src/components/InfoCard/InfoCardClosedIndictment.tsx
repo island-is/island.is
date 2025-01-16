@@ -1,6 +1,7 @@
 import { FC, useContext } from 'react'
 
 import { EventType } from '../../graphql/schema'
+import { isNonEmptyArray } from '../../utils/arrayHelpers'
 import { FormContext } from '../FormProvider/FormProvider'
 import InfoCard from './InfoCard'
 import useInfoCardItems from './useInfoCardItems'
@@ -40,6 +41,8 @@ const InfoCardClosedIndictment: FC<Props> = (props) => {
     (log) => log.eventType === EventType.INDICTMENT_REVIEWED,
   )?.created
 
+  const showMergeCaseItem = isNonEmptyArray(mergeCase.values) && !!mergeCase.values[0]
+
   return (
     <InfoCard
       sections={[
@@ -63,7 +66,7 @@ const InfoCardClosedIndictment: FC<Props> = (props) => {
             policeCaseNumbers,
             courtCaseNumber,
             prosecutorsOffice,
-            ...(workingCase.mergeCase ? [mergeCase] : []),
+            ...(showMergeCaseItem  ? [mergeCase] : []),
             court,
             prosecutor(workingCase.type),
             judge,
