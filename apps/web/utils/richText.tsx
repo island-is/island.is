@@ -83,7 +83,6 @@ import { useI18n } from '@island.is/web/i18n'
 
 import AdministrationOfOccupationalSafetyAndHealthCourses from '../components/connected/AdministrationOfOccupationalSafetyAndHealthCourses/AdministrationOfOccupationalSafetyAndHealthCourses'
 import { BenefitsOfDigitalProcessesCalculator } from '../components/connected/BenefitsOfDigitalProcessesCalculator/BenefitsOfDigitalProcessesCalculator'
-import { MonthlyStatistics } from '../components/connected/electronicRegistrationStatistics'
 import { GrindavikResidentialPropertyPurchaseCalculator } from '../components/connected/GrindavikResidentialPropertyPurchaseCalculator'
 import HousingBenefitCalculator from '../components/connected/HousingBenefitCalculator/HousingBenefitCalculator/HousingBenefitCalculator'
 import JourneymanList from '../components/connected/syslumenn/TableLists/JourneymanList/JourneymanList'
@@ -132,9 +131,6 @@ export const webRenderConnectedComponent = (
       break
     case 'Fiskistofa/SelectedShip':
       connectedComponent = <SelectedShip />
-      break
-    case 'ElectronicRegistrations/MonthlyStatistics':
-      connectedComponent = <MonthlyStatistics slice={slice} />
       break
     case 'Fiskistofa/ShipSearchBoxedInput':
       connectedComponent = <ShipSearchBoxedInput />
@@ -287,6 +283,7 @@ const defaultRenderComponent = {
       teamMembers={slice.teamMembers as TeamListProps['teamMembers']}
       filterTags={slice.filterTags}
       variant={slice.variant as 'accordion' | 'card'}
+      showSearchInput={slice.showSearchInput ?? true}
     />
   ),
   Image: (slice: ImageProps) => {
