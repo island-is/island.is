@@ -18,8 +18,10 @@ export const oldAgePensionFormMessage: MessageDir = {
     },
     externalDataDescription: {
       id: 'oap.application:externalData.description',
-      defaultMessage: 'Eftirfarandi upplýsingar verða sóttar rafrænt þar sem hægt er',
-      description: 'The following information will be retrieved electronically where possible',
+      defaultMessage:
+        'Eftirfarandi upplýsingar verða sóttar rafrænt þar sem hægt er',
+      description:
+        'The following information will be retrieved electronically where possible',
     },
     skraInformationSubTitle: {
       id: 'oap.application:prerequisites.national.registry.subtitle',
