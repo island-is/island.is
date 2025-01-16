@@ -6,6 +6,7 @@ rel_path=$1
 abs_path=$DIR/$rel_path
 action=$2
 owner="${3:-github actions}"
+check_mode="${4:-${CHECK_MODE:-}}"
 
 commit_as_github_actions() {
   git config user.name 'github-actions[bot]'
@@ -22,6 +23,10 @@ IFS=' ' read -r -a action_array <<<"$action"
 
 yarn "${action_array[@]}"
 
+if [[ "$check_mode" == true ]] && ! git diff --quiet; then
+  echo "found unstaged files from $action, aborting"
+  exit 1
+fi
 if [[ $(git diff --stat "$abs_path") != '' ]]; then
   echo "changes found in $rel_path that will be commited"
   git diff "$abs_path"
