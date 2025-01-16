@@ -113,7 +113,7 @@ jobs:
       image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
     needs: prepare
     strategy:
-      fail-fast: ${{ !github.event.localrun }}
+      fail-fast: ${{ !!github.event.localrun }}
       matrix: ${{ fromJson(needs.prepare.outputs.matrix) }}
 
     permissions:
