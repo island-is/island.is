@@ -1,4 +1,5 @@
 # This is a multi-stage Dockerfile which contains all CI-related operations as well as images to be deployed in production
+# `base-*` layers are intended for maximum cacheability, only doing system-level actions
 
 # Global ARGs (used across multiple stages)
 ARG PLAYWRIGHT_VERSION=1.49.1
@@ -11,7 +12,7 @@ ARG NODE_IMAGE_TAG=20-alpine
 ARG APP
 
 # Base image for dependencies
-FROM ${DOCKER_REGISTRY}/library/node:${NODE_IMAGE_TAG} AS cacheable-deps
+FROM ${DOCKER_REGISTRY}/library/node:${NODE_IMAGE_TAG} AS base-deps
 
 # hadolint ignore=DL3018
 RUN apk add --no-cache python3 build-base gcc git jq openjdk21 py3-distutils-extra && \
@@ -21,7 +22,7 @@ RUN apk add --no-cache python3 build-base gcc git jq openjdk21 py3-distutils-ext
 WORKDIR /build
 
 # Add intermediate step for debugging system dependencies
-FROM cacheable-deps AS deps
+FROM base-deps AS deps
 
 # Adding and installing packages
 COPY package.json yarn.lock .yarnrc.yml ./
@@ -53,7 +54,7 @@ RUN yarn run build ${APP} --prod
 
 
 # This is base image for containers that are to be deployed
-FROM ${DOCKER_REGISTRY}/library/node:${NODE_IMAGE_TAG} AS cacheable-base
+FROM ${DOCKER_REGISTRY}/library/node:${NODE_IMAGE_TAG} AS base-node
 ARG APP
 ARG APP_HOME
 ARG APP_DIST_HOME
@@ -66,7 +67,7 @@ WORKDIR /webapp
 RUN addgroup runners && \
   adduser --disabled-password runner --ingroup runners
 
-FROM cacheable-base AS cacheable-base-with-pg
+FROM base-node AS base-node-with-pg
 
 # hadolint ignore=DL3016
 RUN npm install -g \
@@ -76,7 +77,7 @@ RUN npm install -g \
 
 USER runner
 
-FROM cacheable-base-with-pg AS output-express
+FROM base-node-with-pg AS output-express
 
 # Stage-specific ARGs
 ARG APP_DIST_HOME
@@ -93,7 +94,7 @@ LABEL commit=${GIT_COMMIT_SHA}
 ENTRYPOINT []
 CMD [ "node", "--no-experimental-fetch", "main.js" ]
 
-FROM cacheable-base-with-pg AS output-next
+FROM base-node-with-pg AS output-next
 
 # Stage-specific ARGs
 ARG APP
@@ -115,7 +116,7 @@ LABEL commit=${GIT_COMMIT_SHA}
 ENTRYPOINT [ "node", "main.js" ]
 
 
-FROM ${DOCKER_REGISTRY}/library/nginx:1.21-alpine AS output-static
+FROM ${DOCKER_REGISTRY}/library/nginx:1.21-alpine AS base-static
 
 # Stage-specific ARGs
 ARG APP
@@ -128,6 +129,9 @@ RUN mkdir -p /etc/nginx/templates
 # hadolint ignore=DL3018
 RUN apk add --no-cache bash nodejs && \
   rm -rf /var/cache/apk/*
+
+
+FROM base-static AS output-static
 
 COPY scripts/dockerfile-assets/nginx/* /etc/nginx/templates
 COPY scripts/dockerfile-assets/bash/extract-environment.sh /docker-entrypoint.d
@@ -142,7 +146,8 @@ LABEL commit=${GIT_COMMIT_SHA}
 ENV APP=${APP}
 ENV BASEPATH=/
 
-FROM cacheable-base AS output-jest
+
+FROM base-node AS base-jest
 
 # Stage-specific ARGs
 ARG APP
@@ -151,10 +156,12 @@ ARG GIT_BRANCH
 ARG GIT_COMMIT_SHA
 ARG GIT_REPOSITORY_URL
 
-RUN echo 'module.exports = {};' > jest.config.js
-
 # hadolint ignore=DL3016
-RUN npm install -g jest
+RUN npm install -g jest && \
+  echo 'module.exports = {};' > jest.config.js
+
+
+FROM base-jest AS output-jest
 
 COPY --from=builder /dist /webapp/
 
@@ -168,7 +175,6 @@ CMD [ "jest", "main.spec.js" ]
 
 
 FROM mcr.microsoft.com/playwright:${PLAYWRIGHT_IMAGE_TAG} AS playwright-base
-
 FROM playwright-base AS output-playwright
 
 # Stage-specific ARGs
@@ -238,6 +244,6 @@ LABEL commit=${GIT_COMMIT_SHA}
 ENTRYPOINT ["./entrypoint.sh"]
 
 
-FROM cacheable-base AS output-native
+FROM base-node AS output-native
 
 RUN echo "not-implemented"
