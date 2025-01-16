@@ -162,7 +162,6 @@ export const mapGrant = ({ fields, sys }: IGrant): Grant => {
     files: (fields.grantFiles ?? []).map((file) => mapAsset(file)) ?? [],
     supportLinks:
       (fields.grantSupportLinks ?? []).map((link) => mapLink(link)) ?? [],
-
     categoryTags: fields.grantCategoryTags
       ? fields.grantCategoryTags.map((tag) => mapGenericTag(tag))
       : undefined,

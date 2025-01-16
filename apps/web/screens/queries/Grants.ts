@@ -5,6 +5,7 @@ import { nestedFields, slices } from './fragments'
 export const GET_GRANTS_QUERY = gql`
   query GetGrants($input: GetGrantsInput!) {
     getGrants(input: $input) {
+      total
       items {
         id
         name

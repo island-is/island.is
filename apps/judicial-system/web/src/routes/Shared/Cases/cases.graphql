@@ -28,7 +28,16 @@ query Cases {
       defenderChoice
       verdictViewDate
       isSentToPrisonAdmin
+      punishmentType
+      openedByPrisonAdminDate
+      subpoenas {
+        id
+        serviceStatus
+        subpoenaId
+      }
+      verdictAppealDate
     }
+    defendantsPunishmentType
     courtDate
     isValidToDateInThePast
     initialRulingDate

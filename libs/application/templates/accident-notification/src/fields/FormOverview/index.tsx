@@ -1,5 +1,5 @@
 import { formatText } from '@island.is/application/core'
-import { FieldBaseProps, FormValue } from '@island.is/application/types'
+import { FieldBaseProps, FormValue, YES } from '@island.is/application/types'
 import {
   formatPhoneNumber,
   ReviewGroup,
@@ -17,8 +17,7 @@ import format from 'date-fns/format'
 import is from 'date-fns/locale/is'
 import parseISO from 'date-fns/parseISO'
 import kennitala from 'kennitala'
-import React, { FC } from 'react'
-import { States, YES } from '../../utils/constants'
+import { States } from '../../utils/constants'
 import { AccidentNotification } from '../../lib/dataSchema'
 import {
   accidentDetails,
@@ -38,24 +37,30 @@ import {
   sportsClubInfo,
   workMachine,
 } from '../../lib/messages'
+import * as styles from './FormOverview.css'
+import { FileValueLine, ValueLine } from './ValueLine'
 import {
   getAttachmentTitles,
+  returnMissingDocumentsList,
+} from '../../utils/documentUtils'
+import {
   getWorkplaceData,
-  hideLocationAndPurpose,
   isAgricultureAccident,
   isFishermanAccident,
   isGeneralWorkplaceAccident,
-  isHomeActivitiesAccident,
   isMachineRelatedAccident,
   isProfessionalAthleteAccident,
+} from '../../utils/occupationUtils'
+import {
   isReportingOnBehalfOfChild,
   isReportingOnBehalfOfEmployee,
   isReportingOnBehalfOfInjured,
+} from '../../utils/reportingUtils'
+import { hideLocationAndPurpose } from '../../utils/miscUtils'
+import {
+  isHomeActivitiesAccident,
   isWorkAccident,
-  returnMissingDocumentsList,
-} from '../../utils'
-import * as styles from './FormOverview.css'
-import { FileValueLine, ValueLine } from './ValueLine'
+} from '../../utils/accidentUtils'
 
 interface SubmittedApplicationData {
   data?: {
@@ -63,7 +68,7 @@ interface SubmittedApplicationData {
   }
 }
 
-interface FormOverviewProps {
+type Props = {
   field: {
     props: {
       isAssignee: boolean
@@ -71,9 +76,11 @@ interface FormOverviewProps {
   }
 }
 
-export const FormOverview: FC<
-  React.PropsWithChildren<FieldBaseProps & FormOverviewProps>
-> = ({ application, goToScreen, field }) => {
+export const FormOverview = ({
+  application,
+  goToScreen,
+  field,
+}: FieldBaseProps & Props) => {
   const isAssignee = field?.props?.isAssignee || false
   const answers = application.answers as AccidentNotification
   const { formatMessage } = useLocale()

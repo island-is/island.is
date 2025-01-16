@@ -55,6 +55,7 @@ const assetSchema = ({ withShare }: { withShare?: boolean } = {}) =>
             .refine((v) => (withShare ? validateAssetNumber(v) : true)),
           description: z.string(),
           propertyValuation: z.string(),
+          enabled: z.boolean(),
           ...(withShare ? { share: z.string() } : {}),
           ...deceasedShare,
         })
@@ -222,6 +223,7 @@ export const inheritanceReportSchema = z.object({
             assetNumber: z.string().refine((v) => v),
             propertyValuation: z.string().refine((v) => v),
             exchangeRateOrInterest: z.string().refine((v) => v),
+            enabled: z.boolean(),
             ...deceasedShare,
           })
           .refine(
@@ -247,6 +249,7 @@ export const inheritanceReportSchema = z.object({
             description: z.string(),
             assetNumber: z.string(),
             propertyValuation: z.string().refine((v) => v),
+            enabled: z.boolean(),
             ...deceasedShare,
           })
           .refine(
@@ -284,6 +287,7 @@ export const inheritanceReportSchema = z.object({
             amount: z.string(),
             exchangeRateOrInterest: z.string(),
             value: z.string().refine((v) => v),
+            enabled: z.boolean(),
             ...deceasedShare,
           })
           .refine(
@@ -672,6 +676,14 @@ export const inheritanceReportSchema = z.object({
   }),
 
   heirsAdditionalInfo: z.string().optional(),
+  heirsAdditionalInfoPrivateTransferFiles: z
+    .object({ key: z.string(), name: z.string() })
+    .array()
+    .optional(),
+  heirsAdditionalInfoFilesOtherDocuments: z
+    .object({ key: z.string(), name: z.string() })
+    .array()
+    .optional(),
 
   spouse: z
     .object({

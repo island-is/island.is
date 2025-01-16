@@ -4,8 +4,8 @@ query ListLicenses($input: GetGenericLicensesInput!, $locale: String) {
   }
 }
 
-query GetLicense($input: GetGenericLicenseInput!) {
-  genericLicense(input: $input) {
+query GetLicense($input: GetGenericLicenseInput!, $locale: String) {
+  genericLicense(input: $input, locale: $locale) {
     ...GenericUserLicenseFragment
     barcode {
       token

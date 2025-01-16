@@ -6,6 +6,18 @@ export const m = {
       id: 'web.grants:general.seeMore',
       defaultMessage: 'Skoða nánar',
     },
+    goBack: {
+      id: 'web.grants:general.goBack',
+      defaultMessage: 'Til baka',
+    },
+    displayGrid: {
+      id: 'web.grants:general.displayGrid',
+      defaultMessage: 'Sýna sem spjöld',
+    },
+    displayList: {
+      id: 'web.grants:general.displayList',
+      defaultMessage: 'Sýna sem lista',
+    },
   }),
   search: defineMessages({
     search: {
@@ -74,7 +86,7 @@ export const m = {
     },
     applicationWasOpenToAndWith: {
       id: 'web.grants:search.applicationWasOpenToAndWith',
-      defaultMessage: 'Frestur var til og með {arg}',
+      defaultMessage: 'Frestur var til {arg}',
     },
     applicationAlwaysOpen: {
       id: 'web.grants:search.applicationAlwaysOpen',
@@ -133,6 +145,10 @@ export const m = {
     deadline: {
       id: 'web.grants:single.deadline',
       defaultMessage: 'Umsóknir',
+    },
+    deadlinePeriod: {
+      id: 'web.grants:single.deadlinePeriod',
+      defaultMessage: 'Umsóknartímabil',
     },
     status: {
       id: 'web.grants:single.status',
@@ -232,6 +248,10 @@ export const m = {
     grantCategoryBusinessDescription: {
       id: 'web.grants:home.grantCategoryBusinessDescription',
       defaultMessage: 'Lýsing á atvinnulífi',
+    },
+    grantCategoryEnergyTransitionDescription: {
+      id: 'web.grants:home.grantCategoryEnergyTransitionDescription',
+      defaultMessage: 'Lýsing á orkuskiptum',
     },
   }),
 }
