@@ -1,7 +1,8 @@
 # This is a multi-stage Dockerfile which contains all CI-related operations as well as images to be deployed in production
 
 # Global ARGs (used across multiple stages)
-ARG PLAYWRIGHT_VERSION
+ARG PLAYWRIGHT_VERSION=1.49.1
+ARG PLAYWRIGHT_IMAGE_TAG=v${PLAYWRIGHT_VERSION}-noble
 ARG DOCKER_ECR_REGISTRY=public.ecr.aws/docker
 ARG DOCKER_IMAGE_REGISTRY=${DOCKER_ECR_REGISTRY%/docker}
 # Alias DOCKER_IMAGE_REGISTRY to DOCKER_REGISTRY for backwards compatibility
@@ -162,7 +163,7 @@ LABEL commit=${GIT_COMMIT_SHA}
 CMD [ "jest", "main.spec.js" ]
 
 
-FROM mcr.microsoft.com/playwright:v${PLAYWRIGHT_VERSION}-focal AS playwright-base
+FROM mcr.microsoft.com/playwright:${PLAYWRIGHT_IMAGE_TAG} AS playwright-base
 
 FROM playwright-base AS output-playwright
 
