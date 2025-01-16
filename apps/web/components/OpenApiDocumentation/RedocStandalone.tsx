@@ -1,4 +1,4 @@
-import { MenuStore,RedocStandalone } from 'redoc'
+import { MenuStore, RedocStandalone } from 'redoc'
 
 const originalActivate = MenuStore.prototype.activate
 

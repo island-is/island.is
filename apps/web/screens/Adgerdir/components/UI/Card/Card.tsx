@@ -4,7 +4,7 @@ import { useMeasure } from 'react-use'
 import cn from 'classnames'
 import Link, { LinkProps } from 'next/link'
 
-import { Box, Inline,Stack, Text } from '@island.is/island-ui/core'
+import { Box, Inline, Stack, Text } from '@island.is/island-ui/core'
 import { BackgroundImage } from '@island.is/web/components'
 import { Image } from '@island.is/web/graphql/schema'
 

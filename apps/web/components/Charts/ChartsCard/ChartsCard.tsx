@@ -2,7 +2,7 @@ import React, { ReactNode } from 'react'
 import { useMeasure } from 'react-use'
 import cn from 'classnames'
 
-import { Box, Hyphen,Text } from '@island.is/island-ui/core'
+import { Box, Hyphen, Text } from '@island.is/island-ui/core'
 import { ExportCSVButton } from '@island.is/web/components'
 
 import {

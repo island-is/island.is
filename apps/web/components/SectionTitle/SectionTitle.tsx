@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { Box, Icon, IconMapIcon,Inline, Text } from '@island.is/island-ui/core'
+import { Box, Icon, IconMapIcon, Inline, Text } from '@island.is/island-ui/core'
 
 export interface SectionTitleProps {
   title: string

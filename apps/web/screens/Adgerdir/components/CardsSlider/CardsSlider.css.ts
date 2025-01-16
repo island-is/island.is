@@ -1,4 +1,4 @@
-import { globalStyle,style, styleVariants } from '@vanilla-extract/css'
+import { globalStyle, style, styleVariants } from '@vanilla-extract/css'
 
 import { themeUtils } from '@island.is/island-ui/theme'
 

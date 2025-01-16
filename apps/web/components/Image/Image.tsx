@@ -1,4 +1,4 @@
-import React, { useEffect,useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import cn from 'classnames'
 
 import { Image as ApiImage } from '@island.is/web/graphql/schema'

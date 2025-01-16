@@ -1,6 +1,6 @@
 import React, { FC } from 'react'
 
-import { Box,Button } from '@island.is/island-ui/core'
+import { Box, Button } from '@island.is/island-ui/core'
 
 const isIterableObject = (val: object[]) => {
   return typeof val === 'object' && val !== null && !Array.isArray(val)

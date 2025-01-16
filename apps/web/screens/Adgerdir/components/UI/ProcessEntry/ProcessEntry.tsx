@@ -1,7 +1,7 @@
 import React, { FC } from 'react'
 
 import { IframeModal } from '@island.is/island-ui/contentful'
-import { Box, BoxProps,Link, Text } from '@island.is/island-ui/core'
+import { Box, BoxProps, Link, Text } from '@island.is/island-ui/core'
 
 import { Button, ButtonProps, ButtonTypes } from '../Button/Button'
 import * as covidStyles from '../styles/styles.css'

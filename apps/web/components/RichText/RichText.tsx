@@ -7,7 +7,7 @@ import {
   renderSlices,
   Slice as SliceType,
 } from '@island.is/island-ui/contentful'
-import { Link,LinkContext } from '@island.is/island-ui/core'
+import { Link, LinkContext } from '@island.is/island-ui/core'
 
 const TellUsAStory = dynamic(() => import('../TellUsAStory/TellUsAStory'))
 const ContactUs = dynamic(() => import('../ContactUs/ContactUs'))

@@ -1,8 +1,8 @@
 import React from 'react'
 
-import { Box,GridContainer } from '@island.is/island-ui/core'
+import { Box, GridContainer } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
-import { SimpleSlider,StatisticsCard } from '@island.is/web/components'
+import { SimpleSlider, StatisticsCard } from '@island.is/web/components'
 
 interface CardImageprops {
   title?: string
