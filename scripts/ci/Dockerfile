@@ -57,6 +57,9 @@ ENV NODE_OPTIONS="--max-old-space-size=8192"
 
 RUN yarn run build ${APP} --prod
 
+SHELL ["/bin/ash", "-o", "pipefail", "-c"]
+RUN mv "dist/$(yarn nx show project ${APP} --json | jq -r '.root')" /dist
+
 
 # This is base image for containers that are to be deployed
 FROM ${DOCKER_REGISTRY}/library/node:${NODE_IMAGE_TAG} AS base-node
