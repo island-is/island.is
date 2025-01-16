@@ -17,6 +17,11 @@ commit_as_dirty_bot() {
   git config user.email 'builders@andes.is'
 }
 
+# Split action into array safely:
+IFS=' ' read -r -a action_array <<<"$action"
+
+yarn "${action_array[@]}"
+
 if [[ $(git diff --stat "$abs_path") != '' ]]; then
   echo "changes found in $rel_path that will be commited"
   git diff "$abs_path"
