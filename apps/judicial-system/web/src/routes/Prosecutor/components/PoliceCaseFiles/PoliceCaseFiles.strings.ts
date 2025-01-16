@@ -41,7 +41,7 @@ export const strings = defineMessages({
   invalidPoliceCaseFileFromLOKE: {
     id: 'judicial.system.core:police_case_files.invalid_police_case_file_from_loke',
     defaultMessage:
-      'Skráartegund ekki leyfð í Rettarvörslugátt. Eingöngu er tekið á móti gögnum á .PDF formi.',
+      'Skráartegund ekki leyfð í Réttarvörslugátt. Eingöngu er tekið á móti gögnum á .PDF formi.',
     description:
       'Notaður sem texti í upplýsingasvæði fyrir skrár sem RVG styður ekki',
   },

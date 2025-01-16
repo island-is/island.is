@@ -2,7 +2,7 @@ import { FC, useContext } from 'react'
 import { useIntl } from 'react-intl'
 
 import { AlertMessage, Box } from '@island.is/island-ui/core'
-import { isIndictmentCase } from '@island.is/judicial-system/types'
+import { CaseType, isIndictmentCase } from '@island.is/judicial-system/types'
 import {
   FormContext,
   Item,
@@ -12,6 +12,7 @@ import {
   CaseOrigin,
   PoliceCaseFile,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { formatMessage } from '@island.is/judicial-system-web/src/utils/testHelpers'
 
 import { strings } from './PoliceCaseFiles.strings'
 
@@ -44,6 +45,16 @@ interface Props {
   policeCaseFiles?: PoliceCaseFilesData
 }
 
+const validateFileName = (filename: string) => {
+  const invalid = !filename.endsWith('.pdf')
+  if (!invalid) return {}
+
+  return {
+    invalid,
+    tooltipText: formatMessage(strings.invalidPoliceCaseFileFromLOKE),
+  }
+}
+
 const PoliceCaseFiles: FC<Props> = ({
   onUpload,
   policeCaseFileList,
@@ -51,24 +62,17 @@ const PoliceCaseFiles: FC<Props> = ({
 }) => {
   const { formatMessage } = useIntl()
   const { workingCase } = useContext(FormContext)
+  const isIndictment = workingCase.type === CaseType.INDICTMENT
 
   return (
     <Box marginBottom={5}>
       {workingCase.origin === CaseOrigin.LOKE && (
         <SelectableList
           items={policeCaseFileList?.map((p) => {
-            const invalid = !p.name.endsWith('.pdf')
             return {
               id: p.id,
               name: p.name,
-              ...(invalid
-                ? {
-                    invalid,
-                    tooltipText: formatMessage(
-                      strings.invalidPoliceCaseFileFromLOKE,
-                    ),
-                  }
-                : {}),
+              ...(isIndictment ? validateFileName(p.name) : {}),
             }
           })}
           CTAButton={{
