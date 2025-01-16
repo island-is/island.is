@@ -333,6 +333,11 @@ jobs:
           ./scripts/ci/20_check-formatting.sh "write"
           ./infra/scripts/ci/git-check-dirty.sh "/" "nx format:write" "dirtybot"
 
+      - name: NX lint:write
+        if: ${{ github.event_name == 'pull_request' }}
+        run: |
+          ./infra/scripts/ci/git-check-dirty.sh "/" "nx lint:write" "dirtybot"
+
   linting:
     needs:
       - prepare
