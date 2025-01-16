@@ -59,8 +59,7 @@ if [[ "$check_mode" == true ]] && ! git diff --quiet; then
 fi
 if [[ $(git diff --stat "$abs_path") != '' ]]; then
   echo "changes found in $rel_path that will be commited"
-  git diff "$abs_path"
-  git add "$abs_path"
+  git diff "$abs_path" || true
   if [ "$owner" == "github actions" ]; then
     commit_as_github_actions
   elif [ "$owner" == "dirtybot" ]; then
@@ -69,7 +68,7 @@ if [[ $(git diff --stat "$abs_path") != '' ]]; then
     echo "Error: Unknown owner!"
     exit 1
   fi
-  git commit -m "chore: $action update dirty files"
+  git commit -am "chore: $action update dirty files"
   git push
 else
   echo "found no unstaged files from $action, nothing to commit"
