@@ -302,7 +302,7 @@ export const spouseConfirmation = ({ allowFakeData = false }): Form =>
                 alertType: 'warning',
               }),
               buildCheckboxField({
-                id: 'applicantConfirmMissingInfo',
+                id: 'spouseConfirmMissingInfo',
                 title: '',
                 large: true,
                 defaultValue: [],
