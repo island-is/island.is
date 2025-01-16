@@ -364,7 +364,7 @@ jobs:
           enable-cache: 'node_modules,generated-files'
       - name: Lintfix
         run: |
-          ./infra/scripts/ci/git-check-dirty.sh "/" "nx run-many -t lint --fix --parallel --projects=${AFFECTED_PROJECTS}" "dirtybot"
+          ./infra/scripts/ci/git-check-dirty.sh "/" "nx run-many -t lint --fix --parallel 6 --projects=${AFFECTED_PROJECTS}" "dirtybot"
 
   build:
     needs:
