@@ -15,8 +15,10 @@ export const SchoolSelection: FC<FieldBaseProps> = (props) => {
   const { setValue, getValues, register } = useFormContext()
 
   const isFreshman =
-    getValueViaPath<ApplicationType>(application.answers, 'applicationType') ===
-    ApplicationType.FRESHMAN
+    getValueViaPath<ApplicationType>(
+      application.answers,
+      'applicationType.value',
+    ) === ApplicationType.FRESHMAN
 
   const [schoolDuplicateError, setSchoolDuplicateError] =
     useState<boolean>(false)
@@ -166,6 +168,10 @@ export const SchoolSelection: FC<FieldBaseProps> = (props) => {
             ...props.field,
             id: `${props.field.id}.first`,
           }}
+          otherFieldIds={[
+            `${props.field.id}.second`,
+            `${props.field.id}.third`,
+          ]}
         />
       </Box>
 
@@ -182,6 +188,10 @@ export const SchoolSelection: FC<FieldBaseProps> = (props) => {
               ...props.field,
               id: `${props.field.id}.second`,
             }}
+            otherFieldIds={[
+              `${props.field.id}.first`,
+              `${props.field.id}.third`,
+            ]}
           />
         </Box>
       ) : (
@@ -189,7 +199,6 @@ export const SchoolSelection: FC<FieldBaseProps> = (props) => {
           <Text variant="h5">
             {formatMessage(school.secondSelection.addSubtitle)}
           </Text>
-          <Text>{formatMessage(school.thirdSelection.addDescription)}</Text>
         </Box>
       )}
       {!isFreshman && (
@@ -233,6 +242,10 @@ export const SchoolSelection: FC<FieldBaseProps> = (props) => {
                   ...props.field,
                   id: `${props.field.id}.third`,
                 }}
+                otherFieldIds={[
+                  `${props.field.id}.first`,
+                  `${props.field.id}.second`,
+                ]}
               />
             </Box>
           ) : (

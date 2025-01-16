@@ -2,8 +2,10 @@ import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { Test, TestingModule } from '@nestjs/testing'
 import crypto from 'crypto'
-import { CryptoService } from './crypto.service'
+import { tokenSecretBase64 } from '../../../test/sharedConstants'
 import { BffConfig } from '../bff.config'
+import { CryptoService } from './crypto.service'
+import { CryptoKeyService } from './cryptoKey.service'
 
 const DECRYPTED_TEXT = 'Hello, World!'
 
@@ -18,8 +20,7 @@ const invalidConfig = {
 }
 
 const validConfig = {
-  // A valid 32-byte base64 key
-  tokenSecretBase64: 'ABHlmq6Ic6Ihip4OnTa1MeUXtHFex8IT/mFZrjhsme0=',
+  tokenSecretBase64,
 }
 
 const mockLogger = {
@@ -30,6 +31,7 @@ const createModule = async (config = validConfig): Promise<TestingModule> => {
   return Test.createTestingModule({
     providers: [
       CryptoService,
+      CryptoKeyService,
       { provide: LOGGER_PROVIDER, useValue: mockLogger },
       { provide: BffConfig.KEY, useValue: config },
     ],
