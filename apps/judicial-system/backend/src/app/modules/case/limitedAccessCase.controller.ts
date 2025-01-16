@@ -28,14 +28,12 @@ import {
 } from '@island.is/judicial-system/auth'
 import type { User as TUser } from '@island.is/judicial-system/types'
 import {
-  CaseAppealRulingDecision,
-  CaseAppealState,
   CaseState,
-  CaseTransition,
   CaseType,
   indictmentCases,
   investigationCases,
   restrictionCases,
+  UserRole,
 } from '@island.is/judicial-system/types'
 
 import { nowFactory } from '../../factories'
@@ -60,6 +58,7 @@ import {
 } from './guards/rolesRules'
 import { CaseInterceptor } from './interceptors/case.interceptor'
 import { CompletedAppealAccessedInterceptor } from './interceptors/completedAppealAccessed.interceptor'
+import { DefendantIndictmentAccessedInterceptor } from './interceptors/defendantIndictmentAccessed.interceptor'
 import { LimitedAccessCaseFileInterceptor } from './interceptors/limitedAccessCaseFile.interceptor'
 import { Case } from './models/case.model'
 import { transitionCase } from './state/case.state'
@@ -87,6 +86,7 @@ export class LimitedAccessCaseController {
   )
   @RolesRules(prisonSystemStaffRule, defenderRule)
   @UseInterceptors(
+    DefendantIndictmentAccessedInterceptor,
     CompletedAppealAccessedInterceptor,
     LimitedAccessCaseFileInterceptor,
     CaseInterceptor,
@@ -103,7 +103,7 @@ export class LimitedAccessCaseController {
   ): Promise<Case> {
     this.logger.debug(`Getting limitedAccess case ${caseId} by id`)
 
-    if (!theCase.openedByDefender) {
+    if (user.role === UserRole.DEFENDER && !theCase.openedByDefender) {
       const updated = await this.limitedAccessCaseService.update(
         theCase,
         { openedByDefender: nowFactory() },
@@ -169,24 +169,7 @@ export class LimitedAccessCaseController {
       `Transitioning case ${caseId} to ${transition.transition}`,
     )
 
-    const update: LimitedAccessUpdateCase = transitionCase(
-      transition.transition,
-      theCase.type,
-      theCase.state,
-      theCase.appealState,
-    )
-
-    if (update.appealState === CaseAppealState.APPEALED) {
-      update.accusedPostponedAppealDate = nowFactory()
-    }
-
-    if (
-      transition.transition === CaseTransition.WITHDRAW_APPEAL &&
-      !theCase.appealRulingDecision &&
-      theCase.appealState === CaseAppealState.RECEIVED
-    ) {
-      update.appealRulingDecision = CaseAppealRulingDecision.DISCONTINUED
-    }
+    const update = transitionCase(transition.transition, theCase, user)
 
     const updatedCase = await this.limitedAccessCaseService.update(
       theCase,

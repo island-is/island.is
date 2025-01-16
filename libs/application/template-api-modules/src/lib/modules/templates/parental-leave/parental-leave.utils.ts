@@ -538,11 +538,21 @@ export const getFromDate = (
   isFirstPeriod: boolean,
   isActualDateOfBirth: boolean,
   useLength: string,
+  endDateAdjustLength: boolean,
   period: AnswerPeriod,
 ) => {
-  return isFirstPeriod && isActualDateOfBirth && useLength === YES
+  return isFirstPeriod &&
+    isActualDateOfBirth &&
+    (useLength === YES || (useLength === NO && endDateAdjustLength))
     ? apiConstants.actualDateOfBirthMonths
     : isFirstPeriod && isActualDateOfBirth
     ? apiConstants.actualDateOfBirth
     : period.startDate
+}
+
+export const isPreBirthRight = (right: string | undefined) => {
+  if (!right) {
+    return false
+  }
+  return ['VEIKMEÐG', 'ÖRYGGI-L'].includes(right)
 }

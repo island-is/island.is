@@ -1,0 +1,141 @@
+{
+  "uuid": "44fe9d2e-de11-48dc-906a-a9fa8e91f77d",
+  "lastMigration": 32,
+  "name": "Payments",
+  "endpointPrefix": "",
+  "latency": 0,
+  "port": 8081,
+  "hostname": "",
+  "folders": [],
+  "routes": [
+    {
+      "uuid": "43d2c25c-9291-402f-af23-7a06e472dcaa",
+      "type": "http",
+      "documentation": "",
+      "method": "get",
+      "endpoint": "r1/IS-DEV/GOV/10021/FJS-Public/chargeFJS_v2/catalog/performingOrg/6509142520",
+      "responses": [
+        {
+          "uuid": "ecc20a28-e7db-4a4e-8ea7-1751c130a2e0",
+          "body": "{\n  \"error\": {\n    \"code\": 400,\n    \"message\": \"99999999TBR lokað, álagningarvinnsla í gangi.\"\n  }\n}",
+          "latency": 0,
+          "statusCode": 400,
+          "label": "",
+          "headers": [
+            {
+              "key": "access-control-allow-headers",
+              "value": "Content-Type, Origin, Accept, Authorization, Content-Length, X-Requested-With"
+            },
+            {
+              "key": "access-control-allow-methods",
+              "value": "GET,POST,PUT,PATCH,DELETE,HEAD,OPTIONS"
+            },
+            {
+              "key": "access-control-allow-origin",
+              "value": "*"
+            },
+            {
+              "key": "connection",
+              "value": "close"
+            },
+            {
+              "key": "content-type",
+              "value": "application/json"
+            },
+            {
+              "key": "strict-transport-security",
+              "value": "max-age=31557600"
+            },
+            {
+              "key": "x-road-client",
+              "value": "IS-DEV/GOV/10000/island-is-client"
+            },
+            {
+              "key": "x-road-id",
+              "value": "IS-DEV-12ec0c66-94f7-4d3f-b436-46c75dc1d2f3"
+            },
+            {
+              "key": "x-road-request-hash",
+              "value": "DGE3rbvsc80gwBCTKNrBUXVuWZ0FbxupUhYtDL9pZJiMmY+JDuXcGTvp1igUDqljQxRs54xb/lebr5JFJIUjdQ=="
+            },
+            {
+              "key": "x-road-request-id",
+              "value": "4aac1b96-1406-42a7-8627-840bba6b7e03"
+            },
+            {
+              "key": "x-road-service",
+              "value": "IS-DEV/GOV/10021/FJS-Public/chargeFJS_v2"
+            },
+            {
+              "key": "content-length",
+              "value": "100"
+            }
+          ],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": false,
+          "crudKey": "id",
+          "callbacks": []
+        }
+      ],
+      "responseMode": null
+    }
+  ],
+  "rootChildren": [
+    {
+      "type": "route",
+      "uuid": "43d2c25c-9291-402f-af23-7a06e472dcaa"
+    }
+  ],
+  "proxyMode": true,
+  "proxyHost": "http://localhost:8082",
+  "proxyRemovePrefix": false,
+  "tlsOptions": {
+    "enabled": false,
+    "type": "CERT",
+    "pfxPath": "",
+    "certPath": "",
+    "keyPath": "",
+    "caPath": "",
+    "passphrase": ""
+  },
+  "cors": true,
+  "headers": [
+    {
+      "key": "Content-Type",
+      "value": "application/json"
+    },
+    {
+      "key": "Access-Control-Allow-Origin",
+      "value": "*"
+    },
+    {
+      "key": "Access-Control-Allow-Methods",
+      "value": "GET,POST,PUT,PATCH,DELETE,HEAD,OPTIONS"
+    },
+    {
+      "key": "Access-Control-Allow-Headers",
+      "value": "Content-Type, Origin, Accept, Authorization, Content-Length, X-Requested-With"
+    }
+  ],
+  "proxyReqHeaders": [
+    {
+      "key": "",
+      "value": ""
+    }
+  ],
+  "proxyResHeaders": [
+    {
+      "key": "",
+      "value": ""
+    }
+  ],
+  "data": [],
+  "callbacks": []
+}

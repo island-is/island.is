@@ -6,6 +6,7 @@ import {
   DefendantPlea,
   DefenderChoice,
   Gender,
+  PunishmentType,
   ServiceRequirement,
   SubpoenaType,
 } from '@island.is/judicial-system/types'
@@ -87,6 +88,11 @@ export class UpdateDefendantInput {
 
   @Allow()
   @IsOptional()
+  @Field(() => String, { nullable: true })
+  readonly verdictAppealDate?: string
+
+  @Allow()
+  @IsOptional()
   @Field(() => DefenderChoice, { nullable: true })
   readonly defenderChoice?: DefenderChoice
 
@@ -94,4 +100,24 @@ export class UpdateDefendantInput {
   @IsOptional()
   @Field(() => SubpoenaType, { nullable: true })
   readonly subpoenaType?: SubpoenaType
+
+  @Allow()
+  @IsOptional()
+  @Field(() => Boolean, { nullable: true })
+  readonly isDefenderChoiceConfirmed?: boolean
+
+  @Allow()
+  @IsOptional()
+  @Field(() => Boolean, { nullable: true })
+  readonly caseFilesSharedWithDefender?: boolean
+
+  @Allow()
+  @IsOptional()
+  @Field(() => Boolean, { nullable: true })
+  readonly isSentToPrisonAdmin?: boolean
+
+  @Allow()
+  @IsOptional()
+  @Field(() => PunishmentType, { nullable: true })
+  readonly punishmentType?: PunishmentType
 }

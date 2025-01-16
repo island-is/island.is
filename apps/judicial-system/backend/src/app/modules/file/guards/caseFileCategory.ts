@@ -44,6 +44,7 @@ const defenderCaseFileCategoriesForIndictmentCases =
 const prisonAdminCaseFileCategories = [
   CaseFileCategory.APPEAL_RULING,
   CaseFileCategory.RULING,
+  CaseFileCategory.SENT_TO_PRISON_ADMIN_FILE,
 ]
 
 const prisonStaffCaseFileCategories = [CaseFileCategory.APPEAL_RULING]
@@ -64,14 +65,19 @@ const canDefenceUserViewCaseFileOfIndictmentCase = (
   defendants?: Defendant[],
   civilClaimants?: CivilClaimant[],
 ) => {
-  if (Defendant.isDefenderOfDefendant(nationalId, defendants)) {
+  if (
+    Defendant.isConfirmedDefenderOfDefendantWithCaseFileAccess(
+      nationalId,
+      defendants,
+    )
+  ) {
     return defenderCaseFileCategoriesForIndictmentCases.includes(
       caseFileCategory,
     )
   }
 
   if (
-    CivilClaimant.isSpokespersonOfCivilClaimantWithCaseFileAccess(
+    CivilClaimant.isConfirmedSpokespersonOfCivilClaimantWithCaseFileAccess(
       nationalId,
       civilClaimants,
     )

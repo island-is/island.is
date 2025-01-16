@@ -9,6 +9,7 @@ import {
 import { ApiScope } from '@island.is/auth/scopes'
 import { PaymentsOverviewApi } from '@island.is/clients/icelandic-health-insurance/rights-portal'
 import { AuditService } from '@island.is/nest/audit'
+import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
 import { Controller, Header, Param, Post, Res, UseGuards } from '@nestjs/common'
 import { ApiOkResponse } from '@nestjs/swagger'
 import { Response } from 'express'
@@ -20,6 +21,7 @@ export class HealthPaymentsOverviewController {
   constructor(
     private readonly paymentApi: PaymentsOverviewApi,
     private readonly auditService: AuditService,
+    private readonly featureFlagService: FeatureFlagService,
   ) {}
 
   @Post('/payments/:documentId')
@@ -34,6 +36,19 @@ export class HealthPaymentsOverviewController {
     @CurrentUser() user: User,
     @Res() res: Response,
   ) {
+    const featureAllowed = await this.featureFlagService.getValue(
+      Features.healthPaymentOverview,
+      false,
+      user,
+    )
+
+    if (!featureAllowed) {
+      return res.status(403).json({
+        statusCode: 403,
+        message: 'Not allowed',
+      })
+    }
+
     const documentResponse = await this.paymentApi
       .withMiddleware(new AuthMiddleware(user))
       .getPaymentsOverviewDocument({
@@ -48,12 +63,10 @@ export class HealthPaymentsOverviewController {
       })
 
       if (!documentResponse.data)
-        return res.status(404).end(
-          JSON.stringify({
-            statusCode: 404,
-            message: 'Document not found',
-          }),
-        )
+        return res.status(404).json({
+          statusCode: 404,
+          message: 'Document not found',
+        })
 
       const buffer = Buffer.from(documentResponse.data, 'base64')
 
@@ -65,7 +78,7 @@ export class HealthPaymentsOverviewController {
       res.header('Content-Type', 'application/pdf')
       res.header('Pragma', 'no-cache')
       res.header('Cache-Control', 'no-cache')
-      res.header('Cache-Control', 'nmax-age=0')
+      res.header('Cache-Control', 'max-age=0')
       return res.status(200).end(buffer)
     }
     return res.end()

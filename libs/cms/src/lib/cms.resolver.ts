@@ -121,6 +121,22 @@ import { TeamMemberResponse } from './models/teamMemberResponse.model'
 import { TeamList } from './models/teamList.model'
 import { TeamMember } from './models/teamMember.model'
 import { LatestGenericListItems } from './models/latestGenericListItems.model'
+import { GetGenericTagsInTagGroupsInput } from './dto/getGenericTagsInTagGroups.input'
+import { Grant } from './models/grant.model'
+import { GetGrantsInput } from './dto/getGrants.input'
+import { GetSingleGrantInput } from './dto/getSingleGrant.input'
+import { GrantList } from './models/grantList.model'
+import { OrganizationParentSubpage } from './models/organizationParentSubpage.model'
+import { GetOrganizationParentSubpageInput } from './dto/getOrganizationParentSubpage.input'
+import {
+  OrganizationPageStandaloneSitemap,
+  OrganizationPageStandaloneSitemapLevel2,
+} from './models/organizationPageStandaloneSitemap.model'
+import {
+  GetOrganizationPageStandaloneSitemapLevel1Input,
+  GetOrganizationPageStandaloneSitemapLevel2Input,
+} from './dto/getOrganizationPageStandaloneSitemap.input'
+import { GrantCardsList } from './models/grantCardsList.model'
 
 const defaultCache: CacheControlOptions = { maxAge: CACHE_CONTROL_MAX_AGE }
 
@@ -246,10 +262,7 @@ export class CmsResolver {
   async getOrganizationPage(
     @Args('input') input: GetOrganizationPageInput,
   ): Promise<OrganizationPage | null> {
-    return this.cmsElasticsearchService.getSingleDocumentTypeBySlug(
-      getElasticsearchIndex(input.lang),
-      { type: 'webOrganizationPage', slug: input.slug },
-    )
+    return this.cmsContentfulService.getOrganizationPage(input.slug, input.lang)
   }
 
   @CacheControl(defaultCache)
@@ -257,9 +270,10 @@ export class CmsResolver {
   async getOrganizationSubpage(
     @Args('input') input: GetOrganizationSubpageInput,
   ): Promise<OrganizationSubpage | null> {
-    return this.cmsElasticsearchService.getSingleOrganizationSubpage(
-      getElasticsearchIndex(input.lang),
-      { ...input },
+    return this.cmsContentfulService.getOrganizationSubpage(
+      input.organizationSlug,
+      input.slug,
+      input.lang,
     )
   }
 
@@ -422,11 +436,10 @@ export class CmsResolver {
   async getSingleArticle(
     @Args('input') { lang, slug }: GetSingleArticleInput,
   ): Promise<(Partial<Article> & { lang: Locale }) | null> {
-    const article: Article | null =
-      await this.cmsElasticsearchService.getSingleDocumentTypeBySlug<Article>(
-        getElasticsearchIndex(lang),
-        { type: 'webArticle', slug },
-      )
+    const article: Article | null = await this.cmsContentfulService.getArticle(
+      slug,
+      lang,
+    )
 
     if (!article) return null
 
@@ -448,14 +461,28 @@ export class CmsResolver {
   }
 
   @CacheControl(defaultCache)
+  @Query(() => GrantList)
+  async getGrants(@Args('input') input: GetGrantsInput): Promise<GrantList> {
+    return this.cmsElasticsearchService.getGrants(
+      getElasticsearchIndex(input.lang),
+      input,
+    )
+  }
+
+  @CacheControl(defaultCache)
+  @Query(() => Grant, { nullable: true })
+  async getSingleGrant(
+    @Args('input') { lang, id }: GetSingleGrantInput,
+  ): Promise<Grant | null> {
+    return this.cmsContentfulService.getGrant(lang, id)
+  }
+
+  @CacheControl(defaultCache)
   @Query(() => News, { nullable: true })
   getSingleNews(
     @Args('input') { lang, slug }: GetSingleNewsInput,
   ): Promise<News | null> {
-    return this.cmsElasticsearchService.getSingleDocumentTypeBySlug<News>(
-      getElasticsearchIndex(lang),
-      { type: 'webNews', slug },
-    )
+    return this.cmsContentfulService.getNews(lang, slug)
   }
 
   @CacheControl(defaultCache)
@@ -463,10 +490,7 @@ export class CmsResolver {
   getSingleEvent(
     @Args('input') { lang, slug }: GetSingleEventInput,
   ): Promise<EventModel | null> {
-    return this.cmsElasticsearchService.getSingleDocumentTypeBySlug<EventModel>(
-      getElasticsearchIndex(lang),
-      { type: 'webEvent', slug },
-    )
+    return this.cmsContentfulService.getSingleEvent(lang, slug)
   }
 
   @CacheControl(defaultCache)
@@ -616,14 +640,19 @@ export class CmsResolver {
   }
 
   @CacheControl(defaultCache)
+  @Query(() => [GenericTag], { nullable: true })
+  getGenericTagsInTagGroups(
+    @Args('input') input: GetGenericTagsInTagGroupsInput,
+  ): Promise<Array<GenericTag> | null> {
+    return this.cmsContentfulService.getGenericTagsInTagGroups(input)
+  }
+
+  @CacheControl(defaultCache)
   @Query(() => Manual, { nullable: true })
   getSingleManual(
     @Args('input') input: GetSingleManualInput,
   ): Promise<Manual | null> {
-    return this.cmsElasticsearchService.getSingleDocumentTypeBySlug(
-      getElasticsearchIndex(input.lang),
-      { type: 'webManual', slug: input.slug },
-    )
+    return this.cmsContentfulService.getSingleManual(input.lang, input.slug)
   }
 
   @CacheControl(defaultCache)
@@ -688,6 +717,34 @@ export class CmsResolver {
     @Args('input') input: GetTeamMembersInput,
   ): Promise<TeamMemberResponse> {
     return this.cmsElasticsearchService.getTeamMembers(input)
+  }
+
+  @CacheControl(defaultCache)
+  @Query(() => OrganizationParentSubpage, { nullable: true })
+  getOrganizationParentSubpage(
+    @Args('input') input: GetOrganizationParentSubpageInput,
+  ): Promise<OrganizationParentSubpage | null> {
+    return this.cmsContentfulService.getOrganizationParentSubpage(input)
+  }
+
+  @CacheControl(defaultCache)
+  @Query(() => OrganizationPageStandaloneSitemap, { nullable: true })
+  getOrganizationPageStandaloneSitemapLevel1(
+    @Args('input') input: GetOrganizationPageStandaloneSitemapLevel1Input,
+  ): Promise<OrganizationPageStandaloneSitemap | null> {
+    return this.cmsContentfulService.getOrganizationPageStandaloneSitemapLevel1(
+      input,
+    )
+  }
+
+  @CacheControl(defaultCache)
+  @Query(() => OrganizationPageStandaloneSitemapLevel2, { nullable: true })
+  getOrganizationPageStandaloneSitemapLevel2(
+    @Args('input') input: GetOrganizationPageStandaloneSitemapLevel2Input,
+  ): Promise<OrganizationPageStandaloneSitemapLevel2 | null> {
+    return this.cmsContentfulService.getOrganizationPageStandaloneSitemapLevel2(
+      input,
+    )
   }
 }
 
@@ -792,6 +849,42 @@ export class PowerBiSliceResolver {
   })
   async powerBiEmbedPropsFromServer(@Parent() powerBiSlice: PowerBiSlice) {
     return this.powerBiService.getEmbedProps(powerBiSlice)
+  }
+}
+
+@Resolver(() => GrantCardsList)
+@CacheControl(defaultCache)
+export class GrantCardsListResolver {
+  constructor(
+    private cmsElasticsearchService: CmsElasticsearchService,
+    private cmsContentfulService: CmsContentfulService,
+  ) {}
+
+  @ResolveField(() => GrantList)
+  async resolvedGrantsList(
+    @Parent() { resolvedGrantsList: input }: GrantCardsList,
+  ): Promise<GrantList> {
+    if (!input || input?.size === 0) {
+      return { total: 0, items: [] }
+    }
+
+    return this.cmsElasticsearchService.getGrants(
+      getElasticsearchIndex(input.lang),
+      input,
+    )
+  }
+  @ResolveField(() => GraphQLJSONObject)
+  async namespace(@Parent() { resolvedGrantsList: input }: GrantCardsList) {
+    try {
+      const respones = await this.cmsContentfulService.getNamespace(
+        'GrantsPlaza',
+        input?.lang ?? 'is',
+      )
+      return JSON.parse(respones?.fields || '{}')
+    } catch {
+      // Fallback to empty object in case something goes wrong when fetching or parsing namespace
+      return {}
+    }
   }
 }
 

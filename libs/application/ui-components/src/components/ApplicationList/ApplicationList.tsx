@@ -1,5 +1,10 @@
 import React, { useCallback, useState } from 'react'
-import { Box, Pagination, Stack } from '@island.is/island-ui/core'
+import {
+  Box,
+  Pagination,
+  Stack,
+  ToastContainer,
+} from '@island.is/island-ui/core'
 import {
   Application,
   ApplicationTypes,
@@ -95,6 +100,7 @@ const ApplicationList = ({
           />
         </Box>
       ) : null}
+      <ToastContainer hideProgressBar closeButton useKeyframeStyles={false} />
     </>
   )
 }

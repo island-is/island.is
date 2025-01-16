@@ -4,14 +4,14 @@ import { Box, Button } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { theme } from '@island.is/island-ui/theme'
 import { useWindowSize } from 'react-use'
-import { m } from '@island.is/service-portal/core'
+import { m } from '@island.is/portals/my-pages/core'
 import NotificationMenu from './NotificationMenu'
 import { MenuTypes } from '../Header/Header'
 import * as styles from './Notifications.css'
 import {
   useGetUserNotificationsOverviewQuery,
   useMarkAllNotificationsAsSeenMutation,
-} from '@island.is/service-portal/information'
+} from '@island.is/portals/my-pages/information'
 
 interface Props {
   setMenuState: (val: MenuTypes) => void
@@ -28,7 +28,7 @@ const NotificationButton = ({
   const [hasMarkedLocally, setHasMarkedLocally] = useState(false)
   const [markAllAsSeen] = useMarkAllNotificationsAsSeenMutation()
   const { width } = useWindowSize()
-  const isMobile = width < theme.breakpoints.md
+  const isTablet = width < theme.breakpoints.lg
   const ref = useRef<HTMLButtonElement>(null)
 
   const { data, refetch } = useGetUserNotificationsOverviewQuery({
@@ -64,10 +64,10 @@ const NotificationButton = ({
         variant="utility"
         colorScheme="white"
         disabled={disabled}
-        icon={showMenu && isMobile ? 'close' : 'notifications'}
+        icon={showMenu && isTablet ? 'close' : 'notifications'}
         iconType="outline"
         onClick={() => {
-          showMenu && isMobile
+          showMenu && isTablet
             ? setMenuState(undefined)
             : setMenuState('notifications')
         }}
@@ -80,7 +80,7 @@ const NotificationButton = ({
       />
       {data?.userNotificationsOverview?.data.length ? (
         <Box
-          borderRadius="circle"
+          borderRadius="full"
           className={cn({ [styles.badge]: showBadge })}
         />
       ) : undefined}

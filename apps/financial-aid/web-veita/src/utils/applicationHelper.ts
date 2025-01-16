@@ -8,8 +8,8 @@ import {
   formatNationalId,
   DirectTaxPayment,
   sanitizeOnlyNumbers,
+  calcAge,
 } from '@island.is/financial-aid/shared/lib'
-import { calcAge } from './formHelper'
 
 const commentFullWidth = (comment?: string) => {
   return comment && comment.length > 80 ? true : false

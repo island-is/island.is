@@ -314,8 +314,11 @@ export class DirectorateOfImmigrationClient {
           parentApplicationId: applicationId,
           applicant: {
             icelandicIDNO: childInfo.nationalId,
-            givenName: childInfo.givenName,
-            surName: childInfo.familyName,
+            givenName:
+              childInfo.givenName ||
+              childInfo.fullName.split(' ').slice(0, -1).join(' '),
+            surName:
+              childInfo.familyName || childInfo.fullName.split(' ').pop(),
           },
           travelDocuments: childPassportInfo
             ? [

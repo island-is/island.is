@@ -9,6 +9,7 @@ const devConfig = {
     [Airlines.icelandair]: Airlines.icelandair,
     [Airlines.ernir]: Airlines.ernir,
     [Airlines.norlandair]: Airlines.norlandair,
+    [Airlines.myflug]: Airlines.myflug,
   },
   redis: {
     urls: [
@@ -41,6 +42,7 @@ const prodConfig = {
     [Airlines.icelandair]: process.env.ICELANDAIR_API_KEY,
     [Airlines.ernir]: process.env.ERNIR_API_KEY,
     [Airlines.norlandair]: process.env.NORLANDAIR_API_KEY,
+    [Airlines.myflug]: process.env.MYFLUG_API_KEY,
   },
   redis: {
     urls: [process.env.REDIS_URL_NODE_01!],

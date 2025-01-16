@@ -17,24 +17,42 @@ import {
   DefendantPlea,
   DefenderChoice,
   Gender,
+  PunishmentType,
   ServiceRequirement,
   SubpoenaType,
 } from '@island.is/judicial-system/types'
 
 import { Case } from '../../case/models/case.model'
 import { Subpoena } from '../../subpoena/models/subpoena.model'
+import { DefendantEventLog } from './defendantEventLog.model'
 
 @Table({
   tableName: 'defendant',
   timestamps: true,
 })
 export class Defendant extends Model {
-  static isDefenderOfDefendant(
+  static isConfirmedDefenderOfDefendant(
     defenderNationalId: string,
     defendants?: Defendant[],
   ) {
     return defendants?.some(
       (defendant) =>
+        defendant.isDefenderChoiceConfirmed &&
+        defendant.defenderNationalId &&
+        normalizeAndFormatNationalId(defenderNationalId).includes(
+          defendant.defenderNationalId,
+        ),
+    )
+  }
+
+  static isConfirmedDefenderOfDefendantWithCaseFileAccess(
+    defenderNationalId: string,
+    defendants?: Defendant[],
+  ) {
+    return defendants?.some(
+      (defendant) =>
+        defendant.isDefenderChoiceConfirmed &&
+        defendant.caseFilesSharedWithDefender &&
         defendant.defenderNationalId &&
         normalizeAndFormatNationalId(defenderNationalId).includes(
           defendant.defenderNationalId,
@@ -64,7 +82,7 @@ export class Defendant extends Model {
   @ApiProperty({ type: String })
   caseId!: string
 
-  @BelongsTo(() => Case, 'case_id')
+  @BelongsTo(() => Case, 'caseId')
   @ApiPropertyOptional({ type: () => Case })
   case?: Case
 
@@ -140,6 +158,10 @@ export class Defendant extends Model {
   @ApiPropertyOptional({ type: Date })
   verdictViewDate?: Date
 
+  @Column({ type: DataType.DATE, allowNull: true })
+  @ApiPropertyOptional({ type: Date })
+  verdictAppealDate?: Date
+
   @Column({
     type: DataType.ENUM,
     allowNull: true,
@@ -167,4 +189,28 @@ export class Defendant extends Model {
   @Column({ type: DataType.STRING, allowNull: true })
   @ApiPropertyOptional({ type: String })
   requestedDefenderName?: string
+
+  @Column({ type: DataType.BOOLEAN, allowNull: true })
+  @ApiPropertyOptional({ type: Boolean })
+  isDefenderChoiceConfirmed?: boolean
+
+  @Column({ type: DataType.BOOLEAN, allowNull: true })
+  @ApiPropertyOptional({ type: Boolean })
+  caseFilesSharedWithDefender?: boolean
+
+  @Column({ type: DataType.BOOLEAN, allowNull: true })
+  @ApiPropertyOptional({ type: Boolean })
+  isSentToPrisonAdmin?: boolean
+
+  @Column({
+    type: DataType.ENUM,
+    allowNull: true,
+    values: Object.values(PunishmentType),
+  })
+  @ApiPropertyOptional({ enum: PunishmentType })
+  punishmentType?: PunishmentType
+
+  @HasMany(() => DefendantEventLog, { foreignKey: 'defendantId' })
+  @ApiPropertyOptional({ type: () => DefendantEventLog, isArray: true })
+  eventLogs?: DefendantEventLog[]
 }

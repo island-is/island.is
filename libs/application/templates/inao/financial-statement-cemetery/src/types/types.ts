@@ -34,4 +34,31 @@ export enum States {
 
 export enum Roles {
   APPLICANT = 'applicant',
+  NOTALLOWED = 'notAllowed',
+}
+
+type InaoConfigItem = {
+  __typename: string
+  key: string
+  value: string
+}
+
+export type AuditConfig = {
+  financialStatementsInaoConfig: Array<InaoConfigItem>
+}
+
+export type CareTaker = {
+  nationalId: string
+  name: string
+  role: string
+}
+
+export type TaxInfoItem = {
+  __typename: string
+  key: number
+  value: string
+}
+
+export type TaxInfoData = {
+  financialStatementsInaoTaxInfo: Array<TaxInfoItem>
 }

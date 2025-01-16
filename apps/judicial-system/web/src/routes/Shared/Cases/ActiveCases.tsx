@@ -17,7 +17,10 @@ import {
   DefendantInfo,
 } from '@island.is/judicial-system-web/src/components/Table'
 import Table from '@island.is/judicial-system-web/src/components/Table/Table'
-import { CaseListEntry } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  CaseListEntry,
+  Defendant,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 
 interface Props {
   cases: CaseListEntry[]
@@ -57,22 +60,20 @@ const ActiveCases: FC<Props> = (props) => {
         },
       ]}
       data={cases}
-      generateContextMenuItems={(row) => {
-        return [
-          openCaseInNewTabMenuItem(row.id),
-          ...(canDeleteCase(row)
-            ? [
-                {
-                  title: formatMessage(contextMenu.deleteCase),
-                  onClick: () => {
-                    onContextMenuDeleteClick(row.id)
-                  },
-                  icon: 'trash',
-                } as ContextMenuItem,
-              ]
-            : []),
-        ]
-      }}
+      generateContextMenuItems={(row) => [
+        openCaseInNewTabMenuItem(row.id),
+        ...(canDeleteCase(row)
+          ? [
+              {
+                title: formatMessage(contextMenu.deleteCase),
+                onClick: () => {
+                  onContextMenuDeleteClick(row.id)
+                },
+                icon: 'trash',
+              } as ContextMenuItem,
+            ]
+          : []),
+      ]}
       columns={[
         {
           cell: (row) => (
@@ -87,7 +88,13 @@ const ActiveCases: FC<Props> = (props) => {
           cell: (row) => <DefendantInfo defendants={row.defendants} />,
         },
         {
-          cell: (row) => <ColumnCaseType type={row.type} />,
+          cell: (row) => (
+            <ColumnCaseType
+              type={row.type}
+              decision={row.decision}
+              parentCaseId={row.parentCaseId}
+            />
+          ),
         },
         {
           cell: (row) => <CreatedDate created={row.created} />,
@@ -101,6 +108,7 @@ const ActiveCases: FC<Props> = (props) => {
               courtDate={row.courtDate}
               indictmentDecision={row.indictmentDecision}
               indictmentRulingDecision={row.indictmentRulingDecision}
+              defendants={row.defendants}
             />
           ),
         },

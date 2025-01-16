@@ -82,14 +82,14 @@
             "description": "Date from which to filter adverts on, inclusive, takes into account `createdDate`, `updatedDate` and `signatureDate`.",
             "required": false,
             "in": "query",
-            "schema": { "format": "date-time", "type": "string" }
+            "schema": { "type": "string" }
           },
           {
             "name": "dateTo",
             "description": "Date to which to filter adverts on, inclusive, takes into account `createdDate`, `updatedDate` and `signatureDate`.",
             "required": false,
             "in": "query",
-            "schema": { "format": "date-time", "type": "string" }
+            "schema": { "type": "string" }
           }
         ],
         "responses": {
@@ -169,78 +169,6 @@
         }
       }
     },
-    "/api/v1/types/{id}": {
-      "get": {
-        "operationId": "getAdvertTypeById",
-        "parameters": [
-          {
-            "name": "id",
-            "required": true,
-            "in": "path",
-            "schema": { "type": "string" }
-          }
-        ],
-        "responses": {
-          "default": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GetAdvertTypeResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/v1/types": {
-      "get": {
-        "operationId": "getAdvertTypes",
-        "parameters": [
-          {
-            "name": "department",
-            "description": "Department slug to get categories for.",
-            "required": false,
-            "in": "query",
-            "schema": { "type": "string" }
-          },
-          {
-            "name": "search",
-            "description": "String to search for in types.",
-            "required": false,
-            "in": "query",
-            "schema": { "type": "string" }
-          },
-          {
-            "name": "page",
-            "description": "Page number to return.",
-            "required": false,
-            "in": "query",
-            "schema": { "type": "number" }
-          },
-          {
-            "name": "pageSize",
-            "description": "Number of items per page.",
-            "required": false,
-            "in": "query",
-            "schema": { "type": "number" }
-          }
-        ],
-        "responses": {
-          "default": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GetAdvertTypesResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "/api/v1/maincategories": {
       "get": {
         "operationId": "getMainCategories",
@@ -251,6 +179,16 @@
             "required": false,
             "in": "query",
             "schema": { "type": "string" }
+          },
+          {
+            "name": "ids",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "default": [],
+              "type": "array",
+              "items": { "type": "string" }
+            }
           },
           {
             "name": "page",
@@ -293,6 +231,16 @@
             "schema": { "type": "string" }
           },
           {
+            "name": "ids",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "default": [],
+              "type": "array",
+              "items": { "type": "string" }
+            }
+          },
+          {
             "name": "page",
             "description": "Page number to return.",
             "required": false,
@@ -331,6 +279,16 @@
             "required": false,
             "in": "query",
             "schema": { "type": "string" }
+          },
+          {
+            "name": "ids",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "default": [],
+              "type": "array",
+              "items": { "type": "string" }
+            }
           },
           {
             "name": "page",
@@ -410,6 +368,56 @@
         }
       }
     },
+    "/api/v1/cases": {
+      "get": {
+        "operationId": "getCasesInProgress",
+        "parameters": [
+          {
+            "name": "search",
+            "description": "String to search for",
+            "required": false,
+            "in": "query",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "ids",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "default": [],
+              "type": "array",
+              "items": { "type": "string" }
+            }
+          },
+          {
+            "name": "page",
+            "description": "Page number to return.",
+            "required": false,
+            "in": "query",
+            "schema": { "type": "number" }
+          },
+          {
+            "name": "pageSize",
+            "description": "Page size number to return.",
+            "required": false,
+            "in": "query",
+            "schema": { "type": "number" }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetCasesInProgressReponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/error": {
       "get": {
         "operationId": "error",
@@ -420,6 +428,374 @@
             "content": {
               "application/json": {
                 "schema": { "$ref": "#/components/schemas/ValidationResponse" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/advert-types/types": {
+      "get": {
+        "operationId": "getTypes",
+        "summary": "",
+        "parameters": [
+          {
+            "required": false,
+            "description": "Search by id",
+            "name": "id",
+            "in": "query",
+            "schema": { "type": "string" }
+          },
+          {
+            "required": false,
+            "description": "Filter by unassigned",
+            "name": "unassigned",
+            "in": "query",
+            "schema": { "type": "boolean" }
+          },
+          {
+            "required": false,
+            "description": "Search by main type id",
+            "name": "mainType",
+            "in": "query",
+            "schema": { "type": "string" }
+          },
+          {
+            "required": false,
+            "description": "Search by title",
+            "name": "search",
+            "in": "query",
+            "schema": { "type": "string" }
+          },
+          {
+            "required": false,
+            "description": "Search by slug",
+            "name": "slug",
+            "in": "query",
+            "schema": { "type": "string" }
+          },
+          {
+            "required": false,
+            "description": "Search by department slug, title or id",
+            "name": "department",
+            "in": "query",
+            "schema": { "type": "string" }
+          },
+          {
+            "required": false,
+            "description": "The page number",
+            "name": "page",
+            "in": "query",
+            "schema": { "type": "number" }
+          },
+          {
+            "required": false,
+            "description": "The page size",
+            "name": "pageSize",
+            "in": "query",
+            "schema": { "type": "number" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/GetAdvertTypes" }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/AdvertTypeError" }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/AdvertTypeError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/advert-types/main-types": {
+      "get": {
+        "operationId": "getMainTypes",
+        "summary": "",
+        "parameters": [
+          {
+            "required": false,
+            "description": "Search by id",
+            "name": "id",
+            "in": "query",
+            "schema": { "type": "string" }
+          },
+          {
+            "required": false,
+            "description": "Filter by unassigned",
+            "name": "unassigned",
+            "in": "query",
+            "schema": { "type": "boolean" }
+          },
+          {
+            "required": false,
+            "description": "Search by main type id",
+            "name": "mainType",
+            "in": "query",
+            "schema": { "type": "string" }
+          },
+          {
+            "required": false,
+            "description": "Search by title",
+            "name": "search",
+            "in": "query",
+            "schema": { "type": "string" }
+          },
+          {
+            "required": false,
+            "description": "Search by slug",
+            "name": "slug",
+            "in": "query",
+            "schema": { "type": "string" }
+          },
+          {
+            "required": false,
+            "description": "Search by department slug, title or id",
+            "name": "department",
+            "in": "query",
+            "schema": { "type": "string" }
+          },
+          {
+            "required": false,
+            "description": "The page number",
+            "name": "page",
+            "in": "query",
+            "schema": { "type": "number" }
+          },
+          {
+            "required": false,
+            "description": "The page size",
+            "name": "pageSize",
+            "in": "query",
+            "schema": { "type": "number" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/GetAdvertMainTypes" }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/AdvertTypeError" }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/AdvertTypeError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/advert-types/types/{id}": {
+      "get": {
+        "operationId": "getTypeById",
+        "summary": "",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/GetAdvertType" }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/AdvertTypeError" }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/AdvertTypeError" }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/AdvertTypeError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/advert-types/main-types/{id}": {
+      "get": {
+        "operationId": "getMainTypeById",
+        "summary": "",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/GetAdvertMainType" }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/AdvertTypeError" }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/AdvertTypeError" }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/AdvertTypeError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/pdf/case/{id}": {
+      "get": {
+        "operationId": "getPdfByCaseId",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/GetPdfRespone" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/pdf/application/{id}": {
+      "get": {
+        "operationId": "getPdfByApplicationId",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/GetPdfRespone" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/pdf/case/{id}/url": {
+      "get": {
+        "operationId": "getPdfUrlByCaseId",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/GetPdfUrlResponse" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/pdf/application/{id}/url": {
+      "get": {
+        "operationId": "getPdfUrlByApplicationId",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/GetPdfUrlResponse" }
               }
             }
           }
@@ -471,23 +847,18 @@
         "properties": {
           "id": {
             "type": "string",
-            "description": "Unique ID for the advert type, GUID format.",
-            "example": "00000000-0000-0000-0000-000000000000",
-            "nullable": false
+            "description": "The id of the main advert type"
           },
           "title": {
             "type": "string",
-            "description": "Title of the advert type, always uppercased.",
-            "example": "AUGLÝSING"
+            "description": "The title of the main advert type"
           },
           "slug": {
             "type": "string",
-            "description": "Slug of the advert type, used in URLs and API requests.",
-            "example": "auglysing"
+            "description": "The slug of the main advert type"
           },
           "department": {
-            "description": "Department the advert type belongs to.",
-            "nullable": true,
+            "description": "The department of the main advert type",
             "allOf": [{ "$ref": "#/components/schemas/Department" }]
           }
         },
@@ -514,33 +885,6 @@
         },
         "required": ["number", "year", "full"]
       },
-      "MainCategory": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "description": "Unique ID for the main category, GUID format.",
-            "example": "00000000-0000-0000-0000-000000000000",
-            "nullable": false
-          },
-          "title": {
-            "type": "string",
-            "description": "Title of the main category.",
-            "example": "Dómstólar og réttarfar"
-          },
-          "slug": {
-            "type": "string",
-            "description": "Slug of the main category, used in URLs and API requests.",
-            "example": "domstolar-og-rettarfar"
-          },
-          "description": {
-            "type": "string",
-            "description": "Description of the main category, used on front page.",
-            "example": "Hæstiréttur, lögmenn, lögreglumál, dómsmál og landsdómur."
-          }
-        },
-        "required": ["id", "title", "slug", "description"]
-      },
       "Category": {
         "type": "object",
         "properties": {
@@ -559,12 +903,6 @@
             "type": "string",
             "description": "Slug of the advert category, used in URLs and API requests.",
             "example": "evropska-efnahagssvaedid"
-          },
-          "mainCategory": {
-            "description": "The main category this category belongs to.",
-            "nullable": true,
-            "example": "Dómstólar og réttarfar",
-            "allOf": [{ "$ref": "#/components/schemas/MainCategory" }]
           }
         },
         "required": ["id", "title", "slug"]
@@ -930,30 +1268,37 @@
         },
         "required": ["departments", "paging"]
       },
-      "GetAdvertTypeResponse": {
+      "MainCategory": {
         "type": "object",
         "properties": {
-          "type": {
-            "description": "Advert type",
-            "allOf": [{ "$ref": "#/components/schemas/AdvertType" }]
-          }
-        },
-        "required": ["type"]
-      },
-      "GetAdvertTypesResponse": {
-        "type": "object",
-        "properties": {
-          "types": {
-            "description": "List of advert types",
-            "type": "array",
-            "items": { "$ref": "#/components/schemas/AdvertType" }
+          "id": {
+            "type": "string",
+            "description": "Unique ID for the main category, GUID format.",
+            "example": "00000000-0000-0000-0000-000000000000",
+            "nullable": false
           },
-          "paging": {
-            "description": "Paging info",
-            "allOf": [{ "$ref": "#/components/schemas/Paging" }]
+          "title": {
+            "type": "string",
+            "description": "Title of the main category.",
+            "example": "Dómstólar og réttarfar"
+          },
+          "slug": {
+            "type": "string",
+            "description": "Slug of the main category, used in URLs and API requests.",
+            "example": "domstolar-og-rettarfar"
+          },
+          "description": {
+            "type": "string",
+            "description": "Description of the main category, used on front page.",
+            "example": "Hæstiréttur, lögmenn, lögreglumál, dómsmál og landsdómur."
+          },
+          "categories": {
+            "description": "List of sub categories under this main category.",
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/Category" }
           }
         },
-        "required": ["types", "paging"]
+        "required": ["id", "title", "slug", "description", "categories"]
       },
       "GetMainCategoriesResponse": {
         "type": "object",
@@ -1017,6 +1362,77 @@
         },
         "required": ["items", "paging"]
       },
+      "CaseInProgress": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "d290f1ee-6c54-4b01-90e6-d701748f0851"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "Innsent",
+              "Grunnvinnsla",
+              "Yfirlestur",
+              "Tilbúið",
+              "Útgefið",
+              "Tekið úr birtingu",
+              "Birtingu hafnað"
+            ],
+            "example": "Innsent",
+            "description": "Status of the case"
+          },
+          "involvedParty": {
+            "type": "string",
+            "description": "Title of the institution",
+            "example": "Dómsmálaráðuneytið"
+          },
+          "createdAt": {
+            "type": "string",
+            "example": "2024-01-01T09:00:00Z",
+            "description": "Date the case was created. ISO 8601 date and time format in UTC."
+          },
+          "fastTrack": {
+            "type": "boolean",
+            "example": false,
+            "description": "Requested fast track"
+          },
+          "requestedPublicationDate": {
+            "type": "string",
+            "example": "2024-01-01T09:00:00Z",
+            "description": "Requested advert publication date. ISO 8601 date and time format in UTC."
+          },
+          "title": {
+            "type": "string",
+            "example": "TITILL á máli",
+            "description": "Advert title with type"
+          }
+        },
+        "required": [
+          "id",
+          "status",
+          "involvedParty",
+          "createdAt",
+          "fastTrack",
+          "requestedPublicationDate",
+          "title"
+        ]
+      },
+      "GetCasesInProgressReponse": {
+        "type": "object",
+        "properties": {
+          "cases": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/CaseInProgress" }
+          },
+          "paging": {
+            "description": "Paging info",
+            "allOf": [{ "$ref": "#/components/schemas/Paging" }]
+          }
+        },
+        "required": ["cases", "paging"]
+      },
       "ValidationResponse": {
         "type": "object",
         "properties": {
@@ -1040,6 +1456,108 @@
           }
         },
         "required": ["message", "statusCode"]
+      },
+      "GetAdvertTypes": {
+        "type": "object",
+        "properties": {
+          "types": {
+            "description": "List of advert types",
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/AdvertType" }
+          },
+          "paging": {
+            "description": "Paging information",
+            "allOf": [{ "$ref": "#/components/schemas/Paging" }]
+          }
+        },
+        "required": ["types", "paging"]
+      },
+      "AdvertTypeError": {
+        "type": "object",
+        "properties": {
+          "errorType": {
+            "type": "string",
+            "enum": ["DuplicateError", "ValidationError", "NotFoundError"]
+          },
+          "name": { "type": "string" },
+          "message": { "type": "string" },
+          "severity": { "type": "string", "enum": ["info", "warning", "error"] }
+        },
+        "required": ["errorType", "name", "message", "severity"]
+      },
+      "AdvertMainType": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The id of the main advert type"
+          },
+          "title": {
+            "type": "string",
+            "description": "The title of the main advert type"
+          },
+          "slug": {
+            "type": "string",
+            "description": "The slug of the main advert type"
+          },
+          "department": {
+            "description": "The department this main type belongs to",
+            "allOf": [{ "$ref": "#/components/schemas/Department" }]
+          },
+          "types": {
+            "description": "All types under this main type",
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/AdvertType" }
+          }
+        },
+        "required": ["id", "title", "slug", "department", "types"]
+      },
+      "GetAdvertMainTypes": {
+        "type": "object",
+        "properties": {
+          "mainTypes": {
+            "description": "List of all main advert types",
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/AdvertMainType" }
+          },
+          "paging": {
+            "description": "Paging information",
+            "allOf": [{ "$ref": "#/components/schemas/Paging" }]
+          }
+        },
+        "required": ["mainTypes", "paging"]
+      },
+      "GetAdvertType": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "description": "The advert type",
+            "allOf": [{ "$ref": "#/components/schemas/AdvertType" }]
+          }
+        },
+        "required": ["type"]
+      },
+      "GetAdvertMainType": {
+        "type": "object",
+        "properties": {
+          "mainType": {
+            "description": "The main advert type",
+            "allOf": [{ "$ref": "#/components/schemas/AdvertMainType" }]
+          }
+        },
+        "required": ["mainType"]
+      },
+      "GetPdfRespone": {
+        "type": "object",
+        "properties": {
+          "content": { "type": "string", "description": "Base64 encoded PDF" }
+        },
+        "required": ["content"]
+      },
+      "GetPdfUrlResponse": {
+        "type": "object",
+        "properties": { "url": { "type": "string" } },
+        "required": ["url"]
       }
     }
   }

@@ -1,6 +1,7 @@
 import {
   coreDefaultFieldMessages,
   formatText,
+  formatTextWithLocale,
 } from '@island.is/application/core'
 import { BankAccountField, FieldBaseProps } from '@island.is/application/types'
 import { Box, GridColumn, GridRow, Text } from '@island.is/island-ui/core'
@@ -10,10 +11,10 @@ import { InputController } from '@island.is/shared/form-fields'
 interface Props extends FieldBaseProps {
   field: BankAccountField
 }
-
 export const BankAccountFormField = ({ field, application }: Props) => {
-  const { formatMessage } = useLocale()
-  const { marginBottom, marginTop, title, titleVariant, id } = field
+  const { formatMessage, lang: locale } = useLocale()
+  const { marginBottom, marginTop, title, titleVariant, id, clearOnChange } =
+    field
   const bankNumber = formatText(
     coreDefaultFieldMessages.defaultBankAccountBankNumber,
     application,
@@ -29,13 +30,12 @@ export const BankAccountFormField = ({ field, application }: Props) => {
     application,
     formatMessage,
   )
-
   return (
     <Box marginTop={marginTop} marginBottom={marginBottom}>
       {title && (
         <Box marginBottom={1}>
           <Text variant={titleVariant ?? 'h3'}>
-            {formatText(field.title, application, formatMessage)}
+            {formatTextWithLocale(title, application, locale, formatMessage)}
           </Text>
         </Box>
       )}
@@ -50,6 +50,7 @@ export const BankAccountFormField = ({ field, application }: Props) => {
               format="####"
               backgroundColor="blue"
               autoFocus
+              clearOnChange={clearOnChange}
             />
           </Box>
         </GridColumn>
@@ -62,6 +63,7 @@ export const BankAccountFormField = ({ field, application }: Props) => {
               placeholder="00"
               format="##"
               backgroundColor="blue"
+              clearOnChange={clearOnChange}
             />
           </Box>
         </GridColumn>
@@ -74,6 +76,7 @@ export const BankAccountFormField = ({ field, application }: Props) => {
               placeholder="000000"
               format="######"
               backgroundColor="blue"
+              clearOnChange={clearOnChange}
             />
           </Box>
         </GridColumn>

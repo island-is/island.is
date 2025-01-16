@@ -5,6 +5,7 @@ import router from 'next/router'
 import { Box, Button } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
+import { CourtSessionType } from '@island.is/judicial-system/types'
 import { titles } from '@island.is/judicial-system-web/messages'
 import {
   CourtArrangements,
@@ -32,6 +33,7 @@ const Subpoena: FC = () => {
     useContext(FormContext)
   const [navigateTo, setNavigateTo] = useState<keyof stepValidationsType>()
   const [newSubpoenas, setNewSubpoenas] = useState<string[]>([])
+  const [isCreatingSubpoena, setIsCreatingSubpoena] = useState<boolean>(false)
   const { updateDefendantState, updateDefendant } = useDefendants()
   const { formatMessage } = useIntl()
   const {
@@ -51,6 +53,8 @@ const Subpoena: FC = () => {
 
   const handleNavigationTo = useCallback(
     async (destination: keyof stepValidationsType) => {
+      setIsCreatingSubpoena(true)
+
       if (!isSchedulingArraignmentDate) {
         router.push(`${destination}/${workingCase.id}`)
         return
@@ -74,28 +78,33 @@ const Subpoena: FC = () => {
       const allDefendantsUpdated = await Promise.all(promises)
 
       if (!allDefendantsUpdated.every((result) => result)) {
+        setIsCreatingSubpoena(false)
         return
       }
 
-      // If rescheduling after the court has met, then clear the current conclusion
-      const clearedConclusion =
-        isArraignmentScheduled && workingCase.indictmentDecision
-          ? [
-              {
+      const additionalUpdates = [
+        {
+          // This should always be an arraignment type
+          courtSessionType: CourtSessionType.ARRAIGNMENT,
+          // if the case is being rescheduled after the court has met,
+          // then clear the current conclusion
+          ...(isArraignmentScheduled && workingCase.indictmentDecision
+            ? {
                 indictmentDecision: null,
-                courtSessionType: null,
                 courtDate: null,
                 postponedIndefinitelyExplanation: null,
                 indictmentRulingDecision: null,
                 mergeCaseId: null,
                 force: true,
-              },
-            ]
-          : undefined
+              }
+            : {}),
+        },
+      ]
 
-      const courtDateUpdated = await sendCourtDateToServer(clearedConclusion)
+      const courtDateUpdated = await sendCourtDateToServer(additionalUpdates)
 
       if (!courtDateUpdated) {
+        setIsCreatingSubpoena(false)
         return
       }
 
@@ -103,9 +112,11 @@ const Subpoena: FC = () => {
     },
     [
       isSchedulingArraignmentDate,
-      sendCourtDateToServer,
       workingCase.defendants,
+      workingCase.indictmentDecision,
       workingCase.id,
+      isArraignmentScheduled,
+      sendCourtDateToServer,
       updateDefendant,
     ],
   )
@@ -252,7 +263,7 @@ const Subpoena: FC = () => {
           }}
           primaryButtonText={formatMessage(strings.modalPrimaryButtonText)}
           secondaryButtonText={formatMessage(strings.modalSecondaryButtonText)}
-          isPrimaryButtonLoading={false}
+          isPrimaryButtonLoading={isCreatingSubpoena}
         />
       )}
     </PageLayout>

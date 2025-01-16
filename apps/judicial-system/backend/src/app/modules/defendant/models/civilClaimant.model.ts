@@ -20,13 +20,14 @@ import { Case } from '../../case/models/case.model'
   timestamps: false,
 })
 export class CivilClaimant extends Model {
-  static isSpokespersonOfCivilClaimant(
+  static isConfirmedSpokespersonOfCivilClaimant(
     spokespersonNationalId: string,
     civilClaimants?: CivilClaimant[],
   ) {
     return civilClaimants?.some(
       (civilClaimant) =>
         civilClaimant.hasSpokesperson &&
+        civilClaimant.isSpokespersonConfirmed &&
         civilClaimant.spokespersonNationalId &&
         normalizeAndFormatNationalId(spokespersonNationalId).includes(
           civilClaimant.spokespersonNationalId,
@@ -34,18 +35,19 @@ export class CivilClaimant extends Model {
     )
   }
 
-  static isSpokespersonOfCivilClaimantWithCaseFileAccess(
+  static isConfirmedSpokespersonOfCivilClaimantWithCaseFileAccess(
     spokespersonNationalId: string,
     civilClaimants?: CivilClaimant[],
   ) {
     return civilClaimants?.some(
       (civilClaimant) =>
         civilClaimant.hasSpokesperson &&
+        civilClaimant.isSpokespersonConfirmed &&
+        civilClaimant.caseFilesSharedWithSpokesperson &&
         civilClaimant.spokespersonNationalId &&
         normalizeAndFormatNationalId(spokespersonNationalId).includes(
           civilClaimant.spokespersonNationalId,
-        ) &&
-        civilClaimant.caseFilesSharedWithSpokesperson,
+        ),
     )
   }
 
@@ -141,4 +143,11 @@ export class CivilClaimant extends Model {
   })
   @ApiPropertyOptional({ type: Boolean })
   caseFilesSharedWithSpokesperson?: boolean
+
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: true,
+  })
+  @ApiPropertyOptional({ type: Boolean })
+  isSpokespersonConfirmed?: boolean
 }

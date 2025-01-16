@@ -8,7 +8,7 @@ import {
   buildSection,
   buildSelectField,
   buildTextField,
-  getValueViaPath,
+  buildTitleField,
 } from '@island.is/application/core'
 import { m } from '../../lib/messages/messages'
 import { FormValue } from '@island.is/application/types'
@@ -90,8 +90,8 @@ export const formerInsuranceSection = buildSection({
           },
         }),
         buildDividerField({
-          title: ' ',
-          color: 'transparent',
+          marginTop: 5,
+          useDividerLine: false,
         }),
         buildDescriptionField({
           id: 'formerInsurance.entitlementDescription',

@@ -133,6 +133,9 @@ const Confirm: FC<React.PropsWithChildren<unknown>> = () => {
     SkilavottordVehicleReadyToDeregisteredQuery,
     {
       variables: { permno: id },
+      onError: (_err) => {
+        // Do nothing error handled in ErrorLink
+      },
     },
   )
 

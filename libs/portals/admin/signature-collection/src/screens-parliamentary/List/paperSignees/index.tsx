@@ -19,11 +19,13 @@ import {
   useSignatureCollectionAdminCanSignInfoQuery,
   useIdentityQuery,
 } from './identityAndCanSignLookup.generated'
-import { useSignatureCollectionUploadPaperSignatureMutation } from './uploadPaperSignee.generated'
+import { useSignatureCollectionAdminUploadPaperSignatureMutation } from './uploadPaperSignee.generated'
+import { useRevalidator } from 'react-router-dom'
 
 export const PaperSignees = ({ listId }: { listId: string }) => {
   useNamespaces('sp.signatureCollection')
   const { formatMessage } = useLocale()
+  const { revalidate } = useRevalidator()
   const { control, reset } = useForm()
 
   const [nationalIdInput, setNationalIdInput] = useState('')
@@ -61,7 +63,7 @@ export const PaperSignees = ({ listId }: { listId: string }) => {
   }, [nationalIdInput, loading, data])
 
   const [uploadPaperSignee, { loading: uploadingPaperSignature }] =
-    useSignatureCollectionUploadPaperSignatureMutation({
+    useSignatureCollectionAdminUploadPaperSignatureMutation({
       variables: {
         input: {
           listId: listId,
@@ -69,9 +71,20 @@ export const PaperSignees = ({ listId }: { listId: string }) => {
           pageNumber: Number(page),
         },
       },
-      onCompleted: () => {
-        toast.success(formatMessage(m.paperSigneeSuccess))
+      onCompleted: (res) => {
+        if (res.signatureCollectionAdminUploadPaperSignature?.success) {
+          toast.success(formatMessage(m.paperSigneeSuccess))
+        } else {
+          if (
+            res.signatureCollectionAdminUploadPaperSignature?.reasons?.includes(
+              'alreadySigned',
+            )
+          ) {
+            toast.error(formatMessage(m.paperSigneeErrorAlreadySigned))
+          }
+        }
         reset()
+        revalidate()
         setNationalIdTypo(false)
         setName('')
       },

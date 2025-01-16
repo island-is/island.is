@@ -1,7 +1,7 @@
-import { ChangeEvent, FC, useCallback, useContext, useState } from 'react'
+import { ChangeEvent, FC, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 
-import { Box, Checkbox, Text } from '@island.is/island-ui/core'
+import { Box, Button, Checkbox, Text } from '@island.is/island-ui/core'
 import { capitalize } from '@island.is/judicial-system/formatters'
 import { core } from '@island.is/judicial-system-web/messages'
 import {
@@ -9,14 +9,18 @@ import {
   DefenderNotFound,
   FormContext,
   InputAdvocate,
+  Modal,
 } from '@island.is/judicial-system-web/src/components'
 import {
   Defendant,
   DefenderChoice,
+  UpdateDefendantInput,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { useDefendants } from '@island.is/judicial-system-web/src/utils/hooks'
 
 import { strings } from './Advocates.strings'
+
+interface UpdateDefendant extends Omit<UpdateDefendantInput, 'caseId'> {}
 
 interface Props {
   defendant: Defendant
@@ -25,42 +29,96 @@ interface Props {
 const SelectDefender: FC<Props> = ({ defendant }) => {
   const { workingCase, setWorkingCase } = useContext(FormContext)
   const { formatMessage } = useIntl()
-  const { setAndSendDefendantToServer } = useDefendants()
+  const { updateDefendantState, updateDefendant, setAndSendDefendantToServer } =
+    useDefendants()
+
+  const [displayModal, setDisplayModal] = useState<boolean>(false)
 
   const [defenderNotFound, setDefenderNotFound] = useState<boolean>(false)
   const gender = defendant.gender || 'NONE'
 
-  const toggleDefendantWaivesRightToCounsel = useCallback(
-    (
-      caseId: string,
-      defendant: Defendant,
-      defendantWaivesRightToCounsel: boolean,
-    ) => {
-      const updateDefendantInput = {
-        caseId,
-        defendantId: defendant.id,
-        defenderNationalId: defendantWaivesRightToCounsel
-          ? ''
-          : defendant.defenderNationalId,
-        defenderName: defendantWaivesRightToCounsel
-          ? ''
-          : defendant.defenderName,
-        defenderEmail: defendantWaivesRightToCounsel
-          ? ''
-          : defendant.defenderEmail,
-        defenderPhoneNumber: defendantWaivesRightToCounsel
-          ? ''
-          : defendant.defenderPhoneNumber,
-        defenderChoice:
-          defendantWaivesRightToCounsel === true
-            ? DefenderChoice.WAIVE
-            : undefined,
-      }
+  const handleUpdateDefendantState = (update: UpdateDefendant) => {
+    updateDefendantState({ caseId: workingCase.id, ...update }, setWorkingCase)
+  }
 
-      setAndSendDefendantToServer(updateDefendantInput, setWorkingCase)
-    },
-    [setWorkingCase, setAndSendDefendantToServer],
-  )
+  const handleUpdateDefendant = (update: UpdateDefendant) => {
+    updateDefendant({ caseId: workingCase.id, ...update })
+  }
+
+  const handleSetAndSendDefendantToServer = (update: UpdateDefendant) => {
+    setAndSendDefendantToServer(
+      { caseId: workingCase.id, ...update },
+      setWorkingCase,
+    )
+  }
+
+  const toggleDefendantWaivesRightToCounsel = (
+    defendant: Defendant,
+    defendantWaivesRightToCounsel: boolean,
+  ) => {
+    const update: UpdateDefendant = {
+      defendantId: defendant.id,
+      defenderNationalId: defendantWaivesRightToCounsel
+        ? null
+        : defendant.defenderNationalId || null,
+      defenderName: defendantWaivesRightToCounsel
+        ? null
+        : defendant.defenderName,
+      defenderEmail: defendantWaivesRightToCounsel
+        ? null
+        : defendant.defenderEmail,
+      defenderPhoneNumber: defendantWaivesRightToCounsel
+        ? null
+        : defendant.defenderPhoneNumber,
+      defenderChoice:
+        defendantWaivesRightToCounsel === true
+          ? DefenderChoice.WAIVE
+          : DefenderChoice.DELAY,
+    }
+
+    handleSetAndSendDefendantToServer(update)
+  }
+
+  const toggleDefenderChoiceConfirmed = (
+    defendant: Defendant,
+    isDefenderChoiceConfirmed: boolean,
+  ) => {
+    const { defenderChoice, defenderName } = defendant
+
+    const isDelaying =
+      !defenderName &&
+      (!defenderChoice || defenderChoice === DefenderChoice.CHOOSE)
+    const isChoosing =
+      defenderName &&
+      (!defenderChoice || defenderChoice === DefenderChoice.DELAY)
+
+    const defenderChoiceUpdate = isDelaying
+      ? DefenderChoice.DELAY
+      : isChoosing
+      ? DefenderChoice.CHOOSE
+      : defenderChoice
+
+    const update: UpdateDefendant = {
+      defendantId: defendant.id,
+      isDefenderChoiceConfirmed,
+      defenderChoice: defenderChoiceUpdate,
+    }
+
+    handleSetAndSendDefendantToServer(update)
+    setDisplayModal(false)
+  }
+
+  const toggleCaseFilesSharedWithDefender = (
+    defendant: Defendant,
+    caseFilesSharedWithDefender: boolean,
+  ) => {
+    const update: UpdateDefendant = {
+      defendantId: defendant.id,
+      caseFilesSharedWithDefender,
+    }
+
+    handleSetAndSendDefendantToServer(update)
+  }
 
   return (
     <Box component="section" marginBottom={5}>
@@ -87,21 +145,129 @@ const SelectDefender: FC<Props> = ({ defendant }) => {
             checked={Boolean(defendant.defenderChoice === DefenderChoice.WAIVE)}
             onChange={(event: ChangeEvent<HTMLInputElement>) => {
               toggleDefendantWaivesRightToCounsel(
-                workingCase.id,
                 defendant,
                 event.target.checked,
               )
             }}
             filled
             large
+            disabled={defendant.isDefenderChoiceConfirmed === true}
           />
         </Box>
         <InputAdvocate
-          disabled={defendant.defenderChoice === DefenderChoice.WAIVE}
+          advocateType="defender"
+          name={defendant.defenderName}
+          email={defendant.defenderEmail}
+          phoneNumber={defendant.defenderPhoneNumber}
+          onAdvocateChange={(
+            defenderName: string | null,
+            defenderNationalId: string | null,
+            defenderEmail: string | null,
+            defenderPhoneNumber: string | null,
+          ) =>
+            handleSetAndSendDefendantToServer({
+              defendantId: defendant.id,
+              defenderName,
+              defenderNationalId,
+              defenderEmail,
+              defenderPhoneNumber,
+            })
+          }
           onAdvocateNotFound={setDefenderNotFound}
-          clientId={defendant.id}
+          onEmailChange={(defenderEmail: string | null) =>
+            handleUpdateDefendantState({
+              defendantId: defendant.id,
+              defenderEmail,
+            })
+          }
+          onEmailSave={(defenderEmail: string | null) =>
+            handleUpdateDefendant({
+              defendantId: defendant.id,
+              defenderEmail,
+            })
+          }
+          onPhoneNumberChange={(defenderPhoneNumber: string | null) =>
+            handleUpdateDefendantState({
+              defendantId: defendant.id,
+              defenderPhoneNumber,
+            })
+          }
+          onPhoneNumberSave={(defenderPhoneNumber: string | null) =>
+            handleUpdateDefendant({
+              defendantId: defendant.id,
+              defenderPhoneNumber,
+            })
+          }
+          disabled={
+            defendant.defenderChoice === DefenderChoice.WAIVE ||
+            defendant.isDefenderChoiceConfirmed
+          }
         />
+        <Box marginTop={2}>
+          <Checkbox
+            name={`shareFilesWithDefender-${defendant.id}`}
+            label={formatMessage(strings.shareFilesWithDefender)}
+            checked={Boolean(defendant.caseFilesSharedWithDefender)}
+            disabled={!defendant.defenderName && !defendant.defenderEmail}
+            onChange={() => {
+              toggleCaseFilesSharedWithDefender(
+                defendant,
+                !defendant.caseFilesSharedWithDefender,
+              )
+            }}
+            tooltip={formatMessage(strings.shareFilesWithDefenderTooltip)}
+            backgroundColor="white"
+            large
+            filled
+          />
+        </Box>
+        <Box display="flex" justifyContent="flexEnd" marginTop={2}>
+          <Button
+            variant="text"
+            colorScheme={
+              defendant.isDefenderChoiceConfirmed ? 'destructive' : 'default'
+            }
+            onClick={() => {
+              setDisplayModal(true)
+            }}
+          >
+            {defendant.isDefenderChoiceConfirmed
+              ? formatMessage(strings.changeDefenderChoice)
+              : formatMessage(strings.confirmDefenderChoice)}
+          </Button>
+        </Box>
       </BlueBox>
+      {displayModal && (
+        <Modal
+          title={formatMessage(strings.confirmDefenderChoiceModalTitle, {
+            isDefenderChoiceConfirmed: defendant.isDefenderChoiceConfirmed,
+          })}
+          text={formatMessage(
+            defendant.isDefenderChoiceConfirmed
+              ? strings.changeDefenderChoiceModalText
+              : defendant.defenderChoice === DefenderChoice.WAIVE
+              ? strings.confirmDefenderWaivedModalText
+              : !defendant.defenderName
+              ? strings.confirmDefenderDelayModalText
+              : strings.confirmDefenderChoiceModalText,
+            { defenderName: defendant?.defenderName },
+          )}
+          primaryButtonText={formatMessage(
+            strings.confirmModalPrimaryButtonText,
+            { isConfirming: !defendant.isDefenderChoiceConfirmed },
+          )}
+          onPrimaryButtonClick={() =>
+            toggleDefenderChoiceConfirmed(
+              defendant,
+              !defendant.isDefenderChoiceConfirmed,
+            )
+          }
+          secondaryButtonText={formatMessage(
+            strings.confirmModalSecondaryButtonText,
+          )}
+          onSecondaryButtonClick={() => setDisplayModal(false)}
+        />
+      )}
     </Box>
   )
 }

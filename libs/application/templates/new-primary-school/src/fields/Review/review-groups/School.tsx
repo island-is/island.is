@@ -1,4 +1,5 @@
 import { useQuery } from '@apollo/client'
+import { coreErrorMessages } from '@island.is/application/core'
 import { DataValue, ReviewGroup } from '@island.is/application/ui-components'
 import {
   GridColumn,
@@ -8,6 +9,7 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
+import { useMemo } from 'react'
 import { friggSchoolsByMunicipalityQuery } from '../../../graphql/queries'
 import { newPrimarySchoolMessages } from '../../../lib/messages'
 import {
@@ -18,7 +20,6 @@ import {
 } from '../../../lib/newPrimarySchoolUtils'
 import { FriggSchoolsByMunicipalityQuery } from '../../../types/schema'
 import { ReviewGroupProps } from './props'
-import { useMemo } from 'react'
 
 export const School = ({
   application,
@@ -33,7 +34,7 @@ export const School = ({
     application.externalData,
   )
 
-  const { data, loading } = useQuery<FriggSchoolsByMunicipalityQuery>(
+  const { data, loading, error } = useQuery<FriggSchoolsByMunicipalityQuery>(
     friggSchoolsByMunicipalityQuery,
   )
   const selectedSchoolName = useMemo(() => {
@@ -75,6 +76,11 @@ export const School = ({
                     newPrimarySchoolMessages.overview.selectedSchool,
                   )}
                   value={selectedSchoolName || ''}
+                  error={
+                    error
+                      ? formatMessage(coreErrorMessages.failedDataProvider)
+                      : undefined
+                  }
                 />
               </GridColumn>
             </GridRow>

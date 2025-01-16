@@ -6,14 +6,15 @@ import {
   buildFileUploadField,
   getValueViaPath,
   buildHiddenInput,
+  NO,
 } from '@island.is/application/core'
 import { supportingDocuments } from '../../../lib/messages'
 import { Application, FormValue } from '@island.is/application/types'
 import { Citizenship } from '../../../lib/dataSchema'
 import {
+  getSelectedCustodyChild,
   getSelectedIndividualAge,
   getSelectedIndividualName,
-  getSelectedCustodyChildren,
 } from '../../../utils'
 import { Routes } from '../../../lib/constants'
 import { FILE_TYPES_ALLOWED, MIN_AGE_WRITTEN_CONSENT } from '../../../shared'
@@ -48,16 +49,17 @@ export const ChildrenOtherDocumentsSubSection = (index: number) =>
             titleVariant: 'h5',
             title: '',
           }),
-          buildCustomField(
-            {
-              id: `${Routes.CHILDSUPPORTINGDOCUMENTS}[${index}].nationalId`,
-              title: '',
-              component: 'HiddenTextInput',
+          buildHiddenInput({
+            id: `${Routes.CHILDSUPPORTINGDOCUMENTS}[${index}].nationalId`,
+            defaultValue: (application: Application) => {
+              const selectedChild = getSelectedCustodyChild(
+                application.externalData,
+                application.answers,
+                index,
+              )
+              return selectedChild?.nationalId
             },
-            {
-              index: index,
-            },
-          ),
+          }),
           buildFileUploadField({
             id: `${Routes.CHILDSUPPORTINGDOCUMENTS}[${index}].birthCertificate`,
             title:
@@ -113,24 +115,13 @@ export const ChildrenOtherDocumentsSubSection = (index: number) =>
             id: `${Routes.CHILDSUPPORTINGDOCUMENTS}[${index}].writtenConsentFromOtherParentRequired`,
             defaultValue: (application: Application) => {
               const answers = application.answers as Citizenship
-              const selectedInCustody = getSelectedCustodyChildren(
-                application.externalData,
+              const hasFullCustody = getValueViaPath(
                 answers,
-              )
-              const thisChild =
-                !!selectedInCustody &&
-                selectedInCustody.find((_, i) => i === index - 1)
-
-              const hasOtherParent =
-                thisChild && !!thisChild.otherParent ? true : false
-
-              const customAddedParent = getValueViaPath(
-                answers,
-                `selectedChildrenExtraData[${index}].otherParentName`,
+                `selectedChildrenExtraData[${index}].hasFullCustody`,
                 '',
               ) as string
 
-              return hasOtherParent || !!customAddedParent ? 'true' : 'false'
+              return hasFullCustody === NO ? 'true' : 'false'
             },
           }),
           buildFileUploadField({
@@ -150,41 +141,27 @@ export const ChildrenOtherDocumentsSubSection = (index: number) =>
               supportingDocuments.labels.otherDocuments.buttonText,
             condition: (formValue: FormValue, externalData) => {
               const answers = formValue as Citizenship
-              const selectedInCustody = getSelectedCustodyChildren(
-                externalData,
+              const hasFullCustody = getValueViaPath(
                 answers,
-              )
-              const thisChild =
-                !!selectedInCustody &&
-                selectedInCustody.find((_, i) => i === index - 1)
-
-              const hasOtherParent =
-                thisChild && !!thisChild.otherParent ? true : false
-
-              const customAddedParent = getValueViaPath(
-                answers,
-                `selectedChildrenExtraData[${index}].otherParentName`,
+                `selectedChildrenExtraData[${index}].hasFullCustody`,
                 '',
               ) as string
 
-              return hasOtherParent || !!customAddedParent
+              return hasFullCustody === NO
             },
           }),
           buildHiddenInput({
             id: `${Routes.CHILDSUPPORTINGDOCUMENTS}[${index}].custodyDocumentsRequired`,
             defaultValue: (application: Application) => {
               const answers = application.answers as Citizenship
-              const selectedInCustody = getSelectedCustodyChildren(
-                application.externalData,
-                answers,
-              )
-              const thisChild =
-                !!selectedInCustody &&
-                selectedInCustody.find((_, i) => i === index - 1)
-              const hasOtherParent =
-                thisChild && !!thisChild.otherParent ? true : false
 
-              return hasOtherParent ? 'true' : 'false'
+              const hasFullCustody = getValueViaPath(
+                answers,
+                `selectedChildrenExtraData[${index}].hasFullCustody`,
+                '',
+              ) as string
+
+              return hasFullCustody === NO ? 'true' : 'false'
             },
           }),
           buildFileUploadField({
@@ -204,17 +181,14 @@ export const ChildrenOtherDocumentsSubSection = (index: number) =>
               supportingDocuments.labels.otherDocuments.buttonText,
             condition: (formValue: FormValue, externalData) => {
               const answers = formValue as Citizenship
-              const selectedInCustody = getSelectedCustodyChildren(
-                externalData,
-                answers,
-              )
-              const thisChild =
-                !!selectedInCustody &&
-                selectedInCustody.find((_, i) => i === index - 1)
-              const hasOtherParent =
-                thisChild && !!thisChild.otherParent ? true : false
 
-              return hasOtherParent
+              const hasFullCustody = getValueViaPath(
+                answers,
+                `selectedChildrenExtraData[${index}].hasFullCustody`,
+                '',
+              ) as string
+
+              return hasFullCustody === NO
             },
           }),
         ],

@@ -1,9 +1,3 @@
-import {
-  Alert as InfoAlert,
-  dynamicColor,
-  LICENSE_CARD_ROW_GAP,
-  LicenseCard,
-} from '@ui'
 import * as FileSystem from 'expo-file-system'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
@@ -22,6 +16,13 @@ import {
 import { NavigationFunctionComponent } from 'react-native-navigation'
 import PassKit, { AddPassButton } from 'react-native-passkit-wallet'
 import styled, { useTheme } from 'styled-components/native'
+
+import {
+  Alert as InfoAlert,
+  dynamicColor,
+  LICENSE_CARD_ROW_GAP,
+  LicenseCard,
+} from '../../ui'
 import { useFeatureFlag } from '../../contexts/feature-flag-provider'
 import {
   GenericLicenseType,
@@ -35,8 +36,11 @@ import { useConnectivityIndicator } from '../../hooks/use-connectivity-indicator
 import { isAndroid, isIos } from '../../utils/devices'
 import { screenWidth } from '../../utils/dimensions'
 import { FieldRender } from './components/field-render'
+import { useOfflineStore } from '../../stores/offline-store'
+import { useLocale } from '../../hooks/use-locale'
 
 const INFORMATION_BASE_TOP_SPACING = 70
+export const BARCODE_MAX_WIDTH = 500
 
 const getImageFromRawData = (rawData: string) => {
   try {
@@ -77,6 +81,8 @@ const LicenseCardWrapper = styled(SafeAreaView)`
 const ButtonWrapper = styled(SafeAreaView)<{ floating?: boolean }>`
   margin-left: ${({ theme }) => theme.spacing[2]}px;
   margin-right: ${({ theme }) => theme.spacing[2]}px;
+  margin-bottom: ${({ theme, floating }) =>
+    floating ? 0 : theme.spacing[6]}px;
 
   ${({ floating, theme }) =>
     floating &&
@@ -143,6 +149,7 @@ export const WalletPassScreen: NavigationFunctionComponent<{
   const [addingToWallet, setAddingToWallet] = useState(false)
   const isBarcodeEnabled = useFeatureFlag('isBarcodeEnabled', false)
   const fadeInAnim = useRef(new Animated.Value(0)).current
+  const isConnected = useOfflineStore(({ isConnected }) => isConnected)
 
   const [generatePkPass] = useGeneratePkPassMutation()
   const res = useGetLicenseQuery({
@@ -151,21 +158,39 @@ export const WalletPassScreen: NavigationFunctionComponent<{
       input: {
         licenseType: item?.license.type ?? id,
       },
+      locale: useLocale(),
     },
   })
 
   const data = res.data?.genericLicense ?? item
   const fields = data?.payload?.data ?? []
+  const isTablet = screenWidth > 760
   const pkPassAllowed =
     data?.license?.pkpass &&
     data?.license?.pkpassStatus === GenericUserLicensePkPassStatus.Available
   const allowLicenseBarcode =
     isBarcodeEnabled && pkPassAllowed && !data?.payload?.metadata?.expired
   const licenseType = data?.license?.type
-  const barcodeWidth =
-    screenWidth - theme.spacing[4] * 2 - theme.spacing.smallGutter * 2
+  const barcodeWidth = isTablet
+    ? BARCODE_MAX_WIDTH // For tablets - make sure barcode is not huge
+    : screenWidth - theme.spacing[4] * 2 - theme.spacing.smallGutter * 2
   const barcodeHeight = barcodeWidth / 3
   const updated = data?.fetch?.updated
+
+  const { loading } = res
+
+  const informationTopSpacing =
+    (allowLicenseBarcode && ((loading && !data?.barcode) || data?.barcode)) ||
+    ((!isConnected || res.error) && isBarcodeEnabled)
+      ? barcodeHeight + LICENSE_CARD_ROW_GAP
+      : 0
+
+  const [key, setKey] = useState(0)
+  useEffect(() => {
+    // Used to rerender ScrollView to have correct ContentInset based on barcode/no barcode
+    // Remove once barcodes are live
+    setKey((prev) => prev + 1)
+  }, [isBarcodeEnabled])
 
   const fadeIn = () => {
     Animated.timing(fadeInAnim, {
@@ -226,11 +251,22 @@ export const WalletPassScreen: NavigationFunctionComponent<{
           addPass(pkPassContentUri, 'com.snjallveskid').catch(() => {
             if (!canAddPass) {
               Alert.alert(
-                'Villa',
-                'You cannot add passes. Please make sure you have Smartwallet installed on your device.',
+                intl.formatMessage({
+                  id: 'walletPass.errorTitle',
+                }),
+                intl.formatMessage({
+                  id: 'walletPass.errorCannotAddPasses',
+                }),
               )
             } else {
-              Alert.alert('Villa', 'Failed to fetch or add pass')
+              Alert.alert(
+                intl.formatMessage({
+                  id: 'walletPass.errorTitle',
+                }),
+                intl.formatMessage({
+                  id: 'walletPass.errorAddingOrFetching',
+                }),
+              )
             }
           })
           setAddingToWallet(false)
@@ -258,7 +294,12 @@ export const WalletPassScreen: NavigationFunctionComponent<{
       } catch (err) {
         if (!canAddPass) {
           Alert.alert(
-            'You cannot add passes. Please make sure you have Smartwallet installed on your device.',
+            intl.formatMessage({
+              id: 'walletPass.errorTitle',
+            }),
+            intl.formatMessage({
+              id: 'walletPass.errorCannotAddPasses',
+            }),
           )
         } else {
           Alert.alert(
@@ -269,7 +310,9 @@ export const WalletPassScreen: NavigationFunctionComponent<{
               ? intl.formatMessage({
                   id: 'walletPass.errorNotPossibleToAddDriverLicense',
                 })
-              : 'Failed to fetch or add pass',
+              : intl.formatMessage({
+                  id: 'walletPass.errorAddingOrFetching',
+                }),
             item?.license?.type === 'DriversLicense'
               ? [
                   {
@@ -294,7 +337,9 @@ export const WalletPassScreen: NavigationFunctionComponent<{
         console.error(err)
       }
     } else {
-      Alert.alert('You cannot add passes on this device')
+      Alert.alert(
+        intl.formatMessage({ id: 'walletPass.errorNotPossibleOnThisDevice' }),
+      )
     }
   }
 
@@ -314,13 +359,6 @@ export const WalletPassScreen: NavigationFunctionComponent<{
       return expDt
     }
   }
-
-  const { loading } = res
-
-  const informationTopSpacing =
-    allowLicenseBarcode && ((loading && !data?.barcode) || data?.barcode)
-      ? barcodeHeight + LICENSE_CARD_ROW_GAP
-      : 0
 
   const renderButtons = () => {
     if (isIos) {
@@ -360,6 +398,9 @@ export const WalletPassScreen: NavigationFunctionComponent<{
         <LicenseCard
           nativeID={`license-${licenseType}_destination`}
           type={licenseType}
+          title={data?.payload?.metadata?.name ?? undefined}
+          loading={res.loading}
+          error={!!res.error}
           logo={
             isBarcodeEnabled &&
             data?.license?.type === GenericLicenseType.DriversLicense
@@ -378,13 +419,30 @@ export const WalletPassScreen: NavigationFunctionComponent<{
               height: barcodeHeight,
             },
           })}
+          showBarcodeOfflineMessage={!isConnected && isBarcodeEnabled}
         />
       </LicenseCardWrapper>
       <Information
-        contentInset={{ bottom: 162 }}
+        contentInset={{
+          bottom:
+            informationTopSpacing || (!isConnected && isBarcodeEnabled)
+              ? isTablet
+                ? 340
+                : 162
+              : 0,
+        }}
+        key={key}
         topSpacing={informationTopSpacing}
       >
-        <SafeAreaView style={{ marginHorizontal: theme.spacing[2] }}>
+        <SafeAreaView
+          style={{
+            marginHorizontal: theme.spacing[2],
+            marginBottom:
+              pkPassAllowed && !isBarcodeEnabled && isIos
+                ? theme.spacing[15]
+                : theme.spacing[2],
+          }}
+        >
           {/* Show info alert if PCard or Ehic */}
           {(licenseType === GenericLicenseType.PCard ||
             licenseType === GenericLicenseType.Ehic) && (
@@ -439,7 +497,6 @@ export const WalletPassScreen: NavigationFunctionComponent<{
           </Animated.View>
         </ButtonWrapper>
       )}
-
       {addingToWallet && (
         <LoadingOverlay>
           <ActivityIndicator

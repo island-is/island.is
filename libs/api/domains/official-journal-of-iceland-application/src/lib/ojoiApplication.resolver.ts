@@ -25,6 +25,11 @@ import { DeleteApplicationAttachmentInput } from '../models/deleteApplicationAtt
 import type { User } from '@island.is/auth-nest-tools'
 import { GetUserInvolvedPartiesResponse } from '../models/getUserInvolvedParties.response'
 import { GetUserInvolvedPartiesInput } from '../models/getUserInvolvedParties.input'
+import { OJOIAIdInput } from '../models/id.input'
+import { OJOIAApplicationCaseResponse } from '../models/applicationCase.response'
+import { GetPdfResponse } from '../models/getPdf.response'
+import { GetInvolvedPartySignaturesInput } from '../models/getInvolvedPartySignatures.input'
+import { InvolvedPartySignatures } from '../models/getInvolvedPartySignatures.response'
 
 @Scopes(ApiScope.internal)
 @UseGuards(IdsUserGuard, ScopesGuard)
@@ -67,6 +72,13 @@ export class OfficialJournalOfIcelandApplicationResolver {
   })
   getPdfUrl(@Args('id') id: string, @CurrentUser() user: User) {
     return this.ojoiApplicationService.getPdfUrl(id, user)
+  }
+
+  @Query(() => GetPdfResponse, {
+    name: 'OJOIAGetPdf',
+  })
+  getPdf(@Args('input') input: OJOIAIdInput, @CurrentUser() user: User) {
+    return this.ojoiApplicationService.getPdf(input, user)
   }
 
   @Mutation(() => GetPresignedUrlResponse, {
@@ -122,5 +134,35 @@ export class OfficialJournalOfIcelandApplicationResolver {
     @CurrentUser() user: User,
   ) {
     return this.ojoiApplicationService.getUserInvolvedParties(input, user)
+  }
+
+  @Query(() => OJOIAApplicationCaseResponse, {
+    name: 'OJOIAGetApplicationCase',
+  })
+  getApplicationCase(
+    @Args('input') input: OJOIAIdInput,
+    @CurrentUser() user: User,
+  ) {
+    return this.ojoiApplicationService.getApplicationCase(input.id, user)
+  }
+
+  @Mutation(() => Boolean, {
+    name: 'OJOIAPostApplication',
+  })
+  postApplication(
+    @Args('input') input: OJOIAIdInput,
+    @CurrentUser() user: User,
+  ) {
+    return this.ojoiApplicationService.postApplication(input, user)
+  }
+
+  @Query(() => InvolvedPartySignatures, {
+    name: 'officialJournalOfIcelandApplicationInvolvedPartySignatures',
+  })
+  getInvolvedPartySignatures(
+    @Args('input') input: GetInvolvedPartySignaturesInput,
+    @CurrentUser() user: User,
+  ) {
+    return this.ojoiApplicationService.getInvolvedPartySignatures(input, user)
   }
 }

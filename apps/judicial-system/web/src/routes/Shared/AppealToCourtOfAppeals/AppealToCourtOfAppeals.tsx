@@ -4,7 +4,6 @@ import { useRouter } from 'next/router'
 
 import {
   Box,
-  Button,
   InputFileUpload,
   Text,
   UploadFile,
@@ -22,6 +21,7 @@ import {
   Modal,
   PageHeader,
   PageLayout,
+  PageTitle,
   RulingDateLabel,
   SectionHeading,
   UserContext,
@@ -70,12 +70,12 @@ const AppealToCourtOfAppeals = () => {
   }/${id}`
 
   const handleNextButtonClick = useCallback(async () => {
-    const allSucceeded = await handleUpload(
+    const uploadResult = await handleUpload(
       uploadFiles.filter((file) => file.percent === 0),
       updateUploadFile,
     )
 
-    if (!allSucceeded) {
+    if (uploadResult !== 'ALL_SUCCEEDED') {
       return
     }
 
@@ -111,20 +111,9 @@ const AppealToCourtOfAppeals = () => {
     <PageLayout workingCase={workingCase} isLoading={false} notFound={false}>
       <PageHeader title={formatMessage(titles.shared.appealToCourtOfAppeals)} />
       <FormContentContainer>
-        <Box marginBottom={2}>
-          <Button
-            variant="text"
-            preTextIcon="arrowBack"
-            onClick={() => router.push(previousUrl)}
-          >
-            {formatMessage(core.back)}
-          </Button>
-        </Box>
-        <Box marginBottom={1}>
-          <Text as="h1" variant="h1">
-            {formatMessage(strings.title)}
-          </Text>
-        </Box>
+        <PageTitle previousUrl={previousUrl}>
+          {formatMessage(strings.title)}
+        </PageTitle>
         {workingCase.rulingDate && (
           <Box marginBottom={7}>
             <RulingDateLabel rulingDate={workingCase.rulingDate} />

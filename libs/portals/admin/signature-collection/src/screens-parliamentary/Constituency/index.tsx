@@ -15,6 +15,7 @@ import {
   Stack,
   Text,
   toast,
+  TagVariant,
 } from '@island.is/island-ui/core'
 import {
   useLoaderData,
@@ -70,6 +71,33 @@ export const Constituency = ({
   })
 
   const [removeCandidate] = useSignatureCollectionAdminRemoveCandidateMutation()
+
+  const getTagConfig = (list: SignatureCollectionList) => {
+    // Lista læst
+    if (!list.active && !list.reviewed) {
+      return {
+        label: formatMessage(m.listLocked),
+        variant: 'blueberry' as TagVariant,
+        outlined: false,
+      }
+    }
+
+    // Úrvinnslu lokið
+    if (!list.active && list.reviewed) {
+      return {
+        label: formatMessage(m.confirmListReviewed),
+        variant: 'mint' as TagVariant,
+        outlined: false,
+      }
+    }
+
+    // Söfnun í gangi
+    return {
+      label: formatMessage(m.listOpen),
+      variant: 'blue' as TagVariant,
+      outlined: false,
+    }
+  }
 
   return (
     <GridContainer>
@@ -127,12 +155,10 @@ export const Constituency = ({
                     ': ' +
                     constituencyLists.length}
                 </Text>
-                {allowedToProcess && constituencyLists?.length > 0 && (
-                  <CreateCollection
-                    collectionId={collection?.id}
-                    areaId={areaId}
-                  />
-                )}
+                <CreateCollection
+                  collectionId={collection?.id}
+                  areaId={areaId}
+                />
               </Box>
               <Stack space={3}>
                 {constituencyLists.map((list) => (
@@ -158,89 +184,85 @@ export const Constituency = ({
                       },
                     }}
                     tag={
-                      allowedToProcess && list.active
+                      allowedToProcess
                         ? {
-                            label: 'Cancel collection',
-                            renderTag: () => (
-                              <DialogPrompt
-                                baseId="cancel_collection_dialog"
-                                title={
-                                  formatMessage(m.cancelCollectionButton) +
-                                  ' - ' +
-                                  list.area?.name
-                                }
-                                description={
-                                  candidatesListCount[list.candidate.id] === 1
-                                    ? formatMessage(
-                                        m.cancelCollectionModalMessageLastList,
-                                      )
-                                    : formatMessage(
-                                        m.cancelCollectionModalMessage,
-                                      )
-                                }
-                                ariaLabel="delete"
-                                disclosureElement={
-                                  <Tag outlined variant="red">
-                                    <Box display="flex" alignItems="center">
-                                      <Icon
-                                        icon="trash"
-                                        size="small"
-                                        type="outline"
-                                      />
-                                    </Box>
-                                  </Tag>
-                                }
-                                onConfirm={() => {
-                                  removeList({
-                                    variables: {
-                                      input: {
-                                        listId: list.id,
-                                      },
-                                    },
-                                  })
-
-                                  if (
+                            ...getTagConfig(list),
+                            renderTag: (cld) => (
+                              <Box
+                                display="flex"
+                                alignItems="center"
+                                columnGap={1}
+                              >
+                                {cld}
+                                <DialogPrompt
+                                  baseId="cancel_collection_dialog"
+                                  title={
+                                    formatMessage(m.cancelCollectionButton) +
+                                    ' - ' +
+                                    list.area?.name
+                                  }
+                                  description={
                                     candidatesListCount[list.candidate.id] === 1
-                                  ) {
-                                    removeCandidate({
+                                      ? formatMessage(
+                                          m.cancelCollectionModalMessageLastList,
+                                        )
+                                      : formatMessage(
+                                          m.cancelCollectionModalMessage,
+                                        )
+                                  }
+                                  ariaLabel="delete"
+                                  disclosureElement={
+                                    <Tag outlined variant="red">
+                                      <Box display="flex" alignItems="center">
+                                        <Icon
+                                          icon="trash"
+                                          size="small"
+                                          type="outline"
+                                        />
+                                      </Box>
+                                    </Tag>
+                                  }
+                                  onConfirm={() => {
+                                    removeList({
                                       variables: {
                                         input: {
-                                          candidateId: list.candidate.id,
+                                          listId: list.id,
                                         },
                                       },
                                     })
+
+                                    if (
+                                      candidatesListCount[list.candidate.id] ===
+                                      1
+                                    ) {
+                                      removeCandidate({
+                                        variables: {
+                                          input: {
+                                            candidateId: list.candidate.id,
+                                          },
+                                        },
+                                      })
+                                    }
+                                  }}
+                                  buttonTextConfirm={
+                                    candidatesListCount[list.candidate.id] === 1
+                                      ? formatMessage(
+                                          m.cancelCollectionAndCandidateModalConfirmButton,
+                                        )
+                                      : formatMessage(
+                                          m.cancelCollectionModalConfirmButton,
+                                        )
                                   }
-                                }}
-                                buttonTextConfirm={
-                                  candidatesListCount[list.candidate.id] === 1
-                                    ? formatMessage(
-                                        m.cancelCollectionAndCandidateModalConfirmButton,
-                                      )
-                                    : formatMessage(
-                                        m.cancelCollectionModalConfirmButton,
-                                      )
-                                }
-                                buttonPropsConfirm={{
-                                  variant: 'primary',
-                                  colorScheme: 'destructive',
-                                }}
-                                buttonTextCancel={formatMessage(
-                                  m.cancelCollectionModalCancelButton,
-                                )}
-                              />
+                                  buttonPropsConfirm={{
+                                    variant: 'primary',
+                                    colorScheme: 'destructive',
+                                  }}
+                                  buttonTextCancel={formatMessage(
+                                    m.cancelCollectionModalCancelButton,
+                                  )}
+                                />
+                              </Box>
                             ),
-                          }
-                        : !list.active && !list.reviewed
-                        ? {
-                            label: formatMessage(m.listLocked),
-                            variant: 'blueberry',
-                            outlined: false,
-                          }
-                        : !list.active && list.reviewed
-                        ? {
-                            label: formatMessage(m.confirmListReviewed),
-                            variant: 'mint',
-                            outlined: false,
                           }
                         : undefined
                     }

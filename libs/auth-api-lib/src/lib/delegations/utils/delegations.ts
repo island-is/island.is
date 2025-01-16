@@ -16,7 +16,10 @@ export const delegationProviderTypeMap: Record<
   AuthDelegationProvider,
   DelegationRecordType[]
 > = {
-  [AuthDelegationProvider.NationalRegistry]: [AuthDelegationType.LegalGuardian],
+  [AuthDelegationProvider.NationalRegistry]: [
+    AuthDelegationType.LegalGuardian,
+    AuthDelegationType.LegalGuardianMinor,
+  ],
   [AuthDelegationProvider.CompanyRegistry]: [
     AuthDelegationType.ProcurationHolder,
   ],

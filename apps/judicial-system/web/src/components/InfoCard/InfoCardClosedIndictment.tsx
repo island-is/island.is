@@ -2,14 +2,13 @@ import { FC, useContext } from 'react'
 
 import { EventType } from '../../graphql/schema'
 import { FormContext } from '../FormProvider/FormProvider'
-import { DefendantInfoActionButton } from './DefendantInfo/DefendantInfo'
 import InfoCard from './InfoCard'
 import useInfoCardItems from './useInfoCardItems'
 
 export interface Props {
-  defendantInfoActionButton?: DefendantInfoActionButton
   displayAppealExpirationInfo?: boolean
   displayVerdictViewDate?: boolean
+  displaySentToPrisonAdminDate?: boolean
 }
 
 const InfoCardClosedIndictment: FC<Props> = (props) => {
@@ -24,7 +23,7 @@ const InfoCardClosedIndictment: FC<Props> = (props) => {
     court,
     prosecutor,
     judge,
-    offence,
+    offense,
     indictmentReviewer,
     indictmentReviewDecision,
     indictmentReviewedDate,
@@ -32,9 +31,9 @@ const InfoCardClosedIndictment: FC<Props> = (props) => {
   } = useInfoCardItems()
 
   const {
-    defendantInfoActionButton,
     displayAppealExpirationInfo,
     displayVerdictViewDate,
+    displaySentToPrisonAdminDate,
   } = props
 
   const reviewedDate = workingCase.eventLogs?.find(
@@ -50,8 +49,8 @@ const InfoCardClosedIndictment: FC<Props> = (props) => {
             defendants(
               workingCase.type,
               displayAppealExpirationInfo,
-              defendantInfoActionButton,
               displayVerdictViewDate,
+              displaySentToPrisonAdminDate,
             ),
           ],
         },
@@ -68,7 +67,7 @@ const InfoCardClosedIndictment: FC<Props> = (props) => {
             court,
             prosecutor(workingCase.type),
             judge,
-            offence,
+            offense,
           ],
           columns: 2,
         },
@@ -81,7 +80,7 @@ const InfoCardClosedIndictment: FC<Props> = (props) => {
                   ...(workingCase.indictmentReviewDecision
                     ? [indictmentReviewDecision]
                     : []),
-                  ...(indictmentReviewedDate
+                  ...(reviewedDate
                     ? [indictmentReviewedDate(reviewedDate)]
                     : []),
                 ],

@@ -183,10 +183,6 @@ export const useEligibility = (
 
     const requirements = [
       ...eligibility,
-      {
-        key: RequirementKey.HasNoPhoto,
-        requirementMet: hasQualityPhoto,
-      },
       ...(hasExtendedLicense
         ? [
             {
@@ -203,7 +199,6 @@ export const useEligibility = (
         isEligible: loading
           ? undefined
           : (data.drivingLicenseApplicationEligibility?.isEligible ?? false) &&
-            hasQualityPhoto &&
             !hasExtendedLicense &&
             !hasAnyInvalidRemarks,
         requirements,

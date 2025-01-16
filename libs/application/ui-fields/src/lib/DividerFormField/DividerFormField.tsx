@@ -1,30 +1,23 @@
 import React, { FC } from 'react'
 
-import { formatText } from '@island.is/application/core'
-import { DividerField, Application } from '@island.is/application/types'
-import { Box, Text, Divider } from '@island.is/island-ui/core'
-import { useLocale } from '@island.is/localization'
+import { DividerField } from '@island.is/application/types'
+import { Box, Divider } from '@island.is/island-ui/core'
 
 export const DividerFormField: FC<
   React.PropsWithChildren<{
     field: DividerField
-    application: Application
   }>
-> = ({ field, application }) => {
-  const { formatMessage } = useLocale()
-  if (field.title) {
-    return (
-      <Box marginTop={5} marginBottom={1}>
-        <Text variant="h5" color={field.color ?? 'blue400'}>
-          {formatText(field.title, application, formatMessage)}
-        </Text>
-      </Box>
-    )
-  }
+> = ({ field }) => {
+  const { useDividerLine, marginTop, marginBottom } = field
 
   return (
-    <Box paddingTop={2} paddingBottom={2}>
-      <Divider />
+    <Box
+      paddingTop={useDividerLine ? 2 : 0}
+      paddingBottom={useDividerLine ? 2 : 0}
+      marginTop={marginTop}
+      marginBottom={marginBottom}
+    >
+      {useDividerLine && <Divider />}
     </Box>
   )
 }

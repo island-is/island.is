@@ -8,5 +8,6 @@ export type LicensePlateRenewalAnswers = LicensePlateRenewal
 
 export * from './utils'
 export * from './lib/messages/error'
+export * from './lib/messages/applicationCheck'
 
 export default template

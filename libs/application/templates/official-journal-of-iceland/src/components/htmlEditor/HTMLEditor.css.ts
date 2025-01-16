@@ -139,7 +139,7 @@ export const classes: EditorClasses = {
 
   editor: style({
     position: 'relative',
-    minHeight: 200,
+    minHeight: 100,
     maxHeight: 'calc(100vh - 10rem)',
     width: '100%',
     caretColor: theme.color.blue400,

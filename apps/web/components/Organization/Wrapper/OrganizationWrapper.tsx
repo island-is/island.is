@@ -1,6 +1,7 @@
 import React, {
   PropsWithChildren,
   ReactNode,
+  useContext,
   useEffect,
   useMemo,
   useState,
@@ -31,6 +32,8 @@ import {
 } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import {
+  BoostChatPanel,
+  boostChatPanelEndpoints,
   DefaultHeaderProps,
   Footer as WebFooter,
   HeadWithSocialSharing,
@@ -42,6 +45,7 @@ import {
 } from '@island.is/web/components'
 import { DefaultHeader, WatsonChatPanel } from '@island.is/web/components'
 import { SLICE_SPACING, STICKY_NAV_MAX_WIDTH } from '@island.is/web/constants'
+import { GlobalContext } from '@island.is/web/context'
 import {
   Image,
   Organization,
@@ -126,7 +130,7 @@ interface NavigationData {
 interface WrapperProps {
   pageTitle: string
   pageDescription?: string
-  pageFeaturedImage?: Image
+  pageFeaturedImage?: Image | null
   organizationPage: OrganizationPage
   breadcrumbItems?: BreadCrumbItem[]
   mainContent?: ReactNode
@@ -205,13 +209,7 @@ export const getThemeConfig = (
     }
   }
 
-  return {
-    themeConfig: {
-      headerColorScheme: 'white',
-      headerButtonColorScheme: 'negative',
-      footerVersion,
-    },
-  }
+  return { themeConfig: { footerVersion } }
 }
 
 export const OrganizationHeader: React.FC<
@@ -613,6 +611,20 @@ export const OrganizationHeader: React.FC<
           customTitleColor={n('tryggingastofnunHeaderTitleColor', '#007339')}
         />
       )
+    case 'faggilding':
+      return (
+        <DefaultHeader
+          {...defaultProps}
+          logoImageClassName={styles.logoLarge}
+        />
+      )
+    case 'rannis':
+      return (
+        <DefaultHeader
+          {...defaultProps}
+          background="linear-gradient(271deg, #C00B02 5.72%, #DB0B00 91.04%)"
+        />
+      )
     default:
       return <DefaultHeader {...defaultProps} />
   }
@@ -667,10 +679,10 @@ export const OrganizationExternalLinks: React.FC<
                 pureChildren={true}
               >
                 <Button
-                  as="a"
                   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                   // @ts-ignore make web strict
                   variant={variant}
+                  unfocusable
                   icon={isSjukratryggingar ? 'lockClosed' : 'open'}
                   iconType="outline"
                   size="medium"
@@ -708,6 +720,8 @@ export const OrganizationFooter: React.FC<
   const n = useNamespace(namespace)
 
   let OrganizationFooterComponent = null
+
+  const { isServiceWeb } = useContext(GlobalContext)
 
   switch (organization?.slug) {
     case 'syslumenn':
@@ -907,6 +921,29 @@ export const OrganizationFooter: React.FC<
         </>
       )
       break
+    case 'vinnueftirlitid':
+    case 'aosh':
+      {
+        const footerItems = organization?.footerItems ?? []
+        if (footerItems.length === 0) break
+        OrganizationFooterComponent = (
+          <WebFooter
+            heading={organization?.title ?? ''}
+            columns={footerItems}
+            background={
+              isServiceWeb
+                ? theme.color.purple100
+                : organization?.footerConfig?.background
+            }
+            color={
+              isServiceWeb
+                ? theme.color.dark400
+                : organization?.footerConfig?.textColor
+            }
+          />
+        )
+      }
+      break
     default: {
       const footerItems = organization?.footerItems ?? []
       if (footerItems.length === 0) break
@@ -952,6 +989,20 @@ export const OrganizationChatPanel = ({
     return (
       <WatsonChatPanel
         {...watsonConfig[activeLocale][organizationIdWithWatson]}
+      />
+    )
+  }
+
+  const organizationIdWithBoost = organizationIds.find((id) => {
+    return id in boostChatPanelEndpoints
+  })
+
+  if (organizationIdWithBoost) {
+    return (
+      <BoostChatPanel
+        endpoint={
+          organizationIdWithBoost as keyof typeof boostChatPanelEndpoints
+        }
       />
     )
   }
@@ -1086,8 +1137,7 @@ export const OrganizationWrapper: React.FC<
   const router = useRouter()
   const { width } = useWindowSize()
   const [isMobile, setIsMobile] = useState<boolean | undefined>()
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore make web strict
+
   usePlausiblePageview(organizationPage.organization?.trackingDomain)
 
   useEffect(() => {
@@ -1113,6 +1163,21 @@ export const OrganizationWrapper: React.FC<
 
   const sidebarCards = organizationPage.sidebarCards ?? []
 
+  const namespace = useMemo(() => {
+    try {
+      return JSON.parse(
+        organizationPage.organization?.namespace?.fields || '{}',
+      )
+    } catch {
+      return {}
+    }
+  }, [organizationPage.organization?.namespace?.fields])
+
+  const n = useNamespace(namespace)
+
+  const indexableBySearchEngine =
+    organizationPage.canBeFoundInSearchResults ?? true
+
   return (
     <>
       <HeadWithSocialSharing
@@ -1122,7 +1187,11 @@ export const OrganizationWrapper: React.FC<
         imageContentType={pageFeaturedImage?.contentType}
         imageWidth={pageFeaturedImage?.width?.toString()}
         imageHeight={pageFeaturedImage?.height?.toString()}
-      />
+      >
+        {!indexableBySearchEngine && (
+          <meta name="robots" content="noindex, nofollow" />
+        )}
+      </HeadWithSocialSharing>
       <OrganizationHeader
         organizationPage={organizationPage}
         isSubpage={isSubpage}
@@ -1381,11 +1450,13 @@ export const OrganizationWrapper: React.FC<
           />
         </Box>
       )}
-      <OrganizationChatPanel
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore make web strict
-        organizationIds={[organizationPage?.organization?.id]}
-      />
+      {n('enableOrganizationChatPanelForOrgPages', true) && (
+        <OrganizationChatPanel
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore make web strict
+          organizationIds={[organizationPage?.organization?.id]}
+        />
+      )}
     </>
   )
 }

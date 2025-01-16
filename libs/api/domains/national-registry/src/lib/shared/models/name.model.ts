@@ -13,4 +13,7 @@ export class Name {
 
   @Field(() => String, { nullable: true })
   fullName?: string | null
+
+  @Field(() => String, { nullable: true })
+  displayName?: string | null
 }

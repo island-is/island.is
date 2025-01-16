@@ -10,6 +10,7 @@ import { InputFields } from '../../lib/types'
 
 type Props = {
   applicationId: string
+  defaultName?: string
   defaultEmail?: string
   defaultPhone?: string
   defaultVisible?: boolean
@@ -17,6 +18,7 @@ type Props = {
 
 export const AddChannel = ({
   applicationId,
+  defaultName,
   defaultEmail,
   defaultPhone,
   defaultVisible,
@@ -26,25 +28,28 @@ export const AddChannel = ({
   })
   const { formatMessage: f } = useLocale()
 
+  const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [phone, setPhone] = useState('')
   const [isVisible, setIsVisible] = useState(defaultVisible ?? false)
 
   useEffect(() => {
+    setName(defaultName ?? name)
     setEmail(defaultEmail ?? email)
     setPhone(defaultPhone ?? phone)
     setIsVisible(defaultVisible ?? false)
-  }, [defaultEmail, defaultPhone, defaultVisible])
+  }, [defaultName, defaultEmail, defaultPhone, defaultVisible])
 
   const onAddChannel = () => {
     const currentAnswers = structuredClone(application.answers)
     const currentChannels = currentAnswers.advert?.channels ?? []
     const updatedAnswers = set(currentAnswers, InputFields.advert.channels, [
       ...currentChannels,
-      { email, phone },
+      { name, email, phone },
     ])
 
     updateApplication(updatedAnswers)
+    setName('')
     setEmail('')
     setPhone('')
   }
@@ -58,6 +63,16 @@ export const AddChannel = ({
         width="full"
       >
         <Box className={styles.contentWrap} marginBottom={5}>
+          <Box className={styles.emailWrap}>
+            <Input
+              size="xs"
+              name="name"
+              type="text"
+              value={name}
+              label={f(general.name)}
+              onChange={(e) => setName(e.target.value)}
+            />
+          </Box>
           <Box className={styles.emailWrap}>
             <Input
               size="xs"
@@ -84,6 +99,7 @@ export const AddChannel = ({
             variant="ghost"
             onClick={() => {
               setIsVisible(!isVisible)
+              setName('')
               setEmail('')
               setPhone('')
             }}

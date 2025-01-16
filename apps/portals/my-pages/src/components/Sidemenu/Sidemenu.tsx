@@ -10,7 +10,7 @@ import {
 import {
   ServicePortalPaths,
   useDynamicRoutesWithNavigation,
-} from '@island.is/service-portal/core'
+} from '@island.is/portals/my-pages/core'
 import * as styles from './Sidemenu.css'
 import { sharedMessages } from '@island.is/shared/translations'
 import { useLocale, useNamespaces } from '@island.is/localization'
@@ -19,7 +19,7 @@ import { theme } from '@island.is/island-ui/theme'
 import { useWindowSize } from 'react-use'
 import cn from 'classnames'
 import SidemenuItem from './SidemenuItem'
-import { m } from '@island.is/service-portal/core'
+import { m } from '@island.is/portals/my-pages/core'
 
 interface Props {
   setSideMenuOpen: (status: boolean) => void
@@ -47,7 +47,7 @@ const Sidemenu = ({
       onClick={() => setSideMenuOpen(false)}
       aria-label={formatMessage(sharedMessages.close)}
     >
-      <Icon icon="close" color="blue400" />
+      <Icon icon="close" color="blue600" />
     </button>
   )
 
@@ -83,13 +83,13 @@ const Sidemenu = ({
             marginTop={2}
           >
             <Box
-              borderRadius="circle"
+              borderRadius="full"
               background="blue100"
               display="flex"
               justifyContent="center"
               alignItems="center"
               className={styles.overviewIcon}
-              marginRight={2}
+              marginRight={'p2'}
             >
               <Icon icon="dots" />
             </Box>

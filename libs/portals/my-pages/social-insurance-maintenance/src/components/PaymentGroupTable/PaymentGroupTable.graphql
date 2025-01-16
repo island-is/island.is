@@ -1,0 +1,26 @@
+query getPaymentPlan {
+  socialInsurancePaymentPlan {
+    totalPayments
+    totalPaymentsSubtraction
+    totalPaymentsReceived
+    paymentGroups {
+      __typename
+      type
+      name
+      totalYearCumulativeAmount
+      payments {
+        name
+        totalYearCumulativeAmount
+        markWithAsterisk
+        monthlyPaymentHistory {
+          monthIndex
+          amount
+        }
+      }
+      monthlyPaymentHistory {
+        monthIndex
+        amount
+      }
+    }
+  }
+}
