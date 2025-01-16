@@ -31,6 +31,7 @@ jobs:
     outputs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}
       node-image-tag: ${{ steps.build-args.outputs.node-image-tag }}
+      playwrigh-image-tag: ${{ steps.build-args.outputs.playwright-image-tag }}
       docker-registry: ${{ steps.build-args.outputs.docker-registry }}
       merge-commit-sha: ${{ steps.merge-commit.outputs.merge-commit-sha }}
       merge-commit-sha-short: ${{ steps.merge-commit.outputs.merge-commit-sha-short }}
@@ -41,6 +42,7 @@ jobs:
         id: build-args
         run: |
           echo node-image-tag="$(./scripts/ci/get-node-version.mjs)" >>"$GITHUB_OUTPUT"
+          jq -r '.devDependencies."@playwright/test" | "playwright-image-tag=v\(.)"' package.json >>"$GITHUB_OUTPUT"
 
       - name: Compute merge commit
         id: merge-commit
@@ -221,6 +223,7 @@ jobs:
           build-args: |
             NODE_IMAGE_TAG=${{ needs.prepare.outputs.node-image-tag }}
             APP=${{ matrix.project }}
+            PLAYWRIGHT_IMAGE_TAG=${{ needs.prepare.outputs.playwrigh-image-tag }}
           cache-from: ${{ steps.inputs.outputs.build-cache }}
           # cache-to: ${{ steps.inputs.outputs.build-cache }}
 
