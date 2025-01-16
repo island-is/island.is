@@ -1,8 +1,4 @@
-import {
-  MembershipOrganizationType,
-  MembershipRole,
-  SiblingRelationOptions,
-} from './lib/constants'
+import { MembershipOrganizationType, MembershipRole } from './lib/constants'
 
 export interface RelativesRow {
   fullName: string
@@ -14,7 +10,6 @@ export interface RelativesRow {
 export interface SiblingsRow {
   fullName: string
   nationalId: string
-  relation: SiblingRelationOptions
 }
 
 export type Child = {

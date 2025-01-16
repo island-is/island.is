@@ -293,6 +293,7 @@ export const slices = gql`
         ...ImageFields
       }
     }
+    showSearchInput
   }
 
   fragment ContactUsFields on ContactUs {

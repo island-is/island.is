@@ -23,15 +23,23 @@ type Option = {
   label: string
 }
 
-export const SelectionItem: FC<FieldBaseProps> = (props) => {
+interface SelectionItemProps {
+  otherFieldIds: string[]
+}
+
+export const SelectionItem: FC<FieldBaseProps & SelectionItemProps> = (
+  props,
+) => {
   const { formatMessage, lang } = useLocale()
   const { application, setFieldLoadingState } = props
-  const { setValue } = useFormContext()
+  const { setValue, watch } = useFormContext()
   const [isLoadingPrograms, setIsLoadingPrograms] = useState<boolean>(false)
 
   const isFreshman =
-    getValueViaPath<ApplicationType>(application.answers, 'applicationType') ===
-    ApplicationType.FRESHMAN
+    getValueViaPath<ApplicationType>(
+      application.answers,
+      'applicationType.value',
+    ) === ApplicationType.FRESHMAN
 
   // options for dropdowns
   const schoolOptions = getValueViaPath<SecondarySchool[]>(
@@ -255,6 +263,10 @@ export const SelectionItem: FC<FieldBaseProps> = (props) => {
     setFieldLoadingState?.(isLoadingPrograms)
   }, [isLoadingPrograms, setFieldLoadingState])
 
+  const otherSchoolIds: string[] = props.otherFieldIds
+    .filter((fieldId) => watch(`${fieldId}.include`) === true)
+    .map((fieldId) => watch(`${fieldId}.school.id`))
+
   return (
     <Box>
       <Box marginTop={2}>
@@ -263,12 +275,14 @@ export const SelectionItem: FC<FieldBaseProps> = (props) => {
           label={formatMessage(school.selection.schoolLabel)}
           backgroundColor="blue"
           required
-          options={(schoolOptions || []).map((school) => {
-            return {
-              label: school.name,
-              value: school.id,
-            }
-          })}
+          options={(schoolOptions || [])
+            .filter((x) => !otherSchoolIds.includes(x.id))
+            .map((school) => {
+              return {
+                label: school.name,
+                value: school.id,
+              }
+            })}
           onSelect={(value) => selectSchool(value)}
         />
       </Box>
@@ -286,12 +300,14 @@ export const SelectionItem: FC<FieldBaseProps> = (props) => {
                 isLoading={isLoadingPrograms}
                 isDisabled={isLoadingPrograms}
                 value={selectedFirstProgram}
-                options={programOptions.map((program) => {
-                  return {
-                    label: getTranslatedProgram(lang, program),
-                    value: program.id,
-                  }
-                })}
+                options={programOptions
+                  .filter((x) => x.id !== selectedSecondProgram?.value)
+                  .map((program) => {
+                    return {
+                      label: getTranslatedProgram(lang, program),
+                      value: program.id,
+                    }
+                  })}
                 onChange={(option: Option | null) => {
                   onChange(option?.value)
                   setSelectedFirstProgram(option)
@@ -317,12 +333,14 @@ export const SelectionItem: FC<FieldBaseProps> = (props) => {
                   isLoading={isLoadingPrograms}
                   isDisabled={isLoadingPrograms}
                   value={selectedSecondProgram}
-                  options={programOptions.map((program) => {
-                    return {
-                      label: getTranslatedProgram(lang, program),
-                      value: program.id,
-                    }
-                  })}
+                  options={programOptions
+                    .filter((x) => x.id !== selectedFirstProgram?.value)
+                    .map((program) => {
+                      return {
+                        label: getTranslatedProgram(lang, program),
+                        value: program.id,
+                      }
+                    })}
                   onChange={(option: Option | null) => {
                     onChange(option?.value)
                     setSelectedSecondProgram(option)
@@ -378,12 +396,14 @@ export const SelectionItem: FC<FieldBaseProps> = (props) => {
                 isLoading={isLoadingPrograms}
                 isDisabled={isLoadingPrograms}
                 value={selectedNordicLanguage}
-                options={nordicLanguageOptions.map((language) => {
-                  return {
-                    label: language.name,
-                    value: language.code,
-                  }
-                })}
+                options={nordicLanguageOptions
+                  .filter((x) => x.code !== 'da')
+                  .map((language) => {
+                    return {
+                      label: language.name,
+                      value: language.code,
+                    }
+                  })}
                 onChange={(option: Option | null) => {
                   onChange(option?.value)
                   setSelectedNordicLanguage(option)
