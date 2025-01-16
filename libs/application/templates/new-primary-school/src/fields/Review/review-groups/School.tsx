@@ -76,9 +76,11 @@ export const School = ({
               </GridColumn>
               <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
                 <DataValue
-                  label={formatMessage(newPrimarySchoolMessages.overview.grade)}
+                  label={formatMessage(
+                    newPrimarySchoolMessages.primarySchool.grade,
+                  )}
                   value={formatMessage(
-                    newPrimarySchoolMessages.overview.currentGrade,
+                    newPrimarySchoolMessages.primarySchool.currentGrade,
                     {
                       grade: formatGrade(childGradeLevel, lang),
                     },

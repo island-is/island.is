@@ -379,6 +379,21 @@ export const newPrimarySchoolMessages: MessageDir = {
       defaultMessage: 'Upplýsingar um núverandi skóla',
       description: 'Information about current school',
     },
+    currentSchoolInfo: {
+      id: 'nps.application:primary.school.current.school.info',
+      defaultMessage: 'Núverandi skóli',
+      description: 'Current school',
+    },
+    grade: {
+      id: 'nps.application:primary.school.grade',
+      defaultMessage: 'Bekkur',
+      description: 'Grade',
+    },
+    currentGrade: {
+      id: 'nps.application:primary.school.current.grade',
+      defaultMessage: '{grade}. bekkur',
+      description: '{grade} grade',
+    },
 
     // Apply to a new school
     newSchoolSubSectionTitle: {
@@ -630,25 +645,10 @@ export const newPrimarySchoolMessages: MessageDir = {
       defaultMessage: 'Upplýsingar um valinn/nýjan skóla',
       description: 'Information about selected/new school',
     },
-    currentSchool: {
-      id: 'nps.application:overview.current.school',
-      defaultMessage: 'Núverandi skóli',
-      description: 'Current school',
-    },
     selectedSchool: {
       id: 'nps.application:overview.selected.school',
       defaultMessage: 'Valinn skóli',
       description: 'Selected school',
-    },
-    grade: {
-      id: 'nps.application:overview.grade',
-      defaultMessage: 'Bekkur',
-      description: 'Grade',
-    },
-    currentGrade: {
-      id: 'nps.application:overview.current.grade',
-      defaultMessage: '{grade}. bekkur',
-      description: '{grade} grade',
     },
     foodAllergiesOrIntolerances: {
       id: 'nps.application:overview.food.allergies.or.intolerances',

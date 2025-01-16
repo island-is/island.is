@@ -24,9 +24,12 @@ const Grade: FC<React.PropsWithChildren<FieldBaseProps>> = ({
     application.externalData,
   )
 
-  const grade = formatMessage(newPrimarySchoolMessages.overview.currentGrade, {
-    grade: formatGrade(childGradeLevel, lang),
-  })
+  const grade = formatMessage(
+    newPrimarySchoolMessages.primarySchool.currentGrade,
+    {
+      grade: formatGrade(childGradeLevel, lang),
+    },
+  )
 
   useEffect(() => {
     setValue(id, grade)

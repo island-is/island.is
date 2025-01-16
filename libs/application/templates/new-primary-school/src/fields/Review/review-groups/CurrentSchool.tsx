@@ -32,7 +32,7 @@ export const CurrentSchool = ({
           <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
             <DataValue
               label={formatMessage(
-                newPrimarySchoolMessages.overview.currentSchool,
+                newPrimarySchoolMessages.primarySchool.currentSchoolInfo,
               )}
               value={getCurrentSchoolName(application)}
             />
