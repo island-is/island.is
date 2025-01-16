@@ -137,7 +137,6 @@ export const companySection = buildSubSection({
         }),
         buildAlertMessageField({
           id: 'company.alertMessageField.emailAndPhone',
-          title: '',
           message: information.labels.company.emailAndPhoneAlertMessage,
           alertType: 'info',
           marginBottom: 0,
@@ -169,7 +168,6 @@ export const companySection = buildSubSection({
         }),
         buildAlertMessageField({
           id: 'company.alertMessageField',
-          title: '',
           message: information.labels.company.alertMessage,
           alertType: 'info',
           doesNotRequireAnswer: true,

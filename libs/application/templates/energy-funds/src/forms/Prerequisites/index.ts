@@ -19,7 +19,6 @@ import { Logo } from '../../assets/Logo'
 
 export const Prerequisites: Form = buildForm({
   id: 'PrerequisitesForm',
-  title: '',
   logo: Logo,
   mode: FormModes.NOT_STARTED,
   renderLastScreenButton: true,
@@ -37,7 +36,6 @@ export const Prerequisites: Form = buildForm({
           submitField: buildSubmitField({
             id: 'submit',
             placement: 'footer',
-            title: '',
             refetchApplicationAfterSubmit: true,
             actions: [
               {

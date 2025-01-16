@@ -107,7 +107,6 @@ export const AdditionalSupportForTheElderlyForm: Form = buildForm({
                 }),
                 buildRadioField({
                   id: 'paymentInfo.bankAccountType',
-                  title: '',
                   defaultValue: (application: Application) => {
                     const { bankAccountType } = getApplicationAnswers(
                       application.answers,
@@ -429,13 +428,11 @@ export const AdditionalSupportForTheElderlyForm: Form = buildForm({
       children: [
         buildMultiField({
           id: 'confirm',
-          title: '',
           description: '',
           children: [
             buildCustomField(
               {
                 id: 'confirmScreen',
-                title: '',
                 component: 'Review',
               },
               {

@@ -220,7 +220,6 @@ export const PrerequisitesForm: Form = buildForm({
         }),
         buildDescriptionField({
           id: 'unused',
-          title: '',
           description: '',
         }),
       ],

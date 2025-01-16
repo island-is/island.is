@@ -18,7 +18,6 @@ export const commonOverviewFields = [
   ...deceasedInfoFields,
   buildDescriptionField({
     id: 'space0',
-    title: '',
     marginBottom: 'gutter',
     space: 'gutter',
   }),
@@ -73,7 +72,6 @@ export const commonOverviewFields = [
   ),
   buildDescriptionField({
     id: 'space1',
-    title: '',
     marginBottom: 'gutter',
     space: 'gutter',
   }),
@@ -91,7 +89,6 @@ export const commonOverviewFields = [
   }),
   buildDescriptionField({
     id: 'space2',
-    title: '',
     space: 'gutter',
     condition: (answers) =>
       getValueViaPath<string>(answers, 'estate.testament.wills') === YES,
@@ -107,7 +104,6 @@ export const commonOverviewFields = [
   }),
   buildDescriptionField({
     id: 'space3',
-    title: '',
     space: 'gutter',
   }),
   buildKeyValueField({
@@ -119,7 +115,6 @@ export const commonOverviewFields = [
   }),
   buildDescriptionField({
     id: 'space4',
-    title: '',
     space: 'gutter',
   }),
   buildDividerField({}),

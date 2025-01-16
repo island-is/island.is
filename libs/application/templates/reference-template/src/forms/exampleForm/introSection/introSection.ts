@@ -15,13 +15,11 @@ export const introSection = buildSection({
       children: [
         buildDescriptionField({
           id: 'introDescription',
-          title: '',
           description: m.introDescription,
           marginBottom: 2,
         }),
         buildDescriptionField({
           id: 'introDescription2',
-          title: '',
           description: m.introDescription2,
         }),
       ],

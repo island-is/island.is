@@ -16,7 +16,6 @@ import { format as formatNationalId } from 'kennitala'
 
 export const Draft: Form = buildForm({
   id: 'SignListDraft',
-  title: '',
   mode: FormModes.DRAFT,
   renderLastScreenButton: true,
   renderLastScreenBackButton: false,
@@ -50,7 +49,6 @@ export const Draft: Form = buildForm({
           children: [
             buildRadioField({
               id: 'listId',
-              title: '',
               backgroundColor: 'white',
               defaultValue: '',
               required: true,
@@ -123,7 +121,6 @@ export const Draft: Form = buildForm({
             }),
             buildDescriptionField({
               id: 'spaceDivider',
-              title: '',
               space: 'gutter',
             }),
             buildDescriptionField({

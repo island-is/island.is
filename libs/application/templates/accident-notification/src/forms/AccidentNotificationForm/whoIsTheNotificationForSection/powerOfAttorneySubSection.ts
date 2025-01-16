@@ -20,7 +20,6 @@ export const powerOfAttorneySubSection = buildSubSection({
       children: [
         buildRadioField({
           id: 'powerOfAttorney.type',
-          title: '',
           options: [
             {
               value: PowerOfAttorneyUploadEnum.UPLOADNOW,

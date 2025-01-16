@@ -82,23 +82,18 @@ export const PrerequisitesForm: Form = buildForm({
             }),
             buildDataProviderItem({
               provider: SocialInsuranceAdministrationApplicantApi,
-              title: '',
             }),
             buildDataProviderItem({
               provider: SocialInsuranceAdministrationChildrenApi,
-              title: '',
             }),
             buildDataProviderItem({
               provider: SocialInsuranceAdministrationCurrenciesApi,
-              title: '',
             }),
             buildDataProviderItem({
               provider: SocialInsuranceAdministrationIsApplicantEligibleApi,
-              title: '',
             }),
             buildDataProviderItem({
               provider: SocialInsuranceAdministrationSpousalInfo,
-              title: '',
             }),
           ],
         }),
@@ -112,14 +107,12 @@ export const PrerequisitesForm: Form = buildForm({
           children: [
             buildDescriptionField({
               id: 'isNotEligible',
-              title: '',
               description:
                 deathBenefitsFormMessage.pre.isNotEligibleDescription,
             }),
             // Empty submit field to hide all buttons in the footer
             buildSubmitField({
               id: '',
-              title: '',
               actions: [],
             }),
           ],

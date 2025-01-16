@@ -15,13 +15,11 @@ export const getForm = ({
 }): Form =>
   buildForm({
     id: 'PrerequisitesDraft',
-    title: '',
     mode: FormModes.DRAFT,
     renderLastScreenButton: true,
     children: [
       buildSection({
         id: 'selectApplicationFor',
-        title: '',
         children: [
           buildMultiField({
             title: m.preDataCollectionApplicationFor,
@@ -29,7 +27,6 @@ export const getForm = ({
             children: [
               buildRadioField({
                 id: 'applicationFor',
-                title: '',
                 largeButtons: true,
                 backgroundColor: 'blue',
                 required: true,
@@ -48,7 +45,6 @@ export const getForm = ({
               }),
               buildSubmitField({
                 id: 'inheritance.submit',
-                title: '',
                 refetchApplicationAfterSubmit: true,
                 actions: [
                   {

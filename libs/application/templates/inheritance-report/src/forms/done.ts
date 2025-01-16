@@ -6,11 +6,9 @@ import { PREPAID_INHERITANCE } from '../lib/constants'
 
 export const done: Form = buildForm({
   id: 'inheritanceReportDone',
-  title: '',
   mode: FormModes.COMPLETED,
   children: [
     buildFormConclusionSection({
-      sectionTitle: '',
       multiFieldTitle: m.doneMultiFieldTitleEFS,
       alertTitle: m.doneAlertTitleEFS,
       alertMessage: ({ answers }) =>

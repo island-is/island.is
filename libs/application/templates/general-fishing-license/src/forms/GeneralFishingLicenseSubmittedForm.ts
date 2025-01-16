@@ -6,7 +6,6 @@ import { conclusion } from '../lib/messages'
 
 export const GeneralFishingLicenseSubmittedForm: Form = buildForm({
   id: 'GeneralFishingLicenseSubmittedForm',
-  title: '',
   logo: Logo,
   children: [
     buildFormConclusionSection({

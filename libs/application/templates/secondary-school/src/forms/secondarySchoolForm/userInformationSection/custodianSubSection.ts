@@ -188,7 +188,6 @@ export const custodianSubSection = buildSubSection({
         }),
         buildNationalIdWithNameField({
           id: 'mainOtherContact',
-          title: '',
           required: true,
           showPhoneField: true,
           showEmailField: true,

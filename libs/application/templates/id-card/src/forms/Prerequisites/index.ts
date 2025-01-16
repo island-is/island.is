@@ -33,7 +33,6 @@ import { priceList } from '../../lib/messages/priceList'
 
 export const Prerequisites: Form = buildForm({
   id: 'PrerequisitesForm',
-  title: '',
   mode: FormModes.NOT_STARTED,
   renderLastScreenButton: true,
   renderLastScreenBackButton: true,
@@ -50,14 +49,12 @@ export const Prerequisites: Form = buildForm({
           children: [
             buildAlertMessageField({
               id: 'preInformation.alertField.hasValidCard',
-              title: '',
               alertType: 'info',
               message: externalData.preInformation.hasValidCardAlert,
               marginTop: 0,
             }),
             buildAlertMessageField({
               id: 'preInformation.alertField.lostOldCard',
-              title: '',
               alertType: 'info',
               message: externalData.preInformation.lostOldCardAlert,
               marginTop: 0,
@@ -78,7 +75,6 @@ export const Prerequisites: Form = buildForm({
           submitField: buildSubmitField({
             id: 'submit',
             placement: 'footer',
-            title: '',
             refetchApplicationAfterSubmit: true,
             actions: [
               {
@@ -102,7 +98,6 @@ export const Prerequisites: Form = buildForm({
 
             buildDataProviderItem({
               provider: DeliveryAddressApi,
-              title: '',
             }),
             buildDataProviderItem({
               provider: IdentityDocumentApi,
@@ -111,11 +106,9 @@ export const Prerequisites: Form = buildForm({
             }),
             buildDataProviderItem({
               provider: SyslumadurPaymentCatalogApi,
-              title: '',
             }),
             buildDataProviderItem({
               provider: MockableSyslumadurPaymentCatalogApi,
-              title: '',
             }),
           ],
         }),

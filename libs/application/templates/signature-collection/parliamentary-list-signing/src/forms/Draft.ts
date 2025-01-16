@@ -17,7 +17,6 @@ import { m } from '../lib/messages'
 
 export const Draft: Form = buildForm({
   id: 'ParliamentaryListSigningDraft',
-  title: '',
   mode: FormModes.DRAFT,
   renderLastScreenButton: true,
   renderLastScreenBackButton: false,
@@ -53,7 +52,6 @@ export const Draft: Form = buildForm({
           children: [
             buildRadioField({
               id: 'listId',
-              title: '',
               defaultValue: '',
               required: true,
               options: ({

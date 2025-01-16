@@ -13,7 +13,6 @@ import { sectionDigitalLicenseInfo } from './applicationSections/sectionDigitalL
 export const getApplication = ({ allowFakeData = false }): Form => {
   return buildForm({
     id: 'DrivingLicenseDuplicateDraftForm',
-    title: '',
     mode: FormModes.DRAFT,
     renderLastScreenButton: true,
     renderLastScreenBackButton: true,

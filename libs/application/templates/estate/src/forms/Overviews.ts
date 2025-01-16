@@ -35,7 +35,6 @@ export const overview = buildSection({
         ...representativeOverview,
         buildSubmitField({
           id: 'estateDivisionSubmit.submit',
-          title: '',
           refetchApplicationAfterSubmit: true,
           actions: [
             {
@@ -81,7 +80,6 @@ export const overview = buildSection({
         ...overviewConfirmAction,
         buildSubmitField({
           id: 'estateDivisionSubmit.submit',
-          title: '',
           refetchApplicationAfterSubmit: true,
           actions: [
             {
@@ -110,7 +108,6 @@ export const overview = buildSection({
         ...overviewConfirmAction,
         buildSubmitField({
           id: 'estateDivisionSubmit.submit',
-          title: '',
           refetchApplicationAfterSubmit: true,
           actions: [
             {
@@ -135,12 +132,10 @@ export const overview = buildSection({
         ...deceasedInfoFields,
         buildDescriptionField({
           id: 'space',
-          title: '',
           space: 'containerGutter',
         }),
         buildCheckboxField({
           id: 'confirmAction',
-          title: '',
           large: true,
           backgroundColor: 'blue',
           defaultValue: [],
@@ -153,7 +148,6 @@ export const overview = buildSection({
         }),
         buildSubmitField({
           id: 'estateDivisionSubmit.submit',
-          title: '',
           refetchApplicationAfterSubmit: true,
           actions: [
             {

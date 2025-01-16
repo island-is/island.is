@@ -29,7 +29,6 @@ export const workAccidentSubSection = buildSubSection({
         buildRadioField({
           id: 'workAccident.type',
           width: 'half',
-          title: '',
           options: [
             {
               value: WorkAccidentTypeEnum.GENERAL,

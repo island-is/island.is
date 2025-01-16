@@ -66,7 +66,6 @@ export const prerequisite = (): Form => {
               }),
               buildDataProviderItem({
                 provider: ExistingApplicationApi,
-                title: '',
               }),
             ],
           }),
@@ -123,13 +122,11 @@ export const prerequisite = (): Form => {
                 colSpan: ['1/1', '1/1', '1/3'],
               }),
               buildDescriptionField({
-                title: '',
                 space: 'containerGutter',
                 description: m.roleConfirmationDescription,
                 id: 'roleConfirmationDescription',
               }),
               buildDescriptionField({
-                title: '',
                 space: 2,
                 marginBottom: 'gutter',
                 description: m.roleConfirmationNotice,
@@ -137,7 +134,6 @@ export const prerequisite = (): Form => {
               }),
               buildRadioField({
                 id: 'pickRole.roleConfirmation',
-                title: '',
                 options: [
                   {
                     value: RoleConfirmationEnum.CONTINUE,
@@ -179,7 +175,6 @@ export const prerequisite = (): Form => {
               }),
               buildDescriptionField({
                 id: 'delegateRoleDisclaimer',
-                title: '',
                 description: m.delegateRoleDisclaimer,
                 condition: (answers) =>
                   getValueViaPath(answers, 'pickRole.roleConfirmation') ===
@@ -187,7 +182,6 @@ export const prerequisite = (): Form => {
               }),
               buildNationalIdWithNameField({
                 id: 'pickRole.electPerson',
-                title: '',
                 condition: (answers) =>
                   getValueViaPath(answers, 'pickRole.roleConfirmation') ===
                   RoleConfirmationEnum.DELEGATE,

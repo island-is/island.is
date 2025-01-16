@@ -41,7 +41,6 @@ export const subSectionQualityPhoto = buildSubSection({
         }),
         buildRadioField({
           id: 'willBringQualityPhoto',
-          title: '',
           disabled: false,
           options: [
             { value: NO, label: m.qualityPhotoNoAcknowledgement },
@@ -50,7 +49,6 @@ export const subSectionQualityPhoto = buildSubSection({
         }),
         buildDescriptionField({
           id: 'photodesc',
-          title: '',
           description: m.qualityPhotoInstructionBullets,
           condition: (answers) =>
             getValueViaPath(answers, 'willBringQualityPhoto') === YES,
@@ -74,17 +72,14 @@ export const subSectionQualityPhoto = buildSubSection({
         }),
         buildDescriptionField({
           id: 'photodesc',
-          title: '',
           description: m.qualityPhotoInstructionBullets,
         }),
         buildDescriptionField({
           id: 'space',
-          title: '',
           space: 'containerGutter',
         }),
         buildCheckboxField({
           id: 'willBringQualityPhoto',
-          title: '',
           options: [
             {
               value: YES,

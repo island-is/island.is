@@ -10,7 +10,6 @@ import { getCurrentUserType } from '../../lib/utils/helpers'
 
 export const conclusionSection = buildSection({
   id: 'conclusionSection',
-  title: '',
   children: [
     buildMultiField({
       id: 'conclusion',

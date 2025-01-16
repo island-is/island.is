@@ -10,7 +10,6 @@ export const sliderSubsection = buildSubSection({
   children: [
     buildMultiField({
       id: 'slider',
-      title: '',
       children: [
         buildSliderField({
           id: 'basicSlider',

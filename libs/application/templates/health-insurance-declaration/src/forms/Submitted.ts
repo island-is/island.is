@@ -28,17 +28,14 @@ export const HealthInsuranceDeclarationSubmitted: Form = buildForm({
           children: [
             buildDescriptionField({
               id: 'conclusionExpandableDescription',
-              title: '',
               description: m.conclution.general.descriptionFieldMessage,
             }),
             buildCustomField({
               id: 'applicantList',
-              title: '',
               component: 'ApplicantList',
             }),
             buildMessageWithLinkButtonField({
               id: 'conclusionBottomLink',
-              title: '',
               url: bottomButtonLink,
               buttonTitle: coreMessages.openServicePortalButtonTitle,
               message: coreMessages.openServicePortalMessageText,

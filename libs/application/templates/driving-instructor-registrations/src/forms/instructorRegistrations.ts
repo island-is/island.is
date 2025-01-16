@@ -17,7 +17,6 @@ import { m } from '../lib/messages'
 export const getInstructorRegistrations = (allowBELicense = false): Form => {
   return buildForm({
     id: 'InstructorRegistrationsTemplate',
-    title: '',
     mode: FormModes.DRAFT,
     renderLastScreenButton: false,
     children: [
@@ -38,12 +37,10 @@ export const getInstructorRegistrations = (allowBELicense = false): Form => {
               }),
               buildDataProviderItem({
                 provider: NationalRegistryUserApi,
-                title: '',
                 subTitle: '',
               }),
               buildDataProviderItem({
                 provider: allowBELicense ? GetTeacherRightsApi : undefined,
-                title: '',
                 subTitle: '',
               }),
             ],
@@ -56,7 +53,6 @@ export const getInstructorRegistrations = (allowBELicense = false): Form => {
         children: [
           buildCustomField(
             {
-              title: '',
               id: 'table',
               component: 'StudentsOverview',
             },

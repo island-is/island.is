@@ -33,7 +33,6 @@ export const overviewAttachments = [
   }),
   buildDescriptionField({
     id: 'attachmentsNotFilledOut',
-    title: '',
     description: m.notFilledOutItalic,
     space: 'gutter',
     condition: (answers) => {

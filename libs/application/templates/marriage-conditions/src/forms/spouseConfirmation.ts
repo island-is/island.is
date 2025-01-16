@@ -32,7 +32,6 @@ import { dataCollection } from './sharedSections/dataCollection'
 export const spouseConfirmation = ({ allowFakeData = false }): Form =>
   buildForm({
     id: 'spouseConfirmation',
-    title: '',
     mode: FormModes.IN_PROGRESS,
     renderLastScreenButton: true,
     renderLastScreenBackButton: true,
@@ -60,7 +59,6 @@ export const spouseConfirmation = ({ allowFakeData = false }): Form =>
             children: [
               buildCheckboxField({
                 id: 'spouseApprove',
-                title: '',
                 options: [
                   { value: YES, label: m.spouseContinue },
                   //followup: { value: NO, label: m.spouseDecline },
@@ -255,7 +253,6 @@ export const spouseConfirmation = ({ allowFakeData = false }): Form =>
                   buildDescriptionField({
                     id: 'space',
                     space: 'containerGutter',
-                    title: '',
                   }),
                 ],
               }),
@@ -273,7 +270,6 @@ export const spouseConfirmation = ({ allowFakeData = false }): Form =>
             children: [
               buildCustomField({
                 id: 'spouseOverview',
-                title: '',
                 component: 'ApplicationOverview',
               }),
             ],
@@ -286,12 +282,10 @@ export const spouseConfirmation = ({ allowFakeData = false }): Form =>
         children: [
           buildMultiField({
             id: 'payment',
-            title: '',
             children: [
               buildCustomField(
                 {
                   id: 'payment',
-                  title: '',
                   component: 'PaymentInfo',
                 },
                 {
@@ -300,7 +294,6 @@ export const spouseConfirmation = ({ allowFakeData = false }): Form =>
               ),
               buildSubmitField({
                 id: 'submitPayment',
-                title: '',
                 placement: 'footer',
                 refetchApplicationAfterSubmit: true,
                 actions: [

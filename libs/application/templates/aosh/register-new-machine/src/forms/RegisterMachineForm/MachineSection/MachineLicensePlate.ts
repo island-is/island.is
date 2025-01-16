@@ -42,7 +42,6 @@ export const MachineLicensePlate = buildSubSection({
         }),
         buildRadioField({
           id: 'machine.streetRegistration.size',
-          title: '',
           backgroundColor: 'white',
           options: [
             {

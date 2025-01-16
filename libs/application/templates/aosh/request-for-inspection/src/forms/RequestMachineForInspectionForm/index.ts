@@ -7,7 +7,6 @@ import { conclusion, externalData } from '../../lib/messages'
 
 export const RequestInspectionForm: Form = buildForm({
   id: 'RequestInspectionFormDraft',
-  title: '',
   logo: Logo,
   mode: FormModes.DRAFT,
   renderLastScreenButton: true,

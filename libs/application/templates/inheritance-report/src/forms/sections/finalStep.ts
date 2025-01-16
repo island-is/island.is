@@ -23,7 +23,6 @@ export const finalStep = buildSection({
       children: [
         buildCheckboxField({
           id: 'confirmAction',
-          title: '',
           large: false,
           backgroundColor: 'white',
           defaultValue: [],
@@ -36,7 +35,6 @@ export const finalStep = buildSection({
         }),
         buildSubmitField({
           id: 'inheritanceReport.submit',
-          title: '',
           refetchApplicationAfterSubmit: true,
           actions: [
             {

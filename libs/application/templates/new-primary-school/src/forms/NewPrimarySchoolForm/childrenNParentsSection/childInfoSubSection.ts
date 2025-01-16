@@ -146,7 +146,6 @@ export const childInfoSubSection = buildSubSection({
         }),
         buildActionCardListField({
           id: 'childInfo.currentSchool',
-          title: '',
           doesNotRequireAnswer: true,
           marginTop: 2,
           items: (application, lang) => {

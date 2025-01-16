@@ -24,13 +24,11 @@ export const workhealthSection = buildSubSection({
         buildAlertMessageField({
           id: 'companyLaborProtection.alertField',
           alertType: 'info',
-          title: '',
           message: information.labels.laborProtection.alertMessageText,
           doesNotRequireAnswer: true,
         }),
         buildCustomField({
           id: 'companyLaborProtection.workhealthAndSafetyOccupation',
-          title: '',
           component: 'CheckboxFieldCustom',
         }),
       ],

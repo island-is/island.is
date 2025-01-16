@@ -34,21 +34,17 @@ export const dataCollection = [
   }),
   buildDataProviderItem({
     provider: DistrictsApi,
-    title: '',
   }),
   buildDataProviderItem({
     provider: ReligionCodesApi,
-    title: '',
     subTitle: '',
   }),
   buildDataProviderItem({
     provider: DistrictCommissionersPaymentCatalogApi,
-    title: '',
     subTitle: '',
   }),
   buildDataProviderItem({
     provider: MockableDistrictCommissionersPaymentCatalogApi,
-    title: '',
     subTitle: '',
   }),
 ]

@@ -16,7 +16,6 @@ export const MachineType = buildSubSection({
       children: [
         buildCustomField({
           id: 'machine.machineType',
-          title: '',
           component: 'MachineType',
         }),
       ],

@@ -24,7 +24,6 @@ import { Signee } from '@island.is/clients/signature-collection'
 
 export const Draft: Form = buildForm({
   id: 'ParliamentaryListCreationDraft',
-  title: '',
   mode: FormModes.DRAFT,
   renderLastScreenButton: true,
   renderLastScreenBackButton: true,
@@ -147,7 +146,6 @@ export const Draft: Form = buildForm({
           children: [
             buildCheckboxField({
               id: 'constituency',
-              title: '',
               large: true,
               defaultValue: (application: Application) => {
                 const collection = application.externalData
@@ -198,7 +196,6 @@ export const Draft: Form = buildForm({
             }),
             buildDescriptionField({
               id: 'space',
-              title: '',
               space: 'gutter',
             }),
             buildKeyValueField({
@@ -215,7 +212,6 @@ export const Draft: Form = buildForm({
             }),
             buildDescriptionField({
               id: 'space1',
-              title: '',
               space: 'gutter',
             }),
             buildDividerField({}),
@@ -240,7 +236,6 @@ export const Draft: Form = buildForm({
             }),
             buildDescriptionField({
               id: 'space2',
-              title: '',
               space: 'gutter',
             }),
             buildKeyValueField({
@@ -262,7 +257,6 @@ export const Draft: Form = buildForm({
             }),
             buildDescriptionField({
               id: 'space3',
-              title: '',
               space: 'gutter',
             }),
             buildDividerField({}),
@@ -275,7 +269,6 @@ export const Draft: Form = buildForm({
             buildActionCardListField({
               id: 'listsInOverview',
               doesNotRequireAnswer: true,
-              title: '',
               items: ({ answers }) => {
                 return (answers.constituency as string[]).map(
                   (constituency: string) => ({

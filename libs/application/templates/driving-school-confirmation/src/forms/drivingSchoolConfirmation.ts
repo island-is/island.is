@@ -19,7 +19,6 @@ import { m } from '../lib/messages'
 export const getDrivingSchoolConfirmation = (): Form => {
   return buildForm({
     id: 'getDrivingSchoolConfirmation',
-    title: '',
     mode: FormModes.DRAFT,
     renderLastScreenButton: true,
     renderLastScreenBackButton: true,
@@ -36,7 +35,6 @@ export const getDrivingSchoolConfirmation = (): Form => {
             dataProviders: [
               buildDataProviderItem({
                 provider: NationalRegistryUserApi,
-                title: '',
                 subTitle: '',
               }),
               buildDataProviderItem({
@@ -68,25 +66,21 @@ export const getDrivingSchoolConfirmation = (): Form => {
             title: m.confirmationSectionTitle,
             children: [
               buildCustomField({
-                title: '',
                 id: 'info',
                 component: 'ViewStudent',
               }),
               buildCustomField({
-                title: '',
                 id: 'confirmation.date',
                 component: 'ConfirmationDate',
                 condition: (answers) => !!answers.studentBookTypes,
               }),
               buildCustomField({
-                title: '',
                 id: 'confirmation.school',
                 component: 'SelectSchool',
                 condition: (answers) => !!answers.studentBookTypes,
               }),
               buildSubmitField({
                 id: 'submit',
-                title: '',
                 placement: 'footer',
                 refetchApplicationAfterSubmit: true,
                 actions: [

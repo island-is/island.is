@@ -103,7 +103,6 @@ export const overviewAssetsAndDebts = [
   }),
   buildDescriptionField({
     id: 'inventoryNotFilledOut',
-    title: '',
     description: m.notFilledOutItalic,
     marginTop: [3],
     marginBottom: [3],
@@ -452,7 +451,6 @@ export const overviewAssetsAndDebts = [
   }),
   buildDescriptionField({
     id: 'moneyAndDepositNotFilledOut',
-    title: '',
     description: m.notFilledOutItalic,
     marginTop: [3],
     marginBottom: [3],

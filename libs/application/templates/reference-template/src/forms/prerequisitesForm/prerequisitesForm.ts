@@ -35,7 +35,6 @@ export const Prerequisites: Form = buildForm({
   children: [
     buildSection({
       id: 'conditions',
-      title: '', // If this is empty, we will not have a visible stepper on the right side of the screen.
       tabTitle: 'Forkröfur', // If there is no stepper, add tabTitle to have a title on the browser tab.
       children: [
         buildExternalDataProvider({
@@ -67,7 +66,6 @@ export const Prerequisites: Form = buildForm({
           submitField: buildSubmitField({
             id: 'submit',
             placement: 'footer',
-            title: '',
             refetchApplicationAfterSubmit: true,
             actions: [
               {

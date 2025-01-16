@@ -5,7 +5,6 @@ import { conclusionSection } from './WorkAccidentNotificationForm/ConclusionSect
 
 export const Conclusion: Form = buildForm({
   id: 'ConclusionApplicationForm',
-  title: '',
   logo: Logo,
   mode: FormModes.COMPLETED,
   children: [conclusionSection],

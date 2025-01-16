@@ -35,7 +35,6 @@ export const juridicalPersonCompanySubSection = buildSubSection({
         }),
         buildCheckboxField({
           id: 'juridicalPerson.companyConfirmation',
-          title: '',
           large: false,
           backgroundColor: 'white',
           defaultValue: [],

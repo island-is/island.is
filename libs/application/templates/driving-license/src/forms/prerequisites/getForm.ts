@@ -27,7 +27,6 @@ export const getForm = ({
 }: DrivingLicenseFormConfig): Form =>
   buildForm({
     id: 'DrivingLicenseApplicationPrerequisitesForm',
-    title: '',
     logo: LogreglanLogo,
     mode: FormModes.DRAFT,
     renderLastScreenButton: true,

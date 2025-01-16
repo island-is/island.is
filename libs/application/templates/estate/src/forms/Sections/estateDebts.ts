@@ -45,7 +45,6 @@ export const estateDebts = buildSection({
       children: [
         buildCustomField(
           {
-            title: '',
             id: 'debts',
             component: 'TextFieldsRepeater',
           },

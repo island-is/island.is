@@ -72,27 +72,21 @@ export const PrerequisitesForm: Form = buildForm({
             }),
             buildDataProviderItem({
               provider: SocialInsuranceAdministrationCategorizedIncomeTypesApi,
-              title: '',
             }),
             buildDataProviderItem({
               provider: SocialInsuranceAdministrationCurrenciesApi,
-              title: '',
             }),
             buildDataProviderItem({
               provider: SocialInsuranceAdministrationWithholdingTaxApi,
-              title: '',
             }),
             buildDataProviderItem({
               provider: SocialInsuranceAdministrationLatestIncomePlan,
-              title: '',
             }),
             buildDataProviderItem({
               provider: SocialInsuranceAdministrationIsApplicantEligibleApi,
-              title: '',
             }),
             buildDataProviderItem({
               provider: SocialInsuranceAdministrationIncomePlanConditionsApi,
-              title: '',
             }),
             buildDataProviderItem({
               id: 'sia.privacy',
@@ -115,14 +109,12 @@ export const PrerequisitesForm: Form = buildForm({
           children: [
             buildDescriptionField({
               id: 'isNotEligible10Days',
-              title: '',
               description: (application: Application) =>
                 eligibleText(application.externalData),
             }),
             // Empty submit field to hide all buttons in the footer
             buildSubmitField({
               id: '',
-              title: '',
               actions: [],
             }),
           ],

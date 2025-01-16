@@ -17,7 +17,6 @@ export const inheritance = buildSection({
       children: [
         buildCheckboxField({
           id: 'prepaidInheritance',
-          title: '',
           large: true,
           defaultValue: [],
           options: [

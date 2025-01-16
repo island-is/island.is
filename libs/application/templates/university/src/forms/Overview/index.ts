@@ -8,7 +8,6 @@ import { externalData, review } from '../../lib/messages'
 
 export const OverviewForm: Form = buildForm({
   id: 'OverviewForm',
-  title: '',
   mode: FormModes.IN_PROGRESS,
   children: [
     buildSection({
@@ -23,7 +22,6 @@ export const OverviewForm: Form = buildForm({
         buildCustomField({
           component: 'Overview',
           id: 'overview',
-          title: '',
           description: '',
         }),
       ],

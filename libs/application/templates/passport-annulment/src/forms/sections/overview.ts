@@ -35,7 +35,6 @@ export const overview = buildMultiField({
     }),
     buildDescriptionField({
       id: 'overview.space0',
-      title: '',
       space: 'gutter',
     }),
     buildKeyValueField({
@@ -50,7 +49,6 @@ export const overview = buildMultiField({
     }),
     buildDescriptionField({
       id: 'overview.space1',
-      title: '',
       space: 'gutter',
     }),
     buildKeyValueField({
@@ -63,7 +61,6 @@ export const overview = buildMultiField({
     }),
     buildDescriptionField({
       id: 'overview.space2',
-      title: '',
       space: 'gutter',
     }),
     buildDividerField({}),
@@ -77,13 +74,11 @@ export const overview = buildMultiField({
     }),
     buildDescriptionField({
       id: 'overview.confirmDescription',
-      title: '',
       description: m.confirmDescription,
       marginBottom: 3,
     }),
     buildCheckboxField({
       id: 'confirmAnnulment',
-      title: '',
       backgroundColor: 'white',
       defaultValue: [],
       large: false,
@@ -97,7 +92,6 @@ export const overview = buildMultiField({
     buildSubmitField({
       id: 'submit',
       placement: 'footer',
-      title: '',
       refetchApplicationAfterSubmit: true,
       actions: [
         {

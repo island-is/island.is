@@ -43,17 +43,14 @@ export const MissingInfoForm: Form = buildForm({
             }),
             buildCustomField({
               id: 'missingInfo.date',
-              title: '',
               component: 'HiddenDateField',
             }),
             buildCustomField({
               id: 'missingInfo.remarks',
-              title: '',
               component: 'MissingInfoRemarks',
             }),
             buildFileUploadField({
               id: 'missingInfo[0].files',
-              title: '',
               introduction: '',
             }),
             buildTitleField({
@@ -61,12 +58,10 @@ export const MissingInfoForm: Form = buildForm({
             }),
             buildCustomField({
               id: 'submittedData',
-              title: '',
               component: 'Review',
             }),
             buildCheckboxField({
               id: 'confirmMissingInfo',
-              title: '',
               options: [
                 {
                   value: YES,

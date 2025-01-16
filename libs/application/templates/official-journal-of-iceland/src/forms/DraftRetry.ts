@@ -36,7 +36,6 @@ export const DraftRetry: Form = buildForm({
       children: [
         buildCustomField({
           id: 'comments',
-          title: '',
           component: 'CommentsScreen',
         }),
       ],
@@ -47,7 +46,6 @@ export const DraftRetry: Form = buildForm({
       children: [
         buildCustomField({
           id: 'advert',
-          title: '',
           component: 'AdvertScreen',
         }),
       ],
@@ -58,7 +56,6 @@ export const DraftRetry: Form = buildForm({
       children: [
         buildCustomField({
           id: 'attachments',
-          title: '',
           component: 'AttachmentsScreen',
         }),
       ],
@@ -69,7 +66,6 @@ export const DraftRetry: Form = buildForm({
       children: [
         buildCustomField({
           id: 'preview',
-          title: '',
           component: 'PreviewScreen',
         }),
       ],
@@ -80,7 +76,6 @@ export const DraftRetry: Form = buildForm({
       children: [
         buildCustomField({
           id: 'original',
-          title: '',
           component: 'OriginalScreen',
         }),
       ],
@@ -91,7 +86,6 @@ export const DraftRetry: Form = buildForm({
       children: [
         buildCustomField({
           id: 'publishing',
-          title: '',
           component: 'PublishingScreen',
         }),
       ],
@@ -102,16 +96,13 @@ export const DraftRetry: Form = buildForm({
       children: [
         buildMultiField({
           id: Routes.SUMMARY,
-          title: '',
           children: [
             buildCustomField({
               id: Routes.SUMMARY,
-              title: '',
               component: 'SummaryScreen',
             }),
             buildSubmitField({
               id: 'toComplete',
-              title: '',
               placement: 'footer',
               refetchApplicationAfterSubmit: true,
               actions: [

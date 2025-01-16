@@ -29,19 +29,15 @@ export const prerequisitesSection = buildSection({
         }),
         buildDataProviderItem({
           provider: SamgongustofaPaymentCatalogApi,
-          title: '',
         }),
         buildDataProviderItem({
           provider: MockableSamgongustofaPaymentCatalogApi,
-          title: '',
         }),
         buildDataProviderItem({
           provider: DeliveryStationsApi,
-          title: '',
         }),
         buildDataProviderItem({
           provider: PlateTypesApi,
-          title: '',
         }),
       ],
     }),

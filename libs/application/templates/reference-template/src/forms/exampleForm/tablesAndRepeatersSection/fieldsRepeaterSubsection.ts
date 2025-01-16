@@ -15,7 +15,6 @@ export const fieldsRepeaterSubsection = buildSubSection({
       children: [
         buildDescriptionField({
           id: 'fieldsRepeaterDescription',
-          title: '',
           description:
             'FieldsRepeater works similarly to tableRepeater, in that it contains a set of fields to fill out and this set can be repeated as many times as needed. The difference is that in tableRepeater, the values go into a table, while in fieldsRepeater, all fields created are always visible.',
         }),

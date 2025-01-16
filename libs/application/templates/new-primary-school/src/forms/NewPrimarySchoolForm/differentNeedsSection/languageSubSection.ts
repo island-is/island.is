@@ -88,7 +88,6 @@ export const languageSubSection = buildSubSection({
         }),
         buildCheckboxField({
           id: 'languages.icelandicNotSpokenAroundChild',
-          title: '',
           options: (application) => {
             const { nativeLanguage, otherLanguages } = getApplicationAnswers(
               application.answers,

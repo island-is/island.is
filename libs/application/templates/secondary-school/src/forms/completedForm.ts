@@ -12,7 +12,6 @@ import { Logo } from '../assets/Logo'
 
 export const Completed: Form = buildForm({
   id: 'ConclusionForm',
-  title: '',
   logo: Logo,
   mode: FormModes.COMPLETED,
   children: [
@@ -27,12 +26,10 @@ export const Completed: Form = buildForm({
             buildCustomField({
               component: 'Overview',
               id: 'conclusion',
-              title: '',
               description: '',
             }),
             buildMessageWithLinkButtonField({
               id: 'conclusionBottomLink',
-              title: '',
               url: '/minarsidur/umsoknir',
               buttonTitle: coreMessages.openServicePortalButtonTitle,
               message: coreMessages.openServicePortalMessageText,

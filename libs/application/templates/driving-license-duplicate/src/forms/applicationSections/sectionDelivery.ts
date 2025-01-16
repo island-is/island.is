@@ -13,7 +13,6 @@ export const sectionDelivery = buildSection({
   children: [
     buildMultiField({
       id: 'deliverySection',
-      title: '',
       children: [
         buildDescriptionField({
           id: 'deliveryDescription',

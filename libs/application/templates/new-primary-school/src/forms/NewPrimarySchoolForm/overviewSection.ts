@@ -13,13 +13,11 @@ export const overviewSection = buildSection({
   children: [
     buildMultiField({
       id: 'overview',
-      title: '',
       description: '',
       children: [
         buildCustomField(
           {
             id: 'overviewScreen',
-            title: '',
             component: 'Review',
           },
           {

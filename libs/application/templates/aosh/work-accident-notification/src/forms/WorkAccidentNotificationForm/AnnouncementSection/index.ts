@@ -26,7 +26,6 @@ export const announcementSection = buildSection({
         }),
         buildDescriptionField({
           id: 'externalData.Description',
-          title: '',
           description: externalData.dataProvider.announcementDescription,
           titleVariant: 'h4',
           marginBottom: 3,

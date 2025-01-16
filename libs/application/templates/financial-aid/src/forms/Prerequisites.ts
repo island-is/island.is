@@ -43,22 +43,18 @@ export const Prerequisites: Form = buildForm({
             }),
             buildDataProviderItem({
               provider: NationalRegistrySpouseApi,
-              title: '',
               subTitle: '',
             }),
             buildDataProviderItem({
               provider: ChildrenCustodyInformationApi,
-              title: '',
               subTitle: '',
             }),
             buildDataProviderItem({
               provider: MunicipalityApi,
-              title: '',
               subTitle: '',
             }),
             buildDataProviderItem({
               provider: CurrentApplicationApi,
-              title: '',
               subTitle: '',
             }),
             buildDataProviderItem({
@@ -69,7 +65,6 @@ export const Prerequisites: Form = buildForm({
             buildDataProviderItem({
               id: 'moreTaxInfo',
               type: undefined,
-              title: '',
               subTitle: m.externalData.taxData.process,
             }),
           ],
@@ -91,7 +86,6 @@ export const Prerequisites: Form = buildForm({
             }),
             buildSubmitField({
               id: 'toDraft',
-              title: '',
               refetchApplicationAfterSubmit: true,
               actions: [
                 {
@@ -106,7 +100,6 @@ export const Prerequisites: Form = buildForm({
         // This is here to be able to show submit button on former screen :( :( :(
         buildMultiField({
           id: '',
-          title: '',
           children: [],
         }),
       ],

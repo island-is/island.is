@@ -6,7 +6,6 @@ import { m } from '../../lib/messages'
 
 export const notAllowedSection = buildSection({
   id: 'notAllowedSection',
-  title: '',
   children: [
     buildDescriptionField({
       id: 'notAllowedDescription',

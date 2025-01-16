@@ -32,7 +32,6 @@ export const prerequisitesSection = buildSection({
         }),
         buildDataProviderItem({
           provider: SamgongustofaPaymentCatalogApi,
-          title: '',
         }),
       ],
     }),

@@ -17,7 +17,6 @@ export const coOwnerSubSection = buildSubSection({
         buildCustomField({
           id: 'coOwners',
           component: 'CoOwnerRepeater',
-          title: '',
           doesNotRequireAnswer: true,
         }),
       ],

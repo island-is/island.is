@@ -20,7 +20,6 @@ export const subSectionProperties = buildSubSection({
       children: [
         buildCheckboxField({
           id: 'otherProperties',
-          title: '',
           large: false,
           backgroundColor: 'white',
           doesNotRequireAnswer: true,

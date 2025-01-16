@@ -9,7 +9,6 @@ import { getChargeItemsWithExtraLabel } from '../../utils'
 
 export const HealthcareWorkPermitForm: Form = buildForm({
   id: 'HealthcareWorkPermitForm',
-  title: '',
   logo: Logo,
   mode: FormModes.DRAFT,
   renderLastScreenButton: true,

@@ -15,14 +15,12 @@ export const alertMessageSubsection = buildSubSection({
       children: [
         buildDescriptionField({
           id: 'alertMessagesDescription',
-          title: '',
           description:
             'Alert messages are used to display important information to the user. Choose the alertType based on the information you want the user to focus on.',
           width: 'full',
         }),
         buildDescriptionField({
           id: 'alertMessageDescription2',
-          title: '',
           description:
             'In many cases an alert message is shown based on a condition, like something that was fetched from a data provider or the way a user fills in the application.',
           width: 'full',

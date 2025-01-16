@@ -28,7 +28,6 @@ export const externalDataSubSection = buildSubSection({
         }),
         buildDataProviderItem({
           provider: ChildrenApi,
-          title: '',
           subTitle: '',
         }),
         buildDataProviderItem({

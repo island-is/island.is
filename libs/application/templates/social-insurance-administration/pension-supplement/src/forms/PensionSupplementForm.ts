@@ -106,7 +106,6 @@ export const PensionSupplementForm: Form = buildForm({
                 }),
                 buildRadioField({
                   id: 'paymentInfo.bankAccountType',
-                  title: '',
                   defaultValue: (application: Application) => {
                     const { bankAccountType } = getApplicationAnswers(
                       application.answers,
@@ -556,12 +555,10 @@ export const PensionSupplementForm: Form = buildForm({
       children: [
         buildMultiField({
           id: 'confirm',
-          title: '',
           children: [
             buildCustomField(
               {
                 id: 'confirmScreen',
-                title: '',
                 component: 'Review',
               },
               {

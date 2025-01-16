@@ -45,7 +45,6 @@ export const ParentsSubSection = buildSubSection({
       children: [
         buildCustomField({
           id: 'parentInformation',
-          title: '',
           description: '',
           component: 'Parents',
         }),

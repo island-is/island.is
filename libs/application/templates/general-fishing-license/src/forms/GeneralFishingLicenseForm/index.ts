@@ -11,7 +11,6 @@ import { buildFormConclusionSection } from '@island.is/application/ui-forms'
 
 export const GeneralFishingLicenseForm: Form = buildForm({
   id: 'GeneralFishingLicenseForm',
-  title: '',
   logo: Logo,
   mode: FormModes.DRAFT,
   renderLastScreenButton: true,

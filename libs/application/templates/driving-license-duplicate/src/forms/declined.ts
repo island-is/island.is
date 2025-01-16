@@ -27,7 +27,6 @@ export const declined: Form = buildForm({
       children: [
         buildCustomField({
           id: 'categories',
-          title: '',
           component: 'CurrentLicense',
         }),
         buildDescriptionField({
@@ -39,7 +38,6 @@ export const declined: Form = buildForm({
         }),
         buildDescriptionField({
           id: 'rejected.space',
-          title: '',
           description: '',
           space: 'gutter',
         }),

@@ -5,11 +5,9 @@ import { buildFormConclusionSection } from '@island.is/application/ui-forms'
 
 export const Done: Form = buildForm({
   id: 'PassportApplicationAnnulmentComplete',
-  title: '',
   mode: FormModes.COMPLETED,
   children: [
     buildFormConclusionSection({
-      sectionTitle: '',
       multiFieldTitle: m.applicationComplete,
       alertTitle: m.applicationCompleteAlertTitle,
       alertMessage: '',

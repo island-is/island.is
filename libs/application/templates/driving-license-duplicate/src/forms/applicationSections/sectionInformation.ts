@@ -50,7 +50,6 @@ export const sectionInformation = buildSection({
 
         buildCustomField({
           id: 'categories',
-          title: '',
           component: 'CurrentLicense',
         }),
         buildCustomField(
@@ -74,7 +73,6 @@ export const sectionInformation = buildSection({
         }),
         buildCustomField({
           id: 'qSignature',
-          title: '',
           component: 'QualitySignature',
           condition: (_, externalData) => {
             return (
@@ -92,7 +90,6 @@ export const sectionInformation = buildSection({
         }),
         buildCustomField({
           id: 'qphoto',
-          title: '',
           component: 'QualityPhoto',
           condition: (_, externalData) => {
             return (

@@ -36,13 +36,11 @@ export const PrerequisitesSpouse: Form = buildForm({
             }),
             buildDataProviderItem({
               provider: CurrentApplicationApi,
-              title: '',
               subTitle: '',
             }),
             buildDataProviderItem({
               id: 'moreTaxInfo',
               type: undefined,
-              title: '',
               subTitle: m.externalData.taxData.process,
             }),
           ],
@@ -64,7 +62,6 @@ export const PrerequisitesSpouse: Form = buildForm({
             }),
             buildSubmitField({
               id: 'toDraft',
-              title: '',
               refetchApplicationAfterSubmit: true,
               actions: [
                 {
@@ -79,7 +76,6 @@ export const PrerequisitesSpouse: Form = buildForm({
         // This is here to be able to show submit button on former screen :( :( :(
         buildMultiField({
           id: '',
-          title: '',
           children: [],
         }),
       ],

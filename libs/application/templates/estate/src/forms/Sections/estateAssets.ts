@@ -38,7 +38,6 @@ export const estateAssets = buildSection({
               marginBottom: 2,
             }),
             buildCustomField({
-              title: '',
               id: 'estate.assets',
               component: 'RealEstateRepeater',
             }),
@@ -96,7 +95,6 @@ export const estateAssets = buildSection({
               marginBottom: 2,
             }),
             buildCustomField({
-              title: '',
               id: 'estate.vehicles',
               component: 'VehicleRepeater',
             }),

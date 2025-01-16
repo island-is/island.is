@@ -17,7 +17,6 @@ export const NotEligible: Form = buildForm({
   children: [
     buildSection({
       id: 'notEligible',
-      title: '',
       children: [
         buildDescriptionField({
           id: 'notEligibleTitle',

@@ -9,7 +9,6 @@ export const applicationStatusSection = (isAssignee?: boolean) =>
       buildCustomField(
         {
           id: 'applicationStatusScreen',
-          title: '',
           component: 'ApplicationStatus',
         },
         {

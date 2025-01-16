@@ -96,10 +96,8 @@ export const FormPrimary: Form = buildForm({
             buildDescriptionField({
               id: 'space',
               space: 'containerGutter',
-              title: '',
             }),
             buildCheckboxField({
-              title: '',
               id: 'drivingAssessmentConfirmationCheck',
               large: true,
               backgroundColor: 'blue',

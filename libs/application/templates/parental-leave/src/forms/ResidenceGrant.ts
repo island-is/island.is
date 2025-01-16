@@ -34,7 +34,6 @@ export const ResidenceGrant: Form = buildForm({
           children: [
             buildFileUploadField({
               id: 'fileUpload.residenceGrant',
-              title: '',
               maxSize: FILE_SIZE_LIMIT,
               uploadAccept: '.pdf',
               uploadDescription:
@@ -45,7 +44,6 @@ export const ResidenceGrant: Form = buildForm({
             buildSubmitField({
               id: 'residenceGrant.submit',
               placement: 'footer',
-              title: '',
               refetchApplicationAfterSubmit: true,
               actions: [
                 {

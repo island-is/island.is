@@ -42,7 +42,6 @@ export const statusAndChildrenSection = buildSection({
         }),
         buildRadioField({
           id: 'status.type',
-          title: '',
           description: m.statusDescription,
           width: 'half',
           required: true,
@@ -51,7 +50,6 @@ export const statusAndChildrenSection = buildSection({
         }),
         buildDescriptionField({
           id: 'confirmationOfStudiesDescription',
-          title: '',
           description: m.confirmationOfStudies,
           tooltip: m.confirmationOfStudiesTooltip,
           condition: (answers) =>
@@ -60,7 +58,6 @@ export const statusAndChildrenSection = buildSection({
         }),
         buildFileUploadField({
           id: 'status.confirmationOfStudies',
-          title: '',
           introduction: '',
           maxSize: FILE_SIZE_LIMIT,
           uploadHeader: m.fileUploadHeader,
@@ -72,7 +69,6 @@ export const statusAndChildrenSection = buildSection({
         }),
         buildRadioField({
           id: 'children',
-          title: '',
           description: m.childrenDescription,
           width: 'half',
           largeButtons: true,

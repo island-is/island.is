@@ -64,19 +64,16 @@ export const PrerequisitesForm: Form = buildForm({
             buildDataProviderItem({
               id: 'moreInfo',
               type: undefined,
-              title: '',
               subTitle: m.dataProvidersMoreInfo,
             }),
             buildDataProviderItem({
               id: 'userProfile',
               provider: UserProfileApi,
-              title: '',
               subTitle: '',
             }),
             buildDataProviderItem({
               id: 'healthInsurance',
               provider: HealthInsuranceApi,
-              title: '',
               subTitle: '',
             }),
           ],
@@ -90,7 +87,6 @@ export const PrerequisitesForm: Form = buildForm({
           children: [
             buildCustomField({
               id: 'prerequisiteSuccessSummary',
-              title: '',
               component: 'PrerequisiteSummary',
             }),
             buildSubmitField({

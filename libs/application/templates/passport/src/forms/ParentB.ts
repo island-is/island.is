@@ -87,7 +87,6 @@ export const ParentB: Form = buildForm({
             }),
             buildDataProviderItem({
               provider: SyslumadurPaymentCatalogApi,
-              title: '',
             }),
           ],
         }),
@@ -105,7 +104,6 @@ export const ParentB: Form = buildForm({
             buildSubmitField({
               id: 'submit',
               placement: 'footer',
-              title: '',
               refetchApplicationAfterSubmit: true,
               actions: [
                 {

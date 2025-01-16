@@ -17,7 +17,6 @@ export const relativesSubSection = buildSubSection({
       children: [
         buildCustomField({
           id: 'relatives',
-          title: '',
           component: 'RelativesTableRepeater',
         }),
       ],

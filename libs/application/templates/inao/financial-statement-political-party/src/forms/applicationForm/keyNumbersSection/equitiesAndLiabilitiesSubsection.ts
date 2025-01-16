@@ -48,7 +48,6 @@ export const equitiesAndLiabilitiesSubsection = buildSubSection({
         }),
         buildDisplayField({
           id: EQUITYANDLIABILITIESTOTALS.assetsTotal,
-          title: '',
           label: m.totalAssets,
           value: sumProperties,
           variant: 'currency',
@@ -77,7 +76,6 @@ export const equitiesAndLiabilitiesSubsection = buildSubSection({
         }),
         buildDisplayField({
           id: EQUITYANDLIABILITIESTOTALS.liabilitiesTotal,
-          title: '',
           label: m.totalDebts,
           value: sumDebts,
           variant: 'currency',

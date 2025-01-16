@@ -24,12 +24,10 @@ export const confirmSection = buildSection({
       children: [
         buildCustomField({
           id: 'review',
-          title: '',
           component: 'Review',
         }),
         buildRadioField({
           id: 'hasAdditionalInfo',
-          title: '',
           description: m.additionalInfo,
           largeButtons: true,
           width: 'half',
@@ -50,7 +48,6 @@ export const confirmSection = buildSection({
         }),
         buildFileUploadField({
           id: 'additionalFiles',
-          title: '',
           introduction: '',
           maxSize: FILE_SIZE_LIMIT,
           uploadHeader: m.fileUploadHeader,
@@ -65,7 +62,6 @@ export const confirmSection = buildSection({
         }),
         buildCheckboxField({
           id: 'confirmCorrectInfo',
-          title: '',
           required: true,
           options: [
             {

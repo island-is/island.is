@@ -28,7 +28,6 @@ export const deregisterSubSection = buildSubSection({
         }),
         buildRadioField({
           id: 'deregister.status',
-          title: '',
           width: 'half',
           defaultValue: Status.TEMPORARY,
           options: [

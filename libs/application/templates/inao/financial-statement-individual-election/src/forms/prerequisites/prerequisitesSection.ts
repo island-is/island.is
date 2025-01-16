@@ -15,7 +15,6 @@ import { DefaultEvents } from '@island.is/application/types'
 
 export const prerequisitesSection = buildSection({
   id: 'ExternalDataSection',
-  title: '',
   children: [
     buildExternalDataProvider({
       id: 'approveExternalData',
@@ -41,7 +40,6 @@ export const prerequisitesSection = buildSection({
       submitField: buildSubmitField({
         id: 'submit',
         placement: 'footer',
-        title: '',
         refetchApplicationAfterSubmit: true,
         actions: [
           {

@@ -38,7 +38,6 @@ export const prerequisitesSection = buildSection({
         }),
         buildDataProviderItem({
           provider: TeachersApi,
-          title: '',
         }),
       ],
     }),

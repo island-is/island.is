@@ -39,11 +39,9 @@ export const externalDataSection = buildSection({
         }),
         buildDataProviderItem({
           provider: SamgongustofaPaymentCatalogApi,
-          title: '',
         }),
         buildDataProviderItem({
           provider: MockableSamgongustofaPaymentCatalogApi,
-          title: '',
         }),
       ],
     }),

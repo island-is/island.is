@@ -31,7 +31,6 @@ export const application: Form = buildForm({
               {
                 id: 'applicant.institutionSubtitle',
                 component: 'FieldDescription',
-                title: '',
               },
               {
                 subTitle: m.applicant.institutionSubtitle,
@@ -144,7 +143,6 @@ export const application: Form = buildForm({
           children: [
             buildCustomField({
               id: 'constraints',
-              title: '',
               component: 'Constraints',
             }),
           ],
@@ -163,7 +161,6 @@ export const application: Form = buildForm({
           children: [
             buildCustomField({
               id: 'reviewScreen',
-              title: '',
               component: 'ReviewScreen',
             }),
             buildSubmitField({

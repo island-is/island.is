@@ -21,7 +21,6 @@ export const externalDataSection = buildSection({
       submitField: buildSubmitField({
         id: 'submit',
         placement: 'footer',
-        title: '',
         refetchApplicationAfterSubmit: true,
         actions: [
           {
@@ -59,7 +58,6 @@ export const externalDataSection = buildSection({
         }),
         buildDataProviderItem({
           id: 'accidentProvider',
-          title: '',
           subTitle: externalData.accidentProvider.description,
         }),
       ],

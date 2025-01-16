@@ -32,7 +32,6 @@ export const AdditionalDocumentsRequired: Form = buildForm({
           children: [
             buildFileUploadField({
               id: 'fileUpload.additionalDocuments',
-              title: '',
               maxSize: FILE_SIZE_LIMIT,
               maxSizeErrorText:
                 parentalLeaveFormMessages.fileUpload.attachmentMaxSizeError,

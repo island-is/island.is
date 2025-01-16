@@ -8,12 +8,10 @@ import { m } from '../../lib/messages'
 
 export const notAllowedForm = buildForm({
   id: 'notAllowedForm',
-  title: '',
   logo: Logo,
   children: [
     buildSection({
       id: 'notAllowedSection',
-      title: '',
       children: [
         buildDescriptionField({
           id: 'notAllowedDescription',

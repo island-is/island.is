@@ -25,7 +25,6 @@ import { format as formatNationalId } from 'kennitala'
 export const getForm = ({ allowFakeData = false }): Form => {
   return buildForm({
     id: 'PrerequisitesDraft',
-    title: '',
     mode: FormModes.DRAFT,
     renderLastScreenButton: true,
     renderLastScreenBackButton: true,
@@ -129,7 +128,6 @@ export const getForm = ({ allowFakeData = false }): Form => {
               }),
               buildSubmitField({
                 id: 'overview.submit',
-                title: '',
                 refetchApplicationAfterSubmit: true,
                 actions: [
                   {

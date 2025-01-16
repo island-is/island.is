@@ -39,7 +39,6 @@ export const addAttachmentsSection = (isAssignee?: boolean) =>
           }),
           buildFileUploadField({
             id: 'attachments.injuryCertificateFile.file',
-            title: '',
             maxSize: FILE_SIZE_LIMIT,
             maxSizeErrorText: error.attachmentMaxSizeError,
             uploadAccept: UPLOAD_ACCEPT,
@@ -63,7 +62,6 @@ export const addAttachmentsSection = (isAssignee?: boolean) =>
           buildCustomField({
             id: 'attachments.powerOfAttorney.fileLink',
             component: 'ProxyDocument',
-            title: '',
             condition: (formValue: FormValue) =>
               isPowerOfAttorney(formValue) &&
               !isUniqueAssignee(formValue, !!isAssignee) &&
@@ -71,7 +69,6 @@ export const addAttachmentsSection = (isAssignee?: boolean) =>
           }),
           buildFileUploadField({
             id: 'attachments.powerOfAttorneyFile.file',
-            title: '',
             maxSize: FILE_SIZE_LIMIT,
             maxSizeErrorText: error.attachmentMaxSizeError,
             uploadAccept: UPLOAD_ACCEPT,
@@ -96,7 +93,6 @@ export const addAttachmentsSection = (isAssignee?: boolean) =>
           }),
           buildFileUploadField({
             id: 'attachments.deathCertificateFile.file',
-            title: '',
             maxSize: FILE_SIZE_LIMIT,
             maxSizeErrorText: error.attachmentMaxSizeError,
             uploadAccept: UPLOAD_ACCEPT,
@@ -117,13 +113,11 @@ export const addAttachmentsSection = (isAssignee?: boolean) =>
           }),
           buildDescriptionField({
             id: 'attachments.additionalAttachments.description',
-            title: '',
             description: addDocuments.general.additionalDocumentsDescription,
             space: 3,
           }),
           buildFileUploadField({
             id: 'attachments.additionalFiles.file',
-            title: '',
             maxSize: FILE_SIZE_LIMIT,
             maxSizeErrorText: error.attachmentMaxSizeError,
             uploadAccept: UPLOAD_ACCEPT,
@@ -135,7 +129,6 @@ export const addAttachmentsSection = (isAssignee?: boolean) =>
           }),
           buildFileUploadField({
             id: 'attachments.additionalFilesFromReviewer.file',
-            title: '',
             maxSize: FILE_SIZE_LIMIT,
             maxSizeErrorText: error.attachmentMaxSizeError,
             uploadAccept: UPLOAD_ACCEPT,
@@ -147,7 +140,6 @@ export const addAttachmentsSection = (isAssignee?: boolean) =>
           }),
           buildSubmitField({
             id: 'overview.submit',
-            title: '',
             actions: [
               {
                 event: DefaultEvents.SUBMIT,

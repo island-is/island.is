@@ -27,12 +27,10 @@ export const Approved: Form = buildForm({
             buildDescriptionField({
               id: 'applicationApprovedIntro',
               marginBottom: 3,
-              title: '',
               description: m.approved.text,
             }),
             buildMessageWithLinkButtonField({
               id: 'applicationApprovedLink',
-              title: '',
               url: '/minarsidur/umsoknir',
               buttonTitle: coreMessages.openServicePortalButtonTitle,
               message: coreMessages.openServicePortalMessageText,

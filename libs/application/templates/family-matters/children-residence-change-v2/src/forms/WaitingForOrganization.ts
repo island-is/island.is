@@ -23,7 +23,6 @@ export const WaitingForOrganization = buildForm({
           children: [
             buildDescriptionField({
               id: 'waitingForOrganizationDescription',
-              title: '',
               description: m.stateDescriptions.waiting,
             }),
           ],

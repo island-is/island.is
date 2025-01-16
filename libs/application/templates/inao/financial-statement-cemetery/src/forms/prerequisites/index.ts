@@ -17,14 +17,12 @@ import { m } from '../../lib/messages'
 
 export const PrerequisitesForm: Form = buildForm({
   id: 'PrerequisitesForm',
-  title: '',
   mode: FormModes.NOT_STARTED,
   renderLastScreenButton: true,
   logo: Logo,
   children: [
     buildSection({
       id: 'ExternalDataSection',
-      title: '',
       children: [
         buildExternalDataProvider({
           id: 'approveExternalData',
@@ -50,7 +48,6 @@ export const PrerequisitesForm: Form = buildForm({
           submitField: buildSubmitField({
             id: 'submit',
             placement: 'footer',
-            title: '',
             refetchApplicationAfterSubmit: true,
             actions: [
               {

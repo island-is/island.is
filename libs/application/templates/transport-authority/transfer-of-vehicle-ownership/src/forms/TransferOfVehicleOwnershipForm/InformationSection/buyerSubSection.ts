@@ -17,12 +17,10 @@ export const buyerSubSection = buildSubSection({
         buildCustomField({
           id: 'buyer',
           component: 'Buyer',
-          title: '',
         }),
         buildCustomField({
           id: 'buyerCoOwnerAndOperator',
           component: 'BuyerCoOwnerAndOperatorRepeater',
-          title: '',
         }),
       ],
     }),

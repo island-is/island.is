@@ -35,12 +35,10 @@ export const sectionDataProviders = buildExternalDataProvider({
     }),
     buildDataProviderItem({
       provider: QualitySignatureApi,
-      title: '',
       subTitle: '',
     }),
     buildDataProviderItem({
       provider: DuplicateEligibilityApi,
-      title: '',
       subTitle: '',
     }),
     buildDataProviderItem({
@@ -50,17 +48,14 @@ export const sectionDataProviders = buildExternalDataProvider({
     }),
     buildDataProviderItem({
       provider: JurisdictionApi,
-      title: '',
       subTitle: '',
     }),
     buildDataProviderItem({
       provider: CurrentLicenseApi,
-      title: '',
       subTitle: '',
     }),
     buildDataProviderItem({
       provider: SyslumadurPaymentCatalogApi,
-      title: '',
     }),
   ],
 })

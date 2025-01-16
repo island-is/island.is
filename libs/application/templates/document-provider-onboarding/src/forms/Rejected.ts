@@ -35,7 +35,6 @@ export const Rejected: Form = buildForm({
         }),
         buildImageField({
           id: 'ManOnBench',
-          title: '',
           image: ManOnBenchIllustration,
           imageWidth: ['full', 'full', '50%', '50%'],
           imagePosition: 'center',

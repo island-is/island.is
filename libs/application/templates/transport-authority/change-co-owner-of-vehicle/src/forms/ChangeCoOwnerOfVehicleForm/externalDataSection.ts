@@ -44,7 +44,6 @@ export const externalDataSection = buildSection({
         }),
         buildDataProviderItem({
           provider: MockableSamgongustofaPaymentCatalogApi,
-          title: '',
         }),
       ],
     }),

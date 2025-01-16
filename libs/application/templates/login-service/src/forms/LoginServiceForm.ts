@@ -52,7 +52,6 @@ export const LoginServiceForm: Form = buildForm({
             }),
             buildCheckboxField({
               id: 'termsOfAgreement',
-              title: '',
               backgroundColor: 'white',
               options: [
                 {
@@ -232,7 +231,6 @@ export const LoginServiceForm: Form = buildForm({
             }),
             buildSubmitField({
               id: 'overview.submitField',
-              title: '',
               actions: [
                 {
                   event: DefaultEvents.SUBMIT,

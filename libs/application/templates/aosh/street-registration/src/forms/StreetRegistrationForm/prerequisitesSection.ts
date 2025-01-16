@@ -27,7 +27,6 @@ export const prerequisitesSection = buildSection({
       submitField: buildSubmitField({
         id: 'submit',
         placement: 'footer',
-        title: '',
         refetchApplicationAfterSubmit: true,
         actions: [
           {
@@ -55,12 +54,10 @@ export const prerequisitesSection = buildSection({
         }),
         buildDataProviderItem({
           provider: MustInspectBeforeRegistrationApi,
-          title: '',
           subTitle: '',
         }),
         buildDataProviderItem({
           provider: VinnueftirlitidPaymentCatalogApi,
-          title: '',
         }),
       ],
     }),

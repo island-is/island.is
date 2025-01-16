@@ -12,7 +12,6 @@ import {
 
 export const SecondarySchoolForm: Form = buildForm({
   id: 'SecondarySchoolFormDraft',
-  title: '',
   logo: Logo,
   mode: FormModes.DRAFT,
   renderLastScreenButton: false,

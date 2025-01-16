@@ -28,7 +28,6 @@ export const fakeDataSection = buildMultiField({
     }),
     buildRadioField({
       id: 'fakeData.useFakeData',
-      title: '',
       width: 'half',
       options: [
         {

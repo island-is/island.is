@@ -31,7 +31,6 @@ export const prerequisitesSection = buildSection({
         }),
         buildDataProviderItem({
           provider: NationalRegistryBirthplaceApi,
-          title: '',
         }),
         buildDataProviderItem({
           provider: UserProfileApi,
@@ -45,7 +44,6 @@ export const prerequisitesSection = buildSection({
         }),
         buildDataProviderItem({
           provider: QualityPhotoAndSignatureApi,
-          title: '',
         }),
         buildDataProviderItem({
           provider: NewestDriversCardApi,
@@ -60,7 +58,6 @@ export const prerequisitesSection = buildSection({
         }),
         buildDataProviderItem({
           provider: SamgongustofaPaymentCatalogApi,
-          title: '',
         }),
       ],
     }),

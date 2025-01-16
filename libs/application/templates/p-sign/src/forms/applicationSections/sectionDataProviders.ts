@@ -45,7 +45,6 @@ export const sectionDataProviders = buildSection({
         }),
         buildDataProviderItem({
           provider: DistrictsApi,
-          title: '',
           subTitle: '',
         }),
       ],

@@ -19,7 +19,6 @@ import { europeanHealthInsuranceCardApplicationMessages as e } from '../lib/mess
 
 export const EuropeanHealthInsuranceCardPre: Form = buildForm({
   id: 'EuropeanHealthInsuranceCardPre',
-  title: '',
   logo: Sjukra,
   mode: FormModes.NOT_STARTED,
   renderLastScreenBackButton: true,
@@ -68,12 +67,10 @@ export const EuropeanHealthInsuranceCardPre: Form = buildForm({
             }),
             buildDataProviderItem({
               provider: NationalRegistrySpouseApi,
-              title: '',
               subTitle: '',
             }),
             buildDataProviderItem({
               provider: ChildrenCustodyInformationApi,
-              title: '',
               subTitle: '',
             }),
             buildDataProviderItem({

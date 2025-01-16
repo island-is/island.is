@@ -15,14 +15,12 @@ export const tableRepeaterSubsection = buildSubSection({
       children: [
         buildDescriptionField({
           id: 'tableRepeaterDescription',
-          title: '',
           description:
             'In the table repeater, you create a small form that the user fills out and the answers are then sorted into a table. Only one instance of this form is visible at a time. In the table, you can delete and edit rows, and you can disable this functionality. You can also insert data into the table from answers or external data, similar to staticTable.',
           marginBottom: 2,
         }),
         buildDescriptionField({
           id: 'tableRepeaterDescription2',
-          title: '',
           description:
             'In the table repeater, you can use input, select, radio, checkbox, date, nationalIdWithName and phone. The nationalIdWithName field can, just like the regular one, be set to enable company search.',
         }),

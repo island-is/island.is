@@ -9,7 +9,6 @@ import { Individual } from '../types'
 
 export const done: Form = buildForm({
   id: 'MarriageConditionsApplicationComplete',
-  title: '',
   mode: FormModes.COMPLETED,
   renderLastScreenButton: true,
   children: [

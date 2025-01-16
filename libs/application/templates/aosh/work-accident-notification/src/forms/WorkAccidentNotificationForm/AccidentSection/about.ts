@@ -111,7 +111,6 @@ export const aboutSection = buildSubSection({
         }),
         buildDescriptionField({
           id: 'accident.describe.description',
-          title: '',
           description: accident.about.describeDescription,
           marginTop: 3,
           marginBottom: 2,
@@ -158,7 +157,6 @@ export const aboutSection = buildSubSection({
         }),
         buildCustomField({
           id: 'accident',
-          title: '',
           component: 'AccidentLocation',
         }),
       ],

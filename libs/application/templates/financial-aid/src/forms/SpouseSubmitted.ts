@@ -25,7 +25,6 @@ export const SpouseSubmitted: Form = buildForm({
         // Empty submit field to hide all buttons in the footer
         buildSubmitField({
           id: '',
-          title: '',
           actions: [],
         }),
       ],
@@ -44,7 +43,6 @@ export const SpouseSubmitted: Form = buildForm({
         ),
         buildSubmitField({
           id: 'missingFilesSubmit',
-          title: '',
           actions: [
             {
               event: DefaultEvents.EDIT,

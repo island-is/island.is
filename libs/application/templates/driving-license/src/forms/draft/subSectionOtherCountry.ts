@@ -23,7 +23,6 @@ export const subSectionOtherCountry = buildSubSection({
         buildRadioField({
           id: 'otherCountry.drivingLicenseInOtherCountry',
           backgroundColor: 'white',
-          title: '',
           width: 'half',
           largeButtons: true,
           options: [
@@ -40,7 +39,6 @@ export const subSectionOtherCountry = buildSubSection({
         buildCheckboxField({
           id: 'otherCountry.drivingLicenseDeprivedOrRestrictedInOtherCountry',
           backgroundColor: 'white',
-          title: '',
           condition: (answers) =>
             getValueViaPath(
               answers,

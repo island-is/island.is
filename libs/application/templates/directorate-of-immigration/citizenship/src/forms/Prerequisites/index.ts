@@ -32,7 +32,6 @@ import {
 
 export const Prerequisites: Form = buildForm({
   id: 'PrerequisitesForm',
-  title: '',
   mode: FormModes.NOT_STARTED,
   renderLastScreenButton: true,
   renderLastScreenBackButton: true,
@@ -50,7 +49,6 @@ export const Prerequisites: Form = buildForm({
           submitField: buildSubmitField({
             id: 'submit',
             placement: 'footer',
-            title: '',
             refetchApplicationAfterSubmit: true,
             actions: [
               {
@@ -68,19 +66,15 @@ export const Prerequisites: Form = buildForm({
             }),
             buildDataProviderItem({
               provider: NationalRegistryBirthplaceApi,
-              title: '',
             }),
             buildDataProviderItem({
               provider: NationalRegistrySpouseDetailsApi,
-              title: '',
             }),
             buildDataProviderItem({
               provider: NationalRegistryParentsApi,
-              title: '',
             }),
             buildDataProviderItem({
               provider: ChildrenCustodyInformationApi,
-              title: '',
             }),
             buildDataProviderItem({
               provider: UserProfileApi,
@@ -93,27 +87,21 @@ export const Prerequisites: Form = buildForm({
             }),
             buildDataProviderItem({
               provider: ApplicantInformationApi,
-              title: '',
             }),
             buildDataProviderItem({
               provider: CountriesApi,
-              title: '',
             }),
             buildDataProviderItem({
               provider: TravelDocumentTypesApi,
-              title: '',
             }),
             buildDataProviderItem({
               provider: ResidenceInIcelandLastChangeDateApi,
-              title: '',
             }),
             buildDataProviderItem({
               provider: UtlendingastofnunPaymentCatalogApi,
-              title: '',
             }),
             buildDataProviderItem({
               provider: MockableUtlendingastofnunPaymentCatalogApi,
-              title: '',
             }),
             buildDataProviderItem({
               title: externalData.nationalCommissionerOfPolice.title,

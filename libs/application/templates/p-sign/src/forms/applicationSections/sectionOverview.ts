@@ -88,7 +88,6 @@ export const sectionOverview = buildSection({
         }),
         buildCustomField({
           id: 'uploadedPhoto',
-          title: '',
           component: 'UploadedPhoto',
           condition: (answers) =>
             (answers.photo as Photo)?.qualityPhoto === NO ||
@@ -96,7 +95,6 @@ export const sectionOverview = buildSection({
         }),
         buildCustomField({
           id: 'qphoto',
-          title: '',
           component: 'QualityPhoto',
           condition: (answers) =>
             (answers.photo as Photo)?.qualityPhoto === YES,
@@ -120,7 +118,6 @@ export const sectionOverview = buildSection({
         }),
         buildSubmitField({
           id: 'submit',
-          title: '',
           placement: 'footer',
           refetchApplicationAfterSubmit: true,
           actions: [

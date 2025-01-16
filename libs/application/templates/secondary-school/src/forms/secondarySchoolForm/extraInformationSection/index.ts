@@ -89,7 +89,6 @@ export const extraInformationSection = buildSection({
         }),
         buildFileUploadField({
           id: 'extraInformation.supportingDocuments',
-          title: '',
           introduction: '',
           uploadAccept: FILE_TYPES_ALLOWED,
           maxSize: FILE_SIZE_LIMIT,
