@@ -519,6 +519,29 @@ export class InternalCaseService {
     return { caseArchived: true }
   }
 
+  async getCaseHearingArrangements(date: Date): Promise<Case[]> {
+    const startOfDay = new Date(date.setHours(0, 0, 0, 0))
+    const endOfDay = new Date(date.setHours(23, 59, 59, 999))
+
+    return this.caseModel.findAll({
+      include: [
+        {
+          model: DateLog,
+          as: 'dateLogs',
+          where: {
+            date_type: ['ARRAIGNMENT_DATE', 'COURT_DATE'],
+            date: {
+              [Op.gte]: startOfDay,
+              [Op.lte]: endOfDay,
+            },
+          },
+          required: true,
+        },
+      ],
+      order: [[{ model: DateLog, as: 'dateLogs' }, 'date', 'ASC']],
+    })
+  }
+
   async deliverProsecutorToCourt(
     theCase: Case,
     user: TUser,
