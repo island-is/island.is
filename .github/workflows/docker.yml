@@ -238,7 +238,7 @@ jobs:
             APP=${{ matrix.project }}
             PLAYWRIGHT_IMAGE_TAG=${{ needs.prepare.outputs.playwright-image-tag }}
           cache-from: ${{ steps.inputs.outputs.build-cache }}
-          # cache-to: ${{ steps.inputs.outputs.build-cache }}
+          cache-to: ${{ steps.inputs.outputs.build-cache }},mode=min
 
   status:
     name: Collect statuses
