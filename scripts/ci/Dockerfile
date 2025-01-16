@@ -91,8 +91,7 @@ ENV GIT_BRANCH=${GIT_BRANCH} GIT_COMMIT_SHA=${GIT_COMMIT_SHA} GIT_REPOSITORY_URL
 ENV DD_GIT_BRANCH=${GIT_BRANCH} DD_GIT_COMMIT_SHA=${GIT_COMMIT_SHA} DD_GIT_REPOSITORY_URL=${GIT_REPOSITORY_URL}
 LABEL branch=${GIT_BRANCH}
 LABEL commit=${GIT_COMMIT_SHA}
-ENTRYPOINT []
-CMD [ "node", "--no-experimental-fetch", "main.js" ]
+ENTRYPOINT [ "node", "--no-experimental-fetch", "main.js" ]
 
 FROM base-node-with-pg AS output-next
 
@@ -209,7 +208,7 @@ ENV DD_GIT_BRANCH=${GIT_BRANCH} DD_GIT_COMMIT_SHA=${GIT_COMMIT_SHA} DD_GIT_REPOS
 LABEL branch=${GIT_BRANCH}
 LABEL commit=${GIT_COMMIT_SHA}
 USER pwuser
-ENTRYPOINT ["./entrypoint.sh"]
+ENTRYPOINT [ "./entrypoint.sh" ]
 
 
 FROM playwright-base AS output-local
@@ -236,7 +235,7 @@ ENV GIT_BRANCH=${GIT_BRANCH} GIT_COMMIT_SHA=${GIT_COMMIT_SHA} GIT_REPOSITORY_URL
 ENV DD_GIT_BRANCH=${GIT_BRANCH} DD_GIT_COMMIT_SHA=${GIT_COMMIT_SHA} DD_GIT_REPOSITORY_URL=${GIT_REPOSITORY_URL}
 LABEL branch=${GIT_BRANCH}
 LABEL commit=${GIT_COMMIT_SHA}
-ENTRYPOINT ["./entrypoint.sh"]
+ENTRYPOINT [ "./entrypoint.sh" ]
 
 
 FROM base-node AS output-native
