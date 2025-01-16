@@ -385,7 +385,6 @@ export const include: Includeable[] = [
           state: { [Op.not]: CaseFileState.DELETED },
           category: {
             [Op.in]: [
-              CaseFileCategory.INDICTMENT,
               CaseFileCategory.COURT_RECORD,
               CaseFileCategory.CRIMINAL_RECORD,
               CaseFileCategory.COST_BREAKDOWN,
@@ -1840,10 +1839,6 @@ export class CaseService {
   ): Promise<Case | undefined> {
     const receivingCase =
       update.courtCaseNumber && theCase.state === CaseState.SUBMITTED
-    const returningIndictmentCase =
-      isIndictmentCase(theCase.type) &&
-      update.state === CaseState.DRAFT &&
-      theCase.state === CaseState.RECEIVED
     const completingIndictmentCaseWithoutRuling =
       isIndictmentCase(theCase.type) &&
       update.state === CaseState.COMPLETED &&
@@ -1900,13 +1895,6 @@ export class CaseService {
           update.courtCaseNumber !== theCase.courtCaseNumber
         ) {
           await this.fileService.resetCaseFileStates(theCase.id, transaction)
-        }
-
-        if (returningIndictmentCase) {
-          await this.fileService.resetIndictmentCaseFileHashes(
-            theCase.id,
-            transaction,
-          )
         }
 
         // Remove uploaded ruling files if an indictment case is completed without a ruling

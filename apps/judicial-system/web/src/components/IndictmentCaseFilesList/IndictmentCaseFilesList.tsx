@@ -105,7 +105,6 @@ const useFilteredCaseFiles = (caseFiles?: CaseFile[] | null) => {
     }
 
     return {
-      indictments: filterByCategories(CaseFileCategory.INDICTMENT),
       criminalRecords: filterByCategories(CaseFileCategory.CRIMINAL_RECORD),
       costBreakdowns: filterByCategories(CaseFileCategory.COST_BREAKDOWN),
       others: filterByCategories(CaseFileCategory.CASE_FILE),
@@ -174,11 +173,6 @@ const IndictmentCaseFilesList: FC<Props> = ({
       {displayHeading && (
         <SectionHeading title={formatMessage(strings.title)} />
       )}
-      <FileSection
-        title={formatMessage(caseFiles.indictmentSection)}
-        files={filteredFiles.indictments}
-        onOpenFile={onOpen}
-      />
       {displayGeneratedPDFs && (
         <Box marginBottom={5}>
           <Text variant="h4" as="h4" marginBottom={1}>
