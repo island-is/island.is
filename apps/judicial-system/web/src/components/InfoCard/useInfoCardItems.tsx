@@ -203,7 +203,9 @@ const useInfoCardItems = () => {
   const mergeCase: Item = {
     id: 'merge-case-item',
     title: formatMessage(strings.indictmentMergedTitle),
-    values: [workingCase.mergeCase?.courtCaseNumber],
+    values: [
+      workingCase.mergeCase?.courtCaseNumber || workingCase.mergeCaseNumber,
+    ],
   }
 
   const mergedCasePoliceCaseNumbers = (mergedCase: Case): Item => ({
