@@ -175,7 +175,8 @@ jobs:
         with:
           driver: docker-container
           # driver-opts: image=moby/buildkit:buildx-stable-1
-          driver-opts: image=moby/buildkit:buildx-stable-1, image=${{vars.AWS_ECR_REPO_BASE}}/moby/buildkit:buildx-stable-1
+          driver-opts: |
+            image=${{vars.AWS_ECR_REPO_BASE}}/moby/buildkit:buildx-stable-1
           install: true
           use: true
 
