@@ -4,29 +4,49 @@ import { YES } from '@island.is/application/types'
 import { EMPLOYMENT_STATUS } from '../shared/constants'
 import { isValid24HFormatTime, isValidPhoneNumber } from '../utils'
 
-const TimeWithRefine = z
-  .string()
-  .refine((x) => (x ? isValid24HFormatTime(x) : false), {})
-
 const option = z.object({
   value: z.string(),
   label: z.string(),
 })
 
-const accidentSchema = z.object({
-  accidentLocation: option,
-  accidentLocationParentGroup: option.optional(),
-  didAoshCome: z.string(),
-  didPoliceCome: z.string(),
-  exactLocation: z.string(),
-  municipality: z.string(),
-  date: z.string(),
-  time: TimeWithRefine,
-  how: z.string().min(1).max(499),
-  wasDoing: z.string().min(1).max(499),
-  wentWrong: z.string().min(1).max(499),
-})
+const TimeWithRefine = z
+  .string()
+  .refine((x) => (x ? isValid24HFormatTime(x) : false), {})
 
+const accidentSchema = z
+  .object({
+    accidentLocation: option,
+    accidentLocationParentGroup: option.optional(),
+    didAoshCome: z.string(),
+    didPoliceCome: z.string(),
+    exactLocation: z.string(),
+    municipality: z.string(),
+    date: z.string(),
+    time: TimeWithRefine,
+    how: z.string().min(1).max(499),
+    wasDoing: z.string().min(1).max(499),
+    wentWrong: z.string().min(1).max(499),
+  })
+  .refine(
+    (data) => {
+      const date = new Date(data.date)
+      const now = new Date()
+
+      if (date.toDateString() === now.toDateString()) {
+        const hours = parseInt(data.time.slice(0, 2))
+        const minutes = parseInt(data.time.slice(2, 4))
+        const inputTime = new Date()
+        inputTime.setHours(hours, minutes, 0, 0)
+        if (inputTime > now) {
+          return false
+        }
+      }
+      return true
+    },
+    {
+      path: ['time'],
+    },
+  )
 const basicCompanySchema = z.object({
   nationalId: z
     .string()
