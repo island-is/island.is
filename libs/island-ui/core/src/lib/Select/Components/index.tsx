@@ -341,6 +341,20 @@ export const Control = <
   }
 }
 
+export const ClearIndicator = <
+  Value,
+  IsMulti extends boolean,
+  Group extends GroupBase<OptionType<Value>>,
+>(
+  props: ClearIndicatorProps<OptionType<Value>, IsMulti, Group>,
+) => {
+  return (
+    <components.ClearIndicator {...props}>
+      <Icon icon="close" color="blue400" />
+    </components.ClearIndicator>
+  )
+}
+
 export const customStyles = <
   Value,
   IsMulti extends boolean,

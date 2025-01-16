@@ -19,6 +19,7 @@ import {
   MultiValueLabel,
   ClearIndicator,
   customStyles,
+  ClearIndicator,
 } from './Components'
 import { Option as OptionType, SelectProps } from './Select.types'
 
@@ -41,7 +42,6 @@ export const Select = <
   errorMessage = '',
   placeholder = '',
   defaultValue,
-  hideSelectedOptions,
   icon = 'chevronDown',
   isSearchable = true,
   isCreatable = false,
@@ -165,7 +165,6 @@ export const Select = <
         hasError={hasError}
         isSearchable={isSearchable}
         size={size}
-        hideSelectedOptions={hideSelectedOptions}
         required={required}
         formatGroupLabel={formatGroupLabel}
         filterOption={createFilter(filterConfig)}
