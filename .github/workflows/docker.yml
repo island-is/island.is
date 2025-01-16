@@ -254,24 +254,14 @@ jobs:
         env:
           dependencies: ${{ toJSON(needs) }}
         run: |
-          # Debug inputs
-          echo "$dependencies" | jq
-
-          echo "# Summary report" >>"$GITHUB_STEP_SUMMARY"
-          echo "|job|result|" >>"$GITHUB_STEP_SUMMARY"
-          echo "|---|------|" >>"$GITHUB_STEP_SUMMARY"
           success=true
           # Loop through each job and ensure .result == "success"
           for job in $(echo "$dependencies" | jq -r 'keys[]'); do
             result=$(echo "$dependencies" | jq -r ".[\"$job\"].result")
             echo "Job $job => $result"
-            echo "|$job|$result $([[ "$result" == "success" ]] && echo "✅" || echo "❌")|" >>"$GITHUB_STEP_SUMMARY"
             if [[ "$result" != "success" ]]; then
-              success=false
+              echo "Job $job failed with result $result"
+              exit 1
             fi
           done
-          if [[ success != true ]]; then
-            exit 1
-          fi
-
           echo "All dependencies succeeded!"
