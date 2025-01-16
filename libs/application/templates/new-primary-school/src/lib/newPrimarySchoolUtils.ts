@@ -17,11 +17,7 @@ import {
   SelectOption,
   SiblingsRow,
 } from '../types'
-import {
-  ReasonForApplicationOptions,
-  SiblingRelationOptions,
-} from './constants'
-import { newPrimarySchoolMessages } from './messages'
+import { ReasonForApplicationOptions } from './constants'
 
 export const getApplicationAnswers = (answers: Application['answers']) => {
   const childNationalId = getValueViaPath(answers, 'childNationalId') as string
@@ -294,28 +290,6 @@ export const hasOtherParent = (
 ): boolean => {
   const otherParent = getOtherParent({ answers, externalData } as Application)
   return !!otherParent
-}
-
-export const getSiblingRelationOptions = () => [
-  {
-    value: SiblingRelationOptions.SIBLING,
-    label: newPrimarySchoolMessages.primarySchool.siblingsRelationSibling,
-  },
-  {
-    value: SiblingRelationOptions.HALF_SIBLING,
-    label: newPrimarySchoolMessages.primarySchool.halfSiblingsRelationSibling,
-  },
-  {
-    value: SiblingRelationOptions.STEP_SIBLING,
-    label: newPrimarySchoolMessages.primarySchool.stepSiblingsRelationSibling,
-  },
-]
-
-export const getSiblingRelationOptionLabel = (
-  value: SiblingRelationOptions,
-) => {
-  const relationOptions = getSiblingRelationOptions()
-  return relationOptions.find((option) => option.value === value)?.label ?? ''
 }
 
 export const getSelectedOptionLabel = (
