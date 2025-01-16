@@ -79,10 +79,10 @@ export const freeSchoolMealSubSection = buildSubSection({
           },
         ),
         buildAlertMessageField({
-          id: 'freeSchoolMeal.foodAlergiesAlertMessage',
+          id: 'freeSchoolMeal.foodAllergiesAlertMessage',
           title: newPrimarySchoolMessages.shared.alertTitle,
           message:
-            newPrimarySchoolMessages.differentNeeds.foodAlergiesAlertMessage,
+            newPrimarySchoolMessages.differentNeeds.foodAllergiesAlertMessage,
           doesNotRequireAnswer: true,
           alertType: 'info',
           condition: (answers) => {

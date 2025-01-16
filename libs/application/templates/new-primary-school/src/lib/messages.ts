@@ -501,8 +501,8 @@ export const newPrimarySchoolMessages: MessageDir = {
       defaultMessage: 'Veldu tegund',
       description: 'Select type',
     },
-    foodAlergiesAlertMessage: {
-      id: 'nps.application:different.needs.free.school.meal.food.alergies.alert.message',
+    foodAllergiesAlertMessage: {
+      id: 'nps.application:different.needs.free.school.meal.food.allergies.alert.message',
       defaultMessage: 'Spurt er um matarofnæmi undir ofnæmi og óþól',
       description:
         'Food allergies are addressed in the allergies and intolerances section',
