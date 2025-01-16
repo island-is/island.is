@@ -259,43 +259,43 @@ export const newPrimarySchoolMessages: MessageDir = {
         'Information about parents/guardians is retrieved from Registers Iceland and from My Pages on Ísland.is. Check that phone numbers and email addresses are entered correctly before proceeding.',
     },
 
-    // Relatives
-    relativesSubSectionTitle: {
-      id: 'nps.application:childrenNParents.relatives.sub.section.title',
-      defaultMessage: 'Aðstandendur',
-      description: 'Relatives',
+    // Contacts
+    contactsSubSectionTitle: {
+      id: 'nps.application:childrenNParents.contacts.sub.section.title',
+      defaultMessage: 'Tengiliðir',
+      description: 'Contacts',
     },
-    relativesTitle: {
-      id: 'nps.application:childrenNParents.relatives.title',
-      defaultMessage: 'Aðstandendur barnsins',
-      description: "The child's relatives",
+    contactsTitle: {
+      id: 'nps.application:childrenNParents.contacts.title',
+      defaultMessage: 'Tengiliðir barns',
+      description: "The child's contacts",
     },
-    relativesDescription: {
-      id: 'nps.application:childrenNParents.relatives.description',
+    contactsDescription: {
+      id: 'nps.application:childrenNParents.contacts.description',
       defaultMessage:
-        'Skráðu að minnsta kosti einn tengilið sem má hafa samband við ef ekki næst í foreldra/forsjáraðila barnsins. Þú getur bætt við allt að sex aðstandendum. Vinsamlegast látið aðstandendur vita af skráningunni.',
+        'Skráðu að minnsta kosti einn tengilið sem má hafa samband við ef ekki næst í forsjáraðila barnsins. Þú getur bætt við allt að fjórum tengiliðum. Vinsamlegast látið tengiliði vita af skráningunni.',
       description:
-        "List at least one contact person who can be contacted if the child's parents/guardian cannot be reached. You can add up to six relatives. Please inform the relatives of the registration.",
+        "List at least one contact person who can be contacted if the child's guardian cannot be reached. You can add up to four contacts. Please inform the contacts of the registration.",
     },
-    relativesRegistrationTitle: {
-      id: 'nps.application:childrenNParents.relatives.registration.title',
-      defaultMessage: 'Skráning aðstandanda',
-      description: 'Registration of a relative',
+    contactsRegistrationTitle: {
+      id: 'nps.application:childrenNParents.contacts.registration.title',
+      defaultMessage: 'Skráning tengiliðs',
+      description: 'Registration of a contact',
     },
-    relativesAddRelative: {
-      id: 'nps.application:childrenNParents.relatives.add.relative',
-      defaultMessage: 'Bæta við aðstandanda',
-      description: 'Add a relative',
+    contactsAddContact: {
+      id: 'nps.application:childrenNParents.contacts.add.contact',
+      defaultMessage: 'Bæta við tengilið',
+      description: 'Add a contact',
     },
-    relativesRegisterRelative: {
-      id: 'nps.application:childrenNParents.relatives.register.relative',
-      defaultMessage: 'Skrá aðstandanda',
-      description: 'Register relative',
+    contactsRegisterContact: {
+      id: 'nps.application:childrenNParents.contacts.register.contact',
+      defaultMessage: 'Skrá tengilið',
+      description: 'Register contact',
     },
-    relativesDeleteRelative: {
-      id: 'nps.application:childrenNParents.relatives.delete.relative',
-      defaultMessage: 'Eyða aðstandanda',
-      description: 'Remove relative',
+    contactsDeleteContact: {
+      id: 'nps.application:childrenNParents.contacts.delete.contact',
+      defaultMessage: 'Eyða tengilið',
+      description: 'Remove contact',
     },
   }),
 
@@ -757,10 +757,10 @@ export const errorMessages = defineMessages({
     defaultMessage: 'Kennitala þarf að vera gild.',
     description: 'National id must be valid',
   },
-  relativesRequired: {
-    id: 'nps.application:error.relatives.required',
-    defaultMessage: 'Nauðsynlegt er að bæta við a.m.k einum aðstandenda',
-    description: 'You must add at least one relative',
+  contactsRequired: {
+    id: 'nps.application:error.contacts.required',
+    defaultMessage: 'Nauðsynlegt er að bæta við a.m.k einum tengilið',
+    description: 'You must add at least one contact',
   },
   siblingsRequired: {
     id: 'nps.application:error.siblings.required',

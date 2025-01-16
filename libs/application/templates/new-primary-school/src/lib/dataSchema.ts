@@ -57,7 +57,7 @@ export const dataSchema = z.object({
       })
       .optional(),
   }),
-  relatives: z
+  contacts: z
     .array(
       z.object({
         fullName: z.string().min(1),
@@ -69,7 +69,7 @@ export const dataSchema = z.object({
       }),
     )
     .refine((r) => r === undefined || r.length > 0, {
-      params: errorMessages.relativesRequired,
+      params: errorMessages.contactsRequired,
     }),
   reasonForApplication: z
     .object({
