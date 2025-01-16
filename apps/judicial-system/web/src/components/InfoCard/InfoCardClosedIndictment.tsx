@@ -41,7 +41,8 @@ const InfoCardClosedIndictment: FC<Props> = (props) => {
     (log) => log.eventType === EventType.INDICTMENT_REVIEWED,
   )?.created
 
-  const showMergeCaseItem = isNonEmptyArray(mergeCase.values) && !!mergeCase.values[0]
+  const showMergeCaseItem =
+    isNonEmptyArray(mergeCase.values) && !!mergeCase.values[0]
 
   return (
     <InfoCard
@@ -66,7 +67,7 @@ const InfoCardClosedIndictment: FC<Props> = (props) => {
             policeCaseNumbers,
             courtCaseNumber,
             prosecutorsOffice,
-            ...(showMergeCaseItem  ? [mergeCase] : []),
+            ...(showMergeCaseItem ? [mergeCase] : []),
             court,
             prosecutor(workingCase.type),
             judge,
