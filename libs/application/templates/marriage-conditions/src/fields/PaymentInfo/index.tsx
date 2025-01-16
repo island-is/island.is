@@ -60,7 +60,7 @@ export const PaymentInfo: FC<
   )
 
   const nrOfBirthCerts =
-    (applicantHasBirthCertificate ? 0 : 1) + (spouseHasBirthCertificate ? 0 : 1)
+    (applicantHasBirthCertificate ? 1 : 0) + (spouseHasBirthCertificate ? 1 : 0)
 
   // Isolate prices, calculate total and check if total is correct
   const prices = {
