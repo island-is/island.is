@@ -27,10 +27,20 @@ export const otherFees = defineMessages({
     defaultMessage: 'Greitt af leigusala',
     description: 'Label for paid by landlord',
   },
+  housingFundPayedByLandlordLabel: {
+    id: 'ra.application:otherFees.housingFundPayedByTenantLabel',
+    defaultMessage: 'Greitt af leigusala / Á ekki við',
+    description: 'Label for housing fund payed by tenant',
+  },
   housingFundTitle: {
     id: 'ra.application:otherFees.housingFundTitle',
     defaultMessage: 'Hússjóður',
     description: 'Housing fund title',
+  },
+  housingFundCheckboxLabel: {
+    id: 'ra.application:otherFees.housingFundCheckboxLabel',
+    defaultMessage: 'Greitt er í hússjóð',
+    description: 'Housing fund checkbox label',
   },
   housingFundAmountLabel: {
     id: 'ra.application:otherFees.housingFundAmountLabel',
@@ -149,10 +159,25 @@ export const otherFees = defineMessages({
   },
 
   // Error messages
-  errorHousingFundLength: {
-    id: 'ra.application:dataSchema.errorHousingFundLength',
-    defaultMessage: 'Upphæð hússjóðs má ekki vera meira en 7 tölustafir',
-    description: 'Error message when housing fund amount is too long',
+  errorHousingFundEmpty: {
+    id: 'ra.application:dataSchema.errorHousingFundEmpty',
+    defaultMessage: 'Þú verður að slá inn mánaðarlega upphæð fyrir hússjóð',
+    description: 'Error message when housing fund amount is empty',
+  },
+  errorMeterNumberEmpty: {
+    id: 'ra.application:dataSchema.errorMeterNumberEmpty',
+    defaultMessage: 'Númer mælis þarf að vera skráð',
+    description: 'Error message when meter number is empty',
+  },
+  errorMeterStatusEmpty: {
+    id: 'ra.application:dataSchema.errorMeterStatusEmpty',
+    defaultMessage: 'Staða mælis verður að vera skráð',
+    description: 'Error message when meter status is empty',
+  },
+  errorMeterStatusDateEmpty: {
+    id: 'ra.application:dataSchema.errorMeterStatusDateEmpty',
+    defaultMessage: 'Dagsetning aflesturs verður að vera skráð',
+    description: 'Error message when meter status date is empty',
   },
   errorMeterNumberRegex: {
     id: 'ra.application:dataSchema.errorMeterNumberRegex',

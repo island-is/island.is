@@ -3,6 +3,8 @@ import {
   buildMultiField,
   buildDescriptionField,
   buildTextField,
+  buildHiddenInput,
+  buildHiddenInputWithWatchedValue,
 } from '@island.is/application/core'
 import { Routes } from '../../lib/constants'
 import { housingFireProtections } from '../../lib/messages'
@@ -44,7 +46,7 @@ export const RentalHousingFireProtections = buildSubSection({
           space: 4,
         }),
         buildTextField({
-          id: 'fireProtections.exits',
+          id: 'fireProtections.emergencyExits',
           title: housingFireProtections.exitsLabel,
           placeholder: '0',
           width: 'half',
@@ -56,6 +58,10 @@ export const RentalHousingFireProtections = buildSubSection({
           placeholder: '0',
           width: 'half',
           variant: 'number',
+        }),
+        buildHiddenInputWithWatchedValue({
+          id: 'fireProtections.propertySize',
+          watchValue: 'registerProperty.size',
         }),
       ],
     }),

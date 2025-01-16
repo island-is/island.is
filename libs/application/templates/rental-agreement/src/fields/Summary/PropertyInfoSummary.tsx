@@ -225,7 +225,7 @@ export const PropertyInfoSummary = ({
         <GridColumn span={['12/12', '6/12', '6/12', '6/12', '3/12']}>
           <KeyValue
             label={summary.fireProtectionsExitsLabel}
-            value={answers.fireProtections.exits || '-'}
+            value={answers.fireProtections.emergencyExits || '-'}
           />
         </GridColumn>
         <GridColumn span={['12/12', '6/12', '6/12', '6/12', '3/12']}>

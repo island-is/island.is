@@ -36,14 +36,14 @@ export const Summary: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   const isFireProtectionsPresent =
     answers.fireProtections.smokeDetectors &&
     answers.fireProtections.fireExtinguisher &&
-    answers.fireProtections.exits
+    answers.fireProtections.emergencyExits
 
   const isConditionPresent = answers.condition.resultsDescription
 
   const isOtherFeesPresent =
-    answers.rentOtherFees.electricityCost &&
-    answers.rentOtherFees.heatingCost &&
-    answers.rentOtherFees.housingFund
+    answers.otherFees.electricityCost &&
+    answers.otherFees.heatingCost &&
+    answers.otherFees.housingFund
 
   const AlertMessageConditions = [
     {

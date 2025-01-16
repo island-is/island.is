@@ -5,7 +5,7 @@ import {
   RentalAmountPaymentDateOptions,
   RentalHousingCategoryClass,
   RentalHousingCategoryTypes,
-  RentOtherFeesPayeeOptions,
+  OtherFeesPayeeOptions,
   SecurityDepositAmountOptions,
   SecurityDepositTypeOptions,
   TRUE,
@@ -29,6 +29,16 @@ const checkIfNegative = (inputNumber: string) => {
     return true
   }
 }
+
+const approveExternalData = z.boolean().refine((v) => v)
+
+const applicant = z.object({
+  nationalId: z
+    .string()
+    .refine((val) => (val ? kennitala.isValid(val) : false), {
+      params: m.dataSchema.nationalId,
+    }),
+})
 
 const fileSchema = z.object({
   name: z.string(),
@@ -279,12 +289,48 @@ const condition = z.object({
   resultsFiles: z.array(fileSchema),
 })
 
-const fireProtections = z.object({
-  smokeDetectors: z.string().optional(),
-  fireExtinguisher: z.string().optional(),
-  exits: z.string().optional(),
-  fireBlanket: z.string().optional(),
-})
+const fireProtections = z
+  .object({
+    smokeDetectors: z.string().optional(),
+    fireExtinguisher: z.string().optional(),
+    emergencyExits: z.string().optional(),
+    fireBlanket: z.string().optional(),
+    propertySize: z.string().optional(),
+  })
+  .superRefine((data, ctx) => {
+    const propertySizeString = data.propertySize?.replace(',', '.') || ''
+    const numberOfSmokeDetectors = Number(data.smokeDetectors)
+    const requiredSmokeDetectors = Math.ceil(Number(propertySizeString) / 80)
+    if (
+      data.smokeDetectors &&
+      numberOfSmokeDetectors < requiredSmokeDetectors
+    ) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'Custom error message',
+        params: m.housingFireProtections.smokeDetectorMinRequiredError,
+        path: ['smokeDetectors'],
+      })
+    }
+
+    if (data.fireExtinguisher && Number(data.fireExtinguisher) < 1) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'Custom error message',
+        params: m.housingFireProtections.fireExtinguisherNullError,
+        path: ['fireExtinguisher'],
+      })
+    }
+
+    if (data.emergencyExits && Number(data.emergencyExits) < 1) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'Custom error message',
+        params: m.housingFireProtections.emergencyExitNullError,
+        path: ['emergencyExits'],
+      })
+    }
+  })
 
 const securityDeposit = z
   .object({
@@ -416,7 +462,7 @@ const securityDeposit = z
     }
   })
 
-const rentOtherFees = z
+const otherFees = z
   .object({
     housingFund: z.string().optional(),
     housingFundAmount: z.string().optional(),
@@ -430,20 +476,33 @@ const rentOtherFees = z
     heatingCostMeterStatusDate: z.string().optional(),
   })
   .superRefine((data, ctx) => {
-    if (data.housingFund === RentOtherFeesPayeeOptions.TENANT) {
-      if (
-        data.housingFundAmount &&
-        data.housingFundAmount.toString().length > 7
-      ) {
+    const tenantPaysHousingFund =
+      data.housingFund === OtherFeesPayeeOptions.TENANT
+    const tenantPaysElectricityCost =
+      data.electricityCost === OtherFeesPayeeOptions.TENANT
+    const tenantPaysHeatingCost =
+      data.heatingCost === OtherFeesPayeeOptions.TENANT
+
+    if (data.housingFund && tenantPaysHousingFund) {
+      if (!data.housingFundAmount) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           message: 'Custom error message',
-          params: m.otherFees.errorHousingFundLength,
+          params: m.otherFees.errorHousingFundEmpty,
           path: ['housingFundAmount'],
         })
       }
     }
-    if (data.electricityCost === RentOtherFeesPayeeOptions.TENANT) {
+
+    if (data.electricityCost && tenantPaysElectricityCost) {
+      if (!data.electricityCostMeterNumber) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: 'Custom error message',
+          params: m.otherFees.errorMeterNumberEmpty,
+          path: ['electricityCostMeterNumber'],
+        })
+      }
       if (
         data.electricityCostMeterNumber &&
         !isValidMeterNumber(data.electricityCostMeterNumber)
@@ -451,8 +510,16 @@ const rentOtherFees = z
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           message: 'Custom error message',
-          params: m.otherFees.errorMeterNumberRegex,
+          params: m.otherFees.errorMeterStatusRegex,
           path: ['electricityCostMeterNumber'],
+        })
+      }
+      if (!data.electricityCostMeterStatus) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: 'Custom error message',
+          params: m.otherFees.errorMeterStatusEmpty,
+          path: ['electricityCostMeterStatus'],
         })
       }
       if (
@@ -466,8 +533,25 @@ const rentOtherFees = z
           path: ['electricityCostMeterStatus'],
         })
       }
+      if (!data.electricityCostMeterStatusDate) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: 'Custom error message',
+          params: m.otherFees.errorMeterStatusDateEmpty,
+          path: ['electricityCostMeterStatusDate'],
+        })
+      }
     }
-    if (data.heatingCost === RentOtherFeesPayeeOptions.TENANT) {
+
+    if (data.heatingCost && tenantPaysHeatingCost) {
+      if (!data.heatingCostMeterNumber) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: 'Custom error message',
+          params: m.otherFees.errorMeterNumberEmpty,
+          path: ['heatingCostMeterNumber'],
+        })
+      }
       if (
         data.heatingCostMeterNumber &&
         !isValidMeterNumber(data.heatingCostMeterNumber)
@@ -477,6 +561,14 @@ const rentOtherFees = z
           message: 'Custom error message',
           params: m.otherFees.errorMeterNumberRegex,
           path: ['heatingCostMeterNumber'],
+        })
+      }
+      if (!data.heatingCostMeterStatus) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: 'Custom error message',
+          params: m.otherFees.errorMeterNumberEmpty,
+          path: ['heatingCostMeterStatus'],
         })
       }
       if (
@@ -490,11 +582,19 @@ const rentOtherFees = z
           path: ['heatingCostMeterStatus'],
         })
       }
+      if (!data.heatingCostMeterStatusDate) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: 'Custom error message',
+          params: m.otherFees.errorMeterStatusDateEmpty,
+          path: ['heatingCostMeterStatusDate'],
+        })
+      }
     }
     return true
   })
 
-const signature = z.object({
+const signatureInfo = z.object({
   statement: z
     .string()
     .array()
@@ -504,25 +604,19 @@ const signature = z.object({
 })
 
 export const dataSchema = z.object({
-  approveExternalData: z.boolean().refine((v) => v),
-  applicant: z.object({
-    nationalId: z
-      .string()
-      .refine((val) => (val ? kennitala.isValid(val) : false), {
-        params: m.dataSchema.nationalId,
-      }),
-  }),
+  approveExternalData,
+  applicant,
   landlordInfo,
   tenantInfo,
   registerProperty,
   rentalPeriod,
   rentalAmount,
+  securityDeposit,
   specialProvisions,
   condition,
   fireProtections,
-  securityDeposit,
-  rentOtherFees,
-  signature,
+  otherFees,
+  signatureInfo,
 })
 
 export type RentalAgreement = z.TypeOf<typeof dataSchema>

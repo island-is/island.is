@@ -91,7 +91,8 @@ export enum SecurityDepositAmountOptions {
   OTHER = 'other',
 }
 
-export enum RentOtherFeesPayeeOptions {
+export enum OtherFeesPayeeOptions {
+  LANDLORD_OR_NOT_APPLICABLE = 'landlordPaysOrNotApplicable',
   LANDLORD = 'landlordPays',
   TENANT = 'tenantPays',
 }

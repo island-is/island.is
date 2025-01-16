@@ -83,6 +83,7 @@ export const RentalHousingPropertyInfo: SubSection = buildSubSection({
           title: messagesInfo.sizeLabel,
           placeholder: '',
           width: 'half',
+          variant: 'number',
           required: true,
         }),
         buildTextField({
