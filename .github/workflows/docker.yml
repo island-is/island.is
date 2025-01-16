@@ -118,7 +118,7 @@ jobs:
       matrix: ${{ fromJson(needs.prepare.outputs.matrix) }}
 
     permissions:
-      id-token: write # This is required for requesting the JWT
+      id-token: write # This is required for requesting the JWT for AWS/ECR login
       contents: read # This is required for actions/checkout
 
     steps:
