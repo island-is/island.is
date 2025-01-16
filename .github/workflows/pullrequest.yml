@@ -370,6 +370,8 @@ jobs:
             -a "nx run-many --target lint --fix --parallel 6 --projects=${AFFECTED_PROJECTS//[[\]]}" \
             -o "dirtybot" \
             -r
+      - name: Linting
+        run: ./scripts/ci/run-in-parallel-native.sh lint
 
   build:
     needs:
