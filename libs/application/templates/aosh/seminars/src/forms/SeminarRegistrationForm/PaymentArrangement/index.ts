@@ -1,4 +1,5 @@
 import {
+  buildCheckboxField,
   buildCompanySearchField,
   buildCustomField,
   buildDescriptionField,
@@ -216,10 +217,21 @@ export const paymentArrangementSection = buildSection({
         }),
         /* COMPANY ENDS */
 
-        buildCustomField({
+        // buildCustomField({
+        //   id: 'paymentArrangement.agreementCheckbox',
+        //   title: '',
+        //   component: 'AgreementCheckbox',
+        // }),
+        buildCheckboxField({
           id: 'paymentArrangement.agreementCheckbox',
           title: '',
-          component: 'AgreementCheckbox',
+          large: false,
+          options: [
+            {
+              value: 'yes',
+              label: paymentArrangement.labels.aggreementCheckbox,
+            },
+          ],
         }),
       ],
     }),
