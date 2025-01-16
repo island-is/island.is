@@ -1,27 +1,24 @@
-import { Controller, useFormContext, useWatch } from 'react-hook-form'
+import { Controller, useFormContext } from 'react-hook-form'
 import {
+  AlertMessage,
   Box,
   Button,
   InputFileUpload,
   UploadFile,
-  UploadFileStatus,
 } from '@island.is/island-ui/core'
 import {
   FieldBaseProps,
   FieldComponents,
   FieldTypes,
 } from '@island.is/application/types'
-import { FC, useCallback, useEffect, useState } from 'react'
+import { FC, useState } from 'react'
 import { FILE_SIZE_LIMIT } from '../../lib/constants'
 import { parse } from 'csv-parse'
-import { Participant } from '../../shared/types'
+import { CSVError, FileUploadStatus, Participant } from '../../shared/types'
 import { participants as participantMessages } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
-import { useLazyAreIndividualsValid } from '../../hooks/useLazyAreIndividualsValid'
-import { getValueViaPath } from '@island.is/application/core'
 import { DescriptionFormField } from '@island.is/application/ui-fields'
-import { isValidEmail, isValidPhoneNumber } from '../../utils'
-import * as kennitala from 'kennitala'
+import { validateFields } from '../../utils'
 
 interface IndexableObject {
   [index: number]: Array<string>
@@ -46,14 +43,14 @@ const parseDataToParticipantList = (csvInput: string): Participant | null => {
     nationalId: nationalIdWithoutHyphen,
     email: values[2],
     phoneNumber: values[3],
-    disabled: false,
+    disabled: 'false',
   }
 }
 
 const checkHeaders = (headers: string): boolean => {
   const values = headers.split(';')
   let validHeaders = true
-  values.map((value, index) => {
+  values.forEach((value, index) => {
     if (!predefinedHeaders[index].includes(value)) {
       validHeaders = false
     }
@@ -71,27 +68,20 @@ export const Participants: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   const [fileState, setFileState] = useState<Array<UploadFile>>([])
   const [participantList, setParticipantList] = useState<Array<Participant>>([])
   const [foundNotValid, setFoundNotValid] = useState<boolean>(false)
-
-  const participantListWatch: Array<Participant> = useWatch({
-    name: 'participantList',
-  })
-
-  const getAreIndividualsValid = useLazyAreIndividualsValid()
-  const getIsCompanyValidCallback = useCallback(
-    async (nationalIds: Array<string>, courseID: string) => {
-      const { data } = await getAreIndividualsValid({
-        nationalIds,
-        courseID,
-      })
-      return data
-    },
-    [getAreIndividualsValid],
-  )
+  const [csvInputError, setCsvInputError] = useState<Array<CSVError>>([])
 
   const changeFile = (props: Array<UploadFile>) => {
     const reader = new FileReader()
     reader.onload = function (e) {
-      const csvData = reader.result as string
+      if (typeof reader.result !== 'string') {
+        setValue('participantCsvError', true)
+        throw new TypeError(
+          `Expected reader.result to be a string, but got ${
+            reader.result === null ? 'null' : typeof reader.result
+          }.`,
+        )
+      }
+      const csvData = reader.result
       parse(csvData, (err, data) => {
         if (err) {
           rejectFile()
@@ -103,75 +93,43 @@ export const Participants: FC<React.PropsWithChildren<FieldBaseProps>> = ({
           rejectFile()
           return
         }
+        const errorListFromAnswers: Array<CSVError> = []
         const answerValue: Array<Participant> = data.map(
-          (value: Array<string>) => {
+          (value: Array<string>, index: number) => {
             const participantList = parseDataToParticipantList(value[0])
             if (participantList === null) {
               setValue('participantCsvError', true)
               return []
             } else {
-              return parseDataToParticipantList(value[0])
+              const errorMessages = validateFields(value[0])
+              if (errorMessages.length > 0) {
+                errorListFromAnswers.push({
+                  itemIndex: index,
+                  errorList: errorMessages,
+                })
+              }
+              return participantList
             }
           },
         )
-
-        const fileWithSuccessStatus: UploadFile = props[0]
-        Object.assign(fileWithSuccessStatus, {
-          status: 'done' as UploadFileStatus,
-        })
-        setValue('participantCsvError', false)
-        setFileState([fileWithSuccessStatus])
-        setParticipantList(answerValue)
-        setValue('participantList', answerValue)
+        if (errorListFromAnswers.length > 0) {
+          setCsvInputError(errorListFromAnswers)
+        } else {
+          setCsvInputError([])
+          const fileWithSuccessStatus: UploadFile = props[0]
+          Object.assign(fileWithSuccessStatus, {
+            status: FileUploadStatus.done,
+          })
+          setValue('participantCsvError', false)
+          setFileState([fileWithSuccessStatus])
+          setParticipantList(answerValue)
+          setValue('participantList', answerValue)
+        }
       })
     }
     reader.readAsText(props[0] as unknown as Blob)
     return
   }
-
-  // const updateValidity = async (participants: Array<Participant>) => {
-  //   const nationalIds = participants.map((x) => x.nationalId)
-
-  //   if (nationalIds.length > 0) {
-  //     const seminarId = getValueViaPath(
-  //       application.answers,
-  //       'initialQuery',
-  //       '',
-  //     ) as string
-  //     const res = await getIsCompanyValidCallback(nationalIds, seminarId)
-
-  //     let tmpNotValid = false
-  //     const updatedParticipantList: Array<Participant> = participants.map(
-  //       (x) => {
-  //         const participantInRes = res.areIndividualsValid.filter(
-  //           (z) => z.nationalID === x.nationalId,
-  //         )
-  //         if (!participantInRes[0].mayTakeCourse) tmpNotValid = true
-  //         return { ...x, disabled: !participantInRes[0].mayTakeCourse }
-  //       },
-  //     )
-  //     if (tmpNotValid) setValue('participantValidityError', true)
-  //     setFoundNotValid(tmpNotValid)
-  //     setParticipantList(updatedParticipantList)
-  //   }
-  // }
-
-  // useEffect(() => {
-  //   if (participantListWatch) {
-  //     const lastItemIndex = participantListWatch.length - 1
-  //     if (
-  //       participantListWatch[lastItemIndex].name &&
-  //       participantListWatch[lastItemIndex].email &&
-  //       isValidEmail(participantListWatch[lastItemIndex].email) &&
-  //       participantListWatch[lastItemIndex].nationalId &&
-  //       kennitala.isValid(participantListWatch[lastItemIndex].nationalId) &&
-  //       participantListWatch[lastItemIndex].phoneNumber &&
-  //       isValidPhoneNumber(participantListWatch[lastItemIndex].phoneNumber)
-  //     ) {
-  //       updateValidity(participantListWatch)
-  //     }
-  //   }
-  // }, [participantListWatch])
 
   const removeFile = () => {
     setFileState([])
@@ -197,7 +155,7 @@ export const Participants: FC<React.PropsWithChildren<FieldBaseProps>> = ({
 
   const removeInvalidParticipants = () => {
     const validParticipants = participantList.filter(
-      (x) => x.disabled === false,
+      (x) => x.disabled === 'false',
     )
     setValue('participantList', validParticipants)
     setParticipantList(validParticipants)
@@ -267,6 +225,21 @@ export const Participants: FC<React.PropsWithChildren<FieldBaseProps>> = ({
           />
         )}
       />
+
+      {csvInputError.length > 0 &&
+        csvInputError.map((csvError: CSVError) => {
+          let messageString = `${formatMessage(
+            participantMessages.labels.csvErrorLabel,
+          )} ${csvError.itemIndex + 1}`
+          console.log('csvError.errorList', csvError.errorList)
+          csvError.errorList.forEach((errorString) => {
+            messageString = messageString.concat(
+              ' ',
+              formatMessage(errorString),
+            )
+          })
+          return <AlertMessage type="error" message={messageString} />
+        })}
     </Box>
   )
 }

@@ -9,6 +9,12 @@ import {
 
 import { participants as participantMessages } from '../../../lib/messages'
 import { FormValue } from '@island.is/application/types'
+import {
+  QueryAreIndividualsValidArgs,
+  SeminarsIndividualValidationItem,
+} from '@island.is/api/schema'
+import { ARE_INDIVIDUALS_VALID } from '../../../graphql/queries'
+import { Participant } from '../../../shared/types'
 
 export const participantsSection = buildSection({
   id: 'participants',
@@ -24,6 +30,48 @@ export const participantsSection = buildSection({
           title: '',
           addItemButtonText:
             participantMessages.labels.addParticipantButtonText,
+          loadErrorMessage:
+            participantMessages.labels.tableRepeaterLoadErrorMessage,
+          onSubmitLoad: async ({ apolloClient, application, tableItems }) => {
+            const courseID =
+              getValueViaPath<string>(
+                application.answers,
+                'initialQuery',
+                '',
+              ) ?? ''
+            const nationalIds = tableItems?.map((x) => x.nationalId) ?? []
+            const { data } = await apolloClient.query<
+              { areIndividualsValid: Array<SeminarsIndividualValidationItem> }, //TODO get this correct from schemas
+              QueryAreIndividualsValidArgs
+            >({
+              query: ARE_INDIVIDUALS_VALID,
+              variables: {
+                courseID: courseID,
+                nationalIds: nationalIds,
+              },
+            })
+
+            const updatedParticipants: Array<Participant> = tableItems.map(
+              (x) => {
+                const participantInRes = data.areIndividualsValid.filter(
+                  (z: any) => z.nationalID === x.nationalId,
+                )
+                return { ...x, disabled: !participantInRes[0].mayTakeCourse }
+              },
+            )
+
+            const dictinaryOfItems: Array<{ path: string; value: string }> =
+              updatedParticipants.map((x, i) => {
+                return {
+                  path: `participantList[${i}].disabled`,
+                  value: x.disabled ? 'true' : 'false',
+                }
+              })
+
+            return {
+              dictinaryOfItems,
+            }
+          },
           fields: {
             name: {
               component: 'input',

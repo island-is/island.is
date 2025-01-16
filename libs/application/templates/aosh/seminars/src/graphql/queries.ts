@@ -1,3 +1,5 @@
+import gql from 'graphql-tag'
+
 export const IS_COMPANY_VALID = `
   query IsCompanyValid($nationalId: String!) {
     seminarsVerIsCompanyValid(nationalId: $nationalId) {
@@ -7,15 +9,9 @@ export const IS_COMPANY_VALID = `
   }
 `
 
-export const ARE_INDIVIDUALS_VALID = `
-  query AreIndividualsValid(
-    $nationalIds: [String!]! 
-    $courseID: String!
-  ) {
-    areIndividualsValid(
-      nationalIds: $nationalIds 
-      courseID: $courseID
-    ) {
+export const ARE_INDIVIDUALS_VALID = gql`
+  query AreIndividualsValid($nationalIds: [String!]!, $courseID: String!) {
+    areIndividualsValid(nationalIds: $nationalIds, courseID: $courseID) {
       nationalID
       mayTakeCourse
     }
