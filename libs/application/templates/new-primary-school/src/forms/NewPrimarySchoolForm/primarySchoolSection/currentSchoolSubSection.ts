@@ -21,7 +21,7 @@ export const currentSchoolSubSection = buildSubSection({
       children: [
         buildDescriptionField({
           id: 'currentSchool.description',
-          title: newPrimarySchoolMessages.primarySchool.currentSchoolInfo,
+          title: newPrimarySchoolMessages.overview.currentSchool,
           titleVariant: 'h4',
         }),
         buildTextField({

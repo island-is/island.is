@@ -22,7 +22,8 @@ export const CurrentSchool = ({
           <GridColumn span={['12/12', '12/12', '12/12', '12/12']}>
             <Text variant="h3" as="h3">
               {formatMessage(
-                newPrimarySchoolMessages.overview.currentSchoolTitle,
+                newPrimarySchoolMessages.primarySchool
+                  .currentSchoolSubSectionTitle,
               )}
             </Text>
           </GridColumn>
