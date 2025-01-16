@@ -19,7 +19,6 @@ import {
   MultiValueLabel,
   ClearIndicator,
   customStyles,
-  ClearIndicator,
 } from './Components'
 import { Option as OptionType, SelectProps } from './Select.types'
 
