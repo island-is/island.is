@@ -28,7 +28,7 @@ export const SelectFormField: FC<React.PropsWithChildren<Props>> = ({
 }) => {
   const {
     id,
-    title,
+    title = '',
     description,
     options,
     placeholder,

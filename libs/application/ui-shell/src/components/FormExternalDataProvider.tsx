@@ -95,7 +95,7 @@ const ProviderItem: FC<
   }>
 > = ({ dataProviderResult, provider, suppressProviderError, application }) => {
   const [reasons, setReasons] = useState<ProviderErrorReason[]>([])
-  const { title, subTitle, pageTitle } = provider
+  const { title = '', subTitle, pageTitle } = provider
   const { formatMessage } = useLocale()
   const showError =
     provider.id &&
@@ -104,6 +104,7 @@ const ProviderItem: FC<
 
   const errorCode = dataProviderResult?.statusCode ?? 500
   const errorType = errorCode < 500 ? 'warning' : 'error'
+  
 
   useEffect(() => {
     if (dataProviderResult?.reason) {
@@ -163,7 +164,7 @@ const PermissionItem: FC<
     application: Application
   }>
 > = ({ permission, application }) => {
-  const { title, subTitle, pageTitle } = permission
+  const { title = '', subTitle, pageTitle } = permission
 
   return (
     <Box marginBottom={3}>

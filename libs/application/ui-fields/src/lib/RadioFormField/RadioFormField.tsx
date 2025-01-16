@@ -31,7 +31,7 @@ export const RadioFormField: FC<React.PropsWithChildren<Props>> = ({
   const {
     disabled,
     id,
-    title,
+    title = '',
     description,
     options,
     width,
