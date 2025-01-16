@@ -472,7 +472,7 @@ export class NationalRegistryService extends BaseTemplateApiService {
   }
 
   async getBirthPlaceMunicipalityCode(
-    municipality?: string,
+    municipality?: string | null,
   ): Promise<string | null> {
     if (!municipality) {
       return ''
@@ -503,9 +503,9 @@ export class NationalRegistryService extends BaseTemplateApiService {
       }
     }
 
-    const municipalityName = birthplace?.municipalityNumber
-      ? await this.getBirthPlaceMunicipalityCode(birthplace?.municipalityNumber)
-      : ''
+    const municipalityName = await this.getBirthPlaceMunicipalityCode(
+      birthplace?.municipalityNumber,
+    )
 
     return (
       birthplace && {
