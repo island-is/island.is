@@ -333,11 +333,6 @@ jobs:
           ./scripts/ci/20_check-formatting.sh "write"
           ./infra/scripts/ci/git-check-dirty.sh "/" "nx format:write" "dirtybot"
 
-      - name: NX lint:write
-        if: ${{ github.event_name == 'pull_request' }}
-        run: |
-          ./infra/scripts/ci/git-check-dirty.sh "/" "nx run-many -t lint --fix" "dirtybot"
-
   linting:
     needs:
       - prepare
@@ -367,8 +362,9 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           keys: ${{ needs.prepare.outputs.CACHE_KEYS }}
           enable-cache: 'node_modules,generated-files'
-      - name: Linting
-        run: ./scripts/ci/run-in-parallel-native.sh lint
+      - name: Lintfix
+        run: |
+          ./infra/scripts/ci/git-check-dirty.sh "/" "nx run-many -t lint --fix --parallel --projects=${AFFECTED_PROJECTS}" "dirtybot"
 
   build:
     needs:
