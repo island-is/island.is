@@ -104,7 +104,6 @@ const ProviderItem: FC<
 
   const errorCode = dataProviderResult?.statusCode ?? 500
   const errorType = errorCode < 500 ? 'warning' : 'error'
-  
 
   useEffect(() => {
     if (dataProviderResult?.reason) {

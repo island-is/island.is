@@ -109,7 +109,7 @@ export const buildCheckboxField = (
     spacing,
   } = data
   return {
-    ...extractCommonFields({...data, title}),
+    ...extractCommonFields({ ...data, title }),
     children: undefined,
     large,
     strong,
@@ -138,7 +138,7 @@ export const buildDateField = (
     readOnly,
   } = data
   return {
-    ...extractCommonFields({...data, title}),
+    ...extractCommonFields({ ...data, title }),
     children: undefined,
     placeholder,
     maxDate,
@@ -167,7 +167,7 @@ export const buildDescriptionField = (
     doesNotRequireAnswer = true,
   } = data
   return {
-    ...extractCommonFields({...data, title}),
+    ...extractCommonFields({ ...data, title }),
     doesNotRequireAnswer,
     children: undefined,
     description,
@@ -195,7 +195,7 @@ export const buildRadioField = (
   } = data
 
   return {
-    ...extractCommonFields({...data, title}),
+    ...extractCommonFields({ ...data, title }),
     children: undefined,
     largeButtons,
     options,
@@ -222,7 +222,7 @@ export const buildSelectField = (
     required,
   } = data
   return {
-    ...extractCommonFields({...data, title}),
+    ...extractCommonFields({ ...data, title }),
     children: undefined,
     placeholder,
     options,
@@ -250,7 +250,7 @@ export const buildAsyncSelectField = (
   } = data
 
   return {
-    ...extractCommonFields({...data, title}),
+    ...extractCommonFields({ ...data, title }),
     children: undefined,
     placeholder,
     loadOptions,
@@ -276,7 +276,7 @@ export const buildCompanySearchField = (
   } = data
 
   return {
-    ...extractCommonFields({...data, title}),
+    ...extractCommonFields({ ...data, title }),
     children: undefined,
     placeholder,
     shouldIncludeIsatNumber,
@@ -307,7 +307,7 @@ export const buildTextField = (
     onChange,
   } = data
   return {
-    ...extractCommonFields({...data, title}),
+    ...extractCommonFields({ ...data, title }),
     children: undefined,
     placeholder,
     backgroundColor,
@@ -341,7 +341,7 @@ export const buildPhoneField = (
     enableCountrySelector,
   } = data
   return {
-    ...extractCommonFields({...data, title}),
+    ...extractCommonFields({ ...data, title }),
     children: undefined,
     placeholder,
     backgroundColor,
@@ -361,7 +361,7 @@ export const buildCustomField = (
 ): CustomField => {
   const { title = '', component, childInputIds } = data
   return {
-    ...extractCommonFields({...data, title}),
+    ...extractCommonFields({ ...data, title }),
     children: undefined,
     childInputIds,
     type: FieldTypes.CUSTOM,
@@ -387,7 +387,7 @@ export const buildFileUploadField = (
     forImageUpload,
   } = data
   return {
-    ...extractCommonFields({...data, title}),
+    ...extractCommonFields({ ...data, title }),
     children: undefined,
     introduction: introduction,
     uploadHeader:
@@ -415,7 +415,7 @@ export const buildDividerField = (data: {
   marginBottom?: BoxProps['marginBottom']
   marginTop?: BoxProps['marginTop']
 }): DividerField => {
-  const {  useDividerLine = true, condition, marginTop, marginBottom } = data
+  const { useDividerLine = true, condition, marginTop, marginBottom } = data
   return {
     id: '',
     children: undefined,
@@ -438,8 +438,14 @@ export const buildTitleField = (data: {
   marginBottom?: BoxProps['marginBottom']
   marginTop?: BoxProps['marginTop']
 }): TitleField => {
-  const { title = '', titleVariant, color, condition, marginTop, marginBottom } =
-    data
+  const {
+    title = '',
+    titleVariant,
+    color,
+    condition,
+    marginTop,
+    marginBottom,
+  } = data
   return {
     id: '',
     children: undefined,
@@ -601,7 +607,7 @@ export const buildMessageWithLinkButtonField = (
 ): MessageWithLinkButtonField => {
   const { id, title, url, message, buttonTitle } = data
   return {
-    ...extractCommonFields({...data, title}),
+    ...extractCommonFields({ ...data, title }),
     children: undefined,
     id,
     title,
@@ -618,7 +624,7 @@ export const buildExpandableDescriptionField = (
 ): ExpandableDescriptionField => {
   const { id, title, description, introText, startExpanded } = data
   return {
-    ...extractCommonFields({...data, title}),
+    ...extractCommonFields({ ...data, title }),
     children: undefined,
     id,
     title,
@@ -635,7 +641,7 @@ export const buildAlertMessageField = (
 ): AlertMessageField => {
   const { title = '', message, alertType, links } = data
   return {
-    ...extractCommonFields({...data, title}),
+    ...extractCommonFields({ ...data, title }),
     children: undefined,
     message,
     alertType,
@@ -650,7 +656,7 @@ export const buildLinkField = (
 ): LinkField => {
   const { title = '', s3key, link, iconProps } = data
   return {
-    ...extractCommonFields({...data, title}),
+    ...extractCommonFields({ ...data, title }),
     s3key,
     link,
     iconProps,
@@ -663,10 +669,15 @@ export const buildLinkField = (
 export const buildPaymentChargeOverviewField = (
   data: Omit<PaymentChargeOverviewField, 'type' | 'component' | 'children'>,
 ): PaymentChargeOverviewField => {
-  const { id, title= '', forPaymentLabel, totalLabel, getSelectedChargeItems } =
-    data
+  const {
+    id,
+    title = '',
+    forPaymentLabel,
+    totalLabel,
+    getSelectedChargeItems,
+  } = data
   return {
-    ...extractCommonFields({...data, title}),
+    ...extractCommonFields({ ...data, title }),
     children: undefined,
     id,
     title,
@@ -693,7 +704,7 @@ export const buildImageField = (
     imagePosition = 'left',
   } = data
   return {
-    ...extractCommonFields({...data, title}),
+    ...extractCommonFields({ ...data, title }),
     children: undefined,
     id,
     title,
@@ -722,7 +733,7 @@ export const buildPdfLinkButtonField = (
     downloadButtonTitle,
   } = data
   return {
-    ...extractCommonFields({...data, title}),
+    ...extractCommonFields({ ...data, title }),
     verificationDescription,
     verificationLinkTitle,
     verificationLinkUrl,
@@ -817,7 +828,7 @@ export const buildNationalIdWithNameField = (
     description,
   } = data
   return {
-    ...extractCommonFields({...data, title}),
+    ...extractCommonFields({ ...data, title }),
     disabled,
     required,
     customNationalIdLabel,
@@ -850,7 +861,7 @@ export const buildActionCardListField = (
   const { title = '', items, space } = data
 
   return {
-    ...extractCommonFields({...data, title}),
+    ...extractCommonFields({ ...data, title }),
     children: undefined,
     type: FieldTypes.ACTION_CARD_LIST,
     component: FieldComponents.ACTION_CARD_LIST,
@@ -878,7 +889,7 @@ export const buildTableRepeaterField = (
   } = data
 
   return {
-    ...extractCommonFields({...data, title}),
+    ...extractCommonFields({ ...data, title }),
     children: undefined,
     type: FieldTypes.TABLE_REPEATER,
     component: FieldComponents.TABLE_REPEATER,
@@ -914,7 +925,7 @@ export const buildFieldsRepeaterField = (
   } = data
 
   return {
-    ...extractCommonFields({...data, title}),
+    ...extractCommonFields({ ...data, title }),
     children: undefined,
     type: FieldTypes.FIELDS_REPEATER,
     component: FieldComponents.FIELDS_REPEATER,
@@ -1053,7 +1064,7 @@ export const buildDisplayField = (
     halfWidthOwnline,
   } = data
   return {
-    ...extractCommonFields({...data, title}),
+    ...extractCommonFields({ ...data, title }),
     title,
     titleVariant,
     label,
