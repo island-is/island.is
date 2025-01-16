@@ -175,6 +175,7 @@ export interface UpdateCase
     | 'judgeId'
     | 'courtSessionType'
     | 'mergeCaseId'
+    | 'mergeCaseNumber'
   > {
   type?: CaseType
   state?: CaseState
