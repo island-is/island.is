@@ -594,7 +594,7 @@ const otherFees = z
     return true
   })
 
-const signature = z.object({
+const signatureInfo = z.object({
   statement: z
     .string()
     .array()
@@ -616,7 +616,7 @@ export const dataSchema = z.object({
   condition,
   fireProtections,
   otherFees,
-  signature,
+  signatureInfo,
 })
 
 export type RentalAgreement = z.TypeOf<typeof dataSchema>
