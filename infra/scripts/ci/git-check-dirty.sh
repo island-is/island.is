@@ -6,7 +6,19 @@ rel_path=$1
 abs_path=$DIR/$rel_path
 action=$2
 owner="${3:-github actions}"
-check_mode="${4:-${CHECK_MODE:-}}"
+check_mode="${CHECK_MODE:-}"
+run_mode="${RUN_MODE:-}"
+
+while getopts "p:a:o:cr" opt; do
+  case $opt in
+  p) abs_path="$DIR/$OPTARG" ;;
+  a) action="$OPTARG" ;;
+  o) owner="$OPTARG" ;;
+  c) check_mode=true ;;
+  r) run_mode=true ;;
+  *) echo "Invalid option: -$OPTARG" >&2 ;;
+  esac
+done
 
 commit_as_github_actions() {
   git config user.name 'github-actions[bot]'
@@ -21,7 +33,9 @@ commit_as_dirty_bot() {
 # Split action into array safely:
 IFS=' ' read -r -a action_array <<<"$action"
 
-yarn "${action_array[@]}"
+if [[ "$run_mode" == true ]]; then
+  yarn "${action_array[@]}"
+fi
 
 if [[ "$check_mode" == true ]] && ! git diff --quiet; then
   echo "found unstaged files from $action, aborting"
