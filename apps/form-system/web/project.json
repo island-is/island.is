@@ -15,7 +15,7 @@
         "compiler": "babel",
         "outputPath": "dist/apps/form-system/web",
         "index": "apps/form-system/web/src/index.html",
-        "baseHref": "/form/",
+        "baseHref": "/",
         "main": "apps/form-system/web/src/main.tsx",
         "tsConfig": "apps/form-system/web/tsconfig.app.json",
         "assets": [
@@ -26,12 +26,7 @@
           "apps/form-system/web/src/styles.scss"
         ],
         "scripts": [],
-        "webpackConfig": "apps/form-system/web/webpack.config.js",
-        "resolve": {
-          "alias": {
-            "browserslist": "browserslist/index.js"
-          }
-        }
+        "webpackConfig": "apps/form-system/web/webpack.config.js"
       },
       "configurations": {
         "development": {
@@ -60,7 +55,9 @@
       "executor": "@nx/webpack:dev-server",
       "defaultConfiguration": "development",
       "options": {
+        "port": 4201,
         "buildTarget": "form-system-web:build",
+        "proxyConfig": "apps/form-system/web/proxy.config.json",
         "hmr": true
       },
       "configurations": {
@@ -83,6 +80,33 @@
       ],
       "options": {
         "jestConfig": "apps/form-system/web/jest.config.ts"
+      }
+    },
+    "start-bff": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "yarn infra run-local-env services-bff-portals-my-pages"
+        ],
+        "cwd": "infra"
+      }
+    },
+    "dev": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "yarn nx run form-system-web:start-bff",
+          "yarn start form-system-web"
+        ],
+        "parallel": true
+      }
+    },
+    "mock": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "API_MOCKS=true yarn start form-system-web"
+        ]
       }
     }
   }
