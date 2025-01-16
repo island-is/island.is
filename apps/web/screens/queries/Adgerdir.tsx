@@ -1,6 +1,5 @@
-import gql from 'graphql-tag'
-
 import { slices } from './fragments'
+import gql from 'graphql-tag'
 
 export const GET_ADGERDIR_PAGES_QUERY = gql`
   query GetAdgerdirPages($input: GetAdgerdirPagesInput!) {

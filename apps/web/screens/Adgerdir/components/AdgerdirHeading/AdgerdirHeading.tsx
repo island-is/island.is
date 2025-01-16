@@ -1,5 +1,4 @@
 import React, { FC } from 'react'
-
 import { Stack, Text, TextProps } from '@island.is/island-ui/core'
 
 export interface AdgerdirHeadingProps {

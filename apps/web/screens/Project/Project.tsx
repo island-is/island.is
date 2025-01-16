@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
+import { Locale } from '@island.is/shared/types'
 import { useRouter } from 'next/router'
 import slugify from '@sindresorhus/slugify'
 
@@ -10,7 +11,6 @@ import {
   TableOfContents,
   Text,
 } from '@island.is/island-ui/core'
-import { Locale } from '@island.is/shared/types'
 import {
   Form,
   HeadWithSocialSharing,

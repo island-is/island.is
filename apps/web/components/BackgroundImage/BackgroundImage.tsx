@@ -1,9 +1,8 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import { useIntersection } from 'react-use'
 import cn from 'classnames'
-
-import { Box, BoxProps } from '@island.is/island-ui/core'
-import { Colors, theme } from '@island.is/island-ui/theme'
+import { BoxProps, Box } from '@island.is/island-ui/core'
+import { theme, Colors } from '@island.is/island-ui/theme'
 
 import * as styles from './BackgroundImage.css'
 

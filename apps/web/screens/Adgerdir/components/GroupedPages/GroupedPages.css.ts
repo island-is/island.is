@@ -1,7 +1,5 @@
 import { style, styleVariants } from '@vanilla-extract/css'
-
 import { theme } from '@island.is/island-ui/theme'
-
 import covidColors from '../UI/colors'
 
 export const container = style({

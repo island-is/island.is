@@ -1,5 +1,4 @@
 import { style } from '@vanilla-extract/css'
-
 import { theme, themeUtils } from '@island.is/island-ui/theme'
 
 const IMG_CONTAINER_WIDTH = 88

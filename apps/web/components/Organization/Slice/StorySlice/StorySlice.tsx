@@ -1,8 +1,6 @@
 import React from 'react'
-
-import { Box } from '@island.is/island-ui/core'
 import { StorySlice as StorySliceProps } from '@island.is/web/graphql/schema'
-
+import { Box } from '@island.is/island-ui/core'
 import { StoryList } from '../../../StoryList/StoryList'
 
 interface SliceProps {

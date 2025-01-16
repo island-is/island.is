@@ -1,14 +1,13 @@
 import React from 'react'
 import Document, {
-  DocumentContext,
-  Head,
   Html,
+  Head,
   Main,
   NextScript,
+  DocumentContext,
 } from 'next/document'
-
-import { PLAUSIBLE_SCRIPT_SRC } from '../constants'
 import { getLocaleFromPath } from '../i18n/withLocale'
+import { PLAUSIBLE_SCRIPT_SRC } from '../constants'
 
 interface Props {
   lang: Locale

@@ -1,26 +1,25 @@
+import { Colors } from '@island.is/island-ui/theme'
 import React, { ReactNode, useContext } from 'react'
 import { useMeasure } from 'react-use'
 import cn from 'classnames'
 import { LinkProps } from 'next/link'
-
 import {
   Box,
-  FocusableBox,
-  Hyphen,
-  Inline,
   Stack,
-  Tag,
-  TagProps,
-  TagVariant,
   Text,
+  Tag,
+  Inline,
+  TagProps,
+  FocusableBox,
+  TagVariant,
+  Hyphen,
 } from '@island.is/island-ui/core'
-import { Colors } from '@island.is/island-ui/theme'
-import { TestSupport } from '@island.is/island-ui/utils'
-import { BackgroundImage } from '@island.is/web/components'
 import { ColorSchemeContext } from '@island.is/web/context'
+import { BackgroundImage } from '@island.is/web/components'
 import { LinkResolverResponse } from '@island.is/web/hooks/useLinkResolver'
 
 import * as styles from './Card.css'
+import { TestSupport } from '@island.is/island-ui/utils'
 
 export type CardTagsProps = {
   tagProps?: Omit<TagProps, 'children'>

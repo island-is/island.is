@@ -1,4 +1,5 @@
 import React, { useMemo, useRef } from 'react'
+import { Locale } from '@island.is/shared/types'
 import NextLink from 'next/link'
 import { useRouter } from 'next/router'
 import { parseAsBoolean } from 'next-usequerystate'
@@ -20,7 +21,6 @@ import {
   Tag,
   Text,
 } from '@island.is/island-ui/core'
-import { Locale } from '@island.is/shared/types'
 import {
   AnchorNavigation,
   BackgroundImage,

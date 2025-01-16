@@ -1,5 +1,4 @@
 import { style, styleVariants } from '@vanilla-extract/css'
-
 import { blue100, blue600, theme, themeUtils } from '@island.is/island-ui/theme'
 
 export const item = style({

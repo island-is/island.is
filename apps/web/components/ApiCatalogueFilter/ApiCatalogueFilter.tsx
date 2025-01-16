@@ -1,5 +1,3 @@
-import React from 'react'
-
 import {
   Filter,
   FilterInput,
@@ -7,6 +5,7 @@ import {
   FilterMultiChoiceProps,
   FilterProps,
 } from '@island.is/island-ui/core'
+import React from 'react'
 
 type FilterCategory = {
   /** Id for the category. */

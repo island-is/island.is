@@ -1,5 +1,5 @@
-import { Locale } from '@island.is/shared/types'
 import { WatsonChatPanelProps } from '@island.is/web/components'
+import { Locale } from '@island.is/shared/types'
 
 export const watsonConfig: Record<Locale, WatsonChatPanelProps | null> = {
   is: {
