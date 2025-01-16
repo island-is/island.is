@@ -1,38 +1,39 @@
 # This is a multi-stage Dockerfile which contains all CI-related operations as well as images to be deployed in production
 
 # Global ARGs (used across multiple stages)
-ARG PLAYWRIGHT_VERSION
+ARG PLAYWRIGHT_VERSION=1.49.1
+ARG PLAYWRIGHT_IMAGE_TAG=v${PLAYWRIGHT_VERSION}-focal
 ARG DOCKER_ECR_REGISTRY=public.ecr.aws/docker
 ARG DOCKER_IMAGE_REGISTRY=${DOCKER_ECR_REGISTRY%/docker}
 # Alias DOCKER_IMAGE_REGISTRY to DOCKER_REGISTRY for backwards compatibility
 ARG DOCKER_REGISTRY=${DOCKER_IMAGE_REGISTRY}/docker
-ARG NODE_IMAGE_TAG
-ARG APP_HOME
-ARG APP_DIST_HOME=dist/${APP_HOME}
+ARG NODE_IMAGE_TAG=20-alpine
 ARG APP
 
 # Base image for dependencies
-FROM ${DOCKER_REGISTRY}/library/node:${NODE_IMAGE_TAG} AS deps
+FROM ${DOCKER_REGISTRY}/library/node:${NODE_IMAGE_TAG} AS sys-deps
 
 # hadolint ignore=DL3018
-RUN apk add -U git
+RUN apk add --no-cache python3 build-base gcc git jq openjdk21 py3-distutils-extra && \
+  rm -rf /var/cache/apk/* && \
+  ln -sf /usr/bin/python3 /usr/bin/python
 
 WORKDIR /build
+
+# Add intermediate step for debugging system dependencies
+FROM sys-deps AS deps
 
 # Adding and installing packages
 COPY package.json yarn.lock .yarnrc.yml ./
 COPY apps/native/app/package.json ./apps/native/app/
 COPY .yarn/ ./.yarn
-# hadolint ignore=DL3018
-RUN apk add --update --no-cache python3 build-base gcc && ln -sf /usr/bin/python3 /usr/bin/python
-RUN CI=true yarn install --immutable
+
+RUN CI=true yarn install --immutable && \
+  # Don't store the cache in the builder image
+  yarn cache clean
 
 # Image with source code
 FROM deps AS src
-
-RUN wget -O /tmp/jq-linux64 https://github.com/stedolan/jq/releases/download/jq-1.6/jq-linux64 && \
-  chmod a+x /tmp/jq-linux64 && \
-  mv /tmp/jq-linux64 /usr/bin/jq
 
 # image with the source code
 COPY . .
@@ -62,7 +63,8 @@ ENV NODE_ENV=production
 WORKDIR /webapp
 
 # Adding user for running the app
-RUN addgroup runners && adduser -D runner -G runners
+RUN addgroup runners && \
+  adduser --disabled-password runner --ingroup runners
 
 FROM output-base AS output-base-with-pg
 
@@ -82,7 +84,7 @@ ARG GIT_BRANCH
 ARG GIT_COMMIT_SHA
 ARG GIT_REPOSITORY_URL
 
-COPY --from=builder /build/${APP_DIST_HOME} /webapp/
+COPY --from=builder /dist /webapp/
 
 ENV GIT_BRANCH=${GIT_BRANCH} GIT_COMMIT_SHA=${GIT_COMMIT_SHA} GIT_REPOSITORY_URL=${GIT_REPOSITORY_URL}
 ENV DD_GIT_BRANCH=${GIT_BRANCH} DD_GIT_COMMIT_SHA=${GIT_COMMIT_SHA} DD_GIT_REPOSITORY_URL=${GIT_REPOSITORY_URL}
@@ -104,7 +106,7 @@ ENV PORT=4200
 
 # TODO: smallify
 COPY --from=deps /build/node_modules /webapp/node_modules
-COPY --from=builder /build/${APP_DIST_HOME} /webapp/
+COPY --from=builder /dist /webapp/
 
 ENV GIT_BRANCH=${GIT_BRANCH} GIT_COMMIT_SHA=${GIT_COMMIT_SHA} GIT_REPOSITORY_URL=${GIT_REPOSITORY_URL}
 ENV DD_GIT_BRANCH=${GIT_BRANCH} DD_GIT_COMMIT_SHA=${GIT_COMMIT_SHA} DD_GIT_REPOSITORY_URL=${GIT_REPOSITORY_URL}
@@ -124,14 +126,13 @@ ARG GIT_REPOSITORY_URL
 
 RUN mkdir -p /etc/nginx/templates
 # hadolint ignore=DL3018
-RUN apk update && \
-  apk upgrade && \
-  apk add bash nodejs
+RUN apk add --no-cache bash nodejs && \
+  rm -rf /var/cache/apk/*
 
 COPY scripts/dockerfile-assets/nginx/* /etc/nginx/templates
 COPY scripts/dockerfile-assets/bash/extract-environment.sh /docker-entrypoint.d
 COPY scripts/dockerfile-assets/bash/extract-environment.js /docker-entrypoint.d
-COPY --from=builder /build/${APP_DIST_HOME} /usr/share/nginx/html
+COPY --from=builder /dist /usr/share/nginx/html
 
 ENV GIT_BRANCH=${GIT_BRANCH} GIT_COMMIT_SHA=${GIT_COMMIT_SHA} GIT_REPOSITORY_URL=${GIT_REPOSITORY_URL}
 ENV DD_GIT_BRANCH=${GIT_BRANCH} DD_GIT_COMMIT_SHA=${GIT_COMMIT_SHA} DD_GIT_REPOSITORY_URL=${GIT_REPOSITORY_URL}
@@ -155,7 +156,7 @@ RUN echo 'module.exports = {};' > jest.config.js
 # hadolint ignore=DL3016
 RUN npm install -g jest
 
-COPY --from=builder /build/${APP_DIST_HOME} /webapp/
+COPY --from=builder /dist /webapp/
 
 USER runner
 
@@ -166,7 +167,7 @@ LABEL commit=${GIT_COMMIT_SHA}
 CMD [ "jest", "main.spec.js" ]
 
 
-FROM mcr.microsoft.com/playwright:v${PLAYWRIGHT_VERSION}-focal AS playwright-base
+FROM mcr.microsoft.com/playwright:${PLAYWRIGHT_IMAGE_TAG} AS playwright-base
 
 FROM playwright-base AS output-playwright
 
@@ -187,9 +188,9 @@ RUN apt-get update -y && apt-get install -y zip awscli && apt-get purge
 ARG APP_HOME
 ARG APP_DIST_HOME
 
-WORKDIR ${APP_DIST_HOME}
+WORKDIR /testing
 
-COPY --from=builder /build/${APP_DIST_HOME} .
+COPY --from=builder /dist .
 COPY ${APP_HOME}/package.json .
 RUN chown -R pwuser:pwuser .
 
