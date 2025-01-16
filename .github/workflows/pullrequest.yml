@@ -367,7 +367,7 @@ jobs:
         run: |
           ./infra/scripts/ci/git-check-dirty.sh \
             -p "/" \
-            -a "nx run-many --target lint --fix --parallel 6 --projects=${AFFECTED_PROJECTS//[[\]]}" \
+            -a "nx run-many --target lint --fix --parallel ${MAX_JOBS} --projects=${AFFECTED_PROJECTS//[[\]]}" \
             -o "dirtybot" \
             -r
       - name: Linting
