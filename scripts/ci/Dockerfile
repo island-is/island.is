@@ -13,6 +13,7 @@ ARG APP_HOME
 ARG APP_DIST_HOME=dist/${APP_HOME}
 ARG APP
 
+
 # Base image for dependencies
 FROM ${DOCKER_REGISTRY}/library/node:${NODE_IMAGE_TAG} AS base-deps
 
@@ -22,6 +23,7 @@ RUN apk add --no-cache python3 build-base gcc git jq openjdk21 py3-distutils-ext
   ln -sf /usr/bin/python3 /usr/bin/python
 
 WORKDIR /build
+
 
 # Add intermediate step for debugging system dependencies
 FROM base-deps AS deps
@@ -34,6 +36,7 @@ COPY .yarn/ ./.yarn
 RUN CI=true yarn install --immutable && \
   # Don't store the cache in the builder image
   yarn cache clean
+
 
 # Image with source code
 FROM deps AS src
@@ -57,6 +60,7 @@ RUN yarn run build ${APP} --prod
 
 # This is base image for containers that are to be deployed
 FROM ${DOCKER_REGISTRY}/library/node:${NODE_IMAGE_TAG} AS base-node
+
 ARG APP
 ARG APP_HOME
 ARG APP_DIST_HOME
@@ -69,6 +73,7 @@ WORKDIR /webapp
 RUN addgroup runners && \
   adduser --disabled-password runner --ingroup runners
 
+
 FROM base-node AS base-node-with-pg
 
 # hadolint ignore=DL3016
@@ -78,6 +83,7 @@ RUN npm install -g \
   pg
 
 USER runner
+
 
 FROM base-node-with-pg AS output-express
 
@@ -94,6 +100,7 @@ ENV DD_GIT_BRANCH=${GIT_BRANCH} DD_GIT_COMMIT_SHA=${GIT_COMMIT_SHA} DD_GIT_REPOS
 LABEL branch=${GIT_BRANCH}
 LABEL commit=${GIT_COMMIT_SHA}
 ENTRYPOINT [ "node", "--no-experimental-fetch", "main.js" ]
+
 
 FROM base-node-with-pg AS output-next
 
@@ -177,12 +184,14 @@ CMD [ "jest", "main.spec.js" ]
 
 
 FROM mcr.microsoft.com/playwright:${PLAYWRIGHT_IMAGE_TAG} AS playwright-base
+
 # TODO: remove awscli dependency (157 MB extra)
 # hadolint ignore=DL3008
 RUN apt-get update -y && \
   apt-get install -y --no-install-recommends zip awscli && \
   apt-get purge && \
   rm -rf /var/lib/apt/lists/*
+
 
 FROM playwright-base AS output-playwright
 
