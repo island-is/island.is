@@ -336,7 +336,7 @@ jobs:
       - name: NX lint:write
         if: ${{ github.event_name == 'pull_request' }}
         run: |
-          ./infra/scripts/ci/git-check-dirty.sh "/" "nx lint:write" "dirtybot"
+          ./infra/scripts/ci/git-check-dirty.sh "/" "nx run-many -t lint --fix" "dirtybot"
 
   linting:
     needs:
