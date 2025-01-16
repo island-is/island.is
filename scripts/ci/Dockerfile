@@ -175,6 +175,13 @@ CMD [ "jest", "main.spec.js" ]
 
 
 FROM mcr.microsoft.com/playwright:${PLAYWRIGHT_IMAGE_TAG} AS playwright-base
+# TODO: remove awscli dependency (157 MB extra)
+# hadolint ignore=DL3008
+RUN apt-get update -y && \
+  apt-get install -y --no-install-recommends zip awscli && \
+  apt-get purge && \
+  rm -rf /var/lib/apt/lists/*
+
 FROM playwright-base AS output-playwright
 
 # Stage-specific ARGs
@@ -186,34 +193,22 @@ ARG GIT_BRANCH
 ARG GIT_COMMIT_SHA
 ARG GIT_REPOSITORY_URL
 
-# TODO: remove awscli dependency (157 MB extra)
-
-# hadolint ignore=DL3008
-RUN apt-get update -y && apt-get install -y zip awscli && apt-get purge
-
-ARG APP_HOME
-ARG APP_DIST_HOME
-
 WORKDIR /testing
 
-COPY --from=builder /dist .
-COPY ${APP_HOME}/package.json .
-RUN chown -R pwuser:pwuser .
-
-USER pwuser
-COPY .yarnrc.yml ./
-RUN mkdir ./.yarn
+COPY .yarnrc.yml ${APP_HOME}/package.json ./
 COPY .yarn/releases ./.yarn/releases
-RUN yarn install
 
-RUN yarn playwright install ${PLAYWRIGHT_BROWSER}
+RUN yarn install && \
+  yarn playwright install ${PLAYWRIGHT_BROWSER}
 
-COPY --chown=pwuser:pwuser --chmod=0755 ${APP_HOME}/entrypoint.sh .
+COPY --from=builder /dist ./
+COPY --chmod=0755 ${APP_HOME}/entrypoint.sh .
 
 ENV GIT_BRANCH=${GIT_BRANCH} GIT_COMMIT_SHA=${GIT_COMMIT_SHA} GIT_REPOSITORY_URL=${GIT_REPOSITORY_URL}
 ENV DD_GIT_BRANCH=${GIT_BRANCH} DD_GIT_COMMIT_SHA=${GIT_COMMIT_SHA} DD_GIT_REPOSITORY_URL=${GIT_REPOSITORY_URL}
 LABEL branch=${GIT_BRANCH}
 LABEL commit=${GIT_COMMIT_SHA}
+USER pwuser
 ENTRYPOINT ["./entrypoint.sh"]
 
 
