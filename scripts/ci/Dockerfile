@@ -67,8 +67,7 @@ ENV NODE_ENV=production
 RUN addgroup runners && \
   adduser runner --disabled-password --ingroup runners
 
-
-FROM base-node AS base-node-with-pg
+FROM output-base AS output-base-full
 
 # hadolint ignore=DL3016
 RUN npm install -g \
@@ -76,15 +75,10 @@ RUN npm install -g \
   sequelize-cli \
   pg
 
+FROM output-base-full AS output-base-with-pg
 USER runner
 
-
-# Add alias for compatability
-FROM base-node AS output-base
-
-
-FROM base-node-with-pg AS output-express
-WORKDIR /webapp
+FROM output-base-full AS output-express
 
 # Stage-specific ARGs
 ARG GIT_BRANCH
