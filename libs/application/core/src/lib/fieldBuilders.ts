@@ -992,6 +992,8 @@ export const buildSliderField = (
     onChangeEnd,
     labelMultiplier = 1,
     saveAsString,
+    textColor,
+    progressOverlayColor,
     marginTop,
     marginBottom,
   } = data
@@ -1021,6 +1023,8 @@ export const buildSliderField = (
     onChangeEnd,
     labelMultiplier,
     saveAsString,
+    textColor,
+    progressOverlayColor,
     marginTop,
     marginBottom,
   }
