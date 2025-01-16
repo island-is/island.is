@@ -103,6 +103,8 @@ export type RepeaterItem = {
   phoneRequired?: boolean
   showEmailField?: boolean
   emailRequired?: boolean
+  searchCompanies?: boolean
+  searchPersons?: boolean
   readonly?:
     | boolean
     | ((
@@ -222,6 +224,7 @@ export interface BaseField extends FormItem {
   doesNotRequireAnswer?: boolean
   marginBottom?: BoxProps['marginBottom']
   marginTop?: BoxProps['marginTop']
+  clearOnChange?: string[]
 
   // TODO use something like this for non-schema validation?
   // validate?: (formValue: FormValue, context?: object) => boolean
@@ -583,6 +586,12 @@ export interface NationalIdWithNameField extends InputField {
   minAgePerson?: number
   searchPersons?: boolean
   searchCompanies?: boolean
+  showPhoneField?: boolean
+  showEmailField?: boolean
+  phoneRequired?: boolean
+  emailRequired?: boolean
+  phoneLabel?: StaticText
+  emailLabel?: StaticText
   titleVariant?: TitleVariants
 }
 
@@ -754,23 +763,23 @@ export interface SliderField extends BaseField {
   step?: number
   snap?: boolean
   trackStyle?: CSSProperties
-  calculateCellStyle: (index: number) => CSSProperties
+  calculateCellStyle?: (index: number) => CSSProperties
   showLabel?: boolean
   showMinMaxLabels?: boolean
   showRemainderOverlay?: boolean
   showProgressOverlay?: boolean
   showToolTip?: boolean
-  label: {
+  label?: {
     singular: FormText
     plural: FormText
   }
   rangeDates?: {
     start: {
-      date: string
+      date: string | Date
       message: string
     }
     end: {
-      date: string
+      date: string | Date
       message: string
     }
   }
@@ -780,6 +789,8 @@ export interface SliderField extends BaseField {
   labelMultiplier?: number
   id: string
   saveAsString?: boolean
+  textColor?: Colors
+  progressOverlayColor?: Colors
 }
 
 export interface DisplayField extends BaseField {

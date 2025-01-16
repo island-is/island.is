@@ -69,14 +69,12 @@ export const transformApplicationToNewPrimarySchoolDTO = (
       phone: relative.phoneNumber,
       role: relative.relation,
     })),
-    // TODO: Skoða hvernig ég veit hvaða ástæða var valin (ég er ekki með lista yfir ástæður)
     ...(reasonForApplication ===
-    ReasonForApplicationOptions.SIBLINGS_IN_THE_SAME_PRIMARY_SCHOOL
+    ReasonForApplicationOptions.SIBLINGS_IN_SAME_SCHOOL
       ? siblings.map((sibling) => ({
           name: sibling.fullName,
           nationalId: sibling.nationalId,
-          // TODO: Siblings relation valmöguleikar eru ekki í key-options endapunktinum => Júní ætlar að bæta því við (Þurfum að passa að þeir valmöguleikar komi ekki upp í dropdown á aðstandenda síðunni)
-          role: sibling.relation,
+          role: 'sibling',
         }))
       : []),
   ]
@@ -114,7 +112,6 @@ export const transformApplicationToNewPrimarySchoolDTO = (
     },
     agents,
     registration: {
-      // TODO: Skoða hvernig ég veit hvaða ástæða var valin (ég er ekki með lista yfir ástæður)
       defaultOrg: primaryOrgId,
       ...(reasonForApplication !== ReasonForApplicationOptions.MOVING_ABROAD
         ? {
@@ -127,7 +124,7 @@ export const transformApplicationToNewPrimarySchoolDTO = (
           }),
       reason: reasonForApplication,
       ...(reasonForApplication ===
-      ReasonForApplicationOptions.TRANSFER_OF_LEGAL_DOMICILE
+      ReasonForApplicationOptions.MOVING_MUNICIPALITY
         ? {
             newDomicile: {
               address: reasonForApplicationStreetAddress,

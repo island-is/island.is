@@ -76,6 +76,7 @@ const extractCommonFields = (
     nextButtonText,
     marginBottom,
     marginTop,
+    clearOnChange,
   } = data
 
   return {
@@ -91,6 +92,7 @@ const extractCommonFields = (
     nextButtonText,
     marginBottom,
     marginTop,
+    clearOnChange,
   }
 }
 
@@ -793,6 +795,12 @@ export const buildNationalIdWithNameField = (
     minAgePerson,
     searchPersons,
     searchCompanies,
+    showPhoneField,
+    showEmailField,
+    phoneRequired,
+    emailRequired,
+    phoneLabel,
+    emailLabel,
     titleVariant,
     description,
   } = data
@@ -810,6 +818,12 @@ export const buildNationalIdWithNameField = (
     minAgePerson,
     searchPersons,
     searchCompanies,
+    showPhoneField,
+    showEmailField,
+    phoneRequired,
+    emailRequired,
+    phoneLabel,
+    emailLabel,
     children: undefined,
     type: FieldTypes.NATIONAL_ID_WITH_NAME,
     component: FieldComponents.NATIONAL_ID_WITH_NAME,
@@ -978,6 +992,8 @@ export const buildSliderField = (
     onChangeEnd,
     labelMultiplier = 1,
     saveAsString,
+    textColor,
+    progressOverlayColor,
     marginTop,
     marginBottom,
   } = data
@@ -1007,6 +1023,8 @@ export const buildSliderField = (
     onChangeEnd,
     labelMultiplier,
     saveAsString,
+    textColor,
+    progressOverlayColor,
     marginTop,
     marginBottom,
   }
