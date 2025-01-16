@@ -47,10 +47,9 @@ commit_as_dirty_bot() {
   git config user.email 'builders@andes.is'
 }
 
-# Split action into array safely:
-IFS=' ' read -r -a action_array <<<"$action"
-
 if [[ "$run_mode" == true ]]; then
+  # Split action into array safely:
+  IFS=' ' read -r -a action_array <<<"$action"
   yarn "${action_array[@]}"
 fi
 
