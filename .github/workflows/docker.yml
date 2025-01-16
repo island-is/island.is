@@ -205,9 +205,19 @@ jobs:
           context: .
           file: scripts/ci/Dockerfile
           push: false
-          # labels: ${{ steps.meta.outputs.labels }}
-          # tags: ${{ steps.meta.outputs.tags }}
           target: deps
+          build-args: |
+            NODE_IMAGE_TAG=${{ needs.prepare.outputs.node-image-tag }}
+          cache-from: ${{ steps.inputs.outputs.build-cache }}
+          cache-to: ${{ steps.inputs.outputs.build-cache }}
+
+      - name: Docker build/cache output-base
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: scripts/ci/Dockerfile
+          push: false
+          target: output-base-full
           build-args: |
             NODE_IMAGE_TAG=${{ needs.prepare.outputs.node-image-tag }}
           cache-from: ${{ steps.inputs.outputs.build-cache }}

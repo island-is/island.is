@@ -66,7 +66,7 @@ WORKDIR /webapp
 RUN addgroup runners && \
   adduser runner --disabled-password --ingroup runners
 
-FROM output-base AS output-base-with-pg
+FROM output-base AS output-base-full
 
 # hadolint ignore=DL3016
 RUN npm install -g \
@@ -74,9 +74,10 @@ RUN npm install -g \
   sequelize-cli \
   pg
 
+FROM output-base-full AS output-base-with-pg
 USER runner
 
-FROM output-base-with-pg AS output-express
+FROM output-base-full AS output-express
 
 # Stage-specific ARGs
 ARG GIT_BRANCH
