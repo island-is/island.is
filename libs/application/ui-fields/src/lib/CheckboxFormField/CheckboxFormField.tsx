@@ -17,6 +17,7 @@ import { useLocale } from '@island.is/localization'
 
 import { getDefaultValue } from '../../getDefaultValue'
 import { Locale } from '@island.is/shared/types'
+import { Markdown } from '@island.is/shared/components'
 
 interface Props extends FieldBaseProps {
   field: CheckboxField
@@ -96,7 +97,11 @@ export const CheckboxFormField = ({
           options={finalOptions?.map(
             ({ label, subLabel, rightContent, tooltip, ...o }) => ({
               ...o,
-              label: HtmlParser(formatText(label, application, formatMessage)),
+              label: (
+                <Markdown>
+                  {formatText(label, application, formatMessage)}
+                </Markdown>
+              ),
               rightContent,
               subLabel:
                 subLabel &&
