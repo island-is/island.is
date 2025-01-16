@@ -3,12 +3,12 @@ import {
   ApplicationTemplate,
   ApplicationTypes,
   ApplicationContext,
-  ApplicationRole,
   ApplicationStateSchema,
   Application,
   DefaultEvents,
   defineTemplateApi,
   FormModes,
+  InstitutionNationalIds,
 } from '@island.is/application/types'
 import {
   EphemeralStateLifeCycle,
@@ -27,7 +27,7 @@ import {
   NationalRegistryUserApi,
   SchoolsApi,
   StudentInfoApi,
-  UserProfileApi,
+  UserProfileApiWithValidation,
 } from '../dataProviders'
 import { Features } from '@island.is/feature-flags'
 import {
@@ -40,6 +40,8 @@ import {
 } from '../utils'
 import { AuthDelegationType } from '@island.is/shared/types'
 import { ApiScope } from '@island.is/auth/scopes'
+import { assign } from 'xstate'
+import set from 'lodash/set'
 
 const pruneInDaysAfterRegistrationCloses = (
   application: Application,
@@ -121,7 +123,7 @@ const template: ApplicationTemplate<
               api: [
                 NationalRegistryUserApi,
                 NationalRegistryParentsApi,
-                UserProfileApi,
+                UserProfileApiWithValidation,
                 SchoolsApi,
                 StudentInfoApi,
               ],
@@ -149,9 +151,6 @@ const template: ApplicationTemplate<
             ],
           },
           lifecycle: pruneAfterDays(7),
-          onExit: defineTemplateApi({
-            action: ApiActions.validateCanCreate,
-          }),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -162,7 +161,7 @@ const template: ApplicationTemplate<
               actions: [
                 {
                   event: DefaultEvents.SUBMIT,
-                  name: overview.buttons.confirm,
+                  name: overview.buttons.submit,
                   type: 'primary',
                 },
               ],
@@ -176,6 +175,8 @@ const template: ApplicationTemplate<
         },
       },
       [States.SUBMITTED]: {
+        entry: ['assignToInstitution'],
+        exit: ['clearAssignees'],
         meta: {
           name: applicationMessage.stateMetaNameSubmitted.defaultMessage,
           status: FormModes.IN_PROGRESS,
@@ -188,6 +189,10 @@ const template: ApplicationTemplate<
           onEntry: defineTemplateApi({
             action: ApiActions.submitApplication,
           }),
+          onExit: defineTemplateApi({
+            action: ApiActions.deleteApplication,
+            triggerEvent: DefaultEvents.EDIT,
+          }),
           onDelete: defineTemplateApi({
             action: ApiActions.deleteApplication,
           }),
@@ -197,6 +202,10 @@ const template: ApplicationTemplate<
               variant: 'blueberry',
             },
             historyLogs: [
+              {
+                onEvent: DefaultEvents.EDIT,
+                logMessage: applicationMessage.historyAplicationEdited,
+              },
               {
                 onEvent: DefaultEvents.SUBMIT,
                 logMessage: coreHistoryMessages.applicationReceived,
@@ -212,15 +221,21 @@ const template: ApplicationTemplate<
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/conclusionForm').then((module) =>
-                  Promise.resolve(module.Conclusion),
+                import('../forms/submittedForm').then((module) =>
+                  Promise.resolve(module.Submitted),
                 ),
               read: 'all',
               delete: true,
             },
+            {
+              id: Roles.ORGANISATION_REVIEWER,
+              read: 'all',
+              write: 'all',
+            },
           ],
         },
         on: {
+          [DefaultEvents.EDIT]: { target: States.DRAFT },
           [DefaultEvents.SUBMIT]: { target: States.COMPLETED },
         },
       },
@@ -248,8 +263,8 @@ const template: ApplicationTemplate<
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/conclusionForm').then((module) =>
-                  Promise.resolve(module.Conclusion),
+                import('../forms/completedForm').then((module) =>
+                  Promise.resolve(module.Completed),
                 ),
               read: 'all',
             },
@@ -258,14 +273,31 @@ const template: ApplicationTemplate<
       },
     },
   },
-  mapUserToRole(
-    id: string,
-    application: Application,
-  ): ApplicationRole | undefined {
-    if (id === application.applicant) {
+  mapUserToRole: (nationalId: string, application: Application) => {
+    if (nationalId === application.applicant) {
       return Roles.APPLICANT
+    } else if (
+      nationalId === InstitutionNationalIds.MIDSTOD_MENNTUNAR_SKOLATHJONUSTU
+    ) {
+      return Roles.ORGANISATION_REVIEWER
     }
     return undefined
+  },
+  stateMachineOptions: {
+    actions: {
+      assignToInstitution: assign((context) => {
+        const { application } = context
+        set(application, 'assignees', [
+          InstitutionNationalIds.MIDSTOD_MENNTUNAR_SKOLATHJONUSTU,
+        ])
+        return context
+      }),
+      clearAssignees: assign((context) => {
+        const { application } = context
+        set(application, 'assignees', [])
+        return context
+      }),
+    },
   },
 }
 

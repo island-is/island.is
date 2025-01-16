@@ -5134,8 +5134,7 @@
         "additionalProperties": false,
         "properties": {
           "stada": {
-            "type": "string",
-            "nullable": true
+            "type": "boolean"
           },
           "skyring": {
             "type": "string",

@@ -2,10 +2,7 @@ import { NO, YES } from '@island.is/application/types'
 import * as kennitala from 'kennitala'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { z } from 'zod'
-import {
-  ReasonForApplicationOptions,
-  SiblingRelationOptions,
-} from './constants'
+import { ReasonForApplicationOptions } from './constants'
 import { errorMessages } from './messages'
 
 const validatePhoneNumber = (value: string) => {
@@ -131,7 +128,6 @@ export const dataSchema = z.object({
         nationalId: z.string().refine((n) => kennitala.isValid(n), {
           params: errorMessages.nationalId,
         }),
-        relation: z.nativeEnum(SiblingRelationOptions),
       }),
     )
     .refine((r) => r === undefined || r.length > 0, {
@@ -153,6 +149,45 @@ export const dataSchema = z.object({
         path: ['otherLanguages'],
         params: errorMessages.languagesRequired,
       },
+    ),
+  allergiesAndIntolerances: z
+    .object({
+      hasFoodAllergiesOrIntolerances: z.array(z.string()),
+      foodAllergiesOrIntolerances: z.array(z.string()).optional(),
+      hasOtherAllergies: z.array(z.string()),
+      otherAllergies: z.array(z.string()).optional(),
+      usesEpiPen: z.string().optional(),
+      hasConfirmedMedicalDiagnoses: z.enum([YES, NO]),
+      requestMedicationAssistance: z.enum([YES, NO]),
+    })
+    .refine(
+      ({ hasFoodAllergiesOrIntolerances, foodAllergiesOrIntolerances }) =>
+        hasFoodAllergiesOrIntolerances.includes(YES)
+          ? !!foodAllergiesOrIntolerances &&
+            foodAllergiesOrIntolerances.length > 0
+          : true,
+      {
+        path: ['foodAllergiesOrIntolerances'],
+        params: errorMessages.foodAllergiesOrIntolerancesRequired,
+      },
+    )
+    .refine(
+      ({ hasOtherAllergies, otherAllergies }) =>
+        hasOtherAllergies.includes(YES)
+          ? !!otherAllergies && otherAllergies.length > 0
+          : true,
+      {
+        path: ['otherAllergies'],
+        params: errorMessages.otherAllergiesRequired,
+      },
+    )
+    .refine(
+      ({ hasFoodAllergiesOrIntolerances, hasOtherAllergies, usesEpiPen }) =>
+        hasFoodAllergiesOrIntolerances.includes(YES) ||
+        hasOtherAllergies.includes(YES)
+          ? !!usesEpiPen
+          : true,
+      { path: ['usesEpiPen'] },
     ),
   support: z.object({
     developmentalAssessment: z.enum([YES, NO]),
