@@ -695,26 +695,6 @@ export const OldAgePensionForm: Form = buildForm({
       id: 'additionalInformation',
       title: socialInsuranceAdministrationMessage.additionalInfo.section,
       children: [
-        // buildSubSection({
-        //   id: 'fileUploadAdditionalFiles',
-        //   title:
-        //     socialInsuranceAdministrationMessage.fileUpload.additionalFileTitle,
-        //   children: [
-        //     buildFileUploadField({
-        //       id: 'fileUploadAdditionalFiles.additionalDocuments',
-        //       title:
-        //         socialInsuranceAdministrationMessage.fileUpload
-        //           .additionalFileTitle,
-        //       description:
-        //         socialInsuranceAdministrationMessage.fileUpload
-        //           .additionalFileDescription,
-        //       introduction:
-        //         socialInsuranceAdministrationMessage.fileUpload
-        //           .additionalFileDescription,
-        //       ...fileUploadSharedProps,
-        //     }),
-        //   ],
-        // }),
         buildSubSection({
           id: 'commentSection',
           title:
