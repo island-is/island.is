@@ -6,8 +6,11 @@ bootstrap({
   name: 'web',
   appDir: 'apps/web',
   proxyConfig,
-  externalEndpointDependencies: (nextConfig) => {
-    const { graphqlUrl } = nextConfig.serverRuntimeConfig
-    return [graphqlUrl]
+
+
+
+		  externalEndpointDependencies: (nextConfig) => {
+    const { graphqlUrl   } = nextConfig.serverRuntimeConfig
+return [graphqlUrl]
   },
 })
