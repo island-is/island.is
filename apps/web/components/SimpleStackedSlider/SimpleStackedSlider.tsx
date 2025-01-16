@@ -1,4 +1,4 @@
-import React, { FC, Children, useRef, useState } from 'react'
+import React, { Children, FC, useRef, useState } from 'react'
 import cn from 'classnames'
 import chunk from 'lodash/chunk'
 

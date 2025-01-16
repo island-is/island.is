@@ -1,31 +1,33 @@
 import React from 'react'
-import { Screen } from '@island.is/web/types'
-import { CustomNextError } from '@island.is/web/units/errors'
+
 import {
-  Breadcrumbs,
-  Stack,
-  Text,
+  Image,
+  richText,
+  Slice as SliceType,
+} from '@island.is/island-ui/contentful'
+import {
   Box,
-  Navigation,
+  Breadcrumbs,
+  Button,
   GridColumn,
   GridRow,
   Link,
-  Button,
+  Navigation,
+  Stack,
+  Text,
 } from '@island.is/island-ui/core'
-import { withMainLayout } from '@island.is/web/layouts/main'
-import { SidebarLayout } from '../Layouts/SidebarLayout'
-import { GET_GENERIC_OVERVIEW_PAGE_QUERY } from '@island.is/web/screens/queries'
 import {
   GetGenericOverviewPageQuery,
   QueryGetGenericOverviewPageArgs,
 } from '@island.is/web/graphql/schema'
-import { LinkType, useLinkResolver } from '../../hooks/useLinkResolver'
-import {
-  Image,
-  Slice as SliceType,
-  richText,
-} from '@island.is/island-ui/contentful'
+import { withMainLayout } from '@island.is/web/layouts/main'
+import { GET_GENERIC_OVERVIEW_PAGE_QUERY } from '@island.is/web/screens/queries'
+import { Screen } from '@island.is/web/types'
+import { CustomNextError } from '@island.is/web/units/errors'
 import { safelyExtractPathnameFromUrl } from '@island.is/web/utils/safelyExtractPathnameFromUrl'
+
+import { LinkType, useLinkResolver } from '../../hooks/useLinkResolver'
+import { SidebarLayout } from '../Layouts/SidebarLayout'
 
 interface GenericOverviewProps {
   genericOverviewPage: GetGenericOverviewPageQuery['getGenericOverviewPage']
