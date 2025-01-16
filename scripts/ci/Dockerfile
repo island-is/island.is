@@ -156,8 +156,9 @@ ARG GIT_COMMIT_SHA
 ARG GIT_REPOSITORY_URL
 
 # hadolint ignore=DL3016
-RUN npm install -g jest && \
-  echo 'module.exports = {};' > jest.config.js
+RUN npm install -g jest
+# hadolint ignore=DL3059
+RUN echo 'module.exports = {};' > jest.config.js
 
 
 FROM base-jest AS output-jest
@@ -198,7 +199,8 @@ COPY .yarnrc.yml ${APP_HOME}/package.json ./
 COPY .yarn/releases ./.yarn/releases
 
 RUN yarn install && \
-  yarn playwright install ${PLAYWRIGHT_BROWSER}
+  yarn playwright install ${PLAYWRIGHT_BROWSER} && \
+  yarn cache clean
 
 COPY --from=builder /dist ./
 COPY --chmod=0755 ${APP_HOME}/entrypoint.sh .
