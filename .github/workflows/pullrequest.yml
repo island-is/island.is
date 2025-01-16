@@ -350,6 +350,11 @@ jobs:
       matrix: ${{ fromJson(needs.prepare.outputs.LINT_CHUNKS) }}
     steps:
       - uses: actions/checkout@v4
+        if: ${{ github.event_name == 'pull_request' }}
+        # Needed for doing git commit in git-check-dirty script
+        with:
+          token: ${{ secrets.DIRTY_FIX_BOT_TOKEN }}
+          ref: ${{ github.event.pull_request.head.ref }}
       - uses: actions/setup-node@v4
         with:
           node-version-file: 'package.json'
