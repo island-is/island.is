@@ -39,11 +39,11 @@ export const overviewSection = buildSection({
         buildSubmitField({
           id: 'submit',
           placement: 'footer',
-          title: overview.buttons.confirm,
+          title: '',
           actions: [
             {
               event: DefaultEvents.SUBMIT,
-              name: overview.buttons.confirm,
+              name: overview.buttons.submit,
               type: 'primary',
             },
           ],

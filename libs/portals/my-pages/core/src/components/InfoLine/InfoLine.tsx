@@ -65,9 +65,11 @@ export const InfoLine = ({
   loading,
   button,
   tooltip,
-  labelColumnSpan = ['1/1', '5/12', '5/12'],
-  valueColumnSpan = ['1/1', '5/12', '5/12'],
-  buttonColumnSpan = ['1/1', '2/12'],
+  labelColumnSpan = ['1/1', '1/1', '1/1', '5/12'],
+  valueColumnSpan = button
+    ? ['1/1', '6/12', '6/12', '5/12']
+    : ['1/1', '1/1', '1/1', '7/12'],
+  buttonColumnSpan = ['1/1', '6/12', '6/12', '2/12'],
   paddingY = 2,
   paddingBottom,
   warning,
@@ -115,7 +117,7 @@ export const InfoLine = ({
               </Text>
             </Box>
           </GridColumn>
-          <GridColumn order={[3, 2]} span={valueColumnSpan}>
+          <GridColumn order={2} span={valueColumnSpan}>
             <Box
               display="flex"
               alignItems="center"
@@ -141,8 +143,8 @@ export const InfoLine = ({
               )}
             </Box>
           </GridColumn>
-          <GridColumn order={4} span={buttonColumnSpan}>
-            {button && (
+          {button && (
+            <GridColumn order={3} span={buttonColumnSpan}>
               <Box
                 display="flex"
                 justifyContent={['flexStart', 'flexEnd']}
@@ -179,8 +181,8 @@ export const InfoLine = ({
                   </>
                 )}
               </Box>
-            )}
-          </GridColumn>
+            </GridColumn>
+          )}
         </GridRow>
       </Box>
       {divider && <Divider />}
