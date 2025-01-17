@@ -32,12 +32,13 @@ export const BankInfoForm: FC<React.PropsWithChildren<Props>> = ({
 }) => {
   useNamespaces('sp.settings')
   const { formatMessage } = useLocale()
+  const methods = useForm<UseFormProps>()
   const {
     control,
     handleSubmit,
     getValues,
     formState: { errors },
-  } = useForm<UseFormProps>()
+  } = methods
   const [inputPristine, setInputPristine] = useState<boolean>(false)
   const [submitError, setSubmitError] = useState<string>()
 
@@ -91,7 +92,7 @@ export const BankInfoForm: FC<React.PropsWithChildren<Props>> = ({
     submitError
 
   return (
-    <FormProvider control>
+    <FormProvider {...methods}>
       <form onSubmit={handleSubmit(submitFormData)}>
         <Box display="flex" flexWrap="wrap" alignItems="center">
           <Box marginRight={3} className={styles.formContainer}>
