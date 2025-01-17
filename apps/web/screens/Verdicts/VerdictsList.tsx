@@ -116,7 +116,7 @@ const VerdictsList: Screen<VerdictsListProps> = ({ items }) => {
                         </GridColumn>
                       </GridRow>
 
-                      <Divider />
+                      {Boolean(item.presentings) && <Divider />}
                       {Boolean(item.presentings) && (
                         <GridRow>
                           <GridColumn>
