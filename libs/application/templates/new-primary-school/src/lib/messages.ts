@@ -330,16 +330,6 @@ export const newPrimarySchoolMessages: MessageDir = {
       description:
         'We remind you to register your new domicile in Registers Iceland.',
     },
-    country: {
-      id: 'nps.application:primary.school.country',
-      defaultMessage: 'Til hvaða lands er verið að flytja?',
-      description: 'What country are you moving to?',
-    },
-    countryPlaceholder: {
-      id: 'nps.application:primary.school.country.placeholder',
-      defaultMessage: 'Veldu land',
-      description: 'Select a country',
-    },
 
     // Siblings
     siblingsSubSectionTitle: {

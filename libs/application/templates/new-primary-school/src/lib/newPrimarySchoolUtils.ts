@@ -9,11 +9,11 @@ import { Locale } from '@island.is/shared/types'
 import {
   Child,
   ChildInformation,
+  ContactsRow,
   FriggChildInformation,
   Membership,
   Parents,
   Person,
-  ContactsRow,
   SelectOption,
   SiblingsRow,
 } from '../types'
@@ -37,11 +37,6 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     answers,
     'reasonForApplication.reason',
   ) as ReasonForApplicationOptions
-
-  const reasonForApplicationCountry = getValueViaPath(
-    answers,
-    'reasonForApplication.movingAbroad.country',
-  ) as string
 
   const reasonForApplicationStreetAddress = getValueViaPath(
     answers,
@@ -165,7 +160,6 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     parents,
     contacts,
     reasonForApplication,
-    reasonForApplicationCountry,
     reasonForApplicationStreetAddress,
     reasonForApplicationPostalCode,
     siblings,

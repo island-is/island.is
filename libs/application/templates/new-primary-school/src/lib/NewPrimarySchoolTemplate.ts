@@ -172,19 +172,6 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
           application.answers,
         )
 
-        // Clear answers if "Moving abroad" is selected as reason for application
-        if (
-          reasonForApplication === ReasonForApplicationOptions.MOVING_ABROAD
-        ) {
-          unset(application.answers, 'support')
-          unset(application.answers, 'siblings')
-          unset(application.answers, 'languages')
-          unset(application.answers, 'startDate')
-        } else {
-          // Clear movingAbroad if "Moving abroad" is not selected as reason for application
-          unset(application.answers, 'reasonForApplication.movingAbroad')
-        }
-
         // Clear transferOfLegalDomicile if "Moving legal domicile" is not selected as reason for application
         if (
           reasonForApplication !==

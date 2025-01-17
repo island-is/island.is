@@ -74,11 +74,6 @@ export const dataSchema = z.object({
   reasonForApplication: z
     .object({
       reason: z.string(),
-      movingAbroad: z
-        .object({
-          country: z.string().optional(),
-        })
-        .optional(),
       transferOfLegalDomicile: z
         .object({
           streetAddress: z.string(),
@@ -86,15 +81,6 @@ export const dataSchema = z.object({
         })
         .optional(),
     })
-    .refine(
-      ({ reason, movingAbroad }) =>
-        reason === ReasonForApplicationOptions.MOVING_ABROAD
-          ? movingAbroad && !!movingAbroad.country
-          : true,
-      {
-        path: ['movingAbroad', 'country'],
-      },
-    )
     .refine(
       ({ reason, transferOfLegalDomicile }) =>
         reason === ReasonForApplicationOptions.MOVING_MUNICIPALITY

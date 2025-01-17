@@ -20,7 +20,6 @@ export const transformApplicationToNewPrimarySchoolDTO = (
     siblings,
     contacts,
     reasonForApplication,
-    reasonForApplicationCountry,
     reasonForApplicationStreetAddress,
     reasonForApplicationPostalCode,
     selectedSchool,
@@ -113,15 +112,9 @@ export const transformApplicationToNewPrimarySchoolDTO = (
     agents,
     registration: {
       defaultOrg: primaryOrgId,
-      ...(reasonForApplication !== ReasonForApplicationOptions.MOVING_ABROAD
-        ? {
-            selectedOrg: selectedSchool,
-            requestingMeeting: requestMeeting === YES,
-            expectedStartDate: new Date(startDate),
-          }
-        : {
-            movingAbroadCountry: reasonForApplicationCountry,
-          }),
+      selectedOrg: selectedSchool,
+      requestingMeeting: requestMeeting === YES,
+      expectedStartDate: new Date(startDate),
       reason: reasonForApplication,
       ...(reasonForApplication ===
       ReasonForApplicationOptions.MOVING_MUNICIPALITY
@@ -133,20 +126,16 @@ export const transformApplicationToNewPrimarySchoolDTO = (
           }
         : {}),
     },
-    ...(reasonForApplication !== ReasonForApplicationOptions.MOVING_ABROAD
-      ? {
-          social: {
-            hasHadSupport: specialSupport === YES,
-            hasDiagnoses: developmentalAssessment === YES,
-          },
-          language: {
-            nativeLanguage: nativeLanguage,
-            noIcelandic,
-            otherLanguages:
-              otherLanguagesSpokenDaily === YES ? otherLanguages : undefined,
-          },
-        }
-      : {}),
+    social: {
+      hasHadSupport: specialSupport === YES,
+      hasDiagnoses: developmentalAssessment === YES,
+    },
+    language: {
+      nativeLanguage: nativeLanguage,
+      noIcelandic,
+      otherLanguages:
+        otherLanguagesSpokenDaily === YES ? otherLanguages : undefined,
+    },
   }
 
   return newPrimarySchoolDTO
