@@ -12,7 +12,6 @@ import {
   CaseOrigin,
   PoliceCaseFile,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { formatMessage } from '@island.is/judicial-system-web/src/utils/testHelpers'
 
 import { strings } from './PoliceCaseFiles.strings'
 
@@ -45,15 +44,7 @@ interface Props {
   policeCaseFiles?: PoliceCaseFilesData
 }
 
-const validateFileName = (filename: string) => {
-  const invalid = !filename.endsWith('.pdf')
-  if (!invalid) return {}
 
-  return {
-    invalid,
-    tooltipText: formatMessage(strings.invalidPoliceCaseFileFromLOKE),
-  }
-}
 
 const PoliceCaseFiles: FC<Props> = ({
   onUpload,
@@ -63,6 +54,16 @@ const PoliceCaseFiles: FC<Props> = ({
   const { formatMessage } = useIntl()
   const { workingCase } = useContext(FormContext)
   const isIndictment = workingCase.type === CaseType.INDICTMENT
+
+  const validateFileName = (filename: string) => {
+    const invalid = !filename.endsWith('.pdf')
+    if (!invalid) return {}
+  
+    return {
+      invalid,
+      tooltipText: formatMessage(strings.invalidPoliceCaseFileFromLOKE),
+    }
+  }
 
   return (
     <Box marginBottom={5}>
