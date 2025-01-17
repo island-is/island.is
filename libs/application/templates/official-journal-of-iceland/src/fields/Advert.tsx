@@ -14,6 +14,9 @@ import { HTMLEditor } from '../components/htmlEditor/HTMLEditor'
 import { cleanTypename, getAdvertMarkup } from '../lib/utils'
 import { DEPARTMENT_A } from '../lib/constants'
 import { useAdvertTemplateTypes } from '../hooks/useAdvertTemplateTypes'
+import { useAdvertTemplateLazy } from '../hooks/useAdvertTemplate'
+import { OfficialJournalOfIcelandApplicationAdvertTemplateType } from '@island.is/api/schema'
+import { useEffect } from 'react'
 
 export const Advert = ({ application }: OJOIFieldBaseProps) => {
   const { setValue } = useFormContext()
@@ -24,6 +27,11 @@ export const Advert = ({ application }: OJOIFieldBaseProps) => {
   const { departments, loading: loadingDepartments } = useDepartments()
   const { templateTypes, loading: loadingTemplateTypes } =
     useAdvertTemplateTypes()
+
+  const [
+    advertTemplateQuery,
+    { data: templateData, loading: templateLoading, error: templateError },
+  ] = useAdvertTemplateLazy()
 
   const defaultDepartment =
     application.answers?.advert?.department?.id || DEPARTMENT_A
@@ -63,7 +71,18 @@ export const Advert = ({ application }: OJOIFieldBaseProps) => {
     value: tt,
   }))
 
-  console.log(templateTypes)
+  const onAdvertTemplateSelect = (
+    type: OfficialJournalOfIcelandApplicationAdvertTemplateType,
+  ) => {
+    advertTemplateQuery({ variables: { params: { type: type } } })
+  }
+
+  useEffect(() => {
+    if (templateData) {
+      setValue(InputFields.advert.html, templateData)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [templateData])
 
   return (
     <Stack space={[2, 2, 3]}>
@@ -151,6 +170,8 @@ export const Advert = ({ application }: OJOIFieldBaseProps) => {
             placeholder={advert.inputs.template.placeholder}
             applicationId={application.id}
             options={templateOptions}
+            onChange={(type) => onAdvertTemplateSelect(type)}
+            loading={templateLoading}
           />
 
           <OJOIHtmlController

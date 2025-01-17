@@ -1,4 +1,7 @@
-import { OfficialJournalOfIcelandApplicationClientService } from '@island.is/clients/official-journal-of-iceland/application'
+import {
+  GetAdvertTemplateResponseTypeEnum,
+  OfficialJournalOfIcelandApplicationClientService,
+} from '@island.is/clients/official-journal-of-iceland/application'
 import { Inject, Injectable } from '@nestjs/common'
 import { PostCommentInput } from '../models/postComment.input'
 import { PostApplicationInput } from '../models/postApplication.input'
@@ -26,9 +29,15 @@ import {
 import { OJOIAApplicationCaseResponse } from '../models/applicationCase.response'
 import { GetPdfResponse } from '../models/getPdf.response'
 import { OJOIAIdInput } from '../models/id.input'
-import { OJOIApplicationAdvertTemplatesResponse } from '../models/applicationAdvertTemplates.response'
+import { OJOIApplicationAdvertTemplateTypesResponse } from '../models/applicationAdvertTemplateTypes.response'
 import { GetInvolvedPartySignaturesInput } from '../models/getInvolvedPartySignatures.input'
 import { InvolvedPartySignatures } from '../models/getInvolvedPartySignatures.response'
+import { GetAdvertTemplateInput } from '../models/getAdvertTemplate.input'
+import {
+  OJOIApplicationAdvertTemplateResponse,
+  TemplateType,
+} from '../models/applicationAdvertTemplate.response'
+import { isDefined } from '@island.is/shared/utils'
 
 const LOG_CATEGORY = 'official-journal-of-iceland-application'
 
@@ -267,14 +276,55 @@ export class OfficialJournalOfIcelandApplicationService {
     }
   }
 
-  async getAdvertTemplates(
+  async getAdvertTemplate(
+    input: GetAdvertTemplateInput,
     user: User,
-  ): Promise<OJOIApplicationAdvertTemplatesResponse> {
-    const data =
-      await this.ojoiApplicationService.getApplicationAdvertTemplates(user)
+  ): Promise<OJOIApplicationAdvertTemplateResponse> {
+    const data = await this.ojoiApplicationService.getApplicationAdvertTemplate(
+      { advertType: input.type },
+      user,
+    )
+
+    let type
+    switch (data.type) {
+      case GetAdvertTemplateResponseTypeEnum.Auglysing:
+        type = TemplateType.AUGLYSING
+        break
+      case GetAdvertTemplateResponseTypeEnum.Gjaldskra:
+        type = TemplateType.GJALDSKRA
+        break
+      case GetAdvertTemplateResponseTypeEnum.Reglugerd:
+        type = TemplateType.REGLUGERD
+        break
+      default:
+        type = TemplateType.UNKNOWN
+    }
 
     return {
-      templateTypes: data.types,
+      html: data.html,
+      type,
+    }
+  }
+
+  async getAdvertTemplateTypes(
+    user: User,
+  ): Promise<OJOIApplicationAdvertTemplateTypesResponse> {
+    const data =
+      await this.ojoiApplicationService.getApplicationAdvertTemplateTypes(user)
+
+    return {
+      types: data
+        .map((type) => {
+          switch (type) {
+            case 'auglysing':
+              return TemplateType.AUGLYSING
+            case 'gjaldskra':
+              return TemplateType.GJALDSKRA
+            case 'reglugerd':
+              return TemplateType.REGLUGERD
+          }
+        })
+        .filter(isDefined),
     }
   }
 

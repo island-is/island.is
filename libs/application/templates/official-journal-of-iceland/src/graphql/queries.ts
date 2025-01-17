@@ -200,10 +200,19 @@ export const TYPES_QUERY = gql`
   }
 `
 
-export const ADVERT_TEMPLATES_QUERY = gql`
+export const ADVERT_TEMPLATE_QUERY = gql`
+  query AdvertTemplate($params: OfficialJournalOfIcelandAdvertTemplateInput!) {
+    officialJournalOfIcelandApplicationAdvertTemplate(input: $params) {
+      html
+      type
+    }
+  }
+`
+
+export const ADVERT_TEMPLATE_TYPES_QUERY = gql`
   query AdvertTypes {
-    officialJournalOfIcelandApplicationAdvertTemplates {
-      templateTypes
+    officialJournalOfIcelandApplicationAdvertTemplateTypes {
+      types
     }
   }
 `

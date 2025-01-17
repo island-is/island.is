@@ -1,20 +1,20 @@
 import { useQuery } from '@apollo/client'
-import { ADVERT_TEMPLATES_QUERY } from '../graphql/queries'
-import { OfficialJournalOfIcelandApplicationAdvertTemplatesResponse } from '@island.is/api/schema'
+import { ADVERT_TEMPLATE_TYPES_QUERY } from '../graphql/queries'
+import { OfficialJournalOfIcelandApplicationAdvertTemplateTypesResponse } from '@island.is/api/schema'
 
 type TemplatesResponse = {
-  officialJournalOfIcelandApplicationAdvertTemplates: OfficialJournalOfIcelandApplicationAdvertTemplatesResponse
+  officialJournalOfIcelandApplicationAdvertTemplateTypes: OfficialJournalOfIcelandApplicationAdvertTemplateTypesResponse
 }
 
 export const useAdvertTemplateTypes = () => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { data, error, loading } = useQuery<TemplatesResponse>(
-    ADVERT_TEMPLATES_QUERY,
+    ADVERT_TEMPLATE_TYPES_QUERY,
   )
 
   return {
     templateTypes:
-      data?.officialJournalOfIcelandApplicationAdvertTemplates.templateTypes,
+      data?.officialJournalOfIcelandApplicationAdvertTemplateTypes.types,
     error,
     loading,
   }

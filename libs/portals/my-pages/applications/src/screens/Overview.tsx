@@ -2,8 +2,6 @@ import { useState } from 'react'
 import {
   APPLICATION_SERVICE_PROVIDER_SLUG,
   ActionCardLoader,
-  EmptyState,
-  FootNote,
   IntroHeader,
   m as coreMessage,
 } from '@island.is/portals/my-pages/core'

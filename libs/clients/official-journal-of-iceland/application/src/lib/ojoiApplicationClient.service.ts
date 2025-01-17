@@ -21,6 +21,7 @@ import {
   GetPdfRespone,
   GetSignaturesForInvolvedPartyRequest,
   Signature,
+  GetApplicationAdvertTemplateRequest,
 } from '../../gen/fetch'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
@@ -173,8 +174,30 @@ export class OfficialJournalOfIcelandApplicationClientService {
     )
   }
 
-  getApplicationAdvertTemplates = (auth: Auth) =>
-    this.ojoiApplicationApiWithAuth(auth).getApplicationAdvertTemplates()
+  getApplicationAdvertTemplate = (
+    params: GetApplicationAdvertTemplateRequest,
+    auth: Auth,
+  ) =>
+    this.ojoiApplicationApiWithAuth(auth).getApplicationAdvertTemplate(params)
+
+  getApplicationAdvertTemplateTypes = async (auth: Auth) => {
+    const data = await this.ojoiApplicationApiWithAuth(
+      auth,
+    ).getApplicationAdvertTemplates()
+
+    return data.types.map((t) => {
+      if (t === 'auglysing') {
+        return 'auglysing'
+      }
+      if (t === 'reglugerd') {
+        return 'reglugerd'
+      }
+      if (t === 'gjaldskra') {
+        return 'gjaldskra'
+      }
+      return undefined
+    })
+  }
 
   async getUserInvolvedParties(params: GetInvolvedPartiesRequest, auth: Auth) {
     try {

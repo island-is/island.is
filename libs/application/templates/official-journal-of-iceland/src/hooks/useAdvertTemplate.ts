@@ -1,0 +1,36 @@
+import { useLazyQuery, useQuery } from '@apollo/client'
+import { ADVERT_TEMPLATE_QUERY } from '../graphql/queries'
+import {
+  OfficialJournalOfIcelandApplicationAdvertTemplateResponse,
+  OfficialJournalOfIcelandApplicationAdvertTemplateType,
+} from '@island.is/api/schema'
+
+type TemplatesResponse = {
+  officialJournalOfIcelandApplicationAdvertTemplate: OfficialJournalOfIcelandApplicationAdvertTemplateResponse
+}
+
+export const useAdvertTemplate = (
+  type: OfficialJournalOfIcelandApplicationAdvertTemplateType,
+) => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { data, error, loading } = useQuery<TemplatesResponse>(
+    ADVERT_TEMPLATE_QUERY,
+    {
+      variables: {
+        params: {
+          type,
+        },
+      },
+    },
+  )
+
+  return {
+    templates: data?.officialJournalOfIcelandApplicationAdvertTemplate,
+    error,
+    loading,
+  }
+}
+
+export const useAdvertTemplateLazy = () => {
+  return useLazyQuery<TemplatesResponse>(ADVERT_TEMPLATE_QUERY)
+}
