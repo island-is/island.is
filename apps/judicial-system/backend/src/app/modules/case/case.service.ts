@@ -175,6 +175,7 @@ export interface UpdateCase
     | 'judgeId'
     | 'courtSessionType'
     | 'mergeCaseId'
+    | 'mergeCaseNumber'
   > {
   type?: CaseType
   state?: CaseState
@@ -322,6 +323,7 @@ export const include: Includeable[] = [
     model: CaseFile,
     as: 'caseFiles',
     required: false,
+    order: [['created', 'DESC']],
     where: { state: { [Op.not]: CaseFileState.DELETED } },
     separate: true,
   },

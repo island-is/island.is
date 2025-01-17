@@ -20,8 +20,6 @@ export const hasRecyclingFundRole = (role: Role | undefined) =>
   role === Role.recyclingFund
 
 export const hasPermission = (page: Page, role: Role) => {
-  console.log('hasPermission', role)
-
   if (!role) return false
 
   if (role === Role.developer) return true
