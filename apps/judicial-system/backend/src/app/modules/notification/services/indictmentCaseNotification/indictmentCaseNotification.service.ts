@@ -10,12 +10,14 @@ import { EmailService } from '@island.is/email-service'
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { type ConfigType } from '@island.is/nest/config'
 
+import { ROUTE_HANDLER_ROUTE } from '@island.is/judicial-system/consts'
+import { applyDativeCaseToCourtName } from '@island.is/judicial-system/formatters'
 import {
   CaseIndictmentRulingDecision,
   IndictmentCaseNotificationType,
-  IndictmentDecision,
 } from '@island.is/judicial-system/types'
 
+import { notifications } from '../../../../messages'
 import { Case } from '../../../case'
 import { EventService } from '../../../event'
 import { BaseNotificationService } from '../../baseNotification.service'
@@ -103,7 +105,7 @@ export class IndictmentCaseNotificationService extends BaseNotificationService {
       strings.indictmentCompletedWithRuling.body,
       {
         courtCaseNumber: theCase.courtCaseNumber,
-        courtName: theCase.court?.name,
+        courtName: applyDativeCaseToCourtName(theCase.court?.name || ''),
         serviceRequirement:
           theCase.defendants && theCase.defendants[0].serviceRequirement,
         caseOrigin: theCase.origin,
@@ -124,6 +126,42 @@ export class IndictmentCaseNotificationService extends BaseNotificationService {
     )
   }
 
+  private async sendCriminalRecordFilesUploadedNotification(
+    theCase: Case,
+  ): Promise<DeliverResponse> {
+    const formattedSubject = this.formatMessage(
+      strings.criminalRecordFilesUploadedEmail.subject,
+      {
+        courtCaseNumber: theCase.courtCaseNumber,
+      },
+    )
+
+    const formattedBody = this.formatMessage(
+      strings.criminalRecordFilesUploadedEmail.body,
+      {
+        courtCaseNumber: theCase.courtCaseNumber,
+        courtName: theCase.court?.name.replace('dómur', 'dómi'),
+        linkStart: `<a href="${this.config.clientUrl}${ROUTE_HANDLER_ROUTE}/${theCase.id}">`,
+        linkEnd: '</a>',
+      },
+    )
+
+    return this.sendEmails(
+      theCase,
+      IndictmentCaseNotificationType.CRIMINAL_RECORD_FILES_UPLOADED,
+      formattedSubject,
+      formattedBody,
+      [
+        {
+          name: this.formatMessage(
+            notifications.emailNames.publicProsecutorCriminalRecords,
+          ),
+          email: this.config.email.publicProsecutorCriminalRecordsEmail,
+        },
+      ],
+    )
+  }
+
   private sendNotification(
     notificationType: IndictmentCaseNotificationType,
     theCase: Case,
@@ -131,6 +169,8 @@ export class IndictmentCaseNotificationService extends BaseNotificationService {
     switch (notificationType) {
       case IndictmentCaseNotificationType.INDICTMENT_VERDICT_INFO:
         return this.sendVerdictInfoNotification(theCase)
+      case IndictmentCaseNotificationType.CRIMINAL_RECORD_FILES_UPLOADED:
+        return this.sendCriminalRecordFilesUploadedNotification(theCase)
 
       default:
         throw new InternalServerErrorException(

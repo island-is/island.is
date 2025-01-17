@@ -771,6 +771,7 @@ export interface ICustomPageFields {
     | 'OfficialJournalOfIceland'
     | 'Vacancies'
     | 'Grants'
+    | 'DirectorateOfLabourMyPages'
     | undefined
 
   /** Alert Banner */
@@ -1254,6 +1255,34 @@ export interface IFeaturedEvents extends Entry<IFeaturedEventsFields> {
   }
 }
 
+export interface IFeaturedLinksFields {
+  /** Internal Title */
+  internalTitle?: string | undefined
+
+  /** Displayed Title */
+  displayedTitle?: string | undefined
+
+  /** Links */
+  links?: IFeatured[] | undefined
+}
+
+export interface IFeaturedLinks extends Entry<IFeaturedLinksFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'featuredLinks'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
 export interface IFeaturedSupportQnAsFields {
   /** Title */
   title?: string | undefined
@@ -1601,6 +1630,9 @@ export interface IGenericListFields {
 
   /** Order By */
   orderBy?: 'Date' | 'Title' | 'Publish Date' | undefined
+
+  /** Show Search Input */
+  showSearchInput?: boolean | undefined
 }
 
 /** A list of items which can be embedded into rich text */
@@ -1652,6 +1684,12 @@ export interface IGenericListItemFields {
 
   /** External Link */
   externalLink?: ILinkUrl | undefined
+
+  /** Image */
+  image?: Asset | undefined
+
+  /** Full Width Image In Content */
+  fullWidthImageInContent?: boolean | undefined
 }
 
 /** An item that belongs to a generic list */
@@ -1841,7 +1879,7 @@ export interface IGrantFields {
   /** Application button label */
   grantButtonLabel?: string | undefined
 
-  /** Date from */
+  /** Open from */
   grantDateFrom?: string | undefined
 
   /** Open from hour */
@@ -1891,6 +1929,43 @@ export interface IGrant extends Entry<IGrantFields> {
     contentType: {
       sys: {
         id: 'grant'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
+export interface IGrantCardsListFields {
+  /** Title */
+  grantCardListTitle: string
+
+  /** Display title? */
+  grantCardsListDisplayTitle?: boolean | undefined
+
+  /** Funds */
+  grantCardListFunds?: IFund[] | undefined
+
+  /** Max number of cards */
+  grantCardsListMaxNumberOfCards?: number | undefined
+
+  /** Sorting */
+  grantCardsListSorting?:
+    | 'Alphabetical'
+    | 'Most recently updated first'
+    | undefined
+}
+
+export interface IGrantCardsList extends Entry<IGrantCardsListFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'grantCardsList'
         linkType: 'ContentType'
         type: 'Link'
       }
@@ -3424,8 +3499,11 @@ export interface IOrganizationTag extends Entry<IOrganizationTagFields> {
 }
 
 export interface IOverviewLinksFields {
-  /** Title */
+  /** Internal Title */
   title?: string | undefined
+
+  /** Displayed Title */
+  displayedTitle?: string | undefined
 
   /** Overview Links */
   overviewLinks?: IIntroLinkImage[] | undefined
@@ -3435,6 +3513,9 @@ export interface IOverviewLinksFields {
 
   /** Has Border Above */
   hasBorderAbove?: boolean | undefined
+
+  /** Link Data */
+  linkData?: Record<string, any> | undefined
 }
 
 export interface IOverviewLinks extends Entry<IOverviewLinksFields> {
@@ -4036,7 +4117,6 @@ export interface ISliceConnectedComponentFields {
     | 'Skilavottord/CompanyList'
     | 'Skilavottord/CompanyListConnected'
     | 'Undirskriftalistar/PetitionLists'
-    | 'ElectronicRegistrations/MonthlyStatistics'
     | 'LatestNewsCard'
     | 'Fiskistofa/ShipSearch'
     | 'Fiskistofa/ShipSearchSidebarInput'
@@ -4650,6 +4730,9 @@ export interface ITeamListFields {
 
   /** Variant */
   variant?: 'card' | 'accordion' | undefined
+
+  /** Show Search Input */
+  showSearchInput?: boolean | undefined
 }
 
 /** list of team members */
@@ -5330,6 +5413,7 @@ export type CONTENT_TYPE =
   | 'genericTag'
   | 'genericTagGroup'
   | 'grant'
+  | 'grantCardsList'
   | 'graphCard'
   | 'groupedMenu'
   | 'hnippTemplate'

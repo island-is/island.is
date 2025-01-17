@@ -464,3 +464,12 @@ export const getWordByGender = (word: Word, gender?: Gender): string | null => {
       return null
   }
 }
+
+// þgf to dómur
+export const applyDativeCaseToCourtName = (courtName: string) => {
+  const target = 'dómur'
+  if (courtName.includes(target)) {
+    return courtName?.replace(target, 'dómi')
+  }
+  return courtName
+}
