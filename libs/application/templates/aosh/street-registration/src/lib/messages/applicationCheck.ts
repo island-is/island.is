@@ -17,5 +17,10 @@ export const applicationCheck = {
       defaultMessage: 'Hafið samband við Vinnueftirlitið til að götuskrá',
       description: 'Pick machine inspect before registration',
     },
+    unavailableTypeForRegistration: {
+      id: 'aosh.sr.application:applicationCheck.validation.unavailableTypeForRegistration',
+      defaultMessage: 'Ekki er hægt að götuskrá tæki í þessum flokk',
+      description: 'Pick machine has type that is not valid for registration',
+    },
   }),
 }
