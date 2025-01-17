@@ -16,6 +16,13 @@ export const oldAgePensionFormMessage: MessageDir = {
       defaultMessage: 'Forsendur',
       description: 'Prerequisites',
     },
+    externalDataDescription: {
+      id: 'oap.application:externalData.description',
+      defaultMessage:
+        'Eftirfarandi upplýsingar verða sóttar rafrænt þar sem hægt er',
+      description:
+        'The following information will be retrieved electronically where possible',
+    },
     skraInformationSubTitle: {
       id: 'oap.application:prerequisites.national.registry.subtitle',
       defaultMessage: 'Upplýsingar um þig og maka. Upplýsingar um búsetu.',
@@ -40,11 +47,11 @@ export const oldAgePensionFormMessage: MessageDir = {
         'You must start by contacting the pension funds you have paid into before you can apply for a old age pension.',
     },
     pensionFundQuestionDescription: {
-      id: 'oap.application:pension.fund.question.description',
+      id: 'oap.application:pension.fund.question.description#markdown',
       defaultMessage:
-        'Til að geta sótt um ellilífeyri þarft þú staðfestingu á að sótt hafi verið um ellilífeyri hjá öllum lífeyrissjóðum sem þú átt rétt í.',
+        'Til að geta sótt um ellilífeyri þarf að vera búið að sækja um í öllum lífeyrissjóðum sem umsækjandi á rétt í. Hægt er að nálgast yfirlit yfir þá á Mínum síðum síðum þeirra sjóða sem þú hefur greitt í. Yfirlitið er oft kallað lífeyrisgátt eða réttindagátt. Nánari upplýsingar er að finna á https://www.lifeyrismal.is/is/lifeyrisgattin',
       description:
-        'To be able to apply for old-age pension you must have confirmation that you have applied for old-age pension at all pension funds that you have paid into.',
+        'To be eligible for a pension, you must have applied to all the pension funds to which you are entitled. An overview of these can be found on the My Pages page of the funds you have paid into. The overview is often called a pension portal or rights portal. More information can be found here.',
     },
     fishermenQuestionTitle: {
       id: 'oap.application:fishermen.question.title',
