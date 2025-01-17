@@ -11,12 +11,13 @@ import {
   SecurityDepositTypeOptions,
   SecurityDepositAmountOptions,
   UserRole,
+  RentalPaymentMethodOptions,
 } from './constants'
-import * as m from './messages'
+import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import format from 'date-fns/format'
 import parseISO from 'date-fns/parseISO'
 import is from 'date-fns/locale/is'
-import { parsePhoneNumberFromString } from 'libphonenumber-js'
+import * as m from './messages'
 
 export const validateEmail = (value: string) => {
   const regex =
@@ -262,6 +263,21 @@ export const getOtherFeesHousingFeesPayeeOptions = () => [
   {
     value: OtherFeesPayeeOptions.TENANT,
     label: m.otherFees.paidByTenantLabel,
+  },
+]
+
+export const getPaymentMethodOptions = () => [
+  {
+    value: RentalPaymentMethodOptions.BANK_TRANSFER,
+    label: m.rentalAmount.paymentMethodBankTransferLabel,
+  },
+  {
+    value: RentalPaymentMethodOptions.PAYMENT_SLIP,
+    label: m.rentalAmount.paymentMethodPaymentSlipLabel,
+  },
+  {
+    value: RentalPaymentMethodOptions.OTHER,
+    label: m.rentalAmount.paymentMethodOtherLabel,
   },
 ]
 

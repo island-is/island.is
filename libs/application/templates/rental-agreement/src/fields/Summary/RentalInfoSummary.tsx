@@ -20,6 +20,7 @@ import { SummaryCard } from './components/SummaryCard'
 import { SummaryCardRow } from './components/SummaryCardRow'
 import { KeyValue } from './components/KeyValue'
 import { summary } from '../../lib/messages'
+import { Summary } from '../../forms/summary/summary'
 
 type Props = {
   answers: RentalAgreement
@@ -234,6 +235,26 @@ export const RentalInfoSummary = ({
           )}
         </SummaryCardRow>
       )}
+      <SummaryCardRow editAction={goToScreen} route={rentalAmountRoute}>
+        <GridColumn span={['12/12', '4/12']}>
+          <KeyValue
+            label={'Greiðslufyrirkomulag'}
+            value={answers.rentalAmount.paymentMethodOptions || '-'}
+          />
+        </GridColumn>
+        <GridColumn span={['12/12', '4/12']}>
+          <KeyValue
+            label={'Kennitala'}
+            value={answers.rentalAmount.paymentMethodNationalId || '-'}
+          />
+        </GridColumn>
+        <GridColumn span={['12/12', '4/12']}>
+          <KeyValue
+            label={'Reikningsnúmer'}
+            value={answers.rentalAmount.paymentMethodBankAccountNumber || '-'}
+          />
+        </GridColumn>
+      </SummaryCardRow>
     </SummaryCard>
   )
 }

@@ -74,6 +74,12 @@ export enum RentalAmountPaymentDateOptions {
   OTHER = 'other',
 }
 
+export enum RentalPaymentMethodOptions {
+  BANK_TRANSFER = 'bankTransfer',
+  PAYMENT_SLIP = 'paymentSlip',
+  OTHER = 'other',
+}
+
 export enum SecurityDepositTypeOptions {
   BANK_GUARANTEE = 'bankGuarantee',
   CAPITAL = 'capital',
