@@ -526,7 +526,7 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           keys: ${{ needs.prepare.outputs.CACHE_KEYS }}
-          enable-cache: 'node_modules,generated-files'
+          enable-cache: 'node_modules,generated-files,docker'
 
       - name: Cache for dependencies Docker layer
         if: steps.gather.outcome == 'success'
