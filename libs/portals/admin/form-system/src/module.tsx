@@ -1,10 +1,10 @@
 import { lazy } from 'react'
 import { AdminPortalScope } from '@island.is/auth/scopes'
-import { m } from './lib/messages'
 import { PortalModule } from '@island.is/portals/core'
 import { FormSystemPaths } from './lib/paths'
 import { formsLoader } from './screens/Forms/Forms.loader'
 import { formLoader } from './screens/Form/Form.loader'
+import { m } from '@island.is/form-system/ui'
 
 const Forms = lazy(() => import('./screens/Forms/Forms'))
 

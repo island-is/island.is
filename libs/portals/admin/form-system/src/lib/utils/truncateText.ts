@@ -9,13 +9,13 @@ export const truncateName = (name: string, active: boolean, type: ItemType) => {
 
   if (active) {
     switch (type) {
-      case 'Step':
+      case 'Section':
         maxLength = 23
         break
-      case 'Group':
+      case 'Screen':
         maxLength = 16
         break
-      case 'Input':
+      case 'Field':
         maxLength = 12
         break
       default:
@@ -23,13 +23,13 @@ export const truncateName = (name: string, active: boolean, type: ItemType) => {
     }
   } else {
     switch (type) {
-      case 'Step':
+      case 'Section':
         maxLength = 26
         break
-      case 'Group':
+      case 'Screen':
         maxLength = 19
         break
-      case 'Input':
+      case 'Field':
         maxLength = 16
         break
       default:

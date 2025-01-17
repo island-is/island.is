@@ -1,3 +1,0 @@
-mutation formSystemUpdateInput($input: FormSystemUpdateInputInput!) {
-  formSystemUpdateInput(input: $input)
-}
