@@ -175,6 +175,7 @@ export interface UpdateCase
     | 'judgeId'
     | 'courtSessionType'
     | 'mergeCaseId'
+    | 'mergeCaseNumber'
   > {
   type?: CaseType
   state?: CaseState
@@ -322,6 +323,7 @@ export const include: Includeable[] = [
     model: CaseFile,
     as: 'caseFiles',
     required: false,
+    order: [['created', 'DESC']],
     where: { state: { [Op.not]: CaseFileState.DELETED } },
     separate: true,
   },
@@ -1095,21 +1097,20 @@ export class CaseService {
       })
     }
 
-    // Commented out temporarily because police endpoint is not ready to receive revocation
-    // const subpoenasToRevoke = await this.subpoenaService.findByCaseId(
-    //   theCase.id,
-    // )
+    const subpoenasToRevoke = await this.subpoenaService.findByCaseId(
+      theCase.id,
+    )
 
-    // if (subpoenasToRevoke?.length > 0) {
-    //   messages.push(
-    //     ...subpoenasToRevoke.map((subpoena) => ({
-    //       type: MessageType.DELIVERY_TO_POLICE_SUBPOENA_REVOCATION,
-    //       user,
-    //       caseId: theCase.id,
-    //       elementId: [subpoena.defendantId, subpoena.id],
-    //     })),
-    //   )
-    // }
+    if (subpoenasToRevoke?.length > 0) {
+      messages.push(
+        ...subpoenasToRevoke.map((subpoena) => ({
+          type: MessageType.DELIVERY_TO_POLICE_SUBPOENA_REVOCATION,
+          user,
+          caseId: theCase.id,
+          elementId: [subpoena.defendantId, subpoena.id],
+        })),
+      )
+    }
 
     return this.messageService.sendMessagesToQueue(messages)
   }

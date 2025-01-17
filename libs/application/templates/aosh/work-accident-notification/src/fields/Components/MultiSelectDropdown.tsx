@@ -34,7 +34,6 @@ export const MultiSelectDropdown: FC<
         isMulti={true}
         label={group.name}
         closeMenuOnSelect={false}
-        hideSelectedOptions={false}
         placeholder={formatMessage(
           causeAndConsequences.shared.selectPlaceholder,
         )}

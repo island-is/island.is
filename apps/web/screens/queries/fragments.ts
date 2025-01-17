@@ -497,7 +497,16 @@ export const slices = gql`
   fragment OverviewLinksField on OverviewLinks {
     __typename
     id
+    titleAbove
     hasBorderAbove
+    linkData {
+      variant
+      categoryCardItems {
+        title
+        description
+        href
+      }
+    }
     overviewLinks {
       title
       intro {
