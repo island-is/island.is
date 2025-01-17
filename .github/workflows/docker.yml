@@ -113,7 +113,9 @@ jobs:
           if [[ "$localrun" == true ]]; then
             echo build-cache="type=local,src=/tmp,dest=/tmp,mode=max" >>"$GITHUB_OUTPUT"
           else
-            echo build-cache="type=registry,image-manifest=true,oci-mediatypes=true,ref=$image_repository:cache,mode=max" >>"$GITHUB_OUTPUT"
+            build_cache="type=registry,image-manifest=true,oci-mediatypes=true,ref=$image_repository:cache"
+            echo build-cache="$build_cache" >>"$GITHUB_OUTPUT"
+            echo build-cache-shared="$build_cache" >>"$GITHUB_OUTPUT"
           fi
 
       - name: Check out repo
@@ -183,8 +185,9 @@ jobs:
           target: deps
           build-args: |
             NODE_IMAGE_TAG=${{ needs.prepare.outputs.node-image-tag }}
-          cache-from: ${{ steps.inputs.outputs.build-cache }}
-          cache-to: ${{ steps.inputs.outputs.build-cache }}
+            PLAYWRIGHT_IMAGE_TAG=${{ needs.prepare.outputs.playwright-image-tag }}
+          cache-from: ${{ steps.inputs.outputs.build-cache-shared }}
+          cache-to: ${{ steps.inputs.outputs.build-cache-shared }},mode=max
 
       - name: Docker build/cache output-base
         uses: docker/build-push-action@v6
@@ -195,8 +198,9 @@ jobs:
           target: output-base-full
           build-args: |
             NODE_IMAGE_TAG=${{ needs.prepare.outputs.node-image-tag }}
-          cache-from: ${{ steps.inputs.outputs.build-cache }}
-          cache-to: ${{ steps.inputs.outputs.build-cache }}
+            PLAYWRIGHT_IMAGE_TAG=${{ needs.prepare.outputs.playwright-image-tag }}
+          cache-from: ${{ steps.inputs.outputs.build-cache-shared }}
+          cache-to: ${{ steps.inputs.outputs.build-cache-shared }},mode=max
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v6
@@ -211,7 +215,9 @@ jobs:
             NODE_IMAGE_TAG=${{ needs.prepare.outputs.node-image-tag }}
             APP=${{ matrix.project }}
             PLAYWRIGHT_IMAGE_TAG=${{ needs.prepare.outputs.playwright-image-tag }}
-          cache-from: ${{ steps.inputs.outputs.build-cache }}
+          cache-from: |
+            ${{ steps.inputs.outputs.build-cache-shared }}
+            ${{ steps.inputs.outputs.build-cache }}
           cache-to: ${{ steps.inputs.outputs.build-cache }},mode=min
 
   status:
