@@ -94,7 +94,7 @@ export class BarcodeService {
 
   async setCache<Type extends LicenseType>(
     key: string,
-    value: BarcodeData<Type> | string,
+    value: BarcodeData<Type>,
   ) {
     return this.cacheManager.set(key, value, BARCODE_EXPIRE_TIME_IN_SEC * 1000)
   }
