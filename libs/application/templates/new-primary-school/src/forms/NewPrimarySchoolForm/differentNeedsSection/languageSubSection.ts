@@ -1,14 +1,12 @@
 import {
+  buildCustomField,
   buildDescriptionField,
-  buildFieldsRepeaterField,
-  buildHiddenInputWithWatchedValue,
   buildMultiField,
   buildRadioField,
   buildSelectField,
   buildSubSection,
 } from '@island.is/application/core'
 import { NO, YES } from '@island.is/application/types'
-import { getAllLanguageCodes } from '@island.is/shared/utils'
 import { newPrimarySchoolMessages } from '../../../lib/messages'
 import {
   getApplicationAnswers,
@@ -56,192 +54,10 @@ export const languageSubSection = buildSubSection({
             return hasOtherLanguages(answers)
           },
         }),
-        buildSelectField({
-          id: 'languages.language1',
-          dataTestId: 'languages-language1',
-          title: {
-            ...newPrimarySchoolMessages.differentNeeds.languageSelectionTitle,
-            values: {
-              no: '1',
-            },
-          },
-          placeholder:
-            newPrimarySchoolMessages.differentNeeds
-              .languageSelectionPlaceholder,
-          isMulti: false,
-          options: () => {
-            const languages = getAllLanguageCodes()
-            return languages.map((language) => {
-              return {
-                label: language.name,
-                value: language.code,
-              }
-            })
-          },
-          condition: (answers) => {
-            return hasOtherLanguages(answers)
-          },
-        }),
-        buildHiddenInputWithWatchedValue({
-          // Needed to trigger an update on options in the select above
-          id: 'languages.hiddenLanguage1Input',
-          watchValue: 'languages.language1',
-        }),
-        buildSelectField({
-          id: 'languages.language2',
-          dataTestId: 'languages-language2',
-          title: {
-            ...newPrimarySchoolMessages.differentNeeds.languageSelectionTitle,
-            values: {
-              no: '2',
-            },
-          },
-          placeholder:
-            newPrimarySchoolMessages.differentNeeds
-              .languageSelectionPlaceholder,
-
-          options: () => {
-            const languages = getAllLanguageCodes()
-            return languages.map((language) => {
-              return {
-                label: language.name,
-                value: language.code,
-              }
-            })
-          },
-          isMulti: false,
-          disabled: true,
-        }),
-        buildHiddenInputWithWatchedValue({
-          // Needed to trigger an update on options in the select above
-          id: 'languages.hiddenLanguage2Input',
-          watchValue: 'languages.language2',
-        }),
-        buildSelectField({
-          id: 'languages.language3',
-          dataTestId: 'languages-language3',
-          title: {
-            ...newPrimarySchoolMessages.differentNeeds.languageSelectionTitle,
-            values: {
-              no: '3',
-            },
-          },
-          placeholder:
-            newPrimarySchoolMessages.differentNeeds
-              .languageSelectionPlaceholder,
-          options: () => {
-            const languages = getAllLanguageCodes()
-            return languages.map((language) => {
-              return {
-                label: language.name,
-                value: language.code,
-              }
-            })
-          },
-          isMulti: false,
-          condition: (answers) => {
-            const { language2 } = getApplicationAnswers(answers)
-            return hasOtherLanguages(answers) && !!language2
-          },
-        }),
-        buildHiddenInputWithWatchedValue({
-          // Needed to trigger an update on options in the select above
-          id: 'languages.hiddenLanguage3Input',
-          watchValue: 'languages.language3',
-        }),
-        buildSelectField({
-          id: 'languages.language4',
-          dataTestId: 'languages-language4',
-          title: {
-            ...newPrimarySchoolMessages.differentNeeds.languageSelectionTitle,
-            values: {
-              no: '4',
-            },
-          },
-          placeholder:
-            newPrimarySchoolMessages.differentNeeds
-              .languageSelectionPlaceholder,
-          options: () => {
-            const languages = getAllLanguageCodes()
-            return languages.map((language) => {
-              return {
-                label: language.name,
-                value: language.code,
-              }
-            })
-          },
-          isMulti: false,
-          condition: (answers) => {
-            const { language3 } = getApplicationAnswers(answers)
-            return hasOtherLanguages(answers) && !!language3
-          },
-        }),
-        buildHiddenInputWithWatchedValue({
-          // Needed to trigger an update on options in the select above
-          id: 'languages.hiddenLanguage4Input',
-          watchValue: 'languages.language4',
-        }),
-        buildDescriptionField({
-          id: 'languages.child.language.title',
-          title: newPrimarySchoolMessages.differentNeeds.childLanguageTitle,
-          titleVariant: 'h4',
-          condition: (answers) => {
-            const { language1, language2 } = getApplicationAnswers(answers)
-            return hasOtherLanguages(answers) && !!language1 && !!language2
-          },
-        }),
-        buildSelectField({
-          id: 'languages.childLanguage',
-          dataTestId: 'languages-child-language',
-          title:
-            newPrimarySchoolMessages.differentNeeds.languageSubSectionTitle,
-          placeholder:
-            newPrimarySchoolMessages.differentNeeds
-              .languageSelectionPlaceholder,
-          options: (application) => {
-            const { language1, language2, language3, language4 } =
-              getApplicationAnswers(application.answers)
-
-            const languages = getAllLanguageCodes()
-            const selectedLanguages = languages.filter((language) => {
-              return (
-                language.code === language1 ||
-                language.code === language2 ||
-                language.code === language3 ||
-                language.code === language4
-              )
-            })
-
-            return selectedLanguages.map((language) => {
-              return {
-                label: language.name,
-                value: language.code,
-              }
-            })
-          },
-          isMulti: false,
-          condition: (answers) => {
-            const {
-              language1,
-              language2,
-              language3,
-              language4,
-              language1HiddenInput,
-              language2HiddenInput,
-              language3HiddenInput,
-              language4HiddenInput,
-            } = getApplicationAnswers(answers)
-
-            return (
-              hasOtherLanguages(answers) &&
-              !!language1 &&
-              !!language2 &&
-              language1 === language1HiddenInput &&
-              language2 === language2HiddenInput &&
-              language3 === language3HiddenInput &&
-              language4 === language4HiddenInput
-            )
-          },
+        buildCustomField({
+          id: 'languages',
+          title: '',
+          component: 'LanguageSelection',
         }),
         buildRadioField({
           id: 'languages.signLanguage',

@@ -138,22 +138,20 @@ export const dataSchema = z.object({
       params: errorMessages.siblingsRequired,
     }),
   startDate: z.string(),
-  languages: z
-    .object({
-      languageEnvironment: z.string(),
-      signLanguage: z.enum([YES, NO]),
-      interpreter: z.enum([YES, NO]),
-      language1: z.string().optional(),
-      language2: z.string().optional(),
-      language3: z.string().optional(),
-      language4: z.string().optional(),
-      childLanguage: z.string().optional(),
-    })
-    .refine(({ language1, language2 }) => !!language1 && !!language2, {
+  languages: z.object({
+    languageEnvironment: z.string(),
+    signLanguage: z.enum([YES, NO]).optional(),
+    interpreter: z.enum([YES, NO]).optional(),
+    language1: z.string().optional(),
+    language2: z.string().optional(),
+    language3: z.string().optional(),
+    language4: z.string().optional(),
+    childLanguage: z.string().optional(),
+  }),
+  /* .refine(({ language1, language2 }) => !!language1 && !!language2, {
       path: ['childLanguage'],
       params: errorMessages.languagesRequired,
-    }),
-  freeSchoolMeal: z
+    })*/ freeSchoolMeal: z
     .object({
       acceptFreeSchoolLunch: z.enum([YES, NO]),
       hasSpecialNeeds: z.string().optional(),
