@@ -20,6 +20,7 @@ import {
   IndictmentCaseReviewDecision,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
+import { isNonEmptyArray } from '../../utils/arrayHelpers'
 import { sortByIcelandicAlphabet } from '../../utils/sortHelper'
 import { FormContext } from '../FormProvider/FormProvider'
 import { CivilClaimantInfo } from './CivilClaimantInfo/CivilClaimantInfo'
@@ -33,6 +34,9 @@ const useInfoCardItems = () => {
   const { formatMessage } = useIntl()
   const { workingCase } = useContext(FormContext)
 
+  // helper for info card items. If items have no values they will have [{falsy value}]
+  const showItem = (item: Item) => isNonEmptyArray(item.values) && !!item.values[0]
+  
   const defendants = (
     caseType?: CaseType | null,
     displayAppealExpirationInfo?: boolean,
@@ -200,15 +204,26 @@ const useInfoCardItems = () => {
     ],
   }
 
+  const getMergeCaseValue = () => {
+    const internalCourtCaseNumber = workingCase.mergeCase?.courtCaseNumber
+    if (internalCourtCaseNumber) {
+      return internalCourtCaseNumber
+    }
+
+    const externalCourtCaseNumber = [workingCase.mergeCaseNumber]
+    if (externalCourtCaseNumber) {
+      return formatMessage(strings.externalMergeCase, {
+        mergeCaseNumber: externalCourtCaseNumber,
+      })
+    }
+
+    return undefined
+  }
+
   const mergeCase: Item = {
     id: 'merge-case-item',
     title: formatMessage(strings.indictmentMergedTitle),
-    values: [
-      workingCase.mergeCase?.courtCaseNumber ||
-        formatMessage(strings.externalMergeCase, {
-          mergeCaseNumber: workingCase.mergeCaseNumber,
-        }),
-    ],
+    values: [getMergeCaseValue()],
   }
 
   const mergedCasePoliceCaseNumbers = (mergedCase: Case): Item => ({
@@ -364,6 +379,7 @@ const useInfoCardItems = () => {
   }
 
   return {
+    showItem, 
     defendants,
     indictmentCreated,
     prosecutor,
