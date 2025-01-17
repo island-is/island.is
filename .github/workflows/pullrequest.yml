@@ -2,7 +2,6 @@ name: Monorepo pipeline - pull request
 
 on:
   pull_request: {}
-  merge_group: {}
   workflow_dispatch: {}
 
 defaults:
