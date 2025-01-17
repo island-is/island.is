@@ -149,6 +149,7 @@ jobs:
 
       - name: Generate Docker metadata
         id: meta
+        # This step requires a valid GitHub token to query the API for e.g. description of repository
         if: ${{ !github.event.localrun }}
         uses: docker/metadata-action@v5
         with:
@@ -170,6 +171,7 @@ jobs:
             type=sha,format=short,prefix=
             type=sha,format=long,prefix=
             # The final sha for the merge commit
+            # mcgh: Merge Commit GitHub
             type=raw,value=mcgh-${{ github.event.pull_request.merge_commit_sha }}
 
       - name: Docker build/cache deps
