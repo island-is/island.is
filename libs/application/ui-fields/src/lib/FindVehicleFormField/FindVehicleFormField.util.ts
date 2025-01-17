@@ -8,6 +8,8 @@ import {
 } from '@island.is/application/types'
 import { MessageDescriptor } from 'react-intl'
 
+const REGISTRATION_TYPE_LENGTH = 2
+
 export const energyFundsLabel = function (
   energyDetails: EnergyFundVehicleDetailsWithGrant | null,
   energyFundsMessages: Record<string, FormText> | undefined,
@@ -44,10 +46,39 @@ export const mustInspectBeforeStreetRegistration = (
   externalData: ExternalData,
   regNumber: string,
 ) => {
-  const inspectBeforeTypes = getValueViaPath(
+  const inspectBeforeTypes = getValueViaPath<string[]>(
     externalData,
     'typesMustInspectBeforeRegistration.data',
     [],
-  ) as string[]
-  return inspectBeforeTypes?.includes(regNumber.substring(0, 2)) || false
+  )
+  return (
+    inspectBeforeTypes?.includes(
+      regNumber.substring(0, REGISTRATION_TYPE_LENGTH),
+    ) || false
+  )
+}
+
+export const isInvalidRegistrationType = (
+  externalData: ExternalData,
+  regNumber: string,
+) => {
+  if (!regNumber || regNumber.length < REGISTRATION_TYPE_LENGTH) {
+    return true
+  }
+  const validTypes = getValueViaPath<string[]>(
+    externalData,
+    'availableRegistrationTypes.data',
+    [],
+  )
+  const inspectBeforeTypes = getValueViaPath<string[]>(
+    externalData,
+    'typesMustInspectBeforeRegistration.data',
+    [],
+  )
+
+  const regType = regNumber.substring(0, REGISTRATION_TYPE_LENGTH)
+
+  return (
+    !validTypes?.includes(regType) && !inspectBeforeTypes?.includes(regType)
+  )
 }

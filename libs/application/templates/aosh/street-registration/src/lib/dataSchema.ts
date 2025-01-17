@@ -12,16 +12,18 @@ const otherAddressSchema = z.object({
 })
 
 export const MachineAnswersSchema = z.object({
-  machine: z.object({
-    id: z.string().optional(),
-    date: z.string().optional(),
-    type: z.string().optional(),
-    plate: z.string().optional(),
-    subType: z.string().optional(),
-    category: z.string().optional(),
-    regNumber: z.string().optional(),
-    ownerNumber: z.string().optional(),
-  }),
+  machine: z
+    .object({
+      id: z.string().optional(),
+      date: z.string().optional(),
+      type: z.string().optional(),
+      plate: z.string().optional(),
+      subType: z.string().optional(),
+      category: z.string().optional(),
+      regNumber: z.string().optional(),
+      ownerNumber: z.string().optional(),
+    })
+    .refine((obj) => Object.keys(obj).length > 0),
   contact: z.object({
     name: z.string().min(1),
     email: z.string().email().min(1),
