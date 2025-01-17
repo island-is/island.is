@@ -38,9 +38,10 @@ import { screenWidth } from '../../utils/dimensions'
 import { FieldRender } from './components/field-render'
 import { useOfflineStore } from '../../stores/offline-store'
 import { useLocale } from '../../hooks/use-locale'
-
-const INFORMATION_BASE_TOP_SPACING = 70
-export const BARCODE_MAX_WIDTH = 500
+import {
+  BARCODE_MAX_WIDTH,
+  INFORMATION_BASE_TOP_SPACING,
+} from './wallet-pass.constants'
 
 const getImageFromRawData = (rawData: string) => {
   try {
