@@ -538,7 +538,7 @@ export class LicenseService {
         licenseType,
         extraData,
       }),
-      user.sub ? this.barcodeService.setSessionCache(barcodeSessionKey, user.sid) : undefined,
+      this.barcodeService.setSessionCache(barcodeSessionKey, user.sid),
     ])
 
     return tokenPayload
