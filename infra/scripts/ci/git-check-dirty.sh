@@ -37,6 +37,13 @@ EOF
   esac
 done
 
+for opt in "$abs_path" "$action" "$owner"; do
+  if [[ -z "$opt" ]] || [[ "$opt" = -* ]]; then
+    echo "A required argument is missing" >&2
+    exit 1
+  fi
+done
+
 commit_as_github_actions() {
   git config user.name 'github-actions[bot]'
   git config user.email 'github-actions[bot]@users.noreply.github.com'
