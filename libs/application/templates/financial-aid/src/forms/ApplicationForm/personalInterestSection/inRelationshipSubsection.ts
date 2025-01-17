@@ -40,10 +40,13 @@ export const inRelationshipSubsection = buildSubSection({
           id: 'spouse.email',
           title: m.inRelationship.inputs.spouseEmail,
           placeholder: m.inRelationship.inputs.spouseEmailPlaceholder,
+          variant: 'email',
+          required: true,
         }),
         buildCheckboxField({
           id: 'spouse.approveTerms',
           title: '',
+          required: true,
           options: [
             {
               label: m.inRelationship.inputs.checkboxLabel,
