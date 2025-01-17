@@ -30,6 +30,7 @@ import {
   MachinesApi,
   MustInspectBeforeRegistrationApi,
   VinnueftirlitidPaymentCatalogApi,
+  GetAvailableRegistrationTypes,
 } from '../dataProviders'
 import { ApiScope } from '@island.is/auth/scopes'
 import { getChargeItems } from '../utils'
@@ -111,6 +112,7 @@ const template: ApplicationTemplate<
                 UserProfileApi,
                 MachinesApi,
                 MustInspectBeforeRegistrationApi,
+                GetAvailableRegistrationTypes,
                 VinnueftirlitidPaymentCatalogApi,
               ],
             },

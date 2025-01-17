@@ -143,8 +143,6 @@ export class FileService {
 
     switch (file.category) {
       case CaseFileCategory.INDICTMENT:
-      case CaseFileCategory.CRIMINAL_RECORD:
-      case CaseFileCategory.COST_BREAKDOWN:
         courtDocumentFolder = CourtDocumentFolder.INDICTMENT_DOCUMENTS
         break
       case CaseFileCategory.COURT_RECORD:
@@ -154,6 +152,8 @@ export class FileService {
       case CaseFileCategory.CASE_FILE:
       case CaseFileCategory.PROSECUTOR_CASE_FILE:
       case CaseFileCategory.DEFENDANT_CASE_FILE:
+      case CaseFileCategory.CRIMINAL_RECORD:
+      case CaseFileCategory.COST_BREAKDOWN:
       case undefined:
       case null:
         courtDocumentFolder = CourtDocumentFolder.CASE_DOCUMENTS
