@@ -293,6 +293,7 @@ export const slices = gql`
         ...ImageFields
       }
     }
+    showSearchInput
   }
 
   fragment ContactUsFields on ContactUs {
@@ -496,7 +497,16 @@ export const slices = gql`
   fragment OverviewLinksField on OverviewLinks {
     __typename
     id
+    titleAbove
     hasBorderAbove
+    linkData {
+      variant
+      categoryCardItems {
+        title
+        description
+        href
+      }
+    }
     overviewLinks {
       title
       intro {
@@ -976,6 +986,12 @@ export const slices = gql`
         }
         slug
         assetUrl
+        image {
+          url
+          title
+          width
+          height
+        }
       }
     }
   }
