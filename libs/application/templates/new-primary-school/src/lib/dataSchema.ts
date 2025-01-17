@@ -2,10 +2,7 @@ import { NO, YES } from '@island.is/application/types'
 import * as kennitala from 'kennitala'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { z } from 'zod'
-import {
-  ReasonForApplicationOptions,
-  SiblingRelationOptions,
-} from './constants'
+import { ReasonForApplicationOptions } from './constants'
 import { errorMessages } from './messages'
 
 const validatePhoneNumber = (value: string) => {
@@ -60,7 +57,7 @@ export const dataSchema = z.object({
       })
       .optional(),
   }),
-  relatives: z
+  contacts: z
     .array(
       z.object({
         fullName: z.string().min(1),
@@ -72,7 +69,7 @@ export const dataSchema = z.object({
       }),
     )
     .refine((r) => r === undefined || r.length > 0, {
-      params: errorMessages.relativesRequired,
+      params: errorMessages.contactsRequired,
     }),
   reasonForApplication: z
     .object({
@@ -131,7 +128,6 @@ export const dataSchema = z.object({
         nationalId: z.string().refine((n) => kennitala.isValid(n), {
           params: errorMessages.nationalId,
         }),
-        relation: z.nativeEnum(SiblingRelationOptions),
       }),
     )
     .refine((r) => r === undefined || r.length > 0, {
@@ -152,6 +148,30 @@ export const dataSchema = z.object({
       {
         path: ['otherLanguages'],
         params: errorMessages.languagesRequired,
+      },
+    ),
+  freeSchoolMeal: z
+    .object({
+      acceptFreeSchoolLunch: z.enum([YES, NO]),
+      hasSpecialNeeds: z.string().optional(),
+      specialNeedsType: z.string().optional(),
+    })
+    .refine(
+      ({ acceptFreeSchoolLunch, hasSpecialNeeds }) =>
+        acceptFreeSchoolLunch === YES
+          ? !!hasSpecialNeeds && hasSpecialNeeds.length > 0
+          : true,
+      {
+        path: ['hasSpecialNeeds'],
+      },
+    )
+    .refine(
+      ({ acceptFreeSchoolLunch, hasSpecialNeeds, specialNeedsType }) =>
+        acceptFreeSchoolLunch === YES && hasSpecialNeeds === YES
+          ? !!specialNeedsType && specialNeedsType.length > 0
+          : true,
+      {
+        path: ['specialNeedsType'],
       },
     ),
   allergiesAndIntolerances: z
