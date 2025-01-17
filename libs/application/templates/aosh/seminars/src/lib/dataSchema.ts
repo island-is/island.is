@@ -2,6 +2,7 @@ import { z } from 'zod'
 import * as kennitala from 'kennitala'
 import { IndividualOrCompany, PaymentOptions } from '../shared/contstants'
 import { isValidEmail, isValidPhoneNumber } from '../utils'
+import { YES } from '@island.is/application/types'
 
 const UserSchemaBase = z.object({
   nationalId: z
@@ -40,7 +41,7 @@ export const PaymentArrangementSchema = z
       })
       .optional(),
     explanation: z.string().optional(),
-    agreementCheckbox: z.array(z.string().min(1)).nonempty(),
+    agreementCheckbox: z.array(z.string()).refine((v) => v.includes(YES)),
   })
   .refine(
     ({ individualInfo, individualOrCompany }) => {

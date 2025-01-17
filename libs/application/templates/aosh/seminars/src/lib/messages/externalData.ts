@@ -57,5 +57,16 @@ export const externalData = {
         'Ekki tókst að sækja gögn til VER, vinsamlegast reynið síðar',
       description: 'General error when fetching data from VER',
     },
+    noSeminarFoundTitle: {
+      id: 'aosh.sem.application:externalData.ver.noSeminarFoundTitle',
+      defaultMessage: 'Námskeið fannst ekki',
+      description: 'Error message when seminar is not found',
+    },
+    noSeminarFound: {
+      id: 'aosh.sem.application:externalData.ver.noSeminarFound#markdown',
+      defaultMessage:
+        'Engar upplýsingar um þetta námskeið fundust. Vertu viss um að þú hafir valið rétt námskeið inná island.is.',
+      description: 'Error message when seminar is not found',
+    },
   }),
 }

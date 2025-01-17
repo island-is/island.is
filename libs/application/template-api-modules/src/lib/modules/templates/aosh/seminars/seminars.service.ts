@@ -31,6 +31,18 @@ export class SeminarsTemplateService extends BaseTemplateApiService {
   }: TemplateApiModuleActionProps): Promise<CourseDTO> {
     const seminarQueryId =
       getValueViaPath<string>(application.answers, `initialQuery`) ?? ''
+
+    if (seminarQueryId === '') {
+      this.logger.warn('[seminars-service]: No seminar query id found')
+      throw new TemplateApiError(
+        {
+          summary: externalDataMessages.ver.noSeminarFound,
+          title: externalDataMessages.ver.noSeminarFoundTitle,
+        },
+        400,
+      )
+    }
+
     const data = await this.seminarsClientService
       .getSeminar(auth, seminarQueryId)
       .catch(() => {

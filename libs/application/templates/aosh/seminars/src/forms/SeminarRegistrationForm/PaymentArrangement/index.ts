@@ -17,6 +17,7 @@ import {
   Application,
   ExternalData,
   FormValue,
+  YES,
 } from '@island.is/application/types'
 import {
   isIndividual,
@@ -217,18 +218,15 @@ export const paymentArrangementSection = buildSection({
         }),
         /* COMPANY ENDS */
 
-        // buildCustomField({
-        //   id: 'paymentArrangement.agreementCheckbox',
-        //   title: '',
-        //   component: 'AgreementCheckbox',
-        // }),
         buildCheckboxField({
           id: 'paymentArrangement.agreementCheckbox',
           title: '',
           large: false,
+          backgroundColor: 'white',
+          marginTop: 3,
           options: [
             {
-              value: 'yes',
+              value: YES,
               label: paymentArrangement.labels.aggreementCheckbox,
             },
           ],
