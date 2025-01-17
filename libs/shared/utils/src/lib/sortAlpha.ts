@@ -10,10 +10,10 @@ const isStringOrNumber = (key: unknown) =>
   ['number', 'string'].includes(typeof key)
 
 export const sortAlpha =
-  <T, K extends keyof T>(key?: K) =>
-  (a: T, b: T) => {
+  <Item, Key extends keyof Item>(_key?: Key) =>
+  (a: Item, b: Item) => {
+    const key = _key ?? ('title' as keyof Item)
     if (
-      !key ||
       !a[key] ||
       !b[key] ||
       !isStringOrNumber(a[key]) ||
