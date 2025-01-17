@@ -35,8 +35,8 @@ const CaseFileTable: FC<Props> = ({
   const { formatMessage } = useIntl()
 
   const { sortedData, requestSort, getClassNamesFor, isActiveColumn } = useSort(
-    'name',
-    'ascending',
+    'created',
+    'descending',
     caseFiles,
     (entry, column) => entry[column] as string | null | undefined,
   )
