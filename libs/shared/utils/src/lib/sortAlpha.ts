@@ -10,9 +10,8 @@ const isStringOrNumber = (key: unknown) =>
   ['number', 'string'].includes(typeof key)
 
 export const sortAlpha =
-  <Item, Key extends keyof Item>(_key?: Key) =>
-  (a: Item, b: Item) => {
-    const key = _key ?? ('title' as keyof Item)
+  <Item>(key: keyof Partial<Item>) =>
+  (a: Partial<Item>, b: Partial<Item>) => {
     if (
       !a[key] ||
       !b[key] ||
