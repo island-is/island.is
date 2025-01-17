@@ -660,7 +660,7 @@ const Processing: FC = () => {
           nextButtonIcon="arrowForward"
           previousUrl={`${constants.INDICTMENTS_CASE_FILE_ROUTE}/${workingCase.id}`}
           nextIsDisabled={!stepIsValid}
-          nextUrl={constants.INDICTMENTS_TRAFFIC_VIOLATION_ROUTE}
+          nextUrl={constants.INDICTMENTS_INDICTMENT_ROUTE}
         />
       </FormContentContainer>
     </PageLayout>

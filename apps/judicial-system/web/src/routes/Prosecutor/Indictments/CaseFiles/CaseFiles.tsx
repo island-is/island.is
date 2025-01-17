@@ -166,7 +166,7 @@ const CaseFiles = () => {
       <FormContentContainer isFooter>
         <FormFooter
           nextButtonIcon="arrowForward"
-          previousUrl={`${constants.INDICTMENTS_TRAFFIC_VIOLATION_ROUTE}/${workingCase.id}`}
+          previousUrl={`${constants.INDICTMENTS_INDICTMENT_ROUTE}/${workingCase.id}`}
           onNextButtonClick={() =>
             handleNavigationTo(constants.INDICTMENTS_OVERVIEW_ROUTE)
           }

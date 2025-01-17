@@ -173,7 +173,7 @@ export type stepValidationsType = {
   [constants.INVESTIGATION_CASE_POLICE_CONFIRMATION_ROUTE]: () => boolean
   [constants.INDICTMENTS_CASE_FILE_ROUTE]: () => boolean
   [constants.INDICTMENTS_PROCESSING_ROUTE]: (theCase: Case) => boolean
-  [constants.INDICTMENTS_TRAFFIC_VIOLATION_ROUTE]: (theCase: Case) => boolean
+  [constants.INDICTMENTS_INDICTMENT_ROUTE]: (theCase: Case) => boolean
   [constants.INDICTMENTS_CASE_FILES_ROUTE]: (theCase: Case) => boolean
   [constants.RESTRICTION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE]: (
     theCase: Case,
@@ -255,7 +255,7 @@ export const stepValidations = (): stepValidationsType => {
     [constants.INDICTMENTS_CASE_FILE_ROUTE]: () => true,
     [constants.INDICTMENTS_PROCESSING_ROUTE]: (theCase: Case) =>
       validations.isProcessingStepValidIndictments(theCase),
-    [constants.INDICTMENTS_TRAFFIC_VIOLATION_ROUTE]: (theCase: Case) =>
+    [constants.INDICTMENTS_INDICTMENT_ROUTE]: (theCase: Case) =>
       validations.isIndictmentStepValid(theCase),
     [constants.INDICTMENTS_CASE_FILES_ROUTE]: () => true,
     [constants.INDICTMENTS_SUMMARY_ROUTE]: () => true,

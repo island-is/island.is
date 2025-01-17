@@ -501,10 +501,10 @@ const useSections = (
               name: formatMessage(
                 sections.indictmentCaseProsecutorSection.indictment,
               ),
-              href: `${constants.INDICTMENTS_TRAFFIC_VIOLATION_ROUTE}/${id}`,
-              isActive: isActive(constants.INDICTMENTS_TRAFFIC_VIOLATION_ROUTE),
+              href: `${constants.INDICTMENTS_INDICTMENT_ROUTE}/${id}`,
+              isActive: isActive(constants.INDICTMENTS_INDICTMENT_ROUTE),
               onClick:
-                !isActive(constants.INDICTMENTS_TRAFFIC_VIOLATION_ROUTE) &&
+                !isActive(constants.INDICTMENTS_INDICTMENT_ROUTE) &&
                 validateFormStepper(
                   isValid,
                   [
@@ -518,7 +518,7 @@ const useSections = (
                 onNavigationTo
                   ? async () =>
                       await onNavigationTo(
-                        constants.INDICTMENTS_TRAFFIC_VIOLATION_ROUTE,
+                        constants.INDICTMENTS_INDICTMENT_ROUTE,
                       )
                   : undefined,
             },
