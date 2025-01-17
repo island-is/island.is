@@ -1,4 +1,3 @@
-import { useContext } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
@@ -18,7 +17,6 @@ import {
   isRestrictionCase,
 } from '@island.is/judicial-system/types'
 import { core, sections } from '@island.is/judicial-system-web/messages'
-import { FeatureContext } from '@island.is/judicial-system-web/src/components'
 import { RouteSection } from '@island.is/judicial-system-web/src/components/PageLayout/PageLayout'
 import { formatCaseResult } from '@island.is/judicial-system-web/src/components/PageLayout/utils'
 import {
@@ -61,7 +59,6 @@ const useSections = (
 ) => {
   const { formatMessage } = useIntl()
   const router = useRouter()
-  const { features } = useContext(FeatureContext)
   const isActive = (pathname: string) =>
     router.pathname.replace(/\/\[\w+\]/g, '') === pathname
 

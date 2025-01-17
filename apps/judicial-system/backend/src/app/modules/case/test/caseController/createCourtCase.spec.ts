@@ -294,7 +294,6 @@ describe('CaseController - Create court case', () => {
     const caseId = uuid()
     const policeCaseNumber1 = uuid()
     const policeCaseNumber2 = uuid()
-    const indictmentId = uuid()
     const criminalRecordId = uuid()
     const costBreakdownId = uuid()
     const uncategorisedId = uuid()
