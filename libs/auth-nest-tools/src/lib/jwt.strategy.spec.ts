@@ -80,6 +80,8 @@ describe('JwtStrategy#validate', () => {
       nationalId: '1234567890',
       scope: ['test-scope-1'],
       client_id: 'test-client',
+      sub: 'sub',
+      sid: 'sid',
       delegationType: [AuthDelegationType.Custom],
       actor: {
         nationalId: '1234565555',
@@ -122,6 +124,8 @@ describe('JwtStrategy#validate', () => {
       nationalId: '1234567890',
       scope: ['test-scope-1'],
       client_id: 'test-client',
+      sid: 'sid',
+      sub: 'sub',
     }
     const request = {
       headers: {
@@ -151,6 +155,8 @@ describe('JwtStrategy#validate', () => {
         nationalId: '1234564321',
         scope: ['test-scope-2'],
       },
+      sid: 'sid',
+      sub: 'sub',
     }
 
     // Act
@@ -172,12 +178,16 @@ describe('JwtStrategy#validate', () => {
       scope: ['test-scope-1'],
       client_id: 'test-client',
       client_nationalId: '1234565555',
+      sid: 'sid',
+      sub: 'sub',
     }
 
     const personPayload: JwtPayload = {
       scope: ['test-scope-1'],
       client_id: 'test-client',
       nationalId: '1234567890',
+      sub: 'sub',
+      sid: 'sid',
     }
 
     // Act
