@@ -28,7 +28,6 @@ interface VerdictsListProps {
 
 const VerdictsList: Screen<VerdictsListProps> = ({ items }) => {
   const { format } = useDateUtils()
-
   const [searchTerm, setSearchTerm] = useQueryState(
     'q',
     parseAsString
@@ -118,17 +117,18 @@ const VerdictsList: Screen<VerdictsListProps> = ({ items }) => {
                       </GridRow>
 
                       <Divider />
-
-                      <GridRow>
-                        <GridColumn>
-                          <Text variant="small">
-                            <Text color="blue400" variant="medium" as="span">
-                              Reifun:
-                            </Text>{' '}
-                            {item.presentings}
-                          </Text>
-                        </GridColumn>
-                      </GridRow>
+                      {Boolean(item.presentings) && (
+                        <GridRow>
+                          <GridColumn>
+                            <Text variant="small">
+                              <Text color="blue400" variant="medium" as="span">
+                                Reifun:
+                              </Text>{' '}
+                              {item.presentings}
+                            </Text>
+                          </GridColumn>
+                        </GridRow>
+                      )}
                     </Stack>
                   </GridContainer>
                 </FocusableBox>

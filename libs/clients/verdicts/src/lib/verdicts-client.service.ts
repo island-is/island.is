@@ -1,24 +1,10 @@
 import { Injectable } from '@nestjs/common'
-import { NodeHtmlMarkdown } from 'node-html-markdown'
-import sanitizeHtml from 'sanitize-html'
-import { richTextFromMarkdown } from '@contentful/rich-text-from-markdown'
 
 import {
   GetVerdictsOperationRequest,
   VerdictApi,
   type DetailedVerdictData,
 } from '../../gen/fetch/'
-
-const convertHtmlToContentfulRichText = async (html: string, id?: string) => {
-  const sanitizedHtml = sanitizeHtml(html)
-  const markdown = NodeHtmlMarkdown.translate(sanitizedHtml)
-  const richText = await richTextFromMarkdown(markdown)
-  return {
-    __typename: 'Html',
-    document: richText,
-    id,
-  }
-}
 
 @Injectable()
 export class VerdictsClientService {
@@ -37,7 +23,7 @@ export class VerdictsClientService {
         laws: [''],
         dateFrom: '',
         dateTo: '',
-        orderBy: 'title', // TODO: how should the verdicts be ordered?
+        orderBy: 'verdictDate', // TODO: how should the verdicts be ordered?
         pageNumber: 1,
         itemsPerPage: 10,
         ...input,
@@ -52,15 +38,14 @@ export class VerdictsClientService {
             Boolean(item.title) &&
             Boolean(item.court) &&
             Boolean(item.caseNumber) &&
-            Boolean(item.verdictDate) &&
-            Boolean(item.presentings),
+            Boolean(item.verdictDate),
         ) ?? []) as (DetailedVerdictData & {
           id: string
           title: string
           court: string
           caseNumber: string
           verdictDate: Date
-          presentings: string
+          presentings?: string
         })[]
       ).map((item) => ({
         id: item.id,
@@ -72,7 +57,7 @@ export class VerdictsClientService {
           Boolean(judge?.isPresident),
         ),
         keywords: item.keywords ?? [],
-        presentings: item.presentings,
+        presentings: item.presentings ?? '',
       })),
     }
   }
@@ -82,15 +67,15 @@ export class VerdictsClientService {
       id,
     })
 
-    if (!response.item?.verdictHtml) {
+    const content = response.item?.docContent
+
+    if (!content) {
       return null
     }
 
     return {
       item: {
-        content: await convertHtmlToContentfulRichText(
-          response.item.verdictHtml,
-        ),
+        content,
       },
     }
   }

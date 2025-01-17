@@ -1,5 +1,9 @@
-import { SliceType } from '@island.is/island-ui/contentful'
-import { Box, Breadcrumbs, GridContainer } from '@island.is/island-ui/core'
+import {
+  Box,
+  Breadcrumbs,
+  GridContainer,
+  PdfViewer,
+} from '@island.is/island-ui/core'
 import type {
   GetVerdictByIdQuery,
   GetVerdictByIdQueryVariables,
@@ -7,7 +11,6 @@ import type {
 import { withMainLayout } from '@island.is/web/layouts/main'
 import type { Screen } from '@island.is/web/types'
 import { CustomNextError } from '@island.is/web/units/errors'
-import { webRichText } from '@island.is/web/utils/richText'
 
 import { GET_VERDICT_BY_ID_QUERY } from '../queries/Verdicts'
 
@@ -25,7 +28,14 @@ const VerdictDetails: Screen<VerdictDetailsProps> = ({ item }) => {
             { title: 'Dómar', href: '/domar' },
           ]}
         />
-        {webRichText([item.content] as SliceType[])}
+
+        <Box display="flex" justifyContent="center">
+          <PdfViewer
+            file={`data:application/pdf;base64,${item.content}`}
+            showAllPages={true}
+            scale={1.4}
+          />
+        </Box>
       </GridContainer>
     </Box>
   )

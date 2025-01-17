@@ -57,8 +57,8 @@ export class VerdictsResponse {
 
 @ObjectType('WebVerdictByIdItem')
 class VerdictByIdItem {
-  @CacheField(() => graphqlTypeJson)
-  content!: Html
+  @Field()
+  content!: string
 }
 
 @ObjectType('WebVerdictByIdResponse')

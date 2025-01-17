@@ -2889,6 +2889,7 @@
         "caseCategory": { "type": "string" },
         "title": { "type": "string" },
         "verdict": { "type": "string" },
+        "docContent": { "type": "string" },
         "verdictHtml": { "type": "string" },
         "presentings": { "type": "string" },
         "presentingsHtml": { "type": "string" },
