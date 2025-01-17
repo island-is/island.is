@@ -75,6 +75,7 @@ const useGetLicensesData = ({ skipFetching }: { skipFetching: boolean }) => {
         ],
       },
     },
+    fetchPolicy: 'cache-first',
     skip: skipFetching,
   })
 

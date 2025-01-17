@@ -54,6 +54,12 @@ export type TableContext = Context & {
   tableItems: Array<any>
 }
 
+export type AsyncSelectContext = {
+  application: Application
+  apolloClient: ApolloClient<object>
+  selectedValue?: string[]
+}
+
 export type TagVariant =
   | 'blue'
   | 'darkerBlue'
@@ -389,12 +395,13 @@ export interface AsyncSelectField extends InputField {
   readonly type: FieldTypes.ASYNC_SELECT
   component: FieldComponents.ASYNC_SELECT
   placeholder?: FormText
-  loadOptions(c: Context): Promise<Option[]>
+  loadOptions(c: AsyncSelectContext): Promise<Option[]>
   onSelect?(s: SelectOption, cb: (t: unknown) => void): void
   loadingError?: FormText
   backgroundColor?: InputBackgroundColor
   isSearchable?: boolean
   isMulti?: boolean
+  updateOnSelect?: string[]
 }
 
 export interface TextField extends InputField {
@@ -785,23 +792,23 @@ export interface SliderField extends BaseField {
   step?: number
   snap?: boolean
   trackStyle?: CSSProperties
-  calculateCellStyle: (index: number) => CSSProperties
+  calculateCellStyle?: (index: number) => CSSProperties
   showLabel?: boolean
   showMinMaxLabels?: boolean
   showRemainderOverlay?: boolean
   showProgressOverlay?: boolean
   showToolTip?: boolean
-  label: {
+  label?: {
     singular: FormText
     plural: FormText
   }
   rangeDates?: {
     start: {
-      date: string
+      date: string | Date
       message: string
     }
     end: {
-      date: string
+      date: string | Date
       message: string
     }
   }
@@ -811,6 +818,8 @@ export interface SliderField extends BaseField {
   labelMultiplier?: number
   id: string
   saveAsString?: boolean
+  textColor?: Colors
+  progressOverlayColor?: Colors
 }
 
 export interface DisplayField extends BaseField {
