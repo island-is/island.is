@@ -63,11 +63,13 @@ const CasesReviewed: FC<Props> = ({ loading, cases }) => {
         row.defendants.some((defendant) => defendant.isSentToPrisonAdmin),
     )
 
-    if (row.indictmentRulingDecision === CaseIndictmentRulingDecision.FINE) {
-      return null
-    } else if (someDefendantIsSentToPrisonAdmin) {
+    if (someDefendantIsSentToPrisonAdmin) {
       variant = 'red'
       message = strings.tagVerdictViewSentToPrisonAdmin
+    } else if (
+      row.indictmentRulingDecision === CaseIndictmentRulingDecision.FINE
+    ) {
+      return null
     } else if (!row.indictmentVerdictViewedByAll) {
       variant = 'red'
       message = strings.tagVerdictUnviewed
