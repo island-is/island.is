@@ -1,6 +1,5 @@
 import { Dispatch, FC, SetStateAction } from 'react'
 import { useIntl } from 'react-intl'
-import { SingleValue } from 'react-select'
 
 import {
   AlertMessage,
