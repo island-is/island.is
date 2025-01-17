@@ -50,7 +50,10 @@ commit_as_dirty_bot() {
 if [[ "$run_mode" == true ]]; then
   # Split action into array safely:
   IFS=' ' read -r -a action_array <<<"$action"
-  yarn "${action_array[@]}"
+  if ! yarn "${action_array[@]}"; then
+    echo "Error: Failed to execute yarn command: ${action_array[*]}" >&2
+    exit 1
+  fi
 fi
 
 if [[ "$check_mode" == true ]] && ! git diff --quiet; then

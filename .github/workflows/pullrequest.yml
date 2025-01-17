@@ -370,11 +370,16 @@ jobs:
       - name: Lintfix
         if: ${{ !contains(github.event.pull_request.labels.*.name, 'dirty bypass') }}
         run: |
+          set -euo pipefail
+          echo "Running lint --fix for affected projects: ${AFFECTED_PROJECTS}"
           ./infra/scripts/ci/git-check-dirty.sh \
             -p "/" \
             -a "nx run-many --target lint --fix --parallel ${MAX_JOBS} --projects=${AFFECTED_PROJECTS//[[\]]}" \
             -o "dirtybot" \
-            -r
+            -r || {
+              echo "Error: Lintfix failed. Check the logs above for details." >&2
+              exit 1
+            }
       - name: Linting
         run: ./scripts/ci/run-in-parallel-native.sh lint
 
