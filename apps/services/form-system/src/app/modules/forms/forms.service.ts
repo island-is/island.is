@@ -51,6 +51,8 @@ import { FormStatus } from '../../enums/formStatus'
 import { Op } from 'sequelize'
 import { v4 as uuidV4 } from 'uuid'
 import { Sequelize } from 'sequelize-typescript'
+import { User } from '@island.is/auth-nest-tools'
+// import { User } from 'oidc-client-ts'
 
 @Injectable()
 export class FormsService {
@@ -79,9 +81,20 @@ export class FormsService {
     private readonly sequelize: Sequelize,
   ) {}
 
-  async findAll(organizationId: string): Promise<FormResponseDto> {
+  async findAll(user: User): Promise<FormResponseDto> {
+    const organizationNationalId = user.nationalId
+    const organization = await this.organizationModel.findOne({
+      where: { nationalId: organizationNationalId },
+    })
+
+    if (!organization) {
+      throw new NotFoundException(
+        `Organization with nationalId ${organizationNationalId} not found`,
+      )
+    }
+
     const forms = await this.formModel.findAll({
-      where: { organizationId: organizationId },
+      where: { organizationId: organization.id },
     })
 
     const keys = [
@@ -223,7 +236,8 @@ export class FormsService {
       await form.save()
     }
 
-    return this.findAll(form.organizationId)
+    return new FormResponseDto()
+    // return this.findAll(form.organizationId)
   }
 
   async update(id: string, updateFormDto: UpdateFormDto): Promise<void> {

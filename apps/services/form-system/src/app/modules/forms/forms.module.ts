@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common'
+import { MiddlewareConsumer, Module } from '@nestjs/common'
 import { SequelizeModule } from '@nestjs/sequelize'
 import { FormApplicantType } from '../formApplicantTypes/models/formApplicantType.model'
 import { Screen } from '../screens/models/screen.model'
