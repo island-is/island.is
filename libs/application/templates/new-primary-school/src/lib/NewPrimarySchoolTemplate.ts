@@ -97,6 +97,7 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
           'clearPlaceOfResidence',
           'clearLanguages',
           'clearAllergiesAndIntolerances',
+          'clearFreeSchoolMeal',
         ],
         meta: {
           name: States.DRAFT,
@@ -252,6 +253,20 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
           !hasOtherAllergies?.includes(YES)
         ) {
           unset(application.answers, 'allergiesAndIntolerances.usesEpiPen')
+        }
+        return context
+      }),
+      clearFreeSchoolMeal: assign((context) => {
+        const { application } = context
+        const { acceptFreeSchoolLunch, hasSpecialNeeds } =
+          getApplicationAnswers(application.answers)
+
+        if (acceptFreeSchoolLunch !== YES) {
+          unset(application.answers, 'freeSchoolMeal.hasSpecialNeeds')
+          unset(application.answers, 'freeSchoolMeal.specialNeedsType')
+        }
+        if (hasSpecialNeeds !== YES) {
+          unset(application.answers, 'freeSchoolMeal.specialNeedsType')
         }
         return context
       }),

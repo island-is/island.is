@@ -61,7 +61,7 @@ export const dataSchema = z.object({
       })
       .optional(),
   }),
-  relatives: z
+  contacts: z
     .array(
       z.object({
         fullName: z.string().min(1),
@@ -73,7 +73,7 @@ export const dataSchema = z.object({
       }),
     )
     .refine((r) => r === undefined || r.length > 0, {
-      params: errorMessages.relativesRequired,
+      params: errorMessages.contactsRequired,
     }),
   reasonForApplication: z
     .object({
@@ -153,6 +153,30 @@ export const dataSchema = z.object({
       path: ['childLanguage'],
       params: errorMessages.languagesRequired,
     }),
+  freeSchoolMeal: z
+    .object({
+      acceptFreeSchoolLunch: z.enum([YES, NO]),
+      hasSpecialNeeds: z.string().optional(),
+      specialNeedsType: z.string().optional(),
+    })
+    .refine(
+      ({ acceptFreeSchoolLunch, hasSpecialNeeds }) =>
+        acceptFreeSchoolLunch === YES
+          ? !!hasSpecialNeeds && hasSpecialNeeds.length > 0
+          : true,
+      {
+        path: ['hasSpecialNeeds'],
+      },
+    )
+    .refine(
+      ({ acceptFreeSchoolLunch, hasSpecialNeeds, specialNeedsType }) =>
+        acceptFreeSchoolLunch === YES && hasSpecialNeeds === YES
+          ? !!specialNeedsType && specialNeedsType.length > 0
+          : true,
+      {
+        path: ['specialNeedsType'],
+      },
+    ),
   allergiesAndIntolerances: z
     .object({
       hasFoodAllergiesOrIntolerances: z.array(z.string()),

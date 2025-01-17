@@ -13,7 +13,7 @@ import {
   Membership,
   Parents,
   Person,
-  RelativesRow,
+  ContactsRow,
   SelectOption,
   SiblingsRow,
 } from '../types'
@@ -36,7 +36,7 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
 
   const parents = getValueViaPath(answers, 'parents') as Parents
 
-  const relatives = getValueViaPath(answers, 'relatives') as RelativesRow[]
+  const contacts = getValueViaPath(answers, 'contacts') as ContactsRow[]
 
   const reasonForApplication = getValueViaPath(
     answers,
@@ -107,6 +107,21 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     answers,
     'languages.interpreter',
   ) as YesOrNo
+
+  const acceptFreeSchoolLunch = getValueViaPath(
+    answers,
+    'freeSchoolMeal.acceptFreeSchoolLunch',
+  ) as YesOrNo
+
+  const hasSpecialNeeds = getValueViaPath(
+    answers,
+    'freeSchoolMeal.hasSpecialNeeds',
+  ) as YesOrNo
+
+  const specialNeedsType = getValueViaPath(
+    answers,
+    'freeSchoolMeal.specialNeedsType',
+  ) as string
 
   const hasFoodAllergiesOrIntolerances = getValueViaPath(
     answers,
@@ -181,7 +196,7 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     childInfo,
     differentPlaceOfResidence,
     parents,
-    relatives,
+    contacts,
     reasonForApplication,
     reasonForApplicationCountry,
     reasonForApplicationStreetAddress,
@@ -195,6 +210,9 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     childLanguage,
     signLanguage,
     interpreter,
+    acceptFreeSchoolLunch,
+    hasSpecialNeeds,
+    specialNeedsType,
     hasFoodAllergiesOrIntolerances,
     foodAllergiesOrIntolerances,
     hasOtherAllergies,

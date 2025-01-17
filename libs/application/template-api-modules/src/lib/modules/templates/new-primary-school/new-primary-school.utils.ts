@@ -18,7 +18,7 @@ export const transformApplicationToNewPrimarySchoolDTO = (
     childInfo,
     parents,
     siblings,
-    relatives,
+    contacts,
     reasonForApplication,
     reasonForApplicationCountry,
     reasonForApplicationStreetAddress,
@@ -67,11 +67,11 @@ export const transformApplicationToNewPrimarySchoolDTO = (
           },
         ]
       : []),
-    ...relatives.map((relative) => ({
-      name: relative.fullName,
-      nationalId: relative.nationalId,
-      phone: relative.phoneNumber,
-      role: relative.relation,
+    ...contacts.map((contact) => ({
+      name: contact.fullName,
+      nationalId: contact.nationalId,
+      phone: contact.phoneNumber,
+      role: contact.relation,
     })),
     ...(reasonForApplication ===
     ReasonForApplicationOptions.SIBLINGS_IN_SAME_SCHOOL
