@@ -44,8 +44,6 @@ interface Props {
   policeCaseFiles?: PoliceCaseFilesData
 }
 
-
-
 const PoliceCaseFiles: FC<Props> = ({
   onUpload,
   policeCaseFileList,
@@ -58,7 +56,7 @@ const PoliceCaseFiles: FC<Props> = ({
   const validateFileName = (filename: string) => {
     const invalid = !filename.endsWith('.pdf')
     if (!invalid) return {}
-  
+
     return {
       invalid,
       tooltipText: formatMessage(strings.invalidPoliceCaseFileFromLOKE),
