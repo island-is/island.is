@@ -99,7 +99,7 @@ export const InputController = forwardRef(
       step,
       clearOnChange,
     } = props
-    const { setValue } = useFormContext()
+    const formContext = useFormContext()
 
     const renderChildInput = (c: ChildParams & TestSupport) => {
       const { value, onChange, ...props } = c
@@ -133,8 +133,8 @@ export const InputController = forwardRef(
               if (onInputChange) {
                 onInputChange(e)
               }
-              if (clearOnChange) {
-                clearInputsOnChange(clearOnChange, setValue)
+              if (clearOnChange && formContext?.setValue) {
+                clearInputsOnChange(clearOnChange, formContext.setValue)
               }
             }}
             onValueChange={({ value }) => {
@@ -176,8 +176,8 @@ export const InputController = forwardRef(
               if (onInputChange) {
                 onInputChange(e)
               }
-              if (clearOnChange) {
-                clearInputsOnChange(clearOnChange, setValue)
+              if (clearOnChange && formContext?.setValue) {
+                clearInputsOnChange(clearOnChange, formContext.setValue)
               }
             }}
             onValueChange={({ value }) => {
@@ -219,8 +219,8 @@ export const InputController = forwardRef(
               if (onInputChange) {
                 onInputChange(e)
               }
-              if (clearOnChange) {
-                clearInputsOnChange(clearOnChange, setValue)
+              if (clearOnChange && formContext?.setValue) {
+                clearInputsOnChange(clearOnChange, formContext.setValue)
               }
             }}
             onValueChange={({ value }) => {
@@ -261,8 +261,8 @@ export const InputController = forwardRef(
               if (onInputChange) {
                 onInputChange(e)
               }
-              if (clearOnChange) {
-                clearInputsOnChange(clearOnChange, setValue)
+              if (clearOnChange && formContext?.setValue) {
+                clearInputsOnChange(clearOnChange, formContext.setValue)
               }
             }}
             rows={rows}

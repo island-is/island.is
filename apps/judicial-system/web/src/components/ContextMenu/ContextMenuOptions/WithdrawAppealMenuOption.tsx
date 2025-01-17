@@ -42,13 +42,14 @@ export const useWithdrawAppealMenuOption = () => {
   const shouldDisplayWithdrawAppealOption = useCallback(
     (caseEntry: CaseListEntry) => {
       const isProsecution = isProsecutionUser(user)
+      const isDefence = isDefenceUser(user)
       const withdrawableCaseStates = [
         CaseAppealState.APPEALED,
         CaseAppealState.RECEIVED,
       ]
 
       if (
-        (!isProsecution && !isDefenceUser(user)) ||
+        (!isProsecution && !isDefence) ||
         !caseEntry.appealState ||
         !withdrawableCaseStates.includes(caseEntry.appealState)
       ) {
