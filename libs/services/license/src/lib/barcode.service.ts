@@ -99,11 +99,12 @@ export class BarcodeService {
     return this.cacheManager.set(key, value, BARCODE_EXPIRE_TIME_IN_SEC * 1000)
   }
 
-  async setSessionCache(
-    key: string,
-    value: string,
-  ) {
-    return this.cacheManager.set(`${BARCODE_ACTIVE_SESSION_KEY}:${key}`, value, BARCODE_SESSION_EXPIRE_TIME_IN_SEC * 1000)
+  async setSessionCache(key: string, value: string) {
+    return this.cacheManager.set(
+      `${BARCODE_ACTIVE_SESSION_KEY}:${key}`,
+      value,
+      BARCODE_SESSION_EXPIRE_TIME_IN_SEC * 1000,
+    )
   }
 
   async getSessionCache(key: string): Promise<string | undefined> {

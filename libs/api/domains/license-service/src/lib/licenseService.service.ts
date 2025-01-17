@@ -288,7 +288,7 @@ export class LicenseService {
       const msg = `Invalid license type. "${type}"`
       this.logger.warn(msg, { category: LOG_CATEGORY })
 
-    throw new InternalServerErrorException(msg)
+      throw new InternalServerErrorException(msg)
     }
 
     return client
@@ -484,9 +484,13 @@ export class LicenseService {
     const licenseType = this.mapLicenseType(genericUserLicenseType)
     const client = await this.getClient<typeof licenseType>(licenseType)
 
-      const barcodeSessionKey = user.sub ? this.getBarcodeSessionKey(licenseType, user.sub) : undefined
+    const barcodeSessionKey = user.sub
+      ? this.getBarcodeSessionKey(licenseType, user.sub)
+      : undefined
     if (barcodeSessionKey) {
-      const activeBarcodeSession = await this.barcodeService.getSessionCache(barcodeSessionKey)
+      const activeBarcodeSession = await this.barcodeService.getSessionCache(
+        barcodeSessionKey,
+      )
 
       if (activeBarcodeSession && activeBarcodeSession !== user.sid) {
         // If the user has an active session for the license type, we should not create a new barcode
@@ -541,7 +545,9 @@ export class LicenseService {
         licenseType,
         extraData,
       }),
-      barcodeSessionKey && user.sid && this.barcodeService.setSessionCache(barcodeSessionKey, user.sid),
+      barcodeSessionKey &&
+        user.sid &&
+        this.barcodeService.setSessionCache(barcodeSessionKey, user.sid),
     ])
 
     return tokenPayload
