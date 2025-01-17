@@ -35,7 +35,7 @@ export const externalData = {
       description: 'Second heading of announcement page',
     },
     announcementDescription: {
-      id: 'aosh.wan.application:externalData.dataProvider.announcementDescription',
+      id: 'aosh.wan.application:externalData.dataProvider.announcementDescription#markdown',
       defaultMessage: `Vinsamlega athugaðu að þú ert innskráð/ur sem einstaklingur. 
         Atvinnurekanda ber skylda til að sjá til þess að vinnuslys sé tilkynnt til 
         Vinnueftirlitsins þegar slys verður vegna eða við vinnu á vinnustað hans 
