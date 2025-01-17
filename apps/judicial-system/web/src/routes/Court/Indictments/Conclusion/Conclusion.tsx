@@ -236,6 +236,14 @@ const Conclusion: FC = () => {
     }
   }, [workingCase.mergeCaseNumber])
 
+  const handleMergeCaseNumberBlur = (value: string) => {
+    const validation = validate([[value, ['S-case-number']]])
+
+    setMergeCaseNumberErrorMessage(
+      validation.isValid ? undefined : validation.errorMessage,
+    )
+  }
+
   const stepIsValid = () => {
     // Do not leave any downloads unfinished
     if (!allFilesDoneOrError) {
@@ -543,14 +551,7 @@ const Conclusion: FC = () => {
                       setMergeCaseNumber(evt.target.value)
                     }}
                     onBlur={(evt) => {
-                      const validation = validate([
-                        [evt.target.value, ['S-case-number']],
-                      ])
-                      setMergeCaseNumberErrorMessage(
-                        validation.isValid
-                          ? undefined
-                          : validation.errorMessage,
-                      )
+                      handleMergeCaseNumberBlur(evt.target.value)
                     }}
                     hasError={Boolean(mergeCaseNumberErrorMessage)}
                     errorMessage={mergeCaseNumberErrorMessage}
