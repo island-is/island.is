@@ -15,6 +15,7 @@ import { useSDK } from '@contentful/react-apps-toolkit'
 import { CustomSortableContext } from '../../sortable/CustomSortableContext'
 import { SortableEntryCard } from '../../sortable/SortableEntryCard'
 import { mapLocalesToFieldApis } from '../utils'
+import * as styles from './OverviewLinksEditor.css'
 
 const ContentfulField = dynamic(
   () =>
@@ -100,13 +101,7 @@ export const OverviewLinksEditor = () => {
       paddingRight="spacingS"
       paddingTop="spacingL"
       paddingBottom="spacingL"
-      style={{
-        display: 'flex',
-        flexFlow: 'column nowrap',
-        gap: '16px',
-        margin: '0 auto',
-        maxWidth: '768px',
-      }}
+      className={styles.itemContainer}
     >
       <ContentfulField
         displayName="Internal Title"
@@ -165,13 +160,7 @@ export const OverviewLinksEditor = () => {
         <FormControl>
           <FormControl.Label>Overview Links</FormControl.Label>
           <CustomSortableContext
-            containerStyle={{
-              display: 'flex',
-              flexFlow: 'column nowrap',
-              gap: '16px',
-              margin: '0 auto',
-              maxWidth: '768px',
-            }}
+            containerClassName={styles.itemContainer}
             items={linkData.categoryCardItems}
             updateItems={(updatedItems: LinkData['categoryCardItems']) => {
               setLinkData((prevLinkData) => ({
@@ -227,23 +216,24 @@ export const OverviewLinksEditor = () => {
               />
             )}
           />
-          <Button
-            style={{ marginTop: '32px' }}
-            startIcon={<PlusIcon />}
-            onClick={() => {
-              setLinkData((prevLinkData) => ({
-                ...prevLinkData,
-                categoryCardItems: prevLinkData.categoryCardItems.concat({
-                  id: generateUniqueId(prevLinkData),
-                  title: '',
-                  description: '',
-                  href: '',
-                }),
-              }))
-            }}
-          >
-            Create new card
-          </Button>
+          <div className={styles.createCategoryCardButtonContainer}>
+            <Button
+              startIcon={<PlusIcon />}
+              onClick={() => {
+                setLinkData((prevLinkData) => ({
+                  ...prevLinkData,
+                  categoryCardItems: prevLinkData.categoryCardItems.concat({
+                    id: generateUniqueId(prevLinkData),
+                    title: '',
+                    description: '',
+                    href: '',
+                  }),
+                }))
+              }}
+            >
+              Create new card
+            </Button>
+          </div>
         </FormControl>
       )}
 

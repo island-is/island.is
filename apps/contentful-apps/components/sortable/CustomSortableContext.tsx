@@ -1,4 +1,4 @@
-import type { CSSProperties, ReactNode } from 'react'
+import type { ReactNode } from 'react'
 import {
   closestCenter,
   DndContext,
@@ -22,14 +22,14 @@ interface SortableComponentListProps {
   items: Item[]
   updateItems: (updatedItems: Item[]) => void
   renderItem: (item: Item) => ReactNode
-  containerStyle: CSSProperties
+  containerClassName: string
 }
 
 export const CustomSortableContext = ({
   items,
   renderItem,
   updateItems,
-  containerStyle,
+  containerClassName,
 }: SortableComponentListProps) => {
   const sensors = useSensors(useSensor(PointerSensor))
 
@@ -54,7 +54,7 @@ export const CustomSortableContext = ({
       onDragEnd={handleDragEnd}
     >
       <SortableContext items={items} strategy={verticalListSortingStrategy}>
-        <div style={containerStyle}>{items.map(renderItem)}</div>
+        <div className={containerClassName}>{items.map(renderItem)}</div>
       </SortableContext>
     </DndContext>
   )
