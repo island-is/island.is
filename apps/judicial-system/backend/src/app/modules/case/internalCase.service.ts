@@ -520,6 +520,29 @@ export class InternalCaseService {
     return { caseArchived: true }
   }
 
+  async getCaseHearingArrangements(date: Date): Promise<Case[]> {
+    const startOfDay = new Date(date.setHours(0, 0, 0, 0))
+    const endOfDay = new Date(date.setHours(23, 59, 59, 999))
+
+    return this.caseModel.findAll({
+      include: [
+        {
+          model: DateLog,
+          as: 'dateLogs',
+          where: {
+            date_type: ['ARRAIGNMENT_DATE', 'COURT_DATE'],
+            date: {
+              [Op.gte]: startOfDay,
+              [Op.lte]: endOfDay,
+            },
+          },
+          required: true,
+        },
+      ],
+      order: [[{ model: DateLog, as: 'dateLogs' }, 'date', 'ASC']],
+    })
+  }
+
   async deliverProsecutorToCourt(
     theCase: Case,
     user: TUser,
@@ -672,6 +695,9 @@ export class InternalCaseService {
   ): Promise<DeliverResponse> {
     await this.refreshFormatMessage()
 
+    const courtCaseNumber = withCourtCaseNumber && theCase.courtCaseNumber
+    const caseNumber = courtCaseNumber || theCase.policeCaseNumbers.join(', ')
+
     return this.courtService
       .updateIndictmentCaseWithCancellationNotice(
         user,
@@ -679,16 +705,14 @@ export class InternalCaseService {
         theCase.court?.name,
         theCase.courtCaseNumber,
         this.formatMessage(notifications.courtRevokedIndictmentEmail.subject, {
-          courtCaseNumber:
-            (withCourtCaseNumber && theCase.courtCaseNumber) || 'NONE',
+          courtCaseNumber: courtCaseNumber || 'NONE',
         }),
         stripHtmlTags(
           `${this.formatMessage(
             notifications.courtRevokedIndictmentEmail.body,
             {
               prosecutorsOffice: theCase.creatingProsecutor?.institution?.name,
-              courtCaseNumber:
-                (withCourtCaseNumber && theCase.courtCaseNumber) || 'NONE',
+              caseNumber,
             },
           )} ${this.formatMessage(notifications.emailTail)}`,
         ),

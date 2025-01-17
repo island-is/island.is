@@ -19,6 +19,8 @@ import {
   GetApplicationCaseRequest,
   GetApplicationCaseResponse,
   GetPdfRespone,
+  GetSignaturesForInvolvedPartyRequest,
+  Signature,
 } from '../../gen/fetch'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
@@ -203,6 +205,24 @@ export class OfficialJournalOfIcelandApplicationClientService {
       this.logger.warn('Failed to get application case', {
         error,
         applicationId: params.id,
+        category: LOG_CATEGORY,
+      })
+
+      throw error
+    }
+  }
+
+  async getSignaturesForInvolvedParty(
+    params: GetSignaturesForInvolvedPartyRequest,
+    auth: Auth,
+  ): Promise<Signature> {
+    try {
+      return await this.ojoiApplicationApiWithAuth(
+        auth,
+      ).getSignaturesForInvolvedParty(params)
+    } catch (error) {
+      this.logger.warn('Failed to get involved party signatures', {
+        error,
         category: LOG_CATEGORY,
       })
 
