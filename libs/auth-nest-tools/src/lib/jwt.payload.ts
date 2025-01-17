@@ -9,8 +9,8 @@ export interface JwtAct {
 }
 
 export interface JwtPayload {
-  sub: string
-  sid: string
+  sub?: string
+  sid?: string
   nationalId?: string
   scope: string | string[]
   client_id: string

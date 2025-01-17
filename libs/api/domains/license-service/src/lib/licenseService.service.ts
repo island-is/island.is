@@ -484,20 +484,23 @@ export class LicenseService {
     const licenseType = this.mapLicenseType(genericUserLicenseType)
     const client = await this.getClient<typeof licenseType>(licenseType)
 
-    const barcodeSessionKey = this.getBarcodeSessionKey(licenseType, user.sub)
-    const activeBarcodeSession = await this.barcodeService.getSessionCache(barcodeSessionKey)
+      const barcodeSessionKey = user.sub ? this.getBarcodeSessionKey(licenseType, user.sub) : undefined
+    if (barcodeSessionKey) {
+      const activeBarcodeSession = await this.barcodeService.getSessionCache(barcodeSessionKey)
 
-    if (activeBarcodeSession && activeBarcodeSession !== user.sid) {
-      // If the user has an active session for the license type, we should not create a new barcode
-      this.logger.info(
-        `User has an active session for license: ${licenseType}`,
-      )
+      if (activeBarcodeSession && activeBarcodeSession !== user.sid) {
+        // If the user has an active session for the license type, we should not create a new barcode
+        this.logger.info(
+          `User has an active session for license: ${licenseType}`,
+        )
 
-      throw new ProblemError({
-        type: ProblemType.BAD_SUBJECT,
-        title: `User has an active session for license type: ${licenseType}`,
-      })
+        throw new ProblemError({
+          type: ProblemType.BAD_SUBJECT,
+          title: `User has an active session for license type: ${licenseType}`,
+        })
+      }
     }
+
     if (
       genericUserLicense.license.pkpassStatus !==
       GenericUserLicensePkPassStatus.Available
@@ -538,7 +541,7 @@ export class LicenseService {
         licenseType,
         extraData,
       }),
-      this.barcodeService.setSessionCache(barcodeSessionKey, user.sid),
+      barcodeSessionKey && user.sid && this.barcodeService.setSessionCache(barcodeSessionKey, user.sid),
     ])
 
     return tokenPayload
