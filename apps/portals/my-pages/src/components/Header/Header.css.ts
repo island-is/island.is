@@ -7,7 +7,7 @@ import {
 import { theme, themeUtils } from '@island.is/island-ui/theme'
 
 export const header = style({
-  position: 'relative',
+  position: 'fixed',
   zIndex: zIndex.header,
   display: 'flex',
   alignItems: 'center',
@@ -18,7 +18,6 @@ export const header = style({
   '@media': {
     [`screen and (min-width: ${theme.breakpoints.lg}px)`]: {
       height: SERVICE_PORTAL_HEADER_HEIGHT_LG,
-      position: 'fixed',
     },
   },
   transition: 'all 250ms ease-in-out',

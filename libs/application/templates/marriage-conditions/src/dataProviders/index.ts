@@ -28,6 +28,10 @@ export const DistrictCommissionersPaymentCatalogApi =
     externalDataId: 'paymentDistrictCommissioners',
   })
 
+export const BirthCertificateApi = defineTemplateApi({
+  action: 'birthCertificate',
+})
+
 export const MockableDistrictCommissionersPaymentCatalogApi =
   MockablePaymentCatalogApi.configure({
     params: {
