@@ -8,18 +8,13 @@ import {
   getValueViaPath,
 } from '@island.is/application/core'
 import { Routes } from '../../../lib/constants'
-import { ExternalData } from '@island.is/application/types'
 import * as m from '../../../lib/messages'
 import { ApproveOptions } from '../../../lib/types'
 import { unknownRelationshipOptions } from '../../../utils/options'
 
 export const unknownRelationshipSubsection = buildSubSection({
-  condition: (_, externalData) => {
-    return (
-      (externalData as unknown as ExternalData).nationalRegistrySpouse.data ==
-      null
-    )
-  },
+  condition: (_, externalData) =>
+    getValueViaPath(externalData, 'nationalRegistrySpouse.data') == null,
   title: m.unknownRelationship.general.sectionTitle,
   id: Routes.UNKNOWNRELATIONSHIP,
   children: [

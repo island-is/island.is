@@ -12,14 +12,11 @@ import { NationalRegistrySpouse } from '@island.is/api/schema'
 import { inRelationshipOptions } from '../../../utils/options'
 
 export const inRelationshipSubsection = buildSubSection({
-  condition: (_, externalData) => {
-    const spouseData = getValueViaPath<NationalRegistrySpouse>(
+  condition: (_, externalData) =>
+    getValueViaPath<NationalRegistrySpouse>(
       externalData,
       'nationalRegistrySpouse.data',
-    )
-
-    return spouseData != null
-  },
+    ) != null,
   title: m.inRelationship.general.sectionTitle,
   id: Routes.INRELATIONSHIP,
   children: [
