@@ -20,14 +20,17 @@ defaults:
     shell: bash -euo pipefail {0}
 
 env:
-  PUSH_REGISTRY: ${{ vars.PUSH_REGISTRY }}
+  # Regsitry to for build images and cache
+  PRIVATE_REGISTRY: ${{ vars.PRIVATE_REGISTRY }}
+  # Runner images to run jobs in (actions-runner in ECR, or catthehacker locally)
+  ACTIONS_RUNNER_IMAGE: ${{ vars.ACTIONS_RUNNER_IMAGE || 'ubuntu-latest' }}
 
 jobs:
   prepare:
-    name: Prepare workflow Docker build
+    name: Prepare
     runs-on: ec2-runners
     container:
-      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
+      image: ${{ env.ACTIONS_RUNNER_IMAGE }}
     outputs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}
       node-image-tag: ${{ steps.build-args.outputs.node-image-tag }}
@@ -111,7 +114,7 @@ jobs:
     name: Build ${{ matrix.project }}
     runs-on: ec2-runners
     container:
-      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
+      image: ${{ env.ACTIONS_RUNNER_IMAGE }}
     needs: prepare
     strategy:
       fail-fast: false
@@ -125,8 +128,8 @@ jobs:
       - name: Prepare and debug inputs
         id: inputs
         env:
-          # Append a slash when PUSH_REGISTRY is non-empty
-          registry: "${{ env.PUSH_REGISTRY }}${{ env.PUSH_REGISTRY && '/' || '' }}"
+          # Append a slash when PRIVATE_REGISTRY is non-empty
+          registry: "${{ env.PRIVATE_REGISTRY }}${{ env.PRIVATE_REGISTRY && '/' || '' }}"
           # We don't use a repository prefix, just the raw project
           # repository: '${{ github.repository }}/${{ matrix.project }}'
           repository: '${{ matrix.project }}'
@@ -146,7 +149,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Configure AWS Credentials
-        if: ${{ !github.event.localrun && env.PUSH_REGISTRY }}
+        if: ${{ !github.event.localrun && env.PRIVATE_REGISTRY }}
         id: aws-creds
         uses: aws-actions/configure-aws-credentials@v4
         with:
@@ -244,7 +247,7 @@ jobs:
     name: Collect statuses
     runs-on: ec2-runners
     container:
-      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
+      image: ${{ env.ACTIONS_RUNNER_IMAGE }}
     if: ${{ !cancelled() }}
     needs:
       - prepare
