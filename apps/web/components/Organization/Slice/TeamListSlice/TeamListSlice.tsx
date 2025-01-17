@@ -18,12 +18,14 @@ interface TeamMemberListWrapperProps {
   id: string
   filterTags?: GenericTag[] | null
   showSearchInput?: boolean
+  orderBy?: string
 }
 
 export const TeamMemberListWrapper = ({
   id,
   filterTags,
   showSearchInput,
+  orderBy,
 }: TeamMemberListWrapperProps) => {
   const searchQueryId = `${id}q`
   const pageQueryId = `${id}page`
@@ -86,6 +88,7 @@ export const TeamMemberListWrapper = ({
               queryString: searchValue,
               tags,
               tagGroups,
+              orderBy,
             },
           },
         })
@@ -113,6 +116,7 @@ interface TeamListSliceProps extends TeamListProps {
   id: string
   filterTags?: GenericTag[] | null
   showSearchInput?: boolean
+  orderBy?: string
 }
 
 export const TeamListSlice = ({
@@ -121,6 +125,7 @@ export const TeamListSlice = ({
   filterTags,
   id,
   showSearchInput = true,
+  orderBy = 'Name',
 }: TeamListSliceProps) => {
   if (variant === 'accordion') {
     return (
@@ -128,6 +133,7 @@ export const TeamListSlice = ({
         id={id}
         filterTags={filterTags}
         showSearchInput={showSearchInput}
+        orderBy={orderBy}
       />
     )
   }

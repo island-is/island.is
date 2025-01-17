@@ -26,6 +26,7 @@ export class TeamListSyncService implements CmsSyncProvider<ITeamList> {
 
     for (const teamListEntry of entries) {
       const teamList = mapTeamList(teamListEntry)
+      let counter = teamList.teamMembers?.length ?? 0
       for (const member of teamList.teamMembers ?? []) {
         try {
           const memberEntry = teamListEntry.fields.teamMembers?.find(
@@ -62,6 +63,7 @@ export class TeamListSyncService implements CmsSyncProvider<ITeamList> {
             ],
             dateCreated: member.createdAt ?? '',
             dateUpdated: new Date().getTime().toString(),
+            releaseDate: String(counter--),
           })
         } catch (error) {
           logger.warn('Failed to import Team Member', {

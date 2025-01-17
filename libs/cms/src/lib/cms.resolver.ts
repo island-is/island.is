@@ -137,6 +137,8 @@ import {
   GetOrganizationPageStandaloneSitemapLevel2Input,
 } from './dto/getOrganizationPageStandaloneSitemap.input'
 import { GrantCardsList } from './models/grantCardsList.model'
+import { sortAlpha } from '@island.is/shared/utils'
+import { GetTeamMembersInputOrderBy } from './dto/getTeamMembers.input'
 
 const defaultCache: CacheControlOptions = { maxAge: CACHE_CONTROL_MAX_AGE }
 
@@ -928,8 +930,14 @@ export class FeaturedEventsResolver {
 export class TeamListResolver {
   @ResolveField(() => [TeamMember])
   async teamMembers(@Parent() teamList: TeamList) {
+    if (teamList?.variant === 'accordion') {
+      return []
+    }
+
     // The 'accordion' variant has a search so to reduce the inital payload (since it isn't used) we simply return an empty list
-    return teamList?.variant === 'accordion' ? [] : teamList?.teamMembers ?? []
+    return teamList?.teamMemberOrder !== GetTeamMembersInputOrderBy.MANUAL
+      ? teamList?.teamMembers?.sort(sortAlpha('name') as any)
+      : teamList?.teamMembers
   }
 }
 
