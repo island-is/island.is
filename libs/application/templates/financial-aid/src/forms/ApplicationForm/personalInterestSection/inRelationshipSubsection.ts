@@ -9,6 +9,7 @@ import {
 import { Routes } from '../../../lib/constants'
 import * as m from '../../../lib/messages'
 import { NationalRegistrySpouse } from '@island.is/api/schema'
+import { inRelationshipOptions } from '../../../utils/options'
 
 export const inRelationshipSubsection = buildSubSection({
   condition: (_, externalData) => {
@@ -47,12 +48,7 @@ export const inRelationshipSubsection = buildSubSection({
           id: 'spouse.approveTerms',
           title: '',
           required: true,
-          options: [
-            {
-              label: m.inRelationship.inputs.checkboxLabel,
-              value: 'yes',
-            },
-          ],
+          options: inRelationshipOptions,
         }),
       ],
     }),

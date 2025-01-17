@@ -4,31 +4,19 @@ import {
   buildSubSection,
   getValueViaPath,
 } from '@island.is/application/core'
-import { ExternalData } from '../../../lib/types'
 import * as m from '../../../lib/messages'
 import { Routes } from '../../../lib/constants'
 import { ApplicantChildCustodyInformation } from '@island.is/application/types'
 import { inRelationshipSubsection } from './inRelationshipSubsection'
+import { unknownRelationshipSubsection } from './unknownRelationshipSubsection'
+import { homeCircumstancesSubsection } from './homeCircumstancesSubsection'
 
 export const personalInterestSection = buildSection({
   id: 'personalInterest',
   title: m.section.personalInterest,
   children: [
     inRelationshipSubsection,
-    buildSubSection({
-      condition: (_, externalData) =>
-        (externalData as unknown as ExternalData).nationalRegistrySpouse.data ==
-        null,
-      title: m.unknownRelationship.general.sectionTitle,
-      id: Routes.UNKNOWNRELATIONSHIP,
-      children: [
-        buildCustomField({
-          id: Routes.UNKNOWNRELATIONSHIP,
-          title: m.unknownRelationship.general.pageTitle,
-          component: 'UnknownRelationshipForm',
-        }),
-      ],
-    }),
+    unknownRelationshipSubsection,
     buildSubSection({
       condition: (_, externalData) => {
         const childWithInfo = getValueViaPath(
@@ -69,17 +57,7 @@ export const personalInterestSection = buildSection({
         }),
       ],
     }),
-    buildSubSection({
-      id: Routes.HOMECIRCUMSTANCES,
-      title: m.homeCircumstancesForm.general.sectionTitle,
-      children: [
-        buildCustomField({
-          id: Routes.HOMECIRCUMSTANCES,
-          title: m.homeCircumstancesForm.general.pageTitle,
-          component: 'HomeCircumstancesForm',
-        }),
-      ],
-    }),
+    homeCircumstancesSubsection,
     buildSubSection({
       id: Routes.STUDENT,
       title: m.studentForm.general.sectionTitle,
