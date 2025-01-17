@@ -210,7 +210,7 @@ const useInfoCardItems = () => {
       return internalCourtCaseNumber
     }
 
-    const externalCourtCaseNumber = [workingCase.mergeCaseNumber]
+    const externalCourtCaseNumber = workingCase.mergeCaseNumber
     if (externalCourtCaseNumber) {
       return formatMessage(strings.externalMergeCase, {
         mergeCaseNumber: externalCourtCaseNumber,
