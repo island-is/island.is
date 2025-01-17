@@ -12,6 +12,8 @@ import { LicenseConfig } from './license.config'
 export const BARCODE_EXPIRE_TIME_IN_SEC = 60
 export const BARCODE_SESSION_EXPIRE_TIME_IN_SEC = 1800 // 30 minutes
 export const TOKEN_EXPIRED_ERROR = 'TokenExpiredError'
+export const BARCODE_ACTIVE_SESSION_KEY = 'activeSession'
+
 /**
  * License token data used to generate a license token
  * The reason for the one letter fields is to keep the token as small as possible, since it will be used to generate barcodes
@@ -92,20 +94,20 @@ export class BarcodeService {
 
   async setCache<Type extends LicenseType>(
     key: string,
-    value: BarcodeData<Type>,
+    value: BarcodeData<Type> | string,
   ) {
     return this.cacheManager.set(key, value, BARCODE_EXPIRE_TIME_IN_SEC * 1000)
   }
 
-  async setSessionCache<Type extends LicenseType>(
+  async setSessionCache(
     key: string,
-    value: string
+    value: string,
   ) {
-    return this.cacheManager.set(key, value, BARCODE_SESSION_EXPIRE_TIME_IN_SEC * 1000)
+    return this.cacheManager.set(`${BARCODE_ACTIVE_SESSION_KEY}:${key}`, value, BARCODE_SESSION_EXPIRE_TIME_IN_SEC * 1000)
   }
 
   async getSessionCache(key: string): Promise<string | undefined> {
-    return this.cacheManager.get(key)
+    return this.cacheManager.get(`${BARCODE_ACTIVE_SESSION_KEY}:${key}`)
   }
 
   async getCache<Type extends LicenseType>(

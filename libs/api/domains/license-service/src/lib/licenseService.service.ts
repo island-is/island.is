@@ -44,14 +44,12 @@ import { LicenseCollection } from './dto/GenericLicenseCollection.dto'
 import isAfter from 'date-fns/isAfter'
 import { isJSON, isJWT } from 'class-validator'
 import {
-  BARCODE_EXPIRE_TIME_IN_SEC,
   BarcodeService,
   TOKEN_EXPIRED_ERROR,
 } from '@island.is/services/license'
 import { UserAgent } from '@island.is/nest/core'
 import { ProblemError } from '@island.is/nest/problem'
 import { ProblemType } from '@island.is/shared/problem'
-import { coreErrorMessages } from '@island.is/application/core'
 
 const LOG_CATEGORY = 'license-service'
 
@@ -290,7 +288,7 @@ export class LicenseService {
       const msg = `Invalid license type. "${type}"`
       this.logger.warn(msg, { category: LOG_CATEGORY })
 
-      throw new InternalServerErrorException(msg)
+    throw new InternalServerErrorException(msg)
     }
 
     return client
@@ -473,6 +471,10 @@ export class LicenseService {
     )
   }
 
+  getBarcodeSessionKey(licenseType: LicenseType, sub: string) {
+    return `${licenseType}-${sub}`
+  }
+
   async createBarcode(
     user: User,
     genericUserLicense: GenericUserLicense,
@@ -482,7 +484,8 @@ export class LicenseService {
     const licenseType = this.mapLicenseType(genericUserLicenseType)
     const client = await this.getClient<typeof licenseType>(licenseType)
 
-    const activeBarcodeSession = await this.barcodeService.getSessionCache(`activeSession:${licenseType}-${user.sub}`)
+    const barcodeSessionKey = this.getBarcodeSessionKey(licenseType, user.sub)
+    const activeBarcodeSession = await this.barcodeService.getSessionCache(barcodeSessionKey)
 
     if (activeBarcodeSession && activeBarcodeSession !== user.sid) {
       // If the user has an active session for the license type, we should not create a new barcode
@@ -535,7 +538,7 @@ export class LicenseService {
         licenseType,
         extraData,
       }),
-      this.barcodeService.setSessionCache(`activeSession:${licenseType}-${user.sub}`, user.sid!),
+      user.sub ? this.barcodeService.setSessionCache(barcodeSessionKey, user.sid) : undefined,
     ])
 
     return tokenPayload

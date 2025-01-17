@@ -6,8 +6,8 @@ import {
 } from '@island.is/shared/types'
 
 export interface Auth {
-  sub?: string
-  sid?: string
+  sub: string
+  sid: string
   nationalId?: string
   scope: string[]
   authorization: string
