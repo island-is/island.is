@@ -32,6 +32,7 @@ import {
   getDurationDate,
 } from '@island.is/judicial-system-web/src/components/Table'
 import Table from '@island.is/judicial-system-web/src/components/Table/Table'
+import TagContainer from '@island.is/judicial-system-web/src/components/Tags/TagContainer/TagContainer'
 import {
   getPrisonCaseStateTag,
   getPunishmentTypeTag,
@@ -131,21 +132,15 @@ export const PrisonCases: FC = () => {
             },
             {
               cell: (row) => (
-                <>
-                  <Box
-                    display="inlineBlock"
-                    marginRight={row.appealState ? 1 : 0}
-                    marginBottom={row.appealState ? 1 : 0}
-                  >
-                    <TagCaseState caseState={CaseState.ACCEPTED} />
-                  </Box>
+                <TagContainer>
+                  <TagCaseState caseState={CaseState.ACCEPTED} />
                   {row.appealState && (
                     <TagAppealState
                       appealState={row.appealState}
                       appealRulingDecision={row.appealRulingDecision}
                     />
                   )}
-                </>
+                </TagContainer>
               ),
             },
             {
