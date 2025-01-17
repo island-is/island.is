@@ -88,6 +88,10 @@ RUN npm install -g \
 USER runner
 
 
+# Add alias for compatability
+FROM base-node AS output-base
+
+
 FROM base-node-with-pg AS output-express
 
 # Stage-specific ARGs
