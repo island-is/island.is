@@ -1,7 +1,3 @@
-type Item = {
-  [key: string]: unknown
-}
-
 const order =
   '0123456789aAáÁbBcCdDðÐeEéÉfFgGhHiIíÍjJkKlLmMnNoOóÓpPqQrRsStTuUúÚvVwWxXyYýÝzZþÞæÆöÖ'
 
@@ -14,9 +10,10 @@ const isStringOrNumber = (key: unknown) =>
   ['number', 'string'].includes(typeof key)
 
 export const sortAlpha =
-  <T extends Item>(key = 'title') =>
+  <T, K extends keyof T>(key?: K) =>
   (a: T, b: T) => {
     if (
+      !key ||
       !a[key] ||
       !b[key] ||
       !isStringOrNumber(a[key]) ||
