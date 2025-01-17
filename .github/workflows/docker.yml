@@ -36,8 +36,6 @@ jobs:
       node-image-tag: ${{ steps.build-args.outputs.node-image-tag }}
       playwright-image-tag: ${{ steps.build-args.outputs.playwright-image-tag }}
       docker-registry: ${{ steps.build-args.outputs.docker-registry }}
-      merge-commit-sha: ${{ steps.merge-commit.outputs.merge-commit-sha }}
-      merge-commit-sha-short: ${{ steps.merge-commit.outputs.merge-commit-sha-short }}
     steps:
       - uses: actions/checkout@v4
 
@@ -46,29 +44,6 @@ jobs:
         run: |
           echo node-image-tag="$(./scripts/ci/get-node-version.mjs)" >>"$GITHUB_OUTPUT"
           yarn info --json @playwright/test | jq -r '.children.Version | "playwright-image-tag=v\(.)-focal"' >>"$GITHUB_OUTPUT"
-
-      - name: Compute merge commit
-        id: merge-commit
-        if: ${{ !github.event.localrun }}
-        continue-on-error: true
-        run: |
-          # Create a temporary merge commit
-          MERGE_BASE="$(git merge-base HEAD "${{ github.base_ref }}")"
-          TEMP_BRANCH="temp-merge-$(date +%s)"
-          git checkout -f -b "$TEMP_BRANCH" "$MERGE_BASE"
-          git merge --no-commit --no-ff HEAD@{1}
-
-          # Get the tree object of the merge result
-          TREE_OBJECT="$(git write-tree)"
-
-          # Create a temporary merge commit
-          MERGE_COMMIT_SHA="$(git commit-tree $TREE_OBJECT -p HEAD -p HEAD@{1} -m "Temporary merge commit for tagging")"
-          echo merge-commit-sha="$MERGE_COMMIT_SHA" >>"$GITHUB_OUTPUT"
-          echo merge-commit-sha-short="${MERGE_COMMIT_SHA:0:7}" >>"$GITHUB_OUTPUT"
-
-          # Clean up the temporary branch
-          git checkout ${{ github.sha }}
-          git branch -D $TEMP_BRANCH
 
       - name: Create matrix from input
         id: set-matrix
@@ -200,8 +175,6 @@ jobs:
             type=sha,format=long,prefix=
             # The final sha for the merge commit
             type=raw,value=mcgh-${{ github.event.pull_request.merge_commit_sha }}
-            type=raw,value=mc-${{ needs.prepare.outputs.merge-commit-sha }}
-            type=raw,value=mc-${{ needs.prepare.outputs.merge-commit-sha-short }}
 
       - name: Docker build/cache deps
         uses: docker/build-push-action@v6
