@@ -21,7 +21,7 @@ defaults:
 
 env:
   # Regsitry to for build images and cache
-  PRIVATE_REGISTRY: ${{ vars.PRIVATE_REGISTRY }}
+  PRIVATE_REGISTRY: ${{ vars.PRIVATE_REGISTRY || 'localhost' }}
   # Runner images to run jobs in (actions-runner in ECR, or catthehacker locally)
   ACTIONS_RUNNER_IMAGE: ${{ vars.ACTIONS_RUNNER_IMAGE || 'ubuntu-latest' }}
 
@@ -103,21 +103,17 @@ jobs:
       - name: Prepare and debug inputs
         id: inputs
         env:
-          # Append a slash when PRIVATE_REGISTRY is non-empty
-          registry: "${{ env.PRIVATE_REGISTRY }}${{ env.PRIVATE_REGISTRY && '/' || '' }}"
           # We don't use a repository prefix, just the raw project
-          # repository: '${{ github.repository }}/${{ matrix.project }}'
-          repository: '${{ matrix.project }}'
+          image_repository: ${{ env.PRIVATE_REGISTRY }}/${{ matrix.project }}
           localrun: ${{ github.event.localrun }}
         run: |
-          IMAGE_REPOSITORY="$registry$repository"
           echo "Labels: ${{ toJSON(github.event.pull_request.labels) }}"
           echo "Matrix: ${{ toJSON(matrix) }}"
-          echo image-repository="$IMAGE_REPOSITORY" >>"$GITHUB_OUTPUT"
+          echo image-repository="$image_repository" >>"$GITHUB_OUTPUT"
           if [[ "$localrun" == true ]]; then
             echo build-cache="type=local,src=/tmp,dest=/tmp,mode=max" >>"$GITHUB_OUTPUT"
           else
-            echo build-cache="type=registry,image-manifest=true,oci-mediatypes=true,ref=$IMAGE_REPOSITORY:cache,mode=max" >>"$GITHUB_OUTPUT"
+            echo build-cache="type=registry,image-manifest=true,oci-mediatypes=true,ref=$image_repository:cache,mode=max" >>"$GITHUB_OUTPUT"
           fi
 
       - name: Check out repo
