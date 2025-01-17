@@ -17,9 +17,15 @@ import {
   SelectOption,
   SiblingsRow,
 } from '../types'
-import { ReasonForApplicationOptions } from './constants'
+import { ApplicationType, ReasonForApplicationOptions } from './constants'
+import { newPrimarySchoolMessages } from './messages'
 
 export const getApplicationAnswers = (answers: Application['answers']) => {
+  const applicationType = getValueViaPath(
+    answers,
+    'applicationType',
+  ) as ApplicationType
+
   const childNationalId = getValueViaPath(answers, 'childNationalId') as string
 
   const childInfo = getValueViaPath(answers, 'childInfo') as ChildInformation
@@ -154,6 +160,7 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
   ) as string
 
   return {
+    applicationType,
     childNationalId,
     childInfo,
     differentPlaceOfResidence,
@@ -331,4 +338,14 @@ export const getCurrentSchoolName = (application: Application) => {
   return childMemberships
     .map((membership) => membership.organization)
     .find((organization) => organization?.id === primaryOrgId)?.name
+}
+
+export const determineNameFromApplicationAnswers = (
+  application: Application,
+) => {
+  const { applicationType } = getApplicationAnswers(application.answers)
+
+  return applicationType === ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL
+    ? newPrimarySchoolMessages.shared.enrollmentApplicationName
+    : newPrimarySchoolMessages.shared.applicationName
 }

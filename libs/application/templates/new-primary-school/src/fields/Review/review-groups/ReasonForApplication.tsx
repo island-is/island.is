@@ -48,7 +48,7 @@ export const ReasonForApplication = ({
       ) : (
         <Stack space={2}>
           <GridRow>
-            <GridColumn span={['12/12', '12/12', '12/12', '12/12']}>
+            <GridColumn span="12/12">
               <DataValue
                 label={formatMessage(
                   newPrimarySchoolMessages.primarySchool

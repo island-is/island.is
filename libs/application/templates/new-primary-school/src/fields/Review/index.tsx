@@ -12,7 +12,11 @@ import { useLocale } from '@island.is/localization'
 import get from 'lodash/get'
 import has from 'lodash/has'
 import { FC } from 'react'
-import { ReasonForApplicationOptions, States } from '../../lib/constants'
+import {
+  ApplicationType,
+  ReasonForApplicationOptions,
+  States,
+} from '../../lib/constants'
 import { newPrimarySchoolMessages } from '../../lib/messages'
 import { getApplicationAnswers } from '../../lib/newPrimarySchoolUtils'
 
@@ -48,7 +52,9 @@ export const Review: FC<ReviewScreenProps> = ({
   const editable = field.props?.editable ?? false
   const hasError = (id: string) => get(errors, id) as string
 
-  const { reasonForApplication } = getApplicationAnswers(application.answers)
+  const { applicationType, reasonForApplication } = getApplicationAnswers(
+    application.answers,
+  )
 
   const groupHasNoErrors = (ids: string[]) =>
     ids.every((id) => !has(errors, id))
@@ -159,7 +165,9 @@ export const Review: FC<ReviewScreenProps> = ({
       <Child {...childProps} />
       <Parents {...childProps} />
       <Contacts {...childProps} />
-      <CurrentSchool {...childProps} />
+      {applicationType === ApplicationType.NEW_PRIMARY_SCHOOL && (
+        <CurrentSchool {...childProps} />
+      )}
       <School {...childProps} />
       <ReasonForApplication {...childProps} />
       {reasonForApplication ===
@@ -168,7 +176,9 @@ export const Review: FC<ReviewScreenProps> = ({
       )}
       <Languages {...childProps} />
       <FreeSchoolMeal {...childProps} />
-      <AllergiesAndIntolerances {...childProps} />
+      {applicationType === ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL && (
+        <AllergiesAndIntolerances {...childProps} />
+      )}
       <Support {...childProps} />
     </>
   )

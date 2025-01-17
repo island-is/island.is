@@ -54,3 +54,8 @@ export enum MembershipOrganizationType {
   National = 'national',
   School = 'school',
 }
+
+export enum ApplicationType {
+  NEW_PRIMARY_SCHOOL = 'newPrimarySchool',
+  ENROLLMENT_IN_PRIMARY_SCHOOL = 'enrollmentInPrimarySchool',
+}

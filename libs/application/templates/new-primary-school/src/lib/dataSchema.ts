@@ -2,7 +2,7 @@ import { NO, YES } from '@island.is/application/types'
 import * as kennitala from 'kennitala'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { z } from 'zod'
-import { ReasonForApplicationOptions } from './constants'
+import { ApplicationType, ReasonForApplicationOptions } from './constants'
 import { errorMessages } from './messages'
 
 const validatePhoneNumber = (value: string) => {
@@ -17,6 +17,10 @@ const phoneNumberSchema = z
   })
 
 export const dataSchema = z.object({
+  applicationType: z.enum([
+    ApplicationType.NEW_PRIMARY_SCHOOL,
+    ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL,
+  ]),
   approveExternalData: z.boolean().refine((v) => v),
   childNationalId: z.string().min(1),
   childInfo: z

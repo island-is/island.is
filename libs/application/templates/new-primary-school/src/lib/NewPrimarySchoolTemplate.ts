@@ -31,7 +31,10 @@ import {
 } from './constants'
 import { dataSchema } from './dataSchema'
 import { newPrimarySchoolMessages, statesMessages } from './messages'
-import { getApplicationAnswers } from './newPrimarySchoolUtils'
+import {
+  determineNameFromApplicationAnswers,
+  getApplicationAnswers,
+} from './newPrimarySchoolUtils'
 
 const NewPrimarySchoolTemplate: ApplicationTemplate<
   ApplicationContext,
@@ -39,7 +42,7 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
   Events
 > = {
   type: ApplicationTypes.NEW_PRIMARY_SCHOOL,
-  name: newPrimarySchoolMessages.shared.applicationName,
+  name: determineNameFromApplicationAnswers,
   institution: newPrimarySchoolMessages.shared.institution,
   translationNamespaces: ApplicationConfigurations.NewPrimarySchool.translation,
   dataSchema,
