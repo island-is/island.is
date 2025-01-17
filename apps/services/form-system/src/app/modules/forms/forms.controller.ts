@@ -6,12 +6,15 @@ import {
   Param,
   Post,
   Put,
+  UseGuards,
   VERSION_NEUTRAL,
 } from '@nestjs/common'
 import {
   ApiBody,
   ApiCreatedResponse,
   ApiNoContentResponse,
+  ApiOAuth2,
+  ApiOkResponse,
   ApiOperation,
   ApiParam,
   ApiTags,
@@ -20,7 +23,17 @@ import { FormsService } from './forms.service'
 import { CreateFormDto } from './models/dto/createForm.dto'
 import { FormResponseDto } from './models/dto/form.response.dto'
 import { UpdateFormDto } from './models/dto/updateForm.dto'
+import {
+  CurrentUser,
+  IdsUserGuard,
+  Scopes,
+  ScopesGuard,
+  User,
+} from '@island.is/auth-nest-tools'
+import { AdminPortalScope } from '@island.is/auth/scopes'
 
+@UseGuards(IdsUserGuard, ScopesGuard)
+@Scopes(AdminPortalScope.formSystem)
 @ApiTags('forms')
 @Controller({ path: 'forms', version: ['1', VERSION_NEUTRAL] })
 export class FormsController {
@@ -42,12 +55,12 @@ export class FormsController {
     type: FormResponseDto,
     description: 'Get all forms belonging to organization',
   })
-  @ApiParam({ name: 'organizationId', type: String })
-  @Get('organization/:organizationId')
+  @Get('organization')
   async findAll(
-    @Param('organizationId') organizationId: string,
+    @CurrentUser()
+    user: User,
   ): Promise<FormResponseDto> {
-    return await this.formsService.findAll(organizationId)
+    return await this.formsService.findAll(user)
   }
 
   @ApiOperation({ summary: 'Get form by idd' })
