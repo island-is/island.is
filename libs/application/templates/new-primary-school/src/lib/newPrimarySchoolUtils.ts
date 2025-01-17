@@ -292,18 +292,6 @@ export const getSelectedChild = (application: Application) => {
   return selectedChild
 }
 
-export const getSiblings = (application: Application) => {
-  const { children } = getApplicationExternalData(application.externalData)
-  const selectedChild = getSelectedChild(application)
-  const siblings = children
-    .filter((child) => child.nationalId !== selectedChild?.nationalId)
-    .map((child) => ({
-      fullName: child.fullName,
-      nationalId: child.nationalId,
-    }))
-  return siblings
-}
-
 export const getOtherParent = (
   application: Application,
 ): Person | undefined => {
@@ -366,8 +354,3 @@ export const getCurrentSchoolName = (application: Application) => {
     .map((membership) => membership.organization)
     .find((organization) => organization?.id === primaryOrgId)?.name
 }
-
-// export const getNewSchoolType = (answers) => {
-//   const { selectedSchool } = getApplicationAnswers(answers)
-//   selectedSchool.
-// }
