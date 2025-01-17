@@ -1,4 +1,4 @@
-import { Field, ObjectType } from '@nestjs/graphql'
+import { Field, Int, ObjectType } from '@nestjs/graphql'
 import { Section } from './section.model'
 import { LanguageType } from './languageType.model'
 import { Dependency } from './form.model'
@@ -59,3 +59,13 @@ export class Application {
   @Field(() => [Section], { nullable: 'itemsAndList' })
   sections?: Section[]
 }
+
+@ObjectType('FormSystemApplicationListDto')
+export class ApplicationListDto {
+  @Field(() => [Application], { nullable: 'itemsAndList' })
+  applications?: Application[]
+
+  @Field(() => Int, { nullable: true })
+  total?: number
+}
+

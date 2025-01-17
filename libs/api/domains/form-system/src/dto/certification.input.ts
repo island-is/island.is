@@ -51,3 +51,9 @@ export class DeleteCertificationInput {
   @Field(() => String, { nullable: true })
   id?: string
 }
+
+@InputType('FormSystemCreateFormCertificationTypeInput')
+export class FormCertificationTypeCreateInput {
+  @Field(() => FormCertificationTypeDtoInput, { nullable: true })
+  createFormCertificationTypeDto?: FormCertificationTypeDtoInput
+}

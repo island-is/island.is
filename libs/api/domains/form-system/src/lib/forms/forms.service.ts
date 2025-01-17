@@ -11,6 +11,7 @@ import {
   FormsControllerFindAllRequest,
   FormsControllerFindOneRequest,
   FormsControllerUpdateFormRequest,
+  FormUrlsApi,
 } from '@island.is/clients/form-system'
 import {
   CreateFormInput,
@@ -26,7 +27,8 @@ export class FormsService {
   constructor(
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
     private formsService: FormsApi,
-  ) {}
+    private formsUrlService: FormUrlsApi
+  ) { }
 
   // eslint-disable-next-line
   handleError(error: any, errorDetail?: string): ApolloError | null {

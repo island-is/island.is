@@ -1,4 +1,4 @@
-import { Field, InputType } from '@nestjs/graphql'
+import { Field, InputType, Int } from '@nestjs/graphql'
 import { OrganizationInput } from './organization.input'
 import { SectionInput } from './section.input'
 import { DependencyInput } from './form.input'
@@ -12,7 +12,28 @@ export class CreateApplicationInput {
 @InputType('FormSystemGetApplicationInput')
 export class GetApplicationInput {
   @Field(() => String, { nullable: true })
-  formId?: string
+  id?: string
+}
+
+@InputType('FormSystemSubmitScreenInput')
+export class SubmitScreenInput {
+  @Field(() => String, { nullable: true })
+  screenId?: string
+}
+
+@InputType('FormSystemGetApplicationsByOrganizationInput')
+export class GetApplicationsByOrganizationInput {
+  @Field(() => String, { nullable: true })
+  organizationId?: string
+
+  @Field(() => Int, { nullable: true })
+  page?: number
+
+  @Field(() => Int, { nullable: true })
+  limit?: number
+
+  @Field(() => Boolean, { nullable: true })
+  isTest?: boolean
 }
 
 @InputType('FormSystemApplicationEventDtoInput')

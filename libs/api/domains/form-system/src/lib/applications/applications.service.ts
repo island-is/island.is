@@ -4,15 +4,23 @@ import { AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { ApolloError } from '@apollo/client'
 import { handle4xx } from '../../utils/errorHandler'
 import {
+  ApplicationListDto,
   ApplicationsApi,
   ApplicationsControllerCreateRequest,
+  ApplicationsControllerFindAllRequest,
   ApplicationsControllerGetApplicationRequest,
+  ApplicationsControllerSubmitRequest,
+  ApplicationsControllerSubmitScreenRequest,
+  ApplicationsControllerUpdateRequest,
 } from '@island.is/clients/form-system'
 import {
   CreateApplicationInput,
   GetApplicationInput,
+  GetApplicationsByOrganizationInput,
+  SubmitScreenInput,
 } from '../../dto/application.input'
 import { Application } from '../../models/applications.model'
+import { UpdateApplicationDependenciesInput } from '../../dto/applicant.input'
 
 @Injectable()
 export class ApplicationsService {
@@ -20,7 +28,7 @@ export class ApplicationsService {
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
     private applicationsApi: ApplicationsApi,
-  ) {}
+  ) { }
 
   // eslint-disable-next-line
   handleError(error: any, errorDetail?: string): ApolloError | null {
@@ -70,5 +78,69 @@ export class ApplicationsService {
     }
 
     return response as Application
+  }
+
+  async updateDependencies(
+    auth: User,
+    input: UpdateApplicationDependenciesInput
+  ): Promise<void> {
+    const response = await this.applicationsApiWithAuth(auth)
+      .applicationsControllerUpdate(
+        input as ApplicationsControllerUpdateRequest
+      )
+      .catch((e) => handle4xx(e, this.handleError, 'failed to update application dependencies'))
+
+    if (!response || response instanceof ApolloError) {
+      return
+    }
+    return response
+  }
+
+  async submitApplication(
+    auth: User,
+    input: GetApplicationInput
+  ): Promise<void> {
+    const response = await this.applicationsApiWithAuth(auth)
+      .applicationsControllerSubmit(
+        input as ApplicationsControllerSubmitRequest
+      )
+      .catch((e) => handle4xx(e, this.handleError, 'failed to submit application'))
+
+    if (!response || response instanceof ApolloError) {
+      return
+    }
+    return response
+  }
+
+  async submitScreen(
+    auth: User,
+    input: SubmitScreenInput
+  ): Promise<void> {
+    const response = await this.applicationsApiWithAuth(auth)
+      .applicationsControllerSubmitScreen(
+        input as ApplicationsControllerSubmitScreenRequest
+      )
+      .catch((e) => handle4xx(e, this.handleError, 'failed to submit screen'))
+
+    if (!response || response instanceof ApolloError) {
+      return
+    }
+    return response
+  }
+
+  async getAllApplicationsByOrganization(
+    auth: User,
+    input: GetApplicationsByOrganizationInput
+  ): Promise<ApplicationListDto> {
+    const response = await this.applicationsApiWithAuth(auth)
+      .applicationsControllerFindAll(
+        input as ApplicationsControllerFindAllRequest
+      )
+      .catch((e) => handle4xx(e, this.handleError, 'failed to get applications by organization'))
+
+    if (!response || response instanceof ApolloError) {
+      return {}
+    }
+    return response
   }
 }
