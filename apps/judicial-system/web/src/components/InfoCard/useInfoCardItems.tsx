@@ -35,8 +35,9 @@ const useInfoCardItems = () => {
   const { workingCase } = useContext(FormContext)
 
   // helper for info card items. If items have no values they will have [{falsy value}]
-  const showItem = (item: Item) => isNonEmptyArray(item.values) && !!item.values[0]
-  
+  const showItem = (item: Item) =>
+    isNonEmptyArray(item.values) && !!item.values[0]
+
   const defendants = (
     caseType?: CaseType | null,
     displayAppealExpirationInfo?: boolean,
@@ -379,7 +380,7 @@ const useInfoCardItems = () => {
   }
 
   return {
-    showItem, 
+    showItem,
     defendants,
     indictmentCreated,
     prosecutor,
