@@ -930,14 +930,18 @@ export class FeaturedEventsResolver {
 export class TeamListResolver {
   @ResolveField(() => [TeamMember])
   async teamMembers(@Parent() teamList: TeamList) {
+    // The 'accordion' variant has a client side search so to reduce the inital payload (since it isn't used) we simply return an empty list
     if (teamList?.variant === 'accordion') {
       return []
     }
 
-    // The 'accordion' variant has a search so to reduce the inital payload (since it isn't used) we simply return an empty list
-    return teamList?.teamMemberOrder !== GetTeamMembersInputOrderBy.MANUAL
-      ? teamList?.teamMembers?.sort(sortAlpha('name') as any)
-      : teamList?.teamMembers
+    const teamMembers = teamList.teamMembers ?? []
+
+    if (teamList?.teamMemberOrder !== GetTeamMembersInputOrderBy.MANUAL) {
+      teamMembers.sort(sortAlpha('name'))
+    }
+
+    return teamMembers
   }
 }
 
