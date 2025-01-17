@@ -15,7 +15,7 @@ import { OptionsType } from '../../lib/constants'
 import { newPrimarySchoolMessages } from '../../lib/messages'
 import { getSelectedOptionLabel } from '../../lib/newPrimarySchoolUtils'
 
-const RelativesTableRepeater: FC<React.PropsWithChildren<FieldBaseProps>> = ({
+const ContactsTableRepeater: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   error,
   field,
   application,
@@ -37,15 +37,15 @@ const RelativesTableRepeater: FC<React.PropsWithChildren<FieldBaseProps>> = ({
         id,
         title,
         formTitle:
-          newPrimarySchoolMessages.childrenNParents.relativesRegistrationTitle,
+          newPrimarySchoolMessages.childrenNParents.contactsRegistrationTitle,
         addItemButtonText:
-          newPrimarySchoolMessages.childrenNParents.relativesAddRelative,
+          newPrimarySchoolMessages.childrenNParents.contactsAddContact,
         saveItemButtonText:
-          newPrimarySchoolMessages.childrenNParents.relativesRegisterRelative,
+          newPrimarySchoolMessages.childrenNParents.contactsRegisterContact,
         removeButtonTooltipText:
-          newPrimarySchoolMessages.childrenNParents.relativesDeleteRelative,
+          newPrimarySchoolMessages.childrenNParents.contactsDeleteContact,
         marginTop: 0,
-        maxRows: 6,
+        maxRows: 4,
         fields: {
           fullName: {
             component: 'input',
@@ -103,4 +103,4 @@ const RelativesTableRepeater: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   )
 }
 
-export default RelativesTableRepeater
+export default ContactsTableRepeater
