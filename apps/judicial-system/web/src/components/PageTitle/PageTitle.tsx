@@ -16,7 +16,7 @@ import {
 import { core } from '@island.is/judicial-system-web/messages'
 
 import { FormContext } from '../FormProvider/FormProvider'
-import TagCaseState from '../TagCaseState/TagCaseState'
+import TagCaseState from '../Tags/TagCaseState/TagCaseState'
 
 interface Props {
   marginBottom?: ResponsiveProp<Space>

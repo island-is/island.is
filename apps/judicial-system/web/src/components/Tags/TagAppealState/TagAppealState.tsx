@@ -10,7 +10,7 @@ import {
   InstitutionType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
-import { UserContext } from '../UserProvider/UserProvider'
+import { UserContext } from '../../UserProvider/UserProvider'
 
 interface Props {
   appealState?: CaseAppealState | null
