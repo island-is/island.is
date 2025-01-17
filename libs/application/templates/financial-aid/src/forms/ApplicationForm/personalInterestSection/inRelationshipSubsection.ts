@@ -4,19 +4,14 @@ import {
   buildMultiField,
   buildSubSection,
   buildTextField,
-  getValueViaPath,
 } from '@island.is/application/core'
 import { Routes } from '../../../lib/constants'
 import * as m from '../../../lib/messages'
-import { NationalRegistrySpouse } from '@island.is/api/schema'
 import { inRelationshipOptions } from '../../../utils/options'
+import { hasSpouse } from '../../../utils/conditions'
 
 export const inRelationshipSubsection = buildSubSection({
-  condition: (_, externalData) =>
-    getValueViaPath<NationalRegistrySpouse>(
-      externalData,
-      'nationalRegistrySpouse.data',
-    ) != null,
+  condition: hasSpouse,
   title: m.inRelationship.general.sectionTitle,
   id: Routes.INRELATIONSHIP,
   children: [

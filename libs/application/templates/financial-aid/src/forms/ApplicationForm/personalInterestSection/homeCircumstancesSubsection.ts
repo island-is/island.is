@@ -3,12 +3,11 @@ import {
   buildRadioField,
   buildSubSection,
   buildTextField,
-  getValueViaPath,
 } from '@island.is/application/core'
 import { Routes } from '../../../lib/constants'
 import * as m from '../../../lib/messages'
 import { homeCircumstancesOptions } from '../../../utils/options'
-import { HomeCircumstances } from '@island.is/financial-aid/shared/lib'
+import { hasOtherHomeCircumstances } from '../../../utils/conditions'
 
 export const homeCircumstancesSubsection = buildSubSection({
   id: Routes.HOMECIRCUMSTANCES,
@@ -25,11 +24,7 @@ export const homeCircumstancesSubsection = buildSubSection({
           options: homeCircumstancesOptions,
         }),
         buildTextField({
-          condition: (answers) =>
-            getValueViaPath<HomeCircumstances>(
-              answers,
-              'homeCircumstances.type',
-            ) === HomeCircumstances.OTHER,
+          condition: hasOtherHomeCircumstances,
           id: 'homeCircumstances.custom',
           title: m.input.label,
           variant: 'textarea',

@@ -13,6 +13,13 @@ export const unknownRelationshipOptions = [
   },
 ]
 
+export const unknownRelationshipCheckboxOptions = [
+  {
+    label: m.unknownRelationship.inputs.checkboxLabel,
+    value: ApproveOptions.Yes,
+  },
+]
+
 export const inRelationshipOptions = [
   {
     label: m.inRelationship.inputs.checkboxLabel,

@@ -5,16 +5,18 @@ import {
   buildRadioField,
   buildSubSection,
   buildTextField,
-  getValueViaPath,
 } from '@island.is/application/core'
 import { Routes } from '../../../lib/constants'
 import * as m from '../../../lib/messages'
-import { ApproveOptions } from '../../../lib/types'
-import { unknownRelationshipOptions } from '../../../utils/options'
+
+import {
+  unknownRelationshipCheckboxOptions,
+  unknownRelationshipOptions,
+} from '../../../utils/options'
+import { hasNoSpouse, isInRelationship } from '../../../utils/conditions'
 
 export const unknownRelationshipSubsection = buildSubSection({
-  condition: (_, externalData) =>
-    getValueViaPath(externalData, 'nationalRegistrySpouse.data') == null,
+  condition: hasNoSpouse,
   title: m.unknownRelationship.general.sectionTitle,
   id: Routes.UNKNOWNRELATIONSHIP,
   children: [
@@ -44,11 +46,7 @@ export const unknownRelationshipSubsection = buildSubSection({
           options: unknownRelationshipOptions,
         }),
         buildTextField({
-          condition: (answers) =>
-            getValueViaPath<ApproveOptions>(
-              answers,
-              'relationshipStatus.unregisteredCohabitation',
-            ) === ApproveOptions.Yes,
+          condition: isInRelationship,
           id: 'relationshipStatus.spouseNationalId',
           title: m.unknownRelationship.inputs.spouseNationalId,
           placeholder: m.unknownRelationship.inputs.spouseNationalIdPlaceholder,
@@ -56,31 +54,18 @@ export const unknownRelationshipSubsection = buildSubSection({
           required: true,
         }),
         buildTextField({
-          condition: (answers) =>
-            getValueViaPath<ApproveOptions>(
-              answers,
-              'relationshipStatus.unregisteredCohabitation',
-            ) === ApproveOptions.Yes,
+          condition: isInRelationship,
           id: 'relationshipStatus.spouseEmail',
           title: m.unknownRelationship.inputs.spouseEmail,
           placeholder: m.unknownRelationship.inputs.spouseEmailPlaceholder,
           required: true,
         }),
         buildCheckboxField({
-          condition: (answers) =>
-            getValueViaPath<ApproveOptions>(
-              answers,
-              'relationshipStatus.unregisteredCohabitation',
-            ) === ApproveOptions.Yes,
+          condition: isInRelationship,
           id: 'relationshipStatus.spouseApproveTerms',
           title: '',
           required: true,
-          options: [
-            {
-              label: m.unknownRelationship.inputs.checkboxLabel,
-              value: ApproveOptions.Yes,
-            },
-          ],
+          options: unknownRelationshipCheckboxOptions,
         }),
       ],
     }),
