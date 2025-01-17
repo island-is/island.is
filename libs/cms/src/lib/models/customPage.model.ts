@@ -1,4 +1,4 @@
-import { GraphQLJSONObject } from 'graphql-type-json'
+import GraphQLJSON, { GraphQLJSONObject } from 'graphql-type-json'
 import type { SystemMetadata } from '@island.is/shared/types'
 import { Field, ObjectType, ID } from '@nestjs/graphql'
 import { CacheField } from '@island.is/nest/graphql'

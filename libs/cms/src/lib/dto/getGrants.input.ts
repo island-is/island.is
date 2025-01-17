@@ -12,6 +12,15 @@ registerEnumType(GrantsSortBy, {
   name: 'GetGrantsInputSortByEnum',
 })
 
+export enum GrantsAvailabilityStatus {
+  OPEN,
+  CLOSED,
+}
+
+registerEnumType(GrantsAvailabilityStatus, {
+  name: 'GetGrantsInputAvailabilityStatusEnum',
+})
+
 @InputType()
 export class GetGrantsInput {
   @Field({ nullable: true })
@@ -36,6 +45,10 @@ export class GetGrantsInput {
   @CacheField(() => GrantsSortBy, { nullable: true })
   @IsOptional()
   sort?: GrantsSortBy
+
+  @CacheField(() => GrantsAvailabilityStatus, { nullable: true })
+  @IsOptional()
+  status?: GrantsAvailabilityStatus
 
   @Field(() => [String], { nullable: true })
   @IsArray()

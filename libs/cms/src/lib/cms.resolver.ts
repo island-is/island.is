@@ -137,7 +137,6 @@ import {
   GetOrganizationPageStandaloneSitemapLevel2Input,
 } from './dto/getOrganizationPageStandaloneSitemap.input'
 import { GrantCardsList } from './models/grantCardsList.model'
-import { logger } from '@island.is/logging'
 
 const defaultCache: CacheControlOptions = { maxAge: CACHE_CONTROL_MAX_AGE }
 

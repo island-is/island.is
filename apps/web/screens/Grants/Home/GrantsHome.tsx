@@ -36,6 +36,8 @@ import {
   CategorySlug,
   mapTagToMessageId,
 } from './mapTagToMessageId'
+import { useMemo } from 'react'
+import { isDefined } from '@island.is/shared/utils'
 
 const GrantsHomePage: CustomScreen<GrantsHomeProps> = ({
   categories,
@@ -60,6 +62,22 @@ const GrantsHomePage: CustomScreen<GrantsHomeProps> = ({
       isTag: true,
     },
   ]
+
+  const categorySlugs: Array<CategorySlug> = useMemo(() => {
+    const ordering: Array<string> | null =
+      customPageData?.configJson?.categoryOrdering ?? null
+    if (!ordering) {
+      return [...CATEGORY_TAG_SLUGS]
+    }
+
+    return ordering
+      .map((slug) => {
+        if (CATEGORY_TAG_SLUGS.includes(slug as CategorySlug)) {
+          return slug as CategorySlug
+        }
+      })
+      .filter(isDefined)
+  }, [customPageData?.configJson?.categoryOrdering])
 
   return (
     <Box>
@@ -135,26 +153,34 @@ const GrantsHomePage: CustomScreen<GrantsHomeProps> = ({
             </Box>
 
             <GridRow>
-              {categories?.map((c) => (
-                <GridColumn
-                  key={c.slug}
-                  span={['1/1', '1/2', '1/2', '1/3']}
-                  paddingTop={3}
-                  paddingBottom={3}
-                >
-                  <CategoryCard
-                    href={`${searchUrl}?category=${c.slug}`}
-                    heading={c.title}
-                    text={
-                      CATEGORY_TAG_SLUGS.includes(c.slug as CategorySlug)
-                        ? formatMessage(
-                            mapTagToMessageId(c.slug as CategorySlug),
-                          )
-                        : ''
-                    }
-                  />
-                </GridColumn>
-              ))}
+              {categorySlugs
+                ?.map((c) => {
+                  const category = categories?.find((ct) => c === ct.slug)
+
+                  if (!category) {
+                    return undefined
+                  }
+
+                  return (
+                    <GridColumn
+                      key={c}
+                      span={['1/1', '1/2', '1/2', '1/3']}
+                      paddingTop={3}
+                      paddingBottom={3}
+                    >
+                      <CategoryCard
+                        href={`${searchUrl}?category=${c}`}
+                        heading={category.title}
+                        text={
+                          CATEGORY_TAG_SLUGS.includes(c)
+                            ? formatMessage(mapTagToMessageId(c))
+                            : ''
+                        }
+                      />
+                    </GridColumn>
+                  )
+                })
+                .filter(isDefined)}
             </GridRow>
           </GridContainer>
         </Box>

@@ -56,6 +56,13 @@ export class GrantsSyncService implements CmsSyncProvider<IGrant> {
                   mapped?.howToApply?.map(pruneNonSearchableSliceUnionFields),
                 )
               : undefined,
+            mapped.answeringQuestions
+              ? extractStringsFromObject(
+                  mapped?.answeringQuestions?.map(
+                    pruneNonSearchableSliceUnionFields,
+                  ),
+                )
+              : undefined,
             mapped?.applicationHints
               ? extractStringsFromObject(
                   mapped?.applicationHints?.map(
@@ -107,26 +114,20 @@ export class GrantsSyncService implements CmsSyncProvider<IGrant> {
             })
           }
 
-          switch (mapped.status) {
-            case GrantStatus.OPEN:
-            case GrantStatus.ALWAYS_OPEN:
-            case GrantStatus.OPEN_WITH_NOTE:
-              tags.push({
-                key: 'open',
-                type: 'status',
-                value: 'open',
-              })
-              break
-            case GrantStatus.CLOSED:
-            case GrantStatus.CLOSED_OPENING_SOON:
-            case GrantStatus.CLOSED_OPENING_SOON_WITH_ESTIMATION:
-            case GrantStatus.CLOSED_WITH_NOTE:
-              tags.push({
-                key: 'closed',
-                type: 'status',
-                value: 'closed',
-              })
-              break
+          if (mapped.availability) {
+            tags.push({
+              type: 'availability',
+              key: mapped.availability.toString().toLowerCase(),
+              value: mapped.availability.toString().toLowerCase(),
+            })
+          }
+
+          if (mapped.statusIsAutomatic) {
+            tags.push({
+              type: 'isAutomatic',
+              key: 'isAutomatic',
+              value: mapped.statusIsAutomatic ? 'true' : 'false',
+            })
           }
 
           // Tag the document with the ids of its children so we can later look up what document a child belongs to
@@ -137,7 +138,6 @@ export class GrantsSyncService implements CmsSyncProvider<IGrant> {
               type: 'hasChildEntryWithId',
             })
           }
-
           return {
             _id: mapped.id,
             title: mapped.name,
@@ -147,8 +147,12 @@ export class GrantsSyncService implements CmsSyncProvider<IGrant> {
             termPool: createTerms([mapped.name]),
             response: JSON.stringify({ ...mapped, typename: 'Grant' }),
             tags,
-            dateCreated: entry.sys.createdAt,
             dateUpdated: new Date().getTime().toString(),
+            releaseDate: mapped.dateFrom ?? undefined,
+            //hacky, but neccessary as of now. If Grant is automatic, the dates MUST be populated
+            dateCreated: mapped.statusIsAutomatic
+              ? mapped.dateTo ?? entry.sys.createdAt
+              : entry.sys.createdAt,
           }
         } catch (error) {
           logger.warn('Failed to import grants', {

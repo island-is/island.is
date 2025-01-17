@@ -649,6 +649,7 @@ export class CmsElasticsearchService {
       page = 1,
       size = 8,
       sort,
+      status,
       categories,
       types,
       organizations,

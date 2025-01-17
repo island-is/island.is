@@ -2,13 +2,11 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useWindowSize } from 'react-use'
 import debounce from 'lodash/debounce'
-import sortBy from 'lodash/sortBy'
 import NextLink from 'next/link'
 import {
   parseAsArrayOf,
   parseAsInteger,
   parseAsString,
-  parseAsStringLiteral,
   useQueryState,
 } from 'next-usequerystate'
 import { useLazyQuery } from '@apollo/client'
@@ -17,16 +15,13 @@ import {
   Box,
   BreadCrumbItem,
   Breadcrumbs,
-  Filter,
   FilterInput,
-  FilterMultiChoice,
   Pagination,
   Text,
 } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import { debounceTime } from '@island.is/shared/constants'
 import { Locale } from '@island.is/shared/types'
-import { isDefined } from '@island.is/shared/utils'
 import { GrantHeaderWithImage, GrantWrapper } from '@island.is/web/components'
 import {
   ContentLanguage,
@@ -285,28 +280,27 @@ const GrantsSearchResultsPage: CustomScreen<GrantsHomeProps> = ({
                 locale={locale}
               />
             </Box>
-            {totalPages && totalPages > 1 ? (
-              <Box marginTop={2} marginBottom={0}>
-                <Pagination
-                  variant="purple"
-                  page={page}
-                  itemsPerPage={PAGE_SIZE}
-                  totalItems={totalHits}
-                  totalPages={totalPages}
-                  renderLink={(page, className, children) => (
-                    <Box
-                      cursor="pointer"
-                      className={className}
-                      onClick={() => {
-                        setPage(page)
-                      }}
-                    >
-                      {children}
-                    </Box>
-                  )}
-                />
-              </Box>
-            ) : undefined}
+
+            <Box marginTop={2} marginBottom={0} hidden={(totalPages ?? 0) < 1}>
+              <Pagination
+                variant="purple"
+                page={page}
+                itemsPerPage={PAGE_SIZE}
+                totalItems={totalHits}
+                totalPages={totalPages}
+                renderLink={(page, className, children) => (
+                  <Box
+                    cursor="pointer"
+                    className={className}
+                    onClick={() => {
+                      setPage(page)
+                    }}
+                  >
+                    {children}
+                  </Box>
+                )}
+              />
+            </Box>
           </SidebarLayout>
         )}
         {isMobile && (
@@ -333,83 +327,17 @@ const GrantsSearchResultsPage: CustomScreen<GrantsHomeProps> = ({
               justifyContent="spaceBetween"
             >
               <Text>{hitsMessage}</Text>
-              <Box
-                component="form"
-                borderRadius="large"
-                action={currentUrl}
-                onSubmit={(e) => {
-                  e.preventDefault()
+              <GrantsSearchResultsFilter
+                searchState={{
+                  category: categories ?? undefined,
+                  type: types ?? undefined,
+                  organization: organizations ?? undefined,
                 }}
-              >
-                <Filter
-                  labelClearAll={formatMessage(m.search.clearFilters)}
-                  labelOpen=""
-                  labelClear=""
-                  onFilterClear={onResetFilter}
-                >
-                  <Box
-                    background="white"
-                    padding={[1, 1, 2]}
-                    borderRadius="large"
-                  >
-                    <FilterMultiChoice
-                      labelClear={formatMessage(m.search.clearFilterCategory)}
-                      onChange={(e) =>
-                        onSearchFilterUpdate(e.categoryId, e.selected)
-                      }
-                      onClear={onResetFilter}
-                      categories={[
-                        tags
-                          ? {
-                              id: 'category',
-                              label: formatMessage(m.search.category),
-                              selected: categories ?? [],
-                              filters: sortBy(
-                                tags?.filter(
-                                  (t) =>
-                                    t.genericTagGroup?.slug ===
-                                    'grant-category',
-                                ),
-                                'title',
-                              ).map((t) => ({
-                                value: t.slug,
-                                label: t.title,
-                              })),
-                            }
-                          : undefined,
-                        tags
-                          ? {
-                              id: 'type',
-                              label: formatMessage(m.search.type),
-                              selected: types ?? [],
-                              filters: sortBy(
-                                tags?.filter(
-                                  (t) =>
-                                    t.genericTagGroup?.slug === 'grant-type',
-                                ),
-                                'title',
-                              ).map((t) => ({
-                                value: t.slug,
-                                label: t.title,
-                              })),
-                            }
-                          : undefined,
-                        {
-                          id: 'organization',
-                          label: formatMessage(m.search.organization),
-                          selected: organizations ?? [],
-                          filters: [
-                            {
-                              value: 'rannsoknamidstoed-islands-rannis',
-                              label: 'Rannís',
-                            },
-                          ],
-                        },
-                      ].filter(isDefined)}
-                    />
-                  </Box>
-                </Filter>
-              </Box>
+                onSearchUpdate={onSearchFilterUpdate}
+                onReset={onResetFilter}
+                tags={tags ?? []}
+                url={currentUrl}
+              />
             </Box>
             <SearchResultsContent grants={grants} locale={locale} />
           </Box>
