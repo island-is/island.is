@@ -126,7 +126,7 @@ jobs:
         uses: actions-cool/check-user-permission@v2
         id: check-permission
         # This fails locally without a token, and only prevents "admin" label usage
-        continue-on-error: true
+        if: ${{ !!github.event.localrun }}
 
       - name: Set magic env if test-everything label is set
         if: ${{ contains(github.event.pull_request.labels.*.name, 'test everything') && steps.check-permission.outcome == 'success' && steps.check-permission.outputs['user-permission'] == 'admin' }}
