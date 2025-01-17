@@ -43,4 +43,9 @@ export const error = defineMessages({
     defaultMessage: 'Villa kom upp við að skila inn umsókn',
     description: 'Failed to submit application',
   },
+  errorGetFromAOSH: {
+    id: 'aosh.sr.application:error.errorGetFromAOSH',
+    defaultMessage: 'Ekki tókst að sækja gögn frá Vinnueftirlitinu',
+    description: 'Failed to fetch data from AOSH',
+  },
 })
