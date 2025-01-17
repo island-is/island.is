@@ -26,5 +26,5 @@ docker buildx build \
   --cache-to=type=local,dest="$PROJECT_ROOT"/cache_output \
   --build-arg NODE_IMAGE_TAG="$NODE_IMAGE_TAG" \
   -f "${DIR}"/Dockerfile \
-  --target=base-node \
+  --target=output-base \
   "$PROJECT_ROOT"
