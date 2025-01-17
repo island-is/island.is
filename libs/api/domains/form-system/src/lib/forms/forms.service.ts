@@ -8,14 +8,12 @@ import {
   CreateFormDto,
   FormsApi,
   FormsControllerDeleteRequest,
-  FormsControllerFindAllRequest,
   FormsControllerFindOneRequest,
   FormsControllerUpdateFormRequest,
 } from '@island.is/clients/form-system'
 import {
   CreateFormInput,
   DeleteFormInput,
-  GetAllFormsInput,
   GetFormInput,
   UpdateFormInput,
 } from '../../dto/form.input'
@@ -82,10 +80,9 @@ export class FormsService {
 
   async getAllForms(
     auth: User,
-    input: GetAllFormsInput,
   ): Promise<FormResponse> {
     const response = await this.formsApiWithAuth(auth)
-      .formsControllerFindAll(input as FormsControllerFindAllRequest)
+      .formsControllerFindAll()
       .catch((e) => handle4xx(e, this.handleError, 'failed to get all forms'))
 
     if (!response || response instanceof ApolloError) {

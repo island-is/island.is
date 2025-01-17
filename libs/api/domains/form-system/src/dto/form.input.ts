@@ -41,12 +41,6 @@ export class GetFormInput {
   id?: string
 }
 
-@InputType('FormSystemGetAllFormsInput')
-export class GetAllFormsInput {
-  @Field(() => String, { nullable: true })
-  organizationId?: string
-}
-
 @InputType('FormSystemFormUrlInput')
 export class FormUrlInput {
   @Field(() => String, { nullable: true })

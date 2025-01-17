@@ -317,20 +317,11 @@
         ]
       }
     },
-    "/forms/organization/{organizationId}": {
+    "/forms/organization": {
       "get": {
         "operationId": "FormsController_findAll",
         "summary": "Get all forms belonging to organization",
-        "parameters": [
-          {
-            "name": "organizationId",
-            "required": true,
-            "in": "path",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
+        "parameters": [],
         "responses": {
           "201": {
             "description": "Get all forms belonging to organization",
@@ -2195,6 +2186,9 @@
             "format": "date-time",
             "type": "string"
           },
+          "beenPublished": {
+            "type": "boolean"
+          },
           "isTranslated": {
             "type": "boolean"
           },
@@ -2263,6 +2257,7 @@
           "slug",
           "created",
           "modified",
+          "beenPublished",
           "isTranslated",
           "applicationDaysToRemove",
           "derivedFrom",
@@ -2512,6 +2507,9 @@
           "invalidationDate": {
             "format": "date-time",
             "type": "string"
+          },
+          "beenPublished": {
+            "type": "boolean"
           },
           "isTranslated": {
             "type": "boolean"

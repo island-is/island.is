@@ -13,7 +13,6 @@ import {
   CreateFormInput,
   DeleteFormInput,
   GetFormInput,
-  GetAllFormsInput,
   UpdateFormInput,
 } from '../../dto/form.input'
 import { FormResponse } from '../../models/form.model'
@@ -60,10 +59,9 @@ export class FormsResolver {
     name: 'formSystemGetAllForms',
   })
   async getAllForms(
-    @Args('input', { type: () => GetAllFormsInput }) input: GetAllFormsInput,
     @CurrentUser() user: User,
   ): Promise<FormResponse> {
-    return this.formsService.getAllForms(user, input)
+    return this.formsService.getAllForms(user)
   }
 
   @Mutation(() => Boolean, {
