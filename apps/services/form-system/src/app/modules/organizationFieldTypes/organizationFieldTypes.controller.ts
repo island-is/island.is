@@ -4,6 +4,7 @@ import {
   Delete,
   Param,
   Post,
+  UseGuards,
   VERSION_NEUTRAL,
 } from '@nestjs/common'
 import {
@@ -17,7 +18,11 @@ import {
 import { OrganizationFieldTypesService } from './organizationFieldTypes.service'
 import { OrganizationFieldTypeDto } from './models/dto/organizationFieldType.dto'
 import { CreateOrganizationFieldTypeDto } from './models/dto/createOrganizationFieldType.dto'
+import { IdsUserGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
+import { AdminPortalScope } from '@island.is/auth/scopes'
 
+@UseGuards(IdsUserGuard, ScopesGuard)
+@Scopes(AdminPortalScope.formSystemSuperUser)
 @ApiTags('organization field types')
 @Controller({
   path: 'organizationFieldTypes',

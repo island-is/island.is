@@ -6,6 +6,7 @@ import {
   Put,
   Delete,
   VERSION_NEUTRAL,
+  UseGuards,
 } from '@nestjs/common'
 import {
   ApiBody,
@@ -20,7 +21,11 @@ import { CreateListItemDto } from './models/dto/createListItem.dto'
 import { ListItemDto } from './models/dto/listItem.dto'
 import { UpdateListItemDto } from './models/dto/updateListItem.dto'
 import { UpdateListItemsDisplayOrderDto } from './models/dto/updateListItemsDisplayOrder.dto'
+import { IdsUserGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
+import { AdminPortalScope } from '@island.is/auth/scopes'
 
+@UseGuards(IdsUserGuard, ScopesGuard)
+@Scopes(AdminPortalScope.formSystem)
 @ApiTags('list items')
 @Controller({ path: 'listItems', version: ['1', VERSION_NEUTRAL] })
 export class ListItemsController {

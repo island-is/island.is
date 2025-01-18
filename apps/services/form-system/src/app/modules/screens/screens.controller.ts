@@ -6,6 +6,7 @@ import {
   Param,
   Put,
   VERSION_NEUTRAL,
+  UseGuards,
 } from '@nestjs/common'
 import { ScreensService } from './screens.service'
 import { CreateScreenDto } from './models/dto/createScreen.dto'
@@ -20,7 +21,11 @@ import {
 import { UpdateScreenDto } from './models/dto/updateScreen.dto'
 import { ScreenDto } from './models/dto/screen.dto'
 import { UpdateScreensDisplayOrderDto } from './models/dto/updateScreensDisplayOrder.dto'
+import { IdsUserGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
+import { AdminPortalScope } from '@island.is/auth/scopes'
 
+@UseGuards(IdsUserGuard, ScopesGuard)
+@Scopes(AdminPortalScope.formSystem)
 @ApiTags('screens')
 @Controller({ path: 'screens', version: ['1', VERSION_NEUTRAL] })
 export class ScreensController {
@@ -37,10 +42,9 @@ export class ScreensController {
     return this.screensService.create(createScreenDto)
   }
 
-  @ApiOperation({ summary: 'Updates screen' })
-  @ApiCreatedResponse({
-    description: 'Updates a screen',
-    type: ScreenDto,
+  @ApiOperation({ summary: 'Update screen' })
+  @ApiNoContentResponse({
+    description: 'Update screen',
   })
   @ApiBody({ type: UpdateScreenDto })
   @ApiParam({ name: 'id', type: String })
@@ -48,7 +52,7 @@ export class ScreensController {
   async update(
     @Param('id') id: string,
     @Body() updateScreenDto: UpdateScreenDto,
-  ): Promise<ScreenDto> {
+  ): Promise<void> {
     return await this.screensService.update(id, updateScreenDto)
   }
 

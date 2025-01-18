@@ -4,6 +4,7 @@ import {
   Delete,
   Param,
   Post,
+  UseGuards,
   VERSION_NEUTRAL,
 } from '@nestjs/common'
 import {
@@ -17,7 +18,11 @@ import {
 import { FormCertificationTypesService } from './formCertificationTypes.service'
 import { CreateFormCertificationTypeDto } from './models/dto/createFormCertificationType.dto'
 import { FormCertificationTypeDto } from './models/dto/formCertificationType.dto'
+import { IdsUserGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
+import { AdminPortalScope } from '@island.is/auth/scopes'
 
+@UseGuards(IdsUserGuard, ScopesGuard)
+@Scopes(AdminPortalScope.formSystem)
 @ApiTags('form certification types')
 @Controller({ path: 'formCertificationTypes', version: ['1', VERSION_NEUTRAL] })
 export class FormCertificationTypesController {
