@@ -5,6 +5,7 @@ import {
   Param,
   Post,
   Put,
+  UseGuards,
   VERSION_NEUTRAL,
 } from '@nestjs/common'
 import { FieldsService } from './fields.service'
@@ -20,7 +21,11 @@ import {
 import { UpdateFieldDto } from './models/dto/updateField.dto'
 import { FieldDto } from './models/dto/field.dto'
 import { UpdateFieldsDisplayOrderDto } from './models/dto/updateFieldsDisplayOrder.dto'
+import { IdsUserGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
+import { AdminPortalScope } from '@island.is/auth/scopes'
 
+@UseGuards(IdsUserGuard, ScopesGuard)
+@Scopes(AdminPortalScope.formSystem)
 @ApiTags('fields')
 @Controller({ path: 'fields', version: ['1', VERSION_NEUTRAL] })
 export class FieldsController {

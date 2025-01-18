@@ -5,6 +5,7 @@ import {
   Param,
   Post,
   Put,
+  UseGuards,
   VERSION_NEUTRAL,
 } from '@nestjs/common'
 import {
@@ -19,7 +20,11 @@ import { OrganizationUrlsService } from './organizationUrls.service'
 import { OrganizationUrlDto } from './models/dto/organizationUrl.dto'
 import { CreateOrganizationUrlDto } from './models/dto/createOrganizationUrl.dto'
 import { UpdateOrganizationUrlDto } from './models/dto/updateOrganizationUrl.dto'
+import { IdsUserGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
+import { AdminPortalScope } from '@island.is/auth/scopes'
 
+@UseGuards(IdsUserGuard, ScopesGuard)
+@Scopes(AdminPortalScope.formSystem)
 @ApiTags('organization urls')
 @Controller({
   path: 'organizationUrls',
@@ -43,7 +48,7 @@ export class OrganizationUrlsController {
   }
 
   @ApiOperation({ summary: 'Update an organization url' })
-  @ApiCreatedResponse({
+  @ApiNoContentResponse({
     description: 'Update an organization url',
   })
   @ApiBody({ type: UpdateOrganizationUrlDto })

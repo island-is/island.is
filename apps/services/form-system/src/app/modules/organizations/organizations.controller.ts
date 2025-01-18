@@ -6,10 +6,12 @@ import {
   Param,
   NotFoundException,
   VERSION_NEUTRAL,
+  UseGuards,
 } from '@nestjs/common'
 import {
   ApiBody,
   ApiCreatedResponse,
+  ApiOkResponse,
   ApiOperation,
   ApiParam,
   ApiTags,
@@ -18,7 +20,11 @@ import { OrganizationsService } from './organizations.service'
 import { CreateOrganizationDto } from './models/dto/createOrganization.dto'
 import { OrganizationsResponseDto } from './models/dto/organizations.response.dto'
 import { OrganizationDto } from './models/dto/organization.dto'
+import { IdsUserGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
+import { AdminPortalScope } from '@island.is/auth/scopes'
 
+@UseGuards(IdsUserGuard, ScopesGuard)
+@Scopes(AdminPortalScope.formSystemSuperUser)
 @ApiTags('organizations')
 @Controller({ path: 'organizations', version: ['1', VERSION_NEUTRAL] })
 export class OrganizationsController {
@@ -38,7 +44,7 @@ export class OrganizationsController {
   }
 
   @ApiOperation({ summary: 'Get all Organizations' })
-  @ApiCreatedResponse({
+  @ApiOkResponse({
     description: 'Get all Organizations',
     type: OrganizationsResponseDto,
   })
@@ -48,7 +54,7 @@ export class OrganizationsController {
   }
 
   @ApiOperation({ summary: 'Get an organization by id' })
-  @ApiCreatedResponse({
+  @ApiOkResponse({
     description: 'Get an organization by id',
     type: OrganizationDto,
   })

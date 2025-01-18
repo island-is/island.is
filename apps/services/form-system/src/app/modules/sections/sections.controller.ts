@@ -6,6 +6,7 @@ import {
   Param,
   Put,
   VERSION_NEUTRAL,
+  UseGuards,
 } from '@nestjs/common'
 import { SectionsService } from './sections.service'
 import { CreateSectionDto } from './models/dto/createSection.dto'
@@ -20,7 +21,11 @@ import {
 import { UpdateSectionDto } from './models/dto/updateSection.dto'
 import { SectionDto } from './models/dto/section.dto'
 import { UpdateSectionsDisplayOrderDto } from './models/dto/updateSectionsDisplayOrder.dto'
+import { IdsUserGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
+import { AdminPortalScope } from '@island.is/auth/scopes'
 
+@UseGuards(IdsUserGuard, ScopesGuard)
+@Scopes(AdminPortalScope.formSystem)
 @ApiTags('sections')
 @Controller({ path: 'sections', version: ['1', VERSION_NEUTRAL] })
 export class SectionsController {
@@ -38,7 +43,7 @@ export class SectionsController {
   }
 
   @ApiOperation({ summary: 'Updates a section' })
-  @ApiCreatedResponse({
+  @ApiNoContentResponse({
     description: 'Updates a section',
   })
   @ApiBody({ type: UpdateSectionDto })
