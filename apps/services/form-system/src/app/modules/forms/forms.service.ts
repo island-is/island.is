@@ -196,7 +196,7 @@ export class FormsService {
     return formResponse
   }
 
-  async publish(id: string): Promise<FormResponseDto> {
+  async publish(id: string, user: User): Promise<FormResponseDto> {
     const form = await this.formModel.findByPk(id)
 
     if (!form) {
@@ -218,6 +218,7 @@ export class FormsService {
     }
 
     form.status = FormStatus.PUBLISHED
+    form.beenPublished = true
 
     if (form.derivedFrom) {
       const derivedFromForm = await this.formModel.findByPk(form.derivedFrom)
@@ -236,8 +237,7 @@ export class FormsService {
       await form.save()
     }
 
-    return new FormResponseDto()
-    // return this.findAll(form.organizationId)
+    return this.findAll(user)
   }
 
   async update(id: string, updateFormDto: UpdateFormDto): Promise<void> {

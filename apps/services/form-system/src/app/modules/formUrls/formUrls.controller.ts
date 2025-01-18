@@ -4,6 +4,7 @@ import {
   Delete,
   Param,
   Post,
+  UseGuards,
   VERSION_NEUTRAL,
 } from '@nestjs/common'
 import {
@@ -17,7 +18,11 @@ import {
 import { FormUrlsService } from './formUrls.services'
 import { FormUrlDto } from './models/dto/formUrl.dto'
 import { CreateFormUrlDto } from './models/dto/createFormUrl.dto'
+import { IdsUserGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
+import { AdminPortalScope } from '@island.is/auth/scopes'
 
+@UseGuards(IdsUserGuard, ScopesGuard)
+@Scopes(AdminPortalScope.formSystem)
 @ApiTags('form urls')
 @Controller({
   path: 'formUrls',

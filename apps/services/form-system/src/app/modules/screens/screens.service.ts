@@ -30,10 +30,7 @@ export class ScreensService {
     return screenDto
   }
 
-  async update(
-    id: string,
-    updateScreenDto: UpdateScreenDto,
-  ): Promise<ScreenDto> {
+  async update(id: string, updateScreenDto: UpdateScreenDto): Promise<void> {
     const screen = await this.screenModel.findByPk(id)
 
     if (!screen) {
@@ -43,21 +40,6 @@ export class ScreensService {
     Object.assign(screen, updateScreenDto)
 
     await screen.save()
-
-    const keys = [
-      'id',
-      'sectionId',
-      'name',
-      'displayOrder',
-      'multiset',
-      'callRuleset',
-    ]
-    const screenDto: ScreenDto = defaults(
-      pick(screen, keys),
-      zipObject(keys, Array(keys.length).fill(null)),
-    ) as ScreenDto
-
-    return screenDto
   }
 
   async updateDisplayOrder(

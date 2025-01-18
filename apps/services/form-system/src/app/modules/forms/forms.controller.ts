@@ -13,7 +13,6 @@ import {
   ApiBody,
   ApiCreatedResponse,
   ApiNoContentResponse,
-  ApiOAuth2,
   ApiOkResponse,
   ApiOperation,
   ApiParam,
@@ -51,7 +50,7 @@ export class FormsController {
   }
 
   @ApiOperation({ summary: 'Get all forms belonging to organization' })
-  @ApiCreatedResponse({
+  @ApiOkResponse({
     type: FormResponseDto,
     description: 'Get all forms belonging to organization',
   })
@@ -63,8 +62,8 @@ export class FormsController {
     return await this.formsService.findAll(user)
   }
 
-  @ApiOperation({ summary: 'Get form by idd' })
-  @ApiCreatedResponse({
+  @ApiOperation({ summary: 'Get form by id' })
+  @ApiOkResponse({
     type: FormResponseDto,
     description: 'Get form by id',
   })
@@ -75,7 +74,7 @@ export class FormsController {
   }
 
   @ApiOperation({ summary: 'Update form' })
-  @ApiCreatedResponse({
+  @ApiNoContentResponse({
     description: 'Update form',
   })
   @ApiBody({ type: UpdateFormDto })
@@ -89,7 +88,7 @@ export class FormsController {
   }
 
   @ApiOperation({ summary: 'Change published form' })
-  @ApiCreatedResponse({
+  @ApiOkResponse({
     type: FormResponseDto,
     description: 'Change published form',
   })
@@ -100,19 +99,23 @@ export class FormsController {
   }
 
   @ApiOperation({ summary: 'Publish form' })
-  @ApiCreatedResponse({
+  @ApiOkResponse({
     type: FormResponseDto,
     description: 'Publish form',
   })
   @ApiParam({ name: 'id', type: String })
   @Put('publish/:id')
-  async publish(@Param('id') id: string): Promise<FormResponseDto> {
-    return await this.formsService.publish(id)
+  async publish(
+    @Param('id') id: string,
+    @CurrentUser()
+    user: User,
+  ): Promise<FormResponseDto> {
+    return await this.formsService.publish(id, user)
   }
 
   @ApiOperation({ summary: 'Delete form' })
   @ApiNoContentResponse({
-    description: 'Delete field',
+    description: 'Delete form',
   })
   @ApiParam({ name: 'id', type: String })
   @Delete(':id')

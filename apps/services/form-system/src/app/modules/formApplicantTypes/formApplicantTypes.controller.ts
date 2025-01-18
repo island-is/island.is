@@ -5,6 +5,7 @@ import {
   Param,
   Post,
   Put,
+  UseGuards,
   VERSION_NEUTRAL,
 } from '@nestjs/common'
 import {
@@ -19,7 +20,11 @@ import { FormApplicantTypesService } from './formApplicantTypes.service'
 import { CreateFormApplicantTypeDto } from './models/dto/createFormApplicantType.dto'
 import { UpdateFormApplicantTypeDto } from './models/dto/updateFormApplicantType.dto'
 import { FormApplicantTypeDto } from './models/dto/formApplicantType.dto'
+import { IdsUserGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
+import { AdminPortalScope } from '@island.is/auth/scopes'
 
+@UseGuards(IdsUserGuard, ScopesGuard)
+@Scopes(AdminPortalScope.formSystem)
 @ApiTags('form applicant types')
 @Controller({ path: 'formApplicantTypes', version: ['1', VERSION_NEUTRAL] })
 export class FormApplicantTypesController {
@@ -41,7 +46,7 @@ export class FormApplicantTypesController {
   }
 
   @ApiOperation({ summary: 'Update form applicant' })
-  @ApiCreatedResponse({
+  @ApiNoContentResponse({
     description: 'Update form applicant',
   })
   @ApiBody({ type: UpdateFormApplicantTypeDto })

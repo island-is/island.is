@@ -12,6 +12,7 @@ import {
   ApiBody,
   ApiCreatedResponse,
   ApiNoContentResponse,
+  ApiOkResponse,
   ApiOperation,
   ApiParam,
   ApiTags,
@@ -30,7 +31,7 @@ export class ApplicationsController {
   constructor(private readonly applicationsService: ApplicationsService) {}
 
   @ApiOperation({ summary: 'Get an application by id' })
-  @ApiCreatedResponse({
+  @ApiOkResponse({
     description: 'Get an application by id',
     type: ApplicationDto,
   })
@@ -70,7 +71,7 @@ export class ApplicationsController {
   }
 
   @ApiOperation({ summary: 'Submit application' })
-  @ApiCreatedResponse({
+  @ApiNoContentResponse({
     description: 'Submit application',
   })
   @ApiParam({ name: 'id', type: String })
@@ -94,20 +95,43 @@ export class ApplicationsController {
   }
 
   @ApiOperation({ summary: 'Get all applications belonging to organization' })
-  @ApiCreatedResponse({
+  @ApiOkResponse({
     type: ApplicationListDto,
     description: 'Get all applications belonging to organization',
   })
   @ApiParam({ name: 'organizationId', type: String })
   @Get('organization/:organizationId')
-  async findAll(
+  async findAllByOrganization(
     @Param('organizationId') organizationId: string,
     @Query('page') page: number,
     @Query('limit') limit: number,
     @Query('isTest') isTest: boolean,
   ): Promise<ApplicationListDto> {
-    return await this.applicationsService.findAll(
+    return await this.applicationsService.findAllByOrganization(
       organizationId,
+      page,
+      limit,
+      isTest,
+    )
+  }
+
+  @ApiOperation({
+    summary: 'Get all applications of the same type belonging to user',
+  })
+  @ApiOkResponse({
+    type: ApplicationListDto,
+    description: 'Get all applications of the same type belonging to user',
+  })
+  @ApiParam({ name: 'formId', type: String })
+  @Get('form/:formId')
+  async findAllByTypeAndUser(
+    @Param('formId') formId: string,
+    @Query('page') page: number,
+    @Query('limit') limit: number,
+    @Query('isTest') isTest: boolean,
+  ): Promise<ApplicationListDto> {
+    return await this.applicationsService.findAllByTypeAndUser(
+      formId,
       page,
       limit,
       isTest,
