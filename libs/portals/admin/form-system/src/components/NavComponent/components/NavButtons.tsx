@@ -10,6 +10,7 @@ import {
   CREATE_SCREEN,
   DELETE_FIELD,
   DELETE_SCREEN,
+  DELETE_SECTION,
 } from '@island.is/form-system/graphql'
 import { FieldTypesEnum, m } from '@island.is/form-system/ui'
 
@@ -20,8 +21,8 @@ export const NavButtons = () => {
   const { formatMessage } = useIntl()
   const hoverText =
     activeItem.type === 'Section'
-      ? formatMessage(m.addGroupHover)
-      : formatMessage(m.addInputHover)
+      ? formatMessage(m.addScreenHover)
+      : formatMessage(m.addFieldHover)
 
   const containsGroupOrInput = (): boolean | undefined => {
     const { type } = activeItem
@@ -38,6 +39,7 @@ export const NavButtons = () => {
 
   const createScreen = useMutation(CREATE_SCREEN)
   const createField = useMutation(CREATE_FIELD)
+  const deleteSection = useMutation(DELETE_SECTION)
   const deleteScreen = useMutation(DELETE_SCREEN)
   const deleteField = useMutation(DELETE_FIELD)
 
@@ -91,7 +93,7 @@ export const NavButtons = () => {
   const remove = async () => {
     const id = activeItem?.data?.id as string
     if (activeItem.type === 'Section') {
-      await deleteScreen[0]({
+      await deleteSection[0]({
         variables: {
           input: {
             id: id,

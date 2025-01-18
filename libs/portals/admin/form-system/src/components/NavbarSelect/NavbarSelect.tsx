@@ -20,7 +20,7 @@ export const NavbarSelect = () => {
   return (
     <div>
       <Box paddingBottom={2} overflow="hidden">
-        <Text variant="h5">{formatMessage(m.step)}</Text>
+        <Text variant="h5">{formatMessage(m.form)}</Text>
       </Box>
       {sections
         ?.filter((s): s is FormSystemSection => s !== null && s !== undefined)

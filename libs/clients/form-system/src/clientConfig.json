@@ -238,7 +238,7 @@
         "summary": "Get all Organizations",
         "parameters": [],
         "responses": {
-          "201": {
+          "200": {
             "description": "Get all Organizations",
             "content": {
               "application/json": {
@@ -269,7 +269,7 @@
           }
         ],
         "responses": {
-          "201": {
+          "200": {
             "description": "Get an organization by id",
             "content": {
               "application/json": {
@@ -323,7 +323,7 @@
         "summary": "Get all forms belonging to organization",
         "parameters": [],
         "responses": {
-          "201": {
+          "200": {
             "description": "Get all forms belonging to organization",
             "content": {
               "application/json": {
@@ -342,7 +342,7 @@
     "/forms/{id}": {
       "get": {
         "operationId": "FormsController_findOne",
-        "summary": "Get form by idd",
+        "summary": "Get form by id",
         "parameters": [
           {
             "name": "id",
@@ -354,7 +354,7 @@
           }
         ],
         "responses": {
-          "201": {
+          "200": {
             "description": "Get form by id",
             "content": {
               "application/json": {
@@ -393,7 +393,7 @@
           }
         },
         "responses": {
-          "201": {
+          "204": {
             "description": "Update form"
           }
         },
@@ -416,7 +416,7 @@
         ],
         "responses": {
           "204": {
-            "description": "Delete field"
+            "description": "Delete form"
           }
         },
         "tags": [
@@ -439,7 +439,7 @@
           }
         ],
         "responses": {
-          "201": {
+          "200": {
             "description": "Change published form",
             "content": {
               "application/json": {
@@ -470,7 +470,7 @@
           }
         ],
         "responses": {
-          "201": {
+          "200": {
             "description": "Publish form",
             "content": {
               "application/json": {
@@ -566,7 +566,7 @@
           }
         },
         "responses": {
-          "201": {
+          "204": {
             "description": "Updates a section"
           }
         },
@@ -655,7 +655,7 @@
     "/screens/{id}": {
       "put": {
         "operationId": "ScreensController_update",
-        "summary": "Updates screen",
+        "summary": "Update screen",
         "parameters": [
           {
             "name": "id",
@@ -677,15 +677,8 @@
           }
         },
         "responses": {
-          "201": {
-            "description": "Updates a screen",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ScreenDto"
-                }
-              }
-            }
+          "204": {
+            "description": "Update screen"
           }
         },
         "tags": [
@@ -952,7 +945,7 @@
           }
         ],
         "responses": {
-          "201": {
+          "200": {
             "description": "Get an application by id",
             "content": {
               "application/json": {
@@ -1056,7 +1049,7 @@
           }
         ],
         "responses": {
-          "201": {
+          "204": {
             "description": "Submit application"
           }
         },
@@ -1101,7 +1094,7 @@
     },
     "/applications/organization/{organizationId}": {
       "get": {
-        "operationId": "ApplicationsController_findAll",
+        "operationId": "ApplicationsController_findAllByOrganization",
         "summary": "Get all applications belonging to organization",
         "parameters": [
           {
@@ -1138,8 +1131,63 @@
           }
         ],
         "responses": {
-          "201": {
+          "200": {
             "description": "Get all applications belonging to organization",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApplicationListDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "applications"
+        ]
+      }
+    },
+    "/applications/form/{formId}": {
+      "get": {
+        "operationId": "ApplicationsController_findAllByTypeAndUser",
+        "summary": "Get all applications of the same type belonging to user",
+        "parameters": [
+          {
+            "name": "formId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "limit",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "isTest",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Get all applications of the same type belonging to user",
             "content": {
               "application/json": {
                 "schema": {
@@ -1211,7 +1259,7 @@
           }
         },
         "responses": {
-          "201": {
+          "204": {
             "description": "Update form applicant"
           }
         },
@@ -1579,7 +1627,7 @@
           }
         },
         "responses": {
-          "201": {
+          "204": {
             "description": "Update an organization url"
           }
         },
