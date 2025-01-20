@@ -408,13 +408,13 @@ export interface ProfessionRight {
 }
 
 export interface BurningPermit {
-  date: Date | null | undefined
-  type: string | null | undefined
-  subtype: string | null | undefined
-  responsibleParty: string | null | undefined
-  office: string | null | undefined
-  licensee: string | null | undefined
-  place: string | null | undefined
+  date?: Date | null
+  type?: string | null
+  subtype?: string | null
+  responsibleParty?: string | null
+  office?: string | null
+  licensee?: string | null
+  place?: string | null
 }
 
 export interface VehicleRegistration {
