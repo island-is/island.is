@@ -57,7 +57,10 @@ const prosecutorFields: (keyof UpdateCaseDto)[] = [
   'hasCivilClaims',
 ]
 
-const publicProsecutorFields: (keyof UpdateCaseDto)[] = ['indictmentReviewerId']
+const publicProsecutorFields: (keyof UpdateCaseDto)[] = [
+  'indictmentReviewerId',
+  'indictmentReviewDecision',
+]
 
 const districtCourtFields: (keyof UpdateCaseDto)[] = [
   'defenderName',
@@ -103,6 +106,7 @@ const districtCourtFields: (keyof UpdateCaseDto)[] = [
   'indictmentDecision',
   'courtSessionType',
   'mergeCaseId',
+  'mergeCaseNumber',
 ]
 
 const courtOfAppealsFields: (keyof UpdateCaseDto)[] = [

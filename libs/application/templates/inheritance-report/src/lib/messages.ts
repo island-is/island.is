@@ -708,11 +708,21 @@ export const m = defineMessages({
   },
   stocksFaceValue: {
     id: 'ir.application:stocksFaceValue',
+    defaultMessage: 'Nafnverð á dánardegi',
+    description: '',
+  },
+  stocksFaceValuePrePaid: {
+    id: 'ir.application:stocksFaceValuePrePaid',
     defaultMessage: 'Nafnverð',
     description: '',
   },
   stocksRateOfChange: {
     id: 'ir.application:stocksRateOfChange',
+    defaultMessage: 'Gengi á dánardegi',
+    description: '',
+  },
+  stocksRateOfChangePrePaid: {
+    id: 'ir.application:stocksRateOfChangePrePaid',
     defaultMessage: 'Gengi',
     description: '',
   },
@@ -856,6 +866,12 @@ export const m = defineMessages({
   },
   assetsOverviewConfirmation: {
     id: 'ir.application:assetsOverviewConfirmation',
+    defaultMessage:
+      'Ég staðfesti að hafa fært inn upplýsingar um eignir á dánardegi eftir minni bestu vitund.',
+    description: '',
+  },
+  assetsOverviewConfirmationPrePaid: {
+    id: 'ir.application:assetsOverviewConfirmationPrePaid',
     defaultMessage:
       'Ég staðfesti að hafa fært inn upplýsingar um eignir eftir minni bestu vitund.',
     description: '',

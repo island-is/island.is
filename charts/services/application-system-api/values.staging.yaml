@@ -113,6 +113,7 @@ env:
   XROAD_PAYMENT_PROVIDER_ID: 'IS-TEST/GOV/10021/FJS-DEV-Public'
   XROAD_PAYMENT_SCHEDULE_PATH: 'IS-TEST/GOV/10021/FJS-Public/paymentSchedule_v1'
   XROAD_PROPERTIES_SERVICE_V2_PATH: 'IS-TEST/GOV/5812191480/HMS-Protected/Fasteignir-v1'
+  XROAD_SECONDARY_SCHOOL_PATH: 'IS-TEST/GOV/10066/MMS-Protected/umsoknagatt'
   XROAD_SIGNATURE_COLLECTION_PATH: 'IS-TEST/GOV/6503760649/SKRA-Cloud-Protected/Medmaeli-v1'
   XROAD_TJODSKRA_API_PATH: '/SKRA-Protected/Einstaklingar-v1'
   XROAD_TJODSKRA_MEMBER_CODE: '6503760649'
@@ -156,8 +157,8 @@ hpa:
       cpuAverageUtilization: 90
       nginxRequestsIrate: 5
     replicas:
-      max: 60
-      min: 2
+      max: 3
+      min: 1
 image:
   repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/application-system-api'
 ingress:
@@ -206,9 +207,9 @@ podSecurityContext:
   fsGroup: 65534
 pvcs: []
 replicaCount:
-  default: 2
-  max: 60
-  min: 2
+  default: 1
+  max: 3
+  min: 1
 resources:
   limits:
     cpu: '600m'

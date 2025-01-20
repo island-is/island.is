@@ -1,4 +1,3 @@
-import { useDynamicColor } from '@ui/utils'
 import React, { useRef, useState } from 'react'
 import {
   Animated,
@@ -12,6 +11,8 @@ import {
   View,
 } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
+
+import { useDynamicColor } from '../../utils'
 import closeIcon from '../../assets/icons/close.png'
 import searchIcon from '../../assets/icons/search.png'
 import { font } from '../../utils/font'

@@ -1,6 +1,5 @@
 import { Fragment } from 'react'
 import { FieldBaseProps } from '@island.is/application/types'
-import { getValueViaPath } from '@island.is/application/core'
 import {
   AlertBanner,
   Box,
@@ -11,9 +10,6 @@ import {
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { format as formatNationalId } from 'kennitala'
-import { m } from '../../lib/messages'
-import { FinancialStatementCemetery } from '../../lib/dataSchema'
-import { formatCurrency } from '../../utils/helpers'
 import { AboutOverview } from './AboutOverview'
 import { ValueLine } from './ValueLine'
 import { CapitalNumberOverview } from './CapitalNumbersOverview'
@@ -24,117 +20,53 @@ import {
   sectionColumn,
   starterColumnStyle,
 } from './overviewStyles.css'
+import { formatCurrency } from '../../utils/currency'
+import { isCemetryUnderFinancialLimit } from '../../utils/helpers'
+import { getOverviewNumbers } from '../../utils/overviewUtils'
+import { m } from '../../lib/messages'
 
 export const CemeteryOverview = ({ application }: FieldBaseProps) => {
   const { formatMessage } = useLocale()
-
-  const answers = application.answers as FinancialStatementCemetery
-  const file = getValueViaPath<Array<File>>(answers, 'attachments.file')
-  const fileName = file?.[0]?.name
-  const incomeLimit =
-    getValueViaPath<string>(answers, 'cemeteryOperations.incomeLimit') ?? '0'
-  const email = getValueViaPath<string>(answers, 'about.email')
-  const cemeteryCaretakers = answers.cemeteryCaretaker
-
-  const careIncome = getValueViaPath<string>(
-    answers,
-    'cemeteryIncome.careIncome',
+  const cemeteryUnderFinancialLimit = isCemetryUnderFinancialLimit(
+    application.answers,
   )
-  const burialRevenue = getValueViaPath<string>(
-    answers,
-    'cemeteryIncome.burialRevenue',
-  )
-  const grantFromTheCemeteryFund = getValueViaPath<string>(
-    answers,
-    'cemeteryIncome.grantFromTheCemeteryFund',
-  )
-  const otherIncome = getValueViaPath<string>(
-    answers,
-    'cemeteryIncome.otherIncome',
-  )
-  const totalIncome = getValueViaPath<string>(answers, 'cemeteryIncome.total')
-
-  const payroll = getValueViaPath<string>(answers, 'cemeteryExpense.payroll')
-  const funeralCost = getValueViaPath<string>(
-    answers,
-    'cemeteryExpense.funeralCost',
-  )
-  const chapelExpense = getValueViaPath<string>(
-    answers,
-    'cemeteryExpense.chapelExpense',
-  )
-  const donationsToCemeteryFund = getValueViaPath<string>(
-    answers,
-    'cemeteryExpense.cemeteryFundExpense',
-  )
-  const donationsToOther = getValueViaPath<string>(
-    answers,
-    'cemeteryExpense.donationsToOther',
-  )
-  const otherOperationCost = getValueViaPath<string>(
-    answers,
-    'cemeteryExpense.otherOperationCost',
-  )
-  const depreciation = getValueViaPath<string>(
-    answers,
-    'cemeteryExpense.depreciation',
-  )
-  const totalExpenses = getValueViaPath<string>(
-    answers,
-    'cemeteryExpense.total',
-  )
-
-  const fixedAssetsTotal = getValueViaPath<string>(
-    answers,
-    'cemeteryAsset.fixedAssetsTotal',
-  )
-  const currentAssets = getValueViaPath<string>(
-    answers,
-    'cemeteryAsset.currentAssets',
-  )
-  const totalAssets = getValueViaPath<string>(answers, 'assetsTotal')
-
-  const longTerm = getValueViaPath<string>(
-    answers,
-    'cemeteryLiability.longTerm',
-  )
-  const shortTerm = getValueViaPath<string>(
-    answers,
-    'cemeteryLiability.shortTerm',
-  )
-  const totalLiabilities = getValueViaPath<string>(
-    answers,
-    'equityAndLiabilitiesTotals.liabilitiesTotal',
-  )
-
-  const equityAtTheBeginningOfTheYear = getValueViaPath<string>(
-    answers,
-    'cemeteryEquity.equityAtTheBeginningOfTheYear',
-  )
-  const revaluationDueToPriceChanges = getValueViaPath<string>(
-    answers,
-    'cemeteryEquity.revaluationDueToPriceChanges',
-  )
-  const reevaluateOther = getValueViaPath<string>(
-    answers,
-    'cemeteryEquity.reevaluateOther',
-  )
-  const operationResult = getValueViaPath<string>(
-    answers,
-    'cemeteryEquity.operationResult',
-  )
-  const totalEquity = getValueViaPath<string>(answers, 'cemeteryEquity.total')
-
-  const debtsAndCash = getValueViaPath<string>(
-    answers,
-    'equityAndLiabilitiesTotals.equityAndLiabilitiesTotal',
-  )
+  const {
+    careIncome,
+    burialRevenue,
+    grantFromTheCemeteryFund,
+    otherIncome,
+    totalIncome,
+    payroll,
+    funeralCost,
+    chapelExpense,
+    donationsToCemeteryFund,
+    donationsToOther,
+    otherOperationCost,
+    depreciation,
+    totalExpenses,
+    fixedAssetsTotal,
+    currentAssets,
+    totalAssets,
+    longTerm,
+    shortTerm,
+    totalLiabilities,
+    equityAtTheBeginningOfTheYear,
+    revaluationDueToPriceChanges,
+    reevaluateOther,
+    operationResult,
+    totalEquity,
+    debtsAndCash,
+    email,
+    fileName,
+    incomeLimit,
+    cemeteryCaretakers,
+  } = getOverviewNumbers(application.answers)
 
   return (
     <Box marginBottom={2}>
       <Divider />
       <Box paddingY={3}>
-        <AboutOverview answers={answers} />
+        <AboutOverview answers={application.answers} />
       </Box>
       <Divider />
       <Box paddingY={3}>
@@ -214,7 +146,7 @@ export const CemeteryOverview = ({ application }: FieldBaseProps) => {
       <Divider />
 
       <Box paddingY={3}>
-        <CapitalNumberOverview answers={answers} />
+        <CapitalNumberOverview answers={application.answers} />
       </Box>
       <Divider />
       <Box paddingY={3}>
@@ -294,8 +226,9 @@ export const CemeteryOverview = ({ application }: FieldBaseProps) => {
         </GridRow>
       </Box>
       <Divider />
-      {Number(totalIncome) < Number(incomeLimit) &&
-      cemeteryCaretakers?.length > 0 ? (
+      {cemeteryUnderFinancialLimit &&
+      cemeteryCaretakers &&
+      cemeteryCaretakers.length > 0 ? (
         <>
           <Box className={starterColumnStyle}>
             <Text variant="h3" as="h3">
@@ -338,7 +271,7 @@ export const CemeteryOverview = ({ application }: FieldBaseProps) => {
       ) : null}
       {fileName ? (
         <>
-          <FileValueLine label={file?.[0]?.name} />
+          <FileValueLine label={fileName} />
           <Divider />
         </>
       ) : null}

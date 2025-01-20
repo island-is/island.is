@@ -1,38 +1,36 @@
-import { useEffect, useRef, useState } from 'react'
 import {
   AlertBanner,
   Box,
   Button,
+  Filter,
   FilterInput,
   FilterMultiChoice,
   FilterMultiChoiceProps,
   Hidden,
+  Inline,
   SkeletonLoader,
   Stack,
   Text,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import {
-  m,
-  Filter,
-  DownloadFileButtons,
-} from '@island.is/portals/my-pages/core'
+import { DownloadFileButtons, m } from '@island.is/portals/my-pages/core'
+import { useEffect, useRef, useState } from 'react'
 import { exportPeriodBreakdownFile } from '../../utils/filesPeriodBreakdown'
 
+import { useFinanceTransactionPeriodsState } from '../../components/FinanceTransactionPeriods/FinanceTransactionPeriodsContext'
+import { m as messages } from '../../lib/messages'
 import {
   useGetAssessmentYearsQuery,
   useGetChargeTypesByYearLazyQuery,
   useGetChargeTypesDetailsByYearLazyQuery,
 } from '../../screens/FinanceTransactionPeriods/FinanceTransactionPeriods.generated'
-import FinanceTransactionPeriodsTable from './FinanceTransactionPeriodsTable'
 import { transactionPeriodFilter } from '../../utils/simpleFilter'
-import { useFinanceTransactionPeriodsState } from '../../components/FinanceTransactionPeriods/FinanceTransactionPeriodsContext'
+import FinanceTransactionPeriodsTable from './FinanceTransactionPeriodsTable'
 import {
   ChargeTypesByYear,
   ChargeTypesDetailsByYear,
 } from './FinanceTransactionPeriodsTypes'
 import FinanceTransactionSelectedPeriod from './FinanceTransactionSelectedPeriod'
-import { m as messages } from '../../lib/messages'
 
 const DEFAULT_CHARGE_TYPE = '**' // ** finds all charge types
 
@@ -148,75 +146,76 @@ const FinanceTransactionPeriodsFilter = () => {
     <Stack space={2}>
       <Hidden print={true}>
         <Box marginTop={[1, 1, 2, 2, 5]}>
-          <Filter
-            variant="popover"
-            align="left"
-            reverse
-            labelClear={formatMessage(m.clearFilter)}
-            labelClearAll={formatMessage(m.clearAllFilters)}
-            labelOpen={formatMessage(m.openFilter)}
-            labelClose={formatMessage(m.closeFilter)}
-            filterInput={
-              <FilterInput
-                placeholder={formatMessage(m.searchPlaceholder)}
-                name="finance-transaction-periods-input"
-                value={financeTransactionPeriodsState.searchQuery ?? ''}
-                onChange={(e) =>
-                  setFinanceTransactionPeriodsState({ searchQuery: e })
-                }
-                backgroundColor="blue"
+          <Inline space={2}>
+            <Filter
+              variant="popover"
+              align="left"
+              reverse
+              labelClear={formatMessage(m.clearFilter)}
+              labelClearAll={formatMessage(m.clearAllFilters)}
+              labelOpen={formatMessage(m.openFilter)}
+              labelClose={formatMessage(m.closeFilter)}
+              filterInput={
+                <FilterInput
+                  placeholder={formatMessage(m.searchPlaceholder)}
+                  name="finance-transaction-periods-input"
+                  value={financeTransactionPeriodsState.searchQuery ?? ''}
+                  onChange={(e) =>
+                    setFinanceTransactionPeriodsState({ searchQuery: e })
+                  }
+                  backgroundColor="blue"
+                />
+              }
+              onFilterClear={clearAllFilters}
+            >
+              <FilterMultiChoice
+                labelClear={formatMessage(m.clearSelected)}
+                singleExpand={true}
+                onChange={({ categoryId, selected }) => {
+                  if (categoryId === 'years') {
+                    setFinanceTransactionPeriodsState({ year: selected[0] })
+                  }
+                  if (categoryId === 'flokkur') {
+                    setDropdownSelect(selected)
+                  }
+                }}
+                onClear={clearFilter}
+                categories={[
+                  {
+                    id: 'years',
+                    label: formatMessage(messages.transactionsYear),
+                    selected: financeTransactionPeriodsState.year
+                      ? [financeTransactionPeriodsState.year]
+                      : [],
+                    filters: assessmentYears,
+                    inline: false,
+                    singleOption: true,
+                  },
+                  {
+                    id: 'flokkur',
+                    label: formatMessage(messages.transactionsLabel),
+                    selected: dropdownSelect ? [...dropdownSelect] : [],
+                    filters: chargeTypeSelect,
+                    inline: false,
+                    singleOption: false,
+                  },
+                ]}
               />
-            }
-            additionalFilters={
-              <Button
-                colorScheme="default"
-                icon="print"
-                iconType="filled"
-                onClick={() => window.print()}
-                preTextIconType="filled"
-                size="default"
-                type="button"
-                variant="utility"
-              >
-                {formatMessage(m.print)}
-              </Button>
-            }
-            onFilterClear={clearAllFilters}
-          >
-            <FilterMultiChoice
-              labelClear={formatMessage(m.clearSelected)}
-              singleExpand={true}
-              onChange={({ categoryId, selected }) => {
-                if (categoryId === 'years') {
-                  setFinanceTransactionPeriodsState({ year: selected[0] })
-                }
-                if (categoryId === 'flokkur') {
-                  setDropdownSelect(selected)
-                }
-              }}
-              onClear={clearFilter}
-              categories={[
-                {
-                  id: 'years',
-                  label: formatMessage(messages.transactionsYear),
-                  selected: financeTransactionPeriodsState.year
-                    ? [financeTransactionPeriodsState.year]
-                    : [],
-                  filters: assessmentYears,
-                  inline: false,
-                  singleOption: true,
-                },
-                {
-                  id: 'flokkur',
-                  label: formatMessage(messages.transactionsLabel),
-                  selected: dropdownSelect ? [...dropdownSelect] : [],
-                  filters: chargeTypeSelect,
-                  inline: false,
-                  singleOption: false,
-                },
-              ]}
-            />
-          </Filter>
+            </Filter>
+
+            <Button
+              colorScheme="default"
+              icon="print"
+              iconType="filled"
+              onClick={() => window.print()}
+              preTextIconType="filled"
+              size="default"
+              type="button"
+              variant="utility"
+            >
+              {formatMessage(m.print)}
+            </Button>
+          </Inline>
         </Box>
       </Hidden>
 

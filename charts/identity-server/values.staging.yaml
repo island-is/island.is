@@ -36,8 +36,8 @@ auth-admin-web:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 10
-        min: 2
+        max: 3
+        min: 1
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/auth-admin-web'
   ingress:
@@ -59,9 +59,9 @@ auth-admin-web:
   progressDeadlineSeconds: 1200
   pvcs: []
   replicaCount:
-    default: 2
-    max: 10
-    min: 2
+    default: 1
+    max: 3
+    min: 1
   resources:
     limits:
       cpu: '400m'
@@ -191,6 +191,8 @@ identity-server:
     AudkenniSettings__ClientSecret: '/k8s/identity-server/AudkenniClientSecret'
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     ContentfulSettings__AccessToken: '/k8s/identity-server/CONTENTFUL_ACCESS_TOKEN'
+    Datadog__RUM__ApplicationId: '/k8s/ids/DD_RUM_APPLICATION_ID'
+    Datadog__RUM__ClientToken: '/k8s/ids/DD_RUM_CLIENT_TOKEN'
     FeatureFlags__ConfigCatSdkKey: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     IdentityServer__FakePersons: '/k8s/identity-server/FakePersons'
     IdentityServer__LicenseKey: '/k8s/identity-server/LicenseKey'
@@ -270,8 +272,8 @@ services-auth-admin-api:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 10
-        min: 2
+        max: 3
+        min: 1
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-auth-admin-api'
   ingress:
@@ -289,9 +291,9 @@ services-auth-admin-api:
     maxUnavailable: 1
   pvcs: []
   replicaCount:
-    default: 2
-    max: 10
-    min: 2
+    default: 1
+    max: 3
+    min: 1
   resources:
     limits:
       cpu: '400m'
@@ -369,8 +371,8 @@ services-auth-delegation-api:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 10
-        min: 2
+        max: 3
+        min: 1
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-auth-delegation-api'
   ingress:
@@ -387,9 +389,9 @@ services-auth-delegation-api:
     maxUnavailable: 1
   pvcs: []
   replicaCount:
-    default: 2
-    max: 10
-    min: 2
+    default: 1
+    max: 3
+    min: 1
   resources:
     limits:
       cpu: '400m'
@@ -414,6 +416,7 @@ services-auth-delegation-api:
 services-auth-ids-api:
   enabled: true
   env:
+    ALSO_USE_FAKE_USER_API: 'false'
     CODE_OWNER: 'aranja'
     COMPANY_REGISTRY_REDIS_NODES: '["clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379"]'
     COMPANY_REGISTRY_XROAD_PROVIDER_ID: 'IS-TEST/GOV/5402696029/Skatturinn/ft-v1'
@@ -475,8 +478,8 @@ services-auth-ids-api:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 15
-        min: 2
+        max: 3
+        min: 1
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-auth-ids-api'
   initContainer:
@@ -521,9 +524,9 @@ services-auth-ids-api:
     maxUnavailable: 1
   pvcs: []
   replicaCount:
-    default: 2
-    max: 15
-    min: 2
+    default: 1
+    max: 3
+    min: 1
   resources:
     limits:
       cpu: '800m'
@@ -659,8 +662,8 @@ services-auth-personal-representative:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 10
-        min: 2
+        max: 3
+        min: 1
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-auth-personal-representative'
   ingress:
@@ -677,9 +680,9 @@ services-auth-personal-representative:
     maxUnavailable: 1
   pvcs: []
   replicaCount:
-    default: 2
-    max: 10
-    min: 2
+    default: 1
+    max: 3
+    min: 1
   resources:
     limits:
       cpu: '400m'
@@ -728,8 +731,8 @@ services-auth-personal-representative-public:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 10
-        min: 2
+        max: 3
+        min: 1
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-auth-personal-representative-public'
   ingress:
@@ -746,9 +749,9 @@ services-auth-personal-representative-public:
     maxUnavailable: 1
   pvcs: []
   replicaCount:
-    default: 2
-    max: 10
-    min: 2
+    default: 1
+    max: 3
+    min: 1
   resources:
     limits:
       cpu: '400m'
@@ -823,8 +826,8 @@ services-auth-public-api:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 10
-        min: 2
+        max: 3
+        min: 1
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-auth-public-api'
   ingress:
@@ -845,9 +848,9 @@ services-auth-public-api:
     maxUnavailable: 1
   pvcs: []
   replicaCount:
-    default: 2
-    max: 10
-    min: 2
+    default: 1
+    max: 3
+    min: 1
   resources:
     limits:
       cpu: '400m'

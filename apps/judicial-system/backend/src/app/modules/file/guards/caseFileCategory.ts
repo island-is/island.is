@@ -32,7 +32,6 @@ const defenderDefaultCaseFileCategoriesForIndictmentCases = [
 
 const defenderCaseFileCategoriesForIndictmentCases =
   defenderDefaultCaseFileCategoriesForIndictmentCases.concat(
-    CaseFileCategory.INDICTMENT,
     CaseFileCategory.CRIMINAL_RECORD,
     CaseFileCategory.COST_BREAKDOWN,
     CaseFileCategory.CASE_FILE,
@@ -44,6 +43,7 @@ const defenderCaseFileCategoriesForIndictmentCases =
 const prisonAdminCaseFileCategories = [
   CaseFileCategory.APPEAL_RULING,
   CaseFileCategory.RULING,
+  CaseFileCategory.SENT_TO_PRISON_ADMIN_FILE,
 ]
 
 const prisonStaffCaseFileCategories = [CaseFileCategory.APPEAL_RULING]

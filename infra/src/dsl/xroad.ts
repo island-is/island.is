@@ -933,3 +933,13 @@ export const HealthDirectorateVaccination = new XroadConf({
     },
   },
 })
+
+export const SecondarySchool = new XroadConf({
+  env: {
+    XROAD_SECONDARY_SCHOOL_PATH: {
+      dev: 'IS-DEV/GOV/10066/MMS-Protected/umsoknagatt',
+      staging: 'IS-TEST/GOV/10066/MMS-Protected/umsoknagatt',
+      prod: 'IS/GOV/6601241280/MMS-Protected/umsoknagatt',
+    },
+  },
+})

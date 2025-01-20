@@ -53,6 +53,11 @@ export const accident = {
       defaultMessage: 'Nákvæm staðsetning',
       description: 'Label of exact location input field',
     },
+    exactLocationPlaceholder: {
+      id: 'aosh.wan.application:accident.about.exactLocationPlaceholder',
+      defaultMessage: 'Við vörurekka á lager',
+      description: 'Exact location placeholder input field',
+    },
     describeHeading: {
       id: 'aosh.wan.application:accident.about.describeHeading',
       defaultMessage: 'Lýstu tildrögum slyssins eins nákvæmlega og þú getur',
