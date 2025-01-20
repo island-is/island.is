@@ -193,7 +193,7 @@ export const scrolledMenuVisible = style({
     background: theme.color.blue100,
     borderBottom: `1px solid ${theme.color.blue200}`,
     transformOrigin: 'top',
-    animation: `${stretchKeyframe} 0.75s ease-in-out forwards`, // Appear animation
+    animation: `${stretchKeyframe} 0.3 ease-in-out forwards`,
   },
 })
 
@@ -209,7 +209,7 @@ export const scrolledMenuHidden = style({
     background: theme.color.blue100,
     borderBottom: `1px solid ${theme.color.blue200}`,
     transformOrigin: 'top',
-    animation: `${shrinkKeyframe} 0.75s ease-in-out forwards`, // Disappear animation
+    animation: `${shrinkKeyframe} 0.3 ease-in-out forwards`,
   },
 })
 
