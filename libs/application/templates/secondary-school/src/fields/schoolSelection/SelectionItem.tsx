@@ -11,6 +11,7 @@ import {
   ApplicationType,
   getTranslatedProgram,
   Language,
+  LANGUAGE_CODE_DANISH,
   Program,
   SecondarySchool,
 } from '../../utils'
@@ -34,6 +35,7 @@ export const SelectionItem: FC<FieldBaseProps & SelectionItemProps> = (
   const { application, setFieldLoadingState } = props
   const { setValue, watch } = useFormContext()
   const [isLoadingPrograms, setIsLoadingPrograms] = useState<boolean>(false)
+  const [showSecondProgram, setShowSecondProgram] = useState<boolean>(true)
 
   const isFreshman =
     getValueViaPath<ApplicationType>(
@@ -256,8 +258,10 @@ export const SelectionItem: FC<FieldBaseProps & SelectionItemProps> = (
 
   // default set include=true for second program if freshman
   useEffect(() => {
-    setValue(`${props.field.id}.secondProgram.include`, isFreshman)
-  }, [isFreshman, props.field.id, setValue])
+    const showSecondProgram = isFreshman && programOptions.length !== 1
+    setValue(`${props.field.id}.secondProgram.include`, showSecondProgram)
+    setShowSecondProgram(showSecondProgram)
+  }, [isFreshman, programOptions.length, props.field.id, setValue])
 
   useEffect(() => {
     setFieldLoadingState?.(isLoadingPrograms)
@@ -276,7 +280,13 @@ export const SelectionItem: FC<FieldBaseProps & SelectionItemProps> = (
           backgroundColor="blue"
           required
           options={(schoolOptions || [])
-            .filter((x) => !otherSchoolIds.includes(x.id))
+            .filter(
+              (x) =>
+                (isFreshman
+                  ? x.isOpenForAdmissionFreshman
+                  : x.isOpenForAdmissionGeneral) &&
+                !otherSchoolIds.includes(x.id),
+            )
             .map((school) => {
               return {
                 label: school.name,
@@ -319,7 +329,7 @@ export const SelectionItem: FC<FieldBaseProps & SelectionItemProps> = (
         />
       </Box>
 
-      {isFreshman && (
+      {showSecondProgram && (
         <Box marginTop={2}>
           <Controller
             name={`${props.field.id}.secondProgram.id`}
@@ -397,7 +407,7 @@ export const SelectionItem: FC<FieldBaseProps & SelectionItemProps> = (
                 isDisabled={isLoadingPrograms}
                 value={selectedNordicLanguage}
                 options={nordicLanguageOptions
-                  .filter((x) => x.code !== 'da')
+                  .filter((x) => x.code !== LANGUAGE_CODE_DANISH)
                   .map((language) => {
                     return {
                       label: language.name,
