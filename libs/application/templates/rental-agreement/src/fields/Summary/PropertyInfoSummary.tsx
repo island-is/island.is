@@ -2,8 +2,6 @@ import {
   Box,
   Button,
   GridColumn,
-  Icon,
-  Link,
   Text,
   UploadFile,
 } from '@island.is/island-ui/core'

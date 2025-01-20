@@ -255,7 +255,7 @@ export const getOtherFeesPayeeOptions = () => [
   },
 ]
 
-export const getOtherFeesHousingFeesPayeeOptions = () => [
+export const getOtherFeesHousingFundPayeeOptions = () => [
   {
     value: OtherFeesPayeeOptions.LANDLORD_OR_NOT_APPLICABLE,
     label: m.otherFees.housingFundPayedByLandlordLabel,

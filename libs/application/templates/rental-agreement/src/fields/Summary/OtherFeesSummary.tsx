@@ -5,6 +5,7 @@ import { OtherFeesPayeeOptions, Routes } from '../../lib/constants'
 import {
   formatCurrency,
   formatDate,
+  getOtherFeesHousingFundPayeeOptions,
   getOtherFeesPayeeOptions,
 } from '../../lib/utils'
 import { KeyValue } from './components/KeyValue'
@@ -23,6 +24,12 @@ export const OtherFeesSummary = ({ answers, goToScreen, route }: Props) => {
 
   const otherFeesPayee = (answer: string) => {
     const options = getOtherFeesPayeeOptions()
+    const matchingOption = options.find((option) => option.value === answer)
+    return matchingOption ? matchingOption.label : '-'
+  }
+
+  const otherFeesHousingFundPayee = (answer: string) => {
+    const options = getOtherFeesHousingFundPayeeOptions()
     const matchingOption = options.find((option) => option.value === answer)
     return matchingOption ? matchingOption.label : '-'
   }
@@ -63,7 +70,9 @@ export const OtherFeesSummary = ({ answers, goToScreen, route }: Props) => {
           <KeyValue
             label={summary.houseFundLabel}
             value={
-              otherFeesPayee(answers.otherFees.housingFund as string) || '-'
+              otherFeesHousingFundPayee(
+                answers.otherFees.housingFund as string,
+              ) || '-'
             }
           />
         </GridColumn>
