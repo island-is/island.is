@@ -1,7 +1,6 @@
 import CryptoJS from 'crypto-js'
 
 import {
-  BadRequestException,
   forwardRef,
   Inject,
   Injectable,
@@ -17,7 +16,6 @@ import {
   CaseFileCategory,
   EventType,
   hasIndictmentCaseBeenSubmittedToCourt,
-  isTrafficViolationCase,
   SubpoenaType,
   type User as TUser,
 } from '@island.is/judicial-system/types'
@@ -205,12 +203,6 @@ export class PdfService {
   }
 
   async getIndictmentPdf(theCase: Case): Promise<Buffer> {
-    if (!isTrafficViolationCase(theCase)) {
-      throw new BadRequestException(
-        `Case ${theCase.id} is not a traffic violation case`,
-      )
-    }
-
     let confirmation: Confirmation | undefined = undefined
 
     if (hasIndictmentCaseBeenSubmittedToCourt(theCase.state)) {
