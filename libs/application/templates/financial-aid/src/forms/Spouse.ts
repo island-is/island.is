@@ -5,16 +5,27 @@ import {
   buildSection,
   buildSubmitField,
 } from '@island.is/application/core'
-import { DefaultEvents, Form, FormModes } from '@island.is/application/types'
+import {
+  Application,
+  DefaultEvents,
+  Form,
+  FormModes,
+} from '@island.is/application/types'
 
 import * as m from '../lib/messages'
 import { ApproveOptions, ExternalData } from '../lib/types'
 import { Routes } from '../lib/constants'
+import { createElement } from 'react'
+import { Logo } from '../components/Logo/Logo'
 
 export const Spouse: Form = buildForm({
   id: 'FinancialAidApplication',
   title: m.application.name,
   mode: FormModes.IN_PROGRESS,
+  logo: (application: Application) => {
+    const logo = createElement(Logo, { application })
+    return () => logo
+  },
   children: [
     buildSection({
       id: Routes.SPOUSEINCOME,
