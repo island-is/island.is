@@ -867,6 +867,12 @@ export const m = defineMessages({
   assetsOverviewConfirmation: {
     id: 'ir.application:assetsOverviewConfirmation',
     defaultMessage:
+      'Ég staðfesti að hafa fært inn upplýsingar um eignir á dánardegi eftir minni bestu vitund.',
+    description: '',
+  },
+  assetsOverviewConfirmationPrePaid: {
+    id: 'ir.application:assetsOverviewConfirmationPrePaid',
+    defaultMessage:
       'Ég staðfesti að hafa fært inn upplýsingar um eignir eftir minni bestu vitund.',
     description: '',
   },

@@ -712,7 +712,15 @@ export const assets = buildSection({
               title: '',
               large: false,
               backgroundColor: 'white',
-              options: [{ value: YES, label: m.assetsOverviewConfirmation }],
+              options: ({ answers }) => [
+                {
+                  value: YES,
+                  label:
+                    answers.applicationFor === PREPAID_INHERITANCE
+                      ? m.assetsOverviewConfirmationPrePaid
+                      : m.assetsOverviewConfirmation,
+                },
+              ],
             }),
             buildCustomField({
               title: '',
