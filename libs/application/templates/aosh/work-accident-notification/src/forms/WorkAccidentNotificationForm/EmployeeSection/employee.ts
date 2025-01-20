@@ -65,7 +65,7 @@ export const employeeSubSection = (index: number) =>
             title: '',
           }),
           buildAlertMessageField({
-            id: '',
+            id: `employee[${index}].warningMessageField`,
             title: '',
             alertType: 'warning',
             message: employee.employee.samePersonAlert,
