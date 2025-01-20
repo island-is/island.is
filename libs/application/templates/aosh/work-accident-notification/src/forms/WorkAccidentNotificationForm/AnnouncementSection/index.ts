@@ -31,27 +31,6 @@ export const announcementSection = buildSection({
           titleVariant: 'h4',
           marginBottom: 3,
         }),
-        buildDescriptionField({
-          id: 'externalData.secondHeading',
-          title: (application: Application) => {
-            const ssn = getValueViaPath<string>(
-              application.externalData,
-              'identity.data.nationalId',
-            )
-            const name = getValueViaPath<string>(
-              application.externalData,
-              'identity.data.name',
-            )
-            return {
-              ...externalData.dataProvider.announcementHeadingSecond,
-              values: {
-                notandi: `${name} (${ssn})`,
-              },
-            }
-          },
-          titleVariant: 'h4',
-          marginBottom: 3,
-        }),
       ],
     }),
   ],

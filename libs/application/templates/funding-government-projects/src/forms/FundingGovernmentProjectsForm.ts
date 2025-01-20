@@ -123,6 +123,7 @@ export const FundingGovernmentProjectsForm: Form = buildForm({
             }),
             buildSliderField({
               id: 'project.refundableYears',
+              title: '',
               label: {
                 singular: shared.yearSingular,
                 plural: shared.yearPlural,

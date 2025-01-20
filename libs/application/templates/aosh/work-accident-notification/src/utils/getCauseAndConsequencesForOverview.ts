@@ -91,23 +91,23 @@ export const getCauseAndConsequencesForOverview = (
     .flat()
 
   return [
-    `${formatMessage(overview.causeAndConsequences.absence)}: ${
+    `**${formatMessage(overview.causeAndConsequences.absence)}**: ${
       chosenAbsenceDueToAccident?.name
     }`,
-    `${formatMessage(
+    `**${formatMessage(
       overview.causeAndConsequences.circumstances,
-    )}: ${chosenCircumstances.join('. ')}`,
-    `${formatMessage(
+    )}**: ${chosenCircumstances.join('. ')}`,
+    `**${formatMessage(
       overview.causeAndConsequences.deviations,
-    )}: ${chosenDeviations.join('. ')}`,
-    `${formatMessage(
+    )}**: ${chosenDeviations.join('. ')}`,
+    `**${formatMessage(
       overview.causeAndConsequences.causeOfInjury,
-    )}: ${chosenCauseOfInjury.join('. ')}`,
-    `${formatMessage(
+    )}**: ${chosenCauseOfInjury.join('. ')}`,
+    `**${formatMessage(
       overview.causeAndConsequences.typeOfInjury,
-    )}: ${chosenTypeOfInjury.join('. ')}`,
-    `${formatMessage(
+    )}**: ${chosenTypeOfInjury.join('. ')}`,
+    `**${formatMessage(
       overview.causeAndConsequences.injuredBodyParts,
-    )}: ${chosenInjuredBodyParts.join('. ')}`,
+    )}**: ${chosenInjuredBodyParts.join('. ')}`,
   ].filter((n) => n)
 }

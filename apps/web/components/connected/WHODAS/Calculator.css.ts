@@ -10,12 +10,6 @@ export const breakdownRowContainer = style({
   gap: theme.spacing[5],
 })
 
-export const totalScoreRowContainer = style({
-  display: 'grid',
-  gridTemplateColumns: `${leftWidth + 24}px 1fr`,
-  gap: theme.spacing[5],
-})
-
 export const stayOnSinglePageWhenPrinting = style({
   pageBreakInside: 'avoid',
 })

@@ -18,7 +18,7 @@ export const transformApplicationToNewPrimarySchoolDTO = (
     childInfo,
     parents,
     siblings,
-    relatives,
+    contacts,
     reasonForApplication,
     reasonForApplicationCountry,
     reasonForApplicationStreetAddress,
@@ -46,7 +46,7 @@ export const transformApplicationToNewPrimarySchoolDTO = (
       },
       email: parents.parent1.email,
       phone: parents.parent1.phoneNumber,
-      role: 'parent',
+      role: 'guardian',
     },
     ...(parents.parent2
       ? [
@@ -59,24 +59,22 @@ export const transformApplicationToNewPrimarySchoolDTO = (
             },
             email: parents.parent2.email,
             phone: parents.parent2.phoneNumber,
-            role: 'parent',
+            role: 'guardian',
           },
         ]
       : []),
-    ...relatives.map((relative) => ({
-      name: relative.fullName,
-      nationalId: relative.nationalId,
-      phone: relative.phoneNumber,
-      role: relative.relation,
+    ...contacts.map((contact) => ({
+      name: contact.fullName,
+      nationalId: contact.nationalId,
+      phone: contact.phoneNumber,
+      role: contact.relation,
     })),
-    // TODO: Skoða hvernig ég veit hvaða ástæða var valin (ég er ekki með lista yfir ástæður)
     ...(reasonForApplication ===
-    ReasonForApplicationOptions.SIBLINGS_IN_THE_SAME_PRIMARY_SCHOOL
+    ReasonForApplicationOptions.SIBLINGS_IN_SAME_SCHOOL
       ? siblings.map((sibling) => ({
           name: sibling.fullName,
           nationalId: sibling.nationalId,
-          // TODO: Siblings relation valmöguleikar eru ekki í key-options endapunktinum => Júní ætlar að bæta því við (Þurfum að passa að þeir valmöguleikar komi ekki upp í dropdown á aðstandenda síðunni)
-          role: sibling.relation,
+          role: 'sibling',
         }))
       : []),
   ]
@@ -114,7 +112,6 @@ export const transformApplicationToNewPrimarySchoolDTO = (
     },
     agents,
     registration: {
-      // TODO: Skoða hvernig ég veit hvaða ástæða var valin (ég er ekki með lista yfir ástæður)
       defaultOrg: primaryOrgId,
       ...(reasonForApplication !== ReasonForApplicationOptions.MOVING_ABROAD
         ? {
@@ -127,7 +124,7 @@ export const transformApplicationToNewPrimarySchoolDTO = (
           }),
       reason: reasonForApplication,
       ...(reasonForApplication ===
-      ReasonForApplicationOptions.TRANSFER_OF_LEGAL_DOMICILE
+      ReasonForApplicationOptions.MOVING_MUNICIPALITY
         ? {
             newDomicile: {
               address: reasonForApplicationStreetAddress,

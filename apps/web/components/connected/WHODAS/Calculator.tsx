@@ -7,6 +7,7 @@ import {
 } from 'react'
 import { useIntl } from 'react-intl'
 import round from 'lodash/round'
+import { parseAsInteger, useQueryState } from 'next-usequerystate'
 
 import {
   Box,
@@ -162,7 +163,9 @@ const WHODASResults = ({
             {formatMessage(m.results.scoreHeading)}
           </Text>
           <Box background="purple100" padding="p2" borderRadius="large">
-            <Text>{formatScore(totalScore)}</Text>
+            <Text>
+              {formatScore(totalScore)} {formatMessage(m.results.outOf100)}
+            </Text>
           </Box>
         </Stack>
         <Stack space={1}>
@@ -203,17 +206,14 @@ const WHODASResults = ({
                     <Bullet key={step.title}>
                       <Box className={styles.breakdownRowContainer}>
                         <Text>{step.title}</Text>
-                        <Text>{formatScore(step.scoreForStep)}</Text>
+                        <Text>
+                          {formatScore(step.scoreForStep)}{' '}
+                          {formatMessage(m.results.outOf100)}
+                        </Text>
                       </Box>
                     </Bullet>
                   ))}
                 </BulletList>
-                <Box className={styles.totalScoreRowContainer}>
-                  <Text fontWeight="semiBold">
-                    {formatMessage(m.results.totalScore)}
-                  </Text>
-                  <Text fontWeight="semiBold">{formatScore(totalScore)}</Text>
-                </Box>
               </Stack>
             </Stack>
             <Box
@@ -236,7 +236,15 @@ interface WHODASCalculatorProps {
 }
 
 export const WHODASCalculator = ({ slice }: WHODASCalculatorProps) => {
-  const [stepIndex, setStepIndex] = useState(0)
+  const [stepIndex, setStepIndex] = useQueryState(
+    'stepIndex',
+    parseAsInteger
+      .withOptions({
+        history: 'push',
+        clearOnDefault: true,
+      })
+      .withDefault(0),
+  )
   const formRef = useRef<HTMLDivElement | null>(null)
   const steps = (slice.json?.steps ?? []) as Step[]
   const initialRender = useRef(true)
@@ -267,6 +275,7 @@ export const WHODASCalculator = ({ slice }: WHODASCalculatorProps) => {
 
   useEffect(() => {
     if (initialRender.current) {
+      setStepIndex(0) // Reset step index on initial render
       initialRender.current = false
       return
     }
@@ -274,7 +283,7 @@ export const WHODASCalculator = ({ slice }: WHODASCalculatorProps) => {
       behavior: 'smooth',
       top: formRef.current?.offsetTop ?? 0,
     })
-  }, [stepIndex])
+  }, [setStepIndex, stepIndex])
 
   if (showResults) {
     let totalScore = 0
