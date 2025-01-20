@@ -120,8 +120,7 @@ const SelectableList: FC<Props> = (props) => {
             label={formatMessage(strings.selectAllLabel)}
             checked={
               validSelectableItems.length > 0 &&
-              validSelectableItems
-                .every((item) => item.checked)
+              validSelectableItems.every((item) => item.checked)
             }
             onChange={(evt) =>
               setSelectableItems((selectableItems) =>
