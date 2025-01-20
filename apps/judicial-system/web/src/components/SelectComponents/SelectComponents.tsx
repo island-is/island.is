@@ -1,4 +1,5 @@
 import {
+  ClearIndicatorProps,
   components,
   DropdownIndicatorProps,
   OptionProps,
@@ -9,6 +10,16 @@ import {
 import { Icon, Text } from '@island.is/island-ui/core'
 
 import { ReactSelectOption } from '../../types'
+
+export const ClearIndicator = (
+  props: ClearIndicatorProps<ReactSelectOption>,
+) => {
+  return (
+    <components.ClearIndicator {...props}>
+      <Icon icon="close" color="blue400" />
+    </components.ClearIndicator>
+  )
+}
 
 export const DropdownIndicator = (
   props: DropdownIndicatorProps<ReactSelectOption>,
