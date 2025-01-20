@@ -18,10 +18,10 @@ import { prefixBase64 } from '../../../utils/prefix-base-64'
 import IconStatusNonVerified from '../../assets/card/danger.png'
 import IconStatusVerified from '../../assets/card/is-verified.png'
 import { LicenseCardPresets, CustomLicenseType } from './license-list-card'
-import { dynamicColor } from '../../utils'
+import { dynamicColor } from '../../utils/dynamic-color'
 import { Typography } from '../typography/typography'
 import { screenWidth } from '../../../utils/dimensions'
-import { BARCODE_MAX_WIDTH } from '../../../screens/wallet-pass/wallet-pass'
+import { BARCODE_MAX_WIDTH } from '../../../screens/wallet-pass/wallet-pass.constants'
 
 const Host = styled(Animated.View)`
   position: relative;

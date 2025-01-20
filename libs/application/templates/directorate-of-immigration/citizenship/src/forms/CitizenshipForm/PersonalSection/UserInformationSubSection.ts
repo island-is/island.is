@@ -169,11 +169,11 @@ export const UserInformationSubSection = buildSubSection({
           defaultValue: (application: Application) => {
             const nationalRegistryBirthplace = getValueViaPath(
               application.externalData,
-              'nationalRegistryBirthplace.data',
+              'birthplace.data',
               undefined,
             ) as NationalRegistryBirthplace | undefined
 
-            return nationalRegistryBirthplace?.location
+            return nationalRegistryBirthplace?.municipalityName
           },
         }),
       ],
