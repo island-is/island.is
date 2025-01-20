@@ -81,6 +81,10 @@ const GrantSinglePage: CustomScreen<GrantSingleProps> = ({ grant, locale }) => {
     return null
   }
 
+  const applicationStatusLabel = status?.applicationStatus
+    ? generateStatusTag(status.applicationStatus, formatMessage)?.label
+    : undefined
+
   return (
     <GrantWrapper
       pageTitle={grant.name}
@@ -117,11 +121,13 @@ const GrantSinglePage: CustomScreen<GrantSingleProps> = ({ grant, locale }) => {
             <ActionCard
               heading={grant.name}
               text={
-                status
-                  ? generateStatusTag(status.applicationStatus, formatMessage)
-                      ?.label +
-                    (status.deadlineStatus ? ' / ' + status.deadlineStatus : '')
-                  : ''
+                applicationStatusLabel
+                  ? `${applicationStatusLabel}${
+                      status?.deadlineStatus
+                        ? ' / ' + status.deadlineStatus
+                        : ''
+                    }`
+                  : undefined
               }
               backgroundColor="blue"
               cta={{

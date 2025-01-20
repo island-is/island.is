@@ -149,7 +149,6 @@ export const parseStatus = (
     default: {
       return {
         applicationStatus: 'unknown',
-        deadlineStatus: '',
       }
     }
   }

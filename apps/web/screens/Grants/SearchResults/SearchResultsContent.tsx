@@ -96,10 +96,12 @@ export const SearchResultsContent = ({ grants, subheader, locale }: Props) => {
                   ).href,
                 },
                 detailLines: [
-                  {
-                    icon: 'time' as const,
-                    text: status.deadlineStatus,
-                  },
+                  status.deadlineStatus
+                    ? {
+                        icon: 'time' as const,
+                        text: status.deadlineStatus,
+                      }
+                    : undefined,
                   grant.status !==
                     GrantStatus.ClosedOpeningSoonWithEstimation &&
                   grant.dateFrom &&
