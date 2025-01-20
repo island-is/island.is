@@ -780,6 +780,81 @@ export const IndictmentCount: FC<Props> = ({
               </InputMask>
             </Box>
           )}
+          {indictmentCount.offenses?.includes(
+            IndictmentCountOffense.SPEEDING,
+          ) && (
+            <Box marginBottom={2}>
+              <SectionHeading
+                title={formatMessage(strings.speedingTitle)}
+                heading="h4"
+                marginBottom={2}
+              />
+              <Box display="flex" rowGap={1} columnGap={1} flexWrap="wrap">
+                <Box flexGrow={1}>
+                  <Input
+                    name="speed"
+                    autoComplete="off"
+                    label={formatMessage(strings.speedLabel)}
+                    placeholder="0"
+                    required
+                    // value={indictmentCount.substances?.ALCOHOL ?? ''} TODO
+                    // onChange={(event) => {
+                    //   removeErrorMessageIfValid(
+                    //     ['empty'],
+                    //     substanceAmount,
+                    //     substanceAmountMissingErrorMessage,
+                    //     setSubstanceAmountMissingErrorMessage,
+                    //   )
+
+                    //   setSubstanceAmount(event.target.value)
+                    // }}
+                    // onBlur={() => {
+                    //   validateAndSetErrorMessage(
+                    //     ['empty'],
+                    //     substanceAmount,
+                    //     setSubstanceAmountMissingErrorMessage,
+                    //   )
+
+                    //   onUpdateAmount(substance, substanceAmount)
+                    // }}
+                    // errorMessage={substanceAmountMissingErrorMessage}
+                    // hasError={substanceAmountMissingErrorMessage !== ''}
+                  />
+                </Box>
+                <Box flexGrow={1}>
+                  <Input
+                    name="speedLimit"
+                    autoComplete="off"
+                    label={formatMessage(strings.speedLimitLabel)}
+                    placeholder="0"
+                    required
+                    // value={indictmentCount.substances?.ALCOHOL ?? ''} TODO
+                    // onChange={(event) => {
+                    //   removeErrorMessageIfValid(
+                    //     ['empty'],
+                    //     substanceAmount,
+                    //     substanceAmountMissingErrorMessage,
+                    //     setSubstanceAmountMissingErrorMessage,
+                    //   )
+
+                    //   setSubstanceAmount(event.target.value)
+                    // }}
+                    // onBlur={() => {
+                    //   validateAndSetErrorMessage(
+                    //     ['empty'],
+                    //     substanceAmount,
+                    //     setSubstanceAmountMissingErrorMessage,
+                    //   )
+
+                    //   onUpdateAmount(substance, substanceAmount)
+                    // }}
+                    // errorMessage={substanceAmountMissingErrorMessage}
+                    // hasError={substanceAmountMissingErrorMessage !== ''}
+                  />
+                </Box>
+              </Box>
+            </Box>
+          )}
           {indictmentCount.offenses
             ?.filter(
               (offenseType) =>

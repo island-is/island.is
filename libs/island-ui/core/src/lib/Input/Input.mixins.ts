@@ -20,6 +20,7 @@ export const label = {
   fontSize: mobileLabelFontSize,
   lineHeight: 1.3333333333,
   transition: 'color 0.1s',
+  whitespace: 'pre',
   ...themeUtils.responsiveStyle({
     md: {
       lineHeight: 1.1428571429,

@@ -95,6 +95,24 @@ export const indictmentCount = defineMessages({
     description:
       'Notaður sem skýritexti á "vínandamagn" svæði á ákæruliða skrefi í ákærum.',
   },
+  speedingTitle: {
+    id: 'judicial.system.core:indictments_indictment.indictment_count.speeding',
+    defaultMessage: 'Hraði',
+    description:
+      'Notaður sem titill á "Hraði" svæði á ákæruliða skrefi í ákærum.',
+  },
+  speedLabel: {
+    id: 'judicial.system.core:indictments_indictment.indictment_count.speed_label',
+    defaultMessage: 'Mældur hraði (km/klst)',
+    description:
+      'Notaður sem titill á "Mældur hraði" innsláttarsvæði á ákæruliða skrefi í ákærum.',
+  },
+  speedLimitLabel: {
+    id: 'judicial.system.core:indictments_indictment.indictment_count.speed_limit_label',
+    defaultMessage: 'Leyfilegur hámarkshraði (km/klst)',
+    description:
+      'Notaður sem titill á "Leyfilegur hámarkshraði" innsláttarsvæði á ákæruliða skrefi í ákærum.',
+  },
   lawsBrokenTitle: {
     id: 'judicial.system.core:indictments_indictment.indictment_count.laws_broken_title',
     defaultMessage: 'Lagaákvæði',
