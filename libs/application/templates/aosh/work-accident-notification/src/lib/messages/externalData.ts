@@ -23,12 +23,6 @@ export const externalData = {
       defaultMessage: 'Tilkynning',
       description: 'Announcement following prerequisites',
     },
-    announcementHeading: {
-      id: 'aosh.wan.application:externalData.dataProvider.announcementHeading',
-      defaultMessage: 'Velja lögaðila sem slysið er skráð á',
-      description: 'First heading of announcement page',
-    },
-
     announcementDescription: {
       id: 'aosh.wan.application:externalData.dataProvider.announcementDescription#markdown',
       defaultMessage: `Vinsamlega athugaðu að þú ert innskráð/ur sem einstaklingur. 
