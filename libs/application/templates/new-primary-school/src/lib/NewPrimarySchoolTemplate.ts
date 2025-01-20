@@ -208,7 +208,7 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
       clearPlaceOfResidence: assign((context) => {
         const { application } = context
         const { childInfo } = getApplicationAnswers(application.answers)
-        if (childInfo.differentPlaceOfResidence === NO) {
+        if (childInfo?.differentPlaceOfResidence === NO) {
           unset(application.answers, 'childInfo.placeOfResidence')
         }
         return context

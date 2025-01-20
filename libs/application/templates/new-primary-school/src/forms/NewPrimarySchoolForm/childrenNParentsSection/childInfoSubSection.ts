@@ -96,7 +96,7 @@ export const childInfoSubSection = buildSubSection({
           condition: (answers) => {
             const { childInfo } = getApplicationAnswers(answers)
 
-            return !!childInfo.usePronounAndPreferredName?.includes(YES)
+            return !!childInfo?.usePronounAndPreferredName?.includes(YES)
           },
           defaultValue: (application: Application) =>
             getApplicationExternalData(application.externalData)
@@ -109,7 +109,7 @@ export const childInfoSubSection = buildSubSection({
             condition: (answers) => {
               const { childInfo } = getApplicationAnswers(answers)
 
-              return !!childInfo.usePronounAndPreferredName?.includes(YES)
+              return !!childInfo?.usePronounAndPreferredName?.includes(YES)
             },
             component: 'FriggOptionsAsyncSelectField',
             defaultValue: (application: Application) =>
@@ -154,7 +154,7 @@ export const childInfoSubSection = buildSubSection({
           condition: (answers) => {
             const { childInfo } = getApplicationAnswers(answers)
 
-            return childInfo.differentPlaceOfResidence === YES
+            return childInfo?.differentPlaceOfResidence === YES
           },
         }),
         buildTextField({
@@ -166,7 +166,7 @@ export const childInfoSubSection = buildSubSection({
           condition: (answers) => {
             const { childInfo } = getApplicationAnswers(answers)
 
-            return childInfo.differentPlaceOfResidence === YES
+            return childInfo?.differentPlaceOfResidence === YES
           },
         }),
       ],
