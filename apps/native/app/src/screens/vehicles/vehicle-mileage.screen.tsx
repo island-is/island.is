@@ -344,7 +344,12 @@ export const VehicleMileageScreen: NavigationFunctionComponent<{
                   ? `${intl.formatNumber(parseInt(item.mileage, 10))} km`
                   : '-'
               }
-              editable={isFormEditable && index === 0}
+              editable={
+                isFormEditable &&
+                canRegisterMileage &&
+                canUserRegisterVehicleMileage &&
+                index === 0
+              }
               onPress={onEdit}
             />
           )
