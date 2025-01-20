@@ -162,7 +162,7 @@ export class SecondarySchoolService extends BaseTemplateApiService {
         isFreshman: applicationType === SecondarySchoolApplicationType.FRESHMAN,
         contacts: contacts,
         schools: schoolSelection,
-        nativeLanguageCode: extraInformation?.nativeLanguageCode,
+        nativeLanguageCode: extraInformation?.nativeLanguageCode || undefined,
         otherDescription: extraInformation?.otherDescription,
         attachments: await Promise.all(
           (extraInformation?.supportingDocuments || []).map(

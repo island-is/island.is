@@ -149,7 +149,7 @@ export const SecondarySchoolSchema = z.object({
     third: SelectionSchema.optional(),
   }),
   extraInformation: z.object({
-    nativeLanguageCode: z.string().optional(),
+    nativeLanguageCode: z.string().optional().nullable(),
     otherDescription: z.string().optional(),
     supportingDocuments: z.array(FileDocumentSchema).optional(),
   }),
