@@ -59,7 +59,7 @@ const SelectionSchema = z
     include: z.boolean().optional(),
     school: z
       .object({
-        id: z.string().optional(),
+        id: z.string().optional().nullable(),
         name: z.string().optional(),
       })
       .optional(),

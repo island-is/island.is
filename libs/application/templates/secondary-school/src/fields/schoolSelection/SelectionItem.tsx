@@ -1,5 +1,5 @@
 import { FieldBaseProps, YES } from '@island.is/application/types'
-import { AlertMessage, Box, Select } from '@island.is/island-ui/core'
+import { Box, Select } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import {
   CheckboxController,
@@ -130,7 +130,9 @@ export const SelectionItem: FC<FieldBaseProps & SelectionItemProps> = (
               value: firstProgramInfo.id,
               label: getTranslatedProgram(lang, firstProgramInfo),
             })
-            setIsSecondProgramRequired(!firstProgramInfo.isSpecialNeedsProgram)
+            setIsSecondProgramRequired(
+              isFreshman && !firstProgramInfo.isSpecialNeedsProgram,
+            )
           }
 
           const secondProgramInfo = programs.find(
@@ -183,6 +185,7 @@ export const SelectionItem: FC<FieldBaseProps & SelectionItemProps> = (
     nordicLanguageCodeAnswer,
     schoolOptions,
     lang,
+    isFreshman,
   ])
 
   const selectSchool = (option: Option) => {
@@ -239,12 +242,11 @@ export const SelectionItem: FC<FieldBaseProps & SelectionItemProps> = (
     )
 
     if (fieldName === 'firstProgram') {
-      const isSpecialNeedsProgram = programInfo?.isSpecialNeedsProgram
-      const isSecondRequired = !isSpecialNeedsProgram
+      const isSecondRequired = isFreshman && !programInfo?.isSpecialNeedsProgram
 
       setValue(
         `${props.field.id}.${fieldName}.isSpecialNeedsProgram`,
-        isSpecialNeedsProgram,
+        programInfo?.isSpecialNeedsProgram,
       )
       setValue(`${props.field.id}.secondProgram.require`, isSecondRequired)
       setIsSecondProgramRequired(isSecondRequired)
@@ -271,12 +273,12 @@ export const SelectionItem: FC<FieldBaseProps & SelectionItemProps> = (
     setValue(`${props.field.id}.requestDormitory`, [])
   }
 
-  // default set include=true for second program if freshman
+  // initialize include for second program
   useEffect(() => {
-    const showSecondProgram = isFreshman && programOptions.length !== 1
+    const showSecondProgram = programOptions.length !== 1
     setValue(`${props.field.id}.secondProgram.include`, showSecondProgram)
     setShowSecondProgram(showSecondProgram)
-  }, [isFreshman, programOptions.length, props.field.id, setValue])
+  }, [programOptions.length, props.field.id, setValue])
 
   useEffect(() => {
     setFieldLoadingState?.(isLoadingPrograms)
