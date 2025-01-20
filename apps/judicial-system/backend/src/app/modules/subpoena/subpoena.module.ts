@@ -8,7 +8,6 @@ import { CourtModule } from '../court/court.module'
 import { DefendantModule } from '../defendant/defendant.module'
 import { Defendant } from '../defendant/models/defendant.model'
 import { EventModule } from '../event/event.module'
-import { FileModule } from '../file/file.module'
 import { PoliceModule } from '../police/police.module'
 import { Subpoena } from './models/subpoena.model'
 import { InternalSubpoenaController } from './internalSubpoena.controller'
@@ -20,7 +19,6 @@ import { SubpoenaService } from './subpoena.service'
   imports: [
     forwardRef(() => CaseModule),
     forwardRef(() => PoliceModule),
-    forwardRef(() => FileModule),
     forwardRef(() => MessageModule),
     forwardRef(() => EventModule),
     forwardRef(() => DefendantModule),
