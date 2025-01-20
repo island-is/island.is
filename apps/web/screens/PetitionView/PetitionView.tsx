@@ -60,10 +60,6 @@ const PetitionView: Screen<PetitionViewProps> = ({ namespace }) => {
     refetch()
   }, [cursor, pageDirection])
 
-  useEffect(() => {
-    console.log('list', list)
-  }, [list])
-
   return (
     <Box>
       <SidebarLayout
