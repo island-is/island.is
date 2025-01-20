@@ -345,6 +345,9 @@ const Ruling = () => {
               dismissLabelText={formatMessage(
                 ruling.investigationCases.sections.decision.dismissLabel,
               )}
+              noDecisionLabelText={formatMessage(
+                ruling.investigationCases.sections.decision.dismissLabel,
+              )}
               onChange={(decision) => {
                 let ruling = undefined
 

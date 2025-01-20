@@ -27,6 +27,7 @@ const Decision: FC<Props> = ({
   rejectedLabelText,
   partiallyAcceptedLabelText,
   dismissLabelText,
+  noDecisionLabelText,
   onChange,
   disabled = false,
 }) => {
@@ -126,6 +127,24 @@ const Decision: FC<Props> = ({
           onChange={() => {
             setCheckedRadio(CaseDecision.DISMISSING)
             onChange(CaseDecision.DISMISSING)
+          }}
+          large
+          backgroundColor="white"
+          disabled={disabled}
+        />
+      </Box>
+      <Box marginTop={2}>
+        <RadioButton
+          name="case-decision"
+          id="case-decision-none"
+          label={noDecisionLabelText}
+          checked={
+            checkedRadio === CaseDecision.NONE ||
+            (!checkedRadio && workingCase.decision === CaseDecision.NONE)
+          }
+          onChange={() => {
+            setCheckedRadio(CaseDecision.NONE)
+            onChange(CaseDecision.NONE)
           }}
           large
           backgroundColor="white"
