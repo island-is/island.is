@@ -80,4 +80,12 @@ export class IndictmentCount extends Model {
   })
   @ApiPropertyOptional({ enum: IndictmentSubtype, isArray: true })
   indictmentCountSubtypes?: IndictmentSubtype[]
+
+  @Column({ type: DataType.STRING, allowNull: true })
+  @ApiPropertyOptional({ type: String })
+  recordedSpeed?: string
+
+  @Column({ type: DataType.STRING, allowNull: true })
+  @ApiPropertyOptional({ type: String })
+  speedLimit?: string
 }

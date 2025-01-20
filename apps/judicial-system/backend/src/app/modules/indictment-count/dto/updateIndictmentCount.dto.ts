@@ -59,4 +59,14 @@ export class UpdateIndictmentCountDto {
   @IsEnum(IndictmentSubtype, { each: true })
   @ApiPropertyOptional({ enum: IndictmentSubtype, isArray: true })
   readonly indictmentCountSubtypes?: IndictmentSubtype[]
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional({ type: String })
+  readonly recordedSpeed?: string
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional({ type: String })
+  readonly speedLimit?: string
 }

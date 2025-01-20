@@ -48,4 +48,10 @@ export class IndictmentCount {
 
   @Field(() => [IndictmentSubtype], { nullable: true })
   readonly indictmentCountSubtypes?: IndictmentSubtype[]
+
+  @Field(() => String, { nullable: true })
+  readonly recordedSpeed?: string
+
+  @Field(() => String, { nullable: true })
+  readonly speedLimit?: string
 }

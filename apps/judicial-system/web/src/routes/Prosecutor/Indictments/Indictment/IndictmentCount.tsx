@@ -391,6 +391,10 @@ export const IndictmentCount: FC<Props> = ({
     useState<string>('')
   const [legalArgumentsErrorMessage, setLegalArgumentsErrorMessage] =
     useState<string>('')
+  const [recordedSpeedErrorMessage, setRecordedSpeedErrorMessage] =
+    useState<string>('')
+  const [speedLimitErrorMessage, setSpeedLimitErrorMessage] =
+    useState<string>('')
 
   const subtypes: IndictmentSubtype[] = indictmentCount.policeCaseNumber
     ? workingCase.indictmentSubtypes[indictmentCount.policeCaseNumber]
@@ -792,33 +796,39 @@ export const IndictmentCount: FC<Props> = ({
               <Box display="flex" rowGap={1} columnGap={1} flexWrap="wrap">
                 <Box flexGrow={1}>
                   <Input
-                    name="speed"
+                    name="recordedSpeed"
                     autoComplete="off"
-                    label={formatMessage(strings.speedLabel)}
+                    label={formatMessage(strings.recordedSpeedLabel)}
                     placeholder="0"
                     required
-                    // value={indictmentCount.substances?.ALCOHOL ?? ''} TODO
-                    // onChange={(event) => {
-                    //   removeErrorMessageIfValid(
-                    //     ['empty'],
-                    //     substanceAmount,
-                    //     substanceAmountMissingErrorMessage,
-                    //     setSubstanceAmountMissingErrorMessage,
-                    //   )
+                    value={indictmentCount.recordedSpeed ?? ''}
+                    onChange={(event) => {
+                      removeErrorMessageIfValid(
+                        ['empty'],
+                        event.target.value,
+                        recordedSpeedErrorMessage,
+                        setRecordedSpeedErrorMessage,
+                      )
 
-                    //   setSubstanceAmount(event.target.value)
-                    // }}
-                    // onBlur={() => {
-                    //   validateAndSetErrorMessage(
-                    //     ['empty'],
-                    //     substanceAmount,
-                    //     setSubstanceAmountMissingErrorMessage,
-                    //   )
+                      updateIndictmentCountState(
+                        indictmentCount.id,
+                        { recordedSpeed: event.target.value },
+                        setWorkingCase,
+                      )
+                    }}
+                    onBlur={(event) => {
+                      const recordedSpeed = event.target.value
 
-                    //   onUpdateAmount(substance, substanceAmount)
-                    // }}
-                    // errorMessage={substanceAmountMissingErrorMessage}
-                    // hasError={substanceAmountMissingErrorMessage !== ''}
+                      validateAndSetErrorMessage(
+                        ['empty'],
+                        recordedSpeed,
+                        setRecordedSpeedErrorMessage,
+                      )
+
+                      handleIndictmentCountChanges({
+                        recordedSpeed,
+                      })
+                    }}
                   />
                 </Box>
                 <Box flexGrow={1}>

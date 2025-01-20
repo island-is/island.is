@@ -101,8 +101,8 @@ export const indictmentCount = defineMessages({
     description:
       'Notaður sem titill á "Hraði" svæði á ákæruliða skrefi í ákærum.',
   },
-  speedLabel: {
-    id: 'judicial.system.core:indictments_indictment.indictment_count.speed_label',
+  recordedSpeedLabel: {
+    id: 'judicial.system.core:indictments_indictment.indictment_count.recorded_speed_label',
     defaultMessage: 'Mældur hraði (km/klst)',
     description:
       'Notaður sem titill á "Mældur hraði" innsláttarsvæði á ákæruliða skrefi í ákærum.',

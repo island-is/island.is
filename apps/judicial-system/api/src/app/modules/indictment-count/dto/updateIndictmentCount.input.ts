@@ -1,4 +1,4 @@
-import { Allow, IsArray, IsEnum, IsOptional } from 'class-validator'
+import { Allow, IsArray, IsEnum, IsOptional, IsString } from 'class-validator'
 import { GraphQLJSONObject } from 'graphql-type-json'
 
 import { Field, ID, InputType } from '@nestjs/graphql'
@@ -63,4 +63,16 @@ export class UpdateIndictmentCountInput {
   @IsEnum(IndictmentSubtype, { each: true })
   @Field(() => [IndictmentSubtype], { nullable: true })
   readonly indictmentCountSubtypes?: IndictmentSubtype[]
+
+  @Allow()
+  @IsOptional()
+  @IsString()
+  @Field(() => String, { nullable: true })
+  readonly recordedSpeed?: string
+
+  @Allow()
+  @IsOptional()
+  @IsString()
+  @Field(() => String, { nullable: true })
+  readonly speedLimit?: string
 }
