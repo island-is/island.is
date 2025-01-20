@@ -62,8 +62,8 @@ const basicCompanySchema = z.object({
 
 const companySchema = z.object({
   addressOfBranch: z.string().optional(),
-  nameOfBranch: z.string().optional(), // VER needs to confirm requirement here for individuals vs company
-  postnumberOfBranch: z.string().optional(),
+  nameOfBranch: z.string().optional(),
+  postnumberOfBranch: z.string().optional().nullable(),
   industryClassification: z.string().optional(),
   email: z.string().email(),
   phonenumber: z.string().refine((v) => isValidPhoneNumber(v)),
@@ -79,7 +79,15 @@ const employeeSchema = z
     address: z.string().min(1).max(256),
     employmentStatus: z.string().optional(),
     employmentTime: z.string(),
-    employmentRate: z.string(),
+    employmentRate: z.string().refine(
+      (v) => {
+        const rateNum = parseInt(v, 10)
+        return rateNum > 0 && rateNum <= 100
+      },
+      {
+        message: '1-100%',
+      },
+    ),
     workhourArrangement: z.string(),
     nationality: z.string(),
     postnumberAndMunicipality: z.string(),
@@ -106,16 +114,6 @@ const employeeSchema = z
     },
     {
       path: ['tempEmploymentSSN'],
-    },
-  )
-  .refine(
-    (data) => {
-      const rateNum = parseInt(data.employmentRate, 10)
-      return rateNum > 0 && rateNum <= 100
-    },
-    {
-      message: '1%-100%',
-      path: ['employmentRate'],
     },
   )
 
