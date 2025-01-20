@@ -35,11 +35,6 @@ export const subSectionDelivery = buildSubSection({
             { value: Pickup.DISTRICT, label: m.overviewPickupDistrict },
           ],
         }),
-        buildDescriptionField({
-          id: 'space',
-          title: '',
-          space: 'gutter',
-        }),
         buildSelectField({
           id: 'jurisdiction',
           title: 'Veldu afhendingarstað',
