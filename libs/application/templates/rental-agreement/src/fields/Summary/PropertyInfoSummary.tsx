@@ -191,7 +191,7 @@ export const PropertyInfoSummary = ({
                       iconType="outline"
                       truncate={true}
                       onClick={() => {
-                        // TODO: Implement download file url
+                        // TODO: Implement action to open file in new tab
                         window.open(file.key)
                       }}
                     >
