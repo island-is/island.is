@@ -320,6 +320,34 @@
         }
       }
     },
+    "/v1/schools/admissions/open": {
+      "get": {
+        "tags": ["Schools"],
+        "summary": "[GET] Check if any programme is open for admission for any school.",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/AnyOpenForAdmissionDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AnyOpenForAdmissionDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AnyOpenForAdmissionDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/v1/students/{nationalId}/elementarygrades": {
       "get": {
         "tags": ["Students"],
@@ -417,6 +445,14 @@
   },
   "components": {
     "schemas": {
+      "AnyOpenForAdmissionDto": {
+        "type": "object",
+        "properties": {
+          "anyOpenForAdmissionGeneral": { "type": "boolean" },
+          "anyOpenForAdmissionFreshman": { "type": "boolean" }
+        },
+        "additionalProperties": false
+      },
       "ApplicationBaseDto": {
         "type": "object",
         "properties": {
@@ -844,8 +880,7 @@
           "schoolId": {
             "type": "string",
             "description": "What school is being applied to",
-            "format": "uuid",
-            "nullable": true
+            "format": "uuid"
           },
           "name": {
             "type": "string",
@@ -895,6 +930,14 @@
             "type": "string",
             "description": "Website address for school",
             "nullable": true
+          },
+          "anyOpenForAdmissionGeneral": {
+            "type": "boolean",
+            "description": "If any programmes are open for admission"
+          },
+          "anyOpenForAdmissionFreshman": {
+            "type": "boolean",
+            "description": "If any programmes are open for admission for freshman"
           },
           "thirdLanguages": {
             "type": "array",
