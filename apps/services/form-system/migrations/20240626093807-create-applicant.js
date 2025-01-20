@@ -27,13 +27,11 @@ module.exports = {
           },
           name: {
             type: Sequelize.STRING,
-            allowNull: false,
-            defaultValue: '',
+            allowNull: true,
           },
           national_id: {
             type: Sequelize.STRING,
             allowNull: false,
-            defaultValue: '',
           },
           email: {
             type: Sequelize.STRING,
