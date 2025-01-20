@@ -7,8 +7,10 @@ import {
   SortableTable,
   formatDate,
 } from '@island.is/portals/my-pages/core'
+import { Markdown } from '@island.is/shared/components'
 import { messages } from '../../../lib/messages'
 import { tagSelector } from '../../../utils/tagSelector'
+import * as styles from '../tables/VaccinationsTable.css'
 
 interface Props {
   data?: Array<HealthDirectorateVaccination>
@@ -85,8 +87,23 @@ export const SortedVaccinationsTable = ({ data }: Props) => {
                       location: vaccination.location ?? '',
                     })) ?? []
                   }
+                  footer={
+                    <Box marginTop={2} paddingLeft={2}>
+                      <ul color="black">
+                        {item.comments?.map((item, i) => (
+                          <li key={i} className={styles.footerList}>
+                            <Markdown>{item}</Markdown>
+                          </li>
+                        ))}
+                      </ul>
+                    </Box>
+                  }
                 />
-              ) : null,
+              ) : (
+                <EmptyTable
+                  message={formatMessage(messages.noVaccinesRegistered)}
+                />
+              ),
           })) ?? []
         }
       />

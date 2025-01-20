@@ -16,6 +16,7 @@ import { SortableData, SortableTableProps } from './types'
 import { useSortableData } from './useSortableData'
 import { useWindowSize } from 'react-use'
 import { theme } from '@island.is/island-ui/theme'
+import React from 'react'
 
 /**
  * SortableTable component renders a table that can be sorted and is responsive to different screen sizes.
@@ -232,27 +233,31 @@ export const SortableTable = (props: SortableTableProps) => {
                 ellipsisLength={props.ellipsisLength}
               />
             ))}
-            {props.footer && (
-              <T.Row>
-                <T.Data
-                  text={{ fontWeight: 'semiBold' }}
-                  borderColor="white"
-                  key="footer-empty"
-                  unselectable="on"
-                >
-                  {/* Empty cell at index 0 */}
-                </T.Data>
-                {Object.values(props.footer).map((valueItem) => (
+            {props.footer ? (
+              React.isValidElement(props.footer) ? (
+                props.footer
+              ) : (
+                <T.Row>
                   <T.Data
                     text={{ fontWeight: 'semiBold' }}
                     borderColor="white"
-                    key={`footer-${valueItem}`}
+                    key="footer-empty"
+                    unselectable="on"
                   >
-                    {valueItem}
+                    {/* Empty cell at index 0 */}
                   </T.Data>
-                ))}
-              </T.Row>
-            )}
+                  {Object.values(props.footer).map((valueItem) => (
+                    <T.Data
+                      text={{ fontWeight: 'semiBold' }}
+                      borderColor="white"
+                      key={`footer-${valueItem}`}
+                    >
+                      {valueItem}
+                    </T.Data>
+                  ))}
+                </T.Row>
+              )
+            ) : null}
           </T.Body>
         </T.Table>
       )}

@@ -22,9 +22,11 @@ export type SortableTableProps = {
   labels: {
     [key: string]: string
   }
-  footer?: {
-    [key: string]: string | number
-  }
+  footer?:
+    | {
+        [key: string]: string | number
+      }
+    | React.ReactElement
   title?: string
   tagOutlined?: boolean // If tags are set, should they be filled or outlined
   expandable?: boolean // Uses "children" key for expandable rows
