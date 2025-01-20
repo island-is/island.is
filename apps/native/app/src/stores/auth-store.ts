@@ -50,8 +50,11 @@ interface AuthStore extends State {
   cognitoDismissCount: number
   cognitoAuthUrl?: string
   cookies: string
-  fetchUserInfo(skipRefresh?: boolean): Promise<UserInfo>
-  refresh(): Promise<void>
+  fetchUserInfo(
+    skipRefresh?: boolean,
+    skipLogoutIfRefreshFailed?: boolean,
+  ): Promise<UserInfo>
+  refresh(skipLogout?: boolean): Promise<void>
   login(): Promise<boolean>
   logout(): Promise<boolean>
 }
@@ -97,6 +100,13 @@ const clearPasskey = async (userNationalId?: string) => {
   }
 }
 
+const isLogoutError = (e: Error & { code?: string }) => {
+  return (
+    e.code === INVALID_REFRESH_TOKEN_ERROR ||
+    e.message === UNAUTHORIZED_USER_INFO
+  )
+}
+
 export const authStore = create<AuthStore>((set, get) => ({
   authorizeResult: undefined,
   userInfo: undefined,
@@ -107,13 +117,13 @@ export const authStore = create<AuthStore>((set, get) => ({
   cognitoDismissCount: 0,
   cognitoAuthUrl: undefined,
   cookies: '',
-  async fetchUserInfo(skipRefresh = false) {
+  async fetchUserInfo(skipRefresh = false, skipLogoutIfRefreshFailed = false) {
     const appAuthConfig = getAppAuthConfig()
     // Detect expired token
     const expiresAt = get().authorizeResult?.accessTokenExpirationDate ?? 0
 
     if (!skipRefresh && new Date(expiresAt) < new Date()) {
-      await get().refresh()
+      await get().refresh(skipLogoutIfRefreshFailed)
     }
 
     const res = await fetch(
@@ -128,7 +138,7 @@ export const authStore = create<AuthStore>((set, get) => ({
     if (res.status === 401) {
       // Attempt to refresh the access token
       if (!skipRefresh) {
-        await get().refresh()
+        await get().refresh(skipLogoutIfRefreshFailed)
         // Retry the userInfo call
         return get().fetchUserInfo(true)
       }
@@ -141,6 +151,7 @@ export const authStore = create<AuthStore>((set, get) => ({
     }
   },
   async refresh(skipLogout = false) {
+    const intl = getIntl()
     const appAuthConfig = getAppAuthConfig()
     const refreshToken = get().authorizeResult?.refreshToken
 
@@ -154,11 +165,14 @@ export const authStore = create<AuthStore>((set, get) => ({
         refreshToken,
       })
     } catch (e) {
-      if (!skipLogout) {
-        // Add && isLogoutError(e) to if (check if error is INVALID_REFRESH_TOKEN_ERROR or UNAUTHORIZED_USER_INFO?)
-        Alert.alert('Error', 'Your session has expired. Please log in again.') // TODO add to intl and find better error message?
+      if (!skipLogout && isLogoutError(e as Error & { code?: string })) {
+        Alert.alert(
+          intl.formatMessage({ id: 'login.expiredTitle' }),
+          intl.formatMessage({ id: 'login.expiredMessage' }),
+        )
+
         await get().logout()
-        Navigation.setRoot({ root: await getAppRoot() })
+        await Navigation.setRoot({ root: await getAppRoot() })
       }
       throw e
     }
@@ -266,6 +280,7 @@ export async function readAuthorizeResult(): Promise<void> {
   }
 }
 
+// Function used in getAppRoot to check if user is authenticated and show login screen if not
 export async function checkIsAuthenticated() {
   const intl = getIntl()
   const appAuthConfig = getAppAuthConfig()
@@ -299,16 +314,13 @@ export async function checkIsAuthenticated() {
   }
 
   try {
-    await fetchUserInfo()
+    // Fetch user info, skip logout if refresh token fails. Instead, handle it locally.
+    // The reason for that is getAppRoot => checkIsAuthenticated => fetchUserInfo => refresh => getAppRoot if refresh fails, resulting in an infinite loop.
+    await fetchUserInfo(false, true)
 
     return true
   } catch (e) {
-    const err = e as Error & { code?: string }
-    const shouldLogout =
-      err.code === INVALID_REFRESH_TOKEN_ERROR ||
-      err.message === UNAUTHORIZED_USER_INFO
-
-    if (!shouldLogout) {
+    if (!isLogoutError(e as Error & { code?: string })) {
       return true
     }
 

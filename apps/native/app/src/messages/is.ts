@@ -18,6 +18,7 @@ export const is = {
     'Uppfærð réttindi vantar, vinsamlegast skráðu þig inn aftur.',
   'login.expiredMissingUserMessage':
     'Tókst ekki að sækja notendaupplýsingar, vinsamlegast skráðu þig inn aftur.',
+  'login.expiredMessage': 'Vinsamlegast skráðu þig inn aftur.',
 
   // app lock
   'applock.title': 'Sláðu inn 4 tölustafa PIN',
