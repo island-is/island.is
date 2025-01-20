@@ -9,8 +9,6 @@ import { sign, VerifyOptions, verify } from 'jsonwebtoken'
 import { LICENSE_SERVICE_CACHE_MANAGER_PROVIDER } from './licenseCache.provider'
 import { LicenseConfig } from './license.config'
 
-export const BARCODE_EXPIRE_TIME_IN_SEC = 60
-export const BARCODE_SESSION_EXPIRE_TIME_IN_SEC = 1800 // 30 minutes
 export const TOKEN_EXPIRED_ERROR = 'TokenExpiredError'
 export const BARCODE_ACTIVE_SESSION_KEY = 'activeSession'
 
@@ -68,7 +66,7 @@ export class BarcodeService {
     expiresIn: number
   }> {
     // jsonwebtoken uses seconds for expiration time
-    const exp = Math.floor(Date.now() / 1000) + BARCODE_EXPIRE_TIME_IN_SEC
+    const exp = Math.floor(Date.now() / 1000) + this.config.barcodeExpireTimeInSec
 
     return new Promise((resolve, reject) =>
       sign(
@@ -85,7 +83,7 @@ export class BarcodeService {
 
           return resolve({
             token: encoded,
-            expiresIn: BARCODE_EXPIRE_TIME_IN_SEC,
+            expiresIn: this.config.barcodeExpireTimeInSec,
           })
         },
       ),
@@ -96,14 +94,14 @@ export class BarcodeService {
     key: string,
     value: BarcodeData<Type>,
   ) {
-    return this.cacheManager.set(key, value, BARCODE_EXPIRE_TIME_IN_SEC * 1000)
+    return this.cacheManager.set(key, value, this.config.barcodeExpireTimeInSec * 1000)
   }
 
   async setSessionCache(key: string, value: string) {
     return this.cacheManager.set(
       `${BARCODE_ACTIVE_SESSION_KEY}:${key}`,
       value,
-      BARCODE_SESSION_EXPIRE_TIME_IN_SEC * 1000,
+      this.config.barcodeSessionExpireTimeInSec * 1000,
     )
   }
 

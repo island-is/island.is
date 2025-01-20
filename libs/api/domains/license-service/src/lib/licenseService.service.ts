@@ -475,18 +475,7 @@ export class LicenseService {
     return `${licenseType}-${sub}`
   }
 
-  async createBarcode(
-    user: User,
-    genericUserLicense: GenericUserLicense,
-  ): Promise<CreateBarcodeResult | null> {
-    const code = randomUUID()
-    const genericUserLicenseType = genericUserLicense.license.type
-    const licenseType = this.mapLicenseType(genericUserLicenseType)
-    const client = await this.getClient<typeof licenseType>(licenseType)
-
-    const barcodeSessionKey = user.sub
-      ? this.getBarcodeSessionKey(licenseType, user.sub)
-      : undefined
+  async checkBarcodeSession(barcodeSessionKey: string | undefined, user: User, licenseType: LicenseType) {
     if (barcodeSessionKey) {
       const activeBarcodeSession = await this.barcodeService.getSessionCache(
         barcodeSessionKey,
@@ -499,11 +488,27 @@ export class LicenseService {
         )
 
         throw new ProblemError({
-          type: ProblemType.BAD_SUBJECT,
+          type: ProblemType.BAD_SESSION,
           title: `User has an active session for license type: ${licenseType}`,
         })
       }
     }
+  }
+
+  async createBarcode(
+    user: User,
+    genericUserLicense: GenericUserLicense,
+  ): Promise<CreateBarcodeResult | null> {
+    const code = randomUUID()
+    const genericUserLicenseType = genericUserLicense.license.type
+    const licenseType = this.mapLicenseType(genericUserLicenseType)
+    const client = await this.getClient<typeof licenseType>(licenseType)
+
+    const barcodeSessionKey = user.sub
+      ? this.getBarcodeSessionKey(licenseType, user.sub)
+      : undefined
+
+    await this.checkBarcodeSession(barcodeSessionKey, user, licenseType)
 
     if (
       genericUserLicense.license.pkpassStatus !==
