@@ -62,10 +62,10 @@ export const mapTeamList = ({
   }
 
   const mapOrderBy = (orderBy?: ITeamListFields['orderBy']) => {
-    if (orderBy === GetTeamMembersInputOrderBy.MANUAL) {
-      return GetTeamMembersInputOrderBy.MANUAL
+    if (orderBy === GetTeamMembersInputOrderBy.Manual) {
+      return GetTeamMembersInputOrderBy.Manual
     }
-    return GetTeamMembersInputOrderBy.NAME
+    return GetTeamMembersInputOrderBy.Name
   }
 
   return {

@@ -937,7 +937,7 @@ export class TeamListResolver {
 
     const teamMembers = teamList.teamMembers ?? []
 
-    if (teamList?.teamMemberOrder !== GetTeamMembersInputOrderBy.MANUAL) {
+    if (teamList?.teamMemberOrder !== GetTeamMembersInputOrderBy.Manual) {
       teamMembers.sort(sortAlpha('name'))
     }
 

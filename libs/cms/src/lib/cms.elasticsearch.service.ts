@@ -607,7 +607,7 @@ export class CmsElasticsearchService {
       type: 'webTeamMember',
       listId: input.teamListId,
       orderBy:
-        input.orderBy === GetTeamMembersInputOrderBy.MANUAL
+        input.orderBy === GetTeamMembersInputOrderBy.Manual
           ? GetGenericListItemsInputOrderBy.DATE
           : GetGenericListItemsInputOrderBy.TITLE,
     })

@@ -6,6 +6,7 @@ import { TeamList, type TeamListProps } from '@island.is/island-ui/contentful'
 import { GenericList } from '@island.is/web/components'
 import {
   type GenericTag,
+  GetTeamMembersInputOrderBy,
   type Query,
   TeamMemberResponse,
 } from '@island.is/web/graphql/schema'
@@ -18,7 +19,7 @@ interface TeamMemberListWrapperProps {
   id: string
   filterTags?: GenericTag[] | null
   showSearchInput?: boolean
-  orderBy?: string
+  orderBy?: GetTeamMembersInputOrderBy
 }
 
 export const TeamMemberListWrapper = ({
@@ -116,7 +117,7 @@ interface TeamListSliceProps extends TeamListProps {
   id: string
   filterTags?: GenericTag[] | null
   showSearchInput?: boolean
-  orderBy?: string
+  orderBy?: GetTeamMembersInputOrderBy
 }
 
 export const TeamListSlice = ({
@@ -125,7 +126,7 @@ export const TeamListSlice = ({
   filterTags,
   id,
   showSearchInput = true,
-  orderBy = 'Name',
+  orderBy = GetTeamMembersInputOrderBy.Name,
 }: TeamListSliceProps) => {
   if (variant === 'accordion') {
     return (

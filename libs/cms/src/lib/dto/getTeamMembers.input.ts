@@ -11,8 +11,8 @@ import { ElasticsearchIndexLocale } from '@island.is/content-search-index-manage
 import { CacheField } from '@island.is/nest/graphql'
 
 export enum GetTeamMembersInputOrderBy {
-  NAME = 'Name',
-  MANUAL = 'Manual',
+  Name = 'Name',
+  Manual = 'Manual',
 }
 
 registerEnumType(GetTeamMembersInputOrderBy, {
