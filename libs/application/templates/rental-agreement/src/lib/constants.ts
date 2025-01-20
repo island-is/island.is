@@ -6,8 +6,7 @@ export const FALSE = 'false'
 export enum States {
   PREREQUISITES = 'prerequisites',
   DRAFT = 'draft',
-  ONEACCEPTED = 'oneAccepted',
-  TWOACCEPTED = 'twoAccepted',
+  SUMMARY = 'summary',
   SIGNING = 'signing',
   COMPLETED = 'completed',
 }

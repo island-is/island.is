@@ -17,6 +17,10 @@ import {
   NationalRegistryUserApi,
   NationalRegistrySpouseApi,
 } from '../dataProviders'
+import { getLandlordsNationalId } from './getLandlordsNationalId'
+import { assign } from 'xstate'
+import set from 'lodash/set'
+import { getTenantsNationalId } from './getTenantsByNationalId'
 
 type Events = { type: DefaultEvents.SUBMIT } | { type: DefaultEvents.EDIT }
 
@@ -96,16 +100,77 @@ const RentalAgreementTemplate: ApplicationTemplate<
         },
         on: {
           [DefaultEvents.SUBMIT]: {
-            target: States.DRAFT,
+            target: States.SUMMARY,
           },
         },
       },
+      [States.SUMMARY]: {
+        entry: 'assignUsers',
+        meta: {
+          name: States.SUMMARY,
+          progress: 100,
+          status: 'draft',
+          lifecycle: pruneAfterDays(30),
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/summaryForm').then((module) =>
+                  Promise.resolve(module.SummaryForm),
+                ),
+              actions: [
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: 'Staðfesta',
+                  type: 'primary',
+                },
+                {
+                  event: DefaultEvents.EDIT,
+                  name: 'Breyta umsókn',
+                  type: 'primary',
+                },
+              ],
+              write: 'all',
+              read: 'all',
+              delete: true,
+            },
+          ],
+        },
+        on: {
+          [DefaultEvents.SUBMIT]: {
+            target: States.SUMMARY,
+          },
+        },
+      },
+    },
+  },
+  stateMachineOptions: {
+    actions: {
+      assignUsers: assign((context) => {
+        const { application } = context
+
+        const LandlordsNationalId = getLandlordsNationalId(application)
+        const TenantsNationalId = getTenantsNationalId(application)
+        if (
+          LandlordsNationalId &&
+          TenantsNationalId &&
+          LandlordsNationalId !== null &&
+          LandlordsNationalId.length > 0
+        ) {
+          set(application, 'assignees', [
+            LandlordsNationalId,
+            TenantsNationalId,
+          ])
+        }
+        return context
+      }),
     },
   },
   mapUserToRole(
     nationalId: string,
     application: Application,
   ): Roles | undefined {
+    console.log(getLandlordsNationalId(application))
     if (application.applicant === nationalId) {
       return Roles.APPLICANT
     }
