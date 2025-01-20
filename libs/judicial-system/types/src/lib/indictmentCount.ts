@@ -3,6 +3,7 @@ export enum IndictmentCountOffense {
   DRUNK_DRIVING = 'DRUNK_DRIVING',
   ILLEGAL_DRUGS_DRIVING = 'ILLEGAL_DRUGS_DRIVING',
   PRESCRIPTION_DRUGS_DRIVING = 'PRESCRIPTION_DRUGS_DRIVING',
+  SPEEDING = 'SPEEDING',
 }
 
 export enum Substance {
@@ -98,4 +99,5 @@ export const offenseSubstances: {
     Substance.TRIAZOLAM,
     Substance.ZOLPIDEM,
   ],
+  [IndictmentCountOffense.SPEEDING]: [],
 }
