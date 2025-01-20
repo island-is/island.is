@@ -21,7 +21,7 @@ const LanguageSelection: FC<React.PropsWithChildren<FieldBaseProps>> = ({
 }) => {
   const { formatMessage } = useLocale()
 
-  const [visibleLanguages, setVisibleLanguages] = useState(1)
+  const [visibleLanguagesCount, setVisibleLanguagesCount] = useState(1)
   const [selectedLanguages, setSelectedLanguages] = useState<string[]>([
     '',
     '',
@@ -43,7 +43,15 @@ const LanguageSelection: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   ]
 
   const addLanguage = () => {
-    setVisibleLanguages((prev) => Math.min(prev + 1, 4))
+    setVisibleLanguagesCount((prev) => Math.min(prev + 1, 4))
+  }
+
+  /**
+   * Hide child language if there is no language selected
+   * @returns
+   */
+  const hideChildLanguage = () => {
+    return selectedLanguages.filter((language) => language !== '').length <= 1
   }
 
   useEffect(() => {
@@ -69,11 +77,12 @@ const LanguageSelection: FC<React.PropsWithChildren<FieldBaseProps>> = ({
     }
 
     setSelectedLanguages(selected)
-    setVisibleLanguages(visibleCount)
+    setVisibleLanguagesCount(visibleCount)
   }, [application, getApplicationAnswers])
+
   return (
     <Stack space={2}>
-      {languageIdsArray.slice(0, visibleLanguages).map((id, index) => (
+      {languageIdsArray.slice(0, visibleLanguagesCount).map((id, index) => (
         <SelectController
           key={languageIdsArray[index]}
           label={formatMessage(
@@ -103,33 +112,36 @@ const LanguageSelection: FC<React.PropsWithChildren<FieldBaseProps>> = ({
           variant="text"
           size="small"
           onClick={addLanguage}
-          disabled={visibleLanguages >= 4}
+          disabled={visibleLanguagesCount >= 4}
         >
           {formatMessage(
             newPrimarySchoolMessages.differentNeeds.addLanguageButton,
           )}
         </Button>
       </Box>
-      <Text variant="h4" marginTop={3}>
-        {formatMessage(
-          newPrimarySchoolMessages.differentNeeds.childLanguageTitle,
-        )}
-      </Text>
-      <SelectController
-        key={languagesIds.childLanguage}
-        label={formatMessage(
-          newPrimarySchoolMessages.differentNeeds.languageSubSectionTitle,
-        )}
-        placeholder={formatMessage(
-          newPrimarySchoolMessages.differentNeeds.languageSelectionPlaceholder,
-        )}
-        id={languagesIds.childLanguage}
-        name={languagesIds.childLanguage}
-        backgroundColor="blue"
-        options={allLanguageOptions.filter((language) =>
-          selectedLanguages.includes(language.value),
-        )}
-      />
+      <Box hidden={hideChildLanguage()}>
+        <Text variant="h4" marginTop={3}>
+          {formatMessage(
+            newPrimarySchoolMessages.differentNeeds.childLanguageTitle,
+          )}
+        </Text>
+        <SelectController
+          key={languagesIds.childLanguage}
+          label={formatMessage(
+            newPrimarySchoolMessages.differentNeeds.languageSubSectionTitle,
+          )}
+          placeholder={formatMessage(
+            newPrimarySchoolMessages.differentNeeds
+              .languageSelectionPlaceholder,
+          )}
+          id={languagesIds.childLanguage}
+          name={languagesIds.childLanguage}
+          backgroundColor="blue"
+          options={allLanguageOptions.filter((language) =>
+            selectedLanguages.includes(language.value),
+          )}
+        />
+      </Box>
     </Stack>
   )
 }

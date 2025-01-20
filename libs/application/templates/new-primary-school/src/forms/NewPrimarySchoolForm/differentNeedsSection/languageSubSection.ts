@@ -28,11 +28,6 @@ export const languageSubSection = buildSubSection({
           title: newPrimarySchoolMessages.differentNeeds.childNativeLanguage,
           titleVariant: 'h4',
         }),
-        buildDescriptionField({
-          id: 'languages.nativeLanguage.title',
-          title: 'newPrimarySchoolMessages.differentNeeds.childNativeLanguage',
-          titleVariant: 'h4',
-        }),
         buildSelectField({
           id: 'languages.languageEnvironment',
           dataTestId: 'languages-language-environment',
@@ -58,6 +53,9 @@ export const languageSubSection = buildSubSection({
           id: 'languages',
           title: '',
           component: 'LanguageSelection',
+          condition: (answers) => {
+            return hasOtherLanguages(answers)
+          },
         }),
         buildRadioField({
           id: 'languages.signLanguage',
