@@ -231,6 +231,13 @@ const template: ApplicationTemplate<
               id: Roles.ORGANISATION_REVIEWER,
               read: 'all',
               write: 'all',
+              actions: [
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: overview.buttons.submit,
+                  type: 'primary',
+                },
+              ],
             },
           ],
         },

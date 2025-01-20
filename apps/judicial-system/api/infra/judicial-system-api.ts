@@ -47,8 +47,8 @@ export const serviceSetup = (services: {
       },
       HIDDEN_FEATURES: {
         dev: '',
-        staging: 'MULTIPLE_INDICTMENT_SUBTYPES',
-        prod: 'MULTIPLE_INDICTMENT_SUBTYPES',
+        staging: '',
+        prod: '',
       },
     })
     .secrets({
