@@ -276,9 +276,13 @@ export const getLegalArguments = (
   let articles = `${lawsBroken[0][1]}.`
 
   for (let i = 1; i < lawsBroken.length; i++) {
+    let noArticle = articles === '0.'
     let useSbr = true
+
     if (lawsBroken[i][0] !== lawsBroken[i - 1][0]) {
-      articles = `${articles} mgr. ${lawsBroken[i - 1][0]}. gr.`
+      articles = `${noArticle ? '' : `${articles} mgr. `}${
+        lawsBroken[i - 1][0]
+      }. gr.`
       useSbr = i > andIndex
     }
 
@@ -286,7 +290,7 @@ export const getLegalArguments = (
       i === andIndex ? ' og' : useSbr ? ', sbr.' : ','
     } ${lawsBroken[i][1]}.`
   }
-
+  console.log(articles)
   return formatMessage(strings.legalArgumentsAutofill, {
     articles: `${articles} mgr. ${lawsBroken[lawsBroken.length - 1][0]}. gr.`,
   })
