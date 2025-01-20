@@ -118,10 +118,13 @@ export const VehicleMileageScreen: NavigationFunctionComponent<{
         +data[0].mileage
       : 0
 
-  // Editable Flags
+  // Editable Flags:
+  //Indicates that the user has already posted a reading today.
   const isFormEditable = !!res.data?.vehicleMileageDetails?.editing
+  // Indicates that the mileage can be edited for this vehicle.
   const canRegisterMileage =
     !!res.data?.vehicleMileageDetails?.canRegisterMileage
+  // Indicates that the user is allowed to register mileage for this vehicle.
   const canUserRegisterVehicleMileage =
     !!res.data?.vehicleMileageDetails?.canUserRegisterVehicleMileage
 
@@ -353,7 +356,7 @@ export const VehicleMileageScreen: NavigationFunctionComponent<{
           <View key="list-header">
             <View style={{ flexDirection: 'column', gap: 16 }}>
               <TextField
-                editable={canRegisterMileage}
+                editable={canRegisterMileage && canUserRegisterVehicleMileage}
                 key="mileage-input"
                 placeholder={intl.formatMessage({
                   id: 'vehicle.mileage.inputPlaceholder',
@@ -387,11 +390,15 @@ export const VehicleMileageScreen: NavigationFunctionComponent<{
                   id: 'vehicle.mileage.inputSubmitButton',
                 })}
                 onPress={onSubmit}
-                disabled={!canRegisterMileage || loadingSubmit}
+                disabled={
+                  !canRegisterMileage ||
+                  !canUserRegisterVehicleMileage ||
+                  loadingSubmit
+                }
               />
             </View>
             <View>
-              {!canRegisterMileage && (
+              {(!canRegisterMileage || !canUserRegisterVehicleMileage) && (
                 <Typography
                   variant="body3"
                   textAlign="center"
