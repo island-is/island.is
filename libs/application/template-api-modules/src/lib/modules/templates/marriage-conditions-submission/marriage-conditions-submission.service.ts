@@ -20,10 +20,15 @@ import {
   MarriageConditionsFakeData,
 } from '@island.is/application/templates/marriage-conditions/types'
 import { BaseTemplateApiService } from '../../base-template-api.service'
-import { ApplicationTypes } from '@island.is/application/types'
+import {
+  ApplicationTypes,
+  InstitutionNationalIds,
+  PaymentCatalogApi,
+} from '@island.is/application/types'
 import { NationalRegistryXRoadService } from '@island.is/api/domains/national-registry-x-road'
 import { TemplateApiError } from '@island.is/nest/problem'
 import { coreErrorMessages, getValueViaPath } from '@island.is/application/core'
+import { ChargeFjsV2ClientService } from '@island.is/clients/charge-fjs-v2'
 
 @Injectable()
 export class MarriageConditionsSubmissionService extends BaseTemplateApiService {
@@ -32,6 +37,7 @@ export class MarriageConditionsSubmissionService extends BaseTemplateApiService 
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
     private readonly syslumennService: SyslumennService,
     private readonly nationalRegistryService: NationalRegistryXRoadService,
+    private readonly chargeFjsV2ClientService: ChargeFjsV2ClientService,
   ) {
     super(ApplicationTypes.MARRIAGE_CONDITIONS)
   }
@@ -115,6 +121,14 @@ export class MarriageConditionsSubmissionService extends BaseTemplateApiService 
       generateAssignOtherSpouseApplicationEmail,
       application,
     )
+  }
+
+  async paymentNationalRegistry() {
+    const catalog =
+      await this.chargeFjsV2ClientService.getCatalogByPerformingOrg(
+        InstitutionNationalIds.THJODSKRA,
+      )
+    return catalog.item
   }
 
   async submitApplication({ application, auth }: TemplateApiModuleActionProps) {

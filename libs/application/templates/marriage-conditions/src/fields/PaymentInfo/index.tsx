@@ -34,20 +34,22 @@ export const PaymentInfo: FC<
 > = ({ field, application }) => {
   const { formatMessage } = useLocale()
 
-  // Get Payment Catalog
-  const paymentCatalog = application.externalData?.paymentDistrictCommissioners
+  // Get District Commissioner Payment Catalog
+  const paymentCatalogDC = application.externalData
+    ?.paymentDistrictCommissioners?.data as Array<Payment>
+  // Get National Registry Payment Catalog
+  const paymentCatalogNR = application.externalData?.paymentNationalRegistry
     ?.data as Array<Payment>
-
   // Get Charge Codes
-  const birthCertCode = paymentCatalog?.find(
-    (payment) => payment.chargeItemCode === 'AY153',
+  const birthCertCode = paymentCatalogNR?.find(
+    (payment) => payment.chargeItemCode === 'FM501',
   )
-  const maritalCertCode = paymentCatalog?.find(
-    (payment) => payment.chargeItemCode === 'AY154',
+  const maritalCertCode = paymentCatalogNR?.find(
+    (payment) => payment.chargeItemCode === 'FM502',
   )
 
-  const surveyCertCode = paymentCatalog?.find(
-    (payment) => payment.chargeItemCode === 'AY128',
+  const surveyCertCode = paymentCatalogDC?.find(
+    (payment) => payment.chargeItemCode === 'AY154',
   )
 
   const applicantHasBirthCertificate = getValueViaPath<boolean>(

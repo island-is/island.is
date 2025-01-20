@@ -28,6 +28,12 @@ export const DistrictCommissionersPaymentCatalogApi =
     externalDataId: 'paymentDistrictCommissioners',
   })
 
+// Having 2 payment catalog apis did not work so fetching catalog in template-api
+export const NationalRegistryPaymentCatalogApi = defineTemplateApi({
+  action: 'paymentNationalRegistry',
+  externalDataId: 'paymentNationalRegistry',
+})
+
 export const BirthCertificateApi = defineTemplateApi({
   action: 'birthCertificate',
 })
@@ -38,4 +44,12 @@ export const MockableDistrictCommissionersPaymentCatalogApi =
       organizationId: InstitutionNationalIds.SYSLUMENN,
     },
     externalDataId: 'paymentDistrictCommissioners',
+  })
+
+export const MockableNationalRegistryPaymentCatalogApi =
+  MockablePaymentCatalogApi.configure({
+    params: {
+      organizationId: InstitutionNationalIds.THJODSKRA,
+    },
+    externalDataId: 'paymentNationalRegistry',
   })

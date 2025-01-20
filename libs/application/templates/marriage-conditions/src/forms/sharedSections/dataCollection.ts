@@ -8,6 +8,8 @@ import {
   MockableDistrictCommissionersPaymentCatalogApi,
   DistrictCommissionersPaymentCatalogApi,
   BirthCertificateApi,
+  NationalRegistryPaymentCatalogApi,
+  MockableNationalRegistryPaymentCatalogApi,
 } from '../../dataProviders'
 import { m } from '../../lib/messages'
 
@@ -42,12 +44,22 @@ export const dataCollection = [
     subTitle: '',
   }),
   buildDataProviderItem({
+    provider: NationalRegistryPaymentCatalogApi,
+    title: '',
+    subTitle: '',
+  }),
+  buildDataProviderItem({
     provider: DistrictCommissionersPaymentCatalogApi,
     title: '',
     subTitle: '',
   }),
   buildDataProviderItem({
     provider: MockableDistrictCommissionersPaymentCatalogApi,
+    title: '',
+    subTitle: '',
+  }),
+  buildDataProviderItem({
+    provider: MockableNationalRegistryPaymentCatalogApi,
     title: '',
     subTitle: '',
   }),

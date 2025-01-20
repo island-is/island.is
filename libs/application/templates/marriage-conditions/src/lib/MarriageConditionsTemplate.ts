@@ -29,6 +29,8 @@ import {
   MockableDistrictCommissionersPaymentCatalogApi,
   MaritalStatusApi,
   ReligionCodesApi,
+  NationalRegistryPaymentCatalogApi,
+  MockableNationalRegistryPaymentCatalogApi,
 } from '../dataProviders'
 import {
   coreHistoryMessages,
@@ -92,14 +94,20 @@ const MarriageConditionsTemplate: ApplicationTemplate<
               ],
               write: 'all',
               api: [
-                NationalRegistryUserApi,
+                NationalRegistryUserApi.configure({
+                  params: {
+                    legalDomicileIceland: true,
+                  },
+                }),
                 UserProfileApi,
                 DistrictsApi,
                 MaritalStatusApi,
                 ReligionCodesApi,
                 DistrictCommissionersPaymentCatalogApi,
+                NationalRegistryPaymentCatalogApi,
                 BirthCertificateApi,
                 MockableDistrictCommissionersPaymentCatalogApi,
+                MockableNationalRegistryPaymentCatalogApi,
               ],
               delete: true,
             },
@@ -156,14 +164,20 @@ const MarriageConditionsTemplate: ApplicationTemplate<
               ],
               write: 'all',
               api: [
-                NationalRegistryUserApi,
+                NationalRegistryUserApi.configure({
+                  params: {
+                    legalDomicileIceland: true,
+                  },
+                }),
                 UserProfileApi,
                 DistrictsApi,
                 MaritalStatusApi,
                 ReligionCodesApi,
                 DistrictCommissionersPaymentCatalogApi,
+                NationalRegistryPaymentCatalogApi,
                 BirthCertificateApi,
                 MockableDistrictCommissionersPaymentCatalogApi,
+                MockableNationalRegistryPaymentCatalogApi,
               ],
             },
           ],
@@ -186,7 +200,8 @@ const MarriageConditionsTemplate: ApplicationTemplate<
         },
       },
       [States.PAYMENT]: buildPaymentState({
-        organizationId: InstitutionNationalIds.SYSLUMENN,
+        // THIS IS THE PROBLEM, WE HAVE PAYMENT CODES FROM 2 ORGS BUT PAYMENT SUPPORTS ONLY ONE
+        organizationId: InstitutionNationalIds.THJODSKRA,
         roles: [
           {
             id: Roles.ASSIGNED_SPOUSE,
@@ -208,20 +223,19 @@ const MarriageConditionsTemplate: ApplicationTemplate<
               application.answers,
               'applicant.hasBirthCertificate',
             )
-              ? []
-              : { code: 'AY153', quantity: 1 },
+              ? { code: 'FM501', quantity: 1 }
+              : [],
           )
           paymentCodes.push(
             getValueViaPath<boolean>(
               application.externalData,
               'birthCertificate.data.hasBirthCertificate',
             )
-              ? []
-              : { code: 'AY153', quantity: 1 },
+              ? { code: 'FM501', quantity: 1 }
+              : [],
           )
-          paymentCodes.push({ code: 'AY128', quantity: 1 }) // Survey
-          // paymentCodes.push('AY129') // Marriage conditions
-          paymentCodes.push({ code: 'AY154', quantity: 2 }) // Marital status
+          paymentCodes.push({ code: 'AY154', quantity: 1 }) // Survey
+          paymentCodes.push({ code: 'FM502', quantity: 2 }) // Marital status
 
           return paymentCodes.flat()
         },
