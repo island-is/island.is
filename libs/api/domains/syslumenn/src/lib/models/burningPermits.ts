@@ -4,25 +4,25 @@ import { Field, ObjectType } from '@nestjs/graphql'
 @ObjectType()
 class BurningPermit {
   @Field(() => Date, { nullable: true })
-  date: Date | null | undefined
+  date?: Date | null
 
-  @Field({ nullable: true })
-  type: string | null | undefined
+  @Field(() => String, { nullable: true })
+  type?: string | null
 
-  @Field({ nullable: true })
-  subtype: string | null | undefined
+  @Field(() => String, { nullable: true })
+  subtype?: string | null
 
-  @Field({ nullable: true })
-  responsibleParty: string | null | undefined
+  @Field(() => String, { nullable: true })
+  responsibleParty?: string | null
 
-  @Field({ nullable: true })
-  office: string | null | undefined
+  @Field(() => String, { nullable: true })
+  office?: string | null
 
-  @Field({ nullable: true })
-  licensee: string | null | undefined
+  @Field(() => String, { nullable: true })
+  licensee?: string | null
 
-  @Field({ nullable: true })
-  place: string | null | undefined
+  @Field(() => String, { nullable: true })
+  place?: string | null
 }
 
 @ObjectType()
