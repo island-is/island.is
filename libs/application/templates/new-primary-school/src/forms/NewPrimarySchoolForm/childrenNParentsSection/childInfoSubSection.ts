@@ -68,9 +68,16 @@ export const childInfoSubSection = buildSubSection({
           defaultValue: (application: Application) =>
             getApplicationExternalData(application.externalData).applicantCity,
         }),
+        buildCustomField({
+          id: 'childInfo.gender',
+          component: 'Gender',
+          title: newPrimarySchoolMessages.shared.gender,
+          disabled: true,
+        }),
         buildCheckboxField({
           id: 'childInfo.usePronounAndPreferredName',
           title: '',
+          spacing: 0,
           options: [
             {
               value: YES,
@@ -82,16 +89,15 @@ export const childInfoSubSection = buildSubSection({
         }),
         buildTextField({
           id: 'childInfo.preferredName',
+          title:
+            newPrimarySchoolMessages.childrenNParents.childInfoPreferredName,
           tooltip:
             newPrimarySchoolMessages.childrenNParents.preferredNameTooltip,
           condition: (answers) => {
-            const { usePronounAndPreferredName } =
-              getApplicationAnswers(answers)
+            const { childInfo } = getApplicationAnswers(answers)
 
-            return usePronounAndPreferredName?.includes(YES)
+            return !!childInfo.usePronounAndPreferredName?.includes(YES)
           },
-          title:
-            newPrimarySchoolMessages.childrenNParents.childInfoPreferredName,
           defaultValue: (application: Application) =>
             getApplicationExternalData(application.externalData)
               .childInformation.preferredName ?? undefined,
@@ -101,10 +107,9 @@ export const childInfoSubSection = buildSubSection({
             id: 'childInfo.pronouns',
             title: newPrimarySchoolMessages.childrenNParents.childInfoPronouns,
             condition: (answers) => {
-              const { usePronounAndPreferredName } =
-                getApplicationAnswers(answers)
+              const { childInfo } = getApplicationAnswers(answers)
 
-              return usePronounAndPreferredName?.includes(YES)
+              return !!childInfo.usePronounAndPreferredName?.includes(YES)
             },
             component: 'FriggOptionsAsyncSelectField',
             defaultValue: (application: Application) =>
@@ -147,9 +152,9 @@ export const childInfoSubSection = buildSubSection({
           width: 'half',
           required: true,
           condition: (answers) => {
-            const { differentPlaceOfResidence } = getApplicationAnswers(answers)
+            const { childInfo } = getApplicationAnswers(answers)
 
-            return differentPlaceOfResidence === YES
+            return childInfo.differentPlaceOfResidence === YES
           },
         }),
         buildTextField({
@@ -159,9 +164,9 @@ export const childInfoSubSection = buildSubSection({
           format: '###',
           required: true,
           condition: (answers) => {
-            const { differentPlaceOfResidence } = getApplicationAnswers(answers)
+            const { childInfo } = getApplicationAnswers(answers)
 
-            return differentPlaceOfResidence === YES
+            return childInfo.differentPlaceOfResidence === YES
           },
         }),
       ],

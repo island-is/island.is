@@ -105,6 +105,26 @@ export const newPrimarySchoolMessages: MessageDir = {
       defaultMessage: 'Veldu skóla',
       description: 'Select school',
     },
+    gender: {
+      id: 'dess.nps.application:gender',
+      defaultMessage: 'Kyn',
+      description: 'Gender',
+    },
+    male: {
+      id: 'dess.nps.application:gender.male',
+      defaultMessage: 'Karlkyns',
+      description: 'Male',
+    },
+    female: {
+      id: 'dess.nps.application:gender.female',
+      defaultMessage: 'Kvenkyns',
+      description: 'Female',
+    },
+    otherGender: {
+      id: 'dess.nps.application:gender.other',
+      defaultMessage: 'Kynsegin/Annað',
+      description: 'non-binary/Other',
+    },
   }),
 
   pre: defineMessages({
@@ -215,12 +235,12 @@ export const newPrimarySchoolMessages: MessageDir = {
     },
     childInfoPronouns: {
       id: 'nps.application:childrenNParents.child.info.pronouns',
-      defaultMessage: 'Fornafn',
+      defaultMessage: 'Persónufornafn',
       description: 'Pronoun',
     },
     childInfoPronounsPlaceholder: {
       id: 'nps.application:childrenNParents.child.info.pronouns.placeholder',
-      defaultMessage: 'Veldu fornafn',
+      defaultMessage: 'Veldu persónufornafn',
       description: 'Select pronoun',
     },
     usePronounAndPreferredName: {

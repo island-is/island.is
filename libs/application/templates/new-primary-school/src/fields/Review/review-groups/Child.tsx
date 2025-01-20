@@ -25,9 +25,7 @@ export const Child = ({
   goToScreen,
 }: ReviewGroupProps) => {
   const { formatMessage } = useLocale()
-  const { childInfo, differentPlaceOfResidence } = getApplicationAnswers(
-    application.answers,
-  )
+  const { childInfo } = getApplicationAnswers(application.answers)
 
   const {
     options: pronounOptions,
@@ -86,42 +84,45 @@ export const Child = ({
                 />
               </GridColumn>
             </GridRow>
-            {(childInfo.preferredName?.trim().length > 0 ||
-              childInfo.pronouns?.length > 0 ||
-              differentPlaceOfResidence === YES) && (
+            {(childInfo.usePronounAndPreferredName?.includes(YES) ||
+              childInfo.differentPlaceOfResidence === YES) && (
               <GridRow rowGap={2}>
-                {childInfo.preferredName?.trim().length > 0 && (
-                  <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
-                    <DataValue
-                      label={formatMessage(
-                        newPrimarySchoolMessages.childrenNParents
-                          .childInfoPreferredName,
-                      )}
-                      value={childInfo.preferredName}
-                    />
-                  </GridColumn>
-                )}
-                {childInfo.pronouns?.length > 0 && (
-                  <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
-                    <DataValue
-                      label={formatMessage(
-                        newPrimarySchoolMessages.childrenNParents
-                          .childInfoPronouns,
-                      )}
-                      value={childInfo.pronouns
-                        .map((pronoun) =>
-                          getSelectedOptionLabel(pronounOptions, pronoun),
-                        )
-                        .join(', ')}
-                      error={
-                        error
-                          ? formatMessage(coreErrorMessages.failedDataProvider)
-                          : undefined
-                      }
-                    />
-                  </GridColumn>
-                )}
-                {differentPlaceOfResidence === YES && (
+                {childInfo.usePronounAndPreferredName?.includes(YES) &&
+                  childInfo.preferredName?.trim().length > 0 && (
+                    <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
+                      <DataValue
+                        label={formatMessage(
+                          newPrimarySchoolMessages.childrenNParents
+                            .childInfoPreferredName,
+                        )}
+                        value={childInfo.preferredName}
+                      />
+                    </GridColumn>
+                  )}
+                {childInfo.usePronounAndPreferredName?.includes(YES) &&
+                  childInfo.pronouns?.length > 0 && (
+                    <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
+                      <DataValue
+                        label={formatMessage(
+                          newPrimarySchoolMessages.childrenNParents
+                            .childInfoPronouns,
+                        )}
+                        value={childInfo.pronouns
+                          .map((pronoun) =>
+                            getSelectedOptionLabel(pronounOptions, pronoun),
+                          )
+                          .join(', ')}
+                        error={
+                          error
+                            ? formatMessage(
+                                coreErrorMessages.failedDataProvider,
+                              )
+                            : undefined
+                        }
+                      />
+                    </GridColumn>
+                  )}
+                {childInfo.differentPlaceOfResidence === YES && (
                   <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
                     <DataValue
                       label={formatMessage(
