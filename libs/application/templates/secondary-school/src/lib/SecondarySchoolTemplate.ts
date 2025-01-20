@@ -208,7 +208,6 @@ const template: ApplicationTemplate<
               variant: 'blueberry',
             },
             pendingAction: {
-              title: corePendingActionMessages.waitingForReviewTitle,
               content: corePendingActionMessages.waitingForReviewDescription,
               displayStatus: 'info',
             },
@@ -277,8 +276,7 @@ const template: ApplicationTemplate<
               variant: 'blueberry',
             },
             pendingAction: {
-              title: corePendingActionMessages.applicationReceivedTitle,
-              content: corePendingActionMessages.applicationReceivedDescription,
+              content: applicationPendingActionMessages.inReviewDescription,
               displayStatus: 'info',
             },
             historyLogs: [
@@ -331,7 +329,6 @@ const template: ApplicationTemplate<
               variant: 'blueberry',
             },
             pendingAction: {
-              title: applicationPendingActionMessages.reviewFinishedTitle,
               content:
                 applicationPendingActionMessages.reviewFinishedDescription,
               displayStatus: 'success',

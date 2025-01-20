@@ -31,13 +31,13 @@ export const application = defineMessages({
   },
   actionCardInReview: {
     id: 'ss.application:actionCardCompleted',
-    defaultMessage: 'Í skoðun hjá vinnsluaðila',
+    defaultMessage: 'Í vinnslu hjá stofnun',
     description:
       'Description of application state/status when application is completed',
   },
   actionCardCompleted: {
     id: 'ss.application:actionCardCompleted',
-    defaultMessage: 'Klárað',
+    defaultMessage: 'Afgreidd',
     description:
       'Description of application state/status when application is completed',
   },
@@ -81,16 +81,16 @@ export const historyMessages = defineMessages({
   },
   reviewFinished: {
     id: 'ss.historyMessages:reviewFinished',
-    defaultMessage: 'Yfirferð á umsókn lokið',
+    defaultMessage: 'Yfirferð lokið',
     description: 'History message application review finished',
   },
 })
 
 export const pendingActionMessages = defineMessages({
-  reviewFinishedTitle: {
-    id: 'ss.pendingActionMessages:reviewFinishedTitle',
-    defaultMessage: 'Yfirferð lokið',
-    description: 'Pending action message application review finished title',
+  inReviewDescription: {
+    id: 'ss.pendingActionMessages:inReviewDescription',
+    defaultMessage: 'Umsóknin þín er í yfirferð',
+    description: 'Pending action message application in review description',
   },
   reviewFinishedDescription: {
     id: 'ss.pendingActionMessages:reviewFinishedDescription',

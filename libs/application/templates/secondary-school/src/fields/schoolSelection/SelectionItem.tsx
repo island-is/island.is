@@ -441,15 +441,6 @@ export const SelectionItem: FC<FieldBaseProps & SelectionItemProps> = (
         />
       </Box>
 
-      {!!selectedNordicLanguage && (
-        <Box marginTop={2}>
-          <AlertMessage
-            type="info"
-            message={formatMessage(school.selection.nordicLanguageAlertMessage)}
-          />
-        </Box>
-      )}
-
       {allowRequestDormitory && (
         <Box marginTop={2}>
           <CheckboxController

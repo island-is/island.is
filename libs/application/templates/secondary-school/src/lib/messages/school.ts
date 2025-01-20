@@ -42,14 +42,9 @@ export const school = {
     },
     nordicLanguageLabel: {
       id: 'ss.application:school.selection.nordicLanguageLabel',
-      defaultMessage: 'Norðurlandamál (ef annað en danska)',
-      description: 'Nordic language select label',
-    },
-    nordicLanguageAlertMessage: {
-      id: 'ss.application:school.selection.nordicLanguageAlertMessage',
       defaultMessage:
-        'Þetta er aðeins valmöguleiki ef nemandinn er með bakgrunn í öðru norðurlandamáli en dönsku. Önnur norðurlandamál eru yfirleitt kennd fyrir utan stundarskrá og stundum í öðrum skóla.',
-      description: 'Nordic language alert message',
+        'Norðurlandamál (ef þú ert með bakgrunn í öðru en dönsku)',
+      description: 'Nordic language select label',
     },
     requestDormitoryCheckboxLabel: {
       id: 'ss.application:school.selection.requestDormitoryCheckboxLabel',
