@@ -14,11 +14,13 @@ import { ZendeskService } from '../services/zendesk.service'
 import { NudgeService } from '../services/nudge.service'
 import { ApplicationEvent } from './models/applicationEvent.model'
 import { ValidationService } from '../services/validation.service'
+import { Applicant } from '../applicants/models/applicant.model'
 
 @Module({
   imports: [
     SequelizeModule.forFeature([
       Application,
+      Applicant,
       ApplicationEvent,
       Form,
       Value,

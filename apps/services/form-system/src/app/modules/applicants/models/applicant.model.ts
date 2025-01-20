@@ -34,15 +34,13 @@ export class Applicant extends Model<Applicant> {
 
   @Column({
     type: DataType.STRING,
-    allowNull: false,
-    defaultValue: '',
+    allowNull: true,
   })
-  name!: string
+  name?: string
 
   @Column({
     type: DataType.STRING,
     allowNull: false,
-    defaultValue: '',
   })
   nationalId!: string
 
@@ -50,25 +48,25 @@ export class Applicant extends Model<Applicant> {
     type: DataType.STRING,
     allowNull: true,
   })
-  email!: string
+  email?: string
 
   @Column({
     type: DataType.STRING,
     allowNull: true,
   })
-  phoneNumber!: string
+  phoneNumber?: string
 
   @Column({
     type: DataType.STRING,
     allowNull: true,
   })
-  address!: string
+  address?: string
 
   @Column({
     type: DataType.STRING,
     allowNull: true,
   })
-  municipality!: string
+  municipality?: string
 
   @Column({
     type: DataType.STRING,

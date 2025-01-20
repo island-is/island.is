@@ -6,6 +6,7 @@ import {
   Post,
   Put,
   Query,
+  UseGuards,
   VERSION_NEUTRAL,
 } from '@nestjs/common'
 import {
@@ -24,7 +25,18 @@ import { UpdateApplicationDto } from './models/dto/updateApplication.dto'
 import { ApplicationListDto } from './models/dto/applicationList.dto'
 import { ScreenValidationResponse } from '../../dataTypes/validationResponse.model'
 import { ValidationService } from '../services/validation.service'
+import {
+  CurrentUser,
+  IdsUserGuard,
+  Scopes,
+  ScopesGuard,
+  User,
+} from '@island.is/auth-nest-tools'
+import { AdminPortalScope } from '@island.is/auth/scopes'
 
+// @UseGuards(IdsUserGuard, ScopesGuard)
+// @Scopes(AdminPortalScope.formSystem)
+@UseGuards(IdsUserGuard)
 @ApiTags('applications')
 @Controller({ path: 'applications', version: ['1', VERSION_NEUTRAL] })
 export class ApplicationsController {
@@ -37,7 +49,11 @@ export class ApplicationsController {
   })
   @ApiParam({ name: 'id', type: String })
   @Get(':id')
-  async getApplication(@Param('id') id: string): Promise<ApplicationDto> {
+  async getApplication(
+    @Param('id') id: string,
+    @CurrentUser()
+    user: User,
+  ): Promise<ApplicationDto> {
     return await this.applicationsService.getApplication(id)
   }
 
@@ -52,8 +68,14 @@ export class ApplicationsController {
   async create(
     @Param('slug') slug: string,
     @Body() createApplicationDto: CreateApplicationDto,
+    @CurrentUser()
+    user: User,
   ): Promise<ApplicationDto> {
-    return await this.applicationsService.create(slug, createApplicationDto)
+    return await this.applicationsService.create(
+      slug,
+      createApplicationDto,
+      user,
+    )
   }
 
   @ApiOperation({ summary: 'Update application dependencies' })
@@ -66,6 +88,8 @@ export class ApplicationsController {
   async update(
     @Param('id') id: string,
     @Body() updateApplicationDto: UpdateApplicationDto,
+    @CurrentUser()
+    user: User,
   ): Promise<void> {
     await this.applicationsService.update(id, updateApplicationDto)
   }
@@ -76,7 +100,11 @@ export class ApplicationsController {
   })
   @ApiParam({ name: 'id', type: String })
   @Post('submit/:id')
-  async submit(@Param('id') id: string): Promise<void> {
+  async submit(
+    @Param('id') id: string,
+    @CurrentUser()
+    user: User,
+  ): Promise<void> {
     await this.applicationsService.submit(id)
   }
 
@@ -90,6 +118,8 @@ export class ApplicationsController {
   async submitScreen(
     @Param('screenId') screenId: string,
     @Body() applicationDto: ApplicationDto,
+    @CurrentUser()
+    user: User,
   ): Promise<ScreenValidationResponse> {
     return await this.applicationsService.submitScreen(screenId, applicationDto)
   }
@@ -106,6 +136,8 @@ export class ApplicationsController {
     @Query('page') page: number,
     @Query('limit') limit: number,
     @Query('isTest') isTest: boolean,
+    @CurrentUser()
+    user: User,
   ): Promise<ApplicationListDto> {
     return await this.applicationsService.findAllByOrganization(
       organizationId,
@@ -129,6 +161,8 @@ export class ApplicationsController {
     @Query('page') page: number,
     @Query('limit') limit: number,
     @Query('isTest') isTest: boolean,
+    @CurrentUser()
+    user: User,
   ): Promise<ApplicationListDto> {
     return await this.applicationsService.findAllByTypeAndUser(
       formId,
