@@ -2,7 +2,7 @@ import format from 'date-fns/format'
 import { useEffect, useState } from 'react'
 import { useLocation } from 'react-router-dom'
 import { useMutation } from '@apollo/client'
-import Markdown from 'markdown-to-jsx'
+import { Markdown } from '@island.is/shared/components'
 import {
   Box,
   Button,
