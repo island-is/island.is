@@ -312,8 +312,10 @@ export const getIncidentDescription = (
     []
 
   if (
-    subtypes.length > 1 &&
-    (!indictmentCountSubtypes?.length || indictmentCountSubtypes.length === 0)
+    subtypes.length === 0 ||
+    (subtypes.length > 1 &&
+      (!indictmentCountSubtypes?.length ||
+        indictmentCountSubtypes.length === 0))
   ) {
     return ''
   }

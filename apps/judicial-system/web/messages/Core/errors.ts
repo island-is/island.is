@@ -94,6 +94,12 @@ export const errors = defineMessages({
     description:
       'Notaður sem villuskilaboð þegar ekki gengur að sækja lögmanna skrá',
   },
+  fetchLawyer: {
+    id: 'judicial.system.core:errors.fetch_lawyer',
+    defaultMessage: 'Upp kom villa við að sækja lögmann úr lögmanna skrá',
+    description:
+      'Notaður sem villuskilaboð þegar ekki gengur að sækja lögmann úr lögmanna skrá',
+  },
   copyLink: {
     id: 'judicial.system.core:errors.copy_link',
     defaultMessage: 'Ekki tókst að afrita hlekk',
