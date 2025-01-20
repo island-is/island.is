@@ -19,7 +19,6 @@ import {
   ApiTags,
 } from '@nestjs/swagger'
 import { FormsService } from './forms.service'
-import { CreateFormDto } from './models/dto/createForm.dto'
 import { FormResponseDto } from './models/dto/form.response.dto'
 import { UpdateFormDto } from './models/dto/updateForm.dto'
 import {
@@ -43,10 +42,9 @@ export class FormsController {
     type: FormResponseDto,
     description: 'Create new form',
   })
-  @ApiBody({ type: CreateFormDto })
   @Post()
-  async create(@Body() createFormDto: CreateFormDto): Promise<FormResponseDto> {
-    return await this.formsService.create(createFormDto)
+  async create(@CurrentUser() user: User): Promise<FormResponseDto> {
+    return await this.formsService.create(user)
   }
 
   @ApiOperation({ summary: 'Get all forms belonging to organization' })

@@ -1,5 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
+import { Sequelize } from 'sequelize-typescript'
 import { Application } from './models/application.model'
 import { ApplicationDto } from './models/dto/application.dto'
 import { Form } from '../forms/models/form.model'
@@ -21,12 +22,17 @@ import { ApplicationEvents } from '../../enums/applicationEvents'
 import { ApplicationListDto } from './models/dto/applicationList.dto'
 import { FieldTypesEnum } from '../../dataTypes/fieldTypes/fieldTypes.enum'
 import { ScreenValidationResponse } from '../../dataTypes/validationResponse.model'
+import { User } from '@island.is/auth-nest-tools'
+import { Applicant } from '../applicants/models/applicant.model'
+import { ApplicantTypesEnum } from '../../dataTypes/applicantTypes/applicantTypes.enum'
 
 @Injectable()
 export class ApplicationsService {
   constructor(
     @InjectModel(Application)
     private readonly applicationModel: typeof Application,
+    @InjectModel(Applicant)
+    private readonly applicantModel: typeof Applicant,
     @InjectModel(Value)
     private readonly valueModel: typeof Value,
     @InjectModel(Form)
@@ -37,11 +43,13 @@ export class ApplicationsService {
     private readonly applicationEventModel: typeof ApplicationEvent,
     private readonly applicationMapper: ApplicationMapper,
     private readonly serviceManager: ServiceManager,
+    private readonly sequelize: Sequelize,
   ) {}
 
   async create(
     slug: string,
     createApplicationDto: CreateApplicationDto,
+    user: User,
   ): Promise<ApplicationDto> {
     const form: Form = await this.getForm(slug)
 
@@ -49,44 +57,71 @@ export class ApplicationsService {
       throw new NotFoundException(`Form with slug '${slug}' not found`)
     }
 
-    const newApplication: Application = await this.applicationModel.create({
-      formId: form.id,
-      organizationId: form.organizationId,
-      isTest: createApplicationDto.isTest,
-      dependencies: form.dependencies,
-      status: ApplicationStatus.IN_PROGRESS,
-    } as Application)
+    const transaction = await this.sequelize.transaction()
 
-    await this.applicationEventModel.create({
-      eventType: ApplicationEvents.APPLICATION_CREATED,
-      applicationId: newApplication.id,
-    } as ApplicationEvent)
+    try {
+      const newApplication: Application = await this.applicationModel.create(
+        {
+          formId: form.id,
+          organizationId: form.organizationId,
+          isTest: createApplicationDto.isTest,
+          dependencies: form.dependencies,
+          status: ApplicationStatus.IN_PROGRESS,
+        } as Application,
+        { transaction },
+      )
 
-    await Promise.all(
-      form.sections.map((section) =>
-        Promise.all(
-          section.screens?.map((screen) =>
-            Promise.all(
-              screen.fields?.map(async (field) => {
-                return this.valueModel.create({
-                  fieldId: field.id,
-                  fieldType: field.fieldType,
-                  applicationId: newApplication.id,
-                  json: ValueTypeFactory.getClass(
-                    field.fieldType,
-                    new ValueType(),
-                  ),
-                } as Value)
-              }) || [],
-            ),
-          ) || [],
+      await this.applicantModel.create(
+        {
+          nationalId: user.nationalId,
+          applicationId: newApplication.id,
+          applicantTypeId: ApplicantTypesEnum.INDIVIDUAL,
+          lastLogin: new Date(),
+        } as Applicant,
+        { transaction },
+      )
+
+      await this.applicationEventModel.create(
+        {
+          eventType: ApplicationEvents.APPLICATION_CREATED,
+          applicationId: newApplication.id,
+        } as ApplicationEvent,
+        { transaction },
+      )
+
+      await Promise.all(
+        form.sections.map((section) =>
+          Promise.all(
+            section.screens?.map((screen) =>
+              Promise.all(
+                screen.fields?.map(async (field) => {
+                  return this.valueModel.create(
+                    {
+                      fieldId: field.id,
+                      fieldType: field.fieldType,
+                      applicationId: newApplication.id,
+                      json: ValueTypeFactory.getClass(
+                        field.fieldType,
+                        new ValueType(),
+                      ),
+                    } as Value,
+                    { transaction },
+                  )
+                }) || [],
+              ),
+            ) || [],
+          ),
         ),
-      ),
-    )
+      )
 
-    const applicationDto = await this.getApplication(newApplication.id)
+      await transaction.commit()
 
-    return applicationDto
+      const applicationDto = await this.getApplication(newApplication.id)
+      return applicationDto
+    } catch (error) {
+      await transaction.rollback()
+      throw error
+    }
   }
 
   async update(

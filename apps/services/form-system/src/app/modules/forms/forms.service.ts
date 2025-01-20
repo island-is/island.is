@@ -12,7 +12,6 @@ import { Field } from '../fields/models/field.model'
 import { Organization } from '../organizations/models/organization.model'
 import { SectionDto } from '../sections/models/dto/section.dto'
 import { Section } from '../sections/models/section.model'
-import { CreateFormDto } from './models/dto/createForm.dto'
 import { FormDto } from './models/dto/form.dto'
 import { FormResponseDto } from './models/dto/form.response.dto'
 import { Form } from './models/form.model'
@@ -138,23 +137,21 @@ export class FormsService {
     return formResponse
   }
 
-  async create(createFormDto: CreateFormDto): Promise<FormResponseDto> {
-    const { organizationId } = createFormDto
+  async create(user: User): Promise<FormResponseDto> {
+    const organizationNationalId = user.nationalId
+    const organization = await this.organizationModel.findOne({
+      where: { nationalId: organizationNationalId },
+    })
 
-    if (!organizationId) {
-      throw new Error('Missing organizationId')
-    }
-
-    const organization = this.organizationModel.findByPk(organizationId)
     if (!organization) {
       throw new NotFoundException(
-        `Organization with id ${organizationId} not found`,
+        `Organization with nationalId ${organizationNationalId} not found`,
       )
     }
 
     const newForm: Form = await this.formModel.create({
       name: { is: 'Nýtt', en: 'New' },
-      organizationId: organizationId,
+      organizationId: organization.id,
       status: FormStatus.IN_DEVELOPMENT,
     } as Form)
 
