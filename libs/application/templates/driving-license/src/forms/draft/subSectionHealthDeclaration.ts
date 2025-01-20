@@ -159,6 +159,7 @@ export const subSectionHealthDeclaration = buildSubSection({
           message: m.beLicenseHealthDeclarationRequiresHealthCertificate,
           alertType: 'warning',
           condition: (answers, externalData) =>
+            answers.applicationFor === BE &&
             needsHealthCertificateCondition(YES)(answers, externalData),
         }),
       ],
