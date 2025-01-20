@@ -9,13 +9,13 @@ export const m = defineMessages({
     id: 'portals-admin.form-system:template',
     defaultMessage: 'Forskrift',
   },
-  templates: {
+  forms: {
     id: 'portals-admin.form-system:templates',
-    defaultMessage: 'Forskriftir',
+    defaultMessage: 'Form',
   },
-  newTemplate: {
+  newForm: {
     id: 'portals-admin.form-system:new-template',
-    defaultMessage: 'Ný forskrift',
+    defaultMessage: 'Nýtt form',
   },
   organisation: {
     id: 'portals-admin.form-system:organisation',
@@ -32,6 +32,18 @@ export const m = defineMessages({
   nameEnglish: {
     id: 'portals-admin.form-system:name-english',
     defaultMessage: 'Heiti á ensku',
+  },
+  applications: {
+    id: 'portals-admin.form-system:applications',
+    defaultMessage: 'Umsóknir',
+  },
+  overview: {
+    id: 'portals-admin.form-system:overview',
+    defaultMessage: 'Yfirlitsíða',
+  },
+  back: {
+    id: 'portals-admin.form-system:back',
+    defaultMessage: 'Til baka',
   },
   applicationName: {
     id: 'portals-admin.form-system:application-name',

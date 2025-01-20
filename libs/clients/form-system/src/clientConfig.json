@@ -290,16 +290,6 @@
         "operationId": "FormsController_create",
         "summary": "Create new form",
         "parameters": [],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreateFormDto"
-              }
-            }
-          }
-        },
         "responses": {
           "201": {
             "description": "Create new form",
@@ -2350,17 +2340,6 @@
         },
         "required": [
           "organizations"
-        ]
-      },
-      "CreateFormDto": {
-        "type": "object",
-        "properties": {
-          "organizationId": {
-            "type": "string"
-          }
-        },
-        "required": [
-          "organizationId"
         ]
       },
       "FieldType": {

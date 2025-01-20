@@ -5,14 +5,12 @@ import { AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { ApolloError } from '@apollo/client'
 import { handle4xx } from '../../utils/errorHandler'
 import {
-  CreateFormDto,
   FormsApi,
   FormsControllerDeleteRequest,
   FormsControllerFindOneRequest,
   FormsControllerUpdateFormRequest,
 } from '@island.is/clients/form-system'
 import {
-  CreateFormInput,
   DeleteFormInput,
   GetFormInput,
   UpdateFormInput,
@@ -41,12 +39,9 @@ export class FormsService {
     return this.formsService.withMiddleware(new AuthMiddleware(auth))
   }
 
-  async createForm(auth: User, input: CreateFormInput): Promise<FormResponse> {
-    console.log('auth', auth)
+  async createForm(auth: User): Promise<FormResponse> {
     const response = await this.formsApiWithAuth(auth)
-      .formsControllerCreate({
-        createFormDto: input as CreateFormDto,
-      })
+      .formsControllerCreate()
       .catch((e) => handle4xx(e, this.handleError, 'failed to create form'))
     if (!response || response instanceof ApolloError) {
       return {}
@@ -78,9 +73,7 @@ export class FormsService {
     return response as Form
   }
 
-  async getAllForms(
-    auth: User,
-  ): Promise<FormResponse> {
+  async getAllForms(auth: User): Promise<FormResponse> {
     const response = await this.formsApiWithAuth(auth)
       .formsControllerFindAll()
       .catch((e) => handle4xx(e, this.handleError, 'failed to get all forms'))
