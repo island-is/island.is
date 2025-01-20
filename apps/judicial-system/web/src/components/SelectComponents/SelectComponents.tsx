@@ -6,7 +6,7 @@ import {
   SingleValueProps,
 } from 'react-select'
 
-import { IconDeprecated, Text } from '@island.is/island-ui/core'
+import { Icon, Text } from '@island.is/island-ui/core'
 
 import { ReactSelectOption } from '../../types'
 
@@ -15,7 +15,7 @@ export const DropdownIndicator = (
 ) => {
   return (
     <components.DropdownIndicator {...props}>
-      <IconDeprecated type="cheveron" width={12} height={12} color="blue400" />
+      <Icon type="filled" icon="chevronDown" color="blue400" />
     </components.DropdownIndicator>
   )
 }
