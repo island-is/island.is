@@ -17,6 +17,7 @@ import { useLocale } from '@island.is/localization'
 
 import { getDefaultValue } from '../../getDefaultValue'
 import { Locale } from '@island.is/shared/types'
+import { Markdown } from '@island.is/shared/components'
 
 interface Props extends FieldBaseProps {
   field: CheckboxField
@@ -41,6 +42,9 @@ export const CheckboxFormField = ({
     required,
     onSelect,
     spacing,
+    marginTop,
+    marginBottom,
+    clearOnChange,
   } = field
   const { formatMessage, lang: locale } = useLocale()
 
@@ -50,7 +54,7 @@ export const CheckboxFormField = ({
   )
 
   return (
-    <div>
+    <Box marginTop={marginTop} marginBottom={marginBottom}>
       {showFieldName && (
         <Text variant="h4">
           {formatTextWithLocale(
@@ -79,6 +83,7 @@ export const CheckboxFormField = ({
           disabled={disabled}
           large={large}
           name={`${id}`}
+          split={width === 'half' ? '1/2' : '1/1'}
           onSelect={onSelect}
           backgroundColor={backgroundColor}
           defaultValue={
@@ -92,7 +97,11 @@ export const CheckboxFormField = ({
           options={finalOptions?.map(
             ({ label, subLabel, rightContent, tooltip, ...o }) => ({
               ...o,
-              label: HtmlParser(formatText(label, application, formatMessage)),
+              label: (
+                <Markdown>
+                  {formatText(label, application, formatMessage)}
+                </Markdown>
+              ),
               rightContent,
               subLabel:
                 subLabel &&
@@ -104,8 +113,9 @@ export const CheckboxFormField = ({
               }),
             }),
           )}
+          clearOnChange={clearOnChange}
         />
       </Box>
-    </div>
+    </Box>
   )
 }

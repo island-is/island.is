@@ -1,24 +1,84 @@
-import { buildSection } from '@island.is/application/core'
+import {
+  buildCustomField,
+  buildSection,
+  buildSubSection,
+  getValueViaPath,
+} from '@island.is/application/core'
 import * as m from '../../../lib/messages'
-import { inARelationshipSubSection } from './inARelationshipSubSection'
 import { Routes } from '../../../lib/constants'
-import { unknownRelationshipSubSection } from './unknownRelationshipSubSection'
-import { childrenSubSection } from './childrenSubSection'
-import { childrenFilesSubSection } from './childrenFilesSubSection'
-import { homeCircumstancesSubSection } from './homeCircumstancesSubSection'
-import { studentSubSection } from './studentSubSection'
-import { employmentSubSection } from './employmentSubSection'
+import { ApplicantChildCustodyInformation } from '@island.is/application/types'
+import { inRelationshipSubsection } from './inRelationshipSubsection'
+import { unknownRelationshipSubsection } from './unknownRelationshipSubsection'
+import { homeCircumstancesSubsection } from './homeCircumstancesSubsection'
 
 export const personalInterestSection = buildSection({
-  id: Routes.PERSONALINTEREST,
+  id: 'personalInterest',
   title: m.section.personalInterest,
   children: [
-    inARelationshipSubSection,
-    unknownRelationshipSubSection,
-    childrenSubSection,
-    childrenFilesSubSection,
-    homeCircumstancesSubSection,
-    studentSubSection,
-    employmentSubSection,
+    inRelationshipSubsection,
+    unknownRelationshipSubsection,
+    buildSubSection({
+      condition: (_, externalData) => {
+        const childWithInfo = getValueViaPath(
+          externalData,
+          'childrenCustodyInformation.data',
+          [],
+        ) as ApplicantChildCustodyInformation[]
+
+        return Boolean(childWithInfo?.length)
+      },
+      id: Routes.CHILDRENSCHOOLINFO,
+      title: m.childrenForm.general.sectionTitle,
+      children: [
+        buildCustomField({
+          id: Routes.CHILDRENSCHOOLINFO,
+          title: m.childrenForm.general.pageTitle,
+          component: 'ChildrenForm',
+        }),
+      ],
+    }),
+    buildSubSection({
+      condition: (_, externalData) => {
+        const childWithInfo = getValueViaPath(
+          externalData,
+          'childrenCustodyInformation.data',
+          [],
+        ) as ApplicantChildCustodyInformation[]
+
+        return Boolean(childWithInfo?.length)
+      },
+      id: Routes.CHILDRENFILES,
+      title: m.childrenFilesForm.general.sectionTitle,
+      children: [
+        buildCustomField({
+          id: Routes.CHILDRENFILES,
+          title: m.childrenFilesForm.general.pageTitle,
+          component: 'ChildrenFilesForm',
+        }),
+      ],
+    }),
+    homeCircumstancesSubsection,
+    buildSubSection({
+      id: Routes.STUDENT,
+      title: m.studentForm.general.sectionTitle,
+      children: [
+        buildCustomField({
+          id: Routes.STUDENT,
+          title: m.studentForm.general.pageTitle,
+          component: 'StudentForm',
+        }),
+      ],
+    }),
+    buildSubSection({
+      id: Routes.EMPLOYMENT,
+      title: m.employmentForm.general.sectionTitle,
+      children: [
+        buildCustomField({
+          id: Routes.EMPLOYMENT,
+          title: m.employmentForm.general.pageTitle,
+          component: 'EmploymentForm',
+        }),
+      ],
+    }),
   ],
 })

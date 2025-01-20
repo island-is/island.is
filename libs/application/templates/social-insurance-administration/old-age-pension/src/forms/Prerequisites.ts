@@ -35,6 +35,7 @@ import {
   SocialInsuranceAdministrationIsApplicantEligibleApi,
   SocialInsuranceAdministrationApplicantApi,
   SocialInsuranceAdministrationCurrenciesApi,
+  SocialInsuranceAdministrationLatestIncomePlan,
 } from '../dataProviders'
 
 export const PrerequisitesForm: Form = buildForm({
@@ -98,9 +99,7 @@ export const PrerequisitesForm: Form = buildForm({
               id: 'approveExternalData',
               title:
                 socialInsuranceAdministrationMessage.pre.externalDataSection,
-              subTitle:
-                socialInsuranceAdministrationMessage.pre
-                  .externalDataDescription,
+              subTitle: oldAgePensionFormMessage.pre.externalDataDescription,
               checkboxLabel:
                 socialInsuranceAdministrationMessage.pre.checkboxProvider,
               dataProviders: [
@@ -161,6 +160,10 @@ export const PrerequisitesForm: Form = buildForm({
                 }),
                 buildDataProviderItem({
                   provider: SocialInsuranceAdministrationCurrenciesApi,
+                  title: '',
+                }),
+                buildDataProviderItem({
+                  provider: SocialInsuranceAdministrationLatestIncomePlan,
                   title: '',
                 }),
               ],

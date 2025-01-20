@@ -42,7 +42,6 @@ env:
   CONTENTFUL_HOST: 'preview.contentful.com'
   DOWNLOAD_SERVICE_BASE_PATH: 'https://api.dev01.devland.is'
   ELASTIC_NODE: 'https://vpc-search-njkekqydiegezhr4vqpkfnw5la.eu-west-1.es.amazonaws.com'
-  ELECTRONIC_REGISTRATION_STATISTICS_API_URL: 'https://api-staging.thinglysing.is/business/tolfraedi'
   ENDORSEMENT_SYSTEM_BASE_API_URL: 'http://web-endorsement-system-api.endorsement-system.svc.cluster.local'
   FILE_DOWNLOAD_BUCKET: 'island-is-dev-download-cache-api'
   FILE_STORAGE_UPLOAD_BUCKET: 'island-is-dev-upload-api'
@@ -139,6 +138,7 @@ env:
   XROAD_RSK_PROCURING_PATH: 'IS-DEV/GOV/10006/Skatturinn/relationships-v1'
   XROAD_RSK_PROCURING_REDIS_NODES: '["clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379"]'
   XROAD_RSK_PROCURING_SCOPE: '["@rsk.is/prokura","@rsk.is/prokura:admin"]'
+  XROAD_SECONDARY_SCHOOL_PATH: 'IS-DEV/GOV/10066/MMS-Protected/umsoknagatt'
   XROAD_SHIP_REGISTRY_PATH: 'IS-DEV/GOV/10017/Samgongustofa-Protected/skipaskra-V1'
   XROAD_SIGNATURE_COLLECTION_PATH: 'IS-DEV/GOV/10001/SKRA-Cloud-Protected/Medmaeli-v1'
   XROAD_TJODSKRA_API_PATH: '/SKRA-Protected/Einstaklingar-v1'
@@ -171,6 +171,8 @@ grantNamespaces:
   - 'application-system'
   - 'consultation-portal'
   - 'portals-admin'
+  - 'service-portal'
+  - 'portals-my-pages'
 grantNamespacesEnabled: true
 healthCheck:
   liveness:

@@ -128,8 +128,15 @@ import { GetSingleGrantInput } from './dto/getSingleGrant.input'
 import { GrantList } from './models/grantList.model'
 import { OrganizationParentSubpage } from './models/organizationParentSubpage.model'
 import { GetOrganizationParentSubpageInput } from './dto/getOrganizationParentSubpage.input'
-import { OrganizationPageStandaloneSitemap } from './models/organizationPageStandaloneSitemap.model'
-import { GetOrganizationPageStandaloneSitemapLevel1Input } from './dto/getOrganizationPageStandaloneSitemap.input'
+import {
+  OrganizationPageStandaloneSitemap,
+  OrganizationPageStandaloneSitemapLevel2,
+} from './models/organizationPageStandaloneSitemap.model'
+import {
+  GetOrganizationPageStandaloneSitemapLevel1Input,
+  GetOrganizationPageStandaloneSitemapLevel2Input,
+} from './dto/getOrganizationPageStandaloneSitemap.input'
+import { GrantCardsList } from './models/grantCardsList.model'
 
 const defaultCache: CacheControlOptions = { maxAge: CACHE_CONTROL_MAX_AGE }
 
@@ -729,6 +736,16 @@ export class CmsResolver {
       input,
     )
   }
+
+  @CacheControl(defaultCache)
+  @Query(() => OrganizationPageStandaloneSitemapLevel2, { nullable: true })
+  getOrganizationPageStandaloneSitemapLevel2(
+    @Args('input') input: GetOrganizationPageStandaloneSitemapLevel2Input,
+  ): Promise<OrganizationPageStandaloneSitemapLevel2 | null> {
+    return this.cmsContentfulService.getOrganizationPageStandaloneSitemapLevel2(
+      input,
+    )
+  }
 }
 
 @Resolver(() => LatestNewsSlice)
@@ -832,6 +849,42 @@ export class PowerBiSliceResolver {
   })
   async powerBiEmbedPropsFromServer(@Parent() powerBiSlice: PowerBiSlice) {
     return this.powerBiService.getEmbedProps(powerBiSlice)
+  }
+}
+
+@Resolver(() => GrantCardsList)
+@CacheControl(defaultCache)
+export class GrantCardsListResolver {
+  constructor(
+    private cmsElasticsearchService: CmsElasticsearchService,
+    private cmsContentfulService: CmsContentfulService,
+  ) {}
+
+  @ResolveField(() => GrantList)
+  async resolvedGrantsList(
+    @Parent() { resolvedGrantsList: input }: GrantCardsList,
+  ): Promise<GrantList> {
+    if (!input || input?.size === 0) {
+      return { total: 0, items: [] }
+    }
+
+    return this.cmsElasticsearchService.getGrants(
+      getElasticsearchIndex(input.lang),
+      input,
+    )
+  }
+  @ResolveField(() => GraphQLJSONObject)
+  async namespace(@Parent() { resolvedGrantsList: input }: GrantCardsList) {
+    try {
+      const respones = await this.cmsContentfulService.getNamespace(
+        'GrantsPlaza',
+        input?.lang ?? 'is',
+      )
+      return JSON.parse(respones?.fields || '{}')
+    } catch {
+      // Fallback to empty object in case something goes wrong when fetching or parsing namespace
+      return {}
+    }
   }
 }
 

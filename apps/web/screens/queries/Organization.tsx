@@ -127,6 +127,7 @@ export const GET_ORGANIZATION_PAGE_QUERY = gql`
       slug
       title
       description
+      canBeFoundInSearchResults
       topLevelNavigation {
         links {
           label
@@ -441,6 +442,24 @@ export const GET_ORGANIZATION_PAGE_STANDALONE_SITEMAP_LEVEL1_QUERY = gql`
         label
         href
         description
+      }
+    }
+  }
+`
+
+export const GET_ORGANIZATION_PAGE_STANDALONE_SITEMAP_LEVEL2_QUERY = gql`
+  query GetOrganizationPageStandaloneSitemapLevel2Query(
+    $input: GetOrganizationPageStandaloneSitemapLevel2Input!
+  ) {
+    getOrganizationPageStandaloneSitemapLevel2(input: $input) {
+      label
+      childCategories {
+        label
+        href
+        childLinks {
+          label
+          href
+        }
       }
     }
   }

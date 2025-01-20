@@ -5,9 +5,15 @@ import {
   InputBackgroundColor,
   InputProps,
 } from '@island.is/island-ui/core'
-import { Controller, Control, RegisterOptions } from 'react-hook-form'
+import {
+  Controller,
+  Control,
+  RegisterOptions,
+  useFormContext,
+} from 'react-hook-form'
 import NumberFormat, { FormatInputValueFunction } from 'react-number-format'
 import { TestSupport } from '@island.is/island-ui/utils'
+import { clearInputsOnChange } from '@island.is/shared/utils'
 
 interface Props {
   autoFocus?: boolean
@@ -43,6 +49,7 @@ interface Props {
   max?: number
   min?: number
   step?: string
+  clearOnChange?: string[]
 }
 
 interface ChildParams {
@@ -90,7 +97,10 @@ export const InputController = forwardRef(
       max,
       min,
       step,
+      clearOnChange,
     } = props
+    const formContext = useFormContext()
+
     const renderChildInput = (c: ChildParams & TestSupport) => {
       const { value, onChange, ...props } = c
       if (currency) {
@@ -122,6 +132,9 @@ export const InputController = forwardRef(
             ) => {
               if (onInputChange) {
                 onInputChange(e)
+              }
+              if (clearOnChange && formContext?.setValue) {
+                clearInputsOnChange(clearOnChange, formContext.setValue)
               }
             }}
             onValueChange={({ value }) => {
@@ -163,6 +176,9 @@ export const InputController = forwardRef(
               if (onInputChange) {
                 onInputChange(e)
               }
+              if (clearOnChange && formContext?.setValue) {
+                clearInputsOnChange(clearOnChange, formContext.setValue)
+              }
             }}
             onValueChange={({ value }) => {
               onChange(value)
@@ -203,6 +219,9 @@ export const InputController = forwardRef(
               if (onInputChange) {
                 onInputChange(e)
               }
+              if (clearOnChange && formContext?.setValue) {
+                clearInputsOnChange(clearOnChange, formContext.setValue)
+              }
             }}
             onValueChange={({ value }) => {
               onChange(value)
@@ -241,6 +260,9 @@ export const InputController = forwardRef(
               onChange(e.target.value)
               if (onInputChange) {
                 onInputChange(e)
+              }
+              if (clearOnChange && formContext?.setValue) {
+                clearInputsOnChange(clearOnChange, formContext.setValue)
               }
             }}
             rows={rows}

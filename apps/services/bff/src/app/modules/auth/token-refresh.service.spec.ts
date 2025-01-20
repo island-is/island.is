@@ -2,7 +2,6 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import { Test } from '@nestjs/testing'
 import { CacheService } from '../cache/cache.service'
 import { IdsService } from '../ids/ids.service'
-import { TokenResponse } from '../ids/ids.types'
 import { AuthService } from './auth.service'
 import { CachedTokenResponse } from './auth.types'
 import { TokenRefreshService } from './token-refresh.service'
@@ -35,20 +34,11 @@ const mockTokenResponse: CachedTokenResponse = {
     delegationType: [],
     locale: 'is',
     birthdate: '1990-01-01',
+    iss: 'https://identity-server.dev01.devland.is',
   },
   accessTokenExp: Date.now() + 3600000, // Current time + 1 hour in milliseconds
   encryptedAccessToken: 'encrypted.access.token',
   encryptedRefreshToken: 'encrypted.refresh.token',
-}
-
-// When mocking IdsService.refreshToken response, we need TokenResponse type:
-const mockIdsTokenResponse: TokenResponse = {
-  id_token: 'mock.id.token',
-  access_token: 'mock.access.token',
-  refresh_token: 'mock.refresh.token',
-  expires_in: 3600,
-  token_type: 'Bearer',
-  scope: 'openid profile offline_access',
 }
 
 describe('TokenRefreshService', () => {
@@ -56,10 +46,10 @@ describe('TokenRefreshService', () => {
   let authService: AuthService
   let idsService: IdsService
   let cacheService: CacheService
-  const testSid = 'test-sid'
+  const testCacheKey = 'test-sid'
   const testRefreshToken = 'test-refresh-token'
   const refreshInProgressPrefix = 'refresh_token_in_progress'
-  const refreshInProgressKey = `${refreshInProgressPrefix}:${testSid}`
+  const refreshInProgressKey = `${refreshInProgressPrefix}:${testCacheKey}`
 
   beforeEach(async () => {
     const module = await Test.createTestingModule({
@@ -93,7 +83,9 @@ describe('TokenRefreshService', () => {
             delete: jest
               .fn()
               .mockImplementation(async (key) => mockCacheStore.delete(key)),
-            createSessionKeyType: jest.fn((type, sid) => `${type}_${sid}`),
+            createSessionKeyType: jest.fn(
+              (type, cackeKey) => `${type}_${cackeKey}`,
+            ),
           },
         },
       ],
@@ -114,7 +106,7 @@ describe('TokenRefreshService', () => {
     it('should successfully refresh token when no refresh is in progress', async () => {
       // Act
       const result = await service.refreshToken({
-        sid: testSid,
+        cacheKey: testCacheKey,
         encryptedRefreshToken: testRefreshToken,
       })
 
@@ -138,7 +130,7 @@ describe('TokenRefreshService', () => {
       setTimeout(async () => {
         await cacheService.delete(refreshInProgressKey)
         await cacheService.save({
-          key: `current_${testSid}`,
+          key: `current_${testCacheKey}`,
           value: mockTokenResponse,
           ttl: 3600,
         })
@@ -146,7 +138,7 @@ describe('TokenRefreshService', () => {
 
       // Act
       const result = await service.refreshToken({
-        sid: testSid,
+        cacheKey: testCacheKey,
         encryptedRefreshToken: testRefreshToken,
       })
 
@@ -165,7 +157,7 @@ describe('TokenRefreshService', () => {
 
       // Act
       const result = await service.refreshToken({
-        sid: testSid,
+        cacheKey: testCacheKey,
         encryptedRefreshToken: testRefreshToken,
       })
 
@@ -182,15 +174,13 @@ describe('TokenRefreshService', () => {
 
       // Act
       const cachedTokenResponse = await service.refreshToken({
-        sid: testSid,
+        cacheKey: testCacheKey,
         encryptedRefreshToken: testRefreshToken,
       })
       //
       expect(cachedTokenResponse).toBe(null)
 
-      expect(mockLogger.warn).toHaveBeenCalledWith(
-        `Token refresh failed for sid: ${testSid}`,
-      )
+      expect(mockLogger.warn).toHaveBeenCalledWith('Token refresh failed')
     })
 
     it('should prevent concurrent refresh token requests', async () => {
@@ -227,7 +217,7 @@ describe('TokenRefreshService', () => {
       // First request
       refreshPromises.push(
         service.refreshToken({
-          sid: testSid,
+          cacheKey: testCacheKey,
           encryptedRefreshToken: testRefreshToken,
         }),
       )
@@ -239,7 +229,7 @@ describe('TokenRefreshService', () => {
       for (let i = 1; i < refreshCount; i++) {
         refreshPromises.push(
           service.refreshToken({
-            sid: testSid,
+            cacheKey: testCacheKey,
             encryptedRefreshToken: testRefreshToken,
           }),
         )

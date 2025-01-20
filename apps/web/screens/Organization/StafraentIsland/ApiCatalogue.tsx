@@ -1,5 +1,17 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import { ReactNode, useEffect, useState } from 'react'
+import { useWindowSize } from 'react-use'
+import { useRouter } from 'next/router'
+import { useQuery } from '@apollo/client'
+import { INLINES } from '@contentful/rich-text-types'
+
+import {
+  AccessCategory,
+  DataCategory,
+  PricingCategory,
+  TypeCategory,
+} from '@island.is/api-catalogue/consts'
+import { SliceType } from '@island.is/island-ui/contentful'
 import {
   ArrowLink,
   Box,
@@ -10,49 +22,37 @@ import {
   NavigationItem,
   Text,
 } from '@island.is/island-ui/core'
-import { withMainLayout } from '@island.is/web/layouts/main'
-import {
-  ContentLanguage,
-  GetNamespaceQuery,
-  Query,
-  QueryGetNamespaceArgs,
-  QueryGetOrganizationPageArgs,
-  QueryGetOrganizationSubpageArgs,
-} from '@island.is/web/graphql/schema'
-import {
-  GET_CATALOGUE_QUERY,
-  GET_NAMESPACE_QUERY,
-  GET_ORGANIZATION_PAGE_QUERY,
-  GET_ORGANIZATION_SUBPAGE_QUERY,
-} from '../../queries'
-import { Screen } from '../../../types'
-import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
+import { theme } from '@island.is/island-ui/theme'
 import {
   ApiCatalogueFilter,
   OrganizationWrapper,
   ServiceList,
   Webreader,
 } from '@island.is/web/components'
-import { CustomNextError } from '@island.is/web/units/errors'
-import { SliceType } from '@island.is/island-ui/contentful'
-import { useNamespace } from '@island.is/web/hooks'
 import {
+  ContentLanguage,
   GetApiCatalogueInput,
+  GetNamespaceQuery,
+  Query,
   QueryGetApiCatalogueArgs,
-} from '@island.is/api/schema'
-import { useQuery } from '@apollo/client'
-import {
-  AccessCategory,
-  DataCategory,
-  PricingCategory,
-  TypeCategory,
-} from '@island.is/api-catalogue/consts'
-import { useRouter } from 'next/router'
-import { INLINES } from '@contentful/rich-text-types'
-import { useWindowSize } from 'react-use'
-import { theme } from '@island.is/island-ui/theme'
+  QueryGetNamespaceArgs,
+  QueryGetOrganizationPageArgs,
+  QueryGetOrganizationSubpageArgs,
+} from '@island.is/web/graphql/schema'
+import { useNamespace } from '@island.is/web/hooks'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
+import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
+import { withMainLayout } from '@island.is/web/layouts/main'
+import { CustomNextError } from '@island.is/web/units/errors'
 import { webRichText } from '@island.is/web/utils/richText'
+
+import { Screen } from '../../../types'
+import {
+  GET_CATALOGUE_QUERY,
+  GET_NAMESPACE_QUERY,
+  GET_ORGANIZATION_PAGE_QUERY,
+  GET_ORGANIZATION_SUBPAGE_QUERY,
+} from '../../queries'
 
 const LIMIT = 20
 

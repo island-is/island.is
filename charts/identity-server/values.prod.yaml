@@ -9,6 +9,7 @@ auth-admin-web:
   enabled: true
   env:
     BASE_URL: 'https://innskra.island.is/admin'
+    CODE_OWNER: 'aranja'
     IDENTITYSERVER_DOMAIN: 'innskra.island.is'
     LOG_LEVEL: 'info'
     NEXTAUTH_URL: 'https://innskra.island.is/admin/api/auth'
@@ -126,6 +127,7 @@ identity-server:
     - 'nginx-ingress-external'
     - 'user-notification'
     - 'portals-admin'
+    - 'datadog'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -186,6 +188,8 @@ identity-server:
     AudkenniSettings__ClientSecret: '/k8s/identity-server/AudkenniClientSecret'
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     ContentfulSettings__AccessToken: '/k8s/identity-server/CONTENTFUL_ACCESS_TOKEN'
+    Datadog__RUM__ApplicationId: '/k8s/ids/DD_RUM_APPLICATION_ID'
+    Datadog__RUM__ClientToken: '/k8s/ids/DD_RUM_CLIENT_TOKEN'
     FeatureFlags__ConfigCatSdkKey: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     IdentityServer__FakePersons: '/k8s/identity-server/FakePersons'
     IdentityServer__LicenseKey: '/k8s/identity-server/LicenseKey'
@@ -214,6 +218,7 @@ namespaces:
 services-auth-admin-api:
   enabled: true
   env:
+    CODE_OWNER: 'aranja'
     COMPANY_REGISTRY_REDIS_NODES: '["clustercfg.general-redis-cluster-group.dnugi2.euw1.cache.amazonaws.com:6379"]'
     COMPANY_REGISTRY_XROAD_PROVIDER_ID: 'IS/GOV/5402696029/Skatturinn/ft-v1'
     DB_HOST: 'postgres-ids.internal'
@@ -311,6 +316,7 @@ services-auth-admin-api:
 services-auth-delegation-api:
   enabled: true
   env:
+    CODE_OWNER: 'aranja'
     COMPANY_REGISTRY_REDIS_NODES: '["clustercfg.general-redis-cluster-group.dnugi2.euw1.cache.amazonaws.com:6379"]'
     COMPANY_REGISTRY_XROAD_PROVIDER_ID: 'IS/GOV/5402696029/Skatturinn/ft-v1'
     DB_HOST: 'postgres-ids.internal'
@@ -407,6 +413,8 @@ services-auth-delegation-api:
 services-auth-ids-api:
   enabled: true
   env:
+    ALSO_USE_FAKE_USER_API: 'false'
+    CODE_OWNER: 'aranja'
     COMPANY_REGISTRY_REDIS_NODES: '["clustercfg.general-redis-cluster-group.dnugi2.euw1.cache.amazonaws.com:6379"]'
     COMPANY_REGISTRY_XROAD_PROVIDER_ID: 'IS/GOV/5402696029/Skatturinn/ft-v1'
     DB_EXTENSIONS: 'uuid-ossp'
@@ -450,6 +458,7 @@ services-auth-ids-api:
   grantNamespaces:
     - 'nginx-ingress-external'
     - 'user-notification'
+    - 'datadog'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -558,6 +567,7 @@ services-auth-ids-api-cleanup:
     - 'nginx-ingress-external'
     - 'user-notification'
     - 'portals-admin'
+    - 'datadog'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -755,6 +765,7 @@ services-auth-personal-representative-public:
 services-auth-public-api:
   enabled: true
   env:
+    CODE_OWNER: 'aranja'
     COMPANY_REGISTRY_REDIS_NODES: '["clustercfg.general-redis-cluster-group.dnugi2.euw1.cache.amazonaws.com:6379"]'
     COMPANY_REGISTRY_XROAD_PROVIDER_ID: 'IS/GOV/5402696029/Skatturinn/ft-v1'
     DB_HOST: 'postgres-ids.internal'

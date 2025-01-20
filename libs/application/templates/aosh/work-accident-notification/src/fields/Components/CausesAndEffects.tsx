@@ -62,7 +62,7 @@ export const CausesAndEffects: FC<
   const [pickedValue, setPickedValue] = useState<OptionAndKey>()
   const activityGroups = (
     getValueViaPath<Group[]>(application.externalData, externalDataKey) ?? []
-  ).filter((group) => !group.validToSelect)
+  ).filter((group) => group.code.endsWith('0'))
   const activites = (
     getValueViaPath<Item[]>(application.externalData, externalDataKey) ?? []
   ).filter((group) => group.validToSelect)
