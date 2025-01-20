@@ -31,6 +31,11 @@ export const useAdvertTemplate = (
   }
 }
 
-export const useAdvertTemplateLazy = () => {
-  return useLazyQuery<TemplatesResponse>(ADVERT_TEMPLATE_QUERY)
+export const useAdvertTemplateLazy = (
+  onSuccess: (data: TemplatesResponse) => void,
+) => {
+  return useLazyQuery<TemplatesResponse>(ADVERT_TEMPLATE_QUERY, {
+    fetchPolicy: 'no-cache',
+    onCompleted: onSuccess,
+  })
 }

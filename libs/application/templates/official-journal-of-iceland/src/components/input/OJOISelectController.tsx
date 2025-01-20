@@ -104,7 +104,7 @@ export const OJOISelectController = <T,>({
           onChange={(opt) => {
             if (!opt?.value) return
             if (controller) {
-              return handleChange(opt.value)
+              handleChange(opt.value)
             }
             onChange && onChange(opt.value)
           }}
