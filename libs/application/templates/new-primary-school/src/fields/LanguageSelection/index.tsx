@@ -22,10 +22,15 @@ const LanguageSelection: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   const { formatMessage } = useLocale()
 
   const [visibleLanguages, setVisibleLanguages] = useState(1)
-  const [selectedLanguages, setSelectedLanguages] = useState<any[]>([])
+  const [selectedLanguages, setSelectedLanguages] = useState<string[]>([
+    '',
+    '',
+    '',
+    '',
+  ])
 
-  const languages = getAllLanguageCodes()
-  const options = languages.map((language) => ({
+  const allLanguages = getAllLanguageCodes()
+  const allLanguageOptions = allLanguages.map((language) => ({
     label: language.name,
     value: language.code,
   }))
@@ -44,22 +49,22 @@ const LanguageSelection: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   useEffect(() => {
     const { language1, language2, language3, language4 } =
       getApplicationAnswers(application.answers)
-    const selected: { index: number; language: string }[] = []
+    const selected: string[] = []
     let visibleCount = 1
     if (language1) {
-      selected.push({ index: 1, language: language1 })
+      selected.push(language1)
       visibleCount = 1
     }
     if (language2) {
-      selected.push({ index: 2, language: language2 })
+      selected.push(language2)
       visibleCount = 2
     }
     if (language3) {
-      selected.push({ index: 3, language: language3 })
+      selected.push(language3)
       visibleCount = 3
     }
     if (language4) {
-      selected.push({ index: 4, language: language4 })
+      selected.push(language4)
       visibleCount = 4
     }
 
@@ -82,12 +87,13 @@ const LanguageSelection: FC<React.PropsWithChildren<FieldBaseProps>> = ({
           id={languageIdsArray[index]}
           name={languageIdsArray[index]}
           backgroundColor="blue"
-          options={options}
+          options={allLanguageOptions}
           onSelect={(value) => {
-            setSelectedLanguages((prevLanguages) => [
-              ...prevLanguages,
-              value.value,
-            ])
+            setSelectedLanguages((prevLanguages) => {
+              const newLanguages = [...prevLanguages]
+              newLanguages[index] = value.value
+              return newLanguages
+            })
           }}
         />
       ))}
@@ -120,16 +126,9 @@ const LanguageSelection: FC<React.PropsWithChildren<FieldBaseProps>> = ({
         id={languagesIds.childLanguage}
         name={languagesIds.childLanguage}
         backgroundColor="blue"
-        options={options.filter((language) => {
-          console.log('selectedLanguages', selectedLanguages)
-
-          /*
-          selectedLanguages.forEach((language) => {
-            console.log(language)
-          })*/
-
-          return language
-        })}
+        options={allLanguageOptions.filter((language) =>
+          selectedLanguages.includes(language.value),
+        )}
       />
     </Stack>
   )
