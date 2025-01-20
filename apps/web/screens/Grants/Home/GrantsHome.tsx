@@ -1,3 +1,4 @@
+import { useMemo } from 'react'
 import { useIntl } from 'react-intl'
 import NextLink from 'next/link'
 
@@ -13,6 +14,7 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { Locale } from '@island.is/shared/types'
+import { isDefined } from '@island.is/shared/utils'
 import { GrantSearchSection } from '@island.is/web/components'
 import { SLICE_SPACING } from '@island.is/web/constants'
 import {
@@ -36,8 +38,6 @@ import {
   CategorySlug,
   mapTagToMessageId,
 } from './mapTagToMessageId'
-import { useMemo } from 'react'
-import { isDefined } from '@island.is/shared/utils'
 
 const GrantsHomePage: CustomScreen<GrantsHomeProps> = ({
   categories,
@@ -97,26 +97,24 @@ const GrantsHomePage: CustomScreen<GrantsHomeProps> = ({
           //TODO - do when the categories are ready
           quickLinks={[
             {
-              title: 'Listamannalaun',
-              href: searchUrl + '?category=menning-og-listir',
+              title: 'Opið fyrir umsóknir',
+              href: searchUrl + '?status=open',
             },
             {
-              title: 'Barnamenningarsjóður',
-              href: searchUrl + '?category=nam-og-kennsla',
+              title: 'Innlendir sjóðir',
+              href: searchUrl + '?category=grant-category-native',
             },
             {
-              title: 'Tónlistarsjóður',
-              href: searchUrl + '?category=nyskopun',
+              title: 'Tækniþróunarsjóður',
+              href: searchUrl + '?query=tækniþróunarsjóður',
             },
             {
-              title: 'Rannís',
-              href: searchUrl + '?organization=rannis',
-              variant: 'purple',
+              title: 'Fjármögnun',
+              href: searchUrl + '?type=grant-type-financing',
             },
             {
-              title: 'Erasmus',
-              href: searchUrl + '?organization=erasmus',
-              variant: 'purple',
+              title: 'Fyrirtæki',
+              href: searchUrl + '?query=fyrirtæki',
             },
           ]}
           breadcrumbs={
