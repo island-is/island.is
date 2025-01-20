@@ -22,6 +22,7 @@ export interface Program {
   nameIs: string
   nameEn: string
   registrationEndDate: Date
+  isSpecialNeedsProgram: boolean
 }
 
 export interface ApplicationContact {

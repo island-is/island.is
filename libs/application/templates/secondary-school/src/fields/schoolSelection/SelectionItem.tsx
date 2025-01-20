@@ -36,6 +36,8 @@ export const SelectionItem: FC<FieldBaseProps & SelectionItemProps> = (
   const { setValue, watch } = useFormContext()
   const [isLoadingPrograms, setIsLoadingPrograms] = useState<boolean>(false)
   const [showSecondProgram, setShowSecondProgram] = useState<boolean>(true)
+  const [isSecondProgramRequired, setIsSecondProgramRequired] =
+    useState<boolean>(true)
 
   const isFreshman =
     getValueViaPath<ApplicationType>(
@@ -128,6 +130,7 @@ export const SelectionItem: FC<FieldBaseProps & SelectionItemProps> = (
               value: firstProgramInfo.id,
               label: getTranslatedProgram(lang, firstProgramInfo),
             })
+            setIsSecondProgramRequired(!firstProgramInfo.isSpecialNeedsProgram)
           }
 
           const secondProgramInfo = programs.find(
@@ -234,6 +237,18 @@ export const SelectionItem: FC<FieldBaseProps & SelectionItemProps> = (
       `${props.field.id}.${fieldName}.registrationEndDate`,
       programInfo?.registrationEndDate || '',
     )
+
+    if (fieldName === 'firstProgram') {
+      const isSpecialNeedsProgram = programInfo?.isSpecialNeedsProgram
+      const isSecondRequired = !isSpecialNeedsProgram
+
+      setValue(
+        `${props.field.id}.${fieldName}.isSpecialNeedsProgram`,
+        isSpecialNeedsProgram,
+      )
+      setValue(`${props.field.id}.secondProgram.require`, isSecondRequired)
+      setIsSecondProgramRequired(isSecondRequired)
+    }
   }
 
   const setValueThirdLanguage = (languageCode: string | undefined) => {
@@ -339,7 +354,8 @@ export const SelectionItem: FC<FieldBaseProps & SelectionItemProps> = (
                   name={`${props.field.id}.secondProgram.id`}
                   label={formatMessage(school.selection.secondProgramLabel)}
                   backgroundColor="blue"
-                  required={true}
+                  required={isSecondProgramRequired}
+                  isClearable={!isSecondProgramRequired}
                   isLoading={isLoadingPrograms}
                   isDisabled={isLoadingPrograms}
                   value={selectedSecondProgram}

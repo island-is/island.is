@@ -77,6 +77,7 @@ export class SecondarySchoolClient {
       nameIs: `${program.title || ''} - ${program.code}`,
       nameEn: `${program.titleEnglish || ''} - ${program.code}`,
       registrationEndDate: program.registryEndDate || new Date(),
+      isSpecialNeedsProgram: program.isSpecialNeedsProgramme || false,
     }))
   }
 

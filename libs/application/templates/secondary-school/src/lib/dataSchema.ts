@@ -69,11 +69,13 @@ const SelectionSchema = z
         nameIs: z.string().optional(),
         nameEn: z.string().optional(),
         registrationEndDate: z.string().optional(),
+        isSpecialNeedsProgram: z.boolean().optional(),
       })
       .optional(),
     secondProgram: z
       .object({
         include: z.boolean().optional(),
+        require: z.boolean().optional(),
         id: z.string().optional(),
         nameIs: z.string().optional(),
         nameEn: z.string().optional(),
@@ -111,7 +113,7 @@ const SelectionSchema = z
   .refine(
     ({ include, secondProgram }) => {
       if (!include) return true
-      if (!secondProgram?.include) return true
+      if (!secondProgram?.include || !secondProgram?.require) return true
       return !!secondProgram?.id
     },
     { path: ['secondProgram.id'] },

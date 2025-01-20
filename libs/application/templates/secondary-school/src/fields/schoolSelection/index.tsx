@@ -12,7 +12,11 @@ import { SecondarySchoolAnswers } from '../..'
 export const SchoolSelection: FC<FieldBaseProps> = (props) => {
   const { formatMessage } = useLocale()
   const { application, setBeforeSubmitCallback } = props
-  const { setValue, getValues, register } = useFormContext()
+  const { setValue, getValues, register, watch } = useFormContext()
+
+  const isFirstFirstProgramSpecialNeedsEducation = watch(
+    `${props.field.id}.first.firstProgram.isSpecialNeedsProgram`,
+  )
 
   const isFreshman =
     getValueViaPath<ApplicationType>(
@@ -30,38 +34,38 @@ export const SchoolSelection: FC<FieldBaseProps> = (props) => {
   const [programDuplicateError, setProgramDuplicateError] =
     useState<boolean>(false)
 
-  const [showSecondAddRemoveButtons, setShowSecondAddRemoveButtons] =
-    useState<boolean>(false)
-  const [showThirdAddRemoveButtons, setShowThirdAddRemoveButtons] =
-    useState<boolean>(false)
   const [showSecondSelection, setShowSecondSelection] = useState<boolean>(false)
   const [showThirdSelection, setShowThirdSelection] = useState<boolean>(false)
+  const [minSelectionCount, setMinSelectionCount] = useState<number>(1)
+  const [maxSelectionCount, setMaxSelectionCount] = useState<number>(3)
 
-  // Add / remove second selection (only non-freshman can to this)
-  const onClickAddSecond = () => {
-    if (!isFreshman) {
-      setShowSecondSelection(true)
-      setValue(`${props.field.id}.second.include`, true)
-    }
-  }
-  const onClickRemoveSecond = () => {
-    if (!isFreshman) {
-      setShowSecondSelection(false)
-      setValue(`${props.field.id}.second.include`, false)
-    }
+  const getSelectionCount = () => {
+    return 1 + (showSecondSelection ? 1 : 0) + (showThirdSelection ? 1 : 0)
   }
 
-  // Add / remove third selection (only freshman can to this)
-  const onClickAddThird = () => {
-    if (isFreshman) {
-      setShowThirdSelection(true)
-      setValue(`${props.field.id}.third.include`, true)
+  const onClickAdd = () => {
+    const currentCount = getSelectionCount()
+    if (currentCount < maxSelectionCount) {
+      if (currentCount === 1) {
+        setShowSecondSelection(true)
+        setValue(`${props.field.id}.second.include`, true)
+      } else if (currentCount === 2) {
+        setShowThirdSelection(true)
+        setValue(`${props.field.id}.third.include`, true)
+      }
     }
   }
-  const onClickRemoveThird = () => {
-    if (isFreshman) {
-      setShowThirdSelection(false)
-      setValue(`${props.field.id}.third.include`, false)
+
+  const onClickRemove = () => {
+    const currentCount = getSelectionCount()
+    if (currentCount > minSelectionCount) {
+      if (currentCount === 2) {
+        setShowSecondSelection(false)
+        setValue(`${props.field.id}.second.include`, false)
+      } else if (currentCount === 3) {
+        setShowThirdSelection(false)
+        setValue(`${props.field.id}.third.include`, false)
+      }
     }
   }
 
@@ -132,48 +136,67 @@ export const SchoolSelection: FC<FieldBaseProps> = (props) => {
   // default set include for first, second and third selection
   // freshman has second selection as required, and third selection as optional
   // non-freshman has second selection as optional, and third selection is hidden (not available)
+  // handle specifically if school count is limited, or if first selection is special needs program
   useEffect(() => {
-    let showSecondAddRemoveButtons: boolean | undefined
-    let showThirdAddRemoveButtons: boolean | undefined
     let showSecondSelection: boolean | undefined
     let showThirdSelection: boolean | undefined
+    let minSelectionCount: number | undefined
+    let maxSelectionCount: number | undefined
 
     const filteredSchools = schools?.filter((x) =>
       isFreshman ? x.isOpenForAdmissionFreshman : x.isOpenForAdmissionGeneral,
     )
 
     if (isFreshman) {
-      showSecondAddRemoveButtons = false
-      showSecondSelection = true
-      showThirdAddRemoveButtons = true
-      showThirdSelection = getValues(`${props.field.id}.third.include`)
+      if (isFirstFirstProgramSpecialNeedsEducation) {
+        showSecondSelection = getValues(`${props.field.id}.second.include`)
+        showThirdSelection = getValues(`${props.field.id}.third.include`)
+        minSelectionCount = 1
+        maxSelectionCount = 3
+      } else {
+        showSecondSelection = true
+        showThirdSelection = getValues(`${props.field.id}.third.include`)
+        minSelectionCount = 2
+        maxSelectionCount = 3
+      }
     } else {
-      showSecondAddRemoveButtons = true
       showSecondSelection = getValues(`${props.field.id}.second.include`)
-      showThirdAddRemoveButtons = false
       showThirdSelection = false
+      minSelectionCount = 1
+      maxSelectionCount = 2
     }
 
     // overwrite values to handle if schools length is limited
     if (filteredSchools?.length === 1) {
-      showSecondAddRemoveButtons = false
       showSecondSelection = false
-      showThirdAddRemoveButtons = false
       showThirdSelection = false
+      minSelectionCount = 1
+      maxSelectionCount = 1
     } else if (filteredSchools?.length === 2) {
-      showThirdAddRemoveButtons = false
       showThirdSelection = false
+      minSelectionCount = Math.min(minSelectionCount, 2)
+      maxSelectionCount = 2
     }
 
     setValue(`${props.field.id}.first.include`, true)
     setValue(`${props.field.id}.second.include`, showSecondSelection)
     setValue(`${props.field.id}.third.include`, showThirdSelection)
 
-    setShowSecondAddRemoveButtons(showSecondAddRemoveButtons || false)
-    setShowThirdAddRemoveButtons(showThirdAddRemoveButtons || false)
     setShowSecondSelection(showSecondSelection || false)
     setShowThirdSelection(showThirdSelection || false)
-  }, [isFreshman, props.field.id, setValue, getValues, schools])
+    setMinSelectionCount(minSelectionCount || 1)
+    setMaxSelectionCount(maxSelectionCount || 3)
+  }, [
+    isFreshman,
+    props.field.id,
+    setValue,
+    getValues,
+    schools,
+    isFirstFirstProgramSpecialNeedsEducation,
+  ])
+
+  const showAddButton = getSelectionCount() < maxSelectionCount
+  const showRemoveButton = getSelectionCount() > minSelectionCount
 
   return (
     <Box>
@@ -195,105 +218,83 @@ export const SchoolSelection: FC<FieldBaseProps> = (props) => {
 
       {/* Second selection */}
       {/* Required for freshman, optional for non-freshman */}
-      {(showSecondSelection || showSecondAddRemoveButtons) && (
+      {showSecondSelection && (
         <>
           <Text variant="h5" marginTop={2}>
-            {showSecondSelection
-              ? formatMessage(school.secondSelection.subtitle)
-              : formatMessage(school.secondSelection.addSubtitle)}
+            {formatMessage(school.secondSelection.subtitle)}
           </Text>
-          {showSecondSelection && (
-            <SelectionItem
-              {...props}
-              field={{
-                ...props.field,
-                id: `${props.field.id}.second`,
-              }}
-              otherFieldIds={[
-                `${props.field.id}.first`,
-                `${props.field.id}.third`,
-              ]}
-            />
-          )}
-          {showSecondAddRemoveButtons && (
-            <Box marginTop={2}>
-              {!showSecondSelection && (
-                <Button
-                  icon="add"
-                  onClick={() => onClickAddSecond()}
-                  variant="ghost"
-                  fluid
-                >
-                  {formatMessage(school.thirdSelection.addButtonLabel)}
-                </Button>
-              )}
-              {showSecondSelection && (
-                <Button
-                  icon="remove"
-                  onClick={() => onClickRemoveSecond()}
-                  variant="ghost"
-                  colorScheme="destructive"
-                  fluid
-                >
-                  {formatMessage(school.thirdSelection.removeButtonLabel)}
-                </Button>
-              )}
-            </Box>
-          )}
+          <SelectionItem
+            {...props}
+            field={{
+              ...props.field,
+              id: `${props.field.id}.second`,
+            }}
+            otherFieldIds={[
+              `${props.field.id}.first`,
+              `${props.field.id}.third`,
+            ]}
+          />
         </>
       )}
 
       {/* Third selection */}
       {/* Optional for freshman, hidden for non-freshman */}
-      {(showThirdSelection || showThirdAddRemoveButtons) && (
+      {showThirdSelection && (
         <>
           <Text variant="h5" marginTop={2}>
-            {showThirdSelection
-              ? formatMessage(school.thirdSelection.subtitle)
-              : formatMessage(school.thirdSelection.addSubtitle)}
+            {formatMessage(school.thirdSelection.subtitle)}
           </Text>
-          {!showThirdSelection && (
-            <Text>{formatMessage(school.thirdSelection.addDescription)}</Text>
-          )}
-          {showThirdSelection && (
-            <SelectionItem
-              {...props}
-              field={{
-                ...props.field,
-                id: `${props.field.id}.third`,
-              }}
-              otherFieldIds={[
-                `${props.field.id}.first`,
-                `${props.field.id}.second`,
-              ]}
-            />
-          )}
-          {showThirdAddRemoveButtons && (
-            <Box marginTop={2}>
-              {!showThirdSelection && (
-                <Button
-                  icon="add"
-                  onClick={() => onClickAddThird()}
-                  variant="ghost"
-                  fluid
-                >
-                  {formatMessage(school.thirdSelection.addButtonLabel)}
-                </Button>
-              )}
-              {showThirdSelection && (
-                <Button
-                  icon="remove"
-                  onClick={() => onClickRemoveThird()}
-                  variant="ghost"
-                  colorScheme="destructive"
-                  fluid
-                >
-                  {formatMessage(school.thirdSelection.removeButtonLabel)}
-                </Button>
-              )}
-            </Box>
-          )}
+          <SelectionItem
+            {...props}
+            field={{
+              ...props.field,
+              id: `${props.field.id}.third`,
+            }}
+            otherFieldIds={[
+              `${props.field.id}.first`,
+              `${props.field.id}.second`,
+            ]}
+          />
         </>
+      )}
+
+      {/* Remove button */}
+      {showRemoveButton && (
+        <Box marginTop={2}>
+          <Button
+            icon="remove"
+            onClick={() => onClickRemove()}
+            variant="ghost"
+            colorScheme="destructive"
+            fluid
+          >
+            {formatMessage(school.selection.removeButtonLabel)}
+          </Button>
+        </Box>
+      )}
+
+      {/* Add subtitle + description */}
+      {showAddButton && !showSecondSelection && (
+        <Text variant="h5" marginTop={2}>
+          {formatMessage(school.secondSelection.addSubtitle)}
+        </Text>
+      )}
+      {showAddButton && showSecondSelection && !showThirdSelection && (
+        <>
+          <Text variant="h5" marginTop={2}>
+            {formatMessage(school.thirdSelection.addSubtitle)}
+          </Text>
+          <Text>{formatMessage(school.thirdSelection.addDescription)}</Text>
+        </>
+      )}
+
+      {/* Add button */}
+      {showAddButton && (
+        <Box marginTop={2}>
+          <Button icon="add" onClick={() => onClickAdd()} variant="ghost" fluid>
+            {formatMessage(school.selection.addButtonLabel)}
+          </Button>
+        </Box>
       )}
 
       {/* Duplicate error */}
