@@ -121,7 +121,6 @@ const SelectableList: FC<Props> = (props) => {
             checked={
               validSelectableItems.length > 0 &&
               validSelectableItems
-                .filter((item) => !item.invalid)
                 .every((item) => item.checked)
             }
             onChange={(evt) =>
