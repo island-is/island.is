@@ -19,9 +19,9 @@ import MultipleValueList from '../MultipleValueList/MultipleValueList'
 import {
   ClearIndicator,
   DropdownIndicator,
+  Option,
   Placeholder,
   SingleValue,
-  Option,
 } from '../SelectComponents/SelectComponents'
 import * as styles from './CourtDocuments.css'
 
