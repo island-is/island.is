@@ -1,4 +1,4 @@
-import { FC,ReactElement, useContext, useState } from 'react'
+import { FC, ReactElement, useContext, useState } from 'react'
 import { useRouter } from 'next/router'
 import { useApolloClient } from '@apollo/client/react'
 
@@ -17,7 +17,7 @@ import {
   TextFieldLocales,
 } from '@island.is/web/graphql/schema'
 import { useNamespace } from '@island.is/web/hooks'
-import { LinkType,useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
+import { LinkType, useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import { useI18n } from '@island.is/web/i18n'
 import { LayoutProps } from '@island.is/web/layouts/main'
 import { GET_CONTENT_SLUG } from '@island.is/web/screens/queries/Article'

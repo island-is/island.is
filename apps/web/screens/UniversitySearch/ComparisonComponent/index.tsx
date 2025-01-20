@@ -1,6 +1,6 @@
 import React, { MouseEventHandler, ReactNode } from 'react'
 
-import { Box,FocusableBox } from '@island.is/island-ui/core'
+import { Box, FocusableBox } from '@island.is/island-ui/core'
 
 import * as styles from './Comparison.css'
 

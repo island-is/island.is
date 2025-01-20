@@ -1,4 +1,4 @@
-import { type FC,useContext } from 'react'
+import { type FC, useContext } from 'react'
 import { useWindowSize } from 'react-use'
 import {
   parseAsArrayOf,

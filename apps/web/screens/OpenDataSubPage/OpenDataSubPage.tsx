@@ -14,7 +14,7 @@ import {
   Link,
   Text,
 } from '@island.is/island-ui/core'
-import { ChartsCard,StatisticsCard } from '@island.is/web/components'
+import { ChartsCard, StatisticsCard } from '@island.is/web/components'
 import {
   ContentLanguage,
   GetOpenDataSubpageQuery,

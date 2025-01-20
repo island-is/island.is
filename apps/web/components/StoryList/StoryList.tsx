@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { Box,Button, Link, Stack, Text } from '@island.is/island-ui/core'
+import { Box, Button, Link, Stack, Text } from '@island.is/island-ui/core'
 import { ContentLink } from '@island.is/web/components'
 import { PROJECT_STORIES_TAG_ID } from '@island.is/web/constants'
 import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'

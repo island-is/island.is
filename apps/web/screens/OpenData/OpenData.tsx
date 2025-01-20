@@ -41,7 +41,7 @@ import {
 } from '@island.is/web/utils/processMenuData'
 
 import { useLinkResolver } from '../../hooks/useLinkResolver'
-import { GET_CATEGORIES_QUERY,GET_OPEN_DATA_PAGE_QUERY } from '../queries'
+import { GET_CATEGORIES_QUERY, GET_OPEN_DATA_PAGE_QUERY } from '../queries'
 import { GET_GROUPED_MENU_QUERY } from '../queries/Menu'
 import * as styles from './OpenData.css'
 

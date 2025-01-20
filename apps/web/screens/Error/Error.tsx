@@ -1,8 +1,8 @@
-import React, { Fragment,ReactNode } from 'react'
+import React, { Fragment, ReactNode } from 'react'
 import { useRouter } from 'next/router'
 import { Document } from '@contentful/rich-text-types'
 
-import { richText,Slice as SliceType } from '@island.is/island-ui/contentful'
+import { richText, Slice as SliceType } from '@island.is/island-ui/contentful'
 import {
   Box,
   GridColumn,
