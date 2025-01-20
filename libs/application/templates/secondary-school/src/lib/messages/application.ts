@@ -29,9 +29,15 @@ export const application = defineMessages({
     description:
       'Description of application state/status when application is submitted',
   },
+  actionCardInReview: {
+    id: 'ss.application:actionCardCompleted',
+    defaultMessage: 'Í skoðun hjá vinnsluaðila',
+    description:
+      'Description of application state/status when application is completed',
+  },
   actionCardCompleted: {
     id: 'ss.application:actionCardCompleted',
-    defaultMessage: 'Móttekin',
+    defaultMessage: 'Klárað',
     description:
       'Description of application state/status when application is completed',
   },
@@ -53,15 +59,43 @@ export const application = defineMessages({
     description:
       'Meta name of application state when the application is in submitted',
   },
+  stateMetaNameInReview: {
+    id: 'ss.application:stateMetaNameInReview',
+    defaultMessage: 'In review',
+    description:
+      'Meta name of application state when the application is in review',
+  },
   stateMetaNameCompleted: {
     id: 'ss.application:stateMetaNameCompleted',
     defaultMessage: 'Completed',
     description:
       'Meta name of application state when the application is in completed',
   },
-  historyAplicationEdited: {
-    id: 'ss.application:historyAplicationEdited',
+})
+
+export const historyMessages = defineMessages({
+  edited: {
+    id: 'ss.historyMessages:edited',
     defaultMessage: 'Umsókn dregin tilbaka (breyting)',
-    description: 'History application edited',
+    description: 'History message application edited',
+  },
+  reviewFinished: {
+    id: 'ss.historyMessages:reviewFinished',
+    defaultMessage: 'Yfirferð á umsókn lokið',
+    description: 'History message application review finished',
+  },
+})
+
+export const pendingActionMessages = defineMessages({
+  reviewFinishedTitle: {
+    id: 'ss.pendingActionMessages:reviewFinishedTitle',
+    defaultMessage: 'Yfirferð lokið',
+    description: 'Pending action message application review finished title',
+  },
+  reviewFinishedDescription: {
+    id: 'ss.pendingActionMessages:reviewFinishedDescription',
+    defaultMessage: 'Yfirferð á umsókn þinni hefur verið lokið',
+    description:
+      'Pending action message application review finished description',
   },
 })

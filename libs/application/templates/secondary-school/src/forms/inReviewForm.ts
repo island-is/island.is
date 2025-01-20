@@ -10,8 +10,8 @@ import { Form, FormModes } from '@island.is/application/types'
 import { conclusion } from '../lib/messages'
 import { Logo } from '../assets/Logo'
 
-export const Completed: Form = buildForm({
-  id: 'CompletedForm',
+export const InReview: Form = buildForm({
+  id: 'InReviewForm',
   title: '',
   logo: Logo,
   mode: FormModes.COMPLETED,
@@ -30,7 +30,6 @@ export const Completed: Form = buildForm({
               title: '',
               description: '',
             }),
-            // TODO Need to add result from MMS here when design and API are ready
             buildMessageWithLinkButtonField({
               id: 'conclusionBottomLink',
               title: '',

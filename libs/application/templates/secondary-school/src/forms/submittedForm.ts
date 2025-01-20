@@ -15,7 +15,7 @@ import { Logo } from '../assets/Logo'
 import { ApplicationType } from '../utils'
 
 export const Submitted: Form = buildForm({
-  id: 'ConclusionForm',
+  id: 'SubmittedForm',
   title: '',
   logo: Logo,
   mode: FormModes.IN_PROGRESS,
