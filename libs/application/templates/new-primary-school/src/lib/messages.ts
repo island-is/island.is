@@ -373,6 +373,28 @@ export const newPrimarySchoolMessages: MessageDir = {
       description: 'Remove sibling',
     },
 
+    // Current school
+    currentSchoolSubSectionTitle: {
+      id: 'nps.application:primary.school.current.school.sub.section.title',
+      defaultMessage: 'Upplýsingar um núverandi skóla',
+      description: 'Information about current school',
+    },
+    currentSchoolInfo: {
+      id: 'nps.application:primary.school.current.school.info',
+      defaultMessage: 'Núverandi skóli',
+      description: 'Current school',
+    },
+    grade: {
+      id: 'nps.application:primary.school.grade',
+      defaultMessage: 'Bekkur',
+      description: 'Grade',
+    },
+    currentGrade: {
+      id: 'nps.application:primary.school.current.grade',
+      defaultMessage: '{grade}. bekkur',
+      description: '{grade} grade',
+    },
+
     // Apply to a new school
     newSchoolSubSectionTitle: {
       id: 'nps.application:primary.school.new.school.sub.section.title',
@@ -664,28 +686,13 @@ export const newPrimarySchoolMessages: MessageDir = {
     },
     schoolTitle: {
       id: 'nps.application:overview.school.title',
-      defaultMessage: 'Upplýsingar um skóla',
-      description: 'Information about school',
-    },
-    currentSchool: {
-      id: 'nps.application:overview.current.school',
-      defaultMessage: 'Núverandi skóli',
-      description: 'Current school',
+      defaultMessage: 'Upplýsingar um valinn/nýjan skóla',
+      description: 'Information about selected/new school',
     },
     selectedSchool: {
       id: 'nps.application:overview.selected.school',
       defaultMessage: 'Valinn skóli',
       description: 'Selected school',
-    },
-    grade: {
-      id: 'nps.application:overview.grade',
-      defaultMessage: 'Bekkur',
-      description: 'Grade',
-    },
-    currentGrade: {
-      id: 'nps.application:overview.current.grade',
-      defaultMessage: '{grade}. bekkur',
-      description: '{grade} grade',
     },
     foodAllergiesOrIntolerances: {
       id: 'nps.application:overview.food.allergies.or.intolerances',
