@@ -120,6 +120,12 @@ export const m = defineMessages({
     defaultMessage: 'Umsækjandi',
     description: 'Applicant',
   },
+  informationApplicantDescription: {
+    id: 'dl.application:information.applicantDescription',
+    defaultMessage:
+      'Vinsamlegast farðu yfir upplýsingar hér að neðan til að staðfesta að þær séu réttar.',
+    description: '',
+  },
   healthDeclarationSectionTitle: {
     id: 'dl.application:healthDeclarationSection.title',
     defaultMessage: 'Læknisvottorð',
@@ -380,6 +386,11 @@ export const m = defineMessages({
   overviewPaymentCharge: {
     id: 'dl.application:overview.paymentcharge',
     defaultMessage: 'Greiðsla',
+    description: 'Cost',
+  },
+  overviewPaymentChargeWithDelivery: {
+    id: 'dl.application:overview.paymentChargeWithDelivery',
+    defaultMessage: 'Greiðsla (sendingingarkostnaður innifalinn)',
     description: 'Cost',
   },
   errorDataProvider: {
@@ -794,6 +805,16 @@ export const m = defineMessages({
     id: 'dl.application:applicationForRenewalLicenseDescription',
     defaultMessage:
       'Umsókn um endurnýjun ökuréttinda í B flokki (fólksbifreið), fyrir 65 ára og eldri.',
+    description: 'Option description for selecting to renew driving license',
+  },
+  applicationForBFullDescription: {
+    id: 'dl.application:applicationForBFullDescription',
+    defaultMessage: 'Umsókn um fullnaðarréttindi í B flokki (fólksbifreið)',
+    description: 'Option description for selecting to renew driving license',
+  },
+  applicationForBAdvancedDescription: {
+    id: 'dl.application:applicationForBAdvancedDescription',
+    defaultMessage: 'Umsókn um aukin ökurétindi / meirapróf',
     description: 'Option description for selecting to renew driving license',
   },
   applicationForBELicenseTitle: {

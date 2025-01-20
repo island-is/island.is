@@ -1,2 +1,2 @@
-export { LogreglanLogo } from './LogreglanLogo'
+export { Logo } from './Logo'
 export { Company } from './Company'

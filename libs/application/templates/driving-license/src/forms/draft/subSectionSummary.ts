@@ -167,7 +167,10 @@ export const subSectionSummary = buildSubSection({
         }),
         buildDividerField({}),
         buildKeyValueField({
-          label: m.overviewPaymentCharge,
+          label: (application) =>
+            application.answers.pickup === Pickup.POST
+              ? m.overviewPaymentChargeWithDelivery
+              : m.overviewPaymentCharge,
           value: (application) => {
             const items = application.externalData.payment.data as {
               priceAmount: number
