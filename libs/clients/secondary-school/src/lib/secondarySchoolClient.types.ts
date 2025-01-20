@@ -56,6 +56,7 @@ export interface ApplicationAttachment {
 }
 
 export interface Application {
+  id: string
   nationalId: string
   name: string
   phone: string

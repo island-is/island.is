@@ -149,6 +149,7 @@ export class SecondarySchoolService extends BaseTemplateApiService {
     let applicationId: string | undefined
     try {
       applicationId = await this.secondarySchoolClient.create(auth, {
+        id: application.id,
         nationalId: auth.nationalId,
         name: applicant?.name || '',
         phone: applicant?.phoneNumber || '',
