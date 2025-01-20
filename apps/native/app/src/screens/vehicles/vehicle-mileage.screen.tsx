@@ -398,7 +398,7 @@ export const VehicleMileageScreen: NavigationFunctionComponent<{
               />
             </View>
             <View>
-              {(!canRegisterMileage || !canUserRegisterVehicleMileage) && (
+              {shouldDisableMileageForm && (
                 <Typography
                   variant="body3"
                   textAlign="center"
