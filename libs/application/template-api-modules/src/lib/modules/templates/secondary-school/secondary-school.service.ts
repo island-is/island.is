@@ -130,6 +130,8 @@ export class SecondarySchoolService extends BaseTemplateApiService {
     application,
     auth,
   }: TemplateApiModuleActionProps): Promise<string> {
+    const nationalId = auth.actor?.nationalId || auth.nationalId
+
     // Get values from answers
     const applicant = getValueViaPath<SecondarySchoolAnswers['applicant']>(
       application.answers,
@@ -150,7 +152,7 @@ export class SecondarySchoolService extends BaseTemplateApiService {
     try {
       applicationId = await this.secondarySchoolClient.create(auth, {
         id: application.id,
-        nationalId: auth.nationalId,
+        nationalId: nationalId,
         name: applicant?.name || '',
         phone: applicant?.phoneNumber || '',
         email: applicant?.email || '',

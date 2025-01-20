@@ -76,6 +76,9 @@ const template: ApplicationTemplate<
   featureFlag: Features.SecondarySchoolEnabled,
   allowedDelegations: [
     {
+      type: AuthDelegationType.LegalGuardian,
+    },
+    {
       type: AuthDelegationType.Custom,
     },
   ],
