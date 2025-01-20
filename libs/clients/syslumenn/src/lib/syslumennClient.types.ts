@@ -407,6 +407,16 @@ export interface ProfessionRight {
   nationalId?: string
 }
 
+export interface BurningPermit {
+  date: Date | null | undefined
+  type: string | null | undefined
+  subtype: string | null | undefined
+  responsibleParty: string | null | undefined
+  office: string | null | undefined
+  licensee: string | null | undefined
+  place: string | null | undefined
+}
+
 export interface VehicleRegistration {
   modelName?: string
   manufacturer?: string

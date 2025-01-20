@@ -36,6 +36,7 @@ import { JourneymanLicencesResponse } from './models/journeymanLicence'
 import { ProfessionRightsResponse } from './models/professionRights'
 import { ManyPropertyDetail } from './models/manyPropertyDetail'
 import { GetElectronicIDInput } from './dto/getElectronicID.input'
+import { BurningPermitsResponse } from './models/burningPermits'
 
 const cacheTime = process.env.CACHE_TIME || 300
 
@@ -221,5 +222,13 @@ export class SyslumennResolver {
       input.nationalId,
       input.phoneNumber,
     )
+  }
+
+  @Directive(cacheControlDirective())
+  @Query(() => BurningPermitsResponse)
+  @BypassAuth()
+  async getBurningPermits(): Promise<BurningPermitsResponse> {
+    const burningPermits = await this.syslumennService.getBurningPermits()
+    return { list: burningPermits }
   }
 }
