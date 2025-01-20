@@ -29,6 +29,7 @@ import {
   StarfsrettindiModel,
   VedbandayfirlitRegluverkGeneralSvar,
   Skip,
+  Brennuleyfi,
 } from '../../gen/fetch'
 import { uuid } from 'uuidv4'
 import {
@@ -72,6 +73,7 @@ import {
   ShipDetail,
   MortgageCertificateValidation,
   MortgageCertificate,
+  BurningPermit,
 } from './syslumennClient.types'
 const UPLOAD_DATA_SUCCESS = 'Gögn móttekin'
 
@@ -570,6 +572,18 @@ export const mapProfessionRight = (
     name: professionRight.nafn ?? undefined,
     profession: professionRight.starfsrettindi ?? undefined,
     nationalId: professionRight.kennitala ?? undefined,
+  }
+}
+
+export const mapBurningPermits = (permit: Brennuleyfi): BurningPermit => {
+  return {
+    date: permit.dagsetning,
+    type: permit.tegund,
+    subtype: permit.undirtegund,
+    responsibleParty: permit.abyrgdaradili,
+    office: permit.embaetti,
+    licensee: permit.leyfishafi,
+    place: permit.stadur,
   }
 }
 
