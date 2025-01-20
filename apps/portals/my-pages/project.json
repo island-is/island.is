@@ -114,8 +114,7 @@
       "options": {
         "commands": [
           "yarn nx run service-portal:start-bff",
-          "yarn start service-portal",
-          "yarn dev api"
+          "yarn start service-portal"
         ],
         "parallel": true
       }
