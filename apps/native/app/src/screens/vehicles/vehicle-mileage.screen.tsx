@@ -128,6 +128,10 @@ export const VehicleMileageScreen: NavigationFunctionComponent<{
   const canUserRegisterVehicleMileage =
     !!res.data?.vehicleMileageDetails?.canUserRegisterVehicleMileage
 
+  const shouldDisableMileageForm =
+    !canRegisterMileage || !canUserRegisterVehicleMileage
+  const shouldDisableMileageEdit = !isFormEditable || shouldDisableMileageForm
+
   const vehicle = useMemo(() => {
     return {
       type:
@@ -344,12 +348,7 @@ export const VehicleMileageScreen: NavigationFunctionComponent<{
                   ? `${intl.formatNumber(parseInt(item.mileage, 10))} km`
                   : '-'
               }
-              editable={
-                isFormEditable &&
-                canRegisterMileage &&
-                canUserRegisterVehicleMileage &&
-                index === 0
-              }
+              editable={!shouldDisableMileageEdit && index === 0}
               onPress={onEdit}
             />
           )
@@ -361,7 +360,7 @@ export const VehicleMileageScreen: NavigationFunctionComponent<{
           <View key="list-header">
             <View style={{ flexDirection: 'column', gap: 16 }}>
               <TextField
-                editable={canRegisterMileage && canUserRegisterVehicleMileage}
+                editable={!shouldDisableMileageForm}
                 key="mileage-input"
                 placeholder={intl.formatMessage({
                   id: 'vehicle.mileage.inputPlaceholder',
@@ -395,11 +394,7 @@ export const VehicleMileageScreen: NavigationFunctionComponent<{
                   id: 'vehicle.mileage.inputSubmitButton',
                 })}
                 onPress={onSubmit}
-                disabled={
-                  !canRegisterMileage ||
-                  !canUserRegisterVehicleMileage ||
-                  loadingSubmit
-                }
+                disabled={shouldDisableMileageForm || loadingSubmit}
               />
             </View>
             <View>
