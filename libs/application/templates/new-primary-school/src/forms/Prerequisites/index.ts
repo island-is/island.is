@@ -1,9 +1,13 @@
 import { buildForm, buildSection } from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
+import { isRunningOnEnvironment } from '@island.is/shared/utils'
 import { newPrimarySchoolMessages } from '../../lib/messages'
 import { applicationTypeSubSection } from './applicationTypeSubSection'
 import { childrenSubSection } from './childrenSubSection'
 import { externalDataSubSection } from './externalDataSubSection'
+
+const shouldRenderApplicationTypeSubSection =
+  !isRunningOnEnvironment('production')
 
 export const Prerequisites: Form = buildForm({
   id: 'newPrimarySchoolPrerequisites',
@@ -16,7 +20,9 @@ export const Prerequisites: Form = buildForm({
       id: 'prerequisites',
       title: newPrimarySchoolMessages.pre.externalDataSection,
       children: [
-        applicationTypeSubSection,
+        ...(shouldRenderApplicationTypeSubSection
+          ? [applicationTypeSubSection]
+          : []),
         externalDataSubSection,
         childrenSubSection,
       ],

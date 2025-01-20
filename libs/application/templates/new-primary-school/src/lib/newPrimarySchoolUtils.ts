@@ -21,10 +21,12 @@ import { ApplicationType, ReasonForApplicationOptions } from './constants'
 import { newPrimarySchoolMessages } from './messages'
 
 export const getApplicationAnswers = (answers: Application['answers']) => {
-  const applicationType = getValueViaPath(
+  let applicationType = getValueViaPath(
     answers,
     'applicationType',
   ) as ApplicationType
+
+  if (!applicationType) applicationType = ApplicationType.NEW_PRIMARY_SCHOOL
 
   const childNationalId = getValueViaPath(answers, 'childNationalId') as string
 
