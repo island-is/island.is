@@ -1,4 +1,10 @@
-import { parseAsString, useQueryState } from 'next-usequerystate'
+import { useMemo } from 'react'
+import {
+  parseAsArrayOf,
+  parseAsInteger,
+  parseAsString,
+  useQueryState,
+} from 'next-usequerystate'
 
 import {
   Box,
@@ -60,6 +66,67 @@ const VerdictsList: Screen<VerdictsListProps> = ({
       })
       .withDefault(''),
   )
+  const [caseTypeIds, setCaseTypeIds] = useQueryState(
+    'caseTypes',
+    parseAsArrayOf(
+      parseAsInteger.withOptions({
+        clearOnDefault: true,
+        shallow: false,
+      }),
+    )
+      .withDefault([])
+      .withOptions({
+        clearOnDefault: true,
+        shallow: false,
+      }),
+  )
+  const [caseCategoryIds, setCaseCategoryIds] = useQueryState(
+    'caseCategories',
+    parseAsArrayOf(
+      parseAsInteger.withOptions({
+        clearOnDefault: true,
+        shallow: false,
+      }),
+    )
+      .withDefault([])
+      .withOptions({
+        clearOnDefault: true,
+        shallow: false,
+      }),
+  )
+  const [keywordIds, setKeywordIds] = useQueryState(
+    'keywords',
+    parseAsArrayOf(
+      parseAsInteger.withOptions({
+        clearOnDefault: true,
+        shallow: false,
+      }),
+    )
+      .withDefault([])
+      .withOptions({
+        clearOnDefault: true,
+        shallow: false,
+      }),
+  )
+
+  const caseTypeOptions = useMemo(() => {
+    return caseTypes.map((type) => ({
+      value: type.id,
+      label: type.label,
+    }))
+  }, [caseTypes])
+  const caseCategoryOptions = useMemo(() => {
+    return caseCategories.map((category) => ({
+      value: category.id,
+      label: category.label,
+    }))
+  }, [caseCategories])
+  const keywordOptions = useMemo(() => {
+    return keywords.map((keyword) => ({
+      value: keyword.id,
+      label: keyword.label,
+    }))
+  }, [keywords])
 
   return (
     <Box paddingBottom={5}>
@@ -82,37 +149,38 @@ const VerdictsList: Screen<VerdictsListProps> = ({
               name: 'search',
               type: 'outline',
             }}
+            size="sm"
           />
           <Stack space={3}>
             <Select
               label="Málategundir"
               placeholder="Veldu tegund"
-              options={caseTypes.map((caseType) => ({
-                value: caseType.id,
-                label: caseType.label,
-              }))}
+              options={caseTypeOptions}
               isMulti={true}
               size="sm"
+              onChange={(newValue) => {
+                setCaseTypeIds(newValue.map(({ value }) => value))
+              }}
             />
             <Select
               label="Málaflokkar"
               placeholder="Veldu flokk"
-              options={caseCategories.map((caseType) => ({
-                value: caseType.id,
-                label: caseType.label,
-              }))}
+              options={caseCategoryOptions}
               isMulti={true}
               size="sm"
+              onChange={(newValue) => {
+                setCaseCategoryIds(newValue.map(({ value }) => value))
+              }}
             />
             <Select
               label="Lykilorð"
               placeholder="Veldu lykilorð"
-              options={keywords.map((caseType) => ({
-                value: caseType.id,
-                label: caseType.label,
-              }))}
+              options={keywordOptions}
               isMulti={true}
               size="sm"
+              onChange={(newValue) => {
+                setKeywordIds(newValue.map(({ value }) => value))
+              }}
             />
           </Stack>
           <GridRow rowGap={3}>
@@ -198,6 +266,15 @@ const VerdictsList: Screen<VerdictsListProps> = ({
 
 VerdictsList.getProps = async ({ apolloClient, query }) => {
   const searchTerm = parseAsString.withDefault('').parseServerSide(query.q)
+  const caseTypeIds = parseAsArrayOf(parseAsInteger).parseServerSide(
+    query.caseTypes,
+  )
+  const caseCategoryIds = parseAsArrayOf(parseAsInteger).parseServerSide(
+    query.caseCategories,
+  )
+  const keywordIds = parseAsArrayOf(parseAsInteger).parseServerSide(
+    query.keywords,
+  )
 
   const [
     verdictListResponse,
@@ -210,6 +287,9 @@ VerdictsList.getProps = async ({ apolloClient, query }) => {
       variables: {
         input: {
           searchTerm,
+          caseTypeIds,
+          caseCategoryIds,
+          keywordIds,
         },
       },
     }),
