@@ -100,9 +100,6 @@ export const getAppealInfo = (theCase: Case): AppealInfo => {
     baseDate: theRulingDate,
   }).toISOString()
 
-  console.log({rulingDate})
-  console.log({appealDeadline: appealInfo.appealDeadline})
-
   appealInfo.canProsecutorAppeal =
     !hasBeenAppealed && isAppealableDecision(prosecutorAppealDecision)
 

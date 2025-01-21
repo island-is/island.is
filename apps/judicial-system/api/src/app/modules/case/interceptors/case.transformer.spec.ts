@@ -339,7 +339,6 @@ describe('transformCase', () => {
         } as Case
 
         const appealInfo = transformCase(theCase)
-        console.log({appealInfo})
 
         expect(appealInfo).toEqual(
           expect.objectContaining({
@@ -552,7 +551,7 @@ describe('getAppealInfo', () => {
       accusedPostponedAppealDate: '2022-06-15T19:50:08.033Z',
       prosecutorPostponedAppealDate: '2022-06-15T19:50:08.033Z',
     } as Case
-  
+
     const appealInfo = getAppealInfo(theCase)
 
     expect(appealInfo).toEqual({
@@ -694,7 +693,7 @@ describe('getIndictmentInfo', () => {
     )
 
     expect(indictmentInfo).toEqual({
-      indictmentAppealDeadline:  '2022-07-12T23:59:59.999Z',
+      indictmentAppealDeadline: '2022-07-12T23:59:59.999Z',
       indictmentVerdictViewedByAll: false,
       indictmentVerdictAppealDeadlineExpired: false,
     })
@@ -738,7 +737,15 @@ describe('getIndictmentInfo', () => {
       defendants,
     )
 
-    const expectedAppealDeadline = new Date(rulingDate.getFullYear(),rulingDate.getMonth(), rulingDate.getDate() + 3, 23, 59, 59, 999)
+    const expectedAppealDeadline = new Date(
+      rulingDate.getFullYear(),
+      rulingDate.getMonth(),
+      rulingDate.getDate() + 3,
+      23,
+      59,
+      59,
+      999,
+    )
     expect(indictmentInfo).toEqual({
       indictmentAppealDeadline: expectedAppealDeadline.toISOString(),
       indictmentVerdictViewedByAll: true,
