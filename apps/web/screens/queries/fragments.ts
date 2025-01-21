@@ -294,6 +294,7 @@ export const slices = gql`
       }
     }
     showSearchInput
+    teamMemberOrder
   }
 
   fragment ContactUsFields on ContactUs {
