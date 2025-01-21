@@ -17,6 +17,8 @@ export const rentalAmount = defineMessages({
       'Hér er einungis átt við verð fyrir bein leiguafnot. Gjöld fyrir hússjóð, rafmagns- og hitakostnað sem og tryggingar eru skráð í næstu skrefum.',
     description: 'Rental amount page description',
   },
+
+  // Rental amount
   infoTitle: {
     id: 'ra.application:rentalAmount.infoTitle',
     defaultMessage: 'Mánaðarlegt leiguverð fyrir afnot á húsnæðinu',
@@ -32,6 +34,8 @@ export const rentalAmount = defineMessages({
     defaultMessage: 'Upphæð í tölustöfum',
     description: 'Rental amount input placeholder',
   },
+
+  // Indexation
   priceIndexLabel: {
     id: 'ra.application:rentalAmount.priceIndexLabel',
     defaultMessage: 'Leiguverð fylgir vísitölu',
@@ -72,6 +76,8 @@ export const rentalAmount = defineMessages({
     defaultMessage: 'Sláðu inn gildi',
     description: 'Rental amount index type value placeholder',
   },
+
+  // Payment date
   paymentDateTitle: {
     id: 'ra.application:rentalAmount.paymentDateTitle',
     defaultMessage: 'Mánaðardagur greiðslu',
@@ -110,9 +116,53 @@ export const rentalAmount = defineMessages({
   },
   paymentDateOtherOptionPlaceholder: {
     id: 'ra.application:rentalAmount.paymentDateOtherOptionPlaceholder',
-    defaultMessage: 'Sláðu inn mánaðardag (t.d. 3. hvers mánaðar)',
+    defaultMessage: 'Dæmi: 5. hvers mánaðar',
     description: 'Rental amount payment other option date placeholder',
   },
+
+  // Payment method
+  paymentMethodTitle: {
+    id: 'ra.application:rentalAmount.peymentMethodTitle',
+    defaultMessage: 'Greiðsla',
+    description: 'Rental amount payment method title',
+  },
+  paymentMethodOptionsLabel: {
+    id: 'ra.application:rentalAmount.paymentMethodOptionsLabel',
+    defaultMessage: 'Greiðslufyrirkomulag',
+    description: 'Rental amount payment method options label',
+  },
+  paymentMethodBankTransferLabel: {
+    id: 'ra.application:rentalAmount.paymentMethodBankTransferLabel',
+    defaultMessage: 'Greitt inn á reikning',
+    description: 'Rental amount payment method bank transfer label',
+  },
+  paymentMethodNationalIdLabel: {
+    id: 'ra.application:rentalAmount.paymentMethodNationalIdLabel',
+    defaultMessage: 'Kennitala viðtakanda',
+    description: 'Rental amount payment method national id label',
+  },
+  paymentMethodBankAccountNumberLabel: {
+    id: 'ra.application:rentalAmount.paymentMethodBankAccountNumberLabel',
+    defaultMessage: 'Bankareikningur',
+    description: 'Rental amount payment method bank account number label',
+  },
+  paymentMethodPaymentSlipLabel: {
+    id: 'ra.application:rentalAmount.paymentMethodPaymentSlipLabel',
+    defaultMessage: 'Greitt með greiðsluseðli',
+    description: 'Rental amount payment method payment slip label',
+  },
+  paymentMethodOtherLabel: {
+    id: 'ra.application:rentalAmount.paymentMethodOtherLabel',
+    defaultMessage: 'Annað',
+    description: 'Rental amount payment method other label',
+  },
+  paymentMethodOtherTextFieldLabel: {
+    id: 'ra.application:rentalAmount.paymentMethodOtherTextFieldLabel',
+    defaultMessage: 'Lýsing',
+    description: 'Rental amount payment method other text field label',
+  },
+
+  // Payment insurance
   paymentInsuranceTitle: {
     id: 'ra.application:rentalAmount.paymentInsuranceTitle',
     defaultMessage: 'Trygging',
@@ -139,5 +189,33 @@ export const rentalAmount = defineMessages({
     id: 'ra.application:rentalAmount.paymentDateOtherOptionRequiredError',
     defaultMessage: 'Sláðu inn mánaðardag greiðslu',
     description: 'Rental amount payment date other option required error',
+  },
+
+  paymentMethodNationalIdRequiredError: {
+    id: 'ra.application:rentalAmount.paymentMethodNationalIdRequiredError',
+    defaultMessage: 'Kennitala viðtakanda þarf að vera til staðar',
+    description: 'Rental amount payment method national id required error',
+  },
+  paymentMethodNationalIdInvalidError: {
+    id: 'ra.application:rentalAmount.paymentMethodNationalIdInvalidError',
+    defaultMessage: 'Kennitala viðtakanda er ekki á réttu formi',
+    description: 'Rental amount payment method national id invalid error',
+  },
+  paymentMethodBankAccountNumberRequiredError: {
+    id: 'ra.application:rentalAmount.paymentMethodBankAccountNumberRequiredError',
+    defaultMessage: 'Bankareikningur viðtakanda þarf að vera til staðar',
+    description:
+      'Rental amount payment method bank account number required error',
+  },
+  paymentMethodBankAccountNumberInvalidError: {
+    id: 'ra.application:rentalAmount.paymentMethodBankAccountNumberInvalidError',
+    defaultMessage: 'Upplýsingar um bankareikning eru ekki fullnægjandi',
+    description:
+      'Rental amount payment method bank account number invalid error',
+  },
+  paymentMethodOtherTextFieldRequiredError: {
+    id: 'ra.application:rentalAmount.paymentMethodOtherTextFieldRequiredError',
+    defaultMessage: 'Lýsing á greiðslufyrirkomulagi þarf að vera til staðar',
+    description: 'Rental amount payment method other text field required error',
   },
 })

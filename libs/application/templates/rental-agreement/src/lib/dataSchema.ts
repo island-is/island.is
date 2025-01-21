@@ -9,6 +9,7 @@ import {
   SecurityDepositAmountOptions,
   SecurityDepositTypeOptions,
   TRUE,
+  RentalPaymentMethodOptions,
 } from './constants'
 import * as m from './messages'
 
@@ -260,6 +261,16 @@ const rentalAmount = z
       ])
       .optional(),
     paymentDateOther: z.string().optional(),
+    paymentMethodOptions: z
+      .enum([
+        RentalPaymentMethodOptions.BANK_TRANSFER,
+        RentalPaymentMethodOptions.PAYMENT_SLIP,
+        RentalPaymentMethodOptions.OTHER,
+      ])
+      .optional(),
+    paymentMethodNationalId: z.string().optional(),
+    paymentMethodBankAccountNumber: z.string().optional(),
+    paymentMethodOtherTextField: z.string().optional(),
     isPaymentInsuranceRequired: z.string().array().optional(),
   })
   .superRefine((data, ctx) => {
@@ -274,6 +285,60 @@ const rentalAmount = z
         params: m.rentalAmount.paymentDateOtherOptionRequiredError,
         path: ['paymentDateOther'],
       })
+    }
+
+    if (
+      data.paymentMethodOptions === RentalPaymentMethodOptions.BANK_TRANSFER
+    ) {
+      if (!data.paymentMethodNationalId?.trim().length) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: 'Custom error message',
+          params: m.rentalAmount.paymentMethodNationalIdRequiredError,
+          path: ['paymentMethodNationalId'],
+        })
+      }
+      if (
+        data.paymentMethodNationalId &&
+        !kennitala.isValid(data.paymentMethodNationalId)
+      ) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: 'Custom error message',
+          params: m.rentalAmount.paymentMethodNationalIdInvalidError,
+          path: ['paymentMethodNationalId'],
+        })
+      }
+      if (!data.paymentMethodBankAccountNumber?.trim().length) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: 'Custom error message',
+          params: m.rentalAmount.paymentMethodBankAccountNumberRequiredError,
+          path: ['paymentMethodBankAccountNumber'],
+        })
+      }
+      if (
+        data.paymentMethodBankAccountNumber &&
+        data.paymentMethodBankAccountNumber.length < 7
+      ) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: 'Custom error message',
+          params: m.rentalAmount.paymentMethodBankAccountNumberInvalidError,
+          path: ['paymentMethodBankAccountNumber'],
+        })
+      }
+    }
+
+    if (data.paymentMethodOptions === RentalPaymentMethodOptions.OTHER) {
+      if (!data.paymentMethodOtherTextField?.trim().length) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: 'Custom error message',
+          params: m.rentalAmount.paymentMethodOtherTextFieldRequiredError,
+          path: ['paymentMethodOtherTextField'],
+        })
+      }
     }
   })
 

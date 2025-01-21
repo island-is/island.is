@@ -1,8 +1,10 @@
 import { GridColumn } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
+import { formatBankInfo } from '@island.is/application/ui-components'
 import { RentalAgreement } from '../../lib/dataSchema'
 import {
   AnswerOptions,
+  RentalPaymentMethodOptions,
   Routes,
   SecurityDepositAmountOptions,
   SecurityDepositTypeOptions,
@@ -11,6 +13,8 @@ import {
 import {
   formatCurrency,
   formatDate,
+  formatNationalId,
+  getPaymentMethodOptions,
   getRentalAmountIndexTypes,
   getRentalAmountPaymentDateOptions,
   getSecurityAmountOptions,
@@ -86,6 +90,12 @@ export const RentalInfoSummary = ({
       default:
         return '-'
     }
+  }
+
+  const paymentMethodType = (answer: string) => {
+    const options = getPaymentMethodOptions()
+    const matchingOption = options.find((option) => option.value === answer)
+    return matchingOption ? matchingOption.label : '-'
   }
 
   return (
@@ -234,6 +244,50 @@ export const RentalInfoSummary = ({
           )}
         </SummaryCardRow>
       )}
+      <SummaryCardRow editAction={goToScreen} route={rentalAmountRoute}>
+        <GridColumn
+          span={
+            answers.rentalAmount.paymentMethodOptions ===
+            RentalPaymentMethodOptions.OTHER
+              ? ['12/12']
+              : ['12/12', '4/12']
+          }
+        >
+          <KeyValue
+            label={summary.paymentMethodTypeLabel}
+            value={
+              answers.rentalAmount.paymentMethodOptions ===
+              RentalPaymentMethodOptions.OTHER
+                ? answers.rentalAmount.paymentMethodOtherTextField || '-'
+                : paymentMethodType(
+                    answers.rentalAmount.paymentMethodOptions as string,
+                  ) || '-'
+            }
+          />
+        </GridColumn>
+        {answers.rentalAmount.paymentMethodOptions ===
+          RentalPaymentMethodOptions.BANK_TRANSFER && (
+          <>
+            <GridColumn span={['12/12', '4/12']}>
+              <KeyValue
+                label={summary.paymentMethodNationalIdLabel}
+                value={formatNationalId(
+                  answers.rentalAmount.paymentMethodNationalId || '-',
+                )}
+              />
+            </GridColumn>
+
+            <GridColumn span={['12/12', '4/12']}>
+              <KeyValue
+                label={summary.paymentMethodAccountLabel}
+                value={formatBankInfo(
+                  answers.rentalAmount.paymentMethodBankAccountNumber || '-',
+                )}
+              />
+            </GridColumn>
+          </>
+        )}
+      </SummaryCardRow>
     </SummaryCard>
   )
 }

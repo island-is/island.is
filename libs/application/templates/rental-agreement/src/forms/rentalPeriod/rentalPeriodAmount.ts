@@ -13,10 +13,12 @@ import {
   AnswerOptions,
   RentalAmountIndexTypes,
   RentalAmountPaymentDateOptions,
+  RentalPaymentMethodOptions,
   Routes,
   TRUE,
 } from '../../lib/constants'
 import {
+  getPaymentMethodOptions,
   getRentalAmountIndexTypes,
   getRentalAmountPaymentDateOptions,
 } from '../../lib/utils'
@@ -98,6 +100,48 @@ export const RentalPeriodAmount = buildSubSection({
             getValueViaPath(answers, 'rentalAmount.paymentDateOptions') ===
             RentalAmountPaymentDateOptions.OTHER,
         }),
+
+        // Payment method
+        buildDescriptionField({
+          id: 'rentalAmount.paymentMethodTitle',
+          title: rentalAmount.paymentMethodTitle,
+          titleVariant: 'h4',
+          space: 6,
+        }),
+        buildSelectField({
+          id: 'rentalAmount.paymentMethodOptions',
+          title: rentalAmount.paymentMethodOptionsLabel,
+          options: getPaymentMethodOptions(),
+          defaultValue: RentalPaymentMethodOptions.BANK_TRANSFER,
+        }),
+        buildTextField({
+          id: 'rentalAmount.paymentMethodNationalId',
+          title: rentalAmount.paymentMethodNationalIdLabel,
+          format: '######-####',
+          width: 'half',
+          condition: (answers) =>
+            getValueViaPath(answers, 'rentalAmount.paymentMethodOptions') ===
+            RentalPaymentMethodOptions.BANK_TRANSFER,
+        }),
+        buildTextField({
+          id: 'rentalAmount.paymentMethodBankAccountNumber',
+          title: rentalAmount.paymentMethodBankAccountNumberLabel,
+          format: '####-##-######',
+          width: 'half',
+          condition: (answers) =>
+            getValueViaPath(answers, 'rentalAmount.paymentMethodOptions') ===
+            RentalPaymentMethodOptions.BANK_TRANSFER,
+        }),
+        buildTextField({
+          id: 'rentalAmount.paymentMethodOtherTextField',
+          title: rentalAmount.paymentMethodOtherTextFieldLabel,
+          maxLength: 50,
+          condition: (answers) =>
+            getValueViaPath(answers, 'rentalAmount.paymentMethodOptions') ===
+            RentalPaymentMethodOptions.OTHER,
+        }),
+
+        // Payment insurance
         buildDescriptionField({
           id: 'rentalAmount.paymentInsuranceTitle',
           title: rentalAmount.paymentInsuranceTitle,
