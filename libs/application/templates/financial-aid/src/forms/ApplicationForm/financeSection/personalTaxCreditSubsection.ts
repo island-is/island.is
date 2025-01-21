@@ -28,7 +28,7 @@ export const personalTaxCreditSubsection = buildSubSection({
           width: 'half',
         }),
         buildDescriptionField({
-          id: 'personalTaxCreditDescription',
+          id: 'personalTaxCreditDescription2',
           title: m.personalTaxCreditForm.general.descriptionTitle,
           titleVariant: 'h4',
           description: m.personalTaxCreditForm.general.description,
