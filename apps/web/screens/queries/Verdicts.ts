@@ -3,6 +3,7 @@ import gql from 'graphql-tag'
 export const GET_VERDICTS_QUERY = gql`
   query GetVerdicts($input: WebVerdictsInput!) {
     webVerdicts(input: $input) {
+      total
       items {
         id
         title

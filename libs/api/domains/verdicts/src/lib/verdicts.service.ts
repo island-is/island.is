@@ -11,12 +11,14 @@ export class VerdictsService {
   async getVerdicts(input: VerdictsInput): Promise<VerdictsResponse> {
     const response = await this.verdictsClientService.getVerdicts({
       searchTerm: input.searchTerm,
+      pageNumber: input.page ?? 1,
       // caseCategory: input.caseCategoryIds?.map(String),
       // caseType: input.caseTypeIds?.map(String),
       keywords: input.keywordIds?.map(String),
     })
     return {
       items: response.items,
+      total: response.total,
       input,
     }
   }

@@ -7,6 +7,8 @@ import {
   type DetailedVerdictData,
 } from '../../gen/fetch/'
 
+const ITEMS_PER_PAGE = 10
+
 const filterIdAndLabel = (entity?: {
   id?: number
   label?: string
@@ -32,12 +34,16 @@ export class VerdictsClientService {
         dateTo: '',
         orderBy: 'verdictDate desc',
         pageNumber: 1,
-        itemsPerPage: 10,
+        itemsPerPage: ITEMS_PER_PAGE,
         ...input,
       },
     })
 
+    // TODO: what if they do not provide a total
+    const total = response.total ?? 0
+
     return {
+      total,
       items: (
         response.items?.filter(
           (

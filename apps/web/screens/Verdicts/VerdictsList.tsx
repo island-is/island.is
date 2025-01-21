@@ -15,6 +15,7 @@ import {
   GridContainer,
   GridRow,
   Input,
+  Pagination,
   Select,
   Stack,
   Text,
@@ -43,8 +44,11 @@ import {
   GET_VERDICTS_QUERY,
 } from '../queries/Verdicts'
 
+const ITEMS_PER_PAGE = 10
+
 interface VerdictsListProps {
   items: GetVerdictsQuery['webVerdicts']['items']
+  totalItems: number
   caseTypes: WebVerdictCaseType[]
   caseCategories: WebVerdictCaseCategory[]
   keywords: WebVerdictKeyword[]
@@ -55,6 +59,7 @@ const VerdictsList: Screen<VerdictsListProps> = ({
   caseTypes,
   caseCategories,
   keywords,
+  totalItems,
 }) => {
   const { format } = useDateUtils()
   const [searchTerm, setSearchTerm] = useQueryState(
@@ -65,6 +70,12 @@ const VerdictsList: Screen<VerdictsListProps> = ({
         shallow: false,
       })
       .withDefault(''),
+  )
+  const [page, setPage] = useQueryState(
+    'page',
+    parseAsInteger
+      .withDefault(1)
+      .withOptions({ clearOnDefault: true, shallow: false, scroll: true }),
   )
   const [caseTypeIds, setCaseTypeIds] = useQueryState(
     'caseTypes',
@@ -185,7 +196,7 @@ const VerdictsList: Screen<VerdictsListProps> = ({
           </Stack>
           <GridRow rowGap={3}>
             {items.map((item) => (
-              <GridColumn key={item.title} span="1/1">
+              <GridColumn key={item.id} span="1/1">
                 <FocusableBox
                   height="full"
                   href={`/domar/${item.id}`}
@@ -258,6 +269,25 @@ const VerdictsList: Screen<VerdictsListProps> = ({
               </GridColumn>
             ))}
           </GridRow>
+          {totalItems > ITEMS_PER_PAGE && (
+            <Box paddingTop={6}>
+              <Pagination
+                variant="blue"
+                page={page}
+                itemsPerPage={ITEMS_PER_PAGE}
+                totalItems={totalItems}
+                renderLink={(page, className, children) => (
+                  <button
+                    onClick={() => {
+                      setPage(page)
+                    }}
+                  >
+                    <span className={className}>{children}</span>
+                  </button>
+                )}
+              />
+            </Box>
+          )}
         </Stack>
       </GridContainer>
     </Box>
@@ -275,6 +305,7 @@ VerdictsList.getProps = async ({ apolloClient, query }) => {
   const keywordIds = parseAsArrayOf(parseAsInteger).parseServerSide(
     query.keywords,
   )
+  const page = parseAsInteger.withDefault(1).parseServerSide(query.page)
 
   const [
     verdictListResponse,
@@ -290,6 +321,7 @@ VerdictsList.getProps = async ({ apolloClient, query }) => {
           caseTypeIds,
           caseCategoryIds,
           keywordIds,
+          page,
         },
       },
     }),
@@ -319,6 +351,7 @@ VerdictsList.getProps = async ({ apolloClient, query }) => {
     caseCategories:
       caseCategoriesResponse.data.webVerdictCaseCategories.caseCategories,
     keywords: keywordsResponse.data.webVerdictKeywords.keywords,
+    totalItems: verdictListResponse.data.webVerdicts.total,
   }
 }
 
