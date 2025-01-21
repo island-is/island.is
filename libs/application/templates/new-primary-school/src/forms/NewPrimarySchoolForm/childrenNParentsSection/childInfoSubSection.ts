@@ -76,8 +76,7 @@ export const childInfoSubSection = buildSubSection({
             title: newPrimarySchoolMessages.shared.gender,
           },
           {
-            descriptor: (application: Application) =>
-              getGenderMessage(application),
+            value: (application: Application) => getGenderMessage(application),
           },
         ),
         buildCheckboxField({

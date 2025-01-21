@@ -45,13 +45,15 @@ export const currentSchoolSubSection = buildSubSection({
             component: 'DynamicDisabledText',
           },
           {
-            descriptor: newPrimarySchoolMessages.primarySchool.currentGrade,
-            values: (application: Application, lang: Locale) => {
+            value: (application: Application, lang: Locale) => {
               const { childGradeLevel } = getApplicationExternalData(
                 application.externalData,
               )
               return {
-                grade: formatGrade(childGradeLevel, lang),
+                ...newPrimarySchoolMessages.primarySchool.currentGrade,
+                values: {
+                  grade: formatGrade(childGradeLevel, lang),
+                },
               }
             },
           },
