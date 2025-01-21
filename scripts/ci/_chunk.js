@@ -34,7 +34,7 @@ function groupbByPrefix(arr) {
 
 function chunk(groups, chunkSize) {
   if (disableChunks) {
-    return groups.map((group) => [group.join(',')])
+    return groups
   }
   const chunks = []
   for (let i = 0; i < groups.length; i += chunkSize) {
@@ -48,7 +48,9 @@ function chunk(groups, chunkSize) {
 const soloProjects = problematicProjects.filter((p) => projects.includes(p))
 const filteredProjects = projects.filter((p) => !soloProjects.includes(p))
 const groups = groupbByPrefix(filteredProjects)
-const chunkedGroups = groups.map((group) => chunk(group, chunkSize)).flat()
+const chunkedGroups = disableChunks
+  ? groups
+  : groups.map((group) => chunk(group, chunkSize)).flat()
 const chunksJoined = chunkedGroups.map((chunk) => chunk.join(','))
 const chunksFiltered = chunksJoined.filter((job) => job.length > 0)
 const chunksWithSolos = chunksFiltered.concat(soloProjects)
