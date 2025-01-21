@@ -1,4 +1,4 @@
-import React, { PropsWithChildren } from 'react'
+import React, { PropsWithChildren, useState } from 'react'
 import { ModalBase } from '../ModalBase/ModalBase'
 import * as styles from './Filter.css'
 import { Box } from '../Box/Box'
@@ -45,6 +45,32 @@ export const FilterMobileDrawer = ({
   title,
   children,
 }: PropsWithChildren<FilterMobileDrawerProps>) => {
+  const [initialClientY, setInitialClientY] = useState<number | null>(null)
+  const [isClosed, setIsClosed] = useState(true)
+  const [isSwiping, setIsSwiping] = useState(false)
+  const distance = 2
+
+  const handleTouchStart = (event: React.TouchEvent) => {
+    setIsSwiping(true)
+    setInitialClientY(event.touches[0].clientY)
+  }
+
+  const handleTouchMove = (event: React.TouchEvent) => {
+    if (isSwiping && initialClientY !== null) {
+      const currentClientY = event.touches[0].clientY
+      const distanceSwiped = currentClientY - initialClientY
+
+      if (!isClosed && distanceSwiped > distance) {
+        setIsClosed(true)
+      }
+    }
+  }
+
+  const handleTouchEnd = () => {
+    setIsSwiping(false)
+    setInitialClientY(null)
+  }
+
   return (
     <ModalBase
       disclosure={disclosure}
@@ -52,6 +78,11 @@ export const FilterMobileDrawer = ({
       modalLabel={ariaLabel}
       initialVisibility={initialVisibility}
       className={cn(styles.drawer, styles.position)}
+      onVisibilityChange={(visibility) => {
+        setIsClosed(!visibility)
+      }}
+      isVisible={!isClosed}
+      hideOnClickOutside
     >
       {({ closeModal }: { closeModal: () => void }) => {
         return (
@@ -66,6 +97,9 @@ export const FilterMobileDrawer = ({
               background="dark200"
               className={styles.drawerLine}
               onClick={closeModal}
+              onTouchStart={handleTouchStart}
+              onTouchMove={handleTouchMove}
+              onTouchEnd={handleTouchEnd}
             ></Box>
             <Box
               display="flex"
