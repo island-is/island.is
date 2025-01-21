@@ -8,6 +8,7 @@ import {
   GridColumn,
   GridContainer,
   GridRow,
+  Hyphen,
   Link,
   Stack,
   Text,
@@ -21,6 +22,8 @@ import {
 } from '@island.is/web/graphql/schema'
 import { LinkType, useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import { webRichText } from '@island.is/web/utils/richText'
+
+import * as styles from './OverviewLinks.css'
 
 interface SliceProps {
   slice: OverviewLinks
@@ -37,7 +40,7 @@ const IntroLinkImageComponent = ({
 }: IntroLinkImageComponentProps) => {
   const { linkResolver } = useLinkResolver()
   return (
-    <GridRow direction={leftImage ? 'row' : 'rowReverse'}>
+    <GridRow direction={leftImage ? 'row' : 'rowReverse'} rowGap={1}>
       {image?.url && (
         <GridColumn span={['8/8', '3/8', '4/8', '3/8']}>
           <Box
@@ -46,7 +49,11 @@ const IntroLinkImageComponent = ({
             paddingLeft={leftImage ? undefined : [0, 0, 0, 0, 6]}
             paddingRight={leftImage ? [10, 0, 0, 0, 6] : [10, 0]}
           >
-            <img src={`${image.url}?w=774&fm=webp&q=80`} alt="" />
+            <img
+              className={styles.image}
+              src={`${image.url}?w=774&fm=webp&q=80`}
+              alt=""
+            />
           </Box>
         </GridColumn>
       )}
@@ -64,7 +71,7 @@ const IntroLinkImageComponent = ({
               marginBottom={2}
               id={'sliceTitle-' + slice.id}
             >
-              {title}
+              {!leftImage ? <Hyphen>{title}</Hyphen> : title}
             </Text>
             {Boolean(intro) && (
               <Box marginBottom={4}>
