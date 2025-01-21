@@ -37,7 +37,6 @@ export const subSectionInheritance = buildSubSection({
         buildCheckboxField({
           id: 'estateMembers.confirmation',
           large: false,
-          title: 'asdasd',
           backgroundColor: 'white',
           options: [{ value: YES, label: m.inheritanceConfirmation }],
         }),
