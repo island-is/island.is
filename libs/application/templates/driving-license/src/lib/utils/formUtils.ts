@@ -95,7 +95,10 @@ export const getCodes = (application: Application): BasicChargeItem[] => {
     'B-full' | 'B-temp' | 'BE' | 'B-full-renewal-65' | 'B-advanced'
   >(application.answers, 'applicationFor', 'B-full')
 
-  const pickup = getValueViaPath<Pickup>(application.answers, 'pickup')
+  const deliveryMethod = getValueViaPath<Pickup>(
+    application.answers,
+    'delivery.deliveryMethod',
+  )
 
   const codes: BasicChargeItem[] = []
 
@@ -110,7 +113,7 @@ export const getCodes = (application: Application): BasicChargeItem[] => {
 
   codes.push({ code: targetCode })
 
-  if (pickup === Pickup.POST) {
+  if (deliveryMethod === Pickup.POST) {
     codes.push({ code: CHARGE_ITEM_CODES[DELIVERY_FEE] })
   }
 

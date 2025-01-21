@@ -19,16 +19,15 @@ export const subSectionDelivery = buildSubSection({
     buildMultiField({
       id: 'info',
       title: m.pickupLocationTitle,
-      description:
-        'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam.',
+      description: m.pickupLocationDescription,
       children: [
         buildDescriptionField({
           id: 'pickupHeader',
-          title: 'Hvernig vilt þú fá plastökuskírteini þitt afhent?',
+          title: m.deliveryMethodHeader,
           titleVariant: 'h4',
         }),
         buildRadioField({
-          id: 'pickup',
+          id: 'delivery.deliveryMethod',
           title: '',
           defaultValue: Pickup.POST,
           options: [
@@ -37,11 +36,13 @@ export const subSectionDelivery = buildSubSection({
           ],
         }),
         buildSelectField({
-          id: 'jurisdiction',
-          title: 'Veldu afhendingarstað',
+          id: 'delivery.jurisdiction',
+          title: m.selectDistrictCommissionerPickup,
           required: true,
           placeholder: m.districtCommissionerPickupPlaceholder,
-          condition: (answers) => answers.pickup === Pickup.DISTRICT,
+          condition: (answers) =>
+            (answers.delivery as { deliveryMethod: string })?.deliveryMethod ===
+            Pickup.DISTRICT,
           options: ({
             externalData: {
               jurisdictions: { data },

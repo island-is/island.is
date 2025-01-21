@@ -159,7 +159,8 @@ export const subSectionSummary = buildSubSection({
         buildKeyValueField({
           label: m.pickupLocationTitle,
           value: ({ answers }) => {
-            return answers.pickup === Pickup.POST
+            return (answers.delivery as { deliveryMethod: string })
+              .deliveryMethod === Pickup.POST
               ? m.overviewPickupPost
               : m.overviewPickupDistrict
           },
@@ -167,12 +168,13 @@ export const subSectionSummary = buildSubSection({
         }),
         buildDividerField({}),
         buildKeyValueField({
-          label: (application) =>
-            application.answers.pickup === Pickup.POST
+          label: ({ answers }) =>
+            (answers.delivery as { deliveryMethod: string }).deliveryMethod ===
+            Pickup.POST
               ? m.overviewPaymentChargeWithDelivery
               : m.overviewPaymentCharge,
-          value: (application) => {
-            const items = application.externalData.payment.data as {
+          value: ({ answers, externalData }) => {
+            const items = externalData.payment.data as {
               priceAmount: number
               chargeItemCode: string
             }[]
@@ -180,15 +182,18 @@ export const subSectionSummary = buildSubSection({
             const DEFAULT_ITEM_CODE = CHARGE_ITEM_CODES[B_FULL]
 
             const targetCode =
-              typeof application.answers.applicationFor === 'string'
-                ? CHARGE_ITEM_CODES[application.answers.applicationFor]
-                  ? CHARGE_ITEM_CODES[application.answers.applicationFor]
+              typeof answers.applicationFor === 'string'
+                ? CHARGE_ITEM_CODES[answers.applicationFor]
+                  ? CHARGE_ITEM_CODES[answers.applicationFor]
                   : DEFAULT_ITEM_CODE
                 : DEFAULT_ITEM_CODE
 
             let pickupItem = null
 
-            if (application.answers.pickup === Pickup.POST) {
+            if (
+              (answers.delivery as { deliveryMethod: string })
+                .deliveryMethod === Pickup.POST
+            ) {
               pickupItem = items.find(
                 ({ chargeItemCode }) =>
                   chargeItemCode === CHARGE_ITEM_CODES[DELIVERY_FEE],

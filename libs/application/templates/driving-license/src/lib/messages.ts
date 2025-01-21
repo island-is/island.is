@@ -110,9 +110,15 @@ export const m = defineMessages({
     defaultMessage: 'Afhendingarstaður',
     description: 'location for pickup',
   },
-  pickupLocationHeader: {
-    id: 'dl.application:pickupLocationHeader',
-    defaultMessage: 'Hvar viltu sækja/fá ökuskírteinið?',
+  pickupLocationDescription: {
+    id: 'dl.application:pickupLocationDescription',
+    defaultMessage:
+      'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam.',
+    description: 'location for pickup',
+  },
+  deliveryMethodHeader: {
+    id: 'dl.application:deliveryMethodHeader',
+    defaultMessage: 'Hvernig vilt þú fá plastökuskírteini þitt afhent?',
     description: 'Where do you want to pick up your driving license?',
   },
   informationApplicant: {
@@ -645,6 +651,11 @@ export const m = defineMessages({
   districtCommissionerPickup: {
     id: 'dl.application:districtCommisionerPickup',
     defaultMessage: 'Afhending',
+    description: 'Pickup for district commissioner',
+  },
+  selectDistrictCommissionerPickup: {
+    id: 'dl.application:selectDistrictCommissionerPickup',
+    defaultMessage: 'Veldu afhendingarstað',
     description: 'Pickup for district commissioner',
   },
   districtCommissionerPickupPlaceholder: {
