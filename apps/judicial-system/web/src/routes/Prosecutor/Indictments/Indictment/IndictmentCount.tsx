@@ -838,28 +838,34 @@ export const IndictmentCount: FC<Props> = ({
                     label={formatMessage(strings.speedLimitLabel)}
                     placeholder="0"
                     required
-                    // value={indictmentCount.substances?.ALCOHOL ?? ''} TODO
-                    // onChange={(event) => {
-                    //   removeErrorMessageIfValid(
-                    //     ['empty'],
-                    //     substanceAmount,
-                    //     substanceAmountMissingErrorMessage,
-                    //     setSubstanceAmountMissingErrorMessage,
-                    //   )
+                    value={indictmentCount.speedLimit ?? ''}
+                    onChange={(event) => {
+                      removeErrorMessageIfValid(
+                        ['empty'],
+                        event.target.value,
+                        speedLimitErrorMessage,
+                        setSpeedLimitErrorMessage,
+                      )
 
-                    //   setSubstanceAmount(event.target.value)
-                    // }}
-                    // onBlur={() => {
-                    //   validateAndSetErrorMessage(
-                    //     ['empty'],
-                    //     substanceAmount,
-                    //     setSubstanceAmountMissingErrorMessage,
-                    //   )
+                      updateIndictmentCountState(
+                        indictmentCount.id,
+                        { speedLimit: event.target.value },
+                        setWorkingCase,
+                      )
+                    }}
+                    onBlur={(event) => {
+                      const speedLimit = event.target.value
 
-                    //   onUpdateAmount(substance, substanceAmount)
-                    // }}
-                    // errorMessage={substanceAmountMissingErrorMessage}
-                    // hasError={substanceAmountMissingErrorMessage !== ''}
+                      validateAndSetErrorMessage(
+                        ['empty'],
+                        speedLimit,
+                        setRecordedSpeedErrorMessage,
+                      )
+
+                      handleIndictmentCountChanges({
+                        speedLimit,
+                      })
+                    }}
                   />
                 </Box>
               </Box>
