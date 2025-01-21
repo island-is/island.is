@@ -47,13 +47,6 @@ export class VerifyCardInput {
 
   @IsNumber()
   @ApiProperty({
-    description: 'Card cvc',
-    type: Number,
-  })
-  cvc!: number
-
-  @IsNumber()
-  @ApiProperty({
     description: 'Total amount to be paid',
     type: Number,
   })

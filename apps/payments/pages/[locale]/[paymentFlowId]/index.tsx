@@ -2,10 +2,10 @@ import { useState } from 'react'
 import { GetServerSideProps } from 'next'
 import { FormProvider, SubmitHandler, useForm } from 'react-hook-form'
 import gql from 'graphql-tag'
+import { v4 as uuid } from 'uuid'
 
 import {
   Query,
-  QueryGetPaymentFlowArgs,
   QueryGetOrganizationByNationalIdArgs,
 } from '@island.is/api/schema'
 import { Box, Button, ModalBase } from '@island.is/island-ui/core'
@@ -29,32 +29,26 @@ import {
 } from '../../../utils/error/error'
 import { CardErrorCode } from 'apps/payments/utils/error/constants'
 
+import type {
+  GetPaymentFlowDTO,
+  VerifyCardInput,
+  VerifyCardResponse,
+  ChargeCardInput,
+  ChargeCardResponse,
+} from '@island.is/clients/payments'
+import { getPaymentsApi } from 'apps/payments/services/payment'
+
 interface PaymentPageProps {
   locale: string
   paymentFlowId: string
-  paymentFlow: Query['getPaymentFlow']
+  paymentFlow: GetPaymentFlowDTO
   organization: Query['getOrganization']
   productInformation: {
     amount: number
     title: string
   }
+  sessionCorrelationId: string
 }
-
-const GetPaymentFlow = gql`
-  query getPaymentFlow($input: GetPaymentFlowInput!) {
-    getPaymentFlow(input: $input) {
-      id
-      productTitle
-      productPrice
-      payerNationalId
-      payerName
-      invoiceId
-      availablePaymentMethods
-      organisationId
-      metadata
-    }
-  }
-`
 
 const GetOrganization = gql`
   query getOrganizationByNationalId($input: GetOrganizationByNationalIdInput!) {
@@ -101,22 +95,17 @@ export const getServerSideProps: GetServerSideProps<PaymentPageProps> = async (
 
   const client = initApollo()
 
-  let paymentFlow: any = null // TODO look into type "used before initialization"
+  let paymentFlow: PaymentPageProps['paymentFlow'] = null
   let organization: PaymentPageProps['organization'] = null
 
   try {
-    const {
-      data: { getPaymentFlow },
-    } = await client.query<Query, QueryGetPaymentFlowArgs>({
-      query: GetPaymentFlow,
-      variables: {
-        input: {
-          id: paymentFlowId,
-        },
-      },
+    paymentFlow = await getPaymentsApi().paymentFlowControllerGetPaymentInfo({
+      id: paymentFlowId,
     })
 
-    paymentFlow = getPaymentFlow
+    if (!paymentFlow) {
+      throw new Error('Payment flow not found')
+    }
 
     const {
       data: { getOrganizationByNationalId },
@@ -124,7 +113,7 @@ export const getServerSideProps: GetServerSideProps<PaymentPageProps> = async (
       query: GetOrganization,
       variables: {
         input: {
-          nationalId: getPaymentFlow.organisationId,
+          nationalId: paymentFlow.organisationId,
         },
       },
     })
@@ -143,9 +132,14 @@ export const getServerSideProps: GetServerSideProps<PaymentPageProps> = async (
     props: {
       locale,
       paymentFlowId,
-      paymentFlow,
+      // The generated client code transforms null to undefined which causes
+      // serialisation issues when passing the object to the client
+      paymentFlow: Object.fromEntries(
+        Object.entries(paymentFlow).filter(([_, value]) => value !== undefined),
+      ) as any, // TODO: Fix this in the generated client?
       organization,
       productInformation,
+      sessionCorrelationId: uuid(),
     },
   }
 }
@@ -154,6 +148,7 @@ export default function PaymentPage({
   paymentFlow,
   organization,
   productInformation,
+  sessionCorrelationId,
 }: PaymentPageProps) {
   const router = useRouter()
   const methods = useForm({
@@ -165,6 +160,7 @@ export default function PaymentPage({
     paymentFlow?.availablePaymentMethods?.[0] ?? '',
   )
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [isVerifyingCard, setIsVerifyingCard] = useState(false)
   const [isProcessingPayment, setIsProcessingPayment] = useState(false)
   const [threeDSecureData, setThreeDSecureData] = useState(null)
   const [paymentError, setPaymentError] = useState<PaymentError | null>(null)
@@ -175,10 +171,74 @@ export default function PaymentPage({
     !paymentFlow ||
     !paymentFlow.availablePaymentMethods
 
+  const waitForCardVerification = async () => {
+    let maximumWaitTimeSeconds = 60
+    let remainingWaitTimeInMilliSeconds = maximumWaitTimeSeconds * 1000
+
+    let interval = 5000
+
+    while (remainingWaitTimeInMilliSeconds > 0) {
+      const response = await fetch(
+        `/greida/api/card/verificationStatus?paymentFlowId=${paymentFlow.id}`,
+      )
+
+      if (response.ok) {
+        const result = await response.json()
+
+        if (result.isVerified) {
+          return true
+        }
+      }
+
+      await new Promise((resolve) => setTimeout(resolve, interval))
+      remainingWaitTimeInMilliSeconds -= interval
+    }
+
+    return false
+  }
+
+  const verifyCard = async (
+    data: Omit<VerifyCardInput, 'verificationCallbackUrl'>,
+  ): Promise<VerifyCardResponse> => {
+    const response = await fetch('/greida/api/card/verify', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    })
+
+    if (!response.ok) {
+      // TODO: Present to user what went wrong
+      throw new Error(response.statusText)
+    }
+
+    return await response.json()
+  }
+
+  const chargeCard = async (
+    data: ChargeCardInput,
+  ): Promise<ChargeCardResponse> => {
+    const response = await fetch('/greida/api/card/charge', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    })
+
+    if (!response.ok) {
+      // TODO: Present to user what went wrong
+      throw new Error(response.statusText)
+    }
+
+    return response.json()
+  }
+
   const payWithCard = async (data: Record<string, unknown>) => {
     const { card, cardExpiry, cardCVC } = data
 
-    // TODO Verify fields?
+    // TODO Verify fields or let API?
     if (!card || !cardExpiry || typeof cardExpiry !== 'string' || !cardCVC) {
       return
     }
@@ -186,30 +246,43 @@ export default function PaymentPage({
     const [month, year] = cardExpiry?.split('/')
 
     try {
-      const response = await fetch('/greida/api/card/verify', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          card: {
-            number: Number(card),
-            expiryMonth: Number(month),
-            expiryYear: Number(year),
-            cvc: Number(cardCVC),
-          },
-          amount: productInformation.amount,
-          correlationId: paymentFlow.id,
-        }),
-      })
-      if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`)
+      const cardInfo = {
+        number: Number(card),
+        expiryMonth: Number(month),
+        expiryYear: Number(year),
+        cvc: Number(cardCVC),
       }
-      const result = await response.json()
-      console.log({
-        result,
+
+      const verifyCardResponse = await verifyCard({
+        amount: productInformation.amount,
+        cardNumber: cardInfo.number,
+        expiryMonth: cardInfo.expiryMonth,
+        expiryYear: cardInfo.expiryYear,
+        correlationId: sessionCorrelationId,
+        paymentFlowId: paymentFlow.id,
       })
-      setThreeDSecureData(result)
+
+      setThreeDSecureData(verifyCardResponse)
+
+      const isCardVerified = await waitForCardVerification()
+
+      if (!isCardVerified) {
+        throw new Error('Card verification failed')
+      }
+
+      const chargeCardResponse = await chargeCard({
+        amount: productInformation.amount,
+        cardNumber: cardInfo.number,
+        cvc: cardInfo.cvc,
+        expiryMonth: cardInfo.expiryMonth,
+        expiryYear: cardInfo.expiryYear,
+        correlationId: sessionCorrelationId,
+        paymentFlowId: paymentFlow.id,
+      })
+
+      if (chargeCardResponse.isSuccess) {
+        router.push(`${router.asPath}/greitt`)
+      }
     } catch (err) {
       console.log(err)
     }
@@ -217,11 +290,11 @@ export default function PaymentPage({
 
   const onSubmit: SubmitHandler<Record<string, unknown>> = async (data) => {
     setIsSubmitting(true)
-    console.log('Submit', data)
 
     try {
       if (selectedPaymentMethod === 'card') {
         setIsProcessingPayment(true)
+        setIsVerifyingCard(true)
         await payWithCard(data)
       } else {
         router.push(`${router.asPath}/krafa-stofnud`)
@@ -324,7 +397,7 @@ export default function PaymentPage({
       />
       <ModalBase
         baseId="3ds"
-        isVisible={isProcessingPayment}
+        isVisible={isVerifyingCard}
         hideOnClickOutside={false}
       >
         <Box
@@ -350,8 +423,8 @@ export default function PaymentPage({
             >
               {threeDSecureData && (
                 <ThreeDSecure
-                  isActive={isProcessingPayment}
-                  onClose={() => setIsProcessingPayment(false)}
+                  isActive={isVerifyingCard}
+                  onClose={() => setIsVerifyingCard(false)}
                   postUrl={threeDSecureData.postUrl}
                   scriptPath={threeDSecureData.scriptPath}
                   verificationFields={threeDSecureData.verificationFields}

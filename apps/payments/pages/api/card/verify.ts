@@ -1,9 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next'
 import { getPaymentsApi } from 'apps/payments/services/payment'
-
-const badRequest = (res: NextApiResponse, message: string) => {
-  return res.status(400).json({ error: message })
-}
+import type { VerifyCardInput } from '@island.is/clients/payments'
 
 export default async function verifyCardHandler(
   req: NextApiRequest,
@@ -13,19 +10,28 @@ export default async function verifyCardHandler(
     return res.status(405).json({ error: 'Method Not Allowed' })
   }
 
-  const { card, amount, correlationId, paymentFlowId } = req.body
+  const {
+    cardNumber,
+    expiryMonth,
+    expiryYear,
+    amount,
+    correlationId,
+    paymentFlowId,
+  } = req.body as Omit<VerifyCardInput, 'verificationCallbackUrl'>
 
-  await getPaymentsApi().cardPaymentControllerVerify({
-    verifyCardInput: {
-      amount,
-      cardNumber: card.number,
-      cvc: card.cvc,
-      expiryMonth: card.expiryMonth,
-      expiryYear: card.expiryYear,
-      correlationId,
-      paymentFlowId,
-      // TODO: Replace this with a real URL
-      verificationCallbackUrl: '',
-    },
-  })
+  const verificationResponse =
+    await getPaymentsApi().cardPaymentControllerVerify({
+      verifyCardInput: {
+        amount,
+        cardNumber,
+        expiryMonth,
+        expiryYear,
+        correlationId,
+        paymentFlowId,
+        // TODO: Replace this with a real URL
+        verificationCallbackUrl: '',
+      },
+    })
+
+  return res.json(verificationResponse)
 }

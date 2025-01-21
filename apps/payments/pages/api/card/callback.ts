@@ -1,7 +1,7 @@
 import { getPaymentsApi } from 'apps/payments/services/payment'
 import { NextApiRequest, NextApiResponse } from 'next'
 
-export default async function cardVerificationCompleteHandler(
+export default async function cardVerificationCallbackHandler(
   req: NextApiRequest,
   res: NextApiResponse<any>,
 ) {
@@ -30,4 +30,6 @@ export default async function cardVerificationCompleteHandler(
       xid,
     },
   })
+
+  return res.status(200).json({})
 }

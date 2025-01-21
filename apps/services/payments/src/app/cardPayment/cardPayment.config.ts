@@ -12,6 +12,7 @@ const schema = z.object({
     paymentsGatewayApiUrl: z.string(),
   }),
   tokenExpiryMinutes: z.number().int(),
+  memCacheExpiryMinutes: z.number().int(),
 })
 
 export const CardPaymentModuleConfig = defineConfig({
@@ -32,5 +33,7 @@ export const CardPaymentModuleConfig = defineConfig({
       paymentsGatewayApiUrl: env.required('PAYMENTS_GATEWAY_API_URL'),
     },
     tokenExpiryMinutes: env.optionalJSON('PAYMENTS_TOKEN_EXPIRY_MINUTES') ?? 2,
+    memCacheExpiryMinutes:
+      env.optionalJSON('PAYMENTS_MEM_CACHE_EXPIRY_MINUTES') ?? 5,
   }),
 })

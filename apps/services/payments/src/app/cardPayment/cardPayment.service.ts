@@ -2,6 +2,7 @@ import { Inject, Injectable } from '@nestjs/common'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
+// import { ChargeFjsV2ClientService } from '@island.is/clients/charge-fjs-v2'
 import { CardPaymentModuleConfig } from './cardPayment.config'
 import { ConfigType } from '@nestjs/config'
 import { ChargeResponse, VerificationResponse } from './cardPayment.types'
@@ -26,6 +27,7 @@ export class CardPaymentService {
   constructor(
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
+    // private chargeFjsV2ClientService: ChargeFjsV2ClientService,
     @Inject(CardPaymentModuleConfig.KEY)
     private readonly config: ConfigType<typeof CardPaymentModuleConfig>,
   ) {}
@@ -34,16 +36,20 @@ export class CardPaymentService {
     verifyCardInput: VerifyCardInput,
   ): Promise<VerificationResponse> {
     const {
-      paymentsTokenSigningSecret,
-      paymentsTokenSigningAlgorithm,
-      paymentsTokenSignaturePrefix,
-      paymentsGatewayApiUrl,
-    } = this.config.paymentGateway
+      memCacheExpiryMinutes,
+      paymentGateway: {
+        paymentsTokenSigningSecret,
+        paymentsTokenSigningAlgorithm,
+        paymentsTokenSignaturePrefix,
+        paymentsGatewayApiUrl,
+      },
+    } = this.config
 
-    const { amount, correlationId } = verifyCardInput
+    const { amount, correlationId, paymentFlowId } = verifyCardInput
 
     const md = generateMd({
       correlationId,
+      paymentFlowId,
       amount,
       paymentsTokenSigningSecret,
       paymentsTokenSigningAlgorithm,
@@ -57,7 +63,7 @@ export class CardPaymentService {
         paymentFlowId: verifyCardInput.paymentFlowId,
         amount,
       } as SavedVerificationData,
-      60,
+      memCacheExpiryMinutes * 60,
     ) // Valid for 60 seconds
 
     const requestOptions = generateVerificationRequestOptions({
@@ -80,6 +86,7 @@ export class CardPaymentService {
         statusText: response.statusText,
         responseBody,
       })
+      throw new Error(response.statusText)
     }
 
     const data = (await response.json()) as VerificationResponse
@@ -98,6 +105,7 @@ export class CardPaymentService {
 
     const {
       tokenExpiryMinutes,
+      memCacheExpiryMinutes,
       paymentGateway: {
         paymentsTokenSigningSecret,
         paymentsTokenSignaturePrefix,
@@ -146,7 +154,7 @@ export class CardPaymentService {
           xid,
           dsTransId,
         },
-        60,
+        memCacheExpiryMinutes * 60,
       ) // Valid for 60 seconds
     } else {
       this.logger.error('Stored value does not match payload', {

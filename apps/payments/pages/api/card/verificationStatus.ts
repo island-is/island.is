@@ -16,5 +16,5 @@ export default async function verificationStatusHandler(
       paymentFlowId: paymentFlowId as string,
     })
 
-  return response
+  return res.json(response)
 }

@@ -16,23 +16,44 @@ interface MdNormalised {
   issuedAt: number
 }
 
+const removeHyphensFromUUID = (uuid: string) => {
+  return uuid.replace(/-/g, '')
+}
+
+const addHyphensToUUID = (uuid: string) => {
+  if (uuid.length !== 32) {
+    throw new Error('Invalid UUID format. Must be 32 characters long.')
+  }
+
+  // Add hyphens at the appropriate positions
+  return `${uuid.slice(0, 8)}-${uuid.slice(8, 12)}-${uuid.slice(
+    12,
+    16,
+  )}-${uuid.slice(16, 20)}-${uuid.slice(20)}`
+}
+
 export const generateMd = ({
   correlationId,
+  paymentFlowId,
   amount,
   paymentsTokenSigningSecret,
   paymentsTokenSigningAlgorithm,
   paymentsTokenSignaturePrefix,
 }: {
   correlationId: string
+  paymentFlowId: string
   amount: number
   paymentsTokenSigningSecret: string
   paymentsTokenSigningAlgorithm: string
   paymentsTokenSignaturePrefix: string
 }) => {
-  const mdPayload = {
-    c: correlationId,
+  const mdPayload: Omit<MdPayload, 'iat'> = {
+    // Had to reduce the size of the UUIDs to 32 characters
+    // to fit within the character limit of the md object
+    c: removeHyphensFromUUID(correlationId),
+    pi: removeHyphensFromUUID(paymentFlowId),
     a: amount,
-  } as MdPayload
+  }
 
   const mdToken = sign(mdPayload, paymentsTokenSigningSecret, {
     algorithm: paymentsTokenSigningAlgorithm as Algorithm,
@@ -64,10 +85,8 @@ export const generateVerificationRequestOptions = ({
     cardNumber,
     expiryMonth,
     expiryYear,
-    cvc,
     amount,
     verificationCallbackUrl,
-    correlationId,
   } = verifyCardInput
   const { paymentsApiSecret, paymentsApiHeaderKey, paymentsApiHeaderValue } =
     paymentApiConfig
@@ -83,14 +102,12 @@ export const generateVerificationRequestOptions = ({
       cardNumber,
       expirationMonth: expiryMonth,
       expirationYear: 2000 + expiryYear,
-      cvc,
       cardholderDeviceType: 'WWW',
       amount: amount * 100, // Convert to ISK (aurar)
       currency: 'ISK',
       authenticationUrl: verificationCallbackUrl,
       MD: md,
       systemCalling: 'TODO', // TODO
-      correlationId,
     }),
   }
 
@@ -152,7 +169,6 @@ export const getPayloadFromMd = ({
     md,
     'base64',
   ).toString('utf-8')}`
-
   const payload = verify(jwtMd, paymentsTokenSigningSecret) as MdPayload
 
   if (!payload) {
@@ -176,8 +192,10 @@ export const getPayloadFromMd = ({
   }
 
   return {
-    correlationId: payload.c,
-    paymentFlowId: payload.pi,
+    // Had to reduce the size of the UUIDs to 32 characters
+    // to fit within the character limit of the md object
+    correlationId: addHyphensToUUID(payload.c),
+    paymentFlowId: addHyphensToUUID(payload.pi),
     amount: payload.a,
     issuedAt: payload.iat,
   }

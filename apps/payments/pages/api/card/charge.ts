@@ -1,5 +1,6 @@
 import { getPaymentsApi } from 'apps/payments/services/payment'
 import { NextApiRequest, NextApiResponse } from 'next'
+import type { ChargeCardInput } from '@island.is/clients/payments'
 
 export default async function chargeCardHandler(
   req: NextApiRequest,
@@ -9,19 +10,27 @@ export default async function chargeCardHandler(
     return res.status(405).json({ error: 'Method Not Allowed' })
   }
 
-  const { card, amount, correlationId, paymentFlowId } = req.body
+  const {
+    cardNumber,
+    expiryMonth,
+    expiryYear,
+    cvc,
+    amount,
+    correlationId,
+    paymentFlowId,
+  } = req.body as ChargeCardInput
 
   const response = await getPaymentsApi().cardPaymentControllerCharge({
     chargeCardInput: {
       amount,
-      cardNumber: card.number,
-      cvc: card.cvc,
-      expiryMonth: card.expiryMonth,
-      expiryYear: card.expiryYear,
+      cardNumber,
+      cvc,
+      expiryMonth,
+      expiryYear,
       correlationId,
       paymentFlowId,
     },
   })
 
-  return response
+  return res.json(response)
 }
