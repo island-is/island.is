@@ -4736,6 +4736,9 @@ export interface ITeamListFields {
 
   /** Show Search Input */
   showSearchInput?: boolean | undefined
+
+  /** Order By */
+  orderBy?: 'A - Z' | 'Manual' | undefined
 }
 
 /** list of team members */
