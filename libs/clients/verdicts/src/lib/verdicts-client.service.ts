@@ -23,7 +23,7 @@ export class VerdictsClientService {
         laws: [''],
         dateFrom: '',
         dateTo: '',
-        orderBy: 'verdictDate', // TODO: how should the verdicts be ordered?
+        orderBy: 'verdictDate desc',
         pageNumber: 1,
         itemsPerPage: 10,
         ...input,
