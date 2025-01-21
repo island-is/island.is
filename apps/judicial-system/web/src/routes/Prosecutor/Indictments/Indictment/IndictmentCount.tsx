@@ -807,12 +807,9 @@ export const IndictmentCount: FC<Props> = ({
               />
               <Box display="flex" rowGap={1} columnGap={1} flexWrap="wrap">
                 <Box flexGrow={1}>
-                  <Input
-                    name="recordedSpeed"
-                    autoComplete="off"
-                    label={formatMessage(strings.recordedSpeedLabel)}
-                    placeholder="0"
-                    required
+                  <InputMask
+                    mask={'999'}
+                    maskPlaceholder={null}
                     value={indictmentCount.recordedSpeed ?? ''}
                     onChange={(event) => {
                       removeErrorMessageIfValid(
@@ -841,17 +838,22 @@ export const IndictmentCount: FC<Props> = ({
                         recordedSpeed,
                       })
                     }}
-                    errorMessage={recordedSpeedErrorMessage}
-                    hasError={recordedSpeedErrorMessage !== ''}
-                  />
+                  >
+                    <Input
+                      name="recordedSpeed"
+                      autoComplete="off"
+                      label={formatMessage(strings.recordedSpeedLabel)}
+                      placeholder="0"
+                      required
+                      errorMessage={recordedSpeedErrorMessage}
+                      hasError={recordedSpeedErrorMessage !== ''}
+                    />
+                  </InputMask>
                 </Box>
                 <Box flexGrow={1}>
-                  <Input
-                    name="speedLimit"
-                    autoComplete="off"
-                    label={formatMessage(strings.speedLimitLabel)}
-                    placeholder="0"
-                    required
+                  <InputMask
+                    mask={'999'}
+                    maskPlaceholder={null}
                     value={indictmentCount.speedLimit ?? ''}
                     onChange={(event) => {
                       removeErrorMessageIfValid(
@@ -880,9 +882,17 @@ export const IndictmentCount: FC<Props> = ({
                         speedLimit,
                       })
                     }}
-                    errorMessage={speedLimitErrorMessage}
-                    hasError={speedLimitErrorMessage !== ''}
-                  />
+                  >
+                    <Input
+                      name="speedLimit"
+                      autoComplete="off"
+                      label={formatMessage(strings.speedLimitLabel)}
+                      placeholder="0"
+                      required
+                      errorMessage={speedLimitErrorMessage}
+                      hasError={speedLimitErrorMessage !== ''}
+                    />
+                  </InputMask>
                 </Box>
               </Box>
             </Box>
