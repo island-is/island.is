@@ -118,14 +118,14 @@ export const getCleanSchoolSelection = (
 
   let schoolPriority = 1
 
-  const selectionKeys = ['first', 'second', 'third']
-  selectionKeys.forEach((selectionKey) => {
+  const indexKeys = [0, 1, 2]
+  indexKeys.forEach((index) => {
     const selectionItem = getValueViaPath<
-      SecondarySchoolAnswers['selection']['first']
-    >(application.answers, `selection.${selectionKey}`)
+      SecondarySchoolAnswers['selection'][0]
+    >(application.answers, `selection.${index}`)
 
     if (
-      (selectionItem?.include || selectionKey === 'first') &&
+      (selectionItem?.include || index === 0) &&
       selectionItem?.school?.id &&
       selectionItem?.firstProgram?.id
     ) {

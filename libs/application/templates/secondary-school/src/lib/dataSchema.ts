@@ -143,11 +143,7 @@ export const SecondarySchoolSchema = z.object({
   custodians: z.array(CustodianSchema).max(2),
   mainOtherContact: MainOtherContactSchema,
   otherContacts: z.array(OtherContactSchema).max(1),
-  selection: z.object({
-    first: SelectionSchema,
-    second: SelectionSchema.optional(),
-    third: SelectionSchema.optional(),
-  }),
+  selection: z.array(SelectionSchema),
   extraInformation: z.object({
     nativeLanguageCode: z.string().optional().nullable(),
     otherDescription: z.string().optional(),

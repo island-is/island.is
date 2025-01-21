@@ -15,7 +15,7 @@ export const SchoolSelection: FC<FieldBaseProps> = (props) => {
   const { setValue, getValues, register, watch } = useFormContext()
 
   const isFirstFirstProgramSpecialNeedsEducation = watch(
-    `${props.field.id}.first.firstProgram.isSpecialNeedsProgram`,
+    `${props.field.id}[0].firstProgram.isSpecialNeedsProgram`,
   )
 
   const isFreshman =
@@ -52,10 +52,10 @@ export const SchoolSelection: FC<FieldBaseProps> = (props) => {
     if (maxSelectionCount && currentCount < maxSelectionCount) {
       if (currentCount === 1) {
         setShowSecondSelection(true)
-        setValue(`${props.field.id}.second.include`, true)
+        setValue(`${props.field.id}[1].include`, true)
       } else if (currentCount === 2) {
         setShowThirdSelection(true)
-        setValue(`${props.field.id}.third.include`, true)
+        setValue(`${props.field.id}[2].include`, true)
       }
     }
   }
@@ -65,10 +65,10 @@ export const SchoolSelection: FC<FieldBaseProps> = (props) => {
     if (minSelectionCount && currentCount > minSelectionCount) {
       if (currentCount === 2) {
         setShowSecondSelection(false)
-        setValue(`${props.field.id}.second.include`, false)
+        setValue(`${props.field.id}[1].include`, false)
       } else if (currentCount === 3) {
         setShowThirdSelection(false)
-        setValue(`${props.field.id}.third.include`, false)
+        setValue(`${props.field.id}[2].include`, false)
       }
     }
   }
@@ -78,13 +78,13 @@ export const SchoolSelection: FC<FieldBaseProps> = (props) => {
       SecondarySchoolAnswers['selection']
     >(getValues(), 'selection')
 
-    const schoolIds: string[] = [updatedSelection?.first?.school?.id || '']
+    const schoolIds: string[] = [updatedSelection?.[0]?.school?.id || '']
 
     if (showSecondSelection)
-      schoolIds.push(updatedSelection?.second?.school?.id || '')
+      schoolIds.push(updatedSelection?.[1]?.school?.id || '')
 
     if (showThirdSelection)
-      schoolIds.push(updatedSelection?.third?.school?.id || '')
+      schoolIds.push(updatedSelection?.[2]?.school?.id || '')
 
     return hasDuplicates(schoolIds.filter((x) => !!x))
   }
@@ -94,24 +94,22 @@ export const SchoolSelection: FC<FieldBaseProps> = (props) => {
       SecondarySchoolAnswers['selection']
     >(getValues(), 'selection')
 
-    const programIds: string[] = [
-      updatedSelection?.first?.firstProgram?.id || '',
-    ]
-    if (updatedSelection?.first?.secondProgram?.include) {
-      programIds.push(updatedSelection?.first?.secondProgram?.id || '')
+    const programIds: string[] = [updatedSelection?.[0]?.firstProgram?.id || '']
+    if (updatedSelection?.[0]?.secondProgram?.include) {
+      programIds.push(updatedSelection?.[0]?.secondProgram?.id || '')
     }
 
     if (showSecondSelection) {
-      programIds.push(updatedSelection?.second?.firstProgram?.id || '')
-      if (updatedSelection?.second?.secondProgram?.include) {
-        programIds.push(updatedSelection?.second?.secondProgram?.id || '')
+      programIds.push(updatedSelection?.[1]?.firstProgram?.id || '')
+      if (updatedSelection?.[1]?.secondProgram?.include) {
+        programIds.push(updatedSelection?.[1]?.secondProgram?.id || '')
       }
     }
 
     if (showThirdSelection) {
-      programIds.push(updatedSelection?.third?.firstProgram?.id || '')
-      if (updatedSelection?.third?.secondProgram?.include) {
-        programIds.push(updatedSelection?.third?.secondProgram?.id || '')
+      programIds.push(updatedSelection?.[2]?.firstProgram?.id || '')
+      if (updatedSelection?.[2]?.secondProgram?.include) {
+        programIds.push(updatedSelection?.[2]?.secondProgram?.id || '')
       }
     }
 
@@ -153,18 +151,18 @@ export const SchoolSelection: FC<FieldBaseProps> = (props) => {
 
     if (isFreshman) {
       if (isFirstFirstProgramSpecialNeedsEducation) {
-        showSecondSelection = getValues(`${props.field.id}.second.include`)
-        showThirdSelection = getValues(`${props.field.id}.third.include`)
+        showSecondSelection = getValues(`${props.field.id}[1].include`)
+        showThirdSelection = getValues(`${props.field.id}[2].include`)
         minSelectionCount = 1
         maxSelectionCount = 3
       } else {
         showSecondSelection = true
-        showThirdSelection = getValues(`${props.field.id}.third.include`)
+        showThirdSelection = getValues(`${props.field.id}[2].include`)
         minSelectionCount = 2
         maxSelectionCount = 3
       }
     } else {
-      showSecondSelection = getValues(`${props.field.id}.second.include`)
+      showSecondSelection = getValues(`${props.field.id}[1].include`)
       showThirdSelection = false
       minSelectionCount = 1
       maxSelectionCount = 2
@@ -182,9 +180,9 @@ export const SchoolSelection: FC<FieldBaseProps> = (props) => {
       maxSelectionCount = 2
     }
 
-    setValue(`${props.field.id}.first.include`, true)
-    setValue(`${props.field.id}.second.include`, showSecondSelection)
-    setValue(`${props.field.id}.third.include`, showThirdSelection)
+    setValue(`${props.field.id}[0].include`, true)
+    setValue(`${props.field.id}[1].include`, showSecondSelection)
+    setValue(`${props.field.id}[2].include`, showThirdSelection)
 
     setShowSecondSelection(showSecondSelection || false)
     setShowThirdSelection(showThirdSelection || false)
@@ -217,9 +215,9 @@ export const SchoolSelection: FC<FieldBaseProps> = (props) => {
         {...props}
         field={{
           ...props.field,
-          id: `${props.field.id}.first`,
+          id: `${props.field.id}[0]`,
         }}
-        otherFieldIds={[`${props.field.id}.second`, `${props.field.id}.third`]}
+        otherFieldIds={[`${props.field.id}[1]`, `${props.field.id}[2]`]}
       />
 
       {/* Second selection */}
@@ -233,12 +231,9 @@ export const SchoolSelection: FC<FieldBaseProps> = (props) => {
             {...props}
             field={{
               ...props.field,
-              id: `${props.field.id}.second`,
+              id: `${props.field.id}[1]`,
             }}
-            otherFieldIds={[
-              `${props.field.id}.first`,
-              `${props.field.id}.third`,
-            ]}
+            otherFieldIds={[`${props.field.id}[0]`, `${props.field.id}[2]`]}
           />
         </>
       )}
@@ -254,12 +249,9 @@ export const SchoolSelection: FC<FieldBaseProps> = (props) => {
             {...props}
             field={{
               ...props.field,
-              id: `${props.field.id}.third`,
+              id: `${props.field.id}[2]`,
             }}
-            otherFieldIds={[
-              `${props.field.id}.first`,
-              `${props.field.id}.second`,
-            ]}
+            otherFieldIds={[`${props.field.id}[0]`, `${props.field.id}[1]`]}
           />
         </>
       )}
@@ -316,9 +308,9 @@ export const SchoolSelection: FC<FieldBaseProps> = (props) => {
         </Box>
       )}
 
-      <input type="hidden" {...register(`${props.field.id}.first`)} />
-      <input type="hidden" {...register(`${props.field.id}.second`)} />
-      <input type="hidden" {...register(`${props.field.id}.third`)} />
+      <input type="hidden" {...register(`${props.field.id}[0]`)} />
+      <input type="hidden" {...register(`${props.field.id}[1]`)} />
+      <input type="hidden" {...register(`${props.field.id}[2]`)} />
     </Box>
   )
 }
