@@ -49,7 +49,11 @@ import { GetGenericListItemBySlugInput } from './dto/getGenericListItemBySlug.in
 import { GenericListItem } from './models/genericListItem.model'
 import { GetTeamMembersInput } from './dto/getTeamMembers.input'
 import { TeamMemberResponse } from './models/teamMemberResponse.model'
-import { GetGrantsInput, GrantsSortBy } from './dto/getGrants.input'
+import {
+  GetGrantsInput,
+  GrantsAvailabilityStatus,
+  GrantsSortBy,
+} from './dto/getGrants.input'
 import { Grant } from './models/grant.model'
 import { GrantList } from './models/grantList.model'
 

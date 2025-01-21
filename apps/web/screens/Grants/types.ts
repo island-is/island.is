@@ -4,3 +4,5 @@ export interface Status {
   deadlinePeriod?: string
   note?: string
 }
+
+export const Availability = ['closed', 'open'] as const

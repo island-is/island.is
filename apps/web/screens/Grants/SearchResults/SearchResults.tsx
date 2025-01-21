@@ -7,6 +7,7 @@ import {
   parseAsArrayOf,
   parseAsInteger,
   parseAsString,
+  parseAsStringLiteral,
   useQueryState,
 } from 'next-usequerystate'
 import { useLazyQuery } from '@apollo/client'
@@ -27,6 +28,7 @@ import {
   ContentLanguage,
   CustomPageUniqueIdentifier,
   GenericTag,
+  GetGrantsInputAvailabilityStatusEnum,
   Grant,
   GrantList,
   Query,
@@ -44,6 +46,7 @@ import SidebarLayout from '../../Layouts/SidebarLayout'
 import { GET_GENERIC_TAGS_IN_TAG_GROUPS_QUERY } from '../../queries/GenericTag'
 import { GET_GRANTS_QUERY } from '../../queries/Grants'
 import { m } from '../messages'
+import { Availability } from '../types'
 import { SearchResultsContent } from './SearchResultsContent'
 import { GrantsSearchResultsFilter } from './SearchResultsFilter'
 
@@ -69,7 +72,6 @@ const GrantsSearchResultsPage: CustomScreen<GrantsHomeProps> = ({
 
   const [page, setPage] = useQueryState('page', parseAsInteger.withDefault(1))
   const [query, setQuery] = useQueryState('query')
-
   const [categories, setCategories] = useQueryState(
     'category',
     parseAsArrayOf(parseAsString),
@@ -78,6 +80,10 @@ const GrantsSearchResultsPage: CustomScreen<GrantsHomeProps> = ({
   const [organizations, setOrganizations] = useQueryState(
     'organization',
     parseAsArrayOf(parseAsString),
+  )
+  const [status, setStatus] = useQueryState(
+    'status',
+    parseAsStringLiteral(Availability),
   )
 
   const [initialRender, setInitialRender] = useState<boolean>(true)
@@ -113,6 +119,11 @@ const GrantsSearchResultsPage: CustomScreen<GrantsHomeProps> = ({
           search: query,
           size: PAGE_SIZE,
           types,
+          status: status
+            ? status === 'closed'
+              ? GetGrantsInputAvailabilityStatusEnum.Closed
+              : GetGrantsInputAvailabilityStatusEnum.Open
+            : undefined,
         },
       },
     })
@@ -135,6 +146,7 @@ const GrantsSearchResultsPage: CustomScreen<GrantsHomeProps> = ({
     locale,
     organizations,
     page,
+    status,
     query,
     types,
     initialRender,
@@ -177,6 +189,7 @@ const GrantsSearchResultsPage: CustomScreen<GrantsHomeProps> = ({
     setCategories(null)
     setTypes(null)
     setOrganizations(null)
+    setStatus(null)
   }
 
   const hitsMessage = useMemo(() => {
@@ -196,6 +209,15 @@ const GrantsSearchResultsPage: CustomScreen<GrantsHomeProps> = ({
   const onSearchFilterUpdate = (categoryId: string, values?: Array<string>) => {
     const filteredValues = values?.length ? values : null
     switch (categoryId) {
+      case 'status': {
+        const slug = values?.[0]
+          ? Availability.find((v) => v === values[0])
+          : undefined
+        if (slug) {
+          setStatus(slug === 'open' ? 'open' : 'closed')
+        }
+        break
+      }
       case 'category': {
         setCategories(filteredValues)
         break
@@ -264,6 +286,7 @@ const GrantsSearchResultsPage: CustomScreen<GrantsHomeProps> = ({
                     category: categories ?? undefined,
                     type: types ?? undefined,
                     organization: organizations ?? undefined,
+                    status: status ?? undefined,
                   }}
                   onSearchUpdate={onSearchFilterUpdate}
                   onReset={onResetFilter}
@@ -379,6 +402,11 @@ GrantsSearchResults.getProps = async ({ apolloClient, locale, query }) => {
 
     return undefined
   }
+
+  const status =
+    parseAsStringLiteral(Availability).parseServerSide(query?.status) ??
+    undefined
+
   const [
     {
       data: { getGrants },
@@ -401,6 +429,11 @@ GrantsSearchResults.getProps = async ({ apolloClient, locale, query }) => {
           organizations: filterArray<string>(
             arrayParser.parseServerSide(query?.organization),
           ),
+          status: status
+            ? status === 'closed'
+              ? GetGrantsInputAvailabilityStatusEnum.Closed
+              : GetGrantsInputAvailabilityStatusEnum.Open
+            : undefined,
         },
       },
     }),

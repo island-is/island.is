@@ -11,7 +11,11 @@ import {
   extractStringsFromObject,
   pruneNonSearchableSliceUnionFields,
 } from './utils'
-import { mapGrant, GrantStatus } from '../../models/grant.model'
+import {
+  mapGrant,
+  GrantStatus,
+  GrantAvailability,
+} from '../../models/grant.model'
 import { isDefined } from '@island.is/shared/utils'
 
 @Injectable()
@@ -117,16 +121,17 @@ export class GrantsSyncService implements CmsSyncProvider<IGrant> {
           if (mapped.availability) {
             tags.push({
               type: 'availability',
-              key: mapped.availability.toString().toLowerCase(),
-              value: mapped.availability.toString().toLowerCase(),
+              key:
+                mapped.availability === GrantAvailability.OPEN
+                  ? 'open'
+                  : 'closed',
             })
           }
 
           if (mapped.statusIsAutomatic) {
             tags.push({
               type: 'isAutomatic',
-              key: 'isAutomatic',
-              value: mapped.statusIsAutomatic ? 'true' : 'false',
+              key: mapped.statusIsAutomatic ? 'true' : 'false',
             })
           }
 
