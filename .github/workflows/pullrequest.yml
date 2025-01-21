@@ -18,7 +18,7 @@ env:
   SKIP_GENERATED_CACHE: ${{ contains(github.event.pull_request.labels.*.name, 'skip-generated-cache') }}
   NX_AFFECTED_ALL: ${{ contains(github.event.pull_request.labels.*.name, 'nx-affected-all') }}
   CHUNK_SIZE: '10'
-  MAX_JOBS: '10'
+  MAX_JOBS: '6'
   NX_PARALLEL: '10'
   NX_MAX_PARALLEL: '15'
 
