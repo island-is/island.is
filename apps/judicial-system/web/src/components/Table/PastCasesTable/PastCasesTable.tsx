@@ -70,7 +70,7 @@ const PastCasesTable: FC<Props> = ({ cases }) => {
             title: formatMessage(tables.type),
           },
           {
-            title: capitalize(formatMessage(tables.created, { suffix: 'i' })),
+            title: capitalize(formatMessage(tables.created)),
             sortable: { isSortable: true, key: 'created' },
           },
           { title: formatMessage(tables.state) },
