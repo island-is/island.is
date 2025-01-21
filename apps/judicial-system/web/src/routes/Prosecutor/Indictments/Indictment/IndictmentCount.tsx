@@ -84,9 +84,9 @@ const offensesCompare = (
 
 /**
  * Indicates what laws are broken for each offence. The first number is
- * the article and the second is the paragraph, i.e. [49, 2] means article
- * 49, paragraph 2. If paragraph is set to 0, that means that a paragraph
- *  is not specified.
+ * the paragraph and the second is the article, i.e. [49, 2] means paragraph
+ * 49, article 2. If article is set to 0, that means that an article is
+ * not specified.
  */
 const offenseLawsMap: Record<
   IndictmentCountOffense | 'DRUNK_DRIVING_MINOR' | 'DRUNK_DRIVING_MAJOR',
