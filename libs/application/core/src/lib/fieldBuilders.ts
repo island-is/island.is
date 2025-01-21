@@ -407,7 +407,7 @@ export const buildDividerField = (data: {
   marginBottom?: BoxProps['marginBottom']
   marginTop?: BoxProps['marginTop']
 }): DividerField => {
-  const {  useDividerLine = true, condition, marginTop, marginBottom } = data
+  const { useDividerLine = true, condition, marginTop, marginBottom } = data
   return {
     id: '',
     title: '',
@@ -430,8 +430,14 @@ export const buildTitleField = (data: {
   marginBottom?: BoxProps['marginBottom']
   marginTop?: BoxProps['marginTop']
 }): TitleField => {
-  const { title = '', titleVariant, color, condition, marginTop, marginBottom } =
-    data
+  const {
+    title = '',
+    titleVariant,
+    color,
+    condition,
+    marginTop,
+    marginBottom,
+  } = data
   return {
     id: '',
     children: undefined,
@@ -655,8 +661,7 @@ export const buildLinkField = (
 export const buildPaymentChargeOverviewField = (
   data: Omit<PaymentChargeOverviewField, 'type' | 'component' | 'children'>,
 ): PaymentChargeOverviewField => {
-  const { id, forPaymentLabel, totalLabel, getSelectedChargeItems } =
-    data
+  const { id, forPaymentLabel, totalLabel, getSelectedChargeItems } = data
   return {
     ...extractCommonFields(data),
     children: undefined,
