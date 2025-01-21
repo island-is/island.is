@@ -1,6 +1,7 @@
 // This a script that given a list of strings, returns a list of comma-separated chunks of the original list
 
 const chunkSize = parseInt(process.env['CHUNK_SIZE'] || '2')
+const disableChunks = process.env['DISABLE_CHUNKS'] === 'true'
 const projects = process.argv[2].split(',').map((s) => s.trim()) ?? []
 const problematicProjects = [
   'judicial-system-backend',
@@ -32,6 +33,9 @@ function groupbByPrefix(arr) {
 }
 
 function chunk(groups, chunkSize) {
+  if (disableChunks) {
+    return groups.map((group) => [group.join(',')])
+  }
   const chunks = []
   for (let i = 0; i < groups.length; i += chunkSize) {
     chunks.push(groups.slice(i, i + chunkSize))
@@ -59,6 +63,7 @@ new console.Console(process.stderr).log(`Chunk debug:`, {
   chunksJoined,
   chunksFiltered,
   chunksWithSolos,
+  disableChunks,
 })
 
 process.stdout.write(JSON.stringify(chunks))
