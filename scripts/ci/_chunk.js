@@ -2,8 +2,8 @@
 
 const chunkSize = parseInt(process.env['CHUNK_SIZE'] || '2')
 const disableChunks = process.env['DISABLE_CHUNKS'] === 'true'
-console.log({ chunkSize })
-console.log({ disableChunks })
+new console.Console(process.stderr).log({ chunkSize })
+new console.Console(process.stderr).log({ disableChunks })
 const projects = process.argv[2].split(',').map((s) => s.trim()) ?? []
 const problematicProjects = [
   'judicial-system-backend',
