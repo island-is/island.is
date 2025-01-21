@@ -31,7 +31,7 @@ export const incomeSubsection = buildSubSection({
             const income = getValueViaPath<ApproveOptions>(answers, 'income')
             return income === ApproveOptions.Yes
           },
-          id: 'incomeBulletlistTitle',
+          id: 'incomeBulletlistTitleHidden',
         }),
         buildDescriptionField({
           id: 'incomeBulletlistTitle',

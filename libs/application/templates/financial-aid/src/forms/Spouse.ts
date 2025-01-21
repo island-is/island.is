@@ -57,7 +57,7 @@ export const Spouse: Form = buildForm({
                 )
                 return income === ApproveOptions.Yes
               },
-              id: 'incomeBulletlistTitle',
+              id: 'incomeBulletlistTitleHidden',
             }),
             buildDescriptionField({
               id: 'incomeBulletlistTitle',

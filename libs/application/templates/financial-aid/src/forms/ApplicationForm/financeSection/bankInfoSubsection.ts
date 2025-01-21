@@ -1,6 +1,5 @@
 import {
   buildBankAccountField,
-  buildCustomField,
   buildDescriptionField,
   buildMultiField,
   buildSubSection,
@@ -13,7 +12,7 @@ export const bankInfoSubsection = buildSubSection({
   title: m.bankInfoForm.general.sectionTitle,
   children: [
     buildMultiField({
-      id: Routes.BANKINFO,
+      id: 'bankInfoMultiField',
       title: m.bankInfoForm.general.pageTitle,
       children: [
         buildDescriptionField({
