@@ -71,6 +71,7 @@ judicial-system-api:
             - '/api/auth'
             - '/api/case'
             - '/api/feature'
+            - '/api/defender'
   namespace: 'judicial-system'
   podDisruptionBudget:
     maxUnavailable: 1
