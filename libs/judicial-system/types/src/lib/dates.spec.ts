@@ -1,4 +1,9 @@
-import { getAppealDeadlineDate, getIndictmentAppealDeadlineDate } from './dates'
+import {
+  getAppealDeadlineDate,
+  getIndictmentAppealDeadlineDate,
+  hasDatePassed,
+} from './dates'
+
 
 describe('getIndictmentAppealDeadlineDate', () => {
   test('should return fine appeal deadline', () => {
@@ -36,5 +41,29 @@ describe('getAppealDeadlineDate', () => {
 
     // Assert
     expect(actualDate).toStrictEqual(new Date(2024, 1, 4, 23, 59, 59, 999))
+  })
+})
+
+
+describe('hasDatePassed', () => {
+  test('should return true for past dates', () => {
+    // Arrange
+    const pastDate = new Date(2024, 0, 1)
+
+    // Act
+    // Assert
+    expect(hasDatePassed(pastDate)).toBe(true)
+  })
+
+  test('should return false for future dates', () => {
+    // Arrange
+    const futureDate = new Date(2024, 1, 1)
+    const mockTodayDate = new Date(2024, 0, 1)
+
+    jest.useFakeTimers().setSystemTime(mockTodayDate);
+
+    // Act
+    // Assert
+    expect(hasDatePassed(futureDate)).toBe(false)
   })
 })
