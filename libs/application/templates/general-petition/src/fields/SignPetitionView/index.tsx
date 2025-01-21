@@ -20,6 +20,7 @@ import format from 'date-fns/format'
 import { EndorsementList } from '../../types/schema'
 import Skeleton from './Skeleton'
 import Illustration from '../../assets/Illustration'
+import { Markdown } from '@island.is/shared/components'
 
 const SignPetitionView: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   application,
@@ -99,7 +100,7 @@ const SignPetitionView: FC<React.PropsWithChildren<FieldBaseProps>> = ({
                 <Text variant="h2" marginBottom={2}>
                   {petitionList?.title}
                 </Text>
-                <Text>{petitionList?.description}</Text>
+                <Markdown>{petitionList?.description ?? ''}</Markdown>
               </Box>
 
               <Box display={['block', 'flex']}>
