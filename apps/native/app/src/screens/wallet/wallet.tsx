@@ -161,8 +161,6 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
       : undefined
   }, [licenseItems])
 
-  console.log(lastUpdatedFormatted)
-
   // indexing list for spotlight search IOS
   useEffect(() => {
     const indexItems = licenseItems.map((item) => {
