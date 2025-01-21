@@ -32,7 +32,6 @@ import {
   isProsecutionUser,
   isRequestCase,
   isRestrictionCase,
-  isTrafficViolationCase,
   NotificationType,
   restrictionCases,
   type User as TUser,
@@ -1051,39 +1050,14 @@ export class InternalCaseService {
     user: TUser,
   ): Promise<DeliverResponse> {
     try {
-      let policeDocuments: PoliceDocument[]
+      const file = await this.pdfService.getIndictmentPdf(theCase)
 
-      if (isTrafficViolationCase(theCase)) {
-        const file = await this.pdfService.getIndictmentPdf(theCase)
-
-        policeDocuments = [
-          {
-            type: PoliceDocumentType.RVAS,
-            courtDocument: Base64.btoa(file.toString('binary')),
-          },
-        ]
-      } else {
-        policeDocuments = await Promise.all(
-          theCase.caseFiles
-            ?.filter(
-              (caseFile) =>
-                caseFile.category === CaseFileCategory.INDICTMENT &&
-                caseFile.key,
-            )
-            .map(async (caseFile) => {
-              // TODO: Tolerate failure, but log error
-              const file = await this.fileService.getCaseFileFromS3(
-                theCase,
-                caseFile,
-              )
-
-              return {
-                type: PoliceDocumentType.RVAS,
-                courtDocument: Base64.btoa(file.toString('binary')),
-              }
-            }) ?? [],
-        )
-      }
+      const policeDocuments = [
+        {
+          type: PoliceDocumentType.RVAS,
+          courtDocument: Base64.btoa(file.toString('binary')),
+        },
+      ]
 
       const delivered = await this.deliverCaseToPoliceWithFiles(
         theCase,

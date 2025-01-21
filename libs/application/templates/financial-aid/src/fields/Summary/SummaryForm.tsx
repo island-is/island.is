@@ -31,7 +31,6 @@ import {
 
 import { DirectTaxPaymentsModal } from '..'
 import { findFamilyStatus } from '../../lib/utils'
-import withLogo from '../Logo/Logo'
 import ChildrenInfo from './ChildrenInfo'
 
 const SummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
@@ -204,4 +203,4 @@ const SummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
   )
 }
 
-export default withLogo(SummaryForm)
+export default SummaryForm
