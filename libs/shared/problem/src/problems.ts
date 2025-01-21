@@ -32,7 +32,7 @@ export interface BadSubjectProblem extends BaseProblem {
   alternativeSubjects?: AlternativeSubject[]
 }
 export interface BadSessionProblem extends BaseProblem {
-  type: ProblemType.BAD_SESSION,
+  type: ProblemType.BAD_SESSION
 }
 
 export interface AttemptFailedProblem extends BaseProblem {

@@ -475,7 +475,11 @@ export class LicenseService {
     return `${licenseType}-${sub}`
   }
 
-  async checkBarcodeSession(barcodeSessionKey: string | undefined, user: User, licenseType: LicenseType) {
+  async checkBarcodeSession(
+    barcodeSessionKey: string | undefined,
+    user: User,
+    licenseType: LicenseType,
+  ) {
     if (barcodeSessionKey) {
       const activeBarcodeSession = await this.barcodeService.getSessionCache(
         barcodeSessionKey,

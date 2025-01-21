@@ -295,7 +295,6 @@ describe('LicenseService', () => {
     licenseService = moduleRef.get<LicenseService>(LicenseService)
     barcodeService = moduleRef.get<BarcodeService>(BarcodeService)
     config = moduleRef.get(LicenseConfig.KEY)
-
   })
 
   describe.each(licenseIds)('given %s license type id', (licenseId) => {

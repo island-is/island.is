@@ -20,7 +20,10 @@ export const LicenseConfig = defineConfig({
   load: (env) => ({
     barcodeSecretKey: env.required('LICENSE_SERVICE_BARCODE_SECRET_KEY', ''),
     barcodeExpireTimeInSec: env.requiredJSON('BARCODE_EXPIRE_TIME_IN_SEC', 60),
-    barcodeSessionExpireTimeInSec: env.requiredJSON('BARCODE_SESSION_EXPIRE_TIME_IN_SEC', 1800),
+    barcodeSessionExpireTimeInSec: env.requiredJSON(
+      'BARCODE_SESSION_EXPIRE_TIME_IN_SEC',
+      1800,
+    ),
     redis: {
       nodes: env.requiredJSON('LICENSE_SERVICE_REDIS_NODES', [
         'localhost:7000',

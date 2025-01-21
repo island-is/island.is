@@ -66,7 +66,8 @@ export class BarcodeService {
     expiresIn: number
   }> {
     // jsonwebtoken uses seconds for expiration time
-    const exp = Math.floor(Date.now() / 1000) + this.config.barcodeExpireTimeInSec
+    const exp =
+      Math.floor(Date.now() / 1000) + this.config.barcodeExpireTimeInSec
 
     return new Promise((resolve, reject) =>
       sign(
@@ -94,7 +95,11 @@ export class BarcodeService {
     key: string,
     value: BarcodeData<Type>,
   ) {
-    return this.cacheManager.set(key, value, this.config.barcodeExpireTimeInSec * 1000)
+    return this.cacheManager.set(
+      key,
+      value,
+      this.config.barcodeExpireTimeInSec * 1000,
+    )
   }
 
   async setSessionCache(key: string, value: string) {
