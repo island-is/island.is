@@ -22660,16 +22660,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react-pdf@npm:5.0.9":
-  version: 5.0.9
-  resolution: "@types/react-pdf@npm:5.0.9"
-  dependencies:
-    "@types/react": "*"
-    pdfjs-dist: ^2.10.377
-  checksum: 5247dd76dc20beb504f13756d576d4036dab19416de648553f6405b44d4cf8467be3d50063f98cc07eed39b37d07bc834756a3f275b8bc7f635226fd59ae17c7
-  languageName: node
-  linkType: hard
-
 "@types/react-table@npm:7.0.24":
   version: 7.0.24
   resolution: "@types/react-table@npm:7.0.24"
@@ -39214,7 +39204,6 @@ __metadata:
     "@types/react-infinite-scroller": ^1.2.3
     "@types/react-input-mask": 3.0.0
     "@types/react-modal": 3.13.1
-    "@types/react-pdf": 5.0.9
     "@types/react-table": 7.0.24
     "@types/request": 2.48.5
     "@types/resolve": ^1.20.2
@@ -47681,15 +47670,6 @@ __metadata:
     path2d:
       optional: true
   checksum: 96ff90da5b1aca99cfe3c706434f2215ee5405ccd680f1f40c9b97760c39a6d7865911f67a3130301f845c924ebda110da4fa90fd613c999438df408c347505c
-  languageName: node
-  linkType: hard
-
-"pdfjs-dist@npm:^2.10.377":
-  version: 2.10.377
-  resolution: "pdfjs-dist@npm:2.10.377"
-  peerDependencies:
-    worker-loader: ^3.0.7
-  checksum: 5a4c14777676e15aeca9a627cc1f368821071ae040154983edf21f1040cb89acd9b0168b43b64ac10d66f86094dcb48b33513b9810b6d422446c599fb172d5a4
   languageName: node
   linkType: hard
 

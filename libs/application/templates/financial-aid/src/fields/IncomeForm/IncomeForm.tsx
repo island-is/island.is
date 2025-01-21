@@ -10,7 +10,6 @@ import { useIntl } from 'react-intl'
 import { incomeForm } from '../../lib/messages'
 import { RadioController } from '@island.is/shared/form-fields'
 import DescriptionText from '../DescriptionText/DescriptionText'
-import withLogo from '../Logo/Logo'
 
 const IncomeForm = ({ field, errors, application }: FAFieldBaseProps) => {
   const { formatMessage } = useIntl()
@@ -58,4 +57,4 @@ const IncomeForm = ({ field, errors, application }: FAFieldBaseProps) => {
   )
 }
 
-export default withLogo(IncomeForm)
+export default IncomeForm
