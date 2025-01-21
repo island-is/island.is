@@ -150,8 +150,7 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
       ?.jurisdiction
     const teacher = answers.drivingInstructor as string
     const email = answers.email as string
-    const deliveryMethod = (answers.delivery as { deliveryMethod: Pickup })
-      .deliveryMethod
+    const deliveryMethod = (answers.delivery as { deliveryMethod: Pickup })?.deliveryMethod
       ? (answers.delivery as { deliveryMethod: Pickup }).deliveryMethod
       : undefined
     const phone = formatPhoneNumber(answers.phone as string)
