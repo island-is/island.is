@@ -52,10 +52,16 @@ export const SchoolSelectionOverview: FC<FieldBaseProps> = ({
                 </Text>
               )}
             {!!selection?.first?.thirdLanguage?.code && (
-              <Text>{selection?.first?.thirdLanguage?.name}</Text>
+              <Text>
+                {formatMessage(overview.selection.thirdLanguageLabel)}:{' '}
+                {selection?.first?.thirdLanguage?.name}
+              </Text>
             )}
             {!!selection?.first?.nordicLanguage?.code && (
-              <Text>{selection?.first?.nordicLanguage?.name}</Text>
+              <Text>
+                {formatMessage(overview.selection.nordicLanguageLabel)}:{' '}
+                {selection?.first?.nordicLanguage?.name}
+              </Text>
             )}
           </GridColumn>
 
@@ -81,10 +87,16 @@ export const SchoolSelectionOverview: FC<FieldBaseProps> = ({
                   </Text>
                 )}
               {!!selection?.second?.thirdLanguage?.code && (
-                <Text>{selection?.second?.thirdLanguage?.name}</Text>
+                <Text>
+                  {formatMessage(overview.selection.thirdLanguageLabel)}:{' '}
+                  {selection?.second?.thirdLanguage?.name}
+                </Text>
               )}{' '}
               {!!selection?.second?.nordicLanguage?.code && (
-                <Text>{selection?.second?.nordicLanguage?.name}</Text>
+                <Text>
+                  {formatMessage(overview.selection.nordicLanguageLabel)}:{' '}
+                  {selection?.second?.nordicLanguage?.name}
+                </Text>
               )}
             </GridColumn>
           )}
@@ -112,10 +124,16 @@ export const SchoolSelectionOverview: FC<FieldBaseProps> = ({
                     </Text>
                   )}
                 {!!selection?.third?.thirdLanguage?.code && (
-                  <Text>{selection?.third?.thirdLanguage?.name}</Text>
+                  <Text>
+                    {formatMessage(overview.selection.thirdLanguageLabel)}:{' '}
+                    {selection?.third?.thirdLanguage?.name}
+                  </Text>
                 )}
                 {!!selection?.third?.nordicLanguage?.code && (
-                  <Text>{selection?.third?.nordicLanguage?.name}</Text>
+                  <Text>
+                    {formatMessage(overview.selection.nordicLanguageLabel)}:{' '}
+                    {selection?.third?.nordicLanguage?.name}
+                  </Text>
                 )}
               </GridColumn>
               <GridColumn span="1/2"></GridColumn>
