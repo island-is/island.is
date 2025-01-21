@@ -24,11 +24,12 @@ const headerComment = `#########################################################
 const relativeChartDir = '../../../charts'
 const cleanOrphanDirs = (filePath: string): void => {
   try {
-    rmSync(filePath, { recursive: true });
-  }
-  catch (error) {
+    rmSync(filePath, { recursive: true })
+  } catch (error) {
     if (error instanceof Error) {
-      console.error(`Failed to clean orphan directories at ${filePath}: ${error.message}`);
+      console.error(
+        `Failed to clean orphan directories at ${filePath}: ${error.message}`,
+      )
     }
   }
 }
