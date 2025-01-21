@@ -11,6 +11,7 @@ import { usePreventBodyScroll } from './usePreventBodyScroll'
 import * as styles from './Filter.css'
 import { useWindowSize } from 'react-use'
 import FilterMobileDrawer from './FilterMobileDrawer'
+import { theme } from '@island.is/island-ui/theme'
 
 export interface FilterProps {
   /** Label for the clear all button. Should be used for localization. */
@@ -105,14 +106,14 @@ export const Filter: FC<React.PropsWithChildren<FilterProps>> = ({
   const { width } = useWindowSize()
 
   useEffect(() => {
-    // Comment out, mobile not ready yet
-    // if (width < theme.breakpoints.sm) {
-    //   return setIsMobile(true)
-    // }
+    if (width < theme.breakpoints.sm) {
+      return setIsMobile(true)
+    }
     setIsMobile(false)
   }, [width])
 
   const filterInputContent = hasFilterInput ? filterInput : null
+  const filterCountNumber = filterCount > 9 ? '9+' : filterCount
 
   const popoverContent = (component: boolean) => (
     <Box
@@ -180,8 +181,12 @@ export const Filter: FC<React.PropsWithChildren<FilterProps>> = ({
                   color="white"
                   className={styles.filterCount}
                 >
-                  <Text variant="eyebrow" color="white" lineHeight="lg">
-                    {filterCount}
+                  <Text
+                    variant="eyebrow"
+                    color="white"
+                    lineHeight={isMobile ? 'xl' : 'lg'}
+                  >
+                    {filterCountNumber}
                   </Text>
                 </Box>
               </Button>
@@ -316,52 +321,63 @@ export const Filter: FC<React.PropsWithChildren<FilterProps>> = ({
             baseId="filter"
             initialVisibility={false}
             ariaLabel={''}
-            labelCloseModal={labelClose}
+            labelShowResult={labelResult ?? labelClose}
+            labelClearAll={labelClearAll}
+            onFilterClear={onFilterClear}
+            title={title}
             disclosure={
-              <Button
-                icon="filter"
-                iconType="outline"
-                variant="utility"
-                fluid
-                nowrap
-              >
-                {labelOpen}
-              </Button>
-            }
-          >
-            <Box display="flex" width="full">
               <Box
-                width="full"
+                background="white"
+                display="inlineBlock"
+                borderRadius="large"
                 tabIndex={-1}
                 className={filterCount ? styles.filterCountButton : undefined}
               >
-                <Box className={styles.mobilePopoverContainer} {...popover}>
-                  <Box
-                    display="flex"
-                    paddingX={3}
-                    paddingY={2}
-                    justifyContent={title ? 'spaceBetween' : 'flexEnd'}
+                {filterCount ? (
+                  <Button
+                    as="span"
+                    variant="utility"
+                    icon={!filterCount ? 'filter' : undefined}
+                    fluid
+                    nowrap
                   >
-                    {title && (
-                      <Box>
-                        <Text variant="h4" as="p">
-                          {title}
-                        </Text>
-                      </Box>
-                    )}
-                    <Button
-                      icon="reload"
-                      size="small"
-                      variant="text"
-                      onClick={onFilterClear}
+                    {labelOpen}
+
+                    <Box
+                      as="span"
+                      background="blue400"
+                      color="white"
+                      className={styles.filterCount}
                     >
-                      {labelClearAll}
-                    </Button>
-                  </Box>
-                  <Stack space={4} dividers={false}>
-                    {children}
-                  </Stack>
-                </Box>
+                      <Text
+                        variant="eyebrow"
+                        textAlign="center"
+                        color="white"
+                        lineHeight={isMobile ? 'xl' : 'lg'}
+                      >
+                        {filterCountNumber}
+                      </Text>
+                    </Box>
+                  </Button>
+                ) : (
+                  <Button
+                    as="span"
+                    variant="utility"
+                    icon="filter"
+                    fluid
+                    nowrap
+                  >
+                    {labelOpen}
+                  </Button>
+                )}
+              </Box>
+            }
+          >
+            <Box width="full" tabIndex={-1}>
+              <Box className={styles.mobilePopoverContainer} {...popover}>
+                <Stack space={4} dividers={false}>
+                  {children}
+                </Stack>
               </Box>
             </Box>
           </FilterMobileDrawer>

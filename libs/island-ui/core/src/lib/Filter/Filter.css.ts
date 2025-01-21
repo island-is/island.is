@@ -46,7 +46,7 @@ export const drawer = style({
   position: 'fixed',
   bottom: 0,
   width: '100%',
-  height: '90%',
+  maxHeight: '90%',
   transition: 'transform 400ms ease-in-out',
   selectors: {
     '&[data-enter]': {
@@ -82,5 +82,9 @@ export const closeButton = style({
 export const mobilePopoverContainer = style({
   zIndex: 100,
   width: '100%',
-  overflowY: 'auto',
+  overflowY: 'scroll',
+})
+
+export const mobileInnerContainer = style({
+  maxHeight: `calc(100vh - ${theme.headerHeight.large}px)`,
 })

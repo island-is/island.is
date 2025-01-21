@@ -25,7 +25,13 @@ interface FilterMobileDrawerProps {
    */
   initialVisibility?: boolean | undefined
 
-  labelCloseModal: string
+  labelShowResult: string
+
+  labelClearAll: string
+
+  title?: string
+
+  onFilterClear: () => void
 }
 
 export const FilterMobileDrawer = ({
@@ -33,7 +39,10 @@ export const FilterMobileDrawer = ({
   baseId,
   disclosure,
   initialVisibility,
-  labelCloseModal,
+  labelShowResult,
+  labelClearAll,
+  onFilterClear,
+  title,
   children,
 }: PropsWithChildren<FilterMobileDrawerProps>) => {
   return (
@@ -51,7 +60,6 @@ export const FilterMobileDrawer = ({
             paddingTop={2}
             paddingX={0}
             height="full"
-            overflow="auto"
             className={styles.mobileDrawerContainer}
           >
             <Box
@@ -59,24 +67,47 @@ export const FilterMobileDrawer = ({
               className={styles.drawerLine}
               onClick={closeModal}
             ></Box>
-            {/* <Box className={styles.closeButton}>
-              <Button
-                circle
-                colorScheme="negative"
-                icon="close"
-                aria-label="Close drawer"
-                onClick={closeModal}
-                size="large"
-              />
-            </Box> */}
-            <Box>{children}</Box>
-            {labelCloseModal && (
-              <Box padding={3} width="full">
-                <Button fluid onClick={closeModal}>
-                  {labelCloseModal}
+            <Box
+              display="flex"
+              flexDirection="column"
+              height="full"
+              position="relative"
+              className={styles.mobileInnerContainer}
+            >
+              <Box
+                display="flex"
+                paddingX={3}
+                paddingY={2}
+                justifyContent={title ? 'spaceBetween' : 'flexEnd'}
+                flexShrink={0}
+              >
+                {title && (
+                  <Box>
+                    <Text variant="h4" as="p">
+                      {title}
+                    </Text>
+                  </Box>
+                )}
+                <Button
+                  icon="reload"
+                  size="small"
+                  variant="text"
+                  onClick={onFilterClear}
+                >
+                  {labelClearAll}
                 </Button>
               </Box>
-            )}
+              <Box flexGrow={1} overflow="auto">
+                {children}
+              </Box>
+              {labelShowResult && (
+                <Box padding={3} width="full" flexShrink={0}>
+                  <Button fluid onClick={closeModal}>
+                    {labelShowResult}
+                  </Button>
+                </Box>
+              )}
+            </Box>
           </Box>
         )
       }}
