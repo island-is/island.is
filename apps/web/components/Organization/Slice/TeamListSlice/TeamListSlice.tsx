@@ -89,7 +89,7 @@ export const TeamMemberListWrapper = ({
               queryString: searchValue,
               tags,
               tagGroups,
-              orderBy,
+              orderBy: orderBy ?? GetTeamMembersInputOrderBy.Name,
             },
           },
         })
