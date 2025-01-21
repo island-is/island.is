@@ -17,7 +17,7 @@ env:
   COMPOSE_HTTP_TIMEOUT: 180
   SKIP_GENERATED_CACHE: ${{ contains(github.event.pull_request.labels.*.name, 'skip-generated-cache') }}
   NX_AFFECTED_ALL: ${{ contains(github.event.pull_request.labels.*.name, 'nx-affected-all') }}
-  CHUNK_SIZE: '8'
+  CHUNK_SIZE: '20'
   MAX_JOBS: '8'
   NX_PARALLEL: '10'
   NX_MAX_PARALLEL: '20'
