@@ -20,7 +20,7 @@ export const incomeForm = {
       description: 'Income form bullet list of examples of income headline',
     },
     bullets: {
-      id: 'fa.application:section.incomeForm.bulletList.bulletst#markdown',
+      id: 'fa.application:section.incomeForm.bulletList.bullets#markdown',
       defaultMessage:
         '* Greiðslur frá atvinnurekanda \n* Greiðslur frá Vinnumálastofnun \n* Greiðslur frá Tryggingastofnun \n* Greiðslur frá fæðingarorlofssjóði \n* Greiðslur frá Sjúkratryggingum Íslands  \n* Styrkir frá lífeyrissjóðum',
       description: 'Income form bullet list of examples of income.',
