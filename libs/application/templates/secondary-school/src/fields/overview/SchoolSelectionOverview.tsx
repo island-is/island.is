@@ -44,13 +44,12 @@ export const SchoolSelectionOverview: FC<FieldBaseProps> = ({
               {formatMessage(overview.selection.firstProgramLabel)}:{' '}
               {getTranslatedProgram(lang, selection?.[0]?.firstProgram)}
             </Text>
-            {!!selection?.[0]?.secondProgram?.include &&
-              !!selection?.[0]?.secondProgram?.id && (
-                <Text>
-                  {formatMessage(overview.selection.secondProgramLabel)}:{' '}
-                  {getTranslatedProgram(lang, selection?.[0]?.secondProgram)}
-                </Text>
-              )}
+            {!!selection?.[0]?.secondProgram?.id && (
+              <Text>
+                {formatMessage(overview.selection.secondProgramLabel)}:{' '}
+                {getTranslatedProgram(lang, selection?.[0]?.secondProgram)}
+              </Text>
+            )}
             {!!selection?.[0]?.thirdLanguage?.code && (
               <Text>
                 {formatMessage(overview.selection.thirdLanguageLabel)}:{' '}
@@ -76,13 +75,12 @@ export const SchoolSelectionOverview: FC<FieldBaseProps> = ({
                 {formatMessage(overview.selection.firstProgramLabel)}:{' '}
                 {getTranslatedProgram(lang, selection?.[1]?.firstProgram)}
               </Text>
-              {!!selection?.[1]?.secondProgram?.include &&
-                !!selection?.[1]?.secondProgram?.id && (
-                  <Text>
-                    {formatMessage(overview.selection.secondProgramLabel)}:{' '}
-                    {getTranslatedProgram(lang, selection?.[1]?.secondProgram)}
-                  </Text>
-                )}
+              {!!selection?.[1]?.secondProgram?.id && (
+                <Text>
+                  {formatMessage(overview.selection.secondProgramLabel)}:{' '}
+                  {getTranslatedProgram(lang, selection?.[1]?.secondProgram)}
+                </Text>
+              )}
               {!!selection?.[1]?.thirdLanguage?.code && (
                 <Text>
                   {formatMessage(overview.selection.thirdLanguageLabel)}:{' '}
@@ -110,16 +108,12 @@ export const SchoolSelectionOverview: FC<FieldBaseProps> = ({
                   {formatMessage(overview.selection.firstProgramLabel)}:{' '}
                   {getTranslatedProgram(lang, selection?.[2]?.firstProgram)}
                 </Text>
-                {!!selection?.[2]?.secondProgram?.include &&
-                  !!selection?.[2]?.secondProgram?.id && (
-                    <Text>
-                      {formatMessage(overview.selection.secondProgramLabel)}:{' '}
-                      {getTranslatedProgram(
-                        lang,
-                        selection?.[2]?.secondProgram,
-                      )}
-                    </Text>
-                  )}
+                {!!selection?.[2]?.secondProgram?.id && (
+                  <Text>
+                    {formatMessage(overview.selection.secondProgramLabel)}:{' '}
+                    {getTranslatedProgram(lang, selection?.[2]?.secondProgram)}
+                  </Text>
+                )}
                 {!!selection?.[2]?.thirdLanguage?.code && (
                   <Text>
                     {formatMessage(overview.selection.thirdLanguageLabel)}:{' '}

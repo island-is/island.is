@@ -74,6 +74,7 @@ const SelectionSchema = z
       .optional(),
     secondProgram: z
       .object({
+        // Note: this include is only used for zod validation if there is only one program available, but a freshman should pick two
         include: z.boolean().optional(),
         require: z.boolean().optional(),
         id: z.string().optional(),

@@ -139,9 +139,7 @@ export const getCleanSchoolSelection = (
           },
           {
             priority: 2,
-            programId: selectionItem.secondProgram?.include
-              ? selectionItem.secondProgram.id || ''
-              : '',
+            programId: selectionItem.secondProgram?.id || '',
           },
         ].filter((x) => !!x.programId),
         thirdLanguageCode: selectionItem.thirdLanguage?.code || undefined,

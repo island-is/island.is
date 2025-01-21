@@ -14,7 +14,7 @@ export const SchoolSelection: FC<FieldBaseProps> = (props) => {
   const { application, setBeforeSubmitCallback } = props
   const { setValue, getValues, register, watch } = useFormContext()
 
-  const isFirstFirstProgramSpecialNeedsEducation = watch(
+  const isFirstFirstProgramSpecialNeedsProgram = watch(
     `${props.field.id}[0].firstProgram.isSpecialNeedsProgram`,
   )
 
@@ -94,23 +94,19 @@ export const SchoolSelection: FC<FieldBaseProps> = (props) => {
       SecondarySchoolAnswers['selection']
     >(getValues(), 'selection')
 
-    const programIds: string[] = [updatedSelection?.[0]?.firstProgram?.id || '']
-    if (updatedSelection?.[0]?.secondProgram?.include) {
-      programIds.push(updatedSelection?.[0]?.secondProgram?.id || '')
-    }
+    const programIds = [
+      updatedSelection?.[0]?.firstProgram?.id || '',
+      updatedSelection?.[0]?.secondProgram?.id || '',
+    ]
 
     if (showSecondSelection) {
       programIds.push(updatedSelection?.[1]?.firstProgram?.id || '')
-      if (updatedSelection?.[1]?.secondProgram?.include) {
-        programIds.push(updatedSelection?.[1]?.secondProgram?.id || '')
-      }
+      programIds.push(updatedSelection?.[1]?.secondProgram?.id || '')
     }
 
     if (showThirdSelection) {
       programIds.push(updatedSelection?.[2]?.firstProgram?.id || '')
-      if (updatedSelection?.[2]?.secondProgram?.include) {
-        programIds.push(updatedSelection?.[2]?.secondProgram?.id || '')
-      }
+      programIds.push(updatedSelection?.[2]?.secondProgram?.id || '')
     }
 
     return hasDuplicates(programIds.filter((x) => !!x))
@@ -150,7 +146,7 @@ export const SchoolSelection: FC<FieldBaseProps> = (props) => {
     )
 
     if (isFreshman) {
-      if (isFirstFirstProgramSpecialNeedsEducation) {
+      if (isFirstFirstProgramSpecialNeedsProgram) {
         showSecondSelection = getValues(`${props.field.id}[1].include`)
         showThirdSelection = getValues(`${props.field.id}[2].include`)
         minSelectionCount = 1
@@ -194,7 +190,7 @@ export const SchoolSelection: FC<FieldBaseProps> = (props) => {
     setValue,
     getValues,
     schools,
-    isFirstFirstProgramSpecialNeedsEducation,
+    isFirstFirstProgramSpecialNeedsProgram,
   ])
 
   const showAddButton =
