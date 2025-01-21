@@ -13,7 +13,7 @@ import {
 } from '@island.is/island-ui/core'
 import { PUBLIC_PROSECUTOR_STAFF_INDICTMENT_SEND_TO_PRISON_ADMIN_ROUTE } from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
-import { getAppealDeadlineDate } from '@island.is/judicial-system/types'
+import { getIndictmentAppealDeadlineDate } from '@island.is/judicial-system/types'
 import { core, errors } from '@island.is/judicial-system-web/messages'
 
 import {
@@ -140,7 +140,7 @@ const BlueBoxWithDate: FC<Props> = (props) => {
     const deadline =
       defendant.verdictAppealDeadline ||
       (dates.verdictViewDate &&
-        getAppealDeadlineDate({
+        getIndictmentAppealDeadlineDate({
           baseDate: dates.verdictViewDate,
           isFine: false,
         }).toISOString())

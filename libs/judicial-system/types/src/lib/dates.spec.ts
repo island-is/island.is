@@ -1,13 +1,13 @@
-import { getAppealDeadlineDate } from './dates'
+import { getIndictmentAppealDeadlineDate } from './dates'
 
-describe('getAppealDeadlineDate', () => {
+describe('getIndictmentAppealDeadlineDate', () => {
   test('should return fine appeal deadline', () => {
     // Arrange
     const baseDate = new Date(2024, 1, 1)
     const isFine = true
 
     // Act
-    const actualDate = getAppealDeadlineDate({ baseDate, isFine })
+    const actualDate = getIndictmentAppealDeadlineDate({ baseDate, isFine })
 
     // Assert
     expect(actualDate).toStrictEqual(new Date(2024, 1, 4, 23, 59, 59, 999))
@@ -19,7 +19,7 @@ describe('getAppealDeadlineDate', () => {
     const isFine = false
 
     // Act
-    const actualDate = getAppealDeadlineDate({ baseDate, isFine })
+    const actualDate = getIndictmentAppealDeadlineDate({ baseDate, isFine })
 
     // Assert
     expect(actualDate).toStrictEqual(new Date(2024, 1, 29, 23, 59, 59, 999))
