@@ -12,17 +12,15 @@ export async function localrun(
   habitat: ServiceBuilder<any>[],
   runtime: Localhost,
   services: ServiceBuilder<any>[],
-  { dryRun = false, noUpdateSecrets = false } = {},
+  { dryRun = false, skipSecrets = false } = {},
 ) {
-  logger.debug('localrun', { services, dryRun, noUpdateSecrets })
+  logger.debug('localrun', { services, dryRun, skipSecrets })
   const fullSetOfServices = await withUpstreamDependencies(
     envConfig,
     habitat,
     services,
-    dryRun || noUpdateSecrets
-      ? renderers.localrunNoSecrets
-      : renderers.localrun,
-    { dryRun, noUpdateSecrets },
+    dryRun || skipSecrets ? renderers.localrunNoSecrets : renderers.localrun,
+    { dryRun, skipSecrets },
   )
   hacks(fullSetOfServices, habitat)
 
@@ -32,7 +30,7 @@ export async function localrun(
       runtime: runtime,
       services: fullSetOfServices,
       outputFormat:
-        dryRun || noUpdateSecrets
+        dryRun || skipSecrets
           ? renderers.localrunNoSecrets
           : renderers.localrun,
       env: envConfig,

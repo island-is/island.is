@@ -52,6 +52,7 @@ testem.log
 /typings
 /debug.log
 *.log
+docker-compose.yml
 
 # System Files
 .DS_Store
