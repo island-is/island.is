@@ -36,8 +36,12 @@ export const SchoolSelection: FC<FieldBaseProps> = (props) => {
 
   const [showSecondSelection, setShowSecondSelection] = useState<boolean>(false)
   const [showThirdSelection, setShowThirdSelection] = useState<boolean>(false)
-  const [minSelectionCount, setMinSelectionCount] = useState<number>(1)
-  const [maxSelectionCount, setMaxSelectionCount] = useState<number>(3)
+  const [minSelectionCount, setMinSelectionCount] = useState<
+    number | undefined
+  >()
+  const [maxSelectionCount, setMaxSelectionCount] = useState<
+    number | undefined
+  >()
 
   const getSelectionCount = () => {
     return 1 + (showSecondSelection ? 1 : 0) + (showThirdSelection ? 1 : 0)
@@ -45,7 +49,7 @@ export const SchoolSelection: FC<FieldBaseProps> = (props) => {
 
   const onClickAdd = () => {
     const currentCount = getSelectionCount()
-    if (currentCount < maxSelectionCount) {
+    if (maxSelectionCount && currentCount < maxSelectionCount) {
       if (currentCount === 1) {
         setShowSecondSelection(true)
         setValue(`${props.field.id}.second.include`, true)
@@ -58,7 +62,7 @@ export const SchoolSelection: FC<FieldBaseProps> = (props) => {
 
   const onClickRemove = () => {
     const currentCount = getSelectionCount()
-    if (currentCount > minSelectionCount) {
+    if (minSelectionCount && currentCount > minSelectionCount) {
       if (currentCount === 2) {
         setShowSecondSelection(false)
         setValue(`${props.field.id}.second.include`, false)
@@ -184,8 +188,8 @@ export const SchoolSelection: FC<FieldBaseProps> = (props) => {
 
     setShowSecondSelection(showSecondSelection || false)
     setShowThirdSelection(showThirdSelection || false)
-    setMinSelectionCount(minSelectionCount || 1)
-    setMaxSelectionCount(maxSelectionCount || 3)
+    setMinSelectionCount(minSelectionCount)
+    setMaxSelectionCount(maxSelectionCount)
   }, [
     isFreshman,
     props.field.id,
@@ -195,8 +199,10 @@ export const SchoolSelection: FC<FieldBaseProps> = (props) => {
     isFirstFirstProgramSpecialNeedsEducation,
   ])
 
-  const showAddButton = getSelectionCount() < maxSelectionCount
-  const showRemoveButton = getSelectionCount() > minSelectionCount
+  const showAddButton =
+    maxSelectionCount && getSelectionCount() < maxSelectionCount
+  const showRemoveButton =
+    minSelectionCount && getSelectionCount() > minSelectionCount
 
   return (
     <Box>
