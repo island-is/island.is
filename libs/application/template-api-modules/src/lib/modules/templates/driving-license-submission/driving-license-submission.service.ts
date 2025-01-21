@@ -147,7 +147,7 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
     const remarks = answers.hasHealthRemarks === 'yes'
     const needsQualityPhoto = answers.willBringQualityPhoto === 'yes'
     const jurisdictionId = (answers.delivery as { jurisdiction: string })
-      .jurisdiction
+      ?.jurisdiction
     const teacher = answers.drivingInstructor as string
     const email = answers.email as string
     const deliveryMethod = (answers.delivery as { deliveryMethod: Pickup })
