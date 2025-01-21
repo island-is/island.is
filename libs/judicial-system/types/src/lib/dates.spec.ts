@@ -4,7 +4,6 @@ import {
   hasDatePassed,
 } from './dates'
 
-
 describe('getIndictmentAppealDeadlineDate', () => {
   test('should return fine appeal deadline', () => {
     // Arrange
@@ -44,7 +43,6 @@ describe('getAppealDeadlineDate', () => {
   })
 })
 
-
 describe('hasDatePassed', () => {
   test('should return true for past dates', () => {
     // Arrange
@@ -60,7 +58,7 @@ describe('hasDatePassed', () => {
     const futureDate = new Date(2024, 1, 1)
     const mockTodayDate = new Date(2024, 0, 1)
 
-    jest.useFakeTimers().setSystemTime(mockTodayDate);
+    jest.useFakeTimers().setSystemTime(mockTodayDate)
 
     // Act
     // Assert
