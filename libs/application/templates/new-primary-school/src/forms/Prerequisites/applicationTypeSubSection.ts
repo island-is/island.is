@@ -1,10 +1,15 @@
 import { buildRadioField, buildSubSection } from '@island.is/application/core'
+import { isRunningOnEnvironment } from '@island.is/shared/utils'
 import { ApplicationType } from '../../lib/constants'
 import { newPrimarySchoolMessages } from '../../lib/messages'
+
+const shouldRenderApplicationTypeSubSection =
+  !isRunningOnEnvironment('production')
 
 export const applicationTypeSubSection = buildSubSection({
   id: 'applicationTypeSubSection',
   title: newPrimarySchoolMessages.pre.applicationTypeSubSectionTitle,
+  condition: () => shouldRenderApplicationTypeSubSection,
   children: [
     buildRadioField({
       id: 'applicationType',
