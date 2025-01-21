@@ -32,6 +32,14 @@ export class ChargeInput {
   chargeItemCode!: string
 
   @IsNumber()
+  @IsPositive({ message: 'quantity must be greater than 0' })
+  @ApiProperty({
+    description: 'Quantity of this item',
+    type: Number,
+  })
+  quantity!: number
+
+  @IsNumber()
   @IsOptional()
   @IsPositive({ message: 'price must be greater than 0' })
   @ApiProperty({
@@ -39,24 +47,19 @@ export class ChargeInput {
     type: Number,
   })
   price?: number
-
-  @IsNumber()
-  @IsPositive({ message: 'quantity must be greater than 0' })
-  @ApiProperty({
-    description: 'Quantity of this item',
-    type: Number,
-  })
-  quantity!: number
 }
 
 export class CreatePaymentFlowInput {
-  @IsString()
-  @IsOptional()
-  @ApiPropertyOptional({
-    description: 'Product title to display to the payer',
-    type: String,
+  @ApiProperty({
+    description: 'List of allowed payment methods for this payment flow',
+    type: [String],
+    example: ['card', 'invoice'],
+    enum: PaymentMethod,
+    isArray: true,
   })
-  productTitle?: string
+  @IsArray()
+  @IsEnum(PaymentMethod, { each: true })
+  availablePaymentMethods!: PaymentMethod[]
 
   @ApiProperty({
     description: 'Charges associated with the payment flow',
@@ -82,62 +85,44 @@ export class CreatePaymentFlowInput {
   payerNationalId!: string
 
   @IsString()
-  @IsOptional()
-  @ApiPropertyOptional({
-    description:
-      'Optional identifier for an invoice associated with the payment flow',
-    type: String,
-  })
-  invoiceId?: string
-
-  @ApiProperty({
-    description: 'List of allowed payment methods for this payment flow',
-    type: [String],
-    example: ['card', 'invoice'],
-    enum: PaymentMethod,
-    isArray: true,
-  })
-  @IsArray()
-  @IsEnum(PaymentMethod, { each: true })
-  availablePaymentMethods!: PaymentMethod[]
-
-  @IsString()
-  @ApiProperty({
-    description: 'URL callback to be called on a successful payment',
-    type: String,
-  })
-  onSuccessUrl!: string
-
-  @IsString()
-  @IsOptional()
-  @ApiPropertyOptional({
-    description:
-      'URL callback to be called on payment update events like when the user requests to create invoice rather than directly paying',
-    type: String,
-  })
-  onUpdateUrl?: string
-
-  @IsString()
-  @ApiProperty({
-    description: 'URL callback to be called on payment error events',
-    type: String,
-  })
-  onErrorUrl!: string
-
-  @IsString()
   @ApiProperty({
     description: 'Identifier for the organization initiating the payment flow',
     type: String,
   })
   organisationId!: string
 
+  @IsString()
+  @ApiProperty({
+    description:
+      'URL callback to be called on payment update events like when the user requests to create invoice rather than directly paying',
+    type: String,
+  })
+  onUpdateUrl!: string
+
   @IsObject()
   @IsOptional()
   @ApiPropertyOptional({
     description:
-      'Arbitrary JSON data that will be returned on in callbacks (e.g. onSuccess, onUpdate)',
+      'Arbitrary JSON data that will be returned with the onUpdateUrl callback',
     type: Object,
-    example: { customData: 'value' },
+    example: { applicationId: 'abc123' },
   })
   metadata?: object
+
+  @IsString()
+  @IsOptional()
+  @ApiPropertyOptional({
+    description: 'Product title to display to the payer',
+    type: String,
+  })
+  productTitle?: string
+
+  @IsString()
+  @IsOptional()
+  @ApiPropertyOptional({
+    description:
+      'Optional identifier for an invoice associated with the payment flow',
+    type: String,
+  })
+  existingInvoiceId?: string
 }

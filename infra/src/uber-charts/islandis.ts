@@ -130,7 +130,10 @@ const adminPortal = adminPortalSetup()
 const servicePortal = servicePortalSetup()
 const bffAdminPortalService = bffAdminPortalServiceSetup({ api })
 const bffServicePortalService = bffServicePortalServiceSetup({ api })
-const paymentsWebApp = paymentsWebAppServiceSetup({ api })
+const paymentsWebApp = paymentsWebAppServiceSetup({
+  api,
+  paymentsApi: paymentsMicroservice,
+})
 
 const appSystemForm = appSystemFormSetup()
 const web = webSetup({ api })

@@ -15,6 +15,7 @@ import { CompanyRegistryClientService } from '@island.is/clients/rsk/company-reg
 import { CreatePaymentFlowInput } from './dtos/createPaymentFlow.input'
 
 import { environment } from '../../environments'
+import { PaymentFlowEvent } from './models/paymentFlowEvent.model'
 
 @Injectable()
 export class PaymentFlowService {
@@ -23,6 +24,8 @@ export class PaymentFlowService {
     private readonly paymentFlowModel: typeof PaymentFlow,
     @InjectModel(PaymentFlowCharge)
     private readonly paymentFlowChargeModel: typeof PaymentFlowCharge,
+    @InjectModel(PaymentFlowEvent)
+    private readonly paymentFlowEventModel: typeof PaymentFlowEvent,
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
     private chargeFjsV2ClientService: ChargeFjsV2ClientService,
@@ -157,6 +160,58 @@ export class PaymentFlowService {
     } catch (e) {
       this.logger.error('Failed to get payment flow', e)
       return null
+    }
+  }
+
+  async logPaymentFlowUpdate(update: {
+    paymentFlowId: string
+    type: PaymentFlowEvent['type']
+    occurredAt: Date
+    paymentMethod: PaymentMethod
+    reason: PaymentFlowEvent['reason']
+    message: string
+  }) {
+    const paymentFlow = (
+      await this.paymentFlowModel.findOne({
+        where: {
+          id: update.paymentFlowId,
+        },
+      })
+    )?.toJSON()
+
+    if (!paymentFlow) {
+      throw new Error('Payment flow not found')
+    }
+
+    try {
+      this.logger.info(
+        `Payment flow update [${update.paymentFlowId}][${update.type}]`,
+      )
+      await this.paymentFlowEventModel.create(update)
+    } catch (e) {
+      this.logger.error('Failed to log payment flow update', e)
+    }
+
+    try {
+      await fetch(paymentFlow.onUpdateUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          type: update.type,
+          paymentFlowId: update.paymentFlowId,
+          metadata: paymentFlow.metadata,
+          occurredAt: update.occurredAt,
+          details: {
+            paymentMethod: update.paymentMethod,
+            reason: update.reason,
+            message: update.message,
+          },
+        }),
+      })
+    } catch (e) {
+      this.logger.error('Failed to notify onUpdateUrl', e)
     }
   }
 }

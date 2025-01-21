@@ -54,23 +54,11 @@ export class GetPaymentFlowDTO {
   availablePaymentMethods!: PaymentMethod[]
 
   @ApiProperty({
-    description: 'URL callback to be called on a successful payment',
-    type: String,
-  })
-  onSuccessUrl!: string
-
-  @ApiPropertyOptional({
     description:
       'URL callback to be called on payment update events like when the user requests to create invoice rather than directly paying',
     type: String,
   })
-  onUpdateUrl?: string
-
-  @ApiProperty({
-    description: 'URL callback to be called on payment error events',
-    type: String,
-  })
-  onErrorUrl!: string
+  onUpdateUrl!: string
 
   @ApiProperty({
     description: 'Identifier for the organization initiating the payment flow',

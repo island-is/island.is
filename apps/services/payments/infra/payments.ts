@@ -37,6 +37,18 @@ export const serviceSetup = (): ServiceBuilder<'services-payments'> =>
         '/k8s/services-payments/IDENTITY_SERVER_CLIENT_SECRET',
       NATIONAL_REGISTRY_B2C_CLIENT_SECRET:
         '/k8s/services-payments/NATIONAL_REGISTRY_B2C_CLIENT_SECRET',
+      PAYMENTS_TOKEN_SIGNING_SECRET:
+        '/k8s/services-payments/PAYMENTS_TOKEN_SIGNING_SECRET',
+      PAYMENTS_TOKEN_SIGNING_ALGORITHM:
+        '/k8s/services-payments/PAYMENTS_TOKEN_SIGNING_ALGORITHM',
+      PAYMENTS_TOKEN_SIGNATURE_PREFIX:
+        '/k8s/services-payments/PAYMENTS_TOKEN_SIGNATURE_PREFIX',
+      PAYMENTS_API_SECRET: '/k8s/services-payments/PAYMENTS_API_SECRET',
+      PAYMENTS_API_HEADER_KEY: '/k8s/services-payments/PAYMENTS_API_HEADER_KEY',
+      PAYMENTS_API_HEADER_VALUE:
+        '/k8s/services-payments/PAYMENTS_API_HEADER_VALUE',
+      PAYMENTS_GATEWAY_API_URL:
+        '/k8s/services-payments/PAYMENTS_GATEWAY_API_URL',
     })
     .xroad(Base, Client, ChargeFjsV2, RskCompanyInfo, NationalRegistryB2C)
     .readiness('/liveness')

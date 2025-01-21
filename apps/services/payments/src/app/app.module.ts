@@ -12,6 +12,7 @@ import { CompanyRegistryConfig } from '@island.is/clients/rsk/company-registry'
 import { XRoadConfig } from '@island.is/nest/config'
 
 import { PaymentFlowModule } from './paymentFlow/paymentFlow.module'
+import { CardPaymentModule } from './cardPayment/cardPayment.module'
 import { SequelizeConfigService } from '../sequelizeConfig.service'
 
 @Module({
@@ -22,6 +23,7 @@ import { SequelizeConfigService } from '../sequelizeConfig.service'
       useClass: SequelizeConfigService,
     }),
     PaymentFlowModule,
+    CardPaymentModule,
     ConfigModule.forRoot({
       isGlobal: true,
       load: [

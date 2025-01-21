@@ -9,10 +9,15 @@ import { PaymentFlowService } from './paymentFlow.service'
 import { PaymentFlow, PaymentFlowCharge } from './models/paymentFlow.model'
 import { CompanyRegistryClientModule } from '@island.is/clients/rsk/company-registry'
 import { NationalRegistryV3ClientModule } from '@island.is/clients/national-registry-v3'
+import { PaymentFlowEvent } from './models/paymentFlowEvent.model'
 
 @Module({
   imports: [
-    SequelizeModule.forFeature([PaymentFlow, PaymentFlowCharge]),
+    SequelizeModule.forFeature([
+      PaymentFlow,
+      PaymentFlowCharge,
+      PaymentFlowEvent,
+    ]),
     FeatureFlagModule,
     ChargeFjsV2ClientModule,
     NationalRegistryV3ClientModule,

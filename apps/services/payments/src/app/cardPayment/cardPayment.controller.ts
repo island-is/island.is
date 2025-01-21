@@ -1,0 +1,169 @@
+import {
+  BadRequestException,
+  Body,
+  Controller,
+  Get,
+  Param,
+  Post,
+  UseGuards,
+} from '@nestjs/common'
+import { ApiOkResponse, ApiTags } from '@nestjs/swagger'
+
+import { CardPaymentService } from './cardPayment.service'
+import {
+  FeatureFlag,
+  FeatureFlagGuard,
+  Features,
+} from '@island.is/nest/feature-flags'
+import { PaymentFlowService } from '../paymentFlow/paymentFlow.service'
+import { PaymentMethod } from '../../types'
+import { VerifyCardInput } from './dtos/verifyCard.input'
+import { VerificationCallbackInput } from './dtos/verificationCallback.input'
+import { ChargeCardInput } from './dtos/chargeCard.input'
+import { GetVerificationStatus } from './dtos/params.dto'
+import { getTempStorage } from '../tempInMemoryStorage'
+import { CachePaymentFlowStatus } from './cardPayment.types'
+import { VerificationStatusResponse } from './dtos/verificationStatus.response.dto'
+import { VerifyCardResponse } from './dtos/verifyCard.response.dto'
+import { ChargeCardResponse } from './dtos/chargeCard.response.dto'
+
+@UseGuards(FeatureFlagGuard)
+@FeatureFlag(Features.isIslandisPaymentEnabled)
+@ApiTags('payments')
+@Controller({
+  path: 'payments/card',
+  version: ['1'],
+})
+export class CardPaymentController {
+  constructor(
+    private readonly cardPaymentService: CardPaymentService,
+    private readonly paymentFlowService: PaymentFlowService,
+  ) {}
+
+  @Post('/verify')
+  @ApiOkResponse({
+    type: VerifyCardResponse,
+  })
+  async verify(
+    @Body() cardVerificationInput: VerifyCardInput,
+  ): Promise<VerifyCardResponse> {
+    try {
+      const verification = await this.cardPaymentService.verify(
+        cardVerificationInput,
+      )
+
+      await this.paymentFlowService.logPaymentFlowUpdate({
+        paymentFlowId: cardVerificationInput.paymentFlowId,
+        type: 'update',
+        occurredAt: new Date(),
+        paymentMethod: PaymentMethod.CARD,
+        reason: 'payment_started',
+        message: 'Card verification started',
+      })
+
+      // All required data to build the 3DS screen
+      return verification
+    } catch (e) {
+      await this.paymentFlowService.logPaymentFlowUpdate({
+        paymentFlowId: cardVerificationInput.paymentFlowId,
+        type: 'update',
+        occurredAt: new Date(),
+        paymentMethod: PaymentMethod.CARD,
+        reason: 'payment_failed',
+        message: `Card verification was not started because of an error: ${e.message}`,
+      })
+      throw e
+    }
+  }
+
+  @Post('/verify-callback')
+  async verificationCallback(
+    @Body() cardVerificationCallbackInput: VerificationCallbackInput,
+  ) {
+    try {
+      // Confirmed verification from user 3DS
+      const { success, paymentFlowId } =
+        await this.cardPaymentService.verifyThreeDSecureCallback(
+          cardVerificationCallbackInput,
+        )
+
+      if (!success) {
+        await this.paymentFlowService.logPaymentFlowUpdate({
+          paymentFlowId,
+          type: 'update',
+          occurredAt: new Date(),
+          paymentMethod: PaymentMethod.CARD,
+          reason: 'other',
+          message: 'Card verification callback failed',
+        })
+        return
+      }
+
+      getTempStorage().set(
+        paymentFlowId,
+        {
+          isVerified: true,
+        } as CachePaymentFlowStatus,
+        60,
+      )
+
+      await this.paymentFlowService.logPaymentFlowUpdate({
+        paymentFlowId,
+        type: 'update',
+        occurredAt: new Date(),
+        paymentMethod: PaymentMethod.CARD,
+        reason: 'other',
+        message: 'Card verification callback completed',
+      })
+    } catch (e) {
+      await this.paymentFlowService.logPaymentFlowUpdate({
+        paymentFlowId: 'unknown',
+        type: 'update',
+        occurredAt: new Date(),
+        paymentMethod: PaymentMethod.CARD,
+        reason: 'other',
+        message: `Card verification callback failed: ${e.message}`,
+      })
+    }
+  }
+
+  @Get('/verification-status/:paymentFlowId')
+  @ApiOkResponse({
+    type: VerificationStatusResponse,
+  })
+  async verificationStatus(
+    @Param() params: GetVerificationStatus,
+  ): Promise<VerificationStatusResponse> {
+    const { paymentFlowId } = params
+
+    const paymentFlowStatus = getTempStorage().get(
+      paymentFlowId,
+    ) as CachePaymentFlowStatus
+
+    return {
+      isVerified: paymentFlowStatus?.isVerified === true,
+    }
+  }
+
+  @Post('/charge')
+  @ApiOkResponse({
+    type: ChargeCardResponse,
+  })
+  async charge(
+    @Body() chargeCardInput: ChargeCardInput,
+  ): Promise<ChargeCardResponse> {
+    // Payment confirmation
+    const result = await this.cardPaymentService.charge(chargeCardInput)
+
+    await this.paymentFlowService.logPaymentFlowUpdate({
+      paymentFlowId: chargeCardInput.paymentFlowId,
+      type: 'success',
+      occurredAt: new Date(),
+      paymentMethod: PaymentMethod.CARD,
+      reason: 'payment_completed',
+      message: 'Card payment completed',
+    })
+
+    return result
+  }
+}

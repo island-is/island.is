@@ -141,26 +141,10 @@ export class PaymentFlow extends Model<
   @ApiProperty()
   @Column({
     type: DataType.STRING,
-    allowNull: false,
-    field: 'on_success_url',
-  })
-  onSuccessUrl!: string
-
-  @ApiPropertyOptional()
-  @Column({
-    type: DataType.STRING,
     allowNull: true,
     field: 'on_update_url',
   })
-  onUpdateUrl?: string
-
-  @ApiProperty()
-  @Column({
-    type: DataType.STRING,
-    allowNull: false,
-    field: 'on_error_url',
-  })
-  onErrorUrl!: string
+  onUpdateUrl!: string
 
   @ApiProperty()
   @Column({

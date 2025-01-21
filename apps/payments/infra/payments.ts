@@ -8,6 +8,7 @@ const basepath = '/greida'
 
 export const serviceSetup = (services: {
   api: ServiceBuilder<'api'>
+  paymentsApi: ServiceBuilder<'services-payments'>
 }): ServiceBuilder<'payments'> =>
   service(serviceName)
     .image(image)
@@ -15,6 +16,7 @@ export const serviceSetup = (services: {
     .env({
       BASEPATH: basepath,
       API_URL: ref((h) => `http://${h.svc(services.api)}`),
+      PAYMENTS_API_URL: ref((h) => `http://${h.svc(services.paymentsApi)}`),
     })
     .secrets({
       SI_PUBLIC_CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY',

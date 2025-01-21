@@ -1,4 +1,4 @@
-import { getTempRedisStorage } from 'apps/payments/services/payment'
+import { getPaymentsApi } from 'apps/payments/services/payment'
 import { NextApiRequest, NextApiResponse } from 'next'
 
 export default async function chargeCardHandler(
@@ -9,10 +9,19 @@ export default async function chargeCardHandler(
     return res.status(405).json({ error: 'Method Not Allowed' })
   }
 
-  const tempStorage = getTempRedisStorage()
+  const { card, amount, correlationId, paymentFlowId } = req.body
 
-  const counter = (tempStorage.get('counter') || 0) + 1
-  tempStorage.set('counter', counter)
+  const response = await getPaymentsApi().cardPaymentControllerCharge({
+    chargeCardInput: {
+      amount,
+      cardNumber: card.number,
+      cvc: card.cvc,
+      expiryMonth: card.expiryMonth,
+      expiryYear: card.expiryYear,
+      correlationId,
+      paymentFlowId,
+    },
+  })
 
-  return res.status(200).json({ success: true, counter })
+  return response
 }
