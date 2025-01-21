@@ -5,6 +5,9 @@ import { VerdictsService } from './verdicts.service'
 import { VerdictByIdResponse, VerdictsResponse } from './dto/verdicts.response'
 import { VerdictsInput } from './dto/verdicts.input'
 import { VerdictByIdInput } from './dto/verdictById.input'
+import { KeywordsResponse } from './dto/keywords.response'
+import { CaseTypesResponse } from './dto/caseTypes.response'
+import { CaseCategoriesResponse } from './dto/caseCategories.response'
 
 const defaultCache: CacheControlOptions = { maxAge: CACHE_CONTROL_MAX_AGE }
 
@@ -30,5 +33,29 @@ export class VerdictsResolver {
     @Args('input') input: VerdictByIdInput,
   ): Promise<VerdictByIdResponse | null> {
     return this.verdictsService.getVerdictById(input)
+  }
+
+  @CacheControl(defaultCache)
+  @Query(() => CaseTypesResponse, {
+    name: 'webVerdictCaseTypes',
+  })
+  async caseTypes(): Promise<CaseTypesResponse> {
+    return this.verdictsService.getCaseTypes()
+  }
+
+  @CacheControl(defaultCache)
+  @Query(() => CaseCategoriesResponse, {
+    name: 'webVerdictCaseCategories',
+  })
+  async caseCategories(): Promise<CaseCategoriesResponse> {
+    return this.verdictsService.getCaseCategories()
+  }
+
+  @CacheControl(defaultCache)
+  @Query(() => KeywordsResponse, {
+    name: 'webVerdictKeywords',
+  })
+  async keywords(): Promise<KeywordsResponse> {
+    return this.verdictsService.getKeywords()
   }
 }

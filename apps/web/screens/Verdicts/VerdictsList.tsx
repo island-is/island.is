@@ -9,24 +9,47 @@ import {
   GridContainer,
   GridRow,
   Input,
+  Select,
   Stack,
   Text,
 } from '@island.is/island-ui/core'
-import {
+import type {
+  GetVerdictCaseCategoriesQuery,
+  GetVerdictCaseCategoriesQueryVariables,
+  GetVerdictCaseTypesQuery,
+  GetVerdictCaseTypesQueryVariables,
+  GetVerdictKeywordsQuery,
+  GetVerdictKeywordsQueryVariables,
   GetVerdictsQuery,
   GetVerdictsQueryVariables,
+  WebVerdictCaseCategory,
+  WebVerdictCaseType,
+  WebVerdictKeyword,
 } from '@island.is/web/graphql/schema'
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import type { Screen } from '@island.is/web/types'
 
-import { GET_VERDICTS_QUERY } from '../queries/Verdicts'
+import {
+  GET_VERDICT_CASE_CATEGORIES_QUERY,
+  GET_VERDICT_CASE_TYPES_QUERY,
+  GET_VERDICT_KEYWORDS_QUERY,
+  GET_VERDICTS_QUERY,
+} from '../queries/Verdicts'
 
 interface VerdictsListProps {
   items: GetVerdictsQuery['webVerdicts']['items']
+  caseTypes: WebVerdictCaseType[]
+  caseCategories: WebVerdictCaseCategory[]
+  keywords: WebVerdictKeyword[]
 }
 
-const VerdictsList: Screen<VerdictsListProps> = ({ items }) => {
+const VerdictsList: Screen<VerdictsListProps> = ({
+  items,
+  caseTypes,
+  caseCategories,
+  keywords,
+}) => {
   const { format } = useDateUtils()
   const [searchTerm, setSearchTerm] = useQueryState(
     'q',
@@ -60,6 +83,38 @@ const VerdictsList: Screen<VerdictsListProps> = ({ items }) => {
               type: 'outline',
             }}
           />
+          <Stack space={3}>
+            <Select
+              label="Málategundir"
+              placeholder="Veldu tegund"
+              options={caseTypes.map((caseType) => ({
+                value: caseType.id,
+                label: caseType.label,
+              }))}
+              isMulti={true}
+              size="sm"
+            />
+            <Select
+              label="Málaflokkar"
+              placeholder="Veldu flokk"
+              options={caseCategories.map((caseType) => ({
+                value: caseType.id,
+                label: caseType.label,
+              }))}
+              isMulti={true}
+              size="sm"
+            />
+            <Select
+              label="Lykilorð"
+              placeholder="Veldu lykilorð"
+              options={keywords.map((caseType) => ({
+                value: caseType.id,
+                label: caseType.label,
+              }))}
+              isMulti={true}
+              size="sm"
+            />
+          </Stack>
           <GridRow rowGap={3}>
             {items.map((item) => (
               <GridColumn key={item.title} span="1/1">
@@ -144,20 +199,46 @@ const VerdictsList: Screen<VerdictsListProps> = ({ items }) => {
 VerdictsList.getProps = async ({ apolloClient, query }) => {
   const searchTerm = parseAsString.withDefault('').parseServerSide(query.q)
 
-  const verdictListResponse = await apolloClient.query<
-    GetVerdictsQuery,
-    GetVerdictsQueryVariables
-  >({
-    query: GET_VERDICTS_QUERY,
-    variables: {
-      input: {
-        searchTerm,
+  const [
+    verdictListResponse,
+    caseTypesResponse,
+    caseCategoriesResponse,
+    keywordsResponse,
+  ] = await Promise.all([
+    apolloClient.query<GetVerdictsQuery, GetVerdictsQueryVariables>({
+      query: GET_VERDICTS_QUERY,
+      variables: {
+        input: {
+          searchTerm,
+        },
       },
-    },
-  })
+    }),
+    apolloClient.query<
+      GetVerdictCaseTypesQuery,
+      GetVerdictCaseTypesQueryVariables
+    >({
+      query: GET_VERDICT_CASE_TYPES_QUERY,
+    }),
+    apolloClient.query<
+      GetVerdictCaseCategoriesQuery,
+      GetVerdictCaseCategoriesQueryVariables
+    >({
+      query: GET_VERDICT_CASE_CATEGORIES_QUERY,
+    }),
+    apolloClient.query<
+      GetVerdictKeywordsQuery,
+      GetVerdictKeywordsQueryVariables
+    >({
+      query: GET_VERDICT_KEYWORDS_QUERY,
+    }),
+  ])
 
   return {
     items: verdictListResponse.data.webVerdicts.items,
+    caseTypes: caseTypesResponse.data.webVerdictCaseTypes.caseTypes,
+    caseCategories:
+      caseCategoriesResponse.data.webVerdictCaseCategories.caseCategories,
+    keywords: keywordsResponse.data.webVerdictKeywords.keywords,
   }
 }
 

@@ -21,10 +21,18 @@ export class VerdictsService {
   async getVerdictById(
     input: VerdictByIdInput,
   ): Promise<VerdictByIdResponse | null> {
-    const response = await this.verdictsClientService.getSingleVerdictById(
-      input.id,
-    )
+    return this.verdictsClientService.getSingleVerdictById(input.id)
+  }
 
-    return response
+  async getCaseTypes() {
+    return this.verdictsClientService.getCaseTypes()
+  }
+
+  async getCaseCategories() {
+    return this.verdictsClientService.getCaseCategories()
+  }
+
+  async getKeywords() {
+    return this.verdictsClientService.getKeywords()
   }
 }

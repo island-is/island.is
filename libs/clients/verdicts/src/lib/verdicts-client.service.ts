@@ -1,10 +1,17 @@
 import { Injectable } from '@nestjs/common'
 
+import { isDefined } from '@island.is/shared/utils'
 import {
   GetVerdictsOperationRequest,
   VerdictApi,
   type DetailedVerdictData,
 } from '../../gen/fetch/'
+
+const filterIdAndLabel = (entity?: {
+  id?: number
+  label?: string
+}): entity is { id: number; label: string } =>
+  isDefined(entity?.id) && Boolean(entity?.label)
 
 @Injectable()
 export class VerdictsClientService {
@@ -32,21 +39,23 @@ export class VerdictsClientService {
 
     return {
       items: (
-        (response.items?.filter(
-          (item) =>
+        response.items?.filter(
+          (
+            item,
+          ): item is DetailedVerdictData & {
+            id: string
+            title: string
+            court: string
+            caseNumber: string
+            verdictDate: Date
+            presentings?: string
+          } =>
             Boolean(item.id) &&
             Boolean(item.title) &&
             Boolean(item.court) &&
             Boolean(item.caseNumber) &&
             Boolean(item.verdictDate),
-        ) ?? []) as (DetailedVerdictData & {
-          id: string
-          title: string
-          court: string
-          caseNumber: string
-          verdictDate: Date
-          presentings?: string
-        })[]
+        ) ?? []
       ).map((item) => ({
         id: item.id,
         title: item.title,
@@ -77,6 +86,27 @@ export class VerdictsClientService {
       item: {
         content,
       },
+    }
+  }
+
+  async getCaseTypes() {
+    const response = await this.verdictApi.getCaseTypes({})
+    return {
+      caseTypes: response.items?.filter(filterIdAndLabel) ?? [],
+    }
+  }
+
+  async getCaseCategories() {
+    const response = await this.verdictApi.getCaseCategories({})
+    return {
+      caseCategories: response.items?.filter(filterIdAndLabel) ?? [],
+    }
+  }
+
+  async getKeywords() {
+    const response = await this.verdictApi.getKeywords({})
+    return {
+      keywords: response.items?.filter(filterIdAndLabel) ?? [],
     }
   }
 }
