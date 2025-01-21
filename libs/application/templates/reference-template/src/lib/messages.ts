@@ -139,7 +139,7 @@ export const m = defineMessages({
   markdownHeadingExample: {
     id: 'example.application:markdownHeadingExample#markdown',
     defaultMessage:
-      '# Markdown heading 1\n ## Markdown heading 2\n ### Markdown heading 3\n #### Markdown heading 4\n Regular markdown text',
+      '# Markdown heading 1  \n ## Markdown heading 2\n ### Markdown heading 3\n #### Markdown heading 4\n Regular markdown text',
     description: 'Example use of markdown',
   },
   markdownBulletListExample: {
