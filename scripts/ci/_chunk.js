@@ -2,9 +2,11 @@
 
 const chunkSize = parseInt(process.env['CHUNK_SIZE'] || '2')
 const disableChunks = process.env['DISABLE_CHUNKS'] === 'true'
+const disableProblematic = process.env['DISABLE_PROBLEMATIC'] === 'true'
 new console.Console(process.stderr).log(`Initial settings:`, {
   chunkSize,
   disableChunks,
+  disableProblematic,
 })
 
 const projects = process.argv[2].split(',').map((s) => s.trim()) ?? []
@@ -39,15 +41,24 @@ function chunk(arr, size) {
   return chunks
 }
 
-// Projects which require running solo due to timelimits
-const soloProjects = problematicProjects.filter((p) => projects.includes(p))
-new console.Console(process.stderr).log(`Solo projects:`, soloProjects)
+let soloProjects = []
+let filteredProjects = projects
 
-const filteredProjects = projects.filter((p) => !soloProjects.includes(p))
-new console.Console(process.stderr).log(
-  `Filtered projects (excluding solo projects):`,
-  filteredProjects,
-)
+if (!disableProblematic) {
+  // Projects which require running solo due to timelimits
+  soloProjects = problematicProjects.filter((p) => projects.includes(p))
+  new console.Console(process.stderr).log(`Solo projects:`, soloProjects)
+
+  filteredProjects = projects.filter((p) => !soloProjects.includes(p))
+  new console.Console(process.stderr).log(
+    `Filtered projects (excluding solo projects):`,
+    filteredProjects,
+  )
+} else {
+  new console.Console(process.stderr).log(
+    `Problematic project handling disabled. Processing all projects together.`,
+  )
+}
 
 const chunkedProjects = chunk(filteredProjects, chunkSize)
 new console.Console(process.stderr).log(`Chunked projects:`, chunkedProjects)
@@ -55,14 +66,16 @@ new console.Console(process.stderr).log(`Chunked projects:`, chunkedProjects)
 const chunksJoined = chunkedProjects.map((chunk) => chunk.join(','))
 new console.Console(process.stderr).log(`Chunks joined:`, chunksJoined)
 
-const chunksWithSolos = chunksJoined.concat(soloProjects)
-new console.Console(process.stderr).log(
-  `Chunks with solo projects added:`,
-  chunksWithSolos,
-)
+const finalChunks = disableProblematic
+  ? chunksJoined
+  : chunksJoined.concat(soloProjects)
+new console.Console(process.stderr).log(`Final chunks:`, finalChunks)
 
-const finalChunks = chunksWithSolos.sort()
-new console.Console(process.stderr).log(`Final sorted chunks:`, finalChunks)
+const sortedFinalChunks = finalChunks.sort()
+new console.Console(process.stderr).log(
+  `Final sorted chunks:`,
+  sortedFinalChunks,
+)
 
 new console.Console(process.stderr).log(`Chunk debug:`, {
   projects,
@@ -70,10 +83,11 @@ new console.Console(process.stderr).log(`Chunk debug:`, {
   filteredProjects,
   chunkedProjects,
   chunksJoined,
-  chunksWithSolos,
   finalChunks,
+  sortedFinalChunks,
   disableChunks,
+  disableProblematic,
 })
 
 // Only write the final JSON output to stdout
-console.log(JSON.stringify(finalChunks))
+console.log(JSON.stringify(sortedFinalChunks))

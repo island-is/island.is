@@ -133,6 +133,7 @@ jobs:
         id: lint_projects
         env:
           DISABLE_CHUNKS: 'true'
+          DISABLE_PROBLEMATIC: 'true'
         run: |
           set -euo pipefail
           echo "DISABLE_CHUNKS: $DISABLE_CHUNKS"
