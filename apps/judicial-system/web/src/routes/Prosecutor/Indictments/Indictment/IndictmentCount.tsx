@@ -841,6 +841,8 @@ export const IndictmentCount: FC<Props> = ({
                         recordedSpeed,
                       })
                     }}
+                    errorMessage={recordedSpeedErrorMessage}
+                    hasError={recordedSpeedErrorMessage !== ''}
                   />
                 </Box>
                 <Box flexGrow={1}>
@@ -871,13 +873,15 @@ export const IndictmentCount: FC<Props> = ({
                       validateAndSetErrorMessage(
                         ['empty'],
                         speedLimit,
-                        setRecordedSpeedErrorMessage,
+                        setSpeedLimitErrorMessage,
                       )
 
                       handleIndictmentCountChanges({
                         speedLimit,
                       })
                     }}
+                    errorMessage={speedLimitErrorMessage}
+                    hasError={speedLimitErrorMessage !== ''}
                   />
                 </Box>
               </Box>
