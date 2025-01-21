@@ -53,20 +53,14 @@ export const DelegationsScreen = ({
   const { switchUser, userInfo: user } = useAuth()
   const featureFlagClient: FeatureFlagClient = useFeatureFlagClient()
   const navigate = useNavigate()
-
   const [searchParams] = useSearchParams()
-
-  console.log('searchParams', searchParams)
 
   const paramArray: string[] = []
 
   searchParams.forEach((value, key) => {
     paramArray.push(`&${key}=${value}`)
   })
-
   const paramString = paramArray.join('')
-
-  console.log('paramString', paramString)
 
   // Check for user delegations if application supports delegations
   const { data: delegations, error } = useQuery(ACTOR_DELEGATIONS, {
