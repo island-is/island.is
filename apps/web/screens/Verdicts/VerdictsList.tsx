@@ -152,6 +152,7 @@ const VerdictsList: Screen<VerdictsListProps> = ({
             value={searchTerm}
             onChange={(ev) => {
               setSearchTerm(ev.target.value)
+              setPage(1)
             }}
             name="verdict-search-input"
             backgroundColor="blue"
@@ -171,6 +172,7 @@ const VerdictsList: Screen<VerdictsListProps> = ({
               size="sm"
               onChange={(newValue) => {
                 setCaseTypeIds(newValue.map(({ value }) => value))
+                setPage(1)
               }}
             />
             <Select
@@ -181,6 +183,7 @@ const VerdictsList: Screen<VerdictsListProps> = ({
               size="sm"
               onChange={(newValue) => {
                 setCaseCategoryIds(newValue.map(({ value }) => value))
+                setPage(1)
               }}
             />
             <Select
@@ -191,6 +194,7 @@ const VerdictsList: Screen<VerdictsListProps> = ({
               size="sm"
               onChange={(newValue) => {
                 setKeywordIds(newValue.map(({ value }) => value))
+                setPage(1)
               }}
             />
           </Stack>
