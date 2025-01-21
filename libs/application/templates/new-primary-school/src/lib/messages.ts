@@ -225,8 +225,9 @@ export const newPrimarySchoolMessages: MessageDir = {
     childInfoDescription: {
       id: 'nps.application:childrenNParents.child.info.description',
       defaultMessage:
-        'Athugaðu hvort upplýsingarnar séu réttar áður en þú heldur áfram.',
-      description: 'Check that the information is correct before proceeding.',
+        'Upplýsingar um barn eru sóttar í Þjóðskrá. Athugaðu hvort upplýsingarnar séu réttar áður en þú heldur áfram.',
+      description:
+        'Information about the child is retrieved from the National Registry. Check that the information is correct before proceeding.',
     },
     childInfoPreferredName: {
       id: 'nps.application:childrenNParents.child.info.preferred.name',
