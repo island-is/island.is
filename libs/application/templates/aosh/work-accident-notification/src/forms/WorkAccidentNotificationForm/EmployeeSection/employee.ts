@@ -21,6 +21,8 @@ import {
 import { getAllCountryCodes } from '@island.is/shared/utils'
 import { getMaxDate, getMinDate } from '../../../utils'
 import { EMPLOYMENT_STATUS } from '../../../shared/constants'
+import { FormValue } from '@island.is/application/types'
+import { BffUser } from '@island.is/shared/types'
 
 export const employeeSubSection = (index: number) =>
   buildSubSection({
@@ -61,6 +63,23 @@ export const employeeSubSection = (index: number) =>
             id: `employee[${index}].nationalField`,
             required: true,
             title: '',
+          }),
+          buildAlertMessageField({
+            id: `employee[${index}].warningMessageField`,
+            title: '',
+            alertType: 'warning',
+            message: employee.employee.samePersonAlert,
+            condition: (formValue: FormValue, _, user: BffUser | null) => {
+              const actorNationalId = user?.profile.actor?.nationalId
+                ? user?.profile.actor?.nationalId
+                : user?.profile.nationalId
+              const employeeNationalId = getValueViaPath<string>(
+                formValue,
+                `employee[${index}].nationalField.nationalId`,
+              )
+
+              return actorNationalId === employeeNationalId
+            },
           }),
           buildTextField({
             id: `employee[${index}].address`,
