@@ -18,6 +18,7 @@ import {
   RenderFiles,
 } from '@island.is/judicial-system-web/src/components'
 import { CaseFileCategory } from '@island.is/judicial-system-web/src/graphql/schema'
+import { isEmptyArray, isNonEmptyArray } from '@island.is/judicial-system-web/src/utils/arrayHelpers'
 import {
   useDefendants,
   useFileList,
@@ -57,6 +58,13 @@ const IndictmentOverview = () => {
   const hasPunishmentType = (punishmentType: PunishmentType) =>
     defendant?.punishmentType === punishmentType
 
+  const rulingFiles = workingCase.caseFiles?.filter(
+    (file) => file.category === CaseFileCategory.RULING,
+  ) 
+  const courtRecordFiles = isEmptyArray(rulingFiles) ? workingCase.caseFiles?.filter(
+    (file) => file.category === CaseFileCategory.COURT_RECORD,
+  ) : []
+
   return (
     <PageLayout workingCase={workingCase} isLoading={false} notFound={false}>
       <PageHeader title={formatMessage(strings.htmlTitle)} />
@@ -94,14 +102,12 @@ const IndictmentOverview = () => {
         </Box>
         <Box marginBottom={5}>
           <Text variant="h4" as="h4" marginBottom={1}>
-            {formatMessage(strings.verdictTitle)}
+            {formatMessage(isNonEmptyArray(rulingFiles) ? strings.verdictTitle : strings.courtRecordTitle)}
           </Text>
           <RenderFiles
             onOpenFile={onOpen}
             caseFiles={
-              workingCase.caseFiles?.filter(
-                (file) => file.category === CaseFileCategory.RULING,
-              ) || []
+              (isEmptyArray(rulingFiles) ? courtRecordFiles : rulingFiles) || []
             }
           />
         </Box>
