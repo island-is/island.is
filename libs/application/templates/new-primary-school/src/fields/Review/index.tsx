@@ -24,6 +24,7 @@ import { Parents } from './review-groups/Parents'
 import { ReasonForApplication } from './review-groups/ReasonForApplication'
 import { Contacts } from './review-groups/Contacts'
 import { School } from './review-groups/School'
+import { CurrentSchool } from './review-groups/CurrentSchool'
 import { Siblings } from './review-groups/Siblings'
 import { Support } from './review-groups/Support'
 
@@ -158,6 +159,7 @@ export const Review: FC<ReviewScreenProps> = ({
       <Child {...childProps} />
       <Parents {...childProps} />
       <Contacts {...childProps} />
+      <CurrentSchool {...childProps} />
       <ReasonForApplication {...childProps} />
       {reasonForApplication !== ReasonForApplicationOptions.MOVING_ABROAD && (
         <>

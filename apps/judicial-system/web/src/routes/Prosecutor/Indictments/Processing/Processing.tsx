@@ -10,15 +10,10 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
-import {
-  Feature,
-  isTrafficViolationCase,
-} from '@island.is/judicial-system/types'
 import { core, titles } from '@island.is/judicial-system-web/messages'
 import {
   BlueBox,
   CommentsInput,
-  FeatureContext,
   FormContentContainer,
   FormContext,
   FormFooter,
@@ -69,7 +64,6 @@ const Processing: FC = () => {
     isCaseUpToDate,
     refreshCase,
   } = useContext(FormContext)
-  const { features } = useContext(FeatureContext)
   const { updateCase, transitionCase, setAndSendCaseToServer } = useCase()
   const { formatMessage } = useIntl()
   const { setAndSendDefendantToServer } = useDefendants()
@@ -82,10 +76,6 @@ const Processing: FC = () => {
   } = useCivilClaimants()
   const router = useRouter()
 
-  // TODO: currently for e2e tests, this is failing locally due to this feature flag
-  const isTrafficViolationCaseCheck =
-    features.includes(Feature.MULTIPLE_INDICTMENT_SUBTYPES) ||
-    isTrafficViolationCase(workingCase)
   const [civilClaimantNationalIdUpdate, setCivilClaimantNationalIdUpdate] =
     useState<{ nationalId: string | null; civilClaimantId: string }>()
   const [hasCivilClaimantChoice, setHasCivilClaimantChoice] =
@@ -693,13 +683,7 @@ const Processing: FC = () => {
           nextButtonIcon="arrowForward"
           previousUrl={`${constants.INDICTMENTS_CASE_FILE_ROUTE}/${workingCase.id}`}
           nextIsDisabled={!stepIsValid}
-          onNextButtonClick={() =>
-            handleNavigationTo(
-              isTrafficViolationCaseCheck
-                ? constants.INDICTMENTS_TRAFFIC_VIOLATION_ROUTE
-                : constants.INDICTMENTS_CASE_FILES_ROUTE,
-            )
-          }
+          nextUrl={`${constants.INDICTMENTS_INDICTMENT_ROUTE}/${workingCase.id}`}
         />
       </FormContentContainer>
     </PageLayout>

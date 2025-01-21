@@ -1,5 +1,5 @@
 import { Dispatch, FC, SetStateAction, useContext, useState } from 'react'
-import { MessageDescriptor, useIntl } from 'react-intl'
+import { useIntl } from 'react-intl'
 
 import { Box, RadioButton, Text, Tooltip } from '@island.is/island-ui/core'
 import {

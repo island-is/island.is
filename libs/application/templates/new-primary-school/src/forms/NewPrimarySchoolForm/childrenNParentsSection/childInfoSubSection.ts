@@ -1,7 +1,5 @@
 import {
-  buildActionCardListField,
   buildCustomField,
-  buildDescriptionField,
   buildMultiField,
   buildRadioField,
   buildSubSection,
@@ -13,8 +11,6 @@ import { newPrimarySchoolMessages } from '../../../lib/messages'
 import {
   getApplicationAnswers,
   getApplicationExternalData,
-  formatGrade,
-  getCurrentSchoolName,
 } from '../../../lib/newPrimarySchoolUtils'
 
 export const childInfoSubSection = buildSubSection({
@@ -136,40 +132,6 @@ export const childInfoSubSection = buildSubSection({
             const { differentPlaceOfResidence } = getApplicationAnswers(answers)
 
             return differentPlaceOfResidence === YES
-          },
-        }),
-        buildDescriptionField({
-          id: 'childInfo.currentSchool.title',
-          title: newPrimarySchoolMessages.overview.currentSchool,
-          titleVariant: 'h4',
-          space: 2,
-        }),
-        buildActionCardListField({
-          id: 'childInfo.currentSchool',
-          title: '',
-          doesNotRequireAnswer: true,
-          marginTop: 2,
-          items: (application, lang) => {
-            const { childGradeLevel } = getApplicationExternalData(
-              application.externalData,
-            )
-
-            const currentSchool = getCurrentSchoolName(application)
-
-            return [
-              {
-                heading: currentSchool,
-                headingVariant: 'h4',
-                tag: {
-                  label: {
-                    ...newPrimarySchoolMessages.overview.currentGrade,
-                    values: { grade: formatGrade(childGradeLevel, lang) },
-                  },
-                  outlined: true,
-                  variant: 'blue',
-                },
-              },
-            ]
           },
         }),
       ],
