@@ -149,7 +149,7 @@ describe('transformCase', () => {
     it('should be true when the appeal window has closed', () => {
       // Arrange
       const rulingDate = new Date()
-      rulingDate.setDate(rulingDate.getDate() - 3)
+      rulingDate.setDate(rulingDate.getDate() - 4)
       const theCase = {
         type: CaseType.CUSTODY,
         rulingDate: rulingDate.toISOString(),
@@ -339,6 +339,7 @@ describe('transformCase', () => {
         } as Case
 
         const appealInfo = transformCase(theCase)
+        console.log({appealInfo})
 
         expect(appealInfo).toEqual(
           expect.objectContaining({
@@ -540,8 +541,8 @@ describe('getAppealInfo', () => {
     expect(appealInfo).toEqual({})
   })
 
-  it('should return not return appealedDate if case has not been appealed', () => {
-    const rulingDate = new Date().toISOString()
+  it('should not return appealedDate if case has not been appealed', () => {
+    const rulingDate = '2022-06-15T19:50:08.033Z'
     const theCase = {
       type: CaseType.CUSTODY,
       rulingDate,
@@ -551,22 +552,20 @@ describe('getAppealInfo', () => {
       accusedPostponedAppealDate: '2022-06-15T19:50:08.033Z',
       prosecutorPostponedAppealDate: '2022-06-15T19:50:08.033Z',
     } as Case
-
+  
     const appealInfo = getAppealInfo(theCase)
 
     expect(appealInfo).toEqual({
       canBeAppealed: true,
       hasBeenAppealed: false,
-      appealDeadline: new Date(
-        new Date(rulingDate).setDate(new Date(rulingDate).getDate() + 3),
-      ).toISOString(),
+      appealDeadline: '2022-06-18T23:59:59.999Z',
       canDefenderAppeal: true,
       canProsecutorAppeal: true,
     })
   })
 
   it('should return correct appeal info when ruling date is provided', () => {
-    const rulingDate = new Date().toISOString()
+    const rulingDate = '2022-06-15T19:50:08.033Z'
     const theCase = {
       type: CaseType.CUSTODY,
       rulingDate,
@@ -608,7 +607,7 @@ describe('getAppealInfo', () => {
       canBeAppealed: false,
       hasBeenAppealed: false,
       appealedDate: undefined,
-      appealDeadline: '2022-06-18T19:50:08.033Z',
+      appealDeadline: '2022-06-18T23:59:59.999Z',
       canDefenderAppeal: false,
       canProsecutorAppeal: false,
     })
@@ -667,7 +666,7 @@ describe('getIndictmentInfo', () => {
   })
 
   it('should return correct indictment info when ruling date is provided', () => {
-    const rulingDate = new Date().toISOString()
+    const rulingDate = '2022-06-15T19:50:08.033Z'
 
     const indictmentInfo = getIndictmentInfo(
       CaseIndictmentRulingDecision.RULING,
@@ -675,18 +674,16 @@ describe('getIndictmentInfo', () => {
     )
 
     expect(indictmentInfo).toEqual({
-      indictmentAppealDeadline: new Date(
-        new Date(rulingDate).setDate(new Date(rulingDate).getDate() + 28),
-      ).toISOString(),
+      indictmentAppealDeadline: '2022-07-13T23:59:59.999Z',
       indictmentVerdictViewedByAll: true,
       indictmentVerdictAppealDeadlineExpired: true,
     })
   })
 
   it('should return correct indictment info when some defendants have yet to view the verdict', () => {
-    const rulingDate = new Date().toISOString()
+    const rulingDate = '2022-06-14T19:50:08.033Z'
     const defendants = [
-      { verdictViewDate: new Date().toISOString() } as Defendant,
+      { verdictViewDate: '2022-06-15T19:50:08.033Z' } as Defendant,
       { verdictViewDate: undefined } as Defendant,
     ]
 
@@ -697,18 +694,16 @@ describe('getIndictmentInfo', () => {
     )
 
     expect(indictmentInfo).toEqual({
-      indictmentAppealDeadline: new Date(
-        new Date(rulingDate).setDate(new Date(rulingDate).getDate() + 28),
-      ).toISOString(),
+      indictmentAppealDeadline:  '2022-07-12T23:59:59.999Z',
       indictmentVerdictViewedByAll: false,
       indictmentVerdictAppealDeadlineExpired: false,
     })
   })
 
   it('should return correct indictment info when no defendants have yet to view the verdict', () => {
-    const rulingDate = new Date().toISOString()
+    const rulingDate = '2022-06-14T19:50:08.033Z'
     const defendants = [
-      { verdictViewDate: new Date().toISOString() } as Defendant,
+      { verdictViewDate: '2022-06-15T19:50:08.033Z' } as Defendant,
       {
         serviceRequirement: ServiceRequirement.NOT_REQUIRED,
         verdictViewDate: undefined,
@@ -722,16 +717,14 @@ describe('getIndictmentInfo', () => {
     )
 
     expect(indictmentInfo).toEqual({
-      indictmentAppealDeadline: new Date(
-        new Date(rulingDate).setDate(new Date(rulingDate).getDate() + 28),
-      ).toISOString(),
+      indictmentAppealDeadline: '2022-07-12T23:59:59.999Z',
       indictmentVerdictViewedByAll: true,
       indictmentVerdictAppealDeadlineExpired: false,
     })
   })
 
   it('should return correct indictment info when the indictment ruling decision is FINE and the appeal deadline is not expired', () => {
-    const rulingDate = new Date().toISOString()
+    const rulingDate = new Date()
     const defendants = [
       {
         serviceRequirement: ServiceRequirement.NOT_REQUIRED,
@@ -741,14 +734,13 @@ describe('getIndictmentInfo', () => {
 
     const indictmentInfo = getIndictmentInfo(
       CaseIndictmentRulingDecision.FINE,
-      rulingDate,
+      rulingDate.toISOString(),
       defendants,
     )
 
+    const expectedAppealDeadline = new Date(rulingDate.getFullYear(),rulingDate.getMonth(), rulingDate.getDate() + 3, 23, 59, 59, 999)
     expect(indictmentInfo).toEqual({
-      indictmentAppealDeadline: new Date(
-        new Date(rulingDate).setDate(new Date(rulingDate).getDate() + 3),
-      ).toISOString(),
+      indictmentAppealDeadline: expectedAppealDeadline.toISOString(),
       indictmentVerdictViewedByAll: true,
       indictmentVerdictAppealDeadlineExpired: false,
     })
@@ -770,9 +762,7 @@ describe('getIndictmentInfo', () => {
     )
 
     expect(indictmentInfo).toEqual({
-      indictmentAppealDeadline: new Date(
-        new Date(rulingDate).setDate(new Date(rulingDate).getDate() + 3),
-      ).toISOString(),
+      indictmentAppealDeadline: '2024-05-29T23:59:59.999Z',
       indictmentVerdictViewedByAll: true,
       indictmentVerdictAppealDeadlineExpired: true,
     })
@@ -799,7 +789,7 @@ describe('getIndictmentDefendantsInfo', () => {
       {
         verdictViewDate: '2022-06-15T19:50:08.033Z',
         serviceRequirement: ServiceRequirement.REQUIRED,
-        verdictAppealDeadline: '2022-07-13T19:50:08.033Z',
+        verdictAppealDeadline: '2022-07-13T23:59:59.999Z',
         isVerdictAppealDeadlineExpired: true,
       },
       {
