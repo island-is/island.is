@@ -23,7 +23,6 @@ export interface TeamListProps {
     email?: string
     phone?: string
   }
-  orderBy?: 'name' | 'manual'
   teamMembers: {
     title: string
     name: string
