@@ -31,6 +31,11 @@ export const strings = defineMessages({
     defaultMessage: 'Dómur',
     description: 'Titill á Dómur hluta',
   },
+  courtRecordTitle : {
+    id: 'judicial.system.core:indictment_overview.court_record_title',
+    defaultMessage: 'Þingbók',
+    description: 'Titill á Þingbók hluta',
+  },
   punishmentTypeTitle: {
     id: 'judicial.system.core:indictment_overview.punishment_type_title',
     defaultMessage: 'Refsitegund',
