@@ -1,4 +1,4 @@
-import { getIndictmentDeadlineDate, hasDatePassed } from './dates'
+import { getAppealDeadlineDate, hasDatePassed } from './dates'
 
 /*
   This function takes an array of verdict info tuples:
@@ -32,7 +32,7 @@ export const getIndictmentVerdictAppealDeadlineStatus = (
     (newest, [_, current]) => (current && current > newest ? current : newest),
     new Date(0),
   )
-  const deadline = getIndictmentDeadlineDate({
+  const deadline = getAppealDeadlineDate({
     baseDate: newestViewDate,
     isFine,
   })

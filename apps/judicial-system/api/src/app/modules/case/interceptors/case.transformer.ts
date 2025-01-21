@@ -1,5 +1,5 @@
 import {
-  getIndictmentDeadlineDate,
+  getAppealDeadlineDate,
   hasDatePassed,
 } from '@island.is/judicial-system/types'
 import {
@@ -95,7 +95,7 @@ export const getAppealInfo = (theCase: Case): AppealInfo => {
   )
 
   const theRulingDate = new Date(rulingDate)
-  appealInfo.appealDeadline = getIndictmentDeadlineDate({
+  appealInfo.appealDeadline = getAppealDeadlineDate({
     baseDate: theRulingDate,
     isFine: true,
   }).toISOString()
@@ -124,7 +124,7 @@ const transformRequestCase = (theCase: Case): Case => {
     isClosedCourtHidden: theCase.isClosedCourtHidden ?? false,
     isHeightenedSecurityLevel: theCase.isHeightenedSecurityLevel ?? false,
     isValidToDateInThePast: theCase.validToDate
-      ? Date.now() > new Date(theCase.validToDate).getTime()
+      ? hasDatePassed(new Date(theCase.validToDate))
       : theCase.isValidToDateInThePast,
 
     // TODO: Move remaining appeal fields to appealInfo
@@ -162,7 +162,7 @@ export const getIndictmentInfo = (
   }
 
   const theRulingDate = new Date(rulingDate)
-  const indictmentAppealDeadline = getIndictmentDeadlineDate({
+  const indictmentAppealDeadline = getAppealDeadlineDate({
     baseDate: theRulingDate,
     isFine,
   }).toISOString()
@@ -206,7 +206,7 @@ export const getIndictmentDefendantsInfo = (theCase: Case) => {
 
     const baseDate = serviceRequired ? verdictViewDate : theCase.rulingDate
     const verdictAppealDeadline = baseDate
-      ? getIndictmentDeadlineDate({ baseDate: new Date(baseDate), isFine })
+      ? getAppealDeadlineDate({ baseDate: new Date(baseDate), isFine })
       : undefined
     const isVerdictAppealDeadlineExpired =
       verdictAppealDeadline && hasDatePassed(verdictAppealDeadline)

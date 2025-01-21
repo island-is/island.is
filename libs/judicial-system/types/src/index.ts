@@ -104,7 +104,7 @@ export {
 
 export { getIndictmentVerdictAppealDeadlineStatus } from './lib/indictmentCase'
 
-export { getIndictmentDeadlineDate, hasDatePassed } from './lib/dates'
+export { getAppealDeadlineDate, hasDatePassed } from './lib/dates'
 
 export type {
   CrimeScene,

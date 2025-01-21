@@ -7,7 +7,7 @@ const setEndOfDay = (date: Date) => new Date(date.setHours(23, 59, 59, 999))
 
 export const hasDatePassed = (deadline: Date) => Date.now() > deadline.getTime()
 
-export const getIndictmentDeadlineDate = ({
+export const getAppealDeadlineDate = ({
   baseDate,
   isFine,
 }: {

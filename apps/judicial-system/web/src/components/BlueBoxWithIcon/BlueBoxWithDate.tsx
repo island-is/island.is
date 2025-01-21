@@ -13,7 +13,7 @@ import {
 } from '@island.is/island-ui/core'
 import { PUBLIC_PROSECUTOR_STAFF_INDICTMENT_SEND_TO_PRISON_ADMIN_ROUTE } from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
-import { getIndictmentDeadlineDate } from '@island.is/judicial-system/types'
+import { getAppealDeadlineDate } from '@island.is/judicial-system/types'
 import { core, errors } from '@island.is/judicial-system-web/messages'
 
 import {
@@ -136,12 +136,11 @@ const BlueBoxWithDate: FC<Props> = (props) => {
     )
   }
 
-  // TODO
   const appealExpirationInfo = useMemo(() => {
     const deadline =
       defendant.verdictAppealDeadline ||
       (dates.verdictViewDate &&
-        getIndictmentDeadlineDate({
+        getAppealDeadlineDate({
           baseDate: dates.verdictViewDate,
           isFine: false,
         }).toISOString())
