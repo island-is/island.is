@@ -343,7 +343,7 @@ describe('transformCase', () => {
         expect(appealInfo).toEqual(
           expect.objectContaining({
             canBeAppealed: true,
-            appealDeadline: '2022-06-18T19:50:08.033Z',
+            appealDeadline: '2022-06-18T23:59:59.999Z',
             hasBeenAppealed: false,
           }),
         )
@@ -383,7 +383,7 @@ describe('transformCase', () => {
         expect(appealInfo).toEqual(
           expect.objectContaining({
             canBeAppealed: true,
-            appealDeadline: '2022-06-18T19:50:08.033Z',
+            appealDeadline: '2022-06-18T23:59:59.999Z',
             hasBeenAppealed: false,
           }),
         )
@@ -460,7 +460,7 @@ describe('transformCase', () => {
 
       expect(appealInfo).toEqual(
         expect.objectContaining({
-          appealDeadline: '2022-06-18T19:50:08.033Z',
+          appealDeadline: '2022-06-18T23:59:59.999Z',
           canBeAppealed: true,
           hasBeenAppealed: false,
         }),
@@ -479,7 +479,7 @@ describe('transformCase', () => {
 
       expect(appealInfo).toEqual(
         expect.objectContaining({
-          appealDeadline: '2022-06-18T19:50:08.033Z',
+          appealDeadline: '2022-06-18T23:59:59.999Z',
           canBeAppealed: false,
           hasBeenAppealed: false,
         }),
@@ -584,9 +584,7 @@ describe('getAppealInfo', () => {
       hasBeenAppealed: true,
       appealedByRole: UserRole.DEFENDER,
       appealedDate: '2022-06-15T19:50:08.033Z',
-      appealDeadline: new Date(
-        new Date(rulingDate).setDate(new Date(rulingDate).getDate() + 3),
-      ).toISOString(),
+      appealDeadline: '2022-06-18T23:59:59.999Z',
       statementDeadline: '2021-06-16T19:50:08.033Z',
       canDefenderAppeal: false,
       canProsecutorAppeal: false,

@@ -1,14 +1,16 @@
 import {
+  getIndictmentDeadlineDate,
+  hasDatePassed,
+} from '@island.is/judicial-system/types'
+import {
   CaseAppealDecision,
   CaseIndictmentRulingDecision,
   EventType,
-  FINE_APPEAL_WINDOW_DAYS,
   getIndictmentVerdictAppealDeadlineStatus,
   getStatementDeadline,
   isRequestCase,
   ServiceRequirement,
   UserRole,
-  VERDICT_APPEAL_WINDOW_DAYS,
 } from '@island.is/judicial-system/types'
 
 import { Defendant } from '../../defendant'
@@ -93,9 +95,10 @@ export const getAppealInfo = (theCase: Case): AppealInfo => {
   )
 
   const theRulingDate = new Date(rulingDate)
-  appealInfo.appealDeadline = new Date(
-    theRulingDate.getTime() + getDays(3),
-  ).toISOString()
+  appealInfo.appealDeadline = getIndictmentDeadlineDate({
+    baseDate: theRulingDate,
+    isFine: true,
+  }).toISOString()
 
   appealInfo.canProsecutorAppeal =
     !hasBeenAppealed && isAppealableDecision(prosecutorAppealDecision)
@@ -126,7 +129,7 @@ const transformRequestCase = (theCase: Case): Case => {
 
     // TODO: Move remaining appeal fields to appealInfo
     isAppealDeadlineExpired: appealInfo.appealDeadline
-      ? Date.now() >= new Date(appealInfo.appealDeadline).getTime()
+      ? hasDatePassed(new Date(appealInfo.appealDeadline))
       : false,
     isAppealGracePeriodExpired: theCase.rulingDate
       ? Date.now() >= new Date(theCase.rulingDate).getTime() + getDays(31)
@@ -151,19 +154,18 @@ export const getIndictmentInfo = (
   defendants?: Defendant[],
   eventLog?: EventLog[],
 ): IndictmentInfo => {
-  const indictmentInfo: IndictmentInfo = {}
   const isFine = rulingDecision === CaseIndictmentRulingDecision.FINE
   const isRuling = rulingDecision === CaseIndictmentRulingDecision.RULING
 
   if (!rulingDate) {
-    return indictmentInfo
+    return {}
   }
 
   const theRulingDate = new Date(rulingDate)
-  indictmentInfo.indictmentAppealDeadline = new Date(
-    theRulingDate.getTime() +
-      getDays(isFine ? FINE_APPEAL_WINDOW_DAYS : VERDICT_APPEAL_WINDOW_DAYS),
-  ).toISOString()
+  const indictmentAppealDeadline = getIndictmentDeadlineDate({
+    baseDate: theRulingDate,
+    isFine,
+  }).toISOString()
 
   const verdictInfo = defendants?.map<[boolean, Date | undefined]>(
     (defendant) => [
@@ -180,15 +182,17 @@ export const getIndictmentInfo = (
 
   const [indictmentVerdictViewedByAll, indictmentVerdictAppealDeadlineExpired] =
     getIndictmentVerdictAppealDeadlineStatus(verdictInfo, isFine)
-  indictmentInfo.indictmentVerdictViewedByAll = indictmentVerdictViewedByAll
-  indictmentInfo.indictmentVerdictAppealDeadlineExpired =
-    indictmentVerdictAppealDeadlineExpired
 
-  indictmentInfo.indictmentCompletedDate = eventLog
+  const indictmentCompletedDate = eventLog
     ?.find((log) => log.eventType === EventType.INDICTMENT_COMPLETED)
     ?.created?.toString()
 
-  return indictmentInfo
+  return {
+    indictmentAppealDeadline,
+    indictmentVerdictViewedByAll,
+    indictmentVerdictAppealDeadlineExpired,
+    indictmentCompletedDate,
+  }
 }
 
 export const getIndictmentDefendantsInfo = (theCase: Case) => {
@@ -201,23 +205,15 @@ export const getIndictmentDefendantsInfo = (theCase: Case) => {
     const { verdictViewDate } = defendant
 
     const baseDate = serviceRequired ? verdictViewDate : theCase.rulingDate
-
     const verdictAppealDeadline = baseDate
-      ? new Date(
-          new Date(baseDate).getTime() +
-            getDays(
-              isFine ? FINE_APPEAL_WINDOW_DAYS : VERDICT_APPEAL_WINDOW_DAYS,
-            ),
-        ).toISOString()
+      ? getIndictmentDeadlineDate({ baseDate: new Date(baseDate), isFine })
       : undefined
-
-    const isVerdictAppealDeadlineExpired = verdictAppealDeadline
-      ? Date.now() >= new Date(verdictAppealDeadline).getTime()
-      : false
+    const isVerdictAppealDeadlineExpired =
+      verdictAppealDeadline && hasDatePassed(verdictAppealDeadline)
 
     return {
       ...defendant,
-      verdictAppealDeadline,
+      verdictAppealDeadline: verdictAppealDeadline?.toISOString(),
       isVerdictAppealDeadlineExpired,
     }
   })
