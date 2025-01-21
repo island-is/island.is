@@ -128,9 +128,10 @@ jobs:
       - name: Prepare lint targets
         id: lint_projects
         env:
-          DISABLE_CHUNKS: true
+          DISABLE_CHUNKS: 'true'
         run: |
           set -euo pipefail
+          echo "DISABLE_CHUNKS: $DISABLE_CHUNKS"
           CHUNKS="$(./scripts/ci/generate-chunks.sh lint)"
           if [[ "$CHUNKS" != "[]" ]]; then
             echo "CHUNKS={\"projects\":$CHUNKS}" >> "$GITHUB_OUTPUT"
