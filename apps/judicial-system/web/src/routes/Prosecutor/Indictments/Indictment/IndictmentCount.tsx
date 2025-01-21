@@ -276,7 +276,7 @@ export const getLegalArguments = (
   let articles = `${lawsBroken[0][1]}.`
 
   for (let i = 1; i < lawsBroken.length; i++) {
-    let noArticle = articles === '0.'
+    const noArticle = articles === '0.'
     let useSbr = true
 
     if (lawsBroken[i][0] !== lawsBroken[i - 1][0]) {
