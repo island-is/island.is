@@ -5,6 +5,8 @@ const FINE_APPEAL_WINDOW_DAYS = 3
 
 const setEndOfDay = (date: Date) => new Date(date.setHours(23, 59, 59, 999))
 
+export const hasDatePassed = (deadline: Date) => Date.now() > deadline.getTime()
+
 export const getIndictmentDeadlineDate = ({
   baseDate,
   isFine,
@@ -19,4 +21,3 @@ export const getIndictmentDeadlineDate = ({
   return setEndOfDay(deadlineDate)
 }
 
-export const hasDatePassed = (deadline: Date) => Date.now() > deadline.getTime()
