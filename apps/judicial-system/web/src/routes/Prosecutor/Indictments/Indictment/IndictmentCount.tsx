@@ -710,6 +710,10 @@ export const IndictmentCount: FC<Props> = ({
                       handleIndictmentCountChanges({
                         offenses,
                         substances: indictmentCount.substances,
+                        ...(offense === IndictmentCountOffense.SPEEDING && {
+                          recordedSpeed: null,
+                          speedLimit: null,
+                        }),
                       })
                     }}
                   >
