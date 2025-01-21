@@ -120,7 +120,7 @@ export {
   offenseSubstances,
 } from './lib/indictmentCount'
 
-export { type Lawyer, mapToLawyer, AdvocateType } from './lib/advocate'
+export { type Lawyer, mapToLawyer } from './lib/lawyer'
 
 export type { SubstanceMap } from './lib/indictmentCount'
 

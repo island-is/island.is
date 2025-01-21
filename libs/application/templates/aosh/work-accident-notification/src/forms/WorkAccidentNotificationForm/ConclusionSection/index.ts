@@ -11,7 +11,7 @@ import { conclusion } from '../../../lib/messages'
 
 export const conclusionSection = buildSection({
   id: 'conclusion',
-  tabTitle: conclusion.general.title,
+  title: conclusion.general.title,
   children: [
     buildMultiField({
       id: 'uiForms.conclusionMultifield',

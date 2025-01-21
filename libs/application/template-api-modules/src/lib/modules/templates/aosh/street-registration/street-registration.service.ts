@@ -3,7 +3,7 @@ import { SharedTemplateApiService } from '../../../shared'
 import { TemplateApiModuleActionProps } from '../../../../types'
 import { ApplicationTypes } from '@island.is/application/types'
 import { BaseTemplateApiService } from '../../../base-template-api.service'
-
+import { error as errorMsg } from '@island.is/application/templates/aosh/street-registration'
 import { TemplateApiError } from '@island.is/nest/problem'
 import { coreErrorMessages } from '@island.is/application/core'
 import { StreetRegistrationAnswers } from '@island.is/application/templates/aosh/street-registration'
@@ -61,9 +61,41 @@ export class StreetRegistrationTemplateService extends BaseTemplateApiService {
   async getTypesMustInspectBeforeRegistration({
     auth,
   }: TemplateApiModuleActionProps): Promise<string[]> {
-    return await this.workMachineClientService.mustInspectBeforeRegistration(
-      auth,
-    )
+    return await this.workMachineClientService
+      .mustInspectBeforeRegistration(auth)
+      .catch((error) => {
+        this.logger.warning(
+          '[street-registration-service]: Error fetching types requires for inspection',
+          error,
+        )
+        throw new TemplateApiError(
+          {
+            title: coreErrorMessages.defaultTemplateApiError,
+            summary: errorMsg.errorGetFromAOSH,
+          },
+          500,
+        )
+      })
+  }
+
+  async getAvailableRegistrationTypes({
+    auth,
+  }: TemplateApiModuleActionProps): Promise<string[]> {
+    return await this.workMachineClientService
+      .getAvailableRegistrationTypes(auth)
+      .catch((error) => {
+        this.logger.warning(
+          '[street-registration-service]: Error fetching available types for registration',
+          error,
+        )
+        throw new TemplateApiError(
+          {
+            title: coreErrorMessages.defaultTemplateApiError,
+            summary: errorMsg.errorGetFromAOSH,
+          },
+          500,
+        )
+      })
   }
 
   async submitApplication({

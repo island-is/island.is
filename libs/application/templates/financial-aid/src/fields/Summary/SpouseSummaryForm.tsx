@@ -17,7 +17,6 @@ import {
   Files,
   DirectTaxPaymentCell,
 } from './index'
-import withLogo from '../Logo/Logo'
 import { useFormContext } from 'react-hook-form'
 import { useUserInfo } from '@island.is/react-spa/bff'
 
@@ -112,4 +111,4 @@ const SpouseSummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
   )
 }
 
-export default withLogo(SpouseSummaryForm)
+export default SpouseSummaryForm

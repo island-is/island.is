@@ -247,6 +247,7 @@ export const buildAsyncSelectField = (
     backgroundColor = 'blue',
     isSearchable,
     isMulti,
+    updateOnSelect,
   } = data
 
   return {
@@ -261,6 +262,7 @@ export const buildAsyncSelectField = (
     backgroundColor,
     isSearchable,
     isMulti,
+    updateOnSelect,
   }
 }
 
@@ -1005,6 +1007,8 @@ export const buildSliderField = (
     onChangeEnd,
     labelMultiplier = 1,
     saveAsString,
+    textColor,
+    progressOverlayColor,
     marginTop,
     marginBottom,
   } = data
@@ -1034,6 +1038,8 @@ export const buildSliderField = (
     onChangeEnd,
     labelMultiplier,
     saveAsString,
+    textColor,
+    progressOverlayColor,
     marginTop,
     marginBottom,
   }

@@ -7,7 +7,12 @@ import {
   buildSection,
   buildSubmitField,
 } from '@island.is/application/core'
-import { DefaultEvents, Form, FormModes } from '@island.is/application/types'
+import {
+  Application,
+  DefaultEvents,
+  Form,
+  FormModes,
+} from '@island.is/application/types'
 
 import * as m from '../lib/messages'
 import { Routes } from '../lib/constants'
@@ -19,11 +24,17 @@ import {
   MunicipalityApi,
   TaxDataApi,
 } from '../dataProviders'
+import { createElement } from 'react'
+import { Logo } from '../components/Logo/Logo'
 
 export const Prerequisites: Form = buildForm({
   id: 'FinancialAidApplication',
   title: m.application.name,
   mode: FormModes.DRAFT,
+  logo: (application: Application) => {
+    const logo = createElement(Logo, { application })
+    return () => logo
+  },
   children: [
     buildSection({
       id: 'externalData',
