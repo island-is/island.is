@@ -1,6 +1,6 @@
 import { useQuery } from '@apollo/client'
 
-import { ConnectedComponent } from '@island.is/web/graphql/schema'
+import type { ConnectedComponent } from '@island.is/web/graphql/schema'
 
 import { GET_BURNING_PERMITS_QUERY } from './queries'
 
