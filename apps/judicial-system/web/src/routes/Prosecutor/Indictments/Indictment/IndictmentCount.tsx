@@ -290,7 +290,7 @@ export const getLegalArguments = (
       i === andIndex ? ' og' : useSbr ? ', sbr.' : ','
     } ${lawsBroken[i][1]}.`
   }
-  console.log(articles)
+
   return formatMessage(strings.legalArgumentsAutofill, {
     articles: `${articles} mgr. ${lawsBroken[lawsBroken.length - 1][0]}. gr.`,
   })
@@ -345,11 +345,21 @@ export const getIncidentDescription = (
       formatMessage,
     )
 
+    const isSpeeding = indictmentCount.offenses?.includes(
+      IndictmentCountOffense.SPEEDING,
+    )
+
+    const recordedSpeed = indictmentCount.recordedSpeed ?? '[Mældur hraði]'
+    const speedLimit = indictmentCount.speedLimit ?? '[Leyfilegur hraði]'
+
     return formatMessage(strings.incidentDescriptionAutofill, {
       incidentDate,
       vehicleRegistrationNumber: vehicleRegistration,
       reason,
       incidentLocation,
+      isSpeeding,
+      recordedSpeed,
+      speedLimit,
     })
   }
 

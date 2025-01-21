@@ -142,9 +142,9 @@ export const indictmentCount = defineMessages({
     description: 'Notaður sem texti í lagaákvæði taggi.',
   },
   incidentDescriptionAutofill: {
-    id: 'judicial.system.core:indictments_indictment.indictment_count.incident_description_auto_fill',
+    id: 'judicial.system.core:indictments_indictment.indictment_count.incident_description_auto_fill_v1',
     defaultMessage:
-      'fyrir umferðarlagabrot með því að hafa, {incidentDate}, ekið bifreiðinni {vehicleRegistrationNumber} {reason} um {incidentLocation}, þar sem lögregla stöðvaði aksturinn.',
+      'fyrir umferðarlagabrot með því að hafa, {incidentDate}, ekið bifreiðinni {vehicleRegistrationNumber} {reason} um {incidentLocation}, {isSpeeding, select, true {á {recordedSpeed} km hraða á klukkustund, að teknu tilliti til vikmarka, þar sem leyfður hámarkshraði var {speedLimit} km/klst} other {þar sem lögregla stöðvaði aksturinn}}.',
     description:
       'Notaður sem skýritexti á "atvikalýsing" svæði á ákæruliða skrefi í umferðalagabrots ákærum.',
   },
