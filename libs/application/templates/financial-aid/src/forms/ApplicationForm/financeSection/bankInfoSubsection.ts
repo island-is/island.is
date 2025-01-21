@@ -27,7 +27,7 @@ export const bankInfoSubsection = buildSubSection({
           title: '',
         }),
         buildDescriptionField({
-          id: 'bankInfoDescription',
+          id: 'bankInfoDescription2',
           title: m.bankInfoForm.general.descriptionTitle,
           titleVariant: 'h4',
           description: m.bankInfoForm.general.description,
