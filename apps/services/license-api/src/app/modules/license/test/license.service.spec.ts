@@ -33,7 +33,6 @@ import { Cache } from 'cache-manager'
 import * as faker from 'faker'
 
 import ShortUniqueId from 'short-unique-id'
-import { BARCODE_EXPIRE_TIME_IN_SEC } from '@island.is/services/license'
 import { VerifyInputData } from '../dto/verifyLicense.input'
 import { LicenseService } from '../license.service'
 import {
@@ -226,6 +225,7 @@ export class MockUpdateClient extends BaseLicenseUpdateClient {
 describe('LicenseService', () => {
   let licenseService: LicenseService
   let barcodeService: BarcodeService
+  let config: ConfigType<typeof LicenseConfig>
 
   beforeAll(async () => {
     const moduleRef = await Test.createTestingModule({
@@ -294,6 +294,8 @@ describe('LicenseService', () => {
 
     licenseService = moduleRef.get<LicenseService>(LicenseService)
     barcodeService = moduleRef.get<BarcodeService>(BarcodeService)
+    config = moduleRef.get(LicenseConfig.KEY)
+
   })
 
   describe.each(licenseIds)('given %s license type id', (licenseId) => {
@@ -376,7 +378,7 @@ describe('LicenseService', () => {
         await barcodeService.setCache(code, data)
 
         // Let the token expire
-        jest.advanceTimersByTime(BARCODE_EXPIRE_TIME_IN_SEC * 1000)
+        jest.advanceTimersByTime(config.barcodeExpireTimeInSec * 1000)
 
         // Assert
         const result = await licenseService.verifyLicense({
