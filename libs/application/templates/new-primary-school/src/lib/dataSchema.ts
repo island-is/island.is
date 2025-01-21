@@ -138,20 +138,51 @@ export const dataSchema = z.object({
       params: errorMessages.siblingsRequired,
     }),
   startDate: z.string(),
-  languages: z.object({
-    languageEnvironment: z.string(),
-    signLanguage: z.enum([YES, NO]).optional(),
-    interpreter: z.enum([YES, NO]).optional(),
-    language1: z.string().optional(),
-    language2: z.string().optional(),
-    language3: z.string().optional(),
-    language4: z.string().optional(),
-    childLanguage: z.string().optional(),
-  }),
-  /* .refine(({ language1, language2 }) => !!language1 && !!language2, {
-      path: ['childLanguage'],
-      params: errorMessages.languagesRequired,
-    })*/ freeSchoolMeal: z
+  languages: z
+    .object({
+      languageEnvironment: z.string(),
+      signLanguage: z.enum([YES, NO]),
+      interpreter: z.string().optional(),
+      language1: z.string().optional().nullable(),
+      language2: z.string().optional().nullable(),
+      childLanguage: z.string().optional().nullable(),
+    })
+    .refine(
+      ({ languageEnvironment, language1 }) => {
+        return languageEnvironment !== LanguageEnvironmentOptions.ONLY_ICELANDIC
+          ? !!language1
+          : true
+      },
+      {
+        path: ['language1'],
+        message: 'Please select at least one language',
+      },
+    )
+    .refine(
+      ({ languageEnvironment, language1, language2, childLanguage }) => {
+        return languageEnvironment !==
+          LanguageEnvironmentOptions.ONLY_ICELANDIC &&
+          !!language1 &&
+          !!language2
+          ? !!childLanguage
+          : true
+      },
+      {
+        path: ['childLanguage'],
+        message: 'Please select childrens main language',
+      },
+    )
+    .refine(
+      ({ languageEnvironment, interpreter }) => {
+        return languageEnvironment !== LanguageEnvironmentOptions.ONLY_ICELANDIC
+          ? !!interpreter
+          : true
+      },
+      {
+        path: ['interpreter'],
+      },
+    ),
+  freeSchoolMeal: z
     .object({
       acceptFreeSchoolLunch: z.enum([YES, NO]),
       hasSpecialNeeds: z.string().optional(),
