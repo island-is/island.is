@@ -107,9 +107,6 @@ const template: ApplicationTemplate<
             ],
           },
           lifecycle: EphemeralStateLifeCycle,
-          onExit: defineTemplateApi({
-            action: ApiActions.validateCanCreate,
-          }),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -157,6 +154,9 @@ const template: ApplicationTemplate<
             ],
           },
           lifecycle: pruneAfterDays(7),
+          onEntry: defineTemplateApi({
+            action: ApiActions.validateCanCreate,
+          }),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -208,6 +208,7 @@ const template: ApplicationTemplate<
               variant: 'blueberry',
             },
             pendingAction: {
+              title: corePendingActionMessages.waitingForReviewTitle,
               content: corePendingActionMessages.waitingForReviewDescription,
               displayStatus: 'info',
             },
@@ -276,6 +277,7 @@ const template: ApplicationTemplate<
               variant: 'blueberry',
             },
             pendingAction: {
+              title: applicationPendingActionMessages.inReviewTitle,
               content: applicationPendingActionMessages.inReviewDescription,
               displayStatus: 'info',
             },
@@ -329,6 +331,7 @@ const template: ApplicationTemplate<
               variant: 'blueberry',
             },
             pendingAction: {
+              title: applicationPendingActionMessages.reviewFinishedTitle,
               content:
                 applicationPendingActionMessages.reviewFinishedDescription,
               displayStatus: 'success',

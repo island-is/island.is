@@ -280,6 +280,23 @@ export const SelectionItem: FC<FieldBaseProps & SelectionItemProps> = (
     setShowSecondProgram(showSecondProgram)
   }, [programOptions.length, props.field.id, setValue])
 
+  // initialize require for second program
+  useEffect(() => {
+    const firstProgramInfo = programOptions.find(
+      (x) => x.id === firstProgramIdAnswer,
+    )
+    const isSecondRequired =
+      isFreshman && !firstProgramInfo?.isSpecialNeedsProgram
+    setValue(`${props.field.id}.secondProgram.require`, isSecondRequired)
+    setIsSecondProgramRequired(isSecondRequired)
+  }, [
+    programOptions,
+    props.field.id,
+    setValue,
+    firstProgramIdAnswer,
+    isFreshman,
+  ])
+
   useEffect(() => {
     setFieldLoadingState?.(isLoadingPrograms)
   }, [isLoadingPrograms, setFieldLoadingState])

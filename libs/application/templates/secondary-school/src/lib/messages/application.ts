@@ -87,10 +87,21 @@ export const historyMessages = defineMessages({
 })
 
 export const pendingActionMessages = defineMessages({
+  inReviewTitle: {
+    id: 'ss.pendingActionMessages:inReviewTitle',
+    defaultMessage: 'Er í yfirferð',
+    description: 'Pending action message application in review title',
+  },
   inReviewDescription: {
     id: 'ss.pendingActionMessages:inReviewDescription',
     defaultMessage: 'Umsóknin þín er í yfirferð',
     description: 'Pending action message application in review description',
+  },
+  reviewFinishedTitle: {
+    id: 'ss.pendingActionMessages:reviewFinishedTitle',
+    defaultMessage: 'Yfirferð lokið',
+    description:
+      'Pending action message application review finished description',
   },
   reviewFinishedDescription: {
     id: 'ss.pendingActionMessages:reviewFinishedDescription',
