@@ -60,6 +60,9 @@ jobs:
       - name: Checking out relevant branches
         run: |
           set -euo pipefail
+          echo "CHUNK_SIZE: $CHUNK_SIZE"
+          echo "MAX_JOBS: $MAX_JOBS"
+          echo "NX_PARALLEL: $NX_PARALLEL"
           git checkout "$GITHUB_HEAD_REF"
           git checkout "$GITHUB_BASE_REF"
           git checkout "$GITHUB_SHA"
@@ -184,7 +187,6 @@ jobs:
     timeout-minutes: 45
     env:
       AFFECTED_PROJECTS: ${{ matrix.projects }}
-      MAX_JOBS: 1
     strategy:
       fail-fast: false
       matrix: ${{ fromJson(needs.prepare.outputs.TEST_CHUNKS) }}
@@ -347,7 +349,6 @@ jobs:
     env:
       AFFECTED_PROJECTS: ${{ matrix.projects }}
       NODE_OPTIONS: --max-old-space-size=4096
-      MAX_JOBS: 3
     strategy:
       fail-fast: false
       matrix: ${{ fromJson(needs.prepare.outputs.LINT_CHUNKS) }}
@@ -377,7 +378,6 @@ jobs:
     timeout-minutes: 35
     env:
       AFFECTED_PROJECTS: ${{ matrix.projects }}
-      MAX_JOBS: 2
     strategy:
       fail-fast: false
       matrix: ${{ fromJson(needs.prepare.outputs.BUILD_CHUNKS) }}
