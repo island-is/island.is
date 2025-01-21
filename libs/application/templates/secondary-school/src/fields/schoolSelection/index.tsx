@@ -264,42 +264,37 @@ export const SchoolSelection: FC<FieldBaseProps> = (props) => {
         </>
       )}
 
-      {/* Remove button */}
-      {showRemoveButton && (
-        <Box marginTop={2}>
-          <Button
-            icon="remove"
-            onClick={() => onClickRemove()}
-            variant="ghost"
-            colorScheme="destructive"
-            fluid
-          >
-            {formatMessage(school.selection.removeButtonLabel)}
-          </Button>
-        </Box>
-      )}
+      <Box display="flex" justifyContent="flexEnd" marginTop={2}>
+        {showRemoveButton && (
+          <Box marginRight={2}>
+            <Button
+              variant="ghost"
+              colorScheme="destructive"
+              type="button"
+              onClick={onClickRemove}
+            >
+              {formatMessage(school.selection.removeButtonLabel)}
+            </Button>
+          </Box>
+        )}
+        <Button
+          variant="ghost"
+          type="button"
+          onClick={onClickAdd}
+          icon="add"
+          disabled={!showAddButton}
+        >
+          {formatMessage(school.selection.addButtonLabel)}
+        </Button>
+      </Box>
 
-      {/* Add subtitle + description */}
-      {showAddButton && !showSecondSelection && (
-        <Text variant="h5" marginTop={2}>
-          {formatMessage(school.secondSelection.addSubtitle)}
-        </Text>
-      )}
-      {showAddButton && showSecondSelection && !showThirdSelection && (
-        <>
-          <Text variant="h5" marginTop={2}>
-            {formatMessage(school.thirdSelection.addSubtitle)}
-          </Text>
-          <Text>{formatMessage(school.thirdSelection.addDescription)}</Text>
-        </>
-      )}
-
-      {/* Add button */}
-      {showAddButton && (
+      {showAddButton && isFreshman && (
         <Box marginTop={2}>
-          <Button icon="add" onClick={() => onClickAdd()} variant="ghost" fluid>
-            {formatMessage(school.selection.addButtonLabel)}
-          </Button>
+          <AlertMessage
+            type="info"
+            title=""
+            message={formatMessage(school.thirdSelection.addDescription)}
+          />
         </Box>
       )}
 

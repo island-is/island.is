@@ -85,22 +85,12 @@ export const school = {
       defaultMessage: 'Annað val',
       description: 'Second selection sub title',
     },
-    addSubtitle: {
-      id: 'ss.application:school.secondSelection.addSubtitle',
-      defaultMessage: 'Viltu bæta við öðrum skóla?',
-      description: 'Add second selection sub title',
-    },
   }),
   thirdSelection: defineMessages({
     subtitle: {
       id: 'ss.application:school.thirdSelection.subtitle',
       defaultMessage: 'Þriðja val',
       description: 'Third selection sub title',
-    },
-    addSubtitle: {
-      id: 'ss.application:school.thirdSelection.addSubtitle',
-      defaultMessage: 'Viltu bæta við þriðja skólanum?',
-      description: 'Add third selection sub title',
     },
     addDescription: {
       id: 'ss.application:school.thirdSelection.addDescription',
