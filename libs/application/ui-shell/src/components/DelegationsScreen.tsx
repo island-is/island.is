@@ -58,6 +58,16 @@ export const DelegationsScreen = ({
 
   console.log('searchParams', searchParams)
 
+  const paramArray: string[] = []
+
+  searchParams.forEach((value, key) => {
+    paramArray.push(`&${key}=${value}`)
+  })
+
+  const paramString = paramArray.join('')
+
+  console.log('paramString', paramString)
+
   // Check for user delegations if application supports delegations
   const { data: delegations, error } = useQuery(ACTOR_DELEGATIONS, {
     variables: { input: { delegationTypes: screenData.allowedDelegations } },
@@ -185,7 +195,7 @@ export const DelegationsScreen = ({
 
   const handleClick = (nationalId?: string) => {
     if (screenData.screenType !== ScreenType.ONGOING && nationalId) {
-      navigate('?delegationChecked=true')
+      navigate(`?delegationChecked=true${paramString}`)
       switchUser(nationalId)
     } else if (nationalId) {
       switchUser(nationalId)
