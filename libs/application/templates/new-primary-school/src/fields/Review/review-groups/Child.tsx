@@ -36,8 +36,6 @@ export const Child = ({
 
   const genderMessage = getGenderMessage(application)
 
-  const genderText = formatMessage(genderMessage)
-
   return (
     <ReviewGroup
       isEditable={editable}
@@ -93,7 +91,7 @@ export const Child = ({
               <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
                 <DataValue
                   label={formatMessage(newPrimarySchoolMessages.shared.gender)}
-                  value={formatMessage(genderText)}
+                  value={formatMessage(genderMessage)}
                 />
               </GridColumn>
               {childInfo.usePronounAndPreferredName?.includes(YES) &&

@@ -7,8 +7,13 @@ import {
   coreMessages,
 } from '@island.is/application/core'
 import { newPrimarySchoolMessages } from '../../../lib/messages'
-import { getCurrentSchoolName } from '../../../lib/newPrimarySchoolUtils'
+import {
+  formatGrade,
+  getApplicationExternalData,
+  getCurrentSchoolName,
+} from '../../../lib/newPrimarySchoolUtils'
 import { Application } from '@island.is/application/types'
+import { Locale } from '@island.is/shared/types'
 
 export const currentSchoolSubSection = buildSubSection({
   id: 'currentSchoolSubSection',
@@ -32,13 +37,25 @@ export const currentSchoolSubSection = buildSubSection({
           defaultValue: (application: Application) =>
             getCurrentSchoolName(application),
         }),
-        buildCustomField({
-          id: 'currentSchool.grade',
-          title: newPrimarySchoolMessages.primarySchool.grade,
-          width: 'half',
-          disabled: true,
-          component: 'Grade',
-        }),
+        buildCustomField(
+          {
+            id: 'currentSchool.grade',
+            title: newPrimarySchoolMessages.primarySchool.grade,
+            width: 'half',
+            component: 'DynamicDisabledText',
+          },
+          {
+            descriptor: newPrimarySchoolMessages.primarySchool.currentGrade,
+            values: (application: Application, lang: Locale) => {
+              const { childGradeLevel } = getApplicationExternalData(
+                application.externalData,
+              )
+              return {
+                grade: formatGrade(childGradeLevel, lang),
+              }
+            },
+          },
+        ),
       ],
     }),
   ],

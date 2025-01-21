@@ -12,6 +12,7 @@ import { newPrimarySchoolMessages } from '../../../lib/messages'
 import {
   getApplicationAnswers,
   getApplicationExternalData,
+  getGenderMessage,
 } from '../../../lib/newPrimarySchoolUtils'
 
 export const childInfoSubSection = buildSubSection({
@@ -68,12 +69,17 @@ export const childInfoSubSection = buildSubSection({
           defaultValue: (application: Application) =>
             getApplicationExternalData(application.externalData).applicantCity,
         }),
-        buildCustomField({
-          id: 'childInfo.gender',
-          component: 'Gender',
-          title: newPrimarySchoolMessages.shared.gender,
-          disabled: true,
-        }),
+        buildCustomField(
+          {
+            id: 'childInfo.gender',
+            component: 'DynamicDisabledText',
+            title: newPrimarySchoolMessages.shared.gender,
+          },
+          {
+            descriptor: (application: Application) =>
+              getGenderMessage(application),
+          },
+        ),
         buildCheckboxField({
           id: 'childInfo.usePronounAndPreferredName',
           title: '',
