@@ -36,6 +36,15 @@
  *
  * The script provides detailed logging to stderr throughout the process,
  * and outputs the final chunked list as a JSON string to stdout.
+ *
+ * Note on Problematic Projects:
+ * Some projects are designated as "problematic" and are handled separately from the main chunking process.
+ * These projects are run individually (not chunked) due to specific requirements or limitations:
+ * 1. They may have longer execution times that could cause timeouts if run with other projects.
+ * 2. They might require more resources, which could interfere with other projects if run together.
+ * 3. They could have unique dependencies or configurations that necessitate isolated execution.
+ * By running these projects separately, we ensure they don't negatively impact the execution of other projects
+ * and can be given the specific attention or resources they need.
  */
 
 // @ts-check
