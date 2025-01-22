@@ -448,14 +448,20 @@ export const newPrimarySchoolMessages: MessageDir = {
       description:
         "In order to meet the child's needs, the school needs to know which languages are used in communication with the child in the family's daily life.",
     },
-
-    languageEnvTitle: {
+    languageSubTitle: {
+      id: 'nps.application:different.needs.language.sub.title',
+      defaultMessage:
+        'Hvað á best við í tilfelli barnsins og tungumála sem notuð eru í daglegu lífi fjölskyldunnar?',
+      description:
+        'What is best for the child and the languages used in the familys daily life?',
+    },
+    languageEnvironmentTitle: {
       id: 'nps.application:different.needs.language.environment.title',
       defaultMessage: 'Tungumálaumhverfi',
       description: 'Language environment',
     },
-    languageEnvPlaceholder: {
-      id: 'nps.application:different.needs.language.env.placeholder',
+    languageEnvironmentPlaceeholder: {
+      id: 'nps.application:different.needs.language.environment.placeholder',
       defaultMessage: 'Veldu það sem best á við',
       description: 'Choose what best applies',
     },
@@ -499,7 +505,7 @@ export const newPrimarySchoolMessages: MessageDir = {
     childLanguageTitle: {
       id: 'nps.application:different.needs.child.language.title',
       defaultMessage:
-        'Á hverjum af þessum tungumálum sem þú hefur valið finnst barninu sjálfu best að tjá sig á?',
+        'Á hvaða tungumáli sem þú hefur valið, finnst barninu sjálfu best að tjá sig á?',
       description:
         'In which of these languages that you have chosen does the child feel most comfortable expressing themselves?',
     },

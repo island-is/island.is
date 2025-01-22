@@ -24,16 +24,18 @@ export const languageSubSection = buildSubSection({
       description: newPrimarySchoolMessages.differentNeeds.languageDescription,
       children: [
         buildDescriptionField({
-          id: 'languages.nativeLanguage.title',
-          title: newPrimarySchoolMessages.differentNeeds.childNativeLanguage,
+          id: 'languages.sub.title',
+          title: newPrimarySchoolMessages.differentNeeds.languageSubTitle,
           titleVariant: 'h4',
         }),
         buildSelectField({
           id: 'languages.languageEnvironment',
           dataTestId: 'languages-language-environment',
-          title: newPrimarySchoolMessages.differentNeeds.languageEnvTitle,
+          title:
+            newPrimarySchoolMessages.differentNeeds.languageEnvironmentTitle,
           placeholder:
-            newPrimarySchoolMessages.differentNeeds.languageEnvPlaceholder,
+            newPrimarySchoolMessages.differentNeeds
+              .languageEnvironmentPlaceholder,
           options: () => {
             return getLanguageEnvironments()
           },
@@ -48,6 +50,7 @@ export const languageSubSection = buildSubSection({
           condition: (answers) => {
             return hasOtherLanguages(answers)
           },
+          marginBottom: 'gutter',
         }),
         buildCustomField({
           id: 'languages',
