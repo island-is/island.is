@@ -46,5 +46,13 @@ export const rulingAccordion = {
           'Notaður sem titill fyrir "Niðurstaða" hlutanum í úrskurðar fellilista í öllum málategundum.',
       },
     }),
+    noRuling: defineMessages({
+      title: {
+        id: 'judicial.system.core:ruling_accordion.no_ruling.title',
+        defaultMessage: 'Máli er lokið án úrskurðar',
+        description:
+          'Notaður sem titill fyrir "Máli lokið án úrskurðar" hlutanum í úrskurðar fellilista í öllum málategundum.',
+      },
+    }),
   },
 }

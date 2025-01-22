@@ -335,6 +335,7 @@ export const isRequestCase = (type?: CaseType | null): boolean => {
 export const acceptedCaseDecisions = [
   CaseDecision.ACCEPTING,
   CaseDecision.ACCEPTING_PARTIALLY,
+  CaseDecision.COMPLETED_WITHOUT_RULING,
 ]
 
 export const isAcceptingCaseDecision = (

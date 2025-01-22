@@ -426,6 +426,10 @@ export const SignedVerdictOverview: FC = () => {
     return true
   }
 
+  const hasRuling = Boolean(
+    workingCase.decision !== CaseDecision.COMPLETED_WITHOUT_RULING,
+  )
+
   const shouldDisplayAlertBanner =
     (workingCase.hasBeenAppealed &&
       (isProsecutionUser(user) || isDistrictCourtUser(user))) ||
@@ -577,7 +581,7 @@ export const SignedVerdictOverview: FC = () => {
               <Accordion>
                 <PoliceRequestAccordionItem workingCase={workingCase} />
                 <CourtRecordAccordionItem workingCase={workingCase} />
-                <RulingAccordionItem workingCase={workingCase} />
+                {<RulingAccordionItem workingCase={workingCase} />}
                 {user && (
                   <CaseFilesAccordionItem
                     workingCase={workingCase}
