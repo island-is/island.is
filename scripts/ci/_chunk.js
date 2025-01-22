@@ -151,4 +151,4 @@ console.error(`Chunk debug:`, {
 })
 
 // Only write the final JSON output to stdout
-console.log(JSON.stringify(chunks))
+process.stdout.write(JSON.stringify(chunks))
