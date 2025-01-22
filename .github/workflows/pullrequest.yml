@@ -20,8 +20,8 @@ env:
   CHUNK_SIZE: '20'
   DISABLE_CHUNKS: 'true'
   MAX_JOBS: '15'
-  NX_PARALLEL: '25'
-  NX_MAX_PARALLEL: '25'
+  NX_PARALLEL: '15'
+  NX_MAX_PARALLEL: '15'
 
 jobs:
   prepare:
