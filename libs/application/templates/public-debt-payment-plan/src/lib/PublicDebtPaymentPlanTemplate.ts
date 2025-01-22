@@ -19,6 +19,7 @@ import { PaymentPlanPrerequisitesApi } from '../dataProviders'
 import { PublicDebtPaymentPlanSchema } from './dataSchema'
 import { application, conclusion } from './messages'
 import { AuthDelegationType } from '@island.is/shared/types'
+import { CodeOwners } from '@island.is/shared/constants'
 
 const States = {
   draft: 'draft',
@@ -46,6 +47,7 @@ const PublicDebtPaymentPlanTemplate: ApplicationTemplate<
 > = {
   type: ApplicationTypes.PUBLIC_DEBT_PAYMENT_PLAN,
   name: application.name,
+  codeOwner: CodeOwners.NordaApplications,
   institution: application.institutionName,
   allowedDelegations: [{ type: AuthDelegationType.ProcurationHolder }],
   translationNamespaces: [

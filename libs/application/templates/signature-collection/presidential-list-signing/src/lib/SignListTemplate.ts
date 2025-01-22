@@ -17,6 +17,7 @@ import { m } from './messages'
 import { EphemeralStateLifeCycle } from '@island.is/application/core'
 import { StateLifeCycle } from '@island.is/application/types'
 import { CanSignApi, GetListApi } from '../dataProviders'
+import { CodeOwners } from '@island.is/shared/constants'
 
 export const WeekLifeCycle: StateLifeCycle = {
   shouldBeListed: false,
@@ -34,6 +35,7 @@ const SignListTemplate: ApplicationTemplate<
 > = {
   type: ApplicationTypes.PRESIDENTIAL_LIST_SIGNING,
   name: m.applicationName,
+  codeOwner: CodeOwners.Juni,
   institution: m.institution,
   initialQueryParameter: 'candidate',
   dataSchema,

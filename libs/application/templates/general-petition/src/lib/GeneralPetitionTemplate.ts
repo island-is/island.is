@@ -14,6 +14,7 @@ import {
 import { ApiModuleActions, States, Roles } from '../constants'
 import { GeneralPetitionSchema } from './dataSchema'
 import { m } from './messages'
+import { CodeOwners } from '@island.is/shared/constants'
 
 type Events = { type: DefaultEvents.SUBMIT }
 
@@ -27,6 +28,7 @@ const GeneralPetitionTemplate: ApplicationTemplate<
 > = {
   type: ApplicationTypes.GENERAL_PETITION,
   name: m.applicationName,
+  codeOwner: CodeOwners.Juni,
   dataSchema: GeneralPetitionSchema,
   translationNamespaces: [configuration.translation],
   stateMachineConfig: {

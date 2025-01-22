@@ -40,6 +40,7 @@ import {
 import { AuthDelegationType } from '@island.is/shared/types'
 import { ApiScope } from '@island.is/auth/scopes'
 import { buildPaymentState } from '@island.is/application/utils'
+import { CodeOwners } from '@island.is/shared/constants'
 
 const pruneInDaysAtMidnight = (application: Application, days: number) => {
   const date = new Date(application.created)
@@ -88,6 +89,7 @@ const template: ApplicationTemplate<
 > = {
   type: ApplicationTypes.CHANGE_OPERATOR_OF_VEHICLE,
   name: determineMessageFromApplicationAnswers,
+  codeOwner: CodeOwners.Origo,
   institution: applicationMessage.institutionName,
   translationNamespaces: [
     ApplicationConfigurations.ChangeOperatorOfVehicle.translation,

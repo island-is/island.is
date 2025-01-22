@@ -31,6 +31,7 @@ import {
   getApplicationFeatureFlags,
   InheritanceReportFeatureFlags,
 } from './getApplicationFeatureFlags'
+import { CodeOwners } from '@island.is/shared/constants'
 
 const configuration =
   ApplicationConfigurations[ApplicationTypes.INHERITANCE_REPORT]
@@ -51,6 +52,7 @@ const InheritanceReportTemplate: ApplicationTemplate<
         ' - ' +
         m.applicationNameEstate.defaultMessage
       : m.prerequisitesTitle.defaultMessage,
+  codeOwner: CodeOwners.Juni,
   institution: m.institution,
   dataSchema: inheritanceReportSchema,
   translationNamespaces: [configuration.translation],

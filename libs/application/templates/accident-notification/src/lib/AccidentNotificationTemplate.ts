@@ -27,6 +27,7 @@ import { AccidentNotificationSchema } from './dataSchema'
 import { anPendingActionMessages, application } from './messages'
 import { AuthDelegationType } from '@island.is/shared/types'
 import { IdentityApi, NationalRegistryUserApi } from '../dataProviders'
+import { CodeOwners } from '@island.is/shared/constants'
 
 // The applicant is the applicant of the application, can be someone in power of attorney or the representative for the company
 // The assignee is the person who is assigned to review the application can be the injured person or the representative for the company
@@ -89,6 +90,7 @@ const AccidentNotificationTemplate: ApplicationTemplate<
 > = {
   type: ApplicationTypes.ACCIDENT_NOTIFICATION,
   name: application.general.name,
+  codeOwner: CodeOwners.NordaApplications,
   institution: application.general.institutionName,
   translationNamespaces: [
     ApplicationConfigurations.AccidentNotification.translation,

@@ -27,6 +27,7 @@ import { application, states } from './messages'
 import { assign } from 'xstate'
 import set from 'lodash/set'
 import { historyLogs } from './messages/history'
+import { CodeOwners } from '@island.is/shared/constants'
 
 type GrindavikHousingBuyoutEvent =
   | { type: DefaultEvents.APPROVE }
@@ -48,6 +49,7 @@ const GrindavikHousingBuyoutTemplate: ApplicationTemplate<
 > = {
   type: ApplicationTypes.GRINDAVIK_HOUSING_BUYOUT,
   name: application.general.name,
+  codeOwner: CodeOwners.NordaApplications,
   dataSchema: GrindavikHousingBuyoutSchema,
   translationNamespaces: configuration.translation,
   institution: application.general.institutionName,

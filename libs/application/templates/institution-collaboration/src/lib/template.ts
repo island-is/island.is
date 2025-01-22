@@ -12,6 +12,7 @@ import { DefaultStateLifeCycle } from '@island.is/application/core'
 
 import { institutionApplicationMessages as m } from './messages'
 import { dataSchema } from './dataSchema'
+import { CodeOwners } from '@island.is/shared/constants'
 
 type Events = { type: DefaultEvents.SUBMIT } | { type: DefaultEvents.ABORT }
 
@@ -36,6 +37,7 @@ const template: ApplicationTemplate<
 > = {
   type: ApplicationTypes.INSTITUTION_COLLABORATION,
   name: m.application.applicationName,
+  codeOwner: CodeOwners.NordaApplications,
   institution: m.application.institutionName,
   dataSchema,
   stateMachineConfig: {

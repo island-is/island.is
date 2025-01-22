@@ -13,6 +13,7 @@ import * as kennitala from 'kennitala'
 import { ApiActions } from '../shared'
 
 import { m } from './messages'
+import { CodeOwners } from '@island.is/shared/constants'
 
 const States = {
   prerequisites: 'prerequisites',
@@ -51,6 +52,7 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
 > = {
   type: ApplicationTypes.DRIVING_ASSESSMENT_APPROVAL,
   name: m.name,
+  codeOwner: CodeOwners.Juni,
   translationNamespaces: [
     ApplicationConfigurations[ApplicationTypes.DRIVING_ASSESSMENT_APPROVAL]
       .translation,

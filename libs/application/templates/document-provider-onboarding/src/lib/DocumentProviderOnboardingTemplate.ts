@@ -12,6 +12,7 @@ import {
 } from '@island.is/application/types'
 import { API_MODULE_ACTIONS } from '../../constants'
 import { dataSchema } from './dataSchema'
+import { CodeOwners } from '@island.is/shared/constants'
 
 type Events =
   | { type: DefaultEvents.APPROVE }
@@ -42,6 +43,7 @@ const DocumentProviderOnboardingTemplate: ApplicationTemplate<
 > = {
   type: ApplicationTypes.DOCUMENT_PROVIDER_ONBOARDING,
   name: 'Umsókn um að gerast skjalaveitandi',
+  codeOwner: CodeOwners.Hugsmidjan,
   dataSchema,
   stateMachineConfig: {
     initial: States.DRAFT,

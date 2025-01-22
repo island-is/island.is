@@ -24,6 +24,7 @@ import {
   CurrentInstructorApi,
   TeachersApi,
 } from '../dataProviders'
+import { CodeOwners } from '@island.is/shared/constants'
 
 const template: ApplicationTemplate<
   ApplicationContext,
@@ -32,6 +33,7 @@ const template: ApplicationTemplate<
 > = {
   type: ApplicationTypes.DRIVING_LICENSE_BOOK_UPDATE_INSTRUCTOR,
   name: application.name,
+  codeOwner: CodeOwners.Origo,
   institution: application.institutionName,
   translationNamespaces: [
     ApplicationConfigurations.DrivingLicenseBookUpdateInstructor.translation,

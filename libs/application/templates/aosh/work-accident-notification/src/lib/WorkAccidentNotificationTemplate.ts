@@ -24,6 +24,7 @@ import { AuthDelegationType } from '@island.is/shared/types'
 import { shared } from './messages'
 import { ApiActions } from '../shared/constants'
 import { ApiScope } from '@island.is/auth/scopes'
+import { CodeOwners } from '@island.is/shared/constants'
 
 const template: ApplicationTemplate<
   ApplicationContext,
@@ -32,6 +33,7 @@ const template: ApplicationTemplate<
 > = {
   type: ApplicationTypes.WORK_ACCIDENT_NOTIFICATION,
   name: shared.application.name,
+  codeOwner: CodeOwners.Origo,
   institution: shared.application.institutionName,
   translationNamespaces: [
     ApplicationConfigurations.WorkAccidentNotification.translation,

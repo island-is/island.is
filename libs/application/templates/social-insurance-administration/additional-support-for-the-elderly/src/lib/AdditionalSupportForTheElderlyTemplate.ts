@@ -49,6 +49,7 @@ import {
   getApplicationAnswers,
   isEligible,
 } from './additionalSupportForTheElderlyUtils'
+import { CodeOwners } from '@island.is/shared/constants'
 
 const AdditionalSupportForTheElderlyTemplate: ApplicationTemplate<
   ApplicationContext,
@@ -57,6 +58,7 @@ const AdditionalSupportForTheElderlyTemplate: ApplicationTemplate<
 > = {
   type: ApplicationTypes.ADDITIONAL_SUPPORT_FOR_THE_ELDERLY,
   name: additionalSupportForTheElderyFormMessage.shared.applicationTitle,
+  codeOwner: CodeOwners.Deloitte,
   institution: socialInsuranceAdministrationMessage.shared.institution,
   translationNamespaces:
     ApplicationConfigurations.AdditionalSupportForTheElderly.translation,

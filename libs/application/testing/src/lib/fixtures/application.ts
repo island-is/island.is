@@ -11,6 +11,7 @@ import {
   ApplicationRole,
   ApplicationTemplate,
 } from '@island.is/application/types'
+import { CodeOwners } from '@island.is/shared/constants'
 
 export const createApplication = (
   overrides?: Partial<ApplicationWithAttachments>,
@@ -52,6 +53,7 @@ export const createApplicationTemplate = (
   },
   type: ApplicationTypes.EXAMPLE,
   name: 'Test application',
+  codeOwner: CodeOwners.NordaApplications,
   institution: 'Test institution',
   dataSchema: z.object({
     person: z.object({

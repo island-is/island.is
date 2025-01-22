@@ -12,6 +12,7 @@ import { application } from './messages'
 import { dataSchema } from './dataSchema'
 import { Features } from '@island.is/feature-flags'
 import { externalData } from '../lib/messages'
+import { CodeOwners } from '@island.is/shared/constants'
 
 const AlcoholTaxRedemptionTemplate: ApplicationTemplate<
   ApplicationContext,
@@ -20,6 +21,7 @@ const AlcoholTaxRedemptionTemplate: ApplicationTemplate<
 > = {
   type: ApplicationTypes.ALCOHOL_TAX_REDEMPTION,
   name: application.applicationTitle,
+  codeOwner: CodeOwners.NordaApplications,
   institution: application.institutionName,
   featureFlag: Features.alcoholTaxRedemption,
   dataSchema,

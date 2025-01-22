@@ -28,6 +28,7 @@ import {
   CurrentVehiclesApi,
 } from '../dataProviders'
 import { AuthDelegationType } from '@island.is/shared/types'
+import { CodeOwners } from '@island.is/shared/constants'
 
 const determineMessageFromApplicationAnswers = (application: Application) => {
   const plate = getValueViaPath(
@@ -48,6 +49,7 @@ const template: ApplicationTemplate<
 > = {
   type: ApplicationTypes.ENERGY_FUNDS,
   name: determineMessageFromApplicationAnswers,
+  codeOwner: CodeOwners.Origo,
   institution: applicationMessage.institutionName,
   translationNamespaces: [ApplicationConfigurations.EnergyFunds.translation],
   dataSchema: EnergyFundsSchema,

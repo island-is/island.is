@@ -48,6 +48,7 @@ import {
   SocialInsuranceAdministrationSpousalInfo,
 } from '../dataProviders'
 import { getApplicationAnswers, isEligible } from './deathBenefitsUtils'
+import { CodeOwners } from '@island.is/shared/constants'
 
 const DeathBenefitsTemplate: ApplicationTemplate<
   ApplicationContext,
@@ -56,6 +57,7 @@ const DeathBenefitsTemplate: ApplicationTemplate<
 > = {
   type: ApplicationTypes.DEATH_BENEFITS,
   name: deathBenefitsFormMessage.shared.applicationTitle,
+  codeOwner: CodeOwners.Deloitte,
   institution: socialInsuranceAdministrationMessage.shared.institution,
   translationNamespaces: ApplicationConfigurations.DeathBenefits.translation,
   dataSchema,

@@ -38,6 +38,7 @@ import { ApiScope } from '@island.is/auth/scopes'
 import { getBuyerNationalId } from '../utils/getBuyerNationalid'
 import { getExtraData } from '../utils/getExtraData'
 import { isPaymentRequired } from '../utils/isPaymentRequired'
+import { CodeOwners } from '@island.is/shared/constants'
 
 const pruneInDaysAtMidnight = (application: Application, days: number) => {
   const date = new Date(application.created)
@@ -85,6 +86,7 @@ const template: ApplicationTemplate<
 > = {
   type: ApplicationTypes.TRANSFER_OF_MACHINE_OWNERSHIP,
   name: determineMessageFromApplicationAnswers,
+  codeOwner: CodeOwners.Origo,
   institution: applicationMessage.institutionName,
   translationNamespaces: [
     ApplicationConfigurations.TransferOfMachineOwnership.translation,

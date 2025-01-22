@@ -15,6 +15,7 @@ import { Events, States, Roles } from './constants'
 import { dataSchema } from './dataSchema'
 import { m } from './messages'
 import { ApiActions } from './constants'
+import { CodeOwners } from '@island.is/shared/constants'
 
 const configuration =
   ApplicationConfigurations[ApplicationTypes.DRIVING_SCHOOL_CONFIRMATION]
@@ -26,6 +27,7 @@ const DrivingSchoolConfirmationTemplate: ApplicationTemplate<
 > = {
   type: ApplicationTypes.DRIVING_SCHOOL_CONFIRMATION,
   name: m.applicationTitle,
+  codeOwner: CodeOwners.Juni,
   dataSchema: dataSchema,
   translationNamespaces: [configuration.translation],
   stateMachineConfig: {

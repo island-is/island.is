@@ -41,6 +41,7 @@ import {
   socialInsuranceAdministrationMessage,
   statesMessages as coreSIAStatesMessages,
 } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
+import { CodeOwners } from '@island.is/shared/constants'
 
 const PensionSupplementTemplate: ApplicationTemplate<
   ApplicationContext,
@@ -49,6 +50,7 @@ const PensionSupplementTemplate: ApplicationTemplate<
 > = {
   type: ApplicationTypes.PENSION_SUPPLEMENT,
   name: pensionSupplementFormMessage.shared.applicationTitle,
+  codeOwner: CodeOwners.Deloitte,
   institution: socialInsuranceAdministrationMessage.shared.institution,
   translationNamespaces:
     ApplicationConfigurations.PensionSupplement.translation,

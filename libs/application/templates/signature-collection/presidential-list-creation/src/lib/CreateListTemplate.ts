@@ -16,6 +16,7 @@ import { dataSchema } from './dataSchema'
 import { m } from './messages'
 import { EphemeralStateLifeCycle } from '@island.is/application/core'
 import { OwnerRequirementsApi, CurrentCollectionApi } from '../dataProviders'
+import { CodeOwners } from '@island.is/shared/constants'
 
 const WeekLifeCycle: StateLifeCycle = {
   shouldBeListed: false,
@@ -30,6 +31,7 @@ const CreateListTemplate: ApplicationTemplate<
 > = {
   type: ApplicationTypes.PRESIDENTIAL_LIST_CREATION,
   name: m.applicationName,
+  codeOwner: CodeOwners.Juni,
   institution: m.institution,
   dataSchema,
   stateMachineConfig: {

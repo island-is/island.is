@@ -32,6 +32,7 @@ import {
 import { dataSchema } from './dataSchema'
 import { newPrimarySchoolMessages, statesMessages } from './messages'
 import { getApplicationAnswers } from './newPrimarySchoolUtils'
+import { CodeOwners } from '@island.is/shared/constants'
 
 const NewPrimarySchoolTemplate: ApplicationTemplate<
   ApplicationContext,
@@ -40,6 +41,7 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
 > = {
   type: ApplicationTypes.NEW_PRIMARY_SCHOOL,
   name: newPrimarySchoolMessages.shared.applicationName,
+  codeOwner: CodeOwners.Deloitte,
   institution: newPrimarySchoolMessages.shared.institution,
   translationNamespaces: ApplicationConfigurations.NewPrimarySchool.translation,
   dataSchema,

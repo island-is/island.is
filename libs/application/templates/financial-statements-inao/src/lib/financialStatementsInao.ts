@@ -30,6 +30,7 @@ import {
   NationalRegistryUserApi,
   UserInfoApi,
 } from '../dataProviders'
+import { CodeOwners } from '@island.is/shared/constants'
 
 const configuration =
   ApplicationConfigurations[ApplicationTypes.FINANCIAL_STATEMENTS_INAO]
@@ -58,6 +59,7 @@ const FinancialStatementInaoApplication: ApplicationTemplate<
       ? `${m.applicationTitle.defaultMessage} - ${currentUser.fullName}`
       : m.applicationTitle
   },
+  codeOwner: CodeOwners.NordaApplications,
   institution: m.institutionName,
   dataSchema,
   translationNamespaces: [configuration.translation],

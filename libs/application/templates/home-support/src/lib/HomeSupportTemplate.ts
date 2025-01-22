@@ -23,6 +23,7 @@ import {
 } from '@island.is/application/core'
 import { isEligibleForApplication } from '../utils'
 import { Features } from '@island.is/feature-flags'
+import { CodeOwners } from '@island.is/shared/constants'
 
 type HomeSupportEvent =
   | { type: DefaultEvents.APPROVE }
@@ -42,6 +43,7 @@ const HomeSupportTemplate: ApplicationTemplate<
 > = {
   type: ApplicationTypes.HOME_SUPPORT,
   name: application.general.name,
+  codeOwner: CodeOwners.NordaApplications,
   dataSchema: HomeSupportSchema,
   translationNamespaces: configuration.translation,
   featureFlag: Features.homeSupport,

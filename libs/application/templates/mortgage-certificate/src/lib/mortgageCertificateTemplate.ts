@@ -30,6 +30,7 @@ import { MortgageCertificateSchema } from './dataSchema'
 import { application } from './messages'
 import { FeatureFlagClient } from '@island.is/feature-flags'
 import { MortgageCertificateFeatureFlags } from '../util/getApplicationFeatureFlags'
+import { CodeOwners } from '@island.is/shared/constants'
 
 const template: ApplicationTemplate<
   ApplicationContext,
@@ -38,6 +39,7 @@ const template: ApplicationTemplate<
 > = {
   type: ApplicationTypes.MORTGAGE_CERTIFICATE,
   name: application.general.name,
+  codeOwner: CodeOwners.Origo,
   institution: application.general.institutionName,
   translationNamespaces: [
     ApplicationConfigurations.MortgageCertificate.translation,
