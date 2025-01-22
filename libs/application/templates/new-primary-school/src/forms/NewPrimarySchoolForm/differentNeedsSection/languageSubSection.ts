@@ -36,6 +36,7 @@ export const languageSubSection = buildSubSection({
           placeholder:
             newPrimarySchoolMessages.differentNeeds
               .languageEnvironmentPlaceholder,
+          required: true,
           options: () => {
             return getLanguageEnvironments()
           },
