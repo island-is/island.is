@@ -1,6 +1,13 @@
 import type { ApolloError } from '@apollo/client'
 import { Problem } from '../Problem'
 
+interface ProblemExtensions {
+  problem?: Problem
+  exception?: {
+    problem?: Problem
+  }
+}
+
 export const findProblemInApolloError = (
   error: ApolloError | undefined,
   types?: string[],
@@ -9,7 +16,8 @@ export const findProblemInApolloError = (
     return undefined
   }
   const graphQLError = error.graphQLErrors.find((value) => {
-    const problem = value.extensions?.problem as Problem | undefined
+    const extensions = value.extensions as ProblemExtensions | undefined
+    const problem = extensions?.problem || extensions?.exception?.problem
     return problem && (!types || types.includes(problem.type))
   })
 

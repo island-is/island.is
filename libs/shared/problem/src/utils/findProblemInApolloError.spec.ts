@@ -74,12 +74,43 @@ describe('findProblemInApolloError', () => {
     expect(problem).toMatchObject({ type: ProblemType.HTTP_NOT_FOUND })
   })
 
+  it('return first problem matching types when problem is nested in exception object', () => {
+    // Arrange
+    const error = new ApolloError({
+      graphQLErrors: [
+        new GraphQLError('Error', null, null, null, null, null, {
+          exception: {
+            problem: { type: ProblemType.HTTP_BAD_REQUEST },
+          },
+        }),
+        new GraphQLError('Error', null, null, null, null, null, {
+          exception: {
+            problem: { type: ProblemType.HTTP_NOT_FOUND },
+          },
+        }),
+      ],
+    })
+
+    // Act
+    const problem = findProblemInApolloError(error, [
+      ProblemType.HTTP_NOT_FOUND,
+    ])
+
+    // Assert
+    expect(problem).toMatchObject({ type: ProblemType.HTTP_NOT_FOUND })
+  })
+
   it('return undefined if no problem matches types', () => {
     // Arrange
     const error = new ApolloError({
       graphQLErrors: [
         new GraphQLError('Error', null, null, null, null, null, {
           problem: { type: ProblemType.HTTP_BAD_REQUEST },
+        }),
+        new GraphQLError('Error', null, null, null, null, null, {
+          exception: {
+            problem: { type: ProblemType.HTTP_BAD_REQUEST },
+          },
         }),
       ],
     })
