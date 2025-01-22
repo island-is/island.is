@@ -32,9 +32,7 @@ describe('PaymentFlowService', () => {
           },
         ],
         payerNationalId: '1234567890',
-        onSuccessUrl: 'http://localhost:3333/success',
         onUpdateUrl: 'http://localhost:3333/update',
-        onErrorUrl: 'http://localhost:3333/error',
         organisationId: 'test',
       }
 

@@ -31,11 +31,9 @@ describe('PaymentFlowController', () => {
         ],
         payerNationalId: '1234567890',
         availablePaymentMethods: [PaymentMethod.CARD, PaymentMethod.INVOICE],
-        onSuccessUrl: 'https://www.island.is/greida/success',
         onUpdateUrl: 'https://www.island.is/greida/update',
-        onErrorUrl: 'https://www.island.is/greida/error',
         organisationId: 'organization-id',
-        invoiceId: 'todo',
+        // invoiceId: 'todo',
       }
 
       const response = await server.post('/v1/payments').send(payload)
