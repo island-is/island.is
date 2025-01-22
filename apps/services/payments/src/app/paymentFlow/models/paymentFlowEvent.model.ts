@@ -43,6 +43,14 @@ export class PaymentFlowEvent extends Model<
 
   @ApiProperty()
   @Column({
+    type: DataType.UUID,
+    allowNull: false,
+    field: 'correlation_id',
+  })
+  correlationId!: string
+
+  @ApiProperty()
+  @Column({
     type: DataType.ENUM('update', 'success', 'failure', 'deleted'),
     allowNull: false,
   })

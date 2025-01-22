@@ -16,6 +16,7 @@ import { GetVerificationStatus } from './dtos/params.dto'
 import { VerificationStatusResponse } from './dtos/verificationStatus.response.dto'
 import { VerifyCardResponse } from './dtos/verifyCard.response.dto'
 import { ChargeCardResponse } from './dtos/chargeCard.response.dto'
+import { getPayloadFromMd } from './cardPayment.utils'
 
 @UseGuards(FeatureFlagGuard)
 @FeatureFlag(Features.isIslandisPaymentEnabled)
@@ -44,6 +45,7 @@ export class CardPaymentController {
 
       await this.paymentFlowService.logPaymentFlowUpdate({
         paymentFlowId: cardVerificationInput.paymentFlowId,
+        correlationId: cardVerificationInput.correlationId,
         type: 'update',
         occurredAt: new Date(),
         paymentMethod: PaymentMethod.CARD,
@@ -56,6 +58,7 @@ export class CardPaymentController {
     } catch (e) {
       await this.paymentFlowService.logPaymentFlowUpdate({
         paymentFlowId: cardVerificationInput.paymentFlowId,
+        correlationId: cardVerificationInput.correlationId,
         type: 'update',
         occurredAt: new Date(),
         paymentMethod: PaymentMethod.CARD,
@@ -70,16 +73,24 @@ export class CardPaymentController {
   async verificationCallback(
     @Body() cardVerificationCallbackInput: VerificationCallbackInput,
   ) {
+    const mdPayload = this.cardPaymentService.getMdPayload(
+      cardVerificationCallbackInput.md,
+    )
+
+    const { paymentFlowId, correlationId } = mdPayload
+
     try {
       // Confirmed verification from user 3DS
-      const { success, paymentFlowId } =
-        await this.cardPaymentService.verifyThreeDSecureCallback(
+      const { success } =
+        await this.cardPaymentService.verifyThreeDSecureCallback({
           cardVerificationCallbackInput,
-        )
+          mdPayload,
+        })
 
       if (!success) {
         await this.paymentFlowService.logPaymentFlowUpdate({
           paymentFlowId,
+          correlationId,
           type: 'update',
           occurredAt: new Date(),
           paymentMethod: PaymentMethod.CARD,
@@ -91,6 +102,7 @@ export class CardPaymentController {
 
       await this.paymentFlowService.logPaymentFlowUpdate({
         paymentFlowId,
+        correlationId,
         type: 'update',
         occurredAt: new Date(),
         paymentMethod: PaymentMethod.CARD,
@@ -99,7 +111,8 @@ export class CardPaymentController {
       })
     } catch (e) {
       await this.paymentFlowService.logPaymentFlowUpdate({
-        paymentFlowId: 'unknown',
+        paymentFlowId: mdPayload.paymentFlowId,
+        correlationId: mdPayload.correlationId,
         type: 'update',
         occurredAt: new Date(),
         paymentMethod: PaymentMethod.CARD,
@@ -138,6 +151,7 @@ export class CardPaymentController {
 
     await this.paymentFlowService.logPaymentFlowUpdate({
       paymentFlowId: chargeCardInput.paymentFlowId,
+      correlationId: chargeCardInput.correlationId,
       type: 'success',
       occurredAt: new Date(),
       paymentMethod: PaymentMethod.CARD,

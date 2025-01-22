@@ -1,21 +1,11 @@
 import { sign, verify, Algorithm } from 'jsonwebtoken'
 import { ChargeCardInput } from './dtos/chargeCard.input'
 import { VerifyCardInput } from './dtos/verifyCard.input'
-import { SavedVerificationCompleteData } from './cardPayment.types'
-
-interface MdPayload {
-  c: string // payment transaction correlation id
-  pi: string // payment flow id
-  a: number // amount
-  iat: number
-}
-
-interface MdNormalised {
-  correlationId: string
-  paymentFlowId: string
-  amount: number
-  issuedAt: number
-}
+import {
+  MdNormalised,
+  MdSerialized,
+  SavedVerificationCompleteData,
+} from './cardPayment.types'
 
 const removeHyphensFromUUID = (uuid: string) => {
   return uuid.replace(/-/g, '')
@@ -48,7 +38,7 @@ export const generateMd = ({
   paymentsTokenSigningAlgorithm: string
   paymentsTokenSignaturePrefix: string
 }) => {
-  const mdPayload: Omit<MdPayload, 'iat'> = {
+  const MdSerialized: Omit<MdSerialized, 'iat'> = {
     // Had to reduce the size of the UUIDs to 32 characters
     // to fit within the character limit of the md object
     c: removeHyphensFromUUID(correlationId),
@@ -56,7 +46,7 @@ export const generateMd = ({
     a: amount,
   }
 
-  const mdToken = sign(mdPayload, paymentsTokenSigningSecret, {
+  const mdToken = sign(MdSerialized, paymentsTokenSigningSecret, {
     algorithm: paymentsTokenSigningAlgorithm as Algorithm,
   })
 
@@ -165,7 +155,7 @@ export const getPayloadFromMd = ({
     md,
     'base64',
   ).toString('utf-8')}`
-  const payload = verify(jwtMd, paymentsTokenSigningSecret) as MdPayload
+  const payload = verify(jwtMd, paymentsTokenSigningSecret) as MdSerialized
 
   if (!payload) {
     throw new Error('Invalid MD')

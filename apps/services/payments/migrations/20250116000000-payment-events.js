@@ -47,6 +47,10 @@ module.exports = {
             },
             onDelete: 'CASCADE',
           },
+          correlation_id: {
+            type: Sequelize.STRING,
+            allowNull: false,
+          },
           type: {
             type: Sequelize.ENUM('update', 'success', 'failure', 'deleted'),
             allowNull: false,

@@ -165,6 +165,7 @@ export class PaymentFlowService {
 
   async logPaymentFlowUpdate(update: {
     paymentFlowId: string
+    correlationId: string
     type: PaymentFlowEvent['type']
     occurredAt: Date
     paymentMethod: PaymentMethod

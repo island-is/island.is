@@ -10,6 +10,7 @@ import { CardPaymentModuleConfig } from './cardPayment.config'
 import {
   CachePaymentFlowStatus,
   ChargeResponse,
+  MdNormalised,
   SavedVerificationCompleteData,
   SavedVerificationPendingData,
   VerificationResponse,
@@ -97,31 +98,40 @@ export class CardPaymentService {
     return data
   }
 
-  async verifyThreeDSecureCallback({
-    md,
-    cavv,
-    dsTransId,
-    mdStatus,
-    xid,
-  }: VerificationCallbackInput) {
-    let success = false
+  getMdPayload(md: string): MdNormalised {
+    try {
+      const {
+        paymentGateway: {
+          paymentsTokenSigningSecret,
+          paymentsTokenSignaturePrefix,
+        },
+      } = this.config
 
-    const {
-      tokenExpiryMinutes,
-      memCacheExpiryMinutes,
-      paymentGateway: {
+      const payload = getPayloadFromMd({
+        md,
         paymentsTokenSigningSecret,
         paymentsTokenSignaturePrefix,
-      },
-    } = this.config
+      })
 
-    const payload = getPayloadFromMd({
-      md,
-      paymentsTokenSigningSecret,
-      paymentsTokenSignaturePrefix,
-    })
+      return payload
+    } catch (e) {
+      this.logger.error('Failed to get payload from md', e)
+      throw new Error('Invalid md object')
+    }
+  }
 
-    const { correlationId, paymentFlowId, amount, issuedAt } = payload
+  async verifyThreeDSecureCallback({
+    cardVerificationCallbackInput: { cavv, mdStatus, xid, dsTransId },
+    mdPayload,
+  }: {
+    cardVerificationCallbackInput: VerificationCallbackInput
+    mdPayload: MdNormalised
+  }) {
+    let success = false
+
+    const { tokenExpiryMinutes, memCacheExpiryMinutes } = this.config
+
+    const { correlationId, paymentFlowId, amount, issuedAt } = mdPayload
 
     const now = Date.now()
     const tokenExpiresAt = (issuedAt + tokenExpiryMinutes * 60) * 1000
