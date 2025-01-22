@@ -164,7 +164,11 @@ export class EnergyFundsService extends BaseTemplateApiService {
     const currentVehicleList = application.externalData?.currentVehicles
       ?.data as VehiclesWithTotalCount
 
-    const currentvehicleDetails = application.answers.findVehicle
+    const findVehicle = getValueViaPath<boolean | undefined>(
+      application.answers,
+      'selectVehicle.findVehicle',
+    )
+    const currentvehicleDetails = findVehicle
       ? (getValueViaPath(
           application.answers,
           'selectVehicle',
