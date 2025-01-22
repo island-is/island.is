@@ -1,28 +1,24 @@
 import {
-  Injectable,
-  Inject,
-  SetMetadata,
-  applyDecorators,
   CanActivate,
   ExecutionContext,
+  Inject,
+  Injectable,
+  SetMetadata,
   UseGuards,
+  applyDecorators,
   forwardRef,
 } from '@nestjs/common'
 import { AuthenticationError } from 'apollo-server-express'
 import { decode } from 'jsonwebtoken'
 
-import { IdsUserGuard, getRequest } from '@island.is/auth-nest-tools'
 import type { GraphQLContext } from '@island.is/auth-nest-tools'
+import { getRequest } from '@island.is/auth-nest-tools'
 
-import { AccessControlService } from '../accessControl'
 import { environment } from '../../../environments'
+import { AccessControlService } from '../accessControl'
 
-import { User } from './user.model'
 import { RolesGuard } from './roles.guard'
-import { Role } from './user.model'
-import { logger } from '@island.is/logging'
-
-import { isRunningOnEnvironment } from '@island.is/shared/utils'
+import { Role, User } from './user.model'
 
 type AuthorizeOptions = {
   roles?: Role[]

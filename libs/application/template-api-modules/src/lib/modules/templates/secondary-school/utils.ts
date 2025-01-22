@@ -48,33 +48,6 @@ export const getRecipients = (answers: FormValue): Array<EmailRecipient> => {
     })
   })
 
-  // Main other contact
-  const mainOtherContact = getValueViaPath<
-    SecondarySchoolAnswers['mainOtherContact']
-  >(answers, 'mainOtherContact')
-  if (mainOtherContact?.nationalId) {
-    recipientList.push({
-      nationalId: mainOtherContact.nationalId,
-      name: mainOtherContact.name || '',
-      email: mainOtherContact.email || '',
-    })
-  }
-
-  // Other contacts
-  const otherContacts = (
-    getValueViaPath<SecondarySchoolAnswers['otherContacts']>(
-      answers,
-      'otherContacts',
-    ) || []
-  ).filter((x) => !!x.person.nationalId)
-  otherContacts.forEach((otherContact) => {
-    recipientList.push({
-      nationalId: otherContact.person.nationalId,
-      name: otherContact.person.name || '',
-      email: otherContact.email || '',
-    })
-  })
-
   return recipientList
 }
 
@@ -143,7 +116,7 @@ export const getCleanSchoolSelection = (
 ): ApplicationSelectionSchool[] => {
   const result: ApplicationSelectionSchool[] = []
 
-  let schoolPriority = 0
+  let schoolPriority = 1
 
   const selectionKeys = ['first', 'second', 'third']
   selectionKeys.forEach((selectionKey) => {
@@ -161,11 +134,11 @@ export const getCleanSchoolSelection = (
         schoolId: selectionItem.school.id,
         programs: [
           {
-            priority: 0,
+            priority: 1,
             programId: selectionItem.firstProgram.id,
           },
           {
-            priority: 1,
+            priority: 2,
             programId: selectionItem.secondProgram?.include
               ? selectionItem.secondProgram.id || ''
               : '',

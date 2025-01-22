@@ -214,6 +214,7 @@ export const buildSelectField = (
     onSelect,
     backgroundColor = 'blue',
     isMulti,
+    isClearable,
     required,
   } = data
   return {
@@ -226,6 +227,7 @@ export const buildSelectField = (
     component: FieldComponents.SELECT,
     onSelect,
     isMulti,
+    isClearable,
     backgroundColor,
   }
 }
@@ -241,6 +243,7 @@ export const buildAsyncSelectField = (
     backgroundColor = 'blue',
     isSearchable,
     isMulti,
+    updateOnSelect,
   } = data
 
   return {
@@ -255,6 +258,7 @@ export const buildAsyncSelectField = (
     backgroundColor,
     isSearchable,
     isMulti,
+    updateOnSelect,
   }
 }
 
@@ -992,6 +996,8 @@ export const buildSliderField = (
     onChangeEnd,
     labelMultiplier = 1,
     saveAsString,
+    textColor,
+    progressOverlayColor,
     marginTop,
     marginBottom,
   } = data
@@ -1021,6 +1027,8 @@ export const buildSliderField = (
     onChangeEnd,
     labelMultiplier,
     saveAsString,
+    textColor,
+    progressOverlayColor,
     marginTop,
     marginBottom,
   }

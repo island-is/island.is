@@ -14,6 +14,7 @@ import {
   FILE_TYPES_ALLOWED,
   getEndOfDayUTCDate,
   getFirstRegistrationEndDate,
+  LANGUAGE_CODE_ICELANDIC,
 } from '../../../utils'
 
 export const extraInformationSection = buildSection({
@@ -49,9 +50,10 @@ export const extraInformationSection = buildSection({
           title: extraInformation.nativeLanguage.selectLabel,
           placeholder: extraInformation.nativeLanguage.selectPlaceholder,
           width: 'full',
+          doesNotRequireAnswer: true,
           options: () => {
             const languages = getAllLanguageCodes().filter(
-              (x) => x.code !== 'is',
+              (x) => x.code !== LANGUAGE_CODE_ICELANDIC,
             )
             return languages.map((language) => {
               return {

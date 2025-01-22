@@ -66,6 +66,7 @@ import {
   FeaturedSupportQnAs as FeaturedSupportQNAsSchema,
   Form as FormSchema,
   GenericList as GenericListSchema,
+  GetTeamMembersInputOrderBy,
   GrantCardsList as GrantCardsListSchema,
   MultipleStatistics as MultipleStatisticsSchema,
   OneColumnText,
@@ -283,6 +284,8 @@ const defaultRenderComponent = {
       teamMembers={slice.teamMembers as TeamListProps['teamMembers']}
       filterTags={slice.filterTags}
       variant={slice.variant as 'accordion' | 'card'}
+      showSearchInput={slice.showSearchInput ?? true}
+      orderBy={slice.teamMemberOrder ?? GetTeamMembersInputOrderBy.Name}
     />
   ),
   Image: (slice: ImageProps) => {

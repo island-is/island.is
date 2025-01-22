@@ -15,6 +15,7 @@ import {
   DefaultEvents,
   NationalRegistryUserApi,
   UserProfileApi,
+  YES,
   defineTemplateApi,
 } from '@island.is/application/types'
 import { Features } from '@island.is/feature-flags'
@@ -92,6 +93,8 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
           'clearApplicationIfReasonForApplication',
           'clearPlaceOfResidence',
           'clearLanguages',
+          'clearAllergiesAndIntolerances',
+          'clearFreeSchoolMeal',
         ],
         meta: {
           name: States.DRAFT,
@@ -220,6 +223,42 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
         if (otherLanguagesSpokenDaily === NO) {
           unset(application.answers, 'languages.otherLanguages')
           unset(application.answers, 'languages.icelandicNotSpokenAroundChild')
+        }
+        return context
+      }),
+      clearAllergiesAndIntolerances: assign((context) => {
+        const { application } = context
+        const { hasFoodAllergiesOrIntolerances, hasOtherAllergies } =
+          getApplicationAnswers(application.answers)
+
+        if (!hasFoodAllergiesOrIntolerances?.includes(YES)) {
+          unset(
+            application.answers,
+            'allergiesAndIntolerances.foodAllergiesOrIntolerances',
+          )
+        }
+        if (!hasOtherAllergies?.includes(YES)) {
+          unset(application.answers, 'allergiesAndIntolerances.otherAllergies')
+        }
+        if (
+          !hasFoodAllergiesOrIntolerances?.includes(YES) &&
+          !hasOtherAllergies?.includes(YES)
+        ) {
+          unset(application.answers, 'allergiesAndIntolerances.usesEpiPen')
+        }
+        return context
+      }),
+      clearFreeSchoolMeal: assign((context) => {
+        const { application } = context
+        const { acceptFreeSchoolLunch, hasSpecialNeeds } =
+          getApplicationAnswers(application.answers)
+
+        if (acceptFreeSchoolLunch !== YES) {
+          unset(application.answers, 'freeSchoolMeal.hasSpecialNeeds')
+          unset(application.answers, 'freeSchoolMeal.specialNeedsType')
+        }
+        if (hasSpecialNeeds !== YES) {
+          unset(application.answers, 'freeSchoolMeal.specialNeedsType')
         }
         return context
       }),
