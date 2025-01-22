@@ -1,12 +1,4 @@
-import {
-  BadRequestException,
-  Body,
-  Controller,
-  Get,
-  Param,
-  Post,
-  UseGuards,
-} from '@nestjs/common'
+import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common'
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
 import { CardPaymentService } from './cardPayment.service'
@@ -21,8 +13,6 @@ import { VerifyCardInput } from './dtos/verifyCard.input'
 import { VerificationCallbackInput } from './dtos/verificationCallback.input'
 import { ChargeCardInput } from './dtos/chargeCard.input'
 import { GetVerificationStatus } from './dtos/params.dto'
-import { getTempStorage } from '../tempInMemoryStorage'
-import { CachePaymentFlowStatus } from './cardPayment.types'
 import { VerificationStatusResponse } from './dtos/verificationStatus.response.dto'
 import { VerifyCardResponse } from './dtos/verifyCard.response.dto'
 import { ChargeCardResponse } from './dtos/chargeCard.response.dto'
@@ -99,14 +89,6 @@ export class CardPaymentController {
         return
       }
 
-      getTempStorage().set(
-        paymentFlowId,
-        {
-          isVerified: true,
-        } as CachePaymentFlowStatus,
-        60,
-      )
-
       await this.paymentFlowService.logPaymentFlowUpdate({
         paymentFlowId,
         type: 'update',
@@ -136,9 +118,8 @@ export class CardPaymentController {
   ): Promise<VerificationStatusResponse> {
     const { paymentFlowId } = params
 
-    const paymentFlowStatus = getTempStorage().get(
-      paymentFlowId,
-    ) as CachePaymentFlowStatus
+    const paymentFlowStatus =
+      await this.cardPaymentService.getVerificationStatus(paymentFlowId)
 
     return {
       isVerified: paymentFlowStatus?.isVerified === true,

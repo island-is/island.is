@@ -16,6 +16,7 @@ import { PaymentFlowEvent } from '../paymentFlow/models/paymentFlowEvent.model'
 import { PaymentFlowService } from '../paymentFlow/paymentFlow.service'
 import { ConfigModule } from '@nestjs/config'
 import { CardPaymentModuleConfig } from './cardPayment.config'
+import { CardPaymentCacheModule } from './cardPayment.cache'
 
 @Module({
   imports: [
@@ -32,6 +33,7 @@ import { CardPaymentModuleConfig } from './cardPayment.config'
     ChargeFjsV2ClientModule,
     NationalRegistryV3ClientModule,
     CompanyRegistryClientModule,
+    CardPaymentCacheModule,
   ],
   controllers: [CardPaymentController],
   providers: [CardPaymentService, PaymentFlowService],

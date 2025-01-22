@@ -1,6 +1,7 @@
 import { sign, verify, Algorithm } from 'jsonwebtoken'
 import { ChargeCardInput } from './dtos/chargeCard.input'
 import { VerifyCardInput } from './dtos/verifyCard.input'
+import { SavedVerificationCompleteData } from './cardPayment.types'
 
 interface MdPayload {
   c: string // payment transaction correlation id
@@ -120,12 +121,7 @@ export const generateChargeRequestOptions = ({
   paymentApiConfig,
 }: {
   chargeCardInput: ChargeCardInput
-  verificationData: {
-    cavv: string
-    mdStatus: string
-    xid: string
-    dsTransId: string
-  }
+  verificationData: SavedVerificationCompleteData
   paymentApiConfig: PaymentApiConfig
 }) => {
   const { cardNumber, expiryMonth, expiryYear, cvc, amount } = chargeCardInput

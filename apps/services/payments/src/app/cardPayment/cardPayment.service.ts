@@ -1,11 +1,19 @@
 import { Inject, Injectable } from '@nestjs/common'
+import { CACHE_MANAGER } from '@nestjs/cache-manager'
+import { Cache as CacheManager } from 'cache-manager'
+import { ConfigType } from '@nestjs/config'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 // import { ChargeFjsV2ClientService } from '@island.is/clients/charge-fjs-v2'
 import { CardPaymentModuleConfig } from './cardPayment.config'
-import { ConfigType } from '@nestjs/config'
-import { ChargeResponse, VerificationResponse } from './cardPayment.types'
+import {
+  CachePaymentFlowStatus,
+  ChargeResponse,
+  SavedVerificationCompleteData,
+  SavedVerificationPendingData,
+  VerificationResponse,
+} from './cardPayment.types'
 import {
   generateChargeRequestOptions,
   generateMd,
@@ -13,14 +21,8 @@ import {
   getPayloadFromMd,
 } from './cardPayment.utils'
 import { VerificationCallbackInput } from './dtos/verificationCallback.input'
-import { getTempStorage } from '../tempInMemoryStorage'
 import { ChargeCardInput } from './dtos/chargeCard.input'
 import { VerifyCardInput } from './dtos/verifyCard.input'
-
-interface SavedVerificationData {
-  paymentFlowId: string
-  amount: number
-}
 
 @Injectable()
 export class CardPaymentService {
@@ -30,6 +32,8 @@ export class CardPaymentService {
     // private chargeFjsV2ClientService: ChargeFjsV2ClientService,
     @Inject(CardPaymentModuleConfig.KEY)
     private readonly config: ConfigType<typeof CardPaymentModuleConfig>,
+    @Inject(CACHE_MANAGER)
+    private readonly cacheManager: CacheManager,
   ) {}
 
   async verify(
@@ -56,15 +60,14 @@ export class CardPaymentService {
       paymentsTokenSignaturePrefix,
     })
 
-    // TODO associate correlationId with payment flow
-    getTempStorage().set(
+    await this.cacheManager.set(
       verifyCardInput.correlationId,
       {
         paymentFlowId: verifyCardInput.paymentFlowId,
         amount,
-      } as SavedVerificationData,
-      memCacheExpiryMinutes * 60,
-    ) // Valid for 60 seconds
+      } as SavedVerificationPendingData,
+      memCacheExpiryMinutes * 60000,
+    )
 
     const requestOptions = generateVerificationRequestOptions({
       verifyCardInput,
@@ -127,9 +130,9 @@ export class CardPaymentService {
       this.logger.error('Token was expired', correlationId)
     }
 
-    const storedValue = getTempStorage().getAndDelete(
+    const storedValue = (await this.cacheManager.get(
       correlationId,
-    ) as SavedVerificationData
+    )) as SavedVerificationPendingData
 
     if (!storedValue) {
       this.logger.error(
@@ -137,6 +140,8 @@ export class CardPaymentService {
         correlationId,
       )
     }
+
+    await this.cacheManager.del(correlationId)
 
     if (
       storedValue.amount === amount &&
@@ -146,7 +151,7 @@ export class CardPaymentService {
 
       // Save verified information to payment flow
       // to allow client (polling) to continue with payment using verification data
-      getTempStorage().set(
+      await this.cacheManager.set(
         correlationId,
         {
           cavv,
@@ -154,8 +159,18 @@ export class CardPaymentService {
           xid,
           dsTransId,
         },
-        memCacheExpiryMinutes * 60,
-      ) // Valid for 60 seconds
+        memCacheExpiryMinutes * 60000,
+      )
+
+      const paymentFlowStatus: CachePaymentFlowStatus = {
+        isVerified: true,
+      }
+
+      await this.cacheManager.set(
+        paymentFlowId,
+        paymentFlowStatus,
+        this.config.memCacheExpiryMinutes * 60000,
+      )
     } else {
       this.logger.error('Stored value does not match payload', {
         storedAmount: storedValue.amount,
@@ -169,12 +184,22 @@ export class CardPaymentService {
     }
   }
 
+  async getVerificationStatus(paymentFlowId: string) {
+    const status = (await this.cacheManager.get(paymentFlowId)) as
+      | CachePaymentFlowStatus
+      | undefined
+
+    return status
+  }
+
   async charge(chargeCardInput: ChargeCardInput) {
     let success = false
 
     const { correlationId } = chargeCardInput
 
-    const verificationData = getTempStorage().get(correlationId)
+    const verificationData = (await this.cacheManager.get(
+      correlationId,
+    )) as SavedVerificationCompleteData
 
     if (!verificationData) {
       throw new Error('Verification data not found')

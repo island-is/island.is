@@ -1,7 +1,13 @@
-import { defineConfig } from '@island.is/nest/config'
 import { z } from 'zod'
 
+import { defineConfig } from '@island.is/nest/config'
+import { isRunningOnEnvironment } from '@island.is/shared/utils'
+
 const schema = z.object({
+  redis: z.object({
+    nodes: z.array(z.string()),
+    ssl: z.boolean(),
+  }),
   paymentGateway: z.object({
     paymentsTokenSigningSecret: z.string(),
     paymentsTokenSigningAlgorithm: z.string(),
@@ -19,6 +25,17 @@ export const CardPaymentModuleConfig = defineConfig({
   name: 'CardPaymentModuleConfig',
   schema,
   load: (env) => ({
+    redis: {
+      nodes: env.requiredJSON('REDIS_NODES', [
+        'localhost:7000',
+        'localhost:7001',
+        'localhost:7002',
+        'localhost:7003',
+        'localhost:7004',
+        'localhost:7005',
+      ]),
+      ssl: !isRunningOnEnvironment('local'),
+    },
     paymentGateway: {
       paymentsTokenSigningSecret: env.required('PAYMENTS_TOKEN_SIGNING_SECRET'),
       paymentsTokenSigningAlgorithm: env.required(

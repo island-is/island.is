@@ -44,3 +44,15 @@ export interface ChargeResponse {
 export interface CachePaymentFlowStatus {
   isVerified?: boolean
 }
+
+export interface SavedVerificationPendingData {
+  paymentFlowId: string
+  amount: number
+}
+
+export interface SavedVerificationCompleteData {
+  cavv: string
+  mdStatus: string
+  xid: string
+  dsTransId: string
+}
