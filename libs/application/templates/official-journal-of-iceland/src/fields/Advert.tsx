@@ -31,7 +31,8 @@ export const Advert = ({ application }: OJOIFieldBaseProps) => {
   )
 
   const { departments, loading: loadingDepartments } = useDepartments()
-  const { templateTypes } = useAdvertTemplateTypes()
+  const { templateTypes, loading: advertTemplateLoading } =
+    useAdvertTemplateTypes()
 
   const [advertTemplateQuery] = useAdvertTemplateLazy((data) => {
     const currentAnswers = structuredClone(currentApplication.answers)
@@ -168,6 +169,7 @@ export const Advert = ({ application }: OJOIFieldBaseProps) => {
             placeholder={advert.inputs.template.placeholder}
             applicationId={application.id}
             options={templateOptions}
+            loading={advertTemplateLoading}
             onChange={(type) => {
               advertTemplateQuery({ variables: { params: { type: type } } })
             }}
