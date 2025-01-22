@@ -1,37 +1,40 @@
+import { RightsPortalHealthCenter } from '@island.is/api/schema'
 import {
-  Stack,
-  SkeletonLoader,
-  Box,
-  AlertMessage,
-  Text,
   Accordion,
   AccordionItem,
-  Table as T,
+  AlertMessage,
+  Box,
   Button,
   FilterInput,
+  Hidden,
+  SkeletonLoader,
+  Stack,
+  Table as T,
+  Text,
+  Tooltip,
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { IntroHeader } from '@island.is/portals/core'
 import {
   EmptyState,
   ErrorScreen,
   ExcludesFalse,
+  IntroWrapper,
+  m,
+  MobileTable,
 } from '@island.is/portals/my-pages/core'
-import { messages } from '../../lib/messages'
-import * as styles from './HealthRegistration.css'
-import { m } from '@island.is/portals/my-pages/core'
 import groupBy from 'lodash/groupBy'
-import { useEffect, useMemo, useRef, useState } from 'react'
-import { RightsPortalHealthCenter } from '@island.is/api/schema'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { RegisterModal } from '../../components/RegisterModal'
+import { messages } from '../../lib/messages'
 import { HealthPaths } from '../../lib/paths'
 import { formatHealthCenterName } from '../../utils/format'
-import { RegisterModal } from '../../components/RegisterModal'
 import {
   useGetHealthCenterDoctorsLazyQuery,
   useGetHealthCenterQuery,
   useRightsPortalTransferHealthCenterMutation,
 } from './HealthCenterRegistration.generated'
+import * as styles from './HealthRegistration.css'
 
 type SelectedHealthCenter = Pick<RightsPortalHealthCenter, 'id' | 'name'>
 
@@ -69,6 +72,13 @@ const HealthCenterRegistration = () => {
     setLoadingTransfer(false)
     setErrorTransfer(true)
   }
+
+  const handleHealthCenterSelect = useCallback(
+    (id: string, name?: string | null) => {
+      setSelectedHealthCenter({ id, name })
+    },
+    [],
+  )
 
   const [getHealthCenterDoctors] = useGetHealthCenterDoctorsLazyQuery({
     onCompleted: (data) => {
@@ -197,11 +207,11 @@ const HealthCenterRegistration = () => {
     )
 
   return (
-    <Box marginBottom={[6, 6, 10]}>
-      <IntroHeader
-        title={formatMessage(messages.healthCenterRegistrationTitle)}
-        intro={formatMessage(messages.healthCenterRegistrationInfo)}
-      />
+    <IntroWrapper
+      marginBottom={[6, 6, 10]}
+      title={formatMessage(messages.healthCenterRegistrationTitle)}
+      intro={formatMessage(messages.healthCenterRegistrationInfo)}
+    >
       {errorTransfer && (
         <Box paddingBottom={4} ref={errorBoxRef}>
           <AlertMessage
@@ -217,7 +227,7 @@ const HealthCenterRegistration = () => {
         <AlertMessage
           type="warning"
           message={
-            <Text variant="small">
+            <Text variant="medium">
               <strong className={styles.strongStyle}>
                 {formatMessage(messages.alert)}
               </strong>
@@ -271,61 +281,143 @@ const HealthCenterRegistration = () => {
             return (
               <Box dataTestId={`accordion-item`}>
                 <AccordionItem id={`${region}-${key}`} key={key} label={name}>
-                  <T.Table>
-                    <T.Head>
-                      <T.Row>
-                        <T.HeadData>
-                          {formatMessage(messages.healthCenterTitle)}
-                        </T.HeadData>
-                        <T.HeadData>{formatMessage(m.postcode)}</T.HeadData>
-                        <T.HeadData>{formatMessage(m.address)}</T.HeadData>
-                        <T.HeadData />
-                      </T.Row>
-                    </T.Head>
-                    <T.Body>
-                      {group.map((healthCenter, key) => {
-                        return (
-                          <tr
-                            className={styles.tableRowStyle}
-                            key={key}
-                            onMouseEnter={() => setHoverId(healthCenter.id)}
-                            onMouseLeave={() => setHoverId('')}
-                          >
-                            <T.Data>
-                              <Text variant="small">{healthCenter.name}</Text>
-                            </T.Data>
-                            <T.Data>{`${healthCenter.address?.postalCode} ${healthCenter.address?.municipality}`}</T.Data>
-                            <T.Data>
-                              {healthCenter.address?.streetAddress}
-                            </T.Data>
-                            <T.Data>
-                              <Box
-                                className={styles.saveButtonWrapperStyle({
-                                  visible: healthCenter.id === hoverId,
-                                })}
-                              >
-                                <Button
-                                  size="small"
-                                  variant="text"
-                                  icon="pencil"
-                                  onClick={() => {
-                                    setSelectedHealthCenter({
-                                      id: healthCenter.id,
-                                      name: healthCenter.name,
-                                    })
-                                  }}
-                                >
-                                  {formatMessage(
-                                    messages.healthRegistrationSave,
-                                  )}
-                                </Button>
-                              </Box>
-                            </T.Data>
-                          </tr>
-                        )
-                      })}
-                    </T.Body>
-                  </T.Table>
+                  <Hidden below="md">
+                    <T.Table>
+                      <T.Head>
+                        <T.Row>
+                          <T.HeadData>
+                            <Text variant="medium" fontWeight="semiBold">
+                              {formatMessage(messages.healthCenterTitle)}
+                            </Text>
+                          </T.HeadData>
+                          <T.HeadData>
+                            <Text variant="medium" fontWeight="semiBold">
+                              {formatMessage(m.postcode)}
+                            </Text>
+                          </T.HeadData>
+                          <T.HeadData>
+                            <Text variant="medium" fontWeight="semiBold">
+                              {formatMessage(m.address)}
+                            </Text>
+                          </T.HeadData>
+                          <T.HeadData />
+                        </T.Row>
+                      </T.Head>
+                      <T.Body>
+                        {group.map((healthCenter, key) => {
+                          return (
+                            <tr
+                              className={styles.tableRowStyle}
+                              key={key}
+                              onMouseEnter={() => setHoverId(healthCenter.id)}
+                              onMouseLeave={() => setHoverId('')}
+                            >
+                              <T.Data>
+                                <Text variant="medium">
+                                  {healthCenter.name}
+                                </Text>
+                              </T.Data>
+                              <T.Data>
+                                <Text variant="medium">
+                                  {`${healthCenter.address?.postalCode} ${healthCenter.address?.municipality}`}
+                                </Text>
+                              </T.Data>
+                              <T.Data>
+                                <Text variant="medium">
+                                  {healthCenter.address?.streetAddress}
+                                </Text>
+                              </T.Data>
+                              <T.Data>
+                                {healthCenter.canRegister ? (
+                                  <Box
+                                    className={styles.saveButtonWrapperStyle({
+                                      visible: healthCenter.id === hoverId,
+                                    })}
+                                  >
+                                    <Button
+                                      size="small"
+                                      variant="text"
+                                      icon="pencil"
+                                      onClick={() =>
+                                        handleHealthCenterSelect(
+                                          healthCenter.id,
+                                          healthCenter.name,
+                                        )
+                                      }
+                                    >
+                                      {formatMessage(
+                                        messages.healthRegistrationSave,
+                                      )}
+                                    </Button>
+                                  </Box>
+                                ) : (
+                                  <Text
+                                    variant="medium"
+                                    aria-label={formatMessage(
+                                      messages.healthCenterNotAvailableForRegistration,
+                                    )}
+                                  >
+                                    {formatMessage(
+                                      messages.healthCenterNotAvailableForRegistration,
+                                    )}
+                                    <Tooltip
+                                      text={formatMessage(
+                                        messages.healthCenterNotAvailableForRegistrationDesc,
+                                      )}
+                                      placement="right"
+                                    />
+                                  </Text>
+                                )}
+                              </T.Data>
+                            </tr>
+                          )
+                        })}
+                      </T.Body>
+                    </T.Table>
+                  </Hidden>
+                  <Hidden above="sm">
+                    <MobileTable
+                      rows={group.map((healthCenter) => ({
+                        title: healthCenter.name ?? '',
+                        action: healthCenter.canRegister ? (
+                          <div style={{ width: '100%' }}>
+                            <Button
+                              size="small"
+                              fluid
+                              type="button"
+                              variant="ghost"
+                              icon="pencil"
+                              onClick={() =>
+                                handleHealthCenterSelect(
+                                  healthCenter.id,
+                                  healthCenter.name,
+                                )
+                              }
+                            >
+                              {formatMessage(messages.healthRegistrationSave)}
+                            </Button>
+                          </div>
+                        ) : (
+                          <AlertMessage
+                            type="info"
+                            message={formatMessage(
+                              messages.healthCenterNotAvailableForRegistrationDesc,
+                            )}
+                          />
+                        ),
+                        data: [
+                          {
+                            title: formatMessage(m.postcode),
+                            content: `${healthCenter.address?.postalCode} ${healthCenter.address?.municipality}`,
+                          },
+                          {
+                            title: formatMessage(m.address),
+                            content: healthCenter.address?.streetAddress ?? '',
+                          },
+                        ],
+                      }))}
+                    />
+                  </Hidden>
                 </AccordionItem>
               </Box>
             )
@@ -334,7 +426,7 @@ const HealthCenterRegistration = () => {
       ) : null}
 
       {loading && <SkeletonLoader space={1} height={30} repeat={4} />}
-    </Box>
+    </IntroWrapper>
   )
 }
 

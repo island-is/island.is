@@ -742,7 +742,7 @@ export class Case extends Model {
   crimeScenes?: CrimeSceneMap
 
   /**********
-   * The introduction to a traffic violation case
+   * The introduction to a indictment case
    **********/
   @Column({ type: DataType.TEXT, allowNull: true })
   @ApiPropertyOptional({ type: String })
@@ -1029,7 +1029,6 @@ export class Case extends Model {
 
   /**********
    * The md5 hash of the confirmed generated indictment
-   * Only used for traffic violation cases
    **********/
   @Column({ type: DataType.STRING, allowNull: true })
   @ApiPropertyOptional({ type: String })
@@ -1061,12 +1060,20 @@ export class Case extends Model {
   @ApiPropertyOptional({ type: () => Case })
   mergeCase?: Case
 
-  // /**********
-  //  * The cases that have been merged in to the current case - only used if the case was merged
-  //  **********/
+  /**********
+   * The cases that have been merged in to the current case - only used if the case was merged
+   **********/
   @HasMany(() => Case, 'mergeCaseId')
   @ApiPropertyOptional({ type: () => Case })
   mergedCases?: Case[]
+
+  /**********
+   * The court case number this case was merged in to - only used if the case was merged
+   * with a case that is not in RVG
+   **********/
+  @Column({ type: DataType.STRING, allowNull: true })
+  @ApiPropertyOptional({ type: String })
+  mergeCaseNumber?: string
 
   /**********
    * Indicates whether a case should include any civil claims -

@@ -12,3 +12,10 @@ export enum EventType {
 }
 
 export const eventTypes = Object.values(EventType)
+
+export enum DefendantEventType {
+  SENT_TO_PRISON_ADMIN = 'SENT_TO_PRISON_ADMIN',
+  OPENED_BY_PRISON_ADMIN = 'OPENED_BY_PRISON_ADMIN',
+}
+
+export const defendantEventTypes = Object.values(DefendantEventType)

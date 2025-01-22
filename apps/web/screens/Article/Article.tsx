@@ -51,6 +51,7 @@ import { useI18n } from '@island.is/web/i18n'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import type { Screen } from '@island.is/web/types'
 import { CustomNextError } from '@island.is/web/units/errors'
+import { extractNamespaceFromOrganization } from '@island.is/web/utils/extractNamespaceFromOrganization'
 import { createNavigation } from '@island.is/web/utils/navigation'
 import { getOrganizationLink } from '@island.is/web/utils/organization'
 import { webRichText } from '@island.is/web/utils/richText'
@@ -261,12 +262,14 @@ interface ArticleSidebarProps {
   article: Article
   activeSlug?: string | string[]
   n: (s: string) => string
+  organizationNamespace: Record<string, string>
 }
 
 const ArticleSidebar: FC<React.PropsWithChildren<ArticleSidebarProps>> = ({
   article,
   activeSlug,
   n,
+  organizationNamespace,
 }) => {
   const { linkResolver } = useLinkResolver()
   const { activeLocale } = useI18n()
@@ -295,7 +298,9 @@ const ArticleSidebar: FC<React.PropsWithChildren<ArticleSidebarProps>> = ({
       {article?.organization && article.organization.length > 0 && (
         <InstitutionPanel
           img={article.organization[0].logo?.url}
-          institutionTitle={n('organization')}
+          institutionTitle={
+            organizationNamespace?.['organization'] ?? n('organization')
+          }
           institution={article.organization[0].title}
           locale={activeLocale}
           linkProps={{
@@ -307,7 +312,12 @@ const ArticleSidebar: FC<React.PropsWithChildren<ArticleSidebarProps>> = ({
         />
       )}
       {article?.subArticles && article.subArticles.length > 0 && (
-        <ArticleNavigation article={article} activeSlug={activeSlug} n={n} />
+        <ArticleNavigation
+          article={article}
+          activeSlug={activeSlug}
+          n={n}
+          organizationNamespace={organizationNamespace}
+        />
       )}
       <RelatedContent
         title={n('relatedMaterial')}
@@ -324,6 +334,7 @@ export interface ArticleProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   stepOptionsFromNamespace: { data: Record<string, any>[]; slug: string }[]
   stepperNamespace: GetNamespaceQuery['getNamespace']
+  organizationNamespace: Record<string, string>
 }
 
 const ArticleScreen: Screen<ArticleProps> = ({
@@ -331,6 +342,7 @@ const ArticleScreen: Screen<ArticleProps> = ({
   namespace,
   stepperNamespace,
   stepOptionsFromNamespace,
+  organizationNamespace,
 }) => {
   const { activeLocale } = useI18n()
   const portalRef = useRef()
@@ -539,7 +551,8 @@ const ArticleScreen: Screen<ArticleProps> = ({
                 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                 // @ts-expect-error make web strict
                 title: article.organization[0].title,
-                label: n('organization'),
+                label:
+                  organizationNamespace?.['organization'] ?? n('organization'),
                 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                 // @ts-expect-error make web strict
                 href: getOrganizationLink(
@@ -615,6 +628,7 @@ const ArticleScreen: Screen<ArticleProps> = ({
               article={article}
               n={n}
               activeSlug={query.subSlug}
+              organizationNamespace={organizationNamespace}
             />
           </Sticky>
         }
@@ -647,6 +661,7 @@ const ArticleScreen: Screen<ArticleProps> = ({
                 n={n}
                 activeSlug={query.subSlug}
                 isMenuDialog
+                organizationNamespace={organizationNamespace}
               />
             </Box>
           )}
@@ -773,6 +788,7 @@ const ArticleScreen: Screen<ArticleProps> = ({
                 n={n}
                 activeSlug={query.subSlug}
                 isMenuDialog
+                organizationNamespace={organizationNamespace}
               />
             </Box>
           )}
@@ -907,11 +923,17 @@ ArticleScreen.getProps = async ({ apolloClient, query, locale }) => {
         apolloClient,
       )
 
+  const organizationNamespace = extractNamespaceFromOrganization(
+    article.organization?.[0],
+  ) as Record<string, string>
+
   return {
     article,
     namespace,
     stepOptionsFromNamespace,
     stepperNamespace,
+    customTopLoginButtonItem: organizationNamespace?.customTopLoginButtonItem,
+    organizationNamespace,
     ...getThemeConfig(article),
   }
 }

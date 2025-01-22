@@ -33,7 +33,9 @@ type Props = {
 type Addition = z.infer<typeof additionSchema>[number]
 
 export const Additions = ({ application }: Props) => {
-  const [asRoman, setAsRoman] = useState<boolean>(false)
+  const [asRoman, setAsRoman] = useState<boolean>(
+    application.answers.misc?.asRoman ?? false,
+  )
 
   const { formatMessage: f } = useLocale()
   const { setValue } = useFormContext()
@@ -57,8 +59,6 @@ export const Additions = ({ application }: Props) => {
   const onRemoveAddition = (index: number) => {
     const filtered = additions.filter((_, i) => i !== index)
     const mapped = filtered.map((addition, i) => {
-      if (addition.type !== 'html') return addition
-
       const title = f(attachments.additions.title, {
         index: asRoman ? convertNumberToRoman(i + 1) : i + 1,
       })
@@ -83,10 +83,8 @@ export const Additions = ({ application }: Props) => {
 
   const onRomanChange = (val: boolean) => {
     const handleTitleChange = (addition: Addition, i: number) => {
-      if (addition.type !== 'html') return addition
-
       const title = f(attachments.additions.title, {
-        index: asRoman ? convertNumberToRoman(i + 1) : i + 1,
+        index: val ? convertNumberToRoman(i + 1) : i + 1,
       })
       return {
         ...addition,
@@ -97,14 +95,17 @@ export const Additions = ({ application }: Props) => {
     const currentAnswers = structuredClone(currentApplication.answers)
     const updatedAdditions = additions.map(handleTitleChange)
 
-    const updatedAnswers = set(
+    let updatedAnswers = set(
       currentAnswers,
       InputFields.advert.additions,
       updatedAdditions,
     )
 
+    updatedAnswers = set(updatedAnswers, InputFields.misc.asRoman, val)
+
     setAsRoman(val)
     setValue(InputFields.advert.additions, updatedAdditions)
+    setValue(InputFields.misc.asRoman, val)
     updateApplication(updatedAnswers)
   }
 
@@ -206,7 +207,8 @@ export const Additions = ({ application }: Props) => {
                 <Button
                   variant="utility"
                   colorScheme="destructive"
-                  icon="remove"
+                  icon="trash"
+                  iconType="outline"
                   size="small"
                   onClick={() => onRemoveAddition(additionIndex)}
                 >

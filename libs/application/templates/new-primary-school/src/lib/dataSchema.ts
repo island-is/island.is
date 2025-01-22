@@ -2,10 +2,7 @@ import { NO, YES } from '@island.is/application/types'
 import * as kennitala from 'kennitala'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { z } from 'zod'
-import {
-  ReasonForApplicationOptions,
-  SiblingRelationOptions,
-} from './constants'
+import { ReasonForApplicationOptions } from './constants'
 import { errorMessages } from './messages'
 
 const validatePhoneNumber = (value: string) => {
@@ -60,7 +57,7 @@ export const dataSchema = z.object({
       })
       .optional(),
   }),
-  relatives: z
+  contacts: z
     .array(
       z.object({
         fullName: z.string().min(1),
@@ -72,11 +69,11 @@ export const dataSchema = z.object({
       }),
     )
     .refine((r) => r === undefined || r.length > 0, {
-      params: errorMessages.relativesRequired,
+      params: errorMessages.contactsRequired,
     }),
   reasonForApplication: z
     .object({
-      reason: z.nativeEnum(ReasonForApplicationOptions),
+      reason: z.string(),
       movingAbroad: z
         .object({
           country: z.string().optional(),
@@ -100,7 +97,7 @@ export const dataSchema = z.object({
     )
     .refine(
       ({ reason, transferOfLegalDomicile }) =>
-        reason === ReasonForApplicationOptions.TRANSFER_OF_LEGAL_DOMICILE
+        reason === ReasonForApplicationOptions.MOVING_MUNICIPALITY
           ? transferOfLegalDomicile &&
             transferOfLegalDomicile.streetAddress.length > 0
           : true,
@@ -110,7 +107,7 @@ export const dataSchema = z.object({
     )
     .refine(
       ({ reason, transferOfLegalDomicile }) =>
-        reason === ReasonForApplicationOptions.TRANSFER_OF_LEGAL_DOMICILE
+        reason === ReasonForApplicationOptions.MOVING_MUNICIPALITY
           ? transferOfLegalDomicile &&
             transferOfLegalDomicile.postalCode.length > 0
           : true,
@@ -131,7 +128,6 @@ export const dataSchema = z.object({
         nationalId: z.string().refine((n) => kennitala.isValid(n), {
           params: errorMessages.nationalId,
         }),
-        relation: z.nativeEnum(SiblingRelationOptions),
       }),
     )
     .refine((r) => r === undefined || r.length > 0, {
@@ -153,6 +149,69 @@ export const dataSchema = z.object({
         path: ['otherLanguages'],
         params: errorMessages.languagesRequired,
       },
+    ),
+  freeSchoolMeal: z
+    .object({
+      acceptFreeSchoolLunch: z.enum([YES, NO]),
+      hasSpecialNeeds: z.string().optional(),
+      specialNeedsType: z.string().optional(),
+    })
+    .refine(
+      ({ acceptFreeSchoolLunch, hasSpecialNeeds }) =>
+        acceptFreeSchoolLunch === YES
+          ? !!hasSpecialNeeds && hasSpecialNeeds.length > 0
+          : true,
+      {
+        path: ['hasSpecialNeeds'],
+      },
+    )
+    .refine(
+      ({ acceptFreeSchoolLunch, hasSpecialNeeds, specialNeedsType }) =>
+        acceptFreeSchoolLunch === YES && hasSpecialNeeds === YES
+          ? !!specialNeedsType && specialNeedsType.length > 0
+          : true,
+      {
+        path: ['specialNeedsType'],
+      },
+    ),
+  allergiesAndIntolerances: z
+    .object({
+      hasFoodAllergiesOrIntolerances: z.array(z.string()),
+      foodAllergiesOrIntolerances: z.array(z.string()).optional(),
+      hasOtherAllergies: z.array(z.string()),
+      otherAllergies: z.array(z.string()).optional(),
+      usesEpiPen: z.string().optional(),
+      hasConfirmedMedicalDiagnoses: z.enum([YES, NO]),
+      requestMedicationAssistance: z.enum([YES, NO]),
+    })
+    .refine(
+      ({ hasFoodAllergiesOrIntolerances, foodAllergiesOrIntolerances }) =>
+        hasFoodAllergiesOrIntolerances.includes(YES)
+          ? !!foodAllergiesOrIntolerances &&
+            foodAllergiesOrIntolerances.length > 0
+          : true,
+      {
+        path: ['foodAllergiesOrIntolerances'],
+        params: errorMessages.foodAllergiesOrIntolerancesRequired,
+      },
+    )
+    .refine(
+      ({ hasOtherAllergies, otherAllergies }) =>
+        hasOtherAllergies.includes(YES)
+          ? !!otherAllergies && otherAllergies.length > 0
+          : true,
+      {
+        path: ['otherAllergies'],
+        params: errorMessages.otherAllergiesRequired,
+      },
+    )
+    .refine(
+      ({ hasFoodAllergiesOrIntolerances, hasOtherAllergies, usesEpiPen }) =>
+        hasFoodAllergiesOrIntolerances.includes(YES) ||
+        hasOtherAllergies.includes(YES)
+          ? !!usesEpiPen
+          : true,
+      { path: ['usesEpiPen'] },
     ),
   support: z.object({
     developmentalAssessment: z.enum([YES, NO]),

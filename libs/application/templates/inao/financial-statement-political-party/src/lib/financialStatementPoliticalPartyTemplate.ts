@@ -14,16 +14,18 @@ import { m } from './messages'
 import { dataSchema } from './dataSchema'
 import {
   DefaultStateLifeCycle,
+  getValueViaPath,
   pruneAfterDays,
 } from '@island.is/application/core'
 import {
   CurrentUserTypeProvider,
-  IndentityApiProvider,
+  IdentityApiProvider,
   NationalRegistryUserApi,
   UserInfoApi,
 } from '../dataProviders'
 import { AuthDelegationType } from '@island.is/shared/types'
 import { Features } from '@island.is/feature-flags'
+import { POLITICALPARTY_USER_TYPE } from '../utils/constants'
 
 const configuration =
   ApplicationConfigurations[
@@ -50,6 +52,10 @@ const FinancialStatementPoliticalPartyTemplate: ApplicationTemplate<
           name: States.PREREQUISITES,
           progress: 0,
           status: 'draft',
+          onEntry: defineTemplateApi({
+            action: ApiActions.getUserType,
+            shouldPersistToExternalData: true,
+          }),
           actionCard: {
             pendingAction: {
               title: '',
@@ -64,7 +70,6 @@ const FinancialStatementPoliticalPartyTemplate: ApplicationTemplate<
                 import('../forms/prerequsites').then((val) =>
                   Promise.resolve(val.PrerequisitesForm),
                 ),
-
               actions: [
                 {
                   event: DefaultEvents.SUBMIT,
@@ -76,10 +81,18 @@ const FinancialStatementPoliticalPartyTemplate: ApplicationTemplate<
               delete: true,
               api: [
                 CurrentUserTypeProvider,
-                IndentityApiProvider,
+                IdentityApiProvider,
                 NationalRegistryUserApi,
                 UserInfoApi,
               ],
+            },
+            {
+              id: Roles.NOTALLOWED,
+              formLoader: () =>
+                import('../forms/notAllowedForm').then((val) =>
+                  Promise.resolve(val.notAllowedForm),
+                ),
+              read: 'all',
             },
           ],
         },
@@ -109,7 +122,7 @@ const FinancialStatementPoliticalPartyTemplate: ApplicationTemplate<
               delete: true,
               api: [
                 CurrentUserTypeProvider,
-                IndentityApiProvider,
+                IdentityApiProvider,
                 NationalRegistryUserApi,
                 UserInfoApi,
               ],
@@ -142,13 +155,17 @@ const FinancialStatementPoliticalPartyTemplate: ApplicationTemplate<
     },
   },
   mapUserToRole(
-    nationalId: string,
+    _nationalId: string,
     application: Application,
   ): ApplicationRole | undefined {
-    if (application.applicant === nationalId) {
+    const userType = getValueViaPath<number>(
+      application.externalData,
+      'getUserType.data.value',
+    )
+    if (userType === POLITICALPARTY_USER_TYPE) {
       return Roles.APPLICANT
     }
-    return undefined
+    return Roles.NOTALLOWED
   },
 }
 

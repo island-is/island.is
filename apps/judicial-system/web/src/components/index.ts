@@ -1,6 +1,7 @@
 export { CourtCaseInfo, ProsecutorCaseInfo } from './CaseInfo/CaseInfo'
 export { default as AccordionListItem } from './AccordionListItem/AccordionListItem'
 export { default as BlueBox } from './BlueBox/BlueBox'
+export { default as BlueBoxWithDate } from './BlueBoxWithIcon/BlueBoxWithDate'
 export { default as CaseDates } from './CaseDates/CaseDates'
 export { default as CaseFile } from './CaseFile/CaseFile'
 export { default as CaseFileList } from './CaseFileList/CaseFileList'
@@ -66,8 +67,8 @@ export { default as ServiceAnnouncement } from './ServiceAnnouncement/ServiceAnn
 export { strings as serviceAnnouncementStrings } from './ServiceAnnouncement/ServiceAnnouncement.strings'
 export { default as ServiceInterruptionBanner } from './ServiceInterruptionBanner/ServiceInterruptionBanner'
 export { default as SignedDocument } from './SignedDocument/SignedDocument'
-export { default as TagAppealState } from './TagAppealState/TagAppealState'
-export { default as TagCaseState } from './TagCaseState/TagCaseState'
+export { default as TagAppealState } from './Tags/TagAppealState/TagAppealState'
+export { default as TagCaseState } from './Tags/TagCaseState/TagCaseState'
 export { default as CaseTag } from './Tags/CaseTag'
 export {
   getIndictmentRulingDecisionTag,

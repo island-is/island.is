@@ -87,6 +87,31 @@ export const messages = defineMessages({
     id: 'sp.health:repaid',
     defaultMessage: 'Endurgreitt',
   },
+  renewal: {
+    id: 'sp.health:renewal',
+    defaultMessage: 'Endurnýjun',
+  },
+  valid: {
+    id: 'sp.health:valid',
+    defaultMessage: 'Í gildi',
+  },
+  validForRenewal: {
+    id: 'sp.health:valid-for-renewal',
+    defaultMessage: 'Endurnýja',
+  },
+  renewalInProgress: {
+    id: 'sp.health:renewal-in-progress',
+    defaultMessage: 'Endurnýjun í gangi',
+  },
+  notValidForRenewal: {
+    id: 'sp.health:not-valid-for-renewal',
+    defaultMessage: 'Ekki hægt',
+  },
+  notValidForRenewalDetail: {
+    id: 'sp.health:not-valid-for-renewal-detail',
+    defaultMessage:
+      'Sjálfvirk endurnýjun er ekki í boði fyrir þetta hjálpartæki.',
+  },
   monthlyBreakdownOfInvoices: {
     id: 'sp.health:monthly-breakdown-of-invoices',
     defaultMessage: 'Sundurliðun reikninga í völdum mánuði',
@@ -198,7 +223,7 @@ export const messages = defineMessages({
     defaultMessage: 'Sæki skjal',
   },
   healthInsuranceConfirmationTransferError: {
-    id: 'sp.health:health-center-registration-transfer-error-title',
+    id: 'sp.health:health-insurance-confirmation-transfer-error-title',
     defaultMessage:
       'Villa kom upp þegar sótt var staðfesting á sjúkratryggingu',
   },
@@ -209,6 +234,15 @@ export const messages = defineMessages({
   noHealthInsuranceMessage: {
     id: 'sp.health:no-health-insurance-message',
     defaultMessage: 'Síðasta trygging: {arg}',
+  },
+  healthCenterNotAvailableForRegistration: {
+    id: 'sp.health:health-center-not-available-for-registration',
+    defaultMessage: 'Ekki hægt',
+  },
+  healthCenterNotAvailableForRegistrationDesc: {
+    id: 'sp.health:health-center-not-available-for-registration-desc',
+    defaultMessage:
+      'Þessi heilsugæslustöð er með lokað fyrir skráningar utan hverfis.',
   },
   paymentTarget: {
     id: 'sp.health:payment-target',
@@ -281,6 +315,11 @@ export const messages = defineMessages({
     id: 'sp.health:dentist-register-forbidden',
     defaultMessage: 'Þú hefur ekki réttindi',
   },
+  dentistRegistrationTransferErrorInfo: {
+    id: 'sp.health:dentist-registration-transfer-error-info',
+    defaultMessage:
+      'Ekki tókst að skipta um tannlækni. Vinsamlegast reyndu aftur síðar.',
+  },
   dentistModalTitle: {
     id: 'sp.health:dentist-modal-title',
     defaultMessage: 'Færa skráningu yfir á:',
@@ -300,7 +339,7 @@ export const messages = defineMessages({
   },
   healthCenterTitle: {
     id: 'sp.health:health-center-title',
-    defaultMessage: 'Heilsugæsla',
+    defaultMessage: 'Skráð heilsugæsla',
   },
   healthCenterDescription: {
     id: 'sp.health:health-center-intro',
@@ -611,6 +650,10 @@ export const messages = defineMessages({
   personalDoctor: {
     id: 'sp.health:personal-doctor',
     defaultMessage: 'Heimilslæknir',
+  },
+  neighborhoodHealthCenter: {
+    id: 'sp.health:neighborhood-health-center',
+    defaultMessage: 'Hverfisheilsugæsla',
   },
   doctor: {
     id: 'sp.health:doctor',
@@ -986,9 +1029,21 @@ export const messages = defineMessages({
     defaultMessage:
       'Textareitur má ekki vera tómur sé þessi valkostur valinn. ',
   },
+  organMinor: {
+    id: 'sp.health:organ-minor',
+    defaultMessage: 'Til að geta gerst líffæragjafi þarftu að vera 18 ára.',
+  },
+  organTemporaryNationalId: {
+    id: 'sp.health:organ-temporary-national-id',
+    defaultMessage: 'Líffæragjöf er ekki heimiluð á kerfiskennitölur.',
+  },
   other: {
     id: 'sp.health:other-lower-case',
     defaultMessage: 'annað',
+  },
+  otherPascalCase: {
+    id: 'sp.health:other',
+    defaultMessage: 'Annað',
   },
   registrationComplete: {
     id: 'sp.health:registration-complete',
@@ -1056,6 +1111,15 @@ export const messages = defineMessages({
     id: 'sp.health:landlaeknir-tooltip',
     defaultMessage:
       'Landlæknir hefur umsjón með gögnum um þínar bólusetningar.',
+  },
+  landlaeknirMedicinePrescriptionsTooltip: {
+    id: 'sp.health:landlaeknir-prescriptions-tooltip',
+    defaultMessage:
+      'Landlæknir hefur umsjón með gögnum um þínar lyfjaávísanir.',
+  },
+  landlaeknirMedicineDelegationTooltip: {
+    id: 'sp.health:landlaeknir-delegation-tooltip',
+    defaultMessage: 'Landlæknir hefur umsjón með gögnum um þín lyfjaumboð.',
   },
   readAboutVaccinations: {
     id: 'sp.health:read-about-vaccinations',
@@ -1135,8 +1199,100 @@ export const messages = defineMessages({
     id: 'sp.health:medicine-delegation',
     defaultMessage: 'Lyfjaumboð',
   },
+  medicineDelegationIntroText: {
+    id: 'sp.health:medicine-delegation-intro-text',
+    defaultMessage:
+      'Einungis þú getur sótt þín lyf í apótek, nema þú veitir öðrum sérstakt umboð fyrir þig. Hér getur þú skráð þá aðila sem þú veitir umboð til að sækja lyf í apótek fyrir þig.',
+  },
+  medicinePrescriptionIntroText: {
+    id: 'sp.health:medicine-prescription-intro-text',
+    defaultMessage:
+      'Hér finnur þú yfirlit yfir þínar lyfjaávísanir. Þú getur sótt um lyfjaendurnýjun þegar á við.',
+  },
+  medicinePrescriptionHistory: {
+    id: 'sp.health:medicine-prescription-history',
+    defaultMessage: 'Lyfjasagan',
+  },
+  medicinePrescriptionHistoryIntroText: {
+    id: 'sp.health:medicine-prescription-history-intro-text',
+    defaultMessage: 'Hér finnur þú yfirlit yfir þína lyfjasögu.',
+  },
+  usedFor: {
+    id: 'sp.health:used-for',
+    defaultMessage: 'Notað við',
+  },
+  process: {
+    id: 'sp.health:process',
+    defaultMessage: 'Afgreiðslur',
+  },
+  lastDispensed: {
+    id: 'sp.health:last-dispensed',
+    defaultMessage: 'Síðast afgreitt',
+  },
+  type: {
+    id: 'sp.health:type',
+    defaultMessage: 'Tegund',
+  },
+  renew: {
+    id: 'sp.health:renew',
+    defaultMessage: 'Endurnýja',
+  },
+  renewalMedicineRequest: {
+    id: 'sp.health:renewal-medicine-request',
+    defaultMessage: 'Beiðni um endurnýjun á lyfi',
+  },
+  renewalMedicineRequestText: {
+    id: 'sp.health:renewal-medicine-request-text',
+    defaultMessage:
+      'Lyfjaendurnýjun verður unnin eins fljótt og auðið er. Ekki er víst að hún verði afgreidd samdægurs. Ef um neyðartilfelli er að ræða hafið samband við 112.',
+  },
+  medicineInformation: {
+    id: 'sp.health:medicine-information',
+    defaultMessage: 'Upplýsingar um lyf',
+  },
+  moreDetailedInfo: {
+    id: 'sp.health:more-detailed-info',
+    defaultMessage: 'Nánari upplýsingar',
+  },
+  dispenseHistory: {
+    id: 'sp.health:dispense-history',
+    defaultMessage: 'Afgreiðslusaga',
+  },
+  version: {
+    id: 'sp.health:version',
+    defaultMessage: 'Útgáfa',
+  },
+  myDelegations: {
+    id: 'sp.health:my-delegations',
+    defaultMessage: 'Mínir umboðsaðilar',
+  },
+  delegationType: {
+    id: 'sp.health:delegation-type',
+    defaultMessage: 'Tegund umboðs',
+  },
+  addDelegation: {
+    id: 'sp.health:add-delegation',
+    defaultMessage: 'Bæta við umboði',
+  },
+  editDelegation: {
+    id: 'sp.health:edit-delegation',
+    defaultMessage: 'Breyta umboði',
+  },
+  deleteDelegation: {
+    id: 'sp.health:delete-delegation',
+    defaultMessage: 'Eyða umboði',
+  },
+  grantMedicineDelegation: {
+    id: 'sp.health:grant-medicine-delegation',
+    defaultMessage: 'Veita lyfjaumboð',
+  },
   medicinePaymentParticipation: {
     id: 'sp.health:medicine-payment-participation',
     defaultMessage: 'Greiðsluþátttaka',
+  },
+  medicineDelegationLookup: {
+    id: 'sp.health:medicine-delegation-lookup',
+    defaultMessage:
+      'Ofangreindur aðili má einnig fletta upp mínum lyfjaávísunum í apóteki.',
   },
 })

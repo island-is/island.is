@@ -41,9 +41,9 @@ import { Institution } from '../institution'
 import {
   PoliceCaseFile,
   PoliceCaseInfo,
-  SubpoenaStatus,
   UploadPoliceCaseFileResponse,
 } from '../police'
+import { Subpoena } from '../subpoena'
 import { backendModuleConfig } from './backend.config'
 
 @Injectable()
@@ -270,6 +270,25 @@ export class BackendService extends DataSource<{ req: Request }> {
     return this.post(`case/${id}/file`, createFile)
   }
 
+  createDefendantCaseFile(
+    id: string,
+    createFile: unknown,
+    defendantId: string,
+  ): Promise<CaseFile> {
+    return this.post(`case/${id}/defendant/${defendantId}/file`, createFile)
+  }
+
+  createCivilClaimantCaseFile(
+    id: string,
+    createFile: unknown,
+    civilClaimantId: string,
+  ): Promise<CaseFile> {
+    return this.post(
+      `case/${id}/civilClaimant/${civilClaimantId}/file`,
+      createFile,
+    )
+  }
+
   getCaseFileSignedUrl(
     caseId: string,
     id: string,
@@ -307,13 +326,6 @@ export class BackendService extends DataSource<{ req: Request }> {
     return this.get(`case/${caseId}/policeFiles`)
   }
 
-  getSubpoenaStatus(
-    caseId: string,
-    subpoenaId: string,
-  ): Promise<SubpoenaStatus> {
-    return this.get(`case/${caseId}/subpoenaStatus/${subpoenaId}`)
-  }
-
   getPoliceCaseInfo(caseId: string): Promise<PoliceCaseInfo[]> {
     return this.get(`case/${caseId}/policeCaseInfo`)
   }
@@ -343,11 +355,32 @@ export class BackendService extends DataSource<{ req: Request }> {
     )
   }
 
+  limitedAccessUpdateDefendant(
+    caseId: string,
+    defendantId: string,
+    updateDefendant: unknown,
+  ): Promise<Defendant> {
+    return this.patch(
+      `case/${caseId}/limitedAccess/defendant/${defendantId}`,
+      updateDefendant,
+    )
+  }
+
   deleteDefendant(
     caseId: string,
     defendantId: string,
   ): Promise<DeleteDefendantResponse> {
     return this.delete(`case/${caseId}/defendant/${defendantId}`)
+  }
+
+  getSubpoena(
+    caseId: string,
+    defendantId: string,
+    subpoenaId: string,
+  ): Promise<Subpoena> {
+    return this.get(
+      `case/${caseId}/defendant/${defendantId}/subpoena/${subpoenaId}`,
+    )
   }
 
   createCivilClaimant(
@@ -437,6 +470,28 @@ export class BackendService extends DataSource<{ req: Request }> {
     createFile: unknown,
   ): Promise<CaseFile> {
     return this.post(`case/${id}/limitedAccess/file`, createFile)
+  }
+
+  limitedAccessCreateDefendantCaseFile(
+    id: string,
+    createFile: unknown,
+    defendantId: string,
+  ): Promise<CaseFile> {
+    return this.post(
+      `case/${id}/limitedAccess$/defendant/${defendantId}/file`,
+      createFile,
+    )
+  }
+
+  limitedAccessCreateCivilClaimantCaseFile(
+    id: string,
+    createFile: unknown,
+    civilClaimantId: string,
+  ): Promise<CaseFile> {
+    return this.post(
+      `case/${id}/limitedAccess$/civilClaimant/${civilClaimantId}/file`,
+      createFile,
+    )
   }
 
   limitedAccessGetCaseFileSignedUrl(

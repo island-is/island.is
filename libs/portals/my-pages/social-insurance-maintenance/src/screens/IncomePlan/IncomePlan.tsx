@@ -9,6 +9,7 @@ import {
   CardLoader,
   FootNote,
   IntroHeader,
+  IntroWrapper,
   LinkButton,
   m as coreMessages,
   formatDate,
@@ -36,38 +37,6 @@ const parseSubtext = (
   }
 }
 
-const parseTag = (
-  tag: SocialInsuranceIncomePlanStatus,
-  formatMessage: FormatMessage,
-) => {
-  switch (tag) {
-    case SocialInsuranceIncomePlanStatus.ACCEPTED:
-      return {
-        label: formatMessage(coreMessages.processed),
-        variant: 'mint' as const,
-        outlined: false,
-      }
-    case SocialInsuranceIncomePlanStatus.IN_PROGRESS:
-      return {
-        label: formatMessage(coreMessages.inProgress),
-        variant: 'purple' as const,
-        outlined: false,
-      }
-    case SocialInsuranceIncomePlanStatus.CANCELLED:
-      return {
-        label: formatMessage(coreMessages.rejected),
-        variant: 'red' as const,
-        outlined: false,
-      }
-    default:
-      return {
-        label: formatMessage(coreMessages.unknown),
-        variant: 'red' as const,
-        outlined: false,
-      }
-  }
-}
-
 const IncomePlan = () => {
   useNamespaces('sp.social-insurance-maintenance')
   const { formatMessage } = useLocale()
@@ -75,16 +44,14 @@ const IncomePlan = () => {
   const { data, loading, error } = useGetIncomePlanQuery()
 
   return (
-    <Box>
-      <IntroHeader
-        title={formatMessage(coreMessages.incomePlan)}
-        intro={formatMessage(coreMessages.incomePlanDescription)}
-        serviceProviderSlug={'tryggingastofnun'}
-        serviceProviderTooltip={formatMessage(
-          coreMessages.socialInsuranceTooltip,
-        )}
-      />
-
+    <IntroWrapper
+      title={formatMessage(coreMessages.incomePlan)}
+      intro={formatMessage(coreMessages.incomePlanDescription)}
+      serviceProviderSlug={'tryggingastofnun'}
+      serviceProviderTooltip={formatMessage(
+        coreMessages.socialInsuranceTooltip,
+      )}
+    >
       {error && !loading ? (
         <Problem error={error} noBorder={false} />
       ) : loading ? (
@@ -146,17 +113,15 @@ const IncomePlan = () => {
               heading={formatMessage(coreMessages.incomePlan)}
               cta={{
                 label: formatMessage(m.viewIncomePlan),
-                url: SocialInsuranceMaintenancePaths.SocialInsuranceMaintenanceIncomePlanDetail,
+                url:
+                  data.socialInsuranceIncomePlan.status ===
+                  SocialInsuranceIncomePlanStatus.IN_PROGRESS
+                    ? `${document.location.origin}/${formatMessage(
+                        m.incomePlanModifyLink,
+                      )}`
+                    : SocialInsuranceMaintenancePaths.SocialInsuranceMaintenanceIncomePlanDetail,
                 variant: 'text',
               }}
-              tag={
-                data?.socialInsuranceIncomePlan?.status
-                  ? parseTag(
-                      data.socialInsuranceIncomePlan?.status,
-                      formatMessage,
-                    )
-                  : undefined
-              }
             />
           ) : (
             <ActionCard
@@ -183,8 +148,7 @@ const IncomePlan = () => {
           )}
         </Stack>
       )}
-      <FootNote serviceProviderSlug="tryggingastofnun" />
-    </Box>
+    </IntroWrapper>
   )
 }
 

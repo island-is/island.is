@@ -218,6 +218,29 @@ export const indictmentSubtypes: IndictmentSubtypes = {
   THEFT: 'þjófnaður',
 }
 
+export const districtCourtAbbreviation = (courtName?: string | null) => {
+  switch (courtName) {
+    case 'Héraðsdómur Reykjavíkur':
+      return 'HDR'
+    case 'Héraðsdómur Reykjaness':
+      return 'HDRN'
+    case 'Héraðsdómur Vesturlands':
+      return 'HDV'
+    case 'Héraðsdómur Suðurlands':
+      return 'HDS'
+    case 'Héraðsdómur Norðurlands eystra':
+      return 'HDNE'
+    case 'Héraðsdómur Norðurlands vestra':
+      return 'HDNV'
+    case 'Héraðsdómur Austurlands':
+      return 'HDA'
+    case 'Héraðsdómur Vestfjarða':
+      return 'HDVF'
+    default:
+      return ''
+  }
+}
+
 export const getAppealResultTextByValue = (
   value?: CaseAppealRulingDecision | null,
 ) => {
@@ -440,4 +463,13 @@ export const getWordByGender = (word: Word, gender?: Gender): string | null => {
     default:
       return null
   }
+}
+
+// þgf to dómur
+export const applyDativeCaseToCourtName = (courtName: string) => {
+  const target = 'dómur'
+  if (courtName.includes(target)) {
+    return courtName?.replace(target, 'dómi')
+  }
+  return courtName
 }

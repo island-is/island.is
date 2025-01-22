@@ -6,6 +6,7 @@ import {
   DefendantPlea,
   DefenderChoice,
   Gender,
+  PunishmentType,
   ServiceRequirement,
   SubpoenaType,
 } from '@island.is/judicial-system/types'
@@ -109,4 +110,14 @@ export class UpdateDefendantInput {
   @IsOptional()
   @Field(() => Boolean, { nullable: true })
   readonly caseFilesSharedWithDefender?: boolean
+
+  @Allow()
+  @IsOptional()
+  @Field(() => Boolean, { nullable: true })
+  readonly isSentToPrisonAdmin?: boolean
+
+  @Allow()
+  @IsOptional()
+  @Field(() => PunishmentType, { nullable: true })
+  readonly punishmentType?: PunishmentType
 }

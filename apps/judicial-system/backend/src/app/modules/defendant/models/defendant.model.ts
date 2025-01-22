@@ -17,12 +17,14 @@ import {
   DefendantPlea,
   DefenderChoice,
   Gender,
+  PunishmentType,
   ServiceRequirement,
   SubpoenaType,
 } from '@island.is/judicial-system/types'
 
 import { Case } from '../../case/models/case.model'
 import { Subpoena } from '../../subpoena/models/subpoena.model'
+import { DefendantEventLog } from './defendantEventLog.model'
 
 @Table({
   tableName: 'defendant',
@@ -80,7 +82,7 @@ export class Defendant extends Model {
   @ApiProperty({ type: String })
   caseId!: string
 
-  @BelongsTo(() => Case, 'case_id')
+  @BelongsTo(() => Case, 'caseId')
   @ApiPropertyOptional({ type: () => Case })
   case?: Case
 
@@ -195,4 +197,20 @@ export class Defendant extends Model {
   @Column({ type: DataType.BOOLEAN, allowNull: true })
   @ApiPropertyOptional({ type: Boolean })
   caseFilesSharedWithDefender?: boolean
+
+  @Column({ type: DataType.BOOLEAN, allowNull: true })
+  @ApiPropertyOptional({ type: Boolean })
+  isSentToPrisonAdmin?: boolean
+
+  @Column({
+    type: DataType.ENUM,
+    allowNull: true,
+    values: Object.values(PunishmentType),
+  })
+  @ApiPropertyOptional({ enum: PunishmentType })
+  punishmentType?: PunishmentType
+
+  @HasMany(() => DefendantEventLog, { foreignKey: 'defendantId' })
+  @ApiPropertyOptional({ type: () => DefendantEventLog, isArray: true })
+  eventLogs?: DefendantEventLog[]
 }

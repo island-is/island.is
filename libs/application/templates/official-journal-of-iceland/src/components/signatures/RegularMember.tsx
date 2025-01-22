@@ -96,12 +96,12 @@ export const RegularMember = ({
   if (!member) {
     return null
   }
-
   return (
     <Box display="flex" flexDirection="column" rowGap={2}>
       <Box>
         <SignatureMember
-          name={`signature.regular.member.above.${signatureIndex}.${memberIndex}`}
+          name={`signature.regular.member.above.${signatureIndex}.${memberIndex}.${member.above}`}
+          key={`signature.regular.member.above.${signatureIndex}.${memberIndex}.${member.above}`}
           label={f(signatures.inputs.above.label)}
           defaultValue={member.above}
           onChange={(e) =>
@@ -119,7 +119,8 @@ export const RegularMember = ({
       <Box display="flex" columnGap={2} rowGap={2} flexWrap="wrap">
         <Box flexGrow={1}>
           <SignatureMember
-            name={`signature.regular.member.name.${signatureIndex}.${memberIndex}`}
+            name={`signature.regular.member.name.${signatureIndex}.${memberIndex}.${member.name}`}
+            key={`signature.regular.member.name.${signatureIndex}.${memberIndex}.${member.name}`}
             label={f(signatures.inputs.name.label)}
             defaultValue={member.name}
             onChange={(e) =>
@@ -136,7 +137,8 @@ export const RegularMember = ({
         </Box>
         <Box flexGrow={1}>
           <SignatureMember
-            name={`signature.regular.member.after.${signatureIndex}.${memberIndex}`}
+            name={`signature.regular.member.after.${signatureIndex}.${memberIndex}.${member.after}`}
+            key={`signature.regular.member.after.${signatureIndex}.${memberIndex}.${member.after}`}
             label={f(signatures.inputs.after.label)}
             defaultValue={member.after}
             onChange={(e) =>
@@ -155,7 +157,8 @@ export const RegularMember = ({
       <Box display="flex" columnGap={2}>
         <Box flexGrow={1}>
           <SignatureMember
-            name={`signature.regular.member.below.${signatureIndex}.${memberIndex}`}
+            name={`signature.regular.member.below.${signatureIndex}.${memberIndex}.${member.below}`}
+            key={`signature.regular.member.below.${signatureIndex}.${memberIndex}.${member.below}`}
             label={f(signatures.inputs.below.label)}
             defaultValue={member.below}
             onChange={(e) =>

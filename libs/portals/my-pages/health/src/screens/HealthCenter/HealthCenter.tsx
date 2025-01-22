@@ -1,26 +1,25 @@
-import { useLocale, useNamespaces } from '@island.is/localization'
-import {
-  EmptyState,
-  UserInfoLine,
-  IntroHeader,
-  CardLoader,
-  SJUKRATRYGGINGAR_SLUG,
-} from '@island.is/portals/my-pages/core'
-import { useLocation } from 'react-router-dom'
-import { useGetHealthCenterQuery } from './HealthCenter.generated'
 import {
   AlertMessage,
   Box,
-  Divider,
   SkeletonLoader,
   Stack,
 } from '@island.is/island-ui/core'
-import { messages } from '../../lib/messages'
-import HistoryTable from './HistoryTable'
-import subYears from 'date-fns/subYears'
-import { HealthPaths } from '../../lib/paths'
-import { messages as hm } from '../../lib/messages'
+import { useLocale, useNamespaces } from '@island.is/localization'
+import {
+  CardLoader,
+  EmptyState,
+  InfoLine,
+  InfoLineStack,
+  IntroWrapper,
+  SJUKRATRYGGINGAR_SLUG,
+} from '@island.is/portals/my-pages/core'
 import { Problem } from '@island.is/react-spa/shared'
+import subYears from 'date-fns/subYears'
+import { useLocation } from 'react-router-dom'
+import { messages as hm, messages } from '../../lib/messages'
+import { HealthPaths } from '../../lib/paths'
+import { useGetHealthCenterQuery } from './HealthCenter.generated'
+import HistoryTable from './HistoryTable'
 
 const DEFAULT_DATE_TO = new Date()
 const DEFAULT_DATE_FROM = subYears(DEFAULT_DATE_TO, 10)
@@ -46,6 +45,7 @@ const HealthCenter = () => {
   const healthCenterData = data?.rightsPortalHealthCenterRegistrationHistory
 
   const canRegister = healthCenterData?.canRegister ?? false
+  const neighborhoodCenter = healthCenterData?.neighborhoodCenter ?? null
 
   if (loading)
     return (
@@ -62,14 +62,13 @@ const HealthCenter = () => {
   }
 
   return (
-    <Box marginBottom={[6, 6, 10]}>
-      <IntroHeader
-        title={formatMessage(messages.healthCenterTitle)}
-        intro={formatMessage(messages.healthCenterDescription)}
-        serviceProviderSlug={SJUKRATRYGGINGAR_SLUG}
-        serviceProviderTooltip={formatMessage(messages.healthTooltip)}
-      />
-
+    <IntroWrapper
+      marginBottom={[6, 6, 10]}
+      title={formatMessage(messages.healthCenterTitle)}
+      intro={formatMessage(messages.healthCenterDescription)}
+      serviceProviderSlug={SJUKRATRYGGINGAR_SLUG}
+      serviceProviderTooltip={formatMessage(messages.healthTooltip)}
+    >
       {wasSuccessfulTransfer && !loading && (
         <Box width="full" marginTop={4}>
           <AlertMessage
@@ -94,33 +93,40 @@ const HealthCenter = () => {
 
       {healthCenterData?.current && (
         <Box width="full" marginTop={[1, 1, 4]}>
-          <Stack space={2}>
-            <UserInfoLine
-              title={formatMessage(messages.myRegistration)}
+          <InfoLineStack
+            space={2}
+            label={formatMessage(messages.myRegistration)}
+          >
+            <InfoLine
               label={formatMessage(messages.healthCenterTitle)}
               content={
                 healthCenterData.current.healthCenterName ??
                 formatMessage(messages.healthCenterNoHealthCenterRegistered)
               }
-              editLink={
+              button={
                 canRegister
                   ? {
-                      url: HealthPaths.HealthCenterRegistration,
-                      title: hm.changeRegistration,
+                      type: 'link',
+                      to: HealthPaths.HealthCenterRegistration,
+                      label: hm.changeRegistration,
                     }
                   : undefined
               }
             />
-            <Divider />
-            <UserInfoLine
+            <InfoLine
               label={formatMessage(messages.personalDoctor)}
               content={
                 healthCenterData.current.doctor ??
                 formatMessage(messages.healthCenterNoDoctor)
               }
             />
-            <Divider />
-          </Stack>
+            {neighborhoodCenter && (
+              <InfoLine
+                label={formatMessage(messages.neighborhoodHealthCenter)}
+                content={neighborhoodCenter}
+              />
+            )}
+          </InfoLineStack>
         </Box>
       )}
 
@@ -129,7 +135,7 @@ const HealthCenter = () => {
       {!loading && !error && healthCenterData?.history?.length ? (
         <HistoryTable history={healthCenterData.history} />
       ) : null}
-    </Box>
+    </IntroWrapper>
   )
 }
 

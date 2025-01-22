@@ -32,7 +32,7 @@ import {
   MachinesApi,
   MockableVinnueftirlitidPaymentCatalogApi,
 } from '../dataProviders'
-import { getChargeItemCodes, hasReviewerApproved } from '../utils'
+import { getChargeItems, hasReviewerApproved } from '../utils'
 import { buildPaymentState } from '@island.is/application/utils'
 import { ApiScope } from '@island.is/auth/scopes'
 import { getBuyerNationalId } from '../utils/getBuyerNationalid'
@@ -42,8 +42,8 @@ import { isPaymentRequired } from '../utils/isPaymentRequired'
 const pruneInDaysAtMidnight = (application: Application, days: number) => {
   const date = new Date(application.created)
   date.setDate(date.getDate() + days)
-  const pruneDate = new Date(date.toUTCString())
-  pruneDate.setHours(23, 59, 59)
+  const pruneDate = new Date(date)
+  pruneDate.setUTCHours(23, 59, 59)
   return pruneDate
 }
 
@@ -201,7 +201,7 @@ const template: ApplicationTemplate<
       },
       [States.PAYMENT]: buildPaymentState({
         organizationId: InstitutionNationalIds.VINNUEFTIRLITID,
-        chargeItemCodes: getChargeItemCodes,
+        chargeItems: getChargeItems,
         submitTarget: States.REVIEW,
         onExit: [
           defineTemplateApi({

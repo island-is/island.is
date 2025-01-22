@@ -4,7 +4,7 @@ import { uuid } from 'uuidv4'
 import { getModelToken } from '@nestjs/sequelize'
 import { Test } from '@nestjs/testing'
 
-import { FormatMessage, IntlService } from '@island.is/cms-translations'
+import { IntlService } from '@island.is/cms-translations'
 import { createTestIntl } from '@island.is/cms-translations/test'
 import { EmailService } from '@island.is/email-service'
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -24,16 +24,17 @@ import { DefendantService } from '../../defendant'
 import { eventModuleConfig, EventService } from '../../event'
 import { InstitutionService } from '../../institution'
 import { UserService } from '../../user'
-import { CaseNotificationService } from '../caseNotification.service'
-import { CivilClaimantNotificationService } from '../civilClaimantNotification.service'
-import { DefendantNotificationService } from '../defendantNotification.service'
-import { InstitutionNotificationService } from '../institutionNotification.service'
 import { InternalNotificationController } from '../internalNotification.controller'
 import { Notification } from '../models/notification.model'
 import { notificationModuleConfig } from '../notification.config'
 import { NotificationController } from '../notification.controller'
 import { NotificationService } from '../notification.service'
 import { NotificationDispatchService } from '../notificationDispatch.service'
+import { CaseNotificationService } from '../services/caseNotification/caseNotification.service'
+import { CivilClaimantNotificationService } from '../services/civilClaimantNotification/civilClaimantNotification.service'
+import { DefendantNotificationService } from '../services/defendantNotification/defendantNotification.service'
+import { IndictmentCaseNotificationService } from '../services/indictmentCaseNotification/indictmentCaseNotification.service'
+import { InstitutionNotificationService } from '../services/institutionNotification/institutionNotification.service'
 
 jest.mock('@island.is/judicial-system/message')
 
@@ -130,6 +131,7 @@ export const createTestingNotificationModule = async () => {
       InstitutionNotificationService,
       DefendantNotificationService,
       CivilClaimantNotificationService,
+      IndictmentCaseNotificationService,
     ],
   })
     .useMocker((token) => {
@@ -157,6 +159,9 @@ export const createTestingNotificationModule = async () => {
     notificationController: notificationModule.get(NotificationController),
     internalNotificationController: notificationModule.get(
       InternalNotificationController,
+    ),
+    indictmentCaseNotificationService: notificationModule.get(
+      IndictmentCaseNotificationService,
     ),
   }
 

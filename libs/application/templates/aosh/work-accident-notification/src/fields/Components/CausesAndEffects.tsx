@@ -51,6 +51,7 @@ export const CausesAndEffects: FC<
     errors,
     answerId,
     setBeforeSubmitCallback,
+    majorGroupLength,
   } = props
   const { setValue } = useFormContext()
   const { formatMessage } = useLocale()
@@ -61,16 +62,21 @@ export const CausesAndEffects: FC<
   const [pickedValue, setPickedValue] = useState<OptionAndKey>()
   const activityGroups = (
     getValueViaPath<Group[]>(application.externalData, externalDataKey) ?? []
-  ).filter((group) => !group.validToSelect)
+  ).filter((group) => group.code.endsWith('0'))
   const activites = (
     getValueViaPath<Item[]>(application.externalData, externalDataKey) ?? []
   ).filter((group) => group.validToSelect)
 
   const onChange = (answers: OptionWithKey) => {
     const options: Option[] = []
+    const uniqueOptions = new Set<string>()
+
     for (const key in answers) {
       answers[key].forEach((option) => {
-        options.push(option)
+        if (!uniqueOptions.has(option.value)) {
+          uniqueOptions.add(option.value)
+          options.push(option)
+        }
       })
     }
 
@@ -111,7 +117,7 @@ export const CausesAndEffects: FC<
                   causeAndConsequences.shared.searchPlaceholder,
                 )}
                 onChange={(value) => {
-                  const code = value?.value.substring(0, 1)
+                  const code = value?.value.substring(0, majorGroupLength)
                   const activity: Option = {
                     value: value?.value || '',
                     label: value?.label || '',

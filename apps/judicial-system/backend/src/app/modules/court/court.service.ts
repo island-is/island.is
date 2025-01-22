@@ -34,6 +34,7 @@ export enum CourtDocumentFolder {
   CASE_DOCUMENTS = 'Gögn málsins',
   COURT_DOCUMENTS = 'Dómar, úrskurðir og Þingbók',
   APPEAL_DOCUMENTS = 'Kæra til Landsréttar',
+  SUBPOENA_DOCUMENTS = 'Boðanir',
 }
 
 export type Subtype = Exclude<CaseType, CaseType.INDICTMENT> | IndictmentSubtype
@@ -336,15 +337,19 @@ export class CourtService {
       )
 
       const isIndictment = isIndictmentCase(type)
+      const policeCaseNumber = policeCaseNumbers[0]
+        ? policeCaseNumbers[0].replace(/-/g, '')
+        : ''
 
       return await this.courtClientService.createCase(courtId, {
         caseType: isIndictment ? 'S - Ákærumál' : 'R - Rannsóknarmál',
+        // TODO: send a list of subtypes when CourtService supports it
         subtype: courtSubtype as string,
         status: 'Skráð',
         receivalDate: formatISO(receivalDate, { representation: 'date' }),
         basedOn: isIndictment ? 'Sakamál' : 'Rannsóknarhagsmunir',
         // TODO: pass in all policeCaseNumbers when CourtService supports it
-        sourceNumber: policeCaseNumbers[0] ? policeCaseNumbers[0] : '',
+        sourceNumber: policeCaseNumber,
       })
     } catch (reason) {
       if (reason instanceof ServiceUnavailableException) {
@@ -524,7 +529,6 @@ export class CourtService {
       const subject = `${courtName} - ${courtCaseNumber} - lyktir`
       const content = JSON.stringify({
         isCorrection,
-        courtName,
         courtCaseNumber,
         decision,
         rulingDate,
@@ -570,10 +574,13 @@ export class CourtService {
     policeCaseNumber?: string,
     subtypes?: string[],
     defendants?: { name?: string; nationalId?: string }[],
-    prosecutor?: { name?: string; nationalId?: string },
+    prosecutor?: { name?: string; nationalId?: string; email?: string },
   ): Promise<unknown> {
     try {
       const subject = `${courtName} - ${courtCaseNumber} - upplýsingar`
+
+      policeCaseNumber = policeCaseNumber?.replace(/-/g, '')
+
       const content = JSON.stringify({
         receivedByCourtDate,
         indictmentDate,
@@ -581,7 +588,6 @@ export class CourtService {
         subtypes,
         defendants,
         prosecutor,
-        courtName,
       })
 
       return this.sendToRobot(
@@ -657,7 +663,7 @@ export class CourtService {
   ): Promise<unknown> {
     try {
       const subject = `${courtName} - ${courtCaseNumber} - úthlutun`
-      const content = JSON.stringify({ ...assignedRole, courtName })
+      const content = JSON.stringify(assignedRole)
 
       return this.sendToRobot(
         subject,
@@ -692,7 +698,6 @@ export class CourtService {
     const content = JSON.stringify({
       subject: noticeSubject,
       text: noticeText,
-      courtName,
     })
 
     return this.sendToRobot(

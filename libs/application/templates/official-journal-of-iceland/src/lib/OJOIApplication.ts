@@ -41,7 +41,7 @@ const getApplicationName = (application: Application) => {
 
   const type = getValueViaPath(
     application.answers,
-    InputFields.advert.typeName,
+    `${InputFields.advert.type}.title`,
     '',
   )
 

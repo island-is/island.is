@@ -13,6 +13,13 @@ export const getNameAbbreviation = (name: string) => {
   return initials
 }
 
+export const sanitizeSheetName = (sheetName: string) => {
+  return sheetName
+    .replace(/[:\\/?*[\]]/g, '_')
+    .trim()
+    .substring(0, 31) // Max length for a sheet name.
+}
+
 export const tableStyles = {
   padding: '16px',
 }
@@ -63,4 +70,8 @@ export type RecordObject<T = unknown> = Record<string, T>
 
 export function getErrorViaPath(obj: RecordObject, path: string): string {
   return get(obj, path) as string
+}
+
+export const ellipsis = (text: string, length: number) => {
+  return text.length > length ? `${text.substring(0, length)}...` : text
 }

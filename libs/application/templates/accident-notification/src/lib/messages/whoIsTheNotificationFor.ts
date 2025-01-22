@@ -17,6 +17,11 @@ export const whoIsTheNotificationFor = {
       defaultMessage: `Hægt er að tilkynna slys  í eigin nafni , fyrir aðra einstaklinga sem þú ert með skriflegt umboð frá eða fyrir starfsmann lögaðila. Foreldrar og forráðamenn geta líka sent inn tilkynningu fyrir hönd barna sem þeir fara með forsjá yfir. Stofnanir, samtök og félög sem eru virk á sviði persónuverndar geta sent inn tilkynningu án umboðs að uppfylltum skilyrðum 80. gr. reglugerðar (ESB) 2016/679 (almennu persónuverndarreglugerðarinnar).`,
       description: 'Description for who is the notifaction for',
     },
+    procureDescription: {
+      id: 'an.application:whoIsTheNotificationFor.procureDescription',
+      defaultMessage: `Í umboði er hægt að tilkynna slys fyrir einstaklinga sem þú ert með umboð frá eða fyrir starfsmann lögaðila. Foreldrar og forráðamenn geta líka sent inn tilkynningu fyrir hönd barna sem þeir fara með forsjá yfir. Stofnanir, samtök og félög sem eru virk á sviði persónuverndar geta sent inn tilkynningu án umboðs að uppfylltum skilyrðum 80. gr. reglugerðar (ESB) 2016/679 (almennu persónuverndarreglugerðarinnar).`,
+      description: 'Description for who is the notifaction for',
+    },
   }),
   labels: defineMessages({
     juridicalPerson: {
@@ -32,6 +37,11 @@ export const whoIsTheNotificationFor = {
     powerOfAttorney: {
       id: 'an.application:whoIsTheNotificationFor.labels.powerOfAttorney',
       defaultMessage: 'Í umboði fyrir annan einstakling',
+      description: 'Label for power of attorney option',
+    },
+    powerOfAttorneyProcure: {
+      id: 'an.application:whoIsTheNotificationFor.labels.powerOfAttorneyProcure',
+      defaultMessage: 'Einstakling',
       description: 'Label for power of attorney option',
     },
     childInCustody: {

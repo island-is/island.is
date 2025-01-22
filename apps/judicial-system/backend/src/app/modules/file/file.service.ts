@@ -22,7 +22,6 @@ import {
   CaseFileCategory,
   CaseFileState,
   EventType,
-  hasIndictmentCaseBeenSubmittedToCourt,
   isCompletedCase,
   isIndictmentCase,
 } from '@island.is/judicial-system/types'
@@ -42,6 +41,11 @@ import { PresignedPost } from './models/presignedPost.model'
 import { SignedUrl } from './models/signedUrl.model'
 import { UploadFileToCourtResponse } from './models/uploadFileToCourt.response'
 import { fileModuleConfig } from './file.config'
+
+interface CreateFile extends CreateFileDto {
+  defendantId?: string
+  civilClaimantId?: string
+}
 
 // File keys have the following format:
 // <uuid>/<uuid>/<filename>
@@ -102,24 +106,6 @@ export class FileService {
       return true
     }
 
-    if (
-      isIndictmentCase(theCase.type) &&
-      file.category === CaseFileCategory.INDICTMENT
-    ) {
-      // The file may have been confirmed
-      return this.awsS3Service
-        .deleteConfirmedIndictmentCaseObject(theCase.type, file.key)
-        .catch((reason) => {
-          // Tolerate failure, but log what happened
-          this.logger.error(
-            `Could not delete confirmed file ${file.id} of case ${file.caseId} from AWS S3`,
-            { reason },
-          )
-
-          return false
-        })
-    }
-
     return this.awsS3Service
       .deleteObject(theCase.type, file.key)
       .catch((reason) => {
@@ -137,18 +123,15 @@ export class FileService {
     let courtDocumentFolder: CourtDocumentFolder
 
     switch (file.category) {
-      case CaseFileCategory.INDICTMENT:
-      case CaseFileCategory.CRIMINAL_RECORD:
-      case CaseFileCategory.COST_BREAKDOWN:
-        courtDocumentFolder = CourtDocumentFolder.INDICTMENT_DOCUMENTS
-        break
       case CaseFileCategory.COURT_RECORD:
-        courtDocumentFolder = CourtDocumentFolder.COURT_DOCUMENTS
-        break
       case CaseFileCategory.RULING:
         courtDocumentFolder = CourtDocumentFolder.COURT_DOCUMENTS
         break
       case CaseFileCategory.CASE_FILE:
+      case CaseFileCategory.PROSECUTOR_CASE_FILE:
+      case CaseFileCategory.DEFENDANT_CASE_FILE:
+      case CaseFileCategory.CRIMINAL_RECORD:
+      case CaseFileCategory.COST_BREAKDOWN:
       case undefined:
       case null:
         courtDocumentFolder = CourtDocumentFolder.CASE_DOCUMENTS
@@ -172,6 +155,14 @@ export class FileService {
     file: CaseFile,
     pdf: Buffer,
   ): Promise<string | undefined> {
+    if (
+      !theCase.rulingDate ||
+      (file.category !== CaseFileCategory.RULING &&
+        file.category !== CaseFileCategory.COURT_RECORD)
+    ) {
+      return undefined
+    }
+
     const confirmationEvent = theCase.eventLogs?.find(
       (event) => event.eventType === EventType.INDICTMENT_CONFIRMED,
     )
@@ -180,40 +171,16 @@ export class FileService {
       return undefined
     }
 
-    return this.userService
-      .findByNationalId(confirmationEvent.nationalId)
-      .then((user) => {
-        if (file.category === CaseFileCategory.INDICTMENT) {
-          return createConfirmedPdf(
-            {
-              actor: user.name,
-              title: user.title,
-              institution: user.institution?.name ?? '',
-              date: confirmationEvent.created,
-            },
-            pdf,
-            CaseFileCategory.INDICTMENT,
-          )
-        }
-
-        if (
-          (file.category === CaseFileCategory.RULING ||
-            file.category === CaseFileCategory.COURT_RECORD) &&
-          isCompletedCase(theCase.state) &&
-          theCase.rulingDate
-        ) {
-          return createConfirmedPdf(
-            {
-              actor: theCase.judge?.name ?? '',
-              title: theCase.judge?.title,
-              institution: theCase.judge?.institution?.name ?? '',
-              date: theCase.rulingDate,
-            },
-            pdf,
-            file.category,
-          )
-        }
-      })
+    return createConfirmedPdf(
+      {
+        actor: theCase.judge?.name ?? '',
+        title: theCase.judge?.title,
+        institution: theCase.judge?.institution?.name ?? '',
+        date: theCase.rulingDate,
+      },
+      pdf,
+      file.category,
+    )
       .then((confirmedPdf) => {
         if (!confirmedPdf) {
           throw new Error('Failed to create confirmed PDF')
@@ -241,14 +208,6 @@ export class FileService {
     // Only case files in indictment cases can be confirmed
     if (!isIndictmentCase(theCase.type)) {
       return false
-    }
-
-    // Only indictments that have been submitted to court can be confirmed
-    if (
-      file.category === CaseFileCategory.INDICTMENT &&
-      hasIndictmentCaseBeenSubmittedToCourt(theCase.state)
-    ) {
-      return true
     }
 
     // Rulings and court records are only confirmed when a case is completed
@@ -337,7 +296,7 @@ export class FileService {
 
   async createCaseFile(
     theCase: Case,
-    createFile: CreateFileDto,
+    createFile: CreateFile,
     user: User,
   ): Promise<CaseFile> {
     const { key } = createFile
@@ -383,6 +342,25 @@ export class FileService {
         },
       ])
     }
+
+    if (
+      isIndictmentCase(theCase.type) &&
+      file.category &&
+      [
+        CaseFileCategory.PROSECUTOR_CASE_FILE,
+        CaseFileCategory.DEFENDANT_CASE_FILE,
+      ].includes(file.category)
+    ) {
+      await this.messageService.sendMessagesToQueue([
+        {
+          type: MessageType.DELIVERY_TO_COURT_CASE_FILE,
+          user,
+          caseId: theCase.id,
+          elementId: file.id,
+        },
+      ])
+    }
+
     return file
   }
 
@@ -545,13 +523,6 @@ export class FileService {
     return this.fileModel.update(
       { state: CaseFileState.STORED_IN_RVG },
       { where: { caseId, state: CaseFileState.STORED_IN_COURT }, transaction },
-    )
-  }
-
-  resetIndictmentCaseFileHashes(caseId: string, transaction: Transaction) {
-    return this.fileModel.update(
-      { hash: null },
-      { where: { caseId, category: CaseFileCategory.INDICTMENT }, transaction },
     )
   }
 

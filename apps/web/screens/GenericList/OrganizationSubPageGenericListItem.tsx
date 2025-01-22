@@ -1,10 +1,11 @@
 import { useMemo } from 'react'
 import { useRouter } from 'next/router'
 
+import { Query } from '@island.is/web/graphql/schema'
 import { useLinkResolver } from '@island.is/web/hooks'
 import { useI18n } from '@island.is/web/i18n'
-import { type LayoutProps, withMainLayout } from '@island.is/web/layouts/main'
-import { Screen } from '@island.is/web/types'
+import { type LayoutProps } from '@island.is/web/layouts/main'
+import { Screen, ScreenContext } from '@island.is/web/types'
 
 import SubPage, { type SubPageProps } from '../Organization/SubPage'
 import GenericListItemPage, {
@@ -19,8 +20,13 @@ export interface OrganizationSubPageGenericListItemProps {
   genericListItemProps: GenericListItemPageProps
 }
 
+type OrganizationSubPageGenericListItemScreenContext = ScreenContext & {
+  organizationPage?: Query['getOrganizationPage']
+}
+
 const OrganizationSubPageGenericListItem: Screen<
-  OrganizationSubPageGenericListItemProps
+  OrganizationSubPageGenericListItemProps,
+  OrganizationSubPageGenericListItemScreenContext
 > = (props) => {
   const { organizationPage, subpage } = props.parentProps.componentProps
   const router = useRouter()

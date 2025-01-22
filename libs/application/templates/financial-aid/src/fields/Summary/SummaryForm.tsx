@@ -1,5 +1,6 @@
 import React, { useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
+
 import { Text, Box, AlertMessage, UploadFile } from '@island.is/island-ui/core'
 import {
   getNextPeriod,
@@ -9,68 +10,52 @@ import {
   ChildrenAid,
 } from '@island.is/financial-aid/shared/lib'
 import { useLocale } from '@island.is/localization'
+
 import * as m from '../../lib/messages'
 import {
   ApproveOptions,
+  FAFieldBaseProps,
   SummaryComment as SummaryCommentType,
 } from '../../lib/types'
 import { Routes } from '../../lib/constants'
+import { DescriptionText, Breakdown } from '../index'
 import { formatAddress, formItems } from '../../lib/formatters'
-import { findFamilyStatus } from '../../lib/utils'
-import DescriptionText from '../../components/DescriptionText/DescriptionText'
-import Breakdown from '../../components/Breakdown/Breakdown'
-import DirectTaxPaymentModal from '../../components/DirectTaxPaymentsModal/DirectTaxPaymentModal'
-import SummaryComment from '../../components/Summary/SummaryComment'
-import ChildrenInfo from '../../components/Summary/ChildrenInfo'
-import ContactInfo from '../../components/Summary/ContactInfo'
-import Files from '../../components/Summary/Files'
-import FormInfo from '../../components/Summary/FormInfo'
-import DirectTaxPaymentCell from '../../components/Summary/DirectTaxPaymentCell'
-import UserInfo from '../../components/Summary/UserInfo'
-import { FieldBaseProps } from '@island.is/application/types'
-import { AnswersSchema } from '../../lib/dataSchema'
-import { getSummaryConstants } from './utils'
+import {
+  FormInfo,
+  SummaryComment,
+  UserInfo,
+  ContactInfo,
+  Files,
+  DirectTaxPaymentCell,
+} from './index'
 
-export const SummaryForm = ({ application, goToScreen }: FieldBaseProps) => {
+import { DirectTaxPaymentsModal } from '..'
+import { findFamilyStatus } from '../../lib/utils'
+import ChildrenInfo from './ChildrenInfo'
+
+const SummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
   const { formatMessage } = useIntl()
   const { lang } = useLocale()
 
   const { id, answers, externalData } = application
-  const answersSchema = answers as AnswersSchema
   const summaryCommentType = SummaryCommentType.FORMCOMMENT
   const [isModalOpen, setIsModalOpen] = useState(false)
 
-  const {
-    homeCircumstances,
-    individualAid,
-    cohabitationAid,
-    childrenSchoolInfo,
-    municipalitiesDirectTaxPaymentsSuccess,
-    municipalitiesDirectTaxPayments,
-    fetchDate,
-    personalTaxReturn,
-    personalTaxCreditType,
-    childrenCustodyData,
-    childrenAid,
-    nationalRegistryData,
-  } = getSummaryConstants(answers, externalData)
-
   const aidAmount = useMemo(() => {
-    if (externalData.municipality.data && homeCircumstances) {
+    if (externalData.municipality.data && answers.homeCircumstances) {
       return aidCalculator(
-        homeCircumstances,
+        answers.homeCircumstances.type,
         findFamilyStatus(answers, externalData) ===
           FamilyStatus.NOT_COHABITATION
-          ? individualAid
-          : cohabitationAid,
+          ? externalData.municipality.data.individualAid
+          : externalData.municipality.data.cohabitationAid,
       )
     }
   }, [externalData.municipality.data])
 
   const showAlertMessageAboutChildrenAid =
-    childrenCustodyData &&
-    childrenCustodyData?.length > 0 &&
-    childrenAid !== ChildrenAid.NOTDEFINED
+    externalData.childrenCustodyInformation.data.length > 0 &&
+    externalData.municipality.data?.childrenAid !== ChildrenAid.NOTDEFINED
 
   const findFilesRouteFrom = (
     childrenFiles: UploadFile[],
@@ -111,7 +96,7 @@ export const SummaryForm = ({ application, goToScreen }: FieldBaseProps) => {
           <Breakdown
             calculations={estimatedBreakDown(
               aidAmount,
-              personalTaxCreditType === ApproveOptions.Yes,
+              answers.personalTaxCredit === ApproveOptions.Yes,
             )}
           />
         </Box>
@@ -119,7 +104,8 @@ export const SummaryForm = ({ application, goToScreen }: FieldBaseProps) => {
 
       {showAlertMessageAboutChildrenAid && (
         <Box marginTop={[4, 4, 5]}>
-          {childrenAid === ChildrenAid.APPLICANT ? (
+          {externalData.municipality.data?.childrenAid ===
+          ChildrenAid.APPLICANT ? (
             <AlertMessage
               type="info"
               message={
@@ -148,16 +134,16 @@ export const SummaryForm = ({ application, goToScreen }: FieldBaseProps) => {
       </Box>
 
       <UserInfo
-        name={nationalRegistryData?.fullName}
-        nationalId={nationalRegistryData?.nationalId}
-        address={formatAddress(nationalRegistryData)}
+        name={externalData.nationalRegistry.data.fullName}
+        nationalId={externalData.nationalRegistry.data.nationalId}
+        address={formatAddress(externalData.nationalRegistry.data)}
       />
 
-      {childrenSchoolInfo && childrenSchoolInfo.length > 0 && (
+      {answers?.childrenSchoolInfo && answers.childrenSchoolInfo.length > 0 && (
         <ChildrenInfo
-          childrenSchoolInfo={childrenSchoolInfo}
+          childrenSchoolInfo={answers?.childrenSchoolInfo}
           goToScreen={goToScreen}
-          childrenComment={answersSchema?.childrenComment}
+          childrenComment={answers?.childrenComment}
         />
       )}
 
@@ -168,40 +154,46 @@ export const SummaryForm = ({ application, goToScreen }: FieldBaseProps) => {
 
       <DirectTaxPaymentCell
         setIsModalOpen={setIsModalOpen}
-        hasFetchedPayments={municipalitiesDirectTaxPaymentsSuccess ?? false}
-        directTaxPayments={municipalitiesDirectTaxPayments ?? []}
+        hasFetchedPayments={
+          externalData?.taxData?.data?.municipalitiesDirectTaxPayments?.success
+        }
+        directTaxPayments={
+          externalData?.taxData?.data?.municipalitiesDirectTaxPayments
+            ?.directTaxPayments
+        }
       />
 
       <ContactInfo
         route={Routes.CONTACTINFO}
-        email={answersSchema?.contactInfo?.email}
-        phone={answersSchema?.contactInfo?.phone}
+        email={answers?.contactInfo?.email}
+        phone={answers?.contactInfo?.phone}
         goToScreen={goToScreen}
       />
 
       <Files
-        route={
-          findFilesRouteFrom(
-            answersSchema?.childrenFiles ?? [],
-            answersSchema?.income?.type,
-          ) || []
-        }
+        route={findFilesRouteFrom(answers.childrenFiles, answers.income)}
         goToScreen={goToScreen}
-        personalTaxReturn={personalTaxReturn}
-        taxFiles={answersSchema?.taxReturnFiles ?? []}
-        incomeFiles={answersSchema?.incomeFiles ?? []}
-        childrenFiles={answersSchema?.childrenFiles ?? []}
+        personalTaxReturn={
+          externalData.taxData?.data?.municipalitiesPersonalTaxReturn
+            ?.personalTaxReturn
+        }
+        taxFiles={answers.taxReturnFiles ?? []}
+        incomeFiles={answers.incomeFiles ?? []}
+        childrenFiles={answers.childrenFiles ?? []}
         applicationId={id}
       />
 
       <SummaryComment
         commentId={summaryCommentType}
-        comment={answersSchema?.formComment}
+        comment={answers?.formComment}
       />
 
-      <DirectTaxPaymentModal
-        items={municipalitiesDirectTaxPayments ?? []}
-        dateDataWasFetched={fetchDate ?? ''}
+      <DirectTaxPaymentsModal
+        items={
+          externalData?.taxData?.data?.municipalitiesDirectTaxPayments
+            ?.directTaxPayments
+        }
+        dateDataWasFetched={externalData?.nationalRegistry?.date}
         isVisible={isModalOpen}
         onVisibilityChange={(isOpen: boolean) => {
           setIsModalOpen(isOpen)
@@ -210,3 +202,5 @@ export const SummaryForm = ({ application, goToScreen }: FieldBaseProps) => {
     </>
   )
 }
+
+export default SummaryForm

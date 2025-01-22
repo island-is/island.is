@@ -57,22 +57,20 @@ const ActiveCases: FC<Props> = (props) => {
         },
       ]}
       data={cases}
-      generateContextMenuItems={(row) => {
-        return [
-          openCaseInNewTabMenuItem(row.id),
-          ...(canDeleteCase(row)
-            ? [
-                {
-                  title: formatMessage(contextMenu.deleteCase),
-                  onClick: () => {
-                    onContextMenuDeleteClick(row.id)
-                  },
-                  icon: 'trash',
-                } as ContextMenuItem,
-              ]
-            : []),
-        ]
-      }}
+      generateContextMenuItems={(row) => [
+        openCaseInNewTabMenuItem(row.id),
+        ...(canDeleteCase(row)
+          ? [
+              {
+                title: formatMessage(contextMenu.deleteCase),
+                onClick: () => {
+                  onContextMenuDeleteClick(row.id)
+                },
+                icon: 'trash',
+              } as ContextMenuItem,
+            ]
+          : []),
+      ]}
       columns={[
         {
           cell: (row) => (
@@ -107,6 +105,7 @@ const ActiveCases: FC<Props> = (props) => {
               courtDate={row.courtDate}
               indictmentDecision={row.indictmentDecision}
               indictmentRulingDecision={row.indictmentRulingDecision}
+              defendants={row.defendants}
             />
           ),
         },

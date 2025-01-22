@@ -2,7 +2,7 @@ import { ISLANDIS_SLUG, IntroHeader, m } from '@island.is/portals/my-pages/core'
 import ProfileForm from '../../components/PersonalInformation/Forms/ProfileForm/ProfileForm'
 import { useUserProfile } from '@island.is/portals/my-pages/graphql'
 import { useLocale } from '@island.is/localization'
-import { useUserInfo } from '@island.is/auth/react'
+import { useUserInfo } from '@island.is/react-spa/bff'
 import { msg } from '../../lib/messages'
 
 const UserProfile = () => {

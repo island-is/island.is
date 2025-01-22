@@ -15,10 +15,12 @@ import { core } from '@island.is/judicial-system-web/messages'
 import { requestCourtDate } from '@island.is/judicial-system-web/messages'
 import {
   Case,
+  CaseIndictmentRulingDecision,
   CaseType,
   IndictmentCaseReviewDecision,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
+import { isNonEmptyArray } from '../../utils/arrayHelpers'
 import { sortByIcelandicAlphabet } from '../../utils/sortHelper'
 import { FormContext } from '../FormProvider/FormProvider'
 import { CivilClaimantInfo } from './CivilClaimantInfo/CivilClaimantInfo'
@@ -32,10 +34,15 @@ const useInfoCardItems = () => {
   const { formatMessage } = useIntl()
   const { workingCase } = useContext(FormContext)
 
+  // helper for info card items. If items have no values they will have [{falsy value}]
+  const showItem = (item: Item) =>
+    isNonEmptyArray(item.values) && !!item.values[0]
+
   const defendants = (
     caseType?: CaseType | null,
     displayAppealExpirationInfo?: boolean,
     displayVerdictViewDate?: boolean,
+    displaySentToPrisonAdminDate?: boolean,
   ): Item => {
     const defendants = workingCase.defendants
     const isMultipleDefendants = defendants && defendants.length > 1
@@ -78,6 +85,7 @@ const useInfoCardItems = () => {
                 }}
                 displayAppealExpirationInfo={displayAppealExpirationInfo}
                 displayVerdictViewDate={displayVerdictViewDate}
+                displaySentToPrisonAdminDate={displaySentToPrisonAdminDate}
               />
             </div>
           ))
@@ -129,9 +137,9 @@ const useInfoCardItems = () => {
     values: [workingCase.courtCaseNumber],
   }
 
-  const offences: Item = {
-    id: 'offences-item',
-    title: formatMessage(strings.offence),
+  const offenses: Item = {
+    id: 'offenses-item',
+    title: formatMessage(strings.offense),
     values: [
       <>
         {readableIndictmentSubtypes(
@@ -169,9 +177,9 @@ const useInfoCardItems = () => {
     ],
   }
 
-  const offence: Item = {
-    id: 'offence-item',
-    title: formatMessage(strings.offence),
+  const offense: Item = {
+    id: 'offense-item',
+    title: formatMessage(strings.offense),
     values: [
       <>
         {readableIndictmentSubtypes(
@@ -197,10 +205,26 @@ const useInfoCardItems = () => {
     ],
   }
 
+  const getMergeCaseValue = () => {
+    const internalCourtCaseNumber = workingCase.mergeCase?.courtCaseNumber
+    if (internalCourtCaseNumber) {
+      return internalCourtCaseNumber
+    }
+
+    const externalCourtCaseNumber = workingCase.mergeCaseNumber
+    if (externalCourtCaseNumber) {
+      return formatMessage(strings.externalMergeCase, {
+        mergeCaseNumber: externalCourtCaseNumber,
+      })
+    }
+
+    return undefined
+  }
+
   const mergeCase: Item = {
     id: 'merge-case-item',
     title: formatMessage(strings.indictmentMergedTitle),
-    values: [workingCase.mergeCase?.courtCaseNumber],
+    values: [getMergeCaseValue()],
   }
 
   const mergedCasePoliceCaseNumbers = (mergedCase: Case): Item => ({
@@ -277,11 +301,16 @@ const useInfoCardItems = () => {
           IndictmentCaseReviewDecision.ACCEPT
           ? strings.reviewTagAccepted
           : strings.reviewTagAppealed,
+        {
+          isFine:
+            workingCase.indictmentRulingDecision ===
+            CaseIndictmentRulingDecision.FINE,
+        },
       ),
     ],
   }
 
-  const indictmentReviewedDate = (date?: string | null): Item => ({
+  const indictmentReviewedDate = (date: string): Item => ({
     id: 'indictment-reviewed-date-item',
     title: formatMessage(strings.indictmentReviewedDateTitle),
     values: [formatDate(date, 'PP')],
@@ -351,6 +380,7 @@ const useInfoCardItems = () => {
   }
 
   return {
+    showItem,
     defendants,
     indictmentCreated,
     prosecutor,
@@ -358,11 +388,11 @@ const useInfoCardItems = () => {
     policeCaseNumbers,
     court,
     courtCaseNumber,
-    offences,
+    offenses,
     judge,
     caseType,
     registrar,
-    offence,
+    offense,
     requestedCourtDate,
     mergeCase,
     mergedCasePoliceCaseNumbers,

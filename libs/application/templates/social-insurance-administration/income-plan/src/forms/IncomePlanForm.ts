@@ -4,6 +4,7 @@ import {
   buildForm,
   buildMultiField,
   buildSection,
+  buildSelectField,
   buildSubSection,
   buildSubmitField,
   buildTableRepeaterField,
@@ -32,11 +33,13 @@ import {
   YES,
 } from '../lib/constants'
 import {
+  getApplicationAnswers,
   getApplicationExternalData,
   getCategoriesOptions,
   getTypesOptions,
 } from '../lib/incomePlanUtils'
 import { incomePlanFormMessage } from '../lib/messages'
+import { MONTHS } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
 
 export const IncomePlanForm: Form = buildForm({
   id: 'IncomePlanDraft',
@@ -69,9 +72,8 @@ export const IncomePlanForm: Form = buildForm({
               id: 'incomePlanTable',
               title: incomePlanFormMessage.info.section,
               description: (application: Application) => {
-                const { latestIncomePlan } = getApplicationExternalData(
-                  application.externalData,
-                )
+                const { incomePlanConditions, latestIncomePlan } =
+                  getApplicationExternalData(application.externalData)
                 const hasLatestIncomePlan = !isEmpty(latestIncomePlan)
                 const baseMessage = hasLatestIncomePlan
                   ? incomePlanFormMessage.incomePlan
@@ -81,7 +83,9 @@ export const IncomePlanForm: Form = buildForm({
                 return {
                   ...baseMessage,
                   values: {
-                    incomePlanYear: latestIncomePlan.year,
+                    incomePlanYear:
+                      incomePlanConditions?.incomePlanYear ??
+                      new Date().getFullYear(),
                   },
                 }
               },
@@ -625,6 +629,21 @@ export const IncomePlanForm: Form = buildForm({
           title: incomePlanFormMessage.info.temporaryCalculationTitle,
           description: incomePlanFormMessage.info.tableDescription,
           children: [
+            buildCustomField({
+              title: '',
+              id: 'overviewPrint',
+              doesNotRequireAnswer: true,
+              component: 'PrintScreen',
+            }),
+            buildSelectField({
+              id: 'temporaryCalculation.month',
+              title: socialInsuranceAdministrationMessage.period.month,
+              width: 'half',
+              options: MONTHS,
+              defaultValue: MONTHS[new Date().getMonth()].value,
+              condition: (answers) =>
+                getApplicationAnswers(answers).temporaryCalculationShow,
+            }),
             buildCustomField({
               id: 'temporaryCalculationTable',
               title: '',

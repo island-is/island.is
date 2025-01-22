@@ -100,6 +100,8 @@ export const DEFENDER_STATEMENT_ROUTE = '/verjandi/greinargerd'
 //#region Public prosecutor user routes
 export const PUBLIC_PROSECUTOR_STAFF_INDICTMENT_OVERVIEW_ROUTE =
   '/rikissaksoknari/akaera/yfirlit'
+export const PUBLIC_PROSECUTOR_STAFF_INDICTMENT_SEND_TO_PRISON_ADMIN_ROUTE =
+  '/rikissaksoknari/akaera/senda-til-fmst'
 //#endregion Public prosecutor user routes
 
 //#region Prison user routes
@@ -186,7 +188,7 @@ export const INDICTMENTS_DEFENDANT_ROUTE = '/akaera/akaerdi'
 export const INDICTMENTS_POLICE_CASE_FILES_ROUTE = '/akaera/malsgogn'
 export const INDICTMENTS_CASE_FILE_ROUTE = '/akaera/skjalaskra'
 export const INDICTMENTS_PROCESSING_ROUTE = '/akaera/malsmedferd'
-export const INDICTMENTS_TRAFFIC_VIOLATION_ROUTE = '/akaera/akaera'
+export const INDICTMENTS_INDICTMENT_ROUTE = '/akaera/akaera'
 export const INDICTMENTS_CASE_FILES_ROUTE = '/akaera/domskjol'
 export const INDICTMENTS_OVERVIEW_ROUTE = '/akaera/stadfesta'
 export const CLOSED_INDICTMENT_OVERVIEW_ROUTE = '/akaera/yfirlit'
@@ -223,12 +225,12 @@ export const prosecutorInvestigationCasesRoutes = [
   INVESTIGATION_CASE_POLICE_CONFIRMATION_ROUTE,
 ]
 
-export const prosecutorIndictmentRoutes = (isTrafficViolation: boolean) => [
+export const prosecutorIndictmentRoutes = [
   INDICTMENTS_DEFENDANT_ROUTE,
   INDICTMENTS_POLICE_CASE_FILES_ROUTE,
   INDICTMENTS_CASE_FILE_ROUTE,
   INDICTMENTS_PROCESSING_ROUTE,
-  ...(isTrafficViolation ? [INDICTMENTS_TRAFFIC_VIOLATION_ROUTE] : []),
+  INDICTMENTS_INDICTMENT_ROUTE,
   INDICTMENTS_CASE_FILES_ROUTE,
   INDICTMENTS_OVERVIEW_ROUTE,
 ]

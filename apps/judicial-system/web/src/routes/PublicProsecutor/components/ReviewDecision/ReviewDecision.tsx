@@ -5,7 +5,10 @@ import { useRouter } from 'next/router'
 import { Box, RadioButton, Text } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
-import { isPublicProsecutor } from '@island.is/judicial-system/types'
+import {
+  isPublicProsecutor,
+  isPublicProsecutorUser,
+} from '@island.is/judicial-system/types'
 import {
   BlueBox,
   Modal,
@@ -15,34 +18,40 @@ import {
 import { IndictmentCaseReviewDecision } from '@island.is/judicial-system-web/src/graphql/schema'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 
+import { ConfirmationModal, isConfirmProsecutorDecisionModal } from '../utils'
 import { strings } from './ReviewDecision.strings'
 import * as styles from './ReviewDecision.css'
 
 interface Props {
   caseId: string
+  currentDecision?: IndictmentCaseReviewDecision
   indictmentAppealDeadline?: string
-  modalVisible?: boolean
-  setModalVisible: Dispatch<SetStateAction<boolean>>
-  onSelect?: () => void
+  indictmentAppealDeadlineIsInThePast?: boolean
+  modalVisible?: ConfirmationModal
+  setModalVisible: Dispatch<SetStateAction<ConfirmationModal | undefined>>
+  isFine: boolean
+  onSelect?: (decision?: IndictmentCaseReviewDecision) => void
 }
 
 export const ReviewDecision: FC<Props> = (props) => {
+  const {
+    caseId,
+    currentDecision,
+    indictmentAppealDeadline,
+    indictmentAppealDeadlineIsInThePast,
+    modalVisible,
+    setModalVisible,
+    isFine,
+    onSelect,
+  } = props
+
   const { user } = useContext(UserContext)
   const router = useRouter()
   const { formatMessage: fm } = useIntl()
   const { updateCase } = useCase()
-
-  const {
-    caseId,
-    indictmentAppealDeadline,
-    modalVisible,
-    setModalVisible,
-    onSelect,
-  } = props
-
   const [indictmentReviewDecision, setIndictmentReviewDecision] = useState<
     IndictmentCaseReviewDecision | undefined
-  >(undefined)
+  >(currentDecision)
 
   const handleReviewDecision = async () => {
     if (!indictmentReviewDecision) {
@@ -58,27 +67,33 @@ export const ReviewDecision: FC<Props> = (props) => {
 
   const options = [
     {
-      label: fm(strings.appealToCourtOfAppeals),
+      label: fm(
+        isFine
+          ? strings.appealFineToCourtOfAppeals
+          : strings.appealToCourtOfAppeals,
+      ),
       value: IndictmentCaseReviewDecision.APPEAL,
     },
     {
-      label: fm(strings.acceptDecision),
+      label: fm(isFine ? strings.acceptFineDecision : strings.acceptDecision),
       value: IndictmentCaseReviewDecision.ACCEPT,
     },
   ]
 
-  if (!isPublicProsecutor(user)) {
+  if (!(isPublicProsecutor(user) || isPublicProsecutorUser(user))) {
     return null
   }
 
   return (
     <Box marginBottom={5}>
       <SectionHeading
-        title={fm(strings.title)}
+        title={fm(strings.title, { isFine })}
         description={
           <Text variant="eyebrow" as="span">
             {fm(strings.subtitle, {
+              isFine,
               indictmentAppealDeadline: formatDate(indictmentAppealDeadline),
+              appealDeadlineIsInThePast: indictmentAppealDeadlineIsInThePast,
             })}
           </Text>
         }
@@ -94,7 +109,7 @@ export const ReviewDecision: FC<Props> = (props) => {
                 value={item.value}
                 checked={indictmentReviewDecision === item.value}
                 onChange={() => {
-                  onSelect && onSelect()
+                  onSelect && onSelect(item.value)
                   setIndictmentReviewDecision(item.value)
                 }}
                 backgroundColor="white"
@@ -104,17 +119,20 @@ export const ReviewDecision: FC<Props> = (props) => {
           })}
         </div>
       </BlueBox>
-      {modalVisible && (
+      {isConfirmProsecutorDecisionModal(modalVisible) && (
         <Modal
           title={fm(strings.reviewModalTitle)}
-          text={fm(strings.reviewModalText, {
-            reviewerDecision: indictmentReviewDecision,
-          })}
+          text={fm(
+            isFine ? strings.reviewModalTextFine : strings.reviewModalText,
+            {
+              reviewerDecision: indictmentReviewDecision,
+            },
+          )}
           primaryButtonText={fm(strings.reviewModalPrimaryButtonText)}
           secondaryButtonText={fm(strings.reviewModalSecondaryButtonText)}
-          onClose={() => setModalVisible(false)}
+          onClose={() => setModalVisible(undefined)}
           onPrimaryButtonClick={handleReviewDecision}
-          onSecondaryButtonClick={() => setModalVisible(false)}
+          onSecondaryButtonClick={() => setModalVisible(undefined)}
         />
       )}
     </Box>

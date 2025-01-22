@@ -31,7 +31,7 @@ import {
   validateAndSetErrorMessage,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { useNationalRegistry } from '@island.is/judicial-system-web/src/utils/hooks'
-import { isBusiness } from '@island.is/judicial-system-web/src/utils/stepHelper'
+import { isBusiness } from '@island.is/judicial-system-web/src/utils/utils'
 
 import * as strings from './DefendantInfo.strings'
 
@@ -190,7 +190,7 @@ const DefendantInfo: FC<Props> = (props) => {
             onChange({
               caseId: workingCase.id,
               defendantId: defendant.id,
-              nationalId: value,
+              nationalId: value || null,
             })
           }
           onChange={(value) =>
@@ -198,7 +198,7 @@ const DefendantInfo: FC<Props> = (props) => {
               {
                 caseId: workingCase.id,
                 defendantId: defendant.id,
-                nationalId: value,
+                nationalId: value || null,
               },
               setWorkingCase,
             )
