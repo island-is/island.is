@@ -13,7 +13,7 @@ const schema = z.object({
 export const NationalRegistryV3ApplicationsClientConfig = defineConfig<
   z.infer<typeof schema>
 >({
-  name: ' NationalRegistryV3Client',
+  name: ' NationalRegistryV3ApplicationsClient',
   schema,
   load: (env) => ({
     fetchTimeout: 10000,
@@ -24,7 +24,7 @@ export const NationalRegistryV3ApplicationsClientConfig = defineConfig<
     clientSecret: env.required('NATIONAL_REGISTRY_B2C_CLIENT_SECRET', ''),
     scope: env.required(
       'NATIONAL_REGISTRY_B2C_SCOPE',
-      'https://skraidentitydev.onmicrosoft.com/midlun/.default',
+      'https://skraidentitydev.onmicrosoft.com/midlunumsoknir/.default',
     ),
     endpoint: env.required(
       'NATIONAL_REGISTRY_B2C_ENDPOINT',
@@ -32,7 +32,7 @@ export const NationalRegistryV3ApplicationsClientConfig = defineConfig<
     ),
     xRoadServicePath: env.required(
       'NATIONAL_REGISTRY_B2C_PATH',
-      'IS-DEV/GOV/10001/SKRA-Cloud-Protected/Midlun-v1',
+      'IS-DEV/GOV/10001/SKRA-Cloud-Protected/MidlunUmsoknir-v1',
     ),
   }),
 })
