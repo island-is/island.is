@@ -1,26 +1,28 @@
 import React, { useState } from 'react'
-import { useNamespace } from '../../hooks'
+
 import {
   Box,
-  Inline,
-  Text,
-  Divider,
-  Link,
   Button,
-  Select,
-  GridRow,
+  Divider,
   GridColumn,
+  GridRow,
+  Inline,
+  Link,
+  Select,
   StringOption as Option,
+  Text,
 } from '@island.is/island-ui/core'
 import {
+  GetNamespaceQuery,
   Service,
   ServiceDetail,
-  GetNamespaceQuery,
 } from '@island.is/web/graphql/schema'
-import TagList from './TagList'
-import XroadValue from './XroadValue'
+
+import { useNamespace } from '../../hooks'
 import ServiceInfoLink from './ServiceInfoLink'
 import ServiceTag from './ServiceTag'
+import TagList from './TagList'
+import XroadValue from './XroadValue'
 
 export interface ServiceInformationProps {
   service: Service
