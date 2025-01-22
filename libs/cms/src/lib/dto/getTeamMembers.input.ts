@@ -1,7 +1,23 @@
-import { Field, InputType, Int, ObjectType } from '@nestjs/graphql'
+import {
+  Field,
+  InputType,
+  Int,
+  ObjectType,
+  registerEnumType,
+} from '@nestjs/graphql'
 import { IsInt, IsOptional, IsString } from 'class-validator'
 import GraphQLJSON from 'graphql-type-json'
 import { ElasticsearchIndexLocale } from '@island.is/content-search-index-manager'
+import { CacheField } from '@island.is/nest/graphql'
+
+export enum GetTeamMembersInputOrderBy {
+  Name = 'Name',
+  Manual = 'Manual',
+}
+
+registerEnumType(GetTeamMembersInputOrderBy, {
+  name: 'GetTeamMembersInputOrderBy',
+})
 
 @InputType()
 @ObjectType('TeamMemberResponseInput')
@@ -34,4 +50,7 @@ export class GetTeamMembersInput {
 
   @Field(() => GraphQLJSON, { nullable: true })
   tagGroups?: Record<string, string[]>
+
+  @CacheField(() => GetTeamMembersInputOrderBy, { nullable: true })
+  orderBy?: GetTeamMembersInputOrderBy
 }
