@@ -18,9 +18,9 @@ import {
 import {
   ColumnCaseType,
   CourtCaseNumber,
-  CreatedDate,
   DefendantInfo,
   getDurationDate,
+  TableDate,
 } from '@island.is/judicial-system-web/src/components/Table'
 import { CaseListEntry } from '@island.is/judicial-system-web/src/graphql/schema'
 
@@ -106,7 +106,7 @@ const PastCasesTable: FC<Props> = ({ cases }) => {
             ),
           },
           {
-            cell: (row) => <CreatedDate created={row.caseSentToCourtDate} />,
+            cell: (row) => <TableDate displayDate={row.caseSentToCourtDate} />,
           },
           {
             cell: (row) => {

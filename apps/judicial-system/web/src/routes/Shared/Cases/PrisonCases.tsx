@@ -27,9 +27,9 @@ import { useContextMenu } from '@island.is/judicial-system-web/src/components/Co
 import {
   ColumnCaseType,
   CourtCaseNumber,
-  CreatedDate,
   DefendantInfo,
   getDurationDate,
+  TableDate,
 } from '@island.is/judicial-system-web/src/components/Table'
 import Table from '@island.is/judicial-system-web/src/components/Table/Table'
 import TagContainer from '@island.is/judicial-system-web/src/components/Tags/TagContainer/TagContainer'
@@ -128,7 +128,9 @@ export const PrisonCases: FC = () => {
               ),
             },
             {
-              cell: (row) => <CreatedDate created={row.created} />,
+              cell: (row) => (
+                <TableDate displayDate={row.caseSentToCourtDate} />
+              ),
             },
             {
               cell: (row) => (
@@ -232,7 +234,7 @@ export const PrisonCases: FC = () => {
             },
             {
               cell: (row) => (
-                <CreatedDate created={row.indictmentCompletedDate} />
+                <TableDate displayDate={row.indictmentCompletedDate} />
               ),
             },
             {

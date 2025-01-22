@@ -23,8 +23,8 @@ import {
   ColumnCaseType,
   CourtCaseNumber,
   CourtDate,
-  CreatedDate,
   DefendantInfo,
+  TableDate,
 } from '@island.is/judicial-system-web/src/components/Table'
 import Table, {
   TableWrapper,
@@ -148,7 +148,11 @@ const CasesInProgressTable: FC<CasesInProgressTableProps> = (props) => {
                     />
                   ),
                 },
-                { cell: (row) => <CreatedDate created={row.created} /> },
+                {
+                  cell: (row) => (
+                    <TableDate displayDate={row.caseSentToCourtDate} />
+                  ),
+                },
                 {
                   cell: (row) => (
                     <TagCaseState

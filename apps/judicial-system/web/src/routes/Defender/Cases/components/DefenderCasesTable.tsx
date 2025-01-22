@@ -15,9 +15,9 @@ import {
   ColumnCaseType,
   CourtCaseNumber,
   CourtDate,
-  CreatedDate,
   DefendantInfo,
   getDurationDate,
+  TableDate,
 } from '@island.is/judicial-system-web/src/components/Table'
 import Table from '@island.is/judicial-system-web/src/components/Table/Table'
 import TagContainer from '@island.is/judicial-system-web/src/components/Tags/TagContainer/TagContainer'
@@ -101,7 +101,9 @@ export const DefenderCasesTable: FC<Props> = ({
               />
             ),
           },
-          { cell: (row) => <CreatedDate created={row.created} /> },
+          {
+            cell: (row) => <TableDate displayDate={row.caseSentToCourtDate} />,
+          },
           {
             cell: (row) => (
               <TagContainer>

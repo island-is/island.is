@@ -12,8 +12,8 @@ import { useContextMenu } from '@island.is/judicial-system-web/src/components/Co
 import {
   ColumnCaseType,
   CourtCaseNumber,
-  CreatedDate,
   DefendantInfo,
+  TableDate,
 } from '@island.is/judicial-system-web/src/components/Table'
 import Table, {
   TableWrapper,
@@ -83,7 +83,7 @@ const CasesAwaitingAssignmentTable: FC<CasesAwaitingAssignmentTableProps> = (
                   cell: (row) => <ColumnCaseType type={row.type} />,
                 },
                 {
-                  cell: (row) => <CreatedDate created={row.created} />,
+                  cell: (row) => <TableDate displayDate={row.created} />,
                 },
                 {
                   cell: (row) => (
