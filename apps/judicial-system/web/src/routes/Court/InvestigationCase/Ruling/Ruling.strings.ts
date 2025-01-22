@@ -35,6 +35,20 @@ export const icRuling = {
           'Notaður sem skýritexti fyrir "greinargerð um málsatvik" innsláttarsvæðið á úrskurðar skrefi í rannsóknarheimildum.',
       },
     }),
+    completedWithoutRuling: defineMessages({
+      label: {
+        id: 'judicial.system.core:investigation_cases.ruling.completed_without_ruling.label',
+        defaultMessage: 'Ljúka máli án úrskurðar',
+        description:
+          'Notaður sem titill fyrir "Ljúka máli án úrskurðar" checkbox á úrskurðar skrefi í rannsóknarheimildum.',
+      },
+      tooltip: {
+        id: 'judicial.system.core:investigation_cases.ruling.completed_without_ruling.tooltip',
+        defaultMessage: 'Ljúka máli án úrskurðar.',
+        description:
+          'Notaður sem upplýsingatexti við "Ljúka mál án úrskurðar" titlinn á úrskurðar skrefi í rannsóknarheimildum.',
+      },
+    }),
     courtLegalArguments: defineMessages({
       title: {
         id: 'judicial.system.core:investigation_cases.ruling.court_legal_arguments.title',
