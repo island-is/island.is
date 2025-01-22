@@ -65,7 +65,7 @@ export const Spouse: Form = buildForm({
               titleVariant: 'h3',
             }),
             buildDescriptionField({
-              id: 'incomeBulletlist',
+              id: 'incomeBulletList',
               title: '',
               description: m.incomeForm.bulletList.bullets,
             }),
