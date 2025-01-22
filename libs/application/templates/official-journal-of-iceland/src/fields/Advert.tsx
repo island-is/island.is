@@ -38,9 +38,7 @@ export const Advert = ({ application }: OJOIFieldBaseProps) => {
     const html = data.officialJournalOfIcelandApplicationAdvertTemplate.html
     const updatedAnswers = set(currentAnswers, InputFields.advert.html, html)
     setValue(InputFields.advert.type, html)
-    updateApplication(updatedAnswers)
-
-    setAdvertHtmlEditorKey(uuid())
+    updateApplication(updatedAnswers, () => setAdvertHtmlEditorKey(uuid()))
   })
 
   const defaultDepartment =
@@ -50,7 +48,6 @@ export const Advert = ({ application }: OJOIFieldBaseProps) => {
     initalDepartmentId: defaultDepartment,
     pageSize: 300,
   })
-
   const departmentOptions = departments?.map((d) => ({
     label: d.title,
     value: {
@@ -79,8 +76,8 @@ export const Advert = ({ application }: OJOIFieldBaseProps) => {
   const templateOptions = useMemo(
     () =>
       templateTypes?.map((tt) => ({
-        label: tt,
-        value: tt,
+        label: tt.title,
+        value: tt.type,
       })) ?? [],
     [templateTypes],
   )

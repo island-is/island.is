@@ -201,7 +201,9 @@ export const TYPES_QUERY = gql`
 `
 
 export const ADVERT_TEMPLATE_QUERY = gql`
-  query AdvertTemplate($params: OfficialJournalOfIcelandAdvertTemplateInput!) {
+  query GetAdvertTemplate(
+    $params: OfficialJournalOfIcelandAdvertTemplateInput!
+  ) {
     officialJournalOfIcelandApplicationAdvertTemplate(input: $params) {
       html
       type
@@ -210,9 +212,12 @@ export const ADVERT_TEMPLATE_QUERY = gql`
 `
 
 export const ADVERT_TEMPLATE_TYPES_QUERY = gql`
-  query AdvertTypes {
+  query GetAdvertTemplateTypes {
     officialJournalOfIcelandApplicationAdvertTemplateTypes {
-      types
+      types {
+        title
+        type
+      }
     }
   }
 `

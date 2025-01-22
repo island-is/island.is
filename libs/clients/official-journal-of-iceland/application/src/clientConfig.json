@@ -332,7 +332,10 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/GetAdvertTemplatesResponse"
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AdvertTemplateDetails"
+                  }
                 }
               }
             }
@@ -1569,16 +1572,21 @@
         },
         "required": ["applicationCase"]
       },
-      "GetAdvertTemplatesResponse": {
+      "AdvertTemplateDetails": {
         "type": "object",
         "properties": {
-          "types": {
-            "example": "[\"auglysing\", \"reglugerd\", \"gjaldskra\"]",
-            "type": "array",
-            "items": { "type": "string" }
+          "slug": {
+            "type": "string",
+            "example": "auglysing",
+            "enum": ["auglysing", "reglugerd", "gjaldskra"]
+          },
+          "title": {
+            "type": "string",
+            "description": "Template title",
+            "example": "Auglýsing"
           }
         },
-        "required": ["types"]
+        "required": ["slug", "title"]
       },
       "GetAdvertTemplateResponse": {
         "type": "object",

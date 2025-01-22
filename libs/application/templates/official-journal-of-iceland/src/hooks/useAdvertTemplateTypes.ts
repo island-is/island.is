@@ -7,7 +7,6 @@ type TemplatesResponse = {
 }
 
 export const useAdvertTemplateTypes = () => {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { data, error, loading } = useQuery<TemplatesResponse>(
     ADVERT_TEMPLATE_TYPES_QUERY,
   )

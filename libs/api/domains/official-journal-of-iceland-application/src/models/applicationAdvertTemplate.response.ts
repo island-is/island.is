@@ -8,7 +8,7 @@ export enum TemplateType {
 }
 
 registerEnumType(TemplateType, {
-  name: 'officialJournalOfIcelandApplicationAdvertTemplateType',
+  name: 'officialJournalOfIcelandApplicationAdvertTemplateTypeEnum',
 })
 
 @ObjectType('officialJournalOfIcelandApplicationAdvertTemplateResponse')

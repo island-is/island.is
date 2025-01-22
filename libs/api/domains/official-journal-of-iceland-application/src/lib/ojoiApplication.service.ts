@@ -2,7 +2,7 @@ import {
   GetAdvertTemplateResponseTypeEnum,
   OfficialJournalOfIcelandApplicationClientService,
 } from '@island.is/clients/official-journal-of-iceland/application'
-import { Inject, Injectable } from '@nestjs/common'
+import { BadRequestException, Inject, Injectable } from '@nestjs/common'
 import { PostCommentInput } from '../models/postComment.input'
 import { PostApplicationInput } from '../models/postApplication.input'
 import { GetCommentsInput } from '../models/getComments.input'
@@ -13,6 +13,8 @@ import {
   mapAttachmentType,
   mapGetAttachmentType,
   mapPresignedUrlType,
+  mapTemplateTypeEnumToLiteral,
+  mapTemplateTypeLiteralToEnum,
   safeEnumMapper,
 } from './mappers'
 import { AddApplicationAttachmentResponse } from '../models/addApplicationAttachment.response'
@@ -280,51 +282,38 @@ export class OfficialJournalOfIcelandApplicationService {
     input: GetAdvertTemplateInput,
     user: User,
   ): Promise<OJOIApplicationAdvertTemplateResponse> {
-    const data = await this.ojoiApplicationService.getApplicationAdvertTemplate(
-      { advertType: input.type },
-      user,
-    )
+    const advertType = mapTemplateTypeEnumToLiteral(input.type)
 
-    let type
-    switch (data.type) {
-      case GetAdvertTemplateResponseTypeEnum.Auglysing:
-        type = TemplateType.AUGLYSING
-        break
-      case GetAdvertTemplateResponseTypeEnum.Gjaldskra:
-        type = TemplateType.GJALDSKRA
-        break
-      case GetAdvertTemplateResponseTypeEnum.Reglugerd:
-        type = TemplateType.REGLUGERD
-        break
-      default:
-        type = TemplateType.UNKNOWN
+    if (!advertType) {
+      //Shouldn't happen
+      this.logger.error('Invalid advert type supplied', {
+        category: LOG_CATEGORY,
+        applicationId: input.type,
+      })
+      throw new BadRequestException('Invalid advert type')
     }
 
+    const data = await this.ojoiApplicationService.getApplicationAdvertTemplate(
+      { advertType },
+      user,
+    )
     return {
       html: data.html,
-      type,
+      type: mapTemplateTypeLiteralToEnum(data.type),
     }
   }
 
   async getAdvertTemplateTypes(
     user: User,
   ): Promise<OJOIApplicationAdvertTemplateTypesResponse> {
-    const data =
+    const templateTypes =
       await this.ojoiApplicationService.getApplicationAdvertTemplateTypes(user)
 
     return {
-      types: data
-        .map((type) => {
-          switch (type) {
-            case 'auglysing':
-              return TemplateType.AUGLYSING
-            case 'gjaldskra':
-              return TemplateType.GJALDSKRA
-            case 'reglugerd':
-              return TemplateType.REGLUGERD
-          }
-        })
-        .filter(isDefined),
+      types: templateTypes.map(({ title, type }) => ({
+        title,
+        type: mapTemplateTypeLiteralToEnum(type),
+      })),
     }
   }
 
