@@ -23,7 +23,4 @@ export const getIndictmentAppealDeadlineDate = ({
   return setEndOfDay(deadlineDate)
 }
 
-export const getAppealDeadlineDate = ({ baseDate }: { baseDate: Date }) => {
-  const deadlineDate = addDays(baseDate, APPEAL_WINDOW_DAYS)
-  return setEndOfDay(deadlineDate)
-}
+export const getAppealDeadlineDate = ({ baseDate }: { baseDate: Date }) => addDays(baseDate, APPEAL_WINDOW_DAYS)

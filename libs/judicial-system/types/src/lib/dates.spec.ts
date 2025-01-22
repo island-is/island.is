@@ -33,13 +33,14 @@ describe('getIndictmentAppealDeadlineDate', () => {
 describe('getAppealDeadlineDate', () => {
   test('should return expected appeal deadline', () => {
     // Arrange
-    const baseDate = new Date(2024, 1, 1)
+    const date = '2024-01-04T19:50:08.033Z'
+    const baseDate = new Date(date)
 
     // Act
     const actualDate = getAppealDeadlineDate({ baseDate })
 
     // Assert
-    expect(actualDate).toStrictEqual(new Date(2024, 1, 4, 23, 59, 59, 999))
+    expect(actualDate).toStrictEqual(new Date(2024, 0, 7, 19, 50, 8, 33))
   })
 })
 

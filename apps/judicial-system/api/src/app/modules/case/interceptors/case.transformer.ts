@@ -129,7 +129,7 @@ const transformRequestCase = (theCase: Case): Case => {
 
     // TODO: Move remaining appeal fields to appealInfo
     isAppealDeadlineExpired: appealInfo.appealDeadline
-      ? hasDatePassed(new Date(appealInfo.appealDeadline))
+      ? Date.now() >= new Date(appealInfo.appealDeadline).getTime()
       : false,
     isAppealGracePeriodExpired: theCase.rulingDate
       ? Date.now() >= new Date(theCase.rulingDate).getTime() + getDays(31)
