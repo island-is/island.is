@@ -50,6 +50,12 @@ export type Context = {
   apolloClient: ApolloClient<object>
 }
 
+export type AsyncSelectContext = {
+  application: Application
+  apolloClient: ApolloClient<object>
+  selectedValue?: string[]
+}
+
 export type TagVariant =
   | 'blue'
   | 'darkerBlue'
@@ -368,6 +374,7 @@ export interface SelectField extends InputField {
   placeholder?: FormText
   backgroundColor?: InputBackgroundColor
   isMulti?: boolean
+  isClearable?: boolean
 }
 
 export interface CompanySearchField extends InputField {
@@ -383,12 +390,13 @@ export interface AsyncSelectField extends InputField {
   readonly type: FieldTypes.ASYNC_SELECT
   component: FieldComponents.ASYNC_SELECT
   placeholder?: FormText
-  loadOptions(c: Context): Promise<Option[]>
+  loadOptions(c: AsyncSelectContext): Promise<Option[]>
   onSelect?(s: SelectOption, cb: (t: unknown) => void): void
   loadingError?: FormText
   backgroundColor?: InputBackgroundColor
   isSearchable?: boolean
   isMulti?: boolean
+  updateOnSelect?: string[]
 }
 
 export interface TextField extends InputField {

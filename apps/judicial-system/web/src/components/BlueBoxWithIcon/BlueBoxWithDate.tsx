@@ -190,14 +190,14 @@ const BlueBoxWithDate: FC<Props> = (props) => {
           }),
         )
       }
+    }
 
-      if (defendant.sentToPrisonAdminDate && defendant.isSentToPrisonAdmin) {
-        texts.push(
-          formatMessage(strings.sendToPrisonAdminDate, {
-            date: formatDate(defendant.sentToPrisonAdminDate),
-          }),
-        )
-      }
+    if (defendant.sentToPrisonAdminDate && defendant.isSentToPrisonAdmin) {
+      texts.push(
+        formatMessage(strings.sendToPrisonAdminDate, {
+          date: formatDate(defendant.sentToPrisonAdminDate),
+        }),
+      )
     }
 
     return texts
