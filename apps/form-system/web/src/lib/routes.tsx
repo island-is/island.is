@@ -12,9 +12,7 @@ export const routes: RouteObject[] = [
     element: (
       <HeaderInfoProvider>
         <UserProfileLocale />
-        <>
-          <Header />
-        </>
+        <Header />
       </HeaderInfoProvider>
     ),
     children: [
@@ -33,7 +31,7 @@ export const routes: RouteObject[] = [
       },
       {
         path: '*',
-        element: <></>
+        element: <>hoho</>
       }
     ]
   }

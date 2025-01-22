@@ -10,6 +10,7 @@ import { BffProvider, createMockedInitialState } from '@island.is/react-spa/bff'
 import { BASE_PATH } from '../lib/routes'
 import { isMockMode } from '../mocks'
 import { Router } from '../components/Router/Router'
+import { environment } from '../environments'
 
 const mockedInitialState = isMockMode
   ? createMockedInitialState({
@@ -24,9 +25,10 @@ export const App = () => (
         applicationBasePath={BASE_PATH}
         mockedInitialState={mockedInitialState}
       >
-        {/* <FeatureFlagProvider sdkKey={environment.featureFlagSdkKey}> */}
-        <Router />
-        {/* </FeatureFlagProvider> */}
+        <FeatureFlagProvider sdkKey={environment.featureFlagSdkKey}>
+          {/* <Router /> */}
+          <div>test</div>
+        </FeatureFlagProvider>
       </BffProvider>
     </LocaleProvider>
   </ApolloProvider>
