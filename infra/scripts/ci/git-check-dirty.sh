@@ -2,6 +2,28 @@
 set -euxo pipefail
 
 DIR="$(git rev-parse --show-toplevel)"
+
+show_help() {
+  cat <<EOF
+Usage:
+  $0 <path> <action> <owner>
+  $0 [options]
+
+  The options -p, -a, -o are required if using the second form
+
+Options:
+  -p <path> path to the file to check
+  -a <action> action to run
+  -o <owner> owner to commit as
+  -c check mode
+  -r run mode
+EOF
+}
+
+if [[ $# -eq 0 ]]; then
+  show_help && exit 0
+fi
+
 rel_path=$1
 abs_path=$DIR/$rel_path
 action=$2
@@ -16,23 +38,7 @@ while getopts "p:a:o:crh" opt; do
   o) owner="$OPTARG" ;;
   c) check_mode=true ;;
   r) run_mode=true ;;
-  h)
-    cat <<EOF
-Usage:
-  $0 <path> <action> <owner>
-  $0 [options]
-
-  The options -p, -a, -o are required if using the second form
-
-Options:
-  -p <path> path to the file to check
-  -a <action> action to run
-  -o <owner> owner to commit as
-  -c check mode
-  -r run mode
-EOF
-    exit 0
-    ;;
+  h) show_help && exit 0 ;;
   *) echo "Invalid option: -$OPTARG" >&2 ;;
   esac
 done
