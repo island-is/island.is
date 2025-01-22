@@ -39,7 +39,7 @@ export const incomeSubsection = buildSubSection({
           titleVariant: 'h3',
         }),
         buildDescriptionField({
-          id: 'incomeBulletlist',
+          id: 'incomeBulletList',
           title: '',
           description: m.incomeForm.bulletList.bullets,
         }),
