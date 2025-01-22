@@ -55,12 +55,12 @@ export const DelegationsScreen = ({
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
 
-  const paramArray: string[] = []
-
-  searchParams.forEach((value, key) => {
-    paramArray.push(`&${key}=${value}`)
-  })
-  const paramString = paramArray.join('')
+  const paramString = searchParams.size
+    ? '&' +
+      Array.from(searchParams.entries())
+        .map(([key, value]) => `${key}=${encodeURIComponent(value)}`)
+        .join('&')
+    : ''
 
   // Check for user delegations if application supports delegations
   const { data: delegations, error } = useQuery(ACTOR_DELEGATIONS, {
