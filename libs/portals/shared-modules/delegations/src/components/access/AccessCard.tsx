@@ -27,7 +27,8 @@ import {
 } from '../../types/customDelegation'
 import { AuthCustomDelegation } from '@island.is/api/schema'
 
-const isDateExpired = (date?: string | null) => date && new Date(date) < startOfDay(new Date())
+const isDateExpired = (date?: string | null) =>
+  date && new Date(date) < startOfDay(new Date())
 
 const getTagName = (apiScope: AuthApiScope) =>
   apiScope?.group?.displayName ?? apiScope.displayName
