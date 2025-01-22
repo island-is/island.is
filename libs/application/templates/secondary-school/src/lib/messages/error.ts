@@ -12,7 +12,7 @@ export const error = defineMessages({
     description: 'Error validate can create title',
   },
   errorValidateCanCreateDescription: {
-    id: 'ss.application:error.errorValidateCanCreateTitle',
+    id: 'ss.application:error.errorValidateCanCreateDescription',
     defaultMessage:
       'Þú ert með aðra opna umsókn í gangi, vinsamlegast eyðið henni áður en opnað er nýja umsókn',
     description: 'Error validate can create description',
