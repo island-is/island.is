@@ -1,7 +1,6 @@
 query Cases {
   cases {
     id
-    created
     type
     decision
     state
