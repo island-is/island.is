@@ -124,7 +124,7 @@ const LanguageSelection: FC<React.PropsWithChildren<FieldBaseProps>> = ({
         </Button>
       </Box>
       <Box hidden={hideChildLanguage()}>
-        <Text variant="h4" marginTop={3}>
+        <Text variant="h4" marginTop={3} marginBottom="gutter">
           {formatMessage(
             newPrimarySchoolMessages.differentNeeds.childLanguageTitle,
           )}
