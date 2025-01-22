@@ -9,11 +9,11 @@ import { Locale } from '@island.is/shared/types'
 import {
   Child,
   ChildInformation,
+  ContactsRow,
   FriggChildInformation,
   Membership,
   Parents,
   Person,
-  ContactsRow,
   SelectOption,
   SiblingsRow,
 } from '../types'
@@ -145,18 +145,10 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
 
   const schoolMunicipality = getValueViaPath(
     answers,
-    'schools.newSchool.municipality',
+    'newSchool.municipality',
   ) as string
 
-  const selectedSchool = getValueViaPath(
-    answers,
-    'schools.newSchool.school',
-  ) as string
-
-  const newSchoolHiddenInput = getValueViaPath(
-    answers,
-    'schools.newSchool.hiddenInput',
-  ) as string
+  const selectedSchool = getValueViaPath(answers, 'newSchool.school') as string
 
   return {
     childNationalId,
@@ -189,7 +181,6 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     startDate,
     schoolMunicipality,
     selectedSchool,
-    newSchoolHiddenInput,
   }
 }
 
