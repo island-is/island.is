@@ -1,4 +1,4 @@
-'use strict';
+'use strict'
 
 const replaceEnum = require('sequelize-replace-enum-postgres').default
 
@@ -24,7 +24,7 @@ module.exports = {
         'INTERNET_USAGE',
         'OTHER',
         'PHONE_TAPPING',
-        'PAROLE_REVOCATION', 
+        'PAROLE_REVOCATION',
         'PSYCHIATRIC_EXAMINATION',
         'RESTRAINING_ORDER',
         'RESTRAINING_ORDER_AND_EXPULSION_FROM_HOME',
@@ -61,7 +61,7 @@ module.exports = {
         'INTERNET_USAGE',
         'OTHER',
         'PHONE_TAPPING',
-        'PAROLE_REVOCATION', 
+        'PAROLE_REVOCATION',
         'PSYCHIATRIC_EXAMINATION',
         'RESTRAINING_ORDER',
         'RESTRAINING_ORDER_AND_EXPULSION_FROM_HOME',
@@ -74,4 +74,4 @@ module.exports = {
       enumName: 'enum_case_type',
     })
   },
-};
+}
