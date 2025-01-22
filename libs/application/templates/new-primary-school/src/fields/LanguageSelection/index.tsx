@@ -7,6 +7,7 @@ import { SelectController } from '@island.is/shared/form-fields'
 import { getAllLanguageCodes } from '@island.is/shared/utils'
 import { newPrimarySchoolMessages } from '../../lib/messages'
 import { getApplicationAnswers } from '../../lib/newPrimarySchoolUtils'
+import { getErrorViaPath } from '@island.is/application/core'
 
 const languagesIds = {
   language1: 'languages.language1',
@@ -18,6 +19,7 @@ const languagesIds = {
 
 const LanguageSelection: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   application,
+  errors,
 }) => {
   const { formatMessage } = useLocale()
 
@@ -93,6 +95,7 @@ const LanguageSelection: FC<React.PropsWithChildren<FieldBaseProps>> = ({
             newPrimarySchoolMessages.differentNeeds.languageSelectionAriaLabel,
             { no: `${index + 1}` },
           )}
+          error={errors && getErrorViaPath(errors, languageIdsArray[index])}
           placeholder={formatMessage(
             newPrimarySchoolMessages.differentNeeds
               .languageSelectionPlaceholder,
@@ -138,6 +141,7 @@ const LanguageSelection: FC<React.PropsWithChildren<FieldBaseProps>> = ({
             newPrimarySchoolMessages.differentNeeds
               .languageSelectionPlaceholder,
           )}
+          error={errors && getErrorViaPath(errors, languagesIds.childLanguage)}
           id={languagesIds.childLanguage}
           name={languagesIds.childLanguage}
           backgroundColor="blue"

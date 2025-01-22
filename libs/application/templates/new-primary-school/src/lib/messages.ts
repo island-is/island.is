@@ -828,6 +828,11 @@ export const errorMessages = defineMessages({
     defaultMessage: 'Það þarf að velja a.m.k eitt tungumál',
     description: 'At least one language must be selected',
   },
+  languageRequired: {
+    id: 'nps.application:error.language.required',
+    defaultMessage: 'Það þarf að velja tungumál',
+    description: 'Language must be selected',
+  },
   noChildrenFoundTitle: {
     id: 'nps.application:error.no.children.found.title',
     defaultMessage: 'Því miður ert þú ekki með skráð barn á grunnskólaaldri',

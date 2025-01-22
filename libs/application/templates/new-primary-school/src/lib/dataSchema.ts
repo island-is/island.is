@@ -169,7 +169,7 @@ export const dataSchema = z.object({
       },
       {
         path: ['childLanguage'],
-        params: errorMessages.languagesRequired,
+        params: errorMessages.languageRequired,
       },
     )
     .refine(
