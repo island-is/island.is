@@ -133,9 +133,7 @@ async function main() {
   const space = await client.getSpace(
     process.env.CONTENTFUL_SPACE || '8k0h54kbe6bj',
   )
-  const environment = await space.getEnvironment(
-    process.env.CONTENTFUL_ENVIRONMENT || 'master',
-  )
+  const environment = await space.getEnvironment('stefna')
 
   // 2. We generate new contentful types
   await codegenContentful()

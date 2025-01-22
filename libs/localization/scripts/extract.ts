@@ -15,13 +15,9 @@ import {
   createDefaultsObject,
 } from './utils'
 
-const {
-  CONTENTFUL_MANAGEMENT_ACCESS_TOKEN,
-  CONTENTFUL_SPACE,
-  CONTENTFUL_ENVIRONMENT,
-} = process.env
+const { CONTENTFUL_MANAGEMENT_ACCESS_TOKEN, CONTENTFUL_SPACE } = process.env
 const spaceId = CONTENTFUL_SPACE ?? '8k0h54kbe6bj'
-const environmentId = CONTENTFUL_ENVIRONMENT ?? 'master'
+const environmentId = 'stefna'
 
 if (!CONTENTFUL_MANAGEMENT_ACCESS_TOKEN) {
   logger.error('Missing CONTENTFUL_MANAGEMENT_ACCESS_TOKEN')

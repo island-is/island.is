@@ -5,7 +5,7 @@ import { format, resolveConfig } from 'prettier'
 import { logger } from '@island.is/logging'
 
 const targetFileName = 'libs/cms/src/lib/generated/contentfulTypes.d.ts'
-const environment = process.env.CONTENTFUL_ENVIRONMENT || 'master'
+const environment = 'stefna'
 const apiUrl = `https://contentful-type-generator.shared.devland.is/?env=${environment}`
 
 export async function codegenContentful() {

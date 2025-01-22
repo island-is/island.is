@@ -15,7 +15,7 @@ const envs = {
   },
   ELASTIC_INDEX: 'island-is',
   CONTENTFUL_SPACE: '8k0h54kbe6bj',
-  CONTENTFUL_ENVIRONMENT: 'master',
+  CONTENTFUL_ENVIRONMENT: 'stefna',
   CONTENTFUL_HOST: {
     dev: 'preview.contentful.com',
     staging: 'cdn.contentful.com',
