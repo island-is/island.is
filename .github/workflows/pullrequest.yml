@@ -146,6 +146,9 @@ jobs:
 
       - name: Prepare test targets
         id: test_projects
+        env:
+          DISABLE_CHUNKS: 'true'
+          DISABLE_GROUPING: 'true'
         run: |
           set -euo pipefail
           CHUNKS="$(./scripts/ci/generate-chunks.sh test)"
@@ -167,6 +170,9 @@ jobs:
 
       - name: Prepare build targets
         id: build_projects
+        env:
+          DISABLE_CHUNKS: 'true'
+          DISABLE_GROUPING: 'true'
         run: |
           set -euo pipefail
           CHUNKS="$(./scripts/ci/generate-chunks.sh build)"
