@@ -19,7 +19,7 @@ env:
   NX_AFFECTED_ALL: ${{ contains(github.event.pull_request.labels.*.name, 'nx-affected-all') }}
   CHUNK_SIZE: '20'
   DISABLE_CHUNKS: 'true'
-  MAX_JOBS: '15'
+  MAX_JOBS: '10'
   NX_PARALLEL: '15'
   NX_MAX_PARALLEL: '15'
 
