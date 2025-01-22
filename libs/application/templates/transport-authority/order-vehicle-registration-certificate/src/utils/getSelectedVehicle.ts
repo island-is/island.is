@@ -6,11 +6,9 @@ export const getSelectedVehicle = (
   externalData: ExternalData,
   answers: FormValue,
 ): VehiclesCurrentVehicle | undefined => {
-  const findVehicle = getValueViaPath<boolean | undefined>(
-    answers,
-    'pickVehicle.findVehicle',
-  )
-  if (findVehicle) {
+  if (
+    getValueViaPath<boolean | undefined>(answers, 'pickVehicle.findVehicle')
+  ) {
     const vehicle = getValueViaPath(
       answers,
       'pickVehicle',
