@@ -117,6 +117,7 @@ export const Select = <
           Option,
           MultiValue,
           MultiValueLabel,
+          ClearIndicator,
         }}
         isClearable
         backspaceRemovesValue
