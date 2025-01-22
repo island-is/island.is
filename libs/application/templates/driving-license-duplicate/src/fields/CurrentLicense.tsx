@@ -39,7 +39,7 @@ export const CurrentLicense: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   }
 
   return (
-    <Box marginTop={5}>
+    <Box marginTop={4}>
       <Text variant="h4" marginBottom={2}>
         {formatMessage(m.rights)}
       </Text>

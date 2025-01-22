@@ -3,6 +3,7 @@ import {
   buildMultiField,
   buildCustomField,
   buildDescriptionField,
+  buildAlertMessageField,
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
 import { HasQualityPhotoData } from '../../fields/QualityPhoto/hooks/useQualityPhoto'
@@ -20,17 +21,12 @@ export const sectionSignatureAndPhoto = buildSection({
       condition: (answers, externalData) =>
         requirementsMet(answers, externalData),
       children: [
-        buildCustomField(
-          {
-            id: 'qualityAlert',
-            title: '',
-            component: 'Alert',
-          },
-          {
-            type: 'info',
-            message: m.signatureAndImageAlert,
-          },
-        ),
+        buildAlertMessageField({
+          id: 'digitalLicenseInfo',
+          title: '',
+          message: m.signatureAndImageAlert,
+          alertType: 'info',
+        }),
         buildDescriptionField({
           id: 'signatureTitle',
           title: m.signature,
