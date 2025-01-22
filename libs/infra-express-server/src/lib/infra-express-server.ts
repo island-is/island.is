@@ -64,16 +64,18 @@ export const runServer = ({
   // secured
   app.use('/', routes)
 
-  app.use((
-    err: any, // eslint-disable-line  @typescript-eslint/no-explicit-any
-    req: Request,
-    res: Response,
-    next: NextFunction, // eslint-disable-line
-  ) => {
-    logger.error(`Status code: ${err.status}, msg: ${err.message}`)
-    res.status(err.status || 500)
-    res.send(err.message)
-  })
+  app.use(
+    (
+      err: any, // eslint-disable-line  @typescript-eslint/no-explicit-any
+      req: Request,
+      res: Response,
+      next: NextFunction, // eslint-disable-line
+    ) => {
+      logger.error(`Status code: ${err.status}, msg: ${err.message}`)
+      res.status(err.status || 500)
+      res.send(err.message)
+    },
+  )
 
   const servicePort = parseInt(process.env.PORT || `${port}`)
   const metricsPort = servicePort + 1
