@@ -1,10 +1,12 @@
 import React from 'react'
 import { useRouter } from 'next/router'
 import { ApolloProvider } from '@apollo/client/react'
+
 import { getLocaleFromPath } from '@island.is/web/i18n/withLocale'
-import initApollo from './client'
+
 import { ScreenContext } from '../types'
 import { safelyExtractPathnameFromUrl } from '../utils/safelyExtractPathnameFromUrl'
+import initApollo from './client'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore make web strict
 export const withApollo = (Component) => {

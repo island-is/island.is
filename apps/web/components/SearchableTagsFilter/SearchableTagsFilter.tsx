@@ -1,19 +1,20 @@
-import { useContext, type FC } from 'react'
+import { type FC, useContext } from 'react'
 import { useWindowSize } from 'react-use'
+import {
+  parseAsArrayOf,
+  parseAsString,
+  useQueryStates,
+} from 'next-usequerystate'
+
 import {
   Filter,
   FilterMultiChoice,
   type FilterMultiChoiceProps,
 } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
-import {
-  parseAsArrayOf,
-  parseAsString,
-  useQueryStates,
-} from 'next-usequerystate'
-import { useNamespaceStrict as useNamespace } from '@island.is/web/hooks'
 import { GlobalContext } from '@island.is/web/context'
 import type { TagCount } from '@island.is/web/graphql/schema'
+import { useNamespaceStrict as useNamespace } from '@island.is/web/hooks'
 
 type SearchableTagsFilterCategories = FilterMultiChoiceProps['categories']
 type SearchableTagsFilterItems =
