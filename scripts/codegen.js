@@ -24,7 +24,6 @@ const fileExists = async (path) =>
 
 const main = async () => {
   const schemaExists = await fileExists(SCHEMA_PATH)
-  const maxParallel = process.env.NX_MAX_PARALLEL ?? '6'
 
   if (!schemaExists) {
     await promisify(writeFile)(SCHEMA_PATH, 'export default () => {}')
@@ -35,7 +34,7 @@ const main = async () => {
 
     try {
       await exec(
-        `nx run-many --target=${target} --all --parallel --maxParallel=${maxParallel} $NX_OPTIONS`,
+        `nx run-many --target=${target} --all --parallel $NX_OPTIONS`,
         {
           env: skipCache
             ? { ...process.env, NX_OPTIONS: '--skip-nx-cache' }
