@@ -19,10 +19,6 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import { CaseFileCategory } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
-  isEmptyArray,
-  isNonEmptyArray,
-} from '@island.is/judicial-system-web/src/utils/arrayHelpers'
-import {
   useDefendants,
   useFileList,
 } from '@island.is/judicial-system-web/src/utils/hooks'
