@@ -179,13 +179,11 @@ To do so, you can run for example:
 
 It will try to get your AWS credentials from your environment variables and from your `~/.aws/credentials` file. You can find more instructions [here](https://docs.devland.is/repository/aws-secrets#using-aws-session).
 
-{% hint style="info" %}
-If you want to run your app against one of this service (e.g. `db`), you may need to edit your app environment or sequelize config to pass the proxy credentials.
-{% endhint %}
+> [!NOTE]
+> If you want to run your app against one of this service (e.g. `db`), you may need to edit your app environment or sequelize config to pass the proxy credentials.
 
-{% hint style="warning" %}
-The following services will run on the associated ports: `db:5432`, `es:9200`, `redis:6379`, `xroad:80`. If you have docker running on theses ports or any others services you will need to stop them in order to run the proxies.
-{% endhint %}
+> [!WARNING]
+> The following services will run on the associated ports: `db:5432`, `es:9200`, `redis:6379`, `xroad:80`. If you have docker running on theses ports or any others services you will need to stop them in order to run the proxies.
 
 ### Environment variables with static websites
 
