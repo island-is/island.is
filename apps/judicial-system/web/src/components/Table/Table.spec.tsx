@@ -43,10 +43,7 @@ describe('Table', () => {
     const thead = [
       {
         title: 'Title',
-        sortable: {
-          isSortable: true,
-          key: 'indictmentAppealDeadline' as sortableTableColumn,
-        },
+        sortBy: 'indictmentAppealDeadline' as sortableTableColumn,
       },
     ]
 
@@ -101,10 +98,7 @@ describe('Table', () => {
     const thead = [
       {
         title: 'Name',
-        sortable: {
-          isSortable: true,
-          key: 'defendants' as sortableTableColumn,
-        },
+        sortBy: 'defendants' as sortableTableColumn,
       },
     ]
 

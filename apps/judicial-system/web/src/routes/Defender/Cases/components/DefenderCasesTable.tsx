@@ -51,14 +51,14 @@ export const DefenderCasesTable: FC<Props> = ({
           },
           {
             title: capitalize(formatMessage(core.defendant, { suffix: 'i' })),
-            sortable: { isSortable: true, key: 'defendants' },
+            sortBy: 'defendants',
           },
           {
             title: formatMessage(tables.type),
           },
           {
             title: formatMessage(tables.sentToCourtDate),
-            sortable: { isSortable: true, key: 'caseSentToCourtDate' },
+            sortBy: 'caseSentToCourtDate',
           },
           { title: formatMessage(tables.state) },
           {
@@ -67,9 +67,7 @@ export const DefenderCasesTable: FC<Props> = ({
                 ? tables.duration
                 : tables.hearingArrangementDate,
             ),
-            sortable: showingCompletedCases
-              ? undefined
-              : { isSortable: true, key: 'courtDate' },
+            sortBy: showingCompletedCases ? undefined : 'courtDate',
           },
         ]}
         data={cases}

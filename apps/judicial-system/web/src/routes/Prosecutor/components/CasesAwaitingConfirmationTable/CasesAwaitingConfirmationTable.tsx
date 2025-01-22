@@ -68,14 +68,14 @@ const CasesAwaitingConfirmationTable: FC<
                   title: capitalize(
                     formatMessage(core.defendant, { suffix: 'i' }),
                   ),
-                  sortable: { isSortable: true, key: 'defendants' },
+                  sortBy: 'defendants',
                 },
                 {
                   title: formatMessage(tables.type),
                 },
                 {
                   title: capitalize(formatMessage(tables.sentToCourtDate)),
-                  sortable: { isSortable: true, key: 'caseSentToCourtDate' },
+                  sortBy: 'caseSentToCourtDate',
                 },
                 { title: formatMessage(tables.state) },
                 {

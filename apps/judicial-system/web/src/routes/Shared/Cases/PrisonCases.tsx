@@ -90,14 +90,14 @@ export const PrisonCases: FC = () => {
             },
             {
               title: capitalize(formatMessage(core.defendant, { suffix: 'i' })),
-              sortable: { isSortable: true, key: 'defendants' },
+              sortBy: 'defendants',
             },
             {
               title: formatMessage(tables.type),
             },
             {
               title: capitalize(formatMessage(tables.sentToCourtDate)),
-              sortable: { isSortable: true, key: 'caseSentToCourtDate' },
+              sortBy: 'caseSentToCourtDate',
             },
             { title: formatMessage(tables.state) },
             {
@@ -172,21 +172,18 @@ export const PrisonCases: FC = () => {
           thead={[
             {
               title: formatMessage(tables.caseNumber),
-              sortable: {
-                isSortable: true,
-                key: 'courtCaseNumber',
-              },
+              sortBy: 'courtCaseNumber',
             },
             {
               title: capitalize(formatMessage(core.defendant, { suffix: 'i' })),
-              sortable: { isSortable: true, key: 'defendants' },
+              sortBy: 'defendants',
             },
             {
               title: formatMessage(tables.court),
             },
             {
               title: formatMessage(tables.punishmentType),
-              sortable: { isSortable: true, key: 'defendantsPunishmentType' },
+              sortBy: 'defendantsPunishmentType',
             },
             {
               title: capitalize(formatMessage(tables.sentencingDate)),
