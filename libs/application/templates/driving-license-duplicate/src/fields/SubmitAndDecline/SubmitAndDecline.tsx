@@ -19,7 +19,6 @@ export const SubmitAndDecline: FC<React.PropsWithChildren<Props>> = ({
   refetch,
 }) => {
   const applicationId = application.id
-  const { formatMessage } = useLocale()
   const [submitError, setSubmitError] = useState(false)
 
   const [submitApplication, { called }] = useMutation(SUBMIT_APPLICATION, {

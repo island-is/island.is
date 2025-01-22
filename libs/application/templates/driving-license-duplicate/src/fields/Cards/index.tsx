@@ -5,10 +5,8 @@ import {
   GridColumn,
   GridRow,
   ProfileCard,
-  Text,
 } from '@island.is/island-ui/core'
 import { FormatMessage, useLocale } from '@island.is/localization'
-import { m } from '../../lib/messages'
 import NotFilledOut from '../NotFilledOut'
 
 type Props = {

@@ -1,6 +1,5 @@
 import {
   buildCheckboxField,
-  buildDescriptionField,
   buildMultiField,
   buildSection,
 } from '@island.is/application/core'
@@ -14,12 +13,8 @@ export const sectionReasonForApplication = buildSection({
     buildMultiField({
       id: 'reason',
       title: m.reasonTitle,
+      description: m.reasonDescription,
       children: [
-        buildDescriptionField({
-          id: 'reasonDescription',
-          title: '',
-          description: m.reasonDescription,
-        }),
         buildCheckboxField({
           id: 'reason.confirmationCheckbox',
           title: '',

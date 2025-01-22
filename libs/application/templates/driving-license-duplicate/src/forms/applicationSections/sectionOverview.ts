@@ -14,7 +14,7 @@ import { NationalRegistryUser } from '@island.is/api/schema'
 import { m } from '../../lib/messages'
 import format from 'date-fns/format'
 import { allowFakeCondition } from '../../lib/utils'
-import { IGNORE, YES } from '../../lib/constants'
+import { YES } from '../../lib/constants'
 import {
   DriversLicense,
   Jurisdiction,
@@ -30,14 +30,6 @@ export const sectionOverview = buildSection({
       space: 1,
       description: m.overviewSectionDescription,
       children: [
-        buildDividerField({}),
-        buildDescriptionField({
-          id: 'overview.informationTitle',
-          title: m.informationTitle,
-          titleVariant: 'h3',
-          description: '',
-          space: 'gutter',
-        }),
         buildKeyValueField({
           label: m.applicantsName,
           width: 'half',
@@ -53,7 +45,7 @@ export const sectionOverview = buildSection({
         buildDividerField({}),
         buildDescriptionField({
           id: 'overview.currentLicenseTitle',
-          titleVariant: 'h3',
+          titleVariant: 'h4',
           title: m.rights,
           space: 'gutter',
         }),
@@ -125,7 +117,7 @@ export const sectionOverview = buildSection({
         buildDescriptionField({
           id: 'overview.signatureTitle',
           title: m.signature,
-          titleVariant: 'h3',
+          titleVariant: 'h4',
           description: '',
           space: 'gutter',
         }),
@@ -138,7 +130,7 @@ export const sectionOverview = buildSection({
         buildDescriptionField({
           id: 'overview.imageTitle',
           title: m.image,
-          titleVariant: 'h3',
+          titleVariant: 'h4',
           description: '',
           space: 'gutter',
         }),
@@ -151,7 +143,7 @@ export const sectionOverview = buildSection({
         buildDescriptionField({
           id: 'overview.deliveryTitle',
           title: m.deliveryMethodSectionTitle,
-          titleVariant: 'h3',
+          titleVariant: 'h4',
           description: '',
           space: 'gutter',
         }),
@@ -176,13 +168,12 @@ export const sectionOverview = buildSection({
           id: 'spacer',
           space: 'gutter',
           title: m.confirmTitle,
-          description: m.confirmDescription,
-          titleVariant: 'h3',
-          marginBottom: 2,
+          titleVariant: 'h4',
         }),
         buildCheckboxField({
           id: 'overview.confirmationCheckbox',
           title: '',
+          description: m.confirmDescription,
           defaultValue: [],
           options: [
             {

@@ -7,7 +7,6 @@ import {
   AlertMessageType,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { formatText } from '@island.is/application/core'
 import { CustomField, FieldBaseProps } from '@island.is/application/types'
 
 interface Props extends FieldBaseProps {
@@ -21,32 +20,23 @@ type Field = {
   message: string
 }
 
-export const Alert: FC<React.PropsWithChildren<Props>> = ({
-  application,
-  field,
-}) => {
+export const Alert: FC<React.PropsWithChildren<Props>> = ({ field }) => {
   const { formatMessage } = useLocale()
   const { title, type, message, heading } = field.props as Field
 
   return (
-    <Box justifyContent={'spaceBetween'}>
+    <Box>
       {heading && (
-        <Text variant="h3" marginBottom={2}>
-          {formatText(heading, application, formatMessage)}
+        <Text variant="h4" marginBottom={2}>
+          {formatMessage(heading)}
         </Text>
       )}
 
-      <Box marginBottom={3}>
-        <ContentBlock>
-          <AlertMessage
-            type={type}
-            title={
-              title ? formatText(title, application, formatMessage) : undefined
-            }
-            message={formatText(message, application, formatMessage)}
-          />
-        </ContentBlock>
-      </Box>
+      <AlertMessage
+        type={type}
+        title={title ? formatMessage(title) : undefined}
+        message={formatMessage(message)}
+      />
     </Box>
   )
 }
