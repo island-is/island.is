@@ -1,4 +1,4 @@
-import { ApiProperty } from '@nestjs/swagger'
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import {
   CreationOptional,
   InferAttributes,
@@ -99,21 +99,28 @@ export class PaymentFlowEvent extends Model<
   })
   message!: string
 
+  @ApiPropertyOptional({ type: Object })
+  @Column({
+    type: DataType.JSON,
+    allowNull: true,
+  })
+  metadata?: object
+
   @CreatedAt
   @Column({
     type: DataType.DATE,
     allowNull: false,
     defaultValue: DataType.NOW,
-    field: 'created_at',
+    field: 'created',
   })
-  createdAt!: CreationOptional<Date>
+  created!: CreationOptional<Date>
 
   @UpdatedAt
   @Column({
     type: DataType.DATE,
     allowNull: false,
     defaultValue: DataType.NOW,
-    field: 'updated_at',
+    field: 'updated',
   })
-  updatedAt!: CreationOptional<Date>
+  updated!: CreationOptional<Date>
 }

@@ -1,3 +1,4 @@
+import { createEnhancedFetch } from '@island.is/clients/middlewares'
 import {
   PaymentsApi,
   PaymentsApiConfiguration,
@@ -17,7 +18,9 @@ export const getPaymentsApi = () => {
 
   api = new PaymentsApi(
     new PaymentsApiConfiguration({
-      fetchApi: fetch,
+      fetchApi: createEnhancedFetch({
+        name: 'paymentsNextjsApi',
+      }),
       basePath: paymentApiEndpoint,
     }),
   )

@@ -134,9 +134,14 @@ export const getServerSideProps: GetServerSideProps<PaymentPageProps> = async (
       paymentFlowId,
       // The generated client code transforms null to undefined which causes
       // serialisation issues when passing the object to the client
-      paymentFlow: Object.fromEntries(
-        Object.entries(paymentFlow).filter(([_, value]) => value !== undefined),
-      ) as any, // TODO: Fix this in the generated client?
+      paymentFlow:
+        paymentFlow !== null
+          ? (Object.fromEntries(
+              Object.entries(paymentFlow).filter(
+                ([_, value]) => value !== undefined,
+              ),
+            ) as any)
+          : null, // TODO: Fix this in the generated client?
       organization,
       productInformation,
       sessionCorrelationId: uuid(),
@@ -210,7 +215,11 @@ export default function PaymentPage({
 
     if (!response.ok) {
       // TODO: Present to user what went wrong
-      throw new Error(response.statusText)
+      const responseBody = await response.json()
+      setPaymentError({
+        code: responseBody.error,
+      })
+      throw new Error(responseBody.error)
     }
 
     return await response.json()
@@ -262,6 +271,7 @@ export default function PaymentPage({
         paymentFlowId: paymentFlow.id,
       })
 
+      setIsVerifyingCard(true)
       setThreeDSecureData(verifyCardResponse)
 
       const isCardVerified = await waitForCardVerification()
@@ -284,7 +294,7 @@ export default function PaymentPage({
         router.push(`${router.asPath}/greitt`)
       }
     } catch (err) {
-      console.log(err)
+      // throw err
     }
   }
 
@@ -294,13 +304,14 @@ export default function PaymentPage({
     try {
       if (selectedPaymentMethod === 'card') {
         setIsProcessingPayment(true)
-        setIsVerifyingCard(true)
         await payWithCard(data)
       } else {
         router.push(`${router.asPath}/krafa-stofnud`)
         return
       }
     } catch (e) {
+      setIsProcessingPayment(false)
+      setIsVerifyingCard(false)
       console.warn('Error occured while submitting payment', e)
     }
 

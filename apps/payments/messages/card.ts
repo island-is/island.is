@@ -158,6 +158,197 @@ export const cardError = defineMessages({
       'Ekki var hægt að framkvæma kortagreiðslu vegna ógilds kort',
     description: 'Invalid card',
   },
+  lostCardTitle: {
+    id: 'payments.cardError:lostCardTitle',
+    defaultMessage: 'Týnt kort',
+    description: 'Lost card',
+  },
+  lostCard: {
+    id: 'payments.cardError:lostCard',
+    defaultMessage:
+      'Kortið hefur verið tilkynnt týnt og er lokað. Hafðu samband við kortaútgefanda.',
+    description: 'Lost card description',
+  },
+  stolenCardTitle: {
+    id: 'payments.cardError:stolenCardTitle',
+    defaultMessage: 'Stolið kort',
+    description: 'Stolen card',
+  },
+  stolenCard: {
+    id: 'payments.cardError:stolenCard',
+    defaultMessage:
+      'Kortið hefur verið tilkynnt stolið og er lokað. Hafðu samband við kortaútgefanda.',
+    description: 'Stolen card description',
+  },
+  closedAccountTitle: {
+    id: 'payments.cardError:closedAccountTitle',
+    defaultMessage: 'Reikningur lokaður',
+    description: 'Closed account',
+  },
+  closedAccount: {
+    id: 'payments.cardError:closedAccount',
+    defaultMessage: 'Reikningnum tengdum þessu korti hefur verið lokað.',
+    description: 'Closed account description',
+  },
+  transactionNotPermittedTitle: {
+    id: 'payments.cardError:transactionNotPermittedTitle',
+    defaultMessage: 'Aðgerð ekki leyfð',
+    description: 'Transaction not permitted',
+  },
+  transactionNotPermitted: {
+    id: 'payments.cardError:transactionNotPermitted',
+    defaultMessage:
+      'Kortið þitt leyfir ekki þessa aðgerð. Hafðu samband við kortaútgefanda.',
+    description: 'Transaction not permitted description',
+  },
+  restrictedCardTitle: {
+    id: 'payments.cardError:restrictedCardTitle',
+    defaultMessage: 'Takmarkað kort',
+    description: 'Restricted card',
+  },
+  restrictedCard: {
+    id: 'payments.cardError:restrictedCard',
+    defaultMessage:
+      'Kortið þitt hefur takmarkanir og getur ekki verið notað fyrir þessa greiðslu.',
+    description: 'Restricted card description',
+  },
+  suspectedFraudTitle: {
+    id: 'payments.cardError:suspectedFraudTitle',
+    defaultMessage: 'Grunur um svik',
+    description: 'Suspected fraud',
+  },
+  suspectedFraud: {
+    id: 'payments.cardError:suspectedFraud',
+    defaultMessage:
+      'Greiðslan var stöðvuð vegna gruns um svik. Hafðu samband við kortaútgefanda.',
+    description: 'Suspected fraud description',
+  },
+  exceedsWithdrawalLimitTitle: {
+    id: 'payments.cardError:exceedsWithdrawalLimitTitle',
+    defaultMessage: 'Yfir dregnum mörkum',
+    description: 'Exceeds withdrawal limit',
+  },
+  exceedsWithdrawalLimit: {
+    id: 'payments.cardError:exceedsWithdrawalLimit',
+    defaultMessage: 'Þú hefur náð hámarksúttektarmörkum tengdum kortinu þínu.',
+    description: 'Exceeds withdrawal limit description',
+  },
+  securityViolationTitle: {
+    id: 'payments.cardError:securityViolationTitle',
+    defaultMessage: 'Öryggisbrot',
+    description: 'Security violation',
+  },
+  securityViolation: {
+    id: 'payments.cardError:securityViolation',
+    defaultMessage:
+      'Kortinu hefur verið lokað vegna öryggisbrests. Hafðu samband við kortaútgefanda.',
+    description: 'Security violation description',
+  },
+  additionalAuthenticationRequiredTitle: {
+    id: 'payments.cardError:additionalAuthenticationRequiredTitle',
+    defaultMessage: 'Viðbótarauðkenning krafist',
+    description: 'Additional authentication required',
+  },
+  additionalAuthenticationRequired: {
+    id: 'payments.cardError:additionalAuthenticationRequired',
+    defaultMessage: 'Til að ljúka greiðslunni þarf frekari auðkenningu.',
+    description: 'Additional authentication required description',
+  },
+  contactIssuerTitle: {
+    id: 'payments.cardError:contactIssuerTitle',
+    defaultMessage: 'Hafðu samband við kortaútgefanda',
+    description: 'Contact issuer',
+  },
+  contactIssuer: {
+    id: 'payments.cardError:contactIssuer',
+    defaultMessage:
+      'Kortið þarf sérstakt samþykki. Vinsamlegast hafðu samband við kortaútgefanda.',
+    description: 'Contact issuer description',
+  },
+  issuerUnavailableTitle: {
+    id: 'payments.cardError:issuerUnavailableTitle',
+    defaultMessage: 'Kortaútgefandi ekki tiltækur',
+    description: 'Issuer unavailable',
+  },
+  issuerUnavailable: {
+    id: 'payments.cardError:issuerUnavailable',
+    defaultMessage:
+      'Ekki var hægt að ná sambandi við kortaútgefanda. Reyndu aftur síðar.',
+    description: 'Issuer unavailable description',
+  },
+  duplicateTransactionTitle: {
+    id: 'payments.cardError:duplicateTransactionTitle',
+    defaultMessage: 'Tvítalin færsla',
+    description: 'Duplicate transaction',
+  },
+  duplicateTransaction: {
+    id: 'payments.cardError:duplicateTransaction',
+    defaultMessage: 'Þessi greiðsla virðist vera afrit af fyrri greiðslu.',
+    description: 'Duplicate transaction description',
+  },
+  transactionTimedOutTitle: {
+    id: 'payments.cardError:transactionTimedOutTitle',
+    defaultMessage: 'Greiðsla rann út á tíma',
+    description: 'Transaction timed out',
+  },
+  transactionTimedOut: {
+    id: 'payments.cardError:transactionTimedOut',
+    defaultMessage: 'Tenging við greiðslukerfið rann út. Reyndu aftur síðar.',
+    description: 'Transaction timed out description',
+  },
+  stopPaymentOrderTitle: {
+    id: 'payments.cardError:stopPaymentOrderTitle',
+    defaultMessage: 'Stöðvunargjaldskipun',
+    description: 'Stop payment order',
+  },
+  stopPaymentOrder: {
+    id: 'payments.cardError:stopPaymentOrder',
+    defaultMessage: 'Greiðslan var stöðvuð samkvæmt beiðni frá kortaeiganda.',
+    description: 'Stop payment order description',
+  },
+  revocationOfAuthorizationTitle: {
+    id: 'payments.cardError:revocationOfAuthorizationTitle',
+    defaultMessage: 'Heimild afturkölluð',
+    description: 'Revocation of authorization',
+  },
+  revocationOfAuthorization: {
+    id: 'payments.cardError:revocationOfAuthorization',
+    defaultMessage: 'Kortaeigandi afturkallaði heimild fyrir þessa greiðslu.',
+    description: 'Revocation of authorization description',
+  },
+  revocationOfAllAuthorizationsTitle: {
+    id: 'payments.cardError:revocationOfAllAuthorizationsTitle',
+    defaultMessage: 'Allar heimildir afturkallaðar',
+    description: 'Revocation of all authorizations',
+  },
+  revocationOfAllAuthorizations: {
+    id: 'payments.cardError:revocationOfAllAuthorizations',
+    defaultMessage:
+      'Kortaeigandi afturkallaði allar heimildir tengdar kortinu.',
+    description: 'Revocation of all authorizations description',
+  },
+  paymentSystemUnavailableTitle: {
+    id: 'payments.cardError:paymentSystemUnavailableTitle',
+    defaultMessage: 'Greiðslukerfi ekki tiltækt',
+    description: 'Payment system unavailable',
+  },
+  paymentSystemUnavailable: {
+    id: 'payments.cardError:paymentSystemUnavailable',
+    defaultMessage:
+      'Ekki var hægt að tengjast greiðslukerfinu. Reyndu aftur síðar.',
+    description: 'Payment system unavailable description',
+  },
+  genericDeclineTitle: {
+    id: 'payments.cardError:genericDeclineTitle',
+    defaultMessage: 'Greiðsla hafnað',
+    description: 'Generic decline',
+  },
+  genericDecline: {
+    id: 'payments.cardError:genericDecline',
+    defaultMessage:
+      'Greiðslunni var hafnað. Reyndu annað kort eða hafðu samband við kortaútgefanda.',
+    description: 'Generic decline description',
+  },
   unknownTitle: {
     id: 'payments.cardError:unknownTitle',
     defaultMessage: 'Óvænt villa',
@@ -166,6 +357,6 @@ export const cardError = defineMessages({
   unknown: {
     id: 'payments.cardError:unknown',
     defaultMessage: 'Óvænt villa kom upp við að reyna framkvæma kortagreiðslu',
-    description: 'Unknown error',
+    description: 'Unknown error description',
   },
 })

@@ -30,7 +30,7 @@ const getCardType = (cardNumber: string) => {
 export const CardPayment = () => {
   const { control, formState } = useFormContext<CardPaymentInput>()
   const { formatMessage } = useLocale()
-  const [cardMask, setCardMask] = useState('default')
+  const [cardMask, setCardMask] = useState(CARD_MASK_BY_TYPE['default'])
 
   const handleCardChange = (cardNumber: string) => {
     const cardType = getCardType(cardNumber)

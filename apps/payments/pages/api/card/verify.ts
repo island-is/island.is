@@ -22,16 +22,23 @@ export default async function verifyCardHandler(
   const verificationResponse =
     await getPaymentsApi().cardPaymentControllerVerify({
       verifyCardInput: {
-        amount,
-        cardNumber,
-        expiryMonth,
-        expiryYear,
-        correlationId,
-        paymentFlowId,
-        // TODO: Replace this with a real URL
-        verificationCallbackUrl: '',
-      },
-    })
+  try {
+    const verificationResponse =
+      await getPaymentsApi().cardPaymentControllerVerify({
+        verifyCardInput: {
+          amount,
+          cardNumber,
+          expiryMonth,
+          expiryYear,
+          correlationId,
+          paymentFlowId,
+          // TODO: Replace this with a real URL
+          verificationCallbackUrl: '',
+        },
+      })
 
-  return res.json(verificationResponse)
+    return res.json(verificationResponse)
+  } catch (e) {
+    return res.status(400).json({ error: e.message })
+  }
 }

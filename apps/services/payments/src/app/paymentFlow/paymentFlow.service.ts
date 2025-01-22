@@ -8,7 +8,7 @@ import { ChargeFjsV2ClientService } from '@island.is/clients/charge-fjs-v2'
 
 import { PaymentFlow, PaymentFlowCharge } from './models/paymentFlow.model'
 
-import { PaymentMethod } from '../../types'
+import { PaymentFlowUpdateEvent, PaymentMethod } from '../../types'
 import { GetPaymentFlowDTO } from './dtos/getPaymentFlow.dto'
 import { NationalRegistryV3ClientService } from '@island.is/clients/national-registry-v3'
 import { CompanyRegistryClientService } from '@island.is/clients/rsk/company-registry'
@@ -171,6 +171,7 @@ export class PaymentFlowService {
     paymentMethod: PaymentMethod
     reason: PaymentFlowEvent['reason']
     message: string
+    metadata?: object
   }) {
     const paymentFlow = (
       await this.paymentFlowModel.findOne({
@@ -194,22 +195,26 @@ export class PaymentFlowService {
     }
 
     try {
+      const updateBody: PaymentFlowUpdateEvent = {
+        type: update.type,
+        paymentFlowId: update.paymentFlowId,
+        correlationId: update.correlationId,
+        paymentFlowMetadata: paymentFlow.metadata,
+        occurredAt: update.occurredAt,
+        details: {
+          paymentMethod: update.paymentMethod,
+          reason: update.reason,
+          message: update.message,
+          eventMetadata: update.metadata,
+        },
+      }
+
       await fetch(paymentFlow.onUpdateUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          type: update.type,
-          paymentFlowId: update.paymentFlowId,
-          metadata: paymentFlow.metadata,
-          occurredAt: update.occurredAt,
-          details: {
-            paymentMethod: update.paymentMethod,
-            reason: update.reason,
-            message: update.message,
-          },
-        }),
+        body: JSON.stringify(updateBody),
       })
     } catch (e) {
       this.logger.error('Failed to notify onUpdateUrl', e)

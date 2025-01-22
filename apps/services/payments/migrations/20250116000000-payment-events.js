@@ -52,7 +52,13 @@ module.exports = {
             allowNull: false,
           },
           type: {
-            type: Sequelize.ENUM('update', 'success', 'failure', 'deleted'),
+            type: Sequelize.ENUM(
+              'create',
+              'update',
+              'success',
+              'error',
+              'delete',
+            ),
             allowNull: false,
           },
           reason: {
@@ -79,12 +85,16 @@ module.exports = {
             type: Sequelize.STRING,
             allowNull: false,
           },
-          created_at: {
+          metadata: {
+            type: Sequelize.JSON,
+            allowNull: true, // Optional field for arbitrary event-specific JSON data that will be returned in the callbacks
+          },
+          created: {
             type: Sequelize.DATE,
             allowNull: false,
             defaultValue: Sequelize.NOW,
           },
-          updated_at: {
+          updated: {
             type: Sequelize.DATE,
             allowNull: false,
             defaultValue: Sequelize.NOW,

@@ -20,6 +20,7 @@ import {
   generateMd,
   generateVerificationRequestOptions,
   getPayloadFromMd,
+  mapToCardErrorCode,
 } from './cardPayment.utils'
 import { VerificationCallbackInput } from './dtos/verificationCallback.input'
 import { ChargeCardInput } from './dtos/chargeCard.input'
@@ -94,6 +95,10 @@ export class CardPaymentService {
     }
 
     const data = (await response.json()) as VerificationResponse
+
+    if (!data?.isSuccess) {
+      throw new Error(mapToCardErrorCode(data.responseCode))
+    }
 
     return data
   }

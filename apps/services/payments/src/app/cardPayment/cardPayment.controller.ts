@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common'
+import {
+  BadRequestException,
+  Body,
+  Controller,
+  Get,
+  Param,
+  Post,
+  UseGuards,
+} from '@nestjs/common'
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
 import { CardPaymentService } from './cardPayment.service'
@@ -65,7 +73,7 @@ export class CardPaymentController {
         reason: 'payment_failed',
         message: `Card verification was not started because of an error: ${e.message}`,
       })
-      throw e
+      throw new Error(e.message)
     }
   }
 
@@ -157,6 +165,7 @@ export class CardPaymentController {
       paymentMethod: PaymentMethod.CARD,
       reason: 'payment_completed',
       message: 'Card payment completed',
+      metadata: result,
     })
 
     return result

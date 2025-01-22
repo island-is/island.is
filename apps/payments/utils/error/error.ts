@@ -4,7 +4,7 @@ import { cardError, genericError } from '../../messages'
 
 export type PaymentError = {
   code: CardErrorCode
-  meta: Record<string, string | number>
+  meta?: Record<string, string | number>
 }
 
 export const paymentErrorToTitleAndMessage = (
@@ -42,6 +42,96 @@ export const paymentErrorToTitleAndMessage = (
       return {
         title: cardError.invalidCardTitle,
         message: cardError.invalidCard,
+      }
+    case CardErrorCode.LostCard:
+      return {
+        title: cardError.lostCardTitle,
+        message: cardError.lostCard,
+      }
+    case CardErrorCode.StolenCard:
+      return {
+        title: cardError.stolenCardTitle,
+        message: cardError.stolenCard,
+      }
+    case CardErrorCode.ClosedAccount:
+      return {
+        title: cardError.closedAccountTitle,
+        message: cardError.closedAccount,
+      }
+    case CardErrorCode.TransactionNotPermitted:
+      return {
+        title: cardError.transactionNotPermittedTitle,
+        message: cardError.transactionNotPermitted,
+      }
+    case CardErrorCode.RestrictedCard:
+      return {
+        title: cardError.restrictedCardTitle,
+        message: cardError.restrictedCard,
+      }
+    case CardErrorCode.SuspectedFraud:
+      return {
+        title: cardError.suspectedFraudTitle,
+        message: cardError.suspectedFraud,
+      }
+    case CardErrorCode.ExceedsWithdrawalLimit:
+      return {
+        title: cardError.exceedsWithdrawalLimitTitle,
+        message: cardError.exceedsWithdrawalLimit,
+      }
+    case CardErrorCode.SecurityViolation:
+      return {
+        title: cardError.securityViolationTitle,
+        message: cardError.securityViolation,
+      }
+    case CardErrorCode.AdditionalAuthenticationRequired:
+      return {
+        title: cardError.additionalAuthenticationRequiredTitle,
+        message: cardError.additionalAuthenticationRequired,
+      }
+    case CardErrorCode.ContactIssuer:
+      return {
+        title: cardError.contactIssuerTitle,
+        message: cardError.contactIssuer,
+      }
+    case CardErrorCode.IssuerUnavailable:
+      return {
+        title: cardError.issuerUnavailableTitle,
+        message: cardError.issuerUnavailable,
+      }
+    case CardErrorCode.DuplicateTransaction:
+      return {
+        title: cardError.duplicateTransactionTitle,
+        message: cardError.duplicateTransaction,
+      }
+    case CardErrorCode.TransactionTimedOut:
+      return {
+        title: cardError.transactionTimedOutTitle,
+        message: cardError.transactionTimedOut,
+      }
+    case CardErrorCode.StopPaymentOrder:
+      return {
+        title: cardError.stopPaymentOrderTitle,
+        message: cardError.stopPaymentOrder,
+      }
+    case CardErrorCode.RevocationOfAuthorization:
+      return {
+        title: cardError.revocationOfAuthorizationTitle,
+        message: cardError.revocationOfAuthorization,
+      }
+    case CardErrorCode.RevocationOfAllAuthorizations:
+      return {
+        title: cardError.revocationOfAllAuthorizationsTitle,
+        message: cardError.revocationOfAllAuthorizations,
+      }
+    case CardErrorCode.PaymentSystemUnavailable:
+      return {
+        title: cardError.paymentSystemUnavailableTitle,
+        message: cardError.paymentSystemUnavailable,
+      }
+    case CardErrorCode.GenericDecline:
+      return {
+        title: cardError.genericDeclineTitle,
+        message: cardError.genericDecline,
       }
     default:
       return {
