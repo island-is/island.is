@@ -15,7 +15,7 @@ import { Logo } from '../assets/Logo'
 import { ApplicationType } from '../utils'
 
 export const Submitted: Form = buildForm({
-  id: 'ConclusionForm',
+  id: 'SubmittedForm',
   title: '',
   logo: Logo,
   mode: FormModes.IN_PROGRESS,
@@ -23,7 +23,7 @@ export const Submitted: Form = buildForm({
   children: [
     buildSection({
       id: 'conclusionSection',
-      title: conclusion.general.sectionTitle,
+      title: '',
       children: [
         buildMultiField({
           id: 'conclusionMultiField',
@@ -79,7 +79,7 @@ export const Submitted: Form = buildForm({
                 {
                   event: DefaultEvents.EDIT,
                   name: conclusion.overview.editButton,
-                  type: 'signSubtle',
+                  type: 'subtle',
                 },
               ],
             }),

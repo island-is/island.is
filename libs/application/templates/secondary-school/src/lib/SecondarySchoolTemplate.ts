@@ -18,6 +18,9 @@ import {
 } from '@island.is/application/core'
 import {
   application as applicationMessage,
+  historyMessages as applicationHistoryMessages,
+  pendingActionMessages as applicationPendingActionMessages,
+  conclusion,
   externalData,
   overview,
 } from './messages'
@@ -76,6 +79,9 @@ const template: ApplicationTemplate<
   featureFlag: Features.SecondarySchoolEnabled,
   allowedDelegations: [
     {
+      type: AuthDelegationType.LegalGuardian,
+    },
+    {
       type: AuthDelegationType.Custom,
     },
   ],
@@ -101,9 +107,6 @@ const template: ApplicationTemplate<
             ],
           },
           lifecycle: EphemeralStateLifeCycle,
-          onExit: defineTemplateApi({
-            action: ApiActions.validateCanCreate,
-          }),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -151,6 +154,9 @@ const template: ApplicationTemplate<
             ],
           },
           lifecycle: pruneAfterDays(7),
+          onEntry: defineTemplateApi({
+            action: ApiActions.validateCanCreate,
+          }),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -201,21 +207,21 @@ const template: ApplicationTemplate<
               label: applicationMessage.actionCardSubmitted,
               variant: 'blueberry',
             },
+            pendingAction: {
+              title: corePendingActionMessages.waitingForReviewTitle,
+              content: corePendingActionMessages.waitingForReviewDescription,
+              displayStatus: 'info',
+            },
             historyLogs: [
               {
                 onEvent: DefaultEvents.EDIT,
-                logMessage: applicationMessage.historyAplicationEdited,
+                logMessage: applicationHistoryMessages.edited,
               },
               {
                 onEvent: DefaultEvents.SUBMIT,
                 logMessage: coreHistoryMessages.applicationReceived,
               },
             ],
-            pendingAction: {
-              title: corePendingActionMessages.waitingForReviewTitle,
-              content: corePendingActionMessages.waitingForReviewDescription,
-              displayStatus: 'info',
-            },
           },
           roles: [
             {
@@ -226,6 +232,13 @@ const template: ApplicationTemplate<
                 ),
               read: 'all',
               delete: true,
+              actions: [
+                {
+                  event: DefaultEvents.EDIT,
+                  name: conclusion.overview.editButton,
+                  type: 'primary',
+                },
+              ],
             },
             {
               id: Roles.ORGANISATION_REVIEWER,
@@ -243,6 +256,62 @@ const template: ApplicationTemplate<
         },
         on: {
           [DefaultEvents.EDIT]: { target: States.DRAFT },
+          [DefaultEvents.SUBMIT]: { target: States.IN_REVIEW },
+        },
+      },
+      [States.IN_REVIEW]: {
+        entry: ['assignToInstitution'],
+        exit: ['clearAssignees'],
+        meta: {
+          name: applicationMessage.stateMetaNameInReview.defaultMessage,
+          status: FormModes.IN_PROGRESS,
+          lifecycle: {
+            shouldBeListed: true,
+            shouldBePruned: true,
+            whenToPrune: (application: Application) =>
+              pruneInDaysAfterRegistrationCloses(application, 3 * 30),
+          },
+          actionCard: {
+            tag: {
+              label: applicationMessage.actionCardInReview,
+              variant: 'blueberry',
+            },
+            pendingAction: {
+              title: applicationPendingActionMessages.inReviewTitle,
+              content: applicationPendingActionMessages.inReviewDescription,
+              displayStatus: 'info',
+            },
+            historyLogs: [
+              {
+                onEvent: DefaultEvents.SUBMIT,
+                logMessage: applicationHistoryMessages.reviewFinished,
+              },
+            ],
+          },
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/inReviewForm').then((module) =>
+                  Promise.resolve(module.InReview),
+                ),
+              read: 'all',
+            },
+            {
+              id: Roles.ORGANISATION_REVIEWER,
+              read: 'all',
+              write: 'all',
+              actions: [
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: overview.buttons.submit,
+                  type: 'primary',
+                },
+              ],
+            },
+          ],
+        },
+        on: {
           [DefaultEvents.SUBMIT]: { target: States.COMPLETED },
         },
       },
@@ -262,7 +331,9 @@ const template: ApplicationTemplate<
               variant: 'blueberry',
             },
             pendingAction: {
-              title: corePendingActionMessages.applicationReceivedTitle,
+              title: applicationPendingActionMessages.reviewFinishedTitle,
+              content:
+                applicationPendingActionMessages.reviewFinishedDescription,
               displayStatus: 'success',
             },
           },

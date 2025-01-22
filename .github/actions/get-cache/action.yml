@@ -4,6 +4,9 @@ inputs:
   github-token:
     description: 'GitHub token'
     required: true
+  cache-url:
+    description: 'Cache URL'
+    default: 'https://cache.dev01.devland.is/'
   enable-cache:
     description: 'Enable cache'
     default: ''
@@ -18,12 +21,15 @@ runs:
   using: 'composite'
   steps:
     - name: Adding required env vars
+      # Skip when running locally
+      if: ${{ !github.event.localrun }}
       uses: actions/github-script@v7
       env:
+        cache-url: ${{ inputs.cache-url }}
         github-token: ${{ inputs.GITHUB_TOKEN }}
       with:
         script: |
-          core.exportVariable('ACTIONS_CACHE_URL', 'https://cache.dev01.devland.is/')
+          core.exportVariable('ACTIONS_CACHE_URL', process.env['cache-url'])
           core.exportVariable('ACTIONS_RUNTIME_TOKEN', process.env['ACTIONS_RUNTIME_TOKEN'])
           core.exportVariable('ACTIONS_RUNTIME_URL', process.env['ACTIONS_RUNTIME_URL'])
     - name: Get cache
@@ -35,8 +41,8 @@ runs:
         NODE_OPTIONS: --max-old-space-size=8192
       run: |
         # This is because of a weird bug where Github would write as root to .cache
-        export COREPACK_HOME=/github/home/.corepack-cache
-        export CYPRESS_CACHE_FOLDER=/github/home/.cypress-cache
+        export COREPACK_HOME="$HOME/.corepack-cache"
+        export CYPRESS_CACHE_FOLDER="$HOME/.cypress-cache"
         echo "COREPACK_HOME=$COREPACK_HOME" >> $GITHUB_ENV
         echo "CYPRESS_CACHE_FOLDER=$CYPRESS_CACHE_FOLDER" >> $GITHUB_ENV
         cd scripts/ci/cache

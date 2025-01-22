@@ -13,6 +13,7 @@ import { helperStyles, theme } from '@island.is/island-ui/theme'
 import { useLocale } from '@island.is/localization'
 import { PortalPageLoader } from '@island.is/portals/core'
 import { SERVICE_PORTAL_HEADER_HEIGHT_SM } from '@island.is/portals/my-pages/constants'
+import { useUserInfo } from '@island.is/react-spa/bff'
 import {
   LinkResolver,
   ServicePortalPaths,
@@ -63,6 +64,7 @@ export const Header = ({ position }: Props) => {
     isFlagEnabled()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+
 
   const hasNotificationsDelegationAccess = user?.scopes?.includes(
     DocumentsScope.main,
@@ -162,13 +164,11 @@ export const Header = ({ position }: Props) => {
                         </Box>
                       </Hidden>
 
-                      {enableNotificationFlag && (
-                        <NotificationButton
-                          setMenuState={(val: MenuTypes) => setMenuOpen(val)}
-                          showMenu={menuOpen === 'notifications'}
-                          disabled={!hasNotificationsDelegationAccess}
-                        />
-                      )}
+                      <NotificationButton
+                        setMenuState={(val: MenuTypes) => setMenuOpen(val)}
+                        showMenu={menuOpen === 'notifications'}
+                        disabled={!hasNotificationsDelegationAccess}
+                      />
 
                       {user && <UserLanguageSwitcher />}
 
