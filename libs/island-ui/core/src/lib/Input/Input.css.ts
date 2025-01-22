@@ -243,7 +243,6 @@ export const iconWrapper = recipe({
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'flex-start',
-    position: 'absolute',
   },
   variants: {
     size: {
