@@ -36,6 +36,9 @@ type defaultFontWeights = {
   [Type in TextVariants]: number
 }
 
+type defaultLineHeights = {
+  [Type in TextVariants]: string
+}
 export const truncate = style({
   overflow: 'hidden',
   textOverflow: 'ellipsis',
@@ -64,7 +67,7 @@ const fontWeightMap = {
 }
 
 const availableLineHeights = {
-  xs: typographyValues.desktop.paragraph.small.fontWeight,
+  xs: typographyValues.desktop.paragraph.small.lineHeight,
   sm: typographyValues.desktop.paragraph.mediumRegular.lineHeight,
   md: typographyValues.desktop.paragraph.default.lineHeight,
   lg: typographyValues.desktop.paragraph.default.lineHeight,
@@ -94,7 +97,7 @@ const defaultFontWeightsMap: defaultFontWeights = {
   intro: typographyValues.desktop.paragraph.mediumLight.fontWeight,
 }
 
-const defaultLineHeightsMap: defaultFontWeights = {
+const defaultLineHeightsMap: defaultLineHeights = {
   default: typographyValues.desktop.paragraph.default.lineHeight,
   h1: typographyValues.desktop.headings.h1.lineHeight,
   h2: typographyValues.desktop.headings.h2.lineHeight,

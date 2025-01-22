@@ -4,26 +4,28 @@ import omit from 'lodash/omit'
 import * as color from './colors/colors'
 import { font, spacing as spacingPrimitives, radius } from './tokens/tokens'
 import { fontWeight, typographyValues } from './typography/typography'
+import { figmaPrimitives } from './tokens/figmaPrimitives'
 
 export const UNIT = 8
 
 // TODO: spacing will be further updated in the followup PR
+// mark as deprecated?
 export const spacing = {
   0: UNIT * 0,
-  1: spacingPrimitives[8] ?? UNIT * 1,
-  2: spacingPrimitives[16] ?? UNIT * 2,
-  3: spacingPrimitives[24] ?? UNIT * 3,
-  4: spacingPrimitives[32] ?? UNIT * 4,
-  5: spacingPrimitives[40] ?? UNIT * 5,
-  6: spacingPrimitives[48] ?? UNIT * 6,
-  7: spacingPrimitives[56] ?? UNIT * 7,
-  8: spacingPrimitives[64] ?? UNIT * 8,
-  9: spacingPrimitives[72] ?? UNIT * 9,
-  10: spacingPrimitives[80] ?? UNIT * 10,
-  12: spacingPrimitives[96] ?? UNIT * 12,
-  13: spacingPrimitives[104] ?? UNIT * 13,
+  1: UNIT * 1,
+  2: UNIT * 2,
+  3: UNIT * 3,
+  4: UNIT * 4,
+  5: UNIT * 5,
+  6: UNIT * 6,
+  7: UNIT * 7,
+  8: UNIT * 8,
+  9: UNIT * 9,
+  10: UNIT * 10,
+  12: UNIT * 12,
+  13: UNIT * 13,
   14: UNIT * 14, // DEPRECATED
-  15: spacingPrimitives[120] ?? UNIT * 15,
+  15: UNIT * 15,
   20: UNIT * 20, // DEPRECATED
   21: UNIT * 21, // DEPRECATED
   22: UNIT * 22, // DEPRECATED
@@ -31,11 +33,11 @@ export const spacing = {
   24: UNIT * 24, // DEPRECATED
   28: UNIT * 28, // DEPRECATED
   30: UNIT * 30, // DEPRECATED
-  200: spacingPrimitives[200] ?? UNIT * 25,
+  200: UNIT * 25,
   none: UNIT * 0,
-  smallGutter: spacingPrimitives[4] ?? UNIT * 0.5,
-  gutter: spacingPrimitives[16] ?? UNIT * 2,
-  containerGutter: spacingPrimitives[48] ?? UNIT * 6,
+  smallGutter: UNIT * 0.5,
+  gutter: UNIT * 2,
+  containerGutter: UNIT * 6,
   auto: 'auto',
   p1: 8,
   p2: 12,
@@ -43,6 +45,8 @@ export const spacing = {
   p4: 16,
   p5: 18,
 }
+
+export const figmaSpacing = spacingPrimitives
 
 export const zIndex = {
   below: -1,
@@ -86,6 +90,7 @@ export const theme = {
     baseLineHeight: `${typographyValues.desktop.paragraph.default.lineHeight} px`,
   },
   spacing,
+  figmaSpacing,
   transforms: {
     touchable: 'scale(0.98)',
   },

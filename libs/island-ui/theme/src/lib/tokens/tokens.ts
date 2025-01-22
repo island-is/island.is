@@ -1,9 +1,9 @@
 import { figmaColorsTokens } from './figmaColors'
-import { figmaTypographyTokens } from './figmaTypography'
 import { figmaPrimitives } from './figmaPrimitives'
+import { figmaTypographyTokens } from './figmaTypography'
 
 // Primitives
-export const { color, font, spacing, radius } = figmaPrimitives.modes.mode1
+export const { font, spacing, radius } = figmaPrimitives.modes.mode1
 // Color Tokens
 const colorTokensLight = figmaColorsTokens.modes.lightMode
 

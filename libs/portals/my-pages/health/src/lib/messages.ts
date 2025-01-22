@@ -1123,7 +1123,7 @@ export const messages = defineMessages({
   },
   readAboutVaccinations: {
     id: 'sp.health:read-about-vaccinations',
-    defaultMessage: 'Lesa  um bólusetningar',
+    defaultMessage: 'Lesa um bólusetningar',
   },
   readAboutVaccinationsLink: {
     id: 'sp.health:read-about-vaccinations-link',
