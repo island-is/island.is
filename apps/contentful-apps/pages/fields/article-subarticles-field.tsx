@@ -1,11 +1,10 @@
 import { useEffect } from 'react'
 import { FieldExtensionSDK } from '@contentful/app-sdk'
+import { useCMA, useSDK } from '@contentful/react-apps-toolkit'
 import {
   CombinedLinkActions,
   MultipleEntryReferenceEditor,
 } from '@contentful/field-editor-reference'
-import { useCMA, useSDK } from '@contentful/react-apps-toolkit'
-
 import { DEFAULT_LOCALE } from '../../constants'
 
 const ArticleSubArticlesField = () => {

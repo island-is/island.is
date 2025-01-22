@@ -20,7 +20,7 @@ interface VisuallyHiddenProps
 }
 
 const VisuallyHidden = forwardRef<HTMLSpanElement, VisuallyHiddenProps>(
-  ({ children, ...restProps }, ref) => {
+  function VisuallyHiddenInner({ children, ...restProps }, ref) {
     return (
       <span ref={ref} style={style} {...restProps}>
         {children}
