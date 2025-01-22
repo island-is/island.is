@@ -120,7 +120,7 @@ const MobileCase: FC<PropsWithChildren<Props>> = ({
         <>
           <br />
           <Text variant="small" fontWeight={'medium'}>
-            {`${formatMessage(tables.created)} ${format(
+            {`${formatMessage(tables.sentToCourtDate)} ${format(
               parseISO(theCase.created),
               'd.M.y',
             )}`}

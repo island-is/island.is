@@ -57,8 +57,8 @@ export const DefenderCasesTable: FC<Props> = ({
             title: formatMessage(tables.type),
           },
           {
-            title: formatMessage(tables.created),
-            sortable: { isSortable: true, key: 'created' },
+            title: formatMessage(tables.sentToCourtDate),
+            sortable: { isSortable: true, key: 'caseSentToCourtDate' },
           },
           { title: formatMessage(tables.state) },
           {

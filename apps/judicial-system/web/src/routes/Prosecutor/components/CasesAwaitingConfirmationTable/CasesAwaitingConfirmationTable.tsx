@@ -74,8 +74,8 @@ const CasesAwaitingConfirmationTable: FC<
                   title: formatMessage(tables.type),
                 },
                 {
-                  title: capitalize(formatMessage(tables.created)),
-                  sortable: { isSortable: true, key: 'created' },
+                  title: capitalize(formatMessage(tables.sentToCourtDate)),
+                  sortable: { isSortable: true, key: 'caseSentToCourtDate' },
                 },
                 { title: formatMessage(tables.state) },
                 {
