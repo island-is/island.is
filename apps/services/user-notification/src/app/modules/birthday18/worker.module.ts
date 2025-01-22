@@ -1,0 +1,26 @@
+import { Module } from '@nestjs/common'
+import { LoggingModule } from '@island.is/logging'
+import { UserNotificationBirthday18WorkerService } from './worker.service'
+import { environment } from '../../../environments/environment'
+import { QueueModule } from '@island.is/message-queue'
+import { NationalRegistryV3ApplicationsClientModule } from '@island.is/clients/national-registry-v3-applications'
+
+@Module({
+  imports: [
+    LoggingModule,
+    QueueModule.register({
+      client: environment.sqsConfig,
+      queue: {
+        name: 'notifications',
+        queueName: environment.mainQueueName,
+        shouldSleepOutsideWorkingHours: true,
+        deadLetterQueue: {
+          queueName: environment.deadLetterQueueName,
+        },
+      },
+    }),
+    NationalRegistryV3ApplicationsClientModule,
+  ],
+  providers: [UserNotificationBirthday18WorkerService],
+})
+export class UserNotificationBirthday18Module {}
