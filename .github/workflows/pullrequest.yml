@@ -17,10 +17,11 @@ env:
   COMPOSE_HTTP_TIMEOUT: 180
   SKIP_GENERATED_CACHE: ${{ contains(github.event.pull_request.labels.*.name, 'skip-generated-cache') }}
   NX_AFFECTED_ALL: ${{ contains(github.event.pull_request.labels.*.name, 'nx-affected-all') }}
-  CHUNK_SIZE: '15'
-  MAX_JOBS: '20'
-  NX_PARALLEL: '20'
-  NX_MAX_PARALLEL: '20'
+  CHUNK_SIZE: '20'
+  DISABLE_CHUNKS: 'true'
+  MAX_JOBS: '15'
+  NX_PARALLEL: '25'
+  NX_MAX_PARALLEL: '25'
 
 jobs:
   prepare:
@@ -145,8 +146,6 @@ jobs:
 
       - name: Prepare test targets
         id: test_projects
-        env:
-          DISABLE_CHUNKS: 'true'
         run: |
           set -euo pipefail
           CHUNKS="$(./scripts/ci/generate-chunks.sh test)"
