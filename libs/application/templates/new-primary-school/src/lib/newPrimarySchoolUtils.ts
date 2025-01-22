@@ -78,26 +78,6 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
 
   const language4 = getValueViaPath(answers, 'languages.language4') as string
 
-  const language1HiddenInput = getValueViaPath(
-    answers,
-    'languages.hiddenLanguage1Input',
-  ) as string
-
-  const language2HiddenInput = getValueViaPath(
-    answers,
-    'languages.hiddenLanguage2Input',
-  ) as string
-
-  const language3HiddenInput = getValueViaPath(
-    answers,
-    'languages.hiddenLanguage3Input',
-  ) as string
-
-  const language4HiddenInput = getValueViaPath(
-    answers,
-    'languages.hiddenLanguage4Input',
-  ) as string
-
   const childLanguage = getValueViaPath(
     answers,
     'languages.childLanguage',
@@ -227,10 +207,6 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     schoolMunicipality,
     selectedSchool,
     newSchoolHiddenInput,
-    language1HiddenInput,
-    language2HiddenInput,
-    language3HiddenInput,
-    language4HiddenInput,
   }
 }
 

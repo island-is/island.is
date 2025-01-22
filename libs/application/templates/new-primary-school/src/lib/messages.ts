@@ -1,4 +1,5 @@
 import { defineMessages, MessageDescriptor } from 'react-intl'
+import { LanguageEnvironmentOptions } from './constants'
 
 type MessageDir = Record<string, Record<string, MessageDescriptor>>
 
@@ -694,15 +695,15 @@ export const newPrimarySchoolMessages: MessageDir = {
       defaultMessage: 'Foreldri/forsjáraðili',
       description: 'Parent / guardian',
     },
-    nativeLanguage: {
-      id: 'nps.application:overview.native.language',
-      defaultMessage: 'Móðurmál barnsins',
-      description: "The child's native language",
+    languageEnvironment: {
+      id: 'nps.application:overview.language.environment',
+      defaultMessage: 'Tungumálaumhverfi',
+      description: 'Language environment',
     },
-    icelandicSpokenAroundChild: {
-      id: 'nps.application:overview.icelandic.spoken.around.child',
-      defaultMessage: 'Íslenska er töluð í nærumhverfi barnsins',
-      description: "Icelandic is spoken in the child's immediate environment",
+    childLanguage: {
+      id: 'nps.application:overview.child.language',
+      defaultMessage: 'Tungumálið sem barninu finnst best að tjá sig á',
+      description: 'The language the child prefers to express themselves in',
     },
     schoolTitle: {
       id: 'nps.application:overview.school.title',

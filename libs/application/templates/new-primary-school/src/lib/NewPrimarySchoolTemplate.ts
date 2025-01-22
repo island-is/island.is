@@ -227,10 +227,7 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
           unset(application.answers, 'languages.language3')
           unset(application.answers, 'languages.language4')
           unset(application.answers, 'languages.childLanguage')
-          unset(application.answers, 'languages.hiddenLanguage1Input')
-          unset(application.answers, 'languages.hiddenLanguage2Input')
-          unset(application.answers, 'languages.hiddenLanguage3Input')
-          unset(application.answers, 'languages.hiddenLanguage4Input')
+          unset(application.answers, 'languages.interpreter')
         }
         return context
       }),
