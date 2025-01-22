@@ -1,4 +1,9 @@
 import {
+  contentfulManagementAccessToken,
+  spaceId,
+  environmentId,
+} from '../constants'
+import {
   CollectionProp,
   ContentTypeProps,
   createClient as createManagementClient,
@@ -7,17 +12,10 @@ import {
   RoleProps,
   TagProps,
 } from 'contentful-management'
-import type { ActionType } from 'contentful-management/dist/typings/entities/role'
 import slugify from '@sindresorhus/slugify'
-
-import { sortAlpha } from '@island.is/shared/utils'
-
-import {
-  contentfulManagementAccessToken,
-  environmentId,
-  spaceId,
-} from '../constants'
+import type { ActionType } from 'contentful-management/dist/typings/entities/role'
 import type { CheckboxState } from '../types'
+import { sortAlpha } from '@island.is/shared/utils'
 
 let client: PlainClientAPI | null = null
 

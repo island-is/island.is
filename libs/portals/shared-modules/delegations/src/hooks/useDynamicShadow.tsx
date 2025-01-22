@@ -37,7 +37,7 @@ export const useDynamicShadow = (config: UseDynamicShadowOptions = {}) => {
     if (isObserving.current || isDisabled) return
 
     const observer = new IntersectionObserver(
-      (entries) => {
+      function (entries) {
         if (entries[0].intersectionRatio === 0) {
           if (debug) {
             console.log('useDynamicShadow, 🔴 No intersection with screen')
