@@ -656,6 +656,10 @@ const Processing: FC = () => {
                         }
                         tooltip={formatMessage(
                           strings.civilClaimantShareFilesWithDefenderTooltip,
+                          {
+                            defenderIsLawyer:
+                              civilClaimant.spokespersonIsLawyer,
+                          },
                         )}
                         backgroundColor="white"
                         large
