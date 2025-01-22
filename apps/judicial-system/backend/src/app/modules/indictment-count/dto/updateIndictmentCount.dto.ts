@@ -1,10 +1,12 @@
 import {
   IsArray,
   IsEnum,
+  IsNumber,
   IsObject,
   IsOptional,
   IsString,
   MaxLength,
+  Min,
 } from 'class-validator'
 
 import { ApiPropertyOptional } from '@nestjs/swagger'
@@ -61,12 +63,14 @@ export class UpdateIndictmentCountDto {
   readonly indictmentCountSubtypes?: IndictmentSubtype[]
 
   @IsOptional()
-  @IsString()
-  @ApiPropertyOptional({ type: String })
-  readonly recordedSpeed?: string
+  @IsNumber()
+  @Min(0)
+  @ApiPropertyOptional({ type: Number })
+  readonly recordedSpeed?: number
 
   @IsOptional()
-  @IsString()
-  @ApiPropertyOptional({ type: String })
-  readonly speedLimit?: string
+  @IsNumber()
+  @Min(0)
+  @ApiPropertyOptional({ type: Number })
+  readonly speedLimit?: number
 }

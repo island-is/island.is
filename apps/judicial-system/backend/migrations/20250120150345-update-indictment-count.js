@@ -6,7 +6,7 @@ module.exports = {
           'indictment_count',
           'recorded_speed',
           {
-            type: Sequelize.STRING,
+            type: Sequelize.INTEGER,
             allowNull: true,
           },
           { transaction: t },
@@ -15,7 +15,7 @@ module.exports = {
           'indictment_count',
           'speed_limit',
           {
-            type: Sequelize.STRING,
+            type: Sequelize.INTEGER,
             allowNull: true,
           },
           { transaction: t },

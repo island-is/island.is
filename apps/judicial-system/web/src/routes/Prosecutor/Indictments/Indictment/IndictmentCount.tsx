@@ -805,96 +805,96 @@ export const IndictmentCount: FC<Props> = ({
                 heading="h4"
                 marginBottom={2}
               />
-              <Box display="flex" rowGap={1} columnGap={1} flexWrap="wrap">
-                <Box flexGrow={1}>
-                  <InputMask
-                    mask={'999'}
-                    maskPlaceholder={null}
-                    value={indictmentCount.recordedSpeed ?? ''}
-                    onChange={(event) => {
-                      removeErrorMessageIfValid(
-                        ['empty'],
-                        event.target.value,
-                        recordedSpeedErrorMessage,
-                        setRecordedSpeedErrorMessage,
-                      )
+              <Box marginBottom={1}>
+                <InputMask
+                  mask={'999'}
+                  maskPlaceholder={null}
+                  value={indictmentCount.recordedSpeed?.toString() ?? ''}
+                  onChange={(event) => {
+                    const recordedSpeed = parseInt(event.target.value)
 
-                      updateIndictmentCountState(
-                        indictmentCount.id,
-                        { recordedSpeed: event.target.value },
-                        setWorkingCase,
-                      )
-                    }}
-                    onBlur={(event) => {
-                      const recordedSpeed = event.target.value
+                    removeErrorMessageIfValid(
+                      ['empty'],
+                      event.target.value,
+                      recordedSpeedErrorMessage,
+                      setRecordedSpeedErrorMessage,
+                    )
 
-                      validateAndSetErrorMessage(
-                        ['empty'],
-                        recordedSpeed,
-                        setRecordedSpeedErrorMessage,
-                      )
+                    updateIndictmentCountState(
+                      indictmentCount.id,
+                      { recordedSpeed },
+                      setWorkingCase,
+                    )
+                  }}
+                  onBlur={(event) => {
+                    const recordedSpeed = parseInt(event.target.value)
 
-                      handleIndictmentCountChanges({
-                        recordedSpeed,
-                      })
-                    }}
-                  >
-                    <Input
-                      name="recordedSpeed"
-                      autoComplete="off"
-                      label={formatMessage(strings.recordedSpeedLabel)}
-                      placeholder="0"
-                      required
-                      errorMessage={recordedSpeedErrorMessage}
-                      hasError={recordedSpeedErrorMessage !== ''}
-                    />
-                  </InputMask>
-                </Box>
-                <Box flexGrow={1}>
-                  <InputMask
-                    mask={'999'}
-                    maskPlaceholder={null}
-                    value={indictmentCount.speedLimit ?? ''}
-                    onChange={(event) => {
-                      removeErrorMessageIfValid(
-                        ['empty'],
-                        event.target.value,
-                        speedLimitErrorMessage,
-                        setSpeedLimitErrorMessage,
-                      )
+                    validateAndSetErrorMessage(
+                      ['empty'],
+                      recordedSpeed.toString(),
+                      setRecordedSpeedErrorMessage,
+                    )
 
-                      updateIndictmentCountState(
-                        indictmentCount.id,
-                        { speedLimit: event.target.value },
-                        setWorkingCase,
-                      )
-                    }}
-                    onBlur={(event) => {
-                      const speedLimit = event.target.value
-
-                      validateAndSetErrorMessage(
-                        ['empty'],
-                        speedLimit,
-                        setSpeedLimitErrorMessage,
-                      )
-
-                      handleIndictmentCountChanges({
-                        speedLimit,
-                      })
-                    }}
-                  >
-                    <Input
-                      name="speedLimit"
-                      autoComplete="off"
-                      label={formatMessage(strings.speedLimitLabel)}
-                      placeholder="0"
-                      required
-                      errorMessage={speedLimitErrorMessage}
-                      hasError={speedLimitErrorMessage !== ''}
-                    />
-                  </InputMask>
-                </Box>
+                    handleIndictmentCountChanges({
+                      recordedSpeed,
+                    })
+                  }}
+                >
+                  <Input
+                    name="recordedSpeed"
+                    autoComplete="off"
+                    label={formatMessage(strings.recordedSpeedLabel)}
+                    placeholder="0"
+                    required
+                    errorMessage={recordedSpeedErrorMessage}
+                    hasError={recordedSpeedErrorMessage !== ''}
+                  />
+                </InputMask>
               </Box>
+              <InputMask
+                mask={'999'}
+                maskPlaceholder={null}
+                value={indictmentCount.speedLimit?.toString() ?? ''}
+                onChange={(event) => {
+                  const speedLimit = parseInt(event.target.value)
+
+                  removeErrorMessageIfValid(
+                    ['empty'],
+                    event.target.value,
+                    speedLimitErrorMessage,
+                    setSpeedLimitErrorMessage,
+                  )
+
+                  updateIndictmentCountState(
+                    indictmentCount.id,
+                    { speedLimit },
+                    setWorkingCase,
+                  )
+                }}
+                onBlur={(event) => {
+                  const speedLimit = parseInt(event.target.value)
+
+                  validateAndSetErrorMessage(
+                    ['empty'],
+                    speedLimit.toString(),
+                    setSpeedLimitErrorMessage,
+                  )
+
+                  handleIndictmentCountChanges({
+                    speedLimit,
+                  })
+                }}
+              >
+                <Input
+                  name="speedLimit"
+                  autoComplete="off"
+                  label={formatMessage(strings.speedLimitLabel)}
+                  placeholder="0"
+                  required
+                  errorMessage={speedLimitErrorMessage}
+                  hasError={speedLimitErrorMessage !== ''}
+                />
+              </InputMask>
             </Box>
           )}
           {indictmentCount.offenses
