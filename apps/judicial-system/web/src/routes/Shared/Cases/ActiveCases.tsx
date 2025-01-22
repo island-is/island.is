@@ -94,7 +94,7 @@ const ActiveCases: FC<Props> = (props) => {
           ),
         },
         {
-          cell: (row) => <CreatedDate created={row.created} />,
+          cell: (row) => <CreatedDate created={row.caseSentToCourtDate} />,
         },
         {
           cell: (row) => (

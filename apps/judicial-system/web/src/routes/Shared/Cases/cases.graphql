@@ -110,5 +110,6 @@ query Cases {
     indictmentDecision
     indictmentCompletedDate
     courtSessionType
+    caseSentToCourtDate
   }
 }

@@ -106,7 +106,7 @@ const PastCasesTable: FC<Props> = ({ cases }) => {
             ),
           },
           {
-            cell: (row) => <CreatedDate created={row.created} />,
+            cell: (row) => <CreatedDate created={row.caseSentToCourtDate} />,
           },
           {
             cell: (row) => {
