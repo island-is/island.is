@@ -475,7 +475,7 @@ export const StandardForm = ({
               requiredMessage={fn(
                 'kennitala',
                 'requiredMessage',
-                'Kennitölu vantar', // TODO
+                'Kennitölu vantar',
               )}
             />
           </GridColumn>
@@ -494,7 +494,7 @@ export const StandardForm = ({
                 requiredMessage={fn(
                   'kennitala',
                   'requiredMessage',
-                  'Kennitölu vantar', // TODO
+                  'Kennitölu vantar',
                 )}
               />
             </GridColumn>
