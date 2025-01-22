@@ -149,7 +149,7 @@ describe('transformCase', () => {
     it('should be true when the appeal window has closed', () => {
       // Arrange
       const rulingDate = new Date()
-      rulingDate.setDate(rulingDate.getDate() - 4)
+      rulingDate.setDate(rulingDate.getDate() - 3)
       const theCase = {
         type: CaseType.CUSTODY,
         rulingDate: rulingDate.toISOString(),
