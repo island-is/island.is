@@ -89,6 +89,10 @@ const LanguageSelection: FC<React.PropsWithChildren<FieldBaseProps>> = ({
             newPrimarySchoolMessages.differentNeeds.languageSelectionTitle,
             { no: `${index + 1}` },
           )}
+          aria-label={formatMessage(
+            newPrimarySchoolMessages.differentNeeds.languageSelectionAriaLabel,
+            { no: `${index + 1}` },
+          )}
           placeholder={formatMessage(
             newPrimarySchoolMessages.differentNeeds
               .languageSelectionPlaceholder,

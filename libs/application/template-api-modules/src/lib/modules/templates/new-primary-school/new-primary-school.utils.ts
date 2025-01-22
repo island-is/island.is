@@ -133,7 +133,7 @@ export const transformApplicationToNewPrimarySchoolDTO = (
             hasDiagnoses: developmentalAssessment === YES,
           }, // Languages needs to be updated when Juni is ready with the data struccture
           language: {
-            nativeLanguage: undefined,
+            nativeLanguage: '',
             noIcelandic: false,
             otherLanguages: undefined,
           },
