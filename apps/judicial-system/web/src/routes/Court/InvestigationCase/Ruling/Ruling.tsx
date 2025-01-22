@@ -6,6 +6,7 @@ import {
   Accordion,
   AccordionItem,
   Box,
+  Checkbox,
   Input,
   Text,
   Tooltip,
@@ -137,6 +138,32 @@ const Ruling = () => {
               <CaseFileList caseId={workingCase.id} files={caseFiles} />
             </AccordionItem>
           </Accordion>
+        </Box>
+        <Box component="section" marginBottom={5}>
+          <Checkbox
+            name={formatMessage(m.sections.completedWithoutRuling.label)}
+            label={formatMessage(m.sections.completedWithoutRuling.label)}
+            checked={Boolean(
+              workingCase.decision === CaseDecision.COMPLETED_WITHOUT_RULING,
+            )}
+            onChange={({ target }) => {
+              setAndSendCaseToServer(
+                [
+                  {
+                    decision: target.checked
+                      ? CaseDecision.COMPLETED_WITHOUT_RULING
+                      : null,
+                    force: true,
+                  },
+                ],
+                workingCase,
+                setWorkingCase,
+              )
+            }}
+            tooltip={formatMessage(m.sections.completedWithoutRuling.tooltip)}
+            backgroundColor="blue"
+            large
+          />
         </Box>
         <Box component="section" marginBottom={5}>
           <Box marginBottom={3}>
