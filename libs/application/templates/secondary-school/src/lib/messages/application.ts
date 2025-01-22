@@ -30,7 +30,7 @@ export const application = defineMessages({
       'Description of application state/status when application is submitted',
   },
   actionCardInReview: {
-    id: 'ss.application:actionCardCompleted',
+    id: 'ss.application:actionCardInReview',
     defaultMessage: 'Í vinnslu hjá stofnun',
     description:
       'Description of application state/status when application is completed',
