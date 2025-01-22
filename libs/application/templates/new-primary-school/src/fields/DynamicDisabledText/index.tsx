@@ -1,4 +1,5 @@
 import {
+  FieldBaseProps,
   FieldComponents,
   FieldTypes,
   FormTextWithLocale,
@@ -7,24 +8,21 @@ import { TextFormField } from '@island.is/application/ui-fields'
 import { useLocale } from '@island.is/localization'
 import { FC, useEffect } from 'react'
 import { useFormContext } from 'react-hook-form'
-import { Application, Field } from '@island.is/application/types'
 import { formatTextWithLocale } from '@island.is/application/core'
 import { Locale } from '@island.is/shared/types'
 
 interface DynamicDisabledTextProps {
-  application: Application
-  field: Field & {
+  field: {
     props: {
       value: FormTextWithLocale
     }
   }
 }
 
-const DynamicDisabledText: FC<DynamicDisabledTextProps> = ({
-  field,
-  application,
-}) => {
-  const { locale, formatMessage } = useLocale()
+const DynamicDisabledText: FC<
+  React.PropsWithChildren<FieldBaseProps & DynamicDisabledTextProps>
+> = ({ field, application }) => {
+  const { lang: locale, formatMessage } = useLocale()
   const { setValue } = useFormContext()
   const {
     title,
