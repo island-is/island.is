@@ -65,7 +65,6 @@ export const Header = ({ position }: Props) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-
   const hasNotificationsDelegationAccess = user?.scopes?.includes(
     DocumentsScope.main,
   )
