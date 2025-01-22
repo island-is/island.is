@@ -1,21 +1,20 @@
 import { Inject, Injectable, OnApplicationBootstrap } from '@nestjs/common'
-import { join } from 'path'
 import { InjectModel } from '@nestjs/sequelize'
 import { isCompany } from 'kennitala'
+import { join } from 'path'
 
 import { User } from '@island.is/auth-nest-tools'
 import { DocumentsScope } from '@island.is/auth/scopes'
+import { DelegationsApi } from '@island.is/clients/auth/delegation-api'
 import {
-  EinstaklingurDTONafnAllt,
   EinstaklingurDTONafnItar,
   NationalRegistryV3ClientService,
 } from '@island.is/clients/national-registry-v3'
 import {
+  ActorProfileDto,
   UserProfileDto,
   V2UsersApi,
-  ActorProfileDto,
 } from '@island.is/clients/user-profile'
-import { DelegationsApi } from '@island.is/clients/auth/delegation-api'
 import { Body, EmailService, Message } from '@island.is/email-service'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -29,17 +28,17 @@ import { type ConfigType } from '@island.is/nest/config'
 import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
 import type { Locale } from '@island.is/shared/types'
 
-import { UserNotificationsConfig } from '../../../../config'
-import { MessageProcessorService } from '../messageProcessor.service'
-import { NotificationDispatchService } from '../notificationDispatch.service'
-import { CreateHnippNotificationDto } from '../dto/createHnippNotification.dto'
-import { NotificationsService } from '../notifications.service'
-import { HnippTemplate } from '../dto/hnippTemplate.response'
-import { Notification } from '../notification.model'
 import {
   CompanyExtendedInfo,
   CompanyRegistryClientService,
 } from '@island.is/clients/rsk/company-registry'
+import { UserNotificationsConfig } from '../../../../config'
+import { CreateHnippNotificationDto } from '../dto/createHnippNotification.dto'
+import { HnippTemplate } from '../dto/hnippTemplate.response'
+import { MessageProcessorService } from '../messageProcessor.service'
+import { Notification } from '../notification.model'
+import { NotificationDispatchService } from '../notificationDispatch.service'
+import { NotificationsService } from '../notifications.service'
 
 type HandleNotification = {
   profile: {
@@ -475,8 +474,8 @@ export class NotificationsWorkerService {
 
     return shouldUseThirdPartyLogin
       ? `${
-          this.config.servicePortalClickActionUrl
-        }/login?login_hint=${subjectId}&target_link_uri=${encodeURI(
+          this.config.servicePortalBffLoginUrl
+        }?login_hint=${subjectId}&target_link_uri=${encodeURI(
           formattedTemplate.clickActionUrl,
         )}`
       : formattedTemplate.clickActionUrl

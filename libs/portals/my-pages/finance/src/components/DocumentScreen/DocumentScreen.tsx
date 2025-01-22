@@ -10,8 +10,9 @@ import {
   Box,
   Button,
   DatePicker,
+  Filter,
   FilterInput,
-  Hidden,
+  Inline,
   Pagination,
   SkeletonLoader,
   Stack,
@@ -21,24 +22,22 @@ import {
 import { useLocale } from '@island.is/localization'
 import {
   amountFormat,
-  ErrorScreen,
+  FJARSYSLAN_SLUG,
   FootNote,
   formSubmit,
   m,
-  Filter,
   tableStyles,
-  FJARSYSLAN_SLUG,
 } from '@island.is/portals/my-pages/core'
 import { dateFormat } from '@island.is/shared/constants'
 
-import { billsFilter } from '../../utils/simpleFilter'
-import { DocumentsListItemTypes } from './DocumentScreen.types'
-import DropdownExport from '../DropdownExport/DropdownExport'
-import { exportGeneralDocuments } from '../../utils/filesGeneral'
-import * as styles from '../../screens/Finance.css'
-import { useGetFinanceDocumentsListLazyQuery } from './DocumentScreen.generated'
 import { Problem } from '@island.is/react-spa/shared'
+import * as styles from '../../screens/Finance.css'
+import { exportGeneralDocuments } from '../../utils/filesGeneral'
+import { billsFilter } from '../../utils/simpleFilter'
+import DropdownExport from '../DropdownExport/DropdownExport'
 import FinanceIntro from '../FinanceIntro'
+import { useGetFinanceDocumentsListLazyQuery } from './DocumentScreen.generated'
+import { DocumentsListItemTypes } from './DocumentScreen.types'
 
 const ITEMS_ON_PAGE = 20
 
@@ -111,14 +110,15 @@ const DocumentScreen = ({
       {error && !loading && <Problem error={error} noBorder={false} />}
       {!error && (
         <Stack space={2}>
-          <Hidden print={true}>
-            <Box
-              display="flex"
-              justifyContent="flexStart"
-              flexWrap="wrap"
-              rowGap={2}
-              columnGap={2}
-            >
+          <Box
+            display="flex"
+            flexDirection="row"
+            justifyContent="flexStart"
+            flexWrap="wrap"
+            rowGap={2}
+            columnGap={2}
+          >
+            <Inline space={2}>
               <Filter
                 resultCount={0}
                 variant="popover"
@@ -138,34 +138,9 @@ const DocumentScreen = ({
                     backgroundColor="blue"
                   />
                 }
-                additionalFilters={
-                  <>
-                    <Button
-                      colorScheme="default"
-                      icon="print"
-                      iconType="filled"
-                      onClick={() => window.print()}
-                      preTextIconType="filled"
-                      size="default"
-                      type="button"
-                      variant="utility"
-                    >
-                      {formatMessage(m.print)}
-                    </Button>
-                    <DropdownExport
-                      onGetCSV={() =>
-                        exportGeneralDocuments(billsDataArray, title, 'csv')
-                      }
-                      onGetExcel={() =>
-                        exportGeneralDocuments(billsDataArray, title, 'xlsx')
-                      }
-                    />
-                  </>
-                }
                 onFilterClear={clearAllFilters}
               >
                 <Box className={styles.dateFilterSingle} paddingX={3}>
-                  <Box width="full" />
                   <Box marginTop={1}>
                     <Accordion
                       dividerOnBottom={false}
@@ -215,8 +190,31 @@ const DocumentScreen = ({
                   </Box>
                 </Box>
               </Filter>
-            </Box>
-          </Hidden>
+              <Box>
+                <Button
+                  colorScheme="default"
+                  icon="print"
+                  iconType="filled"
+                  onClick={() => window.print()}
+                  preTextIconType="filled"
+                  size="default"
+                  type="button"
+                  variant="utility"
+                >
+                  {formatMessage(m.print)}
+                </Button>
+              </Box>
+
+              <DropdownExport
+                onGetCSV={() =>
+                  exportGeneralDocuments(billsDataArray, title, 'csv')
+                }
+                onGetExcel={() =>
+                  exportGeneralDocuments(billsDataArray, title, 'xlsx')
+                }
+              />
+            </Inline>
+          </Box>
           <Box marginTop={2}>
             {!called && !loading && (
               <AlertBanner

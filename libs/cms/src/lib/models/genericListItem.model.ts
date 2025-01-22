@@ -4,6 +4,7 @@ import { SliceUnion, mapDocument } from '../unions/slice.union'
 import { GenericList, mapGenericList } from './genericList.model'
 import { IGenericListItem } from '../generated/contentfulTypes'
 import { GenericTag, mapGenericTag } from './genericTag.model'
+import { Image, mapImage } from './image.model'
 
 @ObjectType()
 export class GenericListItem {
@@ -36,6 +37,12 @@ export class GenericListItem {
 
   @CacheField(() => [GenericTag], { nullable: true })
   filterTags?: GenericTag[]
+
+  @CacheField(() => Image, { nullable: true })
+  image?: Image | null
+
+  @Field(() => Boolean, { nullable: true })
+  fullWidthImageInContent?: boolean
 }
 
 export const mapGenericListItem = ({
@@ -67,5 +74,7 @@ export const mapGenericListItem = ({
     assetUrl,
     externalUrl: fields.externalLink?.fields?.url ?? '',
     filterTags: fields.filterTags ? fields.filterTags.map(mapGenericTag) : [],
+    image: fields.image ? mapImage(fields.image) : null,
+    fullWidthImageInContent: fields.fullWidthImageInContent ?? true,
   }
 }

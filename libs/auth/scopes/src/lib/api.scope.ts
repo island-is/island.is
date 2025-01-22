@@ -28,8 +28,10 @@ export enum ApiScope {
   healthVaccinations = '@island.is/health/vaccinations',
   workMachines = '@island.is/work-machines',
   vinnueftirlitid = '@island.is/applications/ver',
+  vinnueftirlitidAccident = '@island.is/applications/ver:accidents',
   samgongustofaVehicles = '@island.is/applications/samgongustofa-vehicles',
   carRecycling = '@island.is/applications/urvinnslusjodur',
   energyFunds = '@island.is/applications/orkusjodur',
   signatureCollection = '@island.is/signature-collection',
+  menntamalastofnun = '@island.is/applications/mms',
 }

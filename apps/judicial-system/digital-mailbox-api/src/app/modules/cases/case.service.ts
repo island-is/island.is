@@ -173,7 +173,6 @@ export class CaseService {
             'Content-Type': 'application/json',
             authorization: `Bearer ${this.config.secretToken}`,
           },
-          body: JSON.stringify({ nationalId }),
         },
       )
 

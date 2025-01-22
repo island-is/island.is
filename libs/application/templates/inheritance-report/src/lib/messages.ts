@@ -708,11 +708,21 @@ export const m = defineMessages({
   },
   stocksFaceValue: {
     id: 'ir.application:stocksFaceValue',
+    defaultMessage: 'Nafnverð á dánardegi',
+    description: '',
+  },
+  stocksFaceValuePrePaid: {
+    id: 'ir.application:stocksFaceValuePrePaid',
     defaultMessage: 'Nafnverð',
     description: '',
   },
   stocksRateOfChange: {
     id: 'ir.application:stocksRateOfChange',
+    defaultMessage: 'Gengi á dánardegi',
+    description: '',
+  },
+  stocksRateOfChangePrePaid: {
+    id: 'ir.application:stocksRateOfChangePrePaid',
     defaultMessage: 'Gengi',
     description: '',
   },
@@ -857,6 +867,12 @@ export const m = defineMessages({
   assetsOverviewConfirmation: {
     id: 'ir.application:assetsOverviewConfirmation',
     defaultMessage:
+      'Ég staðfesti að hafa fært inn upplýsingar um eignir á dánardegi eftir minni bestu vitund.',
+    description: '',
+  },
+  assetsOverviewConfirmationPrePaid: {
+    id: 'ir.application:assetsOverviewConfirmationPrePaid',
+    defaultMessage:
       'Ég staðfesti að hafa fært inn upplýsingar um eignir eftir minni bestu vitund.',
     description: '',
   },
@@ -993,6 +1009,11 @@ export const m = defineMessages({
   funeralTombstoneCost: {
     id: 'ir.application:funeralTombstoneCost',
     defaultMessage: 'Legsteinn (áætlaður kostnaður)',
+    description: '',
+  },
+  funeralServiceCost: {
+    id: 'ir.application:funeralServiceCost',
+    defaultMessage: 'Útfararþjónusta',
     description: '',
   },
   funeralOtherCostQuestion: {
@@ -1194,7 +1215,7 @@ export const m = defineMessages({
 
   // Assets to share
   assetsToShareDescription: {
-    id: 'ir.application:assetsToShareDescription',
+    id: 'ir.application:assetsToShareDescription#markdown',
     defaultMessage:
       'Frá dregst búshluti eftirlifandi maka samkvæmt reglum hjúskaparlaga nr. 31/1993.',
     description: '',
@@ -1249,6 +1270,11 @@ export const m = defineMessages({
   share: {
     id: 'ir.application:share',
     defaultMessage: 'Séreign',
+    description: '',
+  },
+  deceasedSharePercentage: {
+    id: 'ir.application:deceasedSharePercentage',
+    defaultMessage: 'Búshluti maka',
     description: '',
   },
   deceasedShare: {
@@ -1377,7 +1403,7 @@ export const m = defineMessages({
     description: '',
   },
   heirsAndPartitionDescription: {
-    id: 'ir.application:heirsAndPartitionDescription',
+    id: 'ir.application:heirsAndPartitionDescription#markdown',
     defaultMessage:
       'Skrá skal netfang erfingja vegna tilkynninga skattstjóra skv. 9. og 10. gr. laga nr. 14/2004.',
     description: '',
@@ -1655,6 +1681,12 @@ export const m = defineMessages({
   },
   heirAdditionalInfoDescription: {
     id: 'ir.application:heirAdditionalInfoDescription',
+    defaultMessage:
+      'Skýringar og athugasemdir erfingja og/eða þess sem skilar inn erfðafjárskýrslu.',
+    description: '',
+  },
+  heirAdditionalInfoPrePaidDescription: {
+    id: 'ir.application:heirAdditionalInfoPrePaidDescription',
     defaultMessage:
       'Skýringar og athugasemdir erfingja og/eða þess sem skilar inn erfðafjárskýrslu.',
     description: '',
