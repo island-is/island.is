@@ -1,7 +1,7 @@
-import { useEffect, useState, useCallback } from 'react'
-import throttle from 'lodash/throttle'
-import debounce from 'lodash/debounce'
+import { useCallback, useEffect, useState } from 'react'
 import { useEvent } from 'react-use'
+import debounce from 'lodash/debounce'
+import throttle from 'lodash/throttle'
 import { polyfill } from 'smoothscroll-polyfill'
 
 const guessVisibleSection = (
