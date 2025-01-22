@@ -50,11 +50,13 @@ interface AuthStore extends State {
   cognitoDismissCount: number
   cognitoAuthUrl?: string
   cookies: string
+  refreshPromise: null | Promise<void | null>
   fetchUserInfo(
     skipRefresh?: boolean,
     skipLogoutIfRefreshFailed?: boolean,
   ): Promise<UserInfo>
-  refresh(skipLogout?: boolean): Promise<void>
+  refresh(skipLogout?: boolean): Promise<void | null>
+  internalRefresh(skipLogout?: boolean): Promise<void | null>
   login(): Promise<boolean>
   logout(): Promise<boolean>
 }
@@ -117,6 +119,7 @@ export const authStore = create<AuthStore>((set, get) => ({
   cognitoDismissCount: 0,
   cognitoAuthUrl: undefined,
   cookies: '',
+  refreshPromise: null,
   async fetchUserInfo(skipRefresh = false, skipLogoutIfRefreshFailed = false) {
     const appAuthConfig = getAppAuthConfig()
     // Detect expired token
@@ -150,7 +153,8 @@ export const authStore = create<AuthStore>((set, get) => ({
       return userInfo
     }
   },
-  async refresh(skipLogout = false) {
+  async internalRefresh(skipLogout = false) {
+    console.log('called refresh')
     const intl = getIntl()
     const appAuthConfig = getAppAuthConfig()
     const refreshToken = get().authorizeResult?.refreshToken
@@ -188,6 +192,23 @@ export const authStore = create<AuthStore>((set, get) => ({
       { service: KEYCHAIN_AUTH_KEY },
     )
     set({ authorizeResult })
+  },
+  async refresh(skipLogout = false) {
+    const currentRefreshPromise = get().refreshPromise
+
+    if (currentRefreshPromise) {
+      console.log('Already refreshing')
+    } else {
+      console.log('Refreshing')
+    }
+    if (!currentRefreshPromise) {
+      const refreshPromise = get()
+        .internalRefresh(skipLogout)
+        .finally(() => set({ refreshPromise: null }))
+      set({ refreshPromise })
+    }
+
+    return get().refreshPromise
   },
   async login() {
     const appAuthConfig = getAppAuthConfig()
