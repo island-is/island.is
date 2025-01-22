@@ -1,5 +1,6 @@
-import React, { createContext, useState, useRef, useEffect } from 'react'
+import React, { createContext, useEffect, useRef, useState } from 'react'
 import rosetta from 'rosetta'
+
 import { defaultLanguage } from '@island.is/shared/constants'
 import { Locale } from '@island.is/shared/types'
 
