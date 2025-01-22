@@ -38,12 +38,13 @@
  * and outputs the final chunked list as a JSON string to stdout.
  */
 
-const chunkSize = parseInt(process.env['CHUNK_SIZE'] || '2')
-const disableChunks = process.env['DISABLE_CHUNKS'] === 'true'
-const disableGrouping = process.env['DISABLE_GROUPING'] === 'true'
-const disableProblematic = process.env['DISABLE_PROBLEMATIC'] === 'true'
+// @ts-check
+const chunkSize = parseInt(process.env.CHUNK_SIZE || '2')
+const disableChunks = process.env.DISABLE_CHUNKS === 'true'
+const disableGrouping = process.env.DISABLE_GROUPING === 'true'
+const disableProblematic = process.env.DISABLE_PROBLEMATIC === 'true'
 
-new console.Console(process.stderr).log(`Initial settings:`, {
+console.error(`Initial settings:`, {
   chunkSize,
   disableChunks,
   disableGrouping,
@@ -51,7 +52,7 @@ new console.Console(process.stderr).log(`Initial settings:`, {
 })
 
 const projects = process.argv[2].split(',').map((s) => s.trim()) ?? []
-new console.Console(process.stderr).log(`Input projects:`, projects)
+console.error(`Input projects:`, projects)
 
 const problematicProjects = [
   'judicial-system-backend',
@@ -59,18 +60,15 @@ const problematicProjects = [
   'services-auth-delegation-api',
   'services-auth-personal-representative',
 ]
-new console.Console(process.stderr).log(
-  `Problematic projects:`,
-  problematicProjects,
-)
+console.error(`Problematic projects:`, problematicProjects)
 
 function groupByPrefix(arr) {
   if (disableGrouping) {
-    new console.Console(process.stderr).log(`Grouping disabled, skipping ...`)
+    console.error(`Grouping disabled, skipping ...`)
     return [arr]
   }
 
-  new console.Console(process.stderr).log(`Grouping by prefix. Input:`, arr)
+  console.error(`Grouping by prefix. Input:`, arr)
   arr.sort()
   const parts = new Map()
 
@@ -80,34 +78,32 @@ function groupByPrefix(arr) {
       parts.set(key, [])
     } // Initialize with empty array
     parts.get(key).push(item) // Add item to array
-    new console.Console(process.stderr).log(
-      `Grouped "${item}" under prefix "${key}"`,
-    )
+    console.error(`Grouped "${item}" under prefix "${key}"`)
   }
 
   // Extract items grouped by prefix
   const values = Array.from(parts.values())
-  new console.Console(process.stderr).log(`Grouped by prefix:`, values)
+  console.error(`Grouped by prefix:`, values)
   return values
 }
 
 function chunk(groups, chunkSize) {
-  new console.Console(process.stderr).log(`Chunking groups. Input:`, groups)
+  console.error(`Chunking groups. Input:`, groups)
   if (disableChunks) {
-    new console.Console(process.stderr).log(`Chunks disabled, skipping ...`)
+    console.error(`Chunks disabled, skipping ...`)
     return groups
   }
 
-  new console.Console(process.stderr).log(`Chunking with size: ${chunkSize}`)
+  console.error(`Chunking with size: ${chunkSize}`)
   const chunks = []
   for (const group of groups) {
     for (let i = 0; i < group.length; i += chunkSize) {
       const chunk = group.slice(i, i + chunkSize)
       chunks.push(chunk)
-      new console.Console(process.stderr).log(`Created chunk:`, chunk)
+      console.error(`Created chunk:`, chunk)
     }
   }
-  new console.Console(process.stderr).log(`Chunked result:`, chunks)
+  console.error(`Chunked result:`, chunks)
   return chunks
 }
 
@@ -115,41 +111,32 @@ function chunk(groups, chunkSize) {
 const soloProjects = disableProblematic
   ? []
   : problematicProjects.filter((p) => projects.includes(p))
-new console.Console(process.stderr).log(`Solo projects:`, soloProjects)
+console.error(`Solo projects:`, soloProjects)
 
 const filteredProjects = disableProblematic
   ? projects
   : projects.filter((p) => !soloProjects.includes(p))
-new console.Console(process.stderr).log(`Filtered projects:`, filteredProjects)
+console.error(`Filtered projects:`, filteredProjects)
 
 const groups = groupByPrefix(filteredProjects)
-new console.Console(process.stderr).log(
-  `Groups after grouping by prefix:`,
-  groups,
-)
+console.error(`Groups after grouping by prefix:`, groups)
 
 const chunkedGroups = chunk(groups, chunkSize)
-new console.Console(process.stderr).log(`Chunked groups:`, chunkedGroups)
+console.error(`Chunked groups:`, chunkedGroups)
 
 const chunksJoined = chunkedGroups.map((chunk) => chunk.join(','))
-new console.Console(process.stderr).log(`Chunks joined:`, chunksJoined)
+console.error(`Chunks joined:`, chunksJoined)
 
 const chunksFiltered = chunksJoined.filter((job) => job.length > 0)
-new console.Console(process.stderr).log(
-  `Chunks filtered (removing empty chunks):`,
-  chunksFiltered,
-)
+console.error(`Chunks filtered (removing empty chunks):`, chunksFiltered)
 
 const chunksWithSolos = chunksFiltered.concat(soloProjects)
-new console.Console(process.stderr).log(
-  `Chunks with solo projects added:`,
-  chunksWithSolos,
-)
+console.error(`Chunks with solo projects added:`, chunksWithSolos)
 
 const chunks = chunksWithSolos.sort()
-new console.Console(process.stderr).log(`Final sorted chunks:`, chunks)
+console.error(`Final sorted chunks:`, chunks)
 
-new console.Console(process.stderr).log(`Chunk debug:`, {
+console.error(`Chunk debug:`, {
   projects,
   soloProjects,
   filteredProjects,
