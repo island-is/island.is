@@ -116,7 +116,7 @@
         "^codegen/backend-client",
         "^codegen/backend-schema"
       ],
-      "inputs": ["default", "^production"]
+      "inputs": ["default", "^production", "mock-certs"]
     },
     "codegen/frontend-client": {
       "dependsOn": ["codegen/backend-schema"],
@@ -179,6 +179,14 @@
       "!{projectRoot}/tsconfig.spec.json",
       "!{projectRoot}/jest.config.[jt]s",
       "!{projectRoot}/src/test-setup.[jt]s"
+    ],
+    "mock-certs": [
+      {
+        "runtime": "mkdir -p tmp/ && touch tmp/islyklar.empty"
+      },
+      {
+        "dependentTasksOutputFiles": "tmp/islyklar.empty"
+      }
     ],
     "graphql-files": [
       {
