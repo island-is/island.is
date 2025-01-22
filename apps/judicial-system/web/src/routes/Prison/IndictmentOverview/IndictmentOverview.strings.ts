@@ -31,7 +31,7 @@ export const strings = defineMessages({
     defaultMessage: 'Dómur',
     description: 'Titill á Dómur hluta',
   },
-  courtRecordTitle : {
+  courtRecordTitle: {
     id: 'judicial.system.core:indictment_overview.court_record_title',
     defaultMessage: 'Þingbók',
     description: 'Titill á Þingbók hluta',
