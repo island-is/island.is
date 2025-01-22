@@ -13,7 +13,10 @@ export const getSelectedMachine = (
   externalData: ExternalData,
   answers: FormValue,
 ) => {
-  if (answers.findVehicle) {
+  const findVehicle: boolean | undefined =
+    getValueViaPath(answers, 'findVehicle') ||
+    getValueViaPath(answers, 'machine.findVehicle')
+  if (findVehicle) {
     const machine = getValueViaPath(answers, 'machine') as Machine
     return machine
   }

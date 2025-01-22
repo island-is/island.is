@@ -241,6 +241,7 @@ export const FindVehicleFormField: FC<React.PropsWithChildren<Props>> = ({
     const permno = vehicleDisabled ? '' : vehicleDetails.permno || ''
 
     setValue('findVehicle', true)
+    setValue(`${field.id}.findVehicle`, true)
 
     setValue(`${field.id}.type`, vehicleDetails.make)
     setValue(`${field.id}.make`, vehicleDetails.make)
@@ -295,6 +296,7 @@ export const FindVehicleFormField: FC<React.PropsWithChildren<Props>> = ({
       }
     }
     setValue('findVehicle', true)
+    setValue(`${field.id}.findVehicle`, true)
 
     setValue(
       `${field.id}.paymentRequiredForOwnerChange`,
@@ -321,6 +323,7 @@ export const FindVehicleFormField: FC<React.PropsWithChildren<Props>> = ({
     vehicleDetailsWithGrant: EnergyFundVehicleDetailsWithGrant,
   ) => {
     setValue('findVehicle', true)
+    setValue(`${field.id}.findVehicle`, true)
 
     setValue(`${field.id}.type`, vehicleDetailsWithGrant.make)
     setValue(`${field.id}.plate`, plate)
