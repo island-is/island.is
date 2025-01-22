@@ -155,7 +155,7 @@ export const dataSchema = z.object({
       },
       {
         path: ['language1'],
-        message: 'Please select at least one language',
+        params: errorMessages.languagesRequired,
       },
     )
     .refine(
@@ -169,7 +169,7 @@ export const dataSchema = z.object({
       },
       {
         path: ['childLanguage'],
-        message: 'Please select childrens main language',
+        params: errorMessages.languagesRequired,
       },
     )
     .refine(
