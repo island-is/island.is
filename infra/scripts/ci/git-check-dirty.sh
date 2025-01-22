@@ -84,7 +84,9 @@ if [[ $(git diff --stat "$abs_path") != '' ]]; then
     echo "Error: Unknown owner!"
     exit 1
   fi
-  git commit -am "chore: $action update dirty files"
+  git commit -am "chore: update dirty files
+
+  $action"
   git push
 else
   echo "found no unstaged files from $action, nothing to commit"
