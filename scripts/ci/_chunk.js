@@ -64,7 +64,7 @@ new console.Console(process.stderr).log(
   problematicProjects,
 )
 
-function groupbByPrefix(arr) {
+function groupByPrefix(arr) {
   if (disableGrouping) {
     new console.Console(process.stderr).log(`Grouping disabled, skipping ...`)
     return [arr]
@@ -122,7 +122,7 @@ const filteredProjects = disableProblematic
   : projects.filter((p) => !soloProjects.includes(p))
 new console.Console(process.stderr).log(`Filtered projects:`, filteredProjects)
 
-const groups = groupbByPrefix(filteredProjects)
+const groups = groupByPrefix(filteredProjects)
 new console.Console(process.stderr).log(
   `Groups after grouping by prefix:`,
   groups,
