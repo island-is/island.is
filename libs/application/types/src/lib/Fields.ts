@@ -374,6 +374,7 @@ export interface SelectField extends InputField {
   placeholder?: FormText
   backgroundColor?: InputBackgroundColor
   isMulti?: boolean
+  isClearable?: boolean
 }
 
 export interface CompanySearchField extends InputField {
