@@ -212,24 +212,23 @@ const GrantCardsList = ({ slice }: SliceProps) => {
     })
     .filter(isDefined)
 
-  if (slice.sorting)
-    return (
-      <>
-        {slice.displayTitle && (
-          <Box marginBottom={2}>
-            <Text variant="h3" as="span" color="dark400">
-              {slice.title}
-            </Text>
-          </Box>
-        )}
-        <InfoCardGrid
-          columns={1}
-          cardsBorder="blue200"
-          variant="detailed"
-          cards={cards ?? []}
-        />
-      </>
-    )
+  return (
+    <>
+      {slice.displayTitle && (
+        <Box marginBottom={2}>
+          <Text variant="h3" as="span" color="dark400">
+            {slice.title}
+          </Text>
+        </Box>
+      )}
+      <InfoCardGrid
+        columns={1}
+        cardsBorder="blue200"
+        variant="detailed"
+        cards={cards ?? []}
+      />
+    </>
+  )
 }
 
 export default GrantCardsList

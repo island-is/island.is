@@ -866,7 +866,7 @@ export class GrantCardsListResolver {
   async resolvedGrantsList(
     @Parent() grantList: GrantCardsList,
   ): Promise<GrantList> {
-    const { resolvedGrantsList: input, maxNumberOfCards, sorting } = grantList
+    const { resolvedGrantsList: input, maxNumberOfCards } = grantList
     if (!input || input?.size === 0 || maxNumberOfCards === 0) {
       return { total: 0, items: [] }
     }
