@@ -79,7 +79,7 @@ const CaseDocuments: FC<Props> = ({
 
   const { user } = useContext(UserContext)
 
-  const hasRuling =
+  const isRulingRequired =
     workingCase.decision !== CaseDecision.COMPLETED_WITHOUT_RULING
 
   return (
@@ -142,9 +142,9 @@ const CaseDocuments: FC<Props> = ({
             caseId={workingCase.id}
             title={formatMessage(core.pdfButtonRuling)}
             pdfType={'ruling'}
-            disabled={!hasRuling}
+            disabled={!isRulingRequired}
           >
-            {hasRuling && (
+            {isRulingRequired && (
               <Box display="flex" flexDirection="row">
                 {workingCase.rulingSignatureDate ? (
                   <SignedDocument
