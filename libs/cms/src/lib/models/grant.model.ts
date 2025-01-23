@@ -117,7 +117,7 @@ const parseStatus = (fields: IGrantFields): GrantStatus => {
         return status
       }
       if (today < parsedDateTo) {
-        GrantStatus.OPEN
+        return GrantStatus.OPEN
       }
       return GrantStatus.CLOSED
     }
