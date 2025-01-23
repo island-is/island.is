@@ -3,6 +3,7 @@ import * as kennitala from 'kennitala'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { z } from 'zod'
 import {
+  ApplicationType,
   ReasonForApplicationOptions,
   LanguageEnvironmentOptions,
 } from './constants'
@@ -21,6 +22,10 @@ const phoneNumberSchema = z
   })
 
 export const dataSchema = z.object({
+  applicationType: z.enum([
+    ApplicationType.NEW_PRIMARY_SCHOOL,
+    ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL,
+  ]),
   approveExternalData: z.boolean().refine((v) => v),
   childNationalId: z.string().min(1),
   childInfo: z
@@ -78,11 +83,6 @@ export const dataSchema = z.object({
   reasonForApplication: z
     .object({
       reason: z.string(),
-      movingAbroad: z
-        .object({
-          country: z.string().optional(),
-        })
-        .optional(),
       transferOfLegalDomicile: z
         .object({
           streetAddress: z.string(),
@@ -90,15 +90,6 @@ export const dataSchema = z.object({
         })
         .optional(),
     })
-    .refine(
-      ({ reason, movingAbroad }) =>
-        reason === ReasonForApplicationOptions.MOVING_ABROAD
-          ? movingAbroad && !!movingAbroad.country
-          : true,
-      {
-        path: ['movingAbroad', 'country'],
-      },
-    )
     .refine(
       ({ reason, transferOfLegalDomicile }) =>
         reason === ReasonForApplicationOptions.MOVING_MUNICIPALITY

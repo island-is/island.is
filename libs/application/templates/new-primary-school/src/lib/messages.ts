@@ -11,6 +11,11 @@ export const newPrimarySchoolMessages: MessageDir = {
       defaultMessage: 'Umsókn í nýjan grunnskóla',
       description: 'Application for a new primary school',
     },
+    enrollmentApplicationName: {
+      id: 'nps.application:enrollment.application.name',
+      defaultMessage: 'Innritun í grunnskóla',
+      description: 'Enrollment in primary school',
+    },
     institution: {
       id: 'nps.application:institution.name',
       defaultMessage: 'Sveitarfélög',
@@ -134,6 +139,20 @@ export const newPrimarySchoolMessages: MessageDir = {
       defaultMessage: 'Forsendur',
       description: 'Prerequisites',
     },
+
+    // Application type
+    applicationTypeSubSectionTitle: {
+      id: 'nps.application:application.type.sub.section.title',
+      defaultMessage: 'Tegund umsóknar',
+      description: 'Application type',
+    },
+    applicationTypeSubSectionDescription: {
+      id: 'nps.application:application.type.sub.section.description',
+      defaultMessage: 'Vinsamlegast veldu tegund umsóknar',
+      description: 'Please select application type',
+    },
+
+    // Data collection
     externalDataSubSection: {
       id: 'nps.application:external.data.sub.section',
       defaultMessage: 'Gagnaöflun',
@@ -372,16 +391,6 @@ export const newPrimarySchoolMessages: MessageDir = {
       description:
         'We remind you to register your new domicile in Registers Iceland.',
     },
-    country: {
-      id: 'nps.application:primary.school.country',
-      defaultMessage: 'Til hvaða lands er verið að flytja?',
-      description: 'What country are you moving to?',
-    },
-    countryPlaceholder: {
-      id: 'nps.application:primary.school.country.placeholder',
-      defaultMessage: 'Veldu land',
-      description: 'Select a country',
-    },
 
     // Siblings
     siblingsSubSectionTitle: {
@@ -421,8 +430,8 @@ export const newPrimarySchoolMessages: MessageDir = {
       defaultMessage: 'Upplýsingar um núverandi skóla',
       description: 'Information about current school',
     },
-    currentSchoolInfo: {
-      id: 'nps.application:primary.school.current.school.info',
+    currentSchool: {
+      id: 'nps.application:primary.school.current.school',
       defaultMessage: 'Núverandi skóli',
       description: 'Current school',
     },

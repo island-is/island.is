@@ -32,6 +32,7 @@ import {
 import { dataSchema } from './dataSchema'
 import { newPrimarySchoolMessages, statesMessages } from './messages'
 import {
+  determineNameFromApplicationAnswers,
   getApplicationAnswers,
   hasForeignLanguages,
 } from './newPrimarySchoolUtils'
@@ -42,7 +43,7 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
   Events
 > = {
   type: ApplicationTypes.NEW_PRIMARY_SCHOOL,
-  name: newPrimarySchoolMessages.shared.applicationName,
+  name: determineNameFromApplicationAnswers,
   institution: newPrimarySchoolMessages.shared.institution,
   translationNamespaces: ApplicationConfigurations.NewPrimarySchool.translation,
   dataSchema,
@@ -174,19 +175,6 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
         const { reasonForApplication } = getApplicationAnswers(
           application.answers,
         )
-
-        // Clear answers if "Moving abroad" is selected as reason for application
-        if (
-          reasonForApplication === ReasonForApplicationOptions.MOVING_ABROAD
-        ) {
-          unset(application.answers, 'support')
-          unset(application.answers, 'siblings')
-          unset(application.answers, 'languages')
-          unset(application.answers, 'startDate')
-        } else {
-          // Clear movingAbroad if "Moving abroad" is not selected as reason for application
-          unset(application.answers, 'reasonForApplication.movingAbroad')
-        }
 
         // Clear transferOfLegalDomicile if "Moving legal domicile" is not selected as reason for application
         if (
