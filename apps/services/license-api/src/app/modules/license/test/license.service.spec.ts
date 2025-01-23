@@ -283,6 +283,8 @@ describe('LicenseService', () => {
             return new BarcodeService(
               {
                 barcodeSecretKey: 'secret',
+                barcodeExpireTimeInSec: 60,
+                barcodeSessionExpireTimeInSec: 3600,
               } as ConfigType<typeof LicenseConfig>,
               cacheStore as unknown as Cache,
             )
