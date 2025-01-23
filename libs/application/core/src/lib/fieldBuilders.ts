@@ -657,8 +657,7 @@ export const buildLinkField = (
 export const buildPaymentChargeOverviewField = (
   data: Omit<PaymentChargeOverviewField, 'type' | 'component' | 'children'>,
 ): PaymentChargeOverviewField => {
-  const { id, forPaymentLabel, totalLabel, getSelectedChargeItems } =
-    data
+  const { id, forPaymentLabel, totalLabel, getSelectedChargeItems } = data
   return {
     ...extractCommonFields(data),
     children: undefined,
