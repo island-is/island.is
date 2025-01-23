@@ -24,7 +24,7 @@ env:
 
 jobs:
   prepare:
-    runs-on: arc
+    runs-on: arc-runners
     timeout-minutes: 35
 
     env:
