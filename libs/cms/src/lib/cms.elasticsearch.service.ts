@@ -39,12 +39,18 @@ import {
   getElasticsearchIndex,
 } from '@island.is/content-search-index-manager'
 import { CustomPage } from './models/customPage.model'
-import { GetGenericListItemsInput } from './dto/getGenericListItems.input'
+import {
+  GetGenericListItemsInput,
+  GetGenericListItemsInputOrderBy,
+} from './dto/getGenericListItems.input'
 import { GenericListItemResponse } from './models/genericListItemResponse.model'
 import { GetCustomSubpageInput } from './dto/getCustomSubpage.input'
 import { GetGenericListItemBySlugInput } from './dto/getGenericListItemBySlug.input'
 import { GenericListItem } from './models/genericListItem.model'
-import { GetTeamMembersInput } from './dto/getTeamMembers.input'
+import {
+  GetTeamMembersInput,
+  GetTeamMembersInputOrderBy,
+} from './dto/getTeamMembers.input'
 import { TeamMemberResponse } from './models/teamMemberResponse.model'
 import { GetGrantsInput } from './dto/getGrants.input'
 import { Grant } from './models/grant.model'
@@ -470,6 +476,7 @@ export class CmsElasticsearchService {
     tags?: string[]
     tagGroups?: Record<string, string[]>
     type: ListItemType
+    orderBy?: GetGenericListItemsInputOrderBy | GetTeamMembersInputOrderBy
   }): Promise<
     ListItemType extends 'webGenericListItem'
       ? Omit<GenericListItemResponse, 'input'>
@@ -525,15 +532,46 @@ export class CmsElasticsearchService {
 
     const size = input.size ?? 10
 
-    const sort: sortRule[] = [
-      {
-        [SortField.RELEASE_DATE]: {
-          order: SortDirection.DESC,
+    let sort: sortRule[] = []
+
+    if (
+      !input.orderBy ||
+      input.orderBy === GetGenericListItemsInputOrderBy.DATE
+    ) {
+      sort = [
+        {
+          [SortField.RELEASE_DATE]: {
+            order: SortDirection.DESC,
+          },
         },
-      },
-      // Sort items with equal values by ascending title order
-      { 'title.sort': { order: SortDirection.ASC } },
-    ]
+        { 'title.sort': { order: SortDirection.ASC } },
+        { dateCreated: { order: SortDirection.DESC } },
+      ]
+    }
+
+    if (input.orderBy === GetGenericListItemsInputOrderBy.TITLE) {
+      sort = [
+        { 'title.sort': { order: SortDirection.ASC } },
+        {
+          [SortField.RELEASE_DATE]: {
+            order: SortDirection.DESC,
+          },
+        },
+        { dateCreated: { order: SortDirection.DESC } },
+      ]
+    }
+
+    if (input.orderBy === GetGenericListItemsInputOrderBy.PUBLISH_DATE) {
+      sort = [
+        { dateCreated: { order: SortDirection.DESC } },
+        { 'title.sort': { order: SortDirection.ASC } },
+        {
+          [SortField.RELEASE_DATE]: {
+            order: SortDirection.DESC,
+          },
+        },
+      ]
+    }
 
     if (input.tags && input.tags.length > 0 && input.tagGroups) {
       must = must.concat(
@@ -568,6 +606,10 @@ export class CmsElasticsearchService {
       ...input,
       type: 'webTeamMember',
       listId: input.teamListId,
+      orderBy:
+        input.orderBy === GetTeamMembersInputOrderBy.Manual
+          ? GetGenericListItemsInputOrderBy.DATE
+          : GetGenericListItemsInputOrderBy.TITLE,
     })
 
     return {
@@ -616,6 +658,7 @@ export class CmsElasticsearchService {
       categories,
       types,
       organizations,
+      funds,
     }: GetGrantsInput,
   ): Promise<GrantList> {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -703,6 +746,30 @@ export class CmsElasticsearchService {
                 {
                   terms: {
                     'tags.key': organizations,
+                  },
+                },
+                {
+                  term: {
+                    'tags.type': 'organization',
+                  },
+                },
+              ],
+            },
+          },
+        },
+      })
+    }
+
+    if (funds) {
+      must.push({
+        nested: {
+          path: 'tags',
+          query: {
+            bool: {
+              must: [
+                {
+                  terms: {
+                    'tags.key': funds,
                   },
                 },
                 {

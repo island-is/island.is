@@ -1,7 +1,6 @@
 import {
   AlertMessage,
   Box,
-  Divider,
   SkeletonLoader,
   Stack,
 } from '@island.is/island-ui/core'
@@ -9,9 +8,10 @@ import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   CardLoader,
   EmptyState,
+  InfoLine,
+  InfoLineStack,
   IntroWrapper,
   SJUKRATRYGGINGAR_SLUG,
-  UserInfoLine,
 } from '@island.is/portals/my-pages/core'
 import { Problem } from '@island.is/react-spa/shared'
 import subYears from 'date-fns/subYears'
@@ -93,42 +93,40 @@ const HealthCenter = () => {
 
       {healthCenterData?.current && (
         <Box width="full" marginTop={[1, 1, 4]}>
-          <Stack space={2}>
-            <UserInfoLine
-              title={formatMessage(messages.myRegistration)}
+          <InfoLineStack
+            space={2}
+            label={formatMessage(messages.myRegistration)}
+          >
+            <InfoLine
               label={formatMessage(messages.healthCenterTitle)}
               content={
                 healthCenterData.current.healthCenterName ??
                 formatMessage(messages.healthCenterNoHealthCenterRegistered)
               }
-              editLink={
+              button={
                 canRegister
                   ? {
-                      url: HealthPaths.HealthCenterRegistration,
-                      title: hm.changeRegistration,
+                      type: 'link',
+                      to: HealthPaths.HealthCenterRegistration,
+                      label: hm.changeRegistration,
                     }
                   : undefined
               }
             />
-            <Divider />
-            <UserInfoLine
+            <InfoLine
               label={formatMessage(messages.personalDoctor)}
               content={
                 healthCenterData.current.doctor ??
                 formatMessage(messages.healthCenterNoDoctor)
               }
             />
-            <Divider />
             {neighborhoodCenter && (
-              <>
-                <UserInfoLine
-                  label={formatMessage(messages.neighborhoodHealthCenter)}
-                  content={neighborhoodCenter}
-                />
-                <Divider />
-              </>
+              <InfoLine
+                label={formatMessage(messages.neighborhoodHealthCenter)}
+                content={neighborhoodCenter}
+              />
             )}
-          </Stack>
+          </InfoLineStack>
         </Box>
       )}
 

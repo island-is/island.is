@@ -1,28 +1,30 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React from 'react'
+import NextLink from 'next/link'
+
 import {
-  GridContainer,
   Box,
-  GridRow,
-  GridColumn,
   Breadcrumbs,
-  Text,
-  Link,
   Button,
-  Inline,
+  GridColumn,
+  GridContainer,
+  GridRow,
   Icon,
+  Inline,
+  Link,
+  Text,
 } from '@island.is/island-ui/core'
+import { ChartsCard, StatisticsCard } from '@island.is/web/components'
 import {
+  ContentLanguage,
   GetOpenDataSubpageQuery,
   QueryGetOpenDataSubpageArgs,
-  ContentLanguage,
 } from '@island.is/web/graphql/schema'
-import { GET_OPEN_DATA_SUBPAGE_QUERY } from '../queries'
-import NextLink from 'next/link'
-import { Screen } from '@island.is/web/types'
-import { StatisticsCard, ChartsCard } from '@island.is/web/components'
 import { withMainLayout } from '@island.is/web/layouts/main'
+import { Screen } from '@island.is/web/types'
+
 import { useLinkResolver } from '../../hooks/useLinkResolver'
+import { GET_OPEN_DATA_SUBPAGE_QUERY } from '../queries'
 
 interface OpenDataSubpageProps {
   page: GetOpenDataSubpageQuery['getOpenDataSubpage']

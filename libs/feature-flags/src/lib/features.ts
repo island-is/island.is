@@ -31,28 +31,22 @@ export enum Features {
   FinancialStatementPoliticalPartyEnabled = 'isFinancialStatementPoliticalPartyEnabled',
   IncomePlanEnabled = 'isIncomePlanEnabled',
   WorkAccidentNotificationEnabled = 'isWorkAccidentNotificationEnabled',
+  SecondarySchoolEnabled = 'isSecondarySchoolEnabled',
 
   // Application System Delegations active
   applicationSystemDelegations = 'applicationSystemDelegations',
 
   // Service portal modules
-  servicePortalPetitionsModule = 'isServicePortalPetitionsModuleEnabled',
   servicePortalConsentModule = 'isServicePortalConsentModuleEnabled',
-  servicePortalSecondaryEducationPages = 'isServicePortalSecondaryEducationPageEnabled',
-  servicePortalWorkMachinesModule = 'isServicePortalWorkMachinesPageEnabled',
-  servicePortalSignatureCollection = 'isServicePortalSignatureCollectionEnabled',
-  servicePortalVehicleMileagePageEnabled = 'isServicePortalVehicleMileagePageEnabled',
-  servicePortalVehicleBulkMileagePageEnabled = 'isServicePortalVehicleBulkMileagePageEnabled',
   servicePortalSocialInsurancePageEnabled = 'isServicePortalSocialInsurancePageEnabled',
   servicePortalSocialInsuranceIncomePlanPageEnabled = 'isServicePortalSocialInsuranceIncomePlanPageEnabled',
   servicePortalHealthVaccinationsPageEnabled = 'isServicePortalHealthVaccinationsPageEnabled',
   servicePortalHealthOrganDonationPageEnabled = 'isServicePortalHealthOrganDonationPageEnabled',
-  ServicePortalNotificationsEnabled = 'isServicePortalNotificationsPageEnabled',
-  servicePortalLawAndOrderModuleEnabled = 'isServicePortalLawAndOrderModuleEnabled',
   servicePortalDocumentsActionsEnabled = 'isServicePortalDocumentsActionsEnabled',
   isServicePortalDocumentsV3PageEnabled = 'isServicePortalDocumentsV3PageEnabled',
   //Occupational License Health directorate fetch enabled
   occupationalLicensesHealthDirectorate = 'isHealthDirectorateOccupationalLicenseEnabled',
+  healthPaymentOverview = 'isHealthPaymentsDocumentOverviewEnabled',
 
   //Occupational License Health directorate fetch enabled
   occupationalLicensesV2 = 'isOccupationalLicensesV2Enabled',

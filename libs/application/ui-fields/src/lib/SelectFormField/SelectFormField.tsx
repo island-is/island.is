@@ -39,6 +39,8 @@ export const SelectFormField: FC<React.PropsWithChildren<Props>> = ({
     isMulti,
     marginTop,
     marginBottom,
+    clearOnChange,
+    isClearable,
   } = field
   const { formatMessage, lang: locale } = useLocale()
 
@@ -96,6 +98,8 @@ export const SelectFormField: FC<React.PropsWithChildren<Props>> = ({
           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
           // @ts-ignore make web strict
           onSelect={onSelect}
+          clearOnChange={clearOnChange}
+          isClearable={isClearable}
         />
       </Box>
     </Box>

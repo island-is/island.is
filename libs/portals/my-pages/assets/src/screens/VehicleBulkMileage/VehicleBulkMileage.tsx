@@ -187,6 +187,9 @@ const VehicleBulkMileage = () => {
                     backgroundColor="blue"
                     value={search ?? ''}
                     onChange={(search) => {
+                      if (page !== 1) {
+                        setPage(1)
+                      }
                       setSearch(search)
                     }}
                     name={formatMessage(m.searchLabel)}

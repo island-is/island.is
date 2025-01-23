@@ -30,7 +30,7 @@ judicial-system-api:
     BACKEND_URL: 'http://web-judicial-system-backend'
     CONTENTFUL_ENVIRONMENT: 'master'
     CONTENTFUL_HOST: 'cdn.contentful.com'
-    HIDDEN_FEATURES: 'MULTIPLE_INDICTMENT_SUBTYPES'
+    HIDDEN_FEATURES: ''
     IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
     LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=460 -r dd-trace/init'
@@ -71,6 +71,7 @@ judicial-system-api:
             - '/api/auth'
             - '/api/case'
             - '/api/feature'
+            - '/api/defender'
   namespace: 'judicial-system'
   podDisruptionBudget:
     maxUnavailable: 1
@@ -229,6 +230,7 @@ judicial-system-backend:
     PRISON_ADMIN_EMAIL: '/k8s/judicial-system/PRISON_ADMIN_EMAIL'
     PRISON_ADMIN_INDICTMENT_EMAILS: '/k8s/judicial-system/PRISON_ADMIN_INDICTMENT_EMAILS'
     PRISON_EMAIL: '/k8s/judicial-system/PRISON_EMAIL'
+    PUBLIC_PROSECUTOR_CRIMINAL_RECORDS_EMAIL: '/k8s/judicial-system/PUBLIC_PROSECUTOR_CRIMINAL_RECORDS_EMAIL'
     XROAD_CLIENT_CERT: '/k8s/judicial-system/XROAD_CLIENT_CERT'
     XROAD_CLIENT_KEY: '/k8s/judicial-system/XROAD_CLIENT_KEY'
     XROAD_CLIENT_PEM: '/k8s/judicial-system/XROAD_CLIENT_PEM'

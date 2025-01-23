@@ -15,6 +15,7 @@ const InfoCardClosedIndictment: FC<Props> = (props) => {
   const { workingCase } = useContext(FormContext)
 
   const {
+    showItem,
     defendants,
     policeCaseNumbers,
     courtCaseNumber,
@@ -23,7 +24,7 @@ const InfoCardClosedIndictment: FC<Props> = (props) => {
     court,
     prosecutor,
     judge,
-    offence,
+    offense,
     indictmentReviewer,
     indictmentReviewDecision,
     indictmentReviewedDate,
@@ -63,11 +64,11 @@ const InfoCardClosedIndictment: FC<Props> = (props) => {
             policeCaseNumbers,
             courtCaseNumber,
             prosecutorsOffice,
-            ...(workingCase.mergeCase ? [mergeCase] : []),
+            ...(showItem(mergeCase) ? [mergeCase] : []),
             court,
             prosecutor(workingCase.type),
             judge,
-            offence,
+            offense,
           ],
           columns: 2,
         },
@@ -80,7 +81,7 @@ const InfoCardClosedIndictment: FC<Props> = (props) => {
                   ...(workingCase.indictmentReviewDecision
                     ? [indictmentReviewDecision]
                     : []),
-                  ...(indictmentReviewedDate
+                  ...(reviewedDate
                     ? [indictmentReviewedDate(reviewedDate)]
                     : []),
                 ],
