@@ -128,8 +128,12 @@ export const GrantsSearchResultsFilter = ({
                 selected: searchState?.['organization'] ?? [],
                 filters: [
                   {
-                    value: 'rannsoknamidstoed-islands-rannis',
+                    value: 'rannis',
                     label: 'Rannís',
+                  },
+                  {
+                    value: 'orkustofnun',
+                    label: 'Orkustofnun',
                   },
                 ],
               },
