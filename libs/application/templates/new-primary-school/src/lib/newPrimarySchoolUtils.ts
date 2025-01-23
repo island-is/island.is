@@ -18,16 +18,13 @@ import {
   SiblingsRow,
 } from '../types'
 import { ReasonForApplicationOptions } from './constants'
+import { newPrimarySchoolMessages } from './messages'
+import { MessageDescriptor } from 'react-intl'
 
 export const getApplicationAnswers = (answers: Application['answers']) => {
   const childNationalId = getValueViaPath(answers, 'childNationalId') as string
 
   const childInfo = getValueViaPath(answers, 'childInfo') as ChildInformation
-
-  const differentPlaceOfResidence = getValueViaPath(
-    answers,
-    'childInfo.differentPlaceOfResidence',
-  ) as YesOrNo
 
   const parents = getValueViaPath(answers, 'parents') as Parents
 
@@ -161,7 +158,6 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
   return {
     childNationalId,
     childInfo,
-    differentPlaceOfResidence,
     parents,
     contacts,
     reasonForApplication,
@@ -337,4 +333,25 @@ export const getCurrentSchoolName = (application: Application) => {
   return childMemberships
     .map((membership) => membership.organization)
     .find((organization) => organization?.id === primaryOrgId)?.name
+}
+
+export const formatGender = (genderCode?: string): MessageDescriptor => {
+  switch (genderCode) {
+    case '1':
+    case '3':
+      return newPrimarySchoolMessages.shared.male
+    case '2':
+    case '4':
+      return newPrimarySchoolMessages.shared.female
+    case '7':
+    case '8':
+    default:
+      return newPrimarySchoolMessages.shared.otherGender
+  }
+}
+
+export const getGenderMessage = (application: Application) => {
+  const selectedChild = getSelectedChild(application)
+  const gender = formatGender(selectedChild?.genderCode)
+  return gender
 }
