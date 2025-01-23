@@ -11,11 +11,7 @@ import {
   extractStringsFromObject,
   pruneNonSearchableSliceUnionFields,
 } from './utils'
-import {
-  mapGrant,
-  GrantStatus,
-  GrantAvailability,
-} from '../../models/grant.model'
+import { mapGrant } from '../../models/grant.model'
 import { isDefined } from '@island.is/shared/utils'
 
 @Injectable()
@@ -118,20 +114,11 @@ export class GrantsSyncService implements CmsSyncProvider<IGrant> {
             })
           }
 
-          if (mapped.availability) {
+          //Use the raw field to escape the mapping
+          if (entry.fields.grantStatus) {
             tags.push({
-              type: 'availability',
-              key:
-                mapped.availability === GrantAvailability.OPEN
-                  ? 'open'
-                  : 'closed',
-            })
-          }
-
-          if (mapped.statusIsAutomatic) {
-            tags.push({
-              type: 'isAutomatic',
-              key: mapped.statusIsAutomatic ? 'true' : 'false',
+              type: 'status',
+              key: entry.fields.grantStatus,
             })
           }
 
@@ -154,10 +141,7 @@ export class GrantsSyncService implements CmsSyncProvider<IGrant> {
             tags,
             dateUpdated: new Date().getTime().toString(),
             releaseDate: mapped.dateFrom ?? undefined,
-            //hacky, but neccessary as of now. If Grant is automatic, the dates MUST be populated
-            dateCreated: mapped.statusIsAutomatic
-              ? mapped.dateTo ?? entry.sys.createdAt
-              : entry.sys.createdAt,
+            dateCreated: mapped.dateTo ?? entry.sys.createdAt,
           }
         } catch (error) {
           logger.warn('Failed to import grants', {

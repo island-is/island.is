@@ -12,7 +12,6 @@ import { Link, mapLink } from './link.model'
 import format from 'date-fns/format'
 import addHours from 'date-fns/addHours'
 import { isValidDate } from '@island.is/shared/utils'
-import { GrantsAvailabilityStatus } from '../dto/getGrants.input'
 
 export enum GrantStatus {
   CLOSED,
@@ -26,14 +25,7 @@ export enum GrantStatus {
   UNKNOWN,
 }
 
-export enum GrantAvailability {
-  CLOSED,
-  OPEN,
-  UNKNOWN,
-}
-
 registerEnumType(GrantStatus, { name: 'GrantStatus' })
-registerEnumType(GrantAvailability, { name: 'GrantAvailability' })
 
 @ObjectType()
 export class Grant {
@@ -82,12 +74,6 @@ export class Grant {
   @Field({ nullable: true })
   statusText?: string
 
-  @Field({ nullable: true })
-  statusIsAutomatic?: boolean
-
-  @CacheField(() => GrantAvailability, { nullable: true })
-  availability?: GrantAvailability
-
   @CacheField(() => [Asset], { nullable: true })
   files?: Array<Asset>
 
@@ -104,29 +90,21 @@ export class Grant {
   fund?: Fund
 }
 
-const parseStatus = (
-  fields: IGrantFields,
-): { status: GrantStatus; availability: GrantAvailability } => {
+const parseStatus = (fields: IGrantFields): GrantStatus => {
   switch (fields.grantStatus) {
     case 'Automatic': {
       const dateTo = parseDate(fields.grantDateTo, fields.grantOpenToHour)
       const dateFrom = parseDate(fields.grantDateFrom, fields.grantOpenFromHour)
 
       if (!dateTo || !dateFrom) {
-        return {
-          status: GrantStatus.INVALID,
-          availability: GrantAvailability.UNKNOWN,
-        }
+        return GrantStatus.INVALID
       }
 
       const parsedDateTo = new Date(dateTo)
       const parsedDateFrom = new Date(dateFrom)
 
       if (!isValidDate(parsedDateTo) || !isValidDate(parsedDateFrom)) {
-        return {
-          status: GrantStatus.INVALID,
-          availability: GrantAvailability.UNKNOWN,
-        }
+        return GrantStatus.INVALID
       }
 
       const today = new Date()
@@ -136,42 +114,21 @@ const parseStatus = (
         const status = fields.grantFromDateIsEstimated
           ? GrantStatus.CLOSED_OPENING_SOON_WITH_ESTIMATION
           : GrantStatus.CLOSED_OPENING_SOON
-        return {
-          status,
-          availability: GrantAvailability.CLOSED,
-        }
+        return status
       }
       if (today < parsedDateTo) {
-        return {
-          status: GrantStatus.OPEN,
-          availability: GrantAvailability.OPEN,
-        }
+        GrantStatus.OPEN
       }
-      return {
-        status: GrantStatus.CLOSED,
-        availability: GrantAvailability.CLOSED,
-      }
+      return GrantStatus.CLOSED
     }
     case 'Always open':
-      return {
-        status: GrantStatus.ALWAYS_OPEN,
-        availability: GrantAvailability.OPEN,
-      }
+      return GrantStatus.ALWAYS_OPEN
     case 'Closed with note':
-      return {
-        status: GrantStatus.CLOSED_WITH_NOTE,
-        availability: GrantAvailability.CLOSED,
-      }
+      return GrantStatus.CLOSED_WITH_NOTE
     case 'Open with note':
-      return {
-        status: GrantStatus.OPEN_WITH_NOTE,
-        availability: GrantAvailability.OPEN,
-      }
+      return GrantStatus.OPEN_WITH_NOTE
     default:
-      return {
-        status: GrantStatus.UNKNOWN,
-        availability: GrantAvailability.UNKNOWN,
-      }
+      return GrantStatus.UNKNOWN
   }
 }
 
@@ -217,10 +174,8 @@ export const mapGrant = ({ fields, sys }: IGrant): Grant => {
       : [],
     dateFrom: parseDate(fields.grantDateFrom, fields.grantOpenFromHour),
     dateTo: parseDate(fields.grantDateTo, fields.grantOpenToHour),
-    status: status.status,
+    status: status,
     statusText: fields.grantStatusNote,
-    statusIsAutomatic: fields.grantStatus === 'Automatic',
-    availability: status.availability,
     fund: fields.grantFund ? mapFund(fields.grantFund) : undefined,
     files: (fields.grantFiles ?? []).map((file) => mapAsset(file)) ?? [],
     supportLinks:

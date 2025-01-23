@@ -746,6 +746,150 @@ export class CmsElasticsearchService {
       })
     })
 
+    if (status) {
+      if (status === GrantsAvailabilityStatus.CLOSED) {
+        must.push([
+          {
+            nested: {
+              path: 'tags',
+              query: {
+                bool: {
+                  must: [
+                    {
+                      term: {
+                        'tags.type': 'status',
+                      },
+                    },
+                    {
+                      terms: {
+                        'tags.key': ['Closed with note', 'Automatic'],
+                      },
+                    },
+                  ],
+                },
+              },
+            },
+          },
+          {
+            bool: {
+              must_not: {
+                bool: {
+                  filter: [
+                    {
+                      range: {
+                        // date from
+                        releaseDate: {
+                          lt: '2024-04-15',
+                        },
+                      },
+                    },
+                    {
+                      range: {
+                        // date from
+                        dateCreated: {
+                          gt: '2024-04-15',
+                        },
+                      },
+                    },
+                    {
+                      nested: {
+                        path: 'tags',
+                        query: {
+                          bool: {
+                            must: [
+                              {
+                                term: {
+                                  'tags.type': 'status',
+                                },
+                              },
+                              {
+                                term: {
+                                  'tags.key': 'Automatic',
+                                },
+                              },
+                            ],
+                          },
+                        },
+                      },
+                    },
+                  ],
+                },
+              },
+            },
+          },
+        ])
+      } else {
+        must.push({
+          bool: {
+            should: [
+              {
+                bool: {
+                  filter: [
+                    {
+                      range: {
+                        releaseDate: {
+                          lt: '2024-04-15',
+                        },
+                      },
+                    },
+                    {
+                      range: {
+                        dateCreated: {
+                          gt: '2024-04-15',
+                        },
+                      },
+                    },
+                    {
+                      nested: {
+                        path: 'tags',
+                        query: {
+                          bool: {
+                            must: [
+                              {
+                                term: {
+                                  'tags.type': 'status',
+                                },
+                              },
+                              {
+                                term: {
+                                  'tags.key': 'Automatic',
+                                },
+                              },
+                            ],
+                          },
+                        },
+                      },
+                    },
+                  ],
+                },
+              },
+              {
+                nested: {
+                  path: 'tags',
+                  query: {
+                    bool: {
+                      must: [
+                        {
+                          term: {
+                            'tags.type': 'status',
+                          },
+                        },
+                        {
+                          terms: {
+                            'tags.key': ['Open with note', 'Always open'],
+                          },
+                        },
+                      ],
+                    },
+                  },
+                },
+              },
+            ],
+          },
+        })
+      }
+    }
+
     if (organizations) {
       must.push({
         nested: {

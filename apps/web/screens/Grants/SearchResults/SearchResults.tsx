@@ -215,7 +215,7 @@ const GrantsSearchResultsPage: CustomScreen<GrantsHomeProps> = ({
           : undefined
         if (slug) {
           setStatus(slug === 'open' ? 'open' : 'closed')
-        }
+        } else setStatus(null)
         break
       }
       case 'category': {
