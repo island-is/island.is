@@ -3,7 +3,6 @@ import {
   FirearmPropertyList,
   LicenseInfo,
 } from '@island.is/clients/firearm-license'
-import { PassInputFieldValueDataInput } from '@island.is/clients/smartsolutions'
 import format from 'date-fns/format'
 import { format as formatSsn } from 'kennitala'
 
@@ -27,9 +26,7 @@ const parsePropertyForPkpassInput = (properties?: Array<FirearmProperty>) => {
 
 export const nationalIdIndex = 'kt'
 
-export const mapNationalId = (
-  nationalId: string,
-): PassInputFieldValueDataInput => {
+export const mapNationalId = (nationalId: string) => {
   return {
     identifier: nationalIdIndex,
     value: nationalId ? formatSsn(nationalId) : '',

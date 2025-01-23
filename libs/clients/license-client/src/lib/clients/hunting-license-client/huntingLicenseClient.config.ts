@@ -6,6 +6,7 @@ export const schema = z.object({
   apiUrl: z.string(),
   passTemplateId: z.string(),
 })
+
 export const HuntingDigitalLicenseClientConfig = defineConfig<
   z.infer<typeof schema>
 >({
