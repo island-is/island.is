@@ -4,6 +4,7 @@ import {
   buildMultiField,
   buildSubSection,
   coreErrorMessages,
+  NO,
 } from '@island.is/application/core'
 import { friggSchoolsByMunicipalityQuery } from '../../../graphql/queries'
 import { ReasonForApplicationOptions } from '../../../lib/constants'
@@ -19,8 +20,12 @@ export const newSchoolSubSection = buildSubSection({
   title: newPrimarySchoolMessages.primarySchool.newSchoolSubSectionTitle,
   condition: (answers) => {
     // Only display section if "Moving abroad" is not selected as reason for application
-    const { reasonForApplication } = getApplicationAnswers(answers)
-    return reasonForApplication !== ReasonForApplicationOptions.MOVING_ABROAD
+    const { reasonForApplication, applyForNeighbourhoodSchool } =
+      getApplicationAnswers(answers)
+    return (
+      reasonForApplication !== ReasonForApplicationOptions.MOVING_ABROAD &&
+      applyForNeighbourhoodSchool === NO
+    )
   },
   children: [
     buildMultiField({

@@ -2,6 +2,7 @@ import {
   buildDateField,
   buildMultiField,
   buildSubSection,
+  NO,
 } from '@island.is/application/core'
 import { ReasonForApplicationOptions } from '../../../lib/constants'
 import { newPrimarySchoolMessages } from '../../../lib/messages'
@@ -12,8 +13,12 @@ export const startingSchoolSubSection = buildSubSection({
   title: newPrimarySchoolMessages.primarySchool.startingSchoolSubSectionTitle,
   condition: (answers) => {
     // Only display section if "Moving abroad" is not selected as reason for application
-    const { reasonForApplication } = getApplicationAnswers(answers)
-    return reasonForApplication !== ReasonForApplicationOptions.MOVING_ABROAD
+    const { reasonForApplication, applyForNeighbourhoodSchool } =
+      getApplicationAnswers(answers)
+    return (
+      reasonForApplication !== ReasonForApplicationOptions.MOVING_ABROAD &&
+      applyForNeighbourhoodSchool === NO
+    )
   },
   children: [
     buildMultiField({

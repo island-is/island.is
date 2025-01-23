@@ -6,13 +6,20 @@ import {
   buildTextField,
   coreMessages,
 } from '@island.is/application/core'
+import { Application, NO } from '@island.is/application/types'
 import { newPrimarySchoolMessages } from '../../../lib/messages'
-import { getCurrentSchoolName } from '../../../lib/newPrimarySchoolUtils'
-import { Application } from '@island.is/application/types'
+import {
+  getApplicationAnswers,
+  getCurrentSchoolName,
+} from '../../../lib/newPrimarySchoolUtils'
 
 export const currentSchoolSubSection = buildSubSection({
   id: 'currentSchoolSubSection',
   title: newPrimarySchoolMessages.primarySchool.currentSchoolSubSectionTitle,
+  condition: (answers) => {
+    const { applyForNeighbourhoodSchool } = getApplicationAnswers(answers)
+    return applyForNeighbourhoodSchool === NO
+  },
   children: [
     buildMultiField({
       id: 'currentSchool',

@@ -3,6 +3,7 @@ import {
   Application,
   ExternalData,
   FormValue,
+  YES,
   YesOrNo,
 } from '@island.is/application/types'
 import { Locale } from '@island.is/shared/types'
@@ -158,6 +159,12 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     'schools.newSchool.hiddenInput',
   ) as string
 
+  const applyForNeighbourhoodSchool = getValueViaPath(
+    answers,
+    'school.applyForNeighbourhoodSchool',
+    YES,
+  ) as YesOrNo
+
   return {
     childNationalId,
     childInfo,
@@ -190,6 +197,7 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     schoolMunicipality,
     selectedSchool,
     newSchoolHiddenInput,
+    applyForNeighbourhoodSchool,
   }
 }
 
