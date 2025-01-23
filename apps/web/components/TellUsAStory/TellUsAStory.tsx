@@ -1,10 +1,10 @@
 import React from 'react'
 import { MutationResult, useMutation } from '@apollo/client'
+
 import {
   TellUsAStoryForm,
   TellUsAStoryFormProps,
 } from '@island.is/island-ui/contentful'
-
 import { TELL_US_A_STORY_MUTATION } from '@island.is/web/screens/queries'
 
 import {
