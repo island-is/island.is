@@ -1,5 +1,6 @@
 import { style, styleVariants, keyframes } from '@vanilla-extract/css'
 import { theme } from '@island.is/island-ui/theme'
+import { StyleWithSelectors } from '@vanilla-extract/css/dist/declarations/src/types'
 
 export const divider = style({
   width: '100%',
@@ -187,35 +188,50 @@ export const scrolledMenu = style({
   position: 'relative',
 })
 
+const baseMobileMenuScrolled: StyleWithSelectors = {
+  content: '',
+  position: 'absolute',
+  top: 0,
+  bottom: -1,
+  zIndex: -1,
+
+  background: theme.color.blue100,
+  borderBottom: `1px solid ${theme.color.blue200}`,
+  transformOrigin: 'top',
+}
+
 export const scrolledMenuVisible = style({
   '::before': {
-    content: '',
-    position: 'absolute',
-    top: 0,
-    bottom: -1,
-    zIndex: -1,
     left: `-${theme.spacing[2]}px`,
     right: `-${theme.spacing[2]}px`,
-    background: theme.color.blue100,
-    borderBottom: `1px solid ${theme.color.blue200}`,
-    transformOrigin: 'top',
     animation: `${stretchKeyframe} 0.3s ease-in-out forwards`, // Appear animation
+  },
+  '@media': {
+    [`screen and (max-width: ${theme.breakpoints.md}px)`]: {
+      '::before': {
+        ...baseMobileMenuScrolled,
+        left: `-${theme.spacing[3]}px`,
+        right: `-${theme.spacing[3]}px`,
+      },
+    },
   },
 })
 
 export const scrolledMenuHidden = style({
   '::before': {
-    content: '',
-    position: 'absolute',
-    top: 0,
-    bottom: -1,
-    zIndex: -1,
+    ...baseMobileMenuScrolled,
     left: `-${theme.spacing[2]}px`,
     right: `-${theme.spacing[2]}px`,
-    background: theme.color.blue100,
-    borderBottom: `1px solid ${theme.color.blue200}`,
-    transformOrigin: 'top',
     animation: `${shrinkKeyframe} 0.3s ease-in-out forwards`, // Disappear animation
+  },
+  '@media': {
+    [`screen and (max-width: ${theme.breakpoints.md}px)`]: {
+      '::before': {
+        ...baseMobileMenuScrolled,
+        left: `-${theme.spacing[3]}px`,
+        right: `-${theme.spacing[3]}px`,
+      },
+    },
   },
 })
 

@@ -21,7 +21,6 @@ import {
   useScrollDirection,
 } from '@island.is/portals/my-pages/core'
 import { DocumentsPaths } from '@island.is/portals/my-pages/documents'
-import { useFeatureFlagClient } from '@island.is/react/feature-flags'
 import { UserLanguageSwitcher, UserMenu } from '@island.is/shared/components'
 import cn from 'classnames'
 import { useEffect, useRef, useState } from 'react'
@@ -44,25 +43,6 @@ export const Header = ({ position }: Props) => {
   const user = useUserInfo()
 
   const scrollDirection = useScrollDirection()
-
-  // Notification feature flag. Remove after feature is live.
-  const [enableNotificationFlag, setEnableNotificationFlag] =
-    useState<boolean>(false)
-  const featureFlagClient = useFeatureFlagClient()
-
-  useEffect(() => {
-    const isFlagEnabled = async () => {
-      const ffEnabled = await featureFlagClient.getValue(
-        `isServicePortalNotificationsPageEnabled`,
-        false,
-      )
-      if (ffEnabled) {
-        setEnableNotificationFlag(ffEnabled as boolean)
-      }
-    }
-    isFlagEnabled()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
 
   const hasNotificationsDelegationAccess = user?.scopes?.includes(
     DocumentsScope.main,

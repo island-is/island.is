@@ -12,14 +12,14 @@ export const header = style({
   display: 'flex',
   alignItems: 'center',
   width: '100%',
-  height: SERVICE_PORTAL_HEADER_HEIGHT_SM,
+  height: SERVICE_PORTAL_HEADER_HEIGHT_LG,
   margin: '0 auto',
   backgroundColor: theme.color.blue100,
   transform: 'translateY(0)',
   '@media': {
-    [`screen and (min-width: ${theme.breakpoints.lg}px)`]: {
+    [`screen and (max-width: ${theme.breakpoints.md}px)`]: {
       position: 'relative',
-      height: SERVICE_PORTAL_HEADER_HEIGHT_LG,
+      height: SERVICE_PORTAL_HEADER_HEIGHT_SM,
     },
   },
 })
