@@ -152,9 +152,9 @@ jobs:
         id: lint_projects
         env:
           # Linting is easy, no need to split/chunk it
-          DISABLE_CHUNKS: true
-          DISABLE_GROUPING: true
-          DISABLE_PROBLEMATIC: true
+          DISABLE_CHUNKS: 'true'
+          DISABLE_GROUPING: 'true'
+          DISABLE_PROBLEMATIC: 'true'
         run: |
           set -euo pipefail
           CHUNKS="$(./scripts/ci/generate-chunks.sh lint)"
