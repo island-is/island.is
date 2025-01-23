@@ -158,7 +158,7 @@ describe('ClientsService', () => {
       await app.cleanUp()
     })
 
-    it('should create application in all environments', async () => {
+    it('should create application in all environments', async function () {
       const createClientsInput: CreateClientInput = {
         clientId: 'test-application-id',
         clientType: CreateClientType.web,
@@ -194,7 +194,7 @@ describe('ClientsService', () => {
       ])
     })
 
-    it('should only create application in development', async () => {
+    it('should only create application in development', async function () {
       const createClientsInput: CreateClientInput = {
         clientId: 'test-application-id',
         clientType: CreateClientType.web,
@@ -232,7 +232,7 @@ describe('ClientsService', () => {
       ])
     })
 
-    it('should publish the client from Staging to Development', async () => {
+    it('should publish the client from Staging to Development', async function () {
       const publishClientInput: PublishClientInput = {
         clientId: 'test-client-id',
         tenantId: 'test-tenant-id',
@@ -268,7 +268,7 @@ describe('ClientsService', () => {
       })
     })
 
-    it('should throw an error because no value was provided', async () => {
+    it('should throw an error because no value was provided', async function () {
       const patchClientsInput: PatchClientInput = {
         clientId: 'test-application-id',
         tenantId: 'test-tenant-id',
@@ -288,7 +288,7 @@ describe('ClientsService', () => {
       await expect(actPromise).rejects.toThrow('Nothing provided to update')
     })
 
-    it('should update the postLogoutRedirectUris for all environments', async () => {
+    it('should update the postLogoutRedirectUris for all environments', async function () {
       const patchClientsInput: PatchClientInput = {
         clientId: 'test-application-id',
         tenantId: 'test-tenant-id',
@@ -348,7 +348,7 @@ describe('ClientsService', () => {
       ])
     })
 
-    it('should update the postLogoutRedirectUris for all Development only', async () => {
+    it('should update the postLogoutRedirectUris for all Development only', async function () {
       const patchClientsInput: PatchClientInput = {
         clientId: 'test-application-id',
         tenantId: 'test-tenant-id',
@@ -384,7 +384,7 @@ describe('ClientsService', () => {
       ])
     })
 
-    it('should only rotate secret in a single target environment', async () => {
+    it('should only rotate secret in a single target environment', async function () {
       // Arrange
       const rotateSecretInput: RotateSecretInput = {
         clientId: 'test-application-id',
@@ -414,7 +414,7 @@ describe('ClientsService', () => {
       })
     })
 
-    it('should revoke old secrets and create new secret in a single environment', async () => {
+    it('should revoke old secrets and create new secret in a single environment', async function () {
       // Arrange
       const rotateSecretInput: RotateSecretInput = {
         clientId: 'test-application-id',
