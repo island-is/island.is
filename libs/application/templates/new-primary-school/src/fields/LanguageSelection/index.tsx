@@ -59,24 +59,13 @@ const LanguageSelection: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   useEffect(() => {
     const { language1, language2, language3, language4 } =
       getApplicationAnswers(application.answers)
-    const selected: string[] = []
-    let visibleCount = 1
-    if (language1) {
-      selected.push(language1)
-      visibleCount = 1
-    }
-    if (language2) {
-      selected.push(language2)
-      visibleCount = 2
-    }
-    if (language3) {
-      selected.push(language3)
-      visibleCount = 3
-    }
-    if (language4) {
-      selected.push(language4)
-      visibleCount = 4
-    }
+
+    const selected = [language1, language2, language3, language4].filter(
+      Boolean,
+    )
+
+    // Ensure the visible count is at least 1
+    const visibleCount = Math.max(1, selected.length)
 
     setSelectedLanguages(selected)
     setVisibleLanguagesCount(visibleCount)
