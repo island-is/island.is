@@ -33,7 +33,7 @@ describe('PaymentFlowController', () => {
         availablePaymentMethods: [PaymentMethod.CARD, PaymentMethod.INVOICE],
         onUpdateUrl: 'https://www.island.is/greida/update',
         organisationId: 'organization-id',
-        // invoiceId: 'todo',
+        // existingInvoiceId: 'todo',
       }
 
       const response = await server.post('/v1/payments').send(payload)

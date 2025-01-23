@@ -19,9 +19,6 @@ export default async function verifyCardHandler(
     paymentFlowId,
   } = req.body as Omit<VerifyCardInput, 'verificationCallbackUrl'>
 
-  const verificationResponse =
-    await getPaymentsApi().cardPaymentControllerVerify({
-      verifyCardInput: {
   try {
     const verificationResponse =
       await getPaymentsApi().cardPaymentControllerVerify({

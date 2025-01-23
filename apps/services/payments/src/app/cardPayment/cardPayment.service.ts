@@ -84,7 +84,6 @@ export class CardPaymentService {
 
     if (!response.ok) {
       const responseBody = await response.text()
-      // TODO: map error to correct client error
       this.logger.error('Failed to verify card', {
         url: response.url,
         status: response.status,
@@ -208,8 +207,6 @@ export class CardPaymentService {
   }
 
   async charge(chargeCardInput: ChargeCardInput) {
-    let success = false
-
     const { correlationId } = chargeCardInput
 
     const verificationData = (await this.cacheManager.get(
@@ -252,9 +249,14 @@ export class CardPaymentService {
         statusText: response.statusText,
         responseBody,
       })
+      throw new Error(response.statusText)
     }
 
     const data = (await response.json()) as ChargeResponse
+
+    if (!data?.isSuccess) {
+      throw new Error(mapToCardErrorCode(data.responseCode))
+    }
 
     return data
   }
