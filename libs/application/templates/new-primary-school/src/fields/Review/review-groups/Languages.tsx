@@ -76,50 +76,57 @@ export const Languages = ({
                   value={getLanguageByCode(language1)?.name}
                 />
               </GridColumn>
-              <GridColumn span={['12/12', '6/12', '6/12', '6/12']}>
-                <DataValue
-                  label={formatMessage(
-                    newPrimarySchoolMessages.differentNeeds
-                      .languageSelectionTitle,
-                    { no: `${2}` },
-                  )}
-                  value={getLanguageByCode(language2)?.name}
-                />
-              </GridColumn>
+              {language2 && (
+                <GridColumn span={['12/12', '6/12', '6/12', '6/12']}>
+                  <DataValue
+                    label={formatMessage(
+                      newPrimarySchoolMessages.differentNeeds
+                        .languageSelectionTitle,
+                      { no: `${2}` },
+                    )}
+                    value={getLanguageByCode(language2)?.name}
+                  />
+                </GridColumn>
+              )}
             </GridRow>
             <GridRow>
-              <GridColumn span={['12/12', '6/12', '6/12', '6/12']}>
-                <DataValue
-                  label={formatMessage(
-                    newPrimarySchoolMessages.differentNeeds
-                      .languageSelectionTitle,
-                    { no: `${3}` },
-                  )}
-                  value={getLanguageByCode(language3)?.name}
-                />
-              </GridColumn>
-              <GridColumn span={['12/12', '6/12', '6/12', '6/12']}>
-                <DataValue
-                  label={formatMessage(
-                    newPrimarySchoolMessages.differentNeeds
-                      .languageSelectionTitle,
-                    { no: `${4}` },
-                  )}
-                  value={getLanguageByCode(language4)?.name}
-                />
-              </GridColumn>
+              {language3 && (
+                <GridColumn span={['12/12', '6/12', '6/12', '6/12']}>
+                  <DataValue
+                    label={formatMessage(
+                      newPrimarySchoolMessages.differentNeeds
+                        .languageSelectionTitle,
+                      { no: `${3}` },
+                    )}
+                    value={getLanguageByCode(language3)?.name}
+                  />
+                </GridColumn>
+              )}
+              {language4 && (
+                <GridColumn span={['12/12', '6/12', '6/12', '6/12']}>
+                  <DataValue
+                    label={formatMessage(
+                      newPrimarySchoolMessages.differentNeeds
+                        .languageSelectionTitle,
+                      { no: `${4}` },
+                    )}
+                    value={getLanguageByCode(language4)?.name}
+                  />
+                </GridColumn>
+              )}
             </GridRow>
-            <GridRow>
-              <GridColumn span={['12/12', '12/12', '12/12', '12/12']}>
-                <DataValue
-                  label={formatMessage(
-                    newPrimarySchoolMessages.overview.childLanguage,
-                  )}
-                  value={getLanguageByCode(childLanguage)?.name}
-                />
-              </GridColumn>
-            </GridRow>
-
+            {childLanguage && (
+              <GridRow>
+                <GridColumn span={['12/12', '12/12', '12/12', '12/12']}>
+                  <DataValue
+                    label={formatMessage(
+                      newPrimarySchoolMessages.overview.childLanguage,
+                    )}
+                    value={getLanguageByCode(childLanguage)?.name}
+                  />
+                </GridColumn>
+              </GridRow>
+            )}
             <GridRow>
               <GridColumn span={['12/12', '6/12', '6/12', '6/12']}>
                 <RadioValue
