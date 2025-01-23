@@ -4,9 +4,8 @@ import {
   buildTextField,
   buildRadioField,
   buildDateField,
-  buildSubmitField,
 } from '@island.is/application/core'
-import { DefaultEvents, FormValue } from '@island.is/application/types'
+import { FormValue } from '@island.is/application/types'
 import {
   getApplicationAnswers,
   getOtherFeesHousingFeesPayeeOptions,
@@ -170,19 +169,6 @@ export const RentalPeriodOtherFees = buildSubSection({
         //     )
         //   },
         // }),
-
-        buildSubmitField({
-          id: 'toSummary',
-          title: '',
-          refetchApplicationAfterSubmit: true,
-          actions: [
-            {
-              event: DefaultEvents.SUBMIT,
-              name: 'Áfram í yfirlit',
-              type: 'primary',
-            },
-          ],
-        }),
       ],
     }),
   ],

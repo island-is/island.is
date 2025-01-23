@@ -1,5 +1,7 @@
+import { FC } from 'react'
 import { GridColumn } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
+import { FieldBaseProps } from '@island.is/application/types'
 import { RentalAgreement } from '../../lib/dataSchema'
 import {
   AnswerOptions,
@@ -20,24 +22,26 @@ import { SummaryCard } from './components/SummaryCard'
 import { SummaryCardRow } from './components/SummaryCardRow'
 import { KeyValue } from './components/KeyValue'
 import { summary } from '../../lib/messages'
-import { Summary } from '../../forms/summary/summary'
 
-type Props = {
-  answers: RentalAgreement
+interface Props extends FieldBaseProps {
   goToScreen?: (id: string) => void
   rentalPeriodRoute?: Routes
   rentalAmountRoute?: Routes
   securityDepositRoute?: Routes
+  isChangeButton: boolean
 }
 
-export const RentalInfoSummary = ({
-  answers,
-  goToScreen,
-  rentalAmountRoute,
-  rentalPeriodRoute,
-  securityDepositRoute,
-}: Props) => {
+export const RentalInfoSummary: FC<Props> = ({ ...props }) => {
   const { formatMessage } = useLocale()
+  const {
+    application,
+    goToScreen,
+    rentalPeriodRoute,
+    rentalAmountRoute,
+    securityDepositRoute,
+    isChangeButton,
+  } = props
+  const answers = application.answers as RentalAgreement
 
   const isSecurityDepositRequired =
     answers.rentalAmount.isPaymentInsuranceRequired?.includes(AnswerOptions.YES)
@@ -92,7 +96,7 @@ export const RentalInfoSummary = ({
   return (
     <SummaryCard>
       {/* Property Address */}
-      <SummaryCardRow isChangeButton={false}>
+      <SummaryCardRow isChangeButton={isChangeButton}>
         <GridColumn span={['12/12']}>
           <KeyValue
             label={`${answers.registerProperty.address}, ${answers.registerProperty.municipality}`}
@@ -110,7 +114,11 @@ export const RentalInfoSummary = ({
       </SummaryCardRow>
 
       {/* Rental period */}
-      <SummaryCardRow editAction={goToScreen} route={rentalPeriodRoute}>
+      <SummaryCardRow
+        editAction={goToScreen}
+        route={rentalPeriodRoute}
+        isChangeButton={isChangeButton}
+      >
         <GridColumn span={['12/12', '4/12']}>
           <KeyValue
             label={summary.rentalPeriodStartDateLabel}
@@ -139,7 +147,11 @@ export const RentalInfoSummary = ({
       </SummaryCardRow>
 
       {/* Rental amount */}
-      <SummaryCardRow editAction={goToScreen} route={rentalAmountRoute}>
+      <SummaryCardRow
+        editAction={goToScreen}
+        route={rentalAmountRoute}
+        isChangeButton={isChangeButton}
+      >
         <GridColumn span={['12/12', '4/12']}>
           <KeyValue
             label={summary.rentalAmountLabel}
@@ -168,7 +180,11 @@ export const RentalInfoSummary = ({
 
       {/* Security deposit */}
       {isSecurityDepositRequired && (
-        <SummaryCardRow editAction={goToScreen} route={securityDepositRoute}>
+        <SummaryCardRow
+          editAction={goToScreen}
+          route={securityDepositRoute}
+          isChangeButton={isChangeButton}
+        >
           <GridColumn span={['12/12', '4/12']}>
             <KeyValue
               label={summary.securityDepositLabel}
@@ -235,7 +251,11 @@ export const RentalInfoSummary = ({
           )}
         </SummaryCardRow>
       )}
-      <SummaryCardRow editAction={goToScreen} route={rentalAmountRoute}>
+      <SummaryCardRow
+        editAction={goToScreen}
+        route={rentalAmountRoute}
+        isChangeButton={isChangeButton}
+      >
         <GridColumn span={['12/12', '4/12']}>
           <KeyValue
             label={'Greiðslufyrirkomulag'}

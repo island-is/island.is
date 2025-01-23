@@ -13,6 +13,9 @@ export const summaryNoBorder = style({
 export const gridRow = style({
   position: 'relative',
   display: 'flex',
+})
+
+export const gridRowChangeButton = style({
   paddingRight: '100px',
 })
 

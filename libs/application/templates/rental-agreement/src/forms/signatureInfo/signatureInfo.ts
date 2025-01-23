@@ -82,6 +82,11 @@ export const SignatureInfo = buildSection({
               name: signatureInfo.submitButtonText,
               type: 'sign',
             },
+            {
+              event: DefaultEvents.EDIT,
+              name: 'Til baka í yfirlit',
+              type: 'subtle',
+            },
           ],
         }),
       ],

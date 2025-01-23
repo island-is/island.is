@@ -1,9 +1,8 @@
+import { FC } from 'react'
 import {
   Box,
   Button,
   GridColumn,
-  Icon,
-  Link,
   Text,
   UploadFile,
 } from '@island.is/island-ui/core'
@@ -25,9 +24,9 @@ import { SummaryCard } from './components/SummaryCard'
 
 import { fileLink, fileLinksList } from './summaryStyles.css'
 import { summary } from '../../lib/messages'
+import { FieldBaseProps } from '@island.is/application/types'
 
-interface Props {
-  answers: RentalAgreement
+interface Props extends FieldBaseProps {
   goToScreen?: (id: string) => void
   categoryRoute?: Routes
   propertyInfoRoute?: Routes
@@ -36,20 +35,24 @@ interface Props {
   propertyConditionRoute?: Routes
   fileUploadRoute?: Routes
   fireProtectionsRoute?: Routes
+  isChangeButton: boolean
 }
 
-export const PropertyInfoSummary = ({
-  answers,
-  goToScreen,
-  categoryRoute,
-  propertyInfoRoute,
-  propertyDescriptionRoute,
-  specialProvisionsRoute,
-  propertyConditionRoute,
-  fileUploadRoute,
-  fireProtectionsRoute,
-}: Props) => {
+export const PropertyInfoSummary: FC<Props> = ({ ...props }) => {
   const { formatMessage } = useLocale()
+  const {
+    application,
+    goToScreen,
+    categoryRoute,
+    propertyInfoRoute,
+    propertyDescriptionRoute,
+    specialProvisionsRoute,
+    propertyConditionRoute,
+    fileUploadRoute,
+    fireProtectionsRoute,
+    isChangeButton,
+  } = props
+  const answers = application.answers as RentalAgreement
 
   const propertyType = (answer: string) => {
     const options = getPropertyTypeOptions()
@@ -73,7 +76,11 @@ export const PropertyInfoSummary = ({
 
   return (
     <SummaryCard cardLabel={formatMessage(summary.propertyInfoHeader)}>
-      <SummaryCardRow editAction={goToScreen} route={categoryRoute}>
+      <SummaryCardRow
+        editAction={goToScreen}
+        route={categoryRoute}
+        isChangeButton={isChangeButton}
+      >
         <GridColumn span={['12/12', '6/12', '6/12', '6/12', '4/12']}>
           <KeyValue
             label={summary.propertyTypeLabel}
@@ -108,7 +115,11 @@ export const PropertyInfoSummary = ({
           )}
       </SummaryCardRow>
 
-      <SummaryCardRow editAction={goToScreen} route={propertyInfoRoute}>
+      <SummaryCardRow
+        editAction={goToScreen}
+        route={propertyInfoRoute}
+        isChangeButton={isChangeButton}
+      >
         <GridColumn span={['12/12', '4/12']}>
           <KeyValue
             label={summary.PropertyNumOfRoomsLabel}
@@ -123,7 +134,11 @@ export const PropertyInfoSummary = ({
         </GridColumn>
       </SummaryCardRow>
 
-      <SummaryCardRow editAction={goToScreen} route={propertyDescriptionRoute}>
+      <SummaryCardRow
+        editAction={goToScreen}
+        route={propertyDescriptionRoute}
+        isChangeButton={isChangeButton}
+      >
         <GridColumn span={['12/12']}>
           <KeyValue
             label={summary.propertyDescriptionLabel}
@@ -132,7 +147,11 @@ export const PropertyInfoSummary = ({
         </GridColumn>
       </SummaryCardRow>
 
-      <SummaryCardRow editAction={goToScreen} route={specialProvisionsRoute}>
+      <SummaryCardRow
+        editAction={goToScreen}
+        route={specialProvisionsRoute}
+        isChangeButton={isChangeButton}
+      >
         <GridColumn span={['12/12']}>
           <KeyValue
             label={summary.PropertySpecialProvisionsLabel}
@@ -141,7 +160,11 @@ export const PropertyInfoSummary = ({
         </GridColumn>
       </SummaryCardRow>
 
-      <SummaryCardRow editAction={goToScreen} route={propertyConditionRoute}>
+      <SummaryCardRow
+        editAction={goToScreen}
+        route={propertyConditionRoute}
+        isChangeButton={isChangeButton}
+      >
         <GridColumn span={['12/12', '12/12', '12/12', '12/12', '4/12']}>
           <KeyValue
             label={summary.propertyConditionInspectorLabel}
@@ -169,7 +192,11 @@ export const PropertyInfoSummary = ({
       </SummaryCardRow>
 
       {uploadFiles.length > 0 && (
-        <SummaryCardRow editAction={goToScreen} route={fileUploadRoute}>
+        <SummaryCardRow
+          editAction={goToScreen}
+          route={fileUploadRoute}
+          isChangeButton={isChangeButton}
+        >
           <GridColumn span={['12/12']}>
             <Box paddingY={'p2'}>
               <Text
@@ -208,6 +235,7 @@ export const PropertyInfoSummary = ({
       <SummaryCardRow
         editAction={goToScreen}
         route={fireProtectionsRoute}
+        isChangeButton={isChangeButton}
         isLast={true}
       >
         <GridColumn span={['12/12', '6/12', '6/12', '6/12', '3/12']}>

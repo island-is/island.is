@@ -1,3 +1,5 @@
+import set from 'lodash/set'
+import { assign } from 'xstate'
 import { pruneAfterDays } from '@island.is/application/core'
 import { Features } from '@island.is/feature-flags'
 import { AuthDelegationType } from '@island.is/shared/types'
@@ -10,19 +12,16 @@ import {
   DefaultEvents,
   UserProfileApi,
   ApplicationConfigurations,
+  ApplicationRole,
 } from '@island.is/application/types'
-import { States, Roles } from './constants'
+import { Events, States, Roles } from './constants'
 import { dataSchema } from './dataSchema'
 import {
   NationalRegistryUserApi,
   NationalRegistrySpouseApi,
 } from '../dataProviders'
 import { getLandlordsNationalId } from './getLandlordsNationalId'
-import { assign } from 'xstate'
-import set from 'lodash/set'
 import { getTenantsNationalId } from './getTenantsByNationalId'
-
-type Events = { type: DefaultEvents.SUBMIT } | { type: DefaultEvents.EDIT }
 
 const RentalAgreementTemplate: ApplicationTemplate<
   ApplicationContext,
@@ -55,7 +54,11 @@ const RentalAgreementTemplate: ApplicationTemplate<
                   Promise.resolve(module.PrerequisitesForm),
                 ),
               actions: [
-                { event: 'SUBMIT', name: 'Staðfesta', type: 'primary' },
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: 'Staðfesta',
+                  type: 'primary',
+                },
               ],
               write: 'all',
               read: 'all',
@@ -69,7 +72,7 @@ const RentalAgreementTemplate: ApplicationTemplate<
           ],
         },
         on: {
-          [DefaultEvents.SUBMIT]: [{ target: States.DRAFT }],
+          [DefaultEvents.SUBMIT]: { target: States.DRAFT },
         },
       },
       [States.DRAFT]: {
@@ -82,19 +85,20 @@ const RentalAgreementTemplate: ApplicationTemplate<
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/rentalAgreementForm').then((module) =>
-                  Promise.resolve(module.RentalAgreementForm),
+                import('../forms/draftForm').then((module) =>
+                  Promise.resolve(module.draftForm),
                 ),
               actions: [
                 {
                   event: DefaultEvents.SUBMIT,
-                  name: 'Staðfesta',
+                  name: 'Áfram í yfirlit',
                   type: 'primary',
                 },
               ],
               write: 'all',
               read: 'all',
               delete: true,
+              api: [UserProfileApi, NationalRegistryUserApi],
             },
           ],
         },
@@ -105,31 +109,68 @@ const RentalAgreementTemplate: ApplicationTemplate<
         },
       },
       [States.SUMMARY]: {
-        entry: 'assignUsers',
         meta: {
           name: States.SUMMARY,
-          progress: 100,
-          status: 'draft',
+          progress: 95,
+          status: 'inprogress',
           lifecycle: pruneAfterDays(30),
           roles: [
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/summaryForm').then((module) =>
-                  Promise.resolve(module.SummaryForm),
+                import('../forms/summaryApplicantForm').then((module) =>
+                  Promise.resolve(module.summaryApplicantForm),
                 ),
               actions: [
                 {
                   event: DefaultEvents.SUBMIT,
-                  name: 'Staðfesta',
+                  name: 'Áfram í undirritun',
                   type: 'primary',
                 },
                 {
                   event: DefaultEvents.EDIT,
                   name: 'Breyta umsókn',
-                  type: 'primary',
+                  type: 'signSubtle',
                 },
               ],
+              write: 'all',
+              read: 'all',
+              delete: true,
+              api: [UserProfileApi, NationalRegistryUserApi],
+            },
+            {
+              id: Roles.ASSIGNEE,
+              formLoader: () =>
+                import('../forms/summaryAssigneeForm').then((module) =>
+                  Promise.resolve(module.summaryAssigneeForm),
+                ),
+              read: 'all',
+              api: [UserProfileApi],
+            },
+          ],
+        },
+        on: {
+          [DefaultEvents.EDIT]: {
+            target: States.DRAFT,
+          },
+          [DefaultEvents.SUBMIT]: {
+            target: States.SIGNING,
+          },
+        },
+      },
+      [States.SIGNING]: {
+        meta: {
+          name: States.SIGNING,
+          progress: 100,
+          status: 'inprogress',
+          lifecycle: pruneAfterDays(30),
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/signingForm').then((module) =>
+                  Promise.resolve(module.SigningForm),
+                ),
               write: 'all',
               read: 'all',
               delete: true,
@@ -138,6 +179,9 @@ const RentalAgreementTemplate: ApplicationTemplate<
         },
         on: {
           [DefaultEvents.SUBMIT]: {
+            target: States.SIGNING,
+          },
+          [DefaultEvents.EDIT]: {
             target: States.SUMMARY,
           },
         },
@@ -151,29 +195,38 @@ const RentalAgreementTemplate: ApplicationTemplate<
 
         const LandlordsNationalId = getLandlordsNationalId(application)
         const TenantsNationalId = getTenantsNationalId(application)
-        if (
-          LandlordsNationalId &&
-          TenantsNationalId &&
-          LandlordsNationalId !== null &&
-          LandlordsNationalId.length > 0
-        ) {
-          set(application, 'assignees', [
-            LandlordsNationalId,
-            TenantsNationalId,
-          ])
+
+        const assigneeIds = [
+          ...(LandlordsNationalId || []),
+          ...(TenantsNationalId || []),
+        ]
+
+        console.log('AssigneeIds', assigneeIds)
+
+        if (assigneeIds && assigneeIds.length > 0) {
+          set(application, 'assignees', [assigneeIds])
         }
+
         return context
       }),
     },
   },
   mapUserToRole(
-    nationalId: string,
+    id: string,
     application: Application,
-  ): Roles | undefined {
-    console.log(getLandlordsNationalId(application))
-    if (application.applicant === nationalId) {
+  ): ApplicationRole | undefined {
+    const { applicant, assignees } = application
+
+    console.log('Assignees', assignees)
+
+    if (id === applicant) {
       return Roles.APPLICANT
     }
+
+    if (assignees.includes(id)) {
+      return Roles.ASSIGNEE
+    }
+
     return undefined
   },
 }

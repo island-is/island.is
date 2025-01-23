@@ -1,7 +1,9 @@
-import { StateLifeCycle } from '@island.is/application/types'
+import { DefaultEvents, StateLifeCycle } from '@island.is/application/types'
 
 export const TRUE = 'true'
 export const FALSE = 'false'
+
+export type Events = { type: DefaultEvents.SUBMIT | DefaultEvents.EDIT }
 
 export enum States {
   PREREQUISITES = 'prerequisites',
@@ -13,6 +15,7 @@ export enum States {
 
 export enum Roles {
   APPLICANT = 'applicant',
+  ASSIGNEE = 'assignee',
 }
 
 export enum Routes {

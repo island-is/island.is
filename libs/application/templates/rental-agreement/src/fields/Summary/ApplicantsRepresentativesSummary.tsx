@@ -14,11 +14,18 @@ interface Props extends FieldBaseProps {
   goToScreen?: (id: string) => void
   landlordsRoute?: Routes
   tenantsRoute?: Routes
+  isChangeButton: boolean
 }
 
 export const ApplicantsRepresentativesSummary: FC<Props> = ({ ...props }) => {
   const { formatMessage } = useLocale()
-  const { application, goToScreen, landlordsRoute, tenantsRoute } = props
+  const {
+    application,
+    goToScreen,
+    landlordsRoute,
+    tenantsRoute,
+    isChangeButton,
+  } = props
   const answers = application.answers as RentalAgreement
 
   const landlordListHasRepresentatives = answers.landlordInfo.table.some(
@@ -51,6 +58,7 @@ export const ApplicantsRepresentativesSummary: FC<Props> = ({ ...props }) => {
                   key={landlordRep.nationalIdWithName?.nationalId}
                   editAction={goToScreen}
                   route={landlordsRoute}
+                  isChangeButton={isChangeButton}
                 >
                   <GridColumn span={['12/12']}>
                     <KeyValue
@@ -95,6 +103,7 @@ export const ApplicantsRepresentativesSummary: FC<Props> = ({ ...props }) => {
                   key={tenantRep.nationalIdWithName?.nationalId}
                   editAction={props.goToScreen}
                   route={tenantsRoute}
+                  isChangeButton={isChangeButton}
                 >
                   <GridColumn span={['12/12']}>
                     <KeyValue
