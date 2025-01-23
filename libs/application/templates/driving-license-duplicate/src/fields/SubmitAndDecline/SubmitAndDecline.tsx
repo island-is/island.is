@@ -6,7 +6,6 @@ import {
   DefaultEvents,
 } from '@island.is/application/types'
 import { Box, LoadingDots } from '@island.is/island-ui/core'
-import { useLocale } from '@island.is/localization'
 import { SUBMIT_APPLICATION } from '@island.is/application/graphql'
 
 interface Props extends FieldBaseProps {
