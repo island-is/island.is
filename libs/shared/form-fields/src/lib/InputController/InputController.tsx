@@ -50,6 +50,7 @@ interface Props {
   min?: number
   step?: string
   clearOnChange?: string[]
+  tooltip?: string
 }
 
 interface ChildParams {
@@ -98,6 +99,7 @@ export const InputController = forwardRef(
       min,
       step,
       clearOnChange,
+      tooltip,
     } = props
     const formContext = useFormContext()
 
@@ -237,6 +239,7 @@ export const InputController = forwardRef(
         return (
           <Input
             id={id}
+            tooltip={tooltip}
             value={value}
             disabled={disabled}
             readOnly={readOnly}

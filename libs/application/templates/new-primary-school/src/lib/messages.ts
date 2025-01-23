@@ -10,6 +10,11 @@ export const newPrimarySchoolMessages: MessageDir = {
       defaultMessage: 'Umsókn í nýjan grunnskóla',
       description: 'Application for a new primary school',
     },
+    enrollmentApplicationName: {
+      id: 'nps.application:enrollment.application.name',
+      defaultMessage: 'Innritun í grunnskóla',
+      description: 'Enrollment in primary school',
+    },
     institution: {
       id: 'nps.application:institution.name',
       defaultMessage: 'Sveitarfélög',
@@ -105,6 +110,26 @@ export const newPrimarySchoolMessages: MessageDir = {
       defaultMessage: 'Veldu skóla',
       description: 'Select school',
     },
+    gender: {
+      id: 'dess.nps.application:gender',
+      defaultMessage: 'Kyn',
+      description: 'Gender',
+    },
+    male: {
+      id: 'dess.nps.application:gender.male',
+      defaultMessage: 'Karlkyns',
+      description: 'Male',
+    },
+    female: {
+      id: 'dess.nps.application:gender.female',
+      defaultMessage: 'Kvenkyns',
+      description: 'Female',
+    },
+    otherGender: {
+      id: 'dess.nps.application:gender.other',
+      defaultMessage: 'Kynsegin/Annað',
+      description: 'non-binary/Other',
+    },
   }),
 
   pre: defineMessages({
@@ -113,6 +138,20 @@ export const newPrimarySchoolMessages: MessageDir = {
       defaultMessage: 'Forsendur',
       description: 'Prerequisites',
     },
+
+    // Application type
+    applicationTypeSubSectionTitle: {
+      id: 'nps.application:application.type.sub.section.title',
+      defaultMessage: 'Tegund umsóknar',
+      description: 'Application type',
+    },
+    applicationTypeSubSectionDescription: {
+      id: 'nps.application:application.type.sub.section.description',
+      defaultMessage: 'Vinsamlegast veldu tegund umsóknar',
+      description: 'Please select application type',
+    },
+
+    // Data collection
     externalDataSubSection: {
       id: 'nps.application:external.data.sub.section',
       defaultMessage: 'Gagnaöflun',
@@ -205,8 +244,9 @@ export const newPrimarySchoolMessages: MessageDir = {
     childInfoDescription: {
       id: 'nps.application:childrenNParents.child.info.description',
       defaultMessage:
-        'Athugaðu hvort upplýsingarnar séu réttar áður en þú heldur áfram.',
-      description: 'Check that the information is correct before proceeding.',
+        'Upplýsingar um barn eru sóttar í Þjóðskrá. Athugaðu hvort upplýsingarnar séu réttar áður en þú heldur áfram.',
+      description:
+        'Information about the child is retrieved from the National Registry. Check that the information is correct before proceeding.',
     },
     childInfoPreferredName: {
       id: 'nps.application:childrenNParents.child.info.preferred.name',
@@ -215,24 +255,44 @@ export const newPrimarySchoolMessages: MessageDir = {
     },
     childInfoPronouns: {
       id: 'nps.application:childrenNParents.child.info.pronouns',
-      defaultMessage: 'Fornafn',
+      defaultMessage: 'Persónufornafn',
       description: 'Pronoun',
     },
     childInfoPronounsPlaceholder: {
       id: 'nps.application:childrenNParents.child.info.pronouns.placeholder',
-      defaultMessage: 'Veldu fornafn',
+      defaultMessage: 'Veldu persónufornafn',
       description: 'Select pronoun',
+    },
+    usePronounAndPreferredName: {
+      id: 'nps.application:childrenNParents.child.info.use.pronoun.and.preferred.name',
+      defaultMessage:
+        'Barnið kýs að vera ávarpað með öðru nafni og/eða persónufornafni en hann eða hún',
+      description:
+        'The child prefers to be addressed by a name and/or personal pronoun other than he or she',
+    },
+    preferredNameTooltip: {
+      id: 'nps.application:childrenNParents.child.info.preferred.name.tooltip',
+      defaultMessage:
+        'Forsjáraðilar geta óskað eftir breytingu á skráðu kyni og nafni barns hjá Þjóðskrá eða barnið sjálft sé það orðið 15 ára. Ef sú breyting er ótímabært má breyta nafni barnsins hér og skrá það nafn sem barn hefur valið sér.',
+      description:
+        "Guardians can request a change to a child's registered gender and name with the National Registry, or the child themselves if they have reached the age of 15. If the change is premature, the child's name can be changed here and the name the child has chosen can be registered.",
     },
     differentPlaceOfResidence: {
       id: 'nps.application:childrenNParents.child.info.different.place.of.residence',
-      defaultMessage: 'Er dvalarstaður barns annað en skráð lögheimili?',
+      defaultMessage: 'Er aðsetur barns annað en skráð lögheimili?',
       description:
-        "Is the child's place of residence different from the registered legal domicile?",
+        "Is the child's temporary residence different from the registered legal domicile?",
+    },
+    differentPlaceOfResidenceDescription: {
+      id: 'nps.application:childrenNParents.child.info.different.place.of.residence.description',
+      defaultMessage: 'Aðsetur er tímabundin búseta barns í öðru húsnæði',
+      description:
+        "Temporary residence is a child's place of residence in another home.",
     },
     childInfoPlaceOfResidence: {
       id: 'nps.application:childrenNParents.child.info.place.of.residence',
-      defaultMessage: 'Dvalarstaður barns',
-      description: "Child's place of residence",
+      defaultMessage: 'Aðsetur barns',
+      description: "Child's temporary residence",
     },
 
     // Parents/guardians
@@ -330,16 +390,6 @@ export const newPrimarySchoolMessages: MessageDir = {
       description:
         'We remind you to register your new domicile in Registers Iceland.',
     },
-    country: {
-      id: 'nps.application:primary.school.country',
-      defaultMessage: 'Til hvaða lands er verið að flytja?',
-      description: 'What country are you moving to?',
-    },
-    countryPlaceholder: {
-      id: 'nps.application:primary.school.country.placeholder',
-      defaultMessage: 'Veldu land',
-      description: 'Select a country',
-    },
 
     // Siblings
     siblingsSubSectionTitle: {
@@ -379,8 +429,8 @@ export const newPrimarySchoolMessages: MessageDir = {
       defaultMessage: 'Upplýsingar um núverandi skóla',
       description: 'Information about current school',
     },
-    currentSchoolInfo: {
-      id: 'nps.application:primary.school.current.school.info',
+    currentSchool: {
+      id: 'nps.application:primary.school.current.school',
       defaultMessage: 'Núverandi skóli',
       description: 'Current school',
     },
