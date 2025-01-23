@@ -71,6 +71,27 @@ export class FormUrlInput {
   method?: string
 }
 
+@InputType('FormSystemOrganizationUrlInput')
+export class OrganizationUrlInput {
+  @Field(() => String, { nullable: true })
+  id?: string
+
+  @Field(() => String, { nullable: true })
+  url?: string
+
+  @Field(() => Boolean, { nullable: true })
+  isXroad?: boolean
+
+  @Field(() => Boolean, { nullable: true })
+  isTest?: boolean
+
+  @Field(() => String, { nullable: true })
+  type?: string
+
+  @Field(() => String, { nullable: true })
+  method?: string
+}
+
 @InputType('FormSystemUpdateFormDtoInput')
 export class UpdateFormDtoInput {
   @Field(() => String, { nullable: true })
@@ -198,4 +219,7 @@ export class FormResponseInput {
 
   @Field(() => [FormInput], { nullable: 'itemsAndList' })
   forms?: FormInput[]
+
+  @Field(() => [OrganizationUrlInput], { nullable: 'itemsAndList' })
+  urls?: OrganizationUrlInput[]
 }
