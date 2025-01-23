@@ -5,7 +5,7 @@ import * as constants from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
 
 interface Props {
-  date: string
+  date: string | Date
   text?: string
   hideTime?: boolean
 }
