@@ -39,8 +39,8 @@ export const participantsSection = buildSection({
                 'initialQuery',
                 '',
               ) ?? ''
-            const nationalIds = tableItems?.map((x) => x.nationalId) ?? []
-            console.log(nationalIds)
+            const nationalIds =
+              tableItems?.map((x) => x.nationalIdWithName.nationalId) ?? []
             const { data } = await apolloClient.query<
               { areIndividualsValid: Array<SeminarsIndividualValidationItem> }, //TODO get this correct from schemas
               QueryAreIndividualsValidArgs
@@ -51,12 +51,11 @@ export const participantsSection = buildSection({
                 nationalIds: nationalIds,
               },
             })
-            console.log(data)
 
             const updatedParticipants: Array<Participant> = tableItems.map(
               (x) => {
                 const participantInRes = data.areIndividualsValid.filter(
-                  (z: any) => z.nationalID === x.nationalId,
+                  (z: any) => z.nationalID === x.nationalIdWithName.nationalId,
                 )
                 return { ...x, disabled: !participantInRes[0].mayTakeCourse }
               },
@@ -76,23 +75,25 @@ export const participantsSection = buildSection({
                 value: 'true',
               })
             }
-            console.log(dictinaryOfItems)
 
             return {
               dictinaryOfItems,
             }
           },
+
+          table: {
+            header: [
+              participantMessages.labels.name,
+              participantMessages.labels.nationalId,
+              participantMessages.labels.email,
+              participantMessages.labels.phoneNumber,
+            ],
+          },
           fields: {
-            name: {
-              component: 'input',
-              label: participantMessages.labels.name,
-              width: 'half',
-            },
-            nationalId: {
-              component: 'input',
-              label: participantMessages.labels.nationalId,
-              width: 'half',
-              format: '######-####',
+            nationalIdWithName: {
+              component: 'nationalIdWithName',
+              label: 'National ID with name',
+              searchPersons: true,
             },
             email: {
               component: 'input',

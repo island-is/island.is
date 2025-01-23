@@ -48,8 +48,8 @@ export const ParticipantsOverviewExpandableTable = ({ data }: Props) => {
                   <TableRow
                     key={index}
                     line={[
-                      line.name,
-                      line.nationalId,
+                      line.nationalIdWithName.name,
+                      line.nationalIdWithName.nationalId,
                       line.email,
                       formatPhoneNumber(line.phoneNumber),
                     ]}
@@ -59,8 +59,8 @@ export const ParticipantsOverviewExpandableTable = ({ data }: Props) => {
                 <TableRow
                   key={index}
                   line={[
-                    line.name,
-                    line.nationalId,
+                    line.nationalIdWithName.name,
+                    line.nationalIdWithName.nationalId,
                     line.email,
                     formatPhoneNumber(line.phoneNumber),
                   ]}

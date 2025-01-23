@@ -140,13 +140,17 @@ export const UserInformationSchema = z.intersection(
 )
 
 export const ParticipantSchema = z.object({
-  name: z.string().min(1),
-  nationalId: z
-    .string()
-    .refine(
-      (nationalId) =>
-        nationalId && nationalId.length !== 0 && kennitala.isValid(nationalId),
-    ),
+  nationalIdWithName: z.object({
+    name: z.string().min(1),
+    nationalId: z
+      .string()
+      .refine(
+        (nationalId) =>
+          nationalId &&
+          nationalId.length !== 0 &&
+          kennitala.isValid(nationalId),
+      ),
+  }),
   email: z
     .string()
     .min(1)

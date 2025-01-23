@@ -112,8 +112,8 @@ export class SeminarsTemplateService extends BaseTemplateApiService {
             paymentExplanation: paymentArrangement?.explanation ?? '',
           },
           students: participantList?.map((participants) => ({
-            name: participants.name,
-            nationalId: participants.nationalId,
+            name: participants.nationalIdWithName.name,
+            nationalId: participants.nationalIdWithName.nationalId,
             email: participants.email,
             phoneNumber: participants.phoneNumber,
           })),

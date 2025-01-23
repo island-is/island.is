@@ -41,8 +41,10 @@ const parseDataToParticipantList = (csvInput: string): Participant | null => {
   }
   const nationalIdWithoutHyphen = values[1].replace('-', '')
   return {
-    name: values[0],
-    nationalId: nationalIdWithoutHyphen,
+    nationalIdWithName: {
+      name: values[0],
+      nationalId: nationalIdWithoutHyphen,
+    },
     email: values[2],
     phoneNumber: values[3],
     disabled: 'false',
@@ -128,7 +130,7 @@ export const Participants: FC<React.PropsWithChildren<FieldBaseProps>> = ({
           },
         )
         const response = await getIsCompanyValidCallback(
-          answerValue.map((x) => x.nationalId),
+          answerValue.map((x) => x.nationalIdWithName.nationalId),
         )
         const hasDisabledParticipant = response?.areIndividualsValid?.find(
           (x) => x.mayTakeCourse === false,
@@ -147,7 +149,7 @@ export const Participants: FC<React.PropsWithChildren<FieldBaseProps>> = ({
           })
           const finalAnswerValue = answerValue.map<Participant>((x) => {
             const participantInRes = response?.areIndividualsValid?.find(
-              (z) => z.nationalID === x.nationalId,
+              (z) => z.nationalID === x.nationalIdWithName.nationalId,
             )
             return {
               ...x,
