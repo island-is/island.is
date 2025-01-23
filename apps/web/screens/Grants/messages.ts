@@ -258,4 +258,26 @@ export const m = {
       defaultMessage: 'Lýsing á orkuskiptum',
     },
   }),
+  bullets: defineMessages({
+    open: {
+      id: 'web.grants:bullets.open',
+      defaultMessage: 'Opið fyrir umsóknir',
+    },
+    nativeFunds: {
+      id: 'web.grants:bullets.nativeFunds',
+      defaultMessage: 'Innlendir sjóðir',
+    },
+    technologyDevelopmentFund: {
+      id: 'web.grants:bullets.technologyDevelopmentFund',
+      defaultMessage: 'Tækniþróunarsjóður',
+    },
+    financing: {
+      id: 'web.grants:bullets.financing',
+      defaultMessage: 'Fjármögnun',
+    },
+    companies: {
+      id: 'web.grants:bullets.companies',
+      defaultMessage: 'Fyrirtæki',
+    },
+  }),
 }

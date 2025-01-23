@@ -94,26 +94,25 @@ const GrantsHomePage: CustomScreen<GrantsHomeProps> = ({
             customPageData?.ogImage?.url ?? formatMessage(m.home.featuredImage)
           }
           featuredImageAlt={formatMessage(m.home.featuredImageAlt)}
-          //TODO - do when the categories are ready
           quickLinks={[
             {
-              title: 'Opið fyrir umsóknir',
+              title: formatMessage(m.bullets.open),
               href: searchUrl + '?status=open',
             },
             {
-              title: 'Innlendir sjóðir',
+              title: formatMessage(m.bullets.nativeFunds),
               href: searchUrl + '?category=grant-category-native',
             },
             {
-              title: 'Tækniþróunarsjóður',
-              href: searchUrl + '?query=tækniþróunarsjóður',
+              title: formatMessage(m.bullets.technologyDevelopmentFund),
+              href: searchUrl + '?query=tækniþróunar',
             },
             {
-              title: 'Fjármögnun',
+              title: formatMessage(m.bullets.financing),
               href: searchUrl + '?type=grant-type-financing',
             },
             {
-              title: 'Fyrirtæki',
+              title: formatMessage(m.bullets.companies),
               href: searchUrl + '?query=fyrirtæki',
             },
           ]}
