@@ -63,9 +63,7 @@ export const newSchoolSubSection = buildSubSection({
             return (
               data?.friggSchoolsByMunicipality
                 ?.find(
-                  ({ name }) =>
-                    name ===
-                    (selectedValue ? selectedValue : schoolMunicipality),
+                  ({ name }) => name === (selectedValue || schoolMunicipality),
                 )
                 ?.children?.filter((school) =>
                   school.gradeLevels?.includes(childGradeLevel),
