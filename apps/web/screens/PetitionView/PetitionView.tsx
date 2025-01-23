@@ -12,6 +12,7 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { Box, Button, Pagination, Table as T } from '@island.is/island-ui/core'
+import { Markdown } from '@island.is/shared/components'
 import { InstitutionPanel } from '@island.is/web/components'
 import {
   GetNamespaceQuery,
@@ -27,7 +28,6 @@ import { Screen } from '../../types'
 import PetitionSkeleton from './PetitionSkeleton'
 import { useGetPetitionList, useGetPetitionListEndorsements } from './queries'
 import { formatDate, getBaseUrl, pageSize } from './utils'
-import { Markdown } from '@island.is/shared/components'
 
 interface PetitionViewProps {
   namespace?: Record<string, string>
