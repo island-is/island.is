@@ -31,12 +31,6 @@
         "command": "yarn openapi-generator -o libs/clients/form-system/gen/fetch -i libs/clients/form-system/src/clientConfig.json"
       },
       "outputs": ["{projectRoot}/gen/fetch"]
-    },
-    "update-openapi-document": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "curl https://profun.island.is/umsoknarkerfi/swagger/v1/swagger.json > libs/clients/form-system/src/clientConfig.json"
-      }
     }
   },
   "schema": "libs/client/form-system/gen/fetch/api.graphql",

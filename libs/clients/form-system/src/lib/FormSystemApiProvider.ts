@@ -4,13 +4,15 @@ import { ConfigType, LazyDuringDevScope } from '@island.is/nest/config'
 import { FormSystemClientConfig } from './FormSystemClient.config'
 import {
   Configuration,
-  FilesApi,
+  ApplicationsApi,
+  FieldsApi,
   FormsApi,
-  GroupsApi,
-  InputsApi,
+  ListItemsApi,
   OrganizationsApi,
-  ServicesApi,
-  StepsApi,
+  ScreensApi,
+  SectionsApi,
+  FormApplicantTypesApi,
+  FormCertificationTypesApi,
 } from '../../gen/fetch'
 
 const provideApi = <T>(
@@ -35,10 +37,13 @@ const provideApi = <T>(
   inject: [FormSystemClientConfig.KEY],
 })
 
-export const FilesApiProvider = provideApi(FilesApi)
+export const ApplicationsApiProvider = provideApi(ApplicationsApi)
+export const FieldsApiProvider = provideApi(FieldsApi)
 export const FormsApiProvider = provideApi(FormsApi)
-export const GroupsApiProvider = provideApi(GroupsApi)
-export const InputsApiProvider = provideApi(InputsApi)
+export const ListItemsApiProvider = provideApi(ListItemsApi)
 export const OrganizationsApiProvider = provideApi(OrganizationsApi)
-export const ServicesApiProvider = provideApi(ServicesApi)
-export const StepsApiProvider = provideApi(StepsApi)
+export const ScreensApiProvider = provideApi(ScreensApi)
+export const SectionsApiProvider = provideApi(SectionsApi)
+export const FormApplicantProvider = provideApi(FormApplicantTypesApi)
+export const CertificationsProvider = provideApi(FormCertificationTypesApi)
+
