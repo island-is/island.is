@@ -9,4 +9,5 @@ export enum ProblemType {
   BAD_SUBJECT = 'https://docs.devland.is/reference/problems/bad-subject',
   TEMPLATE_API_ERROR = 'https://docs.devland.is/reference/problems/template-api-error',
   ATTEMPT_FAILED = 'https://docs.devland.is/reference/problems/attempt-failed',
+  BAD_SESSION = 'https://docs.devland.is/reference/problems/bad-session',
 }
