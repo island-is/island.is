@@ -212,7 +212,7 @@ export const dataSchema = z.object({
       caseManager: z
         .object({
           name: z.string(),
-          email: z.string().email(),
+          email: z.string().email().optional().or(z.literal('')),
         })
         .optional(),
       requestMeeting: z.array(z.enum([YES, NO])).optional(),
@@ -263,7 +263,7 @@ export const dataSchema = z.object({
         (developmentalAssessment === YES || specialSupport === YES) &&
         hasIntegratedServices === YES &&
         hasCaseManager === YES
-          ? caseManager && caseManager.email.length > 0
+          ? caseManager && caseManager.email && caseManager.email.length > 0
           : true,
       {
         path: ['caseManager', 'email'],

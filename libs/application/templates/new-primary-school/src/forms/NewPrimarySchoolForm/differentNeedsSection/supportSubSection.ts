@@ -7,6 +7,7 @@ import {
   buildTextField,
 } from '@island.is/application/core'
 import { NO, YES } from '@island.is/application/types'
+import { ApplicationType } from '../../../lib/constants'
 import { newPrimarySchoolMessages } from '../../../lib/messages'
 import { getApplicationAnswers } from '../../../lib/newPrimarySchoolUtils'
 
@@ -17,12 +18,27 @@ export const supportSubSection = buildSubSection({
     buildMultiField({
       id: 'support',
       title: newPrimarySchoolMessages.differentNeeds.supportSubSectionTitle,
-      description: newPrimarySchoolMessages.differentNeeds.supportDescription,
+      description: (application) => {
+        const { applicationType } = getApplicationAnswers(application.answers)
+
+        return applicationType === ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL
+          ? newPrimarySchoolMessages.differentNeeds.enrollmentSupportDescription
+          : newPrimarySchoolMessages.differentNeeds.supportDescription
+      },
       children: [
         buildRadioField({
           id: 'support.developmentalAssessment',
-          title:
-            newPrimarySchoolMessages.differentNeeds.developmentalAssessment,
+          title: (application) => {
+            const { applicationType } = getApplicationAnswers(
+              application.answers,
+            )
+
+            return applicationType ===
+              ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL
+              ? newPrimarySchoolMessages.differentNeeds
+                  .enrollmentDevelopmentalAssessment
+              : newPrimarySchoolMessages.differentNeeds.developmentalAssessment
+          },
           width: 'half',
           required: true,
           options: [
@@ -40,7 +56,16 @@ export const supportSubSection = buildSubSection({
         }),
         buildRadioField({
           id: 'support.specialSupport',
-          title: newPrimarySchoolMessages.differentNeeds.specialSupport,
+          title: (application) => {
+            const { applicationType } = getApplicationAnswers(
+              application.answers,
+            )
+
+            return applicationType ===
+              ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL
+              ? newPrimarySchoolMessages.differentNeeds.enrollmentSpecialSupport
+              : newPrimarySchoolMessages.differentNeeds.specialSupport
+          },
           width: 'half',
           required: true,
           space: 4,
@@ -161,7 +186,17 @@ export const supportSubSection = buildSubSection({
         buildAlertMessageField({
           id: 'support.supportAlertMessage',
           title: newPrimarySchoolMessages.shared.alertTitle,
-          message: newPrimarySchoolMessages.differentNeeds.supportAlertMessage,
+          message: (application) => {
+            const { applicationType } = getApplicationAnswers(
+              application.answers,
+            )
+
+            return applicationType ===
+              ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL
+              ? newPrimarySchoolMessages.differentNeeds
+                  .enrollmentSupportAlertMessage
+              : newPrimarySchoolMessages.differentNeeds.supportAlertMessage
+          },
           doesNotRequireAnswer: true,
           alertType: 'warning',
           marginTop: 4,

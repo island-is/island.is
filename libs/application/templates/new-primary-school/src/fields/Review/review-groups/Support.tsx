@@ -6,6 +6,7 @@ import {
 } from '@island.is/application/ui-components'
 import { GridColumn, GridRow, Stack } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
+import { ApplicationType } from '../../../lib/constants'
 import { newPrimarySchoolMessages } from '../../../lib/messages'
 import { getApplicationAnswers } from '../../../lib/newPrimarySchoolUtils'
 import { ReviewGroupProps } from './props'
@@ -17,6 +18,7 @@ export const Support = ({
 }: ReviewGroupProps) => {
   const { formatMessage } = useLocale()
   const {
+    applicationType,
     developmentalAssessment,
     specialSupport,
     hasIntegratedServices,
@@ -37,7 +39,11 @@ export const Support = ({
           <GridColumn span="9/12">
             <RadioValue
               label={formatMessage(
-                newPrimarySchoolMessages.differentNeeds.developmentalAssessment,
+                applicationType === ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL
+                  ? newPrimarySchoolMessages.differentNeeds
+                      .enrollmentDevelopmentalAssessment
+                  : newPrimarySchoolMessages.differentNeeds
+                      .developmentalAssessment,
               )}
               value={developmentalAssessment}
             />
@@ -47,7 +53,10 @@ export const Support = ({
           <GridColumn span="12/12">
             <RadioValue
               label={formatMessage(
-                newPrimarySchoolMessages.differentNeeds.specialSupport,
+                applicationType === ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL
+                  ? newPrimarySchoolMessages.differentNeeds
+                      .enrollmentSpecialSupport
+                  : newPrimarySchoolMessages.differentNeeds.specialSupport,
               )}
               value={specialSupport}
             />
