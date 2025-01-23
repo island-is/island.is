@@ -21,7 +21,6 @@ import {
   useScrollDirection,
 } from '@island.is/portals/my-pages/core'
 import { DocumentsPaths } from '@island.is/portals/my-pages/documents'
-import { useUserInfo } from '@island.is/react-spa/bff'
 import { useFeatureFlagClient } from '@island.is/react/feature-flags'
 import { UserLanguageSwitcher, UserMenu } from '@island.is/shared/components'
 import cn from 'classnames'
