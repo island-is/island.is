@@ -5,10 +5,9 @@ DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)"
 
 # shellcheck disable=SC1091
 source "$DIR"/_common.sh
-MAX_JOBS=${MAX_JOBS:-2}
 
 AFFECTED_PROJECTS=$(echo "${AFFECTED_PROJECTS}" | tr '\n,' ' ')
-echo "Running '$AFFECTED_PROJECTS' in parallel of ${MAX_JOBS} for target $1"
+echo "Running '$AFFECTED_PROJECTS' with concurrency of ${MAX_JOBS} and NX_PARALLEL of ${NX_PARALLEL}  for target $1"
 
 IFS=" " read -ra AFFECTED_PROJECTS <<<"$AFFECTED_PROJECTS"
 
