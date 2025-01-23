@@ -32,7 +32,6 @@ import {
   isProsecutionUser,
   isRequestCase,
   isRestrictionCase,
-  isTrafficViolationCase,
   NotificationType,
   restrictionCases,
   type User as TUser,
@@ -518,6 +517,29 @@ export class InternalCaseService {
     this.eventService.postEvent('ARCHIVE', theCase)
 
     return { caseArchived: true }
+  }
+
+  async getCaseHearingArrangements(date: Date): Promise<Case[]> {
+    const startOfDay = new Date(date.setHours(0, 0, 0, 0))
+    const endOfDay = new Date(date.setHours(23, 59, 59, 999))
+
+    return this.caseModel.findAll({
+      include: [
+        {
+          model: DateLog,
+          as: 'dateLogs',
+          where: {
+            date_type: ['ARRAIGNMENT_DATE', 'COURT_DATE'],
+            date: {
+              [Op.gte]: startOfDay,
+              [Op.lte]: endOfDay,
+            },
+          },
+          required: true,
+        },
+      ],
+      order: [[{ model: DateLog, as: 'dateLogs' }, 'date', 'ASC']],
+    })
   }
 
   async deliverProsecutorToCourt(
@@ -1028,39 +1050,14 @@ export class InternalCaseService {
     user: TUser,
   ): Promise<DeliverResponse> {
     try {
-      let policeDocuments: PoliceDocument[]
+      const file = await this.pdfService.getIndictmentPdf(theCase)
 
-      if (isTrafficViolationCase(theCase)) {
-        const file = await this.pdfService.getIndictmentPdf(theCase)
-
-        policeDocuments = [
-          {
-            type: PoliceDocumentType.RVAS,
-            courtDocument: Base64.btoa(file.toString('binary')),
-          },
-        ]
-      } else {
-        policeDocuments = await Promise.all(
-          theCase.caseFiles
-            ?.filter(
-              (caseFile) =>
-                caseFile.category === CaseFileCategory.INDICTMENT &&
-                caseFile.key,
-            )
-            .map(async (caseFile) => {
-              // TODO: Tolerate failure, but log error
-              const file = await this.fileService.getCaseFileFromS3(
-                theCase,
-                caseFile,
-              )
-
-              return {
-                type: PoliceDocumentType.RVAS,
-                courtDocument: Base64.btoa(file.toString('binary')),
-              }
-            }) ?? [],
-        )
-      }
+      const policeDocuments = [
+        {
+          type: PoliceDocumentType.RVAS,
+          courtDocument: Base64.btoa(file.toString('binary')),
+        },
+      ]
 
       const delivered = await this.deliverCaseToPoliceWithFiles(
         theCase,

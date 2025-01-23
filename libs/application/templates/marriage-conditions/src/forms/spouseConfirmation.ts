@@ -10,6 +10,8 @@ import {
   buildSubSection,
   buildExternalDataProvider,
   buildPhoneField,
+  buildImageField,
+  buildAlertMessageField,
 } from '@island.is/application/core'
 import { YES } from '../lib/constants'
 import { m } from '../lib/messages'
@@ -28,6 +30,7 @@ import format from 'date-fns/format'
 import is from 'date-fns/locale/is'
 import { removeCountryCode } from '@island.is/application/ui-components'
 import { dataCollection } from './sharedSections/dataCollection'
+import DigitalServices from '../assets/DigitalServices'
 
 export const spouseConfirmation = ({ allowFakeData = false }): Form =>
   buildForm({
@@ -257,6 +260,57 @@ export const spouseConfirmation = ({ allowFakeData = false }): Form =>
                     space: 'containerGutter',
                     title: '',
                   }),
+                ],
+              }),
+            ],
+          }),
+        ],
+      }),
+      buildSection({
+        condition: (_, externalData) => {
+          const data = (
+            externalData?.birthCertificate?.data as {
+              hasBirthCertificate?: boolean
+            }
+          )?.hasBirthCertificate
+          return !data
+        },
+        id: 'missingInformation',
+        title: m.missingInformation,
+        children: [
+          buildMultiField({
+            id: 'missingInfo',
+            title: m.missingInformationTitle,
+            description: m.missingInformationDescription,
+            children: [
+              buildImageField({
+                id: 'image',
+                title: '',
+                image: DigitalServices,
+                imageWidth: '50%',
+                imagePosition: 'center',
+              }),
+              buildDescriptionField({
+                id: 'space',
+                title: '',
+                space: 'gutter',
+              }),
+              buildAlertMessageField({
+                id: 'missingInfoAlert',
+                title: m.missingInformation,
+                message: m.missingInformationAlertDescription,
+                alertType: 'warning',
+              }),
+              buildCheckboxField({
+                id: 'spouseConfirmMissingInfo',
+                title: '',
+                large: true,
+                defaultValue: [],
+                options: [
+                  {
+                    value: YES,
+                    label: m.applicantConfirmMissingInformation,
+                  },
                 ],
               }),
             ],

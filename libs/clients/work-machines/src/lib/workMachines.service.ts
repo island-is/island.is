@@ -302,6 +302,12 @@ export class WorkMachinesClientService {
     ).apiMachineStreetRegistrationMustInspectBeforeRegistrationGet({})
   }
 
+  async getAvailableRegistrationTypes(auth: Auth) {
+    return await this.machineStreetApiWithAuth(
+      auth,
+    ).apiMachineStreetRegistrationMayStreetRegisterGet({})
+  }
+
   async getMachineTypes(auth: Auth): Promise<MachineTypeDto[]> {
     return await this.machineTypesApiWithAuth(auth).apiMachineTypesGet({})
   }
