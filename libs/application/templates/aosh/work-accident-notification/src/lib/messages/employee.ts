@@ -161,5 +161,11 @@ export const employee = {
         'Dagsetning og tími þegar starfsmaður mætti til vinnu á slysadegi',
       description: 'Error message for employee start time',
     },
+    samePersonAlert: {
+      id: 'aosh.wan.application:employee.samePersonAlert',
+      defaultMessage:
+        'Vinsamlegast athugaðu að þessi tilkynning um að þú hafir lent í vinnuslysi verður skráð á þig! Ef þú ert starfandi hjá fyrirtæki þá ber fyrirtækinu að tilkynna um vinnuslysið skv. 79 gr. laga 46/1980 og tilkynningum þar sem starfsmaður skráir tilkynninguna á sjálfan sig verður hafnað af Vinnueftirlitinu. Ef þú ert sjálfstætt starfandi þá geturu tilkynnt vinnuslys þar sem þú sjálf/ur ert hinn sladaða/i.',
+      description: 'Alert is actor attempt to register accident on himself',
+    },
   }),
 }
