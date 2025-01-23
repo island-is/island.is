@@ -1,16 +1,18 @@
 import React from 'react'
+
 import {
   Box,
-  Text,
+  GridColumn,
   GridContainer,
   GridRow,
-  GridColumn,
-  Link,
   Hidden,
+  Link,
+  Text,
 } from '@island.is/island-ui/core'
-import * as styles from './UkraineProjectHeader.css'
 import { ProjectPage } from '@island.is/web/graphql/schema'
 import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
+
+import * as styles from './UkraineProjectHeader.css'
 
 interface UkraineProjectHeaderProps {
   projectPage: ProjectPage

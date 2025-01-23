@@ -380,6 +380,7 @@ export interface SelectField extends InputField {
   placeholder?: FormText
   backgroundColor?: InputBackgroundColor
   isMulti?: boolean
+  isClearable?: boolean
 }
 
 export interface CompanySearchField extends InputField {
@@ -421,6 +422,7 @@ export interface TextField extends InputField {
   format?: string | FormatInputValueFunction
   suffix?: string
   rows?: number
+  tooltip?: FormText
   onChange?: (...event: any[]) => void
 }
 
