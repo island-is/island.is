@@ -782,15 +782,15 @@ export class CmsElasticsearchService {
                           range: {
                             // date from
                             releaseDate: {
-                              lt: '2024-04-15',
+                              lt: 'now',
                             },
                           },
                         },
                         {
                           range: {
-                            // date from
+                            // date to
                             dateCreated: {
-                              gt: '2024-04-15',
+                              gt: 'now',
                             },
                           },
                         },
@@ -832,15 +832,17 @@ export class CmsElasticsearchService {
                   filter: [
                     {
                       range: {
+                        //date from
                         releaseDate: {
-                          lt: '2024-04-15',
+                          lt: 'now',
                         },
                       },
                     },
                     {
                       range: {
+                        //date to
                         dateCreated: {
-                          gt: '2024-04-15',
+                          gt: 'now',
                         },
                       },
                     },
