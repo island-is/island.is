@@ -35,4 +35,5 @@ export type SortableTableProps = {
   inner?: boolean // Is the table inside another table
   align?: 'left' | 'right'
   ellipsisLength?: number
+  emptyTableMessage?: string
 }
