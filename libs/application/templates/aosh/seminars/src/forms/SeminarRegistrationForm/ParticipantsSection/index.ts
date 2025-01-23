@@ -40,6 +40,7 @@ export const participantsSection = buildSection({
                 '',
               ) ?? ''
             const nationalIds = tableItems?.map((x) => x.nationalId) ?? []
+            console.log(nationalIds)
             const { data } = await apolloClient.query<
               { areIndividualsValid: Array<SeminarsIndividualValidationItem> }, //TODO get this correct from schemas
               QueryAreIndividualsValidArgs
@@ -50,6 +51,7 @@ export const participantsSection = buildSection({
                 nationalIds: nationalIds,
               },
             })
+            console.log(data)
 
             const updatedParticipants: Array<Participant> = tableItems.map(
               (x) => {
@@ -68,6 +70,14 @@ export const participantsSection = buildSection({
                 }
               })
 
+            if (updatedParticipants.find((x) => !!x.disabled)) {
+              dictinaryOfItems.push({
+                path: 'participantValidityError',
+                value: 'true',
+              })
+            }
+            console.log(dictinaryOfItems)
+
             return {
               dictinaryOfItems,
             }
@@ -82,6 +92,7 @@ export const participantsSection = buildSection({
               component: 'input',
               label: participantMessages.labels.nationalId,
               width: 'half',
+              format: '######-####',
             },
             email: {
               component: 'input',
@@ -89,7 +100,7 @@ export const participantsSection = buildSection({
               width: 'half',
             },
             phoneNumber: {
-              component: 'input',
+              component: 'phone',
               label: participantMessages.labels.phoneNumber,
               width: 'half',
             },

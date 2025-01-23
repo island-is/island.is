@@ -11,7 +11,7 @@ import {
   FieldComponents,
   FieldTypes,
 } from '@island.is/application/types'
-import { FC, useState } from 'react'
+import { FC, useCallback, useState } from 'react'
 import { FILE_SIZE_LIMIT } from '../../lib/constants'
 import { parse } from 'csv-parse'
 import { CSVError, FileUploadStatus, Participant } from '../../shared/types'
@@ -19,6 +19,8 @@ import { participants as participantMessages } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
 import { DescriptionFormField } from '@island.is/application/ui-fields'
 import { validateFields } from '../../utils'
+import { useLazyAreIndividualsValid } from '../../hooks/useLazyAreIndividualsValid'
+import { getValueViaPath } from '@island.is/application/core'
 
 interface IndexableObject {
   [index: number]: Array<string>
@@ -69,6 +71,19 @@ export const Participants: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   const [participantList, setParticipantList] = useState<Array<Participant>>([])
   const [foundNotValid, setFoundNotValid] = useState<boolean>(false)
   const [csvInputError, setCsvInputError] = useState<Array<CSVError>>([])
+  const courseID =
+    getValueViaPath<string>(application.answers, 'initialQuery', '') ?? ''
+  const getAreIndividualsValid = useLazyAreIndividualsValid()
+  const getIsCompanyValidCallback = useCallback(
+    async (nationalIds: string[]) => {
+      const { data } = await getAreIndividualsValid({
+        courseID,
+        nationalIds,
+      })
+      return data
+    },
+    [getAreIndividualsValid],
+  )
 
   const changeFile = (props: Array<UploadFile>) => {
     const reader = new FileReader()
@@ -82,7 +97,7 @@ export const Participants: FC<React.PropsWithChildren<FieldBaseProps>> = ({
         )
       }
       const csvData = reader.result
-      parse(csvData, (err, data) => {
+      parse(csvData, async (err, data) => {
         if (err) {
           rejectFile()
           return
@@ -112,6 +127,16 @@ export const Participants: FC<React.PropsWithChildren<FieldBaseProps>> = ({
             }
           },
         )
+        const response = await getIsCompanyValidCallback(
+          answerValue.map((x) => x.nationalId),
+        )
+        const hasDisabledParticipant = response?.areIndividualsValid?.find(
+          (x) => x.mayTakeCourse === false,
+        )
+        if (hasDisabledParticipant) {
+          setValue('participantValidityError', true)
+          setFoundNotValid(true)
+        }
         if (errorListFromAnswers.length > 0) {
           setCsvInputError(errorListFromAnswers)
         } else {
@@ -120,10 +145,19 @@ export const Participants: FC<React.PropsWithChildren<FieldBaseProps>> = ({
           Object.assign(fileWithSuccessStatus, {
             status: FileUploadStatus.done,
           })
+          const finalAnswerValue = answerValue.map<Participant>((x) => {
+            const participantInRes = response?.areIndividualsValid?.find(
+              (z) => z.nationalID === x.nationalId,
+            )
+            return {
+              ...x,
+              disabled: (!participantInRes?.mayTakeCourse).toString(),
+            }
+          })
           setValue('participantCsvError', false)
           setFileState([fileWithSuccessStatus])
-          setParticipantList(answerValue)
-          setValue('participantList', answerValue)
+          setParticipantList(finalAnswerValue)
+          setValue('participantList', finalAnswerValue)
         }
       })
     }
@@ -231,7 +265,6 @@ export const Participants: FC<React.PropsWithChildren<FieldBaseProps>> = ({
           let messageString = `${formatMessage(
             participantMessages.labels.csvErrorLabel,
           )} ${csvError.itemIndex + 1}`
-          console.log('csvError.errorList', csvError.errorList)
           csvError.errorList.forEach((errorString) => {
             messageString = messageString.concat(
               ' ',
