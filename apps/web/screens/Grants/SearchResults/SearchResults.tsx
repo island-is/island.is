@@ -158,7 +158,7 @@ const GrantsSearchResultsPage: CustomScreen<GrantsHomeProps> = ({
       fetchGrants()
     }, debounceTime.search)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [categories, locale, organizations, page, query, types])
+  }, [categories, locale, organizations, page, query, types, status])
 
   useEffect(() => {
     debouncedSearchUpdate()

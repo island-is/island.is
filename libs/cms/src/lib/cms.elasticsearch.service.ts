@@ -59,6 +59,7 @@ import {
 } from './dto/getGrants.input'
 import { Grant } from './models/grant.model'
 import { GrantList } from './models/grantList.model'
+import { logger } from '@island.is/logging'
 
 @Injectable()
 export class CmsElasticsearchService {
@@ -746,78 +747,82 @@ export class CmsElasticsearchService {
       })
     })
 
-    if (status) {
+    if (status !== undefined) {
       if (status === GrantsAvailabilityStatus.CLOSED) {
-        must.push([
-          {
-            nested: {
-              path: 'tags',
-              query: {
-                bool: {
-                  must: [
-                    {
-                      term: {
-                        'tags.type': 'status',
-                      },
-                    },
-                    {
-                      terms: {
-                        'tags.key': ['Closed with note', 'Automatic'],
-                      },
-                    },
-                  ],
-                },
-              },
-            },
-          },
-          {
-            bool: {
-              must_not: {
-                bool: {
-                  filter: [
-                    {
-                      range: {
-                        // date from
-                        releaseDate: {
-                          lt: '2024-04-15',
-                        },
-                      },
-                    },
-                    {
-                      range: {
-                        // date from
-                        dateCreated: {
-                          gt: '2024-04-15',
-                        },
-                      },
-                    },
-                    {
-                      nested: {
-                        path: 'tags',
-                        query: {
-                          bool: {
-                            must: [
-                              {
-                                term: {
-                                  'tags.type': 'status',
-                                },
-                              },
-                              {
-                                term: {
-                                  'tags.key': 'Automatic',
-                                },
-                              },
-                            ],
+        must.push({
+          bool: {
+            must: [
+              {
+                nested: {
+                  path: 'tags',
+                  query: {
+                    bool: {
+                      must: [
+                        {
+                          term: {
+                            'tags.type': 'status',
                           },
                         },
-                      },
+                        {
+                          terms: {
+                            'tags.key': ['Closed with note', 'Automatic'],
+                          },
+                        },
+                      ],
                     },
-                  ],
+                  },
                 },
               },
-            },
+              {
+                bool: {
+                  must_not: {
+                    bool: {
+                      filter: [
+                        {
+                          range: {
+                            // date from
+                            releaseDate: {
+                              lt: '2024-04-15',
+                            },
+                          },
+                        },
+                        {
+                          range: {
+                            // date from
+                            dateCreated: {
+                              gt: '2024-04-15',
+                            },
+                          },
+                        },
+                        {
+                          nested: {
+                            path: 'tags',
+                            query: {
+                              bool: {
+                                must: [
+                                  {
+                                    term: {
+                                      'tags.type': 'status',
+                                    },
+                                  },
+                                  {
+                                    term: {
+                                      'tags.key': 'Automatic',
+                                    },
+                                  },
+                                ],
+                              },
+                            },
+                          },
+                        },
+                      ],
+                    },
+                  },
+                },
+              },
+            ],
           },
-        ])
+        })
       } else {
         must.push({
           bool: {
