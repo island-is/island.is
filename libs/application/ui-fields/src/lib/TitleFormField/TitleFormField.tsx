@@ -14,7 +14,7 @@ export const TitleFormField: FC<
 > = ({ field, application }) => {
   const { formatMessage, lang: locale } = useLocale()
   const {
-    title,
+    title = '',
     titleVariant = 'h5',
     color = 'dark400',
     marginTop = 5,

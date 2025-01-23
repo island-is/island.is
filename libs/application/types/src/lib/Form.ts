@@ -102,7 +102,7 @@ export interface FormItem extends TestSupport {
   readonly id?: string
   condition?: Condition
   readonly type: string
-  readonly title: FormTextWithLocale
+  readonly title?: FormTextWithLocale
   readonly nextButtonText?: FormText
 }
 

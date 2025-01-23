@@ -40,7 +40,7 @@ export const FieldsRepeaterFormField = ({
     description,
     marginTop = 6,
     marginBottom,
-    title,
+    title = '',
     titleVariant = 'h2',
     formTitle,
     formTitleVariant = 'h4',

@@ -24,7 +24,7 @@ export const ExpandableDescriptionFormField: FC<
         startExpanded={field.startExpanded}
         id={`BulletPointFormField-${field.id}`}
         label={formatTextWithLocale(
-          field.title,
+          field.title ?? '',
           application,
           locale as Locale,
           formatMessage,

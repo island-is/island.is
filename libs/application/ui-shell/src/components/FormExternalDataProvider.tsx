@@ -45,7 +45,7 @@ const ItemHeader: React.FC<
     pageTitle?: FormText
     application: Application
   }>
-> = ({ title, subTitle, application, pageTitle }) => {
+> = ({ title = '', subTitle, application, pageTitle }) => {
   const { formatMessage } = useLocale()
 
   return (
