@@ -279,8 +279,6 @@ export const serviceSetup = (services: {
         staging: 'island-is-assistant-feedback',
         prod: 'island-is-assistant-feedback',
       },
-      BARCODE_EXPIRE_TIME_IN_SEC: '60',
-      BARCODE_SESSION_EXPIRE_TIME_IN_SEC: '1800',
     })
 
     .secrets({
