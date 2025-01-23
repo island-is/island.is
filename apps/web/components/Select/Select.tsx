@@ -1,6 +1,8 @@
 import React, { forwardRef } from 'react'
+
 import { Icon } from '@island.is/island-ui/core'
-import { theme, Colors } from '@island.is/island-ui/theme'
+import { Colors, theme } from '@island.is/island-ui/theme'
+
 import * as styles from './Select.css'
 
 export type Option = {

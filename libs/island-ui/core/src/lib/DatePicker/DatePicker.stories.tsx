@@ -43,52 +43,46 @@ export const Basic = () => {
 }
 
 export const WithSelectedDate = () => (
-  <>
-    <Wrap>
-      <DatePicker
-        label="Date"
-        placeholderText="Pick a date"
-        selected={new Date()}
-        handleChange={(date: Date) => console.log(date)}
-      />
-    </Wrap>
-  </>
+  <Wrap>
+    <DatePicker
+      label="Date"
+      placeholderText="Pick a date"
+      selected={new Date()}
+      handleChange={(date: Date) => console.log(date)}
+    />
+  </Wrap>
 )
 
 export const LocaleIS = () => {
   return (
-    <>
-      <Wrap>
-        <DatePicker
-          label="Dagsetning"
-          placeholderText="Veldu dagsetningu"
-          locale="is"
-          handleChange={(date: Date) => console.log(date)}
-        />
-      </Wrap>
-    </>
+    <Wrap>
+      <DatePicker
+        label="Dagsetning"
+        placeholderText="Veldu dagsetningu"
+        locale="is"
+        handleChange={(date: Date) => console.log(date)}
+      />
+    </Wrap>
   )
 }
 
 export const SelectYear = () => {
   const toDay = new Date()
   return (
-    <>
-      <Wrap>
-        <DatePicker
-          label="Date"
-          placeholderText="Pick a year"
-          minYear={toDay.getFullYear() - 10}
-          maxYear={toDay.getFullYear() + 2}
-          handleChange={(date: Date) => console.log(date)}
-        />
-        <Text variant="small" marginTop={3}>
-          Selecting a year will only work if <code>minYear</code> and{' '}
-          <code>maxYear</code> are set and <code>maxYear</code> is higher then{' '}
-          <code>minYear</code>
-        </Text>
-      </Wrap>
-    </>
+    <Wrap>
+      <DatePicker
+        label="Date"
+        placeholderText="Pick a year"
+        minYear={toDay.getFullYear() - 10}
+        maxYear={toDay.getFullYear() + 2}
+        handleChange={(date: Date) => console.log(date)}
+      />
+      <Text variant="small" marginTop={3}>
+        Selecting a year will only work if <code>minYear</code> and{' '}
+        <code>maxYear</code> are set and <code>maxYear</code> is higher then{' '}
+        <code>minYear</code>
+      </Text>
+    </Wrap>
   )
 }
 
@@ -145,33 +139,29 @@ export const SizeExtraSmall = () => {
 }
 
 export const WithErrors = () => (
-  <>
-    <Wrap>
-      <DatePicker
-        id="TestError"
-        label="Date"
-        placeholderText="Pick a date"
-        selected={new Date()}
-        hasError
-        errorMessage="This date is somewhat incorrect"
-        handleChange={(date: Date) => console.log(date)}
-      />
-    </Wrap>
-  </>
+  <Wrap>
+    <DatePicker
+      id="TestError"
+      label="Date"
+      placeholderText="Pick a date"
+      selected={new Date()}
+      hasError
+      errorMessage="This date is somewhat incorrect"
+      handleChange={(date: Date) => console.log(date)}
+    />
+  </Wrap>
 )
 
 export const Disabled = () => (
-  <>
-    <Wrap>
-      <DatePicker
-        label="Date"
-        placeholderText="Pick a date"
-        selected={new Date()}
-        handleChange={(date: Date) => console.log(date)}
-        disabled
-      />
-    </Wrap>
-  </>
+  <Wrap>
+    <DatePicker
+      label="Date"
+      placeholderText="Pick a date"
+      selected={new Date()}
+      handleChange={(date: Date) => console.log(date)}
+      disabled
+    />
+  </Wrap>
 )
 
 export const WithoutLabel = () => (

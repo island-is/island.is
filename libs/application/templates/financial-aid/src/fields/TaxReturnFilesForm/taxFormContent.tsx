@@ -60,11 +60,9 @@ export const getTaxFormContent = (
     default:
       return {
         data: (
-          <>
-            <Box marginBottom={[4, 4, 5]} marginTop={2}>
-              <DescriptionText text={taxReturnForm.general.description} />
-            </Box>
-          </>
+          <Box marginBottom={[4, 4, 5]} marginTop={2}>
+            <DescriptionText text={taxReturnForm.general.description} />
+          </Box>
         ),
         info: (
           <>

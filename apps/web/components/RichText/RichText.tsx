@@ -1,12 +1,13 @@
 import React, { memo, ReactNode } from 'react'
 import dynamic from 'next/dynamic'
+
 import {
-  renderSlices,
   defaultRenderComponent,
   RenderConfig,
+  renderSlices,
   Slice as SliceType,
 } from '@island.is/island-ui/contentful'
-import { LinkContext, Link } from '@island.is/island-ui/core'
+import { Link, LinkContext } from '@island.is/island-ui/core'
 
 const TellUsAStory = dynamic(() => import('../TellUsAStory/TellUsAStory'))
 const ContactUs = dynamic(() => import('../ContactUs/ContactUs'))
