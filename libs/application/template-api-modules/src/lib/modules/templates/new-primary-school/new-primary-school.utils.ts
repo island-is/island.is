@@ -14,7 +14,6 @@ export const transformApplicationToNewPrimarySchoolDTO = (
   application: Application,
 ): FormDto => {
   const {
-    differentPlaceOfResidence,
     childInfo,
     parents,
     siblings,
@@ -94,13 +93,18 @@ export const transformApplicationToNewPrimarySchoolDTO = (
     user: {
       name: childInfo.name,
       nationalId: childInfo.nationalId,
-      preferredName: childInfo.preferredName,
-      pronouns: childInfo.pronouns,
+      ...(childInfo.usePronounAndPreferredName?.includes(YES)
+        ? {
+            preferredName: childInfo.preferredName,
+            pronouns: childInfo.pronouns,
+          }
+        : {}),
       domicile: {
         address: childInfo.address.streetAddress,
         postCode: childInfo.address.postalCode,
       },
-      ...(differentPlaceOfResidence === YES && childInfo.placeOfResidence
+      ...(childInfo.differentPlaceOfResidence === YES &&
+      childInfo.placeOfResidence
         ? {
             residence: {
               address: childInfo.placeOfResidence.streetAddress,
