@@ -153,6 +153,8 @@ jobs:
         env:
           # Linting is easy, no need to split/chunk it
           DISABLE_CHUNKS: true
+          DISABLE_GROUPING: true
+          DISABLE_PROBLEMATIC: true
         run: |
           set -euo pipefail
           CHUNKS="$(./scripts/ci/generate-chunks.sh lint)"
@@ -183,9 +185,6 @@ jobs:
 
       - name: Prepare build targets
         id: build_projects
-        env:
-          # Building is moderately easy, no need to split/chunk it
-          DISABLE_CHUNKS: true
         run: |
           set -euo pipefail
           CHUNKS="$(./scripts/ci/generate-chunks.sh build)"
