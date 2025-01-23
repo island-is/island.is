@@ -27,8 +27,9 @@ jobs:
     steps:
       - uses: int128/datadog-actions-metrics@v1
         with:
-          collect-job-metrics: true
-          collect-step-metrics: true
+          # Very expensive custom metrics
+          collect-job-metrics: false
+          collect-step-metrics: false
           datadog-api-key: ${{ secrets.DD_API_KEY }}
           datadog-site: datadoghq.eu
-          send-pull-request-labels: true
+          send-pull-request-labels: false
