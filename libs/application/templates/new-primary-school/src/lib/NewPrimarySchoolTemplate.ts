@@ -33,7 +33,7 @@ import { dataSchema } from './dataSchema'
 import { newPrimarySchoolMessages, statesMessages } from './messages'
 import {
   getApplicationAnswers,
-  hasOtherLanguages,
+  hasForeignLanguages,
 } from './newPrimarySchoolUtils'
 
 const NewPrimarySchoolTemplate: ApplicationTemplate<
@@ -219,7 +219,7 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
       clearLanguages: assign((context) => {
         const { application } = context
 
-        if (hasOtherLanguages(application.answers)) {
+        if (hasForeignLanguages(application.answers)) {
           unset(application.answers, 'languages.language1')
           unset(application.answers, 'languages.language2')
           unset(application.answers, 'languages.language3')

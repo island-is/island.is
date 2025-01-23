@@ -511,8 +511,8 @@ export const newPrimarySchoolMessages: MessageDir = {
       defaultMessage: 'Aðeins töluð íslenska',
       description: 'Only Icelandic spoken',
     },
-    icelandicAndOtherOption: {
-      id: 'nps.application:different.needs.language.icelandic.and.other.option',
+    icelandicAndForeignOption: {
+      id: 'nps.application:different.needs.language.icelandic.and.foreign.option',
       defaultMessage: 'Töluð íslenska og annað/önnur tungumál',
       description: 'Icelandic and other language(s) spoken',
     },

@@ -358,8 +358,8 @@ export const getLanguageEnvironments = () => {
       label: newPrimarySchoolMessages.differentNeeds.onlyIcelandicOption,
     },
     {
-      value: LanguageEnvironmentOptions.ICELANDIC_AND_OTHER,
-      label: newPrimarySchoolMessages.differentNeeds.icelandicAndOtherOption,
+      value: LanguageEnvironmentOptions.ICELANDIC_AND_FOREIGN,
+      label: newPrimarySchoolMessages.differentNeeds.icelandicAndForeignOption,
     },
     {
       value: LanguageEnvironmentOptions.ONLY_FOREIGN,
@@ -368,7 +368,7 @@ export const getLanguageEnvironments = () => {
   ]
 }
 
-export const hasOtherLanguages = (answers: FormValue) => {
+export const hasForeignLanguages = (answers: FormValue) => {
   const { languageEnvironment } = getApplicationAnswers(answers)
 
   if (!languageEnvironment) {

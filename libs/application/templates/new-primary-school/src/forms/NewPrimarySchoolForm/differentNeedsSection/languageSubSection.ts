@@ -11,7 +11,7 @@ import { newPrimarySchoolMessages } from '../../../lib/messages'
 import {
   getApplicationAnswers,
   getLanguageEnvironments,
-  hasOtherLanguages,
+  hasForeignLanguages,
 } from '../../../lib/newPrimarySchoolUtils'
 
 export const languageSubSection = buildSubSection({
@@ -48,7 +48,7 @@ export const languageSubSection = buildSubSection({
             newPrimarySchoolMessages.differentNeeds.languagesDescription,
           titleVariant: 'h4',
           condition: (answers) => {
-            return hasOtherLanguages(answers)
+            return hasForeignLanguages(answers)
           },
           marginBottom: 'gutter',
         }),
@@ -57,7 +57,7 @@ export const languageSubSection = buildSubSection({
           title: '',
           component: 'LanguageSelection',
           condition: (answers) => {
-            return hasOtherLanguages(answers)
+            return hasForeignLanguages(answers)
           },
         }),
         buildRadioField({
@@ -102,7 +102,7 @@ export const languageSubSection = buildSubSection({
             },
           ],
           condition: (answers) => {
-            return hasOtherLanguages(answers)
+            return hasForeignLanguages(answers)
           },
         }),
       ],

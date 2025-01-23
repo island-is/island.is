@@ -1,13 +1,15 @@
 import { FieldBaseProps } from '@island.is/application/types'
 import React, { FC, useEffect, useState } from 'react'
 
+import { getErrorViaPath } from '@island.is/application/core'
 import { Box, Button, Stack, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { SelectController } from '@island.is/shared/form-fields'
 import { getAllLanguageCodes } from '@island.is/shared/utils'
+import { useFormContext } from 'react-hook-form'
+import { LanguageEnvironmentOptions } from '../../lib/constants'
 import { newPrimarySchoolMessages } from '../../lib/messages'
 import { getApplicationAnswers } from '../../lib/newPrimarySchoolUtils'
-import { getErrorViaPath } from '@island.is/application/core'
 
 const languagesIds = {
   language1: 'languages.language1',
@@ -22,6 +24,7 @@ const LanguageSelection: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   errors,
 }) => {
   const { formatMessage } = useLocale()
+  const { getValues } = useFormContext()
 
   const [visibleLanguagesCount, setVisibleLanguagesCount] = useState(1)
   const [selectedLanguages, setSelectedLanguages] = useState<string[]>([
@@ -32,10 +35,21 @@ const LanguageSelection: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   ])
 
   const allLanguages = getAllLanguageCodes()
-  const allLanguageOptions = allLanguages.map((language) => ({
-    label: language.name,
-    value: language.code,
-  }))
+  const allLanguageOptions = allLanguages
+    .filter((language) => {
+      if (
+        language.code === 'is' &&
+        getValues().languages.languageEnvironment ===
+          LanguageEnvironmentOptions.ONLY_FOREIGN
+      ) {
+        return false
+      }
+      return true
+    })
+    .map((language) => ({
+      label: language.name,
+      value: language.code,
+    }))
 
   const languageIdsArray = [
     languagesIds.language1,
@@ -46,14 +60,6 @@ const LanguageSelection: FC<React.PropsWithChildren<FieldBaseProps>> = ({
 
   const addLanguage = () => {
     setVisibleLanguagesCount((prev) => Math.min(prev + 1, 4))
-  }
-
-  /**
-   * Hide child language if there is no language selected
-   * @returns
-   */
-  const hideChildLanguage = () => {
-    return selectedLanguages.filter((language) => language !== '').length <= 1
   }
 
   useEffect(() => {
@@ -69,13 +75,13 @@ const LanguageSelection: FC<React.PropsWithChildren<FieldBaseProps>> = ({
 
     setSelectedLanguages(selected)
     setVisibleLanguagesCount(visibleCount)
-  }, [application, getApplicationAnswers])
+  }, [application])
 
   return (
     <Stack space={2}>
       {languageIdsArray.slice(0, visibleLanguagesCount).map((id, index) => (
         <SelectController
-          key={languageIdsArray[index]}
+          key={id}
           label={formatMessage(
             newPrimarySchoolMessages.differentNeeds.languageSelectionTitle,
             { no: `${index + 1}` },
@@ -84,19 +90,19 @@ const LanguageSelection: FC<React.PropsWithChildren<FieldBaseProps>> = ({
             newPrimarySchoolMessages.differentNeeds.languageSelectionAriaLabel,
             { no: `${index + 1}` },
           )}
-          error={errors && getErrorViaPath(errors, languageIdsArray[index])}
+          error={errors && getErrorViaPath(errors, id)}
           placeholder={formatMessage(
             newPrimarySchoolMessages.differentNeeds
               .languageSelectionPlaceholder,
           )}
-          id={languageIdsArray[index]}
-          name={languageIdsArray[index]}
+          id={id}
+          name={id}
           backgroundColor="blue"
           options={allLanguageOptions}
-          onSelect={(value) => {
+          onSelect={({ value }) => {
             setSelectedLanguages((prevLanguages) => {
               const newLanguages = [...prevLanguages]
-              newLanguages[index] = value.value
+              newLanguages[index] = value
               return newLanguages
             })
           }}
@@ -115,7 +121,11 @@ const LanguageSelection: FC<React.PropsWithChildren<FieldBaseProps>> = ({
           )}
         </Button>
       </Box>
-      <Box hidden={hideChildLanguage()}>
+      <Box
+        hidden={
+          selectedLanguages.filter((language) => language !== '').length <= 1
+        }
+      >
         <Text variant="h4" marginTop={3} marginBottom="gutter">
           {formatMessage(
             newPrimarySchoolMessages.differentNeeds.childLanguageTitle,

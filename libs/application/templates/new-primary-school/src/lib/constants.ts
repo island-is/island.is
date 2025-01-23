@@ -58,6 +58,6 @@ export enum MembershipOrganizationType {
 
 export enum LanguageEnvironmentOptions {
   ONLY_ICELANDIC = 'onlyIcelandic',
-  ICELANDIC_AND_OTHER = 'icelandicAndOther',
+  ICELANDIC_AND_FOREIGN = 'icelandicAndForeign',
   ONLY_FOREIGN = 'onlyForeign',
 }
