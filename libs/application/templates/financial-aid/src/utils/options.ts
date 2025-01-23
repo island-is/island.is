@@ -1,4 +1,7 @@
-import { HomeCircumstances } from '@island.is/financial-aid/shared/lib'
+import {
+  Employment,
+  HomeCircumstances,
+} from '@island.is/financial-aid/shared/lib'
 import * as m from '../lib/messages'
 import { ApproveOptions } from '..'
 
