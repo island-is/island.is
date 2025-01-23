@@ -163,6 +163,18 @@ export const routesTemplate = {
     is: '/s/[slug]',
     en: '/en/o/[slug]',
   },
+  grantsplaza: {
+    is: '/styrkjatorg',
+    en: '/en/grants-plaza',
+  },
+  grantsplazasearch: {
+    is: '/styrkjatorg/styrkir',
+    en: '/en/grants-plaza/grants',
+  },
+  grantsplazagrant: {
+    is: '/styrkjatorg/styrkur/[id]',
+    en: '/en/grants-plaza/grant/[id]',
+  },
   organizations: {
     is: '/s',
     en: '/en/o',
@@ -310,18 +322,6 @@ export const routesTemplate = {
   undirskriftalistar: {
     is: '/undirskriftalistar',
     en: '/en/petitions',
-  },
-  styrkjatorg: {
-    is: '/styrkjatorg',
-    en: '',
-  },
-  styrkjatorgsearch: {
-    is: '/styrkjatorg/styrkir',
-    en: '',
-  },
-  styrkjatorggrant: {
-    is: '/styrkjatorg/styrkur/[id]',
-    en: '',
   },
 }
 
