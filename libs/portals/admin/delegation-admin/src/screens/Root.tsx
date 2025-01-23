@@ -62,6 +62,7 @@ const Root = () => {
               height={'full'}
             >
               <Button
+                dataTestId="create-delegation-button"
                 onClick={() => navigate(DelegationAdminPaths.CreateDelegation)}
                 size="small"
               >
