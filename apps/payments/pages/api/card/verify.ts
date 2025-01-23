@@ -1,6 +1,7 @@
 import { NextApiRequest, NextApiResponse } from 'next'
-import { getPaymentsApi } from 'apps/payments/services/payment'
+
 import type { VerifyCardInput } from '@island.is/clients/payments'
+import { getPaymentsApi } from '../../../services/payment'
 
 export default async function verifyCardHandler(
   req: NextApiRequest,

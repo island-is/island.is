@@ -20,14 +20,13 @@ import { CardPayment } from '../../../components/CardPayment/CardPayment'
 import { InvoicePayment } from '../../../components/InvoicePayment/InvoicePayment'
 import { ALLOWED_LOCALES, Locale } from '../../../utils'
 import { getConfigcatClient } from '../../../clients/configcat'
-import { card, generic, genericError, invoice } from '../../../messages'
+import { card, generic, invoice } from '../../../messages'
 import { ThreeDSecure } from '../../../components/ThreeDSecure/ThreeDSecure'
 import { useRouter } from 'next/router'
 import {
   getErrorTitleAndMessage,
   PaymentError,
 } from '../../../utils/error/error'
-import { CardErrorCode } from 'apps/payments/utils/error/constants'
 
 import type {
   GetPaymentFlowDTO,
@@ -36,7 +35,7 @@ import type {
   ChargeCardInput,
   ChargeCardResponse,
 } from '@island.is/clients/payments'
-import { getPaymentsApi } from 'apps/payments/services/payment'
+import { getPaymentsApi } from '../../../services/payment'
 
 interface PaymentPageProps {
   locale: string
@@ -177,10 +176,10 @@ export default function PaymentPage({
     !paymentFlow.availablePaymentMethods
 
   const waitForCardVerification = async () => {
-    let maximumWaitTimeSeconds = 60
+    const maximumWaitTimeSeconds = 60
     let remainingWaitTimeInMilliSeconds = maximumWaitTimeSeconds * 1000
 
-    let interval = 5000
+    const interval = 5000
 
     while (remainingWaitTimeInMilliSeconds > 0) {
       const response = await fetch(
@@ -248,11 +247,11 @@ export default function PaymentPage({
     const { card, cardExpiry, cardCVC } = data
 
     // TODO Verify fields or let API?
-    if (!card || !cardExpiry || typeof cardExpiry !== 'string' || !cardCVC) {
+    if (!card || cardExpiry || typeof cardExpiry !== 'string' || !cardCVC) {
       return
     }
 
-    const [month, year] = cardExpiry?.split('/')
+    const [month, year] = cardExpiry.split('/')
 
     try {
       const cardInfo = {

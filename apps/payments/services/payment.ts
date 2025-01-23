@@ -1,9 +1,9 @@
+import getConfig from 'next/config'
 import { createEnhancedFetch } from '@island.is/clients/middlewares'
 import {
   PaymentsApi,
   PaymentsApiConfiguration,
 } from '@island.is/clients/payments'
-import getConfig from 'next/config'
 
 let api: null | PaymentsApi = null
 

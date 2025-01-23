@@ -1,5 +1,6 @@
-import { getPaymentsApi } from 'apps/payments/services/payment'
 import { NextApiRequest, NextApiResponse } from 'next'
+
+import { getPaymentsApi } from '../../../services/payment'
 
 export default async function verificationStatusHandler(
   req: NextApiRequest,

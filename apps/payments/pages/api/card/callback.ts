@@ -1,4 +1,4 @@
-import { getPaymentsApi } from 'apps/payments/services/payment'
+import { getPaymentsApi } from '../../../services/payment'
 import { NextApiRequest, NextApiResponse } from 'next'
 
 export default async function cardVerificationCallbackHandler(

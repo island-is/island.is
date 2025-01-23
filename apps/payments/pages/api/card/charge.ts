@@ -1,6 +1,8 @@
-import { getPaymentsApi } from 'apps/payments/services/payment'
 import { NextApiRequest, NextApiResponse } from 'next'
+
 import type { ChargeCardInput } from '@island.is/clients/payments'
+
+import { getPaymentsApi } from '../../../services/payment'
 
 export default async function chargeCardHandler(
   req: NextApiRequest,
