@@ -13,6 +13,7 @@ import {
   getLanguageEnvironments,
   hasForeignLanguages,
 } from '../../../lib/newPrimarySchoolUtils'
+import { LanguageSelectionProps } from '../../../fields/LanguageSelection'
 
 export const languageSubSection = buildSubSection({
   id: 'languageSubSection',
@@ -52,14 +53,17 @@ export const languageSubSection = buildSubSection({
           },
           marginBottom: 'gutter',
         }),
-        buildCustomField({
-          id: 'languages',
-          title: '',
-          component: 'LanguageSelection',
-          condition: (answers) => {
-            return hasForeignLanguages(answers)
+        buildCustomField(
+          {
+            id: 'languages',
+            title: '',
+            component: 'LanguageSelection',
+            condition: (answers) => {
+              return hasForeignLanguages(answers)
+            },
           },
-        }),
+          {} as LanguageSelectionProps,
+        ),
         buildRadioField({
           id: 'languages.signLanguage',
           title: newPrimarySchoolMessages.differentNeeds.signLanguage,

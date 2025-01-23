@@ -11,6 +11,8 @@ import { LanguageEnvironmentOptions } from '../../lib/constants'
 import { newPrimarySchoolMessages } from '../../lib/messages'
 import { getApplicationAnswers } from '../../lib/newPrimarySchoolUtils'
 
+export type LanguageSelectionProps = {}
+
 const languagesIds = {
   language1: 'languages.language1',
   language2: 'languages.language2',
