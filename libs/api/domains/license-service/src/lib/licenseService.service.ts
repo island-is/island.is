@@ -487,9 +487,9 @@ export class LicenseService {
 
       if (activeBarcodeSession && activeBarcodeSession !== user.sid) {
         // If the user has an active session for the license type, we should not create a new barcode
-        this.logger.info(
-          'User has an active session for license', { licenseType },
-        )
+        this.logger.info('User has an active session for license', {
+          licenseType,
+        })
 
         throw new ProblemError({
           type: ProblemType.BAD_SESSION,
