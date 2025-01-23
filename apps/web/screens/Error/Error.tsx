@@ -1,17 +1,17 @@
-import React, { Fragment, ReactNode } from 'react'
+import React, { ReactNode, Fragment } from 'react'
 import { useRouter } from 'next/router'
 import { Document } from '@contentful/rich-text-types'
 
-import { richText, Slice as SliceType } from '@island.is/island-ui/contentful'
 import {
+  Text,
   Box,
-  GridColumn,
   GridContainer,
   GridRow,
-  Text,
+  GridColumn,
 } from '@island.is/island-ui/core'
-import { ErrorPageQuery } from '@island.is/web/graphql/schema'
+import { Slice as SliceType, richText } from '@island.is/island-ui/contentful'
 import { nlToBr } from '@island.is/web/utils/nlToBr'
+import { ErrorPageQuery } from '@island.is/web/graphql/schema'
 
 type MessageType = {
   title: string

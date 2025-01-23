@@ -96,16 +96,6 @@ export const overview = {
       defaultMessage: 'Braut til vara',
       description: 'Selection second program label',
     },
-    thirdLanguageLabel: {
-      id: 'ss.application:overview.selection.thirdLanguageLabel',
-      defaultMessage: 'Þriðja tungumál',
-      description: 'Selection third language label',
-    },
-    nordicLanguageLabel: {
-      id: 'ss.application:overview.selection.nordicLanguageLabel',
-      defaultMessage: 'Norðurlandamál',
-      description: 'Selection nordic language label',
-    },
   }),
   extraInformation: defineMessages({
     subtitle: {

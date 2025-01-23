@@ -33,98 +33,83 @@ export const SchoolSelectionOverview: FC<FieldBaseProps> = ({
       <Box>
         <GridRow>
           {/* First selection */}
-          <GridColumn span={selection?.[1]?.include ? '1/2' : '1/1'}>
-            {selection?.[1]?.include && (
+          <GridColumn span={selection?.second?.include ? '1/2' : '1/1'}>
+            {selection?.second?.include && (
               <Text variant="h5">
                 {formatMessage(overview.selection.firstSubtitle)}
               </Text>
             )}
-            <Text>{selection?.[0]?.school?.name}</Text>
+            <Text>{selection?.first?.school?.name}</Text>
             <Text>
               {formatMessage(overview.selection.firstProgramLabel)}:{' '}
-              {getTranslatedProgram(lang, selection?.[0]?.firstProgram)}
+              {getTranslatedProgram(lang, selection?.first?.firstProgram)}
             </Text>
-            {!!selection?.[0]?.secondProgram?.id && (
+            {!!selection?.first?.secondProgram?.include && (
               <Text>
                 {formatMessage(overview.selection.secondProgramLabel)}:{' '}
-                {getTranslatedProgram(lang, selection?.[0]?.secondProgram)}
+                {getTranslatedProgram(lang, selection?.first?.secondProgram)}
               </Text>
             )}
-            {!!selection?.[0]?.thirdLanguage?.code && (
-              <Text>
-                {formatMessage(overview.selection.thirdLanguageLabel)}:{' '}
-                {selection?.[0]?.thirdLanguage?.name}
-              </Text>
+            {!!selection?.first?.thirdLanguage?.code && (
+              <Text>{selection?.first?.thirdLanguage?.name}</Text>
             )}
-            {!!selection?.[0]?.nordicLanguage?.code && (
-              <Text>
-                {formatMessage(overview.selection.nordicLanguageLabel)}:{' '}
-                {selection?.[0]?.nordicLanguage?.name}
-              </Text>
+            {!!selection?.first?.nordicLanguage?.code && (
+              <Text>{selection?.first?.nordicLanguage?.name}</Text>
             )}
           </GridColumn>
 
           {/* Second selection */}
-          {selection?.[1]?.include && (
+          {selection?.second?.include && (
             <GridColumn span="1/2">
               <Text variant="h5">
                 {formatMessage(overview.selection.secondSubtitle)}
               </Text>
-              <Text>{selection?.[1]?.school?.name}</Text>
+              <Text>{selection?.second?.school?.name}</Text>
               <Text>
                 {formatMessage(overview.selection.firstProgramLabel)}:{' '}
-                {getTranslatedProgram(lang, selection?.[1]?.firstProgram)}
+                {getTranslatedProgram(lang, selection?.second?.firstProgram)}
               </Text>
-              {!!selection?.[1]?.secondProgram?.id && (
+              {!!selection?.second?.secondProgram?.include && (
                 <Text>
                   {formatMessage(overview.selection.secondProgramLabel)}:{' '}
-                  {getTranslatedProgram(lang, selection?.[1]?.secondProgram)}
+                  {getTranslatedProgram(lang, selection?.second?.secondProgram)}
                 </Text>
               )}
-              {!!selection?.[1]?.thirdLanguage?.code && (
-                <Text>
-                  {formatMessage(overview.selection.thirdLanguageLabel)}:{' '}
-                  {selection?.[1]?.thirdLanguage?.name}
-                </Text>
+              {!!selection?.second?.thirdLanguage?.code && (
+                <Text>{selection?.second?.thirdLanguage?.name}</Text>
               )}{' '}
-              {!!selection?.[1]?.nordicLanguage?.code && (
-                <Text>
-                  {formatMessage(overview.selection.nordicLanguageLabel)}:{' '}
-                  {selection?.[1]?.nordicLanguage?.name}
-                </Text>
+              {!!selection?.second?.nordicLanguage?.code && (
+                <Text>{selection?.second?.nordicLanguage?.name}</Text>
               )}
             </GridColumn>
           )}
 
           {/* Third selection */}
-          {selection?.[2]?.include && (
+          {selection?.third?.include && (
             <Box marginTop={2}>
               <GridColumn span="1/2">
                 <Text variant="h5">
                   {formatMessage(overview.selection.thirdSubtitle)}
                 </Text>
-                <Text>{selection?.[2]?.school?.name}</Text>
+                <Text>{selection?.third?.school?.name}</Text>
                 <Text>
                   {formatMessage(overview.selection.firstProgramLabel)}:{' '}
-                  {getTranslatedProgram(lang, selection?.[2]?.firstProgram)}
+                  {getTranslatedProgram(lang, selection?.third?.firstProgram)}
                 </Text>
-                {!!selection?.[2]?.secondProgram?.id && (
+                {!!selection?.third?.secondProgram?.include && (
                   <Text>
                     {formatMessage(overview.selection.secondProgramLabel)}:{' '}
-                    {getTranslatedProgram(lang, selection?.[2]?.secondProgram)}
+                    {getTranslatedProgram(
+                      lang,
+                      selection?.third?.secondProgram,
+                    )}
                   </Text>
                 )}
-                {!!selection?.[2]?.thirdLanguage?.code && (
-                  <Text>
-                    {formatMessage(overview.selection.thirdLanguageLabel)}:{' '}
-                    {selection?.[2]?.thirdLanguage?.name}
-                  </Text>
+                {!!selection?.third?.thirdLanguage?.code && (
+                  <Text>{selection?.third?.thirdLanguage?.name}</Text>
                 )}
-                {!!selection?.[2]?.nordicLanguage?.code && (
-                  <Text>
-                    {formatMessage(overview.selection.nordicLanguageLabel)}:{' '}
-                    {selection?.[2]?.nordicLanguage?.name}
-                  </Text>
+                {!!selection?.third?.nordicLanguage?.code && (
+                  <Text>{selection?.third?.nordicLanguage?.name}</Text>
                 )}
               </GridColumn>
               <GridColumn span="1/2"></GridColumn>

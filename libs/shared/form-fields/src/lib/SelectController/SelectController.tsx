@@ -132,10 +132,6 @@ export const SelectController = <Value, IsMulti extends boolean = false>({
             if (clearOnChange) {
               clearInputsOnChange(clearOnChange, setValue)
             }
-
-            if (isClearable && newVal === null) {
-              clearInputsOnChange([id], setValue)
-            }
           }}
         />
       )}

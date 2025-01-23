@@ -1,4 +1,5 @@
 import { lazy } from 'react'
+import { Features } from '@island.is/feature-flags'
 import { m } from '@island.is/portals/my-pages/core'
 import { PortalModule, PortalRoute } from '@island.is/portals/core'
 import { EndorsementsScope } from '@island.is/auth/scopes'
@@ -11,6 +12,7 @@ const ViewOwnedPetition = lazy(() => import('./screens/ViewOwnedList'))
 
 export const petitionsModule: PortalModule = {
   name: 'Undirskriftalistar',
+  featureFlag: Features.servicePortalPetitionsModule,
   enabled: ({ isCompany }) => !isCompany,
   routes: ({ userInfo }) => {
     const applicationRoutes: PortalRoute[] = [

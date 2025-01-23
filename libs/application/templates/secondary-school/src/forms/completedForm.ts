@@ -11,13 +11,13 @@ import { conclusion } from '../lib/messages'
 import { Logo } from '../assets/Logo'
 
 export const Completed: Form = buildForm({
-  id: 'CompletedForm',
+  id: 'ConclusionForm',
   logo: Logo,
   mode: FormModes.COMPLETED,
   children: [
     buildSection({
       id: 'conclusionSection',
-      title: '',
+      title: conclusion.general.sectionTitle,
       children: [
         buildMultiField({
           id: 'conclusionMultiField',
@@ -28,7 +28,6 @@ export const Completed: Form = buildForm({
               id: 'conclusion',
               description: '',
             }),
-            // TODO Need to add result from MMS here when design and API are ready
             buildMessageWithLinkButtonField({
               id: 'conclusionBottomLink',
               url: '/minarsidur/umsoknir',

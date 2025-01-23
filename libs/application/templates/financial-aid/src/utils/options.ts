@@ -1,7 +1,4 @@
-import {
-  Employment,
-  HomeCircumstances,
-} from '@island.is/financial-aid/shared/lib'
+import { HomeCircumstances } from '@island.is/financial-aid/shared/lib'
 import * as m from '../lib/messages'
 import { ApproveOptions } from '..'
 
@@ -55,35 +52,5 @@ export const homeCircumstancesOptions = [
   {
     value: HomeCircumstances.OTHER,
     label: m.homeCircumstancesForm.circumstances.other,
-  },
-]
-
-export const studentOptions = [
-  {
-    value: ApproveOptions.No,
-    label: m.approveOptions.no,
-  },
-  {
-    value: ApproveOptions.Yes,
-    label: m.approveOptions.yes,
-  },
-]
-
-export const employmentOptions = [
-  {
-    value: Employment.WORKING,
-    label: m.employmentForm.employment.working,
-  },
-  {
-    value: Employment.UNEMPLOYED,
-    label: m.employmentForm.employment.unemployed,
-  },
-  {
-    value: Employment.CANNOTWORK,
-    label: m.employmentForm.employment.cannotWork,
-  },
-  {
-    value: Employment.OTHER,
-    label: m.employmentForm.employment.other,
   },
 ]

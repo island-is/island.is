@@ -13,6 +13,7 @@ import { helperStyles, theme } from '@island.is/island-ui/theme'
 import { useLocale } from '@island.is/localization'
 import { PortalPageLoader } from '@island.is/portals/core'
 import { useUserInfo } from '@island.is/react-spa/bff'
+import { useFeatureFlagClient } from '@island.is/react/feature-flags'
 import {
   LinkResolver,
   ServicePortalPaths,
@@ -20,7 +21,7 @@ import {
 } from '@island.is/portals/my-pages/core'
 import { DocumentsPaths } from '@island.is/portals/my-pages/documents'
 import { UserLanguageSwitcher, UserMenu } from '@island.is/shared/components'
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useWindowSize } from 'react-use'
 import NotificationButton from '../Notifications/NotificationButton'
@@ -38,6 +39,24 @@ export const Header = ({ position }: Props) => {
   const ref = useRef<HTMLButtonElement>(null)
   const isMobile = width < theme.breakpoints.md
   const user = useUserInfo()
+
+  // Notification feature flag. Remove after feature is live.
+  const [enableNotificationFlag, setEnableNotificationFlag] =
+    useState<boolean>(false)
+  const featureFlagClient = useFeatureFlagClient()
+  useEffect(() => {
+    const isFlagEnabled = async () => {
+      const ffEnabled = await featureFlagClient.getValue(
+        `isServicePortalNotificationsPageEnabled`,
+        false,
+      )
+      if (ffEnabled) {
+        setEnableNotificationFlag(ffEnabled as boolean)
+      }
+    }
+    isFlagEnabled()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   const hasNotificationsDelegationAccess = user?.scopes?.includes(
     DocumentsScope.main,
@@ -103,11 +122,13 @@ export const Header = ({ position }: Props) => {
                         </Box>
                       </Hidden>
 
-                      <NotificationButton
-                        setMenuState={(val: MenuTypes) => setMenuOpen(val)}
-                        showMenu={menuOpen === 'notifications'}
-                        disabled={!hasNotificationsDelegationAccess}
-                      />
+                      {enableNotificationFlag && (
+                        <NotificationButton
+                          setMenuState={(val: MenuTypes) => setMenuOpen(val)}
+                          showMenu={menuOpen === 'notifications'}
+                          disabled={!hasNotificationsDelegationAccess}
+                        />
+                      )}
 
                       {user && <UserLanguageSwitcher />}
 

@@ -1,7 +1,5 @@
-import { globalStyle, style, styleVariants } from '@vanilla-extract/css'
-
+import { style, styleVariants, globalStyle } from '@vanilla-extract/css'
 import { themeUtils } from '@island.is/island-ui/theme'
-
 import covidColors from '../UI/colors'
 
 export const wrapper = style({

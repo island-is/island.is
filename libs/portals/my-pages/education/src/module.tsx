@@ -72,6 +72,7 @@ export const educationModule: PortalModule = {
       name: 'Framhaldsskóli',
       path: EducationPaths.EducationFramhskoli,
       enabled: userInfo.scopes.includes(ApiScope.education),
+      key: 'SecondaryEducation',
       element: (
         <Navigate to={EducationPaths.EducationFramhskoliCareer} replace />
       ),
@@ -80,23 +81,27 @@ export const educationModule: PortalModule = {
       name: 'Framhaldsskóli - Námsferill',
       path: EducationPaths.EducationFramhskoliCareer,
       enabled: userInfo.scopes.includes(ApiScope.education),
+      key: 'SecondaryEducation',
       element: <SecondarySchoolCareer />,
     },
     {
       name: 'Útskriftaryfirlit',
       path: EducationPaths.EducationFramhskoliGraduationOverview,
+      key: 'SecondaryEducation',
       enabled: userInfo.scopes.includes(ApiScope.education),
       element: <SecondarySchoolGraduationOverview />,
     },
     {
       name: 'Útskriftarferill',
       path: EducationPaths.EducationFramhskoliGraduationSingle,
+      key: 'SecondaryEducation',
       enabled: userInfo.scopes.includes(ApiScope.education),
       element: <SecondarySchoolGraduationSingle />,
     },
     {
       name: 'Útskriftarferill nánar',
       path: EducationPaths.EducationFramhskoliGraduationDetail,
+      key: 'SecondaryEducation',
       enabled: userInfo.scopes.includes(ApiScope.education),
       element: <SecondarySchoolGraduationDetail />,
     },

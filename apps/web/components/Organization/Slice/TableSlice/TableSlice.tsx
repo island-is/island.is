@@ -1,8 +1,6 @@
 import { Block, Document } from '@contentful/rich-text-types'
-
 import { Table as T, Text } from '@island.is/island-ui/core'
 import { TableSlice as TableSliceSchema } from '@island.is/web/graphql/schema'
-
 import {
   extractTableRowsFromRichTextDocument,
   extractTextFromRichTextTableCell,

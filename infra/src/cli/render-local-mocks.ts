@@ -109,13 +109,13 @@ export async function runLocalServices(
   }
   if (renderedLocalServices.mocks) {
     logger.warn('Starting mocks in the background')
-    const options = {
-      command: renderedLocalServices.mocks,
-      project: 'mocks',
-      dryRun,
-    }
-    logger.debug('Mocks command options', { options })
-    processes.push(runCommand(options))
+    processes.push(
+      runCommand({
+        command: renderedLocalServices.mocks,
+        project: 'mocks',
+        dryRun,
+      }),
+    )
   }
 
   for (const [name, service] of Object.entries(

@@ -31,6 +31,7 @@ const LOG_CATEGORY = 'law-and-order-resolver'
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
 @Resolver()
 @Audit({ namespace: '@island.is/api/law-and-order' })
+@FeatureFlag(Features.servicePortalLawAndOrderModuleEnabled)
 @Scopes(ApiScope.lawAndOrder)
 export class LawAndOrderResolver {
   constructor(

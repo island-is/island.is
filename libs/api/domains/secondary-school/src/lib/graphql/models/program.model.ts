@@ -13,7 +13,4 @@ export class SecondarySchoolProgram {
 
   @Field(() => Date)
   registrationEndDate!: Date
-
-  @Field(() => Boolean)
-  isSpecialNeedsProgram!: boolean
 }

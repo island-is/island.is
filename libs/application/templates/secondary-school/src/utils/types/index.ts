@@ -22,5 +22,4 @@ export type Program = {
   nameIs: string
   nameEn: string
   registrationEndDate: Date
-  isSpecialNeedsProgram: boolean
 }

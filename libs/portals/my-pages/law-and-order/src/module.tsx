@@ -14,6 +14,7 @@ const CourtCaseDetail = lazy(() =>
 const Subpoena = lazy(() => import('./screens/Subpoena/Subpoena'))
 export const lawAndOrderModule: PortalModule = {
   name: m.lawAndOrder,
+  featureFlag: Features.servicePortalLawAndOrderModuleEnabled,
   routes: ({ userInfo }) => [
     {
       name: m.lawAndOrder,

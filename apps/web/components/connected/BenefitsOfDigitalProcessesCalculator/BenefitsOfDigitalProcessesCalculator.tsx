@@ -151,21 +151,6 @@ export const BenefitsOfDigitalProcessesCalculator = ({
     })
   }, [previousInput])
 
-  const getCurrencyText = (value: number) => {
-    return value >= 1e6
-      ? `${formatValueForPresentation(activeLocale, value)}${
-          activeLocale === 'is' ? '.' : ''
-        }${
-          activeLocale === 'is'
-            ? formatMessage(t.results.currencyPostfix).trim()
-            : formatMessage(t.results.currencyPostfix)
-        }`
-      : (formatCurrency(
-          value,
-          formatMessage(t.results.currencyPostfix),
-        ) as string)
-  }
-
   return (
     <Stack space={4}>
       <Box
@@ -324,7 +309,17 @@ export const BenefitsOfDigitalProcessesCalculator = ({
             <GridRow rowGap={4}>
               <GridColumn span={resultColumnSpan}>
                 <ResultCard
-                  title={getCurrencyText(results.institutionGain)}
+                  title={
+                    results.institutionGain >= 1e6
+                      ? `${formatValueForPresentation(
+                          activeLocale,
+                          results.institutionGain,
+                        )}${formatMessage(t.results.currencyPostfix)}`
+                      : (formatCurrency(
+                          results.institutionGain,
+                          formatMessage(t.results.currencyPostfix),
+                        ) as string)
+                  }
                   description={formatMessage(
                     t.results.institutionGainDescription,
                   )}
@@ -347,7 +342,17 @@ export const BenefitsOfDigitalProcessesCalculator = ({
               </GridColumn>
               <GridColumn span={resultColumnSpan}>
                 <ResultCard
-                  title={getCurrencyText(gainPerCitizen)}
+                  title={
+                    gainPerCitizen >= 1e6
+                      ? `${formatValueForPresentation(
+                          activeLocale,
+                          gainPerCitizen,
+                        )}${formatMessage(t.results.currencyPostfix)}`
+                      : (formatCurrency(
+                          gainPerCitizen,
+                          formatMessage(t.results.currencyPostfix),
+                        ) as string)
+                  }
                   description={formatMessage(t.results.citizenGainDescription, {
                     nameOfProcess: userInput.nameOfProcess,
                   })}

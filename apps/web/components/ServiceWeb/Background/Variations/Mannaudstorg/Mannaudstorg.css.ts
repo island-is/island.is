@@ -1,5 +1,4 @@
 import { style } from '@vanilla-extract/css'
-
 import { DESKTOP_HEADER_HEIGHT } from '../../../constants'
 
 export const bg = style({

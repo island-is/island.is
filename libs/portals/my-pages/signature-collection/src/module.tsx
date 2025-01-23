@@ -35,12 +35,14 @@ export const signatureCollectionModule: PortalModule = {
         name: m.signatureCollectionParliamentaryLists,
         enabled: userInfo.scopes.includes(ApiScope.signatureCollection),
         path: SignatureCollectionPaths.SignatureCollectionParliamentaryLists,
+        key: 'ParliamentaryLists',
         element: <SignatureListsParliamentary />,
       },
       {
         name: m.signatureCollectionParliamentaryLists,
         path: SignatureCollectionPaths.ViewParliamentaryList,
         enabled: userInfo.scopes.includes(ApiScope.signatureCollection),
+        key: 'ParliamentaryLists',
         element: <ViewListParliamentary />,
       },
       // Presidential
@@ -67,12 +69,14 @@ export const signatureCollectionModule: PortalModule = {
     {
       name: m.signatureCollectionParliamentaryLists,
       path: SignatureCollectionPaths.CompanySignatureCollectionParliamentaryLists,
+      key: 'ParliamentaryLists',
       enabled: userInfo.scopes.includes(ApiScope.signatureCollection),
       element: <SignatureListsParliamentary />,
     },
     {
       name: m.signatureCollectionParliamentaryLists,
       path: SignatureCollectionPaths.CompanyViewParliamentaryList,
+      key: 'ParliamentaryLists',
       enabled: userInfo.scopes.includes(ApiScope.signatureCollection),
       element: <ViewListParliamentary />,
     },

@@ -1,8 +1,7 @@
 import React, { ElementType } from 'react'
-import { useWindowSize } from 'react-use'
-
 import { Box, ResponsiveSpace } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
+import { useWindowSize } from 'react-use'
 
 type BackgroundBleed = {
   fromColor: keyof typeof theme.color

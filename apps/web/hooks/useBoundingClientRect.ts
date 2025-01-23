@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react'
-
 import useViewport from './useViewport'
 
 const useBoundingClientRect = (): [

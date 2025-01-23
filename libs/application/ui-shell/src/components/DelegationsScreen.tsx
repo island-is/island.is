@@ -22,7 +22,7 @@ import * as kennitala from 'kennitala'
 import { format as formatKennitala } from 'kennitala'
 import intersection from 'lodash/intersection'
 import { Dispatch, SetStateAction, useEffect, useState } from 'react'
-import { useNavigate, useSearchParams } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { Delegation, DelegationsScreenDataType, ScreenType } from '../types'
 import * as styles from './DelegationsScreen.css'
 import { LoadingShell } from './LoadingShell'
@@ -53,14 +53,6 @@ export const DelegationsScreen = ({
   const { switchUser, userInfo: user } = useAuth()
   const featureFlagClient: FeatureFlagClient = useFeatureFlagClient()
   const navigate = useNavigate()
-  const [searchParams] = useSearchParams()
-
-  const paramString = searchParams.size
-    ? '&' +
-      Array.from(searchParams.entries())
-        .map(([key, value]) => `${key}=${encodeURIComponent(value)}`)
-        .join('&')
-    : ''
 
   // Check for user delegations if application supports delegations
   const { data: delegations, error } = useQuery(ACTOR_DELEGATIONS, {
@@ -189,7 +181,7 @@ export const DelegationsScreen = ({
 
   const handleClick = (nationalId?: string) => {
     if (screenData.screenType !== ScreenType.ONGOING && nationalId) {
-      navigate(`?delegationChecked=true${paramString}`)
+      navigate('?delegationChecked=true')
       switchUser(nationalId)
     } else if (nationalId) {
       switchUser(nationalId)

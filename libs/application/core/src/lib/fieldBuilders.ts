@@ -214,7 +214,6 @@ export const buildSelectField = (
     onSelect,
     backgroundColor = 'blue',
     isMulti,
-    isClearable,
     required,
   } = data
   return {
@@ -227,7 +226,6 @@ export const buildSelectField = (
     component: FieldComponents.SELECT,
     onSelect,
     isMulti,
-    isClearable,
     backgroundColor,
   }
 }

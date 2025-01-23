@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react'
 import isEqual from 'lodash/isEqual'
+import { useEffect, useState } from 'react'
 
 export const usePlausible = (eventName: string, params: unknown) => {
   const [currentParams, setCurrentParams] = useState<unknown>()

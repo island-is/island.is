@@ -1,19 +1,18 @@
 import React, {
-  AllHTMLAttributes,
   ElementType,
+  AllHTMLAttributes,
   forwardRef,
-  Ref,
   useContext,
+  Ref,
 } from 'react'
-import { useToggle } from 'react-use'
 import cn from 'classnames'
-
-import { Box, Link, UseBoxStylesProps } from '@island.is/island-ui/core'
-
+import { useToggle } from 'react-use'
+import { Link, Box, UseBoxStylesProps } from '@island.is/island-ui/core'
 import {
   ColorSchemeContext,
   ColorSchemes,
 } from '../ColorSchemeContext/ColorSchemeContext'
+
 import * as styles from './FocusableBox.css'
 
 // TODO fix strict typing

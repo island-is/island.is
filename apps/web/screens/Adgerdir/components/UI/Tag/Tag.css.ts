@@ -1,7 +1,5 @@
-import { style, styleVariants } from '@vanilla-extract/css'
-
+import { styleVariants, style } from '@vanilla-extract/css'
 import { theme } from '@island.is/island-ui/theme'
-
 import colors from '../colors'
 
 export const container = style({

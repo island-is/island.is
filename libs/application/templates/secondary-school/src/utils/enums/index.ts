@@ -8,7 +8,6 @@ export enum States {
   PREREQUISITES = 'prerequisites',
   DRAFT = 'draft',
   SUBMITTED = 'submitted',
-  IN_REVIEW = 'inReview',
   COMPLETED = 'completed',
 }
 

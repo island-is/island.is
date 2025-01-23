@@ -1,18 +1,16 @@
 import React from 'react'
-
 import {
   Box,
   Button,
   GridColumn,
   GridContainer,
   GridRow,
-  Hidden,
-  Link,
-  Logo,
   Text,
+  Link,
+  Hidden,
+  Logo,
 } from '@island.is/island-ui/core'
 import { EventSlice as EventSliceProps } from '@island.is/web/graphql/schema'
-
 import * as styles from './EventSlice.css'
 
 interface SliceProps {

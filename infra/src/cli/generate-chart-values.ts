@@ -1,6 +1,6 @@
 import { renderEnv } from './render-env'
 import { ChartName, Deployments, Charts } from '../uber-charts/all-charts'
-import { writeFileSync, mkdirSync, rmSync } from 'fs'
+import { writeFileSync, mkdirSync } from 'fs'
 import { Envs } from '../environments'
 import { OpsEnv } from '../dsl/types/input-types'
 import path from 'path'
@@ -21,18 +21,6 @@ const headerComment = `#########################################################
 
 `
 
-const relativeChartDir = '../../../charts'
-const cleanOrphanDirs = (filePath: string): void => {
-  try {
-    rmSync(filePath, { recursive: true })
-  } catch (error) {
-    if (error instanceof Error) {
-      console.error(
-        `Failed to clean orphan directories at ${filePath}: ${error.message}`,
-      )
-    }
-  }
-}
 const writeYamlFile = (filePath: string, content: unknown) => {
   const doc = new yaml.Document()
   doc.contents = doc.createNode(content)
@@ -43,9 +31,8 @@ const writeYamlFile = (filePath: string, content: unknown) => {
 }
 
 const generateChartValues = async () => {
-  console.log('Cleaning orphan charts')
-  cleanOrphanDirs(path.join(__dirname, relativeChartDir))
   console.log('Gathering charts')
+
   for (const [name, envs] of Object.entries(Deployments)) {
     for (const [envType, envName] of Object.entries(envs)) {
       console.log(`Processing ${name} ${envName} ${envType}`)
@@ -58,7 +45,7 @@ const generateChartValues = async () => {
       writeYamlFile(
         path.join(
           __dirname,
-          relativeChartDir,
+          '/../../../charts',
           name,
           `values.${Envs[envName].type}.yaml`,
         ),
@@ -80,7 +67,7 @@ const generateChartValues = async () => {
           writeYamlFile(
             path.join(
               __dirname,
-              `${relativeChartDir}/${name}-services`,
+              `/../../../charts/${name}-services`,
               serviceName,
               `values.${Envs[envName].type}.yaml`,
             ),

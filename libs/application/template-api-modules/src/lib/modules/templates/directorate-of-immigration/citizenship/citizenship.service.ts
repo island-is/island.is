@@ -225,8 +225,10 @@ export class CitizenshipService extends BaseTemplateApiService {
       | undefined
     const residenceInIcelandLastChangeDate = application.externalData
       .residenceInIcelandLastChangeDate?.data as Date | null
-    const nationalRegistryBirthplace = application.externalData.birthplace
-      ?.data as NationalRegistryBirthplace | undefined
+    const nationalRegistryBirthplace = application.externalData
+      .nationalRegistryBirthplace?.data as
+      | NationalRegistryBirthplace
+      | undefined
     const spouseDetails = application.externalData.spouseDetails?.data as
       | NationalRegistrySpouse
       | undefined
@@ -330,7 +332,7 @@ export class CitizenshipService extends BaseTemplateApiService {
         phone: answers.userInformation?.phone,
         citizenshipCode: individual?.citizenship?.code,
         residenceInIcelandLastChangeDate: residenceInIcelandLastChangeDate,
-        birthCountry: nationalRegistryBirthplace?.municipalityName,
+        birthCountry: nationalRegistryBirthplace?.location,
         maritalStatus: individual?.maritalTitle?.description || '',
         dateOfMaritalStatus: spouseDetails?.lastModified,
         spouse: spouseDetails?.nationalId

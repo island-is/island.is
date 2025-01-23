@@ -1,16 +1,15 @@
 import React, { ReactNode } from 'react'
 import { useMeasure } from 'react-use'
 import cn from 'classnames'
-
-import { Box, Hyphen, Text } from '@island.is/island-ui/core'
-import { ExportCSVButton } from '@island.is/web/components'
-
+import { Box, Text, Hyphen } from '@island.is/island-ui/core'
 import {
   MixedChart,
   SimpleBarChart,
   SimpleLineChart,
   SimplePieChart,
 } from '../'
+import { ExportCSVButton } from '@island.is/web/components'
+
 import * as styles from './ChartsCard.css'
 
 interface ChartCardDataProps {

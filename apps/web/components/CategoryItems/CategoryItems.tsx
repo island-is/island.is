@@ -1,9 +1,8 @@
 import React from 'react'
-
-import { CategoryCard, GridContainer, Text } from '@island.is/island-ui/core'
+import { Text, GridContainer, CategoryCard } from '@island.is/island-ui/core'
 import { GridItems } from '@island.is/web/components'
-import { GetArticleCategoriesQuery } from '@island.is/web/graphql/schema'
 import { LinkType, useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
+import { GetArticleCategoriesQuery } from '@island.is/web/graphql/schema'
 
 interface CategoryItemsProps {
   heading: string

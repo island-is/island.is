@@ -2,7 +2,6 @@ import format from 'date-fns/format'
 import { useEffect, useState } from 'react'
 import { useLocation } from 'react-router-dom'
 import { useMutation } from '@apollo/client'
-import { Markdown } from '@island.is/shared/components'
 import {
   Box,
   Button,
@@ -89,7 +88,7 @@ const ViewSignedList = () => {
             <Column width="11/12">
               <Stack space={2}>
                 <Text variant="h3">{petition?.title}</Text>
-                <Markdown>{petition?.description as string}</Markdown>
+                <Text>{petition?.description as string}</Text>
                 <Box
                   display={['block', 'flex']}
                   justifyContent="spaceBetween"

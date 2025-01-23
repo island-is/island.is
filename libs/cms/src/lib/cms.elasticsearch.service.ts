@@ -47,10 +47,7 @@ import { GenericListItemResponse } from './models/genericListItemResponse.model'
 import { GetCustomSubpageInput } from './dto/getCustomSubpage.input'
 import { GetGenericListItemBySlugInput } from './dto/getGenericListItemBySlug.input'
 import { GenericListItem } from './models/genericListItem.model'
-import {
-  GetTeamMembersInput,
-  GetTeamMembersInputOrderBy,
-} from './dto/getTeamMembers.input'
+import { GetTeamMembersInput } from './dto/getTeamMembers.input'
 import { TeamMemberResponse } from './models/teamMemberResponse.model'
 import { GetGrantsInput } from './dto/getGrants.input'
 import { Grant } from './models/grant.model'
@@ -476,7 +473,7 @@ export class CmsElasticsearchService {
     tags?: string[]
     tagGroups?: Record<string, string[]>
     type: ListItemType
-    orderBy?: GetGenericListItemsInputOrderBy | GetTeamMembersInputOrderBy
+    orderBy?: GetGenericListItemsInputOrderBy
   }): Promise<
     ListItemType extends 'webGenericListItem'
       ? Omit<GenericListItemResponse, 'input'>
@@ -606,10 +603,6 @@ export class CmsElasticsearchService {
       ...input,
       type: 'webTeamMember',
       listId: input.teamListId,
-      orderBy:
-        input.orderBy === GetTeamMembersInputOrderBy.Manual
-          ? GetGenericListItemsInputOrderBy.DATE
-          : GetGenericListItemsInputOrderBy.TITLE,
     })
 
     return {

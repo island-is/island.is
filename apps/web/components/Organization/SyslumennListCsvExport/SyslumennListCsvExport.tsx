@@ -1,5 +1,4 @@
 import React, { useState } from 'react'
-
 import { Button } from '@island.is/island-ui/core'
 import { IconMapIcon, IconMapType } from '@island.is/island-ui/core'
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'

@@ -1,5 +1,4 @@
 import React, { ReactNode } from 'react'
-
 import { Box, GridContainer, ResponsiveSpace } from '@island.is/island-ui/core'
 
 interface SubpageDetailsProps {

@@ -1,21 +1,19 @@
 import React from 'react'
 import {
-  CartesianGrid,
-  Legend,
-  Line,
   LineChart,
-  ResponsiveContainer,
-  Tooltip,
   XAxis,
   YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+  Line,
 } from 'recharts'
-
 import { Box } from '@island.is/island-ui/core'
-
 import {
-  COLORS,
   CustomizedAxisTick,
   RenderLegend,
+  COLORS,
   YAxisLabel,
 } from '../sharedChartComponents'
 

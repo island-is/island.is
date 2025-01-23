@@ -1,6 +1,5 @@
 import React, { forwardRef, ReactNode } from 'react'
 import cn from 'classnames'
-
 import { Text } from '@island.is/island-ui/core'
 import { shouldLinkOpenInNewWindow } from '@island.is/shared/utils'
 

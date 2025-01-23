@@ -47,6 +47,7 @@ export class WorkMachinesResolver {
   ) {}
 
   @Scopes(ApiScope.workMachines)
+  @FeatureFlag(Features.servicePortalWorkMachinesModule)
   @Query(() => PaginatedCollectionResponse, {
     name: 'workMachinesPaginatedCollection',
     nullable: true,
@@ -64,11 +65,13 @@ export class WorkMachinesResolver {
   }
 
   @Scopes(ApiScope.workMachines)
+  @FeatureFlag(Features.servicePortalWorkMachinesModule)
   @Query(() => Document, {
     name: 'workMachinesCollectionDocument',
     nullable: true,
   })
   @Audit()
+  @FeatureFlag(Features.servicePortalWorkMachinesModule)
   async getWorkMachinesCollectionDocument(
     @Args('input', {
       type: () => GetDocumentsInput,
@@ -86,6 +89,7 @@ export class WorkMachinesResolver {
   }
 
   @Scopes(ApiScope.workMachines)
+  @FeatureFlag(Features.servicePortalWorkMachinesModule)
   @Query(() => WorkMachine, { name: 'workMachine', nullable: true })
   @Audit()
   async getWorkMachineById(

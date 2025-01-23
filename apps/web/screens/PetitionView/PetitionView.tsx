@@ -27,7 +27,6 @@ import { Screen } from '../../types'
 import PetitionSkeleton from './PetitionSkeleton'
 import { useGetPetitionList, useGetPetitionListEndorsements } from './queries'
 import { formatDate, getBaseUrl, pageSize } from './utils'
-import { Markdown } from '@island.is/shared/components'
 
 interface PetitionViewProps {
   namespace?: Record<string, string>
@@ -142,7 +141,7 @@ const PetitionView: Screen<PetitionViewProps> = ({ namespace }) => {
                 {list.title}
               </Text>
               <Text variant="default" marginBottom={3}>
-                <Markdown>{list.description ?? ''}</Markdown>
+                {list.description}
               </Text>
             </Stack>
             <GridRow>

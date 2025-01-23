@@ -59,7 +59,7 @@ const SelectionSchema = z
     include: z.boolean().optional(),
     school: z
       .object({
-        id: z.string().optional().nullable(),
+        id: z.string().optional(),
         name: z.string().optional(),
       })
       .optional(),
@@ -69,14 +69,11 @@ const SelectionSchema = z
         nameIs: z.string().optional(),
         nameEn: z.string().optional(),
         registrationEndDate: z.string().optional(),
-        isSpecialNeedsProgram: z.boolean().optional(),
       })
       .optional(),
     secondProgram: z
       .object({
-        // Note: this include is only used for zod validation if there is only one program available, but a freshman should pick two
         include: z.boolean().optional(),
-        require: z.boolean().optional(),
         id: z.string().optional(),
         nameIs: z.string().optional(),
         nameEn: z.string().optional(),
@@ -114,7 +111,7 @@ const SelectionSchema = z
   .refine(
     ({ include, secondProgram }) => {
       if (!include) return true
-      if (!secondProgram?.include || !secondProgram?.require) return true
+      if (!secondProgram?.include) return true
       return !!secondProgram?.id
     },
     { path: ['secondProgram.id'] },
@@ -144,9 +141,13 @@ export const SecondarySchoolSchema = z.object({
   custodians: z.array(CustodianSchema).max(2),
   mainOtherContact: MainOtherContactSchema,
   otherContacts: z.array(OtherContactSchema).max(1),
-  selection: z.array(SelectionSchema),
+  selection: z.object({
+    first: SelectionSchema,
+    second: SelectionSchema.optional(),
+    third: SelectionSchema.optional(),
+  }),
   extraInformation: z.object({
-    nativeLanguageCode: z.string().optional().nullable(),
+    nativeLanguageCode: z.string().optional(),
     otherDescription: z.string().optional(),
     supportingDocuments: z.array(FileDocumentSchema).optional(),
   }),

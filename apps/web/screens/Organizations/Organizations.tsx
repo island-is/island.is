@@ -1,50 +1,51 @@
 import { useEffect, useMemo, useState } from 'react'
-import { useWindowSize } from 'react-use'
 import NextLink from 'next/link'
+import { useWindowSize } from 'react-use'
 
 import {
   Box,
+  Text,
   Breadcrumbs,
-  CategoryCard,
   ColorSchemeContext,
   GridColumn,
   GridContainer,
   GridRow,
-  Pagination,
   ResponsiveSpace,
-  Select,
+  Pagination,
+  CategoryCard,
   Stack,
-  Text,
+  Select,
 } from '@island.is/island-ui/core'
 import { helperStyles, theme } from '@island.is/island-ui/theme'
 import { sortAlpha } from '@island.is/shared/utils'
-import { HeadWithSocialSharing } from '@island.is/web/components'
 import {
-  ContentLanguage,
   Query,
   QueryGetNamespaceArgs,
-  QueryGetOrganizationsArgs,
+  ContentLanguage,
   QueryGetOrganizationTagsArgs,
+  QueryGetOrganizationsArgs,
 } from '@island.is/web/graphql/schema'
-import { useNamespace } from '@island.is/web/hooks'
-import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
-import { useI18n } from '@island.is/web/i18n'
 import { withMainLayout } from '@island.is/web/layouts/main'
+import { HeadWithSocialSharing } from '@island.is/web/components'
+import { useNamespace } from '@island.is/web/hooks'
 import { Screen } from '@island.is/web/types'
+import { useI18n } from '@island.is/web/i18n'
+import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import { getOrganizationLink } from '@island.is/web/utils/organization'
 
 import { CustomNextError } from '../../units/errors'
 import {
+  GET_ORGANIZATIONS_QUERY,
   GET_NAMESPACE_QUERY,
   GET_ORGANIZATION_TAGS_QUERY,
-  GET_ORGANIZATIONS_QUERY,
 } from '../queries'
 import {
-  CategoriesProps,
-  FilterLabels,
   FilterMenu,
+  CategoriesProps,
   FilterOptions,
+  FilterLabels,
 } from './FilterMenu'
+
 import * as styles from './Organizations.css'
 
 const CARDS_PER_PAGE = 12

@@ -1,10 +1,9 @@
 import { Field, ObjectType, ID } from '@nestjs/graphql'
 import { CacheField } from '@island.is/nest/graphql'
-import { ITeamList, ITeamListFields } from '../generated/contentfulTypes'
+import { ITeamList } from '../generated/contentfulTypes'
 import { SystemMetadata } from '@island.is/shared/types'
 import { TeamMember, mapTeamMember } from './teamMember.model'
 import { GenericTag } from './genericTag.model'
-import { GetTeamMembersInputOrderBy } from '../dto/getTeamMembers.input'
 
 @ObjectType()
 export class TeamList {
@@ -19,9 +18,6 @@ export class TeamList {
 
   @CacheField(() => [GenericTag], { nullable: true })
   filterTags?: GenericTag[]
-
-  @CacheField(() => GetTeamMembersInputOrderBy, { nullable: true })
-  teamMemberOrder?: GetTeamMembersInputOrderBy
 
   @Field(() => Boolean, { nullable: true })
   showSearchInput?: boolean
@@ -61,13 +57,6 @@ export const mapTeamList = ({
     teamMember.tagGroups = tagGroups
   }
 
-  const mapOrderBy = (orderBy?: ITeamListFields['orderBy']) => {
-    if (orderBy === GetTeamMembersInputOrderBy.Manual) {
-      return GetTeamMembersInputOrderBy.Manual
-    }
-    return GetTeamMembersInputOrderBy.Name
-  }
-
   return {
     typename: 'TeamList',
     id: sys.id,
@@ -75,6 +64,5 @@ export const mapTeamList = ({
     variant: fields.variant === 'accordion' ? 'accordion' : 'card',
     filterTags,
     showSearchInput: fields.showSearchInput ?? true,
-    teamMemberOrder: mapOrderBy(fields.orderBy),
   }
 }

@@ -9,24 +9,12 @@ const getRegistrationEndDates = (formValue: FormValue): Date[] => {
   )
 
   return [
-    selection?.[0]?.include
-      ? selection?.[0]?.firstProgram?.registrationEndDate
-      : undefined,
-    selection?.[0]?.include
-      ? selection?.[0]?.secondProgram?.registrationEndDate
-      : undefined,
-    selection?.[1]?.include
-      ? selection?.[1]?.firstProgram?.registrationEndDate
-      : undefined,
-    selection?.[1]?.include
-      ? selection?.[1]?.secondProgram?.registrationEndDate
-      : undefined,
-    selection?.[2]?.include
-      ? selection?.[2]?.firstProgram?.registrationEndDate
-      : undefined,
-    selection?.[2]?.include
-      ? selection?.[2]?.secondProgram?.registrationEndDate
-      : undefined,
+    selection?.first?.firstProgram?.registrationEndDate,
+    selection?.first?.secondProgram?.registrationEndDate,
+    selection?.second?.firstProgram?.registrationEndDate,
+    selection?.second?.secondProgram?.registrationEndDate,
+    selection?.third?.firstProgram?.registrationEndDate,
+    selection?.third?.secondProgram?.registrationEndDate,
   ]
     .filter((x) => !!x)
     .map((x) => (x ? new Date(x) : new Date()))

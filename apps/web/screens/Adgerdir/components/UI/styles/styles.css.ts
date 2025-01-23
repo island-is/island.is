@@ -1,5 +1,4 @@
 import { globalStyle, style, styleVariants } from '@vanilla-extract/css'
-
 import colors from '../colors'
 
 export const bg = style({

@@ -1,26 +1,24 @@
 import React from 'react'
 import {
-  Bar,
-  CartesianGrid,
   ComposedChart,
-  Legend,
-  Line,
-  ResponsiveContainer,
-  Tooltip,
+  Bar,
   XAxis,
   YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+  Line,
 } from 'recharts'
-
-import { Box } from '@island.is/island-ui/core'
-
 import {
-  COLORS,
   CustomizedAxisTick,
-  CustomizedRightAxisTick,
-  CustomTooltip,
   RenderLegend,
+  COLORS,
+  CustomTooltip,
+  CustomizedRightAxisTick,
   YAxisLabel,
 } from '../sharedChartComponents'
+import { Box } from '@island.is/island-ui/core'
 
 interface GraphDataProps {
   title?: string
