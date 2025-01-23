@@ -2,10 +2,13 @@ import { FC } from 'react'
 import { useIntl } from 'react-intl'
 import { AnimatePresence } from 'framer-motion'
 
-import { Tag, Text } from '@island.is/island-ui/core'
+import { Text } from '@island.is/island-ui/core'
 import { capitalize, formatDate } from '@island.is/judicial-system/formatters'
 import { core, tables } from '@island.is/judicial-system-web/messages'
-import { SectionHeading } from '@island.is/judicial-system-web/src/components'
+import {
+  CaseTag,
+  SectionHeading,
+} from '@island.is/judicial-system-web/src/components'
 import { useContextMenu } from '@island.is/judicial-system-web/src/components/ContextMenu/ContextMenu'
 import {
   CourtCaseNumber,
@@ -80,14 +83,15 @@ const CasesForReview: FC<CasesForReviewTableProps> = ({ loading, cases }) => {
                 },
                 {
                   cell: (row) => (
-                    <Tag variant="darkerBlue" outlined disabled>
-                      {formatMessage(
+                    <CaseTag
+                      color="darkerBlue"
+                      text={formatMessage(
                         row.indictmentRulingDecision ===
                           CaseIndictmentRulingDecision.FINE
                           ? tables.fineTag
                           : tables.rulingTag,
                       )}
-                    </Tag>
+                    />
                   ),
                 },
                 {

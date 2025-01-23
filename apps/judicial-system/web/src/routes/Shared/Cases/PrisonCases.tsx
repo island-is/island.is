@@ -38,6 +38,7 @@ import {
   getPunishmentTypeTag,
 } from '@island.is/judicial-system-web/src/components/Tags/utils'
 import {
+  CaseIndictmentRulingDecision,
   CaseListEntry,
   CaseState,
   CaseType,
@@ -180,7 +181,7 @@ export const PrisonCases: FC = () => {
               sortable: { isSortable: true, key: 'defendants' },
             },
             {
-              title: formatMessage(tables.court),
+              title: formatMessage(tables.type),
             },
             {
               title: formatMessage(tables.punishmentType),
@@ -214,7 +215,17 @@ export const PrisonCases: FC = () => {
               cell: (row) => <DefendantInfo defendants={row.defendants} />,
             },
             {
-              cell: (row) => <ColumnCaseType type={row.type} />,
+              cell: (row) => (
+                <CaseTag
+                  color="darkerBlue"
+                  text={formatMessage(
+                    row.indictmentRulingDecision ===
+                      CaseIndictmentRulingDecision.FINE
+                      ? tables.fineTag
+                      : tables.rulingTag,
+                  )}
+                />
+              ),
             },
             {
               cell: (row) => {
