@@ -1,7 +1,7 @@
 import { FC, useContext, useMemo } from 'react'
 import { useIntl } from 'react-intl'
 
-import { Box, Text } from '@island.is/island-ui/core'
+import { Text } from '@island.is/island-ui/core'
 import { capitalize } from '@island.is/judicial-system/formatters'
 import {
   isDistrictCourtUser,

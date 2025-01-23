@@ -159,7 +159,6 @@ describe('FileController - Upload case file to court', () => {
     caseFileCategory                       | courtDocumentFolder
     ${CaseFileCategory.COURT_RECORD}       | ${CourtDocumentFolder.COURT_DOCUMENTS}
     ${CaseFileCategory.RULING}             | ${CourtDocumentFolder.COURT_DOCUMENTS}
-    ${CaseFileCategory.INDICTMENT}         | ${CourtDocumentFolder.INDICTMENT_DOCUMENTS}
     ${CaseFileCategory.CRIMINAL_RECORD}    | ${CourtDocumentFolder.CASE_DOCUMENTS}
     ${CaseFileCategory.COST_BREAKDOWN}     | ${CourtDocumentFolder.CASE_DOCUMENTS}
     ${CaseFileCategory.CASE_FILE}          | ${CourtDocumentFolder.CASE_DOCUMENTS}

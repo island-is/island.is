@@ -71,7 +71,6 @@ export const PoliceCaseInfo: FC<Props> = ({
   updatePoliceCase,
   policeCaseNumberImmutable = false,
   updateIndictmentCount,
-  indictmentCount,
 }) => {
   const { formatMessage } = useIntl()
 

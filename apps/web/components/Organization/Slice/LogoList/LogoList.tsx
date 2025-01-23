@@ -1,6 +1,8 @@
 import React from 'react'
-import { LogoListSlice as LogoListProps } from '@island.is/web/graphql/schema'
+
 import { Box, GridContainer } from '@island.is/island-ui/core'
+import { LogoListSlice as LogoListProps } from '@island.is/web/graphql/schema'
+
 import { LogoList } from '../../../LogoList/LogoList'
 
 interface SliceProps {

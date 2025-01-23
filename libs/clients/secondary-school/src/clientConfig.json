@@ -7,41 +7,6 @@
   },
   "paths": {
     "/v1/applications": {
-      "get": {
-        "tags": ["Applications"],
-        "summary": "[GET] Fetch an application.",
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ApplicationReturnDto"
-                  }
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ApplicationReturnDto"
-                  }
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ApplicationReturnDto"
-                  }
-                }
-              }
-            }
-          }
-        }
-      },
       "post": {
         "tags": ["Applications"],
         "summary": "[POST] Creates a new application.",
@@ -320,6 +285,34 @@
         }
       }
     },
+    "/v1/schools/admissions/open": {
+      "get": {
+        "tags": ["Schools"],
+        "summary": "[GET] Check if any programme is open for admission for any school.",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/AnyOpenForAdmissionDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AnyOpenForAdmissionDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AnyOpenForAdmissionDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/v1/students/{nationalId}/elementarygrades": {
       "get": {
         "tags": ["Students"],
@@ -417,9 +410,23 @@
   },
   "components": {
     "schemas": {
+      "AnyOpenForAdmissionDto": {
+        "type": "object",
+        "properties": {
+          "anyOpenForAdmissionGeneral": { "type": "boolean" },
+          "anyOpenForAdmissionFreshman": { "type": "boolean" }
+        },
+        "additionalProperties": false
+      },
       "ApplicationBaseDto": {
         "type": "object",
         "properties": {
+          "islandIsApplicationId": {
+            "type": "string",
+            "description": "Reference Id to the Island.is application",
+            "format": "uuid",
+            "nullable": true
+          },
           "applicantNationalId": {
             "type": "string",
             "description": "The national ID  of the applicant",
@@ -524,31 +531,6 @@
           },
           "requestDormitory": {
             "type": "boolean",
-            "description": "Is the student requesting dormitory.",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "ApplicationChoicesReturnDto": {
-        "type": "object",
-        "properties": {
-          "priority": {
-            "type": "integer",
-            "description": "Priority of the school being applied to \r\n1 highest priority, 2 second highest priority, etc.",
-            "format": "int32"
-          },
-          "school": { "$ref": "#/components/schemas/SchoolDto" },
-          "programmeChoice": {
-            "type": "array",
-            "items": { "$ref": "#/components/schemas/ProgrammeChoiceDto" },
-            "description": "Programme choice",
-            "nullable": true
-          },
-          "thirdLanguage": { "$ref": "#/components/schemas/LanguageDto" },
-          "northernLanguage": { "$ref": "#/components/schemas/LanguageDto" },
-          "requestDormitory": {
-            "type": "boolean",
             "description": "Is the student requesting dormitory."
           }
         },
@@ -564,106 +546,6 @@
           }
         },
         "additionalProperties": false
-      },
-      "ApplicationReturnDto": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "description": "Application Id",
-            "format": "uuid"
-          },
-          "applicationDate": {
-            "type": "string",
-            "description": "Application date",
-            "format": "date-time"
-          },
-          "createdDate": {
-            "type": "string",
-            "description": "Date created",
-            "format": "date-time"
-          },
-          "updatedDate": {
-            "type": "string",
-            "description": "Date updated",
-            "format": "date-time"
-          },
-          "status": { "$ref": "#/components/schemas/ApplicationStatus" },
-          "speakingLanguage": { "$ref": "#/components/schemas/LanguageDto" },
-          "applicationChoices": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/ApplicationChoicesReturnDto"
-            },
-            "description": "List of schools being applied to",
-            "nullable": true
-          },
-          "currentApplicantStatus": {
-            "$ref": "#/components/schemas/CurrentApplicantStatus"
-          },
-          "attachments": {
-            "type": "array",
-            "items": { "$ref": "#/components/schemas/AttachmentReturnDto" },
-            "description": "List of attachments",
-            "nullable": true
-          },
-          "applicantNationalId": {
-            "type": "string",
-            "description": "The national ID  of the applicant",
-            "nullable": true
-          },
-          "applicantName": {
-            "type": "string",
-            "description": "Applicant name",
-            "nullable": true
-          },
-          "isFreshman": {
-            "type": "boolean",
-            "description": "Is the applicant a freshman"
-          },
-          "phoneNumber": {
-            "type": "string",
-            "description": "Applicant phone number",
-            "nullable": true
-          },
-          "email": {
-            "type": "string",
-            "description": "Applicant email",
-            "nullable": true
-          },
-          "placeOfResidence": {
-            "type": "string",
-            "description": "Place of residence if other than legal home",
-            "nullable": true
-          },
-          "postCode": {
-            "type": "string",
-            "description": "Postcode of residence if other than legal home",
-            "nullable": true
-          },
-          "municipality": {
-            "type": "string",
-            "description": "Municipality of residence if other than legal home",
-            "nullable": true
-          },
-          "nextOfKin": {
-            "type": "array",
-            "items": { "$ref": "#/components/schemas/NextOfKinDto" },
-            "description": "The national ID of the next of kin",
-            "nullable": true
-          },
-          "otherInformation": {
-            "type": "string",
-            "description": "Other information",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "ApplicationStatus": {
-        "enum": ["NewApplication", "Rejected", "Accepted", "PaymentPending"],
-        "type": "string",
-        "description": "Enum for describing Application Status"
       },
       "AttachmentDto": {
         "type": "object",
@@ -686,30 +568,6 @@
         },
         "additionalProperties": false,
         "description": "Create attachment Dto"
-      },
-      "AttachmentReturnDto": {
-        "type": "object",
-        "properties": {
-          "fileName": {
-            "type": "string",
-            "description": "File name.",
-            "nullable": true
-          },
-          "contentType": {
-            "type": "string",
-            "description": "Content type (e.g., \"pdf\").\r\nNot contstrained to a specific set of values.",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "CurrentApplicantStatus": {
-        "enum": [
-          "Neither",
-          "InSchoolOnHighSchoolLevel",
-          "RegisteredWithLabourInstitute"
-        ],
-        "type": "string"
       },
       "GradeDto": {
         "type": "object",
@@ -834,6 +692,7 @@
             "format": "date-time",
             "nullable": true
           },
+          "isSpecialNeedsProgramme": { "type": "boolean" },
           "schoolId": { "type": "string", "format": "uuid", "nullable": true }
         },
         "additionalProperties": false
@@ -844,8 +703,7 @@
           "schoolId": {
             "type": "string",
             "description": "What school is being applied to",
-            "format": "uuid",
-            "nullable": true
+            "format": "uuid"
           },
           "name": {
             "type": "string",
@@ -895,6 +753,14 @@
             "type": "string",
             "description": "Website address for school",
             "nullable": true
+          },
+          "anyOpenForAdmissionGeneral": {
+            "type": "boolean",
+            "description": "If any programmes are open for admission"
+          },
+          "anyOpenForAdmissionFreshman": {
+            "type": "boolean",
+            "description": "If any programmes are open for admission for freshman"
           },
           "thirdLanguages": {
             "type": "array",

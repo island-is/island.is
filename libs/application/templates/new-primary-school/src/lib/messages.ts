@@ -105,6 +105,26 @@ export const newPrimarySchoolMessages: MessageDir = {
       defaultMessage: 'Veldu skóla',
       description: 'Select school',
     },
+    gender: {
+      id: 'dess.nps.application:gender',
+      defaultMessage: 'Kyn',
+      description: 'Gender',
+    },
+    male: {
+      id: 'dess.nps.application:gender.male',
+      defaultMessage: 'Karlkyns',
+      description: 'Male',
+    },
+    female: {
+      id: 'dess.nps.application:gender.female',
+      defaultMessage: 'Kvenkyns',
+      description: 'Female',
+    },
+    otherGender: {
+      id: 'dess.nps.application:gender.other',
+      defaultMessage: 'Kynsegin/Annað',
+      description: 'non-binary/Other',
+    },
   }),
 
   pre: defineMessages({
@@ -205,8 +225,9 @@ export const newPrimarySchoolMessages: MessageDir = {
     childInfoDescription: {
       id: 'nps.application:childrenNParents.child.info.description',
       defaultMessage:
-        'Athugaðu hvort upplýsingarnar séu réttar áður en þú heldur áfram.',
-      description: 'Check that the information is correct before proceeding.',
+        'Upplýsingar um barn eru sóttar í Þjóðskrá. Athugaðu hvort upplýsingarnar séu réttar áður en þú heldur áfram.',
+      description:
+        'Information about the child is retrieved from the National Registry. Check that the information is correct before proceeding.',
     },
     childInfoPreferredName: {
       id: 'nps.application:childrenNParents.child.info.preferred.name',
@@ -215,24 +236,44 @@ export const newPrimarySchoolMessages: MessageDir = {
     },
     childInfoPronouns: {
       id: 'nps.application:childrenNParents.child.info.pronouns',
-      defaultMessage: 'Fornafn',
+      defaultMessage: 'Persónufornafn',
       description: 'Pronoun',
     },
     childInfoPronounsPlaceholder: {
       id: 'nps.application:childrenNParents.child.info.pronouns.placeholder',
-      defaultMessage: 'Veldu fornafn',
+      defaultMessage: 'Veldu persónufornafn',
       description: 'Select pronoun',
+    },
+    usePronounAndPreferredName: {
+      id: 'nps.application:childrenNParents.child.info.use.pronoun.and.preferred.name',
+      defaultMessage:
+        'Barnið kýs að vera ávarpað með öðru nafni og/eða persónufornafni en hann eða hún',
+      description:
+        'The child prefers to be addressed by a name and/or personal pronoun other than he or she',
+    },
+    preferredNameTooltip: {
+      id: 'nps.application:childrenNParents.child.info.preferred.name.tooltip',
+      defaultMessage:
+        'Forsjáraðilar geta óskað eftir breytingu á skráðu kyni og nafni barns hjá Þjóðskrá eða barnið sjálft sé það orðið 15 ára. Ef sú breyting er ótímabært má breyta nafni barnsins hér og skrá það nafn sem barn hefur valið sér.',
+      description:
+        "Guardians can request a change to a child's registered gender and name with the National Registry, or the child themselves if they have reached the age of 15. If the change is premature, the child's name can be changed here and the name the child has chosen can be registered.",
     },
     differentPlaceOfResidence: {
       id: 'nps.application:childrenNParents.child.info.different.place.of.residence',
-      defaultMessage: 'Er dvalarstaður barns annað en skráð lögheimili?',
+      defaultMessage: 'Er aðsetur barns annað en skráð lögheimili?',
       description:
-        "Is the child's place of residence different from the registered legal domicile?",
+        "Is the child's temporary residence different from the registered legal domicile?",
+    },
+    differentPlaceOfResidenceDescription: {
+      id: 'nps.application:childrenNParents.child.info.different.place.of.residence.description',
+      defaultMessage: 'Aðsetur er tímabundin búseta barns í öðru húsnæði',
+      description:
+        "Temporary residence is a child's place of residence in another home.",
     },
     childInfoPlaceOfResidence: {
       id: 'nps.application:childrenNParents.child.info.place.of.residence',
-      defaultMessage: 'Dvalarstaður barns',
-      description: "Child's place of residence",
+      defaultMessage: 'Aðsetur barns',
+      description: "Child's temporary residence",
     },
 
     // Parents/guardians
@@ -371,6 +412,28 @@ export const newPrimarySchoolMessages: MessageDir = {
       id: 'nps.application:primary.school.siblings.delete.relative',
       defaultMessage: 'Eyða systkini',
       description: 'Remove sibling',
+    },
+
+    // Current school
+    currentSchoolSubSectionTitle: {
+      id: 'nps.application:primary.school.current.school.sub.section.title',
+      defaultMessage: 'Upplýsingar um núverandi skóla',
+      description: 'Information about current school',
+    },
+    currentSchoolInfo: {
+      id: 'nps.application:primary.school.current.school.info',
+      defaultMessage: 'Núverandi skóli',
+      description: 'Current school',
+    },
+    grade: {
+      id: 'nps.application:primary.school.grade',
+      defaultMessage: 'Bekkur',
+      description: 'Grade',
+    },
+    currentGrade: {
+      id: 'nps.application:primary.school.current.grade',
+      defaultMessage: '{grade}. bekkur',
+      description: '{grade} grade',
     },
 
     // Apply to a new school
@@ -664,28 +727,13 @@ export const newPrimarySchoolMessages: MessageDir = {
     },
     schoolTitle: {
       id: 'nps.application:overview.school.title',
-      defaultMessage: 'Upplýsingar um skóla',
-      description: 'Information about school',
-    },
-    currentSchool: {
-      id: 'nps.application:overview.current.school',
-      defaultMessage: 'Núverandi skóli',
-      description: 'Current school',
+      defaultMessage: 'Upplýsingar um valinn/nýjan skóla',
+      description: 'Information about selected/new school',
     },
     selectedSchool: {
       id: 'nps.application:overview.selected.school',
       defaultMessage: 'Valinn skóli',
       description: 'Selected school',
-    },
-    grade: {
-      id: 'nps.application:overview.grade',
-      defaultMessage: 'Bekkur',
-      description: 'Grade',
-    },
-    currentGrade: {
-      id: 'nps.application:overview.current.grade',
-      defaultMessage: '{grade}. bekkur',
-      description: '{grade} grade',
     },
     foodAllergiesOrIntolerances: {
       id: 'nps.application:overview.food.allergies.or.intolerances',

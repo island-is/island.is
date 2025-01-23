@@ -1,6 +1,7 @@
+import React from 'react'
+
 import withApollo from '@island.is/web/graphql/withApollo'
 import { withLocale } from '@island.is/web/i18n'
-import React from 'react'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { getServerSidePropsWrapper } from '@island.is/web/utils/getServerSidePropsWrapper'
 
