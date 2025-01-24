@@ -19,5 +19,7 @@ export const getTranslatedProgram = (
     nameEn?: string
   },
 ): string => {
-  return (lang === 'is' ? program?.nameIs : program?.nameEn) || ''
+  // Note: Not all programs have the english translation
+  const fallback = program?.nameIs || ''
+  return (lang === 'is' ? program?.nameIs : program?.nameEn) || fallback
 }
