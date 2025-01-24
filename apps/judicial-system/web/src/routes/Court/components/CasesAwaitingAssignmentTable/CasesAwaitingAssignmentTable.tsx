@@ -83,7 +83,9 @@ const CasesAwaitingAssignmentTable: FC<CasesAwaitingAssignmentTableProps> = (
                   cell: (row) => <ColumnCaseType type={row.type} />,
                 },
                 {
-                  cell: (row) => <TableDate displayDate={row.created} />,
+                  cell: (row) => (
+                    <TableDate displayDate={row.caseSentToCourtDate} />
+                  ),
                 },
                 {
                   cell: (row) => (
