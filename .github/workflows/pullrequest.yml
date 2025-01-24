@@ -148,49 +148,31 @@ jobs:
           echo "## WARN permissions" >> "$GITHUB_STEP_SUMMARY"
           echo "User '$GITHUB_ACTOR' does not have the required permissions to apply the 'test everything' label" >> "$GITHUB_STEP_SUMMARY"
 
-      - name: Prepare lint targets
-        id: lint_projects
-        env:
-          # Linting is easy, no need to split/chunk it
-          DISABLE_CHUNKS: 'true'
-          DISABLE_GROUPING: 'true'
-          DISABLE_PROBLEMATIC: 'true'
+      - name: Prepare matrices
+        id: matrices
         run: |
           set -euo pipefail
-          CHUNKS="$(./scripts/ci/generate-chunks.sh lint)"
-          if [[ "$CHUNKS" != "[]" ]]; then
-            echo "CHUNKS={\"projects\":$CHUNKS}" >> "$GITHUB_OUTPUT"
-          fi
+          build_id="$GITHUB_RUN_ID-$GITHUB_RUN_NUMBER-$(uuidgen)"
+          # Get nx binary in PATH for faster running
+          export PATH="$PATH:$(yarn bin)"
+          for target in test lint build e2e-ci; do
 
-      - name: Prepare test targets
-        id: test_projects
-        run: |
-          set -euo pipefail
-          CHUNKS="$(./scripts/ci/generate-chunks.sh test)"
-          if [[ "$CHUNKS" != "[]" ]]; then
-            echo "CHUNKS={\"projects\":$CHUNKS}" >> "$GITHUB_OUTPUT"
-          fi
+          case "$target" in
+          # Don't paralellize these, because they can easily run together
+              lint) paralellize=true ;;
+                *) paralellize=false ;;
+            esac
 
-      - name: Prepare e2e targets
-        id: e2e_projects
-        env:
-          CHUNK_SIZE: 1
-        run: |
-          set -euo pipefail
-          CHUNKS="$(./scripts/ci/generate-chunks.sh e2e-ci)"
-          if [[ "$CHUNKS" != "[]" ]]; then
-            echo "CHUNKS={\"projects\":$CHUNKS}" >> "$GITHUB_OUTPUT"
-          fi
-          echo BUILD_ID="$GITHUB_RUN_ID-$GITHUB_RUN_NUMBER-$(uuidgen)" >> "$GITHUB_OUTPUT"
+          nx show projects --with-target lint --affected |
+            jq -Rrcs --arg target "$target" --arg build_id "$build_id" --argjson paralellize "$paralellize" '
+              split("\n") |
+              map(select(length > 0)) |
+              if $paralellize == true then
+                { "project": [.] | transpose, "build_id": $build_id }
+              else
+                { "project": ., "build_id": $target }
+            ' >>"$GITHUB_OUTPUT"
 
-      - name: Prepare build targets
-        id: build_projects
-        run: |
-          set -euo pipefail
-          CHUNKS="$(./scripts/ci/generate-chunks.sh build)"
-          if [[ "$CHUNKS" != "[]" ]]; then
-            echo "CHUNKS={\"projects\":$CHUNKS}" >> "$GITHUB_OUTPUT"
-          fi
       - name: Check release-manager approval
         id: check-release-manager-approval
         if: ${{ contains(github.event.pull_request.labels.*.name, 'automerge') && contains(github.event.pull_request.head.ref, '/pre-release/') }}
@@ -199,6 +181,7 @@ jobs:
         run: |
           set -euo pipefail
           node -r esbuild-register .github/actions/check-team-approval.ts release-managers
+
   tests:
     needs:
       - prepare
