@@ -60,7 +60,10 @@ import { NationalRegistryXRoadModule } from '@island.is/api/domains/national-reg
 import { NotificationsModule } from '@island.is/api/domains/notifications'
 import { PassportModule } from '@island.is/api/domains/passport'
 import { ApiDomainsPaymentModule } from '@island.is/api/domains/payment'
-import { ApiDomainsPaymentsModule } from '@island.is/api/domains/payments'
+import {
+  ApiDomainsPaymentsModule,
+  PaymentsApiModuleConfig,
+} from '@island.is/api/domains/payments'
 import { PaymentScheduleModule } from '@island.is/api/domains/payment-schedule'
 import { RegulationsModule } from '@island.is/api/domains/regulations'
 import { RegulationsAdminModule } from '@island.is/api/domains/regulations-admin'
@@ -446,6 +449,7 @@ const environment = getConfig
         WorkAccidentClientConfig,
         ZendeskServiceConfig,
         emailModuleConfig,
+        PaymentsApiModuleConfig,
       ],
     }),
   ],

@@ -1,7 +1,8 @@
-import { Inject, Injectable } from '@nestjs/common'
+import { BadRequestException, Inject, Injectable } from '@nestjs/common'
 import { CACHE_MANAGER } from '@nestjs/cache-manager'
 import { Cache as CacheManager } from 'cache-manager'
 import { ConfigType } from '@nestjs/config'
+import { v4 as uuid } from 'uuid'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -51,7 +52,9 @@ export class CardPaymentService {
       },
     } = this.config
 
-    const { amount, correlationId, paymentFlowId } = verifyCardInput
+    const correlationId = uuid()
+
+    const { amount, paymentFlowId } = verifyCardInput
 
     const md = generateMd({
       correlationId,
@@ -63,7 +66,7 @@ export class CardPaymentService {
     })
 
     await this.cacheManager.set(
-      verifyCardInput.correlationId,
+      correlationId,
       {
         paymentFlowId: verifyCardInput.paymentFlowId,
         amount,
@@ -142,6 +145,7 @@ export class CardPaymentService {
 
     if (now > tokenExpiresAt) {
       this.logger.error('Token was expired', correlationId)
+      throw new BadRequestException('Invalid token')
     }
 
     const storedValue = (await this.cacheManager.get(
@@ -153,13 +157,14 @@ export class CardPaymentService {
         'No stored value found for correlationId',
         correlationId,
       )
+      throw new BadRequestException('Invalid token')
     }
 
     await this.cacheManager.del(correlationId)
 
     if (
-      storedValue.amount === amount &&
-      storedValue.paymentFlowId === paymentFlowId
+      storedValue?.amount === amount &&
+      storedValue?.paymentFlowId === paymentFlowId
     ) {
       success = true
 
@@ -178,6 +183,7 @@ export class CardPaymentService {
 
       const paymentFlowStatus: CachePaymentFlowStatus = {
         isVerified: true,
+        correlationId,
       }
 
       await this.cacheManager.set(
@@ -187,9 +193,10 @@ export class CardPaymentService {
       )
     } else {
       this.logger.error('Stored value does not match payload', {
-        storedAmount: storedValue.amount,
+        storedAmount: storedValue?.amount,
         payloadAmount: amount,
       })
+      throw new BadRequestException('Invalid token')
     }
 
     return {
@@ -198,16 +205,32 @@ export class CardPaymentService {
     }
   }
 
-  async getVerificationStatus(paymentFlowId: string) {
-    const status = (await this.cacheManager.get(paymentFlowId)) as
+  private async getFullVerificationStatus(paymentFlowId: string) {
+    return this.cacheManager.get(paymentFlowId) as
       | CachePaymentFlowStatus
       | undefined
+  }
 
-    return status
+  async getVerificationStatus(paymentFlowId: string) {
+    const status = await this.getFullVerificationStatus(paymentFlowId)
+
+    const isVerified = status?.isVerified === true
+
+    return {
+      isVerified,
+    }
   }
 
   async charge(chargeCardInput: ChargeCardInput) {
-    const { correlationId } = chargeCardInput
+    const status = await this.getFullVerificationStatus(
+      chargeCardInput.paymentFlowId,
+    )
+
+    if (!status?.isVerified || !status?.correlationId) {
+      throw new Error('Verification data not found')
+    }
+
+    const { correlationId } = status
 
     const verificationData = (await this.cacheManager.get(
       correlationId,
@@ -256,6 +279,16 @@ export class CardPaymentService {
 
     if (!data?.isSuccess) {
       throw new Error(mapToCardErrorCode(data.responseCode))
+    }
+
+    try {
+      await this.cacheManager.del(correlationId)
+      await this.cacheManager.del(chargeCardInput.paymentFlowId)
+    } catch (e) {
+      this.logger.error(
+        'Failed to clear cache after a successful card payment',
+        e,
+      )
     }
 
     return data

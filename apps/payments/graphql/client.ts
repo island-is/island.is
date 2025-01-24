@@ -58,7 +58,15 @@ function create(initialState?: any) {
     link: ApolloLink.from([retryLink, errorLink, authLink, httpLink]),
     connectToDevTools: isBrowser,
     ssrMode: !isBrowser, // Disables forceFetch on the server (so queries are only run once)
-    cache: new InMemoryCache().restore(initialState || {}),
+    defaultOptions: {
+      query: {
+        fetchPolicy: 'no-cache',
+      },
+      watchQuery: {
+        fetchPolicy: 'no-cache',
+      },
+    },
+    cache: new InMemoryCache(),
   })
 }
 

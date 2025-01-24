@@ -14,7 +14,7 @@ export class GetPaymentFlowResponse {
   productPrice!: number
 
   @Field(() => String, { nullable: true })
-  invoiceId?: string
+  existingInvoiceId?: string
 
   @Field(() => String)
   payerNationalId!: string

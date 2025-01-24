@@ -340,13 +340,23 @@ export const cardError = defineMessages({
   },
   genericDeclineTitle: {
     id: 'payments.cardError:genericDeclineTitle',
-    defaultMessage: 'Greiðsla hafnað',
+    defaultMessage: 'Greiðslu hafnað',
     description: 'Generic decline',
   },
   genericDecline: {
     id: 'payments.cardError:genericDecline',
     defaultMessage:
       'Greiðslunni var hafnað. Reyndu annað kort eða hafðu samband við kortaútgefanda.',
+    description: 'Generic decline description',
+  },
+  verificationDeadlineExceededTitle: {
+    id: 'payments.cardError:verificationDeadlineExceededTitle',
+    defaultMessage: 'Beiðni útrunnin',
+    description: 'Exceeded time limit to verify card',
+  },
+  verificationDeadlineExceeded: {
+    id: 'payments.cardError:verificationDeadlineExceeded',
+    defaultMessage: 'Tími til að staðfesta kort er útrunninn.',
     description: 'Generic decline description',
   },
   unknownTitle: {

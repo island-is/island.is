@@ -4,15 +4,7 @@ import { IsNumber, IsString } from 'class-validator'
 export class ChargeCardInput {
   @IsString()
   @ApiProperty({
-    description:
-      'Correlation id for the whole payment from verification to charge',
-    type: String,
-  })
-  correlationId!: string
-
-  @IsString()
-  @ApiProperty({
-    description: 'If of the related payment flow being paid',
+    description: 'Id of the related payment flow being paid',
     type: String,
   })
   paymentFlowId!: string
@@ -40,15 +32,15 @@ export class ChargeCardInput {
 
   @IsNumber()
   @ApiProperty({
+    description: 'Total amount to be paid in ISK (not cents)',
+    type: Number,
+  })
+  amount!: number
+
+  @IsNumber()
+  @ApiProperty({
     description: 'Card cvc',
     type: Number,
   })
   cvc!: number
-
-  @IsNumber()
-  @ApiProperty({
-    description: 'Total amount to be paid',
-    type: Number,
-  })
-  amount!: number
 }

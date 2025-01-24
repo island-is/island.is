@@ -23,5 +23,6 @@ export enum CardErrorCode {
   RevocationOfAllAuthorizations = 'revocation_of_all_authorizations',
   PaymentSystemUnavailable = 'payment_system_unavailable',
   GenericDecline = 'generic_decline',
+  VerificationDeadlineExceeded = 'verification_deadline_exceeded',
   Unknown = 'unknown',
 }

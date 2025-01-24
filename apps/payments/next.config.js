@@ -11,6 +11,7 @@ const {
   API_URL = 'http://localhost:4444',
   CONFIGCAT_SDK_KEY,
   BASEPATH = '/greida',
+  VERIFICATION_CALLBACK_SIGNING_SECRET = '',
 } = process.env
 
 const graphqlPath = '/api/graphql'
@@ -29,10 +30,11 @@ const nextConfig = {
     // Will only be available on the server side
     graphqlEndpoint: `${API_URL}${graphqlPath}`,
     paymentApiEndpoint: PAYMENTS_API_URL,
+    verificationCallbackSigningSecret: VERIFICATION_CALLBACK_SIGNING_SECRET,
   },
   publicRuntimeConfig: {
     // Will be available on both server and client
-    graphqlEndpoint: graphqlPath,
+    graphqlEndpoint: `${API_URL}${graphqlPath}`,
     configCatSdkKey: CONFIGCAT_SDK_KEY,
   },
   basePath: `${BASEPATH}`,

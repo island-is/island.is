@@ -116,7 +116,7 @@ export class PaymentFlow extends Model<
     allowNull: true,
     field: 'invoice_id',
   })
-  invoiceId?: string
+  existingInvoiceId?: string
 
   @ApiProperty()
   @Column({

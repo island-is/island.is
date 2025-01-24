@@ -43,6 +43,7 @@ export interface ChargeResponse {
 
 export interface CachePaymentFlowStatus {
   isVerified?: boolean
+  correlationId?: string
 }
 
 export interface SavedVerificationPendingData {

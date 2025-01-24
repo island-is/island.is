@@ -1,5 +1,15 @@
-import { getPaymentsApi } from '../../../services/payment'
 import { NextApiRequest, NextApiResponse } from 'next'
+import { sign } from 'jsonwebtoken'
+
+import initApollo from '../../../graphql/client'
+
+import {
+  VerificationCallbackMutation,
+  VerificationCallbackMutationVariables,
+  VerificationCallbackDocument,
+} from '../../../graphql/mutations.graphql.generated'
+import getConfig from 'next/config'
+import { findProblemInApolloError } from '@island.is/shared/problem'
 
 export default async function cardVerificationCallbackHandler(
   req: NextApiRequest,
@@ -21,15 +31,46 @@ export default async function cardVerificationCallbackHandler(
     return res.status(400).json({ error: 'MD is required' })
   }
 
-  await getPaymentsApi().cardPaymentControllerVerificationCallback({
-    verificationCallbackInput: {
+  const client = initApollo()
+
+  const {
+    serverRuntimeConfig: { verificationCallbackSigningSecret },
+  } = getConfig()
+
+  // The verification callback will only accept signed tokens
+  const verificationToken = sign(
+    {
+      xid,
+      mdStatus,
+      md: MD,
       cavv,
       dsTransId,
-      md: MD,
-      mdStatus,
-      xid,
     },
-  })
+    verificationCallbackSigningSecret,
+  )
 
-  return res.status(200).json({})
+  try {
+    await client.mutate<
+      VerificationCallbackMutation,
+      VerificationCallbackMutationVariables
+    >({
+      mutation: VerificationCallbackDocument,
+      variables: {
+        input: {
+          verificationToken,
+        },
+      },
+    })
+
+    return res.status(200).json({})
+  } catch (e) {
+    const problem = findProblemInApolloError(e)
+
+    if (problem?.detail) {
+      return res.status(400).json({ error: problem.detail })
+    }
+
+    console.error(e)
+    return res.status(503).json({ error: 'Unknown error occured' })
+  }
 }

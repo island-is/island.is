@@ -133,6 +133,11 @@ export const paymentErrorToTitleAndMessage = (
         title: cardError.genericDeclineTitle,
         message: cardError.genericDecline,
       }
+    case CardErrorCode.VerificationDeadlineExceeded:
+      return {
+        title: cardError.verificationDeadlineExceededTitle,
+        message: cardError.verificationDeadlineExceeded,
+      }
     default:
       return {
         title: cardError.unknownTitle,

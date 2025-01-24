@@ -37,10 +37,10 @@ export class PaymentFlowController {
     description: 'Retrieves payment flow information by ID.',
     response: { status: 200, type: GetPaymentFlowDTO },
   })
-  getPaymentInfo(
+  getPaymentFlow(
     @Param('id', new ParseUUIDPipe()) id: string,
   ): Promise<GetPaymentFlowDTO | null> {
-    return this.paymentFlowService.getPaymentInfo(id)
+    return this.paymentFlowService.getPaymentFlow(id)
   }
 
   @Post()

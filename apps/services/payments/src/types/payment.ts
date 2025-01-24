@@ -9,7 +9,6 @@ export enum PaymentMethod {
 export type PaymentFlowUpdateEvent = {
   type: PaymentFlowEvent['type']
   paymentFlowId: PaymentFlowEvent['paymentFlowId'] // Unique identifier for the payment flow
-  correlationId: PaymentFlowEvent['correlationId'] // Unique identifier for the payment transaction from beginning to end
   paymentFlowMetadata: CreatePaymentFlowInput['metadata'] // Metadata passed to the payment flow during creation (for example applicationId)
   occurredAt: PaymentFlowEvent['occurredAt'] // ISO timestamp for when the event occurred
   details?: {

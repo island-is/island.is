@@ -2,7 +2,7 @@
   "name": "clients-payments",
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/clients/payments/src",
-  "tags": ["scope:client", "lib:client", "lib:react-next"],
+  "tags": ["scope:client", "lib:client"],
   "implicitDependencies": ["services-payments"],
   "targets": {
     "lint": {

@@ -79,6 +79,12 @@
         }
       }
     },
+    "codegen/frontend-client": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "graphql-codegen --config apps/payments/codegen.yml"
+      }
+    },
     "export": {
       "executor": "@nx/next:export",
       "options": {

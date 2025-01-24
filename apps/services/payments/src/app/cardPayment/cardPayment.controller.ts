@@ -53,7 +53,6 @@ export class CardPaymentController {
 
       await this.paymentFlowService.logPaymentFlowUpdate({
         paymentFlowId: cardVerificationInput.paymentFlowId,
-        correlationId: cardVerificationInput.correlationId,
         type: 'update',
         occurredAt: new Date(),
         paymentMethod: PaymentMethod.CARD,
@@ -66,7 +65,6 @@ export class CardPaymentController {
     } catch (e) {
       await this.paymentFlowService.logPaymentFlowUpdate({
         paymentFlowId: cardVerificationInput.paymentFlowId,
-        correlationId: cardVerificationInput.correlationId,
         type: 'update',
         occurredAt: new Date(),
         paymentMethod: PaymentMethod.CARD,
@@ -98,7 +96,6 @@ export class CardPaymentController {
       if (!success) {
         await this.paymentFlowService.logPaymentFlowUpdate({
           paymentFlowId,
-          correlationId,
           type: 'update',
           occurredAt: new Date(),
           paymentMethod: PaymentMethod.CARD,
@@ -110,7 +107,6 @@ export class CardPaymentController {
 
       await this.paymentFlowService.logPaymentFlowUpdate({
         paymentFlowId,
-        correlationId,
         type: 'update',
         occurredAt: new Date(),
         paymentMethod: PaymentMethod.CARD,
@@ -120,13 +116,13 @@ export class CardPaymentController {
     } catch (e) {
       await this.paymentFlowService.logPaymentFlowUpdate({
         paymentFlowId: mdPayload.paymentFlowId,
-        correlationId: mdPayload.correlationId,
         type: 'update',
         occurredAt: new Date(),
         paymentMethod: PaymentMethod.CARD,
         reason: 'other',
         message: `Card verification callback failed: ${e.message}`,
       })
+      throw e
     }
   }
 
@@ -154,12 +150,13 @@ export class CardPaymentController {
   async charge(
     @Body() chargeCardInput: ChargeCardInput,
   ): Promise<ChargeCardResponse> {
+    await this.paymentFlowService.getPaymentFlow(chargeCardInput.paymentFlowId)
+
     // Payment confirmation
     const result = await this.cardPaymentService.charge(chargeCardInput)
 
     await this.paymentFlowService.logPaymentFlowUpdate({
       paymentFlowId: chargeCardInput.paymentFlowId,
-      correlationId: chargeCardInput.correlationId,
       type: 'success',
       occurredAt: new Date(),
       paymentMethod: PaymentMethod.CARD,

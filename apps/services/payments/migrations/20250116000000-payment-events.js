@@ -47,10 +47,6 @@ module.exports = {
             },
             onDelete: 'CASCADE',
           },
-          correlation_id: {
-            type: Sequelize.STRING,
-            allowNull: false,
-          },
           type: {
             type: Sequelize.ENUM(
               'create',
@@ -102,12 +98,32 @@ module.exports = {
         },
         { transaction: t },
       )
+
+      //
+      await queryInterface.addIndex(
+        'payment_flow_event',
+        ['payment_flow_id', 'type'],
+        {
+          name: 'payment_flow_event_payment_flow_id_type_idx',
+          where: {
+            type: 'success',
+          },
+          transaction: t,
+        },
+      )
     })
   },
 
   down: async (queryInterface, Sequelize) => {
     return queryInterface.sequelize.transaction(async (t) => {
       await queryInterface.dropTable('payment_flow_event', { transaction: t })
+      await queryInterface.removeIndex(
+        'payment_flow_event',
+        'payment_flow_event_payment_flow_id_type_idx',
+        {
+          transaction: t,
+        },
+      )
 
       // Revert 'on_update_url' to be optional
       await queryInterface.changeColumn(

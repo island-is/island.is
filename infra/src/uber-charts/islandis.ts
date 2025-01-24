@@ -17,7 +17,7 @@ import { serviceSetup as servicePortalApiSetup } from '../../../apps/services/us
 
 // Payments
 import { serviceSetup as paymentsWebAppServiceSetup } from '../../../apps/payments/infra/payments'
-import { serviceSetup as paymentsMicroserviceServiceSetup } from '../../../apps/services/payments/infra/payments'
+import { serviceSetup as paymentsServiceSetup } from '../../../apps/services/payments/infra/payments'
 
 // Bff's
 import { serviceSetup as bffAdminPortalServiceSetup } from '../../../apps/services/bff/infra/admin-portal.infra'
@@ -109,7 +109,7 @@ const authAdminApi = authAdminApiSetup()
 const universityGatewayService = universityGatewaySetup()
 const universityGatewayWorker = universityGatewayWorkerSetup()
 
-const paymentsMicroservice = paymentsMicroserviceServiceSetup()
+const paymentsService = paymentsServiceSetup()
 
 const api = apiSetup({
   appSystemApi,
@@ -123,7 +123,7 @@ const api = apiSetup({
   authAdminApi,
   universityGatewayApi: universityGatewayService,
   userNotificationService,
-  paymentsApi: paymentsMicroservice,
+  paymentsApi: paymentsService,
 })
 
 const adminPortal = adminPortalSetup()
@@ -132,7 +132,6 @@ const bffAdminPortalService = bffAdminPortalServiceSetup({ api })
 const bffServicePortalService = bffServicePortalServiceSetup({ api })
 const paymentsWebApp = paymentsWebAppServiceSetup({
   api,
-  paymentsApi: paymentsMicroservice,
 })
 
 const appSystemForm = appSystemFormSetup()
@@ -272,7 +271,7 @@ export const Services: EnvironmentServices = {
     universityGatewayWorker,
     bffAdminPortalService,
     paymentsWebApp,
-    paymentsMicroservice,
+    paymentsService,
     bffServicePortalService,
   ],
 }

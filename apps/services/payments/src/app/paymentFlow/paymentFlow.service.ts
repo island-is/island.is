@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common'
+import { BadRequestException, Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { isCompany, isValid } from 'kennitala'
 
@@ -122,7 +122,7 @@ export class PaymentFlowService {
     return person.nafn ?? ''
   }
 
-  async getPaymentInfo(id: string): Promise<GetPaymentFlowDTO | null> {
+  async getPaymentFlow(id: string): Promise<GetPaymentFlowDTO | null> {
     try {
       const paymentFlow = (
         await this.paymentFlowModel.findOne({
@@ -138,7 +138,20 @@ export class PaymentFlowService {
       )?.toJSON()
 
       if (!paymentFlow) {
-        throw new Error('Payment flow not found')
+        throw new BadRequestException('Payment flow not found')
+      }
+
+      const paymentFlowSuccessEvent = (
+        await this.paymentFlowEventModel.findOne({
+          where: {
+            paymentFlowId: id,
+            type: 'success',
+          },
+        })
+      )?.toJSON()
+
+      if (paymentFlowSuccessEvent) {
+        throw new BadRequestException('already_paid')
       }
 
       const paymentDetails = await this.getPaymentFlowChargeDetails(
@@ -159,13 +172,12 @@ export class PaymentFlowService {
       }
     } catch (e) {
       this.logger.error('Failed to get payment flow', e)
-      return null
+      throw e
     }
   }
 
   async logPaymentFlowUpdate(update: {
     paymentFlowId: string
-    correlationId: string
     type: PaymentFlowEvent['type']
     occurredAt: Date
     paymentMethod: PaymentMethod
@@ -198,7 +210,6 @@ export class PaymentFlowService {
       const updateBody: PaymentFlowUpdateEvent = {
         type: update.type,
         paymentFlowId: update.paymentFlowId,
-        correlationId: update.correlationId,
         paymentFlowMetadata: paymentFlow.metadata,
         occurredAt: update.occurredAt,
         details: {

@@ -40,7 +40,7 @@ export class GetPaymentFlowDTO {
       'Optional identifier for an invoice associated with the payment flow',
     type: String,
   })
-  invoiceId?: string
+  existingInvoiceId?: string
 
   @ApiProperty({
     description: 'List of allowed payment methods for this payment flow',

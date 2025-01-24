@@ -1,16 +1,11 @@
 import { useState } from 'react'
 import { GetServerSideProps } from 'next'
 import { FormProvider, SubmitHandler, useForm } from 'react-hook-form'
-import gql from 'graphql-tag'
-import { v4 as uuid } from 'uuid'
-
-import {
-  Query,
-  QueryGetOrganizationByNationalIdArgs,
-} from '@island.is/api/schema'
+import { useRouter } from 'next/router'
 import { Box, Button, ModalBase } from '@island.is/island-ui/core'
 import { Features } from '@island.is/feature-flags'
 import { useLocale } from '@island.is/localization'
+import { findProblemInApolloError } from '@island.is/shared/problem'
 
 import { PageCard } from '../../../components/PageCard/PageCard'
 import initApollo from '../../../graphql/client'
@@ -22,46 +17,43 @@ import { ALLOWED_LOCALES, Locale } from '../../../utils'
 import { getConfigcatClient } from '../../../clients/configcat'
 import { card, generic, invoice } from '../../../messages'
 import { ThreeDSecure } from '../../../components/ThreeDSecure/ThreeDSecure'
-import { useRouter } from 'next/router'
 import {
   getErrorTitleAndMessage,
   PaymentError,
 } from '../../../utils/error/error'
 
-import type {
-  GetPaymentFlowDTO,
-  VerifyCardInput,
-  VerifyCardResponse,
-  ChargeCardInput,
-  ChargeCardResponse,
-} from '@island.is/clients/payments'
-import { getPaymentsApi } from '../../../services/payment'
+import {
+  VerifyCardMutation,
+  ChargeCardMutation,
+  useVerifyCardMutation,
+  useChargeCardMutation,
+} from '../../../graphql/mutations.graphql.generated'
+import {
+  GetPaymentFlowQuery,
+  GetOrganizationByNationalIdQuery,
+  GetPaymentFlowQueryVariables,
+  GetPaymentFlowDocument,
+  GetOrganizationByNationalIdDocument,
+  GetOrganizationByNationalIdQueryVariables,
+  useGetVerificationStatusLazyQuery,
+} from '../../../graphql/queries.graphql.generated'
+import {
+  PaymentsChargeCardInput,
+  PaymentsVerifyCardInput,
+} from '@island.is/api/schema'
+import { CardErrorCode } from '../../..//utils/error/constants'
 
 interface PaymentPageProps {
   locale: string
   paymentFlowId: string
-  paymentFlow: GetPaymentFlowDTO
-  organization: Query['getOrganization']
+  paymentFlow: GetPaymentFlowQuery['paymentsGetFlow']
+  paymentFlowErrorCode: PaymentError | null
+  organization: GetOrganizationByNationalIdQuery['getOrganizationByNationalId']
   productInformation: {
     amount: number
     title: string
   }
-  sessionCorrelationId: string
 }
-
-const GetOrganization = gql`
-  query getOrganizationByNationalId($input: GetOrganizationByNationalIdInput!) {
-    getOrganizationByNationalId(input: $input) {
-      id
-      title
-      shortTitle
-      logo {
-        url
-        title
-      }
-    }
-  }
-`
 
 export const getServerSideProps: GetServerSideProps<PaymentPageProps> = async (
   context,
@@ -95,12 +87,23 @@ export const getServerSideProps: GetServerSideProps<PaymentPageProps> = async (
   const client = initApollo()
 
   let paymentFlow: PaymentPageProps['paymentFlow'] = null
+  let paymentFlowErrorCode: PaymentPageProps['paymentFlowErrorCode'] = null
   let organization: PaymentPageProps['organization'] = null
 
   try {
-    paymentFlow = await getPaymentsApi().paymentFlowControllerGetPaymentInfo({
-      id: paymentFlowId,
+    const { data } = await client.query<
+      GetPaymentFlowQuery,
+      GetPaymentFlowQueryVariables
+    >({
+      query: GetPaymentFlowDocument,
+      variables: {
+        input: {
+          id: paymentFlowId,
+        },
+      },
     })
+
+    paymentFlow = data.paymentsGetFlow
 
     if (!paymentFlow) {
       throw new Error('Payment flow not found')
@@ -108,8 +111,11 @@ export const getServerSideProps: GetServerSideProps<PaymentPageProps> = async (
 
     const {
       data: { getOrganizationByNationalId },
-    } = await client.query<Query, QueryGetOrganizationByNationalIdArgs>({
-      query: GetOrganization,
+    } = await client.query<
+      GetOrganizationByNationalIdQuery,
+      GetOrganizationByNationalIdQueryVariables
+    >({
+      query: GetOrganizationByNationalIdDocument,
       variables: {
         input: {
           nationalId: paymentFlow.organisationId,
@@ -119,7 +125,24 @@ export const getServerSideProps: GetServerSideProps<PaymentPageProps> = async (
 
     organization = getOrganizationByNationalId
   } catch (e) {
-    console.error(e)
+    const problem = findProblemInApolloError(e)
+
+    if (problem) {
+      const code = problem?.detail as string
+
+      if (code === 'already_paid') {
+        return {
+          redirect: {
+            destination: `/${locale}/${paymentFlowId}/greitt`,
+            permanent: false,
+          },
+        }
+      }
+
+      paymentFlowErrorCode = {
+        code: problem?.detail as CardErrorCode,
+      }
+    }
   }
 
   const productInformation = {
@@ -131,19 +154,10 @@ export const getServerSideProps: GetServerSideProps<PaymentPageProps> = async (
     props: {
       locale,
       paymentFlowId,
-      // The generated client code transforms null to undefined which causes
-      // serialisation issues when passing the object to the client
-      paymentFlow:
-        paymentFlow !== null
-          ? (Object.fromEntries(
-              Object.entries(paymentFlow).filter(
-                ([_, value]) => value !== undefined,
-              ),
-            ) as any)
-          : null, // TODO: Fix this in the generated client?
+      paymentFlow,
+      paymentFlowErrorCode,
       organization,
       productInformation,
-      sessionCorrelationId: uuid(),
     },
   }
 }
@@ -152,8 +166,11 @@ export default function PaymentPage({
   paymentFlow,
   organization,
   productInformation,
-  sessionCorrelationId,
 }: PaymentPageProps) {
+  const [verifyCardMutation] = useVerifyCardMutation()
+  const [chargeCardMutation] = useChargeCardMutation()
+  const [getVerificationStatusQuery] = useGetVerificationStatusLazyQuery()
+
   const router = useRouter()
   const methods = useForm({
     mode: 'onBlur',
@@ -182,14 +199,18 @@ export default function PaymentPage({
     const interval = 5000
 
     while (remainingWaitTimeInMilliSeconds > 0) {
-      const response = await fetch(
-        `/greida/api/card/verificationStatus?paymentFlowId=${paymentFlow.id}`,
-      )
+      const { data } = await getVerificationStatusQuery({
+        variables: {
+          input: {
+            id: paymentFlow.id,
+          },
+        },
+      })
 
-      if (response.ok) {
-        const result = await response.json()
+      if (data) {
+        const status = data.paymentsGetVerificationStatus
 
-        if (result.isVerified) {
+        if (status.isVerified) {
           return true
         }
       }
@@ -202,98 +223,122 @@ export default function PaymentPage({
   }
 
   const verifyCard = async (
-    data: Omit<VerifyCardInput, 'verificationCallbackUrl'>,
-  ): Promise<VerifyCardResponse> => {
-    const response = await fetch('/greida/api/card/verify', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(data),
-    })
-
-    if (!response.ok) {
-      // TODO: Present to user what went wrong
-      const responseBody = await response.json()
-      setPaymentError({
-        code: responseBody.error,
+    input: PaymentsVerifyCardInput,
+  ): Promise<VerifyCardMutation['paymentsVerifyCard']> => {
+    try {
+      const { data, errors } = await verifyCardMutation({
+        variables: {
+          input,
+        },
       })
-      throw new Error(responseBody.error)
-    }
 
-    return await response.json()
+      if (errors) {
+        // TODO
+      }
+
+      if (!data) {
+        throw new Error('Failed to verify card')
+      }
+
+      const verification = data.paymentsVerifyCard
+
+      if (!verification.isSuccess) {
+        setPaymentError({
+          code: verification.responseCode as CardErrorCode,
+        })
+      }
+
+      return verification
+    } catch (e) {
+      const problem = findProblemInApolloError(e)
+
+      if (problem) {
+        throw new Error(problem?.detail)
+      }
+
+      throw new Error(CardErrorCode.Unknown)
+    }
   }
 
   const chargeCard = async (
-    data: ChargeCardInput,
-  ): Promise<ChargeCardResponse> => {
-    const response = await fetch('/greida/api/card/charge', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(data),
-    })
+    input: PaymentsChargeCardInput,
+  ): Promise<ChargeCardMutation['paymentsChargeCard']> => {
+    try {
+      const { data, errors } = await chargeCardMutation({
+        variables: {
+          input,
+        },
+      })
 
-    if (!response.ok) {
-      // TODO: Present to user what went wrong
-      throw new Error(response.statusText)
+      if (!data) {
+        throw new Error('Failed to charge card')
+      }
+
+      const result = data?.paymentsChargeCard
+
+      if (!result.isSuccess) {
+        setPaymentError({
+          code: result.responseCode as CardErrorCode,
+        })
+      }
+
+      return result
+    } catch (e) {
+      const problem = findProblemInApolloError(e)
+
+      if (problem) {
+        throw new Error(problem?.detail)
+      }
+
+      throw new Error(CardErrorCode.Unknown)
     }
-
-    return response.json()
   }
 
   const payWithCard = async (data: Record<string, unknown>) => {
     const { card, cardExpiry, cardCVC } = data
 
     // TODO Verify fields or let API?
-    if (!card || cardExpiry || typeof cardExpiry !== 'string' || !cardCVC) {
+    if (!card || !cardExpiry || typeof cardExpiry !== 'string' || !cardCVC) {
       return
     }
 
     const [month, year] = cardExpiry.split('/')
 
-    try {
-      const cardInfo = {
-        number: Number(card),
-        expiryMonth: Number(month),
-        expiryYear: Number(year),
-        cvc: Number(cardCVC),
-      }
+    const cardInfo = {
+      number: Number(card),
+      expiryMonth: Number(month),
+      expiryYear: Number(year),
+      cvc: Number(cardCVC),
+    }
 
-      const verifyCardResponse = await verifyCard({
-        amount: productInformation.amount,
-        cardNumber: cardInfo.number,
-        expiryMonth: cardInfo.expiryMonth,
-        expiryYear: cardInfo.expiryYear,
-        correlationId: sessionCorrelationId,
-        paymentFlowId: paymentFlow.id,
-      })
+    const verifyCardResponse = await verifyCard({
+      amount: productInformation.amount,
+      cardNumber: cardInfo.number,
+      expiryMonth: cardInfo.expiryMonth,
+      expiryYear: cardInfo.expiryYear,
+      paymentFlowId: paymentFlow.id,
+    })
 
-      setIsVerifyingCard(true)
-      setThreeDSecureData(verifyCardResponse)
+    setIsVerifyingCard(true)
+    setThreeDSecureData(verifyCardResponse)
 
-      const isCardVerified = await waitForCardVerification()
+    const isCardVerified = await waitForCardVerification()
 
-      if (!isCardVerified) {
-        throw new Error('Card verification failed')
-      }
+    if (!isCardVerified) {
+      throw new Error(CardErrorCode.VerificationDeadlineExceeded)
+    }
 
-      const chargeCardResponse = await chargeCard({
-        amount: productInformation.amount,
-        cardNumber: cardInfo.number,
-        cvc: cardInfo.cvc,
-        expiryMonth: cardInfo.expiryMonth,
-        expiryYear: cardInfo.expiryYear,
-        correlationId: sessionCorrelationId,
-        paymentFlowId: paymentFlow.id,
-      })
+    const chargeCardResponse = await chargeCard({
+      amount: productInformation.amount,
+      cardNumber: cardInfo.number,
+      cvc: cardInfo.cvc,
+      expiryMonth: cardInfo.expiryMonth,
+      expiryYear: cardInfo.expiryYear,
+      paymentFlowId: paymentFlow.id,
+    })
 
-      if (chargeCardResponse.isSuccess) {
-        router.push(`${router.asPath}/greitt`)
-      }
-    } catch (err) {
-      // throw err
+    if (chargeCardResponse.isSuccess) {
+      router.push(`${router.asPath}/greitt`)
     }
   }
 
@@ -311,6 +356,10 @@ export default function PaymentPage({
     } catch (e) {
       setIsProcessingPayment(false)
       setIsVerifyingCard(false)
+
+      setPaymentError({
+        code: e.message as CardErrorCode,
+      })
       console.warn('Error occured while submitting payment', e)
     }
 
