@@ -32,10 +32,8 @@ export const getIndictmentVerdictAppealDeadlineStatus = (
     (newest, [_, current]) => (current && current > newest ? current : newest),
     new Date(0),
   )
-  const deadline = getIndictmentAppealDeadlineDate({
-    baseDate: newestViewDate,
-    isFine,
-  })
+  const deadline = getIndictmentAppealDeadlineDate(newestViewDate,
+    isFine)
 
   return [true, hasDatePassed(deadline)]
 }
