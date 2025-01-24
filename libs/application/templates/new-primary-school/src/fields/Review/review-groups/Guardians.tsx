@@ -17,7 +17,7 @@ export const Guardians = ({
 
   return (
     <>
-      {Object.values(guardians).map((guardian, index) => (
+      {guardians.map((guardian, index) => (
         <ReviewGroup
           isEditable={editable}
           editAction={() => goToScreen?.('guardians')}

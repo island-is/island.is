@@ -54,18 +54,12 @@ export const dataSchema = z.object({
           : true,
       { path: ['placeOfResidence', 'postalCode'] },
     ),
-  guardians: z.object({
-    guardian1: z.object({
+  guardians: z.array(
+    z.object({
       email: z.string().email(),
       phoneNumber: phoneNumberSchema,
     }),
-    guardian2: z
-      .object({
-        email: z.string().email(),
-        phoneNumber: phoneNumberSchema,
-      })
-      .optional(),
-  }),
+  ),
   contacts: z
     .array(
       z.object({

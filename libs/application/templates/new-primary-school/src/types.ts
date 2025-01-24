@@ -52,10 +52,7 @@ export type Person = {
   }
 }
 
-export type Guardians = {
-  guardian1: Person
-  guardian2: Person
-}
+export type Guardians = Person[]
 
 export type SelectOption = {
   label: string

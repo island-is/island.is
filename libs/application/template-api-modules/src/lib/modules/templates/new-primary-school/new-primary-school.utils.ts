@@ -39,32 +39,17 @@ export const transformApplicationToNewPrimarySchoolDTO = (
   const { primaryOrgId } = getApplicationExternalData(application.externalData)
 
   const agents: AgentDto[] = [
-    {
-      name: guardians.guardian1.fullName,
-      nationalId: guardians.guardian1.nationalId,
+    ...guardians.map((guardian) => ({
+      name: guardian.fullName,
+      nationalId: guardian.nationalId,
       domicile: {
-        address: guardians.guardian1.address.streetAddress,
-        postCode: guardians.guardian1.address.postalCode,
+        address: guardian.address.streetAddress,
+        postCode: guardian.address.postalCode,
       },
-      email: guardians.guardian1.email,
-      phone: guardians.guardian1.phoneNumber,
+      email: guardian.email,
+      phone: guardian.phoneNumber,
       role: 'guardian',
-    },
-    ...(guardians.guardian2
-      ? [
-          {
-            name: guardians.guardian2.fullName,
-            nationalId: guardians.guardian2.nationalId,
-            domicile: {
-              address: guardians.guardian2.address.streetAddress,
-              postCode: guardians.guardian2.address.postalCode,
-            },
-            email: guardians.guardian2.email,
-            phone: guardians.guardian2.phoneNumber,
-            role: 'guardian',
-          },
-        ]
-      : []),
+    })),
     ...contacts.map((contact) => ({
       name: contact.fullName,
       nationalId: contact.nationalId,
@@ -133,6 +118,7 @@ export const transformApplicationToNewPrimarySchoolDTO = (
       otherLanguages: undefined,
     },
   }
+  console.log({ newPrimarySchoolDTO })
 
   return newPrimarySchoolDTO
 }

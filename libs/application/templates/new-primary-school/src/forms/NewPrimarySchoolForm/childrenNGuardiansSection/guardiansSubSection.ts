@@ -34,7 +34,7 @@ export const guardiansSubSection = buildSubSection({
           titleVariant: 'h4',
         }),
         buildTextField({
-          id: 'guardians.guardian1.fullName',
+          id: 'guardians[0].fullName',
           title: newPrimarySchoolMessages.shared.fullName,
           dataTestId: 'fullName1',
           disabled: true,
@@ -46,7 +46,7 @@ export const guardiansSubSection = buildSubSection({
             )?.fullName,
         }),
         buildTextField({
-          id: 'guardians.guardian1.nationalId',
+          id: 'guardians[0].nationalId',
           title: newPrimarySchoolMessages.shared.nationalId,
           width: 'half',
           dataTestId: 'nationalId1',
@@ -60,7 +60,7 @@ export const guardiansSubSection = buildSubSection({
             )?.nationalId,
         }),
         buildTextField({
-          id: 'guardians.guardian1.address.streetAddress',
+          id: 'guardians[0].address.streetAddress',
           title: newPrimarySchoolMessages.shared.address,
           width: 'half',
           dataTestId: 'address1',
@@ -71,7 +71,7 @@ export const guardiansSubSection = buildSubSection({
           },
         }),
         buildTextField({
-          id: 'guardians.guardian1.address.postalCode',
+          id: 'guardians[0].address.postalCode',
           title: newPrimarySchoolMessages.shared.postalCode,
           width: 'half',
           dataTestId: 'postalCode1',
@@ -82,7 +82,7 @@ export const guardiansSubSection = buildSubSection({
           },
         }),
         buildTextField({
-          id: 'guardians.guardian1.address.city',
+          id: 'guardians[0].address.city',
           title: newPrimarySchoolMessages.shared.municipality,
           width: 'half',
           dataTestId: 'city1',
@@ -93,7 +93,7 @@ export const guardiansSubSection = buildSubSection({
           },
         }),
         buildTextField({
-          id: 'guardians.guardian1.email',
+          id: 'guardians[0].email',
           title: newPrimarySchoolMessages.shared.email,
           width: 'half',
           dataTestId: 'email',
@@ -107,7 +107,7 @@ export const guardiansSubSection = buildSubSection({
             )?.email,
         }),
         buildPhoneField({
-          id: 'guardians.guardian1.phoneNumber',
+          id: 'guardians[0].phoneNumber',
           title: newPrimarySchoolMessages.shared.phoneNumber,
           width: 'half',
           defaultValue: (application: Application) => {
@@ -133,7 +133,7 @@ export const guardiansSubSection = buildSubSection({
             hasOtherGuardian(answers, externalData),
         }),
         buildTextField({
-          id: 'guardians.guardian2.fullName',
+          id: 'guardians[1].fullName',
           title: newPrimarySchoolMessages.shared.fullName,
           dataTestId: 'fullName2',
           disabled: true,
@@ -143,7 +143,7 @@ export const guardiansSubSection = buildSubSection({
             getOtherGuardian(application)?.fullName,
         }),
         buildTextField({
-          id: 'guardians.guardian2.nationalId',
+          id: 'guardians[1].nationalId',
           title: newPrimarySchoolMessages.shared.nationalId,
           width: 'half',
           dataTestId: 'nationalId2',
@@ -155,7 +155,7 @@ export const guardiansSubSection = buildSubSection({
             getOtherGuardian(application)?.nationalId,
         }),
         buildTextField({
-          id: 'guardians.guardian2.address.streetAddress',
+          id: 'guardians[1].address.streetAddress',
           title: newPrimarySchoolMessages.shared.address,
           width: 'half',
           dataTestId: 'address2',
@@ -166,7 +166,7 @@ export const guardiansSubSection = buildSubSection({
             getOtherGuardian(application)?.address.streetName,
         }),
         buildTextField({
-          id: 'guardians.guardian2.address.postalCode',
+          id: 'guardians[1].address.postalCode',
           title: newPrimarySchoolMessages.shared.postalCode,
           width: 'half',
           dataTestId: 'postalCode2',
@@ -177,7 +177,7 @@ export const guardiansSubSection = buildSubSection({
             getOtherGuardian(application)?.address.postalCode,
         }),
         buildTextField({
-          id: 'guardians.guardian2.address.city',
+          id: 'guardians[1].address.city',
           title: newPrimarySchoolMessages.shared.municipality,
           width: 'half',
           dataTestId: 'city2',
@@ -188,7 +188,7 @@ export const guardiansSubSection = buildSubSection({
             getOtherGuardian(application)?.address.city,
         }),
         buildTextField({
-          id: 'guardians.guardian2.email',
+          id: 'guardians[1].email',
           title: newPrimarySchoolMessages.shared.email,
           width: 'half',
           dataTestId: 'email2',
@@ -198,7 +198,7 @@ export const guardiansSubSection = buildSubSection({
             hasOtherGuardian(answers, externalData),
         }),
         buildPhoneField({
-          id: 'guardians.guardian2.phoneNumber',
+          id: 'guardians[1].phoneNumber',
           title: newPrimarySchoolMessages.shared.phoneNumber,
           width: 'half',
           dataTestId: 'phone2',
