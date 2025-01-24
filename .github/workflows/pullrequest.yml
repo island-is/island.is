@@ -165,11 +165,11 @@ jobs:
               jq -Rrcs --arg target "$target" --arg build_id "$build_id" --argjson parallelize "$parallelize" '
               split("\n") |
               map(select(length > 0)) |
-              {
+              "\($target)=\({
                 "projects": (if $parallelize then [.] | transpose else [.] end),
                 "build_id": $build_id,
                 "target": $target
-              }
+              })"
             ' >>"$GITHUB_OUTPUT"
           done
 
