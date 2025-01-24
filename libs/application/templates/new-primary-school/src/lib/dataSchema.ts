@@ -2,7 +2,12 @@ import { NO, YES } from '@island.is/application/types'
 import * as kennitala from 'kennitala'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { z } from 'zod'
-import { ApplicationType, ReasonForApplicationOptions } from './constants'
+import {
+  ApplicationType,
+  ReasonForApplicationOptions,
+  LanguageEnvironmentOptions,
+} from './constants'
+
 import { errorMessages } from './messages'
 
 const validatePhoneNumber = (value: string) => {
@@ -129,18 +134,46 @@ export const dataSchema = z.object({
   startDate: z.string(),
   languages: z
     .object({
-      nativeLanguage: z.string(),
-      otherLanguagesSpokenDaily: z.enum([YES, NO]),
-      otherLanguages: z.array(z.string()).optional(),
+      languageEnvironment: z.string(),
+      signLanguage: z.enum([YES, NO]),
+      interpreter: z.string().optional(),
+      language1: z.string().optional().nullable(),
+      language2: z.string().optional().nullable(),
+      childLanguage: z.string().optional().nullable(),
     })
     .refine(
-      ({ otherLanguagesSpokenDaily, otherLanguages }) =>
-        otherLanguagesSpokenDaily === YES
-          ? !!otherLanguages && otherLanguages.length > 0
-          : true,
+      ({ languageEnvironment, language1 }) => {
+        return languageEnvironment !== LanguageEnvironmentOptions.ONLY_ICELANDIC
+          ? !!language1
+          : true
+      },
       {
-        path: ['otherLanguages'],
+        path: ['language1'],
         params: errorMessages.languagesRequired,
+      },
+    )
+    .refine(
+      ({ languageEnvironment, language1, language2, childLanguage }) => {
+        return languageEnvironment !==
+          LanguageEnvironmentOptions.ONLY_ICELANDIC &&
+          !!language1 &&
+          !!language2
+          ? !!childLanguage
+          : true
+      },
+      {
+        path: ['childLanguage'],
+        params: errorMessages.languageRequired,
+      },
+    )
+    .refine(
+      ({ languageEnvironment, interpreter }) => {
+        return languageEnvironment !== LanguageEnvironmentOptions.ONLY_ICELANDIC
+          ? !!interpreter
+          : true
+      },
+      {
+        path: ['interpreter'],
       },
     ),
   freeSchoolMeal: z
