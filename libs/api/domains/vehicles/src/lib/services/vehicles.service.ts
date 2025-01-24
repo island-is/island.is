@@ -137,7 +137,7 @@ export class VehiclesService {
       data:
         res.data
           ?.map((d) => {
-            if (!d.permno || !d.regno) {
+            if (!d.permno) {
               return null
             }
 
@@ -157,7 +157,7 @@ export class VehiclesService {
             }
             return {
               vehicleId: d.permno,
-              registrationNumber: d.regno,
+              registrationNumber: d.regno ?? undefined,
               userRole: d.role ?? undefined,
               type: d.make ?? undefined,
               color: d.colorName ?? undefined,

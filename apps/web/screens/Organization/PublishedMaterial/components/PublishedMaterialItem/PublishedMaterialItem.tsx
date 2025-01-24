@@ -1,5 +1,6 @@
 import React from 'react'
-import { Box, FocusableBox, Text, Tag } from '@island.is/island-ui/core'
+
+import { Box, FocusableBox, Tag, Text } from '@island.is/island-ui/core'
 import { EnhancedAsset } from '@island.is/web/graphql/schema'
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 

@@ -14,13 +14,11 @@ export const transformApplicationToNewPrimarySchoolDTO = (
   application: Application,
 ): FormDto => {
   const {
-    differentPlaceOfResidence,
     childInfo,
     parents,
     siblings,
     contacts,
     reasonForApplication,
-    reasonForApplicationCountry,
     reasonForApplicationStreetAddress,
     reasonForApplicationPostalCode,
     selectedSchool,
@@ -95,13 +93,18 @@ export const transformApplicationToNewPrimarySchoolDTO = (
     user: {
       name: childInfo.name,
       nationalId: childInfo.nationalId,
-      preferredName: childInfo.preferredName,
-      pronouns: childInfo.pronouns,
+      ...(childInfo.usePronounAndPreferredName?.includes(YES)
+        ? {
+            preferredName: childInfo.preferredName,
+            pronouns: childInfo.pronouns,
+          }
+        : {}),
       domicile: {
         address: childInfo.address.streetAddress,
         postCode: childInfo.address.postalCode,
       },
-      ...(differentPlaceOfResidence === YES && childInfo.placeOfResidence
+      ...(childInfo.differentPlaceOfResidence === YES &&
+      childInfo.placeOfResidence
         ? {
             residence: {
               address: childInfo.placeOfResidence.streetAddress,
@@ -113,15 +116,9 @@ export const transformApplicationToNewPrimarySchoolDTO = (
     agents,
     registration: {
       defaultOrg: primaryOrgId,
-      ...(reasonForApplication !== ReasonForApplicationOptions.MOVING_ABROAD
-        ? {
-            selectedOrg: selectedSchool,
-            requestingMeeting: requestMeeting === YES,
-            expectedStartDate: new Date(startDate),
-          }
-        : {
-            movingAbroadCountry: reasonForApplicationCountry,
-          }),
+      selectedOrg: selectedSchool,
+      requestingMeeting: requestMeeting === YES,
+      expectedStartDate: new Date(startDate),
       reason: reasonForApplication,
       ...(reasonForApplication ===
       ReasonForApplicationOptions.MOVING_MUNICIPALITY
@@ -133,20 +130,16 @@ export const transformApplicationToNewPrimarySchoolDTO = (
           }
         : {}),
     },
-    ...(reasonForApplication !== ReasonForApplicationOptions.MOVING_ABROAD
-      ? {
-          social: {
-            hasHadSupport: specialSupport === YES,
-            hasDiagnoses: developmentalAssessment === YES,
-          },
-          language: {
-            nativeLanguage: nativeLanguage,
-            noIcelandic,
-            otherLanguages:
-              otherLanguagesSpokenDaily === YES ? otherLanguages : undefined,
-          },
-        }
-      : {}),
+    social: {
+      hasHadSupport: specialSupport === YES,
+      hasDiagnoses: developmentalAssessment === YES,
+    },
+    language: {
+      nativeLanguage: nativeLanguage,
+      noIcelandic,
+      otherLanguages:
+        otherLanguagesSpokenDaily === YES ? otherLanguages : undefined,
+    },
   }
 
   return newPrimarySchoolDTO
