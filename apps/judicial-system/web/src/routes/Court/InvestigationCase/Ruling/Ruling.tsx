@@ -205,7 +205,7 @@ const Ruling = () => {
             textarea
             rows={7}
             autoExpand={{ on: true, maxHeight: 300 }}
-            required
+            required={isRulingRequired}
             disabled={!isRulingRequired}
           />
         </Box>
@@ -248,7 +248,7 @@ const Ruling = () => {
             textarea
             rows={7}
             autoExpand={{ on: true, maxHeight: 300 }}
-            required
+            required={isRulingRequired}
             disabled={!isRulingRequired}
           />
         </Box>
@@ -293,7 +293,7 @@ const Ruling = () => {
               textarea
               rows={16}
               autoExpand={{ on: true, maxHeight: 600 }}
-              required
+              required={isRulingRequired}
               disabled={!isRulingRequired}
             />
           </Box>
@@ -341,7 +341,7 @@ const Ruling = () => {
               textarea
               rows={16}
               autoExpand={{ on: true, maxHeight: 600 }}
-              required
+              required={isRulingRequired}
               disabled={!isRulingRequired}
             />
           </Box>
