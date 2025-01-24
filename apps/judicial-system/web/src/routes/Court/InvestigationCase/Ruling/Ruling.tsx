@@ -113,10 +113,8 @@ const Ruling = () => {
   const caseFiles =
     workingCase.caseFiles?.filter((file) => !file.category) ?? []
 
-  const isRulingRequired = Boolean(
-    workingCase.decision !== CaseDecision.COMPLETED_WITHOUT_RULING,
-  )
-
+  const isRulingRequired = 
+    workingCase.decision !== CaseDecision.COMPLETED_WITHOUT_RULING
   return (
     <PageLayout
       workingCase={workingCase}
