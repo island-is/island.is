@@ -6,7 +6,7 @@ const schema = z.object({
   scope: z.array(z.string()),
 })
 
-// TODO: Swithc out for correct values when available on dev
+// TODO: ADD SCOPE
 export const HealthDirectorateHealthClientConfig = defineConfig<
   z.infer<typeof schema>
 >({
@@ -15,10 +15,10 @@ export const HealthDirectorateHealthClientConfig = defineConfig<
   load(env) {
     return {
       xroadPath: env.required(
-        'XROAD_HEALTH_DIRECTORATE_VACCINATION_PATH',
-        'IS-DEV/GOV/10015/EmbaettiLandlaeknis-Protected/vaccination-v1',
+        'XROAD_HEALTH_DIRECTORATE_HEALTH_PATH',
+        'IS-DEV/GOV/10015/EmbaettiLandlaeknis-Protected/health-service-v1',
       ),
-      scope: ['@landlaeknir.is/vaccinations'],
+      scope: [],
     }
   },
 })
