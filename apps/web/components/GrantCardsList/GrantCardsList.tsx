@@ -145,7 +145,7 @@ const GrantCardsList = ({ slice }: SliceProps) => {
           link: {
             label: getTranslationString('applicationClosed'),
             href: linkResolver(
-              'styrkjatorggrant',
+              'grantsplazagrant',
               [grant?.applicationId ?? ''],
               activeLocale,
             ).href,
