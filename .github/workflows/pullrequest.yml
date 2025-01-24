@@ -190,7 +190,7 @@ jobs:
       image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
     timeout-minutes: 45
     env:
-      AFFECTED_PROJECTS: ${{ matrix.projects }}
+      AFFECTED_PROJECTS: ${{ matrix.project }}
     strategy:
       fail-fast: false
       matrix: ${{ fromJson(needs.prepare.outputs.TEST_CHUNKS) }}
@@ -232,7 +232,7 @@ jobs:
       image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
     timeout-minutes: 45
     env:
-      AFFECTED_PROJECT: ${{ matrix.projects }}
+      AFFECTED_PROJECT: ${{ matrix.project }}
       CYPRESS_PROJECT_ID: 4q7jz8
       CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
       API_MOCKS: 'true'
@@ -352,7 +352,7 @@ jobs:
     timeout-minutes: 35
     if: needs.prepare.outputs.LINT_CHUNKS
     env:
-      AFFECTED_PROJECTS: ${{ matrix.projects }}
+      AFFECTED_PROJECTS: ${{ matrix.project }}
       NODE_OPTIONS: --max-old-space-size=4096
     strategy:
       fail-fast: false
@@ -382,7 +382,7 @@ jobs:
       image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
     timeout-minutes: 35
     env:
-      AFFECTED_PROJECTS: ${{ matrix.projects }}
+      AFFECTED_PROJECTS: ${{ matrix.project }}
     strategy:
       fail-fast: false
       matrix: ${{ fromJson(needs.prepare.outputs.BUILD_CHUNKS) }}
