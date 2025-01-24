@@ -31,7 +31,11 @@ import {
 } from './constants'
 import { dataSchema } from './dataSchema'
 import { newPrimarySchoolMessages, statesMessages } from './messages'
-import { getApplicationAnswers } from './newPrimarySchoolUtils'
+import {
+  determineNameFromApplicationAnswers,
+  getApplicationAnswers,
+  hasForeignLanguages,
+} from './newPrimarySchoolUtils'
 
 const NewPrimarySchoolTemplate: ApplicationTemplate<
   ApplicationContext,
@@ -39,7 +43,7 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
   Events
 > = {
   type: ApplicationTypes.NEW_PRIMARY_SCHOOL,
-  name: newPrimarySchoolMessages.shared.applicationName,
+  name: determineNameFromApplicationAnswers,
   institution: newPrimarySchoolMessages.shared.institution,
   translationNamespaces: ApplicationConfigurations.NewPrimarySchool.translation,
   dataSchema,
@@ -172,19 +176,6 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
           application.answers,
         )
 
-        // Clear answers if "Moving abroad" is selected as reason for application
-        if (
-          reasonForApplication === ReasonForApplicationOptions.MOVING_ABROAD
-        ) {
-          unset(application.answers, 'support')
-          unset(application.answers, 'siblings')
-          unset(application.answers, 'languages')
-          unset(application.answers, 'startDate')
-        } else {
-          // Clear movingAbroad if "Moving abroad" is not selected as reason for application
-          unset(application.answers, 'reasonForApplication.movingAbroad')
-        }
-
         // Clear transferOfLegalDomicile if "Moving legal domicile" is not selected as reason for application
         if (
           reasonForApplication !==
@@ -207,22 +198,22 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
       }),
       clearPlaceOfResidence: assign((context) => {
         const { application } = context
-        const { differentPlaceOfResidence } = getApplicationAnswers(
-          application.answers,
-        )
-        if (differentPlaceOfResidence === NO) {
+        const { childInfo } = getApplicationAnswers(application.answers)
+        if (childInfo?.differentPlaceOfResidence === NO) {
           unset(application.answers, 'childInfo.placeOfResidence')
         }
         return context
       }),
       clearLanguages: assign((context) => {
         const { application } = context
-        const { otherLanguagesSpokenDaily } = getApplicationAnswers(
-          application.answers,
-        )
-        if (otherLanguagesSpokenDaily === NO) {
-          unset(application.answers, 'languages.otherLanguages')
-          unset(application.answers, 'languages.icelandicNotSpokenAroundChild')
+
+        if (hasForeignLanguages(application.answers)) {
+          unset(application.answers, 'languages.language1')
+          unset(application.answers, 'languages.language2')
+          unset(application.answers, 'languages.language3')
+          unset(application.answers, 'languages.language4')
+          unset(application.answers, 'languages.childLanguage')
+          unset(application.answers, 'languages.interpreter')
         }
         return context
       }),

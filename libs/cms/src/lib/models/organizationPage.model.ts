@@ -89,6 +89,9 @@ export class OrganizationPage {
 
   @Field(() => Boolean, { nullable: true })
   canBeFoundInSearchResults?: boolean
+
+  @Field(() => Boolean, { nullable: true })
+  showPastEventsOption?: boolean
 }
 
 export const mapOrganizationPage = ({
@@ -150,5 +153,6 @@ export const mapOrganizationPage = ({
       : undefined,
     topLevelNavigation,
     canBeFoundInSearchResults: fields.canBeFoundInSearchResults ?? true,
+    showPastEventsOption: fields.showPastEventsOption ?? false,
   }
 }
