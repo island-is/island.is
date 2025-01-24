@@ -128,6 +128,7 @@ export const GET_ORGANIZATION_PAGE_QUERY = gql`
       title
       description
       canBeFoundInSearchResults
+      showPastEventsOption
       topLevelNavigation {
         links {
           label
