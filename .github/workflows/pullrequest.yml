@@ -89,39 +89,6 @@ jobs:
           echo "Current base SHA is '$BASE_SHA' and head SHA is '$HEAD_SHA'"
           echo "{\"base_sha\": \"$BASE_SHA\", \"head_sha\":\"$HEAD_SHA\"}" > event.json
 
-      - name: Get cache
-        id: get-cache
-        uses: ./.github/actions/get-cache
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          enable-cache: 'node_modules'
-
-      - name: Prepare matrices
-        id: matrices
-        run: |
-          set -euo pipefail
-          build_id="$GITHUB_RUN_ID-$GITHUB_RUN_NUMBER-$(uuidgen)"
-          # Get nx binary in PATH for faster running
-          for target in test lint build e2e-ci; do
-
-            case "$target" in
-            # Don't parallelize these, because they can easily run together
-            lint) parallelize=true ;;
-            *) parallelize=false ;;
-            esac
-            yarn nx show projects --with-target "$target" --affected |
-              jq -Rrcs --arg target "$target" --arg build_id "$build_id" --argjson parallelize "$parallelize" '
-              split("\n") |
-              map(select(length > 0)) |
-              "\($target)=\({
-                "projects": (if $parallelize then [.] | transpose else [.] end),
-                "build_id": $build_id,
-                "target": $target
-              })"
-            ' | tee -a "$GITHUB_OUTPUT"
-          done
-          echo "DONE"
-
       # This is to increase the retention days for our GitHub Actions run events
       # See this for more information:
       # https://github.blog/changelog/2020-10-08-github-actions-ability-to-change-retention-days-for-artifacts-and-logs/
@@ -159,6 +126,32 @@ jobs:
           source ./scripts/ci/00_prepare-base-tags.sh "$(git merge-base HEAD "$GITHUB_BASE_REF")"
           git checkout "$GITHUB_SHA"
           echo "BASE=$BASE" >> "$GITHUB_ENV"
+
+      - name: Prepare matrices
+        id: matrices
+        run: |
+          set -euo pipefail
+          build_id="$GITHUB_RUN_ID-$GITHUB_RUN_NUMBER-$(uuidgen)"
+          # Get nx binary in PATH for faster running
+          for target in test lint build e2e-ci; do
+
+            case "$target" in
+            # Don't parallelize these, because they can easily run together
+            lint) parallelize=true ;;
+            *) parallelize=false ;;
+            esac
+            yarn nx show projects --with-target "$target" --affected |
+              jq -Rrcs --arg target "$target" --arg build_id "$build_id" --argjson parallelize "$parallelize" '
+              split("\n") |
+              map(select(length > 0)) |
+              "\($target)=\({
+                "projects": (if $parallelize then [.] | transpose else [.] end),
+                "build_id": $build_id,
+                "target": $target
+              })"
+            ' | tee -a "$GITHUB_OUTPUT"
+          done
+          echo "DONE"
 
       - name: License audit Node modules
         run: ./scripts/ci/20_license-audit.sh
