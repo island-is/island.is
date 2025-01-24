@@ -67,8 +67,8 @@ const GrantsSearchResultsPage: CustomScreen<GrantsHomeProps> = ({
   const router = useRouter()
   const { linkResolver } = useLinkResolver()
 
-  const parentUrl = linkResolver('styrkjatorg', [], locale).href
-  const currentUrl = linkResolver('styrkjatorgsearch', [], locale).href
+  const parentUrl = linkResolver('grantsplaza', [], locale).href
+  const currentUrl = linkResolver('grantsplazasearch', [], locale).href
 
   const [grants, setGrants] = useState<Array<Grant>>(
     initialGrantList?.items ?? [],

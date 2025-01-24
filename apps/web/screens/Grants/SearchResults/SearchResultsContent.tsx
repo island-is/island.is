@@ -91,7 +91,7 @@ export const SearchResultsContent = ({ grants, subheader, locale }: Props) => {
                   link: {
                     label: formatMessage(m.general.seeMore),
                     href: linkResolver(
-                      'styrkjatorggrant',
+                      'grantsplazagrant',
                       [grant?.applicationId ?? ''],
                       locale,
                     ).href,
