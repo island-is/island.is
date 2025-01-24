@@ -6,22 +6,34 @@ import {
   YesOrNo,
 } from '@island.is/application/types'
 import { Locale } from '@island.is/shared/types'
+import { MessageDescriptor } from 'react-intl'
 import {
   Child,
   ChildInformation,
+  ContactsRow,
   FriggChildInformation,
   Membership,
   Parents,
   Person,
-  ContactsRow,
   SelectOption,
   SiblingsRow,
 } from '../types'
-import { ReasonForApplicationOptions } from './constants'
+import {
+  ApplicationType,
+  ReasonForApplicationOptions,
+  LanguageEnvironmentOptions,
+} from './constants'
+
 import { newPrimarySchoolMessages } from './messages'
-import { MessageDescriptor } from 'react-intl'
 
 export const getApplicationAnswers = (answers: Application['answers']) => {
+  let applicationType = getValueViaPath(
+    answers,
+    'applicationType',
+  ) as ApplicationType
+
+  if (!applicationType) applicationType = ApplicationType.NEW_PRIMARY_SCHOOL
+
   const childNationalId = getValueViaPath(answers, 'childNationalId') as string
 
   const childInfo = getValueViaPath(answers, 'childInfo') as ChildInformation
@@ -35,11 +47,6 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     'reasonForApplication.reason',
   ) as ReasonForApplicationOptions
 
-  const reasonForApplicationCountry = getValueViaPath(
-    answers,
-    'reasonForApplication.movingAbroad.country',
-  ) as string
-
   const reasonForApplicationStreetAddress = getValueViaPath(
     answers,
     'reasonForApplication.transferOfLegalDomicile.streetAddress',
@@ -52,25 +59,33 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
 
   const siblings = getValueViaPath(answers, 'siblings') as SiblingsRow[]
 
-  const nativeLanguage = getValueViaPath(
+  const languageEnvironment = getValueViaPath(
     answers,
-    'languages.nativeLanguage',
+    'languages.languageEnvironment',
   ) as string
 
-  const otherLanguagesSpokenDaily = getValueViaPath(
+  const signLanguage = getValueViaPath(
     answers,
-    'languages.otherLanguagesSpokenDaily',
+    'languages.signLanguage',
   ) as YesOrNo
 
-  const otherLanguages = getValueViaPath(
-    answers,
-    'languages.otherLanguages',
-  ) as string[]
+  const language1 = getValueViaPath(answers, 'languages.language1') as string
 
-  const icelandicNotSpokenAroundChild = getValueViaPath(
+  const language2 = getValueViaPath(answers, 'languages.language2') as string
+
+  const language3 = getValueViaPath(answers, 'languages.language3') as string
+
+  const language4 = getValueViaPath(answers, 'languages.language4') as string
+
+  const childLanguage = getValueViaPath(
     answers,
-    'languages.icelandicNotSpokenAroundChild',
-  ) as string[]
+    'languages.childLanguage',
+  ) as string
+
+  const interpreter = getValueViaPath(
+    answers,
+    'languages.interpreter',
+  ) as YesOrNo
 
   const acceptFreeSchoolLunch = getValueViaPath(
     answers,
@@ -132,6 +147,26 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     'support.specialSupport',
   ) as YesOrNo
 
+  const hasIntegratedServices = getValueViaPath(
+    answers,
+    'support.hasIntegratedServices',
+  ) as YesOrNo
+
+  const hasCaseManager = getValueViaPath(
+    answers,
+    'support.hasCaseManager',
+  ) as YesOrNo
+
+  const caseManagerName = getValueViaPath(
+    answers,
+    'support.caseManager.name',
+  ) as string
+
+  const caseManagerEmail = getValueViaPath(
+    answers,
+    'support.caseManager.email',
+  ) as string
+
   const requestMeeting = getValueViaPath(
     answers,
     'support.requestMeeting[0]',
@@ -156,19 +191,23 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
   ) as string
 
   return {
+    applicationType,
     childNationalId,
     childInfo,
     parents,
     contacts,
     reasonForApplication,
-    reasonForApplicationCountry,
     reasonForApplicationStreetAddress,
     reasonForApplicationPostalCode,
     siblings,
-    nativeLanguage,
-    otherLanguagesSpokenDaily,
-    otherLanguages,
-    icelandicNotSpokenAroundChild,
+    languageEnvironment,
+    language1,
+    language2,
+    language3,
+    language4,
+    childLanguage,
+    signLanguage,
+    interpreter,
     acceptFreeSchoolLunch,
     hasSpecialNeeds,
     specialNeedsType,
@@ -181,6 +220,10 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     requestMedicationAssistance,
     developmentalAssessment,
     specialSupport,
+    hasIntegratedServices,
+    hasCaseManager,
+    caseManagerName,
+    caseManagerEmail,
     requestMeeting,
     startDate,
     schoolMunicipality,
@@ -333,6 +376,43 @@ export const getCurrentSchoolName = (application: Application) => {
   return childMemberships
     .map((membership) => membership.organization)
     .find((organization) => organization?.id === primaryOrgId)?.name
+}
+
+export const getLanguageEnvironments = () => {
+  return [
+    {
+      value: LanguageEnvironmentOptions.ONLY_ICELANDIC,
+      label: newPrimarySchoolMessages.differentNeeds.onlyIcelandicOption,
+    },
+    {
+      value: LanguageEnvironmentOptions.ICELANDIC_AND_FOREIGN,
+      label: newPrimarySchoolMessages.differentNeeds.icelandicAndForeignOption,
+    },
+    {
+      value: LanguageEnvironmentOptions.ONLY_FOREIGN,
+      label: newPrimarySchoolMessages.differentNeeds.onlyForeignOption,
+    },
+  ]
+}
+
+export const hasForeignLanguages = (answers: FormValue) => {
+  const { languageEnvironment } = getApplicationAnswers(answers)
+
+  if (!languageEnvironment) {
+    return false
+  }
+
+  return languageEnvironment !== LanguageEnvironmentOptions.ONLY_ICELANDIC
+}
+
+export const determineNameFromApplicationAnswers = (
+  application: Application,
+) => {
+  const { applicationType } = getApplicationAnswers(application.answers)
+
+  return applicationType === ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL
+    ? newPrimarySchoolMessages.shared.enrollmentApplicationName
+    : newPrimarySchoolMessages.shared.applicationName
 }
 
 export const formatGender = (genderCode?: string): MessageDescriptor => {
