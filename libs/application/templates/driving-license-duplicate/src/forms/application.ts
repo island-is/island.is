@@ -9,6 +9,7 @@ import { m } from '../lib/messages'
 import { sectionFakeData } from './applicationSections/sectionFakeData'
 import { sectionReasonForApplication } from './applicationSections/sectionReasonForApplication'
 import { sectionDigitalLicenseInfo } from './applicationSections/sectionDigitalLicenseInfo'
+import { sectionSignatureAndPhoto } from './applicationSections/sectionSignatureAndPhoto'
 
 export const getApplication = ({ allowFakeData = false }): Form => {
   return buildForm({
@@ -28,8 +29,9 @@ export const getApplication = ({ allowFakeData = false }): Form => {
       }),
       sectionReasonForApplication,
       sectionInformation,
-      sectionDelivery,
+      sectionSignatureAndPhoto,
       sectionDigitalLicenseInfo,
+      sectionDelivery,
       sectionOverview,
       sectionPayment,
     ],
