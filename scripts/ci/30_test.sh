@@ -49,7 +49,7 @@ FLAKY_TEST_RETRIES=$(if [[ "$IS_FLAKY_TEST" == true ]]; then echo "$FLAKY_TEST_R
 
 for ((i = 1; i <= FLAKY_TEST_RETRIES; i++)); do
   echo "Running test ${APP} (attempt: ${i}/${FLAKY_TEST_RETRIES})"
-  if yarn run test "${APP}" ${EXTRA_OPTS} --verbose --no-watchman "$@"; then
+  if yarn nx run-many --projects "${AFFECTED_PROJECTS}" --target test ${EXTRA_OPTS} --verbose --no-watchman "$@"; then
     exit 0
   fi
 done
