@@ -864,15 +864,21 @@ export class GrantCardsListResolver {
 
   @ResolveField(() => GrantList)
   async resolvedGrantsList(
-    @Parent() { resolvedGrantsList: input }: GrantCardsList,
+    @Parent() grantList: GrantCardsList,
   ): Promise<GrantList> {
-    if (!input || input?.size === 0) {
+    const { resolvedGrantsList: input, maxNumberOfCards } = grantList
+    if (!input || input?.size === 0 || maxNumberOfCards === 0) {
       return { total: 0, items: [] }
     }
 
     return this.cmsElasticsearchService.getGrants(
       getElasticsearchIndex(input.lang),
-      input,
+      {
+        ...input,
+        ...(maxNumberOfCards && {
+          size: maxNumberOfCards,
+        }),
+      },
     )
   }
   @ResolveField(() => GraphQLJSONObject)
