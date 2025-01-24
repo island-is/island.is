@@ -59,7 +59,6 @@ import {
 } from './dto/getGrants.input'
 import { Grant } from './models/grant.model'
 import { GrantList } from './models/grantList.model'
-import { logger } from '@island.is/logging'
 
 @Injectable()
 export class CmsElasticsearchService {
