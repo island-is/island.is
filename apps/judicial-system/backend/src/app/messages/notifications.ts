@@ -310,14 +310,14 @@ export const notifications = {
       id: 'judicial.system.backend:notifications.accepted_without_ruling.subject',
       defaultMessage: 'Niðurstaða í máli {courtCaseNumber}',
       description:
-        'Notaður sem titill í pósti til hagaðila vegna þegar máli er lokið án úrskurðar',
+        'Notaður sem titill í pósti til hagaðila þegar máli er lokið án úrskurðar',
     },
     prosecutorBody: {
       id: 'judicial.system.backend:notifications.accepted_without_ruling.prosecutor_body',
       defaultMessage:
         'Dómari hefur staðfest niðurstöðu í máli {courtCaseNumber} hjá {courtName}.<br /><br />Skjöl málsins eru aðgengileg á {linkStart}yfirlitssíðu málsins í Réttarvörslugátt{linkEnd}.',
       description:
-        'Notaður sem texti í pósti til sækjanda vegna undirritunar úrskurðar ef tókst að vista úrskurð í AWS S3',
+        'Notaður sem texti í pósti til sækjanda þegar máli er lokið án úrskurðar',
     },
     defenderBody: {
       id: 'judicial.system.backend:notifications.accepted_without_ruling.defender_body',

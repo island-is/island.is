@@ -984,7 +984,7 @@ export class CaseService {
       })
     }
 
-    // kept as part of the ruling case notification type since this is a court decision to complete with no ruling
+    // kept as part of the ruling case notification type since this is a court decision to complete the case with no ruling
     if (theCase.decision === CaseDecision.COMPLETED_WITHOUT_RULING) {
       messages.push({
         type: MessageType.NOTIFICATION,
