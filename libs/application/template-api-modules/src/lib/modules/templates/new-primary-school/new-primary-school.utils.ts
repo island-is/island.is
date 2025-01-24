@@ -19,14 +19,17 @@ export const transformApplicationToNewPrimarySchoolDTO = (
     siblings,
     contacts,
     reasonForApplication,
-    reasonForApplicationCountry,
     reasonForApplicationStreetAddress,
     reasonForApplicationPostalCode,
     selectedSchool,
-    nativeLanguage,
-    otherLanguagesSpokenDaily,
-    otherLanguages,
-    icelandicNotSpokenAroundChild,
+    language1,
+    language2,
+    language3,
+    language4,
+    childLanguage,
+    languageEnvironment,
+    signLanguage,
+    interpreter,
     developmentalAssessment,
     specialSupport,
     startDate,
@@ -78,17 +81,6 @@ export const transformApplicationToNewPrimarySchoolDTO = (
       : []),
   ]
 
-  let noIcelandic: boolean
-  if (otherLanguagesSpokenDaily === YES) {
-    if (nativeLanguage === 'is' || otherLanguages?.includes('is')) {
-      noIcelandic = false
-    } else {
-      noIcelandic = icelandicNotSpokenAroundChild?.includes(YES)
-    }
-  } else {
-    noIcelandic = nativeLanguage !== 'is'
-  }
-
   const newPrimarySchoolDTO: FormDto = {
     type: FormDtoTypeEnum.Registration,
     user: {
@@ -117,15 +109,9 @@ export const transformApplicationToNewPrimarySchoolDTO = (
     agents,
     registration: {
       defaultOrg: primaryOrgId,
-      ...(reasonForApplication !== ReasonForApplicationOptions.MOVING_ABROAD
-        ? {
-            selectedOrg: selectedSchool,
-            requestingMeeting: requestMeeting === YES,
-            expectedStartDate: new Date(startDate),
-          }
-        : {
-            movingAbroadCountry: reasonForApplicationCountry,
-          }),
+      selectedOrg: selectedSchool,
+      requestingMeeting: requestMeeting === YES,
+      expectedStartDate: new Date(startDate),
       reason: reasonForApplication,
       ...(reasonForApplication ===
       ReasonForApplicationOptions.MOVING_MUNICIPALITY
@@ -137,20 +123,15 @@ export const transformApplicationToNewPrimarySchoolDTO = (
           }
         : {}),
     },
-    ...(reasonForApplication !== ReasonForApplicationOptions.MOVING_ABROAD
-      ? {
-          social: {
-            hasHadSupport: specialSupport === YES,
-            hasDiagnoses: developmentalAssessment === YES,
-          },
-          language: {
-            nativeLanguage: nativeLanguage,
-            noIcelandic,
-            otherLanguages:
-              otherLanguagesSpokenDaily === YES ? otherLanguages : undefined,
-          },
-        }
-      : {}),
+    social: {
+      hasHadSupport: specialSupport === YES,
+      hasDiagnoses: developmentalAssessment === YES,
+    }, // Languages needs to be updated when Juni is ready with the data struccture
+    language: {
+      nativeLanguage: '',
+      noIcelandic: false,
+      otherLanguages: undefined,
+    },
   }
 
   return newPrimarySchoolDTO
