@@ -68,7 +68,6 @@ export const GrantsSearchResultsFilter = ({
         labelClear={formatMessage(m.search.clearFilterCategory)}
         labelTitle={formatMessage(m.search.filterTitle)}
         labelResult={formatMessage(m.search.resultFound)}
-        resultCount={8}
         onFilterClear={onReset}
         variant={variant}
         align={'left'}
