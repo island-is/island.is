@@ -52,9 +52,9 @@ export type Person = {
   }
 }
 
-export type Parents = {
-  parent1: Person
-  parent2: Person
+export type Guardians = {
+  guardian1: Person
+  guardian2: Person
 }
 
 export type SelectOption = {

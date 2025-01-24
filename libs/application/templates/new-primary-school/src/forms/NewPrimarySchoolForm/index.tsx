@@ -1,7 +1,7 @@
 import { buildForm } from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
 import { newPrimarySchoolMessages } from '../../lib/messages'
-import { childrenNParentsSection } from './childrenNParentsSection'
+import { childrenNGuardiansSection } from './childrenNGuardiansSection'
 import { conclusionSection } from './conclusionSection'
 import { differentNeedsSection } from './differentNeedsSection'
 import { overviewSection } from './overviewSection'
@@ -12,7 +12,7 @@ export const NewPrimarySchoolForm: Form = buildForm({
   title: newPrimarySchoolMessages.shared.formTitle,
   mode: FormModes.DRAFT,
   children: [
-    childrenNParentsSection,
+    childrenNGuardiansSection,
     primarySchoolSection,
     differentNeedsSection,
     overviewSection,
