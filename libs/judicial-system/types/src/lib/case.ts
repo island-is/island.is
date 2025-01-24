@@ -321,6 +321,8 @@ export const investigationCases = [
   CaseType.RESTRAINING_ORDER_AND_EXPULSION_FROM_HOME,
   CaseType.SEARCH_WARRANT,
   CaseType.SOUND_RECORDING_EQUIPMENT,
+  CaseType.STATEMENT_FROM_MINOR,
+  CaseType.STATEMENT_IN_COURT,
   CaseType.TELECOMMUNICATIONS,
   CaseType.TRACKING_EQUIPMENT,
   CaseType.VIDEO_RECORDING_EQUIPMENT,
@@ -337,6 +339,7 @@ export const isRequestCase = (type?: CaseType | null): boolean => {
 export const acceptedCaseDecisions = [
   CaseDecision.ACCEPTING,
   CaseDecision.ACCEPTING_PARTIALLY,
+  CaseDecision.COMPLETED_WITHOUT_RULING,
 ]
 
 export const isAcceptingCaseDecision = (

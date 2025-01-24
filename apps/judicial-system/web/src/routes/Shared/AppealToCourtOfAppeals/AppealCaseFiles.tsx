@@ -23,11 +23,11 @@ import {
   PageHeader,
   PageLayout,
   PageTitle,
+  RequestAppealRulingNotToBePublishedCheckbox,
+  RulingDateLabel,
   SectionHeading,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import RequestAppealRulingNotToBePublishedCheckbox from '@island.is/judicial-system-web/src/components/RequestAppealRulingNotToBePublishedCheckbox/RequestAppealRulingNotToBePublishedCheckbox'
-import RulingDateLabel from '@island.is/judicial-system-web/src/components/RulingDateLabel/RulingDateLabel'
 import {
   CaseAppealDecision,
   CaseFileCategory,

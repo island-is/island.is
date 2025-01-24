@@ -48,6 +48,12 @@ export const icRuling = {
         description:
           'Notaður sem upplýsingatexti við "Ljúka mál án úrskurðar" titlinn á úrskurðar skrefi í rannsóknarheimildum.',
       },
+      conclusion: {
+        id: 'judicial.system.core:investigation_cases.ruling.completed_without_ruling.conclusion',
+        defaultMessage: 'Máli er lokið án úrskurðar.',
+        description:
+          'Notaður sem texti sem birtist ef "Ljúka máli án úrskurðar" checkbox er valinn á úrskurðar skrefi í rannsóknarheimildum.',
+      },
     }),
     courtLegalArguments: defineMessages({
       title: {

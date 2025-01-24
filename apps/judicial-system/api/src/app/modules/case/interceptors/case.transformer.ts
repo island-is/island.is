@@ -1,5 +1,6 @@
 import {
   CaseAppealDecision,
+  CaseDecision,
   CaseIndictmentRulingDecision,
   EventType,
   FINE_APPEAL_WINDOW_DAYS,
@@ -54,6 +55,7 @@ export const getAppealInfo = (theCase: Case): AppealInfo => {
     prosecutorPostponedAppealDate,
     accusedPostponedAppealDate,
     appealReceivedByCourtDate,
+    decision,
   } = theCase
 
   const appealInfo: AppealInfo = {}
@@ -72,6 +74,9 @@ export const getAppealInfo = (theCase: Case): AppealInfo => {
   const hasBeenAppealed = Boolean(appealState) && !didAllAcceptInCourt
   appealInfo.hasBeenAppealed = hasBeenAppealed
 
+  const wasCompletedWithoutRuling =
+    decision === CaseDecision.COMPLETED_WITHOUT_RULING
+
   if (hasBeenAppealed) {
     appealInfo.appealedByRole =
       prosecutorPostponedAppealDate && !didProsecutorAcceptInCourt
@@ -88,20 +93,21 @@ export const getAppealInfo = (theCase: Case): AppealInfo => {
 
   appealInfo.canBeAppealed = Boolean(
     !hasBeenAppealed &&
+      !wasCompletedWithoutRuling &&
       (isAppealableDecision(accusedAppealDecision) ||
         isAppealableDecision(prosecutorAppealDecision)),
   )
+
+  appealInfo.canProsecutorAppeal =
+    appealInfo.canBeAppealed && isAppealableDecision(prosecutorAppealDecision)
+
+  appealInfo.canDefenderAppeal =
+    appealInfo.canBeAppealed && isAppealableDecision(accusedAppealDecision)
 
   const theRulingDate = new Date(rulingDate)
   appealInfo.appealDeadline = new Date(
     theRulingDate.getTime() + getDays(3),
   ).toISOString()
-
-  appealInfo.canProsecutorAppeal =
-    !hasBeenAppealed && isAppealableDecision(prosecutorAppealDecision)
-
-  appealInfo.canDefenderAppeal =
-    !hasBeenAppealed && isAppealableDecision(accusedAppealDecision)
 
   if (appealReceivedByCourtDate) {
     appealInfo.statementDeadline = getStatementDeadline(
