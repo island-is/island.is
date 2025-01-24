@@ -70,13 +70,13 @@ export const conclusion = {
       description: 'Conclusion overview alert title',
     },
     alertMessageFreshman: {
-      id: 'ss.application:conclusion.overview.alertMessage',
+      id: 'ss.application:conclusion.overview.alertMessageFreshman',
       defaultMessage:
         'Umsóknartímabili lýkur xx. júní. Ekki verður farið að vinna úr umsóknum fyrr en eftir þessa dagsetningu. Ef þú af einhverjum ástæðum vilt gera breytingar þarftu að gera það áður en tímabilinu lýkur.',
       description: 'Conclusion overview alert message',
     },
     alertMessageGeneral: {
-      id: 'ss.application:conclusion.overview.alertMessage',
+      id: 'ss.application:conclusion.overview.alertMessageGeneral',
       defaultMessage:
         'Umsóknartímabili lýkur aa. júní. Ekki verður farið að vinna úr umsóknum fyrr en eftir þessa dagsetningu. Ef þú af einhverjum ástæðum vilt gera breytingar þarftu að gera það áður en tímabilinu lýkur.',
       description: 'Conclusion overview alert message',
