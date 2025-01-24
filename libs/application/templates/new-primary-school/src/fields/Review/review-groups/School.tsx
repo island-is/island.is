@@ -15,7 +15,7 @@ import { ApplicationType } from '../../../lib/constants'
 import { newPrimarySchoolMessages } from '../../../lib/messages'
 import {
   getApplicationAnswers,
-  getNeighborhoodSchoolName,
+  getNeighbourhoodSchoolName,
 } from '../../../lib/newPrimarySchoolUtils'
 import { FriggSchoolsByMunicipalityQuery } from '../../../types/schema'
 import { ReviewGroupProps } from './props'
@@ -47,9 +47,9 @@ export const School = ({
   let schoolName = selectedSchoolName
 
   if (applyForNeighbourhoodSchool === YES) {
-    label = newPrimarySchoolMessages.overview.neighborhoodSchool
+    label = newPrimarySchoolMessages.overview.neighbourhoodSchool
     screen = 'neighbourhoodSchoolSelection'
-    schoolName = getNeighborhoodSchoolName(application)
+    schoolName = getNeighbourhoodSchoolName(application)
   }
 
   return (
@@ -62,38 +62,32 @@ export const School = ({
             </Text>
           </GridColumn>
         </GridRow>
-
         {loading ? (
           <SkeletonLoader height={40} width="100%" borderRadius="large" />
         ) : (
-          <>
-            <GridRow rowGap={2}>
-              <GridColumn span={['12/12', '12/12', '12/12', '12/12']}>
-                <DataValue
-                  label={formatMessage(label)}
-                  value={schoolName || ''}
-                  error={
-                    error
-                      ? formatMessage(coreErrorMessages.failedDataProvider)
-                      : undefined
-                  }
-                />
-              </GridColumn>
-            </GridRow>
+          <GridRow rowGap={2}>
+            <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
+              <DataValue
+                label={formatMessage(label)}
+                value={schoolName || ''}
+                error={
+                  error
+                    ? formatMessage(coreErrorMessages.failedDataProvider)
+                    : undefined
+                }
+              />
+            </GridColumn>
+
             {applicationType === ApplicationType.NEW_PRIMARY_SCHOOL &&
               applyForNeighbourhoodSchool === NO && (
-                <GridRow>
-                  <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
-                    <DataValue
-                      label={formatMessage(
-                        newPrimarySchoolMessages.shared.date,
-                      )}
-                      value={formatDate(startDate)}
-                    />
-                  </GridColumn>
-                </GridRow>
+                <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
+                  <DataValue
+                    label={formatMessage(newPrimarySchoolMessages.shared.date)}
+                    value={formatDate(startDate)}
+                  />
+                </GridColumn>
               )}
-          </>
+          </GridRow>
         )}
       </Stack>
     </ReviewGroup>

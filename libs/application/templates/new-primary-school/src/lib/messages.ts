@@ -452,7 +452,7 @@ export const newPrimarySchoolMessages: MessageDir = {
       defaultMessage: 'Skóli',
       description: 'School',
     },
-    schoolDescription: {
+    schoolSubSectionDescription: {
       id: 'nps.application:primary.school.school.sub.section.description',
       defaultMessage:
         'Börn eiga rétt á skólavist í því sveitarfélagi þar sem þau eru með skráð lögheimili. Einstaka sveitarfélög úthluta barni námsvist í hverfisskóla eða sem næst þeirra lögheimili. Í báðun tilfellum geta foreldrar sótt um annan skóla hvort sem er innan sveitarfélags eða utan. Ekki er þó víst að nýr skóli sjái sér fært að taka á móti barni. Er það ávalt háð aðstæðum hverju sinni.',
@@ -462,17 +462,17 @@ export const newPrimarySchoolMessages: MessageDir = {
     schoolApplyForNeighbourhoodSchoolLabel: {
       id: 'nps.application:primary.school.school.apply.for.neighbourhood.school.label',
       defaultMessage: 'Staðfesta innritun í hverfisskóla',
-      description: 'Confirm enrolment in the neighbourhood school',
+      description: 'Confirm enrollment in the neighbourhood school',
     },
     schoolApplyForNeighbourhoodSchoolSubLabel: {
       id: 'nps.application:primary.school.school.apply.for.neighbourhood.school.sub.label',
-      defaultMessage: 'Hverfisskólinn ykkar er: {neighborhoodSchoolName}',
-      description: 'Your neighbourhood school is: {neighborhoodSchoolName}',
+      defaultMessage: 'Hverfisskólinn ykkar er: {neighbourhoodSchoolName}',
+      description: 'Your neighbourhood school is: {neighbourhoodSchoolName}',
     },
     schoolApplyForOtherSchoolLabel: {
       id: 'nps.application:primary.school.school.apply.for.other.school.label',
       defaultMessage: 'Hafna innritun í hverfisskóla',
-      description: 'Decline enrolment in the neighbourhood school',
+      description: 'Decline enrollment in the neighbourhood school',
     },
     schoolApplyForOtherSchoolSubLabel: {
       id: 'nps.application:primary.school.school.apply.for.other.school.sub.label',
@@ -829,10 +829,10 @@ export const newPrimarySchoolMessages: MessageDir = {
       defaultMessage: 'Valinn skóli',
       description: 'Selected school',
     },
-    neighborhoodSchool: {
-      id: 'nps.application:overview.neigborhood.school',
+    neighbourhoodSchool: {
+      id: 'nps.application:overview.neigbourhood.school',
       defaultMessage: 'Hverfisskóli',
-      description: 'Neighborhoodschool',
+      description: 'Neighbourhood school',
     },
     foodAllergiesOrIntolerances: {
       id: 'nps.application:overview.food.allergies.or.intolerances',

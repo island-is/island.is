@@ -6,17 +6,26 @@ import {
   YES,
 } from '@island.is/application/core'
 import { newPrimarySchoolMessages } from '../../../lib/messages'
-import { getNeighborhoodSchoolName } from '../../../lib/newPrimarySchoolUtils'
+import {
+  getApplicationAnswers,
+  getNeighbourhoodSchoolName,
+} from '../../../lib/newPrimarySchoolUtils'
+import { ApplicationType } from '../../../lib/constants'
 
 export const schoolSubSection = buildSubSection({
   id: 'schoolSubSection',
   title: newPrimarySchoolMessages.primarySchool.schoolSubSectionTitle,
-
+  condition: (answers) => {
+    const { applicationType } = getApplicationAnswers(answers)
+    // Only display section if application type is "Application for a new primary school"
+    return applicationType === ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL
+  },
   children: [
     buildMultiField({
       id: 'neighbourhoodSchoolSelection',
       title: newPrimarySchoolMessages.primarySchool.schoolSubSectionTitle,
-      description: newPrimarySchoolMessages.primarySchool.schoolDescription,
+      description:
+        newPrimarySchoolMessages.primarySchool.schoolSubSectionDescription,
       children: [
         buildRadioField({
           id: 'school.applyForNeighbourhoodSchool',
@@ -32,11 +41,10 @@ export const schoolSubSection = buildSubSection({
                   ...newPrimarySchoolMessages.primarySchool
                     .schoolApplyForNeighbourhoodSchoolSubLabel,
                   values: {
-                    neighborhoodSchoolName:
-                      getNeighborhoodSchoolName(application),
+                    neighbourhoodSchoolName:
+                      getNeighbourhoodSchoolName(application),
                   },
                 },
-
                 value: YES,
               },
               {

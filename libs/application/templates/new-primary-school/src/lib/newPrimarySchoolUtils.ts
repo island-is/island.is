@@ -174,7 +174,6 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
   const applyForNeighbourhoodSchool = getValueViaPath(
     answers,
     'school.applyForNeighbourhoodSchool',
-    YES,
   ) as YesOrNo
 
   return {
@@ -389,7 +388,7 @@ export const hasForeignLanguages = (answers: FormValue) => {
   return languageEnvironment !== LanguageEnvironmentOptions.ONLY_ICELANDIC
 }
 
-export const getNeighborhoodSchoolName = (application: Application) => {
+export const getNeighbourhoodSchoolName = (application: Application) => {
   const { primaryOrgId, childMemberships } = getApplicationExternalData(
     application.externalData,
   )
@@ -398,7 +397,7 @@ export const getNeighborhoodSchoolName = (application: Application) => {
     return undefined
   }
 
-  // This function needs to be improved when Juni is ready with the neighborhood school data
+  // This function needs to be improved when Juni is ready with the neighbourhood school data
 
   // Find the school name since we only have primary org id
   return childMemberships

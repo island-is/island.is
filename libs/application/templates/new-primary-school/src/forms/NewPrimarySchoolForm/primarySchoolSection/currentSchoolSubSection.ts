@@ -6,7 +6,7 @@ import {
   buildTextField,
   coreMessages,
 } from '@island.is/application/core'
-import { Application, NO } from '@island.is/application/types'
+import { Application } from '@island.is/application/types'
 import { Locale } from '@island.is/shared/types'
 import { ApplicationType } from '../../../lib/constants'
 import { newPrimarySchoolMessages } from '../../../lib/messages'
@@ -21,11 +21,10 @@ export const currentSchoolSubSection = buildSubSection({
   id: 'currentSchoolSubSection',
   title: newPrimarySchoolMessages.primarySchool.currentSchoolSubSectionTitle,
   condition: (answers) => {
-    const { applicationType } = getApplicationAnswers(answers)
     // Only display section if application type is "Application for a new primary school"
+    const { applicationType } = getApplicationAnswers(answers)
     return applicationType === ApplicationType.NEW_PRIMARY_SCHOOL
   },
-
   children: [
     buildMultiField({
       id: 'currentSchool',
