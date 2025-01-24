@@ -55,6 +55,12 @@ export enum MembershipOrganizationType {
   School = 'school',
 }
 
+export enum LanguageEnvironmentOptions {
+  ONLY_ICELANDIC = 'onlyIcelandic',
+  ICELANDIC_AND_FOREIGN = 'icelandicAndForeign',
+  ONLY_FOREIGN = 'onlyForeign',
+}
+
 export enum ApplicationType {
   NEW_PRIMARY_SCHOOL = 'newPrimarySchool',
   ENROLLMENT_IN_PRIMARY_SCHOOL = 'enrollmentInPrimarySchool',
