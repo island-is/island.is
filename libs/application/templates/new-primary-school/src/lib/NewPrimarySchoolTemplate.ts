@@ -34,6 +34,7 @@ import { newPrimarySchoolMessages, statesMessages } from './messages'
 import {
   determineNameFromApplicationAnswers,
   getApplicationAnswers,
+  hasForeignLanguages,
 } from './newPrimarySchoolUtils'
 
 const NewPrimarySchoolTemplate: ApplicationTemplate<
@@ -206,12 +207,14 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
       }),
       clearLanguages: assign((context) => {
         const { application } = context
-        const { otherLanguagesSpokenDaily } = getApplicationAnswers(
-          application.answers,
-        )
-        if (otherLanguagesSpokenDaily === NO) {
-          unset(application.answers, 'languages.otherLanguages')
-          unset(application.answers, 'languages.icelandicNotSpokenAroundChild')
+
+        if (hasForeignLanguages(application.answers)) {
+          unset(application.answers, 'languages.language1')
+          unset(application.answers, 'languages.language2')
+          unset(application.answers, 'languages.language3')
+          unset(application.answers, 'languages.language4')
+          unset(application.answers, 'languages.childLanguage')
+          unset(application.answers, 'languages.interpreter')
         }
         return context
       }),
