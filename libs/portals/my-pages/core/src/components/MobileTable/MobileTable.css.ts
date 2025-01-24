@@ -14,3 +14,15 @@ export const container = style({
     borderBottom: `1px solid ${theme.color.blue200}`,
   },
 })
+
+export const divider = style({
+  '::after': {
+    content: '',
+    position: 'absolute',
+    bottom: `-${theme.spacing[3]}px`,
+    left: `-${theme.spacing[2]}px`,
+    right: `-${theme.spacing[2]}px`,
+    height: '1px',
+    background: theme.color.blue200,
+  },
+})
