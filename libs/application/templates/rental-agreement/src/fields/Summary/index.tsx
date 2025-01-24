@@ -80,93 +80,91 @@ export const Summary: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   }, [unfilledConditions, setSubmitButtonDisabled])
 
   return (
-    <>
-      <Box className={summaryWrap}>
-        <Box>
-          <Text variant="h2" as="h2" marginBottom={3}>
-            {formatMessage(summary.pageTitle)}
-          </Text>
-          <Text marginBottom={5}>{formatMessage(summary.pageDescription)}</Text>
-        </Box>
-        <ApplicantsSummary
-          answers={answers}
-          goToScreen={goToScreen}
-          landlordsRoute={Routes.LANDLORDINFORMATION}
-          tenantsRoute={Routes.TENANTINFORMATION}
-        />
-        <ApplicantsRepresentativesSummary
-          application={application}
-          field={field}
-          goToScreen={goToScreen}
-          landlordsRoute={Routes.LANDLORDINFORMATION}
-          tenantsRoute={Routes.TENANTINFORMATION}
-        />
-        <RentalInfoSummary
-          answers={answers}
-          goToScreen={goToScreen}
-          rentalPeriodRoute={Routes.RENTALPERIOD}
-          rentalAmountRoute={Routes.RENTALAMOUNT}
-          securityDepositRoute={Routes.SECURITYDEPOSIT}
-        />
-        <PropertyInfoSummary
-          answers={answers}
-          goToScreen={goToScreen}
-          categoryRoute={Routes.PROPERTYCATEGORY}
-          propertyInfoRoute={Routes.PROPERTYINFORMATION}
-          propertyDescriptionRoute={Routes.SPECIALPROVISIONS}
-          specialProvisionsRoute={Routes.SPECIALPROVISIONS}
-          propertyConditionRoute={Routes.CONDITION}
-          fileUploadRoute={Routes.CONDITION}
-          fireProtectionsRoute={Routes.FIREPROTECTIONS}
-        />
-        <OtherFeesSummary
-          answers={answers}
-          goToScreen={goToScreen}
-          route={Routes.OTHERFEES}
-        />
-        <SummaryCard
-          cardLabel={formatMessage(summary.shareLinkLabel)}
-          tooltipText={formatMessage(summary.shareLinkTooltip)}
-          noBorder
-        >
-          <CopyLink
-            linkUrl={`${document.location.origin}/umsoknir/${ApplicationConfigurations.RentalAgreement.slug}/${application.id}`}
-            buttonTitle={formatMessage(summary.shareLinkbuttonLabel)}
-          />
-        </SummaryCard>
-
-        {!isFireProtectionsPresent ||
-        !isConditionPresent ||
-        !isOtherFeesPresent ? (
-          <Box marginTop={4} marginBottom={4}>
-            <AlertMessage
-              type="error"
-              title={formatMessage(summary.alertMissingInfoTitle)}
-              message={
-                <BulletList>
-                  {unfilledConditions.map((condition, index) => (
-                    <Bullet key={`${index}_${condition.route}`}>
-                      <Button
-                        onClick={() => {
-                          setSubmitButtonDisabled &&
-                            setSubmitButtonDisabled(false)
-                          goToScreen?.(condition.route)
-                        }}
-                        variant="text"
-                        size="small"
-                      >
-                        {formatMessage(condition.message)}
-                      </Button>
-                    </Bullet>
-                  ))}
-                </BulletList>
-              }
-            />
-          </Box>
-        ) : (
-          ''
-        )}
+    <Box className={summaryWrap}>
+      <Box>
+        <Text variant="h2" as="h2" marginBottom={3}>
+          {formatMessage(summary.pageTitle)}
+        </Text>
+        <Text marginBottom={5}>{formatMessage(summary.pageDescription)}</Text>
       </Box>
-    </>
+      <ApplicantsSummary
+        answers={answers}
+        goToScreen={goToScreen}
+        landlordsRoute={Routes.LANDLORDINFORMATION}
+        tenantsRoute={Routes.TENANTINFORMATION}
+      />
+      <ApplicantsRepresentativesSummary
+        application={application}
+        field={field}
+        goToScreen={goToScreen}
+        landlordsRoute={Routes.LANDLORDINFORMATION}
+        tenantsRoute={Routes.TENANTINFORMATION}
+      />
+      <RentalInfoSummary
+        answers={answers}
+        goToScreen={goToScreen}
+        rentalPeriodRoute={Routes.RENTALPERIOD}
+        rentalAmountRoute={Routes.RENTALAMOUNT}
+        securityDepositRoute={Routes.SECURITYDEPOSIT}
+      />
+      <PropertyInfoSummary
+        answers={answers}
+        goToScreen={goToScreen}
+        categoryRoute={Routes.PROPERTYCATEGORY}
+        propertyInfoRoute={Routes.PROPERTYINFORMATION}
+        propertyDescriptionRoute={Routes.SPECIALPROVISIONS}
+        specialProvisionsRoute={Routes.SPECIALPROVISIONS}
+        propertyConditionRoute={Routes.CONDITION}
+        fileUploadRoute={Routes.CONDITION}
+        fireProtectionsRoute={Routes.FIREPROTECTIONS}
+      />
+      <OtherFeesSummary
+        answers={answers}
+        goToScreen={goToScreen}
+        route={Routes.OTHERFEES}
+      />
+      <SummaryCard
+        cardLabel={formatMessage(summary.shareLinkLabel)}
+        tooltipText={formatMessage(summary.shareLinkTooltip)}
+        noBorder
+      >
+        <CopyLink
+          linkUrl={`${document.location.origin}/umsoknir/${ApplicationConfigurations.RentalAgreement.slug}/${application.id}`}
+          buttonTitle={formatMessage(summary.shareLinkbuttonLabel)}
+        />
+      </SummaryCard>
+
+      {!isFireProtectionsPresent ||
+      !isConditionPresent ||
+      !isOtherFeesPresent ? (
+        <Box marginTop={4} marginBottom={4}>
+          <AlertMessage
+            type="error"
+            title={formatMessage(summary.alertMissingInfoTitle)}
+            message={
+              <BulletList>
+                {unfilledConditions.map((condition, index) => (
+                  <Bullet key={`${index}_${condition.route}`}>
+                    <Button
+                      onClick={() => {
+                        setSubmitButtonDisabled &&
+                          setSubmitButtonDisabled(false)
+                        goToScreen?.(condition.route)
+                      }}
+                      variant="text"
+                      size="small"
+                    >
+                      {formatMessage(condition.message)}
+                    </Button>
+                  </Bullet>
+                ))}
+              </BulletList>
+            }
+          />
+        </Box>
+      ) : (
+        ''
+      )}
+    </Box>
   )
 }
