@@ -7,7 +7,7 @@ import {
   buildSubSection,
 } from '@island.is/application/core'
 import { NO, YES } from '@island.is/application/types'
-import { OptionsType } from '../../../lib/constants'
+import { ApplicationType, OptionsType } from '../../../lib/constants'
 import { newPrimarySchoolMessages } from '../../../lib/messages'
 import { getApplicationAnswers } from '../../../lib/newPrimarySchoolUtils'
 
@@ -16,6 +16,11 @@ export const allergiesAndIntolerancesSubSection = buildSubSection({
   title:
     newPrimarySchoolMessages.differentNeeds
       .allergiesAndIntolerancesSubSectionTitle,
+  condition: (answers) => {
+    // Only display section if application type is "Enrollment in primary school"
+    const { applicationType } = getApplicationAnswers(answers)
+    return applicationType === ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL
+  },
   children: [
     buildMultiField({
       id: 'allergiesAndIntolerances',

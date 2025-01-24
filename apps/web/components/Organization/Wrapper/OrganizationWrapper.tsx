@@ -214,7 +214,7 @@ export const getThemeConfig = (
 
 export const OrganizationHeader: React.FC<
   React.PropsWithChildren<HeaderProps>
-> = ({ organizationPage, isSubpage }) => {
+> = ({ organizationPage, isSubpage = false }) => {
   const { linkResolver } = useLinkResolver()
   const namespace = useMemo(
     () => JSON.parse(organizationPage?.organization?.namespace?.fields || '{}'),
@@ -264,7 +264,7 @@ export const OrganizationHeader: React.FC<
     titleSectionPaddingLeft: organizationPage.themeProperties
       .titleSectionPaddingLeft as ResponsiveSpace,
     mobileBackground: organizationPage.themeProperties.mobileBackgroundColor,
-    isSubpage: isSubpage && n('smallerSubpageHeader', false),
+    isSubpage,
   }
 
   switch (organizationPage.theme) {
@@ -273,7 +273,7 @@ export const OrganizationHeader: React.FC<
         <SyslumennDefaultHeader
           organizationPage={organizationPage}
           logoAltText={logoAltText}
-          isSubpage={(isSubpage && n('smallerSubpageHeader', false)) ?? false}
+          isSubpage={isSubpage}
         />
       ) : (
         <SyslumennHeader
@@ -286,7 +286,7 @@ export const OrganizationHeader: React.FC<
         <SjukratryggingarDefaultHeader
           organizationPage={organizationPage}
           logoAltText={logoAltText}
-          isSubpage={(isSubpage && n('smallerSubpageHeader', false)) ?? false}
+          isSubpage={isSubpage}
         />
       ) : (
         <SjukratryggingarHeader
@@ -370,7 +370,7 @@ export const OrganizationHeader: React.FC<
         <FiskistofaDefaultHeader
           organizationPage={organizationPage}
           logoAltText={logoAltText}
-          isSubpage={(isSubpage && n('smallerSubpageHeader', false)) ?? false}
+          isSubpage={isSubpage}
         />
       ) : (
         <FiskistofaHeader
