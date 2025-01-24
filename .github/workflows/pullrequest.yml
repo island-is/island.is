@@ -169,8 +169,9 @@ jobs:
                 "build_id": $build_id,
                 "target": $target
               })"
-            ' >>"$GITHUB_OUTPUT"
+            ' | tee -a "$GITHUB_OUTPUT"
           done
+          echo "DONE"
 
       - name: Check release-manager approval
         id: check-release-manager-approval
