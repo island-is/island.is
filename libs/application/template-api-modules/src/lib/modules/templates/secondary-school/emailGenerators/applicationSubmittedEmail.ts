@@ -29,11 +29,11 @@ export const generateApplicationSubmittedEmail: ApplicationSubmittedEmail = (
     'applicant.name',
   )
 
-  const subject = 'Umsókn um framhaldsskóla - Umsókn send'
+  const subject = 'Umsókn um framhaldsskóla móttekin!'
 
   const message =
-    `<span>Umsókn nemandans</span><br/>` +
-    `<span>${applicantName}, kt. ${applicantNationalId}</span><br/>` +
+    `<span>Umsókn nemandans:</span><br/>` +
+    `<span>${applicantName}, kt. ${applicantNationalId},</span><br/>` +
     `<span>í framhaldsskóla hefur verið móttekin.</span><br/>` +
     `<span>Þú getur farið inn á mínar síður og fylgst með framgangi umsóknarinnar.</span>`
 

@@ -1,13 +1,16 @@
-import {
-  FieldBaseProps,
-  NationalRegistryParent,
-} from '@island.is/application/types'
+import { FieldBaseProps } from '@island.is/application/types'
 import { FC } from 'react'
 import { Box, GridColumn, GridRow, Text } from '@island.is/island-ui/core'
 import { SecondarySchoolAnswers } from '../..'
 import { overview } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
-import { formatKennitala, formatPhoneNumber, Routes, States } from '../../utils'
+import {
+  checkHasAnyCustodians,
+  formatKennitala,
+  formatPhoneNumber,
+  Routes,
+  States,
+} from '../../utils'
 import { ReviewGroup } from '../../components/ReviewGroup'
 import { getValueViaPath } from '@island.is/application/core'
 
@@ -17,17 +20,20 @@ export const CustodianOverview: FC<FieldBaseProps> = ({
 }) => {
   const { formatMessage } = useLocale()
 
-  const custodians =
-    getValueViaPath<NationalRegistryParent[]>(
-      application.externalData,
-      'nationalRegistryCustodians.data',
-    ) || []
-
   const custodiansAnswers =
     getValueViaPath<SecondarySchoolAnswers['custodians']>(
       application.answers,
       'custodians',
     ) || []
+
+  const custodiansExternalData = custodiansAnswers.filter(
+    (x) => !!x.person?.nationalId,
+  )
+  // const custodiansExternalData =
+  //   getValueViaPath<NationalRegistryParent[]>(
+  //     application.externalData,
+  //     'nationalRegistryCustodians.data',
+  //   ) || []
 
   const mainOtherContact = getValueViaPath<
     SecondarySchoolAnswers['mainOtherContact']
@@ -44,8 +50,7 @@ export const CustodianOverview: FC<FieldBaseProps> = ({
     if (goToScreen) goToScreen(page)
   }
 
-  const hasCustodian = !!custodians[0]
-  const showMainOtherContact = !!mainOtherContact?.nationalId
+  const showMainOtherContact = !!mainOtherContact?.person?.nationalId
   const showOtherContacts = !!otherContacts.length
 
   return (
@@ -53,38 +58,36 @@ export const CustodianOverview: FC<FieldBaseProps> = ({
       handleClick={() => onClick(Routes.CUSTODIAN)}
       editMessage={formatMessage(overview.general.editMessage)}
       title={formatMessage(
-        hasCustodian
+        checkHasAnyCustodians(application.externalData)
           ? overview.custodian.subtitle
           : overview.otherContact.subtitle,
       )}
       isEditable={application.state === States.DRAFT}
     >
       <Box>
-        {!!custodians.length && (
+        {!!custodiansExternalData.length && (
           <GridRow>
-            {custodians.map((custodian, index) => (
+            {custodiansExternalData.map((custodian, index) => (
               <GridColumn span="1/2">
                 <Text variant="h5">
                   {formatMessage(overview.custodian.subtitle)}{' '}
-                  {custodians.length > 1 ? index + 1 : ''}
+                  {custodiansExternalData.length > 1 ? index + 1 : ''}
                 </Text>
-                <Text>
-                  {custodian.givenName} {custodian.familyName}
-                </Text>
-                <Text>{formatKennitala(custodian.nationalId)}</Text>
+                <Text>{custodian.person?.name}</Text>
+                <Text>{formatKennitala(custodian.person?.nationalId)}</Text>
                 <Text>{custodian.legalDomicile?.streetAddress}</Text>
                 <Text>
                   {custodian.legalDomicile?.postalCode}{' '}
-                  {custodian.legalDomicile?.locality}
+                  {custodian.legalDomicile?.city}
                 </Text>
                 <Text>
                   {formatMessage(overview.custodian.phoneLabel)}:{' '}
-                  {formatPhoneNumber(custodiansAnswers[index]?.phone)}
+                  {formatPhoneNumber(custodiansAnswers[index]?.person?.phone)}
                 </Text>
-                <Text>{custodiansAnswers[index]?.email}</Text>
+                <Text>{custodiansAnswers[index]?.person?.email}</Text>
               </GridColumn>
             ))}
-            {custodians.length % 2 !== 0 && (
+            {custodiansExternalData.length % 2 !== 0 && (
               <GridColumn span="1/2"></GridColumn>
             )}
           </GridRow>
@@ -98,13 +101,15 @@ export const CustodianOverview: FC<FieldBaseProps> = ({
                   {formatMessage(overview.otherContact.label)}{' '}
                   {otherContacts.length > 0 ? '1' : ''}
                 </Text>
-                <Text>{mainOtherContact.name}</Text>
-                <Text>{formatKennitala(mainOtherContact.nationalId)}</Text>
+                <Text>{mainOtherContact.person?.name}</Text>
+                <Text>
+                  {formatKennitala(mainOtherContact.person?.nationalId)}
+                </Text>
                 <Text>
                   {formatMessage(overview.otherContact.phoneLabel)}:{' '}
-                  {formatPhoneNumber(mainOtherContact.phone)}
+                  {formatPhoneNumber(mainOtherContact.person?.phone)}
                 </Text>
-                <Text>{mainOtherContact.email}</Text>
+                <Text>{mainOtherContact.person?.email}</Text>
               </GridColumn>
             )}
             {showOtherContacts &&
@@ -112,15 +117,15 @@ export const CustodianOverview: FC<FieldBaseProps> = ({
                 <GridColumn span="1/2">
                   <Text variant="h5">
                     {formatMessage(overview.otherContact.label)}{' '}
-                    {mainOtherContact?.nationalId ? index + 2 : ''}
+                    {mainOtherContact?.person?.nationalId ? index + 2 : ''}
                   </Text>
                   <Text>{otherContact.person.name}</Text>
                   <Text>{formatKennitala(otherContact.person.nationalId)}</Text>
                   <Text>
                     {formatMessage(overview.otherContact.phoneLabel)}:{' '}
-                    {formatPhoneNumber(otherContact.phone)}
+                    {formatPhoneNumber(otherContact.person?.phone)}
                   </Text>
-                  <Text>{otherContact.email}</Text>
+                  <Text>{otherContact.person?.email}</Text>
                 </GridColumn>
               ))}
           </GridRow>

@@ -65,15 +65,10 @@ export const userInformation = {
       defaultMessage: 'Forsjáraðili',
       description: 'Title of custodian page',
     },
-    subtitle1: {
-      id: 'ss.application:userInformation.custodian.subtitle1',
-      defaultMessage: 'Forsjáraðili 1',
-      description: 'Custodian 1 subtitle',
-    },
-    subtitle2: {
-      id: 'ss.application:userInformation.custodian.subtitle2',
-      defaultMessage: 'Forsjáraðili 2',
-      description: 'Custodian 1 subtitle',
+    subtitle: {
+      id: 'ss.application:userInformation.custodian.subtitle',
+      defaultMessage: 'Forsjáraðili',
+      description: 'Custodian subtitle',
     },
     name: {
       id: 'ss.application:userInformation.custodian.name',
@@ -90,10 +85,15 @@ export const userInformation = {
       defaultMessage: 'Heimilisfang',
       description: 'Custodian address',
     },
-    postalCodeAndCity: {
-      id: 'ss.application:userInformation.custodian.postalCodeAndCity',
-      defaultMessage: 'Póstnúmer og staður',
-      description: 'Custodian postal code and city',
+    postalCode: {
+      id: 'ss.application:userInformation.custodian.postalCode',
+      defaultMessage: 'Póstnúmer',
+      description: 'Custodian postal code',
+    },
+    city: {
+      id: 'ss.application:userInformation.custodian.city',
+      defaultMessage: 'Staður',
+      description: 'Custodian city',
     },
     email: {
       id: 'ss.application:userInformation.custodian.email',
@@ -104,6 +104,16 @@ export const userInformation = {
       id: 'ss.application:userInformation.custodian.phone',
       defaultMessage: 'Símanúmer',
       description: 'Custodian phone',
+    },
+    addButtonLabel: {
+      id: 'ss.application:userInformation.custodian.addButtonLabel',
+      defaultMessage: 'Bæta við forsjáraðila',
+      description: 'Custodian add button label',
+    },
+    removeButtonLabel: {
+      id: 'ss.application:userInformation.custodian.removeButtonLabel',
+      defaultMessage: 'Fjarlægja forsjáraðila',
+      description: 'Custodian remove button label',
     },
   }),
   otherContact: defineMessages({

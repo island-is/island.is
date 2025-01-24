@@ -9,49 +9,60 @@ const FileDocumentSchema = z.object({
 })
 
 const CustodianSchema = z.object({
-  nationalId: z.string().min(1),
-  name: z.string(),
-  email: z.string().min(1),
-  phone: z.string().min(1),
+  person: z.object({
+    nationalId: z.string().min(1),
+    name: z.string(),
+    email: z.string().min(1),
+    phone: z.string().min(1),
+  }),
+  legalDomicile: z.object({
+    streetAddress: z.string().min(1),
+    postalCode: z.string().min(1),
+    city: z.string().optional(),
+  }),
 })
 
 const MainOtherContactSchema = z
   .object({
     required: z.boolean(),
-    nationalId: z.string().optional(),
-    name: z.string().optional(),
-    email: z.string().optional(),
-    phone: z.string().optional(),
+    person: z
+      .object({
+        nationalId: z.string().optional(),
+        name: z.string().optional(),
+        email: z.string().optional(),
+        phone: z.string().optional(),
+      })
+      .optional(),
   })
   .refine(
-    ({ required, nationalId }) => {
+    ({ required, person }) => {
       if (!required) return true
-      return !!nationalId
+      return !!person?.nationalId
     },
-    { path: ['nationalId'] },
+    { path: ['person.nationalId'] },
   )
   .refine(
-    ({ required, email }) => {
+    ({ required, person }) => {
       if (!required) return true
-      return !!email
+      return !!person?.email
     },
-    { path: ['email'] },
+    { path: ['person.email'] },
   )
   .refine(
-    ({ required, phone }) => {
+    ({ required, person }) => {
       if (!required) return true
-      return !!phone
+      return !!person?.phone
     },
-    { path: ['phone'] },
+    { path: ['person.phone'] },
   )
 
 const OtherContactSchema = z.object({
   person: z.object({
     nationalId: z.string().min(1),
     name: z.string(),
+    email: z.string().min(1),
+    phone: z.string().min(1),
   }),
-  email: z.string().min(1),
-  phone: z.string().min(1),
 })
 
 const SelectionSchema = z

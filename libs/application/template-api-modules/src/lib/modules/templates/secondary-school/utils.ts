@@ -1,12 +1,7 @@
 import { EmailRecipient } from './types'
 import { join } from 'path'
 import { SecondarySchoolAnswers } from '@island.is/application/templates/secondary-school'
-import {
-  Application,
-  FormValue,
-  NationalRegistryParent,
-  YES,
-} from '@island.is/application/types'
+import { Application, FormValue, YES } from '@island.is/application/types'
 import { getValueViaPath } from '@island.is/application/core'
 import {
   ApplicationContact,
@@ -39,12 +34,12 @@ export const getRecipients = (answers: FormValue): Array<EmailRecipient> => {
       answers,
       'custodians',
     ) || []
-  ).filter((x) => !!x.nationalId)
+  ).filter((x) => !!x.person?.nationalId)
   custodians.forEach((custodian) => {
     recipientList.push({
-      nationalId: custodian.nationalId,
-      name: custodian.name || '',
-      email: custodian.email || '',
+      nationalId: custodian.person?.nationalId,
+      name: custodian.person?.name || '',
+      email: custodian.person?.email || '',
     })
   })
 
@@ -57,26 +52,29 @@ export const getCleanContacts = (
   const result: ApplicationContact[] = []
 
   // Custodians
-  const custodiansExternalData = (
-    getValueViaPath<NationalRegistryParent[]>(
-      application.externalData,
-      'nationalRegistryCustodians.data',
-    ) || []
-  ).filter((x) => !!x.nationalId)
   const custodiansAnswers =
     getValueViaPath<SecondarySchoolAnswers['custodians']>(
       application.answers,
       'custodians',
     ) || []
+  const custodiansExternalData = custodiansAnswers.filter(
+    (x) => !!x.person?.nationalId,
+  )
+  // const custodiansExternalData = (
+  //   getValueViaPath<NationalRegistryParent[]>(
+  //     application.externalData,
+  //     'nationalRegistryCustodians.data',
+  //   ) || []
+  // ).filter((x) => !!x.nationalId)
   custodiansExternalData.forEach((custodian, index) => {
     result.push({
-      nationalId: custodian.nationalId,
-      name: `${custodian.givenName} ${custodian.familyName}`,
-      phone: custodiansAnswers[index]?.phone || '',
-      email: custodiansAnswers[index]?.email || '',
+      nationalId: custodian.person?.nationalId,
+      name: custodian.person?.name,
+      phone: custodiansAnswers[index]?.person?.phone || '',
+      email: custodiansAnswers[index]?.person?.email || '',
       address: custodian.legalDomicile?.streetAddress,
       postalCode: custodian.legalDomicile?.postalCode || undefined,
-      city: custodian.legalDomicile?.locality || undefined,
+      city: custodian.legalDomicile?.city || undefined,
     })
   })
 
@@ -84,12 +82,12 @@ export const getCleanContacts = (
   const mainOtherContact = getValueViaPath<
     SecondarySchoolAnswers['mainOtherContact']
   >(application.answers, 'mainOtherContact')
-  if (mainOtherContact?.nationalId)
+  if (mainOtherContact?.person?.nationalId)
     result.push({
-      nationalId: mainOtherContact.nationalId,
-      name: mainOtherContact.name || '',
-      phone: mainOtherContact.phone || '',
-      email: mainOtherContact.email || '',
+      nationalId: mainOtherContact.person?.nationalId,
+      name: mainOtherContact.person?.name || '',
+      phone: mainOtherContact.person?.phone || '',
+      email: mainOtherContact.person?.email || '',
     })
 
   // Other contacts
@@ -101,10 +99,10 @@ export const getCleanContacts = (
   ).filter((x) => !!x.person.nationalId)
   otherContacts.forEach((otherContact) => {
     result.push({
-      nationalId: otherContact.person.nationalId,
-      name: otherContact.person.name || '',
-      phone: otherContact.phone || '',
-      email: otherContact.email || '',
+      nationalId: otherContact.person?.nationalId,
+      name: otherContact.person?.name || '',
+      phone: otherContact.person?.phone || '',
+      email: otherContact.person?.email || '',
     })
   })
 
