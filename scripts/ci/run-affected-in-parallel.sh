@@ -5,7 +5,6 @@ DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)"
 
 # shellcheck disable=SC1091
 source "$DIR"/_common.sh
-MAX_JOBS=${MAX_JOBS:-2}
 
 AFFECTED_PROJECTS=$("$DIR"/_nx-affected-targets.sh "$1" | tr '\n,' ' ')
 echo "Affected projects for target $1 are '$AFFECTED_PROJECTS'"
