@@ -260,7 +260,7 @@ jobs:
           enable-cache: 'node_modules,cypress,generated-files'
 
       - name: Running e2e tests
-        run: ./scripts/ci/40_e2e.sh "${AFFECTED_PROJECT}"
+        run: ./scripts/ci/40_e2e.sh "${AFFECTED_PROJECTS}"
 
   linting-workspace:
     needs:
