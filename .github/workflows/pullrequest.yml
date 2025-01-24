@@ -157,20 +157,19 @@ jobs:
           export PATH="$PATH:$(yarn bin)"
           for target in test lint build e2e-ci; do
 
+          # Don't parallelize these, because they can easily run together
           case "$target" in
-          # Don't paralellize these, because they can easily run together
-              lint) paralellize=true ;;
-                *) paralellize=false ;;
-            esac
-
-          nx show projects --with-target lint --affected |
-            jq -Rrcs --arg target "$target" --arg build_id "$build_id" --argjson paralellize "$paralellize" '
+            lint) parallelize=true ;;
+            *) parallelize=false ;;
+          esac
+          nx show projects --with-target "$target" --affected |
+            jq -Rrcs --arg target "$target" --arg build_id "$build_id" --argjson parallelize "$parallelize" '
               split("\n") |
               map(select(length > 0)) |
-              if $paralellize == true then
-                { "project": [.] | transpose, "build_id": $build_id }
-              else
-                { "project": ., "build_id": $target }
+              {
+                "project": (if $parallelize then . else [.] end),
+                "build_id": $build_id
+              }
             ' >>"$GITHUB_OUTPUT"
 
       - name: Check release-manager approval
