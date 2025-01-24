@@ -11,7 +11,7 @@ defaults:
 jobs:
   codeowners-check:
     name: Lint CODEOWNERS
-    runs-on: ec2-runners
+    runs-on: arc-runners
     env:
       CHECK: 'false'
     container:
