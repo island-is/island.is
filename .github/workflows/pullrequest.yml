@@ -18,17 +18,16 @@ env:
   SKIP_GENERATED_CACHE: ${{ contains(github.event.pull_request.labels.*.name, 'skip-generated-cache') }}
   NX_AFFECTED_ALL: ${{ contains(github.event.pull_request.labels.*.name, 'nx-affected-all') }}
   CHUNK_SIZE: ${{ vars.CHUNK_SIZE || 8 }}
-  DISABLE_GROUPING: 'true'
-  DISABLE_CHUNKS: ${{ vars.DISABLE_CHUNKS || true }}
-  MAX_JOBS: ${{ vars.MAX_JOBS || 10 }}
-  NX_PARALLEL: ${{ vars.NX_PARALLEL || 15 }}
-  NX_MAX_PARALLEL: ${{ vars.NX_MAX_PARALLEL || 15 }}
+  DISABLE_GROUPING: ${{ vars.DISABLE_GROUPING || false }}
+  DISABLE_CHUNKS: ${{ vars.DISABLE_CHUNKS || false }}
+  DISABLE_PROBLEMATIC: ${{ vars.DISABLE_PROBLEMATIC || false }}
+  MAX_JOBS: ${{ vars.MAX_JOBS || 3 }}
+  NX_PARALLEL: ${{ vars.NX_PARALLEL || 6 }}
+  NX_MAX_PARALLEL: ${{ vars.NX_MAX_PARALLEL || 6 }}
 
 jobs:
   prepare:
-    runs-on: ec2-runners
-    container:
-      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
+    runs-on: arc-runners
     timeout-minutes: 35
 
     env:
@@ -48,6 +47,7 @@ jobs:
       # Creates homedir if missing (e.g. when set to /tmp/runner/ when running locally with act)
       - name: Debug home etc.
         run: |
+          echo "docker version: $(docker --version)"
           echo "User: HOME=$HOME, PWD=$PWD, id=$(id)"
           mkdir -p "$HOME"
           ls -lah "$HOME"
@@ -203,9 +203,7 @@ jobs:
     needs:
       - prepare
     if: needs.prepare.outputs.TEST_CHUNKS
-    runs-on: ec2-runners
-    container:
-      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
+    runs-on: arc-runners
     timeout-minutes: 45
     env:
       AFFECTED_PROJECTS: ${{ matrix.projects }}
@@ -245,9 +243,7 @@ jobs:
     needs:
       - prepare
     if: needs.prepare.outputs.E2E_CHUNKS
-    runs-on: ec2-runners
-    container:
-      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
+    runs-on: arc-runners
     timeout-minutes: 45
     env:
       AFFECTED_PROJECT: ${{ matrix.projects }}
@@ -283,9 +279,7 @@ jobs:
   linting-workspace:
     needs:
       - prepare
-    runs-on: ec2-runners
-    container:
-      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
+    runs-on: arc-runners
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v4
@@ -323,9 +317,7 @@ jobs:
   formatting:
     needs:
       - prepare
-    runs-on: ec2-runners
-    container:
-      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
+    runs-on: arc-runners
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v4
@@ -364,9 +356,7 @@ jobs:
   linting:
     needs:
       - prepare
-    runs-on: ec2-runners
-    container:
-      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
+    runs-on: arc-runners
     timeout-minutes: 35
     if: needs.prepare.outputs.LINT_CHUNKS
     env:
@@ -395,9 +385,7 @@ jobs:
   build:
     needs:
       - prepare
-    runs-on: ec2-runners
-    container:
-      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
+    runs-on: arc-runners
     timeout-minutes: 35
     env:
       AFFECTED_PROJECTS: ${{ matrix.projects }}
@@ -424,9 +412,7 @@ jobs:
         run: ./scripts/ci/run-in-parallel-native.sh build
 
   success:
-    runs-on: ec2-runners
-    container:
-      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
+    runs-on: arc-runners
     if: ${{ !cancelled() }}
     needs:
       - prepare

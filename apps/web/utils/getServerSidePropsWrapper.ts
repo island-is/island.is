@@ -50,7 +50,10 @@ export const getServerSidePropsWrapper: (
   } catch (error) {
     if (error instanceof CustomNextError) {
       if (error.statusCode === 404) {
-        logger.info(error.title || '404 error occurred on web', error)
+        logger.info(
+          error.title || '404 status code, page not found on web',
+          error,
+        )
 
         const path = safelyExtractPathnameFromUrl(ctx.req.url)
         if (!path) {
