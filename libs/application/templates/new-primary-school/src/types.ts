@@ -52,8 +52,6 @@ export type Person = {
   }
 }
 
-export type Guardians = Person[]
-
 export type SelectOption = {
   label: string
   value: string

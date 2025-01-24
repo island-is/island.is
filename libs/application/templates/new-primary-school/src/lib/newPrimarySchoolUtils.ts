@@ -13,7 +13,6 @@ import {
   ContactsRow,
   FriggChildInformation,
   Membership,
-  Guardians,
   Person,
   SelectOption,
   SiblingsRow,
@@ -38,7 +37,7 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
 
   const childInfo = getValueViaPath(answers, 'childInfo') as ChildInformation
 
-  const guardians = getValueViaPath(answers, 'guardians') as Guardians
+  const guardians = getValueViaPath(answers, 'guardians') as Person[]
 
   const contacts = getValueViaPath(answers, 'contacts') as ContactsRow[]
 
