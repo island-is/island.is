@@ -11,32 +11,27 @@ import {
 import { useLocale } from '@island.is/localization'
 import { useMemo } from 'react'
 import { friggSchoolsByMunicipalityQuery } from '../../../graphql/queries'
+import { ApplicationType } from '../../../lib/constants'
 import { newPrimarySchoolMessages } from '../../../lib/messages'
 import {
-  formatGrade,
   getApplicationAnswers,
-  getApplicationExternalData,
   getNeighborhoodSchoolName,
 } from '../../../lib/newPrimarySchoolUtils'
 import { FriggSchoolsByMunicipalityQuery } from '../../../types/schema'
 import { ReviewGroupProps } from './props'
-import { ApplicationType } from '../../../lib/constants'
 
 export const School = ({
   application,
   editable,
   goToScreen,
 }: ReviewGroupProps) => {
-  const { formatMessage, formatDate, lang } = useLocale()
+  const { formatMessage, formatDate } = useLocale()
   const {
     applicationType,
     startDate,
     selectedSchool,
     applyForNeighbourhoodSchool,
   } = getApplicationAnswers(application.answers)
-  const { childGradeLevel } = getApplicationExternalData(
-    application.externalData,
-  )
 
   const { data, loading, error } = useQuery<FriggSchoolsByMunicipalityQuery>(
     friggSchoolsByMunicipalityQuery,
@@ -73,7 +68,7 @@ export const School = ({
         ) : (
           <>
             <GridRow rowGap={2}>
-              <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
+              <GridColumn span={['12/12', '12/12', '12/12', '12/12']}>
                 <DataValue
                   label={formatMessage(label)}
                   value={schoolName || ''}
@@ -82,19 +77,6 @@ export const School = ({
                       ? formatMessage(coreErrorMessages.failedDataProvider)
                       : undefined
                   }
-                />
-              </GridColumn>
-              <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
-                <DataValue
-                  label={formatMessage(
-                    newPrimarySchoolMessages.primarySchool.grade,
-                  )}
-                  value={formatMessage(
-                    newPrimarySchoolMessages.primarySchool.currentGrade,
-                    {
-                      grade: formatGrade(childGradeLevel, lang),
-                    },
-                  )}
                 />
               </GridColumn>
             </GridRow>
