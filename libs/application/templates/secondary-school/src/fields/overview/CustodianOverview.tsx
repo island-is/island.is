@@ -29,11 +29,6 @@ export const CustodianOverview: FC<FieldBaseProps> = ({
   const custodiansExternalData = custodiansAnswers.filter(
     (x) => !!x.person?.nationalId,
   )
-  // const custodiansExternalData =
-  //   getValueViaPath<NationalRegistryParent[]>(
-  //     application.externalData,
-  //     'nationalRegistryCustodians.data',
-  //   ) || []
 
   const mainOtherContact = getValueViaPath<
     SecondarySchoolAnswers['mainOtherContact']

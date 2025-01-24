@@ -60,12 +60,6 @@ export const getCleanContacts = (
   const custodiansExternalData = custodiansAnswers.filter(
     (x) => !!x.person?.nationalId,
   )
-  // const custodiansExternalData = (
-  //   getValueViaPath<NationalRegistryParent[]>(
-  //     application.externalData,
-  //     'nationalRegistryCustodians.data',
-  //   ) || []
-  // ).filter((x) => !!x.nationalId)
   custodiansExternalData.forEach((custodian, index) => {
     result.push({
       nationalId: custodian.person?.nationalId,
