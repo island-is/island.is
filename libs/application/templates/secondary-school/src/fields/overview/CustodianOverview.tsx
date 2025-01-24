@@ -17,13 +17,13 @@ export const CustodianOverview: FC<FieldBaseProps> = ({
 }) => {
   const { formatMessage } = useLocale()
 
-  const parents =
+  const custodians =
     getValueViaPath<NationalRegistryParent[]>(
       application.externalData,
-      'nationalRegistryParents.data',
+      'nationalRegistryCustodians.data',
     ) || []
 
-  const custodians =
+  const custodiansAnswers =
     getValueViaPath<SecondarySchoolAnswers['custodians']>(
       application.answers,
       'custodians',
@@ -44,7 +44,7 @@ export const CustodianOverview: FC<FieldBaseProps> = ({
     if (goToScreen) goToScreen(page)
   }
 
-  const hasParent = !!parents[0]
+  const hasCustodian = !!custodians[0]
   const showMainOtherContact = !!mainOtherContact?.nationalId
   const showOtherContacts = !!otherContacts.length
 
@@ -53,38 +53,40 @@ export const CustodianOverview: FC<FieldBaseProps> = ({
       handleClick={() => onClick(Routes.CUSTODIAN)}
       editMessage={formatMessage(overview.general.editMessage)}
       title={formatMessage(
-        hasParent
+        hasCustodian
           ? overview.custodian.subtitle
           : overview.otherContact.subtitle,
       )}
       isEditable={application.state === States.DRAFT}
     >
       <Box>
-        {!!parents.length && (
+        {!!custodians.length && (
           <GridRow>
-            {parents.map((parent, index) => (
+            {custodians.map((custodian, index) => (
               <GridColumn span="1/2">
                 <Text variant="h5">
                   {formatMessage(overview.custodian.subtitle)}{' '}
-                  {parents.length > 1 ? index + 1 : ''}
+                  {custodians.length > 1 ? index + 1 : ''}
                 </Text>
                 <Text>
-                  {parent.givenName} {parent.familyName}
+                  {custodian.givenName} {custodian.familyName}
                 </Text>
-                <Text>{formatKennitala(parent.nationalId)}</Text>
-                <Text>{parent.legalDomicile?.streetAddress}</Text>
+                <Text>{formatKennitala(custodian.nationalId)}</Text>
+                <Text>{custodian.legalDomicile?.streetAddress}</Text>
                 <Text>
-                  {parent.legalDomicile?.postalCode}{' '}
-                  {parent.legalDomicile?.locality}
+                  {custodian.legalDomicile?.postalCode}{' '}
+                  {custodian.legalDomicile?.locality}
                 </Text>
                 <Text>
                   {formatMessage(overview.custodian.phoneLabel)}:{' '}
-                  {formatPhoneNumber(custodians[index]?.phone)}
+                  {formatPhoneNumber(custodiansAnswers[index]?.phone)}
                 </Text>
-                <Text>{custodians[index]?.email}</Text>
+                <Text>{custodiansAnswers[index]?.email}</Text>
               </GridColumn>
             ))}
-            {parents.length % 2 !== 0 && <GridColumn span="1/2"></GridColumn>}
+            {custodians.length % 2 !== 0 && (
+              <GridColumn span="1/2"></GridColumn>
+            )}
           </GridRow>
         )}
 

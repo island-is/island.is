@@ -4,21 +4,21 @@ import {
   NationalRegistryParent,
 } from '@island.is/application/types'
 
-export const getParent = (
+export const getCustodian = (
   externalData: ExternalData,
   index: number,
 ): NationalRegistryParent | undefined => {
-  const parents = getValueViaPath<NationalRegistryParent[]>(
+  const custodians = getValueViaPath<NationalRegistryParent[]>(
     externalData,
-    'nationalRegistryParents.data',
+    'nationalRegistryCustodians.data',
   )
-  return parents?.[index]
+  return custodians?.[index]
 }
 
-export const getHasParent = (
+export const getHasCustodian = (
   externalData: ExternalData,
   index: number,
 ): boolean => {
-  const parent = getParent(externalData, index)
-  return !!parent
+  const custodian = getCustodian(externalData, index)
+  return !!custodian
 }

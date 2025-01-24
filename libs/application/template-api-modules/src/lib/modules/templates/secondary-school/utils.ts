@@ -56,27 +56,27 @@ export const getCleanContacts = (
 ): ApplicationContact[] => {
   const result: ApplicationContact[] = []
 
-  // Parents
-  const parents = (
+  // Custodians
+  const custodiansExternalData = (
     getValueViaPath<NationalRegistryParent[]>(
       application.externalData,
-      'nationalRegistryParents.data',
+      'nationalRegistryCustodians.data',
     ) || []
   ).filter((x) => !!x.nationalId)
-  const parentsAnswers =
+  const custodiansAnswers =
     getValueViaPath<SecondarySchoolAnswers['custodians']>(
       application.answers,
       'custodians',
     ) || []
-  parents.forEach((parent, index) => {
+  custodiansExternalData.forEach((custodian, index) => {
     result.push({
-      nationalId: parent.nationalId,
-      name: `${parent.givenName} ${parent.familyName}`,
-      phone: parentsAnswers[index]?.phone || '',
-      email: parentsAnswers[index]?.email || '',
-      address: parent.legalDomicile?.streetAddress,
-      postalCode: parent.legalDomicile?.postalCode || undefined,
-      city: parent.legalDomicile?.locality || undefined,
+      nationalId: custodian.nationalId,
+      name: `${custodian.givenName} ${custodian.familyName}`,
+      phone: custodiansAnswers[index]?.phone || '',
+      email: custodiansAnswers[index]?.email || '',
+      address: custodian.legalDomicile?.streetAddress,
+      postalCode: custodian.legalDomicile?.postalCode || undefined,
+      city: custodian.legalDomicile?.locality || undefined,
     })
   })
 

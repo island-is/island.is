@@ -11,23 +11,23 @@ import {
 } from '@island.is/application/core'
 import { userInformation } from '../../../lib/messages'
 import { Application } from '@island.is/application/types'
-import { getParent, getHasParent, Routes } from '../../../utils'
+import { getCustodian, getHasCustodian, Routes } from '../../../utils'
 
 export const custodianSubSection = buildSubSection({
   id: 'custodianSubSection',
   title: (application) =>
-    getHasParent(application.externalData, 0)
+    getHasCustodian(application.externalData, 0)
       ? userInformation.custodian.subSectionTitle
       : userInformation.otherContact.subSectionTitle,
   children: [
     buildMultiField({
       id: Routes.CUSTODIAN,
       title: (application) =>
-        getHasParent(application.externalData, 0)
+        getHasCustodian(application.externalData, 0)
           ? userInformation.custodian.pageTitle
           : userInformation.otherContact.pageTitle,
       description: (application) =>
-        getHasParent(application.externalData, 0)
+        getHasCustodian(application.externalData, 0)
           ? ''
           : userInformation.otherContact.description,
       children: [
@@ -37,7 +37,7 @@ export const custodianSubSection = buildSubSection({
           title: userInformation.custodian.subtitle1,
           titleVariant: 'h5',
           space: 3,
-          condition: (_, externalData) => getHasParent(externalData, 0),
+          condition: (_, externalData) => getHasCustodian(externalData, 0),
         }),
         buildTextField({
           id: 'custodians[0].name',
@@ -45,10 +45,10 @@ export const custodianSubSection = buildSubSection({
           backgroundColor: 'blue',
           width: 'half',
           readOnly: true,
-          condition: (_, externalData) => getHasParent(externalData, 0),
+          condition: (_, externalData) => getHasCustodian(externalData, 0),
           defaultValue: (application: Application) => {
-            const parent = getParent(application.externalData, 0)
-            return `${parent?.givenName} ${parent?.familyName}`
+            const custodian = getCustodian(application.externalData, 0)
+            return `${custodian?.givenName} ${custodian?.familyName}`
           },
         }),
         buildTextField({
@@ -58,10 +58,10 @@ export const custodianSubSection = buildSubSection({
           width: 'half',
           readOnly: true,
           format: '######-####',
-          condition: (_, externalData) => getHasParent(externalData, 0),
+          condition: (_, externalData) => getHasCustodian(externalData, 0),
           defaultValue: (application: Application) => {
-            const parent = getParent(application.externalData, 0)
-            return `${parent?.nationalId}`
+            const custodian = getCustodian(application.externalData, 0)
+            return `${custodian?.nationalId}`
           },
         }),
         buildTextField({
@@ -70,10 +70,10 @@ export const custodianSubSection = buildSubSection({
           backgroundColor: 'blue',
           width: 'half',
           readOnly: true,
-          condition: (_, externalData) => getHasParent(externalData, 0),
+          condition: (_, externalData) => getHasCustodian(externalData, 0),
           defaultValue: (application: Application) => {
-            const parent = getParent(application.externalData, 0)
-            return `${parent?.legalDomicile?.streetAddress}`
+            const custodian = getCustodian(application.externalData, 0)
+            return `${custodian?.legalDomicile?.streetAddress}`
           },
         }),
         buildTextField({
@@ -82,10 +82,10 @@ export const custodianSubSection = buildSubSection({
           backgroundColor: 'blue',
           width: 'half',
           readOnly: true,
-          condition: (_, externalData) => getHasParent(externalData, 0),
+          condition: (_, externalData) => getHasCustodian(externalData, 0),
           defaultValue: (application: Application) => {
-            const parent = getParent(application.externalData, 0)
-            return `${parent?.legalDomicile?.postalCode} ${parent?.legalDomicile?.locality}`
+            const custodian = getCustodian(application.externalData, 0)
+            return `${custodian?.legalDomicile?.postalCode} ${custodian?.legalDomicile?.locality}`
           },
         }),
         buildPhoneField({
@@ -93,7 +93,7 @@ export const custodianSubSection = buildSubSection({
           title: userInformation.custodian.phone,
           width: 'half',
           required: true,
-          condition: (_, externalData) => getHasParent(externalData, 0),
+          condition: (_, externalData) => getHasCustodian(externalData, 0),
         }),
         buildTextField({
           id: 'custodians[0].email',
@@ -102,7 +102,7 @@ export const custodianSubSection = buildSubSection({
           width: 'half',
           variant: 'email',
           required: true,
-          condition: (_, externalData) => getHasParent(externalData, 0),
+          condition: (_, externalData) => getHasCustodian(externalData, 0),
         }),
 
         // Custodian 2
@@ -111,7 +111,7 @@ export const custodianSubSection = buildSubSection({
           title: userInformation.custodian.subtitle2,
           titleVariant: 'h5',
           space: 3,
-          condition: (_, externalData) => getHasParent(externalData, 1),
+          condition: (_, externalData) => getHasCustodian(externalData, 1),
         }),
         buildTextField({
           id: 'custodians[1].name',
@@ -119,10 +119,10 @@ export const custodianSubSection = buildSubSection({
           backgroundColor: 'blue',
           width: 'half',
           readOnly: true,
-          condition: (_, externalData) => getHasParent(externalData, 1),
+          condition: (_, externalData) => getHasCustodian(externalData, 1),
           defaultValue: (application: Application) => {
-            const parent = getParent(application.externalData, 1)
-            return `${parent?.givenName} ${parent?.familyName}`
+            const custodian = getCustodian(application.externalData, 1)
+            return `${custodian?.givenName} ${custodian?.familyName}`
           },
         }),
         buildTextField({
@@ -132,10 +132,10 @@ export const custodianSubSection = buildSubSection({
           width: 'half',
           readOnly: true,
           format: '######-####',
-          condition: (_, externalData) => getHasParent(externalData, 1),
+          condition: (_, externalData) => getHasCustodian(externalData, 1),
           defaultValue: (application: Application) => {
-            const parent = getParent(application.externalData, 1)
-            return `${parent?.nationalId}`
+            const custodian = getCustodian(application.externalData, 1)
+            return `${custodian?.nationalId}`
           },
         }),
         buildTextField({
@@ -144,10 +144,10 @@ export const custodianSubSection = buildSubSection({
           backgroundColor: 'blue',
           width: 'half',
           readOnly: true,
-          condition: (_, externalData) => getHasParent(externalData, 1),
+          condition: (_, externalData) => getHasCustodian(externalData, 1),
           defaultValue: (application: Application) => {
-            const parent = getParent(application.externalData, 1)
-            return `${parent?.legalDomicile?.streetAddress}`
+            const custodian = getCustodian(application.externalData, 1)
+            return `${custodian?.legalDomicile?.streetAddress}`
           },
         }),
         buildTextField({
@@ -156,10 +156,13 @@ export const custodianSubSection = buildSubSection({
           backgroundColor: 'blue',
           width: 'half',
           readOnly: true,
-          condition: (_, externalData) => getHasParent(externalData, 1),
+          condition: (_, externalData) => getHasCustodian(externalData, 1),
           defaultValue: (application: Application) => {
-            const parent = getParent(application.externalData, 1)
-            return `${parent?.legalDomicile?.postalCode} ${parent?.legalDomicile?.locality}`
+            const custodian = getCustodian(application.externalData, 1)
+            return (
+              custodian?.legalDomicile &&
+              `${custodian?.legalDomicile?.postalCode} ${custodian?.legalDomicile?.locality}`
+            )
           },
         }),
         buildPhoneField({
@@ -167,7 +170,7 @@ export const custodianSubSection = buildSubSection({
           title: userInformation.custodian.phone,
           width: 'half',
           required: true,
-          condition: (_, externalData) => getHasParent(externalData, 1),
+          condition: (_, externalData) => getHasCustodian(externalData, 1),
         }),
         buildTextField({
           id: 'custodians[1].email',
@@ -176,14 +179,14 @@ export const custodianSubSection = buildSubSection({
           width: 'half',
           variant: 'email',
           required: true,
-          condition: (_, externalData) => getHasParent(externalData, 1),
+          condition: (_, externalData) => getHasCustodian(externalData, 1),
         }),
 
         // Other contact
         buildHiddenInput({
           id: 'mainOtherContact.required',
           defaultValue: (application: Application) => {
-            return getHasParent(application.externalData, 0) ? false : true
+            return getHasCustodian(application.externalData, 0) ? false : true
           },
         }),
         buildNationalIdWithNameField({
