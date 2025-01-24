@@ -11,7 +11,7 @@ import {
 } from './conclusionSection'
 
 export const SecondarySchoolForm: Form = buildForm({
-  id: 'SecondarySchoolFormDraft',
+  id: 'SecondarySchoolForm',
   title: '',
   logo: Logo,
   mode: FormModes.DRAFT,

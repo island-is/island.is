@@ -214,6 +214,7 @@ export const buildSelectField = (
     onSelect,
     backgroundColor = 'blue',
     isMulti,
+    isClearable,
     required,
   } = data
   return {
@@ -226,6 +227,7 @@ export const buildSelectField = (
     component: FieldComponents.SELECT,
     onSelect,
     isMulti,
+    isClearable,
     backgroundColor,
   }
 }
@@ -298,6 +300,7 @@ export const buildTextField = (
     min,
     readOnly,
     rightAlign,
+    tooltip,
     onChange,
   } = data
   return {
@@ -315,6 +318,7 @@ export const buildTextField = (
     rightAlign,
     max,
     min,
+    tooltip,
     onChange,
     type: FieldTypes.TEXT,
     component: FieldComponents.TEXT,
