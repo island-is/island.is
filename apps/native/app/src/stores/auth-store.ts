@@ -26,6 +26,7 @@ import {
   DeletePasskeyMutationVariables,
 } from '../graphql/types/schema'
 import { getAppRoot } from '../utils/lifecycle/get-app-root'
+import { deduplicatePromise } from '../utils/deduplicatePromise'
 
 const KEYCHAIN_AUTH_KEY = `@islandis_${bundleId}`
 const INVALID_REFRESH_TOKEN_ERROR = 'invalid_grant'
@@ -56,9 +57,8 @@ interface AuthStore extends State {
     skipLogoutIfRefreshFailed?: boolean,
   ): Promise<UserInfo>
   refresh(skipLogout?: boolean): Promise<void | null>
-  internalRefresh(skipLogout?: boolean): Promise<void | null>
   login(): Promise<boolean>
-  logout(): Promise<boolean>
+  logout(skipPasskeyDeletion?: boolean): Promise<boolean>
 }
 
 const getAppAuthConfig = () => {
@@ -153,8 +153,7 @@ export const authStore = create<AuthStore>((set, get) => ({
       return userInfo
     }
   },
-  async internalRefresh(skipLogout = false) {
-    console.log('called refresh')
+  refresh: deduplicatePromise(async (skipLogout = false) => {
     const intl = getIntl()
     const appAuthConfig = getAppAuthConfig()
     const refreshToken = get().authorizeResult?.refreshToken
@@ -175,7 +174,7 @@ export const authStore = create<AuthStore>((set, get) => ({
           intl.formatMessage({ id: 'login.expiredMessage' }),
         )
 
-        await get().logout()
+        await get().logout(true)
         await Navigation.setRoot({ root: await getAppRoot() })
       }
       throw e
@@ -192,24 +191,7 @@ export const authStore = create<AuthStore>((set, get) => ({
       { service: KEYCHAIN_AUTH_KEY },
     )
     set({ authorizeResult })
-  },
-  async refresh(skipLogout = false) {
-    const currentRefreshPromise = get().refreshPromise
-
-    if (currentRefreshPromise) {
-      console.log('Already refreshing')
-    } else {
-      console.log('Refreshing')
-    }
-    if (!currentRefreshPromise) {
-      const refreshPromise = get()
-        .internalRefresh(skipLogout)
-        .finally(() => set({ refreshPromise: null }))
-      set({ refreshPromise })
-    }
-
-    return get().refreshPromise
-  },
+  }),
   async login() {
     const appAuthConfig = getAppAuthConfig()
     const authorizeResult = await authorize({
@@ -233,20 +215,22 @@ export const authStore = create<AuthStore>((set, get) => ({
     }
     return false
   },
-  async logout() {
+  async logout(skipPasskeyDeletion = false) {
     // Clear all MMKV storages
     clearAllStorages()
 
     // Clear push token if exists
     const pushToken = notificationsStore.getState().pushToken
     if (pushToken) {
-      notificationsStore.getState().deletePushToken(pushToken)
+     void notificationsStore.getState().deletePushToken(pushToken)
     }
     notificationsStore.getState().reset()
 
-    // Clear passkey if exists
-    const userNationalId = get().userInfo?.nationalId
-    await clearPasskey(userNationalId)
+    // Clear passkey if exists, can't delete passkeys if no auth token
+    if (!skipPasskeyDeletion) {
+      const userNationalId = get().userInfo?.nationalId
+      await clearPasskey(userNationalId)
+    }
 
     const appAuthConfig = getAppAuthConfig()
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
@@ -274,6 +258,7 @@ export const authStore = create<AuthStore>((set, get) => ({
     )
     // Reset home screen widgets
     preferencesStore.getState().resetHomeScreenWidgets()
+
     return true
   },
 }))

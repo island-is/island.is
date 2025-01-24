@@ -114,7 +114,7 @@ const errorLink = onError(
   },
 )
 
-const getAndRefreshToken = () => {
+const getAndRefreshToken = async () => {
   const { authorizeResult, refresh } = authStore.getState()
 
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
@@ -123,24 +123,28 @@ const getAndRefreshToken = () => {
     Date.now() - 30 * 1000
   if (isTokenAboutToExpire) {
     // expires in less than 30 seconds, so refresh
-    refresh()
+    await refresh()
   }
   return authorizeResult?.accessToken
 }
 
-const authLink = setContext(async (_, { headers }) => ({
-  headers: {
-    ...headers,
-    authorization: `Bearer ${getAndRefreshToken()}`,
-    'X-Cognito-Token': `Bearer ${
-      environmentStore.getState().cognito?.accessToken
-    }`,
-    'User-Agent': getCustomUserAgent(),
-    cookie: [authStore.getState().cookies]
-      .filter((x) => String(x) !== '')
-      .join('; '),
-  },
-}))
+const authLink = setContext(async (_, { headers }) => {
+  const token = await getAndRefreshToken()
+
+  return {
+    headers: {
+      ...headers,
+      authorization: `Bearer ${token}`,
+      'X-Cognito-Token': `Bearer ${
+        environmentStore.getState().cognito?.accessToken
+      }`,
+      'User-Agent': getCustomUserAgent(),
+      cookie: [authStore.getState().cookies]
+        .filter((x) => String(x) !== '')
+        .join('; '),
+    },
+  }
+})
 
 export const archivedCache = new Map()
 
