@@ -45,7 +45,7 @@ env:
 jobs:
   pre-checks:
     name: Check if job should run
-    runs-on: ec2-runners
+    runs-on: arc-runners
     container:
       image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
     env:
@@ -147,7 +147,7 @@ jobs:
           echo "PRE_CHECK=push" >> "$GITHUB_OUTPUT"
 
   prepare:
-    runs-on: ec2-runners
+    runs-on: arc-runners
     container:
       image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
     timeout-minutes: 90
@@ -446,7 +446,7 @@ jobs:
     needs:
       - prepare
     if: needs.prepare.outputs.TEST_CHUNKS
-    runs-on: ec2-runners
+    runs-on: arc-runners
     container:
       image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
     timeout-minutes: 35
@@ -487,7 +487,7 @@ jobs:
     needs:
       - pre-checks
       - prepare
-    runs-on: ec2-runners
+    runs-on: arc-runners
     container:
       image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
     timeout-minutes: 35
@@ -636,7 +636,7 @@ jobs:
       - prepare
       - pre-checks
     #    if: needs.prepare.outputs.IMAGES && needs.pre-checks.outputs.PRE_CHECK != 'push'
-    runs-on: ec2-runners
+    runs-on: arc-runners
     container:
       image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
     timeout-minutes: 5
@@ -694,7 +694,7 @@ jobs:
             await updateComment({github, context, comment: COMMENT})
 
   retag-unaffected:
-    runs-on: ec2-runners
+    runs-on: arc-runners
     container:
       image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
     timeout-minutes: 5
@@ -725,7 +725,7 @@ jobs:
         run: ./scripts/ci/retag-unaffected.sh "$UNAFFECTED"
 
   deploy:
-    runs-on: ec2-runners
+    runs-on: arc-runners
     container:
       image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
     if: ${{ !cancelled() && needs.retag-unaffected.result == 'success' && needs.helm-docker-build.result != 'failure' }}
@@ -781,7 +781,7 @@ jobs:
           }
           BODY
   push-success:
-    runs-on: ec2-runners
+    runs-on: arc-runners
     container:
       image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
     if: ${{ !cancelled() }}
@@ -805,7 +805,7 @@ jobs:
         run: echo "Build was skipped"
 
   failure-notification:
-    runs-on: ec2-runners
+    runs-on: arc-runners
     container:
       image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
     if: failure() && needs.pre-checks.outputs.PRE_CHECK && needs.pre-checks.outputs.PRE_CHECK != 'feature-deploy'
@@ -828,7 +828,7 @@ jobs:
 
   scanflags:
     if: github.ref == 'ref/heads/main'
-    runs-on: ec2-runners
+    runs-on: arc-runners
     container:
       image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
     steps:
