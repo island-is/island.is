@@ -110,7 +110,6 @@ const MobileTableRow: React.FC<Props> = ({
       <Box width="full" marginY={1}>
         {tableRow.action}
       </Box>
-      {<Divider />}
       {/* Children - visible when extended */}
       {extended && (
         <AnimateHeight height={extended ? 'auto' : 0} duration={800}>
