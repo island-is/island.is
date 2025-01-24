@@ -153,7 +153,6 @@ jobs:
           set -euo pipefail
           build_id="$GITHUB_RUN_ID-$GITHUB_RUN_NUMBER-$(uuidgen)"
           # Get nx binary in PATH for faster running
-          export PATH="$PATH:$(yarn bin)"
           for target in test lint build e2e-ci; do
 
             case "$target" in
@@ -161,7 +160,7 @@ jobs:
             lint) parallelize=true ;;
             *) parallelize=false ;;
             esac
-            nx show projects --with-target "$target" --affected |
+            yarn nx show projects --with-target "$target" --affected |
               jq -Rrcs --arg target "$target" --arg build_id "$build_id" --argjson parallelize "$parallelize" '
               split("\n") |
               map(select(length > 0)) |
