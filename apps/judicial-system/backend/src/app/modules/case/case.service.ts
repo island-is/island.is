@@ -823,6 +823,7 @@ export class CaseService {
       CaseFileCategory.CASE_FILE,
       CaseFileCategory.PROSECUTOR_CASE_FILE,
       CaseFileCategory.DEFENDANT_CASE_FILE,
+      CaseFileCategory.CIVIL_CLAIM,
     ]
 
     const deliverCaseFileToCourtMessages =
