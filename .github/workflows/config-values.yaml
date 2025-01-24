@@ -28,8 +28,6 @@ env:
 jobs:
   prepare:
     runs-on: arc-runners
-    container:
-      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
     outputs:
       ENVS: ${{ steps.select_envs.outputs.ENVS }}
     steps:
@@ -49,8 +47,6 @@ jobs:
 
   helm-values-validation:
     runs-on: arc-runners
-    container:
-      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v4
@@ -103,8 +99,6 @@ jobs:
       - prepare
       - helm-values-validation # waiting on this job so the cache would be prepared
     runs-on: arc-runners
-    container:
-      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
     strategy:
       fail-fast: false
       matrix: ${{ fromJson(needs.prepare.outputs.ENVS) }}

@@ -7,8 +7,6 @@ on:
 jobs:
   success:
     runs-on: arc-runners
-    container:
-      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
     steps:
       - name: Dump GitHub context
         env:
@@ -22,9 +20,6 @@ jobs:
     runs-on: arc-runners
     env:
       CHECK: 'false'
-    container:
-      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
-
     steps:
       - name: Codeowners validation
         run: |

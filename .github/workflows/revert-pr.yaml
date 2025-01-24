@@ -26,8 +26,6 @@ jobs:
     name: Determine Failure
     if: ${{ github.event.workflow_run.conclusion == 'failure' }}
     runs-on: arc-runners
-    container:
-      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
     outputs:
       PR_NUMBER: ${{ steps.fetch-pr.outputs.PR_NUMBER }}
     steps:
@@ -72,8 +70,6 @@ jobs:
     needs: detect-failure
     if: ${{ needs.detect-failure.outputs.PR_NUMBER && github.event.workflow_run.conclusion == 'failure' }}
     runs-on: arc-runners
-    container:
-      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
     steps:
       - name: Debug
         run: |
@@ -89,8 +85,6 @@ jobs:
   manual-revert-pr:
     name: Manual PR revert
     runs-on: arc-runners
-    container:
-      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
     if: ${{ github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'revert') && (github.event.pull_request.merged == true || github.event.pull_request.draft == true) && github.actor != 'github-actions' }}
     steps:
       - name: Debug
