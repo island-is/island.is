@@ -71,7 +71,7 @@ fi
 # Run tests with retries
 for ((i = 1; i <= MAX_RETRIES; i++)); do
   echo "Running tests for projects: ${AFFECTED_PROJECTS} (attempt: ${i}/${MAX_RETRIES})"
-  if yarn nx run-many --projects "${AFFECTED_PROJECTS}" --target test ${EXTRA_OPTS} --verbose --no-watchman "$@"; then
+  if yarn nx run-many --projects "${AFFECTED_PROJECTS}" --target test --parallel="${NX_PARALLEL}" ${EXTRA_OPTS} --verbose --no-watchman "$@"; then
     exit 0
   fi
 done
