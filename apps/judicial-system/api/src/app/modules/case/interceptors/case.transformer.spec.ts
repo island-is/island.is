@@ -1,3 +1,5 @@
+import addDays from 'date-fns/addDays'
+import endOfDay from 'date-fns/endOfDay'
 import each from 'jest-each'
 
 import {
@@ -737,15 +739,8 @@ describe('getIndictmentInfo', () => {
       defendants,
     )
 
-    const expectedIndictmentAppealDeadline = new Date(
-      rulingDate.getFullYear(),
-      rulingDate.getMonth(),
-      rulingDate.getDate() + 3,
-      23,
-      59,
-      59,
-      999,
-    )
+    const expectedIndictmentAppealDeadline = endOfDay(addDays(rulingDate, 3))
+
     expect(indictmentInfo).toEqual({
       indictmentAppealDeadline: expectedIndictmentAppealDeadline.toISOString(),
       indictmentVerdictViewedByAll: true,

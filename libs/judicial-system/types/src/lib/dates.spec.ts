@@ -1,3 +1,5 @@
+import endOfDay from 'date-fns/endOfDay'
+
 import {
   getAppealDeadlineDate,
   getIndictmentAppealDeadlineDate,
@@ -11,10 +13,10 @@ describe('getIndictmentAppealDeadlineDate', () => {
     const isFine = true
 
     // Act
-    const actualDate = getIndictmentAppealDeadlineDate({ baseDate, isFine })
+    const actualDate = getIndictmentAppealDeadlineDate(baseDate, isFine)
 
     // Assert
-    expect(actualDate).toStrictEqual(new Date(2024, 1, 4, 23, 59, 59, 999))
+    expect(actualDate).toStrictEqual(endOfDay(new Date(2024, 1, 4)))
   })
 
   test('should return verdict appeal deadline', () => {
@@ -23,10 +25,10 @@ describe('getIndictmentAppealDeadlineDate', () => {
     const isFine = false
 
     // Act
-    const actualDate = getIndictmentAppealDeadlineDate({ baseDate, isFine })
+    const actualDate = getIndictmentAppealDeadlineDate(baseDate, isFine)
 
     // Assert
-    expect(actualDate).toStrictEqual(new Date(2024, 1, 29, 23, 59, 59, 999))
+    expect(actualDate).toStrictEqual(endOfDay(new Date(2024, 1, 29)))
   })
 })
 
@@ -37,7 +39,7 @@ describe('getAppealDeadlineDate', () => {
     const baseDate = new Date(date)
 
     // Act
-    const actualDate = getAppealDeadlineDate({ baseDate })
+    const actualDate = getAppealDeadlineDate(baseDate)
 
     // Assert
     expect(actualDate).toStrictEqual(new Date(2024, 0, 7, 19, 50, 8, 33))
@@ -59,10 +61,11 @@ describe('hasDatePassed', () => {
     const futureDate = new Date(2024, 1, 1)
     const mockTodayDate = new Date(2024, 0, 1)
 
-    jest.useFakeTimers().setSystemTime(mockTodayDate)
-
     // Act
+    jest.useFakeTimers().setSystemTime(mockTodayDate)
+    const isFutureDate = hasDatePassed(futureDate)
+
     // Assert
-    expect(hasDatePassed(futureDate)).toBe(false)
+    expect(isFutureDate).toBe(false)
   })
 })
