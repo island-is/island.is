@@ -36,20 +36,12 @@ export const conclusion = {
     },
     accordionTextFreshman: {
       id: 'ss.application:conclusion.general.accordionTextFreshman#markdown',
-      defaultMessage:
-        `* **xx. júní 2025**` +
-        `\n\n Umsóknartímabili lýkur. Ekki verður farið að vinna úr umsóknum fyrr en eftir þessa dagsetningu. Ef þú af einhverjum ástæðum vilt gera breytingar þarftu að gera það áður en tímabilinu lýkur.\n` +
-        `* **yy. - zz. júní 2025**` +
-        `\n\n Unnið er úr umsóknum á þessu tímabili og verður tilkynning send á alla umsækjendur. Hnipp verður sent í gegnum island.is og ættir þú að fá tilkynningu í appið og tölvupóst um niðurstöðuna.`,
+      defaultMessage: `* **xx. júní 2025**\n\n Umsóknartímabili lýkur. Ekki verður farið að vinna úr umsóknum fyrr en eftir þessa dagsetningu. Ef þú af einhverjum ástæðum vilt gera breytingar þarftu að gera það áður en tímabilinu lýkur.\n* **yy. - zz. júní 2025** +\n\n Unnið er úr umsóknum á þessu tímabili og verður tilkynning send á alla umsækjendur. Hnipp verður sent í gegnum island.is og ættir þú að fá tilkynningu í appið og tölvupóst um niðurstöðuna.`,
       description: 'Conclusion accordion text freshman',
     },
     accordionTextGeneral: {
       id: 'ss.application:conclusion.general.accordionTextGeneral#markdown',
-      defaultMessage:
-        `* **aa. júní 2025**` +
-        `\n\n Umsóknartímabili lýkur. Ekki verður farið að vinna úr umsóknum fyrr en eftir þessa dagsetningu. Ef þú af einhverjum ástæðum vilt gera breytingar þarftu að gera það áður en tímabilinu lýkur.\n` +
-        `* **bb. - cc. júní 2025**` +
-        `\n\n Unnið er úr umsóknum á þessu tímabili og verður tilkynning send á alla umsækjendur. Hnipp verður sent í gegnum island.is og ættir þú að fá tilkynningu í appið og tölvupóst um niðurstöðuna.`,
+      defaultMessage: `* **aa. júní 2025**\n\n Umsóknartímabili lýkur. Ekki verður farið að vinna úr umsóknum fyrr en eftir þessa dagsetningu. Ef þú af einhverjum ástæðum vilt gera breytingar þarftu að gera það áður en tímabilinu lýkur.\n* **bb. - cc. júní 2025**\n\n Unnið er úr umsóknum á þessu tímabili og verður tilkynning send á alla umsækjendur. Hnipp verður sent í gegnum island.is og ættir þú að fá tilkynningu í appið og tölvupóst um niðurstöðuna.`,
       description: 'Conclusion accordion text general',
     },
   }),
