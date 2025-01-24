@@ -63,10 +63,15 @@ export const GrantsSearchResultsFilter = ({
     >
       <Filter
         labelClearAll={formatMessage(m.search.clearFilters)}
-        labelOpen=""
-        labelClear=""
+        labelOpen={formatMessage(m.search.openFilter)}
+        labelClose={formatMessage(m.search.closeFilter)}
+        labelClear={formatMessage(m.search.clearFilterCategory)}
+        labelTitle={formatMessage(m.search.filterTitle)}
+        labelResult={formatMessage(m.search.resultFound)}
+        resultCount={8}
         onFilterClear={onReset}
         variant={variant}
+        align={'left'}
       >
         <Box background="white" padding={[1, 1, 2]} borderRadius="large">
           <FilterMultiChoice

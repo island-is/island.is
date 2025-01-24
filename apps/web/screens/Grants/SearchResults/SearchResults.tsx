@@ -21,6 +21,7 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
+import { Problem } from '@island.is/react-spa/shared'
 import { debounceTime } from '@island.is/shared/constants'
 import { Locale } from '@island.is/shared/types'
 import { GrantHeaderWithImage, GrantWrapper } from '@island.is/web/components'
@@ -91,7 +92,7 @@ const GrantsSearchResultsPage: CustomScreen<GrantsHomeProps> = ({
   const { width } = useWindowSize()
   const isMobile = width <= theme.breakpoints.md
 
-  const [getGrants] = useLazyQuery<
+  const [getGrants, { error, loading }] = useLazyQuery<
     { getGrants: GrantList },
     QueryGetGrantsArgs
   >(GET_GRANTS_QUERY)
@@ -108,17 +109,16 @@ const GrantsSearchResultsPage: CustomScreen<GrantsHomeProps> = ({
       setInitialRender(false)
       return
     }
-
     getGrants({
       variables: {
         input: {
-          categories,
+          categories: categories ? [...categories] : null,
           lang: locale,
-          organizations,
+          organizations: organizations ? [...organizations] : null,
           page,
           search: query,
           size: PAGE_SIZE,
-          types,
+          types: types ? [...types] : null,
           status: status
             ? status === 'closed'
               ? GetGrantsInputAvailabilityStatusEnum.Closed
@@ -133,12 +133,10 @@ const GrantsSearchResultsPage: CustomScreen<GrantsHomeProps> = ({
           setTotalHits(res.data.getGrants.total)
         } else if (res.error) {
           setGrants([])
-          console.error('Error fetching grants', res.error)
         }
       })
-      .catch((err) => {
+      .catch(() => {
         setGrants([])
-        console.error('Error fetching grants', err)
       })
   }, [
     categories,
@@ -207,7 +205,7 @@ const GrantsSearchResultsPage: CustomScreen<GrantsHomeProps> = ({
   }, [formatMessage, totalHits])
 
   const onSearchFilterUpdate = (categoryId: string, values?: Array<string>) => {
-    const filteredValues = values?.length ? values : null
+    const filteredValues = values?.length ? [...values] : null
     switch (categoryId) {
       case 'status': {
         const slug = values?.[0]
@@ -292,6 +290,7 @@ const GrantsSearchResultsPage: CustomScreen<GrantsHomeProps> = ({
                   onReset={onResetFilter}
                   tags={tags ?? []}
                   url={currentUrl}
+                  variant={'default'}
                 />
               </Box>
             }
@@ -344,7 +343,6 @@ const GrantsSearchResultsPage: CustomScreen<GrantsHomeProps> = ({
             </Box>
             <Box
               marginY={2}
-              marginLeft={4}
               display="flex"
               alignItems="center"
               justifyContent="spaceBetween"
@@ -360,9 +358,31 @@ const GrantsSearchResultsPage: CustomScreen<GrantsHomeProps> = ({
                 onReset={onResetFilter}
                 tags={tags ?? []}
                 url={currentUrl}
+                variant={'popover'}
               />
             </Box>
+
             <SearchResultsContent grants={grants} locale={locale} />
+            <Box marginTop={2} marginBottom={0} hidden={(totalPages ?? 0) < 1}>
+              <Pagination
+                variant="purple"
+                page={page}
+                itemsPerPage={PAGE_SIZE}
+                totalItems={totalHits}
+                totalPages={totalPages}
+                renderLink={(page, className, children) => (
+                  <Box
+                    cursor="pointer"
+                    className={className}
+                    onClick={() => {
+                      setPage(page)
+                    }}
+                  >
+                    {children}
+                  </Box>
+                )}
+              />
+            </Box>
           </Box>
         )}
       </Box>

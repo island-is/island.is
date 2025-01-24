@@ -1,4 +1,3 @@
-import { useEffect, useMemo, useState } from 'react'
 import { useWindowSize } from 'react-use'
 
 import { Box, BoxProps, Text } from '../..'
@@ -46,60 +45,11 @@ export const InfoCardGrid = ({
   cardsBorder,
   variant,
   columns,
-  notFoundText,
 }: Props) => {
-  const [isMobile, setIsMobile] = useState(false)
   const { width } = useWindowSize()
-
-  useEffect(() => {
-    if (width < theme.breakpoints.sm) {
-      return setIsMobile(true)
-    }
-    setIsMobile(false)
-  }, [width])
+  const isMobile = width < theme.breakpoints.sm
 
   const cardSize = mapColumnCountToCardSize(columns, isMobile)
-
-  const cardsToRender = useMemo(() => {
-    return cards.map((c, index) => (
-      <InfoCard
-        key={`${c.title}-${index}`}
-        background={cardsBackground}
-        borderColor={cardsBorder}
-        variant={variant}
-        size={isMobile ? 'medium' : cardSize}
-        {...c}
-      />
-    ))
-  }, [cardSize, cards, cardsBackground, cardsBorder, isMobile, variant])
-
-  if (cards.length < 1) {
-    return (
-      <Box
-        display="flex"
-        alignItems="center"
-        justifyContent="center"
-        background="white"
-        borderWidth="standard"
-        borderRadius="lg"
-        borderColor="blue200"
-        flexDirection={['columnReverse', 'columnReverse', 'row']}
-        columnGap={[2, 4, 8, 8, 20]}
-        paddingY={[5, 8]}
-        paddingX={[3, 3, 5, 10]}
-        rowGap={[7, 7, 0]}
-      >
-        <Box display="flex" flexDirection="column" rowGap={1}>
-          <Text variant={'h3'} as={'h3'} color="dark400">
-            {notFoundText}
-          </Text>
-        </Box>
-        {!isMobile && (
-          <img width="240" src="/assets/sofa.svg" alt={notFoundText} />
-        )}
-      </Box>
-    )
-  }
 
   return (
     <Box
@@ -112,7 +62,16 @@ export const InfoCardGrid = ({
           : styles.gridContainerOneColumn
       }
     >
-      {cardsToRender}
+      {cards.map((c, index) => (
+        <InfoCard
+          key={`${c.title}-${index}`}
+          background={cardsBackground}
+          borderColor={cardsBorder}
+          variant={variant}
+          size={isMobile ? 'medium' : cardSize}
+          {...c}
+        />
+      ))}
     </Box>
   )
 }

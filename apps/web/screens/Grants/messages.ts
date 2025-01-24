@@ -36,13 +36,25 @@ export const m = {
       id: 'web.grants:search.inputPlaceholder',
       defaultMessage: 'Sía eftir leitarorði',
     },
+    filterTitle: {
+      id: 'web.grants:search.filterTitle',
+      defaultMessage: 'Leitarsíur',
+    },
     clearFilters: {
       id: 'web.grants:search.clearFilters',
       defaultMessage: 'Hreinsa allar síur',
     },
+    openFilter: {
+      id: 'web.grants:search.openFilter',
+      defaultMessage: 'Opna síu',
+    },
+    closeFilter: {
+      id: 'web.grants:search.closeFilter',
+      defaultMessage: 'Loka síu',
+    },
     clearFilterCategory: {
       id: 'web.grants:search.clearFilterCategory',
-      defaultMessage: 'Hreinsa flokk',
+      defaultMessage: 'Hreinsa síu',
     },
     applicationStatus: {
       id: 'web.grants:search.applicationStatus',
@@ -111,6 +123,14 @@ export const m = {
     noResultsFound: {
       id: 'web.grants:search.noResultsFound',
       defaultMessage: 'Engir styrkir fundust',
+    },
+    error: {
+      id: 'web.grants:search.error',
+      defaultMessage: 'Þjónusta liggur tímabundið niðri',
+    },
+    errorText: {
+      id: 'web.grants:search.errorText',
+      defaultMessage: 'Vinsamlegast reynið aftur síðar',
     },
     organization: {
       id: 'web.grants:search.organization',
