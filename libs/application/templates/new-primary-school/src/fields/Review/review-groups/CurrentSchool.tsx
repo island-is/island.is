@@ -19,7 +19,7 @@ export const CurrentSchool = ({
     application.answers,
   )
 
-  let label = newPrimarySchoolMessages.primarySchool.currentSchoolInfo
+  let label = newPrimarySchoolMessages.primarySchool.currentSchool
   let screen = 'currentSchool'
 
   if (applyForNeighbourhoodSchool === YES) {
@@ -31,7 +31,7 @@ export const CurrentSchool = ({
     <ReviewGroup isEditable={editable} editAction={() => goToScreen?.(screen)}>
       <Stack space={2}>
         <GridRow>
-          <GridColumn span={['12/12', '12/12', '12/12', '12/12']}>
+          <GridColumn span="10/12">
             <Text variant="h3" as="h3">
               {formatMessage(
                 newPrimarySchoolMessages.primarySchool

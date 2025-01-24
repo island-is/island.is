@@ -4,7 +4,7 @@ import {
   buildSubSection,
   NO,
 } from '@island.is/application/core'
-import { ReasonForApplicationOptions } from '../../../lib/constants'
+import { ApplicationType } from '../../../lib/constants'
 import { newPrimarySchoolMessages } from '../../../lib/messages'
 import { getApplicationAnswers } from '../../../lib/newPrimarySchoolUtils'
 
@@ -12,11 +12,11 @@ export const startingSchoolSubSection = buildSubSection({
   id: 'startingSchoolSubSection',
   title: newPrimarySchoolMessages.primarySchool.startingSchoolSubSectionTitle,
   condition: (answers) => {
-    // Only display section if "Moving abroad" is not selected as reason for application
-    const { reasonForApplication, applyForNeighbourhoodSchool } =
+    // Only display section if application type is "Application for a new primary school"
+    const { applicationType, applyForNeighbourhoodSchool } =
       getApplicationAnswers(answers)
     return (
-      reasonForApplication !== ReasonForApplicationOptions.MOVING_ABROAD &&
+      applicationType === ApplicationType.NEW_PRIMARY_SCHOOL &&
       applyForNeighbourhoodSchool === NO
     )
   },

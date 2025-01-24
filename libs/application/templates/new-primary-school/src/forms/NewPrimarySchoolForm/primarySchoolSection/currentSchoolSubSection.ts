@@ -7,22 +7,29 @@ import {
   coreMessages,
 } from '@island.is/application/core'
 import { Application, NO } from '@island.is/application/types'
+import { Locale } from '@island.is/shared/types'
+import { ApplicationType } from '../../../lib/constants'
 import { newPrimarySchoolMessages } from '../../../lib/messages'
 import {
   formatGrade,
+  getApplicationAnswers,
   getApplicationExternalData,
   getCurrentSchoolName,
-  getApplicationAnswers,
 } from '../../../lib/newPrimarySchoolUtils'
-import { Locale } from '@island.is/shared/types'
 
 export const currentSchoolSubSection = buildSubSection({
   id: 'currentSchoolSubSection',
   title: newPrimarySchoolMessages.primarySchool.currentSchoolSubSectionTitle,
   condition: (answers) => {
-    const { applyForNeighbourhoodSchool } = getApplicationAnswers(answers)
-    return applyForNeighbourhoodSchool === NO
+    const { applyForNeighbourhoodSchool, applicationType } =
+      getApplicationAnswers(answers)
+    // Only display section if application type is "Application for a new primary school"
+    return (
+      applyForNeighbourhoodSchool === NO &&
+      applicationType === ApplicationType.NEW_PRIMARY_SCHOOL
+    )
   },
+
   children: [
     buildMultiField({
       id: 'currentSchool',
@@ -31,7 +38,7 @@ export const currentSchoolSubSection = buildSubSection({
       children: [
         buildDescriptionField({
           id: 'currentSchool.description',
-          title: newPrimarySchoolMessages.primarySchool.currentSchoolInfo,
+          title: newPrimarySchoolMessages.primarySchool.currentSchool,
           titleVariant: 'h4',
         }),
         buildTextField({

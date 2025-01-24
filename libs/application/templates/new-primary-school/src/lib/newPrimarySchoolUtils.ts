@@ -7,22 +7,29 @@ import {
   YesOrNo,
 } from '@island.is/application/types'
 import { Locale } from '@island.is/shared/types'
+import { MessageDescriptor } from 'react-intl'
 import {
   Child,
   ChildInformation,
+  ContactsRow,
   FriggChildInformation,
   Membership,
   Parents,
   Person,
-  ContactsRow,
   SelectOption,
   SiblingsRow,
 } from '../types'
-import { ReasonForApplicationOptions } from './constants'
+import { ApplicationType, ReasonForApplicationOptions } from './constants'
 import { newPrimarySchoolMessages } from './messages'
-import { MessageDescriptor } from 'react-intl'
 
 export const getApplicationAnswers = (answers: Application['answers']) => {
+  let applicationType = getValueViaPath(
+    answers,
+    'applicationType',
+  ) as ApplicationType
+
+  if (!applicationType) applicationType = ApplicationType.NEW_PRIMARY_SCHOOL
+
   const childNationalId = getValueViaPath(answers, 'childNationalId') as string
 
   const childInfo = getValueViaPath(answers, 'childInfo') as ChildInformation
@@ -35,11 +42,6 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     answers,
     'reasonForApplication.reason',
   ) as ReasonForApplicationOptions
-
-  const reasonForApplicationCountry = getValueViaPath(
-    answers,
-    'reasonForApplication.movingAbroad.country',
-  ) as string
 
   const reasonForApplicationStreetAddress = getValueViaPath(
     answers,
@@ -163,12 +165,12 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
   ) as YesOrNo
 
   return {
+    applicationType,
     childNationalId,
     childInfo,
     parents,
     contacts,
     reasonForApplication,
-    reasonForApplicationCountry,
     reasonForApplicationStreetAddress,
     reasonForApplicationPostalCode,
     siblings,
@@ -341,6 +343,16 @@ export const getCurrentSchoolName = (application: Application) => {
   return childMemberships
     .map((membership) => membership.organization)
     .find((organization) => organization?.id === primaryOrgId)?.name
+}
+
+export const determineNameFromApplicationAnswers = (
+  application: Application,
+) => {
+  const { applicationType } = getApplicationAnswers(application.answers)
+
+  return applicationType === ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL
+    ? newPrimarySchoolMessages.shared.enrollmentApplicationName
+    : newPrimarySchoolMessages.shared.applicationName
 }
 
 export const formatGender = (genderCode?: string): MessageDescriptor => {

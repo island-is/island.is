@@ -13,19 +13,23 @@ import { useLocale } from '@island.is/localization'
 import get from 'lodash/get'
 import has from 'lodash/has'
 import { FC } from 'react'
-import { ReasonForApplicationOptions, States } from '../../lib/constants'
+import {
+  ApplicationType,
+  ReasonForApplicationOptions,
+  States,
+} from '../../lib/constants'
 import { newPrimarySchoolMessages } from '../../lib/messages'
 import { getApplicationAnswers } from '../../lib/newPrimarySchoolUtils'
 
 import { AllergiesAndIntolerances } from './review-groups/AllergiesAndIntolerances'
 import { Child } from './review-groups/Child'
+import { Contacts } from './review-groups/Contacts'
+import { CurrentSchool } from './review-groups/CurrentSchool'
 import { FreeSchoolMeal } from './review-groups/FreeSchoolMeal'
 import { Languages } from './review-groups/Languages'
 import { Parents } from './review-groups/Parents'
 import { ReasonForApplication } from './review-groups/ReasonForApplication'
-import { Contacts } from './review-groups/Contacts'
 import { School } from './review-groups/School'
-import { CurrentSchool } from './review-groups/CurrentSchool'
 import { Siblings } from './review-groups/Siblings'
 import { Support } from './review-groups/Support'
 
@@ -49,7 +53,7 @@ export const Review: FC<ReviewScreenProps> = ({
   const editable = field.props?.editable ?? false
   const hasError = (id: string) => get(errors, id) as string
 
-  const { reasonForApplication, applyForNeighbourhoodSchool } =
+  const { applicationType, reasonForApplication, applyForNeighbourhoodSchool } =
     getApplicationAnswers(application.answers)
 
   const groupHasNoErrors = (ids: string[]) =>
@@ -161,21 +165,22 @@ export const Review: FC<ReviewScreenProps> = ({
       <Child {...childProps} />
       <Parents {...childProps} />
       <Contacts {...childProps} />
-      <CurrentSchool {...childProps} />
-      <ReasonForApplication {...childProps} />
-      {reasonForApplication !== ReasonForApplicationOptions.MOVING_ABROAD && (
-        <>
-          {reasonForApplication ===
-            ReasonForApplicationOptions.SIBLINGS_IN_SAME_SCHOOL && (
-            <Siblings {...childProps} />
-          )}
-          {applyForNeighbourhoodSchool === NO && <School {...childProps} />}
-          <Languages {...childProps} />
-          <FreeSchoolMeal {...childProps} />
-          <AllergiesAndIntolerances {...childProps} />
-          <Support {...childProps} />
-        </>
+      {applicationType === ApplicationType.NEW_PRIMARY_SCHOOL && (
+        <CurrentSchool {...childProps} />
       )}
+      {applyForNeighbourhoodSchool === NO && <School {...childProps} />}
+
+      <ReasonForApplication {...childProps} />
+      {reasonForApplication ===
+        ReasonForApplicationOptions.SIBLINGS_IN_SAME_SCHOOL && (
+        <Siblings {...childProps} />
+      )}
+      <Languages {...childProps} />
+      <FreeSchoolMeal {...childProps} />
+      {applicationType === ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL && (
+        <AllergiesAndIntolerances {...childProps} />
+      )}
+      <Support {...childProps} />
     </>
   )
 }
