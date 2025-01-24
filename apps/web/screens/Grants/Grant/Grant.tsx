@@ -44,10 +44,10 @@ const GrantSinglePage: CustomScreen<GrantSingleProps> = ({ grant, locale }) => {
   const { linkResolver } = useLinkResolver()
   const router = useRouter()
 
-  const baseUrl = linkResolver('styrkjatorg', [], locale).href
-  const searchUrl = linkResolver('styrkjatorgsearch', [], locale).href
+  const baseUrl = linkResolver('grantsplaza', [], locale).href
+  const searchUrl = linkResolver('grantsplazasearch', [], locale).href
   const currentUrl = linkResolver(
-    'styrkjatorggrant',
+    'grantsplazagrant',
     [grant?.applicationId ?? ''],
     locale,
   ).href
