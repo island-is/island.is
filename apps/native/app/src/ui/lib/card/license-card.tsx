@@ -40,6 +40,7 @@ const Host = styled(Animated.View)`
 const ContentContainer = styled.View`
   flex-direction: row;
   justify-content: space-between;
+  margin-bottom: ${({ theme }) => theme.spacing[1]}px;
 `
 
 const BarcodeWrapper = styled.View<{ minHeight?: number }>`
@@ -80,12 +81,12 @@ const BackgroundImage = styled.ImageBackground<{ color: string }>`
 const Content = styled.View`
   flex-shrink: 1;
   justify-content: center;
-  margin-bottom: ${({ theme }) => theme.spacing[1]}px;
 `
 
 const Base64Image = styled.Image`
-  width: 64px;
   height: 72px;
+  width: 64px;
+  align-self: flex-end;
   border-radius: ${({ theme: { border } }) => border.radius.large};
 `
 
@@ -151,7 +152,6 @@ export function LicenseCard({
   ...props
 }: LicenseCardProps) {
   const theme = useTheme()
-
   const intl = useIntl()
   const preset = type
     ? LicenseCardPresets[type]
