@@ -257,7 +257,8 @@ jobs:
         continue-on-error: false
         run: |
           set -euo pipefail
-          export NODE_IMAGE_TAG="$(./scripts/ci/get-node-version.mjs)"
+          NODE_IMAGE_TAG="$(./scripts/ci/get-node-version.mjs)"
+          export NODE_IMAGE_TAG
           echo "NODE_IMAGE_TAG: '${NODE_IMAGE_TAG}'"
           echo NODE_IMAGE_TAG="${NODE_IMAGE_TAG}" >> "$GITHUB_OUTPUT"
           echo NODE_IMAGE_TAG="${NODE_IMAGE_TAG}" >> "$GITHUB_ENV"
