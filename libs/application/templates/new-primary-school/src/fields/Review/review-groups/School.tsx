@@ -19,6 +19,7 @@ import {
 } from '../../../lib/newPrimarySchoolUtils'
 import { FriggSchoolsByMunicipalityQuery } from '../../../types/schema'
 import { ReviewGroupProps } from './props'
+import { ApplicationType } from '../../../lib/constants'
 
 export const School = ({
   application,
@@ -26,7 +27,7 @@ export const School = ({
   goToScreen,
 }: ReviewGroupProps) => {
   const { formatMessage, formatDate, lang } = useLocale()
-  const { startDate, selectedSchool } = getApplicationAnswers(
+  const { applicationType, startDate, selectedSchool } = getApplicationAnswers(
     application.answers,
   )
   const { childGradeLevel } = getApplicationExternalData(
@@ -49,7 +50,7 @@ export const School = ({
     >
       <Stack space={2}>
         <GridRow>
-          <GridColumn span={['12/12', '12/12', '12/12', '12/12']}>
+          <GridColumn span="12/12">
             <Text variant="h3" as="h3">
               {formatMessage(newPrimarySchoolMessages.overview.schoolTitle)}
             </Text>
@@ -88,14 +89,16 @@ export const School = ({
                 />
               </GridColumn>
             </GridRow>
-            <GridRow rowGap={2}>
-              <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
-                <DataValue
-                  label={formatMessage(newPrimarySchoolMessages.shared.date)}
-                  value={formatDate(startDate)}
-                />
-              </GridColumn>
-            </GridRow>
+            {applicationType === ApplicationType.NEW_PRIMARY_SCHOOL && (
+              <GridRow>
+                <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
+                  <DataValue
+                    label={formatMessage(newPrimarySchoolMessages.shared.date)}
+                    value={formatDate(startDate)}
+                  />
+                </GridColumn>
+              </GridRow>
+            )}
           </>
         )}
       </Stack>
