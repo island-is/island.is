@@ -34,7 +34,7 @@ export const Languages = ({
     >
       <Stack space={2}>
         <GridRow>
-          <GridColumn span={['12/12', '12/12', '12/12', '12/12']}>
+          <GridColumn span="12/12">
             <DataValue
               label={formatMessage(
                 newPrimarySchoolMessages.overview.nativeLanguage,
@@ -44,7 +44,7 @@ export const Languages = ({
           </GridColumn>
         </GridRow>
         <GridRow>
-          <GridColumn span={['12/12', '12/12', '12/12', '12/12']}>
+          <GridColumn span="12/12">
             <RadioValue
               label={formatMessage(
                 newPrimarySchoolMessages.differentNeeds
@@ -57,7 +57,7 @@ export const Languages = ({
         {otherLanguagesSpokenDaily === YES && (
           <>
             <GridRow>
-              <GridColumn span={['12/12', '12/12', '12/12', '12/12']}>
+              <GridColumn span="12/12">
                 <DataValue
                   label={formatMessage(
                     newPrimarySchoolMessages.differentNeeds.languageTitle,
@@ -73,7 +73,7 @@ export const Languages = ({
             {!icelandicSelected &&
               icelandicNotSpokenAroundChild?.includes(YES) && (
                 <GridRow>
-                  <GridColumn span={['12/12', '12/12', '12/12', '12/12']}>
+                  <GridColumn span="12/12">
                     <DataValue
                       label={formatMessage(
                         newPrimarySchoolMessages.overview
