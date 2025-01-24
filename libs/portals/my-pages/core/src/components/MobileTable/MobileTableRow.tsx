@@ -45,6 +45,7 @@ const MobileTableRow: React.FC<Props> = ({
     <Box
       className={cn({
         [styles.container]: extended,
+        [styles.divider]: !extended && !inner,
       })}
       padding={inner ? 1 : 0}
       paddingTop={3}
@@ -113,9 +114,10 @@ const MobileTableRow: React.FC<Props> = ({
       {/* Children - visible when extended */}
       {extended && (
         <AnimateHeight height={extended ? 'auto' : 0} duration={800}>
-          <Box ref={ref} paddingTop={2}>
-            {tableRow.children}
+          <Box paddingTop={2} paddingBottom={3}>
+            <Divider />
           </Box>
+          <Box ref={ref}>{tableRow.children}</Box>
         </AnimateHeight>
       )}
     </Box>

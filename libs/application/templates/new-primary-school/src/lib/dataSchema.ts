@@ -2,7 +2,12 @@ import { NO, YES } from '@island.is/application/types'
 import * as kennitala from 'kennitala'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { z } from 'zod'
-import { ReasonForApplicationOptions } from './constants'
+import {
+  ApplicationType,
+  ReasonForApplicationOptions,
+  LanguageEnvironmentOptions,
+} from './constants'
+
 import { errorMessages } from './messages'
 
 const validatePhoneNumber = (value: string) => {
@@ -17,6 +22,10 @@ const phoneNumberSchema = z
   })
 
 export const dataSchema = z.object({
+  applicationType: z.enum([
+    ApplicationType.NEW_PRIMARY_SCHOOL,
+    ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL,
+  ]),
   approveExternalData: z.boolean().refine((v) => v),
   childNationalId: z.string().min(1),
   childInfo: z
@@ -74,11 +83,6 @@ export const dataSchema = z.object({
   reasonForApplication: z
     .object({
       reason: z.string(),
-      movingAbroad: z
-        .object({
-          country: z.string().optional(),
-        })
-        .optional(),
       transferOfLegalDomicile: z
         .object({
           streetAddress: z.string(),
@@ -86,15 +90,6 @@ export const dataSchema = z.object({
         })
         .optional(),
     })
-    .refine(
-      ({ reason, movingAbroad }) =>
-        reason === ReasonForApplicationOptions.MOVING_ABROAD
-          ? movingAbroad && !!movingAbroad.country
-          : true,
-      {
-        path: ['movingAbroad', 'country'],
-      },
-    )
     .refine(
       ({ reason, transferOfLegalDomicile }) =>
         reason === ReasonForApplicationOptions.MOVING_MUNICIPALITY
@@ -136,18 +131,46 @@ export const dataSchema = z.object({
   startDate: z.string(),
   languages: z
     .object({
-      nativeLanguage: z.string(),
-      otherLanguagesSpokenDaily: z.enum([YES, NO]),
-      otherLanguages: z.array(z.string()).optional(),
+      languageEnvironment: z.string(),
+      signLanguage: z.enum([YES, NO]),
+      interpreter: z.string().optional(),
+      language1: z.string().optional().nullable(),
+      language2: z.string().optional().nullable(),
+      childLanguage: z.string().optional().nullable(),
     })
     .refine(
-      ({ otherLanguagesSpokenDaily, otherLanguages }) =>
-        otherLanguagesSpokenDaily === YES
-          ? !!otherLanguages && otherLanguages.length > 0
-          : true,
+      ({ languageEnvironment, language1 }) => {
+        return languageEnvironment !== LanguageEnvironmentOptions.ONLY_ICELANDIC
+          ? !!language1
+          : true
+      },
       {
-        path: ['otherLanguages'],
+        path: ['language1'],
         params: errorMessages.languagesRequired,
+      },
+    )
+    .refine(
+      ({ languageEnvironment, language1, language2, childLanguage }) => {
+        return languageEnvironment !==
+          LanguageEnvironmentOptions.ONLY_ICELANDIC &&
+          !!language1 &&
+          !!language2
+          ? !!childLanguage
+          : true
+      },
+      {
+        path: ['childLanguage'],
+        params: errorMessages.languageRequired,
+      },
+    )
+    .refine(
+      ({ languageEnvironment, interpreter }) => {
+        return languageEnvironment !== LanguageEnvironmentOptions.ONLY_ICELANDIC
+          ? !!interpreter
+          : true
+      },
+      {
+        path: ['interpreter'],
       },
     ),
   freeSchoolMeal: z
