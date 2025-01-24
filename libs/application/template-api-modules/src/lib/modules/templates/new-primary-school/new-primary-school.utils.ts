@@ -118,7 +118,6 @@ export const transformApplicationToNewPrimarySchoolDTO = (
       otherLanguages: undefined,
     },
   }
-  console.log({ newPrimarySchoolDTO })
 
   return newPrimarySchoolDTO
 }
