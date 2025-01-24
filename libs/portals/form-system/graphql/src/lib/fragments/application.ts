@@ -1,6 +1,7 @@
 import { gql } from '@apollo/client'
 import { SectionFragment } from './section'
 import { LanguageFields } from './languageFields'
+import { DependencyFragment } from './dependency'
 
 export const ApplicationFragment = gql`
   fragment Application on FormSystemApplication {
@@ -16,6 +17,9 @@ export const ApplicationFragment = gql`
     slug
     created
     modified
+    dependencies {
+      ...Dependency
+    }
     sections {
       ...Section
     }
@@ -24,4 +28,5 @@ export const ApplicationFragment = gql`
   }
   ${LanguageFields}
   ${SectionFragment}
+  ${DependencyFragment}
 `

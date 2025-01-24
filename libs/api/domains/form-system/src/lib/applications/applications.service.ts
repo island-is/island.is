@@ -10,7 +10,6 @@ import {
   ApplicationsControllerFindAllRequest,
   ApplicationsControllerGetApplicationRequest,
   ApplicationsControllerSubmitRequest,
-  ApplicationsControllerSubmitScreenRequest,
   ApplicationsControllerUpdateRequest,
 } from '@island.is/clients/form-system'
 import {
@@ -56,7 +55,7 @@ export class ApplicationsService {
       .catch((e) =>
         handle4xx(e, this.handleError, 'failed to create application'),
       )
-
+    console.log(response)
     if (!response || response instanceof ApolloError) {
       return {}
     }
@@ -112,21 +111,21 @@ export class ApplicationsService {
     return response
   }
 
-  async submitScreen(
-    auth: User,
-    input: SubmitScreenInput
-  ): Promise<void> {
-    const response = await this.applicationsApiWithAuth(auth)
-      .applicationsControllerSubmitScreen(
-        input as ApplicationsControllerSubmitScreenRequest
-      )
-      .catch((e) => handle4xx(e, this.handleError, 'failed to submit screen'))
+  // async submitScreen(
+  //   auth: User,
+  //   input: SubmitScreenInput
+  // ): Promise<void> {
+  //   const response = await this.applicationsApiWithAuth(auth)
+  //     .applicationsControllerSubmitScreen(
+  //       input as ApplicationsControllerSubmitScreenRequest
+  //     )
+  //     .catch((e) => handle4xx(e, this.handleError, 'failed to submit screen'))
 
-    if (!response || response instanceof ApolloError) {
-      return
-    }
-    return response
-  }
+  //   if (!response || response instanceof ApolloError) {
+  //     return
+  //   }
+  //   return response
+  // }
 
   async getAllApplicationsByOrganization(
     auth: User,

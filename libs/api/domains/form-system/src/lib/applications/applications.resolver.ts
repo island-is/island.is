@@ -36,7 +36,7 @@ export class ApplicationsResolver {
     return this.applicationsService.getApplication(user, input)
   }
 
-  @Mutation(() => Boolean, {
+  @Mutation(() => Application, {
     name: 'formSystemCreateApplication',
   })
   async createApplication(
@@ -69,16 +69,16 @@ export class ApplicationsResolver {
     return this.applicationsService.submitApplication(user, input)
   }
 
-  @Mutation(() => Boolean, {
-    name: 'formSystemSubmitScreen',
-  })
-  async submitScreen(
-    @Args('input', { type: () => SubmitScreenInput })
-    input: SubmitScreenInput,
-    @CurrentUser() user: User,
-  ): Promise<void> {
-    return this.applicationsService.submitScreen(user, input)
-  }
+  // @Mutation(() => Boolean, {
+  //   name: 'formSystemSubmitScreen',
+  // })
+  // async submitScreen(
+  //   @Args('input', { type: () => SubmitScreenInput })
+  //   input: SubmitScreenInput,
+  //   @CurrentUser() user: User,
+  // ): Promise<void> {
+  //   return this.applicationsService.submitScreen(user, input)
+  // }
 
   @Query(() => ApplicationListDto, {
     name: 'formSystemGetApplicationsByOrganization',

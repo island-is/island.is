@@ -3,10 +3,19 @@ import { OrganizationInput } from './organization.input'
 import { SectionInput } from './section.input'
 import { DependencyInput } from './form.input'
 
+@InputType('FormSystemCreateApplicationDtoInput')
+export class CreateApplicationDtoInput {
+  @Field(() => Boolean, { nullable: true })
+  isTest?: boolean
+}
+
 @InputType('FormSystemCreateApplicationInput')
 export class CreateApplicationInput {
   @Field(() => String, { nullable: true })
   slug?: string
+
+  @Field(() => CreateApplicationDtoInput, { nullable: true })
+  createApplicationDto?: CreateApplicationDtoInput
 }
 
 @InputType('FormSystemGetApplicationInput')

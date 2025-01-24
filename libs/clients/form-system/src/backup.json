@@ -238,7 +238,7 @@
         "summary": "Get all Organizations",
         "parameters": [],
         "responses": {
-          "200": {
+          "201": {
             "description": "Get all Organizations",
             "content": {
               "application/json": {
@@ -269,7 +269,7 @@
           }
         ],
         "responses": {
-          "200": {
+          "201": {
             "description": "Get an organization by id",
             "content": {
               "application/json": {
@@ -290,6 +290,16 @@
         "operationId": "FormsController_create",
         "summary": "Create new form",
         "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateFormDto"
+              }
+            }
+          }
+        },
         "responses": {
           "201": {
             "description": "Create new form",
@@ -307,13 +317,22 @@
         ]
       }
     },
-    "/forms/organization": {
+    "/forms/organization/{organizationId}": {
       "get": {
         "operationId": "FormsController_findAll",
         "summary": "Get all forms belonging to organization",
-        "parameters": [],
+        "parameters": [
+          {
+            "name": "organizationId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
         "responses": {
-          "200": {
+          "201": {
             "description": "Get all forms belonging to organization",
             "content": {
               "application/json": {
@@ -332,7 +351,7 @@
     "/forms/{id}": {
       "get": {
         "operationId": "FormsController_findOne",
-        "summary": "Get form by id",
+        "summary": "Get form by idd",
         "parameters": [
           {
             "name": "id",
@@ -344,7 +363,7 @@
           }
         ],
         "responses": {
-          "200": {
+          "201": {
             "description": "Get form by id",
             "content": {
               "application/json": {
@@ -383,7 +402,7 @@
           }
         },
         "responses": {
-          "204": {
+          "201": {
             "description": "Update form"
           }
         },
@@ -406,7 +425,7 @@
         ],
         "responses": {
           "204": {
-            "description": "Delete form"
+            "description": "Delete field"
           }
         },
         "tags": [
@@ -429,7 +448,7 @@
           }
         ],
         "responses": {
-          "200": {
+          "201": {
             "description": "Change published form",
             "content": {
               "application/json": {
@@ -460,7 +479,7 @@
           }
         ],
         "responses": {
-          "200": {
+          "201": {
             "description": "Publish form",
             "content": {
               "application/json": {
@@ -556,7 +575,7 @@
           }
         },
         "responses": {
-          "204": {
+          "201": {
             "description": "Updates a section"
           }
         },
@@ -645,7 +664,7 @@
     "/screens/{id}": {
       "put": {
         "operationId": "ScreensController_update",
-        "summary": "Update screen",
+        "summary": "Updates screen",
         "parameters": [
           {
             "name": "id",
@@ -667,8 +686,15 @@
           }
         },
         "responses": {
-          "204": {
-            "description": "Update screen"
+          "201": {
+            "description": "Updates a screen",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScreenDto"
+                }
+              }
+            }
           }
         },
         "tags": [
@@ -935,7 +961,7 @@
           }
         ],
         "responses": {
-          "200": {
+          "201": {
             "description": "Get an application by id",
             "content": {
               "application/json": {
@@ -1039,7 +1065,7 @@
           }
         ],
         "responses": {
-          "204": {
+          "201": {
             "description": "Submit application"
           }
         },
@@ -1048,26 +1074,17 @@
         ]
       }
     },
-    "/applications/submitScreen{screenId}": {
+    "/applications/validateScreen": {
       "post": {
-        "operationId": "ApplicationsController_submitScreen",
+        "operationId": "ApplicationsController_validateScreen",
         "summary": "validate and save input values of a screen",
-        "parameters": [
-          {
-            "name": "screenId",
-            "required": true,
-            "in": "path",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
+        "parameters": [],
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/ApplicationDto"
+                "$ref": "#/components/schemas/ScreenDto"
               }
             }
           }
@@ -1084,7 +1101,7 @@
     },
     "/applications/organization/{organizationId}": {
       "get": {
-        "operationId": "ApplicationsController_findAllByOrganization",
+        "operationId": "ApplicationsController_findAll",
         "summary": "Get all applications belonging to organization",
         "parameters": [
           {
@@ -1121,7 +1138,7 @@
           }
         ],
         "responses": {
-          "200": {
+          "201": {
             "description": "Get all applications belonging to organization",
             "content": {
               "application/json": {
@@ -1137,58 +1154,98 @@
         ]
       }
     },
-    "/applications/form/{formId}": {
-      "get": {
-        "operationId": "ApplicationsController_findAllByTypeAndUser",
-        "summary": "Get all applications of the same type belonging to user",
-        "parameters": [
-          {
-            "name": "formId",
-            "required": true,
-            "in": "path",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "page",
-            "required": true,
-            "in": "query",
-            "schema": {
-              "type": "number"
-            }
-          },
-          {
-            "name": "limit",
-            "required": true,
-            "in": "query",
-            "schema": {
-              "type": "number"
-            }
-          },
-          {
-            "name": "isTest",
-            "required": true,
-            "in": "query",
-            "schema": {
-              "type": "boolean"
+    "/values": {
+      "post": {
+        "operationId": "ValuesController_create",
+        "summary": "Creates a new value",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateValueDto"
+              }
             }
           }
-        ],
+        },
         "responses": {
-          "200": {
-            "description": "Get all applications of the same type belonging to user",
+          "201": {
+            "description": "Creates a new value",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ApplicationListDto"
+                  "$ref": "#/components/schemas/ValueDto"
                 }
               }
             }
           }
         },
         "tags": [
-          "applications"
+          "values"
+        ]
+      }
+    },
+    "/values/{id}": {
+      "put": {
+        "operationId": "ValuesController_update",
+        "summary": "Update a value",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateValueDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Update a value",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValueDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "values"
+        ]
+      },
+      "delete": {
+        "operationId": "ValuesController_delete",
+        "summary": "Delete value by id",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Delete value by id"
+          }
+        },
+        "tags": [
+          "values"
         ]
       }
     },
@@ -1249,7 +1306,7 @@
           }
         },
         "responses": {
-          "204": {
+          "201": {
             "description": "Update form applicant"
           }
         },
@@ -1617,7 +1674,7 @@
           }
         },
         "responses": {
-          "204": {
+          "201": {
             "description": "Update an organization url"
           }
         },
@@ -2050,8 +2107,7 @@
         },
         "required": [
           "id",
-          "order",
-          "events"
+          "order"
         ]
       },
       "FieldDto": {
@@ -2224,9 +2280,6 @@
             "format": "date-time",
             "type": "string"
           },
-          "beenPublished": {
-            "type": "boolean"
-          },
           "isTranslated": {
             "type": "boolean"
           },
@@ -2295,7 +2348,6 @@
           "slug",
           "created",
           "modified",
-          "beenPublished",
           "isTranslated",
           "applicationDaysToRemove",
           "derivedFrom",
@@ -2340,6 +2392,17 @@
         },
         "required": [
           "organizations"
+        ]
+      },
+      "CreateFormDto": {
+        "type": "object",
+        "properties": {
+          "organizationId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "organizationId"
         ]
       },
       "FieldType": {
@@ -2534,9 +2597,6 @@
           "invalidationDate": {
             "format": "date-time",
             "type": "string"
-          },
-          "beenPublished": {
-            "type": "boolean"
           },
           "isTranslated": {
             "type": "boolean"
@@ -2854,12 +2914,6 @@
             "items": {
               "$ref": "#/components/schemas/SectionDto"
             }
-          },
-          "files": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/ValueDto"
-            }
           }
         }
       },
@@ -2904,6 +2958,40 @@
             "type": "number"
           }
         }
+      },
+      "CreateValueDto": {
+        "type": "object",
+        "properties": {
+          "order": {
+            "type": "number"
+          },
+          "fieldId": {
+            "type": "string"
+          },
+          "fieldType": {
+            "type": "string"
+          },
+          "applicationId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "order",
+          "fieldId",
+          "fieldType",
+          "applicationId"
+        ]
+      },
+      "UpdateValueDto": {
+        "type": "object",
+        "properties": {
+          "json": {
+            "$ref": "#/components/schemas/ValueType"
+          }
+        },
+        "required": [
+          "json"
+        ]
       },
       "CreateFormApplicantTypeDto": {
         "type": "object",
