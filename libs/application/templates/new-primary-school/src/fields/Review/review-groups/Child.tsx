@@ -43,7 +43,7 @@ export const Child = ({
     >
       <Stack space={2}>
         <GridRow>
-          <GridColumn span={['12/12', '12/12', '12/12', '12/12']}>
+          <GridColumn span="12/12">
             <Text variant="h3" as="h3">
               {formatMessage(newPrimarySchoolMessages.overview.child)}
             </Text>
