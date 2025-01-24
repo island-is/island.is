@@ -147,7 +147,7 @@ export const SearchResultsContent = ({
                   link: {
                     label: formatMessage(m.general.seeMore),
                     href: linkResolver(
-                      'styrkjatorggrant',
+                      'grantsplazagrant',
                       [grant?.applicationId ?? ''],
                       locale,
                     ).href,

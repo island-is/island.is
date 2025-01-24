@@ -4,9 +4,7 @@ set -euxo pipefail
 : "${DD_CIVISIBILITY_AGENTLESS_ENABLED:=true}"
 : "${DD_SITE:=datadoghq.eu}"
 : "${DD_ENV:=ci}"
-# DD_SERVICE is never used as-is, but initializes the variable, and makes easy
-# debugging for when the environment variable isn't successfully set in earlier CI steps
-: "${DD_SERVICE:=${APP:-"unit-test"}}"
+: "${DD_SERVICE:=unit-test}"
 : "${DD_API_KEY:='<set-api-key>'}"
 : "${NODE_OPTIONS:=}"
 : "${FLAKY_TEST_RETRIES:=3}"
@@ -19,11 +17,6 @@ FLAKY_TESTS=(
   "services-auth-delegation-api"
   "services-auth-personal-representative"
 )
-if [[ " ${FLAKY_TESTS[*]} " == *" ${APP} "* ]]; then
-  IS_FLAKY_TEST=true
-else
-  IS_FLAKY_TEST=false
-fi
 
 projects_uncollectible_coverage=(
   "application-templates-no-debt-certificate"
@@ -32,10 +25,6 @@ projects_uncollectible_coverage=(
   "shared-babel"
   "portals-my-pages-core"
 )
-# shellcheck disable=SC2076
-if [[ ! " ${projects_uncollectible_coverage[*]} " =~ " ${APP} " ]]; then
-  EXTRA_OPTS="--codeCoverage"
-fi
 
 export DD_CIVISIBILITY_AGENTLESS_ENABLED \
   DD_SITE \
@@ -45,12 +34,46 @@ export DD_CIVISIBILITY_AGENTLESS_ENABLED \
   NODE_OPTIONS \
   SERVERSIDE_FEATURES_ON=\"\" # disable server-side features
 
-FLAKY_TEST_RETRIES=$(if [[ "$IS_FLAKY_TEST" == true ]]; then echo "$FLAKY_TEST_RETRIES"; else echo 1; fi)
+# Function to check if any project in AFFECTED_PROJECTS is a flaky test
+is_any_project_flaky() {
+  IFS=',' read -ra PROJECTS <<<"$AFFECTED_PROJECTS"
+  for project in "${PROJECTS[@]}"; do
+    if [[ " ${FLAKY_TESTS[*]} " == *" ${project} "* ]]; then
+      return 0
+    fi
+  done
+  return 1
+}
 
-for ((i = 1; i <= FLAKY_TEST_RETRIES; i++)); do
-  echo "Running test ${APP} (attempt: ${i}/${FLAKY_TEST_RETRIES})"
-  if yarn run test "${APP}" ${EXTRA_OPTS} --verbose --no-watchman "$@"; then
+# Determine if any project requires code coverage
+requires_code_coverage() {
+  IFS=',' read -ra PROJECTS <<<"$AFFECTED_PROJECTS"
+  for project in "${PROJECTS[@]}"; do
+    if [[ ! " ${projects_uncollectible_coverage[*]} " =~ \ ${project}\  ]]; then
+      return 0
+    fi
+  done
+  return 1
+}
+
+# Set code coverage if required
+if requires_code_coverage; then
+  EXTRA_OPTS="--codeCoverage"
+fi
+
+# Determine number of retries
+if is_any_project_flaky; then
+  MAX_RETRIES=$FLAKY_TEST_RETRIES
+else
+  MAX_RETRIES=1
+fi
+
+# Run tests with retries
+for ((i = 1; i <= MAX_RETRIES; i++)); do
+  echo "Running tests for projects: ${AFFECTED_PROJECTS} (attempt: ${i}/${MAX_RETRIES})"
+  if yarn nx run-many --projects "${AFFECTED_PROJECTS}" --target test --parallel="${NX_PARALLEL}" ${EXTRA_OPTS} --verbose --no-watchman "$@"; then
     exit 0
   fi
 done
+
 exit 1

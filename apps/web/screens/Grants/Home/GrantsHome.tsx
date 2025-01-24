@@ -48,8 +48,8 @@ const GrantsHomePage: CustomScreen<GrantsHomeProps> = ({
   const { linkResolver } = useLinkResolver()
   const { formatMessage } = intl
 
-  const baseUrl = linkResolver('styrkjatorg', [], locale).href
-  const searchUrl = linkResolver('styrkjatorgsearch', [], locale).href
+  const baseUrl = linkResolver('grantsplaza', [], locale).href
+  const searchUrl = linkResolver('grantsplazasearch', [], locale).href
 
   const breadcrumbItems = [
     {
