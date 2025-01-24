@@ -200,6 +200,28 @@ export const TYPES_QUERY = gql`
   }
 `
 
+export const ADVERT_TEMPLATE_QUERY = gql`
+  query GetAdvertTemplate(
+    $params: OfficialJournalOfIcelandAdvertTemplateInput!
+  ) {
+    officialJournalOfIcelandApplicationAdvertTemplate(input: $params) {
+      html
+      type
+    }
+  }
+`
+
+export const ADVERT_TEMPLATE_TYPES_QUERY = gql`
+  query GetAdvertTemplateTypes {
+    officialJournalOfIcelandApplicationAdvertTemplateTypes {
+      types {
+        title
+        type
+      }
+    }
+  }
+`
+
 export const DEPARTMENT_QUERY = gql`
   query AdvertDepartment($params: OfficialJournalOfIcelandAdvertSingleParams!) {
     officialJournalOfIcelandDepartment(params: $params) {

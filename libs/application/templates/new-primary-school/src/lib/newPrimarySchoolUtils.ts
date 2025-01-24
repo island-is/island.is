@@ -146,6 +146,26 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     'support.specialSupport',
   ) as YesOrNo
 
+  const hasIntegratedServices = getValueViaPath(
+    answers,
+    'support.hasIntegratedServices',
+  ) as YesOrNo
+
+  const hasCaseManager = getValueViaPath(
+    answers,
+    'support.hasCaseManager',
+  ) as YesOrNo
+
+  const caseManagerName = getValueViaPath(
+    answers,
+    'support.caseManager.name',
+  ) as string
+
+  const caseManagerEmail = getValueViaPath(
+    answers,
+    'support.caseManager.email',
+  ) as string
+
   const requestMeeting = getValueViaPath(
     answers,
     'support.requestMeeting[0]',
@@ -156,18 +176,10 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
 
   const schoolMunicipality = getValueViaPath(
     answers,
-    'schools.newSchool.municipality',
+    'newSchool.municipality',
   ) as string
 
-  const selectedSchool = getValueViaPath(
-    answers,
-    'schools.newSchool.school',
-  ) as string
-
-  const newSchoolHiddenInput = getValueViaPath(
-    answers,
-    'schools.newSchool.hiddenInput',
-  ) as string
+  const selectedSchool = getValueViaPath(answers, 'newSchool.school') as string
 
   return {
     applicationType,
@@ -199,11 +211,14 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     requestMedicationAssistance,
     developmentalAssessment,
     specialSupport,
+    hasIntegratedServices,
+    hasCaseManager,
+    caseManagerName,
+    caseManagerEmail,
     requestMeeting,
     startDate,
     schoolMunicipality,
     selectedSchool,
-    newSchoolHiddenInput,
   }
 }
 
