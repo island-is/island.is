@@ -222,7 +222,7 @@ export const authStore = create<AuthStore>((set, get) => ({
     // Clear push token if exists
     const pushToken = notificationsStore.getState().pushToken
     if (pushToken) {
-     void notificationsStore.getState().deletePushToken(pushToken)
+      void notificationsStore.getState().deletePushToken(pushToken)
     }
     notificationsStore.getState().reset()
 
