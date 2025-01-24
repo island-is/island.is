@@ -3,7 +3,7 @@ import { ExternalData } from '@island.is/application/types'
 import kennitala from 'kennitala'
 
 export const checkHasAnyCustodians = (externalData: ExternalData): boolean => {
-  return checkIsOfLegalAge(externalData)
+  return !checkIsOfLegalAge(externalData)
 }
 
 const checkIsOfLegalAge = (externalData: ExternalData) => {
@@ -12,5 +12,5 @@ const checkIsOfLegalAge = (externalData: ExternalData) => {
     'nationalRegistry.data.nationalId',
   )
   const age = kennitala.info(nationalId || '').age
-  return age < 18
+  return age >= 18
 }
