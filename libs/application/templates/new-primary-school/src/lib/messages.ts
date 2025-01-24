@@ -1,4 +1,5 @@
 import { defineMessages, MessageDescriptor } from 'react-intl'
+import { LanguageEnvironmentOptions } from './constants'
 
 type MessageDir = Record<string, Record<string, MessageDescriptor>>
 
@@ -9,6 +10,11 @@ export const newPrimarySchoolMessages: MessageDir = {
       id: 'nps.application:application.name',
       defaultMessage: 'Umsókn í nýjan grunnskóla',
       description: 'Application for a new primary school',
+    },
+    enrollmentApplicationName: {
+      id: 'nps.application:enrollment.application.name',
+      defaultMessage: 'Innritun í grunnskóla',
+      description: 'Enrollment in primary school',
     },
     institution: {
       id: 'nps.application:institution.name',
@@ -105,6 +111,26 @@ export const newPrimarySchoolMessages: MessageDir = {
       defaultMessage: 'Veldu skóla',
       description: 'Select school',
     },
+    gender: {
+      id: 'dess.nps.application:gender',
+      defaultMessage: 'Kyn',
+      description: 'Gender',
+    },
+    male: {
+      id: 'dess.nps.application:gender.male',
+      defaultMessage: 'Karlkyns',
+      description: 'Male',
+    },
+    female: {
+      id: 'dess.nps.application:gender.female',
+      defaultMessage: 'Kvenkyns',
+      description: 'Female',
+    },
+    otherGender: {
+      id: 'dess.nps.application:gender.other',
+      defaultMessage: 'Kynsegin/Annað',
+      description: 'non-binary/Other',
+    },
   }),
 
   pre: defineMessages({
@@ -113,6 +139,20 @@ export const newPrimarySchoolMessages: MessageDir = {
       defaultMessage: 'Forsendur',
       description: 'Prerequisites',
     },
+
+    // Application type
+    applicationTypeSubSectionTitle: {
+      id: 'nps.application:application.type.sub.section.title',
+      defaultMessage: 'Tegund umsóknar',
+      description: 'Application type',
+    },
+    applicationTypeSubSectionDescription: {
+      id: 'nps.application:application.type.sub.section.description',
+      defaultMessage: 'Vinsamlegast veldu tegund umsóknar',
+      description: 'Please select application type',
+    },
+
+    // Data collection
     externalDataSubSection: {
       id: 'nps.application:external.data.sub.section',
       defaultMessage: 'Gagnaöflun',
@@ -205,8 +245,9 @@ export const newPrimarySchoolMessages: MessageDir = {
     childInfoDescription: {
       id: 'nps.application:childrenNParents.child.info.description',
       defaultMessage:
-        'Athugaðu hvort upplýsingarnar séu réttar áður en þú heldur áfram.',
-      description: 'Check that the information is correct before proceeding.',
+        'Upplýsingar um barn eru sóttar í Þjóðskrá. Athugaðu hvort upplýsingarnar séu réttar áður en þú heldur áfram.',
+      description:
+        'Information about the child is retrieved from the National Registry. Check that the information is correct before proceeding.',
     },
     childInfoPreferredName: {
       id: 'nps.application:childrenNParents.child.info.preferred.name',
@@ -215,24 +256,44 @@ export const newPrimarySchoolMessages: MessageDir = {
     },
     childInfoPronouns: {
       id: 'nps.application:childrenNParents.child.info.pronouns',
-      defaultMessage: 'Fornafn',
+      defaultMessage: 'Persónufornafn',
       description: 'Pronoun',
     },
     childInfoPronounsPlaceholder: {
       id: 'nps.application:childrenNParents.child.info.pronouns.placeholder',
-      defaultMessage: 'Veldu fornafn',
+      defaultMessage: 'Veldu persónufornafn',
       description: 'Select pronoun',
+    },
+    usePronounAndPreferredName: {
+      id: 'nps.application:childrenNParents.child.info.use.pronoun.and.preferred.name',
+      defaultMessage:
+        'Barnið kýs að vera ávarpað með öðru nafni og/eða persónufornafni en hann eða hún',
+      description:
+        'The child prefers to be addressed by a name and/or personal pronoun other than he or she',
+    },
+    preferredNameTooltip: {
+      id: 'nps.application:childrenNParents.child.info.preferred.name.tooltip',
+      defaultMessage:
+        'Forsjáraðilar geta óskað eftir breytingu á skráðu kyni og nafni barns hjá Þjóðskrá eða barnið sjálft sé það orðið 15 ára. Ef sú breyting er ótímabært má breyta nafni barnsins hér og skrá það nafn sem barn hefur valið sér.',
+      description:
+        "Guardians can request a change to a child's registered gender and name with the National Registry, or the child themselves if they have reached the age of 15. If the change is premature, the child's name can be changed here and the name the child has chosen can be registered.",
     },
     differentPlaceOfResidence: {
       id: 'nps.application:childrenNParents.child.info.different.place.of.residence',
-      defaultMessage: 'Er dvalarstaður barns annað en skráð lögheimili?',
+      defaultMessage: 'Er aðsetur barns annað en skráð lögheimili?',
       description:
-        "Is the child's place of residence different from the registered legal domicile?",
+        "Is the child's temporary residence different from the registered legal domicile?",
+    },
+    differentPlaceOfResidenceDescription: {
+      id: 'nps.application:childrenNParents.child.info.different.place.of.residence.description',
+      defaultMessage: 'Aðsetur er tímabundin búseta barns í öðru húsnæði',
+      description:
+        "Temporary residence is a child's place of residence in another home.",
     },
     childInfoPlaceOfResidence: {
       id: 'nps.application:childrenNParents.child.info.place.of.residence',
-      defaultMessage: 'Dvalarstaður barns',
-      description: "Child's place of residence",
+      defaultMessage: 'Aðsetur barns',
+      description: "Child's temporary residence",
     },
 
     // Parents/guardians
@@ -330,16 +391,6 @@ export const newPrimarySchoolMessages: MessageDir = {
       description:
         'We remind you to register your new domicile in Registers Iceland.',
     },
-    country: {
-      id: 'nps.application:primary.school.country',
-      defaultMessage: 'Til hvaða lands er verið að flytja?',
-      description: 'What country are you moving to?',
-    },
-    countryPlaceholder: {
-      id: 'nps.application:primary.school.country.placeholder',
-      defaultMessage: 'Veldu land',
-      description: 'Select a country',
-    },
 
     // Siblings
     siblingsSubSectionTitle: {
@@ -379,8 +430,8 @@ export const newPrimarySchoolMessages: MessageDir = {
       defaultMessage: 'Upplýsingar um núverandi skóla',
       description: 'Information about current school',
     },
-    currentSchoolInfo: {
-      id: 'nps.application:primary.school.current.school.info',
+    currentSchool: {
+      id: 'nps.application:primary.school.current.school',
       defaultMessage: 'Núverandi skóli',
       description: 'Current school',
     },
@@ -445,30 +496,78 @@ export const newPrimarySchoolMessages: MessageDir = {
       defaultMessage:
         'Til að hægt sé að koma til móts við þarfir barnsins þarf skólinn að vita hvaða tungumál eru töluð í nærumhverfi þess. Veldu þau tungumál, eitt eða fleiri sem töluð eru dagsdaglega á heimilinu í samskiptum við eða í kringum barn.',
       description:
-        "In order to meet the child's needs, the school needs to know which languages ​​are spoken in their immediate environment. Choose the languages, one or more, that are spoken daily at home in communication with or around a child.",
+        "In order to meet the child's needs, the school needs to know which languages are used in communication with the child in the family's daily life.",
     },
-    childNativeLanguage: {
-      id: 'nps.application:different.needs.child.native.language',
-      defaultMessage: 'Hvert er móðurmál barnsins?',
-      description: "What is the child's native language?",
-    },
-    otherLanguagesSpokenDaily: {
-      id: 'nps.application:different.needs.other.languages.spoken.daily',
+    languageSubTitle: {
+      id: 'nps.application:different.needs.language.sub.title',
       defaultMessage:
-        'Eru önnur tungumál en móðurmál töluð daglega á heimili barnsins?',
+        'Hvað á best við í tilfelli barnsins og tungumála sem notuð eru í daglegu lífi fjölskyldunnar?',
       description:
-        "Are languages ​​other than the native language spoken daily in the child's home?",
+        'What is best for the child and the languages used in the familys daily life?',
     },
-    languagePlaceholder: {
-      id: 'nps.application:different.needs.language.placeholder',
+    languageEnvironmentTitle: {
+      id: 'nps.application:different.needs.language.environment.title',
+      defaultMessage: 'Tungumálaumhverfi',
+      description: 'Language environment',
+    },
+    languageEnvironmentPlaceeholder: {
+      id: 'nps.application:different.needs.language.environment.placeholder',
+      defaultMessage: 'Veldu það sem best á við',
+      description: 'Choose what best applies',
+    },
+    onlyIcelandicOption: {
+      id: 'nps.application:different.needs.language.only.icelandic.option',
+      defaultMessage: 'Aðeins töluð íslenska',
+      description: 'Only Icelandic spoken',
+    },
+    icelandicAndForeignOption: {
+      id: 'nps.application:different.needs.language.icelandic.and.foreign.option',
+      defaultMessage: 'Töluð íslenska og annað/önnur tungumál',
+      description: 'Icelandic and other language(s) spoken',
+    },
+    onlyForeignOption: {
+      id: 'nps.application:different.needs.language.only.foreign.option',
+      defaultMessage: 'Aðeins töluð önnur tungumál en íslenska',
+      description: 'Only other languages spoken, not Icelandic',
+    },
+    languagesDescription: {
+      id: 'nps.application:different.needs.languages.description',
+      defaultMessage:
+        'Raðaðu tungumálunum eftir því hvaða tungumál er mest er notað. Það sem er mest notað er nr. 1 og svo koll af kolli.',
+      description:
+        'Rank the languages according to which language is used the most. The most used language is number 1, and so on.',
+    },
+    languageSelectionTitle: {
+      id: 'nps.application:different.needs.language.selection.title',
+      defaultMessage: 'Tungumál {no}',
+      description: 'Language {no}',
+    },
+    addLanguageButton: {
+      id: 'nps.application:different.needs.language.add.button',
+      defaultMessage: 'Bæta við tungumáli',
+      description: 'Add language',
+    },
+    languageSelectionPlaceholder: {
+      id: 'nps.application:different.needs.language.selection.placeholder',
       defaultMessage: 'Veldu tungumál',
-      description: 'Choose a language',
+      description: 'Choose language',
     },
-    icelandicNotSpokenAroundChild: {
-      id: 'nps.application:different.needs.icelandic.not.spoken.around.child',
-      defaultMessage: 'Það er ekki töluð íslenska í nærumhverfi barnsins',
+    childLanguageTitle: {
+      id: 'nps.application:different.needs.child.language.title',
+      defaultMessage:
+        'Á hvaða tungumáli sem þú hefur valið, finnst barninu sjálfu best að tjá sig á?',
       description:
-        "Icelandic is not spoken in the child's immediate environment",
+        'In which of these languages that you have chosen does the child feel most comfortable expressing themselves?',
+    },
+    signLanguage: {
+      id: 'nps.application:different.needs.sign.language',
+      defaultMessage: 'Notar barnið táknmál?',
+      description: 'Does the child use sign language?',
+    },
+    interpreter: {
+      id: 'nps.application:different.needs.interpreter',
+      defaultMessage: 'Þurfa foreldrar túlk?',
+      description: 'Do the parents need an interpreter?',
     },
 
     // Free school meal
@@ -672,17 +771,17 @@ export const newPrimarySchoolMessages: MessageDir = {
     parents: {
       id: 'nps.application:overview.parents',
       defaultMessage: 'Foreldri/forsjáraðili',
-      description: 'Parent/guardian',
+      description: 'Parent / guardian',
     },
-    nativeLanguage: {
-      id: 'nps.application:overview.native.language',
-      defaultMessage: 'Móðurmál barnsins',
-      description: "The child's native language",
+    languageEnvironment: {
+      id: 'nps.application:overview.language.environment',
+      defaultMessage: 'Tungumálaumhverfi',
+      description: 'Language environment',
     },
-    icelandicSpokenAroundChild: {
-      id: 'nps.application:overview.icelandic.spoken.around.child',
-      defaultMessage: 'Íslenska er töluð í nærumhverfi barnsins',
-      description: "Icelandic is spoken in the child's immediate environment",
+    childLanguage: {
+      id: 'nps.application:overview.child.language',
+      defaultMessage: 'Tungumálið sem barninu finnst best að tjá sig á',
+      description: 'The language the child prefers to express themselves in',
     },
     schoolTitle: {
       id: 'nps.application:overview.school.title',
@@ -778,6 +877,11 @@ export const errorMessages = defineMessages({
     id: 'nps.application:error.languages.required',
     defaultMessage: 'Það þarf að velja a.m.k eitt tungumál',
     description: 'At least one language must be selected',
+  },
+  languageRequired: {
+    id: 'nps.application:error.language.required',
+    defaultMessage: 'Það þarf að velja tungumál',
+    description: 'Language must be selected',
   },
   noChildrenFoundTitle: {
     id: 'nps.application:error.no.children.found.title',
