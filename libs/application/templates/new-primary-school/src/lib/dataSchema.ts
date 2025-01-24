@@ -110,11 +110,9 @@ export const dataSchema = z.object({
         path: ['transferOfLegalDomicile', 'postalCode'],
       },
     ),
-  schools: z.object({
-    newSchool: z.object({
-      municipality: z.string(),
-      school: z.string(),
-    }),
+  newSchool: z.object({
+    municipality: z.string(),
+    school: z.string(),
   }),
   siblings: z
     .array(
