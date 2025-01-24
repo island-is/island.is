@@ -6,10 +6,7 @@ import {
   YES,
 } from '@island.is/application/core'
 import { newPrimarySchoolMessages } from '../../../lib/messages'
-import {
-  getCurrentSchoolName,
-  getNeighborhoodSchoolName,
-} from '../../../lib/newPrimarySchoolUtils'
+import { getNeighborhoodSchoolName } from '../../../lib/newPrimarySchoolUtils'
 
 export const schoolSubSection = buildSubSection({
   id: 'schoolSubSection',

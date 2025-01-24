@@ -15,20 +15,12 @@ export const CurrentSchool = ({
   goToScreen,
 }: ReviewGroupProps) => {
   const { formatMessage } = useLocale()
-  const { applyForNeighbourhoodSchool } = getApplicationAnswers(
-    application.answers,
-  )
-
-  let label = newPrimarySchoolMessages.primarySchool.currentSchool
-  let screen = 'currentSchool'
-
-  if (applyForNeighbourhoodSchool === YES) {
-    label = newPrimarySchoolMessages.overview.selectedSchool
-    screen = 'neighbourhoodSchoolSelection'
-  }
 
   return (
-    <ReviewGroup isEditable={editable} editAction={() => goToScreen?.(screen)}>
+    <ReviewGroup
+      isEditable={editable}
+      editAction={() => goToScreen?.('currentSchool')}
+    >
       <Stack space={2}>
         <GridRow>
           <GridColumn span="10/12">
@@ -43,7 +35,9 @@ export const CurrentSchool = ({
         <GridRow rowGap={2}>
           <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
             <DataValue
-              label={formatMessage(label)}
+              label={formatMessage(
+                newPrimarySchoolMessages.primarySchool.currentSchool,
+              )}
               value={getCurrentSchoolName(application)}
             />
           </GridColumn>

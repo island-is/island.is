@@ -1,5 +1,5 @@
 import { useQuery } from '@apollo/client'
-import { coreErrorMessages } from '@island.is/application/core'
+import { coreErrorMessages, NO, YES } from '@island.is/application/core'
 import { DataValue, ReviewGroup } from '@island.is/application/ui-components'
 import {
   GridColumn,
@@ -16,6 +16,7 @@ import {
   formatGrade,
   getApplicationAnswers,
   getApplicationExternalData,
+  getNeighborhoodSchoolName,
 } from '../../../lib/newPrimarySchoolUtils'
 import { FriggSchoolsByMunicipalityQuery } from '../../../types/schema'
 import { ReviewGroupProps } from './props'
@@ -27,9 +28,12 @@ export const School = ({
   goToScreen,
 }: ReviewGroupProps) => {
   const { formatMessage, formatDate, lang } = useLocale()
-  const { applicationType, startDate, selectedSchool } = getApplicationAnswers(
-    application.answers,
-  )
+  const {
+    applicationType,
+    startDate,
+    selectedSchool,
+    applyForNeighbourhoodSchool,
+  } = getApplicationAnswers(application.answers)
   const { childGradeLevel } = getApplicationExternalData(
     application.externalData,
   )
@@ -43,11 +47,18 @@ export const School = ({
       .find((school) => school?.id === selectedSchool)?.name
   }, [data, selectedSchool])
 
+  let label = newPrimarySchoolMessages.overview.selectedSchool
+  let screen = 'school'
+  let schoolName = selectedSchoolName
+
+  if (applyForNeighbourhoodSchool === YES) {
+    label = newPrimarySchoolMessages.overview.neighborhoodSchool
+    screen = 'neighbourhoodSchoolSelection'
+    schoolName = getNeighborhoodSchoolName(application)
+  }
+
   return (
-    <ReviewGroup
-      isEditable={editable}
-      editAction={() => goToScreen?.('school')}
-    >
+    <ReviewGroup isEditable={editable} editAction={() => goToScreen?.(screen)}>
       <Stack space={2}>
         <GridRow>
           <GridColumn span="12/12">
@@ -64,10 +75,8 @@ export const School = ({
             <GridRow rowGap={2}>
               <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
                 <DataValue
-                  label={formatMessage(
-                    newPrimarySchoolMessages.overview.selectedSchool,
-                  )}
-                  value={selectedSchoolName || ''}
+                  label={formatMessage(label)}
+                  value={schoolName || ''}
                   error={
                     error
                       ? formatMessage(coreErrorMessages.failedDataProvider)
@@ -89,16 +98,19 @@ export const School = ({
                 />
               </GridColumn>
             </GridRow>
-            {applicationType === ApplicationType.NEW_PRIMARY_SCHOOL && (
-              <GridRow>
-                <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
-                  <DataValue
-                    label={formatMessage(newPrimarySchoolMessages.shared.date)}
-                    value={formatDate(startDate)}
-                  />
-                </GridColumn>
-              </GridRow>
-            )}
+            {applicationType === ApplicationType.NEW_PRIMARY_SCHOOL &&
+              applyForNeighbourhoodSchool === NO && (
+                <GridRow>
+                  <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
+                    <DataValue
+                      label={formatMessage(
+                        newPrimarySchoolMessages.shared.date,
+                      )}
+                      value={formatDate(startDate)}
+                    />
+                  </GridColumn>
+                </GridRow>
+              )}
           </>
         )}
       </Stack>

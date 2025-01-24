@@ -466,8 +466,8 @@ export const newPrimarySchoolMessages: MessageDir = {
     },
     schoolApplyForNeighbourhoodSchoolSubLabel: {
       id: 'nps.application:primary.school.school.apply.for.neighbourhood.school.sub.label',
-      defaultMessage: 'Hverfisskólinn ykkar er: {currentSchoolName}',
-      description: 'Your neighbourhood school is: {currentSchoolName}',
+      defaultMessage: 'Hverfisskólinn ykkar er: {neighborhoodSchoolName}',
+      description: 'Your neighbourhood school is: {neighborhoodSchoolName}',
     },
     schoolApplyForOtherSchoolLabel: {
       id: 'nps.application:primary.school.school.apply.for.other.school.label',
@@ -828,6 +828,11 @@ export const newPrimarySchoolMessages: MessageDir = {
       id: 'nps.application:overview.selected.school',
       defaultMessage: 'Valinn skóli',
       description: 'Selected school',
+    },
+    neighborhoodSchool: {
+      id: 'nps.application:overview.neigborhood.school',
+      defaultMessage: 'Hverfisskóli',
+      description: 'Neighborhoodschool',
     },
     foodAllergiesOrIntolerances: {
       id: 'nps.application:overview.food.allergies.or.intolerances',
