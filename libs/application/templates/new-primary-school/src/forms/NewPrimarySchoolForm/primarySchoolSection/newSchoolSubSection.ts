@@ -18,7 +18,7 @@ export const newSchoolSubSection = buildSubSection({
   id: 'newSchoolSubSection',
   title: newPrimarySchoolMessages.primarySchool.newSchoolSubSectionTitle,
   condition: (answers) => {
-    // Only display section if "Moving abroad" is not selected as reason for application
+    // Only display section if not seleting neighbourhood school
     const { applyForNeighbourhoodSchool } = getApplicationAnswers(answers)
     return applyForNeighbourhoodSchool === NO
   },

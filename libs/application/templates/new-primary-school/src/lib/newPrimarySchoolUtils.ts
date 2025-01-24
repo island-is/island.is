@@ -345,6 +345,23 @@ export const getCurrentSchoolName = (application: Application) => {
     .find((organization) => organization?.id === primaryOrgId)?.name
 }
 
+export const getNeighborhoodSchoolName = (application: Application) => {
+  const { primaryOrgId, childMemberships } = getApplicationExternalData(
+    application.externalData,
+  )
+
+  if (!primaryOrgId || !childMemberships) {
+    return undefined
+  }
+
+  // This function needs to be improved when Juni is ready with the neighborhood school data
+
+  // Find the school name since we only have primary org id
+  return childMemberships
+    .map((membership) => membership.organization)
+    .find((organization) => organization?.id === primaryOrgId)?.name
+}
+
 export const determineNameFromApplicationAnswers = (
   application: Application,
 ) => {

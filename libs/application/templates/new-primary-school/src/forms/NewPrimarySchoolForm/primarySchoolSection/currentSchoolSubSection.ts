@@ -21,13 +21,9 @@ export const currentSchoolSubSection = buildSubSection({
   id: 'currentSchoolSubSection',
   title: newPrimarySchoolMessages.primarySchool.currentSchoolSubSectionTitle,
   condition: (answers) => {
-    const { applyForNeighbourhoodSchool, applicationType } =
-      getApplicationAnswers(answers)
+    const { applicationType } = getApplicationAnswers(answers)
     // Only display section if application type is "Application for a new primary school"
-    return (
-      applyForNeighbourhoodSchool === NO &&
-      applicationType === ApplicationType.NEW_PRIMARY_SCHOOL
-    )
+    return applicationType === ApplicationType.NEW_PRIMARY_SCHOOL
   },
 
   children: [

@@ -4,6 +4,7 @@ import {
   buildMultiField,
   buildSubSection,
   buildTextField,
+  NO,
 } from '@island.is/application/core'
 import {
   OptionsType,
@@ -16,6 +17,11 @@ export const reasonForApplicationSubSection = buildSubSection({
   id: 'reasonForApplicationSubSection',
   title:
     newPrimarySchoolMessages.primarySchool.reasonForApplicationSubSectionTitle,
+  condition: (answers) => {
+    // Only display section if not seleting neighbourhood school
+    const { applyForNeighbourhoodSchool } = getApplicationAnswers(answers)
+    return applyForNeighbourhoodSchool === NO
+  },
   children: [
     buildMultiField({
       id: 'reasonForApplication',
