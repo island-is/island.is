@@ -457,7 +457,7 @@ export const coreErrorMessages = defineMessages({
     description: 'Message indicating submission after payment failed',
   },
   paymentSubmitFailedDescription: {
-    id: 'application.system:core.payment.submitTitle',
+    id: 'application.system:core.payment.paymentSubmitFailedDescription',
     defaultMessage:
       'Villa hefur komið upp við áframhaldandi vinnslu. Vinsamlegast reynið aftur síðar. Ef villa endurtekur sig vinsamlegast hafið samband við island@island.is.',
     description: 'Message indicating submission after payment failed',
