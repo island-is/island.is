@@ -1,6 +1,5 @@
 import { GridColumn } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { formatBankInfo } from '@island.is/application/ui-components'
 import { RentalAgreement } from '../../lib/dataSchema'
 import {
   AnswerOptions,
@@ -11,6 +10,7 @@ import {
   TRUE,
 } from '../../lib/constants'
 import {
+  formatBankInfo,
   formatCurrency,
   formatDate,
   formatNationalId,
@@ -244,6 +244,8 @@ export const RentalInfoSummary = ({
           )}
         </SummaryCardRow>
       )}
+
+      {/* Payment method */}
       <SummaryCardRow editAction={goToScreen} route={rentalAmountRoute}>
         <GridColumn
           span={
