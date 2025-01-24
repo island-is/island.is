@@ -19,7 +19,7 @@ export const CurrentSchool = ({
     >
       <Stack space={2}>
         <GridRow>
-          <GridColumn span={['12/12', '12/12', '12/12', '12/12']}>
+          <GridColumn span="10/12">
             <Text variant="h3" as="h3">
               {formatMessage(
                 newPrimarySchoolMessages.primarySchool
@@ -32,7 +32,7 @@ export const CurrentSchool = ({
           <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
             <DataValue
               label={formatMessage(
-                newPrimarySchoolMessages.primarySchool.currentSchoolInfo,
+                newPrimarySchoolMessages.primarySchool.currentSchool,
               )}
               value={getCurrentSchoolName(application)}
             />
