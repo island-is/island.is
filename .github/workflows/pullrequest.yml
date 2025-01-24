@@ -131,7 +131,7 @@ jobs:
         id: matrices
         run: |
           set -euo pipefail
-          build_id="$GITHUB_RUN_ID-$GITHUB_RUN_NUMBER-$(uuidgen)"
+          build_id="$GITHUB_RUN_ID-$GITHUB_RUN_NUMBER-$RANDOM"
           # Get nx binary in PATH for faster running
           for target in test lint build e2e-ci; do
 
