@@ -11,11 +11,20 @@ interface Props {
     href?: string
   }[]
   width?: 'full' | 'half'
+  backgroundColor?: 'blue' | 'white'
 }
 
-const NestedInfoLines: React.FC<Props> = ({ label, data, width = 'full' }) => {
+const NestedInfoLines: React.FC<Props> = ({
+  label,
+  data,
+  width = 'full',
+  backgroundColor,
+}) => {
   return (
-    <Box margin={[0, 0, 1, 3, 3]}>
+    <Box
+      padding={[0, 0, 1, 3, 3]}
+      background={backgroundColor === 'blue' ? 'blue100' : 'white'}
+    >
       {label && (
         <Box className={styles.title} paddingBottom={2}>
           <Text variant="small" fontWeight="medium">
