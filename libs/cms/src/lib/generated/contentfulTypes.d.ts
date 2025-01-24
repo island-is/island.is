@@ -3330,6 +3330,9 @@ export interface IOrganizationPageFields {
 
   /** Can be found in search results */
   canBeFoundInSearchResults?: boolean | undefined
+
+  /** Show past events option */
+  showPastEventsOption?: boolean | undefined
 }
 
 export interface IOrganizationPage extends Entry<IOrganizationPageFields> {
