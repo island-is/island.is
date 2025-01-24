@@ -147,6 +147,26 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     'support.specialSupport',
   ) as YesOrNo
 
+  const hasIntegratedServices = getValueViaPath(
+    answers,
+    'support.hasIntegratedServices',
+  ) as YesOrNo
+
+  const hasCaseManager = getValueViaPath(
+    answers,
+    'support.hasCaseManager',
+  ) as YesOrNo
+
+  const caseManagerName = getValueViaPath(
+    answers,
+    'support.caseManager.name',
+  ) as string
+
+  const caseManagerEmail = getValueViaPath(
+    answers,
+    'support.caseManager.email',
+  ) as string
+
   const requestMeeting = getValueViaPath(
     answers,
     'support.requestMeeting[0]',
@@ -200,6 +220,10 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     requestMedicationAssistance,
     developmentalAssessment,
     specialSupport,
+    hasIntegratedServices,
+    hasCaseManager,
+    caseManagerName,
+    caseManagerEmail,
     requestMeeting,
     startDate,
     schoolMunicipality,
