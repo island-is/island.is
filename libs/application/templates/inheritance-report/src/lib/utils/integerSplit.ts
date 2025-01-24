@@ -1,40 +1,59 @@
-// Creates an array of roughly equal shares that sums up to the total
-// For example:
-//  10/3  => [4, 3, 3]
-//  100/6 => [16, 16, 17, 17, 17, 17]
-export const integerSplit = (total: number, parts: number): number[] => {
-  if (parts <= 0) {
-    return []
+// Creates an array of calculated shares that sum up to the total
+// F.x:
+//  total: 100, percentages: [33.3, 33.3, 33.4] => [33, 33, 34]
+//
+// Requirements: Percentages should sum up to 100 exactly.
+
+// WARNING:
+//  This method uses the Hamilton method of apportionment
+//  which renders it susceptible to the Alabama Paradox.
+//  Do not use this method of apportionment elsewhere unless you are certain
+//  that the Alabama Paradox is inconsequential to your use case.
+//  See: https://en.wikipedia.org/wiki/Apportionment_paradox
+export const integerPercentageSplit = (
+  total: number,
+  percentages: number[],
+): number[] => {
+  const negativeTotal = total < 0
+  total = Math.abs(total)
+
+  const percentageSum = percentages.reduceRight((p, c) => p + c)
+  const tolerance = 1.0e-10
+  if (percentageSum !== 100 && Math.abs(100 - percentageSum) > tolerance) {
+    throw new Error('Percentages must add up to 100 exactly')
   }
 
-  // Get share and fraction, f.x. 10/3 => share: 3, fraction: 0.333333
-  let share = total / parts
-  const shareFraction = share - Math.floor(share)
+  if (percentages.some((p) => p < 0)) {
+    throw new Error('A percentage may not be negative')
+  }
 
-  // Choose which way to round based on the fraction to reduce
-  // how many operations are needed
-  //  F.x: adjusts 9=>10 one time instead of 10=>9 ten times for 100/11
-  const roundingFunction = shareFraction >= 0.5 ? Math.ceil : Math.floor
-  share = roundingFunction(share)
-  const adjuster = shareFraction >= 0.5 ? -1 : 1
+  const shares = percentages.map((p) => Math.floor((p / 100) * total))
+  let sum = shares.reduceRight((p, c) => p + c)
 
-  // Create a dumb array and keep an account of it's sum
-  // F.x: 10/3 results here in [3, 3, 3] with sum 9
-  let sum = 0
-  const result = Array.from({ length: parts }, () => {
-    sum += share
-    return share
-  })
+  // The value of accumulated errors should not exceed the number of elements.
+  // Therefore we iterate in a specific order.
+  // We correct **first** the values that were floored the most.
 
-  // Iterate over the array with the adjuster until the sum matches
-  // F.x 10/3 goes from [3, 3, 3] to [4, 3, 3] in one step with adjuster  1
-  // ~~~  8/3 goes from [3, 3, 3] to [2, 3, 3] in one step with adjuster -1
+  // For example, flooring the values [1.8, 1.6, 1.9, 1.7] goes to [1, 1, 1, 1].
+  // The real total is 7 but the floored total is 4. We need to add a value of 1 to 3 shares
+  // in order to match that same total.
+  // So a fair result is [2, 1, 2, 2] from an iterationOrder = [1, 3, 0, 2].
+  const iterationOrder = percentages
+    .map((p) => (p / 100) * total - Math.floor((p / 100) * total))
+    .map((value, index) => ({ value, index }))
+    .sort((a, b) => b.value - a.value)
+    .map((e) => e.index)
+
   let iterator = 0
-  while (sum != total) {
-    result[iterator] += adjuster
-    sum += adjuster
-    iterator += 1
-  }
+  while (sum < total) {
+    shares[iterationOrder[iterator]] += 1
+    sum += 1
 
-  return result
+    iterator += 1
+    iterator = iterator % iterationOrder.length
+  }
+  if (negativeTotal) {
+    return shares.map((e) => e * -1)
+  }
+  return shares
 }

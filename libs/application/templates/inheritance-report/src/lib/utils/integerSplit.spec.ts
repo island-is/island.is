@@ -1,46 +1,115 @@
-import { integerSplit } from './integerSplit'
-describe('integerSplit', () => {
-  it('should split a given amount into roughly equal parts', () => {
-    expect(integerSplit(100, 11)).toEqual([10, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9])
-    expect(integerSplit(10, 3)).toEqual([4, 3, 3])
-    expect(integerSplit(100, 6)).toEqual([16, 16, 17, 17, 17, 17])
+import { integerPercentageSplit } from './integerSplit'
+
+describe('integerPercentageSplit', () => {
+  it('should split a total on percentages roughly equally', () => {
+    expect(integerPercentageSplit(100, [33.3, 33.3, 33.4])).toEqual([
+      33, 33, 34,
+    ])
+    expect(integerPercentageSplit(10, [11, 19, 31, 39])).toEqual([1, 2, 3, 4])
+    expect(integerPercentageSplit(10, [2, 49.5, 48.5])).toEqual([0, 5, 5])
+    expect(integerPercentageSplit(100, [2, 49.5, 48.5])).toEqual([2, 50, 48])
+    expect(integerPercentageSplit(1000, [2, 49.5, 48.5])).toEqual([
+      20, 495, 485,
+    ])
   })
 
-  it('should return an array that sums up to the total', () => {
-    const total = 1000
+  it('should preserve the total when splitting', () => {
+    expect(integerPercentageSplit(2, [1, 2, 47, 50])).toEqual([0, 0, 1, 1])
+    expect(
+      integerPercentageSplit(1, [1, 2, 3, 4, 5, 6, 7, 8, 9, 9, 10, 11, 12, 13]),
+    ).toEqual([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1])
+
+    // Iterate through some percentages that add up to 100 percent
+    // and see if the total is preserved
+    const total = 999
     let i = 1
-    while (i < 1000) {
-      const res = integerSplit(total, i)
-      const sum = res.reduceRight((p, c) => p + c)
-      expect(sum).toEqual(total)
+    while (i < 40) {
+      let j = 1
+      while (j < 25) {
+        let s = 100 - i - j // so s + i + j is necessarily 100
+        if (s > 0) {
+          const res = integerPercentageSplit(total, [i, j, s])
+          expect(res.reduceRight((p, c) => p + c)).toEqual(total)
+        }
+        j += 1
+      }
       i += 1
     }
   })
 
-  // Unusual usage and edge cases
-  it('creates some zero shares for splits where the total is less than parts', () => {
-    expect(integerSplit(4, 5)).toEqual([0, 1, 1, 1, 1])
-    expect(integerSplit(6, 12)).toEqual([0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1])
-  })
-
-  it('rather than crashing, returns an empty array when requesting 0 or less shares', () => {
-    expect(integerSplit(2000, 0)).toEqual([])
-    expect(integerSplit(800, -5)).toEqual([])
-  })
-
-  it('returns an array of zeroes when splitting 0', () => {
-    expect(integerSplit(0, 4)).toEqual([0, 0, 0, 0])
-    expect(integerSplit(0, 3)).toEqual([0, 0, 0])
-    expect(integerSplit(0, 2)).toEqual([0, 0])
-    expect(integerSplit(0, 1)).toEqual([0])
-    expect(integerSplit(0, 0)).toEqual([])
-  })
-
-  it('also divides negatives roughly equally', () => {
-    expect(integerSplit(-100, 11)).toEqual([
-      -10, -9, -9, -9, -9, -9, -9, -9, -9, -9, -9,
+  it('should split deterministically while preserving order', () => {
+    expect(integerPercentageSplit(199, [33.3, 33.3, 33.4])).toEqual([
+      66, 66, 67,
     ])
-    expect(integerSplit(-10, 3)).toEqual([-4, -3, -3])
-    expect(integerSplit(-100, 6)).toEqual([-16, -16, -17, -17, -17, -17])
+    expect(integerPercentageSplit(199, [33.3, 33.4, 33.3])).toEqual([
+      66, 67, 66,
+    ])
+    expect(integerPercentageSplit(199, [33.4, 33.3, 33.3])).toEqual([
+      67, 66, 66,
+    ])
+
+    expect(integerPercentageSplit(256, [12.5, 42.8, 44.7])).toEqual([
+      32, 110, 114,
+    ])
+    expect(integerPercentageSplit(256, [12.5, 44.7, 42.8])).toEqual([
+      32, 114, 110,
+    ])
+    expect(integerPercentageSplit(256, [44.7, 12.5, 42.8])).toEqual([
+      114, 32, 110,
+    ])
+  })
+
+  it('should correctly divide negative totals', () => {
+    expect(integerPercentageSplit(-100, [33.3, 33.3, 33.4])).toEqual([
+      -33, -33, -34,
+    ])
+    expect(integerPercentageSplit(-10, [11, 19, 31, 39])).toEqual([
+      -1, -2, -3, -4,
+    ])
+    expect(integerPercentageSplit(-10, [2, 49.5, 48.5])).toEqual([-0, -5, -5])
+    expect(integerPercentageSplit(-100, [2, 49.5, 48.5])).toEqual([
+      -2, -50, -48,
+    ])
+    expect(integerPercentageSplit(-1000, [2, 49.5, 48.5])).toEqual([
+      -20, -495, -485,
+    ])
+  })
+
+  // Exceptions and edge cases
+  it('should throw an error when percentages do not add up to 100', () => {
+    expect(() => {
+      integerPercentageSplit(0, [1, 2, 3])
+    }).toThrowError('Percentages must add up to 100 exactly')
+
+    expect(() => {
+      integerPercentageSplit(0, [99, 999, 9999])
+    }).toThrowError('Percentages must add up to 100 exactly')
+
+    expect(() => {
+      integerPercentageSplit(0, [33.333, 33.333, 33.333])
+    }).toThrowError('Percentages must add up to 100 exactly')
+
+    // Should be tolerant for 100-d ~= 100 when d is tiny (see tolerance value in function)
+    // Usually errors are around 1e-14 in size but we may as well select ~1.0e-10 for some leeway
+    // Such miniscule differences should not alter the outcome of results in any meaningful way
+    expect(
+      integerPercentageSplit(
+        0,
+        [33.333333333333, 33.333333333333, 33.333333333333],
+      ),
+    ).toEqual([0, 0, 0])
+  })
+
+  it('should throw an error when some percentage is negative', () => {
+    expect(() => {
+      integerPercentageSplit(0, [100, -10, 10])
+    }).toThrowError('A percentage may not be negative')
+
+    expect(() => {
+      integerPercentageSplit(
+        0,
+        [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, -5],
+      )
+    }).toThrowError('A percentage may not be negative')
   })
 })
