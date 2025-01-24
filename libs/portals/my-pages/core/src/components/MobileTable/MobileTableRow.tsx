@@ -45,7 +45,7 @@ const MobileTableRow: React.FC<Props> = ({
     <Box
       className={cn({
         [styles.container]: extended,
-        [styles.divider]: !extended,
+        [styles.divider]: !extended && !inner,
       })}
       padding={inner ? 1 : 0}
       paddingTop={3}
