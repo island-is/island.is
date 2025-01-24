@@ -140,7 +140,7 @@ jobs:
             lint) parallelize=true ;;
             *) parallelize=false ;;
             esac
-            yarn nx show projects --with-target "$target" --affected |
+            yarn nx show projects --with-target "$target" --affected --base "$BASE_REF" |
               jq -Rrcs --arg target "$target" --arg build_id "$build_id" --argjson parallelize "$parallelize" '
               split("\n") |
               map(select(length > 0)) |
