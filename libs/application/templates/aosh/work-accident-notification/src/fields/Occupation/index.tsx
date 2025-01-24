@@ -1,7 +1,7 @@
 import { getValueViaPath } from '@island.is/application/core'
 import { FieldBaseProps } from '@island.is/application/types'
 import { FC, useEffect, useState } from 'react'
-import { Box, Select } from '@island.is/island-ui/core'
+import { Box, ErrorMessage, Select } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { employee } from '../../lib/messages'
 import { Controller, useFormContext } from 'react-hook-form'
@@ -175,6 +175,16 @@ export const Occupation: FC<
     }
     setSelectedSubMajorGroup(selectedGroup)
 
+    if (selectedGroup?.value) {
+      const isValidToSelect = findGroupByCode(
+        subMajorGroupOptions,
+        selectedGroup.value,
+      )?.validToSelect
+      if (isValidToSelect) {
+        setValue(`employee[${idx}].victimsOccupation`, selectedGroup)
+      }
+    }
+
     setMinorGroupOptions(
       victimOccupationMinorGroups.filter(
         (group) => group.code?.substring(0, 2) === value.value?.substring(0, 2),
@@ -193,6 +203,17 @@ export const Occupation: FC<
       label: value.label,
     }
     setSelectedMinorGroup(selectedGroup)
+
+    if (selectedGroup?.value) {
+      const isValidToSelect = findGroupByCode(
+        minorGroupOptions,
+        selectedGroup.value,
+      )?.validToSelect
+      if (isValidToSelect) {
+        setValue(`employee[${idx}].victimsOccupation`, selectedGroup)
+      }
+    }
+
     setUnitGroupOptions(
       victimsOccupationUnitGroups.filter(
         (group) => group.code?.substring(0, 3) === value.value?.substring(0, 3),
@@ -331,6 +352,7 @@ export const Occupation: FC<
               <Select
                 label={formatMessage(employee.employee.majorGroupLabel)}
                 name={`employee[${idx}].victimsOccupationMajor`}
+                required={true}
                 options={majorGroupOptions.map((item) => ({
                   label: item.name || '',
                   value: item.code,
@@ -362,6 +384,7 @@ export const Occupation: FC<
               <Select
                 label={formatMessage(employee.employee.subMajorGroupLabel)}
                 name={`employee[${idx}].victimsOccupationSubMajor`}
+                required={true}
                 isDisabled={
                   !selectedMajorGroup || subMajorGroupOptions.length === 0
                 }
@@ -396,6 +419,7 @@ export const Occupation: FC<
               <Select
                 label={formatMessage(employee.employee.minorGroupLabel)}
                 name={`employee[${idx}].victimsOccupationMinor`}
+                required={true}
                 isDisabled={
                   !selectedSubMajorGroup || minorGroupOptions.length === 0
                 }
@@ -430,6 +454,7 @@ export const Occupation: FC<
               <Select
                 label={formatMessage(employee.employee.unitGroupLabel)}
                 name={`employee[${idx}].victimsOccupationUnit`}
+                required={true}
                 isDisabled={
                   !selectedMinorGroup || unitGroupOptions.length === 0
                 }

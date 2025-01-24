@@ -10,10 +10,10 @@ export const primarySchoolSection = buildSection({
   id: 'primarySchoolSection',
   title: newPrimarySchoolMessages.primarySchool.sectionTitle,
   children: [
-    reasonForApplicationSubSection,
-    siblingsSubSection,
     currentSchoolSubSection,
     newSchoolSubSection,
+    reasonForApplicationSubSection,
+    siblingsSubSection,
     startingSchoolSubSection,
   ],
 })
