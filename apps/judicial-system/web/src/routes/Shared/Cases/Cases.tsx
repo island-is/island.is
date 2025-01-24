@@ -30,6 +30,7 @@ import {
 import { PastCasesTable } from '@island.is/judicial-system-web/src/components/Table'
 import { TableWrapper } from '@island.is/judicial-system-web/src/components/Table/Table'
 import {
+  CaseDecision,
   CaseListEntry,
   CaseState,
   CaseTransition,
@@ -170,7 +171,11 @@ export const Cases: FC = () => {
         if (isIndictmentCase(c.type)) {
           return !isCompletedCase(c.state)
         } else {
-          return !(isCompletedCase(c.state) && c.rulingSignatureDate)
+          return !(
+            isCompletedCase(c.state) &&
+            (c.rulingSignatureDate ||
+              c.decision === CaseDecision.COMPLETED_WITHOUT_RULING)
+          )
         }
       }
 

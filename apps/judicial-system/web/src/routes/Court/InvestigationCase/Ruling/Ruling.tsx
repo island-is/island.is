@@ -113,6 +113,8 @@ const Ruling = () => {
   const caseFiles =
     workingCase.caseFiles?.filter((file) => !file.category) ?? []
 
+  const isRulingRequired =
+    workingCase.decision !== CaseDecision.COMPLETED_WITHOUT_RULING
   return (
     <PageLayout
       workingCase={workingCase}
@@ -143,9 +145,7 @@ const Ruling = () => {
           <Checkbox
             name={formatMessage(m.sections.completedWithoutRuling.label)}
             label={formatMessage(m.sections.completedWithoutRuling.label)}
-            checked={Boolean(
-              workingCase.decision === CaseDecision.COMPLETED_WITHOUT_RULING,
-            )}
+            checked={!isRulingRequired}
             onChange={({ target }) => {
               setAndSendCaseToServer(
                 [
@@ -153,6 +153,9 @@ const Ruling = () => {
                     decision: target.checked
                       ? CaseDecision.COMPLETED_WITHOUT_RULING
                       : null,
+                    conclusion: formatMessage(
+                      m.sections.completedWithoutRuling.conclusion,
+                    ),
                     force: true,
                   },
                 ],
@@ -203,6 +206,7 @@ const Ruling = () => {
             rows={7}
             autoExpand={{ on: true, maxHeight: 300 }}
             required
+            disabled={!isRulingRequired}
           />
         </Box>
         <Box component="section" marginBottom={5}>
@@ -245,6 +249,7 @@ const Ruling = () => {
             rows={7}
             autoExpand={{ on: true, maxHeight: 300 }}
             required
+            disabled={!isRulingRequired}
           />
         </Box>
         <Box component="section" marginBottom={5}>
@@ -289,6 +294,7 @@ const Ruling = () => {
               rows={16}
               autoExpand={{ on: true, maxHeight: 600 }}
               required
+              disabled={!isRulingRequired}
             />
           </Box>
         </Box>
@@ -336,6 +342,7 @@ const Ruling = () => {
               rows={16}
               autoExpand={{ on: true, maxHeight: 600 }}
               required
+              disabled={!isRulingRequired}
             />
           </Box>
         </Box>
@@ -348,6 +355,7 @@ const Ruling = () => {
           <RulingInput
             workingCase={workingCase}
             setWorkingCase={setWorkingCase}
+            disabled={!isRulingRequired}
           />
         </Box>
         <Box component="section" marginBottom={5}>
@@ -399,6 +407,7 @@ const Ruling = () => {
                   setWorkingCase,
                 )
               }}
+              disabled={!isRulingRequired}
             />
           </Box>
         </Box>
@@ -433,6 +442,7 @@ const Ruling = () => {
             rows={7}
             autoExpand={{ on: true, maxHeight: 300 }}
             textarea
+            disabled={!isRulingRequired}
           />
         </Box>
         <Box marginBottom={10}>
@@ -440,6 +450,7 @@ const Ruling = () => {
             caseId={workingCase.id}
             title={formatMessage(core.pdfButtonRuling)}
             pdfType="ruling"
+            disabled={!isRulingRequired}
           />
         </Box>
       </FormContentContainer>

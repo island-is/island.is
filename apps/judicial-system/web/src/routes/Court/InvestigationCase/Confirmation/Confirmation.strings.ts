@@ -18,6 +18,12 @@ export const confirmation = defineMessages({
     description:
       'Notaður sem texti í "áfram" takkanum á staðfesingar skrefi í rannsóknarheimildum þegar verið er að samþykkja kröfu',
   },
+  continueButtonTextCompletedWithoutRuling: {
+    id: 'judicial.system.core:investigation_case_confirmation.continue_button_text_completed_without_ruling',
+    defaultMessage: 'Ljúka máli án úrskurðar',
+    description:
+      'Notaður sem texti í "áfram" takkanum á staðfesingar skrefi í rannsóknarheimildum þegar verið er að ljúka máli án úrskurðar',
+  },
   continueButtonTextAcceptingPartially: {
     id: 'judicial.system.core:investigation_case_confirmation.continue_button_text_accepting_partially',
     defaultMessage: 'Staðfesta og undirrita úrskurð',
