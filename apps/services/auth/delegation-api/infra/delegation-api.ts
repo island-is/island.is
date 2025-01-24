@@ -50,11 +50,9 @@ export const serviceSetup = (services: {
       },
       XROAD_NATIONAL_REGISTRY_REDIS_NODES: REDIS_NODE_CONFIG,
       XROAD_RSK_PROCURING_REDIS_NODES: REDIS_NODE_CONFIG,
-      USER_NOTIFICATION_API_URL: {
-        dev: ref((h) => `http://${h.svc(services.userNotification)}`),
-        staging: ref((h) => `http://${h.svc(services.userNotification)}`),
-        prod: 'https://user-notification.internal.island.is',
-      },
+      USER_NOTIFICATION_API_URL: ref(
+        (h) => `http://${h.svc(services.userNotification)}`,
+      ),
       COMPANY_REGISTRY_XROAD_PROVIDER_ID: {
         dev: 'IS-DEV/GOV/10006/Skatturinn/ft-v1',
         staging: 'IS-TEST/GOV/5402696029/Skatturinn/ft-v1',
