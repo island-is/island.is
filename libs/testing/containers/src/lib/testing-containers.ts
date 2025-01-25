@@ -21,11 +21,14 @@ export const startPostgres = async () => {
     'public.ecr.aws/docker/library/postgres:15.3-alpine',
   )
     .withName(uniqueName('postgres'))
-    .withEnv('POSTGRES_DB', name)
-    .withEnv('POSTGRES_USER', name)
-    .withEnv('POSTGRES_PASSWORD', name)
+    .withEnvironment({ POSTGRES_DB: name })
+    .withEnvironment({ POSTGRES_USER: name })
+    .withEnvironment({ POSTGRES_PASSWORD: name })
     .withHealthCheck({
-      test: `PGPASSWORD=${name} psql -U ${name} -d ${name} -c 'SELECT 1'`,
+      test: [
+        'CMD-SHELL',
+        `PGPASSWORD=${name} psql -U ${name} -d ${name} -c 'SELECT 1'`,
+      ],
       interval: 1000,
       timeout: 3000,
       retries: 5,
@@ -49,7 +52,7 @@ export const startRedisCluster = async () => {
     'public.ecr.aws/bitnami/redis-cluster:5.0.14',
   )
     .withName(uniqueName('redis'))
-    .withEnv('IP', '0.0.0.0')
+    .withEnvironment({ IP: '0.0.0.0' })
     .withExposedPorts(...portConfig.redis)
     .start()
 }
