@@ -1,7 +1,6 @@
 import React, { FC } from 'react'
 
 import { Box, SkeletonLoader } from '@island.is/island-ui/core'
-import { formatText } from '@island.is/application/core'
 import { Application, FieldBaseProps } from '@island.is/application/types'
 import { m } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
@@ -14,7 +13,6 @@ interface QualitySignatureData {
 
 const Signature: FC<React.PropsWithChildren<QualitySignatureData>> = ({
   qualitySignature,
-  application,
 }: QualitySignatureData) => {
   const { formatMessage } = useLocale()
 
@@ -25,8 +23,7 @@ const Signature: FC<React.PropsWithChildren<QualitySignatureData>> = ({
   const src = qualitySignature
   return (
     <img
-      // TODO: UPDATE ALT
-      alt={formatText(m.qualityPhotoAltText, application, formatMessage) || ''}
+      alt={formatMessage(m.qualityPhotoAltText)}
       src={src}
       id="mySignature"
     />
@@ -39,7 +36,7 @@ const QualitySignature: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   const { qualitySignature } = useQualitySignature(application)
   const img = Signature({ qualitySignature, application })
   return (
-    <Box marginTop={4} marginBottom={3} width="full">
+    <Box marginTop={2}>
       {qualitySignature ? img : <SkeletonLoader height={242} width={191} />}
     </Box>
   )
