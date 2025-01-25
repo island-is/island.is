@@ -277,6 +277,10 @@ export const m = {
       id: 'web.grants:home.grantCategoryEnergyTransitionDescription',
       defaultMessage: 'Lýsing á orkuskiptum',
     },
+    grantCategoryEnvironmentDescription: {
+      id: 'web.grants:home.grantCategoryEnvironmentDescription',
+      defaultMessage: 'Lýsing á umhverfi',
+    },
   }),
   bullets: defineMessages({
     open: {
