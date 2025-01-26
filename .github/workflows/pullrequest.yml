@@ -165,6 +165,7 @@ jobs:
       - name: Prepare test targets
         id: test_projects
         env:
+          CHUNK_SIZE: 3
           DISABLE_CHUNKS: 'false'
           DISABLE_GROUPING: 'false'
           DISABLE_PROBLEMATIC: 'false'
