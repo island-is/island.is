@@ -13,14 +13,34 @@ import set from 'lodash/set'
 import { HTMLEditor } from '../components/htmlEditor/HTMLEditor'
 import { cleanTypename, getAdvertMarkup } from '../lib/utils'
 import { DEPARTMENT_A } from '../lib/constants'
+import { useAdvertTemplateTypes } from '../hooks/useAdvertTemplateTypes'
+import { useAdvertTemplateLazy } from '../hooks/useAdvertTemplate'
+import { useMemo, useState } from 'react'
+import { uuid } from 'uuidv4'
 
 export const Advert = ({ application }: OJOIFieldBaseProps) => {
   const { setValue } = useFormContext()
-  const { application: currentApplication } = useApplication({
-    applicationId: application.id,
-  })
+  const { application: currentApplication, updateApplication } = useApplication(
+    {
+      applicationId: application.id,
+    },
+  )
+
+  const [advertHtmlEditorKey, setAdvertHtmlEditorKey] = useState(
+    'advert-html-content',
+  )
 
   const { departments, loading: loadingDepartments } = useDepartments()
+  const { templateTypes, loading: advertTemplateLoading } =
+    useAdvertTemplateTypes()
+
+  const [advertTemplateQuery] = useAdvertTemplateLazy((data) => {
+    const currentAnswers = structuredClone(currentApplication.answers)
+    const html = data.officialJournalOfIcelandApplicationAdvertTemplate.html
+    const updatedAnswers = set(currentAnswers, InputFields.advert.html, html)
+    setValue(InputFields.advert.type, html)
+    updateApplication(updatedAnswers, () => setAdvertHtmlEditorKey(uuid()))
+  })
 
   const defaultDepartment =
     application.answers?.advert?.department?.id || DEPARTMENT_A
@@ -29,7 +49,6 @@ export const Advert = ({ application }: OJOIFieldBaseProps) => {
     initalDepartmentId: defaultDepartment,
     pageSize: 300,
   })
-
   const departmentOptions = departments?.map((d) => ({
     label: d.title,
     value: {
@@ -54,6 +73,15 @@ export const Advert = ({ application }: OJOIFieldBaseProps) => {
     type: currentApplication.answers.advert?.type?.title,
     title: currentApplication.answers.advert?.title,
   })
+
+  const templateOptions = useMemo(
+    () =>
+      templateTypes?.map((tt) => ({
+        label: tt.title,
+        value: tt.type,
+      })) ?? [],
+    [templateTypes],
+  )
 
   return (
     <Stack space={[2, 2, 3]}>
@@ -85,6 +113,7 @@ export const Advert = ({ application }: OJOIFieldBaseProps) => {
           />
 
           <OJOISelectController
+            controller={true}
             width="half"
             applicationId={application.id}
             name={InputFields.advert.mainType}
@@ -93,12 +122,10 @@ export const Advert = ({ application }: OJOIFieldBaseProps) => {
             loading={mainTypeLoading}
             options={mainTypeOptions}
             onBeforeChange={(answers, value) => {
-              if (value.types.length === 1) {
-                const cleaned = cleanTypename(value.types[0])
-                set(answers, InputFields.advert.type, cleaned)
-              } else {
-                set(answers, InputFields.advert.type, null)
-              }
+              const typeValue =
+                value.types.length === 1 ? cleanTypename(value.types[0]) : null
+              set(answers, InputFields.advert.type, typeValue)
+              setValue(InputFields.advert.type, typeValue)
             }}
           />
 
@@ -136,17 +163,23 @@ export const Advert = ({ application }: OJOIFieldBaseProps) => {
       <FormGroup title={advert.headings.materialForPublication}>
         <Stack space={[2, 2, 3]}>
           <OJOISelectController
+            width="half"
             name={InputFields.misc.selectedTemplate}
             label={advert.inputs.template.label}
             placeholder={advert.inputs.template.placeholder}
             applicationId={application.id}
-            disabled={true}
+            options={templateOptions}
+            loading={advertTemplateLoading}
+            onChange={(type) => {
+              advertTemplateQuery({ variables: { params: { type: type } } })
+            }}
           />
 
           <OJOIHtmlController
             applicationId={application.id}
             name={InputFields.advert.html}
             defaultValue={currentApplication.answers?.advert?.html}
+            key={advertHtmlEditorKey}
             // we have use setValue from useFormContext to update the value
             // because this is not a controlled component
             onChange={(value) => setValue(InputFields.advert.html, value)}

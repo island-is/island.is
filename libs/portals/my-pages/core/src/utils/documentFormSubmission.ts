@@ -1,6 +1,6 @@
 import { createBffUrlGenerator } from '@island.is/react-spa/bff'
 
-export const formSubmit = async (url: string, annual?: boolean) => {
+export const formSubmit = async (url: string) => {
   const bffUrlGenerator = createBffUrlGenerator()
   const bffUrl = bffUrlGenerator('/api', {
     url,
@@ -16,15 +16,6 @@ export const formSubmit = async (url: string, annual?: boolean) => {
   form.method = 'post'
   form.action = bffUrl
   form.target = '_blank'
-
-  if (annual) {
-    // Optional param
-    const annualInput = document.createElement('input')
-    form.appendChild(annualInput)
-    annualInput.type = 'hidden'
-    annualInput.name = 'annualDoc'
-    annualInput.value = 'true'
-  }
 
   document.body.appendChild(form)
   form.submit()

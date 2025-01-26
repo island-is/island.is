@@ -345,7 +345,7 @@ export const assets = buildSection({
                       [ESTATE_INHERITANCE]: m.bankAccountCapital,
                       [PREPAID_INHERITANCE]: m.bankAccountCapitalPrePaid,
                     },
-                    id: 'amount',
+                    id: 'propertyValuation',
                     required: true,
                     currency: true,
                   },
@@ -376,7 +376,7 @@ export const assets = buildSection({
                 fromExternalData: 'bankAccounts',
                 skipPushRight: true,
                 repeaterButtonText: m.bankAccountRepeaterButton,
-                sumField: 'amount',
+                sumField: 'propertyValuation',
                 sumField2: 'exchangeRateOrInterest',
               },
             ),
@@ -712,7 +712,15 @@ export const assets = buildSection({
               title: '',
               large: false,
               backgroundColor: 'white',
-              options: [{ value: YES, label: m.assetsOverviewConfirmation }],
+              options: ({ answers }) => [
+                {
+                  value: YES,
+                  label:
+                    answers.applicationFor === PREPAID_INHERITANCE
+                      ? m.assetsOverviewConfirmationPrePaid
+                      : m.assetsOverviewConfirmation,
+                },
+              ],
             }),
             buildCustomField({
               title: '',

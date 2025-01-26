@@ -105,6 +105,7 @@ const ActiveCases: FC<Props> = (props) => {
               courtDate={row.courtDate}
               indictmentDecision={row.indictmentDecision}
               indictmentRulingDecision={row.indictmentRulingDecision}
+              defendants={row.defendants}
             />
           ),
         },

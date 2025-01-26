@@ -1,4 +1,5 @@
 import { useQuery } from '@apollo/client'
+import { coreErrorMessages } from '@island.is/application/core'
 import { DataValue, ReviewGroup } from '@island.is/application/ui-components'
 import {
   GridColumn,
@@ -8,17 +9,17 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
+import { useMemo } from 'react'
 import { friggSchoolsByMunicipalityQuery } from '../../../graphql/queries'
 import { newPrimarySchoolMessages } from '../../../lib/messages'
 import {
   formatGrade,
   getApplicationAnswers,
   getApplicationExternalData,
-  getCurrentSchoolName,
 } from '../../../lib/newPrimarySchoolUtils'
 import { FriggSchoolsByMunicipalityQuery } from '../../../types/schema'
 import { ReviewGroupProps } from './props'
-import { useMemo } from 'react'
+import { ApplicationType } from '../../../lib/constants'
 
 export const School = ({
   application,
@@ -26,14 +27,14 @@ export const School = ({
   goToScreen,
 }: ReviewGroupProps) => {
   const { formatMessage, formatDate, lang } = useLocale()
-  const { startDate, selectedSchool } = getApplicationAnswers(
+  const { applicationType, startDate, selectedSchool } = getApplicationAnswers(
     application.answers,
   )
   const { childGradeLevel } = getApplicationExternalData(
     application.externalData,
   )
 
-  const { data, loading } = useQuery<FriggSchoolsByMunicipalityQuery>(
+  const { data, loading, error } = useQuery<FriggSchoolsByMunicipalityQuery>(
     friggSchoolsByMunicipalityQuery,
   )
   const selectedSchoolName = useMemo(() => {
@@ -49,7 +50,7 @@ export const School = ({
     >
       <Stack space={2}>
         <GridRow>
-          <GridColumn span={['12/12', '12/12', '12/12', '12/12']}>
+          <GridColumn span="12/12">
             <Text variant="h3" as="h3">
               {formatMessage(newPrimarySchoolMessages.overview.schoolTitle)}
             </Text>
@@ -64,39 +65,40 @@ export const School = ({
               <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
                 <DataValue
                   label={formatMessage(
-                    newPrimarySchoolMessages.overview.currentSchool,
+                    newPrimarySchoolMessages.overview.selectedSchool,
                   )}
-                  value={getCurrentSchoolName(application)}
+                  value={selectedSchoolName || ''}
+                  error={
+                    error
+                      ? formatMessage(coreErrorMessages.failedDataProvider)
+                      : undefined
+                  }
                 />
               </GridColumn>
               <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
                 <DataValue
                   label={formatMessage(
-                    newPrimarySchoolMessages.overview.selectedSchool,
+                    newPrimarySchoolMessages.primarySchool.grade,
                   )}
-                  value={selectedSchoolName || ''}
-                />
-              </GridColumn>
-            </GridRow>
-            <GridRow rowGap={2}>
-              <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
-                <DataValue
-                  label={formatMessage(newPrimarySchoolMessages.overview.grade)}
                   value={formatMessage(
-                    newPrimarySchoolMessages.overview.currentGrade,
+                    newPrimarySchoolMessages.primarySchool.currentGrade,
                     {
                       grade: formatGrade(childGradeLevel, lang),
                     },
                   )}
                 />
               </GridColumn>
-              <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
-                <DataValue
-                  label={formatMessage(newPrimarySchoolMessages.shared.date)}
-                  value={formatDate(startDate)}
-                />
-              </GridColumn>
             </GridRow>
+            {applicationType === ApplicationType.NEW_PRIMARY_SCHOOL && (
+              <GridRow>
+                <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
+                  <DataValue
+                    label={formatMessage(newPrimarySchoolMessages.shared.date)}
+                    value={formatDate(startDate)}
+                  />
+                </GridColumn>
+              </GridRow>
+            )}
           </>
         )}
       </Stack>

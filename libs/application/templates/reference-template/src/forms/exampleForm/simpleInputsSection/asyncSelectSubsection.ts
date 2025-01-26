@@ -1,5 +1,7 @@
 import {
   buildAsyncSelectField,
+  buildDescriptionField,
+  buildDividerField,
   buildMultiField,
   buildSubSection,
 } from '@island.is/application/core'
@@ -67,6 +69,56 @@ export const asyncSelectSubsection = buildSubSection({
               data?.friggSchoolsByMunicipality?.map((municipality) => ({
                 value: municipality.name,
                 label: municipality.name,
+              })) ?? []
+            )
+          },
+        }),
+        buildDividerField({}),
+        buildDescriptionField({
+          id: 'asyncSelectDescription',
+          title: 'Value dependent async select',
+          description:
+            'Sometimes the options you might want to present to a user must depend on the value of another async select field. Value dependent async select offers just that.',
+          titleVariant: 'h3',
+          marginBottom: [2],
+        }),
+
+        buildAsyncSelectField({
+          id: 'primaryAsyncSelect',
+          title: 'Primary Async Select',
+          placeholder: 'This will inform the dependent async select',
+          loadingError: 'Loading error',
+          loadOptions: async ({ apolloClient }) => {
+            const { data } =
+              await apolloClient.query<FriggSchoolsByMunicipality>({
+                query: friggSchoolsByMunicipalityQuery,
+              })
+
+            return (
+              data?.friggSchoolsByMunicipality?.map((municipality) => ({
+                value: municipality.name,
+                label: municipality.name,
+              })) ?? []
+            )
+          },
+        }),
+
+        buildAsyncSelectField({
+          id: 'dependentAsyncSelect',
+          title: 'Dependent Async Select',
+          placeholder: 'Will re-fetch when the primary async select is changed',
+          loadingError: 'Loading error',
+          updateOnSelect: ['primaryAsyncSelect'],
+          loadOptions: async ({ apolloClient, selectedValue }) => {
+            const { data } =
+              await apolloClient.query<FriggSchoolsByMunicipality>({
+                query: friggSchoolsByMunicipalityQuery,
+              })
+
+            return (
+              data?.friggSchoolsByMunicipality?.map((municipality) => ({
+                value: municipality.name + ' ' + selectedValue,
+                label: municipality.name + ' ' + selectedValue,
               })) ?? []
             )
           },

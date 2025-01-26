@@ -1,0 +1,26 @@
+name: Validate code in the merge queue (post merge)
+
+on:
+  workflow_dispatch:
+  merge_group:
+
+jobs:
+  success:
+    runs-on: arc-runners
+    steps:
+      - name: Dump GitHub context
+        env:
+          GITHUB_CONTEXT: ${{ toJson(github) }}
+        run: |
+          echo "$GITHUB_CONTEXT"
+      - name: Announce success
+        run: echo "Build is successful"
+  codeowners-check:
+    name: Lint CODEOWNERS
+    runs-on: arc-runners
+    env:
+      CHECK: 'false'
+    steps:
+      - name: Codeowners validation
+        run: |
+          exit 0

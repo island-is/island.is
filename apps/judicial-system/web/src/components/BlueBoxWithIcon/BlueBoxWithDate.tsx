@@ -61,6 +61,13 @@ const BlueBoxWithDate: FC<Props> = (props) => {
   const serviceRequired =
     defendant.serviceRequirement === ServiceRequirement.REQUIRED
 
+  const shouldHideDatePickers = Boolean(
+    defendant.verdictAppealDate ||
+      defendant.isVerdictAppealDeadlineExpired ||
+      defendant.isSentToPrisonAdmin ||
+      isFine,
+  )
+
   const handleDateChange = (
     date: Date | undefined,
     valid: boolean,
@@ -119,6 +126,17 @@ const BlueBoxWithDate: FC<Props> = (props) => {
     setModalVisible(undefined)
   }
 
+  const handleRevokeAppeal = () => {
+    setAndSendDefendantToServer(
+      {
+        caseId: workingCase.id,
+        defendantId: defendant.id,
+        verdictAppealDate: null,
+      },
+      setWorkingCase,
+    )
+  }
+
   const appealExpirationInfo = useMemo(() => {
     const deadline =
       defendant.verdictAppealDeadline ||
@@ -172,14 +190,14 @@ const BlueBoxWithDate: FC<Props> = (props) => {
           }),
         )
       }
+    }
 
-      if (defendant.sentToPrisonAdminDate && defendant.isSentToPrisonAdmin) {
-        texts.push(
-          formatMessage(strings.sendToPrisonAdminDate, {
-            date: formatDate(defendant.sentToPrisonAdminDate),
-          }),
-        )
-      }
+    if (defendant.sentToPrisonAdminDate && defendant.isSentToPrisonAdmin) {
+      texts.push(
+        formatMessage(strings.sendToPrisonAdminDate, {
+          date: formatDate(defendant.sentToPrisonAdminDate),
+        }),
+      )
     }
 
     return texts
@@ -198,26 +216,27 @@ const BlueBoxWithDate: FC<Props> = (props) => {
     serviceRequired,
   ])
 
-  const datePickerVariants = {
-    dpHidden: { opacity: 0, y: 15, marginTop: '16px' },
-    dpVisible: { opacity: 1, y: 0 },
-    dpExit: {
+  const verdictViewDateVariants = {
+    hidden: { opacity: 0, y: 15, marginTop: '16px' },
+    visible: { opacity: 1, y: 0 },
+    exit: {
       opacity: 0,
       y: 15,
     },
   }
 
-  const datePicker2Variants = {
-    dpHidden: { opacity: 0, y: 15, marginTop: '16px' },
-    dpVisible: {
+  const appealDateVariants = {
+    hidden: { opacity: 0, y: 15, marginTop: '16px' },
+    visible: {
       opacity: 1,
       y: 0,
       height: 'auto',
       transition: { delay: triggerAnimation ? 0 : 0.4 },
     },
-    dpExit: {
+    exit: {
       opacity: 0,
       height: 0,
+      marginTop: 0,
       transition: { opacity: { duration: 0.2 } },
     },
   }
@@ -246,13 +265,18 @@ const BlueBoxWithDate: FC<Props> = (props) => {
               <motion.div
                 key={index}
                 initial={{
-                  marginTop: index === 0 ? 0 : '16px',
+                  marginTop: 0,
                   opacity: 0,
                   y: 20,
                   height: triggerAnimation2 ? 0 : 'auto',
                 }}
-                animate={{ opacity: 1, y: 0, height: 'auto' }}
-                exit={{ opacity: 0, y: 20 }}
+                animate={{
+                  opacity: 1,
+                  y: 0,
+                  height: 'auto',
+                  marginTop: index === 0 ? 0 : '16px',
+                }}
+                exit={{ opacity: 0, y: 20, height: 0 }}
                 transition={{
                   delay: index < 4 ? index * 0.2 : 0,
                   duration: 0.3,
@@ -264,15 +288,14 @@ const BlueBoxWithDate: FC<Props> = (props) => {
             ))}
         </AnimatePresence>
         <AnimatePresence mode="wait">
-          {defendant.verdictAppealDate ||
-          defendant.isVerdictAppealDeadlineExpired ||
-          isFine ? null : !serviceRequired || defendant.verdictViewDate ? (
+          {shouldHideDatePickers ? null : !serviceRequired ||
+            defendant.verdictViewDate ? (
             <motion.div
               key="defendantAppealDate"
-              variants={datePicker2Variants}
-              initial="dpHidden"
-              animate="dpVisible"
-              exit="dpExit"
+              variants={appealDateVariants}
+              initial="hidden"
+              animate="visible"
+              exit="exit"
             >
               <Box className={styles.dataContainer}>
                 <DateTime
@@ -302,10 +325,10 @@ const BlueBoxWithDate: FC<Props> = (props) => {
           ) : (
             <motion.div
               key="defendantVerdictViewDate"
-              variants={datePickerVariants}
+              variants={verdictViewDateVariants}
               initial={false}
-              animate="dpVisible"
-              exit="dpExit"
+              animate="visible"
+              exit="exit"
               transition={{ duration: 0.2, ease: 'easeInOut', delay: 0.4 }}
             >
               <Box className={styles.dataContainer}>
@@ -338,7 +361,16 @@ const BlueBoxWithDate: FC<Props> = (props) => {
         </AnimatePresence>
       </Box>
       <Box display="flex" justifyContent="flexEnd" marginTop={1}>
-        {defendant.isSentToPrisonAdmin ? (
+        {defendant.verdictAppealDate ? (
+          <Button
+            variant="text"
+            onClick={handleRevokeAppeal}
+            size="small"
+            colorScheme="destructive"
+          >
+            {formatMessage(strings.revokeAppeal)}
+          </Button>
+        ) : defendant.isSentToPrisonAdmin ? (
           <Button
             variant="text"
             onClick={() => setModalVisible('REVOKE_SEND_TO_PRISON_ADMIN')}

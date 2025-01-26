@@ -114,7 +114,12 @@ export class InheritanceReportService extends BaseTemplateApiService {
       attachments.push(
         ...(await Promise.all(
           answers.heirsAdditionalInfoPrivateTransferFiles.map(async (file) => {
-            const content = await this.getFileContentBase64(file.key)
+            const filename = (
+              application.attachments as {
+                [key: string]: string
+              }
+            )[file.key]
+            const content = await this.getFileContentBase64(filename)
             return {
               name: file.name,
               content,
@@ -128,7 +133,12 @@ export class InheritanceReportService extends BaseTemplateApiService {
       attachments.push(
         ...(await Promise.all(
           answers.heirsAdditionalInfoFilesOtherDocuments.map(async (file) => {
-            const content = await this.getFileContentBase64(file.key)
+            const filename = (
+              application.attachments as {
+                [key: string]: string
+              }
+            )[file.key]
+            const content = await this.getFileContentBase64(filename)
             return {
               name: file.name,
               content,
@@ -178,7 +188,10 @@ export class InheritanceReportService extends BaseTemplateApiService {
       )
       return fileContent || ''
     } catch (e) {
-      this.logger.warn('[estate]: Failed to get file content - ', e)
+      this.logger.warn(
+        '[inherhitance-report]: Failed to get file content - ',
+        e,
+      )
       return 'err'
     }
   }

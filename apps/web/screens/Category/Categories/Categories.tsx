@@ -1,5 +1,6 @@
 import React from 'react'
-import { Screen } from '@island.is/web/types'
+
+import { CategoryItems } from '@island.is/web/components'
 import {
   ContentLanguage,
   GetArticleCategoriesQuery,
@@ -7,10 +8,11 @@ import {
   QueryGetArticleCategoriesArgs,
   QueryGetNamespaceArgs,
 } from '@island.is/web/graphql/schema'
-import { GET_CATEGORIES_QUERY, GET_NAMESPACE_QUERY } from '../../queries'
 import { useNamespaceStrict } from '@island.is/web/hooks'
 import { withMainLayout } from '@island.is/web/layouts/main'
-import { CategoryItems } from '@island.is/web/components'
+import { Screen } from '@island.is/web/types'
+
+import { GET_CATEGORIES_QUERY, GET_NAMESPACE_QUERY } from '../../queries'
 
 interface CategoriesProps {
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
