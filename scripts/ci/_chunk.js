@@ -73,6 +73,10 @@ const problematicProjects = [
   'shared-babel',
   'shared-connected',
   'shared-constants',
+  'application-core',
+  'application-graphql',
+  'application-system-form',
+  'application-template-api-modules',
 ]
 console.error(`Problematic projects:`, problematicProjects)
 
