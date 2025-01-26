@@ -271,6 +271,22 @@ export class DefendantService {
     return updatedDefendant
   }
 
+  async createDefendantEvent({
+    caseId,
+    defendantId,
+    eventType,
+  }: {
+    caseId: string
+    defendantId: string
+    eventType: DefendantEventType
+  }): Promise<void> {
+    await this.defendantEventLogModel.create({
+      caseId,
+      defendantId,
+      eventType,
+    })
+  }
+
   async updateIndictmentCaseDefendant(
     theCase: Case,
     defendant: Defendant,
@@ -284,7 +300,7 @@ export class DefendantService {
     )
 
     if (update.isSentToPrisonAdmin) {
-      this.defendantEventLogModel.create({
+      this.createDefendantEvent({
         caseId: theCase.id,
         defendantId: defendant.id,
         eventType: DefendantEventType.SENT_TO_PRISON_ADMIN,

@@ -20,6 +20,7 @@ import { Notification } from './models/notification.model'
 import { CaseNotificationService } from './services/caseNotification/caseNotification.service'
 import { CivilClaimantNotificationService } from './services/civilClaimantNotification/civilClaimantNotification.service'
 import { DefendantNotificationService } from './services/defendantNotification/defendantNotification.service'
+import { IndictmentCaseNotificationService } from './services/indictmentCaseNotification/indictmentCaseNotification.service'
 import { InstitutionNotificationService } from './services/institutionNotification/institutionNotification.service'
 import { SubpoenaNotificationService } from './services/subpoenaNotification/subpoenaNotification.service'
 import { InternalNotificationController } from './internalNotification.controller'
@@ -47,6 +48,7 @@ import { NotificationDispatchService } from './notificationDispatch.service'
     CaseNotificationService,
     CivilClaimantNotificationService,
     DefendantNotificationService,
+    IndictmentCaseNotificationService,
     InstitutionNotificationService,
     NotificationService,
     NotificationDispatchService,

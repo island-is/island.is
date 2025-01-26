@@ -257,7 +257,7 @@ const signatureTemplate = (
 
       return `
   <div class="signature">
-    <p align="center"><em>${signature.institution} ${date}</em></p>
+    <p align="center"><em>${signature.institution} <span class="signature__date">${date}</span></em></p>
     ${chairmanMarkup}
     <div style="margin-bottom: 1.5em; display: ${styleObject.display}; grid-template-columns: ${styleObject.gridTemplateColumns};" class="signature__content">
     ${membersMarkup}
@@ -387,4 +387,14 @@ export const base64ToBlob = (base64: string, mimeType = 'application/pdf') => {
 export const convertNumberToRoman = (num: number) => {
   const roman = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X']
   return roman[num - 1]
+}
+
+export const cleanTypename = (obj: {
+  __typename?: string
+  id: string
+  title: string
+  slug: string
+}) => {
+  const { __typename: _, ...rest } = obj
+  return rest
 }

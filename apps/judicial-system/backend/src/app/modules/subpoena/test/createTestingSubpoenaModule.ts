@@ -13,9 +13,9 @@ import {
 import { MessageService } from '@island.is/judicial-system/message'
 
 import { CaseService, PdfService } from '../../case'
+import { CourtService } from '../../court'
 import { Defendant, DefendantService } from '../../defendant'
 import { EventService } from '../../event'
-import { FileService } from '../../file'
 import { PoliceService } from '../../police'
 import { UserService } from '../../user'
 import { InternalSubpoenaController } from '../internalSubpoena.controller'
@@ -24,14 +24,14 @@ import { Subpoena } from '../models/subpoena.model'
 import { SubpoenaController } from '../subpoena.controller'
 import { SubpoenaService } from '../subpoena.service'
 
+jest.mock('@island.is/judicial-system/message')
 jest.mock('../../user/user.service')
 jest.mock('../../case/case.service')
 jest.mock('../../case/pdf.service')
 jest.mock('../../police/police.service')
-jest.mock('../../file/file.service')
 jest.mock('../../event/event.service')
 jest.mock('../../defendant/defendant.service')
-jest.mock('@island.is/judicial-system/message')
+jest.mock('../../court/court.service')
 
 export const createTestingSubpoenaModule = async () => {
   const subpoenaModule = await Test.createTestingModule({
@@ -48,9 +48,9 @@ export const createTestingSubpoenaModule = async () => {
       CaseService,
       PdfService,
       PoliceService,
-      FileService,
       EventService,
       DefendantService,
+      CourtService,
       {
         provide: LOGGER_PROVIDER,
         useValue: {
@@ -92,7 +92,7 @@ export const createTestingSubpoenaModule = async () => {
 
   const policeService = subpoenaModule.get<PoliceService>(PoliceService)
 
-  const fileService = subpoenaModule.get<FileService>(FileService)
+  const courtService = subpoenaModule.get<CourtService>(CourtService)
 
   const subpoenaModel = await subpoenaModule.resolve<typeof Subpoena>(
     getModelToken(Subpoena),
@@ -117,7 +117,7 @@ export const createTestingSubpoenaModule = async () => {
     userService,
     pdfService,
     policeService,
-    fileService,
+    courtService,
     subpoenaModel,
     subpoenaService,
     subpoenaController,

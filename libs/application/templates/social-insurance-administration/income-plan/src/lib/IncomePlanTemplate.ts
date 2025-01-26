@@ -202,13 +202,6 @@ const IncomePlanTemplate: ApplicationTemplate<
                 import('../forms/InReview').then((val) =>
                   Promise.resolve(val.InReview),
                 ),
-              actions: [
-                {
-                  event: DefaultEvents.EDIT,
-                  name: incomePlanFormMessage.confirm.buttonEdit,
-                  type: 'primary',
-                },
-              ],
               read: 'all',
               write: 'all',
             },
@@ -223,7 +216,6 @@ const IncomePlanTemplate: ApplicationTemplate<
           ],
         },
         on: {
-          [DefaultEvents.EDIT]: { target: States.DRAFT },
           INREVIEW: {
             target: States.TRYGGINGASTOFNUN_IN_REVIEW,
           },

@@ -6,6 +6,18 @@ export const m = {
       id: 'web.grants:general.seeMore',
       defaultMessage: 'Skoða nánar',
     },
+    goBack: {
+      id: 'web.grants:general.goBack',
+      defaultMessage: 'Til baka',
+    },
+    displayGrid: {
+      id: 'web.grants:general.displayGrid',
+      defaultMessage: 'Sýna sem spjöld',
+    },
+    displayList: {
+      id: 'web.grants:general.displayList',
+      defaultMessage: 'Sýna sem lista',
+    },
   }),
   search: defineMessages({
     search: {
@@ -24,17 +36,29 @@ export const m = {
       id: 'web.grants:search.inputPlaceholder',
       defaultMessage: 'Sía eftir leitarorði',
     },
+    filterTitle: {
+      id: 'web.grants:search.filterTitle',
+      defaultMessage: 'Leitarsíur',
+    },
     clearFilters: {
       id: 'web.grants:search.clearFilters',
       defaultMessage: 'Hreinsa allar síur',
     },
+    openFilter: {
+      id: 'web.grants:search.openFilter',
+      defaultMessage: 'Opna síu',
+    },
+    closeFilter: {
+      id: 'web.grants:search.closeFilter',
+      defaultMessage: 'Loka síu',
+    },
     clearFilterCategory: {
       id: 'web.grants:search.clearFilterCategory',
-      defaultMessage: 'Hreinsa flokk',
+      defaultMessage: 'Hreinsa síu',
     },
     applicationStatus: {
       id: 'web.grants:search.applicationStatus',
-      defaultMessage: 'Staða umsóknar',
+      defaultMessage: 'Staða umsókna',
     },
     applicationOpen: {
       id: 'web.grants:search.applicationOpen',
@@ -51,6 +75,34 @@ export const m = {
     applicationSeeDescription: {
       id: 'web.grants:search.applicationSeeDescription',
       defaultMessage: 'Sjá lýsingu',
+    },
+    applicationOpensAt: {
+      id: 'web.grants:search.applicationOpensAt',
+      defaultMessage: 'Opnar {arg}',
+    },
+    applicationEstimatedOpensAt: {
+      id: 'web.grants:search.applicationEstimatedOpensAt',
+      defaultMessage: 'Áætlað næst í {arg}',
+    },
+    applicationOpensTo: {
+      id: 'web.grants:search.applicationOpensTo',
+      defaultMessage: 'Frestur til {arg}',
+    },
+    applicationOpensToWithDay: {
+      id: 'web.grants:search.applicationOpensToWithDay',
+      defaultMessage: 'Frestur til og með {arg}',
+    },
+    applicationWasOpenTo: {
+      id: 'web.grants:search.applicationWasOpenTo',
+      defaultMessage: 'Frestur var til {arg}',
+    },
+    applicationWasOpenToAndWith: {
+      id: 'web.grants:search.applicationWasOpenToAndWith',
+      defaultMessage: 'Frestur var til {arg}',
+    },
+    applicationAlwaysOpen: {
+      id: 'web.grants:search.applicationAlwaysOpen',
+      defaultMessage: 'Opið er allt árið',
     },
     category: {
       id: 'web.grants:search.category',
@@ -71,6 +123,14 @@ export const m = {
     noResultsFound: {
       id: 'web.grants:search.noResultsFound',
       defaultMessage: 'Engir styrkir fundust',
+    },
+    error: {
+      id: 'web.grants:search.error',
+      defaultMessage: 'Þjónusta liggur tímabundið niðri',
+    },
+    errorText: {
+      id: 'web.grants:search.errorText',
+      defaultMessage: 'Vinsamlegast reynið aftur síðar',
     },
     organization: {
       id: 'web.grants:search.organization',
@@ -98,9 +158,17 @@ export const m = {
       id: 'web.grants:single.type',
       defaultMessage: 'Tegund',
     },
+    applications: {
+      id: 'web.grants:single.applications',
+      defaultMessage: 'Umsóknir',
+    },
     deadline: {
       id: 'web.grants:single.deadline',
-      defaultMessage: 'Umsóknarfrestur',
+      defaultMessage: 'Umsóknir',
+    },
+    deadlinePeriod: {
+      id: 'web.grants:single.deadlinePeriod',
+      defaultMessage: 'Umsóknartímabil',
     },
     status: {
       id: 'web.grants:single.status',
@@ -125,6 +193,10 @@ export const m = {
     howToApply: {
       id: 'web.grants:single.howToApply',
       defaultMessage: 'Hvernig er sótt um?',
+    },
+    answeringQuestions: {
+      id: 'web.grants:single.answeringQuestions',
+      defaultMessage: 'Svör við spurningum',
     },
   }),
   home: defineMessages({
@@ -200,6 +272,32 @@ export const m = {
     grantCategoryBusinessDescription: {
       id: 'web.grants:home.grantCategoryBusinessDescription',
       defaultMessage: 'Lýsing á atvinnulífi',
+    },
+    grantCategoryEnergyTransitionDescription: {
+      id: 'web.grants:home.grantCategoryEnergyTransitionDescription',
+      defaultMessage: 'Lýsing á orkuskiptum',
+    },
+  }),
+  bullets: defineMessages({
+    open: {
+      id: 'web.grants:bullets.open',
+      defaultMessage: 'Opið fyrir umsóknir',
+    },
+    nativeFunds: {
+      id: 'web.grants:bullets.nativeFunds',
+      defaultMessage: 'Innlendir sjóðir',
+    },
+    technologyDevelopmentFund: {
+      id: 'web.grants:bullets.technologyDevelopmentFund',
+      defaultMessage: 'Tækniþróunarsjóður',
+    },
+    financing: {
+      id: 'web.grants:bullets.financing',
+      defaultMessage: 'Fjármögnun',
+    },
+    companies: {
+      id: 'web.grants:bullets.companies',
+      defaultMessage: 'Fyrirtæki',
     },
   }),
 }

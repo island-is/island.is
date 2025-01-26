@@ -8,7 +8,7 @@ import {
 import { m } from '../../lib/messages'
 import {
   CurrentUserTypeProvider,
-  IndentityApiProvider,
+  IdentityApiProvider,
   UserInfoApi,
 } from '../../dataProviders'
 import { DefaultEvents } from '@island.is/application/types'
@@ -23,7 +23,7 @@ export const prerequisitesSection = buildSection({
       checkboxLabel: m.dataCollectionCheckboxLabel,
       dataProviders: [
         buildDataProviderItem({
-          provider: IndentityApiProvider,
+          provider: IdentityApiProvider,
           title: m.dataCollectionNationalRegistryTitle,
           subTitle: m.dataCollectionNationalRegistrySubtitle,
         }),

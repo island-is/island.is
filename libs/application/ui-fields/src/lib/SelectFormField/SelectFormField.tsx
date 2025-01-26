@@ -1,5 +1,4 @@
 import React, { FC, useMemo } from 'react'
-
 import {
   formatText,
   buildFieldOptions,
@@ -38,6 +37,10 @@ export const SelectFormField: FC<React.PropsWithChildren<Props>> = ({
     backgroundColor,
     required = false,
     isMulti,
+    marginTop,
+    marginBottom,
+    clearOnChange,
+    isClearable,
   } = field
   const { formatMessage, lang: locale } = useLocale()
 
@@ -47,7 +50,7 @@ export const SelectFormField: FC<React.PropsWithChildren<Props>> = ({
   )
 
   return (
-    <div>
+    <Box marginTop={marginTop} marginBottom={marginBottom}>
       {description && (
         <FieldDescription
           description={formatTextWithLocale(
@@ -95,8 +98,10 @@ export const SelectFormField: FC<React.PropsWithChildren<Props>> = ({
           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
           // @ts-ignore make web strict
           onSelect={onSelect}
+          clearOnChange={clearOnChange}
+          isClearable={isClearable}
         />
       </Box>
-    </div>
+    </Box>
   )
 }

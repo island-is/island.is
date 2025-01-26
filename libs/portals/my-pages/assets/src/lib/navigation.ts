@@ -45,11 +45,7 @@ export const assetsNavigation: PortalNavigationItem = {
           ],
         },
         {
-          name: m.vehiclesLookup,
-          path: AssetsPaths.AssetsVehiclesLookup,
-        },
-        {
-          name: m.vehiclesBulkMileage,
+          name: m.vehiclesRegisterMileage,
           path: AssetsPaths.AssetsVehiclesBulkMileage,
           children: [
             {
@@ -71,6 +67,11 @@ export const assetsNavigation: PortalNavigationItem = {
             },
           ],
         },
+        {
+          name: m.vehiclesLookup,
+          path: AssetsPaths.AssetsVehiclesLookup,
+        },
+
         {
           name: m.vehiclesHistory,
           path: AssetsPaths.AssetsVehiclesHistory,

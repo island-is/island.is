@@ -1,4 +1,3 @@
-import { Button, CancelButton, Illustration, Onboarding } from '@ui'
 import {
   AuthenticationType,
   authenticateAsync,
@@ -8,6 +7,8 @@ import React, { useEffect, useState } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { AppState, Platform } from 'react-native'
 import { NavigationFunctionComponent } from 'react-native-navigation'
+
+import { Button, CancelButton, Illustration, Onboarding } from '../../ui'
 import finger from '../../assets/icons/finger-16.png'
 import iris from '../../assets/icons/iris-16.png'
 import { preferencesStore } from '../../stores/preferences-store'

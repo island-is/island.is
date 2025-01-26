@@ -28,7 +28,7 @@ import {
   useCase,
   useOnceOn,
 } from '@island.is/judicial-system-web/src/utils/hooks'
-import { hasSentNotification } from '@island.is/judicial-system-web/src/utils/stepHelper'
+import { hasSentNotification } from '@island.is/judicial-system-web/src/utils/utils'
 import { isCourtHearingArrangementsStepValidIC } from '@island.is/judicial-system-web/src/utils/validate'
 
 import { icHearingArrangements as m } from './HearingArrangements.strings'

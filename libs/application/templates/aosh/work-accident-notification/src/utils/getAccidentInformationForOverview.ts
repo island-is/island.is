@@ -26,29 +26,29 @@ export const getAccidentInformationForOverview = (
   )
 
   return [
-    `${formatMessage(overview.labels.dateAndTime)}: ${formatDate(
+    `**${formatMessage(overview.labels.dateAndTime)}**: ${formatDate(
       accident?.date ?? '',
     )}, ${accident?.time.slice(0, 2)}:${accident?.time.slice(2, 4)}`,
-    `${formatMessage(overview.labels.didAoshCome)}:  ${formatMessage(
+    `**${formatMessage(overview.labels.didAoshCome)}**:  ${formatMessage(
       accident?.didAoshCome === 'yes' ? shared.options.yes : shared.options.no,
     )}`,
-    `${formatMessage(overview.labels.didPoliceCome)}: ${formatMessage(
+    `**${formatMessage(overview.labels.didPoliceCome)}**: ${formatMessage(
       accident?.didPoliceCome === 'yes'
         ? shared.options.yes
         : shared.options.no,
     )}`,
-    `${formatMessage(overview.labels.injuredAmount)}: ${employees.length}`,
-    `${formatMessage(overview.labels.municipality)}: ${
+    `**${formatMessage(overview.labels.injuredAmount)}**: ${employees.length}`,
+    `**${formatMessage(overview.labels.municipality)}**: ${
       chosenMunicipality?.name
     }`,
-    `${formatMessage(overview.labels.exactLocation)}: ${
+    `**${formatMessage(overview.labels.exactLocation)}**: ${
       accident?.exactLocation
     }`,
-    `${formatMessage(overview.labels.accidentDescription)}: 
+    `**${formatMessage(overview.labels.accidentDescription)}**: 
     \n ${accident?.wasDoing}
     \n ${accident?.wentWrong}
     \n ${accident?.how}`,
-    `${formatMessage(overview.labels.locationOfAccident)}: ${
+    `**${formatMessage(overview.labels.locationOfAccident)}**: ${
       accident?.accidentLocation.label
     }`,
   ].filter((n) => n)

@@ -1,6 +1,7 @@
 import React, {
   PropsWithChildren,
   ReactNode,
+  useContext,
   useEffect,
   useMemo,
   useState,
@@ -44,6 +45,7 @@ import {
 } from '@island.is/web/components'
 import { DefaultHeader, WatsonChatPanel } from '@island.is/web/components'
 import { SLICE_SPACING, STICKY_NAV_MAX_WIDTH } from '@island.is/web/constants'
+import { GlobalContext } from '@island.is/web/context'
 import {
   Image,
   Organization,
@@ -212,7 +214,7 @@ export const getThemeConfig = (
 
 export const OrganizationHeader: React.FC<
   React.PropsWithChildren<HeaderProps>
-> = ({ organizationPage, isSubpage }) => {
+> = ({ organizationPage, isSubpage = false }) => {
   const { linkResolver } = useLinkResolver()
   const namespace = useMemo(
     () => JSON.parse(organizationPage?.organization?.namespace?.fields || '{}'),
@@ -262,7 +264,7 @@ export const OrganizationHeader: React.FC<
     titleSectionPaddingLeft: organizationPage.themeProperties
       .titleSectionPaddingLeft as ResponsiveSpace,
     mobileBackground: organizationPage.themeProperties.mobileBackgroundColor,
-    isSubpage: isSubpage && n('smallerSubpageHeader', false),
+    isSubpage,
   }
 
   switch (organizationPage.theme) {
@@ -271,7 +273,7 @@ export const OrganizationHeader: React.FC<
         <SyslumennDefaultHeader
           organizationPage={organizationPage}
           logoAltText={logoAltText}
-          isSubpage={(isSubpage && n('smallerSubpageHeader', false)) ?? false}
+          isSubpage={isSubpage}
         />
       ) : (
         <SyslumennHeader
@@ -284,7 +286,7 @@ export const OrganizationHeader: React.FC<
         <SjukratryggingarDefaultHeader
           organizationPage={organizationPage}
           logoAltText={logoAltText}
-          isSubpage={(isSubpage && n('smallerSubpageHeader', false)) ?? false}
+          isSubpage={isSubpage}
         />
       ) : (
         <SjukratryggingarHeader
@@ -368,7 +370,7 @@ export const OrganizationHeader: React.FC<
         <FiskistofaDefaultHeader
           organizationPage={organizationPage}
           logoAltText={logoAltText}
-          isSubpage={(isSubpage && n('smallerSubpageHeader', false)) ?? false}
+          isSubpage={isSubpage}
         />
       ) : (
         <FiskistofaHeader
@@ -616,6 +618,13 @@ export const OrganizationHeader: React.FC<
           logoImageClassName={styles.logoLarge}
         />
       )
+    case 'rannis':
+      return (
+        <DefaultHeader
+          {...defaultProps}
+          background="linear-gradient(271deg, #C00B02 5.72%, #DB0B00 91.04%)"
+        />
+      )
     default:
       return <DefaultHeader {...defaultProps} />
   }
@@ -670,10 +679,10 @@ export const OrganizationExternalLinks: React.FC<
                 pureChildren={true}
               >
                 <Button
-                  as="a"
                   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                   // @ts-ignore make web strict
                   variant={variant}
+                  unfocusable
                   icon={isSjukratryggingar ? 'lockClosed' : 'open'}
                   iconType="outline"
                   size="medium"
@@ -711,6 +720,8 @@ export const OrganizationFooter: React.FC<
   const n = useNamespace(namespace)
 
   let OrganizationFooterComponent = null
+
+  const { isServiceWeb } = useContext(GlobalContext)
 
   switch (organization?.slug) {
     case 'syslumenn':
@@ -909,6 +920,29 @@ export const OrganizationFooter: React.FC<
           <Divider />
         </>
       )
+      break
+    case 'vinnueftirlitid':
+    case 'aosh':
+      {
+        const footerItems = organization?.footerItems ?? []
+        if (footerItems.length === 0) break
+        OrganizationFooterComponent = (
+          <WebFooter
+            heading={organization?.title ?? ''}
+            columns={footerItems}
+            background={
+              isServiceWeb
+                ? theme.color.purple100
+                : organization?.footerConfig?.background
+            }
+            color={
+              isServiceWeb
+                ? theme.color.dark400
+                : organization?.footerConfig?.textColor
+            }
+          />
+        )
+      }
       break
     default: {
       const footerItems = organization?.footerItems ?? []
@@ -1141,6 +1175,9 @@ export const OrganizationWrapper: React.FC<
 
   const n = useNamespace(namespace)
 
+  const indexableBySearchEngine =
+    organizationPage.canBeFoundInSearchResults ?? true
+
   return (
     <>
       <HeadWithSocialSharing
@@ -1150,7 +1187,11 @@ export const OrganizationWrapper: React.FC<
         imageContentType={pageFeaturedImage?.contentType}
         imageWidth={pageFeaturedImage?.width?.toString()}
         imageHeight={pageFeaturedImage?.height?.toString()}
-      />
+      >
+        {!indexableBySearchEngine && (
+          <meta name="robots" content="noindex, nofollow" />
+        )}
+      </HeadWithSocialSharing>
       <OrganizationHeader
         organizationPage={organizationPage}
         isSubpage={isSubpage}

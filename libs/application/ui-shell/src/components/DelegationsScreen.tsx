@@ -16,13 +16,13 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { useBff } from '@island.is/react-spa/bff'
+import { useAuth } from '@island.is/react-spa/bff'
 import { useFeatureFlagClient } from '@island.is/react/feature-flags'
 import * as kennitala from 'kennitala'
 import { format as formatKennitala } from 'kennitala'
 import intersection from 'lodash/intersection'
 import { Dispatch, SetStateAction, useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import { Delegation, DelegationsScreenDataType, ScreenType } from '../types'
 import * as styles from './DelegationsScreen.css'
 import { LoadingShell } from './LoadingShell'
@@ -50,9 +50,17 @@ export const DelegationsScreen = ({
   })
   const { formatMessage } = useLocale()
   const type = getTypeFromSlug(slug)
-  const { switchUser, userInfo: user } = useBff()
+  const { switchUser, userInfo: user } = useAuth()
   const featureFlagClient: FeatureFlagClient = useFeatureFlagClient()
   const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
+
+  const paramString = searchParams.size
+    ? '&' +
+      Array.from(searchParams.entries())
+        .map(([key, value]) => `${key}=${encodeURIComponent(value)}`)
+        .join('&')
+    : ''
 
   // Check for user delegations if application supports delegations
   const { data: delegations, error } = useQuery(ACTOR_DELEGATIONS, {
@@ -181,7 +189,7 @@ export const DelegationsScreen = ({
 
   const handleClick = (nationalId?: string) => {
     if (screenData.screenType !== ScreenType.ONGOING && nationalId) {
-      navigate('?delegationChecked=true')
+      navigate(`?delegationChecked=true${paramString}`)
       switchUser(nationalId)
     } else if (nationalId) {
       switchUser(nationalId)

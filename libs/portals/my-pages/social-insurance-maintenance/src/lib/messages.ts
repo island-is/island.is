@@ -18,6 +18,11 @@ export const m = defineMessages({
     id: 'sp.social-insurance-maintenance:maintenance-footer-link',
     defaultMessage: ' <link>Fara á mínar síður TR</link>',
   },
+  maintenanceFooterTemporaryWarning: {
+    id: 'sp.social-insurance-maintenance:maintenance-footer-temporary-warning',
+    defaultMessage:
+      '* Vinsamlega athugið að nýtt örorku- og endurhæfingargreiðslukerfi tekur gildi 1. september 2025. Fjárhæðir vegna tímabilsins september til desember munu breytast. TR vinnur að breytingum á kerfum stofnunarinnar og mun uppfæra greiðsluáætlunina að þeim loknum, á vormánuðum 2025.',
+  },
   paymentPlan: {
     id: 'sp.social-insurance-maintenance:payment-plan',
     defaultMessage: 'Greiðsluáætlun',
@@ -121,5 +126,10 @@ export const m = defineMessages({
   incomePlanLinkText: {
     id: 'sp.social-insurance-maintenance:income-plan-link-text',
     defaultMessage: 'Hvað er tekjuáætlun?',
+  },
+  paymentPlanTemporarilyUnavailable: {
+    id: 'sp.social-insurance-maintenance:payment-plan-temporarily-unavailable',
+    defaultMessage:
+      'Bráðabirgðagreiðsluáætlun 2025 verður tilbúin seinni part desember',
   },
 })

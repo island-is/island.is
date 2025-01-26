@@ -1,4 +1,3 @@
-import { TopLine } from '@ui'
 import React, {
   ReactElement,
   useCallback,
@@ -17,6 +16,7 @@ import CodePush from 'react-native-code-push'
 import { NavigationFunctionComponent } from 'react-native-navigation'
 import { BottomTabsIndicator } from '../../components/bottom-tabs-indicator/bottom-tabs-indicator'
 
+import { TopLine } from '../../ui'
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
 import { useAndroidNotificationPermission } from '../../hooks/use-android-notification-permission'
 import { useConnectivityIndicator } from '../../hooks/use-connectivity-indicator'

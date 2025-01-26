@@ -1,4 +1,3 @@
-import { EmptyList, StatusCardSkeleton } from '@ui'
 import { useCallback, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { Image, RefreshControl, ScrollView, View } from 'react-native'
@@ -6,6 +5,7 @@ import { NavigationFunctionComponent } from 'react-native-navigation'
 import { useNavigationComponentDidAppear } from 'react-native-navigation-hooks'
 import { useTheme } from 'styled-components'
 
+import { EmptyList, StatusCardSkeleton } from '../../ui'
 import illustrationSrc from '../../assets/illustrations/le-jobs-s3.png'
 import {
   Application,

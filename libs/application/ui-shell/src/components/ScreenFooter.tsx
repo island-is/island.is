@@ -27,6 +27,7 @@ interface FooterProps {
   renderLastScreenBackButton?: boolean
   submitButtonDisabled?: boolean
   nextButtonText?: FormText
+  canGoBack: boolean
 }
 
 type SubmitButton = Omit<ButtonTypes, 'circle'> & {
@@ -45,6 +46,11 @@ const submitButtonConfig: Record<CallToAction['type'], SubmitButton> = {
     variant: 'primary',
   },
   subtle: {
+    colorScheme: 'light',
+    variant: 'ghost',
+  },
+  signSubtle: {
+    icon: 'pencil',
     colorScheme: 'light',
     variant: 'ghost',
   },
@@ -68,13 +74,13 @@ export const ScreenFooter: FC<React.PropsWithChildren<FooterProps>> = ({
   renderLastScreenBackButton,
   submitButtonDisabled,
   nextButtonText,
+  canGoBack,
 }) => {
   const { formatMessage } = useLocale()
   const user = useUserInfo()
   const hasSubmitField = submitField !== undefined
   const isLastScreen = activeScreenIndex === numberOfScreens - 1
-  const showGoBack =
-    activeScreenIndex > 0 && (!isLastScreen || renderLastScreenBackButton)
+  const showGoBack = canGoBack && (!isLastScreen || renderLastScreenBackButton)
 
   if (
     (isLastScreen && !renderLastScreenButton) ||

@@ -1,10 +1,10 @@
-import { EmptyCard, StatusCardSkeleton } from '@ui'
 import React from 'react'
 import { useIntl } from 'react-intl'
 import styled from 'styled-components'
 import { Image, SafeAreaView, View } from 'react-native'
 import { ApolloError } from '@apollo/client'
 
+import { EmptyCard, StatusCardSkeleton } from '../../ui'
 import leJobss3 from '../../assets/illustrations/le-jobs-s3.png'
 import {
   Application,

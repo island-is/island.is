@@ -7,7 +7,6 @@ import { currentMonth } from '@island.is/financial-aid/shared/lib'
 
 import { DescriptionText, PrivacyPolicyAccordion } from '..'
 import { FAFieldBaseProps } from '../../lib/types'
-import withLogo from '../Logo/Logo'
 import { aboutForm } from '../../lib/messages'
 
 const AboutForm = ({ application }: FAFieldBaseProps) => {
@@ -34,4 +33,4 @@ const AboutForm = ({ application }: FAFieldBaseProps) => {
   )
 }
 
-export default withLogo(AboutForm)
+export default AboutForm

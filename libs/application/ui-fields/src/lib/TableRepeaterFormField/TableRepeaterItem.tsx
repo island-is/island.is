@@ -46,6 +46,19 @@ export const Item = ({
   const { setValue, control, clearErrors } = useFormContext()
   const prevWatchedValuesRef = useRef<string | (string | undefined)[]>()
 
+  const getSpan = (component: string, width: string) => {
+    if (component !== 'radio' && component !== 'checkbox') {
+      if (width === 'half') {
+        return '1/2'
+      }
+      if (width === 'third') {
+        return '1/3'
+      }
+      return '1/1'
+    }
+    return '1/1'
+  }
+
   const {
     component,
     id: itemId,
@@ -61,9 +74,8 @@ export const Item = ({
     defaultValue,
     ...props
   } = item
-  const isHalfColumn = component !== 'radio' && width === 'half'
-  const isThirdColumn = component !== 'radio' && width === 'third'
-  const span = isHalfColumn ? '1/2' : isThirdColumn ? '1/3' : '1/1'
+
+  const span = getSpan(component, width)
   const Component = componentMapper[component]
   const id = `${dataId}[${activeIndex}].${itemId}`
   const activeValues =
@@ -203,7 +215,7 @@ export const Item = ({
         label={formatText(label, application, formatMessage)}
         options={translatedOptions}
         placeholder={formatText(placeholder, application, formatMessage)}
-        split={width === 'half' ? '1/2' : '1/1'}
+        split={width === 'half' ? '1/2' : width === 'third' ? '1/3' : '1/1'}
         error={getFieldError(itemId)}
         control={control}
         readOnly={Readonly}
@@ -216,6 +228,7 @@ export const Item = ({
         }}
         application={application}
         defaultValue={DefaultValue}
+        large={true}
         {...props}
       />
     </GridColumn>

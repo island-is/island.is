@@ -203,6 +203,9 @@
       "@island.is/api/domains/rights-portal": [
         "libs/api/domains/rights-portal/src/index.ts"
       ],
+      "@island.is/api/domains/secondary-school": [
+        "libs/api/domains/secondary-school/src/index.ts"
+      ],
       "@island.is/api/domains/sessions": [
         "libs/api/domains/sessions/src/index.ts"
       ],
@@ -492,6 +495,9 @@
       "@island.is/application/templates/reference-template": [
         "libs/application/templates/reference-template/src/index.ts"
       ],
+      "@island.is/application/templates/secondary-school": [
+        "libs/application/templates/secondary-school/src/index.ts"
+      ],
       "@island.is/application/templates/signature-collection/parliamentary-list-creation": [
         "libs/application/templates/signature-collection/parliamentary-list-creation/src/index.ts"
       ],
@@ -577,7 +583,6 @@
       "@island.is/application/utils": ["libs/application/utils/src/index.ts"],
       "@island.is/auth-api-lib": ["libs/auth-api-lib/src/index.ts"],
       "@island.is/auth-nest-tools": ["libs/auth-nest-tools/src/index.ts"],
-      "@island.is/auth/react": ["libs/auth/react/src/index.ts"],
       "@island.is/auth/scopes": ["libs/auth/scopes/src/index.ts"],
       "@island.is/auth/shared": ["libs/auth/shared/src/index.ts"],
       "@island.is/cache": ["libs/cache/src/index.ts"],
@@ -757,6 +762,9 @@
       "@island.is/clients/rsk/personal-tax-return": [
         "libs/clients/rsk/personal-tax-return/src/index.ts"
       ],
+      "@island.is/clients/secondary-school": [
+        "libs/clients/secondary-school/src/index.ts"
+      ],
       "@island.is/clients/sessions": ["libs/clients/sessions/src/index.ts"],
       "@island.is/clients/ship-registry": [
         "libs/clients/ship-registry/src/index.ts"
@@ -906,7 +914,6 @@
       "@island.is/infra-nest-server": ["libs/infra-nest-server/src/index.ts"],
       "@island.is/infra-next-server": ["libs/infra-next-server/src/index.ts"],
       "@island.is/infra-tracing": ["libs/infra-tracing/src/index.ts"],
-      "@island.is/island-ui-native": ["apps/native/island-ui/src/index.ts"],
       "@island.is/island-ui/contentful": [
         "libs/island-ui/contentful/src/index.ts"
       ],

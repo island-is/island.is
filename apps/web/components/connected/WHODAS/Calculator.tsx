@@ -7,6 +7,7 @@ import {
 } from 'react'
 import { useIntl } from 'react-intl'
 import round from 'lodash/round'
+import { parseAsInteger, useQueryState } from 'next-usequerystate'
 
 import {
   Box,
@@ -235,7 +236,15 @@ interface WHODASCalculatorProps {
 }
 
 export const WHODASCalculator = ({ slice }: WHODASCalculatorProps) => {
-  const [stepIndex, setStepIndex] = useState(0)
+  const [stepIndex, setStepIndex] = useQueryState(
+    'stepIndex',
+    parseAsInteger
+      .withOptions({
+        history: 'push',
+        clearOnDefault: true,
+      })
+      .withDefault(0),
+  )
   const formRef = useRef<HTMLDivElement | null>(null)
   const steps = (slice.json?.steps ?? []) as Step[]
   const initialRender = useRef(true)
@@ -266,6 +275,7 @@ export const WHODASCalculator = ({ slice }: WHODASCalculatorProps) => {
 
   useEffect(() => {
     if (initialRender.current) {
+      setStepIndex(0) // Reset step index on initial render
       initialRender.current = false
       return
     }
@@ -273,7 +283,7 @@ export const WHODASCalculator = ({ slice }: WHODASCalculatorProps) => {
       behavior: 'smooth',
       top: formRef.current?.offsetTop ?? 0,
     })
-  }, [stepIndex])
+  }, [setStepIndex, stepIndex])
 
   if (showResults) {
     let totalScore = 0

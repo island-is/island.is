@@ -28,7 +28,7 @@ import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import {
   hasSentNotification,
   isReopenedCOACase,
-} from '@island.is/judicial-system-web/src/utils/stepHelper'
+} from '@island.is/judicial-system-web/src/utils/utils'
 import { isCourtOfAppealCaseStepValid } from '@island.is/judicial-system-web/src/utils/validate'
 
 import CaseNumberInput from '../components/CaseNumberInput/CaseNumberInput'

@@ -16,9 +16,10 @@ export const ExpandableDescriptionFormField: FC<
   React.PropsWithChildren<Props>
 > = ({ application, field }) => {
   const { formatMessage, lang: locale } = useLocale()
+  const { marginTop = 2, marginBottom = 2 } = field
 
   return (
-    <Box marginY={2}>
+    <Box marginTop={marginTop} marginBottom={marginBottom}>
       <AccordionCard
         startExpanded={field.startExpanded}
         id={`BulletPointFormField-${field.id}`}

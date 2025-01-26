@@ -16,7 +16,7 @@ export const SubmitFormField: FC<React.PropsWithChildren<Props>> = ({
   field,
   error,
 }) => {
-  const { id, title, actions, placement } = field
+  const { id, title, actions, placement, marginTop = 4, marginBottom } = field
   const { formatMessage, lang: locale } = useLocale()
   const actionsAsOptions = useMemo(() => {
     return actions.map((a) => {
@@ -38,7 +38,8 @@ export const SubmitFormField: FC<React.PropsWithChildren<Props>> = ({
       borderRadius="large"
       width="full"
       padding={4}
-      marginTop={4}
+      marginTop={marginTop}
+      marginBottom={marginBottom}
     >
       <Text variant="h4">
         {formatTextWithLocale(

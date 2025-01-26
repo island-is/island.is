@@ -285,13 +285,13 @@ export const coreMessages = defineMessages({
   openServicePortalMessageText: {
     id: 'application.system:openServicePortal.messageText',
     defaultMessage:
-      'Upplýsingar í mínum síðum og í appi hefur þú aðgang að margvíslegum upplýsingum s.s stafrænt pósthólf, þínar upplýsingar, fjármál, umsóknir, menntun, fasteignir, ökutæki, skírteini, starfsleyfi ofl.',
+      'Á Mínum síðum Ísland.is getur þú nálgast stöðu umsóknarinnar ásamt öðrum upplýsingum.',
     description:
       'Text for form builder component left side of button to go to the service portal',
   },
   openServicePortalButtonTitle: {
     id: 'application.system:openServicePortal.buttonTitle',
-    defaultMessage: 'Áfram',
+    defaultMessage: 'Opna Mínar síður',
     description: 'Button text for form builder component, go to service portal',
   },
   copyLinkSuccessToast: {
@@ -317,6 +317,21 @@ export const coreDefaultFieldMessages = defineMessages({
     id: 'application.system:core.default.fileUpload.buttonLabel',
     defaultMessage: 'Veljið skjöl til að hlaða upp',
     description: 'Default file upload button label',
+  },
+  defaultBankAccountBankNumber: {
+    id: 'application.system:core.default.bankAccount.bankNumber',
+    defaultMessage: 'Bankanúmer',
+    description: 'Bank account bank number',
+  },
+  defaultBankAccountLedger: {
+    id: 'application.system:core.default.bankAccount.ledger',
+    defaultMessage: 'Höfuðbók',
+    description: 'Bank account ledger',
+  },
+  defaultBankAccountAccountNumber: {
+    id: 'application.system:core.default.bankAccount.accountNumber',
+    defaultMessage: 'Reikningsnúmer',
+    description: 'Bank account account number',
   },
   defaultDownloadButtonTitle: {
     id: 'application.system:core.default.pdfLinkButtonField.downloadButtonTitle',
@@ -442,7 +457,7 @@ export const coreErrorMessages = defineMessages({
     description: 'Message indicating submission after payment failed',
   },
   paymentSubmitFailedDescription: {
-    id: 'application.system:core.payment.submitTitle',
+    id: 'application.system:core.payment.paymentSubmitFailedDescription',
     defaultMessage:
       'Villa hefur komið upp við áframhaldandi vinnslu. Vinsamlegast reynið aftur síðar. Ef villa endurtekur sig vinsamlegast hafið samband við island@island.is.',
     description: 'Message indicating submission after payment failed',

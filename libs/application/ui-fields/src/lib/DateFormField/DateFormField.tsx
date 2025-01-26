@@ -45,6 +45,9 @@ export const DateFormField: FC<React.PropsWithChildren<Props>> = ({
     maxYear,
     onChange,
     readOnly,
+    marginTop,
+    marginBottom,
+    clearOnChange,
   } = field
   const { formatMessage, lang } = useLocale()
 
@@ -115,7 +118,7 @@ export const DateFormField: FC<React.PropsWithChildren<Props>> = ({
   )
 
   return (
-    <div>
+    <Box marginTop={marginTop} marginBottom={marginBottom}>
       {description && (
         <FieldDescription
           description={formatTextWithLocale(
@@ -153,8 +156,9 @@ export const DateFormField: FC<React.PropsWithChildren<Props>> = ({
           }
           error={error}
           onChange={onChange}
+          clearOnChange={clearOnChange}
         />
       </Box>
-    </div>
+    </Box>
   )
 }

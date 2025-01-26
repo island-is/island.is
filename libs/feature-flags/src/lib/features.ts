@@ -31,34 +31,34 @@ export enum Features {
   FinancialStatementPoliticalPartyEnabled = 'isFinancialStatementPoliticalPartyEnabled',
   IncomePlanEnabled = 'isIncomePlanEnabled',
   WorkAccidentNotificationEnabled = 'isWorkAccidentNotificationEnabled',
+  SecondarySchoolEnabled = 'isSecondarySchoolEnabled',
 
   // Application System Delegations active
   applicationSystemDelegations = 'applicationSystemDelegations',
 
   // Service portal modules
-  servicePortalPetitionsModule = 'isServicePortalPetitionsModuleEnabled',
   servicePortalConsentModule = 'isServicePortalConsentModuleEnabled',
-  servicePortalSecondaryEducationPages = 'isServicePortalSecondaryEducationPageEnabled',
-  servicePortalWorkMachinesModule = 'isServicePortalWorkMachinesPageEnabled',
-  servicePortalSignatureCollection = 'isServicePortalSignatureCollectionEnabled',
-  servicePortalVehicleMileagePageEnabled = 'isServicePortalVehicleMileagePageEnabled',
-  servicePortalVehicleBulkMileagePageEnabled = 'isServicePortalVehicleBulkMileagePageEnabled',
   servicePortalSocialInsurancePageEnabled = 'isServicePortalSocialInsurancePageEnabled',
   servicePortalSocialInsuranceIncomePlanPageEnabled = 'isServicePortalSocialInsuranceIncomePlanPageEnabled',
   servicePortalHealthVaccinationsPageEnabled = 'isServicePortalHealthVaccinationsPageEnabled',
   servicePortalHealthOrganDonationPageEnabled = 'isServicePortalHealthOrganDonationPageEnabled',
-  ServicePortalNotificationsEnabled = 'isServicePortalNotificationsPageEnabled',
-  servicePortalLawAndOrderModuleEnabled = 'isServicePortalLawAndOrderModuleEnabled',
   servicePortalDocumentsActionsEnabled = 'isServicePortalDocumentsActionsEnabled',
   isServicePortalDocumentsV3PageEnabled = 'isServicePortalDocumentsV3PageEnabled',
   //Occupational License Health directorate fetch enabled
   occupationalLicensesHealthDirectorate = 'isHealthDirectorateOccupationalLicenseEnabled',
+  healthPaymentOverview = 'isHealthPaymentsDocumentOverviewEnabled',
 
   //Occupational License Health directorate fetch enabled
   occupationalLicensesV2 = 'isOccupationalLicensesV2Enabled',
 
   //New License service fetch enabled
   licensesV2 = 'isLicensesV2Enabled',
+
+  //Is social administration payment plan 2025 enabled?
+  isServicePortalPaymentPlan2025Enabled = 'isServicePortalPaymentPlan2025Enabled',
+
+  //Is vehicle bulk mileage graph enabled?
+  isServicePortalVehicleBulkMileageSubdataPageEnabled = 'isServicePortalVehicleBulkMileageSubdataPageEnabled',
 
   //Possible universities
   isUniversityOfAkureyriEnabled = 'isUniversityOfAkureyriEnabled',
@@ -100,12 +100,6 @@ export enum Features {
   // Single sign on passkeys
   isPasskeyRegistrationEnabled = 'isPasskeyRegistrationEnabled',
   isPasskeyAuthEnabled = 'isPasskeyAuthEnabled',
-
-  // Legal represantative delegation type
-  isLegalRepresentativeDelegationEnabled = 'isLegalRepresentativeDelegationEnabled',
-
-  // General mandate delegation type
-  isGeneralMandateDelegationEnabled = 'isGeneralMandateDelegationEnabled',
 
   // Islandis Payment
   isIslandisPaymentEnabled = 'islandisPayment',

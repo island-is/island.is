@@ -37,38 +37,6 @@ const parseSubtext = (
   }
 }
 
-const parseTag = (
-  tag: SocialInsuranceIncomePlanStatus,
-  formatMessage: FormatMessage,
-) => {
-  switch (tag) {
-    case SocialInsuranceIncomePlanStatus.ACCEPTED:
-      return {
-        label: formatMessage(coreMessages.processed),
-        variant: 'mint' as const,
-        outlined: false,
-      }
-    case SocialInsuranceIncomePlanStatus.IN_PROGRESS:
-      return {
-        label: formatMessage(coreMessages.inProgress),
-        variant: 'purple' as const,
-        outlined: false,
-      }
-    case SocialInsuranceIncomePlanStatus.CANCELLED:
-      return {
-        label: formatMessage(coreMessages.rejected),
-        variant: 'red' as const,
-        outlined: false,
-      }
-    default:
-      return {
-        label: formatMessage(coreMessages.unknown),
-        variant: 'red' as const,
-        outlined: false,
-      }
-  }
-}
-
 const IncomePlan = () => {
   useNamespaces('sp.social-insurance-maintenance')
   const { formatMessage } = useLocale()

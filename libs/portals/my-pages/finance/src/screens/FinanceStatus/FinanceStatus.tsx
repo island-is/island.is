@@ -167,8 +167,7 @@ const FinanceStatus = () => {
                         }),
                         onClick: () =>
                           formSubmit(
-                            `${financeStatusData.downloadServiceURL}${previousYear}`,
-                            true,
+                            `${financeStatusData.downloadServiceURL}${previousYear}?action=annualDoc`,
                           ),
                       },
                       {
@@ -177,8 +176,7 @@ const FinanceStatus = () => {
                         }),
                         onClick: () =>
                           formSubmit(
-                            `${financeStatusData.downloadServiceURL}${twoYearsAgo}`,
-                            true,
+                            `${financeStatusData.downloadServiceURL}${twoYearsAgo}?action=annualDoc`,
                           ),
                       },
                     ]}

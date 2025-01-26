@@ -35,6 +35,7 @@ import {
   getAdditionalSingleParentRightsInMonths,
   clamp,
   getMultipleBirthsDaysInMonths,
+  Files,
 } from '@island.is/application/templates/parental-leave'
 import {
   Application,
@@ -402,6 +403,23 @@ export class ParentalLeaveService extends BaseTemplateApiService {
     }
   }
 
+  async getPDFs(
+    application: Application,
+    documents: Files[],
+    attachmentType: string,
+    fileUpload: string,
+  ) {
+    const PDFs = []
+    for (const index of documents.keys()) {
+      const pdf = await this.getPdf(application, index, fileUpload)
+      PDFs.push({
+        attachmentType,
+        attachmentBytes: pdf,
+      })
+    }
+    return PDFs
+  }
+
   async getAttachments(application: Application): Promise<Attachment[]> {
     const attachments: Attachment[] = []
     const {
@@ -433,48 +451,36 @@ export class ParentalLeaveService extends BaseTemplateApiService {
       state === States.RESIDENCE_GRANT_APPLICATION
     ) {
       if (residenceGrantFiles) {
-        residenceGrantFiles.forEach(async (item, index) => {
-          const pdf = await this.getPdf(
-            application,
-            index,
-            'fileUpload.residenceGrant',
-          )
-          attachments.push({
-            attachmentType: apiConstants.attachments.residenceGrant,
-            attachmentBytes: pdf,
-          })
-        })
+        const PDFs = await this.getPDFs(
+          application,
+          residenceGrantFiles,
+          apiConstants.attachments.residenceGrant,
+          'fileUpload.residenceGrant',
+        )
+        attachments.push(...PDFs)
       }
     }
 
     if (changeEmployerFile) {
-      changeEmployerFile.forEach(async (item, index) => {
-        const pdf = await this.getPdf(
-          application,
-          index,
-          'fileUpload.changeEmployerFile',
-        )
-        attachments.push({
-          attachmentType: apiConstants.attachments.changeEmployer,
-          attachmentBytes: pdf,
-        })
-      })
+      const PDFs = await this.getPDFs(
+        application,
+        changeEmployerFile,
+        apiConstants.attachments.changeEmployer,
+        'fileUpload.changeEmployerFile',
+      )
+      attachments.push(...PDFs)
     }
 
     // We don't want to send old files to VMST again
     if (applicationFundId && applicationFundId !== '') {
       if (additionalDocuments) {
-        for (const index of additionalDocuments.keys()) {
-          const pdf = await this.getPdf(
-            application,
-            index,
-            'fileUpload.additionalDocuments',
-          )
-          attachments.push({
-            attachmentType: apiConstants.attachments.other,
-            attachmentBytes: pdf,
-          })
-        }
+        const PDFs = await this.getPDFs(
+          application,
+          additionalDocuments,
+          apiConstants.attachments.other,
+          'fileUpload.additionalDocuments',
+        )
+        attachments.push(...PDFs)
       }
       return attachments
     }

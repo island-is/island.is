@@ -25,7 +25,6 @@ import { DrivingLicenseBookModule } from '@island.is/api/domains/driving-license
 import { EducationModule } from '@island.is/api/domains/education'
 import { EducationV2Module } from '@island.is/api/domains/education'
 import { SocialInsuranceModule } from '@island.is/api/domains/social-insurance'
-import { ElectronicRegistrationsModule } from '@island.is/api/domains/electronic-registration-statistics'
 import {
   EmailSignupModule,
   ZenterSignupConfig,
@@ -94,7 +93,6 @@ import { ConsultationPortalClientConfig } from '@island.is/clients/consultation-
 import { DisabilityLicenseClientConfig } from '@island.is/clients/disability-license'
 import { DrivingLicenseApiConfig } from '@island.is/clients/driving-license'
 import { DrivingLicenseBookClientConfig } from '@island.is/clients/driving-license-book'
-import { ElectronicRegistrationsClientConfig } from '@island.is/clients/electronic-registration-statistics'
 import { EnergyFundsClientConfig } from '@island.is/clients/energy-funds'
 import { FinanceClientConfig } from '@island.is/clients/finance'
 import { FinancialStatementsInaoClientConfig } from '@island.is/clients/financial-statements-inao'
@@ -209,6 +207,8 @@ import { UmbodsmadurSkuldaraModule } from '@island.is/api/domains/umbodsmadur-sk
 import { UmbodsmadurSkuldaraClientConfig } from '@island.is/clients/ums-cost-of-living-calculator'
 import { emailModuleConfig } from '@island.is/email-service'
 import { ZendeskServiceConfig } from '@island.is/clients/zendesk'
+import { SecondarySchoolClientConfig } from '@island.is/clients/secondary-school'
+import { SecondarySchoolApiModule } from '@island.is/api/domains/secondary-school'
 
 const environment = getConfig
 
@@ -297,7 +297,6 @@ const environment = getConfig
     HealthDirectorateClientModule,
     OfficialJournalOfIcelandClientModule,
     DisabilityLicenseModule,
-    ElectronicRegistrationsModule,
     FiskistofaModule,
     WatsonAssistantChatModule,
     IcelandicGovernmentInstitutionVacanciesModule,
@@ -348,6 +347,7 @@ const environment = getConfig
     LawAndOrderModule,
     UmbodsmadurSkuldaraModule,
     HealthDirectorateModule,
+    SecondarySchoolApiModule,
     ConfigModule.forRoot({
       isGlobal: true,
       load: [
@@ -388,7 +388,6 @@ const environment = getConfig
         IdsClientConfig,
         NationalRegistryClientConfig,
         SyslumennClientConfig,
-        ElectronicRegistrationsClientConfig,
         XRoadConfig,
         MunicipalitiesFinancialAidConfig,
         SocialInsuranceAdministrationClientConfig,
@@ -449,6 +448,7 @@ const environment = getConfig
         WorkAccidentClientConfig,
         ZendeskServiceConfig,
         emailModuleConfig,
+        SecondarySchoolClientConfig,
         PaymentsApiModuleConfig,
       ],
     }),

@@ -1,0 +1,5 @@
+mutation LimitedAccessUpdateDefendant($input: UpdateDefendantInput!) {
+  limitedAccessUpdateDefendant(input: $input) {
+    id
+  }
+}

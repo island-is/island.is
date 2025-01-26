@@ -3,7 +3,7 @@ import { useQuery } from '@apollo/client'
 import {
   OfficialJournalOfIcelandAdvert,
   OfficialJournalOfIcelandAdvertsResponse,
-} from '@island.is/api/schema'
+} from '@island.is/web/graphql/schema'
 
 import { ADVERTS_QUERY } from '../../queries/OfficialJournalOfIceland'
 import { getAdvertParams } from '../lib/advert-params.mapper'

@@ -11,7 +11,10 @@ import {
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 
 import type { SubstanceMap } from '@island.is/judicial-system/types'
-import { IndictmentCountOffense } from '@island.is/judicial-system/types'
+import {
+  IndictmentCountOffense,
+  IndictmentSubtype,
+} from '@island.is/judicial-system/types'
 
 import { Case } from '../../case/models/case.model'
 
@@ -69,4 +72,12 @@ export class IndictmentCount extends Model {
   @Column({ type: DataType.TEXT, allowNull: true })
   @ApiPropertyOptional({ type: String })
   legalArguments?: string
+
+  @Column({
+    type: DataType.ARRAY(DataType.ENUM),
+    allowNull: true,
+    values: Object.values(IndictmentSubtype),
+  })
+  @ApiPropertyOptional({ enum: IndictmentSubtype, isArray: true })
+  indictmentCountSubtypes?: IndictmentSubtype[]
 }

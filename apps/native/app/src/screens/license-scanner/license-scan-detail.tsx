@@ -1,4 +1,3 @@
-import { ScanResultCard, SupportedGenericLicenseTypes } from '@ui'
 import { useIntl } from 'react-intl'
 import {
   Navigation,
@@ -7,6 +6,8 @@ import {
 } from 'react-native-navigation'
 import { useNavigationButtonPress } from 'react-native-navigation-hooks/dist'
 import styled from 'styled-components/native'
+
+import { ScanResultCard, SupportedGenericLicenseTypes } from '../../ui'
 import { LICENSE_SCANNER_DONE } from '../../constants/navigation-buttons'
 import {
   VerifyLicenseBarcodeError,

@@ -79,7 +79,7 @@ export interface Form {
   children: FormChildren[]
   icon?: string
   id: string
-  logo?: React.FC<React.PropsWithChildren<unknown>>
+  logo?: FormComponent
   mode?: FormModes
   renderLastScreenBackButton?: boolean
   renderLastScreenButton?: boolean
@@ -110,11 +110,13 @@ export interface Section extends FormItem {
   type: FormItemTypes.SECTION
   children: SectionChildren[]
   draftPageNumber?: number
+  tabTitle?: FormTextWithLocale
 }
 
 export interface SubSection extends FormItem {
   type: FormItemTypes.SUB_SECTION
   children: FormLeaf[]
+  tabTitle?: FormTextWithLocale
 }
 
 export interface Repeater extends FormItem {
@@ -184,6 +186,7 @@ export interface FieldBaseProps<TAnswers = FormValue> {
   field: Field
   application: Application<TAnswers>
   showFieldName?: boolean
+  clearOnChange?: string[]
   goToScreen?: (id: string) => void
   answerQuestions?: (answers: FormValue) => void
   refetch?: () => void

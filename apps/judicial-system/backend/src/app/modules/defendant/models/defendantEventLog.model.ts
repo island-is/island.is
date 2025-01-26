@@ -20,11 +20,17 @@ import { Defendant } from './defendant.model'
   timestamps: true,
 })
 export class DefendantEventLog extends Model {
-  static sentToPrisonAdminDate(defendantEventLogs?: DefendantEventLog[]) {
+  // gets the latest log date of a given type, since the defendant event logs are sorted
+  static getDefendantEventLogTypeDate({
+    defendantEventLogs,
+    eventType,
+  }: {
+    defendantEventLogs?: DefendantEventLog[]
+    eventType: DefendantEventType
+  }) {
     return defendantEventLogs?.find(
-      (defendantEventLog) =>
-        defendantEventLog.eventType === DefendantEventType.SENT_TO_PRISON_ADMIN,
-    )
+      (defendantEventLog) => defendantEventLog.eventType === eventType,
+    )?.created
   }
 
   @Column({

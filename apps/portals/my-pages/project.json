@@ -105,9 +105,7 @@
     "start-bff": {
       "executor": "nx:run-commands",
       "options": {
-        "commands": [
-          "node -r esbuild-register src/cli/cli.ts run-local-env services-bff-portals-my-pages"
-        ],
+        "commands": ["yarn infra run-local-env services-bff-portals-my-pages"],
         "cwd": "infra"
       }
     },

@@ -1,6 +1,4 @@
 import { useApolloClient, useFragment_experimental } from '@apollo/client'
-import { Alert, blue400, dynamicColor, Header, Loader } from '@ui'
-import { Problem } from '@ui/lib/problem/problem'
 import React, { useEffect, useRef, useState } from 'react'
 import { FormattedDate, useIntl } from 'react-intl'
 import {
@@ -22,6 +20,8 @@ import {
 import Pdf, { Source } from 'react-native-pdf'
 import WebView from 'react-native-webview'
 import styled, { useTheme } from 'styled-components/native'
+
+import { Alert, blue400, dynamicColor, Header, Loader, Problem } from '../../ui'
 import {
   DocumentV2,
   DocumentV2Action,

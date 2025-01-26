@@ -1,10 +1,11 @@
-import { Input, InputRow, NavigationBarSheet } from '@ui'
 import { useIntl } from 'react-intl'
 import { ScrollView, View } from 'react-native'
 import {
   Navigation,
   NavigationFunctionComponent,
 } from 'react-native-navigation'
+
+import { Input, InputRow, NavigationBarSheet } from '../../ui'
 import { useGetFinanceStatusDetailsQuery } from '../../graphql/types/schema'
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
 import { testIDs } from '../../utils/test-ids'

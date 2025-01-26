@@ -3,11 +3,12 @@ import { useIntl } from 'react-intl'
 import { useWindowSize } from 'react-use'
 import debounce from 'lodash/debounce'
 import NextLink from 'next/link'
-import { useRouter } from 'next/router'
 import {
   parseAsArrayOf,
   parseAsInteger,
   parseAsString,
+  parseAsStringLiteral,
+  useQueryState,
 } from 'next-usequerystate'
 import { useLazyQuery } from '@apollo/client'
 
@@ -16,9 +17,11 @@ import {
   BreadCrumbItem,
   Breadcrumbs,
   FilterInput,
+  Pagination,
   Text,
 } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
+import { Problem } from '@island.is/react-spa/shared'
 import { debounceTime } from '@island.is/shared/constants'
 import { Locale } from '@island.is/shared/types'
 import { GrantHeaderWithImage, GrantWrapper } from '@island.is/web/components'
@@ -26,6 +29,7 @@ import {
   ContentLanguage,
   CustomPageUniqueIdentifier,
   GenericTag,
+  GetGrantsInputAvailabilityStatusEnum,
   Grant,
   GrantList,
   Query,
@@ -43,126 +47,116 @@ import SidebarLayout from '../../Layouts/SidebarLayout'
 import { GET_GENERIC_TAGS_IN_TAG_GROUPS_QUERY } from '../../queries/GenericTag'
 import { GET_GRANTS_QUERY } from '../../queries/Grants'
 import { m } from '../messages'
+import { Availability } from '../types'
 import { SearchResultsContent } from './SearchResultsContent'
 import { GrantsSearchResultsFilter } from './SearchResultsFilter'
 
-export interface SearchState {
-  page?: number
-  query?: string
-  status?: Array<string>
-  category?: Array<string>
-  type?: Array<string>
-  organization?: Array<string>
-}
+const PAGE_SIZE = 8
 
 const GrantsSearchResultsPage: CustomScreen<GrantsHomeProps> = ({
   locale,
-  initialGrants,
+  initialGrantList,
   tags,
 }) => {
   const { formatMessage } = useIntl()
-  const router = useRouter()
   const { linkResolver } = useLinkResolver()
 
-  const parentUrl = linkResolver('styrkjatorg', [], locale).href
-  const currentUrl = linkResolver('styrkjatorgsearch', [], locale).href
+  const parentUrl = linkResolver('grantsplaza', [], locale).href
+  const currentUrl = linkResolver('grantsplazasearch', [], locale).href
 
-  const [grants, setGrants] = useState<Array<Grant>>(initialGrants ?? [])
-  const [searchState, setSearchState] = useState<SearchState>()
+  const [grants, setGrants] = useState<Array<Grant>>(
+    initialGrantList?.items ?? [],
+  )
+  const [totalHits, setTotalHits] = useState<number | undefined>(
+    initialGrantList?.total ?? 0,
+  )
+
+  const [page, setPage] = useQueryState('page', parseAsInteger.withDefault(1))
+  const [query, setQuery] = useQueryState('query')
+  const [categories, setCategories] = useQueryState(
+    'category',
+    parseAsArrayOf(parseAsString),
+  )
+  const [types, setTypes] = useQueryState('type', parseAsArrayOf(parseAsString))
+  const [organizations, setOrganizations] = useQueryState(
+    'organization',
+    parseAsArrayOf(parseAsString),
+  )
+  const [status, setStatus] = useQueryState(
+    'status',
+    parseAsStringLiteral(Availability),
+  )
+
   const [initialRender, setInitialRender] = useState<boolean>(true)
 
   const { width } = useWindowSize()
   const isMobile = width <= theme.breakpoints.md
 
-  const [getGrants, { error }] = useLazyQuery<
+  const [getGrants, { error, loading }] = useLazyQuery<
     { getGrants: GrantList },
     QueryGetGrantsArgs
   >(GET_GRANTS_QUERY)
 
-  //load params into search state on first render
-  useEffect(() => {
-    const searchParams = new URLSearchParams(document.location.search)
-    const page = searchParams.get('page')
-    const statuses = searchParams.getAll('status')
-    const categories = searchParams.getAll('category')
-    const types = searchParams.getAll('type')
-    const organizations = searchParams.getAll('organization')
-
-    setSearchState({
-      page: page ? Number.parseInt(page) : undefined,
-      query: searchParams.get('query') ?? undefined,
-      status: statuses.length ? statuses : undefined,
-      category: categories.length ? categories : undefined,
-      type: types.length ? types : undefined,
-      organization: organizations.length ? organizations : undefined,
-    })
-  }, [])
-
-  const updateUrl = useCallback(() => {
-    if (!searchState) {
+  const totalPages = useMemo(() => {
+    if (!totalHits) {
       return
     }
-    router.replace(
-      {
-        pathname: currentUrl,
-        query: Object.entries(searchState)
-          .filter(([_, value]) => !!value)
-          .reduce(
-            (accumulator, [searchStateKey, searchStateValue]) => ({
-              ...accumulator,
-              [searchStateKey]: searchStateValue,
-            }),
-            {},
-          ),
-      },
-      undefined,
-      { shallow: true },
-    )
-  }, [searchState, router, currentUrl])
+    return totalHits > PAGE_SIZE ? Math.ceil(totalHits / PAGE_SIZE) : 1
+  }, [totalHits])
 
   const fetchGrants = useCallback(() => {
     if (initialRender) {
       setInitialRender(false)
       return
     }
-
     getGrants({
       variables: {
         input: {
-          categories: searchState?.category,
+          categories: categories ? [...categories] : null,
           lang: locale,
-          organizations: searchState?.organization,
-          page: searchState?.page,
-          search: searchState?.query,
-          size: 8,
-          statuses: searchState?.status,
-          types: searchState?.type,
+          organizations: organizations ? [...organizations] : null,
+          page,
+          search: query,
+          size: PAGE_SIZE,
+          types: types ? [...types] : null,
+          status: status
+            ? status === 'closed'
+              ? GetGrantsInputAvailabilityStatusEnum.Closed
+              : GetGrantsInputAvailabilityStatusEnum.Open
+            : undefined,
         },
       },
     })
       .then((res) => {
         if (res.data) {
           setGrants(res.data.getGrants.items)
+          setTotalHits(res.data.getGrants.total)
         } else if (res.error) {
           setGrants([])
-          console.error('Error fetching grants', res.error)
         }
       })
-      .catch((err) => {
+      .catch(() => {
         setGrants([])
-        console.error('Error fetching grants', err)
       })
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchState, initialRender])
+  }, [
+    categories,
+    getGrants,
+    locale,
+    organizations,
+    page,
+    status,
+    query,
+    types,
+    initialRender,
+  ])
 
   //SEARCH STATE UPDATES
   const debouncedSearchUpdate = useMemo(() => {
     return debounce(() => {
-      updateUrl()
       fetchGrants()
     }, debounceTime.search)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchState])
+  }, [categories, locale, organizations, page, query, types, status])
 
   useEffect(() => {
     debouncedSearchUpdate()
@@ -170,16 +164,6 @@ const GrantsSearchResultsPage: CustomScreen<GrantsHomeProps> = ({
       debouncedSearchUpdate.cancel()
     }
   }, [debouncedSearchUpdate])
-
-  const updateSearchStateValue = (
-    categoryId: keyof SearchState,
-    values: unknown,
-  ) => {
-    setSearchState({
-      ...searchState,
-      [categoryId]: values,
-    })
-  }
 
   const breadcrumbItems: Array<BreadCrumbItem> = [
     {
@@ -198,30 +182,54 @@ const GrantsSearchResultsPage: CustomScreen<GrantsHomeProps> = ({
   ]
 
   const onResetFilter = () => {
-    setSearchState({
-      page: undefined,
-      query: undefined,
-      status: undefined,
-      category: undefined,
-      type: undefined,
-      organization: undefined,
-    })
-    router.replace(currentUrl, {}, { shallow: true })
+    setPage(1)
+    setQuery(null)
+    setCategories(null)
+    setTypes(null)
+    setOrganizations(null)
+    setStatus(null)
   }
 
   const hitsMessage = useMemo(() => {
-    if (!grants) {
+    if (!totalHits) {
       return
     }
-    if (grants.length === 1) {
+    if (totalHits === 1) {
       return formatMessage(m.search.resultFound, {
-        arg: <strong>{grants.length}</strong>,
+        arg: <strong>{totalHits}</strong>,
       })
     }
     return formatMessage(m.search.resultsFound, {
-      arg: <strong>{grants.length}</strong>,
+      arg: <strong>{totalHits}</strong>,
     })
-  }, [formatMessage, grants])
+  }, [formatMessage, totalHits])
+
+  const onSearchFilterUpdate = (categoryId: string, values?: Array<string>) => {
+    const filteredValues = values?.length ? [...values] : null
+    switch (categoryId) {
+      case 'status': {
+        const slug = values?.[0]
+          ? Availability.find((v) => v === values[0])
+          : undefined
+        if (slug) {
+          setStatus(slug === 'open' ? 'open' : 'closed')
+        } else setStatus(null)
+        break
+      }
+      case 'category': {
+        setCategories(filteredValues)
+        break
+      }
+      case 'type': {
+        setTypes(filteredValues)
+        break
+      }
+      case 'organization': {
+        setOrganizations(filteredValues)
+        break
+      }
+    }
+  }
 
   return (
     <GrantWrapper
@@ -267,18 +275,22 @@ const GrantsSearchResultsPage: CustomScreen<GrantsHomeProps> = ({
                   <FilterInput
                     name="query"
                     placeholder={formatMessage(m.search.inputPlaceholder)}
-                    value={searchState?.query ?? ''}
-                    onChange={(option) =>
-                      updateSearchStateValue('query', option)
-                    }
+                    value={query ?? ''}
+                    onChange={(option) => setQuery(option)}
                   />
                 </Box>
                 <GrantsSearchResultsFilter
-                  searchState={searchState}
-                  onSearchUpdate={updateSearchStateValue}
+                  searchState={{
+                    category: categories ?? undefined,
+                    type: types ?? undefined,
+                    organization: organizations ?? undefined,
+                    status: status ?? undefined,
+                  }}
+                  onSearchUpdate={onSearchFilterUpdate}
                   onReset={onResetFilter}
                   tags={tags ?? []}
                   url={currentUrl}
+                  variant={'default'}
                 />
               </Box>
             }
@@ -288,6 +300,27 @@ const GrantsSearchResultsPage: CustomScreen<GrantsHomeProps> = ({
                 grants={grants}
                 subheader={hitsMessage}
                 locale={locale}
+              />
+            </Box>
+
+            <Box marginTop={2} marginBottom={0} hidden={(totalPages ?? 0) < 1}>
+              <Pagination
+                variant="purple"
+                page={page}
+                itemsPerPage={PAGE_SIZE}
+                totalItems={totalHits}
+                totalPages={totalPages}
+                renderLink={(page, className, children) => (
+                  <Box
+                    cursor="pointer"
+                    className={className}
+                    onClick={() => {
+                      setPage(page)
+                    }}
+                  >
+                    {children}
+                  </Box>
+                )}
               />
             </Box>
           </SidebarLayout>
@@ -303,29 +336,53 @@ const GrantsSearchResultsPage: CustomScreen<GrantsHomeProps> = ({
               <FilterInput
                 name="query"
                 placeholder={formatMessage(m.search.inputPlaceholder)}
-                value={searchState?.query ?? ''}
-                onChange={(option) => updateSearchStateValue('query', option)}
+                value={query ?? ''}
+                onChange={(option) => setQuery(option)}
                 backgroundColor={'white'}
               />
             </Box>
             <Box
               marginY={2}
-              marginLeft={4}
               display="flex"
               alignItems="center"
               justifyContent="spaceBetween"
             >
               <Text>{hitsMessage}</Text>
               <GrantsSearchResultsFilter
-                searchState={searchState}
+                searchState={{
+                  category: categories ?? undefined,
+                  type: types ?? undefined,
+                  organization: organizations ?? undefined,
+                }}
+                onSearchUpdate={onSearchFilterUpdate}
                 onReset={onResetFilter}
-                onSearchUpdate={updateSearchStateValue}
                 tags={tags ?? []}
                 url={currentUrl}
-                variant="popover"
+                variant={'popover'}
               />
             </Box>
+
             <SearchResultsContent grants={grants} locale={locale} />
+            <Box marginTop={2} marginBottom={0} hidden={(totalPages ?? 0) < 1}>
+              <Pagination
+                variant="purple"
+                page={page}
+                itemsPerPage={PAGE_SIZE}
+                totalItems={totalHits}
+                totalPages={totalPages}
+                renderLink={(page, className, children) => (
+                  <Box
+                    cursor="pointer"
+                    className={className}
+                    onClick={() => {
+                      setPage(page)
+                    }}
+                  >
+                    {children}
+                  </Box>
+                )}
+              />
+            </Box>
           </Box>
         )}
       </Box>
@@ -335,19 +392,19 @@ const GrantsSearchResultsPage: CustomScreen<GrantsHomeProps> = ({
 
 interface GrantsHomeProps {
   locale: Locale
-  initialGrants?: Array<Grant>
+  initialGrantList?: GrantList
   tags?: Array<GenericTag>
 }
 
 const GrantsSearchResults: CustomScreen<GrantsHomeProps> = ({
-  initialGrants,
+  initialGrantList,
   tags,
   customPageData,
   locale,
 }) => {
   return (
     <GrantsSearchResultsPage
-      initialGrants={initialGrants}
+      initialGrantList={initialGrantList}
       tags={tags}
       locale={locale}
       customPageData={customPageData}
@@ -365,6 +422,10 @@ GrantsSearchResults.getProps = async ({ apolloClient, locale, query }) => {
 
     return undefined
   }
+
+  const status =
+    parseAsStringLiteral(Availability).parseServerSide(query?.status) ??
+    undefined
 
   const [
     {
@@ -384,13 +445,15 @@ GrantsSearchResults.getProps = async ({ apolloClient, locale, query }) => {
           categories: filterArray<string>(
             arrayParser.parseServerSide(query?.category),
           ),
-          statuses: filterArray<string>(
-            arrayParser.parseServerSide(query?.status),
-          ),
           types: filterArray<string>(arrayParser.parseServerSide(query?.type)),
           organizations: filterArray<string>(
             arrayParser.parseServerSide(query?.organization),
           ),
+          status: status
+            ? status === 'closed'
+              ? GetGrantsInputAvailabilityStatusEnum.Closed
+              : GetGrantsInputAvailabilityStatusEnum.Open
+            : undefined,
         },
       },
     }),
@@ -404,8 +467,9 @@ GrantsSearchResults.getProps = async ({ apolloClient, locale, query }) => {
       },
     }),
   ])
+
   return {
-    initialGrants: getGrants.items,
+    initialGrantList: getGrants,
     tags: getGenericTagsInTagGroups ?? undefined,
     locale: locale as Locale,
     themeConfig: {

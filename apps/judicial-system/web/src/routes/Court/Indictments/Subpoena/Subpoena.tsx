@@ -5,6 +5,7 @@ import router from 'next/router'
 import { Box, Button } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
+import { CourtSessionType } from '@island.is/judicial-system/types'
 import { titles } from '@island.is/judicial-system-web/messages'
 import {
   CourtArrangements,
@@ -81,23 +82,26 @@ const Subpoena: FC = () => {
         return
       }
 
-      // If rescheduling after the court has met, then clear the current conclusion
-      const clearedConclusion =
-        isArraignmentScheduled && workingCase.indictmentDecision
-          ? [
-              {
+      const additionalUpdates = [
+        {
+          // This should always be an arraignment type
+          courtSessionType: CourtSessionType.ARRAIGNMENT,
+          // if the case is being rescheduled after the court has met,
+          // then clear the current conclusion
+          ...(isArraignmentScheduled && workingCase.indictmentDecision
+            ? {
                 indictmentDecision: null,
-                courtSessionType: null,
                 courtDate: null,
                 postponedIndefinitelyExplanation: null,
                 indictmentRulingDecision: null,
                 mergeCaseId: null,
                 force: true,
-              },
-            ]
-          : undefined
+              }
+            : {}),
+        },
+      ]
 
-      const courtDateUpdated = await sendCourtDateToServer(clearedConclusion)
+      const courtDateUpdated = await sendCourtDateToServer(additionalUpdates)
 
       if (!courtDateUpdated) {
         setIsCreatingSubpoena(false)

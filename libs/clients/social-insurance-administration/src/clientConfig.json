@@ -1,9 +1,6 @@
 {
   "openapi": "3.0.1",
-  "info": {
-    "title": "TR Portal API",
-    "version": "v1.0"
-  },
+  "info": { "title": "TR Portal API", "version": "v1.0" },
   "paths": {
     "/api/protected/v1/Applicant/{applicationType}/eligible": {
       "get": {
@@ -15,10 +12,7 @@
             "in": "path",
             "description": "The type of application (e.g. old age pension) to check for eligibility",
             "required": true,
-            "style": "simple",
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           }
         ],
         "responses": {
@@ -83,7 +77,7 @@
             }
           },
           "500": {
-            "description": "Server Error",
+            "description": "Internal Server Error",
             "content": {
               "text/plain": {
                 "schema": {
@@ -103,7 +97,7 @@
             }
           },
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "text/plain": {
                 "schema": {
@@ -191,7 +185,7 @@
             }
           },
           "500": {
-            "description": "Server Error",
+            "description": "Internal Server Error",
             "content": {
               "text/plain": {
                 "schema": {
@@ -211,7 +205,7 @@
             }
           },
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "text/plain": {
                 "schema": {
@@ -226,6 +220,132 @@
               "text/json": {
                 "schema": {
                   "$ref": "#/components/schemas/TrWeb.Commons.ExternalPortals.Api.Models.Applicant.ApplicantInfoReturn"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/protected/v1/Applicant/onetimepayment": {
+      "post": {
+        "tags": ["Applicant"],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TrWeb.Commons.ExternalPortals.Api.Models.FormBuilder.Application"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TrWeb.Commons.ExternalPortals.Api.Models.FormBuilder.Application"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/TrWeb.Commons.ExternalPortals.Api.Models.FormBuilder.Application"
+              }
+            }
+          }
+        },
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Commons.ExternalPortals.Api.Models.FormBuilder.ResultSets.ApplicationResultSet"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Commons.ExternalPortals.Api.Models.FormBuilder.ResultSets.ApplicationResultSet"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Commons.ExternalPortals.Api.Models.FormBuilder.ResultSets.ApplicationResultSet"
                 }
               }
             }
@@ -319,7 +439,7 @@
             }
           },
           "500": {
-            "description": "Server Error",
+            "description": "Internal Server Error",
             "content": {
               "text/plain": {
                 "schema": {
@@ -339,25 +459,16 @@
             }
           },
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "text/plain": {
-                "schema": {
-                  "type": "integer",
-                  "format": "int32"
-                }
+                "schema": { "type": "integer", "format": "int32" }
               },
               "application/json": {
-                "schema": {
-                  "type": "integer",
-                  "format": "int32"
-                }
+                "schema": { "type": "integer", "format": "int32" }
               },
               "text/json": {
-                "schema": {
-                  "type": "integer",
-                  "format": "int32"
-                }
+                "schema": { "type": "integer", "format": "int32" }
               }
             }
           }
@@ -374,30 +485,15 @@
             "in": "path",
             "description": "The application type, e.g. \"oldagepension\"",
             "required": true,
-            "style": "simple",
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           }
         ],
         "requestBody": {
           "description": "Input for application, varies by type",
           "content": {
-            "application/json": {
-              "schema": {
-                "type": "object"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "type": "object"
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "type": "object"
-              }
-            }
+            "application/json": { "schema": { "type": "object" } },
+            "text/json": { "schema": { "type": "object" } },
+            "application/*+json": { "schema": { "type": "object" } }
           }
         },
         "responses": {
@@ -462,7 +558,7 @@
             }
           },
           "500": {
-            "description": "Server Error",
+            "description": "Internal Server Error",
             "content": {
               "text/plain": {
                 "schema": {
@@ -482,7 +578,7 @@
             }
           },
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "text/plain": {
                 "schema": {
@@ -514,10 +610,7 @@
             "in": "path",
             "description": "The application GUID for the application in Island.is",
             "required": true,
-            "style": "simple",
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           }
         ],
         "requestBody": {
@@ -612,7 +705,7 @@
             }
           },
           "500": {
-            "description": "Server Error",
+            "description": "Internal Server Error",
             "content": {
               "text/plain": {
                 "schema": {
@@ -631,9 +724,7 @@
               }
             }
           },
-          "204": {
-            "description": "No Content"
-          }
+          "204": { "description": "No Content" }
         }
       }
     },
@@ -702,7 +793,7 @@
             }
           },
           "500": {
-            "description": "Server Error",
+            "description": "Internal Server Error",
             "content": {
               "text/plain": {
                 "schema": {
@@ -722,7 +813,7 @@
             }
           },
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "text/plain": {
                 "schema": {
@@ -752,18 +843,12 @@
             "name": "documentId",
             "in": "path",
             "required": true,
-            "style": "simple",
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           },
           {
             "name": "authenticationType",
             "in": "query",
-            "style": "form",
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           }
         ],
         "responses": {
@@ -828,7 +913,7 @@
             }
           },
           "500": {
-            "description": "Server Error",
+            "description": "Internal Server Error",
             "content": {
               "text/plain": {
                 "schema": {
@@ -848,7 +933,7 @@
             }
           },
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "text/plain": {
                 "schema": {
@@ -936,7 +1021,7 @@
             }
           },
           "500": {
-            "description": "Server Error",
+            "description": "Internal Server Error",
             "content": {
               "text/plain": {
                 "schema": {
@@ -956,31 +1041,16 @@
             }
           },
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "text/plain": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "type": "string"
-                  }
-                }
+                "schema": { "type": "array", "items": { "type": "string" } }
               },
               "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "type": "string"
-                  }
-                }
+                "schema": { "type": "array", "items": { "type": "string" } }
               },
               "text/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "type": "string"
-                  }
-                }
+                "schema": { "type": "array", "items": { "type": "string" } }
               }
             }
           }
@@ -1053,7 +1123,7 @@
             }
           },
           "500": {
-            "description": "Server Error",
+            "description": "Internal Server Error",
             "content": {
               "text/plain": {
                 "schema": {
@@ -1073,7 +1143,7 @@
             }
           },
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "text/plain": {
                 "schema": {
@@ -1170,7 +1240,7 @@
             }
           },
           "500": {
-            "description": "Server Error",
+            "description": "Internal Server Error",
             "content": {
               "text/plain": {
                 "schema": {
@@ -1190,7 +1260,7 @@
             }
           },
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "text/plain": {
                 "schema": {
@@ -1229,11 +1299,7 @@
           {
             "name": "year",
             "in": "query",
-            "style": "form",
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
+            "schema": { "type": "integer", "format": "int32" }
           }
         ],
         "responses": {
@@ -1298,7 +1364,7 @@
             }
           },
           "500": {
-            "description": "Server Error",
+            "description": "Internal Server Error",
             "content": {
               "text/plain": {
                 "schema": {
@@ -1318,7 +1384,7 @@
             }
           },
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "text/plain": {
                 "schema": {
@@ -1406,7 +1472,7 @@
             }
           },
           "500": {
-            "description": "Server Error",
+            "description": "Internal Server Error",
             "content": {
               "text/plain": {
                 "schema": {
@@ -1426,7 +1492,7 @@
             }
           },
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "text/plain": {
                 "schema": {
@@ -1534,7 +1600,7 @@
             }
           },
           "500": {
-            "description": "Server Error",
+            "description": "Internal Server Error",
             "content": {
               "text/plain": {
                 "schema": {
@@ -1554,7 +1620,7 @@
             }
           },
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "text/plain": {
                 "schema": {
@@ -1642,7 +1708,7 @@
             }
           },
           "500": {
-            "description": "Server Error",
+            "description": "Internal Server Error",
             "content": {
               "text/plain": {
                 "schema": {
@@ -1662,7 +1728,7 @@
             }
           },
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "text/plain": {
                 "schema": {
@@ -1693,10 +1759,7 @@
             "name": "year",
             "in": "query",
             "description": "",
-            "style": "form",
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           }
         ],
         "responses": {
@@ -1761,7 +1824,7 @@
             }
           },
           "500": {
-            "description": "Server Error",
+            "description": "Internal Server Error",
             "content": {
               "text/plain": {
                 "schema": {
@@ -1781,7 +1844,7 @@
             }
           },
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "text/plain": {
                 "schema": {
@@ -1869,7 +1932,7 @@
             }
           },
           "500": {
-            "description": "Server Error",
+            "description": "Internal Server Error",
             "content": {
               "text/plain": {
                 "schema": {
@@ -1889,7 +1952,7 @@
             }
           },
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "text/plain": {
                 "schema": {
@@ -1977,7 +2040,7 @@
             }
           },
           "500": {
-            "description": "Server Error",
+            "description": "Internal Server Error",
             "content": {
               "text/plain": {
                 "schema": {
@@ -1997,33 +2060,24 @@
             }
           },
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "text/plain": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "type": "integer",
-                    "format": "int32"
-                  }
+                  "items": { "type": "integer", "format": "int32" }
                 }
               },
               "application/json": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "type": "integer",
-                    "format": "int32"
-                  }
+                  "items": { "type": "integer", "format": "int32" }
                 }
               },
               "text/json": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "type": "integer",
-                    "format": "int32"
-                  }
+                  "items": { "type": "integer", "format": "int32" }
                 }
               }
             }
@@ -2117,7 +2171,7 @@
             }
           },
           "500": {
-            "description": "Server Error",
+            "description": "Internal Server Error",
             "content": {
               "text/plain": {
                 "schema": {
@@ -2137,7 +2191,7 @@
             }
           },
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "text/plain": {
                 "schema": {
@@ -2234,7 +2288,7 @@
             }
           },
           "500": {
-            "description": "Server Error",
+            "description": "Internal Server Error",
             "content": {
               "text/plain": {
                 "schema": {
@@ -2254,23 +2308,11 @@
             }
           },
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "string"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "type": "string"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "type": "string"
-                }
-              }
+              "text/plain": { "schema": { "type": "string" } },
+              "application/json": { "schema": { "type": "string" } },
+              "text/json": { "schema": { "type": "string" } }
             }
           }
         }
@@ -2342,7 +2384,7 @@
             }
           },
           "500": {
-            "description": "Server Error",
+            "description": "Internal Server Error",
             "content": {
               "text/plain": {
                 "schema": {
@@ -2362,23 +2404,11 @@
             }
           },
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "string"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "type": "string"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "type": "string"
-                }
-              }
+              "text/plain": { "schema": { "type": "string" } },
+              "application/json": { "schema": { "type": "string" } },
+              "text/json": { "schema": { "type": "string" } }
             }
           }
         }
@@ -2449,7 +2479,7 @@
             }
           },
           "500": {
-            "description": "Server Error",
+            "description": "Internal Server Error",
             "content": {
               "text/plain": {
                 "schema": {
@@ -2469,7 +2499,7 @@
             }
           },
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "text/plain": {
                 "schema": {
@@ -2497,75 +2527,36 @@
       "TrWeb.Api.Services.Common.Clients.Models.GetBankInformationReturn": {
         "type": "object",
         "properties": {
-          "bank": {
-            "type": "string",
-            "nullable": true
-          },
-          "ledger": {
-            "type": "string",
-            "nullable": true
-          },
-          "accountNumber": {
-            "type": "string",
-            "nullable": true
-          },
-          "iban": {
-            "type": "string",
-            "nullable": true
-          },
-          "swift": {
-            "type": "string",
-            "nullable": true
-          },
-          "foreignBankName": {
-            "type": "string",
-            "nullable": true
-          },
-          "foreignBankAddress": {
-            "type": "string",
-            "nullable": true
-          },
-          "currency": {
-            "type": "string",
-            "nullable": true
-          }
+          "bank": { "type": "string", "nullable": true },
+          "ledger": { "type": "string", "nullable": true },
+          "accountNumber": { "type": "string", "nullable": true },
+          "iban": { "type": "string", "nullable": true },
+          "swift": { "type": "string", "nullable": true },
+          "foreignBankName": { "type": "string", "nullable": true },
+          "foreignBankAddress": { "type": "string", "nullable": true },
+          "currency": { "type": "string", "nullable": true }
         },
         "additionalProperties": false
       },
       "TrWeb.Api.Services.Domain.Applications.Models.CreateApplicationFromPaperReturn": {
         "type": "object",
         "properties": {
-          "applicationLineId": {
-            "type": "integer",
-            "format": "int32"
-          }
+          "applicationLineId": { "type": "integer", "format": "int32" }
         },
         "additionalProperties": false
       },
       "TrWeb.Api.Services.Domain.DigitalMailbox.Models.Document": {
         "type": "object",
         "properties": {
-          "type": {
-            "type": "string",
-            "nullable": true
-          },
-          "content": {
-            "type": "string",
-            "nullable": true
-          }
+          "type": { "type": "string", "nullable": true },
+          "content": { "type": "string", "nullable": true }
         },
         "additionalProperties": false
       },
       "TrWeb.Api.Services.Domain.Finance.Models.IslandIsIncomePlanDto": {
         "type": "object",
         "properties": {
-          "incomeYear": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "splitIncomeByMonth": {
-            "type": "boolean"
-          },
+          "incomeYear": { "type": "integer", "format": "int32" },
           "incomeTypes": {
             "type": "array",
             "items": {
@@ -2579,100 +2570,69 @@
       "TrWeb.Api.Services.Domain.Finance.Models.IslandIsIncomeTypeDto": {
         "type": "object",
         "properties": {
-          "incomeTypeNumber": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "incomeTypeCode": {
-            "type": "string",
-            "nullable": true
-          },
-          "incomeTypeName": {
-            "type": "string",
-            "nullable": true
-          },
-          "changesAllowed": {
-            "type": "boolean"
-          },
-          "currencyNumber": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "currencyCode": {
-            "type": "string",
-            "nullable": true
-          },
-          "incomeCategoryNumber": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "incomeCategoryCode": {
-            "type": "string",
-            "nullable": true
-          },
-          "incomeCategoryName": {
-            "type": "string",
-            "nullable": true
-          },
+          "incomeTypeNumber": { "type": "integer", "format": "int32" },
+          "incomeTypeCode": { "type": "string", "nullable": true },
+          "incomeTypeName": { "type": "string", "nullable": true },
+          "currencyCode": { "type": "string", "nullable": true },
+          "incomeCategoryNumber": { "type": "integer", "format": "int32" },
+          "incomeCategoryCode": { "type": "string", "nullable": true },
+          "incomeCategoryName": { "type": "string", "nullable": true },
           "amountJan": {
             "type": "number",
-            "format": "double"
+            "format": "double",
+            "nullable": true
           },
           "amountFeb": {
             "type": "number",
-            "format": "double"
+            "format": "double",
+            "nullable": true
           },
           "amountMar": {
             "type": "number",
-            "format": "double"
+            "format": "double",
+            "nullable": true
           },
           "amountApr": {
             "type": "number",
-            "format": "double"
+            "format": "double",
+            "nullable": true
           },
           "amountMay": {
             "type": "number",
-            "format": "double"
+            "format": "double",
+            "nullable": true
           },
           "amountJun": {
             "type": "number",
-            "format": "double"
+            "format": "double",
+            "nullable": true
           },
           "amountJul": {
             "type": "number",
-            "format": "double"
+            "format": "double",
+            "nullable": true
           },
           "amountAug": {
             "type": "number",
-            "format": "double"
+            "format": "double",
+            "nullable": true
           },
           "amountSep": {
             "type": "number",
-            "format": "double"
+            "format": "double",
+            "nullable": true
           },
           "amountOct": {
             "type": "number",
-            "format": "double"
+            "format": "double",
+            "nullable": true
           },
           "amountNov": {
             "type": "number",
-            "format": "double"
+            "format": "double",
+            "nullable": true
           },
           "amountDec": {
-            "type": "number",
-            "format": "double"
-          }
-        },
-        "additionalProperties": false
-      },
-      "TrWeb.Api.Services.Domain.Finance.Models.RknMonthDto": {
-        "type": "object",
-        "properties": {
-          "month": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "amount": {
             "type": "number",
             "format": "double",
             "nullable": true
@@ -2680,17 +2640,19 @@
         },
         "additionalProperties": false
       },
+      "TrWeb.Api.Services.Domain.Finance.Models.RknMonthDto": {
+        "type": "object",
+        "properties": {
+          "month": { "type": "integer", "format": "int32" },
+          "amount": { "type": "number", "format": "double", "nullable": true }
+        },
+        "additionalProperties": false
+      },
       "TrWeb.Api.Services.UseCase.DeathBenefits.Models.ExternalSpousalInfo": {
         "type": "object",
         "properties": {
-          "name": {
-            "type": "string",
-            "nullable": true
-          },
-          "nationalId": {
-            "type": "string",
-            "nullable": true
-          },
+          "name": { "type": "string", "nullable": true },
+          "nationalId": { "type": "string", "nullable": true },
           "dateOfDeath": {
             "type": "string",
             "format": "date-time",
@@ -3285,56 +3247,24 @@
             "description": "Income type category code",
             "nullable": true
           },
-          "january": {
-            "type": "number",
-            "format": "double",
-            "nullable": true
-          },
+          "january": { "type": "number", "format": "double", "nullable": true },
           "february": {
             "type": "number",
             "format": "double",
             "nullable": true
           },
-          "march": {
-            "type": "number",
-            "format": "double",
-            "nullable": true
-          },
-          "april": {
-            "type": "number",
-            "format": "double",
-            "nullable": true
-          },
-          "may": {
-            "type": "number",
-            "format": "double",
-            "nullable": true
-          },
-          "june": {
-            "type": "number",
-            "format": "double",
-            "nullable": true
-          },
-          "july": {
-            "type": "number",
-            "format": "double",
-            "nullable": true
-          },
-          "august": {
-            "type": "number",
-            "format": "double",
-            "nullable": true
-          },
+          "march": { "type": "number", "format": "double", "nullable": true },
+          "april": { "type": "number", "format": "double", "nullable": true },
+          "may": { "type": "number", "format": "double", "nullable": true },
+          "june": { "type": "number", "format": "double", "nullable": true },
+          "july": { "type": "number", "format": "double", "nullable": true },
+          "august": { "type": "number", "format": "double", "nullable": true },
           "september": {
             "type": "number",
             "format": "double",
             "nullable": true
           },
-          "october": {
-            "type": "number",
-            "format": "double",
-            "nullable": true
-          },
+          "october": { "type": "number", "format": "double", "nullable": true },
           "november": {
             "type": "number",
             "format": "double",
@@ -3345,11 +3275,7 @@
             "format": "double",
             "nullable": true
           },
-          "total": {
-            "type": "number",
-            "format": "double",
-            "nullable": true
-          }
+          "total": { "type": "number", "format": "double", "nullable": true }
         },
         "additionalProperties": false
       },
@@ -3454,6 +3380,11 @@
             "format": "double",
             "nullable": true
           },
+          "markWithAsterisk": {
+            "type": "boolean",
+            "description": "Whether to mark this row with an asterisk",
+            "nullable": true
+          },
           "months": {
             "type": "array",
             "items": {
@@ -3473,10 +3404,7 @@
             "description": "Ellilífeyrir 1\r\nEllilífeyrir sjómanna 2\r\nÖrorkulífeyrir 3\r\nEndurhæfingarlífeyrir 4\r\nHálfur ellilífeyrir 5",
             "format": "int32"
           },
-          "hasSpouse": {
-            "type": "boolean",
-            "description": "Hjúskaparstaða"
-          },
+          "hasSpouse": { "type": "boolean", "description": "Hjúskaparstaða" },
           "livingCondition": {
             "type": "integer",
             "description": "Heimilisaðstæður, býr ein(n) ?\r\nBýr ein(n) = 1\r\nBýr ekki ein(n) = 2",
@@ -3566,10 +3494,7 @@
             "description": "Séreignarlífeyrisgreiðslur",
             "format": "int32"
           },
-          "otherIncome": {
-            "type": "integer",
-            "format": "int32"
-          },
+          "otherIncome": { "type": "integer", "format": "int32" },
           "capitalIncome": {
             "type": "integer",
             "description": "Fjármagnstekjur",
@@ -3624,18 +3549,10 @@
         },
         "additionalProperties": false
       },
-      "ProblemDetails": {
-        "additionalProperties": false
-      },
-      "ValidationProblemDetails": {
-        "additionalProperties": false
-      },
+      "ProblemDetails": { "additionalProperties": false },
+      "ValidationProblemDetails": { "additionalProperties": false },
       "TrWeb.Commons.ExternalPortals.Api.Models.FormBuilder.Ruleset": {
-        "properties": {
-          "gildi": {
-            "type": "string"
-          }
-        }
+        "properties": { "gildi": { "type": "string" } }
       }
     },
     "securitySchemes": {
@@ -3646,9 +3563,5 @@
       }
     }
   },
-  "security": [
-    {
-      "Bearer": ["Bearer"]
-    }
-  ]
+  "security": [{ "Bearer": ["Bearer"] }]
 }

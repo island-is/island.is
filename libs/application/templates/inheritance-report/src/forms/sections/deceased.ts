@@ -118,7 +118,7 @@ export const deceased = buildSection({
           {
             name: 'customShare.customSpouseSharePercentage',
             placeholder: '50%',
-            label: m.deceasedShare.defaultMessage,
+            label: m.deceasedSharePercentage.defaultMessage,
           },
         ),
         buildDescriptionField({

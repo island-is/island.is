@@ -4,7 +4,7 @@ import DatePicker from 'react-native-date-picker'
 
 import calendarIcon from '../../assets/icons/calendar.png'
 import { Typography } from '../typography/typography'
-import { dynamicColor } from '@ui/utils/dynamic-color'
+import { dynamicColor } from '../../utils/dynamic-color'
 import { useIntl } from 'react-intl'
 import { View, Image } from 'react-native'
 

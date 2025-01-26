@@ -19,11 +19,9 @@ import {
   PageTitle,
   RenderFiles,
   SectionHeading,
+  UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import {
-  Defendants,
-  Prosecutor,
-} from '@island.is/judicial-system-web/src/components/CaseInfo/CaseInfo'
+import { ProsecutorAndDefendantsEntries } from '@island.is/judicial-system-web/src/components/CaseInfo/CaseInfo'
 import {
   CaseFile,
   CaseFileCategory,
@@ -43,6 +41,7 @@ const Summary: FC = () => {
     useContext(FormContext)
   const { transitionCase, isTransitioningCase } = useCase()
   const [modalVisible, setModalVisible] = useState<'CONFIRM_INDICTMENT'>()
+  const { user } = useContext(UserContext)
 
   const { onOpen } = useFileList({
     caseId: workingCase.id,
@@ -90,6 +89,13 @@ const Summary: FC = () => {
     workingCase.indictmentRulingDecision,
   )
 
+  const canUserCompleteCase =
+    (workingCase.indictmentRulingDecision !==
+      CaseIndictmentRulingDecision.RULING &&
+      workingCase.indictmentRulingDecision !==
+        CaseIndictmentRulingDecision.DISMISSAL) ||
+    workingCase.judge?.id === user?.id
+
   return (
     <PageLayout
       workingCase={workingCase}
@@ -120,8 +126,7 @@ const Summary: FC = () => {
           </Text>
         </Box>
         <Box component="section" marginBottom={2}>
-          <Prosecutor workingCase={workingCase} />
-          <Defendants workingCase={workingCase} />
+          <ProsecutorAndDefendantsEntries workingCase={workingCase} />
         </Box>
         <Box component="section" marginBottom={6}>
           <InfoCardClosedIndictment />
@@ -159,6 +164,12 @@ const Summary: FC = () => {
           nextButtonIcon="checkmark"
           nextButtonText={formatMessage(strings.nextButtonText)}
           onNextButtonClick={() => setModalVisible('CONFIRM_INDICTMENT')}
+          hideNextButton={!canUserCompleteCase}
+          infoBoxText={
+            canUserCompleteCase
+              ? ''
+              : formatMessage(strings.onlyAssignedJudgeCanComplete)
+          }
         />
       </FormContentContainer>
       {modalVisible === 'CONFIRM_INDICTMENT' && (

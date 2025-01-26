@@ -6,11 +6,9 @@ import {
   buildTextField,
 } from '@island.is/application/core'
 import { representativeInfo, rescueSquadInfo } from '../../../lib/messages'
-import {
-  isInjuredAndRepresentativeOfCompanyOrInstitute,
-  isReportingOnBehalfOfEmployee,
-  isRescueWorkAccident,
-} from '../../../utils'
+import { isInjuredAndRepresentativeOfCompanyOrInstitute } from '../../../utils/miscUtils'
+import { isRescueWorkAccident } from '../../../utils/accidentUtils'
+import { isReportingOnBehalfOfEmployee } from '../../../utils/reportingUtils'
 
 // Rescue squad information when accident is related to rescue squad
 export const rescueSquadInfoSubSection = buildSubSection({
