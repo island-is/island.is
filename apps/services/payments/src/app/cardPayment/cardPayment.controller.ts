@@ -82,8 +82,13 @@ export class CardPaymentController {
     const mdPayload = this.cardPaymentService.getMdPayload(
       cardVerificationCallbackInput.md,
     )
+    const { correlationId } = mdPayload
 
-    const { paymentFlowId, correlationId } = mdPayload
+    const savedVerificationPendingData =
+      await this.cardPaymentService.getSavedVerificationPendingData(
+        correlationId,
+      )
+    const { paymentFlowId } = savedVerificationPendingData
 
     try {
       // Confirmed verification from user 3DS
@@ -91,6 +96,7 @@ export class CardPaymentController {
         await this.cardPaymentService.verifyThreeDSecureCallback({
           cardVerificationCallbackInput,
           mdPayload,
+          savedVerificationPendingData,
         })
 
       if (!success) {
@@ -115,7 +121,7 @@ export class CardPaymentController {
       })
     } catch (e) {
       await this.paymentFlowService.logPaymentFlowUpdate({
-        paymentFlowId: mdPayload.paymentFlowId,
+        paymentFlowId,
         type: 'update',
         occurredAt: new Date(),
         paymentMethod: PaymentMethod.CARD,

@@ -10,24 +10,8 @@ import {
   SavedVerificationCompleteData,
 } from './cardPayment.types'
 
-const removeHyphensFromUUID = (uuid: string) => {
-  return uuid.replace(/-/g, '')
-}
-
-const addHyphensToUUID = (uuid: string) => {
-  if (uuid.length !== 32) {
-    throw new Error('Invalid UUID format. Must be 32 characters long.')
-  }
-
-  // Add hyphens at the appropriate positions
-  return `${uuid.slice(0, 8)}-${uuid.slice(8, 12)}-${uuid.slice(
-    12,
-    16,
-  )}-${uuid.slice(16, 20)}-${uuid.slice(20)}`
-}
-
 const MdSerializedSchema = z.object({
-  c: z.string().length(32, 'Correlation ID must be 32 characters long'),
+  c: z.string().length(36, 'Correlation ID must be 36 characters long'),
   iat: z.number(),
 })
 
@@ -41,7 +25,6 @@ export const generateMd = ({
   amount: number
   paymentsTokenSigningSecret: string
   paymentsTokenSigningAlgorithm: string
-  paymentsTokenSignaturePrefix: string
 }) => {
   const mdSerialized: Omit<MdSerialized, 'iat'> = {
     c: correlationId,

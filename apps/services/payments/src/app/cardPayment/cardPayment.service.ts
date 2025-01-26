@@ -47,7 +47,6 @@ export class CardPaymentService {
       paymentGateway: {
         paymentsTokenSigningSecret,
         paymentsTokenSigningAlgorithm,
-        paymentsTokenSignaturePrefix,
         paymentsGatewayApiUrl,
       },
     } = this.config
@@ -62,7 +61,6 @@ export class CardPaymentService {
       amount,
       paymentsTokenSigningSecret,
       paymentsTokenSigningAlgorithm,
-      paymentsTokenSignaturePrefix,
     })
 
     const savedVerificationPendingData: SavedVerificationPendingData = {
@@ -124,12 +122,30 @@ export class CardPaymentService {
     }
   }
 
+  async getSavedVerificationPendingData(correlationId: string) {
+    const savedVerificationPendingData = (await this.cacheManager.get(
+      correlationId,
+    )) as SavedVerificationPendingData
+
+    if (!savedVerificationPendingData) {
+      this.logger.error(
+        'No saved verification pending data found for correlationId',
+        correlationId,
+      )
+      throw new BadRequestException('Invalid token')
+    }
+
+    return savedVerificationPendingData
+  }
+
   async verifyThreeDSecureCallback({
     cardVerificationCallbackInput: { cavv, mdStatus, xid, dsTransId },
     mdPayload,
+    savedVerificationPendingData,
   }: {
     cardVerificationCallbackInput: VerificationCallbackInput
     mdPayload: MdNormalised
+    savedVerificationPendingData: SavedVerificationPendingData
   }) {
     const { tokenExpiryMinutes, memCacheExpiryMinutes } = this.config
 
@@ -140,18 +156,6 @@ export class CardPaymentService {
 
     if (now > tokenExpiresAt) {
       this.logger.error('Token was expired', correlationId)
-      throw new BadRequestException('Invalid token')
-    }
-
-    const savedVerificationPendingData = (await this.cacheManager.get(
-      correlationId,
-    )) as SavedVerificationPendingData
-
-    if (!savedVerificationPendingData) {
-      this.logger.error(
-        'No stored value found for correlationId',
-        correlationId,
-      )
       throw new BadRequestException('Invalid token')
     }
 
