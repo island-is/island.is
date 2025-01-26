@@ -156,21 +156,37 @@ export class CardPaymentController {
   async charge(
     @Body() chargeCardInput: ChargeCardInput,
   ): Promise<ChargeCardResponse> {
-    await this.paymentFlowService.getPaymentFlow(chargeCardInput.paymentFlowId)
+    try {
+      await this.paymentFlowService.getPaymentFlow(
+        chargeCardInput.paymentFlowId,
+      )
 
-    // Payment confirmation
-    const result = await this.cardPaymentService.charge(chargeCardInput)
+      // Payment confirmation
+      const result = await this.cardPaymentService.charge(chargeCardInput)
 
-    await this.paymentFlowService.logPaymentFlowUpdate({
-      paymentFlowId: chargeCardInput.paymentFlowId,
-      type: 'success',
-      occurredAt: new Date(),
-      paymentMethod: PaymentMethod.CARD,
-      reason: 'payment_completed',
-      message: 'Card payment completed',
-      metadata: result,
-    })
+      await this.paymentFlowService.logPaymentFlowUpdate({
+        paymentFlowId: chargeCardInput.paymentFlowId,
+        type: 'success',
+        occurredAt: new Date(),
+        paymentMethod: PaymentMethod.CARD,
+        reason: 'payment_completed',
+        message: 'Card payment completed',
+        metadata: result,
+      })
 
-    return result
+      return result
+    } catch (e) {
+      await this.paymentFlowService.logPaymentFlowUpdate({
+        paymentFlowId: chargeCardInput.paymentFlowId,
+        type: 'update',
+        occurredAt: new Date(),
+        paymentMethod: PaymentMethod.CARD,
+        reason: 'payment_failed',
+        message: `Card payment failed: ${e.message}`,
+      })
+
+      // TODO
+      throw new BadRequestException('todo_code')
+    }
   }
 }

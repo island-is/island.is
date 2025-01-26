@@ -1,4 +1,4 @@
-import { service, ServiceBuilder } from '../../../../infra/src/dsl/dsl'
+import { service, ServiceBuilder, json } from '../../../../infra/src/dsl/dsl'
 import {
   Base,
   Client,
@@ -30,6 +30,17 @@ export const serviceSetup = (): ServiceBuilder<'services-payments'> =>
         dev: 'https://beta.dev01.devland.is',
         staging: 'https://beta.staging01.devland.is',
         prod: 'https://island.is',
+      },
+      REDIS_NODES: {
+        dev: json([
+          'clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379',
+        ]),
+        staging: json([
+          'clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379',
+        ]),
+        prod: json([
+          'clustercfg.general-redis-cluster-group.dnugi2.euw1.cache.amazonaws.com:6379',
+        ]),
       },
     })
     .secrets({

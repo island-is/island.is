@@ -257,8 +257,6 @@ export class CardPaymentService {
     if (!response.ok) {
       const responseBody = await response.text()
       this.logger.error('Failed to charge card', {
-        url: response.url,
-        status: response.status,
         statusText: response.statusText,
         responseBody,
       })
