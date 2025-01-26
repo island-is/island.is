@@ -1290,16 +1290,20 @@ export const messages = defineMessages({
     id: 'sp.health:medicine-payment-participation',
     defaultMessage: 'Greiðsluþátttaka',
   },
-  references: {
-    id: 'sp.health:references',
+  referrals: {
+    id: 'sp.health:referrals',
     defaultMessage: 'Tilvísanir',
   },
-  referencesIntro: {
-    id: 'sp.health:references-intro',
+  referralsIntro: {
+    id: 'sp.health:referrals-intro',
     defaultMessage: 'Hér finnur þú tilvísanir ...',
   },
+  noReferrals: {
+    id: 'sp.health:no-referrals',
+    defaultMessage: 'Engar tilvísanir',
+  },
   organizationWebsite: {
-    id: 'sp.health:references-org-website',
+    id: 'sp.health:referrals-org-website',
     defaultMessage: 'Vefur stofnunar',
   },
   waitlists: {

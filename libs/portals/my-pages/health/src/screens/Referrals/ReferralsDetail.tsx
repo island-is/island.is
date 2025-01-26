@@ -14,8 +14,8 @@ const ReferencesDetail: React.FC = () => {
 
   return (
     <IntroWrapper
-      title={formatMessage(messages.references)}
-      intro={formatMessage(messages.referencesIntro)}
+      title={formatMessage(messages.referrals)}
+      intro={formatMessage(messages.referralsIntro)}
       serviceProviderSlug={HEALTH_DIRECTORATE_SLUG}
       serviceProviderTooltip={formatMessage(
         messages.landlaeknirVaccinationsTooltip,

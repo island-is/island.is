@@ -3,7 +3,7 @@ import { ApiScope } from '@island.is/auth/scopes'
 import { PortalModule } from '@island.is/portals/core'
 import { m } from '@island.is/portals/my-pages/core'
 import { Navigate } from 'react-router-dom'
-import ReferencesDetail from './screens/References/ReferencesDetail'
+import ReferencesDetail from './screens/Referrals/ReferralsDetail'
 import Waitlists from './screens/Waitlists/Waitlists'
 import WaitlistsDetail from './screens/Waitlists/WaitlistsDetail'
 import { messages as hm } from './lib/messages'
@@ -78,7 +78,7 @@ const Vaccinations = lazy(() =>
   import('./screens/Vaccinations/VaccinationsWrapper'),
 )
 
-const References = lazy(() => import('./screens/References/References'))
+const Referrals = lazy(() => import('./screens/Referrals/Referrals'))
 
 const MEDICINE_LANDLAEKNIR_FLAG = 'HealthMedicineLandlaeknir'
 
@@ -261,14 +261,14 @@ export const healthModule: PortalModule = {
       element: <Vaccinations />,
     },
     {
-      name: hm.references,
+      name: hm.referrals,
       path: HealthPaths.HealthReferences,
       key: 'HealthReferences',
       enabled: true, //TODO: Add scopeuserInfo.scopes.includes(ApiScope.healthReferences),
-      element: <References />,
+      element: <Referrals />,
     },
     {
-      name: hm.references,
+      name: hm.referrals,
       path: HealthPaths.HealthReferencesDetail,
       key: 'HealthReferences',
       enabled: true, //TODO: Add scopeuserInfo.scopes.includes(ApiScope.healthReferences),

@@ -1,0 +1,22 @@
+query GetReferrals($locale: String) {
+  healthDirectorateReferrals(locale: $locale) {
+    referrals {
+      id
+      serviceName
+      createdDate
+      validUntilDate
+      stateDisplay
+      reason
+      fromContactInfo {
+        name
+        profession
+        department
+      }
+      toContactInfo {
+        name
+        profession
+        department
+      }
+    }
+  }
+}
