@@ -51,7 +51,6 @@ interface AuthStore extends State {
   cognitoDismissCount: number
   cognitoAuthUrl?: string
   cookies: string
-  refreshPromise: null | Promise<void | null>
   fetchUserInfo(
     skipRefresh?: boolean,
     skipLogoutIfRefreshFailed?: boolean,
@@ -119,7 +118,6 @@ export const authStore = create<AuthStore>((set, get) => ({
   cognitoDismissCount: 0,
   cognitoAuthUrl: undefined,
   cookies: '',
-  refreshPromise: null,
   async fetchUserInfo(skipRefresh = false, skipLogoutIfRefreshFailed = false) {
     const appAuthConfig = getAppAuthConfig()
     // Detect expired token
