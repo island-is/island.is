@@ -39,6 +39,6 @@ export const mapTagToMessageId = (tagSlug: CategorySlug) => {
     case 'grant-category-energy-transition':
       return m.home.grantCategoryEnergyTransitionDescription
     case 'grant-category-environment':
-      return m.home.grantCategoryEnergyTransitionDescription
+      return m.home.grantCategoryEnvironmentDescription
   }
 }
