@@ -69,6 +69,10 @@ const problematicProjects = [
   'services-auth-delegation-api',
   'services-auth-personal-representative',
   'skilavottord-web',
+  'shared-components',
+  'shared-babel',
+  'shared-connected',
+  'shared-constants',
 ]
 console.error(`Problematic projects:`, problematicProjects)
 
