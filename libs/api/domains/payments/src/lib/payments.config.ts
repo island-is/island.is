@@ -10,7 +10,7 @@ export const PaymentsApiModuleConfig = defineConfig({
   schema,
   load: (env) => ({
     verificationCallbackSigningSecret: env.required(
-      'VERIFICATION_CALLBACK_SIGNING_SECRET',
+      'PAYMENTS_VERIFICATION_CALLBACK_SIGNING_SECRET',
       '',
     ),
   }),
