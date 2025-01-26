@@ -28,18 +28,13 @@ const addHyphensToUUID = (uuid: string) => {
 
 const MdSerializedSchema = z.object({
   c: z.string().length(32, 'Correlation ID must be 32 characters long'),
-  pi: z.string().length(32, 'Payment flow ID must be 32 characters long'),
-  a: z.number(),
   iat: z.number(),
 })
 
 export const generateMd = ({
   correlationId,
-  paymentFlowId,
-  amount,
   paymentsTokenSigningSecret,
   paymentsTokenSigningAlgorithm,
-  paymentsTokenSignaturePrefix,
 }: {
   correlationId: string
   paymentFlowId: string
@@ -49,22 +44,14 @@ export const generateMd = ({
   paymentsTokenSignaturePrefix: string
 }) => {
   const mdSerialized: Omit<MdSerialized, 'iat'> = {
-    // Had to reduce the size of the UUIDs to 32 characters
-    // to fit within the character limit of the md object
-    c: removeHyphensFromUUID(correlationId),
-    pi: removeHyphensFromUUID(paymentFlowId),
-    a: amount,
+    c: correlationId,
   }
 
   const mdToken = sign(mdSerialized, paymentsTokenSigningSecret, {
     algorithm: paymentsTokenSigningAlgorithm as Algorithm,
   })
 
-  const md = Buffer.from(
-    mdToken.replace(paymentsTokenSignaturePrefix, ''),
-  ).toString('base64')
-
-  return md
+  return Buffer.from(mdToken).toString('base64')
 }
 
 interface PaymentApiConfig {
@@ -154,28 +141,19 @@ export const generateChargeRequestOptions = ({
 
 export const getPayloadFromMd = ({
   md,
-  paymentsTokenSignaturePrefix,
   paymentsTokenSigningSecret,
 }: {
   md: string
-  paymentsTokenSignaturePrefix: string
   paymentsTokenSigningSecret: string
 }): MdNormalised => {
-  const jwtMd = `${paymentsTokenSignaturePrefix}${Buffer.from(
-    md,
-    'base64',
-  ).toString('utf-8')}`
+  const jwtMd = Buffer.from(md, 'base64').toString('utf-8')
 
   const payload = MdSerializedSchema.parse(
     verify(jwtMd, paymentsTokenSigningSecret),
   )
 
   return {
-    // Had to reduce the size of the UUIDs to 32 characters
-    // to fit within the character limit of the md object
-    correlationId: addHyphensToUUID(payload.c),
-    paymentFlowId: addHyphensToUUID(payload.pi),
-    amount: payload.a,
+    correlationId: payload.c,
     issuedAt: payload.iat,
   }
 }

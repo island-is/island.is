@@ -65,12 +65,13 @@ export class CardPaymentService {
       paymentsTokenSignaturePrefix,
     })
 
+    const savedVerificationPendingData: SavedVerificationPendingData = {
+      paymentFlowId,
+    }
+
     await this.cacheManager.set(
       correlationId,
-      {
-        paymentFlowId: verifyCardInput.paymentFlowId,
-        amount,
-      } as SavedVerificationPendingData,
+      savedVerificationPendingData,
       memCacheExpiryMinutes * 60000,
     )
 
@@ -108,16 +109,12 @@ export class CardPaymentService {
   getMdPayload(md: string): MdNormalised {
     try {
       const {
-        paymentGateway: {
-          paymentsTokenSigningSecret,
-          paymentsTokenSignaturePrefix,
-        },
+        paymentGateway: { paymentsTokenSigningSecret },
       } = this.config
 
       const payload = getPayloadFromMd({
         md,
         paymentsTokenSigningSecret,
-        paymentsTokenSignaturePrefix,
       })
 
       return payload
@@ -134,11 +131,9 @@ export class CardPaymentService {
     cardVerificationCallbackInput: VerificationCallbackInput
     mdPayload: MdNormalised
   }) {
-    let success = false
-
     const { tokenExpiryMinutes, memCacheExpiryMinutes } = this.config
 
-    const { correlationId, paymentFlowId, amount, issuedAt } = mdPayload
+    const { correlationId, issuedAt } = mdPayload
 
     const now = Date.now()
     const tokenExpiresAt = (issuedAt + tokenExpiryMinutes * 60) * 1000
@@ -148,11 +143,11 @@ export class CardPaymentService {
       throw new BadRequestException('Invalid token')
     }
 
-    const storedValue = (await this.cacheManager.get(
+    const savedVerificationPendingData = (await this.cacheManager.get(
       correlationId,
     )) as SavedVerificationPendingData
 
-    if (!storedValue) {
+    if (!savedVerificationPendingData) {
       this.logger.error(
         'No stored value found for correlationId',
         correlationId,
@@ -160,47 +155,38 @@ export class CardPaymentService {
       throw new BadRequestException('Invalid token')
     }
 
+    const { paymentFlowId } = savedVerificationPendingData
+
     await this.cacheManager.del(correlationId)
 
-    if (
-      storedValue?.amount === amount &&
-      storedValue?.paymentFlowId === paymentFlowId
-    ) {
-      success = true
-
-      // Save verified information to payment flow
-      // to allow client (polling) to continue with payment using verification data
-      await this.cacheManager.set(
-        correlationId,
-        {
-          cavv,
-          mdStatus,
-          xid,
-          dsTransId,
-        },
-        memCacheExpiryMinutes * 60000,
-      )
-
-      const paymentFlowStatus: CachePaymentFlowStatus = {
-        isVerified: true,
-        correlationId,
-      }
-
-      await this.cacheManager.set(
-        paymentFlowId,
-        paymentFlowStatus,
-        this.config.memCacheExpiryMinutes * 60000,
-      )
-    } else {
-      this.logger.error('Stored value does not match payload', {
-        storedAmount: storedValue?.amount,
-        payloadAmount: amount,
-      })
-      throw new BadRequestException('Invalid token')
+    const savedVerificationCompleteData: SavedVerificationCompleteData = {
+      cavv,
+      mdStatus,
+      xid,
+      dsTransId,
     }
 
+    // Save verified information to payment flow
+    // to allow client (polling) to continue with payment using verification data
+    await this.cacheManager.set(
+      correlationId,
+      savedVerificationCompleteData,
+      memCacheExpiryMinutes * 60000,
+    )
+
+    const paymentFlowStatus: CachePaymentFlowStatus = {
+      isVerified: true,
+      correlationId,
+    }
+
+    await this.cacheManager.set(
+      paymentFlowId,
+      paymentFlowStatus,
+      this.config.memCacheExpiryMinutes * 60000,
+    )
+
     return {
-      success,
+      success: true,
       paymentFlowId,
     }
   }

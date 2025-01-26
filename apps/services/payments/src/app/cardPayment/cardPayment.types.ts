@@ -48,7 +48,6 @@ export interface CachePaymentFlowStatus {
 
 export interface SavedVerificationPendingData {
   paymentFlowId: string
-  amount: number
 }
 
 export interface SavedVerificationCompleteData {
@@ -60,15 +59,11 @@ export interface SavedVerificationCompleteData {
 
 export interface MdSerialized {
   c: string // payment transaction correlation id
-  pi: string // payment flow id
-  a: number // amount
   iat: number
 }
 
 export interface MdNormalised {
   correlationId: string
-  paymentFlowId: string
-  amount: number
   issuedAt: number
 }
 
