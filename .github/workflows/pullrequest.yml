@@ -207,6 +207,8 @@ jobs:
     timeout-minutes: 45
     env:
       AFFECTED_PROJECTS: ${{ matrix.projects }}
+      DISABLE_GROUPING: 'true'
+      DISABLE_PROBLEMATIC: 'true'
     strategy:
       fail-fast: false
       matrix: ${{ fromJson(needs.prepare.outputs.TEST_CHUNKS) }}
