@@ -1,0 +1,409 @@
+{
+  "openapi": "3.0.0",
+  "paths": {
+    "/v1/me/waiting-lists": {
+      "get": {
+        "description": "Get user's status in the waiting lists",
+        "operationId": "MeWaitingListController_getWaitingListEntries_v1",
+        "parameters": [
+          {
+            "name": "locale",
+            "required": false,
+            "in": "query",
+            "description": "The locale to use for the response",
+            "schema": { "$ref": "#/components/schemas/Locale" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/WaitingListEntryDto"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+              }
+            }
+          }
+        },
+        "tags": ["me/waiting-lists"]
+      }
+    },
+    "/v1/me/referrals": {
+      "get": {
+        "description": "Get user's referrals",
+        "operationId": "MeReferralController_getReferrals_v1",
+        "parameters": [
+          {
+            "name": "locale",
+            "required": false,
+            "in": "query",
+            "description": "The locale to use for the response",
+            "schema": { "$ref": "#/components/schemas/Locale" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/ReferralDto" }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+              }
+            }
+          }
+        },
+        "tags": ["me/referrals"]
+      }
+    },
+    "/v1/me/prescriptions": {
+      "get": {
+        "description": "Get user's active prescriptions",
+        "operationId": "MePrescriptionController_getPrescriptions_v1",
+        "parameters": [
+          {
+            "name": "locale",
+            "required": false,
+            "in": "query",
+            "description": "The locale to use for the response",
+            "schema": { "$ref": "#/components/schemas/Locale" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/PrescribedItemDto" }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+              }
+            }
+          }
+        },
+        "tags": ["me/prescriptions"]
+      }
+    },
+    "/v1/me/dispensations/grouped": {
+      "get": {
+        "operationId": "MeDispensationController_getGroupedDispensations_v1",
+        "parameters": [],
+        "responses": { "200": { "description": "" } },
+        "tags": ["me/dispensations"]
+      }
+    },
+    "/v1/me/dispensations/bla": {
+      "get": {
+        "operationId": "MeDispensationController_bla_v1",
+        "parameters": [],
+        "responses": { "200": { "description": "" } },
+        "tags": ["me/dispensations"]
+      }
+    },
+    "/v1/me/dispensations/{atcCode}": {
+      "get": {
+        "operationId": "MeDispensationController_getDispensationsForAtcCode_v1",
+        "parameters": [
+          {
+            "name": "atcCode",
+            "required": true,
+            "in": "path",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": { "200": { "description": "" } },
+        "tags": ["me/dispensations"]
+      }
+    }
+  },
+  "info": {
+    "title": "Prescription API",
+    "description": "",
+    "version": "1.0",
+    "contact": {}
+  },
+  "tags": [],
+  "servers": [],
+  "components": {
+    "securitySchemes": {
+      "oauth2": {
+        "type": "oauth2",
+        "flows": {
+          "authorizationCode": {
+            "authorizationUrl": "https://identity-server.dev01.devland.is/connect/authorize",
+            "tokenUrl": "https://identity-server.dev01.devland.is/connect/token",
+            "scopes": { "openid": "openid" }
+          }
+        }
+      }
+    },
+    "schemas": {
+      "Locale": { "type": "string", "enum": ["en", "is"] },
+      "WaitingListEntryDto": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "name": { "type": "string" },
+          "waitBeganDate": { "format": "date-time", "type": "string" },
+          "lastUpdated": { "format": "date-time", "type": "string" },
+          "statusId": { "type": "number" },
+          "statusDisplay": { "type": "string" },
+          "organizationName": { "type": "string" }
+        },
+        "required": [
+          "id",
+          "name",
+          "statusId",
+          "statusDisplay",
+          "organizationName"
+        ]
+      },
+      "HttpProblemResponse": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "object",
+            "description": "A URI reference that identifies the problem type"
+          },
+          "title": {
+            "type": "string",
+            "description": "A short, human-readable summary of the problem type"
+          },
+          "status": { "type": "number", "description": "The HTTP status code" },
+          "detail": {
+            "type": "string",
+            "description": "A human-readable explanation specific to this occurrence of the problem"
+          },
+          "instance": {
+            "type": "string",
+            "description": "A URI reference that identifies the specific occurrence of the problem."
+          }
+        },
+        "required": ["type", "title"]
+      },
+      "ReferralContactInfoDto": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string" },
+          "profession": { "type": "string" },
+          "department": { "type": "string" }
+        },
+        "required": ["name", "profession", "department"]
+      },
+      "ReferralDto": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "serviceType": { "type": "string" },
+          "serviceName": { "type": "string" },
+          "createdDate": { "format": "date-time", "type": "string" },
+          "validUntilDate": { "format": "date-time", "type": "string" },
+          "stateValue": { "type": "number" },
+          "stateDisplay": { "type": "string" },
+          "assignedProviderId": { "type": "string" },
+          "reasonForReferral": { "type": "string" },
+          "fromContactInfo": {
+            "$ref": "#/components/schemas/ReferralContactInfoDto"
+          },
+          "toContactInfo": {
+            "$ref": "#/components/schemas/ReferralContactInfoDto"
+          }
+        },
+        "required": ["id", "serviceType", "fromContactInfo", "toContactInfo"]
+      },
+      "DispensedItemDto": {
+        "type": "object",
+        "properties": {
+          "productId": { "type": "string" },
+          "productName": { "type": "object" },
+          "productStrength": { "type": "object" },
+          "dispensedAmount": { "type": "object" },
+          "dispensedAmountDisplay": { "type": "object" },
+          "numberOfPackages": { "type": "object" }
+        },
+        "required": ["productId"]
+      },
+      "DispensationDto": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "number" },
+          "dispensingAgentId": { "type": "number" },
+          "dispensingAgentName": { "type": "string" },
+          "dispensationDate": { "format": "date-time", "type": "string" },
+          "dispensedItemsCount": { "type": "number" },
+          "dispensedItems": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/DispensedItemDto" }
+          }
+        },
+        "required": [
+          "id",
+          "dispensingAgentId",
+          "dispensationDate",
+          "dispensedItemsCount",
+          "dispensedItems"
+        ]
+      },
+      "PrescribedItemDto": {
+        "type": "object",
+        "properties": {
+          "prescribedItemId": { "type": "number" },
+          "prescriptionId": { "type": "number" },
+          "prescriberId": { "type": "string" },
+          "prescriberName": { "type": "object" },
+          "issueDate": { "format": "date-time", "type": "string" },
+          "expiryDate": { "format": "date-time", "type": "string" },
+          "productId": { "type": "string" },
+          "productName": { "type": "object" },
+          "productType": {
+            "type": "object",
+            "description": "Based on the ATC classification"
+          },
+          "productForm": { "type": "object" },
+          "productUrl": { "type": "object" },
+          "productStrength": { "type": "object" },
+          "productQuantity": { "type": "object" },
+          "dosageInstructions": { "type": "object" },
+          "indication": { "type": "object" },
+          "totalPrescribedAmount": { "type": "object" },
+          "totalPrescribedAmountDisplay": { "type": "object" },
+          "isRegiment": { "type": "object" },
+          "isRenewable": { "type": "boolean" },
+          "renewalBlockedReason": {
+            "type": "string",
+            "enum": [
+              "pendingRequest",
+              "rejectedRequest",
+              "notFullyDispensed",
+              "isRegiment"
+            ]
+          },
+          "renewalStatus": { "type": "number", "enum": [0, 1, 2] },
+          "amountRemaining": { "type": "number" },
+          "amountRemainingUnit": { "type": "string" },
+          "amountRemainingDisplay": { "type": "string" },
+          "percentageRemaining": { "type": "number" },
+          "isFullyDispensed": { "type": "boolean" },
+          "dispensations": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/DispensationDto" }
+          }
+        },
+        "required": [
+          "prescribedItemId",
+          "prescriptionId",
+          "prescriberId",
+          "prescriberName",
+          "issueDate",
+          "expiryDate",
+          "productId",
+          "isRenewable",
+          "isFullyDispensed",
+          "dispensations"
+        ]
+      }
+    }
+  }
+}
