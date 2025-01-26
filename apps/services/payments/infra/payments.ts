@@ -49,6 +49,8 @@ export const serviceSetup = (): ServiceBuilder<'services-payments'> =>
         '/k8s/services-payments/PAYMENTS_GATEWAY_API_HEADER_VALUE',
       PAYMENTS_GATEWAY_API_URL:
         '/k8s/services-payments/PAYMENTS_GATEWAY_API_URL',
+      PAYMENTS_GATEWAY_SYSTEM_CALLING:
+        '/k8s/services-payments/PAYMENTS_GATEWAY_SYSTEM_CALLING',
     })
     .xroad(Base, Client, ChargeFjsV2, RskCompanyInfo, NationalRegistryB2C)
     .readiness('/liveness')

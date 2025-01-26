@@ -15,6 +15,7 @@ const schema = z.object({
     paymentsApiHeaderKey: z.string(),
     paymentsApiHeaderValue: z.string(),
     paymentsGatewayApiUrl: z.string(),
+    systemCalling: z.string(),
   }),
   tokenExpiryMinutes: z.number().int(),
   memCacheExpiryMinutes: z.number().int(),
@@ -44,6 +45,7 @@ export const CardPaymentModuleConfig = defineConfig({
       paymentsApiHeaderKey: env.required('PAYMENTS_GATEWAY_API_HEADER_KEY'),
       paymentsApiHeaderValue: env.required('PAYMENTS_GATEWAY_API_HEADER_VALUE'),
       paymentsGatewayApiUrl: env.required('PAYMENTS_GATEWAY_API_URL'),
+      systemCalling: env.required('PAYMENTS_GATEWAY_SYSTEM_CALLING'),
     },
     tokenExpiryMinutes: env.optionalJSON('PAYMENTS_TOKEN_EXPIRY_MINUTES') ?? 2,
     memCacheExpiryMinutes:

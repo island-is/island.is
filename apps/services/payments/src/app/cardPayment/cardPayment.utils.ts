@@ -41,6 +41,7 @@ interface PaymentApiConfig {
   paymentsApiSecret: string
   paymentsApiHeaderKey: string
   paymentsApiHeaderValue: string
+  systemCalling: string
 }
 
 export const generateVerificationRequestOptions = ({
@@ -95,8 +96,12 @@ export const generateChargeRequestOptions = ({
   paymentApiConfig: PaymentApiConfig
 }) => {
   const { cardNumber, expiryMonth, expiryYear, cvc, amount } = chargeCardInput
-  const { paymentsApiSecret, paymentsApiHeaderKey, paymentsApiHeaderValue } =
-    paymentApiConfig
+  const {
+    paymentsApiSecret,
+    paymentsApiHeaderKey,
+    paymentsApiHeaderValue,
+    systemCalling,
+  } = paymentApiConfig
 
   const requestOptions: RequestInit = {
     method: 'POST',
@@ -114,7 +119,7 @@ export const generateChargeRequestOptions = ({
       cvc,
       currency: 'ISK',
       amount: amount * 100, // Convert to ISK (aurar)
-      systemCalling: 'TODO',
+      systemCalling,
       cardVerificationData: verificationData,
     }),
   }
