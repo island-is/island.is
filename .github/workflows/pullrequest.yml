@@ -165,10 +165,11 @@ jobs:
       - name: Prepare test targets
         id: test_projects
         env:
-          CHUNK_SIZE: 3
+          CHUNK_SIZE: 4
           DISABLE_CHUNKS: 'false'
           DISABLE_GROUPING: 'false'
           DISABLE_PROBLEMATIC: 'false'
+          NX_PARALLEL: 6
         run: |
           set -euo pipefail
           CHUNKS="$(./scripts/ci/generate-chunks.sh test)"
