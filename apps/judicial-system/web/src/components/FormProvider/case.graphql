@@ -390,6 +390,7 @@ query Case($input: CaseQueryInput!) {
       caseFilesSharedWithSpokesperson
       isSpokespersonConfirmed
     }
+    mergeCaseNumber
     civilDemands
     hasCivilClaims
   }

@@ -166,8 +166,9 @@ export const PasskeyScreen: NavigationFunctionComponent<{
             <Image
               source={illustrationSrc}
               style={{
-                width: isSmallDevice ? 120 : 174,
-                height: isSmallDevice ? 140 : 204,
+                flex: 1,
+                maxWidth: 174,
+                maxHeight: 204,
               }}
               resizeMode="contain"
             />

@@ -1684,6 +1684,12 @@ export interface IGenericListItemFields {
 
   /** External Link */
   externalLink?: ILinkUrl | undefined
+
+  /** Image */
+  image?: Asset | undefined
+
+  /** Full Width Image In Content */
+  fullWidthImageInContent?: boolean | undefined
 }
 
 /** An item that belongs to a generic list */
@@ -1866,6 +1872,9 @@ export interface IGrantFields {
 
   /** Application hints */
   grantApplicationHints?: Document | undefined
+
+  /** Answering questions */
+  grantAnsweringQuestions?: Document | undefined
 
   /** Application url */
   granApplicationUrl?: ILinkUrl | undefined
@@ -3324,6 +3333,9 @@ export interface IOrganizationPageFields {
 
   /** Can be found in search results */
   canBeFoundInSearchResults?: boolean | undefined
+
+  /** Show past events option */
+  showPastEventsOption?: boolean | undefined
 }
 
 export interface IOrganizationPage extends Entry<IOrganizationPageFields> {
@@ -3493,8 +3505,11 @@ export interface IOrganizationTag extends Entry<IOrganizationTagFields> {
 }
 
 export interface IOverviewLinksFields {
-  /** Title */
+  /** Internal Title */
   title?: string | undefined
+
+  /** Displayed Title */
+  displayedTitle?: string | undefined
 
   /** Overview Links */
   overviewLinks?: IIntroLinkImage[] | undefined
@@ -3504,6 +3519,9 @@ export interface IOverviewLinksFields {
 
   /** Has Border Above */
   hasBorderAbove?: boolean | undefined
+
+  /** Link Data */
+  linkData?: Record<string, any> | undefined
 }
 
 export interface IOverviewLinks extends Entry<IOverviewLinksFields> {
@@ -4718,6 +4736,12 @@ export interface ITeamListFields {
 
   /** Variant */
   variant?: 'card' | 'accordion' | undefined
+
+  /** Show Search Input */
+  showSearchInput?: boolean | undefined
+
+  /** Order By */
+  orderBy?: 'A - Z' | 'Manual' | undefined
 }
 
 /** list of team members */

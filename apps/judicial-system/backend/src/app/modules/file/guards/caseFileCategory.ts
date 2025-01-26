@@ -32,7 +32,6 @@ const defenderDefaultCaseFileCategoriesForIndictmentCases = [
 
 const defenderCaseFileCategoriesForIndictmentCases =
   defenderDefaultCaseFileCategoriesForIndictmentCases.concat(
-    CaseFileCategory.INDICTMENT,
     CaseFileCategory.CRIMINAL_RECORD,
     CaseFileCategory.COST_BREAKDOWN,
     CaseFileCategory.CASE_FILE,

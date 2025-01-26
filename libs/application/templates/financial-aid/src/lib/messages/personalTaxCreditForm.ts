@@ -18,9 +18,9 @@ export const personalTaxCreditForm = {
       description: 'Student form description title',
     },
     description: {
-      id: 'fa.application:section.personalTaxCreditForm.general.description',
+      id: 'fa.application:section.personalTaxCreditForm.general.description#markdown',
       defaultMessage:
-        'Persónuafsláttur er skattaafsláttur sem veittur er öllum einstaklingum eldri en 16 ára. Persónuafslætti má safna upp á milli mánaða og nýta síðar. Uppsafnaður persónuafsláttur sem ekki er nýttur innan árs fellur niður við lok þess.',
+        '#####Persónuafsláttur er skattaafsláttur sem veittur er öllum einstaklingum eldri en 16 ára. Persónuafslætti má safna upp á milli mánaða og nýta síðar. Uppsafnaður persónuafsláttur sem ekki er nýttur innan árs fellur niður við lok þess.',
       description: 'Student form description of tax credit ',
     },
     recommendedChoice: {

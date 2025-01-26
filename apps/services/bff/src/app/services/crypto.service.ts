@@ -1,32 +1,18 @@
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { Inject, Injectable } from '@nestjs/common'
-import { ConfigType } from '@nestjs/config'
 import * as crypto from 'crypto'
-import { BffConfig } from '../bff.config'
+import { CryptoKeyService } from './cryptoKey.service'
 
 @Injectable()
 export class CryptoService {
   private readonly algorithm = 'aes-256-cbc'
-  private readonly key: Buffer
 
   constructor(
     @Inject(LOGGER_PROVIDER)
-    private logger: Logger,
-
-    @Inject(BffConfig.KEY)
-    private readonly config: ConfigType<typeof BffConfig>,
-  ) {
-    // Decode from base64 to binary
-    this.key = Buffer.from(this.config.tokenSecretBase64, 'base64')
-
-    // Ensure the key is exactly 32 bytes (256 bits) long
-    if (this.key.length !== 32) {
-      throw new Error(
-        '"tokenSecretBase64" secret must be exactly 32 bytes (256 bits) long.',
-      )
-    }
-  }
+    private readonly logger: Logger,
+    private readonly cryptoKeyService: CryptoKeyService,
+  ) {}
 
   /**
    * Encrypts a given text using the AES-256-CBC encryption algorithm.
@@ -45,7 +31,11 @@ export class CryptoService {
       const iv = crypto.randomBytes(16)
 
       // Create a Cipher object using the algorithm, encryption key, and initialization vector (IV)
-      const cipher = crypto.createCipheriv(this.algorithm, this.key, iv)
+      const cipher = crypto.createCipheriv(
+        this.algorithm,
+        this.cryptoKeyService.cryptoKey,
+        iv,
+      )
 
       // Encrypt the text in 'utf8' format and encode the result as base64
       let encrypted = cipher.update(text, 'utf8', 'base64')
@@ -88,7 +78,11 @@ export class CryptoService {
       const iv = Buffer.from(ivBase64, 'base64')
 
       // Create a Decipher object using the same algorithm, key, and IV
-      const decipher = crypto.createDecipheriv(this.algorithm, this.key, iv)
+      const decipher = crypto.createDecipheriv(
+        this.algorithm,
+        this.cryptoKeyService.cryptoKey,
+        iv,
+      )
 
       // Decrypt the encrypted text from base64 to utf8 format
       let decrypted = decipher.update(encrypted, 'base64', 'utf8')

@@ -59,7 +59,7 @@ const SelectionSchema = z
     include: z.boolean().optional(),
     school: z
       .object({
-        id: z.string().optional(),
+        id: z.string().optional().nullable(),
         name: z.string().optional(),
       })
       .optional(),
@@ -69,11 +69,14 @@ const SelectionSchema = z
         nameIs: z.string().optional(),
         nameEn: z.string().optional(),
         registrationEndDate: z.string().optional(),
+        isSpecialNeedsProgram: z.boolean().optional(),
       })
       .optional(),
     secondProgram: z
       .object({
+        // Note: this include is only used for zod validation if there is only one program available, but a freshman should pick two
         include: z.boolean().optional(),
+        require: z.boolean().optional(),
         id: z.string().optional(),
         nameIs: z.string().optional(),
         nameEn: z.string().optional(),
@@ -111,7 +114,7 @@ const SelectionSchema = z
   .refine(
     ({ include, secondProgram }) => {
       if (!include) return true
-      if (!secondProgram?.include) return true
+      if (!secondProgram?.include || !secondProgram?.require) return true
       return !!secondProgram?.id
     },
     { path: ['secondProgram.id'] },
@@ -123,17 +126,27 @@ export const SecondarySchoolSchema = z.object({
     phoneRequired: true,
     emailRequired: true,
   }),
-  applicationType: z.nativeEnum(ApplicationType),
+  applicationType: z
+    .object({
+      value: z.nativeEnum(ApplicationType),
+      isOpenForAdmissionFreshman: z.boolean().optional(),
+      isOpenForAdmissionGeneral: z.boolean().optional(),
+    })
+    .refine(
+      ({ value, isOpenForAdmissionFreshman, isOpenForAdmissionGeneral }) => {
+        if (value === ApplicationType.FRESHMAN)
+          return isOpenForAdmissionFreshman
+        else if (value === ApplicationType.GENERAL_APPLICATION)
+          return isOpenForAdmissionGeneral
+        return true
+      },
+    ),
   custodians: z.array(CustodianSchema).max(2),
   mainOtherContact: MainOtherContactSchema,
   otherContacts: z.array(OtherContactSchema).max(1),
-  selection: z.object({
-    first: SelectionSchema,
-    second: SelectionSchema.optional(),
-    third: SelectionSchema.optional(),
-  }),
+  selection: z.array(SelectionSchema),
   extraInformation: z.object({
-    nativeLanguageCode: z.string().optional(),
+    nativeLanguageCode: z.string().optional().nullable(),
     otherDescription: z.string().optional(),
     supportingDocuments: z.array(FileDocumentSchema).optional(),
   }),

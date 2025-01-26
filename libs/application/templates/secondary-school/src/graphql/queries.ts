@@ -5,6 +5,7 @@ export const PROGRAMS_BY_SCHOOLS_ID_QUERY = `
       nameIs
       nameEn
       registrationEndDate
+      isSpecialNeedsProgram
     }
   } 
 `

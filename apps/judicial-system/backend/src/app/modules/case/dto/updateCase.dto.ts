@@ -535,6 +535,11 @@ export class UpdateCaseDto {
   @IsOptional()
   @IsString()
   @ApiPropertyOptional({ type: String })
+  readonly mergeCaseNumber?: string
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional({ type: String })
   readonly civilDemands?: string
 
   @IsOptional()

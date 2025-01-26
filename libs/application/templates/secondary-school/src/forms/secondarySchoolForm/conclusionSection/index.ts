@@ -6,7 +6,7 @@ import { ApplicationType } from '../../../utils'
 export const conclusionSectionFreshman = buildFormConclusionSection({
   condition: (answers) => {
     return (
-      getValueViaPath<ApplicationType>(answers, 'applicationType') ===
+      getValueViaPath<ApplicationType>(answers, 'applicationType.value') ===
       ApplicationType.FRESHMAN
     )
   },
@@ -19,7 +19,7 @@ export const conclusionSectionFreshman = buildFormConclusionSection({
 export const conclusionSectionGeneral = buildFormConclusionSection({
   condition: (answers) => {
     return (
-      getValueViaPath<ApplicationType>(answers, 'applicationType') !==
+      getValueViaPath<ApplicationType>(answers, 'applicationType.value') !==
       ApplicationType.FRESHMAN
     )
   },

@@ -173,6 +173,51 @@ export class EventService {
     }
   }
 
+  async postDailyHearingArrangementEvents(date: Date, cases: Case[]) {
+    const title = `:judge: Fyrirtökur ${formatDate(date)}`
+
+    const arrangementTexts = cases.map((theCase) => {
+      return `>${theCase.courtCaseNumber}: ${
+        formatDate(
+          DateLog.courtDate(theCase.dateLogs)?.date ??
+            DateLog.arraignmentDate(theCase.dateLogs)?.date,
+          'p',
+        ) ?? date
+      }`
+    })
+
+    const arrangementSummary =
+      arrangementTexts.length > 0
+        ? arrangementTexts.join('\n')
+        : '>Engar fyrirtökur á dagskrá'
+
+    try {
+      if (!this.config.url) {
+        return
+      }
+
+      await fetch(`${this.config.url}`, {
+        method: 'POST',
+        headers: { 'Content-type': 'application/json' },
+        body: JSON.stringify({
+          blocks: [
+            {
+              type: 'section',
+              text: {
+                type: 'mrkdwn',
+                text: `*${title}*\n${arrangementSummary}`,
+              },
+            },
+          ],
+        }),
+      })
+    } catch (error) {
+      this.logger.error(`Failed to post court hearing arrangement summary`, {
+        error,
+      })
+    }
+  }
+
   async postErrorEvent(
     message: string,
     info: { [key: string]: string | boolean | Date | undefined },

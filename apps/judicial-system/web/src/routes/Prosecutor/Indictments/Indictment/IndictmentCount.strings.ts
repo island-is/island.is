@@ -177,8 +177,8 @@ export const indictmentCount = defineMessages({
       'Notaður sem titill á "heimfærslu" svæði á ákæruliða skrefi í ákærum.',
   },
   legalArgumentsPlaceholder: {
-    id: 'judicial.system.core:indictments_indictment.indictment_count.legal_arguments_placeholder',
-    defaultMessage: 'Skrifaðu heimfærslu',
+    id: 'judicial.system.core:indictments_indictment.indictment_count.legal_arguments_placeholder_v1',
+    defaultMessage: 'Telst háttsemi þessi varða við...',
     description:
       'Notaður sem skýritexti á "heimfærslu" svæði á ákæruliða skrefi í ákærum.',
   },

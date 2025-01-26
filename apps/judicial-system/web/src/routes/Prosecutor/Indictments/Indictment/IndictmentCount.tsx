@@ -312,8 +312,10 @@ export const getIncidentDescription = (
     []
 
   if (
-    subtypes.length > 1 &&
-    (!indictmentCountSubtypes?.length || indictmentCountSubtypes.length === 0)
+    subtypes.length === 0 ||
+    (subtypes.length > 1 &&
+      (!indictmentCountSubtypes?.length ||
+        indictmentCountSubtypes.length === 0))
   ) {
     return ''
   }
@@ -541,48 +543,46 @@ export const IndictmentCount: FC<Props> = ({
         />
       </Box>
       <Box marginBottom={2}>
+        <Box marginBottom={3}>
+          <IndictmentInfo
+            policeCaseNumber={indictmentCount.policeCaseNumber ?? ''}
+            subtypes={workingCase.indictmentSubtypes}
+            crimeScenes={workingCase.crimeScenes}
+          />
+        </Box>
         {subtypes?.length > 1 && (
-          <>
-            <Box marginBottom={3}>
-              <IndictmentInfo
-                policeCaseNumber={indictmentCount.policeCaseNumber ?? ''}
-                subtypes={workingCase.indictmentSubtypes}
-                crimeScenes={workingCase.crimeScenes}
-              />
-            </Box>
-            <Box marginBottom={2}>
-              <SectionHeading
-                title={formatMessage(strings.selectIndictmentSubtype)}
-                heading="h4"
-                marginBottom={2}
-              />
-              <div className={styles.indictmentSubtypesContainter}>
-                {subtypes.map((subtype: IndictmentSubtype) => (
-                  <div
-                    className={styles.indictmentSubtypesItem}
-                    key={`${subtype}-${indictmentCount.id}`}
-                  >
-                    <Checkbox
-                      name={`${subtype}-${indictmentCount.id}`}
-                      value={subtype}
-                      label={capitalize(indictmentSubtypes[subtype])}
-                      checked={
-                        indictmentCount.indictmentCountSubtypes?.includes(
-                          subtype,
-                        ) ?? false
-                      }
-                      onChange={(evt) => {
-                        handleSubtypeChange(subtype, evt.target.checked)
-                      }}
-                      backgroundColor="white"
-                      large
-                      filled
-                    />
-                  </div>
-                ))}
-              </div>
-            </Box>
-          </>
+          <Box marginBottom={2}>
+            <SectionHeading
+              title={formatMessage(strings.selectIndictmentSubtype)}
+              heading="h4"
+              marginBottom={2}
+            />
+            <div className={styles.indictmentSubtypesContainter}>
+              {subtypes.map((subtype: IndictmentSubtype) => (
+                <div
+                  className={styles.indictmentSubtypesItem}
+                  key={`${subtype}-${indictmentCount.id}`}
+                >
+                  <Checkbox
+                    name={`${subtype}-${indictmentCount.id}`}
+                    value={subtype}
+                    label={capitalize(indictmentSubtypes[subtype])}
+                    checked={
+                      indictmentCount.indictmentCountSubtypes?.includes(
+                        subtype,
+                      ) ?? false
+                    }
+                    onChange={(evt) => {
+                      handleSubtypeChange(subtype, evt.target.checked)
+                    }}
+                    backgroundColor="white"
+                    large
+                    filled
+                  />
+                </div>
+              ))}
+            </div>
+          </Box>
         )}
       </Box>
       {shouldShowTrafficViolationFields() && (

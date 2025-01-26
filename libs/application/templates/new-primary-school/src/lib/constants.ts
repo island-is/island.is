@@ -27,14 +27,7 @@ export enum Roles {
 
 export enum ReasonForApplicationOptions {
   MOVING_MUNICIPALITY = 'movingMuniciplaity',
-  MOVING_ABROAD = 'movingAbroad',
   SIBLINGS_IN_SAME_SCHOOL = 'SiblingsInSameSchool',
-}
-
-export enum SiblingRelationOptions {
-  SIBLING = 'sibling',
-  HALF_SIBLING = 'halfSibling',
-  STEP_SIBLING = 'stepSibling',
 }
 
 export enum OptionsType {
@@ -60,4 +53,15 @@ export enum MembershipOrganizationType {
   Municipality = 'municipality',
   National = 'national',
   School = 'school',
+}
+
+export enum LanguageEnvironmentOptions {
+  ONLY_ICELANDIC = 'onlyIcelandic',
+  ICELANDIC_AND_FOREIGN = 'icelandicAndForeign',
+  ONLY_FOREIGN = 'onlyForeign',
+}
+
+export enum ApplicationType {
+  NEW_PRIMARY_SCHOOL = 'newPrimarySchool',
+  ENROLLMENT_IN_PRIMARY_SCHOOL = 'enrollmentInPrimarySchool',
 }

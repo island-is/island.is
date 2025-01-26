@@ -35,7 +35,7 @@ export const userInformation = {
     subtitle: {
       id: 'ss.application:userInformation.applicationType.subtitle',
       defaultMessage: 'Tegund umsækjanda',
-      description: 'Application typa subtitle',
+      description: 'Application type subtitle',
     },
     freshmanOptionTitle: {
       id: 'ss.application:userInformation.applicationType.freshmanOptionTitle',
@@ -46,6 +46,12 @@ export const userInformation = {
       id: 'ss.application:userInformation.applicationType.generalApplicationOptionTitle',
       defaultMessage: 'Lauk grunnskóla fyrir ári eða meira',
       description: 'General application option title',
+    },
+    alertMessage: {
+      id: 'ss.application:userInformation.applicationType.alertMessage',
+      defaultMessage:
+        'Miðstöð menntunar og skólaþjónustu hefur ekki upplýsingar um útskrift þína úr grunnskóla í vor. Vinsamlegast hafðu samband í gegnum netfangið innritun@midstodmenntunar.is',
+      description: 'Application type alert message',
     },
   }),
   custodian: defineMessages({

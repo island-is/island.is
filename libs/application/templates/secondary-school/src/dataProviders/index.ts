@@ -1,9 +1,6 @@
-import { defineTemplateApi } from '@island.is/application/types'
+import { defineTemplateApi, UserProfileApi } from '@island.is/application/types'
 
-export {
-  NationalRegistryUserApi,
-  UserProfileApi,
-} from '@island.is/application/types'
+export { NationalRegistryUserApi } from '@island.is/application/types'
 
 export const StudentInfoApi = defineTemplateApi({
   action: 'getStudentInfo',
@@ -21,4 +18,11 @@ export const NationalRegistryParentsApi = defineTemplateApi({
   action: 'getParents',
   externalDataId: 'nationalRegistryParents',
   namespace: 'NationalRegistry',
+})
+
+export const UserProfileApiWithValidation = UserProfileApi.configure({
+  params: {
+    validatePhoneNumber: true,
+    validateEmail: true,
+  },
 })

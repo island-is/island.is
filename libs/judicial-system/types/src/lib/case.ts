@@ -376,13 +376,7 @@ export const isTrafficViolationCase = (theCase: {
   indictmentSubtypes?: IndictmentSubtypeMap
   caseFiles?: { category?: CaseFileCategory | null }[] | null
 }): boolean => {
-  if (
-    theCase.type !== CaseType.INDICTMENT ||
-    !theCase.indictmentSubtypes ||
-    theCase.caseFiles?.some(
-      (file) => file.category === CaseFileCategory.INDICTMENT,
-    )
-  ) {
+  if (theCase.type !== CaseType.INDICTMENT || !theCase.indictmentSubtypes) {
     return false
   }
 

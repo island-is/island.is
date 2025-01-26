@@ -1,4 +1,5 @@
 import { defineMessages, MessageDescriptor } from 'react-intl'
+import { LanguageEnvironmentOptions } from './constants'
 
 type MessageDir = Record<string, Record<string, MessageDescriptor>>
 
@@ -9,6 +10,11 @@ export const newPrimarySchoolMessages: MessageDir = {
       id: 'nps.application:application.name',
       defaultMessage: 'Umsókn í nýjan grunnskóla',
       description: 'Application for a new primary school',
+    },
+    enrollmentApplicationName: {
+      id: 'nps.application:enrollment.application.name',
+      defaultMessage: 'Innritun í grunnskóla',
+      description: 'Enrollment in primary school',
     },
     institution: {
       id: 'nps.application:institution.name',
@@ -105,6 +111,26 @@ export const newPrimarySchoolMessages: MessageDir = {
       defaultMessage: 'Veldu skóla',
       description: 'Select school',
     },
+    gender: {
+      id: 'dess.nps.application:gender',
+      defaultMessage: 'Kyn',
+      description: 'Gender',
+    },
+    male: {
+      id: 'dess.nps.application:gender.male',
+      defaultMessage: 'Karlkyns',
+      description: 'Male',
+    },
+    female: {
+      id: 'dess.nps.application:gender.female',
+      defaultMessage: 'Kvenkyns',
+      description: 'Female',
+    },
+    otherGender: {
+      id: 'dess.nps.application:gender.other',
+      defaultMessage: 'Kynsegin/Annað',
+      description: 'non-binary/Other',
+    },
   }),
 
   pre: defineMessages({
@@ -113,6 +139,20 @@ export const newPrimarySchoolMessages: MessageDir = {
       defaultMessage: 'Forsendur',
       description: 'Prerequisites',
     },
+
+    // Application type
+    applicationTypeSubSectionTitle: {
+      id: 'nps.application:application.type.sub.section.title',
+      defaultMessage: 'Tegund umsóknar',
+      description: 'Application type',
+    },
+    applicationTypeSubSectionDescription: {
+      id: 'nps.application:application.type.sub.section.description',
+      defaultMessage: 'Vinsamlegast veldu tegund umsóknar',
+      description: 'Please select application type',
+    },
+
+    // Data collection
     externalDataSubSection: {
       id: 'nps.application:external.data.sub.section',
       defaultMessage: 'Gagnaöflun',
@@ -205,8 +245,9 @@ export const newPrimarySchoolMessages: MessageDir = {
     childInfoDescription: {
       id: 'nps.application:childrenNParents.child.info.description',
       defaultMessage:
-        'Athugaðu hvort upplýsingarnar séu réttar áður en þú heldur áfram.',
-      description: 'Check that the information is correct before proceeding.',
+        'Upplýsingar um barn eru sóttar í Þjóðskrá. Athugaðu hvort upplýsingarnar séu réttar áður en þú heldur áfram.',
+      description:
+        'Information about the child is retrieved from the National Registry. Check that the information is correct before proceeding.',
     },
     childInfoPreferredName: {
       id: 'nps.application:childrenNParents.child.info.preferred.name',
@@ -215,24 +256,44 @@ export const newPrimarySchoolMessages: MessageDir = {
     },
     childInfoPronouns: {
       id: 'nps.application:childrenNParents.child.info.pronouns',
-      defaultMessage: 'Fornafn',
+      defaultMessage: 'Persónufornafn',
       description: 'Pronoun',
     },
     childInfoPronounsPlaceholder: {
       id: 'nps.application:childrenNParents.child.info.pronouns.placeholder',
-      defaultMessage: 'Veldu fornafn',
+      defaultMessage: 'Veldu persónufornafn',
       description: 'Select pronoun',
+    },
+    usePronounAndPreferredName: {
+      id: 'nps.application:childrenNParents.child.info.use.pronoun.and.preferred.name',
+      defaultMessage:
+        'Barnið kýs að vera ávarpað með öðru nafni og/eða persónufornafni en hann eða hún',
+      description:
+        'The child prefers to be addressed by a name and/or personal pronoun other than he or she',
+    },
+    preferredNameTooltip: {
+      id: 'nps.application:childrenNParents.child.info.preferred.name.tooltip',
+      defaultMessage:
+        'Forsjáraðilar geta óskað eftir breytingu á skráðu kyni og nafni barns hjá Þjóðskrá eða barnið sjálft sé það orðið 15 ára. Ef sú breyting er ótímabært má breyta nafni barnsins hér og skrá það nafn sem barn hefur valið sér.',
+      description:
+        "Guardians can request a change to a child's registered gender and name with the National Registry, or the child themselves if they have reached the age of 15. If the change is premature, the child's name can be changed here and the name the child has chosen can be registered.",
     },
     differentPlaceOfResidence: {
       id: 'nps.application:childrenNParents.child.info.different.place.of.residence',
-      defaultMessage: 'Er dvalarstaður barns annað en skráð lögheimili?',
+      defaultMessage: 'Er aðsetur barns annað en skráð lögheimili?',
       description:
-        "Is the child's place of residence different from the registered legal domicile?",
+        "Is the child's temporary residence different from the registered legal domicile?",
+    },
+    differentPlaceOfResidenceDescription: {
+      id: 'nps.application:childrenNParents.child.info.different.place.of.residence.description',
+      defaultMessage: 'Aðsetur er tímabundin búseta barns í öðru húsnæði',
+      description:
+        "Temporary residence is a child's place of residence in another home.",
     },
     childInfoPlaceOfResidence: {
       id: 'nps.application:childrenNParents.child.info.place.of.residence',
-      defaultMessage: 'Dvalarstaður barns',
-      description: "Child's place of residence",
+      defaultMessage: 'Aðsetur barns',
+      description: "Child's temporary residence",
     },
 
     // Parents/guardians
@@ -259,43 +320,43 @@ export const newPrimarySchoolMessages: MessageDir = {
         'Information about parents/guardians is retrieved from Registers Iceland and from My Pages on Ísland.is. Check that phone numbers and email addresses are entered correctly before proceeding.',
     },
 
-    // Relatives
-    relativesSubSectionTitle: {
-      id: 'nps.application:childrenNParents.relatives.sub.section.title',
-      defaultMessage: 'Aðstandendur',
-      description: 'Relatives',
+    // Contacts
+    contactsSubSectionTitle: {
+      id: 'nps.application:childrenNParents.contacts.sub.section.title',
+      defaultMessage: 'Tengiliðir',
+      description: 'Contacts',
     },
-    relativesTitle: {
-      id: 'nps.application:childrenNParents.relatives.title',
-      defaultMessage: 'Aðstandendur barnsins',
-      description: "The child's relatives",
+    contactsTitle: {
+      id: 'nps.application:childrenNParents.contacts.title',
+      defaultMessage: 'Tengiliðir barns',
+      description: "The child's contacts",
     },
-    relativesDescription: {
-      id: 'nps.application:childrenNParents.relatives.description',
+    contactsDescription: {
+      id: 'nps.application:childrenNParents.contacts.description',
       defaultMessage:
-        'Skráðu að minnsta kosti einn tengilið sem má hafa samband við ef ekki næst í foreldra/forsjáraðila barnsins. Þú getur bætt við allt að sex aðstandendum. Vinsamlegast látið aðstandendur vita af skráningunni.',
+        'Skráðu að minnsta kosti einn tengilið sem má hafa samband við ef ekki næst í forsjáraðila barnsins. Þú getur bætt við allt að fjórum tengiliðum. Vinsamlegast látið tengiliði vita af skráningunni.',
       description:
-        "List at least one contact person who can be contacted if the child's parents/guardian cannot be reached. You can add up to six relatives. Please inform the relatives of the registration.",
+        "List at least one contact person who can be contacted if the child's guardian cannot be reached. You can add up to four contacts. Please inform the contacts of the registration.",
     },
-    relativesRegistrationTitle: {
-      id: 'nps.application:childrenNParents.relatives.registration.title',
-      defaultMessage: 'Skráning aðstandanda',
-      description: 'Registration of a relative',
+    contactsRegistrationTitle: {
+      id: 'nps.application:childrenNParents.contacts.registration.title',
+      defaultMessage: 'Skráning tengiliðs',
+      description: 'Registration of a contact',
     },
-    relativesAddRelative: {
-      id: 'nps.application:childrenNParents.relatives.add.relative',
-      defaultMessage: 'Bæta við aðstandanda',
-      description: 'Add a relative',
+    contactsAddContact: {
+      id: 'nps.application:childrenNParents.contacts.add.contact',
+      defaultMessage: 'Bæta við tengilið',
+      description: 'Add a contact',
     },
-    relativesRegisterRelative: {
-      id: 'nps.application:childrenNParents.relatives.register.relative',
-      defaultMessage: 'Skrá aðstandanda',
-      description: 'Register relative',
+    contactsRegisterContact: {
+      id: 'nps.application:childrenNParents.contacts.register.contact',
+      defaultMessage: 'Skrá tengilið',
+      description: 'Register contact',
     },
-    relativesDeleteRelative: {
-      id: 'nps.application:childrenNParents.relatives.delete.relative',
-      defaultMessage: 'Eyða aðstandanda',
-      description: 'Remove relative',
+    contactsDeleteContact: {
+      id: 'nps.application:childrenNParents.contacts.delete.contact',
+      defaultMessage: 'Eyða tengilið',
+      description: 'Remove contact',
     },
   }),
 
@@ -330,16 +391,6 @@ export const newPrimarySchoolMessages: MessageDir = {
       description:
         'We remind you to register your new domicile in Registers Iceland.',
     },
-    country: {
-      id: 'nps.application:primary.school.country',
-      defaultMessage: 'Til hvaða lands er verið að flytja?',
-      description: 'What country are you moving to?',
-    },
-    countryPlaceholder: {
-      id: 'nps.application:primary.school.country.placeholder',
-      defaultMessage: 'Veldu land',
-      description: 'Select a country',
-    },
 
     // Siblings
     siblingsSubSectionTitle: {
@@ -372,20 +423,27 @@ export const newPrimarySchoolMessages: MessageDir = {
       defaultMessage: 'Eyða systkini',
       description: 'Remove sibling',
     },
-    siblingsRelationSibling: {
-      id: 'nps.application:primary.school.siblings.relation.sibling',
-      defaultMessage: 'Alsystkini',
-      description: 'Sibling',
+
+    // Current school
+    currentSchoolSubSectionTitle: {
+      id: 'nps.application:primary.school.current.school.sub.section.title',
+      defaultMessage: 'Upplýsingar um núverandi skóla',
+      description: 'Information about current school',
     },
-    halfSiblingsRelationSibling: {
-      id: 'nps.application:primary.school.siblings.relation.half.sibling',
-      defaultMessage: 'Hálfsystkini',
-      description: 'Half sibling',
+    currentSchool: {
+      id: 'nps.application:primary.school.current.school',
+      defaultMessage: 'Núverandi skóli',
+      description: 'Current school',
     },
-    stepSiblingsRelationSibling: {
-      id: 'nps.application:primary.school.siblings.relation.step.sibling',
-      defaultMessage: 'Stjúpsystkini',
-      description: 'Step sibling',
+    grade: {
+      id: 'nps.application:primary.school.grade',
+      defaultMessage: 'Bekkur',
+      description: 'Grade',
+    },
+    currentGrade: {
+      id: 'nps.application:primary.school.current.grade',
+      defaultMessage: '{grade}. bekkur',
+      description: '{grade} grade',
     },
 
     // Apply to a new school
@@ -438,30 +496,208 @@ export const newPrimarySchoolMessages: MessageDir = {
       defaultMessage:
         'Til að hægt sé að koma til móts við þarfir barnsins þarf skólinn að vita hvaða tungumál eru töluð í nærumhverfi þess. Veldu þau tungumál, eitt eða fleiri sem töluð eru dagsdaglega á heimilinu í samskiptum við eða í kringum barn.',
       description:
-        "In order to meet the child's needs, the school needs to know which languages ​​are spoken in their immediate environment. Choose the languages, one or more, that are spoken daily at home in communication with or around a child.",
+        "In order to meet the child's needs, the school needs to know which languages are used in communication with the child in the family's daily life.",
     },
-    childNativeLanguage: {
-      id: 'nps.application:different.needs.child.native.language',
-      defaultMessage: 'Hvert er móðurmál barnsins?',
-      description: "What is the child's native language?",
-    },
-    otherLanguagesSpokenDaily: {
-      id: 'nps.application:different.needs.other.languages.spoken.daily',
+    languageSubTitle: {
+      id: 'nps.application:different.needs.language.sub.title',
       defaultMessage:
-        'Eru önnur tungumál en móðurmál töluð daglega á heimili barnsins?',
+        'Hvað á best við í tilfelli barnsins og tungumála sem notuð eru í daglegu lífi fjölskyldunnar?',
       description:
-        "Are languages ​​other than the native language spoken daily in the child's home?",
+        'What is best for the child and the languages used in the familys daily life?',
     },
-    languagePlaceholder: {
-      id: 'nps.application:different.needs.language.placeholder',
+    languageEnvironmentTitle: {
+      id: 'nps.application:different.needs.language.environment.title',
+      defaultMessage: 'Tungumálaumhverfi',
+      description: 'Language environment',
+    },
+    languageEnvironmentPlaceeholder: {
+      id: 'nps.application:different.needs.language.environment.placeholder',
+      defaultMessage: 'Veldu það sem best á við',
+      description: 'Choose what best applies',
+    },
+    onlyIcelandicOption: {
+      id: 'nps.application:different.needs.language.only.icelandic.option',
+      defaultMessage: 'Aðeins töluð íslenska',
+      description: 'Only Icelandic spoken',
+    },
+    icelandicAndForeignOption: {
+      id: 'nps.application:different.needs.language.icelandic.and.foreign.option',
+      defaultMessage: 'Töluð íslenska og annað/önnur tungumál',
+      description: 'Icelandic and other language(s) spoken',
+    },
+    onlyForeignOption: {
+      id: 'nps.application:different.needs.language.only.foreign.option',
+      defaultMessage: 'Aðeins töluð önnur tungumál en íslenska',
+      description: 'Only other languages spoken, not Icelandic',
+    },
+    languagesDescription: {
+      id: 'nps.application:different.needs.languages.description',
+      defaultMessage:
+        'Raðaðu tungumálunum eftir því hvaða tungumál er mest er notað. Það sem er mest notað er nr. 1 og svo koll af kolli.',
+      description:
+        'Rank the languages according to which language is used the most. The most used language is number 1, and so on.',
+    },
+    languageSelectionTitle: {
+      id: 'nps.application:different.needs.language.selection.title',
+      defaultMessage: 'Tungumál {no}',
+      description: 'Language {no}',
+    },
+    addLanguageButton: {
+      id: 'nps.application:different.needs.language.add.button',
+      defaultMessage: 'Bæta við tungumáli',
+      description: 'Add language',
+    },
+    languageSelectionPlaceholder: {
+      id: 'nps.application:different.needs.language.selection.placeholder',
       defaultMessage: 'Veldu tungumál',
-      description: 'Choose a language',
+      description: 'Choose language',
     },
-    icelandicNotSpokenAroundChild: {
-      id: 'nps.application:different.needs.icelandic.not.spoken.around.child',
-      defaultMessage: 'Það er ekki töluð íslenska í nærumhverfi barnsins',
+    childLanguageTitle: {
+      id: 'nps.application:different.needs.child.language.title',
+      defaultMessage:
+        'Á hvaða tungumáli sem þú hefur valið, finnst barninu sjálfu best að tjá sig á?',
       description:
-        "Icelandic is not spoken in the child's immediate environment",
+        'In which of these languages that you have chosen does the child feel most comfortable expressing themselves?',
+    },
+    signLanguage: {
+      id: 'nps.application:different.needs.sign.language',
+      defaultMessage: 'Notar barnið táknmál?',
+      description: 'Does the child use sign language?',
+    },
+    interpreter: {
+      id: 'nps.application:different.needs.interpreter',
+      defaultMessage: 'Þurfa foreldrar túlk?',
+      description: 'Do the parents need an interpreter?',
+    },
+
+    // Free school meal
+    freeSchoolMealSubSectionTitle: {
+      id: 'nps.application:different.needs.free.school.meal.sub.section.title',
+      defaultMessage: 'Gjaldfrjáls skólamáltíð',
+      description: 'Free school meal ',
+    },
+    freeSchoolMealDescription: {
+      id: 'nps.application:different.needs.free.school.meal.description',
+      defaultMessage:
+        'Barninu stendur til boða gjaldfrjáls skólamáltíð. Til þess að skólinn geti mætt fæðuþörfum barnsins á sama tíma og spornað er við matarsóun þurfum við upplýsingar er varða matarumhverfi barnsins.',
+      description:
+        "The child is entitled to a free school meal. In order for the school to be able to meet the child's nutritional needs while at the same time preventing food waste, we need information about the child's food environment.",
+    },
+    acceptFreeSchoolLunch: {
+      id: 'nps.application:different.needs.free.school.meal.accept.free.school.lunch',
+      defaultMessage:
+        'Viltu þiggja gjaldfrjálsa máltíð í hádeginu fyrir barnið þitt?',
+      description:
+        'Would you like to accept a free school lunch for your child?',
+    },
+    hasSpecialNeeds: {
+      id: 'nps.application:different.needs.free.school.meal.has.special.needs',
+      defaultMessage:
+        'Er barnið með sérþarfir sem óskað er eftir að tekið sé tillit til?',
+      description:
+        'Does the child have special needs that you wish to be taken into account?',
+    },
+    specialNeedsType: {
+      id: 'nps.application:different.needs.free.school.meal.special.needs.type',
+      defaultMessage: 'Tegund',
+      description: 'Type',
+    },
+    specialNeedsTypePlaceholder: {
+      id: 'nps.application:different.needs.free.school.meal.special.needs.type.placeholder',
+      defaultMessage: 'Veldu tegund',
+      description: 'Select type',
+    },
+    foodAllergiesAlertMessage: {
+      id: 'nps.application:different.needs.free.school.meal.food.allergies.alert.message',
+      defaultMessage: 'Spurt er um matarofnæmi undir ofnæmi og óþól',
+      description:
+        'Food allergies are addressed in the allergies and intolerances section',
+    },
+
+    // Allergies and intolerances
+    allergiesAndIntolerancesSubSectionTitle: {
+      id: 'nps.application:different.needs.allergies.and.intolerances.sub.section.title',
+      defaultMessage: 'Ofnæmi og óþol',
+      description: 'Allergies and intolerances',
+    },
+    allergiesAndIntolerancesDescription: {
+      id: 'nps.application:different.needs.allergies.and.intolerances.description',
+      defaultMessage:
+        'Er barnið með ofnæmi eða óþol sem starfsfólk skóla þarf að vera meðvitað um?',
+      description:
+        'Does the child have any allergies or intolerances that school staff need to be aware of?',
+    },
+    hasFoodAllergiesOrIntolerances: {
+      id: 'nps.application:different.needs.allergies.and.intolerances.has.food.allergies.or.intolerances',
+      defaultMessage: 'Barnið er með fæðuofnæmi eða -óþol',
+      description: 'The child has food allergies or intolerances',
+    },
+    typeOfFoodAllergiesOrIntolerances: {
+      id: 'nps.application:different.needs.allergies.and.intolerances.type.of.food.allergies.or.intolerances',
+      defaultMessage: 'Tegund fæðuofnæmis eða -óþols',
+      description: 'Type of food allergies or intolerances',
+    },
+    typeOfFoodAllergiesOrIntolerancesPlaceholder: {
+      id: 'nps.application:different.needs.allergies.and.intolerances.type.of.food.allergies.or.intolerances.placeholder',
+      defaultMessage: 'Veldu tegund fæðuofnæmis eða -óþols',
+      description: 'Select type of food allergies or intolerances',
+    },
+    hasOtherAllergies: {
+      id: 'nps.application:different.needs.allergies.and.intolerances.has.other.allergies',
+      defaultMessage: 'Barnið er með annað ofnæmi',
+      description: 'The child has other allergies',
+    },
+    typeOfOtherAllergies: {
+      id: 'nps.application:different.needs.allergies.and.intolerances.type.of.other.allergies',
+      defaultMessage: 'Tegund ofnæmis',
+      description: 'Type of allergies',
+    },
+    typeOfOtherAllergiesPlaceholder: {
+      id: 'nps.application:different.needs.allergies.and.intolerances.type.of.other.allergies.placeholder',
+      defaultMessage: 'Veldu tegund ofnæmis',
+      description: 'Select type of allergies',
+    },
+    allergiesCertificateAlertMessage: {
+      id: 'nps.application:different.needs.allergies.and.intolerances.allergies.certificate.alert.message',
+      defaultMessage:
+        'Athugið að skóli getur óskað eftir vottorði til staðfestingar á ofnæmi.',
+      description:
+        'Please note that the school may request a certificate to confirm allergies.',
+    },
+    usesEpiPen: {
+      id: 'nps.application:different.needs.allergies.and.intolerances.uses.epi.pen',
+      defaultMessage:
+        'Þarf barnið að hafa tiltækan adrenalínpenna (epi-pen) vegna ofnæmis?',
+      description:
+        'Does the child need to have an epi-pen available for allergies?',
+    },
+    hasConfirmedMedicalDiagnoses: {
+      id: 'nps.application:different.needs.allergies.and.intolerances.has.confirmed.medical.diagnoses',
+      defaultMessage:
+        'Hefur barnið staðfestar læknisfræðilegar greiningar sem mikilvægt er að skólinn kunni að bregðast rétt við?',
+      description:
+        'Does the child have confirmed medical diagnoses that are important for the school to be able to respond appropriately?',
+    },
+    hasConfirmedMedicalDiagnosesDescription: {
+      id: 'nps.application:different.needs.allergies.and.intolerances.has.confirmed.medical.diagnoses.description',
+      defaultMessage:
+        'Hér er átt við greiningar eins og flogaveiki, sykursýki eða blóðstorknunarsjúkdóm',
+      description:
+        'This refers to diagnoses such as epilepsy, diabetes, or blood clotting disorders.',
+    },
+    requestMedicationAssistance: {
+      id: 'nps.application:different.needs.allergies.and.intolerances.request.medication.assistance',
+      defaultMessage:
+        'Er óskað eftir aðstoð við barn vegna lyfjagjafar á skólatíma?',
+      description:
+        'Is assistance requested for a child due to medication administration during school hours?',
+    },
+    schoolNurseAlertMessage: {
+      id: 'nps.application:different.needs.allergies.and.intolerances.school.nurse.alert.message',
+      defaultMessage:
+        'Skólahjúkrunarfræðingur mun setja sig í samband við þig til að tryggja rétta skráningu upplýsinga og miðlun þeirra til starfsfólks skóla.',
+      description:
+        'The school nurse will contact you to ensure proper recording of information and its dissemination to school staff.',
     },
 
     // Support
@@ -477,6 +713,13 @@ export const newPrimarySchoolMessages: MessageDir = {
       description:
         "If your child has a diagnosis of a disability, developmental disorder, chronic illness or serious illness that could affect their schooling, the child's current school will forward that information to the school they are applying to.",
     },
+    enrollmentSupportDescription: {
+      id: 'nps.application:different.needs.enrollment.support.description',
+      defaultMessage:
+        'Ef barnið þitt er með greiningu um fötlun, þroskafrávik, langvinn veikindi eða alvarlegan sjúkdóm sem gætu haft áhrif á skólagöngu þess, þá sér núverandi leikskóli barns um að miðla þeim upplýsingum áfram til þess skóla sem sótt er um í.',
+      description:
+        "If your child has a diagnosis of a disability, developmental disorder, chronic illness or serious illness that could affect their schooling, the child's current nursery will forward that information to the school they are applying to.",
+    },
     developmentalAssessment: {
       id: 'nps.application:different.needs.developmental.assessment',
       defaultMessage:
@@ -484,12 +727,74 @@ export const newPrimarySchoolMessages: MessageDir = {
       description:
         'Have any assessments or diagnoses been conducted on the development or status of the child in the current school?',
     },
+    enrollmentDevelopmentalAssessment: {
+      id: 'nps.application:different.needs.enrollment.developmental.assessment',
+      defaultMessage:
+        'Hafa farið fram skimanir eða greiningar á þroska eða stöðu barnsins í núverandi leikskóla?',
+      description:
+        'Have any assessments or diagnoses been conducted on the development or status of the child in the current nursery?',
+    },
     specialSupport: {
       id: 'nps.application:different.needs.special.support',
       defaultMessage:
         'Hefur nemandinn áður notið sérkennslu eða stuðnings í skóla?',
       description:
         'Has the student previously received special education or support in school?',
+    },
+    enrollmentSpecialSupport: {
+      id: 'nps.application:different.needs.enrollment.special.support',
+      defaultMessage:
+        'Hefur nemandinn áður notið sérkennslu eða stuðnings í leikskóla?',
+      description:
+        'Has the student previously received special education or support in nursery?',
+    },
+    hasIntegratedServices: {
+      id: 'nps.application:different.needs.has.integrated.services',
+      defaultMessage: 'Hefur barnið verið með samþætta þjónustu?',
+      description: 'Has the child had integrated services?',
+    },
+    hasIntegratedServicesDescription: {
+      id: 'nps.application:different.needs.has.integrated.services.description',
+      defaultMessage:
+        'Foreldri hefur óskað eftir og gefið leyfi fyrir því að aðilar sem koma að stuðningi við barnið tali saman og deili upplýsingum sem hjálpað geta barni sín á milli.',
+      description:
+        "The parent has requested and given permission for the parties involved in the child's support to communicate and share information that can help the child.",
+    },
+    hasCaseManager: {
+      id: 'nps.application:different.needs.has.case.manager',
+      defaultMessage: 'Hefur barnið verið með málastjóra?',
+      description: 'Has the child had a case manager?',
+    },
+    hasCaseManagerDescription: {
+      id: 'nps.application:different.needs.has.case.manager.description',
+      defaultMessage:
+        'Málastjóri er sá aðili á vegum sveitarfélagsins sem tilnefndur hefur verið til að stýra stuðningsteymi barnsins og styðja við fjölskylduna.',
+      description:
+        "A case manager is the person appointed by the municipality to lead the child's support team and support the family.",
+    },
+    caseManagerName: {
+      id: 'nps.application:different.needs.case.manager.name',
+      defaultMessage: 'Nafn málastjóra',
+      description: 'Case manager name',
+    },
+    caseManagerEmail: {
+      id: 'nps.application:different.needs.case.manager.email',
+      defaultMessage: 'Netfang málastjóra',
+      description: 'Case manager email address',
+    },
+    supportAlertMessage: {
+      id: 'nps.application:different.needs.support.alert.message#markdown',
+      defaultMessage:
+        'Við flutning barns milli leik- og /eða grunnskóla mun skólastjóri sjá til þess að miðla persónuupplýsingum um barnið sem nauðsynlegar eru fyrir velferð og aðlögun þess í grunnskóla, með tryggum og öruggum hætti til viðtökuskóla. \n\nPersónuupplýsingar geta verið:\n\na. Almennar upplýsingar um félagslega stöðu og þroska barna.\n\nb. Kennslufræðilegar, læknisfræðilegar, sálfræðilegar, sérkennslufræðilegar greiningar og aðrar greiningar og sérúrræði fyrir börn, sérkennsluumsóknir, námsáætlanir vegna sérúrræða, einstaklingsnámskrár og aðrar bakgrunnsupplýsingar sem að gagni geta komið fyrir velferð og aðlögun barna í grunnskóla.\n\nc. Hvers konar skrifleg eða stafræn gögn svo sem skýrslur, greinargerðir og umsagnir er varða velferð og skólagöngu barns.',
+      description:
+        "When transferring a child between nursery and/or primary school, the head of the school ensures that the personal data of the child necessary for their well-being and adaptation to primary school, is passed on to the receiving school in a safe and secure manner. \n\nPersonal data can be: \n\na. General information about the social status and development of children. \n\nb. Educational, medical, psychological, special educational and other diagnoses and special needs for children, special education applications, curricula for special needs, individual curricula and other background information that may be useful for the well-being and adjustment of children in primary school. \n\nc. Any written or digital data such as reports, analyses and comments on the child's well-being and schooling.",
+    },
+    enrollmentSupportAlertMessage: {
+      id: 'nps.application:different.needs.enrollment.support.alert.message#markdown',
+      defaultMessage:
+        'Við flutning barns úr leikskóla í grunnskóla mun leikskólastjóri sjá til þess að miðla persónuupplýsingum um barnið sem nauðsynlegar eru fyrir velferð og aðlögun þess í grunnskóla, með tryggum og öruggum hætti til viðtökuskóla. \n\nPersónuupplýsingar geta verið:\n\na. Almennar upplýsingar um félagslega stöðu og þroska barna.\n\nb. Kennslufræðilegar, læknisfræðilegar, sálfræðilegar, sérkennslufræðilegar greiningar og aðrar greiningar og sérúrræði fyrir börn, sérkennsluumsóknir, námsáætlanir vegna sérúrræða, einstaklingsnámskrár og aðrar bakgrunnsupplýsingar sem að gagni geta komið fyrir velferð og aðlögun barna í grunnskóla.\n\nc. Hvers konar skrifleg eða stafræn gögn svo sem skýrslur, greinargerðir og umsagnir er varða velferð og skólagöngu barns.',
+      description:
+        "When transferring a child from nursery to primary school, the head of the nursery ensures that the personal data of the child necessary for their well-being and adaptation to primary school, is passed on to the receiving school in a safe and secure manner. \n\nPersonal data can be: \n\na. General information about the social status and development of children. \n\nb. Educational, medical, psychological, special educational and other diagnoses and special needs for children, special education applications, curricula for special needs, individual curricula and other background information that may be useful for the well-being and adjustment of children in primary school. \n\nc. Any written or digital data such as reports, analyses and comments on the child's well-being and schooling.",
     },
     requestMeeting: {
       id: 'nps.application:different.needs.request.meeting',
@@ -535,42 +840,42 @@ export const newPrimarySchoolMessages: MessageDir = {
     parents: {
       id: 'nps.application:overview.parents',
       defaultMessage: 'Foreldri/forsjáraðili',
-      description: 'Parent/guardian',
+      description: 'Parent / guardian',
     },
-    nativeLanguage: {
-      id: 'nps.application:overview.native.language',
-      defaultMessage: 'Móðurmál barnsins',
-      description: "The child's native language",
+    languageEnvironment: {
+      id: 'nps.application:overview.language.environment',
+      defaultMessage: 'Tungumálaumhverfi',
+      description: 'Language environment',
     },
-    icelandicSpokenAroundChild: {
-      id: 'nps.application:overview.icelandic.spoken.around.child',
-      defaultMessage: 'Íslenska er töluð í nærumhverfi barnsins',
-      description: "Icelandic is spoken in the child's immediate environment",
+    childLanguage: {
+      id: 'nps.application:overview.child.language',
+      defaultMessage: 'Tungumálið sem barninu finnst best að tjá sig á',
+      description: 'The language the child prefers to express themselves in',
     },
     schoolTitle: {
       id: 'nps.application:overview.school.title',
-      defaultMessage: 'Upplýsingar um skóla',
-      description: 'Information about school',
-    },
-    currentSchool: {
-      id: 'nps.application:overview.current.school',
-      defaultMessage: 'Núverandi skóli',
-      description: 'Current school',
+      defaultMessage: 'Upplýsingar um valinn/nýjan skóla',
+      description: 'Information about selected/new school',
     },
     selectedSchool: {
       id: 'nps.application:overview.selected.school',
       defaultMessage: 'Valinn skóli',
       description: 'Selected school',
     },
-    grade: {
-      id: 'nps.application:overview.grade',
-      defaultMessage: 'Bekkur',
-      description: 'Grade',
+    foodAllergiesOrIntolerances: {
+      id: 'nps.application:overview.food.allergies.or.intolerances',
+      defaultMessage: 'Fæðuofnæmi eða -óþol',
+      description: 'Food allergies or intolerances',
     },
-    currentGrade: {
-      id: 'nps.application:overview.current.grade',
-      defaultMessage: '{grade}. bekkur',
-      description: '{grade} grade',
+    otherAllergies: {
+      id: 'nps.application:overview.other.allergies',
+      defaultMessage: 'Annað ofnæmi',
+      description: 'Other allergies',
+    },
+    usesEpiPen: {
+      id: 'nps.application:overview.uses.epi.pen',
+      defaultMessage: 'Notar adrenalínpenna (epi-pen) vegna ofnæmis',
+      description: 'Uses an epi-pen for allergies',
     },
   }),
 
@@ -627,10 +932,10 @@ export const errorMessages = defineMessages({
     defaultMessage: 'Kennitala þarf að vera gild.',
     description: 'National id must be valid',
   },
-  relativesRequired: {
-    id: 'nps.application:error.relatives.required',
-    defaultMessage: 'Nauðsynlegt er að bæta við a.m.k einum aðstandenda',
-    description: 'You must add at least one relative',
+  contactsRequired: {
+    id: 'nps.application:error.contacts.required',
+    defaultMessage: 'Nauðsynlegt er að bæta við a.m.k einum tengilið',
+    description: 'You must add at least one contact',
   },
   siblingsRequired: {
     id: 'nps.application:error.siblings.required',
@@ -641,6 +946,11 @@ export const errorMessages = defineMessages({
     id: 'nps.application:error.languages.required',
     defaultMessage: 'Það þarf að velja a.m.k eitt tungumál',
     description: 'At least one language must be selected',
+  },
+  languageRequired: {
+    id: 'nps.application:error.language.required',
+    defaultMessage: 'Það þarf að velja tungumál',
+    description: 'Language must be selected',
   },
   noChildrenFoundTitle: {
     id: 'nps.application:error.no.children.found.title',
@@ -654,5 +964,15 @@ export const errorMessages = defineMessages({
       'Eingöngu sá sem er með lögheimilisforsjá hefur heimild til að sækja um fyrir barn. \n\nÞjóðskrá skráir hver eða hverjir teljast foreldrar barns og hver fari með forsjárskyldur þess. Upplýsingar um skráningu forsjár og lögheimilisforeldris má nálgast hér: [Foreldrar og forsjá | Þjóðskrá (skra.is)](https://www.skra.is/folk/skraning-barns/foreldrar-og-forsja/)\n\nUpplýsingum um tengsl á milli barna og foreldra auk forsjáraðila eru einnig aðgengilegar á [Mínum síðum á Ísland.is](https://island.is/minarsidur)',
     description:
       'Only the person who has legal custody has the authority to apply for a child.\n\nThe National Registry records who or which individuals are considered to be the parents of a child and who has custody responsibilities. Information on registering custody and legal guardianship can be found here: [Parents and Custody | National Registry (skra.is)](https://www.skra.is/folk/skraning-barns/foreldrar-og-forsja/)\n\nInformation about the relationship between children and parents, as well as custody authorities, is also available on [My Pages on Ísland.is](https://island.is/minarsidur)',
+  },
+  foodAllergiesOrIntolerancesRequired: {
+    id: 'nps.application:error.food.allergies.or.intolerances.required',
+    defaultMessage: 'Það þarf að velja a.m.k eitt fæðuofnæmi eða -óþol',
+    description: 'At least one food allergy or intolerance must be selected',
+  },
+  otherAllergiesRequired: {
+    id: 'nps.application:error.other.allergies.required',
+    defaultMessage: 'Það þarf að velja a.m.k eitt ofnæmi',
+    description: 'At least one allergy must be selected',
   },
 })

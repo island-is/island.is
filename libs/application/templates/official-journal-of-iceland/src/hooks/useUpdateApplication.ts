@@ -56,7 +56,10 @@ export const useApplication = ({ applicationId }: OJOIUseApplicationParams) => {
     },
   ] = useMutation(POST_APPLICATION_MUTATION)
 
-  const updateApplication = async (input: partialSchema, cb?: () => void) => {
+  const updateApplication = async (
+    input: Partial<partialSchema>,
+    cb?: () => void,
+  ) => {
     await updateApplicationMutation({
       variables: {
         locale,

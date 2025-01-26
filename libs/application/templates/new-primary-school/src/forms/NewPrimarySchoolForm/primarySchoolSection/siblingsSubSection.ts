@@ -4,16 +4,9 @@ import {
   buildTableRepeaterField,
 } from '@island.is/application/core'
 import { format as formatKennitala } from 'kennitala'
-import {
-  ReasonForApplicationOptions,
-  SiblingRelationOptions,
-} from '../../../lib/constants'
+import { ReasonForApplicationOptions } from '../../../lib/constants'
 import { newPrimarySchoolMessages } from '../../../lib/messages'
-import {
-  getApplicationAnswers,
-  getSiblingRelationOptionLabel,
-  getSiblingRelationOptions,
-} from '../../../lib/newPrimarySchoolUtils'
+import { getApplicationAnswers } from '../../../lib/newPrimarySchoolUtils'
 
 export const siblingsSubSection = buildSubSection({
   id: 'siblingsSubSection',
@@ -60,25 +53,14 @@ export const siblingsSubSection = buildSubSection({
               placeholder: '000000-0000',
               dataTestId: 'sibling-national-id',
             },
-            relation: {
-              component: 'select',
-              label: newPrimarySchoolMessages.shared.relation,
-              placeholder: newPrimarySchoolMessages.shared.relationPlaceholder,
-              // TODO: Nota gögn fá Júní
-              options: getSiblingRelationOptions(),
-              dataTestId: 'sibling-relation',
-            },
           },
           table: {
             format: {
               nationalId: (value) => formatKennitala(value),
-              relation: (value) =>
-                getSiblingRelationOptionLabel(value as SiblingRelationOptions),
             },
             header: [
               newPrimarySchoolMessages.shared.fullName,
               newPrimarySchoolMessages.shared.nationalId,
-              newPrimarySchoolMessages.shared.relation,
             ],
           },
         }),
