@@ -164,6 +164,10 @@ jobs:
 
       - name: Prepare test targets
         id: test_projects
+        env:
+          DISABLE_CHUNKS: 'false'
+          DISABLE_GROUPING: 'false'
+          DISABLE_PROBLEMATIC: 'false'
         run: |
           set -euo pipefail
           CHUNKS="$(./scripts/ci/generate-chunks.sh test)"
@@ -207,9 +211,6 @@ jobs:
     timeout-minutes: 45
     env:
       AFFECTED_PROJECTS: ${{ matrix.projects }}
-      DISABLE_CHUNKS: 'false'
-      DISABLE_GROUPING: 'false'
-      DISABLE_PROBLEMATIC: 'false'
     strategy:
       fail-fast: false
       matrix: ${{ fromJson(needs.prepare.outputs.TEST_CHUNKS) }}
