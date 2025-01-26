@@ -1,4 +1,6 @@
 import { sign, verify, Algorithm } from 'jsonwebtoken'
+import { z } from 'zod'
+
 import { ChargeCardInput } from './dtos/chargeCard.input'
 import { VerifyCardInput } from './dtos/verifyCard.input'
 import {
@@ -24,6 +26,13 @@ const addHyphensToUUID = (uuid: string) => {
   )}-${uuid.slice(16, 20)}-${uuid.slice(20)}`
 }
 
+const MdSerializedSchema = z.object({
+  c: z.string().length(32, 'Correlation ID must be 32 characters long'),
+  pi: z.string().length(32, 'Payment flow ID must be 32 characters long'),
+  a: z.number(),
+  iat: z.number(),
+})
+
 export const generateMd = ({
   correlationId,
   paymentFlowId,
@@ -39,7 +48,7 @@ export const generateMd = ({
   paymentsTokenSigningAlgorithm: string
   paymentsTokenSignaturePrefix: string
 }) => {
-  const MdSerialized: Omit<MdSerialized, 'iat'> = {
+  const mdSerialized: Omit<MdSerialized, 'iat'> = {
     // Had to reduce the size of the UUIDs to 32 characters
     // to fit within the character limit of the md object
     c: removeHyphensFromUUID(correlationId),
@@ -47,7 +56,7 @@ export const generateMd = ({
     a: amount,
   }
 
-  const mdToken = sign(MdSerialized, paymentsTokenSigningSecret, {
+  const mdToken = sign(mdSerialized, paymentsTokenSigningSecret, {
     algorithm: paymentsTokenSigningAlgorithm as Algorithm,
   })
 
@@ -156,27 +165,10 @@ export const getPayloadFromMd = ({
     md,
     'base64',
   ).toString('utf-8')}`
-  const payload = verify(jwtMd, paymentsTokenSigningSecret) as MdSerialized
 
-  if (!payload) {
-    throw new Error('Invalid MD')
-  }
-
-  if (!payload.c) {
-    throw new Error('Correlation ID not found in MD')
-  }
-
-  if (!payload.pi) {
-    throw new Error('Payment flow ID not found in MD')
-  }
-
-  if (!payload.iat) {
-    throw new Error('Issued at not found in MD')
-  }
-
-  if (typeof payload.a === 'undefined') {
-    throw new Error('Amount not found in MD')
-  }
+  const payload = MdSerializedSchema.parse(
+    verify(jwtMd, paymentsTokenSigningSecret),
+  )
 
   return {
     // Had to reduce the size of the UUIDs to 32 characters

@@ -1,15 +1,24 @@
-import { NextApiRequest, NextApiResponse } from 'next'
 import { sign } from 'jsonwebtoken'
+import getConfig from 'next/config'
+import { NextApiRequest, NextApiResponse } from 'next'
+import { z } from 'zod'
+
+import { findProblemInApolloError } from '@island.is/shared/problem'
 
 import initApollo from '../../../graphql/client'
-
 import {
   VerificationCallbackMutation,
   VerificationCallbackMutationVariables,
   VerificationCallbackDocument,
 } from '../../../graphql/mutations.graphql.generated'
-import getConfig from 'next/config'
-import { findProblemInApolloError } from '@island.is/shared/problem'
+
+const VerificationCallbackSchema = z.object({
+  xid: z.string().min(1, 'xid is required'),
+  mdStatus: z.string().min(1, 'mdStatus status is required'),
+  MD: z.string().min(1, 'MD is required'),
+  cavv: z.string().min(1, 'cavv is required'),
+  dsTransId: z.string().min(1, 'dsTransId is required'),
+})
 
 export default async function cardVerificationCallbackHandler(
   req: NextApiRequest,
@@ -25,11 +34,8 @@ export default async function cardVerificationCallbackHandler(
     return res.status(400).json({ error: 'Invalid content-type' })
   }
 
-  const { xid, mdStatus, MD, cavv, dsTransId } = req.body
-
-  if (!MD) {
-    return res.status(400).json({ error: 'MD is required' })
-  }
+  const { xid, mdStatus, MD, cavv, dsTransId } =
+    VerificationCallbackSchema.parse(req.body)
 
   const client = initApollo()
 
