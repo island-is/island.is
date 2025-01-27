@@ -1,13 +1,10 @@
 import { Navigate, useLocation } from 'react-router-dom'
-import { ReactNode, useEffect } from 'react'
+import { Outlet } from 'react-router-dom'
+import { useEffect } from 'react'
 import { plausibleSwapDataDomain } from '../utils/plausibleSwapDataDomain'
 import { FinancePaths } from '../lib/paths'
 
-interface Props {
-  children?: ReactNode
-}
-
-const FinanceRoot = ({ children }: Props) => {
+const FinanceRoot = () => {
   const location = useLocation()
 
   useEffect(() => {
@@ -20,7 +17,7 @@ const FinanceRoot = ({ children }: Props) => {
   if (location.pathname === FinancePaths.FinanceRoot) {
     return <Navigate to={FinancePaths.FinanceStatus} replace />
   }
-  return children
+  return <Outlet />
 }
 
 export default FinanceRoot
