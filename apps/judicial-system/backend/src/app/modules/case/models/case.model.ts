@@ -742,7 +742,7 @@ export class Case extends Model {
   crimeScenes?: CrimeSceneMap
 
   /**********
-   * The introduction to a traffic violation case
+   * The introduction to a indictment case
    **********/
   @Column({ type: DataType.TEXT, allowNull: true })
   @ApiPropertyOptional({ type: String })
@@ -1029,7 +1029,6 @@ export class Case extends Model {
 
   /**********
    * The md5 hash of the confirmed generated indictment
-   * Only used for traffic violation cases
    **********/
   @Column({ type: DataType.STRING, allowNull: true })
   @ApiPropertyOptional({ type: String })

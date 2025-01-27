@@ -17,7 +17,7 @@ import Table, {
 import TableInfoContainer from '@island.is/judicial-system-web/src/components/Table/TableInfoContainer/TableInfoContainer'
 import TagCaseState, {
   mapIndictmentCaseStateToTagVariant,
-} from '@island.is/judicial-system-web/src/components/TagCaseState/TagCaseState'
+} from '@island.is/judicial-system-web/src/components/Tags/TagCaseState/TagCaseState'
 import {
   CaseIndictmentRulingDecision,
   CaseListEntry,

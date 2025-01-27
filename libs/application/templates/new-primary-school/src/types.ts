@@ -36,6 +36,7 @@ export type ChildInformation = {
     streetAddress: string
     postalCode: string
   }
+  usePronounAndPreferredName?: string[]
 }
 
 export type Person = {

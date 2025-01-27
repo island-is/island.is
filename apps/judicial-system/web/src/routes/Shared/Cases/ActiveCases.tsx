@@ -17,10 +17,7 @@ import {
   DefendantInfo,
 } from '@island.is/judicial-system-web/src/components/Table'
 import Table from '@island.is/judicial-system-web/src/components/Table/Table'
-import {
-  CaseListEntry,
-  Defendant,
-} from '@island.is/judicial-system-web/src/graphql/schema'
+import { CaseListEntry } from '@island.is/judicial-system-web/src/graphql/schema'
 
 interface Props {
   cases: CaseListEntry[]

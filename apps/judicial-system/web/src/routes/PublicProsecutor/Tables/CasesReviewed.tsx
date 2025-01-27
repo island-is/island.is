@@ -2,7 +2,7 @@ import { FC } from 'react'
 import { MessageDescriptor, useIntl } from 'react-intl'
 import { AnimatePresence } from 'framer-motion'
 
-import { Box, Tag, Text } from '@island.is/island-ui/core'
+import { Tag, Text } from '@island.is/island-ui/core'
 import {
   capitalize,
   districtCourtAbbreviation,
@@ -22,6 +22,7 @@ import Table, {
   TableWrapper,
 } from '@island.is/judicial-system-web/src/components/Table/Table'
 import TableInfoContainer from '@island.is/judicial-system-web/src/components/Table/TableInfoContainer/TableInfoContainer'
+import TagContainer from '@island.is/judicial-system-web/src/components/Tags/TagContainer/TagContainer'
 import {
   CaseListEntry,
   IndictmentCaseReviewDecision,
@@ -62,11 +63,13 @@ const CasesReviewed: FC<Props> = ({ loading, cases }) => {
         row.defendants.some((defendant) => defendant.isSentToPrisonAdmin),
     )
 
-    if (row.indictmentRulingDecision === CaseIndictmentRulingDecision.FINE) {
-      return null
-    } else if (someDefendantIsSentToPrisonAdmin) {
+    if (someDefendantIsSentToPrisonAdmin) {
       variant = 'red'
       message = strings.tagVerdictViewSentToPrisonAdmin
+    } else if (
+      row.indictmentRulingDecision === CaseIndictmentRulingDecision.FINE
+    ) {
+      return null
     } else if (!row.indictmentVerdictViewedByAll) {
       variant = 'red'
       message = strings.tagVerdictUnviewed
@@ -157,32 +160,28 @@ const CasesReviewed: FC<Props> = ({ loading, cases }) => {
                 },
                 {
                   cell: (row) => (
-                    <>
-                      <Box marginRight={1}>
-                        <CaseTag
-                          color="darkerBlue"
-                          text={
-                            (row.indictmentReviewDecision &&
-                              indictmentReviewDecisionMapping(
-                                row.indictmentReviewDecision,
-                                row.indictmentRulingDecision ===
-                                  CaseIndictmentRulingDecision.FINE,
-                              )) ||
-                            ''
-                          }
-                        />
-                      </Box>
+                    <TagContainer>
+                      <CaseTag
+                        color="darkerBlue"
+                        text={
+                          (row.indictmentReviewDecision &&
+                            indictmentReviewDecisionMapping(
+                              row.indictmentReviewDecision,
+                              row.indictmentRulingDecision ===
+                                CaseIndictmentRulingDecision.FINE,
+                            )) ||
+                          ''
+                        }
+                      />
                       {hasDefendantAppealedVerdict(row.defendants) && (
-                        <Box marginTop={1}>
-                          <CaseTag
-                            color="red"
-                            text={formatMessage(
-                              strings.tagDefendantAppealedVerdict,
-                            )}
-                          />
-                        </Box>
+                        <CaseTag
+                          color="red"
+                          text={formatMessage(
+                            strings.tagDefendantAppealedVerdict,
+                          )}
+                        />
                       )}
-                    </>
+                    </TagContainer>
                   ),
                 },
                 {

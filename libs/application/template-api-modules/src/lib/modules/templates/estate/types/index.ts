@@ -32,7 +32,7 @@ type EstateMember = {
   ssn?: string
   nationalId?: string
   relation?: string
-  relationWithApplicant?: string
+  relationWithApplicant?: string | null
   dateOfBirth?: string
   foreignCitizenship?: string | string[]
   noContactInfo?: ('Yes' | 'No')[]

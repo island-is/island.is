@@ -213,6 +213,7 @@ export const include: Includeable[] = [
     model: CaseFile,
     as: 'caseFiles',
     required: false,
+    order: [['created', 'DESC']],
     where: {
       state: { [Op.not]: CaseFileState.DELETED },
       category: [
@@ -227,7 +228,6 @@ export const include: Includeable[] = [
         CaseFileCategory.APPEAL_RULING,
         CaseFileCategory.APPEAL_COURT_RECORD,
         CaseFileCategory.COURT_RECORD,
-        CaseFileCategory.INDICTMENT,
         CaseFileCategory.CRIMINAL_RECORD,
         CaseFileCategory.COST_BREAKDOWN,
         CaseFileCategory.CASE_FILE,
@@ -276,7 +276,6 @@ export const include: Includeable[] = [
           state: { [Op.not]: CaseFileState.DELETED },
           category: {
             [Op.in]: [
-              CaseFileCategory.INDICTMENT,
               CaseFileCategory.COURT_RECORD,
               CaseFileCategory.CRIMINAL_RECORD,
               CaseFileCategory.COST_BREAKDOWN,
