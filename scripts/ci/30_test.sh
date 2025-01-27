@@ -10,7 +10,7 @@ set -euxo pipefail
 : "${FLAKY_TEST_RETRIES:=3}"
 
 # Default to big old-space, and more options for testing, but allow overriding
-NODE_OPTIONS="--max-old-space-size=8193 --unhandled-rejections=warn --require=dd-trace/ci/init ${NODE_OPTIONS:-}"
+NODE_OPTIONS="--max-old-space-size=8193 --unhandled-rejections=warn --trace-warnings --require=dd-trace/ci/init ${NODE_OPTIONS:-}"
 EXTRA_OPTS=""
 
 FLAKY_TESTS=(
@@ -73,7 +73,7 @@ fi
 # Run tests with retries
 for ((i = 1; i <= MAX_RETRIES; i++)); do
   echo "Running tests for projects: ${AFFECTED_PROJECTS} (attempt: ${i}/${MAX_RETRIES})"
-  if yarn nx run-many --projects "${AFFECTED_PROJECTS}" --target test --parallel="${NX_PARALLEL}" --verbose --no-watchman "$@"; then
+  if yarn nx run-many --projects "${AFFECTED_PROJECTS}" --target test --parallel="${NX_PARALLEL}" --verbose --no-watchman --detectOpenHandles --debug --ci --runInBand "$@"; then
     exit 0
   fi
 done
