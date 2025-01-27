@@ -714,8 +714,7 @@ jobs:
       - name: Retag unaffected Docker images
         run: ./scripts/ci/retag-unaffected.sh "$UNAFFECTED"
   deploy-feature:
-    runs-on: ec2-runners
-    container: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
+    runs-on: arc-runners
     if: always() && needs.pre-checks.result == 'success' && needs.pre-checks.outputs.PRE_CHECK == 'feature-deploy' && !(needs.pre-checks.outputs.PRE_RELEASE == 'true') && needs.helm-docker-build.result != 'failure' && needs.prepare.outputs.IMAGES != ''
     needs:
       - pre-checks
