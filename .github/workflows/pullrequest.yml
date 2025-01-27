@@ -78,9 +78,9 @@ jobs:
           echo "NX_PARALLEL: $NX_PARALLEL"
           set -x
 
-          git checkout -m "$GITHUB_HEAD_REF"
-          git checkout -m "$GITHUB_BASE_REF"
-          git checkout -m "$GITHUB_SHA"
+          git checkout -m "${{ github.event.pull_request.head.ref }}"
+          git checkout -m "${{ github.event.pull_request.base.ref }}"
+          git checkout -m "${{ github.sha }}"
 
           git config --global user.email "ci@island.is"
           git config --global user.name "CI Bot"
@@ -419,7 +419,6 @@ jobs:
 
   success:
     runs-on: arc-runners
-    if: ${{ !cancelled() }}
     needs:
       - prepare
       - linting-workspace
