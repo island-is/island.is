@@ -1,0 +1,13 @@
+{
+  "localrun": true,
+  "pull_request": {
+    "head": { "ref": "HEAD" },
+    "base": { "ref": "main" }
+  },
+  "head": {
+    "ref": "HEAD"
+  },
+  "base": {
+    "ref": "main"
+  }
+}
