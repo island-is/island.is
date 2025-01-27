@@ -17,7 +17,7 @@ export const translation = defineMessages({
     description: 'Villuskilaboð ef ekki tókst að sækja áfengisleyfi',
   },
   licensee: {
-    id: 'web.syslumenn.burningPermitList:place',
+    id: 'web.syslumenn.burningPermitList:licensee',
     defaultMessage: 'Leyfishafi',
     description: 'Leyfishafi',
   },
