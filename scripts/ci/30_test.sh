@@ -49,13 +49,10 @@ echo $EXTRA_OPTS
 
 yarn nx run-many \
   --projects "${AFFECTED_PROJECTS}" \
-  --detectLeaks \
   --target test \
   --parallel="${NX_PARALLEL}" \
   --verbose \
   --no-watchman \
-  --detectOpenHandles \
   --debug \
   --ci \
-  --runInBand \
   --passWithNoTests "$@"

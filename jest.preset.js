@@ -8,6 +8,8 @@ module.exports = {
   testMatch: ['**/+(*.)+(spec|test).+(ts|js)?(x)'],
   testPathIgnorePatterns: ['<rootDir>/apps/.*/e2e'],
   resolver: customResolver,
+  detectOpenHandles: true,
+  runinBand: true,
   moduleFileExtensions: ['ts', 'js', 'html'],
   coverageReporters: ['json'],
   collectCoverageFrom: [
