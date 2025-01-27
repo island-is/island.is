@@ -8,6 +8,7 @@ import {
   ViewStyle,
 } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
+import { ApolloError } from '@apollo/client'
 
 import { Barcode } from '../barcode/barcode'
 import { Skeleton } from '../skeleton/skeleton'
@@ -22,6 +23,10 @@ import { dynamicColor } from '../../utils/dynamic-color'
 import { Typography } from '../typography/typography'
 import { screenWidth } from '../../../utils/dimensions'
 import { BARCODE_MAX_WIDTH } from '../../../screens/wallet-pass/wallet-pass.constants'
+import {
+  findProblemInApolloError,
+  ProblemType,
+} from '@island.is/shared/problem'
 
 const Host = styled(Animated.View)`
   position: relative;
@@ -123,7 +128,7 @@ interface LicenseCardProps {
   backgroundColor?: string
   showBarcodeOfflineMessage?: boolean
   loading?: boolean
-  error?: boolean
+  error?: ApolloError
   barcode?: {
     value?: string | null
     loading?: boolean
@@ -165,6 +170,10 @@ export function LicenseCard({
     ? BARCODE_MAX_WIDTH
     : screenWidth - theme.spacing[4] * 2 - theme.spacing.smallGutter * 2
   const barcodeHeight = barcodeWidth / 3
+
+  const badSessionError = error
+    ? findProblemInApolloError(error as any, [ProblemType.BAD_SESSION])
+    : undefined
 
   return (
     <Host>
@@ -297,7 +306,9 @@ export function LicenseCard({
             <OfflineMessage variant="body3" style={{ opacity: 1 }}>
               {intl.formatMessage({
                 id: error
-                  ? 'walletPass.barcodeErrorFailedToFetch'
+                  ? badSessionError
+                    ? 'walletPass.barcodeErrorBadSession'
+                    : 'walletPass.barcodeErrorFailedToFetch'
                   : 'walletPass.barcodeErrorNotConnected',
               })}
             </OfflineMessage>
