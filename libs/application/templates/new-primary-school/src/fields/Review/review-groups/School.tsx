@@ -43,12 +43,12 @@ export const School = ({
   }, [data, selectedSchool])
 
   let label = newPrimarySchoolMessages.overview.selectedSchool
-  let screen = 'school'
+  let screen = 'newSchool'
   let schoolName = selectedSchoolName
 
   if (applyForNeighbourhoodSchool === YES) {
     label = newPrimarySchoolMessages.overview.neighbourhoodSchool
-    screen = 'neighbourhoodSchoolSelection'
+    screen = 'school'
     schoolName = getNeighbourhoodSchoolName(application)
   }
 

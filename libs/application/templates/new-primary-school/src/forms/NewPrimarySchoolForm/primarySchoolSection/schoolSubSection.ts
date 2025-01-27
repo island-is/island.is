@@ -22,7 +22,7 @@ export const schoolSubSection = buildSubSection({
   },
   children: [
     buildMultiField({
-      id: 'neighbourhoodSchoolSelection',
+      id: 'school',
       title: newPrimarySchoolMessages.primarySchool.schoolSubSectionTitle,
       description:
         newPrimarySchoolMessages.primarySchool.schoolSubSectionDescription,
