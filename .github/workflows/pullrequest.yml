@@ -20,7 +20,7 @@ env:
   DISABLE_CHUNKS: 'false'
   DISABLE_GROUPING: 'false'
   DISABLE_PROBLEMATIC: 'false'
-  CHUNK_SIZE: '5'
+  CHUNK_SIZE: '3'
   MAX_JOBS: '3'
   NX_PARALLEL: '3'
   NX_MAX_PARALLEL: '4'
