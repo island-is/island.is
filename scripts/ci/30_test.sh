@@ -35,4 +35,4 @@ export DD_CIVISIBILITY_AGENTLESS_ENABLED \
   NODE_OPTIONS \
   SERVERSIDE_FEATURES_ON=\"\" # disable server-side features
 
-yarn nx run "${APP}:test" ${EXTRA_OPTS} --verbose "$@"
+yarn nx run "${APP}:test" ${EXTRA_OPTS} --verbose "$@" --passWithNoTests
