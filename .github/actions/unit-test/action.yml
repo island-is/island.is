@@ -24,6 +24,7 @@ runs:
   using: 'composite'
   steps:
     - name: Docker login to ECR repo
+      if: ${{ ! github.event.localrun }}
       run: ./scripts/ci/docker-login-ecr.sh
       shell: bash
       env:
