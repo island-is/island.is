@@ -110,14 +110,12 @@ export const dataSchema = z.object({
         path: ['transferOfLegalDomicile', 'postalCode'],
       },
     ),
+  newSchool: z.object({
+    municipality: z.string(),
+    school: z.string(),
+  }),
   school: z.object({
     applyForNeighbourhoodSchool: z.enum([YES, NO]),
-  }),
-  schools: z.object({
-    newSchool: z.object({
-      municipality: z.string(),
-      school: z.string(),
-    }),
   }),
   siblings: z
     .array(
@@ -239,11 +237,72 @@ export const dataSchema = z.object({
           : true,
       { path: ['usesEpiPen'] },
     ),
-  support: z.object({
-    developmentalAssessment: z.enum([YES, NO]),
-    specialSupport: z.enum([YES, NO]),
-    requestMeeting: z.array(z.enum([YES, NO])).optional(),
-  }),
+  support: z
+    .object({
+      developmentalAssessment: z.enum([YES, NO]),
+      specialSupport: z.enum([YES, NO]),
+      hasIntegratedServices: z.string().optional(),
+      hasCaseManager: z.string().optional(),
+      caseManager: z
+        .object({
+          name: z.string(),
+          email: z.string().email().optional().or(z.literal('')),
+        })
+        .optional(),
+      requestMeeting: z.array(z.enum([YES, NO])).optional(),
+    })
+    .refine(
+      ({ developmentalAssessment, specialSupport, hasIntegratedServices }) =>
+        developmentalAssessment === YES || specialSupport === YES
+          ? !!hasIntegratedServices
+          : true,
+      { path: ['hasIntegratedServices'] },
+    )
+    .refine(
+      ({
+        developmentalAssessment,
+        specialSupport,
+        hasIntegratedServices,
+        hasCaseManager,
+      }) =>
+        (developmentalAssessment === YES || specialSupport === YES) &&
+        hasIntegratedServices === YES
+          ? !!hasCaseManager
+          : true,
+      { path: ['hasCaseManager'] },
+    )
+    .refine(
+      ({
+        developmentalAssessment,
+        specialSupport,
+        hasIntegratedServices,
+        hasCaseManager,
+        caseManager,
+      }) =>
+        (developmentalAssessment === YES || specialSupport === YES) &&
+        hasIntegratedServices === YES &&
+        hasCaseManager === YES
+          ? caseManager && caseManager.name.length > 0
+          : true,
+      { path: ['caseManager', 'name'] },
+    )
+    .refine(
+      ({
+        developmentalAssessment,
+        specialSupport,
+        hasIntegratedServices,
+        hasCaseManager,
+        caseManager,
+      }) =>
+        (developmentalAssessment === YES || specialSupport === YES) &&
+        hasIntegratedServices === YES &&
+        hasCaseManager === YES
+          ? caseManager && caseManager.email && caseManager.email.length > 0
+          : true,
+      {
+        path: ['caseManager', 'email'],
+      },
+    ),
 })
 
 export type SchemaFormValues = z.infer<typeof dataSchema>
