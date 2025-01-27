@@ -59,12 +59,10 @@ jobs:
           echo "CHUNKS={\"projects\":$CHUNKS}" >> "$GITHUB_OUTPUT"
 
   tests:
+    needs: prepare
     if: needs.prepare.outputs.TEST_CHUNKS
-    runs-on: ec2-runners
-    container:
-      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
-    needs:
-      - prepare
+    runs-on: arc-runners
+    timeout-minutes: 45
     env:
       AFFECTED_PROJECTS: ${{ matrix.projects }}
       MAX_JOBS: 1
@@ -73,8 +71,6 @@ jobs:
       matrix: ${{ fromJson(needs.prepare.outputs.TEST_CHUNKS) }}
     steps:
       - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
 
       - uses: actions/setup-node@v4
         with:
