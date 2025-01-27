@@ -58,7 +58,6 @@ const IndictmentOverview = () => {
   const criminalRecordUpdateFile = workingCase.caseFiles?.filter(
     (file) => file.category === CaseFileCategory.CRIMINAL_RECORD_UPDATE,
   )
-  console.log({"test": workingCase.caseFiles})
 
   const hasPunishmentType = (punishmentType: PunishmentType) =>
     defendant?.punishmentType === punishmentType
