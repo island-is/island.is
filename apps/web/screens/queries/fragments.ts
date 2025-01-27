@@ -809,6 +809,8 @@ export const slices = gql`
     title
     displayTitle
     namespace
+    maxNumberOfCards
+    sorting
     resolvedGrantsList {
       total
       items {

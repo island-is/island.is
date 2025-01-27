@@ -52,7 +52,11 @@ import {
   GetTeamMembersInputOrderBy,
 } from './dto/getTeamMembers.input'
 import { TeamMemberResponse } from './models/teamMemberResponse.model'
-import { GetGrantsInput } from './dto/getGrants.input'
+import {
+  GetGrantsInput,
+  GrantsAvailabilityStatus,
+  GrantsSortBy,
+} from './dto/getGrants.input'
 import { Grant } from './models/grant.model'
 import { GrantList } from './models/grantList.model'
 
@@ -659,6 +663,8 @@ export class CmsElasticsearchService {
       search,
       page = 1,
       size = 8,
+      sort,
+      status,
       categories,
       types,
       organizations,
@@ -682,19 +688,22 @@ export class CmsElasticsearchService {
       queryString = queryString.replace('`', '')
     }
 
-    const sort: ('_score' | sortRule)[] = [
-      {
-        [SortField.RELEASE_DATE]: {
-          order: SortDirection.DESC,
-        },
-      },
-      // Sort items with equal values by ascending title order
-      { 'title.sort': { order: SortDirection.ASC } },
-    ]
-
-    // Order by score first in case there is a query string
+    let sortRules: ('_score' | sortRule)[] = []
+    if (!sort || sort === GrantsSortBy.RECENTLY_UPDATED) {
+      sortRules = [
+        { dateUpdated: { order: SortDirection.DESC } },
+        { 'title.sort': { order: SortDirection.ASC } },
+        { dateCreated: { order: SortDirection.DESC } },
+      ]
+    } else if (sort === GrantsSortBy.ALPHABETICAL) {
+      sortRules = [
+        { 'title.sort': { order: SortDirection.ASC } },
+        { dateUpdated: { order: SortDirection.DESC } },
+        { dateCreated: { order: SortDirection.DESC } },
+      ]
+    }
     if (queryString.length > 0 && queryString !== '*') {
-      sort.unshift('_score')
+      sortRules.unshift('_score')
     }
 
     if (queryString) {
@@ -703,6 +712,7 @@ export class CmsElasticsearchService {
           query: queryString + '*',
           fields: ['title^100', 'content'],
           analyze_wildcard: true,
+          default_operator: 'and',
         },
       })
     }
@@ -739,6 +749,156 @@ export class CmsElasticsearchService {
         },
       })
     })
+
+    if (status !== undefined) {
+      if (status === GrantsAvailabilityStatus.CLOSED) {
+        must.push({
+          bool: {
+            must: [
+              {
+                nested: {
+                  path: 'tags',
+                  query: {
+                    bool: {
+                      must: [
+                        {
+                          term: {
+                            'tags.type': 'status',
+                          },
+                        },
+                        {
+                          terms: {
+                            'tags.key': ['Closed with note', 'Automatic'],
+                          },
+                        },
+                      ],
+                    },
+                  },
+                },
+              },
+              {
+                bool: {
+                  must_not: {
+                    bool: {
+                      filter: [
+                        {
+                          range: {
+                            // date from
+                            releaseDate: {
+                              lt: 'now',
+                            },
+                          },
+                        },
+                        {
+                          range: {
+                            // date to
+                            dateCreated: {
+                              gt: 'now',
+                            },
+                          },
+                        },
+                        {
+                          nested: {
+                            path: 'tags',
+                            query: {
+                              bool: {
+                                must: [
+                                  {
+                                    term: {
+                                      'tags.type': 'status',
+                                    },
+                                  },
+                                  {
+                                    term: {
+                                      'tags.key': 'Automatic',
+                                    },
+                                  },
+                                ],
+                              },
+                            },
+                          },
+                        },
+                      ],
+                    },
+                  },
+                },
+              },
+            ],
+          },
+        })
+      } else {
+        must.push({
+          bool: {
+            should: [
+              {
+                bool: {
+                  filter: [
+                    {
+                      range: {
+                        //date from
+                        releaseDate: {
+                          lt: 'now',
+                        },
+                      },
+                    },
+                    {
+                      range: {
+                        //date to
+                        dateCreated: {
+                          gt: 'now',
+                        },
+                      },
+                    },
+                    {
+                      nested: {
+                        path: 'tags',
+                        query: {
+                          bool: {
+                            must: [
+                              {
+                                term: {
+                                  'tags.type': 'status',
+                                },
+                              },
+                              {
+                                term: {
+                                  'tags.key': 'Automatic',
+                                },
+                              },
+                            ],
+                          },
+                        },
+                      },
+                    },
+                  ],
+                },
+              },
+              {
+                nested: {
+                  path: 'tags',
+                  query: {
+                    bool: {
+                      must: [
+                        {
+                          term: {
+                            'tags.type': 'status',
+                          },
+                        },
+                        {
+                          terms: {
+                            'tags.key': ['Open with note', 'Always open'],
+                          },
+                        },
+                      ],
+                    },
+                  },
+                },
+              },
+            ],
+          },
+        })
+      }
+    }
 
     if (organizations) {
       must.push({
