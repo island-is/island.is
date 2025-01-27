@@ -9,7 +9,6 @@ module.exports = {
   testPathIgnorePatterns: ['<rootDir>/apps/.*/e2e'],
   resolver: customResolver,
   detectOpenHandles: true,
-  runinBand: true,
   detectLeaks: true,
   passWithNoTests: true,
   moduleFileExtensions: ['ts', 'js', 'html'],
