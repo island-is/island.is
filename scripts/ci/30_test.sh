@@ -61,6 +61,8 @@ if requires_code_coverage; then
   EXTRA_OPTS="--codeCoverage"
 fi
 
+echo $EXTRA_OPTS
+
 # Determine number of retries
 if is_any_project_flaky; then
   MAX_RETRIES=$FLAKY_TEST_RETRIES
@@ -71,7 +73,7 @@ fi
 # Run tests with retries
 for ((i = 1; i <= MAX_RETRIES; i++)); do
   echo "Running tests for projects: ${AFFECTED_PROJECTS} (attempt: ${i}/${MAX_RETRIES})"
-  if yarn nx run-many --projects "${AFFECTED_PROJECTS}" --target test --parallel="${NX_PARALLEL}" ${EXTRA_OPTS} --verbose --no-watchman "$@"; then
+  if yarn nx run-many --projects "${AFFECTED_PROJECTS}" --target test --parallel="${NX_PARALLEL}" --verbose --no-watchman "$@"; then
     exit 0
   fi
 done
