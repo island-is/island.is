@@ -801,10 +801,10 @@ export class ApplicationController {
       if (hasError && error) {
         throw new TemplateApiError(error, 500)
       }
-      
+
       withLoggingContext({
-        applicationId: updatedApplication.id,
-        templateId: updatedApplication.typeId,
+        applicationId: existingApplication.id,
+        templateId: templateId
       }, () => {
         this.logger.info(`Application submission ended successfully`)
       })
