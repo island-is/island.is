@@ -63,16 +63,12 @@ console.error(`Initial settings:`, {
 const projects = process.argv[2].split(',').map((s) => s.trim()) ?? []
 console.error(`Input projects:`, projects)
 
-process.stdout.write(JSON.stringify(['application-template-api-modules']))
-process.exit(0)
-
 const problematicProjects = [
   'judicial-system-backend',
   'application-system-api',
   'services-auth-delegation-api',
   'services-auth-personal-representative',
   'skilavottord-web',
-  'application-template-api-modules',
 ]
 console.error(`Problematic projects:`, problematicProjects)
 
