@@ -2,11 +2,9 @@ import {
   buildAlertMessageField,
   buildCustomField,
   buildMultiField,
-  buildSelectField,
   buildSubSection,
   buildTextField,
 } from '@island.is/application/core'
-import { getAllCountryCodes } from '@island.is/shared/utils'
 import {
   OptionsType,
   ReasonForApplicationOptions,
@@ -43,29 +41,6 @@ export const reasonForApplicationSubSection = buildSubSection({
                 .reasonForApplicationPlaceholder,
           },
         ),
-        buildSelectField({
-          id: 'reasonForApplication.movingAbroad.country',
-          dataTestId: 'reason-for-application-country',
-          title: newPrimarySchoolMessages.primarySchool.country,
-          placeholder:
-            newPrimarySchoolMessages.primarySchool.countryPlaceholder,
-          options: () => {
-            const countries = getAllCountryCodes()
-            return countries.map((country) => {
-              return {
-                label: country.name_is || country.name,
-                value: country.code,
-              }
-            })
-          },
-          condition: (answers) => {
-            const { reasonForApplication } = getApplicationAnswers(answers)
-
-            return (
-              reasonForApplication === ReasonForApplicationOptions.MOVING_ABROAD
-            )
-          },
-        }),
         buildTextField({
           id: 'reasonForApplication.transferOfLegalDomicile.streetAddress',
           title: newPrimarySchoolMessages.shared.address,
@@ -104,15 +79,11 @@ export const reasonForApplicationSubSection = buildSubSection({
           doesNotRequireAnswer: true,
           alertType: 'info',
           condition: (answers) => {
-            const { reasonForApplication, reasonForApplicationCountry } =
-              getApplicationAnswers(answers)
+            const { reasonForApplication } = getApplicationAnswers(answers)
 
             return (
               reasonForApplication ===
-                ReasonForApplicationOptions.MOVING_MUNICIPALITY ||
-              (reasonForApplication ===
-                ReasonForApplicationOptions.MOVING_ABROAD &&
-                reasonForApplicationCountry !== undefined)
+              ReasonForApplicationOptions.MOVING_MUNICIPALITY
             )
           },
         }),

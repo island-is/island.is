@@ -49,6 +49,7 @@ export const TextFormField: FC<React.PropsWithChildren<Props>> = ({
     step,
     marginBottom,
     marginTop,
+    tooltip,
     onChange = () => undefined,
     clearOnChange,
   } = field
@@ -70,6 +71,12 @@ export const TextFormField: FC<React.PropsWithChildren<Props>> = ({
 
       <Box paddingTop={2}>
         <InputController
+          tooltip={formatTextWithLocale(
+            tooltip || '',
+            application,
+            locale as Locale,
+            formatMessage,
+          )}
           disabled={disabled}
           readOnly={readOnly}
           id={id}
