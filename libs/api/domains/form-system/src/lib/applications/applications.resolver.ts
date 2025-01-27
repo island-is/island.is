@@ -80,14 +80,14 @@ export class ApplicationsResolver {
   //   return this.applicationsService.submitScreen(user, input)
   // }
 
-  @Query(() => ApplicationListDto, {
-    name: 'formSystemGetApplicationsByOrganization',
-  })
-  async getApplicationsByOrganization(
-    @Args('input', { type: () => GetApplicationsByOrganizationInput })
-    input: GetApplicationsByOrganizationInput,
-    @CurrentUser() user: User,
-  ): Promise<ApplicationListDto> {
-    return this.applicationsService.getAllApplicationsByOrganization(user, input)
-  }
+  // @Query(() => ApplicationListDto, {
+  //   name: 'formSystemGetApplicationsByOrganization',
+  // })
+  // async getApplicationsByOrganization(
+  //   @Args('input', { type: () => GetApplicationsByOrganizationInput })
+  //   input: GetApplicationsByOrganizationInput,
+  //   @CurrentUser() user: User,
+  // ): Promise<ApplicationListDto> {
+  //   return this.applicationsService.getAllApplicationsByOrganization(user, input)
+  // }
 }

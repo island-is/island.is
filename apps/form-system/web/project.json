@@ -3,7 +3,9 @@
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/form-system/web/src",
   "projectType": "application",
-  "tags": [],
+  "tags": [
+    "scope:portals-admin"
+  ],
   "targets": {
     "build": {
       "executor": "@nx/webpack:webpack",

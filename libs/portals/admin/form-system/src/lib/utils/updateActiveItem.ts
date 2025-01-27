@@ -65,7 +65,7 @@ export const updateActiveItemFn = async (
             updateScreenDto: {
               name,
               multiset: multiset ? multiset : 0,
-              callRuleset,
+              callRuleset: callRuleset ? callRuleset : false,
             },
           },
         },
@@ -81,8 +81,8 @@ export const updateActiveItemFn = async (
         isRequired,
         isHidden,
       } = currentActiveItem
-        ? (currentActiveItem.data as FormSystemField)
-        : (activeItem.data as FormSystemField)
+          ? (currentActiveItem.data as FormSystemField)
+          : (activeItem.data as FormSystemField)
       updateField({
         variables: {
           input: {

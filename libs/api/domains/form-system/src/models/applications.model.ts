@@ -60,6 +60,9 @@ export class Application {
 
   @Field(() => [Section], { nullable: 'itemsAndList' })
   sections?: Section[]
+
+  @Field(() => [ValueDto], { nullable: 'itemsAndList' })
+  files?: ValueDto[]
 }
 
 @ObjectType('FormSystemApplicationListDto')

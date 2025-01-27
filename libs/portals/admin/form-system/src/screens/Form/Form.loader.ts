@@ -25,7 +25,7 @@ export const formLoader: WrappedLoaderFn = ({ client }) => {
             id: params.formId,
           },
         },
-        fetchPolicy: 'no-cache',
+        fetchPolicy: 'cache-first',
       })
       if (!loading && !data) {
         throw new Error('No form data found')

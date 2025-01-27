@@ -2,6 +2,7 @@ import { Field, InputType, Int } from '@nestjs/graphql'
 import { OrganizationInput } from './organization.input'
 import { SectionInput } from './section.input'
 import { DependencyInput } from './form.input'
+import { ValueDtoInput } from './value.input'
 
 @InputType('FormSystemCreateApplicationDtoInput')
 export class CreateApplicationDtoInput {
@@ -94,4 +95,7 @@ export class ApplicationInput {
 
   @Field(() => [SectionInput], { nullable: 'itemsAndList' })
   sections?: SectionInput[]
+
+  @Field(() => [ValueDtoInput], { nullable: 'itemsAndList' })
+  files?: ValueDtoInput[]
 }

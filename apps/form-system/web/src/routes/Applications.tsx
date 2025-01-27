@@ -36,7 +36,7 @@ export const Applications = () => {
     return app
   }
 
-
+  console.log('slug', slug)
   // Check whether the user has opened this form before and if so, show all the applications 
   const applications = []
   // Assuming the user has not opened this form before, create a new application
@@ -44,6 +44,6 @@ export const Applications = () => {
   }
 
   return (
-    <Button onClick={() => console.log(createApplication())}>Create</Button>
+    <Button onClick={createApplication}>Create</Button>
   )
 }

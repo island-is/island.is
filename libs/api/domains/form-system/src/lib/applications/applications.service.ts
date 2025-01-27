@@ -7,7 +7,6 @@ import {
   ApplicationListDto,
   ApplicationsApi,
   ApplicationsControllerCreateRequest,
-  ApplicationsControllerFindAllRequest,
   ApplicationsControllerGetApplicationRequest,
   ApplicationsControllerSubmitRequest,
   ApplicationsControllerUpdateRequest,
@@ -15,8 +14,6 @@ import {
 import {
   CreateApplicationInput,
   GetApplicationInput,
-  GetApplicationsByOrganizationInput,
-  SubmitScreenInput,
 } from '../../dto/application.input'
 import { Application } from '../../models/applications.model'
 import { UpdateApplicationDependenciesInput } from '../../dto/applicant.input'
@@ -48,6 +45,7 @@ export class ApplicationsService {
     auth: User,
     input: CreateApplicationInput,
   ): Promise<Application> {
+    console.log('input', auth)
     const response = await this.applicationsApiWithAuth(auth)
       .applicationsControllerCreate(
         input as ApplicationsControllerCreateRequest,
@@ -127,19 +125,19 @@ export class ApplicationsService {
   //   return response
   // }
 
-  async getAllApplicationsByOrganization(
-    auth: User,
-    input: GetApplicationsByOrganizationInput
-  ): Promise<ApplicationListDto> {
-    const response = await this.applicationsApiWithAuth(auth)
-      .applicationsControllerFindAll(
-        input as ApplicationsControllerFindAllRequest
-      )
-      .catch((e) => handle4xx(e, this.handleError, 'failed to get applications by organization'))
+  // async getAllApplicationsByOrganization(
+  //   auth: User,
+  //   input: GetApplicationsByOrganizationInput
+  // ): Promise<ApplicationListDto> {
+  //   const response = await this.applicationsApiWithAuth(auth)
+  //     .applicationsControllerFindAll(
+  //       input as 
+  //     )
+  //     .catch((e) => handle4xx(e, this.handleError, 'failed to get applications by organization'))
 
-    if (!response || response instanceof ApolloError) {
-      return {}
-    }
-    return response
-  }
+  //   if (!response || response instanceof ApolloError) {
+  //     return {}
+  //   }
+  //   return response
+  // }
 }
