@@ -34,7 +34,7 @@ COPY apps/native/app/package.json ./apps/native/app/
 COPY .yarn/ ./.yarn
 
 # hadolint ignore=DL3060
-RUN --mount=type=cache,target=.yarn/cache \
+RUN --mount=type=cache,target=.yarn/cache --mount=type=cache,target=node_modules --mount=type=cache,id=node_modules,source=apps/native/app/node_modules,target=apps/native/app/node_modules \
   # Cache-mount the relatively frequently changing caches
   CI=true yarn install --immutable
 
@@ -123,7 +123,7 @@ ARG GIT_REPOSITORY_URL
 ENV PORT=4200
 
 # TODO: smallify
-COPY --from=deps /build/node_modules ./
+RUN --mount=type=cache,id=node_modules,target=/build/node_modules /build/node_modules ./
 COPY --from=builder /dist ./
 RUN ls -lah . main.*
 
