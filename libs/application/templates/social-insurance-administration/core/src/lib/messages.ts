@@ -43,8 +43,7 @@ export const socialInsuranceAdministrationMessage: MessageDir = {
     },
     checkboxProvider: {
       id: 'sia.application:prerequisites.checkbox.provider',
-      defaultMessage:
-        'Ég samþykki gagnaöflun í umsóknarferlinu',
+      defaultMessage: 'Ég samþykki gagnaöflun í umsóknarferlinu',
       description:
         'I agree to the collection of data as a part of the application process',
     },
