@@ -20,6 +20,7 @@ export enum Routes {
   LANDLORDINFORMATION = 'landlordInfo',
   TENANTINFORMATION = 'tenantInfo',
   PROPERTYINFORMATION = 'registerProperty.info',
+  PROPERTYINFORMATION_SERCH = 'registerProperty.search',
   PROPERTYCATEGORY = 'registerProperty.category',
   SPECIALPROVISIONS = 'specialProvisions',
   CONDITION = 'condition',

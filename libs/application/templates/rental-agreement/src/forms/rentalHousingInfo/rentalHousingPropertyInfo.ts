@@ -1,4 +1,5 @@
 import {
+  buildCustomField,
   buildDescriptionField,
   buildMultiField,
   buildRadioField,
@@ -96,6 +97,20 @@ export const RentalHousingPropertyInfo: SubSection = buildSubSection({
         }),
       ],
     }),
+
+    buildMultiField({
+      id: Routes.PROPERTYINFORMATION_SERCH,
+      title: messagesInfo.pageTitle,
+      description: messagesInfo.pageDescription,
+      children: [
+        buildCustomField({
+          id: 'registerProperty.searchresults',
+          title: '',
+          component: 'PropertySearch',
+        }),
+      ],
+    }),
+
     buildMultiField({
       id: 'registerProperty.summary',
       title: '',
