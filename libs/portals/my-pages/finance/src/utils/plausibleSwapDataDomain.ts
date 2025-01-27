@@ -21,6 +21,10 @@ export const plausibleSwapDataDomain = (type: 'finance' | 'default') => {
     const plausibleScript = document.querySelector(
       'script[data-domain]',
     ) as HTMLScriptElement
+    if (!plausibleScript) {
+      console.warn('Plausible script not found in document')
+      return
+    }
     const isDefaultDomain = plausibleScript?.dataset?.domain === DEFAULT_DOMAIN
     const isFinanceDomain =
       plausibleScript?.dataset?.domain === `${DEFAULT_DOMAIN},${FINANCE_DOMAIN}`
