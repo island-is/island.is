@@ -104,17 +104,17 @@ const IndictmentOverview = () => {
         <Box marginBottom={5}>
           <InfoCardClosedIndictment displayVerdictViewDate />
         </Box>
-        {isNonEmptyArray(criminalRecordUpdateFile) && <Box marginBottom={5}>
-          <Text variant="h4" as="h4" marginBottom={1}>
-            {formatMessage(
-              strings.criminalRecordUpdateSection,
-            )}
-          </Text>
-          <RenderFiles
-            onOpenFile={onOpen}
-            caseFiles={criminalRecordUpdateFile}
-          />
-        </Box>}
+        {isNonEmptyArray(criminalRecordUpdateFile) && (
+          <Box marginBottom={5}>
+            <Text variant="h4" as="h4" marginBottom={1}>
+              {formatMessage(strings.criminalRecordUpdateSection)}
+            </Text>
+            <RenderFiles
+              onOpenFile={onOpen}
+              caseFiles={criminalRecordUpdateFile}
+            />
+          </Box>
+        )}
         <Box marginBottom={5}>
           <Text variant="h4" as="h4" marginBottom={1}>
             {formatMessage(

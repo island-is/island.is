@@ -435,7 +435,7 @@ describe('Limited Access View Case File Guard', () => {
           CaseFileCategory.RULING,
           CaseFileCategory.SENT_TO_PRISON_ADMIN_FILE,
           CaseFileCategory.COURT_RECORD,
-          CaseFileCategory.CRIMINAL_RECORD_UPDATE
+          CaseFileCategory.CRIMINAL_RECORD_UPDATE,
         ]
 
         describe.each(allowedCaseFileCategories)(

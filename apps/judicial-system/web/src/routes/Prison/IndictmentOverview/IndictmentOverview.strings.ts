@@ -76,7 +76,6 @@ export const strings = defineMessages({
   criminalRecordUpdateSection: {
     id: 'judicial.system.core:indictment_overview.criminal_record_update_section',
     defaultMessage: 'Tilkynning til sakaskrár',
-    description:
-      'Titill á Tilkynning til sakaskrár',
+    description: 'Titill á Tilkynning til sakaskrár',
   },
 })
