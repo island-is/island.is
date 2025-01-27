@@ -36,7 +36,7 @@ export const NavbarTab = () => {
             setInSettings(false)
           }}
         >
-          {formatMessage(m.step)}
+          {formatMessage(m.form)}
         </Box>
         <Box
           className={cn({
@@ -56,7 +56,7 @@ export const NavbarTab = () => {
             setInSettings(true)
           }}
         >
-          {formatMessage(m.basicSettings)}
+          {formatMessage(m.settings)}
         </Box>
       </Inline>
     </Box>

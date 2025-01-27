@@ -373,7 +373,7 @@ export const Navbar = () => {
         </DndContext>
         <Box display="flex" justifyContent="center" paddingTop={3}>
           <Button variant="ghost" size="small" onClick={addSection}>
-            {formatMessage(m.addStep)}
+            {formatMessage(m.addSection)}
           </Button>
         </Box>
       </div>

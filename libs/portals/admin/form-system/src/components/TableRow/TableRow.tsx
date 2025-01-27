@@ -8,7 +8,7 @@ import {
   Button,
 } from '@island.is/island-ui/core'
 import * as styles from './TableRow.css'
-import { useState } from 'react'
+import { Dispatch, SetStateAction, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { useNavigate } from 'react-router-dom'
 import { TranslationTag } from '../TranslationTag/TranslationTag'
@@ -16,6 +16,9 @@ import { FormSystemPaths } from '../../lib/paths'
 import { ApplicationTemplateStatus } from '../../lib/utils/interfaces'
 import { useIntl } from 'react-intl'
 import { m } from '@island.is/form-system/ui'
+import { useMutation, useQuery } from '@apollo/client'
+import { DELETE_FORM, GET_FORM } from '@island.is/form-system/graphql'
+import { FormSystemForm } from '@island.is/api/schema'
 
 interface Props {
   id?: string | null
@@ -25,9 +28,10 @@ interface Props {
   org?: string | null
   state?: number
   options?: string
-  isHeader: boolean
   translated?: boolean
   slug?: string
+  beenPublished?: boolean
+  setFormsState: Dispatch<SetStateAction<FormSystemForm[]>>
 }
 
 interface ColumnTextProps {
@@ -46,42 +50,46 @@ export const TableRow = ({
   lastModified,
   org,
   state,
-  isHeader,
   translated,
   slug,
+  beenPublished,
+  setFormsState,
 }: Props) => {
   const [isOpen, setIsOpen] = useState(false)
   const navigate = useNavigate()
   const { formatMessage, formatDate } = useIntl()
-  const header = () => (
-    <>
-      <Box className={styles.header}>
-        <Row>
-          <Column span="5/12">
-            <Box paddingLeft={2}>
-              <Text variant="medium">{formatMessage(m.name)}</Text>
-            </Box>
-          </Column>
-          <Column span="2/12">
-            <Text variant="medium">{formatMessage(m.lastModified)}</Text>
-          </Column>
-          <Column span="1/12">
-            <Text variant="medium">{formatMessage(m.translations)}</Text>
-          </Column>
-          <Column span="2/12">
-            <Text variant="medium">{formatMessage(m.organisation)}</Text>
-          </Column>
-          <Column span="1/12">
-            <Text variant="medium">{formatMessage(m.state)}</Text>
-          </Column>
-          <Column span="1/12">
-            <Text variant="medium">{formatMessage(m.actions)}</Text>
-          </Column>
-        </Row>
-      </Box>
-    </>
-  )
-  if (isHeader) return header()
+  const deleteForm = useMutation(DELETE_FORM)
+  // const { refetch } = useQuery(GET_FORM)
+
+  // const header = () => (
+  //   <>
+  //     <Box className={styles.header}>
+  //       <Row>
+  //         <Column span="5/12">
+  //           <Box paddingLeft={2}>
+  //             <Text variant="medium">{formatMessage(m.name)}</Text>
+  //           </Box>
+  //         </Column>
+  //         <Column span="2/12">
+  //           <Text variant="medium">{formatMessage(m.lastModified)}</Text>
+  //         </Column>
+  //         <Column span="1/12">
+  //           <Text variant="medium">{formatMessage(m.translations)}</Text>
+  //         </Column>
+  //         <Column span="2/12">
+  //           <Text variant="medium">{formatMessage(m.organisation)}</Text>
+  //         </Column>
+  //         <Column span="1/12">
+  //           <Text variant="medium">{formatMessage(m.state)}</Text>
+  //         </Column>
+  //         <Column span="1/12">
+  //           <Text variant="medium">{formatMessage(m.actions)}</Text>
+  //         </Column>
+  //       </Row>
+  //     </Box>
+  //   </>
+  // )
+  // if (isHeader) return header()
   return (
     <Box
       paddingTop={2}
@@ -145,10 +153,19 @@ export const TableRow = ({
                   title: formatMessage(m.copy),
                 },
                 {
-                  title: formatMessage(m.translateToEnglish),
-                },
-                {
-                  title: 'Export',
+                  title: formatMessage(m.delete),
+                  onClick: () => {
+                    deleteForm[0]({
+                      variables: {
+                        input: {
+                          id: id,
+                        },
+                      },
+                    })
+                    setFormsState((prevForms) =>
+                      prevForms.filter((form) => form.id !== id),
+                    )
+                  },
                 },
                 {
                   title: 'Json',

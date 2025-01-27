@@ -25,11 +25,14 @@ export const formLoader: WrappedLoaderFn = ({ client }) => {
             id: params.formId,
           },
         },
+        fetchPolicy: 'no-cache',
       })
       if (!loading && !data) {
         throw new Error('No form data found')
       }
 
+      console.log('id', params.formId)
+      console.log('data', data.formSystemGetForm.form?.sections)
       return {
         formBuilder: removeTypename(data.formSystemGetForm),
       }

@@ -10,10 +10,8 @@ import { UseGuards } from '@nestjs/common'
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql'
 import { FormsService } from './forms.service'
 import {
-  CreateFormInput,
   DeleteFormInput,
   GetFormInput,
-  GetAllFormsInput,
   UpdateFormInput,
 } from '../../dto/form.input'
 import { FormResponse } from '../../models/form.model'
@@ -28,11 +26,8 @@ export class FormsResolver {
   @Mutation(() => FormResponse, {
     name: 'formSystemCreateForm',
   })
-  async createForm(
-    @Args('input', { type: () => CreateFormInput }) input: CreateFormInput,
-    @CurrentUser() user: User,
-  ): Promise<FormResponse> {
-    return this.formsService.createForm(user, input)
+  async createForm(@CurrentUser() user: User): Promise<FormResponse> {
+    return this.formsService.createForm(user)
   }
 
   @Mutation(() => Boolean, {
@@ -59,11 +54,8 @@ export class FormsResolver {
   @Query(() => FormResponse, {
     name: 'formSystemGetAllForms',
   })
-  async getAllForms(
-    @Args('input', { type: () => GetAllFormsInput }) input: GetAllFormsInput,
-    @CurrentUser() user: User,
-  ): Promise<FormResponse> {
-    return this.formsService.getAllForms(user, input)
+  async getAllForms(@CurrentUser() user: User): Promise<FormResponse> {
+    return this.formsService.getAllForms(user)
   }
 
   @Mutation(() => Boolean, {

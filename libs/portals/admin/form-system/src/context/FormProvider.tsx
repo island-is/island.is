@@ -9,7 +9,7 @@ import { ControlState, controlReducer } from '../hooks/controlReducer'
 import { ActiveItem, NavbarSelectStatus } from '../lib/utils/interfaces'
 import { removeTypename } from '../lib/utils/removeTypename'
 import { updateDnd } from '../lib/utils/updateDnd'
-import { defaultStep } from '../lib/utils/defaultStep'
+import { defaultSection } from '../lib/utils/defaultSection'
 import { baseSettingsStep } from '../lib/utils/getBaseSettingsSection'
 import { updateActiveItemFn } from '../lib/utils/updateActiveItem'
 import { useMutation } from '@apollo/client'
@@ -47,7 +47,7 @@ export const FormProvider: React.FC<{
         ? baseSettingsStep
         : removeTypename(form?.sections)?.find(
             (s: FormSystemSection) => s?.sectionType === SectionTypes.INPUT,
-          ) ?? defaultStep,
+          ) ?? defaultSection,
     },
     activeListItem: null,
     form: removeTypename(form) as FormSystemForm,

@@ -9,13 +9,13 @@ export const m = defineMessages({
     id: 'portals-admin.form-system:template',
     defaultMessage: 'Forskrift',
   },
-  templates: {
+  forms: {
     id: 'portals-admin.form-system:templates',
-    defaultMessage: 'Forskriftir',
+    defaultMessage: 'Form',
   },
-  newTemplate: {
+  newForm: {
     id: 'portals-admin.form-system:new-template',
-    defaultMessage: 'Ný forskrift',
+    defaultMessage: 'Nýtt form',
   },
   organisation: {
     id: 'portals-admin.form-system:organisation',
@@ -33,13 +33,25 @@ export const m = defineMessages({
     id: 'portals-admin.form-system:name-english',
     defaultMessage: 'Heiti á ensku',
   },
+  applications: {
+    id: 'portals-admin.form-system:applications',
+    defaultMessage: 'Umsóknir',
+  },
+  overview: {
+    id: 'portals-admin.form-system:overview',
+    defaultMessage: 'Yfirlitsíða',
+  },
+  back: {
+    id: 'portals-admin.form-system:back',
+    defaultMessage: 'Til baka',
+  },
   applicationName: {
     id: 'portals-admin.form-system:application-name',
-    defaultMessage: 'Heiti umsóknar',
+    defaultMessage: 'Heiti umsóknarforms',
   },
   applicationNameEnglish: {
     id: 'portals-admin.form-system:application-name-english',
-    defaultMessage: 'Heiti umsóknar á ensku',
+    defaultMessage: 'Heiti umsóknarforms á ensku',
   },
   description: {
     id: 'portals-admin.form-system:description',
@@ -57,9 +69,9 @@ export const m = defineMessages({
     id: 'portals-admin.form-system:deadline',
     defaultMessage: 'Umsóknarfrestur',
   },
-  basicSettings: {
-    id: 'portals-admin.form-system:basic-settings',
-    defaultMessage: 'Grunnstillingar',
+  settings: {
+    id: 'portals-admin.form-system:settings',
+    defaultMessage: 'Stillingar',
   },
   allowProgress: {
     id: 'portals-admin.form-system:allow-progress',
@@ -69,7 +81,7 @@ export const m = defineMessages({
   premisesTitle: {
     id: 'portals-admin.form-system:premises-title',
     defaultMessage:
-      'Í þessu skrefi óskum við eftir samþykki fyrir því að upplýsingar um hlutaðeigandi aðila verði sóttar af Mínum síðum. Að auki er hægt að óska eftir heimild fyrir því að einhver af eftirfarandi vottorðum verði sótt í viðeigandi vefþjónustur',
+      'Á þessum skjá óskum við eftir samþykki fyrir því að upplýsingar um hlutaðeigandi aðila verði sóttar af Mínum síðum. Að auki er hægt að óska eftir heimild fyrir því að einhver af eftirfarandi vottorðum verði sótt í viðeigandi vefþjónustur',
   },
   premises: {
     id: 'portals-admin.form-system:premises',
@@ -127,9 +139,9 @@ export const m = defineMessages({
     id: 'portals-admin.form-system:define-relevant-parties',
     defaultMessage: 'Skilgreindu hlutaðeigandi aðila',
   },
-  step: {
-    id: 'portals-admin.form-system:step',
-    defaultMessage: 'Skref',
+  form: {
+    id: 'portals-admin.form-system:form',
+    defaultMessage: 'Form',
   },
   group: {
     id: 'portals-admin.form-system:group',
@@ -147,9 +159,9 @@ export const m = defineMessages({
     id: 'portals-admin.form-system:save-and-continue',
     defaultMessage: 'Vista og halda áfram',
   },
-  addStep: {
-    id: 'portals-admin.form-system:add-step',
-    defaultMessage: 'Bæta við skrefi',
+  addSection: {
+    id: 'portals-admin.form-system:add-section',
+    defaultMessage: 'Bæta við kafla',
   },
   allowFileTypes: {
     id: 'portals-admin.form-system:allow-file-types',
@@ -377,10 +389,6 @@ export const m = defineMessages({
     id: 'portals-admin.form-system:copy',
     defaultMessage: 'Afrita',
   },
-  translateToEnglish: {
-    id: 'portals-admin.form-system:translate-to-english',
-    defaultMessage: 'Þýðing enska',
-  },
   getUrl: {
     id: 'portals-admin.form-system:get-url',
     defaultMessage: 'Sækja slóð',
@@ -417,11 +425,11 @@ export const m = defineMessages({
     id: 'portals-admin.form-system:property-number-input',
     defaultMessage: 'Skrá fasteignanúmer',
   },
-  addGroupHover: {
+  addScreenHover: {
     id: 'portals-admin.form-system:add-step-hover',
-    defaultMessage: 'Bæta við hópi',
+    defaultMessage: 'Bæta við skjá',
   },
-  addInputHover: {
+  addFieldHover: {
     id: 'portals-admin.form-system:add-input-hover',
     defaultMessage: 'Bæta við innslætti',
   },

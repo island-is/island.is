@@ -23,12 +23,6 @@ export class DependencyInput {
   isSelected?: boolean
 }
 
-@InputType('FormSystemCreateFormInput')
-export class CreateFormInput {
-  @Field(() => String, { nullable: true })
-  organizationId?: string
-}
-
 @InputType('FormSystemDeleteFormInput')
 export class DeleteFormInput {
   @Field(() => String, { nullable: true })
@@ -39,12 +33,6 @@ export class DeleteFormInput {
 export class GetFormInput {
   @Field(() => String, { nullable: true })
   id?: string
-}
-
-@InputType('FormSystemGetAllFormsInput')
-export class GetAllFormsInput {
-  @Field(() => String, { nullable: true })
-  organizationId?: string
 }
 
 @InputType('FormSystemFormUrlInput')
@@ -162,6 +150,9 @@ export class FormInput {
 
   @Field(() => Boolean, { nullable: true })
   isTranslated?: boolean
+
+  @Field(() => Boolean, { nullable: true })
+  beenPublished?: boolean
 
   @Field(() => Int, { nullable: true })
   applicationDaysToRemove?: number

@@ -2,71 +2,105 @@ import { Box, Button, Text, Inline } from '@island.is/island-ui/core'
 import { useLoaderData, useNavigate } from 'react-router-dom'
 import { FormSystemPaths } from '../../lib/paths'
 import { TableRow } from '../../components/TableRow/TableRow'
-import { CREATE_FORM } from '@island.is/form-system/graphql'
+import { CREATE_FORM, GET_FORMS } from '@island.is/form-system/graphql'
 import { FormsLoaderResponse } from './Forms.loader'
-import { useMutation } from '@apollo/client'
+import { useMutation, useQuery } from '@apollo/client'
 import { useIntl } from 'react-intl'
 import { m } from '@island.is/form-system/ui'
+import { FormsHeader } from '../../components/Header/FormsHeader'
+import { FormSystemForm } from '@island.is/api/schema'
+import { useEffect, useState } from 'react'
+import { TableHeader } from '../../components/TableRow/TableHeader'
 
 export const Forms = () => {
   const navigate = useNavigate()
   const { forms } = useLoaderData() as FormsLoaderResponse
+  // const { data, refetch } = useQuery(GET_FORMS,)
   const { formatMessage } = useIntl()
-  const [formSystemCreateFormMutation] = useMutation(CREATE_FORM)
+  // const [formSystemCreateFormMutation] = useMutation(CREATE_FORM, {
+  //   onCompleted: () => {
+  //     refetch()
+  //   },
+  // })
+
+  // useEffect(() => {
+  //   refetch()
+  // })
+
+  // const { data } = useQuery(GET_FORMS)
+
+  // const forms: FormSystemForm[] = data?.formSystemGetAllForms?.forms
+
+  // const { data, refetch } = useQuery(GET_FORMS)
+  const [formsState, setFormsState] = useState<FormSystemForm[]>(forms)
+
+  // const [formSystemCreateFormMutation] = useMutation(CREATE_FORM, {
+  //   onCompleted: (newFormData) => {
+  //     if (newFormData?.formSystemCreateForm?.form) {
+  //       setFormsState((prevForms) => [
+  //         ...prevForms,
+  //         newFormData.formSystemCreateForm.form,
+  //       ])
+  //     }
+  //     refetch() // Refetch the data after mutation
+  //   },
+  // })
+
+  // useEffect(() => {
+  //   console.log('formsState', formsState)
+  // }, [formsState])
+
   if (forms) {
     return (
-      <div>
+      <>
         {/* Title and buttons  */}
-        <div>
-          <Text variant="h2">{formatMessage(m.templates)}</Text>
-        </div>
-        <Box marginTop={5}>
-          <Inline space={2}>
-            <Button
-              variant="ghost"
-              size="medium"
-              onClick={async () => {
-                const { data } = await formSystemCreateFormMutation({
-                  variables: {
-                    input: {
-                      organizationId: 'a4b0db68-e169-416a-8ad9-e46b73ce2d39',
-                    },
-                  },
-                })
-                navigate(
-                  FormSystemPaths.Form.replace(
-                    ':formId',
-                    String(data?.formSystemCreateForm?.form?.id),
-                  ),
-                )
-              }}
-            >
-              {formatMessage(m.newTemplate)}
-            </Button>
-          </Inline>
-        </Box>
+        {/* <div>
+          <Text variant="h2">{formatMessage(m.forms)}</Text>
+        </div> */}
+        {/* <Box marginTop={5}> */}
+        {/* <Inline space={2}> */}
+        <FormsHeader setFormsState={setFormsState} />
+        {/* <Button
+          variant="ghost"
+          size="medium"
+          onClick={async () => {
+            const { data } = await formSystemCreateFormMutation()
+            navigate(
+              FormSystemPaths.Form.replace(
+                ':formId',
+                String(data?.formSystemCreateForm?.form?.id),
+              ),
+            )
+          }}
+        >
+          {formatMessage(m.newForm)}
+        </Button> */}
+        {/* </Inline> */}
+        {/* </Box> */}
 
-        <Box marginTop={5}></Box>
+        {/* <Box marginTop={5}></Box> */}
 
-        <Box marginTop={5}>
+        {/* <Box marginTop={5}>
           <Box width="half"></Box>
-        </Box>
-        <TableRow isHeader={true} />
+        </Box> */}
+        <TableHeader />
         {forms &&
-          forms?.map((f) => {
+          formsState.map((f) => {
+            // console.log('formId', f.id)
             return (
               <TableRow
                 key={f?.id}
                 id={f?.id}
                 name={f?.name?.is ?? ''}
                 org={f?.organizationId}
-                isHeader={false}
                 translated={f?.isTranslated ?? false}
                 slug={f?.slug ?? ''}
+                beenPublished={f?.beenPublished ?? false}
+                setFormsState={setFormsState}
               />
             )
           })}
-      </div>
+      </>
     )
   }
   return <></>
