@@ -6,7 +6,7 @@ import { rulingAccordion as m } from '@island.is/judicial-system-web/messages'
 import { CaseDecision } from '@island.is/judicial-system-web/src/graphql/schema'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
-import { AccordionListItem } from '../..'
+import { AccordionListItem, SectionHeading } from '../..'
 
 interface Props {
   workingCase: Case
@@ -29,18 +29,18 @@ const RulingAccordionItem: FC<Props> = ({
     >
       <Box component="section">
         {workingCase.decision === CaseDecision.COMPLETED_WITHOUT_RULING ? (
-          <Box marginBottom={2}>
-            <Text as="h4" variant="h4">
-              {formatMessage(m.sections.noRuling.title)}
-            </Text>
-          </Box>
+          <SectionHeading
+            title={formatMessage(m.sections.noRuling.title)}
+            heading="h4"
+            marginBottom={2}
+          />
         ) : (
           <>
-            <Box marginBottom={2}>
-              <Text as="h4" variant="h4">
-                {formatMessage(m.title)}
-              </Text>
-            </Box>
+            <SectionHeading
+              title={formatMessage(m.title)}
+              heading="h4"
+              marginBottom={2}
+            />
             <AccordionListItem
               title={formatMessage(m.sections.prosecutorDemands.title)}
             >
