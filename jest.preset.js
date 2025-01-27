@@ -10,6 +10,7 @@ module.exports = {
   resolver: customResolver,
   detectOpenHandles: true,
   runinBand: true,
+  detectLeaks: true,
   passWithNoTests: true,
   moduleFileExtensions: ['ts', 'js', 'html'],
   coverageReporters: ['json'],

@@ -55,4 +55,5 @@ yarn nx run-many \
   --no-watchman \
   --debug \
   --ci \
+  --detectLeaks=false \
   --passWithNoTests "$@"
