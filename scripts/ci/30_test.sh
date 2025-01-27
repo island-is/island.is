@@ -49,7 +49,7 @@ FLAKY_TEST_RETRIES=$(if [[ "$IS_FLAKY_TEST" == true ]]; then echo "$FLAKY_TEST_R
 
 for ((i = 1; i <= FLAKY_TEST_RETRIES; i++)); do
   echo "Running test ${APP} (attempt: ${i}/${FLAKY_TEST_RETRIES})"
-  if nx run "${APP}:test" ${EXTRA_OPTS} --verbose "$@"; then
+  if yarn nx run "${APP}:test" ${EXTRA_OPTS} --verbose "$@"; then
     echo "Tests for ${APP} passed"
     exit 0
   fi
