@@ -5,6 +5,7 @@ import { localrun } from '../dsl/exports/localrun'
 import { logger, runCommand } from '../common'
 import { ChildProcess } from 'child_process'
 import { LocalrunValueFile } from '../dsl/types/output-types'
+import { parseTargetString, TargetConfiguration } from '@nx/devkit'
 
 export async function renderLocalServices({
   services,
@@ -12,12 +13,14 @@ export async function renderLocalServices({
   json = false,
   dryRun = false,
   noUpdateSecrets = false,
+  docker = false,
 }: {
   services: string[]
   print?: boolean
   json?: boolean
   dryRun?: boolean
   noUpdateSecrets?: boolean
+  docker?: boolean
 }): Promise<LocalrunValueFile> {
   logger.debug('renderLocalServices', {
     services,
@@ -65,6 +68,7 @@ export async function runLocalServices(
     json = false,
     noUpdateSecrets = false,
     startProxies = false,
+    docker = false,
   }: {
     dryRun?: boolean
     neverFail?: boolean
@@ -72,6 +76,7 @@ export async function runLocalServices(
     json?: boolean
     noUpdateSecrets?: boolean
     startProxies?: boolean
+    docker?: boolean
   } = {},
 ) {
   logger.debug('runLocalServices', { services, dependencies })
@@ -85,6 +90,7 @@ export async function runLocalServices(
     json,
     dryRun,
     noUpdateSecrets,
+    docker,
   })
 
   // Verify that all dependencies exist in the rendered dependency list

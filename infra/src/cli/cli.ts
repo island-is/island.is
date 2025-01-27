@@ -71,6 +71,7 @@ const cli = yargs(process.argv.slice(2))
             default: false,
             alias: ['nosecrets', 'no-secrets'],
           })
+          .option('docker', { type: 'boolean', default: false })
           // Custom check for 'services' since yargs lack built-in validation
           .check((argv) => {
             const svc = argv.services
@@ -89,6 +90,7 @@ const cli = yargs(process.argv.slice(2))
         json: argv.json,
         print: true,
         noUpdateSecrets: argv['no-update-secrets'],
+        docker: argv.docker,
       })
     },
   )
@@ -118,6 +120,7 @@ const cli = yargs(process.argv.slice(2))
             type: 'boolean',
             default: false,
           })
+          .option('docker', { type: 'boolean', default: false })
           // Custom check for 'services' since yargs lack built-in validation
           .check((argv) => {
             const svc = argv.services
@@ -137,6 +140,7 @@ const cli = yargs(process.argv.slice(2))
         noUpdateSecrets: argv['no-update-secrets'],
         print: argv.print,
         startProxies: argv.proxies,
+        docker: argv.docker,
       })
     },
   )
