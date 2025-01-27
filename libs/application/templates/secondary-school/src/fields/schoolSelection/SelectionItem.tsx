@@ -1,5 +1,5 @@
 import { FieldBaseProps, YES } from '@island.is/application/types'
-import { AlertMessage, Box, Select } from '@island.is/island-ui/core'
+import { Box, Select } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import {
   CheckboxController,
@@ -36,6 +36,8 @@ export const SelectionItem: FC<FieldBaseProps & SelectionItemProps> = (
   const { setValue, watch } = useFormContext()
   const [isLoadingPrograms, setIsLoadingPrograms] = useState<boolean>(false)
   const [showSecondProgram, setShowSecondProgram] = useState<boolean>(true)
+  const [isSecondProgramRequired, setIsSecondProgramRequired] =
+    useState<boolean>(true)
 
   const isFreshman =
     getValueViaPath<ApplicationType>(
@@ -128,6 +130,9 @@ export const SelectionItem: FC<FieldBaseProps & SelectionItemProps> = (
               value: firstProgramInfo.id,
               label: getTranslatedProgram(lang, firstProgramInfo),
             })
+            setIsSecondProgramRequired(
+              isFreshman && !firstProgramInfo.isSpecialNeedsProgram,
+            )
           }
 
           const secondProgramInfo = programs.find(
@@ -180,6 +185,7 @@ export const SelectionItem: FC<FieldBaseProps & SelectionItemProps> = (
     nordicLanguageCodeAnswer,
     schoolOptions,
     lang,
+    isFreshman,
   ])
 
   const selectSchool = (option: Option) => {
@@ -234,6 +240,17 @@ export const SelectionItem: FC<FieldBaseProps & SelectionItemProps> = (
       `${props.field.id}.${fieldName}.registrationEndDate`,
       programInfo?.registrationEndDate || '',
     )
+
+    if (fieldName === 'firstProgram') {
+      const isSecondRequired = isFreshman && !programInfo?.isSpecialNeedsProgram
+
+      setValue(
+        `${props.field.id}.${fieldName}.isSpecialNeedsProgram`,
+        programInfo?.isSpecialNeedsProgram,
+      )
+      setValue(`${props.field.id}.secondProgram.require`, isSecondRequired)
+      setIsSecondProgramRequired(isSecondRequired)
+    }
   }
 
   const setValueThirdLanguage = (languageCode: string | undefined) => {
@@ -256,12 +273,29 @@ export const SelectionItem: FC<FieldBaseProps & SelectionItemProps> = (
     setValue(`${props.field.id}.requestDormitory`, [])
   }
 
-  // default set include=true for second program if freshman
+  // initialize include for second program
   useEffect(() => {
-    const showSecondProgram = isFreshman && programOptions.length !== 1
+    const showSecondProgram = programOptions.length !== 1
     setValue(`${props.field.id}.secondProgram.include`, showSecondProgram)
     setShowSecondProgram(showSecondProgram)
-  }, [isFreshman, programOptions.length, props.field.id, setValue])
+  }, [programOptions.length, props.field.id, setValue])
+
+  // initialize require for second program
+  useEffect(() => {
+    const firstProgramInfo = programOptions.find(
+      (x) => x.id === firstProgramIdAnswer,
+    )
+    const isSecondRequired =
+      isFreshman && !firstProgramInfo?.isSpecialNeedsProgram
+    setValue(`${props.field.id}.secondProgram.require`, isSecondRequired)
+    setIsSecondProgramRequired(isSecondRequired)
+  }, [
+    programOptions,
+    props.field.id,
+    setValue,
+    firstProgramIdAnswer,
+    isFreshman,
+  ])
 
   useEffect(() => {
     setFieldLoadingState?.(isLoadingPrograms)
@@ -339,7 +373,8 @@ export const SelectionItem: FC<FieldBaseProps & SelectionItemProps> = (
                   name={`${props.field.id}.secondProgram.id`}
                   label={formatMessage(school.selection.secondProgramLabel)}
                   backgroundColor="blue"
-                  required={true}
+                  required={isSecondProgramRequired}
+                  isClearable={!isSecondProgramRequired}
                   isLoading={isLoadingPrograms}
                   isDisabled={isLoadingPrograms}
                   value={selectedSecondProgram}
@@ -424,15 +459,6 @@ export const SelectionItem: FC<FieldBaseProps & SelectionItemProps> = (
           }}
         />
       </Box>
-
-      {!!selectedNordicLanguage && (
-        <Box marginTop={2}>
-          <AlertMessage
-            type="info"
-            message={formatMessage(school.selection.nordicLanguageAlertMessage)}
-          />
-        </Box>
-      )}
 
       {allowRequestDormitory && (
         <Box marginTop={2}>

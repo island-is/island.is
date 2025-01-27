@@ -67,7 +67,13 @@ export const serviceSetup = (services: {
           staging: 'judicial-system',
           prod: 'rettarvorslugatt.island.is',
         },
-        paths: ['/api/graphql', '/api/auth', '/api/case', '/api/feature'],
+        paths: [
+          '/api/graphql',
+          '/api/auth',
+          '/api/case',
+          '/api/feature',
+          '/api/defender',
+        ],
         extraAnnotations: {
           dev: {
             'nginx.ingress.kubernetes.io/proxy-buffering': 'on',
