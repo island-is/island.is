@@ -46,9 +46,7 @@ env:
 jobs:
   pre-checks:
     name: Check if job should run
-    runs-on: ec2-runners
-    container:
-      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
+    runs-on: arc-runners
     env:
       CREATE_PATTERNS: ^release/
       PRE_RELEASE_PATTERN: ^pre-release/
@@ -148,9 +146,7 @@ jobs:
           echo "PRE_CHECK=push" >> "$GITHUB_OUTPUT"
 
   prepare:
-    runs-on: ec2-runners
-    container:
-      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
+    runs-on: arc-runners
     timeout-minutes: 90
 
     if: needs.pre-checks.outputs.PRE_CHECK
@@ -447,9 +443,7 @@ jobs:
     needs:
       - prepare
     if: needs.prepare.outputs.TEST_CHUNKS
-    runs-on: ec2-runners
-    container:
-      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
+    runs-on: arc-runners
     timeout-minutes: 35
     env:
       AFFECTED_PROJECTS: ${{ matrix.projects }}
@@ -483,14 +477,13 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           docker-registry: ${{ env.DOCKER_REGISTRY}}
+          affected-projects: ${{ env.AFFECTED_PROJECTS }}
 
   docker-build:
     needs:
       - pre-checks
       - prepare
-    runs-on: ec2-runners
-    container:
-      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
+    runs-on: arc-runners
     timeout-minutes: 35
     if: needs.prepare.outputs.BUILD_CHUNKS
     env:
@@ -637,10 +630,8 @@ jobs:
       - prepare
       - pre-checks
     #    if: needs.prepare.outputs.IMAGES && needs.pre-checks.outputs.PRE_CHECK != 'push'
-    runs-on: ec2-runners
-    container:
-      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
-    timeout-minutes: 5
+    runs-on: arc-runners
+    timeout-minutes: 30
     env:
       FEATURE_NAME: ${{ needs.pre-checks.outputs.FEATURE_NAME }}
       DOCKER_TAG: ${{ needs.prepare.outputs.DOCKER_TAG}}
@@ -695,9 +686,7 @@ jobs:
             await updateComment({github, context, comment: COMMENT})
 
   retag-unaffected:
-    runs-on: ec2-runners
-    container:
-      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
+    runs-on: arc-runners
     timeout-minutes: 5
     if: ${{ !cancelled() && needs.pre-checks.result == 'success' && needs.prepare.result != 'skipped' }}
     needs:
@@ -726,9 +715,7 @@ jobs:
         run: ./scripts/ci/retag-unaffected.sh "$UNAFFECTED"
 
   deploy:
-    runs-on: ec2-runners
-    container:
-      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
+    runs-on: arc-runners
     if: ${{ !cancelled() && needs.retag-unaffected.result == 'success' && needs.helm-docker-build.result != 'failure' }}
     needs:
       - retag-unaffected
@@ -782,9 +769,7 @@ jobs:
           }
           BODY
   push-success:
-    runs-on: ec2-runners
-    container:
-      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
+    runs-on: arc-runners
     if: ${{ !cancelled() }}
     needs:
       - pre-checks
@@ -806,9 +791,7 @@ jobs:
         run: echo "Build was skipped"
 
   failure-notification:
-    runs-on: ec2-runners
-    container:
-      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
+    runs-on: arc-runners
     if: failure() && needs.pre-checks.outputs.PRE_CHECK && needs.pre-checks.outputs.PRE_CHECK != 'feature-deploy'
     needs:
       - pre-checks
@@ -829,9 +812,7 @@ jobs:
 
   scanflags:
     if: github.ref == 'ref/heads/main'
-    runs-on: ec2-runners
-    container:
-      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
+    runs-on: arc-runners
     steps:
       - name: Checkout
         uses: actions/checkout@v3

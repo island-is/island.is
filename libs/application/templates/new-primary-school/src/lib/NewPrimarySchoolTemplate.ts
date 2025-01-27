@@ -99,6 +99,7 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
           'clearLanguages',
           'clearAllergiesAndIntolerances',
           'clearFreeSchoolMeal',
+          'clearSupport',
         ],
         meta: {
           name: States.DRAFT,
@@ -250,6 +251,29 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
         }
         if (hasSpecialNeeds !== YES) {
           unset(application.answers, 'freeSchoolMeal.specialNeedsType')
+        }
+        return context
+      }),
+      clearSupport: assign((context) => {
+        const { application } = context
+        const {
+          developmentalAssessment,
+          specialSupport,
+          hasIntegratedServices,
+          hasCaseManager,
+        } = getApplicationAnswers(application.answers)
+
+        if (developmentalAssessment !== YES && specialSupport !== YES) {
+          unset(application.answers, 'support.hasIntegratedServices')
+          unset(application.answers, 'support.hasCaseManager')
+          unset(application.answers, 'support.caseManager')
+        }
+        if (hasIntegratedServices !== YES) {
+          unset(application.answers, 'support.hasCaseManager')
+          unset(application.answers, 'support.caseManager')
+        }
+        if (hasCaseManager !== YES) {
+          unset(application.answers, 'support.caseManager')
         }
         return context
       }),

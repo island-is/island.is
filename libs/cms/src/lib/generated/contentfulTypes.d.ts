@@ -1873,6 +1873,9 @@ export interface IGrantFields {
   /** Application hints */
   grantApplicationHints?: Document | undefined
 
+  /** Answering questions */
+  grantAnsweringQuestions?: Document | undefined
+
   /** Application url */
   granApplicationUrl?: ILinkUrl | undefined
 
