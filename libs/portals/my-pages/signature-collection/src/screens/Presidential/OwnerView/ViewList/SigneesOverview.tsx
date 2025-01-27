@@ -19,11 +19,11 @@ import { SignatureCollectionSignature as Signature } from '@island.is/api/schema
 const Signees = () => {
   useNamespaces('sp.signatureCollection')
   const { formatMessage } = useLocale()
-  const id = useParams()
+  const { id } = useParams() as { id: string }
 
   const [searchTerm, setSearchTerm] = useState('')
   const { listSignees, loadingSignees } = useGetListSignees(
-    id as unknown as string,
+    id,
   )
   const [signees, setSignees] = useState(listSignees)
 
