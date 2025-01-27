@@ -26,7 +26,7 @@ export const Siblings = ({
       editAction={() => goToScreen?.('siblings')}
     >
       <GridRow>
-        <GridColumn span={['12/12', '12/12', '12/12', '12/12']}>
+        <GridColumn span="12/12">
           <Label>
             {formatMessage(
               newPrimarySchoolMessages.primarySchool.siblingsTitle,
