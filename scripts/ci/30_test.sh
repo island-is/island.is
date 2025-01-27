@@ -15,16 +15,6 @@ set -euxo pipefail
 NODE_OPTIONS="--max-old-space-size=8193 --unhandled-rejections=warn --require=dd-trace/ci/init ${NODE_OPTIONS:-}"
 EXTRA_OPTS=""
 
-FLAKY_TESTS=(
-  "services-auth-delegation-api"
-  "services-auth-personal-representative"
-)
-if [[ " ${FLAKY_TESTS[*]} " == *" ${APP} "* ]]; then
-  IS_FLAKY_TEST=true
-else
-  IS_FLAKY_TEST=false
-fi
-
 projects_uncollectible_coverage=(
   "application-templates-no-debt-certificate"
   "api-domains-email-signup"
@@ -45,14 +35,4 @@ export DD_CIVISIBILITY_AGENTLESS_ENABLED \
   NODE_OPTIONS \
   SERVERSIDE_FEATURES_ON=\"\" # disable server-side features
 
-FLAKY_TEST_RETRIES=$(if [[ "$IS_FLAKY_TEST" == true ]]; then echo "$FLAKY_TEST_RETRIES"; else echo 1; fi)
-
-for ((i = 1; i <= FLAKY_TEST_RETRIES; i++)); do
-  echo "Running test ${APP} (attempt: ${i}/${FLAKY_TEST_RETRIES})"
-  if yarn nx run "${APP}:test" ${EXTRA_OPTS} --verbose "$@"; then
-    echo "Tests for ${APP} passed"
-    exit 0
-  fi
-done
-
-echo "Tests for ${APP} failed after ${FLAKY_TEST_RETRIES} attempts"
+yarn nx run "${APP}:test" ${EXTRA_OPTS} --verbose "$@"
