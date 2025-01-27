@@ -94,10 +94,19 @@ export class SecondarySchoolService extends BaseTemplateApiService {
       // Delete the application in MMS
       await this.secondarySchoolClient.delete(auth, application.id)
 
-      // If that succeeded, send email to applicant and custodians
-      await this.sendEmailAboutDeleteApplication(application)
+      try {
+        // If that succeeded, send email to applicant and custodians
+        await this.sendEmailAboutDeleteApplication(application)
+      } catch (emailError) {
+        logger.error(
+          `Application deleted but failed to send notification emails: ${emailError.message}`,
+          { applicationId: application.id },
+        )
+      }
     } catch (error) {
-      throw new Error(`Error deleting application: ${error.message}`)
+      throw new Error(
+        `Failed to delete application ${application.id}: ${error.message}`,
+      )
     }
   }
 
