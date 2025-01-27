@@ -7,13 +7,19 @@ DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)"
 source "$DIR"/_common.sh
 
 AFFECTED_PROJECTS=$(echo "${AFFECTED_PROJECTS}" | tr '\n,' ' ')
-echo "Running '$AFFECTED_PROJECTS' with concurrency of ${MAX_JOBS} and  for target $1"
+echo "Running '$AFFECTED_PROJECTS' with concurrency of ${MAX_JOBS} and for target $1"
 
 IFS=" " read -ra AFFECTED_PROJECTS <<<"$AFFECTED_PROJECTS"
 
-# Run parallel execution
-parallel --keep-order --lb -j "$MAX_JOBS" APP={} "$DIR"/"$1".sh ::: "${AFFECTED_PROJECTS[@]}"
+# Run parallel execution and capture its output
+OUTPUT=$(parallel --keep-order --lb -j "$MAX_JOBS" APP={} "$DIR"/"$1".sh ::: "${AFFECTED_PROJECTS[@]}" 2>&1)
 PARALLEL_EXIT_STATUS=$?
+
+# Print the output for debugging
+echo "Parallel execution output:"
+echo "$OUTPUT"
+
+echo "Parallel exit status: $PARALLEL_EXIT_STATUS"
 
 # Check the exit status of parallel
 if [ $PARALLEL_EXIT_STATUS -eq 0 ]; then
