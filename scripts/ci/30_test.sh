@@ -63,11 +63,4 @@ fi
 
 echo $EXTRA_OPTS
 
-# Determine number of retries
-if is_any_project_flaky; then
-  MAX_RETRIES=$FLAKY_TEST_RETRIES
-else
-  MAX_RETRIES=1
-fi
-
 yarn nx run-many --projects "${AFFECTED_PROJECTS}" --target test --parallel="${NX_PARALLEL}" --verbose --no-watchman --detectOpenHandles --debug --ci --runInBand "$@"
