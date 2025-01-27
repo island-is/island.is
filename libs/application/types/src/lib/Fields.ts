@@ -53,7 +53,7 @@ export type Context = {
 export type AsyncSelectContext = {
   application: Application
   apolloClient: ApolloClient<object>
-  selectedValue?: string
+  selectedValue?: string | string[]
 }
 
 export type TagVariant =

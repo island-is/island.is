@@ -78,7 +78,7 @@ export const asyncSelectSubsection = buildSubSection({
           id: 'asyncSelectDescription',
           title: 'Value dependent async select',
           description:
-            'Sometimes the options you might want to present to a user must depend on the value of another async select field. Value dependent async select offers just that.',
+            'Sometimes the options you might want to present to a user must depend on the value of another async select field. Value dependent async select offers just that. Multi select fields are also supported and selected values will be passed as an array.',
           titleVariant: 'h3',
           marginBottom: [2],
         }),

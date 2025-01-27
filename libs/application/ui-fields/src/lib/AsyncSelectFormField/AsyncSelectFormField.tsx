@@ -53,7 +53,7 @@ export const AsyncSelectFormField: FC<React.PropsWithChildren<Props>> = ({
     useState<string>('')
 
   const watchUpdateOnSelect = updateOnSelect ? watch(updateOnSelect) : ''
-  const load = async (selectedValue?: string) => {
+  const load = async (selectedValue?: string | string[]) => {
     try {
       setHasLoadingError(false)
       const loaded = await loadOptions({
