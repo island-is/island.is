@@ -20,7 +20,7 @@ env:
   DISABLE_CHUNKS: 'false'
   DISABLE_GROUPING: 'false'
   DISABLE_PROBLEMATIC: 'false'
-  CHUNK_SIZE: '3'
+  CHUNK_SIZE: '6'
   MAX_JOBS: '2'
   NX_PARALLEL: '2'
   NX_MAX_PARALLEL: '4'
@@ -185,8 +185,6 @@ jobs:
 
       - name: Prepare build targets
         id: build_projects
-        env:
-          CHUNK_SIZE: 5
         run: |
           set -euo pipefail
           CHUNKS="$(./scripts/ci/generate-chunks.sh build)"
