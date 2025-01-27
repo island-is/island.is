@@ -51,6 +51,7 @@ export const extraInformationSection = buildSection({
           placeholder: extraInformation.nativeLanguage.selectPlaceholder,
           width: 'full',
           doesNotRequireAnswer: true,
+          isClearable: true,
           options: () => {
             const languages = getAllLanguageCodes().filter(
               (x) => x.code !== LANGUAGE_CODE_ICELANDIC,
