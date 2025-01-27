@@ -30,6 +30,7 @@ import { AuthDelegationType } from '@island.is/shared/types'
 import { ApiScope } from '@island.is/auth/scopes'
 import { buildPaymentState } from '@island.is/application/utils'
 import { getChargeItems, getExtraData } from '../utils'
+import { CodeOwners } from '@island.is/shared/constants'
 
 const determineMessageFromApplicationAnswers = (application: Application) => {
   const plate = getValueViaPath(
@@ -50,6 +51,7 @@ const template: ApplicationTemplate<
 > = {
   type: ApplicationTypes.ORDER_VEHICLE_REGISTRATION_CERTIFICATE,
   name: determineMessageFromApplicationAnswers,
+  codeOwner: CodeOwners.Origo,
   institution: applicationMessage.institutionName,
   translationNamespaces: [
     ApplicationConfigurations.OrderVehicleRegistrationCertificate.translation,

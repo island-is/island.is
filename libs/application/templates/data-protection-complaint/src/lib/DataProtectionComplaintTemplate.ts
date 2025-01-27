@@ -28,9 +28,9 @@ const DataProtectionComplaintTemplate: ApplicationTemplate<
   ApplicationStateSchema<DataProtectionComplaintEvent>,
   DataProtectionComplaintEvent
 > = {
-  codeOwner: CodeOwners.NordaApplications,
   type: ApplicationTypes.DATA_PROTECTION_AUTHORITY_COMPLAINT,
   name: application.name,
+  codeOwner: CodeOwners.NordaApplications,
   institution: application.institutionName,
   dataSchema: DataProtectionComplaintSchema,
   stateMachineConfig: {
