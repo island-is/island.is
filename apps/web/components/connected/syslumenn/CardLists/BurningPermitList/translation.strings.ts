@@ -9,12 +9,12 @@ export const translation = defineMessages({
   errorTitle: {
     id: 'web.syslumenn.burningPermitList:errorTitle',
     defaultMessage: 'Villa',
-    description: 'Titill á villuskilaboðum ef ekki tókst að sækja áfengisleyfi',
+    description: 'Titill á villuskilaboðum ef ekki tókst að sækja leyfi',
   },
   errorMessage: {
     id: 'web.syslumenn.burningPermitList:errorMessage',
-    defaultMessage: 'Ekki tókst að sækja áfengisleyfi.',
-    description: 'Villuskilaboð ef ekki tókst að sækja áfengisleyfi',
+    defaultMessage: 'Ekki tókst að sækja leyfi.',
+    description: 'Villuskilaboð ef ekki tókst að sækja leyfi',
   },
   licensee: {
     id: 'web.syslumenn.burningPermitList:licensee',
