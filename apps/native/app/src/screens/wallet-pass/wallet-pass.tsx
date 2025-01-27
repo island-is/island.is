@@ -401,7 +401,7 @@ export const WalletPassScreen: NavigationFunctionComponent<{
           type={licenseType}
           title={data?.payload?.metadata?.name ?? undefined}
           loading={res.loading}
-          error={!!res.error}
+          error={res.error}
           logo={
             isBarcodeEnabled &&
             data?.license?.type === GenericLicenseType.DriversLicense
