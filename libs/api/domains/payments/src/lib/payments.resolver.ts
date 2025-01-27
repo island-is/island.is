@@ -18,6 +18,8 @@ import { ChargeCardResponse } from './dto/chargeCard.response'
 import { GetPaymentVerificationStatusResponse } from './dto/getVerificationStatus.response'
 import { CardVerificationCallbackInput } from './dto/cardVerificationCallback.input'
 import { ApolloError } from '@apollo/client'
+import { CreatePaymentFlowInput } from './dto/createPaymentFlow.input'
+import { CreatePaymentFlowResponse } from './dto/createPaymentFlow.response'
 
 @UseGuards(ScopesGuard, FeatureFlagGuard)
 @FeatureFlag(Features.isIslandisPaymentEnabled)
@@ -32,6 +34,19 @@ export class PaymentsResolver {
   ): Promise<GetPaymentFlowResponse> {
     try {
       return this.paymentsService.getPaymentFlow(input)
+    } catch (e) {
+      throw new ApolloError(e.message)
+    }
+  }
+
+  // TODO: Remove after testing on feature deployment
+  @Mutation(() => CreatePaymentFlowResponse, { name: 'paymentsCreateFlow' })
+  async createPaymentFlow(
+    @Args('input', { type: () => CreatePaymentFlowInput })
+    input: CreatePaymentFlowInput,
+  ): Promise<CreatePaymentFlowResponse> {
+    try {
+      return this.paymentsService.createPaymentFlow(input)
     } catch (e) {
       throw new ApolloError(e.message)
     }

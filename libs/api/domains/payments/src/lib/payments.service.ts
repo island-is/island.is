@@ -16,6 +16,8 @@ import { ChargeCardInput } from './dto/chargeCard.input'
 import { ChargeCardResponse } from './dto/chargeCard.response'
 import { CardVerificationCallbackInput } from './dto/cardVerificationCallback.input'
 import { PaymentsApiModuleConfig } from './payments.config'
+import { CreatePaymentFlowInput } from './dto/createPaymentFlow.input'
+import { CreatePaymentFlowResponse } from './dto/createPaymentFlow.response'
 
 @Injectable()
 export class PaymentsService {
@@ -29,6 +31,15 @@ export class PaymentsService {
     return this.paymentsApi.paymentFlowControllerGetPaymentFlow(input)
   }
 
+  // TODO: Remove after testing on feature deployment
+  createPaymentFlow(
+    input: CreatePaymentFlowInput,
+  ): Promise<CreatePaymentFlowResponse> {
+    return this.paymentsApi.paymentFlowControllerCreatePaymentUrl({
+      createPaymentFlowInput: input,
+    })
+  }
+
   getVerificationStatus(
     input: GetPaymentFlowInput,
   ): Promise<VerificationStatusResponse> {
@@ -39,10 +50,7 @@ export class PaymentsService {
 
   verifyCard(verifyCardInput: VerifyCardInput): Promise<VerifyCardResponse> {
     return this.paymentsApi.cardPaymentControllerVerify({
-      verifyCardInput: {
-        ...verifyCardInput,
-        verificationCallbackUrl: '', // TODO
-      },
+      verifyCardInput,
     })
   }
 

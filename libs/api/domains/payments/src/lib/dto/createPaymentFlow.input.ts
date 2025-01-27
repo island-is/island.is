@@ -1,4 +1,4 @@
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
+import { Field, InputType, Float } from '@nestjs/graphql'
 import {
   IsEnum,
   IsArray,
@@ -13,64 +13,53 @@ import {
   ValidateNested,
 } from 'class-validator'
 import { Type } from 'class-transformer'
+import { GraphQLJSONObject } from 'graphql-type-json'
 
-import { PaymentMethod } from '../../../types'
+import { CreatePaymentFlowInputAvailablePaymentMethodsEnum } from '@island.is/clients/payments'
 
+@InputType('PaymentsCreateChargeInput')
 export class ChargeInput {
+  @Field(() => String, { description: 'Charge type' })
   @IsString()
-  @ApiProperty({
-    description: 'Charge type',
-    type: String,
-  })
   chargeType!: string
 
+  @Field(() => String, { description: 'Charge item code' })
   @IsString()
-  @ApiProperty({
-    description: 'Charge item code',
-    type: String,
-  })
   chargeItemCode!: string
 
+  @Field(() => Float, { description: 'Quantity of this item' })
   @IsNumber()
   @IsPositive({ message: 'quantity must be greater than 0' })
-  @ApiProperty({
-    description: 'Quantity of this item',
-    type: Number,
-  })
   quantity!: number
 
+  @Field(() => Float, { nullable: true, description: 'Price of the charge' })
   @IsNumber()
   @IsOptional()
   @IsPositive({ message: 'price must be greater than 0' })
-  @ApiPropertyOptional({
-    description: 'Price of the charge',
-    type: Number,
-  })
   price?: number
 }
 
+@InputType('PaymentsCreateInput')
 export class CreatePaymentFlowInput {
-  @ApiProperty({
+  @Field(() => [String], {
     description: 'List of allowed payment methods for this payment flow',
-    type: [String],
-    example: ['card', 'invoice'],
-    enum: PaymentMethod,
-    isArray: true,
   })
   @IsArray()
-  @IsEnum(PaymentMethod, { each: true })
-  availablePaymentMethods!: PaymentMethod[]
+  @IsEnum(CreatePaymentFlowInputAvailablePaymentMethodsEnum, { each: true })
+  availablePaymentMethods!: CreatePaymentFlowInputAvailablePaymentMethodsEnum[]
 
-  @ApiProperty({
+  @Field(() => [ChargeInput], {
     description: 'Charges associated with the payment flow',
-    type: [ChargeInput],
   })
   @IsArray()
   @ArrayNotEmpty()
-  @ValidateNested({ each: true }) // Validate each object in the array
-  @Type(() => ChargeInput) // Transform each array item to a Charge instance
+  @ValidateNested({ each: true })
+  @Type(() => ChargeInput)
   charges!: ChargeInput[]
 
+  @Field(() => String, {
+    description: 'National id of the payer, can be a company or an individual',
+  })
   @IsString()
   @Length(10, 10, {
     message: 'payerNationalId must be exactly 10 characters long',
@@ -78,51 +67,44 @@ export class CreatePaymentFlowInput {
   @Matches(/^\d+$/, {
     message: 'payerNationalId must contain only numeric characters',
   })
-  @ApiProperty({
-    description: 'National id of the payer, can be a company or an individual',
-    type: String,
-  })
   payerNationalId!: string
 
-  @IsString()
-  @ApiProperty({
+  @Field(() => String, {
     description: 'Identifier for the organization initiating the payment flow',
-    type: String,
   })
+  @IsString()
   organisationId!: string
 
-  @IsString()
-  @ApiProperty({
+  @Field(() => String, {
     description:
       'URL callback to be called on payment update events like when the user requests to create invoice rather than directly paying',
-    type: String,
   })
+  @IsString()
   onUpdateUrl!: string
 
-  @IsObject()
-  @IsOptional()
-  @ApiPropertyOptional({
+  @Field(() => GraphQLJSONObject, {
+    nullable: true,
     description:
       'Arbitrary JSON data that will be returned with the onUpdateUrl callback',
-    type: Object,
-    example: { applicationId: 'abc123' },
   })
+  @IsObject()
+  @IsOptional()
   metadata?: object
 
+  @Field(() => String, {
+    nullable: true,
+    description: 'Product title to display to the payer',
+  })
   @IsString()
   @IsOptional()
-  @ApiPropertyOptional({
-    description: 'Product title to display to the payer',
-    type: String,
-  })
   productTitle?: string
 
-  @IsString()
-  @IsOptional()
-  @ApiPropertyOptional({
+  @Field(() => String, {
+    nullable: true,
     description:
       'Optional identifier for an invoice associated with the payment flow',
-    type: String,
   })
+  @IsString()
+  @IsOptional()
   existingInvoiceId?: string
 }

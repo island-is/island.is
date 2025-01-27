@@ -9,13 +9,6 @@ export class VerifyCardInput {
   })
   paymentFlowId!: string
 
-  @IsString()
-  @ApiProperty({
-    description: 'Callback URL for the 3DS verification',
-    type: String,
-  })
-  verificationCallbackUrl!: string
-
   @IsNumber()
   @ApiProperty({
     description: 'Card number',

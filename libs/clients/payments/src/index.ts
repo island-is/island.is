@@ -5,6 +5,7 @@ export {
   GetPaymentFlowDTO, // TODO change naming to either response or dto
   VerificationStatusResponse, // TODO above
   VerificationCallbackInput,
+  CreatePaymentFlowInputAvailablePaymentMethodsEnum,
   ChargeCardInput,
   VerifyCardInput,
   VerifyCardResponse,
