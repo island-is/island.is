@@ -18,6 +18,7 @@ import {
   RenderFiles,
 } from '@island.is/judicial-system-web/src/components'
 import { CaseFileCategory } from '@island.is/judicial-system-web/src/graphql/schema'
+import { isNonEmptyArray } from '@island.is/judicial-system-web/src/utils/arrayHelpers'
 import {
   useDefendants,
   useFileList,
@@ -53,6 +54,11 @@ const IndictmentOverview = () => {
   const sentToPrisonAdminFiles = workingCase.caseFiles?.filter(
     (file) => file.category === CaseFileCategory.SENT_TO_PRISON_ADMIN_FILE,
   )
+
+  const criminalRecordUpdateFile = workingCase.caseFiles?.filter(
+    (file) => file.category === CaseFileCategory.CRIMINAL_RECORD_UPDATE,
+  )
+  console.log({"test": workingCase.caseFiles})
 
   const hasPunishmentType = (punishmentType: PunishmentType) =>
     defendant?.punishmentType === punishmentType
@@ -99,6 +105,17 @@ const IndictmentOverview = () => {
         <Box marginBottom={5}>
           <InfoCardClosedIndictment displayVerdictViewDate />
         </Box>
+        {isNonEmptyArray(criminalRecordUpdateFile) && <Box marginBottom={5}>
+          <Text variant="h4" as="h4" marginBottom={1}>
+            {formatMessage(
+              strings.criminalRecordUpdateSection,
+            )}
+          </Text>
+          <RenderFiles
+            onOpenFile={onOpen}
+            caseFiles={criminalRecordUpdateFile}
+          />
+        </Box>}
         <Box marginBottom={5}>
           <Text variant="h4" as="h4" marginBottom={1}>
             {formatMessage(
@@ -114,7 +131,6 @@ const IndictmentOverview = () => {
             }
           />
         </Box>
-
         {sentToPrisonAdminFiles && sentToPrisonAdminFiles.length > 0 && (
           <Box marginBottom={5}>
             <Text variant="h4" as="h4" marginBottom={1}>
