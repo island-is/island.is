@@ -300,7 +300,6 @@ export class CaseNotificationService extends BaseNotificationService {
       html: body,
       recipientName: theCase.defenderName,
       recipientEmail: theCase.defenderEmail,
-      attachments: undefined,
       skipTail: !theCase.defenderNationalId,
     })
   }
@@ -366,7 +365,6 @@ export class CaseNotificationService extends BaseNotificationService {
       html: body,
       recipientName: theCase.defenderName,
       recipientEmail: theCase.defenderEmail,
-      attachments: undefined,
       skipTail: !theCase.defenderNationalId,
     })
   }
@@ -653,7 +651,6 @@ export class CaseNotificationService extends BaseNotificationService {
       html: linkHtml,
       recipientName: theCase.defenderName,
       recipientEmail: theCase.defenderEmail,
-      attachments: undefined,
       skipTail: !theCase.defenderNationalId,
     })
   }
@@ -677,8 +674,8 @@ export class CaseNotificationService extends BaseNotificationService {
     return this.sendEmail({
       subject,
       html: body,
-      recipientName: email,
-      recipientEmail: name,
+      recipientName: name,
+      recipientEmail: email,
       attachments: calendarInvite && [calendarInvite],
       skipTail: Boolean(overviewUrl) === false,
     }).then((recipient) => {
@@ -997,7 +994,6 @@ export class CaseNotificationService extends BaseNotificationService {
           }),
       recipientName: defenderName ?? '',
       recipientEmail: defenderEmail ?? '',
-      attachments: undefined,
       skipTail: Boolean(defenderNationalId) === false,
     })
   }
@@ -1213,7 +1209,6 @@ export class CaseNotificationService extends BaseNotificationService {
           }),
       recipientName: theCase.defenderName,
       recipientEmail: theCase.defenderEmail,
-      attachments: undefined,
       skipTail: !theCase.defenderNationalId,
     })
   }
@@ -1360,7 +1355,6 @@ export class CaseNotificationService extends BaseNotificationService {
       html,
       recipientName: this.formatMessage(notifications.emailNames.prison),
       recipientEmail: this.config.email.prisonEmail,
-      attachments: undefined,
       skipTail: true,
     })
   }
@@ -1393,7 +1387,6 @@ export class CaseNotificationService extends BaseNotificationService {
       html,
       recipientName: defenderName,
       recipientEmail: defenderEmail,
-      attachments: undefined,
       skipTail: true,
     })
   }
@@ -1430,7 +1423,6 @@ export class CaseNotificationService extends BaseNotificationService {
       html,
       recipientName: defenderName,
       recipientEmail: defenderEmail,
-      attachments: undefined,
       skipTail: !defenderNationalId,
     })
   }
@@ -1707,7 +1699,6 @@ export class CaseNotificationService extends BaseNotificationService {
       html,
       recipientName: theCase.registrar.name,
       recipientEmail: theCase.registrar.email,
-      attachments: undefined,
       skipTail: true,
     })
 
@@ -1801,7 +1792,6 @@ export class CaseNotificationService extends BaseNotificationService {
       html,
       recipientName: name,
       recipientEmail: email,
-      attachments: undefined,
       skipTail: !link,
     })
   }
@@ -2036,7 +2026,7 @@ export class CaseNotificationService extends BaseNotificationService {
           html: defenderHtml,
           recipientName: theCase.defenderName,
           recipientEmail: theCase.defenderEmail,
-          attachments: undefined,
+
           skipTail: !theCase.defenderNationalId,
         }),
       )
@@ -2145,7 +2135,7 @@ export class CaseNotificationService extends BaseNotificationService {
           html: defenderHtml,
           recipientName: theCase.defenderName,
           recipientEmail: theCase.defenderEmail,
-          attachments: undefined,
+
           skipTail: !theCase.defenderNationalId,
         }),
       )
@@ -2279,7 +2269,7 @@ export class CaseNotificationService extends BaseNotificationService {
           html: defenderHtml,
           recipientName: theCase.defenderName,
           recipientEmail: theCase.defenderEmail,
-          attachments: undefined,
+
           skipTail: !theCase.defenderNationalId,
         }),
       )
@@ -2492,7 +2482,7 @@ export class CaseNotificationService extends BaseNotificationService {
           html: defenderHtml,
           recipientName: theCase.defenderName,
           recipientEmail: theCase.defenderEmail,
-          attachments: undefined,
+
           skipTail: !theCase.defenderNationalId,
         }),
       )
@@ -2530,7 +2520,7 @@ export class CaseNotificationService extends BaseNotificationService {
         html,
         recipientName: theCase.defenderName,
         recipientEmail: theCase.defenderEmail,
-        attachments: undefined,
+
         skipTail: !theCase.defenderNationalId,
       }),
     )
