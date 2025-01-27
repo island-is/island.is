@@ -33,9 +33,8 @@ COPY package.json yarn.lock .yarnrc.yml ./
 COPY apps/native/app/package.json ./apps/native/app/
 COPY .yarn/ ./.yarn
 
-RUN CI=true yarn install --immutable && \
-  # Don't store the cache in the builder image
-  yarn cache clean
+RUN --mount=type=cache,target=.yarn/cache pwd && ls -lah . .yarn && \
+  CI=true yarn install --immutable
 
 
 # Image with source code
