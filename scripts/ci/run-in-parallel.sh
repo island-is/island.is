@@ -12,4 +12,4 @@ echo "Running '$AFFECTED_PROJECTS' with concurrency of ${MAX_JOBS} and  for targ
 IFS=" " read -ra AFFECTED_PROJECTS <<<"$AFFECTED_PROJECTS"
 
 # This is a helper script to run in parallel a list of provided projects for a specific target
-exec parallel --halt soon,fail=1 --lb -j "$MAX_JOBS" APP={} "$DIR"/"$1".sh ::: "${AFFECTED_PROJECTS[@]}"
+exec parallel --halt never --lb -j "$MAX_JOBS" APP={} "$DIR"/"$1".sh ::: "${AFFECTED_PROJECTS[@]}"

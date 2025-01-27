@@ -17,13 +17,13 @@ env:
   COMPOSE_HTTP_TIMEOUT: 180
   SKIP_GENERATED_CACHE: ${{ contains(github.event.pull_request.labels.*.name, 'skip-generated-cache') }}
   NX_AFFECTED_ALL: ${{ contains(github.event.pull_request.labels.*.name, 'nx-affected-all') }}
-  CHUNK_SIZE: ${{ vars.CHUNK_SIZE || 8 }}
-  DISABLE_GROUPING: ${{ vars.DISABLE_GROUPING || false }}
-  DISABLE_CHUNKS: ${{ vars.DISABLE_CHUNKS || false }}
-  DISABLE_PROBLEMATIC: ${{ vars.DISABLE_PROBLEMATIC || false }}
-  MAX_JOBS: ${{ vars.MAX_JOBS || 3 }}
-  NX_PARALLEL: ${{ vars.NX_PARALLEL || 6 }}
-  NX_MAX_PARALLEL: ${{ vars.NX_MAX_PARALLEL || 6 }}
+  DISABLE_CHUNKS: 'false'
+  DISABLE_GROUPING: 'false'
+  DISABLE_PROBLEMATIC: 'false'
+  CHUNK_SIZE: '3'
+  MAX_JOBS: '2'
+  NX_PARALLEL: '4'
+  NX_MAX_PARALLEL: '4'
 
 jobs:
   prepare:
