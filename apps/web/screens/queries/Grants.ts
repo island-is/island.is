@@ -121,6 +121,10 @@ export const GET_GRANT_QUERY = gql`
         ...AllSlices
         ${nestedFields}
       }
+      answeringQuestions {
+        ...AllSlices
+        ${nestedFields}
+      }
       applicationHints {
         ...AllSlices
         ${nestedFields}
