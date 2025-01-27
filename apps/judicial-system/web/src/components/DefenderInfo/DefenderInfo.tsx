@@ -119,7 +119,13 @@ const DefenderInfo: FC<Props> = ({ workingCase, setWorkingCase }) => {
       {defenderNotFound && <DefenderNotFound />}
       <BlueBox>
         <InputAdvocate
-          advocateType="defender"
+          advocateType={
+            !isProsecutionUser(user) &&
+            workingCase.sessionArrangements ===
+              SessionArrangements.ALL_PRESENT_SPOKESPERSON
+              ? 'spokesperson'
+              : 'defender'
+          }
           name={workingCase.defenderName}
           email={workingCase.defenderEmail}
           phoneNumber={workingCase.defenderPhoneNumber}
