@@ -98,6 +98,11 @@ export class CardPaymentService {
     const data = (await response.json()) as VerificationResponse
 
     if (!data?.isSuccess) {
+      this.logger.error(`Failed to verify card (${paymentFlowId})`, {
+        url: response.url,
+        responseCode: data.responseCode,
+        responseDescription: data.responseDescription,
+      })
       throw new Error(mapToCardErrorCode(data.responseCode))
     }
 

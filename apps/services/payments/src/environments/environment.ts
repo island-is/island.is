@@ -6,8 +6,8 @@ export default {
     groupName: process.env.AUDIT_GROUP_NAME,
     serviceName: isProduction ? 'services-payments' : undefined,
   },
-  islandis: {
-    origin: process.env.ISLANDIS_URL || 'http://localhost:4200',
+  paymentsWeb: {
+    origin: process.env.PAYMENTS_WEB_URL,
   },
   port: process.env.PORT ? Number(process.env.PORT) : 3333,
 }

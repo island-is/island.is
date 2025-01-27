@@ -38,7 +38,7 @@ describe('PaymentFlowService', () => {
 
       const result = await service.createPaymentUrl(paymentInfo)
 
-      expect(result.url).toBeDefined()
+      expect(result.urls).toBeDefined()
     })
   })
 })

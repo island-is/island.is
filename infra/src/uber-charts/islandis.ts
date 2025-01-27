@@ -16,7 +16,7 @@ import { serviceSetup as servicePortalSetup } from '../../../apps/portals/my-pag
 import { serviceSetup as servicePortalApiSetup } from '../../../apps/services/user-profile/infra/service-portal-api'
 
 // Payments
-import { serviceSetup as paymentsWebAppServiceSetup } from '../../../apps/payments/infra/payments'
+import { serviceSetup as paymentsWebSetup } from '../../../apps/payments/infra/payments'
 import { serviceSetup as paymentsServiceSetup } from '../../../apps/services/payments/infra/payments'
 
 // Bff's
@@ -130,7 +130,7 @@ const adminPortal = adminPortalSetup()
 const servicePortal = servicePortalSetup()
 const bffAdminPortalService = bffAdminPortalServiceSetup({ api })
 const bffServicePortalService = bffServicePortalServiceSetup({ api })
-const paymentsWebApp = paymentsWebAppServiceSetup({
+const paymentsWebApp = paymentsWebSetup({
   api,
 })
 

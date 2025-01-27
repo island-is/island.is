@@ -49,6 +49,6 @@ export const CardPaymentModuleConfig = defineConfig({
     },
     tokenExpiryMinutes: env.optionalJSON('PAYMENTS_TOKEN_EXPIRY_MINUTES') ?? 2,
     memCacheExpiryMinutes:
-      env.optionalJSON('PAYMENTS_MEM_CACHE_EXPIRY_MINUTES') ?? 5,
+      env.optionalJSON('PAYMENTS_MEM_CACHE_EXPIRY_MINUTES') ?? 2,
   }),
 })

@@ -9,6 +9,7 @@ import {
   MdSerialized,
   SavedVerificationCompleteData,
 } from './cardPayment.types'
+import { environment } from '../../environments'
 
 const MdSerializedSchema = z.object({
   c: z.string().length(36, 'Correlation ID must be 36 characters long'),
@@ -53,15 +54,13 @@ export const generateVerificationRequestOptions = ({
   md: string
   paymentApiConfig: PaymentApiConfig
 }) => {
+  const { cardNumber, expiryMonth, expiryYear, amount } = verifyCardInput
   const {
-    cardNumber,
-    expiryMonth,
-    expiryYear,
-    amount,
-    verificationCallbackUrl,
-  } = verifyCardInput
-  const { paymentsApiSecret, paymentsApiHeaderKey, paymentsApiHeaderValue } =
-    paymentApiConfig
+    paymentsApiSecret,
+    paymentsApiHeaderKey,
+    paymentsApiHeaderValue,
+    systemCalling,
+  } = paymentApiConfig
 
   const requestOptions: RequestInit = {
     method: 'POST',
@@ -77,9 +76,9 @@ export const generateVerificationRequestOptions = ({
       cardholderDeviceType: 'WWW',
       amount: amount * 100, // Convert to ISK (aurar)
       currency: 'ISK',
-      authenticationUrl: verificationCallbackUrl,
+      authenticationUrl: `${environment.paymentsWeb.origin}/api/card/callback`,
       MD: md,
-      systemCalling: 'TODO', // TODO
+      systemCalling,
     }),
   }
 

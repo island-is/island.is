@@ -16,6 +16,7 @@ import { CreatePaymentFlowInput } from './dtos/createPaymentFlow.input'
 
 import { environment } from '../../environments'
 import { PaymentFlowEvent } from './models/paymentFlowEvent.model'
+import { CreatePaymentFlowDTO } from './dtos/createPaymentFlow.dto'
 
 @Injectable()
 export class PaymentFlowService {
@@ -35,7 +36,7 @@ export class PaymentFlowService {
 
   async createPaymentUrl(
     paymentInfo: CreatePaymentFlowInput,
-  ): Promise<{ url: string }> {
+  ): Promise<CreatePaymentFlowDTO> {
     try {
       const paymentFlow = await this.paymentFlowModel.create({
         ...paymentInfo,
@@ -50,7 +51,10 @@ export class PaymentFlowService {
       await this.paymentFlowChargeModel.bulkCreate(charges)
 
       return {
-        url: `${environment.islandis.origin}/greida/is/${paymentFlow.id}`,
+        urls: {
+          is: `${environment.paymentsWeb.origin}/is/${paymentFlow.id}`,
+          en: `${environment.paymentsWeb.origin}/en/${paymentFlow.id}`,
+        },
       }
     } catch (e) {
       this.logger.error('Failed to create payment url', e)

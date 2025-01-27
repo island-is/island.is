@@ -1,8 +1,37 @@
 import { ApiProperty } from '@nestjs/swagger'
+import { IsObject, IsOptional, IsString } from 'class-validator'
 
+// Define the structure of the URLs
+class PaymentUrls {
+  @ApiProperty({
+    description: 'URL for Icelandic locale',
+    type: String,
+    example: 'https://www.island.is/greida/is/:id',
+  })
+  @IsOptional()
+  @IsString()
+  is!: string
+
+  @ApiProperty({
+    description: 'URL for English locale',
+    type: String,
+    example: 'https://www.island.is/greida/en/:id',
+  })
+  @IsOptional()
+  @IsString()
+  en!: string
+}
+
+// Main DTO for the CreatePaymentFlow response
 export class CreatePaymentFlowDTO {
   @ApiProperty({
-    description: 'The URL where the payment flow will be initiated',
+    description: 'Localized URLs for payment flow initiation',
+    type: PaymentUrls,
+    example: {
+      is: 'https://www.island.is/greida/is/:id',
+      en: 'https://www.island.is/greida/en/:id',
+    },
   })
-  url!: string
+  @IsObject()
+  urls!: PaymentUrls
 }

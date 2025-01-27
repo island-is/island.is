@@ -39,7 +39,7 @@ describe('PaymentFlowController', () => {
       const response = await server.post('/v1/payments').send(payload)
 
       expect(response.status).toBe(200)
-      expect(response.body.url).toBeDefined()
+      expect(response.body.urls).toBeDefined()
     })
   })
 })

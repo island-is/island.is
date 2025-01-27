@@ -1,4 +1,9 @@
-import { service, ServiceBuilder, json } from '../../../../infra/src/dsl/dsl'
+import {
+  service,
+  ServiceBuilder,
+  json,
+  ref,
+} from '../../../../infra/src/dsl/dsl'
 import {
   Base,
   Client,
@@ -26,10 +31,15 @@ export const serviceSetup = (): ServiceBuilder<'services-payments'> =>
         staging: 'https://identity-server.staging01.devland.is',
         prod: 'https://innskra.island.is',
       },
-      ISLANDIS_URL: {
-        dev: 'https://beta.dev01.devland.is',
-        staging: 'https://beta.staging01.devland.is',
-        prod: 'https://island.is',
+      PAYMENTS_WEB_URL: {
+        dev: ref(
+          (ctx) =>
+            `https://${
+              ctx.featureDeploymentName ? `${ctx.featureDeploymentName}-` : ''
+            }beta.dev01.devland.is/greida`,
+        ),
+        staging: `https://beta.staging01.devland.is/greida`,
+        prod: `https://island.is/greida`,
       },
       REDIS_NODES: {
         dev: json([
