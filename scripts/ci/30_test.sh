@@ -4,15 +4,13 @@ set -euxo pipefail
 : "${DD_CIVISIBILITY_AGENTLESS_ENABLED:=true}"
 : "${DD_SITE:=datadoghq.eu}"
 : "${DD_ENV:=ci}"
-# DD_SERVICE is never used as-is, but initializes the variable, and makes easy
-# debugging for when the environment variable isn't successfully set in earlier CI steps
-: "${DD_SERVICE:=${APP:-"unit-test"}}"
+: "${DD_SERVICE:=unit-test}"
 : "${DD_API_KEY:='<set-api-key>'}"
 : "${NODE_OPTIONS:=}"
 : "${FLAKY_TEST_RETRIES:=3}"
 
 # Default to big old-space, and more options for testing, but allow overriding
-NODE_OPTIONS="--max-old-space-size=8193 --unhandled-rejections=warn --require=dd-trace/ci/init ${NODE_OPTIONS:-}"
+NODE_OPTIONS="--max-old-space-size=8193 --unhandled-rejections=warn --trace-warnings --require=dd-trace/ci/init ${NODE_OPTIONS:-}"
 EXTRA_OPTS=""
 
 projects_uncollectible_coverage=(
@@ -22,10 +20,6 @@ projects_uncollectible_coverage=(
   "shared-babel"
   "portals-my-pages-core"
 )
-# shellcheck disable=SC2076
-if [[ ! " ${projects_uncollectible_coverage[*]} " =~ " ${APP} " ]]; then
-  EXTRA_OPTS="--codeCoverage"
-fi
 
 export DD_CIVISIBILITY_AGENTLESS_ENABLED \
   DD_SITE \
@@ -35,4 +29,33 @@ export DD_CIVISIBILITY_AGENTLESS_ENABLED \
   NODE_OPTIONS \
   SERVERSIDE_FEATURES_ON=\"\" # disable server-side features
 
-yarn nx run "${APP}:test" ${EXTRA_OPTS} --verbose --passWithNoTests "$@"
+# Determine if any project requires code coverage
+requires_code_coverage() {
+  IFS=',' read -ra PROJECTS <<<"$AFFECTED_PROJECTS"
+  for project in "${PROJECTS[@]}"; do
+    if [[ ! " ${projects_uncollectible_coverage[*]} " =~ \ ${project}\  ]]; then
+      return 0
+    fi
+  done
+  return 1
+}
+
+# Set code coverage if required
+if requires_code_coverage; then
+  EXTRA_OPTS="--codeCoverage"
+fi
+
+echo $EXTRA_OPTS
+
+yarn nx run-many \
+  --projects "${AFFECTED_PROJECTS}" \
+  --detectLeaks \
+  --target test \
+  --parallel="${NX_PARALLEL}" \
+  --verbose \
+  --no-watchman \
+  --detectOpenHandles \
+  --debug \
+  --ci \
+  --runInBand \
+  --passWithNoTests "$@"
