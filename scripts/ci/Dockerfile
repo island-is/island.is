@@ -33,7 +33,9 @@ COPY package.json yarn.lock .yarnrc.yml ./
 COPY apps/native/app/package.json ./apps/native/app/
 COPY .yarn/ ./.yarn
 
+# hadolint ignore=DL3060
 RUN --mount=type=cache,target=.yarn/cache pwd && ls -lah . .yarn && \
+  # Cache-mount the relatively frequently changing caches
   CI=true yarn install --immutable
 
 
