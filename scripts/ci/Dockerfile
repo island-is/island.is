@@ -93,6 +93,7 @@ FROM base-node AS output-base
 
 
 FROM base-node-with-pg AS output-express
+LABEL org.opencontainers.image.webserver=express
 
 # Stage-specific ARGs
 ARG APP_DIST_HOME
@@ -110,6 +111,7 @@ ENTRYPOINT [ "node", "--no-experimental-fetch", "main.js" ]
 
 
 FROM base-node-with-pg AS output-next
+LABEL org.opencontainers.image.webserver=nextjs
 
 # Stage-specific ARGs
 ARG APP
@@ -147,6 +149,7 @@ RUN apk add --no-cache bash nodejs && \
 
 
 FROM base-static AS output-static
+LABEL org.opencontainers.image.webserver=nginx
 
 COPY scripts/dockerfile-assets/nginx/* /etc/nginx/templates
 COPY scripts/dockerfile-assets/bash/extract-environment.sh /docker-entrypoint.d
@@ -178,6 +181,7 @@ RUN echo 'module.exports = {};' > jest.config.js
 
 
 FROM base-jest AS output-jest
+LABEL org.opencontainers.image.test.framework=jest
 
 COPY --from=builder /dist /webapp/
 
@@ -201,6 +205,7 @@ RUN apt-get update -y && \
 
 
 FROM playwright-base AS output-playwright
+LABEL org.opencontainers.image.test.framework=playwright
 
 # Stage-specific ARGs
 ARG APP
