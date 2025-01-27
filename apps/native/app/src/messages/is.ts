@@ -406,6 +406,8 @@ export const is = {
   'walletPass.barcodeErrorNotConnected':
     'Ekki er hægt að skanna skírteini nema að tækið sé nettengt.',
   'walletPass.barcodeErrorFailedToFetch': 'Ekki tókst að sækja barkóða',
+  'walletPass.barcodeErrorBadSession':
+    'Of stutt síðan skírteini var sótt á öðru tæki',
   'walletPass.validLicense': 'Í gildi',
   'walletPass.expiredLicense': 'Útrunnið',
   'walletPass.passportNumber': 'Númer vegabréfs: {licenseNumber}',
