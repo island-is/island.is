@@ -5,7 +5,6 @@ import { localrun } from '../dsl/exports/localrun'
 import { logger, runCommand } from '../common'
 import { ChildProcess } from 'child_process'
 import { LocalrunValueFile } from '../dsl/types/output-types'
-import { parseTargetString, TargetConfiguration } from '@nx/devkit'
 
 export async function renderLocalServices({
   services,
@@ -43,6 +42,38 @@ export async function renderLocalServices({
     { dryRun, noUpdateSecrets },
   )
 
+  if (docker) {
+    const targetString = 'docker-*'
+    const targets = ...
+    logger.info('Target:', { targetString, target })
+
+    // Ensure the target name starts with "docker-"
+    const type = target.target.startsWith('docker-')
+      ? target.target.replace('docker-', '')
+      : undefined
+
+    if (!type) {
+      throw new Error(
+        `Invalid target: ${targetString}. Expected a target starting with "docker-".`,
+      )
+    }
+    Object.entries(renderedLocalServices.services)
+      .map(([k, v]): typeof v => ({
+        ...v,
+        commands: [
+          [
+            `docker buildx build`,
+            `--file="$PWD/scripts/ci/Dockerfile"`,
+            `--target=output-${type}`,
+            `--load`,
+            `--build-arg=APP=${k}`,
+            `--tag=${k}:local`,
+          ].join(' '),
+          `dokcer run --rm -it --name=${k} --env-file=.env.${k} ${k}:local`,
+        ],
+      }))
+      .map(console.error)
+  }
   if (print) {
     const commandedServices = Object.entries(
       renderedLocalServices.services,
