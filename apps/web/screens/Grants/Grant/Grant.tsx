@@ -81,6 +81,10 @@ const GrantSinglePage: CustomScreen<GrantSingleProps> = ({ grant, locale }) => {
     return null
   }
 
+  const applicationStatusLabel = status?.applicationStatus
+    ? generateStatusTag(status.applicationStatus, formatMessage)?.label
+    : undefined
+
   return (
     <GrantWrapper
       pageTitle={grant.name}
@@ -117,11 +121,13 @@ const GrantSinglePage: CustomScreen<GrantSingleProps> = ({ grant, locale }) => {
             <ActionCard
               heading={grant.name}
               text={
-                status
-                  ? generateStatusTag(status.applicationStatus, formatMessage)
-                      ?.label +
-                    (status.deadlineStatus ? ' / ' + status.deadlineStatus : '')
-                  : ''
+                applicationStatusLabel
+                  ? `${applicationStatusLabel}${
+                      status?.deadlineStatus
+                        ? ' / ' + status.deadlineStatus
+                        : ''
+                    }`
+                  : undefined
               }
               backgroundColor="blue"
               cta={{
@@ -172,6 +178,24 @@ const GrantSinglePage: CustomScreen<GrantSingleProps> = ({ grant, locale }) => {
                 <Box className="rs_read">
                   {webRichText(
                     grant.howToApply as SliceType[],
+                    undefined,
+                    locale,
+                  )}
+                </Box>
+              </Box>
+              <Divider />
+            </>
+          ) : undefined}
+
+          {grant.answeringQuestions?.length ? (
+            <>
+              <Box>
+                <Text variant="h3">
+                  {formatMessage(m.single.answeringQuestions)}
+                </Text>
+                <Box className="rs_read">
+                  {webRichText(
+                    grant.answeringQuestions as SliceType[],
                     undefined,
                     locale,
                   )}
