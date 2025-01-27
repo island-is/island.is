@@ -92,7 +92,7 @@ import { isNewActor } from './utils/delegationUtils'
 import { PaymentService } from '@island.is/application/api/payment'
 import { ApplicationChargeService } from './charge/application-charge.service'
 import type { Logger } from '@island.is/logging'
-import { LOGGER_PROVIDER } from '@island.is/logging'
+import { LOGGER_PROVIDER, withLoggingContext } from '@island.is/logging'
 
 import { TemplateApiError } from '@island.is/nest/problem'
 import { BypassDelegation } from './guards/bypass-delegation.decorator'
@@ -801,7 +801,13 @@ export class ApplicationController {
       if (hasError && error) {
         throw new TemplateApiError(error, 500)
       }
-      this.logger.info(`Application submission ended successfully`)
+      
+      withLoggingContext({
+        applicationId: updatedApplication.id,
+        templateId: updatedApplication.typeId,
+      }, () => {
+        this.logger.info(`Application submission ended successfully`)
+      })
 
       if (hasChanged) {
         return updatedApplication
