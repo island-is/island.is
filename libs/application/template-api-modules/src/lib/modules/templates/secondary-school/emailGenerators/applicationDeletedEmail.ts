@@ -5,12 +5,12 @@ import { pathToAsset } from '../utils'
 import { ApplicationConfigurations } from '@island.is/application/types'
 import { getValueViaPath } from '@island.is/application/core'
 
-export type ApplicationRejectedEmail = (
+export type ApplicationDeletedEmail = (
   props: EmailTemplateGeneratorProps,
   recipient: EmailRecipient,
 ) => Message
 
-export const generateApplicationRejectedEmail: ApplicationRejectedEmail = (
+export const generateApplicationDeletedEmail: ApplicationDeletedEmail = (
   props,
   recipient,
 ): Message => {

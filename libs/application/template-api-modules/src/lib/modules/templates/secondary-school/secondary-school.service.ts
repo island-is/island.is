@@ -25,7 +25,7 @@ import {
   getRecipients,
 } from './utils'
 import {
-  generateApplicationRejectedEmail,
+  generateApplicationDeletedEmail,
   generateApplicationSubmittedEmail,
 } from './emailGenerators'
 import { getValueViaPath } from '@island.is/application/core'
@@ -120,7 +120,7 @@ export class SecondarySchoolService extends BaseTemplateApiService {
       recipientList.map((recipient) =>
         this.sharedTemplateAPIService
           .sendEmail(
-            (props) => generateApplicationRejectedEmail(props, recipient),
+            (props) => generateApplicationDeletedEmail(props, recipient),
             application,
           )
           .catch((e) => {
