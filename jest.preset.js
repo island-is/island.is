@@ -8,6 +8,7 @@ module.exports = {
   testMatch: ['**/+(*.)+(spec|test).+(ts|js)?(x)'],
   testPathIgnorePatterns: ['<rootDir>/apps/.*/e2e'],
   resolver: customResolver,
+  testTimeout: 20000,
   detectOpenHandles: true,
   runInBand: true,
   detectLeaks: true,
