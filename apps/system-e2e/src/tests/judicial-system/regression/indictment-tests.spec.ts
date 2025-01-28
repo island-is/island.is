@@ -281,7 +281,9 @@ test.describe.serial('Indictment tests', () => {
     // Completed case overview
     await expect(page).toHaveURL(`domur/akaera/lokid/${caseId}`)
 
-    await page.getByText('Birta skal dómfellda dóminn').click()
+    await page
+      .getByRole('radio', { name: 'Birta skal dómfellda dóminn' })
+      .click()
     await page.getByTestId('continueButton').click()
     await page.getByTestId('modalPrimaryButton').click()
   })
