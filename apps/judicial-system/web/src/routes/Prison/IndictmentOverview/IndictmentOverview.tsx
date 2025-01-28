@@ -57,6 +57,13 @@ const IndictmentOverview = () => {
   const hasPunishmentType = (punishmentType: PunishmentType) =>
     defendant?.punishmentType === punishmentType
 
+  const hasRuling = workingCase.caseFiles?.some(
+    (file) => file.category === CaseFileCategory.RULING,
+  )
+  const fileCategory = hasRuling
+    ? CaseFileCategory.RULING
+    : CaseFileCategory.COURT_RECORD
+
   return (
     <PageLayout workingCase={workingCase} isLoading={false} notFound={false}>
       <PageHeader title={formatMessage(strings.htmlTitle)} />
@@ -94,14 +101,16 @@ const IndictmentOverview = () => {
         </Box>
         <Box marginBottom={5}>
           <Text variant="h4" as="h4" marginBottom={1}>
-            {formatMessage(strings.verdictTitle)}
+            {formatMessage(
+              hasRuling ? strings.verdictTitle : strings.courtRecordTitle,
+            )}
           </Text>
           <RenderFiles
             onOpenFile={onOpen}
             caseFiles={
               workingCase.caseFiles?.filter(
-                (file) => file.category === CaseFileCategory.RULING,
-              ) || []
+                (file) => file.category === fileCategory,
+              ) ?? []
             }
           />
         </Box>
