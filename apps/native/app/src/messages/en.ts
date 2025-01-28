@@ -19,6 +19,7 @@ export const en: TranslatedMessages = {
     'Updated permissions required, please login again.',
   'login.expiredMissingUserMessage':
     'Could not fetch user information, please login again.',
+  'login.expiredMessage': 'Please log in again.',
 
   // app lock
   'applock.title': 'Enter a 4-digit PIN',
