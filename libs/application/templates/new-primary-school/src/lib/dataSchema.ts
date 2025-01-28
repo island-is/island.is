@@ -4,8 +4,8 @@ import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { z } from 'zod'
 import {
   ApplicationType,
-  ReasonForApplicationOptions,
   LanguageEnvironmentOptions,
+  ReasonForApplicationOptions,
 } from './constants'
 
 import { errorMessages } from './messages'
@@ -111,6 +111,9 @@ export const dataSchema = z.object({
   newSchool: z.object({
     municipality: z.string(),
     school: z.string(),
+  }),
+  school: z.object({
+    applyForNeighbourhoodSchool: z.enum([YES, NO]),
   }),
   siblings: z
     .array(

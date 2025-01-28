@@ -4,6 +4,7 @@ import {
   Application,
   DefaultEvents,
   Field,
+  NO,
   RecordObject,
 } from '@island.is/application/types'
 import { handleServerError } from '@island.is/application/ui-components'
@@ -26,8 +27,8 @@ import { Contacts } from './review-groups/Contacts'
 import { CurrentNursery } from './review-groups/CurrentNursery'
 import { CurrentSchool } from './review-groups/CurrentSchool'
 import { FreeSchoolMeal } from './review-groups/FreeSchoolMeal'
-import { Languages } from './review-groups/Languages'
 import { Guardians } from './review-groups/Guardians'
+import { Languages } from './review-groups/Languages'
 import { ReasonForApplication } from './review-groups/ReasonForApplication'
 import { School } from './review-groups/School'
 import { Siblings } from './review-groups/Siblings'
@@ -53,9 +54,8 @@ export const Review: FC<ReviewScreenProps> = ({
   const editable = field.props?.editable ?? false
   const hasError = (id: string) => get(errors, id) as string
 
-  const { applicationType, reasonForApplication } = getApplicationAnswers(
-    application.answers,
-  )
+  const { applicationType, reasonForApplication, applyForNeighbourhoodSchool } =
+    getApplicationAnswers(application.answers)
 
   const groupHasNoErrors = (ids: string[]) =>
     ids.every((id) => !has(errors, id))
@@ -173,7 +173,11 @@ export const Review: FC<ReviewScreenProps> = ({
         <CurrentNursery {...childProps} />
       )}
       <School {...childProps} />
-      <ReasonForApplication {...childProps} />
+      {(applicationType === ApplicationType.NEW_PRIMARY_SCHOOL ||
+        (applicationType === ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL &&
+          applyForNeighbourhoodSchool === NO)) && (
+        <ReasonForApplication {...childProps} />
+      )}
       {reasonForApplication ===
         ReasonForApplicationOptions.SIBLINGS_IN_SAME_SCHOOL && (
         <Siblings {...childProps} />
