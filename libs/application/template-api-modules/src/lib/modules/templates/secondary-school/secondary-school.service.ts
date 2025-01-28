@@ -25,7 +25,7 @@ import {
   getRecipients,
 } from './utils'
 import {
-  generateApplicationRejectedEmail,
+  generateApplicationDeletedEmail,
   generateApplicationSubmittedEmail,
 } from './emailGenerators'
 import { getValueViaPath } from '@island.is/application/core'
@@ -90,16 +90,23 @@ export class SecondarySchoolService extends BaseTemplateApiService {
     application,
     auth,
   }: TemplateApiModuleActionProps): Promise<void> {
-    const externalApplicationId = getValueViaPath<string>(
-      application.externalData,
-      'submitApplication.data',
-    )
-    if (externalApplicationId) {
+    try {
       // Delete the application in MMS
-      await this.secondarySchoolClient.delete(auth, externalApplicationId)
+      await this.secondarySchoolClient.delete(auth, application.id)
 
-      // If that succeeded, send email to applicant and custodians
-      await this.sendEmailAboutDeleteApplication(application)
+      try {
+        // If that succeeded, send email to applicant and custodians
+        await this.sendEmailAboutDeleteApplication(application)
+      } catch (emailError) {
+        logger.error(
+          `Application deleted but failed to send notification emails: ${emailError.message}`,
+          { applicationId: application.id },
+        )
+      }
+    } catch (error) {
+      throw new Error(
+        `Failed to delete application ${application.id}: ${error.message}`,
+      )
     }
   }
 
@@ -113,7 +120,7 @@ export class SecondarySchoolService extends BaseTemplateApiService {
       recipientList.map((recipient) =>
         this.sharedTemplateAPIService
           .sendEmail(
-            (props) => generateApplicationRejectedEmail(props, recipient),
+            (props) => generateApplicationDeletedEmail(props, recipient),
             application,
           )
           .catch((e) => {
