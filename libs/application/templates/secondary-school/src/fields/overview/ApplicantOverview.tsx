@@ -23,13 +23,15 @@ export const ApplicantOverview: FC<FieldBaseProps> = ({
     if (goToScreen) goToScreen(page)
   }
 
+  const isEditable = application.state === States.DRAFT
+
   return (
     <ReviewGroup
       handleClick={() => onClick(Routes.PERSONAL)}
       editMessage={formatMessage(overview.general.editMessage)}
       title={formatMessage(overview.applicant.subtitle)}
-      isEditable={application.state === States.DRAFT}
-      hideTopDivider={application.state !== States.DRAFT}
+      isEditable={isEditable}
+      hideTopDivider={!isEditable}
     >
       <Box>
         <GridRow>
