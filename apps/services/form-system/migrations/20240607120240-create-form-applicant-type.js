@@ -38,21 +38,25 @@ module.exports = {
           },
         },
         { transaction: t },
-      );
+      )
 
       await queryInterface.addConstraint('form_applicant_type', {
         fields: ['applicant_type_id', 'form_id'],
         type: 'unique',
         name: 'unique_applicant_type_id_form_id_pair',
         transaction: t,
-      });
-    });
+      })
+    })
   },
 
   async down(queryInterface, Sequelize) {
     return queryInterface.sequelize.transaction(async (t) => {
-      await queryInterface.removeConstraint('form_applicant_type', 'unique_applicant_type_id_form_id_pair', { transaction: t });
-      await queryInterface.dropTable('form_applicant_type', { transaction: t });
-    });
+      await queryInterface.removeConstraint(
+        'form_applicant_type',
+        'unique_applicant_type_id_form_id_pair',
+        { transaction: t },
+      )
+      await queryInterface.dropTable('form_applicant_type', { transaction: t })
+    })
   },
-};
+}
