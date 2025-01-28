@@ -44,6 +44,7 @@ const prisonAdminCaseFileCategories = [
   CaseFileCategory.APPEAL_RULING,
   CaseFileCategory.RULING,
   CaseFileCategory.SENT_TO_PRISON_ADMIN_FILE,
+  CaseFileCategory.COURT_RECORD,
 ]
 
 const prisonStaffCaseFileCategories = [CaseFileCategory.APPEAL_RULING]

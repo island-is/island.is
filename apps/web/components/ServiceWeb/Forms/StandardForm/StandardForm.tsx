@@ -461,29 +461,35 @@ export const StandardForm = ({
           </>
         )
         break
+      case SjukratryggingarCategories.FERDAKOSTNADUR:
+      case SjukratryggingarCategories.HEILBRIGDISSTARFSFOLK:
+      case SjukratryggingarCategories.HEILBRIGDISTHJONUSTA:
+      case SjukratryggingarCategories.RETTINDI_MILLI_LANDA:
       case SjukratryggingarCategories.SJUKRADAGPENINGAR:
-      case SjukratryggingarCategories.LYFJAMAL:
-      case SjukratryggingarCategories.SAMNINGAR_INNKAUP:
-      case SjukratryggingarCategories.ALTHJODAMAL:
-      case SjukratryggingarCategories.ONNUR_THJONUSTA:
+      case SjukratryggingarCategories.SLYS_OG_SJUKLINGATRYGGING:
+      case SjukratryggingarCategories.SJUKLINGATRYGGING:
+      case SjukratryggingarCategories.SLYSATRYGGING:
+      case SjukratryggingarCategories.TANNLAEKNINGAR:
+      case SjukratryggingarCategories.VEFGATTIR:
+      case SjukratryggingarCategories.THJALFUN:
+      case SjukratryggingarCategories.ONNUR_THJONUSTA_SJUKRATRYGGINGA:
+      case SjukratryggingarCategories.HJUKRUNARHEIMILI:
+      case SjukratryggingarCategories.TULKATHJONUSTA:
+      case SjukratryggingarCategories.EVROPSKA_SJUKRATRYGGINGAKORTID:
         fields = (
           <GridColumn span="12/12" paddingBottom={3}>
             <BasicInput
               name="kennitala"
               format="######-####"
               label={fn('kennitala', 'label', 'Kennitala')}
-              requiredMessage={fn(
-                'kennitala',
-                'requiredMessage',
-                'Kennitölu vantar',
-              )}
             />
           </GridColumn>
         )
         break
-      case SjukratryggingarCategories.SLYSAMAL_SJUKLINGATRYGGING:
-      case SjukratryggingarCategories.HJALPARTAEKI_NAERING:
-      case SjukratryggingarCategories.HEILBRIGDISTHJONUSTA:
+      case SjukratryggingarCategories.HJALPARTAEKI:
+      case SjukratryggingarCategories.HJALPARTAEKI_OG_NAERING:
+      case SjukratryggingarCategories.NAERING:
+      case SjukratryggingarCategories.LYF_OG_LYFJAKOSTNADUR:
         fields = (
           <>
             <GridColumn paddingBottom={3}>
@@ -491,11 +497,6 @@ export const StandardForm = ({
                 name="kennitala"
                 format="######-####"
                 label={fn('kennitala', 'label', 'Kennitala')}
-                requiredMessage={fn(
-                  'kennitala',
-                  'requiredMessage',
-                  'Kennitölu vantar',
-                )}
               />
             </GridColumn>
             <GridColumn span="12/12" paddingBottom={3}>

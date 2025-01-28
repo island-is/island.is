@@ -46,6 +46,11 @@ export const conclusion = {
     },
   }),
   overview: defineMessages({
+    sectionTitle: {
+      id: 'ss.application:conclusion.overview.sectionTitle',
+      defaultMessage: 'Yfirlit',
+      description: 'Title of conclusion overview section',
+    },
     pageTitle: {
       id: 'ss.application:conclusion.overview.pageTitle',
       defaultMessage: 'Umsóknin þín',

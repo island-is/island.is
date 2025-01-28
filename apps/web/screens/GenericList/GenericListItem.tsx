@@ -1,7 +1,14 @@
 import cn from 'classnames'
 
 import { Image } from '@island.is/island-ui/contentful'
-import { Box, GridContainer, Stack, Text } from '@island.is/island-ui/core'
+import {
+  Box,
+  GridContainer,
+  Inline,
+  Stack,
+  Tag,
+  Text,
+} from '@island.is/island-ui/core'
 import { HeadWithSocialSharing, Webreader } from '@island.is/web/components'
 import type {
   GenericListItem,
@@ -28,6 +35,7 @@ const GenericListItemPage: Screen<GenericListItemPageProps> = ({
   ogTitle,
 }) => {
   const { format } = useDateUtils()
+  const filterTags = item.filterTags ?? []
 
   return (
     <GridContainer className="rs_read">
@@ -39,10 +47,24 @@ const GenericListItemPage: Screen<GenericListItemPageProps> = ({
               {format(new Date(item.date), 'do MMMM yyyy')}
             </Text>
           )}
-          <Stack space={1}>
+          <Stack space={2}>
             <Text variant="h1" as="h1">
               {item.title}
             </Text>
+            {filterTags.length > 0 && (
+              <Inline space={1}>
+                {filterTags.map((tag) => (
+                  <Tag
+                    disabled={true}
+                    variant="purple"
+                    outlined={true}
+                    key={tag.id}
+                  >
+                    {tag.title}
+                  </Tag>
+                ))}
+              </Inline>
+            )}
             {showReadspeaker && <Webreader readClass="rs_read" marginTop={0} />}
           </Stack>
           {item.image && (

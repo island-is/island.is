@@ -9,6 +9,7 @@ import {
   SliceUnion,
 } from '../unions/slice.union'
 import { FooterItem, mapFooterItem } from './footerItem.model'
+import { AlertBanner, mapAlertBanner } from './alertBanner.model'
 
 @ObjectType()
 class ServiceWebPageEmailConfigItem {
@@ -47,6 +48,9 @@ export class ServiceWebPage {
 
   @CacheField(() => [SliceUnion], { nullable: true })
   contactFormDisclaimer?: Array<typeof SliceUnion | null>
+
+  @CacheField(() => AlertBanner, { nullable: true })
+  alertBanner?: AlertBanner | null
 }
 
 const mapServiceWebPageEmailConfig = (
@@ -88,4 +92,5 @@ export const mapServiceWebPage = ({
         sys.id + ':contactFormDisclaimer',
       )
     : [],
+  alertBanner: fields.alertBanner ? mapAlertBanner(fields.alertBanner) : null,
 })

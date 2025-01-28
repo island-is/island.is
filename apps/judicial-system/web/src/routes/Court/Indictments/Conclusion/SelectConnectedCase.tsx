@@ -91,7 +91,6 @@ const SelectConnectedCase: FC<Props> = ({
     return connectedCases.length === 0 ? (
       <AlertMessage
         type="warning"
-        title={formatMessage(strings.noConnectedCasesTitle)}
         message={formatMessage(strings.noConnectedCasesMessage)}
       />
     ) : (

@@ -15,7 +15,7 @@ export const transformApplicationToNewPrimarySchoolDTO = (
 ): FormDto => {
   const {
     childInfo,
-    parents,
+    guardians,
     siblings,
     contacts,
     reasonForApplication,
@@ -39,32 +39,17 @@ export const transformApplicationToNewPrimarySchoolDTO = (
   const { primaryOrgId } = getApplicationExternalData(application.externalData)
 
   const agents: AgentDto[] = [
-    {
-      name: parents.parent1.fullName,
-      nationalId: parents.parent1.nationalId,
+    ...guardians.map((guardian) => ({
+      name: guardian.fullName,
+      nationalId: guardian.nationalId,
       domicile: {
-        address: parents.parent1.address.streetAddress,
-        postCode: parents.parent1.address.postalCode,
+        address: guardian.address.streetAddress,
+        postCode: guardian.address.postalCode,
       },
-      email: parents.parent1.email,
-      phone: parents.parent1.phoneNumber,
+      email: guardian.email,
+      phone: guardian.phoneNumber,
       role: 'guardian',
-    },
-    ...(parents.parent2
-      ? [
-          {
-            name: parents.parent2.fullName,
-            nationalId: parents.parent2.nationalId,
-            domicile: {
-              address: parents.parent2.address.streetAddress,
-              postCode: parents.parent2.address.postalCode,
-            },
-            email: parents.parent2.email,
-            phone: parents.parent2.phoneNumber,
-            role: 'guardian',
-          },
-        ]
-      : []),
+    })),
     ...contacts.map((contact) => ({
       name: contact.fullName,
       nationalId: contact.nationalId,

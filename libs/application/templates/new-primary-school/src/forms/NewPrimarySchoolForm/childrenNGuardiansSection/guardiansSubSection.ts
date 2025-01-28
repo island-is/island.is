@@ -13,26 +13,28 @@ import {
 import { newPrimarySchoolMessages } from '../../../lib/messages'
 import {
   getApplicationExternalData,
-  getOtherParent,
-  hasOtherParent,
+  getOtherGuardian,
+  hasOtherGuardian,
 } from '../../../lib/newPrimarySchoolUtils'
 
-export const parentsSubSection = buildSubSection({
-  id: 'parentsSubSection',
-  title: newPrimarySchoolMessages.childrenNParents.parentsSubSectionTitle,
+export const guardiansSubSection = buildSubSection({
+  id: 'guardiansSubSection',
+  title: newPrimarySchoolMessages.childrenNGuardians.guardiansSubSectionTitle,
   children: [
     buildMultiField({
-      id: 'parents',
-      title: newPrimarySchoolMessages.childrenNParents.parentsSubSectionTitle,
-      description: newPrimarySchoolMessages.childrenNParents.parentsDescription,
+      id: 'guardians',
+      title:
+        newPrimarySchoolMessages.childrenNGuardians.guardiansSubSectionTitle,
+      description:
+        newPrimarySchoolMessages.childrenNGuardians.guardiansDescription,
       children: [
         buildDescriptionField({
-          id: 'parentsInfo1',
-          title: newPrimarySchoolMessages.childrenNParents.parent,
+          id: 'guardiansInfo1',
+          title: newPrimarySchoolMessages.childrenNGuardians.guardian,
           titleVariant: 'h4',
         }),
         buildTextField({
-          id: 'parents.parent1.fullName',
+          id: 'guardians[0].fullName',
           title: newPrimarySchoolMessages.shared.fullName,
           dataTestId: 'fullName1',
           disabled: true,
@@ -44,7 +46,7 @@ export const parentsSubSection = buildSubSection({
             )?.fullName,
         }),
         buildTextField({
-          id: 'parents.parent1.nationalId',
+          id: 'guardians[0].nationalId',
           title: newPrimarySchoolMessages.shared.nationalId,
           width: 'half',
           dataTestId: 'nationalId1',
@@ -58,7 +60,7 @@ export const parentsSubSection = buildSubSection({
             )?.nationalId,
         }),
         buildTextField({
-          id: 'parents.parent1.address.streetAddress',
+          id: 'guardians[0].address.streetAddress',
           title: newPrimarySchoolMessages.shared.address,
           width: 'half',
           dataTestId: 'address1',
@@ -69,7 +71,7 @@ export const parentsSubSection = buildSubSection({
           },
         }),
         buildTextField({
-          id: 'parents.parent1.address.postalCode',
+          id: 'guardians[0].address.postalCode',
           title: newPrimarySchoolMessages.shared.postalCode,
           width: 'half',
           dataTestId: 'postalCode1',
@@ -80,7 +82,7 @@ export const parentsSubSection = buildSubSection({
           },
         }),
         buildTextField({
-          id: 'parents.parent1.address.city',
+          id: 'guardians[0].address.city',
           title: newPrimarySchoolMessages.shared.municipality,
           width: 'half',
           dataTestId: 'city1',
@@ -91,7 +93,7 @@ export const parentsSubSection = buildSubSection({
           },
         }),
         buildTextField({
-          id: 'parents.parent1.email',
+          id: 'guardians[0].email',
           title: newPrimarySchoolMessages.shared.email,
           width: 'half',
           dataTestId: 'email',
@@ -105,7 +107,7 @@ export const parentsSubSection = buildSubSection({
             )?.email,
         }),
         buildPhoneField({
-          id: 'parents.parent1.phoneNumber',
+          id: 'guardians[0].phoneNumber',
           title: newPrimarySchoolMessages.shared.phoneNumber,
           width: 'half',
           defaultValue: (application: Application) => {
@@ -123,87 +125,87 @@ export const parentsSubSection = buildSubSection({
         }),
 
         buildDescriptionField({
-          id: 'parentsInfo2',
-          title: newPrimarySchoolMessages.childrenNParents.otherParent,
+          id: 'guardiansInfo2',
+          title: newPrimarySchoolMessages.childrenNGuardians.otherGuardian,
           titleVariant: 'h4',
           marginTop: 'containerGutter',
           condition: (answers, externalData) =>
-            hasOtherParent(answers, externalData),
+            hasOtherGuardian(answers, externalData),
         }),
         buildTextField({
-          id: 'parents.parent2.fullName',
+          id: 'guardians[1].fullName',
           title: newPrimarySchoolMessages.shared.fullName,
           dataTestId: 'fullName2',
           disabled: true,
           condition: (answers, externalData) =>
-            hasOtherParent(answers, externalData),
+            hasOtherGuardian(answers, externalData),
           defaultValue: (application: Application) =>
-            getOtherParent(application)?.fullName,
+            getOtherGuardian(application)?.fullName,
         }),
         buildTextField({
-          id: 'parents.parent2.nationalId',
+          id: 'guardians[1].nationalId',
           title: newPrimarySchoolMessages.shared.nationalId,
           width: 'half',
           dataTestId: 'nationalId2',
           format: '######-####',
           disabled: true,
           condition: (answers, externalData) =>
-            hasOtherParent(answers, externalData),
+            hasOtherGuardian(answers, externalData),
           defaultValue: (application: Application) =>
-            getOtherParent(application)?.nationalId,
+            getOtherGuardian(application)?.nationalId,
         }),
         buildTextField({
-          id: 'parents.parent2.address.streetAddress',
+          id: 'guardians[1].address.streetAddress',
           title: newPrimarySchoolMessages.shared.address,
           width: 'half',
           dataTestId: 'address2',
           disabled: true,
           condition: (answers, externalData) =>
-            hasOtherParent(answers, externalData),
+            hasOtherGuardian(answers, externalData),
           defaultValue: (application: Application) =>
-            getOtherParent(application)?.address.streetName,
+            getOtherGuardian(application)?.address.streetName,
         }),
         buildTextField({
-          id: 'parents.parent2.address.postalCode',
+          id: 'guardians[1].address.postalCode',
           title: newPrimarySchoolMessages.shared.postalCode,
           width: 'half',
           dataTestId: 'postalCode2',
           disabled: true,
           condition: (answers, externalData) =>
-            hasOtherParent(answers, externalData),
+            hasOtherGuardian(answers, externalData),
           defaultValue: (application: Application) =>
-            getOtherParent(application)?.address.postalCode,
+            getOtherGuardian(application)?.address.postalCode,
         }),
         buildTextField({
-          id: 'parents.parent2.address.city',
+          id: 'guardians[1].address.city',
           title: newPrimarySchoolMessages.shared.municipality,
           width: 'half',
           dataTestId: 'city2',
           disabled: true,
           condition: (answers, externalData) =>
-            hasOtherParent(answers, externalData),
+            hasOtherGuardian(answers, externalData),
           defaultValue: (application: Application) =>
-            getOtherParent(application)?.address.city,
+            getOtherGuardian(application)?.address.city,
         }),
         buildTextField({
-          id: 'parents.parent2.email',
+          id: 'guardians[1].email',
           title: newPrimarySchoolMessages.shared.email,
           width: 'half',
           dataTestId: 'email2',
           variant: 'email',
           required: true,
           condition: (answers, externalData) =>
-            hasOtherParent(answers, externalData),
+            hasOtherGuardian(answers, externalData),
         }),
         buildPhoneField({
-          id: 'parents.parent2.phoneNumber',
+          id: 'guardians[1].phoneNumber',
           title: newPrimarySchoolMessages.shared.phoneNumber,
           width: 'half',
           dataTestId: 'phone2',
           placeholder: '000-0000',
           required: true,
           condition: (answers, externalData) =>
-            hasOtherParent(answers, externalData),
+            hasOtherGuardian(answers, externalData),
         }),
       ],
     }),

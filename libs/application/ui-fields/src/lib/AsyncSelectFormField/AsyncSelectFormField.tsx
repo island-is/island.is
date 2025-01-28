@@ -52,8 +52,8 @@ export const AsyncSelectFormField: FC<React.PropsWithChildren<Props>> = ({
   const [lastUpdateOnSelectValue, setLastUpdateOnSelectValue] =
     useState<string>('')
 
-  const watchUpdateOnSelect = updateOnSelect ? watch(updateOnSelect) : []
-  const load = async (selectedValue?: string[]) => {
+  const watchUpdateOnSelect = updateOnSelect ? watch(updateOnSelect) : ''
+  const load = async (selectedValue?: string | string[]) => {
     try {
       setHasLoadingError(false)
       const loaded = await loadOptions({
@@ -68,20 +68,16 @@ export const AsyncSelectFormField: FC<React.PropsWithChildren<Props>> = ({
   }
 
   useEffect(() => {
-    if (
-      watchUpdateOnSelect.length > 0 &&
-      watchUpdateOnSelect[0] !== undefined
-    ) {
-      setLastUpdateOnSelectValue(watchUpdateOnSelect[0])
+    if (watchUpdateOnSelect) {
+      setLastUpdateOnSelectValue(watchUpdateOnSelect)
     }
   }, [watchUpdateOnSelect])
 
   useEffect(() => {
     if (updateOnSelect) {
-      const [selectedValue] = watchUpdateOnSelect
-      if (selectedValue !== undefined) {
-        load(selectedValue)
-        setLastUpdateOnSelectValue(selectedValue)
+      if (watchUpdateOnSelect !== undefined) {
+        load(watchUpdateOnSelect)
+        setLastUpdateOnSelectValue(watchUpdateOnSelect)
       } else {
         load()
       }

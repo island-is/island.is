@@ -18,6 +18,7 @@ import { useMemo } from 'react'
 import { m as coreMessages } from '@island.is/portals/core'
 import uniqBy from 'lodash/uniqBy'
 import sortBy from 'lodash/sortBy'
+import startOfDay from 'date-fns/startOfDay'
 import { m } from '../../lib/messages'
 import { AuthApiScope, AuthDelegationType } from '@island.is/api/schema'
 import {
@@ -27,7 +28,7 @@ import {
 import { AuthCustomDelegation } from '@island.is/api/schema'
 
 const isDateExpired = (date?: string | null) =>
-  date ? new Date(date) < new Date() : false
+  date && new Date(date) < startOfDay(new Date())
 
 const getTagName = (apiScope: AuthApiScope) =>
   apiScope?.group?.displayName ?? apiScope.displayName

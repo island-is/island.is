@@ -4,8 +4,10 @@ import {
   buildMultiField,
   buildSubSection,
   buildTextField,
+  NO,
 } from '@island.is/application/core'
 import {
+  ApplicationType,
   OptionsType,
   ReasonForApplicationOptions,
 } from '../../../lib/constants'
@@ -16,6 +18,15 @@ export const reasonForApplicationSubSection = buildSubSection({
   id: 'reasonForApplicationSubSection',
   title:
     newPrimarySchoolMessages.primarySchool.reasonForApplicationSubSectionTitle,
+  condition: (answers) => {
+    const { applyForNeighbourhoodSchool, applicationType } =
+      getApplicationAnswers(answers)
+    return (
+      applicationType === ApplicationType.NEW_PRIMARY_SCHOOL ||
+      (applicationType === ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL &&
+        applyForNeighbourhoodSchool === NO)
+    )
+  },
   children: [
     buildMultiField({
       id: 'reasonForApplication',

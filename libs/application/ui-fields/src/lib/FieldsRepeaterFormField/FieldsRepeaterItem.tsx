@@ -1,4 +1,8 @@
-import { formatText, getValueViaPath } from '@island.is/application/core'
+import {
+  formatText,
+  getErrorViaPath,
+  getValueViaPath,
+} from '@island.is/application/core'
 import { Application, RepeaterItem } from '@island.is/application/types'
 import { GridColumn, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
@@ -128,7 +132,7 @@ export const Item = ({
      */
     const errorList = error as unknown as Record<string, string>[] | undefined
     const errors = errorList?.[index]
-    return errors?.[id]
+    return errors && getErrorViaPath(errors, id)
   }
 
   const getDefaultValue = (

@@ -7,13 +7,13 @@ import { newPrimarySchoolMessages } from '../../../lib/messages'
 
 export const contactsSubSection = buildSubSection({
   id: 'contactsSubSection',
-  title: newPrimarySchoolMessages.childrenNParents.contactsSubSectionTitle,
+  title: newPrimarySchoolMessages.childrenNGuardians.contactsSubSectionTitle,
   children: [
     buildMultiField({
       id: 'contacts',
-      title: newPrimarySchoolMessages.childrenNParents.contactsTitle,
+      title: newPrimarySchoolMessages.childrenNGuardians.contactsTitle,
       description:
-        newPrimarySchoolMessages.childrenNParents.contactsDescription,
+        newPrimarySchoolMessages.childrenNGuardians.contactsDescription,
       children: [
         buildCustomField({
           id: 'contacts',

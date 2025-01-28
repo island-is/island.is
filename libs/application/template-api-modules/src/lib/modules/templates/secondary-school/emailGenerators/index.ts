@@ -1,2 +1,2 @@
 export * from './applicationSubmittedEmail'
-export * from './applicationRejectedEmail'
+export * from './applicationDeletedEmail'

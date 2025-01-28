@@ -86,12 +86,12 @@ export class SecondarySchoolClient {
     return !studentInfo?.hasActiveApplication
   }
 
-  async delete(auth: User, externalId: string): Promise<void> {
-    return this.applicationsApiWithAuth(auth).v1ApplicationsApplicationIdDelete(
-      {
-        applicationId: externalId,
-      },
-    )
+  async delete(auth: User, applicationId: string): Promise<void> {
+    return this.applicationsApiWithAuth(
+      auth,
+    ).v1ApplicationsIslandIsApplicationIdDelete({
+      islandIsApplicationId: applicationId,
+    })
   }
 
   async create(auth: User, application: Application): Promise<string> {

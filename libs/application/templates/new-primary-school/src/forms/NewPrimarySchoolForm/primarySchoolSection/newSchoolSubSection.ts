@@ -3,8 +3,10 @@ import {
   buildMultiField,
   buildSubSection,
   coreErrorMessages,
+  NO,
 } from '@island.is/application/core'
 import { friggSchoolsByMunicipalityQuery } from '../../../graphql/queries'
+import { ApplicationType } from '../../../lib/constants'
 import { newPrimarySchoolMessages } from '../../../lib/messages'
 import {
   getApplicationAnswers,
@@ -15,6 +17,15 @@ import { FriggSchoolsByMunicipalityQuery } from '../../../types/schema'
 export const newSchoolSubSection = buildSubSection({
   id: 'newSchoolSubSection',
   title: newPrimarySchoolMessages.primarySchool.newSchoolSubSectionTitle,
+  condition: (answers) => {
+    const { applyForNeighbourhoodSchool, applicationType } =
+      getApplicationAnswers(answers)
+    return (
+      applicationType === ApplicationType.NEW_PRIMARY_SCHOOL ||
+      (applicationType === ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL &&
+        applyForNeighbourhoodSchool === NO)
+    )
+  },
   children: [
     buildMultiField({
       id: 'newSchool',
@@ -46,7 +57,7 @@ export const newSchoolSubSection = buildSubSection({
           placeholder: newPrimarySchoolMessages.shared.schoolPlaceholder,
           loadingError: coreErrorMessages.failedDataProvider,
           dataTestId: 'new-school-school',
-          updateOnSelect: ['newSchool.municipality'],
+          updateOnSelect: 'newSchool.municipality',
           loadOptions: async ({ application, apolloClient, selectedValue }) => {
             const { schoolMunicipality } = getApplicationAnswers(
               application.answers,

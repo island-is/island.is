@@ -17,7 +17,10 @@ import {
   PageTitle,
   RenderFiles,
 } from '@island.is/judicial-system-web/src/components'
-import { CaseFileCategory } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  CaseFileCategory,
+  CaseIndictmentRulingDecision,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   useDefendants,
   useFileList,
@@ -57,12 +60,23 @@ const IndictmentOverview = () => {
   const hasPunishmentType = (punishmentType: PunishmentType) =>
     defendant?.punishmentType === punishmentType
 
+  const hasRuling = workingCase.caseFiles?.some(
+    (file) => file.category === CaseFileCategory.RULING,
+  )
+  const fileCategory = hasRuling
+    ? CaseFileCategory.RULING
+    : CaseFileCategory.COURT_RECORD
+
   return (
     <PageLayout workingCase={workingCase} isLoading={false} notFound={false}>
       <PageHeader title={formatMessage(strings.htmlTitle)} />
       <FormContentContainer>
         <PageTitle previousUrl={constants.PRISON_CASES_ROUTE}>
-          {formatMessage(strings.title)}
+          {formatMessage(strings.title, {
+            isFine:
+              workingCase.indictmentRulingDecision ===
+              CaseIndictmentRulingDecision.FINE,
+          })}
         </PageTitle>
         <Box marginBottom={5}>
           {workingCase.courtCaseNumber && (
@@ -94,14 +108,16 @@ const IndictmentOverview = () => {
         </Box>
         <Box marginBottom={5}>
           <Text variant="h4" as="h4" marginBottom={1}>
-            {formatMessage(strings.verdictTitle)}
+            {formatMessage(
+              hasRuling ? strings.verdictTitle : strings.courtRecordTitle,
+            )}
           </Text>
           <RenderFiles
             onOpenFile={onOpen}
             caseFiles={
               workingCase.caseFiles?.filter(
-                (file) => file.category === CaseFileCategory.RULING,
-              ) || []
+                (file) => file.category === fileCategory,
+              ) ?? []
             }
           />
         </Box>

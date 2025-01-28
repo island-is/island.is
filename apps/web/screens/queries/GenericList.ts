@@ -55,6 +55,10 @@ export const GET_GENERIC_LIST_ITEM_BY_SLUG_QUERY = gql`
         width
         height
       }
+      filterTags {
+        id
+        title
+      }
       fullWidthImageInContent
     }
   }
