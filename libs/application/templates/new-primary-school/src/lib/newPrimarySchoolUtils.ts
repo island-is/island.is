@@ -19,8 +19,8 @@ import {
 } from '../types'
 import {
   ApplicationType,
-  ReasonForApplicationOptions,
   LanguageEnvironmentOptions,
+  ReasonForApplicationOptions,
 } from './constants'
 
 import { newPrimarySchoolMessages } from './messages'
@@ -181,6 +181,11 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
 
   const selectedSchool = getValueViaPath(answers, 'newSchool.school') as string
 
+  const applyForNeighbourhoodSchool = getValueViaPath(
+    answers,
+    'school.applyForNeighbourhoodSchool',
+  ) as YesOrNo
+
   return {
     applicationType,
     childNationalId,
@@ -219,6 +224,7 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     startDate,
     schoolMunicipality,
     selectedSchool,
+    applyForNeighbourhoodSchool,
   }
 }
 
@@ -396,6 +402,23 @@ export const hasForeignLanguages = (answers: FormValue) => {
   }
 
   return languageEnvironment !== LanguageEnvironmentOptions.ONLY_ICELANDIC
+}
+
+export const getNeighbourhoodSchoolName = (application: Application) => {
+  const { primaryOrgId, childMemberships } = getApplicationExternalData(
+    application.externalData,
+  )
+
+  if (!primaryOrgId || !childMemberships) {
+    return undefined
+  }
+
+  // This function needs to be improved when Juni is ready with the neighbourhood school data
+
+  // Find the school name since we only have primary org id
+  return childMemberships
+    .map((membership) => membership.organization)
+    .find((organization) => organization?.id === primaryOrgId)?.name
 }
 
 export const determineNameFromApplicationAnswers = (

@@ -108,6 +108,9 @@ export const dataSchema = z.object({
     municipality: z.string(),
     school: z.string(),
   }),
+  school: z.object({
+    applyForNeighbourhoodSchool: z.enum([YES, NO]),
+  }),
   siblings: z
     .array(
       z.object({
