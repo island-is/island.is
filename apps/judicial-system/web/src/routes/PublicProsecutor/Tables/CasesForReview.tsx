@@ -49,29 +49,20 @@ const CasesForReview: FC<CasesForReviewTableProps> = ({ loading, cases }) => {
               thead={[
                 {
                   title: formatMessage(tables.caseNumber),
-                  sortable: {
-                    isSortable: true,
-                    key: 'courtCaseNumber',
-                  },
+                  sortBy: 'courtCaseNumber',
                 },
                 {
                   title: capitalize(
                     formatMessage(core.defendant, { suffix: 'i' }),
                   ),
-                  sortable: {
-                    isSortable: true,
-                    key: 'defendants',
-                  },
+                  sortBy: 'defendants',
                 },
                 { title: formatMessage(tables.type) },
                 { title: formatMessage(tables.state) },
                 { title: formatMessage(tables.prosecutorName) },
                 {
                   title: formatMessage(tables.deadline),
-                  sortable: {
-                    isSortable: true,
-                    key: 'indictmentAppealDeadline',
-                  },
+                  sortBy: 'indictmentAppealDeadline',
                 },
               ]}
               data={cases}
