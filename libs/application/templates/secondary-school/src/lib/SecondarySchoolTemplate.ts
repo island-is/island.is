@@ -20,7 +20,6 @@ import {
   application as applicationMessage,
   historyMessages as applicationHistoryMessages,
   pendingActionMessages as applicationPendingActionMessages,
-  conclusion,
   externalData,
   overview,
 } from './messages'
@@ -40,6 +39,7 @@ import {
   ApiActions,
   getEndOfDayUTCDate,
   getLastRegistrationEndDate,
+  ApplicationEvents,
 } from '../utils'
 import { AuthDelegationType } from '@island.is/shared/types'
 import { ApiScope } from '@island.is/auth/scopes'
@@ -157,6 +157,9 @@ const template: ApplicationTemplate<
           onEntry: defineTemplateApi({
             action: ApiActions.validateCanCreate,
           }),
+          onExit: defineTemplateApi({
+            action: ApiActions.submitApplication,
+          }),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -180,6 +183,87 @@ const template: ApplicationTemplate<
           [DefaultEvents.SUBMIT]: { target: States.SUBMITTED },
         },
       },
+      [States.EDIT]: {
+        entry: ['assignToInstitution'],
+        exit: ['clearAssignees'],
+        meta: {
+          name: applicationMessage.stateMetaNameEdit.defaultMessage,
+          status: FormModes.DRAFT,
+          actionCard: {
+            tag: {
+              label: applicationMessage.actionCardEdit,
+              variant: 'blue',
+            },
+            historyLogs: [
+              {
+                onEvent: DefaultEvents.SUBMIT,
+                logMessage: coreHistoryMessages.applicationSent,
+              },
+              {
+                onEvent: DefaultEvents.ABORT,
+                logMessage: applicationHistoryMessages.changesAborted,
+              },
+              {
+                onEvent: ApplicationEvents.RECEIVED,
+                logMessage: coreHistoryMessages.applicationReceived,
+              },
+            ],
+          },
+          lifecycle: {
+            shouldBeListed: true,
+            shouldBePruned: true,
+            whenToPrune: (application: Application) =>
+              pruneInDaysAfterRegistrationCloses(application, 30),
+          },
+          onExit: defineTemplateApi({
+            action: ApiActions.submitApplication,
+            triggerEvent: DefaultEvents.SUBMIT,
+          }),
+          onDelete: defineTemplateApi({
+            action: ApiActions.deleteApplication,
+          }),
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/editForm').then((module) =>
+                  Promise.resolve(module.Edit),
+                ),
+              actions: [
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: overview.buttons.submit,
+                  type: 'primary',
+                },
+                {
+                  event: DefaultEvents.ABORT,
+                  name: overview.buttons.abort,
+                  type: 'primary',
+                },
+              ],
+              write: 'all',
+              delete: true,
+            },
+            {
+              id: Roles.ORGANISATION_REVIEWER,
+              read: 'all',
+              write: 'all',
+              actions: [
+                {
+                  event: ApplicationEvents.RECEIVED,
+                  name: overview.buttons.received,
+                  type: 'primary',
+                },
+              ],
+            },
+          ],
+        },
+        on: {
+          [DefaultEvents.SUBMIT]: { target: States.SUBMITTED },
+          [DefaultEvents.ABORT]: { target: States.SUBMITTED },
+          [ApplicationEvents.RECEIVED]: { target: States.IN_REVIEW },
+        },
+      },
       [States.SUBMITTED]: {
         entry: ['assignToInstitution'],
         exit: ['clearAssignees'],
@@ -192,13 +276,6 @@ const template: ApplicationTemplate<
             whenToPrune: (application: Application) =>
               pruneInDaysAfterRegistrationCloses(application, 30),
           },
-          onEntry: defineTemplateApi({
-            action: ApiActions.submitApplication,
-          }),
-          onExit: defineTemplateApi({
-            action: ApiActions.deleteApplication,
-            triggerEvent: DefaultEvents.EDIT,
-          }),
           onDelete: defineTemplateApi({
             action: ApiActions.deleteApplication,
           }),
@@ -218,7 +295,7 @@ const template: ApplicationTemplate<
                 logMessage: applicationHistoryMessages.edited,
               },
               {
-                onEvent: DefaultEvents.SUBMIT,
+                onEvent: ApplicationEvents.RECEIVED,
                 logMessage: coreHistoryMessages.applicationReceived,
               },
             ],
@@ -231,11 +308,14 @@ const template: ApplicationTemplate<
                   Promise.resolve(module.Submitted),
                 ),
               read: 'all',
+              write: {
+                answers: ['copy'],
+              },
               delete: true,
               actions: [
                 {
                   event: DefaultEvents.EDIT,
-                  name: conclusion.overview.editButton,
+                  name: overview.buttons.edit,
                   type: 'primary',
                 },
               ],
@@ -246,8 +326,8 @@ const template: ApplicationTemplate<
               write: 'all',
               actions: [
                 {
-                  event: DefaultEvents.SUBMIT,
-                  name: overview.buttons.submit,
+                  event: ApplicationEvents.RECEIVED,
+                  name: overview.buttons.received,
                   type: 'primary',
                 },
               ],
@@ -255,8 +335,8 @@ const template: ApplicationTemplate<
           ],
         },
         on: {
-          [DefaultEvents.EDIT]: { target: States.DRAFT },
-          [DefaultEvents.SUBMIT]: { target: States.IN_REVIEW },
+          [DefaultEvents.EDIT]: { target: States.EDIT },
+          [ApplicationEvents.RECEIVED]: { target: States.IN_REVIEW },
         },
       },
       [States.IN_REVIEW]: {
@@ -283,7 +363,7 @@ const template: ApplicationTemplate<
             },
             historyLogs: [
               {
-                onEvent: DefaultEvents.SUBMIT,
+                onEvent: ApplicationEvents.RECEIVED,
                 logMessage: applicationHistoryMessages.reviewFinished,
               },
             ],
@@ -303,8 +383,8 @@ const template: ApplicationTemplate<
               write: 'all',
               actions: [
                 {
-                  event: DefaultEvents.SUBMIT,
-                  name: overview.buttons.submit,
+                  event: ApplicationEvents.RECEIVED,
+                  name: overview.buttons.received,
                   type: 'primary',
                 },
               ],
@@ -312,7 +392,7 @@ const template: ApplicationTemplate<
           ],
         },
         on: {
-          [DefaultEvents.SUBMIT]: { target: States.COMPLETED },
+          [ApplicationEvents.RECEIVED]: { target: States.COMPLETED },
         },
       },
       [States.COMPLETED]: {

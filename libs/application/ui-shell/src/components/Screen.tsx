@@ -188,8 +188,27 @@ const Screen: FC<React.PropsWithChildren<ScreenProps>> = ({
     setIsSubmitting(true)
     setBeforeSubmitError({})
 
+    let event: string | undefined
+    if (submitField !== undefined) {
+      const finalAnswers = { ...formValue, ...data }
+      if (submitField.placement === 'screen') {
+        event = (finalAnswers[submitField.id] as string) ?? 'SUBMIT'
+      } else {
+        if (submitField.actions.length === 1) {
+          const actionEvent = submitField.actions[0].event
+          event =
+            typeof actionEvent === 'object' ? actionEvent.type : actionEvent
+        } else {
+          const nativeEvent = e?.nativeEvent as { submitter: { id: string } }
+          event = nativeEvent?.submitter?.id ?? 'SUBMIT'
+        }
+      }
+    }
+
     if (typeof beforeSubmitCallback.current === 'function') {
-      const [canContinue, possibleError] = await beforeSubmitCallback.current()
+      const [canContinue, possibleError] = await beforeSubmitCallback.current(
+        event,
+      )
 
       if (!canContinue) {
         setIsSubmitting(false)
@@ -203,19 +222,6 @@ const Screen: FC<React.PropsWithChildren<ScreenProps>> = ({
 
     if (submitField !== undefined) {
       const finalAnswers = { ...formValue, ...data }
-      let event: string
-      if (submitField.placement === 'screen') {
-        event = (finalAnswers[submitField.id] as string) ?? 'SUBMIT'
-      } else {
-        if (submitField.actions.length === 1) {
-          const actionEvent = submitField.actions[0].event
-          event =
-            typeof actionEvent === 'object' ? actionEvent.type : actionEvent
-        } else {
-          const nativeEvent = e?.nativeEvent as { submitter: { id: string } }
-          event = nativeEvent?.submitter?.id ?? 'SUBMIT'
-        }
-      }
 
       response = await submitApplication({
         variables: {

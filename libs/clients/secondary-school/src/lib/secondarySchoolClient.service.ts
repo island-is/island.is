@@ -95,6 +95,22 @@ export class SecondarySchoolClient {
   }
 
   async create(auth: User, application: Application): Promise<string> {
+    // Check if an application already exists
+    let externalId: string | undefined
+    try {
+      externalId = await this.applicationsApiWithAuth(
+        auth,
+      ).v1ApplicationsIslandIsApplicationIdIdGet({
+        islandIsApplicationId: application.id,
+      })
+    } catch (e) {
+      console.log('e', e)
+      if (e.response?.status !== 404) {
+        // Rethrow if the error isn't due to the application not existing
+        throw e
+      }
+    }
+
     const applicationBaseDto = {
       islandIsApplicationId: application.id,
       applicantNationalId: application.nationalId,
@@ -129,21 +145,36 @@ export class SecondarySchoolClient {
       attachments: application.attachments,
     }
 
-    try {
-      const result = await this.applicationsApiWithAuth(
-        auth,
-      ).v1ApplicationsPost({
-        applicationBaseDto,
-      })
+    if (externalId) {
+      try {
+        await this.applicationsApiWithAuth(
+          auth,
+        ).v1ApplicationsIslandIsApplicationIdPut({
+          islandIsApplicationId: application.id,
+          applicationBaseDto,
+        })
 
-      if (!result.id) {
-        throw new Error('Application creation failed: No ID returned')
+        return externalId
+      } catch (error) {
+        throw new Error(`Failed to update application: ${error.message}`)
       }
+    } else {
+      try {
+        const result = await this.applicationsApiWithAuth(
+          auth,
+        ).v1ApplicationsPost({
+          applicationBaseDto,
+        })
 
-      // Return external ID
-      return result.id
-    } catch (error) {
-      throw new Error(`Failed to create application: ${error.message}`)
+        if (!result.id) {
+          throw new Error('Application creation failed: No ID returned')
+        }
+
+        // Return external ID
+        return result.id
+      } catch (error) {
+        throw new Error(`Failed to create application: ${error.message}`)
+      }
     }
   }
 }
