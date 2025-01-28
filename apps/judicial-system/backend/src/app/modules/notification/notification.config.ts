@@ -25,6 +25,10 @@ export const notificationModuleConfig = defineConfig({
       courtsEmails: env.requiredJSON('COURTS_EMAILS', {}) as {
         [key: string]: string
       },
+      courtOfAppealsAssistantEmails: env.required(
+        'COURT_OF_APPEALS_ASSISTANT_EMAILS',
+        '',
+      ),
       policeInstitutionEmails: env.requiredJSON(
         'POLICE_INSTITUTIONS_EMAILS',
         {},
