@@ -36,7 +36,10 @@ const validateApplicationsInitialData = ({
     return true
   }
   // Only show widget initially if there are applications
-  if (data?.applicationApplications?.length !== 0) {
+  if (
+    data?.applicationApplications?.length &&
+    data?.applicationApplications?.length !== 0
+  ) {
     return true
   }
   return false
