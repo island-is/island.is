@@ -52,6 +52,7 @@ FROM src AS builder
 # Stage-specific ARGs
 ENV NODE_ENV=production
 ENV NODE_OPTIONS="--max-old-space-size=8192"
+ARG APP
 
 RUN yarn nx run-many --target=build --projects="${APP}" --prod --parallel=8
 
