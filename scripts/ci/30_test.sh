@@ -66,3 +66,5 @@ opts=(
   --verbose
 )
 yarn nx run-many "${opts[@]}" ${EXTRA_OPTS} "$@"
+
+echo "DONE"
