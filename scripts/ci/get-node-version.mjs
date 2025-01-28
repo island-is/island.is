@@ -5,7 +5,9 @@ const DOCKERHUB_BASE_URL =
   'https://hub.docker.com/v2/repositories/library/node/tags?page_size=100'
 
 const nodeVersion = await getPackageVersion()
-const version = await getVersion(nodeVersion)
+// TODO: make better
+// const version = await getVersion(nodeVersion)
+const version = '20-alpine3.20'
 
 if (!version) {
   console.error(`Failed getting docker image for ${nodeVersion}`)

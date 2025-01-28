@@ -43,7 +43,7 @@ export const Child = ({
     >
       <Stack space={2}>
         <GridRow>
-          <GridColumn span={['12/12', '12/12', '12/12', '12/12']}>
+          <GridColumn span="12/12">
             <Text variant="h3" as="h3">
               {formatMessage(newPrimarySchoolMessages.overview.child)}
             </Text>
@@ -99,7 +99,7 @@ export const Child = ({
                   <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
                     <DataValue
                       label={formatMessage(
-                        newPrimarySchoolMessages.childrenNParents
+                        newPrimarySchoolMessages.childrenNGuardians
                           .childInfoPreferredName,
                       )}
                       value={childInfo.preferredName}
@@ -111,7 +111,7 @@ export const Child = ({
                   <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
                     <DataValue
                       label={formatMessage(
-                        newPrimarySchoolMessages.childrenNParents
+                        newPrimarySchoolMessages.childrenNGuardians
                           .childInfoPronouns,
                       )}
                       value={childInfo.pronouns
@@ -131,7 +131,7 @@ export const Child = ({
                 <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
                   <DataValue
                     label={formatMessage(
-                      newPrimarySchoolMessages.childrenNParents
+                      newPrimarySchoolMessages.childrenNGuardians
                         .childInfoPlaceOfResidence,
                     )}
                     value={`${childInfo.placeOfResidence?.streetAddress}, ${childInfo.placeOfResidence?.postalCode}`}

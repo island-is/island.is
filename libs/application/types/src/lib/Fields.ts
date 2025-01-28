@@ -57,7 +57,7 @@ export type TableContext = Context & {
 export type AsyncSelectContext = {
   application: Application
   apolloClient: ApolloClient<object>
-  selectedValue?: string[]
+  selectedValue?: string | string[]
 }
 
 export type TagVariant =
@@ -402,7 +402,7 @@ export interface AsyncSelectField extends InputField {
   backgroundColor?: InputBackgroundColor
   isSearchable?: boolean
   isMulti?: boolean
-  updateOnSelect?: string[]
+  updateOnSelect?: string
 }
 
 export interface TextField extends InputField {

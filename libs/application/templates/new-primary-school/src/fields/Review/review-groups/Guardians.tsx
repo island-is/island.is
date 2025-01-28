@@ -7,27 +7,27 @@ import { newPrimarySchoolMessages } from '../../../lib/messages'
 import { getApplicationAnswers } from '../../../lib/newPrimarySchoolUtils'
 import { ReviewGroupProps } from './props'
 
-export const Parents = ({
+export const Guardians = ({
   application,
   editable,
   goToScreen,
 }: ReviewGroupProps) => {
   const { formatMessage } = useLocale()
-  const { parents } = getApplicationAnswers(application.answers)
+  const { guardians } = getApplicationAnswers(application.answers)
 
   return (
     <>
-      {Object.values(parents).map((parent, index) => (
+      {guardians.map((guardian, index) => (
         <ReviewGroup
           isEditable={editable}
-          editAction={() => goToScreen?.('parents')}
+          editAction={() => goToScreen?.('guardians')}
           key={index}
         >
           <Stack space={2}>
             <GridRow>
-              <GridColumn span={['12/12', '12/12', '12/12', '12/12']}>
+              <GridColumn span="12/12">
                 <Text variant="h3" as="h3">
-                  {formatMessage(newPrimarySchoolMessages.overview.parents)}{' '}
+                  {formatMessage(newPrimarySchoolMessages.overview.guardians)}{' '}
                   {index + 1}
                 </Text>
               </GridColumn>
@@ -38,7 +38,7 @@ export const Parents = ({
                   label={formatMessage(
                     newPrimarySchoolMessages.shared.fullName,
                   )}
-                  value={parent.fullName}
+                  value={guardian.fullName}
                 />
               </GridColumn>
               <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
@@ -46,7 +46,7 @@ export const Parents = ({
                   label={formatMessage(
                     newPrimarySchoolMessages.shared.nationalId,
                   )}
-                  value={formatKennitala(parent.nationalId)}
+                  value={formatKennitala(guardian.nationalId)}
                 />
               </GridColumn>
             </GridRow>
@@ -54,7 +54,7 @@ export const Parents = ({
               <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
                 <DataValue
                   label={formatMessage(newPrimarySchoolMessages.shared.address)}
-                  value={parent.address.streetAddress}
+                  value={guardian.address.streetAddress}
                 />
               </GridColumn>
               <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
@@ -62,7 +62,7 @@ export const Parents = ({
                   label={formatMessage(
                     newPrimarySchoolMessages.shared.municipality,
                   )}
-                  value={`${parent.address.postalCode}, ${parent.address.city}`}
+                  value={`${guardian.address.postalCode}, ${guardian.address.city}`}
                 />
               </GridColumn>
             </GridRow>
@@ -70,7 +70,7 @@ export const Parents = ({
               <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
                 <DataValue
                   label={formatMessage(newPrimarySchoolMessages.shared.email)}
-                  value={parent.email}
+                  value={guardian.email}
                 />
               </GridColumn>
               <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
@@ -78,7 +78,7 @@ export const Parents = ({
                   label={formatMessage(
                     newPrimarySchoolMessages.shared.phoneNumber,
                   )}
-                  value={formatNumber(parent.phoneNumber, 'International')}
+                  value={formatNumber(guardian.phoneNumber, 'International')}
                 />
               </GridColumn>
             </GridRow>
