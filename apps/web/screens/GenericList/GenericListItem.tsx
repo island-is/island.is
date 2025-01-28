@@ -53,7 +53,7 @@ const GenericListItemPage: Screen<GenericListItemPageProps> = ({
             </Text>
             {filterTags.length > 0 && (
               <Inline space={1}>
-                {item.filterTags?.map((tag) => (
+                {filterTags.map((tag) => (
                   <Tag
                     disabled={true}
                     variant="purple"

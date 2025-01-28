@@ -58,7 +58,6 @@ export const GET_GENERIC_LIST_ITEM_BY_SLUG_QUERY = gql`
       filterTags {
         id
         title
-        slug
       }
       fullWidthImageInContent
     }
