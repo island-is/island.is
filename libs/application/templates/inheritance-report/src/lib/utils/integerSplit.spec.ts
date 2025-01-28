@@ -1,4 +1,4 @@
-import { integerPercentageSplit } from './integerSplit'
+import { integerPercentageSplit, isEqualWithTolerance } from './integerSplit'
 
 describe('integerPercentageSplit', () => {
   it('should split a total on percentages roughly equally', () => {
@@ -111,5 +111,23 @@ describe('integerPercentageSplit', () => {
         [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, -5],
       )
     }).toThrowError('A percentage may not be negative')
+  })
+})
+
+describe('isEqualWithTolerance', () => {
+  it('returns true if abs(target-number) <= tolerance, false otherwise', () => {
+    const largeTolerance = 1
+    const smallTolerance = 1e-6
+    expect(isEqualWithTolerance(100, 100)).toBeTruthy()
+    expect(isEqualWithTolerance(100, 99, largeTolerance)).toBeTruthy()
+    expect(
+      isEqualWithTolerance(-200, -200.000000001, smallTolerance),
+    ).toBeTruthy()
+
+    expect(isEqualWithTolerance(888.88, 888.98, smallTolerance)).toBeFalsy()
+    expect(
+      isEqualWithTolerance(0, 0 - 1.5 * smallTolerance, smallTolerance),
+    ).toBeFalsy()
+    expect(isEqualWithTolerance(1, -1, largeTolerance)).toBeFalsy()
   })
 })

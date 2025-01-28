@@ -18,8 +18,7 @@ export const integerPercentageSplit = (
   total = Math.abs(total)
 
   const percentageSum = percentages.reduceRight((p, c) => p + c)
-  const tolerance = 1.0e-10
-  if (percentageSum !== 100 && Math.abs(100 - percentageSum) > tolerance) {
+  if (!isEqualWithTolerance(percentageSum, 100)) {
     throw new Error('Percentages must add up to 100 exactly')
   }
 
@@ -56,4 +55,14 @@ export const integerPercentageSplit = (
     return shares.map((e) => e * -1)
   }
   return shares
+}
+
+// Returns true if an array sums to a target number,
+// includes a tolerance to account for floating point errors
+export const isEqualWithTolerance = (
+  number: number,
+  target: number,
+  tolerance: number = 10e-10,
+) => {
+  return number === target || Math.abs(target - number) <= tolerance
 }
