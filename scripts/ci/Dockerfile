@@ -231,33 +231,6 @@ USER pwuser
 ENTRYPOINT [ "./entrypoint.sh" ]
 
 
-FROM playwright-base AS output-local
-
-# Stage-specific ARGs
-ARG APP
-ARG APP_DIST_HOME
-ARG APP_HOME
-ARG GIT_BRANCH
-ARG GIT_COMMIT_SHA
-ARG GIT_REPOSITORY_URL
-
-WORKDIR ${APP_DIST_HOME}
-
-# node user exists in the base image
-RUN mkdir -p /out \
-  && chown node:node /out
-
-COPY --chown=pwuser:pwuser --chmod=0755 ${APP_HOME}/entrypoint.sh .
-
-USER pwuser
-
-ENV GIT_BRANCH=${GIT_BRANCH} GIT_COMMIT_SHA=${GIT_COMMIT_SHA} GIT_REPOSITORY_URL=${GIT_REPOSITORY_URL}
-ENV DD_GIT_BRANCH=${GIT_BRANCH} DD_GIT_COMMIT_SHA=${GIT_COMMIT_SHA} DD_GIT_REPOSITORY_URL=${GIT_REPOSITORY_URL}
-LABEL branch=${GIT_BRANCH}
-LABEL commit=${GIT_COMMIT_SHA}
-ENTRYPOINT [ "./entrypoint.sh" ]
-
-
 FROM base-node AS output-native
 
 RUN echo "not-implemented"

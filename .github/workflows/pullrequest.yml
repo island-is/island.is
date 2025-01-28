@@ -17,17 +17,21 @@ env:
   COMPOSE_HTTP_TIMEOUT: 180
   SKIP_GENERATED_CACHE: ${{ contains(github.event.pull_request.labels.*.name, 'skip-generated-cache') }}
   NX_AFFECTED_ALL: ${{ contains(github.event.pull_request.labels.*.name, 'nx-affected-all') }}
+  DISABLE_CHUNKS: 'false'
+  DISABLE_GROUPING: 'false'
+  DISABLE_PROBLEMATIC: 'false'
+  CHUNK_SIZE: '3'
+  MAX_JOBS: '2'
+  NX_PARALLEL: '2'
+  NX_MAX_PARALLEL: '4'
 
 jobs:
   prepare:
-    runs-on: ec2-runners
-    container:
-      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
+    runs-on: arc-runners
     timeout-minutes: 35
 
     env:
       AFFECTED_ALL: ${{ secrets.AFFECTED_ALL }}
-      CHUNK_SIZE: 7
       SERVERSIDE_FEATURES_ON: ''
       DOCKER_REGISTRY: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/
       DOCKER_BASE_IMAGE_REGISTRY: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/ecr-public
@@ -43,6 +47,7 @@ jobs:
       # Creates homedir if missing (e.g. when set to /tmp/runner/ when running locally with act)
       - name: Debug home etc.
         run: |
+          echo "docker version: $(docker --version)"
           echo "User: HOME=$HOME, PWD=$PWD, id=$(id)"
           mkdir -p "$HOME"
           ls -lah "$HOME"
@@ -65,19 +70,33 @@ jobs:
           yarn --version
           ls -l "$(which node)"
 
+      - name: Derive appropriate SHAs
+        uses: nrwl/nx-set-shas@v4
+
+      - run: |
+          echo "BASE: ${{ env.NX_BASE }}"
+          echo "HEAD: ${{ env.NX_HEAD }}"
+
       - name: Checking out relevant branches
         run: |
           set -euo pipefail
+          echo "CHUNK_SIZE: $CHUNK_SIZE"
+          echo "MAX_JOBS: $MAX_JOBS"
+          echo "NX_PARALLEL: $NX_PARALLEL"
           set -x
 
-          git checkout -m "$GITHUB_HEAD_REF"
-          git checkout -m "$GITHUB_BASE_REF"
-          git checkout -m "$GITHUB_SHA"
+          # git checkout -m "$GITHUB_HEAD_REF"
+          # git checkout -m "$GITHUB_BASE_REF"
+          # git checkout -m "$GITHUB_SHA"
+
           git config --global user.email "ci@island.is"
           git config --global user.name "CI Bot"
 
-          BASE_SHA="$(git merge-base HEAD "$GITHUB_BASE_REF")"
-          HEAD_SHA="$(git merge-base HEAD "$GITHUB_HEAD_REF")"
+          # BASE_SHA="$(git merge-base HEAD "$GITHUB_BASE_REF")"
+          # HEAD_SHA="$(git merge-base HEAD "$GITHUB_HEAD_REF")"
+          BASE_SHA=${{ env.NX_BASE }}
+          HEAD_SHA=${{ env.NX_HEAD }}
+          echo "BASE=$BASE_SHA" >> "$GITHUB_ENV"
           echo "Current base SHA is '$BASE_SHA' and head SHA is '$HEAD_SHA'"
           echo "{\"base_sha\": \"$BASE_SHA\", \"head_sha\":\"$HEAD_SHA\"}" > event.json
 
@@ -102,22 +121,22 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           enable-cache: 'node_modules,cypress,generated-files'
 
-      - name: Preparing HEAD and BASE tags
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          HTML_URL: ${{ github.event.pull_request.html_url }}
-          ISSUE_REPORTING_SLACK_WEBHOOK_URL: ${{ secrets.SLACK_BUILD_ISSUES_REPORTING_WEBHOOK_URL }}
-        run: |
-          set -euo pipefail
-          echo "HEAD=$GITHUB_SHA" >> "$GITHUB_ENV"
-          export HEAD_REF="$GITHUB_HEAD_REF"
-          export BASE_REF="$GITHUB_BASE_REF"
-          export PR_REF="$GITHUB_SHA"
-          export SHELL=/usr/bin/bash
-          export WORKFLOW_ID=pullrequest
-          source ./scripts/ci/00_prepare-base-tags.sh "$(git merge-base HEAD "$GITHUB_BASE_REF")"
-          git checkout "$GITHUB_SHA"
-          echo "BASE=$BASE" >> "$GITHUB_ENV"
+      # - name: Preparing HEAD and BASE tags
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #     HTML_URL: ${{ github.event.pull_request.html_url }}
+      #     ISSUE_REPORTING_SLACK_WEBHOOK_URL: ${{ secrets.SLACK_BUILD_ISSUES_REPORTING_WEBHOOK_URL }}
+      #   run: |
+      #     set -euo pipefail
+      #     echo "HEAD=$GITHUB_SHA" >> "$GITHUB_ENV"
+      #     export HEAD_REF="$GITHUB_HEAD_REF"
+      #     export BASE_REF="$GITHUB_BASE_REF"
+      #     export PR_REF="$GITHUB_SHA"
+      #     export SHELL=/usr/bin/bash
+      #     export WORKFLOW_ID=pullrequest
+      #     source ./scripts/ci/00_prepare-base-tags.sh "$(git merge-base HEAD "$GITHUB_BASE_REF")"
+      #     git checkout "$GITHUB_SHA"
+      #     echo "BASE=$BASE" >> "$GITHUB_ENV"
 
       - name: License audit Node modules
         run: ./scripts/ci/20_license-audit.sh
@@ -141,6 +160,11 @@ jobs:
 
       - name: Prepare lint targets
         id: lint_projects
+        env:
+          # Linting is easy, no need to split/chunk it
+          DISABLE_CHUNKS: 'true'
+          DISABLE_GROUPING: 'true'
+          DISABLE_PROBLEMATIC: 'true'
         run: |
           set -euo pipefail
           CHUNKS="$(./scripts/ci/generate-chunks.sh lint)"
@@ -171,8 +195,6 @@ jobs:
 
       - name: Prepare build targets
         id: build_projects
-        env:
-          CHUNK_SIZE: 4
         run: |
           set -euo pipefail
           CHUNKS="$(./scripts/ci/generate-chunks.sh build)"
@@ -191,13 +213,10 @@ jobs:
     needs:
       - prepare
     if: needs.prepare.outputs.TEST_CHUNKS
-    runs-on: ec2-runners
-    container:
-      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
+    runs-on: arc-runners
     timeout-minutes: 45
     env:
       AFFECTED_PROJECTS: ${{ matrix.projects }}
-      MAX_JOBS: 1
     strategy:
       fail-fast: false
       matrix: ${{ fromJson(needs.prepare.outputs.TEST_CHUNKS) }}
@@ -234,9 +253,7 @@ jobs:
     needs:
       - prepare
     if: needs.prepare.outputs.E2E_CHUNKS
-    runs-on: ec2-runners
-    container:
-      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
+    runs-on: arc-runners
     timeout-minutes: 45
     env:
       AFFECTED_PROJECT: ${{ matrix.projects }}
@@ -272,9 +289,7 @@ jobs:
   linting-workspace:
     needs:
       - prepare
-    runs-on: ec2-runners
-    container:
-      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
+    runs-on: arc-runners
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v4
@@ -312,9 +327,7 @@ jobs:
   formatting:
     needs:
       - prepare
-    runs-on: ec2-runners
-    container:
-      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
+    runs-on: arc-runners
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v4
@@ -353,15 +366,12 @@ jobs:
   linting:
     needs:
       - prepare
-    runs-on: ec2-runners
-    container:
-      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
+    runs-on: arc-runners
     timeout-minutes: 35
     if: needs.prepare.outputs.LINT_CHUNKS
     env:
       AFFECTED_PROJECTS: ${{ matrix.projects }}
       NODE_OPTIONS: --max-old-space-size=4096
-      MAX_JOBS: 3
     strategy:
       fail-fast: false
       matrix: ${{ fromJson(needs.prepare.outputs.LINT_CHUNKS) }}
@@ -385,13 +395,10 @@ jobs:
   build:
     needs:
       - prepare
-    runs-on: ec2-runners
-    container:
-      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
+    runs-on: arc-runners
     timeout-minutes: 35
     env:
       AFFECTED_PROJECTS: ${{ matrix.projects }}
-      MAX_JOBS: 2
     strategy:
       fail-fast: false
       matrix: ${{ fromJson(needs.prepare.outputs.BUILD_CHUNKS) }}
@@ -415,9 +422,7 @@ jobs:
         run: ./scripts/ci/run-in-parallel-native.sh build
 
   success:
-    runs-on: ec2-runners
-    container:
-      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
+    runs-on: arc-runners
     if: ${{ !cancelled() }}
     needs:
       - prepare

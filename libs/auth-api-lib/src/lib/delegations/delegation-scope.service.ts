@@ -28,10 +28,11 @@ import { DelegationDelegationType } from './models/delegation-delegation-type.mo
 import { DelegationScope } from './models/delegation-scope.model'
 import { DelegationTypeModel } from './models/delegation-type.model'
 import { Delegation } from './models/delegation.model'
+import { DelegationValidity } from './types/delegationValidity'
 import filterByCustomScopeRule from './utils/filterByScopeCustomScopeRule'
+import { getScopeValidityWhereClause } from './utils/scopes'
 
 import type { User } from '@island.is/auth-nest-tools'
-
 @Injectable()
 export class DelegationScopeService {
   constructor(
@@ -135,17 +136,8 @@ export class DelegationScopeService {
     toNationalId: string,
     fromNationalId: string,
   ): Promise<DelegationScope[]> {
-    const today = new Date()
-
     return this.delegationScopeModel.findAll({
-      where: {
-        [Op.and]: [
-          { validFrom: { [Op.lte]: today } },
-          {
-            validTo: { [Op.or]: [{ [Op.is]: undefined }, { [Op.gte]: today }] },
-          },
-        ],
-      },
+      where: getScopeValidityWhereClause(DelegationValidity.NOW),
       include: [
         {
           model: Delegation,

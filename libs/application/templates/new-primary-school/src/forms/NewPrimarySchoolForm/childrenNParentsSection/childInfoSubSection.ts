@@ -1,4 +1,5 @@
 import {
+  buildCheckboxField,
   buildCustomField,
   buildMultiField,
   buildRadioField,
@@ -11,6 +12,7 @@ import { newPrimarySchoolMessages } from '../../../lib/messages'
 import {
   getApplicationAnswers,
   getApplicationExternalData,
+  getGenderMessage,
 } from '../../../lib/newPrimarySchoolUtils'
 
 export const childInfoSubSection = buildSubSection({
@@ -67,10 +69,40 @@ export const childInfoSubSection = buildSubSection({
           defaultValue: (application: Application) =>
             getApplicationExternalData(application.externalData).applicantCity,
         }),
+        buildCustomField(
+          {
+            id: 'childInfo.gender',
+            component: 'DynamicDisabledText',
+            title: newPrimarySchoolMessages.shared.gender,
+          },
+          {
+            value: (application: Application) => getGenderMessage(application),
+          },
+        ),
+        buildCheckboxField({
+          id: 'childInfo.usePronounAndPreferredName',
+          title: '',
+          spacing: 0,
+          options: [
+            {
+              value: YES,
+              label:
+                newPrimarySchoolMessages.childrenNParents
+                  .usePronounAndPreferredName,
+            },
+          ],
+        }),
         buildTextField({
           id: 'childInfo.preferredName',
           title:
             newPrimarySchoolMessages.childrenNParents.childInfoPreferredName,
+          tooltip:
+            newPrimarySchoolMessages.childrenNParents.preferredNameTooltip,
+          condition: (answers) => {
+            const { childInfo } = getApplicationAnswers(answers)
+
+            return !!childInfo?.usePronounAndPreferredName?.includes(YES)
+          },
           defaultValue: (application: Application) =>
             getApplicationExternalData(application.externalData)
               .childInformation.preferredName ?? undefined,
@@ -79,6 +111,11 @@ export const childInfoSubSection = buildSubSection({
           {
             id: 'childInfo.pronouns',
             title: newPrimarySchoolMessages.childrenNParents.childInfoPronouns,
+            condition: (answers) => {
+              const { childInfo } = getApplicationAnswers(answers)
+
+              return !!childInfo?.usePronounAndPreferredName?.includes(YES)
+            },
             component: 'FriggOptionsAsyncSelectField',
             defaultValue: (application: Application) =>
               getApplicationExternalData(application.externalData)
@@ -96,6 +133,9 @@ export const childInfoSubSection = buildSubSection({
           id: 'childInfo.differentPlaceOfResidence',
           title:
             newPrimarySchoolMessages.childrenNParents.differentPlaceOfResidence,
+          description:
+            newPrimarySchoolMessages.childrenNParents
+              .differentPlaceOfResidenceDescription,
           width: 'half',
           required: true,
           space: 4,
@@ -117,9 +157,9 @@ export const childInfoSubSection = buildSubSection({
           width: 'half',
           required: true,
           condition: (answers) => {
-            const { differentPlaceOfResidence } = getApplicationAnswers(answers)
+            const { childInfo } = getApplicationAnswers(answers)
 
-            return differentPlaceOfResidence === YES
+            return childInfo?.differentPlaceOfResidence === YES
           },
         }),
         buildTextField({
@@ -129,9 +169,9 @@ export const childInfoSubSection = buildSubSection({
           format: '###',
           required: true,
           condition: (answers) => {
-            const { differentPlaceOfResidence } = getApplicationAnswers(answers)
+            const { childInfo } = getApplicationAnswers(answers)
 
-            return differentPlaceOfResidence === YES
+            return childInfo?.differentPlaceOfResidence === YES
           },
         }),
       ],
