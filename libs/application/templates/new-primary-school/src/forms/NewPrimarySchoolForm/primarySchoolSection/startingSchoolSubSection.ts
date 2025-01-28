@@ -11,7 +11,7 @@ export const startingSchoolSubSection = buildSubSection({
   id: 'startingSchoolSubSection',
   title: newPrimarySchoolMessages.primarySchool.startingSchoolSubSectionTitle,
   condition: (answers) => {
-    // Only display section if application type is "Application for a new primary school" and not selecting neighbourhood school
+    // Only display section if application type is "Application for a new primary school"
     const { applicationType } = getApplicationAnswers(answers)
     return applicationType === ApplicationType.NEW_PRIMARY_SCHOOL
   },
