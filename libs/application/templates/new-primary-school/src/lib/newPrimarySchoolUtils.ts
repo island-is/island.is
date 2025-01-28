@@ -13,12 +13,16 @@ import {
   ContactsRow,
   FriggChildInformation,
   Membership,
-  Parents,
   Person,
   SelectOption,
   SiblingsRow,
 } from '../types'
-import { ApplicationType, ReasonForApplicationOptions } from './constants'
+import {
+  ApplicationType,
+  LanguageEnvironmentOptions,
+  ReasonForApplicationOptions,
+} from './constants'
+
 import { newPrimarySchoolMessages } from './messages'
 
 export const getApplicationAnswers = (answers: Application['answers']) => {
@@ -33,7 +37,7 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
 
   const childInfo = getValueViaPath(answers, 'childInfo') as ChildInformation
 
-  const parents = getValueViaPath(answers, 'parents') as Parents
+  const guardians = getValueViaPath(answers, 'guardians') as Person[]
 
   const contacts = getValueViaPath(answers, 'contacts') as ContactsRow[]
 
@@ -54,25 +58,33 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
 
   const siblings = getValueViaPath(answers, 'siblings') as SiblingsRow[]
 
-  const nativeLanguage = getValueViaPath(
+  const languageEnvironment = getValueViaPath(
     answers,
-    'languages.nativeLanguage',
+    'languages.languageEnvironment',
   ) as string
 
-  const otherLanguagesSpokenDaily = getValueViaPath(
+  const signLanguage = getValueViaPath(
     answers,
-    'languages.otherLanguagesSpokenDaily',
+    'languages.signLanguage',
   ) as YesOrNo
 
-  const otherLanguages = getValueViaPath(
-    answers,
-    'languages.otherLanguages',
-  ) as string[]
+  const language1 = getValueViaPath(answers, 'languages.language1') as string
 
-  const icelandicNotSpokenAroundChild = getValueViaPath(
+  const language2 = getValueViaPath(answers, 'languages.language2') as string
+
+  const language3 = getValueViaPath(answers, 'languages.language3') as string
+
+  const language4 = getValueViaPath(answers, 'languages.language4') as string
+
+  const childLanguage = getValueViaPath(
     answers,
-    'languages.icelandicNotSpokenAroundChild',
-  ) as string[]
+    'languages.childLanguage',
+  ) as string
+
+  const interpreter = getValueViaPath(
+    answers,
+    'languages.interpreter',
+  ) as YesOrNo
 
   const acceptFreeSchoolLunch = getValueViaPath(
     answers,
@@ -134,6 +146,26 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     'support.specialSupport',
   ) as YesOrNo
 
+  const hasIntegratedServices = getValueViaPath(
+    answers,
+    'support.hasIntegratedServices',
+  ) as YesOrNo
+
+  const hasCaseManager = getValueViaPath(
+    answers,
+    'support.hasCaseManager',
+  ) as YesOrNo
+
+  const caseManagerName = getValueViaPath(
+    answers,
+    'support.caseManager.name',
+  ) as string
+
+  const caseManagerEmail = getValueViaPath(
+    answers,
+    'support.caseManager.email',
+  ) as string
+
   const requestMeeting = getValueViaPath(
     answers,
     'support.requestMeeting[0]',
@@ -144,33 +176,34 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
 
   const schoolMunicipality = getValueViaPath(
     answers,
-    'schools.newSchool.municipality',
+    'newSchool.municipality',
   ) as string
 
-  const selectedSchool = getValueViaPath(
-    answers,
-    'schools.newSchool.school',
-  ) as string
+  const selectedSchool = getValueViaPath(answers, 'newSchool.school') as string
 
-  const newSchoolHiddenInput = getValueViaPath(
+  const applyForNeighbourhoodSchool = getValueViaPath(
     answers,
-    'schools.newSchool.hiddenInput',
-  ) as string
+    'school.applyForNeighbourhoodSchool',
+  ) as YesOrNo
 
   return {
     applicationType,
     childNationalId,
     childInfo,
-    parents,
+    guardians,
     contacts,
     reasonForApplication,
     reasonForApplicationStreetAddress,
     reasonForApplicationPostalCode,
     siblings,
-    nativeLanguage,
-    otherLanguagesSpokenDaily,
-    otherLanguages,
-    icelandicNotSpokenAroundChild,
+    languageEnvironment,
+    language1,
+    language2,
+    language3,
+    language4,
+    childLanguage,
+    signLanguage,
+    interpreter,
     acceptFreeSchoolLunch,
     hasSpecialNeeds,
     specialNeedsType,
@@ -183,11 +216,15 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     requestMedicationAssistance,
     developmentalAssessment,
     specialSupport,
+    hasIntegratedServices,
+    hasCaseManager,
+    caseManagerName,
+    caseManagerEmail,
     requestMeeting,
     startDate,
     schoolMunicipality,
     selectedSchool,
-    newSchoolHiddenInput,
+    applyForNeighbourhoodSchool,
   }
 }
 
@@ -274,7 +311,7 @@ export const getSelectedChild = (application: Application) => {
   return selectedChild
 }
 
-export const getOtherParent = (
+export const getOtherGuardian = (
   application: Application,
 ): Person | undefined => {
   const selectedChild = getSelectedChild(application)
@@ -282,12 +319,15 @@ export const getOtherParent = (
   return selectedChild?.otherParent as Person | undefined
 }
 
-export const hasOtherParent = (
+export const hasOtherGuardian = (
   answers: FormValue,
   externalData: ExternalData,
 ): boolean => {
-  const otherParent = getOtherParent({ answers, externalData } as Application)
-  return !!otherParent
+  const otherGuardian = getOtherGuardian({
+    answers,
+    externalData,
+  } as Application)
+  return !!otherGuardian
 }
 
 export const getSelectedOptionLabel = (
@@ -330,6 +370,50 @@ export const getCurrentSchoolName = (application: Application) => {
   if (!primaryOrgId || !childMemberships) {
     return undefined
   }
+
+  // Find the school name since we only have primary org id
+  return childMemberships
+    .map((membership) => membership.organization)
+    .find((organization) => organization?.id === primaryOrgId)?.name
+}
+
+export const getLanguageEnvironments = () => {
+  return [
+    {
+      value: LanguageEnvironmentOptions.ONLY_ICELANDIC,
+      label: newPrimarySchoolMessages.differentNeeds.onlyIcelandicOption,
+    },
+    {
+      value: LanguageEnvironmentOptions.ICELANDIC_AND_FOREIGN,
+      label: newPrimarySchoolMessages.differentNeeds.icelandicAndForeignOption,
+    },
+    {
+      value: LanguageEnvironmentOptions.ONLY_FOREIGN,
+      label: newPrimarySchoolMessages.differentNeeds.onlyForeignOption,
+    },
+  ]
+}
+
+export const hasForeignLanguages = (answers: FormValue) => {
+  const { languageEnvironment } = getApplicationAnswers(answers)
+
+  if (!languageEnvironment) {
+    return false
+  }
+
+  return languageEnvironment !== LanguageEnvironmentOptions.ONLY_ICELANDIC
+}
+
+export const getNeighbourhoodSchoolName = (application: Application) => {
+  const { primaryOrgId, childMemberships } = getApplicationExternalData(
+    application.externalData,
+  )
+
+  if (!primaryOrgId || !childMemberships) {
+    return undefined
+  }
+
+  // This function needs to be improved when Juni is ready with the neighbourhood school data
 
   // Find the school name since we only have primary org id
   return childMemberships

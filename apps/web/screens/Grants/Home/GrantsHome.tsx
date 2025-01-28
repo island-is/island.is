@@ -1,3 +1,4 @@
+import { useMemo } from 'react'
 import { useIntl } from 'react-intl'
 import NextLink from 'next/link'
 
@@ -13,6 +14,7 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { Locale } from '@island.is/shared/types'
+import { isDefined } from '@island.is/shared/utils'
 import { GrantSearchSection } from '@island.is/web/components'
 import { SLICE_SPACING } from '@island.is/web/constants'
 import {
@@ -46,8 +48,8 @@ const GrantsHomePage: CustomScreen<GrantsHomeProps> = ({
   const { linkResolver } = useLinkResolver()
   const { formatMessage } = intl
 
-  const baseUrl = linkResolver('styrkjatorg', [], locale).href
-  const searchUrl = linkResolver('styrkjatorgsearch', [], locale).href
+  const baseUrl = linkResolver('grantsplaza', [], locale).href
+  const searchUrl = linkResolver('grantsplazasearch', [], locale).href
 
   const breadcrumbItems = [
     {
@@ -60,6 +62,22 @@ const GrantsHomePage: CustomScreen<GrantsHomeProps> = ({
       isTag: true,
     },
   ]
+
+  const categorySlugs: Array<CategorySlug> = useMemo(() => {
+    const ordering: Array<string> | null =
+      customPageData?.configJson?.categoryOrdering ?? null
+    if (!ordering) {
+      return [...CATEGORY_TAG_SLUGS]
+    }
+
+    return ordering
+      .map((slug) => {
+        if (CATEGORY_TAG_SLUGS.includes(slug as CategorySlug)) {
+          return slug as CategorySlug
+        }
+      })
+      .filter(isDefined)
+  }, [customPageData?.configJson?.categoryOrdering])
 
   return (
     <Box>
@@ -76,29 +94,26 @@ const GrantsHomePage: CustomScreen<GrantsHomeProps> = ({
             customPageData?.ogImage?.url ?? formatMessage(m.home.featuredImage)
           }
           featuredImageAlt={formatMessage(m.home.featuredImageAlt)}
-          //TODO - do when the categories are ready
           quickLinks={[
             {
-              title: 'Listamannalaun',
-              href: searchUrl + '?category=menning-og-listir',
+              title: formatMessage(m.bullets.open),
+              href: searchUrl + '?status=open',
             },
             {
-              title: 'Barnamenningarsjóður',
-              href: searchUrl + '?category=nam-og-kennsla',
+              title: formatMessage(m.bullets.nativeFunds),
+              href: searchUrl + '?category=grant-category-native',
             },
             {
-              title: 'Tónlistarsjóður',
-              href: searchUrl + '?category=nyskopun',
+              title: formatMessage(m.bullets.technologyDevelopmentFund),
+              href: searchUrl + '?query=tækniþróunar',
             },
             {
-              title: 'Rannís',
-              href: searchUrl + '?organization=rannis',
-              variant: 'purple',
+              title: formatMessage(m.bullets.financing),
+              href: searchUrl + '?type=grant-type-financing',
             },
             {
-              title: 'Erasmus',
-              href: searchUrl + '?organization=erasmus',
-              variant: 'purple',
+              title: formatMessage(m.bullets.companies),
+              href: searchUrl + '?query=fyrirtæki',
             },
           ]}
           breadcrumbs={
@@ -135,26 +150,34 @@ const GrantsHomePage: CustomScreen<GrantsHomeProps> = ({
             </Box>
 
             <GridRow>
-              {categories?.map((c) => (
-                <GridColumn
-                  key={c.slug}
-                  span={['1/1', '1/2', '1/2', '1/3']}
-                  paddingTop={3}
-                  paddingBottom={3}
-                >
-                  <CategoryCard
-                    href={`${searchUrl}?category=${c.slug}`}
-                    heading={c.title}
-                    text={
-                      CATEGORY_TAG_SLUGS.includes(c.slug as CategorySlug)
-                        ? formatMessage(
-                            mapTagToMessageId(c.slug as CategorySlug),
-                          )
-                        : ''
-                    }
-                  />
-                </GridColumn>
-              ))}
+              {categorySlugs
+                ?.map((c) => {
+                  const category = categories?.find((ct) => c === ct.slug)
+
+                  if (!category) {
+                    return undefined
+                  }
+
+                  return (
+                    <GridColumn
+                      key={c}
+                      span={['1/1', '1/2', '1/2', '1/3']}
+                      paddingTop={3}
+                      paddingBottom={3}
+                    >
+                      <CategoryCard
+                        href={`${searchUrl}?category=${c}`}
+                        heading={category.title}
+                        text={
+                          CATEGORY_TAG_SLUGS.includes(c)
+                            ? formatMessage(mapTagToMessageId(c))
+                            : ''
+                        }
+                      />
+                    </GridColumn>
+                  )
+                })
+                .filter(isDefined)}
             </GridRow>
           </GridContainer>
         </Box>
