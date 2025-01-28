@@ -1,7 +1,6 @@
-import { useEffect, useState } from 'react'
 import { useWindowSize } from 'react-use'
 
-import { Box, BoxProps } from '../..'
+import { Box, BoxProps, Text } from '../..'
 import { theme } from '@island.is/island-ui/theme'
 
 import * as styles from './InfoCard.css'
@@ -18,6 +17,7 @@ interface Props {
   columns?: 1 | 2 | 3
   cardsBackground?: BoxProps['background']
   cardsBorder?: BoxProps['borderColor']
+  notFoundText?: string
 }
 
 type CardSize = 'small' | 'medium' | 'large'
@@ -46,20 +46,14 @@ export const InfoCardGrid = ({
   variant,
   columns,
 }: Props) => {
-  const [isMobile, setIsMobile] = useState(false)
   const { width } = useWindowSize()
-
-  useEffect(() => {
-    if (width < theme.breakpoints.sm) {
-      return setIsMobile(true)
-    }
-    setIsMobile(false)
-  }, [width])
+  const isMobile = width < theme.breakpoints.sm
 
   const cardSize = mapColumnCountToCardSize(columns, isMobile)
 
   return (
     <Box
+      hidden={cards.length < 1}
       className={
         cardSize === 'small'
           ? styles.gridContainerThreeColumn
