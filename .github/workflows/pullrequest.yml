@@ -96,6 +96,7 @@ jobs:
           # HEAD_SHA="$(git merge-base HEAD "$GITHUB_HEAD_REF")"
           BASE_SHA=${{ env.NX_BASE }}
           HEAD_SHA=${{ env.NX_HEAD }}
+          echo "BASE=$BASE_SHA" >> "$GITHUB_ENV"
           echo "Current base SHA is '$BASE_SHA' and head SHA is '$HEAD_SHA'"
           echo "{\"base_sha\": \"$BASE_SHA\", \"head_sha\":\"$HEAD_SHA\"}" > event.json
 
@@ -120,22 +121,22 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           enable-cache: 'node_modules,cypress,generated-files'
 
-      - name: Preparing HEAD and BASE tags
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          HTML_URL: ${{ github.event.pull_request.html_url }}
-          ISSUE_REPORTING_SLACK_WEBHOOK_URL: ${{ secrets.SLACK_BUILD_ISSUES_REPORTING_WEBHOOK_URL }}
-        run: |
-          set -euo pipefail
-          echo "HEAD=$GITHUB_SHA" >> "$GITHUB_ENV"
-          export HEAD_REF="$GITHUB_HEAD_REF"
-          export BASE_REF="$GITHUB_BASE_REF"
-          export PR_REF="$GITHUB_SHA"
-          export SHELL=/usr/bin/bash
-          export WORKFLOW_ID=pullrequest
-          source ./scripts/ci/00_prepare-base-tags.sh "$(git merge-base HEAD "$GITHUB_BASE_REF")"
-          git checkout "$GITHUB_SHA"
-          echo "BASE=$BASE" >> "$GITHUB_ENV"
+      # - name: Preparing HEAD and BASE tags
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #     HTML_URL: ${{ github.event.pull_request.html_url }}
+      #     ISSUE_REPORTING_SLACK_WEBHOOK_URL: ${{ secrets.SLACK_BUILD_ISSUES_REPORTING_WEBHOOK_URL }}
+      #   run: |
+      #     set -euo pipefail
+      #     echo "HEAD=$GITHUB_SHA" >> "$GITHUB_ENV"
+      #     export HEAD_REF="$GITHUB_HEAD_REF"
+      #     export BASE_REF="$GITHUB_BASE_REF"
+      #     export PR_REF="$GITHUB_SHA"
+      #     export SHELL=/usr/bin/bash
+      #     export WORKFLOW_ID=pullrequest
+      #     source ./scripts/ci/00_prepare-base-tags.sh "$(git merge-base HEAD "$GITHUB_BASE_REF")"
+      #     git checkout "$GITHUB_SHA"
+      #     echo "BASE=$BASE" >> "$GITHUB_ENV"
 
       - name: License audit Node modules
         run: ./scripts/ci/20_license-audit.sh
