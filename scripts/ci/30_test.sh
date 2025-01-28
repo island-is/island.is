@@ -54,6 +54,7 @@ echo $EXTRA_OPTS
 
 opts=(
   --projects="${AFFECTED_PROJECTS}"
+  --exclude="${services_to_skip[*]}"
   --target=test
   --parallel="${NX_PARALLEL}"
   --verbose
@@ -62,9 +63,8 @@ opts=(
   --ci
   --detectLeaks=false # Detecting leaks in CI is flaky and takes a long time
   --detectOpenHandles # Prevents shipping improperly async-ed code
-  --passWithNoTests
-  --exclude="${services_to_skip[*]}"
-  # --runInBand # in-band causes significant slowness when many projects are running pralallel
+  --passWithNoTests   # This should ideally be `true`, but too many projects don't have tests
+  # --runInBand       # `runInBand` causes significant slowness when many projects are running pralallel
 )
 yarn nx run-many "${opts[@]}" ${EXTRA_OPTS} "$@"
 
