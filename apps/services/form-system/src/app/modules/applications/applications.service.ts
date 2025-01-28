@@ -191,7 +191,7 @@ export class ApplicationsService {
       })
     })
 
-    // internal validation of the input values of the screen
+    // internal validation of the input values of the screen.
     const screenValidationResponse =
       this.serviceManager.validation(filteredScreenDto)
 
