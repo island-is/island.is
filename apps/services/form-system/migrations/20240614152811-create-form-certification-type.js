@@ -1,8 +1,8 @@
 module.exports = {
   async up(queryInterface, Sequelize) {
-    return queryInterface.sequelize.transaction((t) =>
-      queryInterface.createTable(
-        'form_certification_type',
+    return queryInterface.sequelize.transaction(async (t) => {
+      await queryInterface.createTable(
+        'organization_certification_type',
         {
           id: {
             type: Sequelize.UUID,
@@ -20,30 +20,35 @@ module.exports = {
             defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
             allowNull: false,
           },
-          form_id: {
+          organization_id: {
             type: Sequelize.UUID,
             allowNull: false,
             references: {
-              model: 'form',
+              model: 'organization',
               key: 'id',
             },
           },
           certification_type_id: {
             type: Sequelize.UUID,
-            defaultValue: Sequelize.UUIDV4,
             allowNull: false,
           },
         },
         { transaction: t },
-      ),
-    )
+      );
+
+      await queryInterface.addConstraint('organization_certification_type', {
+        fields: ['organization_id', 'certification_type_id'],
+        type: 'unique',
+        name: 'unique_organization_id_certification_type_id_pair',
+        transaction: t,
+      });
+    });
   },
 
   async down(queryInterface, Sequelize) {
-    return queryInterface.sequelize.transaction((t) =>
-      queryInterface.dropTable('form_certification_type', {
-        transaction: t,
-      }),
-    )
+    return queryInterface.sequelize.transaction(async (t) => {
+      await queryInterface.removeConstraint('organization_certification_type', 'unique_organization_id_certification_type_id_pair', { transaction: t });
+      await queryInterface.dropTable('organization_certification_type', { transaction: t });
+    });
   },
-}
+};
