@@ -55,7 +55,6 @@ ENV NODE_OPTIONS="--max-old-space-size=8192"
 ARG APP
 
 RUN yarn nx run-many --target=build --projects="${APP}" --prod --parallel=8
-
 RUN sh -c ' \
   set -euxo pipefail; \
   ls -lah dist/ ./ ./apps/; \
@@ -69,9 +68,6 @@ RUN sh -c ' \
   mv "dist/$root_dir" /dist; \
   ls -lah /dist; \
   '
-
-SHELL ["/bin/ash", "-o", "pipefail", "-c"]
-RUN mv "dist/$(yarn nx show project "${APP}" --json | jq -r '.root')" /dist
 
 
 # This is base image for containers that are to be deployed
