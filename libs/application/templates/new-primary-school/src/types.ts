@@ -52,11 +52,6 @@ export type Person = {
   }
 }
 
-export type Parents = {
-  parent1: Person
-  parent2: Person
-}
-
 export type SelectOption = {
   label: string
   value: string

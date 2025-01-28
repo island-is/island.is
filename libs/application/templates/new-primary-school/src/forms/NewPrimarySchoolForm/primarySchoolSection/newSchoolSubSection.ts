@@ -46,7 +46,7 @@ export const newSchoolSubSection = buildSubSection({
           placeholder: newPrimarySchoolMessages.shared.schoolPlaceholder,
           loadingError: coreErrorMessages.failedDataProvider,
           dataTestId: 'new-school-school',
-          updateOnSelect: ['newSchool.municipality'],
+          updateOnSelect: 'newSchool.municipality',
           loadOptions: async ({ application, apolloClient, selectedValue }) => {
             const { schoolMunicipality } = getApplicationAnswers(
               application.answers,
