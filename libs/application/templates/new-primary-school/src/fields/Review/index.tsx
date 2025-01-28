@@ -27,7 +27,7 @@ import { Contacts } from './review-groups/Contacts'
 import { CurrentSchool } from './review-groups/CurrentSchool'
 import { FreeSchoolMeal } from './review-groups/FreeSchoolMeal'
 import { Languages } from './review-groups/Languages'
-import { Parents } from './review-groups/Parents'
+import { Guardians } from './review-groups/Guardians'
 import { ReasonForApplication } from './review-groups/ReasonForApplication'
 import { School } from './review-groups/School'
 import { Siblings } from './review-groups/Siblings'
@@ -163,7 +163,7 @@ export const Review: FC<ReviewScreenProps> = ({
         </Box>
       )}
       <Child {...childProps} />
-      <Parents {...childProps} />
+      <Guardians {...childProps} />
       <Contacts {...childProps} />
       {applicationType === ApplicationType.NEW_PRIMARY_SCHOOL && (
         <CurrentSchool {...childProps} />
