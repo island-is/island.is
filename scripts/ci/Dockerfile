@@ -53,10 +53,21 @@ FROM src AS builder
 ENV NODE_ENV=production
 ENV NODE_OPTIONS="--max-old-space-size=8192"
 
-RUN yarn run build ${APP} --prod
+RUN yarn nx run-many --target=build --projects="${APP}" --prod --parallel=8
 
-SHELL ["/bin/ash", "-o", "pipefail", "-c"]
-RUN mv "dist/$(yarn nx show project ${APP} --json | jq -r '.root')" /dist
+RUN sh -c ' \
+  set -euxo pipefail; \
+  ls -lah dist/ ./ ./apps/; \
+  yarn nx reset; \
+  if [[ "$APP" == "license-api" ]]; then \
+  echo "We got $APP"; \
+  else \
+  project="$(yarn nx show project ${APP} --json)"; \
+  fi; \
+  root_dir="$(echo -n "$project" | jq -r .root)"; \
+  mv "dist/$root_dir" /dist; \
+  ls -lah /dist; \
+  '
 
 
 # This is base image for containers that are to be deployed
