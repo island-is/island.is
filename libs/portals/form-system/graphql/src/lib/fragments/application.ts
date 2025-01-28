@@ -17,6 +17,7 @@ export const ApplicationFragment = gql`
     slug
     created
     modified
+    submittedAt
     dependencies {
       ...Dependency
     }

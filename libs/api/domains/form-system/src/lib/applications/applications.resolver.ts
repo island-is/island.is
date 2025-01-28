@@ -9,12 +9,10 @@ import {
 } from '@island.is/auth-nest-tools'
 import { Audit } from '@island.is/nest/audit'
 import { ApplicationsService } from './applications.service'
-import { Application, ApplicationListDto } from '../../models/applications.model'
+import { Application } from '../../models/applications.model'
 import {
   CreateApplicationInput,
   GetApplicationInput,
-  GetApplicationsByOrganizationInput,
-  SubmitScreenInput,
 } from '../../dto/application.input'
 import { UpdateApplicationDependenciesInput } from '../../dto/applicant.input'
 

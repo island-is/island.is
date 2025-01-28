@@ -4,7 +4,7 @@
   "sourceRoot": "apps/form-system/web/src",
   "projectType": "application",
   "tags": [
-    "scope:portals-admin"
+    "scope:form-system-web"
   ],
   "targets": {
     "build": {
