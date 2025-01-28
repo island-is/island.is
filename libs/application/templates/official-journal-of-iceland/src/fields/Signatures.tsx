@@ -11,7 +11,7 @@ import {
 import { signatures } from '../lib/messages/signatures'
 import { useState } from 'react'
 import { SignatureType, SignatureTypes } from '../lib/constants'
-import { Box, Button, Tabs } from '@island.is/island-ui/core'
+import { Box, Button, Stack, Tabs } from '@island.is/island-ui/core'
 import { CommitteeSignature } from '../components/signatures/Committee'
 import { RegularSignature } from '../components/signatures/Regular'
 import { useApplication } from '../hooks/useUpdateApplication'
@@ -34,13 +34,15 @@ export const Signatures = ({ application }: OJOIFieldBaseProps) => {
     applicationId: application.id,
   })
 
+  const [lastCopied, setLastCopied] = useState(new Date().toISOString())
+
   const [selectedTab, setSelectedTab] = useState<SignatureType>(
     (application.answers?.misc?.signatureType as SignatureType) ??
       SignatureTypes.REGULAR,
   )
 
   const { lastSignature } = useLastSignature({
-    involvedPartyId: application.answers.advert?.involvedPartyId ?? '',
+    involvedPartyId: application.answers.advert?.involvedPartyId,
   })
 
   const tabs = [
@@ -109,7 +111,10 @@ export const Signatures = ({ application }: OJOIFieldBaseProps) => {
         : InputFields.signature.regular,
       signature,
     )
-    updateApplication(signature, refetchApplication)
+    updateApplication(signature, () => {
+      refetchApplication()
+      setLastCopied(new Date().toISOString())
+    })
   }
 
   const onTabChangeHandler = (tabId: string) => {
@@ -128,7 +133,7 @@ export const Signatures = ({ application }: OJOIFieldBaseProps) => {
   }
 
   return (
-    <>
+    <Stack space={2} key={lastCopied}>
       <FormGroup
         title={f(signatures.general.title)}
         intro={f(signatures.general.intro)}
@@ -156,6 +161,7 @@ export const Signatures = ({ application }: OJOIFieldBaseProps) => {
       <FormGroup title={f(signatures.headings.preview)}>
         <HTMLEditor
           name="signaturePreview"
+          config={{ toolbar: false }}
           key={selectedTab}
           value={getSignaturesMarkup({
             signatures: currentApplication.answers.signatures,
@@ -164,6 +170,6 @@ export const Signatures = ({ application }: OJOIFieldBaseProps) => {
           readOnly={true}
         />
       </FormGroup>
-    </>
+    </Stack>
   )
 }
