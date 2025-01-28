@@ -33,11 +33,13 @@ import {
 } from '@island.is/judicial-system-web/src/components/Table'
 import Table from '@island.is/judicial-system-web/src/components/Table/Table'
 import TagContainer from '@island.is/judicial-system-web/src/components/Tags/TagContainer/TagContainer'
+import TagIndictmentRulingDecision from '@island.is/judicial-system-web/src/components/Tags/TagIndictmentRulingDecision/TagIndictmentRulingDecison'
 import {
   getPrisonCaseStateTag,
   getPunishmentTypeTag,
 } from '@island.is/judicial-system-web/src/components/Tags/utils'
 import {
+  CaseIndictmentRulingDecision,
   CaseListEntry,
   CaseState,
   CaseType,
@@ -133,7 +135,10 @@ export const PrisonCases: FC = () => {
             {
               cell: (row) => (
                 <TagContainer>
-                  <TagCaseState caseState={CaseState.ACCEPTED} />
+                  <TagCaseState
+                    caseState={row.state}
+                    isValidToDateInThePast={row.isValidToDateInThePast}
+                  />
                   {row.appealState && (
                     <TagAppealState
                       appealState={row.appealState}
@@ -180,7 +185,7 @@ export const PrisonCases: FC = () => {
               sortable: { isSortable: true, key: 'defendants' },
             },
             {
-              title: formatMessage(tables.court),
+              title: formatMessage(tables.type),
             },
             {
               title: formatMessage(tables.punishmentType),
@@ -214,7 +219,14 @@ export const PrisonCases: FC = () => {
               cell: (row) => <DefendantInfo defendants={row.defendants} />,
             },
             {
-              cell: (row) => <ColumnCaseType type={row.type} />,
+              cell: (row) => (
+                <TagIndictmentRulingDecision
+                  isFine={
+                    row.indictmentRulingDecision ===
+                    CaseIndictmentRulingDecision.FINE
+                  }
+                />
+              ),
             },
             {
               cell: (row) => {
