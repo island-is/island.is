@@ -1,5 +1,6 @@
 import { buildSection } from '@island.is/application/core'
 import { newPrimarySchoolMessages } from '../../../lib/messages'
+import { currentNurserySubSection } from './currentNurserySubSection'
 import { currentSchoolSubSection } from './currentSchoolSubSection'
 import { newSchoolSubSection } from './newSchoolSubSection'
 import { reasonForApplicationSubSection } from './reasonForApplicationSubSection'
@@ -11,6 +12,7 @@ export const primarySchoolSection = buildSection({
   title: newPrimarySchoolMessages.primarySchool.sectionTitle,
   children: [
     currentSchoolSubSection,
+    currentNurserySubSection,
     newSchoolSubSection,
     reasonForApplicationSubSection,
     siblingsSubSection,

@@ -74,6 +74,10 @@ export const dataSchema = z.object({
     .refine((r) => r === undefined || r.length > 0, {
       params: errorMessages.contactsRequired,
     }),
+  currentNursery: z.object({
+    municipality: z.string(),
+    nursery: z.string(),
+  }),
   reasonForApplication: z
     .object({
       reason: z.string(),

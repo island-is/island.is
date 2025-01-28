@@ -5,27 +5,31 @@ import {
   coreErrorMessages,
 } from '@island.is/application/core'
 import { friggSchoolsByMunicipalityQuery } from '../../../graphql/queries'
+import { ApplicationType } from '../../../lib/constants'
 import { newPrimarySchoolMessages } from '../../../lib/messages'
-import {
-  getApplicationAnswers,
-  getApplicationExternalData,
-} from '../../../lib/newPrimarySchoolUtils'
+import { getApplicationAnswers } from '../../../lib/newPrimarySchoolUtils'
 import { FriggSchoolsByMunicipalityQuery } from '../../../types/schema'
 
-export const newSchoolSubSection = buildSubSection({
-  id: 'newSchoolSubSection',
-  title: newPrimarySchoolMessages.primarySchool.newSchoolSubSectionTitle,
+export const currentNurserySubSection = buildSubSection({
+  id: 'currentNurserySubSection',
+  title: newPrimarySchoolMessages.primarySchool.currentNurserySubSectionTitle,
+  condition: (answers) => {
+    // Only display section if application type is "Enrollment in primary school"
+    const { applicationType } = getApplicationAnswers(answers)
+    return applicationType === ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL
+  },
   children: [
     buildMultiField({
-      id: 'newSchool',
-      title: newPrimarySchoolMessages.primarySchool.newSchoolSubSectionTitle,
+      id: 'currentNursery',
+      title:
+        newPrimarySchoolMessages.primarySchool.currentNurserySubSectionTitle,
       children: [
         buildAsyncSelectField({
-          id: 'newSchool.municipality',
+          id: 'currentNursery.municipality',
           title: newPrimarySchoolMessages.shared.municipality,
           placeholder: newPrimarySchoolMessages.shared.municipalityPlaceholder,
           loadingError: coreErrorMessages.failedDataProvider,
-          dataTestId: 'new-school-municipality',
+          dataTestId: 'current-nursery-municipality',
           loadOptions: async ({ apolloClient }) => {
             const { data } =
               await apolloClient.query<FriggSchoolsByMunicipalityQuery>({
@@ -41,17 +45,14 @@ export const newSchoolSubSection = buildSubSection({
           },
         }),
         buildAsyncSelectField({
-          id: 'newSchool.school',
-          title: newPrimarySchoolMessages.shared.school,
-          placeholder: newPrimarySchoolMessages.shared.schoolPlaceholder,
+          id: 'currentNursery.nursery',
+          title: newPrimarySchoolMessages.primarySchool.nursery,
+          placeholder:
+            newPrimarySchoolMessages.primarySchool.nurseryPlaceholder,
           loadingError: coreErrorMessages.failedDataProvider,
-          dataTestId: 'new-school-school',
-          updateOnSelect: 'newSchool.municipality',
-          loadOptions: async ({ application, apolloClient, selectedValue }) => {
-            const { childGradeLevel } = getApplicationExternalData(
-              application.externalData,
-            )
-
+          dataTestId: 'current-nursery-nursery',
+          updateOnSelect: 'currentNursery.municipality',
+          loadOptions: async ({ apolloClient, selectedValue }) => {
             const { data } =
               await apolloClient.query<FriggSchoolsByMunicipalityQuery>({
                 query: friggSchoolsByMunicipalityQuery,
@@ -60,19 +61,17 @@ export const newSchoolSubSection = buildSubSection({
             return (
               data?.friggSchoolsByMunicipality
                 ?.find(({ name }) => name === selectedValue)
-                ?.children?.filter((school) =>
-                  school.gradeLevels?.includes(childGradeLevel),
-                )
-                ?.map((school) => ({
-                  value: school.id,
-                  label: school.name,
+                ?.children?.map((nursery) => ({
+                  value: nursery.id,
+                  label: nursery.name,
                 })) ?? []
             )
           },
           condition: (answers) => {
-            const { schoolMunicipality } = getApplicationAnswers(answers)
+            const { currentNurseryMunicipality } =
+              getApplicationAnswers(answers)
 
-            return !!schoolMunicipality
+            return !!currentNurseryMunicipality
           },
         }),
       ],

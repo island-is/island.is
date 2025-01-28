@@ -23,6 +23,7 @@ import { getApplicationAnswers } from '../../lib/newPrimarySchoolUtils'
 import { AllergiesAndIntolerances } from './review-groups/AllergiesAndIntolerances'
 import { Child } from './review-groups/Child'
 import { Contacts } from './review-groups/Contacts'
+import { CurrentNursery } from './review-groups/CurrentNursery'
 import { CurrentSchool } from './review-groups/CurrentSchool'
 import { FreeSchoolMeal } from './review-groups/FreeSchoolMeal'
 import { Languages } from './review-groups/Languages'
@@ -167,6 +168,9 @@ export const Review: FC<ReviewScreenProps> = ({
       <Contacts {...childProps} />
       {applicationType === ApplicationType.NEW_PRIMARY_SCHOOL && (
         <CurrentSchool {...childProps} />
+      )}
+      {applicationType === ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL && (
+        <CurrentNursery {...childProps} />
       )}
       <School {...childProps} />
       <ReasonForApplication {...childProps} />
