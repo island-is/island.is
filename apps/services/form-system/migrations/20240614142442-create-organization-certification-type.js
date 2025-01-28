@@ -34,21 +34,27 @@ module.exports = {
           },
         },
         { transaction: t },
-      );
+      )
 
       await queryInterface.addConstraint('organization_certification_type', {
         fields: ['organization_id', 'certification_type_id'],
         type: 'unique',
         name: 'unique_organization_id_certification_type_id_pair',
         transaction: t,
-      });
-    });
+      })
+    })
   },
 
   async down(queryInterface, Sequelize) {
     return queryInterface.sequelize.transaction(async (t) => {
-      await queryInterface.removeConstraint('organization_certification_type', 'unique_organization_id_certification_type_id_pair', { transaction: t });
-      await queryInterface.dropTable('organization_certification_type', { transaction: t });
-    });
+      await queryInterface.removeConstraint(
+        'organization_certification_type',
+        'unique_organization_id_certification_type_id_pair',
+        { transaction: t },
+      )
+      await queryInterface.dropTable('organization_certification_type', {
+        transaction: t,
+      })
+    })
   },
-};
+}

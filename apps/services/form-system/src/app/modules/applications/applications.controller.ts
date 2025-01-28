@@ -24,7 +24,6 @@ import { CreateApplicationDto } from './models/dto/createApplication.dto'
 import { UpdateApplicationDto } from './models/dto/updateApplication.dto'
 import { ApplicationListDto } from './models/dto/applicationList.dto'
 import { ScreenValidationResponse } from '../../dataTypes/validationResponse.model'
-import { ValidationService } from '../services/validation.service'
 import {
   CurrentUser,
   IdsUserGuard,
@@ -32,7 +31,7 @@ import {
   ScopesGuard,
   User,
 } from '@island.is/auth-nest-tools'
-import { AdminPortalScope, ApiScope } from '@island.is/auth/scopes'
+import { ApiScope } from '@island.is/auth/scopes'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(ApiScope.internal)
