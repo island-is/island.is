@@ -56,6 +56,7 @@ opts=(
   --ci
   --debug
   --detectOpenHandles
+  --detectLeaks
   --exclude="${services_to_skip[*]}"
   --no-watchman
   --parallel="${NX_PARALLEL}"
