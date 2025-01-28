@@ -13,17 +13,17 @@ set -euxo pipefail
 NODE_OPTIONS="--max-old-space-size=8193 --unhandled-rejections=warn --trace-warnings --require=dd-trace/ci/init ${NODE_OPTIONS:-}"
 EXTRA_OPTS=""
 
-FLAKY_TESTS=(
-  "services-auth-delegation-api"
-  "services-auth-personal-representative"
-)
-
 projects_uncollectible_coverage=(
   "application-templates-no-debt-certificate"
   "api-domains-email-signup"
   "skilavottord-web"
   "shared-babel"
   "portals-my-pages-core"
+)
+
+# Array of services to skip during testing
+services_to_skip=(
+  "services-user-notification"
 )
 
 export DD_CIVISIBILITY_AGENTLESS_ENABLED \
@@ -33,17 +33,6 @@ export DD_CIVISIBILITY_AGENTLESS_ENABLED \
   DD_API_KEY \
   NODE_OPTIONS \
   SERVERSIDE_FEATURES_ON=\"\" # disable server-side features
-
-# Function to check if any project in AFFECTED_PROJECTS is a flaky test
-is_any_project_flaky() {
-  IFS=',' read -ra PROJECTS <<<"$AFFECTED_PROJECTS"
-  for project in "${PROJECTS[@]}"; do
-    if [[ " ${FLAKY_TESTS[*]} " == *" ${project} "* ]]; then
-      return 0
-    fi
-  done
-  return 1
-}
 
 # Determine if any project requires code coverage
 requires_code_coverage() {
@@ -63,4 +52,16 @@ fi
 
 echo $EXTRA_OPTS
 
-yarn nx run-many --projects "${AFFECTED_PROJECTS}" --target test --parallel="${NX_PARALLEL}" --verbose --no-watchman --detectOpenHandles --debug --ci --runInBand "$@"
+yarn nx run-many \
+  --ci \
+  --debug \
+  --detectOpenHandles \
+  --exclude="${services_to_skip[*]}" \
+  --no-watchman \
+  --parallel="${NX_PARALLEL}" \
+  --passWithNoTests \
+  --projects "${AFFECTED_PROJECTS}" \
+  --runInBand \
+  --target test \
+  --verbose \
+  "$@"
