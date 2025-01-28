@@ -274,9 +274,9 @@ export const getLegalArguments = (
   }
 
   let articles = `${lawsBroken[0][1]}.`
+  const noArticle = articles === '0.'
 
   for (let i = 1; i < lawsBroken.length; i++) {
-    const noArticle = articles === '0.'
     let useSbr = true
 
     if (lawsBroken[i][0] !== lawsBroken[i - 1][0]) {
@@ -829,11 +829,10 @@ export const IndictmentCount: FC<Props> = ({
                   onBlur={(event) => {
                     const recordedSpeed = parseInt(event.target.value)
 
-                    validateAndSetErrorMessage(
-                      ['empty'],
-                      recordedSpeed.toString(),
-                      setRecordedSpeedErrorMessage,
-                    )
+                    if (isNaN(recordedSpeed)) {
+                      setRecordedSpeedErrorMessage('Reitur má ekki vera tómur')
+                      return
+                    }
 
                     handleIndictmentCountChanges({
                       recordedSpeed,
@@ -874,11 +873,10 @@ export const IndictmentCount: FC<Props> = ({
                 onBlur={(event) => {
                   const speedLimit = parseInt(event.target.value)
 
-                  validateAndSetErrorMessage(
-                    ['empty'],
-                    speedLimit.toString(),
-                    setSpeedLimitErrorMessage,
-                  )
+                  if (isNaN(speedLimit)) {
+                    setSpeedLimitErrorMessage('Reitur má ekki vera tómur')
+                    return
+                  }
 
                   handleIndictmentCountChanges({
                     speedLimit,
