@@ -68,6 +68,7 @@ const problematicProjects = [
   'application-system-api',
   'services-auth-delegation-api',
   'services-auth-personal-representative',
+  'skilavottord-web',
 ]
 console.error(`Problematic projects:`, problematicProjects)
 
