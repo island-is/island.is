@@ -23,7 +23,7 @@ projects_uncollectible_coverage=(
 
 # Array of services to skip during testing
 services_to_skip=(
-  "services-user-notification"
+  # "services-user-notification"
 )
 
 export DD_CIVISIBILITY_AGENTLESS_ENABLED \
