@@ -1,5 +1,4 @@
 import { defineMessages, MessageDescriptor } from 'react-intl'
-import { LanguageEnvironmentOptions } from './constants'
 
 type MessageDir = Record<string, Record<string, MessageDescriptor>>
 
@@ -229,132 +228,132 @@ export const newPrimarySchoolMessages: MessageDir = {
     },
   }),
 
-  childrenNParents: defineMessages({
+  childrenNGuardians: defineMessages({
     sectionTitle: {
-      id: 'nps.application:childrenNParents.section.title',
-      defaultMessage: 'Börn og foreldrar',
-      description: 'Children and parents',
+      id: 'nps.application:childrenNGuardians.section.title',
+      defaultMessage: 'Börn og forsjáraðilar',
+      description: 'Children and guardians',
     },
 
     // Child information
     childInfoSubSectionTitle: {
-      id: 'nps.application:childrenNParents.child.info.sub.section.title',
+      id: 'nps.application:childrenNGuardians.child.info.sub.section.title',
       defaultMessage: 'Upplýsingar um barn',
       description: 'Information about child',
     },
     childInfoDescription: {
-      id: 'nps.application:childrenNParents.child.info.description',
+      id: 'nps.application:childrenNGuardians.child.info.description',
       defaultMessage:
         'Upplýsingar um barn eru sóttar í Þjóðskrá. Athugaðu hvort upplýsingarnar séu réttar áður en þú heldur áfram.',
       description:
         'Information about the child is retrieved from the National Registry. Check that the information is correct before proceeding.',
     },
     childInfoPreferredName: {
-      id: 'nps.application:childrenNParents.child.info.preferred.name',
+      id: 'nps.application:childrenNGuardians.child.info.preferred.name',
       defaultMessage: 'Valið nafn',
       description: 'Preferred name',
     },
     childInfoPronouns: {
-      id: 'nps.application:childrenNParents.child.info.pronouns',
+      id: 'nps.application:childrenNGuardians.child.info.pronouns',
       defaultMessage: 'Persónufornafn',
       description: 'Pronoun',
     },
     childInfoPronounsPlaceholder: {
-      id: 'nps.application:childrenNParents.child.info.pronouns.placeholder',
+      id: 'nps.application:childrenNGuardians.child.info.pronouns.placeholder',
       defaultMessage: 'Veldu persónufornafn',
       description: 'Select pronoun',
     },
     usePronounAndPreferredName: {
-      id: 'nps.application:childrenNParents.child.info.use.pronoun.and.preferred.name',
+      id: 'nps.application:childrenNGuardians.child.info.use.pronoun.and.preferred.name',
       defaultMessage:
         'Barnið kýs að vera ávarpað með öðru nafni og/eða persónufornafni en hann eða hún',
       description:
         'The child prefers to be addressed by a name and/or personal pronoun other than he or she',
     },
     preferredNameTooltip: {
-      id: 'nps.application:childrenNParents.child.info.preferred.name.tooltip',
+      id: 'nps.application:childrenNGuardians.child.info.preferred.name.tooltip',
       defaultMessage:
         'Forsjáraðilar geta óskað eftir breytingu á skráðu kyni og nafni barns hjá Þjóðskrá eða barnið sjálft sé það orðið 15 ára. Ef sú breyting er ótímabært má breyta nafni barnsins hér og skrá það nafn sem barn hefur valið sér.',
       description:
         "Guardians can request a change to a child's registered gender and name with the National Registry, or the child themselves if they have reached the age of 15. If the change is premature, the child's name can be changed here and the name the child has chosen can be registered.",
     },
     differentPlaceOfResidence: {
-      id: 'nps.application:childrenNParents.child.info.different.place.of.residence',
+      id: 'nps.application:childrenNGuardians.child.info.different.place.of.residence',
       defaultMessage: 'Er aðsetur barns annað en skráð lögheimili?',
       description:
         "Is the child's temporary residence different from the registered legal domicile?",
     },
     differentPlaceOfResidenceDescription: {
-      id: 'nps.application:childrenNParents.child.info.different.place.of.residence.description',
+      id: 'nps.application:childrenNGuardians.child.info.different.place.of.residence.description',
       defaultMessage: 'Aðsetur er tímabundin búseta barns í öðru húsnæði',
       description:
         "Temporary residence is a child's place of residence in another home.",
     },
     childInfoPlaceOfResidence: {
-      id: 'nps.application:childrenNParents.child.info.place.of.residence',
+      id: 'nps.application:childrenNGuardians.child.info.place.of.residence',
       defaultMessage: 'Aðsetur barns',
       description: "Child's temporary residence",
     },
 
-    // Parents/guardians
-    parentsSubSectionTitle: {
-      id: 'nps.application:childrenNParents.parents.sub.section.title',
-      defaultMessage: 'Foreldrar/forsjáraðilar',
-      description: 'Parents/guardians',
+    // Guardians
+    guardiansSubSectionTitle: {
+      id: 'nps.application:childrenNGuardians.guardians.sub.section.title',
+      defaultMessage: 'Forsjáraðilar',
+      description: 'Guardians',
     },
-    otherParent: {
-      id: 'nps.application:childrenNParents.otherParent',
-      defaultMessage: 'Upplýsingar um foreldri/forsjáraðila 2',
-      description: 'Information about parent/guardian 2',
+    otherGuardian: {
+      id: 'nps.application:childrenNGuardians.otherGuardian',
+      defaultMessage: 'Upplýsingar um forsjáraðila 2',
+      description: 'Information about guardian 2',
     },
-    parent: {
-      id: 'nps.application:childrenNParents.parent',
-      defaultMessage: 'Upplýsingar um foreldri/forsjáraðila 1',
-      description: 'Information about parent/guardian 1',
+    guardian: {
+      id: 'nps.application:childrenNGuardians.guardian',
+      defaultMessage: 'Upplýsingar um forsjáraðila 1',
+      description: 'Information about guardian 1',
     },
-    parentsDescription: {
-      id: 'nps.application:childrenNParents.parents.description',
+    guardiansDescription: {
+      id: 'nps.application:childrenNGuardians.guardians.description',
       defaultMessage:
-        'Upplýsingar um foreldra/forsjáraðila eru sóttar úr Þjóðskrá og af Mínum síðum á Island.is. Athugaðu hvort símanúmer og netföng séu rétt skráð áður en þú heldur áfram.',
+        'Upplýsingar um forsjáraðila eru sóttar úr Þjóðskrá og af Mínum síðum á Ísland.is. Athugaðu hvort símanúmer og netföng séu rétt skráð áður en þú heldur áfram.',
       description:
-        'Information about parents/guardians is retrieved from Registers Iceland and from My Pages on Ísland.is. Check that phone numbers and email addresses are entered correctly before proceeding.',
+        'Information about guardians is retrieved from Registers Iceland and from My Pages on Ísland.is. Check that phone numbers and email addresses are entered correctly before proceeding.',
     },
 
     // Contacts
     contactsSubSectionTitle: {
-      id: 'nps.application:childrenNParents.contacts.sub.section.title',
+      id: 'nps.application:childrenNGuardians.contacts.sub.section.title',
       defaultMessage: 'Tengiliðir',
       description: 'Contacts',
     },
     contactsTitle: {
-      id: 'nps.application:childrenNParents.contacts.title',
+      id: 'nps.application:childrenNGuardians.contacts.title',
       defaultMessage: 'Tengiliðir barns',
       description: "The child's contacts",
     },
     contactsDescription: {
-      id: 'nps.application:childrenNParents.contacts.description',
+      id: 'nps.application:childrenNGuardians.contacts.description',
       defaultMessage:
         'Skráðu að minnsta kosti einn tengilið sem má hafa samband við ef ekki næst í forsjáraðila barnsins. Þú getur bætt við allt að fjórum tengiliðum. Vinsamlegast látið tengiliði vita af skráningunni.',
       description:
         "List at least one contact person who can be contacted if the child's guardian cannot be reached. You can add up to four contacts. Please inform the contacts of the registration.",
     },
     contactsRegistrationTitle: {
-      id: 'nps.application:childrenNParents.contacts.registration.title',
+      id: 'nps.application:childrenNGuardians.contacts.registration.title',
       defaultMessage: 'Skráning tengiliðs',
       description: 'Registration of a contact',
     },
     contactsAddContact: {
-      id: 'nps.application:childrenNParents.contacts.add.contact',
+      id: 'nps.application:childrenNGuardians.contacts.add.contact',
       defaultMessage: 'Bæta við tengilið',
       description: 'Add a contact',
     },
     contactsRegisterContact: {
-      id: 'nps.application:childrenNParents.contacts.register.contact',
+      id: 'nps.application:childrenNGuardians.contacts.register.contact',
       defaultMessage: 'Skrá tengilið',
       description: 'Register contact',
     },
     contactsDeleteContact: {
-      id: 'nps.application:childrenNParents.contacts.delete.contact',
+      id: 'nps.application:childrenNGuardians.contacts.delete.contact',
       defaultMessage: 'Eyða tengilið',
       description: 'Remove contact',
     },
@@ -837,10 +836,10 @@ export const newPrimarySchoolMessages: MessageDir = {
       defaultMessage: 'Breyta umsókn',
       description: 'Edit application',
     },
-    parents: {
-      id: 'nps.application:overview.parents',
-      defaultMessage: 'Foreldri/forsjáraðili',
-      description: 'Parent / guardian',
+    guardians: {
+      id: 'nps.application:overview.guardians',
+      defaultMessage: 'Forsjáraðili',
+      description: 'Guardian',
     },
     languageEnvironment: {
       id: 'nps.application:overview.language.environment',
