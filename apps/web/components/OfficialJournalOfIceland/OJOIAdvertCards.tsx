@@ -1,6 +1,6 @@
-import { OfficialJournalOfIcelandAdvertsResponse } from '@island.is/api/schema'
 import { Stack } from '@island.is/island-ui/core'
 import { Locale } from '@island.is/shared/types'
+import { OfficialJournalOfIcelandAdvertsResponse } from '@island.is/web/graphql/schema'
 import { linkResolver } from '@island.is/web/hooks'
 
 import { OJOIAdvertCard } from './OJOIAdvertCard'

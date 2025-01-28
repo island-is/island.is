@@ -1,9 +1,10 @@
-import { Label, Typography } from '@ui'
 import React, { isValidElement } from 'react'
 import { FormattedDate, useIntl } from 'react-intl'
 import { Image, ImageSourcePropType } from 'react-native'
 import styled from 'styled-components/native'
 
+import { Typography } from '../typography/typography'
+import { Label } from '../label/label'
 import { dynamicColor } from '../../utils'
 
 const Host = styled.SafeAreaView<{ unread?: boolean }>`

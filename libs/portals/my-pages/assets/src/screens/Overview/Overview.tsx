@@ -12,15 +12,12 @@ import {
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   CardLoader,
-  EmptyState,
-  ErrorScreen,
   FootNote,
   formSubmit,
   IntroHeader,
   m,
   SAMGONGUSTOFA_SLUG,
 } from '@island.is/portals/my-pages/core'
-import { useUserInfo } from '@island.is/auth/react'
 
 import { VehicleCard } from '../../components/VehicleCard'
 import {
@@ -36,6 +33,7 @@ import { exportVehicleOwnedDocument } from '../../utils/vehicleOwnedMapper'
 import useDebounce from 'react-use/lib/useDebounce'
 import { VehiclesDetail } from '@island.is/api/schema'
 import { Problem } from '@island.is/react-spa/shared'
+import { useUserInfo } from '@island.is/react-spa/bff'
 
 const defaultFilterValues = {
   searchQuery: '',

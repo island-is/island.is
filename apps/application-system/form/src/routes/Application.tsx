@@ -1,9 +1,9 @@
 import { useParams } from 'react-router-dom'
 
+import { coreMessages } from '@island.is/application/core'
 import { ApplicationForm, ErrorShell } from '@island.is/application/ui-shell'
 import { useLocale } from '@island.is/localization'
-import { coreMessages } from '@island.is/application/core'
-import { useAuth } from '@island.is/auth/react'
+import { useUserInfo } from '@island.is/react-spa/bff'
 
 type UseParams = {
   slug: string
@@ -12,7 +12,7 @@ type UseParams = {
 
 export const Application = () => {
   const { slug, id } = useParams() as UseParams
-  const { userInfo } = useAuth()
+  const userInfo = useUserInfo()
   const { formatMessage } = useLocale()
   const nationalRegistryId = userInfo?.profile?.nationalId
 

@@ -7,6 +7,7 @@ export {
   DefendantPlea,
   ServiceRequirement,
   ServiceStatus,
+  PunishmentType,
   isSuccessfulServiceStatus,
   isFailedServiceStatus,
 } from './lib/defendant'
@@ -19,6 +20,8 @@ export {
   NotificationDispatchType,
   DefendantNotificationType,
   CivilClaimantNotificationType,
+  IndictmentCaseNotificationType,
+  EventNotificationType,
   notificationTypes,
 } from './lib/notification'
 export type { Institution } from './lib/institution'
@@ -99,11 +102,13 @@ export {
   courtSessionTypeNames,
 } from './lib/case'
 
+export { getIndictmentVerdictAppealDeadlineStatus } from './lib/indictmentCase'
+
 export {
-  getIndictmentVerdictAppealDeadlineStatus,
-  VERDICT_APPEAL_WINDOW_DAYS,
-  FINE_APPEAL_WINDOW_DAYS,
-} from './lib/indictmentCase'
+  getIndictmentAppealDeadlineDate,
+  getAppealDeadlineDate,
+  hasDatePassed,
+} from './lib/dates'
 
 export type {
   CrimeScene,
@@ -117,7 +122,7 @@ export {
   offenseSubstances,
 } from './lib/indictmentCount'
 
-export { type Lawyer, mapToLawyer, AdvocateType } from './lib/advocate'
+export { type Lawyer, mapToLawyer } from './lib/lawyer'
 
 export type { SubstanceMap } from './lib/indictmentCount'
 

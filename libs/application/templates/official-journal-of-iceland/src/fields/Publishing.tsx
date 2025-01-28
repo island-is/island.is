@@ -8,6 +8,7 @@ import {
   AlertMessage,
   Box,
   Icon,
+  Inline,
   Select,
   SkeletonLoader,
   Tag,
@@ -18,6 +19,8 @@ import set from 'lodash/set'
 import addYears from 'date-fns/addYears'
 import { addWeekdays, getFastTrack, getWeekendDates } from '../lib/utils'
 import { useState } from 'react'
+import { baseEntitySchema } from '../lib/dataSchema'
+import { z } from 'zod'
 
 export const Publishing = ({ application }: OJOIFieldBaseProps) => {
   const { formatMessage: f } = useLocale()
@@ -52,7 +55,7 @@ export const Publishing = ({ application }: OJOIFieldBaseProps) => {
     getFastTrack(new Date(defaultDate)).fastTrack,
   )
 
-  const onCategoryChange = (value?: string) => {
+  const onCategoryChange = (value?: z.infer<typeof baseEntitySchema>) => {
     setIsUpdatingCategory(true)
     if (!value) {
       setIsUpdatingCategory(false)
@@ -62,8 +65,8 @@ export const Publishing = ({ application }: OJOIFieldBaseProps) => {
     const currentAnswers = structuredClone(currentApplication.answers)
     const selectedCategories = currentAnswers.advert?.categories || []
 
-    const newCategories = selectedCategories.includes(value)
-      ? selectedCategories.filter((c) => c !== value)
+    const newCategories = selectedCategories.find((cat) => cat.id === value.id)
+      ? selectedCategories.filter((c) => c.id !== value.id)
       : [...selectedCategories, value]
 
     const updatedAnswers = set(
@@ -77,19 +80,12 @@ export const Publishing = ({ application }: OJOIFieldBaseProps) => {
     })
   }
 
-  const defaultCategory = {
-    label: f(publishing.inputs.contentCategories.placeholder),
-    value: '',
-  }
-
   const mappedCategories = categories?.map((c) => ({
     label: c.title,
-    value: c.id,
+    value: c,
   }))
 
-  const selectedCategories = categories?.filter((c) =>
-    currentApplication.answers.advert?.categories?.includes(c.id),
-  )
+  const selectedCategories = currentApplication.answers.advert?.categories
 
   return (
     <FormGroup title={f(publishing.headings.date)}>
@@ -124,30 +120,29 @@ export const Publishing = ({ application }: OJOIFieldBaseProps) => {
               size="sm"
               label={f(publishing.inputs.contentCategories.label)}
               backgroundColor="blue"
-              defaultValue={defaultCategory}
               options={mappedCategories}
+              defaultValue={mappedCategories?.[0]}
               onChange={(opt) => onCategoryChange(opt?.value)}
+              filterConfig={{
+                matchFrom: 'start',
+              }}
             />
-            <Box
-              marginTop={1}
-              display="flex"
-              rowGap={1}
-              columnGap={1}
-              flexWrap="wrap"
-            >
-              {selectedCategories?.map((c) => (
-                <Tag
-                  disabled={isUpdatingCategory}
-                  onClick={() => onCategoryChange(c.id)}
-                  outlined
-                  key={c.id}
-                >
-                  <Box display="flex" alignItems="center">
-                    {c.title}
-                    <Icon icon="close" size="small" />
-                  </Box>
-                </Tag>
-              ))}
+            <Box marginTop={1}>
+              <Inline space={1} flexWrap="wrap">
+                {selectedCategories?.map((c) => (
+                  <Tag
+                    disabled={isUpdatingCategory}
+                    onClick={() => onCategoryChange(c)}
+                    outlined
+                    key={c.id}
+                  >
+                    <Box display="flex" alignItems="center">
+                      {c.title}
+                      <Icon icon="close" size="small" />
+                    </Box>
+                  </Tag>
+                ))}
+              </Inline>
             </Box>
           </>
         )}

@@ -1,31 +1,31 @@
-import intersection from 'lodash/intersection'
-import React, { Dispatch, SetStateAction, useEffect, useState } from 'react'
 import { useQuery } from '@apollo/client'
-import { useAuth } from '@island.is/auth/react'
-import { ACTOR_DELEGATIONS } from '@island.is/application/graphql'
-import {
-  Text,
-  Box,
-  Page,
-  GridContainer,
-  Stack,
-  Icon,
-} from '@island.is/island-ui/core'
 import {
   coreDelegationsMessages,
   coreMessages,
   getTypeFromSlug,
 } from '@island.is/application/core'
+import { ACTOR_DELEGATIONS } from '@island.is/application/graphql'
 import { getApplicationTemplateByTypeId } from '@island.is/application/template-loader'
-import { LoadingShell } from './LoadingShell'
-import { format as formatKennitala } from 'kennitala'
-import { useLocale } from '@island.is/localization'
-import { ScreenType, DelegationsScreenDataType, Delegation } from '../types'
 import { FeatureFlagClient, Features } from '@island.is/feature-flags'
+import {
+  Box,
+  GridContainer,
+  Icon,
+  Page,
+  Stack,
+  Text,
+} from '@island.is/island-ui/core'
+import { useLocale } from '@island.is/localization'
+import { useAuth } from '@island.is/react-spa/bff'
 import { useFeatureFlagClient } from '@island.is/react/feature-flags'
-import { useNavigate } from 'react-router-dom'
 import * as kennitala from 'kennitala'
+import { format as formatKennitala } from 'kennitala'
+import intersection from 'lodash/intersection'
+import { Dispatch, SetStateAction, useEffect, useState } from 'react'
+import { useNavigate, useSearchParams } from 'react-router-dom'
+import { Delegation, DelegationsScreenDataType, ScreenType } from '../types'
 import * as styles from './DelegationsScreen.css'
+import { LoadingShell } from './LoadingShell'
 
 enum DelegationType {
   LegalGuardian = 'LegalGuardian',
@@ -53,6 +53,14 @@ export const DelegationsScreen = ({
   const { switchUser, userInfo: user } = useAuth()
   const featureFlagClient: FeatureFlagClient = useFeatureFlagClient()
   const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
+
+  const paramString = searchParams.size
+    ? '&' +
+      Array.from(searchParams.entries())
+        .map(([key, value]) => `${key}=${encodeURIComponent(value)}`)
+        .join('&')
+    : ''
 
   // Check for user delegations if application supports delegations
   const { data: delegations, error } = useQuery(ACTOR_DELEGATIONS, {
@@ -181,7 +189,7 @@ export const DelegationsScreen = ({
 
   const handleClick = (nationalId?: string) => {
     if (screenData.screenType !== ScreenType.ONGOING && nationalId) {
-      navigate('?delegationChecked=true')
+      navigate(`?delegationChecked=true${paramString}`)
       switchUser(nationalId)
     } else if (nationalId) {
       switchUser(nationalId)

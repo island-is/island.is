@@ -1,29 +1,30 @@
-import React from 'react'
 import {
-  Box,
-  DatePicker,
-  Checkbox,
-  FilterMultiChoice,
-  AccordionItem,
-  Accordion,
-  Input,
-  Hidden,
-  Text,
-} from '@island.is/island-ui/core'
-import { m, Filter } from '@island.is/portals/my-pages/core'
-import { useLocale, useNamespaces } from '@island.is/localization'
-import { messages } from '../../utils/messages'
-import * as styles from './DocumentsFilter.css'
-import DocumentsFilterTags from './DocumentsFilterTagsV2'
-import isEqual from 'lodash/isEqual'
-import { defaultFilterValues, FilterValuesType } from '../../utils/types'
-import {
-  DocumentType,
   DocumentsV2Category,
   DocumentsV2Sender,
+  DocumentType,
 } from '@island.is/api/schema'
-import { useDocumentFilters } from '../../hooks/useDocumentFilters'
+import {
+  Accordion,
+  AccordionItem,
+  Box,
+  Checkbox,
+  DatePicker,
+  Filter,
+  FilterMultiChoice,
+  Hidden,
+  Input,
+  Text,
+} from '@island.is/island-ui/core'
+import { useLocale, useNamespaces } from '@island.is/localization'
+import { m } from '@island.is/portals/my-pages/core'
 import { isDefined } from '@island.is/shared/utils'
+import isEqual from 'lodash/isEqual'
+import React from 'react'
+import { useDocumentFilters } from '../../hooks/useDocumentFilters'
+import { messages } from '../../utils/messages'
+import { defaultFilterValues, FilterValuesType } from '../../utils/types'
+import * as styles from './DocumentsFilter.css'
+import DocumentsFilterTags from './DocumentsFilterTagsV2'
 
 interface Props {
   filterValue: FilterValuesType
@@ -93,13 +94,11 @@ const DocumentsFilter = ({
         labelClearAll={formatMessage(m.clearAllFilters)}
         labelOpen={formatMessage(m.openFilter)}
         labelClose={formatMessage(m.closeFilter)}
-        fullWidthInput
-        largeButton
         filterInput={
           <Input
             placeholder={formatMessage(m.searchPlaceholder)}
             name="rafraen-skjol-input"
-            size="sm"
+            size="xs"
             label={formatMessage(messages.documentSearchLabel)}
             onChange={debounceChange}
             backgroundColor="blue"

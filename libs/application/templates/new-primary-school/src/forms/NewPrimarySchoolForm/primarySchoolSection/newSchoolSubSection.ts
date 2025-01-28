@@ -1,12 +1,12 @@
 import {
   buildAsyncSelectField,
-  buildHiddenInputWithWatchedValue,
   buildMultiField,
   buildSubSection,
   coreErrorMessages,
+  NO,
 } from '@island.is/application/core'
 import { friggSchoolsByMunicipalityQuery } from '../../../graphql/queries'
-import { ReasonForApplicationOptions } from '../../../lib/constants'
+import { ApplicationType } from '../../../lib/constants'
 import { newPrimarySchoolMessages } from '../../../lib/messages'
 import {
   getApplicationAnswers,
@@ -18,17 +18,21 @@ export const newSchoolSubSection = buildSubSection({
   id: 'newSchoolSubSection',
   title: newPrimarySchoolMessages.primarySchool.newSchoolSubSectionTitle,
   condition: (answers) => {
-    // Only display section if "Moving abroad" is not selected as reason for application
-    const { reasonForApplication } = getApplicationAnswers(answers)
-    return reasonForApplication !== ReasonForApplicationOptions.MOVING_ABROAD
+    const { applyForNeighbourhoodSchool, applicationType } =
+      getApplicationAnswers(answers)
+    return (
+      applicationType === ApplicationType.NEW_PRIMARY_SCHOOL ||
+      (applicationType === ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL &&
+        applyForNeighbourhoodSchool === NO)
+    )
   },
   children: [
     buildMultiField({
-      id: 'school',
+      id: 'newSchool',
       title: newPrimarySchoolMessages.primarySchool.newSchoolSubSectionTitle,
       children: [
         buildAsyncSelectField({
-          id: 'schools.newSchool.municipality',
+          id: 'newSchool.municipality',
           title: newPrimarySchoolMessages.shared.municipality,
           placeholder: newPrimarySchoolMessages.shared.municipalityPlaceholder,
           loadingError: coreErrorMessages.failedDataProvider,
@@ -48,12 +52,13 @@ export const newSchoolSubSection = buildSubSection({
           },
         }),
         buildAsyncSelectField({
-          id: 'schools.newSchool.school',
+          id: 'newSchool.school',
           title: newPrimarySchoolMessages.shared.school,
           placeholder: newPrimarySchoolMessages.shared.schoolPlaceholder,
           loadingError: coreErrorMessages.failedDataProvider,
           dataTestId: 'new-school-school',
-          loadOptions: async ({ application, apolloClient }) => {
+          updateOnSelect: 'newSchool.municipality',
+          loadOptions: async ({ application, apolloClient, selectedValue }) => {
             const { schoolMunicipality } = getApplicationAnswers(
               application.answers,
             )
@@ -68,7 +73,9 @@ export const newSchoolSubSection = buildSubSection({
 
             return (
               data?.friggSchoolsByMunicipality
-                ?.find(({ name }) => name === schoolMunicipality)
+                ?.find(
+                  ({ name }) => name === (selectedValue || schoolMunicipality),
+                )
                 ?.children?.filter((school) =>
                   school.gradeLevels?.includes(childGradeLevel),
                 )
@@ -79,19 +86,10 @@ export const newSchoolSubSection = buildSubSection({
             )
           },
           condition: (answers) => {
-            const { schoolMunicipality, newSchoolHiddenInput } =
-              getApplicationAnswers(answers)
+            const { schoolMunicipality } = getApplicationAnswers(answers)
 
-            return (
-              !!schoolMunicipality &&
-              schoolMunicipality === newSchoolHiddenInput
-            )
+            return !!schoolMunicipality
           },
-        }),
-        buildHiddenInputWithWatchedValue({
-          // Needed to trigger an update on loadOptions in the async select above
-          id: 'schools.newSchool.hiddenInput',
-          watchValue: 'schools.newSchool.municipality',
         }),
       ],
     }),

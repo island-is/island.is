@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common'
+import { FeatureFlagModule } from '@island.is/nest/feature-flags'
 import { AuthModule } from '@island.is/auth-nest-tools'
 import { RightsPortalClientModule } from '@island.is/clients/icelandic-health-insurance/rights-portal'
 import { AidOrNutritionResolver } from './aidOrNutrition/aidOrNutrition.resolver'
@@ -17,7 +18,7 @@ import { PaymentResolver } from './payment/payment.resolver'
 import { PaymentService } from './payment/payment.service'
 
 @Module({
-  imports: [RightsPortalClientModule, AuthModule],
+  imports: [RightsPortalClientModule, AuthModule, FeatureFlagModule],
   providers: [
     AidOrNutritionResolver,
     AidOrNutritionService,

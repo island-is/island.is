@@ -63,15 +63,27 @@ export const advert = {
         description: 'Placeholder for the department input',
       },
     }),
+    mainType: defineMessages({
+      label: {
+        id: 'ojoi.application:advert.inputs.mainType.label',
+        defaultMessage: 'Tegund birtingar',
+        description: 'Label for the main type input',
+      },
+      placeholder: {
+        id: 'ojoi.application:advert.inputs.mainType.placeholder',
+        defaultMessage: 'Veldu tegund birtingar',
+        description: 'Placeholder for the main type input',
+      },
+    }),
     type: defineMessages({
       label: {
         id: 'ojoi.application:advert.inputs.type.label',
-        defaultMessage: 'Tegund birtingar',
+        defaultMessage: 'Undirtegund birtingar',
         description: 'Label for the type input',
       },
       placeholder: {
         id: 'ojoi.application:advert.inputs.type.placeholder',
-        defaultMessage: 'Veldu tegund birtingar',
+        defaultMessage: 'Veldu undirtegund birtingar',
         description: 'Placeholder for the type input',
       },
     }),

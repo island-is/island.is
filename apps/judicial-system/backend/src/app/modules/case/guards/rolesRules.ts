@@ -57,7 +57,10 @@ const prosecutorFields: (keyof UpdateCaseDto)[] = [
   'hasCivilClaims',
 ]
 
-const publicProsecutorFields: (keyof UpdateCaseDto)[] = ['indictmentReviewerId']
+const publicProsecutorFields: (keyof UpdateCaseDto)[] = [
+  'indictmentReviewerId',
+  'indictmentReviewDecision',
+]
 
 const districtCourtFields: (keyof UpdateCaseDto)[] = [
   'defenderName',
@@ -103,6 +106,7 @@ const districtCourtFields: (keyof UpdateCaseDto)[] = [
   'indictmentDecision',
   'courtSessionType',
   'mergeCaseId',
+  'mergeCaseNumber',
 ]
 
 const courtOfAppealsFields: (keyof UpdateCaseDto)[] = [
@@ -211,7 +215,7 @@ export const prosecutorTransitionRule: RolesRule = {
     const dto: TransitionCaseDto = request.body
     const theCase: Case = request.case
 
-    // Deny if something is missing - shuould never happen
+    // Deny if something is missing - should never happen
     if (!user || !dto || !theCase) {
       return false
     }
@@ -258,7 +262,7 @@ export const defenderTransitionRule: RolesRule = {
     const dto: TransitionCaseDto = request.body
     const theCase: Case = request.case
 
-    // Deny if something is missing - shuould never happen
+    // Deny if something is missing - should never happen
     if (!dto || !theCase) {
       return false
     }
@@ -393,7 +397,7 @@ export const districtCourtJudgeSignRulingRule: RolesRule = {
     const user: User = request.user
     const theCase: Case = request.case
 
-    // Deny if something is missing - shuould never happen
+    // Deny if something is missing - should never happen
     if (!user || !theCase) {
       return false
     }

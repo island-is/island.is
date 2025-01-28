@@ -1,135 +1,6 @@
 {
   "openapi": "3.0.0",
   "paths": {
-    "/v1/me/organ-donor-status": {
-      "get": {
-        "operationId": "MeDonorStatusController_getOrganDonorStatus",
-        "description": "Get user's donation-exception donor status",
-        "parameters": [
-          {
-            "name": "ip",
-            "required": false,
-            "in": "query",
-            "description": "The IP address of the user",
-            "schema": { "type": "string" }
-          },
-          {
-            "name": "locale",
-            "required": false,
-            "in": "query",
-            "description": "The locale to use for the response",
-            "schema": { "$ref": "#/components/schemas/Locale" }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": { "$ref": "#/components/schemas/OrganDonorDto" }
-              }
-            }
-          },
-          "400": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
-              }
-            }
-          },
-          "401": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
-              }
-            }
-          },
-          "403": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
-              }
-            }
-          },
-          "500": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
-              }
-            }
-          }
-        },
-        "tags": ["me/organ-donor-status"]
-      },
-      "post": {
-        "operationId": "MeDonorStatusController_updateOrganDonorStatus",
-        "description": "Update user's donation-exception donor status",
-        "parameters": [
-          {
-            "name": "ip",
-            "required": false,
-            "in": "query",
-            "description": "The IP address of the user",
-            "schema": { "type": "string" }
-          },
-          {
-            "name": "locale",
-            "required": false,
-            "in": "query",
-            "description": "The locale to use for the response",
-            "schema": { "$ref": "#/components/schemas/Locale" }
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": { "$ref": "#/components/schemas/UpdateOrganDonorDto" }
-            }
-          }
-        },
-        "responses": {
-          "200": { "description": "" },
-          "400": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
-              }
-            }
-          },
-          "401": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
-              }
-            }
-          },
-          "403": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
-              }
-            }
-          },
-          "500": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
-              }
-            }
-          }
-        },
-        "tags": ["me/organ-donor-status"]
-      }
-    },
     "/v1/donation-exceptions": {
       "get": {
         "operationId": "DonationExceptionController_getOrgans",
@@ -190,6 +61,135 @@
         },
         "tags": ["donation-exceptions"]
       }
+    },
+    "/v1/me/organ-donor-status": {
+      "get": {
+        "operationId": "MeDonorStatusController_getOrganDonorStatus",
+        "description": "Get user's donation-exception donor status",
+        "parameters": [
+          {
+            "name": "locale",
+            "required": false,
+            "in": "query",
+            "description": "The locale to use for the response",
+            "schema": { "$ref": "#/components/schemas/Locale" }
+          },
+          {
+            "name": "ip",
+            "required": false,
+            "in": "query",
+            "description": "The IP address of the user",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/OrganDonorDto" }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+              }
+            }
+          }
+        },
+        "tags": ["me/organ-donor-status"]
+      },
+      "post": {
+        "operationId": "MeDonorStatusController_updateOrganDonorStatus",
+        "description": "Update user's donation-exception donor status",
+        "parameters": [
+          {
+            "name": "locale",
+            "required": false,
+            "in": "query",
+            "description": "The locale to use for the response",
+            "schema": { "$ref": "#/components/schemas/Locale" }
+          },
+          {
+            "name": "ip",
+            "required": false,
+            "in": "query",
+            "description": "The IP address of the user",
+            "schema": { "type": "string" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/UpdateOrganDonorDto" }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "" },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+              }
+            }
+          }
+        },
+        "tags": ["me/organ-donor-status"]
+      }
     }
   },
   "info": {
@@ -226,24 +226,11 @@
         },
         "required": ["id", "name"]
       },
-      "OrganDonorDto": {
-        "type": "object",
-        "properties": {
-          "isDonor": { "type": "boolean" },
-          "exceptions": {
-            "type": "array",
-            "items": { "$ref": "#/components/schemas/OrganDto" }
-          },
-          "exceptionComment": { "type": "string" },
-          "registrationDate": { "format": "date-time", "type": "string" }
-        },
-        "required": ["isDonor", "exceptions"]
-      },
       "HttpProblemResponse": {
         "type": "object",
         "properties": {
           "type": {
-            "type": "object",
+            "type": "string",
             "description": "A URI reference that identifies the problem type"
           },
           "title": {
@@ -262,12 +249,27 @@
         },
         "required": ["type", "title"]
       },
+      "OrganDonorDto": {
+        "type": "object",
+        "properties": {
+          "isDonor": { "type": "boolean" },
+          "exceptions": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/OrganDto" }
+          },
+          "exceptionComment": { "type": "string" },
+          "registrationDate": { "format": "date-time", "type": "string" },
+          "isMinor": { "type": "boolean" },
+          "isTemporaryResident": { "type": "boolean" }
+        },
+        "required": ["isDonor", "exceptions"]
+      },
       "UpdateOrganDonorDto": {
         "type": "object",
         "properties": {
           "isDonor": { "type": "boolean" },
           "exceptions": { "type": "array", "items": { "type": "string" } },
-          "exceptionComment": { "type": "object" }
+          "exceptionComment": { "type": "string" }
         },
         "required": ["isDonor", "exceptions"]
       }

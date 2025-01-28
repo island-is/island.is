@@ -1,4 +1,3 @@
-import React from 'react'
 import {
   Box,
   Button,
@@ -8,8 +7,9 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
+import { useUserInfo } from '@island.is/react-spa/bff'
 import { UserLanguageSwitcher } from '@island.is/shared/components'
-import { useAuth } from '@island.is/auth/react'
+
 interface OnboardingHeaderProps {
   dropOnboarding: () => void
   hideClose: boolean
@@ -21,7 +21,7 @@ export const OnboardingHeader = ({
 }: OnboardingHeaderProps) => {
   useNamespaces('sp.settings')
   const { formatMessage } = useLocale()
-  const { userInfo: user } = useAuth()
+  const user = useUserInfo()
   const closeWindow = formatMessage({
     id: 'sp.settings:close-window',
     defaultMessage: 'Loka glugga',

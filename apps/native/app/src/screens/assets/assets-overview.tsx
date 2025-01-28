@@ -1,4 +1,3 @@
-import { AssetCard, EmptyList, Skeleton, TopLine } from '@ui'
 import React, { useCallback, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 import {
@@ -12,6 +11,8 @@ import {
 } from 'react-native'
 import { NavigationFunctionComponent } from 'react-native-navigation'
 import { useTheme } from 'styled-components/native'
+
+import { AssetCard, EmptyList, Skeleton, TopLine } from '../../ui'
 import illustrationSrc from '../../assets/illustrations/le-moving-s1.png'
 import { BottomTabsIndicator } from '../../components/bottom-tabs-indicator/bottom-tabs-indicator'
 import { useListAssetsQuery } from '../../graphql/types/schema'

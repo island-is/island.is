@@ -7,7 +7,11 @@ import { InjectModel } from '@nestjs/sequelize'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
-import { EventType } from '@island.is/judicial-system/types'
+import { MessageService, MessageType } from '@island.is/judicial-system/message'
+import {
+  EventNotificationType,
+  EventType,
+} from '@island.is/judicial-system/types'
 
 import { CreateEventLogDto } from './dto/createEventLog.dto'
 import { EventLog } from './models/eventLog.model'
@@ -20,11 +24,19 @@ const allowMultiple: EventType[] = [
   EventType.INDICTMENT_CONFIRMED,
 ]
 
+const eventToNotificationMap: Partial<
+  Record<EventType, EventNotificationType>
+> = {
+  INDICTMENT_SENT_TO_PUBLIC_PROSECUTOR:
+    EventNotificationType.INDICTMENT_SENT_TO_PUBLIC_PROSECUTOR,
+}
+
 @Injectable()
 export class EventLogService {
   constructor(
     @InjectModel(EventLog)
     private readonly eventLogModel: typeof EventLog,
+    private readonly messageService: MessageService,
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
   ) {}
@@ -58,6 +70,10 @@ export class EventLogService {
       // Tolerate failure but log error
       this.logger.error('Failed to create event log', error)
     }
+
+    if (caseId) {
+      this.addEventNotificationToQueue(eventType, caseId)
+    }
   }
 
   async loginMap(
@@ -85,5 +101,24 @@ export class EventLogService {
             ]),
           ),
       )
+  }
+
+  // Sends events to queue for notification dispatch
+  private addEventNotificationToQueue(eventType: EventType, caseId: string) {
+    const notificationType = eventToNotificationMap[eventType]
+
+    if (notificationType) {
+      try {
+        this.messageService.sendMessagesToQueue([
+          {
+            type: MessageType.EVENT_NOTIFICATION_DISPATCH,
+            caseId: caseId,
+            body: { type: notificationType },
+          },
+        ])
+      } catch (error) {
+        this.logger.error('Failed to send event notification to queue', error)
+      }
+    }
   }
 }

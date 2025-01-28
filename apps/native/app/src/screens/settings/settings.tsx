@@ -1,11 +1,4 @@
 import { useApolloClient } from '@apollo/client'
-import {
-  Alert,
-  NavigationBarSheet,
-  TableViewAccessory,
-  TableViewCell,
-  TableViewGroup,
-} from '@ui'
 import { authenticateAsync } from 'expo-local-authentication'
 import React, { useEffect, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
@@ -26,6 +19,14 @@ import {
   NavigationFunctionComponent,
 } from 'react-native-navigation'
 import { useTheme } from 'styled-components/native'
+
+import {
+  Alert,
+  NavigationBarSheet,
+  TableViewAccessory,
+  TableViewCell,
+  TableViewGroup,
+} from '../../ui'
 import editIcon from '../../assets/icons/edit.png'
 import chevronForward from '../../ui/assets/icons/chevron-forward.png'
 import { PressableHighlight } from '../../components/pressable-highlight/pressable-highlight'

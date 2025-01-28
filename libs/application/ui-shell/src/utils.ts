@@ -167,7 +167,6 @@ function isFunctionalComponent(
     component.length === 0
   )
 }
-
 function isFunctionReturningComponent(
   component: FormComponent | undefined,
 ): component is (
@@ -176,7 +175,6 @@ function isFunctionReturningComponent(
   if (!component) return false
   return typeof component === 'function' && component.length === 1
 }
-
 export function getFormComponent(
   component: FormComponent | undefined,
   application: Application,
@@ -184,10 +182,8 @@ export function getFormComponent(
   if (isFunctionalComponent(component)) {
     return component
   }
-
   if (isFunctionReturningComponent(component)) {
     return component(application)
   }
-
   return null
 }

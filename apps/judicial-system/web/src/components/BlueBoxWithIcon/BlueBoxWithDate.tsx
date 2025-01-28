@@ -1,6 +1,5 @@
 import { FC, useContext, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
-import addDays from 'date-fns/addDays'
 import { AnimatePresence, motion } from 'framer-motion'
 import { useRouter } from 'next/router'
 
@@ -14,8 +13,8 @@ import {
 } from '@island.is/island-ui/core'
 import { PUBLIC_PROSECUTOR_STAFF_INDICTMENT_SEND_TO_PRISON_ADMIN_ROUTE } from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
-import { VERDICT_APPEAL_WINDOW_DAYS } from '@island.is/judicial-system/types'
-import { errors } from '@island.is/judicial-system-web/messages'
+import { getIndictmentAppealDeadlineDate } from '@island.is/judicial-system/types'
+import { core, errors } from '@island.is/judicial-system-web/messages'
 
 import {
   CaseIndictmentRulingDecision,
@@ -26,6 +25,7 @@ import { formatDateForServer, useDefendants } from '../../utils/hooks'
 import DateTime from '../DateTime/DateTime'
 import { FormContext } from '../FormProvider/FormProvider'
 import { getAppealExpirationInfo } from '../InfoCard/DefendantInfo/DefendantInfo'
+import Modal from '../Modal/Modal'
 import SectionHeading from '../SectionHeading/SectionHeading'
 import { strings } from './BlueBoxWithDate.strings'
 import * as styles from './BlueBoxWithIcon.css'
@@ -34,6 +34,8 @@ interface Props {
   defendant: Defendant
   icon?: IconMapIcon
 }
+
+type VisibleModal = 'REVOKE_SEND_TO_PRISON_ADMIN'
 
 const BlueBoxWithDate: FC<Props> = (props) => {
   const { defendant, icon } = props
@@ -47,7 +49,8 @@ const BlueBoxWithDate: FC<Props> = (props) => {
   })
   const [triggerAnimation, setTriggerAnimation] = useState<boolean>(false)
   const [triggerAnimation2, setTriggerAnimation2] = useState<boolean>(false)
-  const { setAndSendDefendantToServer } = useDefendants()
+  const [modalVisible, setModalVisible] = useState<VisibleModal>()
+  const { setAndSendDefendantToServer, isUpdatingDefendant } = useDefendants()
   const { workingCase, setWorkingCase } = useContext(FormContext)
   const router = useRouter()
 
@@ -56,6 +59,13 @@ const BlueBoxWithDate: FC<Props> = (props) => {
 
   const serviceRequired =
     defendant.serviceRequirement === ServiceRequirement.REQUIRED
+
+  const shouldHideDatePickers = Boolean(
+    defendant.verdictAppealDate ||
+      defendant.isVerdictAppealDeadlineExpired ||
+      defendant.isSentToPrisonAdmin ||
+      isFine,
+  )
 
   const handleDateChange = (
     date: Date | undefined,
@@ -111,15 +121,28 @@ const BlueBoxWithDate: FC<Props> = (props) => {
       },
       setWorkingCase,
     )
+
+    setModalVisible(undefined)
+  }
+
+  const handleRevokeAppeal = () => {
+    setAndSendDefendantToServer(
+      {
+        caseId: workingCase.id,
+        defendantId: defendant.id,
+        verdictAppealDate: null,
+      },
+      setWorkingCase,
+    )
   }
 
   const appealExpirationInfo = useMemo(() => {
     const deadline =
       defendant.verdictAppealDeadline ||
       (dates.verdictViewDate &&
-        addDays(
+        getIndictmentAppealDeadlineDate(
           dates.verdictViewDate,
-          VERDICT_APPEAL_WINDOW_DAYS,
+          false,
         ).toISOString())
 
     return getAppealExpirationInfo(
@@ -166,14 +189,14 @@ const BlueBoxWithDate: FC<Props> = (props) => {
           }),
         )
       }
+    }
 
-      if (defendant.sentToPrisonAdminDate && defendant.isSentToPrisonAdmin) {
-        texts.push(
-          formatMessage(strings.sendToPrisonAdminDate, {
-            date: formatDate(defendant.sentToPrisonAdminDate),
-          }),
-        )
-      }
+    if (defendant.sentToPrisonAdminDate && defendant.isSentToPrisonAdmin) {
+      texts.push(
+        formatMessage(strings.sendToPrisonAdminDate, {
+          date: formatDate(defendant.sentToPrisonAdminDate),
+        }),
+      )
     }
 
     return texts
@@ -192,26 +215,27 @@ const BlueBoxWithDate: FC<Props> = (props) => {
     serviceRequired,
   ])
 
-  const datePickerVariants = {
-    dpHidden: { opacity: 0, y: 15, marginTop: '16px' },
-    dpVisible: { opacity: 1, y: 0 },
-    dpExit: {
+  const verdictViewDateVariants = {
+    hidden: { opacity: 0, y: 15, marginTop: '16px' },
+    visible: { opacity: 1, y: 0 },
+    exit: {
       opacity: 0,
       y: 15,
     },
   }
 
-  const datePicker2Variants = {
-    dpHidden: { opacity: 0, y: 15, marginTop: '16px' },
-    dpVisible: {
+  const appealDateVariants = {
+    hidden: { opacity: 0, y: 15, marginTop: '16px' },
+    visible: {
       opacity: 1,
       y: 0,
       height: 'auto',
       transition: { delay: triggerAnimation ? 0 : 0.4 },
     },
-    dpExit: {
+    exit: {
       opacity: 0,
       height: 0,
+      marginTop: 0,
       transition: { opacity: { duration: 0.2 } },
     },
   }
@@ -240,13 +264,18 @@ const BlueBoxWithDate: FC<Props> = (props) => {
               <motion.div
                 key={index}
                 initial={{
-                  marginTop: index === 0 ? 0 : '16px',
+                  marginTop: 0,
                   opacity: 0,
                   y: 20,
                   height: triggerAnimation2 ? 0 : 'auto',
                 }}
-                animate={{ opacity: 1, y: 0, height: 'auto' }}
-                exit={{ opacity: 0, y: 20 }}
+                animate={{
+                  opacity: 1,
+                  y: 0,
+                  height: 'auto',
+                  marginTop: index === 0 ? 0 : '16px',
+                }}
+                exit={{ opacity: 0, y: 20, height: 0 }}
                 transition={{
                   delay: index < 4 ? index * 0.2 : 0,
                   duration: 0.3,
@@ -258,15 +287,14 @@ const BlueBoxWithDate: FC<Props> = (props) => {
             ))}
         </AnimatePresence>
         <AnimatePresence mode="wait">
-          {defendant.verdictAppealDate ||
-          defendant.isVerdictAppealDeadlineExpired ||
-          isFine ? null : !serviceRequired || defendant.verdictViewDate ? (
+          {shouldHideDatePickers ? null : !serviceRequired ||
+            defendant.verdictViewDate ? (
             <motion.div
               key="defendantAppealDate"
-              variants={datePicker2Variants}
-              initial="dpHidden"
-              animate="dpVisible"
-              exit="dpExit"
+              variants={appealDateVariants}
+              initial="hidden"
+              animate="visible"
+              exit="exit"
             >
               <Box className={styles.dataContainer}>
                 <DateTime
@@ -296,10 +324,10 @@ const BlueBoxWithDate: FC<Props> = (props) => {
           ) : (
             <motion.div
               key="defendantVerdictViewDate"
-              variants={datePickerVariants}
+              variants={verdictViewDateVariants}
               initial={false}
-              animate="dpVisible"
-              exit="dpExit"
+              animate="visible"
+              exit="exit"
               transition={{ duration: 0.2, ease: 'easeInOut', delay: 0.4 }}
             >
               <Box className={styles.dataContainer}>
@@ -332,10 +360,19 @@ const BlueBoxWithDate: FC<Props> = (props) => {
         </AnimatePresence>
       </Box>
       <Box display="flex" justifyContent="flexEnd" marginTop={1}>
-        {defendant.isSentToPrisonAdmin ? (
+        {defendant.verdictAppealDate ? (
           <Button
             variant="text"
-            onClick={handleRevokeSendToPrisonAdmin}
+            onClick={handleRevokeAppeal}
+            size="small"
+            colorScheme="destructive"
+          >
+            {formatMessage(strings.revokeAppeal)}
+          </Button>
+        ) : defendant.isSentToPrisonAdmin ? (
+          <Button
+            variant="text"
+            onClick={() => setModalVisible('REVOKE_SEND_TO_PRISON_ADMIN')}
             size="small"
             colorScheme="destructive"
           >
@@ -355,6 +392,20 @@ const BlueBoxWithDate: FC<Props> = (props) => {
           </Button>
         )}
       </Box>
+      {modalVisible === 'REVOKE_SEND_TO_PRISON_ADMIN' && (
+        <Modal
+          title={formatMessage(strings.revokeSendToPrisonAdminModalTitle)}
+          text={formatMessage(strings.revokeSendToPrisonAdminModalText, {
+            courtCaseNumber: workingCase.courtCaseNumber,
+            defendant: defendant.name,
+          })}
+          onPrimaryButtonClick={handleRevokeSendToPrisonAdmin}
+          primaryButtonText={formatMessage(strings.revoke)}
+          isPrimaryButtonLoading={isUpdatingDefendant}
+          secondaryButtonText={formatMessage(core.cancel)}
+          onSecondaryButtonClick={() => setModalVisible(undefined)}
+        />
+      )}
     </>
   )
 }

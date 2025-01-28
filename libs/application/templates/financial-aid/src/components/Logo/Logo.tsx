@@ -4,11 +4,9 @@ import {
   logoKeyFromMunicipalityCode,
 } from '@island.is/financial-aid/shared/lib'
 import React, { useEffect, useState } from 'react'
-
 type Props = {
   application: Application
 }
-
 export const Logo = ({ application }: Props) => {
   const [logo, setLogo] = useState<string>()
   const municipality = application.externalData.municipality
@@ -26,7 +24,6 @@ export const Logo = ({ application }: Props) => {
       setLogo(svgLogo.default)
     }
     getLogo()
-  }, [])
-
+  }, [municipality])
   return <img src={logo} alt="Municipality logo" />
 }

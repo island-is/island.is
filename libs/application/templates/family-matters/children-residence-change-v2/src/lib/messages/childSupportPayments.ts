@@ -22,7 +22,7 @@ export const childSupportPayments = {
     alert: {
       id: 'crc.application:section.arrangement.childSupportPayment.alert',
       defaultMessage:
-        'Ef um samkomulag um framfærslu er að ræða þá er hvorki hægt að krefjast milligöngu Tryggingastofnunar eða krefjast fjarnáms fyrir meðlagsgreiðslum.',
+        'Ef um samkomulag um framfærslu er að ræða þá er hvorki hægt að krefjast milligöngu Tryggingastofnunar né krefjast fjarnáms fyrir meðlagsgreiðslum.',
       description: 'Child support payments page alert',
     },
   }),

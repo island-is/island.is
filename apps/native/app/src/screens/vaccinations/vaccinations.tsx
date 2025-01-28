@@ -1,16 +1,16 @@
-import {
-  GeneralCardSkeleton,
-  Heading,
-  Problem,
-  TabButtons,
-  Typography,
-} from '@ui'
 import React, { useCallback, useState } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { RefreshControl, SafeAreaView, ScrollView, View } from 'react-native'
 import { NavigationFunctionComponent } from 'react-native-navigation'
 import styled from 'styled-components/native'
 
+import {
+  GeneralCardSkeleton,
+  Heading,
+  Problem,
+  TabButtons,
+  Typography,
+} from '../../ui'
 import { useGetVaccinationsQuery } from '../../graphql/types/schema'
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
 import { useConnectivityIndicator } from '../../hooks/use-connectivity-indicator'

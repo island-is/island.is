@@ -1,4 +1,8 @@
-import { formatText, getValueViaPath } from '@island.is/application/core'
+import {
+  formatText,
+  getErrorViaPath,
+  getValueViaPath,
+} from '@island.is/application/core'
 import { Application, RepeaterItem } from '@island.is/application/types'
 import { GridColumn, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
@@ -46,6 +50,19 @@ export const Item = ({
   const { setValue, control, clearErrors } = useFormContext()
   const prevWatchedValuesRef = useRef<string | (string | undefined)[]>()
 
+  const getSpan = (component: string, width: string) => {
+    if (component !== 'radio' && component !== 'checkbox') {
+      if (width === 'half') {
+        return '1/2'
+      }
+      if (width === 'third') {
+        return '1/3'
+      }
+      return '1/1'
+    }
+    return '1/1'
+  }
+
   const {
     component,
     id: itemId,
@@ -61,9 +78,8 @@ export const Item = ({
     defaultValue,
     ...props
   } = item
-  const isHalfColumn = component !== 'radio' && width === 'half'
-  const isThirdColumn = component !== 'radio' && width === 'third'
-  const span = isHalfColumn ? '1/2' : isThirdColumn ? '1/3' : '1/1'
+
+  const span = getSpan(component, width)
   const Component = componentMapper[component]
   const id = `${dataId}[${index}].${itemId}`
   const activeValues = index >= 0 && values ? values[index] : undefined
@@ -116,7 +132,7 @@ export const Item = ({
      */
     const errorList = error as unknown as Record<string, string>[] | undefined
     const errors = errorList?.[index]
-    return errors?.[id]
+    return errors && getErrorViaPath(errors, id)
   }
 
   const getDefaultValue = (
@@ -172,17 +188,17 @@ export const Item = ({
   }
   if (component === 'radio') {
     DefaultValue =
-      (getValueViaPath(application.answers, id) as string[]) ??
+      getValueViaPath<Array<string>>(application.answers, id) ??
       getDefaultValue(item, application, activeValues)
   }
   if (component === 'checkbox') {
     DefaultValue =
-      (getValueViaPath(application.answers, id) as string[]) ??
+      getValueViaPath<Array<string>>(application.answers, id) ??
       getDefaultValue(item, application, activeValues)
   }
   if (component === 'date') {
     DefaultValue =
-      (getValueViaPath(application.answers, id) as string) ??
+      getValueViaPath<string>(application.answers, id) ??
       getDefaultValue(item, application, activeValues)
   }
 
@@ -203,7 +219,7 @@ export const Item = ({
         label={formatText(label, application, formatMessage)}
         options={translatedOptions}
         placeholder={formatText(placeholder, application, formatMessage)}
-        split={width === 'half' ? '1/2' : '1/1'}
+        split={width === 'half' ? '1/2' : width === 'third' ? '1/3' : '1/1'}
         error={getFieldError(itemId)}
         control={control}
         readOnly={Readonly}
@@ -216,6 +232,7 @@ export const Item = ({
         }}
         application={application}
         defaultValue={DefaultValue}
+        large={true}
         {...props}
       />
     </GridColumn>

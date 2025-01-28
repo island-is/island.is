@@ -83,4 +83,25 @@ export const strings = defineMessages({
     description:
       'Notaður sem titill í svæði þar sem kærufrestur viðurlagaákvörðunar er tekinn fram',
   },
+  revokeSendToPrisonAdminModalTitle: {
+    id: 'judicial.system.core:blue_box_with_date.revoke_send_to_prison_admin_modal_title',
+    defaultMessage: 'Afturkalla úr fullnustu',
+    description: 'Notaður sem titill í "Afturkalla úr fullnustu" modal glugga.',
+  },
+  revokeSendToPrisonAdminModalText: {
+    id: 'judicial.system.core:blue_box_with_date.revoke_send_to_prison_admin_modal_text',
+    defaultMessage:
+      'Mál {courtCaseNumber} verður afturkallað.\nÁkærði: {defendant}.',
+    description: 'Notaður sem texti í "Afturkalla úr fullnustu" modal glugga.',
+  },
+  revoke: {
+    id: 'judicial.system.core:blue_box_with_date.revoke',
+    defaultMessage: 'Afturkalla',
+    description: 'Notaður sem texti fyrir aðgerðina að afturkalla mál',
+  },
+  revokeAppeal: {
+    id: 'judicial.system.core:blue_box_with_date.revoke_appeal',
+    defaultMessage: 'Afturkalla áfrýjun',
+    description: 'Notaður sem texti fyrir aðgerðina að afturkalla áfrýjun',
+  },
 })

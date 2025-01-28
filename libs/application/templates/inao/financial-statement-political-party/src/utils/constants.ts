@@ -51,17 +51,21 @@ export const EQUITIESANDLIABILITIESIDS = {
   assetPrefix: 'asset',
   currentAssets: 'asset.currentAssets',
   fixedAssetsTotal: 'asset.fixedAssetsTotal',
-  assetTotal: 'asset.total',
   liabilityPrefix: 'liability',
   longTerm: 'liability.longTerm',
   shortTerm: 'liability.shortTerm',
   asset: 'liability.asset',
-  totalLiability: 'liability.total',
   operationResult: 'equity.operationResult',
   equityPrefix: 'equity',
   totalEquity: 'equity.totalEquity',
   totalCash: 'equity.total',
-  totalEquityAndLiabilities: 'equityAndLiabilities.total',
+}
+
+export const EQUITYANDLIABILITIESTOTALS = {
+  assetsTotal: 'equityAndLiabilitiesTotals.assetsTotal',
+  liabilitiesTotal: 'equityAndLiabilitiesTotals.liabilitiesTotal',
+  equityAndLiabilitiesTotal:
+    'equityAndLiabilitiesTotals.equityAndLiabilitiesTotal',
 }
 
 // Error helpers

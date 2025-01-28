@@ -1,6 +1,13 @@
 import type { ApolloError } from '@apollo/client'
 import { Problem } from '../Problem'
 
+interface ProblemExtensions {
+  problem?: Problem
+  exception?: {
+    problem?: Problem
+  }
+}
+
 export const findProblemInApolloError = (
   error: ApolloError | undefined,
   types?: string[],
@@ -8,15 +15,20 @@ export const findProblemInApolloError = (
   if (!error) {
     return undefined
   }
-  const graphQLError = error.graphQLErrors.find((value) => {
-    const problem = value.extensions?.problem as Problem | undefined
-    return problem && (!types || types.includes(problem.type))
-  })
 
-  if (!graphQLError) {
+  const problems = error.graphQLErrors
+    .map((value) => {
+      const extensions = value.extensions as ProblemExtensions | undefined
+      const problem = extensions?.problem || extensions?.exception?.problem
+      if (problem && (!types || types.includes(problem.type))) {
+        return problem
+      }
+    })
+    .filter((problem) => problem) as Problem[]
+
+  if (problems.length === 0) {
     return undefined
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  return graphQLError.extensions!.problem as Problem
+  return problems[0]
 }

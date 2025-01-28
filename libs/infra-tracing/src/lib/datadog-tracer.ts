@@ -22,7 +22,12 @@ export const maskSpan = (
 }
 
 if (process.env.NODE_ENV !== 'development') {
-  tracer.init({ logInjection: true }) // initialized in a different file to avoid hoisting.
+  tracer.init({
+    logInjection: true,
+    tags: {
+      codeOwner: process.env.CODE_OWNER,
+    },
+  }) // initialized in a different file to avoid hoisting.
   tracer.use('express', {
     blacklist: ['/liveness', '/readiness', '/metrics'],
     hooks: {

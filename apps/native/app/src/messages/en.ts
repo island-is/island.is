@@ -19,6 +19,7 @@ export const en: TranslatedMessages = {
     'Updated permissions required, please login again.',
   'login.expiredMissingUserMessage':
     'Could not fetch user information, please login again.',
+  'login.expiredMessage': 'Please log in again.',
 
   // app lock
   'applock.title': 'Enter a 4-digit PIN',
@@ -249,6 +250,8 @@ export const en: TranslatedMessages = {
   'wallet.emptyListTitle': 'There are currently no documents',
   'wallet.emptyListDescription':
     'When you get e.g. driving licenses, firearms licenses or fishing licenses from the government, they appear here.',
+  'wallet.lastUpdated': 'Last updated: {date}',
+  'wallet.update': 'Update',
 
   // wallet pass
   'walletPass.screenTitle': 'Pass',
@@ -264,8 +267,17 @@ export const en: TranslatedMessages = {
   'walletPass.errorAddingOrFetching': 'Failed to fetch or add pass.',
   'walletPass.errorNotPossibleOnThisDevice':
     'You cannot add passes on this device.',
-  'walletPass.errorNotConnectedNoBarcode':
+
+  'walletPass.barcodeErrorNotConnected':
     'Not possible to scan barcode if the device is not connected to the internet.',
+  'walletPass.barcodeErrorFailedToFetch': 'Could not fetch barcode',
+  'walletPass.barcodeErrorBadSession':
+    'Too little time since license was accessed on another device',
+  'walletPass.validLicense': 'Valid',
+  'walletPass.expiredLicense': 'Expired',
+  'walletPass.passportNumber': 'Passport number: {licenseNumber}',
+  'walletPass.licenseNumber': 'License number: {licenseNumber}',
+  'walletPass.errorFetchingLicense': 'Could not update license',
 
   // wallet passport
   'walletPassport.screenTitle': 'Passport',
@@ -665,15 +677,15 @@ export const en: TranslatedMessages = {
 
   // health - organ donation
   'health.organDonation': 'Organ Donation',
-  'health.organDonation.change': 'Breyta afstöðu',
-  'health.organDonation.isDonor': 'Ég er líffæragjafi',
+  'health.organDonation.change': 'Change selection',
+  'health.organDonation.isDonor': 'I am an organ donor',
   'health.organDonation.isDonorWithLimitations':
-    'Ég heimila líffæragjöf, með takmörkunum.',
-  'health.organDonation.isNotDonor': 'Ég heimila ekki líffæragjöf',
+    'I allow organ donation, with restrictions.',
+  'health.organDonation.isNotDonor': 'I forbid organ donation',
   'health.organDonation.isDonorDescription':
-    'Öll líffærin mín má nota til ígræðslu.',
+    'My organs can all be used for transplantation.',
   'health.organDonation.isNotDonorDescription':
-    'Engin líffæri má nota til ígræðslu.',
+    'No organs can be used for transplantation.',
   'health.organDonation.isDonorWithLimitationsDescription':
-    'Öll líffærin mín má nota til ígræðslu fyrir utan: {limitations}.',
+    'All organs can be used for transplantation except: {limitations}.',
 }

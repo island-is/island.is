@@ -291,6 +291,9 @@ const Completed: FC = () => {
                     large
                     backgroundColor="white"
                     label={formatMessage(strings.serviceRequirementNotRequired)}
+                    tooltip={formatMessage(
+                      strings.serviceRequirementNotRequiredTooltip,
+                    )}
                   />
                 </BlueBox>
               </Box>

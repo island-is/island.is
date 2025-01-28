@@ -65,7 +65,7 @@ export class CaseController {
   })
   @CommonApiResponses
   @ApiLocaleQuery
-  async getAllCases(
+  getAllCases(
     @CurrentUser() user: User,
     @Query() query?: { locale: string },
   ): Promise<CasesResponse[]> {
@@ -85,7 +85,7 @@ export class CaseController {
     description: 'Case for given case id and authenticated user not found',
   })
   @ApiLocaleQuery
-  async getCase(
+  getCase(
     @Param('caseId', new ParseUUIDPipe()) caseId: string,
     @CurrentUser() user: User,
     @Query() query?: { locale: string },
@@ -106,7 +106,7 @@ export class CaseController {
     description: 'Subpoena for given case id and authenticated user not found',
   })
   @ApiLocaleQuery
-  async getSubpoena(
+  getSubpoena(
     @Param('caseId', new ParseUUIDPipe()) caseId: string,
     @CurrentUser() user: User,
     @Query() query?: { locale: string },
@@ -131,7 +131,7 @@ export class CaseController {
     description: 'User is not allowed to update subpoena',
   })
   @ApiLocaleQuery
-  async updateSubpoena(
+  updateSubpoena(
     @CurrentUser() user: User,
     @Param('caseId', new ParseUUIDPipe()) caseId: string,
     @Body() defenderAssignment: UpdateSubpoenaDto,

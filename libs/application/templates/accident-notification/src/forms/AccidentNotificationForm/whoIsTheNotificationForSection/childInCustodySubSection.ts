@@ -4,7 +4,7 @@ import {
   buildTextField,
 } from '@island.is/application/core'
 import { childInCustody } from '../../../lib/messages'
-import { isReportingOnBehalfOfChild } from '../../../utils'
+import { isReportingOnBehalfOfChild } from '../../../utils/reportingUtils'
 
 export const childInCustodySubSection = buildSubSection({
   id: 'childInCustody.section',

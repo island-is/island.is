@@ -45,7 +45,7 @@ import {
   useCase,
   useDefendants,
 } from '@island.is/judicial-system-web/src/utils/hooks'
-import { isBusiness } from '@island.is/judicial-system-web/src/utils/stepHelper'
+import { isBusiness } from '@island.is/judicial-system-web/src/utils/utils'
 import { isDefendantStepValidIC } from '@island.is/judicial-system-web/src/utils/validate'
 
 import {
@@ -192,14 +192,7 @@ const Defendant = () => {
 
   const handleCreateDefendantClick = async () => {
     if (workingCase.id) {
-      const defendantId = await createDefendant({
-        caseId: workingCase.id,
-        gender: undefined,
-        name: '',
-        address: '',
-        nationalId: '',
-        citizenship: '',
-      })
+      const defendantId = await createDefendant({ caseId: workingCase.id })
 
       createEmptyDefendant(defendantId)
     } else {
@@ -214,14 +207,7 @@ const Defendant = () => {
       ...prevWorkingCase,
       defendants: prevWorkingCase.defendants && [
         ...prevWorkingCase.defendants,
-        {
-          id: defendantId || uuid(),
-          gender: undefined,
-          name: '',
-          nationalId: '',
-          address: '',
-          citizenship: '',
-        } as TDefendant,
+        { id: defendantId || uuid() },
       ],
     }))
   }

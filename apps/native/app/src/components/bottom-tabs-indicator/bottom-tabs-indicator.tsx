@@ -1,9 +1,9 @@
-import { dynamicColor } from '@ui'
 import React, { useEffect, useRef, useState } from 'react'
 import { Animated, SafeAreaView, View, useWindowDimensions } from 'react-native'
 import { useTheme } from 'styled-components'
 import styled from 'styled-components/native'
 import { useUiStore } from '../../stores/ui-store'
+import { dynamicColor } from '../../ui'
 
 const Host = styled.View`
   position: absolute;

@@ -19,9 +19,7 @@ export const textSearch = (
   )
 }
 
-export const getSortedAndFilteredList = <
-  T extends Record<string, string | null>,
->(
+export const getSortedAndFilteredList = <T>(
   list: T[],
   searchTerms: string[],
   keys: (keyof T)[],
@@ -30,13 +28,15 @@ export const getSortedAndFilteredList = <
 
   const startsWithFullSearchString = (item: T): boolean => {
     return keys.some((key) =>
-      item[key]?.trim().toLowerCase().startsWith(fullSearchString),
+      (item[key] as string)?.trim().toLowerCase().startsWith(fullSearchString),
     )
   }
 
   const containsAllTerms = (item: T): boolean => {
     return searchTerms.every((searchTerm) =>
-      keys.some((key) => item[key]?.trim().toLowerCase().includes(searchTerm)),
+      keys.some((key) =>
+        (item[key] as string)?.trim().toLowerCase().includes(searchTerm),
+      ),
     )
   }
 

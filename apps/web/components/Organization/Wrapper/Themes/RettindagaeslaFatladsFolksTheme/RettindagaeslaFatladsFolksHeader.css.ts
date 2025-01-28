@@ -1,5 +1,6 @@
 import { style } from '@vanilla-extract/css'
-import { themeUtils, theme } from '@island.is/island-ui/theme'
+
+import { theme, themeUtils } from '@island.is/island-ui/theme'
 
 export const headerBg = style({
   background: 'linear-gradient(rgba(242, 247, 255, 0), rgba(242, 247, 255, 1))',

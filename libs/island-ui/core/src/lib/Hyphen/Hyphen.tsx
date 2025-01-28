@@ -12,7 +12,7 @@ type HyphenateText = (
 ) => string
 
 // TODO: import patterns dynamically
-const hyphenateText: HyphenateText = (
+export const hyphenateText: HyphenateText = (
   content,
   { minLeft, minRight, locale = 'is' },
 ) => {

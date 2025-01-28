@@ -4,11 +4,6 @@ import { useRouter } from 'next/router'
 import { useLazyQuery } from '@apollo/client'
 
 import {
-  FiskistofaShipBasicInfo as ShipBasicInfo,
-  FiskistofaShipBasicInfoResponse,
-  QueryFiskistofaGetShipsArgs as QueryGetShipsArgs,
-} from '@island.is/api/schema'
-import {
   Box,
   Button,
   Input,
@@ -17,6 +12,11 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { shouldLinkOpenInNewWindow } from '@island.is/shared/utils'
+import {
+  FiskistofaShipBasicInfo as ShipBasicInfo,
+  FiskistofaShipBasicInfoResponse,
+  QueryFiskistofaGetShipsArgs as QueryGetShipsArgs,
+} from '@island.is/web/graphql/schema'
 
 import { GET_SHIPS_QUERY } from './queries'
 import { translation as translationStrings } from './translation.strings'

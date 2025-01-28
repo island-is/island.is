@@ -1,15 +1,16 @@
 import {
+  CodeOwners,
+  ServiceBuilder,
+  json,
+  ref,
+  service,
+} from '../../../../infra/src/dsl/dsl'
+import {
   Base,
   Client,
   NationalRegistryB2C,
   RskCompanyInfo,
 } from '../../../../infra/src/dsl/xroad'
-import {
-  json,
-  ref,
-  service,
-  ServiceBuilder,
-} from '../../../../infra/src/dsl/dsl'
 
 const serviceName = 'user-notification'
 const serviceWorkerName = `${serviceName}-worker`
@@ -41,6 +42,11 @@ const getEnv = (services: {
     '@island.is/auth/delegations/index:system',
   ]),
   SERVICE_PORTAL_CLICK_ACTION_URL: 'https://island.is/minarsidur',
+  SERVICE_PORTAL_BFF_LOGIN_URL: {
+    dev: 'https://beta.dev01.devland.is/bff/login',
+    staging: 'https://beta.staging01.devland.is/bff/login',
+    prod: 'https://island.is/bff/login',
+  },
   EMAIL_FROM_ADDRESS: {
     dev: 'development@island.is',
     staging: 'development@island.is',
@@ -56,6 +62,7 @@ export const userNotificationServiceSetup = (services: {
     .image(imageName)
     .namespace(serviceName)
     .serviceAccount(serviceName)
+    .codeOwner(CodeOwners.Juni)
     .db()
     .command('node')
     .args('--no-experimental-fetch', 'main.js')
@@ -121,6 +128,7 @@ export const userNotificationWorkerSetup = (services: {
     .image(imageName)
     .namespace(serviceName)
     .serviceAccount(serviceWorkerName)
+    .codeOwner(CodeOwners.Juni)
     .command('node')
     .args('--no-experimental-fetch', 'main.js', '--job=worker')
     .db()
@@ -169,6 +177,7 @@ export const userNotificationCleanUpWorkerSetup = (): ServiceBuilder<
     .image(imageName)
     .namespace(serviceName)
     .serviceAccount(serviceCleanupWorkerName)
+    .codeOwner(CodeOwners.Juni)
     .command('node')
     .args('--no-experimental-fetch', 'main.js', '--job=cleanup')
     .db({ name: 'user-notification' })

@@ -2,7 +2,7 @@ import React from 'react'
 import { Image } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 import { ImageSourcePropType, Text } from 'react-native'
-import { fontByWeight } from '@ui/utils'
+import { fontByWeight } from '../../utils'
 
 const Host = styled.View`
   border-bottom-width: 1px;

@@ -252,7 +252,7 @@ export const NewMachineAnswersSchema = z.object({
     streetRegistration: z
       .object({
         registerToTraffic: z.enum([YES, NO]),
-        size: z.enum(['1', '2', '3']),
+        size: z.enum(['1', '2', '3']).optional(),
       })
       .optional(),
   }),

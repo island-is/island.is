@@ -37,6 +37,7 @@ export const mustInspectBeforeStreetRegistration = (
     'typesMustInspectBeforeRegistration.data',
     [],
   ) as string[]
+
   return inspectBeforeTypes?.includes(regNumber.substring(0, 2)) || false
 }
 
@@ -46,4 +47,42 @@ export const getExtraData = (application: ApplicationType): ExtraData[] => {
     { name: 'regNumber', value: streetAnswers.machine.regNumber || '' },
     { name: 'date', value: streetAnswers.machine?.date || '' },
   ]
+}
+
+export const isInvalidRegistrationType = (
+  externalData: ExternalData,
+  regNumber: string,
+) => {
+  const validTypes = getValueViaPath<string[]>(
+    externalData,
+    'availableRegistrationTypes.data',
+    [],
+  )
+  const inspectBeforeTypes = getValueViaPath<string[]>(
+    externalData,
+    'typesMustInspectBeforeRegistration.data',
+    [],
+  )
+
+  const regType = regNumber.substring(0, 2)
+
+  return (
+    !validTypes?.includes(regType) && !inspectBeforeTypes?.includes(regType)
+  )
+}
+
+export const isMachineDisabled = (
+  externalData: ExternalData,
+  regNumber: string,
+): boolean => {
+  const validTypes = getValueViaPath<string[]>(
+    externalData,
+    'availableRegistrationTypes.data',
+    [],
+  )
+
+  const regType = regNumber.substring(0, 2)
+
+  // Checks the machine type against the available registration types
+  return !validTypes?.includes(regType)
 }

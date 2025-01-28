@@ -1,3 +1,8 @@
+import { useEffect, useState } from 'react'
+import { useIntl } from 'react-intl'
+import { ScrollView, View } from 'react-native'
+import { Navigation } from 'react-native-navigation'
+
 import {
   Accordion,
   AccordionItem,
@@ -5,11 +10,7 @@ import {
   Checkbox,
   DatePickerInput,
   theme,
-} from '@ui'
-import { useEffect, useState } from 'react'
-import { useIntl } from 'react-intl'
-import { ScrollView, View } from 'react-native'
-import { Navigation } from 'react-native-navigation'
+} from '../../ui'
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
 import { useConnectivityIndicator } from '../../hooks/use-connectivity-indicator'
 import {

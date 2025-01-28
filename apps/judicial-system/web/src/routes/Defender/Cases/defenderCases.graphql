@@ -23,6 +23,11 @@ query DefenderCases($input: CaseListQueryInput) {
       name
       noNationalId
       defenderChoice
+      subpoenas {
+        id
+        serviceStatus
+        subpoenaId
+      }
     }
     initialRulingDate
     rulingDate

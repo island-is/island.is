@@ -34,9 +34,9 @@ import {
 import { SendNotificationResponse } from './models/sendNotification.response'
 import { NotificationService } from './notification.service'
 
-@UseGuards(JwtAuthGuard, RolesGuard, CaseExistsGuard)
 @Controller('api/case/:caseId/notification')
 @ApiTags('notifications')
+@UseGuards(JwtAuthGuard, RolesGuard, CaseExistsGuard)
 export class NotificationController {
   constructor(
     private readonly notificationService: NotificationService,

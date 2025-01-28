@@ -160,6 +160,7 @@ export const companySection = buildSubSection({
           title: information.labels.company.phonenumber,
           width: 'half',
           required: true,
+          enableCountrySelector: true,
           defaultValue: (application: Application) =>
             getValueViaPath<string>(
               application.externalData,
@@ -173,8 +174,7 @@ export const companySection = buildSubSection({
           alertType: 'info',
           doesNotRequireAnswer: true,
           marginBottom: 0,
-          condition: (formValue: FormValue, externalData) =>
-            isCompany(externalData),
+          condition: (_, externalData) => isCompany(externalData),
         }),
         buildTextField({
           id: 'companyInformation.nameOfBranch',
@@ -182,8 +182,7 @@ export const companySection = buildSubSection({
           backgroundColor: 'blue',
           width: 'half',
           defaultValue: (application: Application) => '',
-          condition: (formValue: FormValue, externalData) =>
-            isCompany(externalData),
+          condition: (_, externalData) => isCompany(externalData),
         }),
         buildTextField({
           id: 'companyInformation.addressOfBranch',
@@ -192,23 +191,20 @@ export const companySection = buildSubSection({
           width: 'half',
           doesNotRequireAnswer: true,
           defaultValue: (application: Application) => '',
-          condition: (formValue: FormValue, externalData) =>
-            isCompany(externalData),
+          condition: (_, externalData) => isCompany(externalData),
         }),
         buildSelectField({
           id: 'companyInformation.postnumberOfBranch',
           title: information.labels.company.postNumberAndTownOfBranch,
           width: 'half',
           doesNotRequireAnswer: true,
-          condition: (formValue: FormValue, externalData) =>
-            isCompany(externalData),
+          condition: (_, externalData) => isCompany(externalData),
           options: (application) => {
             const postCodes =
               getValueViaPath<PostCodeDto[]>(
                 application.externalData,
                 'aoshData.data.postCode',
               ) ?? []
-
             return postCodes
               .filter((postCode) => postCode?.code && postCode?.name)
               .map(({ code, name }) => ({

@@ -1,4 +1,3 @@
-import { Alert, Button, Input, InputRow, NavigationBarSheet } from '@ui'
 import React from 'react'
 import { useIntl } from 'react-intl'
 import { ScrollView, View } from 'react-native'
@@ -6,6 +5,8 @@ import {
   Navigation,
   NavigationFunctionComponent,
 } from 'react-native-navigation'
+
+import { Alert, Button, Input, InputRow, NavigationBarSheet } from '../../ui'
 import { useNationalRegistryUserQuery } from '../../graphql/types/schema'
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
 import { navigateTo } from '../../lib/deep-linking'
@@ -27,7 +28,7 @@ export const PersonalInfoScreen: NavigationFunctionComponent = ({
   const intl = useIntl()
   const { dismiss, dismissed } = usePreferencesStore()
   const natRegRes = useNationalRegistryUserQuery()
-  const natRegData = natRegRes?.data?.nationalRegistryUser
+  const natRegData = natRegRes?.data?.nationalRegistryPerson
   const errorNatReg = !!natRegRes.error && !natRegData
   const loadingNatReg = natRegRes.loading && !natRegData
 

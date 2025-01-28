@@ -10,18 +10,22 @@ import {
 
 import { useEffect, useState, useCallback, useMemo } from 'react'
 import {
+  EmptyTable,
   ExpandRow,
   NestedFullTable,
   formatDate,
   m,
 } from '@island.is/portals/my-pages/core'
-import { AlertMessage, Box } from '@island.is/island-ui/core'
 import { vehicleMessage } from '../../lib/messages'
 import { VehicleBulkMileageSaveButton } from './VehicleBulkMileageSaveButton'
 import { InputController } from '@island.is/shared/form-fields'
 import * as styles from './VehicleBulkMileage.css'
 import { displayWithUnit } from '../../utils/displayWithUnit'
 import { isReadDateToday } from '../../utils/readDate'
+import { AlertMessage, Box, Text } from '@island.is/island-ui/core'
+import format from 'date-fns/format'
+import { VehicleBulkMileageSubData } from './VehicleBulkMileageSubData'
+import { Features, useFeatureFlagClient } from '@island.is/react/feature-flags'
 
 const ORIGIN_CODE = 'ISLAND.IS'
 
@@ -40,6 +44,22 @@ export const VehicleBulkMileageRow = ({ vehicle }: Props) => {
   const { formatMessage } = useLocale()
   const [postError, setPostError] = useState<string | null>(null)
   const [postStatus, setPostStatus] = useState<MutationStatus>('initial')
+
+  const [showSubdata, setShowSubdata] = useState<boolean>(false)
+  const featureFlagClient = useFeatureFlagClient()
+  useEffect(() => {
+    const isFlagEnabled = async () => {
+      const ffEnabled = await featureFlagClient.getValue(
+        Features.isServicePortalVehicleBulkMileageSubdataPageEnabled,
+        false,
+      )
+      if (ffEnabled) {
+        setShowSubdata(ffEnabled as boolean)
+      }
+    }
+    isFlagEnabled()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   const [
     executeRegistrationsQuery,
@@ -236,10 +256,17 @@ export const VehicleBulkMileageRow = ({ vehicle }: Props) => {
       onExpandCallback={executeRegistrationsQuery}
       data={[
         {
-          value: vehicle.vehicleType,
+          value: (
+            <Box>
+              <Text variant="medium">{vehicle.vehicleType}</Text>
+              <Text variant="small">{vehicle.vehicleId}</Text>
+            </Box>
+          ),
         },
         {
-          value: vehicle.vehicleId,
+          value: vehicle.lastMileageRegistration?.date
+            ? format(vehicle.lastMileageRegistration?.date, 'dd.MM.yyyy')
+            : '-',
         },
         {
           value: vehicle.lastMileageRegistration?.mileage
@@ -257,6 +284,8 @@ export const VehicleBulkMileageRow = ({ vehicle }: Props) => {
                 control={control}
                 id={vehicle.vehicleId}
                 name={vehicle.vehicleId}
+                backgroundColor="blue"
+                placeholder="km"
                 type="number"
                 suffix=" km"
                 thousandSeparator
@@ -375,6 +404,20 @@ export const VehicleBulkMileageRow = ({ vehicle }: Props) => {
           type="error"
           message={formatMessage(vehicleMessage.mileageHistoryFetchFailed)}
         />
+      ) : showSubdata ? (
+        data?.vehiclesMileageRegistrationHistory ? (
+          <VehicleBulkMileageSubData
+            vehicleId={vehicle.vehicleId}
+            data={data?.vehiclesMileageRegistrationHistory}
+            loading={loading}
+          />
+        ) : (
+          <EmptyTable
+            background={'blue100'}
+            loading={loading}
+            message={formatMessage(vehicleMessage.noVehiclesFound)}
+          />
+        )
       ) : (
         <NestedFullTable
           headerArray={[

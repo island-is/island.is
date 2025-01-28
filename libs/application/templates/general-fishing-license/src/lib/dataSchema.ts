@@ -16,7 +16,7 @@ const FileSchema = z.object({
 export const GeneralFishingLicenseSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
   externalData: z.object({
-    identityRegistry: z.object({
+    identity: z.object({
       data: z.object({
         date: z.string(),
         status: z.enum(['success', 'failure']),

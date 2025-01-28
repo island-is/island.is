@@ -1,7 +1,8 @@
-import { Button, CancelButton, Illustration, Onboarding } from '@ui'
 import React from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { NavigationFunctionComponent } from 'react-native-navigation'
+
+import { Button, CancelButton, Illustration, Onboarding } from '../../ui'
 import allow from '../../assets/icons/allow.png'
 import { preferencesStore } from '../../stores/preferences-store'
 import { nextOnboardingStep } from '../../utils/onboarding'

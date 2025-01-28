@@ -21,13 +21,7 @@ import {
 } from '@island.is/judicial-system/auth'
 import type { User } from '@island.is/judicial-system/types'
 
-import {
-  districtCourtAssistantRule,
-  districtCourtJudgeRule,
-  districtCourtRegistrarRule,
-  prosecutorRepresentativeRule,
-  prosecutorRule,
-} from '../../guards'
+import { prosecutorRepresentativeRule, prosecutorRule } from '../../guards'
 import {
   Case,
   CaseExistsGuard,
@@ -36,13 +30,14 @@ import {
   CaseReadGuard,
   CurrentCase,
 } from '../case'
-import { Subpoena } from '../subpoena'
 import { UploadPoliceCaseFileDto } from './dto/uploadPoliceCaseFile.dto'
 import { PoliceCaseFile } from './models/policeCaseFile.model'
 import { PoliceCaseInfo } from './models/policeCaseInfo.model'
 import { UploadPoliceCaseFileResponse } from './models/uploadPoliceCaseFile.response'
 import { PoliceService } from './police.service'
 
+@Controller('api/case/:caseId')
+@ApiTags('police files')
 @UseGuards(
   JwtAuthGuard,
   RolesGuard,
@@ -50,8 +45,6 @@ import { PoliceService } from './police.service'
   CaseReadGuard,
   CaseNotCompletedGuard,
 )
-@Controller('api/case/:caseId')
-@ApiTags('police files')
 export class PoliceController {
   constructor(
     private readonly policeService: PoliceService,
@@ -74,28 +67,6 @@ export class PoliceController {
     this.logger.debug(`Getting all police files for case ${caseId}`)
 
     return this.policeService.getAllPoliceCaseFiles(theCase.id, user)
-  }
-
-  @RolesRules(
-    prosecutorRule,
-    prosecutorRepresentativeRule,
-    districtCourtJudgeRule,
-    districtCourtAssistantRule,
-    districtCourtRegistrarRule,
-  )
-  @Get('subpoenaStatus/:subpoenaId')
-  @ApiOkResponse({
-    type: Subpoena,
-    description: 'Gets subpoena status',
-  })
-  getSubpoenaStatus(
-    @Param('subpoenaId') subpoenaId: string,
-    @CurrentCase() theCase: Case,
-    @CurrentHttpUser() user: User,
-  ): Promise<Subpoena> {
-    this.logger.debug(`Gets subpoena status in case ${theCase.id}`)
-
-    return this.policeService.getSubpoenaStatus(subpoenaId, user)
   }
 
   @RolesRules(prosecutorRule, prosecutorRepresentativeRule)

@@ -1,5 +1,5 @@
 import { onError, ErrorResponse } from '@apollo/client/link/error'
-import { signIn, signOut } from 'next-auth/client'
+import { signIn } from 'next-auth/client'
 
 import { toast } from '@island.is/island-ui/core'
 
@@ -22,7 +22,10 @@ export default onError(({ graphQLErrors, networkError }: ErrorResponse) => {
         })
       }
       return
-    } else if (errorCodes.includes('FORBIDDEN')) {
+    } else if (
+      errorCodes.includes('FORBIDDEN') ||
+      (graphQLErrors[0]?.extensions as any)?.response?.error === 'NOT_FOUND'
+    ) {
       return
     }
 

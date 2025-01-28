@@ -6,15 +6,18 @@ import { FriggOptionsQuery } from '../types/schema'
 
 export const useFriggOptions = (type?: OptionsType) => {
   const { lang } = useLocale()
-  const { data } = useQuery<FriggOptionsQuery>(friggOptionsQuery, {
-    variables: {
-      type: {
-        type,
+  const { data, loading, error } = useQuery<FriggOptionsQuery>(
+    friggOptionsQuery,
+    {
+      variables: {
+        type: {
+          type,
+        },
       },
     },
-  })
+  )
 
-  return (
+  const options =
     data?.friggOptions?.flatMap(({ options }) =>
       options.flatMap(({ value, key }) => {
         let content = value.find(({ language }) => language === lang)?.content
@@ -24,5 +27,12 @@ export const useFriggOptions = (type?: OptionsType) => {
         return { value: key ?? '', label: content ?? '' }
       }),
     ) ?? []
-  )
+
+  const otherIndex = options.findIndex((option) => option.value === 'other')
+
+  if (otherIndex >= 0) {
+    options.push(options.splice(otherIndex, 1)[0])
+  }
+
+  return { options, loading, error }
 }

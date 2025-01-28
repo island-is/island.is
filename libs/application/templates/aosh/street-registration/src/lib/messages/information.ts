@@ -82,6 +82,11 @@ export const information = {
         defaultMessage: 'Hafið samband við Vinnueftirlitið til að götuskrá',
         description: 'Pick machine inspect before registration',
       },
+      invalidRegistrationType: {
+        id: 'aosh.sr.application:information.labels.pickMachine.invalidRegistrationType',
+        defaultMessage: 'Ekki er hægt að götuskrá tæki í þessum flokk',
+        description: 'Pick machine invalid registration type tag',
+      },
     }),
     machine: defineMessages({
       sectionTitle: {

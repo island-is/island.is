@@ -16,6 +16,10 @@ import { environment } from '../../../../environments'
 import { SequelizeConfigService } from '../../../sequelizeConfig.service'
 import { ApplicationChargeModule } from '../charge/application-charge.module'
 import { ApplicationLifeCycleService } from './application-lifecycle.service'
+import {
+  UserNotificationClientConfig,
+  UserNotificationEagerClientModule,
+} from '@island.is/clients/user-notification'
 
 @Module({
   imports: [
@@ -26,10 +30,16 @@ import { ApplicationLifeCycleService } from './application-lifecycle.service'
     LoggingModule,
     ApplicationChargeModule,
     ApplicationFilesModule,
+    UserNotificationEagerClientModule,
     AuditModule.forRoot(environment.audit),
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [signingModuleConfig, ApplicationFilesConfig, FileStorageConfig],
+      load: [
+        UserNotificationClientConfig,
+        signingModuleConfig,
+        ApplicationFilesConfig,
+        FileStorageConfig,
+      ],
     }),
   ],
   providers: [ApplicationLifeCycleService],

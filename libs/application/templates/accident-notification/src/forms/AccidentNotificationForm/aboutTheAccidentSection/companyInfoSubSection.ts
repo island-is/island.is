@@ -9,11 +9,11 @@ import { companyInfo, representativeInfo } from '../../../lib/messages'
 import {
   isAgricultureAccident,
   isGeneralWorkplaceAccident,
-  isHomeActivitiesAccident,
-  isInjuredAndRepresentativeOfCompanyOrInstitute,
   isInternshipStudiesAccident,
-  isReportingOnBehalfOfEmployee,
-} from '../../../utils'
+} from '../../../utils/occupationUtils'
+import { isReportingOnBehalfOfEmployee } from '../../../utils/reportingUtils'
+import { isHomeActivitiesAccident } from '../../../utils/accidentUtils'
+import { isInjuredAndRepresentativeOfCompanyOrInstitute } from '../../../utils/miscUtils'
 
 // Company information if work accident without the injured being a fisherman or in agriculture
 export const companyInfoSubSection = buildSubSection({

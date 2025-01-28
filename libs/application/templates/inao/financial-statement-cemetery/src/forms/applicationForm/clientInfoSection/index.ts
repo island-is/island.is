@@ -1,14 +1,19 @@
 import {
-  buildCustomField,
+  buildAsyncSelectField,
   buildDescriptionField,
   buildMultiField,
+  buildPhoneField,
   buildSection,
   buildTextField,
+  getValueViaPath,
 } from '@island.is/application/core'
-import { Application, UserProfile } from '@island.is/application/types'
+import { Application } from '@island.is/application/types'
 import { m } from '../../../lib/messages'
 import { ABOUTIDS } from '../../../utils/constants'
 import { Identity } from '@island.is/api/schema'
+import { getAuditConfig } from '../../../graphql'
+import { AuditConfig } from '../../../types/types'
+import { getYearOptions } from '../../../utils/helpers'
 
 export const clientInfoSection = buildSection({
   id: 'info',
@@ -19,15 +24,21 @@ export const clientInfoSection = buildSection({
       title: m.info,
       description: m.reviewContact,
       children: [
-        buildDescriptionField({
+        buildAsyncSelectField({
           id: ABOUTIDS.operatingYear,
-          title: '',
+          title: m.operatingYear,
+          placeholder: m.selectOperatingYear,
+          width: 'half',
+          loadOptions: async ({ apolloClient }) => {
+            const { data } = await apolloClient.query<AuditConfig>({
+              query: getAuditConfig,
+            })
+            return getYearOptions(data)
+          },
         }),
-        buildCustomField({
-          id: 'OperatingYear',
-          childInputIds: [ABOUTIDS.operatingYear],
+        buildDescriptionField({
+          id: 'about.description',
           title: '',
-          component: 'OperatingYear',
         }),
         buildTextField({
           id: 'about.nationalId',
@@ -48,42 +59,49 @@ export const clientInfoSection = buildSection({
             return nationalRegistry.name
           },
         }),
-        buildDescriptionField({
+        buildTextField({
+          id: ABOUTIDS.powerOfAttorneyNationalId,
+          title: m.powerOfAttorneyNationalId,
+          width: 'half',
+          readOnly: true,
+          format: '######-####',
+          defaultValue: (application: Application) =>
+            getValueViaPath<string>(
+              application.externalData,
+              'identity.data.actor.nationalId',
+            ),
+        }),
+        buildTextField({
           id: ABOUTIDS.powerOfAttorneyName,
-          title: '',
+          title: m.powerOfAttorneyName,
+          width: 'half',
+          readOnly: true,
+          defaultValue: (application: Application) =>
+            getValueViaPath<string>(
+              application.externalData,
+              'identity.data.actor.name',
+            ),
         }),
-        buildCustomField({
-          id: 'powerOfAttorney',
-          title: '',
-          description: '',
-          component: 'PowerOfAttorneyFields',
-          childInputIds: [
-            ABOUTIDS.powerOfAttorneyNationalId,
-            ABOUTIDS.powerOfAttorneyName,
-          ],
-        }),
-
         buildTextField({
           id: 'about.email',
           title: m.email,
           width: 'half',
           variant: 'email',
-          defaultValue: (application: Application) => {
-            const userProfile = application.externalData.userProfile
-              .data as UserProfile
-            return userProfile.email
-          },
+          defaultValue: (application: Application) =>
+            getValueViaPath<string>(
+              application.externalData,
+              'userProfile.data.email',
+            ),
         }),
-        buildTextField({
+        buildPhoneField({
           id: 'about.phoneNumber',
           title: m.phoneNumber,
           width: 'half',
-          variant: 'tel',
-          defaultValue: (application: Application) => {
-            const userProfile = application.externalData.userProfile
-              .data as UserProfile
-            return userProfile.mobilePhoneNumber
-          },
+          defaultValue: (application: Application) =>
+            getValueViaPath<string>(
+              application.externalData,
+              'userProfile.data.mobilePhoneNumber',
+            ),
         }),
       ],
     }),

@@ -1,9 +1,15 @@
 import React from 'react'
 import { Controller, useFormContext, RegisterOptions } from 'react-hook-form'
 
-import { Select, Option, InputBackgroundColor } from '@island.is/island-ui/core'
+import {
+  Select,
+  SelectProps,
+  Option,
+  InputBackgroundColor,
+} from '@island.is/island-ui/core'
 import { TestSupport } from '@island.is/island-ui/utils'
 import { MultiValue, SingleValue } from 'react-select'
+import { clearInputsOnChange } from '@island.is/shared/utils'
 
 interface SelectControllerProps<Value, IsMulti extends boolean = false> {
   error?: string
@@ -26,6 +32,8 @@ interface SelectControllerProps<Value, IsMulti extends boolean = false> {
   rules?: RegisterOptions
   size?: 'xs' | 'sm' | 'md'
   internalKey?: string
+  filterConfig?: SelectProps<Value, IsMulti>['filterConfig']
+  clearOnChange?: string[]
 }
 
 export const SelectController = <Value, IsMulti extends boolean = false>({
@@ -47,8 +55,10 @@ export const SelectController = <Value, IsMulti extends boolean = false>({
   rules,
   size,
   internalKey,
+  filterConfig,
+  clearOnChange,
 }: SelectControllerProps<Value, IsMulti> & TestSupport) => {
-  const { clearErrors } = useFormContext()
+  const { clearErrors, setValue } = useFormContext()
 
   const isMultiValue = (
     value: MultiValue<Option<Value>> | SingleValue<Option<Value>>,
@@ -67,7 +77,14 @@ export const SelectController = <Value, IsMulti extends boolean = false>({
         .filter(Boolean) as Option<Value>[]
     }
 
-    return options.find((option) => option.value === value)
+    // Return null if the value is not in the options to avoid hung values
+    const foundOption = options.find((option) => option.value === value) || null
+    // Avoid having nonexistent values in the answers object by setting the value to null
+    // if the value is not in the options and there are options meaning options have been fetched
+    if (!foundOption && options.length > 0) {
+      setValue(id, null)
+    }
+    return foundOption
   }
 
   return (
@@ -91,6 +108,7 @@ export const SelectController = <Value, IsMulti extends boolean = false>({
           placeholder={placeholder}
           value={getValue(value)}
           isSearchable={isSearchable}
+          filterConfig={filterConfig}
           isMulti={isMulti}
           isClearable={isClearable}
           size={size}
@@ -109,6 +127,14 @@ export const SelectController = <Value, IsMulti extends boolean = false>({
               // eslint-disable-next-line @typescript-eslint/ban-ts-comment
               // @ts-ignore make web strict
               onSelect(newVal, onChange)
+            }
+
+            if (clearOnChange) {
+              clearInputsOnChange(clearOnChange, setValue)
+            }
+
+            if (isClearable && newVal === null) {
+              clearInputsOnChange([id], setValue)
             }
           }}
         />

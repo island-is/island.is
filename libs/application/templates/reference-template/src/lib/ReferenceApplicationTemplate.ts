@@ -1,3 +1,14 @@
+/*
+ ***
+ *** The state machine is for this template is as follows:
+ ***
+ ***                                                            /-> Approved
+ *** Prerequisites -> Draft -> Waiting to assign -> In review --
+ ***                    Λ             |                         \-> Rejected
+ ***                    |_____________|
+ ***
+ */
+
 import {
   DefaultStateLifeCycle,
   getValueViaPath,
@@ -26,16 +37,8 @@ import {
   MyMockProvider,
   NationalRegistryApi,
 } from '../dataProviders'
-import { ExampleSchema } from './dataSchema'
-
-const States = {
-  prerequisites: 'prerequisites',
-  draft: 'draft',
-  inReview: 'inReview',
-  approved: 'approved',
-  rejected: 'rejected',
-  waitingToAssign: 'waitingToAssign',
-}
+import { dataSchema } from './dataSchema'
+import { States } from '../utils/constants'
 
 type ReferenceTemplateEvent =
   | { type: DefaultEvents.APPROVE }
@@ -50,19 +53,19 @@ enum Roles {
 }
 
 const determineMessageFromApplicationAnswers = (application: Application) => {
-  const careerHistory = getValueViaPath(
+  const careerHistory = getValueViaPath<string>(
     application.answers,
     'careerHistory',
     undefined,
-  ) as string | undefined
-  const careerIndustry = getValueViaPath(
+  )
+  const careerIndustry = getValueViaPath<string>(
     application.answers,
     'careerIndustry',
     undefined,
-  ) as string | undefined
+  )
 
   if (careerHistory === 'no') {
-    return m.nameApplicationNeverWorkedBefore
+    return 'abcdef'
   }
   if (careerIndustry) {
     return {
@@ -72,6 +75,7 @@ const determineMessageFromApplicationAnswers = (application: Application) => {
   }
   return m.name
 }
+
 const ReferenceApplicationTemplate: ApplicationTemplate<
   ApplicationContext,
   ApplicationStateSchema<ReferenceTemplateEvent>,
@@ -81,14 +85,14 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
   name: determineMessageFromApplicationAnswers,
   institution: m.institutionName,
   translationNamespaces: [ApplicationConfigurations.ExampleForm.translation],
-  dataSchema: ExampleSchema,
+  dataSchema: dataSchema,
   featureFlag: Features.exampleApplication,
   allowMultipleApplicationsInDraft: true,
 
   stateMachineConfig: {
-    initial: States.prerequisites,
+    initial: States.PREREQUISITES,
     states: {
-      [States.prerequisites]: {
+      [States.PREREQUISITES]: {
         meta: {
           name: 'Skilyrði',
           progress: 0,
@@ -103,8 +107,8 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/Prerequisites').then((module) =>
-                  Promise.resolve(module.Prerequisites),
+                import('../forms/prerequisitesForm/prerequisitesForm').then(
+                  (module) => Promise.resolve(module.Prerequisites),
                 ),
               actions: [
                 { event: 'SUBMIT', name: 'Staðfesta', type: 'primary' },
@@ -131,15 +135,14 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
           ],
         },
         on: {
-          SUBMIT: {
-            target: States.draft,
+          [DefaultEvents.SUBMIT]: {
+            target: States.DRAFT,
           },
         },
       },
-      [States.draft]: {
+      [States.DRAFT]: {
         meta: {
-          name: 'Umsókn um ökunám',
-
+          name: 'Dæmi um umsókn',
           actionCard: {
             description: m.draftDescription,
             historyLogs: {
@@ -154,7 +157,7 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/ExampleForm').then((module) =>
+                import('../forms/exampleForm').then((module) =>
                   Promise.resolve(module.ExampleForm),
                 ),
               actions: [
@@ -166,14 +169,14 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
           ],
         },
         on: {
-          SUBMIT: [
+          [DefaultEvents.SUBMIT]: [
             {
-              target: States.waitingToAssign,
+              target: States.WAITINGTOASSIGN,
             },
           ],
         },
       },
-      [States.waitingToAssign]: {
+      [States.WAITINGTOASSIGN]: {
         meta: {
           name: 'Waiting to assign',
           progress: 0.75,
@@ -207,8 +210,8 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/WaitingToAssign').then((val) =>
-                  Promise.resolve(val.PendingReview),
+                import('../forms/waitingToAssignForm/waitingToAssignForm').then(
+                  (val) => Promise.resolve(val.PendingReview),
                 ),
               read: 'all',
               write: 'all',
@@ -217,20 +220,20 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
             {
               id: Roles.ASSIGNEE,
               formLoader: () =>
-                import('../forms/WaitingToAssign').then((val) =>
-                  Promise.resolve(val.PendingReview),
+                import('../forms/waitingToAssignForm/waitingToAssignForm').then(
+                  (val) => Promise.resolve(val.PendingReview),
                 ),
               read: 'all',
             },
           ],
         },
         on: {
-          SUBMIT: { target: States.inReview },
-          ASSIGN: { target: States.inReview },
-          EDIT: { target: States.draft },
+          [DefaultEvents.SUBMIT]: { target: States.INREVIEW },
+          [DefaultEvents.ASSIGN]: { target: States.INREVIEW },
+          [DefaultEvents.EDIT]: { target: States.DRAFT },
         },
       },
-      [States.inReview]: {
+      [States.INREVIEW]: {
         meta: {
           name: 'In Review',
           progress: 0.75,
@@ -263,8 +266,8 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
             {
               id: Roles.ASSIGNEE,
               formLoader: () =>
-                import('../forms/ReviewApplication').then((val) =>
-                  Promise.resolve(val.ReviewApplication),
+                import('../forms/reviewApplicationForm/reviewApplication').then(
+                  (val) => Promise.resolve(val.ReviewApplication),
                 ),
               actions: [
                 { event: 'APPROVE', name: 'Samþykkja', type: 'primary' },
@@ -279,7 +282,7 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/PendingReview').then((val) =>
+                import('../forms/pendingReviewForm/pendingReview').then((val) =>
                   Promise.resolve(val.PendingReview),
                 ),
               read: 'all',
@@ -287,11 +290,11 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
           ],
         },
         on: {
-          APPROVE: { target: States.approved },
-          REJECT: { target: States.rejected },
+          [DefaultEvents.APPROVE]: { target: States.APPROVED },
+          [DefaultEvents.REJECT]: { target: States.REJECTED },
         },
       },
-      [States.approved]: {
+      [States.APPROVED]: {
         meta: {
           name: 'Approved',
           progress: 1,
@@ -301,7 +304,7 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/Approved').then((val) =>
+                import('../forms/approvedForm/approvedForm').then((val) =>
                   Promise.resolve(val.Approved),
                 ),
               read: 'all',
@@ -309,18 +312,17 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
           ],
         },
       },
-      [States.rejected]: {
+      [States.REJECTED]: {
         meta: {
           name: 'Rejected',
           progress: 1,
           status: 'rejected',
           lifecycle: DefaultStateLifeCycle,
-
           roles: [
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/Rejected').then((val) =>
+                import('../forms/rejectedForm/rejectedForm').then((val) =>
                   Promise.resolve(val.Rejected),
                 ),
             },

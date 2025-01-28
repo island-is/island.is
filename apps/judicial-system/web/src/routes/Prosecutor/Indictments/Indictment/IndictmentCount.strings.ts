@@ -6,6 +6,11 @@ export const indictmentCount = defineMessages({
     defaultMessage: 'Eyða',
     description: 'Notaður sem texti á Eyða hnappi á ákæruliða skrefi í ákærum.',
   },
+  policeCaseNumberTitle: {
+    id: 'judicial.system.core:indictments_indictment.indictment_count.police_case_number_title',
+    defaultMessage: 'Málsnúmer lögreglu',
+    description: 'Notaður sem titill fyrir "Málsnúmer lögreglu" svæði.',
+  },
   policeCaseNumberLabel: {
     id: 'judicial.system.core:indictments_indictment.indictment_count.police_case_number_label',
     defaultMessage: 'LÖKE málsnúmer',
@@ -17,6 +22,12 @@ export const indictmentCount = defineMessages({
     defaultMessage: 'Veldu málsnúmer',
     description:
       'Notaður sem skýritexti á LÖKE málsnúmers lista á ákæruliða skrefi í ákærum.',
+  },
+  vehicleRegistrationNumberTitle: {
+    id: 'judicial.system.core:indictments_indictment.indictment_count.vehicle_registration_number_title',
+    defaultMessage: 'Númer ökutækis',
+    description:
+      'Notaður sem titill á "Númer ökutækis" svæði á ákæruliða skrefi í ákærum.',
   },
   vehicleRegistrationNumberLabel: {
     id: 'judicial.system.core:indictments_indictment.indictment_count.vehicle_registration_number_label',
@@ -30,6 +41,12 @@ export const indictmentCount = defineMessages({
     description:
       'Notaður sem skýritexti á "skráningarnúmer ökutækis" svæði á ákæruliða skrefi í ákærum.',
   },
+  incidentTitle: {
+    id: 'judicial.system.core:indictments_indictment.indictment_count.incident_title',
+    defaultMessage: 'Brot',
+    description:
+      'Notaður sem titill á "brot" lista á ákæruliða skrefi í ákærum.',
+  },
   incidentLabel: {
     id: 'judicial.system.core:indictments_indictment.indictment_count.incident_label',
     defaultMessage: 'Brot',
@@ -41,6 +58,12 @@ export const indictmentCount = defineMessages({
     defaultMessage: 'Veldu brot',
     description:
       'Notaður sem skýritexti á "brot" lista á ákæruliða skrefi í ákærum.',
+  },
+  incidentDescriptionTitle: {
+    id: 'judicial.system.core:indictments_indictment.indictment_count.incident_description_title',
+    defaultMessage: 'Atvikalýsing',
+    description:
+      'Notaður sem titill á "atvikalýsing" svæði á ákæruliða skrefi í ákærum.',
   },
   incidentDescriptionLabel: {
     id: 'judicial.system.core:indictments_indictment.indictment_count.incident_description_label',
@@ -54,6 +77,12 @@ export const indictmentCount = defineMessages({
     description:
       'Notaður sem skýritexti á "atvikalýsing" svæði á ákæruliða skrefi í ákærum.',
   },
+  bloodAlcoholContentTitle: {
+    id: 'judicial.system.core:indictments_indictment.indictment_count.blood_alcohol_content_title',
+    defaultMessage: 'Vínandamagn',
+    description:
+      'Notaður sem titill á "vínandamagn" svæði á ákæruliða skrefi í ákærum.',
+  },
   bloodAlcoholContentLabel: {
     id: 'judicial.system.core:indictments_indictment.indictment_count.blood_alcohol_content_label',
     defaultMessage: 'Vínandamagn (‰)',
@@ -65,6 +94,12 @@ export const indictmentCount = defineMessages({
     defaultMessage: '0,00',
     description:
       'Notaður sem skýritexti á "vínandamagn" svæði á ákæruliða skrefi í ákærum.',
+  },
+  lawsBrokenTitle: {
+    id: 'judicial.system.core:indictments_indictment.indictment_count.laws_broken_title',
+    defaultMessage: 'Lagaákvæði',
+    description:
+      'Notaður sem titill á "lagaákvæði" leitarboxi á ákæruliða skrefi í ákærum.',
   },
   lawsBrokenLabel: {
     id: 'judicial.system.core:indictments_indictment.indictment_count.laws_broken_label',
@@ -123,6 +158,18 @@ export const indictmentCount = defineMessages({
     defaultMessage: 'í blóðsýni mældist',
     description: 'Notaður sem upphafstexti fyrir efni í blóði í atvikalýsingu.',
   },
+  indictmentDescriptionSubtypesAutofill: {
+    id: 'judicial.system.core:indictments_indictment.indictment_count.indictment_description_subtypes_auto_fill',
+    defaultMessage: 'fyrir [{subtypes}] með því að hafa, {date}',
+    description:
+      'Notaður sem ástæða í atvikalýsingu fyrir önnur brot en umferðalagabrot.',
+  },
+  legalArgumentsTitle: {
+    id: 'judicial.system.core:indictments_indictment.indictment_count.legal_arguments_title',
+    defaultMessage: 'Heimfærsla',
+    description:
+      'Notaður sem titill á "heimfærslu" svæði á ákæruliða skrefi í ákærum.',
+  },
   legalArgumentsLabel: {
     id: 'judicial.system.core:indictments_indictment.indictment_count.legal_arguments_label',
     defaultMessage: 'Heimfærsla',
@@ -130,8 +177,8 @@ export const indictmentCount = defineMessages({
       'Notaður sem titill á "heimfærslu" svæði á ákæruliða skrefi í ákærum.',
   },
   legalArgumentsPlaceholder: {
-    id: 'judicial.system.core:indictments_indictment.indictment_count.legal_arguments_placeholder',
-    defaultMessage: 'Skrifaðu heimfærslu',
+    id: 'judicial.system.core:indictments_indictment.indictment_count.legal_arguments_placeholder_v1',
+    defaultMessage: 'Telst háttsemi þessi varða við...',
     description:
       'Notaður sem skýritexti á "heimfærslu" svæði á ákæruliða skrefi í ákærum.',
   },
@@ -140,5 +187,10 @@ export const indictmentCount = defineMessages({
     defaultMessage:
       'Telst háttsemi þessi varða við {articles} umferðarlaga nr. 77/2019.',
     description: 'Notaður sem sjálfgefinn texti í heimfærslu svæði.',
+  },
+  selectIndictmentSubtype: {
+    id: 'judicial.system.core:indictments_indictment.indictment_count.select_indictment_subtype',
+    defaultMessage: 'Veldu sakarefni',
+    description: 'Notaður sem titill fyrir "Veldu sakarefni" svæði.',
   },
 })

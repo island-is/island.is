@@ -23,7 +23,6 @@ export class CaseListInterceptor implements NestInterceptor {
           // WARNING: Be careful when adding to this list. No sensitive information should be returned.
           // If you need to add sensitive information, then you should consider adding a new endpoint
           // for defenders and other user roles that are not allowed to see sensitive information.
-
           return {
             id: theCase.id,
             created: theCase.created,
@@ -65,6 +64,7 @@ export class CaseListInterceptor implements NestInterceptor {
             indictmentRulingDecision: theCase.indictmentRulingDecision,
             courtSessionType: theCase.courtSessionType,
             eventLogs: theCase.eventLogs,
+            court: theCase.court,
           }
         }),
       ),

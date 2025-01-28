@@ -141,6 +141,7 @@ export const InstitutionSignature = ({
       <Box className={styles.institution}>
         <Box flexGrow={1}>
           <Input
+            maxLength={100}
             name={`signature.${type}.institution${
               signatureIndex ? `.${signatureIndex}` : ''
             }`}

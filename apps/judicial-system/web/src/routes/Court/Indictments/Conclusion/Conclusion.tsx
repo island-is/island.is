@@ -39,6 +39,7 @@ import {
   useS3Upload,
   useUploadFiles,
 } from '@island.is/judicial-system-web/src/utils/hooks'
+import { validate } from '@island.is/judicial-system-web/src/utils/validate'
 
 import SelectConnectedCase from './SelectConnectedCase'
 import { strings } from './Conclusion.strings'
@@ -106,6 +107,9 @@ const Conclusion: FC = () => {
     useState<CourtSessionType>()
   const [selectedDecision, setSelectedDecision] =
     useState<CaseIndictmentRulingDecision>()
+  const [mergeCaseNumber, setMergeCaseNumber] = useState<string>()
+  const [mergeCaseNumberErrorMessage, setMergeCaseNumberErrorMessage] =
+    useState<string>()
 
   const handleNavigationTo = useCallback(
     async (destination: keyof stepValidationsType) => {
@@ -139,7 +143,13 @@ const Conclusion: FC = () => {
         case IndictmentDecision.COMPLETING:
           update.indictmentRulingDecision = selectedDecision
           if (selectedDecision === CaseIndictmentRulingDecision.MERGE) {
-            update.mergeCaseId = workingCase.mergeCase?.id
+            if (mergeCaseNumber) {
+              update.mergeCaseNumber = mergeCaseNumber
+            }
+
+            if (workingCase.mergeCase?.id) {
+              update.mergeCaseId = workingCase.mergeCase?.id
+            }
           }
           break
         case IndictmentDecision.REDISTRIBUTING:
@@ -164,8 +174,9 @@ const Conclusion: FC = () => {
       )
     },
     [
-      courtDate?.date,
-      courtDate?.location,
+      courtDate.date,
+      courtDate.location,
+      mergeCaseNumber,
       postponementReason,
       selectedAction,
       selectedCourtSessionType,
@@ -219,6 +230,20 @@ const Conclusion: FC = () => {
     }
   }, [workingCase.indictmentDecision])
 
+  useEffect(() => {
+    if (workingCase.mergeCaseNumber) {
+      setMergeCaseNumber(workingCase.mergeCaseNumber)
+    }
+  }, [workingCase.mergeCaseNumber])
+
+  const handleMergeCaseNumberBlur = (value: string) => {
+    const validation = validate([[value, ['S-case-number']]])
+
+    setMergeCaseNumberErrorMessage(
+      validation.isValid ? undefined : validation.errorMessage,
+    )
+  }
+
   const stepIsValid = () => {
     // Do not leave any downloads unfinished
     if (!allFilesDoneOrError) {
@@ -259,7 +284,10 @@ const Conclusion: FC = () => {
                 (file) =>
                   file.category === CaseFileCategory.COURT_RECORD &&
                   file.status === 'done',
-              ) && workingCase.mergeCase?.id,
+              ) &&
+                (workingCase.mergeCase?.id ||
+                  validate([[mergeCaseNumber, ['empty', 'S-case-number']]])
+                    .isValid),
             )
           default:
             return false
@@ -502,10 +530,34 @@ const Conclusion: FC = () => {
                   title={formatMessage(strings.connectedCaseNumbersTitle)}
                   required
                 />
-                <SelectConnectedCase
-                  workingCase={workingCase}
-                  setWorkingCase={setWorkingCase}
-                />
+                <BlueBox>
+                  <Box marginBottom={2}>
+                    <SelectConnectedCase
+                      workingCase={workingCase}
+                      setWorkingCase={setWorkingCase}
+                      mergeCaseNumber={mergeCaseNumber}
+                    />
+                  </Box>
+                  <Input
+                    name="mergeCaseNumber"
+                    label={formatMessage(strings.mergeCaseNumberLabel)}
+                    autoComplete="off"
+                    value={mergeCaseNumber}
+                    placeholder={formatMessage(
+                      strings.mergeCaseNumberPlaceholder,
+                    )}
+                    onChange={(evt) => {
+                      setMergeCaseNumberErrorMessage(undefined)
+                      setMergeCaseNumber(evt.target.value)
+                    }}
+                    onBlur={(evt) => {
+                      handleMergeCaseNumberBlur(evt.target.value)
+                    }}
+                    hasError={Boolean(mergeCaseNumberErrorMessage)}
+                    errorMessage={mergeCaseNumberErrorMessage}
+                    disabled={Boolean(workingCase.mergeCase)}
+                  />
+                </BlueBox>
               </Box>
             )}
           </>

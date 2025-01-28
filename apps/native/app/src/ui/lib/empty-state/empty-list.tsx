@@ -2,7 +2,7 @@ import React from 'react'
 import { View } from 'react-native'
 import styled from 'styled-components/native'
 
-import { dynamicColor } from '@ui/utils'
+import { dynamicColor } from '../../utils'
 import { Typography } from '../typography/typography'
 
 const Host = styled.View`

@@ -6,10 +6,10 @@ import {
   FormItemTypes,
   FormValue,
 } from '@island.is/application/types'
-import { useAuth } from '@island.is/auth/react'
 
-import { FieldDef, MultiFieldScreen } from '../types'
+import { useUserInfo } from '@island.is/react-spa/bff'
 import { convertMultiFieldToScreen } from '../reducer/reducerUtils'
+import { FieldDef, MultiFieldScreen } from '../types'
 
 // Use this component to optimize performance for applying conditions in response to form value changes for multifields
 export const ConditionHandler: FC<
@@ -21,7 +21,7 @@ export const ConditionHandler: FC<
   }>
 > = ({ answerQuestions, externalData, formValue, screen }) => {
   const data = useWatch({ defaultValue: formValue }) as FormValue
-  const { userInfo: user } = useAuth()
+  const user = useUserInfo()
 
   useEffect(() => {
     const newScreen = convertMultiFieldToScreen(

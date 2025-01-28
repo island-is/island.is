@@ -1,7 +1,8 @@
 import { useMemo } from 'react'
 import format from 'date-fns/format'
-import localeIS from 'date-fns/locale/is'
 import localeEN from 'date-fns/locale/en-GB'
+import localeIS from 'date-fns/locale/is'
+
 import { useI18n } from './useI18n'
 
 const localeMap = {

@@ -83,6 +83,7 @@ export const EducationGraduationDetail = () => {
                 date: formatMessage(edMessage.dateShort),
                 status: formatMessage(edMessage.status),
               }}
+              defaultSortByKey="name"
               items={
                 item.courses?.map((course, i) => ({
                   id: course?.courseId ?? `${i}`,

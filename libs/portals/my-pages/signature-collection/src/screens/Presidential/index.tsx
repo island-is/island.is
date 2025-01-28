@@ -2,9 +2,8 @@ import { Box } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import OwnerView from './OwnerView'
 import { useGetCurrentCollection, useIsOwner } from '../../hooks'
-import { EmptyState, IntroHeader } from '@island.is/portals/my-pages/core'
+import { EmptyState, IntroWrapper } from '@island.is/portals/my-pages/core'
 import { m } from '../../lib/messages'
-import { CollectionType } from '../../lib/constants'
 import SigneeView from '../shared/SigneeView'
 
 const SignatureLists = () => {
@@ -17,11 +16,11 @@ const SignatureLists = () => {
 
   return (
     <Box>
-      <IntroHeader
+      <IntroWrapper
         title={formatMessage(m.pageTitle)}
         intro={formatMessage(m.pageDescriptionSignee)}
       />
-      {currentCollection?.name === CollectionType.Presidential &&
+      {currentCollection?.isPresidential &&
       !loadingIsOwner &&
       !loadingCurrentCollection ? (
         <Box>

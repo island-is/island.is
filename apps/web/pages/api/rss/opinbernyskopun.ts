@@ -1,10 +1,11 @@
 import { documentToHtmlString } from '@contentful/rich-text-html-renderer'
+
+import initApollo from '@island.is/web/graphql/client'
 import {
   FaqList,
   GetProjectPageQuery,
   QueryGetProjectPageArgs,
 } from '@island.is/web/graphql/schema'
-import initApollo from '@island.is/web/graphql/client'
 import { GET_PROJECT_PAGE_QUERY } from '@island.is/web/screens/queries/Project'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore make web strict

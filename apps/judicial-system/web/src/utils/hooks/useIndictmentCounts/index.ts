@@ -80,7 +80,7 @@ const useIndictmentCounts = () => {
         const { data } = await updateIndictmentCountMutation({
           variables: {
             input: {
-              indictmentCountId: indictmentCountId,
+              indictmentCountId,
               caseId,
               ...update,
             },

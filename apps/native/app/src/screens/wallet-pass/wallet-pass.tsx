@@ -1,9 +1,3 @@
-import {
-  Alert as InfoAlert,
-  dynamicColor,
-  LICENSE_CARD_ROW_GAP,
-  LicenseCard,
-} from '@ui'
 import * as FileSystem from 'expo-file-system'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
@@ -23,6 +17,12 @@ import { NavigationFunctionComponent } from 'react-native-navigation'
 import PassKit, { AddPassButton } from 'react-native-passkit-wallet'
 import styled, { useTheme } from 'styled-components/native'
 
+import {
+  Alert as InfoAlert,
+  dynamicColor,
+  LICENSE_CARD_ROW_GAP,
+  LicenseCard,
+} from '../../ui'
 import { useFeatureFlag } from '../../contexts/feature-flag-provider'
 import {
   GenericLicenseType,
@@ -37,8 +37,11 @@ import { isAndroid, isIos } from '../../utils/devices'
 import { screenWidth } from '../../utils/dimensions'
 import { FieldRender } from './components/field-render'
 import { useOfflineStore } from '../../stores/offline-store'
-
-const INFORMATION_BASE_TOP_SPACING = 70
+import { useLocale } from '../../hooks/use-locale'
+import {
+  BARCODE_MAX_WIDTH,
+  INFORMATION_BASE_TOP_SPACING,
+} from './wallet-pass.constants'
 
 const getImageFromRawData = (rawData: string) => {
   try {
@@ -156,19 +159,22 @@ export const WalletPassScreen: NavigationFunctionComponent<{
       input: {
         licenseType: item?.license.type ?? id,
       },
+      locale: useLocale(),
     },
   })
 
   const data = res.data?.genericLicense ?? item
   const fields = data?.payload?.data ?? []
+  const isTablet = screenWidth > 760
   const pkPassAllowed =
     data?.license?.pkpass &&
     data?.license?.pkpassStatus === GenericUserLicensePkPassStatus.Available
   const allowLicenseBarcode =
     isBarcodeEnabled && pkPassAllowed && !data?.payload?.metadata?.expired
   const licenseType = data?.license?.type
-  const barcodeWidth =
-    screenWidth - theme.spacing[4] * 2 - theme.spacing.smallGutter * 2
+  const barcodeWidth = isTablet
+    ? BARCODE_MAX_WIDTH // For tablets - make sure barcode is not huge
+    : screenWidth - theme.spacing[4] * 2 - theme.spacing.smallGutter * 2
   const barcodeHeight = barcodeWidth / 3
   const updated = data?.fetch?.updated
 
@@ -176,9 +182,9 @@ export const WalletPassScreen: NavigationFunctionComponent<{
 
   const informationTopSpacing =
     (allowLicenseBarcode && ((loading && !data?.barcode) || data?.barcode)) ||
-    (!isConnected && isBarcodeEnabled)
-      ? barcodeHeight + LICENSE_CARD_ROW_GAP
-      : 0
+    ((!isConnected || res.error) && isBarcodeEnabled)
+      ? barcodeHeight + LICENSE_CARD_ROW_GAP + theme.spacing[5]
+      : theme.spacing[2]
 
   const [key, setKey] = useState(0)
   useEffect(() => {
@@ -393,6 +399,9 @@ export const WalletPassScreen: NavigationFunctionComponent<{
         <LicenseCard
           nativeID={`license-${licenseType}_destination`}
           type={licenseType}
+          title={data?.payload?.metadata?.name ?? undefined}
+          loading={res.loading}
+          error={res.error}
           logo={
             isBarcodeEnabled &&
             data?.license?.type === GenericLicenseType.DriversLicense
@@ -418,7 +427,9 @@ export const WalletPassScreen: NavigationFunctionComponent<{
         contentInset={{
           bottom:
             informationTopSpacing || (!isConnected && isBarcodeEnabled)
-              ? 162
+              ? isTablet
+                ? 340
+                : 162
               : 0,
         }}
         key={key}

@@ -1,4 +1,9 @@
-import { json, service, ServiceBuilder } from '../../../../../infra/src/dsl/dsl'
+import {
+  CodeOwners,
+  json,
+  service,
+  ServiceBuilder,
+} from '../../../../../infra/src/dsl/dsl'
 import {
   Base,
   Client,
@@ -23,6 +28,7 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-public-api'> => {
     .namespace('identity-server-admin')
     .image('services-auth-public-api')
     .db({ name: 'servicesauth' })
+    .codeOwner(CodeOwners.Aranja)
     .env({
       IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/auth-api',
       IDENTITY_SERVER_ISSUER_URL: {

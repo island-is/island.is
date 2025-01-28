@@ -82,6 +82,7 @@ describe('Feature-deployment support', () => {
         clientId: '@admin.island.is/bff-stjornbord',
         clientName: 'portals-admin',
         services: { api: apiService },
+        globalPrefix: '/stjornbord/bff',
       })
       .env({
         BFF_ALLOWED_EXTERNAL_API_URLS: {
@@ -122,10 +123,11 @@ describe('Feature-deployment support', () => {
       IDENTITY_SERVER_CLIENT_ID: `@admin.island.is/bff-stjornbord`,
       IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is',
       BFF_NAME: 'stjornbord',
-      BFF_CLIENT_KEY_PATH: `/stjornbord`,
-      BFF_PAR_SUPPORT_ENABLED: 'true',
+      BFF_CLIENT_BASE_PATH: '/stjornbord',
+      BFF_GLOBAL_PREFIX: `/stjornbord/bff`,
+      BFF_PAR_SUPPORT_ENABLED: 'false',
       BFF_ALLOWED_REDIRECT_URIS: json([
-        'https://feature-A-beta.dev01.devland.is',
+        'https://feature-A-beta.dev01.devland.is/stjornbord',
       ]),
       BFF_CLIENT_BASE_URL: 'https://feature-A-beta.dev01.devland.is',
       BFF_LOGOUT_REDIRECT_URI: 'https://feature-A-beta.dev01.devland.is',

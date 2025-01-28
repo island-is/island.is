@@ -32,3 +32,24 @@ mutation UpdateUserProfile(
     locale
   }
 }
+
+query GetAdminNotifications($nationalId: String!, $input: NotificationsInput!) {
+  adminNotifications(nationalId: $nationalId, input: $input) {
+    data {
+      id
+      notificationId
+      sender {
+        id
+        logoUrl
+      }
+      sent
+    }
+    pageInfo {
+      hasNextPage
+      hasPreviousPage
+      startCursor
+      endCursor
+    }
+    totalCount
+  }
+}

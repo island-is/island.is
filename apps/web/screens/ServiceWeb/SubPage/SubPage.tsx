@@ -55,7 +55,7 @@ import {
 } from '../../queries'
 import ContactBanner from '../ContactBanner/ContactBanner'
 import OrganizationContactBanner from '../ContactBanner/OrganizationContactBanner'
-import { getSlugPart } from '../utils'
+import { getSlugPart, shouldShowInstitutionContactBanner } from '../utils'
 
 export interface Dictionary<T> {
   [index: string]: T
@@ -105,9 +105,7 @@ const SubPage: Screen<SubPageProps> = ({
   const institutionSlugBelongsToMannaudstorg =
     institutionSlug.includes('mannaudstorg')
 
-  const institutionSlugBelongsToTryggingastofnun =
-    institutionSlug.includes('tryggingastofnun') ||
-    institutionSlug.includes('social-insurance-administration')
+  const showContactBanner = shouldShowInstitutionContactBanner(institutionSlug)
 
   // Already filtered by category, simply
   const categoryDescription = supportQNAs[0]?.category?.description ?? ''
@@ -394,7 +392,7 @@ const SubPage: Screen<SubPageProps> = ({
                 </GridRow>
               </GridContainer>
 
-              {!institutionSlugBelongsToTryggingastofnun && (
+              {showContactBanner && (
                 <Box marginTop={[10, 10, 20]}>
                   <ContactBanner
                     slug={institutionSlug}
@@ -553,6 +551,7 @@ SubPage.getProps = async ({ apolloClient, locale, query, res }) => {
     singleSupportCategory: singleSupportCategory?.data?.getSupportCategory,
     locale: locale as Locale,
     serviceWebPage: getServiceWebPage,
+    customAlertBanner: getServiceWebPage?.alertBanner,
   }
 }
 

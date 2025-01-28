@@ -1,4 +1,5 @@
 import React, { FC, ReactNode } from 'react'
+
 import { Link } from '@island.is/island-ui/core'
 import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 

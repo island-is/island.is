@@ -1,3 +1,7 @@
+import { useIntl } from 'react-intl'
+import { TouchableOpacity, View } from 'react-native'
+import { useTheme } from 'styled-components'
+
 import {
   Badge,
   badgeColorSchemes,
@@ -6,11 +10,7 @@ import {
   StatusCard,
   Typography,
   ViewPager,
-} from '@ui'
-import { useIntl } from 'react-intl'
-import { TouchableOpacity, View } from 'react-native'
-import { useTheme } from 'styled-components'
-
+} from '../../../ui'
 import { Application } from '../../../graphql/types/schema'
 import { getApplicationType } from '../utils/getApplicationType'
 import { getBadgeVariant } from '../utils/getBadgeVariant'

@@ -1,5 +1,3 @@
-import { useParams } from 'react-router-dom'
-import { useGetCertificateByIdQuery } from './MedicineCertificate.generated'
 import {
   Box,
   Icon,
@@ -7,12 +5,18 @@ import {
   Stack,
   Text,
 } from '@island.is/island-ui/core'
-import { GoBack, UserInfoLine } from '@island.is/portals/my-pages/core'
-import { messages } from '../../lib/messages'
+import { useParams } from 'react-router-dom'
+import { useGetCertificateByIdQuery } from './MedicineCertificate.generated'
+
 import { useLocale } from '@island.is/localization'
-import { HealthPaths } from '../../lib/paths'
+import {
+  IntroWrapper,
+  SJUKRATRYGGINGAR_SLUG,
+  UserInfoLine,
+} from '@island.is/portals/my-pages/core'
 import { Problem } from '@island.is/react-spa/shared'
-import { ExtraDoctors } from '../../components/ExtraDoctors'
+import { messages } from '../../lib/messages'
+import { ExtraDoctors } from './components/ExtraDoctors'
 
 type UseParams = {
   type: string
@@ -38,16 +42,17 @@ export const MedicineCertificate = () => {
   const hasError = error && !loading && !data
 
   return (
-    <Box paddingTop={4}>
+    <IntroWrapper
+      title={formatMessage(messages.medicineLicenseTitle)}
+      intro={formatMessage(messages.medicineLicenseIntroText)}
+      serviceProviderSlug={SJUKRATRYGGINGAR_SLUG}
+      serviceProviderTooltip={formatMessage(messages.healthTooltip)}
+    >
       <Stack dividers="blueberry200" space={1}>
         {isLoading && <SkeletonLoader height={35} space={2} repeat={4} />}
         {hasError && <Problem error={error} noBorder={false} />}
         {certificate && !isLoading && (
           <>
-            <GoBack
-              path={HealthPaths.HealthMedicineCertificates}
-              label={formatMessage(messages.medicineLicenseIntroTitle)}
-            />
             {certificate.drugName && (
               <UserInfoLine
                 paddingY={3}
@@ -161,7 +166,7 @@ export const MedicineCertificate = () => {
           </>
         )}
       </Stack>
-    </Box>
+    </IntroWrapper>
   )
 }
 

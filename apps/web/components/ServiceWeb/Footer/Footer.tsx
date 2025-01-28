@@ -1,23 +1,24 @@
 import { FC } from 'react'
+
 import {
   Box,
   GridColumn,
   GridContainer,
   GridRow,
   Hidden,
-  Text,
+  Hyphen,
+  Inline,
+  Link,
+  LinkContext,
   Logo,
   Stack,
-  LinkContext,
-  Link,
-  Inline,
-  Hyphen,
+  Text,
 } from '@island.is/island-ui/core'
-import Illustration from './Illustration'
 import { Locale } from '@island.is/shared/types'
 import { shouldLinkOpenInNewWindow } from '@island.is/shared/utils'
 import { useNamespace } from '@island.is/web/hooks'
 
+import Illustration from './Illustration'
 import * as styles from './Footer.css'
 
 interface Props {
@@ -25,6 +26,7 @@ interface Props {
   locale?: Locale
   logoSrc?: string
   contactLink?: string
+  contactLinkLabel?: string
   phone?: string
   namespace: Record<string, string>
 }
@@ -34,6 +36,7 @@ export const Footer: FC<React.PropsWithChildren<Props>> = ({
   locale = 'is',
   logoSrc,
   contactLink,
+  contactLinkLabel,
   phone,
   namespace,
 }) => {
@@ -130,7 +133,8 @@ export const Footer: FC<React.PropsWithChildren<Props>> = ({
                         >
                           <Text color={'blue600'}>
                             <a href={contactLink}>
-                              {n('sendUsALine', 'Sendu okkur línu')}
+                              {contactLinkLabel ||
+                                n('sendUsALine', 'Sendu okkur línu')}
                             </a>
                           </Text>
                         </LinkContext.Provider>

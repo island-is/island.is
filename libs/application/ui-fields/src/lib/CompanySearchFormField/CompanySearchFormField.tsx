@@ -32,6 +32,8 @@ export const CompanySearchFormField: FC<React.PropsWithChildren<Props>> = ({
     shouldIncludeIsatNumber,
     checkIfEmployerIsOnForbiddenList,
     required,
+    marginTop = [2, 4],
+    marginBottom,
   } = field
   const { formatMessage, lang: locale } = useLocale()
 
@@ -49,7 +51,7 @@ export const CompanySearchFormField: FC<React.PropsWithChildren<Props>> = ({
   }
 
   return (
-    <Box marginTop={[2, 4]}>
+    <Box marginTop={marginTop} marginBottom={marginBottom}>
       <CompanySearchController
         required={buildFieldRequired(application, required)}
         checkIfEmployerIsOnForbiddenList={checkIfEmployerIsOnForbiddenList}

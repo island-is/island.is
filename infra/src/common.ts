@@ -30,14 +30,13 @@ export async function runCommand({
     shell: true,
     stdio: 'pipe',
   })
-  proc.stdout?.on('data', (data) => {
+  logger.debug('Process started', { proc, cwd, command })
+  proc.stdout?.on('data', (data: Buffer | string) => {
     data
       .toString()
-      .split('\n')
+      .split(/\r?\n|\r|\n/g)
       .forEach((line: string) => {
-        if (line.trim().length > 0) {
-          logger.info(logMessage(line))
-        }
+        logger.info(logMessage(line.trim()))
       })
   })
   proc.stderr?.on('data', (data) => {

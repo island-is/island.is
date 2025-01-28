@@ -23,8 +23,7 @@ import { DiplomaModel } from './inna/diplomas.model'
 
 @Resolver()
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
-@Scopes(ApiScope.internal)
-@FeatureFlag(Features.servicePortalSecondaryEducationPages)
+@Scopes(ApiScope.education)
 @Audit({ namespace: '@island.is/api/education-inna' })
 export class InnaResolver {
   constructor(private innaService: InnaClientService) {}

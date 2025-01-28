@@ -38,4 +38,11 @@ export const strings = defineMessages({
     description:
       'Notaður sem texti í upplýsingaboxi fyrir ákæru/kröfu sem ekki er stofnuð í LÖKE í LÖKE gagnapakkanum.',
   },
+  invalidPoliceCaseFileFromLOKE: {
+    id: 'judicial.system.core:police_case_files.invalid_police_case_file_from_loke',
+    defaultMessage:
+      'Skráartegund ekki leyfð í Réttarvörslugátt. Eingöngu er tekið á móti gögnum á .PDF formi.',
+    description:
+      'Notaður sem texti í upplýsingasvæði fyrir skrár sem RVG styður ekki',
+  },
 })

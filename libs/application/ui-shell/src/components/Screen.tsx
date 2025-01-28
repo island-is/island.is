@@ -76,6 +76,7 @@ type ScreenProps = {
   renderLastScreenBackButton?: boolean
   goToScreen: (id: string) => void
   setUpdateForbidden: (value: boolean) => void
+  canGoBack: boolean
 }
 
 const getServerValidationErrors = (error: ApolloError | undefined) => {
@@ -107,6 +108,7 @@ const Screen: FC<React.PropsWithChildren<ScreenProps>> = ({
   renderLastScreenBackButton,
   screen,
   sections,
+  canGoBack,
 }) => {
   const { answers: formValue, externalData, id: applicationId } = application
   const { lang: locale, formatMessage } = useLocale()
@@ -416,6 +418,7 @@ const Screen: FC<React.PropsWithChildren<ScreenProps>> = ({
           numberOfScreens={numberOfScreens}
           mode={mode}
           goBack={goBack}
+          canGoBack={canGoBack}
           submitField={submitField}
           loading={loading}
           canProceed={!isLoadingOrPending}

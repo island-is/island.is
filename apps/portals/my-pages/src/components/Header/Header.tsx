@@ -1,4 +1,4 @@
-import { useAuth } from '@island.is/auth/react'
+import { DocumentsScope } from '@island.is/auth/scopes'
 import {
   Box,
   Button,
@@ -12,7 +12,7 @@ import {
 import { helperStyles, theme } from '@island.is/island-ui/theme'
 import { useLocale } from '@island.is/localization'
 import { PortalPageLoader } from '@island.is/portals/core'
-import { useFeatureFlagClient } from '@island.is/react/feature-flags'
+import { useUserInfo } from '@island.is/react-spa/bff'
 import {
   LinkResolver,
   ServicePortalPaths,
@@ -20,13 +20,12 @@ import {
 } from '@island.is/portals/my-pages/core'
 import { DocumentsPaths } from '@island.is/portals/my-pages/documents'
 import { UserLanguageSwitcher, UserMenu } from '@island.is/shared/components'
-import { useEffect, useRef, useState } from 'react'
+import { useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useWindowSize } from 'react-use'
 import NotificationButton from '../Notifications/NotificationButton'
 import Sidemenu from '../Sidemenu/Sidemenu'
 import * as styles from './Header.css'
-import { DocumentsScope } from '@island.is/auth/scopes'
 export type MenuTypes = 'side' | 'user' | 'notifications' | undefined
 
 interface Props {
@@ -38,25 +37,7 @@ export const Header = ({ position }: Props) => {
   const { width } = useWindowSize()
   const ref = useRef<HTMLButtonElement>(null)
   const isMobile = width < theme.breakpoints.md
-  const { userInfo: user } = useAuth()
-
-  // Notification feature flag. Remove after feature is live.
-  const [enableNotificationFlag, setEnableNotificationFlag] =
-    useState<boolean>(false)
-  const featureFlagClient = useFeatureFlagClient()
-  useEffect(() => {
-    const isFlagEnabled = async () => {
-      const ffEnabled = await featureFlagClient.getValue(
-        `isServicePortalNotificationsPageEnabled`,
-        false,
-      )
-      if (ffEnabled) {
-        setEnableNotificationFlag(ffEnabled as boolean)
-      }
-    }
-    isFlagEnabled()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  const user = useUserInfo()
 
   const hasNotificationsDelegationAccess = user?.scopes?.includes(
     DocumentsScope.main,
@@ -122,13 +103,11 @@ export const Header = ({ position }: Props) => {
                         </Box>
                       </Hidden>
 
-                      {enableNotificationFlag && (
-                        <NotificationButton
-                          setMenuState={(val: MenuTypes) => setMenuOpen(val)}
-                          showMenu={menuOpen === 'notifications'}
-                          disabled={!hasNotificationsDelegationAccess}
-                        />
-                      )}
+                      <NotificationButton
+                        setMenuState={(val: MenuTypes) => setMenuOpen(val)}
+                        showMenu={menuOpen === 'notifications'}
+                        disabled={!hasNotificationsDelegationAccess}
+                      />
 
                       {user && <UserLanguageSwitcher />}
 

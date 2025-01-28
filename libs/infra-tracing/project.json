@@ -3,7 +3,7 @@
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/infra-tracing/src",
   "projectType": "library",
-  "tags": ["scope:js", "lib:js"],
+  "tags": ["scope:node", "lib:node"],
   "generators": {},
   "targets": {
     "lint": {

@@ -28,6 +28,17 @@
         "buildTarget": "services-auth-delegation-api:build"
       }
     },
+    "dev": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          {
+            "command": "yarn start services-auth-delegation-api"
+          }
+        ],
+        "parallel": true
+      }
+    },
     "lint": {
       "executor": "@nx/eslint:lint"
     },

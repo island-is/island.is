@@ -209,6 +209,11 @@ export const core = defineMessages({
     defaultMessage: 'Halda áfram',
     description: 'Notað fyrir "Halda áfram" takka í öllum flæðum.',
   },
+  cancel: {
+    id: 'judicial.system.core:cancel',
+    defaultMessage: 'Hætta við',
+    description: 'Notað fyrir "Hætta við" takka í öllum flæðum.',
+  },
   createCase: {
     id: 'judicial.system.core:create_case',
     defaultMessage: 'Stofna mál',

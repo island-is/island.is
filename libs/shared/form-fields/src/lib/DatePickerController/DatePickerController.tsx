@@ -9,6 +9,7 @@ import {
   DatePickerProps,
 } from '@island.is/island-ui/core'
 import { Locale } from '@island.is/shared/types'
+import { clearInputsOnChange } from '@island.is/shared/utils'
 
 interface Props {
   defaultValue?: string
@@ -30,6 +31,7 @@ interface Props {
   required?: boolean
   readOnly?: boolean
   calendarStartDay?: number
+  clearOnChange?: string[]
 }
 
 const df = 'yyyy-MM-dd'
@@ -54,6 +56,7 @@ export const DatePickerController: FC<React.PropsWithChildren<Props>> = ({
   readOnly,
   onChange = () => undefined,
   calendarStartDay = 0,
+  clearOnChange,
 }) => {
   const { clearErrors, setValue } = useFormContext()
 
@@ -87,6 +90,9 @@ export const DatePickerController: FC<React.PropsWithChildren<Props>> = ({
             onControllerChange(newVal)
             setValue(name, newVal)
             onChange(newVal)
+            if (clearOnChange) {
+              clearInputsOnChange(clearOnChange, setValue)
+            }
           }}
         />
       )}

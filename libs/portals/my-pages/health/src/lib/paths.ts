@@ -21,10 +21,15 @@ export enum HealthPaths {
   HealthDentistRegistration = '/heilsa/tannlaeknar/skraning',
 
   HealthMedicine = '/heilsa/lyf',
-  HealthMedicinePurchase = '/heilsa/lyf/lyfjakaup',
-  HealthMedicineCalculator = '/heilsa/lyf/lyfjareiknivel',
+  HealthMedicinePaymentParticipation = '/heilsa/lyf/greidsluthatttaka',
+  HealthMedicinePurchase = '/heilsa/lyf/greidsluthatttaka/lyfjakaup',
+  HealthMedicineCalculator = '/heilsa/lyf/greidsluthatttaka/lyfjareiknivel',
   HealthMedicineCertificates = '/heilsa/lyf/lyfjaskirteini',
   HealthMedicineCertificate = '/heilsa/lyf/lyfjaskirteini/:name/:id',
+  HealthMedicinePrescription = '/heilsa/lyf/lyfjaavisanir',
+  HealthMedicinePrescriptionOverview = '/heilsa/lyf/lyfjaavisanir/yfirlit',
+  HealthMedicinePrescriptionHistory = '/heilsa/lyf/lyfjasaga',
+  HealthMedicineDelegation = '/heilsa/lyf/lyfjaumbod',
 
   HealthCenter = '/heilsa/heilsugaesla',
   HealthCenterRegistration = '/heilsa/heilsugaesla/skraning',

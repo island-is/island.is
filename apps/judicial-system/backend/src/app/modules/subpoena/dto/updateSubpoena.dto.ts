@@ -1,5 +1,6 @@
-import { Transform } from 'class-transformer'
+import { Transform, Type } from 'class-transformer'
 import {
+  IsDate,
   IsEnum,
   IsOptional,
   IsString,
@@ -26,9 +27,10 @@ export class UpdateSubpoenaDto {
   readonly servedBy?: string
 
   @IsOptional()
-  @IsString()
-  @ApiPropertyOptional({ type: String })
-  readonly serviceDate?: string
+  @Type(() => Date)
+  @IsDate()
+  @ApiPropertyOptional({ type: Date })
+  readonly serviceDate?: Date
 
   @IsOptional()
   @IsString()

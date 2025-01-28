@@ -1,12 +1,3 @@
-import {
-  Alert,
-  Button,
-  Heading,
-  Input,
-  InputRow,
-  Problem,
-  Typography,
-} from '@ui'
 import React, { useCallback, useMemo, useState } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
 import {
@@ -22,6 +13,15 @@ import { NavigationFunctionComponent } from 'react-native-navigation'
 import styled, { useTheme } from 'styled-components/native'
 import { ApolloError } from '@apollo/client'
 
+import {
+  Alert,
+  Button,
+  Heading,
+  Input,
+  InputRow,
+  Problem,
+  Typography,
+} from '../../ui'
 import {
   useGetHealthCenterQuery,
   useGetHealthInsuranceOverviewQuery,

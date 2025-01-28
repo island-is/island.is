@@ -1,15 +1,16 @@
-import React, { useState, useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useFormik } from 'formik'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore make web strict
-import toQueryString from 'to-querystring'
+import jsonp from 'jsonp'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore make web strict
-import jsonp from 'jsonp'
+import toQueryString from 'to-querystring'
+
+import { NewsletterSignup } from '@island.is/island-ui/core'
 import { GetNamespaceQuery } from '@island.is/web/graphql/schema'
 import { useNamespace } from '@island.is/web/hooks'
 import { isValidEmail } from '@island.is/web/utils/isValidEmail'
-import { NewsletterSignup } from '@island.is/island-ui/core'
 
 type FormState = {
   type: '' | 'error' | 'success'

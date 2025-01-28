@@ -1,3 +1,9 @@
+import React from 'react'
+import { FormattedMessage, useIntl } from 'react-intl'
+import { Image, SafeAreaView, TouchableOpacity } from 'react-native'
+import styled, { useTheme } from 'styled-components/native'
+import { ApolloError } from '@apollo/client'
+
 import {
   Typography,
   Heading,
@@ -5,14 +11,7 @@ import {
   ViewPager,
   EmptyCard,
   GeneralCardSkeleton,
-} from '@ui'
-
-import React from 'react'
-import { FormattedMessage, useIntl } from 'react-intl'
-import { Image, SafeAreaView, TouchableOpacity } from 'react-native'
-import styled, { useTheme } from 'styled-components/native'
-import { ApolloError } from '@apollo/client'
-
+} from '../../ui'
 import { navigateTo } from '../../lib/deep-linking'
 import {
   GenericLicenseType,
@@ -76,6 +75,7 @@ const useGetLicensesData = ({ skipFetching }: { skipFetching: boolean }) => {
         ],
       },
     },
+    fetchPolicy: 'cache-first',
     skip: skipFetching,
   })
 

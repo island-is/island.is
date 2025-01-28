@@ -1,7 +1,8 @@
-import { CustomLicenseType, LicenseCard } from '@ui'
 import React from 'react'
 import { SafeAreaView, ViewStyle } from 'react-native'
 import styled from 'styled-components/native'
+
+import { CustomLicenseType, LicenseListCard } from '../../../ui'
 import { Pressable as PressableRaw } from '../../../components/pressable/pressable'
 import {
   GenericUserLicense,
@@ -52,15 +53,10 @@ export const WalletItem = React.memo(
             }}
           >
             <SafeAreaView>
-              <LicenseCard
+              <LicenseListCard
                 nativeID={`license-${CustomLicenseType.Passport}_source`}
                 type={CustomLicenseType.Passport}
-                date={
-                  item?.expirationDate
-                    ? new Date(item?.expirationDate)
-                    : undefined
-                }
-                status={isInvalid ? 'NOT_VALID' : 'VALID'}
+                licenseNumber={item?.numberWithType ?? ''}
               />
             </SafeAreaView>
           </Pressable>
@@ -85,13 +81,11 @@ export const WalletItem = React.memo(
             }}
           >
             <SafeAreaView>
-              <LicenseCard
+              <LicenseListCard
                 nativeID={`license-${item?.license?.type}_source`}
+                title={item?.payload?.metadata?.name}
                 type={item?.license?.type}
-                date={new Date(Number(item.fetch.updated))}
-                status={
-                  !item?.payload?.metadata?.expired ? 'VALID' : 'NOT_VALID'
-                }
+                licenseNumber={item?.payload?.metadata?.licenseNumber}
               />
             </SafeAreaView>
           </Pressable>

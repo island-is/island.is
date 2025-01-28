@@ -87,6 +87,9 @@ export const debtsAndFuneralCost = buildSection({
                   {
                     label: DebtTypes.OtherDebts,
                   },
+                  {
+                    label: DebtTypes.InsuranceInstitute,
+                  },
                 ],
               },
             ),
@@ -154,6 +157,10 @@ export const debtsAndFuneralCost = buildSection({
                   {
                     id: 'tombstone',
                     title: m.funeralTombstoneCost,
+                  },
+                  {
+                    id: 'service',
+                    title: m.funeralServiceCost,
                   },
                 ],
               },

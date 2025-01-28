@@ -1,17 +1,17 @@
-import { useLocale, useNamespaces } from '@island.is/localization'
 import { Box, SkeletonLoader, Tabs } from '@island.is/island-ui/core'
+import { useLocale, useNamespaces } from '@island.is/localization'
 import {
-  HEALTH_DIRECTORATE_SLUG,
-  IntroHeader,
-  LinkButton,
   EmptyTable,
+  HEALTH_DIRECTORATE_SLUG,
+  IntroWrapper,
+  LinkButton,
 } from '@island.is/portals/my-pages/core'
+import { Problem } from '@island.is/react-spa/shared'
+import { isDefined } from '@island.is/shared/utils'
 import { messages as m } from '../../lib/messages'
 import { SECTION_GAP } from '../../utils/constants'
 import { useGetVaccinationsQuery } from './Vaccinations.generated'
 import { SortedVaccinationsTable } from './tables/SortedVaccinationsTable'
-import { isDefined } from '@island.is/shared/utils'
-import { Problem } from '@island.is/react-spa/shared'
 
 export const VaccinationsWrapper = () => {
   useNamespaces('sp.health')
@@ -39,31 +39,28 @@ export const VaccinationsWrapper = () => {
   ].filter(isDefined)
 
   return (
-    <Box>
-      <IntroHeader
-        title={formatMessage(m.vaccinations)}
-        intro={formatMessage(m.vaccinationsIntro)}
-        serviceProviderSlug={HEALTH_DIRECTORATE_SLUG}
-        serviceProviderTooltip={formatMessage(m.landlaeknirVaccinationsTooltip)}
-      />
-      {/* Buttons */}
-      <Box printHidden display="flex" flexDirection="row" marginBottom={6}>
+    <IntroWrapper
+      title={formatMessage(m.vaccinations)}
+      intro={formatMessage(m.vaccinationsIntro)}
+      serviceProviderSlug={HEALTH_DIRECTORATE_SLUG}
+      serviceProviderTooltip={formatMessage(m.landlaeknirVaccinationsTooltip)}
+      buttonGroup={[
         <LinkButton
+          key="vaccinations-read-about"
           to={formatMessage(m.readAboutVaccinationsLink)}
           icon="open"
           variant="utility"
           text={formatMessage(m.readAboutVaccinations)}
-        />
-        <Box marginLeft={1}>
-          <LinkButton
-            to={formatMessage(m.makeVaccinationAppointmentLink)}
-            icon="open"
-            variant="utility"
-            text={formatMessage(m.makeVaccinationAppointment)}
-          />
-        </Box>
-      </Box>
-
+        />,
+        <LinkButton
+          key="vaccinations-make-appointment"
+          to={formatMessage(m.makeVaccinationAppointmentLink)}
+          icon="open"
+          variant="utility"
+          text={formatMessage(m.makeVaccinationAppointment)}
+        />,
+      ]}
+    >
       <Box>
         {loading && (
           <SkeletonLoader
@@ -91,7 +88,7 @@ export const VaccinationsWrapper = () => {
           />
         </Box>
       )}
-    </Box>
+    </IntroWrapper>
   )
 }
 export default VaccinationsWrapper

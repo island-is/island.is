@@ -53,7 +53,7 @@ const ExpandableLine: FC<React.PropsWithChildren<Props>> = ({
       ref.current?.scrollIntoView({ block: 'nearest', behavior: 'smooth' })
   }, [closed])
 
-  function onExpandButton() {
+  const onExpandButton = () => {
     toggleExpand(!expanded)
   }
 

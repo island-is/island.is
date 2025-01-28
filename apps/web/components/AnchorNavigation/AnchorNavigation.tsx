@@ -1,9 +1,10 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import useScrollSpy from '@island.is/web/hooks/useScrollSpy'
-import { Bullet } from '@island.is/web/components'
-import { Text, Box, FocusableBox, Stack } from '@island.is/island-ui/core'
-import slugify from '@sindresorhus/slugify'
 import { useRouter } from 'next/router'
+import slugify from '@sindresorhus/slugify'
+
+import { Box, FocusableBox, Stack, Text } from '@island.is/island-ui/core'
+import { Bullet } from '@island.is/web/components'
+import useScrollSpy from '@island.is/web/hooks/useScrollSpy'
 
 export interface AnchorNavigationProps {
   title?: string

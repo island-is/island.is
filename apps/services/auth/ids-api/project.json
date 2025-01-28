@@ -175,6 +175,17 @@
         ],
         "parallel": true
       }
+    },
+    "dev": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          {
+            "command": "yarn start services-auth-ids-api"
+          }
+        ],
+        "parallel": true
+      }
     }
   }
 }

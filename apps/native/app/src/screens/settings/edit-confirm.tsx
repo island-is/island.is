@@ -1,10 +1,3 @@
-import {
-  Button,
-  CancelButton,
-  NavigationBarSheet,
-  TextField,
-  Typography,
-} from '@ui'
 import React from 'react'
 import { useIntl } from 'react-intl'
 import { Alert, ScrollView, View } from 'react-native'
@@ -12,6 +5,14 @@ import {
   Navigation,
   NavigationFunctionComponent,
 } from 'react-native-navigation'
+
+import {
+  Button,
+  CancelButton,
+  NavigationBarSheet,
+  TextField,
+  Typography,
+} from '../../ui'
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
 import { testIDs } from '../../utils/test-ids'
 import { useUpdateUserProfile } from './utils/profile-queries'

@@ -1,6 +1,7 @@
-import { dynamicColor } from '@ui/utils'
 import { Image } from 'react-native'
 import styled, { DefaultTheme } from 'styled-components/native'
+
+import { dynamicColor } from '../../utils'
 import dangerIcon from '../../assets/alert/danger.png'
 import infoIcon from '../../assets/alert/info-alert.png'
 import warningIcon from '../../assets/alert/warning.png'

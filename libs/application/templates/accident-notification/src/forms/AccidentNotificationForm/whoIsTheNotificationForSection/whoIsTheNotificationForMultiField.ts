@@ -1,34 +1,33 @@
 import { buildMultiField, buildRadioField } from '@island.is/application/core'
 import { whoIsTheNotificationFor } from '../../../lib/messages'
-import { WhoIsTheNotificationForEnum } from '../../../types'
+import {
+  whoIsTheNotificationForOptions,
+  whoIsTheNotificationForProcureOptions,
+} from '../../../utils/getOptions'
 
 export const whoIsTheNotificationForMultiField = buildMultiField({
   id: 'whoIsTheNotificationFor',
   title: whoIsTheNotificationFor.general.heading,
-  description: whoIsTheNotificationFor.general.description,
+  description: (application) => {
+    if (application.externalData.identity) {
+      return whoIsTheNotificationFor.general.procureDescription
+    }
+    return whoIsTheNotificationFor.general.description
+  },
   children: [
     buildRadioField({
       id: 'whoIsTheNotificationFor.answer',
       title: '',
       width: 'half',
-      options: [
-        {
-          value: WhoIsTheNotificationForEnum.ME,
-          label: whoIsTheNotificationFor.labels.me,
-        },
-        {
-          value: WhoIsTheNotificationForEnum.POWEROFATTORNEY,
-          label: whoIsTheNotificationFor.labels.powerOfAttorney,
-        },
-        {
-          value: WhoIsTheNotificationForEnum.JURIDICALPERSON,
-          label: whoIsTheNotificationFor.labels.juridicalPerson,
-        },
-        {
-          value: WhoIsTheNotificationForEnum.CHILDINCUSTODY,
-          label: whoIsTheNotificationFor.labels.childInCustody,
-        },
-      ],
+      condition: (_answers, externalData) => !externalData.identity,
+      options: whoIsTheNotificationForOptions,
+    }),
+    buildRadioField({
+      id: 'whoIsTheNotificationFor.answer',
+      title: '',
+      width: 'half',
+      condition: (_answers, externalData) => !!externalData.identity,
+      options: whoIsTheNotificationForProcureOptions,
     }),
   ],
 })

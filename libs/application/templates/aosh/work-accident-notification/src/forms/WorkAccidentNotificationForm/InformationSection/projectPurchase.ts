@@ -1,6 +1,5 @@
 import {
   buildAlertMessageField,
-  buildDescriptionField,
   buildMultiField,
   buildRadioField,
   buildSubSection,
@@ -16,14 +15,9 @@ export const projectPurchaseSection = buildSubSection({
   children: [
     buildMultiField({
       id: 'projectPurchase',
-      title: information.general.pageTitle,
-      description: information.general.description,
+      title: information.labels.projectPurchase.pageTitle,
+      description: information.labels.projectPurchase.pageDescription,
       children: [
-        buildDescriptionField({
-          id: 'projectPurchase.description',
-          title: information.labels.projectPurchase.descriptionField,
-          titleVariant: 'h5',
-        }),
         buildAlertMessageField({
           id: 'projectPurchase.alertMessage',
           title: '',

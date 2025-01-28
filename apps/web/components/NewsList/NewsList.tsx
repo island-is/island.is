@@ -1,21 +1,23 @@
-import {
-  Stack,
-  Hidden,
-  GridColumn,
-  Pagination,
-  Text,
-  Select,
-  Option,
-  Box,
-  Link,
-  Inline,
-  Tag,
-  LinkV2,
-} from '@island.is/island-ui/core'
-import { LinkType, useLinkResolver, useNamespace } from '@island.is/web/hooks'
-import { NewsCard, Webreader } from '@island.is/web/components'
 import { useRouter } from 'next/router'
+
+import {
+  Box,
+  GridColumn,
+  Hidden,
+  Inline,
+  Link,
+  LinkV2,
+  Option,
+  Pagination,
+  Select,
+  Stack,
+  Tag,
+  Text,
+} from '@island.is/island-ui/core'
+import { NewsCard, Webreader } from '@island.is/web/components'
 import { GenericTag, GetNewsQuery } from '@island.is/web/graphql/schema'
+import { LinkType, useLinkResolver, useNamespace } from '@island.is/web/hooks'
+
 import { makeHref } from './utils'
 
 interface NewsListProps {

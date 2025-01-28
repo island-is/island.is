@@ -79,31 +79,31 @@ export const getEmployeeInformationForOverview = (
     `${employee.address ?? ''}, ${chosenPostCode?.code} ${
       chosenPostCode?.name
     }`,
-    `${formatMessage(overview.employee.nationality)}: ${
+    `**${formatMessage(overview.employee.nationality)}**: ${
       chosenNationality?.name
     }`,
-    `${formatMessage(overview.employee.employmentStatus)}: ${
+    `**${formatMessage(overview.employee.employmentStatus)}**: ${
       chosenEmploymentStatus?.name
     }`,
-    `${formatMessage(overview.employee.startDate)}: ${formatDate(
+    `**${formatMessage(overview.employee.startDate)}**: ${formatDate(
       employee.startDate,
     )}`,
-    `${formatMessage(overview.employee.employmentTime)}: ${
+    `**${formatMessage(overview.employee.employmentTime)}**: ${
       chosenEmploymentTime?.name
     }`,
-    `${formatMessage(overview.employee.employmentRate)}: ${
+    `**${formatMessage(overview.employee.employmentRate)}**: ${
       employee?.employmentRate
     }`,
-    `${formatMessage(overview.employee.workhourArrangement)}: ${
+    `**${formatMessage(overview.employee.workhourArrangement)}**: ${
       chosenWorkhourArrangement?.name
     }`,
-    `${formatMessage(overview.employee.startTime)}: ${formatDate(
+    `**${formatMessage(overview.employee.startTime)}**: ${formatDate(
       employee.startOfWorkdayDate,
     )}, ${employee.startTime.slice(0, 2)}:${employee.startTime.slice(2, 4)}`,
-    `${formatMessage(overview.employee.workstation)}: ${
+    `**${formatMessage(overview.employee.workstation)}**: ${
       chosenWorkstation?.name
     }`,
-    `${formatMessage(overview.employee.occupationTitle)}: ${
+    `**${formatMessage(overview.employee.occupationTitle)}**: ${
       employee.victimsOccupation.label
     }`,
   ].filter((n) => n)

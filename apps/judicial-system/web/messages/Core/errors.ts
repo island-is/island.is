@@ -43,8 +43,8 @@ export const errors = defineMessages({
       'Notaður sem villuskilaboð þegar ekki gengur að eyða kröfuhafa',
   },
   createCase: {
-    id: 'judicial.system.core:errors.create_case',
-    defaultMessage: 'Upp kom villa við að stofnun máls',
+    id: 'judicial.system.core:errors.create_case_v1',
+    defaultMessage: 'Upp kom villa við stofnun máls',
     description: 'Notaður sem villuskilaboð þegar ekki gengur að stofna mál',
   },
   updateCase: {
@@ -93,6 +93,12 @@ export const errors = defineMessages({
     defaultMessage: 'Upp kom villa við að sækja lögmanna skrá',
     description:
       'Notaður sem villuskilaboð þegar ekki gengur að sækja lögmanna skrá',
+  },
+  fetchLawyer: {
+    id: 'judicial.system.core:errors.fetch_lawyer',
+    defaultMessage: 'Upp kom villa við að sækja lögmann úr lögmanna skrá',
+    description:
+      'Notaður sem villuskilaboð þegar ekki gengur að sækja lögmann úr lögmanna skrá',
   },
   copyLink: {
     id: 'judicial.system.core:errors.copy_link',

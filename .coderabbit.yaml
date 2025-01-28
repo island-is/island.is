@@ -6,6 +6,7 @@ reviews:
   poem: false
   review_status: true
   collapse_walkthrough: false
+  auto_title_instructions: 'A conventional commit compliant PR title with subject (fix,feat,ci, et.c.) that is descriptive for a generated changelog'
   path_instructions:
     - path: 'apps/services/**/*'
       instructions: |

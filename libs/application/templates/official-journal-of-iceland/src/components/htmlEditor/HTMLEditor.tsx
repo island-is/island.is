@@ -3,7 +3,7 @@ import { Editor, EditorFileUploader } from '@island.is/regulations-tools/Editor'
 import { useEffect, useRef, useState } from 'react'
 import { Controller } from 'react-hook-form'
 import { classes, editorWrapper, errorStyle } from './HTMLEditor.css'
-import { Box, Text } from '@island.is/island-ui/core'
+import { Box, Stack, Text } from '@island.is/island-ui/core'
 type Props = {
   title?: string
   name: string
@@ -50,12 +50,8 @@ export const HTMLEditor = ({
       defaultValue={initialValue}
       render={({ field: { onChange: updateFormValue, value } }) => {
         return (
-          <>
-            {title && (
-              <Text marginBottom={2} variant="h5">
-                {title}
-              </Text>
-            )}
+          <Stack space={[2, 2, 3]}>
+            {title && <Text variant="h5">{title}</Text>}
             <Box
               className={editorWrapper({
                 error: !!error,
@@ -80,7 +76,7 @@ export const HTMLEditor = ({
               />
             </Box>
             {error && <div className={errorStyle}>{error}</div>}
-          </>
+          </Stack>
         )
       }}
     />

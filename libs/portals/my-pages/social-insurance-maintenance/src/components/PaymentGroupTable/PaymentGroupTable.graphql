@@ -11,6 +11,7 @@ query getPaymentPlan {
       payments {
         name
         totalYearCumulativeAmount
+        markWithAsterisk
         monthlyPaymentHistory {
           monthIndex
           amount

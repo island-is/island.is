@@ -1,5 +1,6 @@
 // TODO: Add tests
 import {
+  IndictmentSubtype,
   isIndictmentCase,
   isTrafficViolationCase,
 } from '@island.is/judicial-system/types'
@@ -11,13 +12,14 @@ import {
   CaseType,
   DateLog,
   DefenderChoice,
+  IndictmentCount,
   IndictmentDecision,
   SessionArrangements,
   User,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
-import { isBusiness } from './stepHelper'
+import { isBusiness } from './utils'
 
 export type Validation =
   | 'empty'
@@ -30,7 +32,6 @@ export type Validation =
   | 'date-format'
   | 'R-case-number'
   | 'S-case-number'
-  | 'vehicle-registration-number'
   | 'appeal-case-number-format'
 
 type ValidateItem = 'valid' | [string | undefined | null, Validation[]]
@@ -92,12 +93,6 @@ const getRegexByValidation = (validation: Validation) => {
       return {
         regex: new RegExp(/^S-[0-9]{1,5}\/[0-9]{4}$/),
         errorMessage: `Dæmi: S-1234/${new Date().getFullYear()}`,
-      }
-    }
-    case 'vehicle-registration-number': {
-      return {
-        regex: new RegExp(/^[A-Z]{2}([A-Z]{1}|[0-9]{1})[0-9]{2}$/),
-        errorMessage: 'Dæmi: AB123',
       }
     }
     case 'appeal-case-number-format': {
@@ -294,12 +289,46 @@ export const isProcessingStepValidIndictments = (
   )
 }
 
-export const isTrafficViolationStepValidIndictments = (
-  workingCase: Case,
-): boolean => {
-  return Boolean(
+export const isIndictmentStepValid = (workingCase: Case): boolean => {
+  const hasValidDemands = Boolean(
     workingCase.demands &&
       (!workingCase.hasCivilClaims || workingCase.civilDemands),
+  )
+
+  if (!workingCase.indictmentSubtypes || !hasValidDemands) {
+    return false
+  }
+
+  const isValidTrafficViolation = (indictmentCount: IndictmentCount) =>
+    Boolean(indictmentCount.policeCaseNumber) &&
+    Boolean(indictmentCount.offenses && indictmentCount.offenses?.length > 0) &&
+    Boolean(indictmentCount.vehicleRegistrationNumber) &&
+    Boolean(indictmentCount.lawsBroken) &&
+    Boolean(indictmentCount.incidentDescription) &&
+    Boolean(indictmentCount.legalArguments)
+
+  const isValidNonTrafficViolation = (indictmentCount: IndictmentCount) =>
+    Boolean(indictmentCount.incidentDescription) &&
+    Boolean(indictmentCount.legalArguments)
+
+  const isTrafficViolation = (indictmentCount: IndictmentCount) =>
+    indictmentCount.indictmentCountSubtypes?.includes(
+      IndictmentSubtype.TRAFFIC_VIOLATION,
+    )
+
+  // All indictment counts are traffic violations
+  if (isTrafficViolationCase(workingCase)) {
+    return workingCase.indictmentCounts?.every(isValidTrafficViolation) ?? false
+  }
+
+  if (!workingCase.indictmentCounts?.length) {
+    return false
+  }
+
+  return workingCase.indictmentCounts.every((indictmentCount) =>
+    isTrafficViolation(indictmentCount)
+      ? isValidTrafficViolation(indictmentCount)
+      : isValidNonTrafficViolation(indictmentCount),
   )
 }
 
@@ -583,13 +612,4 @@ export const isCourtOfAppealWithdrawnCaseStepValid = (
   return validate([
     [workingCase.appealCaseNumber, ['empty', 'appeal-case-number-format']],
   ]).isValid
-}
-
-export const isCaseFilesStepValidIndictments = (workingCase: Case): boolean => {
-  return Boolean(
-    isTrafficViolationCase(workingCase) ||
-      workingCase.caseFiles?.some(
-        (file) => file.category === CaseFileCategory.INDICTMENT,
-      ),
-  )
 }

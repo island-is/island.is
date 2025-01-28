@@ -316,6 +316,7 @@ export class FixtureFactory {
       case AuthDelegationType.Custom:
         return AuthDelegationProvider.Custom
       case AuthDelegationType.LegalGuardian:
+      case AuthDelegationType.LegalGuardianMinor:
         return AuthDelegationProvider.NationalRegistry
       case AuthDelegationType.ProcurationHolder:
         return AuthDelegationProvider.CompanyRegistry

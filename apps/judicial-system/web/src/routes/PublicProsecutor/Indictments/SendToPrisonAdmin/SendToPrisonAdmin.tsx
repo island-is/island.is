@@ -2,9 +2,9 @@ import { FC, useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useParams, useRouter } from 'next/navigation'
 
-import { Box, UploadFile } from '@island.is/island-ui/core'
+import { Box, InputFileUpload, UploadFile } from '@island.is/island-ui/core'
 import { PUBLIC_PROSECUTOR_STAFF_INDICTMENT_OVERVIEW_ROUTE } from '@island.is/judicial-system/consts'
-import { core } from '@island.is/judicial-system-web/messages'
+import { core, errors } from '@island.is/judicial-system-web/messages'
 import {
   CourtCaseInfo,
   FormContentContainer,
@@ -37,7 +37,10 @@ const SendToPrisonAdmin: FC = () => {
   const [uploadFileError, setUploadFileError] = useState<string>()
   const router = useRouter()
   const { defendantId } = useParams<{ caseId: string; defendantId: string }>()
-  const { handleUpload, handleRemove } = useS3Upload(workingCase.id)
+  const { handleUpload, handleRemove } = useS3Upload(
+    workingCase.id,
+    defendantId,
+  )
   const { updateDefendant, isUpdatingDefendant } = useDefendants()
   const { uploadFiles, removeUploadFile, addUploadFiles, updateUploadFile } =
     useUploadFiles()
@@ -65,16 +68,15 @@ const SendToPrisonAdmin: FC = () => {
       isSentToPrisonAdmin: true,
     })
 
-    // TODO: UNCOMMENT WHEN THIS FEATURE IS READY
-    // const uploadResult = await handleUpload(
-    //   uploadFiles.filter((file) => file.percent === 0),
-    //   updateUploadFile,
-    // )
+    const uploadResult = await handleUpload(
+      uploadFiles.filter((file) => file.percent === 0),
+      updateUploadFile,
+    )
 
-    // if (uploadResult !== 'ALL_SUCCEEDED') {
-    //   setUploadFileError(formatMessage(errors.uploadFailed))
-    //   return
-    // }
+    if (uploadResult !== 'ALL_SUCCEEDED') {
+      setUploadFileError(formatMessage(errors.uploadFailed))
+      return
+    }
 
     router.push(
       `${PUBLIC_PROSECUTOR_STAFF_INDICTMENT_OVERVIEW_ROUTE}/${workingCase.id}`,
@@ -119,8 +121,6 @@ const SendToPrisonAdmin: FC = () => {
           description={formatMessage(strings.fileUploadDescription)}
         />
         <Box marginBottom={10}>
-          {/* NOTE: This is temporarily disabled while we work on this
-          upload feature.
           <InputFileUpload
             fileList={uploadFiles.filter(
               (file) =>
@@ -134,7 +134,7 @@ const SendToPrisonAdmin: FC = () => {
             buttonLabel={formatMessage(core.uploadBoxButtonLabel)}
             onChange={handleFileUpload}
             onRemove={handleRemoveFile}
-          /> */}
+          />
         </Box>
       </FormContentContainer>
       <FormContentContainer isFooter>

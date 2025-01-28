@@ -6,7 +6,10 @@ import { AnimatePresence, motion } from 'framer-motion'
 
 import { Box, Text } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
-import { formatDate } from '@island.is/judicial-system/formatters'
+import {
+  districtCourtAbbreviation,
+  formatDate,
+} from '@island.is/judicial-system/formatters'
 import {
   CaseType,
   isCompletedCase,
@@ -168,25 +171,32 @@ const Table: FC<TableProps> = (props) => {
     return null
   }
 
+  const getColumnValue = (
+    entry: CaseListEntry,
+    column: keyof CaseListEntry,
+  ) => {
+    const courtAbbreviation = districtCourtAbbreviation(entry.court?.name)
+
+    switch (column) {
+      case 'defendants':
+        return entry.defendants?.[0]?.name ?? ''
+      case 'defendantsPunishmentType':
+        return entry.defendants?.[0]?.punishmentType ?? ''
+      case 'courtCaseNumber':
+        return courtAbbreviation
+          ? `${courtAbbreviation}: ${entry.courtCaseNumber}`
+          : entry.courtCaseNumber ?? ''
+      default:
+        return entry[column]?.toString() ?? ''
+    }
+  }
+
   useMemo(() => {
     if (sortConfig) {
       data.sort((a: CaseListEntry, b: CaseListEntry) => {
-        const getColumnValue = (entry: CaseListEntry) => {
-          if (
-            sortConfig.column === 'defendants' &&
-            entry.defendants &&
-            entry.defendants.length > 0 &&
-            entry.defendants[0].name
-          ) {
-            return entry.defendants[0].name
-          }
-
-          return entry[sortConfig.column]?.toString()
-        }
-
         const compareResult = compareLocaleIS(
-          getColumnValue(a),
-          getColumnValue(b),
+          getColumnValue(a, sortConfig.column),
+          getColumnValue(b, sortConfig.column),
         )
 
         return sortConfig.direction === 'ascending'

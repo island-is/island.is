@@ -13,6 +13,9 @@ import { URL } from 'url'
  * @param uri - The URI to validate.
  * @param allowedUris - List of allowed URIs.
  * @returns True if the URI is valid, false otherwise.
+ *
+ * @example validateUri('https://island.is/some-path', ['https://island.is']) // true
+ *
  */
 export const validateUri = (uri: string, allowedUris: string[]): boolean => {
   //  input validation for extra security

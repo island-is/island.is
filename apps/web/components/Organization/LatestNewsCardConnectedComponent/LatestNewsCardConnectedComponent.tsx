@@ -1,4 +1,5 @@
 import { useQuery } from '@apollo/client'
+
 import { Box, ProfileCard, Text } from '@island.is/island-ui/core'
 import {
   GetNewsWithContentQuery,
@@ -8,6 +9,7 @@ import {
 import { useLinkResolver } from '@island.is/web/hooks'
 import { useI18n } from '@island.is/web/i18n'
 import { GET_NEWS_WITH_CONTENT_QUERY } from '@island.is/web/screens/queries'
+
 import * as styles from './LatestNewsCardConnectedComponent.css'
 
 const extractHeadingsFromContent = (

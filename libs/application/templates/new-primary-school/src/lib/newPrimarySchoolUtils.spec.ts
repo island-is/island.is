@@ -1,7 +1,7 @@
 import { ExternalData } from '@island.is/application/types'
-import { hasOtherParent } from './newPrimarySchoolUtils'
+import { hasOtherGuardian } from './newPrimarySchoolUtils'
 
-describe('hasOtherParent', () => {
+describe('hasOtherGuardian', () => {
   it('should return true if otherParent exists in externalData', () => {
     const answers = {}
     const externalData = {
@@ -18,7 +18,7 @@ describe('hasOtherParent', () => {
       },
     } as unknown as ExternalData
 
-    expect(hasOtherParent(answers, externalData)).toBe(true)
+    expect(hasOtherGuardian(answers, externalData)).toBe(true)
   })
 
   it('should return false if otherParent does not exist in externalData', () => {
@@ -32,6 +32,6 @@ describe('hasOtherParent', () => {
         ],
       },
     } as unknown as ExternalData
-    expect(hasOtherParent(answers, externalData)).toBe(false)
+    expect(hasOtherGuardian(answers, externalData)).toBe(false)
   })
 })

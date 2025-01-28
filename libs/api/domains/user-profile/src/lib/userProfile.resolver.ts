@@ -1,5 +1,5 @@
-import { Args, Mutation, Query, Resolver } from '@nestjs/graphql'
 import { UseGuards } from '@nestjs/common'
+import { Args, Mutation, Query, Resolver } from '@nestjs/graphql'
 
 import type { User } from '@island.is/auth-nest-tools'
 import {
@@ -8,21 +8,19 @@ import {
   ScopesGuard,
 } from '@island.is/auth-nest-tools'
 
-import { ConfirmEmailVerificationInput } from './dto/confirmEmailVerificationInput'
-import { ConfirmSmsVerificationInput } from './dto/confirmSmsVerificationInput'
-import { CreateSmsVerificationInput } from './dto/createSmsVerificationInput'
 import { CreateEmailVerificationInput } from './dto/createEmalVerificationInput'
+import { CreateSmsVerificationInput } from './dto/createSmsVerificationInput'
 import { CreateUserProfileInput } from './dto/createUserProfileInput'
-import { UpdateUserProfileInput } from './dto/updateUserProfileInput'
 import { DeleteIslykillValueInput } from './dto/deleteIslykillValueInput'
-import { UserProfile } from './userProfile.model'
-import { ConfirmResponse, Response } from './response.model'
-import { DeleteIslykillSettings } from './models/deleteIslykillSettings.model'
-import { UserProfileService } from './userProfile.service'
-import { UserDeviceToken } from './userDeviceToken.model'
-import { UserDeviceTokenInput } from './dto/userDeviceTokenInput'
 import { DeleteTokenResponse } from './dto/deleteTokenResponse'
+import { UpdateUserProfileInput } from './dto/updateUserProfileInput'
+import { UserDeviceTokenInput } from './dto/userDeviceTokenInput'
+import { DeleteIslykillSettings } from './models/deleteIslykillSettings.model'
 import { UserProfileLocale } from './models/userProfileLocale.model'
+import { Response } from './response.model'
+import { UserDeviceToken } from './userDeviceToken.model'
+import { UserProfile } from './userProfile.model'
+import { UserProfileService } from './userProfile.service'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver()
@@ -83,28 +81,6 @@ export class UserProfileResolver {
   ): Promise<Response> {
     await this.userProfileService.createEmailVerification(input, user)
     return Promise.resolve({ created: true })
-  }
-
-  @Mutation(() => Response, { nullable: true })
-  async resendEmailVerification(@CurrentUser() user: User): Promise<Response> {
-    await this.userProfileService.resendEmailVerification(user)
-    return Promise.resolve({ created: true })
-  }
-
-  @Mutation(() => ConfirmResponse, { nullable: true })
-  confirmSmsVerification(
-    @Args('input') input: ConfirmSmsVerificationInput,
-    @CurrentUser() user: User,
-  ): Promise<ConfirmResponse> {
-    return this.userProfileService.confirmSms(input, user)
-  }
-
-  @Mutation(() => ConfirmResponse, { nullable: true })
-  confirmEmailVerification(
-    @Args('input') input: ConfirmEmailVerificationInput,
-    @CurrentUser() user: User,
-  ): Promise<ConfirmResponse | null> {
-    return this.userProfileService.confirmEmail(input, user)
   }
 
   @Mutation(() => UserDeviceToken)

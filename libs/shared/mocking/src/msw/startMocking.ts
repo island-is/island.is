@@ -3,7 +3,7 @@ import { RequestHandler } from 'msw'
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export declare type RequestHandlersList = RequestHandler<any, any, any, any>[]
 
-const allowedKeyPaths = ['stjornbord', 'minarsidur']
+const allowedKeyPaths = ['stjornbord', 'minarsidur', 'umsoknir']
 
 const extractUniqueKeyPath = (url: string) => {
   try {
@@ -28,6 +28,25 @@ export const startMocking = (requestHandlers: RequestHandlersList) => {
     server.listen()
     return server
   } else {
+    const { pathname, search, hash } = location
+
+    // Handle trailing slash redirect only for root paths
+    // This prevents infinite reloads when accessing root paths without trailing slash
+    // e.g., /minarsidur will redirect to /minarsidur/
+    // but /minarsidur/umsoknir will remain unchanged
+    // This is necessary because the application expects root paths to have trailing slashes
+    // for proper routing and service worker functionality.
+    const isRootPath = allowedKeyPaths.some(
+      // Exactly matches /minarsidur, /stjornbord, /umsoknir, etc.
+      (path) => pathname === `/${path}`,
+    )
+
+    if (isRootPath) {
+      location.replace(`${pathname}/${search}${hash}`)
+
+      return
+    }
+
     // eslint-disable-next-line @typescript-eslint/no-var-requires
     const { setupWorker } = require('msw')
     const worker = setupWorker(...requestHandlers)

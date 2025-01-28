@@ -375,7 +375,7 @@ export const m = defineMessages({
     defaultMessage: 'Gagnaöflun',
     description: 'Title for data collection section',
   },
-  dataCollectionTitleUserCemetry: {
+  dataCollectionTitleUserCemetery: {
     id: 'fsc.application:applicationDataCollectionTitleUserCemetry',
     defaultMessage: 'Gagnaöflun vegna skila ársreiknings kirkjugarðs',
     description: 'Title for data collection section',
@@ -681,5 +681,11 @@ export const m = defineMessages({
     defaultMessage:
       'Ef þú telur að þessi kennitala ætti að vera skráð sem kirkjugarður þá bendum við þér á að hafa samband við Ríkisendurskoðun í síma 448 8800',
     description: 'Descriptionwhen user is not allowed to apply',
+  },
+  conclusionAlertMessage: {
+    id: 'fsc.application:conclusionAlertMessage',
+    defaultMessage:
+      'Ársreikning fyrir rekstrarárið {value1} hefur verið skilað',
+    description: 'Conclusion alert message',
   },
 })

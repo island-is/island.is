@@ -22,7 +22,7 @@ export class QualitySignatureResolver {
   resolveDataUri(
     @Parent() { hasQualitySignature }: QualitySignature,
     @CurrentUser() user: User,
-  ): Promise<String | null> {
+  ): Promise<string | null> {
     return hasQualitySignature
       ? this.drivingLicenseService.getQualitySignatureUri(user.authorization)
       : Promise.resolve(null)

@@ -1,5 +1,4 @@
 import { useApolloClient } from '@apollo/client'
-import { Button, NavigationBarSheet, TextField, Typography } from '@ui'
 import React, { useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { Alert, ScrollView, View } from 'react-native'
@@ -7,6 +6,8 @@ import {
   Navigation,
   NavigationFunctionComponent,
 } from 'react-native-navigation'
+
+import { Button, NavigationBarSheet, TextField, Typography } from '../../ui'
 import {
   CreateSmsVerificationDocument,
   CreateSmsVerificationMutation,

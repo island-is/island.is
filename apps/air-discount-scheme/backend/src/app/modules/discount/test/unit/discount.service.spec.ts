@@ -64,7 +64,9 @@ describe('DiscountService', () => {
         {
           provide: LOGGER_PROVIDER,
           useClass: jest.fn(() => ({
-            error: () => ({}),
+            error: jest.fn(),
+            info: jest.fn(),
+            warn: jest.fn(),
           })),
         },
         {

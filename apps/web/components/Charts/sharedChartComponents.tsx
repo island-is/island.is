@@ -1,8 +1,10 @@
 import React from 'react'
-import * as styles from './charts.css'
 import cn from 'classnames'
 import { LegendProps, TooltipProps } from 'recharts'
+
 import { Box, Text } from '@island.is/island-ui/core'
+
+import * as styles from './charts.css'
 
 interface AxisTickProps {
   x?: number

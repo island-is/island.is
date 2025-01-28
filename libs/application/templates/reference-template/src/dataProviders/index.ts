@@ -1,9 +1,6 @@
 import { defineTemplateApi } from '@island.is/application/types'
 import { MockProviderApi } from '@island.is/application/types'
-import {
-  NationalRegistryUserApi,
-  UserProfileApi,
-} from '@island.is/application/types'
+import { NationalRegistryUserApi } from '@island.is/application/types'
 export interface MyParameterType {
   id: number
 }

@@ -172,6 +172,11 @@ export class NationalRegistryClientService {
     return formatReligionDto(codes)
   }
 
+  async getMunicipalityCodeName(municipality: string): Promise<string | null> {
+    const code = await this.keysApi.lyklarGetSveitarfelag({ id: municipality })
+    return code.nafn
+  }
+
   async getCohabitionCodeValue(
     id: string,
     gender: string,

@@ -1,4 +1,5 @@
-import { useEffect, useContext } from 'react'
+import { useContext, useEffect } from 'react'
+
 import { GlobalContext } from '../context'
 
 export const useContentfulId = (

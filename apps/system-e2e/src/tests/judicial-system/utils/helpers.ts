@@ -5,8 +5,14 @@ export const randomPoliceCaseNumber = () => {
   return `007-${new Date().getFullYear()}-${Math.floor(Math.random() * 100000)}`
 }
 
-export const randomCourtCaseNumber = () => {
-  return `R-${Math.floor(Math.random() * 1000)}/${new Date().getFullYear()}`
+export const randomCourtCaseNumber = (prefix?: string) => {
+  return `${prefix ?? 'R'}-${Math.floor(
+    Math.random() * 1000,
+  )}/${new Date().getFullYear()}`
+}
+
+export const randomIndictmentCourtCaseNumber = () => {
+  return randomCourtCaseNumber('S')
 }
 
 export const randomAppealCaseNumber = () => {

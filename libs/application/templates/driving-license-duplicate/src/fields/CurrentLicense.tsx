@@ -2,7 +2,7 @@ import React, { FC } from 'react'
 
 import { useLocale } from '@island.is/localization'
 import { Box, Tag, Text } from '@island.is/island-ui/core'
-import { getValueViaPath, formatText } from '@island.is/application/core'
+import { getValueViaPath } from '@island.is/application/core'
 import { FieldBaseProps } from '@island.is/application/types'
 import { DriversLicenseCategory } from '@island.is/clients/driving-license'
 import format from 'date-fns/format'
@@ -39,13 +39,11 @@ export const CurrentLicense: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   }
 
   return (
-    <>
-      <Box marginBottom={3} marginTop={4}>
-        <Text variant="h3">
-          {formatText(m.rights, application, formatMessage)}
-        </Text>
-      </Box>
-      <Box marginBottom={4}>
+    <Box marginTop={4}>
+      <Text variant="h4" marginBottom={2}>
+        {formatMessage(m.rights)}
+      </Text>
+      <Box>
         {currentLicense.categories.map(
           (category: DriversLicenseCategory, index: number) => {
             const expiresText = category.expires
@@ -109,7 +107,7 @@ export const CurrentLicense: FC<React.PropsWithChildren<FieldBaseProps>> = ({
           },
         )}
       </Box>
-    </>
+    </Box>
   )
 }
 

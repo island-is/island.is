@@ -15,7 +15,7 @@ import {
   ScopesGuard,
   User,
 } from '@island.is/auth-nest-tools'
-import { delegationScopes } from '@island.is/auth/scopes'
+import { AdminPortalScope, delegationScopes } from '@island.is/auth/scopes'
 import { Audit } from '@island.is/nest/audit'
 import { Documentation } from '@island.is/nest/swagger'
 
@@ -92,6 +92,11 @@ export class DomainsController {
   @Audit<DomainDTO[]>({
     resources: (domains) => domains.map((domain) => domain.name),
   })
+  @Scopes(
+    ...delegationScopes,
+    AdminPortalScope.delegationSystemAdmin,
+    AdminPortalScope.delegationSystem,
+  )
   findAll(
     @CurrentUser() user: User,
     @Query('lang') language?: string,

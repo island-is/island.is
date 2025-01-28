@@ -1,3 +1,4 @@
+import { useMemo } from 'react'
 import { useIntl } from 'react-intl'
 import NextLink from 'next/link'
 import { useRouter } from 'next/router'
@@ -8,11 +9,12 @@ import {
   Box,
   Breadcrumbs,
   Divider,
+  Hidden,
   Stack,
   Text,
 } from '@island.is/island-ui/core'
 import { Locale } from '@island.is/shared/types'
-import { GrantWrapper } from '@island.is/web/components'
+import { GrantWrapper, InstitutionPanel } from '@island.is/web/components'
 import {
   ContentLanguage,
   CustomPageUniqueIdentifier,
@@ -32,17 +34,20 @@ import {
 import SidebarLayout from '../../Layouts/SidebarLayout'
 import { GET_GRANT_QUERY } from '../../queries'
 import { m } from '../messages'
-import { GrantSidebar } from './GrantSidebar'
+import { generateStatusTag, parseStatus } from '../utils'
+import DetailPanel from './GrantSidebar/DetailPanel'
+import ExtraPanel from './GrantSidebar/ExtraPanel'
+import { GrantSidebar } from './GrantSidebar/GrantSidebar'
 
 const GrantSinglePage: CustomScreen<GrantSingleProps> = ({ grant, locale }) => {
   const { formatMessage } = useIntl()
   const { linkResolver } = useLinkResolver()
   const router = useRouter()
 
-  const baseUrl = linkResolver('styrkjatorg', [], locale).href
-  const searchUrl = linkResolver('styrkjatorgsearch', [], locale).href
+  const baseUrl = linkResolver('grantsplaza', [], locale).href
+  const searchUrl = linkResolver('grantsplazasearch', [], locale).href
   const currentUrl = linkResolver(
-    'styrkjatorggrant',
+    'grantsplazagrant',
     [grant?.applicationId ?? ''],
     locale,
   ).href
@@ -67,9 +72,18 @@ const GrantSinglePage: CustomScreen<GrantSingleProps> = ({ grant, locale }) => {
     },
   ]
 
+  const status = useMemo(
+    () => (grant ? parseStatus(grant, formatMessage, locale) : null),
+    [grant, formatMessage, locale],
+  )
+
   if (!grant) {
     return null
   }
+
+  const applicationStatusLabel = status?.applicationStatus
+    ? generateStatusTag(status.applicationStatus, formatMessage)?.label
+    : undefined
 
   return (
     <GrantWrapper
@@ -100,20 +114,39 @@ const GrantSinglePage: CustomScreen<GrantSingleProps> = ({ grant, locale }) => {
             </Text>
             <Text variant="default">{grant.description}</Text>
           </Box>
-          <ActionCard
-            heading={grant.name}
-            backgroundColor="blue"
-            cta={{
-              disabled: !grant.applicationUrl?.slug,
-              label: formatMessage(m.single.apply),
-              onClick: () => router.push(grant.applicationUrl?.slug ?? ''),
-              icon: 'open',
-              iconType: 'outline',
-            }}
-          />
+          <Hidden above="sm">
+            <DetailPanel grant={grant} locale={locale} button />
+          </Hidden>
+          <Hidden below="md">
+            <ActionCard
+              heading={grant.name}
+              text={
+                applicationStatusLabel
+                  ? `${applicationStatusLabel}${
+                      status?.deadlineStatus
+                        ? ' / ' + status.deadlineStatus
+                        : ''
+                    }`
+                  : undefined
+              }
+              backgroundColor="blue"
+              cta={{
+                disabled:
+                  status?.applicationStatus === 'closed' ||
+                  status?.applicationStatus === 'unknown',
+                size: 'small',
+                label:
+                  grant.applicationButtonLabel ?? formatMessage(m.single.apply),
+                onClick: () => router.push(grant.applicationUrl?.slug ?? ''),
+                icon: 'open',
+                iconType: 'outline',
+              }}
+            />
+          </Hidden>
           {grant.specialEmphasis?.length ? (
             <>
               <Box className="rs_read">
+                {status?.note && <Text fontWeight="medium">{status.note}</Text>}
                 {webRichText(
                   grant.specialEmphasis as SliceType[],
                   undefined,
@@ -139,26 +172,39 @@ const GrantSinglePage: CustomScreen<GrantSingleProps> = ({ grant, locale }) => {
             </>
           ) : undefined}
           {grant.howToApply?.length ? (
-            <Box>
-              <Text variant="h3">{formatMessage(m.single.howToApply)}</Text>
-              <Box className="rs_read">
-                {webRichText(
-                  grant.howToApply as SliceType[],
-                  undefined,
-                  locale,
-                )}
+            <>
+              <Box>
+                <Text variant="h3">{formatMessage(m.single.howToApply)}</Text>
+                <Box className="rs_read">
+                  {webRichText(
+                    grant.howToApply as SliceType[],
+                    undefined,
+                    locale,
+                  )}
+                </Box>
               </Box>
-            </Box>
+              <Divider />
+            </>
           ) : undefined}
-          {grant.applicationDeadline?.length ? (
-            <Box className="rs_read">
-              {webRichText(
-                grant.applicationDeadline as SliceType[],
-                undefined,
-                locale,
-              )}
-            </Box>
+
+          {grant.answeringQuestions?.length ? (
+            <>
+              <Box>
+                <Text variant="h3">
+                  {formatMessage(m.single.answeringQuestions)}
+                </Text>
+                <Box className="rs_read">
+                  {webRichText(
+                    grant.answeringQuestions as SliceType[],
+                    undefined,
+                    locale,
+                  )}
+                </Box>
+              </Box>
+              <Divider />
+            </>
           ) : undefined}
+
           {grant.applicationHints?.length ? (
             <Box className="rs_read">
               {webRichText(
@@ -168,6 +214,22 @@ const GrantSinglePage: CustomScreen<GrantSingleProps> = ({ grant, locale }) => {
               )}
             </Box>
           ) : undefined}
+          {(grant.files || grant.supportLinks) && (
+            <Hidden above="md">
+              <ExtraPanel grant={grant} />
+            </Hidden>
+          )}
+          <Hidden above="md">
+            <InstitutionPanel
+              institutionTitle={formatMessage(m.single.provider)}
+              institution={
+                grant.fund?.parentOrganization.title ??
+                formatMessage(m.single.unknownInstitution)
+              }
+              img={grant.fund?.parentOrganization.logo?.url}
+              locale={locale}
+            />
+          </Hidden>
         </Stack>
       </SidebarLayout>
     </GrantWrapper>

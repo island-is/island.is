@@ -1,15 +1,16 @@
+import Link from 'next/link'
+
 import {
   Box,
+  Button,
   GridColumn,
   GridRow,
   Text,
-  Button,
 } from '@island.is/island-ui/core'
-import Link from 'next/link'
+import { useLinkResolver } from '@island.is/web/hooks'
+import { useI18n } from '@island.is/web/i18n'
 
 import img from '../../../assets/images/educationLicense.svg'
-import { useI18n } from '@island.is/web/i18n'
-import { useLinkResolver } from '@island.is/web/hooks'
 
 interface ContactBannerProps {
   slug?: string

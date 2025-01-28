@@ -12,6 +12,7 @@ import {
   TicketStatus,
   ZendeskService,
 } from '@island.is/clients/zendesk'
+import { CompanyRegistryClientService } from '@island.is/clients/rsk/company-registry'
 
 import { Delegation } from '../models/delegation.model'
 import { DelegationAdminCustomDto } from '../dto/delegation-admin-custom.dto'
@@ -45,6 +46,7 @@ export class DelegationAdminCustomService {
     private delegationScopeService: DelegationScopeService,
     private namesService: NamesService,
     private sequelize: Sequelize,
+    private rskCompanyInfoService: CompanyRegistryClientService,
   ) {}
 
   private getZendeskCustomFields(ticket: Ticket): {
@@ -276,9 +278,7 @@ export class DelegationAdminCustomService {
       })
     }
 
-    if (
-      !(kennitala.isPerson(fromNationalId) && kennitala.isPerson(toNationalId))
-    ) {
+    if (!kennitala.isPerson(toNationalId)) {
       throw new BadRequestException({
         message: 'National Ids are not valid',
         error: ErrorCodes.INPUT_VALIDATION_INVALID_PERSON,
@@ -300,7 +300,11 @@ export class DelegationAdminCustomService {
     },
   ): Promise<Delegation> {
     const [fromDisplayName, toName] = await Promise.all([
-      this.namesService.getPersonName(delegation.fromNationalId),
+      kennitala.isPerson(delegation.fromNationalId)
+        ? this.namesService.getPersonName(delegation.fromNationalId)
+        : this.rskCompanyInfoService
+            .getCompany(delegation.fromNationalId)
+            .then((company) => company?.name ?? ''),
       this.namesService.getPersonName(delegation.toNationalId),
     ])
 
@@ -310,6 +314,7 @@ export class DelegationAdminCustomService {
           {
             fromNationalId: delegation.fromNationalId,
             toNationalId: delegation.toNationalId,
+            domainName: null,
           },
           {
             referenceId: delegation.referenceId,

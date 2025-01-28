@@ -1,7 +1,7 @@
 import { FC, useMemo } from 'react'
 
-import { Slice } from '@island.is/api/schema'
 import { TableOfContents } from '@island.is/island-ui/core'
+import { Slice } from '@island.is/web/graphql/schema'
 import { scrollTo } from '@island.is/web/hooks/useScrollSpy'
 
 export const TOC: FC<

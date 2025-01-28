@@ -25,9 +25,9 @@ import { DeliverResponse } from './models/deliver.response'
 import { CaseFile } from './models/file.model'
 import { FileService } from './file.service'
 
-@UseGuards(TokenGuard)
 @Controller('api/internal/case/:caseId')
 @ApiTags('internal files')
+@UseGuards(TokenGuard)
 export class InternalFileController {
   constructor(
     private readonly fileService: FileService,

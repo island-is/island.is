@@ -33,6 +33,12 @@ export class Donor {
 
   @Field(() => Limitations, { nullable: true })
   limitations?: Limitations
+
+  @Field(() => Boolean, { defaultValue: false })
+  isMinor!: boolean
+
+  @Field(() => Boolean, { defaultValue: false })
+  isTemporaryResident!: boolean
 }
 
 @ObjectType('HealthDirectorateOrganDonation')
@@ -54,4 +60,7 @@ export class DonorInput {
 
   @Field(() => [String], { nullable: true })
   organLimitations?: string[]
+
+  @Field({ nullable: true })
+  comment?: string
 }

@@ -136,3 +136,21 @@ export class Advert {
   @Field(() => AdvertDocument)
   document!: AdvertDocument
 }
+
+@ObjectType('OfficialJournalOfIcelandAdvertsMainType')
+export class AdvertMainType {
+  @Field()
+  id!: string
+
+  @Field()
+  title!: string
+
+  @Field()
+  slug!: string
+
+  @Field(() => AdvertEntity)
+  department!: AdvertEntity
+
+  @Field(() => [AdvertType])
+  types!: AdvertType[]
+}

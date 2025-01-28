@@ -1,5 +1,6 @@
 {{- if .Values.enabled }}
 {{- $fullName := include "api-template.fullname" . -}}
+{{- $appName := include "api-template.name" . -}}
 {{- $labels := include "api-template.labels" . -}}
 {{- $svcPort := $.Values.service.port -}}
 {{- range $name, $ingress := omit .Values.ingress "behindCloudfront" }}
@@ -10,7 +11,7 @@ apiVersion: extensions/v1beta1
 {{- end }}
 kind: Ingress
 metadata:
-  name: "{{ $fullName }}-{{ $name }}"
+  name: "{{ $appName }}-{{ $name }}"
   {{- if $.Values.namespace }}
   namespace: {{ $.Values.namespace }}
   {{- end }}
@@ -38,7 +39,7 @@ spec:
           - pathType: Prefix
             backend:
               service:
-                name: {{ $fullName }}
+                name: {{ $appName }}
                 port:
                   number: {{ $svcPort }}
           {{- if eq (kindOf .) "map" }}

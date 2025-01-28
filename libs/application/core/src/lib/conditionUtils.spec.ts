@@ -2,27 +2,25 @@ import {
   AllOrAny,
   Comparators,
   Condition,
-  SingleConditionCheck,
-  FormValue,
   ExternalData,
+  FormValue,
+  SingleConditionCheck,
 } from '@island.is/application/types'
+import { applicationSystemScopes } from '@island.is/auth/scopes'
+import { BffUser } from '@island.is/shared/types'
 import { buildTextField } from '../lib/fieldBuilders'
 import { shouldShowFormItem } from './conditionUtils'
 import { buildSection, buildSubSection } from './formBuilders'
-import { User } from '@island.is/shared/types'
-import { createOpenIDUser } from '@island.is/testing/fixtures'
 
-const createRandomUser = (): User => {
-  const user = {
-    profile: {
-      nationalId: '1234567890',
-      name: 'John Doe',
-      idp: 'idpExample',
-      subjectType: 'person',
-    },
-  }
-  return createOpenIDUser(user as User)
-}
+const createRandomUser = (): BffUser => ({
+  profile: {
+    nationalId: '1234567890',
+    name: 'John Doe',
+    idp: 'idpExample',
+    subjectType: 'person',
+  } as BffUser['profile'],
+  scopes: applicationSystemScopes,
+})
 
 const createExternalData = (
   key: string,

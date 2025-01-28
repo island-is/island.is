@@ -1,4 +1,5 @@
 import React from 'react'
+
 import { Stack, Text } from '@island.is/island-ui/core'
 
 export interface HeadingProps {

@@ -1,5 +1,5 @@
-import { FormValue, ExternalData } from './Application'
-import { User } from '@island.is/shared/types'
+import { BffUser } from '@island.is/shared/types'
+import { ExternalData, FormValue } from './Application'
 
 export enum Comparators {
   EQUALS = 'eq',
@@ -46,7 +46,7 @@ export type StaticCheck = QuestionCheck | ExternalDataCheck | UserPropCheck
 export type DynamicCheck = (
   formValue: FormValue,
   externalData: ExternalData,
-  user: User | null,
+  user: BffUser | null,
 ) => boolean
 
 export type SingleConditionCheck = StaticCheck | DynamicCheck

@@ -1,19 +1,19 @@
 import React, { useMemo } from 'react'
-import { Screen } from '@island.is/web/types'
-import { CustomNextError } from '@island.is/web/units/errors'
-import slugify from '@sindresorhus/slugify'
 import NextLink from 'next/link'
+import { useRouter } from 'next/router'
+import slugify from '@sindresorhus/slugify'
+
 import { Slice as SliceType } from '@island.is/island-ui/contentful'
 import {
-  GridRow,
-  GridColumn,
-  Breadcrumbs,
-  Text,
   Box,
-  GridContainer,
   BreadCrumbItem,
+  Breadcrumbs,
+  GridColumn,
+  GridContainer,
+  GridRow,
+  Text,
 } from '@island.is/island-ui/core'
-import { withMainLayout } from '@island.is/web/layouts/main'
+import { Locale } from '@island.is/shared/types'
 import {
   AnchorNavigation,
   BackgroundImage,
@@ -22,27 +22,29 @@ import {
   Sticky,
   WatsonChatPanel,
 } from '@island.is/web/components'
-import {
-  GET_ANCHOR_PAGE_QUERY,
-  GET_NAMESPACE_QUERY,
-} from '@island.is/web/screens/queries'
+import { Webreader } from '@island.is/web/components'
+import { DIGITAL_ICELAND_PLAUSIBLE_TRACKING_DOMAIN } from '@island.is/web/constants'
 import {
   GetAnchorPageQuery,
   GetNamespaceQuery,
   QueryGetAnchorPageArgs,
   QueryGetNamespaceArgs,
 } from '@island.is/web/graphql/schema'
-import { createNavigation } from '@island.is/web/utils/navigation'
 import { useNamespace, usePlausiblePageview } from '@island.is/web/hooks'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
 import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
-import { useRouter } from 'next/router'
-import { Locale } from '@island.is/shared/types'
 import { useLocalLinkTypeResolver } from '@island.is/web/hooks/useLocalLinkTypeResolver'
-import { webRichText } from '@island.is/web/utils/richText'
 import { useI18n } from '@island.is/web/i18n'
-import { Webreader } from '@island.is/web/components'
-import { DIGITAL_ICELAND_PLAUSIBLE_TRACKING_DOMAIN } from '@island.is/web/constants'
+import { withMainLayout } from '@island.is/web/layouts/main'
+import {
+  GET_ANCHOR_PAGE_QUERY,
+  GET_NAMESPACE_QUERY,
+} from '@island.is/web/screens/queries'
+import { Screen } from '@island.is/web/types'
+import { CustomNextError } from '@island.is/web/units/errors'
+import { createNavigation } from '@island.is/web/utils/navigation'
+import { webRichText } from '@island.is/web/utils/richText'
+
 import { watsonConfig } from './config'
 
 interface AnchorPageProps {

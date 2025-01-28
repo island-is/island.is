@@ -6,7 +6,6 @@ import {
   DefaultEvents,
 } from '@island.is/application/types'
 import { Box, LoadingDots } from '@island.is/island-ui/core'
-import { useLocale } from '@island.is/localization'
 import { SUBMIT_APPLICATION } from '@island.is/application/graphql'
 
 interface Props extends FieldBaseProps {
@@ -19,7 +18,6 @@ export const SubmitAndDecline: FC<React.PropsWithChildren<Props>> = ({
   refetch,
 }) => {
   const applicationId = application.id
-  const { formatMessage } = useLocale()
   const [submitError, setSubmitError] = useState(false)
 
   const [submitApplication, { called }] = useMutation(SUBMIT_APPLICATION, {

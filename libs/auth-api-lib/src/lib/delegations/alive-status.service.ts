@@ -1,4 +1,5 @@
-import { Inject, Injectable, Logger } from '@nestjs/common'
+import { Inject, Injectable, Logger, Optional } from '@nestjs/common'
+import { ConfigService } from '@nestjs/config'
 import * as kennitala from 'kennitala'
 
 import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
@@ -20,13 +21,20 @@ const decesead = 'LÉST'
 
 @Injectable()
 export class AliveStatusService {
+  alsoUseFakeApi: boolean
+
   constructor(
     private readonly nationalRegistryClient: NationalRegistryClientService,
     private readonly nationalRegistryV3Client: NationalRegistryV3ClientService,
     private readonly companyRegistryClient: CompanyRegistryClientService,
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
-  ) {}
+    @Optional()
+    readonly configService?: ConfigService,
+  ) {
+    this.alsoUseFakeApi =
+      configService?.get<boolean>('ALSO_USE_FAKE_USER_API') ?? false
+  }
 
   /**
    * Divides nationalIds into alive and deceased
@@ -134,7 +142,11 @@ export class AliveStatusService {
   ): Promise<IdentityInfo> {
     if (useNationalRegistryV3) {
       return await this.nationalRegistryV3Client
-        .getAllDataIndividual(individualInfo.nationalId)
+        .getAllDataIndividual(
+          individualInfo.nationalId,
+          false,
+          this.alsoUseFakeApi,
+        )
         .then((individual) => {
           if (
             individual &&

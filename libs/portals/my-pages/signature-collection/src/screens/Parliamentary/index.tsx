@@ -2,14 +2,14 @@ import { Box } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   EmptyState,
-  IntroHeader,
+  IntroWrapper,
   THJODSKRA_SLUG,
 } from '@island.is/portals/my-pages/core'
 import { m } from '../../lib/messages'
 import OwnerView from './OwnerView'
 import SigneeView from '../shared/SigneeView'
 import { useGetCurrentCollection, useIsOwner } from '../../hooks'
-import { useUserInfo } from '@island.is/auth/react'
+import { useUserInfo } from '@island.is/react-spa/bff'
 import { AuthDelegationType } from '../../types/schema'
 
 const SignatureListsParliamentary = () => {
@@ -23,7 +23,7 @@ const SignatureListsParliamentary = () => {
 
   return (
     <Box>
-      <IntroHeader
+      <IntroWrapper
         title={formatMessage(m.pageTitleParliamentary)}
         intro={formatMessage(m.pageDescriptionSignee)}
         serviceProviderTooltip={formatMessage(m.infoProviderTooltip)}

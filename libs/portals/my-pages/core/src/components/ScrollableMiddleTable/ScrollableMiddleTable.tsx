@@ -40,8 +40,10 @@ const getBreakpointWidth = (width: number) => {
   }
   return '200%'
 }
-const FIRST_COLUMN_WIDTH = theme.spacing[23]
-const LAST_COLUMN_WIDTH = theme.spacing[15]
+
+//Magic numbers
+const FIRST_COLUMN_WIDTH = 130
+const LAST_COLUMN_WIDTH = 144
 const ICON_WIDTH = theme.spacing[6]
 
 export const ScrollableMiddleTable = ({

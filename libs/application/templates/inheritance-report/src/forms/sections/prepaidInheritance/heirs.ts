@@ -84,7 +84,7 @@ export const prePaidHeirs = buildSection({
         buildMultiField({
           id: 'prePaidHeirsAdditionalInfo',
           title: m.heirAdditionalInfo,
-          description: m.heirAdditionalInfoDescription,
+          description: m.heirAdditionalInfoPrePaidDescription,
           children: [
             buildTextField({
               id: 'heirsAdditionalInfo',

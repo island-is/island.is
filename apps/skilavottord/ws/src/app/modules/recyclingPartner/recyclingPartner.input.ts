@@ -37,6 +37,12 @@ export class CreateRecyclingPartnerInput {
 
   @Field()
   email?: string
+
+  @Field()
+  isMunicipality?: boolean
+
+  @Field({ nullable: true })
+  municipalityId?: string
 }
 
 @InputType()
@@ -70,4 +76,10 @@ export class UpdateRecyclingPartnerInput {
 
   @Field()
   email?: string
+
+  @Field({ nullable: true })
+  isMunicipality?: boolean
+
+  @Field({ nullable: true })
+  municipalityId?: string
 }

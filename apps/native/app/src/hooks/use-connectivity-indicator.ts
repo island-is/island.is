@@ -1,11 +1,10 @@
 import { QueryResult } from '@apollo/client'
-
-import { theme } from '@ui'
 import isEqual from 'lodash/isEqual'
 import { useEffect, useRef } from 'react'
 import { Navigation, OptionsTopBar } from 'react-native-navigation'
 import { OptionsTopBarButton } from 'react-native-navigation/lib/src/interfaces/Options'
 
+import { theme } from '../ui'
 import { useOfflineStore } from '../stores/offline-store'
 import { ButtonRegistry as BR } from '../utils/component-registry'
 import { isDefined } from '../utils/is-defined'

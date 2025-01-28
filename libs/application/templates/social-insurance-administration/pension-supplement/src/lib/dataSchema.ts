@@ -48,7 +48,7 @@ export const dataSchema = z.object({
       ]),
       bankAddress: z.string(),
       bankName: z.string(),
-      currency: z.string(),
+      currency: z.string().nullable(),
       iban: z.string(),
       swift: z.string(),
     })

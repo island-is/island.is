@@ -406,7 +406,6 @@ describe('CaseController - Update', () => {
       const caseToUpdate = { courtCaseNumber }
       const policeCaseNumber1 = uuid()
       const policeCaseNumber2 = uuid()
-      const indictmentId = uuid()
       const criminalRecordId = uuid()
       const costBreakdownId = uuid()
       const uncategorisedId = uuid()
@@ -415,12 +414,6 @@ describe('CaseController - Update', () => {
         type,
         policeCaseNumbers: [policeCaseNumber1, policeCaseNumber2],
         caseFiles: [
-          {
-            id: indictmentId,
-            key: uuid(),
-            state: CaseFileState.STORED_IN_RVG,
-            category: CaseFileCategory.INDICTMENT,
-          },
           {
             id: criminalRecordId,
             key: uuid(),
@@ -474,12 +467,6 @@ describe('CaseController - Update', () => {
             type: MessageType.DELIVERY_TO_COURT_CASE_FILE,
             user,
             caseId,
-            elementId: indictmentId,
-          },
-          {
-            type: MessageType.DELIVERY_TO_COURT_CASE_FILE,
-            user,
-            caseId,
             elementId: criminalRecordId,
           },
           {
@@ -493,6 +480,11 @@ describe('CaseController - Update', () => {
             user,
             caseId,
             elementId: uncategorisedId,
+          },
+          {
+            type: MessageType.DELIVERY_TO_COURT_INDICTMENT,
+            user,
+            caseId,
           },
         ])
       })
@@ -898,7 +890,19 @@ describe('CaseController - Update', () => {
           elementId: [defendantId1, subpoenaId1],
         },
         {
+          type: MessageType.DELIVERY_TO_COURT_SUBPOENA,
+          user,
+          caseId: theCase.id,
+          elementId: [defendantId1, subpoenaId1],
+        },
+        {
           type: MessageType.DELIVERY_TO_POLICE_SUBPOENA,
+          user,
+          caseId: theCase.id,
+          elementId: [defendantId2, subpoenaId2],
+        },
+        {
+          type: MessageType.DELIVERY_TO_COURT_SUBPOENA,
           user,
           caseId: theCase.id,
           elementId: [defendantId2, subpoenaId2],

@@ -1,10 +1,12 @@
 import {
-  buildCustomField,
+  buildDisplayField,
   buildMultiField,
   buildSubSection,
+  buildTextField,
 } from '@island.is/application/core'
 import { m } from '../../../lib/messages'
 import { CAPITALNUMBERS } from '../../../utils/constants'
+import { sumCapitalNumbers } from '../../../utils/sums'
 
 export const capitalNumberSubSection = buildSubSection({
   id: 'keynumbers.capitalNumbers',
@@ -15,12 +17,27 @@ export const capitalNumberSubSection = buildSubSection({
       title: m.capitalNumbersSectionTitle,
       description: m.fillOutAppopriate,
       children: [
-        buildCustomField({
-          id: 'capitalNumberField',
+        buildTextField({
+          id: CAPITALNUMBERS.capitalIncome,
+          title: m.capitalIncome,
+          width: 'half',
+          variant: 'currency',
+          rightAlign: true,
+        }),
+        buildTextField({
+          id: CAPITALNUMBERS.capitalCost,
+          title: m.capitalCost,
+          width: 'half',
+          variant: 'currency',
+          rightAlign: true,
+        }),
+        buildDisplayField({
+          id: CAPITALNUMBERS.total,
           title: '',
-          description: '',
-          component: 'KeyNumbersCapital',
-          childInputIds: Object.values(CAPITALNUMBERS),
+          label: m.totalCapital,
+          value: sumCapitalNumbers,
+          variant: 'currency',
+          rightAlign: true,
         }),
       ],
     }),

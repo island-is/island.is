@@ -7,7 +7,7 @@ import {
   PieChart,
 } from 'recharts'
 
-import { Chart } from '@island.is/api/schema'
+import { Chart } from '@island.is/web/graphql/schema'
 
 import { ChartComponentWithRenderProps, ChartType } from '../types'
 import { decideChartBase } from '../utils'

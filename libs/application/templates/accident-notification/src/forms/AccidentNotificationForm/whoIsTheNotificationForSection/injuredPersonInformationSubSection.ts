@@ -8,7 +8,7 @@ import { injuredPersonInformation } from '../../../lib/messages'
 import {
   isReportingOnBehalfOfEmployee,
   isReportingOnBehalfOfInjured,
-} from '../../../utils'
+} from '../../../utils/reportingUtils'
 
 export const injuredPersonInformationSubSection = buildSubSection({
   id: 'injuredPersonInformation.section',

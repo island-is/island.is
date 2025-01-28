@@ -18,7 +18,7 @@ import { useDefenderCasesQuery } from './defenderCases.generated'
 import { defenderCases as m } from './Cases.strings'
 import * as styles from './Cases.css'
 
-export const Cases: FC<unknown> = () => {
+export const Cases: FC = () => {
   const { formatMessage } = useIntl()
 
   const availableTabs = ['active', 'completed']
@@ -114,10 +114,7 @@ export const Cases: FC<unknown> = () => {
                       filters={filters}
                       toggleFilter={toggleFilters}
                     />
-                    <DefenderCasesTable
-                      cases={activeFilteredCases}
-                      loading={loading}
-                    />
+                    <DefenderCasesTable cases={activeFilteredCases} />
                   </Box>
                 ) : (
                   <Box className={styles.infoContainer} marginTop={3}>
@@ -144,7 +141,6 @@ export const Cases: FC<unknown> = () => {
                     <DefenderCasesTable
                       cases={completedFilteredCases}
                       showingCompletedCases={true}
-                      loading={loading}
                     />
                   </Box>
                 ) : (

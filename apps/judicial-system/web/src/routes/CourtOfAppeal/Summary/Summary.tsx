@@ -31,7 +31,7 @@ import {
 import {
   hasSentNotification,
   shouldUseAppealWithdrawnRoutes,
-} from '@island.is/judicial-system-web/src/utils/stepHelper'
+} from '@island.is/judicial-system-web/src/utils/utils'
 
 import CaseNumbers from '../components/CaseNumbers/CaseNumbers'
 import RulingModifiedModal from './RulingModifiedModal/RulingModifiedModal'

@@ -98,6 +98,7 @@ export class SocialInsuranceService {
                   return {
                     name: r.name,
                     totalYearCumulativeAmount: r.total ?? 0,
+                    markWithAsterisk: r.markWithAsterisk ?? undefined,
                     monthlyPaymentHistory:
                       r.months
                         ?.map((m) => {

@@ -140,11 +140,11 @@ export class FinancialStatementPoliticalPartyTemplateService extends BaseTemplat
   }
 
   private getOperatingYear(application: Application) {
-    const year = getValueViaPath(
+    const year = getValueViaPath<string>(
       application.answers,
       'conditionalAbout.operatingYear',
     )
-    if (typeof year !== 'string') {
+    if (!year) {
       throw new Error('Operating year not found or invalid')
     }
     return year

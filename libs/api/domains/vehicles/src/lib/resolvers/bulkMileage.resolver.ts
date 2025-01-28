@@ -24,7 +24,6 @@ import { BulkVehicleMileageRequestStatusInput } from '../dto/getBulkVehicleMilea
 import { BulkVehicleMileageRequestOverviewInput } from '../dto/getBulkVehicleMileageRequestOverview.input'
 
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
-@FeatureFlag(Features.servicePortalVehicleBulkMileagePageEnabled)
 @Resolver()
 @Audit({ namespace: '@island.is/api/vehicles' })
 @Scopes(ApiScope.vehicles)

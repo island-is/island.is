@@ -30,6 +30,11 @@ export const shared = {
       description:
         'Description of application state/status when the application is in prerequisites',
     },
+    prereqTabTitle: {
+      id: 'aosh.wan.application:shared.application.prereqTabTitle',
+      defaultMessage: 'Gagnaöflun',
+      description: 'Title of prerequisites tab',
+    },
   }),
   options: defineMessages({
     no: {

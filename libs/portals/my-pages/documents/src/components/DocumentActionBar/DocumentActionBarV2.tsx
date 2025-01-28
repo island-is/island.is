@@ -1,17 +1,16 @@
 import {
-  Icon,
   Box,
   BoxProps,
-  LoadingDots,
   Button,
+  Icon,
+  LoadingDots,
 } from '@island.is/island-ui/core'
-import { useUserInfo } from '@island.is/auth/react'
-import { Tooltip, m } from '@island.is/portals/my-pages/core'
 import { useLocale } from '@island.is/localization'
-import { ActiveDocumentType2 } from '../../lib/types'
-import { useDocumentContext } from '../../screens/Overview/DocumentContext'
+import { Tooltip, m } from '@island.is/portals/my-pages/core'
 import { useDocumentList } from '../../hooks/useDocumentList'
 import { useMailAction } from '../../hooks/useMailActionV2'
+import { ActiveDocumentType2 } from '../../lib/types'
+import { useDocumentContext } from '../../screens/Overview/DocumentContext'
 import { downloadFile } from '../../utils/downloadDocumentV2'
 import * as styles from './DocumentActionBar.css'
 
@@ -37,7 +36,6 @@ export const DocumentActionBar: React.FC<DocumentActionBarProps> = ({
 
   const { activeDocument } = useDocumentContext()
   const { fetchObject, refetch } = useDocumentList()
-  const userInfo = useUserInfo()
 
   const { formatMessage } = useLocale()
 
@@ -144,7 +142,7 @@ export const DocumentActionBar: React.FC<DocumentActionBarProps> = ({
                 icon="download"
                 iconType={'outline'}
                 onClick={() =>
-                  downloadFile(activeDocument, userInfo, 'download')
+                  downloadFile({ doc: activeDocument, query: 'download' })
                 }
                 size="medium"
                 colorScheme="light"
@@ -158,7 +156,11 @@ export const DocumentActionBar: React.FC<DocumentActionBarProps> = ({
               circle
               icon="print"
               iconType={'outline'}
-              onClick={() => downloadFile(activeDocument, userInfo)}
+              onClick={() =>
+                downloadFile({
+                  doc: activeDocument,
+                })
+              }
               size="medium"
               colorScheme="light"
             />

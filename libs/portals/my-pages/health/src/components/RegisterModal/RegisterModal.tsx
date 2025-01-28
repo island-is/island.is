@@ -1,16 +1,16 @@
 import {
-  ModalBase,
-  Icon,
   Box,
   Button,
-  Text,
+  Icon,
+  ModalBase,
   Select,
+  Text,
 } from '@island.is/island-ui/core'
-import { messages } from '../../lib/messages'
-import * as styles from './RegisterModal.css'
 import { useLocale } from '@island.is/localization'
 import { useState } from 'react'
+import { messages } from '../../lib/messages'
 import { HealthCenterDoctorOption } from '../../screens/HealthCenterRegistration/HealthCenterRegistration'
+import * as styles from './RegisterModal.css'
 
 type RegisterModalProps = {
   onClose: () => void

@@ -17,7 +17,7 @@ import {
 
 import {
   CurrentUserTypeProvider,
-  IndentityApiProvider,
+  IdentityApiProvider,
   NationalRegistryUserApi,
   UserInfoApi,
 } from '../dataProviders'
@@ -77,7 +77,7 @@ const FinancialStatementIndividualElectionTemplate: ApplicationTemplate<
               delete: true,
               api: [
                 CurrentUserTypeProvider,
-                IndentityApiProvider,
+                IdentityApiProvider,
                 NationalRegistryUserApi,
                 UserInfoApi,
               ],

@@ -1,4 +1,3 @@
-import { Divider, Input, InputRow, NavigationBarSheet } from '@ui'
 import React from 'react'
 import { useIntl } from 'react-intl'
 import { ScrollView, View } from 'react-native'
@@ -6,6 +5,8 @@ import {
   Navigation,
   NavigationFunctionComponent,
 } from 'react-native-navigation'
+
+import { Divider, Input, InputRow, NavigationBarSheet } from '../../ui'
 import { useGetAssetQuery } from '../../graphql/types/schema'
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
 import { testIDs } from '../../utils/test-ids'

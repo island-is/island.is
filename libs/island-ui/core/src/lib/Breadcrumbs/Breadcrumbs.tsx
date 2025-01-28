@@ -38,6 +38,7 @@ export const Breadcrumbs: FC<React.PropsWithChildren<BreadcrumbsProps>> = ({
     <Box
       aria-label={label}
       display={'inlineFlex'}
+      flexWrap={'wrap'}
       alignItems={'center'}
       className="rs_skip"
       component="nav"

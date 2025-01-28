@@ -180,14 +180,6 @@ export const footerFirstColumnContainer = style({
   gap: '1.5rem',
 })
 
-export const footerSecondColumnContainer = style({
-  flexDirection: 'column',
-  justifyContent: 'center',
-  alignItems: 'flex-start',
-  width: '17rem',
-  gap: '1.5rem',
-})
-
 export const navigation = style({
   ...themeUtils.responsiveStyle({
     md: {

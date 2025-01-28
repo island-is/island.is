@@ -1,4 +1,9 @@
-import { Inject, Injectable, forwardRef } from '@nestjs/common'
+import {
+  Inject,
+  Injectable,
+  NotFoundException,
+  forwardRef,
+} from '@nestjs/common'
 import { HttpService } from '@nestjs/axios'
 import { InjectModel } from '@nestjs/sequelize'
 import format from 'date-fns/format'
@@ -33,7 +38,7 @@ export class RecyclingRequestService {
     private httpService: HttpService,
     private fjarsyslaService: FjarsyslaService,
     @Inject(forwardRef(() => RecyclingPartnerService))
-    private recycllingPartnerService: RecyclingPartnerService,
+    private recyclingPartnerService: RecyclingPartnerService,
     private vehicleService: VehicleService,
     private icelandicTransportAuthorityServices: IcelandicTransportAuthorityServices,
   ) {}
@@ -43,6 +48,9 @@ export class RecyclingRequestService {
     disposalStation: string,
     vehicle: VehicleModel,
   ) {
+    const disposalStationId =
+      await this.recyclingPartnerService.getPayingPartnerId(disposalStation)
+
     try {
       const { restAuthUrl, restDeRegUrl, restUsername, restPassword } =
         environment.samgongustofa
@@ -73,7 +81,7 @@ export class RecyclingRequestService {
       const jsonDeRegBody = JSON.stringify({
         permno: vehiclePermno,
         deRegisterDate: format(new Date(), "yyyy-MM-dd'T'HH:mm:ss"),
-        disposalStation: disposalStation,
+        disposalStation: disposalStationId,
         explanation: 'Rafrænt afskráning',
         mileage: vehicle.mileage ?? 0,
         plateCount: vehicle.plateCount,
@@ -159,8 +167,12 @@ export class RecyclingRequestService {
           )
         }
       } else {
-        throw new Error(
-          `Could not find any requestType for vehicle's number: ${loggedPermno} in database`,
+        this.logger.warn(
+          `car-recycling: Could not find any requestType for vehicle's number: ${loggedPermno} in database from partner ${user.partnerId}`,
+        )
+        throw new NotFoundException(
+          `Could not find any requestType for vehicle's number: ${loggedPermno} in database from partner ${user.partnerId}`,
+          'NOT_FOUND',
         )
       }
 
@@ -173,6 +185,10 @@ export class RecyclingRequestService {
       }
       return res
     } catch (err) {
+      if (err instanceof NotFoundException) {
+        throw err
+      }
+
       throw new Error(
         `Failed on getVehicleInfoToDeregistered request from partner ${user.partnerId} with error: ${err}`,
       )
@@ -251,7 +267,7 @@ export class RecyclingRequestService {
       // is partnerId null?
       if (partnerId) {
         newRecyclingRequest.recyclingPartnerId = partnerId
-        const partner = await this.recycllingPartnerService.findOne(partnerId)
+        const partner = await this.recyclingPartnerService.findOne(partnerId)
         if (!partner) {
           this.logger.error(
             `car-recycling: The recycling station is not in the recycling station list`,

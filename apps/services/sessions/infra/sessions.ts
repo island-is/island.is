@@ -1,4 +1,8 @@
-import { service, ServiceBuilder } from '../../../../infra/src/dsl/dsl'
+import {
+  CodeOwners,
+  service,
+  ServiceBuilder,
+} from '../../../../infra/src/dsl/dsl'
 
 const namespace = 'services-sessions'
 const imageName = 'services-sessions'
@@ -7,6 +11,7 @@ export const serviceSetup = (): ServiceBuilder<'services-sessions'> =>
   service('services-sessions')
     .namespace(namespace)
     .image(imageName)
+    .codeOwner(CodeOwners.Aranja)
     .redis()
     .db({
       readOnly: true,
@@ -54,6 +59,7 @@ export const workerSetup = (): ServiceBuilder<'services-sessions-worker'> =>
   service('services-sessions-worker')
     .image(imageName)
     .namespace(namespace)
+    .codeOwner(CodeOwners.Aranja)
     .redis()
     .serviceAccount('sessions-worker')
     .command('node')
@@ -92,6 +98,7 @@ export const cleanupSetup = (): ServiceBuilder<typeof cleanupId> =>
   service(cleanupId)
     .namespace(namespace)
     .image(imageName)
+    .codeOwner(CodeOwners.Aranja)
     .command('node')
     .args('main.js', '--job=cleanup')
     .resources({

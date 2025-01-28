@@ -17,8 +17,12 @@ import Table, {
 import TableInfoContainer from '@island.is/judicial-system-web/src/components/Table/TableInfoContainer/TableInfoContainer'
 import TagCaseState, {
   mapIndictmentCaseStateToTagVariant,
-} from '@island.is/judicial-system-web/src/components/TagCaseState/TagCaseState'
-import { CaseListEntry } from '@island.is/judicial-system-web/src/graphql/schema'
+} from '@island.is/judicial-system-web/src/components/Tags/TagCaseState/TagCaseState'
+import TagIndictmentRulingDecision from '@island.is/judicial-system-web/src/components/Tags/TagIndictmentRulingDecision/TagIndictmentRulingDecison'
+import {
+  CaseIndictmentRulingDecision,
+  CaseListEntry,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { strings } from './CasesAwaitingReview.strings'
 
@@ -48,6 +52,7 @@ const CasesForReview: FC<CasesForReviewTableProps> = ({ loading, cases }) => {
                   ),
                   sortable: { isSortable: true, key: 'defendants' },
                 },
+                { title: formatMessage(tables.type) },
                 { title: formatMessage(tables.state) },
                 {
                   title: formatMessage(tables.deadline),
@@ -58,9 +63,9 @@ const CasesForReview: FC<CasesForReviewTableProps> = ({ loading, cases }) => {
                 },
               ]}
               data={cases}
-              generateContextMenuItems={(row) => {
-                return [openCaseInNewTabMenuItem(row.id)]
-              }}
+              generateContextMenuItems={(row) => [
+                openCaseInNewTabMenuItem(row.id),
+              ]}
               columns={[
                 {
                   cell: (row) => (
@@ -73,6 +78,16 @@ const CasesForReview: FC<CasesForReviewTableProps> = ({ loading, cases }) => {
                 },
                 {
                   cell: (row) => <DefendantInfo defendants={row.defendants} />,
+                },
+                {
+                  cell: (row) => (
+                    <TagIndictmentRulingDecision
+                      isFine={
+                        row.indictmentRulingDecision ===
+                        CaseIndictmentRulingDecision.FINE
+                      }
+                    />
+                  ),
                 },
                 {
                   cell: (row) => (

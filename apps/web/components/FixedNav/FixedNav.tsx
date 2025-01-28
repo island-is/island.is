@@ -1,18 +1,19 @@
 import React, { FC, useState } from 'react'
 import cn from 'classnames'
+
 import {
-  GridContainer,
   Box,
   FocusableBox,
-  Logo,
-  Icon,
+  GridContainer,
   Hidden,
+  Icon,
+  Logo,
 } from '@island.is/island-ui/core'
-import { useI18n } from '@island.is/web/i18n'
 import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
+import { useI18n } from '@island.is/web/i18n'
+
 import { useScrollPosition } from '../../hooks/useScrollPosition'
 import SearchInput from '../SearchInput/SearchInput'
-
 import * as styles from './FixedNav.css'
 
 export const FixedNav: FC<React.PropsWithChildren<unknown>> = () => {

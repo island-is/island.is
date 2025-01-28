@@ -1,5 +1,4 @@
 import { Locale } from '@island.is/shared/types'
-
 import { WatsonChatPanelProps } from '@island.is/web/components'
 import { setupOneScreenWatsonChatBot } from '@island.is/web/utils/webChat'
 

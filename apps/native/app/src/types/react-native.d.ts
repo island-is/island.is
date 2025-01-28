@@ -85,7 +85,3 @@ declare module 'react-native-dialogs' {
     options: OptionsPrompt,
   ): Promise<PromptResponse>
 }
-
-declare module '@island.is/application/types/lib/ApplicationTypes' {
-  export const ApplicationConfigurations: Record<string, any>
-}

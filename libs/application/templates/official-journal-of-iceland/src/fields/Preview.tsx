@@ -21,7 +21,6 @@ import {
 import { Routes, SignatureTypes } from '../lib/constants'
 import { useApplication } from '../hooks/useUpdateApplication'
 import { advert, error, preview, signatures } from '../lib/messages'
-import { useType } from '../hooks/useType'
 import {
   previewValidationSchema,
   signatureValidationSchema,
@@ -38,10 +37,6 @@ export const Preview = ({ application, goToScreen }: OJOIFieldBaseProps) => {
   const [hasInvalidPdf, setHasInvalidPdf] = useState(false)
 
   const { formatMessage: f } = useLocale()
-
-  const { type } = useType({
-    typeId: currentApplication.answers.advert?.typeId,
-  })
 
   const {
     fetchPdf,
@@ -60,7 +55,7 @@ export const Preview = ({ application, goToScreen }: OJOIFieldBaseProps) => {
       const url = URL.createObjectURL(blob)
 
       let downloadName
-      const type = currentApplication.answers.advert?.typeName
+      const type = currentApplication.answers.advert?.type?.title
       if (type) {
         downloadName = type.replace('.', '')
       }
@@ -103,14 +98,14 @@ export const Preview = ({ application, goToScreen }: OJOIFieldBaseProps) => {
   })
 
   const advertMarkup = getAdvertMarkup({
-    type: type?.title,
+    type: currentApplication.answers.advert?.type?.title,
     title: currentApplication.answers.advert?.title,
     html: currentApplication.answers.advert?.html,
   })
 
   const hasMarkup =
     !!currentApplication.answers.advert?.html ||
-    type?.title ||
+    currentApplication.answers.advert?.type?.title ||
     currentApplication.answers.advert?.title
 
   const combinedHtml = hasMarkup

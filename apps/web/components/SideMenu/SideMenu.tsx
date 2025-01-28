@@ -9,6 +9,7 @@ import FocusLock from 'react-focus-lock'
 import { RemoveScroll } from 'react-remove-scroll'
 import { useKey, useWindowSize } from 'react-use'
 import cn from 'classnames'
+
 import {
   Box,
   Button,
@@ -25,8 +26,9 @@ import {
 import { theme } from '@island.is/island-ui/theme'
 import { MenuTabsContext } from '@island.is/web/context/MenuTabsContext/MenuTabsContext'
 import { useI18n } from '@island.is/web/i18n'
-import { SearchInput } from '../SearchInput/SearchInput'
+
 import { LanguageToggler } from '../LanguageToggler'
+import { SearchInput } from '../SearchInput/SearchInput'
 import * as styles from './SideMenu.css'
 
 interface TabLink {

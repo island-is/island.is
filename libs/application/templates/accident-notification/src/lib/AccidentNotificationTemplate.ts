@@ -14,30 +14,33 @@ import {
   ApplicationTypes,
   DefaultEvents,
   defineTemplateApi,
-  NationalRegistryUserApi,
   PendingAction,
+  FormModes,
 } from '@island.is/application/types'
 import set from 'lodash/set'
 import { assign } from 'xstate'
 import { AccidentTypeEnum, ReviewApprovalEnum } from '..'
-import { States } from '../constants'
+import { States } from '../utils/constants'
 import { ApiActions } from '../shared'
 import { WhoIsTheNotificationForEnum } from '../types'
 import { AccidentNotificationSchema } from './dataSchema'
 import { anPendingActionMessages, application } from './messages'
+import { AuthDelegationType } from '@island.is/shared/types'
+import { IdentityApi, NationalRegistryUserApi } from '../dataProviders'
 
 // The applicant is the applicant of the application, can be someone in power of attorney or the representative for the company
 // The assignee is the person who is assigned to review the application can be the injured person or the representative for the company
 // The assignee should see all data related to the application being submitted to sjukra but not data only relevant to applicant
 enum Roles {
+  PROCURER = 'procurer',
   APPLICANT = 'applicant',
   ASSIGNEE = 'assignee',
 }
 
 type AccidentNotificationEvent =
   | { type: DefaultEvents.APPROVE }
-  | { type: DefaultEvents.SUBMIT }
   | { type: DefaultEvents.REJECT }
+  | { type: DefaultEvents.SUBMIT }
   | { type: DefaultEvents.ASSIGN }
 
 const assignStatePendingAction = (
@@ -61,7 +64,7 @@ const assignStatePendingAction = (
 }
 
 const reviewStatePendingAction = (
-  application: Application,
+  _application: Application,
   role: string,
 ): PendingAction => {
   if (role === Roles.ASSIGNEE) {
@@ -91,15 +94,72 @@ const AccidentNotificationTemplate: ApplicationTemplate<
     ApplicationConfigurations.AccidentNotification.translation,
   ],
   dataSchema: AccidentNotificationSchema,
+  allowedDelegations: [
+    {
+      type: AuthDelegationType.ProcurationHolder,
+    },
+    {
+      type: AuthDelegationType.Custom,
+    },
+  ],
   stateMachineConfig: {
-    initial: States.DRAFT,
+    initial: States.PREREQUISITES,
     states: {
+      [States.PREREQUISITES]: {
+        meta: {
+          name: application.general.name.defaultMessage,
+          progress: 0,
+          lifecycle: DefaultStateLifeCycle,
+          status: FormModes.DRAFT,
+          actionCard: {
+            historyLogs: [
+              {
+                onEvent: DefaultEvents.SUBMIT,
+                logMessage: coreHistoryMessages.applicationStarted,
+              },
+            ],
+          },
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/PrerequisitesForm').then((val) =>
+                  Promise.resolve(val.PrerequisitesForm),
+                ),
+              actions: [
+                { event: 'SUBMIT', name: 'Staðfesta', type: 'primary' },
+              ],
+              write: 'all',
+              api: [NationalRegistryUserApi, IdentityApi],
+              delete: true,
+            },
+            {
+              id: Roles.PROCURER,
+              formLoader: () =>
+                import('../forms/PrerequisitesProcureForm').then((val) =>
+                  Promise.resolve(val.PrerequisitesProcureForm),
+                ),
+              actions: [
+                { event: 'SUBMIT', name: 'Staðfesta', type: 'primary' },
+              ],
+              write: 'all',
+              api: [NationalRegistryUserApi, IdentityApi],
+              delete: true,
+            },
+          ],
+        },
+        on: {
+          [DefaultEvents.SUBMIT]: {
+            target: States.DRAFT,
+          },
+        },
+      },
       [States.DRAFT]: {
         meta: {
           name: application.general.name.defaultMessage,
           progress: 0.4,
           lifecycle: DefaultStateLifeCycle,
-          status: 'draft',
+          status: FormModes.DRAFT,
           actionCard: {
             historyLogs: [
               {
@@ -111,6 +171,19 @@ const AccidentNotificationTemplate: ApplicationTemplate<
           roles: [
             {
               id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/AccidentNotificationForm/index').then((val) =>
+                  Promise.resolve(val.AccidentNotificationForm),
+                ),
+              actions: [
+                { event: 'SUBMIT', name: 'Staðfesta', type: 'primary' },
+              ],
+              write: 'all',
+              api: [NationalRegistryUserApi],
+              delete: true,
+            },
+            {
+              id: Roles.PROCURER,
               formLoader: () =>
                 import('../forms/AccidentNotificationForm/index').then((val) =>
                   Promise.resolve(val.AccidentNotificationForm),
@@ -346,17 +419,16 @@ const AccidentNotificationTemplate: ApplicationTemplate<
     id: string,
     application: Application,
   ): ApplicationRole | undefined {
-    if (id === application.applicant && application.assignees.includes(id)) {
-      return Roles.ASSIGNEE
-    }
+    const { applicant, applicantActors, assignees } = application
 
-    if (id === application.applicant) {
+    if (id === applicant) {
+      if (applicantActors.length) return Roles.PROCURER
+      if (assignees.includes(id)) return Roles.ASSIGNEE
       return Roles.APPLICANT
     }
 
-    if (application.assignees.includes(id)) {
-      return Roles.ASSIGNEE
-    }
+    if (assignees.includes(id)) return Roles.ASSIGNEE
+
     return undefined
   },
 }

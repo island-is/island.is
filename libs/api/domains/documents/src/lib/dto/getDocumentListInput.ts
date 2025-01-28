@@ -21,7 +21,7 @@ export class GetDocumentListInput {
   typeId?: string
 
   @Field({ nullable: true })
-  sortBy?: 'Date' | 'Category' | 'Type' | 'Subject' | 'Sender'
+  sortBy?: 'Date' | 'Category' | 'Type' | 'Subject' | 'Sender' | 'Publication'
 
   @Field({ nullable: true })
   order?: 'Ascending' | 'Descending'

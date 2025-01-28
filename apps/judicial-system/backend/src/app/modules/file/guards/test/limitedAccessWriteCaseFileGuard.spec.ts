@@ -48,7 +48,7 @@ describe('LimitedAccess Write Case File Guard', () => {
   })
 
   describe.each(allowedCaseFileCategories)(
-    'a defender can view %s',
+    'a defender can write %s',
     (category) => {
       describe('when creating a case file', () => {
         let then: Then
@@ -93,7 +93,7 @@ describe('LimitedAccess Write Case File Guard', () => {
       (category) =>
         !allowedCaseFileCategories.includes(category as CaseFileCategory),
     ),
-  )('a defender can not view %s', (category) => {
+  )('a defender can not write %s', (category) => {
     describe('when creating a case file', () => {
       let then: Then
 
@@ -137,7 +137,7 @@ describe('LimitedAccess Write Case File Guard', () => {
     Object.keys(UserRole).filter((role) => role !== UserRole.DEFENDER),
   )('role %s', (role) => {
     describe.each(Object.keys(CaseFileCategory))(
-      'can not view %s',
+      'can not write %s',
       (category) => {
         describe('when creating a case file', () => {
           let then: Then
@@ -225,7 +225,7 @@ describe('LimitedAccess Write Case File Guard', () => {
     })
   })
 
-  describe('a defender can view DEFENDANT_CASE_FILE in indictment cases', () => {
+  describe('a defender can write DEFENDANT_CASE_FILE in indictment cases', () => {
     describe('when creating a case file', () => {
       let then: Then
 
@@ -265,7 +265,7 @@ describe('LimitedAccess Write Case File Guard', () => {
 
   describe.each(
     Object.keys(CaseType).filter((ct) => ct !== CaseType.INDICTMENT),
-  )('a defender can not view DEFENDANT_CASE_FILE in %s cases', (caseType) => {
+  )('a defender can not write DEFENDANT_CASE_FILE in %s cases', (caseType) => {
     describe('when creating a case file', () => {
       let then: Then
 

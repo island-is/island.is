@@ -1,6 +1,6 @@
+import { ServiceBuilder } from '../dsl'
 import { FeatureNames } from '../features'
 import { EnvironmentConfig } from './charts'
-import { ServiceBuilder } from '../dsl'
 import { Optional } from './helpers'
 
 export type OpsEnv = 'dev' | 'staging' | 'prod'
@@ -22,6 +22,10 @@ export type BffInfo = {
   clientId: string
   clientName: string
   services: BffInfraServices
+  /**
+   * Global url prefix for the app
+   */
+  globalPrefix: string
   env?: EnvironmentVariables
   secrets?: Secrets
 }

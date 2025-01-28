@@ -1,7 +1,7 @@
 import jwt from 'jsonwebtoken'
 import {
-  TokenResponse,
   GetLoginSearchParamsReturnValue,
+  TokenResponse,
 } from '../src/app/modules/ids/ids.types'
 
 export const SESSION_COOKIE_NAME = 'sid'
@@ -9,6 +9,9 @@ export const ALGORITM_TYPE = 'HS256'
 export const SID_VALUE = 'fake_uuid'
 
 const ONE_HOUR_EXPIRATION = Math.floor(Date.now() / 1000) + 3600
+
+// A valid 32-byte base64 key
+export const tokenSecretBase64 = 'ABHlmq6Ic6Ihip4OnTa1MeUXtHFex8IT/mFZrjhsme0='
 
 export const mockedTokensResponse: TokenResponse = {
   access_token: jwt.sign(

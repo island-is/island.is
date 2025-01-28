@@ -322,11 +322,358 @@
         }
       }
     },
-    "/api/v1/health": {
+    "/api/v1/applications/advert/templates": {
       "get": {
-        "operationId": "HealthController_",
+        "operationId": "getApplicationAdvertTemplates",
         "parameters": [],
-        "responses": { "200": { "description": "Health check endpoint." } }
+        "responses": {
+          "default": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AdvertTemplateDetails"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/applications/advert/templates/{advertType}": {
+      "get": {
+        "operationId": "getApplicationAdvertTemplate",
+        "parameters": [
+          {
+            "name": "advertType",
+            "required": true,
+            "in": "path",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetAdvertTemplateResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/applications/involved-party/{involvedPartyId}": {
+      "get": {
+        "operationId": "getSignaturesForInvolvedParty",
+        "parameters": [
+          {
+            "name": "involvedPartyId",
+            "required": true,
+            "in": "path",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful signature get.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Signature" }
+              }
+            }
+          },
+          "404": { "description": "Signature not found" },
+          "default": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Signature" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/advert-types/types": {
+      "get": {
+        "operationId": "getTypes",
+        "summary": "",
+        "parameters": [
+          {
+            "required": false,
+            "description": "Search by id",
+            "name": "id",
+            "in": "query",
+            "schema": { "type": "string" }
+          },
+          {
+            "required": false,
+            "description": "Filter by unassigned",
+            "name": "unassigned",
+            "in": "query",
+            "schema": { "type": "boolean" }
+          },
+          {
+            "required": false,
+            "description": "Search by main type id",
+            "name": "mainType",
+            "in": "query",
+            "schema": { "type": "string" }
+          },
+          {
+            "required": false,
+            "description": "Search by title",
+            "name": "search",
+            "in": "query",
+            "schema": { "type": "string" }
+          },
+          {
+            "required": false,
+            "description": "Search by slug",
+            "name": "slug",
+            "in": "query",
+            "schema": { "type": "string" }
+          },
+          {
+            "required": false,
+            "description": "Search by department slug, title or id",
+            "name": "department",
+            "in": "query",
+            "schema": { "type": "string" }
+          },
+          {
+            "required": false,
+            "description": "The page number",
+            "name": "page",
+            "in": "query",
+            "schema": { "type": "number" }
+          },
+          {
+            "required": false,
+            "description": "The page size",
+            "name": "pageSize",
+            "in": "query",
+            "schema": { "type": "number" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/GetAdvertTypes" }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/AdvertTypeError" }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/AdvertTypeError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/advert-types/main-types": {
+      "get": {
+        "operationId": "getMainTypes",
+        "summary": "",
+        "parameters": [
+          {
+            "required": false,
+            "description": "Search by id",
+            "name": "id",
+            "in": "query",
+            "schema": { "type": "string" }
+          },
+          {
+            "required": false,
+            "description": "Filter by unassigned",
+            "name": "unassigned",
+            "in": "query",
+            "schema": { "type": "boolean" }
+          },
+          {
+            "required": false,
+            "description": "Search by main type id",
+            "name": "mainType",
+            "in": "query",
+            "schema": { "type": "string" }
+          },
+          {
+            "required": false,
+            "description": "Search by title",
+            "name": "search",
+            "in": "query",
+            "schema": { "type": "string" }
+          },
+          {
+            "required": false,
+            "description": "Search by slug",
+            "name": "slug",
+            "in": "query",
+            "schema": { "type": "string" }
+          },
+          {
+            "required": false,
+            "description": "Search by department slug, title or id",
+            "name": "department",
+            "in": "query",
+            "schema": { "type": "string" }
+          },
+          {
+            "required": false,
+            "description": "The page number",
+            "name": "page",
+            "in": "query",
+            "schema": { "type": "number" }
+          },
+          {
+            "required": false,
+            "description": "The page size",
+            "name": "pageSize",
+            "in": "query",
+            "schema": { "type": "number" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/GetAdvertMainTypes" }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/AdvertTypeError" }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/AdvertTypeError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/advert-types/types/{id}": {
+      "get": {
+        "operationId": "getTypeById",
+        "summary": "",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/GetAdvertType" }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/AdvertTypeError" }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/AdvertTypeError" }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/AdvertTypeError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/advert-types/main-types/{id}": {
+      "get": {
+        "operationId": "getMainTypeById",
+        "summary": "",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/GetAdvertMainType" }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/AdvertTypeError" }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/AdvertTypeError" }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/AdvertTypeError" }
+              }
+            }
+          }
+        }
       }
     },
     "/api/v1/pdf/case/{id}": {
@@ -420,6 +767,13 @@
           }
         }
       }
+    },
+    "/api/v1/health": {
+      "get": {
+        "operationId": "HealthController_",
+        "parameters": [],
+        "responses": { "200": { "description": "Health check endpoint." } }
+      }
     }
   },
   "info": {
@@ -439,6 +793,15 @@
         },
         "required": ["price"]
       },
+      "BaseEntity": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "description": "Id of the entity" },
+          "title": { "type": "string", "description": "Title of the entity" },
+          "slug": { "type": "string", "description": "Slug of the entity" }
+        },
+        "required": ["id", "title", "slug"]
+      },
       "ApplicationCommunicationChannel": {
         "type": "object",
         "properties": {
@@ -455,6 +818,23 @@
         },
         "required": ["email", "phone"]
       },
+      "ApplicationAddition": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "description": "Id of the addition" },
+          "title": { "type": "string", "description": "Title of the addition" },
+          "content": {
+            "type": "string",
+            "description": "Content of the addition (html)"
+          },
+          "type": {
+            "type": "string",
+            "enum": ["html", "file"],
+            "description": "Type of the addition"
+          }
+        },
+        "required": ["id", "title", "content", "type"]
+      },
       "ApplicationAdvert": {
         "type": "object",
         "properties": {
@@ -463,20 +843,15 @@
             "example": "a12c3d4e-5f67-8h90-1i23-j45k6l7m8n9o0",
             "description": "Id of the involved party"
           },
-          "departmentId": {
-            "type": "string",
+          "department": {
             "example": "a12c3d4e-5f67-8h90-1i23-j45k6l7m8n9o0",
-            "description": "Id of the selected department"
+            "description": "Id of the selected department",
+            "allOf": [{ "$ref": "#/components/schemas/BaseEntity" }]
           },
-          "typeId": {
-            "type": "string",
+          "type": {
             "example": "a12c3d4e-5f67-8h90-1i23-j45k6l7m8n9o0",
-            "description": "Id of the selected type"
-          },
-          "typeName": {
-            "type": "string",
-            "example": "a12c3d4e-5f67-8h90-1i23-j45k6l7m8n9o0",
-            "description": "Title of the selected type"
+            "description": "Id of the selected type",
+            "allOf": [{ "$ref": "#/components/schemas/BaseEntity" }]
           },
           "title": {
             "type": "string",
@@ -493,13 +868,21 @@
             "example": "2021-04-01T00:00:00.000Z",
             "description": "Request advert publcation date"
           },
-          "categories": { "type": "array", "items": { "type": "string" } },
+          "categories": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/BaseEntity" }
+          },
           "channels": {
             "description": "Communication channels",
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/ApplicationCommunicationChannel"
             }
+          },
+          "additions": {
+            "description": "Additions to the advert",
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/ApplicationAddition" }
           },
           "message": {
             "type": "string",
@@ -509,14 +892,14 @@
         },
         "required": [
           "involvedPartyId",
-          "departmentId",
-          "typeId",
-          "typeName",
+          "department",
+          "type",
           "title",
           "html",
           "requestedDate",
           "categories",
           "channels",
+          "additions",
           "message"
         ]
       },
@@ -834,7 +1217,8 @@
             "type": "string",
             "description": "Who received the comment"
           },
-          "comment": { "type": "string", "description": "The comment itself" }
+          "comment": { "type": "string", "description": "The comment itself" },
+          "state": { "type": "string", "description": "The comment itself" }
         },
         "required": [
           "id",
@@ -846,7 +1230,8 @@
           "direction",
           "creator",
           "receiver",
-          "comment"
+          "comment",
+          "state"
         ]
       },
       "GetCaseCommentsResponse": {
@@ -1034,33 +1419,6 @@
         },
         "required": ["involvedParties"]
       },
-      "MainCategory": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "description": "Unique ID for the main category, GUID format.",
-            "example": "00000000-0000-0000-0000-000000000000",
-            "nullable": false
-          },
-          "title": {
-            "type": "string",
-            "description": "Title of the main category.",
-            "example": "Dómstólar og réttarfar"
-          },
-          "slug": {
-            "type": "string",
-            "description": "Slug of the main category, used in URLs and API requests.",
-            "example": "domstolar-og-rettarfar"
-          },
-          "description": {
-            "type": "string",
-            "description": "Description of the main category, used on front page.",
-            "example": "Hæstiréttur, lögmenn, lögreglumál, dómsmál og landsdómur."
-          }
-        },
-        "required": ["id", "title", "slug", "description"]
-      },
       "Category": {
         "type": "object",
         "properties": {
@@ -1079,12 +1437,6 @@
             "type": "string",
             "description": "Slug of the advert category, used in URLs and API requests.",
             "example": "evropska-efnahagssvaedid"
-          },
-          "mainCategory": {
-            "description": "The main category this category belongs to.",
-            "nullable": true,
-            "example": "Dómstólar og réttarfar",
-            "allOf": [{ "$ref": "#/components/schemas/MainCategory" }]
           }
         },
         "required": ["id", "title", "slug"]
@@ -1169,23 +1521,18 @@
         "properties": {
           "id": {
             "type": "string",
-            "description": "Unique ID for the advert type, GUID format.",
-            "example": "00000000-0000-0000-0000-000000000000",
-            "nullable": false
+            "description": "The id of the main advert type"
           },
           "title": {
             "type": "string",
-            "description": "Title of the advert type, always uppercased.",
-            "example": "AUGLÝSING"
+            "description": "The title of the main advert type"
           },
           "slug": {
             "type": "string",
-            "description": "Slug of the advert type, used in URLs and API requests.",
-            "example": "auglysing"
+            "description": "The slug of the main advert type"
           },
           "department": {
-            "description": "Department the advert type belongs to.",
-            "nullable": true,
+            "description": "The department of the main advert type",
             "allOf": [{ "$ref": "#/components/schemas/Department" }]
           }
         },
@@ -1224,6 +1571,244 @@
           "applicationCase": { "$ref": "#/components/schemas/ApplicationCase" }
         },
         "required": ["applicationCase"]
+      },
+      "AdvertTemplateDetails": {
+        "type": "object",
+        "properties": {
+          "slug": {
+            "type": "string",
+            "example": "auglysing",
+            "enum": ["auglysing", "reglugerd", "gjaldskra"]
+          },
+          "title": {
+            "type": "string",
+            "description": "Template title",
+            "example": "Auglýsing"
+          }
+        },
+        "required": ["slug", "title"]
+      },
+      "GetAdvertTemplateResponse": {
+        "type": "object",
+        "properties": {
+          "html": {
+            "type": "string",
+            "description": "Advert template as HTML"
+          },
+          "type": {
+            "type": "string",
+            "description": "Template type",
+            "example": "auglysing",
+            "enum": ["auglysing", "reglugerd", "gjaldskra"]
+          }
+        },
+        "required": ["html", "type"]
+      },
+      "SignatureType": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The id of the signature type"
+          },
+          "title": {
+            "type": "string",
+            "description": "The title of the signature type"
+          },
+          "slug": {
+            "type": "string",
+            "description": "The slug of the signature type"
+          }
+        },
+        "required": ["id", "title", "slug"]
+      },
+      "SignatureMember": {
+        "type": "object",
+        "properties": {
+          "text": {
+            "type": "string",
+            "description": "The name/title/w.e. of the signature member"
+          },
+          "textAbove": {
+            "type": "string",
+            "description": "The text comes above the signature name"
+          },
+          "textBefore": {
+            "type": "string",
+            "description": "The text that comes before the signature name"
+          },
+          "textBelow": {
+            "type": "string",
+            "description": "The text that comes below the signature name"
+          },
+          "textAfter": {
+            "type": "string",
+            "description": "The text that comes after the signature name"
+          }
+        },
+        "required": ["text"]
+      },
+      "Signature": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "description": "The id of the signature" },
+          "institution": {
+            "type": "string",
+            "description": "Institution of the signature"
+          },
+          "date": {
+            "type": "string",
+            "description": "ISO datestring of the signature"
+          },
+          "type": {
+            "description": "The type of the signature",
+            "allOf": [{ "$ref": "#/components/schemas/SignatureType" }]
+          },
+          "involvedParty": {
+            "description": "The involved party of the signature",
+            "allOf": [{ "$ref": "#/components/schemas/Institution" }]
+          },
+          "members": {
+            "description": "Members of the signature",
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/SignatureMember" }
+          },
+          "chairman": {
+            "description": "Chairman of the signature",
+            "allOf": [{ "$ref": "#/components/schemas/SignatureMember" }]
+          },
+          "additionalSignature": {
+            "type": "string",
+            "description": "Additional signature name"
+          },
+          "html": { "type": "string", "description": "HTML of the signature" }
+        },
+        "required": [
+          "id",
+          "institution",
+          "date",
+          "type",
+          "involvedParty",
+          "members"
+        ]
+      },
+      "Paging": {
+        "type": "object",
+        "properties": {
+          "page": { "type": "number", "example": 1 },
+          "totalPages": { "type": "number", "example": 10 },
+          "totalItems": { "type": "number", "example": 1000 },
+          "nextPage": { "type": "number", "example": 2, "nullable": true },
+          "previousPage": { "type": "number", "example": 1, "nullable": true },
+          "pageSize": {
+            "type": "number",
+            "example": 10,
+            "minimum": 1,
+            "maximum": 100
+          },
+          "hasNextPage": { "type": "boolean", "example": true },
+          "hasPreviousPage": { "type": "boolean", "example": false }
+        },
+        "required": [
+          "page",
+          "totalPages",
+          "totalItems",
+          "nextPage",
+          "previousPage",
+          "pageSize",
+          "hasNextPage",
+          "hasPreviousPage"
+        ]
+      },
+      "GetAdvertTypes": {
+        "type": "object",
+        "properties": {
+          "types": {
+            "description": "List of advert types",
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/AdvertType" }
+          },
+          "paging": {
+            "description": "Paging information",
+            "allOf": [{ "$ref": "#/components/schemas/Paging" }]
+          }
+        },
+        "required": ["types", "paging"]
+      },
+      "AdvertTypeError": {
+        "type": "object",
+        "properties": {
+          "errorType": {
+            "type": "string",
+            "enum": ["DuplicateError", "ValidationError", "NotFoundError"]
+          },
+          "name": { "type": "string" },
+          "message": { "type": "string" },
+          "severity": { "type": "string", "enum": ["info", "warning", "error"] }
+        },
+        "required": ["errorType", "name", "message", "severity"]
+      },
+      "AdvertMainType": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The id of the main advert type"
+          },
+          "title": {
+            "type": "string",
+            "description": "The title of the main advert type"
+          },
+          "slug": {
+            "type": "string",
+            "description": "The slug of the main advert type"
+          },
+          "department": {
+            "description": "The department this main type belongs to",
+            "allOf": [{ "$ref": "#/components/schemas/Department" }]
+          },
+          "types": {
+            "description": "All types under this main type",
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/AdvertType" }
+          }
+        },
+        "required": ["id", "title", "slug", "department", "types"]
+      },
+      "GetAdvertMainTypes": {
+        "type": "object",
+        "properties": {
+          "mainTypes": {
+            "description": "List of all main advert types",
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/AdvertMainType" }
+          },
+          "paging": {
+            "description": "Paging information",
+            "allOf": [{ "$ref": "#/components/schemas/Paging" }]
+          }
+        },
+        "required": ["mainTypes", "paging"]
+      },
+      "GetAdvertType": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "description": "The advert type",
+            "allOf": [{ "$ref": "#/components/schemas/AdvertType" }]
+          }
+        },
+        "required": ["type"]
+      },
+      "GetAdvertMainType": {
+        "type": "object",
+        "properties": {
+          "mainType": {
+            "description": "The main advert type",
+            "allOf": [{ "$ref": "#/components/schemas/AdvertMainType" }]
+          }
+        },
+        "required": ["mainType"]
       },
       "GetPdfRespone": {
         "type": "object",

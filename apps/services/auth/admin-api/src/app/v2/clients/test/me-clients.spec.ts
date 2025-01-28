@@ -431,23 +431,26 @@ describe('MeClientsController with auth', () => {
         slidingRefreshTokenLifetime:
           typeSpecificDefaults.slidingRefreshTokenLifetime ??
           clientBaseAttributes.slidingRefreshTokenLifetime,
-        accessTokenLifetime: clientBaseAttributes.accessTokenLifetime,
+        accessTokenLifetime:
+          typeSpecificDefaults.accessTokenLifetime ??
+          clientBaseAttributes.accessTokenLifetime,
         allowOfflineAccess: clientBaseAttributes.allowOfflineAccess,
         redirectUris: [],
         postLogoutRedirectUris: [],
         requireApiScopes: false,
         requireConsent: false,
-        requirePkce: true,
-        supportTokenExchange: false,
+        requirePkce:
+          typeSpecificDefaults.requirePkce ?? clientBaseAttributes.requirePkce,
+        supportTokenExchange: typeSpecificDefaults.supportTokenExchange,
         supportsCustomDelegation: false,
         supportsLegalGuardians: false,
         supportsPersonalRepresentatives: false,
         supportsProcuringHolders: false,
         promptDelegations: false,
-        customClaims: [],
+        customClaims: typeSpecificDefaults.customClaims ?? [],
         singleSession: false,
         supportedDelegationTypes: [],
-        allowedAcr: [defaultAcrValue],
+        allowedAcr: typeSpecificDefaults.allowedAcr ?? [defaultAcrValue],
       })
 
       // Assert - db record
@@ -468,9 +471,14 @@ describe('MeClientsController with auth', () => {
         absoluteRefreshTokenLifetime:
           typeSpecificDefaults.absoluteRefreshTokenLifetime ??
           clientBaseAttributes.absoluteRefreshTokenLifetime,
-        accessTokenLifetime: clientBaseAttributes.accessTokenLifetime,
-        allowOfflineAccess: clientBaseAttributes.allowOfflineAccess,
-        requirePkce: clientBaseAttributes.requirePkce,
+        accessTokenLifetime:
+          typeSpecificDefaults.accessTokenLifetime ??
+          clientBaseAttributes.accessTokenLifetime,
+        allowOfflineAccess:
+          typeSpecificDefaults.allowOfflineAccess ??
+          clientBaseAttributes.allowOfflineAccess,
+        requirePkce:
+          typeSpecificDefaults.requirePkce ?? clientBaseAttributes.requirePkce,
         refreshTokenExpiration: translateRefreshTokenExpiration(
           typeSpecificDefaults.refreshTokenExpiration,
         ),

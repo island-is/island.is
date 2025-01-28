@@ -597,7 +597,7 @@
             "schema": { "type": "string" }
           },
           {
-            "name": "age",
+            "name": "agePatient",
             "required": true,
             "in": "query",
             "schema": { "type": "number" }
@@ -610,6 +610,12 @@
           },
           {
             "name": "rejected",
+            "required": true,
+            "in": "query",
+            "schema": { "type": "array", "items": { "type": "string" } }
+          },
+          {
+            "name": "vaccineCodes",
             "required": true,
             "in": "query",
             "schema": { "type": "array", "items": { "type": "string" } }
@@ -820,6 +826,7 @@
           "diseaseId": { "type": "string" },
           "order": { "type": "number" },
           "type": { "type": "object" },
+          "vaccineCodes": { "type": "string" },
           "cond1Type": { "type": "string" },
           "cond1Min": { "type": "number" },
           "cond1Max": { "type": "number" },
@@ -859,6 +866,7 @@
           "description": { "type": "string" },
           "isFeatured": { "type": "boolean" },
           "isVisible": { "type": "boolean" },
+          "hideIfNoVaccinations": { "type": "boolean" },
           "vaccines": {
             "type": "array",
             "items": { "$ref": "#/components/schemas/VaccineDiseaseDto" }
@@ -877,6 +885,7 @@
           "name",
           "isFeatured",
           "isVisible",
+          "hideIfNoVaccinations",
           "vaccines",
           "rules",
           "translations"
@@ -890,6 +899,7 @@
           "description": { "type": "string" },
           "isFeatured": { "type": "boolean" },
           "isVisible": { "type": "boolean" },
+          "hideIfNoVaccinations": { "type": "boolean" },
           "vaccines": {
             "type": "array",
             "items": { "$ref": "#/components/schemas/VaccineDiseaseDto" }
@@ -909,6 +919,7 @@
         "properties": {
           "order": { "type": "number" },
           "type": { "type": "object" },
+          "vaccineCodes": { "type": "string" },
           "cond1Type": { "type": "string" },
           "cond1Min": { "type": "number" },
           "cond1Max": { "type": "number" },
@@ -938,6 +949,7 @@
           "diseaseId": { "type": "string" },
           "order": { "type": "number" },
           "type": { "type": "object" },
+          "vaccineCodes": { "type": "string" },
           "cond1Type": { "type": "string" },
           "cond1Min": { "type": "number" },
           "cond1Max": { "type": "number" },

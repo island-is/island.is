@@ -1,6 +1,13 @@
 import React, { useState } from 'react'
-import { Screen } from '@island.is/web/types'
-import { withMainLayout } from '@island.is/web/layouts/main'
+import { useRouter } from 'next/router'
+
+import { Box, NavigationItem, Text } from '@island.is/island-ui/core'
+import {
+  OpenApiView,
+  OrganizationWrapper,
+  ServiceInformation,
+  SubpageDetailsContent,
+} from '@island.is/web/components'
 import {
   ContentLanguage,
   GetNamespaceQuery,
@@ -13,25 +20,19 @@ import {
   ServiceDetail,
   XroadIdentifier,
 } from '@island.is/web/graphql/schema'
-import {
-  GET_NAMESPACE_QUERY,
-  GET_API_SERVICE_QUERY,
-  GET_ORGANIZATION_PAGE_QUERY,
-} from '../../queries'
-import {
-  ServiceInformation,
-  OpenApiView,
-  SubpageDetailsContent,
-  OrganizationWrapper,
-} from '@island.is/web/components'
-
-import { Box, NavigationItem, Text } from '@island.is/island-ui/core'
 import { useNamespace } from '@island.is/web/hooks'
 import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
-import SubpageLayout from '@island.is/web/screens/Layouts/Layouts'
-import { useRouter } from 'next/router'
-import { CustomNextError } from '@island.is/web/units/errors'
 import useLocalLinkTypeResolver from '@island.is/web/hooks/useLocalLinkTypeResolver'
+import { withMainLayout } from '@island.is/web/layouts/main'
+import SubpageLayout from '@island.is/web/screens/Layouts/Layouts'
+import { Screen } from '@island.is/web/types'
+import { CustomNextError } from '@island.is/web/units/errors'
+
+import {
+  GET_API_SERVICE_QUERY,
+  GET_NAMESPACE_QUERY,
+  GET_ORGANIZATION_PAGE_QUERY,
+} from '../../queries'
 
 interface ServiceDetailsProps {
   organizationPage: Query['getOrganizationPage']

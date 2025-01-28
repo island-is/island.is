@@ -1,5 +1,6 @@
 import { DocumentDTO, MessageAction } from '../..'
 import sanitizeHtml from 'sanitize-html'
+import { svgAttr, svgTags } from '../../utils/htmlConfig'
 
 const customDocument = {
   senderName: 'Ríkisskattstjóri',
@@ -61,10 +62,17 @@ export const mapToDocument = (
     fileType = 'html'
 
     const html = sanitizeHtml(document.htmlContent, {
-      allowedTags: sanitizeHtml.defaults.allowedTags.concat(['img']),
+      parser: {
+        lowerCaseAttributeNames: false,
+      },
+      allowedTags: sanitizeHtml.defaults.allowedTags.concat([
+        'img',
+        ...svgTags,
+      ]),
       allowedAttributes: {
         ...sanitizeHtml.defaults.allowedAttributes,
         '*': ['style'],
+        ...svgAttr,
       },
       allowedSchemes: sanitizeHtml.defaults.allowedSchemes.concat([
         'data',

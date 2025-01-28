@@ -46,7 +46,6 @@ const sharedRoutes = (scopes: string[]) => [
     name: 'Notifications',
     path: InformationPaths.Notifications,
     enabled: scopes.includes(DocumentsScope.main),
-    key: 'Notifications',
     element: <Notifications />,
   },
 ]

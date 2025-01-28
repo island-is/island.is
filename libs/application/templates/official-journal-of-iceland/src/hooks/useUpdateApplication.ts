@@ -12,6 +12,7 @@ import debounce from 'lodash/debounce'
 import { DEBOUNCE_INPUT_TIMER } from '../lib/constants'
 import { ApplicationTypes } from '@island.is/application/types'
 import { Application } from '@island.is/api/schema'
+import { POST_APPLICATION_MUTATION } from '../graphql/queries'
 
 type OJOIUseApplicationParams = {
   applicationId?: string
@@ -46,7 +47,19 @@ export const useApplication = ({ applicationId }: OJOIUseApplicationParams) => {
 
   const [createApplicationMutation] = useMutation(CREATE_APPLICATION)
 
-  const updateApplication = async (input: partialSchema, cb?: () => void) => {
+  const [
+    postApplicationMutation,
+    {
+      data: postApplicationData,
+      error: postApplicationError,
+      loading: postApplicationLoading,
+    },
+  ] = useMutation(POST_APPLICATION_MUTATION)
+
+  const updateApplication = async (
+    input: Partial<partialSchema>,
+    cb?: () => void,
+  ) => {
     await updateApplicationMutation({
       variables: {
         locale,
@@ -94,6 +107,22 @@ export const useApplication = ({ applicationId }: OJOIUseApplicationParams) => {
     })
   }
 
+  const postApplication = async (id: string, onComplete?: () => void) => {
+    await postApplicationMutation({
+      variables: {
+        input: {
+          id: id,
+        },
+      },
+      onError: (error) => {
+        console.error(error)
+      },
+      onCompleted: (data) => {
+        onComplete && onComplete()
+      },
+    })
+  }
+
   const debouncedUpdateApplication = debounce(
     updateApplication,
     DEBOUNCE_INPUT_TIMER,
@@ -118,6 +147,10 @@ export const useApplication = ({ applicationId }: OJOIUseApplicationParams) => {
     updateLoading,
     updateError,
     isLoading: applicationLoading || updateLoading,
+    postApplication,
+    postApplicationData,
+    postApplicationError,
+    postApplicationLoading,
     debouncedOnUpdateApplicationHandler,
     updateApplication,
     submitApplication,

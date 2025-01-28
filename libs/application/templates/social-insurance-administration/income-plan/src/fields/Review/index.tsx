@@ -119,26 +119,13 @@ export const Review: FC<ReviewScreenProps> = ({
             </Box>
             <Box marginBottom={10}>
               <Text variant="default">
-                {formatMessage(inReviewFormMessages.description)}
+                {state === `${States.TRYGGINGASTOFNUN_SUBMITTED}`
+                  ? formatMessage(inReviewFormMessages.description)
+                  : formatMessage(inReviewFormMessages.reviewDescription)}
               </Text>
             </Box>
           </Box>
           <Box display="flex" columnGap={2} alignItems="center">
-            {state === `${States.TRYGGINGASTOFNUN_SUBMITTED}` && (
-              <Button
-                colorScheme="default"
-                iconType="filled"
-                size="small"
-                type="button"
-                variant="text"
-                icon="pencil"
-                loading={loadingSubmit}
-                disabled={loadingSubmit}
-                onClick={() => handleSubmit('EDIT')}
-              >
-                {formatMessage(incomePlanFormMessage.confirm.buttonEdit)}
-              </Button>
-            )}
             <Button
               variant="utility"
               icon="print"

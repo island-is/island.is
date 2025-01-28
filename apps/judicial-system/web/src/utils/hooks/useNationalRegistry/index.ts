@@ -9,7 +9,7 @@ import {
   NationalRegistryResponsePerson,
 } from '@island.is/judicial-system-web/src/types'
 
-import { isBusiness } from '../../stepHelper'
+import { isBusiness } from '../../utils'
 import { validate } from '../../validate'
 
 const useNationalRegistry = (nationalId?: string | null) => {

@@ -1,9 +1,3 @@
-export enum DataProviderTypes {
-  NationalRegistry = 'NationalRegistryProvider',
-  UserProfile = 'UserProfileProvider',
-  IdentityRegistry = 'IdentityProvider',
-}
-
 export enum FishingLicenseEnum {
   HOOKCATCHLIMIT = 'hookCatchLimit',
   FISHWITHDANISHSEINE = 'fishWithDanishSeine', // Dragnótaveiðileyfi

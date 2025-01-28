@@ -1,5 +1,8 @@
-import { OfficialJournalOfIcelandApplicationClientService } from '@island.is/clients/official-journal-of-iceland/application'
-import { Inject, Injectable } from '@nestjs/common'
+import {
+  GetAdvertTemplateResponseTypeEnum,
+  OfficialJournalOfIcelandApplicationClientService,
+} from '@island.is/clients/official-journal-of-iceland/application'
+import { BadRequestException, Inject, Injectable } from '@nestjs/common'
 import { PostCommentInput } from '../models/postComment.input'
 import { PostApplicationInput } from '../models/postApplication.input'
 import { GetCommentsInput } from '../models/getComments.input'
@@ -10,6 +13,8 @@ import {
   mapAttachmentType,
   mapGetAttachmentType,
   mapPresignedUrlType,
+  mapTemplateTypeEnumToLiteral,
+  mapTemplateTypeLiteralToEnum,
   safeEnumMapper,
 } from './mappers'
 import { AddApplicationAttachmentResponse } from '../models/addApplicationAttachment.response'
@@ -26,6 +31,15 @@ import {
 import { OJOIAApplicationCaseResponse } from '../models/applicationCase.response'
 import { GetPdfResponse } from '../models/getPdf.response'
 import { OJOIAIdInput } from '../models/id.input'
+import { OJOIApplicationAdvertTemplateTypesResponse } from '../models/applicationAdvertTemplateTypes.response'
+import { GetInvolvedPartySignaturesInput } from '../models/getInvolvedPartySignatures.input'
+import { InvolvedPartySignatures } from '../models/getInvolvedPartySignatures.response'
+import { GetAdvertTemplateInput } from '../models/getAdvertTemplate.input'
+import {
+  OJOIApplicationAdvertTemplateResponse,
+  TemplateType,
+} from '../models/applicationAdvertTemplate.response'
+import { isDefined } from '@island.is/shared/utils'
 
 const LOG_CATEGORY = 'official-journal-of-iceland-application'
 
@@ -257,6 +271,85 @@ export class OfficialJournalOfIcelandApplicationService {
       this.logger.error('Failed to get pdf', {
         category: LOG_CATEGORY,
         applicationId: input.id,
+        error: error,
+      })
+
+      throw error
+    }
+  }
+
+  async getAdvertTemplate(
+    input: GetAdvertTemplateInput,
+    user: User,
+  ): Promise<OJOIApplicationAdvertTemplateResponse> {
+    const advertType = mapTemplateTypeEnumToLiteral(input.type)
+
+    if (!advertType) {
+      //Shouldn't happen
+      this.logger.error('Invalid advert type supplied', {
+        category: LOG_CATEGORY,
+        applicationId: input.type,
+      })
+      throw new BadRequestException('Invalid advert type')
+    }
+
+    const data = await this.ojoiApplicationService.getApplicationAdvertTemplate(
+      { advertType },
+      user,
+    )
+    return {
+      html: data.html,
+      type: mapTemplateTypeLiteralToEnum(data.type),
+    }
+  }
+
+  async getAdvertTemplateTypes(
+    user: User,
+  ): Promise<OJOIApplicationAdvertTemplateTypesResponse> {
+    const templateTypes =
+      await this.ojoiApplicationService.getApplicationAdvertTemplateTypes(user)
+
+    return {
+      types: templateTypes.map(({ title, type }) => ({
+        title,
+        type: mapTemplateTypeLiteralToEnum(type),
+      })),
+    }
+  }
+
+  async getInvolvedPartySignatures(
+    input: GetInvolvedPartySignaturesInput,
+    user: User,
+  ): Promise<InvolvedPartySignatures> {
+    try {
+      const data =
+        await this.ojoiApplicationService.getSignaturesForInvolvedParty(
+          input,
+          user,
+        )
+
+      return {
+        ...data,
+        members: data.members.map((member) => ({
+          name: member.text ?? undefined,
+          above: member.textAbove ?? undefined,
+          before: member.textBefore ?? undefined,
+          below: member.textBelow ?? undefined,
+          after: member.textAfter ?? undefined,
+        })),
+        ...(data?.chairman && {
+          chairman: {
+            name: data.chairman.text ?? undefined,
+            above: data.chairman.textAbove ?? undefined,
+            before: data.chairman.textBefore ?? undefined,
+            below: data.chairman.textBelow ?? undefined,
+            after: data.chairman.textAfter ?? undefined,
+          },
+        }),
+      }
+    } catch (error) {
+      this.logger.error('Failed to get signatures for involved party', {
+        category: LOG_CATEGORY,
         error: error,
       })
 

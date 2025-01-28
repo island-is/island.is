@@ -16,3 +16,10 @@ export class GetOrganizationPageStandaloneSitemapLevel1Input {
   @IsString()
   lang: ElasticsearchIndexLocale = 'is'
 }
+
+@InputType()
+export class GetOrganizationPageStandaloneSitemapLevel2Input extends GetOrganizationPageStandaloneSitemapLevel1Input {
+  @Field()
+  @IsString()
+  subcategorySlug!: string
+}

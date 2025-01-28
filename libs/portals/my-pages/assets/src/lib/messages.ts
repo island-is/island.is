@@ -292,9 +292,33 @@ export const vehicleMessage = defineMessages({
     id: 'sp.vehicles:permno',
     defaultMessage: 'Fastanúmer',
   },
+  viewChart: {
+    id: 'sp.vehicles:view-chart',
+    defaultMessage: 'Sjá línurit',
+  },
+  viewTable: {
+    id: 'sp.vehicles:view-table',
+    defaultMessage: 'Sjá töflu',
+  },
+  registrationHistory: {
+    id: 'sp.vehicles:registration-history',
+    defaultMessage: 'Skráningarsaga',
+  },
+  viewRegistrationHistory: {
+    id: 'sp.vehicles:view-registration-history',
+    defaultMessage: 'Sjá alla skráningarsögu',
+  },
   lastRegistration: {
     id: 'sp.vehicles:last-registration',
     defaultMessage: 'Síðasta skráning',
+  },
+  lastStatus: {
+    id: 'sp.vehicles:last-status',
+    defaultMessage: 'Síðasta staða',
+  },
+  lastRegistered: {
+    id: 'sp.vehicles:last-registered',
+    defaultMessage: 'Síðast skráð',
   },
   verno: {
     id: 'sp.vehicles:verno',
@@ -517,6 +541,10 @@ export const vehicleMessage = defineMessages({
   totalWeight: {
     id: 'sp.vehicles:total-weight',
     defaultMessage: 'Heildarþyngd',
+  },
+  total: {
+    id: 'sp.vehicles:total',
+    defaultMessage: 'Samtals:',
   },
   width: {
     id: 'sp.vehicles:width',

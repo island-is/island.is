@@ -261,38 +261,3 @@ describe('Validate court case number', () => {
     },
   )
 })
-
-describe('Validate vehicle registration number', () => {
-  test.each`
-    vehicleRegistrationNumber
-    ${'AB123'}
-    ${'QWE23'}
-  `(
-    'should pass when vehicle registration number is in correct format $vehicle-registration-number',
-    ({ vehicleRegistrationNumber }) => {
-      const result = validate([
-        [vehicleRegistrationNumber, ['vehicle-registration-number']],
-      ])
-      expect(result.isValid).toEqual(true)
-    },
-  )
-
-  test.each`
-    vehicleRegistrationNumber
-    ${'ABCDE'}
-    ${'12345'}
-    ${'ABCD5'}
-    ${'A1234'}
-    ${'AB-123'}
-    ${'ABC-23'}
-  `(
-    'should fail when vehicle registration number is in incorrect format $vehicle-registration-number',
-    ({ vehicleRegistrationNumber }) => {
-      const result = validate([
-        [vehicleRegistrationNumber, ['vehicle-registration-number']],
-      ])
-      expect(result.isValid).toEqual(false)
-      expect(result.errorMessage).toEqual('Dæmi: AB123')
-    },
-  )
-})

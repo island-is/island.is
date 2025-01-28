@@ -7,7 +7,6 @@ import {
 } from '@apollo/client/core'
 import { setContext } from '@apollo/client/link/context'
 import { useAsyncStorage } from '@react-native-community/async-storage'
-import { Button } from '@ui'
 import { useEffect, useState } from 'react'
 import { ActionSheetIOS, Linking, Text, View } from 'react-native'
 import {
@@ -19,6 +18,8 @@ import {
   Navigation,
   NavigationFunctionComponent,
 } from 'react-native-navigation'
+
+import { Button } from '../../ui'
 import { config } from '../../config'
 import { openNativeBrowser } from '../../lib/rn-island'
 import { cognitoAuthUrl, configs } from './config-switcher'

@@ -1,5 +1,5 @@
 import React, { FC, useState, useEffect } from 'react'
-import { useForm } from 'react-hook-form'
+import { FormProvider, useForm } from 'react-hook-form'
 import { m } from '@island.is/portals/my-pages/core'
 import { msg } from '../../../../../../lib/messages'
 import { useLocale, useNamespaces } from '@island.is/localization'
@@ -41,13 +41,14 @@ export const InputEmail: FC<React.PropsWithChildren<Props>> = ({
   emailVerified = false,
 }) => {
   useNamespaces('sp.settings')
+  const methods = useForm<UseFormProps>()
   const {
     handleSubmit,
     control,
     getValues,
     setValue,
     formState: { errors },
-  } = useForm<UseFormProps>()
+  } = methods
   const { updateOrCreateUserProfile, loading: saveLoading } =
     useUpdateOrCreateUserProfile()
   const { deleteIslykillValue, loading: deleteLoading } =
@@ -193,171 +194,173 @@ export const InputEmail: FC<React.PropsWithChildren<Props>> = ({
 
   return (
     <Box>
-      <form
-        onSubmit={handleSubmit(
-          emailInternal ? handleSendEmailVerification : saveEmptyChange,
-        )}
-      >
-        <Box display="flex" flexWrap="wrap" alignItems="center">
-          <Box marginRight={3} width="full" className={styles.formContainer}>
-            <InputController
-              control={control}
-              backgroundColor="blue"
-              id="email"
-              autoFocus
-              name="email"
-              required={false}
-              type="email"
-              icon={email && verificationValid ? 'checkmark' : undefined}
-              disabled={disabled}
-              rules={{
-                pattern: {
-                  value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                  message: formatMessage({
-                    id: 'sp.settings:email-wrong-format-message',
-                    defaultMessage: 'Netfangið er ekki á réttu formi',
-                  }),
-                },
-              }}
-              label={formatMessage(m.email)}
-              onChange={(inp) => {
-                setEmailInternal(inp.target.value)
-                setErrors({ ...formErrors, email: undefined })
-                checkSetPristineInput()
-              }}
-              placeholder="nafn@island.is"
-              error={errors?.email?.message || formErrors?.email}
-              size="xs"
-              defaultValue={email}
-            />
-          </Box>
-          <Box
-            display="flex"
-            alignItems="flexStart"
-            flexDirection="column"
-            paddingTop={2}
-          >
-            {!createLoading && !deleteLoading && !fetchLoading && (
-              <>
-                {emailVerifyCreated ? (
-                  <FormButton
-                    disabled={verificationValid || disabled || resendBlock}
-                    onClick={
-                      emailInternal
-                        ? () =>
-                            handleSendEmailVerification({
-                              email: getValues().email ?? '',
-                            })
-                        : () => saveEmptyChange()
-                    }
-                  >
-                    {emailInternal
-                      ? emailInternal === emailToVerify
-                        ? formatMessage({
-                            id: 'sp.settings:resend',
-                            defaultMessage: 'Endursenda',
-                          })
-                        : buttonText
-                      : formatMessage(msg.saveEmptyChange)}
-                  </FormButton>
-                ) : (
-                  <FormButton
-                    submit
-                    disabled={verificationValid || disabled || inputPristine}
-                  >
-                    {emailInternal
-                      ? buttonText
-                      : formatMessage(msg.saveEmptyChange)}
-                  </FormButton>
-                )}
-              </>
-            )}
-            {(createLoading || deleteLoading || fetchLoading) && (
-              <LoadingDots />
-            )}
-          </Box>
-        </Box>
-      </form>
-      {emailVerifyCreated && (
-        <Box marginTop={3}>
-          <Text variant="medium" marginBottom={2}>
-            {formatMessage({
-              id: 'sp.settings:email-verify-code-sent',
-              defaultMessage: `Öryggiskóði hefur verið sendur á netfangið þitt. Sláðu hann inn
-                  hér að neðan. Athugaðu að pósturinn getur endað með ruslpóstinum.`,
-            })}
-          </Text>
-
-          <form onSubmit={handleSubmit(handleConfirmCode)}>
-            <Box display="flex" flexWrap="wrap" alignItems="flexStart">
-              <Box className={styles.codeInput} marginRight={3}>
-                <InputController
-                  control={control}
-                  backgroundColor="blue"
-                  id="code"
-                  name="code"
-                  format="###"
-                  label={formatMessage(m.verificationCode)}
-                  placeholder="000"
-                  defaultValue=""
-                  error={errors?.code?.message || formErrors?.code}
-                  disabled={verificationValid || disabled}
-                  icon={verificationValid ? 'checkmark' : undefined}
-                  size="xs"
-                  autoComplete="off"
-                  onChange={(inp) => {
-                    setCodeInternal(inp.target.value)
-                    setErrors({ ...formErrors, code: undefined })
-                  }}
-                  rules={{
-                    required: {
-                      value: true,
-                      message: formatMessage(m.verificationCodeRequired),
-                    },
-                  }}
-                />
-              </Box>
-              <Box
-                display="flex"
-                alignItems="flexStart"
-                flexDirection="column"
-                paddingTop={4}
-                className={styles.codeButton}
-              >
-                {!saveLoading && (
-                  <FormButton
-                    submit
-                    disabled={!codeInternal || disabled || verificationValid}
-                  >
-                    {formatMessage(m.codeConfirmation)}
-                  </FormButton>
-                )}
-                {saveLoading && (
-                  <Box>
-                    <LoadingDots />
-                  </Box>
-                )}
-              </Box>
+      <FormProvider {...methods}>
+        <form
+          onSubmit={handleSubmit(
+            emailInternal ? handleSendEmailVerification : saveEmptyChange,
+          )}
+        >
+          <Box display="flex" flexWrap="wrap" alignItems="center">
+            <Box marginRight={3} width="full" className={styles.formContainer}>
+              <InputController
+                control={control}
+                backgroundColor="blue"
+                id="email"
+                autoFocus
+                name="email"
+                required={false}
+                type="email"
+                icon={email && verificationValid ? 'checkmark' : undefined}
+                disabled={disabled}
+                rules={{
+                  pattern: {
+                    value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                    message: formatMessage({
+                      id: 'sp.settings:email-wrong-format-message',
+                      defaultMessage: 'Netfangið er ekki á réttu formi',
+                    }),
+                  },
+                }}
+                label={formatMessage(m.email)}
+                onChange={(inp) => {
+                  setEmailInternal(inp.target.value)
+                  setErrors({ ...formErrors, email: undefined })
+                  checkSetPristineInput()
+                }}
+                placeholder="nafn@island.is"
+                error={errors?.email?.message || formErrors?.email}
+                size="xs"
+                defaultValue={email}
+              />
             </Box>
-          </form>
-        </Box>
-      )}
+            <Box
+              display="flex"
+              alignItems="flexStart"
+              flexDirection="column"
+              paddingTop={2}
+            >
+              {!createLoading && !deleteLoading && !fetchLoading && (
+                <>
+                  {emailVerifyCreated ? (
+                    <FormButton
+                      disabled={verificationValid || disabled || resendBlock}
+                      onClick={
+                        emailInternal
+                          ? () =>
+                              handleSendEmailVerification({
+                                email: getValues().email ?? '',
+                              })
+                          : () => saveEmptyChange()
+                      }
+                    >
+                      {emailInternal
+                        ? emailInternal === emailToVerify
+                          ? formatMessage({
+                              id: 'sp.settings:resend',
+                              defaultMessage: 'Endursenda',
+                            })
+                          : buttonText
+                        : formatMessage(msg.saveEmptyChange)}
+                    </FormButton>
+                  ) : (
+                    <FormButton
+                      submit
+                      disabled={verificationValid || disabled || inputPristine}
+                    >
+                      {emailInternal
+                        ? buttonText
+                        : formatMessage(msg.saveEmptyChange)}
+                    </FormButton>
+                  )}
+                </>
+              )}
+              {(createLoading || deleteLoading || fetchLoading) && (
+                <LoadingDots />
+              )}
+            </Box>
+          </Box>
+        </form>
+        {emailVerifyCreated && (
+          <Box marginTop={3}>
+            <Text variant="medium" marginBottom={2}>
+              {formatMessage({
+                id: 'sp.settings:email-verify-code-sent',
+                defaultMessage: `Öryggiskóði hefur verið sendur á netfangið þitt. Sláðu hann inn
+                  hér að neðan. Athugaðu að pósturinn getur endað með ruslpóstinum.`,
+              })}
+            </Text>
 
-      {email &&
-        verificationValid === false &&
-        inputPristine &&
-        !emailVerifyCreated && (
-          <Box marginTop={2}>
-            <ContactNotVerified
-              contactType="email"
-              onClick={() =>
-                handleSendEmailVerification({
-                  email: email,
-                })
-              }
-            />
+            <form onSubmit={handleSubmit(handleConfirmCode)}>
+              <Box display="flex" flexWrap="wrap" alignItems="flexStart">
+                <Box className={styles.codeInput} marginRight={3}>
+                  <InputController
+                    control={control}
+                    backgroundColor="blue"
+                    id="code"
+                    name="code"
+                    format="###"
+                    label={formatMessage(m.verificationCode)}
+                    placeholder="000"
+                    defaultValue=""
+                    error={errors?.code?.message || formErrors?.code}
+                    disabled={verificationValid || disabled}
+                    icon={verificationValid ? 'checkmark' : undefined}
+                    size="xs"
+                    autoComplete="off"
+                    onChange={(inp) => {
+                      setCodeInternal(inp.target.value)
+                      setErrors({ ...formErrors, code: undefined })
+                    }}
+                    rules={{
+                      required: {
+                        value: true,
+                        message: formatMessage(m.verificationCodeRequired),
+                      },
+                    }}
+                  />
+                </Box>
+                <Box
+                  display="flex"
+                  alignItems="flexStart"
+                  flexDirection="column"
+                  paddingTop={4}
+                  className={styles.codeButton}
+                >
+                  {!saveLoading && (
+                    <FormButton
+                      submit
+                      disabled={!codeInternal || disabled || verificationValid}
+                    >
+                      {formatMessage(m.codeConfirmation)}
+                    </FormButton>
+                  )}
+                  {saveLoading && (
+                    <Box>
+                      <LoadingDots />
+                    </Box>
+                  )}
+                </Box>
+              </Box>
+            </form>
           </Box>
         )}
+
+        {email &&
+          verificationValid === false &&
+          inputPristine &&
+          !emailVerifyCreated && (
+            <Box marginTop={2}>
+              <ContactNotVerified
+                contactType="email"
+                onClick={() =>
+                  handleSendEmailVerification({
+                    email: email,
+                  })
+                }
+              />
+            </Box>
+          )}
+      </FormProvider>
     </Box>
   )
 }

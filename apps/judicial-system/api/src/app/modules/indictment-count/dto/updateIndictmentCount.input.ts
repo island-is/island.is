@@ -4,7 +4,10 @@ import { GraphQLJSONObject } from 'graphql-type-json'
 import { Field, ID, InputType } from '@nestjs/graphql'
 
 import type { SubstanceMap } from '@island.is/judicial-system/types'
-import { IndictmentCountOffense } from '@island.is/judicial-system/types'
+import {
+  IndictmentCountOffense,
+  IndictmentSubtype,
+} from '@island.is/judicial-system/types'
 
 @InputType()
 export class UpdateIndictmentCountInput {
@@ -53,4 +56,11 @@ export class UpdateIndictmentCountInput {
   @IsOptional()
   @Field(() => String, { nullable: true })
   readonly legalArguments?: string
+
+  @Allow()
+  @IsOptional()
+  @IsArray()
+  @IsEnum(IndictmentSubtype, { each: true })
+  @Field(() => [IndictmentSubtype], { nullable: true })
+  readonly indictmentCountSubtypes?: IndictmentSubtype[]
 }

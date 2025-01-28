@@ -1,4 +1,5 @@
 import { useRouter } from 'next/router'
+import { parseAsBoolean, useQueryState } from 'next-usequerystate'
 
 import {
   Box,
@@ -7,6 +8,7 @@ import {
   Pagination,
   Stack,
   Text,
+  ToggleSwitchCheckbox,
 } from '@island.is/island-ui/core'
 import type { Locale } from '@island.is/shared/types'
 import {
@@ -39,6 +41,7 @@ import { GET_NAMESPACE_QUERY, GET_ORGANIZATION_PAGE_QUERY } from '../../queries'
 import { GET_EVENTS_QUERY } from '../../queries/Events'
 
 const PAGE_SIZE = 10
+const INCLUDE_PAST_EVENTS_KEY = 'includePastEvents'
 
 export interface OrganizationEventListProps {
   organizationPage: OrganizationPage
@@ -84,6 +87,14 @@ const OrganizationEventList: Screen<OrganizationEventListProps> = ({
     organizationPage.slug,
   ]).href
 
+  const [includePastEvents, setIncludePastEvents] = useQueryState(
+    INCLUDE_PAST_EVENTS_KEY,
+    parseAsBoolean.withDefault(false).withOptions({
+      clearOnDefault: true,
+      shallow: false,
+    }),
+  )
+
   return (
     <OrganizationWrapper
       pageTitle={eventsHeading}
@@ -112,6 +123,17 @@ const OrganizationEventList: Screen<OrganizationEventListProps> = ({
             readId={undefined}
             readClass="rs_read"
           />
+          {organizationPage.showPastEventsOption && (
+            <Box display="flex" justifyContent="flexEnd">
+              <ToggleSwitchCheckbox
+                label={
+                  activeLocale === 'is' ? 'Liðnir viðburðir' : 'Past events'
+                }
+                checked={includePastEvents}
+                onChange={setIncludePastEvents}
+              />
+            </Box>
+          )}
           <EventList
             namespace={namespace}
             eventList={eventList?.items}
@@ -128,7 +150,7 @@ const OrganizationEventList: Screen<OrganizationEventListProps> = ({
                 <LinkV2
                   href={{
                     pathname: eventOverviewHref,
-                    query: { page },
+                    query: { page, includePastEvents },
                   }}
                 >
                   <span className={className}>{children}</span>
@@ -176,6 +198,12 @@ OrganizationEventList.getProps = async ({ apolloClient, query, locale }) => {
     )
   }
 
+  const includePastEvents =
+    parseAsBoolean
+      .withDefault(false)
+      .parseServerSide(query[INCLUDE_PAST_EVENTS_KEY]) &&
+    Boolean(organizationPage.showPastEventsOption)
+
   const selectedPage = extractPageNumberQueryParameter(query)
 
   const [eventsResponse, namespace] = await Promise.all([
@@ -187,7 +215,8 @@ OrganizationEventList.getProps = async ({ apolloClient, query, locale }) => {
           lang: locale as Locale,
           page: selectedPage,
           size: PAGE_SIZE,
-          order: 'asc',
+          order: includePastEvents ? 'desc' : 'asc',
+          includePastEvents,
         },
       },
     }),

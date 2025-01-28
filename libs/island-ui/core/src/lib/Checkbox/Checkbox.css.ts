@@ -58,7 +58,7 @@ export const largeLabel = style({
   padding: `${theme.spacing[3]}px ${theme.spacing[2]}px`,
   '@media': {
     [`screen and (min-width: ${theme.breakpoints.sm}px)`]: {
-      padding: `${theme.spacing[4]}px ${theme.spacing[3]}px`,
+      padding: `${theme.spacing[3]}px ${theme.spacing[3]}px`,
     },
   },
 })

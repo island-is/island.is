@@ -108,6 +108,8 @@ export const serviceSetup = (services: {
         '/k8s/identity-server/redaction/USER_IDENTIFIERS_KEY_ID',
       Redaction__UserIdentifiers__Key:
         '/k8s/identity-server/redaction/USER_IDENTIFIERS_KEY',
+      Datadog__RUM__ApplicationId: '/k8s/ids/DD_RUM_APPLICATION_ID',
+      Datadog__RUM__ClientToken: '/k8s/ids/DD_RUM_CLIENT_TOKEN',
     })
     .ingress({
       primary: {
@@ -196,5 +198,6 @@ export const serviceSetup = (services: {
       'nginx-ingress-external',
       'user-notification',
       'portals-admin',
+      'datadog',
     )
 }

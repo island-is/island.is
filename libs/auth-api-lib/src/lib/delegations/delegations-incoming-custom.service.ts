@@ -26,6 +26,7 @@ import { Delegation } from './models/delegation.model'
 import { NationalRegistryV3FeatureService } from './national-registry-v3-feature.service'
 import { DelegationValidity } from './types/delegationValidity'
 import { getScopeValidityWhereClause } from './utils/scopes'
+import filterByCustomScopeRule from './utils/filterByScopeCustomScopeRule'
 
 type FindAllValidIncomingOptions = {
   nationalId: string
@@ -182,31 +183,52 @@ export class DelegationsIncomingCustomService {
     })
   }
 
-  private filterByCustomScopeRule(scope: ApiScopeInfo) {
-    const foundCSR = this.delegationConfig.customScopeRules.find(
-      (csr) => csr.scopeName === scope.name,
-    )
-
-    if (!foundCSR) {
-      return true
-    }
-
-    return foundCSR.onlyForDelegationType.includes(
-      AuthDelegationType.GeneralMandate,
-    )
-  }
-
-  async findAllAvailableGeneralMandate(
+  /**
+   * Finds all companies that have a general mandate for the user.
+   * @param user
+   * @param clientAllowedApiScopes
+   * @param requireApiScopes
+   */
+  async findCompanyGeneralMandate(
     user: User,
     clientAllowedApiScopes: ApiScopeInfo[],
     requireApiScopes: boolean,
   ): Promise<MergedDelegationDTO[]> {
+    const delegations = await this.findAllAvailableGeneralMandate(
+      user,
+      clientAllowedApiScopes,
+      requireApiScopes,
+      [AuthDelegationType.ProcurationHolder],
+    )
+
+    return delegations.filter((d) => kennitala.isCompany(d.fromNationalId))
+  }
+
+  /**
+   * Finds all individuals that have a general mandate for the user.
+   * @param user
+   * @param clientAllowedApiScopes
+   * @param requireApiScopes
+   * @param supportedDelegationTypes
+   */
+  async findAllAvailableGeneralMandate(
+    user: User,
+    clientAllowedApiScopes: ApiScopeInfo[],
+    requireApiScopes: boolean,
+    supportedDelegationTypes = [AuthDelegationType.GeneralMandate],
+  ): Promise<MergedDelegationDTO[]> {
     const customApiScopes = clientAllowedApiScopes.filter(
       (s) =>
         !s.isAccessControlled &&
-        this.filterByCustomScopeRule(s) &&
-        s.supportedDelegationTypes?.some(
-          (dt) => dt.delegationType === AuthDelegationType.GeneralMandate,
+        filterByCustomScopeRule(
+          s,
+          [AuthDelegationType.GeneralMandate],
+          this.delegationConfig.customScopeRules,
+        ) &&
+        s.supportedDelegationTypes?.some((dt) =>
+          supportedDelegationTypes.includes(
+            dt.delegationType as AuthDelegationType,
+          ),
         ),
     )
 

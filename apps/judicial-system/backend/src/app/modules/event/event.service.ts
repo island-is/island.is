@@ -43,7 +43,7 @@ const caseEvent: Record<CaseEvent, string> = {
   [CaseTransition.ACCEPT]: ':white_check_mark: Samþykkt',
   [CaseTransition.APPEAL]: ':judge: Kæra',
   ARCHIVE: ':file_cabinet: Sett í geymslu',
-  [CaseTransition.ASK_FOR_CANCELLATION]: ':interrobang: Beðið um aftuköllun',
+  [CaseTransition.ASK_FOR_CANCELLATION]: ':interrobang: Beðið um afturköllun',
   [CaseTransition.ASK_FOR_CONFIRMATION]: ':question: Beðið um staðfestingu',
   [CaseTransition.COMPLETE]: ':white_check_mark: Lokið',
   [CaseTransition.COMPLETE_APPEAL]: ':white_check_mark: Kæru lokið',
@@ -170,6 +170,51 @@ export class EventService {
         `Failed to post event ${event} for case ${theCase.id}`,
         { error },
       )
+    }
+  }
+
+  async postDailyHearingArrangementEvents(date: Date, cases: Case[]) {
+    const title = `:judge: Fyrirtökur ${formatDate(date)}`
+
+    const arrangementTexts = cases.map((theCase) => {
+      return `>${theCase.courtCaseNumber}: ${
+        formatDate(
+          DateLog.courtDate(theCase.dateLogs)?.date ??
+            DateLog.arraignmentDate(theCase.dateLogs)?.date,
+          'p',
+        ) ?? date
+      }`
+    })
+
+    const arrangementSummary =
+      arrangementTexts.length > 0
+        ? arrangementTexts.join('\n')
+        : '>Engar fyrirtökur á dagskrá'
+
+    try {
+      if (!this.config.url) {
+        return
+      }
+
+      await fetch(`${this.config.url}`, {
+        method: 'POST',
+        headers: { 'Content-type': 'application/json' },
+        body: JSON.stringify({
+          blocks: [
+            {
+              type: 'section',
+              text: {
+                type: 'mrkdwn',
+                text: `*${title}*\n${arrangementSummary}`,
+              },
+            },
+          ],
+        }),
+      })
+    } catch (error) {
+      this.logger.error(`Failed to post court hearing arrangement summary`, {
+        error,
+      })
     }
   }
 

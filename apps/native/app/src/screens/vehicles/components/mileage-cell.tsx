@@ -1,6 +1,7 @@
-import { Skeleton, Typography, useDynamicColor } from '@ui'
 import { useIntl } from 'react-intl'
 import { Image, Pressable, View } from 'react-native'
+
+import { Skeleton, Typography, useDynamicColor } from '../../../ui'
 import clock from '../../../assets/icons/clock.png'
 
 export function MileageCell({

@@ -1,4 +1,3 @@
-import React from 'react'
 import { defineMessage } from 'react-intl'
 import { checkDelegation } from '@island.is/shared/utils'
 import { info } from 'kennitala'
@@ -13,7 +12,7 @@ import {
   InfoLine,
   InfoLineStack,
 } from '@island.is/portals/my-pages/core'
-import { useUserInfo } from '@island.is/auth/react'
+import { useUserInfo } from '@island.is/react-spa/bff'
 
 import {
   natRegGenderMessageDescriptorRecord,

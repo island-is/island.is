@@ -36,16 +36,13 @@ import {
 } from '@island.is/shared/types'
 import {
   createCurrentUser,
+  createNationalId,
   createNationalRegistryUser,
 } from '@island.is/testing/fixtures'
 import { TestApp } from '@island.is/testing/nest'
 
 import { defaultScopes, setupWithAuth } from '../../../test/setup'
-import {
-  getFakeName,
-  getFakeNationalId,
-  NameIdTuple,
-} from '../../../test/stubs/genericStubs'
+import { getFakeName, NameIdTuple } from '../../../test/stubs/genericStubs'
 import {
   delegationTypes,
   getPersonalRepresentativeRelationship,
@@ -54,6 +51,10 @@ import {
   getScopePermission,
   personalRepresentativeType,
 } from '../../../test/stubs/personalRepresentativeStubs'
+
+const getFakeNationalId = () => createNationalId('person')
+
+const setupHookTimeout = 10000
 
 describe('Personal Representative DelegationsController', () => {
   describe.each([false, true])(
@@ -73,6 +74,7 @@ describe('Personal Representative DelegationsController', () => {
         let prTypeModel: typeof PersonalRepresentativeType
         let prDelegationTypeModel: typeof PersonalRepresentativeDelegationTypeModel
         let delegationTypeModel: typeof DelegationTypeModel
+        let nationalRegistryV3FeatureService: NationalRegistryV3FeatureService
         let nationalRegistryApi: NationalRegistryClientService
         let nationalRegistryV3Api: NationalRegistryV3ClientService
         let delegationProviderModel: typeof DelegationProviderModel
@@ -152,17 +154,14 @@ describe('Personal Representative DelegationsController', () => {
             getModelToken(DelegationProviderModel),
           )
           clientModel = app.get<typeof Client>(getModelToken(Client))
+          nationalRegistryV3FeatureService = app.get(
+            NationalRegistryV3FeatureService,
+          )
           nationalRegistryApi = app.get(NationalRegistryClientService)
           nationalRegistryV3Api = app.get(NationalRegistryV3ClientService)
           delegationIndexService = app.get(DelegationsIndexService)
-          const nationalRegistryV3FeatureService = app.get(
-            NationalRegistryV3FeatureService,
-          )
-          jest
-            .spyOn(nationalRegistryV3FeatureService, 'getValue')
-            .mockImplementation(async () => featureFlag)
           factory = new FixtureFactory(app)
-        })
+        }, setupHookTimeout)
 
         const createDelegationTypeAndProvider = async (rightCode: string[]) => {
           const newDelegationProvider = await delegationProviderModel.create({
@@ -403,6 +402,10 @@ describe('Personal Representative DelegationsController', () => {
                   ),
                 ]
 
+                jest
+                  .spyOn(nationalRegistryV3FeatureService, 'getValue')
+                  .mockImplementation(async () => featureFlag)
+
                 nationalRegistryApiSpy = jest
                   .spyOn(nationalRegistryApi, 'getIndividual')
                   .mockImplementation(async (id) => {
@@ -461,7 +464,7 @@ describe('Personal Representative DelegationsController', () => {
               })
 
               afterAll(async () => {
-                jest.clearAllMocks()
+                jest.resetAllMocks()
                 await prRightsModel.destroy({
                   where: {},
                   cascade: true,

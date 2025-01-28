@@ -2,9 +2,8 @@ import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { Inject, Injectable, UnauthorizedException } from '@nestjs/common'
 import type { Response } from 'express'
-import { SESSION_COOKIE_NAME } from '../constants/cookies'
 import { CacheService } from '../modules/cache/cache.service'
-import { getCookieOptions } from '../utils/get-cookie-options'
+import { SessionCookieService } from './sessionCookie.service'
 
 /**
  * Standard OAuth2 error codes returned by Identity Server
@@ -34,6 +33,7 @@ export class ErrorService {
     private logger: Logger,
 
     private readonly cacheService: CacheService,
+    private readonly sessionCookieService: SessionCookieService,
   ) {}
 
   /**
@@ -79,7 +79,7 @@ export class ErrorService {
         error,
       )
 
-      res.clearCookie(SESSION_COOKIE_NAME, getCookieOptions())
+      this.sessionCookieService.clear(res)
       await this.cacheService.delete(tokenResponseKey)
 
       throw new UnauthorizedException()

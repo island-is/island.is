@@ -1,10 +1,10 @@
 import { Icon, Table as T } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { general } from '../../lib/messages'
-import { useApplication } from '../../hooks/useUpdateApplication'
-import { InputFields } from '../../lib/types'
+import { useUserInfo } from '@island.is/react-spa/bff'
 import set from 'lodash/set'
-import { useAuth } from '@island.is/auth/react'
+import { useApplication } from '../../hooks/useUpdateApplication'
+import { general } from '../../lib/messages'
+import { InputFields } from '../../lib/types'
 
 type Props = {
   applicationId: string
@@ -18,7 +18,7 @@ export const ChannelList = ({ applicationId, onEditChannel }: Props) => {
     applicationId,
   })
 
-  const { userInfo } = useAuth()
+  const userInfo = useUserInfo()
 
   const defaultName = userInfo?.profile?.name
   const defaultEmail = userInfo?.profile?.email

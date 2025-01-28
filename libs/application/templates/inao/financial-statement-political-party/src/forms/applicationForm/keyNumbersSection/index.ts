@@ -1,8 +1,8 @@
 import { buildSection } from '@island.is/application/core'
 import { m } from '../../../lib/messages'
-import { operatingCostSubsection } from './operatingCostSubsection'
-import { capitalNumbersSubsection } from './capitalNumbersSubsection'
 import { equitiesAndLiabilitiesSubsection } from './equitiesAndLiabilitiesSubsection'
+import { capitalNumbersSubsection } from './capitalNumbersSubsection'
+import { operatingCostSubsection } from './operatingCostSubsection'
 
 export const keyNumbersSection = buildSection({
   id: 'keyNumbers',

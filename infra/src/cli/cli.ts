@@ -140,5 +140,6 @@ const cli = yargs(process.argv.slice(2))
       })
     },
   )
+  .strict()
   .demandCommand(1)
   .parse()

@@ -38,13 +38,16 @@ export const PhoneFormField: FC<React.PropsWithChildren<Props>> = ({
     dataTestId,
     allowedCountryCodes,
     enableCountrySelector = false,
+    marginTop,
+    marginBottom,
     onChange = () => undefined,
+    clearOnChange,
   } = field
   const { control, clearErrors } = useFormContext()
   const { formatMessage, lang: locale } = useLocale()
 
   return (
-    <div>
+    <Box marginTop={marginTop} marginBottom={marginBottom}>
       {description && (
         <FieldDescription
           description={formatTextWithLocale(
@@ -92,8 +95,9 @@ export const PhoneFormField: FC<React.PropsWithChildren<Props>> = ({
           defaultValue={getDefaultValue(field, application)}
           backgroundColor={backgroundColor}
           required={buildFieldRequired(application, required)}
+          clearOnChange={clearOnChange}
         />
       </Box>
-    </div>
+    </Box>
   )
 }

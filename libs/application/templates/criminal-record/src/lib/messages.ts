@@ -31,18 +31,6 @@ export const m = defineMessages({
     defaultMessage: 'Ég hef kynnt mér ofangreint',
     description: 'I understand',
   },
-  nationalRegistryTitle: {
-    id: 'cr.application:nationalRegistry.title',
-    defaultMessage: 'Persónuupplýsingar úr Þjóðskrá',
-    description: 'Personal information from the National Registry',
-  },
-  nationalRegistrySubTitle: {
-    id: 'cr.application:nationalRegistry.subTitle',
-    defaultMessage:
-      'Til þess að auðvelda fyrir sækjum við persónuupplýsingar úr Þjóðskrá til þess að fylla út umsóknina',
-    description:
-      'Information from the National Registry will be used to prefill the data in the application',
-  },
   userProfileInformationTitle: {
     id: 'cr.application:userprofile.title',
     defaultMessage: 'Netfang og símanúmer úr þínum stillingum',

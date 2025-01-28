@@ -5,7 +5,10 @@ import { useRouter } from 'next/router'
 import { Box, RadioButton, Text } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
-import { isPublicProsecutor } from '@island.is/judicial-system/types'
+import {
+  isPublicProsecutor,
+  isPublicProsecutorUser,
+} from '@island.is/judicial-system/types'
 import {
   BlueBox,
   Modal,
@@ -15,22 +18,25 @@ import {
 import { IndictmentCaseReviewDecision } from '@island.is/judicial-system-web/src/graphql/schema'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 
+import { ConfirmationModal, isConfirmProsecutorDecisionModal } from '../utils'
 import { strings } from './ReviewDecision.strings'
 import * as styles from './ReviewDecision.css'
 
 interface Props {
   caseId: string
+  currentDecision?: IndictmentCaseReviewDecision
   indictmentAppealDeadline?: string
   indictmentAppealDeadlineIsInThePast?: boolean
-  modalVisible?: boolean
-  setModalVisible: Dispatch<SetStateAction<boolean>>
+  modalVisible?: ConfirmationModal
+  setModalVisible: Dispatch<SetStateAction<ConfirmationModal | undefined>>
   isFine: boolean
-  onSelect?: () => void
+  onSelect?: (decision?: IndictmentCaseReviewDecision) => void
 }
 
 export const ReviewDecision: FC<Props> = (props) => {
   const {
     caseId,
+    currentDecision,
     indictmentAppealDeadline,
     indictmentAppealDeadlineIsInThePast,
     modalVisible,
@@ -45,7 +51,7 @@ export const ReviewDecision: FC<Props> = (props) => {
   const { updateCase } = useCase()
   const [indictmentReviewDecision, setIndictmentReviewDecision] = useState<
     IndictmentCaseReviewDecision | undefined
-  >(undefined)
+  >(currentDecision)
 
   const handleReviewDecision = async () => {
     if (!indictmentReviewDecision) {
@@ -74,7 +80,7 @@ export const ReviewDecision: FC<Props> = (props) => {
     },
   ]
 
-  if (!isPublicProsecutor(user)) {
+  if (!(isPublicProsecutor(user) || isPublicProsecutorUser(user))) {
     return null
   }
 
@@ -103,7 +109,7 @@ export const ReviewDecision: FC<Props> = (props) => {
                 value={item.value}
                 checked={indictmentReviewDecision === item.value}
                 onChange={() => {
-                  onSelect && onSelect()
+                  onSelect && onSelect(item.value)
                   setIndictmentReviewDecision(item.value)
                 }}
                 backgroundColor="white"
@@ -113,7 +119,7 @@ export const ReviewDecision: FC<Props> = (props) => {
           })}
         </div>
       </BlueBox>
-      {modalVisible && (
+      {isConfirmProsecutorDecisionModal(modalVisible) && (
         <Modal
           title={fm(strings.reviewModalTitle)}
           text={fm(
@@ -124,9 +130,9 @@ export const ReviewDecision: FC<Props> = (props) => {
           )}
           primaryButtonText={fm(strings.reviewModalPrimaryButtonText)}
           secondaryButtonText={fm(strings.reviewModalSecondaryButtonText)}
-          onClose={() => setModalVisible(false)}
+          onClose={() => setModalVisible(undefined)}
           onPrimaryButtonClick={handleReviewDecision}
-          onSecondaryButtonClick={() => setModalVisible(false)}
+          onSecondaryButtonClick={() => setModalVisible(undefined)}
         />
       )}
     </Box>

@@ -1,5 +1,4 @@
 import {
-  AlertMessage,
   Box,
   Button,
   Icon,
@@ -23,24 +22,16 @@ import {
   DEFAULT_PAGE_SIZE,
   OJOI_INPUT_HEIGHT,
 } from '../lib/constants'
-import { useAdvert } from '../hooks/useAdvert'
 import debounce from 'lodash/debounce'
-import set from 'lodash/set'
 import { InputFields } from '../lib/types'
 import { useFormContext } from 'react-hook-form'
+import { OfficialJournalOfIcelandAdvert } from '@island.is/api/schema'
+import { cleanTypename } from '../lib/utils'
 type Props = {
   applicationId: string
   visible: boolean
   setVisible: (visible: boolean) => void
   onConfirmChange?: () => void
-}
-
-type UpdateAdvertFields = {
-  title: string
-  departmentId: string
-  typeId: string
-  html: string
-  categories: string[]
 }
 
 export const AdvertModal = ({
@@ -49,41 +40,24 @@ export const AdvertModal = ({
   setVisible,
   onConfirmChange,
 }: Props) => {
-  const [page, setPage] = useState(DEFAULT_PAGE)
-  const [search, setSearch] = useState('')
-  const [selectedAdvertId, setSelectedAdvertId] = useState<string | null>(null)
-
   const { formatMessage: f } = useLocale()
   const { setValue } = useFormContext()
   const { application, updateApplication } = useApplication({
     applicationId,
   })
 
+  const [page, setPage] = useState(DEFAULT_PAGE)
+  const [search, setSearch] = useState('')
+  const [selectedAdvert, setSelectedAdvert] =
+    useState<OfficialJournalOfIcelandAdvert | null>(null)
+
   const { adverts, paging, loading } = useAdverts({
     page: page,
     search: search,
   })
 
-  const [updateAdvertFields, setUpdateAdvertFields] =
-    useState<UpdateAdvertFields | null>(null)
-
-  const { loading: loadingAdvert, error: advertError } = useAdvert({
-    advertId: selectedAdvertId,
-    onCompleted: (ad) => {
-      setUpdateAdvertFields({
-        title: ad.title,
-        departmentId: ad.department.id,
-        typeId: ad.type.id,
-        html: ad.document.html,
-        categories: ad.categories.map((c) => c.id),
-      })
-    },
-  })
-
-  const disableConfirmButton = !selectedAdvertId || !!advertError
-
-  const onSelectAdvert = (advertId: string) => {
-    setSelectedAdvertId(advertId)
+  const onSelectAdvert = (advert: OfficialJournalOfIcelandAdvert) => {
+    setSelectedAdvert(advert)
   }
 
   const onSearchChange = (value: string) => {
@@ -97,46 +71,33 @@ export const AdvertModal = ({
     debouncedSearch(e.target.value)
   }
 
-  const onConfirm = () => {
-    if (!updateAdvertFields) {
+  const onConfirm = (advert: OfficialJournalOfIcelandAdvert | null) => {
+    if (!advert) {
       return
     }
 
-    const currentAnswers = structuredClone(application.answers)
+    const department = cleanTypename(advert.department)
+    const type = cleanTypename(advert.type)
 
-    let updatedAnswers = set(
-      currentAnswers,
-      InputFields.advert.title,
-      updateAdvertFields.title,
-    )
-    updatedAnswers = set(
-      updatedAnswers,
-      InputFields.advert.departmentId,
-      updateAdvertFields.departmentId,
-    )
-    updatedAnswers = set(
-      updatedAnswers,
-      InputFields.advert.typeId,
-      updateAdvertFields.typeId,
-    )
-    updatedAnswers = set(
-      updatedAnswers,
-      InputFields.advert.html,
-      updateAdvertFields.html,
-    )
-    updatedAnswers = set(
-      updatedAnswers,
-      InputFields.advert.categories,
-      updateAdvertFields.categories,
+    const categories = advert.categories.map((category) =>
+      cleanTypename(category),
     )
 
-    setValue(InputFields.advert.title, updateAdvertFields.title)
-    setValue(InputFields.advert.departmentId, updateAdvertFields.departmentId)
-    setValue(InputFields.advert.typeId, updateAdvertFields.typeId)
-    setValue(InputFields.advert.html, updateAdvertFields.html)
-    setValue(InputFields.advert.categories, updateAdvertFields.categories)
+    setValue(InputFields.advert.department, department)
+    setValue(InputFields.advert.type, type)
+    setValue(InputFields.advert.title, advert.title)
 
-    updateApplication(updatedAnswers)
+    updateApplication({
+      ...application.answers,
+      advert: {
+        department,
+        type,
+        categories,
+        title: advert.title,
+        html: advert.document.html,
+      },
+    })
+
     onConfirmChange && onConfirmChange()
     setVisible(false)
   }
@@ -173,13 +134,6 @@ export const AdvertModal = ({
                   onChange={handleSearchChange}
                 />
               </Box>
-              {!!advertError && (
-                <AlertMessage
-                  type="error"
-                  title={f(error.fetchAdvertFailed)}
-                  message={f(error.fetchAdvertFailedMessage)}
-                />
-              )}
               <Box
                 paddingY={1}
                 borderColor="blue200"
@@ -201,8 +155,8 @@ export const AdvertModal = ({
                         key={i}
                         name={advert.id}
                         label={advert.title}
-                        checked={selectedAdvertId === advert.id}
-                        onChange={() => onSelectAdvert(advert.id)}
+                        checked={selectedAdvert?.id === advert.id}
+                        onChange={() => onSelectAdvert(advert)}
                       />
                     ))}
                   </Stack>
@@ -233,9 +187,8 @@ export const AdvertModal = ({
                 {f(general.cancel)}
               </Button>
               <Button
-                disabled={disableConfirmButton}
-                loading={loadingAdvert}
-                onClick={onConfirm}
+                disabled={!selectedAdvert}
+                onClick={() => onConfirm(selectedAdvert)}
               >
                 {f(general.confirm)}
               </Button>

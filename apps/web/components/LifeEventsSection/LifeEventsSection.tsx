@@ -1,15 +1,17 @@
 import React from 'react'
+
 import {
-  Text,
+  Box,
+  Button,
   GridContainer,
   Hidden,
-  Box,
   Link,
-  Button,
+  Text,
 } from '@island.is/island-ui/core'
 import { GridItems } from '@island.is/web/components'
-import { LinkType, useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import { LifeEventPage } from '@island.is/web/graphql/schema'
+import { LinkType, useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
+
 import CardWithFeaturedItems from '../CardWithFeaturedItems/CardWithFeaturedItems'
 
 interface LifeEventsSectionProps {

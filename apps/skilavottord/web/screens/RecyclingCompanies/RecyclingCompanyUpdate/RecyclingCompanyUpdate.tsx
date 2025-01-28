@@ -1,30 +1,31 @@
-import React, { FC, useContext } from 'react'
-import { useForm } from 'react-hook-form'
-import { useRouter } from 'next/router'
 import { useMutation, useQuery } from '@apollo/client'
 import gql from 'graphql-tag'
 import NextLink from 'next/link'
+import { useRouter } from 'next/router'
+import React, { FC, useContext, useEffect } from 'react'
+import { useForm } from 'react-hook-form'
 
 import {
   Box,
   Breadcrumbs,
-  GridColumn,
-  GridRow,
   SkeletonLoader,
   Stack,
-  Text,
   toast,
 } from '@island.is/island-ui/core'
-import { PartnerPageLayout } from '@island.is/skilavottord-web/components/Layouts'
-import { useI18n } from '@island.is/skilavottord-web/i18n'
-import Sidenav from '@island.is/skilavottord-web/components/Sidenav/Sidenav'
-import { hasPermission } from '@island.is/skilavottord-web/auth/utils'
-import { UserContext } from '@island.is/skilavottord-web/context'
+import {
+  hasPermission,
+  hasMunicipalityRole,
+} from '@island.is/skilavottord-web/auth/utils'
 import { NotFound } from '@island.is/skilavottord-web/components'
+import { PartnerPageLayout } from '@island.is/skilavottord-web/components/Layouts'
+import { UserContext } from '@island.is/skilavottord-web/context'
 import { Query, Role } from '@island.is/skilavottord-web/graphql/schema'
+import { useI18n } from '@island.is/skilavottord-web/i18n'
 
-import { RecyclingCompanyImage, RecyclingCompanyForm } from '../components'
-import { SkilavottordAllRecyclingPartnersQuery } from '../RecyclingCompanies'
+import NavigationLinks from '@island.is/skilavottord-web/components/NavigationLinks/NavigationLinks'
+import PageHeader from '@island.is/skilavottord-web/components/PageHeader/PageHeader'
+import { RecyclingCompanyForm } from '../components'
+import { SkilavottordRecyclingPartnersQuery } from '../RecyclingCompanies'
 
 const SkilavottordRecyclingPartnerQuery = gql`
   query SkilavottordRecyclingPartnerQuery($input: RecyclingPartnerInput!) {
@@ -39,6 +40,7 @@ const SkilavottordRecyclingPartnerQuery = gql`
       website
       phone
       active
+      municipalityId
     }
   }
 `
@@ -58,14 +60,36 @@ const UpdateSkilavottordRecyclingPartnerMutation = gql`
       website
       phone
       active
+      municipalityId
     }
   }
 `
 
 const RecyclingCompanyUpdate: FC<React.PropsWithChildren<unknown>> = () => {
+  const {
+    control,
+    reset,
+    handleSubmit,
+    setValue,
+    formState: { errors },
+  } = useForm({
+    mode: 'onChange',
+  })
+  const {
+    t: { recyclingCompanies: t, municipalities: mt, routes },
+  } = useI18n()
   const { user } = useContext(UserContext)
   const router = useRouter()
   const { id } = router.query
+
+  const isMunicipalityPage = router.route === routes.municipalities.edit
+
+  // Show only recycling companies for the municipality
+  let partnerId = null
+  if (hasMunicipalityRole(user?.role)) {
+    partnerId = user?.partnerId
+  }
+
   const { data, error, loading } = useQuery<Query>(
     SkilavottordRecyclingPartnerQuery,
     {
@@ -86,23 +110,34 @@ const RecyclingCompanyUpdate: FC<React.PropsWithChildren<unknown>> = () => {
           variables: { input: { companyId: id } },
         },
         {
-          query: SkilavottordAllRecyclingPartnersQuery,
+          query: SkilavottordRecyclingPartnersQuery,
+          variables: {
+            isMunicipalityPage: isMunicipalityPage,
+            municipalityId: partnerId,
+          },
         },
       ],
     },
   )
 
-  const {
-    control,
-    reset,
-    handleSubmit,
-    formState: { errors },
-  } = useForm({
-    mode: 'onChange',
-  })
-  const {
-    t: { recyclingCompanies: t, recyclingFundSidenav: sidenavText, routes },
-  } = useI18n()
+  let breadcrumbTitle = t.title
+  let title = t.recyclingCompany.view.title
+  let info = t.recyclingCompany.view.info
+  let activeSection = 2
+  let route = routes.recyclingCompanies.baseRoute
+
+  useEffect(() => {
+    setValue('isMunicipality', isMunicipalityPage)
+  }, [isMunicipalityPage, setValue])
+
+  // If coming from municipality page
+  if (isMunicipalityPage) {
+    activeSection = 1
+    breadcrumbTitle = mt.title
+    title = mt.municipality.view.title
+    info = mt.municipality.view.info
+    route = routes.municipalities.baseRoute
+  }
 
   if (!user) {
     return null
@@ -114,59 +149,46 @@ const RecyclingCompanyUpdate: FC<React.PropsWithChildren<unknown>> = () => {
     return <NotFound />
   }
 
+  const navigateToBaseRoute = () => {
+    const route = isMunicipalityPage
+      ? routes.municipalities.baseRoute
+      : routes.recyclingCompanies.baseRoute
+    return router.push(route)
+  }
+
   const handleUpdateRecyclingPartner = handleSubmit(async (input) => {
     // Not needed to be sent to the backend, causes error if it is sent
     delete input.__typename
+
+    const municipalityId = input.municipalityId
+    input.municipalityId =
+      typeof municipalityId === 'object' && municipalityId?.value
+        ? municipalityId.value
+        : (municipalityId as string) || ''
 
     const { errors } = await updateSkilavottordRecyclingPartner({
       variables: { input },
     })
     if (!errors) {
-      router.push(routes.recyclingCompanies.baseRoute).then(() => {
+      navigateToBaseRoute().then(() => {
         toast.success(t.recyclingCompany.view.updated)
       })
     }
   })
 
-  const handleCancel = () => router.push(routes.recyclingCompanies.baseRoute)
+  const handleCancel = () => {
+    navigateToBaseRoute()
+  }
 
   return (
-    <PartnerPageLayout
-      side={
-        <Sidenav
-          title={sidenavText.title}
-          sections={[
-            {
-              icon: 'car',
-              title: `${sidenavText.recycled}`,
-              link: `${routes.recycledVehicles}`,
-            },
-            {
-              icon: 'business',
-              title: `${sidenavText.companies}`,
-              link: `${routes.recyclingCompanies.baseRoute}`,
-            },
-            {
-              ...(hasPermission('accessControl', user?.role)
-                ? {
-                    icon: 'lockClosed',
-                    title: `${sidenavText.accessControl}`,
-                    link: `${routes.accessControl}`,
-                  }
-                : null),
-            } as React.ComponentProps<typeof Sidenav>['sections'][0],
-          ].filter(Boolean)}
-          activeSection={1}
-        />
-      }
-    >
+    <PartnerPageLayout side={<NavigationLinks activeSection={activeSection} />}>
       <Stack space={4}>
         <Breadcrumbs
           items={[
             { title: 'Ísland.is', href: routes.home['recyclingCompany'] },
             {
-              title: t.title,
-              href: routes.recyclingCompanies.baseRoute,
+              title: breadcrumbTitle,
+              href: route,
             },
             {
               title: t.recyclingCompany.view.breadcrumb,
@@ -182,29 +204,7 @@ const RecyclingCompanyUpdate: FC<React.PropsWithChildren<unknown>> = () => {
             )
           }}
         />
-        <Box
-          display="flex"
-          alignItems="flexStart"
-          justifyContent="spaceBetween"
-        >
-          <GridRow marginBottom={7}>
-            <GridColumn span={['8/8', '6/8', '5/8']} order={[2, 1]}>
-              <Text variant="h1" as="h1" marginBottom={4}>
-                {t.recyclingCompany.view.title}
-              </Text>
-              <Text variant="intro"> {t.recyclingCompany.view.info}</Text>
-            </GridColumn>
-            <GridColumn
-              span={['8/8', '2/8']}
-              offset={['0', '0', '1/8']}
-              order={[1, 2]}
-            >
-              <Box textAlign={['center', 'right']} padding={[6, 0]}>
-                <RecyclingCompanyImage />
-              </Box>
-            </GridColumn>
-          </GridRow>
-        </Box>
+        <PageHeader title={title} info={info} />
       </Stack>
       <Box marginTop={7}>
         {loading ? (
@@ -216,6 +216,7 @@ const RecyclingCompanyUpdate: FC<React.PropsWithChildren<unknown>> = () => {
             control={control}
             errors={errors}
             editView
+            isMunicipalityPage={isMunicipalityPage}
           />
         )}
       </Box>

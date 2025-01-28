@@ -2,8 +2,11 @@ import { FC, useContext, useMemo } from 'react'
 import { useIntl } from 'react-intl'
 import partition from 'lodash/partition'
 
-import { AlertMessage, Box, Tag, Text } from '@island.is/island-ui/core'
-import { capitalize } from '@island.is/judicial-system/formatters'
+import { AlertMessage, Box, Text } from '@island.is/island-ui/core'
+import {
+  capitalize,
+  districtCourtAbbreviation,
+} from '@island.is/judicial-system/formatters'
 import {
   core,
   errors,
@@ -11,6 +14,7 @@ import {
   titles,
 } from '@island.is/judicial-system-web/messages'
 import {
+  CaseTag,
   Logo,
   PageHeader,
   SectionHeading,
@@ -28,12 +32,20 @@ import {
   getDurationDate,
 } from '@island.is/judicial-system-web/src/components/Table'
 import Table from '@island.is/judicial-system-web/src/components/Table/Table'
+import TagContainer from '@island.is/judicial-system-web/src/components/Tags/TagContainer/TagContainer'
+import TagIndictmentRulingDecision from '@island.is/judicial-system-web/src/components/Tags/TagIndictmentRulingDecision/TagIndictmentRulingDecison'
 import {
+  getPrisonCaseStateTag,
+  getPunishmentTypeTag,
+} from '@island.is/judicial-system-web/src/components/Tags/utils'
+import {
+  CaseIndictmentRulingDecision,
   CaseListEntry,
   CaseState,
   CaseType,
   InstitutionType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { isNonEmptyArray } from '@island.is/judicial-system-web/src/utils/arrayHelpers'
 
 import { usePrisonCasesQuery } from './prisonCases.generated'
 import { cases as m } from './Cases.strings'
@@ -122,21 +134,15 @@ export const PrisonCases: FC = () => {
             },
             {
               cell: (row) => (
-                <>
-                  <Box
-                    display="inlineBlock"
-                    marginRight={row.appealState ? 1 : 0}
-                    marginBottom={row.appealState ? 1 : 0}
-                  >
-                    <TagCaseState caseState={CaseState.ACCEPTED} />
-                  </Box>
+                <TagContainer>
+                  <TagCaseState caseState={CaseState.ACCEPTED} />
                   {row.appealState && (
                     <TagAppealState
                       appealState={row.appealState}
                       appealRulingDecision={row.appealRulingDecision}
                     />
                   )}
-                </>
+                </TagContainer>
               ),
             },
             {
@@ -166,13 +172,21 @@ export const PrisonCases: FC = () => {
           thead={[
             {
               title: formatMessage(tables.caseNumber),
+              sortable: {
+                isSortable: true,
+                key: 'courtCaseNumber',
+              },
             },
             {
               title: capitalize(formatMessage(core.defendant, { suffix: 'i' })),
               sortable: { isSortable: true, key: 'defendants' },
             },
             {
-              title: formatMessage(tables.court),
+              title: formatMessage(tables.type),
+            },
+            {
+              title: formatMessage(tables.punishmentType),
+              sortable: { isSortable: true, key: 'defendantsPunishmentType' },
             },
             {
               title: capitalize(formatMessage(tables.sentencingDate)),
@@ -182,19 +196,48 @@ export const PrisonCases: FC = () => {
           data={cases}
           columns={[
             {
-              cell: (row) => (
-                <CourtCaseNumber
-                  courtCaseNumber={row.courtCaseNumber ?? ''}
-                  policeCaseNumbers={row.policeCaseNumbers ?? []}
-                  appealCaseNumber={row.appealCaseNumber ?? ''}
-                />
-              ),
+              cell: (row) => {
+                const courtAbbreviation = districtCourtAbbreviation(
+                  row.court?.name,
+                )
+
+                return (
+                  <CourtCaseNumber
+                    courtCaseNumber={`${
+                      courtAbbreviation ? `${courtAbbreviation}: ` : ''
+                    }${row.courtCaseNumber ?? ''}`}
+                    policeCaseNumbers={row.policeCaseNumbers ?? []}
+                    appealCaseNumber={row.appealCaseNumber ?? ''}
+                  />
+                )
+              },
             },
             {
               cell: (row) => <DefendantInfo defendants={row.defendants} />,
             },
             {
-              cell: (row) => <ColumnCaseType type={row.type} />,
+              cell: (row) => (
+                <TagIndictmentRulingDecision
+                  isFine={
+                    row.indictmentRulingDecision ===
+                    CaseIndictmentRulingDecision.FINE
+                  }
+                />
+              ),
+            },
+            {
+              cell: (row) => {
+                const punishmentType = isNonEmptyArray(row.defendants)
+                  ? row.defendants[0].punishmentType
+                  : undefined
+                const punishmentTypeTag = getPunishmentTypeTag(punishmentType)
+                return punishmentTypeTag ? (
+                  <CaseTag
+                    color={punishmentTypeTag.color}
+                    text={formatMessage(punishmentTypeTag.text)}
+                  />
+                ) : null
+              },
             },
             {
               cell: (row) => (
@@ -202,11 +245,23 @@ export const PrisonCases: FC = () => {
               ),
             },
             {
-              cell: () => (
-                <Tag variant="purple" outlined disabled truncate>
-                  {'Nýtt'}
-                </Tag>
-              ),
+              cell: (row) => {
+                const prisonCaseState =
+                  row.defendants &&
+                  row.defendants?.length > 0 &&
+                  row.defendants[0].openedByPrisonAdminDate
+                    ? CaseState.RECEIVED
+                    : CaseState.NEW
+                const prisonCaseStateTag =
+                  getPrisonCaseStateTag(prisonCaseState)
+
+                return (
+                  <CaseTag
+                    color={prisonCaseStateTag.color}
+                    text={formatMessage(prisonCaseStateTag.text)}
+                  />
+                )
+              },
             },
           ]}
           generateContextMenuItems={(row) => [openCaseInNewTabMenuItem(row.id)]}

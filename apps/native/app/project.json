@@ -6,29 +6,81 @@
   "tags": ["scope:js"],
   "generators": {},
   "targets": {
-    "serve": {
-      "executor": "nx:run-commands",
+    "start": {
+      "executor": "@nx/react-native:start",
+      "dependsOn": [],
       "options": {
-        "cwd": "apps/native/app",
-        "command": "yarn start"
+        "port": 8081
       }
     },
-    "build": {
-      "executor": "nx:run-commands",
+    "run-ios": {
+      "executor": "@nx/react-native:run-ios",
+      "dependsOn": [],
+      "options": {}
+    },
+    "bundle-ios": {
+      "executor": "@nx/react-native:bundle",
+      "dependsOn": [],
+      "outputs": ["{options.bundleOutput}"],
       "options": {
-        "cwd": "apps/native/app",
-        "command": "yarn build-mock"
+        "entryFile": "index.js",
+        "platform": "ios",
+        "bundleOutput": "dist/apps/native/app/ios/main.jsbundle"
       }
     },
-    "test": {
-      "executor": "nx:run-commands",
+    "run-android": {
+      "executor": "@nx/react-native:run-android",
+      "dependsOn": [],
+      "options": {}
+    },
+    "build-android": {
+      "executor": "@nx/react-native:build-android",
+      "outputs": [
+        "{projectRoot}/android/app/build/outputs/bundle",
+        "{projectRoot}/android/app/build/outputs/apk"
+      ],
+      "dependsOn": [],
+      "options": {}
+    },
+    "build-ios": {
+      "executor": "@nx/react-native:build-ios",
+      "outputs": ["{projectRoot}/ios/build/Build"],
+      "dependsOn": [],
+      "options": {}
+    },
+    "pod-install": {
+      "executor": "@nx/react-native:pod-install",
+      "dependsOn": ["sync-deps"],
+      "outputs": ["{projectRoot}/ios/Pods", "{projectRoot}/ios/Podfile.lock"],
+      "options": {}
+    },
+    "upgrade": {
+      "executor": "@nx/react-native:upgrade",
+      "options": {}
+    },
+    "bundle-android": {
+      "executor": "@nx/react-native:bundle",
+      "dependsOn": [],
+      "outputs": ["{options.bundleOutput}"],
       "options": {
-        "cwd": "apps/native/app",
-        "command": "yarn test-mock"
+        "entryFile": "index.js",
+        "platform": "android",
+        "bundleOutput": "dist/apps/native/app/android/main.jsbundle"
       }
+    },
+    "sync-deps": {
+      "executor": "@nx/react-native:sync-deps",
+      "options": {}
     },
     "lint": {
       "executor": "@nx/eslint:lint"
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "options": {
+        "jestConfig": "apps/native/app/jest.config.ts"
+      }
     },
     "codegen/frontend-client": {
       "executor": "nx:run-commands",

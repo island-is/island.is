@@ -1146,6 +1146,12 @@ export const m = defineMessages({
       'Ekki er hægt að halda áfram með umsókn þar sem engin erfingi er skráður',
     description: '',
   },
+  missingSpouseUndividedEstateValidation: {
+    id: 'es.application:missingSpouseUndividedEstateValidation',
+    defaultMessage:
+      'Ekki er hægt að halda áfram með umsókn þar sem skrá þarf maka í listann af erfingjum',
+    description: '',
+  },
 
   // Properties
   realEstatesDescription: {

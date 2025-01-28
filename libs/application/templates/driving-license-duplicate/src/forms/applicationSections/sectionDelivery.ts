@@ -1,5 +1,4 @@
 import {
-  buildDescriptionField,
   buildMultiField,
   buildSection,
   buildSelectField,
@@ -13,15 +12,9 @@ export const sectionDelivery = buildSection({
   children: [
     buildMultiField({
       id: 'deliverySection',
-      title: '',
+      title: m.deliveryMethodTitle,
+      description: m.deliveryMethodDescription,
       children: [
-        buildDescriptionField({
-          id: 'deliveryDescription',
-          titleVariant: 'h3',
-          title: m.deliveryMethodTitle,
-          marginBottom: 2,
-          description: m.deliveryMethodDescription,
-        }),
         buildSelectField({
           id: 'district',
           title: m.deliveryMethodOfficeLabel,

@@ -61,7 +61,9 @@ export const PaymentGroupTableRow = ({ data, formatMessage }: Props) => (
 
           return monthlyAmount ? amountFormat(monthlyAmount) : '-'
         }),
-        last: amountFormat(p.totalYearCumulativeAmount),
+        last: `${amountFormat(p.totalYearCumulativeAmount)}${
+          p.markWithAsterisk ? ' *' : ''
+        }`,
       }))}
     />
   </ExpandRow>

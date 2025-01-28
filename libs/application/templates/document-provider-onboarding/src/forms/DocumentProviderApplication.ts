@@ -4,10 +4,10 @@ import {
   buildSection,
   buildTextField,
   buildSubmitField,
-  buildDividerField,
   buildDescriptionField,
   buildCheckboxField,
   buildLinkField,
+  buildTitleField,
 } from '@island.is/application/core'
 import { Form, ApplicationTypes, FormModes } from '@island.is/application/types'
 import { m } from '../lib/messages'
@@ -184,8 +184,7 @@ export const DocumentProviderOnboarding: Form = buildForm({
           title: m.confirmationTitle,
           description: m.confirmationSubTitle,
           children: [
-            //Error in dev tools, missing keys on divider fields...
-            buildDividerField({
+            buildTitleField({
               title: m.applicantSection,
               color: 'currentColor',
             }),
@@ -213,8 +212,7 @@ export const DocumentProviderOnboarding: Form = buildForm({
               format: '###-####',
               placeholder: m.applicantPhoneNumberPlaceholder,
             }),
-            //Error in dev tools, missing keys on divider fields...
-            buildDividerField({
+            buildTitleField({
               title: m.administrativeContactSection,
               color: 'currentColor',
             }),
@@ -236,8 +234,7 @@ export const DocumentProviderOnboarding: Form = buildForm({
               format: '###-####',
               placeholder: m.administrativeContactPhoneNumberPlaceholder,
             }),
-            //Error in dev tools, missing keys on divider fields...
-            buildDividerField({
+            buildTitleField({
               title: m.technicalContactSection,
               color: 'currentColor',
             }),
@@ -259,8 +256,7 @@ export const DocumentProviderOnboarding: Form = buildForm({
               format: '###-####',
               placeholder: m.technicalContactPhoneNumberPlaceHolder,
             }),
-            //Error in dev tools, missing keys on divider fields...
-            buildDividerField({
+            buildTitleField({
               title: m.helpDeskSection,
               color: 'currentColor',
             }),

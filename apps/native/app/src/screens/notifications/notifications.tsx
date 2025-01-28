@@ -1,13 +1,4 @@
-import {
-  Button,
-  NavigationBarSheet,
-  NotificationCard,
-  Problem,
-  ListItemSkeleton,
-  EmptyList,
-} from '@ui'
 import { useApolloClient } from '@apollo/client'
-
 import { dismissAllNotificationsAsync } from 'expo-notifications'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
@@ -24,6 +15,15 @@ import {
 } from 'react-native-navigation'
 import { useTheme } from 'styled-components'
 import styled from 'styled-components/native'
+
+import {
+  Button,
+  NavigationBarSheet,
+  NotificationCard,
+  Problem,
+  ListItemSkeleton,
+  EmptyList,
+} from '../../ui'
 import {
   GetUserNotificationsQuery,
   Notification,
@@ -32,7 +32,6 @@ import {
   useMarkAllNotificationsAsSeenMutation,
   useMarkUserNotificationAsReadMutation,
 } from '../../graphql/types/schema'
-
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
 import { navigateTo, navigateToUniversalLink } from '../../lib/deep-linking'
 import { useNotificationsStore } from '../../stores/notifications-store'
