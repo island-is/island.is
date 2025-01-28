@@ -202,6 +202,23 @@ export class PdfService {
       })
   }
 
+  async getCivilClaimPdf(
+    theCase: Case,
+    fileId?: string,
+    fileName?: string,
+  ): Promise<Buffer | undefined> {
+    const existingPdf = await this.tryGetPdfFromS3(
+      theCase,
+      `${theCase.id}/${fileId}/${fileName}`,
+    )
+
+    if (existingPdf === undefined) {
+      this.logger.error(`Civil claim with id ${fileId} not found`)
+    }
+
+    return existingPdf
+  }
+
   async getIndictmentPdf(theCase: Case): Promise<Buffer> {
     let confirmation: Confirmation | undefined = undefined
 

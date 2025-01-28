@@ -20,6 +20,7 @@ import {
   MessageType,
 } from '@island.is/judicial-system/message'
 import {
+  CaseFileCategory,
   isFailedServiceStatus,
   isSuccessfulServiceStatus,
   ServiceStatus,
@@ -294,13 +295,22 @@ export class SubpoenaService {
     user: TUser,
   ): Promise<DeliverResponse> {
     try {
+      const civilClaim = theCase.caseFiles?.find(
+        (caseFile) => caseFile.category === CaseFileCategory.CIVIL_CLAIM,
+      )
+
+      const indictmentPdf = await this.pdfService.getIndictmentPdf(theCase)
       const subpoenaPdf = await this.pdfService.getSubpoenaPdf(
         theCase,
         defendant,
         subpoena,
       )
 
-      const indictmentPdf = await this.pdfService.getIndictmentPdf(theCase)
+      const civilClaimPdf = await this.pdfService.getCivilClaimPdf(
+        theCase,
+        civilClaim?.id,
+        civilClaim?.name,
+      )
 
       const createdSubpoena = await this.policeService.createSubpoena(
         theCase,
@@ -308,6 +318,9 @@ export class SubpoenaService {
         Base64.btoa(subpoenaPdf.toString('binary')),
         Base64.btoa(indictmentPdf.toString('binary')),
         user,
+        civilClaimPdf
+          ? Base64.btoa(civilClaimPdf.toString('binary'))
+          : undefined,
       )
 
       if (!createdSubpoena) {
