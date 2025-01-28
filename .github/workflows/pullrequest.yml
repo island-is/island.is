@@ -70,6 +70,13 @@ jobs:
           yarn --version
           ls -l "$(which node)"
 
+      - name: Derive appropriate SHAs
+        uses: nrwl/nx-set-shas@v4
+
+      - run: |
+          echo "BASE: ${{ env.NX_BASE }}"
+          echo "HEAD: ${{ env.NX_HEAD }}"
+
       - name: Checking out relevant branches
         run: |
           set -euo pipefail
@@ -78,15 +85,17 @@ jobs:
           echo "NX_PARALLEL: $NX_PARALLEL"
           set -x
 
-          git checkout -m "$GITHUB_HEAD_REF"
-          git checkout -m "$GITHUB_BASE_REF"
-          git checkout -m "$GITHUB_SHA"
+          # git checkout -m "$GITHUB_HEAD_REF"
+          # git checkout -m "$GITHUB_BASE_REF"
+          # git checkout -m "$GITHUB_SHA"
 
           git config --global user.email "ci@island.is"
           git config --global user.name "CI Bot"
 
-          BASE_SHA="$(git merge-base HEAD "$GITHUB_BASE_REF")"
-          HEAD_SHA="$(git merge-base HEAD "$GITHUB_HEAD_REF")"
+          # BASE_SHA="$(git merge-base HEAD "$GITHUB_BASE_REF")"
+          # HEAD_SHA="$(git merge-base HEAD "$GITHUB_HEAD_REF")"
+          BASE_SHA=${{ env.NX_BASE }}
+          HEAD_SHA=${{ env.NX_HEAD }}
           echo "Current base SHA is '$BASE_SHA' and head SHA is '$HEAD_SHA'"
           echo "{\"base_sha\": \"$BASE_SHA\", \"head_sha\":\"$HEAD_SHA\"}" > event.json
 
