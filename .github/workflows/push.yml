@@ -717,10 +717,10 @@ jobs:
     runs-on: arc-runners
     if: always() && needs.pre-checks.result == 'success' && needs.pre-checks.outputs.PRE_CHECK == 'feature-deploy' && !(needs.pre-checks.outputs.PRE_RELEASE == 'true') && needs.helm-docker-build.result != 'failure' && needs.prepare.outputs.IMAGES != ''
     needs:
-      - pre-checks
+      # - pre-checks
       - prepare
-      - helm-docker-build
-      - retag-unaffected
+      # - helm-docker-build
+      # - retag-unaffected
     env:
       GIT_BRANCH_DEPLOY: ${{ needs.pre-checks.outputs.GIT_BRANCH_DEPLOY }}
       FEATURE_NAME: ${{ needs.pre-checks.outputs.FEATURE_NAME }}
