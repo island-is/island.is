@@ -263,14 +263,14 @@ export const healthModule: PortalModule = {
     {
       name: hm.referrals,
       path: HealthPaths.HealthReferences,
-      key: 'HealthReferences',
+      key: 'Referrals',
       enabled: true, //TODO: Add scopeuserInfo.scopes.includes(ApiScope.healthReferences),
       element: <Referrals />,
     },
     {
       name: hm.referrals,
       path: HealthPaths.HealthReferencesDetail,
-      key: 'HealthReferences',
+      key: 'Referrals',
       enabled: true, //TODO: Add scopeuserInfo.scopes.includes(ApiScope.healthReferences),
       element: <ReferencesDetail />,
     },

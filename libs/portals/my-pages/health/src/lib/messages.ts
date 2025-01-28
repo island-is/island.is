@@ -1310,9 +1310,17 @@ export const messages = defineMessages({
     id: 'sp.health:waitlists',
     defaultMessage: 'Biðlistar',
   },
+  noWaitlists: {
+    id: 'sp.health:no-waitlists',
+    defaultMessage: 'Engar skráning á biðlista finnst',
+  },
   waitlistsIntro: {
     id: 'sp.health:waitlists-intro',
     defaultMessage: 'Hér finnur þú biðlista ...',
+  },
+  waitlistLastUpdated: {
+    id: 'sp.health:waitlist-last-updated',
+    defaultMessage: 'Staða síðast uppfærð',
   },
   moreDetail: {
     id: 'sp.health:more-detail',

@@ -39,8 +39,8 @@ export enum HealthPaths {
   HealthVaccinationsOther = '/heilsa/bolusetningar/adrar',
 
   HealthReferences = '/heilsa/tilvisanir',
-  HealthReferencesDetail = '/heilsa/tilvisanir/:type',
+  HealthReferencesDetail = '/heilsa/tilvisanir/:id',
 
   HealthWaitlists = '/heilsa/waitlists',
-  HealthWaitlistsDetail = '/heilsa/waitlists/:type',
+  HealthWaitlistsDetail = '/heilsa/waitlists/:id',
 }

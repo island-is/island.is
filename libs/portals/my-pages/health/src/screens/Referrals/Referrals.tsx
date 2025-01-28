@@ -10,6 +10,7 @@ import { Stack } from '@island.is/island-ui/core'
 import { HealthPaths } from '../../lib/paths'
 import { useGetReferralsQuery } from './Referrals.generated'
 import { Problem } from '@island.is/react-spa/shared'
+import { isDefined } from '@island.is/shared/utils'
 
 const References: React.FC = () => {
   useNamespaces('sp.health')
@@ -21,6 +22,7 @@ const References: React.FC = () => {
   })
 
   const referrals = data?.healthDirectorateReferrals.referrals
+
   return (
     <IntroWrapper
       title={formatMessage(messages.referrals)}
@@ -33,7 +35,7 @@ const References: React.FC = () => {
       {!loading && !error && referrals?.length === 0 && (
         <Problem
           type="no_data"
-          message={formatMessage(messages.referrals)}
+          message={formatMessage(messages.noReferrals)}
           imgSrc="./assets/images/nodata.svg"
         />
       )}
@@ -44,7 +46,12 @@ const References: React.FC = () => {
           <ActionCard
             key={index}
             heading={referral?.serviceName ?? ''}
-            text={referral?.validUntilDate ?? ''}
+            text={[
+              formatMessage(messages.medicineValidTo),
+              referral.validUntilDate,
+            ]
+              .filter((item) => isDefined(item))
+              .join(' ')}
             tag={{
               label: referral?.stateDisplay ?? '',
               outlined: false,
@@ -52,7 +59,7 @@ const References: React.FC = () => {
             }}
             cta={{
               url: HealthPaths.HealthReferencesDetail.replace(
-                ':type',
+                ':id',
                 referral?.id ?? '',
               ),
               label: formatMessage(messages.seeMore),

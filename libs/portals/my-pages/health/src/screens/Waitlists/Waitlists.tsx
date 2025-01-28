@@ -8,10 +8,19 @@ import {
 import React from 'react'
 import { messages } from '../../lib/messages'
 import { HealthPaths } from '../../lib/paths'
+import { useGetWaitlistsQuery } from './Waitlists.generated'
+import { Problem } from '@island.is/react-spa/shared'
+import { isDefined } from '@island.is/shared/utils'
 
 const Waitlists: React.FC = () => {
   useNamespaces('sp.health')
-  const { formatMessage } = useLocale()
+  const { formatMessage, lang } = useLocale()
+
+  const { data, loading, error } = useGetWaitlistsQuery({
+    variables: { locale: lang },
+  })
+
+  const waitlists = data?.healthDirectorateWaitlists.waitlists
 
   return (
     <IntroWrapper
@@ -22,27 +31,44 @@ const Waitlists: React.FC = () => {
         messages.landlaeknirVaccinationsTooltip,
       )}
     >
-      <Stack space={2}>
-        <ActionCard
-          heading="Liðskiptaaðgerð á hné"
-          text="Staða síðast uppfærð 23.11.2023"
-          eyebrow="Landspítalinn"
-          tag={{
-            label: 'Samþykktur á lista',
-            outlined: false,
-            variant: 'blue',
-          }}
-          cta={{
-            url: HealthPaths.HealthWaitlistsDetail.replace(
-              ':type',
-              'lidskipti',
-            ),
-            label: formatMessage(messages.seeMore),
-            centered: true,
-            variant: 'text',
-          }}
+      {!loading && !error && waitlists?.length === 0 && (
+        <Problem
+          type="no_data"
+          message={formatMessage(messages.noWaitlists)}
+          imgSrc="./assets/images/nodata.svg"
         />
-        <ActionCard
+      )}
+      {error && !loading && <Problem error={error} noBorder={false} />}
+
+      <Stack space={2}>
+        {waitlists?.map((waitlist, index) => (
+          <ActionCard
+            heading={waitlist?.name ?? ''}
+            text={[
+              formatMessage(messages.waitlistLastUpdated),
+              waitlist.lastUpdated,
+            ]
+              .filter((item) => isDefined(item))
+              .join(' ')}
+            eyebrow={waitlist?.organization}
+            tag={{
+              label: waitlist.status,
+              outlined: false,
+              variant: 'blue',
+            }}
+            cta={{
+              url: HealthPaths.HealthWaitlistsDetail.replace(
+                ':id',
+                waitlist.id,
+              ),
+              label: formatMessage(messages.seeMore),
+              centered: true,
+              variant: 'text',
+            }}
+          />
+        ))}
+
+        {/* <ActionCard
           heading="Hjúkrunarheimili"
           text="Staða síðast uppfærð 03.12.2024"
           eyebrow="Sóltún hjúkrunarheimili"
@@ -56,7 +82,7 @@ const Waitlists: React.FC = () => {
             centered: true,
             variant: 'text',
           }}
-        />
+        /> */}
       </Stack>
     </IntroWrapper>
   )

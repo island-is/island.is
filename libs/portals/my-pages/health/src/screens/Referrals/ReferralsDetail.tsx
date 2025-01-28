@@ -7,11 +7,23 @@ import {
 } from '@island.is/portals/my-pages/core'
 import React from 'react'
 import { messages } from '../../lib/messages'
+import { useGetReferralsDetailQuery } from './Referrals.generated'
+import { useParams } from 'react-router-dom'
+
+type UseParams = {
+  id: string
+}
 
 const ReferencesDetail: React.FC = () => {
   useNamespaces('sp.health')
-  const { formatMessage } = useLocale()
+  const { formatMessage, lang } = useLocale()
+  const { id } = useParams() as UseParams
 
+  const {data, loading, error } = useGetReferralsDetailQuery({variables: {locale: lang}})
+
+  const referral = data?.healthDirectorateReferrals.referrals.find(item => item.id === id)
+
+  
   return (
     <IntroWrapper
       title={formatMessage(messages.referrals)}

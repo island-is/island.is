@@ -9,10 +9,28 @@ import {
 } from '@island.is/portals/my-pages/core'
 import React from 'react'
 import { messages } from '../../lib/messages'
+import { useParams } from 'react-router-dom'
+import { useGetWaitlistsQuery } from './Waitlists.generated'
+import { isDefined } from '@island.is/shared/utils'
+import { Problem } from '@island.is/react-spa/shared'
+
+type UseParams = {
+  id: string
+}
 
 const WaitlistsDetail: React.FC = () => {
   useNamespaces('sp.health')
-  const { formatMessage } = useLocale()
+  const { formatMessage, lang } = useLocale()
+
+  const { id } = useParams() as UseParams
+
+  const { data, loading, error } = useGetWaitlistsQuery({
+    variables: { locale: lang },
+  })
+
+  const waitlist = data?.healthDirectorateWaitlists.waitlists.find(
+    (item) => item.id === id,
+  )
 
   return (
     <IntroWrapper
@@ -31,6 +49,15 @@ const WaitlistsDetail: React.FC = () => {
       ]}
       marginBottom={6}
     >
+      {!loading && !error && isDefined(waitlist) && (
+        <Problem
+          type="no_data"
+          message={formatMessage(messages.noWaitlists)}
+          imgSrc="./assets/images/nodata.svg"
+        />
+      )}
+      {error && !loading && <Problem error={error} noBorder={false} />}
+
       <InfoLineStack space={1}>
         <InfoLine label="Biðlisti" content="Liðskiptiaðgerð á hné" />
         <InfoLine
