@@ -18,7 +18,7 @@ import {
 import { error, overview } from '../lib/messages'
 import { getEndOfDayUTCDate, getFirstRegistrationEndDate } from '../utils'
 
-// Note: This form is identical to SecondarySchoolForm, except added ABORT action in buildSubmitField
+// Note: This form is identical to SecondarySchoolForm, except added ABORT action in buildSubmitField and custom field HandleBeforeSubmitInEdit
 export const Edit: Form = buildForm({
   id: 'SecondarySchoolForm',
   title: '',

@@ -104,7 +104,6 @@ export class SecondarySchoolClient {
         islandIsApplicationId: application.id,
       })
     } catch (e) {
-      console.log('e', e)
       if (e.response?.status !== 404) {
         // Rethrow if the error isn't due to the application not existing
         throw e
