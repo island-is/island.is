@@ -1,68 +1,131 @@
 import { Octokit } from '@octokit/rest'
 
-const GITHUB_TOKEN = process.env.GITHUB_TOKEN
-const OWNER = process.env.GITHUB_ORG
-const REPO = process.env.GITHUB_REPO
-const WORKFLOW_FILE = 'push.yml'
+async function getWorkflowJobStepOutputs(config) {
+  const { owner, repo, workflowId, branch, auth } = config
 
-if (!GITHUB_TOKEN || !OWNER || !REPO) {
-  console.error(
-    'GITHUB_TOKEN, GITHUB_ORG, or GITHUB_REPO is not set in the environment variables.',
-  )
-  process.exit(1)
-}
+  const octokit = new Octokit({ auth })
 
-const octokit = new Octokit({ auth: GITHUB_TOKEN })
-
-async function fetchActionOutput() {
   try {
-    // Fetch workflow runs
+    // Get the workflow run
     const { data: workflowRuns } = await octokit.actions.listWorkflowRuns({
-      owner: OWNER,
-      repo: REPO,
-      workflow_id: WORKFLOW_FILE,
-      per_page: 10,
+      owner,
+      repo,
+      workflow_id: workflowId,
+      branch: branch,
+      per_page: 1,
     })
 
-    console.log(`Workflow: ${WORKFLOW_FILE}`)
+    if (workflowRuns.total_count === 0) {
+      throw new Error(
+        `No workflow runs found for workflow ID ${workflowId} on branch ${branch}`,
+      )
+    }
 
-    for (const run of workflowRuns.workflow_runs) {
-      if (
-        run.head_branch.startsWith('pre-release/') ||
-        run.head_branch.startsWith('release/')
-      ) {
-        console.log(`\nBranch: ${run.head_branch}`)
-        console.log(`Run ID: ${run.id}`)
-        console.log(`Created: ${run.created_at}`)
-        console.log(`Status: ${run.status}`)
-        console.log(`Conclusion: ${run.conclusion}`)
+    const latestRun = workflowRuns.workflow_runs[0]
+    console.log(
+      `Found workflow run: ${latestRun.id} (Status: ${latestRun.status})`,
+    )
 
-        // Fetch jobs for this run
-        const { data: jobs } = await octokit.actions.listJobsForWorkflowRun({
-          owner: OWNER,
-          repo: REPO,
-          run_id: run.id,
-        })
+    // Get all jobs for the workflow run
+    const { data: jobsResponse } = await octokit.actions.listJobsForWorkflowRun(
+      {
+        owner,
+        repo,
+        run_id: latestRun.id,
+      },
+    )
 
-        for (const job of jobs.jobs) {
-          console.log(`\n  Job: ${job.name}`)
-          for (const step of job.steps) {
-            console.log(`    Step: ${step.name} (${step.conclusion})`)
+    // Get the prepare job specifically
+    const prepareJob = jobsResponse.jobs.find((job) => job.name === 'prepare')
 
-            // Unfortunately, the REST API doesn't provide direct access to step outputs
-            // You would need to parse the logs to get this information
-          }
-        }
-        console.log('---')
+    if (!prepareJob) {
+      console.log(
+        'Available jobs:',
+        jobsResponse.jobs.map((job) => job.name),
+      )
+      throw new Error('Prepare job not found')
+    }
+
+    // Get the job logs
+    const { data: logs } = await octokit.actions.downloadJobLogsForWorkflowRun({
+      owner,
+      repo,
+      job_id: prepareJob.id,
+    })
+
+    // Split logs into lines
+    const logLines = logs.split('\n')
+
+    // Look for the line with the actual Docker tag value
+    let dockerTag = null
+
+    // Find the line where the Docker tag is printed with its resolved value
+    const tagLine = logLines.find(
+      (line) =>
+        line.includes('DOCKER_TAG:') &&
+        !line.includes('${') &&
+        !line.includes('LAST_GOOD_BUILD'),
+    )
+
+    if (tagLine) {
+      const match = tagLine.match(/DOCKER_TAG:\s*(.+?)$/)
+      if (match) {
+        dockerTag = match[1].trim()
       }
     }
-  } catch (error) {
-    console.error('Error fetching data:', error)
-    if (error.response) {
-      console.error(`Status: ${error.response.status}`)
-      console.error(`Message: ${error.response.data.message}`)
+
+    return {
+      runId: latestRun.id,
+      status: latestRun.status,
+      conclusion: latestRun.conclusion,
+      dockerTag,
     }
+  } catch (error) {
+    console.error('Error fetching job outputs:', error)
+    throw error
   }
 }
 
-fetchActionOutput()
+// Parse command line arguments
+async function main() {
+  const args = process.argv.slice(2)
+  const branchName = args[0]
+  const repoName = args[1] || 'island.is'
+
+  if (!branchName) {
+    console.error('Error: Branch name is required')
+    console.error('Usage: node script.js <branch-name> [repo-name]')
+    console.error('Example: node script.js main')
+    console.error('Example: node script.js main my-repo')
+    process.exit(1)
+  }
+
+  const config = {
+    owner: 'island-is',
+    repo: repoName,
+    workflowId: 'push.yml',
+    branch: branchName,
+    auth: process.env.GITHUB_TOKEN,
+  }
+
+  if (!process.env.GITHUB_TOKEN) {
+    console.error('Error: GITHUB_TOKEN environment variable is required')
+    process.exit(1)
+  }
+
+  try {
+    const result = await getWorkflowJobStepOutputs(config)
+    if (result.dockerTag) {
+      console.log('Docker tag:', result.dockerTag)
+    } else {
+      console.log('Docker tag not found')
+      console.log('Run status:', result.status)
+      console.log('Run conclusion:', result.conclusion)
+    }
+  } catch (error) {
+    console.error('Failed to fetch job outputs:', error)
+    process.exit(1)
+  }
+}
+
+main()
