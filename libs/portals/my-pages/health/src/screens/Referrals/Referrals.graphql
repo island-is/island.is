@@ -8,7 +8,7 @@ fragment Referral on HealthDirectorateReferral {
 query GetReferrals($locale: String) {
   healthDirectorateReferrals(locale: $locale) {
     referrals {
-     ...Referral
+      ...Referral
     }
   }
 }
@@ -16,9 +16,9 @@ query GetReferrals($locale: String) {
 query GetReferralsDetail($locale: String) {
   healthDirectorateReferrals(locale: $locale) {
     referrals {
-     ...Referral
-     createdDate
-     reason
+      ...Referral
+      createdDate
+      reason
       fromContactInfo {
         name
         profession

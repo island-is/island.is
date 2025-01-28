@@ -19,11 +19,14 @@ const ReferencesDetail: React.FC = () => {
   const { formatMessage, lang } = useLocale()
   const { id } = useParams() as UseParams
 
-  const {data, loading, error } = useGetReferralsDetailQuery({variables: {locale: lang}})
+  const { data, loading, error } = useGetReferralsDetailQuery({
+    variables: { locale: lang },
+  })
 
-  const referral = data?.healthDirectorateReferrals.referrals.find(item => item.id === id)
+  const referral = data?.healthDirectorateReferrals.referrals.find(
+    (item) => item.id === id,
+  )
 
-  
   return (
     <IntroWrapper
       title={formatMessage(messages.referrals)}
