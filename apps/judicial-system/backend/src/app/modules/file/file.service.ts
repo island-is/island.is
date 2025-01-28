@@ -132,6 +132,7 @@ export class FileService {
       case CaseFileCategory.DEFENDANT_CASE_FILE:
       case CaseFileCategory.CRIMINAL_RECORD:
       case CaseFileCategory.COST_BREAKDOWN:
+      case CaseFileCategory.CIVIL_CLAIM:
       case undefined:
       case null:
         courtDocumentFolder = CourtDocumentFolder.CASE_DOCUMENTS
