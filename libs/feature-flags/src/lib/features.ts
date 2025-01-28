@@ -42,6 +42,10 @@ export enum Features {
   servicePortalSocialInsuranceIncomePlanPageEnabled = 'isServicePortalSocialInsuranceIncomePlanPageEnabled',
   servicePortalHealthVaccinationsPageEnabled = 'isServicePortalHealthVaccinationsPageEnabled',
   servicePortalHealthOrganDonationPageEnabled = 'isServicePortalHealthOrganDonationPageEnabled',
+  servicePortalHealthReferralsPageEnabled = 'isServicePortalHealthReferralsPageEnabled',
+  servicePortalHealthWaitlistsPageEnabled = 'isServicePortalHealthWaitlistsPageEnabled',
+
+
   servicePortalDocumentsActionsEnabled = 'isServicePortalDocumentsActionsEnabled',
   isServicePortalDocumentsV3PageEnabled = 'isServicePortalDocumentsV3PageEnabled',
   //Occupational License Health directorate fetch enabled

@@ -153,11 +153,11 @@ export class HealthDirectorateService {
             ? new Date(item.lastUpdated?.toString())
             : undefined,
           name: item.name,
-          waitBeganDate: item.waitBeganDate
+          waitBegan: item.waitBeganDate
             ? new Date(item.waitBeganDate?.toString())
             : undefined,
-          organizationName: item.organizationName.toString(),
-          statusDisplay: item.statusDisplay?.toString(),
+          organization: item.organizationName.toString(),
+          status: item.statusDisplay?.toString(),
         }
       }) ?? []
 
