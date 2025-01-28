@@ -1,9 +1,11 @@
 import React, { FC, ReactNode } from 'react'
+import cn from 'classnames'
+
 import { Box, Text } from '@island.is/island-ui/core'
+import { Colors } from '@island.is/island-ui/theme'
+
 import { Tag } from '../Tag/Tag'
 import { TagVariant } from '../Tag/Tag'
-import { Colors } from '@island.is/island-ui/theme'
-import cn from 'classnames'
 import * as styles from './Breadcrumbs.css'
 
 export interface BreadCrumbItem {

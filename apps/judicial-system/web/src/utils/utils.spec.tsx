@@ -9,7 +9,7 @@ import {
 
 import * as formatters from './formatters'
 import { validateAndSendToServer } from './formHelper'
-import { getAppealEndDate, getShortGender, hasSentNotification } from './utils'
+import { getShortGender, hasSentNotification } from './utils'
 
 describe('Utils', () => {
   describe('removeTabs', () => {
@@ -90,19 +90,6 @@ describe('Utils', () => {
 
       // Assert
       expect(res).toEqual('020-0202-2929')
-    })
-  })
-
-  describe('getAppealEndDate', () => {
-    test('should return the correct end date', () => {
-      // Arrange
-      const date = '2020-10-24T12:25:00Z'
-
-      // Act
-      const result = getAppealEndDate(date)
-
-      // Assert
-      expect(result).toEqual('27. október 2020 kl. 12:25')
     })
   })
 
