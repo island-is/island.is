@@ -17,13 +17,13 @@ env:
   COMPOSE_HTTP_TIMEOUT: 180
   SKIP_GENERATED_CACHE: ${{ contains(github.event.pull_request.labels.*.name, 'skip-generated-cache') }}
   NX_AFFECTED_ALL: ${{ contains(github.event.pull_request.labels.*.name, 'nx-affected-all') }}
-  CHUNK_SIZE: ${{ vars.CHUNK_SIZE || 8 }}
-  DISABLE_GROUPING: ${{ vars.DISABLE_GROUPING || false }}
-  DISABLE_CHUNKS: ${{ vars.DISABLE_CHUNKS || false }}
-  DISABLE_PROBLEMATIC: ${{ vars.DISABLE_PROBLEMATIC || false }}
-  MAX_JOBS: ${{ vars.MAX_JOBS || 3 }}
-  NX_PARALLEL: ${{ vars.NX_PARALLEL || 6 }}
-  NX_MAX_PARALLEL: ${{ vars.NX_MAX_PARALLEL || 6 }}
+  DISABLE_CHUNKS: 'false'
+  DISABLE_GROUPING: 'false'
+  DISABLE_PROBLEMATIC: 'false'
+  CHUNK_SIZE: '3'
+  MAX_JOBS: '2'
+  NX_PARALLEL: '2'
+  NX_MAX_PARALLEL: '4'
 
 jobs:
   prepare:
@@ -70,6 +70,13 @@ jobs:
           yarn --version
           ls -l "$(which node)"
 
+      - name: Derive appropriate SHAs
+        uses: nrwl/nx-set-shas@v4
+
+      - run: |
+          echo "BASE: ${{ env.NX_BASE }}"
+          echo "HEAD: ${{ env.NX_HEAD }}"
+
       - name: Checking out relevant branches
         run: |
           set -euo pipefail
@@ -78,15 +85,18 @@ jobs:
           echo "NX_PARALLEL: $NX_PARALLEL"
           set -x
 
-          git checkout -m "$GITHUB_HEAD_REF"
-          git checkout -m "$GITHUB_BASE_REF"
-          git checkout -m "$GITHUB_SHA"
+          # git checkout -m "$GITHUB_HEAD_REF"
+          # git checkout -m "$GITHUB_BASE_REF"
+          # git checkout -m "$GITHUB_SHA"
 
           git config --global user.email "ci@island.is"
           git config --global user.name "CI Bot"
 
-          BASE_SHA="$(git merge-base HEAD "$GITHUB_BASE_REF")"
-          HEAD_SHA="$(git merge-base HEAD "$GITHUB_HEAD_REF")"
+          # BASE_SHA="$(git merge-base HEAD "$GITHUB_BASE_REF")"
+          # HEAD_SHA="$(git merge-base HEAD "$GITHUB_HEAD_REF")"
+          BASE_SHA=${{ env.NX_BASE }}
+          HEAD_SHA=${{ env.NX_HEAD }}
+          echo "BASE=$BASE_SHA" >> "$GITHUB_ENV"
           echo "Current base SHA is '$BASE_SHA' and head SHA is '$HEAD_SHA'"
           echo "{\"base_sha\": \"$BASE_SHA\", \"head_sha\":\"$HEAD_SHA\"}" > event.json
 
@@ -111,22 +121,22 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           enable-cache: 'node_modules,cypress,generated-files'
 
-      - name: Preparing HEAD and BASE tags
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          HTML_URL: ${{ github.event.pull_request.html_url }}
-          ISSUE_REPORTING_SLACK_WEBHOOK_URL: ${{ secrets.SLACK_BUILD_ISSUES_REPORTING_WEBHOOK_URL }}
-        run: |
-          set -euo pipefail
-          echo "HEAD=$GITHUB_SHA" >> "$GITHUB_ENV"
-          export HEAD_REF="$GITHUB_HEAD_REF"
-          export BASE_REF="$GITHUB_BASE_REF"
-          export PR_REF="$GITHUB_SHA"
-          export SHELL=/usr/bin/bash
-          export WORKFLOW_ID=pullrequest
-          source ./scripts/ci/00_prepare-base-tags.sh "$(git merge-base HEAD "$GITHUB_BASE_REF")"
-          git checkout "$GITHUB_SHA"
-          echo "BASE=$BASE" >> "$GITHUB_ENV"
+      # - name: Preparing HEAD and BASE tags
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #     HTML_URL: ${{ github.event.pull_request.html_url }}
+      #     ISSUE_REPORTING_SLACK_WEBHOOK_URL: ${{ secrets.SLACK_BUILD_ISSUES_REPORTING_WEBHOOK_URL }}
+      #   run: |
+      #     set -euo pipefail
+      #     echo "HEAD=$GITHUB_SHA" >> "$GITHUB_ENV"
+      #     export HEAD_REF="$GITHUB_HEAD_REF"
+      #     export BASE_REF="$GITHUB_BASE_REF"
+      #     export PR_REF="$GITHUB_SHA"
+      #     export SHELL=/usr/bin/bash
+      #     export WORKFLOW_ID=pullrequest
+      #     source ./scripts/ci/00_prepare-base-tags.sh "$(git merge-base HEAD "$GITHUB_BASE_REF")"
+      #     git checkout "$GITHUB_SHA"
+      #     echo "BASE=$BASE" >> "$GITHUB_ENV"
 
       - name: License audit Node modules
         run: ./scripts/ci/20_license-audit.sh
