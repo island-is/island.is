@@ -65,4 +65,4 @@ opts=(
   --target=test
   --verbose
 )
-yarn nx run-many "${opts[@]}" "$@"
+yarn nx run-many "${opts[@]}" ${EXTRA_OPTS} "$@"
