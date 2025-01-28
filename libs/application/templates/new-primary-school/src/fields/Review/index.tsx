@@ -4,6 +4,7 @@ import {
   Application,
   DefaultEvents,
   Field,
+  NO,
   RecordObject,
 } from '@island.is/application/types'
 import { handleServerError } from '@island.is/application/ui-components'
@@ -52,9 +53,8 @@ export const Review: FC<ReviewScreenProps> = ({
   const editable = field.props?.editable ?? false
   const hasError = (id: string) => get(errors, id) as string
 
-  const { applicationType, reasonForApplication } = getApplicationAnswers(
-    application.answers,
-  )
+  const { applicationType, reasonForApplication, applyForNeighbourhoodSchool } =
+    getApplicationAnswers(application.answers)
 
   const groupHasNoErrors = (ids: string[]) =>
     ids.every((id) => !has(errors, id))
@@ -169,7 +169,11 @@ export const Review: FC<ReviewScreenProps> = ({
         <CurrentSchool {...childProps} />
       )}
       <School {...childProps} />
-      <ReasonForApplication {...childProps} />
+      {(applicationType === ApplicationType.NEW_PRIMARY_SCHOOL ||
+        (applicationType === ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL &&
+          applyForNeighbourhoodSchool === NO)) && (
+        <ReasonForApplication {...childProps} />
+      )}
       {reasonForApplication ===
         ReasonForApplicationOptions.SIBLINGS_IN_SAME_SCHOOL && (
         <Siblings {...childProps} />
