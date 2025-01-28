@@ -102,11 +102,13 @@ export {
   courtSessionTypeNames,
 } from './lib/case'
 
+export { getIndictmentVerdictAppealDeadlineStatus } from './lib/indictmentCase'
+
 export {
-  getIndictmentVerdictAppealDeadlineStatus,
-  VERDICT_APPEAL_WINDOW_DAYS,
-  FINE_APPEAL_WINDOW_DAYS,
-} from './lib/indictmentCase'
+  getIndictmentAppealDeadlineDate,
+  getAppealDeadlineDate,
+  hasDatePassed,
+} from './lib/dates'
 
 export type {
   CrimeScene,
