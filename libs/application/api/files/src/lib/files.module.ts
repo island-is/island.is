@@ -29,7 +29,9 @@ export const createBullModule = () => {
   if (process.env.INIT_SCHEMA === 'true') {
     return NestBullModule.registerQueueAsync()
   } else {
-    const bullModuleName = 'application_system_api_bull_module'
+    const bullModuleName =
+      process.env.APPLICATION_SYSTEM_BULL_PREFIX ??
+      'application_system_api_bull_module'
     return NestBullModule.registerQueueAsync({
       name: 'upload',
       useFactory: (config: ConfigType<typeof ApplicationFilesConfig>) => ({
