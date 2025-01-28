@@ -445,6 +445,42 @@ export const newPrimarySchoolMessages: MessageDir = {
       description: '{grade} grade',
     },
 
+    // School page
+    schoolSubSectionTitle: {
+      id: 'nps.application:primary.school.school.sub.section.title',
+      defaultMessage: 'Skóli',
+      description: 'School',
+    },
+    schoolSubSectionDescription: {
+      id: 'nps.application:primary.school.school.sub.section.description',
+      defaultMessage:
+        'Börn eiga rétt á skólavist í því sveitarfélagi þar sem þau eru með skráð lögheimili. Einstaka sveitarfélög úthluta barni námsvist í hverfisskóla eða sem næst þeirra lögheimili. Í báðun tilfellum geta foreldrar sótt um annan skóla hvort sem er innan sveitarfélags eða utan. Ekki er þó víst að nýr skóli sjái sér fært að taka á móti barni. Er það ávalt háð aðstæðum hverju sinni.',
+      description:
+        'Children have the right to attend school in the municipality where they have their registered domicile. Some municipalities assign a child to a neighbourhood school or the school closest to their domicile. In both cases, parents can apply for another school, whether within the municipality or outside it. However, it is not certain that the new school will be able to accept the child. This is always subject to the circumstances at the time.',
+    },
+    schoolApplyForNeighbourhoodSchoolLabel: {
+      id: 'nps.application:primary.school.school.apply.for.neighbourhood.school.label',
+      defaultMessage: 'Staðfesta innritun í hverfisskóla',
+      description: 'Confirm enrollment in the neighbourhood school',
+    },
+    schoolApplyForNeighbourhoodSchoolSubLabel: {
+      id: 'nps.application:primary.school.school.apply.for.neighbourhood.school.sub.label',
+      defaultMessage: 'Hverfisskólinn ykkar er: {neighbourhoodSchoolName}',
+      description: 'Your neighbourhood school is: {neighbourhoodSchoolName}',
+    },
+    schoolApplyForOtherSchoolLabel: {
+      id: 'nps.application:primary.school.school.apply.for.other.school.label',
+      defaultMessage: 'Hafna innritun í hverfisskóla',
+      description: 'Decline enrollment in the neighbourhood school',
+    },
+    schoolApplyForOtherSchoolSubLabel: {
+      id: 'nps.application:primary.school.school.apply.for.other.school.sub.label',
+      defaultMessage:
+        'Þú getur sótt um fyrir barnið þitt í skóla utan þíns skólahverfis, en ekki er víst að skólinn geti tekið við barninu.',
+      description:
+        'You can apply for your child to attend a school outside your school district, but it is not certain that the school will be able to accept your child.',
+    },
+
     // Apply to a new school
     newSchoolSubSectionTitle: {
       id: 'nps.application:primary.school.new.school.sub.section.title',
@@ -860,6 +896,11 @@ export const newPrimarySchoolMessages: MessageDir = {
       id: 'nps.application:overview.selected.school',
       defaultMessage: 'Valinn skóli',
       description: 'Selected school',
+    },
+    neighbourhoodSchool: {
+      id: 'nps.application:overview.neigbourhood.school',
+      defaultMessage: 'Hverfisskóli',
+      description: 'Neighbourhood school',
     },
     foodAllergiesOrIntolerances: {
       id: 'nps.application:overview.food.allergies.or.intolerances',
