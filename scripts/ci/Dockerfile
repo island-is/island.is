@@ -59,11 +59,7 @@ RUN sh -c ' \
   set -euxo pipefail; \
   ls -lah dist/ ./ ./apps/; \
   yarn nx reset; \
-  if [[ "$APP" == "license-api" ]]; then \
-  echo "We got $APP"; \
-  else \
   project="$(yarn nx show project ${APP} --json)"; \
-  fi; \
   root_dir="$(echo -n "$project" | jq -r .root)"; \
   mv "dist/$root_dir" /dist; \
   ls -lah /dist; \
