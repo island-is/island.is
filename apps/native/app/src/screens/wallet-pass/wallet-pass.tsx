@@ -183,7 +183,7 @@ export const WalletPassScreen: NavigationFunctionComponent<{
   const informationTopSpacing =
     (allowLicenseBarcode && ((loading && !data?.barcode) || data?.barcode)) ||
     ((!isConnected || res.error) && isBarcodeEnabled)
-      ? barcodeHeight + LICENSE_CARD_ROW_GAP + theme.spacing[5]
+      ? barcodeHeight + LICENSE_CARD_ROW_GAP + theme.spacing[4]
       : theme.spacing[2]
 
   const [key, setKey] = useState(0)
@@ -429,7 +429,7 @@ export const WalletPassScreen: NavigationFunctionComponent<{
             informationTopSpacing || (!isConnected && isBarcodeEnabled)
               ? isTablet
                 ? 340
-                : 162
+                : 182
               : 0,
         }}
         key={key}
