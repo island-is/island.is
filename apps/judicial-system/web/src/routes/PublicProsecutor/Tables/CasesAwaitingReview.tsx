@@ -5,10 +5,7 @@ import { AnimatePresence } from 'framer-motion'
 import { Text } from '@island.is/island-ui/core'
 import { capitalize, formatDate } from '@island.is/judicial-system/formatters'
 import { core, tables } from '@island.is/judicial-system-web/messages'
-import {
-  CaseTag,
-  SectionHeading,
-} from '@island.is/judicial-system-web/src/components'
+import { SectionHeading } from '@island.is/judicial-system-web/src/components'
 import { useContextMenu } from '@island.is/judicial-system-web/src/components/ContextMenu/ContextMenu'
 import {
   CourtCaseNumber,
@@ -21,6 +18,7 @@ import TableInfoContainer from '@island.is/judicial-system-web/src/components/Ta
 import TagCaseState, {
   mapIndictmentCaseStateToTagVariant,
 } from '@island.is/judicial-system-web/src/components/Tags/TagCaseState/TagCaseState'
+import TagIndictmentRulingDecision from '@island.is/judicial-system-web/src/components/Tags/TagIndictmentRulingDecision/TagIndictmentRulingDecison'
 import {
   CaseIndictmentRulingDecision,
   CaseListEntry,
@@ -83,14 +81,11 @@ const CasesForReview: FC<CasesForReviewTableProps> = ({ loading, cases }) => {
                 },
                 {
                   cell: (row) => (
-                    <CaseTag
-                      color="darkerBlue"
-                      text={formatMessage(
+                    <TagIndictmentRulingDecision
+                      isFine={
                         row.indictmentRulingDecision ===
-                          CaseIndictmentRulingDecision.FINE
-                          ? tables.fineTag
-                          : tables.rulingTag,
-                      )}
+                        CaseIndictmentRulingDecision.FINE
+                      }
                     />
                   ),
                 },

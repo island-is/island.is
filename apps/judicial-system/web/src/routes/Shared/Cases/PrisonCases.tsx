@@ -33,6 +33,7 @@ import {
 } from '@island.is/judicial-system-web/src/components/Table'
 import Table from '@island.is/judicial-system-web/src/components/Table/Table'
 import TagContainer from '@island.is/judicial-system-web/src/components/Tags/TagContainer/TagContainer'
+import TagIndictmentRulingDecision from '@island.is/judicial-system-web/src/components/Tags/TagIndictmentRulingDecision/TagIndictmentRulingDecison'
 import {
   getPrisonCaseStateTag,
   getPunishmentTypeTag,
@@ -216,14 +217,11 @@ export const PrisonCases: FC = () => {
             },
             {
               cell: (row) => (
-                <CaseTag
-                  color="darkerBlue"
-                  text={formatMessage(
+                <TagIndictmentRulingDecision
+                  isFine={
                     row.indictmentRulingDecision ===
-                      CaseIndictmentRulingDecision.FINE
-                      ? tables.fineTag
-                      : tables.rulingTag,
-                  )}
+                    CaseIndictmentRulingDecision.FINE
+                  }
                 />
               ),
             },
