@@ -52,16 +52,17 @@ fi
 
 echo $EXTRA_OPTS
 
-yarn nx run-many \
-  --ci \
-  --debug \
-  --detectOpenHandles \
-  --exclude="${services_to_skip[*]}" \
-  --no-watchman \
-  --parallel="${NX_PARALLEL}" \
-  --passWithNoTests \
-  --projects "${AFFECTED_PROJECTS}" \
-  --runInBand \
-  --target test \
-  --verbose \
-  "$@"
+opts=(
+  --ci
+  --debug
+  --detectOpenHandles
+  --exclude="${services_to_skip[*]}"
+  --no-watchman
+  --parallel="${NX_PARALLEL}"
+  --passWithNoTests
+  --projects="${AFFECTED_PROJECTS}"
+  # --runInBand
+  --target=test
+  --verbose
+)
+yarn nx run-many "${opts[@]}" "$@"
