@@ -45,7 +45,6 @@ export enum Features {
   servicePortalHealthReferralsPageEnabled = 'isServicePortalHealthReferralsPageEnabled',
   servicePortalHealthWaitlistsPageEnabled = 'isServicePortalHealthWaitlistsPageEnabled',
 
-
   servicePortalDocumentsActionsEnabled = 'isServicePortalDocumentsActionsEnabled',
   isServicePortalDocumentsV3PageEnabled = 'isServicePortalDocumentsV3PageEnabled',
   //Occupational License Health directorate fetch enabled
