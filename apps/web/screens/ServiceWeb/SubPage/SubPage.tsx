@@ -551,6 +551,7 @@ SubPage.getProps = async ({ apolloClient, locale, query, res }) => {
     singleSupportCategory: singleSupportCategory?.data?.getSupportCategory,
     locale: locale as Locale,
     serviceWebPage: getServiceWebPage,
+    customAlertBanner: getServiceWebPage?.alertBanner,
   }
 }
 
