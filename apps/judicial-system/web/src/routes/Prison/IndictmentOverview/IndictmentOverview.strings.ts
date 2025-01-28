@@ -7,8 +7,9 @@ export const strings = defineMessages({
     description: 'Titill á yfirliti ákæru',
   },
   title: {
-    id: 'judicial.system.core:indictment_overview.title',
-    defaultMessage: 'Dómur til fullnustu',
+    id: 'judicial.system.core:indictment_overview.title_v1',
+    defaultMessage:
+      '{isFine, select, true {Viðurlagaákvörðun} other {Dómur}} til fullnustu',
     description: 'Notaður sem titill á yfirliti ákæru fyrir fangelsi',
   },
   indictmentCompletedTitle: {
