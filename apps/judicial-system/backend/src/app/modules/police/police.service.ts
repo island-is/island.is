@@ -632,6 +632,7 @@ export class PoliceService {
     const arraignmentInfo = dateLogs?.find(
       (dateLog) => dateLog.dateType === 'ARRAIGNMENT_DATE',
     )
+
     try {
       const res = await this.fetchPoliceCaseApi(
         `${this.xRoadPath}/CreateSubpoena`,

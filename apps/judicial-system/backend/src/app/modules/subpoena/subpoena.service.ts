@@ -308,8 +308,7 @@ export class SubpoenaService {
 
       const civilClaimPdf = await this.pdfService.getCivilClaimPdf(
         theCase,
-        civilClaim?.id,
-        civilClaim?.name,
+        civilClaim?.key,
       )
 
       const createdSubpoena = await this.policeService.createSubpoena(
