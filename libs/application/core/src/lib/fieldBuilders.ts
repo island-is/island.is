@@ -47,6 +47,8 @@ import {
   FieldsRepeaterField,
   AccordionField,
   BankAccountField,
+  TitleField,
+  TitleVariants,
 } from '@island.is/application/types'
 import { Locale } from '@island.is/shared/types'
 import { Colors } from '@island.is/island-ui/theme'
@@ -74,6 +76,7 @@ const extractCommonFields = (
     nextButtonText,
     marginBottom,
     marginTop,
+    clearOnChange,
   } = data
 
   return {
@@ -89,6 +92,7 @@ const extractCommonFields = (
     nextButtonText,
     marginBottom,
     marginTop,
+    clearOnChange,
   }
 }
 
@@ -210,6 +214,7 @@ export const buildSelectField = (
     onSelect,
     backgroundColor = 'blue',
     isMulti,
+    isClearable,
     required,
   } = data
   return {
@@ -222,6 +227,7 @@ export const buildSelectField = (
     component: FieldComponents.SELECT,
     onSelect,
     isMulti,
+    isClearable,
     backgroundColor,
   }
 }
@@ -237,6 +243,7 @@ export const buildAsyncSelectField = (
     backgroundColor = 'blue',
     isSearchable,
     isMulti,
+    updateOnSelect,
   } = data
 
   return {
@@ -251,6 +258,7 @@ export const buildAsyncSelectField = (
     backgroundColor,
     isSearchable,
     isMulti,
+    updateOnSelect,
   }
 }
 
@@ -292,6 +300,7 @@ export const buildTextField = (
     min,
     readOnly,
     rightAlign,
+    tooltip,
     onChange,
   } = data
   return {
@@ -309,6 +318,7 @@ export const buildTextField = (
     rightAlign,
     max,
     min,
+    tooltip,
     onChange,
     type: FieldTypes.TEXT,
     component: FieldComponents.TEXT,
@@ -397,19 +407,43 @@ export const buildFileUploadField = (
 
 export const buildDividerField = (data: {
   condition?: Condition
-  title?: FormText
-  color?: Colors
+  useDividerLine?: boolean
   marginBottom?: BoxProps['marginBottom']
   marginTop?: BoxProps['marginTop']
 }): DividerField => {
-  const { title, color, condition, marginTop, marginBottom } = data
+  const { useDividerLine = true, condition, marginTop, marginBottom } = data
   return {
     id: '',
     children: undefined,
     type: FieldTypes.DIVIDER,
     component: FieldComponents.DIVIDER,
     doesNotRequireAnswer: true,
+    title: '',
+    useDividerLine,
+    condition,
+    marginTop,
+    marginBottom,
+  }
+}
+
+export const buildTitleField = (data: {
+  condition?: Condition
+  title?: FormText
+  titleVariant?: TitleVariants
+  color?: Colors
+  marginBottom?: BoxProps['marginBottom']
+  marginTop?: BoxProps['marginTop']
+}): TitleField => {
+  const { title, titleVariant, color, condition, marginTop, marginBottom } =
+    data
+  return {
+    id: '',
+    children: undefined,
+    type: FieldTypes.TITLE,
+    component: FieldComponents.TITLE,
+    doesNotRequireAnswer: true,
     title: title ?? '',
+    titleVariant: titleVariant,
     color,
     condition,
     marginTop,
@@ -428,6 +462,8 @@ export const buildKeyValueField = (data: {
   paddingX?: BoxProps['padding']
   paddingY?: BoxProps['padding']
   paddingBottom?: BoxProps['padding']
+  marginTop?: BoxProps['marginTop']
+  marginBottom?: BoxProps['marginBottom']
 }): KeyValueField => {
   const {
     label,
@@ -440,6 +476,8 @@ export const buildKeyValueField = (data: {
     paddingX,
     paddingY,
     paddingBottom,
+    marginTop,
+    marginBottom,
   } = data
 
   return {
@@ -459,6 +497,8 @@ export const buildKeyValueField = (data: {
     paddingX,
     paddingY,
     paddingBottom,
+    marginTop,
+    marginBottom,
   }
 }
 
@@ -761,6 +801,12 @@ export const buildNationalIdWithNameField = (
     minAgePerson,
     searchPersons,
     searchCompanies,
+    showPhoneField,
+    showEmailField,
+    phoneRequired,
+    emailRequired,
+    phoneLabel,
+    emailLabel,
     titleVariant,
     description,
   } = data
@@ -778,6 +824,12 @@ export const buildNationalIdWithNameField = (
     minAgePerson,
     searchPersons,
     searchCompanies,
+    showPhoneField,
+    showEmailField,
+    phoneRequired,
+    emailRequired,
+    phoneLabel,
+    emailLabel,
     children: undefined,
     type: FieldTypes.NATIONAL_ID_WITH_NAME,
     component: FieldComponents.NATIONAL_ID_WITH_NAME,
@@ -946,6 +998,8 @@ export const buildSliderField = (
     onChangeEnd,
     labelMultiplier = 1,
     saveAsString,
+    textColor,
+    progressOverlayColor,
     marginTop,
     marginBottom,
   } = data
@@ -975,6 +1029,8 @@ export const buildSliderField = (
     onChangeEnd,
     labelMultiplier,
     saveAsString,
+    textColor,
+    progressOverlayColor,
     marginTop,
     marginBottom,
   }

@@ -30,6 +30,12 @@ query Cases {
       isSentToPrisonAdmin
       punishmentType
       openedByPrisonAdminDate
+      subpoenas {
+        id
+        serviceStatus
+        subpoenaId
+      }
+      verdictAppealDate
     }
     defendantsPunishmentType
     courtDate

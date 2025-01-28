@@ -109,62 +109,70 @@ export const CalculateShare: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   const updateShareCalculations = useCallback(() => {
     const bankAccounts: CalcShared = (
       (answers.assets as unknown as EstateAssets)?.bankAccounts?.data ?? []
-    ).map((item) => {
-      const propertyValuation = valueToNumber(item.propertyValuation)
-      const exchangeRateOrInterest = valueToNumber(item.exchangeRateOrInterest)
-      const deceasedShare = valueToNumber(item.deceasedShare)
-      const value = propertyValuation + exchangeRateOrInterest
-      const { shareValue, deceasedShareValue } = getShareValue(
-        value,
-        deceasedShare,
-      )
-      const deduction = deceasedWasInCohabitation ? value - shareValue : 0
-      return {
-        value,
-        deduction,
-        shareValue,
-        deceasedShareValue,
-        deceasedShare,
-      }
-    })
+    )
+      .filter((item) => !!item.enabled)
+      .map((item) => {
+        const propertyValuation = valueToNumber(item.propertyValuation)
+        const exchangeRateOrInterest = valueToNumber(
+          item.exchangeRateOrInterest,
+        )
+        const deceasedShare = valueToNumber(item.deceasedShare)
+        const value = propertyValuation + exchangeRateOrInterest
+        const { shareValue, deceasedShareValue } = getShareValue(
+          value,
+          deceasedShare,
+        )
+        const deduction = deceasedWasInCohabitation ? value - shareValue : 0
+        return {
+          value,
+          deduction,
+          shareValue,
+          deceasedShareValue,
+          deceasedShare,
+        }
+      })
 
     const claims: CalcShared = (
       (answers.assets as unknown as EstateAssets)?.claims?.data ?? []
-    ).map((item) => {
-      const value = valueToNumber(item.propertyValuation)
-      const deceasedShare = valueToNumber(item.deceasedShare)
-      const { shareValue, deceasedShareValue } = getShareValue(
-        value,
-        deceasedShare,
-      )
-      const deduction = deceasedWasInCohabitation ? value - shareValue : 0
-      return {
-        value,
-        deduction,
-        shareValue,
-        deceasedShareValue,
-        deceasedShare,
-      }
-    })
+    )
+      .filter((item) => !!item.enabled)
+      .map((item) => {
+        const value = valueToNumber(item.propertyValuation)
+        const deceasedShare = valueToNumber(item.deceasedShare)
+        const { shareValue, deceasedShareValue } = getShareValue(
+          value,
+          deceasedShare,
+        )
+        const deduction = deceasedWasInCohabitation ? value - shareValue : 0
+        return {
+          value,
+          deduction,
+          shareValue,
+          deceasedShareValue,
+          deceasedShare,
+        }
+      })
 
     const guns: CalcShared = (
       (answers.assets as unknown as EstateAssets)?.guns?.data ?? []
-    ).map((item) => {
-      const value = valueToNumber(item.propertyValuation)
-      const deceasedShare = valueToNumber(item.deceasedShare)
-      const { shareValue, deceasedShareValue } = getShareValue(
-        value,
-        deceasedShare,
-      )
-      const deduction = deceasedWasInCohabitation ? value - shareValue : 0
-      return {
-        value,
-        deduction,
-        shareValue,
-        deceasedShareValue,
-        deceasedShare,
-      }
-    })
+    )
+      .filter((item) => !!item.enabled)
+      .map((item) => {
+        const value = valueToNumber(item.propertyValuation)
+        const deceasedShare = valueToNumber(item.deceasedShare)
+        const { shareValue, deceasedShareValue } = getShareValue(
+          value,
+          deceasedShare,
+        )
+        const deduction = deceasedWasInCohabitation ? value - shareValue : 0
+        return {
+          value,
+          deduction,
+          shareValue,
+          deceasedShareValue,
+          deceasedShare,
+        }
+      })
 
     const inventory: CalcShared = [
       (answers.assets as unknown as EstateAssets)?.inventory ?? [],
@@ -246,41 +254,45 @@ export const CalculateShare: FC<React.PropsWithChildren<FieldBaseProps>> = ({
 
     const stocks: CalcShared = (
       (answers.assets as unknown as EstateAssets)?.stocks?.data ?? []
-    ).map((item) => {
-      const value = valueToNumber(item.value)
-      const deceasedShare = valueToNumber(item.deceasedShare)
-      const { shareValue, deceasedShareValue } = getShareValue(
-        value,
-        deceasedShare,
-      )
-      const deduction = deceasedWasInCohabitation ? value - shareValue : 0
-      return {
-        value,
-        deduction,
-        shareValue,
-        deceasedShareValue,
-        deceasedShare,
-      }
-    })
+    )
+      .filter((item) => !!item.enabled)
+      .map((item) => {
+        const value = valueToNumber(item.value)
+        const deceasedShare = valueToNumber(item.deceasedShare)
+        const { shareValue, deceasedShareValue } = getShareValue(
+          value,
+          deceasedShare,
+        )
+        const deduction = deceasedWasInCohabitation ? value - shareValue : 0
+        return {
+          value,
+          deduction,
+          shareValue,
+          deceasedShareValue,
+          deceasedShare,
+        }
+      })
 
     const vehicles: CalcShared = (
       (answers.assets as unknown as EstateAssets)?.vehicles?.data ?? []
-    ).map((item) => {
-      const value = valueToNumber(item.propertyValuation)
-      const deceasedShare = valueToNumber(item.deceasedShare)
-      const { shareValue, deceasedShareValue } = getShareValue(
-        value,
-        deceasedShare,
-      )
-      const deduction = deceasedWasInCohabitation ? value - shareValue : 0
-      return {
-        value,
-        deduction,
-        shareValue,
-        deceasedShareValue,
-        deceasedShare,
-      }
-    })
+    )
+      .filter((item) => !!item.enabled)
+      .map((item) => {
+        const value = valueToNumber(item.propertyValuation)
+        const deceasedShare = valueToNumber(item.deceasedShare)
+        const { shareValue, deceasedShareValue } = getShareValue(
+          value,
+          deceasedShare,
+        )
+        const deduction = deceasedWasInCohabitation ? value - shareValue : 0
+        return {
+          value,
+          deduction,
+          shareValue,
+          deceasedShareValue,
+          deceasedShare,
+        }
+      })
 
     setShareValues({
       bankAccounts: {

@@ -3,6 +3,7 @@ import { conditionsSubsection } from './conditionsSubsection'
 import { conditions2Subsection } from './conditions2Subsection'
 import { getDataFromExternalDataSubsection } from './getDataFromExternalDataSection'
 import { validationSubsection } from './validadionSubsection'
+import { clearOnChangeSubsection } from './clearOnChangeSubsection'
 
 export const commonActionsSection = buildSection({
   id: 'commonActions',
@@ -10,6 +11,7 @@ export const commonActionsSection = buildSection({
   children: [
     getDataFromExternalDataSubsection,
     validationSubsection,
+    clearOnChangeSubsection,
     conditionsSubsection,
     conditions2Subsection,
   ],

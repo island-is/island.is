@@ -24,6 +24,7 @@ interface NewsCardProps {
   dateTextColor?: 'dark400' | 'purple400'
   titleVariant?: 'h2' | 'h3'
   titleAs?: 'h2' | 'h3' | 'h4'
+  titleTextColor?: 'dark400' | 'blue400'
   mini?: boolean
 }
 
@@ -37,6 +38,7 @@ export const NewsCard: React.FC<React.PropsWithChildren<NewsCardProps>> = ({
   dateTextColor = 'dark400',
   titleVariant = 'h2',
   titleAs = 'h3',
+  titleTextColor = 'dark400',
   mini,
 }) => {
   const [ref, { width }] = useMeasure()
@@ -67,7 +69,7 @@ export const NewsCard: React.FC<React.PropsWithChildren<NewsCardProps>> = ({
                 {formattedDate}
               </Text>
             )}
-            <Text variant="h2" as={titleAs}>
+            <Text variant="h2" as={titleAs} color={titleTextColor}>
               {title}
             </Text>
           </Stack>
@@ -107,7 +109,7 @@ export const NewsCard: React.FC<React.PropsWithChildren<NewsCardProps>> = ({
               <Text variant="eyebrow" color={dateTextColor}>
                 {formattedDate}
               </Text>
-              <Text variant={titleVariant} as={titleAs}>
+              <Text variant={titleVariant} as={titleAs} color={titleTextColor}>
                 {title}
               </Text>
               {React.isValidElement(introduction) ? (
@@ -130,7 +132,7 @@ export const NewsCard: React.FC<React.PropsWithChildren<NewsCardProps>> = ({
               </Box>
             )}
           </Box>
-          {!!showImage && (
+          {!!showImage && image && (
             <Box flexGrow={0} width="full" className={styles.image}>
               <BackgroundImage
                 width={600}

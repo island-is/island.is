@@ -34,7 +34,7 @@ const NewsItemImage = ({ newsItem }: NewsArticleProps) =>
         {...newsItem?.image}
         url={
           newsItem?.image?.url
-            ? newsItem.image?.url + '?w=774&fm=webp&q=80'
+            ? newsItem.image?.url + '?w=1000&fm=webp&q=80'
             : ''
         }
         thumbnail={
@@ -112,7 +112,11 @@ export const NewsArticle: React.FC<
               Image: (slice: ImageProps) => {
                 return (
                   <Box className={styles.clearBoth}>
-                    <Image {...slice} thumbnail={slice.url + '?w=50'} />
+                    <Image
+                      {...slice}
+                      thumbnail={slice.url + '?w=50'}
+                      url={slice.url + '?w=1000&fm=webp&q=80'}
+                    />
                   </Box>
                 )
               },

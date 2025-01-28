@@ -109,8 +109,8 @@ const FinancialAidTemplate: ApplicationTemplate<
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/Application').then((module) =>
-                  Promise.resolve(module.Application),
+                import('../forms/ApplicationForm').then((module) =>
+                  Promise.resolve(module.ApplicationForm),
                 ),
               read: 'all',
               write: 'all',

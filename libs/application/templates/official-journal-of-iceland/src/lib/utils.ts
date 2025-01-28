@@ -257,7 +257,7 @@ const signatureTemplate = (
 
       return `
   <div class="signature">
-    <p align="center"><em>${signature.institution} ${date}</em></p>
+    <p align="center"><em>${signature.institution} <span class="signature__date">${date}</span></em></p>
     ${chairmanMarkup}
     <div style="margin-bottom: 1.5em; display: ${styleObject.display}; grid-template-columns: ${styleObject.gridTemplateColumns};" class="signature__content">
     ${membersMarkup}

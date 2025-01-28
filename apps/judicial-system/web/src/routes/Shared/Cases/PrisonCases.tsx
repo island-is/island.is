@@ -2,7 +2,7 @@ import { FC, useContext, useMemo } from 'react'
 import { useIntl } from 'react-intl'
 import partition from 'lodash/partition'
 
-import { AlertMessage, Box, Tag, Text } from '@island.is/island-ui/core'
+import { AlertMessage, Box, Text } from '@island.is/island-ui/core'
 import {
   capitalize,
   districtCourtAbbreviation,
@@ -32,11 +32,14 @@ import {
   getDurationDate,
 } from '@island.is/judicial-system-web/src/components/Table'
 import Table from '@island.is/judicial-system-web/src/components/Table/Table'
+import TagContainer from '@island.is/judicial-system-web/src/components/Tags/TagContainer/TagContainer'
+import TagIndictmentRulingDecision from '@island.is/judicial-system-web/src/components/Tags/TagIndictmentRulingDecision/TagIndictmentRulingDecison'
 import {
   getPrisonCaseStateTag,
   getPunishmentTypeTag,
 } from '@island.is/judicial-system-web/src/components/Tags/utils'
 import {
+  CaseIndictmentRulingDecision,
   CaseListEntry,
   CaseState,
   CaseType,
@@ -131,21 +134,15 @@ export const PrisonCases: FC = () => {
             },
             {
               cell: (row) => (
-                <>
-                  <Box
-                    display="inlineBlock"
-                    marginRight={row.appealState ? 1 : 0}
-                    marginBottom={row.appealState ? 1 : 0}
-                  >
-                    <TagCaseState caseState={CaseState.ACCEPTED} />
-                  </Box>
+                <TagContainer>
+                  <TagCaseState caseState={CaseState.ACCEPTED} />
                   {row.appealState && (
                     <TagAppealState
                       appealState={row.appealState}
                       appealRulingDecision={row.appealRulingDecision}
                     />
                   )}
-                </>
+                </TagContainer>
               ),
             },
             {
@@ -185,7 +182,7 @@ export const PrisonCases: FC = () => {
               sortable: { isSortable: true, key: 'defendants' },
             },
             {
-              title: formatMessage(tables.court),
+              title: formatMessage(tables.type),
             },
             {
               title: formatMessage(tables.punishmentType),
@@ -219,7 +216,14 @@ export const PrisonCases: FC = () => {
               cell: (row) => <DefendantInfo defendants={row.defendants} />,
             },
             {
-              cell: (row) => <ColumnCaseType type={row.type} />,
+              cell: (row) => (
+                <TagIndictmentRulingDecision
+                  isFine={
+                    row.indictmentRulingDecision ===
+                    CaseIndictmentRulingDecision.FINE
+                  }
+                />
+              ),
             },
             {
               cell: (row) => {

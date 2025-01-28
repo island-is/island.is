@@ -86,6 +86,7 @@ const MobileCase: FC<PropsWithChildren<Props>> = ({
           courtDate={theCase.courtDate}
           indictmentRulingDecision={theCase.indictmentRulingDecision}
           indictmentDecision={theCase.indictmentDecision}
+          defendants={theCase.defendants}
         />,
       ]}
       isLoading={isLoading}

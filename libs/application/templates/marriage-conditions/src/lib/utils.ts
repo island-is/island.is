@@ -7,12 +7,7 @@ export const allowFakeCondition =
   (answers: FormValue) =>
     getValueViaPath(answers, 'fakeData.useFakeData') === result
 
-export const getSpouseNationalId = (answers: FormValue): string =>
-  getValueViaPath(answers, 'spouse.person.nationalId') as string
-
-export const removeCountryCode = (phone: string) => {
-  return phone.replace(/(^00354|^\+354|\D)/g, '')
-}
+export const fakeDataIsEnabled = allowFakeCondition(YES)
 
 export const formatIsk = (value: number): string =>
   `${value.toLocaleString('is-IS')} kr.`

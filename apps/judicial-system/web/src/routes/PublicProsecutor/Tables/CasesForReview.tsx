@@ -2,7 +2,7 @@ import { FC } from 'react'
 import { useIntl } from 'react-intl'
 import { AnimatePresence } from 'framer-motion'
 
-import { Tag, Text } from '@island.is/island-ui/core'
+import { Text } from '@island.is/island-ui/core'
 import {
   capitalize,
   districtCourtAbbreviation,
@@ -21,7 +21,8 @@ import Table, {
 import TableInfoContainer from '@island.is/judicial-system-web/src/components/Table/TableInfoContainer/TableInfoContainer'
 import TagCaseState, {
   mapIndictmentCaseStateToTagVariant,
-} from '@island.is/judicial-system-web/src/components/TagCaseState/TagCaseState'
+} from '@island.is/judicial-system-web/src/components/Tags/TagCaseState/TagCaseState'
+import TagIndictmentRulingDecision from '@island.is/judicial-system-web/src/components/Tags/TagIndictmentRulingDecision/TagIndictmentRulingDecison'
 import {
   CaseIndictmentRulingDecision,
   CaseListEntry,
@@ -100,14 +101,12 @@ const CasesForReview: FC<CasesForReviewTableProps> = ({ loading, cases }) => {
                 },
                 {
                   cell: (row) => (
-                    <Tag variant="darkerBlue" outlined disabled>
-                      {formatMessage(
+                    <TagIndictmentRulingDecision
+                      isFine={
                         row.indictmentRulingDecision ===
-                          CaseIndictmentRulingDecision.FINE
-                          ? tables.fineTag
-                          : tables.rulingTag,
-                      )}
-                    </Tag>
+                        CaseIndictmentRulingDecision.FINE
+                      }
+                    />
                   ),
                 },
                 {
