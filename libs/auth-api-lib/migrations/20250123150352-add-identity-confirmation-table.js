@@ -9,13 +9,21 @@ module.exports = {
         allowNull: false,
         defaultValue: Sequelize.UUIDV4,
       },
-      ticketId: {
-        type: Sequelize.UUID,
+      ticket_id: {
+        type: Sequelize.STRING,
         allowNull: false,
       },
       type: {
-        type: Sequelize.ENUM('email', 'web', 'mobile'),
+        type: Sequelize.ENUM('email', 'phone', 'web'),
         allowNull: false,
+      },
+      created: {
+        type: Sequelize.DATE,
+        allowNull: false,
+        defaultValue: Sequelize.fn('now'),
+      },
+      modified: {
+        type: Sequelize.DATE,
       },
     })
   },

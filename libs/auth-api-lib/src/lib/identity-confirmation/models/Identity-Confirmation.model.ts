@@ -5,13 +5,14 @@ import {
   PrimaryKey,
   Table,
   UpdatedAt,
+  Model,
 } from 'sequelize-typescript'
 import {
   type CreationOptional,
   InferAttributes,
   InferCreationAttributes,
-  Model,
 } from 'sequelize'
+import { IdentityConfirmationType } from '../types/identity-confirmation-type'
 
 @Table({
   tableName: 'identity_confirmation',
@@ -33,13 +34,14 @@ export class IdentityConfirmation extends Model<
     type: DataType.STRING,
     allowNull: false,
   })
-  type!: string
+  ticketId!: string
 
   @Column({
-    type: DataType.STRING,
+    type: DataType.ENUM,
+    values: Object.values(IdentityConfirmationType),
     allowNull: false,
   })
-  ticketId!: string
+  type!: IdentityConfirmationType
 
   @CreatedAt
   readonly created!: CreationOptional<Date>

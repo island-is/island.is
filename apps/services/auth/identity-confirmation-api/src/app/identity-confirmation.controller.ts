@@ -33,7 +33,7 @@ export class IdentityConfirmationController {
     },
   })
   async identityConfirmation(@Body() body: IdentityConfirmationInputDto) {
-    return await this.auditService.auditPromise<string>(
+    await this.auditService.auditPromise<string>(
       {
         system: true,
         namespace,
