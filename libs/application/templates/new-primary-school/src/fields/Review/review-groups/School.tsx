@@ -1,5 +1,5 @@
 import { useQuery } from '@apollo/client'
-import { coreErrorMessages, NO, YES } from '@island.is/application/core'
+import { coreErrorMessages, YES } from '@island.is/application/core'
 import { DataValue, ReviewGroup } from '@island.is/application/ui-components'
 import {
   GridColumn,
@@ -78,15 +78,14 @@ export const School = ({
               />
             </GridColumn>
 
-            {applicationType === ApplicationType.NEW_PRIMARY_SCHOOL &&
-              applyForNeighbourhoodSchool === NO && (
-                <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
-                  <DataValue
-                    label={formatMessage(newPrimarySchoolMessages.shared.date)}
-                    value={formatDate(startDate)}
-                  />
-                </GridColumn>
-              )}
+            {applicationType === ApplicationType.NEW_PRIMARY_SCHOOL && (
+              <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
+                <DataValue
+                  label={formatMessage(newPrimarySchoolMessages.shared.date)}
+                  value={formatDate(startDate)}
+                />
+              </GridColumn>
+            )}
           </GridRow>
         )}
       </Stack>

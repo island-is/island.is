@@ -169,10 +169,11 @@ export const Review: FC<ReviewScreenProps> = ({
         <CurrentSchool {...childProps} />
       )}
       <School {...childProps} />
-      {applyForNeighbourhoodSchool === NO &&
-        applicationType === ApplicationType.NEW_PRIMARY_SCHOOL && (
-          <ReasonForApplication {...childProps} />
-        )}
+      {(applicationType === ApplicationType.NEW_PRIMARY_SCHOOL ||
+        (applicationType === ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL &&
+          applyForNeighbourhoodSchool === NO)) && (
+        <ReasonForApplication {...childProps} />
+      )}
       {reasonForApplication ===
         ReasonForApplicationOptions.SIBLINGS_IN_SAME_SCHOOL && (
         <Siblings {...childProps} />

@@ -3,7 +3,6 @@ import {
   Application,
   ExternalData,
   FormValue,
-  YES,
   YesOrNo,
 } from '@island.is/application/types'
 import { Locale } from '@island.is/shared/types'
@@ -21,8 +20,8 @@ import {
 } from '../types'
 import {
   ApplicationType,
-  ReasonForApplicationOptions,
   LanguageEnvironmentOptions,
+  ReasonForApplicationOptions,
 } from './constants'
 
 import { newPrimarySchoolMessages } from './messages'

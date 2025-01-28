@@ -2,7 +2,6 @@ import {
   buildDateField,
   buildMultiField,
   buildSubSection,
-  NO,
 } from '@island.is/application/core'
 import { ApplicationType } from '../../../lib/constants'
 import { newPrimarySchoolMessages } from '../../../lib/messages'
@@ -13,12 +12,8 @@ export const startingSchoolSubSection = buildSubSection({
   title: newPrimarySchoolMessages.primarySchool.startingSchoolSubSectionTitle,
   condition: (answers) => {
     // Only display section if application type is "Application for a new primary school" and not selecting neighbourhood school
-    const { applicationType, applyForNeighbourhoodSchool } =
-      getApplicationAnswers(answers)
-    return (
-      applicationType === ApplicationType.NEW_PRIMARY_SCHOOL &&
-      applyForNeighbourhoodSchool === NO
-    )
+    const { applicationType } = getApplicationAnswers(answers)
+    return applicationType === ApplicationType.NEW_PRIMARY_SCHOOL
   },
   children: [
     buildMultiField({
