@@ -51,7 +51,6 @@ import { Op } from 'sequelize'
 import { v4 as uuidV4 } from 'uuid'
 import { Sequelize } from 'sequelize-typescript'
 import { User } from '@island.is/auth-nest-tools'
-// import { User } from 'oidc-client-ts'
 
 @Injectable()
 export class FormsService {
@@ -82,14 +81,15 @@ export class FormsService {
 
   async findAll(user: User): Promise<FormResponseDto> {
     const organizationNationalId = user.nationalId
-    const organization = await this.organizationModel.findOne({
+    let organization = await this.organizationModel.findOne({
       where: { nationalId: organizationNationalId },
     })
 
     if (!organization) {
-      throw new NotFoundException(
-        `Organization with nationalId ${organizationNationalId} not found`,
-      )
+      organization = await this.organizationModel.create({
+        nationalId: organizationNationalId,
+        name: { is: '', en: '' },
+      } as Organization)
     }
 
     const forms = await this.formModel.findAll({

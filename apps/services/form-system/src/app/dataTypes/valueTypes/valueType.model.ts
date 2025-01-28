@@ -119,4 +119,12 @@ export class ValueType {
   @IsOptional()
   @ApiPropertyOptional({ type: String })
   s3Key?: string
+
+  @IsOptional()
+  @ApiPropertyOptional({ type: String })
+  s3Url?: string
+
+  @IsOptional()
+  @ApiPropertyOptional({ type: String })
+  paymentCode?: string
 }

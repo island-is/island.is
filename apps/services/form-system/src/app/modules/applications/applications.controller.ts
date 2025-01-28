@@ -32,11 +32,10 @@ import {
   ScopesGuard,
   User,
 } from '@island.is/auth-nest-tools'
-import { AdminPortalScope } from '@island.is/auth/scopes'
+import { AdminPortalScope, ApiScope } from '@island.is/auth/scopes'
 
-// @UseGuards(IdsUserGuard, ScopesGuard)
-// @Scopes(AdminPortalScope.formSystem)
-@UseGuards(IdsUserGuard)
+@UseGuards(IdsUserGuard, ScopesGuard)
+@Scopes(ApiScope.internal)
 @ApiTags('applications')
 @Controller({ path: 'applications', version: ['1', VERSION_NEUTRAL] })
 export class ApplicationsController {
