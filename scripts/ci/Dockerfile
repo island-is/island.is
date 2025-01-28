@@ -50,9 +50,6 @@ COPY . ./
 FROM src AS builder
 
 # Stage-specific ARGs
-ARG APP
-ARG APP_DIST_HOME
-ENV APP=${APP}
 ENV NODE_ENV=production
 ENV NODE_OPTIONS="--max-old-space-size=8192"
 
@@ -65,10 +62,6 @@ RUN mv "dist/$(yarn nx show project ${APP} --json | jq -r '.root')" /dist
 # This is base image for containers that are to be deployed
 FROM ${DOCKER_REGISTRY}/library/node:${NODE_IMAGE_TAG} AS base-node
 
-ARG APP
-ARG APP_HOME
-ARG APP_DIST_HOME
-ENV APP=${APP}
 ENV NODE_ENV=production
 
 # Adding user for running the app
@@ -95,7 +88,6 @@ FROM base-node-with-pg AS output-express
 WORKDIR /webapp
 
 # Stage-specific ARGs
-ARG APP_DIST_HOME
 ARG GIT_BRANCH
 ARG GIT_COMMIT_SHA
 ARG GIT_REPOSITORY_URL
@@ -114,8 +106,6 @@ FROM base-node-with-pg AS output-next
 WORKDIR /webapp
 
 # Stage-specific ARGs
-ARG APP
-ARG APP_DIST_HOME
 ARG GIT_BRANCH
 ARG GIT_COMMIT_SHA
 ARG GIT_REPOSITORY_URL
@@ -137,8 +127,6 @@ ENTRYPOINT [ "node", "main.js" ]
 FROM ${DOCKER_REGISTRY}/library/nginx:1.21-alpine AS base-static
 
 # Stage-specific ARGs
-ARG APP
-ARG APP_DIST_HOME
 ARG GIT_BRANCH
 ARG GIT_COMMIT_SHA
 ARG GIT_REPOSITORY_URL
@@ -170,8 +158,6 @@ ENV BASEPATH=/
 FROM base-node AS base-jest
 
 # Stage-specific ARGs
-ARG APP
-ARG APP_DIST_HOME
 ARG GIT_BRANCH
 ARG GIT_COMMIT_SHA
 ARG GIT_REPOSITORY_URL
@@ -211,8 +197,6 @@ FROM playwright-base AS output-playwright
 WORKDIR /testing
 
 # Stage-specific ARGs
-ARG APP
-ARG APP_DIST_HOME
 ARG APP_HOME
 ARG PLAYWRIGHT_BROWSER=chromium
 ARG GIT_BRANCH
