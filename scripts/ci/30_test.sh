@@ -53,9 +53,9 @@ fi
 echo $EXTRA_OPTS
 
 opts=(
-  --projects "${AFFECTED_PROJECTS}"
+  --projects="${AFFECTED_PROJECTS}"
   --target=test
-  --parallel "${NX_PARALLEL}"
+  --parallel="${NX_PARALLEL}"
   --verbose
   --no-watchman
   --debug
