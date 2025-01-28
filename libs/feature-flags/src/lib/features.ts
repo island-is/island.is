@@ -101,12 +101,6 @@ export enum Features {
   isPasskeyRegistrationEnabled = 'isPasskeyRegistrationEnabled',
   isPasskeyAuthEnabled = 'isPasskeyAuthEnabled',
 
-  // Legal represantative delegation type
-  isLegalRepresentativeDelegationEnabled = 'isLegalRepresentativeDelegationEnabled',
-
-  // General mandate delegation type
-  isGeneralMandateDelegationEnabled = 'isGeneralMandateDelegationEnabled',
-
   // Should auth api use national registry v3 for checking deceased status
   isNationalRegistryV3DeceasedStatusEnabled = 'isNationalRegistryV3DeceasedStatusEnabled',
 }
