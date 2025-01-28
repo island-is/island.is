@@ -204,16 +204,17 @@ export class PdfService {
 
   async getCivilClaimPdf(
     theCase: Case,
-    fileId?: string,
-    fileName?: string,
+    fileKey?: string,
   ): Promise<Buffer | undefined> {
-    const existingPdf = await this.tryGetPdfFromS3(
-      theCase,
-      `${theCase.id}/${fileId}/${fileName}`,
-    )
+    if (!fileKey) {
+      this.logger.error('No key provided')
+      return
+    }
+
+    const existingPdf = await this.tryGetPdfFromS3(theCase, fileKey)
 
     if (existingPdf === undefined) {
-      this.logger.error(`Civil claim with id ${fileId} not found`)
+      this.logger.error(`Civil claim with id ${fileKey} not found`)
     }
 
     return existingPdf
