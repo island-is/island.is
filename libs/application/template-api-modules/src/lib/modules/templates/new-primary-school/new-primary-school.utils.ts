@@ -22,10 +22,14 @@ export const transformApplicationToNewPrimarySchoolDTO = (
     reasonForApplicationStreetAddress,
     reasonForApplicationPostalCode,
     selectedSchool,
-    nativeLanguage,
-    otherLanguagesSpokenDaily,
-    otherLanguages,
-    icelandicNotSpokenAroundChild,
+    language1,
+    language2,
+    language3,
+    language4,
+    childLanguage,
+    languageEnvironment,
+    signLanguage,
+    interpreter,
     developmentalAssessment,
     specialSupport,
     startDate,
@@ -77,17 +81,6 @@ export const transformApplicationToNewPrimarySchoolDTO = (
       : []),
   ]
 
-  let noIcelandic: boolean
-  if (otherLanguagesSpokenDaily === YES) {
-    if (nativeLanguage === 'is' || otherLanguages?.includes('is')) {
-      noIcelandic = false
-    } else {
-      noIcelandic = icelandicNotSpokenAroundChild?.includes(YES)
-    }
-  } else {
-    noIcelandic = nativeLanguage !== 'is'
-  }
-
   const newPrimarySchoolDTO: FormDto = {
     type: FormDtoTypeEnum.Registration,
     user: {
@@ -133,12 +126,11 @@ export const transformApplicationToNewPrimarySchoolDTO = (
     social: {
       hasHadSupport: specialSupport === YES,
       hasDiagnoses: developmentalAssessment === YES,
-    },
+    }, // Languages needs to be updated when Juni is ready with the data struccture
     language: {
-      nativeLanguage: nativeLanguage,
-      noIcelandic,
-      otherLanguages:
-        otherLanguagesSpokenDaily === YES ? otherLanguages : undefined,
+      nativeLanguage: '',
+      noIcelandic: false,
+      otherLanguages: undefined,
     },
   }
 

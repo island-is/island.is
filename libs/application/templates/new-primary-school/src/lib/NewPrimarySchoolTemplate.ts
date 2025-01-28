@@ -34,6 +34,7 @@ import { newPrimarySchoolMessages, statesMessages } from './messages'
 import {
   determineNameFromApplicationAnswers,
   getApplicationAnswers,
+  hasForeignLanguages,
 } from './newPrimarySchoolUtils'
 
 const NewPrimarySchoolTemplate: ApplicationTemplate<
@@ -98,6 +99,7 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
           'clearLanguages',
           'clearAllergiesAndIntolerances',
           'clearFreeSchoolMeal',
+          'clearSupport',
         ],
         meta: {
           name: States.DRAFT,
@@ -205,12 +207,14 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
       }),
       clearLanguages: assign((context) => {
         const { application } = context
-        const { otherLanguagesSpokenDaily } = getApplicationAnswers(
-          application.answers,
-        )
-        if (otherLanguagesSpokenDaily === NO) {
-          unset(application.answers, 'languages.otherLanguages')
-          unset(application.answers, 'languages.icelandicNotSpokenAroundChild')
+
+        if (hasForeignLanguages(application.answers)) {
+          unset(application.answers, 'languages.language1')
+          unset(application.answers, 'languages.language2')
+          unset(application.answers, 'languages.language3')
+          unset(application.answers, 'languages.language4')
+          unset(application.answers, 'languages.childLanguage')
+          unset(application.answers, 'languages.interpreter')
         }
         return context
       }),
@@ -247,6 +251,29 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
         }
         if (hasSpecialNeeds !== YES) {
           unset(application.answers, 'freeSchoolMeal.specialNeedsType')
+        }
+        return context
+      }),
+      clearSupport: assign((context) => {
+        const { application } = context
+        const {
+          developmentalAssessment,
+          specialSupport,
+          hasIntegratedServices,
+          hasCaseManager,
+        } = getApplicationAnswers(application.answers)
+
+        if (developmentalAssessment !== YES && specialSupport !== YES) {
+          unset(application.answers, 'support.hasIntegratedServices')
+          unset(application.answers, 'support.hasCaseManager')
+          unset(application.answers, 'support.caseManager')
+        }
+        if (hasIntegratedServices !== YES) {
+          unset(application.answers, 'support.hasCaseManager')
+          unset(application.answers, 'support.caseManager')
+        }
+        if (hasCaseManager !== YES) {
+          unset(application.answers, 'support.caseManager')
         }
         return context
       }),
