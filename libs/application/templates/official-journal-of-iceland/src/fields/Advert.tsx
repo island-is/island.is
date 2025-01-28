@@ -38,7 +38,7 @@ export const Advert = ({ application }: OJOIFieldBaseProps) => {
     const currentAnswers = structuredClone(currentApplication.answers)
     const html = data.officialJournalOfIcelandApplicationAdvertTemplate.html
     const updatedAnswers = set(currentAnswers, InputFields.advert.html, html)
-    setValue(InputFields.advert.type, html)
+    setValue(InputFields.advert.html, html)
     updateApplication(updatedAnswers, () => setAdvertHtmlEditorKey(uuid()))
   })
 
