@@ -13,7 +13,6 @@ import {
   ContactsRow,
   FriggChildInformation,
   Membership,
-  Parents,
   Person,
   SelectOption,
   SiblingsRow,
@@ -38,7 +37,7 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
 
   const childInfo = getValueViaPath(answers, 'childInfo') as ChildInformation
 
-  const parents = getValueViaPath(answers, 'parents') as Parents
+  const guardians = getValueViaPath(answers, 'guardians') as Person[]
 
   const contacts = getValueViaPath(answers, 'contacts') as ContactsRow[]
 
@@ -186,7 +185,7 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     applicationType,
     childNationalId,
     childInfo,
-    parents,
+    guardians,
     contacts,
     reasonForApplication,
     reasonForApplicationStreetAddress,
@@ -306,7 +305,7 @@ export const getSelectedChild = (application: Application) => {
   return selectedChild
 }
 
-export const getOtherParent = (
+export const getOtherGuardian = (
   application: Application,
 ): Person | undefined => {
   const selectedChild = getSelectedChild(application)
@@ -314,12 +313,15 @@ export const getOtherParent = (
   return selectedChild?.otherParent as Person | undefined
 }
 
-export const hasOtherParent = (
+export const hasOtherGuardian = (
   answers: FormValue,
   externalData: ExternalData,
 ): boolean => {
-  const otherParent = getOtherParent({ answers, externalData } as Application)
-  return !!otherParent
+  const otherGuardian = getOtherGuardian({
+    answers,
+    externalData,
+  } as Application)
+  return !!otherGuardian
 }
 
 export const getSelectedOptionLabel = (
