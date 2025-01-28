@@ -62,7 +62,7 @@ export const integerPercentageSplit = (
 export const isEqualWithTolerance = (
   number: number,
   target: number,
-  tolerance: number = 10e-10,
+  tolerance = 10e-10,
 ) => {
   return number === target || Math.abs(target - number) <= tolerance
 }

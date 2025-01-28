@@ -26,7 +26,7 @@ describe('integerPercentageSplit', () => {
     while (i < 40) {
       let j = 1
       while (j < 25) {
-        let s = 100 - i - j // so s + i + j is necessarily 100
+        const s = 100 - i - j // so s + i + j is necessarily 100
         if (s > 0) {
           const res = integerPercentageSplit(total, [i, j, s])
           expect(res.reduceRight((p, c) => p + c)).toEqual(total)
