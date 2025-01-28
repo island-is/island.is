@@ -1,32 +1,23 @@
 # This is a multi-stage Dockerfile which contains all CI-related operations as well as images to be deployed in production
-# `base-*` layers are intended for maximum cacheability, only doing system-level actions
 
 # Global ARGs (used across multiple stages)
-ARG PLAYWRIGHT_VERSION=1.49.1
-ARG PLAYWRIGHT_IMAGE_TAG=v${PLAYWRIGHT_VERSION}-focal
+ARG PLAYWRIGHT_VERSION
 ARG DOCKER_ECR_REGISTRY=public.ecr.aws/docker
 ARG DOCKER_IMAGE_REGISTRY=${DOCKER_ECR_REGISTRY%/docker}
 # Alias DOCKER_IMAGE_REGISTRY to DOCKER_REGISTRY for backwards compatibility
 ARG DOCKER_REGISTRY=${DOCKER_IMAGE_REGISTRY}/docker
-ARG NODE_IMAGE_TAG=20-alpine
+ARG NODE_IMAGE_TAG
 ARG APP_HOME
 ARG APP_DIST_HOME=dist/${APP_HOME}
 ARG APP
 
-
 # Base image for dependencies
-FROM ${DOCKER_REGISTRY}/library/node:${NODE_IMAGE_TAG} AS base-deps
+FROM ${DOCKER_REGISTRY}/library/node:${NODE_IMAGE_TAG} AS deps
 
 # hadolint ignore=DL3018
-RUN apk add --no-cache python3 build-base gcc git jq openjdk21 py3-distutils-extra && \
-  rm -rf /var/cache/apk/* && \
-  ln -sf /usr/bin/python3 /usr/bin/python
+RUN apk add -U git
 
 WORKDIR /build
-
-
-# Add intermediate step for debugging system dependencies
-FROM base-deps AS deps
 
 # Adding and installing packages
 COPY package.json yarn.lock .yarnrc.yml ./
@@ -41,6 +32,10 @@ RUN --mount=type=cache,target=.yarn/cache \
 
 # Image with source code
 FROM deps AS src
+
+RUN wget -O /tmp/jq-linux64 https://github.com/stedolan/jq/releases/download/jq-1.6/jq-linux64 && \
+  chmod a+x /tmp/jq-linux64 && \
+  mv /tmp/jq-linux64 /usr/bin/jq
 
 # image with the source code
 COPY . ./
@@ -76,11 +71,9 @@ FROM ${DOCKER_REGISTRY}/library/node:${NODE_IMAGE_TAG} AS base-node
 ENV NODE_ENV=production
 
 # Adding user for running the app
-RUN addgroup runners && \
-  adduser --disabled-password runner --ingroup runners
+RUN addgroup runners && adduser -D runner -G runners
 
-
-FROM base-node AS base-node-with-pg
+FROM output-base AS output-base-with-pg
 
 # hadolint ignore=DL3016
 RUN npm install -g \
@@ -110,7 +103,8 @@ ENV GIT_BRANCH=${GIT_BRANCH} GIT_COMMIT_SHA=${GIT_COMMIT_SHA} GIT_REPOSITORY_URL
 ENV DD_GIT_BRANCH=${GIT_BRANCH} DD_GIT_COMMIT_SHA=${GIT_COMMIT_SHA} DD_GIT_REPOSITORY_URL=${GIT_REPOSITORY_URL}
 LABEL branch=${GIT_BRANCH}
 LABEL commit=${GIT_COMMIT_SHA}
-ENTRYPOINT [ "node", "--no-experimental-fetch", "main.js" ]
+ENTRYPOINT []
+CMD [ "node", "--no-experimental-fetch", "main.js" ]
 
 
 FROM base-node-with-pg AS output-next
@@ -135,7 +129,7 @@ LABEL commit=${GIT_COMMIT_SHA}
 ENTRYPOINT [ "node", "main.js" ]
 
 
-FROM ${DOCKER_REGISTRY}/library/nginx:1.21-alpine AS base-static
+FROM ${DOCKER_REGISTRY}/library/nginx:1.21-alpine AS output-static
 
 # Stage-specific ARGs
 ARG GIT_BRANCH
@@ -165,19 +159,17 @@ LABEL commit=${GIT_COMMIT_SHA}
 ENV APP=${APP}
 ENV BASEPATH=/
 
-
-FROM base-node AS base-jest
+FROM output-base AS output-jest
 
 # Stage-specific ARGs
 ARG GIT_BRANCH
 ARG GIT_COMMIT_SHA
 ARG GIT_REPOSITORY_URL
 
-# hadolint ignore=DL3016
-RUN npm install -g jest
-# hadolint ignore=DL3059
 RUN echo 'module.exports = {};' > jest.config.js
 
+# hadolint ignore=DL3016
+RUN npm install -g jest
 
 FROM base-jest AS output-jest
 WORKDIR /webapp
@@ -194,15 +186,7 @@ LABEL commit=${GIT_COMMIT_SHA}
 CMD [ "jest", "main.spec.js" ]
 
 
-FROM mcr.microsoft.com/playwright:${PLAYWRIGHT_IMAGE_TAG} AS playwright-base
-
-# TODO: remove awscli dependency (157 MB extra)
-# hadolint ignore=DL3008
-RUN apt-get update -y && \
-  apt-get install -y --no-install-recommends zip awscli && \
-  apt-get purge && \
-  rm -rf /var/lib/apt/lists/*
-
+FROM mcr.microsoft.com/playwright:v${PLAYWRIGHT_VERSION}-focal AS playwright-base
 
 FROM playwright-base AS output-playwright
 WORKDIR /testing
@@ -216,10 +200,9 @@ ARG GIT_REPOSITORY_URL
 
 COPY .yarnrc.yml ${APP_HOME}/package.json ./
 COPY .yarn/releases ./.yarn/releases
+RUN yarn install
 
-RUN yarn install && \
-  yarn playwright install ${PLAYWRIGHT_BROWSER} && \
-  yarn cache clean
+RUN yarn playwright install ${PLAYWRIGHT_BROWSER}
 
 COPY --from=builder /dist ./
 COPY --chmod=0755 ${APP_HOME}/entrypoint.sh ./
@@ -228,8 +211,7 @@ ENV GIT_BRANCH=${GIT_BRANCH} GIT_COMMIT_SHA=${GIT_COMMIT_SHA} GIT_REPOSITORY_URL
 ENV DD_GIT_BRANCH=${GIT_BRANCH} DD_GIT_COMMIT_SHA=${GIT_COMMIT_SHA} DD_GIT_REPOSITORY_URL=${GIT_REPOSITORY_URL}
 LABEL branch=${GIT_BRANCH}
 LABEL commit=${GIT_COMMIT_SHA}
-USER pwuser
-ENTRYPOINT [ "./entrypoint.sh" ]
+ENTRYPOINT ["./entrypoint.sh"]
 
 
 FROM base-node AS output-native

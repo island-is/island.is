@@ -24,6 +24,7 @@ export const Submitted: Form = buildForm({
     buildSection({
       id: 'conclusionSection',
       title: '',
+      tabTitle: conclusion.overview.sectionTitle,
       children: [
         buildMultiField({
           id: 'conclusionMultiField',
