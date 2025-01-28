@@ -70,7 +70,7 @@ RUN sh -c ' \
   '
 
 SHELL ["/bin/ash", "-o", "pipefail", "-c"]
-RUN mv "dist/$(yarn nx show project ${APP} --json | jq -r '.root')" /dist
+RUN mv "dist/$(yarn nx show project "${APP}" --json | jq -r '.root')" /dist
 
 
 # This is base image for containers that are to be deployed
