@@ -698,7 +698,7 @@ jobs:
             await updateComment({github, context, comment: COMMENT})
 
   retag-unaffected:
-    runs-on: arc-runners
+    runs-on: ec2-runners
     timeout-minutes: 5
     if: ${{ !cancelled() && needs.pre-checks.result == 'success' && needs.prepare.result != 'skipped' }}
     needs:
