@@ -25,6 +25,7 @@ import {
   dateTypes,
   defendantEventTypes,
   eventTypes,
+  isRequestCase,
   stringTypes,
   UserRole,
 } from '@island.is/judicial-system/types'
@@ -39,7 +40,11 @@ import {
   DefendantService,
 } from '../defendant'
 import { EventLog } from '../event-log'
-import { CaseFile, defenderCaseFileCategoriesForRequestCases } from '../file'
+import {
+  CaseFile,
+  defenderCaseFileCategoriesForRequestCases,
+  defenderCaseFileCategoriesForIndictmentCases,
+} from '../file'
 import { IndictmentCount } from '../indictment-count'
 import { Institution } from '../institution'
 import { Subpoena } from '../subpoena'
@@ -525,7 +530,11 @@ export class LimitedAccessCaseService {
         (file) =>
           file.key &&
           file.category &&
-          defenderCaseFileCategoriesForRequestCases.includes(file.category),
+          (isRequestCase(theCase.type)
+            ? defenderCaseFileCategoriesForRequestCases.includes(file.category)
+            : defenderCaseFileCategoriesForIndictmentCases.includes(
+                file.category,
+              )),
       ) ?? []
 
     // TODO: speed this up by fetching all files in parallel
@@ -545,15 +554,15 @@ export class LimitedAccessCaseService {
     filesToZip.push(
       {
         data: await this.pdfService.getRequestPdf(theCase),
-        name: 'krafa.pdf',
+        name: 'Krafa.pdf',
       },
       {
         data: await this.pdfService.getCourtRecordPdf(theCase, user),
-        name: 'þingbok.pdf',
+        name: 'Þingbók.pdf',
       },
       {
         data: await this.pdfService.getRulingPdf(theCase),
-        name: 'urskurður.pdf',
+        name: 'Úrskurður.pdf',
       },
     )
 

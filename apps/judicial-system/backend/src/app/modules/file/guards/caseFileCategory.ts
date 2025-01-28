@@ -30,7 +30,7 @@ const defenderDefaultCaseFileCategoriesForIndictmentCases = [
   CaseFileCategory.RULING,
 ]
 
-const defenderCaseFileCategoriesForIndictmentCases =
+export const defenderCaseFileCategoriesForIndictmentCases =
   defenderDefaultCaseFileCategoriesForIndictmentCases.concat(
     CaseFileCategory.CRIMINAL_RECORD,
     CaseFileCategory.COST_BREAKDOWN,
