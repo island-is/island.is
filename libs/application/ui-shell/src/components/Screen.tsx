@@ -236,7 +236,11 @@ const Screen: FC<React.PropsWithChildren<ScreenProps>> = ({
       if (response?.data) {
         addExternalData(response.data?.submitApplication.externalData)
 
-        if (submitField.refetchApplicationAfterSubmit) {
+        if (
+          submitField.refetchApplicationAfterSubmit === true ||
+          (typeof submitField.refetchApplicationAfterSubmit === 'function' &&
+            submitField.refetchApplicationAfterSubmit(event))
+        ) {
           refetch()
         }
       }
