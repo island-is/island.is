@@ -829,7 +829,7 @@ export const IndictmentCount: FC<Props> = ({
                   onBlur={(event) => {
                     const recordedSpeed = parseInt(event.target.value)
 
-                    if (isNaN(recordedSpeed)) {
+                    if (Number.isNaN(recordedSpeed)) {
                       setRecordedSpeedErrorMessage('Reitur má ekki vera tómur')
                       return
                     }
@@ -873,7 +873,7 @@ export const IndictmentCount: FC<Props> = ({
                 onBlur={(event) => {
                   const speedLimit = parseInt(event.target.value)
 
-                  if (isNaN(speedLimit)) {
+                  if (Number.isNaN(speedLimit)) {
                     setSpeedLimitErrorMessage('Reitur má ekki vera tómur')
                     return
                   }
