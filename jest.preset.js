@@ -10,7 +10,7 @@ module.exports = {
   resolver: customResolver,
   testTimeout: 20000,
   detectOpenHandles: true,
-  runInBand: true,
+  runInBand: false,
   detectLeaks: true,
   passWithNoTests: true,
   moduleFileExtensions: ['ts', 'js', 'html'],
