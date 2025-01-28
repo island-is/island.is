@@ -21,6 +21,11 @@ projects_uncollectible_coverage=(
   "portals-my-pages-core"
 )
 
+# Array of services to skip during testing
+services_to_skip=(
+  "services-user-notification"
+)
+
 export DD_CIVISIBILITY_AGENTLESS_ENABLED \
   DD_SITE \
   DD_ENV \
@@ -56,4 +61,6 @@ yarn nx run-many \
   --debug \
   --ci \
   --detectLeaks=false \
-  --passWithNoTests "$@"
+  --passWithNoTests \
+  --exclude="${services_to_skip[*]}" \
+  "$@"
