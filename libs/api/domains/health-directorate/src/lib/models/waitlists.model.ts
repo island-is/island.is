@@ -9,16 +9,16 @@ export class Waitlist {
   name!: string
 
   @Field(() => Date, { nullable: true })
-  waitBeganDate?: Date
+  waitBegan?: Date
 
   @Field(() => Date, { nullable: true })
   lastUpdated?: Date
 
   @Field()
-  organizationName!: string
+  organization!: string
 
   @Field()
-  statusDisplay!: string
+  status!: string
 }
 
 @ObjectType('HealthDirectorateWaitlists')

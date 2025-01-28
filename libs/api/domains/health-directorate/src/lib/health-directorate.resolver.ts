@@ -98,6 +98,7 @@ export class HealthDirectorateResolver {
     name: 'healthDirectorateWaitlists',
   })
   @Audit()
+  @FeatureFlag(Features.servicePortalHealthWaitlistsPageEnabled)
   getWaitlists(
     @Args('locale', { type: () => String, nullable: true })
     locale: Locale = 'is',
@@ -111,6 +112,8 @@ export class HealthDirectorateResolver {
     name: 'healthDirectorateReferrals',
   })
   @Audit()
+  @FeatureFlag(Features.servicePortalHealthReferralsPageEnabled)
+
   getReferalls(
     @Args('locale', { type: () => String, nullable: true })
     locale: Locale = 'is',
