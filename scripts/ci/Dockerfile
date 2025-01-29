@@ -14,19 +14,19 @@ ARG APP
 # Base image for dependencies
 FROM node:${NODE_IMAGE_VERSION}-bookworm-slim AS deps
 
-# Install git
-RUN apt-get update && apt-get install -y git && apt-get clean && rm -rf /var/lib/apt/lists/*
-
-WORKDIR /build
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+  git \
+  python3 \
+  build-essential \
+  gcc && \
+  ln -sf /usr/bin/python3 /usr/bin/python && \
+  apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Adding and installing packages
 COPY package.json yarn.lock .yarnrc.yml ./
 COPY apps/native/app/package.json ./apps/native/app/
 COPY .yarn/ ./.yarn
-RUN apt-get update && apt-get install -y python3 build-essential gcc && \
-  ln -sf /usr/bin/python3 /usr/bin/python && \
-  apt-get clean && rm -rf /var/lib/apt/lists/*
-RUN CI=true yarn install --immutable
 
 # Image with source code
 FROM deps AS src
