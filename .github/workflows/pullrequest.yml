@@ -21,7 +21,7 @@ env:
   DISABLE_CHUNKS: 'true'
   DISABLE_GROUPING: 'false'
   DISABLE_PROBLEMATIC: 'false'
-  CHUNK_SIZE: '12'
+  CHUNK_SIZE: '8'
   MAX_JOBS: '2'
   NX_PARALLEL: '2'
   NX_MAX_PARALLEL: '4'
@@ -89,15 +89,9 @@ jobs:
           echo "NX_PARALLEL: $NX_PARALLEL"
           set -x
 
-          # git checkout -m "$GITHUB_HEAD_REF"
-          # git checkout -m "$GITHUB_BASE_REF"
-          # git checkout -m "$GITHUB_SHA"
-
           git config --global user.email "ci@island.is"
           git config --global user.name "CI Bot"
 
-          # BASE_SHA="$(git merge-base HEAD "$GITHUB_BASE_REF")"
-          # HEAD_SHA="$(git merge-base HEAD "$GITHUB_HEAD_REF")"
           BASE_SHA=${{ env.NX_BASE }}
           HEAD_SHA=${{ env.NX_HEAD }}
           echo "BASE=$BASE_SHA" >> "$GITHUB_ENV"
@@ -125,23 +119,6 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           enable-cache: 'node_modules,cypress,generated-files'
-
-      # - name: Preparing HEAD and BASE tags
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      #     HTML_URL: ${{ github.event.pull_request.html_url }}
-      #     ISSUE_REPORTING_SLACK_WEBHOOK_URL: ${{ secrets.SLACK_BUILD_ISSUES_REPORTING_WEBHOOK_URL }}
-      #   run: |
-      #     set -euo pipefail
-      #     echo "HEAD=$GITHUB_SHA" >> "$GITHUB_ENV"
-      #     export HEAD_REF="$GITHUB_HEAD_REF"
-      #     export BASE_REF="$GITHUB_BASE_REF"
-      #     export PR_REF="$GITHUB_SHA"
-      #     export SHELL=/usr/bin/bash
-      #     export WORKFLOW_ID=pullrequest
-      #     source ./scripts/ci/00_prepare-base-tags.sh "$(git merge-base HEAD "$GITHUB_BASE_REF")"
-      #     git checkout "$GITHUB_SHA"
-      #     echo "BASE=$BASE" >> "$GITHUB_ENV"
 
       - name: License audit Node modules
         run: ./scripts/ci/20_license-audit.sh
@@ -214,6 +191,7 @@ jobs:
         run: |
           set -euo pipefail
           node -r esbuild-register .github/actions/check-team-approval.ts release-managers
+
   tests:
     needs:
       - prepare
