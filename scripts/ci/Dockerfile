@@ -50,20 +50,14 @@ COPY . ./
 FROM src AS builder
 
 # Stage-specific ARGs
+ARG APP
 ENV NODE_ENV=production
 ENV NODE_OPTIONS="--max-old-space-size=8192"
-ARG APP
 
 RUN yarn nx run-many --target=build --projects="${APP}" --prod --parallel=8
-SHELL ["/bin/bash", "-o", "pipefail", "-c"]
-RUN sh -c ' \
-  set -euxo pipefail; \
-  find dist -name project.json -delete; \
-  project_json="$(yarn nx show project "${APP}" --json --verbose)"; \
-  project_root=$(echo "$project_json"| jq -r .root); \
-  mv "dist/$project_root" /dist; \
-  ls -lah /dist; \
-  '
+SHELL ["/bin/ash", "-o", "pipefail", "-c"]
+RUN project_root="$(yarn nx show project ${APP} --json | jq -r '.root')" && \
+  mv "dist/$project_root" /dist/
 
 
 # This is base image for containers that are to be deployed
