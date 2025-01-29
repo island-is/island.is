@@ -2,17 +2,19 @@ import { Field, Int, ObjectType } from '@nestjs/graphql'
 import { Section } from './section.model'
 import { LanguageType } from './languageType.model'
 import { Dependency } from './form.model'
+import { ValueDto } from './value.model'
 
 @ObjectType('FormSystemApplicationEventDto')
 export class ApplicationEventDto {
-  @Field(() => Date, { nullable: true })
-  created?: Date
-
   @Field(() => String, { nullable: true })
   eventType?: string
 
   @Field(() => Boolean, { nullable: true })
   isFileEvent?: boolean
+
+  @Field(() => Date, { nullable: true })
+  created?: Date
+
 }
 
 @ObjectType('FormSystemApplication')
@@ -58,6 +60,9 @@ export class Application {
 
   @Field(() => [Section], { nullable: 'itemsAndList' })
   sections?: Section[]
+
+  @Field(() => [ValueDto], { nullable: 'itemsAndList' })
+  files?: ValueDto[]
 }
 
 @ObjectType('FormSystemApplicationListDto')

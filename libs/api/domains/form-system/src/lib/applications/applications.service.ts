@@ -7,17 +7,13 @@ import {
   ApplicationListDto,
   ApplicationsApi,
   ApplicationsControllerCreateRequest,
-  ApplicationsControllerFindAllRequest,
   ApplicationsControllerGetApplicationRequest,
   ApplicationsControllerSubmitRequest,
-  ApplicationsControllerSubmitScreenRequest,
   ApplicationsControllerUpdateRequest,
 } from '@island.is/clients/form-system'
 import {
   CreateApplicationInput,
   GetApplicationInput,
-  GetApplicationsByOrganizationInput,
-  SubmitScreenInput,
 } from '../../dto/application.input'
 import { Application } from '../../models/applications.model'
 import { UpdateApplicationDependenciesInput } from '../../dto/applicant.input'
@@ -49,14 +45,15 @@ export class ApplicationsService {
     auth: User,
     input: CreateApplicationInput,
   ): Promise<Application> {
+    console.log('auth', auth)
+    console.log('input', input)
     const response = await this.applicationsApiWithAuth(auth)
       .applicationsControllerCreate(
         input as ApplicationsControllerCreateRequest,
       )
-      .catch((e) =>
-        handle4xx(e, this.handleError, 'failed to create application'),
-      )
-
+    // .catch((e) =>
+    //   handle4xx(e, this.handleError, 'failed to create application'),
+    // )
     if (!response || response instanceof ApolloError) {
       return {}
     }
@@ -112,35 +109,35 @@ export class ApplicationsService {
     return response
   }
 
-  async submitScreen(
-    auth: User,
-    input: SubmitScreenInput
-  ): Promise<void> {
-    const response = await this.applicationsApiWithAuth(auth)
-      .applicationsControllerSubmitScreen(
-        input as ApplicationsControllerSubmitScreenRequest
-      )
-      .catch((e) => handle4xx(e, this.handleError, 'failed to submit screen'))
+  // async submitScreen(
+  //   auth: User,
+  //   input: SubmitScreenInput
+  // ): Promise<void> {
+  //   const response = await this.applicationsApiWithAuth(auth)
+  //     .applicationsControllerSubmitScreen(
+  //       input as ApplicationsControllerSubmitScreenRequest
+  //     )
+  //     .catch((e) => handle4xx(e, this.handleError, 'failed to submit screen'))
 
-    if (!response || response instanceof ApolloError) {
-      return
-    }
-    return response
-  }
+  //   if (!response || response instanceof ApolloError) {
+  //     return
+  //   }
+  //   return response
+  // }
 
-  async getAllApplicationsByOrganization(
-    auth: User,
-    input: GetApplicationsByOrganizationInput
-  ): Promise<ApplicationListDto> {
-    const response = await this.applicationsApiWithAuth(auth)
-      .applicationsControllerFindAll(
-        input as ApplicationsControllerFindAllRequest
-      )
-      .catch((e) => handle4xx(e, this.handleError, 'failed to get applications by organization'))
+  // async getAllApplicationsByOrganization(
+  //   auth: User,
+  //   input: GetApplicationsByOrganizationInput
+  // ): Promise<ApplicationListDto> {
+  //   const response = await this.applicationsApiWithAuth(auth)
+  //     .applicationsControllerFindAll(
+  //       input as 
+  //     )
+  //     .catch((e) => handle4xx(e, this.handleError, 'failed to get applications by organization'))
 
-    if (!response || response instanceof ApolloError) {
-      return {}
-    }
-    return response
-  }
+  //   if (!response || response instanceof ApolloError) {
+  //     return {}
+  //   }
+  //   return response
+  // }
 }

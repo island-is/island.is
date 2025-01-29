@@ -9,12 +9,10 @@ import {
 } from '@island.is/auth-nest-tools'
 import { Audit } from '@island.is/nest/audit'
 import { ApplicationsService } from './applications.service'
-import { Application, ApplicationListDto } from '../../models/applications.model'
+import { Application } from '../../models/applications.model'
 import {
   CreateApplicationInput,
   GetApplicationInput,
-  GetApplicationsByOrganizationInput,
-  SubmitScreenInput,
 } from '../../dto/application.input'
 import { UpdateApplicationDependenciesInput } from '../../dto/applicant.input'
 
@@ -36,7 +34,7 @@ export class ApplicationsResolver {
     return this.applicationsService.getApplication(user, input)
   }
 
-  @Mutation(() => Boolean, {
+  @Mutation(() => Application, {
     name: 'formSystemCreateApplication',
   })
   async createApplication(
@@ -69,25 +67,25 @@ export class ApplicationsResolver {
     return this.applicationsService.submitApplication(user, input)
   }
 
-  @Mutation(() => Boolean, {
-    name: 'formSystemSubmitScreen',
-  })
-  async submitScreen(
-    @Args('input', { type: () => SubmitScreenInput })
-    input: SubmitScreenInput,
-    @CurrentUser() user: User,
-  ): Promise<void> {
-    return this.applicationsService.submitScreen(user, input)
-  }
+  // @Mutation(() => Boolean, {
+  //   name: 'formSystemSubmitScreen',
+  // })
+  // async submitScreen(
+  //   @Args('input', { type: () => SubmitScreenInput })
+  //   input: SubmitScreenInput,
+  //   @CurrentUser() user: User,
+  // ): Promise<void> {
+  //   return this.applicationsService.submitScreen(user, input)
+  // }
 
-  @Query(() => ApplicationListDto, {
-    name: 'formSystemGetApplicationsByOrganization',
-  })
-  async getApplicationsByOrganization(
-    @Args('input', { type: () => GetApplicationsByOrganizationInput })
-    input: GetApplicationsByOrganizationInput,
-    @CurrentUser() user: User,
-  ): Promise<ApplicationListDto> {
-    return this.applicationsService.getAllApplicationsByOrganization(user, input)
-  }
+  // @Query(() => ApplicationListDto, {
+  //   name: 'formSystemGetApplicationsByOrganization',
+  // })
+  // async getApplicationsByOrganization(
+  //   @Args('input', { type: () => GetApplicationsByOrganizationInput })
+  //   input: GetApplicationsByOrganizationInput,
+  //   @CurrentUser() user: User,
+  // ): Promise<ApplicationListDto> {
+  //   return this.applicationsService.getAllApplicationsByOrganization(user, input)
+  // }
 }

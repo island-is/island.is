@@ -14,6 +14,9 @@ export class Value {
   date?: Date
 
   @Field(() => String, { nullable: true })
+  listValue?: string
+
+  @Field(() => String, { nullable: true })
   nationalId?: string
 
   @Field(() => String, { nullable: true })
@@ -56,9 +59,6 @@ export class Value {
   months?: Month[]
 
   @Field(() => String, { nullable: true })
-  listValue?: string
-
-  @Field(() => String, { nullable: true })
   email?: string
 
   @Field(() => String, { nullable: true })
@@ -78,6 +78,12 @@ export class Value {
 
   @Field(() => String, { nullable: true })
   s3Key?: string
+
+  @Field(() => String, { nullable: true })
+  s3Url?: string
+
+  @Field(() => String, { nullable: true })
+  paymentCode?: string
 }
 
 @ObjectType('FormSystemValueDto')

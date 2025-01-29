@@ -22,7 +22,7 @@ import { Screen } from '../../models/screen.model'
 @CodeOwner(CodeOwners.Advania)
 @Audit({ namespace: '@island.is/api/form-system' })
 export class ScreensResolver {
-  constructor(private readonly screensService: ScreensService) {}
+  constructor(private readonly screensService: ScreensService) { }
 
   @Mutation(() => Screen, {
     name: 'formSystemCreateScreen',
@@ -45,13 +45,14 @@ export class ScreensResolver {
     return this.screensService.deleteScreen(user, input)
   }
 
-  @Mutation(() => Screen, {
+  @Mutation(() => Boolean, {
     name: 'formSystemUpdateScreen',
+    nullable: true
   })
   async updateScreen(
     @Args('input') input: UpdateScreenInput,
     @CurrentUser() user: User,
-  ): Promise<Screen> {
+  ): Promise<void> {
     return this.screensService.updateScreen(user, input)
   }
 

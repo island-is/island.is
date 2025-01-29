@@ -1,10 +1,8 @@
 import { ApolloProvider } from '@apollo/client'
-
 import { client } from '@island.is/application/graphql'
 import { LocaleProvider } from '@island.is/localization'
 import { FeatureFlagProvider } from '@island.is/react/feature-flags'
 import { defaultLanguage } from '@island.is/shared/constants'
-
 import { applicationSystemScopes } from '@island.is/auth/scopes'
 import { BffProvider, createMockedInitialState } from '@island.is/react-spa/bff'
 import { BASE_PATH } from '../lib/routes'
@@ -14,7 +12,7 @@ import { environment } from '../environments'
 
 const mockedInitialState = isMockMode
   ? createMockedInitialState({
-    scopes: applicationSystemScopes,
+    scopes: ['@island.is/internal'],
   })
   : undefined
 
@@ -26,8 +24,8 @@ export const App = () => (
         mockedInitialState={mockedInitialState}
       >
         <FeatureFlagProvider sdkKey={environment.featureFlagSdkKey}>
-          {/* <Router /> */}
-          <div>test</div>
+          <Router />
+          {/* <div>test</div> */}
         </FeatureFlagProvider>
       </BffProvider>
     </LocaleProvider>
