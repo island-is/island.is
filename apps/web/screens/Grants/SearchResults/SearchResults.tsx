@@ -300,6 +300,7 @@ const GrantsSearchResultsPage: CustomScreen<GrantsHomeProps> = ({
                   tags={tags ?? []}
                   url={currentUrl}
                   variant={'default'}
+                  hits={totalHits}
                 />
               </Box>
             }
@@ -362,12 +363,14 @@ const GrantsSearchResultsPage: CustomScreen<GrantsHomeProps> = ({
                   category: categories ?? undefined,
                   type: types ?? undefined,
                   organization: organizations ?? undefined,
+                  status: status ?? undefined,
                 }}
                 onSearchUpdate={onSearchFilterUpdate}
                 onReset={onResetFilter}
                 tags={tags ?? []}
                 url={currentUrl}
-                variant={'popover'}
+                variant={'dialog'}
+                hits={totalHits}
               />
             </Box>
 

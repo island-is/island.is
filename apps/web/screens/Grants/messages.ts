@@ -112,6 +112,10 @@ export const m = {
       id: 'web.grants:search.type',
       defaultMessage: 'Tegund',
     },
+    viewResults: {
+      id: 'web.grants:search.viewResults',
+      defaultMessage: 'Skoða niðurstöður',
+    },
     resultFound: {
       id: 'web.grants:search.resultFound',
       defaultMessage: '{arg} styrkur fannst',
