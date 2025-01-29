@@ -57,7 +57,6 @@ describe('withoutAuth and permissions', () => {
       // CleanUp
       app.cleanUp()
     },
-    30000,
   )
 
   it.each`
