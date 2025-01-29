@@ -22,11 +22,11 @@ RUN apk add --no-cache python3 build-base gcc git jq openjdk21 py3-distutils-ext
   rm -rf /var/cache/apk/* && \
   ln -sf /usr/bin/python3 /usr/bin/python
 
-WORKDIR /build
 
 
 # Add intermediate step for debugging system dependencies
 FROM base-deps AS deps
+WORKDIR /build
 
 # Adding and installing packages
 COPY package.json yarn.lock .yarnrc.yml ./
