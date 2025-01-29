@@ -14,7 +14,7 @@ auth-admin-web:
     LOG_LEVEL: 'info'
     NEXTAUTH_URL: 'https://identity-server.dev01.devland.is/admin/api/auth'
     NEXT_PUBLIC_BACKEND_URL: '/backend'
-    NODE_OPTIONS: '--max- old - space - size=230 -r dd-trace/init'
+    NODE_OPTIONS: '--max-old-space-size=230 -r dd-trace/init'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
     - 'nginx-ingress-external'
@@ -43,7 +43,7 @@ auth-admin-web:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com'
     tag: 'latest_master'
   ingress:
-    primary -alb:
+    primary-alb:
       annotations:
         kubernetes.io/ingress.class: 'nginx-external-alb'
         nginx.ingress.kubernetes.io/proxy-buffer-size: '16k'
@@ -115,10 +115,10 @@ identity-server:
     IdentityServer__EnableFakeLogin: 'true'
     IdentityServer__EnableFeatureDeploymentWildcards: 'true'
     IdentityServer__KeyManagement__Enabled: 'true'
-    IdentityServer__SigningCertificate__Path: '/ etc / config / ids-signing.pfx '
+    IdentityServer__SigningCertificate__Path: '/etc/config/ids-signing.pfx'
     LOG_LEVEL: 'info'
     MeUserProfileApiSettings__BaseAddress: 'http://web-service-portal-api.service-portal.svc.cluster.local'
-    NODE_OPTIONS: '--max- old - space - size=1843 -r dd-trace/init'
+    NODE_OPTIONS: '--max-old-space-size=1843 -r dd-trace/init'
     PersistenceSettings__BaseAddress: 'http://web-services-auth-ids-api'
     PersistenceSettings__DelegationsCacheEnabled: 'false'
     RedisSettings__Address: 'clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com'
@@ -156,7 +156,7 @@ identity-server:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com'
     tag: 'latest_master'
   ingress:
-    primary -alb:
+    primary-alb:
       annotations:
         kubernetes.io/ingress.class: 'nginx-external-alb'
         nginx.ingress.kubernetes.io/enable-global-auth: 'false'
@@ -212,7 +212,7 @@ identity-server:
     targetPort: 5000
   serviceAccount:
     annotations:
-      eks.amazonaws.com/role-arn: 'arn: aws: iam::013313053092: role / identity-server '
+      eks.amazonaws.com/role-arn: 'arn:aws:iam::013313053092:role/identity-server'
     create: true
     name: 'identity-server'
 namespaces:
@@ -240,7 +240,7 @@ services-auth-admin-api:
     NATIONAL_REGISTRY_B2C_ENDPOINT: 'https://skraidentitydev.b2clogin.com/skraidentitydev.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token'
     NATIONAL_REGISTRY_B2C_PATH: 'IS-DEV/GOV/10001/SKRA-Cloud-Protected/Midlun-v1'
     NATIONAL_REGISTRY_B2C_SCOPE: 'https://skraidentitydev.onmicrosoft.com/midlun/.default'
-    NODE_OPTIONS: '--max- old - space - size=691 -r dd-trace/init'
+    NODE_OPTIONS: '--max-old-space-size=691 -r dd-trace/init'
     SERVERSIDE_FEATURES_ON: ''
     SYSLUMENN_HOST: 'https://api.syslumenn.is/staging'
     SYSLUMENN_TIMEOUT: '3000'
@@ -283,7 +283,7 @@ services-auth-admin-api:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com'
     tag: 'latest_master'
   ingress:
-    primary -alb:
+    primary-alb:
       annotations:
         kubernetes.io/ingress.class: 'nginx-external-alb'
         nginx.ingress.kubernetes.io/enable-global-auth: 'false'
@@ -339,7 +339,7 @@ services-auth-delegation-api:
     NATIONAL_REGISTRY_B2C_ENDPOINT: 'https://skraidentitydev.b2clogin.com/skraidentitydev.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token'
     NATIONAL_REGISTRY_B2C_PATH: 'IS-DEV/GOV/10001/SKRA-Cloud-Protected/Midlun-v1'
     NATIONAL_REGISTRY_B2C_SCOPE: 'https://skraidentitydev.onmicrosoft.com/midlun/.default'
-    NODE_OPTIONS: '--max- old - space - size=460 -r dd-trace/init'
+    NODE_OPTIONS: '--max-old-space-size=460 -r dd-trace/init'
     SERVERSIDE_FEATURES_ON: ''
     SYSLUMENN_HOST: 'https://api.syslumenn.is/staging'
     SYSLUMENN_TIMEOUT: '3000'
@@ -384,7 +384,7 @@ services-auth-delegation-api:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com'
     tag: 'latest_master'
   ingress:
-    internal -alb:
+    internal-alb:
       annotations:
         kubernetes.io/ingress.class: 'nginx-internal-alb'
         nginx.ingress.kubernetes.io/service-upstream: 'true'
@@ -440,7 +440,7 @@ services-auth-ids-api:
     NATIONAL_REGISTRY_B2C_ENDPOINT: 'https://skraidentitydev.b2clogin.com/skraidentitydev.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token'
     NATIONAL_REGISTRY_B2C_PATH: 'IS-DEV/GOV/10001/SKRA-Cloud-Protected/Midlun-v1'
     NATIONAL_REGISTRY_B2C_SCOPE: 'https://skraidentitydev.onmicrosoft.com/midlun/.default'
-    NODE_OPTIONS: '--max- old - space - size=691 -r dd-trace/init'
+    NODE_OPTIONS: '--max-old-space-size=691 -r dd-trace/init'
     NOVA_ACCEPT_UNAUTHORIZED: 'true'
     PASSKEY_CORE_ALLOWED_ORIGINS: '["https://island.is","android:apk-key-hash:JgPeo_F6KYk-ngRa26tO2SsAtMiTBQCc7WtSgN-jRX0","android:apk-key-hash:EsLTUu5kaY7XPmMl2f7nbq4amu-PNzdYu3FecNf90wU"]'
     PASSKEY_CORE_CHALLENGE_TTL_MS: '120000'
@@ -574,7 +574,7 @@ services-auth-ids-api-cleanup:
     DB_USER: 'servicesauth'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
     LOG_LEVEL: 'info'
-    NODE_OPTIONS: '--max- old - space - size=921 -r dd-trace/init'
+    NODE_OPTIONS: '--max-old-space-size=921 -r dd-trace/init'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
     - 'nginx-ingress-external'
@@ -641,7 +641,7 @@ services-auth-personal-representative:
     NATIONAL_REGISTRY_B2C_ENDPOINT: 'https://skraidentitydev.b2clogin.com/skraidentitydev.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token'
     NATIONAL_REGISTRY_B2C_PATH: 'IS-DEV/GOV/10001/SKRA-Cloud-Protected/Midlun-v1'
     NATIONAL_REGISTRY_B2C_SCOPE: 'https://skraidentitydev.onmicrosoft.com/midlun/.default'
-    NODE_OPTIONS: '--max- old - space - size=460 -r dd-trace/init'
+    NODE_OPTIONS: '--max-old-space-size=460 -r dd-trace/init'
     SERVERSIDE_FEATURES_ON: ''
     SYSLUMENN_HOST: 'https://api.syslumenn.is/staging'
     SYSLUMENN_TIMEOUT: '3000'
@@ -681,7 +681,7 @@ services-auth-personal-representative:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com'
     tag: 'latest_master'
   ingress:
-    primary -alb:
+    primary-alb:
       annotations:
         kubernetes.io/ingress.class: 'nginx-internal-alb'
         nginx.ingress.kubernetes.io/service-upstream: 'true'
@@ -726,7 +726,7 @@ services-auth-personal-representative-public:
     DB_USER: 'servicesauth'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
     LOG_LEVEL: 'info'
-    NODE_OPTIONS: '--max- old - space - size=460 -r dd-trace/init'
+    NODE_OPTIONS: '--max-old-space-size=460 -r dd-trace/init'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces: []
   grantNamespacesEnabled: false
@@ -752,7 +752,7 @@ services-auth-personal-representative-public:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com'
     tag: 'latest_master'
   ingress:
-    primary -alb:
+    primary-alb:
       annotations:
         kubernetes.io/ingress.class: 'nginx-internal-alb'
         nginx.ingress.kubernetes.io/service-upstream: 'true'
@@ -798,7 +798,7 @@ services-auth-public-api:
     NATIONAL_REGISTRY_B2C_ENDPOINT: 'https://skraidentitydev.b2clogin.com/skraidentitydev.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token'
     NATIONAL_REGISTRY_B2C_PATH: 'IS-DEV/GOV/10001/SKRA-Cloud-Protected/Midlun-v1'
     NATIONAL_REGISTRY_B2C_SCOPE: 'https://skraidentitydev.onmicrosoft.com/midlun/.default'
-    NODE_OPTIONS: '--max- old - space - size=345 -r dd-trace/init'
+    NODE_OPTIONS: '--max-old-space-size=345 -r dd-trace/init'
     PASSKEY_CORE_ALLOWED_ORIGINS: '["https://island.is","android:apk-key-hash:JgPeo_F6KYk-ngRa26tO2SsAtMiTBQCc7WtSgN-jRX0","android:apk-key-hash:EsLTUu5kaY7XPmMl2f7nbq4amu-PNzdYu3FecNf90wU"]'
     PASSKEY_CORE_CHALLENGE_TTL_MS: '120000'
     PASSKEY_CORE_RP_ID: 'island.is'
@@ -849,7 +849,7 @@ services-auth-public-api:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com'
     tag: 'latest_master'
   ingress:
-    primary -alb:
+    primary-alb:
       annotations:
         kubernetes.io/ingress.class: 'nginx-external-alb'
         nginx.ingress.kubernetes.io/enable-global-auth: 'false'

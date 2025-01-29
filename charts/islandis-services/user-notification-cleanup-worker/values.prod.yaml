@@ -31,7 +31,7 @@ env:
   DB_REPLICAS_HOST: 'postgres-applications.internal'
   DB_USER: 'user_notification'
   LOG_LEVEL: 'info'
-  NODE_OPTIONS: '--max- old - space - size=230 -r dd-trace/init'
+  NODE_OPTIONS: '--max-old-space-size=230 -r dd-trace/init'
   SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
 grantNamespaces:
   - 'nginx-ingress-internal'
@@ -109,6 +109,6 @@ securityContext:
   privileged: false
 serviceAccount:
   annotations:
-    eks.amazonaws.com/role-arn: 'arn: aws: iam::251502586493: role / user-notification-cleanup-worker '
+    eks.amazonaws.com/role-arn: 'arn:aws:iam::251502586493:role/user-notification-cleanup-worker'
   create: true
   name: 'user-notification-cleanup-worker'

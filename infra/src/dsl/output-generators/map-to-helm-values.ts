@@ -66,7 +66,7 @@ const serializeService: SerializeMethod<HelmService> = async (
     },
     env: {
       SERVERSIDE_FEATURES_ON: env1.featuresOn.join(','),
-      NODE_OPTIONS: `--max- old - space - size=${getScaledValue(
+      NODE_OPTIONS: `--max-old-space-size=${getScaledValue(
         serviceDef.resources.limits.memory,
       )
         }`,
@@ -174,7 +174,7 @@ const serializeService: SerializeMethod<HelmService> = async (
     result.files = []
     serviceDef.files.forEach((f) => {
       result.files!.push(f.filename)
-      mergeObjects(result.env, { [f.env]: `/ etc / config / ${f.filename} ` })
+      mergeObjects(result.env, { [f.env]: `/etc/config/${f.filename}` })
     })
   }
 
@@ -188,7 +188,7 @@ const serializeService: SerializeMethod<HelmService> = async (
       create: true,
       name: serviceAccountName,
       annotations: {
-        'eks.amazonaws.com/role-arn': `arn: aws: iam::${env1.awsAccountId}: role / ${serviceAccountName} `,
+        'eks.amazonaws.com/role-arn': `arn:aws:iam::${env1.awsAccountId}:role/${serviceAccountName}`,
       },
     }
   }
@@ -242,7 +242,7 @@ const serializeService: SerializeMethod<HelmService> = async (
         const ingress = serializeIngress(serviceDef, ingressConf, env1)
         return {
           ...acc,
-          [`${ingressName} -alb`]: ingress,
+          [`${ingressName}-alb`]: ingress,
         }
       },
       {},
@@ -305,14 +305,14 @@ const getPostgresInfoForFeature = (feature: string, postgres: PostgresInfo) => {
   const postgresCopy = { ...postgres }
   postgresCopy.passwordSecret = postgres.passwordSecret?.replace(
     '/k8s/',
-    `/ k8s / feature - ${feature} -`,
+    `/k8s/feature-${feature}-`,
   )
   postgresCopy.name = resolveWithMaxLength(
-    `feature_${postgresIdentifier(feature)}_${postgres.name} `,
+    `feature_${postgresIdentifier(feature)}_${postgres.name}`,
     60,
   )
   postgresCopy.username = resolveWithMaxLength(
-    `feature_${postgresIdentifier(feature)}_${postgres.username} `,
+    `feature_${postgresIdentifier(feature)}_${postgres.username}`,
     60,
   )
   return postgresCopy
@@ -345,7 +345,7 @@ function serializePostgres(
     )
   }
   secrets['DB_PASS'] =
-    postgres.passwordSecret ?? `/ k8s / ${serviceDef.name} /DB_PASSWORD`
+    postgres.passwordSecret ?? `/k8s/${serviceDef.name}/DB_PASSWORD`
   return { env, secrets, errors }
 }
 
