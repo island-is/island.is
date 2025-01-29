@@ -6,37 +6,39 @@ ARG DOCKER_ECR_REGISTRY=public.ecr.aws/docker
 ARG DOCKER_IMAGE_REGISTRY=${DOCKER_ECR_REGISTRY%/docker}
 # Alias DOCKER_IMAGE_REGISTRY to DOCKER_REGISTRY for backwards compatibility
 ARG DOCKER_REGISTRY=${DOCKER_IMAGE_REGISTRY}/docker
-ARG NODE_IMAGE_TAG=20-alpine3.20
+ARG NODE_IMAGE_VERSION=20
 ARG APP_HOME
 ARG APP_DIST_HOME=dist/${APP_HOME}
 ARG APP
 
 # Base image for dependencies
-FROM ${DOCKER_REGISTRY}/library/node:${NODE_IMAGE_TAG} AS deps
+FROM node:${NODE_IMAGE_VERSION}-bookworm-slim AS deps
 
-# hadolint ignore=DL3018
-RUN apk add -U git
-
-WORKDIR /build
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+  git \
+  python3 \
+  build-essential \
+  gcc && \
+  ln -sf /usr/bin/python3 /usr/bin/python && \
+  apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Adding and installing packages
 COPY package.json yarn.lock .yarnrc.yml ./
 COPY apps/native/app/package.json ./apps/native/app/
 COPY .yarn/ ./.yarn
-# hadolint ignore=DL3018
-RUN apk add --update --no-cache python3 build-base gcc pkgconf && ln -sf /usr/bin/python3 /usr/bin/python
 RUN CI=true yarn install --immutable
 
 # Image with source code
 FROM deps AS src
 
-RUN wget -O /tmp/jq-linux64 https://github.com/stedolan/jq/releases/download/jq-1.6/jq-linux64 && \
-  chmod a+x /tmp/jq-linux64 && \
-  mv /tmp/jq-linux64 /usr/bin/jq
+RUN apt-get update && apt-get install -y wget && \
+  wget -O /usr/local/bin/jq https://github.com/stedolan/jq/releases/download/jq-1.6/jq-linux64 && \
+  chmod +x /usr/local/bin/jq && \
+  apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # image with the source code
 COPY . .
-
 
 # Build stage
 FROM src AS builder
@@ -50,9 +52,8 @@ ENV NODE_OPTIONS="--max-old-space-size=8192"
 
 RUN yarn run build ${APP} --prod
 
-
 # This is base image for containers that are to be deployed
-FROM ${DOCKER_REGISTRY}/library/node:${NODE_IMAGE_TAG} AS output-base
+FROM node:${NODE_IMAGE_VERSION}-bookworm-slim AS output-base
 ARG APP
 ARG APP_HOME
 ARG APP_DIST_HOME
@@ -62,7 +63,7 @@ ENV NODE_ENV=production
 WORKDIR /webapp
 
 # Adding user for running the app
-RUN addgroup runners && adduser -D runner -G runners
+RUN groupadd runners && useradd -m -g runners runner
 
 FROM output-base AS output-base-with-pg
 
@@ -111,7 +112,6 @@ ENV DD_GIT_BRANCH=${GIT_BRANCH} DD_GIT_COMMIT_SHA=${GIT_COMMIT_SHA} DD_GIT_REPOS
 LABEL branch=${GIT_BRANCH}
 LABEL commit=${GIT_COMMIT_SHA}
 ENTRYPOINT [ "node", "main.js" ]
-
 
 FROM ${DOCKER_REGISTRY}/library/nginx:1.21-alpine AS output-static
 
@@ -165,7 +165,6 @@ LABEL branch=${GIT_BRANCH}
 LABEL commit=${GIT_COMMIT_SHA}
 CMD [ "jest", "main.spec.js" ]
 
-
 FROM mcr.microsoft.com/playwright:v${PLAYWRIGHT_VERSION}-focal AS playwright-base
 
 FROM playwright-base AS output-playwright
@@ -208,7 +207,6 @@ ENV DD_GIT_BRANCH=${GIT_BRANCH} DD_GIT_COMMIT_SHA=${GIT_COMMIT_SHA} DD_GIT_REPOS
 LABEL branch=${GIT_BRANCH}
 LABEL commit=${GIT_COMMIT_SHA}
 ENTRYPOINT ["./entrypoint.sh"]
-
 
 FROM output-base AS output-native
 
