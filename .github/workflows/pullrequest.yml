@@ -115,6 +115,18 @@ jobs:
           include-hidden-files: true
           if-no-files-found: error
 
+      - name: Update nx.json
+        run: |
+          jq '.tasksRunnerOptions.default.runner = "nx-cloud" | .tasksRunnerOptions.default.options.nxCloudId = env.NX_CLOUD_ID' nx.json > nx.json.tmp && mv nx.json.tmp nx.json
+        env:
+          NX_CLOUD_ID: ${{ vars.NX_CLOUD_ID }}
+
+      - name: Upload updated nx.json
+        uses: actions/upload-artifact@v4
+        with:
+          name: nx-json
+          path: nx.json
+
       - name: Get cache
         id: get-cache
         uses: ./.github/actions/get-cache
@@ -233,6 +245,11 @@ jobs:
       - name: Setup yarn
         run: corepack enable
 
+      - name: Download nx.json
+        uses: actions/download-artifact@v4
+        with:
+          name: nx-json
+
       - name: Get cache
         id: get-cache
         uses: ./.github/actions/get-cache
@@ -276,6 +293,11 @@ jobs:
       - name: Setup yarn
         run: corepack enable
 
+      - name: Download nx.json
+        uses: actions/download-artifact@v4
+        with:
+          name: nx-json
+
       - name: Get cache
         id: get-cache
         uses: ./.github/actions/get-cache
@@ -297,8 +319,15 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version-file: 'package.json'
+
       - name: Setup yarn
         run: corepack enable
+
+      - name: Download nx.json
+        uses: actions/download-artifact@v4
+        with:
+          name: nx-json
+
       - name: Get cache
         id: get-cache
         uses: ./.github/actions/get-cache
@@ -336,16 +365,17 @@ jobs:
         with:
           token: ${{ secrets.DIRTY_FIX_BOT_TOKEN }}
           ref: ${{ github.event.pull_request.head.ref }}
-
       - uses: actions/checkout@v4
         if: ${{ github.ref == 'ref/heads/main' }}
-
       - uses: actions/setup-node@v4
         with:
           node-version-file: 'package.json'
       - name: Setup yarn
         run: corepack enable
-
+      - name: Download nx.json
+        uses: actions/download-artifact@v4
+        with:
+          name: nx-json
       - name: Get cache
         id: get-cache
         uses: ./.github/actions/get-cache
@@ -353,11 +383,9 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           keys: ${{ needs.prepare.outputs.CACHE_KEYS }}
           enable-cache: 'node_modules'
-
       - name: NX format:check
         if: ${{ github.ref == 'ref/heads/main' }}
         run: ./scripts/ci/20_check-formatting.sh "check"
-
       - name: NX format:write
         if: ${{ github.event_name == 'pull_request' }}
         run: |
@@ -383,6 +411,10 @@ jobs:
           node-version-file: 'package.json'
       - name: Setup yarn
         run: corepack enable
+      - name: Download nx.json
+        uses: actions/download-artifact@v4
+        with:
+          name: nx-json
       - name: Get cache
         id: get-cache
         uses: ./.github/actions/get-cache
@@ -411,6 +443,10 @@ jobs:
           node-version-file: 'package.json'
       - name: Setup yarn
         run: corepack enable
+      - name: Download nx.json
+        uses: actions/download-artifact@v4
+        with:
+          name: nx-json
       - name: Get cache
         id: get-cache
         uses: ./.github/actions/get-cache
