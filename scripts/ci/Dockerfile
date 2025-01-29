@@ -167,6 +167,7 @@ RUN npm install -g jest
 # hadolint ignore=DL3059
 RUN echo 'module.exports = {};' > jest.config.js
 
+
 FROM base-jest AS output-jest
 WORKDIR /webapp
 
