@@ -117,6 +117,7 @@ jobs:
 
       - name: Update nx.json
         run: |
+          echo "nx_json_hash=${{ hashFiles('nx.json') }}" >> $GITHUB_OUTPUT
           jq '.tasksRunnerOptions.default.runner = "nx-cloud" | .tasksRunnerOptions.default.options.nxCloudId = env.NX_CLOUD_ID' nx.json > nx.json.tmp && mv nx.json.tmp nx.json
         env:
           NX_CLOUD_ID: ${{ vars.NX_CLOUD_ID }}
@@ -124,7 +125,7 @@ jobs:
       - name: Upload updated nx.json
         uses: actions/upload-artifact@v4
         with:
-          name: nx-json-${{ hashFiles('nx.json') }}
+          name: nx-json-${{ steps.hash_step.outputs.nx_json_hash }}
           path: nx.json
 
       - name: Get cache
@@ -446,7 +447,7 @@ jobs:
       - name: Download nx.json
         uses: actions/download-artifact@v4
         with:
-          name: nx-json-${{ hashFiles('nx.json') }}
+          name: nx-json
       - name: Get cache
         id: get-cache
         uses: ./.github/actions/get-cache
