@@ -22,6 +22,7 @@
       "options": {
         "commands": [
           "curl -H \"X-Road-Client: IS-DEV/GOV/10000/island-is-client\" http://localhost:8081/r1/IS-DEV/GOV/10001/SKRA-Cloud-Protected/getOpenAPI?serviceCode=MidlunUmsoknir-v1 -H \"Authorization:Bearer $(curl -X POST https://skraidentitydev.b2clogin.com/skraidentitydev.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token -d grant_type='client_credentials&client_id=${NAT_REG_CLIENT_ID}&client_secret=${NAT_REG_CLIENT_SECRET}&scope=https://skraidentitydev.onmicrosoft.com/midlunumsoknir/.default')\" > src/clientConfig.json",
+          "cat <<< $(jq '.components.schemas.ProblemDetails.additionalProperties = false' src/clientConfig.json) > src/clientConfig.json",
           "prettier --write src/clientConfig.json"
         ],
         "parallel": false,
