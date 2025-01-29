@@ -23,6 +23,8 @@ RUN apt-get update && apt-get install -y \
   ln -sf /usr/bin/python3 /usr/bin/python && \
   apt-get clean && rm -rf /var/lib/apt/lists/*
 
+WORKDIR /build
+
 # Adding and installing packages
 COPY package.json yarn.lock .yarnrc.yml ./
 COPY apps/native/app/package.json ./apps/native/app/
