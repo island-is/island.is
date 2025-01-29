@@ -17,6 +17,7 @@ import { Option } from '@island.is/application/types'
 
 import { getDefaultValue } from '../../getDefaultValue'
 import { Locale } from '@island.is/shared/types'
+import { useFormContext } from 'react-hook-form'
 
 interface Props extends FieldBaseProps {
   field: AsyncSelectField
@@ -41,25 +42,57 @@ export const AsyncSelectFormField: FC<React.PropsWithChildren<Props>> = ({
     isMulti,
     required = false,
     clearOnChange,
+    updateOnSelect,
   } = field
   const { formatMessage, lang: locale } = useLocale()
   const apolloClient = useApolloClient()
   const [options, setOptions] = useState<Option[]>([])
   const [hasLoadingError, setHasLoadingError] = useState<boolean>(false)
+  const { watch } = useFormContext()
+  const [lastUpdateOnSelectValue, setLastUpdateOnSelectValue] =
+    useState<string>('')
+
+  const watchUpdateOnSelect = updateOnSelect ? watch(updateOnSelect) : []
+  const load = async (selectedValue?: string[]) => {
+    try {
+      setHasLoadingError(false)
+      const loaded = await loadOptions({
+        application,
+        apolloClient,
+        selectedValue,
+      })
+      setOptions(loaded)
+    } catch {
+      setHasLoadingError(true)
+    }
+  }
 
   useEffect(() => {
-    const load = async () => {
-      try {
-        setHasLoadingError(false)
-        const loaded = await loadOptions({ application, apolloClient })
-        setOptions(loaded)
-      } catch {
-        setHasLoadingError(true)
+    if (
+      watchUpdateOnSelect.length > 0 &&
+      watchUpdateOnSelect[0] !== undefined
+    ) {
+      setLastUpdateOnSelectValue(watchUpdateOnSelect[0])
+    }
+  }, [watchUpdateOnSelect])
+
+  useEffect(() => {
+    if (updateOnSelect) {
+      const [selectedValue] = watchUpdateOnSelect
+      if (selectedValue !== undefined) {
+        load(selectedValue)
+        setLastUpdateOnSelectValue(selectedValue)
+      } else {
+        load()
       }
     }
+  }, [lastUpdateOnSelectValue])
 
-    load()
-  }, [loadOptions])
+  useEffect(() => {
+    if (!updateOnSelect) {
+      load()
+    }
+  }, [])
 
   return (
     <Box marginTop={field.marginTop} marginBottom={field.marginBottom}>

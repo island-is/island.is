@@ -123,7 +123,21 @@ export const SecondarySchoolSchema = z.object({
     phoneRequired: true,
     emailRequired: true,
   }),
-  applicationType: z.object({ value: z.nativeEnum(ApplicationType) }),
+  applicationType: z
+    .object({
+      value: z.nativeEnum(ApplicationType),
+      isOpenForAdmissionFreshman: z.boolean().optional(),
+      isOpenForAdmissionGeneral: z.boolean().optional(),
+    })
+    .refine(
+      ({ value, isOpenForAdmissionFreshman, isOpenForAdmissionGeneral }) => {
+        if (value === ApplicationType.FRESHMAN)
+          return isOpenForAdmissionFreshman
+        else if (value === ApplicationType.GENERAL_APPLICATION)
+          return isOpenForAdmissionGeneral
+        return true
+      },
+    ),
   custodians: z.array(CustodianSchema).max(2),
   mainOtherContact: MainOtherContactSchema,
   otherContacts: z.array(OtherContactSchema).max(1),

@@ -77,7 +77,14 @@ export const SelectController = <Value, IsMulti extends boolean = false>({
         .filter(Boolean) as Option<Value>[]
     }
 
-    return options.find((option) => option.value === value)
+    // Return null if the value is not in the options to avoid hung values
+    const foundOption = options.find((option) => option.value === value) || null
+    // Avoid having nonexistent values in the answers object by setting the value to null
+    // if the value is not in the options and there are options meaning options have been fetched
+    if (!foundOption && options.length > 0) {
+      setValue(id, null)
+    }
+    return foundOption
   }
 
   return (

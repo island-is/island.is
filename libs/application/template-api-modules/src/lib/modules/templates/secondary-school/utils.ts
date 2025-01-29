@@ -116,7 +116,7 @@ export const getCleanSchoolSelection = (
 ): ApplicationSelectionSchool[] => {
   const result: ApplicationSelectionSchool[] = []
 
-  let schoolPriority = 0
+  let schoolPriority = 1
 
   const selectionKeys = ['first', 'second', 'third']
   selectionKeys.forEach((selectionKey) => {
@@ -134,11 +134,11 @@ export const getCleanSchoolSelection = (
         schoolId: selectionItem.school.id,
         programs: [
           {
-            priority: 0,
+            priority: 1,
             programId: selectionItem.firstProgram.id,
           },
           {
-            priority: 1,
+            priority: 2,
             programId: selectionItem.secondProgram?.include
               ? selectionItem.secondProgram.id || ''
               : '',

@@ -259,43 +259,43 @@ export const newPrimarySchoolMessages: MessageDir = {
         'Information about parents/guardians is retrieved from Registers Iceland and from My Pages on Ísland.is. Check that phone numbers and email addresses are entered correctly before proceeding.',
     },
 
-    // Relatives
-    relativesSubSectionTitle: {
-      id: 'nps.application:childrenNParents.relatives.sub.section.title',
-      defaultMessage: 'Aðstandendur',
-      description: 'Relatives',
+    // Contacts
+    contactsSubSectionTitle: {
+      id: 'nps.application:childrenNParents.contacts.sub.section.title',
+      defaultMessage: 'Tengiliðir',
+      description: 'Contacts',
     },
-    relativesTitle: {
-      id: 'nps.application:childrenNParents.relatives.title',
-      defaultMessage: 'Aðstandendur barnsins',
-      description: "The child's relatives",
+    contactsTitle: {
+      id: 'nps.application:childrenNParents.contacts.title',
+      defaultMessage: 'Tengiliðir barns',
+      description: "The child's contacts",
     },
-    relativesDescription: {
-      id: 'nps.application:childrenNParents.relatives.description',
+    contactsDescription: {
+      id: 'nps.application:childrenNParents.contacts.description',
       defaultMessage:
-        'Skráðu að minnsta kosti einn tengilið sem má hafa samband við ef ekki næst í foreldra/forsjáraðila barnsins. Þú getur bætt við allt að sex aðstandendum. Vinsamlegast látið aðstandendur vita af skráningunni.',
+        'Skráðu að minnsta kosti einn tengilið sem má hafa samband við ef ekki næst í forsjáraðila barnsins. Þú getur bætt við allt að fjórum tengiliðum. Vinsamlegast látið tengiliði vita af skráningunni.',
       description:
-        "List at least one contact person who can be contacted if the child's parents/guardian cannot be reached. You can add up to six relatives. Please inform the relatives of the registration.",
+        "List at least one contact person who can be contacted if the child's guardian cannot be reached. You can add up to four contacts. Please inform the contacts of the registration.",
     },
-    relativesRegistrationTitle: {
-      id: 'nps.application:childrenNParents.relatives.registration.title',
-      defaultMessage: 'Skráning aðstandanda',
-      description: 'Registration of a relative',
+    contactsRegistrationTitle: {
+      id: 'nps.application:childrenNParents.contacts.registration.title',
+      defaultMessage: 'Skráning tengiliðs',
+      description: 'Registration of a contact',
     },
-    relativesAddRelative: {
-      id: 'nps.application:childrenNParents.relatives.add.relative',
-      defaultMessage: 'Bæta við aðstandanda',
-      description: 'Add a relative',
+    contactsAddContact: {
+      id: 'nps.application:childrenNParents.contacts.add.contact',
+      defaultMessage: 'Bæta við tengilið',
+      description: 'Add a contact',
     },
-    relativesRegisterRelative: {
-      id: 'nps.application:childrenNParents.relatives.register.relative',
-      defaultMessage: 'Skrá aðstandanda',
-      description: 'Register relative',
+    contactsRegisterContact: {
+      id: 'nps.application:childrenNParents.contacts.register.contact',
+      defaultMessage: 'Skrá tengilið',
+      description: 'Register contact',
     },
-    relativesDeleteRelative: {
-      id: 'nps.application:childrenNParents.relatives.delete.relative',
-      defaultMessage: 'Eyða aðstandanda',
-      description: 'Remove relative',
+    contactsDeleteContact: {
+      id: 'nps.application:childrenNParents.contacts.delete.contact',
+      defaultMessage: 'Eyða tengilið',
+      description: 'Remove contact',
     },
   }),
 
@@ -373,6 +373,28 @@ export const newPrimarySchoolMessages: MessageDir = {
       description: 'Remove sibling',
     },
 
+    // Current school
+    currentSchoolSubSectionTitle: {
+      id: 'nps.application:primary.school.current.school.sub.section.title',
+      defaultMessage: 'Upplýsingar um núverandi skóla',
+      description: 'Information about current school',
+    },
+    currentSchoolInfo: {
+      id: 'nps.application:primary.school.current.school.info',
+      defaultMessage: 'Núverandi skóli',
+      description: 'Current school',
+    },
+    grade: {
+      id: 'nps.application:primary.school.grade',
+      defaultMessage: 'Bekkur',
+      description: 'Grade',
+    },
+    currentGrade: {
+      id: 'nps.application:primary.school.current.grade',
+      defaultMessage: '{grade}. bekkur',
+      description: '{grade} grade',
+    },
+
     // Apply to a new school
     newSchoolSubSectionTitle: {
       id: 'nps.application:primary.school.new.school.sub.section.title',
@@ -447,6 +469,50 @@ export const newPrimarySchoolMessages: MessageDir = {
       defaultMessage: 'Það er ekki töluð íslenska í nærumhverfi barnsins',
       description:
         "Icelandic is not spoken in the child's immediate environment",
+    },
+
+    // Free school meal
+    freeSchoolMealSubSectionTitle: {
+      id: 'nps.application:different.needs.free.school.meal.sub.section.title',
+      defaultMessage: 'Gjaldfrjáls skólamáltíð',
+      description: 'Free school meal ',
+    },
+    freeSchoolMealDescription: {
+      id: 'nps.application:different.needs.free.school.meal.description',
+      defaultMessage:
+        'Barninu stendur til boða gjaldfrjáls skólamáltíð. Til þess að skólinn geti mætt fæðuþörfum barnsins á sama tíma og spornað er við matarsóun þurfum við upplýsingar er varða matarumhverfi barnsins.',
+      description:
+        "The child is entitled to a free school meal. In order for the school to be able to meet the child's nutritional needs while at the same time preventing food waste, we need information about the child's food environment.",
+    },
+    acceptFreeSchoolLunch: {
+      id: 'nps.application:different.needs.free.school.meal.accept.free.school.lunch',
+      defaultMessage:
+        'Viltu þiggja gjaldfrjálsa máltíð í hádeginu fyrir barnið þitt?',
+      description:
+        'Would you like to accept a free school lunch for your child?',
+    },
+    hasSpecialNeeds: {
+      id: 'nps.application:different.needs.free.school.meal.has.special.needs',
+      defaultMessage:
+        'Er barnið með sérþarfir sem óskað er eftir að tekið sé tillit til?',
+      description:
+        'Does the child have special needs that you wish to be taken into account?',
+    },
+    specialNeedsType: {
+      id: 'nps.application:different.needs.free.school.meal.special.needs.type',
+      defaultMessage: 'Tegund',
+      description: 'Type',
+    },
+    specialNeedsTypePlaceholder: {
+      id: 'nps.application:different.needs.free.school.meal.special.needs.type.placeholder',
+      defaultMessage: 'Veldu tegund',
+      description: 'Select type',
+    },
+    foodAllergiesAlertMessage: {
+      id: 'nps.application:different.needs.free.school.meal.food.allergies.alert.message',
+      defaultMessage: 'Spurt er um matarofnæmi undir ofnæmi og óþól',
+      description:
+        'Food allergies are addressed in the allergies and intolerances section',
     },
 
     // Allergies and intolerances
@@ -620,28 +686,13 @@ export const newPrimarySchoolMessages: MessageDir = {
     },
     schoolTitle: {
       id: 'nps.application:overview.school.title',
-      defaultMessage: 'Upplýsingar um skóla',
-      description: 'Information about school',
-    },
-    currentSchool: {
-      id: 'nps.application:overview.current.school',
-      defaultMessage: 'Núverandi skóli',
-      description: 'Current school',
+      defaultMessage: 'Upplýsingar um valinn/nýjan skóla',
+      description: 'Information about selected/new school',
     },
     selectedSchool: {
       id: 'nps.application:overview.selected.school',
       defaultMessage: 'Valinn skóli',
       description: 'Selected school',
-    },
-    grade: {
-      id: 'nps.application:overview.grade',
-      defaultMessage: 'Bekkur',
-      description: 'Grade',
-    },
-    currentGrade: {
-      id: 'nps.application:overview.current.grade',
-      defaultMessage: '{grade}. bekkur',
-      description: '{grade} grade',
     },
     foodAllergiesOrIntolerances: {
       id: 'nps.application:overview.food.allergies.or.intolerances',
@@ -713,10 +764,10 @@ export const errorMessages = defineMessages({
     defaultMessage: 'Kennitala þarf að vera gild.',
     description: 'National id must be valid',
   },
-  relativesRequired: {
-    id: 'nps.application:error.relatives.required',
-    defaultMessage: 'Nauðsynlegt er að bæta við a.m.k einum aðstandenda',
-    description: 'You must add at least one relative',
+  contactsRequired: {
+    id: 'nps.application:error.contacts.required',
+    defaultMessage: 'Nauðsynlegt er að bæta við a.m.k einum tengilið',
+    description: 'You must add at least one contact',
   },
   siblingsRequired: {
     id: 'nps.application:error.siblings.required',

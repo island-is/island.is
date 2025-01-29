@@ -3,6 +3,7 @@ import { ReasonForApplicationOptions } from '../../../lib/constants'
 import { newPrimarySchoolMessages } from '../../../lib/messages'
 import { getApplicationAnswers } from '../../../lib/newPrimarySchoolUtils'
 import { allergiesAndIntolerancesSubSection } from './allergiesAndIntolerancesSubSection'
+import { freeSchoolMealSubSection } from './freeSchoolMealSubSection'
 import { languageSubSection } from './languageSubSection'
 import { supportSubSection } from './supportSubSection'
 
@@ -16,6 +17,7 @@ export const differentNeedsSection = buildSection({
   },
   children: [
     languageSubSection,
+    freeSchoolMealSubSection,
     allergiesAndIntolerancesSubSection,
     supportSubSection,
   ],

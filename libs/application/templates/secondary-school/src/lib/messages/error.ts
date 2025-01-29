@@ -17,6 +17,16 @@ export const error = defineMessages({
       'Þú ert með aðra opna umsókn í gangi, vinsamlegast eyðið henni áður en opnað er nýja umsókn',
     description: 'Error validate can create description',
   },
+  errorNoSchoolOpenForAdmissionTitle: {
+    id: 'ss.application:error.errorNoSchoolOpenForAdmissionTitle',
+    defaultMessage: 'Ekki er hægt að opna nýja umsókn ',
+    description: 'Error no school open for admission title',
+  },
+  errorNoSchoolOpenForAdmissionDescription: {
+    id: 'ss.application:error.errorNoSchoolOpenForAdmissionDescription',
+    defaultMessage: 'Það er enginn skóli með opið fyrir umsóknir eins og er',
+    description: 'Error no school open for admission description',
+  },
   errorPastRegistrationDateTitle: {
     id: 'ss.application:error.errorPastRegistrationDateTitle',
     defaultMessage: 'Athugið',

@@ -1,6 +1,6 @@
 import { MembershipOrganizationType, MembershipRole } from './lib/constants'
 
-export interface RelativesRow {
+export interface ContactsRow {
   fullName: string
   phoneNumber: string
   nationalId: string

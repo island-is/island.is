@@ -53,6 +53,8 @@ export class SecondarySchoolClient {
           name: language.name || '',
         })) || [],
       allowRequestDormitory: school.availableDormitory || false,
+      isOpenForAdmissionGeneral: school.anyOpenForAdmissionGeneral || false,
+      isOpenForAdmissionFreshman: school.anyOpenForAdmissionFreshman || false,
     }))
   }
 

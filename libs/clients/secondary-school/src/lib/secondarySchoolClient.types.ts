@@ -13,6 +13,8 @@ export interface SecondarySchool {
   thirdLanguages: Language[]
   nordicLanguages: Language[]
   allowRequestDormitory: boolean
+  isOpenForAdmissionGeneral: boolean
+  isOpenForAdmissionFreshman: boolean
 }
 
 export interface Program {

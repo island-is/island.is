@@ -49,7 +49,25 @@ export class SecondarySchoolService extends BaseTemplateApiService {
   async getSchools({
     auth,
   }: TemplateApiModuleActionProps): Promise<SecondarySchool[]> {
-    return this.secondarySchoolClient.getSchools(auth)
+    const studentInfo = await this.secondarySchoolClient.getStudentInfo(auth)
+    const schools = await this.secondarySchoolClient.getSchools(auth)
+
+    const schoolIsOpenForAdmission = schools.find((x) =>
+      studentInfo?.isFreshman
+        ? x.isOpenForAdmissionFreshman
+        : x.isOpenForAdmissionFreshman || x.isOpenForAdmissionGeneral,
+    )
+    if (!schoolIsOpenForAdmission) {
+      throw new TemplateApiError(
+        {
+          title: error.errorNoSchoolOpenForAdmissionTitle,
+          summary: error.errorNoSchoolOpenForAdmissionDescription,
+        },
+        400,
+      )
+    }
+
+    return schools
   }
 
   async validateCanCreate({
