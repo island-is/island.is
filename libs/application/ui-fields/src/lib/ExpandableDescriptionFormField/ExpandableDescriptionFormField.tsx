@@ -40,12 +40,7 @@ export const ExpandableDescriptionFormField: FC<
         )}
         <BulletList space="gutter" type="ul">
           <Markdown>
-            {formatTextWithLocale(
-              field.description,
-              application,
-              locale as Locale,
-              formatMessage,
-            )}
+            {formatText(field.description, application, formatMessage)}
           </Markdown>
         </BulletList>
       </AccordionCard>

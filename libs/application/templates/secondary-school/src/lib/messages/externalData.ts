@@ -64,7 +64,7 @@ export const externalData = {
     subTitle: {
       id: 'ss.application:externalData.educationalCareer.subTitle',
       defaultMessage:
-        'Upplýsingar um lokaeinkunnir úr grunnskóla eða fyrirliggjandi námsgráður og skírteini verða sóttar við úrvinnslu umsókna.',
+        'Lokaeinkunnir úr grunnskóla eða upplýsingar um fyrirliggjandi námsgráður og skírteini.',
       description: 'We will fetch degrees and certificates',
     },
   }),

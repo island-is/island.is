@@ -14,7 +14,8 @@ export const extraInformation = {
     },
     description: {
       id: 'ss.application:extraInformation.general.description',
-      defaultMessage: '',
+      defaultMessage:
+        'Vinsamlegast veldu taktu fram ef það eru einhverjar sérþarfir. Ef ekkert á við þá heldurðu bara áfram.',
       description: 'Description of extra information page',
     },
   }),
@@ -77,8 +78,7 @@ export const extraInformation = {
     },
     fileUploadDescription: {
       id: 'ss.application:extraInformation.supportingDocuments.fileUploadDescription',
-      defaultMessage:
-        'Eingöngu er tekið við skjölum með endingunum: .pdf, .jpg, .jpeg, .png',
+      defaultMessage: 'Tekið er við skjölum með endingu: .pdf',
       description: 'Supporting documents file upload title',
     },
     fileUploadButtonLabel: {

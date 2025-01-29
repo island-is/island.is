@@ -34,12 +34,7 @@ export const AlertMessageFormField: FC<React.PropsWithChildren<Props>> = ({
               {field.message != null ? (
                 <Text variant="small">
                   <Markdown>
-                    {formatTextWithLocale(
-                      field.message,
-                      application,
-                      locale as Locale,
-                      formatMessage,
-                    )}
+                    {formatText(field.message, application, formatMessage)}
                   </Markdown>
                 </Text>
               ) : null}

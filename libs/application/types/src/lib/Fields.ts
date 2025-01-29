@@ -462,9 +462,7 @@ export interface SubmitField extends BaseField {
   component: FieldComponents.SUBMIT
   readonly actions: CallToAction[]
   readonly placement: 'footer' | 'screen'
-  readonly refetchApplicationAfterSubmit?:
-    | boolean
-    | ((event?: string) => boolean)
+  readonly refetchApplicationAfterSubmit?: boolean
 }
 
 export interface DividerField extends BaseField {
@@ -521,7 +519,7 @@ export interface ExpandableDescriptionField extends BaseField {
   readonly type: FieldTypes.EXPANDABLE_DESCRIPTION
   component: FieldComponents.EXPANDABLE_DESCRIPTION
   introText?: FormText
-  description: FormTextWithLocale
+  description: FormText
   startExpanded?: boolean
 }
 
@@ -529,7 +527,7 @@ export interface AlertMessageField extends BaseField {
   readonly type: FieldTypes.ALERT_MESSAGE
   component: FieldComponents.ALERT_MESSAGE
   alertType?: 'default' | 'warning' | 'error' | 'info' | 'success'
-  message?: FormTextWithLocale
+  message?: FormText
   links?: AlertMessageLink[]
 }
 

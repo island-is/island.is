@@ -43,19 +43,7 @@ export class SecondarySchoolService extends BaseTemplateApiService {
   async getStudentInfo({
     auth,
   }: TemplateApiModuleActionProps): Promise<Student> {
-    const result = await this.secondarySchoolClient.getStudentInfo(auth)
-
-    if (result.hasActiveApplication) {
-      throw new TemplateApiError(
-        {
-          title: error.errorValidateCanCreateTitle,
-          summary: error.errorValidateCanCreateDescription,
-        },
-        400,
-      )
-    }
-
-    return result
+    return this.secondarySchoolClient.getStudentInfo(auth)
   }
 
   async getSchools({
@@ -82,34 +70,43 @@ export class SecondarySchoolService extends BaseTemplateApiService {
     return schools
   }
 
+  async validateCanCreate({
+    auth,
+  }: TemplateApiModuleActionProps): Promise<void> {
+    const canCreate = await this.secondarySchoolClient.validateCanCreate(auth)
+
+    if (!canCreate) {
+      throw new TemplateApiError(
+        {
+          title: error.errorValidateCanCreateTitle,
+          summary: error.errorValidateCanCreateDescription,
+        },
+        400,
+      )
+    }
+  }
+
   async deleteApplication({
     application,
     auth,
   }: TemplateApiModuleActionProps): Promise<void> {
-    const externalId = await this.secondarySchoolClient.getExternalId(
-      auth,
-      application.id,
-    )
+    try {
+      // Delete the application in MMS
+      await this.secondarySchoolClient.delete(auth, application.id)
 
-    if (externalId) {
       try {
-        // Delete the application in MMS
-        await this.secondarySchoolClient.delete(auth, application.id)
-
-        try {
-          // If that succeeded, send email to applicant and custodians
-          await this.sendEmailAboutDeleteApplication(application)
-        } catch (emailError) {
-          logger.error(
-            `Application deleted but failed to send notification emails: ${emailError.message}`,
-            { applicationId: application.id },
-          )
-        }
-      } catch (error) {
-        throw new Error(
-          `Failed to delete application ${application.id}: ${error.message}`,
+        // If that succeeded, send email to applicant and custodians
+        await this.sendEmailAboutDeleteApplication(application)
+      } catch (emailError) {
+        logger.error(
+          `Application deleted but failed to send notification emails: ${emailError.message}`,
+          { applicationId: application.id },
         )
       }
+    } catch (error) {
+      throw new Error(
+        `Failed to delete application ${application.id}: ${error.message}`,
+      )
     }
   }
 

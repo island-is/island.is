@@ -34,16 +34,13 @@ export const ExtraInformationOverview: FC<FieldBaseProps> = ({
     return language?.name || ''
   }
 
-  const isEditable =
-    application.state === States.DRAFT || application.state === States.EDIT
-
   return (
     (showNativeLanguage || showOtherDescription || showSupportingDocuments) && (
       <ReviewGroup
         handleClick={() => onClick(Routes.EXTRA_INFORMATION)}
         editMessage={formatMessage(overview.general.editMessage)}
         title={formatMessage(overview.extraInformation.subtitle)}
-        isEditable={isEditable}
+        isEditable={application.state === States.DRAFT}
       >
         <Box>
           <GridRow>

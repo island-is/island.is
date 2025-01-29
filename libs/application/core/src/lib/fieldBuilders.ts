@@ -508,7 +508,7 @@ export const buildSubmitField = (data: {
   placement?: 'footer' | 'screen'
   marginBottom?: BoxProps['marginBottom']
   marginTop?: BoxProps['marginTop']
-  refetchApplicationAfterSubmit?: boolean | ((event?: string) => boolean)
+  refetchApplicationAfterSubmit?: boolean
   actions: CallToAction[]
 }): SubmitField => {
   const {

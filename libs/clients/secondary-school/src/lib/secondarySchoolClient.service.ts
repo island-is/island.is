@@ -30,10 +30,7 @@ export class SecondarySchoolClient {
 
   async getStudentInfo(auth: User): Promise<Student> {
     const studentInfo = await this.studentsApiWithAuth(auth).v1StudentsInfoGet()
-    return {
-      hasActiveApplication: studentInfo?.hasActiveApplication || false,
-      isFreshman: studentInfo?.isFreshman || false,
-    }
+    return { isFreshman: studentInfo?.isFreshman || false }
   }
 
   async getSchools(auth: User): Promise<SecondarySchool[]> {
@@ -84,6 +81,11 @@ export class SecondarySchoolClient {
     }))
   }
 
+  async validateCanCreate(auth: User): Promise<boolean> {
+    const studentInfo = await this.studentsApiWithAuth(auth).v1StudentsInfoGet()
+    return !studentInfo?.hasActiveApplication
+  }
+
   async delete(auth: User, applicationId: string): Promise<void> {
     return this.applicationsApiWithAuth(
       auth,
@@ -92,17 +94,14 @@ export class SecondarySchoolClient {
     })
   }
 
-  async getExternalId(
-    auth: User,
-    applicationId: string,
-  ): Promise<string | undefined> {
+  async create(auth: User, application: Application): Promise<string> {
+    // Check if an application already exists
     let externalId: string | undefined
-
     try {
       externalId = await this.applicationsApiWithAuth(
         auth,
       ).v1ApplicationsIslandIsApplicationIdIdGet({
-        islandIsApplicationId: applicationId,
+        islandIsApplicationId: application.id,
       })
     } catch (e) {
       if (e.response?.status !== 404) {
@@ -110,13 +109,6 @@ export class SecondarySchoolClient {
         throw e
       }
     }
-
-    return externalId
-  }
-
-  async create(auth: User, application: Application): Promise<string> {
-    // Check if an application already exists
-    const externalId = await this.getExternalId(auth, application.id)
 
     const applicationBaseDto = {
       islandIsApplicationId: application.id,

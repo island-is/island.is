@@ -7,17 +7,12 @@ import {
   buildSection,
   coreMessages,
 } from '@island.is/application/core'
-import {
-  Condition,
-  FormText,
-  FormTextWithLocale,
-  StaticText,
-} from '@island.is/application/types'
+import { Condition, FormText, StaticText } from '@island.is/application/types'
 import { conclusion } from './messages'
 
 type Props = Partial<{
   alertTitle: FormText
-  alertMessage: FormTextWithLocale
+  alertMessage: FormText
   alertType: 'success' | 'warning' | 'error' | 'info'
   multiFieldTitle: StaticText
   secondButtonLink: StaticText
@@ -26,7 +21,7 @@ type Props = Partial<{
   accordion?: boolean
   expandableHeader: FormText
   expandableIntro: FormText
-  expandableDescription: FormTextWithLocale
+  expandableDescription: FormText
   conclusionLinkS3FileKey: FormText
   conclusionLink: string
   conclusionLinkLabel: StaticText

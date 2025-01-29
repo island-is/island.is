@@ -35,12 +35,11 @@ export const custodianSubSection = buildSubSection({
           titleVariant: 'h5',
           condition: (_, externalData) => checkHasAnyCustodians(externalData),
           formTitleNumbering: 'suffix',
-          formTitle: userInformation.custodian.label,
+          formTitle: userInformation.custodian.subtitle,
           addItemButtonText: userInformation.custodian.addButtonLabel,
           removeItemButtonText: userInformation.custodian.removeButtonLabel,
           minRows: 1,
           maxRows: 2,
-          marginTop: 0,
           fields: {
             person: {
               component: 'nationalIdWithName',

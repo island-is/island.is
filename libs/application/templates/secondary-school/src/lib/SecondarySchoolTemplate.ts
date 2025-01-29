@@ -154,6 +154,9 @@ const template: ApplicationTemplate<
             ],
           },
           lifecycle: pruneAfterDays(7),
+          onEntry: defineTemplateApi({
+            action: ApiActions.validateCanCreate,
+          }),
           onExit: defineTemplateApi({
             action: ApiActions.submitApplication,
           }),
@@ -282,7 +285,7 @@ const template: ApplicationTemplate<
               variant: 'blueberry',
             },
             pendingAction: {
-              title: applicationPendingActionMessages.waitingForReviewTitle,
+              title: corePendingActionMessages.waitingForReviewTitle,
               content: corePendingActionMessages.waitingForReviewDescription,
               displayStatus: 'info',
             },

@@ -11,7 +11,10 @@ import { userInformationSection } from './secondarySchoolForm/userInformationSec
 import { schoolSection } from './secondarySchoolForm/schoolSection'
 import { extraInformationSection } from './secondarySchoolForm/extraInformationSection'
 import { Logo } from '../assets/Logo'
-import { conclusionSection } from './secondarySchoolForm/conclusionSection'
+import {
+  conclusionSectionFreshman,
+  conclusionSectionGeneral,
+} from './secondarySchoolForm/conclusionSection'
 import { error, overview } from '../lib/messages'
 import { getEndOfDayUTCDate, getFirstRegistrationEndDate } from '../utils'
 
@@ -58,9 +61,6 @@ export const Edit: Form = buildForm({
               id: 'submit',
               placement: 'footer',
               title: '',
-              refetchApplicationAfterSubmit: (event) => {
-                return event === DefaultEvents.ABORT
-              },
               actions: [
                 {
                   event: DefaultEvents.ABORT,
@@ -86,6 +86,7 @@ export const Edit: Form = buildForm({
     }),
     // Note: The conclusion section will appear after submit, but then on refresh the
     // conclusionForm is visible (overview)
-    conclusionSection,
+    conclusionSectionFreshman,
+    conclusionSectionGeneral,
   ],
 })
