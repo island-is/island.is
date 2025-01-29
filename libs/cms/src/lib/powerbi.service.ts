@@ -8,6 +8,7 @@ import {
 } from '@island.is/clients/middlewares'
 import { PowerBiConfig } from './powerbi.config'
 import { GetPowerBiEmbedPropsFromServerResponse } from './dto/getPowerBiEmbedPropsFromServer.response'
+import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
 
 type Owner = 'Fiskistofa'
 const BASE_URL = 'https://api.powerbi.com/v1.0/myorg'
@@ -19,6 +20,7 @@ export class PowerBiService {
   constructor(
     @Inject(PowerBiConfig.KEY)
     private config: ConfigType<typeof PowerBiConfig>,
+    @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {
     this.fetch = createEnhancedFetch({ name: 'PowerBiService' })
   }
@@ -35,24 +37,29 @@ export class PowerBiService {
     )
       return null
 
-    const accessToken = await this.getAccessToken(powerBiSlice.owner as Owner)
+    try {
+      const accessToken = await this.getAccessToken(powerBiSlice.owner as Owner)
 
-    const report = await this.getReport(
-      powerBiSlice.workspaceId,
-      powerBiSlice.reportId,
-      accessToken,
-    )
+      const report = await this.getReport(
+        powerBiSlice.workspaceId,
+        powerBiSlice.reportId,
+        accessToken,
+      )
 
-    const embedToken = await this.getEmbedToken(
-      powerBiSlice.reportId,
-      [report.datasetId],
-      powerBiSlice.workspaceId,
-      accessToken,
-    )
+      const embedToken = await this.getEmbedToken(
+        powerBiSlice.reportId,
+        [report.datasetId],
+        powerBiSlice.workspaceId,
+        accessToken,
+      )
 
-    return {
-      accessToken: embedToken,
-      embedUrl: report.embedUrl,
+      return {
+        accessToken: embedToken,
+        embedUrl: report.embedUrl,
+      }
+    } catch (error) {
+      this.logger.error('Failed to fetch PowerBi embed props', error)
+      return null
     }
   }
 
