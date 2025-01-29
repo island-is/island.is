@@ -75,12 +75,12 @@ export const Header = ({ position }: Props) => {
   return (
     <div className={styles.placeholder}>
       <PortalPageLoader />
+      {/*  Inline style to dynamicly change position of header because of alert banners */}
       <header
         className={cn(styles.header, {
           [styles.showHeader]: show,
           [styles.hideHeader]: hide,
         })}
-        {/*  Inline style to dynamicly change position of header because of alert banners */}
         style={{
           top: position,
         }}
