@@ -6,7 +6,7 @@ on:
 
 defaults:
   run:
-    shell: bash
+    shell: bash -euo pipefail {0}
 
 concurrency:
   # See https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#example-using-a-fallback-value
