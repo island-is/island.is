@@ -2559,6 +2559,7 @@ services-documents:
 services-form-system:
   enabled: true
   env:
+    CODE_OWNER: 'Advania'
     DB_HOST: 'postgres-applications.internal'
     DB_NAME: 'services_form_system'
     DB_REPLICAS_HOST: 'postgres-applications-reader.internal'
