@@ -32,15 +32,10 @@ import TableSkeleton from './TableSkeleton/TableSkeleton'
 import { table as strings } from './Table.strings'
 import * as styles from './Table.css'
 
-interface Sortable {
-  isSortable: boolean
-  key: sortableTableColumn
-}
-
 interface TableProps {
   thead: {
     title: string
-    sortable?: Sortable
+    sortBy?: sortableTableColumn
   }[]
   data: CaseListEntry[]
   columns: { cell: (row: CaseListEntry) => ReactNode }[]
@@ -239,14 +234,14 @@ const Table: FC<TableProps> = (props) => {
         <tr>
           {thead.map((th) => (
             <th key={`${th}-${thead.indexOf(th)}`} className={styles.th}>
-              {th.sortable ? (
+              {th.sortBy ? (
                 <SortButton
                   title={th.title}
-                  onClick={() => th.sortable && requestSort(th.sortable.key)}
-                  sortAsc={getClassNamesFor(th.sortable.key) === 'ascending'}
-                  sortDes={getClassNamesFor(th.sortable.key) === 'descending'}
-                  isActive={sortConfig?.column === th.sortable.key}
-                  dataTestid={`${th.sortable.key}SortButton`}
+                  onClick={() => th.sortBy && requestSort(th.sortBy)}
+                  sortAsc={getClassNamesFor(th.sortBy) === 'ascending'}
+                  sortDes={getClassNamesFor(th.sortBy) === 'descending'}
+                  isActive={sortConfig?.column === th.sortBy}
+                  dataTestid={`${th.sortBy}SortButton`}
                 />
               ) : (
                 <Text as="span" fontWeight="regular">
