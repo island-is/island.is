@@ -701,7 +701,7 @@ export const IncomePlanForm: Form = buildForm({
       expandableIntro: '',
       bottomButtonMessage:
         incomePlanFormMessage.conclusionScreen.bottomButtonMessage,
-      bottomButtonLink: '/minarsidur/framfaersla/tekjuaaetlun',
+      bottomButtonLink: '/minarsidur/umsoknir',
     }),
   ],
 })
