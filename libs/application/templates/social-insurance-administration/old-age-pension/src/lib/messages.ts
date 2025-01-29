@@ -295,18 +295,6 @@ export const oldAgePensionFormMessage: MessageDir = {
   }),
 
   fileUpload: defineMessages({
-    earlyRetirementTitle: {
-      id: 'oap.application:fileUpload.earlyRetirement.title',
-      defaultMessage: 'Fylgiskjöl vegna snemmtöku',
-      description: 'Early retirement attachment',
-    },
-    earlyRetirementDescription: {
-      id: 'oap.application:fileUpload.earlyRetirement.description',
-      defaultMessage:
-        'Hér getur þú skilað yfirliti úr lífeyrisgátt sem þú hefur áunnið þér réttindi í. Athugaðu að skjalið þarf að vera á .pdf formi.',
-      description:
-        'Here you can submit an overview from the pension portal in which you have earned rights. Note that the document must be in .pdf format.',
-    },
     pensionFileTitle: {
       id: 'oap.application:fileUpload.pensionFile.title',
       defaultMessage: 'Fylgiskjöl lífeyrissjóða',

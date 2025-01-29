@@ -2082,16 +2082,26 @@ export class CaseNotificationService extends BaseNotificationService {
       },
     )
 
-    const promises = [
+    const courtOfAppealsAssistantEmails =
+      this.config.email.courtOfAppealsAssistantEmails
+        .split(',')
+        .map((email) => email.trim())
+
+    const allCourtOfAppealsEmails = [
+      ...courtOfAppealsAssistantEmails,
+      this.getCourtEmail(this.config.courtOfAppealsId),
+    ]
+
+    const promises = allCourtOfAppealsEmails.map((email) =>
       this.sendEmail({
         subject,
         html,
         recipientName: this.formatMessage(
           notifications.emailNames.courtOfAppeals,
         ),
-        recipientEmail: this.getCourtEmail(this.config.courtOfAppealsId),
+        recipientEmail: email,
       }),
-    ]
+    )
 
     const prosecutorHtml = this.formatMessage(
       notifications.caseAppealReceivedByCourt.body,

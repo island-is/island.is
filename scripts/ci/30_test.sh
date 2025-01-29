@@ -10,13 +10,8 @@ set -euxo pipefail
 : "${FLAKY_TEST_RETRIES:=3}"
 
 # Default to big old-space, and more options for testing, but allow overriding
-NODE_OPTIONS="--max-old-space-size=8193 --unhandled-rejections=warn --require=dd-trace/ci/init ${NODE_OPTIONS:-}"
+NODE_OPTIONS="--max-old-space-size=8193 --unhandled-rejections=warn --trace-warnings --require=dd-trace/ci/init ${NODE_OPTIONS:-}"
 EXTRA_OPTS=""
-
-FLAKY_TESTS=(
-  "services-auth-delegation-api"
-  "services-auth-personal-representative"
-)
 
 projects_uncollectible_coverage=(
   "application-templates-no-debt-certificate"
@@ -26,6 +21,11 @@ projects_uncollectible_coverage=(
   "portals-my-pages-core"
 )
 
+# Array of services to skip during testing
+services_to_skip=(
+  "services-user-notification"
+)
+
 export DD_CIVISIBILITY_AGENTLESS_ENABLED \
   DD_SITE \
   DD_ENV \
@@ -33,17 +33,6 @@ export DD_CIVISIBILITY_AGENTLESS_ENABLED \
   DD_API_KEY \
   NODE_OPTIONS \
   SERVERSIDE_FEATURES_ON=\"\" # disable server-side features
-
-# Function to check if any project in AFFECTED_PROJECTS is a flaky test
-is_any_project_flaky() {
-  IFS=',' read -ra PROJECTS <<<"$AFFECTED_PROJECTS"
-  for project in "${PROJECTS[@]}"; do
-    if [[ " ${FLAKY_TESTS[*]} " == *" ${project} "* ]]; then
-      return 0
-    fi
-  done
-  return 1
-}
 
 # Determine if any project requires code coverage
 requires_code_coverage() {
@@ -61,19 +50,22 @@ if requires_code_coverage; then
   EXTRA_OPTS="--codeCoverage"
 fi
 
-# Determine number of retries
-if is_any_project_flaky; then
-  MAX_RETRIES=$FLAKY_TEST_RETRIES
-else
-  MAX_RETRIES=1
-fi
+echo $EXTRA_OPTS
 
-# Run tests with retries
-for ((i = 1; i <= MAX_RETRIES; i++)); do
-  echo "Running tests for projects: ${AFFECTED_PROJECTS} (attempt: ${i}/${MAX_RETRIES})"
-  if yarn nx run-many --projects "${AFFECTED_PROJECTS}" --target test --parallel="${NX_PARALLEL}" ${EXTRA_OPTS} --verbose --no-watchman "$@"; then
-    exit 0
-  fi
-done
+opts=(
+  --projects="${AFFECTED_PROJECTS}"
+  --exclude="${services_to_skip[*]}"
+  --target=test
+  --parallel="${NX_PARALLEL}"
+  --verbose
+  --no-watchman
+  --debug
+  --ci
+  --detectLeaks=false # Detecting leaks in CI is flaky and takes a long time
+  --detectOpenHandles # Prevents shipping improperly async-ed code
+  --passWithNoTests   # This should ideally be `true`, but too many projects don't have tests
+  # --runInBand       # `runInBand` causes significant slowness when many projects are running pralallel
+)
+yarn nx run-many "${opts[@]}" ${EXTRA_OPTS} "$@"
 
-exit 1
+echo "DONE"

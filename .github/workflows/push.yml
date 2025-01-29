@@ -37,16 +37,20 @@ env:
   NX_AFFECTED_ALL: ${{ contains(github.event.pull_request.labels.*.name, 'nx-affected-all') }}
   CONFIGCAT_MAIN_CONFIG_ID: 08d8c761-021c-46f0-8671-6244663a372f
   CONFIGCAT_MOBILE_APP_CONFIG_ID: 08daf234-7573-4b3b-85f6-189fc7502542
-  CHUNK_SIZE: ${{ vars.CHUNK_SIZE || 8 }}
-  DISABLE_CHUNKS: ${{ vars.DISABLE_CHUNKS || true }}
-  MAX_JOBS: ${{ vars.MAX_JOBS || 10 }}
-  NX_PARALLEL: ${{ vars.NX_PARALLEL || 10 }}
-  NX_MAX_PARALLEL: ${{ vars.NX_MAX_PARALLEL || 10 }}
+  DISABLE_CHUNKS: 'false'
+  DISABLE_GROUPING: 'false'
+  DISABLE_PROBLEMATIC: 'false'
+  CHUNK_SIZE: '3'
+  MAX_JOBS: '2'
+  NX_PARALLEL: '2'
+  NX_MAX_PARALLEL: '4'
 
 jobs:
   pre-checks:
     name: Check if job should run
-    runs-on: arc-runners
+    runs-on: ec2-runners
+    container:
+      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
     env:
       CREATE_PATTERNS: ^release/
       PRE_RELEASE_PATTERN: ^pre-release/
@@ -146,7 +150,9 @@ jobs:
           echo "PRE_CHECK=push" >> "$GITHUB_OUTPUT"
 
   prepare:
-    runs-on: arc-runners
+    runs-on: ec2-runners
+    container:
+      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
     timeout-minutes: 90
 
     if: needs.pre-checks.outputs.PRE_CHECK
@@ -213,6 +219,13 @@ jobs:
           git config --global user.email "ci@island.is"
           git config --global user.name "CI Bot"
 
+      - name: Derive appropriate SHAs
+        uses: nrwl/nx-set-shas@v4
+
+      - run: |
+          echo "BASE: ${{ env.NX_BASE }}"
+          echo "HEAD: ${{ env.NX_HEAD }}"
+
       - name: Checking out relevant branches for a PR
         if: needs.pre-checks.outputs.PRE_CHECK && needs.pre-checks.outputs.PRE_CHECK == 'feature-deploy' && !(needs.pre-checks.outputs.PRE_RELEASE == 'true')
         run: |
@@ -223,8 +236,10 @@ jobs:
           git config --global user.email "ci@island.is"
           git config --global user.name "CI Bot"
 
-          BASE_SHA="$(git merge-base HEAD "$GITHUB_BASE_REF")"
-          HEAD_SHA="$(git merge-base HEAD "$GITHUB_HEAD_REF")"
+          # BASE_SHA="$(git merge-base HEAD "$GITHUB_BASE_REF")"
+          # HEAD_SHA="$(git merge-base HEAD "$GITHUB_HEAD_REF")"
+          BASE_SHA=${{ env.NX_BASE }}
+          HEAD_SHA=${{ env.NX_HEAD }}
           echo "Current base SHA is '$BASE_SHA' and head SHA is '$HEAD_SHA'"
           echo "{\"base_sha\": \"$BASE_SHA\", \"head_sha\":\"$HEAD_SHA\"}" > event.json
 
@@ -443,7 +458,9 @@ jobs:
     needs:
       - prepare
     if: needs.prepare.outputs.TEST_CHUNKS
-    runs-on: arc-runners
+    runs-on: ec2-runners
+    container:
+      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
     timeout-minutes: 35
     env:
       AFFECTED_PROJECTS: ${{ matrix.projects }}
@@ -477,13 +494,14 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           docker-registry: ${{ env.DOCKER_REGISTRY}}
-          affected-projects: ${{ env.AFFECTED_PROJECTS }}
 
   docker-build:
     needs:
       - pre-checks
       - prepare
-    runs-on: arc-runners
+    runs-on: ec2-runners
+    container:
+      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
     timeout-minutes: 35
     if: needs.prepare.outputs.BUILD_CHUNKS
     env:
@@ -630,7 +648,9 @@ jobs:
       - prepare
       - pre-checks
     #    if: needs.prepare.outputs.IMAGES && needs.pre-checks.outputs.PRE_CHECK != 'push'
-    runs-on: arc-runners
+    runs-on: ec2-runners
+    container:
+      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
     timeout-minutes: 30
     env:
       FEATURE_NAME: ${{ needs.pre-checks.outputs.FEATURE_NAME }}
@@ -686,7 +706,9 @@ jobs:
             await updateComment({github, context, comment: COMMENT})
 
   retag-unaffected:
-    runs-on: arc-runners
+    runs-on: ec2-runners
+    container:
+      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
     timeout-minutes: 5
     if: ${{ !cancelled() && needs.pre-checks.result == 'success' && needs.prepare.result != 'skipped' }}
     needs:
@@ -715,7 +737,9 @@ jobs:
         run: ./scripts/ci/retag-unaffected.sh "$UNAFFECTED"
 
   deploy:
-    runs-on: arc-runners
+    runs-on: ec2-runners
+    container:
+      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
     if: ${{ !cancelled() && needs.retag-unaffected.result == 'success' && needs.helm-docker-build.result != 'failure' }}
     needs:
       - retag-unaffected
@@ -769,7 +793,9 @@ jobs:
           }
           BODY
   push-success:
-    runs-on: arc-runners
+    runs-on: ec2-runners
+    container:
+      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
     if: ${{ !cancelled() }}
     needs:
       - pre-checks
@@ -791,7 +817,9 @@ jobs:
         run: echo "Build was skipped"
 
   failure-notification:
-    runs-on: arc-runners
+    runs-on: ec2-runners
+    container:
+      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
     if: failure() && needs.pre-checks.outputs.PRE_CHECK && needs.pre-checks.outputs.PRE_CHECK != 'feature-deploy'
     needs:
       - pre-checks
@@ -812,7 +840,9 @@ jobs:
 
   scanflags:
     if: github.ref == 'ref/heads/main'
-    runs-on: arc-runners
+    runs-on: ec2-runners
+    container:
+      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
     steps:
       - name: Checkout
         uses: actions/checkout@v3

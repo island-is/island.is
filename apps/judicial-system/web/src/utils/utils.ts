@@ -1,6 +1,3 @@
-import addDays from 'date-fns/addDays'
-import parseISO from 'date-fns/parseISO'
-
 import { TagVariant } from '@island.is/island-ui/core'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import {
@@ -58,11 +55,6 @@ export const fileSize = (bytes?: number) => {
 
   const kb = Math.ceil(bytes / 1024)
   return kb >= 10000 ? `${kb.toString().substring(0, 2)}MB` : `${kb}KB`
-}
-
-export const getAppealEndDate = (rulingDate: string) => {
-  const appealEndDate = addDays(parseISO(rulingDate), 3)
-  return formatDate(appealEndDate, 'PPPp')
 }
 
 export const isBusiness = (nationalId?: string | null) => {

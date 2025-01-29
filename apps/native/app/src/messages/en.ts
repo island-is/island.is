@@ -19,6 +19,7 @@ export const en: TranslatedMessages = {
     'Updated permissions required, please login again.',
   'login.expiredMissingUserMessage':
     'Could not fetch user information, please login again.',
+  'login.expiredMessage': 'Please log in again.',
 
   // app lock
   'applock.title': 'Enter a 4-digit PIN',
@@ -270,6 +271,8 @@ export const en: TranslatedMessages = {
   'walletPass.barcodeErrorNotConnected':
     'Not possible to scan barcode if the device is not connected to the internet.',
   'walletPass.barcodeErrorFailedToFetch': 'Could not fetch barcode',
+  'walletPass.barcodeErrorBadSession':
+    'Too little time since license was accessed on another device',
   'walletPass.validLicense': 'Valid',
   'walletPass.expiredLicense': 'Expired',
   'walletPass.passportNumber': 'Passport number: {licenseNumber}',
