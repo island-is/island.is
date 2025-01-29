@@ -323,7 +323,7 @@ jobs:
       - name: Upload updated nx.json
         uses: actions/upload-artifact@v4
         with:
-          name: nx-json
+          name: nx-json-${{ hashFiles('nx.json') }}
           path: nx.json
       - name: Get cache
         id: get-cache
@@ -494,7 +494,7 @@ jobs:
       - name: Download nx.json
         uses: actions/download-artifact@v4
         with:
-          name: nx-json
+          name: nx-json-${{ hashFiles('nx.json') }}
 
       - name: Get cache
         id: get-cache
@@ -555,7 +555,7 @@ jobs:
       - name: Download nx.json
         uses: actions/download-artifact@v4
         with:
-          name: nx-json
+          name: nx-json-${{ hashFiles('nx.json') }}
 
       - name: Get cache
         id: get-cache
