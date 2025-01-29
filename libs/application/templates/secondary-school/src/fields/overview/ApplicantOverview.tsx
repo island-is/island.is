@@ -4,7 +4,12 @@ import { Box, GridColumn, GridRow, Text } from '@island.is/island-ui/core'
 import { SecondarySchoolAnswers } from '../..'
 import { overview } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
-import { formatKennitala, formatPhoneNumber, States, Routes } from '../../utils'
+import {
+  formatKennitala,
+  formatPhoneNumber,
+  Routes,
+  checkIsEditable,
+} from '../../utils'
 import { ReviewGroup } from '../../components/ReviewGroup'
 import { getValueViaPath } from '@island.is/application/core'
 
@@ -23,8 +28,7 @@ export const ApplicantOverview: FC<FieldBaseProps> = ({
     if (goToScreen) goToScreen(page)
   }
 
-  const isEditable =
-    application.state === States.DRAFT || application.state === States.EDIT
+  const isEditable = checkIsEditable(application.state)
 
   return (
     <ReviewGroup

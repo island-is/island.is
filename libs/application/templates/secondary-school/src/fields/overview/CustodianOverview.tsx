@@ -9,7 +9,7 @@ import {
   formatKennitala,
   formatPhoneNumber,
   Routes,
-  States,
+  checkIsEditable,
 } from '../../utils'
 import { ReviewGroup } from '../../components/ReviewGroup'
 import { getValueViaPath } from '@island.is/application/core'
@@ -48,8 +48,7 @@ export const CustodianOverview: FC<FieldBaseProps> = ({
   const showMainOtherContact = !!mainOtherContact?.person?.nationalId
   const showOtherContacts = !!otherContacts.length
 
-  const isEditable =
-    application.state === States.DRAFT || application.state === States.EDIT
+  const isEditable = checkIsEditable(application.state)
 
   return (
     <ReviewGroup

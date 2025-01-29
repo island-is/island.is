@@ -5,7 +5,7 @@ import { useLocale } from '@island.is/localization'
 import { overview } from '../../lib/messages'
 import { SecondarySchoolAnswers } from '../..'
 import { ReviewGroup } from '../../components/ReviewGroup'
-import { Routes, States } from '../../utils'
+import { Routes, checkIsEditable } from '../../utils'
 import { getLanguageByCode } from '@island.is/shared/utils'
 import { getValueViaPath } from '@island.is/application/core'
 
@@ -34,8 +34,7 @@ export const ExtraInformationOverview: FC<FieldBaseProps> = ({
     return language?.name || ''
   }
 
-  const isEditable =
-    application.state === States.DRAFT || application.state === States.EDIT
+  const isEditable = checkIsEditable(application.state)
 
   return (
     (showNativeLanguage || showOtherDescription || showSupportingDocuments) && (
