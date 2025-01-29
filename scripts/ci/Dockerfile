@@ -27,6 +27,7 @@ RUN apt-get update && apt-get install -y \
 COPY package.json yarn.lock .yarnrc.yml ./
 COPY apps/native/app/package.json ./apps/native/app/
 COPY .yarn/ ./.yarn
+RUN CI=true yarn install --immutable
 
 # Image with source code
 FROM deps AS src
