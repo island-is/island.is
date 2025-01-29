@@ -190,13 +190,15 @@ const Overview: FC = () => {
         )}
         <PageTitle>{formatMessage(strings.heading)}</PageTitle>
         <ProsecutorCaseInfo workingCase={workingCase} />
-        <Box marginBottom={2}>
-          <AlertMessage
-            title={formatMessage(strings.indictmentCancelledTitle)}
-            message={formatMessage(strings.indictmentCancelledMessage)}
-            type="warning"
-          />
-        </Box>
+        {workingCase.state === CaseState.WAITING_FOR_CANCELLATION && (
+          <Box marginBottom={2}>
+            <AlertMessage
+              title={formatMessage(strings.indictmentCancelledTitle)}
+              message={formatMessage(strings.indictmentCancelledMessage)}
+              type="warning"
+            />
+          </Box>
+        )}
         {workingCase.defendants?.map((defendant) =>
           defendant.subpoenas?.map((subpoena) => (
             <ServiceAnnouncement
