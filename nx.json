@@ -1,7 +1,7 @@
 {
   "tasksRunnerOptions": {
     "default": {
-      "runner": "nx-cloud",
+      "runner": "nx/tasks-runners/default",
       "options": {
         "cacheableOperations": [
           "build",
@@ -14,8 +14,7 @@
           "generateDevIndexHTML"
         ],
         "cacheDirectory": ".cache/nx",
-        "parallel": 1,
-        "nxCloudId": "64e4eb6a54304f090734e8df"
+        "parallel": 1
       }
     },
     "docker-test": {
