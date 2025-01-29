@@ -10,7 +10,6 @@ import {
 import { ChargeCardInput } from './dtos/chargeCard.input'
 import { VerifyCardInput } from './dtos/verifyCard.input'
 import {
-  CardErrorCode,
   ChargeResponse,
   MdNormalised,
   MdSerialized,
@@ -19,6 +18,7 @@ import {
 
 import { PaymentFlowAttributes } from '../paymentFlow/models/paymentFlow.model'
 import { CardPaymentModuleConfigType } from './cardPayment.config'
+import { CardErrorCode } from '@island.is/shared/constants'
 
 const MdSerializedSchema = z.object({
   c: z.string().length(36, 'Correlation ID must be 36 characters long'),

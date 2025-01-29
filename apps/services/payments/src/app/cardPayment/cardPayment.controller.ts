@@ -25,6 +25,7 @@ import { VerificationStatusResponse } from './dtos/verificationStatus.response.d
 import { VerifyCardResponse } from './dtos/verifyCard.response.dto'
 import { ChargeCardResponse } from './dtos/chargeCard.response.dto'
 import { PaymentFlowFjsChargeConfirmation } from '../paymentFlow/models/paymentFlowFjsChargeConfirmation.model'
+import { CardErrorCode } from '@island.is/shared/constants'
 
 @UseGuards(FeatureFlagGuard)
 @FeatureFlag(Features.isIslandisPaymentEnabled)
@@ -47,6 +48,10 @@ export class CardPaymentController {
     @Body() cardVerificationInput: VerifyCardInput,
   ): Promise<VerifyCardResponse> {
     try {
+      await this.paymentFlowService.isEligibleToBePaid(
+        cardVerificationInput.paymentFlowId,
+      )
+
       const verification = await this.cardPaymentService.verify(
         cardVerificationInput,
       )
@@ -223,7 +228,7 @@ export class CardPaymentController {
       })
 
       // TODO
-      throw new BadRequestException('todo_code')
+      throw new BadRequestException(CardErrorCode.Unknown)
     }
   }
 }

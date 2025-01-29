@@ -28,6 +28,7 @@ import { VerificationCallbackInput } from './dtos/verificationCallback.input'
 import { ChargeCardInput } from './dtos/chargeCard.input'
 import { VerifyCardInput } from './dtos/verifyCard.input'
 import { PaymentFlowAttributes } from '../paymentFlow/models/paymentFlow.model'
+import { PaymentServiceCode } from '@island.is/shared/constants'
 
 @Injectable()
 export class CardPaymentService {
@@ -124,7 +125,7 @@ export class CardPaymentService {
       return payload
     } catch (e) {
       this.logger.error('Failed to get payload from md', e)
-      throw new Error('Invalid md object')
+      throw new Error(PaymentServiceCode.InvalidVerificationToken)
     }
   }
 
@@ -138,7 +139,7 @@ export class CardPaymentService {
         'No saved verification pending data found for correlationId',
         correlationId,
       )
-      throw new BadRequestException('Invalid token')
+      throw new BadRequestException(PaymentServiceCode.InvalidVerificationToken)
     }
 
     return savedVerificationPendingData
@@ -162,7 +163,7 @@ export class CardPaymentService {
 
     if (now > tokenExpiresAt) {
       this.logger.error('Token was expired', correlationId)
-      throw new BadRequestException('Invalid token')
+      throw new BadRequestException(PaymentServiceCode.InvalidVerificationToken)
     }
 
     const { paymentFlowId } = savedVerificationPendingData
@@ -223,7 +224,7 @@ export class CardPaymentService {
     )
 
     if (!status?.isVerified || !status?.correlationId) {
-      throw new Error('Verification data not found')
+      throw new Error(PaymentServiceCode.MissingVerification)
     }
 
     const { correlationId } = status
@@ -233,7 +234,7 @@ export class CardPaymentService {
     )) as SavedVerificationCompleteData
 
     if (!verificationData) {
-      throw new Error('Verification data not found')
+      throw new Error(PaymentServiceCode.MissingVerification)
     }
 
     if (
@@ -242,7 +243,7 @@ export class CardPaymentService {
       !verificationData.xid ||
       !verificationData.dsTransId
     ) {
-      throw new Error('Verification data not found')
+      throw new Error(PaymentServiceCode.MissingVerification)
     }
 
     const {

@@ -1,5 +1,7 @@
 import { MessageDescriptor } from 'react-intl'
-import { CardErrorCode } from './constants'
+
+import { CardErrorCode } from '@island.is/shared/constants'
+
 import { cardError, genericError } from '../../messages'
 
 export type PaymentError = {

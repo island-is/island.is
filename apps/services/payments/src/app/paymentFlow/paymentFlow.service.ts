@@ -22,6 +22,7 @@ import { environment } from '../../environments'
 import { PaymentFlowEvent } from './models/paymentFlowEvent.model'
 import { CreatePaymentFlowDTO } from './dtos/createPaymentFlow.dto'
 import { PaymentFlowFjsChargeConfirmation } from './models/paymentFlowFjsChargeConfirmation.model'
+import { PaymentServiceCode } from '@island.is/shared/constants'
 
 @Injectable()
 export class PaymentFlowService {
@@ -65,7 +66,7 @@ export class PaymentFlowService {
       }
     } catch (e) {
       this.logger.error('Failed to create payment url', e)
-      throw new Error('Failed to create payment url')
+      throw new Error(PaymentServiceCode.CouldNotCreatePaymentFlow)
     }
   }
 
@@ -109,14 +110,14 @@ export class PaymentFlowService {
 
   private async getPayerName(payerNationalId: string) {
     if (!isValid(payerNationalId)) {
-      throw new Error('Invalid payer national id')
+      throw new Error(PaymentServiceCode.InvalidPayerNationalId)
     }
 
     if (isCompany(payerNationalId)) {
       const company = await this.companyRegistryApi.getCompany(payerNationalId)
 
       if (!company) {
-        throw new Error('Company not found')
+        throw new Error(PaymentServiceCode.CompanyNotFound)
       }
 
       return company.name
@@ -127,10 +128,37 @@ export class PaymentFlowService {
     )
 
     if (!person) {
-      throw new Error('Person not found')
+      throw new Error(PaymentServiceCode.PersonNotFound)
     }
 
     return person.nafn ?? ''
+  }
+
+  async isEligibleToBePaid(id: string) {
+    const paymentFlow = (
+      await this.paymentFlowModel.findOne({
+        where: {
+          id,
+        },
+      })
+    )?.toJSON()
+
+    if (!paymentFlow) {
+      throw new BadRequestException(PaymentServiceCode.PaymentFlowNotFound)
+    }
+
+    const paymentFlowSuccessEvent = (
+      await this.paymentFlowEventModel.findOne({
+        where: {
+          paymentFlowId: id,
+          type: 'success',
+        },
+      })
+    )?.toJSON()
+
+    if (paymentFlowSuccessEvent) {
+      throw new BadRequestException(PaymentServiceCode.PaymentFlowAlreadyPaid)
+    }
   }
 
   async getPaymentFlowWithPaymentDetails(id: string) {
@@ -148,7 +176,7 @@ export class PaymentFlowService {
     )?.toJSON()
 
     if (!paymentFlow) {
-      throw new BadRequestException('Payment flow not found')
+      throw new BadRequestException(PaymentServiceCode.PaymentFlowNotFound)
     }
 
     const paymentFlowSuccessEvent = (
@@ -161,7 +189,7 @@ export class PaymentFlowService {
     )?.toJSON()
 
     if (paymentFlowSuccessEvent) {
-      throw new BadRequestException('already_paid')
+      throw new BadRequestException(PaymentServiceCode.PaymentFlowAlreadyPaid)
     }
 
     const paymentDetails = await this.getPaymentFlowChargeDetails(
@@ -215,7 +243,7 @@ export class PaymentFlowService {
     )?.toJSON()
 
     if (!paymentFlow) {
-      throw new Error('Payment flow not found')
+      throw new BadRequestException(PaymentServiceCode.PaymentFlowNotFound)
     }
 
     try {
