@@ -28,6 +28,11 @@ import { GetUserInvolvedPartiesInput } from '../models/getUserInvolvedParties.in
 import { OJOIAIdInput } from '../models/id.input'
 import { OJOIAApplicationCaseResponse } from '../models/applicationCase.response'
 import { GetPdfResponse } from '../models/getPdf.response'
+import { GetInvolvedPartySignaturesInput } from '../models/getInvolvedPartySignatures.input'
+import { InvolvedPartySignatures } from '../models/getInvolvedPartySignatures.response'
+import { OJOIApplicationAdvertTemplateTypesResponse } from '../models/applicationAdvertTemplateTypes.response'
+import { OJOIApplicationAdvertTemplateResponse } from '../models/applicationAdvertTemplate.response'
+import { GetAdvertTemplateInput } from '../models/getAdvertTemplate.input'
 
 @Scopes(ApiScope.internal)
 @UseGuards(IdsUserGuard, ScopesGuard)
@@ -123,6 +128,25 @@ export class OfficialJournalOfIcelandApplicationResolver {
     return this.ojoiApplicationService.deleteApplicationAttachment(input, user)
   }
 
+  @Query(() => OJOIApplicationAdvertTemplateResponse, {
+    name: 'officialJournalOfIcelandApplicationAdvertTemplate',
+  })
+  getAdvertTemplate(
+    @Args('input', { type: () => GetAdvertTemplateInput })
+    input: GetAdvertTemplateInput,
+    @CurrentUser()
+    user: User,
+  ) {
+    return this.ojoiApplicationService.getAdvertTemplate(input, user)
+  }
+
+  @Query(() => OJOIApplicationAdvertTemplateTypesResponse, {
+    name: 'officialJournalOfIcelandApplicationAdvertTemplateTypes',
+  })
+  getAdvertTemplateTypes(@CurrentUser() user: User) {
+    return this.ojoiApplicationService.getAdvertTemplateTypes(user)
+  }
+
   @Query(() => GetUserInvolvedPartiesResponse, {
     name: 'officialJournalOfIcelandApplicationGetUserInvolvedParties',
   })
@@ -152,5 +176,15 @@ export class OfficialJournalOfIcelandApplicationResolver {
     @CurrentUser() user: User,
   ) {
     return this.ojoiApplicationService.postApplication(input, user)
+  }
+
+  @Query(() => InvolvedPartySignatures, {
+    name: 'officialJournalOfIcelandApplicationInvolvedPartySignatures',
+  })
+  getInvolvedPartySignatures(
+    @Args('input') input: GetInvolvedPartySignaturesInput,
+    @CurrentUser() user: User,
+  ) {
+    return this.ojoiApplicationService.getInvolvedPartySignatures(input, user)
   }
 }

@@ -8,7 +8,6 @@ import {
 import {
   ApplicationType as SecondarySchoolApplicationType,
   SecondarySchoolAnswers,
-  States as SecondarySchoolStates,
 } from '@island.is/application/templates/secondary-school'
 import {
   SecondarySchool,
@@ -26,7 +25,7 @@ import {
   getRecipients,
 } from './utils'
 import {
-  generateApplicationRejectedEmail,
+  generateApplicationDeletedEmail,
   generateApplicationSubmittedEmail,
 } from './emailGenerators'
 import { getValueViaPath } from '@island.is/application/core'
@@ -50,7 +49,25 @@ export class SecondarySchoolService extends BaseTemplateApiService {
   async getSchools({
     auth,
   }: TemplateApiModuleActionProps): Promise<SecondarySchool[]> {
-    return this.secondarySchoolClient.getSchools(auth)
+    const studentInfo = await this.secondarySchoolClient.getStudentInfo(auth)
+    const schools = await this.secondarySchoolClient.getSchools(auth)
+
+    const schoolIsOpenForAdmission = schools.find((x) =>
+      studentInfo?.isFreshman
+        ? x.isOpenForAdmissionFreshman
+        : x.isOpenForAdmissionFreshman || x.isOpenForAdmissionGeneral,
+    )
+    if (!schoolIsOpenForAdmission) {
+      throw new TemplateApiError(
+        {
+          title: error.errorNoSchoolOpenForAdmissionTitle,
+          summary: error.errorNoSchoolOpenForAdmissionDescription,
+        },
+        400,
+      )
+    }
+
+    return schools
   }
 
   async validateCanCreate({
@@ -73,17 +90,24 @@ export class SecondarySchoolService extends BaseTemplateApiService {
     application,
     auth,
   }: TemplateApiModuleActionProps): Promise<void> {
-    const externalApplicationId =
-      getValueViaPath<string>(
-        application.externalData,
-        'submitApplication.data',
-      ) || ''
+    try {
+      // Delete the application in MMS
+      await this.secondarySchoolClient.delete(auth, application.id)
 
-    // Delete the application in MMS
-    await this.secondarySchoolClient.delete(auth, externalApplicationId)
-
-    // Send email to applicant and all contacts
-    await this.sendEmailAboutDeleteApplication(application)
+      try {
+        // If that succeeded, send email to applicant and custodians
+        await this.sendEmailAboutDeleteApplication(application)
+      } catch (emailError) {
+        logger.error(
+          `Application deleted but failed to send notification emails: ${emailError.message}`,
+          { applicationId: application.id },
+        )
+      }
+    } catch (error) {
+      throw new Error(
+        `Failed to delete application ${application.id}: ${error.message}`,
+      )
+    }
   }
 
   private async sendEmailAboutDeleteApplication(
@@ -96,7 +120,7 @@ export class SecondarySchoolService extends BaseTemplateApiService {
       recipientList.map((recipient) =>
         this.sharedTemplateAPIService
           .sendEmail(
-            (props) => generateApplicationRejectedEmail(props, recipient),
+            (props) => generateApplicationDeletedEmail(props, recipient),
             application,
           )
           .catch((e) => {
@@ -113,6 +137,8 @@ export class SecondarySchoolService extends BaseTemplateApiService {
     application,
     auth,
   }: TemplateApiModuleActionProps): Promise<string> {
+    const nationalId = auth.actor?.nationalId || auth.nationalId
+
     // Get values from answers
     const applicant = getValueViaPath<SecondarySchoolAnswers['applicant']>(
       application.answers,
@@ -120,7 +146,7 @@ export class SecondarySchoolService extends BaseTemplateApiService {
     )
     const applicationType = getValueViaPath<SecondarySchoolApplicationType>(
       application.answers,
-      'applicationType',
+      'applicationType.value',
     )
     const contacts = getCleanContacts(application)
     const schoolSelection = getCleanSchoolSelection(application)
@@ -132,7 +158,8 @@ export class SecondarySchoolService extends BaseTemplateApiService {
     let applicationId: string | undefined
     try {
       applicationId = await this.secondarySchoolClient.create(auth, {
-        nationalId: auth.nationalId,
+        id: application.id,
+        nationalId: nationalId,
         name: applicant?.name || '',
         phone: applicant?.phoneNumber || '',
         email: applicant?.email || '',
@@ -142,7 +169,7 @@ export class SecondarySchoolService extends BaseTemplateApiService {
         isFreshman: applicationType === SecondarySchoolApplicationType.FRESHMAN,
         contacts: contacts,
         schools: schoolSelection,
-        nativeLanguageCode: extraInformation?.nativeLanguageCode,
+        nativeLanguageCode: extraInformation?.nativeLanguageCode || undefined,
         otherDescription: extraInformation?.otherDescription,
         attachments: await Promise.all(
           (extraInformation?.supportingDocuments || []).map(

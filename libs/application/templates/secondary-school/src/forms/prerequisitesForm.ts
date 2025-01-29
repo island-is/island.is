@@ -9,11 +9,11 @@ import { DefaultEvents, Form, FormModes } from '@island.is/application/types'
 import { Logo } from '../assets/Logo'
 import { externalData } from '../lib/messages'
 import {
-  NationalRegistryParentsApi,
+  NationalRegistryCustodiansApi,
   NationalRegistryUserApi,
   SchoolsApi,
   StudentInfoApi,
-  UserProfileApi,
+  UserProfileApiWithValidation,
 } from '../dataProviders'
 
 export const Prerequisites: Form = buildForm({
@@ -26,7 +26,8 @@ export const Prerequisites: Form = buildForm({
   children: [
     buildSection({
       id: 'externalData',
-      title: externalData.dataProvider.sectionTitle,
+      title: '',
+      tabTitle: externalData.dataProvider.sectionTitle,
       children: [
         buildExternalDataProvider({
           title: externalData.dataProvider.pageTitle,
@@ -53,11 +54,11 @@ export const Prerequisites: Form = buildForm({
               subTitle: externalData.nationalRegistry.subTitle,
             }),
             buildDataProviderItem({
-              provider: NationalRegistryParentsApi,
+              provider: NationalRegistryCustodiansApi,
               title: '',
             }),
             buildDataProviderItem({
-              provider: UserProfileApi,
+              provider: UserProfileApiWithValidation,
               title: externalData.userProfile.title,
               subTitle: externalData.userProfile.subTitle,
             }),

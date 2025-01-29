@@ -1,4 +1,5 @@
-import { style, globalStyle } from '@vanilla-extract/css'
+import { globalStyle, style } from '@vanilla-extract/css'
+
 import { dark400, theme } from '@island.is/island-ui/theme'
 
 export const footerBg = style({

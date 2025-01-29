@@ -49,7 +49,9 @@ export const TextFormField: FC<React.PropsWithChildren<Props>> = ({
     step,
     marginBottom,
     marginTop,
+    tooltip,
     onChange = () => undefined,
+    clearOnChange,
   } = field
   const { clearErrors } = useFormContext()
   const { formatMessage, lang: locale } = useLocale()
@@ -69,6 +71,12 @@ export const TextFormField: FC<React.PropsWithChildren<Props>> = ({
 
       <Box paddingTop={2}>
         <InputController
+          tooltip={formatTextWithLocale(
+            tooltip || '',
+            application,
+            locale as Locale,
+            formatMessage,
+          )}
           disabled={disabled}
           readOnly={readOnly}
           id={id}
@@ -113,6 +121,7 @@ export const TextFormField: FC<React.PropsWithChildren<Props>> = ({
           max={max}
           min={min}
           step={step}
+          clearOnChange={clearOnChange}
         />
       </Box>
     </Box>

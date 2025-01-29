@@ -66,6 +66,7 @@ export const NationalIdWithNameFormField: FC<
         phoneLabel={field.phoneLabel}
         emailLabel={field.emailLabel}
         error={error}
+        clearOnChange={field.clearOnChange}
       />
     </Box>
   )

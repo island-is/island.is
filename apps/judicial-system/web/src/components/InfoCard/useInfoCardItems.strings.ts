@@ -72,4 +72,10 @@ export const strings = defineMessages({
     defaultMessage: 'Nafn',
     description: 'Notaður sem titill fyrir nafn',
   },
+  externalMergeCase: {
+    id: 'judicial.system.core:info_card_indictment.external_merge_case',
+    defaultMessage: '{mergeCaseNumber} utan Réttarvörslugáttar',
+    description:
+      'Notaður texti fyrir "Sameinað máli" sem er aðeins til utan gáttar',
+  },
 })

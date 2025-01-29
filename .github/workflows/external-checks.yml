@@ -12,11 +12,10 @@ jobs:
   codeowners-check:
     name: Lint CODEOWNERS
     runs-on: ec2-runners
-    env:
-      CHECK: 'false'
     container:
       image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
-
+    env:
+      CHECK: 'false'
     steps:
       - uses: actions/checkout@v4
         with:

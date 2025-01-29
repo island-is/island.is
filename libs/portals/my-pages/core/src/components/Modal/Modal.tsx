@@ -87,6 +87,7 @@ export const Modal: FC<React.PropsWithChildren<Props>> = ({
       disclosure={disclosure}
       modalLabel={label}
       isVisible={isVisible}
+      preventBodyScroll
     >
       {({ closeModal }: { closeModal: () => void }) =>
         skeleton ? (
@@ -99,7 +100,7 @@ export const Modal: FC<React.PropsWithChildren<Props>> = ({
             alignItems="center"
             rowGap={2}
             paddingY={[3, 6, 12]}
-            paddingX={[3, 6, 12, 15]}
+            paddingX={[3, 6, 12, 14]}
           >
             <Box className={styles.closeButton}>
               <Button

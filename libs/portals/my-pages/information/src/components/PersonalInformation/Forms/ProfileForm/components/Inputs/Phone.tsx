@@ -1,5 +1,5 @@
 import React, { FC, useState, useEffect } from 'react'
-import { useForm } from 'react-hook-form'
+import { FormProvider, useForm } from 'react-hook-form'
 import { m } from '@island.is/portals/my-pages/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { msg } from '../../../../../../lib/messages'
@@ -50,13 +50,14 @@ export const InputPhone: FC<React.PropsWithChildren<Props>> = ({
   telVerified = false,
 }) => {
   useNamespaces('sp.settings')
+  const methods = useForm<UseFormProps>()
   const {
     handleSubmit,
     control,
     getValues,
     setValue,
     formState: { errors },
-  } = useForm<UseFormProps>()
+  } = methods
   const { updateOrCreateUserProfile, loading: saveLoading } =
     useUpdateOrCreateUserProfile()
   const { deleteIslykillValue, loading: deleteLoading } =
@@ -196,195 +197,197 @@ export const InputPhone: FC<React.PropsWithChildren<Props>> = ({
 
   return (
     <Box>
-      <form
-        onSubmit={handleSubmit(
-          telInternal ? handleSendTelVerification : saveEmptyChange,
-        )}
-      >
-        <Box display="flex" flexWrap="wrap" alignItems="center">
-          <Box marginRight={3} width="full" className={styles.formContainer}>
-            <Columns>
-              <Column width="content">
-                <Box className={styles.countryCodeInput}>
-                  <Input
-                    label={formatMessage({
-                      id: 'sp.settings:phone-country-code',
-                      defaultMessage: 'Landsnúmer',
-                    })}
-                    name="country-code"
+      <FormProvider {...methods}>
+        <form
+          onSubmit={handleSubmit(
+            telInternal ? handleSendTelVerification : saveEmptyChange,
+          )}
+        >
+          <Box display="flex" flexWrap="wrap" alignItems="center">
+            <Box marginRight={3} width="full" className={styles.formContainer}>
+              <Columns>
+                <Column width="content">
+                  <Box className={styles.countryCodeInput}>
+                    <Input
+                      label={formatMessage({
+                        id: 'sp.settings:phone-country-code',
+                        defaultMessage: 'Landsnúmer',
+                      })}
+                      name="country-code"
+                      backgroundColor="blue"
+                      size="xs"
+                      readOnly
+                      value="+354"
+                      disabled
+                    />
+                  </Box>
+                </Column>
+                <Column>
+                  <InputController
+                    control={control}
+                    id="tel"
                     backgroundColor="blue"
+                    name="tel"
+                    type="tel"
+                    format="### ####"
+                    required={false}
+                    icon={mobile && verificationValid ? 'checkmark' : undefined}
+                    disabled={disabled}
                     size="xs"
-                    readOnly
-                    value="+354"
-                    disabled
+                    rules={{
+                      minLength: {
+                        value: 7,
+                        message: formatMessage(msg.errorTelReqLength),
+                      },
+                      maxLength: {
+                        value: 7,
+                        message: formatMessage(msg.errorTelReqLength),
+                      },
+                      pattern: {
+                        value: /^\d+$/,
+                        message: formatMessage(msg.errorOnlyNumbers),
+                      },
+                    }}
+                    label={formatMessage(sharedMessages.phoneNumber)}
+                    placeholder="000 0000"
+                    onChange={(inp) => {
+                      setTelInternal(parseFullNumber(inp.target.value || ''))
+                      setErrors({ ...formErrors, mobile: undefined })
+                      checkSetPristineInput()
+                    }}
+                    error={errors.tel?.message || formErrors.mobile}
+                    defaultValue={mobile}
+                  />
+                </Column>
+              </Columns>
+            </Box>
+            <Box
+              display="flex"
+              alignItems="flexStart"
+              flexDirection="column"
+              paddingTop={2}
+            >
+              {!createLoading && !deleteLoading && !fetchLoading && (
+                <>
+                  {telVerifyCreated ? (
+                    <FormButton
+                      disabled={verificationValid || disabled || resendBlock}
+                      onClick={
+                        telInternal
+                          ? () =>
+                              handleSendTelVerification({
+                                tel: getValues().tel,
+                              })
+                          : () => saveEmptyChange()
+                      }
+                    >
+                      {telInternal
+                        ? telInternal === telToVerify
+                          ? formatMessage({
+                              id: 'sp.settings:resend',
+                              defaultMessage: 'Endursenda',
+                            })
+                          : buttonText
+                        : formatMessage(msg.saveEmptyChange)}
+                    </FormButton>
+                  ) : (
+                    <FormButton
+                      submit
+                      disabled={verificationValid || disabled || inputPristine}
+                    >
+                      {telInternal
+                        ? buttonText
+                        : formatMessage(msg.saveEmptyChange)}
+                    </FormButton>
+                  )}
+                </>
+              )}
+              {(createLoading || deleteLoading || fetchLoading) && (
+                <LoadingDots />
+              )}
+            </Box>
+          </Box>
+        </form>
+        {telVerifyCreated && (
+          <Box marginTop={3}>
+            <Text variant="medium" marginBottom={2}>
+              {formatMessage({
+                id: 'sp.settings:tel-verify-code-sent',
+                defaultMessage: `Öryggiskóði hefur verið sendur í símann þinn. Sláðu hann inn
+                  hér að neðan.`,
+              })}
+            </Text>
+            <form onSubmit={handleSubmit(handleConfirmCode)}>
+              <Box display="flex" flexWrap="wrap" alignItems="flexStart">
+                <Box className={styles.codeInput} marginRight={3}>
+                  <InputController
+                    control={control}
+                    backgroundColor="blue"
+                    id="code"
+                    name="code"
+                    format="###"
+                    label={formatMessage(m.verificationCode)}
+                    placeholder="000"
+                    defaultValue=""
+                    error={errors.code?.message || formErrors.code}
+                    disabled={verificationValid || disabled}
+                    icon={verificationValid ? 'checkmark' : undefined}
+                    size="xs"
+                    autoComplete="off"
+                    onChange={(inp) => {
+                      setCodeInternal(inp.target.value)
+                      setErrors({ ...formErrors, code: undefined })
+                    }}
+                    rules={{
+                      required: {
+                        value: true,
+                        message: formatMessage(m.verificationCodeRequired),
+                      },
+                    }}
                   />
                 </Box>
-              </Column>
-              <Column>
-                <InputController
-                  control={control}
-                  id="tel"
-                  backgroundColor="blue"
-                  name="tel"
-                  type="tel"
-                  format="### ####"
-                  required={false}
-                  icon={mobile && verificationValid ? 'checkmark' : undefined}
-                  disabled={disabled}
-                  size="xs"
-                  rules={{
-                    minLength: {
-                      value: 7,
-                      message: formatMessage(msg.errorTelReqLength),
-                    },
-                    maxLength: {
-                      value: 7,
-                      message: formatMessage(msg.errorTelReqLength),
-                    },
-                    pattern: {
-                      value: /^\d+$/,
-                      message: formatMessage(msg.errorOnlyNumbers),
-                    },
-                  }}
-                  label={formatMessage(sharedMessages.phoneNumber)}
-                  placeholder="000 0000"
-                  onChange={(inp) => {
-                    setTelInternal(parseFullNumber(inp.target.value || ''))
-                    setErrors({ ...formErrors, mobile: undefined })
-                    checkSetPristineInput()
-                  }}
-                  error={errors.tel?.message || formErrors.mobile}
-                  defaultValue={mobile}
-                />
-              </Column>
-            </Columns>
-          </Box>
-          <Box
-            display="flex"
-            alignItems="flexStart"
-            flexDirection="column"
-            paddingTop={2}
-          >
-            {!createLoading && !deleteLoading && !fetchLoading && (
-              <>
-                {telVerifyCreated ? (
-                  <FormButton
-                    disabled={verificationValid || disabled || resendBlock}
-                    onClick={
-                      telInternal
-                        ? () =>
-                            handleSendTelVerification({
-                              tel: getValues().tel,
-                            })
-                        : () => saveEmptyChange()
-                    }
-                  >
-                    {telInternal
-                      ? telInternal === telToVerify
-                        ? formatMessage({
-                            id: 'sp.settings:resend',
-                            defaultMessage: 'Endursenda',
-                          })
-                        : buttonText
-                      : formatMessage(msg.saveEmptyChange)}
-                  </FormButton>
-                ) : (
-                  <FormButton
-                    submit
-                    disabled={verificationValid || disabled || inputPristine}
-                  >
-                    {telInternal
-                      ? buttonText
-                      : formatMessage(msg.saveEmptyChange)}
-                  </FormButton>
-                )}
-              </>
-            )}
-            {(createLoading || deleteLoading || fetchLoading) && (
-              <LoadingDots />
-            )}
-          </Box>
-        </Box>
-      </form>
-      {telVerifyCreated && (
-        <Box marginTop={3}>
-          <Text variant="medium" marginBottom={2}>
-            {formatMessage({
-              id: 'sp.settings:tel-verify-code-sent',
-              defaultMessage: `Öryggiskóði hefur verið sendur í símann þinn. Sláðu hann inn
-                  hér að neðan.`,
-            })}
-          </Text>
-          <form onSubmit={handleSubmit(handleConfirmCode)}>
-            <Box display="flex" flexWrap="wrap" alignItems="flexStart">
-              <Box className={styles.codeInput} marginRight={3}>
-                <InputController
-                  control={control}
-                  backgroundColor="blue"
-                  id="code"
-                  name="code"
-                  format="###"
-                  label={formatMessage(m.verificationCode)}
-                  placeholder="000"
-                  defaultValue=""
-                  error={errors.code?.message || formErrors.code}
-                  disabled={verificationValid || disabled}
-                  icon={verificationValid ? 'checkmark' : undefined}
-                  size="xs"
-                  autoComplete="off"
-                  onChange={(inp) => {
-                    setCodeInternal(inp.target.value)
-                    setErrors({ ...formErrors, code: undefined })
-                  }}
-                  rules={{
-                    required: {
-                      value: true,
-                      message: formatMessage(m.verificationCodeRequired),
-                    },
-                  }}
-                />
+                <Box
+                  display="flex"
+                  alignItems="flexStart"
+                  flexDirection="column"
+                  paddingTop={4}
+                  className={styles.codeButton}
+                >
+                  {!saveLoading && (
+                    <FormButton
+                      submit
+                      disabled={!codeInternal || disabled || verificationValid}
+                    >
+                      {formatMessage(m.codeConfirmation)}
+                    </FormButton>
+                  )}
+                  {saveLoading && (
+                    <Box>
+                      <LoadingDots />
+                    </Box>
+                  )}
+                </Box>
               </Box>
-              <Box
-                display="flex"
-                alignItems="flexStart"
-                flexDirection="column"
-                paddingTop={4}
-                className={styles.codeButton}
-              >
-                {!saveLoading && (
-                  <FormButton
-                    submit
-                    disabled={!codeInternal || disabled || verificationValid}
-                  >
-                    {formatMessage(m.codeConfirmation)}
-                  </FormButton>
-                )}
-                {saveLoading && (
-                  <Box>
-                    <LoadingDots />
-                  </Box>
-                )}
-              </Box>
-            </Box>
-          </form>
-        </Box>
-      )}
-
-      {mobile &&
-        verificationValid === false &&
-        inputPristine &&
-        !telVerifyCreated && (
-          <Box marginTop={2}>
-            <ContactNotVerified
-              contactType="tel"
-              onClick={() =>
-                handleSendTelVerification({
-                  tel: mobile,
-                })
-              }
-            />
+            </form>
           </Box>
         )}
+
+        {mobile &&
+          verificationValid === false &&
+          inputPristine &&
+          !telVerifyCreated && (
+            <Box marginTop={2}>
+              <ContactNotVerified
+                contactType="tel"
+                onClick={() =>
+                  handleSendTelVerification({
+                    tel: mobile,
+                  })
+                }
+              />
+            </Box>
+          )}
+      </FormProvider>
     </Box>
   )
 }

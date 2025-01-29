@@ -11,6 +11,7 @@ export const CATEGORY_TAG_SLUGS = [
   'grant-category-education-and-teaching',
   'grant-category-youth-and-sports',
   'grant-category-energy-transition',
+  'grant-category-environment',
 ] as const
 
 export type CategorySlug = typeof CATEGORY_TAG_SLUGS[number]
@@ -37,5 +38,7 @@ export const mapTagToMessageId = (tagSlug: CategorySlug) => {
       return m.home.grantCategoryYouthAndSportsDescription
     case 'grant-category-energy-transition':
       return m.home.grantCategoryEnergyTransitionDescription
+    case 'grant-category-environment':
+      return m.home.grantCategoryEnvironmentDescription
   }
 }

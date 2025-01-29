@@ -3,12 +3,12 @@ import {
   ApplicationTemplate,
   ApplicationTypes,
   ApplicationContext,
-  ApplicationRole,
   ApplicationStateSchema,
   Application,
   DefaultEvents,
   defineTemplateApi,
   FormModes,
+  InstitutionNationalIds,
 } from '@island.is/application/types'
 import {
   EphemeralStateLifeCycle,
@@ -18,16 +18,19 @@ import {
 } from '@island.is/application/core'
 import {
   application as applicationMessage,
+  historyMessages as applicationHistoryMessages,
+  pendingActionMessages as applicationPendingActionMessages,
+  conclusion,
   externalData,
   overview,
 } from './messages'
 import { SecondarySchoolSchema } from './dataSchema'
 import {
-  NationalRegistryParentsApi,
+  NationalRegistryCustodiansApi,
   NationalRegistryUserApi,
   SchoolsApi,
   StudentInfoApi,
-  UserProfileApi,
+  UserProfileApiWithValidation,
 } from '../dataProviders'
 import { Features } from '@island.is/feature-flags'
 import {
@@ -40,6 +43,8 @@ import {
 } from '../utils'
 import { AuthDelegationType } from '@island.is/shared/types'
 import { ApiScope } from '@island.is/auth/scopes'
+import { assign } from 'xstate'
+import set from 'lodash/set'
 
 const pruneInDaysAfterRegistrationCloses = (
   application: Application,
@@ -74,6 +79,9 @@ const template: ApplicationTemplate<
   featureFlag: Features.SecondarySchoolEnabled,
   allowedDelegations: [
     {
+      type: AuthDelegationType.LegalGuardian,
+    },
+    {
       type: AuthDelegationType.Custom,
     },
   ],
@@ -99,9 +107,6 @@ const template: ApplicationTemplate<
             ],
           },
           lifecycle: EphemeralStateLifeCycle,
-          onExit: defineTemplateApi({
-            action: ApiActions.validateCanCreate,
-          }),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -120,8 +125,8 @@ const template: ApplicationTemplate<
               delete: true,
               api: [
                 NationalRegistryUserApi,
-                NationalRegistryParentsApi,
-                UserProfileApi,
+                NationalRegistryCustodiansApi,
+                UserProfileApiWithValidation,
                 SchoolsApi,
                 StudentInfoApi,
               ],
@@ -149,7 +154,7 @@ const template: ApplicationTemplate<
             ],
           },
           lifecycle: pruneAfterDays(7),
-          onExit: defineTemplateApi({
+          onEntry: defineTemplateApi({
             action: ApiActions.validateCanCreate,
           }),
           roles: [
@@ -162,7 +167,7 @@ const template: ApplicationTemplate<
               actions: [
                 {
                   event: DefaultEvents.SUBMIT,
-                  name: overview.buttons.confirm,
+                  name: overview.buttons.submit,
                   type: 'primary',
                 },
               ],
@@ -176,6 +181,8 @@ const template: ApplicationTemplate<
         },
       },
       [States.SUBMITTED]: {
+        entry: ['assignToInstitution'],
+        exit: ['clearAssignees'],
         meta: {
           name: applicationMessage.stateMetaNameSubmitted.defaultMessage,
           status: FormModes.IN_PROGRESS,
@@ -188,6 +195,10 @@ const template: ApplicationTemplate<
           onEntry: defineTemplateApi({
             action: ApiActions.submitApplication,
           }),
+          onExit: defineTemplateApi({
+            action: ApiActions.deleteApplication,
+            triggerEvent: DefaultEvents.EDIT,
+          }),
           onDelete: defineTemplateApi({
             action: ApiActions.deleteApplication,
           }),
@@ -196,27 +207,107 @@ const template: ApplicationTemplate<
               label: applicationMessage.actionCardSubmitted,
               variant: 'blueberry',
             },
-            historyLogs: [
-              {
-                onEvent: DefaultEvents.SUBMIT,
-                logMessage: coreHistoryMessages.applicationReceived,
-              },
-            ],
             pendingAction: {
               title: corePendingActionMessages.waitingForReviewTitle,
               content: corePendingActionMessages.waitingForReviewDescription,
               displayStatus: 'info',
             },
+            historyLogs: [
+              {
+                onEvent: DefaultEvents.EDIT,
+                logMessage: applicationHistoryMessages.edited,
+              },
+              {
+                onEvent: DefaultEvents.SUBMIT,
+                logMessage: coreHistoryMessages.applicationReceived,
+              },
+            ],
           },
           roles: [
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/conclusionForm').then((module) =>
-                  Promise.resolve(module.Conclusion),
+                import('../forms/submittedForm').then((module) =>
+                  Promise.resolve(module.Submitted),
                 ),
               read: 'all',
               delete: true,
+              actions: [
+                {
+                  event: DefaultEvents.EDIT,
+                  name: conclusion.overview.editButton,
+                  type: 'primary',
+                },
+              ],
+            },
+            {
+              id: Roles.ORGANISATION_REVIEWER,
+              read: 'all',
+              write: 'all',
+              actions: [
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: overview.buttons.submit,
+                  type: 'primary',
+                },
+              ],
+            },
+          ],
+        },
+        on: {
+          [DefaultEvents.EDIT]: { target: States.DRAFT },
+          [DefaultEvents.SUBMIT]: { target: States.IN_REVIEW },
+        },
+      },
+      [States.IN_REVIEW]: {
+        entry: ['assignToInstitution'],
+        exit: ['clearAssignees'],
+        meta: {
+          name: applicationMessage.stateMetaNameInReview.defaultMessage,
+          status: FormModes.IN_PROGRESS,
+          lifecycle: {
+            shouldBeListed: true,
+            shouldBePruned: true,
+            whenToPrune: (application: Application) =>
+              pruneInDaysAfterRegistrationCloses(application, 3 * 30),
+          },
+          actionCard: {
+            tag: {
+              label: applicationMessage.actionCardInReview,
+              variant: 'blueberry',
+            },
+            pendingAction: {
+              title: applicationPendingActionMessages.inReviewTitle,
+              content: applicationPendingActionMessages.inReviewDescription,
+              displayStatus: 'info',
+            },
+            historyLogs: [
+              {
+                onEvent: DefaultEvents.SUBMIT,
+                logMessage: applicationHistoryMessages.reviewFinished,
+              },
+            ],
+          },
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/inReviewForm').then((module) =>
+                  Promise.resolve(module.InReview),
+                ),
+              read: 'all',
+            },
+            {
+              id: Roles.ORGANISATION_REVIEWER,
+              read: 'all',
+              write: 'all',
+              actions: [
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: overview.buttons.submit,
+                  type: 'primary',
+                },
+              ],
             },
           ],
         },
@@ -240,7 +331,9 @@ const template: ApplicationTemplate<
               variant: 'blueberry',
             },
             pendingAction: {
-              title: corePendingActionMessages.applicationReceivedTitle,
+              title: applicationPendingActionMessages.reviewFinishedTitle,
+              content:
+                applicationPendingActionMessages.reviewFinishedDescription,
               displayStatus: 'success',
             },
           },
@@ -248,8 +341,8 @@ const template: ApplicationTemplate<
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/conclusionForm').then((module) =>
-                  Promise.resolve(module.Conclusion),
+                import('../forms/completedForm').then((module) =>
+                  Promise.resolve(module.Completed),
                 ),
               read: 'all',
             },
@@ -258,14 +351,31 @@ const template: ApplicationTemplate<
       },
     },
   },
-  mapUserToRole(
-    id: string,
-    application: Application,
-  ): ApplicationRole | undefined {
-    if (id === application.applicant) {
+  mapUserToRole: (nationalId: string, application: Application) => {
+    if (nationalId === application.applicant) {
       return Roles.APPLICANT
+    } else if (
+      nationalId === InstitutionNationalIds.MIDSTOD_MENNTUNAR_SKOLATHJONUSTU
+    ) {
+      return Roles.ORGANISATION_REVIEWER
     }
     return undefined
+  },
+  stateMachineOptions: {
+    actions: {
+      assignToInstitution: assign((context) => {
+        const { application } = context
+        set(application, 'assignees', [
+          InstitutionNationalIds.MIDSTOD_MENNTUNAR_SKOLATHJONUSTU,
+        ])
+        return context
+      }),
+      clearAssignees: assign((context) => {
+        const { application } = context
+        set(application, 'assignees', [])
+        return context
+      }),
+    },
   },
 }
 

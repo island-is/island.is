@@ -47,7 +47,6 @@ import {
   isIndictmentCase,
   isInvestigationCase,
   isRequestCase,
-  isTrafficViolationCase,
   notificationTypes,
   StringType,
   stringTypes,
@@ -175,6 +174,7 @@ export interface UpdateCase
     | 'judgeId'
     | 'courtSessionType'
     | 'mergeCaseId'
+    | 'mergeCaseNumber'
   > {
   type?: CaseType
   state?: CaseState
@@ -192,6 +192,7 @@ export interface UpdateCase
   courtDate?: UpdateDateLog
   postponedIndefinitelyExplanation?: string
   civilDemands?: string
+  caseSentToCourtDate?: string
 }
 
 type DateLogKeys = keyof Pick<UpdateCase, 'arraignmentDate' | 'courtDate'>
@@ -322,6 +323,7 @@ export const include: Includeable[] = [
     model: CaseFile,
     as: 'caseFiles',
     required: false,
+    order: [['created', 'DESC']],
     where: { state: { [Op.not]: CaseFileState.DELETED } },
     separate: true,
   },
@@ -386,7 +388,6 @@ export const include: Includeable[] = [
           state: { [Op.not]: CaseFileState.DELETED },
           category: {
             [Op.in]: [
-              CaseFileCategory.INDICTMENT,
               CaseFileCategory.COURT_RECORD,
               CaseFileCategory.CRIMINAL_RECORD,
               CaseFileCategory.COST_BREAKDOWN,
@@ -817,22 +818,14 @@ export class CaseService {
       }),
     )
 
-    const caseFilesCategories = isTrafficViolationCase(theCase)
-      ? [
-          CaseFileCategory.CRIMINAL_RECORD,
-          CaseFileCategory.COST_BREAKDOWN,
-          CaseFileCategory.CASE_FILE,
-          CaseFileCategory.PROSECUTOR_CASE_FILE,
-          CaseFileCategory.DEFENDANT_CASE_FILE,
-        ]
-      : [
-          CaseFileCategory.INDICTMENT,
-          CaseFileCategory.CRIMINAL_RECORD,
-          CaseFileCategory.COST_BREAKDOWN,
-          CaseFileCategory.CASE_FILE,
-          CaseFileCategory.PROSECUTOR_CASE_FILE,
-          CaseFileCategory.DEFENDANT_CASE_FILE,
-        ]
+    const caseFilesCategories = [
+      CaseFileCategory.CRIMINAL_RECORD,
+      CaseFileCategory.COST_BREAKDOWN,
+      CaseFileCategory.CASE_FILE,
+      CaseFileCategory.PROSECUTOR_CASE_FILE,
+      CaseFileCategory.DEFENDANT_CASE_FILE,
+      CaseFileCategory.CIVIL_CLAIM,
+    ]
 
     const deliverCaseFileToCourtMessages =
       theCase.caseFiles
@@ -854,13 +847,11 @@ export class CaseService {
       deliverCaseFileToCourtMessages,
     )
 
-    if (isTrafficViolationCase(theCase)) {
-      messages.push({
-        type: MessageType.DELIVERY_TO_COURT_INDICTMENT,
-        user,
-        caseId: theCase.id,
-      })
-    }
+    messages.push({
+      type: MessageType.DELIVERY_TO_COURT_INDICTMENT,
+      user,
+      caseId: theCase.id,
+    })
 
     if (theCase.state === CaseState.WAITING_FOR_CANCELLATION) {
       messages.push({
@@ -1095,21 +1086,20 @@ export class CaseService {
       })
     }
 
-    // Commented out temporarily because police endpoint is not ready to receive revocation
-    // const subpoenasToRevoke = await this.subpoenaService.findByCaseId(
-    //   theCase.id,
-    // )
+    const subpoenasToRevoke = await this.subpoenaService.findByCaseId(
+      theCase.id,
+    )
 
-    // if (subpoenasToRevoke?.length > 0) {
-    //   messages.push(
-    //     ...subpoenasToRevoke.map((subpoena) => ({
-    //       type: MessageType.DELIVERY_TO_POLICE_SUBPOENA_REVOCATION,
-    //       user,
-    //       caseId: theCase.id,
-    //       elementId: [subpoena.defendantId, subpoena.id],
-    //     })),
-    //   )
-    // }
+    if (subpoenasToRevoke?.length > 0) {
+      messages.push(
+        ...subpoenasToRevoke.map((subpoena) => ({
+          type: MessageType.DELIVERY_TO_POLICE_SUBPOENA_REVOCATION,
+          user,
+          caseId: theCase.id,
+          elementId: [subpoena.defendantId, subpoena.id],
+        })),
+      )
+    }
 
     return this.messageService.sendMessagesToQueue(messages)
   }
@@ -1843,6 +1833,21 @@ export class CaseService {
         return this.eventLogService.create(eventLogDTO, transaction)
       }
     }
+
+    if (isRequestCase(theCase.type)) {
+      if (
+        update.state === CaseState.SUBMITTED &&
+        theCase.state === CaseState.DRAFT
+      ) {
+        const eventLogDTO = this.constructEventLogDTO(
+          EventType.CASE_SENT_TO_COURT,
+          theCase,
+          user,
+        )
+
+        return this.eventLogService.create(eventLogDTO, transaction)
+      }
+    }
   }
 
   async update(
@@ -1853,10 +1858,6 @@ export class CaseService {
   ): Promise<Case | undefined> {
     const receivingCase =
       update.courtCaseNumber && theCase.state === CaseState.SUBMITTED
-    const returningIndictmentCase =
-      isIndictmentCase(theCase.type) &&
-      update.state === CaseState.DRAFT &&
-      theCase.state === CaseState.RECEIVED
     const completingIndictmentCaseWithoutRuling =
       isIndictmentCase(theCase.type) &&
       update.state === CaseState.COMPLETED &&
@@ -1913,13 +1914,6 @@ export class CaseService {
           update.courtCaseNumber !== theCase.courtCaseNumber
         ) {
           await this.fileService.resetCaseFileStates(theCase.id, transaction)
-        }
-
-        if (returningIndictmentCase) {
-          await this.fileService.resetIndictmentCaseFileHashes(
-            theCase.id,
-            transaction,
-          )
         }
 
         // Remove uploaded ruling files if an indictment case is completed without a ruling

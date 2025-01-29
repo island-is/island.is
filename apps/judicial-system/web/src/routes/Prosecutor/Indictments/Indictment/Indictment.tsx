@@ -40,7 +40,7 @@ import {
   useIndictmentCounts,
   useOnceOn,
 } from '@island.is/judicial-system-web/src/utils/hooks'
-import { isTrafficViolationStepValidIndictments } from '@island.is/judicial-system-web/src/utils/validate'
+import { isIndictmentStepValid } from '@island.is/judicial-system-web/src/utils/validate'
 
 import { usePoliceCaseInfoQuery } from '../Defendant/policeCaseInfo.generated'
 import { IndictmentCount } from './IndictmentCount'
@@ -115,7 +115,7 @@ const Indictment = () => {
     },
   })
 
-  const stepIsValid = isTrafficViolationStepValidIndictments(workingCase)
+  const stepIsValid = isIndictmentStepValid(workingCase)
 
   const handleNavigationTo = useCallback(
     (destination: string) => router.push(`${destination}/${workingCase.id}`),

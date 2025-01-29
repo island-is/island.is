@@ -48,6 +48,10 @@ export const relationWithApplicant = [
   'Stjúpbarnabarnabarn (barnabarnabarn látins maka)',
 ]
 
+export const SPOUSE = 'Maki'
+
 export const heirAgeValidation = 'heirAgeValidation'
 export const missingHeirUndividedEstateValidation =
   'missingHeirUndividedEstateValidation'
+export const missingSpouseUndividedEstateValidation =
+  'missingSpouseUndividedEstateValidation'
