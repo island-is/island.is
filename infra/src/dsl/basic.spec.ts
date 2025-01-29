@@ -25,7 +25,7 @@ describe('Basic serialization', () => {
     .image({
       name: 'test',
       repository: 'testrepo',
-      tag: 'testtag'
+      tag: 'testtag',
     })
     .env({ A: 'B' })
     .secrets({
@@ -64,7 +64,6 @@ describe('Basic serialization', () => {
     expect(result.serviceDef[0].enabled).toBe(true)
     expect(result.serviceDef[0].namespace).toBe('islandis')
   })
-
 
   it('repo', () => {
     expect(result.serviceDef[0].image.repository).toBe('testrepo')

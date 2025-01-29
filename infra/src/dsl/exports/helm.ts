@@ -19,7 +19,7 @@ export const renderHelmValueFileContent = async (
   habitat: ServiceBuilder<any>[],
   services: ServiceBuilder<any>[],
   withMocks: Mocks,
-  dockerTag: string
+  dockerTag: string,
 ) => {
   return dumpServiceHelm(
     env,
@@ -32,7 +32,7 @@ export const renderHelmServiceFile = async (
   habitat: ServiceBuilder<any>[],
   services: ServiceBuilder<any>[],
   withMocks: Mocks,
-  dockerTag?: string
+  dockerTag?: string,
 ) => {
   const { services: renderedServices, runtime } = await renderHelmServices(
     env,

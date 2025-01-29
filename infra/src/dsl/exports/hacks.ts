@@ -10,7 +10,7 @@ import { logger } from '../../common'
 export function hacks(
   fullSetOfServices: ServiceBuilder<any>[],
   habitat: ServiceBuilder<any>[],
-  dockerTag?: string
+  dockerTag?: string,
 ) {
   logger.debug('hacks', { numberOfServices: fullSetOfServices.length })
   const api = fullSetOfServices.find((s) => s.serviceDef.name === 'api')

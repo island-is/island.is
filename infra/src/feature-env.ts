@@ -101,9 +101,10 @@ const buildIngressComment = (data: HelmService[]): string =>
     .join('\n')
 
 const buildComment = (data: Services<HelmService>): string => {
-  return `Feature deployment of your services will begin shortly. Your feature will be accessible here:\n${buildIngressComment(Object.values(data)) ??
+  return `Feature deployment of your services will begin shortly. Your feature will be accessible here:\n${
+    buildIngressComment(Object.values(data)) ??
     'Feature deployment of your services will begin shortly. No web endpoints defined (no ingresses were defined)'
-    }`
+  }`
 }
 const deployedComment = (
   data: ServiceBuilder<any>[],
@@ -118,7 +119,7 @@ yargs(process.argv.slice(2))
   .command(
     'values',
     'get helm values file',
-    () => { },
+    () => {},
     async (argv: Arguments) => {
       const { habitat, affectedServices, env, dockerTag } = parseArguments(argv)
       const { included: featureYaml } = await getFeatureAffectedServices(
@@ -133,7 +134,7 @@ yargs(process.argv.slice(2))
           habitat,
           featureYaml,
           (argv.withMocks ?? 'false') === 'true' ? 'with-mocks' : 'no-mocks',
-          dockerTag
+          dockerTag,
         ),
         argv.output,
       )
@@ -143,7 +144,7 @@ yargs(process.argv.slice(2))
   .command(
     'ingress-comment',
     'get helm values file',
-    () => { },
+    () => {},
     async (argv: Arguments) => {
       const { habitat, affectedServices, env } = parseArguments(argv)
       const { included: featureYaml, excluded } =

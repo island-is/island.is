@@ -72,11 +72,11 @@ export type DockerImage = {
 
 export type EnvironmentVariableValue =
   | Optional<
-    {
-      [idx in OpsEnvWithLocal]: ValueType
-    },
-    'local'
-  >
+      {
+        [idx in OpsEnvWithLocal]: ValueType
+      },
+      'local'
+    >
   | ValueType
 
 export type EnvironmentVariables = {
