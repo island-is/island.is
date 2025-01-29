@@ -353,6 +353,7 @@ const GrantsSearchResultsPage: CustomScreen<GrantsHomeProps> = ({
                   category: categories ?? undefined,
                   type: types ?? undefined,
                   organization: organizations ?? undefined,
+                  status: status ?? undefined,
                 }}
                 onSearchUpdate={onSearchFilterUpdate}
                 onReset={onResetFilter}
