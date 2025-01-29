@@ -139,12 +139,11 @@ RUN apk add --no-cache bash nodejs && \
 
 
 FROM base-static AS output-static
-WORKDIR /usr/share/nginx/html
 
 COPY scripts/dockerfile-assets/nginx/* /etc/nginx/templates
 COPY scripts/dockerfile-assets/bash/extract-environment.sh /docker-entrypoint.d
 COPY scripts/dockerfile-assets/bash/extract-environment.js /docker-entrypoint.d
-COPY --from=builder /dist ./
+COPY --from=builder /dist /usr/share/nginx/html
 RUN ls -lah .
 
 ENV GIT_BRANCH=${GIT_BRANCH} GIT_COMMIT_SHA=${GIT_COMMIT_SHA} GIT_REPOSITORY_URL=${GIT_REPOSITORY_URL}
