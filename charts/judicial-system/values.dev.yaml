@@ -33,7 +33,7 @@ judicial-system-api:
     HIDDEN_FEATURES: ''
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
     LOG_LEVEL: 'info'
-    NODE_OPTIONS: '--max-old-space-size=460 -r dd-trace/init'
+    NODE_OPTIONS: '--max- old - space - size=460 -r dd-trace/init'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
     - 'nginx-ingress-external'
@@ -56,9 +56,11 @@ judicial-system-api:
         max: 10
         min: 2
   image:
-    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/judicial-system-api'
+    name: 'judicial-system-api'
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com'
+    tag: 'latest_master'
   ingress:
-    primary-alb:
+    primary -alb:
       annotations:
         kubernetes.io/ingress.class: 'nginx-external-alb'
         nginx.ingress.kubernetes.io/proxy-buffer-size: '8k'
@@ -101,7 +103,7 @@ judicial-system-api:
     privileged: false
   serviceAccount:
     annotations:
-      eks.amazonaws.com/role-arn: 'arn:aws:iam::013313053092:role/judicial-system-api'
+      eks.amazonaws.com/role-arn: 'arn: aws: iam::013313053092: role / judicial-system-api '
     create: true
     name: 'judicial-system-api'
 judicial-system-backend:
@@ -118,7 +120,7 @@ judicial-system-backend:
     DOKOBIT_URL: 'https://developers.dokobit.com'
     EMAIL_REGION: 'eu-west-1'
     LOG_LEVEL: 'info'
-    NODE_OPTIONS: '--max-old-space-size=921 -r dd-trace/init'
+    NODE_OPTIONS: '--max- old - space - size=921 -r dd-trace/init'
     NOVA_ACCEPT_UNAUTHORIZED: 'true'
     S3_BUCKET: 'island-is-dev-upload-judicial-system'
     S3_REGION: 'eu-west-1'
@@ -159,7 +161,9 @@ judicial-system-backend:
         max: 10
         min: 2
   image:
-    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/judicial-system-backend'
+    name: 'judicial-system-backend'
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com'
+    tag: 'latest_master'
   initContainer:
     containers:
       - args:
@@ -242,7 +246,7 @@ judicial-system-backend:
     privileged: false
   serviceAccount:
     annotations:
-      eks.amazonaws.com/role-arn: 'arn:aws:iam::013313053092:role/judicial-system-backend'
+      eks.amazonaws.com/role-arn: 'arn: aws: iam::013313053092: role / judicial-system-backend '
     create: true
     name: 'judicial-system-backend'
 judicial-system-digital-mailbox-api:
@@ -254,7 +258,7 @@ judicial-system-digital-mailbox-api:
     BACKEND_URL: 'http://web-judicial-system-backend'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
     LOG_LEVEL: 'info'
-    NODE_OPTIONS: '--max-old-space-size=230 -r dd-trace/init'
+    NODE_OPTIONS: '--max- old - space - size=230 -r dd-trace/init'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
     - 'nginx-ingress-internal'
@@ -277,9 +281,11 @@ judicial-system-digital-mailbox-api:
         max: 3
         min: 1
   image:
-    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/judicial-system-digital-mailbox-api'
+    name: 'judicial-system-digital-mailbox-api'
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com'
+    tag: 'latest_master'
   ingress:
-    primary-alb:
+    primary -alb:
       annotations:
         kubernetes.io/ingress.class: 'nginx-internal-alb'
         nginx.ingress.kubernetes.io/service-upstream: 'true'
@@ -314,7 +320,7 @@ judicial-system-digital-mailbox-api:
     privileged: false
   serviceAccount:
     annotations:
-      eks.amazonaws.com/role-arn: 'arn:aws:iam::013313053092:role/judicial-system-digital-mailbox-api'
+      eks.amazonaws.com/role-arn: 'arn: aws: iam::013313053092: role / judicial-system-digital-mailbox-api '
     create: true
     name: 'judicial-system-digital-mailbox-api'
 judicial-system-message-handler:
@@ -327,7 +333,7 @@ judicial-system-message-handler:
   env:
     BACKEND_URL: 'http://web-judicial-system-backend'
     LOG_LEVEL: 'info'
-    NODE_OPTIONS: '--max-old-space-size=230 -r dd-trace/init'
+    NODE_OPTIONS: '--max- old - space - size=230 -r dd-trace/init'
     SERVERSIDE_FEATURES_ON: ''
     SQS_DEAD_LETTER_QUEUE_NAME: 'sqs-judicial-system-dlq'
     SQS_QUEUE_NAME: 'sqs-judicial-system'
@@ -353,7 +359,9 @@ judicial-system-message-handler:
         max: 3
         min: 1
   image:
-    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/judicial-system-message-handler'
+    name: 'judicial-system-message-handler'
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com'
+    tag: 'latest_master'
   namespace: 'judicial-system'
   podDisruptionBudget:
     maxUnavailable: 1
@@ -379,7 +387,7 @@ judicial-system-message-handler:
     privileged: false
   serviceAccount:
     annotations:
-      eks.amazonaws.com/role-arn: 'arn:aws:iam::013313053092:role/judicial-system-message-handler'
+      eks.amazonaws.com/role-arn: 'arn: aws: iam::013313053092: role / judicial-system-message-handler '
     create: true
     name: 'judicial-system-message-handler'
 judicial-system-scheduler:
@@ -392,7 +400,7 @@ judicial-system-scheduler:
   env:
     BACKEND_URL: 'http://web-judicial-system-backend'
     LOG_LEVEL: 'info'
-    NODE_OPTIONS: '--max-old-space-size=230 -r dd-trace/init'
+    NODE_OPTIONS: '--max- old - space - size=230 -r dd-trace/init'
     SERVERSIDE_FEATURES_ON: ''
     SQS_DEAD_LETTER_QUEUE_NAME: 'sqs-judicial-system-dlq'
     SQS_QUEUE_NAME: 'sqs-judicial-system'
@@ -419,7 +427,9 @@ judicial-system-scheduler:
         max: 1
         min: 1
   image:
-    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/judicial-system-scheduler'
+    name: 'judicial-system-scheduler'
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com'
+    tag: 'latest_master'
   namespace: 'judicial-system'
   podDisruptionBudget:
     maxUnavailable: 1
@@ -446,7 +456,7 @@ judicial-system-scheduler:
     privileged: false
   serviceAccount:
     annotations:
-      eks.amazonaws.com/role-arn: 'arn:aws:iam::013313053092:role/judicial-system-scheduler'
+      eks.amazonaws.com/role-arn: 'arn: aws: iam::013313053092: role / judicial-system-scheduler '
     create: true
     name: 'judicial-system-scheduler'
 judicial-system-web:
@@ -455,7 +465,7 @@ judicial-system-web:
     API_URL: 'https://judicial-system.dev01.devland.is'
     INTERNAL_API_URL: 'http://web-judicial-system-api'
     LOG_LEVEL: 'info'
-    NODE_OPTIONS: '--max-old-space-size=230 -r dd-trace/init'
+    NODE_OPTIONS: '--max- old - space - size=230 -r dd-trace/init'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
     - 'nginx-ingress-external'
@@ -478,9 +488,11 @@ judicial-system-web:
         max: 3
         min: 1
   image:
-    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/judicial-system-web'
+    name: 'judicial-system-web'
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com'
+    tag: 'latest_master'
   ingress:
-    primary-alb:
+    primary -alb:
       annotations:
         kubernetes.io/ingress.class: 'nginx-external-alb'
         nginx.ingress.kubernetes.io/proxy-buffer-size: '8k'
@@ -521,7 +533,7 @@ judicial-system-xrd-api:
     AUDIT_TRAIL_USE_GENERIC_LOGGER: 'false'
     BACKEND_URL: 'http://web-judicial-system-backend'
     LOG_LEVEL: 'info'
-    NODE_OPTIONS: '--max-old-space-size=230 -r dd-trace/init'
+    NODE_OPTIONS: '--max- old - space - size=230 -r dd-trace/init'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
     - 'nginx-ingress-internal'
@@ -544,9 +556,11 @@ judicial-system-xrd-api:
         max: 3
         min: 1
   image:
-    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/judicial-system-xrd-api'
+    name: 'judicial-system-xrd-api'
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com'
+    tag: 'latest_master'
   ingress:
-    primary-alb:
+    primary -alb:
       annotations:
         kubernetes.io/ingress.class: 'nginx-internal-alb'
         nginx.ingress.kubernetes.io/service-upstream: 'true'
@@ -581,7 +595,7 @@ judicial-system-xrd-api:
     privileged: false
   serviceAccount:
     annotations:
-      eks.amazonaws.com/role-arn: 'arn:aws:iam::013313053092:role/judicial-system-xrd-api'
+      eks.amazonaws.com/role-arn: 'arn: aws: iam::013313053092: role / judicial-system-xrd-api '
     create: true
     name: 'judicial-system-xrd-api'
 namespaces:

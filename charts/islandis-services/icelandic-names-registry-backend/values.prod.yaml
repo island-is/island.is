@@ -25,7 +25,7 @@ env:
   DB_USER: 'icelandic_names_registry_backend'
   IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
   LOG_LEVEL: 'info'
-  NODE_OPTIONS: '--max-old-space-size=230 -r dd-trace/init'
+  NODE_OPTIONS: '--max- old - space - size=230 -r dd-trace/init'
   SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
 grantNamespaces:
   - 'islandis'
@@ -48,7 +48,9 @@ hpa:
       max: 10
       min: 3
 image:
-  repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/icelandic-names-registry-backend'
+  name: 'icelandic-names-registry-backend'
+  repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com'
+  tag: 'latest_master'
 initContainer:
   containers:
     - args:

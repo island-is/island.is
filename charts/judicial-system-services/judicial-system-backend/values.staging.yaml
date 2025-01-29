@@ -30,7 +30,7 @@ env:
   DOKOBIT_URL: 'https://developers.dokobit.com'
   EMAIL_REGION: 'eu-west-1'
   LOG_LEVEL: 'info'
-  NODE_OPTIONS: '--max-old-space-size=921 -r dd-trace/init'
+  NODE_OPTIONS: '--max- old - space - size=921 -r dd-trace/init'
   NOVA_ACCEPT_UNAUTHORIZED: 'false'
   S3_BUCKET: 'island-is-staging-upload-judicial-system'
   S3_REGION: 'eu-west-1'
@@ -71,7 +71,9 @@ hpa:
       max: 3
       min: 1
 image:
-  repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/judicial-system-backend'
+  name: 'judicial-system-backend'
+  repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com'
+  tag: 'latest_master'
 initContainer:
   containers:
     - args:
@@ -154,6 +156,6 @@ securityContext:
   privileged: false
 serviceAccount:
   annotations:
-    eks.amazonaws.com/role-arn: 'arn:aws:iam::261174024191:role/judicial-system-backend'
+    eks.amazonaws.com/role-arn: 'arn: aws: iam::261174024191: role / judicial-system-backend '
   create: true
   name: 'judicial-system-backend'

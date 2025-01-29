@@ -14,7 +14,7 @@ air-discount-scheme-api:
     ELASTIC_NODE: 'https://vpc-search-q6hdtjcdlhkffyxvrnmzfwphuq.eu-west-1.es.amazonaws.com'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
     LOG_LEVEL: 'info'
-    NODE_OPTIONS: '--max-old-space-size=460 -r dd-trace/init'
+    NODE_OPTIONS: '--max- old - space - size=460 -r dd-trace/init'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
     - 'nginx-ingress-external'
@@ -38,9 +38,11 @@ air-discount-scheme-api:
         max: 3
         min: 1
   image:
-    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/air-discount-scheme-api'
+    name: 'air-discount-scheme-api'
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com'
+    tag: 'latest_master'
   ingress:
-    primary-alb:
+    primary -alb:
       annotations:
         kubernetes.io/ingress.class: 'nginx-external-alb'
         nginx.ingress.kubernetes.io/service-upstream: 'true'
@@ -79,7 +81,7 @@ air-discount-scheme-api:
     privileged: false
   serviceAccount:
     annotations:
-      eks.amazonaws.com/role-arn: 'arn:aws:iam::261174024191:role/air-discount-scheme-api'
+      eks.amazonaws.com/role-arn: 'arn: aws: iam::261174024191: role / air-discount-scheme-api '
     create: true
     name: 'air-discount-scheme-api'
 air-discount-scheme-backend:
@@ -93,7 +95,7 @@ air-discount-scheme-backend:
     IDENTITY_SERVER_CLIENT_ID: '@vegagerdin.is/clients/air-discount-scheme'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
     LOG_LEVEL: 'info'
-    NODE_OPTIONS: '--max-old-space-size=460 -r dd-trace/init'
+    NODE_OPTIONS: '--max- old - space - size=460 -r dd-trace/init'
     REDIS_URL_NODE_01: 'clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379'
     SERVERSIDE_FEATURES_ON: ''
     XROAD_BASE_PATH: 'http://securityserver.staging01.devland.is'
@@ -126,9 +128,11 @@ air-discount-scheme-backend:
         max: 3
         min: 1
   image:
-    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/air-discount-scheme-backend'
+    name: 'air-discount-scheme-backend'
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com'
+    tag: 'latest_master'
   ingress:
-    primary-alb:
+    primary -alb:
       annotations:
         kubernetes.io/ingress.class: 'nginx-external-alb'
         nginx.ingress.kubernetes.io/enable-global-auth: 'false'
@@ -202,7 +206,7 @@ air-discount-scheme-web:
     IDENTITY_SERVER_ISSUER_DOMAIN: 'identity-server.staging01.devland.is'
     LOG_LEVEL: 'info'
     NEXTAUTH_URL: 'https://loftbru.staging01.devland.is'
-    NODE_OPTIONS: '--max-old-space-size=230 -r dd-trace/init'
+    NODE_OPTIONS: '--max- old - space - size=230 -r dd-trace/init'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
     - 'nginx-ingress-external'
@@ -226,9 +230,11 @@ air-discount-scheme-web:
         max: 3
         min: 1
   image:
-    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/air-discount-scheme-web'
+    name: 'air-discount-scheme-web'
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com'
+    tag: 'latest_master'
   ingress:
-    primary-alb:
+    primary -alb:
       annotations:
         kubernetes.io/ingress.class: 'nginx-external-alb'
         nginx.ingress.kubernetes.io/configuration-snippet: 'rewrite /$ https://beta.staging01.devland.is/loftbru; rewrite /en$ https://beta.staging01.devland.is/en/lower-airfares-for-residents-in-rural-areas;'
@@ -308,7 +314,7 @@ api:
     ICELANDIC_NAMES_REGISTRY_BACKEND_URL: 'http://web-icelandic-names-registry-backend.icelandic-names-registry.svc.cluster.local'
     IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/api'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
-    ISLYKILL_CERT: '/etc/config/islyklar.p12'
+    ISLYKILL_CERT: '/ etc / config / islyklar.p12 '
     LICENSE_SERVICE_REDIS_NODES: '["clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379"]'
     LOG_LEVEL: 'info'
     MUNICIPALITIES_FINANCIAL_AID_BACKEND_URL: 'http://web-financial-aid-backend'
@@ -316,7 +322,7 @@ api:
     NATIONAL_REGISTRY_B2C_ENDPOINT: 'https://skraidentitydev.b2clogin.com/skraidentitystaging.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token'
     NATIONAL_REGISTRY_B2C_PATH: 'IS-TEST/GOV/6503760649/SKRA-Cloud-Protected/Midlun-v1'
     NATIONAL_REGISTRY_B2C_SCOPE: 'https://skraidentitystaging.onmicrosoft.com/midlun/.default'
-    NODE_OPTIONS: '--max-old-space-size=2880 -r dd-trace/init'
+    NODE_OPTIONS: '--max- old - space - size=2880 -r dd-trace/init'
     REGULATIONS_ADMIN_URL: 'http://web-regulations-admin-backend.regulations-admin.svc.cluster.local'
     SEND_FROM_EMAIL: 'development@island.is'
     SERVERSIDE_FEATURES_ON: ''
@@ -443,9 +449,11 @@ api:
         max: 3
         min: 1
   image:
-    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/api'
+    name: 'api'
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com'
+    tag: 'latest_master'
   ingress:
-    primary-alb:
+    primary -alb:
       annotations:
         kubernetes.io/ingress.class: 'nginx-external-alb'
         nginx.ingress.kubernetes.io/service-upstream: 'true'
@@ -570,7 +578,7 @@ api:
     privileged: false
   serviceAccount:
     annotations:
-      eks.amazonaws.com/role-arn: 'arn:aws:iam::261174024191:role/api'
+      eks.amazonaws.com/role-arn: 'arn: aws: iam::261174024191: role / api '
     create: true
     name: 'api'
 application-system-api:
@@ -609,7 +617,7 @@ application-system-api:
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
     INSTITUTION_APPLICATION_RECIPIENT_EMAIL_ADDRESS: 'gunnar.ingi@fjr.is'
     INSTITUTION_APPLICATION_RECIPIENT_NAME: 'Gunnar Ingi'
-    ISLYKILL_CERT: '/etc/config/islyklar.p12'
+    ISLYKILL_CERT: '/ etc / config / islyklar.p12 '
     LOGIN_SERVICE_APPLICATION_RECIPIENT_EMAIL_ADDRESS: 'gunnar.ingi@fjr.is'
     LOGIN_SERVICE_APPLICATION_RECIPIENT_NAME: 'Gunnar Ingi'
     LOG_LEVEL: 'info'
@@ -617,7 +625,7 @@ application-system-api:
     NATIONAL_REGISTRY_B2C_ENDPOINT: 'https://skraidentitydev.b2clogin.com/skraidentitystaging.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token'
     NATIONAL_REGISTRY_B2C_PATH: 'IS-TEST/GOV/6503760649/SKRA-Cloud-Protected/Midlun-v1'
     NATIONAL_REGISTRY_B2C_SCOPE: 'https://skraidentitystaging.onmicrosoft.com/midlun/.default'
-    NODE_OPTIONS: '--max-old-space-size=921 -r dd-trace/init'
+    NODE_OPTIONS: '--max- old - space - size=921 -r dd-trace/init'
     NOVA_ACCEPT_UNAUTHORIZED: 'false'
     NOVA_USERNAME: 'IslandIs_User_Development'
     RECYCLING_FUND_GQL_BASE_PATH: 'http://web-skilavottord-ws.skilavottord.svc.cluster.local/app/skilavottord/api/graphql'
@@ -717,9 +725,11 @@ application-system-api:
         max: 3
         min: 1
   image:
-    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/application-system-api'
+    name: 'application-system-api'
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com'
+    tag: 'latest_master'
   ingress:
-    primary-alb:
+    primary -alb:
       annotations:
         kubernetes.io/ingress.class: 'nginx-internal-alb'
         nginx.ingress.kubernetes.io/proxy-buffer-size: '8k'
@@ -822,7 +832,7 @@ application-system-api:
     privileged: false
   serviceAccount:
     annotations:
-      eks.amazonaws.com/role-arn: 'arn:aws:iam::261174024191:role/application-system-api'
+      eks.amazonaws.com/role-arn: 'arn: aws: iam::261174024191: role / application-system-api '
     create: true
     name: 'application-system-api'
 application-system-api-worker:
@@ -847,7 +857,7 @@ application-system-api-worker:
     IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/application-system'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
     LOG_LEVEL: 'info'
-    NODE_OPTIONS: '--max-old-space-size=691 -r dd-trace/init'
+    NODE_OPTIONS: '--max- old - space - size=691 -r dd-trace/init'
     REDIS_URL_NODE_01: '["clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379"]'
     SERVERSIDE_FEATURES_ON: ''
     USER_NOTIFICATION_API_URL: 'http://web-user-notification.user-notification.svc.cluster.local'
@@ -884,7 +894,9 @@ application-system-api-worker:
         max: 3
         min: 1
   image:
-    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/application-system-api'
+    name: 'application-system-api-worker'
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com'
+    tag: 'latest_master'
   namespace: 'application-system'
   podDisruptionBudget:
     maxUnavailable: 1
@@ -925,7 +937,7 @@ application-system-api-worker:
     privileged: false
   serviceAccount:
     annotations:
-      eks.amazonaws.com/role-arn: 'arn:aws:iam::261174024191:role/application-system-api-worker'
+      eks.amazonaws.com/role-arn: 'arn: aws: iam::261174024191: role / application-system-api-worker '
     create: true
     name: 'application-system-api-worker'
 application-system-form:
@@ -933,7 +945,7 @@ application-system-form:
   env:
     BASEPATH: '/umsoknir'
     LOG_LEVEL: 'info'
-    NODE_OPTIONS: '--max-old-space-size=230'
+    NODE_OPTIONS: '--max- old - space - size=230'
     SERVERSIDE_FEATURES_ON: ''
     SI_PUBLIC_ENVIRONMENT: 'staging'
   grantNamespaces:
@@ -959,9 +971,11 @@ application-system-form:
         max: 3
         min: 1
   image:
-    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/application-system-form'
+    name: 'application-system-form'
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com'
+    tag: 'latest_master'
   ingress:
-    primary-alb:
+    primary -alb:
       annotations:
         kubernetes.io/ingress.class: 'nginx-external-alb'
         nginx.ingress.kubernetes.io/proxy-buffer-size: '8k'
@@ -1005,7 +1019,7 @@ consultation-portal:
     IDENTITY_SERVER_ISSUER_DOMAIN: 'identity-server.staging01.devland.is'
     LOG_LEVEL: 'info'
     NEXTAUTH_URL: 'https://beta.staging01.devland.is/samradsgatt/api/auth'
-    NODE_OPTIONS: '--max-old-space-size=460 -r dd-trace/init'
+    NODE_OPTIONS: '--max- old - space - size=460 -r dd-trace/init'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces: []
   grantNamespacesEnabled: false
@@ -1027,9 +1041,11 @@ consultation-portal:
         max: 3
         min: 1
   image:
-    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/consultation-portal'
+    name: 'consultation-portal'
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com'
+    tag: 'latest_master'
   ingress:
-    primary-alb:
+    primary -alb:
       annotations:
         kubernetes.io/ingress.class: 'nginx-external-alb'
         nginx.ingress.kubernetes.io/proxy-buffer-size: '8k'
@@ -1068,7 +1084,7 @@ download-service:
     IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/download-service'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
     LOG_LEVEL: 'info'
-    NODE_OPTIONS: '--max-old-space-size=460 -r dd-trace/init'
+    NODE_OPTIONS: '--max- old - space - size=460 -r dd-trace/init'
     REGULATIONS_ADMIN_URL: 'http://web-regulations-admin-backend.regulations-admin.svc.cluster.local'
     SERVERSIDE_FEATURES_ON: ''
     XROAD_AGRICULTURAL_UNIVERSITY_OF_ICELAND_PATH: 'IS-TEST/EDU/10056/LBHI-Protected/brautskraning-v1'
@@ -1118,9 +1134,11 @@ download-service:
         max: 3
         min: 1
   image:
-    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/download-service'
+    name: 'download-service'
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com'
+    tag: 'latest_master'
   ingress:
-    primary-alb:
+    primary -alb:
       annotations:
         kubernetes.io/ingress.class: 'nginx-external-alb'
         nginx.ingress.kubernetes.io/enable-global-auth: 'false'
@@ -1187,7 +1205,7 @@ endorsement-system-api:
     NATIONAL_REGISTRY_B2C_ENDPOINT: 'https://skraidentitydev.b2clogin.com/skraidentitystaging.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token'
     NATIONAL_REGISTRY_B2C_PATH: 'IS-TEST/GOV/6503760649/SKRA-Cloud-Protected/Midlun-v1'
     NATIONAL_REGISTRY_B2C_SCOPE: 'https://skraidentitystaging.onmicrosoft.com/midlun/.default'
-    NODE_OPTIONS: '--max-old-space-size=230 -r dd-trace/init'
+    NODE_OPTIONS: '--max- old - space - size=230 -r dd-trace/init'
     SERVERSIDE_FEATURES_ON: ''
     XROAD_BASE_PATH: 'http://securityserver.staging01.devland.is'
     XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.staging01.devland.is/r1/IS-TEST'
@@ -1220,7 +1238,9 @@ endorsement-system-api:
         max: 3
         min: 1
   image:
-    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-endorsements-api'
+    name: 'endorsement-system-api'
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com'
+    tag: 'latest_master'
   initContainer:
     containers:
       - args:
@@ -1271,7 +1291,7 @@ endorsement-system-api:
     privileged: false
   serviceAccount:
     annotations:
-      eks.amazonaws.com/role-arn: 'arn:aws:iam::261174024191:role/endorsement-system-api'
+      eks.amazonaws.com/role-arn: 'arn: aws: iam::261174024191: role / endorsement-system-api '
     create: true
     name: 'endorsement-system-api'
 global:
@@ -1294,7 +1314,7 @@ icelandic-names-registry-backend:
     DB_USER: 'icelandic_names_registry_backend'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
     LOG_LEVEL: 'info'
-    NODE_OPTIONS: '--max-old-space-size=230 -r dd-trace/init'
+    NODE_OPTIONS: '--max- old - space - size=230 -r dd-trace/init'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
     - 'islandis'
@@ -1317,7 +1337,9 @@ icelandic-names-registry-backend:
         max: 3
         min: 1
   image:
-    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/icelandic-names-registry-backend'
+    name: 'icelandic-names-registry-backend'
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com'
+    tag: 'latest_master'
   initContainer:
     containers:
       - args:
@@ -1379,7 +1401,7 @@ island-ui-storybook:
   enabled: true
   env:
     LOG_LEVEL: 'info'
-    NODE_OPTIONS: '--max-old-space-size=230'
+    NODE_OPTIONS: '--max- old - space - size=230'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
     - 'nginx-ingress-external'
@@ -1402,9 +1424,11 @@ island-ui-storybook:
         max: 3
         min: 1
   image:
-    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/island-ui-storybook'
+    name: 'island-ui-storybook'
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com'
+    tag: 'latest_master'
   ingress:
-    primary-alb:
+    primary -alb:
       annotations:
         kubernetes.io/ingress.class: 'nginx-external-alb'
         nginx.ingress.kubernetes.io/service-upstream: 'true'
@@ -1440,7 +1464,7 @@ license-api:
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
     LICENSE_SERVICE_REDIS_NODES: '["clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379"]'
     LOG_LEVEL: 'info'
-    NODE_OPTIONS: '--max-old-space-size=460 -r dd-trace/init'
+    NODE_OPTIONS: '--max- old - space - size=460 -r dd-trace/init'
     SERVERSIDE_FEATURES_ON: ''
     XROAD_BASE_PATH: 'http://securityserver.staging01.devland.is'
     XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.staging01.devland.is/r1/IS-TEST'
@@ -1475,9 +1499,11 @@ license-api:
         max: 3
         min: 1
   image:
-    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/license-api'
+    name: 'license-api'
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com'
+    tag: 'latest_master'
   ingress:
-    primary-alb:
+    primary -alb:
       annotations:
         kubernetes.io/ingress.class: 'nginx-internal-alb'
         nginx.ingress.kubernetes.io/service-upstream: 'true'
@@ -1555,7 +1581,7 @@ portals-admin:
   env:
     BASEPATH: '/stjornbord'
     LOG_LEVEL: 'info'
-    NODE_OPTIONS: '--max-old-space-size=460'
+    NODE_OPTIONS: '--max- old - space - size=460'
     SERVERSIDE_FEATURES_ON: ''
     SI_PUBLIC_ENVIRONMENT: 'staging'
   grantNamespaces:
@@ -1580,9 +1606,11 @@ portals-admin:
         max: 3
         min: 1
   image:
-    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/portals-admin'
+    name: 'portals-admin'
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com'
+    tag: 'latest_master'
   ingress:
-    primary-alb:
+    primary -alb:
       annotations:
         kubernetes.io/ingress.class: 'nginx-external-alb'
         nginx.ingress.kubernetes.io/proxy-buffer-size: '8k'
@@ -1630,7 +1658,7 @@ regulations-admin-backend:
     NATIONAL_REGISTRY_B2C_ENDPOINT: 'https://skraidentitydev.b2clogin.com/skraidentitystaging.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token'
     NATIONAL_REGISTRY_B2C_PATH: 'IS-TEST/GOV/6503760649/SKRA-Cloud-Protected/Midlun-v1'
     NATIONAL_REGISTRY_B2C_SCOPE: 'https://skraidentitystaging.onmicrosoft.com/midlun/.default'
-    NODE_OPTIONS: '--max-old-space-size=460 -r dd-trace/init'
+    NODE_OPTIONS: '--max- old - space - size=460 -r dd-trace/init'
     SERVERSIDE_FEATURES_ON: ''
     XROAD_BASE_PATH: 'http://securityserver.staging01.devland.is'
     XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.staging01.devland.is/r1/IS-TEST'
@@ -1659,7 +1687,9 @@ regulations-admin-backend:
         max: 3
         min: 1
   image:
-    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/regulations-admin-backend'
+    name: 'regulations-admin-backend'
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com'
+    tag: 'latest_master'
   initContainer:
     containers:
       - args:
@@ -1724,7 +1754,7 @@ search-indexer-service:
     ELASTIC_NODE: 'https://vpc-search-q6hdtjcdlhkffyxvrnmzfwphuq.eu-west-1.es.amazonaws.com'
     ENVIRONMENT: 'staging'
     LOG_LEVEL: 'info'
-    NODE_OPTIONS: '--max-old-space-size=3686 -r dd-trace/init'
+    NODE_OPTIONS: '--max- old - space - size=3686 -r dd-trace/init'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces: []
   grantNamespacesEnabled: false
@@ -1746,9 +1776,11 @@ search-indexer-service:
         max: 1
         min: 1
   image:
-    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-search-indexer'
+    name: 'search-indexer-service'
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com'
+    tag: 'latest_master'
   ingress:
-    primary-alb:
+    primary -alb:
       annotations:
         kubernetes.io/ingress.class: 'nginx-external-alb'
         nginx.ingress.kubernetes.io/enable-global-auth: 'false'
@@ -1841,7 +1873,7 @@ search-indexer-service:
     privileged: false
   serviceAccount:
     annotations:
-      eks.amazonaws.com/role-arn: 'arn:aws:iam::261174024191:role/search-indexer'
+      eks.amazonaws.com/role-arn: 'arn: aws: iam::261174024191: role / search-indexer '
     create: true
     name: 'search-indexer'
 service-portal:
@@ -1849,7 +1881,7 @@ service-portal:
   env:
     BASEPATH: '/minarsidur'
     LOG_LEVEL: 'info'
-    NODE_OPTIONS: '--max-old-space-size=230'
+    NODE_OPTIONS: '--max- old - space - size=230'
     SERVERSIDE_FEATURES_ON: ''
     SI_PUBLIC_ENVIRONMENT: 'staging'
   grantNamespaces:
@@ -1877,9 +1909,11 @@ service-portal:
         max: 3
         min: 1
   image:
-    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/service-portal'
+    name: 'service-portal'
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com'
+    tag: 'latest_master'
   ingress:
-    primary-alb:
+    primary -alb:
       annotations:
         kubernetes.io/ingress.class: 'nginx-external-alb'
         nginx.ingress.kubernetes.io/proxy-buffer-size: '8k'
@@ -1924,13 +1958,13 @@ service-portal-api:
     DB_USER: 'service_portal_api'
     EMAIL_REGION: 'eu-west-1'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
-    ISLYKILL_CERT: '/etc/config/islyklar.p12'
+    ISLYKILL_CERT: '/ etc / config / islyklar.p12 '
     LOG_LEVEL: 'info'
     NATIONAL_REGISTRY_B2C_CLIENT_ID: 'ca128c23-b43c-443d-bade-ec5a146a933f'
     NATIONAL_REGISTRY_B2C_ENDPOINT: 'https://skraidentitydev.b2clogin.com/skraidentitystaging.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token'
     NATIONAL_REGISTRY_B2C_PATH: 'IS-TEST/GOV/6503760649/SKRA-Cloud-Protected/Midlun-v1'
     NATIONAL_REGISTRY_B2C_SCOPE: 'https://skraidentitystaging.onmicrosoft.com/midlun/.default'
-    NODE_OPTIONS: '--max-old-space-size=921 -r dd-trace/init'
+    NODE_OPTIONS: '--max- old - space - size=921 -r dd-trace/init'
     NOVA_ACCEPT_UNAUTHORIZED: 'false'
     SERVERSIDE_FEATURES_ON: ''
     SERVICE_PORTAL_BASE_URL: 'https://beta.staging01.devland.is/minarsidur'
@@ -1966,9 +2000,11 @@ service-portal-api:
         max: 3
         min: 1
   image:
-    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-user-profile'
+    name: 'service-portal-api'
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com'
+    tag: 'latest_master'
   ingress:
-    internal-alb:
+    internal -alb:
       annotations:
         kubernetes.io/ingress.class: 'nginx-internal-alb'
         nginx.ingress.kubernetes.io/service-upstream: 'true'
@@ -2036,7 +2072,7 @@ service-portal-api:
     privileged: false
   serviceAccount:
     annotations:
-      eks.amazonaws.com/role-arn: 'arn:aws:iam::261174024191:role/service-portal-api'
+      eks.amazonaws.com/role-arn: 'arn: aws: iam::261174024191: role / service-portal-api '
     create: true
     name: 'service-portal-api'
 services-bff-portals-admin:
@@ -2059,7 +2095,7 @@ services-bff-portals-admin:
     IDENTITY_SERVER_CLIENT_SCOPES: '["@admin.island.is/delegations","@admin.island.is/ads","@admin.island.is/regulations","@admin.island.is/regulations:manage","@admin.island.is/icelandic-names-registry","@admin.island.is/application-system:admin","@admin.island.is/application-system:institution","@admin.island.is/document-provider","@admin.island.is/auth","@admin.island.is/auth:admin","@admin.island.is/petitions","@admin.island.is/service-desk","@admin.island.is/ads:explicit","@admin.island.is/signature-collection:manage","@admin.island.is/signature-collection:process","@admin.island.is/form-system","@admin.island.is/form-system:admin","@admin.island.is/delegation-system","@admin.island.is/delegation-system:admin"]'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
     LOG_LEVEL: 'info'
-    NODE_OPTIONS: '--max-old-space-size=460 -r dd-trace/init'
+    NODE_OPTIONS: '--max- old - space - size=460 -r dd-trace/init'
     REDIS_URL_NODE_01: '["clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379"]'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
@@ -2084,9 +2120,11 @@ services-bff-portals-admin:
         max: 3
         min: 1
   image:
-    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-bff'
+    name: 'services-bff-portals-admin'
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com'
+    tag: 'latest_master'
   ingress:
-    primary-alb:
+    primary -alb:
       annotations:
         kubernetes.io/ingress.class: 'nginx-external-alb'
         nginx.ingress.kubernetes.io/enable-global-auth: 'false'
@@ -2123,7 +2161,7 @@ services-bff-portals-admin:
     privileged: false
   serviceAccount:
     annotations:
-      eks.amazonaws.com/role-arn: 'arn:aws:iam::261174024191:role/services-bff'
+      eks.amazonaws.com/role-arn: 'arn: aws: iam::261174024191: role / services-bff '
     create: true
     name: 'services-bff'
 services-bff-portals-my-pages:
@@ -2145,7 +2183,7 @@ services-bff-portals-my-pages:
     IDENTITY_SERVER_CLIENT_SCOPES: '["api_resource.scope","@island.is/applications:read","@island.is/applications:write","@island.is/user-profile:read","@island.is/user-profile:write","@island.is/auth/actor-delegations","@island.is/auth/delegations:write","@island.is/auth/consents","@skra.is/individuals","@island.is/documents","@island.is/endorsements","@admin.island.is/petitions","@island.is/assets/ip","@island.is/assets","@island.is/education","@island.is/education-license","@island.is/finance:overview","@island.is/finance/salary","@island.is/finance/schedule:read","@island.is/finance/loans","@island.is/internal","@island.is/internal:procuring","@island.is/me:details","@island.is/law-and-order","@island.is/licenses","@island.is/licenses:verify","@island.is/company","@island.is/vehicles","@island.is/work-machines","@island.is/health/payments","@island.is/health/medicines","@island.is/health/assistive-devices-and-nutrition","@island.is/health/therapies","@island.is/health/healthcare","@island.is/health/rights-status","@island.is/health/dentists","@island.is/health/organ-donation","@island.is/health/vaccinations","@island.is/signature-collection","@island.is/applications/urvinnslusjodur","@island.is/applications/orkusjodur","@island.is/fishing-license","@island.is/applications/samgongustofa-vehicles","@island.is/applications/ver","@island.is/applications/mms","@samband.is/financial-aid/applicant","@samband.is/financial-aid:read","@samband.is/financial-aid:write"]'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
     LOG_LEVEL: 'info'
-    NODE_OPTIONS: '--max-old-space-size=460 -r dd-trace/init'
+    NODE_OPTIONS: '--max- old - space - size=460 -r dd-trace/init'
     REDIS_URL_NODE_01: '["clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379"]'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
@@ -2170,9 +2208,11 @@ services-bff-portals-my-pages:
         max: 3
         min: 1
   image:
-    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-bff'
+    name: 'services-bff-portals-my-pages'
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com'
+    tag: 'latest_master'
   ingress:
-    primary-alb:
+    primary -alb:
       annotations:
         kubernetes.io/ingress.class: 'nginx-external-alb'
         nginx.ingress.kubernetes.io/enable-global-auth: 'false'
@@ -2209,7 +2249,7 @@ services-bff-portals-my-pages:
     privileged: false
   serviceAccount:
     annotations:
-      eks.amazonaws.com/role-arn: 'arn:aws:iam::261174024191:role/services-bff'
+      eks.amazonaws.com/role-arn: 'arn: aws: iam::261174024191: role / services-bff '
     create: true
     name: 'services-bff'
 services-documents:
@@ -2221,7 +2261,7 @@ services-documents:
     DB_USER: 'services_documents'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
     LOG_LEVEL: 'info'
-    NODE_OPTIONS: '--max-old-space-size=230 -r dd-trace/init'
+    NODE_OPTIONS: '--max- old - space - size=230 -r dd-trace/init'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
     - 'islandis'
@@ -2245,7 +2285,9 @@ services-documents:
         max: 3
         min: 1
   image:
-    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-documents'
+    name: 'services-documents'
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com'
+    tag: 'latest_master'
   initContainer:
     containers:
       - args:
@@ -2300,7 +2342,7 @@ services-sessions:
     DB_USER: 'services_sessions_read'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
     LOG_LEVEL: 'info'
-    NODE_OPTIONS: '--max-old-space-size=460 -r dd-trace/init'
+    NODE_OPTIONS: '--max- old - space - size=460 -r dd-trace/init'
     REDIS_URL_NODE_01: '["clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379"]'
     REDIS_USE_SSL: 'true'
     SERVERSIDE_FEATURES_ON: ''
@@ -2327,9 +2369,11 @@ services-sessions:
         max: 3
         min: 1
   image:
-    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-sessions'
+    name: 'services-sessions'
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com'
+    tag: 'latest_master'
   ingress:
-    internal-alb:
+    internal -alb:
       annotations:
         kubernetes.io/ingress.class: 'nginx-internal-alb'
         nginx.ingress.kubernetes.io/service-upstream: 'true'
@@ -2372,7 +2416,7 @@ services-sessions-cleanup:
     DB_REPLICAS_HOST: 'postgres-applications.internal'
     DB_USER: 'services_sessions'
     LOG_LEVEL: 'info'
-    NODE_OPTIONS: '--max-old-space-size=460 -r dd-trace/init'
+    NODE_OPTIONS: '--max- old - space - size=460 -r dd-trace/init'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
     - 'nginx-ingress-internal'
@@ -2397,7 +2441,9 @@ services-sessions-cleanup:
         max: 3
         min: 1
   image:
-    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-sessions'
+    name: 'services-sessions-cleanup'
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com'
+    tag: 'latest_master'
   namespace: 'services-sessions'
   podDisruptionBudget:
     maxUnavailable: 1
@@ -2436,7 +2482,7 @@ services-sessions-worker:
     DB_USER: 'services_sessions'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
     LOG_LEVEL: 'info'
-    NODE_OPTIONS: '--max-old-space-size=460 -r dd-trace/init'
+    NODE_OPTIONS: '--max- old - space - size=460 -r dd-trace/init'
     REDIS_URL_NODE_01: '["clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379"]'
     REDIS_USE_SSL: 'true'
     SERVERSIDE_FEATURES_ON: ''
@@ -2463,7 +2509,9 @@ services-sessions-worker:
         max: 3
         min: 1
   image:
-    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-sessions'
+    name: 'services-sessions-worker'
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com'
+    tag: 'latest_master'
   initContainer:
     containers:
       - args:
@@ -2513,7 +2561,7 @@ services-sessions-worker:
     privileged: false
   serviceAccount:
     annotations:
-      eks.amazonaws.com/role-arn: 'arn:aws:iam::261174024191:role/sessions-worker'
+      eks.amazonaws.com/role-arn: 'arn: aws: iam::261174024191: role / sessions-worker '
     create: true
     name: 'sessions-worker'
 services-university-gateway:
@@ -2531,7 +2579,7 @@ services-university-gateway:
     IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/university-gateway'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
     LOG_LEVEL: 'info'
-    NODE_OPTIONS: '--max-old-space-size=345 -r dd-trace/init'
+    NODE_OPTIONS: '--max- old - space - size=345 -r dd-trace/init'
     REDIS_URL_NODE_01: '["clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379"]'
     SERVERSIDE_FEATURES_ON: ''
     XROAD_BASE_PATH: 'http://securityserver.staging01.devland.is'
@@ -2569,9 +2617,11 @@ services-university-gateway:
         max: 3
         min: 1
   image:
-    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-university-gateway'
+    name: 'services-university-gateway'
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com'
+    tag: 'latest_master'
   ingress:
-    primary-alb:
+    primary -alb:
       annotations:
         kubernetes.io/ingress.class: 'nginx-internal-alb'
         nginx.ingress.kubernetes.io/service-upstream: 'true'
@@ -2641,7 +2691,7 @@ services-university-gateway:
     privileged: false
   serviceAccount:
     annotations:
-      eks.amazonaws.com/role-arn: 'arn:aws:iam::261174024191:role/services-university-gateway'
+      eks.amazonaws.com/role-arn: 'arn: aws: iam::261174024191: role / services-university-gateway '
     create: true
     name: 'services-university-gateway'
 services-university-gateway-worker:
@@ -2661,7 +2711,7 @@ services-university-gateway-worker:
     IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/university-gateway'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
     LOG_LEVEL: 'info'
-    NODE_OPTIONS: '--max-old-space-size=345 -r dd-trace/init'
+    NODE_OPTIONS: '--max- old - space - size=345 -r dd-trace/init'
     REDIS_URL_NODE_01: '["clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379"]'
     SERVERSIDE_FEATURES_ON: ''
     XROAD_BASE_PATH: 'http://securityserver.staging01.devland.is'
@@ -2699,7 +2749,9 @@ services-university-gateway-worker:
         max: 3
         min: 1
   image:
-    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-university-gateway'
+    name: 'services-university-gateway-worker'
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com'
+    tag: 'latest_master'
   namespace: 'services-university-gateway'
   podDisruptionBudget:
     maxUnavailable: 1
@@ -2727,7 +2779,7 @@ services-university-gateway-worker:
     privileged: false
   serviceAccount:
     annotations:
-      eks.amazonaws.com/role-arn: 'arn:aws:iam::261174024191:role/services-university-gateway-worker'
+      eks.amazonaws.com/role-arn: 'arn: aws: iam::261174024191: role / services-university-gateway-worker '
     create: true
     name: 'services-university-gateway-worker'
 skilavottord-web:
@@ -2736,7 +2788,7 @@ skilavottord-web:
     API_URL: 'http://web-skilavottord-ws'
     ENVIRONMENT: 'staging'
     LOG_LEVEL: 'info'
-    NODE_OPTIONS: '--max-old-space-size=460 -r dd-trace/init'
+    NODE_OPTIONS: '--max- old - space - size=460 -r dd-trace/init'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
     - 'nginx-ingress-external'
@@ -2759,9 +2811,11 @@ skilavottord-web:
         max: 3
         min: 1
   image:
-    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/skilavottord-web'
+    name: 'skilavottord-web'
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com'
+    tag: 'latest_master'
   ingress:
-    primary-alb:
+    primary -alb:
       annotations:
         kubernetes.io/ingress.class: 'nginx-external-alb'
         nginx.ingress.kubernetes.io/proxy-buffer-size: '8k'
@@ -2806,7 +2860,7 @@ skilavottord-ws:
     DB_USER: 'skilavottord'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
     LOG_LEVEL: 'info'
-    NODE_OPTIONS: '--max-old-space-size=460 -r dd-trace/init'
+    NODE_OPTIONS: '--max- old - space - size=460 -r dd-trace/init'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
     - 'application-system'
@@ -2829,9 +2883,11 @@ skilavottord-ws:
         max: 3
         min: 1
   image:
-    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/skilavottord-ws'
+    name: 'skilavottord-ws'
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com'
+    tag: 'latest_master'
   ingress:
-    primary-alb:
+    primary -alb:
       annotations:
         kubernetes.io/ingress.class: 'nginx-external-alb'
         nginx.ingress.kubernetes.io/service-upstream: 'true'
@@ -2919,7 +2975,7 @@ user-notification:
     NATIONAL_REGISTRY_B2C_ENDPOINT: 'https://skraidentitydev.b2clogin.com/skraidentitystaging.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token'
     NATIONAL_REGISTRY_B2C_PATH: 'IS-TEST/GOV/6503760649/SKRA-Cloud-Protected/Midlun-v1'
     NATIONAL_REGISTRY_B2C_SCOPE: 'https://skraidentitystaging.onmicrosoft.com/midlun/.default'
-    NODE_OPTIONS: '--max-old-space-size=345 -r dd-trace/init'
+    NODE_OPTIONS: '--max- old - space - size=345 -r dd-trace/init'
     REDIS_URL_NODE_01: '["clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379"]'
     REDIS_USE_SSL: 'true'
     SERVERSIDE_FEATURES_ON: ''
@@ -2955,9 +3011,11 @@ user-notification:
         max: 3
         min: 1
   image:
-    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-user-notification'
+    name: 'user-notification'
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com'
+    tag: 'latest_master'
   ingress:
-    primary-alb:
+    primary -alb:
       annotations:
         kubernetes.io/ingress.class: 'nginx-internal-alb'
         nginx.ingress.kubernetes.io/proxy-buffer-size: '8k'
@@ -2997,7 +3055,7 @@ user-notification:
     privileged: false
   serviceAccount:
     annotations:
-      eks.amazonaws.com/role-arn: 'arn:aws:iam::261174024191:role/user-notification'
+      eks.amazonaws.com/role-arn: 'arn: aws: iam::261174024191: role / user-notification '
     create: true
     name: 'user-notification'
 user-notification-cleanup-worker:
@@ -3015,7 +3073,7 @@ user-notification-cleanup-worker:
     DB_REPLICAS_HOST: 'postgres-applications.internal'
     DB_USER: 'user_notification'
     LOG_LEVEL: 'info'
-    NODE_OPTIONS: '--max-old-space-size=230 -r dd-trace/init'
+    NODE_OPTIONS: '--max- old - space - size=230 -r dd-trace/init'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
     - 'nginx-ingress-internal'
@@ -3041,7 +3099,9 @@ user-notification-cleanup-worker:
         max: 3
         min: 1
   image:
-    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-user-notification'
+    name: 'user-notification-cleanup-worker'
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com'
+    tag: 'latest_master'
   initContainer:
     containers:
       - args:
@@ -3091,7 +3151,7 @@ user-notification-cleanup-worker:
     privileged: false
   serviceAccount:
     annotations:
-      eks.amazonaws.com/role-arn: 'arn:aws:iam::261174024191:role/user-notification-cleanup-worker'
+      eks.amazonaws.com/role-arn: 'arn: aws: iam::261174024191: role / user-notification-cleanup-worker '
     create: true
     name: 'user-notification-cleanup-worker'
 user-notification-worker:
@@ -3123,7 +3183,7 @@ user-notification-worker:
     NATIONAL_REGISTRY_B2C_ENDPOINT: 'https://skraidentitydev.b2clogin.com/skraidentitystaging.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token'
     NATIONAL_REGISTRY_B2C_PATH: 'IS-TEST/GOV/6503760649/SKRA-Cloud-Protected/Midlun-v1'
     NATIONAL_REGISTRY_B2C_SCOPE: 'https://skraidentitystaging.onmicrosoft.com/midlun/.default'
-    NODE_OPTIONS: '--max-old-space-size=345 -r dd-trace/init'
+    NODE_OPTIONS: '--max- old - space - size=345 -r dd-trace/init'
     REDIS_URL_NODE_01: '["clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379"]'
     REDIS_USE_SSL: 'true'
     SERVERSIDE_FEATURES_ON: ''
@@ -3159,7 +3219,9 @@ user-notification-worker:
         max: 3
         min: 1
   image:
-    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-user-notification'
+    name: 'user-notification-worker'
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com'
+    tag: 'latest_master'
   initContainer:
     containers:
       - args:
@@ -3213,7 +3275,7 @@ user-notification-worker:
     privileged: false
   serviceAccount:
     annotations:
-      eks.amazonaws.com/role-arn: 'arn:aws:iam::261174024191:role/user-notification-worker'
+      eks.amazonaws.com/role-arn: 'arn: aws: iam::261174024191: role / user-notification-worker '
     create: true
     name: 'user-notification-worker'
 web:
@@ -3227,7 +3289,7 @@ web:
     DISABLE_SYSLUMENN_PAGE: 'false'
     ENVIRONMENT: 'staging'
     LOG_LEVEL: 'info'
-    NODE_OPTIONS: '--max-old-space-size=691 -r dd-trace/init'
+    NODE_OPTIONS: '--max- old - space - size=691 -r dd-trace/init'
     SERVERSIDE_FEATURES_ON: ''
     TRACKING_DOMAIN: 'beta.staging01.devland.is'
   grantNamespaces:
@@ -3255,9 +3317,11 @@ web:
         max: 3
         min: 1
   image:
-    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/web'
+    name: 'web'
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com'
+    tag: 'latest_master'
   ingress:
-    primary-alb:
+    primary -alb:
       annotations:
         kubernetes.io/ingress.class: 'nginx-external-alb'
         nginx.ingress.kubernetes.io/proxy-buffer-size: '8k'
@@ -3299,7 +3363,7 @@ xroad-collector:
   env:
     ELASTIC_NODE: 'https://vpc-search-q6hdtjcdlhkffyxvrnmzfwphuq.eu-west-1.es.amazonaws.com'
     LOG_LEVEL: 'info'
-    NODE_OPTIONS: '--max-old-space-size=230 -r dd-trace/init'
+    NODE_OPTIONS: '--max- old - space - size=230 -r dd-trace/init'
     NODE_TLS_REJECT_UNAUTHORIZED: '0'
     SERVERSIDE_FEATURES_ON: ''
     XROAD_BASE_PATH: 'http://securityserver.staging01.devland.is'
@@ -3327,7 +3391,9 @@ xroad-collector:
         max: 3
         min: 1
   image:
-    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-xroad-collector'
+    name: 'xroad-collector'
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com'
+    tag: 'latest_master'
   namespace: 'xroad-collector'
   podDisruptionBudget:
     maxUnavailable: 1
@@ -3353,6 +3419,6 @@ xroad-collector:
     privileged: false
   serviceAccount:
     annotations:
-      eks.amazonaws.com/role-arn: 'arn:aws:iam::261174024191:role/xroad-collector'
+      eks.amazonaws.com/role-arn: 'arn: aws: iam::261174024191: role / xroad-collector '
     create: true
     name: 'xroad-collector'

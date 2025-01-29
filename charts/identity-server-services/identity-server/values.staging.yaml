@@ -43,10 +43,10 @@ env:
   IdentityServer__EnableFakeLogin: 'true'
   IdentityServer__EnableFeatureDeploymentWildcards: 'true'
   IdentityServer__KeyManagement__Enabled: 'true'
-  IdentityServer__SigningCertificate__Path: '/etc/config/ids-signing.pfx'
+  IdentityServer__SigningCertificate__Path: '/ etc / config / ids-signing.pfx '
   LOG_LEVEL: 'info'
   MeUserProfileApiSettings__BaseAddress: 'http://web-service-portal-api.service-portal.svc.cluster.local'
-  NODE_OPTIONS: '--max-old-space-size=1843 -r dd-trace/init'
+  NODE_OPTIONS: '--max- old - space - size=1843 -r dd-trace/init'
   PersistenceSettings__BaseAddress: 'http://web-services-auth-ids-api'
   PersistenceSettings__DelegationsCacheEnabled: 'false'
   RedisSettings__Address: 'clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com'
@@ -80,9 +80,11 @@ hpa:
       max: 3
       min: 1
 image:
-  repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/identity-server'
+  name: 'identity-server'
+  repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com'
+  tag: 'latest_master'
 ingress:
-  primary-alb:
+  primary -alb:
     annotations:
       kubernetes.io/ingress.class: 'nginx-external-alb'
       nginx.ingress.kubernetes.io/enable-global-auth: 'false'
@@ -138,6 +140,6 @@ service:
   targetPort: 5000
 serviceAccount:
   annotations:
-    eks.amazonaws.com/role-arn: 'arn:aws:iam::261174024191:role/identity-server'
+    eks.amazonaws.com/role-arn: 'arn: aws: iam::261174024191: role / identity-server '
   create: true
   name: 'identity-server'
