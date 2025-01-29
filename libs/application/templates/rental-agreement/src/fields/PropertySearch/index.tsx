@@ -1,214 +1,140 @@
-import { FC, useState } from 'react'
+import { FC, useEffect, useState } from 'react'
+import { Controller, useFormContext } from 'react-hook-form'
 import { CustomField, FieldBaseProps } from '@island.is/application/types'
-import { AsyncSearch, AsyncSearchOption } from '@island.is/island-ui/core'
-import { size } from 'lodash'
+import {
+  AsyncSearch,
+  AsyncSearchOption,
+  Box,
+  Text,
+} from '@island.is/island-ui/core'
 
 interface Props extends FieldBaseProps {
   field: CustomField
 }
 
-export const PropertySearch: FC<React.PropsWithChildren<Props>> = ({
-  application,
-}) => {
-  const { answers: formValue } = application
-  const [options, setOptions] = useState<AsyncSearchOption[]>([])
-
-  return (
-    <AsyncSearch
-      options={[]}
-      placeholder="Leitaðu eftir heimiisfangi"
-      closeMenuOnSubmit
-    />
-  )
+type Merking = {
+  id: string
+  units: {
+    unitId: string
+    merking: string
+    unitType: string
+    size: string
+    numberOfRooms: string
+  }[]
 }
 
-const properties = [
-  {
-    streetAddress: 'Jöklafold 5',
-    regionNumber: '112',
-    cityName: 'Reykjavík',
-    propertyIds: [
-      {
-        propertyId: '2042190',
-        size: '174.5',
-        propertyType: 'Raðhús',
-        merking: '040101',
-      },
-    ],
-  },
-  {
-    streetAddress: 'Valshlíð 6',
-    regionNumber: '102',
-    cityName: 'Reykjavik',
-    propertyIds: [
-      {
-        propertyId: '2507085',
-        propertyType: 'Íbúð',
-        size: '67.3',
-        merking: [
-          {
-            id: '020102',
-            units: [
-              {
-                unitId: '2383972',
-                merking: '0101',
-                unitType: 'íbúð',
-                size: '67.3',
-                numberOfRooms: '2',
-              },
-              {
-                unitId: '2374580',
-                merking: 'E035',
-                unitType: 'Stæði í bílageymslu',
-                size: '0',
-                numberOfRooms: undefined,
-              },
-            ],
-          },
-        ],
-      },
-      {
-        propertyId: '2507086',
-        propertyType: 'Íbúð',
-        size: '57.2',
-        merking: [
-          {
-            id: '020103',
-            units: [
-              {
-                unitId: '2383973',
-                merking: '0102',
-                unitType: 'íbúð',
-                size: '57.2',
-                numberOfRooms: '2',
-              },
-              {
-                unitId: '2374581',
-                merking: 'E036',
-                unitType: 'Stæði í bílageymslu',
-                size: '0',
-                numberOfRooms: undefined,
-              },
-            ],
-          },
-        ],
-      },
-      {
-        propertyId: '2507087',
-        propertyType: 'Íbúð',
-        size: '117.3',
-        merking: [
-          {
-            id: '020201',
-            units: [
-              {
-                unitId: '2383974',
-                merking: '0103',
-                unitType: 'íbúð',
-                size: '117.3',
-                numberOfRooms: '3',
-              },
-              {
-                unitId: '2374580',
-                merking: 'E025',
-                unitType: 'Stæði í bílageymslu',
-                size: '0',
-                numberOfRooms: undefined,
-              },
-            ],
-          },
-        ],
-      },
-      {
-        propertyId: '2507404',
-        propertyType: 'Íbúð',
-        size: '99.4',
-        merking: [
-          {
-            id: '020202',
-            units: [
-              {
-                unitId: '2383978',
-                merking: '0201',
-                unitType: 'íbúð',
-                size: '99.4',
-                numberOfRooms: '3',
-              },
-              {
-                unitId: '2374582',
-                merking: 'E037',
-                unitType: 'Stæði í bílageymslu',
-                size: '0',
-                numberOfRooms: undefined,
-              },
-            ],
-          },
-        ],
-      },
-    ],
-  },
-  {
-    streetAddress: 'Eggertsgata 22',
-    regionNumber: '112',
-    cityName: 'Reykjavík',
-    propertyIds: [
-      {
-        propertyId: '2215524',
-        merking: '160003',
-        propertyType: 'Íbúð',
-        size: '952.8',
-        units: [
-          {
-            unitId: '2215526',
-            merking: '0004',
-            unitType: 'íbúð',
-            size: '36.1',
-            numberOfRooms: '1',
-          },
-          {
-            unitId: '2215527',
-            merking: '0005',
-            unitType: 'íbúð',
-            size: '52',
-            numberOfRooms: '2',
-          },
-          {
-            unitId: '2215528',
-            merking: '0101',
-            unitType: 'íbúð',
-            size: '53.1',
-            numberOfRooms: '2',
-          },
-          {
-            unitId: '2215531',
-            merking: '0102',
-            unitType: 'íbúð',
-            size: '52.6',
-            numberOfRooms: '2',
-          },
-          {
-            unitId: '2215532',
-            merking: '0103',
-            unitType: 'íbúð',
-            size: '36.1',
-            numberOfRooms: '1',
-          },
-          {
-            unitId: '2215533',
-            merking: '0004',
-            unitType: 'íbúð',
-            size: '36.1',
-            numberOfRooms: '1',
-          },
-          {
-            unitId: '2215534',
-            merking: '0004',
-            unitType: 'íbúð',
-            size: '52.6',
-            numberOfRooms: '2',
-          },
-        ],
-      },
-    ],
-  },
-]
+type PropertyIds = {
+  propertyId: string
+  size: string
+  propertyType: string
+  merking: Merking[]
+}
+
+type Property = {
+  streetAddress: string
+  regionNumber: string
+  cityName: string
+  propertyIds: PropertyIds[]
+}
+
+export const PropertySearch: FC<React.PropsWithChildren<Props>> = ({
+  application,
+  field,
+}) => {
+  const { answers: formValue } = application
+  const { clearErrors, register, setValue, getValues } = useFormContext()
+  const { id } = field
+  const [options, setOptions] = useState<AsyncSearchOption[]>([])
+  const [pending, setPending] = useState(false)
+
+  const [selectedProperty, setSelectedProperty] = useState<
+    | {
+        streetAddress: string
+        regionNumber: string
+        cityName: string
+        propertyIds: PropertyIds[]
+      }
+    | undefined
+  >(undefined)
+
+  const fetchProperties = (query = '') => {
+    if (query.length === 0) {
+      console.log('no query')
+      return
+    }
+    setPending(true)
+    fetch('http://localhost:3001/properties')
+      .then((res) => res.json())
+      .then((data) => {
+        setPending(false)
+        const filteredData = data
+          .filter((property: Property) =>
+            property.streetAddress.toLowerCase().includes(query.toLowerCase()),
+          )
+          .sort((a: Property, b: Property) =>
+            a.streetAddress.localeCompare(b.streetAddress),
+          )
+        if (filteredData.length) {
+          setOptions(
+            filteredData.map((property: Property) => ({
+              label: `${property.streetAddress}, ${property.regionNumber} ${property.cityName}`,
+              value: `${property.streetAddress}, ${property.regionNumber} ${property.cityName}`,
+              streetAddress: property.streetAddress,
+              regionNumber: property.regionNumber,
+              cityName: property.cityName,
+            })),
+          )
+        }
+      })
+  }
+
+  console.log('id: ', id)
+  console.log('selectedProperty: ', selectedProperty)
+  console.log('selectedPropertyType: ', typeof selectedProperty)
+
+  return (
+    <>
+      <Box>
+        <Controller
+          name={`${id}`}
+          defaultValue=""
+          render={({ field: { onChange, value } }) => {
+            return (
+              <AsyncSearch
+                options={options}
+                placeholder="Leitaðu eftir heimilisfangi"
+                initialInputValue={value}
+                closeMenuOnSubmit
+                size="large"
+                colored
+                onChange={(selection: { value: string } | null) => {
+                  clearErrors(id)
+                  const selectedValue =
+                    selection === null ? undefined : selection.value
+                  const selectedOption = options.find(
+                    (option) => option.value === selectedValue,
+                  )
+                  setSelectedProperty(selectedOption as unknown as Property)
+                  onChange(selection === null ? undefined : selection.value)
+                }}
+                onInputValueChange={(newValue) => {
+                  fetchProperties(newValue)
+                }}
+                loading={pending}
+              />
+            )
+          }}
+        />
+      </Box>
+
+      {selectedProperty && (
+        <Box>
+          <Text variant="h3" marginTop={12}>
+            Selected Property:
+          </Text>
+          <Text variant="medium">{selectedProperty.streetAddress}</Text>
+        </Box>
+      )}
+    </>
+  )
+}

@@ -1,0 +1,122 @@
+[
+  {
+    "streetAddress": "Jöklafold 5",
+    "regionNumber": "112",
+    "cityName": "Reykjavík",
+    "propertyIds": [
+      {
+        "propertyId": "2042190",
+        "size": "174.5",
+        "propertyType": "Raðhús",
+        "merking": "040101"
+      }
+    ]
+  },
+  {
+    "streetAddress": "Valshlíð 6",
+    "regionNumber": "102",
+    "cityName": "Reykjavik",
+    "propertyIds": [
+      {
+        "propertyId": "2507085",
+        "propertyType": "Íbúð",
+        "size": "67.3",
+        "merking": [
+          {
+            "id": "020201",
+            "units": [
+              {
+                "unitId": "2383972",
+                "merking": "0201",
+                "unitType": "íbúð",
+                "size": "67.3",
+                "numberOfRooms": "2"
+              },
+              {
+                "unitId": "2374580",
+                "merking": "E035",
+                "unitType": "Stæði í bílageymslu",
+                "size": "0",
+                "numberOfRooms": null
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "propertyId": "2507086",
+        "propertyType": "Íbúð",
+        "size": "99.3",
+        "merking": [
+          {
+            "id": "020102",
+            "units": [
+              {
+                "unitId": "2383972",
+                "merking": "0102",
+                "unitType": "íbúð",
+                "size": "99.3",
+                "numberOfRooms": "3"
+              },
+              {
+                "unitId": "2374582",
+                "merking": "E036",
+                "unitType": "Stæði í bílageymslu",
+                "size": "0",
+                "numberOfRooms": null
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "propertyId": "2507087",
+        "propertyType": "Íbúð",
+        "size": "67.3",
+        "merking": [
+          {
+            "id": "020101",
+            "units": [
+              {
+                "unitId": "2383976",
+                "merking": "0101",
+                "unitType": "íbúð",
+                "size": "55.6",
+                "numberOfRooms": "1"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "streetAddress": "Eggertsgata 22",
+    "regionNumber": "112",
+    "cityName": "Reykjavík",
+    "propertyIds": [
+      {
+        "propertyId": "2215524",
+        "merking": "160003",
+        "propertyType": "Íbúð",
+        "size": "952.8",
+        "units": [
+          {
+            "unitId": "2215526",
+            "merking": "0004",
+            "unitType": "íbúð",
+            "size": "36.1",
+            "numberOfRooms": "1"
+          },
+          {
+            "unitId": "2215527",
+            "merking": "0005",
+            "unitType": "íbúð",
+            "size": "52",
+            "numberOfRooms": "2"
+          }
+        ]
+      }
+    ]
+  }
+]
