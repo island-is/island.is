@@ -2,8 +2,9 @@
 # `base-*` layers are intended for maximum cacheability, only doing system-level actions
 
 # Global ARGs (used across multiple stages)
-ARG PLAYWRIGHT_VERSION=1.49.1
-ARG PLAYWRIGHT_IMAGE_TAG=v${PLAYWRIGHT_VERSION}-focal
+ARG PLAYWRIGHT_VERSION
+# This tag expands to `v<version>` or `latest` depending on whether PLAYWRIGHT_VERSION is set
+ARG PLAYWRIGHT_IMAGE_TAG=${PLAYWRIGHT_VERSION:+v}${PLAYWRIGHT_VERSION:-latest}
 ARG DOCKER_ECR_REGISTRY=public.ecr.aws/docker
 ARG DOCKER_IMAGE_REGISTRY=${DOCKER_ECR_REGISTRY%/docker}
 # Alias DOCKER_IMAGE_REGISTRY to DOCKER_REGISTRY for backwards compatibility
