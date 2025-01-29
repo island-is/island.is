@@ -18,7 +18,7 @@ ARG APP
 FROM ${DOCKER_REGISTRY}/library/node:${NODE_IMAGE_TAG} AS base-deps
 
 # hadolint ignore=DL3018
-RUN apk add --no-cache python3 build-base gcc git jq openjdk21 py3-distutils-extra && \
+RUN apk add --no-cache python3 build-base gcc git jq openjdk21 py3-distutils-extra pkgconf && \
   rm -rf /var/cache/apk/* && \
   ln -sf /usr/bin/python3 /usr/bin/python
 

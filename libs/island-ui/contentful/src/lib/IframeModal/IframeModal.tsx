@@ -33,7 +33,7 @@ export const IframeModalDiv = forwardRef(
   (props: DialogProps, ref: Ref<HTMLDivElement>) => {
     const [mounted, setMounted] = useState(false)
 
-    useLayoutEffect(function () {
+    useLayoutEffect(() => {
       setMounted(true)
     }, [])
 
