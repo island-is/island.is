@@ -17,7 +17,10 @@ import {
   PageTitle,
   RenderFiles,
 } from '@island.is/judicial-system-web/src/components'
-import { CaseFileCategory, CaseIndictmentRulingDecision } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  CaseFileCategory,
+  CaseIndictmentRulingDecision,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import { isNonEmptyArray } from '@island.is/judicial-system-web/src/utils/arrayHelpers'
 import {
   useDefendants,
