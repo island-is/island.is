@@ -48,6 +48,9 @@ export const CustodianOverview: FC<FieldBaseProps> = ({
   const showMainOtherContact = !!mainOtherContact?.person?.nationalId
   const showOtherContacts = !!otherContacts.length
 
+  const isEditable =
+    application.state === States.DRAFT || application.state === States.EDIT
+
   return (
     <ReviewGroup
       handleClick={() => onClick(Routes.CUSTODIAN)}
@@ -57,7 +60,7 @@ export const CustodianOverview: FC<FieldBaseProps> = ({
           ? overview.custodian.subtitle
           : overview.otherContact.subtitle,
       )}
-      isEditable={application.state === States.DRAFT}
+      isEditable={isEditable}
     >
       <Box>
         {!!custodiansExternalData.length && (

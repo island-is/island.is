@@ -61,6 +61,9 @@ export const Edit: Form = buildForm({
               id: 'submit',
               placement: 'footer',
               title: '',
+              refetchApplicationAfterSubmit: (event) => {
+                return event === DefaultEvents.ABORT
+              },
               actions: [
                 {
                   event: DefaultEvents.ABORT,

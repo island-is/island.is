@@ -462,7 +462,9 @@ export interface SubmitField extends BaseField {
   component: FieldComponents.SUBMIT
   readonly actions: CallToAction[]
   readonly placement: 'footer' | 'screen'
-  readonly refetchApplicationAfterSubmit?: boolean
+  readonly refetchApplicationAfterSubmit?:
+    | boolean
+    | ((event?: string) => boolean)
 }
 
 export interface DividerField extends BaseField {
