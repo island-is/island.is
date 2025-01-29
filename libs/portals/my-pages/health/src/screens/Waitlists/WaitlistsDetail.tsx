@@ -49,7 +49,7 @@ const WaitlistsDetail: React.FC = () => {
       ]}
       marginBottom={6}
     >
-      {!loading && !error && isDefined(waitlist) && (
+      {!loading && !error && !isDefined(waitlist) && (
         <Problem
           type="no_data"
           message={formatMessage(messages.noWaitlists)}
@@ -59,10 +59,15 @@ const WaitlistsDetail: React.FC = () => {
       {error && !loading && <Problem error={error} noBorder={false} />}
 
       <InfoLineStack space={1}>
-        <InfoLine label="Biðlisti" content="Liðskiptiaðgerð á hné" />
         <InfoLine
-          label="Stofnun"
-          content="Landspítalinn"
+          label={formatMessage(messages.waitlist)}
+          content={waitlist?.name ?? formatMessage(messages.noDataRegistered)}
+        />
+        <InfoLine
+          label={formatMessage(messages.organization)}
+          content={
+            waitlist?.organization ?? formatMessage(messages.noDataRegistered)
+          }
           button={{
             type: 'link',
             label: formatMessage(messages.organizationWebsite),
@@ -70,10 +75,22 @@ const WaitlistsDetail: React.FC = () => {
             icon: 'open',
           }}
         />
-        <InfoLine label="Skráning á lista" content="08.10.2023" />
-        <InfoLine label="Staða" content="Samþykktur á lista" />
-        <InfoLine label="Staða síðast uppfærð" content="23.11.2023" />
-        <InfoLine label="Nafn læknis" content="Sóley Gunnarsdóttir" />
+        <InfoLine
+          label={formatMessage(messages.registeredToList)}
+          content={
+            waitlist?.waitBegan ?? formatMessage(messages.noDataRegistered)
+          }
+        />
+        <InfoLine
+          label={formatMessage(messages.status)}
+          content={waitlist?.status ?? formatMessage(messages.noDataRegistered)}
+        />
+        <InfoLine
+          label={formatMessage(messages.statusLastUpdated)}
+          content={
+            waitlist?.lastUpdated ?? formatMessage(messages.noDataRegistered)
+          }
+        />
       </InfoLineStack>
     </IntroWrapper>
   )

@@ -45,7 +45,7 @@ const Waitlists: React.FC = () => {
           <ActionCard
             heading={waitlist?.name ?? ''}
             text={[
-              formatMessage(messages.waitlistLastUpdated),
+              formatMessage(messages.statusLastUpdated),
               waitlist.lastUpdated,
             ]
               .filter((item) => isDefined(item))

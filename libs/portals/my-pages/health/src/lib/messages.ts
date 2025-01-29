@@ -1312,15 +1312,31 @@ export const messages = defineMessages({
   },
   noWaitlists: {
     id: 'sp.health:no-waitlists',
-    defaultMessage: 'Engar skráning á biðlista finnst',
+    defaultMessage: 'Engin skráning á biðlista finnst',
   },
   waitlistsIntro: {
     id: 'sp.health:waitlists-intro',
     defaultMessage: 'Hér finnur þú biðlista ...',
   },
-  waitlistLastUpdated: {
+  statusLastUpdated: {
     id: 'sp.health:waitlist-last-updated',
     defaultMessage: 'Staða síðast uppfærð',
+  },
+  waitlist: {
+    id: 'sp.health:waitlist',
+    defaultMessage: 'Biðlisti',
+  },
+  organization: {
+    id: 'sp.health:organization',
+    defaultMessage: 'Stofnun',
+  },
+  noDataRegistered: {
+    id: 'sp.health:no-data-registered',
+    defaultMessage: 'Engin gögn skráð',
+  },
+  registeredToList: {
+    id: 'sp.health:registered-to-list',
+    defaultMessage: 'Skráning á lista',
   },
   moreDetail: {
     id: 'sp.health:more-detail',
