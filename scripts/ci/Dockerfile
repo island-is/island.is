@@ -23,9 +23,11 @@ WORKDIR /build
 COPY package.json yarn.lock .yarnrc.yml ./
 COPY apps/native/app/package.json ./apps/native/app/
 COPY .yarn/ ./.yarn
+
 RUN apt-get update && apt-get install -y python3 build-essential gcc && \
   ln -sf /usr/bin/python3 /usr/bin/python && \
   apt-get clean && rm -rf /var/lib/apt/lists/*
+
 RUN CI=true yarn install --immutable
 
 # Image with source code
