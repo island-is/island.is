@@ -9,23 +9,23 @@ import {
   Hidden,
   Logo,
 } from '@island.is/island-ui/core'
-import { helperStyles, theme } from '@island.is/island-ui/theme'
+import { helperStyles } from '@island.is/island-ui/theme'
 import { useLocale } from '@island.is/localization'
 import { PortalPageLoader } from '@island.is/portals/core'
 import { SERVICE_PORTAL_HEADER_HEIGHT_SM } from '@island.is/portals/my-pages/constants'
-import { useUserInfo } from '@island.is/react-spa/bff'
 import {
   LinkResolver,
   ServicePortalPaths,
   m,
-  useScrollDirection,
+  useIsMobile,
+  useScrollPosition,
 } from '@island.is/portals/my-pages/core'
 import { DocumentsPaths } from '@island.is/portals/my-pages/documents'
+import { useUserInfo } from '@island.is/react-spa/bff'
 import { UserLanguageSwitcher, UserMenu } from '@island.is/shared/components'
 import cn from 'classnames'
-import { useEffect, useRef, useState } from 'react'
+import { useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { useWindowSize } from 'react-use'
 import NotificationButton from '../Notifications/NotificationButton'
 import Sidemenu from '../Sidemenu/Sidemenu'
 import * as styles from './Header.css'
@@ -37,59 +37,61 @@ interface Props {
 export const Header = ({ position }: Props) => {
   const { formatMessage } = useLocale()
   const [menuOpen, setMenuOpen] = useState<MenuTypes>()
-  const { width } = useWindowSize()
   const ref = useRef<HTMLButtonElement>(null)
-  const isMobile = width < theme.breakpoints.md
-  const user = useUserInfo()
+  const isMobile = useIsMobile()
 
-  const scrollDirection = useScrollDirection()
+  const user = useUserInfo()
 
   const hasNotificationsDelegationAccess = user?.scopes?.includes(
     DocumentsScope.main,
   )
+  const [show, setShow] = useState<boolean>(true)
 
-  const [isScrolled, setIsScrolled] = useState<boolean>(false)
-  const headerHeight = ref.current?.offsetHeight || 0
+  const [hide, setHide] = useState<boolean>(true)
 
-  useEffect(() => {
-    const handleScroll = () => {
-      if (window.scrollY >= SERVICE_PORTAL_HEADER_HEIGHT_SM) {
-        setIsScrolled(true)
-      } else {
-        setIsScrolled(false)
+  useScrollPosition(
+    ({ prevPos, currPos }) => {
+      let px = -600
+
+      if (typeof window !== `undefined`) {
+        px = window.innerHeight * -1
       }
-    }
 
-    const handleTouchMove = () => {
-      // Call handleScroll on touchmove to ensure state updates during touch
-      handleScroll()
-    }
+      const goingDown = currPos.y < prevPos.y
+      const canShow = px > currPos.y
+      const canHide = currPos.y < -SERVICE_PORTAL_HEADER_HEIGHT_SM
 
-    window.addEventListener('scroll', handleScroll, { passive: true })
-    window.addEventListener('touchmove', handleTouchMove, { passive: true })
-
-    return () => {
-      window.removeEventListener('scroll', handleScroll)
-      window.removeEventListener('touchmove', handleTouchMove)
-    }
-  }, [headerHeight])
+      setShow(canShow && !goingDown)
+      setHide(goingDown && canHide)
+    },
+    [setShow],
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore make web strict
+    null,
+    false,
+    150,
+  )
 
   return (
     <div className={styles.placeholder}>
       <PortalPageLoader />
-      {/*  Inline style to dynamicly change position of header because of alert banners */}
       <header
         className={cn(styles.header, {
-          [styles.fixedHeader]: scrollDirection === 'up',
-          [styles.hideHeader]: scrollDirection === 'down' && isScrolled,
+          [styles.showHeader]: show,
+          [styles.hideHeader]: hide,
         })}
+        {/*  Inline style to dynamicly change position of header because of alert banners */}
         style={{
           top: position,
         }}
       >
         <GridContainer>
           <GridRow>
-            <GridColumn span="12/12" paddingTop={4} paddingBottom={4}>
+            <GridColumn
+              span="12/12"
+              paddingTop={[2, 2, 2, 4]}
+              paddingBottom={[2, 2, 2, 4]}
+            >
               <PortalPageLoader />
 
               <Box width="full">

@@ -291,7 +291,6 @@ export const Navigation: FC<React.PropsWithChildren<NavigationProps>> = ({
           background={backgroundColor}
           alignItems="center"
           borderRadius="large"
-          position="relative"
           className={cn(styles.scrolledMenu, {
             [styles.scrolledMenuVisible]: isScrolled,
             [styles.scrolledMenuHidden]: isScrolled === false,

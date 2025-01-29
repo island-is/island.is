@@ -190,11 +190,11 @@ export const scrolledMenu = style({
 
 const baseMobileMenuScrolled: StyleWithSelectors = {
   content: '',
-  position: 'absolute',
+  position: 'fixed',
   top: 0,
-  bottom: -1,
   zIndex: -1,
 
+  // bottom: -1,
   background: theme.color.blue100,
   borderBottom: `1px solid ${theme.color.blue200}`,
   transformOrigin: 'top',
