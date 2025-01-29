@@ -25,6 +25,7 @@ env:
   MAX_JOBS: '2'
   NX_PARALLEL: '2'
   NX_MAX_PARALLEL: '4'
+  NX_TASKS_RUNNER: ci
 
 jobs:
   prepare:
@@ -114,20 +115,6 @@ jobs:
           retention-days: 90
           include-hidden-files: true
           if-no-files-found: error
-
-      - name: Update nx.json
-        id: nx-json
-        run: |
-          echo "hash=${{ hashFiles('nx.json') }}" >> $GITHUB_OUTPUT
-          jq '.tasksRunnerOptions.default.runner = "nx-cloud" | .tasksRunnerOptions.default.options.nxCloudId = env.NX_CLOUD_ID' nx.json > nx.json.tmp && mv nx.json.tmp nx.json
-        env:
-          NX_CLOUD_ID: ${{ vars.NX_CLOUD_ID }}
-
-      - name: Upload updated nx.json
-        uses: actions/upload-artifact@v4
-        with:
-          name: nx-json-${{ steps.nx-json.outputs.hash }}
-          path: nx.json
 
       - name: Get cache
         id: get-cache
@@ -247,11 +234,6 @@ jobs:
       - name: Setup yarn
         run: corepack enable
 
-      - name: Download nx.json
-        uses: actions/download-artifact@v4
-        with:
-          name: nx-json-${{ hashFiles('nx.json') }}
-
       - name: Get cache
         id: get-cache
         uses: ./.github/actions/get-cache
@@ -295,11 +277,6 @@ jobs:
       - name: Setup yarn
         run: corepack enable
 
-      - name: Download nx.json
-        uses: actions/download-artifact@v4
-        with:
-          name: nx-json-${{ hashFiles('nx.json') }}
-
       - name: Get cache
         id: get-cache
         uses: ./.github/actions/get-cache
@@ -324,11 +301,6 @@ jobs:
 
       - name: Setup yarn
         run: corepack enable
-
-      - name: Download nx.json
-        uses: actions/download-artifact@v4
-        with:
-          name: nx-json-${{ hashFiles('nx.json') }}
 
       - name: Get cache
         id: get-cache
@@ -374,10 +346,6 @@ jobs:
           node-version-file: 'package.json'
       - name: Setup yarn
         run: corepack enable
-      - name: Download nx.json
-        uses: actions/download-artifact@v4
-        with:
-          name: nx-json-${{ hashFiles('nx.json') }}
       - name: Get cache
         id: get-cache
         uses: ./.github/actions/get-cache
@@ -413,10 +381,6 @@ jobs:
           node-version-file: 'package.json'
       - name: Setup yarn
         run: corepack enable
-      - name: Download nx.json
-        uses: actions/download-artifact@v4
-        with:
-          name: nx-json-${{ hashFiles('nx.json') }}
       - name: Get cache
         id: get-cache
         uses: ./.github/actions/get-cache
@@ -445,10 +409,6 @@ jobs:
           node-version-file: 'package.json'
       - name: Setup yarn
         run: corepack enable
-      - name: Download nx.json
-        uses: actions/download-artifact@v4
-        with:
-          name: nx-json
       - name: Get cache
         id: get-cache
         uses: ./.github/actions/get-cache

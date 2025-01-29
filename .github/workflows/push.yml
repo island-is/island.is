@@ -36,6 +36,7 @@ env:
   SKIP_GENERATED_CACHE: ${{ contains(github.event.pull_request.labels.*.name, 'skip-generated-cache') }}
   NX_AFFECTED_ALL: ${{ contains(github.event.pull_request.labels.*.name, 'nx-affected-all') }}
   NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
+  NX_TASKS_RUNNER: ci
   CONFIGCAT_MAIN_CONFIG_ID: 08d8c761-021c-46f0-8671-6244663a372f
   CONFIGCAT_MOBILE_APP_CONFIG_ID: 08daf234-7573-4b3b-85f6-189fc7502542
   DISABLE_CHUNKS: 'false'
@@ -314,20 +315,6 @@ jobs:
         id: git_nx_head
         name: Preparing HEAD tag
 
-      - name: Update nx.json
-        id: nx-json
-        run: |
-          echo "hash=${{ hashFiles('nx.json') }}" >> $GITHUB_OUTPUT
-          jq '.tasksRunnerOptions.default.runner = "nx-cloud" | .tasksRunnerOptions.default.options.nxCloudId = env.NX_CLOUD_ID' nx.json > nx.json.tmp && mv nx.json.tmp nx.json
-        env:
-          NX_CLOUD_ID: ${{ vars.NX_CLOUD_ID }}
-
-      - name: Upload updated nx.json
-        uses: actions/upload-artifact@v4
-        with:
-          name: nx-json-${{ steps.nx-json.outputs.hash }}
-          path: nx.json
-
       - name: Get cache
         id: get-cache
         uses: ./.github/actions/get-cache
@@ -494,11 +481,6 @@ jobs:
       - name: Setup yarn
         run: corepack enable
 
-      - name: Download nx.json
-        uses: actions/download-artifact@v4
-        with:
-          name: nx-json-${{ hashFiles('nx.json') }}
-
       - name: Get cache
         id: get-cache
         uses: ./.github/actions/get-cache
@@ -554,11 +536,6 @@ jobs:
       - name: Setup yarn
         run: corepack enable
         if: steps.gather.outcome == 'success'
-
-      - name: Download nx.json
-        uses: actions/download-artifact@v4
-        with:
-          name: nx-json-${{ hashFiles('nx.json') }}
 
       - name: Get cache
         id: get-cache
