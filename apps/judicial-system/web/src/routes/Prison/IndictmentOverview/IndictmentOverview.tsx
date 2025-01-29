@@ -17,7 +17,7 @@ import {
   PageTitle,
   RenderFiles,
 } from '@island.is/judicial-system-web/src/components'
-import { CaseFileCategory } from '@island.is/judicial-system-web/src/graphql/schema'
+import { CaseFileCategory, CaseIndictmentRulingDecision } from '@island.is/judicial-system-web/src/graphql/schema'
 import { isNonEmptyArray } from '@island.is/judicial-system-web/src/utils/arrayHelpers'
 import {
   useDefendants,
@@ -74,7 +74,11 @@ const IndictmentOverview = () => {
       <PageHeader title={formatMessage(strings.htmlTitle)} />
       <FormContentContainer>
         <PageTitle previousUrl={constants.PRISON_CASES_ROUTE}>
-          {formatMessage(strings.title)}
+          {formatMessage(strings.title, {
+            isFine:
+              workingCase.indictmentRulingDecision ===
+              CaseIndictmentRulingDecision.FINE,
+          })}
         </PageTitle>
         <Box marginBottom={5}>
           {workingCase.courtCaseNumber && (
