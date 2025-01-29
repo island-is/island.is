@@ -720,7 +720,7 @@ describe('getIndictmentInfo', () => {
     expect(indictmentInfo).toEqual({
       indictmentAppealDeadline: '2022-07-12T23:59:59.999Z',
       indictmentVerdictViewedByAll: true,
-      indictmentVerdictAppealDeadlineExpired: false,
+      indictmentVerdictAppealDeadlineExpired: true,
     })
   })
 
