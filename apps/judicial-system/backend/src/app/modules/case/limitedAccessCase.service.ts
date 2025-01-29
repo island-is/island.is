@@ -42,8 +42,9 @@ import {
 import { EventLog } from '../event-log'
 import {
   CaseFile,
-  defenderCaseFileCategoriesForRequestCases,
   defenderCaseFileCategoriesForIndictmentCases,
+  defenderCaseFileCategoriesForRequestCases,
+  defenderDefaultCaseFileCategoriesForIndictmentCases,
 } from '../file'
 import { IndictmentCount } from '../indictment-count'
 import { Institution } from '../institution'
@@ -525,16 +526,24 @@ export class LimitedAccessCaseService {
   async getAllFilesZip(theCase: Case, user: TUser): Promise<Buffer> {
     const filesToZip: { data: Buffer; name: string }[] = []
 
+    const getFileCategories = (tc: Case) => {
+      if (isRequestCase(tc.type)) {
+        return defenderCaseFileCategoriesForRequestCases
+      } else {
+        if (tc.defendants?.[0].caseFilesSharedWithDefender) {
+          return defenderCaseFileCategoriesForIndictmentCases
+        } else {
+          return defenderDefaultCaseFileCategoriesForIndictmentCases
+        }
+      }
+    }
+
     const caseFilesByCategory =
       theCase.caseFiles?.filter(
         (file) =>
           file.key &&
           file.category &&
-          (isRequestCase(theCase.type)
-            ? defenderCaseFileCategoriesForRequestCases.includes(file.category)
-            : defenderCaseFileCategoriesForIndictmentCases.includes(
-                file.category,
-              )),
+          getFileCategories(theCase).includes(file.category),
       ) ?? []
 
     // TODO: speed this up by fetching all files in parallel
@@ -551,20 +560,22 @@ export class LimitedAccessCaseService {
         )
     }
 
-    filesToZip.push(
-      {
-        data: await this.pdfService.getRequestPdf(theCase),
-        name: 'Krafa.pdf',
-      },
-      {
-        data: await this.pdfService.getCourtRecordPdf(theCase, user),
-        name: 'Þingbók.pdf',
-      },
-      {
-        data: await this.pdfService.getRulingPdf(theCase),
-        name: 'Úrskurður.pdf',
-      },
-    )
+    if (isRequestCase(theCase.type)) {
+      filesToZip.push(
+        {
+          data: await this.pdfService.getRequestPdf(theCase),
+          name: 'Krafa.pdf',
+        },
+        {
+          data: await this.pdfService.getCourtRecordPdf(theCase, user),
+          name: 'Þingbók.pdf',
+        },
+        {
+          data: await this.pdfService.getRulingPdf(theCase),
+          name: 'Úrskurður.pdf',
+        },
+      )
+    }
 
     return this.zipFiles(filesToZip)
   }

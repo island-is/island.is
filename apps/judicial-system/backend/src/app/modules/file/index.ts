@@ -4,4 +4,5 @@ export {
   canLimitedAccessUserViewCaseFile,
   defenderCaseFileCategoriesForIndictmentCases,
   defenderCaseFileCategoriesForRequestCases,
+  defenderDefaultCaseFileCategoriesForIndictmentCases,
 } from './guards/caseFileCategory'
