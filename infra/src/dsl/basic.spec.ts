@@ -22,7 +22,7 @@ const Staging: EnvironmentConfig = {
 describe('Basic serialization', () => {
   const sut = service('api')
     .namespace('islandis')
-    .image('test')
+    .image('test', repository: 'testrepo')
     .env({ A: 'B' })
     .secrets({
       SECRET: '/path',

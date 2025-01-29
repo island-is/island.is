@@ -39,6 +39,7 @@ const serializeService: SerializeMethod<HelmService> = async (
   const { addToErrors, mergeObjects, getErrors } = checksAndValidations(
     service.name,
   )
+  const defaultRepository = '821090935708.dkr.ecr.eu-west-1.amazonaws.com'
   const serviceDef = service
   const {
     grantNamespaces,
@@ -59,15 +60,16 @@ const serializeService: SerializeMethod<HelmService> = async (
     grantNamespacesEnabled: grantNamespacesEnabled,
     namespace: namespace,
     image: {
-      repository: `821090935708.dkr.ecr.eu-west-1.amazonaws.com/${
-        serviceDef.image ?? serviceDef.name
-      }`,
+      repository: `${serviceDef.image?.repository ?? defaultRepository}`,
+      name: `${serviceDef.image?.name ?? serviceDef.name}`,
+      tag: `${serviceDef.image?.tag ?? 'latest_master'}`,
     },
     env: {
       SERVERSIDE_FEATURES_ON: env1.featuresOn.join(','),
-      NODE_OPTIONS: `--max-old-space-size=${getScaledValue(
+      NODE_OPTIONS: `--max- old - space - size=${getScaledValue(
         serviceDef.resources.limits.memory,
-      )}`,
+      )
+        }`,
       LOG_LEVEL: 'info',
     },
     secrets: {},
@@ -172,7 +174,7 @@ const serializeService: SerializeMethod<HelmService> = async (
     result.files = []
     serviceDef.files.forEach((f) => {
       result.files!.push(f.filename)
-      mergeObjects(result.env, { [f.env]: `/etc/config/${f.filename}` })
+      mergeObjects(result.env, { [f.env]: `/ etc / config / ${f.filename} ` })
     })
   }
 
@@ -186,7 +188,7 @@ const serializeService: SerializeMethod<HelmService> = async (
       create: true,
       name: serviceAccountName,
       annotations: {
-        'eks.amazonaws.com/role-arn': `arn:aws:iam::${env1.awsAccountId}:role/${serviceAccountName}`,
+        'eks.amazonaws.com/role-arn': `arn: aws: iam::${env1.awsAccountId}: role / ${serviceAccountName} `,
       },
     }
   }
@@ -240,7 +242,7 @@ const serializeService: SerializeMethod<HelmService> = async (
         const ingress = serializeIngress(serviceDef, ingressConf, env1)
         return {
           ...acc,
-          [`${ingressName}-alb`]: ingress,
+          [`${ingressName} -alb`]: ingress,
         }
       },
       {},
@@ -303,14 +305,14 @@ const getPostgresInfoForFeature = (feature: string, postgres: PostgresInfo) => {
   const postgresCopy = { ...postgres }
   postgresCopy.passwordSecret = postgres.passwordSecret?.replace(
     '/k8s/',
-    `/k8s/feature-${feature}-`,
+    `/ k8s / feature - ${feature} -`,
   )
   postgresCopy.name = resolveWithMaxLength(
-    `feature_${postgresIdentifier(feature)}_${postgres.name}`,
+    `feature_${postgresIdentifier(feature)}_${postgres.name} `,
     60,
   )
   postgresCopy.username = resolveWithMaxLength(
-    `feature_${postgresIdentifier(feature)}_${postgres.username}`,
+    `feature_${postgresIdentifier(feature)}_${postgres.username} `,
     60,
   )
   return postgresCopy
@@ -339,11 +341,11 @@ function serializePostgres(
     env['DB_REPLICAS_HOST'] = reader
   } catch (e) {
     errors.push(
-      `Could not resolve DB_HOST variable for service: ${serviceDef.name}`,
+      `Could not resolve DB_HOST variable for service: ${serviceDef.name} `,
     )
   }
   secrets['DB_PASS'] =
-    postgres.passwordSecret ?? `/k8s/${serviceDef.name}/DB_PASSWORD`
+    postgres.passwordSecret ?? `/ k8s / ${serviceDef.name} /DB_PASSWORD`
   return { env, secrets, errors }
 }
 
@@ -469,7 +471,7 @@ const serviceMockDef = (options: {
     grantNamespacesEnabled: true,
     namespace: getFeatureDeploymentNamespace(options.env),
     image: {
-      repository: `bbyars/mountebank`,
+      name: `bbyars/mountebank`,
     },
     env: {},
     command: ['mb', 'start', '--configfile=/etc/config/default-imposters.json'],

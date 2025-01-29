@@ -19,6 +19,7 @@ import {
   PodDisruptionBudget,
   IngressMapping,
   BffInfo,
+  DockerImage
 } from './types/input-types'
 import { bffConfig } from './bff'
 import { logger } from '../logging'
@@ -149,8 +150,8 @@ export class ServiceBuilder<ServiceType extends string> {
     return this
   }
 
-  image(name: string) {
-    this.serviceDef.image = name
+  image(image?: DockerImage) {
+    this.serviceDef.image = image
     return this
   }
 
@@ -526,8 +527,7 @@ export class ServiceBuilder<ServiceType extends string> {
         ),
       passwordSecret:
         postgres.passwordSecret ??
-        `/k8s/${this.stripPostfix(defaultName)}${
-          postgres.readOnly ? '/readonly' : ''
+        `/k8s/${this.stripPostfix(defaultName)}${postgres.readOnly ? '/readonly' : ''
         }/DB_PASSWORD`,
       //These are already covered by the merge above
       // host: postgres.host ?? this.serviceDef.postgres?.host, // Allows missing host

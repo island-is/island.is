@@ -64,13 +64,19 @@ export type HealthProbe = {
 
 export type Secrets = { [name: string]: string }
 
+export type DockerImage = {
+  name?: string
+  repository?: string
+  tag?: string
+}
+
 export type EnvironmentVariableValue =
   | Optional<
-      {
-        [idx in OpsEnvWithLocal]: ValueType
-      },
-      'local'
-    >
+    {
+      [idx in OpsEnvWithLocal]: ValueType
+    },
+    'local'
+  >
   | ValueType
 
 export type EnvironmentVariables = {
@@ -114,7 +120,7 @@ export type ServiceDefinitionCore = {
   serviceAccountEnabled: boolean
   cmds?: string
   args?: string[]
-  image?: string
+  image?: DockerImage
   resources: Resources
   replicaCount?: ReplicaCount
   securityContext: {
