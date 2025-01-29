@@ -39,11 +39,10 @@ jobs:
       DOCKER_BASE_IMAGE_REGISTRY: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/ecr-public
 
     outputs:
-      TEST_CHUNKS: ${{ steps.test_projects.outputs.CHUNKS }}
-      E2E_CHUNKS: ${{ steps.e2e_projects.outputs.CHUNKS }}
-      E2E_BUILD_ID: ${{ steps.e2e_projects.outputs.BUILD_ID }}
-      LINT_CHUNKS: ${{ steps.lint_projects.outputs.CHUNKS }}
-      BUILD_CHUNKS: ${{ steps.build_projects.outputs.CHUNKS }}
+      TEST_CHUNKS: ${{ steps.chunked.outputs.CHUNKS }}
+      E2E_CHUNKS: ${{ steps.chunked.outputs.CHUNKS }}
+      LINT_CHUNKS: ${{ steps.chunked.outputs.CHUNKS }}
+      BUILD_CHUNKS: ${{ steps.chunked.outputs.CHUNKS }}
       CACHE_KEYS: ${{ steps.get-cache.outputs.keys }}
     steps:
       # Creates homedir if missing (e.g. when set to /tmp/runner/ when running locally with act)
@@ -160,49 +159,26 @@ jobs:
           echo "## WARN permissions" >> "$GITHUB_STEP_SUMMARY"
           echo "User '$GITHUB_ACTOR' does not have the required permissions to apply the 'test everything' label" >> "$GITHUB_STEP_SUMMARY"
 
-      - name: Prepare lint targets
-        id: lint_projects
+      - name: Prepare chunkss
+        id: chunked
         env:
-          # Linting is easy, no need to split/chunk it
           DISABLE_CHUNKS: 'true'
           DISABLE_GROUPING: 'true'
           DISABLE_PROBLEMATIC: 'true'
         run: |
-          set -euo pipefail
-          CHUNKS="$(./scripts/ci/generate-chunks.sh lint)"
-          if [[ "$CHUNKS" != "[]" ]]; then
-            echo "CHUNKS={\"projects\":$CHUNKS}" >> "$GITHUB_OUTPUT"
-          fi
+          for type in lint test e2e build; do
+            case "$type" in
+            # These are easy, no need to split/chunk it
+            lint | build) export DISABLE_CHUNKS=true DISABLE_GROUPING=true DISABLE_PROBLEMATIC=true ;;
+            *) ;;
+            esac
+            CHUNKS="$(./scripts/ci/generate-chunks.sh "$type")"
+            BUILD_ID="$GITHUB_RUN_ID-$GITHUB_RUN_NUMBER-$(uuidgen)"
+            if [[ "$CHUNKS" != "[]" ]]; then
+          echo "${type}-chunks={\"projects\":$CHUNKS,\"build-id\":\"$BUILD_ID\"}" >>"$GITHUB_OUTPUT"
+            fi
+          done
 
-      - name: Prepare test targets
-        id: test_projects
-        run: |
-          set -euo pipefail
-          CHUNKS="$(./scripts/ci/generate-chunks.sh test)"
-          if [[ "$CHUNKS" != "[]" ]]; then
-            echo "CHUNKS={\"projects\":$CHUNKS}" >> "$GITHUB_OUTPUT"
-          fi
-
-      - name: Prepare e2e targets
-        id: e2e_projects
-        env:
-          CHUNK_SIZE: 1
-        run: |
-          set -euo pipefail
-          CHUNKS="$(./scripts/ci/generate-chunks.sh e2e-ci)"
-          if [[ "$CHUNKS" != "[]" ]]; then
-            echo "CHUNKS={\"projects\":$CHUNKS}" >> "$GITHUB_OUTPUT"
-          fi
-          echo BUILD_ID="$GITHUB_RUN_ID-$GITHUB_RUN_NUMBER-$(uuidgen)" >> "$GITHUB_OUTPUT"
-
-      - name: Prepare build targets
-        id: build_projects
-        run: |
-          set -euo pipefail
-          CHUNKS="$(./scripts/ci/generate-chunks.sh build)"
-          if [[ "$CHUNKS" != "[]" ]]; then
-            echo "CHUNKS={\"projects\":$CHUNKS}" >> "$GITHUB_OUTPUT"
-          fi
       - name: Check release-manager approval
         id: check-release-manager-approval
         if: ${{ contains(github.event.pull_request.labels.*.name, 'automerge') && contains(github.event.pull_request.head.ref, '/pre-release/') }}
@@ -267,7 +243,7 @@ jobs:
       CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
       API_MOCKS: 'true'
       NODE_OPTIONS: --max-old-space-size=4096
-      E2E_BUILD_ID: '${{ needs.prepare.outputs.E2E_BUILD_ID }}-${{ github.run_attempt }}'
+      E2E_BUILD_ID: ${{ matrix.build-id }}
     strategy:
       fail-fast: false
       matrix: ${{ fromJson(needs.prepare.outputs.E2E_CHUNKS) }}
