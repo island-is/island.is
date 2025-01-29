@@ -3,6 +3,7 @@
 # Global ARGs (used across multiple stages)
 ARG PLAYWRIGHT_VERSION
 ARG DOCKER_ECR_REGISTRY=public.ecr.aws/docker
+ARG DOCKER_NODE_REGISTRY=821090935708.dkr.ecr.eu-west-1.amazonaws.com/node
 ARG DOCKER_IMAGE_REGISTRY=${DOCKER_ECR_REGISTRY%/docker}
 # Alias DOCKER_IMAGE_REGISTRY to DOCKER_REGISTRY for backwards compatibility
 ARG DOCKER_REGISTRY=${DOCKER_IMAGE_REGISTRY}/docker
@@ -12,7 +13,7 @@ ARG APP_DIST_HOME=dist/${APP_HOME}
 ARG APP
 
 # Base image for dependencies
-FROM node:${NODE_IMAGE_VERSION}-bookworm-slim AS deps
+FROM ${DOCKER_NODE_REGISTRY}:${NODE_IMAGE_VERSION}-bookworm-slim AS deps
 
 # Install system dependencies
 RUN apt-get update && apt-get install -y \
@@ -55,7 +56,7 @@ ENV NODE_OPTIONS="--max-old-space-size=8192"
 RUN yarn run build ${APP} --prod
 
 # This is base image for containers that are to be deployed
-FROM node:${NODE_IMAGE_VERSION}-bookworm-slim AS output-base
+FROM ${DOCKER_NODE_REGISTRY}:${NODE_IMAGE_VERSION}-bookworm-slim AS output-base
 ARG APP
 ARG APP_HOME
 ARG APP_DIST_HOME
