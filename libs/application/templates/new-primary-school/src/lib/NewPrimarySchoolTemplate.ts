@@ -210,7 +210,7 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
       clearLanguages: assign((context) => {
         const { application } = context
 
-        if (hasForeignLanguages(application.answers)) {
+        if (!hasForeignLanguages(application.answers)) {
           unset(application.answers, 'languages.language1')
           unset(application.answers, 'languages.language2')
           unset(application.answers, 'languages.language3')

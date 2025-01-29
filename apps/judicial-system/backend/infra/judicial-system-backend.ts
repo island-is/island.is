@@ -63,6 +63,8 @@ export const serviceSetup = (): ServiceBuilder<'judicial-system-backend'> =>
       COURTS_ASSISTANT_MOBILE_NUMBERS:
         '/k8s/judicial-system/COURTS_ASSISTANT_MOBILE_NUMBERS',
       COURTS_EMAILS: '/k8s/judicial-system/COURTS_EMAILS',
+      COURT_OF_APPEALS_ASSISTANT_EMAILS:
+        '/k8s/judicial-system/COURT_OF_APPEALS_ASSISTANT_EMAILS',
       DOKOBIT_ACCESS_TOKEN: '/k8s/judicial-system/DOKOBIT_ACCESS_TOKEN',
       EMAIL_FROM: '/k8s/judicial-system/EMAIL_FROM',
       EMAIL_FROM_NAME: '/k8s/judicial-system/EMAIL_FROM_NAME',

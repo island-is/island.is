@@ -26,7 +26,7 @@ import {
 } from './messages'
 import { SecondarySchoolSchema } from './dataSchema'
 import {
-  NationalRegistryParentsApi,
+  NationalRegistryCustodiansApi,
   NationalRegistryUserApi,
   SchoolsApi,
   StudentInfoApi,
@@ -127,7 +127,7 @@ const template: ApplicationTemplate<
               delete: true,
               api: [
                 NationalRegistryUserApi,
-                NationalRegistryParentsApi,
+                NationalRegistryCustodiansApi,
                 UserProfileApiWithValidation,
                 SchoolsApi,
                 StudentInfoApi,

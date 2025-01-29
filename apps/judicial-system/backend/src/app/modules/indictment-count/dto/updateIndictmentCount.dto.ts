@@ -1,10 +1,12 @@
 import {
   IsArray,
   IsEnum,
+  IsNumber,
   IsObject,
   IsOptional,
   IsString,
   MaxLength,
+  Min,
 } from 'class-validator'
 
 import { ApiPropertyOptional } from '@nestjs/swagger'
@@ -59,4 +61,16 @@ export class UpdateIndictmentCountDto {
   @IsEnum(IndictmentSubtype, { each: true })
   @ApiPropertyOptional({ enum: IndictmentSubtype, isArray: true })
   readonly indictmentCountSubtypes?: IndictmentSubtype[]
+
+  @IsOptional()
+  @IsNumber()
+  @Min(0)
+  @ApiPropertyOptional({ type: Number })
+  readonly recordedSpeed?: number
+
+  @IsOptional()
+  @IsNumber()
+  @Min(0)
+  @ApiPropertyOptional({ type: Number })
+  readonly speedLimit?: number
 }
