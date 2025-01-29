@@ -8,6 +8,7 @@ import {
   ViewStyle,
 } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
+import { ApolloError } from '@apollo/client'
 
 import { Barcode } from '../barcode/barcode'
 import { Skeleton } from '../skeleton/skeleton'
@@ -22,6 +23,10 @@ import { dynamicColor } from '../../utils/dynamic-color'
 import { Typography } from '../typography/typography'
 import { screenWidth } from '../../../utils/dimensions'
 import { BARCODE_MAX_WIDTH } from '../../../screens/wallet-pass/wallet-pass.constants'
+import {
+  findProblemInApolloError,
+  ProblemType,
+} from '@island.is/shared/problem'
 
 const Host = styled(Animated.View)`
   position: relative;
@@ -32,9 +37,10 @@ const Host = styled(Animated.View)`
   justify-content: center;
 `
 
-const ContentContainer = styled.View`
+const ContentContainer = styled.View<{ marginBottom: number }>`
   flex-direction: row;
   justify-content: space-between;
+  margin-bottom: ${({ marginBottom }) => marginBottom}px;
 `
 
 const BarcodeWrapper = styled.View<{ minHeight?: number }>`
@@ -75,12 +81,12 @@ const BackgroundImage = styled.ImageBackground<{ color: string }>`
 const Content = styled.View`
   flex-shrink: 1;
   justify-content: center;
-  margin-bottom: ${({ theme }) => theme.spacing[1]}px;
 `
 
 const Base64Image = styled.Image`
-  width: 64px;
   height: 72px;
+  width: 64px;
+  align-self: flex-end;
   border-radius: ${({ theme: { border } }) => border.radius.large};
 `
 
@@ -122,7 +128,7 @@ interface LicenseCardProps {
   backgroundColor?: string
   showBarcodeOfflineMessage?: boolean
   loading?: boolean
-  error?: boolean
+  error?: ApolloError
   barcode?: {
     value?: string | null
     loading?: boolean
@@ -146,7 +152,6 @@ export function LicenseCard({
   ...props
 }: LicenseCardProps) {
   const theme = useTheme()
-
   const intl = useIntl()
   const preset = type
     ? LicenseCardPresets[type]
@@ -166,6 +171,10 @@ export function LicenseCard({
     : screenWidth - theme.spacing[4] * 2 - theme.spacing.smallGutter * 2
   const barcodeHeight = barcodeWidth / 3
 
+  const badSessionError = error
+    ? findProblemInApolloError(error as any, [ProblemType.BAD_SESSION])
+    : undefined
+
   return (
     <Host>
       <BackgroundImage
@@ -173,7 +182,7 @@ export function LicenseCard({
         color={backgroundColor}
         resizeMode="cover"
       />
-      <ContentContainer>
+      <ContentContainer marginBottom={barcode ? theme.spacing[1] : 0}>
         <Content>
           <Title
             numberOfLines={1}
@@ -193,7 +202,6 @@ export function LicenseCard({
                   width: 62,
                   borderRadius: 4,
                   opacity: 0.5,
-                  marginBottom: theme.spacing.smallGutter,
                 }}
               />
             ) : (
@@ -297,7 +305,9 @@ export function LicenseCard({
             <OfflineMessage variant="body3" style={{ opacity: 1 }}>
               {intl.formatMessage({
                 id: error
-                  ? 'walletPass.barcodeErrorFailedToFetch'
+                  ? badSessionError
+                    ? 'walletPass.barcodeErrorBadSession'
+                    : 'walletPass.barcodeErrorFailedToFetch'
                   : 'walletPass.barcodeErrorNotConnected',
               })}
             </OfflineMessage>

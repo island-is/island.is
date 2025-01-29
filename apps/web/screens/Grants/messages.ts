@@ -36,13 +36,25 @@ export const m = {
       id: 'web.grants:search.inputPlaceholder',
       defaultMessage: 'Sía eftir leitarorði',
     },
+    filterTitle: {
+      id: 'web.grants:search.filterTitle',
+      defaultMessage: 'Leitarsíur',
+    },
     clearFilters: {
       id: 'web.grants:search.clearFilters',
       defaultMessage: 'Hreinsa allar síur',
     },
+    openFilter: {
+      id: 'web.grants:search.openFilter',
+      defaultMessage: 'Opna síu',
+    },
+    closeFilter: {
+      id: 'web.grants:search.closeFilter',
+      defaultMessage: 'Loka síu',
+    },
     clearFilterCategory: {
       id: 'web.grants:search.clearFilterCategory',
-      defaultMessage: 'Hreinsa flokk',
+      defaultMessage: 'Hreinsa síu',
     },
     applicationStatus: {
       id: 'web.grants:search.applicationStatus',
@@ -100,6 +112,10 @@ export const m = {
       id: 'web.grants:search.type',
       defaultMessage: 'Tegund',
     },
+    viewResults: {
+      id: 'web.grants:search.viewResults',
+      defaultMessage: 'Skoða niðurstöður',
+    },
     resultFound: {
       id: 'web.grants:search.resultFound',
       defaultMessage: '{arg} styrkur fannst',
@@ -111,6 +127,14 @@ export const m = {
     noResultsFound: {
       id: 'web.grants:search.noResultsFound',
       defaultMessage: 'Engir styrkir fundust',
+    },
+    error: {
+      id: 'web.grants:search.error',
+      defaultMessage: 'Þjónusta liggur tímabundið niðri',
+    },
+    errorText: {
+      id: 'web.grants:search.errorText',
+      defaultMessage: 'Vinsamlegast reynið aftur síðar',
     },
     organization: {
       id: 'web.grants:search.organization',
@@ -173,6 +197,10 @@ export const m = {
     howToApply: {
       id: 'web.grants:single.howToApply',
       defaultMessage: 'Hvernig er sótt um?',
+    },
+    answeringQuestions: {
+      id: 'web.grants:single.answeringQuestions',
+      defaultMessage: 'Svör við spurningum',
     },
   }),
   home: defineMessages({
@@ -252,6 +280,32 @@ export const m = {
     grantCategoryEnergyTransitionDescription: {
       id: 'web.grants:home.grantCategoryEnergyTransitionDescription',
       defaultMessage: 'Lýsing á orkuskiptum',
+    },
+    grantCategoryEnvironmentDescription: {
+      id: 'web.grants:home.grantCategoryEnvironmentDescription',
+      defaultMessage: 'Lýsing á umhverfi',
+    },
+  }),
+  bullets: defineMessages({
+    open: {
+      id: 'web.grants:bullets.open',
+      defaultMessage: 'Opið fyrir umsóknir',
+    },
+    nativeFunds: {
+      id: 'web.grants:bullets.nativeFunds',
+      defaultMessage: 'Innlendir sjóðir',
+    },
+    technologyDevelopmentFund: {
+      id: 'web.grants:bullets.technologyDevelopmentFund',
+      defaultMessage: 'Tækniþróunarsjóður',
+    },
+    financing: {
+      id: 'web.grants:bullets.financing',
+      defaultMessage: 'Fjármögnun',
+    },
+    companies: {
+      id: 'web.grants:bullets.companies',
+      defaultMessage: 'Fyrirtæki',
     },
   }),
 }
