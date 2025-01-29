@@ -24,7 +24,7 @@ COPY package.json yarn.lock .yarnrc.yml ./
 COPY apps/native/app/package.json ./apps/native/app/
 COPY .yarn/ ./.yarn
 # hadolint ignore=DL3018
-RUN apk add --update --no-cache python3 build-base gcc && ln -sf /usr/bin/python3 /usr/bin/python
+RUN apk add --update --no-cache python3 build-base gcc pkgconf && ln -sf /usr/bin/python3 /usr/bin/python
 RUN CI=true yarn install --immutable
 
 # Image with source code
