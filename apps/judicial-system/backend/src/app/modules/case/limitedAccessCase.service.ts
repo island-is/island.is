@@ -25,6 +25,7 @@ import {
   dateTypes,
   defendantEventTypes,
   eventTypes,
+  isIndictmentCase,
   isRequestCase,
   stringTypes,
   UserRole,
@@ -563,6 +564,38 @@ export class LimitedAccessCaseService {
           data: await this.pdfService.getRulingPdf(theCase),
           name: 'Úrskurður.pdf',
         },
+      )
+    }
+
+    if (isIndictmentCase(theCase.type)) {
+      const defendant = theCase.defendants && theCase.defendants[0]
+      const subpoena =
+        defendant && defendant.subpoenas && defendant.subpoenas[0]
+
+      filesToZip.push(
+        {
+          data: await this.pdfService.getIndictmentPdf(theCase),
+          name: 'Ákæra.pdf',
+        },
+        {
+          data: await this.pdfService.getCaseFilesRecordPdf(
+            theCase,
+            theCase.policeCaseNumbers[0],
+          ),
+          name: `Skjalaskrá ${theCase.courtCaseNumber}.pdf`,
+        },
+        ...(defendant && subpoena
+          ? [
+              {
+                data: await this.pdfService.getSubpoenaPdf(
+                  theCase,
+                  defendant,
+                  subpoena,
+                ),
+                name: 'Fyrirkall.pdf',
+              },
+            ]
+          : []),
       )
     }
 
