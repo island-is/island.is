@@ -10,6 +10,7 @@ import { PaymentFlow, PaymentFlowCharge } from './models/paymentFlow.model'
 import { CompanyRegistryClientModule } from '@island.is/clients/rsk/company-registry'
 import { NationalRegistryV3ClientModule } from '@island.is/clients/national-registry-v3'
 import { PaymentFlowEvent } from './models/paymentFlowEvent.model'
+import { PaymentFlowFjsChargeConfirmation } from './models/paymentFlowFjsChargeConfirmation.model'
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { PaymentFlowEvent } from './models/paymentFlowEvent.model'
       PaymentFlow,
       PaymentFlowCharge,
       PaymentFlowEvent,
+      PaymentFlowFjsChargeConfirmation,
     ]),
     FeatureFlagModule,
     ChargeFjsV2ClientModule,

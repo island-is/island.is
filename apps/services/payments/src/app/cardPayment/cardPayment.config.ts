@@ -21,6 +21,8 @@ const schema = z.object({
   memCacheExpiryMinutes: z.number().int(),
 })
 
+export type CardPaymentModuleConfigType = z.infer<typeof schema>
+
 export const CardPaymentModuleConfig = defineConfig({
   name: 'CardPaymentModuleConfig',
   schema,

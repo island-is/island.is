@@ -4,19 +4,24 @@ import { isCompany, isValid } from 'kennitala'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
-import { ChargeFjsV2ClientService } from '@island.is/clients/charge-fjs-v2'
+import {
+  ChargeFjsV2ClientService,
+  CatalogItem,
+  Charge,
+} from '@island.is/clients/charge-fjs-v2'
+import { NationalRegistryV3ClientService } from '@island.is/clients/national-registry-v3'
+import { CompanyRegistryClientService } from '@island.is/clients/rsk/company-registry'
 
 import { PaymentFlow, PaymentFlowCharge } from './models/paymentFlow.model'
 
 import { PaymentFlowUpdateEvent, PaymentMethod } from '../../types'
 import { GetPaymentFlowDTO } from './dtos/getPaymentFlow.dto'
-import { NationalRegistryV3ClientService } from '@island.is/clients/national-registry-v3'
-import { CompanyRegistryClientService } from '@island.is/clients/rsk/company-registry'
 import { CreatePaymentFlowInput } from './dtos/createPaymentFlow.input'
 
 import { environment } from '../../environments'
 import { PaymentFlowEvent } from './models/paymentFlowEvent.model'
 import { CreatePaymentFlowDTO } from './dtos/createPaymentFlow.dto'
+import { PaymentFlowFjsChargeConfirmation } from './models/paymentFlowFjsChargeConfirmation.model'
 
 @Injectable()
 export class PaymentFlowService {
@@ -27,6 +32,8 @@ export class PaymentFlowService {
     private readonly paymentFlowChargeModel: typeof PaymentFlowCharge,
     @InjectModel(PaymentFlowEvent)
     private readonly paymentFlowEventModel: typeof PaymentFlowEvent,
+    @InjectModel(PaymentFlowFjsChargeConfirmation)
+    private readonly paymentFlowFjsChargeConfirmationModel: typeof PaymentFlowFjsChargeConfirmation,
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
     private chargeFjsV2ClientService: ChargeFjsV2ClientService,
@@ -71,7 +78,7 @@ export class PaymentFlowService {
         organisationId,
       )
 
-    const filteredChargeInformation = []
+    const filteredChargeInformation: CatalogItem[] = []
 
     for (const product of item) {
       const matchingCharge = charges.find(
@@ -91,12 +98,12 @@ export class PaymentFlowService {
     }
 
     return {
-      charges,
       firstProductTitle: filteredChargeInformation?.[0]?.chargeItemName ?? null,
       totalPrice: filteredChargeInformation.reduce(
         (acc, charge) => acc + charge.priceAmount,
         0,
       ),
+      catalogItems: filteredChargeInformation,
     }
   }
 
@@ -126,42 +133,52 @@ export class PaymentFlowService {
     return person.nafn ?? ''
   }
 
+  async getPaymentFlowWithPaymentDetails(id: string) {
+    const paymentFlow = (
+      await this.paymentFlowModel.findOne({
+        where: {
+          id,
+        },
+        include: [
+          {
+            model: PaymentFlowCharge,
+          },
+        ],
+      })
+    )?.toJSON()
+
+    if (!paymentFlow) {
+      throw new BadRequestException('Payment flow not found')
+    }
+
+    const paymentFlowSuccessEvent = (
+      await this.paymentFlowEventModel.findOne({
+        where: {
+          paymentFlowId: id,
+          type: 'success',
+        },
+      })
+    )?.toJSON()
+
+    if (paymentFlowSuccessEvent) {
+      throw new BadRequestException('already_paid')
+    }
+
+    const paymentDetails = await this.getPaymentFlowChargeDetails(
+      paymentFlow.organisationId,
+      paymentFlow.charges,
+    )
+
+    return {
+      paymentFlow,
+      paymentDetails,
+    }
+  }
+
   async getPaymentFlow(id: string): Promise<GetPaymentFlowDTO | null> {
     try {
-      const paymentFlow = (
-        await this.paymentFlowModel.findOne({
-          where: {
-            id,
-          },
-          include: [
-            {
-              model: PaymentFlowCharge,
-            },
-          ],
-        })
-      )?.toJSON()
-
-      if (!paymentFlow) {
-        throw new BadRequestException('Payment flow not found')
-      }
-
-      const paymentFlowSuccessEvent = (
-        await this.paymentFlowEventModel.findOne({
-          where: {
-            paymentFlowId: id,
-            type: 'success',
-          },
-        })
-      )?.toJSON()
-
-      if (paymentFlowSuccessEvent) {
-        throw new BadRequestException('already_paid')
-      }
-
-      const paymentDetails = await this.getPaymentFlowChargeDetails(
-        paymentFlow.organisationId,
-        paymentFlow.charges,
-      )
+      const { paymentFlow, paymentDetails } =
+        await this.getPaymentFlowWithPaymentDetails(id)
 
       const payerName = await this.getPayerName(paymentFlow.payerNationalId)
 
@@ -234,5 +251,24 @@ export class PaymentFlowService {
     } catch (e) {
       this.logger.error('Failed to notify onUpdateUrl', e)
     }
+  }
+
+  async createPaymentCharge(paymentFlowId: string, chargePayload: Charge) {
+    const chargeConfirmation = await this.chargeFjsV2ClientService.createCharge(
+      chargePayload,
+    )
+
+    const newChargeConfirmation =
+      await this.paymentFlowFjsChargeConfirmationModel.create({
+        paymentFlowId,
+        receptionId: chargeConfirmation.receptionID,
+        user4: chargeConfirmation.user4,
+      })
+
+    return newChargeConfirmation
+  }
+
+  async deletePaymentFlow(id: string) {
+    // TODO
   }
 }

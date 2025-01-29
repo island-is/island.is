@@ -177,3 +177,5 @@ export class PaymentFlow extends Model<
   })
   modified!: CreationOptional<Date>
 }
+
+export type PaymentFlowAttributes = InferAttributes<PaymentFlow>

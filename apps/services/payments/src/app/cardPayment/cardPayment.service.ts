@@ -6,7 +6,7 @@ import { v4 as uuid } from 'uuid'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
-// import { ChargeFjsV2ClientService } from '@island.is/clients/charge-fjs-v2'
+import type { CatalogItem } from '@island.is/clients/charge-fjs-v2'
 import { CardPaymentModuleConfig } from './cardPayment.config'
 import {
   CachePaymentFlowStatus,
@@ -17,6 +17,7 @@ import {
   VerificationResponse,
 } from './cardPayment.types'
 import {
+  generateCardChargeFJSPayload,
   generateChargeRequestOptions,
   generateMd,
   generateVerificationRequestOptions,
@@ -26,13 +27,13 @@ import {
 import { VerificationCallbackInput } from './dtos/verificationCallback.input'
 import { ChargeCardInput } from './dtos/chargeCard.input'
 import { VerifyCardInput } from './dtos/verifyCard.input'
+import { PaymentFlowAttributes } from '../paymentFlow/models/paymentFlow.model'
 
 @Injectable()
 export class CardPaymentService {
   constructor(
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
-    // private chargeFjsV2ClientService: ChargeFjsV2ClientService,
     @Inject(CardPaymentModuleConfig.KEY)
     private readonly config: ConfigType<typeof CardPaymentModuleConfig>,
     @Inject(CACHE_MANAGER)
@@ -285,5 +286,25 @@ export class CardPaymentService {
     }
 
     return data
+  }
+
+  createCardPaymentChargePayload({
+    paymentFlow,
+    charges,
+    chargeResponse,
+    totalPrice,
+  }: {
+    paymentFlow: PaymentFlowAttributes
+    charges: CatalogItem[]
+    chargeResponse: ChargeResponse
+    totalPrice: number
+  }) {
+    return generateCardChargeFJSPayload({
+      paymentFlow,
+      charges,
+      chargeResponse,
+      paymentApiConfig: this.config.paymentGateway,
+      totalPrice,
+    })
   }
 }

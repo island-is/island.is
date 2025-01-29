@@ -24,7 +24,7 @@ import { GetVerificationStatus } from './dtos/params.dto'
 import { VerificationStatusResponse } from './dtos/verificationStatus.response.dto'
 import { VerifyCardResponse } from './dtos/verifyCard.response.dto'
 import { ChargeCardResponse } from './dtos/chargeCard.response.dto'
-import { getPayloadFromMd } from './cardPayment.utils'
+import { PaymentFlowFjsChargeConfirmation } from '../paymentFlow/models/paymentFlowFjsChargeConfirmation.model'
 
 @UseGuards(FeatureFlagGuard)
 @FeatureFlag(Features.isIslandisPaymentEnabled)
@@ -157,12 +157,46 @@ export class CardPaymentController {
     @Body() chargeCardInput: ChargeCardInput,
   ): Promise<ChargeCardResponse> {
     try {
-      await this.paymentFlowService.getPaymentFlow(
+      // Will fail if already paid
+      const {
+        paymentFlow,
+        paymentDetails: { catalogItems, totalPrice },
+      } = await this.paymentFlowService.getPaymentFlowWithPaymentDetails(
         chargeCardInput.paymentFlowId,
       )
 
       // Payment confirmation
       const result = await this.cardPaymentService.charge(chargeCardInput)
+
+      let confirmation: null | PaymentFlowFjsChargeConfirmation = null
+
+      try {
+        // Send charge confirmation to FJS
+        const fjsChargePayload =
+          this.cardPaymentService.createCardPaymentChargePayload({
+            paymentFlow,
+            charges: catalogItems,
+            chargeResponse: result,
+            totalPrice,
+          })
+
+        confirmation = await this.paymentFlowService.createPaymentCharge(
+          paymentFlow.id,
+          fjsChargePayload,
+        )
+      } catch (e) {
+        // TODO:
+        // Never fail the payment if the charge confirmation fails
+        // But retry it behind the scenes
+        // Implement retry logic later
+        // throw new BadRequestException(
+        //   'payment_successful_but_fjs_charge_creation_failed',
+        // )
+        // If the error indicates that this is already paid
+        // Error code = 400 and message = "Búið að taka á móti álagningu XXX ..."
+        // (there is a 24 hour limit on buying certain items)
+        // Then we should refund the payment
+      }
 
       await this.paymentFlowService.logPaymentFlowUpdate({
         paymentFlowId: chargeCardInput.paymentFlowId,
@@ -171,7 +205,10 @@ export class CardPaymentController {
         paymentMethod: PaymentMethod.CARD,
         reason: 'payment_completed',
         message: 'Card payment completed',
-        metadata: result,
+        metadata: {
+          payment: result,
+          charge: confirmation,
+        },
       })
 
       return result

@@ -1,15 +1,24 @@
 import { sign, verify, Algorithm } from 'jsonwebtoken'
 import { z } from 'zod'
 
+import {
+  CatalogItem,
+  Charge,
+  PayInfoPaymentMeansEnum,
+} from '@island.is/clients/charge-fjs-v2'
+
 import { ChargeCardInput } from './dtos/chargeCard.input'
 import { VerifyCardInput } from './dtos/verifyCard.input'
 import {
   CardErrorCode,
+  ChargeResponse,
   MdNormalised,
   MdSerialized,
   SavedVerificationCompleteData,
 } from './cardPayment.types'
-import { environment } from '../../environments'
+
+import { PaymentFlowAttributes } from '../paymentFlow/models/paymentFlow.model'
+import { CardPaymentModuleConfigType } from './cardPayment.config'
 
 const MdSerializedSchema = z.object({
   c: z.string().length(36, 'Correlation ID must be 36 characters long'),
@@ -38,13 +47,6 @@ export const generateMd = ({
   return Buffer.from(mdToken).toString('base64')
 }
 
-interface PaymentApiConfig {
-  paymentsApiSecret: string
-  paymentsApiHeaderKey: string
-  paymentsApiHeaderValue: string
-  systemCalling: string
-}
-
 export const generateVerificationRequestOptions = ({
   verifyCardInput,
   md,
@@ -52,7 +54,7 @@ export const generateVerificationRequestOptions = ({
 }: {
   verifyCardInput: VerifyCardInput
   md: string
-  paymentApiConfig: PaymentApiConfig
+  paymentApiConfig: CardPaymentModuleConfigType['paymentGateway']
 }) => {
   const { cardNumber, expiryMonth, expiryYear, amount } = verifyCardInput
   const {
@@ -92,7 +94,7 @@ export const generateChargeRequestOptions = ({
 }: {
   chargeCardInput: ChargeCardInput
   verificationData: SavedVerificationCompleteData
-  paymentApiConfig: PaymentApiConfig
+  paymentApiConfig: CardPaymentModuleConfigType['paymentGateway']
 }) => {
   const { cardNumber, expiryMonth, expiryYear, cvc, amount } = chargeCardInput
   const {
@@ -171,4 +173,49 @@ export function mapToCardErrorCode(originalCode: string): CardErrorCode {
 
   // Return the mapped value or the default
   return errorCodeMap[originalCode] || CardErrorCode.GenericDecline
+}
+
+export const generateCardChargeFJSPayload = ({
+  paymentFlow,
+  charges,
+  chargeResponse,
+  paymentApiConfig,
+  totalPrice,
+}: {
+  paymentFlow: PaymentFlowAttributes
+  charges: CatalogItem[]
+  chargeResponse: ChargeResponse
+  paymentApiConfig: CardPaymentModuleConfigType['paymentGateway']
+  totalPrice: number
+}): Charge => {
+  return {
+    chargeItemSubject: paymentFlow.productTitle ?? charges[0].chargeItemName,
+    chargeType: charges[0].chargeType,
+    charges: charges.map((charge) => ({
+      amount: charge.priceAmount,
+      chargeItemCode: charge.chargeItemCode,
+      priceAmount: charge.priceAmount,
+      quantity: charge.quantity ?? 1,
+      reference: charge.chargeItemName,
+    })),
+    immediateProcess: true,
+    payeeNationalID: paymentFlow.payerNationalId,
+    performerNationalID: paymentFlow.payerNationalId,
+    performingOrgID: paymentFlow.organisationId,
+    requestID: paymentFlow.id,
+    systemID: paymentApiConfig.systemCalling,
+    payInfo: {
+      PAN: chargeResponse.maskedCardNumber,
+      RRN: chargeResponse.acquirerReferenceNumber,
+      authCode: chargeResponse.authorizationCode,
+      cardType: chargeResponse.cardInformation.cardScheme,
+      payableAmount: totalPrice,
+      paymentMeans: chargeResponse.cardInformation.cardUsage
+        ?.toLowerCase()
+        ?.startsWith('d')
+        ? PayInfoPaymentMeansEnum.Debetkort
+        : PayInfoPaymentMeansEnum.Kreditkort,
+    },
+    returnUrl: '',
+  }
 }
