@@ -6,7 +6,11 @@ import { Inject } from '@nestjs/common'
 import AmazonS3URI from 'amazon-s3-uri'
 import { ApplicationFilesConfig } from './files.config'
 import { ConfigType } from '@nestjs/config'
-import { LOGGER_PROVIDER, withLoggingContext, type Logger } from '@island.is/logging'
+import {
+  LOGGER_PROVIDER,
+  withLoggingContext,
+  type Logger,
+} from '@island.is/logging'
 import { CodeOwner } from '@island.is/nest/core'
 import { CodeOwners } from '@island.is/shared/constants'
 
@@ -55,11 +59,17 @@ export class UploadProcessor {
         resultUrl,
       }
     } catch (error) {
-      withLoggingContext({
-        applicationId: applicationId
-      }, () => {
-        this.logger.error('An error occurred while processing upload job', error)
-      })
+      withLoggingContext(
+        {
+          applicationId: applicationId,
+        },
+        () => {
+          this.logger.error(
+            'An error occurred while processing upload job',
+            error,
+          )
+        },
+      )
       throw error
     }
   }
@@ -93,11 +103,17 @@ export class UploadProcessor {
         result.resultUrl,
       )
     } catch (error) {
-      withLoggingContext({
-        applicationId: applicationId
-      }, () => {
-        this.logger.error('An error occurred while completing upload job', error)
-      })
+      withLoggingContext(
+        {
+          applicationId: applicationId,
+        },
+        () => {
+          this.logger.error(
+            'An error occurred while completing upload job',
+            error,
+          )
+        },
+      )
       throw error
     }
   }

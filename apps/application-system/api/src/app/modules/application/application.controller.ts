@@ -639,8 +639,8 @@ export class ApplicationController {
     @CurrentLocale() locale: Locale,
   ): Promise<ApplicationResponseDto> {
     const existingApplication =
-    await this.applicationAccessService.findOneByIdAndNationalId(id, user)
-    
+      await this.applicationAccessService.findOneByIdAndNationalId(id, user)
+
     const templateId = existingApplication.typeId as ApplicationTypes
     const template = await getApplicationTemplateByTypeId(templateId)
     return withCodeOwner(template.codeOwner, async () => {
@@ -728,9 +728,9 @@ export class ApplicationController {
     @CurrentLocale() locale: Locale,
   ): Promise<ApplicationResponseDto> {
     const existingApplication =
-    await this.applicationAccessService.findOneByIdAndNationalId(id, user, {
-      shouldThrowIfPruned: true,
-    })
+      await this.applicationAccessService.findOneByIdAndNationalId(id, user, {
+        shouldThrowIfPruned: true,
+      })
     const templateId = existingApplication.typeId as ApplicationTypes
     const template = await getApplicationTemplateByTypeId(templateId)
     return withCodeOwner(template.codeOwner, async () => {
@@ -802,12 +802,15 @@ export class ApplicationController {
         throw new TemplateApiError(error, 500)
       }
 
-      withLoggingContext({
-        applicationId: existingApplication.id,
-        templateId: templateId
-      }, () => {
-        this.logger.info(`Application submission ended successfully`)
-      })
+      withLoggingContext(
+        {
+          applicationId: existingApplication.id,
+          templateId: templateId,
+        },
+        () => {
+          this.logger.info(`Application submission ended successfully`)
+        },
+      )
 
       if (hasChanged) {
         return updatedApplication

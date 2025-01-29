@@ -41,7 +41,7 @@ const EstateTemplate: ApplicationTemplate<
     answers.selectedEstate
       ? m.prerequisitesTitle.defaultMessage + ' - ' + answers.selectedEstate
       : m.prerequisitesTitle.defaultMessage,
-  
+
   codeOwner: CodeOwners.Juni,
   institution: m.institution,
   dataSchema: estateSchema,
