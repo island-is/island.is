@@ -23,14 +23,12 @@ export const SchoolSelectionOverview: FC<FieldBaseProps> = ({
     if (goToScreen) goToScreen(page)
   }
 
-  const isEditable = application.state === States.DRAFT
-
   return (
     <ReviewGroup
       handleClick={() => onClick(Routes.SCHOOL)}
       editMessage={formatMessage(overview.general.editMessage)}
       title={formatMessage(overview.selection.subtitle)}
-      isEditable={isEditable}
+      isEditable={application.state === States.DRAFT}
     >
       <Box>
         <GridRow>
