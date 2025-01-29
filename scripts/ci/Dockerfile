@@ -55,13 +55,13 @@ ENV NODE_OPTIONS="--max-old-space-size=8192"
 ARG APP
 
 RUN yarn nx run-many --target=build --projects="${APP}" --prod --parallel=8
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN sh -c ' \
   set -euxo pipefail; \
-  ls -lah dist/ ./ ./apps/; \
-  yarn nx reset; \
-  project="$(yarn nx show project ${APP} --json)"; \
-  root_dir="$(echo -n "$project" | jq -r .root)"; \
-  mv "dist/$root_dir" /dist; \
+  find dist -name project.json -delete; \
+  project_json="$(yarn nx show project "${APP}" --json --verbose)"; \
+  project_root=$(echo "$project_json"| jq -r .root); \
+  mv "dist/$project_root" /dist; \
   ls -lah /dist; \
   '
 
