@@ -42,7 +42,7 @@ export enum Features {
   servicePortalSocialInsuranceIncomePlanPageEnabled = 'isServicePortalSocialInsuranceIncomePlanPageEnabled',
   servicePortalHealthVaccinationsPageEnabled = 'isServicePortalHealthVaccinationsPageEnabled',
   servicePortalHealthOrganDonationPageEnabled = 'isServicePortalHealthOrganDonationPageEnabled',
-  servicePortalHealthReferralsPageEnabled = 'isServicePortalHealthReferralsPageEnabled',
+  servicePortalHealthReferralsPageEnabled = 'isServicePortalReferralsPageEnabled',
   servicePortalHealthWaitlistsPageEnabled = 'isServicePortalHealthWaitlistsPageEnabled',
 
   servicePortalDocumentsActionsEnabled = 'isServicePortalDocumentsActionsEnabled',
