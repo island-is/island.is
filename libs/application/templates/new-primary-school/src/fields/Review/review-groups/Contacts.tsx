@@ -57,10 +57,10 @@ export const Contacts = ({
         <SkeletonLoader height={40} width="80%" borderRadius="large" />
       ) : (
         <GridRow>
-          <GridColumn span={['12/12', '12/12', '12/12', '12/12']}>
+          <GridColumn span="12/12">
             <Label>
               {formatMessage(
-                newPrimarySchoolMessages.childrenNParents
+                newPrimarySchoolMessages.childrenNGuardians
                   .contactsSubSectionTitle,
               )}
             </Label>

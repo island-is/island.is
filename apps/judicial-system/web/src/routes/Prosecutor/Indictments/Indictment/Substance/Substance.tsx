@@ -75,6 +75,6 @@ export const Substance: FC<Props> = ({
       }}
       errorMessage={substanceAmountMissingErrorMessage}
       hasError={substanceAmountMissingErrorMessage !== ''}
-    ></Input>
+    />
   )
 }

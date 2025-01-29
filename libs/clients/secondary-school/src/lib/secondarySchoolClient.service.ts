@@ -77,6 +77,7 @@ export class SecondarySchoolClient {
       nameIs: `${program.title || ''} - ${program.code}`,
       nameEn: `${program.titleEnglish || ''} - ${program.code}`,
       registrationEndDate: program.registryEndDate || new Date(),
+      isSpecialNeedsProgram: program.isSpecialNeedsProgramme || false,
     }))
   }
 
@@ -85,16 +86,17 @@ export class SecondarySchoolClient {
     return !studentInfo?.hasActiveApplication
   }
 
-  async delete(auth: User, externalId: string): Promise<void> {
-    return this.applicationsApiWithAuth(auth).v1ApplicationsApplicationIdDelete(
-      {
-        applicationId: externalId,
-      },
-    )
+  async delete(auth: User, applicationId: string): Promise<void> {
+    return this.applicationsApiWithAuth(
+      auth,
+    ).v1ApplicationsIslandIsApplicationIdDelete({
+      islandIsApplicationId: applicationId,
+    })
   }
 
   async create(auth: User, application: Application): Promise<string> {
     const applicationBaseDto = {
+      islandIsApplicationId: application.id,
       applicantNationalId: application.nationalId,
       applicantName: application.name,
       isFreshman: application.isFreshman,
@@ -133,9 +135,12 @@ export class SecondarySchoolClient {
       ).v1ApplicationsPost({
         applicationBaseDto,
       })
+
       if (!result.id) {
         throw new Error('Application creation failed: No ID returned')
       }
+
+      // Return external ID
       return result.id
     } catch (error) {
       throw new Error(`Failed to create application: ${error.message}`)
