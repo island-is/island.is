@@ -1,19 +1,12 @@
-# This is a multi-stage Dockerfile which contains all CI-related operations as well as images to be deployed in production
-
 # Global ARGs (used across multiple stages)
 ARG PLAYWRIGHT_VERSION
-ARG DOCKER_ECR_REGISTRY=public.ecr.aws/docker
-ARG DOCKER_NODE_REGISTRY=821090935708.dkr.ecr.eu-west-1.amazonaws.com/node
-ARG DOCKER_IMAGE_REGISTRY=${DOCKER_ECR_REGISTRY%/docker}
-# Alias DOCKER_IMAGE_REGISTRY to DOCKER_REGISTRY for backwards compatibility
-ARG DOCKER_REGISTRY=${DOCKER_IMAGE_REGISTRY}/docker
 ARG NODE_IMAGE_VERSION=20
 ARG APP_HOME
 ARG APP_DIST_HOME=dist/${APP_HOME}
 ARG APP
 
 # Base image for dependencies
-FROM ${DOCKER_NODE_REGISTRY}:${NODE_IMAGE_VERSION}-bookworm-slim AS deps
+FROM public.ecr.aws/docker/library/node:${NODE_IMAGE_VERSION}-bookworm-slim AS deps
 
 # Install system dependencies
 RUN apt-get update && apt-get install -y \
@@ -25,7 +18,6 @@ RUN apt-get update && apt-get install -y \
   apt-get clean && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /build
-
 # Adding and installing packages
 COPY package.json yarn.lock .yarnrc.yml ./
 COPY apps/native/app/package.json ./apps/native/app/
@@ -56,7 +48,7 @@ ENV NODE_OPTIONS="--max-old-space-size=8192"
 RUN yarn run build ${APP} --prod
 
 # This is base image for containers that are to be deployed
-FROM ${DOCKER_NODE_REGISTRY}:${NODE_IMAGE_VERSION}-bookworm-slim AS output-base
+FROM public.ecr.aws/docker/library/node:${NODE_IMAGE_VERSION}-bookworm-slim AS output-base
 ARG APP
 ARG APP_HOME
 ARG APP_DIST_HOME
@@ -116,7 +108,7 @@ LABEL branch=${GIT_BRANCH}
 LABEL commit=${GIT_COMMIT_SHA}
 ENTRYPOINT [ "node", "main.js" ]
 
-FROM ${DOCKER_REGISTRY}/library/nginx:1.21-alpine AS output-static
+FROM public.ecr.aws/docker/library/nginx:1.21-alpine AS output-static
 
 # Stage-specific ARGs
 ARG APP
