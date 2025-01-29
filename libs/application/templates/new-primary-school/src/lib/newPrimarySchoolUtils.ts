@@ -68,6 +68,18 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     'languages.signLanguage',
   ) as YesOrNo
 
+  const selectedLanguages = getValueViaPath(
+    answers,
+    'languages.selectedLanguages',
+  ) as Array<{
+    code: string
+  }>
+
+  let languages: string[] = []
+  if (selectedLanguages) {
+    languages = selectedLanguages.map((lang) => lang.code)
+  }
+
   const language1 = getValueViaPath(answers, 'languages.language1') as string
 
   const language2 = getValueViaPath(answers, 'languages.language2') as string
@@ -75,6 +87,10 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
   const language3 = getValueViaPath(answers, 'languages.language3') as string
 
   const language4 = getValueViaPath(answers, 'languages.language4') as string
+  const language1HiddenInput = getValueViaPath(
+    answers,
+    'languages.language1HiddenInput',
+  ) as string
 
   const childLanguage = getValueViaPath(
     answers,
@@ -197,6 +213,8 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     reasonForApplicationPostalCode,
     siblings,
     languageEnvironment,
+    languages,
+    language1HiddenInput,
     language1,
     language2,
     language3,
