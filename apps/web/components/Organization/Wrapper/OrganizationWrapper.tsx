@@ -1232,7 +1232,7 @@ export const OrganizationWrapper: React.FC<
                     return !item?.href || shouldLinkBeAnAnchorTag(item.href) ? (
                       link
                     ) : (
-                      <NextLink href={item?.href} legacyBehavior>
+                      <NextLink href={item.href} legacyBehavior>
                         {link}
                       </NextLink>
                     )
