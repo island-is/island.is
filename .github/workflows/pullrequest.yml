@@ -241,7 +241,7 @@ jobs:
       AFFECTED_PROJECT: ${{ matrix.projects }}
       CYPRESS_PROJECT_ID: 4q7jz8
       CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
-      API_MOCKS: 'true'
+      API_MOCKS: true
       NODE_OPTIONS: --max-old-space-size=4096
       E2E_BUILD_ID: ${{ matrix.build-id }}
     strategy:
