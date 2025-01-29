@@ -525,30 +525,17 @@ export class LimitedAccessCaseService {
 
   async getAllFilesZip(theCase: Case, user: TUser): Promise<Buffer> {
     const filesToZip: { data: Buffer; name: string }[] = []
-
-    const getFileCategories = (tc: Case) => {
-      if (isRequestCase(tc.type)) {
-        return defenderCaseFileCategoriesForRequestCases
-      } else {
-        if (tc.defendants?.[0].caseFilesSharedWithDefender) {
-          return defenderCaseFileCategoriesForIndictmentCases
-        } else {
-          return defenderDefaultCaseFileCategoriesForIndictmentCases
-        }
-      }
-    }
-
+    const caseFileCategories = this.getFileCategories(theCase)
     const caseFilesByCategory =
       theCase.caseFiles?.filter(
         (file) =>
           file.key &&
           file.category &&
-          getFileCategories(theCase).includes(file.category),
+          caseFileCategories.includes(file.category),
       ) ?? []
 
-    // TODO: speed this up by fetching all files in parallel
-    for (const file of caseFilesByCategory) {
-      await this.awsS3Service
+    const fileFetchPromises = caseFilesByCategory.map((file) => {
+      return this.awsS3Service
         .getObject(theCase.type, file.key)
         .then((content) => filesToZip.push({ data: content, name: file.name }))
         .catch((reason) =>
@@ -558,7 +545,9 @@ export class LimitedAccessCaseService {
             { reason },
           ),
         )
-    }
+    })
+
+    await Promise.all(fileFetchPromises)
 
     if (isRequestCase(theCase.type)) {
       filesToZip.push(
@@ -578,5 +567,17 @@ export class LimitedAccessCaseService {
     }
 
     return this.zipFiles(filesToZip)
+  }
+
+  private getFileCategories = (theCase: Case) => {
+    if (isRequestCase(theCase.type)) {
+      return defenderCaseFileCategoriesForRequestCases
+    } else {
+      if (theCase.defendants?.[0].caseFilesSharedWithDefender) {
+        return defenderCaseFileCategoriesForIndictmentCases
+      } else {
+        return defenderDefaultCaseFileCategoriesForIndictmentCases
+      }
+    }
   }
 }
