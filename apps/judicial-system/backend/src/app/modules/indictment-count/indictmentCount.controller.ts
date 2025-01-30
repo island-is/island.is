@@ -21,10 +21,12 @@ import {
 
 import { prosecutorRepresentativeRule, prosecutorRule } from '../../guards'
 import { CaseExistsGuard, CaseWriteGuard } from '../case'
+import { CreateOffenseDto } from './dto/createOffense.dto'
 import { UpdateIndictmentCountDto } from './dto/updateIndictmentCount.dto'
 import { IndictmentCountExistsGuard } from './guards/indictmentCountExists.guard'
 import { DeleteIndictmentCountResponse } from './models/delete.response'
 import { IndictmentCount } from './models/indictmentCount.model'
+import { Offense } from './models/offense.model'
 import { IndictmentCountService } from './indictmentCount.service'
 
 @Controller('api/case/:caseId/indictmentCount')
@@ -90,5 +92,19 @@ export class IndictmentCountController {
     )
 
     return { deleted }
+  }
+
+  @UseGuards(CaseExistsGuard, CaseWriteGuard)
+  @RolesRules(prosecutorRule, prosecutorRepresentativeRule)
+  @Post()
+  @ApiCreatedResponse({
+    type: Offense,
+    description: 'Creates a new indictment count offense',
+  })
+  createOffense(@Param('indictmentCountId') indictmentCountId: string,     @Body() createOffenseDto: CreateOffenseDto,
+): Promise<Offense> {
+    this.logger.debug(`Creating a new offense for indictment count ${indictmentCountId}`)
+
+    return this.indictmentCountService.createOffense(indictmentCountId, createOffenseDto.type)
   }
 }

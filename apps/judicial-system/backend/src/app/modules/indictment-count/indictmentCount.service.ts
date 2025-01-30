@@ -10,14 +10,20 @@ import { InjectModel } from '@nestjs/sequelize'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
+import { IndictmentCountOffense } from '@island.is/judicial-system/types'
+
 import { UpdateIndictmentCountDto } from './dto/updateIndictmentCount.dto'
+import { UpdateOffenseDto } from './dto/updateOffense.dto'
 import { IndictmentCount } from './models/indictmentCount.model'
+import { Offense } from './models/offense.model'
 
 @Injectable()
 export class IndictmentCountService {
   constructor(
     @InjectModel(IndictmentCount)
     private readonly indictmentCountModel: typeof IndictmentCount,
+    private readonly offenseModel: typeof Offense,
+
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
@@ -71,6 +77,53 @@ export class IndictmentCountService {
     } else if (numberOfAffectedRows < 1) {
       throw new InternalServerErrorException(
         `Could not delete indictment count ${indictmentCountId} of case ${caseId}`,
+      )
+    }
+
+    return true
+  }
+
+  async createOffense(indictmentCountId: string, type: IndictmentCountOffense): Promise<Offense> {
+    return this.offenseModel.create({ indictmentCountId, type})
+  }
+
+  async updateOffense(
+    offenseId: string,
+    indictmentCountId: string,
+    update: UpdateOffenseDto,
+  ): Promise<Offense> {
+    const [numberOfAffectedRows, offenses] = await this.offenseModel.update(update, {
+      where: { id: offenseId, indictmentCountId },
+      returning: true,
+    })
+
+    if (numberOfAffectedRows > 1) {
+      // Tolerate failure, but log error
+      this.logger.error(
+        `Unexpected number of rows (${numberOfAffectedRows}) affected when updating offense ${offenseId} for indictment count ${indictmentCountId}`,
+      )
+    } else if (numberOfAffectedRows < 1) {
+      throw new InternalServerErrorException(
+        `Could not update offense ${offenseId} for indictment count ${indictmentCountId}`,
+      )
+    }
+
+    return offenses[0]
+  }
+
+  async deleteOffense(indictmentCountId: string, offenseId: string, ): Promise<boolean> {
+    const numberOfAffectedRows = await this.offenseModel.destroy({
+      where: { id: indictmentCountId, offenseId },
+    })
+
+    if (numberOfAffectedRows > 1) {
+      // Tolerate failure, but log error
+      this.logger.error(
+        `Unexpected number of rows (${numberOfAffectedRows}) affected when deleting offense ${offenseId} for indictment count ${indictmentCountId}`,
+      )
+    } else if (numberOfAffectedRows < 1) {
+      throw new InternalServerErrorException(
+        `Could not delete offense ${offenseId} for indictment count ${indictmentCountId}`,
       )
     }
 

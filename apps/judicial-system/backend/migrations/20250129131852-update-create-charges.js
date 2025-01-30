@@ -19,10 +19,10 @@ module.exports = {
               key: 'id',
             },
             allowNull: false,
-          },          
+          },
           type: {
             type: Sequelize.STRING, // DRIVING_WITHOUT_LICENCE, DRUNK_DRIVING, ...
-            allowNull: false, 
+            allowNull: false,
           },
           substances: {
             type: Sequelize.JSON,
