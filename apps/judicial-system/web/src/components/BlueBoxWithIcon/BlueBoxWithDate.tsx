@@ -1,6 +1,5 @@
 import { FC, useContext, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
-import addDays from 'date-fns/addDays'
 import { AnimatePresence, motion } from 'framer-motion'
 import { useRouter } from 'next/router'
 
@@ -14,7 +13,7 @@ import {
 } from '@island.is/island-ui/core'
 import { PUBLIC_PROSECUTOR_STAFF_INDICTMENT_SEND_TO_PRISON_ADMIN_ROUTE } from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
-import { VERDICT_APPEAL_WINDOW_DAYS } from '@island.is/judicial-system/types'
+import { getIndictmentAppealDeadlineDate } from '@island.is/judicial-system/types'
 import { core, errors } from '@island.is/judicial-system-web/messages'
 
 import {
@@ -141,9 +140,9 @@ const BlueBoxWithDate: FC<Props> = (props) => {
     const deadline =
       defendant.verdictAppealDeadline ||
       (dates.verdictViewDate &&
-        addDays(
+        getIndictmentAppealDeadlineDate(
           dates.verdictViewDate,
-          VERDICT_APPEAL_WINDOW_DAYS,
+          false,
         ).toISOString())
 
     return getAppealExpirationInfo(
@@ -190,14 +189,14 @@ const BlueBoxWithDate: FC<Props> = (props) => {
           }),
         )
       }
+    }
 
-      if (defendant.sentToPrisonAdminDate && defendant.isSentToPrisonAdmin) {
-        texts.push(
-          formatMessage(strings.sendToPrisonAdminDate, {
-            date: formatDate(defendant.sentToPrisonAdminDate),
-          }),
-        )
-      }
+    if (defendant.sentToPrisonAdminDate && defendant.isSentToPrisonAdmin) {
+      texts.push(
+        formatMessage(strings.sendToPrisonAdminDate, {
+          date: formatDate(defendant.sentToPrisonAdminDate),
+        }),
+      )
     }
 
     return texts

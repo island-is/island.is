@@ -27,6 +27,7 @@ import format from 'date-fns/format'
 import { formatCurrency } from '@island.is/application/ui-components'
 import {
   energyFundsLabel,
+  isInvalidRegistrationType,
   mustInspectBeforeStreetRegistration,
 } from './FindVehicleFormField.util'
 
@@ -159,8 +160,7 @@ export const FindVehicleFormField: FC<React.PropsWithChildren<Props>> = ({
     isMachine,
     isEnergyFunds,
     energyFundsMessages,
-    marginTop,
-    marginBottom,
+    clearOnChange,
   } = field
 
   const [plate, setPlate] = useState<string>(
@@ -240,7 +240,7 @@ export const FindVehicleFormField: FC<React.PropsWithChildren<Props>> = ({
 
     const permno = vehicleDisabled ? '' : vehicleDetails.permno || ''
 
-    setValue('findVehicle', true)
+    setValue(`${field.id}.findVehicle`, true)
 
     setValue(`${field.id}.type`, vehicleDetails.make)
     setValue(`${field.id}.make`, vehicleDetails.make)
@@ -267,25 +267,34 @@ export const FindVehicleFormField: FC<React.PropsWithChildren<Props>> = ({
     const machineDisabled = machineDetails.disabled
 
     if (application.typeId === 'StreetRegistration') {
+      const isUnavailableTypeForRegistration = isInvalidRegistrationType(
+        application?.externalData,
+        machineDetails.regNumber || '',
+      )
       const mustInspect = mustInspectBeforeStreetRegistration(
         application?.externalData,
         machineDetails.regNumber || '',
       )
-      if (mustInspect && !machineDisabled) {
+      const statusKey = mustInspect
+        ? 'inspectBeforeRegistration'
+        : isUnavailableTypeForRegistration
+        ? 'unavailableTypeForRegistration'
+        : null
+
+      if (
+        statusKey === 'inspectBeforeRegistration' ||
+        statusKey === 'unavailableTypeForRegistration'
+      ) {
         machineDetails = {
           ...machineDetails,
           disabled: true,
           status:
             validationErrors &&
-            formatText(
-              validationErrors.inspectBeforeRegistration,
-              application,
-              formatMessage,
-            ),
+            formatText(validationErrors[statusKey], application, formatMessage),
         }
       }
     }
-    setValue('findVehicle', true)
+    setValue(`${field.id}.findVehicle`, true)
 
     setValue(
       `${field.id}.paymentRequiredForOwnerChange`,
@@ -311,7 +320,7 @@ export const FindVehicleFormField: FC<React.PropsWithChildren<Props>> = ({
   const setEnergyFundsValues = (
     vehicleDetailsWithGrant: EnergyFundVehicleDetailsWithGrant,
   ) => {
-    setValue('findVehicle', true)
+    setValue(`${field.id}.findVehicle`, true)
 
     setValue(`${field.id}.type`, vehicleDetailsWithGrant.make)
     setValue(`${field.id}.plate`, plate)
@@ -388,6 +397,7 @@ export const FindVehicleFormField: FC<React.PropsWithChildren<Props>> = ({
               },
             }}
             maxLength={isMachine ? 7 : 5}
+            clearOnChange={clearOnChange}
           />
         </Box>
         <Button onClick={findVehicleByPlate} disabled={buttonDisabled}>

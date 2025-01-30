@@ -781,6 +781,11 @@ export const notifications = {
       defaultMessage: 'Landsréttur',
       description: 'Nafn á Landsrétti í tölvupóstum',
     },
+    publicProsecutorCriminalRecords: {
+      id: 'judicial.system.backend:notifications.email_names.public_prosecutor_criminal_records',
+      defaultMessage: 'Ritari sakaskrár',
+      description: 'Nafn á ritara sakaskrá í tölvupóstum',
+    },
   }),
   COAJudgeAssigned: defineMessages({
     subject: {
@@ -837,9 +842,9 @@ export const notifications = {
       description: 'Fyrirsögn í pósti til dómstóls þegar ákæra er afturkölluð',
     },
     body: {
-      id: 'judicial.system.backend:notifications.court_revoked_indictment_email.body',
+      id: 'judicial.system.backend:notifications.court_revoked_indictment_email.body_v1',
       defaultMessage:
-        '{prosecutorsOffice} hefur afturkallað ákæru {courtCaseNumber, select, NONE {í máli sem ekki hefur enn fengið málsnúmer} other {í máli {courtCaseNumber}}}.',
+        '{prosecutorsOffice} hefur afturkallað ákæru í máli {caseNumber}.',
       description: 'Texti í pósti til dómstóls þegar ákæra er afturkölluð',
     },
   }),

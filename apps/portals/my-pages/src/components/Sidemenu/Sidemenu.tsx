@@ -47,7 +47,7 @@ const Sidemenu = ({
       onClick={() => setSideMenuOpen(false)}
       aria-label={formatMessage(sharedMessages.close)}
     >
-      <Icon icon="close" color="blue400" />
+      <Icon icon="close" color="blue600" />
     </button>
   )
 
@@ -89,7 +89,7 @@ const Sidemenu = ({
               justifyContent="center"
               alignItems="center"
               className={styles.overviewIcon}
-              marginRight={2}
+              marginRight={'p2'}
             >
               <Icon icon="dots" />
             </Box>

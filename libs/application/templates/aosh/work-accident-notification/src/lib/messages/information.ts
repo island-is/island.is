@@ -115,7 +115,7 @@ export const information = {
         description: 'Email and phone information alert message',
       },
     }),
-    laborProtection: {
+    laborProtection: defineMessages({
       pageTitle: {
         id: 'aosh.wan.application:information.laborProtection.pageTitle',
         defaultMessage: 'Vinnuverndastarf',
@@ -128,8 +128,8 @@ export const information = {
         description:
           'Text for the alerts field in the labor protection part of the company section',
       },
-    },
-    workhealth: {
+    }),
+    workhealth: defineMessages({
       sectionTitle: {
         id: 'aosh.wan.application:information.workhealth.sectionTitle',
         defaultMessage: 'Vinnuvernd',
@@ -137,7 +137,7 @@ export const information = {
       },
       descriptionField: {
         id: 'aosh.wan.application:information.workhealth.descriptionField',
-        defaultMessage: 'Vinnuverndarstarf',
+        defaultMessage: 'Vinnuverndarstörf',
         description: 'H5 of workhealth information page',
       },
       errorAlert: {
@@ -147,8 +147,18 @@ export const information = {
         description:
           'error alert on workhealth information page when user attempt to navigate forwards without choosing an option',
       },
-    },
-    projectPurchase: {
+      pageTitle: {
+        id: 'aosh.wan.application:information.workhealth.pageTitle',
+        defaultMessage: 'Vinnuvernd',
+        description: 'Title of workhealth information page',
+      },
+      pageDescription: {
+        id: 'aosh.wan.application:information.workhealth.pageDescription',
+        defaultMessage: 'Öryggis- og heilbrigðisstarfsemi fyrirtækisins.',
+        description: 'Description of workhealth information page',
+      },
+    }),
+    projectPurchase: defineMessages({
       sectionTitle: {
         id: 'aosh.wan.application:information.projectPurchase.sectionTitle',
         defaultMessage: 'Verkkaupi',
@@ -177,6 +187,16 @@ export const information = {
         defaultMessage: 'Nafn',
         description: 'Name, in project purchase section',
       },
-    },
+      pageTitle: {
+        id: 'aosh.wan.application:information.projectPurchase.pageTitle',
+        defaultMessage: 'Verkkaupi',
+        description: 'Title of project purchase information page',
+      },
+      pageDescription: {
+        id: 'aosh.wan.application:information.projectPurchase.pageDescription',
+        defaultMessage: 'Verkkaupi',
+        description: 'Description of project purchase information page',
+      },
+    }),
   },
 }

@@ -3,7 +3,7 @@ import localeEN from 'date-fns/locale/en-GB'
 import localeIS from 'date-fns/locale/is'
 import { useRouter } from 'next/router'
 
-import { ActionCard, Box, InfoCardGrid } from '@island.is/island-ui/core'
+import { ActionCard, Box, InfoCardGrid, Text } from '@island.is/island-ui/core'
 import { Locale } from '@island.is/shared/types'
 import { isDefined } from '@island.is/shared/utils'
 import {
@@ -19,6 +19,12 @@ import { TranslationKeys } from './types'
 interface SliceProps {
   slice: GrantCardsListSchema
 }
+
+const OPEN_GRANT_STATUSES = [
+  GrantStatus.AlwaysOpen,
+  GrantStatus.Open,
+  GrantStatus.OpenWithNote,
+]
 
 const formatDate = (
   date: Date,
@@ -108,25 +114,54 @@ const GrantCardsList = ({ slice }: SliceProps) => {
     }
   }
 
-  if (slice.resolvedGrantsList?.items.length === 1) {
-    const grant = slice.resolvedGrantsList.items[0]
+  const grantItems = slice.resolvedGrantsList?.items ?? []
+
+  if (grantItems.length === 1) {
+    const grant = grantItems[0]
+
+    const cardText = `${getTranslationString(
+      grant?.status && OPEN_GRANT_STATUSES.includes(grant.status)
+        ? 'applicationOpen'
+        : 'applicationClosed',
+    )} / ${parseStatus(grant)}`
+
     return (
-      <ActionCard
-        heading={grant.name}
-        backgroundColor="blue"
-        cta={{
-          disabled: !grant.applicationUrl?.slug,
-          label: grant.applicationButtonLabel ?? getTranslationString('apply'),
-          onClick: () => router.push(grant.applicationUrl?.slug ?? ''),
-          icon: 'open',
-          iconType: 'outline',
-        }}
-      />
+      <>
+        {slice.displayTitle && (
+          <Box marginBottom={2}>
+            <Text variant="h3" as="span" color="dark400">
+              {slice.title}
+            </Text>
+          </Box>
+        )}
+        <ActionCard
+          heading={grant.name}
+          text={cardText}
+          backgroundColor="blue"
+          cta={{
+            disabled:
+              !grant?.status ||
+              grant.status === GrantStatus.Invalid ||
+              grant.status === GrantStatus.Closed ||
+              grant.status === GrantStatus.Unknown,
+            size: 'small',
+            label:
+              grant.applicationButtonLabel ?? getTranslationString('apply'),
+            onClick: () => router.push(grant.applicationUrl?.slug ?? ''),
+            icon: 'open',
+            iconType: 'outline',
+          }}
+        />
+      </>
     )
   }
 
-  const cards = slice.resolvedGrantsList?.items
+  const cards = grantItems
     ?.map((grant) => {
+      const grantIsOpen =
+        !!grant?.status &&
+        grant.status !== GrantStatus.Invalid &&
+        OPEN_GRANT_STATUSES.includes(grant.status)
       if (grant.id) {
         return {
           id: grant.id,
@@ -145,11 +180,21 @@ const GrantCardsList = ({ slice }: SliceProps) => {
           link: {
             label: getTranslationString('applicationClosed'),
             href: linkResolver(
-              'styrkjatorggrant',
+              'grantsplazagrant',
               [grant?.applicationId ?? ''],
               activeLocale,
             ).href,
           },
+          tags: [
+            !!grant.status && grant.status !== GrantStatus.Invalid
+              ? {
+                  label: getTranslationString(
+                    grantIsOpen ? 'applicationOpen' : 'applicationClosed',
+                  ),
+                  variant: grantIsOpen ? 'mint' : 'rose',
+                }
+              : undefined,
+          ].filter(isDefined),
           detailLines: [
             grant.dateFrom && grant.dateTo
               ? {
@@ -183,9 +228,21 @@ const GrantCardsList = ({ slice }: SliceProps) => {
     .filter(isDefined)
 
   return (
-    <Box padding={1} borderColor="blue100" borderRadius="large">
-      <InfoCardGrid columns={1} variant="detailed" cards={cards ?? []} />
-    </Box>
+    <>
+      {slice.displayTitle && (
+        <Box marginBottom={2}>
+          <Text variant="h3" as="span" color="dark400">
+            {slice.title}
+          </Text>
+        </Box>
+      )}
+      <InfoCardGrid
+        columns={1}
+        cardsBorder="blue200"
+        variant="detailed"
+        cards={cards ?? []}
+      />
+    </>
   )
 }
 

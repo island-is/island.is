@@ -80,7 +80,7 @@ const useIndictmentCounts = () => {
         const { data } = await updateIndictmentCountMutation({
           variables: {
             input: {
-              indictmentCountId: indictmentCountId,
+              indictmentCountId,
               caseId,
               ...update,
             },
@@ -128,11 +128,21 @@ const useIndictmentCounts = () => {
   )
 
   const lawTag = useCallback(
-    (law: number[]) =>
-      formatMessage(indictmentCount.lawsBrokenTag, {
-        paragraph: law[1],
-        article: law[0],
-      }),
+    (law: number[]) => {
+      const article = law[0]
+      const paragraph = law[1]
+
+      if (paragraph === 0) {
+        return formatMessage(indictmentCount.lawsBrokenTagArticleOnly, {
+          article,
+        })
+      } else {
+        return formatMessage(indictmentCount.lawsBrokenTag, {
+          article,
+          paragraph,
+        })
+      }
+    },
     [formatMessage],
   )
 
