@@ -236,35 +236,35 @@ export const serviceSetup = (services: {
       },
       XROAD_RSK_PROCURING_REDIS_NODES: {
         dev: json([
-          'clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379',
+          'redis.internal:6379',
         ]),
         staging: json([
-          'clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379',
+          'redis.internal:6379',
         ]),
         prod: json([
-          'clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379',
+          'redis.internal:6379',
         ]),
       },
       APOLLO_CACHE_REDIS_NODES: {
         dev: json([
-          'clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379',
+          'redis.internal:6379',
         ]),
         staging: json([
-          'clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379',
+          'redis.internal:6379',
         ]),
         prod: json([
-          'clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379',
+          'redis.internal:6379',
         ]),
       },
       LICENSE_SERVICE_REDIS_NODES: {
         dev: json([
-          'clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379',
+          'redis.internal:6379',
         ]),
         staging: json([
-          'clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379',
+          'redis.internal:6379',
         ]),
         prod: json([
-          'clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379',
+          'redis.internal:6379',
         ]),
       },
       XROAD_RSK_PROCURING_SCOPE: json([

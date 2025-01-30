@@ -18,13 +18,13 @@ const imageName = 'services-auth-ids-api'
 
 const REDIS_NODE_CONFIG = {
   dev: json([
-    'clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379',
+    'redis.internal:6379',
   ]),
   staging: json([
-    'clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379',
+    'redis.internal:6379',
   ]),
   prod: json([
-    'clustercfg.general-redis-cluster-group.dnugi2.euw1.cache.amazonaws.com:6379',
+    'redis.internal:6379',
   ]),
 }
 

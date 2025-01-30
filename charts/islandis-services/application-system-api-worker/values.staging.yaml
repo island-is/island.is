@@ -39,7 +39,7 @@ env:
   IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
   LOG_LEVEL: 'info'
   NODE_OPTIONS: '--max-old-space-size=691 -r dd-trace/init'
-  REDIS_URL_NODE_01: '["clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379"]'
+  REDIS_URL_NODE_01: '["redis.internal:6379"]'
   SERVERSIDE_FEATURES_ON: ''
   USER_NOTIFICATION_API_URL: 'http://web-user-notification.user-notification.svc.cluster.local'
   XROAD_BASE_PATH: 'http://securityserver.staging01.devland.is'

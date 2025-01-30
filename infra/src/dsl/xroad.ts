@@ -404,13 +404,13 @@ export const NationalRegistry = new XroadConf({
     },
     XROAD_NATIONAL_REGISTRY_REDIS_NODES: {
       dev: json([
-        'clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379',
+        'redis.internal:6379',
       ]),
       staging: json([
-        'clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379',
+        'redis.internal:6379',
       ]),
       prod: json([
-        'clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379',
+        'redis.internal:6379',
       ]),
     },
     // Deprecated:
@@ -552,13 +552,13 @@ export const RskCompanyInfo = new XroadConf({
     },
     COMPANY_REGISTRY_REDIS_NODES: {
       dev: json([
-        'clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379',
+        'redis.internal:6379',
       ]),
       staging: json([
-        'clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379',
+        'redis.internal:6379',
       ]),
       prod: json([
-        'clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379',
+        'redis.internal:6379',
       ]),
     },
   },

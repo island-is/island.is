@@ -22,7 +22,7 @@ env:
   CODE_OWNER: 'hugsmidjan'
   HUNTING_LICENSE_PASS_TEMPLATE_ID: 'd4ecf781-3764-4063-a4e1-9c3e17cebfba'
   IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
-  LICENSE_SERVICE_REDIS_NODES: '["clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379"]'
+  LICENSE_SERVICE_REDIS_NODES: '["redis.internal:6379"]'
   LOG_LEVEL: 'info'
   NODE_OPTIONS: '--max-old-space-size=460 -r dd-trace/init'
   SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'

@@ -5,7 +5,7 @@ const dev01: EnvironmentConfig = {
   auroraHost: 'postgres-applications.internal',
   auroraReplica: 'postgres-applications-reader.internal',
   redisHost: JSON.stringify([
-    'clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379',
+    'redis.internal:6379',
   ]),
   domain: 'dev01.devland.is',
   type: 'dev',
@@ -42,7 +42,7 @@ const staging01: EnvironmentConfig = {
   defaultMinReplicas: 1,
   releaseName: 'web',
   redisHost: JSON.stringify([
-    'clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379',
+    'redis.internal:6379',
   ]),
   awsAccountId: '261174024191',
   awsAccountRegion: 'eu-west-1',
@@ -87,7 +87,7 @@ export let Envs: EnvironmentConfigs = {
     defaultMinReplicas: 3,
     releaseName: 'web',
     redisHost: JSON.stringify([
-      'clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379',
+      'redis.internal:6379',
     ]),
     awsAccountId: '251502586493',
     awsAccountRegion: 'eu-west-1',
@@ -118,7 +118,7 @@ export let Envs: EnvironmentConfigs = {
     defaultMinReplicas: 3,
     releaseName: 'web',
     redisHost: JSON.stringify([
-      'clustercfg.general-redis-cluster-group.dnugi2.euw1.cache.amazonaws.com:6379',
+      'redis.internal:6379',
     ]),
     awsAccountId: '567113216315',
     awsAccountRegion: 'eu-west-1',

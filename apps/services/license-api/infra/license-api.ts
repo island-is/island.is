@@ -29,13 +29,13 @@ export const serviceSetup = (): ServiceBuilder<'license-api'> =>
       },
       LICENSE_SERVICE_REDIS_NODES: {
         dev: json([
-          'clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379',
+          'redis.internal:6379',
         ]),
         staging: json([
-          'clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379',
+          'redis.internal:6379',
         ]),
         prod: json([
-          'clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379',
+          'redis.internal:6379',
         ]),
       },
       HUNTING_LICENSE_PASS_TEMPLATE_ID: {

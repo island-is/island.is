@@ -9,7 +9,7 @@ export const serviceSetup = (): ServiceBuilder<'github-actions-cache'> => {
 
     .env({
       REDIS_NODES:
-        'clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379',
+        'redis.internal:6379',
     })
     .ingress({
       primary: {
