@@ -753,14 +753,13 @@ export class ApplicationController {
       })
     const templateId = existingApplication.typeId as ApplicationTypes
     const template = await getApplicationTemplateByTypeId(templateId)
+    // TODO
+    if (template === null) {
+      throw new BadRequestException(
+        `No application template exists for type: ${existingApplication.typeId}`,
+      )
+    }
     return withCodeOwner(template.codeOwner, async () => {
-      // TODO
-      if (template === null) {
-        throw new BadRequestException(
-          `No application template exists for type: ${existingApplication.typeId}`,
-        )
-      }
-
       const newAnswers = (updateApplicationStateDto.answers ?? {}) as FormValue
       const namespaces = await getApplicationTranslationNamespaces(
         existingApplication as BaseApplication,
