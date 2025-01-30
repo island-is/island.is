@@ -55,7 +55,7 @@ jobs:
       CREATE_PATTERNS: ^release/
       PRE_RELEASE_PATTERN: ^pre-release/
     outputs:
-      NODE_IMAGE_TAG: ${{ steps.git-branch.outputs.NODE_IMAGE_TAG }}
+      NODE_VERSION: ${{ steps.git-branch.outputs.NODE_VERSION }}
       GIT_BRANCH: ${{ steps.git-branch.outputs.GIT_BRANCH }}
       GIT_BRANCH_DEPLOY: ${{ steps.git-branch-deploy.outputs.GIT_BRANCH_DEPLOY }}
       FEATURE_NAME: ${{ steps.git-branch-deploy.outputs.FEATURE_NAME }}
@@ -166,7 +166,7 @@ jobs:
       CACHE_KEYS: ${{ steps.get-cache.outputs.keys }}
       TEST_CHUNKS: ${{ steps.test_projects.outputs.CHUNKS }}
       DOCKER_TAG: ${{ steps.docker_tags.outputs.DOCKER_TAG }}
-      NODE_IMAGE_TAG: ${{ steps.nodejs_image.outputs.NODE_IMAGE_TAG }}
+      NODE_VERSION: ${{ steps.nodejs_image.outputs.NODE_VERSION }}
       LAST_GOOD_BUILD_DOCKER_TAG: ${{ steps.git_nx_base.outputs.LAST_GOOD_BUILD_DOCKER_TAG }}
       UNAFFECTED: ${{ steps.unaffected.outputs.UNAFFECTED }}
       BUILD_CHUNKS: ${{ steps.build_map.outputs.BUILD_CHUNKS }}
@@ -266,11 +266,11 @@ jobs:
         continue-on-error: false
         run: |
           set -euo pipefail
-          export NODE_IMAGE_TAG="$(./scripts/ci/get-node-version.mjs)"
-          echo "NODE_IMAGE_TAG: '${NODE_IMAGE_TAG}'"
-          echo NODE_IMAGE_TAG="${NODE_IMAGE_TAG}" >> "$GITHUB_OUTPUT"
-          echo NODE_IMAGE_TAG="${NODE_IMAGE_TAG}" >> "$GITHUB_ENV"
-          echo "**NODE_IMAGE_TAG** '${NODE_IMAGE_TAG}'" >> "$GITHUB_STEP_SUMMARY"
+          export NODE_VERSION="$(./scripts/ci/get-node-version.mjs)"
+          echo "NODE_VERSION: '${NODE_VERSION}'"
+          echo NODE_VERSION="${NODE_VERSION}" >> "$GITHUB_OUTPUT"
+          echo NODE_VERSION="${NODE_VERSION}" >> "$GITHUB_ENV"
+          echo "**NODE_VERSION** '${NODE_VERSION}'" >> "$GITHUB_STEP_SUMMARY"
       - name: Generate docker image tag
         id: docker_tags
         run: |
@@ -505,7 +505,7 @@ jobs:
       AFFECTED_ALL: ${{ secrets.AFFECTED_ALL }}
       GIT_BRANCH: ${{ needs.pre-checks.outputs.GIT_BRANCH}}
       DOCKER_TAG: ${{ needs.prepare.outputs.DOCKER_TAG}}
-      NODE_IMAGE_TAG: ${{ needs.prepare.outputs.NODE_IMAGE_TAG}}
+      NODE_VERSION: ${{ needs.prepare.outputs.NODE_VERSION}}
       PUBLISH: true
     strategy:
       fail-fast: false
@@ -593,7 +593,7 @@ jobs:
         id: dockerargs
         if: steps.gather.outcome == 'success'
         env:
-          NODE_IMAGE_TAG: ${{ needs.prepare.outputs.NODE_IMAGE_TAG }}
+          NODE_VERSION: ${{ needs.prepare.outputs.NODE_VERSION }}
           GIT_COMMIT_SHA: ${{ github.sha }}
           DOCKER_BASE_IMAGE_REGISTRY: ${{ env.DOCKER_BASE_IMAGE_REGISTRY }}
         run: |
@@ -604,7 +604,7 @@ jobs:
           SERVER_URL="${SERVER_URL%.git}"
           build_args=(
             --build-arg="DOCKER_IMAGE_REGISTRY=${DOCKER_BASE_IMAGE_REGISTRY}"
-            --build-arg="NODE_IMAGE_TAG=${NODE_IMAGE_TAG}"
+            --build-arg="NODE_VERSION=${NODE_VERSION}"
             --build-arg="GIT_BRANCH=${GIT_BRANCH}"
             --build-arg="GIT_COMMIT_SHA=${GIT_COMMIT_SHA}"
             --build-arg="GIT_REPOSITORY_URL=${SERVER_URL}"
@@ -617,12 +617,12 @@ jobs:
         id: dockerbuild
         if: steps.gather.outcome == 'success'
         env:
-          NODE_IMAGE_TAG: ${{ needs.prepare.outputs.NODE_IMAGE_TAG }}
+          NODE_VERSION: ${{ needs.prepare.outputs.NODE_VERSION }}
           GIT_COMMIT_SHA: ${{ github.sha }}
           DOCKER_BASE_IMAGE_REGISTRY: ${{ env.DOCKER_BASE_IMAGE_REGISTRY }}
         run: |
           set -x
-          echo "Node image tag is: '${NODE_IMAGE_TAG}'"
+          echo "Node image tag is: '${NODE_VERSION}'"
           echo "Docker build args are: 'EXTRA_DOCKER_BUILD_ARGS'"
           export EXTRA_DOCKER_BUILD_ARGS
           ./scripts/ci/run-in-parallel.sh "90_${DOCKER_TYPE}"
@@ -630,12 +630,12 @@ jobs:
       - name: Building Docker images Retry
         if: steps.gather.outcome == 'success' && steps.dockerbuild.outcome == 'failure'
         env:
-          NODE_IMAGE_TAG: ${{ needs.prepare.outputs.NODE_IMAGE_TAG }}
+          NODE_VERSION: ${{ needs.prepare.outputs.NODE_VERSION }}
           GIT_COMMIT_SHA: ${{ github.sha }}
           DOCKER_BASE_IMAGE_REGISTRY: ${{ env.DOCKER_BASE_IMAGE_REGISTRY }}
         run: |
           set -x
-          echo "Node image tag is: '${NODE_IMAGE_TAG}'"
+          echo "Node image tag is: '${NODE_VERSION}'"
           echo "Docker build args are: 'EXTRA_DOCKER_BUILD_ARGS'"
           export EXTRA_DOCKER_BUILD_ARGS
           ./scripts/ci/run-in-parallel.sh "90_${DOCKER_TYPE}"
@@ -653,7 +653,7 @@ jobs:
       FEATURE_NAME: ${{ needs.pre-checks.outputs.FEATURE_NAME }}
       DOCKER_TAG: ${{ needs.prepare.outputs.DOCKER_TAG}}
       GIT_BRANCH: ${{ needs.pre-checks.outputs.GIT_BRANCH }}
-      NODE_IMAGE_TAG: ${{ needs.prepare.outputs.NODE_IMAGE_TAG }}
+      NODE_VERSION: ${{ needs.prepare.outputs.NODE_VERSION }}
     steps:
       - uses: actions/checkout@v3
 
@@ -674,8 +674,8 @@ jobs:
         working-directory: infra
         run: |
           echo Registry is: ${{env.DOCKER_BASE_IMAGE_REGISTRY}}
-          echo Image tag is: ${{env.NODE_IMAGE_TAG}}
-          export EXTRA_DOCKER_BUILD_ARGS="--build-arg DOCKER_IMAGE_REGISTRY=${{env.DOCKER_BASE_IMAGE_REGISTRY}} --build-arg NODE_IMAGE_TAG=${{env.NODE_IMAGE_TAG}}"
+          echo Image tag is: ${{env.NODE_VERSION}}
+          export EXTRA_DOCKER_BUILD_ARGS="--build-arg DOCKER_IMAGE_REGISTRY=${{env.DOCKER_BASE_IMAGE_REGISTRY}} --build-arg NODE_VERSION=${{env.NODE_VERSION}}"
           ./scripts/build-docker-container.sh "$DOCKER_TAG"
           echo "COMMENT<<EOF" >> "$GITHUB_ENV"
           echo "Affected services are: ${{needs.prepare.outputs.IMAGES}}" >> "$GITHUB_ENV"

@@ -7,7 +7,7 @@ const DOCKERHUB_BASE_URL =
 const nodeVersion = await getPackageVersion()
 // TODO: make better
 // const version = await getVersion(nodeVersion)
-const version = '20-alpine3.20'
+const version = '20'
 
 if (!version) {
   console.error(`Failed getting docker image for ${nodeVersion}`)
