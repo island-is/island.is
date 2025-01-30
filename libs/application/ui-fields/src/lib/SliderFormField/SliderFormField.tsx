@@ -38,6 +38,8 @@ export const SliderFormField: FC<
     snap,
     step,
     saveAsString,
+    textColor,
+    progressOverlayColor,
     marginTop,
     marginBottom,
   } = field
@@ -86,10 +88,16 @@ export const SliderFormField: FC<
             showRemainderOverlay={showRemainderOverlay}
             showProgressOverlay={showProgressOverlay}
             showToolTip={showToolTip}
-            label={{
-              singular: formatText(label.singular, application, formatMessage),
-              plural: formatText(label.plural, application, formatMessage),
-            }}
+            label={
+              label && {
+                singular: formatText(
+                  label.singular,
+                  application,
+                  formatMessage,
+                ),
+                plural: formatText(label.plural, application, formatMessage),
+              }
+            }
             rangeDates={rangeDates}
             currentIndex={Number(value)}
             onChange={(val) => {
@@ -100,6 +108,8 @@ export const SliderFormField: FC<
             }}
             onChangeEnd={onChangeEnd}
             labelMultiplier={labelMultiplier}
+            textColor={textColor}
+            progressOverlayColor={progressOverlayColor}
           />
         )}
       />

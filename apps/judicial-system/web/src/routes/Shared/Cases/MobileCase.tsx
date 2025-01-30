@@ -94,15 +94,13 @@ const MobileCase: FC<PropsWithChildren<Props>> = ({
       <Text title={theCase.policeCaseNumbers?.join(', ')}>
         {displayFirstPlusRemaining(theCase.policeCaseNumbers)}
       </Text>
-
       {theCase.courtCaseNumber && (
         <Text>{`${courtAbbreviation ? `${courtAbbreviation}: ` : ''}${
           theCase.courtCaseNumber
         }`}</Text>
       )}
-      <br />
       {theCase.defendants && theCase.defendants.length > 0 && (
-        <>
+        <Box marginTop={3}>
           <Text>{theCase.defendants[0].name ?? ''}</Text>
           {theCase.defendants.length === 1 ? (
             <Text>
@@ -114,18 +112,17 @@ const MobileCase: FC<PropsWithChildren<Props>> = ({
           ) : (
             <Text>{`+ ${theCase.defendants.length - 1}`}</Text>
           )}
-        </>
+        </Box>
       )}
-      {theCase.created && (
-        <>
-          <br />
-          <Text variant="small" fontWeight={'medium'}>
-            {`${formatMessage(tables.created)} ${format(
-              parseISO(theCase.created),
+      {theCase.caseSentToCourtDate && (
+        <Box marginTop={3}>
+          <Text variant="small" fontWeight="medium">
+            {`${formatMessage(tables.sentToCourtDate)} ${format(
+              parseISO(theCase.caseSentToCourtDate),
               'd.M.y',
             )}`}
           </Text>
-        </>
+        </Box>
       )}
       <Box marginTop={1}>{children}</Box>
     </CategoryCard>

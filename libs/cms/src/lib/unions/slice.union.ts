@@ -48,6 +48,7 @@ import {
   IFeaturedEvents,
   IGenericList,
   ILatestGenericListItems,
+  IFeaturedLinks,
   IGrantCardsList,
 } from '../generated/contentfulTypes'
 import { Image, mapImage } from '../models/image.model'
@@ -146,6 +147,7 @@ import {
   LatestGenericListItems,
   mapLatestGenericListItems,
 } from '../models/latestGenericListItems.model'
+import { FeaturedLinks, mapFeaturedLinks } from '../models/featuredLinks.model'
 import {
   GrantCardsList,
   mapGrantCardsList,
@@ -198,6 +200,7 @@ export type SliceTypes =
   | IGenericList
   | IGrantCardsList
   | ILatestGenericListItems
+  | IFeaturedLinks
 
 export const SliceUnion = createUnionType({
   name: 'Slice',
@@ -250,6 +253,7 @@ export const SliceUnion = createUnionType({
     FeaturedEvents,
     GenericList,
     LatestGenericListItems,
+    FeaturedLinks,
     GrantCardsList,
   ],
   resolveType: (document) => document.typename, // typename is appended to request on indexing
@@ -348,6 +352,8 @@ export const mapSliceUnion = (slice: SliceTypes): typeof SliceUnion => {
       return mapGenericList(slice as IGenericList)
     case 'latestGenericListItems':
       return mapLatestGenericListItems(slice as ILatestGenericListItems)
+    case 'featuredLinks':
+      return mapFeaturedLinks(slice as IFeaturedLinks)
     case 'grantCardsList':
       return mapGrantCardsList(slice as IGrantCardsList)
     default:

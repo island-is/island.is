@@ -18,9 +18,17 @@ export const notificationModuleConfig = defineConfig({
         'PRISON_ADMIN_INDICTMENT_EMAILS',
         '',
       ),
+      publicProsecutorCriminalRecordsEmail: env.required(
+        'PUBLIC_PROSECUTOR_CRIMINAL_RECORDS_EMAIL',
+        '',
+      ),
       courtsEmails: env.requiredJSON('COURTS_EMAILS', {}) as {
         [key: string]: string
       },
+      courtOfAppealsAssistantEmails: env.required(
+        'COURT_OF_APPEALS_ASSISTANT_EMAILS',
+        '',
+      ),
       policeInstitutionEmails: env.requiredJSON(
         'POLICE_INSTITUTIONS_EMAILS',
         {},

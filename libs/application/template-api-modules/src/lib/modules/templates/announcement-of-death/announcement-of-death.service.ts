@@ -40,7 +40,7 @@ export class AnnouncementOfDeathService extends BaseTemplateApiService {
 
   async deathNotice({
     application,
-  }: TemplateApiModuleActionProps): Promise<Boolean> {
+  }: TemplateApiModuleActionProps): Promise<boolean> {
     const applicationData: any =
       application.externalData?.syslumennOnEntry?.data
     if (

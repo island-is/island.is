@@ -9,7 +9,6 @@ import { useLocale } from '@island.is/localization'
 import { aboutSpouseForm } from '../../lib/messages'
 import { DescriptionText, PrivacyPolicyAccordion } from '..'
 import { FAFieldBaseProps } from '../../lib/types'
-import withLogo from '../Logo/Logo'
 
 const AboutSpouseForm = ({ application }: FAFieldBaseProps) => {
   const { lang } = useLocale()
@@ -35,4 +34,4 @@ const AboutSpouseForm = ({ application }: FAFieldBaseProps) => {
   )
 }
 
-export default withLogo(AboutSpouseForm)
+export default AboutSpouseForm
