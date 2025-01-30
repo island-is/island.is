@@ -173,7 +173,7 @@ jobs:
           context: .
           file: scripts/ci/Dockerfile
           push: false
-          target: output-base-full
+          target: output-base
           build-args: |
             NODE_IMAGE_TAG=${{ needs.prepare.outputs.node-image-tag }}
             PLAYWRIGHT_IMAGE_TAG=${{ needs.prepare.outputs.playwright-image-tag }}
