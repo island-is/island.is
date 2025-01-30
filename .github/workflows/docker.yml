@@ -58,6 +58,7 @@ jobs:
         id: set-matrix
         env:
           localrun: ${{ !!github.event.localrun }}
+          projects: ${{ inputs.projects }}
         run: |
           # Create a list of objects of the form:
           # [
@@ -69,7 +70,7 @@ jobs:
           # ]
           echo "matrix=$(git ls-files '**/project.json' |
             xargs cat |
-            jq -s -c '{ include: [
+            jq -s -c --arg projects "$projects" '{ include: [
               .[]
               | select( .name | IN($projects | split(",") | .[]) )
               | {
