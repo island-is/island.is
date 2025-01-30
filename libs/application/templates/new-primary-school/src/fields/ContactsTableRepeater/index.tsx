@@ -37,13 +37,13 @@ const ContactsTableRepeater: FC<React.PropsWithChildren<FieldBaseProps>> = ({
         id,
         title,
         formTitle:
-          newPrimarySchoolMessages.childrenNParents.contactsRegistrationTitle,
+          newPrimarySchoolMessages.childrenNGuardians.contactsRegistrationTitle,
         addItemButtonText:
-          newPrimarySchoolMessages.childrenNParents.contactsAddContact,
+          newPrimarySchoolMessages.childrenNGuardians.contactsAddContact,
         saveItemButtonText:
-          newPrimarySchoolMessages.childrenNParents.contactsRegisterContact,
+          newPrimarySchoolMessages.childrenNGuardians.contactsRegisterContact,
         removeButtonTooltipText:
-          newPrimarySchoolMessages.childrenNParents.contactsDeleteContact,
+          newPrimarySchoolMessages.childrenNGuardians.contactsDeleteContact,
         marginTop: 0,
         maxRows: 4,
         fields: {
