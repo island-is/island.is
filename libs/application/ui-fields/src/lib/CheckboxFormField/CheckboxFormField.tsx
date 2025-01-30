@@ -31,7 +31,7 @@ export const CheckboxFormField = ({
 }: Props) => {
   const {
     id,
-    title,
+    title = '',
     description,
     options,
     disabled,
