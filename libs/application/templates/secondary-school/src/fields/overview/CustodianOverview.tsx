@@ -79,6 +79,7 @@ export const CustodianOverview: FC<FieldBaseProps> = ({
           <GridRow>
             {custodiansExternalData.map((custodian, index) => (
               <GridColumn
+                key={custodian.person?.nationalId}
                 span={custodiansExternalData.length > 1 ? '1/2' : '1/1'}
               >
                 {totalCount > 1 && (
@@ -108,7 +109,10 @@ export const CustodianOverview: FC<FieldBaseProps> = ({
         {!!contacts.length && (
           <GridRow marginTop={3}>
             {contacts.map((contact, index) => (
-              <GridColumn span={contacts.length > 1 ? '1/2' : '1/1'}>
+              <GridColumn
+                key={contact.person?.nationalId}
+                span={contacts.length > 1 ? '1/2' : '1/1'}
+              >
                 {totalCount > 1 && (
                   <Text variant="h5">
                     {`${formatMessage(overview.otherContact.label)} ${
