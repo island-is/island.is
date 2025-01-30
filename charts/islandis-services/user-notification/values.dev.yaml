@@ -35,7 +35,7 @@ env:
   DB_USER: 'user_notification'
   DEAD_LETTER_QUEUE_NAME: 'user-notification-failure'
   EMAIL_FROM_ADDRESS: 'development@island.is'
-  IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
+  IDENTITY_SERVER_ISSUER_URL: 'https://innskra.dev01.devland.is'
   LOG_LEVEL: 'info'
   MAIN_QUEUE_NAME: 'user-notification'
   NATIONAL_REGISTRY_B2C_CLIENT_ID: 'b464afdd-056b-406d-b650-6d41733cfeb7'
