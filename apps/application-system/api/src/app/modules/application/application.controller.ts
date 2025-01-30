@@ -710,16 +710,20 @@ export class ApplicationController {
     })
   }
 
-  private logSubmissionResult(applicationId: string, templateId: string, error = false) {
+  private logSubmissionResult(
+    applicationId: string,
+    templateId: string,
+    error = false,
+  ) {
     const context = {
       applicationId,
       templateId,
     }
-    
+
     const message = error
       ? `Application submission ended with an error`
       : `Application submission ended successfully`
-  
+
     withLoggingContext(context, () => {
       this.logger.info(message)
     })
