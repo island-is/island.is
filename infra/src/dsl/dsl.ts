@@ -1,6 +1,6 @@
 import { merge } from 'lodash'
 import { CodeOwners } from '../../../libs/shared/constants/src/lib/codeOwners'
-import {
+import type {
   Context,
   EnvironmentVariables,
   ExtraValues,
@@ -572,4 +572,4 @@ export const service = <Service extends string>(
 
 export const json = (value: unknown): string => JSON.stringify(value)
 
-export { CodeOwners, Context }
+export type { CodeOwners, Context }
