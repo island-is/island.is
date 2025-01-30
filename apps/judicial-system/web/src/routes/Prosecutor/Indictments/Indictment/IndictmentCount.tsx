@@ -292,8 +292,6 @@ export const getLegalArguments = (
     articles = `${articles}${
       i === andIndex ? ' og' : useSbr ? ', sbr.' : ','
     } ${lawsBroken[i][1]}.`
-
-    console.log('articles', articles)
   }
 
   return formatMessage(strings.legalArgumentsAutofill, {
