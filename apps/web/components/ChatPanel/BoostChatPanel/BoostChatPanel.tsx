@@ -86,7 +86,7 @@ export const BoostChatPanel: React.FC<
     }
 
     return () => {
-      window.boost?.chatPanel?.hide()
+      window.boost?.chatPanel?.minimize()
     }
   }, [activeLocale, endpoint])
 
