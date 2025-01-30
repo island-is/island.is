@@ -45,30 +45,27 @@ export const FilterMobileDrawer = ({
   title,
   children,
 }: PropsWithChildren<FilterMobileDrawerProps>) => {
-  const [initialClientY, setInitialClientY] = useState<number | null>(null)
   const [isClosed, setIsClosed] = useState(true)
-  const [isSwiping, setIsSwiping] = useState(false)
-  const distance = 2
+  const [touchStart, setTouchStart] = useState<number | null>(null)
+  const [touchEnd, setTouchEnd] = useState<number | null>(null)
 
-  const handleTouchStart = (event: React.TouchEvent) => {
-    setIsSwiping(true)
-    setInitialClientY(event.touches[0].clientY)
+  const minSwipeDistance = 50
+
+  const onTouchStart = (e: React.TouchEvent<HTMLElement>) => {
+    setTouchEnd(null)
+    setTouchStart(e.targetTouches[0].clientY)
   }
 
-  const handleTouchMove = (event: React.TouchEvent) => {
-    if (isSwiping && initialClientY !== null) {
-      const currentClientY = event.touches[0].clientY
-      const distanceSwiped = currentClientY - initialClientY
+  const onTouchMove = (e: React.TouchEvent<HTMLElement>) =>
+    setTouchEnd(e.targetTouches[0].clientY)
 
-      if (!isClosed && distanceSwiped > distance) {
-        setIsClosed(true)
-      }
+  const onTouchEnd = (closeModal: () => void) => {
+    if (!touchStart || !touchEnd) return
+    const distance = touchStart - touchEnd
+    const isDownSwipe = distance < -minSwipeDistance
+    if (isDownSwipe) {
+      closeModal()
     }
-  }
-
-  const handleTouchEnd = () => {
-    setIsSwiping(false)
-    setInitialClientY(null)
   }
 
   return (
@@ -96,11 +93,12 @@ export const FilterMobileDrawer = ({
             <Box
               background="dark200"
               className={styles.drawerLine}
+              margin={3}
               onClick={closeModal}
-              onTouchStart={handleTouchStart}
-              onTouchMove={handleTouchMove}
-              onTouchEnd={handleTouchEnd}
-            ></Box>
+              onTouchStart={(e) => onTouchStart(e)}
+              onTouchMove={(e) => onTouchMove(e)}
+              onTouchEnd={() => onTouchEnd(closeModal)}
+            />
             <Box
               display="flex"
               flexDirection="column"
