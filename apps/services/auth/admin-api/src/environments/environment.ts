@@ -7,7 +7,7 @@ const devConfig = {
   },
   auth: {
     audience,
-    issuer: 'https://identity-server.dev01.devland.is',
+    issuer: 'https://innskra.dev01.devland.is',
   },
   port: 6333,
   clientSecretEncryptionKey:
