@@ -96,7 +96,8 @@ apps/**/index.html
 # Next.js
 .next
 
-.nx/
+/.nx/*
+!/.nx/workflows/
 .zed/
 
 # E2E outputs
