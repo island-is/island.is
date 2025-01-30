@@ -21,7 +21,7 @@ FROM ${DOCKER_REGISTRY}/library/node:${NODE_IMAGE_TAG} AS base-deps
 # hadolint ignore=DL3008
 RUN apt-get update && \
   apt-get install -y --no-install-recommends \
-  build-base build-essential gcc git jq openjdk21 pkgconf py3-distutils-extra python3 && \
+  build-essential gcc git jq openjdk-17-jdk pkgconf python3 python3-distutils && \
   ln -sf /usr/bin/python3 /usr/bin/python && \
   apt-get clean && \
   rm -rf /var/lib/apt/lists/*
