@@ -112,6 +112,10 @@ export const m = {
       id: 'web.grants:search.type',
       defaultMessage: 'Tegund',
     },
+    viewResults: {
+      id: 'web.grants:search.viewResults',
+      defaultMessage: 'Skoða niðurstöður',
+    },
     resultFound: {
       id: 'web.grants:search.resultFound',
       defaultMessage: '{arg} styrkur fannst',
@@ -276,6 +280,10 @@ export const m = {
     grantCategoryEnergyTransitionDescription: {
       id: 'web.grants:home.grantCategoryEnergyTransitionDescription',
       defaultMessage: 'Lýsing á orkuskiptum',
+    },
+    grantCategoryEnvironmentDescription: {
+      id: 'web.grants:home.grantCategoryEnvironmentDescription',
+      defaultMessage: 'Lýsing á umhverfi',
     },
   }),
   bullets: defineMessages({

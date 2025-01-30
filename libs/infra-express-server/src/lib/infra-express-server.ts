@@ -30,9 +30,9 @@ export const runServer = ({
     buckets: [0.1, 5, 15, 50, 100, 200, 300, 400, 500], // buckets for response time from 0.1ms to 500ms
   })
 
-  app.use(function collectRouteMetricsPart1(req, res, next) {
+  app.use((req, res, next) => {
     res.locals.startEpoch = Date.now()
-    res.on('finish', function () {
+    res.on('finish', () => {
       const responseTimeInMs = Date.now() - res.locals.startEpoch
       httpRequestDurationMicroseconds
         .labels(req.method, req.path, `${res.statusCode}`)
@@ -41,11 +41,11 @@ export const runServer = ({
     return next()
   })
 
-  app.get('/liveness', function liveness(req, res) {
+  app.get('/liveness', (req, res) => {
     res.json({ ok: true })
   })
 
-  app.get('/version', function versionOfCode(req, res) {
+  app.get('/version', (req, res) => {
     res.json({ version: process.env.REVISION })
   })
 
@@ -64,16 +64,18 @@ export const runServer = ({
   // secured
   app.use('/', routes)
 
-  app.use(function errorHandler(
-    err: any, // eslint-disable-line  @typescript-eslint/no-explicit-any
-    req: Request,
-    res: Response,
-    next: NextFunction, // eslint-disable-line
-  ) {
-    logger.error(`Status code: ${err.status}, msg: ${err.message}`)
-    res.status(err.status || 500)
-    res.send(err.message)
-  })
+  app.use(
+    (
+      err: any, // eslint-disable-line  @typescript-eslint/no-explicit-any
+      req: Request,
+      res: Response,
+      next: NextFunction, // eslint-disable-line
+    ) => {
+      logger.error(`Status code: ${err.status}, msg: ${err.message}`)
+      res.status(err.status || 500)
+      res.send(err.message)
+    },
+  )
 
   const servicePort = parseInt(process.env.PORT || `${port}`)
   const metricsPort = servicePort + 1

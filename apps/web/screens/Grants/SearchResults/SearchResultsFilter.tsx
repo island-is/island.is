@@ -29,6 +29,7 @@ interface Props {
   tags: Array<GenericTag>
   url: string
   variant?: FilterProps['variant']
+  hits?: number
 }
 
 export const GrantsSearchResultsFilter = ({
@@ -38,6 +39,7 @@ export const GrantsSearchResultsFilter = ({
   tags,
   url,
   variant = 'default',
+  hits,
 }: Props) => {
   const { formatMessage } = useIntl()
 
@@ -67,7 +69,8 @@ export const GrantsSearchResultsFilter = ({
         labelClose={formatMessage(m.search.closeFilter)}
         labelClear={formatMessage(m.search.clearFilterCategory)}
         labelTitle={formatMessage(m.search.filterTitle)}
-        labelResult={formatMessage(m.search.resultFound)}
+        labelResult={formatMessage(m.search.viewResults)}
+        resultCount={hits}
         onFilterClear={onReset}
         variant={variant}
         align={'left'}

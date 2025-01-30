@@ -533,7 +533,7 @@ export const OldAgePensionForm: Form = buildForm({
 
                         return currentEmployer?.ratioType === RatioType.YEARLY
                       },
-                      placeholder: '1%',
+                      placeholder: '1-50%',
                       variant: 'number',
                       width: 'full',
                     }),

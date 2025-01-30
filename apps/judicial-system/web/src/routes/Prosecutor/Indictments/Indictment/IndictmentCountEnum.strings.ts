@@ -21,4 +21,9 @@ export const indictmentCountEnum = defineMessages({
     defaultMessage: 'Lyfjaakstur',
     description: 'Notaður sem titill á subtype fyrir "lyfjaakstur" brot.',
   },
+  SPEEDING: {
+    id: 'judicial.system.core:indictments_indictment.indictment_count_enum.speeding',
+    defaultMessage: 'Hraðakstur',
+    description: 'Notaður sem titill á subtype fyrir "hraðakstur" brot.',
+  },
 })

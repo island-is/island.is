@@ -13,6 +13,7 @@ import {
   DateLog,
   DefenderChoice,
   IndictmentCount,
+  IndictmentCountOffense,
   IndictmentDecision,
   SessionArrangements,
   User,
@@ -299,13 +300,20 @@ export const isIndictmentStepValid = (workingCase: Case): boolean => {
     return false
   }
 
+  const isValidSpeedingIndictmentCount = (indictmentCount: IndictmentCount) =>
+    indictmentCount.offenses?.includes(IndictmentCountOffense.SPEEDING)
+      ? Boolean(indictmentCount.recordedSpeed) &&
+        Boolean(indictmentCount.speedLimit)
+      : true
+
   const isValidTrafficViolation = (indictmentCount: IndictmentCount) =>
     Boolean(indictmentCount.policeCaseNumber) &&
     Boolean(indictmentCount.offenses && indictmentCount.offenses?.length > 0) &&
     Boolean(indictmentCount.vehicleRegistrationNumber) &&
     Boolean(indictmentCount.lawsBroken) &&
     Boolean(indictmentCount.incidentDescription) &&
-    Boolean(indictmentCount.legalArguments)
+    Boolean(indictmentCount.legalArguments) &&
+    isValidSpeedingIndictmentCount(indictmentCount)
 
   const isValidNonTrafficViolation = (indictmentCount: IndictmentCount) =>
     Boolean(indictmentCount.incidentDescription) &&

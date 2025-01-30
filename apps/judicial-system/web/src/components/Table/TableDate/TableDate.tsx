@@ -4,17 +4,17 @@ import parseISO from 'date-fns/parseISO'
 
 import { Text } from '@island.is/island-ui/core'
 
-const CreatedDate = ({ created }: { created?: string | null }) => {
-  if (!created) {
+const TableDate = ({ displayDate }: { displayDate?: string | null }) => {
+  if (!displayDate) {
     return null
   }
 
   return (
     <Text as="span">
-      {format(parseISO(created), 'd.M.y', {
+      {format(parseISO(displayDate), 'd.M.y', {
         locale: localeIS,
       })}
     </Text>
   )
 }
-export default CreatedDate
+export default TableDate

@@ -39,8 +39,13 @@ export const overview = {
   custodian: defineMessages({
     subtitle: {
       id: 'ss.application:overview.custodian.subtitle',
-      defaultMessage: 'Forsjáraðili',
+      defaultMessage: 'Forsjáraðili/ar',
       description: 'Custodian subtitle',
+    },
+    label: {
+      id: 'ss.application:overview.custodian.label',
+      defaultMessage: 'Forsjáraðili',
+      description: 'Custodian label',
     },
     phoneLabel: {
       id: 'ss.application:overview.custodian.phoneLabel',
@@ -51,7 +56,7 @@ export const overview = {
   otherContact: defineMessages({
     subtitle: {
       id: 'ss.application:overview.otherContact.subtitle',
-      defaultMessage: 'Tengiliður',
+      defaultMessage: 'Tengiliður/ir',
       description: 'Other contact subtitle',
     },
     label: {

@@ -149,4 +149,7 @@ export class CaseListEntry {
   // until we have a resolution on how to handle multiple defendants in the case list
   @Field(() => PunishmentType, { nullable: true })
   readonly defendantsPunishmentType?: PunishmentType
+
+  @Field(() => String, { nullable: true })
+  readonly caseSentToCourtDate?: string
 }

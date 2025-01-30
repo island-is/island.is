@@ -15,9 +15,9 @@ import {
   ColumnCaseType,
   CourtCaseNumber,
   CourtDate,
-  CreatedDate,
   DefendantInfo,
   getDurationDate,
+  TableDate,
 } from '@island.is/judicial-system-web/src/components/Table'
 import Table from '@island.is/judicial-system-web/src/components/Table/Table'
 import TagContainer from '@island.is/judicial-system-web/src/components/Tags/TagContainer/TagContainer'
@@ -51,14 +51,14 @@ export const DefenderCasesTable: FC<Props> = ({
           },
           {
             title: capitalize(formatMessage(core.defendant, { suffix: 'i' })),
-            sortable: { isSortable: true, key: 'defendants' },
+            sortBy: 'defendants',
           },
           {
             title: formatMessage(tables.type),
           },
           {
-            title: formatMessage(tables.created),
-            sortable: { isSortable: true, key: 'created' },
+            title: formatMessage(tables.sentToCourtDate),
+            sortBy: 'caseSentToCourtDate',
           },
           { title: formatMessage(tables.state) },
           {
@@ -67,9 +67,7 @@ export const DefenderCasesTable: FC<Props> = ({
                 ? tables.duration
                 : tables.hearingArrangementDate,
             ),
-            sortable: showingCompletedCases
-              ? undefined
-              : { isSortable: true, key: 'courtDate' },
+            sortBy: showingCompletedCases ? undefined : 'courtDate',
           },
         ]}
         data={cases}
@@ -101,7 +99,9 @@ export const DefenderCasesTable: FC<Props> = ({
               />
             ),
           },
-          { cell: (row) => <CreatedDate created={row.created} /> },
+          {
+            cell: (row) => <TableDate displayDate={row.caseSentToCourtDate} />,
+          },
           {
             cell: (row) => (
               <TagContainer>

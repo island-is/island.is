@@ -148,7 +148,7 @@ export const FieldsRepeaterFormField = ({
             {Array.from({ length: numberOfItems }).map((_i, i) => (
               <Fragment key={i}>
                 {(formTitleNumbering !== 'none' || formTitle) && (
-                  <Box marginTop={4} marginLeft={2} width="full">
+                  <Box marginTop={i === 0 ? 0 : 4} marginLeft={2} width="full">
                     <Text variant={formTitleVariant}>
                       {formTitleNumbering === 'prefix' ? `${i + 1}. ` : ''}
                       {formTitle &&
