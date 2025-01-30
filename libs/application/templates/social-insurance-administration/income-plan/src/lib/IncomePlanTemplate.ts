@@ -296,7 +296,7 @@ const IncomePlanTemplate: ApplicationTemplate<
         const { withholdingTax, latestIncomePlan } = getApplicationExternalData(
           application.externalData,
         )
-        
+
         if (latestIncomePlan && latestIncomePlan.status === 'Accepted') {
           latestIncomePlan.incomeTypeLines.forEach((income, i) => {
             set(
@@ -317,8 +317,8 @@ const IncomePlanTemplate: ApplicationTemplate<
               income.incomeCategoryName,
             )
           })
-        }  
-        //Temporarily removing this until withholdingTax endpoint provides more accurate info  
+        }
+        //Temporarily removing this until withholdingTax endpoint provides more accurate info
         // } else {
         //   withholdingTax &&
         //     withholdingTax.incomeTypes?.forEach((income, i) => {
