@@ -1,18 +1,18 @@
 name: Docker Build
 
 on:
-  pull_request:
-    branches: [main, 'release-*', 'pre-release-*']
-  push:
-    branches: [main, 'release-*', 'pre-release-*']
   workflow_dispatch:
     inputs:
       projects:
         description: 'Comma-separated list of project names to build.'
         required: true
+      runners:
+        description: 'The runners to run the jobs on.'
+        required: false
+        default: 'arc-runners'
 
 concurrency:
-  group: docker-build-${{ github.head_ref || github.run_id }}
+  group: container-build-${{ github.head_ref || github.run_id }}
   cancel-in-progress: true
 
 defaults:
@@ -21,21 +21,17 @@ defaults:
 
 env:
   # Regsitry to for build images and cache
-  PRIVATE_REGISTRY: ${{ vars.PRIVATE_REGISTRY || 'localhost' }}
-  # Runner images to run jobs in (actions-runner in ECR, or catthehacker locally)
-  ACTIONS_RUNNER_IMAGE: ${{ vars.ACTIONS_RUNNER_IMAGE || 'ubuntu-latest' }}
+  IMAGE_REPOSITORY: ${{ vars.IMAGE_REPOSITORY || 'localhost' }}
 
 jobs:
   prepare:
     name: Prepare
-    runs-on: ec2-runners
-    container:
-      image: ${{ env.ACTIONS_RUNNER_IMAGE }}
+    runs-on: ${{ inputs.runners }}
     outputs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}
       node-image-tag: ${{ steps.build-args.outputs.node-image-tag }}
       playwright-image-tag: ${{ steps.build-args.outputs.playwright-image-tag }}
-      docker-registry: ${{ steps.build-args.outputs.docker-registry }}
+      container-registry: ${{ steps.build-args.outputs.container-registry }}
     steps:
       - uses: actions/checkout@v4
 
@@ -50,22 +46,6 @@ jobs:
         env:
           localrun: ${{ !!github.event.localrun }}
         run: |
-          # Run smaller sample than all affected when running locally
-          if [[ ${localrun} == true ]]; then
-            output="matrix=$(
-              echo '{
-                "include":[
-                  {"project":"system-e2e","docker":"playwright"},
-                  {"project":"web","docker":"next"},
-                  {"project":"api","docker":"nest"},
-                  {"project":"service-portal","docker":"static"}
-                ]
-              }' | jq -c
-            )"
-            echo "$output" >>"$GITHUB_OUTPUT"
-            exit 0
-          fi
-
           # Create a list of objects of the form:
           # [
           #   {
@@ -87,9 +67,7 @@ jobs:
 
   build:
     name: Build ${{ matrix.project }}
-    runs-on: ec2-runners
-    container:
-      image: ${{ env.ACTIONS_RUNNER_IMAGE }}
+    runs-on: ${{ inputs.runners }}
     needs: prepare
     strategy:
       fail-fast: false
@@ -103,8 +81,8 @@ jobs:
       - name: Prepare and debug inputs
         id: inputs
         env:
-          # We don't use a repository prefix, just the raw project
-          image_repository: ${{ env.PRIVATE_REGISTRY }}/${{ matrix.project }}
+          # We don't use a repository prefix (e.g. <registry>/island.is/<project>), just the raw project
+          image_repository: ${{ env.IMAGE_REPOSITORY }}/${{ matrix.project }}
           localrun: ${{ github.event.localrun }}
         run: |
           echo "Labels: ${{ toJSON(github.event.pull_request.labels) }}"
@@ -122,11 +100,11 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Configure AWS Credentials
-        if: ${{ !github.event.localrun && env.PRIVATE_REGISTRY }}
+        if: ${{ !github.event.localrun && env.IMAGE_REPOSITORY }}
         id: aws-creds
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          role-session-name: docker-build
+          role-session-name: container-build
           aws-region: ${{ vars.AWS_REGION }}
           # Identical to usage in push.yml
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
@@ -149,7 +127,7 @@ jobs:
           install: true
           use: true
 
-      - name: Generate Docker metadata
+      - name: Generate image metadata
         id: meta
         # This step requires a valid GitHub token to query the API for e.g. description of repository
         if: ${{ !github.event.localrun }}
@@ -176,7 +154,7 @@ jobs:
             # mcgh: Merge Commit GitHub
             type=raw,value=mcgh-${{ github.event.pull_request.merge_commit_sha }}
 
-      - name: Docker build/cache deps
+      - name: Docker build/cache dependencies
         uses: docker/build-push-action@v6
         with:
           context: .
@@ -189,7 +167,7 @@ jobs:
           cache-from: ${{ steps.inputs.outputs.build-cache-shared }}
           cache-to: ${{ steps.inputs.outputs.build-cache-shared }},mode=max
 
-      - name: Docker build/cache output-base
+      - name: Docker build/cache output base
         uses: docker/build-push-action@v6
         with:
           context: .
@@ -215,33 +193,8 @@ jobs:
             NODE_IMAGE_TAG=${{ needs.prepare.outputs.node-image-tag }}
             APP=${{ matrix.project }}
             PLAYWRIGHT_IMAGE_TAG=${{ needs.prepare.outputs.playwright-image-tag }}
+          # Caching final images doesn't make sense when this should only run if the project is affected (changed)
           cache-from: |
             ${{ steps.inputs.outputs.build-cache-shared }}
             ${{ steps.inputs.outputs.build-cache }}
           cache-to: ${{ steps.inputs.outputs.build-cache }},mode=min
-
-  status:
-    name: Collect statuses
-    runs-on: ec2-runners
-    container:
-      image: ${{ env.ACTIONS_RUNNER_IMAGE }}
-    if: ${{ !cancelled() }}
-    needs:
-      - prepare
-      - build
-    steps:
-      - name: Check statuses
-        env:
-          dependencies: ${{ toJSON(needs) }}
-        run: |
-          success=true
-          # Loop through each job and ensure .result == "success"
-          for job in $(echo "$dependencies" | jq -r 'keys[]'); do
-            result=$(echo "$dependencies" | jq -r ".[\"$job\"].result")
-            echo "Job $job => $result"
-            if [[ "$result" != "success" ]]; then
-              echo "Job $job failed with result $result"
-              exit 1
-            fi
-          done
-          echo "All dependencies succeeded!"
