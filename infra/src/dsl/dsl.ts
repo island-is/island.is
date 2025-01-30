@@ -572,4 +572,4 @@ export const service = <Service extends string>(
 
 export const json = (value: unknown): string => JSON.stringify(value)
 
-export { CodeOwners }
+export { CodeOwners, Context }
