@@ -154,7 +154,7 @@ describe('BFF PortalEnv serialization', () => {
     expect(result.serviceDef[0].env).toEqual({
       IDENTITY_SERVER_CLIENT_SCOPES: json(adminPortalScopes),
       IDENTITY_SERVER_CLIENT_ID: `@admin.island.is/bff-${key}`,
-      IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is',
+      IDENTITY_SERVER_ISSUER_URL: 'https://innskra.dev01.devland.is',
       // BFF
       BFF_NAME: 'stjornbord',
       BFF_GLOBAL_PREFIX: `/${key}/bff`,

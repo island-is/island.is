@@ -21,7 +21,7 @@ enabled: true
 env:
   API_URL: 'http://web-air-discount-scheme-api'
   ENVIRONMENT: 'dev'
-  IDENTITY_SERVER_ISSUER_DOMAIN: 'identity-server.dev01.devland.is'
+  IDENTITY_SERVER_ISSUER_DOMAIN: 'innskra.dev01.devland.is'
   LOG_LEVEL: 'info'
   NEXTAUTH_URL: 'https://loftbru.dev01.devland.is'
   NODE_OPTIONS: '--max-old-space-size=230 -r dd-trace/init'

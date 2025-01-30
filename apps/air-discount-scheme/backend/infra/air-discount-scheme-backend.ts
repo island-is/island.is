@@ -27,7 +27,7 @@ export const serviceSetup = (): ServiceBuilder<'air-discount-scheme-backend'> =>
         prod: 'prod',
       },
       IDENTITY_SERVER_ISSUER_URL: {
-        dev: 'https://identity-server.dev01.devland.is',
+        dev: 'https://innskra.dev01.devland.is',
         staging: 'https://identity-server.staging01.devland.is',
         prod: 'https://innskra.island.is',
       },
@@ -37,10 +37,9 @@ export const serviceSetup = (): ServiceBuilder<'air-discount-scheme-backend'> =>
     .migrations()
     .redis({
       host: {
-        dev: 'clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379',
-        staging:
-          'clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379',
-        prod: 'clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379',
+        dev: 'redis.internal:6379',
+        staging: 'redis.internal:6379',
+        prod: 'redis.internal:6379',
       },
     })
     .ingress({
