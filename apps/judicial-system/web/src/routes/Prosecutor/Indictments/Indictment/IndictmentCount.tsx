@@ -186,47 +186,49 @@ export const getIncidentDescriptionReason = (
   substances: SubstanceMap,
   formatMessage: IntlShape['formatMessage'],
 ) => {
-  let reason = offenses.reduce((acc, offense, index) => {
-    if (
-      (offenses.length > 1 && index === offenses.length - 1) ||
-      (offenses.length > 2 &&
-        index === offenses.length - 2 &&
-        offense === IndictmentCountOffense.ILLEGAL_DRUGS_DRIVING)
-    ) {
-      acc += ' og '
-    } else if (index > 0) {
-      acc += ', '
-    }
-    switch (offense) {
-      case IndictmentCountOffense.DRIVING_WITHOUT_LICENCE:
-        acc += formatMessage(
-          strings.incidentDescriptionDrivingWithoutLicenceAutofill,
-        )
-        break
-      case IndictmentCountOffense.DRUNK_DRIVING:
-        acc += formatMessage(strings.incidentDescriptionDrunkDrivingAutofill)
-        break
-      case IndictmentCountOffense.ILLEGAL_DRUGS_DRIVING:
-        acc += `${formatMessage(
-          strings.incidentDescriptionDrugsDrivingPrefixAutofill,
-        )} ${formatMessage(
-          strings.incidentDescriptionIllegalDrugsDrivingAutofill,
-        )}`
-        break
-      case IndictmentCountOffense.PRESCRIPTION_DRUGS_DRIVING:
-        acc +=
-          (offenses.includes(IndictmentCountOffense.ILLEGAL_DRUGS_DRIVING)
-            ? ''
-            : `${formatMessage(
-                strings.incidentDescriptionDrugsDrivingPrefixAutofill,
-              )} `) +
-          formatMessage(
-            strings.incidentDescriptionPrescriptionDrugsDrivingAutofill,
+  let reason = offenses
+    .filter((offense) => offense !== IndictmentCountOffense.SPEEDING)
+    .reduce((acc, offense, index) => {
+      if (
+        (offenses.length > 1 && index === offenses.length - 1) ||
+        (offenses.length > 2 &&
+          index === offenses.length - 2 &&
+          offense === IndictmentCountOffense.ILLEGAL_DRUGS_DRIVING)
+      ) {
+        acc += ' og '
+      } else if (index > 0) {
+        acc += ', '
+      }
+      switch (offense) {
+        case IndictmentCountOffense.DRIVING_WITHOUT_LICENCE:
+          acc += formatMessage(
+            strings.incidentDescriptionDrivingWithoutLicenceAutofill,
           )
-        break
-    }
-    return acc
-  }, '')
+          break
+        case IndictmentCountOffense.DRUNK_DRIVING:
+          acc += formatMessage(strings.incidentDescriptionDrunkDrivingAutofill)
+          break
+        case IndictmentCountOffense.ILLEGAL_DRUGS_DRIVING:
+          acc += `${formatMessage(
+            strings.incidentDescriptionDrugsDrivingPrefixAutofill,
+          )} ${formatMessage(
+            strings.incidentDescriptionIllegalDrugsDrivingAutofill,
+          )}`
+          break
+        case IndictmentCountOffense.PRESCRIPTION_DRUGS_DRIVING:
+          acc +=
+            (offenses.includes(IndictmentCountOffense.ILLEGAL_DRUGS_DRIVING)
+              ? ''
+              : `${formatMessage(
+                  strings.incidentDescriptionDrugsDrivingPrefixAutofill,
+                )} `) +
+            formatMessage(
+              strings.incidentDescriptionPrescriptionDrugsDrivingAutofill,
+            )
+          break
+      }
+      return acc
+    }, '')
 
   const relevantSubstances = getRelevantSubstances(offenses, substances)
 
@@ -274,14 +276,15 @@ export const getLegalArguments = (
     }
   }
 
-  let articles = `${lawsBroken[0][1]}.`
-  const noArticle = articles === '0.'
+  // handle the subarticle of the first laws tuple
+  let articles = lawsBroken[0][1] === 0 ? '' : `${lawsBroken[0][1]}.`
 
   for (let i = 1; i < lawsBroken.length; i++) {
     let useSbr = true
+    const hasNoArticle = lawsBroken[i - 1][1] === 0
 
     if (lawsBroken[i][0] !== lawsBroken[i - 1][0]) {
-      articles = `${noArticle ? '' : `${articles} mgr. `}${
+      articles = `${articles}${hasNoArticle ? '' : ` mgr. `}${
         lawsBroken[i - 1][0]
       }. gr.`
       useSbr = i > andIndex
