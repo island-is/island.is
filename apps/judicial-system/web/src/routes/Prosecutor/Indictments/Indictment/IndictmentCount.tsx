@@ -185,7 +185,8 @@ export const getIncidentDescriptionReason = (
   substances: SubstanceMap,
   formatMessage: IntlShape['formatMessage'],
 ) => {
-  let reason = offenses.reduce((acc, offense, index) => {
+  
+  let reason = offenses.filter((offense)=> offense !== IndictmentCountOffense.SPEEDING).reduce((acc, offense, index) => {
     if (
       (offenses.length > 1 && index === offenses.length - 1) ||
       (offenses.length > 2 &&
