@@ -710,6 +710,21 @@ export class ApplicationController {
     })
   }
 
+  private logSubmissionResult(applicationId: string, templateId: string, error = false) {
+    const context = {
+      applicationId,
+      templateId,
+    }
+    
+    const message = error
+      ? `Application submission ended with an error`
+      : `Application submission ended successfully`
+  
+    withLoggingContext(context, () => {
+      this.logger.info(message)
+    })
+  }
+
   @Scopes(ApplicationScope.write)
   @Put('applications/:id/submit')
   @ApiParam({
@@ -799,18 +814,11 @@ export class ApplicationController {
       })
 
       if (hasError && error) {
+        this.logSubmissionResult(existingApplication.id, templateId, hasError)
         throw new TemplateApiError(error, 500)
       }
 
-      withLoggingContext(
-        {
-          applicationId: existingApplication.id,
-          templateId: templateId,
-        },
-        () => {
-          this.logger.info(`Application submission ended successfully`)
-        },
-      )
+      this.logSubmissionResult(existingApplication.id, templateId)
 
       if (hasChanged) {
         return updatedApplication
