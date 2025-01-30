@@ -188,7 +188,9 @@ jobs:
           cache-from: |
             ${{ steps.args.outputs.build-cache-local }}
             ${{ steps.args.outputs.build-cache }}
-          cache-to: ${{ steps.args.outputs.build-cache }},mode=max
+          cache-to: |
+            ${{ steps.args.outputs.build-cache-local }},mode=max
+            ${{ steps.args.outputs.build-cache }},mode=max
 
       - name: Docker build/cache output base
         uses: docker/build-push-action@v6
@@ -200,8 +202,12 @@ jobs:
           build-args: |
             NODE_IMAGE_TAG=${{ needs.prepare.outputs.node-image-version }}
             PLAYWRIGHT_IMAGE_TAG=${{ needs.prepare.outputs.playwright-image-tag }}
-          cache-from: ${{ steps.args.outputs.build-cache }}
-          cache-to: ${{ steps.args.outputs.build-cache }},mode=max
+          cache-from: |
+            ${{ steps.args.outputs.build-cache-local }}
+            ${{ steps.args.outputs.build-cache }}
+          cache-to: |
+            ${{ steps.args.outputs.build-cache-local }},mode=max
+            ${{ steps.args.outputs.build-cache }},mode=max
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v6
@@ -218,6 +224,7 @@ jobs:
             PLAYWRIGHT_IMAGE_TAG=${{ needs.prepare.outputs.playwright-image-tag }}
           # Caching final images doesn't make sense when this should only run if the project is affected (changed)
           cache-from: |
+            ${{ steps.args.outputs.build-cache-local }}
             ${{ steps.args.outputs.build-cache }}
-            ${{ steps.args.outputs.build-cache }}
-          cache-to: ${{ steps.args.outputs.build-cache }},mode=min
+          cache-to: |
+            ${{ steps.args.outputs.build-cache }},mode=min
