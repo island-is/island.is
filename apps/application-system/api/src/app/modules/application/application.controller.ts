@@ -721,10 +721,9 @@ export class ApplicationController {
     }
 
     withLoggingContext(context, () => {
-      if(hasError){
+      if (hasError) {
         this.logger.error(`Application submission ended with an error`)
-      }
-      else {
+      } else {
         this.logger.info(`Application submission ended successfully`)
       }
     })
