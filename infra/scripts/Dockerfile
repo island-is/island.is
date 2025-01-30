@@ -1,11 +1,12 @@
 ARG DOCKER_IMAGE_REGISTRY=public.ecr.aws
 ARG NODE_IMAGE_VERSION
-FROM ${DOCKER_IMAGE_REGISTRY}/docker/library/node:${NODE_IMAGE_VERSION} AS runner
+ARG NODE_IMAGE_TAG=${NODE_IMAGE_VERSION}-alpine3.20
+FROM ${DOCKER_IMAGE_REGISTRY}/docker/library/node:${NODE_IMAGE_TAG} AS runner
 
 # hadolint ignore=DL3018
 RUN apk add --no-cache postgresql-client bash
 
-FROM ${DOCKER_IMAGE_REGISTRY}/docker/library/node:${NODE_IMAGE_VERSION} AS build
+FROM ${DOCKER_IMAGE_REGISTRY}/docker/library/node:${NODE_IMAGE_TAG} AS build
 WORKDIR /app/infra
 
 ENV NODE_OPTIONS=--openssl-legacy-provider
