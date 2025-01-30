@@ -275,17 +275,16 @@ export const getLegalArguments = (
     }
   }
 
+  // handle the subarticle of the first laws tuple
   let articles = lawsBroken[0][1] === 0 ? '' : `${lawsBroken[0][1]}.`
-
-  console.log('articles', articles)
-  console.log('lawsBroken', lawsBroken)
 
   for (let i = 1; i < lawsBroken.length; i++) {
     let useSbr = true
+    const hasNoArticle = lawsBroken[i - 1][1] === 0
 
     if (lawsBroken[i][0] !== lawsBroken[i - 1][0]) {
       articles = `${articles}${
-        lawsBroken[i - 1][1] === 0 ? '' : `${articles} mgr. `
+        hasNoArticle ? '' : ` mgr. `
       }${lawsBroken[i - 1][0]}. gr.`
       useSbr = i > andIndex
     }
