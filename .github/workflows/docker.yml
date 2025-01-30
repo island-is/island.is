@@ -93,8 +93,8 @@ jobs:
       contents: read # This is required for actions/checkout
 
     steps:
-      - name: Prepare and debug inputs
-        id: inputs
+      - name: Prepare arguments
+        id: args
         env:
           # We don't use a repository prefix (e.g. <registry>/island.is/<project>), just the raw project
           image_repository: ${{ env.IMAGE_REGISTRY }}/${{ matrix.project }}
@@ -142,7 +142,7 @@ jobs:
         uses: docker/metadata-action@v5
         with:
           images: |
-            ${{ steps.inputs.outputs.image-repository }}
+            ${{ steps.args.outputs.image-repository }}
           tags: |
             # Edge without prefix should only be used on `main`, so as not to conflict with type=sha
             # type=edge
@@ -173,9 +173,9 @@ jobs:
             NODE_IMAGE_TAG=${{ needs.prepare.outputs.node-image-version }}
             PLAYWRIGHT_IMAGE_TAG=${{ needs.prepare.outputs.playwright-image-tag }}
           cache-from: |
-            ${{ steps.inputs.outputs.build-cache-local }}
-            ${{ steps.inputs.outputs.build-cache }}
-          cache-to: ${{ steps.inputs.outputs.build-cache }},mode=max
+            ${{ steps.args.outputs.build-cache-local }}
+            ${{ steps.args.outputs.build-cache }}
+          cache-to: ${{ steps.args.outputs.build-cache }},mode=max
 
       - name: Docker build/cache output base
         uses: docker/build-push-action@v6
@@ -187,8 +187,8 @@ jobs:
           build-args: |
             NODE_IMAGE_TAG=${{ needs.prepare.outputs.node-image-version }}
             PLAYWRIGHT_IMAGE_TAG=${{ needs.prepare.outputs.playwright-image-tag }}
-          cache-from: ${{ steps.inputs.outputs.build-cache }}
-          cache-to: ${{ steps.inputs.outputs.build-cache }},mode=max
+          cache-from: ${{ steps.args.outputs.build-cache }}
+          cache-to: ${{ steps.args.outputs.build-cache }},mode=max
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v6
@@ -205,6 +205,6 @@ jobs:
             PLAYWRIGHT_IMAGE_TAG=${{ needs.prepare.outputs.playwright-image-tag }}
           # Caching final images doesn't make sense when this should only run if the project is affected (changed)
           cache-from: |
-            ${{ steps.inputs.outputs.build-cache }}
-            ${{ steps.inputs.outputs.build-cache }}
-          cache-to: ${{ steps.inputs.outputs.build-cache }},mode=min
+            ${{ steps.args.outputs.build-cache }}
+            ${{ steps.args.outputs.build-cache }}
+          cache-to: ${{ steps.args.outputs.build-cache }},mode=min
