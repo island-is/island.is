@@ -47,12 +47,11 @@ env:
   # Regsitry to for build images and cache
   IMAGE_REGISTRY: ${{ vars.IMAGE_REGISTRY || 'localhost' }}
   AWS_ECR_REPO_BASE: ${{ vars.AWS_ECR_REPO_BASE || 'docker.io' }}
-  is_labeled: ${{ contains(github.event.pull_request.labels.*.name, 'docker build') }}
 
 jobs:
   prepare:
     name: Prepare
-    if: ${{ github.event_name != 'pull_request' || env.is_labeled }}
+    if: ${{ github.event_name != 'pull_request' || contains(github.event.pull_request.labels.*.name, 'docker build') }}
     runs-on: ${{ inputs.runners || 'arc-runners' }}
     outputs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}
@@ -79,7 +78,7 @@ jobs:
           localrun: ${{ !!github.event.localrun }}
           projects: ${{ inputs.projects }}
         run: |
-          if [[ "$is_labeled" == true ]]; then
+          if [[ ${{ contains(github.event.pull_request.labels.*.name, 'docker build') }} ]]; then
             echo "Using small subset for testing docker build (on ${{ github.event.pull_request.base.ref }})"
             # A representative sample of various docker build targets
             export projects="web,air-discount-scheme-backend,license-api"
