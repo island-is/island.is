@@ -48,9 +48,7 @@ env:
 jobs:
   pre-checks:
     name: Check if job should run
-    runs-on: ec2-runners
-    container:
-      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
+    runs-on: arc-runners
     env:
       CREATE_PATTERNS: ^release/
       PRE_RELEASE_PATTERN: ^pre-release/
@@ -150,9 +148,7 @@ jobs:
           echo "PRE_CHECK=push" >> "$GITHUB_OUTPUT"
 
   prepare:
-    runs-on: ec2-runners
-    container:
-      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
+    runs-on: arc-runners
     timeout-minutes: 90
 
     if: needs.pre-checks.outputs.PRE_CHECK
@@ -458,9 +454,7 @@ jobs:
     needs:
       - prepare
     if: needs.prepare.outputs.TEST_CHUNKS
-    runs-on: ec2-runners
-    container:
-      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
+    runs-on: arc-runners
     timeout-minutes: 35
     env:
       AFFECTED_PROJECTS: ${{ matrix.projects }}

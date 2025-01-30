@@ -27,9 +27,7 @@ env:
 
 jobs:
   prepare:
-    runs-on: ec2-runners
-    container:
-      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
+    runs-on: arc-runners
     timeout-minutes: 35
 
     env:
@@ -295,9 +293,7 @@ jobs:
   linting-workspace:
     needs:
       - prepare
-    runs-on: ec2-runners
-    container:
-      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
+    runs-on: arc-runners
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v4
@@ -335,9 +331,7 @@ jobs:
   formatting:
     needs:
       - prepare
-    runs-on: ec2-runners
-    container:
-      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
+    runs-on: arc-runners
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v4
@@ -376,9 +370,7 @@ jobs:
   linting:
     needs:
       - prepare
-    runs-on: ec2-runners
-    container:
-      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
+    runs-on: arc-runners
     timeout-minutes: 35
     if: needs.prepare.outputs.LINT_CHUNKS
     env:
@@ -407,9 +399,7 @@ jobs:
   build:
     needs:
       - prepare
-    runs-on: ec2-runners
-    container:
-      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
+    runs-on: arc-runners
     timeout-minutes: 35
     env:
       AFFECTED_PROJECTS: ${{ matrix.projects }}
@@ -436,9 +426,7 @@ jobs:
         run: ./scripts/ci/run-in-parallel-native.sh build
 
   success:
-    runs-on: ec2-runners
-    container:
-      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
+    runs-on: arc-runners
     if: ${{ !cancelled() }}
     needs:
       - prepare
