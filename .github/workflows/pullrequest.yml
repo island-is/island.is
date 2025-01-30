@@ -60,7 +60,7 @@ jobs:
           fetch-depth: 0
 
       - name: NX Cloud
-        run: npx nx-cloud start-ci-run --distribute-on=".nx/workflows/distribution-config.yaml" --stop-agents-after="test"
+        run: npx nx-cloud start-ci-run --distribute-on=".nx/workflows/distribution-config.yaml" --stop-agents-after="build"
 
       - uses: actions/setup-node@v4
         with:
@@ -143,9 +143,6 @@ jobs:
           echo "## WARN permissions" >> "$GITHUB_STEP_SUMMARY"
           echo "User '$GITHUB_ACTOR' does not have the required permissions to apply the 'test everything' label" >> "$GITHUB_STEP_SUMMARY"
 
-      - name: NX run affected
-        run: yarn nx -t test
-
       - name: Prepare lint targets
         id: lint_projects
         env:
@@ -170,7 +167,6 @@ jobs:
           fi
 
       - name: Prepare e2e targets
-        if: false
         id: e2e_projects
         env:
           CHUNK_SIZE: 1
@@ -183,7 +179,6 @@ jobs:
           echo BUILD_ID="$GITHUB_RUN_ID-$GITHUB_RUN_NUMBER-$(uuidgen)" >> "$GITHUB_OUTPUT"
 
       - name: Prepare build targets
-        if: false
         id: build_projects
         run: |
           set -euo pipefail

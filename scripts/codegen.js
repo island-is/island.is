@@ -24,33 +24,45 @@ const fileExists = async (path) =>
 
 const main = async () => {
   const schemaExists = await fileExists(SCHEMA_PATH)
-  // const nxMaxParallel = process.env.NX_MAX_PARALLEL ?? '2'
-  // const nxParallel = process.env.NX_PARALLEL ?? '2'
-
-  const nxMaxParallel = '10'
-  const nxParallel = '6'
+  const nxMaxParallel = process.env.NX_MAX_PARALLEL ?? '2'
+  const nxParallel = process.env.NX_PARALLEL ?? '2'
 
   if (!schemaExists) {
     await promisify(writeFile)(SCHEMA_PATH, 'export default () => {}')
   }
 
-  for (const target of TARGETS) {
-    console.log(`--> Running command for ${target}\n`)
-
-    try {
-      await exec(
-        `nx run-many --target=${target} --all --parallel=${nxParallel} --maxParallel=${nxMaxParallel} $NX_OPTIONS`,
-        {
-          env: skipCache
-            ? { ...process.env, NX_OPTIONS: '--skip-nx-cache' }
-            : process.env,
-        },
-      )
-    } catch (err) {
-      console.error(`Error running command: ${err.message}`)
-      process.exit(err.code || 1)
-    }
+  try {
+    await exec(
+      `nx run affected -t ${TARGETS.join(
+        ' ',
+      )} test build --parallel=${nxParallel} --maxParallel=${nxMaxParallel} $NX_OPTIONS`,
+      {
+        env: skipCache
+          ? { ...process.env, NX_OPTIONS: '--skip-nx-cache' }
+          : process.env,
+      },
+    )
+  } catch (err) {
+    console.error(`Error running command: ${err.message}`)
+    process.exit(err.code || 1)
   }
+  // for (const target of TARGETS) {
+  //   console.log(`--> Running command for ${target}\n`)
+  //
+  //   try {
+  //     await exec(
+  //       `nx run-many --target=${target} --all --parallel=${nxParallel} --maxParallel=${nxMaxParallel} $NX_OPTIONS`,
+  //       {
+  //         env: skipCache
+  //           ? { ...process.env, NX_OPTIONS: '--skip-nx-cache' }
+  //           : process.env,
+  //       },
+  //     )
+  //   } catch (err) {
+  //     console.error(`Error running command: ${err.message}`)
+  //     process.exit(err.code || 1)
+  //   }
+  // }
 }
 
 main()
