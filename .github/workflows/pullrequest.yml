@@ -26,6 +26,7 @@ env:
   NX_PARALLEL: '2'
   NX_MAX_PARALLEL: '4'
   NX_TASKS_RUNNER: ci
+  CHUNKS_DEBUG: '["services-auth-admin-api"]'
 
 jobs:
   prepare:
