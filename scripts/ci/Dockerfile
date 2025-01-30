@@ -117,7 +117,7 @@ ARG GIT_REPOSITORY_URL
 ENV PORT=4200
 
 # TODO: smallify
-COPY --from=deps /build/node_modules ./
+COPY --from=deps /build/node_modules ./node_modules
 COPY --from=builder /dist ./
 RUN ls -lah . main.*
 
