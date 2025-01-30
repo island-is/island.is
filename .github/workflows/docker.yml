@@ -64,7 +64,7 @@ jobs:
           localrun: ${{ !!github.event.localrun }}
           projects: ${{ inputs.projects }}
         run: |
-          if [[ ${{ github.event.pull_request.labels.*.name == 'docker build' }} ]]; then
+          if [[ ${{ contains(github.event.pull_request.labels.*.name, 'docker build') }} ]]; then
             echo "Using small subset for testing docker build (on ${{ github.event.pull_request.base.ref }})"
             # A representative sample of various docker build targets
             export projects="web,air-discount-scheme-backend,license-api"
