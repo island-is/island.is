@@ -247,7 +247,7 @@ export const NationalIdWithName: FC<
                 ? formatMessage(customNameLabel)
                 : formatMessage(coreErrorMessages.nationalRegistryName)
             }
-            required={required}
+            required={disabled ? required : false}
             error={
               searchPersons
                 ? queryError || data?.identity === null

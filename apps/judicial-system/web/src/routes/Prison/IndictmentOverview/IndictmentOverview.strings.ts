@@ -74,4 +74,9 @@ export const strings = defineMessages({
     defaultMessage: 'Fullnusta',
     description: 'Titill á til fullnustu skjali',
   },
+  criminalRecordUpdateSection: {
+    id: 'judicial.system.core:indictment_overview.criminal_record_update_section',
+    defaultMessage: 'Tilkynning til sakaskrár',
+    description: 'Titill á Tilkynning til sakaskrár',
+  },
 })
