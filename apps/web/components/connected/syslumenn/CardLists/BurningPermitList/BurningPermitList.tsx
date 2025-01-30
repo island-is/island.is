@@ -167,6 +167,17 @@ export const BurningPermitList: FC<
         <Box>
           <Box paddingTop={[4, 4, 6]} paddingBottom={[4, 5, 10]}>
             {filteredburningPermits.slice(0, showCount).map((permit, index) => {
+              const dateString = permit.dateFrom
+                ? `${format(new Date(permit.dateFrom), DATE_FORMAT)} ${
+                    permit.timeFrom ? permit.timeFrom : ''
+                  }${
+                    !permit.dateTo
+                      ? ''
+                      : ` - ${format(new Date(permit.dateTo), DATE_FORMAT)} ${
+                          permit.timeTo ? permit.timeTo : ''
+                        }`
+                  }`
+                : ''
               return (
                 <Box
                   key={`burning-permit-${index}`}
@@ -177,31 +188,19 @@ export const BurningPermitList: FC<
                   paddingY={3}
                   marginBottom={4}
                 >
-                  <Box
-                    alignItems="flexStart"
-                    display="flex"
-                    flexDirection={[
-                      'columnReverse',
-                      'columnReverse',
-                      'columnReverse',
-                      'row',
-                    ]}
-                    justifyContent="spaceBetween"
-                  >
-                    {Boolean(permit.date) && (
-                      <Text variant="eyebrow" color="purple400" paddingTop={1}>
-                        {format(new Date(permit.date as Date), DATE_FORMAT)}
-                      </Text>
-                    )}
-                    <Tag disabled>{permit.office}</Tag>
-                  </Box>
                   <Text variant="h3">{permit.licensee}</Text>
+
                   <Box paddingTop={2}>
+                    <Text>
+                      {formatMessage(t.office)}: {permit.office}
+                    </Text>
                     {Boolean(permit.place) && (
                       <Text>
                         {formatMessage(t.place)}: {permit.place}
                       </Text>
                     )}
+                    {Boolean(dateString) && <Text>{dateString}</Text>}
+
                     {Boolean(permit.responsibleParty) && (
                       <Text>
                         {formatMessage(t.responsibleParty)}:{' '}
@@ -216,6 +215,11 @@ export const BurningPermitList: FC<
                     {Boolean(permit.subtype) && (
                       <Text>
                         {formatMessage(t.subtype)}: {permit.subtype}
+                      </Text>
+                    )}
+                    {typeof permit.size === 'number' && (
+                      <Text>
+                        {formatMessage(t.size)}: {permit.size}
                       </Text>
                     )}
                   </Box>

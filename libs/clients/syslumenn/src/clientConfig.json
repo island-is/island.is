@@ -4406,9 +4406,21 @@
             "type": "string",
             "nullable": true
           },
-          "dagsetning": {
+          "dagsetningFra": {
             "type": "string",
             "format": "date-time"
+          },
+          "dagsetningTil": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "timiFra": {
+            "type": "string",
+            "nullable": true
+          },
+          "timiTil": {
+            "type": "string",
+            "nullable": true
           },
           "tegund": {
             "type": "string",
@@ -4421,6 +4433,10 @@
           "embaetti": {
             "type": "string",
             "nullable": true
+          },
+          "staerd": {
+            "type": "integer",
+            "format": "int32"
           }
         }
       },

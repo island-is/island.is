@@ -21,10 +21,20 @@ export const translation = defineMessages({
     defaultMessage: 'Leyfishafi',
     description: 'Leyfishafi',
   },
+  size: {
+    id: 'web.syslumenn.burningPermitList:size',
+    defaultMessage: 'Fermetrastærð',
+    description: 'Fermetrastærð',
+  },
   place: {
     id: 'web.syslumenn.burningPermitList:place',
     defaultMessage: 'Staður',
     description: 'Staður',
+  },
+  office: {
+    id: 'web.syslumenn.burningPermitList:office',
+    defaultMessage: 'Embætti',
+    description: 'Embætti',
   },
   date: {
     id: 'web.syslumenn.burningPermitList:date',

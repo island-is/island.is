@@ -1,10 +1,22 @@
 import { CacheField } from '@island.is/nest/graphql'
-import { Field, ObjectType } from '@nestjs/graphql'
+import { Field, Float, ObjectType } from '@nestjs/graphql'
 
 @ObjectType()
 class BurningPermit {
   @Field(() => Date, { nullable: true })
-  date?: Date | null
+  dateFrom?: Date | null
+
+  @Field(() => String, { nullable: true })
+  timeFrom?: string | null
+
+  @Field(() => Date, { nullable: true })
+  dateTo?: Date | null
+
+  @Field(() => String, { nullable: true })
+  timeTo?: string | null
+
+  @Field(() => Float, { nullable: true })
+  size?: number | null
 
   @Field(() => String, { nullable: true })
   type?: string | null

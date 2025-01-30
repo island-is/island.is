@@ -577,13 +577,17 @@ export const mapProfessionRight = (
 
 export const mapBurningPermits = (permit: Brennuleyfi): BurningPermit => {
   return {
-    date: permit.dagsetning,
+    dateFrom: permit.dagsetningFra,
+    timeFrom: permit.timiFra,
+    dateTo: permit.dagsetningTil,
+    timeTo: permit.timiTil,
     type: permit.tegund,
     subtype: permit.undirtegund,
     responsibleParty: permit.abyrgdaradili,
     office: permit.embaetti,
     licensee: permit.leyfishafi,
     place: permit.stadur,
+    size: permit.staerd,
   }
 }
 
