@@ -43,7 +43,7 @@ env:
 jobs:
   prepare:
     name: Prepare
-    runs-on: arc-runners
+    runs-on: ${{ inputs.runners || 'arc-runners' }}
     outputs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}
       node-image-version: ${{ steps.build-args.outputs.node-image-tag }}
@@ -89,7 +89,7 @@ jobs:
 
   build:
     name: Build ${{ matrix.project }}
-    runs-on: arc-runners
+    runs-on: ${{ inputs.runners || 'arc-runners' }}
     needs: prepare
     strategy:
       fail-fast: false
