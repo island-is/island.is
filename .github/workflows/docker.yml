@@ -69,7 +69,7 @@ jobs:
           yarn info --json @playwright/test | jq -r '.children.Version | "playwright-image-tag=v\(.)-focal"' >>"$GITHUB_OUTPUT"
 
       - name: Codegen
-        if: ${{ env.is_labeled }}
+        if: ${{ contains(github.event.pull_request.labels.*.name, 'docker build') }}
         run: |
           yarn codegen
 
