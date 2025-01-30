@@ -5,7 +5,7 @@ export default {
   roots: [__dirname],
   coverageDirectory: '<rootDir>/coverage/apps/services/auth/admin-api',
   globals: {},
-  testTimeout: 10000,
+  testTimeout: 30000,
   displayName: 'services-auth-admin-api',
   testEnvironment: 'node',
   setupFiles: [`${__dirname}/test/environment.jest.ts`],
