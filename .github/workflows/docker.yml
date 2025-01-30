@@ -35,6 +35,7 @@ defaults:
 env:
   # Regsitry to for build images and cache
   IMAGE_REGISTRY: ${{ vars.IMAGE_REGISTRY || 'localhost' }}
+  AWS_ECR_REPO_BASE: ${{ vars.AWS_ECR_REPO_BASE || 'docker.io' }}
 
 jobs:
   prepare:
@@ -131,7 +132,7 @@ jobs:
           driver: docker-container
           # driver-opts: image=moby/buildkit:buildx-stable-1
           driver-opts: |
-            image=${{vars.AWS_ECR_REPO_BASE}}/moby/buildkit:buildx-stable-1
+            image=${{ env.AWS_ECR_REPO_BASE }}/moby/buildkit:buildx-stable-1
           install: true
           use: true
 
