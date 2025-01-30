@@ -160,7 +160,7 @@ jobs:
             # PR branch/name
             type=ref,event=branch
             type=ref,event=push
-            type=ref,event=pull_request
+            type=ref,event=pr
             type=ref,event=workflow_dispatch
             # Git SHA
             type=sha,format=short,prefix=
