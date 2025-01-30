@@ -1,72 +1,66 @@
-# This is a multi-stage Dockerfile which contains all CI-related operations as well as images to be deployed in production
-
 # Global ARGs (used across multiple stages)
-ARG PLAYWRIGHT_VERSION=1.49.1
-ARG PLAYWRIGHT_IMAGE_TAG=v${PLAYWRIGHT_VERSION}-focal
-ARG DOCKER_ECR_REGISTRY=public.ecr.aws/docker
-ARG DOCKER_IMAGE_REGISTRY=${DOCKER_ECR_REGISTRY%/docker}
-# Alias DOCKER_IMAGE_REGISTRY to DOCKER_REGISTRY for backwards compatibility
-ARG DOCKER_REGISTRY=${DOCKER_IMAGE_REGISTRY}/docker
-ARG NODE_IMAGE_TAG=20-alpine
+ARG PLAYWRIGHT_VERSION
+ARG NODE_IMAGE_VERSION=20
+ARG APP_HOME
+ARG APP_DIST_HOME=dist/${APP_HOME}
 ARG APP
 
 # Base image for dependencies
-FROM ${DOCKER_REGISTRY}/library/node:${NODE_IMAGE_TAG} AS sys-deps
+FROM public.ecr.aws/docker/library/node:${NODE_IMAGE_VERSION}-bookworm-slim AS deps
 
-# hadolint ignore=DL3018
-RUN apk add --update --no-cache python3 build-base gcc git jq openjdk21 py3-distutils-extra && \
-  rm -rf /var/cache/apk/* && \
-  ln -sf /usr/bin/python3 /usr/bin/python
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+  git \
+  python3 \
+  build-essential \
+  gcc && \
+  ln -sf /usr/bin/python3 /usr/bin/python && \
+  apt-get clean && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /build
-
-# Add intermediate step for debugging system dependencies
-FROM sys-deps AS deps
-
 # Adding and installing packages
 COPY package.json yarn.lock .yarnrc.yml ./
 COPY apps/native/app/package.json ./apps/native/app/
 COPY .yarn/ ./.yarn
-
-RUN CI=true yarn install --immutable && \
-  yarn cache clean
+RUN CI=true yarn install --immutable
 
 # Image with source code
 FROM deps AS src
 
+RUN apt-get update && apt-get install -y wget && \
+  wget -O /usr/local/bin/jq https://github.com/stedolan/jq/releases/download/jq-1.6/jq-linux64 && \
+  chmod +x /usr/local/bin/jq && \
+  apt-get clean && rm -rf /var/lib/apt/lists/*
+
 # image with the source code
 COPY . .
-
 
 # Build stage
 FROM src AS builder
 
 # Stage-specific ARGs
 ARG APP
+ARG APP_DIST_HOME
 ENV APP=${APP}
+ENV NODE_ENV=production
 ENV NODE_OPTIONS="--max-old-space-size=8192"
 
-RUN yarn codegen --projects ${APP}
-ENV NODE_ENV=production
-RUN yarn run build --prod ${APP}
-
-SHELL ["/bin/ash", "-o", "pipefail", "-c"]
-RUN cp -a "dist/$(yarn nx show project ${APP} --json | jq -r '.root')" /dist
-
+RUN yarn run build ${APP} --prod
 
 # This is base image for containers that are to be deployed
-FROM ${DOCKER_REGISTRY}/library/node:${NODE_IMAGE_TAG} AS output-base
+FROM public.ecr.aws/docker/library/node:${NODE_IMAGE_VERSION}-bookworm-slim AS output-base
 ARG APP
+ARG APP_HOME
+ARG APP_DIST_HOME
 ENV APP=${APP}
 ENV NODE_ENV=production
 
 WORKDIR /webapp
 
 # Adding user for running the app
-RUN addgroup runners && \
-  adduser runner --disabled-password --ingroup runners
+RUN groupadd runners && useradd -m -g runners runner
 
-FROM output-base AS output-base-full
+FROM output-base AS output-base-with-pg
 
 # hadolint ignore=DL3016
 RUN npm install -g \
@@ -74,17 +68,17 @@ RUN npm install -g \
   sequelize-cli \
   pg
 
-FROM output-base-full AS output-base-with-pg
 USER runner
 
-FROM output-base-full AS output-express
+FROM output-base-with-pg AS output-express
 
 # Stage-specific ARGs
+ARG APP_DIST_HOME
 ARG GIT_BRANCH
 ARG GIT_COMMIT_SHA
 ARG GIT_REPOSITORY_URL
 
-COPY --from=builder /dist /webapp/
+COPY --from=builder /build/${APP_DIST_HOME} /webapp/
 
 ENV GIT_BRANCH=${GIT_BRANCH} GIT_COMMIT_SHA=${GIT_COMMIT_SHA} GIT_REPOSITORY_URL=${GIT_REPOSITORY_URL}
 ENV DD_GIT_BRANCH=${GIT_BRANCH} DD_GIT_COMMIT_SHA=${GIT_COMMIT_SHA} DD_GIT_REPOSITORY_URL=${GIT_REPOSITORY_URL}
@@ -97,6 +91,7 @@ FROM output-base-with-pg AS output-next
 
 # Stage-specific ARGs
 ARG APP
+ARG APP_DIST_HOME
 ARG GIT_BRANCH
 ARG GIT_COMMIT_SHA
 ARG GIT_REPOSITORY_URL
@@ -105,7 +100,7 @@ ENV PORT=4200
 
 # TODO: smallify
 COPY --from=deps /build/node_modules /webapp/node_modules
-COPY --from=builder /dist /webapp/
+COPY --from=builder /build/${APP_DIST_HOME} /webapp/
 
 ENV GIT_BRANCH=${GIT_BRANCH} GIT_COMMIT_SHA=${GIT_COMMIT_SHA} GIT_REPOSITORY_URL=${GIT_REPOSITORY_URL}
 ENV DD_GIT_BRANCH=${GIT_BRANCH} DD_GIT_COMMIT_SHA=${GIT_COMMIT_SHA} DD_GIT_REPOSITORY_URL=${GIT_REPOSITORY_URL}
@@ -113,24 +108,25 @@ LABEL branch=${GIT_BRANCH}
 LABEL commit=${GIT_COMMIT_SHA}
 ENTRYPOINT [ "node", "main.js" ]
 
-
-FROM ${DOCKER_REGISTRY}/library/nginx:1.21-alpine AS output-static
+FROM public.ecr.aws/docker/library/nginx:1.21-alpine AS output-static
 
 # Stage-specific ARGs
 ARG APP
+ARG APP_DIST_HOME
 ARG GIT_BRANCH
 ARG GIT_COMMIT_SHA
 ARG GIT_REPOSITORY_URL
 
 RUN mkdir -p /etc/nginx/templates
 # hadolint ignore=DL3018
-RUN apk add --no-cache bash nodejs && \
-  rm -rf /var/cache/apk/*
+RUN apk update && \
+  apk upgrade && \
+  apk add bash nodejs
 
 COPY scripts/dockerfile-assets/nginx/* /etc/nginx/templates
 COPY scripts/dockerfile-assets/bash/extract-environment.sh /docker-entrypoint.d
 COPY scripts/dockerfile-assets/bash/extract-environment.js /docker-entrypoint.d
-COPY --from=builder /dist /usr/share/nginx/html
+COPY --from=builder /build/${APP_DIST_HOME} /usr/share/nginx/html
 
 ENV GIT_BRANCH=${GIT_BRANCH} GIT_COMMIT_SHA=${GIT_COMMIT_SHA} GIT_REPOSITORY_URL=${GIT_REPOSITORY_URL}
 ENV DD_GIT_BRANCH=${GIT_BRANCH} DD_GIT_COMMIT_SHA=${GIT_COMMIT_SHA} DD_GIT_REPOSITORY_URL=${GIT_REPOSITORY_URL}
@@ -144,6 +140,7 @@ FROM output-base AS output-jest
 
 # Stage-specific ARGs
 ARG APP
+ARG APP_DIST_HOME
 ARG GIT_BRANCH
 ARG GIT_COMMIT_SHA
 ARG GIT_REPOSITORY_URL
@@ -153,7 +150,7 @@ RUN echo 'module.exports = {};' > jest.config.js
 # hadolint ignore=DL3016
 RUN npm install -g jest
 
-COPY --from=builder /dist /webapp/
+COPY --from=builder /build/${APP_DIST_HOME} /webapp/
 
 USER runner
 
@@ -163,14 +160,14 @@ LABEL branch=${GIT_BRANCH}
 LABEL commit=${GIT_COMMIT_SHA}
 CMD [ "jest", "main.spec.js" ]
 
-
-FROM mcr.microsoft.com/playwright:${PLAYWRIGHT_IMAGE_TAG} AS playwright-base
+FROM mcr.microsoft.com/playwright:v${PLAYWRIGHT_VERSION}-focal AS playwright-base
 
 FROM playwright-base AS output-playwright
 
 # Stage-specific ARGs
 ARG APP
-ARG APP_HOME=apps/system-e2e
+ARG APP_DIST_HOME
+ARG APP_HOME
 ARG PLAYWRIGHT_BROWSER=chromium
 ARG GIT_BRANCH
 ARG GIT_COMMIT_SHA
@@ -181,9 +178,12 @@ ARG GIT_REPOSITORY_URL
 # hadolint ignore=DL3008
 RUN apt-get update -y && apt-get install -y zip awscli && apt-get purge
 
-WORKDIR /testing
+ARG APP_HOME
+ARG APP_DIST_HOME
 
-COPY --from=builder /dist .
+WORKDIR ${APP_DIST_HOME}
+
+COPY --from=builder /build/${APP_DIST_HOME} .
 COPY ${APP_HOME}/package.json .
 RUN chown -R pwuser:pwuser .
 
@@ -202,34 +202,6 @@ ENV DD_GIT_BRANCH=${GIT_BRANCH} DD_GIT_COMMIT_SHA=${GIT_COMMIT_SHA} DD_GIT_REPOS
 LABEL branch=${GIT_BRANCH}
 LABEL commit=${GIT_COMMIT_SHA}
 ENTRYPOINT ["./entrypoint.sh"]
-
-
-FROM playwright-base AS output-local
-
-# Stage-specific ARGs
-ARG APP
-ARG APP_DIST_HOME
-ARG APP_HOME=apps/system-e2e
-ARG GIT_BRANCH
-ARG GIT_COMMIT_SHA
-ARG GIT_REPOSITORY_URL
-
-WORKDIR ${APP_DIST_HOME}
-
-# node user exists in the base image
-RUN mkdir -p /out \
-  && chown node:node /out
-
-COPY --chown=pwuser:pwuser --chmod=0755 ${APP_HOME}/entrypoint.sh .
-
-USER pwuser
-
-ENV GIT_BRANCH=${GIT_BRANCH} GIT_COMMIT_SHA=${GIT_COMMIT_SHA} GIT_REPOSITORY_URL=${GIT_REPOSITORY_URL}
-ENV DD_GIT_BRANCH=${GIT_BRANCH} DD_GIT_COMMIT_SHA=${GIT_COMMIT_SHA} DD_GIT_REPOSITORY_URL=${GIT_REPOSITORY_URL}
-LABEL branch=${GIT_BRANCH}
-LABEL commit=${GIT_COMMIT_SHA}
-ENTRYPOINT ["./entrypoint.sh"]
-
 
 FROM output-base AS output-native
 
