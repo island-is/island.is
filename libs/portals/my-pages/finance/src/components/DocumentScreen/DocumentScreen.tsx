@@ -38,6 +38,7 @@ import DropdownExport from '../DropdownExport/DropdownExport'
 import FinanceIntro from '../FinanceIntro'
 import { useGetFinanceDocumentsListLazyQuery } from './DocumentScreen.generated'
 import { DocumentsListItemTypes } from './DocumentScreen.types'
+import { useFinanceSwapHook } from '../../utils/financeSwapHook'
 
 const ITEMS_ON_PAGE = 20
 
@@ -55,6 +56,7 @@ const DocumentScreen = ({
   defaultDateRangeMonths = 3,
 }: Props) => {
   const { formatMessage } = useLocale()
+  useFinanceSwapHook()
 
   const [page, setPage] = useState(1)
   const [fromDate, setFromDate] = useState<Date>()
