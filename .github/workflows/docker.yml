@@ -67,11 +67,6 @@ jobs:
           echo node-image-version="$(./scripts/ci/get-node-version.mjs)" >>"$GITHUB_OUTPUT"
           yarn info --json @playwright/test | jq -r '.children.Version | "playwright-image-tag=v\(.)-focal"' >>"$GITHUB_OUTPUT"
 
-      - name: Codegen
-        if: ${{ contains(github.event.pull_request.labels.*.name, 'docker build') }}
-        run: |
-          yarn codegen
-
       - name: Create matrix from input
         id: set-matrix
         env:
@@ -82,6 +77,8 @@ jobs:
             echo "Using small subset for testing docker build (on ${{ github.event.pull_request.base.ref }})"
             # A representative sample of various docker build targets
             export projects="web,air-discount-scheme-backend,license-api"
+            # In PRs we don't have the generated files context from when being called.
+            yarn codegen
           fi
           # Create a list of objects of the form:
           # [
