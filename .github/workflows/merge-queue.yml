@@ -198,6 +198,8 @@ jobs:
   codeowners-check:
     name: Lint CODEOWNERS
     runs-on: arc-runners
+    env:
+      CHECK: 'false'
     steps:
       - name: Codeowners validation
         run: |
