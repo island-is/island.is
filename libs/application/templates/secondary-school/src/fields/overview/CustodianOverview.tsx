@@ -45,8 +45,14 @@ export const CustodianOverview: FC<FieldBaseProps> = ({
     if (goToScreen) goToScreen(page)
   }
 
+  const showCustodians = !!custodiansExternalData.length
   const showMainOtherContact = !!mainOtherContact?.person?.nationalId
   const showOtherContacts = !!otherContacts.length
+
+  const totalCount =
+    custodiansExternalData.length +
+    (showMainOtherContact ? 1 : 0) +
+    otherContacts.length
 
   return (
     <ReviewGroup
@@ -60,14 +66,17 @@ export const CustodianOverview: FC<FieldBaseProps> = ({
       isEditable={application.state === States.DRAFT}
     >
       <Box>
-        {!!custodiansExternalData.length && (
+        {showCustodians && (
           <GridRow>
             {custodiansExternalData.map((custodian, index) => (
               <GridColumn span="1/2">
-                <Text variant="h5">
-                  {formatMessage(overview.custodian.subtitle)}{' '}
-                  {custodiansExternalData.length > 1 ? index + 1 : ''}
-                </Text>
+                {totalCount > 1 && (
+                  <Text variant="h5">
+                    {`${formatMessage(overview.custodian.label)} ${
+                      custodiansExternalData.length > 1 ? index + 1 : ''
+                    }`}
+                  </Text>
+                )}
                 <Text>{custodian.person?.name}</Text>
                 <Text>{formatKennitala(custodian.person?.nationalId)}</Text>
                 <Text>{custodian.legalDomicile?.streetAddress}</Text>
@@ -92,10 +101,13 @@ export const CustodianOverview: FC<FieldBaseProps> = ({
           <GridRow marginTop={3}>
             {showMainOtherContact && (
               <GridColumn span={showOtherContacts ? '1/2' : '1/1'}>
-                <Text variant="h5">
-                  {formatMessage(overview.otherContact.label)}{' '}
-                  {otherContacts.length > 0 ? '1' : ''}
-                </Text>
+                {totalCount > 1 && (
+                  <Text variant="h5">
+                    {`${formatMessage(overview.otherContact.label)} ${
+                      otherContacts.length > 0 ? '1' : ''
+                    }`}
+                  </Text>
+                )}
                 <Text>{mainOtherContact.person?.name}</Text>
                 <Text>
                   {formatKennitala(mainOtherContact.person?.nationalId)}
@@ -110,10 +122,20 @@ export const CustodianOverview: FC<FieldBaseProps> = ({
             {showOtherContacts &&
               otherContacts.map((otherContact, index) => (
                 <GridColumn span="1/2">
-                  <Text variant="h5">
-                    {formatMessage(overview.otherContact.label)}{' '}
-                    {mainOtherContact?.person?.nationalId ? index + 2 : ''}
-                  </Text>
+                  {totalCount > 1 && showMainOtherContact && (
+                    <Text variant="h5">
+                      {`${formatMessage(overview.otherContact.label)} ${
+                        index + 2
+                      }`}
+                    </Text>
+                  )}
+                  {totalCount > 1 && !showMainOtherContact && (
+                    <Text variant="h5">
+                      {`${formatMessage(overview.otherContact.label)} ${
+                        otherContacts.length > 1 ? index + 1 : ''
+                      }`}
+                    </Text>
+                  )}
                   <Text>{otherContact.person.name}</Text>
                   <Text>{formatKennitala(otherContact.person.nationalId)}</Text>
                   <Text>
