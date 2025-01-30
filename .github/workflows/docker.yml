@@ -159,7 +159,6 @@ jobs:
             type=pep440,pattern={{version}}
             # PR branch/name
             type=ref,event=branch
-            type=ref,event=push
             type=ref,event=pr
             type=ref,event=workflow_dispatch
             # Git SHA
