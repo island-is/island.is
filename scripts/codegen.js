@@ -24,28 +24,24 @@ const fileExists = async (path) =>
 
 const main = async () => {
   const schemaExists = await fileExists(SCHEMA_PATH)
-  const maxParallel = process.env.NX_MAX_PARALLEL ?? '6'
 
   if (!schemaExists) {
     await promisify(writeFile)(SCHEMA_PATH, 'export default () => {}')
   }
-
-  for (const target of TARGETS) {
-    console.log(`--> Running command for ${target}\n`)
-
-    try {
-      await exec(
-        `nx run-many --target=${target} --all --parallel --maxParallel=${maxParallel} $NX_OPTIONS`,
-        {
-          env: skipCache
-            ? { ...process.env, NX_OPTIONS: '--skip-nx-cache' }
-            : process.env,
-        },
-      )
-    } catch (err) {
-      console.error(`Error running command: ${err.message}`)
-      process.exit(err.code || 1)
-    }
+  try {
+    await exec(
+      `nx run-many --targets=${TARGETS.join(
+        ',',
+      )} --parallel=10 --maxParallel=20 $NX_OPTIONS`,
+      {
+        env: skipCache
+          ? { ...process.env, NX_OPTIONS: '--skip-nx-cache' }
+          : process.env,
+      },
+    )
+  } catch (err) {
+    console.error(`Error running command: ${err.message}`)
+    process.exit(err.code || 1)
   }
 }
 
