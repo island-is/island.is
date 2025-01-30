@@ -65,10 +65,8 @@ jobs:
       - name: Setup yarn
         run: corepack enable
 
-
       - name: Derive appropriate SHAs
         uses: nrwl/nx-set-shas@v4
-
 
       - name: Gather branch info
         id: build_info
