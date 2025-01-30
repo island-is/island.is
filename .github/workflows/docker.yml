@@ -1,4 +1,11 @@
 name: Docker Build
+# This workflow builds Docker images for projects in the repository.
+# It can be triggered by:
+# - Labeling a pull request with "docker build"
+# - Being called from another workflow via `workflow_call`
+# - Manual dispatch using `workflow_dispatch`
+# The workflow uses matrix builds to parallelize the process and leverages caching
+# to speed up dependency and final image builds.
 
 on:
   pull_request:
