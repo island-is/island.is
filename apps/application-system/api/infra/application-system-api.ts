@@ -49,6 +49,11 @@ import {
 
 export const GRAPHQL_API_URL_ENV_VAR_NAME = 'GRAPHQL_API_URL' // This property is a part of a circular dependency that is treated specially in certain deployment types
 
+/**
+ * Make sure that each feature deployment has its own bull prefix. Since each
+ * feature deployment has its own database and applications, we don't want bull
+ * jobs to jump between environments.
+ */
 const APPLICATION_SYSTEM_BULL_PREFIX = (ctx: Context) =>
   ctx.featureDeploymentName
     ? `application_system_api_bull_module.${ctx.featureDeploymentName}`
