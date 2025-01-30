@@ -317,7 +317,7 @@ const IncomePlanTemplate: ApplicationTemplate<
               income.incomeCategoryName,
             )
           })
-        }  
+        }
         //Temporarily removing this until withholdingTax endpoint provides more accurate info
         // } else {
         //   withholdingTax &&
