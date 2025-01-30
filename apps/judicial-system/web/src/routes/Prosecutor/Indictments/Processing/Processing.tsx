@@ -656,6 +656,10 @@ const Processing: FC = () => {
                         }
                         tooltip={formatMessage(
                           strings.civilClaimantShareFilesWithDefenderTooltip,
+                          {
+                            defenderIsLawyer:
+                              civilClaimant.spokespersonIsLawyer,
+                          },
                         )}
                         backgroundColor="white"
                         large
@@ -683,7 +687,7 @@ const Processing: FC = () => {
           nextButtonIcon="arrowForward"
           previousUrl={`${constants.INDICTMENTS_CASE_FILE_ROUTE}/${workingCase.id}`}
           nextIsDisabled={!stepIsValid}
-          nextUrl={constants.INDICTMENTS_INDICTMENT_ROUTE}
+          nextUrl={`${constants.INDICTMENTS_INDICTMENT_ROUTE}/${workingCase.id}`}
         />
       </FormContentContainer>
     </PageLayout>

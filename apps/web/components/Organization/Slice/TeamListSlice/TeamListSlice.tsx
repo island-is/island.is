@@ -6,6 +6,7 @@ import { TeamList, type TeamListProps } from '@island.is/island-ui/contentful'
 import { GenericList } from '@island.is/web/components'
 import {
   type GenericTag,
+  GetTeamMembersInputOrderBy,
   type Query,
   TeamMemberResponse,
 } from '@island.is/web/graphql/schema'
@@ -18,12 +19,14 @@ interface TeamMemberListWrapperProps {
   id: string
   filterTags?: GenericTag[] | null
   showSearchInput?: boolean
+  orderBy?: GetTeamMembersInputOrderBy
 }
 
 export const TeamMemberListWrapper = ({
   id,
   filterTags,
   showSearchInput,
+  orderBy,
 }: TeamMemberListWrapperProps) => {
   const searchQueryId = `${id}q`
   const pageQueryId = `${id}page`
@@ -86,6 +89,7 @@ export const TeamMemberListWrapper = ({
               queryString: searchValue,
               tags,
               tagGroups,
+              orderBy: orderBy ?? GetTeamMembersInputOrderBy.Name,
             },
           },
         })
@@ -113,6 +117,7 @@ interface TeamListSliceProps extends TeamListProps {
   id: string
   filterTags?: GenericTag[] | null
   showSearchInput?: boolean
+  orderBy?: GetTeamMembersInputOrderBy
 }
 
 export const TeamListSlice = ({
@@ -121,6 +126,7 @@ export const TeamListSlice = ({
   filterTags,
   id,
   showSearchInput = true,
+  orderBy = GetTeamMembersInputOrderBy.Name,
 }: TeamListSliceProps) => {
   if (variant === 'accordion') {
     return (
@@ -128,6 +134,7 @@ export const TeamListSlice = ({
         id={id}
         filterTags={filterTags}
         showSearchInput={showSearchInput}
+        orderBy={orderBy}
       />
     )
   }

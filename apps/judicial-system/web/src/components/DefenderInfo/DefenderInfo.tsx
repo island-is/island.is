@@ -1,5 +1,5 @@
 import { Dispatch, FC, SetStateAction, useContext, useState } from 'react'
-import { MessageDescriptor, useIntl } from 'react-intl'
+import { useIntl } from 'react-intl'
 
 import { Box, RadioButton, Text, Tooltip } from '@island.is/island-ui/core'
 import {
@@ -119,7 +119,13 @@ const DefenderInfo: FC<Props> = ({ workingCase, setWorkingCase }) => {
       {defenderNotFound && <DefenderNotFound />}
       <BlueBox>
         <InputAdvocate
-          advocateType="defender"
+          advocateType={
+            !isProsecutionUser(user) &&
+            workingCase.sessionArrangements ===
+              SessionArrangements.ALL_PRESENT_SPOKESPERSON
+              ? 'spokesperson'
+              : 'defender'
+          }
           name={workingCase.defenderName}
           email={workingCase.defenderEmail}
           phoneNumber={workingCase.defenderPhoneNumber}
