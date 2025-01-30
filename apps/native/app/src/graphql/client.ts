@@ -96,7 +96,8 @@ const errorLink = onError(
 )
 
 const getAndRefreshToken = async () => {
-  const { authorizeResult, refresh } = authStore.getState()
+  const { refresh } = authStore.getState()
+  let { authorizeResult } = authStore.getState()
 
   const timeUntilExpiration =
     new Date(authorizeResult?.accessTokenExpirationDate ?? 0).getTime() -
@@ -106,11 +107,16 @@ const getAndRefreshToken = async () => {
   if (isTokenPerhapsExpired) {
     // get a new token to be safe
     await refresh()
+    authorizeResult = authStore.getState().authorizeResult
   } else if (isTokenCloseToExpiring) {
     // expires in less than 60 seconds, so refresh in the background
-    refresh().catch((err) => {
-      console.error('Failed to refresh token in the background', err)
-    })
+    refresh()
+      .catch((err) => {
+        console.error('Failed to refresh token in the background', err)
+      })
+      .finally(() => {
+        authorizeResult = authStore.getState().authorizeResult
+      })
   }
 
   return authorizeResult?.accessToken
