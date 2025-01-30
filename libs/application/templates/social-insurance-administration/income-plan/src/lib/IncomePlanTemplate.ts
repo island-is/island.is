@@ -297,9 +297,7 @@ const IncomePlanTemplate: ApplicationTemplate<
           application.externalData,
         )
         
-        //if (
-        latestIncomePlan && latestIncomePlan.status === 'Accepted' &&
-        //) {
+        if (latestIncomePlan && latestIncomePlan.status === 'Accepted') {
           latestIncomePlan.incomeTypeLines.forEach((income, i) => {
             set(
               answers,
@@ -319,6 +317,7 @@ const IncomePlanTemplate: ApplicationTemplate<
               income.incomeCategoryName,
             )
           })
+        }  
         //Temporarily removing this until withholdingTax endpoint provides more accurate info  
         // } else {
         //   withholdingTax &&
