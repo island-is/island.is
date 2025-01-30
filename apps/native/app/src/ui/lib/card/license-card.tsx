@@ -37,10 +37,10 @@ const Host = styled(Animated.View)`
   justify-content: center;
 `
 
-const ContentContainer = styled.View`
+const ContentContainer = styled.View<{ marginBottom: number }>`
   flex-direction: row;
   justify-content: space-between;
-  margin-bottom: ${({ theme }) => theme.spacing[1]}px;
+  margin-bottom: ${({ marginBottom }) => marginBottom}px;
 `
 
 const BarcodeWrapper = styled.View<{ minHeight?: number }>`
@@ -182,7 +182,7 @@ export function LicenseCard({
         color={backgroundColor}
         resizeMode="cover"
       />
-      <ContentContainer>
+      <ContentContainer marginBottom={barcode ? theme.spacing[1] : 0}>
         <Content>
           <Title
             numberOfLines={1}
@@ -202,7 +202,6 @@ export function LicenseCard({
                   width: 62,
                   borderRadius: 4,
                   opacity: 0.5,
-                  marginBottom: theme.spacing.smallGutter,
                 }}
               />
             ) : (

@@ -26,7 +26,7 @@ import {
 } from './messages'
 import { SecondarySchoolSchema } from './dataSchema'
 import {
-  NationalRegistryParentsApi,
+  NationalRegistryCustodiansApi,
   NationalRegistryUserApi,
   SchoolsApi,
   StudentInfoApi,
@@ -125,7 +125,7 @@ const template: ApplicationTemplate<
               delete: true,
               api: [
                 NationalRegistryUserApi,
-                NationalRegistryParentsApi,
+                NationalRegistryCustodiansApi,
                 UserProfileApiWithValidation,
                 SchoolsApi,
                 StudentInfoApi,
@@ -154,8 +154,8 @@ const template: ApplicationTemplate<
             ],
           },
           lifecycle: pruneAfterDays(7),
-          onEntry: defineTemplateApi({
-            action: ApiActions.validateCanCreate,
+          onExit: defineTemplateApi({
+            action: ApiActions.submitApplication,
           }),
           roles: [
             {
@@ -192,9 +192,6 @@ const template: ApplicationTemplate<
             whenToPrune: (application: Application) =>
               pruneInDaysAfterRegistrationCloses(application, 30),
           },
-          onEntry: defineTemplateApi({
-            action: ApiActions.submitApplication,
-          }),
           onExit: defineTemplateApi({
             action: ApiActions.deleteApplication,
             triggerEvent: DefaultEvents.EDIT,
@@ -208,7 +205,7 @@ const template: ApplicationTemplate<
               variant: 'blueberry',
             },
             pendingAction: {
-              title: corePendingActionMessages.waitingForReviewTitle,
+              title: applicationPendingActionMessages.waitingForReviewTitle,
               content: corePendingActionMessages.waitingForReviewDescription,
               displayStatus: 'info',
             },

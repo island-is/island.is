@@ -14,9 +14,11 @@ export const SchoolsApi = defineTemplateApi({
   namespace: 'SecondarySchool',
 })
 
-export const NationalRegistryParentsApi = defineTemplateApi({
+export const NationalRegistryCustodiansApi = defineTemplateApi({
+  // TODO fix action when NationalRegistryV3 is ready
+  // also update all usage of type NationalRegistryParent
   action: 'getParents',
-  externalDataId: 'nationalRegistryParents',
+  externalDataId: 'nationalRegistryCustodians',
   namespace: 'NationalRegistry',
 })
 

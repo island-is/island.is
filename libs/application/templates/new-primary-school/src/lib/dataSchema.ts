@@ -54,18 +54,12 @@ export const dataSchema = z.object({
           : true,
       { path: ['placeOfResidence', 'postalCode'] },
     ),
-  parents: z.object({
-    parent1: z.object({
+  guardians: z.array(
+    z.object({
       email: z.string().email(),
       phoneNumber: phoneNumberSchema,
     }),
-    parent2: z
-      .object({
-        email: z.string().email(),
-        phoneNumber: phoneNumberSchema,
-      })
-      .optional(),
-  }),
+  ),
   contacts: z
     .array(
       z.object({
@@ -113,6 +107,9 @@ export const dataSchema = z.object({
   newSchool: z.object({
     municipality: z.string(),
     school: z.string(),
+  }),
+  school: z.object({
+    applyForNeighbourhoodSchool: z.enum([YES, NO]),
   }),
   siblings: z
     .array(

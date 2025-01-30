@@ -11,7 +11,7 @@ export const httpRequestDurationMiddleware = () => {
 
   return (req: Request, res: Response, next: Function) => {
     res.locals.startEpoch = Date.now()
-    res.on('finish', function () {
+    res.on('finish', () => {
       const responseTimeInMs = Date.now() - res.locals.startEpoch
       httpRequestDurationMicroseconds
         .labels(req.method, req.path, `${res.statusCode}`)
