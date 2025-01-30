@@ -235,37 +235,19 @@ export const serviceSetup = (services: {
         prod: '5f42f942-d8d6-40bf-a186-5a9e12619d9f',
       },
       XROAD_RSK_PROCURING_REDIS_NODES: {
-        dev: json([
-          'redis.internal:6379',
-        ]),
-        staging: json([
-          'redis.internal:6379',
-        ]),
-        prod: json([
-          'redis.internal:6379',
-        ]),
+        dev: json(['redis.internal:6379']),
+        staging: json(['redis.internal:6379']),
+        prod: json(['redis.internal:6379']),
       },
       APOLLO_CACHE_REDIS_NODES: {
-        dev: json([
-          'redis.internal:6379',
-        ]),
-        staging: json([
-          'redis.internal:6379',
-        ]),
-        prod: json([
-          'redis.internal:6379',
-        ]),
+        dev: json(['redis.internal:6379']),
+        staging: json(['redis.internal:6379']),
+        prod: json(['redis.internal:6379']),
       },
       LICENSE_SERVICE_REDIS_NODES: {
-        dev: json([
-          'redis.internal:6379',
-        ]),
-        staging: json([
-          'redis.internal:6379',
-        ]),
-        prod: json([
-          'redis.internal:6379',
-        ]),
+        dev: json(['redis.internal:6379']),
+        staging: json(['redis.internal:6379']),
+        prod: json(['redis.internal:6379']),
       },
       XROAD_RSK_PROCURING_SCOPE: json([
         '@rsk.is/prokura',

@@ -38,8 +38,7 @@ export const serviceSetup = (): ServiceBuilder<'air-discount-scheme-backend'> =>
     .redis({
       host: {
         dev: 'redis.internal:6379',
-        staging:
-          'redis.internal:6379',
+        staging: 'redis.internal:6379',
         prod: 'redis.internal:6379',
       },
     })

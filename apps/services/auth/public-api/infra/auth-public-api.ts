@@ -12,15 +12,9 @@ import {
 } from '../../../../../infra/src/dsl/xroad'
 
 const REDIS_NODE_CONFIG = {
-  dev: json([
-    'redis.internal:6379',
-  ]),
-  staging: json([
-    'redis.internal:6379',
-  ]),
-  prod: json([
-    'redis.internal:6379',
-  ]),
+  dev: json(['redis.internal:6379']),
+  staging: json(['redis.internal:6379']),
+  prod: json(['redis.internal:6379']),
 }
 
 export const serviceSetup = (): ServiceBuilder<'services-auth-public-api'> => {

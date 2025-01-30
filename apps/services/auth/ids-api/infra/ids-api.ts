@@ -17,15 +17,9 @@ const namespace = 'identity-server'
 const imageName = 'services-auth-ids-api'
 
 const REDIS_NODE_CONFIG = {
-  dev: json([
-    'redis.internal:6379',
-  ]),
-  staging: json([
-    'redis.internal:6379',
-  ]),
-  prod: json([
-    'redis.internal:6379',
-  ]),
+  dev: json(['redis.internal:6379']),
+  staging: json(['redis.internal:6379']),
+  prod: json(['redis.internal:6379']),
 }
 
 export const serviceSetup = (): ServiceBuilder<'services-auth-ids-api'> => {

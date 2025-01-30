@@ -403,15 +403,9 @@ export const NationalRegistry = new XroadConf({
       prod: 'IS/GOV/6503760649/SKRA-Protected/Einstaklingar-v1',
     },
     XROAD_NATIONAL_REGISTRY_REDIS_NODES: {
-      dev: json([
-        'redis.internal:6379',
-      ]),
-      staging: json([
-        'redis.internal:6379',
-      ]),
-      prod: json([
-        'redis.internal:6379',
-      ]),
+      dev: json(['redis.internal:6379']),
+      staging: json(['redis.internal:6379']),
+      prod: json(['redis.internal:6379']),
     },
     // Deprecated:
     XROAD_TJODSKRA_API_PATH: '/SKRA-Protected/Einstaklingar-v1',
@@ -551,15 +545,9 @@ export const RskCompanyInfo = new XroadConf({
       prod: 'IS/GOV/5402696029/Skatturinn/ft-v1',
     },
     COMPANY_REGISTRY_REDIS_NODES: {
-      dev: json([
-        'redis.internal:6379',
-      ]),
-      staging: json([
-        'redis.internal:6379',
-      ]),
-      prod: json([
-        'redis.internal:6379',
-      ]),
+      dev: json(['redis.internal:6379']),
+      staging: json(['redis.internal:6379']),
+      prod: json(['redis.internal:6379']),
     },
   },
 })
