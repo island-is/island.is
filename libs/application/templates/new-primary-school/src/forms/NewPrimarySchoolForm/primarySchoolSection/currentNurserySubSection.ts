@@ -37,9 +37,9 @@ export const currentNurserySubSection = buildSubSection({
               })
 
             return (
-              data?.friggSchoolsByMunicipality?.map((municipality) => ({
-                value: municipality.name,
-                label: municipality.name,
+              data?.friggSchoolsByMunicipality?.map(({ name }) => ({
+                value: name,
+                label: name,
               })) ?? []
             )
           },
