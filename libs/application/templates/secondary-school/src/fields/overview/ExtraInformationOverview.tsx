@@ -28,7 +28,7 @@ export const ExtraInformationOverview: FC<FieldBaseProps> = ({
     if (goToScreen) goToScreen(page)
   }
 
-  const getLanguageName = (code: string | undefined): string => {
+  const getLanguageName = (code: string | undefined | null): string => {
     if (!code) return ''
     const language = getLanguageByCode(code)
     return language?.name || ''

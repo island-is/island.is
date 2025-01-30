@@ -101,7 +101,6 @@ export const RegularMember = ({
       <Box>
         <SignatureMember
           name={`signature.regular.member.above.${signatureIndex}.${memberIndex}.${member.above}`}
-          key={`signature.regular.member.above.${signatureIndex}.${memberIndex}.${member.above}`}
           label={f(signatures.inputs.above.label)}
           defaultValue={member.above}
           onChange={(e) =>
@@ -120,7 +119,6 @@ export const RegularMember = ({
         <Box flexGrow={1}>
           <SignatureMember
             name={`signature.regular.member.name.${signatureIndex}.${memberIndex}.${member.name}`}
-            key={`signature.regular.member.name.${signatureIndex}.${memberIndex}.${member.name}`}
             label={f(signatures.inputs.name.label)}
             defaultValue={member.name}
             onChange={(e) =>
@@ -138,7 +136,6 @@ export const RegularMember = ({
         <Box flexGrow={1}>
           <SignatureMember
             name={`signature.regular.member.after.${signatureIndex}.${memberIndex}.${member.after}`}
-            key={`signature.regular.member.after.${signatureIndex}.${memberIndex}.${member.after}`}
             label={f(signatures.inputs.after.label)}
             defaultValue={member.after}
             onChange={(e) =>
@@ -158,7 +155,6 @@ export const RegularMember = ({
         <Box flexGrow={1}>
           <SignatureMember
             name={`signature.regular.member.below.${signatureIndex}.${memberIndex}.${member.below}`}
-            key={`signature.regular.member.below.${signatureIndex}.${memberIndex}.${member.below}`}
             label={f(signatures.inputs.below.label)}
             defaultValue={member.below}
             onChange={(e) =>

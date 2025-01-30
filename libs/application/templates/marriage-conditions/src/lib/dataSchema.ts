@@ -198,6 +198,7 @@ export const dataSchema = z.object({
       path: ['place', 'ceremonyPlace'],
     }),
   applicantConfirmMissingInfo: z.array(z.enum([YES])).length(1),
+  spouseConfirmMissingInfo: z.array(z.enum([YES])).length(1),
 
   //spouse's part of the application
   spouseApprove: z.array(z.enum([YES, NO])).nonempty(),

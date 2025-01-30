@@ -37,11 +37,7 @@ import {
   LimitedAccessCaseExistsGuard,
 } from '../case'
 import { MergedCaseExistsGuard } from '../case/guards/mergedCaseExists.guard'
-import {
-  CivilClaimant,
-  CivilClaimantExistsGuard,
-  CurrentCivilClaimant,
-} from '../defendant'
+import { CivilClaimantExistsGuard } from '../defendant'
 import { CreateFileDto } from './dto/createFile.dto'
 import { CreatePresignedPostDto } from './dto/createPresignedPost.dto'
 import { CurrentCaseFile } from './guards/caseFile.decorator'

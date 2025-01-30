@@ -13,6 +13,7 @@ import {
   DateLog,
   DefenderChoice,
   IndictmentCount,
+  IndictmentCountOffense,
   IndictmentDecision,
   SessionArrangements,
   User,
@@ -289,9 +290,7 @@ export const isProcessingStepValidIndictments = (
   )
 }
 
-export const isTrafficViolationStepValidIndictments = (
-  workingCase: Case,
-): boolean => {
+export const isIndictmentStepValid = (workingCase: Case): boolean => {
   const hasValidDemands = Boolean(
     workingCase.demands &&
       (!workingCase.hasCivilClaims || workingCase.civilDemands),
@@ -301,13 +300,20 @@ export const isTrafficViolationStepValidIndictments = (
     return false
   }
 
+  const isValidSpeedingIndictmentCount = (indictmentCount: IndictmentCount) =>
+    indictmentCount.offenses?.includes(IndictmentCountOffense.SPEEDING)
+      ? Boolean(indictmentCount.recordedSpeed) &&
+        Boolean(indictmentCount.speedLimit)
+      : true
+
   const isValidTrafficViolation = (indictmentCount: IndictmentCount) =>
     Boolean(indictmentCount.policeCaseNumber) &&
     Boolean(indictmentCount.offenses && indictmentCount.offenses?.length > 0) &&
     Boolean(indictmentCount.vehicleRegistrationNumber) &&
     Boolean(indictmentCount.lawsBroken) &&
     Boolean(indictmentCount.incidentDescription) &&
-    Boolean(indictmentCount.legalArguments)
+    Boolean(indictmentCount.legalArguments) &&
+    isValidSpeedingIndictmentCount(indictmentCount)
 
   const isValidNonTrafficViolation = (indictmentCount: IndictmentCount) =>
     Boolean(indictmentCount.incidentDescription) &&
@@ -614,13 +620,4 @@ export const isCourtOfAppealWithdrawnCaseStepValid = (
   return validate([
     [workingCase.appealCaseNumber, ['empty', 'appeal-case-number-format']],
   ]).isValid
-}
-
-export const isCaseFilesStepValidIndictments = (workingCase: Case): boolean => {
-  return Boolean(
-    isTrafficViolationCase(workingCase) ||
-      workingCase.caseFiles?.some(
-        (file) => file.category === CaseFileCategory.INDICTMENT,
-      ),
-  )
 }

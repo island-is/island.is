@@ -294,6 +294,7 @@ export const slices = gql`
       }
     }
     showSearchInput
+    teamMemberOrder
   }
 
   fragment ContactUsFields on ContactUs {
@@ -497,7 +498,16 @@ export const slices = gql`
   fragment OverviewLinksField on OverviewLinks {
     __typename
     id
+    titleAbove
     hasBorderAbove
+    linkData {
+      variant
+      categoryCardItems {
+        title
+        description
+        href
+      }
+    }
     overviewLinks {
       title
       intro {
@@ -799,6 +809,8 @@ export const slices = gql`
     title
     displayTitle
     namespace
+    maxNumberOfCards
+    sorting
     resolvedGrantsList {
       total
       items {
