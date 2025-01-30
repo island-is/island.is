@@ -29,7 +29,7 @@ jobs:
     runs-on: ${{ inputs.runners }}
     outputs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}
-      node-image-tag: ${{ steps.build-args.outputs.node-image-tag }}
+      node-image-version: ${{ steps.build-args.outputs.node-image-tag }}
       playwright-image-tag: ${{ steps.build-args.outputs.playwright-image-tag }}
       container-registry: ${{ steps.build-args.outputs.container-registry }}
     steps:
@@ -38,7 +38,7 @@ jobs:
       - name: Build arg prep
         id: build-args
         run: |
-          echo node-image-tag="$(./scripts/ci/get-node-version.mjs)" >>"$GITHUB_OUTPUT"
+          echo node-image-version="$(./scripts/ci/get-node-version.mjs)" >>"$GITHUB_OUTPUT"
           yarn info --json @playwright/test | jq -r '.children.Version | "playwright-image-tag=v\(.)-focal"' >>"$GITHUB_OUTPUT"
 
       - name: Create matrix from input
@@ -162,7 +162,7 @@ jobs:
           push: false
           target: deps
           build-args: |
-            NODE_IMAGE_TAG=${{ needs.prepare.outputs.node-image-tag }}
+            NODE_IMAGE_TAG=${{ needs.prepare.outputs.node-image-version }}
             PLAYWRIGHT_IMAGE_TAG=${{ needs.prepare.outputs.playwright-image-tag }}
           cache-from: ${{ steps.inputs.outputs.build-cache-shared }}
           cache-to: ${{ steps.inputs.outputs.build-cache-shared }},mode=max
@@ -175,7 +175,7 @@ jobs:
           push: false
           target: output-base
           build-args: |
-            NODE_IMAGE_TAG=${{ needs.prepare.outputs.node-image-tag }}
+            NODE_IMAGE_TAG=${{ needs.prepare.outputs.node-image-version }}
             PLAYWRIGHT_IMAGE_TAG=${{ needs.prepare.outputs.playwright-image-tag }}
           cache-from: ${{ steps.inputs.outputs.build-cache-shared }}
           cache-to: ${{ steps.inputs.outputs.build-cache-shared }},mode=max
@@ -190,7 +190,7 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           target: output-${{ matrix.docker }}
           build-args: |
-            NODE_IMAGE_TAG=${{ needs.prepare.outputs.node-image-tag }}
+            NODE_IMAGE_TAG=${{ needs.prepare.outputs.node-image-version }}
             APP=${{ matrix.project }}
             PLAYWRIGHT_IMAGE_TAG=${{ needs.prepare.outputs.playwright-image-tag }}
           # Caching final images doesn't make sense when this should only run if the project is affected (changed)
