@@ -71,6 +71,7 @@ jobs:
             xargs cat |
             jq -s -c '{ include: [
               .[]
+              | select( .name | IN($projects | split(",") | .[]) )
               | {
                   project: .name,
                   docker: (.targets | keys | map(select(startswith("docker-") and . != "docker-native")) | map(sub("^docker-"; "")) | .[])
