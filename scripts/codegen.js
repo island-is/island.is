@@ -24,8 +24,11 @@ const fileExists = async (path) =>
 
 const main = async () => {
   const schemaExists = await fileExists(SCHEMA_PATH)
-  const nxMaxParallel = process.env.NX_MAX_PARALLEL ?? '2'
-  const nxParallel = process.env.NX_PARALLEL ?? '2'
+  // const nxMaxParallel = process.env.NX_MAX_PARALLEL ?? '2'
+  // const nxParallel = process.env.NX_PARALLEL ?? '2'
+
+  const nxMaxParallel = '10'
+  const nxParallel = '6'
 
   if (!schemaExists) {
     await promisify(writeFile)(SCHEMA_PATH, 'export default () => {}')
