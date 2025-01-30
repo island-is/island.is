@@ -27,7 +27,6 @@ RUN apk add --no-cache python3 build-base gcc git jq openjdk21 py3-distutils-ext
 # Add intermediate step for debugging system dependencies
 FROM base-deps AS deps
 WORKDIR /build
-
 # Adding and installing packages
 COPY package.json yarn.lock .yarnrc.yml ./
 COPY apps/native/app/package.json ./apps/native/app/
@@ -45,7 +44,6 @@ FROM deps AS src
 # image with the source code
 COPY . ./
 
-
 # Build stage
 FROM src AS builder
 
@@ -58,7 +56,6 @@ RUN yarn nx run-many --target=build --projects="${APP}" --prod --parallel=8
 SHELL ["/bin/ash", "-o", "pipefail", "-c"]
 RUN project_root="$(yarn nx show project ${APP} --json | jq -r '.root')" && \
   mv "dist/$project_root" /dist/
-
 
 # This is base image for containers that are to be deployed
 FROM ${DOCKER_REGISTRY}/library/node:${NODE_IMAGE_TAG} AS base-node
