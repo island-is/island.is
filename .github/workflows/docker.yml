@@ -39,12 +39,11 @@ env:
   # Regsitry to for build images and cache
   IMAGE_REGISTRY: ${{ vars.IMAGE_REGISTRY || 'localhost' }}
   AWS_ECR_REPO_BASE: ${{ vars.AWS_ECR_REPO_BASE || 'docker.io' }}
-  RUNNERS: ${{ inputs.runners || 'arc-runners' }}
 
 jobs:
   prepare:
     name: Prepare
-    runs-on: ${{ env.RUNNERS }}
+    runs-on: arc-runners
     outputs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}
       node-image-version: ${{ steps.build-args.outputs.node-image-tag }}
@@ -90,7 +89,7 @@ jobs:
 
   build:
     name: Build ${{ matrix.project }}
-    runs-on: ${{ env.RUNNERS }}
+    runs-on: arc-runners
     needs: prepare
     strategy:
       fail-fast: false
