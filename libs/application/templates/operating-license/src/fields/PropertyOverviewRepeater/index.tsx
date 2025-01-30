@@ -18,7 +18,7 @@ export const PropertyOverviewRepeater: FC<
   React.PropsWithChildren<PropTypes>
 > = ({ field, application }) => {
   const { formatMessage, lang: locale } = useLocale()
-  const { title } = field
+  const { title = '' } = field
   const { id } = field.props as { id: string }
   const fields = getValueViaPath(application.answers, id) as Property[]
 
