@@ -29,7 +29,6 @@ export const schoolSubSection = buildSubSection({
       children: [
         buildRadioField({
           id: 'school.applyForNeighbourhoodSchool',
-          title: '',
           required: true,
           options: (application) => {
             return [
