@@ -319,69 +319,71 @@ const IncomePlanTemplate: ApplicationTemplate<
               income.incomeCategoryName,
             )
           })
-        } else {
-          withholdingTax &&
-            withholdingTax.incomeTypes?.forEach((income, i) => {
-              set(
-                answers,
-                `incomePlanTable[${i}].incomeType`,
-                income.incomeTypeName,
-              )
-              set(
-                answers,
-                `incomePlanTable[${i}].incomePerYear`,
-                String(income.total),
-              )
-              set(answers, `incomePlanTable[${i}].currency`, ISK)
-              set(answers, `incomePlanTable[${i}].income`, RatioType.YEARLY)
-              set(
-                answers,
-                `incomePlanTable[${i}].incomeCategory`,
-                income.categoryName,
-              )
-
-              set(
-                answers,
-                `incomePlanTable[${i}].january`,
-                String(income.january),
-              )
-              set(
-                answers,
-                `incomePlanTable[${i}].february`,
-                String(income.february),
-              )
-              set(answers, `incomePlanTable[${i}].march`, String(income.march))
-              set(answers, `incomePlanTable[${i}].april`, String(income.april))
-              set(answers, `incomePlanTable[${i}].may`, String(income.may))
-              set(answers, `incomePlanTable[${i}].june`, String(income.june))
-              set(answers, `incomePlanTable[${i}].july`, String(income.july))
-              set(
-                answers,
-                `incomePlanTable[${i}].august`,
-                String(income.august),
-              )
-              set(
-                answers,
-                `incomePlanTable[${i}].september`,
-                String(income.september),
-              )
-              set(
-                answers,
-                `incomePlanTable[${i}].october`,
-                String(income.october),
-              )
-              set(
-                answers,
-                `incomePlanTable[${i}].november`,
-                String(income.november),
-              )
-              set(
-                answers,
-                `incomePlanTable[${i}].december`,
-                String(income.december),
-              )
-            })
         }
+        //Temporarily removing this until withholdingTax endpoint provides more accurate info
+        // } else {
+        //   withholdingTax &&
+        //     withholdingTax.incomeTypes?.forEach((income, i) => {
+        //       set(
+        //         answers,
+        //         `incomePlanTable[${i}].incomeType`,
+        //         income.incomeTypeName,
+        //       )
+        //       set(
+        //         answers,
+        //         `incomePlanTable[${i}].incomePerYear`,
+        //         String(income.total),
+        //       )
+        //       set(answers, `incomePlanTable[${i}].currency`, ISK)
+        //       set(answers, `incomePlanTable[${i}].income`, RatioType.YEARLY)
+        //       set(
+        //         answers,
+        //         `incomePlanTable[${i}].incomeCategory`,
+        //         income.categoryName,
+        //       )
+
+        //       set(
+        //         answers,
+        //         `incomePlanTable[${i}].january`,
+        //         String(income.january),
+        //       )
+        //       set(
+        //         answers,
+        //         `incomePlanTable[${i}].february`,
+        //         String(income.february),
+        //       )
+        //       set(answers, `incomePlanTable[${i}].march`, String(income.march))
+        //       set(answers, `incomePlanTable[${i}].april`, String(income.april))
+        //       set(answers, `incomePlanTable[${i}].may`, String(income.may))
+        //       set(answers, `incomePlanTable[${i}].june`, String(income.june))
+        //       set(answers, `incomePlanTable[${i}].july`, String(income.july))
+        //       set(
+        //         answers,
+        //         `incomePlanTable[${i}].august`,
+        //         String(income.august),
+        //       )
+        //       set(
+        //         answers,
+        //         `incomePlanTable[${i}].september`,
+        //         String(income.september),
+        //       )
+        //       set(
+        //         answers,
+        //         `incomePlanTable[${i}].october`,
+        //         String(income.october),
+        //       )
+        //       set(
+        //         answers,
+        //         `incomePlanTable[${i}].november`,
+        //         String(income.november),
+        //       )
+        //       set(
+        //         answers,
+        //         `incomePlanTable[${i}].december`,
+        //         String(income.december),
+        //       )
+        //     })
+        // }
 
         return context
       }),
