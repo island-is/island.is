@@ -14,7 +14,7 @@ module.exports = {
         allowNull: false,
       },
       type: {
-        type: Sequelize.ENUM('email', 'phone', 'web'),
+        type: Sequelize.STRING,
         allowNull: false,
       },
       created: {
