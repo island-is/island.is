@@ -77,7 +77,7 @@ jobs:
                   docker: (.targets | keys | map(select(startswith("docker-") and . != "docker-native")) | map(sub("^docker-"; "")) | .[])
                 }
               ]
-            }')" >>"$GITHUB_OUTPUT"
+            }')" | tee -a "$GITHUB_OUTPUT"
 
   build:
     name: Build ${{ matrix.project }}
