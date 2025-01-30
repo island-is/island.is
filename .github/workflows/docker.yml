@@ -3,7 +3,7 @@ name: Docker Build
 on:
   pull_request:
     types:
-      - synchronize
+      - labeled
   workflow_call:
     inputs:
       projects:
@@ -64,7 +64,8 @@ jobs:
           localrun: ${{ !!github.event.localrun }}
           projects: ${{ inputs.projects }}
         run: |
-          if [[ ${{ github.event_name == 'pull_request' }} ]]; then
+          if [[ ${{ github.event.pull_request.labels.*.name == 'docker build' }} ]]; then
+            echo "Using small subset for testing docker build (on ${{ github.event.pull_request.base.ref }})"
             export projects="web,air-discount-scheme-backend,license-api"
           fi
           # Create a list of objects of the form:
