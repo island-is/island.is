@@ -55,7 +55,7 @@ jobs:
           #   ...
           # ]
           echo "matrix=$(git ls-files '**/project.json' |
-            xargs cat | \
+            xargs cat |
             jq -s -c '{ include: [
               .[]
               | {
