@@ -17,7 +17,7 @@ const SecondaryContact: FC<React.PropsWithChildren<FieldBaseProps>> = ({
 }) => {
   const { setValue, getValues } = useFormContext()
   const { formatMessage, lang: locale } = useLocale()
-  const { id, title } = field
+  const { id, title = '' } = field
   const isEnabled = getValues('hasSecondaryContact') === YES
 
   const enableSecondaryContact = () => {
