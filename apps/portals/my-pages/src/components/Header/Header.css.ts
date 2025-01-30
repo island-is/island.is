@@ -5,7 +5,6 @@ import {
   zIndex,
 } from '@island.is/portals/my-pages/constants'
 import { globalStyle, style } from '@vanilla-extract/css'
-
 export const header = style({
   position: 'fixed',
   display: 'flex',
@@ -19,10 +18,9 @@ export const header = style({
   backgroundColor: theme.color.blue100,
   alignItems: 'center',
   opacity: 1,
-  visibility: 'visible',
   transform: 'translateY(0%)',
   transition:
-    'opacity 150ms ease, transform 150ms ease, visibility 0ms linear 150ms',
+    'opacity 350ms cubic-bezier(0.4, 0.0, 0.2, 1), transform 350ms cubic-bezier(0.4, 0.0, 0.2, 1), visibility 0ms',
   '@media': {
     [`screen and (max-width: ${theme.breakpoints.md}px)`]: {
       height: SERVICE_PORTAL_HEADER_HEIGHT_SM,
@@ -34,10 +32,9 @@ export const hideHeader = style({
   '@media': {
     [`screen and (max-width: ${theme.breakpoints.md}px)`]: {
       transform: `translateY(-100%)`,
-      opacity: 0,
-      visibility: 'hidden',
       transition:
-        'opacity 250ms ease, transform 250ms ease, visibility 0ms linear 0ms',
+        'opacity 350ms cubic-bezier(0.4, 0.0, 0.2, 1), transform 350ms cubic-bezier(0.4, 0.0, 0.2, 1), visibility 0ms',
+      transitionDelay: '100ms',
     },
   },
 })
@@ -46,10 +43,8 @@ export const showHeader = style({
   '@media': {
     [`screen and (max-width: ${theme.breakpoints.md}px)`]: {
       transform: `translateY(0%)`,
-      opacity: 1,
-      visibility: 'visible',
       transition:
-        'opacity 250ms ease, transform 250ms ease, visibility 0ms linear 0ms',
+        'opacity 350ms cubic-bezier(0.4, 0.0, 0.2, 1), transform 350ms cubic-bezier(0.4, 0.0, 0.2, 1), visibility 0ms',
     },
   },
 })

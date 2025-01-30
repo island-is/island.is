@@ -86,6 +86,7 @@ interface MobileNavigationDialogProps {
   onClick: () => void
   menuState: MenuStateReturn
   mobileNavigationButtonCloseLabel?: string
+  isScrolled?: boolean
 }
 
 interface NavigationTreeProps {
@@ -214,6 +215,18 @@ export const Navigation: FC<React.PropsWithChildren<NavigationProps>> = ({
     setActiveAccordions(toggleId(activeAccordions, id, singleAccordion))
   }
 
+  const mobileId = 'menuDialog-mobile-test'
+  const [isScrolled, setIsScrolled] = useState<boolean | undefined>(undefined)
+  const scrolled = useScrolledPassed(mobileId)
+
+  useEffect(() => {
+    if (scrolled) {
+      setIsScrolled(true)
+    } else if (isScrolled && !scrolled) {
+      setIsScrolled(false)
+    }
+  }, [scrolled])
+
   const Title: MobileNavigationDialogProps['Title'] = titleLinkProps ? (
     renderLink(
       <FocusableBox
@@ -221,7 +234,8 @@ export const Navigation: FC<React.PropsWithChildren<NavigationProps>> = ({
         href={asSpan ? undefined : titleLink?.href}
         borderRadius="large"
         className={styles.link}
-        {...basePadding}
+        paddingX={isScrolled ? 2 : 4}
+        paddingY={basePadding.paddingY}
       >
         {({ isFocused, isHovered }) => {
           const textColor =
@@ -246,7 +260,11 @@ export const Navigation: FC<React.PropsWithChildren<NavigationProps>> = ({
       titleProps,
     )
   ) : (
-    <Box paddingX={4} paddingBottom={1} style={{ paddingTop: 6 }}>
+    <Box
+      paddingX={isScrolled ? 2 : 4}
+      paddingBottom={1}
+      style={{ paddingTop: 6 }}
+    >
       <Box display="flex" flexDirection="row" alignItems="center">
         {titleIcon && (
           <Box
@@ -270,18 +288,6 @@ export const Navigation: FC<React.PropsWithChildren<NavigationProps>> = ({
     </Box>
   )
 
-  const mobileId = 'menuDialog-mobile-test'
-  const [isScrolled, setIsScrolled] = useState<boolean | undefined>(undefined)
-  const scrolled = useScrolledPassed(mobileId)
-
-  useEffect(() => {
-    if (scrolled) {
-      setIsScrolled(true)
-    } else if (isScrolled && !scrolled) {
-      setIsScrolled(false)
-    }
-  }, [scrolled])
-
   return (
     <NavigationContext.Provider
       value={{ baseId, activeAccordions, toggleAccordion }}
@@ -293,7 +299,6 @@ export const Navigation: FC<React.PropsWithChildren<NavigationProps>> = ({
           borderRadius="large"
           className={cn(styles.scrolledMenu, {
             [styles.scrolledMenuVisible]: isScrolled,
-            [styles.scrolledMenuHidden]: isScrolled === false,
           })}
           id={mobileId}
         >
@@ -326,6 +331,7 @@ export const Navigation: FC<React.PropsWithChildren<NavigationProps>> = ({
               onClick={() => {
                 menu.hide()
               }}
+              isScrolled={isScrolled}
             />
           </Menu>
         </Box>
@@ -366,6 +372,7 @@ const MobileNavigationDialog = ({
   menuState,
   asSpan,
   mobileNavigationButtonCloseLabel,
+  isScrolled,
 }: MobileNavigationDialogProps) => {
   return (
     <ModalBase
@@ -384,7 +391,7 @@ const MobileNavigationDialog = ({
           <Box
             position="absolute"
             right={0}
-            marginRight={4}
+            marginRight={isScrolled ? 2 : 4}
             style={{ top: '50%', transform: 'translateY(-50%)' }}
           >
             <FocusableBox
@@ -515,7 +522,7 @@ const MobileButton = ({
             icon="menu"
             size="medium"
             color={'blue400'}
-            className={isShaking ? styles.shake : ''}
+            // className={isShaking ? styles.shake : ''}
           />
         </FocusableBox>
       </Box>

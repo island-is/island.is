@@ -167,72 +167,18 @@ export const transition = style({
   },
 })
 
-const stretchKeyframe = keyframes({
-  '0%': {
-    transform: 'scaleX(0)',
-  },
-  '100%': {
-    transform: 'scaleX(1)',
-  },
-})
-
-const shrinkKeyframe = keyframes({
-  '0%': {
-    transform: 'scaleX(1)',
-  },
-  '100%': {
-    transform: 'scaleX(0)',
-  },
-})
 export const scrolledMenu = style({
   position: 'relative',
+  marginLeft: 0,
+  marginRight: 0,
+  transition: 'margin-left 300ms ease, margin-right 300ms ease',
 })
-
-const baseMobileMenuScrolled: StyleWithSelectors = {
-  content: '',
-  position: 'fixed',
-  top: 0,
-  zIndex: -1,
-
-  // bottom: -1,
-  background: theme.color.blue100,
-  borderBottom: `1px solid ${theme.color.blue200}`,
-  transformOrigin: 'top',
-}
 
 export const scrolledMenuVisible = style({
-  '::before': {
-    left: `-${theme.spacing[2]}px`,
-    right: `-${theme.spacing[2]}px`,
-    animation: `${stretchKeyframe} 0.3s ease-in-out forwards`, // Appear animation
-  },
-  '@media': {
-    [`screen and (max-width: ${theme.breakpoints.md}px)`]: {
-      '::before': {
-        ...baseMobileMenuScrolled,
-        left: `-${theme.spacing[3]}px`,
-        right: `-${theme.spacing[3]}px`,
-      },
-    },
-  },
-})
-
-export const scrolledMenuHidden = style({
-  '::before': {
-    ...baseMobileMenuScrolled,
-    left: `-${theme.spacing[2]}px`,
-    right: `-${theme.spacing[2]}px`,
-    animation: `${shrinkKeyframe} 0.3s ease-in-out forwards`, // Disappear animation
-  },
-  '@media': {
-    [`screen and (max-width: ${theme.breakpoints.md}px)`]: {
-      '::before': {
-        ...baseMobileMenuScrolled,
-        left: `-${theme.spacing[3]}px`,
-        right: `-${theme.spacing[3]}px`,
-      },
-    },
-  },
+  borderRadius: 'unset',
+  marginLeft: -theme.spacing[2],
+  marginRight: -theme.spacing[2],
+  transition: 'margin-left 300ms ease, margin-right 300ms ease',
 })
 
 export const mobileNav = style({

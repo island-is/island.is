@@ -25,7 +25,8 @@ export const mobileNav = style({
   position: 'sticky',
   top: 0,
   zIndex: 99,
-  transition: 'top 450ms cubic-bezier(0.4, 0.0, 0.2, 1)',
+  transition: 'top 350ms cubic-bezier(0.4, 0.0, 0.2, 1)',
+  transitionDelay: '150ms',
 })
 
 globalStyle(`${btn} > span`, {
