@@ -128,6 +128,22 @@ describe('getLegalArguments', () => {
     const result = getLegalArguments(lawsBroken, formatMessage)
 
     expect(result).toEqual(
+      'Telst háttsemi þessi varða við 37. gr. og 1., sbr. 2. mgr. 49. gr., sbr. 1. mgr. 95. gr. umferðarlaga nr. 77/2019.',
+    )
+  })
+
+  test('should format legal arguments without sub articles', () => {
+    const lawsBroken = [
+      [37, 0],
+      [49, 1],
+      [49, 2],
+      [58, 0],
+      [95, 1],
+    ]
+
+    const result = getLegalArguments(lawsBroken, formatMessage)
+
+    expect(result).toEqual(
       'Telst háttsemi þessi varða við 37. gr., 1., sbr. 2. mgr. 49. gr., sbr. 1. mgr. 95. gr. umferðarlaga nr. 77/2019.',
     )
   })
