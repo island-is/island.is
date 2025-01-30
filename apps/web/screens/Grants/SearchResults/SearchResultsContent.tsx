@@ -11,7 +11,6 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
-import { Problem } from '@island.is/react-spa/shared'
 import { Locale } from '@island.is/shared/types'
 import { isDefined } from '@island.is/shared/utils'
 import { Grant, GrantStatus } from '@island.is/web/graphql/schema'
@@ -19,6 +18,7 @@ import { useLinkResolver } from '@island.is/web/hooks'
 
 import { m } from '../messages'
 import { generateStatusTag, parseStatus } from '../utils'
+import { Problem } from '@island.is/react-spa/shared'
 
 interface Props {
   grants?: Array<Grant>
