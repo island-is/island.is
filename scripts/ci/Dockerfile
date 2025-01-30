@@ -9,7 +9,7 @@ ARG DOCKER_ECR_REGISTRY=public.ecr.aws/docker
 ARG DOCKER_IMAGE_REGISTRY=${DOCKER_ECR_REGISTRY%/docker}
 # Alias DOCKER_IMAGE_REGISTRY to DOCKER_REGISTRY for backwards compatibility
 ARG DOCKER_REGISTRY=${DOCKER_IMAGE_REGISTRY}/docker
-ARG NODE_IMAGE_TAG=20-alpine
+ARG NODE_IMAGE_TAG=20-bookworm-slim
 ARG APP_HOME
 ARG APP
 
@@ -17,11 +17,14 @@ ARG APP
 # Base image for dependencies
 FROM ${DOCKER_REGISTRY}/library/node:${NODE_IMAGE_TAG} AS base-deps
 
-# hadolint ignore=DL3018
-RUN apk add --no-cache python3 build-base gcc git jq openjdk21 py3-distutils-extra pkgconf && \
-  rm -rf /var/cache/apk/* && \
-  ln -sf /usr/bin/python3 /usr/bin/python
-
+# Install system dependencies
+# hadolint ignore=DL3008
+RUN apt-get update && \
+  apt-get install -y --no-install-recommends \
+  build-base build-essential gcc git jq openjdk21 pkgconf py3-distutils-extra python3 && \
+  ln -sf /usr/bin/python3 /usr/bin/python && \
+  apt-get clean && \
+  rm -rf /var/lib/apt/lists/*
 
 
 # Add intermediate step for debugging system dependencies
@@ -44,6 +47,7 @@ FROM deps AS src
 # image with the source code
 COPY . ./
 
+
 # Build stage
 FROM src AS builder
 
@@ -57,14 +61,15 @@ SHELL ["/bin/ash", "-o", "pipefail", "-c"]
 RUN project_root="$(yarn nx show project ${APP} --json | jq -r '.root')" && \
   mv "dist/$project_root" /dist/
 
+
 # This is base image for containers that are to be deployed
 FROM ${DOCKER_REGISTRY}/library/node:${NODE_IMAGE_TAG} AS base-node
 
 ENV NODE_ENV=production
 
 # Adding user for running the app
-RUN addgroup runners && \
-  adduser --disabled-password runner --ingroup runners
+RUN groupadd runners && \
+  useradd --create-home --gid runners --shell /usr/sbin/nologin runner
 
 
 FROM base-node AS base-node-with-pg
