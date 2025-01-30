@@ -24,7 +24,6 @@ export const extraInformationSection = buildSection({
     buildMultiField({
       id: 'extraInformationMultiField',
       title: extraInformation.general.pageTitle,
-      description: extraInformation.general.description,
       children: [
         buildAlertMessageField({
           id: 'alertPastRegistrationEndDate',
