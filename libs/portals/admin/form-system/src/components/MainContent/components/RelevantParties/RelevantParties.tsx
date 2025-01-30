@@ -65,7 +65,13 @@ export const RelevantParties = () => {
         )
         setFormApplicants([...formApplicants, ...newApplicants])
       } catch (e) {
-        console.error(e)
+        console.error('Apollo error:', e.message)
+        if (e.networkError) {
+          console.error('Network error:', e.networkError)
+        }
+        if (e.graphQLErrors) {
+          console.error('GraphQL error:', e.graphQLErrors)
+        }
       }
     } else {
       try {

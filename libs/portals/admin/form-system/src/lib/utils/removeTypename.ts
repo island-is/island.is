@@ -19,5 +19,6 @@ export const removeTypename = (obj: any): any => {
       Object.entries(newObj.fieldSettings).filter(([_, v]) => v !== null),
     )
   }
+  console.log('removeTypeName new object', newObj)
   return newObj
 }

@@ -18,7 +18,7 @@ export class CreateScreenInput {
 }
 
 @InputType('FormSystemUpdateScreenDtoInput')
-export class UpdateSectionDtoInput {
+export class UpdateScreenDtoInput {
   @Field(() => LanguageTypeInput, { nullable: true })
   name?: LanguageTypeInput
 
@@ -34,8 +34,8 @@ export class UpdateScreenInput {
   @Field(() => String, { nullable: true })
   id?: string
 
-  @Field(() => UpdateSectionDtoInput, { nullable: true })
-  updateScreenDto?: UpdateSectionDtoInput
+  @Field(() => UpdateScreenDtoInput, { nullable: true })
+  updateScreenDto?: UpdateScreenDtoInput
 }
 
 @InputType('FormSystemDeleteScreenInput')

@@ -25,7 +25,7 @@ export class ScreensService {
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
     private screensApi: ScreensApi,
-  ) { }
+  ) {}
 
   // eslint-disable-next-line
   handleError(error: any, errorDetail?: string): ApolloError | null {
@@ -63,13 +63,13 @@ export class ScreensService {
     }
   }
 
-  async updateScreen(auth: User, input: UpdateScreenInput): Promise<Screen> {
+  async updateScreen(auth: User, input: UpdateScreenInput): Promise<void> {
     const response = await this.screensApiWithAuth(auth)
       .screensControllerUpdate(input as ScreensControllerUpdateRequest)
       .catch((e) => handle4xx(e, this.handleError, 'failed to update screen'))
 
     if (!response || response instanceof ApolloError) {
-      return {}
+      return
     }
 
     return response

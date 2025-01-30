@@ -45,13 +45,14 @@ export class ScreensResolver {
     return this.screensService.deleteScreen(user, input)
   }
 
-  @Mutation(() => Screen, {
+  @Mutation(() => Boolean, {
     name: 'formSystemUpdateScreen',
+    nullable: true,
   })
   async updateScreen(
     @Args('input') input: UpdateScreenInput,
     @CurrentUser() user: User,
-  ): Promise<Screen> {
+  ): Promise<void> {
     return this.screensService.updateScreen(user, input)
   }
 
