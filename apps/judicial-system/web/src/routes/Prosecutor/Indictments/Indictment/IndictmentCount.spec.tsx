@@ -131,6 +131,7 @@ describe('getLegalArguments', () => {
       'Telst háttsemi þessi varða við 37. gr. og 1., sbr. 2. mgr. 49. gr., sbr. 1. mgr. 95. gr. umferðarlaga nr. 77/2019.',
     )
   })
+})
 
 describe('getIncidentDescriptionReason', () => {
   test('should return a description for one offense', () => {

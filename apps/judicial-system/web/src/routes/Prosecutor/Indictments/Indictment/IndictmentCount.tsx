@@ -283,9 +283,9 @@ export const getLegalArguments = (
     const hasNoArticle = lawsBroken[i - 1][1] === 0
 
     if (lawsBroken[i][0] !== lawsBroken[i - 1][0]) {
-      articles = `${articles}${
-        hasNoArticle ? '' : ` mgr. `
-      }${lawsBroken[i - 1][0]}. gr.`
+      articles = `${articles}${hasNoArticle ? '' : ` mgr. `}${
+        lawsBroken[i - 1][0]
+      }. gr.`
       useSbr = i > andIndex
     }
 
