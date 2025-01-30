@@ -58,13 +58,6 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           enable-cache: 'node_modules,cypress,generated-files'
 
-      - uses: actions/setup-node@v4
-        with:
-          node-version-file: 'package.json'
-
-      - name: Setup yarn
-        run: corepack enable
-
       - name: Derive appropriate SHAs
         uses: nrwl/nx-set-shas@v4
 
