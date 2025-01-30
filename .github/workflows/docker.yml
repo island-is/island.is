@@ -68,6 +68,11 @@ jobs:
           echo node-image-version="$(./scripts/ci/get-node-version.mjs)" >>"$GITHUB_OUTPUT"
           yarn info --json @playwright/test | jq -r '.children.Version | "playwright-image-tag=v\(.)-focal"' >>"$GITHUB_OUTPUT"
 
+      - name: Codegen
+        if: ${{ env.is_labeled }}
+        run: |
+          yarn codegen
+
       - name: Create matrix from input
         id: set-matrix
         env:
