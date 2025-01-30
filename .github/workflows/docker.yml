@@ -1,6 +1,9 @@
 name: Docker Build
 
 on:
+  pull_request:
+    types:
+      - synchronize
   workflow_call:
     inputs:
       projects:
@@ -61,6 +64,9 @@ jobs:
           localrun: ${{ !!github.event.localrun }}
           projects: ${{ inputs.projects }}
         run: |
+          if [[ ${{ github.event_name == 'pull_request' }} ]]; then
+            export projects="web,air-discount-scheme-backend,license-api"
+          fi
           # Create a list of objects of the form:
           # [
           #   {
