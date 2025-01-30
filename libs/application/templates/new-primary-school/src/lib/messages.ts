@@ -445,6 +445,23 @@ export const newPrimarySchoolMessages: MessageDir = {
       description: '{grade} grade',
     },
 
+    // Current nursery
+    currentNurserySubSectionTitle: {
+      id: 'nps.application:primary.school.current.nursery.sub.section.title',
+      defaultMessage: 'Upplýsingar um núverandi leikskóla',
+      description: 'Information about current nursery',
+    },
+    nursery: {
+      id: 'nps.application:primary.school.nursery',
+      defaultMessage: 'Leikskóli',
+      description: 'Nursery',
+    },
+    nurseryPlaceholder: {
+      id: 'nps.application:primary.school.nursery.placeholder',
+      defaultMessage: 'Veldu leikskóla',
+      description: 'Select nursery',
+    },
+
     // School page
     schoolSubSectionTitle: {
       id: 'nps.application:primary.school.school.sub.section.title',
@@ -916,6 +933,11 @@ export const newPrimarySchoolMessages: MessageDir = {
       id: 'nps.application:overview.uses.epi.pen',
       defaultMessage: 'Notar adrenalínpenna (epi-pen) vegna ofnæmis',
       description: 'Uses an epi-pen for allergies',
+    },
+    currentNursery: {
+      id: 'nps.application:overview.current.nursery',
+      defaultMessage: 'Núverandi leikskóli',
+      description: 'Current nursery',
     },
   }),
 
