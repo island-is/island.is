@@ -244,7 +244,7 @@ export const authStore = create<AuthStore>((set, get) => ({
     }
 
     const client = await getApolloClientAsync()
-    await client.cache.reset()
+    await client.resetStore()
     await Keychain.resetGenericPassword({ service: KEYCHAIN_AUTH_KEY })
     set(
       (state) => ({
