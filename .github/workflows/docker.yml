@@ -1,14 +1,27 @@
 name: Docker Build
 
 on:
+  workflow_call:
+    inputs:
+      projects:
+        description: 'Comma-separated list of project names to build.'
+        type: string
+        required: true
+      runners:
+        description: 'The runners to run the jobs on.'
+        type: string
+        required: false
+        default: 'arc-runners'
   workflow_dispatch:
     inputs:
       projects:
         description: 'Comma-separated list of project names to build.'
+        type: string
         required: true
       runners:
         description: 'The runners to run the jobs on.'
         required: false
+        type: string
         default: 'arc-runners'
 
 concurrency:
