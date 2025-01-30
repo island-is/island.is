@@ -78,7 +78,7 @@ jobs:
             # A representative sample of various docker build targets
             export projects="web,air-discount-scheme-backend,license-api"
             # In PRs we don't have the generated files context from when being called.
-            yarn codegen
+            corepack enable && yarn install --immutable && yarn codegen
           fi
           # Create a list of objects of the form:
           # [
