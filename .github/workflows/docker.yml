@@ -21,7 +21,7 @@ defaults:
 
 env:
   # Regsitry to for build images and cache
-  IMAGE_REPOSITORY: ${{ vars.IMAGE_REPOSITORY || 'localhost' }}
+  IMAGE_REGISTRY: ${{ vars.IMAGE_REGISTRY || 'localhost' }}
 
 jobs:
   prepare:
@@ -82,7 +82,7 @@ jobs:
         id: inputs
         env:
           # We don't use a repository prefix (e.g. <registry>/island.is/<project>), just the raw project
-          image_repository: ${{ env.IMAGE_REPOSITORY }}/${{ matrix.project }}
+          image_repository: ${{ env.IMAGE_REGISTRY }}/${{ matrix.project }}
           localrun: ${{ github.event.localrun }}
         run: |
           echo "Labels: ${{ toJSON(github.event.pull_request.labels) }}"
@@ -100,7 +100,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Configure AWS Credentials
-        if: ${{ !github.event.localrun && env.IMAGE_REPOSITORY }}
+        if: ${{ !github.event.localrun }}
         id: aws-creds
         uses: aws-actions/configure-aws-credentials@v4
         with:
