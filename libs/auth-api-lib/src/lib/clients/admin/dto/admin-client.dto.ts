@@ -1,8 +1,9 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 
 import { TranslatedValueDto } from '../../../translation/dto/translated-value.dto'
-import { ClientType, RefreshTokenExpiration } from '../../../types'
+import { ClientSso, ClientType, RefreshTokenExpiration } from '../../../types'
 import { AdminClientClaimDto } from './admin-client-claim.dto'
+import { IsEnum } from 'class-validator'
 
 export class AdminClientDto {
   @ApiProperty()
@@ -130,4 +131,12 @@ export class AdminClientDto {
   })
   @ApiProperty()
   allowedAcr!: string[]
+
+  @IsEnum(ClientSso)
+  @ApiProperty({
+    example: 'disabled',
+    enum: ClientSso,
+    enumName: 'ClientSso',
+  })
+  readonly sso!: string
 }
