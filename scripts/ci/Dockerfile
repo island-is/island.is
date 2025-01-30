@@ -68,7 +68,7 @@ FROM ${DOCKER_REGISTRY}/library/node:${NODE_IMAGE_TAG} AS base-node
 ENV NODE_ENV=production
 
 # Adding user for running the app
-RUN groupadd runners && \
+RUN addgroup runners && \
   useradd --create-home --gid runners --shell /usr/sbin/nologin runner
 
 
