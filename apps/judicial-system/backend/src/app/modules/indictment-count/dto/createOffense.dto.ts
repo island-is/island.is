@@ -6,6 +6,6 @@ import { IndictmentCountOffense } from '@island.is/judicial-system/types'
 
 export class CreateOffenseDto {
   @IsEnum(IndictmentCountOffense)
-  @ApiProperty({ type: IndictmentCountOffense })
+  @ApiProperty({ enum: IndictmentCountOffense })
   readonly offense!: IndictmentCountOffense
 }
