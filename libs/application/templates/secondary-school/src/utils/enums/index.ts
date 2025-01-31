@@ -8,6 +8,7 @@ export enum States {
   PREREQUISITES = 'prerequisites',
   DRAFT = 'draft',
   SUBMITTED = 'submitted',
+  IN_REVIEW = 'inReview',
   COMPLETED = 'completed',
 }
 
@@ -17,7 +18,6 @@ export enum Roles {
 }
 
 export enum ApiActions {
-  validateCanCreate = 'validateCanCreate',
   submitApplication = 'submitApplication',
   deleteApplication = 'deleteApplication',
 }

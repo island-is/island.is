@@ -48,6 +48,8 @@ import {
   TOKEN_EXPIRED_ERROR,
 } from '@island.is/services/license'
 import { UserAgent } from '@island.is/nest/core'
+import { ProblemError } from '@island.is/nest/problem'
+import { ProblemType } from '@island.is/shared/problem'
 
 const LOG_CATEGORY = 'license-service'
 
@@ -469,6 +471,34 @@ export class LicenseService {
     )
   }
 
+  getBarcodeSessionKey(licenseType: LicenseType, sub: string) {
+    return `${licenseType}-${sub}`
+  }
+
+  async checkBarcodeSession(
+    barcodeSessionKey: string | undefined,
+    user: User,
+    licenseType: LicenseType,
+  ) {
+    if (barcodeSessionKey) {
+      const activeBarcodeSession = await this.barcodeService.getSessionCache(
+        barcodeSessionKey,
+      )
+
+      if (activeBarcodeSession && activeBarcodeSession !== user.sid) {
+        // If the user has an active session for the license type, we should not create a new barcode
+        this.logger.info('User has an active session for license', {
+          licenseType,
+        })
+
+        throw new ProblemError({
+          type: ProblemType.BAD_SESSION,
+          title: `User has an active session for license type: ${licenseType}`,
+        })
+      }
+    }
+  }
+
   async createBarcode(
     user: User,
     genericUserLicense: GenericUserLicense,
@@ -477,6 +507,12 @@ export class LicenseService {
     const genericUserLicenseType = genericUserLicense.license.type
     const licenseType = this.mapLicenseType(genericUserLicenseType)
     const client = await this.getClient<typeof licenseType>(licenseType)
+
+    const barcodeSessionKey = user.sub
+      ? this.getBarcodeSessionKey(licenseType, user.sub)
+      : undefined
+
+    await this.checkBarcodeSession(barcodeSessionKey, user, licenseType)
 
     if (
       genericUserLicense.license.pkpassStatus !==
@@ -518,6 +554,9 @@ export class LicenseService {
         licenseType,
         extraData,
       }),
+      barcodeSessionKey &&
+        user.sid &&
+        this.barcodeService.setSessionCache(barcodeSessionKey, user.sid),
     ])
 
     return tokenPayload
