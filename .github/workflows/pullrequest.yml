@@ -44,9 +44,10 @@ jobs:
       E2E_CHUNKS: ${{ steps.e2e_projects.outputs.CHUNKS }}
       E2E_BUILD_ID: ${{ steps.e2e_projects.outputs.BUILD_ID }}
       LINT_CHUNKS: ${{ steps.lint_projects.outputs.CHUNKS }}
-      BUILD_CHUNKS: ${{ steps.build_projects.outputs.CHUNKS }}
+      BUILD_CHUNKS: ${{ steps.build_map.outputs.BUILD_CHUNKS }}
       CACHE_KEYS: ${{ steps.get-cache.outputs.keys }}
       NX_BASE: ${{ steps.export-sha.outputs.NX_BASE }}
+      UNAFFECTED: ${{ steps.unaffected.outputs.UNAFFECTED }}
     steps:
       # Creates homedir if missing (e.g. when set to /tmp/runner/ when running locally with act)
       - name: Debug home etc.
@@ -163,6 +164,23 @@ jobs:
           if [[ "$CHUNKS" != "[]" ]]; then
             echo "CHUNKS={\"projects\":$CHUNKS}" >> "$GITHUB_OUTPUT"
           fi
+
+      - name: Prepare docker build targets
+        id: build_map
+        run: |
+          set -euo pipefail
+          CHUNKS="$(./scripts/ci/generate-build-chunks.sh docker-express docker-next docker-static docker-playwright docker-jest)"
+          echo "CHUNKS: '$CHUNKS'"
+          if [[ "$CHUNKS" != "[]" ]]; then
+            echo BUILD_CHUNKS="$CHUNKS" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Gather unaffected docker images
+        id: unaffected
+        run: |
+          set -euo pipefail
+          UNAFFECTED="$(./scripts/ci/list-unaffected.sh docker-next docker-express docker-static docker-playwright docker-jest)"
+          echo UNAFFECTED="$UNAFFECTED" >> "$GITHUB_OUTPUT"
 
       - name: Prepare e2e targets
         id: e2e_projects
@@ -371,6 +389,11 @@ jobs:
     env:
       AFFECTED_PROJECTS: ${{ matrix.projects }}
       NX_BASE: ${{ needs.prepare.outputs.NX_BASE }}
+      AFFECTED_ALL: ${{ secrets.AFFECTED_ALL }}
+      GIT_BRANCH: ${{ github.sha }}
+      DOCKER_TAG: ${{ github.sha }}
+      NODE_IMAGE_VERSION: 20
+      PUBLISH: false
     strategy:
       fail-fast: false
       matrix: ${{ fromJson(needs.prepare.outputs.BUILD_CHUNKS) }}
@@ -390,8 +413,15 @@ jobs:
           keys: ${{ needs.prepare.outputs.CACHE_KEYS }}
           enable-cache: 'node_modules'
 
-      - name: Building
-        run: ./scripts/ci/run-in-parallel-native.sh build
+      - name: Gather apps
+        id: gather
+        run: |
+          set -euo pipefail
+          AFFECTED_PROJECTS="$(echo '${{ matrix.chunk }}' | jq -r '.projects')"
+          DOCKER_TYPE="$(echo '${{ matrix.chunk }}' | jq -r '.docker_type')"
+          echo AFFECTED_PROJECTS="$AFFECTED_PROJECTS" >> "$GITHUB_ENV"
+          echo DOCKER_TYPE="$DOCKER_TYPE" >> "$GITHUB_ENV"
+        continue-on-error: true
 
       - name: Docker login to ECR repo
         run: ./scripts/ci/docker-login-ecr.sh
@@ -420,7 +450,7 @@ jobs:
       - name: Prepare Docker build arguments
         id: dockerargs
         env:
-          NODE_IMAGE_TAG: ${{ needs.prepare.outputs.NODE_IMAGE_TAG }}
+          NODE_IMAGE_VERSION: ${{ needs.prepare.outputs.NODE_IMAGE_VERSION }}
           GIT_COMMIT_SHA: ${{ github.sha }}
           DOCKER_BASE_IMAGE_REGISTRY: ${{ env.DOCKER_BASE_IMAGE_REGISTRY }}
         run: |
@@ -431,7 +461,7 @@ jobs:
           SERVER_URL="${SERVER_URL%.git}"
           build_args=(
             --build-arg="DOCKER_IMAGE_REGISTRY=${DOCKER_BASE_IMAGE_REGISTRY}"
-            --build-arg="NODE_IMAGE_TAG=${NODE_IMAGE_TAG}"
+            --build-arg="NODE_IMAGE_VERSION=${NODE_IMAGE_TAG}"
             --build-arg="GIT_BRANCH=${GIT_BRANCH}"
             --build-arg="GIT_COMMIT_SHA=${GIT_COMMIT_SHA}"
             --build-arg="GIT_REPOSITORY_URL=${SERVER_URL}"
@@ -442,14 +472,13 @@ jobs:
       - name: Building Docker images
         continue-on-error: true
         id: dockerbuild
-        if: steps.gather.outcome == 'success'
         env:
-          NODE_IMAGE_TAG: ${{ needs.prepare.outputs.NODE_IMAGE_TAG }}
+          NODE_IMAGE_VERSION: ${{ needs.prepare.outputs.NODE_IMAGE_TAG }}
           GIT_COMMIT_SHA: ${{ github.sha }}
           DOCKER_BASE_IMAGE_REGISTRY: ${{ env.DOCKER_BASE_IMAGE_REGISTRY }}
         run: |
           set -x
-          echo "Node image tag is: '${NODE_IMAGE_TAG}'"
+          echo "Node image tag is: '${NODE_IMAGE_VERSION}'"
           echo "Docker build args are: 'EXTRA_DOCKER_BUILD_ARGS'"
           export EXTRA_DOCKER_BUILD_ARGS
           ./scripts/ci/run-in-parallel.sh "90_${DOCKER_TYPE}"
