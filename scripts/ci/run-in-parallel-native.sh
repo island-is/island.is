@@ -10,7 +10,7 @@ echo "Running '$AFFECTED_PROJECTS' in parallel of ${NX_PARALLEL} for target $1"
 
 if [ -n "$AFFECTED_PROJECTS" ]; then
   echo "Affected projects for target $1 are '$AFFECTED_PROJECTS'"
-  yarn run nx run-many --target="$1" --projects="$AFFECTED_PROJECTS" --parallel="${NX_PARALLEL:-6}" --maxParallel="$NX_MAX_PARALLEL"
+  yarn nx run-many --target="$1" --projects="$AFFECTED_PROJECTS" --parallel="${NX_PARALLEL:-6}" --maxParallel="$NX_MAX_PARALLEL"
 else
   echo "No affected projects for target $1"
 fi

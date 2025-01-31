@@ -31,6 +31,7 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
+import { shouldLinkBeAnAnchorTag } from '@island.is/shared/utils'
 import {
   BoostChatPanel,
   boostChatPanelEndpoints,
@@ -1079,12 +1080,12 @@ export const OrganizationWrapper: React.FC<
                   title={navigationData.title}
                   activeItemTitle={activeNavigationItemTitle}
                   renderLink={(link, item) => {
-                    return item?.href ? (
-                      <NextLink href={item?.href} legacyBehavior>
+                    return !item?.href || shouldLinkBeAnAnchorTag(item.href) ? (
+                      link
+                    ) : (
+                      <NextLink href={item.href} legacyBehavior>
                         {link}
                       </NextLink>
-                    ) : (
-                      link
                     )
                   }}
                 />

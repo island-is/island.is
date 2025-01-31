@@ -17,7 +17,6 @@ export const contactsSubSection = buildSubSection({
       children: [
         buildCustomField({
           id: 'contacts',
-          title: '',
           component: 'ContactsTableRepeater',
         }),
       ],

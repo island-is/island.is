@@ -48,7 +48,7 @@ export const TableRepeaterFormField: FC<Props> = ({
     marginTop = 6,
     marginBottom,
     getStaticTableData,
-    title,
+    title = '',
     titleVariant = 'h4',
     addItemButtonText = coreMessages.buttonAdd,
     cancelButtonText = coreMessages.buttonCancel,

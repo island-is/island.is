@@ -218,7 +218,7 @@ export interface SelectOption<T = string | number> {
 export interface BaseField extends FormItem {
   readonly id: string
   readonly component: FieldComponents | string
-  readonly title: FormTextWithLocale
+  readonly title?: FormTextWithLocale
   readonly description?: FormTextWithLocale
   readonly children: undefined
   disabled?: boolean

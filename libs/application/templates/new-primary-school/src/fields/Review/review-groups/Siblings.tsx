@@ -41,7 +41,6 @@ export const Siblings = ({
                   component: FieldComponents.STATIC_TABLE,
                   children: undefined,
                   id: 'siblingsTable',
-                  title: '',
                   header: [
                     newPrimarySchoolMessages.shared.fullName,
                     newPrimarySchoolMessages.shared.nationalId,

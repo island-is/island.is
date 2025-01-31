@@ -27,7 +27,7 @@ export const DescriptionFormField: FC<
       {showFieldName && (
         <Text variant={field.titleVariant}>
           {formatTextWithLocale(
-            field.title,
+            field.title ?? '',
             application,
             locale as Locale,
             formatMessage,
