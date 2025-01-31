@@ -1,5 +1,5 @@
 import {
-  GetAdvertTemplateResponseTypeEnum,
+  CaseActionEnum,
   OfficialJournalOfIcelandApplicationClientService,
 } from '@island.is/clients/official-journal-of-iceland/application'
 import { BadRequestException, Inject, Injectable } from '@nestjs/common'
@@ -25,7 +25,8 @@ import type { Logger } from '@island.is/logging'
 import { User } from '@island.is/auth-nest-tools'
 import { GetUserInvolvedPartiesInput } from '../models/getUserInvolvedParties.input'
 import {
-  CommentDirection,
+  CaseComment,
+  CaseCommentTypeEnum,
   GetCommentsResponse,
 } from '../models/getComments.response'
 import { OJOIAApplicationCaseResponse } from '../models/applicationCase.response'
@@ -35,11 +36,7 @@ import { OJOIApplicationAdvertTemplateTypesResponse } from '../models/applicatio
 import { GetInvolvedPartySignaturesInput } from '../models/getInvolvedPartySignatures.input'
 import { InvolvedPartySignatures } from '../models/getInvolvedPartySignatures.response'
 import { GetAdvertTemplateInput } from '../models/getAdvertTemplate.input'
-import {
-  OJOIApplicationAdvertTemplateResponse,
-  TemplateType,
-} from '../models/applicationAdvertTemplate.response'
-import { isDefined } from '@island.is/shared/utils'
+import { OJOIApplicationAdvertTemplateResponse } from '../models/applicationAdvertTemplate.response'
 
 const LOG_CATEGORY = 'official-journal-of-iceland-application'
 
@@ -60,19 +57,39 @@ export class OfficialJournalOfIcelandApplicationService {
       user,
     )
 
-    const mapped = incomingComments.comments.map((c) => {
-      const directonEnum =
-        safeEnumMapper(c.direction, CommentDirection) ??
-        CommentDirection.RECEIVED
+    const getDative = (days: number) => {
+      if (days % 10 === 1 && days % 100 !== 11) {
+        return 'degi'
+      }
+      return 'dögum'
+    }
+
+    const now = new Date()
+    const mapped: CaseComment[] = incomingComments.comments.map((c) => {
+      const commentDate = new Date(c.created)
+
+      const diff = now.getTime() - commentDate.getTime()
+      const diffDays = Math.ceil(diff / (1000 * 60 * 60 * 24))
+      const dative = getDative(diffDays)
+
+      const action =
+        c.action === CaseActionEnum.APPLICATIONCOMMENT
+          ? CaseCommentTypeEnum.APPLICATION_COMMENT
+          : CaseCommentTypeEnum.EXTERNAL_COMMENT
+
+      const age =
+        diffDays === 0
+          ? 'Í dag'
+          : diffDays === 1
+          ? 'Í gær'
+          : `f. ${diffDays} ${dative})}`
 
       return {
         id: c.id,
-        age: c.age,
-        direction: directonEnum,
-        title: c.title,
+        age: age,
+        creator: c.creator.title,
         comment: c.comment,
-        creator: c.creator,
-        receiver: c.receiver,
+        action: action,
       }
     })
 

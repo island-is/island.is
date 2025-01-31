@@ -1,12 +1,12 @@
 import { Field, ID, ObjectType, registerEnumType } from '@nestjs/graphql'
 
-export enum CommentDirection {
-  SENT = 'sent',
-  RECEIVED = 'received',
+export enum CaseCommentTypeEnum {
+  EXTERNAL_COMMENT = 'EXTERNAL_COMMENT',
+  APPLICATION_COMMENT = 'APPLICATION_COMMENT',
 }
 
-registerEnumType(CommentDirection, {
-  name: 'OJOICommentDirection',
+registerEnumType(CaseCommentTypeEnum, {
+  name: 'OJOIACommentTypeEnum',
 })
 
 @ObjectType('OJOIAComment')
@@ -17,20 +17,14 @@ export class CaseComment {
   @Field()
   age!: string
 
-  @Field(() => CommentDirection)
-  direction!: CommentDirection
-
   @Field()
-  title!: string
+  creator!: string
 
   @Field(() => String, { nullable: true })
   comment!: string | null
 
-  @Field(() => String, { nullable: true })
-  creator!: string | null
-
-  @Field(() => String, { nullable: true })
-  receiver!: string | null
+  @Field(() => CaseCommentTypeEnum)
+  action!: CaseCommentTypeEnum
 }
 
 @ObjectType('OJOIAGetCommentsResponse')

@@ -2,17 +2,15 @@ import { Box, Icon, Text } from '@island.is/island-ui/core'
 import * as styles from './Comments.css'
 import { useLocale } from '@island.is/localization'
 import { comments } from '../../lib/messages/comments'
-import { OjoiCommentDirection, OjoiaComment } from '@island.is/api/schema'
+import { OjoiaComment, OjoiaCommentTypeEnum } from '@island.is/api/schema'
 export type Props = OjoiaComment
 
 export const Comment = ({
   id,
   age,
-  title,
-  direction,
   creator,
-  receiver,
   comment,
+  action,
 }: OjoiaComment) => {
   const { formatMessage: f } = useLocale()
 
@@ -23,7 +21,7 @@ export const Comment = ({
           <Icon
             useStroke={true}
             icon={
-              direction === OjoiCommentDirection.RECEIVED
+              action === OjoiaCommentTypeEnum.EXTERNAL_COMMENT
                 ? 'arrowBack'
                 : 'arrowForward'
             }
@@ -34,9 +32,7 @@ export const Comment = ({
       </Box>
       <Box className={styles.contentColumn}>
         <Text>
-          <strong>{creator ? creator : f(comments.unknownUser.name)}</strong>{' '}
-          {title && `${title}`}
-          {receiver && ` ${receiver}`}
+          <strong>{creator}</strong> {f(comments.general.commentPostfix)}
         </Text>
         <Text>{comment}</Text>
       </Box>

@@ -369,11 +369,8 @@ export const GET_COMMENTS_QUERY = gql`
       comments {
         id
         age
-        title
-        direction
-        comment
         creator
-        receiver
+        comment
       }
     }
   }

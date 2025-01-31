@@ -18,6 +18,11 @@ export const comments = {
       defaultMessage: 'Athugasemdir',
       description: 'Title of comments section',
     },
+    commentPostfix: {
+      id: 'ojoi.application:comments.general.commentPostfix',
+      defaultMessage: 'gerir athugasemd',
+      description: 'Comment postfix',
+    },
   }),
   warnings: defineMessages({
     noCommentsTitle: {
