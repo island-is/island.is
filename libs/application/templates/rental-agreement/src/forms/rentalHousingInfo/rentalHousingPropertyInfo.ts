@@ -6,11 +6,9 @@ import {
   buildSelectField,
   buildStaticTableField,
   buildSubSection,
-  buildTextField,
   getValueViaPath,
 } from '@island.is/application/core'
 import { SubSection } from '@island.is/application/types'
-import { postalCodes } from '@island.is/shared/utils'
 import {
   RentalHousingCategoryClass,
   RentalHousingCategoryTypes,
@@ -32,72 +30,6 @@ export const RentalHousingPropertyInfo: SubSection = buildSubSection({
   id: Routes.PROPERTYINFORMATION,
   title: registerProperty.subsection.name,
   children: [
-    buildMultiField({
-      id: Routes.PROPERTYINFORMATION,
-      title: messagesInfo.pageTitle,
-      description: messagesInfo.pageDescription,
-      children: [
-        buildTextField({
-          id: 'registerProperty.address',
-          title: messagesInfo.addressLabel,
-          placeholder: messagesInfo.addressPlaceholder,
-          required: true,
-          maxLength: 50,
-        }),
-        buildTextField({
-          id: 'registerProperty.propertyId',
-          title: messagesInfo.propertyIdLabel,
-          placeholder: messagesInfo.propertyIdPlaceholder,
-          width: 'half',
-          maxLength: 10,
-          required: true,
-        }),
-        buildTextField({
-          id: 'registerProperty.unitId',
-          title: messagesInfo.propertyUnitIdLabel,
-          placeholder: messagesInfo.propertyUnitIdPlaceholder,
-          width: 'half',
-          format: '## ####',
-          required: true,
-        }),
-        buildSelectField({
-          id: 'registerProperty.postalCode',
-          title: messagesInfo.postalCodeLabel,
-          placeholder: messagesInfo.postalCodePlaceholder,
-          width: 'half',
-          required: true,
-          options: () => {
-            return postalCodes.map((code) => {
-              return { value: `${code}`, label: `${code}` }
-            })
-          },
-        }),
-        buildTextField({
-          id: 'registerProperty.municipality',
-          title: messagesInfo.municipalityLabel,
-          placeholder: messagesInfo.municipalityPlaceholder,
-          width: 'half',
-          required: true,
-        }),
-        buildTextField({
-          id: 'registerProperty.size',
-          title: messagesInfo.sizeLabel,
-          placeholder: '',
-          width: 'half',
-          variant: 'number',
-          required: true,
-        }),
-        buildTextField({
-          id: 'registerProperty.numOfRooms',
-          title: messagesInfo.numOfRoomsLabel,
-          placeholder: '',
-          variant: 'number',
-          width: 'half',
-          required: true,
-        }),
-      ],
-    }),
-
     buildMultiField({
       id: Routes.PROPERTYINFORMATION_SERCH,
       title: messagesInfo.pageTitle,
@@ -129,24 +61,39 @@ export const RentalHousingPropertyInfo: SubSection = buildSubSection({
           rows({ answers }) {
             const propertyId = getValueViaPath(
               answers,
-              'registerProperty.propertyId',
+              'registerProperty.searchresults.propertyId',
             )
-            const address = getValueViaPath(answers, 'registerProperty.address')
+            const address = getValueViaPath(
+              answers,
+              'registerProperty.searchresults.streetAddress',
+            )
+            const postalCode = getValueViaPath(
+              answers,
+              'registerProperty.searchresults.regionNumber',
+            )
             const municipality = getValueViaPath(
               answers,
-              'registerProperty.municipality',
+              'registerProperty.searchresults.cityName',
             )
-            const unitId = getValueViaPath(answers, 'registerProperty.unitId')
-            const size = getValueViaPath(answers, 'registerProperty.size')
+            const unitId = getValueViaPath(
+              answers,
+              'registerProperty.searchresults.marking',
+            )
+            const size = getValueViaPath(
+              answers,
+              'registerProperty.searchresults.size',
+            )
             const numOfRooms = getValueViaPath(
               answers,
-              'registerProperty.numOfRooms',
+              'registerProperty.searchresults.numberOfRooms',
             )
             return [
               [
                 propertyId ? `F${propertyId}` : '--',
                 address
-                  ? `${address}${municipality ? `, ${municipality}` : ''}`
+                  ? `${address}, ${postalCode && postalCode} ${
+                      municipality && municipality
+                    }`
                   : '--',
                 unitId ? unitId : '--',
                 size ? `${size} m²` : '--',

@@ -6,9 +6,80 @@
     "propertyIds": [
       {
         "propertyId": "2042190",
-        "size": "174.5",
-        "propertyType": "Raðhús",
-        "merking": "040101"
+        "marking": "040101",
+        "propertySize": "175.6",
+        "units": [
+          {
+            "unitId": "2042191",
+            "markingNr": "0101",
+            "unitType": "Raðhús",
+            "size": "175.6",
+            "numberOfRooms": "7"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "streetAddress": "Reyrengi 55",
+    "regionNumber": "112",
+    "cityName": "Reykjavík",
+    "propertyIds": [
+      {
+        "propertyId": "2039395",
+        "marking": "020101",
+        "propertySize": "190.8",
+        "units": [
+          {
+            "unitId": "2039395",
+            "markingNr": "0101",
+            "unitType": "Einbýli",
+            "size": "190.8",
+            "numberOfRooms": "5"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "streetAddress": "Hæðargarður 3b",
+    "regionNumber": "108",
+    "cityName": "Reykjavík",
+    "propertyIds": [
+      {
+        "propertyId": "2034939",
+        "marking": "020201",
+        "propertySize": "86.2",
+        "units": [
+          {
+            "unitId": "2034939",
+            "markingNr": "0201",
+            "unitType": "Íbúð",
+            "size": "86.2",
+            "numberOfRooms": "3"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "streetAddress": "Engimýri 3",
+    "regionNumber": "210",
+    "cityName": "Garðabær",
+    "propertyIds": [
+      {
+        "propertyId": "2069889",
+        "marking": "010101",
+        "propertySize": "244.9",
+        "units": [
+          {
+            "unitId": "2069889",
+            "markingNr": "0101",
+            "unitType": "Einbýli",
+            "size": "244.9",
+            "numberOfRooms": "6"
+          }
+        ]
       }
     ]
   },
@@ -19,72 +90,260 @@
     "propertyIds": [
       {
         "propertyId": "2507085",
-        "propertyType": "Íbúð",
-        "size": "67.3",
-        "merking": [
+        "marking": "020101",
+        "propertySize": "67.3",
+        "units": [
           {
-            "id": "020201",
-            "units": [
-              {
-                "unitId": "2383972",
-                "merking": "0201",
-                "unitType": "íbúð",
-                "size": "67.3",
-                "numberOfRooms": "2"
-              },
-              {
-                "unitId": "2374580",
-                "merking": "E035",
-                "unitType": "Stæði í bílageymslu",
-                "size": "0",
-                "numberOfRooms": null
-              }
-            ]
+            "unitId": "2383972",
+            "markingNr": "0101",
+            "unitType": "Íbúð",
+            "size": "67.3",
+            "numberOfRooms": "2"
+          },
+          {
+            "unitId": "2374580",
+            "markingNr": "E035",
+            "unitType": "Stæði í bílageymslu",
+            "size": "0",
+            "numberOfRooms": "0"
           }
         ]
       },
       {
         "propertyId": "2507086",
-        "propertyType": "Íbúð",
-        "size": "99.3",
-        "merking": [
+        "marking": "020102",
+        "propertySize": "57.2",
+        "units": [
           {
-            "id": "020102",
-            "units": [
-              {
-                "unitId": "2383972",
-                "merking": "0102",
-                "unitType": "íbúð",
-                "size": "99.3",
-                "numberOfRooms": "3"
-              },
-              {
-                "unitId": "2374582",
-                "merking": "E036",
-                "unitType": "Stæði í bílageymslu",
-                "size": "0",
-                "numberOfRooms": null
-              }
-            ]
+            "unitId": "2383973",
+            "markingNr": "0102",
+            "unitType": "Íbúð",
+            "size": "57.2",
+            "numberOfRooms": "2"
+          },
+          {
+            "unitId": "2374581",
+            "markingNr": "E036",
+            "unitType": "Stæði í bílageymslu",
+            "size": "0",
+            "numberOfRooms": "0"
           }
         ]
       },
       {
         "propertyId": "2507087",
-        "propertyType": "Íbúð",
-        "size": "67.3",
-        "merking": [
+        "marking": "020103",
+        "propertySize": "117.3",
+        "units": [
           {
-            "id": "020101",
-            "units": [
-              {
-                "unitId": "2383976",
-                "merking": "0101",
-                "unitType": "íbúð",
-                "size": "55.6",
-                "numberOfRooms": "1"
-              }
-            ]
+            "unitId": "2383974",
+            "markingNr": "0103",
+            "unitType": "Íbúð",
+            "size": "117.3",
+            "numberOfRooms": "3"
+          },
+          {
+            "unitId": "2374570",
+            "markingNr": "E025",
+            "unitType": "Stæði í bílageymslu",
+            "size": "0",
+            "numberOfRooms": "0"
+          }
+        ]
+      },
+      {
+        "propertyId": "2507404",
+        "marking": "020201",
+        "propertySize": "99.4",
+        "units": [
+          {
+            "unitId": "2383978",
+            "markingNr": "0201",
+            "unitType": "Íbúð",
+            "size": "99.4",
+            "numberOfRooms": "3"
+          },
+          {
+            "unitId": "2374582",
+            "markingNr": "E037",
+            "unitType": "Stæði í bílageymslu",
+            "size": "0",
+            "numberOfRooms": "0"
+          }
+        ]
+      },
+      {
+        "propertyId": "2507405",
+        "marking": "020202",
+        "propertySize": "54.3",
+        "units": [
+          {
+            "unitId": "2383979",
+            "markingNr": "0202",
+            "unitType": "Íbúð",
+            "size": "54.3",
+            "numberOfRooms": "2"
+          },
+          {
+            "unitId": "2374571",
+            "markingNr": "E026",
+            "unitType": "Stæði í bílageymslu",
+            "size": "0",
+            "numberOfRooms": "0"
+          }
+        ]
+      },
+      {
+        "propertyId": "2507406",
+        "marking": "020203",
+        "propertySize": "119.3",
+        "units": [
+          {
+            "unitId": "2383980",
+            "markingNr": "0203",
+            "unitType": "Íbúð",
+            "size": "119.3",
+            "numberOfRooms": "2"
+          },
+          {
+            "unitId": "2374583",
+            "markingNr": "E038",
+            "unitType": "Stæði í bílageymslu",
+            "size": "0",
+            "numberOfRooms": "0"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "streetAddress": "Valshlíð 2",
+    "regionNumber": "102",
+    "cityName": "Reykjavik",
+    "propertyIds": [
+      {
+        "propertyId": "2507424",
+        "marking": "020101",
+        "propertySize": "121.9",
+        "units": [
+          {
+            "unitId": "2384031",
+            "markingNr": "0101",
+            "unitType": "Íbúð",
+            "size": "121.9",
+            "numberOfRooms": "4"
+          },
+          {
+            "unitId": "2374651",
+            "markingNr": "N014",
+            "unitType": "Stæði í bílageymslu",
+            "size": "0",
+            "numberOfRooms": "0"
+          }
+        ]
+      },
+      {
+        "propertyId": "2507425",
+        "marking": "020102",
+        "propertySize": "103.1",
+        "units": [
+          {
+            "unitId": "2384032",
+            "markingNr": "0102",
+            "unitType": "Íbúð",
+            "size": "103.1",
+            "numberOfRooms": "4"
+          },
+          {
+            "unitId": "2374650",
+            "markingNr": "N013",
+            "unitType": "Stæði í bílageymslu",
+            "size": "0",
+            "numberOfRooms": "0"
+          }
+        ]
+      },
+      {
+        "propertyId": "2507426",
+        "marking": "020103",
+        "propertySize": "60.2",
+        "units": [
+          {
+            "unitId": "2384033",
+            "markingNr": "0103",
+            "unitType": "Íbúð",
+            "size": "60.2",
+            "numberOfRooms": "3"
+          },
+          {
+            "unitId": "2374649",
+            "markingNr": "N012",
+            "unitType": "Stæði í bílageymslu",
+            "size": "0",
+            "numberOfRooms": "0"
+          }
+        ]
+      },
+      {
+        "propertyId": "2507427",
+        "marking": "020104",
+        "propertySize": "77.5",
+        "units": [
+          {
+            "unitId": "2384034",
+            "markingNr": "0104",
+            "unitType": "Íbúð",
+            "size": "77.5",
+            "numberOfRooms": "3"
+          },
+          {
+            "unitId": "2374648",
+            "markingNr": "N011",
+            "unitType": "Stæði í bílageymslu",
+            "size": "0",
+            "numberOfRooms": "0"
+          }
+        ]
+      },
+      {
+        "propertyId": "2507432",
+        "marking": "020202",
+        "propertySize": "119.3",
+        "units": [
+          {
+            "unitId": "2384039",
+            "markingNr": "0201",
+            "unitType": "Íbúð",
+            "size": "119.3",
+            "numberOfRooms": "3"
+          },
+          {
+            "unitId": "2374670",
+            "markingNr": "N033",
+            "unitType": "Stæði í bílageymslu",
+            "size": "0",
+            "numberOfRooms": "0"
+          }
+        ]
+      },
+      {
+        "propertyId": "2507433",
+        "propertySize": "104",
+        "marking": "020202",
+        "units": [
+          {
+            "unitId": "2384040",
+            "markingNr": "0202",
+            "unitType": "Íbúð",
+            "size": "104",
+            "numberOfRooms": "2"
+          },
+          {
+            "unitId": "2374647",
+            "markingNr": "N010",
+            "unitType": "Stæði í bílageymslu",
+            "size": "0",
+            "numberOfRooms": "0"
           }
         ]
       }
@@ -96,24 +355,44 @@
     "cityName": "Reykjavík",
     "propertyIds": [
       {
-        "propertyId": "2215524",
-        "merking": "160003",
-        "propertyType": "Íbúð",
-        "size": "952.8",
+        "propertyId": "2507433",
+        "marking": "160003",
+        "propertySize": "952.8",
         "units": [
           {
             "unitId": "2215526",
-            "merking": "0004",
+            "markingNr": "0004",
             "unitType": "íbúð",
             "size": "36.1",
             "numberOfRooms": "1"
           },
           {
             "unitId": "2215527",
-            "merking": "0005",
+            "markingNr": "0005",
             "unitType": "íbúð",
             "size": "52",
             "numberOfRooms": "2"
+          },
+          {
+            "unitId": "2215528",
+            "markingNr": "0006",
+            "unitType": "íbúð",
+            "size": "36.3",
+            "numberOfRooms": "1"
+          },
+          {
+            "unitId": "2215529",
+            "markingNr": "0007",
+            "unitType": "íbúð",
+            "size": "52",
+            "numberOfRooms": "2"
+          },
+          {
+            "unitId": "2215530",
+            "markingNr": "0008",
+            "unitType": "íbúð",
+            "size": "64",
+            "numberOfRooms": "3"
           }
         ]
       }
