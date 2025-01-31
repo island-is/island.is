@@ -84,9 +84,9 @@ export class IndictmentCountService {
 
   async createOffense(
     indictmentCountId: string,
-    type: IndictmentCountOffense,
+    offense: IndictmentCountOffense,
   ): Promise<Offense> {
-    return this.offenseModel.create({ indictmentCountId, type })
+    return this.offenseModel.create({ indictmentCountId, offense })
   }
 
   async updateOffense(

@@ -20,7 +20,7 @@ module.exports = {
             },
             allowNull: false,
           },
-          type: {
+          offense: {
             type: Sequelize.STRING, // DRIVING_WITHOUT_LICENCE, DRUNK_DRIVING, ...
             allowNull: false,
           },

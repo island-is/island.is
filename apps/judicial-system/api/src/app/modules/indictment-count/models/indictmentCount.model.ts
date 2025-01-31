@@ -8,8 +8,6 @@ import {
   IndictmentSubtype,
 } from '@island.is/judicial-system/types'
 
-// TODO: move to offense API model?
-registerEnumType(IndictmentCountOffense, { name: 'IndictmentCountOffense' })
 registerEnumType(IndictmentSubtype, { name: 'IndictmentSubtype' })
 
 @ObjectType()

@@ -111,7 +111,7 @@ export class IndictmentCountController {
 
     return this.indictmentCountService.createOffense(
       indictmentCountId,
-      createOffenseDto.type,
+      createOffenseDto.offense,
     )
   }
 }

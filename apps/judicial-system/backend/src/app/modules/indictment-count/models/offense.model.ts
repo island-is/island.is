@@ -29,11 +29,11 @@ export class Offense extends Model {
   @ForeignKey(() => IndictmentCount)
   @Column({ type: DataType.UUID, allowNull: false })
   @ApiProperty({ type: String })
-  indictment_count_id!: string
+  indictmentCountId!: string
 
   @Column({ type: DataType.STRING, allowNull: false })
   @ApiProperty({ type: String })
-  type!: string
+  offense!: string
 
   @Column({ type: DataType.JSONB, allowNull: true })
   @ApiPropertyOptional({ type: Object })
