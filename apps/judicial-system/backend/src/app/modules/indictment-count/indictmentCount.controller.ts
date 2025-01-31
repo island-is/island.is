@@ -94,14 +94,15 @@ export class IndictmentCountController {
     return { deleted }
   }
 
-  // @UseGuards(CaseExistsGuard, CaseWriteGuard)
+  @UseGuards(CaseExistsGuard, CaseWriteGuard)
   @RolesRules(prosecutorRule, prosecutorRepresentativeRule)
-  @Post()
+  @Post(':indictmentCountId/offense')
   @ApiCreatedResponse({
     type: Offense,
     description: 'Creates a new indictment count offense',
   })
   createOffense(
+    @Param('caseId') caseId: string,
     @Param('indictmentCountId') indictmentCountId: string,
     @Body() createOffenseDto: CreateOffenseDto,
   ): Promise<Offense> {
