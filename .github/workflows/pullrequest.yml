@@ -409,7 +409,6 @@ jobs:
 
   success:
     runs-on: arc-runners
-    if: ${{ !cancelled() }}
     needs:
       - prepare
       - linting-workspace
