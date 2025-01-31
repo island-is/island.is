@@ -60,6 +60,5 @@ export const HandleBeforeSubmitInEdit: FC<FieldBaseProps> = ({
     return [true, null]
   })
 
-  // eslint-disable-next-line react/jsx-no-useless-fragment
-  return <></>
+  return null
 }
