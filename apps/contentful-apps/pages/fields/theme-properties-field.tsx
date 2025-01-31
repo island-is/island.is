@@ -2,8 +2,8 @@ import { useEffect, useState } from 'react'
 import { useDebounce } from 'react-use'
 import { FieldExtensionSDK } from '@contentful/app-sdk'
 import {
-  FormControl,
   Paragraph,
+  FormControl,
   Radio,
   Stack,
   TextInput,

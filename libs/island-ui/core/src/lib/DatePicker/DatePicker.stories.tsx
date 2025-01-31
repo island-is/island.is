@@ -43,7 +43,8 @@ export const Basic = () => {
 }
 
 export const WithSelectedDate = () => (
-  <Wrap>
+  <>
+    <Wrap>
       <DatePicker
         label="Date"
         placeholderText="Pick a date"
@@ -51,11 +52,13 @@ export const WithSelectedDate = () => (
         handleChange={(date: Date) => console.log(date)}
       />
     </Wrap>
+  </>
 )
 
 export const LocaleIS = () => {
   return (
-    <Wrap>
+    <>
+      <Wrap>
         <DatePicker
           label="Dagsetning"
           placeholderText="Veldu dagsetningu"
@@ -63,13 +66,15 @@ export const LocaleIS = () => {
           handleChange={(date: Date) => console.log(date)}
         />
       </Wrap>
+    </>
   )
 }
 
 export const SelectYear = () => {
   const toDay = new Date()
   return (
-    <Wrap>
+    <>
+      <Wrap>
         <DatePicker
           label="Date"
           placeholderText="Pick a year"
@@ -83,6 +88,7 @@ export const SelectYear = () => {
           <code>minYear</code>
         </Text>
       </Wrap>
+    </>
   )
 }
 
@@ -139,7 +145,8 @@ export const SizeExtraSmall = () => {
 }
 
 export const WithErrors = () => (
-  <Wrap>
+  <>
+    <Wrap>
       <DatePicker
         id="TestError"
         label="Date"
@@ -150,10 +157,12 @@ export const WithErrors = () => (
         handleChange={(date: Date) => console.log(date)}
       />
     </Wrap>
+  </>
 )
 
 export const Disabled = () => (
-  <Wrap>
+  <>
+    <Wrap>
       <DatePicker
         label="Date"
         placeholderText="Pick a date"
@@ -162,6 +171,7 @@ export const Disabled = () => (
         disabled
       />
     </Wrap>
+  </>
 )
 
 export const WithoutLabel = () => (

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { FieldExtensionSDK } from '@contentful/app-sdk'
-import { Box } from '@contentful/f36-components'
 import { useSDK } from '@contentful/react-apps-toolkit'
+import { Box } from '@contentful/f36-components'
 
 const PublishDateField = () => {
   const sdk = useSDK<FieldExtensionSDK>()

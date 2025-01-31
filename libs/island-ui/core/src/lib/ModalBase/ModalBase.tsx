@@ -29,7 +29,7 @@ export const BackdropDiv = forwardRef(
     ref: Ref<HTMLDivElement>,
   ) => {
     const [mounted, setMounted] = useState(false)
-    useLayoutEffect(() => {
+    useLayoutEffect(function () {
       setMounted(true)
     }, [])
 
