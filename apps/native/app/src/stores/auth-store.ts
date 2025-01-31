@@ -104,6 +104,7 @@ const clearPasskey = async (userNationalId?: string) => {
 const isLogoutError = (e: Error & { code?: string }) => {
   return (
     e.code === INVALID_REFRESH_TOKEN_ERROR ||
+    e.message === INVALID_REFRESH_TOKEN_ERROR ||
     e.message === UNAUTHORIZED_USER_INFO
   )
 }
