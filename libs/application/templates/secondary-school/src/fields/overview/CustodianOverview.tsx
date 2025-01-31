@@ -41,12 +41,27 @@ export const CustodianOverview: FC<FieldBaseProps> = ({
     ) || []
   ).filter((x) => !!x.person.nationalId)
 
+  // merge together list of main other contact + other contacts
+  let contacts: {
+    person?: {
+      nationalId?: string
+      name?: string
+      email?: string
+      phone?: string
+    }
+  }[] = []
+  if (mainOtherContact?.person?.nationalId) {
+    contacts.push(mainOtherContact)
+  }
+  if (otherContacts.length > 0) {
+    contacts = contacts.concat(otherContacts)
+  }
+
   const onClick = (page: string) => {
     if (goToScreen) goToScreen(page)
   }
 
-  const showMainOtherContact = !!mainOtherContact?.person?.nationalId
-  const showOtherContacts = !!otherContacts.length
+  const totalCount = custodiansExternalData.length + contacts.length
 
   const isEditable = checkIsEditable(application.state)
 
@@ -65,11 +80,17 @@ export const CustodianOverview: FC<FieldBaseProps> = ({
         {!!custodiansExternalData.length && (
           <GridRow>
             {custodiansExternalData.map((custodian, index) => (
-              <GridColumn span="1/2">
-                <Text variant="h5">
-                  {formatMessage(overview.custodian.subtitle)}{' '}
-                  {custodiansExternalData.length > 1 ? index + 1 : ''}
-                </Text>
+              <GridColumn
+                key={custodian.person?.nationalId}
+                span={custodiansExternalData.length > 1 ? '1/2' : '1/1'}
+              >
+                {totalCount > 1 && (
+                  <Text variant="h5">
+                    {`${formatMessage(overview.custodian.label)} ${
+                      custodiansExternalData.length > 1 ? index + 1 : ''
+                    }`}
+                  </Text>
+                )}
                 <Text>{custodian.person?.name}</Text>
                 <Text>{formatKennitala(custodian.person?.nationalId)}</Text>
                 <Text>{custodian.legalDomicile?.streetAddress}</Text>
@@ -84,47 +105,32 @@ export const CustodianOverview: FC<FieldBaseProps> = ({
                 <Text>{custodiansAnswers[index]?.person?.email}</Text>
               </GridColumn>
             ))}
-            {custodiansExternalData.length % 2 !== 0 && (
-              <GridColumn span="1/2"></GridColumn>
-            )}
           </GridRow>
         )}
 
-        {(showMainOtherContact || showOtherContacts) && (
+        {!!contacts.length && (
           <GridRow marginTop={3}>
-            {showMainOtherContact && (
-              <GridColumn span={showOtherContacts ? '1/2' : '1/1'}>
-                <Text variant="h5">
-                  {formatMessage(overview.otherContact.label)}{' '}
-                  {otherContacts.length > 0 ? '1' : ''}
-                </Text>
-                <Text>{mainOtherContact.person?.name}</Text>
-                <Text>
-                  {formatKennitala(mainOtherContact.person?.nationalId)}
-                </Text>
+            {contacts.map((contact, index) => (
+              <GridColumn
+                key={contact.person?.nationalId}
+                span={contacts.length > 1 ? '1/2' : '1/1'}
+              >
+                {totalCount > 1 && (
+                  <Text variant="h5">
+                    {`${formatMessage(overview.otherContact.label)} ${
+                      contacts.length > 1 ? index + 1 : ''
+                    }`}
+                  </Text>
+                )}
+                <Text>{contact?.person?.name}</Text>
+                <Text>{formatKennitala(contact?.person?.nationalId)}</Text>
                 <Text>
                   {formatMessage(overview.otherContact.phoneLabel)}:{' '}
-                  {formatPhoneNumber(mainOtherContact.person?.phone)}
+                  {formatPhoneNumber(contact?.person?.phone)}
                 </Text>
-                <Text>{mainOtherContact.person?.email}</Text>
+                <Text>{contact?.person?.email}</Text>
               </GridColumn>
-            )}
-            {showOtherContacts &&
-              otherContacts.map((otherContact, index) => (
-                <GridColumn span="1/2">
-                  <Text variant="h5">
-                    {formatMessage(overview.otherContact.label)}{' '}
-                    {mainOtherContact?.person?.nationalId ? index + 2 : ''}
-                  </Text>
-                  <Text>{otherContact.person.name}</Text>
-                  <Text>{formatKennitala(otherContact.person.nationalId)}</Text>
-                  <Text>
-                    {formatMessage(overview.otherContact.phoneLabel)}:{' '}
-                    {formatPhoneNumber(otherContact.person?.phone)}
-                  </Text>
-                  <Text>{otherContact.person?.email}</Text>
-                </GridColumn>
-              ))}
+            ))}
           </GridRow>
         )}
       </Box>

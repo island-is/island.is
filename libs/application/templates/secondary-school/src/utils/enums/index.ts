@@ -26,7 +26,6 @@ export enum Roles {
 }
 
 export enum ApiActions {
-  validateCanCreate = 'validateCanCreate',
   submitApplication = 'submitApplication',
   deleteApplication = 'deleteApplication',
 }

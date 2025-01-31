@@ -17,13 +17,14 @@ import {
 
 export const childInfoSubSection = buildSubSection({
   id: 'childInfoSubSection',
-  title: newPrimarySchoolMessages.childrenNParents.childInfoSubSectionTitle,
+  title: newPrimarySchoolMessages.childrenNGuardians.childInfoSubSectionTitle,
   children: [
     buildMultiField({
       id: 'childInfo',
-      title: newPrimarySchoolMessages.childrenNParents.childInfoSubSectionTitle,
+      title:
+        newPrimarySchoolMessages.childrenNGuardians.childInfoSubSectionTitle,
       description:
-        newPrimarySchoolMessages.childrenNParents.childInfoDescription,
+        newPrimarySchoolMessages.childrenNGuardians.childInfoDescription,
       children: [
         buildTextField({
           id: 'childInfo.name',
@@ -81,13 +82,12 @@ export const childInfoSubSection = buildSubSection({
         ),
         buildCheckboxField({
           id: 'childInfo.usePronounAndPreferredName',
-          title: '',
           spacing: 0,
           options: [
             {
               value: YES,
               label:
-                newPrimarySchoolMessages.childrenNParents
+                newPrimarySchoolMessages.childrenNGuardians
                   .usePronounAndPreferredName,
             },
           ],
@@ -95,9 +95,9 @@ export const childInfoSubSection = buildSubSection({
         buildTextField({
           id: 'childInfo.preferredName',
           title:
-            newPrimarySchoolMessages.childrenNParents.childInfoPreferredName,
+            newPrimarySchoolMessages.childrenNGuardians.childInfoPreferredName,
           tooltip:
-            newPrimarySchoolMessages.childrenNParents.preferredNameTooltip,
+            newPrimarySchoolMessages.childrenNGuardians.preferredNameTooltip,
           condition: (answers) => {
             const { childInfo } = getApplicationAnswers(answers)
 
@@ -110,7 +110,8 @@ export const childInfoSubSection = buildSubSection({
         buildCustomField(
           {
             id: 'childInfo.pronouns',
-            title: newPrimarySchoolMessages.childrenNParents.childInfoPronouns,
+            title:
+              newPrimarySchoolMessages.childrenNGuardians.childInfoPronouns,
             condition: (answers) => {
               const { childInfo } = getApplicationAnswers(answers)
 
@@ -124,7 +125,7 @@ export const childInfoSubSection = buildSubSection({
           {
             optionsType: OptionsType.PRONOUN,
             placeholder:
-              newPrimarySchoolMessages.childrenNParents
+              newPrimarySchoolMessages.childrenNGuardians
                 .childInfoPronounsPlaceholder,
             isMulti: true,
           },
@@ -132,9 +133,10 @@ export const childInfoSubSection = buildSubSection({
         buildRadioField({
           id: 'childInfo.differentPlaceOfResidence',
           title:
-            newPrimarySchoolMessages.childrenNParents.differentPlaceOfResidence,
+            newPrimarySchoolMessages.childrenNGuardians
+              .differentPlaceOfResidence,
           description:
-            newPrimarySchoolMessages.childrenNParents
+            newPrimarySchoolMessages.childrenNGuardians
               .differentPlaceOfResidenceDescription,
           width: 'half',
           required: true,
@@ -153,7 +155,8 @@ export const childInfoSubSection = buildSubSection({
         buildTextField({
           id: 'childInfo.placeOfResidence.streetAddress',
           title:
-            newPrimarySchoolMessages.childrenNParents.childInfoPlaceOfResidence,
+            newPrimarySchoolMessages.childrenNGuardians
+              .childInfoPlaceOfResidence,
           width: 'half',
           required: true,
           condition: (answers) => {

@@ -359,7 +359,7 @@ const Screen: FC<React.PropsWithChildren<ScreenProps>> = ({
             {...(shouldCreateTopLevelRegion ? { id: screen.id } : {})}
           >
             {formatTextWithLocale(
-              screen.title,
+              screen.title ?? '',
               application,
               locale as Locale,
               formatMessage,

@@ -85,7 +85,7 @@ export interface Form {
   mode?: FormModes
   renderLastScreenBackButton?: boolean
   renderLastScreenButton?: boolean
-  title: StaticText
+  title?: StaticText
   type: FormItemTypes.FORM
 }
 
@@ -104,7 +104,7 @@ export interface FormItem extends TestSupport {
   readonly id?: string
   condition?: Condition
   readonly type: string
-  readonly title: FormTextWithLocale
+  readonly title?: FormTextWithLocale
   readonly nextButtonText?: FormText
 }
 
@@ -155,7 +155,7 @@ export interface DataProviderItem {
   readonly id: string
   readonly action?: string
   readonly order?: number
-  readonly title: FormText
+  readonly title?: FormText
   readonly subTitle?: FormText
   readonly pageTitle?: FormText
   readonly source?: string //TODO see if we can remove this
@@ -164,7 +164,7 @@ export interface DataProviderItem {
 export interface DataProviderBuilderItem {
   id?: string
   type?: string //TODO REMOVE THIS
-  title: FormText
+  title?: FormText
   subTitle?: FormText
   pageTitle?: FormText
   source?: string
