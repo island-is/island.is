@@ -66,7 +66,7 @@ export const runServer = ({
   app.use('/', routes)
 
   app.use(function errorHandler(
-    err: any, // eslint-disable-line  @typescript-eslint/no-explicit-any
+    err: any, // @typescript-eslint/no-explicit-any
     _req: Request,
     res: Response,
     _next: NextFunction,
