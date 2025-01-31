@@ -606,12 +606,12 @@ export class LimitedAccessCaseService {
   private getFileCategories = (theCase: Case) => {
     if (isRequestCase(theCase.type)) {
       return defenderCaseFileCategoriesForRequestCases
-    } else {
-      if (theCase.defendants?.[0].caseFilesSharedWithDefender) {
-        return defenderCaseFileCategoriesForIndictmentCases
-      } else {
-        return defenderDefaultCaseFileCategoriesForIndictmentCases
-      }
     }
+
+    if (theCase.defendants?.[0].caseFilesSharedWithDefender) {
+      return defenderCaseFileCategoriesForIndictmentCases
+    }
+
+    return defenderDefaultCaseFileCategoriesForIndictmentCases
   }
 }
