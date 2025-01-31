@@ -10,13 +10,11 @@ ARG DOCKER_IMAGE_REGISTRY=${DOCKER_ECR_REGISTRY%/docker}
 # Alias DOCKER_IMAGE_REGISTRY to DOCKER_REGISTRY for backwards compatibility
 ARG DOCKER_REGISTRY=${DOCKER_IMAGE_REGISTRY}/docker
 ARG NODE_VERSION=20
-ARG NODE_IMAGE_TAG=${NODE_VERSION}-bookworm-slim
-ARG APP_HOME
 ARG APP
 
 
 # Base image for dependencies
-FROM ${DOCKER_REGISTRY}/library/node:${NODE_IMAGE_TAG} AS base-deps
+FROM ${DOCKER_REGISTRY}/library/node:${NODE_VERSION}-bookworm-slim AS base-deps
 
 # Install system dependencies
 # hadolint ignore=DL3008
