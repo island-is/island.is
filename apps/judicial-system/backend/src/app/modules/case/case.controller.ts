@@ -200,7 +200,7 @@ export class CaseController {
     if (update.registrarId) {
       await this.validateAssignedUser(
         update.registrarId,
-        [UserRole.DISTRICT_COURT_REGISTRAR],
+        [UserRole.DISTRICT_COURT_REGISTRAR, UserRole.DISTRICT_COURT_ASSISTANT],
         theCase.courtId,
       )
     }

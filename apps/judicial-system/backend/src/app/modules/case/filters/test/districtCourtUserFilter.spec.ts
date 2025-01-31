@@ -65,6 +65,7 @@ const continueFromIndictmentType = (user: User, type: string) => {
 describe.each([
   UserRole.DISTRICT_COURT_JUDGE,
   UserRole.DISTRICT_COURT_REGISTRAR,
+  UserRole.DISTRICT_COURT_ASSISTANT,
 ])('district court user %s', (role) => {
   const user = {
     role,
@@ -114,7 +115,8 @@ describe.each(
   districtCourtRoles.filter(
     (role) =>
       role !== UserRole.DISTRICT_COURT_JUDGE &&
-      role !== UserRole.DISTRICT_COURT_REGISTRAR,
+      role !== UserRole.DISTRICT_COURT_REGISTRAR &&
+      role !== UserRole.DISTRICT_COURT_ASSISTANT,
   ),
 )('district court user %s', (role) => {
   const user = {
