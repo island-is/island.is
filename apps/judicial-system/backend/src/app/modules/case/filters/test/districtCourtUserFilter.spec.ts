@@ -62,11 +62,7 @@ const continueFromIndictmentType = (user: User, type: string) => {
   })
 }
 
-describe.each([
-  UserRole.DISTRICT_COURT_JUDGE,
-  UserRole.DISTRICT_COURT_REGISTRAR,
-  UserRole.DISTRICT_COURT_ASSISTANT,
-])('district court user %s', (role) => {
+describe.each(districtCourtRoles)('district court user %s', (role) => {
   const user = {
     role,
     institution: { id: uuid(), type: InstitutionType.DISTRICT_COURT },
@@ -103,35 +99,6 @@ describe.each([
           continueFromCaseState(user, type, state)
         },
       )
-    },
-  )
-
-  describe.each(indictmentCases)('accessible case type %s', (type) => {
-    continueFromIndictmentType(user, type)
-  })
-})
-
-describe.each(
-  districtCourtRoles.filter(
-    (role) =>
-      role !== UserRole.DISTRICT_COURT_JUDGE &&
-      role !== UserRole.DISTRICT_COURT_REGISTRAR &&
-      role !== UserRole.DISTRICT_COURT_ASSISTANT,
-  ),
-)('district court user %s', (role) => {
-  const user = {
-    role,
-    institution: { id: uuid(), type: InstitutionType.DISTRICT_COURT },
-  } as User
-
-  describe.each([...restrictionCases, ...investigationCases])(
-    'inaccessible case type %s',
-    (type) => {
-      const theCase = {
-        type,
-      } as Case
-
-      verifyNoAccess(theCase, user)
     },
   )
 
