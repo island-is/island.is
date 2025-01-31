@@ -57,7 +57,7 @@ export class NotificationsListResolver {
     try {
       notifications = await this.service.getNotifications(locale, user, input)
     } catch (e) {
-      this.logger.error('failed to get notifications', {
+      this.logger.info('failed to get notifications', {
         locale,
         category: LOG_CATEGORY,
         error: e,

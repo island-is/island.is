@@ -9,7 +9,7 @@ import {
   formatKennitala,
   formatPhoneNumber,
   Routes,
-  States,
+  checkIsEditable,
 } from '../../utils'
 import { ReviewGroup } from '../../components/ReviewGroup'
 import { getValueViaPath } from '@island.is/application/core'
@@ -63,6 +63,8 @@ export const CustodianOverview: FC<FieldBaseProps> = ({
 
   const totalCount = custodiansExternalData.length + contacts.length
 
+  const isEditable = checkIsEditable(application.state)
+
   return (
     <ReviewGroup
       handleClick={() => onClick(Routes.CUSTODIAN)}
@@ -72,7 +74,7 @@ export const CustodianOverview: FC<FieldBaseProps> = ({
           ? overview.custodian.subtitle
           : overview.otherContact.subtitle,
       )}
-      isEditable={application.state === States.DRAFT}
+      isEditable={isEditable}
     >
       <Box>
         {!!custodiansExternalData.length && (

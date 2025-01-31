@@ -10,7 +10,9 @@ import { Condition } from './Condition'
 import { Application, FormValue } from './Application'
 import { TestSupport } from '@island.is/island-ui/utils'
 import { Locale } from '@island.is/shared/types'
-export type BeforeSubmitCallback = () => Promise<[true, null] | [false, string]>
+export type BeforeSubmitCallback = (
+  event?: string,
+) => Promise<[true, null] | [false, string]>
 
 export type SetBeforeSubmitCallback = (
   callback: BeforeSubmitCallback | null,
