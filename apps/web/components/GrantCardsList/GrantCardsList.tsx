@@ -141,6 +141,7 @@ const GrantCardsList = ({ slice }: SliceProps) => {
           cta={{
             disabled:
               !grant?.status ||
+              grant.status === GrantStatus.Invalid ||
               grant.status === GrantStatus.Closed ||
               grant.status === GrantStatus.Unknown,
             size: 'small',
@@ -157,6 +158,10 @@ const GrantCardsList = ({ slice }: SliceProps) => {
 
   const cards = grantItems
     ?.map((grant) => {
+      const grantIsOpen =
+        !!grant?.status &&
+        grant.status !== GrantStatus.Invalid &&
+        OPEN_GRANT_STATUSES.includes(grant.status)
       if (grant.id) {
         return {
           id: grant.id,
@@ -180,6 +185,16 @@ const GrantCardsList = ({ slice }: SliceProps) => {
               activeLocale,
             ).href,
           },
+          tags: [
+            !!grant.status && grant.status !== GrantStatus.Invalid
+              ? {
+                  label: getTranslationString(
+                    grantIsOpen ? 'applicationOpen' : 'applicationClosed',
+                  ),
+                  variant: grantIsOpen ? 'mint' : 'rose',
+                }
+              : undefined,
+          ].filter(isDefined),
           detailLines: [
             grant.dateFrom && grant.dateTo
               ? {
