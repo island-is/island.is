@@ -11,7 +11,6 @@ import {
 import {
   isCompletedCase,
   isDefenceUser,
-  isProsecutionUser,
   isSuccessfulServiceStatus,
 } from '@island.is/judicial-system/types'
 import { titles } from '@island.is/judicial-system-web/messages'
@@ -43,6 +42,7 @@ import {
   Subpoena,
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { shouldDisplayGeneratedPdfFiles } from '@island.is/judicial-system-web/src/utils/utils'
 
 import { ReviewDecision } from '../../PublicProsecutor/components/ReviewDecision/ReviewDecision'
 import {
@@ -120,6 +120,8 @@ const IndictmentOverview: FC = () => {
   const hasMergeCases =
     workingCase.mergedCases && workingCase.mergedCases.length > 0
 
+  const displayGeneratedPDFs = shouldDisplayGeneratedPdfFiles(workingCase, user)
+
   const shouldDisplayReviewDecision =
     isCompletedCase(workingCase.state) &&
     workingCase.indictmentReviewer?.id === user?.id &&
@@ -137,28 +139,6 @@ const IndictmentOverview: FC = () => {
     ) &&
     workingCase.indictmentDecision !==
       IndictmentDecision.POSTPONING_UNTIL_VERDICT
-
-  const shouldDisplayGeneratedPdfFiles =
-    isProsecutionUser(user) ||
-    workingCase.defendants?.some(
-      (defendant) =>
-        defendant.isDefenderChoiceConfirmed &&
-        defendant.caseFilesSharedWithDefender &&
-        defendant.defenderNationalId &&
-        normalizeAndFormatNationalId(user?.nationalId).includes(
-          defendant.defenderNationalId,
-        ),
-    ) ||
-    workingCase.civilClaimants?.some(
-      (civilClaimant) =>
-        civilClaimant.hasSpokesperson &&
-        civilClaimant.isSpokespersonConfirmed &&
-        civilClaimant.caseFilesSharedWithSpokesperson &&
-        civilClaimant.spokespersonNationalId &&
-        normalizeAndFormatNationalId(user?.nationalId).includes(
-          civilClaimant.spokespersonNationalId,
-        ),
-    )
 
   const handleNavigationTo = useCallback(
     (destination: string) => router.push(`${destination}/${workingCase.id}`),
@@ -255,7 +235,7 @@ const IndictmentOverview: FC = () => {
                       <ConnectedCaseFilesAccordionItem
                         connectedCaseParentId={workingCase.id}
                         connectedCase={mergedCase}
-                        displayGeneratedPDFs={shouldDisplayGeneratedPdfFiles}
+                        displayGeneratedPDFs={displayGeneratedPDFs}
                       />
                     </Box>
                   ))}
@@ -266,7 +246,7 @@ const IndictmentOverview: FC = () => {
           <Box component="section" marginBottom={5}>
             <IndictmentCaseFilesList
               workingCase={workingCase}
-              displayGeneratedPDFs={shouldDisplayGeneratedPdfFiles}
+              displayGeneratedPDFs={displayGeneratedPDFs}
             />
           </Box>
           {canAddFiles && (
