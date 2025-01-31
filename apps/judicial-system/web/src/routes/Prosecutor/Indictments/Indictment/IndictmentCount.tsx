@@ -50,6 +50,7 @@ import { indictmentCountEnum as enumStrings } from './IndictmentCountEnum.string
 import { indictmentCountSubstanceEnum as substanceStrings } from './IndictmentCountSubstanceEnum.strings'
 import * as styles from './IndictmentCount.css'
 
+// TODO: we need to get the offenses per indictmentCount specifically
 interface Props {
   indictmentCount: TIndictmentCount
   workingCase: Case
@@ -438,6 +439,8 @@ export const IndictmentCount: FC<Props> = ({
   const handleIndictmentCountChanges = (update: UpdateIndictmentCount) => {
     let lawsBroken
 
+    const {offenses} = update
+    // TODO
     if (update.substances || update.offenses) {
       lawsBroken = getLawsBroken(
         update.offenses || indictmentCount.offenses,
@@ -486,6 +489,7 @@ export const IndictmentCount: FC<Props> = ({
     handleIndictmentCountChanges({
       indictmentCountSubtypes: Array.from(currentSubtypes),
       ...(!currentSubtypes.has(IndictmentSubtype.TRAFFIC_VIOLATION) && {
+        // TODO: delete all offenses
         offenses: [],
         substances: {},
         vehicleRegistrationNumber: null,
@@ -676,6 +680,7 @@ export const IndictmentCount: FC<Props> = ({
                   selectedOffense,
                 ].sort(offensesCompare)
 
+                // TODO: update offenses
                 handleIndictmentCountChanges({
                   offenses,
                 })
