@@ -60,7 +60,7 @@ export const Contacts = ({
           <GridColumn span="12/12">
             <Label>
               {formatMessage(
-                newPrimarySchoolMessages.childrenNParents
+                newPrimarySchoolMessages.childrenNGuardians
                   .contactsSubSectionTitle,
               )}
             </Label>
@@ -73,7 +73,6 @@ export const Contacts = ({
                     component: FieldComponents.STATIC_TABLE,
                     children: undefined,
                     id: 'contactsTable',
-                    title: '',
                     header: [
                       newPrimarySchoolMessages.shared.fullName,
                       newPrimarySchoolMessages.shared.phoneNumber,
