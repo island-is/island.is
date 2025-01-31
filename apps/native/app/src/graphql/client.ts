@@ -111,11 +111,11 @@ const getAndRefreshToken = async () => {
   } else if (isTokenCloseToExpiring) {
     // expires in less than 60 seconds, so refresh in the background
     refresh()
+      .then(() => {
+        authorizeResult = authStore.getState().authorizeResult
+      })
       .catch((err) => {
         console.error('Failed to refresh token in the background', err)
-      })
-      .finally(() => {
-        authorizeResult = authStore.getState().authorizeResult
       })
   }
 
