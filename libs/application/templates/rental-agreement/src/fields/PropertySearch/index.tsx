@@ -37,7 +37,7 @@ interface Property {
 export const PropertySearch: FC<React.PropsWithChildren<Props>> = ({
   field,
 }) => {
-  const { clearErrors, register, setValue, getValues } = useFormContext()
+  const { clearErrors, setValue, getValues } = useFormContext()
   const { id } = field
   const [query, setQuery] = useState('')
   const [options, setOptions] = useState<AsyncSearchOption[]>([])
@@ -107,7 +107,7 @@ export const PropertySearch: FC<React.PropsWithChildren<Props>> = ({
         <Controller
           name={`${id}`}
           defaultValue=""
-          render={({ field: { onChange, value } }) => {
+          render={({ field: { onChange } }) => {
             return (
               <AsyncSearch
                 options={options}
