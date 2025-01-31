@@ -387,7 +387,7 @@ export class SubpoenaService {
 
     const subpoenaRevoked = await this.policeService.revokeSubpoena(
       theCase,
-      subpoena,
+      subpoena.id,
       user,
     )
 
