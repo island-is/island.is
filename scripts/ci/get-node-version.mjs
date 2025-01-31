@@ -3,7 +3,7 @@ import { getPackageJSON } from './_common.mjs'
 
 const nodeVersion = await getPackageVersion()
 
-if (!version) {
+if (!nodeVersion) {
   console.error(`Failed getting docker image for ${nodeVersion}`)
   process.exit(1)
 }
