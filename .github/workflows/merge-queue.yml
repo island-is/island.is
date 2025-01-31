@@ -56,7 +56,7 @@ jobs:
   #       uses: ./.github/actions/get-cache
   #       with:
   #         github-token: ${{ secrets.GITHUB_TOKEN }}
-  #         enable-cache: 'node_modules,cypress,generated-files'
+  #         enable-cache: 'node_modules,cypress'
 
   #     - name: Derive appropriate SHAs
   #       uses: nrwl/nx-set-shas@v4
@@ -100,7 +100,7 @@ jobs:
   #       with:
   #         github-token: ${{ secrets.GITHUB_TOKEN }}
   #         keys: ${{ needs.prepare.outputs.CACHE_KEYS }}
-  #         enable-cache: 'node_modules,cypress,generated-files'
+  #         enable-cache: 'node_modules,cypress'
 
   #     - uses: ./.github/actions/unit-test
   #       with:
@@ -142,7 +142,7 @@ jobs:
   #       with:
   #         github-token: ${{ secrets.GITHUB_TOKEN }}
   #         keys: ${{ needs.prepare.outputs.CACHE_KEYS }}
-  #         enable-cache: 'node_modules,cypress,generated-files'
+  #         enable-cache: 'node_modules,cypress'
 
   #     - name: Running e2e tests
   #       run: ./scripts/ci/40_e2e.sh "${AFFECTED_PROJECT}"
@@ -171,7 +171,7 @@ jobs:
   #       with:
   #         github-token: ${{ secrets.GITHUB_TOKEN }}
   #         keys: ${{ needs.prepare.outputs.CACHE_KEYS }}
-  #         enable-cache: 'node_modules,generated-files'
+  #         enable-cache: 'node_modules'
 
   #     - name: Building
   #       run: ./scripts/ci/run-in-parallel-native.sh build
