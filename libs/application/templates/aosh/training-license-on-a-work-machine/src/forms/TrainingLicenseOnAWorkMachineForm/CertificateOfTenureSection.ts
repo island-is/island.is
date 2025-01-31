@@ -2,13 +2,11 @@ import {
   buildMultiField,
   buildTextField,
   buildSection,
-  buildPhoneField,
-  getValueViaPath,
-  buildTableRepeaterField,
   buildCheckboxField,
+  buildSelectField,
+  buildDateField,
 } from '@island.is/application/core'
 import { certificateOfTenure, information } from '../../lib/messages'
-import { Application } from '@island.is/api/schema'
 
 export const certificateOfTenureSection = buildSection({
   id: 'certificateOfTenureSection',
@@ -19,71 +17,53 @@ export const certificateOfTenureSection = buildSection({
       title: information.general.title,
       description: information.general.description,
       children: [
-        buildTableRepeaterField({
-          id: 'certificateOfTenure',
-          title: '',
-          addItemButtonText:
-            certificateOfTenure.labels.registerMachineButtonText,
-          table: {
-            header: ['bla', 'kla', 'far', 'bar', 'baz'],
-          },
-          fields: {
-            practicalRight: {
-              component: 'select',
-              label: certificateOfTenure.labels.practicalRight,
-              placeholder: certificateOfTenure.labels.practicalRightPlaceholder,
-              width: 'full',
-              displayInTable: false,
-              options: [
-                {
-                  label: 'Bla',
-                  value: 'bla',
-                },
-                {
-                  label: 'sa',
-                  value: 'sa',
-                },
-              ],
-            },
-            machineNumber: {
-              component: 'input',
-              label: certificateOfTenure.labels.machineNumber,
-              width: 'half',
-            },
-            machineType: {
-              component: 'input',
-              label: certificateOfTenure.labels.machineType,
-              width: 'half',
-              // readonly: true,
-              // backgroundColor: 'white',
-            },
-            tenureInHours: {
-              component: 'input',
-              label: certificateOfTenure.labels.tenureInHours,
-              width: 'full',
-            },
-            dateFrom: {
-              component: 'date',
-              label: certificateOfTenure.labels.dateFrom,
-              placeholder: certificateOfTenure.labels.datePlaceholder,
-              width: 'half',
-            },
-            dateTo: {
-              component: 'date',
-              label: certificateOfTenure.labels.dateTo,
-              placeholder: certificateOfTenure.labels.datePlaceholder,
-              width: 'half',
-            },
-          },
+        buildSelectField({
+          id: 'certificateOfTenure.practicalRight',
+          title: certificateOfTenure.labels.practicalRight,
+          options: [
+            { value: 'test', label: 'test' },
+            { value: 'test2', label: 'test2' },
+          ],
+          placeholder: certificateOfTenure.labels.practicalRightPlaceholder,
+        }),
+        buildTextField({
+          id: 'certificateOfTenure.machineNumber',
+          title: certificateOfTenure.labels.machineNumber,
+          width: 'half',
+        }),
+        buildTextField({
+          id: 'certificateOfTenure.machineType',
+          title: certificateOfTenure.labels.machineType,
+          width: 'half',
+          readOnly: true,
+          defaultValue: () => 'temp',
+        }),
+        buildDateField({
+          id: 'certificateOfTenure.dateFrom',
+          title: certificateOfTenure.labels.dateFrom,
+          width: 'half',
+          placeholder: certificateOfTenure.labels.datePlaceholder,
+        }),
+        buildDateField({
+          id: 'certificateOfTenure.dateTo',
+          title: certificateOfTenure.labels.dateTo,
+          width: 'half',
+          placeholder: certificateOfTenure.labels.datePlaceholder,
+        }),
+        buildTextField({
+          id: 'certificateOfTenure.tenureInHours',
+          title: certificateOfTenure.labels.tenureInHours,
+          width: 'half',
+          format: '####',
+          // variant: 'number',
         }),
         buildCheckboxField({
-          id: 'approveMachines',
+          id: 'certificateOfTenure.approveMachines',
           title: '',
           marginTop: 4,
           options: [
             {
-              label:
-                'Það vottast hér með að ég hef stjórnað og  fylgst með viðhaldi eftirtalinna véla.',
+              label: certificateOfTenure.labels.approveMachines,
               value: 'approveMachines',
             },
           ],

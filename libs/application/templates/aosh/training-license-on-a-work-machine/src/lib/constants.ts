@@ -7,11 +7,13 @@ export type Events = {
 export enum States {
   PREREQUISITES = 'prerequisites',
   DRAFT = 'draft',
+  REVIEW = 'review',
   COMPLETED = 'completed',
 }
 
 export enum Roles {
   APPLICANT = 'applicant',
+  ASSIGNEE = 'assignee',
 }
 
 export enum ApiActions {

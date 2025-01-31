@@ -2,7 +2,7 @@ import { getValueViaPath } from '@island.is/application/core'
 import { FormatMessage, FormValue } from '@island.is/application/types'
 import { information } from '../lib/messages'
 import { format as formatKennitala } from 'kennitala'
-import { formatPhoneNumber } from '@island.is/application/ui-components'
+import { formatPhoneNumber } from './formatPhoneNumber'
 
 export const getApplicantInformation = (
   answers: FormValue,

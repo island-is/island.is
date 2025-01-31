@@ -49,5 +49,10 @@ export const assigneeInformation = {
       defaultMessage: 'Netfang staðfestingaraðila',
       description: `Assignee information email label`,
     },
+    isContractor: {
+      id: 'aosh.tlwm.application:assigneeInformation.labels.isContractor',
+      defaultMessage: 'Ég er verktaki',
+      description: `Assignee information contractor label`,
+    },
   }),
 }

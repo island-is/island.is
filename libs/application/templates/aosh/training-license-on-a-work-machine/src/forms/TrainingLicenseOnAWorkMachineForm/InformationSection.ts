@@ -14,7 +14,7 @@ export const informationSection = buildSection({
   title: information.general.sectionTitle,
   children: [
     buildMultiField({
-      id: 'importerInformationMultiField',
+      id: 'informationMultiField',
       title: information.general.title,
       description: information.general.description,
       children: [

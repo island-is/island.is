@@ -3,8 +3,12 @@ import {
   buildTextField,
   buildSection,
   buildPhoneField,
+  buildCheckboxField,
+  YES,
+  buildNationalIdWithNameField,
 } from '@island.is/application/core'
 import { assigneeInformation } from '../../lib/messages'
+import { isContractor } from '../../utils'
 
 export const assigneeInformationSection = buildSection({
   id: 'assigneeInformationSection',
@@ -15,43 +19,41 @@ export const assigneeInformationSection = buildSection({
       title: assigneeInformation.general.title,
       description: assigneeInformation.general.description,
       children: [
-        buildTextField({
-          id: 'assigneeInformation.companyNationalId',
-          title: assigneeInformation.labels.companyNationalId,
-          width: 'half',
-          required: true,
+        buildCheckboxField({
+          id: 'assigneeInformation.isContractor',
+          title: '',
+          options: [
+            {
+              value: YES,
+              label: assigneeInformation.labels.isContractor,
+            },
+          ],
         }),
-        buildTextField({
-          id: 'assigneeInformation.companyName',
-          title: assigneeInformation.labels.companyName,
-          width: 'half',
-          format: '######-####',
+        buildNationalIdWithNameField({
+          id: 'assigneeInformation.company',
+          title: '',
+          customNationalIdLabel: assigneeInformation.labels.companyNationalId,
+          customNameLabel: assigneeInformation.labels.companyName,
+          searchCompanies: true,
+          searchPersons: false,
           required: true,
+          condition: (answers) => !isContractor(answers),
         }),
-        buildTextField({
-          id: 'assigneeInformation.assigneeName',
-          title: assigneeInformation.labels.assigneeName,
-          width: 'half',
+        buildNationalIdWithNameField({
+          id: 'assigneeInformation.assignee',
+          title: '',
+          customNationalIdLabel: assigneeInformation.labels.assigneeNationalId,
+          customNameLabel: assigneeInformation.labels.assigneeName,
+          emailLabel: assigneeInformation.labels.assigneeEmail,
+          phoneLabel: assigneeInformation.labels.assigneePhone,
+          showEmailField: true,
+          showPhoneField: true,
+          emailRequired: true,
+          phoneRequired: true,
+          searchCompanies: false,
+          searchPersons: true,
           required: true,
-        }),
-        buildTextField({
-          id: 'assigneeInformation.assigneeNationalId',
-          title: assigneeInformation.labels.assigneeNationalId,
-          width: 'half',
-          format: '######-####',
-          required: true,
-        }),
-        buildTextField({
-          id: 'assigneeInformation.assigneeEmail',
-          title: assigneeInformation.labels.assigneeEmail,
-          width: 'half',
-          required: true,
-        }),
-        buildPhoneField({
-          id: 'assigneeInformation.assigneePhone',
-          title: assigneeInformation.labels.assigneePhone,
-          width: 'half',
-          required: true,
+          condition: (answers) => !isContractor(answers),
         }),
       ],
     }),

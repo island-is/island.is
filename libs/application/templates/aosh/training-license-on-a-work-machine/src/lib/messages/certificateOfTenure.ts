@@ -70,5 +70,16 @@ export const certificateOfTenure = {
       defaultMessage: 'Tímabil',
       description: 'Certificate of tenure period',
     },
+    approveMachines: {
+      id: 'aosh.tlwm.application:certificateOfTenure.labels.approveMachines',
+      defaultMessage:
+        'Það vottast hér með að ég hef stjórnað og  fylgst með viðhaldi eftirtalinna véla.',
+      description: 'Certificate of tenure approve machines label',
+    },
+    tenureInHoursError: {
+      id: 'aosh.tlwm.application:certificateOfTenure.labels.tenureInHoursError',
+      defaultMessage: 'Starfstími þarf að hafa náð 1000 klst.',
+      description: 'Certificate of tenure tenure in hours error message',
+    },
   }),
 }

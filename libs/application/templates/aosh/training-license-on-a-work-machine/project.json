@@ -1,5 +1,5 @@
 {
-  "name": "training-license-on-a-work-machine",
+  "name": "application-templates-aosh-training-license-on-a-work-machine",
   "$schema": "../../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/application/templates/aosh/training-license-on-a-work-machine/src",
   "projectType": "library",
@@ -7,6 +7,12 @@
   "targets": {
     "lint": {
       "executor": "@nx/eslint:lint"
+    },
+    "extract-strings": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract libs/application/templates/training-license-on-a-work-machine/src/lib/messages/index.ts"
+      }
     },
     "test": {
       "executor": "@nx/jest:jest",

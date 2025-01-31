@@ -9,10 +9,12 @@ import { useLocale } from '@island.is/localization'
 import { ReviewGroup } from '../Components/ReviewGroup'
 import { KeyValueFormField } from '@island.is/application/ui-fields'
 import { overview } from '../../lib/messages'
-import { getAssigneeInformation, getApplicantInformation } from '../../utils'
-// import { ParticipantsOverviewExpandableTable } from '../Components/ParticipantsOverviewExpandableTable'
-// import { getValueViaPath } from '@island.is/application/core'
-// import { Participant } from '../../shared/types'
+import {
+  getAssigneeInformation,
+  getApplicantInformation,
+  isContractor,
+} from '../../utils'
+import { getMachineTenureInformation } from '../../utils/getMachineTenureInformation'
 
 export const Overview: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   ...props
@@ -27,7 +29,7 @@ export const Overview: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   return (
     <Box>
       <ReviewGroup
-        handleClick={() => onClick('importerInformationMultiField')}
+        handleClick={() => onClick('informationMultiField')}
         editMessage={formatMessage(overview.labels.editMessage)}
         title={formatMessage(overview.labels.applicant)}
         isFirst
@@ -45,21 +47,11 @@ export const Overview: FC<React.PropsWithChildren<FieldBaseProps>> = ({
         />
       </ReviewGroup>
 
-      {/* <ReviewGroup title={formatMessage(overview.labels.machineTenure)}>
-        <ParticipantsOverviewExpandableTable
-          data={
-            getValueViaPath<Participant[]>(
-              application.answers,
-              'participantList',
-            ) ?? []
-          }
-        />
-      </ReviewGroup> */}
-
       <ReviewGroup
-        handleClick={() => onClick('assigneeInformationMultiField')}
+        handleClick={() => onClick('certificateOfTenureMultiField')}
         editMessage={formatMessage(overview.labels.editMessage)}
-        title={formatMessage(overview.labels.assignee)}
+        title={formatMessage(overview.labels.machineTenure)}
+        isLast={isContractor(application.answers)}
       >
         <KeyValueFormField
           application={application}
@@ -69,10 +61,33 @@ export const Overview: FC<React.PropsWithChildren<FieldBaseProps>> = ({
             component: FieldComponents.KEY_VALUE,
             title: '',
             label: '',
-            value: getAssigneeInformation(application.answers, formatMessage),
+            value: getMachineTenureInformation(
+              application.answers,
+              formatMessage,
+            ),
           }}
         />
       </ReviewGroup>
+
+      {!isContractor(application.answers) && (
+        <ReviewGroup
+          handleClick={() => onClick('assigneeInformationMultiField')}
+          editMessage={formatMessage(overview.labels.editMessage)}
+          title={formatMessage(overview.labels.assignee)}
+        >
+          <KeyValueFormField
+            application={application}
+            field={{
+              ...props.field,
+              type: FieldTypes.KEY_VALUE,
+              component: FieldComponents.KEY_VALUE,
+              title: '',
+              label: '',
+              value: getAssigneeInformation(application.answers, formatMessage),
+            }}
+          />
+        </ReviewGroup>
+      )}
     </Box>
   )
 }

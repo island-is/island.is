@@ -23,6 +23,16 @@ export const overview = {
       defaultMessage: 'Staðfesta',
       description: 'Overview approveButton label',
     },
+    agreeButton: {
+      id: 'aosh.tlwm.application:overview.general.agreeButton',
+      defaultMessage: 'Samþykkja',
+      description: 'Overview agreeButton label',
+    },
+    rejectButton: {
+      id: 'aosh.tlwm.application:overview.general.rejectButton',
+      defaultMessage: 'Hafna',
+      description: 'Overview rejectButton label',
+    },
   }),
   labels: defineMessages({
     editMessage: {
@@ -37,7 +47,7 @@ export const overview = {
     },
     machineTenure: {
       id: 'aosh.tlwm.application:overview.labels.machineTenure',
-      defaultMessage: 'Skráður starfstími á vinnuvél',
+      defaultMessage: 'Skráður starfstími á vinnuvél (Vottorð um starfstíma)',
       description: 'Machine tenure label on overview page',
     },
     assignee: {

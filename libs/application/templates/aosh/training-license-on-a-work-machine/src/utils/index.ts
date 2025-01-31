@@ -1,3 +1,6 @@
 export * from './isValidPhoneNumber'
 export * from './getApplicantInformation'
 export * from './getAssigneeInformation'
+export * from './isValidEmail'
+export * from './isContractor'
+export * from './formatDate'

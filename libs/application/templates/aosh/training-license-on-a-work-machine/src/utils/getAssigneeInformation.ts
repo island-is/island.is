@@ -2,7 +2,7 @@ import { getValueViaPath } from '@island.is/application/core'
 import { FormatMessage, FormValue } from '@island.is/application/types'
 import { assigneeInformation } from '../lib/messages'
 import { format as formatKennitala } from 'kennitala'
-import { formatPhoneNumber } from '@island.is/application/ui-components'
+import { formatPhoneNumber } from './formatPhoneNumber'
 
 export const getAssigneeInformation = (
   answers: FormValue,
@@ -10,27 +10,27 @@ export const getAssigneeInformation = (
 ) => {
   const companyNationalId = getValueViaPath<string>(
     answers,
-    'assigneeInformation.companyNationalId',
+    'assigneeInformation.company.nationalId',
   )
   const companyName = getValueViaPath<string>(
     answers,
-    'assigneeInformation.companyName',
+    'assigneeInformation.company.name',
   )
   const assigneeNationalId = getValueViaPath<string>(
     answers,
-    'assigneeInformation.assigneeNationalId',
+    'assigneeInformation.assignee.nationalId',
   )
   const assigneeName = getValueViaPath<string>(
     answers,
-    'assigneeInformation.assigneeName',
+    'assigneeInformation.assignee.name',
   )
   const assigneeEmail = getValueViaPath<string>(
     answers,
-    'assigneeInformation.assigneeEmail',
+    'assigneeInformation.assignee.email',
   )
   const assigneePhone = getValueViaPath<string>(
     answers,
-    'assigneeInformation.assigneePhone',
+    'assigneeInformation.assignee.phone',
   )
 
   return [

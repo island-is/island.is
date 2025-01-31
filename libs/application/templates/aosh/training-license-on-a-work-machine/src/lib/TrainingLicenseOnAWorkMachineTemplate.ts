@@ -23,6 +23,16 @@ import { application as applicationMessage } from './messages'
 import { IdentityApi, UserProfileApi } from '../dataProviders'
 import { ApiScope } from '@island.is/auth/scopes'
 import { Features } from '@island.is/feature-flags'
+import { assign } from 'xstate'
+import set from 'lodash/set'
+
+const pruneInDaysAtMidnight = (application: Application, days: number) => {
+  const date = new Date(application.created)
+  date.setDate(date.getDate() + days)
+  const pruneDate = new Date(date)
+  pruneDate.setUTCHours(23, 59, 59)
+  return pruneDate
+}
 
 const determineMessageFromApplicationAnswers = (application: Application) => {
   const regNumber = getValueViaPath(
@@ -41,11 +51,13 @@ const template: ApplicationTemplate<
   ApplicationStateSchema<Events>,
   Events
 > = {
-  type: ApplicationTypes.MACHINE_REGISTRATION,
+  type: ApplicationTypes.TRAINING_LICENSE_ON_A_WORK_MACHINE,
   name: determineMessageFromApplicationAnswers,
   institution: applicationMessage.institutionName,
   translationNamespaces:
-    ApplicationConfigurations.MachineRegistration.translation,
+    ApplicationConfigurations[
+      ApplicationTypes.TRAINING_LICENSE_ON_A_WORK_MACHINE
+    ].translation,
   dataSchema: TrainingLicenseOnAWorkMachineAnswersSchema,
   featureFlag: Features.TrainingLicenseOnAWorkMachineEnabled,
   allowedDelegations: [
@@ -127,19 +139,85 @@ const template: ApplicationTemplate<
                   (module) =>
                     Promise.resolve(module.TrainingLicenseOnAWorkMachineForm),
                 ),
-              // actions: [
-              //   {
-              //     event: DefaultEvents.SUBMIT,
-              //     name: 'Staðfesta',
-              //     type: 'primary',
-              //   },
-              // ],
+              actions: [
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: 'Staðfesta',
+                  type: 'primary',
+                },
+              ],
               write: 'all',
               delete: true,
             },
           ],
         },
         on: {
+          [DefaultEvents.SUBMIT]: { target: States.REVIEW },
+        },
+      },
+      [States.REVIEW]: {
+        entry: 'assignUsers',
+        meta: {
+          name: 'Kennsluréttindi á vinnuvél',
+          status: 'inprogress',
+          // onDelete: defineTemplateApi({
+          //   action: ApiActions.deleteApplication,
+          // }),
+          actionCard: {
+            tag: {
+              label: applicationMessage.actionCardDraft,
+              variant: 'blue',
+            },
+            historyLogs: [
+              // {
+              //   onEvent: DefaultEvents.APPROVE,
+              //   logMessage: applicationMessage.historyLogApprovedByReviewer,
+              // },
+              {
+                onEvent: DefaultEvents.REJECT,
+                logMessage: coreHistoryMessages.applicationRejected,
+              },
+              {
+                onEvent: DefaultEvents.SUBMIT,
+                logMessage: coreHistoryMessages.applicationApproved,
+              },
+            ],
+            // pendingAction: reviewStatePendingAction,
+          },
+          lifecycle: {
+            shouldBeListed: true,
+            shouldBePruned: true,
+            whenToPrune: (application: Application) =>
+              pruneInDaysAtMidnight(application, 7),
+          },
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/ReviewForm').then((module) =>
+                  Promise.resolve(module.ReviewForm),
+                ),
+              write: {
+                answers: [],
+              },
+              read: 'all',
+              delete: true,
+            },
+            {
+              id: Roles.ASSIGNEE,
+              formLoader: () =>
+                import('../forms/ReviewForm').then((module) =>
+                  Promise.resolve(module.ReviewForm),
+                ),
+              write: {
+                answers: [],
+              },
+              read: 'all',
+            },
+          ],
+        },
+        on: {
+          // [DefaultEvents.REJECT]: { target: States.REJECTED },
           [DefaultEvents.SUBMIT]: { target: States.COMPLETED },
         },
       },
@@ -175,12 +253,37 @@ const template: ApplicationTemplate<
       },
     },
   },
+  stateMachineOptions: {
+    actions: {
+      assignUsers: assign((context) => {
+        const { application } = context
+
+        const assigneeNationalId = getValueViaPath<string>(
+          application.answers,
+          'assignee.nationalId',
+          '',
+        )
+        if (assigneeNationalId !== null && assigneeNationalId !== '') {
+          set(application, 'assignees', [assigneeNationalId])
+        }
+        return context
+      }),
+    },
+  },
   mapUserToRole(
     id: string,
     application: Application,
   ): ApplicationRole | undefined {
+    const assigneeNationalId = getValueViaPath<string>(
+      application.answers,
+      'assignee.nationalId',
+      '',
+    )
     if (id === application.applicant) {
       return Roles.APPLICANT
+    }
+    if (id === assigneeNationalId && application.assignees.includes(id)) {
+      return Roles.ASSIGNEE
     }
 
     return undefined
