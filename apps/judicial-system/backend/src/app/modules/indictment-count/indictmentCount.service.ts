@@ -22,7 +22,7 @@ export class IndictmentCountService {
   constructor(
     @InjectModel(IndictmentCount)
     private readonly indictmentCountModel: typeof IndictmentCount,
-    private readonly offenseModel: typeof Offense,
+    @InjectModel(Offense) private readonly offenseModel: typeof Offense,
 
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
@@ -83,8 +83,11 @@ export class IndictmentCountService {
     return true
   }
 
-  async createOffense(indictmentCountId: string, type: IndictmentCountOffense): Promise<Offense> {
-    return this.offenseModel.create({ indictmentCountId, type})
+  async createOffense(
+    indictmentCountId: string,
+    type: IndictmentCountOffense,
+  ): Promise<Offense> {
+    return this.offenseModel.create({ indictmentCountId, type })
   }
 
   async updateOffense(
@@ -92,10 +95,13 @@ export class IndictmentCountService {
     indictmentCountId: string,
     update: UpdateOffenseDto,
   ): Promise<Offense> {
-    const [numberOfAffectedRows, offenses] = await this.offenseModel.update(update, {
-      where: { id: offenseId, indictmentCountId },
-      returning: true,
-    })
+    const [numberOfAffectedRows, offenses] = await this.offenseModel.update(
+      update,
+      {
+        where: { id: offenseId, indictmentCountId },
+        returning: true,
+      },
+    )
 
     if (numberOfAffectedRows > 1) {
       // Tolerate failure, but log error
@@ -111,7 +117,10 @@ export class IndictmentCountService {
     return offenses[0]
   }
 
-  async deleteOffense(indictmentCountId: string, offenseId: string, ): Promise<boolean> {
+  async deleteOffense(
+    indictmentCountId: string,
+    offenseId: string,
+  ): Promise<boolean> {
     const numberOfAffectedRows = await this.offenseModel.destroy({
       where: { id: indictmentCountId, offenseId },
     })

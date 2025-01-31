@@ -439,7 +439,7 @@ export const IndictmentCount: FC<Props> = ({
   const handleIndictmentCountChanges = (update: UpdateIndictmentCount) => {
     let lawsBroken
 
-    const {offenses} = update
+    const { offenses } = update
     // TODO
     if (update.substances || update.offenses) {
       lawsBroken = getLawsBroken(

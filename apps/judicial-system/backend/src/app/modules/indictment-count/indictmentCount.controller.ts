@@ -101,10 +101,17 @@ export class IndictmentCountController {
     type: Offense,
     description: 'Creates a new indictment count offense',
   })
-  createOffense(@Param('indictmentCountId') indictmentCountId: string,     @Body() createOffenseDto: CreateOffenseDto,
-): Promise<Offense> {
-    this.logger.debug(`Creating a new offense for indictment count ${indictmentCountId}`)
+  createOffense(
+    @Param('indictmentCountId') indictmentCountId: string,
+    @Body() createOffenseDto: CreateOffenseDto,
+  ): Promise<Offense> {
+    this.logger.debug(
+      `Creating a new offense for indictment count ${indictmentCountId}`,
+    )
 
-    return this.indictmentCountService.createOffense(indictmentCountId, createOffenseDto.type)
+    return this.indictmentCountService.createOffense(
+      indictmentCountId,
+      createOffenseDto.type,
+    )
   }
 }
