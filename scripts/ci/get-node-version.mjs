@@ -1,7 +1,9 @@
 #!/usr/bin/env node
+// @ts-check
 import { getPackageJSON } from './_common.mjs'
 
 const nodeVersion = await getPackageVersion()
+const majorOnly = true
 
 if (!nodeVersion) {
   console.error(`Failed getting docker image for ${nodeVersion}`)
@@ -16,4 +18,7 @@ async function getPackageVersion() {
     throw new Error(`Cannot find node version`)
   }
   return version
+    .split('.')
+    .slice(0, majorOnly ? 1 : 3)
+    .join('.')
 }

@@ -46,7 +46,6 @@ env:
   MAX_JOBS: '2'
   NX_PARALLEL: '2'
   NX_MAX_PARALLEL: '4'
-  NODE_IMAGE_VERSION: 20
 
 jobs:
   pre-checks:
@@ -267,7 +266,7 @@ jobs:
         continue-on-error: false
         run: |
           set -euo pipefail
-          export NODE_IMAGE_VERSION="$NODE_IMAGE_VERSION"
+          export NODE_IMAGE_VERSION="$(./scripts/ci/get-node-version.mjs)"
           echo "NODE_IMAGE_VERSION: '${NODE_IMAGE_VERSION}'"
           echo NODE_IMAGE_VERSION="${NODE_IMAGE_VERSION}" >> "$GITHUB_OUTPUT"
           echo NODE_IMAGE_VERSION="${NODE_IMAGE_VERSION}" >> "$GITHUB_ENV"
