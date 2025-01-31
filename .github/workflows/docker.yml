@@ -77,8 +77,6 @@ jobs:
             echo "Using small subset for testing docker build (on ${{ github.event.pull_request.base.ref }})"
             # A representative sample of various docker build targets
             export projects="web,air-discount-scheme-backend,license-api"
-            # In PRs we don't have the generated files context from when being called.
-            corepack enable && yarn install --immutable && yarn codegen
           fi
           # Create a list of objects of the form:
           # [
@@ -178,6 +176,12 @@ jobs:
             # The final sha for the merge commit
             # mcgh: Merge Commit GitHub
             type=raw,value=mcgh-${{ github.event.pull_request.merge_commit_sha }}
+
+      - name: Godegen if needed
+        if: ${{ contains(github.event.pull_request.labels.*.name, 'docker build') }}
+        run: |
+          # In PRs we don't have the generated files context from when being called.
+          corepack enable && yarn install --immutable && yarn codegen
 
       - name: Docker build/cache dependencies
         uses: docker/build-push-action@v6
