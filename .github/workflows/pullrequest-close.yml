@@ -44,8 +44,8 @@ jobs:
       - name: Check unicorn affected
         id: unicorn-affected
         run: |
-          echo "Comparing nx affected for $HeadRef using origin/$BaseRef as base branch"
-          echo IS_UNICORN=$(node scripts/ci/unicorn-utils.mjs "{\"baseBranch\": \"origin/$BaseRef\", \"mergeBranch\": \"$HeadRef\" }") >> "$GITHUB_OUTPUT"
+          echo "Comparing nx affected for ${{ env.NX_HEAD }} using ${{ env.NX_BASE }} as base branch"
+          echo IS_UNICORN=$(node scripts/ci/unicorn-utils.mjs "{\"baseBranch\": \"origin/${{ env.NX_BASE }}\", \"mergeBranch\": \"${{ env.NX_HEAD }}\" }") >> "$GITHUB_OUTPUT"
       - name: Results
         run: |
           echo "Unicorn = ${{ steps.unicorn-affected.outputs.IS_UNICORN }}"
