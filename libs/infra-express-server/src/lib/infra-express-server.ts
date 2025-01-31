@@ -1,3 +1,4 @@
+import { setupShutdownHooks } from '@island.is/node-utils'
 import express, { Router, Request, Response, NextFunction } from 'express'
 import { collectDefaultMetrics, Histogram } from 'prom-client'
 import { metricsApp } from './metrics-publisher'
@@ -41,11 +42,11 @@ export const runServer = ({
     return next()
   })
 
-  app.get('/liveness', (req, res) => {
+  app.get('/liveness', function liveness(_req, res) {
     res.json({ ok: true })
   })
 
-  app.get('/version', (req, res) => {
+  app.get('/version', function versionOfCode(_req, res) {
     res.json({ version: process.env.REVISION })
   })
 
@@ -56,7 +57,7 @@ export const runServer = ({
 
   // security middleware
   // we should implemente something along the lines of this https://auth0.com/docs/quickstart/backend/nodejs/01-authorization
-  app.use((req, res, next) => {
+  app.use((_req, _res, next) => {
     // we need to secure all routes by default. OAuth?
     next()
   })
@@ -64,18 +65,16 @@ export const runServer = ({
   // secured
   app.use('/', routes)
 
-  app.use(
-    (
-      err: any, // eslint-disable-line  @typescript-eslint/no-explicit-any
-      req: Request,
-      res: Response,
-      next: NextFunction, // eslint-disable-line
-    ) => {
-      logger.error(`Status code: ${err.status}, msg: ${err.message}`)
-      res.status(err.status || 500)
-      res.send(err.message)
-    },
-  )
+  app.use(function errorHandler(
+    err: any, // @typescript-eslint/no-explicit-any
+    _req: Request,
+    res: Response,
+    _next: NextFunction,
+  ) {
+    logger.error(`Status code: ${err.status}, msg: ${err.message}`)
+    res.status(err.status || 500)
+    res.send(err.message)
+  })
 
   const servicePort = parseInt(process.env.PORT || `${port}`)
   const metricsPort = servicePort + 1
@@ -86,6 +85,7 @@ export const runServer = ({
   const server = app.listen(servicePort, () => {
     logger.info(`Listening on port ${servicePort}`)
   })
+  setupShutdownHooks(server)
   server.on('error', logger.error)
   return server
 }
