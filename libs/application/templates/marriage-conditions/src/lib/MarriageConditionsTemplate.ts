@@ -209,7 +209,7 @@ const MarriageConditionsTemplate: ApplicationTemplate<
               'applicant.hasBirthCertificate',
             )
               ? { code: 'AY153', quantity: 1 }
-              : []
+              : [],
           )
           paymentCodes.push(
             getValueViaPath<boolean>(
@@ -217,7 +217,7 @@ const MarriageConditionsTemplate: ApplicationTemplate<
               'birthCertificate.data.hasBirthCertificate',
             )
               ? { code: 'AY153', quantity: 1 }
-              : []
+              : [],
           )
           paymentCodes.push({ code: 'AY128', quantity: 1 }) // Survey
           paymentCodes.push({ code: 'AY154', quantity: 2 }) // Marital status
