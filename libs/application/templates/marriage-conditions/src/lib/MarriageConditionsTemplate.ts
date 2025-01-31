@@ -208,7 +208,7 @@ const MarriageConditionsTemplate: ApplicationTemplate<
               application.answers,
               'applicant.hasBirthCertificate',
             )
-              ? { code: 'AY153', quantity: 1 }
+              ? { code: 'AY171', quantity: 1 }
               : []
           )
           paymentCodes.push(
@@ -216,11 +216,11 @@ const MarriageConditionsTemplate: ApplicationTemplate<
               application.externalData,
               'birthCertificate.data.hasBirthCertificate',
             )
-              ? { code: 'AY153', quantity: 1 }
+              ? { code: 'AY171', quantity: 1 }
               : []
           )
           paymentCodes.push({ code: 'AY128', quantity: 1 }) // Survey
-          paymentCodes.push({ code: 'AY154', quantity: 2 }) // Marital status
+          paymentCodes.push({ code: 'AY172', quantity: 2 }) // Marital status
 
           return paymentCodes.flat()
         },
