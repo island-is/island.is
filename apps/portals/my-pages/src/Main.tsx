@@ -8,8 +8,6 @@ import { userMonitoring } from '@island.is/user-monitoring'
 import { App } from './app/App'
 import { environment } from './environments'
 
-// DEPLOYME
-
 if (!isRunningOnEnvironment('local')) {
   userMonitoring.initDdRum({
     service: 'service-portal',
