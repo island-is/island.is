@@ -47,7 +47,6 @@ env:
   # Regsitry to for build images and cache
   IMAGE_REGISTRY: ${{ vars.IMAGE_REGISTRY || 'localhost' }}
   AWS_ECR_REPO_BASE: ${{ vars.AWS_ECR_REPO_BASE || 'docker.io' }}
-  NODE_IMAGE_VERSION: 20
 
 jobs:
   prepare:
@@ -65,7 +64,7 @@ jobs:
       - name: Build arg prep
         id: build-args
         run: |
-          node_image_version="$NODE_IMAGE_VERSION"
+          node_image_version="$(./scripts/ci/get-node-version.mjs)"
           echo node-image-version="$node_image_version" >>"$GITHUB_OUTPUT"
           yarn info --json @playwright/test | jq -r '.children.Version | "playwright-image-tag=v\(.)-focal"' >>"$GITHUB_OUTPUT"
 
