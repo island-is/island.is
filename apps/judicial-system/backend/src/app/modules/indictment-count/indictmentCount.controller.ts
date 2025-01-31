@@ -94,7 +94,7 @@ export class IndictmentCountController {
     return { deleted }
   }
 
-  @UseGuards(CaseExistsGuard, CaseWriteGuard)
+  // @UseGuards(CaseExistsGuard, CaseWriteGuard)
   @RolesRules(prosecutorRule, prosecutorRepresentativeRule)
   @Post()
   @ApiCreatedResponse({

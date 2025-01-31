@@ -23,7 +23,6 @@ export class IndictmentCountService {
     @InjectModel(IndictmentCount)
     private readonly indictmentCountModel: typeof IndictmentCount,
     @InjectModel(Offense) private readonly offenseModel: typeof Offense,
-
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 

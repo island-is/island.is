@@ -15,7 +15,7 @@ export class Offense {
   @Field(() => ID, { nullable: true })
   readonly indictmentCountId?: string
 
-  @Field(() => [IndictmentCountOffense], { nullable: true })
+  @Field(() => IndictmentCountOffense, { nullable: true })
   readonly type?: IndictmentCountOffense
 
   @Field(() => GraphQLJSONObject, { nullable: true })
