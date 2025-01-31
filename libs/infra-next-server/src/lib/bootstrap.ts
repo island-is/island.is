@@ -1,4 +1,5 @@
 import '@island.is/infra-tracing'
+import { setupShutdownHooks } from '@island.is/node-utils'
 
 import createExpressApp, { Express } from 'express'
 
@@ -43,7 +44,7 @@ type BootstrapOptions = {
 const startServer = (app: Express, port = 4200) => {
   const nextPort = parseInt(process.env.PORT || '') || port
   const metricsPort = nextPort + 1
-  app.listen(nextPort, () => {
+  const server = app.listen(nextPort, () => {
     logger.info(
       `Next custom server listening at http://localhost:${nextPort}`,
       {
@@ -51,24 +52,13 @@ const startServer = (app: Express, port = 4200) => {
       },
     )
   })
+  setupShutdownHooks(server)
   startMetricServer(metricsPort)
-}
-
-const setupExitHook = () => {
-  // Make sure the server doesn't hang after parent process disconnects, eg when
-  // e2e tests are finished.
-  if (process.env.NX_INVOKED_BY_RUNNER === 'true') {
-    process.on('disconnect', () => {
-      process.exit(0)
-    })
-  }
 }
 
 export const bootstrap = async (options: BootstrapOptions) => {
   const dev = process.env.NODE_ENV !== 'production'
   monkeyPatchServerLogging()
-
-  setupExitHook()
 
   const expressApp = createExpressApp()
 
