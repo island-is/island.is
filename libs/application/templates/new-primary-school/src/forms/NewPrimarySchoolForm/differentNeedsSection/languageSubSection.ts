@@ -57,7 +57,7 @@ export const languageSubSection = buildSubSection({
           marginBottom: 'gutter',
         }),
         buildFieldsRepeaterField({
-          id: 'languages.selectedLanguages',
+          id: 'selectedLanguages',
           title: '',
           formTitleNumbering: 'none',
           addItemButtonText:
@@ -146,11 +146,11 @@ export const languageSubSection = buildSubSection({
             return showChildLangagueFields(answers)
           },
         }),
-        buildHiddenInputWithWatchedValue({
+        /*  buildHiddenInputWithWatchedValue({
           // Needed to trigger an update on options in the select above
           id: 'languages.languagesHiddenInput',
-          watchValue: 'languages.selectedLanguages',
-        }),
+          watchValue: 'selectedLanguages',
+        }),*/
 
         buildRadioField({
           id: 'languages.signLanguage',

@@ -78,7 +78,7 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
 
   const selectedLanguages = getValueViaPath(
     answers,
-    'languages.selectedLanguages',
+    'selectedLanguages',
   ) as Array<{
     code: string
   }>
@@ -433,35 +433,20 @@ export const hasForeignLanguages = (answers: FormValue) => {
 }
 
 export const showChildLangagueFields = (answers: FormValue) => {
-  const { languageEnvironment, selectedLanguages, languagesHiddenInput } =
+  const { languageEnvironment, selectedLanguages } =
     getApplicationAnswers(answers)
 
-  // console.log('selectedLanguages', {
-  //   languageEnvironment,
-  //   languagesHiddenInput,
-  //   selectedLanguages,
-  // })
-
   if (!selectedLanguages) {
-    // console.log('no - selectedLanguages')
     return false
   }
-
-  /*console.log(
-    ' selectedLanguages.filter',
-    selectedLanguages.filter((language) => language.code),
-  )*/
-
-  const updateValue =
-    JSON.stringify(selectedLanguages) === JSON.stringify(languagesHiddenInput)
 
   if (
     languageEnvironment === LanguageEnvironmentOptions.ONLY_FOREIGN &&
     selectedLanguages.length >= 1 &&
     selectedLanguages.filter((language) => language.code).length >= 1
   ) {
-    // console.log('ONLY_FOREIGN', updateValue)
-    return updateValue
+    console.log('ONLY_FOREIGN')
+    return true
   }
 
   if (
@@ -469,17 +454,12 @@ export const showChildLangagueFields = (answers: FormValue) => {
     selectedLanguages.length >= 2 &&
     selectedLanguages.filter((language) => language.code).length >= 2
   ) {
-    //console.log('ICELANDIC_AND_FOREIGN', updateValue)
-    return updateValue
+    console.log('ICELANDIC_AND_FOREIGN')
+    return true
   }
-  /*
-  console.log(
-    'FINAL - updateValue',
-    updateValue,
-    selectedLanguages.filter((language) => language.code).length >= 1,
-  ) */
+
   // Ef þetta er sett sem false að þá uppfærist ekki childlanguage þegar tungumál 1-4  er breytt
-  return updateValue
+  return false
 }
 
 export const getNeighbourhoodSchoolName = (application: Application) => {
