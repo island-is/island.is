@@ -183,7 +183,7 @@ LABEL commit=${GIT_COMMIT_SHA}
 CMD [ "jest", "main.spec.js" ]
 
 
-FROM mcr.microsoft.com/playwright:${PLAYWRIGHT_IMAGE_TAG} AS playwright-base
+FROM mcr.microsoft.com/playwright:${PLAYWRIGHT_IMAGE_TAG} AS base-playwright
 
 # TODO: remove awscli dependency (157 MB extra)
 # hadolint ignore=DL3008
@@ -193,7 +193,7 @@ RUN apt-get update -y && \
   rm -rf /var/lib/apt/lists/*
 
 
-FROM playwright-base AS output-playwright
+FROM base-playwright AS output-playwright
 WORKDIR /testing
 
 # Stage-specific ARGs
