@@ -6,9 +6,6 @@ on:
       - reopened
       - edited
       - synchronize
-    branches-ignore:
-      - 'uni-pr'
-      - 'feature/unicorn-app'
 
 defaults:
   run:

@@ -4,7 +4,19 @@ on:
   push:
     branches:
       - 'main'
+      - 'release/**'
+      - 'pre-release/**'
+    paths-ignore:
+      - '**/*.md'
+    tags:
+      - docker-build-*
   workflow_dispatch:
+  create:
+  pull_request:
+    types:
+      - opened
+      - synchronize
+      - labeled
 
 defaults:
   run:

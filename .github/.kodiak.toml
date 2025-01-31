@@ -8,4 +8,3 @@ merge.message.title = "pull_request_title"
 # Allow pull requests to be prioritized. This should mainly be done when doing stuff
 # that will unblock other pull requests
 merge.priority_merge_label = "high priority"
-update.ignored_usernames = ["robertaandersen"]
