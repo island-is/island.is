@@ -8,7 +8,7 @@ source "$DIR"/_common.sh
 
 mkdir -p "$PROJECT_ROOT"/cache
 
-NODE_IMAGE_VERSION=${NODE_IMAGE_VERSION:-20}
+NODE_IMAGE_VERSION=${NODE_IMAGE_VERSION:-$(./scripts/ci/get-node-version.mjs)}
 
 docker buildx create --driver docker-container --use || true
 
