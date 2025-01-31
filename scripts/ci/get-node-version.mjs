@@ -2,8 +2,7 @@
 // @ts-check
 import { getPackageJSON } from './_common.mjs'
 
-const nodeVersion = await getPackageVersion()
-const majorOnly = true
+const nodeVersion = await getPackageVersion({ majorOnly: true })
 
 if (!nodeVersion) {
   console.error(`Failed getting docker image for ${nodeVersion}`)
@@ -11,7 +10,7 @@ if (!nodeVersion) {
 }
 process.stdout.write(nodeVersion)
 
-async function getPackageVersion() {
+async function getPackageVersion({ majorOnly = true } = {}) {
   const content = await getPackageJSON()
   const version = content.engines?.node
   if (!version) {
