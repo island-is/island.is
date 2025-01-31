@@ -65,7 +65,6 @@ export const PropertySearch: FC<React.PropsWithChildren<Props>> = ({
   }, [getValues, id])
 
   const fetchProperties = (query = '') => {
-    console.log('fetchProperties query:', query)
     if (query.length === 0) {
       console.log('no query')
       return
@@ -109,10 +108,6 @@ export const PropertySearch: FC<React.PropsWithChildren<Props>> = ({
           name={`${id}`}
           defaultValue=""
           render={({ field: { onChange, value } }) => {
-            console.log('query:', query)
-            console.log('value:', value)
-            console.log('selectedProperty: ', selectedProperty)
-
             return (
               <AsyncSearch
                 options={options}
