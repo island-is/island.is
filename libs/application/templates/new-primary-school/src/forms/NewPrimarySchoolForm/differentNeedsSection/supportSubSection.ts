@@ -203,7 +203,6 @@ export const supportSubSection = buildSubSection({
         }),
         buildCheckboxField({
           id: 'support.requestMeeting',
-          title: '',
           description: newPrimarySchoolMessages.differentNeeds.requestMeeting,
           options: [
             {

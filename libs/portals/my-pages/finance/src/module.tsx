@@ -3,9 +3,12 @@ import { ApiScope } from '@island.is/auth/scopes'
 import { m } from '@island.is/portals/my-pages/core'
 import { PortalModule } from '@island.is/portals/core'
 import { FinancePaths } from './lib/paths'
-import { financeRoutesLoader } from './screens/FinanceRoutes.loader'
+import { Navigate } from 'react-router-dom'
+import {
+  financeDomainLoader,
+  financeRoutesLoader,
+} from './screens/FinanceRoutes.loader'
 import { redirects } from './financeRedirects'
-import FinanceRoot from './screens/FinanceRoot'
 
 const FinanceStatus = lazy(() => import('./screens/FinanceStatus'))
 const FinanceBills = lazy(() => import('./screens/FinanceBills'))
@@ -35,63 +38,62 @@ export const financeModule: PortalModule = {
         ApiScope.financeSalary,
         ApiScope.financeSchedule,
       ].some((scope) => userInfo.scopes.includes(scope)),
-      element: <FinanceRoot />,
-      children: [
-        {
-          name: m.financeStatus,
-          path: FinancePaths.FinanceStatus,
-          enabled: userInfo.scopes.includes(ApiScope.financeOverview),
-          element: <FinanceStatus />,
-        },
-        {
-          name: m.financeBills,
-          path: FinancePaths.FinancePaymentsBills,
-          enabled: userInfo.scopes.includes(ApiScope.financeOverview),
-          element: <FinanceBills />,
-        },
-        {
-          name: m.financeTransactionsCategories,
-          path: FinancePaths.FinanceTransactionCategories,
-          element: <FinanceTransactionsCategories />,
-          enabled: userInfo.scopes.includes(ApiScope.financeOverview),
-          dynamic: true,
-          loader: financeRoutesLoader({ userInfo, ...rest }),
-        },
-        {
-          name: m.financeTransactionPeriods,
-          path: FinancePaths.FinanceTransactionPeriods,
-          element: <FinanceTransactionPeriods />,
-          enabled: userInfo.scopes.includes(ApiScope.financeOverview),
-          dynamic: true,
-          loader: financeRoutesLoader({ userInfo, ...rest }),
-          key: 'FinanceTransactionPeriods',
-        },
-        {
-          name: m.financeEmployeeClaims,
-          path: FinancePaths.FinanceEmployeeClaims,
-          element: <FinanceEmployeeClaims />,
-          enabled: userInfo.scopes.includes(ApiScope.financeSalary),
-          dynamic: true,
-          loader: financeRoutesLoader({ userInfo, ...rest }),
-        },
-        {
-          name: m.financeLocalTax,
-          path: FinancePaths.FinanceLocalTax,
-          element: <FinanceLocalTax />,
-          enabled: userInfo.scopes.includes(ApiScope.financeOverview),
-          dynamic: true,
-          loader: financeRoutesLoader({ userInfo, ...rest }),
-        },
-        {
-          name: m.financeSchedules,
-          path: FinancePaths.FinancePaymentsSchedule,
-          enabled: userInfo.scopes.includes(ApiScope.financeSchedule),
-          element: <FinanceSchedule />,
-          dynamic: true,
-          loader: financeRoutesLoader({ userInfo, ...rest }),
-        },
-        ...redirects,
-      ],
+      element: <Navigate to={FinancePaths.FinanceStatus} replace />,
+    },
+    {
+      name: m.financeStatus,
+      path: FinancePaths.FinanceStatus,
+      enabled: userInfo.scopes.includes(ApiScope.financeOverview),
+      element: <FinanceStatus />,
+      loader: financeDomainLoader({ userInfo, ...rest }),
+    },
+    {
+      name: m.financeBills,
+      path: FinancePaths.FinancePaymentsBills,
+      enabled: userInfo.scopes.includes(ApiScope.financeOverview),
+      element: <FinanceBills />,
+      loader: financeDomainLoader({ userInfo, ...rest }),
+    },
+    {
+      name: m.financeTransactionsCategories,
+      path: FinancePaths.FinanceTransactionCategories,
+      element: <FinanceTransactionsCategories />,
+      enabled: userInfo.scopes.includes(ApiScope.financeOverview),
+      dynamic: true,
+      loader: financeRoutesLoader({ userInfo, ...rest }),
+    },
+    {
+      name: m.financeTransactionPeriods,
+      path: FinancePaths.FinanceTransactionPeriods,
+      element: <FinanceTransactionPeriods />,
+      enabled: userInfo.scopes.includes(ApiScope.financeOverview),
+      dynamic: true,
+      loader: financeRoutesLoader({ userInfo, ...rest }),
+      key: 'FinanceTransactionPeriods',
+    },
+    {
+      name: m.financeEmployeeClaims,
+      path: FinancePaths.FinanceEmployeeClaims,
+      element: <FinanceEmployeeClaims />,
+      enabled: userInfo.scopes.includes(ApiScope.financeSalary),
+      dynamic: true,
+      loader: financeRoutesLoader({ userInfo, ...rest }),
+    },
+    {
+      name: m.financeLocalTax,
+      path: FinancePaths.FinanceLocalTax,
+      element: <FinanceLocalTax />,
+      enabled: userInfo.scopes.includes(ApiScope.financeOverview),
+      dynamic: true,
+      loader: financeRoutesLoader({ userInfo, ...rest }),
+    },
+    {
+      name: m.financeSchedules,
+      path: FinancePaths.FinancePaymentsSchedule, //
+      enabled: userInfo.scopes.includes(ApiScope.financeSchedule),
+      element: <FinanceSchedule />,
+      dynamic: true,
+      loader: financeRoutesLoader({ userInfo, ...rest }),
     },
     {
       name: m.financeHousingBenefits,
@@ -105,5 +107,6 @@ export const financeModule: PortalModule = {
       enabled: userInfo.scopes.includes(ApiScope.financeOverview),
       element: <FinanceLoans />,
     },
+    ...redirects,
   ],
 }

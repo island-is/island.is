@@ -31,7 +31,7 @@ export const TextFormField: FC<React.PropsWithChildren<Props>> = ({
   const {
     id,
     disabled,
-    title,
+    title = '',
     description,
     placeholder,
     backgroundColor,

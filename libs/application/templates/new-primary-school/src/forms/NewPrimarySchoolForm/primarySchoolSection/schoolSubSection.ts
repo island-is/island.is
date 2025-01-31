@@ -5,12 +5,12 @@ import {
   NO,
   YES,
 } from '@island.is/application/core'
+import { ApplicationType } from '../../../lib/constants'
 import { newPrimarySchoolMessages } from '../../../lib/messages'
 import {
   getApplicationAnswers,
   getNeighbourhoodSchoolName,
 } from '../../../lib/newPrimarySchoolUtils'
-import { ApplicationType } from '../../../lib/constants'
 
 export const schoolSubSection = buildSubSection({
   id: 'schoolSubSection',
@@ -29,7 +29,6 @@ export const schoolSubSection = buildSubSection({
       children: [
         buildRadioField({
           id: 'school.applyForNeighbourhoodSchool',
-          title: '',
           required: true,
           options: (application) => {
             return [

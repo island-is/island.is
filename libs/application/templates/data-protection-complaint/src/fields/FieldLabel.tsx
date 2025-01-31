@@ -9,7 +9,7 @@ export const FieldLabel: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   application,
   field,
 }) => {
-  const { title } = field
+  const { title = '' } = field
   const { formatMessage, lang: locale } = useLocale()
 
   return (

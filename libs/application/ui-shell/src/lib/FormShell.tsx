@@ -171,7 +171,7 @@ export const FormShell: FC<
                 className={styles.sidebarInner}
               >
                 <FormStepper
-                  form={form}
+                  form={{ ...form, title: form.title ?? '' }}
                   sections={sections}
                   screens={screens}
                   currentScreen={currentScreen}

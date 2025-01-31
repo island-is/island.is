@@ -22,9 +22,11 @@ import { useUserInfo } from '@island.is/react-spa/bff'
 import { m as messages } from '../../lib/messages'
 import FinanceIntro from '../../components/FinanceIntro'
 import { useGetPaymentScheduleQuery } from './FinanceSchedule.generated'
+import { useFinanceSwapHook } from '../../utils/financeSwapHook'
 
 const FinanceSchedule = () => {
   useNamespaces('sp.finance-schedule')
+  useFinanceSwapHook()
   const { formatMessage } = useLocale()
   const userInfo = useUserInfo()
   const isDelegation = checkDelegation(userInfo)

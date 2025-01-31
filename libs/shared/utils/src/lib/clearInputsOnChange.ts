@@ -3,6 +3,6 @@ export const clearInputsOnChange = (
   setValue: (key: string, value: any) => void,
 ) => {
   clearOnChange.forEach((key) => {
-    setValue(key, null)
+    setValue(key, '')
   })
 }

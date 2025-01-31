@@ -30,7 +30,7 @@ export const AsyncSelectFormField: FC<React.PropsWithChildren<Props>> = ({
 }) => {
   const {
     id,
-    title,
+    title = '',
     description,
     loadOptions,
     loadingError,

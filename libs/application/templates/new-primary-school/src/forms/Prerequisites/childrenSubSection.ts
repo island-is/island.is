@@ -39,7 +39,6 @@ export const childrenSubSection = buildSubSection({
         buildSubmitField({
           id: 'submit',
           placement: 'footer',
-          title: '',
           refetchApplicationAfterSubmit: true,
           actions: [
             {
