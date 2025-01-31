@@ -82,7 +82,7 @@ export const translation = defineMessages({
     description: 'Tegund',
   },
   subtype: {
-    id: 'web.syslumenn.burningPermitList:validPeriodLabel',
+    id: 'web.syslumenn.burningPermitList:subtype',
     defaultMessage: 'Undirtegund',
     description: 'Undirtegund',
   },
