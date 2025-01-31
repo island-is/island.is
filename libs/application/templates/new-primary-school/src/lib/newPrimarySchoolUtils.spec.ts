@@ -1,5 +1,8 @@
 import { ExternalData } from '@island.is/application/types'
-import { hasOtherGuardian } from './newPrimarySchoolUtils'
+import {
+  hasOtherGuardian,
+  showChildLangagueFields,
+} from './newPrimarySchoolUtils'
 
 describe('hasOtherGuardian', () => {
   it('should return true if otherParent exists in externalData', () => {

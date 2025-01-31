@@ -1,5 +1,4 @@
 import {
-  buildCustomField,
   buildDescriptionField,
   buildFieldsRepeaterField,
   buildHiddenInputWithWatchedValue,
@@ -9,15 +8,15 @@ import {
   buildSubSection,
 } from '@island.is/application/core'
 import { Application, NO, YES } from '@island.is/application/types'
+import { getAllLanguageCodes } from '@island.is/shared/utils'
+import { LanguageEnvironmentOptions } from '../../../lib/constants'
 import { newPrimarySchoolMessages } from '../../../lib/messages'
 import {
   getApplicationAnswers,
   getLanguageEnvironments,
   hasForeignLanguages,
+  showChildLangagueFields,
 } from '../../../lib/newPrimarySchoolUtils'
-import { LanguageSelectionProps } from '../../../fields/LanguageSelection'
-import { getAllLanguageCodes } from '@island.is/shared/utils'
-import { LanguageEnvironmentOptions } from '../../../lib/constants'
 
 export const languageSubSection = buildSubSection({
   id: 'languageSubSection',
@@ -80,17 +79,9 @@ export const languageSubSection = buildSubSection({
                 newPrimarySchoolMessages.differentNeeds
                   .languageSelectionPlaceholder,
               width: 'full',
-              /*  updateValueObj: {
-                valueModifier: (application, activeField) => {
-                  console.log('activeField', activeField)
-                  return null
-                },
-                watchValues: 'incomeCategory',
-              }, */
               options: (application: Application) => {
-                const { languageEnvironment } = getApplicationAnswers(
-                  application.answers,
-                )
+                const { languageEnvironment, selectedLanguages } =
+                  getApplicationAnswers(application.answers)
 
                 const languages = getAllLanguageCodes()
                 return languages
@@ -112,18 +103,12 @@ export const languageSubSection = buildSubSection({
             },
           },
         }),
-        buildHiddenInputWithWatchedValue({
-          // Needed to trigger an update on options in the select above
-          id: 'languages.language1HiddenInput',
-          watchValue: 'languages.selectedLanguages[0].code',
-        }),
         buildDescriptionField({
           id: 'languages.child.language.title',
           title: newPrimarySchoolMessages.differentNeeds.childLanguageTitle,
           titleVariant: 'h4',
           condition: (answers) => {
-            const { language1, language2 } = getApplicationAnswers(answers)
-            return hasForeignLanguages(answers) && !!language1 && !!language2
+            return showChildLangagueFields(answers)
           },
         }),
         buildSelectField({
@@ -134,41 +119,39 @@ export const languageSubSection = buildSubSection({
           placeholder:
             newPrimarySchoolMessages.differentNeeds
               .languageSelectionPlaceholder,
-
           options: (application) => {
-            const {
-              languages,
-              language1,
-              language2,
-              language3,
-              language4,
-              language1HiddenInput,
-            } = getApplicationAnswers(application.answers)
+            const { selectedLanguages, languagesHiddenInput } =
+              getApplicationAnswers(application.answers)
 
-            console.log('languageSEL', {
-              languages,
-              language1,
-              language1HiddenInput,
-            })
+            console.log('options', { selectedLanguages, languagesHiddenInput })
 
-            const allLanguages = getAllLanguageCodes()
-            const selectedLanguages = allLanguages.filter((language) => {
-              return (
-                language.code === language1 ||
-                language.code === language2 ||
-                language.code === language3 ||
-                language.code === language4
-              )
-            })
+            if (!selectedLanguages) {
+              return []
+            }
 
-            return selectedLanguages.map((language) => {
-              return {
-                label: language.name,
-                value: language.code,
-              }
-            })
+            return getAllLanguageCodes()
+              .filter((language) => {
+                return selectedLanguages.some(
+                  (lang) => lang?.code === language.code,
+                )
+              })
+              .map((language) => {
+                return {
+                  label: language.name,
+                  value: language.code,
+                }
+              })
+          },
+          condition: (answers) => {
+            return showChildLangagueFields(answers)
           },
         }),
+        buildHiddenInputWithWatchedValue({
+          // Needed to trigger an update on options in the select above
+          id: 'languages.languagesHiddenInput',
+          watchValue: 'languages.selectedLanguages',
+        }),
+
         buildRadioField({
           id: 'languages.signLanguage',
           title: newPrimarySchoolMessages.differentNeeds.signLanguage,

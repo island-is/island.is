@@ -562,7 +562,7 @@ export const newPrimarySchoolMessages: MessageDir = {
       defaultMessage: 'Tungumálaumhverfi',
       description: 'Language environment',
     },
-    languageEnvironmentPlaceeholder: {
+    languageEnvironmentPlaceholder: {
       id: 'nps.application:different.needs.language.environment.placeholder',
       defaultMessage: 'Veldu það sem best á við',
       description: 'Choose what best applies',
