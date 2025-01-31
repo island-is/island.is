@@ -15,18 +15,21 @@ export const transformApplicationToNewPrimarySchoolDTO = (
 ): FormDto => {
   const {
     childInfo,
-    parents,
+    guardians,
     siblings,
     contacts,
     reasonForApplication,
-    reasonForApplicationCountry,
     reasonForApplicationStreetAddress,
     reasonForApplicationPostalCode,
     selectedSchool,
-    nativeLanguage,
-    otherLanguagesSpokenDaily,
-    otherLanguages,
-    icelandicNotSpokenAroundChild,
+    language1,
+    language2,
+    language3,
+    language4,
+    childLanguage,
+    languageEnvironment,
+    signLanguage,
+    interpreter,
     developmentalAssessment,
     specialSupport,
     startDate,
@@ -36,32 +39,17 @@ export const transformApplicationToNewPrimarySchoolDTO = (
   const { primaryOrgId } = getApplicationExternalData(application.externalData)
 
   const agents: AgentDto[] = [
-    {
-      name: parents.parent1.fullName,
-      nationalId: parents.parent1.nationalId,
+    ...guardians.map((guardian) => ({
+      name: guardian.fullName,
+      nationalId: guardian.nationalId,
       domicile: {
-        address: parents.parent1.address.streetAddress,
-        postCode: parents.parent1.address.postalCode,
+        address: guardian.address.streetAddress,
+        postCode: guardian.address.postalCode,
       },
-      email: parents.parent1.email,
-      phone: parents.parent1.phoneNumber,
+      email: guardian.email,
+      phone: guardian.phoneNumber,
       role: 'guardian',
-    },
-    ...(parents.parent2
-      ? [
-          {
-            name: parents.parent2.fullName,
-            nationalId: parents.parent2.nationalId,
-            domicile: {
-              address: parents.parent2.address.streetAddress,
-              postCode: parents.parent2.address.postalCode,
-            },
-            email: parents.parent2.email,
-            phone: parents.parent2.phoneNumber,
-            role: 'guardian',
-          },
-        ]
-      : []),
+    })),
     ...contacts.map((contact) => ({
       name: contact.fullName,
       nationalId: contact.nationalId,
@@ -77,17 +65,6 @@ export const transformApplicationToNewPrimarySchoolDTO = (
         }))
       : []),
   ]
-
-  let noIcelandic: boolean
-  if (otherLanguagesSpokenDaily === YES) {
-    if (nativeLanguage === 'is' || otherLanguages?.includes('is')) {
-      noIcelandic = false
-    } else {
-      noIcelandic = icelandicNotSpokenAroundChild?.includes(YES)
-    }
-  } else {
-    noIcelandic = nativeLanguage !== 'is'
-  }
 
   const newPrimarySchoolDTO: FormDto = {
     type: FormDtoTypeEnum.Registration,
@@ -117,15 +94,9 @@ export const transformApplicationToNewPrimarySchoolDTO = (
     agents,
     registration: {
       defaultOrg: primaryOrgId,
-      ...(reasonForApplication !== ReasonForApplicationOptions.MOVING_ABROAD
-        ? {
-            selectedOrg: selectedSchool,
-            requestingMeeting: requestMeeting === YES,
-            expectedStartDate: new Date(startDate),
-          }
-        : {
-            movingAbroadCountry: reasonForApplicationCountry,
-          }),
+      selectedOrg: selectedSchool,
+      requestingMeeting: requestMeeting === YES,
+      expectedStartDate: new Date(startDate),
       reason: reasonForApplication,
       ...(reasonForApplication ===
       ReasonForApplicationOptions.MOVING_MUNICIPALITY
@@ -137,20 +108,15 @@ export const transformApplicationToNewPrimarySchoolDTO = (
           }
         : {}),
     },
-    ...(reasonForApplication !== ReasonForApplicationOptions.MOVING_ABROAD
-      ? {
-          social: {
-            hasHadSupport: specialSupport === YES,
-            hasDiagnoses: developmentalAssessment === YES,
-          },
-          language: {
-            nativeLanguage: nativeLanguage,
-            noIcelandic,
-            otherLanguages:
-              otherLanguagesSpokenDaily === YES ? otherLanguages : undefined,
-          },
-        }
-      : {}),
+    social: {
+      hasHadSupport: specialSupport === YES,
+      hasDiagnoses: developmentalAssessment === YES,
+    }, // Languages needs to be updated when Juni is ready with the data struccture
+    language: {
+      nativeLanguage: '',
+      noIcelandic: false,
+      otherLanguages: undefined,
+    },
   }
 
   return newPrimarySchoolDTO

@@ -35,25 +35,28 @@ env:
   GITHUB_ACTIONS_CACHE_URL: https://cache.dev01.devland.is/
   SKIP_GENERATED_CACHE: ${{ contains(github.event.pull_request.labels.*.name, 'skip-generated-cache') }}
   NX_AFFECTED_ALL: ${{ contains(github.event.pull_request.labels.*.name, 'nx-affected-all') }}
+  NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
+  NX_TASKS_RUNNER: ci
   CONFIGCAT_MAIN_CONFIG_ID: 08d8c761-021c-46f0-8671-6244663a372f
   CONFIGCAT_MOBILE_APP_CONFIG_ID: 08daf234-7573-4b3b-85f6-189fc7502542
-  CHUNK_SIZE: ${{ vars.CHUNK_SIZE || 8 }}
-  DISABLE_CHUNKS: ${{ vars.DISABLE_CHUNKS || true }}
-  MAX_JOBS: ${{ vars.MAX_JOBS || 10 }}
-  NX_PARALLEL: ${{ vars.NX_PARALLEL || 10 }}
-  NX_MAX_PARALLEL: ${{ vars.NX_MAX_PARALLEL || 10 }}
+  DISABLE_CHUNKS: 'false'
+  DISABLE_GROUPING: 'false'
+  DISABLE_PROBLEMATIC: 'false'
+  CHUNK_SIZE: '3'
+  MAX_JOBS: '2'
+  NX_PARALLEL: '2'
+  NX_MAX_PARALLEL: '4'
+  NODE_IMAGE_VERSION: 20
 
 jobs:
   pre-checks:
     name: Check if job should run
-    runs-on: ec2-runners
-    container:
-      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
+    runs-on: arc-runners
     env:
       CREATE_PATTERNS: ^release/
       PRE_RELEASE_PATTERN: ^pre-release/
     outputs:
-      NODE_IMAGE_TAG: ${{ steps.git-branch.outputs.NODE_IMAGE_TAG }}
+      NODE_IMAGE_VERSION: ${{ steps.git-branch.outputs.NODE_IMAGE_VERSION }}
       GIT_BRANCH: ${{ steps.git-branch.outputs.GIT_BRANCH }}
       GIT_BRANCH_DEPLOY: ${{ steps.git-branch-deploy.outputs.GIT_BRANCH_DEPLOY }}
       FEATURE_NAME: ${{ steps.git-branch-deploy.outputs.FEATURE_NAME }}
@@ -148,9 +151,7 @@ jobs:
           echo "PRE_CHECK=push" >> "$GITHUB_OUTPUT"
 
   prepare:
-    runs-on: ec2-runners
-    container:
-      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
+    runs-on: arc-runners
     timeout-minutes: 90
 
     if: needs.pre-checks.outputs.PRE_CHECK
@@ -166,7 +167,7 @@ jobs:
       CACHE_KEYS: ${{ steps.get-cache.outputs.keys }}
       TEST_CHUNKS: ${{ steps.test_projects.outputs.CHUNKS }}
       DOCKER_TAG: ${{ steps.docker_tags.outputs.DOCKER_TAG }}
-      NODE_IMAGE_TAG: ${{ steps.nodejs_image.outputs.NODE_IMAGE_TAG }}
+      NODE_IMAGE_VERSION: ${{ steps.nodejs_image.outputs.NODE_IMAGE_VERSION }}
       LAST_GOOD_BUILD_DOCKER_TAG: ${{ steps.git_nx_base.outputs.LAST_GOOD_BUILD_DOCKER_TAG }}
       UNAFFECTED: ${{ steps.unaffected.outputs.UNAFFECTED }}
       BUILD_CHUNKS: ${{ steps.build_map.outputs.BUILD_CHUNKS }}
@@ -217,6 +218,13 @@ jobs:
           git config --global user.email "ci@island.is"
           git config --global user.name "CI Bot"
 
+      - name: Derive appropriate SHAs
+        uses: nrwl/nx-set-shas@v4
+
+      - run: |
+          echo "BASE: ${{ env.NX_BASE }}"
+          echo "HEAD: ${{ env.NX_HEAD }}"
+
       - name: Checking out relevant branches for a PR
         if: needs.pre-checks.outputs.PRE_CHECK && needs.pre-checks.outputs.PRE_CHECK == 'feature-deploy' && !(needs.pre-checks.outputs.PRE_RELEASE == 'true')
         run: |
@@ -227,8 +235,10 @@ jobs:
           git config --global user.email "ci@island.is"
           git config --global user.name "CI Bot"
 
-          BASE_SHA="$(git merge-base HEAD "$GITHUB_BASE_REF")"
-          HEAD_SHA="$(git merge-base HEAD "$GITHUB_HEAD_REF")"
+          # BASE_SHA="$(git merge-base HEAD "$GITHUB_BASE_REF")"
+          # HEAD_SHA="$(git merge-base HEAD "$GITHUB_HEAD_REF")"
+          BASE_SHA=${{ env.NX_BASE }}
+          HEAD_SHA=${{ env.NX_HEAD }}
           echo "Current base SHA is '$BASE_SHA' and head SHA is '$HEAD_SHA'"
           echo "{\"base_sha\": \"$BASE_SHA\", \"head_sha\":\"$HEAD_SHA\"}" > event.json
 
@@ -257,11 +267,11 @@ jobs:
         continue-on-error: false
         run: |
           set -euo pipefail
-          export NODE_IMAGE_TAG="$(./scripts/ci/get-node-version.mjs)"
-          echo "NODE_IMAGE_TAG: '${NODE_IMAGE_TAG}'"
-          echo NODE_IMAGE_TAG="${NODE_IMAGE_TAG}" >> "$GITHUB_OUTPUT"
-          echo NODE_IMAGE_TAG="${NODE_IMAGE_TAG}" >> "$GITHUB_ENV"
-          echo "**NODE_IMAGE_TAG** '${NODE_IMAGE_TAG}'" >> "$GITHUB_STEP_SUMMARY"
+          export NODE_IMAGE_VERSION="$NODE_IMAGE_VERSION"
+          echo "NODE_IMAGE_VERSION: '${NODE_IMAGE_VERSION}'"
+          echo NODE_IMAGE_VERSION="${NODE_IMAGE_VERSION}" >> "$GITHUB_OUTPUT"
+          echo NODE_IMAGE_VERSION="${NODE_IMAGE_VERSION}" >> "$GITHUB_ENV"
+          echo "**NODE_IMAGE_VERSION** '${NODE_IMAGE_VERSION}'" >> "$GITHUB_STEP_SUMMARY"
       - name: Generate docker image tag
         id: docker_tags
         run: |
@@ -307,7 +317,7 @@ jobs:
         uses: ./.github/actions/get-cache
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          enable-cache: 'node_modules,generated-files'
+          enable-cache: 'node_modules'
 
       - name: Set Test Everything true
         run: |
@@ -442,22 +452,20 @@ jobs:
           if [[ "$CHUNKS" != "[]" ]]; then
             echo "IMAGES="$(echo "$CHUNKS" | jq '.[] | fromjson | .projects' -r | tr '\n' ',')"" >> "$GITHUB_OUTPUT"
           fi
-
   tests:
     needs:
       - prepare
     if: needs.prepare.outputs.TEST_CHUNKS
-    runs-on: ec2-runners
-    container:
-      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
-    timeout-minutes: 35
+    runs-on: arc-runners
+    timeout-minutes: 45
     env:
       AFFECTED_PROJECTS: ${{ matrix.projects }}
+      NX_BASE: ${{ needs.prepare.outputs.NX_BASE }}
     strategy:
       fail-fast: false
       matrix: ${{ fromJson(needs.prepare.outputs.TEST_CHUNKS) }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
@@ -474,15 +482,16 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           keys: ${{ needs.prepare.outputs.CACHE_KEYS }}
-          enable-cache: 'node_modules,generated-files'
+          enable-cache: 'node_modules,cypress'
 
-      - uses: ./.github/actions/unit-test
+      - name: Run unit tests
+        uses: ./.github/actions/unit-test
         with:
           dd-api-key: '${{ secrets.DD_API_KEY }}'
           codecov-token: ${{ secrets.CODECOV_TOKEN }}
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          docker-registry: ${{ env.DOCKER_REGISTRY}}
+          docker-registry: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/
 
   docker-build:
     needs:
@@ -497,7 +506,7 @@ jobs:
       AFFECTED_ALL: ${{ secrets.AFFECTED_ALL }}
       GIT_BRANCH: ${{ needs.pre-checks.outputs.GIT_BRANCH}}
       DOCKER_TAG: ${{ needs.prepare.outputs.DOCKER_TAG}}
-      NODE_IMAGE_TAG: ${{ needs.prepare.outputs.NODE_IMAGE_TAG}}
+      NODE_IMAGE_VERSION: ${{ needs.prepare.outputs.NODE_IMAGE_VERSION}}
       PUBLISH: true
     strategy:
       fail-fast: false
@@ -530,7 +539,7 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           keys: ${{ needs.prepare.outputs.CACHE_KEYS }}
-          enable-cache: 'node_modules,generated-files'
+          enable-cache: 'node_modules'
 
       - name: Cache for dependencies Docker layer
         if: steps.gather.outcome == 'success'
@@ -585,7 +594,7 @@ jobs:
         id: dockerargs
         if: steps.gather.outcome == 'success'
         env:
-          NODE_IMAGE_TAG: ${{ needs.prepare.outputs.NODE_IMAGE_TAG }}
+          NODE_IMAGE_VERSION: ${{ needs.prepare.outputs.NODE_IMAGE_VERSION }}
           GIT_COMMIT_SHA: ${{ github.sha }}
           DOCKER_BASE_IMAGE_REGISTRY: ${{ env.DOCKER_BASE_IMAGE_REGISTRY }}
         run: |
@@ -596,7 +605,7 @@ jobs:
           SERVER_URL="${SERVER_URL%.git}"
           build_args=(
             --build-arg="DOCKER_IMAGE_REGISTRY=${DOCKER_BASE_IMAGE_REGISTRY}"
-            --build-arg="NODE_IMAGE_TAG=${NODE_IMAGE_TAG}"
+            --build-arg="NODE_IMAGE_VERSION=${NODE_IMAGE_VERSION}"
             --build-arg="GIT_BRANCH=${GIT_BRANCH}"
             --build-arg="GIT_COMMIT_SHA=${GIT_COMMIT_SHA}"
             --build-arg="GIT_REPOSITORY_URL=${SERVER_URL}"
@@ -609,12 +618,12 @@ jobs:
         id: dockerbuild
         if: steps.gather.outcome == 'success'
         env:
-          NODE_IMAGE_TAG: ${{ needs.prepare.outputs.NODE_IMAGE_TAG }}
+          NODE_IMAGE_VERSION: ${{ needs.prepare.outputs.NODE_IMAGE_VERSION }}
           GIT_COMMIT_SHA: ${{ github.sha }}
           DOCKER_BASE_IMAGE_REGISTRY: ${{ env.DOCKER_BASE_IMAGE_REGISTRY }}
         run: |
           set -x
-          echo "Node image tag is: '${NODE_IMAGE_TAG}'"
+          echo "Node image tag is: '${NODE_IMAGE_VERSION}'"
           echo "Docker build args are: 'EXTRA_DOCKER_BUILD_ARGS'"
           export EXTRA_DOCKER_BUILD_ARGS
           ./scripts/ci/run-in-parallel.sh "90_${DOCKER_TYPE}"
@@ -622,12 +631,12 @@ jobs:
       - name: Building Docker images Retry
         if: steps.gather.outcome == 'success' && steps.dockerbuild.outcome == 'failure'
         env:
-          NODE_IMAGE_TAG: ${{ needs.prepare.outputs.NODE_IMAGE_TAG }}
+          NODE_IMAGE_VERSION: ${{ needs.prepare.outputs.NODE_IMAGE_VERSION }}
           GIT_COMMIT_SHA: ${{ github.sha }}
           DOCKER_BASE_IMAGE_REGISTRY: ${{ env.DOCKER_BASE_IMAGE_REGISTRY }}
         run: |
           set -x
-          echo "Node image tag is: '${NODE_IMAGE_TAG}'"
+          echo "Node image tag is: '${NODE_IMAGE_VERSION}'"
           echo "Docker build args are: 'EXTRA_DOCKER_BUILD_ARGS'"
           export EXTRA_DOCKER_BUILD_ARGS
           ./scripts/ci/run-in-parallel.sh "90_${DOCKER_TYPE}"
@@ -640,12 +649,12 @@ jobs:
     runs-on: ec2-runners
     container:
       image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
-    timeout-minutes: 5
+    timeout-minutes: 30
     env:
       FEATURE_NAME: ${{ needs.pre-checks.outputs.FEATURE_NAME }}
       DOCKER_TAG: ${{ needs.prepare.outputs.DOCKER_TAG}}
       GIT_BRANCH: ${{ needs.pre-checks.outputs.GIT_BRANCH }}
-      NODE_IMAGE_TAG: ${{ needs.prepare.outputs.NODE_IMAGE_TAG }}
+      NODE_IMAGE_VERSION: ${{ needs.prepare.outputs.NODE_IMAGE_VERSION }}
     steps:
       - uses: actions/checkout@v3
 
@@ -666,8 +675,8 @@ jobs:
         working-directory: infra
         run: |
           echo Registry is: ${{env.DOCKER_BASE_IMAGE_REGISTRY}}
-          echo Image tag is: ${{env.NODE_IMAGE_TAG}}
-          export EXTRA_DOCKER_BUILD_ARGS="--build-arg DOCKER_IMAGE_REGISTRY=${{env.DOCKER_BASE_IMAGE_REGISTRY}} --build-arg NODE_IMAGE_TAG=${{env.NODE_IMAGE_TAG}}"
+          echo Image tag is: ${{env.NODE_IMAGE_VERSION}}
+          export EXTRA_DOCKER_BUILD_ARGS="--build-arg DOCKER_IMAGE_REGISTRY=${{env.DOCKER_BASE_IMAGE_REGISTRY}} --build-arg NODE_IMAGE_VERSION=${{env.NODE_IMAGE_VERSION}}"
           ./scripts/build-docker-container.sh "$DOCKER_TAG"
           echo "COMMENT<<EOF" >> "$GITHUB_ENV"
           echo "Affected services are: ${{needs.prepare.outputs.IMAGES}}" >> "$GITHUB_ENV"
@@ -782,9 +791,7 @@ jobs:
           }
           BODY
   push-success:
-    runs-on: ec2-runners
-    container:
-      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
+    runs-on: arc-runners
     if: ${{ !cancelled() }}
     needs:
       - pre-checks
@@ -806,9 +813,7 @@ jobs:
         run: echo "Build was skipped"
 
   failure-notification:
-    runs-on: ec2-runners
-    container:
-      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
+    runs-on: arc-runners
     if: failure() && needs.pre-checks.outputs.PRE_CHECK && needs.pre-checks.outputs.PRE_CHECK != 'feature-deploy'
     needs:
       - pre-checks
@@ -829,9 +834,7 @@ jobs:
 
   scanflags:
     if: github.ref == 'ref/heads/main'
-    runs-on: ec2-runners
-    container:
-      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
+    runs-on: arc-runners
     steps:
       - name: Checkout
         uses: actions/checkout@v3

@@ -33,7 +33,7 @@ export const DateFormField: FC<React.PropsWithChildren<Props>> = ({
   const {
     id,
     disabled,
-    title,
+    title = '',
     description,
     required,
     placeholder,
