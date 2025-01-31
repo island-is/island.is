@@ -23,6 +23,10 @@ on:
         type: string
         required: false
         default: 'arc-runners'
+      version:
+        description: 'The version to tag the image with (previously DOCKER_TAG)'
+        type: string
+        required: false
   workflow_dispatch:
     inputs:
       projects:
@@ -34,6 +38,10 @@ on:
         required: false
         type: string
         default: 'arc-runners'
+      version:
+        description: 'The version to tag the image with (previously DOCKER_TAG)'
+        type: string
+        required: false
 
 concurrency:
   group: container-build-${{ github.head_ref || github.run_id }}
@@ -177,6 +185,7 @@ jobs:
             type=sha,format=long,prefix=
             # The final sha for the merge commit
             # mcgh: Merge Commit GitHub
+            type=raw,value=${{ inputs.version }},enable=${{ !!inputs.version }}
             type=raw,value=mcgh-${{ github.event.pull_request.merge_commit_sha }}
 
       - name: Godegen if needed
