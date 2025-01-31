@@ -27,4 +27,7 @@ export class FormResponseDto {
 
   @ApiPropertyOptional({ type: [FormDto] })
   forms?: FormDto[]
+
+  @ApiPropertyOptional({ type: [String] })
+  organizationNationalIds?: string[]
 }
