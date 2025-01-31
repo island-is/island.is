@@ -10,6 +10,51 @@ defaults:
     shell: bash
 
 jobs:
+  check-unicorn:
+    name: Is this a unicorn PR
+    runs-on: arc-runners
+    timeout-minutes: 10
+    steps:
+      - name: Dump github context
+        run: echo "${{ toJson(github) }}"
+
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 10
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: 'package.json'
+
+      - name: Setup yarn
+        run: corepack enable
+
+      - name: Get cache
+        id: get-cache
+        uses: ./.github/actions/get-cache
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          enable-cache: 'node_modules,generated-files'
+
+      - name: Check unicorn affected
+        id: unicorn-affected
+        env:
+          BaseRef: ${{ github.base_ref }} #The target branch e.g. main (feature/unicorn-app)
+          HeadRef: ${{ github.head_ref }} #The branch being merged e.g. (unicorn-pipe-rel3)
+        run: |
+          echo "Comparing nx affected for $HeadRef using origin/$BaseRef as base branch"
+          echo IS_UNICORN=$(node scripts/ci/unicorn-utils.mjs "{\"baseBranch\": \"origin/$BaseRef\", \"mergeBranch\": \"$HeadRef\" }") >> "$GITHUB_OUTPUT"
+      - name: Results
+        run: |
+          echo "Unicorn = ${{ steps.unicorn-affected.outputs.IS_UNICORN }}"
+
+      - name: Find Latest Release Branch
+        id: get_latest_release
+        run: |
+          node scripts/ci/get-last-release.mjs $(git branch -r)
+
+      - run: "echo 'latest release: ${{ steps.get_latest_release.outputs.data }}'"
+
   cleanup:
     name: Clean up feature deployment
     runs-on: arc-runners
