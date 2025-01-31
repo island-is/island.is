@@ -22,10 +22,9 @@ export const NationalRegistryCustodiansApi = defineTemplateApi({
   namespace: 'NationalRegistry',
 })
 
-export const UserProfileApiWithValidation = UserProfileApi
-// export const UserProfileApiWithValidation = UserProfileApi.configure({
-//   params: {
-//     validatePhoneNumber: true,
-//     validateEmail: true,
-//   },
-// })
+export const UserProfileApiWithValidation = UserProfileApi.configure({
+  params: {
+    validatePhoneNumberIfNotActor: true,
+    validateEmailIfNotActor: true,
+  },
+})
