@@ -43,9 +43,6 @@ jobs:
           echo "HEAD: ${{ env.NX_HEAD }}"
       - name: Check unicorn affected
         id: unicorn-affected
-        env:
-          BaseRef: ${{ github.base_ref }} #The target branch e.g. main (feature/unicorn-app)
-          HeadRef: ${{ github.head_ref }} #The branch being merged e.g. (unicorn-pipe-rel3)
         run: |
           echo "Comparing nx affected for $HeadRef using origin/$BaseRef as base branch"
           echo IS_UNICORN=$(node scripts/ci/unicorn-utils.mjs "{\"baseBranch\": \"origin/$BaseRef\", \"mergeBranch\": \"$HeadRef\" }") >> "$GITHUB_OUTPUT"
