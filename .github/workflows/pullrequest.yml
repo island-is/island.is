@@ -177,6 +177,9 @@ jobs:
 
       - name: Gather unaffected docker images
         id: unaffected
+        env:
+          GIT_BRANCH: ${{ github.sha }}
+          BRANCH: ${{ github.sha }}
         run: |
           set -euo pipefail
           UNAFFECTED="$(./scripts/ci/list-unaffected.sh docker-next docker-express docker-static docker-playwright docker-jest)"
