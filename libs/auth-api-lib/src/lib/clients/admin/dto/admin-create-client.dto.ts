@@ -23,12 +23,6 @@ const CreateClientType = {
   [ClientType.web]: ClientType.web,
 }
 
-const CreateClientSsoType = {
-  [ClientSso.Client]: ClientSso.Client,
-  [ClientSso.Disabled]: ClientSso.Disabled,
-  [ClientSso.Enabled]: ClientSso.Enabled,
-}
-
 export class AdminCreateClientDto extends OmitType(AdminPatchClientDto, [
   'removedDelegationTypes',
   'addedDelegationTypes',
@@ -66,11 +60,11 @@ export class AdminCreateClientDto extends OmitType(AdminPatchClientDto, [
   supportedDelegationTypes?: AuthDelegationType[]
 
   @IsNotEmpty()
-  @IsEnum(CreateClientSsoType)
+  @IsEnum(ClientSso)
   @ApiProperty({
     example: 'spa',
-    enum: CreateClientSsoType,
-    enumName: 'CreateClientSsoType',
+    enum: ClientSso,
+    enumName: 'ClientSso',
   })
   readonly sso!: ClientSso
 

@@ -546,6 +546,7 @@ export class AdminClientsService {
     return {
       clientId: client.clientId,
       clientType: client.clientType,
+      sso: client.sso,
       tenantId: client.domainName ?? '',
       displayName: this.adminTranslationService.createTranslatedValueDTOs({
         key: 'clientName',
