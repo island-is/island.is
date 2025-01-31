@@ -15,7 +15,13 @@ export const StaticTableFormField: FC<Props> = ({
   application,
   showFieldName,
 }) => {
-  const { marginTop, marginBottom, description, title, titleVariant } = field
+  const {
+    marginTop,
+    marginBottom,
+    description,
+    title = '',
+    titleVariant,
+  } = field
   const { formatMessage, lang: locale } = useLocale()
   const header =
     typeof field.header === 'function'

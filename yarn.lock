@@ -10680,34 +10680,34 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@datadog/browser-core@npm:4.36.0":
-  version: 4.36.0
-  resolution: "@datadog/browser-core@npm:4.36.0"
-  checksum: 29c41a79ed39467ed6cf654dbefa19acffd300af71691fbefbfec75848ead909da1ac5537de6b61b202c831e54cbf7b98064c1e33e4cf2ed31795ae806f80ea5
+"@datadog/browser-core@npm:5.35.0":
+  version: 5.35.0
+  resolution: "@datadog/browser-core@npm:5.35.0"
+  checksum: a928cc669c155215c7b036c48e3387430266f238863fa5aa6d33f6b10edbba0be50fc9abb841cacded34de5465931acc98806127719df3758b8d76c2171384f4
   languageName: node
   linkType: hard
 
-"@datadog/browser-rum-core@npm:4.36.0":
-  version: 4.36.0
-  resolution: "@datadog/browser-rum-core@npm:4.36.0"
+"@datadog/browser-rum-core@npm:5.35.0":
+  version: 5.35.0
+  resolution: "@datadog/browser-rum-core@npm:5.35.0"
   dependencies:
-    "@datadog/browser-core": 4.36.0
-  checksum: 6683397f742a5b735c3a645cc6aab608328bbe8386e5db4947ea1de4d25119ca39c5c0985f03a0903092b862d6b7ebd410b9e84857fcb24bba3352c9017aa92a
+    "@datadog/browser-core": 5.35.0
+  checksum: e77642a714efc58d7f3cec466b361553b1c347ef8894d06c1f03279a6d77ad4dab4708124ea30b94f3284fccda9e5c275a0889f86e0349541eee6451948b6f71
   languageName: node
   linkType: hard
 
-"@datadog/browser-rum@npm:4.36.0":
-  version: 4.36.0
-  resolution: "@datadog/browser-rum@npm:4.36.0"
+"@datadog/browser-rum@npm:5.35.0":
+  version: 5.35.0
+  resolution: "@datadog/browser-rum@npm:5.35.0"
   dependencies:
-    "@datadog/browser-core": 4.36.0
-    "@datadog/browser-rum-core": 4.36.0
+    "@datadog/browser-core": 5.35.0
+    "@datadog/browser-rum-core": 5.35.0
   peerDependencies:
-    "@datadog/browser-logs": 4.36.0
+    "@datadog/browser-logs": 5.35.0
   peerDependenciesMeta:
     "@datadog/browser-logs":
       optional: true
-  checksum: ca56f07c5f968d2af53755cf0e25d6970b800c89914d6d4a2c03dd2af03cfc42733b1a160048dfccfff2295e1e11c1582b4dda97d9bfea6ff8dc6b7bdab8d6b5
+  checksum: 800ca7ccc58b39517105ca85b3331e0dff498e48814498b17628c53000f53d486224a360327238d601d8e86c671d7a55d2683589e7ba179609d49f4b01fd26c4
   languageName: node
   linkType: hard
 
@@ -39978,7 +39978,7 @@ __metadata:
     "@contentful/rich-text-plain-text-renderer": 16.0.5
     "@contentful/rich-text-react-renderer": 15.16.5
     "@contentful/rich-text-types": 16.2.0
-    "@datadog/browser-rum": 4.36.0
+    "@datadog/browser-rum": 5.35.0
     "@dnd-kit/core": 6.1.0
     "@dnd-kit/sortable": 8.0.0
     "@elastic/elasticsearch": 7.7.1
