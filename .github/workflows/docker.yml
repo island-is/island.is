@@ -147,7 +147,7 @@ jobs:
         uses: docker/setup-buildx-action@v3
         with:
           driver: docker-container
-          # driver-opts: image=moby/buildkit:buildx-stable-1
+          # We get rate-limited if using docker.io's image for buildkit.
           driver-opts: |
             image=${{ env.AWS_ECR_REPO_BASE }}/moby/buildkit:buildx-stable-1
           install: true
