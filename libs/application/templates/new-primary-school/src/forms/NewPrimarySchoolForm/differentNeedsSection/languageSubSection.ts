@@ -56,7 +56,6 @@ export const languageSubSection = buildSubSection({
         buildCustomField(
           {
             id: 'languages',
-            title: '',
             component: 'LanguageSelection',
             condition: (answers) => {
               return hasForeignLanguages(answers)

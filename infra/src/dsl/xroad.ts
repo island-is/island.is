@@ -433,7 +433,7 @@ export const NationalRegistryB2C = new XroadConf({
     NATIONAL_REGISTRY_B2C_ENDPOINT: {
       dev: 'https://skraidentitydev.b2clogin.com/skraidentitydev.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token',
       staging:
-        'https://skraidentitydev.b2clogin.com/skraidentitystaging.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token',
+        'https://skraidentitystaging.b2clogin.com/skraidentitystaging.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token',
       prod: 'https://skraidentity.b2clogin.com/skraidentity.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token',
     },
     NATIONAL_REGISTRY_B2C_SCOPE: {
@@ -469,7 +469,7 @@ export const NationalRegistryAuthB2C = new XroadConf({
     },
     NATIONAL_REGISTRY_B2C_PATH: {
       dev: 'IS-DEV/GOV/10001/SKRA-Cloud-Protected/Midlun-v1',
-      staging: 'IS-TEST/GOV/10001/SKRA-Cloud-Protected/Midlun-v1',
+      staging: 'IS-TEST/GOV/6503760649/SKRA-Cloud-Protected/Midlun-v1',
       prod: 'IS/GOV/6503760649/SKRA-Cloud-Protected/Midlun-v1',
     },
   },
