@@ -4,6 +4,7 @@
 # Run "yarn charts" instead.
 #
 #####################################################################
+
 air-discount-scheme-api:
   enabled: true
   env:
@@ -1812,8 +1813,8 @@ namespaces:
     - 'services-sessions'
     - 'contentful-apps'
     - 'services-university-gateway'
-    - 'unicorn-app'
     - 'portals-my-pages'
+    - 'unicorn-app'
 portals-admin:
   enabled: true
   env:

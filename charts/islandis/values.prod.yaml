@@ -4,6 +4,7 @@
 # Run "yarn charts" instead.
 #
 #####################################################################
+
 air-discount-scheme-api:
   enabled: true
   env:
@@ -1677,6 +1678,7 @@ namespaces:
     - 'contentful-apps'
     - 'contentful-entry-tagger'
     - 'portals-my-pages'
+    - 'unicorn-app'
 portals-admin:
   enabled: true
   env:
