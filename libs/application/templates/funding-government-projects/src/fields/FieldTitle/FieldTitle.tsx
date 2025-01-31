@@ -24,7 +24,7 @@ export const FieldTitle = ({ field, application }: Props) => {
         marginBottom={field.description ? 1 : 0}
       >
         {formatTextWithLocale(
-          field.title,
+          field.title ?? '',
           application,
           locale as Locale,
           formatMessage,
