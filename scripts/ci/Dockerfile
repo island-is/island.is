@@ -56,7 +56,7 @@ ENV NODE_ENV=production
 ENV NODE_OPTIONS="--max-old-space-size=8192"
 
 RUN yarn nx run-many --target=build --projects="${APP}" --prod --parallel=8
-SHELL ["/bin/ash", "-o", "pipefail", "-c"]
+SHELL ["/bin/bash", "-euo", "pipefail", "-c"]
 RUN project_root="$(yarn nx show project ${APP} --json | jq -r '.root')" && \
   mv "dist/$project_root" /dist/
 
