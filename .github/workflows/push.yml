@@ -316,7 +316,7 @@ jobs:
         uses: ./.github/actions/get-cache
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          enable-cache: 'node_modules,generated-files'
+          enable-cache: 'node_modules'
 
       - name: Set Test Everything true
         run: |
@@ -481,7 +481,7 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           keys: ${{ needs.prepare.outputs.CACHE_KEYS }}
-          enable-cache: 'node_modules,cypress,generated-files'
+          enable-cache: 'node_modules,cypress'
 
       - name: Run unit tests
         uses: ./.github/actions/unit-test
@@ -538,7 +538,7 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           keys: ${{ needs.prepare.outputs.CACHE_KEYS }}
-          enable-cache: 'node_modules,generated-files'
+          enable-cache: 'node_modules'
 
       - name: Cache for dependencies Docker layer
         if: steps.gather.outcome == 'success'
