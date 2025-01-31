@@ -62,7 +62,7 @@ RUN project_root="$(yarn nx show project ${APP} --json | jq -r '.root')" && \
 
 
 # This is base image for containers that are to be deployed
-FROM ${DOCKER_REGISTRY}/library/node:${NODE_IMAGE_TAG} AS base-node
+FROM ${DOCKER_REGISTRY}/library/node:${NODE_VERSION}-bookworm-slim AS base-node
 
 ENV NODE_ENV=production
 
