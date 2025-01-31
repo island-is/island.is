@@ -41,11 +41,6 @@ export const translation = defineMessages({
     defaultMessage: 'Dagsetning',
     description: 'Dagsetning',
   },
-  office: {
-    id: 'web.syslumenn.burningPermitList:office',
-    defaultMessage: 'Embætti',
-    description: 'Embætti',
-  },
   responsibleParty: {
     id: 'web.syslumenn.burningPermitList:responsibleParty',
     defaultMessage: 'Ábyrgðaraðili',
