@@ -1,5 +1,5 @@
 import React from 'react'
-import { Flex, Note, Paragraph, TextLink } from '@contentful/f36-components'
+import { Flex,Note, Paragraph, TextLink } from '@contentful/f36-components'
 
 const LocalhostWarning = () => {
   return (

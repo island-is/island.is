@@ -12,7 +12,7 @@ import {
   TextInput,
 } from '@contentful/f36-components'
 import { Pagination } from '@contentful/f36-components'
-import { CloseIcon, SearchIcon } from '@contentful/f36-icons'
+import { CloseIcon,SearchIcon } from '@contentful/f36-icons'
 import {
   CombinedLinkActions,
   MultipleEntryReferenceEditor,

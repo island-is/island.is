@@ -113,10 +113,10 @@ export const EditClient = () => {
               message={formatMessage(m.needHelpDescription)}
               action={
                 <LinkV2 href={IDSAdminExternalPaths.Docs} newTab>
-                  <Button size="small" variant="text">
-                    {formatMessage(m.learnMore)}
-                  </Button>
-                </LinkV2>
+                    <Button size="small" variant="text">
+                      {formatMessage(m.learnMore)}
+                    </Button>
+                  </LinkV2>
               }
             />
           </Box>
