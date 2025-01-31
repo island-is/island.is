@@ -4,6 +4,7 @@
 # Run "yarn charts" instead.
 #
 #####################################################################
+
 global:
   env:
     AUDIT_GROUP_NAME: '/island-is/audit-log'
