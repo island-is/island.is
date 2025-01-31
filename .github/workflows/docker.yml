@@ -55,7 +55,7 @@ jobs:
     runs-on: ${{ inputs.runners || 'arc-runners' }}
     outputs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}
-      node-image-version: ${{ steps.build-args.outputs.node-image-tag }}
+      node-image-version: ${{ steps.build-args.outputs.node-image-version }}
       playwright-image-tag: ${{ steps.build-args.outputs.playwright-image-tag }}
       container-registry: ${{ steps.build-args.outputs.container-registry }}
     steps:
@@ -191,7 +191,7 @@ jobs:
           push: false
           target: deps
           build-args: |
-            NODE_IMAGE_TAG=${{ needs.prepare.outputs.node-image-version }}
+            NODE_IMAGE_VERSION=${{ needs.prepare.outputs.node-image-version }}
             PLAYWRIGHT_IMAGE_TAG=${{ needs.prepare.outputs.playwright-image-tag }}
           cache-from: |
             ${{ steps.args.outputs.build-cache-local }}
@@ -208,7 +208,7 @@ jobs:
           push: false
           target: output-base
           build-args: |
-            NODE_IMAGE_TAG=${{ needs.prepare.outputs.node-image-version }}
+            NODE_IMAGE_VERSION=${{ needs.prepare.outputs.node-image-version }}
             PLAYWRIGHT_IMAGE_TAG=${{ needs.prepare.outputs.playwright-image-tag }}
           cache-from: |
             ${{ steps.args.outputs.build-cache-local }}
@@ -227,7 +227,7 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           target: output-${{ matrix.docker }}
           build-args: |
-            NODE_IMAGE_TAG=${{ needs.prepare.outputs.node-image-version }}
+            NODE_IMAGE_VERSION=${{ needs.prepare.outputs.node-image-version }}
             APP=${{ matrix.project }}
             PLAYWRIGHT_IMAGE_TAG=${{ needs.prepare.outputs.playwright-image-tag }}
           # Caching final images doesn't make sense when this should only run if the project is affected (changed)
