@@ -33,7 +33,6 @@ export const allergiesAndIntolerancesSubSection = buildSubSection({
       children: [
         buildCheckboxField({
           id: 'allergiesAndIntolerances.hasFoodAllergiesOrIntolerances',
-          title: '',
           spacing: 0,
           options: [
             {
@@ -69,7 +68,6 @@ export const allergiesAndIntolerancesSubSection = buildSubSection({
         ),
         buildCheckboxField({
           id: 'allergiesAndIntolerances.hasOtherAllergies',
-          title: '',
           spacing: 0,
           options: [
             {
