@@ -46,9 +46,6 @@ export const createApp = async ({
     },
   )
 
-  // Handle signals like SIGINT, SIGTERM and SIGHUP gracefully.
-  app.enableShutdownHooks()
-
   if (enableVersioning) {
     app.enableVersioning()
   }
