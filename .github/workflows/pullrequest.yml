@@ -341,11 +341,11 @@ jobs:
       - name: NX format:check
         if: ${{ github.ref == 'ref/heads/main' }}
         run: ./scripts/ci/20_check-formatting.sh "check"
-      - name: NX format:write
-        if: ${{ github.event_name == 'pull_request' }}
-        run: |
-          ./scripts/ci/20_check-formatting.sh "write"
-          ./infra/scripts/ci/git-check-dirty.sh "/" "nx format:write" "dirtybot"
+      # - name: NX format:write
+      #   if: ${{ github.event_name == 'pull_request' }}
+      #   run: |
+      #     ./scripts/ci/20_check-formatting.sh "write"
+      #     ./infra/scripts/ci/git-check-dirty.sh "/" "nx format:write" "dirtybot"
 
   linting:
     needs:
