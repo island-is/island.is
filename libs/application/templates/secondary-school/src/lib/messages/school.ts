@@ -95,7 +95,7 @@ export const school = {
     addDescription: {
       id: 'ss.application:school.thirdSelection.addDescription',
       defaultMessage:
-        'Ákveðnir framhaldsskólar á Íslandi fá jafnan fleiri umsóknir en pláss leyfa. Til að auka líkur á að komast inn í skóla að þínu vali getur þú bætt inn þriðja skólanum. Mikilvægt er að kynna sér inntökuskilyrði hvers skóla vandlega. Fáir þú ekki inn í einhverjum þeirra skóla sem þú sækir um mun Miðstöð menntunar og skólaþjónustu útvega þér skólapláss.',
+        'Ákveðnir framhaldsskólar á Íslandi fá jafnan fleiri umsóknir en pláss leyfa. Til að auka líkur á að komast inn í skóla að þínu vali getur þú bætt inn þriðja skólanum. Mikilvægt er að kynna sér inntökuskilyrði hvers skóla vandlega. Fáir þú ekki inni í einhverjum þeirra skóla sem þú sækir um mun Miðstöð menntunar og skólaþjónustu útvega þér skólapláss.',
       description: 'Add third selection description',
     },
   }),
