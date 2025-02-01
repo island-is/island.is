@@ -10,12 +10,12 @@ import {
   getValueViaPath,
 } from '@island.is/application/core'
 import { DefaultEvents, Form, FormModes } from '@island.is/application/types'
-import { conclusion } from '../lib/messages'
+import { conclusion, overview } from '../lib/messages'
 import { Logo } from '../assets/Logo'
 import { ApplicationType } from '../utils'
 
 export const Submitted: Form = buildForm({
-  id: 'ConclusionForm',
+  id: 'SubmittedForm',
   title: '',
   logo: Logo,
   mode: FormModes.IN_PROGRESS,
@@ -23,7 +23,8 @@ export const Submitted: Form = buildForm({
   children: [
     buildSection({
       id: 'conclusionSection',
-      title: conclusion.general.sectionTitle,
+      title: '',
+      tabTitle: conclusion.overview.sectionTitle,
       children: [
         buildMultiField({
           id: 'conclusionMultiField',
@@ -78,10 +79,16 @@ export const Submitted: Form = buildForm({
               actions: [
                 {
                   event: DefaultEvents.EDIT,
-                  name: conclusion.overview.editButton,
-                  type: 'signSubtle',
+                  name: overview.buttons.edit,
+                  type: 'signGhost',
                 },
               ],
+            }),
+            buildCustomField({
+              component: 'HandleBeforeSubmitInSubmitted',
+              id: 'handleBeforeSubmitInSubmitted',
+              title: '',
+              description: '',
             }),
           ],
         }),
