@@ -49,17 +49,15 @@ jobs:
         run: |
           # echo "Comparing nx affected for ${{ env.NX_HEAD }} using ${{ env.NX_BASE }} as base branch"
           # echo IS_UNICORN=$(node scripts/ci/unicorn-utils.mjs "{\"head\": \"${{ env.NX_HEAD }}\", \"base\": \"${{ env.NX_BASE }}\" }") >> "$GITHUB_OUTPUT"
-          echo IS_UNICORN=true
-          echo $IS_UNICORN >> "$GITHUB_OUTPUT"
+          echo IS_UNICORN=true >> "$GITHUB_OUTPUT"
       - name: Results
         run: |
-          echo "Unicorn = $IS_UNICORN"
+          echo "Unicorn = ${{ steps.unicorn_affected.outputs.IS_UNICORN }}"
 
       - name: Find Latest Release Branch
-        if: ${{ steps.check-unicorn.outputs.IS_UNICORN == 'true' }}
+        if: ${{ steps.unicorn-affected.outputs.IS_UNICORN == 'true' }}
         id: get_latest_release
         run: |
-          git branch -r
           node scripts/ci/get-last-release.mjs $(git branch -r)
 
       - run: "echo 'latest release: ${{ steps.get_latest_release.outputs.data }}'"
