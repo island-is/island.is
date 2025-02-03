@@ -114,9 +114,17 @@ export class VehicleOwnerChangeClient {
           saleAmount: ownerChange.saleAmount,
           insuranceCompanyCode: insuranceCompanyCode,
           useGroup: useGroup,
-          operatorEmail: null,
-          operators: null,
-          coOwners: null,
+          operatorEmail:
+            ownerChange.operators?.find((x) => x.isMainOperator)?.email || null,
+          operators:
+            ownerChange.operators?.map((operator) => ({
+              personIdNumber: operator.ssn,
+              mainOperator: operator.isMainOperator ? 1 : 0,
+            })) || null,
+          coOwners:
+            ownerChange.coOwners?.map((coOwner) => ({
+              personIdNumber: coOwner.ssn,
+            })) || null,
           reportingPersonIdNumber: auth.nationalId,
           mileage: ownerChange.mileage,
         },

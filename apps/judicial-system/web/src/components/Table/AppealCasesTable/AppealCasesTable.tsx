@@ -76,7 +76,7 @@ const AppealCasesTable: FC<Props> = (props) => {
           },
           {
             title: capitalize(formatMessage(core.defendant, { suffix: 'i' })),
-            sortable: { isSortable: true, key: 'defendants' },
+            sortBy: 'defendants',
           },
           {
             title: formatMessage(tables.type),
@@ -86,9 +86,7 @@ const AppealCasesTable: FC<Props> = (props) => {
             title: showingCompletedCases
               ? formatMessage(tables.duration)
               : formatMessage(tables.appealDate),
-            sortable: showingCompletedCases
-              ? undefined
-              : { isSortable: true, key: 'appealedDate' },
+            sortBy: showingCompletedCases ? undefined : 'appealedDate',
           },
         ]}
         data={activeCasesData}

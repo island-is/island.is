@@ -6,7 +6,7 @@ import { Op } from 'sequelize'
 import { StaffRole } from '@island.is/financial-aid/shared/lib'
 
 interface Then {
-  result: Number
+  result: number
   error: Error
 }
 

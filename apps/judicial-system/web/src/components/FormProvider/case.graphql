@@ -219,6 +219,8 @@ query Case($input: CaseQueryInput!) {
       incidentDescription
       legalArguments
       indictmentCountSubtypes
+      recordedSpeed
+      speedLimit
     }
     requestDriversLicenseSuspension
     appealState

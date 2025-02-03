@@ -26,7 +26,7 @@ export const CompanySearchFormField: FC<React.PropsWithChildren<Props>> = ({
 }) => {
   const {
     id,
-    title,
+    title = '',
     placeholder,
     setLabelToDataSchema = true,
     shouldIncludeIsatNumber,

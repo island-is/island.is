@@ -26,6 +26,7 @@ command:
 enabled: true
 env:
   APPLICATION_ATTACHMENT_BUCKET: 'island-is-staging-storage-application-system'
+  APPLICATION_SYSTEM_BULL_PREFIX: 'application_system_api_bull_module'
   CLIENT_LOCATION_ORIGIN: 'https://beta.staging01.devland.is/umsoknir'
   CODE_OWNER: 'norda-applications'
   DB_HOST: 'postgres-applications.internal'

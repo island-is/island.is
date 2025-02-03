@@ -10,7 +10,7 @@ import {
   getValueViaPath,
 } from '@island.is/application/core'
 import { DefaultEvents, Form, FormModes } from '@island.is/application/types'
-import { conclusion } from '../lib/messages'
+import { conclusion, overview } from '../lib/messages'
 import { Logo } from '../assets/Logo'
 import { ApplicationType } from '../utils'
 
@@ -79,10 +79,16 @@ export const Submitted: Form = buildForm({
               actions: [
                 {
                   event: DefaultEvents.EDIT,
-                  name: conclusion.overview.editButton,
-                  type: 'subtle',
+                  name: overview.buttons.edit,
+                  type: 'signGhost',
                 },
               ],
+            }),
+            buildCustomField({
+              component: 'HandleBeforeSubmitInSubmitted',
+              id: 'handleBeforeSubmitInSubmitted',
+              title: '',
+              description: '',
             }),
           ],
         }),

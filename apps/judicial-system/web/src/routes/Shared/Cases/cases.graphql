@@ -1,7 +1,6 @@
 query Cases {
   cases {
     id
-    created
     type
     decision
     state
@@ -110,5 +109,6 @@ query Cases {
     indictmentDecision
     indictmentCompletedDate
     courtSessionType
+    caseSentToCourtDate
   }
 }

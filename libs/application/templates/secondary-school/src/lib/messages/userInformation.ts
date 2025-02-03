@@ -57,18 +57,18 @@ export const userInformation = {
   custodian: defineMessages({
     subSectionTitle: {
       id: 'ss.application:userInformation.custodian.subSectionTitle',
-      defaultMessage: 'Forsjáraðili',
+      defaultMessage: 'Forsjáraðili/ar',
       description: 'Title of custodian sub section',
     },
     pageTitle: {
       id: 'ss.application:userInformation.custodian.pageTitle',
-      defaultMessage: 'Forsjáraðili',
+      defaultMessage: 'Forsjáraðili/ar',
       description: 'Title of custodian page',
     },
-    subtitle: {
-      id: 'ss.application:userInformation.custodian.subtitle',
+    label: {
+      id: 'ss.application:userInformation.custodian.label',
       defaultMessage: 'Forsjáraðili',
-      description: 'Custodian subtitle',
+      description: 'Custodian label',
     },
     name: {
       id: 'ss.application:userInformation.custodian.name',
@@ -119,12 +119,12 @@ export const userInformation = {
   otherContact: defineMessages({
     subSectionTitle: {
       id: 'ss.application:userInformation.otherContact.subSectionTitle',
-      defaultMessage: 'Tengiliður',
+      defaultMessage: 'Tengiliður/ir',
       description: 'Title of other contact sub section',
     },
     pageTitle: {
       id: 'ss.application:userInformation.otherContact.pageTitle',
-      defaultMessage: 'Tengiliður',
+      defaultMessage: 'Tengiliður/ir',
       description: 'Title of other contact page',
     },
     description: {

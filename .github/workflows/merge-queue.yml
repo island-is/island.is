@@ -1,27 +1,205 @@
 name: Validate code in the merge queue (post merge)
 
 on:
-  workflow_dispatch:
+  workflow_dispatch: {}
   merge_group:
+defaults:
+  run:
+    shell: bash -euxo pipefail {0}
+
+concurrency:
+  group: merge-queue-post-${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
+
+env:
+  COMPOSE_HTTP_TIMEOUT: 180
+  SKIP_GENERATED_CACHE: ${{ contains(github.event.pull_request.labels.*.name, 'skip-generated-cache') }}
+  NX_AFFECTED_ALL: ${{ contains(github.event.pull_request.labels.*.name, 'nx-affected-all') }}
+  CHUNK_SIZE: ${{ vars.CHUNK_SIZE || 3 }}
+  DISABLE_GROUPING: ${{ vars.DISABLE_GROUPING || false }}
+  DISABLE_CHUNKS: ${{ vars.DISABLE_CHUNKS || false }}
+  DISABLE_PROBLEMATIC: ${{ vars.DISABLE_PROBLEMATIC || false }}
+  MAX_JOBS: ${{ vars.MAX_JOBS || 2 }}
+  NX_PARALLEL: ${{ vars.NX_PARALLEL || 2 }}
+  NX_MAX_PARALLEL: ${{ vars.NX_MAX_PARALLEL || 4 }}
 
 jobs:
+  # prepare:
+  #   runs-on: arc-runners
+  #   timeout-minutes: 35
+  #   env:
+  #     AFFECTED_ALL: ${{ secrets.AFFECTED_ALL }}
+  #     SERVERSIDE_FEATURES_ON: ''
+  #     DOCKER_REGISTRY: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/
+
+  #   outputs:
+  #     CACHE_KEYS: ${{ steps.get_cache.outputs.keys }}
+  #     TEST_CHUNKS: ${{ steps.build_info.outputs.TEST_CHUNKS }}
+  #     E2E_CHUNKS: ${{ steps.build_info.outputs.E2E_CHUNKS }}
+  #     E2E_BUILD_ID: ${{ steps.build_info.outputs.BUILD_ID }}
+  #     BUILD_CHUNKS: ${{ steps.build_info.outputs.BUILD_CHUNKS }}
+  #   steps:
+  #     - name: Checkout code
+  #       uses: actions/checkout@v4
+  #       with:
+  #         fetch-depth: 0
+
+  #     - uses: actions/setup-node@v4
+  #       with:
+  #         node-version-file: 'package.json'
+
+  #     - name: Setup yarn
+  #       run: corepack enable
+
+  #     - name: Get cache
+  #       id: get_cache
+  #       uses: ./.github/actions/get-cache
+  #       with:
+  #         github-token: ${{ secrets.GITHUB_TOKEN }}
+  #         enable-cache: 'node_modules,cypress'
+
+  #     - name: Derive appropriate SHAs
+  #       uses: nrwl/nx-set-shas@v4
+
+  #     - name: Gather branch info
+  #       id: build_info
+  #       run: |
+  #         export BASE=${{ env.NX_BASE }}
+  #         export HEAD=${{ env.NX_HEAD }}
+
+  #         echo "TEST_CHUNKS={\"projects\":$(./scripts/ci/generate-chunks.sh test)}" >> "$GITHUB_OUTPUT"
+  #         echo "BUILD_CHUNKS={\"projects\":$(./scripts/ci/generate-chunks.sh build)}" >> "$GITHUB_OUTPUT"
+  #         echo "E2E_CHUNKS={\"projects\":$(./scripts/ci/generate-chunks.sh e2e-ci)}" >> "$GITHUB_OUTPUT"
+  #         echo BUILD_ID="$GITHUB_RUN_ID-$GITHUB_RUN_NUMBER-$(uuidgen)" >> "$GITHUB_OUTPUT"
+
+  # tests:
+  #   needs:
+  #     - prepare
+  #   if: needs.prepare.outputs.TEST_CHUNKS
+  #   runs-on: ec2-runners
+  #   container:
+  #     image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
+  #   env:
+  #     AFFECTED_PROJECTS: ${{ matrix.projects }}
+  #   strategy:
+  #     fail-fast: false
+  #     matrix: ${{ fromJson(needs.prepare.outputs.TEST_CHUNKS) }}
+  #   steps:
+  #     - uses: actions/checkout@v4
+
+  #     - uses: actions/setup-node@v4
+  #       with:
+  #         node-version-file: 'package.json'
+
+  #     - name: Setup yarn
+  #       run: corepack enable
+
+  #     - name: Get cache
+  #       id: get-cache
+  #       uses: ./.github/actions/get-cache
+  #       with:
+  #         github-token: ${{ secrets.GITHUB_TOKEN }}
+  #         keys: ${{ needs.prepare.outputs.CACHE_KEYS }}
+  #         enable-cache: 'node_modules,cypress'
+
+  #     - uses: ./.github/actions/unit-test
+  #       with:
+  #         dd-api-key: '${{ secrets.DD_API_KEY }}'
+  #         codecov-token: ${{ secrets.CODECOV_TOKEN }}
+  #         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  #         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  #         docker-registry: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/
+
+  # e2e:
+  #   needs:
+  #     - prepare
+  #   if: needs.prepare.outputs.E2E_CHUNKS
+  #   runs-on: arc-runners
+  #   timeout-minutes: 45
+  #   env:
+  #     AFFECTED_PROJECT: ${{ matrix.projects }}
+  #     CYPRESS_PROJECT_ID: 4q7jz8
+  #     CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
+  #     API_MOCKS: 'true'
+  #     NODE_OPTIONS: --max-old-space-size=4096
+  #     E2E_BUILD_ID: '${{ needs.prepare.outputs.E2E_BUILD_ID }}-${{ github.run_attempt }}'
+  #   strategy:
+  #     fail-fast: false
+  #     matrix: ${{ fromJson(needs.prepare.outputs.E2E_CHUNKS) }}
+  #   steps:
+  #     - uses: actions/checkout@v4
+
+  #     - uses: actions/setup-node@v4
+  #       with:
+  #         node-version-file: 'package.json'
+
+  #     - name: Setup yarn
+  #       run: corepack enable
+
+  #     - name: Get cache
+  #       id: get-cache
+  #       uses: ./.github/actions/get-cache
+  #       with:
+  #         github-token: ${{ secrets.GITHUB_TOKEN }}
+  #         keys: ${{ needs.prepare.outputs.CACHE_KEYS }}
+  #         enable-cache: 'node_modules,cypress'
+
+  #     - name: Running e2e tests
+  #       run: ./scripts/ci/40_e2e.sh "${AFFECTED_PROJECT}"
+
+  # build:
+  #   needs:
+  #     - prepare
+  #   runs-on: arc-runners
+  #   timeout-minutes: 35
+  #   env:
+  #     AFFECTED_PROJECTS: ${{ matrix.projects }}
+  #   strategy:
+  #     fail-fast: true
+  #     matrix: ${{ fromJson(needs.prepare.outputs.BUILD_CHUNKS) }}
+  #   if: needs.prepare.outputs.BUILD_CHUNKS
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #     - uses: actions/setup-node@v4
+  #       with:
+  #         node-version-file: 'package.json'
+  #     - name: Setup yarn
+  #       run: corepack enable
+  #     - name: Get cache
+  #       id: get-cache
+  #       uses: ./.github/actions/get-cache
+  #       with:
+  #         github-token: ${{ secrets.GITHUB_TOKEN }}
+  #         keys: ${{ needs.prepare.outputs.CACHE_KEYS }}
+  #         enable-cache: 'node_modules'
+
+  #     - name: Building
+  #       run: ./scripts/ci/run-in-parallel-native.sh build
+
   success:
-    runs-on: ec2-runners
-    container:
-      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
+    runs-on: arc-runners
+    # if: ${{ !cancelled() }}
+    # needs:
+    #   - prepare
+    #   - tests
+    #   - e2e
+    #   - build
     steps:
-      - name: Dump GitHub context
-        env:
-          GITHUB_CONTEXT: ${{ toJson(github) }}
-        run: |
-          echo "$GITHUB_CONTEXT"
       - name: Announce success
         run: echo "Build is successful"
+      # - name: Check prepare success
+      #   run: '[[ ${{ needs.prepare.result }} == "success" ]] || exit 1'
+      # - name: Check tests success
+      #   run: '[[ ${{ needs.tests.result }} != "failure" ]] || exit 1'
+      # - name: Check e2e success
+      #   run: '[[ ${{ needs.e2e.result }} != "failure" ]] || exit 1'
+      # - name: Check build success
+      #   run: '[[ ${{ needs.build.result }} != "failure" ]] || exit 1'
+
+  # Remove this as a required status check and switch to something more meaningful
   codeowners-check:
     name: Lint CODEOWNERS
-    runs-on: ec2-runners
-    container:
-      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
+    runs-on: arc-runners
     env:
       CHECK: 'false'
     steps:

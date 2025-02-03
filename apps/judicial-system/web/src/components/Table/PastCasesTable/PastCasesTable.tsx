@@ -18,9 +18,9 @@ import {
 import {
   ColumnCaseType,
   CourtCaseNumber,
-  CreatedDate,
   DefendantInfo,
   getDurationDate,
+  TableDate,
 } from '@island.is/judicial-system-web/src/components/Table'
 import { CaseListEntry } from '@island.is/judicial-system-web/src/graphql/schema'
 
@@ -64,14 +64,14 @@ const PastCasesTable: FC<Props> = ({ cases }) => {
           },
           {
             title: capitalize(formatMessage(core.defendant, { suffix: 'i' })),
-            sortable: { isSortable: true, key: 'defendants' },
+            sortBy: 'defendants',
           },
           {
             title: formatMessage(tables.type),
           },
           {
-            title: capitalize(formatMessage(tables.created, { suffix: 'i' })),
-            sortable: { isSortable: true, key: 'created' },
+            title: capitalize(formatMessage(tables.sentToCourtDate)),
+            sortBy: 'caseSentToCourtDate',
           },
           { title: formatMessage(tables.state) },
           { title: formatMessage(tables.duration) },
@@ -106,7 +106,7 @@ const PastCasesTable: FC<Props> = ({ cases }) => {
             ),
           },
           {
-            cell: (row) => <CreatedDate created={row.created} />,
+            cell: (row) => <TableDate displayDate={row.caseSentToCourtDate} />,
           },
           {
             cell: (row) => {

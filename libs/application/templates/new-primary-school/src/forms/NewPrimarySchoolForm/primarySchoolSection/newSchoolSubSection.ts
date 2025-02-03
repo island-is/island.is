@@ -44,9 +44,9 @@ export const newSchoolSubSection = buildSubSection({
               })
 
             return (
-              data?.friggSchoolsByMunicipality?.map((municipality) => ({
-                value: municipality.name,
-                label: municipality.name,
+              data?.friggSchoolsByMunicipality?.map(({ name }) => ({
+                value: name,
+                label: name,
               })) ?? []
             )
           },
@@ -59,9 +59,6 @@ export const newSchoolSubSection = buildSubSection({
           dataTestId: 'new-school-school',
           updateOnSelect: 'newSchool.municipality',
           loadOptions: async ({ application, apolloClient, selectedValue }) => {
-            const { schoolMunicipality } = getApplicationAnswers(
-              application.answers,
-            )
             const { childGradeLevel } = getApplicationExternalData(
               application.externalData,
             )
@@ -73,9 +70,7 @@ export const newSchoolSubSection = buildSubSection({
 
             return (
               data?.friggSchoolsByMunicipality
-                ?.find(
-                  ({ name }) => name === (selectedValue || schoolMunicipality),
-                )
+                ?.find(({ name }) => name === selectedValue)
                 ?.children?.filter((school) =>
                   school.gradeLevels?.includes(childGradeLevel),
                 )

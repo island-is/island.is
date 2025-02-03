@@ -20,13 +20,13 @@ export const conclusion = {
     alertMessageFreshman: {
       id: 'ss.application:conclusion.general.alertMessageFreshman',
       defaultMessage:
-        'Umsókn þín í framhaldsskóla hefur verið móttekin! Hægt er að senda inn nýja umsókn til xx. júní 2025',
+        'Umsókn þín í framhaldsskóla hefur verið móttekin! Hægt er að breyta umsókn til xx. júní 2025',
       description: 'Conclusion general alert message for freshman',
     },
     alertMessageGeneral: {
       id: 'ss.application:conclusion.general.alertMessageGeneral',
       defaultMessage:
-        'Umsókn þín í framhaldsskóla hefur verið móttekin! Hægt er að senda inn nýja umsókn til aa. júní 2025',
+        'Umsókn þín í framhaldsskóla hefur verið móttekin! Hægt er að breyta umsókn til aa. júní 2025',
       description: 'Conclusion general alert message for general application',
     },
     accordionTitle: {
@@ -36,12 +36,12 @@ export const conclusion = {
     },
     accordionTextFreshman: {
       id: 'ss.application:conclusion.general.accordionTextFreshman#markdown',
-      defaultMessage: `* **xx. júní 2025**\n\n Umsóknartímabili lýkur. Ekki verður farið að vinna úr umsóknum fyrr en eftir þessa dagsetningu. Ef þú af einhverjum ástæðum vilt gera breytingar þarftu að gera það áður en tímabilinu lýkur.\n* **yy. - zz. júní 2025** +\n\n Unnið er úr umsóknum á þessu tímabili og verður tilkynning send á alla umsækjendur. Hnipp verður sent í gegnum island.is og ættir þú að fá tilkynningu í appið og tölvupóst um niðurstöðuna.`,
+      defaultMessage: `* **Þann xx. júní 2025:**\n\n\tUmsóknartímabili lýkur. Ekki verður farið að vinna úr umsóknum fyrr en eftir þessa dagsetningu. Ef þú af einhverjum ástæðum vilt gera breytingar þarftu að gera það áður en tímabilinu lýkur.\n* **Frá yy. júní 2025:** \n\n\tUnnið er úr umsóknum frá og með þessum degi og verður tilkynning send á alla umsækjendur. Hnipp verður sent í gegnum Ísland.is og ættir þú að fá tilkynningu í appið og tölvupóst um niðurstöðuna.`,
       description: 'Conclusion accordion text freshman',
     },
     accordionTextGeneral: {
       id: 'ss.application:conclusion.general.accordionTextGeneral#markdown',
-      defaultMessage: `* **aa. júní 2025**\n\n Umsóknartímabili lýkur. Ekki verður farið að vinna úr umsóknum fyrr en eftir þessa dagsetningu. Ef þú af einhverjum ástæðum vilt gera breytingar þarftu að gera það áður en tímabilinu lýkur.\n* **bb. - cc. júní 2025**\n\n Unnið er úr umsóknum á þessu tímabili og verður tilkynning send á alla umsækjendur. Hnipp verður sent í gegnum island.is og ættir þú að fá tilkynningu í appið og tölvupóst um niðurstöðuna.`,
+      defaultMessage: `* **Þann aa. júní 2025:**\n\n\tUmsóknartímabili lýkur. Ekki verður farið að vinna úr umsóknum fyrr en eftir þessa dagsetningu. Ef þú af einhverjum ástæðum vilt gera breytingar þarftu að gera það áður en tímabilinu lýkur.\n* **Frá bb. júní 2025:** \n\n\tUnnið er úr umsóknum frá og með þessum degi og verður tilkynning send á alla umsækjendur. Hnipp verður sent í gegnum Ísland.is og ættir þú að fá tilkynningu í appið og tölvupóst um niðurstöðuna.`,
       description: 'Conclusion accordion text general',
     },
   }),
@@ -72,11 +72,6 @@ export const conclusion = {
       defaultMessage:
         'Umsóknartímabili lýkur aa. júní. Ekki verður farið að vinna úr umsóknum fyrr en eftir þessa dagsetningu. Ef þú af einhverjum ástæðum vilt gera breytingar þarftu að gera það áður en tímabilinu lýkur.',
       description: 'Conclusion overview alert message',
-    },
-    editButton: {
-      id: 'ss.application:conclusion.overview.editButton',
-      defaultMessage: 'Eyða umsókn og opna nýja',
-      description: 'Conclusion overview edit button',
     },
   }),
 }

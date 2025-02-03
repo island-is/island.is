@@ -291,7 +291,7 @@ export const useFileUpload = (formFiles: UploadFile[], folderId: string) => {
     })
   }
 
-  const openFileById = (fileId: String) => {
+  const openFileById = (fileId: string) => {
     return openFile({ variables: { input: { id: fileId } } })
   }
 

@@ -181,6 +181,16 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
 
   const selectedSchool = getValueViaPath(answers, 'newSchool.school') as string
 
+  const currentNurseryMunicipality = getValueViaPath(
+    answers,
+    'currentNursery.municipality',
+  ) as string
+
+  const currentNursery = getValueViaPath(
+    answers,
+    'currentNursery.nursery',
+  ) as string
+
   const applyForNeighbourhoodSchool = getValueViaPath(
     answers,
     'school.applyForNeighbourhoodSchool',
@@ -224,6 +234,8 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     startDate,
     schoolMunicipality,
     selectedSchool,
+    currentNurseryMunicipality,
+    currentNursery,
     applyForNeighbourhoodSchool,
   }
 }

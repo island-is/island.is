@@ -12,23 +12,23 @@ import {
 } from '@island.is/application/types'
 
 export const buildForm = (data: Omit<Form, 'type'>): Form => {
-  return { ...data, type: FormItemTypes.FORM }
+  return { ...data, title: data.title ?? '', type: FormItemTypes.FORM }
 }
 
 export const buildMultiField = (data: Omit<MultiField, 'type'>): MultiField => {
-  return { ...data, type: FormItemTypes.MULTI_FIELD }
+  return { ...data, title: data.title ?? '', type: FormItemTypes.MULTI_FIELD }
 }
 
 export const buildRepeater = (data: Omit<Repeater, 'type'>): Repeater => {
-  return { ...data, type: FormItemTypes.REPEATER }
+  return { ...data, title: data.title ?? '', type: FormItemTypes.REPEATER }
 }
 
 export const buildSection = (data: Omit<Section, 'type'>): Section => {
-  return { ...data, type: FormItemTypes.SECTION }
+  return { ...data, title: data.title ?? '', type: FormItemTypes.SECTION }
 }
 
 export const buildSubSection = (data: Omit<SubSection, 'type'>): SubSection => {
-  return { ...data, type: FormItemTypes.SUB_SECTION }
+  return { ...data, title: data.title ?? '', type: FormItemTypes.SUB_SECTION }
 }
 
 export const buildExternalDataProvider = (
@@ -36,6 +36,7 @@ export const buildExternalDataProvider = (
 ): ExternalDataProvider => {
   return {
     ...data,
+    title: data.title ?? '',
     isPartOfRepeater: false,
     children: undefined,
     type: FormItemTypes.EXTERNAL_DATA_PROVIDER,
@@ -49,7 +50,7 @@ export const buildDataProviderItem = (
     id: data.provider?.externalDataId ?? data.provider?.action ?? '',
     action: data.provider?.actionId,
     order: data.provider?.order,
-    title: data.title,
+    title: data.title ?? '',
     subTitle: data.subTitle,
     pageTitle: data.pageTitle,
     source: data.source,

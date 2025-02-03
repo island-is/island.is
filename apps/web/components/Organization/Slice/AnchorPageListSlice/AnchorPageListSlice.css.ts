@@ -24,5 +24,8 @@ export const anchorPageCardContainer = style({
     lg: {
       gridTemplateColumns: '1fr 1fr',
     },
+    xl: {
+      gridTemplateColumns: '1fr 1fr 1fr',
+    },
   }),
 })

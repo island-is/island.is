@@ -443,7 +443,9 @@ export const SelectionItem: FC<FieldBaseProps & SelectionItemProps> = (
         </Box>
       )}
 
-      {(!selectedSchool || !!nordicLanguageOptions.length) && (
+      {(!selectedSchool ||
+        !!nordicLanguageOptions.filter((x) => x.code !== LANGUAGE_CODE_DANISH)
+          .length) && (
         <Box marginTop={2}>
           <Controller
             name={`${props.field.id}.nordicLanguage.code`}
