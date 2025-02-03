@@ -27,7 +27,7 @@ const populateError = (
     const path = pathToError || element.path
     let message = formatMessage(coreErrorMessages.defaultError)
     if (element.code === ZodIssueCode.custom) {
-      const namespaceRegex = /^\w*\.\w*:.*/g
+      const namespaceRegex = /^[\w.]+:\w+(\.\w+)*$/g
       const includeNamespace = element?.params?.id?.match(namespaceRegex)?.[0]
       if (includeNamespace) {
         message = formatMessage(element.params as StaticTextObject)
