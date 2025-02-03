@@ -92,8 +92,8 @@ export const DigitalIcelandLatestNewsSlice: React.FC<
 > = ({ slice, slug }) => {
   const { linkResolver } = useLinkResolver()
   return (
-    <Stack space={4}>
-      <GridContainer>
+    <GridContainer>
+      <Stack space={4}>
         <Box
           display="flex"
           flexDirection="row"
@@ -109,8 +109,6 @@ export const DigitalIcelandLatestNewsSlice: React.FC<
             <SeeMoreLink slice={slice} slug={slug} />
           </Hidden>
         </Box>
-      </GridContainer>
-      <GridContainer>
         <Box className={styles.itemListContainer}>
           {slice.news.slice(0, 3).map((news) => (
             <Item
@@ -124,14 +122,12 @@ export const DigitalIcelandLatestNewsSlice: React.FC<
             />
           ))}
         </Box>
-      </GridContainer>
-      <Hidden above="sm">
-        <GridContainer>
+        <Hidden above="sm">
           <Box display="flex" justifyContent="center">
             <SeeMoreLink slice={slice} slug={slug} />
           </Box>
-        </GridContainer>
-      </Hidden>
-    </Stack>
+        </Hidden>
+      </Stack>
+    </GridContainer>
   )
 }
