@@ -19,6 +19,7 @@ import type {
   PodDisruptionBudget,
   IngressMapping,
   BffInfo,
+  DockerImage,
 } from './types/input-types'
 import { bffConfig } from './bff'
 import { logger } from '../logging'
@@ -149,8 +150,8 @@ export class ServiceBuilder<ServiceType extends string> {
     return this
   }
 
-  image(name: string) {
-    this.serviceDef.image = name
+  image(image?: DockerImage) {
+    this.serviceDef.image = image
     return this
   }
 
