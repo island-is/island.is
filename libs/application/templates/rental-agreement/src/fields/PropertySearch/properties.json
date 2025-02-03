@@ -63,6 +63,300 @@
     ]
   },
   {
+    "streetAddress": "Hæðargarður 1a",
+    "regionNumber": "108",
+    "cityName": "Reykjavík",
+    "propertyIds": [
+      {
+        "propertyId": "2034934",
+        "marking": "020201",
+        "propertySize": "86.2",
+        "units": [
+          {
+            "unitId": "2034934",
+            "markingNr": "0201",
+            "unitType": "Íbúð",
+            "size": "86.2",
+            "numberOfRooms": "3"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "streetAddress": "Hæðargarður 3a",
+    "regionNumber": "108",
+    "cityName": "Reykjavík",
+    "propertyIds": [
+      {
+        "propertyId": "2034972",
+        "marking": "020201",
+        "propertySize": "86.2",
+        "units": [
+          {
+            "unitId": "2034972",
+            "markingNr": "0201",
+            "unitType": "Íbúð",
+            "size": "86.2",
+            "numberOfRooms": "3"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "streetAddress": "Hæðargarður 3c",
+    "regionNumber": "108",
+    "cityName": "Reykjavík",
+    "propertyIds": [
+      {
+        "propertyId": "2034973",
+        "marking": "020201",
+        "propertySize": "86.2",
+        "units": [
+          {
+            "unitId": "2034973",
+            "markingNr": "0201",
+            "unitType": "Íbúð",
+            "size": "86.2",
+            "numberOfRooms": "3"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "streetAddress": "Hæðargarður 5a",
+    "regionNumber": "108",
+    "cityName": "Reykjavík",
+    "propertyIds": [
+      {
+        "propertyId": "2034974",
+        "marking": "020201",
+        "propertySize": "86.2",
+        "units": [
+          {
+            "unitId": "2034974",
+            "markingNr": "0201",
+            "unitType": "Íbúð",
+            "size": "86.2",
+            "numberOfRooms": "3"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "streetAddress": "Hæðargarður 5b",
+    "regionNumber": "108",
+    "cityName": "Reykjavík",
+    "propertyIds": [
+      {
+        "propertyId": "2034975",
+        "marking": "020201",
+        "propertySize": "86.2",
+        "units": [
+          {
+            "unitId": "2034975",
+            "markingNr": "0201",
+            "unitType": "Íbúð",
+            "size": "86.2",
+            "numberOfRooms": "3"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "streetAddress": "Hæðargarður 7a",
+    "regionNumber": "108",
+    "cityName": "Reykjavík",
+    "propertyIds": [
+      {
+        "propertyId": "2034988",
+        "marking": "020201",
+        "propertySize": "86.2",
+        "units": [
+          {
+            "unitId": "2034988",
+            "markingNr": "0201",
+            "unitType": "Íbúð",
+            "size": "86.2",
+            "numberOfRooms": "3"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "streetAddress": "Hæðargarður 7b",
+    "regionNumber": "108",
+    "cityName": "Reykjavík",
+    "propertyIds": [
+      {
+        "propertyId": "2034989",
+        "marking": "020201",
+        "propertySize": "86.2",
+        "units": [
+          {
+            "unitId": "2034989",
+            "markingNr": "0201",
+            "unitType": "Íbúð",
+            "size": "86.2",
+            "numberOfRooms": "3"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "streetAddress": "Hæðargarður 7c",
+    "regionNumber": "108",
+    "cityName": "Reykjavík",
+    "propertyIds": [
+      {
+        "propertyId": "2034990",
+        "marking": "020201",
+        "propertySize": "86.2",
+        "units": [
+          {
+            "unitId": "2034990",
+            "markingNr": "0201",
+            "unitType": "Íbúð",
+            "size": "86.2",
+            "numberOfRooms": "3"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "streetAddress": "Hæðargarður 7d",
+    "regionNumber": "108",
+    "cityName": "Reykjavík",
+    "propertyIds": [
+      {
+        "propertyId": "2034991",
+        "marking": "020201",
+        "propertySize": "86.2",
+        "units": [
+          {
+            "unitId": "2034991",
+            "markingNr": "0201",
+            "unitType": "Íbúð",
+            "size": "86.2",
+            "numberOfRooms": "3"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "streetAddress": "Hæðargarður 7e",
+    "regionNumber": "108",
+    "cityName": "Reykjavík",
+    "propertyIds": [
+      {
+        "propertyId": "2034992",
+        "marking": "020201",
+        "propertySize": "86.2",
+        "units": [
+          {
+            "unitId": "2034992",
+            "markingNr": "0201",
+            "unitType": "Íbúð",
+            "size": "86.2",
+            "numberOfRooms": "3"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "streetAddress": "Hæðargarður 9",
+    "regionNumber": "108",
+    "cityName": "Reykjavík",
+    "propertyIds": [
+      {
+        "propertyId": "2034993",
+        "marking": "020201",
+        "propertySize": "86.2",
+        "units": [
+          {
+            "unitId": "2034993",
+            "markingNr": "0201",
+            "unitType": "Íbúð",
+            "size": "86.2",
+            "numberOfRooms": "3"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "streetAddress": "Hæðargarður 11a",
+    "regionNumber": "108",
+    "cityName": "Reykjavík",
+    "propertyIds": [
+      {
+        "propertyId": "2034994",
+        "marking": "020201",
+        "propertySize": "86.2",
+        "units": [
+          {
+            "unitId": "2034994",
+            "markingNr": "0201",
+            "unitType": "Íbúð",
+            "size": "86.2",
+            "numberOfRooms": "3"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "streetAddress": "Hæðargarður 11b",
+    "regionNumber": "108",
+    "cityName": "Reykjavík",
+    "propertyIds": [
+      {
+        "propertyId": "2034995",
+        "marking": "020201",
+        "propertySize": "86.2",
+        "units": [
+          {
+            "unitId": "2034995",
+            "markingNr": "0201",
+            "unitType": "Íbúð",
+            "size": "86.2",
+            "numberOfRooms": "3"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "streetAddress": "Hæðargarður 1b",
+    "regionNumber": "108",
+    "cityName": "Reykjavík",
+    "propertyIds": [
+      {
+        "propertyId": "2034935",
+        "marking": "020201",
+        "propertySize": "86.2",
+        "units": [
+          {
+            "unitId": "2034939",
+            "markingNr": "0201",
+            "unitType": "Íbúð",
+            "size": "86.2",
+            "numberOfRooms": "3"
+          }
+        ]
+      }
+    ]
+  },
+  {
     "streetAddress": "Engimýri 3",
     "regionNumber": "210",
     "cityName": "Garðabær",

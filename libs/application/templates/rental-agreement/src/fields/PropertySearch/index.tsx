@@ -64,41 +64,56 @@ export const PropertySearch: FC<React.PropsWithChildren<Props>> = ({
     }
   }, [getValues, id])
 
+  // Mock data - replace with actual fetch
+  const propertiesMockData = require('./properties.json')
+
   const fetchProperties = (query = '') => {
-    if (query.length === 0) {
-      console.log('no query')
+    if (query.length < 2) {
+      console.log('No data')
       return
     }
     setPending(true)
-    fetch('http://localhost:3001/properties')
-      .then((res) => res.json())
-      .then((data: Property[]) => {
-        setPending(false)
-        const filteredData = data
-          .filter((property: Property) =>
-            property.streetAddress.toLowerCase().includes(query.toLowerCase()),
-          )
-          .sort((a: Property, b: Property) =>
-            a.streetAddress.localeCompare(b.streetAddress),
-          )
-          .slice(0, 10)
-        if (filteredData.length) {
-          setOptions(
-            filteredData.map((property: Property) => ({
-              label: `${property.streetAddress}, ${property.regionNumber} ${property.cityName}`,
-              value: `${property.streetAddress}, ${property.regionNumber} ${property.cityName}`,
-              propertyIds: property.propertyIds,
-              propertyId: property.propertyIds[0].propertyId,
-              streetAddress: property.streetAddress,
-              regionNumber: property.regionNumber,
-              cityName: property.cityName,
-              marking: property.propertyIds[0].marking,
-              size: property.propertyIds[0].units[0].size,
-              numberOfRooms: property.propertyIds[0].units[0].numberOfRooms,
-            })),
-          )
-        }
-      })
+    // fetch('http://localhost:3001/properties')
+    //   .then((res) => res.json())
+    //   .then((data: Property[]) => {
+    //     setPending(false)
+    //     const filteredData = data
+    //       .filter((property: Property) =>
+    //         property.streetAddress.toLowerCase().includes(query.toLowerCase()),
+    //       )
+    //       .sort((a: Property, b: Property) =>
+    //         a.streetAddress.localeCompare(b.streetAddress),
+    //       )
+    //       .slice(0, 10)
+    setTimeout(() => {
+      const filteredData = propertiesMockData
+        .filter((property: Property) =>
+          property.streetAddress.toLowerCase().includes(query.toLowerCase()),
+        )
+        .sort((a: Property, b: Property) =>
+          a.streetAddress.localeCompare(b.streetAddress),
+        )
+        .slice(0, 10)
+
+      setPending(false)
+
+      if (filteredData.length) {
+        setOptions(
+          filteredData.map((property: Property) => ({
+            label: `${property.streetAddress}, ${property.regionNumber} ${property.cityName}`,
+            value: `${property.streetAddress}, ${property.regionNumber} ${property.cityName}`,
+            propertyIds: property.propertyIds,
+            propertyId: property.propertyIds[0].propertyId,
+            streetAddress: property.streetAddress,
+            regionNumber: property.regionNumber,
+            cityName: property.cityName,
+            marking: property.propertyIds[0].marking,
+            size: property.propertyIds[0].units[0].size,
+            numberOfRooms: property.propertyIds[0].units[0].numberOfRooms,
+          })),
+        )
+      }
+    }, 500)
   }
 
   return (
@@ -154,12 +169,12 @@ export const PropertySearch: FC<React.PropsWithChildren<Props>> = ({
           <Text variant="h3" marginTop={12}>
             Selected Property:
           </Text>
-          <Text variant="medium">
+          <Text variant="medium" marginBottom={2}>
             {selectedProperty.streetAddress}, {selectedProperty.regionNumber}{' '}
             {selectedProperty.cityName}
           </Text>
           {selectedProperty.propertyIds.map((propertyId) => (
-            <Fragment key={propertyId.propertyId}>
+            <Box key={propertyId.propertyId} marginBottom={2}>
               <Text variant="medium">
                 {`Fasteignanúmer: ${propertyId.propertyId}, Merking: ${propertyId.marking}, Stærð fasteignar: ${propertyId.propertySize}m²`}
               </Text>
@@ -168,7 +183,7 @@ export const PropertySearch: FC<React.PropsWithChildren<Props>> = ({
                   {`Unit ID: ${unit.unitId}, Merking: ${unit.markingNr}, Stærð: ${unit.size}, Fjöldi herbergja: ${unit.numberOfRooms}`}
                 </Text>
               ))}
-            </Fragment>
+            </Box>
           ))}
         </Box>
       )}
