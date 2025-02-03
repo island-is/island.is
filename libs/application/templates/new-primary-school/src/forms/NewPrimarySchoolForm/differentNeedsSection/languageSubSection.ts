@@ -1,19 +1,22 @@
 import {
-  buildCustomField,
   buildDescriptionField,
+  buildFieldsRepeaterField,
+  buildHiddenInputWithWatchedValue,
   buildMultiField,
   buildRadioField,
   buildSelectField,
   buildSubSection,
 } from '@island.is/application/core'
-import { NO, YES } from '@island.is/application/types'
+import { Application, NO, YES } from '@island.is/application/types'
+import { getAllLanguageCodes } from '@island.is/shared/utils'
+import { LanguageEnvironmentOptions } from '../../../lib/constants'
 import { newPrimarySchoolMessages } from '../../../lib/messages'
 import {
   getApplicationAnswers,
   getLanguageEnvironments,
   hasForeignLanguages,
+  showChildLangagueFields,
 } from '../../../lib/newPrimarySchoolUtils'
-import { LanguageSelectionProps } from '../../../fields/LanguageSelection'
 
 export const languageSubSection = buildSubSection({
   id: 'languageSubSection',
@@ -53,16 +56,102 @@ export const languageSubSection = buildSubSection({
           },
           marginBottom: 'gutter',
         }),
-        buildCustomField(
-          {
-            id: 'languages',
-            component: 'LanguageSelection',
-            condition: (answers) => {
-              return hasForeignLanguages(answers)
+        buildFieldsRepeaterField({
+          id: 'selectedLanguages',
+          title: '',
+          formTitleNumbering: 'none',
+          addItemButtonText:
+            newPrimarySchoolMessages.differentNeeds.addLanguageButton,
+          removeItemButtonText: 'remove button',
+          minRows: 1,
+          maxRows: 4,
+          marginTop: 'auto',
+          marginBottom: 'auto',
+          condition: (answers) => {
+            return hasForeignLanguages(answers)
+          },
+          fields: {
+            code: {
+              component: 'select',
+              label:
+                newPrimarySchoolMessages.differentNeeds.languageSelectionTitle,
+              placeholder:
+                newPrimarySchoolMessages.differentNeeds
+                  .languageSelectionPlaceholder,
+              width: 'full',
+              options: (application: Application) => {
+                const { languageEnvironment, selectedLanguages } =
+                  getApplicationAnswers(application.answers)
+
+                const languages = getAllLanguageCodes()
+                return languages
+                  .filter((language) => {
+                    if (
+                      language.code === 'is' &&
+                      languageEnvironment ===
+                        LanguageEnvironmentOptions.ONLY_FOREIGN
+                    ) {
+                      return false
+                    }
+                    return true
+                  })
+                  .map((language) => ({
+                    label: language.name,
+                    value: language.code,
+                  }))
+              },
             },
           },
-          {} as LanguageSelectionProps,
-        ),
+        }),
+        buildDescriptionField({
+          id: 'languages.child.language.title',
+          title: newPrimarySchoolMessages.differentNeeds.childLanguageTitle,
+          titleVariant: 'h4',
+          condition: (answers) => {
+            return showChildLangagueFields(answers)
+          },
+        }),
+        buildSelectField({
+          id: 'languages.childLanguage',
+          dataTestId: 'languages-child-language',
+          title:
+            newPrimarySchoolMessages.differentNeeds.languageSubSectionTitle,
+          placeholder:
+            newPrimarySchoolMessages.differentNeeds
+              .languageSelectionPlaceholder,
+          options: (application) => {
+            const { selectedLanguages, languagesHiddenInput } =
+              getApplicationAnswers(application.answers)
+
+            console.log('options', { selectedLanguages, languagesHiddenInput })
+
+            if (!selectedLanguages) {
+              return []
+            }
+
+            return getAllLanguageCodes()
+              .filter((language) => {
+                return selectedLanguages.some(
+                  (lang) => lang?.code === language.code,
+                )
+              })
+              .map((language) => {
+                return {
+                  label: language.name,
+                  value: language.code,
+                }
+              })
+          },
+          condition: (answers) => {
+            return showChildLangagueFields(answers)
+          },
+        }),
+        /*  buildHiddenInputWithWatchedValue({
+          // Needed to trigger an update on options in the select above
+          id: 'languages.languagesHiddenInput',
+          watchValue: 'selectedLanguages',
+        }),*/
+
         buildRadioField({
           id: 'languages.signLanguage',
           title: newPrimarySchoolMessages.differentNeeds.signLanguage,

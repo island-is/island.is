@@ -137,7 +137,7 @@ export const dataSchema = z.object({
       language2: z.string().optional().nullable(),
       childLanguage: z.string().optional().nullable(),
     })
-    .refine(
+    /* .refine(
       ({ languageEnvironment, language1 }) => {
         return languageEnvironment !== LanguageEnvironmentOptions.ONLY_ICELANDIC
           ? !!language1
@@ -147,7 +147,7 @@ export const dataSchema = z.object({
         path: ['language1'],
         params: errorMessages.languagesRequired,
       },
-    )
+    )*/
     .refine(
       ({ languageEnvironment, language1, language2, childLanguage }) => {
         return languageEnvironment !==

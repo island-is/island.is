@@ -65,7 +65,7 @@ const LanguageSelection: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   }
 
   useEffect(() => {
-    const { language1, language2, language3, language4 } =
+    /* const { language1, language2, language3, language4 } =
       getApplicationAnswers(application.answers)
 
     const selected = [language1, language2, language3, language4].filter(
@@ -76,7 +76,7 @@ const LanguageSelection: FC<React.PropsWithChildren<FieldBaseProps>> = ({
     const visibleCount = Math.max(1, selected.length)
 
     setSelectedLanguages(selected)
-    setVisibleLanguagesCount(visibleCount)
+    setVisibleLanguagesCount(visibleCount) */
   }, [application])
 
   return (

@@ -63,18 +63,32 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     'languages.languageEnvironment',
   ) as string
 
+  const language1 = getValueViaPath(answers, 'languages.language1') as string
+
+  const language2 = getValueViaPath(answers, 'languages.language1') as string
+
+  const language3 = getValueViaPath(answers, 'languages.language1') as string
+
+  const language4 = getValueViaPath(answers, 'languages.language1') as string
+
   const signLanguage = getValueViaPath(
     answers,
     'languages.signLanguage',
   ) as YesOrNo
 
-  const language1 = getValueViaPath(answers, 'languages.language1') as string
+  const selectedLanguages = getValueViaPath(
+    answers,
+    'selectedLanguages',
+  ) as Array<{
+    code: string
+  }>
 
-  const language2 = getValueViaPath(answers, 'languages.language2') as string
-
-  const language3 = getValueViaPath(answers, 'languages.language3') as string
-
-  const language4 = getValueViaPath(answers, 'languages.language4') as string
+  const languagesHiddenInput = getValueViaPath(
+    answers,
+    'languages.languagesHiddenInput',
+  ) as Array<{
+    code: string
+  }>
 
   const childLanguage = getValueViaPath(
     answers,
@@ -207,6 +221,8 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     reasonForApplicationPostalCode,
     siblings,
     languageEnvironment,
+    selectedLanguages,
+    languagesHiddenInput,
     language1,
     language2,
     language3,
@@ -414,6 +430,36 @@ export const hasForeignLanguages = (answers: FormValue) => {
   }
 
   return languageEnvironment !== LanguageEnvironmentOptions.ONLY_ICELANDIC
+}
+
+export const showChildLangagueFields = (answers: FormValue) => {
+  const { languageEnvironment, selectedLanguages } =
+    getApplicationAnswers(answers)
+
+  if (!selectedLanguages) {
+    return false
+  }
+
+  if (
+    languageEnvironment === LanguageEnvironmentOptions.ONLY_FOREIGN &&
+    selectedLanguages.length >= 1 &&
+    selectedLanguages.filter((language) => language.code).length >= 1
+  ) {
+    console.log('ONLY_FOREIGN')
+    return true
+  }
+
+  if (
+    languageEnvironment === LanguageEnvironmentOptions.ICELANDIC_AND_FOREIGN &&
+    selectedLanguages.length >= 2 &&
+    selectedLanguages.filter((language) => language.code).length >= 2
+  ) {
+    console.log('ICELANDIC_AND_FOREIGN')
+    return true
+  }
+
+  // Ef þetta er sett sem false að þá uppfærist ekki childlanguage þegar tungumál 1-4  er breytt
+  return false
 }
 
 export const getNeighbourhoodSchoolName = (application: Application) => {
