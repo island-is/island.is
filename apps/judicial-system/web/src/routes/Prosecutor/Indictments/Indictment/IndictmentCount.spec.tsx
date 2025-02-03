@@ -20,7 +20,7 @@ const formatMessage = createIntl({
 
 describe('getRelevantSubstances', () => {
   test('should return relevant substances in the correct order for the indictment description', () => {
-    const offenses = [
+    const deprecatedOffenses = [
       offense.DRUNK_DRIVING,
       offense.ILLEGAL_DRUGS_DRIVING,
       offense.PRESCRIPTION_DRUGS_DRIVING,
@@ -32,7 +32,7 @@ describe('getRelevantSubstances', () => {
       [Substance.ALCOHOL]: '1.10',
     }
 
-    const result = getRelevantSubstances(offenses, substances)
+    const result = getRelevantSubstances(deprecatedOffenses, substances)
 
     expect(result).toEqual([
       ['ALCOHOL', '1.10'],
@@ -135,25 +135,25 @@ describe('getLegalArguments', () => {
 
 describe('getIncidentDescriptionReason', () => {
   test('should return a description for one offense', () => {
-    const offenses = [offense.DRIVING_WITHOUT_LICENCE]
+    const deprecatedOffenses = [offense.DRIVING_WITHOUT_LICENCE]
 
-    const result = getIncidentDescriptionReason(offenses, {}, formatMessage)
+    const result = getIncidentDescriptionReason(deprecatedOffenses, {}, formatMessage)
 
     expect(result).toBe('sviptur ökurétti')
   })
 
   test('should return a description for two offense', () => {
-    const offenses = [offense.DRIVING_WITHOUT_LICENCE, offense.DRUNK_DRIVING]
+    const deprecatedOffenses = [offense.DRIVING_WITHOUT_LICENCE, offense.DRUNK_DRIVING]
 
-    const result = getIncidentDescriptionReason(offenses, {}, formatMessage)
+    const result = getIncidentDescriptionReason(deprecatedOffenses, {}, formatMessage)
 
     expect(result).toBe('sviptur ökurétti og undir áhrifum áfengis')
   })
 
   test('should return a description with prescription drugs', () => {
-    const offenses = [offense.DRUNK_DRIVING, offense.PRESCRIPTION_DRUGS_DRIVING]
+    const deprecatedOffenses = [offense.DRUNK_DRIVING, offense.PRESCRIPTION_DRUGS_DRIVING]
 
-    const result = getIncidentDescriptionReason(offenses, {}, formatMessage)
+    const result = getIncidentDescriptionReason(deprecatedOffenses, {}, formatMessage)
 
     expect(result).toBe(
       'undir áhrifum áfengis og óhæfur til að stjórna henni örugglega vegna áhrifa slævandi lyfja',
@@ -161,9 +161,9 @@ describe('getIncidentDescriptionReason', () => {
   })
 
   test('should return a description with illegal drugs', () => {
-    const offenses = [offense.DRUNK_DRIVING, offense.ILLEGAL_DRUGS_DRIVING]
+    const deprecatedOffenses = [offense.DRUNK_DRIVING, offense.ILLEGAL_DRUGS_DRIVING]
 
-    const result = getIncidentDescriptionReason(offenses, {}, formatMessage)
+    const result = getIncidentDescriptionReason(deprecatedOffenses, {}, formatMessage)
 
     expect(result).toBe(
       'undir áhrifum áfengis og óhæfur til að stjórna henni örugglega vegna áhrifa ávana- og fíkniefna',
@@ -171,13 +171,13 @@ describe('getIncidentDescriptionReason', () => {
   })
 
   test('should return a description with illegal drugs as third offense', () => {
-    const offenses = [
+    const deprecatedOffenses = [
       offense.DRIVING_WITHOUT_LICENCE,
       offense.DRUNK_DRIVING,
       offense.ILLEGAL_DRUGS_DRIVING,
     ]
 
-    const result = getIncidentDescriptionReason(offenses, {}, formatMessage)
+    const result = getIncidentDescriptionReason(deprecatedOffenses, {}, formatMessage)
 
     expect(result).toBe(
       'sviptur ökurétti, undir áhrifum áfengis og óhæfur til að stjórna henni örugglega vegna áhrifa ávana- og fíkniefna',
@@ -185,13 +185,13 @@ describe('getIncidentDescriptionReason', () => {
   })
 
   test('should return a description with illegal and prescription drugs', () => {
-    const offenses = [
+    const deprecatedOffenses = [
       offense.DRUNK_DRIVING,
       offense.ILLEGAL_DRUGS_DRIVING,
       offense.PRESCRIPTION_DRUGS_DRIVING,
     ]
 
-    const result = getIncidentDescriptionReason(offenses, {}, formatMessage)
+    const result = getIncidentDescriptionReason(deprecatedOffenses, {}, formatMessage)
 
     expect(result).toBe(
       'undir áhrifum áfengis og óhæfur til að stjórna henni örugglega vegna áhrifa ávana- og fíkniefna og slævandi lyfja',
@@ -199,12 +199,12 @@ describe('getIncidentDescriptionReason', () => {
   })
 
   test('should return a description with only illegal and prescription drugs', () => {
-    const offenses = [
+    const deprecatedOffenses = [
       offense.ILLEGAL_DRUGS_DRIVING,
       offense.PRESCRIPTION_DRUGS_DRIVING,
     ]
 
-    const result = getIncidentDescriptionReason(offenses, {}, formatMessage)
+    const result = getIncidentDescriptionReason(deprecatedOffenses, {}, formatMessage)
 
     expect(result).toBe(
       'óhæfur til að stjórna henni örugglega vegna áhrifa ávana- og fíkniefna og slævandi lyfja',
@@ -213,9 +213,9 @@ describe('getIncidentDescriptionReason', () => {
 })
 
 describe('getIncidentDescription', () => {
-  test('should return an empty string if there are no offenses in traffic violations', () => {
+  test('should return an empty string if there are no deprecatedOffenses in traffic violations', () => {
     const result = getIncidentDescription(
-      { id: 'testId', offenses: [], policeCaseNumber: '123-123-123' },
+      { id: 'testId', deprecatedOffenses: [], policeCaseNumber: '123-123-123' },
       formatMessage,
       {},
       { '123-123-123': [IndictmentSubtype.TRAFFIC_VIOLATION] },
@@ -224,7 +224,7 @@ describe('getIncidentDescription', () => {
     expect(result).toBe('')
   })
 
-  test('should return an empty string if offenses are missing in traffic violations', () => {
+  test('should return an empty string if deprecatedOffenses are missing in traffic violations', () => {
     const result = getIncidentDescription(
       { id: 'testId', policeCaseNumber: '123-123-123' },
       formatMessage,
@@ -239,7 +239,7 @@ describe('getIncidentDescription', () => {
     const result = getIncidentDescription(
       {
         id: 'testId',
-        offenses: [offense.DRUNK_DRIVING],
+        deprecatedOffenses: [offense.DRUNK_DRIVING],
         policeCaseNumber: '123-123-123',
       },
       formatMessage,
@@ -271,7 +271,7 @@ describe('getIncidentDescription', () => {
       {
         id: 'testId',
         policeCaseNumber: '123-123-123',
-        offenses: [offense.DRUNK_DRIVING],
+        deprecatedOffenses: [offense.DRUNK_DRIVING],
         indictmentCountSubtypes: [IndictmentSubtype.TRAFFIC_VIOLATION],
       },
       formatMessage,
@@ -294,7 +294,7 @@ describe('getIncidentDescription', () => {
       {
         id: 'testId',
         policeCaseNumber: '123-123-123',
-        offenses: [offense.DRUNK_DRIVING],
+        deprecatedOffenses: [offense.DRUNK_DRIVING],
         indictmentCountSubtypes: [
           IndictmentSubtype.CUSTOMS_VIOLATION,
           IndictmentSubtype.THEFT,
@@ -320,7 +320,7 @@ describe('getIncidentDescription', () => {
       {
         id: 'testId',
         policeCaseNumber: '123-123-123',
-        offenses: [offense.DRUNK_DRIVING],
+        deprecatedOffenses: [offense.DRUNK_DRIVING],
         indictmentCountSubtypes: [
           IndictmentSubtype.CUSTOMS_VIOLATION,
           IndictmentSubtype.TRAFFIC_VIOLATION,

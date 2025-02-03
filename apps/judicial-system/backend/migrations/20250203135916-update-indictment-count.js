@@ -7,7 +7,7 @@ module.exports = {
         queryInterface.renameColumn(
           'indictment_count',
           'offenses',
-          'deprecatedOffenses',
+          'deprecated_offenses',
           { transaction: t },
         ),
       ]),
@@ -19,7 +19,7 @@ module.exports = {
       Promise.all([
         queryInterface.renameColumn(
           'indictment_count',
-          'deprecatedOffenses',
+          'deprecated_offenses',
           'offenses',
           { transaction: t },
         ),
