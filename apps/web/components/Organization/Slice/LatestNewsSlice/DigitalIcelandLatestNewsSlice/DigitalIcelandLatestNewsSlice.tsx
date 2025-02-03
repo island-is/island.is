@@ -32,19 +32,20 @@ const Item = (item: ItemProps) => {
         <Box
           className={styles.imageBox}
           style={{
-            backgroundImage: `url("${item.imageSrc}?w=500")`,
-            backgroundSize: 'cover',
+            background: `url("${item.imageSrc}?w=500") 50% / cover no-repeat`,
           }}
         />
         <Text variant="h3">{item.title}</Text>
         <Text variant="medium">{item.description}</Text>
-        <Inline space={1}>
-          {item.tags.map((tag) => (
-            <Tag key={tag} disabled>
-              {tag}
-            </Tag>
-          ))}
-        </Inline>
+        <Box>
+          <Inline space={1}>
+            {item.tags.map((tag) => (
+              <Tag key={tag} disabled>
+                {tag}
+              </Tag>
+            ))}
+          </Inline>
+        </Box>
       </Stack>
     </LinkV2>
   )
