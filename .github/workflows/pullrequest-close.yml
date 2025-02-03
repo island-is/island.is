@@ -22,17 +22,81 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 100
+          fetch-depth: 0
+
+      # - uses: actions/setup-node@v4
+      #   with:
+      #     node-version-file: 'package.json'
+
+      # - name: Setup yarn
+      #   run: corepack enable
+
+      # - name: Get cache
+      #   id: get-cache
+      #   uses: ./.github/actions/get-cache
+      #   with:
+      #     github-token: ${{ secrets.GITHUB_TOKEN }}
+      #     enable-cache: 'node_modules'
+
+      # - name: Derive appropriate SHAs
+      #   uses: nrwl/nx-set-shas@v4
+
+      # - run: |
+      #     echo "BASE: ${{ env.NX_BASE }}"
+      #     echo "HEAD: ${{ env.NX_HEAD }}"
+      - name: Check unicorn affected
+        id: unicorn_affected
+        run: |
+          # echo "Comparing nx affected for ${{ env.NX_HEAD }} using ${{ env.NX_BASE }} as base branch"
+          # echo IS_UNICORN=$(node scripts/ci/unicorn-utils.mjs "{\"head\": \"${{ env.NX_HEAD }}\", \"base\": \"${{ env.NX_BASE }}\" }") >> "$GITHUB_OUTPUT"
+          echo IS_UNICORN=true >> "$GITHUB_OUTPUT"
+      - name: Results
+        run: |
+          echo "Unicorn = ${{ steps.unicorn_affected.outputs.IS_UNICORN }}"
 
       - name: Find Latest Release Branch
+        if: ${{ steps.unicorn_affected.outputs.IS_UNICORN == 'true' }}
         id: get_latest_release
         run: |
-          test="hallo"
-          test=$(git branch)
-          echo $test
-          test=$(git branch -a)
-          echo $test
-          test=$(git branch -r)
-          echo $test
           node scripts/ci/get-last-release.mjs $(git branch -r)
 
+      - run: "echo 'latest release: ${{ steps.get_latest_release.outputs.data }}'"
+
+
+
+
+  # cleanup:
+  #   name: Clean up feature deployment
+  #   runs-on: arc-runners
+  #   steps:
+  #     - name: Get git branch
+  #       run: |
+  #         set -euo pipefail
+  #         GIT_BRANCH="${GITHUB_HEAD_REF:-${GITHUB_REF/refs\/heads\//}}"
+  #         echo "GIT_BRANCH=$GIT_BRANCH" >> "$GITHUB_ENV"
+  #     - name: Generate deployment branch name
+  #       id: git-branch-deploy
+  #       run: |
+  #         set -euo pipefail
+  #         GIT_BRANCH_DEPLOY="$GIT_BRANCH"
+  #         if [[ ! ("$GIT_BRANCH_DEPLOY" =~ "feature/") ]]; then
+  #           # If event is pull request but branch is not prefixed with feature/
+  #           GIT_BRANCH_DEPLOY=feature/$GIT_BRANCH_DEPLOY
+  #         fi
+  #         # Avoid too long resource names
+  #         GIT_BRANCH_DEPLOY="${GIT_BRANCH_DEPLOY:0:50}"
+  #         echo "GIT_BRANCH_DEPLOY=$GIT_BRANCH_DEPLOY" >> "$GITHUB_ENV"
+  #     - name: Clean up feature
+  #       env:
+  #         SPINNAKER_WEBHOOK_TOKEN: ${{ secrets.SPINNAKER_WEBHOOK_TOKEN }}
+  #         SPINNAKER_URL: https://spinnaker-gate.shared.devland.is
+  #       run: |
+  #         set -euo pipefail
+  #         curl "$SPINNAKER_URL/webhooks/webhook/feature-cleanup" -H "content-type: application/json" --data-binary @- <<BODY
+  #         {
+  #           "token": "$SPINNAKER_WEBHOOK_TOKEN",
+  #           "parameters": {
+  #             "feature_name": "$(echo "$GIT_BRANCH_DEPLOY" | cut -d"/" -f2- | tr -cd '[:alnum:]-' | tr '[:upper:]' '[:lower:]' | cut -c1-50)"
+  #           }
+  #         }
+  #         BODY
