@@ -19,7 +19,8 @@ export const itemListContainer = style({
   gap: theme.spacing[4],
   ...themeUtils.responsiveStyle({
     xs: {
-      justifyItems: 'center',
+      gridTemplateColumns: 'minmax(302px, 500px)',
+      justifyContent: 'center',
     },
     md: {
       gridTemplateColumns: 'repeat(auto-fit, minmax(302px, 1fr))',
