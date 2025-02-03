@@ -5,6 +5,8 @@ import {
   buildSection,
   buildSubmitField,
   getValueViaPath,
+  NO,
+  YES,
 } from '@island.is/application/core'
 import { DefaultEvents } from '@island.is/application/types'
 import { m } from '../lib/messages'
@@ -12,7 +14,7 @@ import { commonOverviewFields } from './OverviewSections/commonFields'
 import { overviewAssetsAndDebts } from './OverviewSections/assetsAndDebts'
 import { overviewAttachments } from './OverviewSections/attachments'
 import { overviewConfirmAction } from './OverviewSections/confirmAction'
-import { EstateTypes, YES, NO } from '../lib/constants'
+import { EstateTypes } from '../lib/constants'
 import { deceasedInfoFields } from './Sections/deceasedInfoFields'
 import { representativeOverview } from './OverviewSections/representative'
 
