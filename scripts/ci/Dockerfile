@@ -53,7 +53,8 @@ FROM src AS builder
 
 # Stage-specific ARGs
 ARG APP
-ARG APP_DIST_HOME
+ARG APP_HOME
+ARG APP_DIST_HOME=dist/${APP_HOME}
 ARG NX_PARALLEL=2
 ARG NX_MAX_PARALLEL=4
 ARG NX_TASKS_RUNNER=ci
@@ -67,7 +68,8 @@ ENV NX_TASKS_RUNNER=${NX_TASKS_RUNNER}
 RUN --mount=type=secret,id=nx_cloud_access_token \
   NX_CLOUD_ACCESS_TOKEN="$(cat /run/secrets/nx_cloud_access_token)" yarn run build ${APP} --prod
 SHELL ["/bin/bash", "-euo", "pipefail", "-c"]
-RUN yarn nx show project ${APP} --json \
+RUN if [[ -n "${APP_HOME}" ]]; then cp -r "${APP_DIST_HOME}" /dist; else \
+  yarn nx show project ${APP} --json \
   # Find _anything_ to prevent emptyness
   | grep . \
   # Print the output to stderr for debugging
@@ -75,10 +77,8 @@ RUN yarn nx show project ${APP} --json \
   # Find root
   | jq -r '.root' \
   # Move outputs to /dist
-  | xargs -I{} mv "dist/{}" /dist
-
-ARG APP_HOME
-RUN cp -r "dist/${APP_HOME}" /dist
+  | xargs -I{} mv "dist/{}" /dist \
+  ; fi
 
 
 # This is base image for containers that are to be deployed
