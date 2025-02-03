@@ -396,7 +396,7 @@ export const m = defineMessages({
   },
   overviewPaymentChargeWithDelivery: {
     id: 'dl.application:overview.paymentChargeWithDelivery',
-    defaultMessage: 'Greiðsla (sendingingarkostnaður innifalinn)',
+    defaultMessage: 'Greiðsla (sendingarkostnaður innifalinn)',
     description: 'Cost',
   },
   errorDataProvider: {
