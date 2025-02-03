@@ -271,8 +271,16 @@ describe('InternalCaseController - Archive', () => {
       expect(mockCaseModel.findOne).toHaveBeenCalledWith({
         include: [
           { model: Defendant, as: 'defendants' },
-          { model: IndictmentCount, as: 'indictmentCounts' },
-          { model: CaseFile, as: 'caseFiles' },
+          {
+            model: IndictmentCount,
+            as: 'indictmentCounts',
+            include: [
+              {
+                model: Offense,
+                as: 'offenses',
+              },
+            ],
+          },          { model: CaseFile, as: 'caseFiles' },
           { model: CaseString, as: 'caseStrings' },
         ],
         order: [

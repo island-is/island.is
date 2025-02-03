@@ -21,10 +21,14 @@ import {
 
 import { prosecutorRepresentativeRule, prosecutorRule } from '../../guards'
 import { CaseExistsGuard, CaseWriteGuard } from '../case'
+import { CreateOffenseDto } from './dto/createOffense.dto'
 import { UpdateIndictmentCountDto } from './dto/updateIndictmentCount.dto'
+import { UpdateOffenseDto } from './dto/updateOffense.dto'
 import { IndictmentCountExistsGuard } from './guards/indictmentCountExists.guard'
-import { DeleteIndictmentCountResponse } from './models/delete.response'
+import { OffenseExistsGuard } from './guards/offenseExists.guard'
+import { DeleteIndictmentCountResponse } from './models/deleteIndictmentCount.response'
 import { IndictmentCount } from './models/indictmentCount.model'
+import { Offense } from './models/offense.model'
 import { IndictmentCountService } from './indictmentCount.service'
 
 @Controller('api/case/:caseId/indictmentCount')
@@ -87,6 +91,73 @@ export class IndictmentCountController {
     const deleted = await this.indictmentCountService.delete(
       caseId,
       indictmentCountId,
+    )
+
+    return { deleted }
+  }
+
+  @UseGuards(CaseExistsGuard, CaseWriteGuard, IndictmentCountExistsGuard)
+  @RolesRules(prosecutorRule, prosecutorRepresentativeRule)
+  @Post(':indictmentCountId/offense')
+  @ApiCreatedResponse({
+    type: Offense,
+    description: 'Creates a new indictment count offense',
+  })
+  createOffense(
+    @Param('caseId') caseId: string,
+    @Param('indictmentCountId') indictmentCountId: string,
+    @Body() createOffenseDto: CreateOffenseDto,
+  ): Promise<Offense> {
+    this.logger.debug(
+      `Creating a new offense for indictment count ${indictmentCountId} of case ${caseId}`,
+    )
+
+    return this.indictmentCountService.createOffense(
+      indictmentCountId,
+      createOffenseDto.offense,
+    )
+  }
+
+  @UseGuards(CaseExistsGuard, CaseWriteGuard, OffenseExistsGuard)
+  @RolesRules(prosecutorRule, prosecutorRepresentativeRule)
+  @Patch(':indictmentCountId/offense/:offenseId')
+  @ApiOkResponse({
+    type: Offense,
+    description: 'Updates an offense',
+  })
+  updateOffense(
+    @Param('caseId') caseId: string,
+    @Param('indictmentCountId') indictmentCountId: string,
+    @Param('offenseId') offenseId: string,
+    @Body() updatedOffense: UpdateOffenseDto,
+  ): Promise<Offense> {
+    this.logger.debug(
+      `Updating an offense ${offenseId} for indictment count ${indictmentCountId} of case ${caseId}`,
+    )
+
+    return this.indictmentCountService.updateOffense(
+      indictmentCountId,
+      offenseId,
+      updatedOffense,
+    )
+  }
+
+  @UseGuards(CaseExistsGuard, CaseWriteGuard, OffenseExistsGuard) 
+  @RolesRules(prosecutorRule, prosecutorRepresentativeRule)
+  @Delete(':indictmentCountId/offense/:offenseId')
+  @ApiOkResponse({ description: 'Deletes an offense',})
+  async deleteOffense(
+    @Param('caseId') caseId: string,
+    @Param('indictmentCountId') indictmentCountId: string,
+    @Param('offenseId') offenseId: string,
+  ): Promise<DeleteIndictmentCountResponse> {
+    this.logger.debug(
+      `Deleting an offense ${offenseId} for indictment count ${indictmentCountId} of case ${caseId}`,
+    )
+
+    const deleted = await this.indictmentCountService.deleteOffense(
+      indictmentCountId,
+      offenseId
     )
 
     return { deleted }
