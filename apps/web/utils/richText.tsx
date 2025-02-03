@@ -86,6 +86,7 @@ import AdministrationOfOccupationalSafetyAndHealthCourses from '../components/co
 import { BenefitsOfDigitalProcessesCalculator } from '../components/connected/BenefitsOfDigitalProcessesCalculator/BenefitsOfDigitalProcessesCalculator'
 import { GrindavikResidentialPropertyPurchaseCalculator } from '../components/connected/GrindavikResidentialPropertyPurchaseCalculator'
 import HousingBenefitCalculator from '../components/connected/HousingBenefitCalculator/HousingBenefitCalculator/HousingBenefitCalculator'
+import { BurningPermitList } from '../components/connected/syslumenn/CardLists/BurningPermitList/BurningPermitList'
 import JourneymanList from '../components/connected/syslumenn/TableLists/JourneymanList/JourneymanList'
 import ProfessionRights from '../components/connected/syslumenn/TableLists/ProfessionRights/ProfessionRights'
 import { UmsCostOfLivingCalculator } from '../components/connected/UmbodsmadurSkuldara'
@@ -201,6 +202,9 @@ export const webRenderConnectedComponent = (
       break
     case 'WHODAS/Calculator':
       connectedComponent = <WHODASCalculator slice={slice} />
+      break
+    case 'Brennuleyfi/BurningPermitList':
+      connectedComponent = <BurningPermitList slice={slice} />
       break
     default:
       connectedComponent = renderConnectedComponent(slice)
