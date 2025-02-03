@@ -58,6 +58,7 @@ jobs:
         if: ${{ steps.check-unicorn.outputs.IS_UNICORN == 'true' }}
         id: get_latest_release
         run: |
+          git branch -r
           node scripts/ci/get-last-release.mjs $(git branch -r)
 
       - run: "echo 'latest release: ${{ steps.get_latest_release.outputs.data }}'"
