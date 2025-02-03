@@ -6,42 +6,131 @@
     "version": "1.0"
   },
   "paths": {
-    "/v1/applications": {
+    "/v1/applications/{islandIsApplicationId}": {
       "get": {
         "tags": ["Applications"],
         "summary": "[GET] Fetch an application.",
+        "parameters": [
+          {
+            "name": "islandIsApplicationId",
+            "in": "path",
+            "description": "(required) The ApplicationId from Island.is.",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid" }
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK",
             "content": {
               "text/plain": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ApplicationReturnDto"
-                  }
+                  "$ref": "#/components/schemas/ApplicationReturnDto"
                 }
               },
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ApplicationReturnDto"
-                  }
+                  "$ref": "#/components/schemas/ApplicationReturnDto"
                 }
               },
               "text/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ApplicationReturnDto"
-                  }
+                  "$ref": "#/components/schemas/ApplicationReturnDto"
                 }
               }
             }
           }
         }
       },
+      "put": {
+        "tags": ["Applications"],
+        "summary": "[GET] Overwrites an existing application",
+        "parameters": [
+          {
+            "name": "islandIsApplicationId",
+            "in": "path",
+            "description": "(required) The ApplicationId from Island.is.",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid" }
+          }
+        ],
+        "requestBody": {
+          "description": "(required) Application  MMS.Core.Domain.Dtos.Application.ApplicationUpdateDto.",
+          "content": {
+            "application/json-patch+json": {
+              "schema": { "$ref": "#/components/schemas/ApplicationBaseDto" }
+            },
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/ApplicationBaseDto" }
+            },
+            "text/json": {
+              "schema": { "$ref": "#/components/schemas/ApplicationBaseDto" }
+            },
+            "application/*+json": {
+              "schema": { "$ref": "#/components/schemas/ApplicationBaseDto" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": { "type": "string", "format": "uuid" }
+              },
+              "application/json": {
+                "schema": { "type": "string", "format": "uuid" }
+              },
+              "text/json": { "schema": { "type": "string", "format": "uuid" } }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Applications"],
+        "summary": "[DELETE] Deletes an application.",
+        "parameters": [
+          {
+            "name": "islandIsApplicationId",
+            "in": "path",
+            "description": "(required) The ApplicationId from Island.is.",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid" }
+          }
+        ],
+        "responses": { "200": { "description": "OK" } }
+      }
+    },
+    "/v1/applications/{islandIsApplicationId}/id": {
+      "get": {
+        "tags": ["Applications"],
+        "summary": "[GET] Fetch an applicationId.",
+        "parameters": [
+          {
+            "name": "islandIsApplicationId",
+            "in": "path",
+            "description": "(required) The ApplicationId from Island.is.",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": { "type": "string", "format": "uuid" }
+              },
+              "application/json": {
+                "schema": { "type": "string", "format": "uuid" }
+              },
+              "text/json": { "schema": { "type": "string", "format": "uuid" } }
+            }
+          }
+        }
+      }
+    },
+    "/v1/applications": {
       "post": {
         "tags": ["Applications"],
         "summary": "[POST] Creates a new application.",
@@ -84,98 +173,6 @@
             }
           }
         }
-      }
-    },
-    "/v1/applications/{applicationId}": {
-      "put": {
-        "tags": ["Applications"],
-        "summary": "[GET] Overwrites an existing application",
-        "parameters": [
-          {
-            "name": "applicationId",
-            "in": "path",
-            "description": "(required) ApplicationId.",
-            "required": true,
-            "schema": { "type": "string", "format": "uuid" }
-          }
-        ],
-        "requestBody": {
-          "description": "(required) Application  MMS.Core.Domain.Dtos.Application.ApplicationUpdateDto.",
-          "content": {
-            "application/json-patch+json": {
-              "schema": { "$ref": "#/components/schemas/ApplicationBaseDto" }
-            },
-            "application/json": {
-              "schema": { "$ref": "#/components/schemas/ApplicationBaseDto" }
-            },
-            "text/json": {
-              "schema": { "$ref": "#/components/schemas/ApplicationBaseDto" }
-            },
-            "application/*+json": {
-              "schema": { "$ref": "#/components/schemas/ApplicationBaseDto" }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": { "type": "string", "format": "uuid" }
-              },
-              "application/json": {
-                "schema": { "type": "string", "format": "uuid" }
-              },
-              "text/json": { "schema": { "type": "string", "format": "uuid" } }
-            }
-          }
-        }
-      },
-      "delete": {
-        "tags": ["Applications"],
-        "summary": "[DELETE] Deletes an application.",
-        "parameters": [
-          {
-            "name": "applicationId",
-            "in": "path",
-            "description": "(required) ApplicationId.",
-            "required": true,
-            "schema": { "type": "string", "format": "uuid" }
-          }
-        ],
-        "responses": { "200": { "description": "OK" } }
-      }
-    },
-    "/v1/applications/{applicationId}/attachments": {
-      "patch": {
-        "tags": ["Applications"],
-        "summary": "[PATCH] Adds attachments to an existing application.",
-        "parameters": [
-          {
-            "name": "applicationId",
-            "in": "path",
-            "description": "The ID of the application to add attachments to.",
-            "required": true,
-            "schema": { "type": "string", "format": "uuid" }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "multipart/form-data": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "files": {
-                    "type": "array",
-                    "items": { "type": "string", "format": "binary" }
-                  }
-                }
-              },
-              "encoding": { "files": { "style": "form" } }
-            }
-          }
-        },
-        "responses": { "200": { "description": "OK" } }
       }
     },
     "/v1/schools/{schoolId}": {
@@ -320,6 +317,34 @@
         }
       }
     },
+    "/v1/schools/admissions/open": {
+      "get": {
+        "tags": ["Schools"],
+        "summary": "[GET] Check if any programme is open for admission for any school.",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/AnyOpenForAdmissionDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AnyOpenForAdmissionDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AnyOpenForAdmissionDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/v1/students/{nationalId}/elementarygrades": {
       "get": {
         "tags": ["Students"],
@@ -417,9 +442,23 @@
   },
   "components": {
     "schemas": {
+      "AnyOpenForAdmissionDto": {
+        "type": "object",
+        "properties": {
+          "anyOpenForAdmissionGeneral": { "type": "boolean" },
+          "anyOpenForAdmissionFreshman": { "type": "boolean" }
+        },
+        "additionalProperties": false
+      },
       "ApplicationBaseDto": {
         "type": "object",
         "properties": {
+          "islandIsApplicationId": {
+            "type": "string",
+            "description": "Reference Id to the Island.is application",
+            "format": "uuid",
+            "nullable": true
+          },
           "applicantNationalId": {
             "type": "string",
             "description": "The national ID  of the applicant",
@@ -524,8 +563,7 @@
           },
           "requestDormitory": {
             "type": "boolean",
-            "description": "Is the student requesting dormitory.",
-            "nullable": true
+            "description": "Is the student requesting dormitory."
           }
         },
         "additionalProperties": false
@@ -538,7 +576,7 @@
             "description": "Priority of the school being applied to \r\n1 highest priority, 2 second highest priority, etc.",
             "format": "int32"
           },
-          "school": { "$ref": "#/components/schemas/SchoolDto" },
+          "school": { "$ref": "#/components/schemas/SchoolSimpleDto" },
           "programmeChoice": {
             "type": "array",
             "items": { "$ref": "#/components/schemas/ProgrammeChoiceDto" },
@@ -605,6 +643,12 @@
             "type": "array",
             "items": { "$ref": "#/components/schemas/AttachmentReturnDto" },
             "description": "List of attachments",
+            "nullable": true
+          },
+          "islandIsApplicationId": {
+            "type": "string",
+            "description": "Reference Id to the Island.is application",
+            "format": "uuid",
             "nullable": true
           },
           "applicantNationalId": {
@@ -834,6 +878,7 @@
             "format": "date-time",
             "nullable": true
           },
+          "isSpecialNeedsProgramme": { "type": "boolean" },
           "schoolId": { "type": "string", "format": "uuid", "nullable": true }
         },
         "additionalProperties": false
@@ -844,8 +889,7 @@
           "schoolId": {
             "type": "string",
             "description": "What school is being applied to",
-            "format": "uuid",
-            "nullable": true
+            "format": "uuid"
           },
           "name": {
             "type": "string",
@@ -896,6 +940,14 @@
             "description": "Website address for school",
             "nullable": true
           },
+          "anyOpenForAdmissionGeneral": {
+            "type": "boolean",
+            "description": "If any programmes are open for admission"
+          },
+          "anyOpenForAdmissionFreshman": {
+            "type": "boolean",
+            "description": "If any programmes are open for admission for freshman"
+          },
           "thirdLanguages": {
             "type": "array",
             "items": { "$ref": "#/components/schemas/LanguageDto" },
@@ -906,6 +958,27 @@
             "type": "array",
             "items": { "$ref": "#/components/schemas/LanguageDto" },
             "description": "Nordic languageges tought in school",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "SchoolSimpleDto": {
+        "type": "object",
+        "properties": {
+          "schoolId": {
+            "type": "string",
+            "description": "What school is being applied to",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string",
+            "description": "Name of school",
+            "nullable": true
+          },
+          "abbreviation": {
+            "type": "string",
+            "description": "Abbr for school",
             "nullable": true
           }
         },

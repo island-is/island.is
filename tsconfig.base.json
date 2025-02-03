@@ -1285,33 +1285,16 @@
       "@island.is/skilavottord/consts": [
         "libs/skilavottord/consts/src/index.ts"
       ],
-      "@island.is/skilavottord/types": [
-        "libs/skilavottord/types/src/index.ts"
-      ],
-      "@island.is/testing/containers": [
-        "libs/testing/containers/src/index.ts"
-      ],
-      "@island.is/testing/e2e": [
-        "libs/testing/e2e/src/index.ts"
-      ],
-      "@island.is/testing/fixtures": [
-        "libs/testing/fixtures/src/index.ts"
-      ],
-      "@island.is/testing/nest": [
-        "libs/testing/nest/src/index.ts"
-      ],
-      "@island.is/university-gateway": [
-        "libs/university-gateway/src/index.ts"
-      ],
-      "@island.is/user-monitoring": [
-        "libs/user-monitoring/src/index.ts"
-      ],
-      "@island.is/web/*": [
-        "apps/web/*"
-      ],
-      "@island.is/web/component*": [
-        "apps/web/component*/real.ts"
-      ],
+      "@island.is/skilavottord/types": ["libs/skilavottord/types/src/index.ts"],
+      "@island.is/testing/containers": ["libs/testing/containers/src/index.ts"],
+      "@island.is/testing/e2e": ["libs/testing/e2e/src/index.ts"],
+      "@island.is/testing/fixtures": ["libs/testing/fixtures/src/index.ts"],
+      "@island.is/testing/nest": ["libs/testing/nest/src/index.ts"],
+      "@island.is/unicorn-app/*": ["apps/unicorn-app/*"],
+      "@island.is/university-gateway": ["libs/university-gateway/src/index.ts"],
+      "@island.is/user-monitoring": ["libs/user-monitoring/src/index.ts"],
+      "@island.is/web/*": ["apps/web/*"],
+      "@island.is/web/component*": ["apps/web/component*/real.ts"],
       "api/domains/financial-statement-cemetery": [
         "libs/api/domains/financial-statement-cemetery/src/index.ts"
       ],

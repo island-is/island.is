@@ -62,6 +62,7 @@ import {
 } from '../../../apps/services/sessions/infra/sessions'
 
 import { serviceSetup as authAdminApiSetup } from '../../../apps/services/auth/admin-api/infra/auth-admin-api'
+import { serviceSetup as unicornAppSetup } from '../../../apps/unicorn-app/infra/infra'
 
 import { EnvironmentServices } from '.././dsl/types/charts'
 import { ServiceBuilder } from '../dsl/dsl'
@@ -154,6 +155,8 @@ const userNotificationWorkerService = userNotificationWorkerSetup({
 const userNotificationCleanupWorkerService =
   userNotificationCleanUpWorkerSetup()
 
+const unicornApp = unicornAppSetup()
+
 const githubActionsCache = githubActionsCacheSetup()
 
 const externalContractsTests = externalContractsTestsSetup()
@@ -195,6 +198,7 @@ export const Services: EnvironmentServices = {
     contentfulEntryTagger,
     bffAdminPortalService,
     bffServicePortalService,
+    unicornApp,
   ],
   staging: [
     appSystemApi,
@@ -228,8 +232,9 @@ export const Services: EnvironmentServices = {
     sessionsCleanupWorker,
     universityGatewayService,
     universityGatewayWorker,
-    bffAdminPortalService,
     bffServicePortalService,
+    bffAdminPortalService,
+    unicornApp,
   ],
   dev: [
     appSystemApi,
@@ -269,6 +274,7 @@ export const Services: EnvironmentServices = {
     universityGatewayWorker,
     bffAdminPortalService,
     bffServicePortalService,
+    unicornApp,
   ],
 }
 

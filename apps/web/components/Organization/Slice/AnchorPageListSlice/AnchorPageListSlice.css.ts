@@ -1,5 +1,6 @@
-import { themeUtils } from '@island.is/island-ui/theme'
 import { style } from '@vanilla-extract/css'
+
+import { themeUtils } from '@island.is/island-ui/theme'
 
 export const profileCardContainer = style({
   display: 'grid',
@@ -22,6 +23,9 @@ export const anchorPageCardContainer = style({
   ...themeUtils.responsiveStyle({
     lg: {
       gridTemplateColumns: '1fr 1fr',
+    },
+    xl: {
+      gridTemplateColumns: '1fr 1fr 1fr',
     },
   }),
 })

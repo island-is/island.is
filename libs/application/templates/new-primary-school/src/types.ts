@@ -1,6 +1,6 @@
 import { MembershipOrganizationType, MembershipRole } from './lib/constants'
 
-export interface RelativesRow {
+export interface ContactsRow {
   fullName: string
   phoneNumber: string
   nationalId: string
@@ -36,6 +36,7 @@ export type ChildInformation = {
     streetAddress: string
     postalCode: string
   }
+  usePronounAndPreferredName?: string[]
 }
 
 export type Person = {
@@ -49,11 +50,6 @@ export type Person = {
     postalCode: string
     city: string
   }
-}
-
-export type Parents = {
-  parent1: Person
-  parent2: Person
 }
 
 export type SelectOption = {

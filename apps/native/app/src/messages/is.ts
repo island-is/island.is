@@ -18,6 +18,7 @@ export const is = {
     'Uppfærð réttindi vantar, vinsamlegast skráðu þig inn aftur.',
   'login.expiredMissingUserMessage':
     'Tókst ekki að sækja notendaupplýsingar, vinsamlegast skráðu þig inn aftur.',
+  'login.expiredMessage': 'Vinsamlegast skráðu þig inn aftur.',
 
   // app lock
   'applock.title': 'Sláðu inn 4 tölustafa PIN',
@@ -406,6 +407,8 @@ export const is = {
   'walletPass.barcodeErrorNotConnected':
     'Ekki er hægt að skanna skírteini nema að tækið sé nettengt.',
   'walletPass.barcodeErrorFailedToFetch': 'Ekki tókst að sækja barkóða',
+  'walletPass.barcodeErrorBadSession':
+    'Of stutt síðan skírteini var sótt á öðru tæki',
   'walletPass.validLicense': 'Í gildi',
   'walletPass.expiredLicense': 'Útrunnið',
   'walletPass.passportNumber': 'Númer vegabréfs: {licenseNumber}',
@@ -640,7 +643,7 @@ export const is = {
   'health.overview.insuredFrom': 'Sjúkratrygging frá',
   'health.overview.status': 'Staða',
   'health.overview.notInsured': 'Þú ert ekki með sjúkratryggingu',
-  'health.overview.coPayments': 'Greiðsluþáttaka',
+  'health.overview.coPayments': 'Greiðsluþátttaka',
   'health.overview.maxMonthlyPayment': 'Hámarksgreiðslan þín á mánuði',
   'health.overview.paymentLimit': 'Greiðslumark',
   'health.overview.paymentCredit': 'Inneign',

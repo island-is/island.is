@@ -6,5 +6,5 @@ export class ParentalLeavePregnancyStatus {
   hasActivePregnancy!: boolean
 
   @Field(() => String)
-  expectedDateOfBirth!: String
+  expectedDateOfBirth!: string
 }

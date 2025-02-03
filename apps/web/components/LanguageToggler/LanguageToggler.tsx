@@ -1,16 +1,15 @@
-import { useContext, ReactElement, useState, FC } from 'react'
+import { FC, ReactElement, useContext, useState } from 'react'
 import { useRouter } from 'next/router'
 import { useApolloClient } from '@apollo/client/react'
+
 import {
   Button,
-  ButtonTypes,
-  Hidden,
-  DialogPrompt,
   ButtonProps,
+  ButtonTypes,
+  DialogPrompt,
+  Hidden,
 } from '@island.is/island-ui/core'
-import { useI18n } from '@island.is/web/i18n'
 import { Locale } from '@island.is/shared/types'
-import { GET_CONTENT_SLUG } from '@island.is/web/screens/queries/Article'
 import { GlobalContext } from '@island.is/web/context'
 import {
   GetContentSlugQuery,
@@ -18,8 +17,10 @@ import {
   TextFieldLocales,
 } from '@island.is/web/graphql/schema'
 import { useNamespace } from '@island.is/web/hooks'
-import { useLinkResolver, LinkType } from '@island.is/web/hooks/useLinkResolver'
+import { LinkType, useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
+import { useI18n } from '@island.is/web/i18n'
 import { LayoutProps } from '@island.is/web/layouts/main'
+import { GET_CONTENT_SLUG } from '@island.is/web/screens/queries/Article'
 
 type LanguageTogglerProps = {
   dialogId?: string

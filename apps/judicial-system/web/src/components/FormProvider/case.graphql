@@ -219,6 +219,8 @@ query Case($input: CaseQueryInput!) {
       incidentDescription
       legalArguments
       indictmentCountSubtypes
+      recordedSpeed
+      speedLimit
     }
     requestDriversLicenseSuspension
     appealState
@@ -390,6 +392,7 @@ query Case($input: CaseQueryInput!) {
       caseFilesSharedWithSpokesperson
       isSpokespersonConfirmed
     }
+    mergeCaseNumber
     civilDemands
     hasCivilClaims
   }
