@@ -230,6 +230,7 @@ ARG GIT_REPOSITORY_URL
 
 COPY .yarnrc.yml ${APP_HOME}/package.json ./
 COPY .yarn/releases ./.yarn/releases
+RUN corepack enable
 
 RUN yarn install && \
   yarn playwright install ${PLAYWRIGHT_BROWSER} && \
