@@ -3,6 +3,7 @@ export default {
   preset: './jest.preset.js',
   rootDir: '../../../',
   roots: [__dirname],
+  detectLeaks: false,
   coverageDirectory: '<rootDir>/coverage/apps/services/payments',
   globalSetup: `${__dirname}/test/globalSetup.ts`,
   globalTeardown: `${__dirname}/test/globalTeardown.ts`,

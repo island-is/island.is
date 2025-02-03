@@ -63,12 +63,15 @@ describe('CardPaymentController', () => {
     cacheManager = app.get<CacheManager>(CACHE_MANAGER)
   })
 
-  afterAll(() => {
-    app?.cleanUp()
+  afterAll(async () => {
+    await app?.cleanUp()
 
     process.env.PAYMENTS_GATEWAY_API_URL = previousPaymentGatewayApiUrl
-    process.env.PAYMENTS_TOKEN_SIGN = previousTokenSigningSecret
+    process.env.PAYMENTS_TOKEN_SIGNING_SECRET = previousTokenSigningSecret
     process.env.PAYMENTS_TOKEN_SIGNING_ALGORITHM = previousTokenSigningAlgorithm
+
+    jest.clearAllMocks()
+    jest.restoreAllMocks()
   })
 
   describe('verify', () => {
@@ -315,6 +318,7 @@ describe('CardPaymentController', () => {
       })
 
       cacheGetSpy.mockRestore()
+      cacheDelSpy.mockRestore()
       cacheSetSpy.mockRestore()
       fetchSpy.mockRestore()
     })
