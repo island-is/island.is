@@ -22,7 +22,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 10
+          fetch-depth: 100
 
       # - uses: actions/setup-node@v4
       #   with:
@@ -54,10 +54,10 @@ jobs:
         run: |
           echo "Unicorn = ${{ steps.unicorn_affected.outputs.IS_UNICORN }}"
 
-      - uses: actions/checkout@v4
-        if: ${{ steps.unicorn_affected.outputs.IS_UNICORN == 'true' }}
-        with:
-          fetch-depth: 0
+      # - uses: actions/checkout@v4
+      #   if: ${{ steps.unicorn_affected.outputs.IS_UNICORN == 'true' }}
+      #   with:
+      #     fetch-depth: 0
 
       - name: Find Latest Release Branch
         if: ${{ steps.unicorn_affected.outputs.IS_UNICORN == 'true' }}
