@@ -55,7 +55,7 @@ jobs:
           echo "Unicorn = ${{ steps.unicorn_affected.outputs.IS_UNICORN }}"
 
       - name: Find Latest Release Branch
-        if: ${{ steps.unicorn-affected.outputs.IS_UNICORN == 'true' }}
+        if: ${{ steps.unicorn_affected.outputs.IS_UNICORN == 'true' }}
         id: get_latest_release
         run: |
           node scripts/ci/get-last-release.mjs $(git branch -r)
