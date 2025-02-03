@@ -49,6 +49,7 @@ jobs:
           github-token: ${{ github.token }}
           enable-cache: node_modules,${{ github.event.localrun && 'generated-files' || '' }}
       - name: Derive appropriate SHAs
+        if: ${{ !github.event.localrun }}
         uses: nrwl/nx-set-shas@v4
       - name: Setup yarn
         run: |
