@@ -9,6 +9,8 @@ export default function Index() {
                 Welcome unicorn 🦄 Q-Test Hallo4
                 <br></br>
                 This is a new line
+                <br></br>
+                This is a new line
               </span>
             </h1>
           </div>
