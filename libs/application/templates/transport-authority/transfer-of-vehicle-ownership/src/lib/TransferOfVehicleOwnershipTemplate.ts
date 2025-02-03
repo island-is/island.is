@@ -37,6 +37,7 @@ import {
 import { getChargeItems, getExtraData, canReviewerApprove } from '../utils'
 import { ApiScope } from '@island.is/auth/scopes'
 import { buildPaymentState } from '@island.is/application/utils'
+import { CodeOwners } from '@island.is/shared/constants'
 
 const pruneInDaysAtMidnight = (application: Application, days: number) => {
   const date = new Date(application.created)
@@ -85,6 +86,7 @@ const template: ApplicationTemplate<
 > = {
   type: ApplicationTypes.TRANSFER_OF_VEHICLE_OWNERSHIP,
   name: determineMessageFromApplicationAnswers,
+  codeOwner: CodeOwners.Origo,
   institution: applicationMessage.institutionName,
   translationNamespaces: [
     ApplicationConfigurations.TransferOfVehicleOwnership.translation,
