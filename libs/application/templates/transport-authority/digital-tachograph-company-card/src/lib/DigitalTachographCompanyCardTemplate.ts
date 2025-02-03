@@ -28,6 +28,7 @@ import {
 } from '../dataProviders'
 import { buildPaymentState } from '@island.is/application/utils'
 import { getChargeItems } from '../utils'
+import { CodeOwners } from '@island.is/shared/constants'
 
 const template: ApplicationTemplate<
   ApplicationContext,
@@ -36,6 +37,7 @@ const template: ApplicationTemplate<
 > = {
   type: ApplicationTypes.DIGITAL_TACHOGRAPH_COMPANY_CARD,
   name: application.name,
+  codeOwner: CodeOwners.Origo,
   institution: application.institutionName,
   translationNamespaces: [
     ApplicationConfigurations.DigitalTachographCompanyCard.translation,
