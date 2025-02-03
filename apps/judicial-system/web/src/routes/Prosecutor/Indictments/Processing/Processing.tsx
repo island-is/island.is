@@ -10,16 +10,10 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
-import {
-  AdvocateType,
-  Feature,
-  isTrafficViolationCase,
-} from '@island.is/judicial-system/types'
 import { core, titles } from '@island.is/judicial-system-web/messages'
 import {
   BlueBox,
   CommentsInput,
-  FeatureContext,
   FormContentContainer,
   FormContext,
   FormFooter,
@@ -55,6 +49,11 @@ import { ProsecutorSection, SelectCourt } from '../../components'
 import { strings } from './processing.strings'
 import * as styles from './Processing.css'
 
+interface UpdateCivilClaimant
+  extends Omit<UpdateCivilClaimantInput, 'caseId'> {}
+
+interface UpdateDefendant extends Omit<UpdateDefendantInput, 'caseId'> {}
+
 const Processing: FC = () => {
   const { user } = useContext(UserContext)
   const {
@@ -65,22 +64,18 @@ const Processing: FC = () => {
     isCaseUpToDate,
     refreshCase,
   } = useContext(FormContext)
-  const { features } = useContext(FeatureContext)
   const { updateCase, transitionCase, setAndSendCaseToServer } = useCase()
   const { formatMessage } = useIntl()
-  const { updateDefendant, updateDefendantState } = useDefendants()
+  const { setAndSendDefendantToServer } = useDefendants()
   const {
     updateCivilClaimant,
     updateCivilClaimantState,
     createCivilClaimant,
     deleteCivilClaimant,
+    setAndSendCivilClaimantToServer,
   } = useCivilClaimants()
   const router = useRouter()
 
-  // TODO: currently for e2e tests, this is failing locally due to this feature flag
-  const isTrafficViolationCaseCheck =
-    features.includes(Feature.MULTIPLE_INDICTMENT_SUBTYPES) ||
-    isTrafficViolationCase(workingCase)
   const [civilClaimantNationalIdUpdate, setCivilClaimantNationalIdUpdate] =
     useState<{ nationalId: string | null; civilClaimantId: string }>()
   const [hasCivilClaimantChoice, setHasCivilClaimantChoice] =
@@ -125,37 +120,28 @@ const Processing: FC = () => {
 
   const stepIsValid = isProcessingStepValidIndictments(workingCase)
 
-  const handleUpdateDefendant = useCallback(
-    (updatedDefendant: UpdateDefendantInput) => {
-      updateDefendantState(updatedDefendant, setWorkingCase)
-      updateDefendant(updatedDefendant)
-    },
-    [updateDefendantState, setWorkingCase, updateDefendant],
-  )
+  const handleSetAndSendDefendantToServer = (update: UpdateDefendant) => {
+    setAndSendDefendantToServer(
+      { caseId: workingCase.id, ...update },
+      setWorkingCase,
+    )
+  }
 
-  const handleUpdateCivilClaimant = useCallback(
-    (updatedCivilClaimant: UpdateCivilClaimantInput) => {
-      updateCivilClaimantState(updatedCivilClaimant, setWorkingCase)
-      updateCivilClaimant(updatedCivilClaimant)
-    },
-    [updateCivilClaimant, setWorkingCase, updateCivilClaimantState],
-  )
-
-  const handleCreateCivilClaimantClick = async () => {
+  const handleCreateCivilClaimantClick = () => {
     addCivilClaimant()
 
     window.scrollTo(0, document.body.scrollHeight)
   }
 
-  const addCivilClaimant = useCallback(async () => {
+  const addCivilClaimant = async () => {
     const civilClaimantId = await createCivilClaimant({
       caseId: workingCase.id,
     })
 
-    setWorkingCase((prevWorkingCase) => ({
-      ...prevWorkingCase,
-      civilClaimants: prevWorkingCase.civilClaimants && [
-        ...prevWorkingCase.civilClaimants,
+    setWorkingCase((prev) => ({
+      ...prev,
+      civilClaimants: [
+        ...(prev.civilClaimants || []),
         {
           id: civilClaimantId,
           name: '',
@@ -163,9 +149,57 @@ const Processing: FC = () => {
         } as CivilClaimant,
       ],
     }))
-  }, [createCivilClaimant, setWorkingCase, workingCase.id])
+  }
 
-  const handleHasCivilClaimsChange = async (hasCivilClaims: boolean) => {
+  const removeCivilClaimantById = async (civilClaimantId: string) => {
+    const deleteSuccess = await deleteCivilClaimant(
+      workingCase.id,
+      civilClaimantId,
+    )
+
+    if (!deleteSuccess) {
+      return
+    }
+
+    setWorkingCase((prev) => ({
+      ...prev,
+      civilClaimants: prev.civilClaimants?.filter(
+        (civilClaimant) => civilClaimant.id !== civilClaimantId,
+      ),
+    }))
+  }
+
+  const removeAllCivilClaimants = () => {
+    if (!workingCase.civilClaimants) {
+      return
+    }
+
+    for (const civilClaimant of workingCase.civilClaimants) {
+      removeCivilClaimantById(civilClaimant.id)
+    }
+  }
+
+  const handleUpdateCivilClaimantState = (update: UpdateCivilClaimant) => {
+    updateCivilClaimantState(
+      { caseId: workingCase.id, ...update },
+      setWorkingCase,
+    )
+  }
+
+  const handleUpdateCivilClaimant = (update: UpdateCivilClaimant) => {
+    updateCivilClaimant({ caseId: workingCase.id, ...update })
+  }
+
+  const handleSetAndSendCivilClaimantToServer = (
+    update: UpdateCivilClaimant,
+  ) => {
+    setAndSendCivilClaimantToServer(
+      { caseId: workingCase.id, ...update },
+      setWorkingCase,
+    )
+  }
+
+  const handleHasCivilClaimsChange = (hasCivilClaims: boolean) => {
     setHasCivilClaimantChoice(hasCivilClaims)
 
     setAndSendCaseToServer(
@@ -181,7 +215,7 @@ const Processing: FC = () => {
     }
   }
 
-  const handleCivilClaimantNationalIdBlur = async (
+  const handleCivilClaimantNationalIdBlur = (
     nationalId: string,
     noNationalId?: boolean | null,
     civilClaimantId?: string | null,
@@ -191,8 +225,7 @@ const Processing: FC = () => {
     }
 
     if (noNationalId) {
-      handleUpdateCivilClaimant({
-        caseId: workingCase.id,
+      handleSetAndSendCivilClaimantToServer({
         civilClaimantId,
         nationalId: nationalId || null,
       })
@@ -216,54 +249,6 @@ const Processing: FC = () => {
     updateCivilClaimant({ name, civilClaimantId, caseId: workingCase.id })
   }
 
-  const removeAllCivilClaimants = useCallback(async () => {
-    const promises: Promise<boolean>[] = []
-
-    if (!workingCase.civilClaimants) {
-      return
-    }
-
-    for (const civilClaimant of workingCase.civilClaimants) {
-      if (!civilClaimant.id) {
-        return
-      }
-
-      promises.push(deleteCivilClaimant(workingCase.id, civilClaimant.id))
-    }
-
-    const allCivilClaimantsDeleted = await Promise.all(promises)
-
-    if (allCivilClaimantsDeleted.every((deleted) => deleted)) {
-      setWorkingCase((prev) => ({ ...prev, civilClaimants: [] }))
-    }
-  }, [
-    deleteCivilClaimant,
-    setWorkingCase,
-    workingCase.civilClaimants,
-    workingCase.id,
-  ])
-
-  const removeCivilClaimantById = useCallback(
-    async (caseId: string, civilClaimantId?: string | null) => {
-      if (!civilClaimantId) {
-        return
-      }
-
-      const deleteSuccess = await deleteCivilClaimant(caseId, civilClaimantId)
-
-      if (!deleteSuccess) {
-        return
-      }
-
-      const newCivilClaimants = workingCase.civilClaimants?.filter(
-        (civilClaimant) => civilClaimant.id !== civilClaimantId,
-      )
-
-      setWorkingCase((prev) => ({ ...prev, civilClaimants: newCivilClaimants }))
-    },
-    [deleteCivilClaimant, setWorkingCase, workingCase.civilClaimants],
-  )
-
   useEffect(() => {
     if (!civilClaimantNationalIdUpdate) {
       return
@@ -274,14 +259,14 @@ const Processing: FC = () => {
 
     setNationalIdNotFound(items.length === 0)
 
-    const update = {
-      caseId: workingCase.id,
+    const update: UpdateCivilClaimant = {
       civilClaimantId: civilClaimantNationalIdUpdate.civilClaimantId || '',
       nationalId: civilClaimantNationalIdUpdate.nationalId,
       ...(person?.name ? { name: person.name } : {}),
     }
 
-    handleUpdateCivilClaimant(update)
+    handleSetAndSendCivilClaimantToServer(update)
+
     // We want this hook to run exclusively when personData changes.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [personData])
@@ -326,9 +311,8 @@ const Processing: FC = () => {
                       name={`defendant-${defendant.id}-plea-decision`}
                       checked={defendant.defendantPlea === DefendantPlea.GUILTY}
                       onChange={() => {
-                        handleUpdateDefendant({
+                        handleSetAndSendDefendantToServer({
                           defendantId: defendant.id,
-                          caseId: workingCase.id,
                           defendantPlea: DefendantPlea.GUILTY,
                         })
                       }}
@@ -343,9 +327,8 @@ const Processing: FC = () => {
                         defendant.defendantPlea === DefendantPlea.NOT_GUILTY
                       }
                       onChange={() => {
-                        handleUpdateDefendant({
+                        handleSetAndSendDefendantToServer({
                           defendantId: defendant.id,
-                          caseId: workingCase.id,
                           defendantPlea: DefendantPlea.NOT_GUILTY,
                         })
                       }}
@@ -360,9 +343,8 @@ const Processing: FC = () => {
                         defendant.defendantPlea === DefendantPlea.NO_PLEA
                       }
                       onChange={() => {
-                        handleUpdateDefendant({
+                        handleSetAndSendDefendantToServer({
                           defendantId: defendant.id,
-                          caseId: workingCase.id,
                           defendantPlea: DefendantPlea.NO_PLEA,
                         })
                       }}
@@ -444,10 +426,7 @@ const Processing: FC = () => {
                         variant="text"
                         colorScheme="destructive"
                         onClick={() => {
-                          removeCivilClaimantById(
-                            workingCase.id,
-                            civilClaimant.id,
-                          )
+                          removeCivilClaimantById(civilClaimant.id)
                         }}
                       >
                         {formatMessage(strings.remove)}
@@ -460,8 +439,7 @@ const Processing: FC = () => {
                       label={formatMessage(strings.civilClaimantNoNationalId)}
                       checked={Boolean(civilClaimant.noNationalId)}
                       onChange={() => {
-                        handleUpdateCivilClaimant({
-                          caseId: workingCase.id,
+                        handleSetAndSendCivilClaimantToServer({
                           civilClaimantId: civilClaimant.id,
                           nationalId: null,
                           noNationalId: !civilClaimant.noNationalId,
@@ -488,14 +466,10 @@ const Processing: FC = () => {
                           )
                         }
 
-                        updateCivilClaimantState(
-                          {
-                            caseId: workingCase.id,
-                            civilClaimantId: civilClaimant.id ?? '',
-                            nationalId: val,
-                          },
-                          setWorkingCase,
-                        )
+                        handleUpdateCivilClaimantState({
+                          civilClaimantId: civilClaimant.id ?? '',
+                          nationalId: val,
+                        })
                       }}
                       onBlur={(val) =>
                         handleCivilClaimantNationalIdBlur(
@@ -517,14 +491,10 @@ const Processing: FC = () => {
                   <InputName
                     value={civilClaimant.name ?? undefined}
                     onChange={(val) =>
-                      updateCivilClaimantState(
-                        {
-                          caseId: workingCase.id,
-                          civilClaimantId: civilClaimant.id ?? '',
-                          name: val,
-                        },
-                        setWorkingCase,
-                      )
+                      handleUpdateCivilClaimantState({
+                        civilClaimantId: civilClaimant.id ?? '',
+                        name: val,
+                      })
                     }
                     onBlur={(val) =>
                       handleCivilClaimantNameBlur(val, civilClaimant.id)
@@ -540,8 +510,7 @@ const Processing: FC = () => {
                           : 'default'
                       }
                       onClick={() => {
-                        handleUpdateCivilClaimant({
-                          caseId: workingCase.id,
+                        handleSetAndSendCivilClaimantToServer({
                           civilClaimantId: civilClaimant.id,
                           hasSpokesperson: !civilClaimant.hasSpokesperson,
                           spokespersonEmail: null,
@@ -571,8 +540,7 @@ const Processing: FC = () => {
                             large
                             backgroundColor="white"
                             onChange={() =>
-                              handleUpdateCivilClaimant({
-                                caseId: workingCase.id,
+                              handleSetAndSendCivilClaimantToServer({
                                 civilClaimantId: civilClaimant.id,
                                 spokespersonIsLawyer: true,
                               })
@@ -590,8 +558,7 @@ const Processing: FC = () => {
                             large
                             backgroundColor="white"
                             onChange={() =>
-                              handleUpdateCivilClaimant({
-                                caseId: workingCase.id,
+                              handleSetAndSendCivilClaimantToServer({
                                 civilClaimantId: civilClaimant.id,
                                 spokespersonIsLawyer: false,
                               })
@@ -604,17 +571,64 @@ const Processing: FC = () => {
                       </Box>
                       <Box marginBottom={2}>
                         <InputAdvocate
-                          clientId={civilClaimant.id}
                           advocateType={
                             civilClaimant.spokespersonIsLawyer
-                              ? AdvocateType.LAWYER
-                              : AdvocateType.LEGAL_RIGHTS_PROTECTOR
+                              ? 'lawyer'
+                              : 'legalRightsProtector'
+                          }
+                          name={civilClaimant.spokespersonName}
+                          email={civilClaimant.spokespersonEmail}
+                          phoneNumber={civilClaimant.spokespersonPhoneNumber}
+                          onAdvocateChange={(
+                            spokespersonName: string | null,
+                            spokespersonNationalId: string | null,
+                            spokespersonEmail: string | null,
+                            spokespersonPhoneNumber: string | null,
+                          ) => {
+                            handleSetAndSendCivilClaimantToServer({
+                              civilClaimantId: civilClaimant.id,
+                              spokespersonName,
+                              spokespersonNationalId,
+                              spokespersonEmail,
+                              spokespersonPhoneNumber,
+                              caseFilesSharedWithSpokesperson:
+                                spokespersonNationalId
+                                  ? civilClaimant.caseFilesSharedWithSpokesperson
+                                  : null,
+                            })
+                          }}
+                          onEmailChange={(spokespersonEmail: string | null) =>
+                            handleUpdateCivilClaimantState({
+                              civilClaimantId: civilClaimant.id,
+                              spokespersonEmail,
+                            })
+                          }
+                          onEmailSave={(spokespersonEmail: string | null) =>
+                            handleUpdateCivilClaimant({
+                              civilClaimantId: civilClaimant.id,
+                              spokespersonEmail,
+                            })
+                          }
+                          onPhoneNumberChange={(
+                            spokespersonPhoneNumber: string | null,
+                          ) =>
+                            handleUpdateCivilClaimantState({
+                              civilClaimantId: civilClaimant.id,
+                              spokespersonPhoneNumber,
+                            })
+                          }
+                          onPhoneNumberSave={(
+                            spokespersonPhoneNumber: string | null,
+                          ) =>
+                            handleUpdateCivilClaimant({
+                              civilClaimantId: civilClaimant.id,
+                              spokespersonPhoneNumber,
+                            })
                           }
                           disabled={
                             civilClaimant.spokespersonIsLawyer === null ||
                             civilClaimant.spokespersonIsLawyer === undefined
                           }
-                          isCivilClaim={true}
                         />
                       </Box>
                       <Checkbox
@@ -630,8 +644,7 @@ const Processing: FC = () => {
                           civilClaimant.caseFilesSharedWithSpokesperson,
                         )}
                         onChange={() => {
-                          handleUpdateCivilClaimant({
-                            caseId: workingCase.id,
+                          handleSetAndSendCivilClaimantToServer({
                             civilClaimantId: civilClaimant.id,
                             caseFilesSharedWithSpokesperson:
                               !civilClaimant.caseFilesSharedWithSpokesperson,
@@ -643,6 +656,10 @@ const Processing: FC = () => {
                         }
                         tooltip={formatMessage(
                           strings.civilClaimantShareFilesWithDefenderTooltip,
+                          {
+                            defenderIsLawyer:
+                              civilClaimant.spokespersonIsLawyer,
+                          },
                         )}
                         backgroundColor="white"
                         large
@@ -670,13 +687,7 @@ const Processing: FC = () => {
           nextButtonIcon="arrowForward"
           previousUrl={`${constants.INDICTMENTS_CASE_FILE_ROUTE}/${workingCase.id}`}
           nextIsDisabled={!stepIsValid}
-          onNextButtonClick={() =>
-            handleNavigationTo(
-              isTrafficViolationCaseCheck
-                ? constants.INDICTMENTS_TRAFFIC_VIOLATION_ROUTE
-                : constants.INDICTMENTS_CASE_FILES_ROUTE,
-            )
-          }
+          nextUrl={`${constants.INDICTMENTS_INDICTMENT_ROUTE}/${workingCase.id}`}
         />
       </FormContentContainer>
     </PageLayout>

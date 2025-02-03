@@ -39,7 +39,7 @@ export const summaryApplicantForm: Form = buildForm({
                 {
                   event: DefaultEvents.EDIT,
                   name: 'Uppfæra umsókn',
-                  type: 'signSubtle',
+                  type: 'signGhost',
                 },
               ],
             }),

@@ -5,14 +5,18 @@ import { FieldBaseProps } from '@island.is/application/types'
 import { RentalAgreement } from '../../lib/dataSchema'
 import {
   AnswerOptions,
+  RentalPaymentMethodOptions,
   Routes,
   SecurityDepositAmountOptions,
   SecurityDepositTypeOptions,
   TRUE,
 } from '../../lib/constants'
 import {
+  formatBankInfo,
   formatCurrency,
   formatDate,
+  formatNationalId,
+  getPaymentMethodOptions,
   getRentalAmountIndexTypes,
   getRentalAmountPaymentDateOptions,
   getSecurityAmountOptions,
@@ -91,6 +95,12 @@ export const RentalInfoSummary: FC<Props> = ({ ...props }) => {
       default:
         return '-'
     }
+  }
+
+  const paymentMethodType = (answer: string) => {
+    const options = getPaymentMethodOptions()
+    const matchingOption = options.find((option) => option.value === answer)
+    return matchingOption ? matchingOption.label : '-'
   }
 
   return (
@@ -251,29 +261,55 @@ export const RentalInfoSummary: FC<Props> = ({ ...props }) => {
           )}
         </SummaryCardRow>
       )}
+
+      {/* Payment method */}
       <SummaryCardRow
         editAction={goToScreen}
         route={rentalAmountRoute}
         isChangeButton={isChangeButton}
       >
-        <GridColumn span={['12/12', '4/12']}>
+        <GridColumn
+          span={
+            answers.rentalAmount.paymentMethodOptions ===
+            RentalPaymentMethodOptions.OTHER
+              ? ['12/12']
+              : ['12/12', '4/12']
+          }
+        >
           <KeyValue
-            label={'Greiðslufyrirkomulag'}
-            value={answers.rentalAmount.paymentMethodOptions || '-'}
+            label={summary.paymentMethodTypeLabel}
+            value={
+              answers.rentalAmount.paymentMethodOptions ===
+              RentalPaymentMethodOptions.OTHER
+                ? answers.rentalAmount.paymentMethodOtherTextField || '-'
+                : paymentMethodType(
+                    answers.rentalAmount.paymentMethodOptions as string,
+                  ) || '-'
+            }
           />
         </GridColumn>
-        <GridColumn span={['12/12', '4/12']}>
-          <KeyValue
-            label={'Kennitala'}
-            value={answers.rentalAmount.paymentMethodNationalId || '-'}
-          />
-        </GridColumn>
-        <GridColumn span={['12/12', '4/12']}>
-          <KeyValue
-            label={'Reikningsnúmer'}
-            value={answers.rentalAmount.paymentMethodBankAccountNumber || '-'}
-          />
-        </GridColumn>
+        {answers.rentalAmount.paymentMethodOptions ===
+          RentalPaymentMethodOptions.BANK_TRANSFER && (
+          <>
+            <GridColumn span={['12/12', '4/12']}>
+              <KeyValue
+                label={summary.paymentMethodNationalIdLabel}
+                value={formatNationalId(
+                  answers.rentalAmount.paymentMethodNationalId || '-',
+                )}
+              />
+            </GridColumn>
+
+            <GridColumn span={['12/12', '4/12']}>
+              <KeyValue
+                label={summary.paymentMethodAccountLabel}
+                value={formatBankInfo(
+                  answers.rentalAmount.paymentMethodBankAccountNumber || '-',
+                )}
+              />
+            </GridColumn>
+          </>
+        )}
       </SummaryCardRow>
     </SummaryCard>
   )

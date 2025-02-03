@@ -117,15 +117,20 @@ export const summary = defineMessages({
   },
 
   // Rent transaction details
-  paymentTransactionTypeLabel: {
-    id: 'ra.application:summary.paymentTransactionTypeLabel',
+  paymentMethodTypeLabel: {
+    id: 'ra.application:summary.paymentMethodTypeLabel',
     defaultMessage: 'Greiðslufyrirkomulag',
-    description: 'Payment transaction type label',
+    description: 'Payment method type label',
   },
-  paymentTransactionAccountLabel: {
-    id: 'ra.application:summary.paymentTransactionAccountLabel',
-    defaultMessage: 'Bankareikningur',
-    description: 'Payment transaction account label',
+  paymentMethodAccountLabel: {
+    id: 'ra.application:summary.paymentMethodAccountLabel',
+    defaultMessage: 'Reikningsnúmer',
+    description: 'Payment method account label',
+  },
+  paymentMethodNationalIdLabel: {
+    id: 'ra.application:summary.paymentMethodNationalIdLabel',
+    defaultMessage: 'Kennitala',
+    description: 'Payment method national id label',
   },
 
   // Other costs

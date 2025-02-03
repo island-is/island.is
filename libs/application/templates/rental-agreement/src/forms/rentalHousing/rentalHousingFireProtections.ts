@@ -3,7 +3,6 @@ import {
   buildMultiField,
   buildDescriptionField,
   buildTextField,
-  buildHiddenInput,
   buildHiddenInputWithWatchedValue,
 } from '@island.is/application/core'
 import { Routes } from '../../lib/constants'

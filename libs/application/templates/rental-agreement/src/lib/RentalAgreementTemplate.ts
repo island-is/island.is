@@ -130,7 +130,7 @@ const RentalAgreementTemplate: ApplicationTemplate<
                 {
                   event: DefaultEvents.EDIT,
                   name: 'Breyta umsókn',
-                  type: 'signSubtle',
+                  type: 'signGhost',
                 },
               ],
               write: 'all',

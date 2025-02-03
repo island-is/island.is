@@ -1,4 +1,5 @@
 export interface Student {
+  hasActiveApplication: boolean
   isFreshman: boolean
 }
 
@@ -13,6 +14,8 @@ export interface SecondarySchool {
   thirdLanguages: Language[]
   nordicLanguages: Language[]
   allowRequestDormitory: boolean
+  isOpenForAdmissionGeneral: boolean
+  isOpenForAdmissionFreshman: boolean
 }
 
 export interface Program {
@@ -20,6 +23,7 @@ export interface Program {
   nameIs: string
   nameEn: string
   registrationEndDate: Date
+  isSpecialNeedsProgram: boolean
 }
 
 export interface ApplicationContact {
@@ -53,6 +57,7 @@ export interface ApplicationAttachment {
 }
 
 export interface Application {
+  id: string
   nationalId: string
   name: string
   phone: string

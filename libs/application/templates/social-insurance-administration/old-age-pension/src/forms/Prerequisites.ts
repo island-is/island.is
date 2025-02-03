@@ -99,9 +99,7 @@ export const PrerequisitesForm: Form = buildForm({
               id: 'approveExternalData',
               title:
                 socialInsuranceAdministrationMessage.pre.externalDataSection,
-              subTitle:
-                socialInsuranceAdministrationMessage.pre
-                  .externalDataDescription,
+              subTitle: oldAgePensionFormMessage.pre.externalDataDescription,
               checkboxLabel:
                 socialInsuranceAdministrationMessage.pre.checkboxProvider,
               dataProviders: [

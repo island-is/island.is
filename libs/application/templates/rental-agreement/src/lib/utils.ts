@@ -42,6 +42,14 @@ export const formatPhoneNumber = (phoneNumber: string): string => {
   return phone?.formatNational() || phoneNumber
 }
 
+export const formatBankInfo = (bankInfo: string) => {
+  const formattedBankInfo = bankInfo.replace(/^(.{4})(.{2})/, '$1-$2-')
+  if (formattedBankInfo && formattedBankInfo.length >= 6) {
+    return formattedBankInfo
+  }
+  return bankInfo
+}
+
 export const formatCurrency = (answer: string) =>
   answer.replace(/\B(?=(\d{3})+(?!\d))/g, '.') + ' ISK'
 
@@ -255,7 +263,7 @@ export const getOtherFeesPayeeOptions = () => [
   },
 ]
 
-export const getOtherFeesHousingFeesPayeeOptions = () => [
+export const getOtherFeesHousingFundPayeeOptions = () => [
   {
     value: OtherFeesPayeeOptions.LANDLORD_OR_NOT_APPLICABLE,
     label: m.otherFees.housingFundPayedByLandlordLabel,

@@ -703,7 +703,7 @@ export class SyslumennService {
       simi: phoneNumber,
     })
 
-    return res?.stada === 'Í lagi'
+    return res?.stada === 'ok'
   }
 
   async checkIfBirthCertificateExists(nationalId: string): Promise<boolean> {

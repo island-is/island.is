@@ -33,7 +33,9 @@ export const ENABLED_MODULES = (process.env[ENV_ENABLED_CACHE] || '')
     return a
   }, {})
 
-export const cypressPath = '/github/home/.cypress-cache'
+// Override default Cypress cache; the default (~/.cache) could be unwritable
+export const cypressPath =
+  process.env.CYPRESS_CACHE_FOLDER || `${process.env.HOME}/.cypress-cache`
 export const cacheSuccess = JSON.parse(process.env[ENV_CACHE_SUCCESS] ?? '{}')
 export const initCache = process.env[ENV_INIT_CACHE] === 'true'
 
@@ -112,7 +114,6 @@ export const caches = [
       const files = [
         'scripts/ci/10_prepare-docker-deps.sh',
         'scripts/ci/Dockerfile',
-        'scripts/ci/get-node-version.mjs',
         'scripts/ci/_common.mjs',
       ].map((file) => resolve(ROOT, file))
       const filesHash = getFilesHash(files)

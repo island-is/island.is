@@ -8,7 +8,7 @@ import {
 import { FormValue } from '@island.is/application/types'
 import {
   getApplicationAnswers,
-  getOtherFeesHousingFeesPayeeOptions,
+  getOtherFeesHousingFundPayeeOptions,
   getOtherFeesPayeeOptions,
 } from '../../lib/utils'
 import { OtherFeesPayeeOptions, Routes } from '../../lib/constants'
@@ -41,7 +41,7 @@ export const RentalPeriodOtherFees = buildSubSection({
         buildRadioField({
           id: 'otherFees.housingFund',
           title: otherFees.housingFundTitle,
-          options: getOtherFeesHousingFeesPayeeOptions,
+          options: getOtherFeesHousingFundPayeeOptions,
           width: 'half',
           space: 1,
         }),

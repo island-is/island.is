@@ -293,8 +293,12 @@ const Defendant = () => {
             indictmentCount.policeCaseNumber === policeCaseNumber,
         )
         .forEach((indictmentCount) => {
+          const updatedIndictmentCount = {
+            ...indictmentCount,
+            indictmentCountSubtypes: subtypes?.[policeCaseNumber],
+          }
           const incidentDescription = getIncidentDescription(
-            indictmentCount,
+            updatedIndictmentCount,
             formatMessage,
             crimeScene,
             subtypes,

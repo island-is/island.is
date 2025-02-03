@@ -25,6 +25,7 @@ import {
   SIGNED_VERDICT_OVERVIEW_ROUTE,
 } from '@island.is/judicial-system/consts'
 import {
+  applyDativeCaseToCourtName,
   formatDate,
   getAppealResultTextByValue,
   getHumanReadableCaseIndictmentRulingDecision,
@@ -875,7 +876,7 @@ export class CaseNotificationService extends BaseNotificationService {
       isIndictmentCase(theCase.type)
         ? this.formatMessage(notifications.caseCompleted.prosecutorBody, {
             courtCaseNumber: theCase.courtCaseNumber,
-            courtName: theCase.court?.name?.replace('dómur', 'dómi'),
+            courtName: applyDativeCaseToCourtName(theCase.court?.name || ''),
             caseIndictmentRulingDecision:
               getHumanReadableCaseIndictmentRulingDecision(
                 theCase.indictmentRulingDecision,
@@ -913,7 +914,7 @@ export class CaseNotificationService extends BaseNotificationService {
       isIndictmentCase(theCase.type)
         ? this.formatMessage(notifications.caseCompleted.defenderBody, {
             courtCaseNumber: theCase.courtCaseNumber,
-            courtName: theCase.court?.name?.replace('dómur', 'dómi'),
+            courtName: applyDativeCaseToCourtName(theCase.court?.name || ''),
             caseIndictmentRulingDecision:
               getHumanReadableCaseIndictmentRulingDecision(
                 theCase.indictmentRulingDecision,
@@ -2008,14 +2009,24 @@ export class CaseNotificationService extends BaseNotificationService {
       },
     )
 
-    const promises = [
+    const courtOfAppealsAssistantEmails =
+      this.config.email.courtOfAppealsAssistantEmails
+        .split(',')
+        .map((email) => email.trim())
+
+    const allCourtOfAppealsEmails = [
+      ...courtOfAppealsAssistantEmails,
+      this.getCourtEmail(this.config.courtOfAppealsId),
+    ]
+
+    const promises = allCourtOfAppealsEmails.map((email) =>
       this.sendEmail(
         subject,
         html,
         this.formatMessage(notifications.emailNames.courtOfAppeals),
-        this.getCourtEmail(this.config.courtOfAppealsId),
+        email,
       ),
-    ]
+    )
 
     const prosecutorHtml = this.formatMessage(
       notifications.caseAppealReceivedByCourt.body,
