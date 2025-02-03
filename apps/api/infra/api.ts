@@ -66,6 +66,7 @@ export const serviceSetup = (services: {
   authAdminApi: ServiceBuilder<'services-auth-admin-api'>
   universityGatewayApi: ServiceBuilder<'services-university-gateway'>
   userNotificationService: ServiceBuilder<'services-user-notification'>
+  formSystemService: ServiceBuilder<'api-domains-form-system'>
 }): ServiceBuilder<'api'> => {
   return service('api')
     .namespace('islandis')
@@ -193,10 +194,13 @@ export const serviceSetup = (services: {
       FINANCIAL_STATEMENTS_INAO_TOKEN_ENDPOINT:
         'https://login.microsoftonline.com/05a20268-aaea-4bb5-bb78-960b0462185e/oauth2/v2.0/token',
       FORM_SYSTEM_API_BASE_PATH: {
-        dev: 'https://profun.island.is/umsoknarkerfi',
+        dev: 'http://localhost:3434',
         staging: '',
         prod: '',
       },
+      // FORM_SYSTEM_API_BASE_PATH: ref(
+      //   (h) => `http://${h.svc(services.formSystemService)}`,
+      // ),
       CONSULTATION_PORTAL_CLIENT_BASE_PATH: {
         dev: 'https://samradapi-test.devland.is',
         staging: 'https://samradapi-test.devland.is',
