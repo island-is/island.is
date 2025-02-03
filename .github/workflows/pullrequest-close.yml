@@ -52,7 +52,7 @@ jobs:
           echo IS_UNICORN=true >> "$GITHUB_OUTPUT"
       - name: Results
         run: |
-          echo "Unicorn = ${{ steps.check-unicorn.outputs.IS_UNICORN }}"
+          echo "Unicorn = ${{ steps.unicorn_affected.outputs.IS_UNICORN }}"
 
       - name: Find Latest Release Branch
         if: ${{ steps.check-unicorn.outputs.IS_UNICORN == 'true' }}
