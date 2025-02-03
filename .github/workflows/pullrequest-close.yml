@@ -54,6 +54,11 @@ jobs:
         run: |
           echo "Unicorn = ${{ steps.unicorn_affected.outputs.IS_UNICORN }}"
 
+      - uses: actions/checkout@v4
+        if: ${{ steps.unicorn_affected.outputs.IS_UNICORN == 'true' }}
+        with:
+          fetch-depth: 0
+
       - name: Find Latest Release Branch
         if: ${{ steps.unicorn_affected.outputs.IS_UNICORN == 'true' }}
         id: get_latest_release
