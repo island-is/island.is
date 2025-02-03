@@ -18,11 +18,6 @@ on:
         description: 'Comma-separated list of project names to build.'
         type: string
         required: true
-      runners:
-        description: 'The runners to run the jobs on.'
-        type: string
-        required: false
-        default: 'arc-runners'
       version:
         description: 'The version to tag the image with (previously DOCKER_TAG)'
         type: string
@@ -37,11 +32,6 @@ on:
         description: 'Comma-separated list of project names to build.'
         type: string
         required: true
-      runners:
-        description: 'The runners to run the jobs on.'
-        required: false
-        type: string
-        default: 'arc-runners'
       version:
         description: 'The version to tag the image with (previously DOCKER_TAG)'
         type: string
