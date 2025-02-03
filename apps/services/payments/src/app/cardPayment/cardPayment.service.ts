@@ -94,7 +94,7 @@ export class CardPaymentService {
         statusText: response.statusText,
         responseBody,
       })
-      throw new Error(response.statusText)
+      throw new BadRequestException(response.statusText)
     }
 
     const data = (await response.json()) as VerificationResponse
@@ -105,7 +105,7 @@ export class CardPaymentService {
         responseCode: data.responseCode,
         responseDescription: data.responseDescription,
       })
-      throw new Error(mapToCardErrorCode(data.responseCode))
+      throw new BadRequestException(mapToCardErrorCode(data.responseCode))
     }
 
     return data
@@ -125,7 +125,7 @@ export class CardPaymentService {
       return payload
     } catch (e) {
       this.logger.error('Failed to get payload from md', e)
-      throw new Error(PaymentServiceCode.InvalidVerificationToken)
+      throw new BadRequestException(PaymentServiceCode.InvalidVerificationToken)
     }
   }
 
@@ -224,7 +224,7 @@ export class CardPaymentService {
     )
 
     if (!status?.isVerified || !status?.correlationId) {
-      throw new Error(PaymentServiceCode.MissingVerification)
+      throw new BadRequestException(PaymentServiceCode.MissingVerification)
     }
 
     const { correlationId } = status
@@ -234,7 +234,7 @@ export class CardPaymentService {
     )) as SavedVerificationCompleteData
 
     if (!verificationData) {
-      throw new Error(PaymentServiceCode.MissingVerification)
+      throw new BadRequestException(PaymentServiceCode.MissingVerification)
     }
 
     if (
@@ -243,7 +243,7 @@ export class CardPaymentService {
       !verificationData.xid ||
       !verificationData.dsTransId
     ) {
-      throw new Error(PaymentServiceCode.MissingVerification)
+      throw new BadRequestException(PaymentServiceCode.MissingVerification)
     }
 
     const {
@@ -267,13 +267,13 @@ export class CardPaymentService {
         statusText: response.statusText,
         responseBody,
       })
-      throw new Error(response.statusText)
+      throw new BadRequestException(response.statusText)
     }
 
     const data = (await response.json()) as ChargeResponse
 
     if (!data?.isSuccess) {
-      throw new Error(mapToCardErrorCode(data.responseCode))
+      throw new BadRequestException(mapToCardErrorCode(data.responseCode))
     }
 
     try {

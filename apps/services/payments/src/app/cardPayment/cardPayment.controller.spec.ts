@@ -1,0 +1,327 @@
+import request from 'supertest'
+import { v4 as uuid } from 'uuid'
+import { Cache as CacheManager } from 'cache-manager'
+import { CACHE_MANAGER } from '@nestjs/cache-manager'
+
+import { TestApp, testServer, useDatabase } from '@island.is/testing/nest'
+
+import { VerifyCardInput } from './dtos/verifyCard.input'
+import { PaymentServiceCode } from '@island.is/shared/constants'
+import { CreatePaymentFlowInput } from '../paymentFlow/dtos/createPaymentFlow.input'
+import { PaymentMethod } from '../../types'
+import { AppModule } from '../app.module'
+import { SequelizeConfigService } from '../../sequelizeConfig.service'
+import { SavedVerificationPendingData } from './cardPayment.types'
+import { generateMd } from './cardPayment.utils'
+import { VerificationCallbackInput } from './dtos/verificationCallback.input'
+
+const getCreatePaymentFlowPayload = (): CreatePaymentFlowInput => ({
+  charges: [
+    {
+      chargeItemCode: '123',
+      chargeType: 'A',
+      quantity: 1,
+    },
+  ],
+  payerNationalId: '1234567890',
+  availablePaymentMethods: [PaymentMethod.CARD, PaymentMethod.INVOICE],
+  onUpdateUrl: '/onUpdate',
+  organisationId: 'organization-id',
+})
+
+const TOKEN_SIGNING_SECRET = 'supersecret'
+const TOKEN_SIGNING_ALGORITHM = 'HS256'
+
+describe('CardPaymentController', () => {
+  let app: TestApp
+  let server: request.SuperTest<request.Test>
+  let cacheManager: CacheManager
+
+  let previousPaymentGatewayApiUrl = ''
+  let previousTokenSigningSecret = ''
+  let previousTokenSigningAlgorithm = ''
+
+  beforeAll(async () => {
+    previousPaymentGatewayApiUrl = process.env.PAYMENTS_GATEWAY_API_URL!
+    previousTokenSigningSecret = process.env.PAYMENTS_TOKEN_SIGNING_SECRET!
+    previousTokenSigningAlgorithm =
+      process.env.PAYMENTS_TOKEN_SIGNING_ALGORITHM!
+
+    process.env.PAYMENTS_GATEWAY_API_URL = ''
+    process.env.PAYMENTS_TOKEN_SIGNING_SECRET = TOKEN_SIGNING_SECRET
+    process.env.PAYMENTS_TOKEN_SIGNING_ALGORITHM = TOKEN_SIGNING_ALGORITHM
+
+    app = await testServer({
+      appModule: AppModule,
+      enableVersioning: true,
+      hooks: [
+        useDatabase({ type: 'postgres', provider: SequelizeConfigService }),
+      ],
+    })
+    server = request(app.getHttpServer())
+
+    cacheManager = app.get<CacheManager>(CACHE_MANAGER)
+  })
+
+  beforeEach(() => {})
+
+  afterEach(() => {})
+
+  afterAll(() => {
+    app?.cleanUp()
+
+    process.env.PAYMENTS_GATEWAY_API_URL = previousPaymentGatewayApiUrl
+    process.env.PAYMENTS_TOKEN_SIGN = previousTokenSigningSecret
+    process.env.PAYMENTS_TOKEN_SIGNING_ALGORITHM = previousTokenSigningAlgorithm
+  })
+
+  describe('verify', () => {
+    let paymentFlowId: string
+
+    beforeAll(async () => {
+      const createPayload = getCreatePaymentFlowPayload()
+
+      const response = await server.post('/v1/payments').send(createPayload)
+
+      expect(response.status).toBe(200)
+
+      const {
+        urls: { is },
+      } = response.body
+
+      paymentFlowId = is.split('/').pop()
+    })
+
+    it('should throw an error if trying to verify invalid payment flow', async () => {
+      const verifyPayload: VerifyCardInput = {
+        amount: 1000,
+        cardNumber: 4242424242424242,
+        expiryMonth: 12,
+        expiryYear: new Date().getFullYear() - 2000,
+        paymentFlowId: uuid(),
+      }
+
+      const response = await server
+        .post('/v1/payments/card/verify')
+        .send(verifyPayload)
+
+      expect(response.status).toBe(400)
+
+      const errorCode = response.body.detail
+      expect(errorCode).toBe(PaymentServiceCode.PaymentFlowNotFound)
+    })
+
+    it('it should generate the correct cache payloads (cache and fetch) when verify is called with a valid card', async () => {
+      const verificationUrl = '/CardVerification'
+
+      const cacheSpy = jest.spyOn(cacheManager, 'set')
+      const fetchSpy = jest
+        .spyOn(global, 'fetch')
+        .mockImplementation(async (url, options) => {
+          if (typeof url === 'string') {
+            if (url.includes(verificationUrl)) {
+              return {
+                json: async () => ({ isSuccess: true }),
+                status: 200,
+                ok: true,
+              } as Response
+            }
+          }
+
+          return {
+            json: async () => ({ error: 'Missing handler' }),
+            status: 500,
+            ok: false,
+          } as Response
+        })
+
+      const verifyPayload: VerifyCardInput = {
+        amount: 1000,
+        cardNumber: 4242424242424242,
+        expiryMonth: 12,
+        expiryYear: new Date().getFullYear() - 2000,
+        paymentFlowId,
+      }
+
+      const expectedCacheValue: SavedVerificationPendingData = {
+        paymentFlowId,
+      }
+
+      const expectedVerifiedAmount = verifyPayload.amount * 100
+
+      await server.post('/v1/payments/card/verify').send(verifyPayload)
+
+      expect(cacheSpy).toHaveBeenCalled()
+
+      const [correlationId, value] = cacheSpy.mock.calls[0]
+      expect(typeof correlationId).toBe('string')
+      expect(value).toEqual(expectedCacheValue)
+
+      const [url, options] = fetchSpy.mock.calls[0]
+
+      expect(url).toBe(verificationUrl)
+      expect(typeof options).toBe('object')
+
+      const body = JSON.parse(options!.body as string)
+
+      expect(body.cardNumber).toBe(verifyPayload.cardNumber)
+      expect(body.expirationMonth).toBe(verifyPayload.expiryMonth)
+      expect(body.expirationYear).toBe(verifyPayload.expiryYear + 2000)
+      expect(body.amount).toBe(expectedVerifiedAmount)
+      expect(body.currency).toBe('ISK')
+
+      const expectedMd = generateMd({
+        correlationId,
+        paymentFlowId,
+        amount: verifyPayload.amount,
+        paymentsTokenSigningSecret: TOKEN_SIGNING_SECRET,
+        paymentsTokenSigningAlgorithm: TOKEN_SIGNING_ALGORITHM,
+      })
+
+      expect(body.MD).toBe(expectedMd)
+
+      cacheSpy.mockRestore()
+      fetchSpy.mockRestore()
+    })
+
+    it('should throw an error in verification callback if correlation id is not found in cache', async () => {
+      const cacheGetSpy = jest.spyOn(cacheManager, 'get') // not mocking return value ("nothing in cache")
+
+      const someCorrelationId = uuid()
+
+      // Valid md created with a valid secret
+      const md = generateMd({
+        correlationId: someCorrelationId,
+        paymentFlowId,
+        amount: 1000,
+        paymentsTokenSigningSecret: TOKEN_SIGNING_SECRET,
+        paymentsTokenSigningAlgorithm: TOKEN_SIGNING_ALGORITHM,
+      })
+
+      const verificationCallbackPayload: VerificationCallbackInput = {
+        md,
+        mdStatus: 'mdStatus',
+        cavv: 'cavv',
+        xid: 'xid',
+        dsTransId: 'dsTransId',
+      }
+
+      const response = await server
+        .post('/v1/payments/card/verify-callback')
+        .send(verificationCallbackPayload)
+
+      // Will check cache but not find the correlation id there
+      expect(cacheGetSpy).toHaveBeenCalled()
+      expect(response.status).toBe(400)
+
+      cacheGetSpy.mockRestore()
+    })
+
+    it('should throw an error in verification callback if md is invalid', async () => {
+      const cacheGetSpy = jest.spyOn(cacheManager, 'get')
+
+      const someCorrelationId = uuid()
+
+      // Invalid md
+      const md = generateMd({
+        correlationId: someCorrelationId,
+        paymentFlowId,
+        amount: 1000,
+        paymentsTokenSigningSecret: 'some invalid secret',
+        paymentsTokenSigningAlgorithm: TOKEN_SIGNING_ALGORITHM,
+      })
+
+      const verificationCallbackPayload: VerificationCallbackInput = {
+        md,
+        mdStatus: 'mdStatus',
+        cavv: 'cavv',
+        xid: 'xid',
+        dsTransId: 'dsTransId',
+      }
+
+      const response = await server
+        .post('/v1/payments/card/verify-callback')
+        .send(verificationCallbackPayload)
+
+      // Will throw an error before even looking into cache
+      expect(cacheGetSpy).not.toHaveBeenCalled()
+      expect(response.status).toBe(400)
+
+      cacheGetSpy.mockRestore()
+    })
+
+    it('associates payment flow with callback during verification callback authentication', async () => {
+      const pendingVerificationInCache: SavedVerificationPendingData = {
+        paymentFlowId,
+      }
+
+      const cacheGetSpy = jest
+        .spyOn(cacheManager, 'get')
+        .mockResolvedValue(pendingVerificationInCache)
+      const cacheSetSpy = jest.spyOn(cacheManager, 'set')
+      const cacheDelSpy = jest.spyOn(cacheManager, 'del')
+
+      const fetchSpy = jest
+        .spyOn(global, 'fetch')
+        .mockImplementation(async (url, options) => {
+          if (typeof url === 'string') {
+            return {
+              json: async () => ({ isSuccess: true }),
+              status: 200,
+              ok: true,
+            } as Response
+          }
+
+          return {
+            json: async () => ({ error: 'Missing handler' }),
+            status: 500,
+            ok: false,
+          } as Response
+        })
+
+      const originalCorrelationId = uuid()
+      const md = generateMd({
+        correlationId: originalCorrelationId,
+        paymentFlowId,
+        amount: 1000,
+        paymentsTokenSigningSecret: TOKEN_SIGNING_SECRET,
+        paymentsTokenSigningAlgorithm: TOKEN_SIGNING_ALGORITHM,
+      })
+
+      const verificationCallbackPayload: VerificationCallbackInput = {
+        md,
+        mdStatus: 'mdStatus',
+        cavv: 'cavv',
+        xid: 'xid',
+        dsTransId: 'dsTransId',
+      }
+
+      await server
+        .post('/v1/payments/card/verify-callback')
+        .send(verificationCallbackPayload)
+
+      expect(cacheGetSpy).toHaveBeenCalled()
+
+      const [getKey] = cacheGetSpy.mock.calls[0]
+      const [delKey] = cacheDelSpy.mock.calls[0]
+
+      expect(getKey).toBe(originalCorrelationId)
+      expect(delKey).toBe(originalCorrelationId)
+
+      const [correlationId, verificationData] = cacheSetSpy.mock.calls[0]
+
+      expect(correlationId).toBe(originalCorrelationId)
+      expect(verificationData).toEqual({
+        mdStatus: verificationCallbackPayload.mdStatus,
+        cavv: verificationCallbackPayload.cavv,
+        xid: verificationCallbackPayload.xid,
+        dsTransId: verificationCallbackPayload.dsTransId,
+      })
+
+      cacheGetSpy.mockRestore()
+      cacheSetSpy.mockRestore()
+      fetchSpy.mockRestore()
+    })
+  })
+})
+

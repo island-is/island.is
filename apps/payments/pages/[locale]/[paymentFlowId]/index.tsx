@@ -41,7 +41,7 @@ import {
   PaymentsChargeCardInput,
   PaymentsVerifyCardInput,
 } from '@island.is/api/schema'
-import { CardErrorCode } from '../../..//utils/error/constants'
+import { CardErrorCode, PaymentServiceCode } from '@island.is/shared/constants'
 
 interface PaymentPageProps {
   locale: string
@@ -130,7 +130,7 @@ export const getServerSideProps: GetServerSideProps<PaymentPageProps> = async (
     if (problem) {
       const code = problem?.detail as string
 
-      if (code === 'already_paid') {
+      if (code === PaymentServiceCode.PaymentFlowAlreadyPaid) {
         return {
           redirect: {
             destination: `/${locale}/${paymentFlowId}/greitt`,
