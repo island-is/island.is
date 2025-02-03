@@ -37,6 +37,11 @@ import {
   IndictmentCount,
   UpdateIndictmentCountInput,
 } from '../indictment-count'
+import { CreateOffenseInput } from '../indictment-count/dto/createOffense.input'
+import { DeleteOffenseInput } from '../indictment-count/dto/deleteOffense.input'
+import { UpdateOffenseInput } from '../indictment-count/dto/updateOffense.input'
+import { DeleteOffenseResponse } from '../indictment-count/models/deleteOffense.response'
+import { Offense } from '../indictment-count/models/offense.model'
 import { Institution } from '../institution'
 import {
   PoliceCaseFile,
@@ -435,6 +440,32 @@ export class BackendService extends DataSource<{ req: Request }> {
     return this.delete(`case/${caseId}/indictmentCount/${indictmentCountId}`)
   }
 
+  createOffense(input: CreateOffenseInput): Promise<Offense> {
+    const { caseId, indictmentCountId, ...createOffense } = input
+
+    return this.post(
+      `case/${caseId}/indictmentCount/${indictmentCountId}/offense`,
+      createOffense,
+    )
+  }
+
+  updateOffense(input: UpdateOffenseInput): Promise<Offense> {
+    const { caseId, indictmentCountId, offenseId, ...updateOffense } = input
+
+    return this.patch(
+      `case/${caseId}/indictmentCount/${indictmentCountId}/offense/${offenseId}`,
+      updateOffense,
+    )
+  }
+
+  deleteOffense(input: DeleteOffenseInput): Promise<DeleteOffenseResponse> {
+    const { caseId, offenseId, indictmentCountId } = input
+
+    return this.delete(
+      `case/${caseId}/indictmentCount/${indictmentCountId}/offense/${offenseId}`,
+    )
+  }
+  
   limitedAccessGetCase(id: string): Promise<Case> {
     return this.get<Case>(`case/${id}/limitedAccess`, this.caseTransformer)
   }

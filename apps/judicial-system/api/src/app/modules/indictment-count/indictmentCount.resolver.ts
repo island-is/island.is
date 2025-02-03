@@ -18,7 +18,7 @@ import { BackendService } from '../backend'
 import { CreateIndictmentCountInput } from './dto/createIndictmentCount.input'
 import { DeleteIndictmentCountInput } from './dto/deleteIndictmentCount.input'
 import { UpdateIndictmentCountInput } from './dto/updateIndictmentCount.input'
-import { DeleteIndictmentCountResponse } from './models/delete.response'
+import { DeleteIndictmentCountResponse } from './models/deleteIndictmentCount.response'
 import { IndictmentCount } from './models/indictmentCount.model'
 
 @UseGuards(JwtGraphQlAuthGuard)
