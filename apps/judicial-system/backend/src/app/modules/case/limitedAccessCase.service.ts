@@ -41,6 +41,7 @@ import {
 import { EventLog } from '../event-log'
 import { CaseFile, defenderCaseFileCategoriesForRequestCases } from '../file'
 import { IndictmentCount } from '../indictment-count'
+import { Offense } from '../indictment-count/models/offense.model'
 import { Institution } from '../institution'
 import { Subpoena } from '../subpoena'
 import { User } from '../user'
