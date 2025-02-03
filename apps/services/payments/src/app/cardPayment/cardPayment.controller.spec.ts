@@ -63,10 +63,6 @@ describe('CardPaymentController', () => {
     cacheManager = app.get<CacheManager>(CACHE_MANAGER)
   })
 
-  beforeEach(() => {})
-
-  afterEach(() => {})
-
   afterAll(() => {
     app?.cleanUp()
 
