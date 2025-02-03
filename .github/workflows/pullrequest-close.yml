@@ -19,7 +19,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     env:
-        GITHUB_CONTEXT: ${{ toJson(github) }}
+      GITHUB_CONTEXT: ${{ toJson(github) }}
     outputs:
       IS_UNICORN: ${{ steps.unicorn_affected.outputs.IS_UNICORN }}
       LATEST_RELEASE: ${{ steps.get_latest_release.outputs.LATEST_RELEASE }}
@@ -85,7 +85,6 @@ jobs:
           echo "new branch created"
           gh pr create -B $TARGET_BRANCH -H $PR_BRANCH --title "Automated cherry-pick of ${{ github.event.pull_request.merge_commit_sha }}" --body "Automated cherry-pick of ${{ github.event.pull_request.merge_commit_sha }}"
           echo "PR created"
-
 
   # cleanup:
   #   name: Clean up feature deployment
