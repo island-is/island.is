@@ -25,7 +25,6 @@ jobs:
           fetch-depth: 100
 
       - name: Find Latest Release Branch
-        if: ${{ steps.unicorn_affected.outputs.IS_UNICORN == 'true' }}
         id: get_latest_release
         run: |
           test="hallo"
