@@ -43,7 +43,9 @@ jobs:
         with:
           node-version-file: 'package.json'
       - name: Setup yarn
-        run: corepack enable
+        run: |
+          corepack enable
+          yarn install --immutable
       - name: Get cache
         id: get_cache
         uses: ./.github/actions/get-cache
