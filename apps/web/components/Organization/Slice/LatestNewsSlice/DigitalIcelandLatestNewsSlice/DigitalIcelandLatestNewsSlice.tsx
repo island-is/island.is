@@ -11,6 +11,7 @@ import {
   Tag,
   Text,
 } from '@island.is/island-ui/core'
+import { BackgroundImage } from '@island.is/web/components'
 import { LatestNewsSlice as LatestNewsSliceSchema } from '@island.is/web/graphql/schema'
 import { useLinkResolver } from '@island.is/web/hooks'
 import { shortenText } from '@island.is/web/screens/IcelandicGovernmentInstitutionVacancies/IcelandicGovernmentInstitutionVacanciesList'
@@ -38,12 +39,20 @@ const Item = (item: ItemProps) => {
         height="full"
       >
         <Stack space={2}>
-          <Box
-            className={styles.imageBox}
-            style={{
-              background: `url("${item.imageSrc}?w=500") left center / cover no-repeat`,
+          <BackgroundImage
+            positionX="left"
+            backgroundSize="cover"
+            image={{ url: item.imageSrc }}
+            ratio="396:210"
+            boxProps={{
+              alignItems: 'center',
+              width: 'full',
+              display: 'inlineFlex',
+              overflow: 'hidden',
+              borderRadius: 'large',
             }}
           />
+
           <Stack space={1}>
             <Text variant="h3">{item.title}</Text>
             <Text variant="medium">
@@ -92,42 +101,49 @@ export const DigitalIcelandLatestNewsSlice: React.FC<
 > = ({ slice, slug }) => {
   const { linkResolver } = useLinkResolver()
   return (
-    <GridContainer>
-      <Stack space={4}>
-        <Box
-          display="flex"
-          flexDirection="row"
-          justifyContent="spaceBetween"
-          alignItems="center"
-          rowGap={3}
-          columnGap={3}
-        >
-          <Text variant="h2" as="h2" dataTestId="home-news">
-            {slice.title}
-          </Text>
-          <Hidden below="md">
-            <SeeMoreLink slice={slice} slug={slug} />
-          </Hidden>
-        </Box>
-        <Box className={styles.itemListContainer}>
-          {slice.news.slice(0, 3).map((news) => (
-            <Item
-              key={news.id}
-              href={linkResolver('organizationnews', [slug, news.slug]).href}
-              date={news.date}
-              description={news.intro}
-              imageSrc={news.image?.url}
-              tags={news.genericTags.map((tag) => tag.title)}
-              title={news.title}
-            />
-          ))}
-        </Box>
-        <Hidden above="sm">
-          <Box display="flex" justifyContent="center">
-            <SeeMoreLink slice={slice} slug={slug} />
+    <Box component="section" aria-labelledby="news-items-title">
+      <GridContainer>
+        <Stack space={4}>
+          <Box
+            display="flex"
+            flexDirection="row"
+            justifyContent="spaceBetween"
+            alignItems="center"
+            rowGap={3}
+            columnGap={3}
+          >
+            <Text
+              id="news-items-title"
+              variant="h2"
+              as="h2"
+              dataTestId="home-news"
+            >
+              {slice.title}
+            </Text>
+            <Hidden below="md">
+              <SeeMoreLink slice={slice} slug={slug} />
+            </Hidden>
           </Box>
-        </Hidden>
-      </Stack>
-    </GridContainer>
+          <Box className={styles.itemListContainer}>
+            {slice.news.slice(0, 3).map((news) => (
+              <Item
+                key={news.id}
+                href={linkResolver('organizationnews', [slug, news.slug]).href}
+                date={news.date}
+                description={news.intro}
+                imageSrc={news.image?.url}
+                tags={news.genericTags.map((tag) => tag.title)}
+                title={news.title}
+              />
+            ))}
+          </Box>
+          <Hidden above="sm">
+            <Box display="flex" justifyContent="center">
+              <SeeMoreLink slice={slice} slug={slug} />
+            </Box>
+          </Hidden>
+        </Stack>
+      </GridContainer>
+    </Box>
   )
 }

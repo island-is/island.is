@@ -211,10 +211,12 @@ const OrganizationHomePage = ({
             slice.__typename === 'LatestNewsSlice'
           ) {
             return (
-              <DigitalIcelandLatestNewsSlice
-                slice={slice}
-                slug={organizationPage.slug}
-              />
+              <Box paddingTop={[5, 5, 8]} paddingBottom={[2, 2, 5]}>
+                <DigitalIcelandLatestNewsSlice
+                  slice={slice}
+                  slug={organizationPage.slug}
+                />
+              </Box>
             )
           }
           return (
