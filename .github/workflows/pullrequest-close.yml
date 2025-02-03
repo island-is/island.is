@@ -64,7 +64,7 @@ jobs:
         id: get_latest_release
         run: |
           test="hallo"
-          test=$(git branch -l)
+          test=$(git branch -a)
           echo $test
           test=$(git branch -r)
           echo $test
