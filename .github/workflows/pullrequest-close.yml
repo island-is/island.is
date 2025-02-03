@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - ci/cherry-pick-unicorn
-      - ci/cherry-pick-pr-test
+      - ci/cherry-pick-pr
   pull_request:
     types:
       - closed
@@ -30,7 +30,7 @@ jobs:
 
       - name: Print GitHub event
         run: |
-          echo $GITHUB_CONTEXT
+          echo ${{ github.event.pull_request.merge_commit_sha }}
         # with:
         #   fetch-depth: 0
 
