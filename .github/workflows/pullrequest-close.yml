@@ -15,7 +15,7 @@ defaults:
 jobs:
   check-unicorn:
     name: Is this a unicorn PR
-    runs-on: ubuntu-runners
+    runs-on: ubuntu-latest
     timeout-minutes: 10
     outputs:
       IS_UNICORN: ${{ steps.unicorn_affected.outputs.IS_UNICORN }}
