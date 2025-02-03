@@ -18,8 +18,8 @@ export class FinancialStatementsInaoService {
     }
   }
 
-  async getElections(nationalId: string) {
-    return this.dataverseClient.getElections(nationalId)
+  async getElections() {
+    return this.dataverseClient.getElections()
   }
 
   async getClientFinancialLimit(clientType: string, year: string) {
