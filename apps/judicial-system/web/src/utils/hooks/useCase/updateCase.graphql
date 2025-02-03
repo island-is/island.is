@@ -172,7 +172,7 @@ mutation UpdateCase($input: UpdateCaseInput!) {
       created
       modified
       vehicleRegistrationNumber
-      offenses
+      deprecatedOffenses
       substances
       lawsBroken
       incidentDescription

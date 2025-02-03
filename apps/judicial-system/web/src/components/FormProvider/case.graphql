@@ -213,7 +213,7 @@ query Case($input: CaseQueryInput!) {
       created
       modified
       vehicleRegistrationNumber
-      offenses
+      deprecatedOffenses
       substances
       lawsBroken
       incidentDescription
