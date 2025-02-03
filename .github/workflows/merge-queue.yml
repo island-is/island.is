@@ -42,10 +42,6 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version-file: 'package.json'
-      - name: Setup yarn
-        run: |
-          corepack enable
-          yarn install --immutable
       - name: Get cache
         id: get_cache
         uses: ./.github/actions/get-cache
@@ -54,6 +50,10 @@ jobs:
           enable-cache: node_modules,${{ github.event.localrun && 'generated-files' || '' }}
       - name: Derive appropriate SHAs
         uses: nrwl/nx-set-shas@v4
+      - name: Setup yarn
+        run: |
+          corepack enable
+          yarn install --immutable
       - name: Find affected projects
         id: affected
         env:
