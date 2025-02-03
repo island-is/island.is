@@ -1621,33 +1621,30 @@ export const synchronizeVMSTPeriods = (
       firstPeriodStart = 'specificDate'
     }
 
-    if (!period.rightsCodePeriod.includes('DVAL')) {
-      // API returns multiple rightsCodePeriod in string ('M-L-GR, M-FS')
-      const rightsCodePeriod = period.rightsCodePeriod.split(',')[0]
-      const obj = {
-        startDate: period.from,
-        endDate: period.to,
-        ratio: period.ratio.split(',')[0],
-        rawIndex: index,
-        firstPeriodStart: firstPeriodStart,
-        useLength: NO as YesOrNo,
-        rightCodePeriod: rightsCodePeriod,
-        daysToUse: period.days,
-        paid: period.paid,
-        approved: period.approved,
-      }
-
-      if (period.paid) {
-        newPeriods.push(obj)
-      } else if (isThisMonth(new Date(period.from))) {
-        if (today.getDate() >= 20) {
-          newPeriods.push(obj)
-        }
-      } else if (new Date(period.from).getTime() <= today.getTime()) {
-        newPeriods.push(obj)
-      }
-      temptVMSTPeriods.push(obj)
+    const rightsCodePeriod = period.rightsCodePeriod.split(',')[0]
+    const obj = {
+      startDate: period.from,
+      endDate: period.to,
+      ratio: period.ratio.split(',')[0],
+      rawIndex: index,
+      firstPeriodStart: firstPeriodStart,
+      useLength: NO as YesOrNo,
+      rightCodePeriod: rightsCodePeriod,
+      daysToUse: period.days,
+      paid: period.paid,
+      approved: period.approved,
     }
+
+    if (period.paid) {
+      newPeriods.push(obj)
+    } else if (isThisMonth(new Date(period.from))) {
+      if (today.getDate() >= 20) {
+        newPeriods.push(obj)
+      }
+    } else if (new Date(period.from).getTime() <= today.getTime()) {
+      newPeriods.push(obj)
+    }
+    temptVMSTPeriods.push(obj)
   })
 
   let index = newPeriods.length
