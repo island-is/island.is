@@ -21,7 +21,6 @@ import {
 import { useMutation } from '@apollo/client'
 import { UPDATE_APPLICATION } from '@island.is/application/graphql'
 import {
-  AnswerOption,
   DEFAULT_COMMITTEE_SIGNATURE_MEMBER_COUNT,
   DEFAULT_REGULAR_SIGNATURE_COUNT,
   DEFAULT_REGULAR_SIGNATURE_MEMBER_COUNT,
@@ -32,6 +31,7 @@ import { getCommitteeSignature, getRegularSignature } from '../lib/utils'
 import { HTMLEditor } from '../components/htmlEditor/HTMLEditor'
 import { HTMLText } from '@island.is/regulations-tools/types'
 import { useApplicationCase } from '../hooks/useApplicationCase'
+import { YesOrNoEnum } from '@island.is/application/core'
 export const Submitted = (props: OJOIFieldBaseProps) => {
   const { formatMessage, locale } = useLocale()
 
@@ -66,7 +66,7 @@ export const Submitted = (props: OJOIFieldBaseProps) => {
     currentAnswers = set(
       currentAnswers,
       InputFields.requirements.approveExternalData,
-      AnswerOption.YES,
+      YesOrNoEnum.YES,
     )
 
     currentAnswers = set(currentAnswers, InputFields.signature.regular, [

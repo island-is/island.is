@@ -3,9 +3,9 @@ import { Box, Button, Text } from '@island.is/island-ui/core'
 import React, { FC, useEffect } from 'react'
 import { useLocale } from '@island.is/localization'
 import { complaint } from '../../lib/messages'
-import { YES, NO } from '../../shared'
 import { useFieldArray } from 'react-hook-form'
 import { ComplaineeRepeaterItem } from './ComplaineeRepeaterItem'
+import { YES, NO } from '@island.is/application/core'
 
 export type ComplaineeField = {
   name: string

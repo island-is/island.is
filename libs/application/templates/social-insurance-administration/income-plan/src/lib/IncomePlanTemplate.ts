@@ -3,6 +3,7 @@ import {
   DefaultStateLifeCycle,
   EphemeralStateLifeCycle,
   pruneAfterDays,
+  YES,
 } from '@island.is/application/core'
 import {
   Actions,
@@ -38,7 +39,7 @@ import {
   SocialInsuranceAdministrationLatestIncomePlan,
   SocialInsuranceAdministrationWithholdingTaxApi,
 } from '../dataProviders'
-import { INCOME, ISK, RatioType, YES } from './constants'
+import { INCOME, ISK, RatioType } from './constants'
 import { dataSchema } from './dataSchema'
 import {
   getApplicationAnswers,

@@ -21,8 +21,6 @@ import {
 } from '@island.is/clients/vmst'
 import {
   StartDateOptions,
-  YES,
-  NO,
   Period,
   calculatePeriodLength,
   PARENTAL_LEAVE,
@@ -42,6 +40,7 @@ import { PaymentService } from '@island.is/application/api/payment'
 import { sharedModuleConfig } from '../../shared/shared.config'
 import { ApplicationService } from '@island.is/application/api/core'
 import { S3Service } from '@island.is/nest/aws'
+import { NO, YES } from '@island.is/application/core'
 
 const nationalId = '1234564321'
 let id = 0

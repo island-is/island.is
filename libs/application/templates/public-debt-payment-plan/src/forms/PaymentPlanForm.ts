@@ -12,6 +12,8 @@ import {
   buildSection,
   buildSubmitField,
   getValueViaPath,
+  NO,
+  YES,
 } from '@island.is/application/core'
 import {
   CustomField,
@@ -33,7 +35,6 @@ import {
   paymentPlan,
 } from '../lib/messages'
 import { isApplicantPerson } from '../lib/paymentPlanUtils'
-import { NO, YES } from '../shared/constants'
 import {
   PaymentPlanBuildIndex,
   PaymentPlanExternalData,

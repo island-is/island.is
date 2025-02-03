@@ -7,13 +7,14 @@ import {
   buildSubSection,
   buildTextField,
   getValueViaPath,
+  YES,
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
 import {
   getEstateDataFromApplication,
   shouldShowDeceasedShareField,
 } from '../../lib/utils/helpers'
-import { Application, FormValue, YES } from '@island.is/application/types'
+import { Application, FormValue } from '@island.is/application/types'
 import {
   ESTATE_INHERITANCE,
   PREPAID_INHERITANCE,

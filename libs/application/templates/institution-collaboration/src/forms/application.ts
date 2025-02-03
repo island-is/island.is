@@ -7,9 +7,9 @@ import {
   buildSection,
   buildSubmitField,
   buildTextField,
+  YES,
 } from '@island.is/application/core'
 
-import { YES } from '../constants'
 import { buildFormConclusionSection } from '@island.is/application/ui-forms'
 import { institutionApplicationMessages as m } from '../lib/messages'
 

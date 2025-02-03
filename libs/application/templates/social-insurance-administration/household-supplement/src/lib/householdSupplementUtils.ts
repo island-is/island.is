@@ -1,4 +1,4 @@
-import { getValueViaPath } from '@island.is/application/core'
+import { getValueViaPath, YES, YesOrNo } from '@island.is/application/core'
 import {
   BankAccountType,
   MONTHS,
@@ -12,8 +12,6 @@ import {
 import {
   Application,
   ExternalData,
-  YES,
-  YesOrNo,
 } from '@island.is/application/types'
 import addMonths from 'date-fns/addMonths'
 import subYears from 'date-fns/subYears'

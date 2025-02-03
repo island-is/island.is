@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { formatText, getValueViaPath } from '@island.is/application/core'
+import { formatText, getValueViaPath, NO, YES } from '@island.is/application/core'
 import { Box, Stack, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import {
@@ -15,9 +15,7 @@ import { m } from '../../lib/messages/messages'
 import { FileUploadController } from '@island.is/application/ui-components'
 import {
   FILE_SIZE_LIMIT,
-  NO,
   EmploymentStatus,
-  YES,
 } from '../../utils/constants'
 
 export const StatusAndChildren = ({

@@ -2,6 +2,7 @@ import {
   DefaultStateLifeCycle,
   EphemeralStateLifeCycle,
   NO,
+  YES,
   pruneAfterDays,
 } from '@island.is/application/core'
 import {
@@ -15,7 +16,6 @@ import {
   DefaultEvents,
   NationalRegistryUserApi,
   UserProfileApi,
-  YES,
   defineTemplateApi,
 } from '@island.is/application/types'
 import { Features } from '@island.is/feature-flags'

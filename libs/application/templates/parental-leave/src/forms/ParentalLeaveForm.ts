@@ -20,6 +20,8 @@ import {
   buildSliderField,
   formatText,
   NO_ANSWER,
+  YES,
+  NO,
 } from '@island.is/application/core'
 import {
   Application,
@@ -40,7 +42,6 @@ import {
   FILE_SIZE_LIMIT,
   Languages,
   MANUAL,
-  NO,
   NO_PRIVATE_PENSION_FUND,
   NO_UNION,
   PARENTAL_GRANT,
@@ -52,7 +53,6 @@ import {
   SPOUSE,
   StartDateOptions,
   UnEmployedBenefitTypes,
-  YES,
 } from '../constants'
 import {
   GetPensionFunds,

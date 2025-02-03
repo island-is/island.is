@@ -5,8 +5,9 @@ import {
   buildRadioField,
   buildSelectField,
   buildSubSection,
+  YES,
+  NO,
 } from '@island.is/application/core'
-import { NO, YES } from '@island.is/application/types'
 import { newPrimarySchoolMessages } from '../../../lib/messages'
 import {
   getApplicationAnswers,

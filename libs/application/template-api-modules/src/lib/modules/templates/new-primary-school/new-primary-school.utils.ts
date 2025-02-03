@@ -1,9 +1,10 @@
+import { YES } from '@island.is/application/core'
 import {
   getApplicationAnswers,
   getApplicationExternalData,
   ReasonForApplicationOptions,
 } from '@island.is/application/templates/new-primary-school'
-import { Application, YES } from '@island.is/application/types'
+import { Application } from '@island.is/application/types'
 import {
   AgentDto,
   FormDto,

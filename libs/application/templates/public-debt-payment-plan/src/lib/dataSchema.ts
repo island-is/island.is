@@ -1,8 +1,9 @@
 import { applicantInformationSchema } from '@island.is/application/ui-forms'
 import * as kennitala from 'kennitala'
 import { z } from 'zod'
-import { AMOUNT, MONTHS, NO, YES } from '../shared/constants'
+import { AMOUNT, MONTHS } from '../shared/constants'
 import { error } from './messages'
+import { NO, YES } from '@island.is/application/core'
 
 export const PaymentPlanSchema = z
   .object({

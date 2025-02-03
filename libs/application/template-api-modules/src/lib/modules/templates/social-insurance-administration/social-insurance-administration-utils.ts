@@ -1,4 +1,4 @@
-import { Application, YES, YesOrNo } from '@island.is/application/types'
+import { Application } from '@island.is/application/types'
 import parse from 'date-fns/parse'
 import {
   ApplicationDTO,
@@ -14,7 +14,7 @@ import {
   getApplicationAnswers as getOAPApplicationAnswers,
   getApplicationExternalData as getOAPApplicationExternalData,
 } from '@island.is/application/templates/social-insurance-administration/old-age-pension'
-import { getValueViaPath } from '@island.is/application/core'
+import { getValueViaPath, YES, YesOrNo } from '@island.is/application/core'
 import { BankAccountType } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
 import {
   formatBank,

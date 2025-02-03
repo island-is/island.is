@@ -1,7 +1,7 @@
 import { z } from 'zod'
 import { error } from './error'
-import { YES } from '@island.is/application/types'
 import { PassportStatus } from './constants'
+import { YES } from '@island.is/application/core'
 
 export const dataSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),

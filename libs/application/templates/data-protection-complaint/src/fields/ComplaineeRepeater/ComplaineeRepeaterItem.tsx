@@ -2,6 +2,8 @@ import {
   formatText,
   getErrorViaPath,
   getValueViaPath,
+  NO,
+  YES,
 } from '@island.is/application/core'
 import {
   Application,
@@ -20,7 +22,6 @@ import { InputController, RadioController } from '@island.is/shared/form-fields'
 import React, { FC, useState, useEffect } from 'react'
 import { FieldArrayWithId } from 'react-hook-form'
 import { complaint, sharedFields } from '../../lib/messages'
-import { NO, YES } from '../../shared'
 import * as styles from './ComplaineeRepeater.css'
 import { useFormContext } from 'react-hook-form'
 

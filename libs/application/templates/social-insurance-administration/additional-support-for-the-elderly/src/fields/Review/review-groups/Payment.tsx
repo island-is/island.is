@@ -10,12 +10,12 @@ import { socialInsuranceAdministrationMessage } from '@island.is/application/tem
 import { ReviewGroupProps } from './props'
 import { getApplicationAnswers } from '../../../lib/additionalSupportForTheElderlyUtils'
 import { BankAccountType } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
-import { YES } from '@island.is/application/types'
 import {
   friendlyFormatIBAN,
   friendlyFormatSWIFT,
   getTaxLevelOption,
 } from '@island.is/application/templates/social-insurance-administration-core/lib/socialInsuranceAdministrationUtils'
+import { YES } from '@island.is/application/core'
 
 export const Payment = ({
   application,

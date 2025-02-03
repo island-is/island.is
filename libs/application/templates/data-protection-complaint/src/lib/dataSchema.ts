@@ -1,8 +1,8 @@
 import { applicantInformationSchema } from '@island.is/application/ui-forms'
 import * as kennitala from 'kennitala'
 import { z } from 'zod'
-import { NO, YES } from '../shared'
 import { error } from './messages/error'
+import { NO, YES } from '@island.is/application/core'
 
 export enum OnBehalf {
   MYSELF = 'myself',

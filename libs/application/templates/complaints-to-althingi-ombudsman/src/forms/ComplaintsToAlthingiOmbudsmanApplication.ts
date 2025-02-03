@@ -12,6 +12,8 @@ import {
   buildSubmitField,
   buildSubSection,
   buildTextField,
+  NO,
+  YES,
 } from '@island.is/application/core'
 import {
   Application,
@@ -19,8 +21,6 @@ import {
   Form,
   FormModes,
   FormValue,
-  NO,
-  YES,
 } from '@island.is/application/types'
 import {
   applicantInformationMultiField,

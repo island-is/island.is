@@ -1,7 +1,7 @@
-import { FieldBaseProps, NO } from '@island.is/application/types'
+import { FieldBaseProps } from '@island.is/application/types'
 import { FC } from 'react'
 import { useFormContext } from 'react-hook-form'
-import { getValueViaPath } from '@island.is/application/core'
+import { getValueViaPath, NO } from '@island.is/application/core'
 import { PersonInformation } from '../../lib/dataSchema'
 
 interface ChangeAnswersProps {
