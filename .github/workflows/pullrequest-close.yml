@@ -70,7 +70,7 @@ jobs:
       - name: Create a PR
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          PR_BRANCH: cicd/${{ github.head_ref}}
+          PR_BRANCH: ci/${{ github.head_ref}}
           TARGET_BRANCH: ci/dummy-target
         run: |
           git config --global user.email "${{ github.actor }}@users.noreply.github.com"
