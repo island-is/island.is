@@ -1,4 +1,4 @@
-import { FC, Fragment, useEffect, useState } from 'react'
+import { FC, useEffect, useState } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { CustomField, FieldBaseProps } from '@island.is/application/types'
 import {
@@ -7,6 +7,8 @@ import {
   Box,
   Text,
 } from '@island.is/island-ui/core'
+
+import propertiesData from './properties'
 
 interface Props extends FieldBaseProps {
   field: CustomField
@@ -65,7 +67,6 @@ export const PropertySearch: FC<React.PropsWithChildren<Props>> = ({
   }, [getValues, id])
 
   // Mock data - replace with actual fetch
-  const propertiesMockData = require('./properties.json')
 
   const fetchProperties = (query = '') => {
     if (query.length < 2) {
@@ -86,7 +87,7 @@ export const PropertySearch: FC<React.PropsWithChildren<Props>> = ({
     //       )
     //       .slice(0, 10)
     setTimeout(() => {
-      const filteredData = propertiesMockData
+      const filteredData = propertiesData
         .filter((property: Property) =>
           property.streetAddress.toLowerCase().includes(query.toLowerCase()),
         )
