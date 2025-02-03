@@ -61,6 +61,7 @@ jobs:
           chunks="build-chunks={\"projects\":$(./scripts/ci/generate-chunks.sh build)}"
           echo "$chunks" >>"$GITHUB_OUTPUT"
           echo "nx={\"parallel\":${{ env.NX_PARALLEL }},\"max-parallel\":${{ env.NX_MAX_PARALLEL }}}"
+
   docker-build:
     uses: ./.github/workflows/docker.yml
     needs:
