@@ -160,11 +160,12 @@ export const HeirsRepeater: FC<
       return
     }
 
-    const total = values.reduce((acc: number, current: any) => {
+    let total = values.reduce((acc: number, current: any) => {
       const val = parseFloat(current[props.sumField])
 
       return current?.enabled ? acc + (isNaN(val) ? 0 : val) : acc
     }, 0)
+    total = parseFloat(total.toFixed(6))
 
     const addTotal = id.replace('data', 'total')
 

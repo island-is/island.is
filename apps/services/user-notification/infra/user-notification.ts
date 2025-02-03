@@ -104,6 +104,15 @@ export const userNotificationServiceSetup = (services: {
           },
         },
       },
+      internal: {
+        host: {
+          dev: serviceName,
+          staging: serviceName,
+          prod: serviceName,
+        },
+        paths: ['/'],
+        public: false,
+      },
     })
     .resources({
       limits: {
