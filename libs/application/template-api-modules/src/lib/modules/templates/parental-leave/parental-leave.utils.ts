@@ -554,5 +554,5 @@ export const isPreBirthRight = (right: string | undefined) => {
   if (!right) {
     return false
   }
-  return ['VEIKMEÐG', 'ÖRYGGI-L'].includes(right)
+  return ['VEIKMEÐG', 'ÖRYGGI-L', 'DVALSTYRK', 'DVAL.FJÖL'].includes(right)
 }
