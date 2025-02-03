@@ -205,9 +205,13 @@ FROM mcr.microsoft.com/playwright:${PLAYWRIGHT_IMAGE_TAG} AS base-playwright
 # TODO: remove awscli dependency (157 MB extra)
 # hadolint ignore=DL3008
 RUN apt-get update -y && \
-  apt-get install -y --no-install-recommends zip awscli && \
+  apt-get install -y --no-install-recommends zip && \
   apt-get purge && \
-  rm -rf /var/lib/apt/lists/*
+  rm -rf /var/lib/apt/lists/* && \
+  curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" && \
+  unzip awscliv2.zip && \
+  ./aws/install && \
+  rm -rf ./aws ./awscli*.zip
 
 
 FROM base-playwright AS output-playwright
