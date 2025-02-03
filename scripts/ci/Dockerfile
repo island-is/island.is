@@ -204,7 +204,7 @@ LABEL commit=${GIT_COMMIT_SHA}
 CMD [ "jest", "main.spec.js" ]
 
 
-FROM mcr.microsoft.com/playwright:${PLAYWRIGHT_IMAGE_TAG} AS base-playwright
+FROM mcr.microsoft.com/playwright:${PLAYWRIGHT_IMAGE_TAG} AS deps-playwright
 
 # TODO: remove awscli dependency (157 MB extra)
 # hadolint ignore=DL3008
@@ -218,7 +218,7 @@ RUN apt-get update -y && \
   rm -rf ./aws ./awscli*.zip
 
 
-FROM base-playwright AS output-playwright
+FROM deps-playwright AS base-playwright
 WORKDIR /testing
 
 # Stage-specific ARGs
@@ -234,6 +234,9 @@ COPY .yarn/releases ./.yarn/releases
 RUN yarn install && \
   yarn playwright install ${PLAYWRIGHT_BROWSER} && \
   yarn cache clean
+
+
+FROM base-playwright AS output-playwright
 
 COPY --from=builder /dist ./
 COPY --chmod=0755 ${APP_HOME}/entrypoint.sh ./
