@@ -53,7 +53,8 @@ FROM src AS builder
 
 # Stage-specific ARGs
 ARG APP
-ARG APP_DIST_HOME
+ARG APP_HOME
+ARG APP_DIST_HOME=dist/${APP_HOME}
 ARG NX_PARALLEL=2
 ARG NX_MAX_PARALLEL=4
 ARG NX_TASKS_RUNNER=ci
@@ -75,7 +76,10 @@ RUN yarn nx show project ${APP} --json --verbose \
   # Find root
   | jq -r '.root' \
   # Move outputs to /dist
-  | xargs -I{} mv "dist/{}" /dist
+  | xargs -I{} mv "dist/{}" /dist \
+  || \
+  # Fallback to APP_DIST_HOME usage if dynamic version fails
+  mv "dist/${APP_DIST_HOME}" /dist
 
 
 # This is base image for containers that are to be deployed
