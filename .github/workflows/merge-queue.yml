@@ -49,7 +49,7 @@ jobs:
         uses: ./.github/actions/get-cache
         with:
           github-token: ${{ github.token }}
-          enable-cache: 'node_modules'
+          enable-cache: node_modules,${{ github.event.localrun && 'generated-files' || '' }}
       - name: Derive appropriate SHAs
         uses: nrwl/nx-set-shas@v4
       - name: Find affected projects
