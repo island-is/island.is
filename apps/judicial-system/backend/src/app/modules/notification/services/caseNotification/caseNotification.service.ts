@@ -742,8 +742,8 @@ export class CaseNotificationService extends BaseNotificationService {
         courtDate,
         calendarInvite,
         `${this.config.clientUrl}${INDICTMENTS_OVERVIEW_ROUTE}/${theCase.id}`,
-        theCase.prosecutor?.name,
         theCase.prosecutor?.email,
+        theCase.prosecutor?.name,
       ),
     ]
 
@@ -765,8 +765,8 @@ export class CaseNotificationService extends BaseNotificationService {
                 theCase.type,
                 theCase.id,
               ),
-            defendant.defenderName,
             defendant.defenderEmail,
+            defendant.defenderName,
           ),
         )
       }
