@@ -79,7 +79,7 @@ RUN yarn nx show project ${APP} --json --verbose \
   | xargs -I{} mv "dist/{}" /dist \
   || \
   # Fallback to APP_DIST_HOME usage if dynamic version fails
-  mv "dist/${APP_DIST_HOME}" /dist
+  mv "${APP_DIST_HOME}" /dist
 
 
 # This is base image for containers that are to be deployed
