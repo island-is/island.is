@@ -4,6 +4,7 @@ on:
   workflow_dispatch: {}
   merge_group:
   pull_request:
+    # For debugging with 'ci debug' label
     types:
       - synchronize
       - labeled
@@ -53,7 +54,9 @@ jobs:
         uses: nrwl/nx-set-shas@v4
       - name: Setup yarn
         run: |
+          # Cached by GitHub actions
           corepack enable
+          # Cached by `get-cache` above
           yarn install --immutable
       - name: Find affected projects
         id: affected
