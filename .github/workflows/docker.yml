@@ -186,11 +186,20 @@ jobs:
             type=raw,value=${{ inputs.version }},enable=${{ !!inputs.version }}
             type=raw,value=mcgh-${{ github.event.pull_request.merge_commit_sha }}
 
-      - name: Godegen if needed
-        if: ${{ contains(github.event.pull_request.labels.*.name, 'docker build') }}
+      - name: Get cache
+        uses: ./.github/actions/get-cache
+        with:
+          github-token: ${{ github.token }}
+          enable-cache: 'node_modules'
+
+      - name: Godegen
         run: |
-          # In PRs we don't have the generated files context from when being called.
-          corepack enable && yarn install --immutable && yarn codegen
+          # Cached by GitHub Actions
+          corepack enable
+          # Cached by get-cache
+          yarn install --immutable
+          # Cached by Nx Cloud
+          yarn codegen
 
       - name: Docker build/cache dependencies
         uses: docker/build-push-action@v6
