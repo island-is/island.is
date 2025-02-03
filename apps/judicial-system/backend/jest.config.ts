@@ -11,6 +11,7 @@ export default {
   globals: {},
   displayName: 'judicial-system-backend',
   testEnvironment: 'node',
+  detectLeaks: false,
   transform: {
     '^.+\\.[tj]s$': [
       'ts-jest',

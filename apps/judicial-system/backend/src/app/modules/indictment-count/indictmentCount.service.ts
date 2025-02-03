@@ -90,8 +90,8 @@ export class IndictmentCountService {
   }
 
   async updateOffense(
-    offenseId: string,
     indictmentCountId: string,
+    offenseId: string,
     update: UpdateOffenseDto,
   ): Promise<Offense> {
     const [numberOfAffectedRows, offenses] = await this.offenseModel.update(
@@ -121,7 +121,7 @@ export class IndictmentCountService {
     offenseId: string,
   ): Promise<boolean> {
     const numberOfAffectedRows = await this.offenseModel.destroy({
-      where: { id: indictmentCountId, offenseId },
+      where: { id: offenseId, indictmentCountId },
     })
 
     if (numberOfAffectedRows > 1) {
