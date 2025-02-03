@@ -65,6 +65,10 @@ jobs:
       - prepare
     with:
       projects: ${{ needs.prepare.outputs.affected }}
+      build-args: |
+        --build-arg="NX_PARALLEL=${{ env.NX_PARALLEL }}"
+        --build-arg="NX_MAX_PARALLEL=${{ env.NX_MAX_PARALLEL }}"
+        --build-arg="NX_TASKS_RUNNER=ci"
 
   success:
     runs-on: arc-runners
