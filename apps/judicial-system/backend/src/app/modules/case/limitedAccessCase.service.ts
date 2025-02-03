@@ -25,6 +25,9 @@ import {
   dateTypes,
   defendantEventTypes,
   eventTypes,
+  isIndictmentCase,
+  isProsecutionUser,
+  isRequestCase,
   stringTypes,
   UserRole,
 } from '@island.is/judicial-system/types'
@@ -39,7 +42,12 @@ import {
   DefendantService,
 } from '../defendant'
 import { EventLog } from '../event-log'
-import { CaseFile, defenderCaseFileCategoriesForRequestCases } from '../file'
+import {
+  CaseFile,
+  defenderCaseFileCategoriesForIndictmentCases,
+  defenderCaseFileCategoriesForRequestCases,
+  defenderDefaultCaseFileCategoriesForIndictmentCases,
+} from '../file'
 import { IndictmentCount } from '../indictment-count'
 import { Institution } from '../institution'
 import { Subpoena } from '../subpoena'
@@ -520,44 +528,129 @@ export class LimitedAccessCaseService {
 
   async getAllFilesZip(theCase: Case, user: TUser): Promise<Buffer> {
     const filesToZip: { data: Buffer; name: string }[] = []
-
+    const caseFileCategories = this.getFileCategories(theCase)
     const caseFilesByCategory =
       theCase.caseFiles?.filter(
         (file) =>
           file.key &&
           file.category &&
-          defenderCaseFileCategoriesForRequestCases.includes(file.category),
+          caseFileCategories.includes(file.category),
       ) ?? []
 
-    // TODO: speed this up by fetching all files in parallel
-    for (const file of caseFilesByCategory) {
-      await this.awsS3Service
-        .getObject(theCase.type, file.key)
-        .then((content) => filesToZip.push({ data: content, name: file.name }))
-        .catch((reason) =>
-          // Tolerate failure, but log what happened
-          this.logger.warn(
-            `Could not get file ${file.id} of case ${file.caseId} from AWS S3`,
-            { reason },
-          ),
-        )
-    }
-
-    filesToZip.push(
-      {
-        data: await this.pdfService.getRequestPdf(theCase),
-        name: 'krafa.pdf',
-      },
-      {
-        data: await this.pdfService.getCourtRecordPdf(theCase, user),
-        name: 'þingbok.pdf',
-      },
-      {
-        data: await this.pdfService.getRulingPdf(theCase),
-        name: 'urskurður.pdf',
+    const caseFilesByCategoryPromises = caseFilesByCategory.map(
+      async (file) => {
+        return this.awsS3Service
+          .getObject(theCase.type, file.key)
+          .then((data) => filesToZip.push({ data, name: file.name }))
+          .catch((reason) =>
+            // Tolerate failure, but log what happened
+            this.logger.warn(
+              `Could not get file ${file.id} of case ${file.caseId} from AWS S3`,
+              { reason },
+            ),
+          )
       },
     )
 
+    await Promise.all(caseFilesByCategoryPromises)
+
+    if (isRequestCase(theCase.type)) {
+      filesToZip.push(
+        {
+          data: await this.pdfService.getRequestPdf(theCase),
+          name: 'Krafa.pdf',
+        },
+        {
+          data: await this.pdfService.getCourtRecordPdf(theCase, user),
+          name: 'Þingbók.pdf',
+        },
+        {
+          data: await this.pdfService.getRulingPdf(theCase),
+          name: 'Úrskurður.pdf',
+        },
+      )
+    }
+
+    if (
+      isIndictmentCase(theCase.type) &&
+      this.shouldDisplayGeneratedPdfFiles(theCase, user)
+    ) {
+      filesToZip.push({
+        data: await this.pdfService.getIndictmentPdf(theCase),
+        name: 'Ákæra.pdf',
+      })
+
+      const caseFilesRecordPromises = theCase.policeCaseNumbers.map(
+        async (policeCaseNumber) => {
+          return this.pdfService
+            .getCaseFilesRecordPdf(theCase, policeCaseNumber)
+            .then((data) =>
+              filesToZip.push({
+                data,
+                name: `Skjalaskrá-${policeCaseNumber}.pdf`,
+              }),
+            )
+        },
+      )
+
+      await Promise.all(caseFilesRecordPromises)
+
+      const subpoenaPromises: Promise<number>[] = []
+
+      theCase.defendants?.map((defendant) =>
+        defendant.subpoenas?.map((subpoena) =>
+          subpoenaPromises.push(
+            this.pdfService
+              .getSubpoenaPdf(theCase, defendant, subpoena)
+              .then((data) =>
+                filesToZip.push({
+                  data,
+                  name: `Fyrirkall-${defendant.name}.pdf`,
+                }),
+              ),
+          ),
+        ),
+      )
+
+      await Promise.all(subpoenaPromises)
+    }
+
     return this.zipFiles(filesToZip)
   }
+
+  private getFileCategories = (theCase: Case) => {
+    if (isRequestCase(theCase.type)) {
+      return defenderCaseFileCategoriesForRequestCases
+    }
+
+    if (theCase.defendants?.[0].caseFilesSharedWithDefender) {
+      return defenderCaseFileCategoriesForIndictmentCases
+    }
+
+    return defenderDefaultCaseFileCategoriesForIndictmentCases
+  }
+
+  private shouldDisplayGeneratedPdfFiles = (theCase: Case, user?: TUser) =>
+    Boolean(
+      isProsecutionUser(user) ||
+        theCase.defendants?.some(
+          (defendant) =>
+            defendant.isDefenderChoiceConfirmed &&
+            defendant.caseFilesSharedWithDefender &&
+            defendant.defenderNationalId &&
+            normalizeAndFormatNationalId(user?.nationalId).includes(
+              defendant.defenderNationalId,
+            ),
+        ) ||
+        theCase.civilClaimants?.some(
+          (civilClaimant) =>
+            civilClaimant.hasSpokesperson &&
+            civilClaimant.isSpokespersonConfirmed &&
+            civilClaimant.caseFilesSharedWithSpokesperson &&
+            civilClaimant.spokespersonNationalId &&
+            normalizeAndFormatNationalId(user?.nationalId).includes(
+              civilClaimant.spokespersonNationalId,
+            ),
+        ),
+    )
 }

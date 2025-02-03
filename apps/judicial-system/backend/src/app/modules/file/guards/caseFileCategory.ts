@@ -25,12 +25,12 @@ export const defenderCaseFileCategoriesForRequestCases = [
   CaseFileCategory.APPEAL_COURT_RECORD,
 ]
 
-const defenderDefaultCaseFileCategoriesForIndictmentCases = [
+export const defenderDefaultCaseFileCategoriesForIndictmentCases = [
   CaseFileCategory.COURT_RECORD,
   CaseFileCategory.RULING,
 ]
 
-const defenderCaseFileCategoriesForIndictmentCases =
+export const defenderCaseFileCategoriesForIndictmentCases =
   defenderDefaultCaseFileCategoriesForIndictmentCases.concat(
     CaseFileCategory.CRIMINAL_RECORD,
     CaseFileCategory.COST_BREAKDOWN,
