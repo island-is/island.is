@@ -526,9 +526,11 @@ jobs:
         with:
           node-version-file: 'package.json'
         if: steps.gather.outcome == 'success'
+
       - name: Setup yarn
         run: corepack enable
         if: steps.gather.outcome == 'success'
+
       - name: Get cache
         id: get-cache
         uses: ./.github/actions/get-cache
@@ -536,6 +538,42 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           keys: ${{ needs.prepare.outputs.CACHE_KEYS }}
           enable-cache: 'node_modules'
+
+      - name: Cache for dependencies Docker layer
+        if: steps.gather.outcome == 'success'
+        id: cache-deps-base
+        continue-on-error: true
+        uses: ./.github/actions/cache
+        with:
+          path: cache_output
+          key: ${{ needs.prepare.outputs.node-modules-hash }}-docker-output-base-1
+
+      - name: Check cache success
+        run: '[[ "${{ steps.cache-deps-base.outputs.success }}" != "false" ]] || exit 1'
+
+      - name: Cache for NodeJS dependencies - Docker layer
+        id: cache-deps
+        if: steps.gather.outcome == 'success'
+        continue-on-error: true
+        uses: ./.github/actions/cache
+        with:
+          path: cache
+          key: ${{ needs.prepare.outputs.node-modules-hash }}-docker-deps-1
+
+      - name: Check cache success
+        run: '[[ "${{ steps.cache-deps.outputs.success }}" != "false" ]] || exit 1'
+
+      - name: Docker login to ECR repo
+        if: steps.gather.outcome == 'success'
+        run: ./scripts/ci/docker-login-ecr.sh
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+        with:
+          image: '${{ env.DOCKER_BASE_IMAGE_REGISTRY }}/eks-distro-build-tooling/binfmt-misc:qemu-v6.1.0'
       - name: Check if cached buildx image exists
         id: cache-check
         run: |
@@ -544,6 +582,12 @@ jobs:
             docker tag docker.io/moby/buildkit:buildx-stable-1 ${{vars.AWS_ECR_REPO_BASE}}/moby/buildkit:buildx-stable-1
             docker push ${{vars.AWS_ECR_REPO_BASE}}/moby/buildkit:buildx-stable-1
           fi
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+        with:
+          driver-opts: |
+            image=${{vars.AWS_ECR_REPO_BASE}}/moby/buildkit:buildx-stable-1
+
       - name: Prepare Docker build arguments
         id: dockerargs
         if: steps.gather.outcome == 'success'
@@ -569,8 +613,10 @@ jobs:
           )
           export EXTRA_DOCKER_BUILD_ARGS="${build_args[*]}"
           echo "EXTRA_DOCKER_BUILD_ARGS=${EXTRA_DOCKER_BUILD_ARGS}" >> "${GITHUB_ENV}"
+
           # Create a temporary file with the NX_CLOUD_ACCESS_TOKEN
           echo "${{ secrets.NX_CLOUD_ACCESS_TOKEN }}" > nx_cloud_access_token.txt
+
           # Add secret to EXTRA_DOCKER_BUILD_ARGS
           echo "EXTRA_DOCKER_BUILD_ARGS=${EXTRA_DOCKER_BUILD_ARGS} --secret id=nx_cloud_access_token,src=nx_cloud_access_token.txt" >> "${GITHUB_ENV}"
 
@@ -578,19 +624,29 @@ jobs:
         continue-on-error: true
         id: dockerbuild
         if: steps.gather.outcome == 'success'
-        uses: .github/docker.yml
-        with:
-          projects: ${{ matrix.chunk }}
-          version: ${{ env.DOCKER_TAG }}
-          build-args: ${{ env.EXTRA_DOCKER_BUILD_ARGS | replace(' ','\n') }}
+        env:
+          NODE_IMAGE_VERSION: ${{ needs.prepare.outputs.NODE_IMAGE_VERSION }}
+          GIT_COMMIT_SHA: ${{ github.sha }}
+          DOCKER_BASE_IMAGE_REGISTRY: ${{ env.DOCKER_BASE_IMAGE_REGISTRY }}
+        run: |
+          set -x
+          echo "Node image tag is: '${NODE_IMAGE_VERSION}'"
+          echo "Docker build args are: 'EXTRA_DOCKER_BUILD_ARGS'"
+          export EXTRA_DOCKER_BUILD_ARGS
+          ./scripts/ci/run-in-parallel.sh "90_${DOCKER_TYPE}"
 
       - name: Building Docker images Retry
         if: steps.gather.outcome == 'success' && steps.dockerbuild.outcome == 'failure'
-        uses: .github/docker.yml
-        with:
-          projects: ${{ matrix.chunk }}
-          version: ${{ env.DOCKER_TAG }}
-          build-args: ${{ env.EXTRA_DOCKER_BUILD_ARGS | replace(' ','\n') }}
+        env:
+          NODE_IMAGE_VERSION: ${{ needs.prepare.outputs.NODE_IMAGE_VERSION }}
+          GIT_COMMIT_SHA: ${{ github.sha }}
+          DOCKER_BASE_IMAGE_REGISTRY: ${{ env.DOCKER_BASE_IMAGE_REGISTRY }}
+        run: |
+          set -x
+          echo "Node image tag is: '${NODE_IMAGE_VERSION}'"
+          echo "Docker build args are: 'EXTRA_DOCKER_BUILD_ARGS'"
+          export EXTRA_DOCKER_BUILD_ARGS
+          ./scripts/ci/run-in-parallel.sh "90_${DOCKER_TYPE}"
 
   helm-docker-build:
     needs:
