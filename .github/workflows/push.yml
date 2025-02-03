@@ -582,6 +582,7 @@ jobs:
         with:
           projects: ${{ matrix.chunk }}
           version: ${{ env.DOCKER_TAG }}
+          build-args: ${{ env.EXTRA_DOCKER_BUILD_ARGS | replace(' ','\n') }}
 
       - name: Building Docker images Retry
         if: steps.gather.outcome == 'success' && steps.dockerbuild.outcome == 'failure'
@@ -589,6 +590,7 @@ jobs:
         with:
           projects: ${{ matrix.chunk }}
           version: ${{ env.DOCKER_TAG }}
+          build-args: ${{ env.EXTRA_DOCKER_BUILD_ARGS | replace(' ','\n') }}
 
   helm-docker-build:
     needs:
