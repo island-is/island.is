@@ -1,7 +1,7 @@
 export const contentfulManagementAccessToken =
   process.env.CONTENTFUL_MANAGEMENT_ACCESS_TOKEN
 export const spaceId = process.env.CONTENTFUL_SPACE || '8k0h54kbe6bj'
-export const environmentId = process.env.CONTENTFUL_ENVIRONMENT || 'master'
+export const environmentId = 'stefna'
 
 export const DEFAULT_EDITABLE_ENTRY_TYPE_IDS = [
   'accordionSlice',

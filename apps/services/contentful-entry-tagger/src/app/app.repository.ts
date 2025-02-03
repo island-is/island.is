@@ -10,7 +10,7 @@ import {
 import { ClientAPI } from 'contentful-management/dist/typings/create-contentful-api'
 
 const SPACE_ID = '8k0h54kbe6bj'
-const ENVIRONMENT = process.env.CONTENTFUL_ENVIRONMENT || 'master'
+const ENVIRONMENT = 'stefna'
 const MAX_TAGS_PER_ENVIRONMENT = 500
 
 const mapTagsToSysObjects = (tags?: Link<'Tag'>[] | Tag[]) => {
