@@ -11,9 +11,9 @@ describe('clearInputsOnChange', () => {
 
     // Assert
     expect(setValue).toHaveBeenCalledTimes(3)
-    expect(setValue).toHaveBeenCalledWith('field1', null)
-    expect(setValue).toHaveBeenCalledWith('field2', null)
-    expect(setValue).toHaveBeenCalledWith('field3', null)
+    expect(setValue).toHaveBeenCalledWith('field1', '')
+    expect(setValue).toHaveBeenCalledWith('field2', '')
+    expect(setValue).toHaveBeenCalledWith('field3', '')
   })
 
   it('should handle empty array of fields', () => {
