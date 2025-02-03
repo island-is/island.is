@@ -12,6 +12,12 @@ export class Offense {
   @Field(() => ID)
   readonly id!: string
 
+  @Field(() => String, { nullable: true })
+  readonly created?: string
+
+  @Field(() => String, { nullable: true })
+  readonly modified?: string
+
   @Field(() => ID, { nullable: true })
   readonly indictmentCountId?: string
 

@@ -12,6 +12,16 @@ module.exports = {
             allowNull: false,
             defaultValue: Sequelize.UUIDV4,
           },
+          created: {
+            type: 'TIMESTAMP WITH TIME ZONE',
+            defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
+            allowNull: false,
+          },
+          modified: {
+            type: 'TIMESTAMP WITH TIME ZONE',
+            defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
+            allowNull: false,
+          },
           indictment_count_id: {
             type: Sequelize.UUID,
             references: {

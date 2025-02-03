@@ -1,9 +1,11 @@
 import {
   Column,
+  CreatedAt,
   DataType,
   ForeignKey,
   Model,
   Table,
+  UpdatedAt,
 } from 'sequelize-typescript'
 
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
@@ -14,7 +16,7 @@ import { IndictmentCount } from './indictmentCount.model'
 
 @Table({
   tableName: 'offense',
-  timestamps: false,
+  timestamps: true,
 })
 export class Offense extends Model {
   @Column({
@@ -25,6 +27,14 @@ export class Offense extends Model {
   })
   @ApiProperty({ type: String })
   id!: string
+
+  @CreatedAt
+  @ApiProperty({ type: Date })
+  created!: Date
+
+  @UpdatedAt
+  @ApiProperty({ type: Date })
+  modified!: Date
 
   @ForeignKey(() => IndictmentCount)
   @Column({ type: DataType.UUID, allowNull: false })
