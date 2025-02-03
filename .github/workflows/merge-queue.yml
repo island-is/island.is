@@ -77,13 +77,8 @@ jobs:
 
   success:
     runs-on: arc-runners
-    # if: ${{ !cancelled() }}
     needs:
       - docker-build
-      # - prepare
-      # - tests
-      # - e2e
-      # - build
     env:
       needs_results: ${{ needs.*.result }}
       needs: ${{ needs }}
@@ -96,14 +91,6 @@ jobs:
         run: '[[ ${{ needs.prepare.result }} == "success" ]] || exit 1'
       - name: Announce success
         run: echo "Build is successful"
-      # - name: Check prepare success
-      #   run: '[[ ${{ needs.prepare.result }} == "success" ]] || exit 1'
-      # - name: Check tests success
-      #   run: '[[ ${{ needs.tests.result }} != "failure" ]] || exit 1'
-      # - name: Check e2e success
-      #   run: '[[ ${{ needs.e2e.result }} != "failure" ]] || exit 1'
-      # - name: Check build success
-      #   run: '[[ ${{ needs.build.result }} != "failure" ]] || exit 1'
 
   # Remove this as a required status check and switch to something more meaningful
   codeowners-check:
