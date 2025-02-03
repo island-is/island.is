@@ -52,14 +52,7 @@ ENV NX_PARALLEL=${NX_PARALLEL}
 ENV NX_MAX_PARALLEL=${NX_MAX_PARALLEL}
 ENV NX_TASKS_RUNNER=${NX_TASKS_RUNNER}
 
-<<<<<<< HEAD
 RUN yarn run build ${APP} --prod
-=======
-# Use the secret during build
-RUN --mount=type=secret,id=nx_cloud_access_token \
-  export NX_CLOUD_ACCESS_TOKEN=$(cat /run/secrets/nx_cloud_access_token) && \
-  yarn run build ${APP} --prod
->>>>>>> eb47bfd65eaa57eec9d0df1d9e1bbb9a298dcb5e
 
 # This is base image for containers that are to be deployed
 FROM public.ecr.aws/docker/library/node:${NODE_IMAGE_VERSION}-bookworm-slim AS output-base
