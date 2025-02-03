@@ -60,7 +60,7 @@ jobs:
         id: get_latest_release
         run: |
           LATEST_RELEASE="$(node scripts/ci/get-last-release.mjs $(git branch -r))"
-          echo $LATEST_RELEASE >> "$GITHUB_OUTPUT"
+          echo LATEST_RELEASE=$LATEST_RELEASE >> "$GITHUB_OUTPUT"
 
       - run: "echo 'latest release: ${{ steps.get_latest_release.outputs.LATEST_RELEASE }}'"
 
