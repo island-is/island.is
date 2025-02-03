@@ -398,7 +398,16 @@ export class InternalCaseService {
     const theCase = await this.caseModel.findOne({
       include: [
         { model: Defendant, as: 'defendants' },
-        { model: IndictmentCount, as: 'indictmentCounts' },
+        {
+          model: IndictmentCount,
+          as: 'indictmentCounts',
+          include: [
+            {
+              model: Offense,
+              as: 'offenses',
+            },
+          ],
+        },
         { model: CaseFile, as: 'caseFiles' },
         { model: CaseString, as: 'caseStrings' },
       ],
