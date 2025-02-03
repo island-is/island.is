@@ -15,8 +15,10 @@ defaults:
 jobs:
   check-unicorn:
     name: Is this a unicorn PR
-    runs-on: arc-runners
+    runs-on: ubuntu-runners
     timeout-minutes: 10
+    outputs:
+      IS_UNICORN: ${{ steps.unicorn_affected.outputs.IS_UNICORN }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -45,7 +47,7 @@ jobs:
       - name: Check unicorn affected
         id: unicorn_affected
         run: |
-          echo "Comparing nx affected for ${{ env.NX_HEAD }} using ${{ env.NX_BASE }} as base branch"
+          # echo "Comparing nx affected for ${{ env.NX_HEAD }} using ${{ env.NX_BASE }} as base branch"
           # echo IS_UNICORN=$(node scripts/ci/unicorn-utils.mjs "{\"head\": \"${{ env.NX_HEAD }}\", \"base\": \"${{ env.NX_BASE }}\" }") >> "$GITHUB_OUTPUT"
           echo IS_UNICORN=true >> "$GITHUB_OUTPUT"
       - name: Results
