@@ -25,14 +25,8 @@ jobs:
       LATEST_RELEASE: ${{ steps.get_latest_release.outputs.LATEST_RELEASE }}
     steps:
       - uses: actions/checkout@v4
-
-
-
-      - name: Print GitHub event
-        run: |
-          echo ${{ github.event.pull_request.merge_commit_sha }}
-        # with:
-        #   fetch-depth: 0
+        with:
+          fetch-depth: 0
 
       # - uses: actions/setup-node@v4
       #   with:
@@ -54,15 +48,15 @@ jobs:
       # - run: |
       #     echo "BASE: ${{ env.NX_BASE }}"
       #     echo "HEAD: ${{ env.NX_HEAD }}"
-      - name: Check unicorn affected
-        id: unicorn_affected
-        run: |
-          # echo "Comparing nx affected for ${{ env.NX_HEAD }} using ${{ env.NX_BASE }} as base branch"
-          # echo IS_UNICORN=$(node scripts/ci/unicorn-utils.mjs "{\"head\": \"${{ env.NX_HEAD }}\", \"base\": \"${{ env.NX_BASE }}\" }") >> "$GITHUB_OUTPUT"
-          echo IS_UNICORN=true >> "$GITHUB_OUTPUT"
-      - name: Results
-        run: |
-          echo "Unicorn = ${{ steps.unicorn_affected.outputs.IS_UNICORN }}"
+      # - name: Check unicorn affected
+      #   id: unicorn_affected
+      #   run: |
+      #     # echo "Comparing nx affected for ${{ env.NX_HEAD }} using ${{ env.NX_BASE }} as base branch"
+      #     # echo IS_UNICORN=$(node scripts/ci/unicorn-utils.mjs "{\"head\": \"${{ env.NX_HEAD }}\", \"base\": \"${{ env.NX_BASE }}\" }") >> "$GITHUB_OUTPUT"
+      #     echo IS_UNICORN=true >> "$GITHUB_OUTPUT"
+      # - name: Results
+      #   run: |
+      #     echo "Unicorn = ${{ steps.unicorn_affected.outputs.IS_UNICORN }}"
 
       # - name: Find Latest Release Branch
       #   if: ${{ steps.unicorn_affected.outputs.IS_UNICORN == 'true' }}
@@ -73,7 +67,23 @@ jobs:
 
       # - run: "echo 'latest release: ${{ steps.get_latest_release.outputs.LATEST_RELEASE }}'"
 
-
+      - name: Create a PR
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_BRANCH: cicd/${{ github.head_ref}}
+          TARGET_BRANCH: ci/dummy-target
+        run: |
+          git config --global user.email "${{ github.actor }}@users.noreply.github.com"
+          git config --global user.name "${{ github.actor }} (automated)"
+          echo ${{ github.event.pull_request.merge_commit_sha }}
+          echo ${{ github.head_ref}}
+          git checkout $TARGET_BRANCH
+          git checkout -b $PR_BRANCH
+          git cherry-pick -x ${{ github.event.pull_request.merge_commit_sha }}
+          git commit --allow-empty -am "Automated cherry-pick of ${{ github.event.pull_request.merge_commit_sha }}"
+          git push --set-upstream origin $PR_BRANCH
+          echo "new branch created"
+          gh pr create -B $TARGET_BRANCH -H $PR_BRANCH --title "Automated cherry-pick of ${{ github.event.pull_request.merge_commit_sha }}" --body "Automated cherry-pick of ${{ github.event.pull_request.merge_commit_sha }}"
 
 
   # cleanup:
