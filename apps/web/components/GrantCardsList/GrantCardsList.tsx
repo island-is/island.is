@@ -129,7 +129,7 @@ const GrantCardsList = ({ slice }: SliceProps) => {
       <>
         {slice.displayTitle && (
           <Box marginBottom={2}>
-            <Text variant="h3" as="span" color="dark400">
+            <Text variant="h3" color="dark400">
               {slice.title}
             </Text>
           </Box>
