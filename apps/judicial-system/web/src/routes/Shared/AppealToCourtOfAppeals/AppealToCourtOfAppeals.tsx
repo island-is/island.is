@@ -187,7 +187,10 @@ const AppealToCourtOfAppeals = () => {
               ? strings.uploadFailedNextButtonText
               : strings.nextButtonText,
           )}
-          nextIsDisabled={updateUploadFile.length === 0 || isTransitioningCase}
+          nextIsDisabled={
+            !uploadFiles.find((file) => file.category === appealBriefType) ||
+            isTransitioningCase
+          }
           nextIsLoading={!allFilesDoneOrError || isTransitioningCase}
           nextButtonIcon={undefined}
           nextButtonColorScheme={someFilesError ? 'destructive' : 'default'}

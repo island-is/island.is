@@ -19,6 +19,7 @@ import {
 import { m } from './messages/messages'
 import { dataSchema } from './dataSchema'
 import { API_MODULE } from '../utils/constants'
+import { CodeOwners } from '@island.is/shared/constants'
 
 type Events = { type: DefaultEvents.SUBMIT }
 
@@ -44,6 +45,7 @@ const HealthInsuranceTemplate: ApplicationTemplate<
 > = {
   type: ApplicationTypes.HEALTH_INSURANCE,
   name: applicationName,
+  codeOwner: CodeOwners.NordaApplications,
   dataSchema,
   translationNamespaces: [configuration.translation],
   allowMultipleApplicationsInDraft: false,
