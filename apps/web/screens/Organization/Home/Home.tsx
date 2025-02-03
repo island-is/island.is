@@ -13,6 +13,7 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import {
+  DigitalIcelandLatestNewsSlice,
   getThemeConfig,
   IconTitleCard,
   OrganizationWrapper,
@@ -204,21 +205,36 @@ const OrganizationHomePage = ({
             : 0
         }
       >
-        {organizationPage?.bottomSlices.map((slice) => (
-          <SliceMachine
-            key={slice.id}
-            slice={slice}
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore make web strict
-            namespace={namespace}
-            slug={organizationPage.slug}
-            fullWidth={true}
-            params={{
-              latestNewsSliceColorVariant:
-                organizationPage.theme === 'landing_page' ? 'blue' : 'default',
-            }}
-          />
-        ))}
+        {organizationPage?.bottomSlices.map((slice) => {
+          if (
+            organizationPage.id === '5fFSe5CO3LJUjDwMmZaz3M' &&
+            slice.__typename === 'LatestNewsSlice'
+          ) {
+            return (
+              <DigitalIcelandLatestNewsSlice
+                slice={slice}
+                slug={organizationPage.slug}
+              />
+            )
+          }
+          return (
+            <SliceMachine
+              key={slice.id}
+              slice={slice}
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              // @ts-ignore make web strict
+              namespace={namespace}
+              slug={organizationPage.slug}
+              fullWidth={true}
+              params={{
+                latestNewsSliceColorVariant:
+                  organizationPage.theme === 'landing_page'
+                    ? 'blue'
+                    : 'default',
+              }}
+            />
+          )
+        })}
       </Stack>
       {organizationPage?.theme === 'landing_page' && (
         <LandingPageFooter
