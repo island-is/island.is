@@ -66,6 +66,10 @@ jobs:
           test="hallo"
           test=$(git branch -l)
           echo $test
+          test=$(git branch -r)
+          echo $test
+          test=$(git log)
+          echo $test
           node scripts/ci/get-last-release.mjs $(git branch -r)
 
       - run: "echo 'latest release: ${{ steps.get_latest_release.outputs.data }}'"
