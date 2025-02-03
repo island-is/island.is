@@ -19,6 +19,8 @@ import {
   buildImageField,
   buildCheckboxField,
   buildHiddenInput,
+  YES,
+  NO,
 } from '@island.is/application/core'
 import {
   Form,
@@ -32,8 +34,6 @@ import { Individual } from '../types'
 import { m } from '../lib/messages'
 import {
   DistrictCommissionerAgencies,
-  NO,
-  YES,
   CeremonyPlaces,
   Religion,
 } from '../lib/constants'

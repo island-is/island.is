@@ -1,13 +1,11 @@
 import { ApplicationContext } from '@island.is/application/types'
 
-import { getValueViaPath } from '@island.is/application/core'
+import { getValueViaPath, NO, YES, YesOrNo } from '@island.is/application/core'
 import {
-  NO,
   PARENTAL_GRANT,
   PARENTAL_GRANT_STUDENTS,
   PARENTAL_LEAVE,
   States,
-  YES,
 } from '../constants'
 import {
   getApplicationAnswers,
@@ -15,7 +13,7 @@ import {
   requiresOtherParentApproval,
   residentGrantIsOpenForApplication,
 } from '../lib/parentalLeaveUtils'
-import { EmployerRow, Period, YesOrNo } from '../types'
+import { EmployerRow, Period } from '../types'
 
 export const allEmployersHaveApproved = (context: ApplicationContext) => {
   const employers = getValueViaPath<EmployerRow[]>(

@@ -1,4 +1,4 @@
-import { FieldBaseProps, YES } from '@island.is/application/types'
+import { FieldBaseProps } from '@island.is/application/types'
 import { Box, Select } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import {
@@ -16,7 +16,7 @@ import {
   SecondarySchool,
 } from '../../utils'
 import { Controller, useFormContext } from 'react-hook-form'
-import { getValueViaPath } from '@island.is/application/core'
+import { getValueViaPath, YES } from '@island.is/application/core'
 import { useLazyProgramList } from '../../hooks/useLazyProgramList'
 
 type Option = {

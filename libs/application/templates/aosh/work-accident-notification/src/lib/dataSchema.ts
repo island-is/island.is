@@ -1,8 +1,8 @@
 import { z } from 'zod'
 import * as kennitala from 'kennitala'
-import { YES } from '@island.is/application/types'
 import { EMPLOYMENT_STATUS } from '../shared/constants'
 import { isValid24HFormatTime, isValidPhoneNumber } from '../utils'
+import { YES } from '@island.is/application/core'
 
 const option = z.object({
   value: z.string(),

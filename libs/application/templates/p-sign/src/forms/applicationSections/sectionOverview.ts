@@ -5,6 +5,8 @@ import {
   buildDividerField,
   buildKeyValueField,
   buildSubmitField,
+  YES,
+  NO,
 } from '@island.is/application/core'
 import { Application, DefaultEvents } from '@island.is/application/types'
 import { format as formatNationalId } from 'kennitala'
@@ -12,7 +14,7 @@ import { NationalRegistryUser } from '../../types/schema'
 import { m } from '../../lib/messages'
 import format from 'date-fns/format'
 import is from 'date-fns/locale/is'
-import { YES, NO, SEND_HOME, PICK_UP } from '../../lib/constants'
+import { SEND_HOME, PICK_UP } from '../../lib/constants'
 import { Photo, Delivery } from '../../types'
 import {
   formatPhoneNumber,
