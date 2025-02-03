@@ -15,9 +15,6 @@ jobs:
     runs-on: arc-runners
     timeout-minutes: 10
     steps:
-      - name: Dump github context
-        run: echo "${{ toJson(github) }}"
-
       - uses: actions/checkout@v4
         with:
           fetch-depth: 10
