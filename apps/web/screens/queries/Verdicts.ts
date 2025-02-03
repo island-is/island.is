@@ -1,0 +1,68 @@
+import gql from 'graphql-tag'
+
+export const GET_VERDICTS_QUERY = gql`
+  query GetVerdicts($input: WebVerdictsInput!) {
+    webVerdicts(input: $input) {
+      total
+      items {
+        id
+        title
+        court
+        caseNumber
+        verdictDate
+        keywords
+        presentings
+        presidentJudge {
+          name
+          title
+        }
+      }
+      input {
+        searchTerm
+      }
+    }
+  }
+`
+
+export const GET_VERDICT_BY_ID_QUERY = gql`
+  query GetVerdictById($input: WebVerdictByIdInput!) {
+    webVerdictById(input: $input) {
+      item {
+        content
+      }
+    }
+  }
+`
+
+export const GET_VERDICT_CASE_TYPES_QUERY = gql`
+  query GetVerdictCaseTypes {
+    webVerdictCaseTypes {
+      caseTypes {
+        id
+        label
+      }
+    }
+  }
+`
+
+export const GET_VERDICT_CASE_CATEGORIES_QUERY = gql`
+  query GetVerdictCaseCategories {
+    webVerdictCaseCategories {
+      caseCategories {
+        id
+        label
+      }
+    }
+  }
+`
+
+export const GET_VERDICT_KEYWORDS_QUERY = gql`
+  query GetVerdictKeywords {
+    webVerdictKeywords {
+      keywords {
+        id
+        label
+      }
+    }
+  }
+`
