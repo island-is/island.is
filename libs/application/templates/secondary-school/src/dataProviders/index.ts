@@ -24,7 +24,7 @@ export const NationalRegistryCustodiansApi = defineTemplateApi({
 
 export const UserProfileApiWithValidation = UserProfileApi.configure({
   params: {
-    validatePhoneNumber: true,
-    validateEmail: true,
+    validatePhoneNumberIfNotActor: true,
+    validateEmailIfNotActor: true,
   },
 })
