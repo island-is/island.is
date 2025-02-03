@@ -75,7 +75,7 @@ RUN yarn nx show project ${APP} --json \
   # Find root
   | jq -r '.root' \
   # Move outputs to /dist
-  | xargs -I{} mv "dist/{}" /dist/
+  | xargs -I{} mv "dist/{}" /dist
 
 
 # This is base image for containers that are to be deployed
