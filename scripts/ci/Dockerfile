@@ -1,3 +1,4 @@
+# syntax=docker/dockerfile:1.2
 # This is a multi-stage Dockerfile which contains all CI-related operations as well as images to be deployed in production
 # `base-*` layers are intended for maximum cacheability, only doing system-level actions
 
@@ -52,10 +53,19 @@ FROM src AS builder
 
 # Stage-specific ARGs
 ARG APP
+ARG APP_DIST_HOME
+ARG NX_PARALLEL=2
+ARG NX_MAX_PARALLEL=4
+ARG NX_TASKS_RUNNER=ci
 ENV NODE_ENV=production
 ENV NODE_OPTIONS="--max-old-space-size=8192"
+ENV NX_PARALLEL=${NX_PARALLEL}
+ENV NX_MAX_PARALLEL=${NX_MAX_PARALLEL}
+ENV NX_TASKS_RUNNER=${NX_TASKS_RUNNER}
 
-RUN yarn nx run-many --target=build --projects="${APP}" --prod --parallel=8
+# Use the secret during build
+RUN --mount=type=secret,id=nx_cloud_access_token \
+  NX_CLOUD_ACCESS_TOKEN="$(cat /run/secrets/nx_cloud_access_token)" yarn run build ${APP} --prod
 SHELL ["/bin/bash", "-euo", "pipefail", "-c"]
 RUN project_root="$(yarn nx show project ${APP} --json | jq -r '.root')" && \
   mv "dist/$project_root" /dist/
