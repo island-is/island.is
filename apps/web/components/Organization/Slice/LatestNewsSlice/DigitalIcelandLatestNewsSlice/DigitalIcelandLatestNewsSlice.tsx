@@ -4,15 +4,16 @@ import {
   Box,
   Button,
   GridContainer,
+  Hidden,
   Inline,
   LinkV2,
   Stack,
   Tag,
   Text,
 } from '@island.is/island-ui/core'
-import { GridItems } from '@island.is/web/components'
 import { LatestNewsSlice as LatestNewsSliceSchema } from '@island.is/web/graphql/schema'
 import { useLinkResolver } from '@island.is/web/hooks'
+import { shortenText } from '@island.is/web/screens/IcelandicGovernmentInstitutionVacancies/IcelandicGovernmentInstitutionVacanciesList'
 
 import * as styles from './DigitalIcelandLatestNewsSlice.css'
 
@@ -27,16 +28,29 @@ interface ItemProps {
 
 const Item = (item: ItemProps) => {
   return (
-    <LinkV2 href={item.href}>
-      <Stack space={2}>
-        <Box
-          className={styles.imageBox}
-          style={{
-            background: `url("${item.imageSrc}?w=500") 50% / cover no-repeat`,
-          }}
-        />
-        <Text variant="h3">{item.title}</Text>
-        <Text variant="medium">{item.description}</Text>
+    <LinkV2 href={item.href} className={styles.itemContainer}>
+      <Box
+        display="flex"
+        flexDirection="column"
+        flexWrap="nowrap"
+        rowGap={[2, 2, 2, 5]}
+        justifyContent="spaceBetween"
+        height="full"
+      >
+        <Stack space={2}>
+          <Box
+            className={styles.imageBox}
+            style={{
+              background: `url("${item.imageSrc}?w=500") left center / cover no-repeat`,
+            }}
+          />
+          <Stack space={1}>
+            <Text variant="h3">{item.title}</Text>
+            <Text variant="medium">
+              {shortenText(item.description ?? '', 80)}
+            </Text>
+          </Stack>
+        </Stack>
         <Box>
           <Inline space={1}>
             {item.tags.map((tag) => (
@@ -46,7 +60,24 @@ const Item = (item: ItemProps) => {
             ))}
           </Inline>
         </Box>
-      </Stack>
+      </Box>
+    </LinkV2>
+  )
+}
+
+const SeeMoreLink = ({ slice, slug }: SliceProps) => {
+  const { linkResolver } = useLinkResolver()
+  return (
+    <LinkV2
+      href={
+        slice.readMoreLink?.url
+          ? slice.readMoreLink.url
+          : linkResolver('organizationnewsoverview', [slug]).href
+      }
+    >
+      <Button as="span" unfocusable={true} variant="text" icon="arrowForward">
+        {slice.readMoreText}
+      </Button>
     </LinkV2>
   )
 }
@@ -74,31 +105,16 @@ export const DigitalIcelandLatestNewsSlice: React.FC<
           <Text variant="h2" as="h2" dataTestId="home-news">
             {slice.title}
           </Text>
-
-          <LinkV2
-            href={
-              slice.readMoreLink?.url
-                ? slice.readMoreLink.url
-                : linkResolver('organizationnewsoverview', [slug]).href
-            }
-          >
-            <Button variant="text" icon="arrowForward" nowrap>
-              {slice.readMoreText}
-            </Button>
-          </LinkV2>
+          <Hidden below="md">
+            <SeeMoreLink slice={slice} slug={slug} />
+          </Hidden>
         </Box>
       </GridContainer>
-      <GridItems
-        third
-        insideGridContainer
-        mobileItemsRows={1}
-        mobileItemWidth={396}
-        paddingTop={5}
-        paddingBottom={5}
-      >
-        {slice.news.slice(0, 3).map((news) => (
-          <Box key={news.id} height="full">
+      <GridContainer>
+        <Box className={styles.itemListContainer}>
+          {slice.news.slice(0, 3).map((news) => (
             <Item
+              key={news.id}
               href={linkResolver('organizationnews', [slug, news.slug]).href}
               date={news.date}
               description={news.intro}
@@ -106,9 +122,16 @@ export const DigitalIcelandLatestNewsSlice: React.FC<
               tags={news.genericTags.map((tag) => tag.title)}
               title={news.title}
             />
+          ))}
+        </Box>
+      </GridContainer>
+      <Hidden above="sm">
+        <GridContainer>
+          <Box display="flex" justifyContent="center">
+            <SeeMoreLink slice={slice} slug={slug} />
           </Box>
-        ))}
-      </GridItems>
+        </GridContainer>
+      </Hidden>
     </Stack>
   )
 }
