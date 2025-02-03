@@ -4,9 +4,10 @@ on:
   push:
     branches:
       - ci/cherry-pick-unicorn
-  # pull_request:
-  #   types:
-  #     - closed
+      - ci/cherry-pick-pr-test
+  pull_request:
+    types:
+      - closed
 
 defaults:
   run:
@@ -17,13 +18,21 @@ jobs:
     name: Is this a unicorn PR
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    env:
+        GITHUB_CONTEXT: ${{ toJson(github) }}
     outputs:
       IS_UNICORN: ${{ steps.unicorn_affected.outputs.IS_UNICORN }}
       LATEST_RELEASE: ${{ steps.get_latest_release.outputs.LATEST_RELEASE }}
     steps:
       - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
+
+
+
+      - name: Print GitHub event
+        run: |
+          echo $GITHUB_CONTEXT
+        # with:
+        #   fetch-depth: 0
 
       # - uses: actions/setup-node@v4
       #   with:
@@ -55,14 +64,14 @@ jobs:
         run: |
           echo "Unicorn = ${{ steps.unicorn_affected.outputs.IS_UNICORN }}"
 
-      - name: Find Latest Release Branch
-        if: ${{ steps.unicorn_affected.outputs.IS_UNICORN == 'true' }}
-        id: get_latest_release
-        run: |
-          LATEST_RELEASE="$(node scripts/ci/get-last-release.mjs $(git branch -r))"
-          echo LATEST_RELEASE=$LATEST_RELEASE >> "$GITHUB_OUTPUT"
+      # - name: Find Latest Release Branch
+      #   if: ${{ steps.unicorn_affected.outputs.IS_UNICORN == 'true' }}
+      #   id: get_latest_release
+      #   run: |
+      #     LATEST_RELEASE="$(node scripts/ci/get-last-release.mjs $(git branch -r))"
+      #     echo LATEST_RELEASE=$LATEST_RELEASE >> "$GITHUB_OUTPUT"
 
-      - run: "echo 'latest release: ${{ steps.get_latest_release.outputs.LATEST_RELEASE }}'"
+      # - run: "echo 'latest release: ${{ steps.get_latest_release.outputs.LATEST_RELEASE }}'"
 
 
 
