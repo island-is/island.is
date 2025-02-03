@@ -4,7 +4,7 @@ set -euxo pipefail
 : "${DD_CIVISIBILITY_AGENTLESS_ENABLED:=true}"
 : "${DD_SITE:=datadoghq.eu}"
 : "${DD_ENV:=ci}"
-: "${DD_SERVICE:=unit-test}"
+: "${DD_SERVICE:=}"
 : "${DD_API_KEY:='<set-api-key>'}"
 : "${NODE_OPTIONS:=}"
 : "${FLAKY_TEST_RETRIES:=3}"
