@@ -49,7 +49,8 @@ jobs:
         run: |
           # echo "Comparing nx affected for ${{ env.NX_HEAD }} using ${{ env.NX_BASE }} as base branch"
           # echo IS_UNICORN=$(node scripts/ci/unicorn-utils.mjs "{\"head\": \"${{ env.NX_HEAD }}\", \"base\": \"${{ env.NX_BASE }}\" }") >> "$GITHUB_OUTPUT"
-          echo IS_UNICORN=true >> "$GITHUB_OUTPUT"
+          echo IS_UNICORN=true
+          echo $IS_UNICORN >> "$GITHUB_OUTPUT"
       - name: Results
         run: |
           echo "Unicorn = $IS_UNICORN"
