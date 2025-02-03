@@ -73,6 +73,7 @@ jobs:
           git push --set-upstream origin $PR_BRANCH
           echo "new branch created"
           gh pr create -B $TARGET_BRANCH -H $PR_BRANCH --title "Automated cherry-pick of ${{ github.event.pull_request.merge_commit_sha }}" --body "Automated cherry-pick of ${{ github.event.pull_request.merge_commit_sha }}"
+          echo "PR created"
 
   # cleanup:
   #   name: Clean up feature deployment
