@@ -19,6 +19,7 @@ export const FormStepper = ({ sections }: Props) => {
           section={section?.name?.is ?? ''}
           isComplete={section?.isCompleted ?? false}
           isActive={section.id === currentSection?.id}
+          key={section?.id}
           subSections={section?.screens?.map((screen, screenIndex) => {
             return <Text key={screenIndex}> {screen?.name?.is ?? ''}</Text>
           })}

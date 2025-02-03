@@ -31,7 +31,9 @@ export const Applications = () => {
         }
       }
     })
-    console.log(app)
+    if (app) {
+      navigate(`../${slug}/${app.data.formSystemCreateApplication.id}`)
+    }
     return app
   }
 
