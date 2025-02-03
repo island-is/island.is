@@ -19,6 +19,7 @@ jobs:
     timeout-minutes: 10
     outputs:
       IS_UNICORN: ${{ steps.unicorn_affected.outputs.IS_UNICORN }}
+      LATEST_RELEASE: ${{ steps.get_latest_release.outputs.LATEST_RELEASE }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -58,9 +59,9 @@ jobs:
         if: ${{ steps.unicorn_affected.outputs.IS_UNICORN == 'true' }}
         id: get_latest_release
         run: |
-          node scripts/ci/get-last-release.mjs $(git branch -r)
+          echo LATEST_RELEASE=node scripts/ci/get-last-release.mjs $(git branch -r) >> "$GITHUB_OUTPUT"
 
-      - run: "echo 'latest release: ${{ steps.get_latest_release.outputs.data }}'"
+      - run: "echo 'latest release: ${{ steps.get_latest_release.outputs.LATEST_RELEASE }}'"
 
 
 
