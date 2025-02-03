@@ -66,6 +66,7 @@ export const serviceSetup = (services: {
   authAdminApi: ServiceBuilder<'services-auth-admin-api'>
   universityGatewayApi: ServiceBuilder<'services-university-gateway'>
   userNotificationService: ServiceBuilder<'services-user-notification'>
+  paymentsApi: ServiceBuilder<'services-payments'>
 }): ServiceBuilder<'api'> => {
   return service('api')
     .namespace('islandis')
@@ -274,6 +275,7 @@ export const serviceSetup = (services: {
       UNIVERSITY_GATEWAY_API_URL: ref(
         (h) => `http://${h.svc(services.universityGatewayApi)}`,
       ),
+      PAYMENTS_API_URL: ref((h) => `http://${h.svc(services.paymentsApi)}`),
       WATSON_ASSISTANT_CHAT_FEEDBACK_DB_NAME: {
         dev: 'island-is-assistant-feedback',
         staging: 'island-is-assistant-feedback',
@@ -390,6 +392,8 @@ export const serviceSetup = (services: {
         '/k8s/api/UMBODSMADUR_SKULDARA_COST_OF_LIVING_CALCULATOR_API_URL',
       VINNUEFTIRLITID_CAMPAIGN_MONITOR_API_KEY:
         '/k8s/api/VINNUEFTIRLITID_CAMPAIGN_MONITOR_API_KEY',
+      PAYMENTS_VERIFICATION_CALLBACK_SIGNING_SECRET:
+        '/k8s/payments/PAYMENTS_VERIFICATION_CALLBACK_SIGNING_SECRET',
     })
     .xroad(
       AdrAndMachine,
