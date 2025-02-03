@@ -132,16 +132,16 @@ const laws = Object.values(offenseLawsMap)
   .sort(lawsCompare)
 
 const getLawsBroken = (
-  offenses?: IndictmentCountOffense[] | null,
+  deprecatedOffenses?: IndictmentCountOffense[] | null,
   substances?: SubstanceMap | null,
 ) => {
-  if (!offenses || offenses.length === 0) {
+  if (!deprecatedOffenses || deprecatedOffenses.length === 0) {
     return []
   }
 
   let lawsBroken: [number, number][] = []
 
-  offenses.forEach((offense) => {
+  deprecatedOffenses.forEach((offense) => {
     lawsBroken = lawsBroken.concat(offenseLawsMap[offense])
 
     if (offense === IndictmentCountOffense.DRUNK_DRIVING) {
@@ -164,10 +164,10 @@ interface LawsBrokenOption {
 }
 
 export const getRelevantSubstances = (
-  offenses: IndictmentCountOffense[],
+  deprecatedOffenses: IndictmentCountOffense[],
   substances: SubstanceMap,
 ) => {
-  const allowedSubstances = offenses.map(
+  const allowedSubstances = deprecatedOffenses.map(
     (offense) => offenseSubstances[offense],
   )
 
@@ -182,17 +182,17 @@ export const getRelevantSubstances = (
 }
 
 export const getIncidentDescriptionReason = (
-  offenses: IndictmentCountOffense[],
+  deprecatedOffenses: IndictmentCountOffense[],
   substances: SubstanceMap,
   formatMessage: IntlShape['formatMessage'],
 ) => {
-  let reason = offenses
+  let reason = deprecatedOffenses
     .filter((offense) => offense !== IndictmentCountOffense.SPEEDING)
     .reduce((acc, offense, index) => {
       if (
-        (offenses.length > 1 && index === offenses.length - 1) ||
-        (offenses.length > 2 &&
-          index === offenses.length - 2 &&
+        (deprecatedOffenses.length > 1 && index === deprecatedOffenses.length - 1) ||
+        (deprecatedOffenses.length > 2 &&
+          index === deprecatedOffenses.length - 2 &&
           offense === IndictmentCountOffense.ILLEGAL_DRUGS_DRIVING)
       ) {
         acc += ' og '
@@ -217,7 +217,7 @@ export const getIncidentDescriptionReason = (
           break
         case IndictmentCountOffense.PRESCRIPTION_DRUGS_DRIVING:
           acc +=
-            (offenses.includes(IndictmentCountOffense.ILLEGAL_DRUGS_DRIVING)
+            (deprecatedOffenses.includes(IndictmentCountOffense.ILLEGAL_DRUGS_DRIVING)
               ? ''
               : `${formatMessage(
                   strings.incidentDescriptionDrugsDrivingPrefixAutofill,
@@ -230,7 +230,7 @@ export const getIncidentDescriptionReason = (
       return acc
     }, '')
 
-  const relevantSubstances = getRelevantSubstances(offenses, substances)
+  const relevantSubstances = getRelevantSubstances(deprecatedOffenses, substances)
 
   reason += relevantSubstances.reduce((acc, substance, index) => {
     if (index === 0) {
@@ -307,7 +307,7 @@ export const getIncidentDescription = (
   subtypesRecord?: Record<string, IndictmentSubtype[]>,
 ) => {
   const {
-    offenses,
+    deprecatedOffenses,
     substances,
     vehicleRegistrationNumber,
     indictmentCountSubtypes,
@@ -339,17 +339,17 @@ export const getIncidentDescription = (
     isTrafficViolationIndictmentCount(policeCaseNumber, subtypesRecord) ||
     indictmentCountSubtypes?.includes(IndictmentSubtype.TRAFFIC_VIOLATION)
   ) {
-    if (!offenses || offenses.length === 0) {
+    if (!deprecatedOffenses || deprecatedOffenses.length === 0) {
       return ''
     }
 
     const reason = getIncidentDescriptionReason(
-      offenses,
+      deprecatedOffenses,
       substances || {},
       formatMessage,
     )
 
-    const isSpeeding = indictmentCount.offenses?.includes(
+    const isSpeeding = indictmentCount.deprecatedOffenses?.includes(
       IndictmentCountOffense.SPEEDING,
     )
 
@@ -419,9 +419,9 @@ export const IndictmentCount: FC<Props> = ({
       Object.values(IndictmentCountOffense).map((offense) => ({
         value: offense,
         label: formatMessage(enumStrings[offense]),
-        disabled: indictmentCount.offenses?.includes(offense),
+        disabled: indictmentCount.deprecatedOffenses?.includes(offense),
       })),
-    [formatMessage, indictmentCount.offenses],
+    [formatMessage, indictmentCount.deprecatedOffenses],
   )
 
   const lawsBrokenOptions: LawsBrokenOption[] = useMemo(
@@ -442,11 +442,9 @@ export const IndictmentCount: FC<Props> = ({
   const handleIndictmentCountChanges = (update: UpdateIndictmentCount) => {
     let lawsBroken
 
-    const { offenses } = update
-    // TODO
-    if (update.substances || update.offenses) {
+    if (update.substances || update.deprecatedOffenses) {
       lawsBroken = getLawsBroken(
-        update.offenses || indictmentCount.offenses,
+        update.deprecatedOffenses || indictmentCount.deprecatedOffenses,
         update.substances || indictmentCount.substances,
       )
     }
@@ -492,8 +490,7 @@ export const IndictmentCount: FC<Props> = ({
     handleIndictmentCountChanges({
       indictmentCountSubtypes: Array.from(currentSubtypes),
       ...(!currentSubtypes.has(IndictmentSubtype.TRAFFIC_VIOLATION) && {
-        // TODO: delete all offenses
-        offenses: [],
+        deprecatedOffenses: [],
         substances: {},
         vehicleRegistrationNumber: null,
       }),
@@ -672,29 +669,29 @@ export const IndictmentCount: FC<Props> = ({
               marginBottom={2}
             />
             <Select
-              name="offenses"
+              name="deprecatedOffenses"
               options={offensesOptions}
               label={formatMessage(strings.incidentLabel)}
               placeholder={formatMessage(strings.incidentPlaceholder)}
               onChange={(so) => {
                 const selectedOffense = so?.value as IndictmentCountOffense
-                const offenses = [
-                  ...(indictmentCount.offenses ?? []),
+                const deprecatedOffenses = [
+                  ...(indictmentCount.deprecatedOffenses ?? []),
                   selectedOffense,
                 ].sort(offensesCompare)
 
                 // TODO: update offenses
                 handleIndictmentCountChanges({
-                  offenses,
+                  deprecatedOffenses,
                 })
               }}
               value={null}
               required
             />
           </Box>
-          {indictmentCount.offenses && indictmentCount.offenses.length > 0 && (
+          {indictmentCount.deprecatedOffenses && indictmentCount.deprecatedOffenses.length > 0 && (
             <Box marginBottom={2}>
-              {indictmentCount.offenses.map((offense) => (
+              {indictmentCount.deprecatedOffenses.map((offense) => (
                 <Box
                   display="inlineBlock"
                   key={`${indictmentCount.id}-${offense}`}
@@ -705,7 +702,7 @@ export const IndictmentCount: FC<Props> = ({
                   <Tag
                     variant="darkerBlue"
                     onClick={() => {
-                      const offenses = (indictmentCount.offenses ?? []).filter(
+                      const deprecatedOffenses = (indictmentCount.deprecatedOffenses ?? []).filter(
                         (o) => o !== offense,
                       )
 
@@ -716,7 +713,7 @@ export const IndictmentCount: FC<Props> = ({
                       })
 
                       handleIndictmentCountChanges({
-                        offenses,
+                        deprecatedOffenses,
                         substances: indictmentCount.substances,
                         ...(offense === IndictmentCountOffense.SPEEDING && {
                           recordedSpeed: null,
@@ -734,7 +731,7 @@ export const IndictmentCount: FC<Props> = ({
               ))}
             </Box>
           )}
-          {indictmentCount.offenses?.includes(
+          {indictmentCount.deprecatedOffenses?.includes(
             IndictmentCountOffense.DRUNK_DRIVING,
           ) && (
             <Box marginBottom={2}>
@@ -804,7 +801,7 @@ export const IndictmentCount: FC<Props> = ({
               </InputMask>
             </Box>
           )}
-          {indictmentCount.offenses?.includes(
+          {indictmentCount.deprecatedOffenses?.includes(
             IndictmentCountOffense.SPEEDING,
           ) && (
             <Box marginBottom={2}>
@@ -903,7 +900,7 @@ export const IndictmentCount: FC<Props> = ({
               </InputMask>
             </Box>
           )}
-          {indictmentCount.offenses
+          {indictmentCount.deprecatedOffenses
             ?.filter(
               (offenseType) =>
                 offenseType === IndictmentCountOffense.ILLEGAL_DRUGS_DRIVING ||

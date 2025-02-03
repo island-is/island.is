@@ -130,7 +130,7 @@ const Indictment = () => {
       // at least one count with the offense driving under the influence of alcohol, illegal drugs or prescription drugs
       // then by default the prosecutor requests a suspension of the driver's licence.
       const requestDriversLicenseSuspension = indictmentCounts?.some((count) =>
-        count.offenses?.some((offense) =>
+        count.deprecatedOffenses?.some((offense) =>
           [
             IndictmentCountOffense.DRUNK_DRIVING,
             IndictmentCountOffense.ILLEGAL_DRUGS_DRIVING,

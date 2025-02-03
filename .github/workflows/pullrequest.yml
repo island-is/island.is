@@ -22,7 +22,11 @@ env:
   DISABLE_GROUPING: 'false'
   DISABLE_PROBLEMATIC: 'false'
   CHUNK_SIZE: '8'
+<<<<<<< HEAD
   MAX_JOBS: '2'
+=======
+  MAX_JOBS: '1'
+>>>>>>> eb47bfd65eaa57eec9d0df1d9e1bbb9a298dcb5e
   NX_PARALLEL: '2'
   NX_MAX_PARALLEL: '4'
   NX_TASKS_RUNNER: ci
@@ -206,8 +210,6 @@ jobs:
       matrix: ${{ fromJson(needs.prepare.outputs.TEST_CHUNKS) }}
     steps:
       - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
 
       - uses: actions/setup-node@v4
         with:
@@ -341,11 +343,19 @@ jobs:
       - name: NX format:check
         if: ${{ github.ref == 'ref/heads/main' }}
         run: ./scripts/ci/20_check-formatting.sh "check"
+<<<<<<< HEAD
       - name: NX format:write
         if: ${{ github.event_name == 'pull_request' }}
         run: |
           ./scripts/ci/20_check-formatting.sh "write"
           ./infra/scripts/ci/git-check-dirty.sh "/" "nx format:write" "dirtybot"
+=======
+      # - name: NX format:write
+      #   if: ${{ github.event_name == 'pull_request' }}
+      #   run: |
+      #     ./scripts/ci/20_check-formatting.sh "write"
+      #     ./infra/scripts/ci/git-check-dirty.sh "/" "nx format:write" "dirtybot"
+>>>>>>> eb47bfd65eaa57eec9d0df1d9e1bbb9a298dcb5e
 
   linting:
     needs:
