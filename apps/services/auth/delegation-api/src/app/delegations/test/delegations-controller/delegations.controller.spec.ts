@@ -35,6 +35,7 @@ describe('DelegationsController', () => {
 
     await factory.createClient(testcase.client)
     await factory.createDomain(testcase.domain)
+    await factory.createAllDelegationTypes()
 
     // create api scopes in db
     await Promise.all(

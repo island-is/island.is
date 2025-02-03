@@ -1,13 +1,15 @@
+import {
+  DelegationDirection,
+  PersonalRepresentativeDelegationType,
+} from '@island.is/auth-api-lib'
+import { AuthDelegationType } from '@island.is/shared/types'
 import { createNationalId } from '@island.is/testing/fixtures'
+
 import {
   personalRepresentativeRightTypeCodeFinance,
   scopes,
   TestCase,
 } from './delegations.controller-test-types'
-import {
-  DelegationDirection,
-  PersonalRepresentativeDelegationType,
-} from '@island.is/auth-api-lib'
 
 const person1 = createNationalId('person')
 const person2 = createNationalId('person')
@@ -185,7 +187,7 @@ export const validTestCases: Record<
         },
         {
           toNationalId: person1,
-          type: personalRepresentativeRightTypeCodeFinance as PersonalRepresentativeDelegationType, // type that scope has no permission for
+          type: `${AuthDelegationType.PersonalRepresentative}:${personalRepresentativeRightTypeCodeFinance}` as PersonalRepresentativeDelegationType, // type that scope has no permission for
         },
       ],
       scopes: [scopes.representative], // has permission for postholf right type not finance
