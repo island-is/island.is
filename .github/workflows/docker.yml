@@ -18,12 +18,12 @@ on:
         description: 'Comma-separated list of project names to build.'
         type: string
         required: true
-      version:
-        description: 'The version to tag the image with (previously DOCKER_TAG)'
-        type: string
-        required: false
       build-args:
         description: 'Additional build-args (newline separated)'
+        type: string
+        required: false
+      version:
+        description: 'The version to tag the image with (previously DOCKER_TAG)'
         type: string
         required: false
   workflow_dispatch:
@@ -32,12 +32,12 @@ on:
         description: 'Comma-separated list of project names to build.'
         type: string
         required: true
-      version:
-        description: 'The version to tag the image with (previously DOCKER_TAG)'
-        type: string
-        required: false
       build-args:
         description: 'Additional build-args (newline separated)'
+        type: string
+        required: false
+      version:
+        description: 'The version to tag the image with (previously DOCKER_TAG)'
         type: string
         required: false
 
