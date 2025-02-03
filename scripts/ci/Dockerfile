@@ -67,8 +67,15 @@ ENV NX_TASKS_RUNNER=${NX_TASKS_RUNNER}
 RUN --mount=type=secret,id=nx_cloud_access_token \
   NX_CLOUD_ACCESS_TOKEN="$(cat /run/secrets/nx_cloud_access_token)" yarn run build ${APP} --prod
 SHELL ["/bin/bash", "-euo", "pipefail", "-c"]
-RUN project_root="$(yarn nx show project ${APP} --json | jq -r '.root')" && \
-  mv "dist/$project_root" /dist/
+RUN yarn nx show project ${APP} --json \
+  # Find _anything_ to prevent emptyness
+  | grep . \
+  # Print the output to stderr for debugging
+  | tee /dev/stderr \
+  # Find root
+  | jq -r '.root' \
+  # Move outputs to /dist
+  | xargs -I{} mv "dist/{}" /dist/
 
 
 # This is base image for containers that are to be deployed
