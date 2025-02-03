@@ -2,7 +2,8 @@ import { Field, InputType, ID } from '@nestjs/graphql'
 
 import { Environment } from '@island.is/shared/types'
 
-import { CreateClientType, ClientSso } from '../../models/client-type.enum'
+import { CreateClientType } from '../../models/client-type.enum'
+import { ClientSso } from '../../models/client-sso.enum'
 
 @InputType('CreateAuthAdminClientInput')
 export class CreateClientInput {

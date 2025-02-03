@@ -60,6 +60,7 @@ export class ClientsService extends MultiEnvironmentService {
       .map(([clientId, clients]) => ({
         clientId,
         clientType: clients[0].clientType,
+        sso: clients[0].sso,
         environments: clients,
       }))
       .sort((a, b) => a.clientId.localeCompare(b.clientId))
@@ -107,6 +108,7 @@ export class ClientsService extends MultiEnvironmentService {
     return {
       clientId,
       clientType: clientEnvs[0].clientType,
+      sso: clientEnvs[0].sso,
       environments: clientEnvs,
     }
   }
