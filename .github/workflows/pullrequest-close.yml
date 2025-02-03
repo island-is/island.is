@@ -5,9 +5,9 @@ on:
     branches:
       - ci/cherry-pick-unicorn
       - ci/cherry-pick-pr-test
-  # pull_request:
-  #   types:
-  #     - closed
+  pull_request:
+    types:
+      - closed
 
 defaults:
   run:
