@@ -68,7 +68,7 @@ export class SubpoenaController {
     private readonly pdfService: PdfService,
     private readonly subpoenaService: SubpoenaService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
-  ) { }
+  ) {}
 
   @RolesRules(
     prosecutorRule,
@@ -125,7 +125,8 @@ export class SubpoenaController {
     @Query('subpoenaType') subpoenaType?: SubpoenaType,
   ): Promise<void> {
     this.logger.debug(
-      `Getting subpoena ${subpoenaId ?? 'draft'
+      `Getting subpoena ${
+        subpoenaId ?? 'draft'
       } for defendant ${defendantId} of case ${caseId} as a pdf document`,
     )
 

@@ -51,7 +51,7 @@ export class LimitedAccessSubpoenaController {
   constructor(
     private readonly pdfService: PdfService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
-  ) { }
+  ) {}
 
   @UseGuards(SubpoenaExistsGuard)
   @RolesRules(defenderGeneratedPdfRule)
