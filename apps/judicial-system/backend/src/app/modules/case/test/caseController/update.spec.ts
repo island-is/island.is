@@ -855,6 +855,7 @@ describe('CaseController - Update', () => {
     const updatedCase = {
       ...theCase,
       type: CaseType.INDICTMENT,
+      origin: CaseOrigin.LOKE,
       dateLogs: [{ dateType: DateType.ARRAIGNMENT_DATE, ...arraignmentDate }],
       defendants: [
         { id: defendantId1, subpoenas: [{ id: subpoenaId1 }] },

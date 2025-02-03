@@ -1,10 +1,9 @@
 import formatISO from 'date-fns/formatISO'
 import { Base64 } from 'js-base64'
-import { Sequelize } from 'sequelize-typescript'
 import { ConfidentialClientApplication } from '@azure/msal-node'
 
 import { Inject, Injectable, ServiceUnavailableException } from '@nestjs/common'
-import { InjectConnection, InjectModel } from '@nestjs/sequelize'
+import { InjectModel } from '@nestjs/sequelize'
 
 import { EmailService } from '@island.is/email-service'
 import type { Logger } from '@island.is/logging'
@@ -141,7 +140,6 @@ export class CourtService {
     private readonly courtClientService: CourtClientService,
     private readonly emailService: EmailService,
     private readonly eventService: EventService,
-    @InjectConnection() private readonly sequelize: Sequelize,
     @InjectModel(RobotLog) private readonly robotLogModel: typeof RobotLog,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
     @Inject(courtModuleConfig.KEY)
@@ -163,7 +161,9 @@ export class CourtService {
             },
           })
       } else {
-        logger.error('Missing required configuration for Microsoft Graph API')
+        this.logger.error(
+          'Missing required configuration for Microsoft Graph API',
+        )
       }
     }
   }
