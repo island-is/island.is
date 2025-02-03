@@ -3,6 +3,10 @@ name: Validate code in the merge queue (post merge)
 on:
   workflow_dispatch: {}
   merge_group:
+  pull_request:
+    types:
+      - synchronize
+      - labeled
 defaults:
   run:
     shell: bash -euxo pipefail {0}
@@ -25,6 +29,7 @@ env:
 
 jobs:
   prepare:
+    if: ${{ github.event_name != 'pull_request' || contains(github.event.pull_request.labels.*.name, 'ci debug') }}
     runs-on: arc-runners
     outputs:
       affected: ${{ steps.affected.outputs.build-chunks }}

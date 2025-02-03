@@ -1,7 +1,7 @@
 name: Docker Build
 # This workflow builds Docker images for projects in the repository.
 # It can be triggered by:
-# - Labeling a pull request with "docker build"
+# - Labeling a pull request with "ci debug"
 # - Being called from another workflow via `workflow_call`
 # - Manual dispatch using `workflow_dispatch`
 # The workflow uses matrix builds to parallelize the process and leverages caching
@@ -58,7 +58,7 @@ env:
 jobs:
   prepare:
     name: Prepare
-    if: ${{ github.event_name != 'pull_request' || contains(github.event.pull_request.labels.*.name, 'docker build') }}
+    if: ${{ github.event_name != 'pull_request' || contains(github.event.pull_request.labels.*.name, 'ci debug') }}
     runs-on: ${{ inputs.runners || 'arc-runners' }}
     outputs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}
@@ -81,7 +81,7 @@ jobs:
           localrun: ${{ !!github.event.localrun }}
           projects: ${{ inputs.projects }}
         run: |
-          if [[ ${{ contains(github.event.pull_request.labels.*.name, 'docker build') }} ]]; then
+          if [[ ${{ contains(github.event.pull_request.labels.*.name, 'ci debug') }} ]]; then
             echo "Using small subset for testing docker build (on ${{ github.event.pull_request.base.ref }})"
             # A representative sample of various docker build targets
             export projects="web,air-discount-scheme-backend,license-api"
@@ -208,6 +208,8 @@ jobs:
           file: scripts/ci/Dockerfile
           push: false
           target: deps
+          secrets: |
+            nx_cloud_access_token=${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
           build-args: |
             NODE_IMAGE_VERSION=${{ needs.prepare.outputs.node-image-version }}
             PLAYWRIGHT_IMAGE_TAG=${{ needs.prepare.outputs.playwright-image-tag }}
@@ -226,6 +228,8 @@ jobs:
           file: scripts/ci/Dockerfile
           push: false
           target: output-base
+          secrets: |
+            nx_cloud_access_token=${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
           build-args: |
             NODE_IMAGE_VERSION=${{ needs.prepare.outputs.node-image-version }}
             PLAYWRIGHT_IMAGE_TAG=${{ needs.prepare.outputs.playwright-image-tag }}
