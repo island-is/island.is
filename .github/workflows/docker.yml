@@ -27,6 +27,10 @@ on:
         description: 'The version to tag the image with (previously DOCKER_TAG)'
         type: string
         required: false
+      build-args:
+        description: 'Additional build-args (newline separated)'
+        type: string
+        required: false
   workflow_dispatch:
     inputs:
       projects:
@@ -40,6 +44,10 @@ on:
         default: 'arc-runners'
       version:
         description: 'The version to tag the image with (previously DOCKER_TAG)'
+        type: string
+        required: false
+      build-args:
+        description: 'Additional build-args (newline separated)'
         type: string
         required: false
 
@@ -64,14 +72,14 @@ jobs:
     runs-on: ${{ inputs.runners || 'arc-runners' }}
     outputs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}
-      node-image-version: ${{ steps.build-args.outputs.node-image-version }}
-      playwright-image-tag: ${{ steps.build-args.outputs.playwright-image-tag }}
-      container-registry: ${{ steps.build-args.outputs.container-registry }}
+      node-image-version: ${{ steps.args-prep.outputs.node-image-version }}
+      playwright-image-tag: ${{ steps.args-prep.outputs.playwright-image-tag }}
+      container-registry: ${{ steps.args-prep.outputs.container-registry }}
     steps:
       - uses: actions/checkout@v4
 
       - name: Build arg prep
-        id: build-args
+        id: args-prep
         run: |
           node_image_version="$NODE_IMAGE_VERSION"
           echo node-image-version="$node_image_version" >>"$GITHUB_OUTPUT"
@@ -204,6 +212,7 @@ jobs:
           build-args: |
             NODE_IMAGE_VERSION=${{ needs.prepare.outputs.node-image-version }}
             PLAYWRIGHT_IMAGE_TAG=${{ needs.prepare.outputs.playwright-image-tag }}
+            ${{ inputs.build-args }}
           cache-from: |
             ${{ steps.args.outputs.build-cache-local }}
             ${{ steps.args.outputs.build-cache }}
@@ -221,6 +230,7 @@ jobs:
           build-args: |
             NODE_IMAGE_VERSION=${{ needs.prepare.outputs.node-image-version }}
             PLAYWRIGHT_IMAGE_TAG=${{ needs.prepare.outputs.playwright-image-tag }}
+            ${{ inputs.build-args }}
           cache-from: |
             ${{ steps.args.outputs.build-cache-local }}
             ${{ steps.args.outputs.build-cache }}
@@ -241,6 +251,7 @@ jobs:
             NODE_IMAGE_VERSION=${{ needs.prepare.outputs.node-image-version }}
             APP=${{ matrix.project }}
             PLAYWRIGHT_IMAGE_TAG=${{ needs.prepare.outputs.playwright-image-tag }}
+            ${{ inputs.build-args }}
           # Caching final images doesn't make sense when this should only run if the project is affected (changed)
           cache-from: |
             ${{ steps.args.outputs.build-cache-local }}
