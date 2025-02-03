@@ -26,7 +26,9 @@ export const titleForCase = (
 
   if (theCase.state === CaseState.ACCEPTED) {
     if (isInvestigationCase(theCase.type)) {
-      return formatMessage(strings.investigationCaseAcceptedTitle)
+      return theCase.decision === CaseDecision.COMPLETED_WITHOUT_RULING
+        ? formatMessage(strings.investigationCaseCompletedWithoutRuling)
+        : formatMessage(strings.investigationCaseAcceptedTitle)
     }
 
     const caseType =

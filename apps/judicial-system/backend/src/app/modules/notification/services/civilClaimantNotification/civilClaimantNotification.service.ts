@@ -75,14 +75,14 @@ export class CivilClaimantNotificationService extends BaseNotificationService {
 
     if (civilClaimant.isSpokespersonConfirmed) {
       promises.push(
-        this.sendEmail(
-          formattedSubject,
-          formattedBody,
-          civilClaimant.spokespersonName,
-          civilClaimant.spokespersonEmail,
-          undefined,
-          true,
-        ),
+        this.sendEmail({
+          subject: formattedSubject,
+          html: formattedBody,
+          recipientName: civilClaimant.spokespersonName,
+          recipientEmail: civilClaimant.spokespersonEmail,
+          attachments: undefined,
+          skipTail: true,
+        }),
       )
     }
 
