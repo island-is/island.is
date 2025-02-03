@@ -3,7 +3,8 @@
     [
       "@nx/react/babel",
       {
-        "runtime": "automatic"
+        "runtime": "automatic",
+        "useBuiltIns": "usage"
       }
     ]
   ],
