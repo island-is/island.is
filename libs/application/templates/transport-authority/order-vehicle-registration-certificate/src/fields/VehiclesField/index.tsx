@@ -7,31 +7,16 @@ import { Box } from '@island.is/island-ui/core'
 import { FC } from 'react'
 import { CurrentVehiclesAndRecords } from '../../shared'
 import { error, information } from '../../lib/messages'
-import { useLazyVehicleDetails } from '../../hooks/useLazyVehicleDetails'
 import {
   FindVehicleFormField,
   VehicleRadioFormField,
+  VehicleSelectFormField,
 } from '@island.is/application/ui-fields'
-import { ApolloQueryResult } from '@apollo/client'
-import { VehicleSelectField } from './VehicleSelectField'
 
 export const VehiclesField: FC<React.PropsWithChildren<FieldBaseProps>> = (
   props,
 ) => {
   const { application } = props
-
-  const getVehicleDetails = useLazyVehicleDetails()
-  const createGetVehicleDetailsWrapper = (
-    getVehicleDetailsFunction: (variables: {
-      permno: string
-    }) => Promise<ApolloQueryResult<any>>,
-  ) => {
-    return async (plate: string) => {
-      const variables = { permno: plate }
-      const result = await getVehicleDetailsFunction(variables)
-      return result.data.vehicleOwnerchangeChecksByPermno // Adjust based on your query
-    }
-  }
   const currentVehicleList = application.externalData.currentVehicleList
     .data as CurrentVehiclesAndRecords
 
@@ -48,7 +33,8 @@ export const VehiclesField: FC<React.PropsWithChildren<FieldBaseProps>> = (
             type: FieldTypes.FIND_VEHICLE,
             component: FieldComponents.FIND_VEHICLE,
             children: undefined,
-            getDetails: createGetVehicleDetailsWrapper(getVehicleDetails),
+            //TODOx remove
+            // getDetails: createGetVehicleDetailsWrapper(getVehicleDetails),
             additionalErrors: false,
             findPlatePlaceholder:
               information.labels.pickVehicle.findPlatePlaceholder,
@@ -60,9 +46,20 @@ export const VehiclesField: FC<React.PropsWithChildren<FieldBaseProps>> = (
           }}
         />
       ) : currentVehicleList.totalRecords > 5 ? (
-        <VehicleSelectField
-          currentVehicleList={currentVehicleList.vehicles}
+        <VehicleSelectFormField
           {...props}
+          field={{
+            id: 'pickVehicle',
+            title: information.labels.pickVehicle.title,
+            type: FieldTypes.VEHICLE_SELECT,
+            component: FieldComponents.VEHICLE_SELECT,
+            children: undefined,
+            itemType: 'VEHICLE',
+            itemList: currentVehicleList?.vehicles,
+            inputLabelText: information.labels.pickVehicle.vehicle,
+            inputPlaceholderText: information.labels.pickVehicle.placeholder,
+            inputErrorMessage: error.requiredValidVehicle,
+          }}
         />
       ) : (
         <VehicleRadioFormField

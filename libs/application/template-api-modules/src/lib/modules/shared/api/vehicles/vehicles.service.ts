@@ -25,33 +25,22 @@ export class VehiclesService extends BaseTemplateApiService {
     const showCoOwned = params?.showCoOwned || false
     const showOperated = params?.showOperated || false
 
-    const countResult =
-      (
-        await this.vehiclesApiWithAuth(
-          auth,
-        ).currentvehicleswithmileageandinspGet({
-          showOwned: showOwned,
-          showCoowned: showCoOwned,
-          showOperated: showOperated,
-          page: 1,
-          pageSize: 1,
-        })
-      ).totalRecords || 0
-    if (countResult && countResult > 20) {
-      return {
-        totalRecords: countResult,
-        vehicles: [],
-      }
-    }
-    const result = await this.vehiclesApiWithAuth(auth).currentVehiclesGet({
-      persidNo: auth.nationalId,
+    // Get max 20 vehicles and total count of vehicles
+    // Note: Should be enough to only get 20, because if totalRecords
+    // is higher than 20, then we won't return any vehicles
+    const result = await this.vehiclesApiWithAuth(
+      auth,
+    ).currentvehicleswithmileageandinspGet({
       showOwned: showOwned,
       showCoowned: showCoOwned,
       showOperated: showOperated,
+      page: 1,
+      pageSize: 20,
     })
+    const totalRecords = result.totalRecords || 0
 
-    // // Validate that user has at least 1 vehicle
-    if (!result || !result.length) {
+    // Validate that user has at least 1 vehicle
+    if (!totalRecords) {
       if (showOwned && !showCoOwned && !showOperated) {
         // Throw error message that user is not the main owner of at least 1 vehicle
         throw new TemplateApiError(
@@ -82,13 +71,26 @@ export class VehiclesService extends BaseTemplateApiService {
       }
     }
 
+    // Case: count > 20
+    // Display search box, get vehicle basic info when permno is entered
+    if (totalRecords > 20) {
+      return {
+        totalRecords: totalRecords,
+        vehicles: [],
+      }
+    }
+
+    const resultData = result.data || []
+
+    // Case: count <= 20
+    // Display dropdown or radio buttons, return all basic info now
     return {
-      totalRecords: countResult,
-      vehicles: result?.map((vehicle) => ({
-        permno: vehicle.permno,
-        make: vehicle.make,
-        color: vehicle.color,
-        role: vehicle.role,
+      totalRecords: totalRecords,
+      vehicles: resultData.map((vehicle) => ({
+        permno: vehicle.permno || undefined,
+        make: vehicle.make || undefined,
+        color: vehicle.colorName || undefined,
+        role: vehicle.role || undefined,
       })),
     }
   }
