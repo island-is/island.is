@@ -103,18 +103,21 @@ export const RentalInfoSummary = ({
       {/* Property Address */}
       <SummaryCardRow isChangeButton={false}>
         <GridColumn span={['12/12']}>
-          <KeyValue
-            label={`${answers.registerProperty.address}, ${answers.registerProperty.municipality}`}
-            value={
-              `${formatMessage(summary.rentalPropertyIdPrefix)}${
-                answers.registerProperty.propertyId
-              }` || '-'
-            }
-            labelVariant="h4"
-            labelAs="h4"
-            valueVariant="medium"
-            valueAs="p"
-          />
+          {answers.registerProperty.searchResults && (
+            <KeyValue
+              label={`${answers.registerProperty.searchResults[0].streetAddress}, ${answers.registerProperty.searchResults[0].regionNumber} ${answers.registerProperty.searchResults[0].cityName}`}
+              value={
+                `${formatMessage(summary.rentalPropertyIdPrefix)}${
+                  answers.registerProperty.searchResults[0].propertyIds[0]
+                    .propertyId
+                }` || '-'
+              }
+              labelVariant="h4"
+              labelAs="h4"
+              valueVariant="medium"
+              valueAs="p"
+            />
+          )}
         </GridColumn>
       </SummaryCardRow>
 

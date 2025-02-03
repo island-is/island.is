@@ -2,8 +2,11 @@
   "extends": "../../../../tsconfig.base.json",
   "compilerOptions": {
     "jsx": "react-jsx",
-    "allowJs": true
+    "allowJs": true,
+    "resolveJsonModule": true,
+    "esModuleInterop": true
   },
+
   "files": [],
   "include": [],
   "references": [

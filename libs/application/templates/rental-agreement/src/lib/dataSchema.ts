@@ -47,44 +47,27 @@ const fileSchema = z.object({
   url: z.string().optional(),
 })
 
-const registerProperty = z
-  .object({
-    address: z.string().optional(),
-    propertyId: z.string().optional(),
-    unitId: z.string().optional(),
-    postalCode: z.string().optional(),
-    municipality: z.string().optional(),
-    size: z.string().optional(),
-    numOfRooms: z.string().optional(),
-    categoryType: z
-      .enum([
-        RentalHousingCategoryTypes.ENTIRE_HOME,
-        RentalHousingCategoryTypes.ROOM,
-        RentalHousingCategoryTypes.COMMERCIAL,
-      ])
-      .optional(),
-    categoryClass: z
-      .enum([
-        RentalHousingCategoryClass.GENERAL_MARKET,
-        RentalHousingCategoryClass.SPECIAL_GROUPS,
-      ])
-      .optional(),
-    categoryClassGroup: z.string().optional(),
-  })
-  .superRefine((data, ctx) => {
-    if (
-      data.categoryClass &&
-      data.categoryClass.includes('specialGroups') &&
-      !data.categoryClassGroup
-    ) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: 'Custom error message',
-        params: m.registerProperty.category.classGroupRequiredError,
-        path: ['categoryClassGroup'],
-      })
-    }
-  })
+const propertyUnit = z.object({
+  unitId: z.string(),
+  markingNr: z.string(),
+  unitType: z.string(),
+  size: z.string(),
+  numberOfRooms: z.string(),
+})
+
+const PropertyId = z.object({
+  propertyId: z.string(),
+  marking: z.string(),
+  propertySize: z.string(),
+  units: z.array(propertyUnit),
+})
+
+const Property = z.object({
+  streetAddress: z.string(),
+  regionNumber: z.string(),
+  cityName: z.string(),
+  propertyIds: z.array(PropertyId),
+})
 
 const landlordInfo = z
   .object({
@@ -200,6 +183,39 @@ const tenantInfo = z
     //     path: ['table'],
     //   })
     // }
+  })
+
+const registerProperty = z
+  .object({
+    searchResults: z.array(Property).optional(),
+    categoryType: z
+      .enum([
+        RentalHousingCategoryTypes.ENTIRE_HOME,
+        RentalHousingCategoryTypes.ROOM,
+        RentalHousingCategoryTypes.COMMERCIAL,
+      ])
+      .optional(),
+    categoryClass: z
+      .enum([
+        RentalHousingCategoryClass.GENERAL_MARKET,
+        RentalHousingCategoryClass.SPECIAL_GROUPS,
+      ])
+      .optional(),
+    categoryClassGroup: z.string().optional(),
+  })
+  .superRefine((data, ctx) => {
+    if (
+      data.categoryClass &&
+      data.categoryClass.includes('specialGroups') &&
+      !data.categoryClassGroup
+    ) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'Custom error message',
+        params: m.registerProperty.category.classGroupRequiredError,
+        path: ['categoryClassGroup'],
+      })
+    }
   })
 
 const rentalPeriod = z
