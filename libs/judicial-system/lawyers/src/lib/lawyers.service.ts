@@ -18,9 +18,7 @@ export class LawyersService {
   async getLawyers(lawyerType?: LawyerType): Promise<Lawyer[]> {
     const response = await fetch(
       `${this.config.lawyerRegistryAPI}/lawyers${
-        lawyerType && lawyerType === LawyerType.LITIGATORS
-          ? '?isCorporate=0'
-          : ''
+        lawyerType && lawyerType === LawyerType.LITIGATORS ? '?verjendur=1' : ''
       }`,
       {
         headers: {
