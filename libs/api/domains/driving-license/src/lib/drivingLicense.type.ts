@@ -104,7 +104,7 @@ export enum DrivingLicenseCategory {
   BE = 'BE',
 }
 
-export enum NeedsHealhCertificate {
+export enum NeedsHealthCertificate {
   TRUE = 1,
   FALSE = 0,
 }

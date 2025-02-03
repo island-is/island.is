@@ -110,15 +110,27 @@ export const m = defineMessages({
     defaultMessage: 'Afhendingarstaður',
     description: 'location for pickup',
   },
-  pickupLocationHeader: {
-    id: 'dl.application:pickupLocationHeader',
-    defaultMessage: 'Hvar viltu sækja/fá ökuskírteinið?',
+  pickupLocationDescription: {
+    id: 'dl.application:pickupLocationDescription',
+    defaultMessage:
+      'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam.',
+    description: 'location for pickup',
+  },
+  deliveryMethodHeader: {
+    id: 'dl.application:deliveryMethodHeader',
+    defaultMessage: 'Hvernig vilt þú fá plastökuskírteini þitt afhent?',
     description: 'Where do you want to pick up your driving license?',
   },
   informationApplicant: {
     id: 'dl.application:information.applicant',
     defaultMessage: 'Umsækjandi',
     description: 'Applicant',
+  },
+  informationApplicantDescription: {
+    id: 'dl.application:information.applicantDescription',
+    defaultMessage:
+      'Vinsamlegast farðu yfir upplýsingar hér að neðan til að staðfesta að þær séu réttar.',
+    description: '',
   },
   healthDeclarationSectionTitle: {
     id: 'dl.application:healthDeclarationSection.title',
@@ -382,6 +394,11 @@ export const m = defineMessages({
     defaultMessage: 'Greiðsla',
     description: 'Cost',
   },
+  overviewPaymentChargeWithDelivery: {
+    id: 'dl.application:overview.paymentChargeWithDelivery',
+    defaultMessage: 'Greiðsla (sendingarkostnaður innifalinn)',
+    description: 'Cost',
+  },
   errorDataProvider: {
     id: 'dl.application:error.dataProvider',
     defaultMessage: 'Reyndu aftur síðar',
@@ -636,6 +653,11 @@ export const m = defineMessages({
     defaultMessage: 'Afhending',
     description: 'Pickup for district commissioner',
   },
+  selectDistrictCommissionerPickup: {
+    id: 'dl.application:selectDistrictCommissionerPickup',
+    defaultMessage: 'Veldu afhendingarstað',
+    description: 'Pickup for district commissioner',
+  },
   districtCommissionerPickupPlaceholder: {
     id: 'dl.application:districtCommisionerPickupPlaceholder',
     defaultMessage: 'Veldu sýslumannsembætti',
@@ -794,6 +816,16 @@ export const m = defineMessages({
     id: 'dl.application:applicationForRenewalLicenseDescription',
     defaultMessage:
       'Umsókn um endurnýjun ökuréttinda í B flokki (fólksbifreið), fyrir 65 ára og eldri.',
+    description: 'Option description for selecting to renew driving license',
+  },
+  applicationForBFullDescription: {
+    id: 'dl.application:applicationForBFullDescription',
+    defaultMessage: 'Umsókn um fullnaðarréttindi í B flokki (fólksbifreið)',
+    description: 'Option description for selecting to renew driving license',
+  },
+  applicationForBAdvancedDescription: {
+    id: 'dl.application:applicationForBAdvancedDescription',
+    defaultMessage: 'Umsókn um aukin ökurétindi / meirapróf',
     description: 'Option description for selecting to renew driving license',
   },
   applicationForBELicenseTitle: {

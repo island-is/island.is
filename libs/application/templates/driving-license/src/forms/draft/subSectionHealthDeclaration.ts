@@ -159,6 +159,7 @@ export const subSectionHealthDeclaration = buildSubSection({
           message: m.beLicenseHealthDeclarationRequiresHealthCertificate,
           alertType: 'warning',
           condition: (answers, externalData) =>
+            answers.applicationFor === BE &&
             needsHealthCertificateCondition(YES)(answers, externalData),
         }),
       ],
@@ -166,12 +167,12 @@ export const subSectionHealthDeclaration = buildSubSection({
     buildMultiField({
       id: 'healthDeclarationAge65',
       title: m.healthDeclarationMultiFieldTitle,
+      description: m.healthDeclarationMultiField65Description,
       condition: (answers) => answers.applicationFor === B_FULL_RENEWAL_65,
       children: [
         buildDescriptionField({
           id: 'healthDeclarationDescription65',
           title: '',
-          description: m.healthDeclarationMultiField65Description,
         }),
       ],
     }),
