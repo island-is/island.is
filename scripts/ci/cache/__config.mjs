@@ -114,7 +114,6 @@ export const caches = [
       const files = [
         'scripts/ci/10_prepare-docker-deps.sh',
         'scripts/ci/Dockerfile',
-        'scripts/ci/get-node-version.mjs',
         'scripts/ci/_common.mjs',
       ].map((file) => resolve(ROOT, file))
       const filesHash = getFilesHash(files)
