@@ -33,6 +33,7 @@ jobs:
     runs-on: arc-runners
     outputs:
       affected: ${{ steps.affected.outputs.build-chunks }}
+      nx: ${{ steps.build-args.outputs.nx }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -59,6 +60,7 @@ jobs:
         run: |
           chunks="build-chunks={\"projects\":$(./scripts/ci/generate-chunks.sh build)}"
           echo "$chunks" >>"$GITHUB_OUTPUT"
+          echo "nx={\"parallel\":${{ env.NX_PARALLEL }},\"max-parallel\":${{ env.NX_MAX_PARALLEL }}}"
   docker-build:
     uses: ./.github/workflows/docker.yml
     needs:
@@ -66,8 +68,8 @@ jobs:
     with:
       projects: ${{ needs.prepare.outputs.affected }}
       build-args: |
-        --build-arg="NX_PARALLEL=${{ env.NX_PARALLEL }}"
-        --build-arg="NX_MAX_PARALLEL=${{ env.NX_MAX_PARALLEL }}"
+        --build-arg="NX_PARALLEL=${{ needs.prepare.outputs.nx.parallel }}"
+        --build-arg="NX_MAX_PARALLEL=${{ needs.prepare.outputs.nx.max-parallel }}"
         --build-arg="NX_TASKS_RUNNER=ci"
 
   success:
