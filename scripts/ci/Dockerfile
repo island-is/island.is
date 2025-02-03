@@ -67,7 +67,7 @@ ENV NX_TASKS_RUNNER=${NX_TASKS_RUNNER}
 RUN --mount=type=secret,id=nx_cloud_access_token \
   NX_CLOUD_ACCESS_TOKEN="$(cat /run/secrets/nx_cloud_access_token)" yarn run build ${APP} --prod
 SHELL ["/bin/bash", "-euo", "pipefail", "-c"]
-RUN yarn nx show project ${APP} --json \
+RUN yarn nx show project ${APP} --json --verbose \
   # Find _anything_ to prevent emptyness
   | grep . \
   # Print the output to stderr for debugging
