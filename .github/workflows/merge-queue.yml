@@ -61,8 +61,8 @@ jobs:
       - name: Find affected projects
         id: affected
         env:
-          BASE: ${{ env.NX_BASE }}
-          HEAD: ${{ env.NX_HEAD }}
+          BASE: ${{ env.NX_BASE || env.GITHUB_BASE_REF }}
+          HEAD: ${{ env.NX_HEAD || env.GITHUB_HEAD_REF }}
         run: |
           chunks="build-chunks={\"projects\":$(./scripts/ci/generate-chunks.sh build)}"
           echo "$chunks" >>"$GITHUB_OUTPUT"
