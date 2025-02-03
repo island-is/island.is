@@ -207,7 +207,8 @@ const OrganizationHomePage = ({
       >
         {organizationPage?.bottomSlices.map((slice) => {
           if (
-            organizationPage.id === '5fFSe5CO3LJUjDwMmZaz3M' &&
+            (organizationPage.slug === 'stafraent-island' ||
+              organizationPage.slug === 'digital-iceland') &&
             slice.__typename === 'LatestNewsSlice'
           ) {
             return (
