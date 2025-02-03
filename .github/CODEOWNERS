@@ -178,6 +178,7 @@ codemagic.yaml                                                                  
 /libs/clients/intellectual-properties/                                                                    @island-is/hugsmidjan
 /libs/clients/islykill/                                                                                   @island-is/hugsmidjan
 /libs/clients/national-registry/v3/                                                                       @island-is/hugsmidjan
+/libs/clients/national-registry/v3-applications/                                                          @island-is/juni
 /libs/clients/district-commissioners-licenses/                                                            @island-is/hugsmidjan
 /libs/clients/regulations/                                                                                @island-is/hugsmidjan
 /libs/clients/vehicles/                                                                                   @island-is/hugsmidjan @island-is/stefna

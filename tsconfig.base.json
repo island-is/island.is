@@ -735,6 +735,9 @@
       "@island.is/clients/national-registry-v3": [
         "libs/clients/national-registry/v3/src/index.ts"
       ],
+      "@island.is/clients/national-registry-v3-applications": [
+        "libs/clients/national-registry/v3-applications/src/index.ts"
+      ],
       "@island.is/clients/official-journal-of-iceland": [
         "libs/clients/official-journal-of-iceland/public/src/index.ts"
       ],

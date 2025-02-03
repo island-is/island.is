@@ -1,0 +1,1246 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "MidlunUmsoknirRestApi",
+    "version": "1.0"
+  },
+  "paths": {
+    "/Einstaklingar/{kennitala}": {
+      "get": {
+        "tags": ["Einstaklingar"],
+        "parameters": [
+          {
+            "name": "kennitala",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EinstaklingurDTO"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/Einstaklingar/{kennitala}/faedingarstadur": {
+      "get": {
+        "tags": ["Einstaklingar"],
+        "parameters": [
+          {
+            "name": "kennitala",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FaedingarstadurDTO"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/Einstaklingar/{kennitala}/forsjaUndir": {
+      "get": {
+        "tags": ["Einstaklingar"],
+        "parameters": [
+          {
+            "name": "kennitala",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/Einstaklingar/{kennitala}/forsjaYfir": {
+      "get": {
+        "tags": ["Einstaklingar"],
+        "parameters": [
+          {
+            "name": "kennitala",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/Einstaklingar/{kennitala}/rikisfang": {
+      "get": {
+        "tags": ["Einstaklingar"],
+        "parameters": [
+          {
+            "name": "kennitala",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RikisfangDTO"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/Einstaklingar/{kennitala}/adsetur": {
+      "get": {
+        "tags": ["Einstaklingar"],
+        "parameters": [
+          {
+            "name": "kennitala",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdseturDTO"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/Einstaklingar/{kennitala}/hjuskapur": {
+      "get": {
+        "tags": ["Einstaklingar"],
+        "parameters": [
+          {
+            "name": "kennitala",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HjuskapurDTO"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/Einstaklingar/{kennitala}/logheimili": {
+      "get": {
+        "tags": ["Einstaklingar"],
+        "parameters": [
+          {
+            "name": "kennitala",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LogheimiliDTO"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/Einstaklingar/{kennitala}/logheimilistengsl": {
+      "get": {
+        "tags": ["Einstaklingar"],
+        "parameters": [
+          {
+            "name": "kennitala",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LogheimilistengslDTO"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/Einstaklingar/{kennitala}/logheimilistengslItar": {
+      "get": {
+        "tags": ["Einstaklingar"],
+        "parameters": [
+          {
+            "name": "kennitala",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LogheimilistengslItarDTO"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/Einstaklingar/{kennitala}/logheimilisforeldri": {
+      "get": {
+        "tags": ["Einstaklingar"],
+        "parameters": [
+          {
+            "name": "kennitala",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/Einstaklingar/{kennitala}/busetuforeldri": {
+      "get": {
+        "tags": ["Einstaklingar"],
+        "parameters": [
+          {
+            "name": "kennitala",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/Einstaklingar/{kennitala}/busetusaga": {
+      "get": {
+        "tags": ["Einstaklingar"],
+        "parameters": [
+          {
+            "name": "kennitala",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/BusetaDTO"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/Einstaklingar/18IDag": {
+      "get": {
+        "tags": ["Einstaklingar"],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/Utl/{Kennitala}": {
+      "get": {
+        "tags": ["Utl"],
+        "parameters": [
+          {
+            "name": "Kennitala",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EinstaklingurUtlDTO"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "AdseturDTO": {
+        "type": "object",
+        "properties": {
+          "heiti": {
+            "type": "string",
+            "nullable": true
+          },
+          "ibudanumer": {
+            "type": "string",
+            "nullable": true
+          },
+          "postnumer": {
+            "type": "string",
+            "nullable": true
+          },
+          "stadur": {
+            "type": "string",
+            "nullable": true
+          },
+          "sveitarfelagsnumer": {
+            "type": "string",
+            "nullable": true
+          },
+          "huskodi": {
+            "type": "string",
+            "nullable": true
+          },
+          "heimilisfang": {
+            "type": "string",
+            "nullable": true
+          },
+          "landakodi": {
+            "type": "string",
+            "nullable": true
+          },
+          "breytt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "BusetaDTO": {
+        "type": "object",
+        "properties": {
+          "heiti": {
+            "type": "string",
+            "nullable": true
+          },
+          "ibudanumer": {
+            "type": "string",
+            "nullable": true
+          },
+          "postnumer": {
+            "type": "string",
+            "nullable": true
+          },
+          "stadur": {
+            "type": "string",
+            "nullable": true
+          },
+          "sveitarfelagsnumer": {
+            "type": "string",
+            "nullable": true
+          },
+          "huskodi": {
+            "type": "string",
+            "nullable": true
+          },
+          "fasteignanumer": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "heimilisfang": {
+            "type": "string",
+            "nullable": true
+          },
+          "landakodi": {
+            "type": "string",
+            "nullable": true
+          },
+          "breytt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "EinstaklingurDTO": {
+        "required": ["kennitala"],
+        "type": "object",
+        "properties": {
+          "kennitala": {
+            "type": "string",
+            "nullable": true
+          },
+          "nafn": {
+            "type": "string",
+            "nullable": true
+          },
+          "kynKodi": {
+            "type": "string",
+            "nullable": true
+          },
+          "kynTexti": {
+            "type": "string",
+            "nullable": true
+          },
+          "bannmerking": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "faedingardagur": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "logheimili": {
+            "$ref": "#/components/schemas/HeimilisfangBaseDTO"
+          },
+          "adsetur": {
+            "$ref": "#/components/schemas/HeimilisfangBaseDTO"
+          }
+        },
+        "additionalProperties": false
+      },
+      "EinstaklingurUtlBaseDTO": {
+        "type": "object",
+        "properties": {
+          "kennitala": {
+            "type": "string",
+            "nullable": true
+          },
+          "nafn": {
+            "type": "string",
+            "nullable": true
+          },
+          "rikisfangKodi": {
+            "type": "string",
+            "nullable": true
+          },
+          "rikisfangLand": {
+            "type": "string",
+            "nullable": true
+          },
+          "rikisfangBrDagur": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "EinstaklingurUtlDTO": {
+        "type": "object",
+        "properties": {
+          "kennitala": {
+            "type": "string",
+            "nullable": true
+          },
+          "nafn": {
+            "type": "string",
+            "nullable": true
+          },
+          "rikisfangKodi": {
+            "type": "string",
+            "nullable": true
+          },
+          "rikisfangLand": {
+            "type": "string",
+            "nullable": true
+          },
+          "rikisfangBrDagur": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "maki": {
+            "$ref": "#/components/schemas/EinstaklingurUtlBaseDTO"
+          },
+          "hjuSambudBrDagur": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "skraTilLandsinsDagur": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "Error": {
+        "type": "object",
+        "additionalProperties": false
+      },
+      "FaedingarstadurDTO": {
+        "type": "object",
+        "properties": {
+          "sveitarfelagsnumer": {
+            "type": "string",
+            "nullable": true
+          },
+          "stadur": {
+            "type": "string",
+            "nullable": true
+          },
+          "faedingardagur": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "HeimilisfangBaseDTO": {
+        "type": "object",
+        "properties": {
+          "heiti": {
+            "type": "string",
+            "nullable": true
+          },
+          "ibudanumer": {
+            "type": "string",
+            "nullable": true
+          },
+          "postnumer": {
+            "type": "string",
+            "nullable": true
+          },
+          "stadur": {
+            "type": "string",
+            "nullable": true
+          },
+          "sveitarfelagsnumer": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "HjuskapurDTO": {
+        "type": "object",
+        "properties": {
+          "kennitalaMaka": {
+            "type": "string",
+            "nullable": true
+          },
+          "nafnMaka": {
+            "type": "string",
+            "nullable": true
+          },
+          "hjuskaparKodi": {
+            "type": "string",
+            "nullable": true
+          },
+          "hjuskaparTexti": {
+            "type": "string",
+            "nullable": true
+          },
+          "dagsetningBreytt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "LogheimiliDTO": {
+        "type": "object",
+        "properties": {
+          "heiti": {
+            "type": "string",
+            "nullable": true
+          },
+          "ibudanumer": {
+            "type": "string",
+            "nullable": true
+          },
+          "postnumer": {
+            "type": "string",
+            "nullable": true
+          },
+          "stadur": {
+            "type": "string",
+            "nullable": true
+          },
+          "sveitarfelagsnumer": {
+            "type": "string",
+            "nullable": true
+          },
+          "huskodi": {
+            "type": "string",
+            "nullable": true
+          },
+          "heimilisfang": {
+            "type": "string",
+            "nullable": true
+          },
+          "landakodi": {
+            "type": "string",
+            "nullable": true
+          },
+          "breytt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "fasteignanumer": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "LogheimilismedlimurDTO": {
+        "required": ["kennitala"],
+        "type": "object",
+        "properties": {
+          "nafn": {
+            "type": "string",
+            "nullable": true
+          },
+          "kennitala": {
+            "type": "string",
+            "nullable": true
+          },
+          "kynkodi": {
+            "type": "string",
+            "nullable": true
+          },
+          "kyntexti": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "LogheimilistengslDTO": {
+        "type": "object",
+        "properties": {
+          "logheimilisTengsl": {
+            "type": "string",
+            "nullable": true
+          },
+          "logheimilistengslmedlimir": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/LogheimilismedlimurDTO"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "LogheimilistengslItarDTO": {
+        "type": "object",
+        "properties": {
+          "logheimilisTengsl": {
+            "type": "string",
+            "nullable": true
+          },
+          "logheimiliseinstaklingar": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/EinstaklingurDTO"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ProblemDetails": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "nullable": true
+          },
+          "title": {
+            "type": "string",
+            "nullable": true
+          },
+          "status": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "detail": {
+            "type": "string",
+            "nullable": true
+          },
+          "instance": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "RikisfangDTO": {
+        "type": "object",
+        "properties": {
+          "kodi": {
+            "type": "string",
+            "nullable": true
+          },
+          "land": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "securitySchemes": {
+      "Bearer": {
+        "type": "http",
+        "scheme": "Bearer",
+        "bearerFormat": "Bearer"
+      }
+    }
+  },
+  "security": [
+    {
+      "Bearer": []
+    }
+  ]
+}
