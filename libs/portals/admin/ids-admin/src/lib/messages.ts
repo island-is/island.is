@@ -307,6 +307,9 @@ export const m = defineMessages({
     defaultMessage:
       'Configure custom claims (hard-coded) in access tokens created for this application. Each line should have the form claimName=value. Claim names automatically prefixed with "client_" to avoid collisions. Claim values are always stored as strings.',
   },
+  ssoDescription: {
+    id: 'ap.ids-admin:sso-description',
+  },
   logoutUrl: {
     id: 'ap.ids-admin:logout-url',
     defaultMessage: 'Logout URL',
@@ -475,6 +478,22 @@ export const m = defineMessages({
   supportsTokenExchange: {
     id: 'ap.ids-admin:supports-token-exchange',
     defaultMessage: 'Supports token exchange grant',
+  },
+  allowSSO: {
+    id: 'ap.ids-admin:allow-sso',
+    defaultMessage: 'Allow single sign-on (SSO)',
+  },
+  allowSSODescription: {
+    id: 'ap.ids-admin:allow-sso-description',
+    defaultMessage: 'Allow users to sign in with the same session on other applications using the island.is authentication service.',
+  },
+  allowClientSSO: {
+    id: 'ap.ids-admin:allow-client-sso',
+    defaultMessage: 'Only for this client',
+  },
+  allowClientSSODescription: {
+    id: 'ap.ids-admin:allow-client-sso-description',
+    defaultMessage: 'Only allow single sign-on for this client. Users will not be able to sign in with the same session on other applications using the island.is authentication service, but the same session is used when switching between delegations',
   },
   singleSession: {
     id: 'ap.ids-admin:single-session',

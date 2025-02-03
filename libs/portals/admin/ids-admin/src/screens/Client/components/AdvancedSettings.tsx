@@ -1,8 +1,12 @@
 import React from 'react'
 
-import { AuthAdminClientEnvironment } from '@island.is/api/schema'
-import { Checkbox, Input, Stack, Text } from '@island.is/island-ui/core'
+import {
+  AuthAdminClientEnvironment,
+  AuthAdminClientSso,
+} from '@island.is/api/schema'
+import { Checkbox, Input, Box, Stack, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
+import capitalize from 'lodash/capitalize'
 
 import { m } from '../../../lib/messages'
 import { useEnvironmentState } from '../../../hooks/useEnvironmentState'
@@ -23,6 +27,7 @@ type AdvancedSettingsProps = Pick<
   | 'accessTokenLifetime'
   | 'customClaims'
   | 'singleSession'
+  | 'sso'
 >
 
 export const AdvancedSettings = ({
@@ -33,6 +38,7 @@ export const AdvancedSettings = ({
   accessTokenLifetime,
   customClaims,
   singleSession,
+  sso
 }: AdvancedSettingsProps) => {
   const { formatMessage } = useLocale()
   const { isSuperAdmin } = useSuperAdmin()
@@ -51,7 +57,11 @@ export const AdvancedSettings = ({
     accessTokenLifetime,
     singleSession,
     customClaims: customClaimsString,
+    allowSso: sso === AuthAdminClientSso.enabled || sso === AuthAdminClientSso.client,
+    allowSsoClient: sso === AuthAdminClientSso.client
   })
+
+  console.log('inputValues', inputValues)
   const { formatErrorMessage } = useErrorFormatMessage()
   const readableAccessTokenLifetime = useReadableSeconds(accessTokenLifetime)
 
@@ -68,6 +78,7 @@ export const AdvancedSettings = ({
         'supportTokenExchange',
         'accessTokenLifetime',
         'customClaims',
+        'sso'
       ])}
     >
       <Stack space={3}>
@@ -206,6 +217,49 @@ export const AdvancedSettings = ({
           <Text variant="small">
             {formatMessage(m.customClaimsDescription)}
           </Text>
+        </Stack>
+        <Stack space={1}>
+          <Checkbox
+            label={formatMessage(m.allowSSO)}
+            backgroundColor="blue"
+            large
+            disabled={!isSuperAdmin}
+            defaultChecked={inputValues.allowSso || inputValues.allowSsoClient}
+            checked={inputValues.allowSso || inputValues.allowSsoClient}
+            name="allowSso"
+            value="true"
+            onChange={(e) => {
+              setInputValues({
+                ...inputValues,
+                allowSso: e.target.checked,
+                allowSsoClient: e.target.checked ? inputValues.allowSsoClient : false,
+              })
+            }}
+            subLabel={formatMessage(m.allowSSODescription)}
+          >
+            <Box padding={3}>
+            {sso !== AuthAdminClientSso.disabled && (
+              <Checkbox
+                label={formatMessage(m.allowClientSSO)}
+                backgroundColor="blue"
+                large
+                disabled={!isSuperAdmin}
+                defaultChecked={inputValues.allowSsoClient}
+                checked={inputValues.allowSsoClient}
+                name="allowSsoClient"
+                value="true"
+                onChange={(e) => {
+                  setInputValues({
+                    ...inputValues,
+                    allowSsoClient: e.target.checked,
+                    allowSso: e.target.checked ? true : inputValues.allowSso,
+                  })
+                }}
+                subLabel={formatMessage(m.allowClientSSODescription)}
+              />)
+            }
+            </Box>
+          </Checkbox>
         </Stack>
       </Stack>
     </FormCard>
