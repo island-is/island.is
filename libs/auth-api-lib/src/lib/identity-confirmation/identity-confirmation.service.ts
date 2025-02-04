@@ -137,7 +137,7 @@ export class IdentityConfirmationService {
   }
 
   private generateLink = (id: string) => {
-    return `${process.env.IDENTITY_SERVER_ISSUER_URL}/confirmation/${id}`
+    return `${process.env.IDENTITY_SERVER_ISSUER_URL}/app/confirm-identity/${id}`
   }
 
   private getCustomField = (
