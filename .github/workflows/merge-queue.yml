@@ -72,7 +72,7 @@ jobs:
           is_debug: ${{ contains(github.event.pull_request.labels.*.name, 'ci debug') }}
         run: |
           if [[ "$is_debug" == true ]]; then
-            chunks='["web","air-discount-scheme-api,air-discount-scheme-backend,air-discount-scheme-web","license-api","system-e2e","island-ui-storybook"]'
+            chunks='build-chunks={\"projects\":["web","air-discount-scheme-api,air-discount-scheme-backend,air-discount-scheme-web","license-api","system-e2e","island-ui-storybook"]}'
           else
             chunks="build-chunks={\"projects\":$(./scripts/ci/generate-chunks.sh build)}"
           fi
