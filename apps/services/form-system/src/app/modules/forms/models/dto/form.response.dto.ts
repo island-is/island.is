@@ -5,6 +5,7 @@ import { FieldType } from '../../../../dataTypes/fieldTypes/fieldType.model'
 import { ListType } from '../../../../dataTypes/listTypes/listType.model'
 import { CertificationType } from '../../../../dataTypes/certificationTypes/certificationType.model'
 import { OrganizationUrlDto } from '../../../organizationUrls/models/dto/organizationUrl.dto'
+import { OrganizationDto } from '../../../organizations/models/dto/organization.dto'
 
 export class FormResponseDto {
   @ApiPropertyOptional({ type: FormDto })
@@ -30,4 +31,7 @@ export class FormResponseDto {
 
   @ApiPropertyOptional({ type: [String] })
   organizationNationalIds?: string[]
+
+  // @ApiPropertyOptional({ type: [OrganizationDto] })
+  // organizations?: OrganizationDto[]
 }
