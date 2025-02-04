@@ -35,7 +35,7 @@ const nextConfig = {
   },
   publicRuntimeConfig: {
     // Will be available on both server and client
-    graphqlEndpoint: `${API_URL}${graphqlPath}`,
+    graphqlEndpoint: graphqlPath,
     configCatSdkKey: CONFIGCAT_SDK_KEY,
   },
   basePath: `${BASEPATH}`,
