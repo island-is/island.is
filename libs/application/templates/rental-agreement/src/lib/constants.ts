@@ -8,6 +8,7 @@ export type Events = { type: DefaultEvents.SUBMIT | DefaultEvents.EDIT }
 export enum States {
   PREREQUISITES = 'prerequisites',
   DRAFT = 'draft',
+  INREVIEW = 'inReview',
   SUMMARY = 'summary',
   SIGNING = 'signing',
   COMPLETED = 'completed',

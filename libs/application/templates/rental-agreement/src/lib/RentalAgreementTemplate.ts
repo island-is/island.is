@@ -20,8 +20,7 @@ import {
   NationalRegistryUserApi,
   NationalRegistrySpouseApi,
 } from '../dataProviders'
-import { getLandlordsNationalId } from './getLandlordsNationalId'
-import { getTenantsNationalId } from './getTenantsByNationalId'
+import { getNationalIdListOfAssignees } from './getLandlordsNationalId'
 
 const RentalAgreementTemplate: ApplicationTemplate<
   ApplicationContext,
@@ -43,7 +42,6 @@ const RentalAgreementTemplate: ApplicationTemplate<
       [States.PREREQUISITES]: {
         meta: {
           name: States.PREREQUISITES,
-          progress: 0,
           status: 'draft',
           lifecycle: pruneAfterDays(30),
           roles: [
@@ -78,7 +76,6 @@ const RentalAgreementTemplate: ApplicationTemplate<
       [States.DRAFT]: {
         meta: {
           name: States.DRAFT,
-          progress: 75,
           status: 'draft',
           lifecycle: pruneAfterDays(30),
           roles: [
@@ -109,9 +106,10 @@ const RentalAgreementTemplate: ApplicationTemplate<
         },
       },
       [States.SUMMARY]: {
+        entry: 'assignUsers',
+        exit: 'clearAssignees',
         meta: {
-          name: States.SUMMARY,
-          progress: 95,
+          name: 'Summary for review',
           status: 'inprogress',
           lifecycle: pruneAfterDays(30),
           roles: [
@@ -161,7 +159,6 @@ const RentalAgreementTemplate: ApplicationTemplate<
       [States.SIGNING]: {
         meta: {
           name: States.SIGNING,
-          progress: 100,
           status: 'inprogress',
           lifecycle: pruneAfterDays(30),
           roles: [
@@ -193,19 +190,20 @@ const RentalAgreementTemplate: ApplicationTemplate<
       assignUsers: assign((context) => {
         const { application } = context
 
-        const LandlordsNationalId = getLandlordsNationalId(application)
-        const TenantsNationalId = getTenantsNationalId(application)
+        const assigneeNationalIds = getNationalIdListOfAssignees(application)
 
-        const assigneeIds = [
-          ...(LandlordsNationalId || []),
-          ...(TenantsNationalId || []),
-        ]
+        console.log('AssigneeNationalIds', assigneeNationalIds)
 
-        console.log('AssigneeIds', assigneeIds)
-
-        if (assigneeIds && assigneeIds.length > 0) {
-          set(application, 'assignees', [assigneeIds])
+        if (assigneeNationalIds && assigneeNationalIds.length > 0) {
+          set(application, 'assignees', assigneeNationalIds)
         }
+
+        return context
+      }),
+      clearAssignees: assign((context) => {
+        const { application } = context
+
+        set(application, 'assignees', [])
 
         return context
       }),
@@ -217,13 +215,13 @@ const RentalAgreementTemplate: ApplicationTemplate<
   ): ApplicationRole | undefined {
     const { applicant, assignees } = application
 
-    console.log('Assignees', assignees)
+    console.log('Assignees: ', assignees)
 
     if (id === applicant) {
       return Roles.APPLICANT
     }
 
-    if (assignees.includes(id)) {
+    if (assignees.includes(id) && id !== applicant) {
       return Roles.ASSIGNEE
     }
 
