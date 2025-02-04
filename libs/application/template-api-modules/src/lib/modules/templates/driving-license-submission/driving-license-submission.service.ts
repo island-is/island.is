@@ -196,6 +196,7 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
         jurisdictionId: jurisdictionId as unknown as number,
         needsToPresentHealthCertificate: needsHealthCert || remarks,
         needsToPresentQualityPhoto: needsQualityPhoto,
+        sendLicenseInMail: deliveryMethod === Pickup.POST ? 1 : 0,
         licenseCategory:
           applicationFor === 'B-full'
             ? DrivingLicenseCategory.B

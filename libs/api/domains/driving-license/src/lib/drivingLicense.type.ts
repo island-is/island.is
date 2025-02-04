@@ -25,6 +25,7 @@ export interface NewDrivingLicenseInput {
   needsToPresentHealthCertificate: boolean
   needsToPresentQualityPhoto: boolean
   licenseCategory: DrivingLicenseCategory
+  sendLicenseInMail: number
 }
 
 export interface NewTemporaryDrivingLicenseInput {
