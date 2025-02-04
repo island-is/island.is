@@ -4,7 +4,7 @@ import { Box, GridColumn, GridRow, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { overview } from '../../lib/messages'
 import { SecondarySchoolAnswers } from '../..'
-import { getTranslatedProgram, Routes, States } from '../../utils'
+import { getTranslatedProgram, Routes, checkIsEditable } from '../../utils'
 import { ReviewGroup } from '../../components/ReviewGroup'
 import { getValueViaPath } from '@island.is/application/core'
 
@@ -23,12 +23,14 @@ export const SchoolSelectionOverview: FC<FieldBaseProps> = ({
     if (goToScreen) goToScreen(page)
   }
 
+  const isEditable = checkIsEditable(application.state)
+
   return (
     <ReviewGroup
       handleClick={() => onClick(Routes.SCHOOL)}
       editMessage={formatMessage(overview.general.editMessage)}
       title={formatMessage(overview.selection.subtitle)}
-      isEditable={application.state === States.DRAFT}
+      isEditable={isEditable}
     >
       <Box>
         <GridRow>
