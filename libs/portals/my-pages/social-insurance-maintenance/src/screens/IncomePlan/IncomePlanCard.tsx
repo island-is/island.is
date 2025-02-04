@@ -13,18 +13,11 @@ import { Status } from './types'
 import { SocialInsuranceMaintenancePaths } from '../../lib/paths'
 
 interface Props {
-  applicationStatus: Status
-  incomePlanStatus?: SocialInsuranceIncomePlanStatus
-  incomePlanRegistrationDate?: string
-  incomePlanEligibleForChange?: boolean
+  status: Status
+  registrationDate?: string
 }
 
-export const IncomePlanCard = ({
-  applicationStatus,
-  incomePlanStatus,
-  incomePlanRegistrationDate,
-  incomePlanEligibleForChange,
-}: Props) => {
+export const IncomePlanCard = ({ status, registrationDate }: Props) => {
   const { formatMessage } = useLocale()
 
   const parseSubtext = (
@@ -44,7 +37,7 @@ export const IncomePlanCard = ({
     }
   }
 
-  switch (applicationStatus) {
+  switch (status) {
     case 'in_progress': {
       return (
         <ActionCard
@@ -70,60 +63,31 @@ export const IncomePlanCard = ({
         />
       )
     }
+    case 'accepted_no_changes':
     case 'accepted': {
-      if (incomePlanEligibleForChange) {
-        return (
-          <ActionCard
-            image={{
-              type: 'image',
-              url: './assets/images/tr.svg',
-            }}
-            text={
-              incomePlanStatus && incomePlanRegistrationDate
-                ? parseSubtext(
-                    incomePlanStatus,
-                    new Date(incomePlanRegistrationDate),
-                    formatMessage,
-                  )
-                : undefined
-            }
-            heading={formatMessage(coreMessages.incomePlan)}
-            cta={{
-              label: formatMessage(m.viewIncomePlan),
-              url:
-                incomePlanStatus === SocialInsuranceIncomePlanStatus.IN_PROGRESS
-                  ? `${document.location.origin}/${formatMessage(
-                      m.incomePlanModifyLink,
-                    )}`
-                  : SocialInsuranceMaintenancePaths.SocialInsuranceMaintenanceIncomePlanDetail,
-              variant: 'text',
-            }}
-          />
-        )
-      }
-
       return (
         <ActionCard
           image={{
             type: 'image',
             url: './assets/images/tr.svg',
           }}
-          text={formatMessage(m.applicationAccepted)}
+          text={
+            registrationDate
+              ? parseSubtext(
+                  SocialInsuranceIncomePlanStatus.ACCEPTED,
+                  new Date(registrationDate),
+                  formatMessage,
+                )
+              : undefined
+          }
           headingColor="currentColor"
           heading={formatMessage(coreMessages.incomePlan)}
           backgroundColor="blue"
           borderColor="blue200"
           cta={{
-            label: formatMessage(m.continueApplication),
-            url: `${document.location.origin}/${formatMessage(
-              m.incomePlanModifyLink,
-            )}`,
-            disabled: true,
-            variant: 'primary',
-            size: 'medium',
-            icon: 'open',
-            iconType: 'outline',
-            centered: true,
+            label: formatMessage(m.viewIncomePlan),
+            url: SocialInsuranceMaintenancePaths.SocialInsuranceMaintenanceIncomePlanDetail,
+            variant: 'text',
           }}
         />
       )
@@ -152,58 +116,5 @@ export const IncomePlanCard = ({
         />
       )
     }
-    case 'rejected': {
-      return (
-        <ActionCard
-          image={{
-            type: 'image',
-            url: './assets/images/tr.svg',
-          }}
-          text={formatMessage(m.applicationRejected)}
-          headingColor="currentColor"
-          heading={formatMessage(coreMessages.incomePlan)}
-          backgroundColor="blue"
-          borderColor="blue200"
-          cta={{
-            label: formatMessage(m.modifyIncomePlan),
-            url: `${document.location.origin}/${formatMessage(
-              m.incomePlanModifyLink,
-            )}`,
-            disabled: true,
-            variant: 'primary',
-            size: 'medium',
-            icon: 'open',
-            centered: true,
-          }}
-        />
-      )
-    }
-    default: {
-      ;<p>be</p>
-    }
   }
-
-  return (
-    <ActionCard
-      image={{
-        type: 'image',
-        url: './assets/images/tr.svg',
-      }}
-      text={formatMessage(m.noActiveIncomePlan)}
-      headingColor="currentColor"
-      heading={formatMessage(coreMessages.incomePlan)}
-      backgroundColor="blue"
-      borderColor="blue200"
-      cta={{
-        label: formatMessage(m.submitIncomePlan),
-        url: `${document.location.origin}/${formatMessage(
-          m.incomePlanModifyLink,
-        )}`,
-        variant: 'primary',
-        size: 'medium',
-        icon: 'open',
-        centered: true,
-      }}
-    />
-  )
 }

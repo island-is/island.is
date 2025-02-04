@@ -134,10 +134,6 @@ export const m = defineMessages({
     id: 'sp.social-insurance-maintenance:application-in-review',
     defaultMessage: 'Umsókn bíður samþykkis',
   },
-  applicationAccepted: {
-    id: 'sp.social-insurance-maintenance:application-accepted',
-    defaultMessage: 'Umsókn bíður samþykkis',
-  },
   incomePlanLink: {
     id: 'sp.social-insurance-maintenance:income-plan-link',
     defaultMessage:

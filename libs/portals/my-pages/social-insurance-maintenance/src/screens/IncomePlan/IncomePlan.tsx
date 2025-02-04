@@ -5,62 +5,83 @@ import {
   useNamespaces,
 } from '@island.is/localization'
 import {
-  ActionCard,
   CardLoader,
   IntroWrapper,
   LinkButton,
   m as coreMessages,
-  formatDate,
 } from '@island.is/portals/my-pages/core'
 import { m } from '../../lib/messages'
 import { Problem } from '@island.is/react-spa/shared'
-import { SocialInsuranceMaintenancePaths } from '../../lib/paths'
 import {
   useGetIncomePlanApplicationQuery,
   useGetIncomePlanQuery,
 } from './IncomePlan.generated'
-import { SocialInsuranceIncomePlanStatus } from '@island.is/api/schema'
 import { mapStatus } from './mapper'
 import { ApplicationStatus, Status } from './types'
 import { IncomePlanCard } from './IncomePlanCard'
+import { useMemo } from 'react'
+
+const RENDER_ALERT_BOX_CONDITIONALS: Status[] = [
+  'in_review',
+  'accepted_no_changes',
+  'rejected_no_changes',
+]
+
+const RENDER_LINK_BUTTON_CONDITIONALS: Status[] = [
+  'in_review',
+  'accepted_no_changes',
+  'rejected_no_changes',
+]
 
 const IncomePlan = () => {
   useNamespaces('sp.social-insurance-maintenance')
   const { formatMessage, locale } = useLocale()
 
   const { data, loading, error } = useGetIncomePlanQuery()
-  const { data: applications, error: applicationsError } =
-    useGetIncomePlanApplicationQuery({
-      variables: {
-        input: {
-          typeId: ['IncomePlan'],
-          scopeCheck: true,
-        },
-        locale,
+  const {
+    data: applications,
+    error: applicationsError,
+    loading: applicationsLoading,
+  } = useGetIncomePlanApplicationQuery({
+    variables: {
+      input: {
+        typeId: ['IncomePlan'],
+        scopeCheck: true,
       },
-    })
+      locale,
+    },
+  })
 
-  let status: Status
-  if (error || applicationsError) {
-    status = 'error'
-  } else {
+  const status: Status = useMemo(() => {
+    if (loading || applicationsLoading) {
+      return 'loading'
+    }
+    if (error || applicationsError) {
+      return 'error'
+    }
     const applicationState = applications
       ? applications.applicationApplications?.[
           applications.applicationApplications.length - 1
         ].state
       : undefined
-    status = mapStatus(
+    return mapStatus(
       data?.socialInsuranceIncomePlan?.status,
       applicationState ? (applicationState as ApplicationStatus) : undefined,
+      data?.socialInsuranceIncomePlan?.isEligibleForChange.isEligible ??
+        undefined,
     )
-  }
+  }, [
+    applications,
+    applicationsError,
+    applicationsLoading,
+    data?.socialInsuranceIncomePlan?.isEligibleForChange.isEligible,
+    data?.socialInsuranceIncomePlan?.status,
+    error,
+    loading,
+  ])
 
-  const alertBox = () => {
-    if (
-      status === 'in_review' ||
-      (status === 'accepted' &&
-        data?.socialInsuranceIncomePlan?.isEligibleForChange.isEligible)
-    ) {
+  const renderAlertBox = () => {
+    if (RENDER_ALERT_BOX_CONDITIONALS.includes(status)) {
       return (
         <AlertMessage
           type="info"
@@ -69,11 +90,54 @@ const IncomePlan = () => {
         />
       )
     }
-
-    return undefined
   }
 
-  const applicationButtonAboveCard = () => {}
+  const renderLinkButton = () => {
+    if (RENDER_LINK_BUTTON_CONDITIONALS.includes(status)) {
+      return (
+        <LinkButton
+          to={formatMessage(m.incomePlanLink)}
+          text={formatMessage(m.incomePlanLinkText)}
+          icon="open"
+          variant="utility"
+        />
+      )
+    }
+  }
+
+  const renderContent = () => {
+    switch (status) {
+      case 'error':
+        return <Problem error={error || applicationsError} noBorder={false} />
+      case 'loading':
+        return (
+          <Box marginBottom={2}>
+            <CardLoader />
+          </Box>
+        )
+      case 'accepted':
+      case 'accepted_no_changes':
+      case 'in_review':
+      case 'in_progress': {
+        return (
+          <Stack space={2}>
+            <Inline space={2}>
+              {renderAlertBox()}
+              {renderLinkButton()}
+            </Inline>
+            <IncomePlanCard
+              status={status}
+              registrationDate={
+                data?.socialInsuranceIncomePlan?.registrationDate
+              }
+            />
+          </Stack>
+        )
+      }
+      default:
+        return <Problem type="no_data" noBorder={false} />
+    }
+  }
 
   return (
     <IntroWrapper
@@ -84,53 +148,7 @@ const IncomePlan = () => {
         coreMessages.socialInsuranceTooltip,
       )}
     >
-      {error && !loading ? (
-        <Problem error={error || applicationsError} noBorder={false} />
-      ) : loading ? (
-        <Box marginBottom={2}>
-          <CardLoader />
-        </Box>
-      ) : (
-        <Stack space={2}>
-          <Inline space={2}>
-            {!error && !loading && alertBox()}
-            <LinkButton
-              to={formatMessage(m.incomePlanLink)}
-              text={formatMessage(m.incomePlanLinkText)}
-              icon="open"
-              variant="utility"
-            />
-            {status === 'accepted' && (
-              <LinkButton
-                to={`${document.location.origin}/${formatMessage(
-                  m.incomePlanModifyLink,
-                )}`}
-                text={formatMessage(m.modifyIncomePlan)}
-                disabled={
-                  !data?.socialInsuranceIncomePlan?.isEligibleForChange
-                    .isEligible
-                }
-                icon="open"
-                variant="primary"
-                size="small"
-              />
-            )}
-          </Inline>
-          <IncomePlanCard
-            applicationStatus={status}
-            incomePlanStatus={
-              data?.socialInsuranceIncomePlan?.status ?? undefined
-            }
-            incomePlanRegistrationDate={
-              data?.socialInsuranceIncomePlan?.registrationDate
-            }
-            incomePlanEligibleForChange={
-              data?.socialInsuranceIncomePlan?.isEligibleForChange.isEligible ??
-              undefined
-            }
-          />
-        </Stack>
-      )}
+      {renderContent()}
     </IntroWrapper>
   )
 }

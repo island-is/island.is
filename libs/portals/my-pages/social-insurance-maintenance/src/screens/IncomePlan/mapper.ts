@@ -4,31 +4,15 @@ import { ApplicationStatus, Status } from './types'
 export const mapStatus = (
   status?: SocialInsuranceIncomePlanStatus,
   applicationStatus?: ApplicationStatus,
+  eligibleForChange?: boolean,
 ): Status => {
   if (!status && !applicationStatus) {
     return 'no_data'
   }
   //no data from service provider
   switch (status) {
-    case SocialInsuranceIncomePlanStatus.UNKNOWN: {
-      switch (applicationStatus) {
-        case 'draft': {
-          return 'in_progress'
-        }
-        case 'completed': {
-          //shouldn't happen
-          return 'unknown'
-        }
-        case 'tryggingastofnunSubmitted':
-        case 'tryggingastofnunInReview': {
-          return 'in_review'
-        }
-        default:
-          return 'unknown'
-      }
-    }
     case SocialInsuranceIncomePlanStatus.IN_PROGRESS: {
-      return 'in_progress'
+      return 'in_review'
     }
     case SocialInsuranceIncomePlanStatus.CANCELLED: {
       switch (applicationStatus) {
@@ -36,15 +20,17 @@ export const mapStatus = (
           return 'in_progress'
         }
         case 'completed': {
-          //shouldn't happen
-          return 'rejected'
+          return 'accepted'
         }
         case 'tryggingastofnunSubmitted':
         case 'tryggingastofnunInReview': {
           return 'in_review'
         }
-        default:
-          return 'unknown'
+        default: {
+          return eligibleForChange === false
+            ? 'rejected_no_changes'
+            : 'rejected'
+        }
       }
     }
     case SocialInsuranceIncomePlanStatus.ACCEPTED: {
@@ -53,22 +39,21 @@ export const mapStatus = (
           return 'in_progress'
         }
         case 'completed': {
-          //shouldn't happen
           return 'accepted'
         }
         case 'tryggingastofnunSubmitted':
         case 'tryggingastofnunInReview': {
           return 'in_review'
         }
-        default:
-          return 'unknown'
+        default: {
+          return eligibleForChange === false
+            ? 'accepted_no_changes'
+            : 'accepted'
+        }
       }
     }
     default:
       switch (applicationStatus) {
-        case 'draft': {
-          return 'in_progress'
-        }
         case 'completed': {
           //shouldn't happen
           return 'unknown'
