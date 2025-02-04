@@ -44,5 +44,15 @@ export const information = {
       defaultMessage: 'Símanúmer',
       description: 'Complainers phone number',
     },
+    gender: {
+      id: 'ctao.application:information.aboutTheComplainer.gender',
+      defaultMessage: 'Kyn',
+      description: 'Complainers gender',
+    },
+    genderJustification: {
+      id: 'ctao.application:information.aboutTheComplainer.genderJustification',
+      defaultMessage: 'Þessara upplýsinga er eingöngu óskað til þess að hægt sé að vinna tölfræði um þá hópa sem leita til umboðsmanns Alþingis. Þær verða ekki nýttar í öðrum og ósamrýmanlegum tilgangi.',
+      description: 'Explanation for why the complainers gender is being asked for',
+    },
   }),
 }
