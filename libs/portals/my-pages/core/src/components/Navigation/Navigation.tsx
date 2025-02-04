@@ -86,7 +86,6 @@ interface MobileNavigationDialogProps {
   onClick: () => void
   menuState: MenuStateReturn
   mobileNavigationButtonCloseLabel?: string
-  isScrolled?: boolean
 }
 
 interface NavigationTreeProps {
@@ -234,7 +233,7 @@ export const Navigation: FC<React.PropsWithChildren<NavigationProps>> = ({
         href={asSpan ? undefined : titleLink?.href}
         borderRadius="large"
         className={styles.link}
-        paddingX={isScrolled ? 2 : 4}
+        paddingX={2}
         paddingY={basePadding.paddingY}
       >
         {({ isFocused, isHovered }) => {
@@ -260,11 +259,7 @@ export const Navigation: FC<React.PropsWithChildren<NavigationProps>> = ({
       titleProps,
     )
   ) : (
-    <Box
-      paddingX={isScrolled ? 2 : 4}
-      paddingBottom={1}
-      style={{ paddingTop: 6 }}
-    >
+    <Box paddingX={2} paddingBottom={1} style={{ paddingTop: 6 }}>
       <Box display="flex" flexDirection="row" alignItems="center">
         {titleIcon && (
           <Box
@@ -331,7 +326,6 @@ export const Navigation: FC<React.PropsWithChildren<NavigationProps>> = ({
               onClick={() => {
                 menu.hide()
               }}
-              isScrolled={isScrolled}
             />
           </Menu>
         </Box>
@@ -372,7 +366,6 @@ const MobileNavigationDialog = ({
   menuState,
   asSpan,
   mobileNavigationButtonCloseLabel,
-  isScrolled,
 }: MobileNavigationDialogProps) => {
   return (
     <ModalBase
@@ -391,7 +384,7 @@ const MobileNavigationDialog = ({
           <Box
             position="absolute"
             right={0}
-            marginRight={isScrolled ? 2 : 4}
+            marginRight={2}
             style={{ top: '50%', transform: 'translateY(-50%)' }}
           >
             <FocusableBox
