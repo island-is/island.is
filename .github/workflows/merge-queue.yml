@@ -65,8 +65,8 @@ jobs:
       - name: Find affected projects
         id: affected
         env:
-          BASE: ${{ env.NX_BASE || env.GITHUB_BASE_REF }}
-          HEAD: ${{ env.NX_HEAD || env.GITHUB_HEAD_REF }}
+          BASE: ${{ env.NX_BASE || env.GITHUB_BASE_REF || github.event.pull_request.base.sha }}
+          HEAD: ${{ env.NX_HEAD || env.GITHUB_HEAD_REF || github.event.pull_request.head.sha }}
         run: |
           chunks="build-chunks={\"projects\":$(./scripts/ci/generate-chunks.sh build)}"
           echo "$chunks" | tee -a "$GITHUB_OUTPUT"
