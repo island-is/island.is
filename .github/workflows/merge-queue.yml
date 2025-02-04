@@ -60,6 +60,7 @@ jobs:
         uses: nrwl/nx-set-shas@v4
       - name: Setup yarn
         run: |
+          ls -lah node_modules
           # Cached by GitHub actions
           corepack enable
           # Cached by `get-cache` above
