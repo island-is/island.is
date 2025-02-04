@@ -62,7 +62,7 @@ export class AdminCreateClientDto extends OmitType(AdminPatchClientDto, [
   @IsNotEmpty()
   @IsEnum(ClientSso)
   @ApiProperty({
-    example: 'spa',
+    example: 'enabled',
     enum: ClientSso,
     enumName: 'ClientSso',
   })

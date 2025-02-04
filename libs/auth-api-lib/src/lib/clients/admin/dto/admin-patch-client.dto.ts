@@ -1,4 +1,4 @@
-import { ApiPropertyOptional } from '@nestjs/swagger'
+import {  ApiPropertyOptional } from '@nestjs/swagger'
 import { Type } from 'class-transformer'
 import {
   IsArray,
@@ -10,7 +10,7 @@ import {
 } from 'class-validator'
 
 import { TranslatedValueDto } from '../../../translation/dto/translated-value.dto'
-import { RefreshTokenExpiration } from '../../../types'
+import { ClientSso, RefreshTokenExpiration } from '../../../types'
 import { AdminClientClaimDto } from './admin-client-claim.dto'
 import { AuthDelegationType } from '@island.is/shared/types'
 
@@ -208,6 +208,15 @@ export class AdminPatchClientDto {
   })
   @IsOptional()
   allowedAcr?: string[]
+
+  @IsOptional()
+  @IsEnum(ClientSso)
+  @ApiPropertyOptional({
+    example: 'enabled',
+    enum: ClientSso,
+    enumName: 'ClientSso',
+  })
+  readonly sso?: ClientSso
 }
 
 export const superUserFields = [
@@ -219,4 +228,5 @@ export const superUserFields = [
   'customClaims',
   'singleSession',
   'allowedAcr',
+  'sso',
 ]

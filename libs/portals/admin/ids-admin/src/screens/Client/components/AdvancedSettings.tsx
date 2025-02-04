@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 
 import {
   AuthAdminClientEnvironment,
@@ -58,7 +58,7 @@ export const AdvancedSettings = ({
     singleSession,
     customClaims: customClaimsString,
     allowSso: sso === AuthAdminClientSso.enabled || sso === AuthAdminClientSso.client,
-    allowSsoClient: sso === AuthAdminClientSso.client
+    allowSsoClient: sso === AuthAdminClientSso.client,
   })
 
   console.log('inputValues', inputValues)

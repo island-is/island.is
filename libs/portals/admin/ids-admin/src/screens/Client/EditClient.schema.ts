@@ -4,7 +4,7 @@ import { zfd } from 'zod-form-data'
 import {
   AuthAdminTranslatedValue,
   AuthAdminRefreshTokenExpiration,
-  AuthAdminClientClaim,
+  AuthAdminClientClaim, AuthAdminClientSso,
 } from '@island.is/api/schema'
 
 import { booleanCheckbox } from '../../utils/forms'
@@ -169,6 +169,8 @@ export const schema = {
       supportTokenExchange: booleanCheckbox,
       requireConsent: booleanCheckbox,
       singleSession: booleanCheckbox,
+      allowSso: booleanCheckbox,
+      allowSsoClient: booleanCheckbox,
       accessTokenLifetime: z
         .string()
         .refine(checkIfStringIsPositiveNumber, {
@@ -186,7 +188,19 @@ export const schema = {
           return transformCustomClaims(s)
         }),
     })
-    .merge(defaultEnvironmentSchema),
+    .merge(defaultEnvironmentSchema)
+    .transform((data) => {
+      const { allowSso, allowSsoClient, ...rest } = data
+
+      return {
+        ...rest,
+        sso: allowSsoClient
+          ? AuthAdminClientSso.client
+          : allowSso
+          ? AuthAdminClientSso.enabled
+          : AuthAdminClientSso.disabled,
+      }
+    }),
   [ClientFormTypes.permissions]: z
     .object({
       addedScopes: zfd.repeatable(z.optional(z.array(z.string()))),
