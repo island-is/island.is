@@ -123,13 +123,23 @@ export const PropertyInfoSummary: FC<Props> = ({ ...props }) => {
         <GridColumn span={['12/12', '4/12']}>
           <KeyValue
             label={summary.PropertyNumOfRoomsLabel}
-            value={answers.registerProperty.numOfRooms || '-'}
+            value={
+              (answers.registerProperty.searchResults &&
+                answers.registerProperty.searchResults.propertyIds[0].units[0]
+                  .numberOfRooms) ||
+              '-'
+            }
           />
         </GridColumn>
         <GridColumn span={['12/12', '4/12']}>
           <KeyValue
             label={summary.propertySizeLabel}
-            value={answers.registerProperty.size || '-'}
+            value={
+              (answers.registerProperty.searchResults &&
+                answers.registerProperty.searchResults.propertyIds[0].units[0]
+                  .size) ||
+              '-'
+            }
           />
         </GridColumn>
       </SummaryCardRow>

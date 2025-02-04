@@ -25,7 +25,7 @@ import {
 import { SummaryCard } from './components/SummaryCard'
 import { SummaryCardRow } from './components/SummaryCardRow'
 import { KeyValue } from './components/KeyValue'
-import { summary } from '../../lib/messages'
+import { registerProperty, summary } from '../../lib/messages'
 
 interface Props extends FieldBaseProps {
   goToScreen?: (id: string) => void
@@ -103,16 +103,18 @@ export const RentalInfoSummary: FC<Props> = ({ ...props }) => {
     return matchingOption ? matchingOption.label : '-'
   }
 
+  console.log('registerProperty', answers.registerProperty.searchResults?.label)
+
   return (
     <SummaryCard>
       {/* Property Address */}
-      <SummaryCardRow isChangeButton={isChangeButton}>
-        <GridColumn span={['12/12']}>
+      <GridColumn span={['12/12']}>
+        {answers.registerProperty.searchResults && (
           <KeyValue
-            label={`${answers.registerProperty.address}, ${answers.registerProperty.municipality}`}
+            label={`${answers.registerProperty.searchResults.streetAddress}, ${answers.registerProperty.searchResults.regionNumber} ${answers.registerProperty.searchResults.cityName}`}
             value={
               `${formatMessage(summary.rentalPropertyIdPrefix)}${
-                answers.registerProperty.propertyId
+                answers.registerProperty.searchResults.propertyIds[0].propertyId
               }` || '-'
             }
             labelVariant="h4"
@@ -120,8 +122,8 @@ export const RentalInfoSummary: FC<Props> = ({ ...props }) => {
             valueVariant="medium"
             valueAs="p"
           />
-        </GridColumn>
-      </SummaryCardRow>
+        )}
+      </GridColumn>
 
       {/* Rental period */}
       <SummaryCardRow

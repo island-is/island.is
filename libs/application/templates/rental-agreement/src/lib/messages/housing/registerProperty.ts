@@ -21,65 +21,13 @@ export const registerProperty = {
         'Finndu eignina með fasteignanúmeri eða heimilisfangi. Nánari upplýsingar er að finna í [fasteignaskrá HMS](https://leit.fasteignaskra.is/).',
       description: 'Register property page description',
     },
-    addressLabel: {
-      id: 'ra.application:registerProperty.info.addressLabel',
-      defaultMessage: 'Heimilisfang leiguhúsnæðis',
-      description: 'Register property address input label',
-    },
-    addressPlaceholder: {
-      id: 'ra.application:registerProperty.info.addressPlaceholder',
-      defaultMessage: 'Sláðu inn Heimilisfang leiguhúsnæðis',
-      description: 'Register property address input placeholder',
-    },
-    propertyIdLabel: {
-      id: 'ra.application:registerProperty.info.propertyIdLabel',
-      defaultMessage: 'Fasteignanúmer',
-      description: 'Input label for property number',
-    },
-    propertyIdPlaceholder: {
-      id: 'ra.application:registerProperty.info.propertyIdPlaceholder',
-      defaultMessage: 'Sláðu inn fasteignanúmer húsnæðis (án F)',
-      description: 'Input placeholder for property number',
-    },
-    propertyUnitIdLabel: {
-      id: 'ra.application:registerProperty.info.propertyUnitIdLabel',
-      defaultMessage: 'Merking fasteignahluta',
-      description: 'Input label for property unit marking',
-    },
-    propertyUnitIdPlaceholder: {
-      id: 'ra.application:registerProperty.info.propertyUnitIdPlaceholder',
-      defaultMessage: 'Sláðu inn merkingu fasteignar sem á að leigja',
-      description: 'Input placeholder for property unit marking',
-    },
-    postalCodeLabel: {
-      id: 'ra.application:registerProperty.info.postalCodeLabel',
-      defaultMessage: 'Póstnúmer',
-      description: 'Input label for property postal code',
-    },
-    postalCodePlaceholder: {
-      id: 'ra.application:registerProperty.info.postalCodePlaceholder',
-      defaultMessage: 'Veldu póstnúmer',
-      description: 'Input placeholder for property postal code',
-    },
-    municipalityLabel: {
-      id: 'ra.application:registerProperty.info.municipalityLabel',
-      defaultMessage: 'Sveitarfélag',
-      description: 'Input label for property municipality',
-    },
-    municipalityPlaceholder: {
-      id: 'ra.application:registerProperty.info.municipalityPlaceholder',
-      defaultMessage: 'Sláðu inn sveitarfélag',
-      description: 'Input placeholder for property municipality',
-    },
-    sizeLabel: {
-      id: 'ra.application:registerProperty.info.sizeLabel',
-      defaultMessage: 'Stærð húsnæðis (m²)',
-      description: 'Input label for property size',
-    },
-    numOfRoomsLabel: {
-      id: 'ra.application:registerProperty.info.numOfRoomsLabel',
-      defaultMessage: 'Fjöldi herbergja',
-      description: 'Input label for number of rooms in property',
+
+    // Error messages
+    searchResultsEmptyError: {
+      id: 'ra.application:registerProperty.category.searchResultsEmptyError',
+      defaultMessage:
+        'Skráning leiguhúsnæðis þarf að vera til staðar til að halda áfram',
+      description: 'Error message when no search results',
     },
   }),
 

@@ -189,10 +189,7 @@ const RentalAgreementTemplate: ApplicationTemplate<
     actions: {
       assignUsers: assign((context) => {
         const { application } = context
-
         const assigneeNationalIds = getNationalIdListOfAssignees(application)
-
-        console.log('AssigneeNationalIds', assigneeNationalIds)
 
         if (assigneeNationalIds && assigneeNationalIds.length > 0) {
           set(application, 'assignees', assigneeNationalIds)
@@ -202,9 +199,7 @@ const RentalAgreementTemplate: ApplicationTemplate<
       }),
       clearAssignees: assign((context) => {
         const { application } = context
-
         set(application, 'assignees', [])
-
         return context
       }),
     },
