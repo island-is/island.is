@@ -10,7 +10,7 @@ on:
       - labeled
 defaults:
   run:
-    shell: bash -euxo pipefail {0}
+    shell: bash -euo pipefail {0}
 
 concurrency:
   group: merge-queue-post-${{ github.head_ref || github.run_id }}
