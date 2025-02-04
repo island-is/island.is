@@ -113,12 +113,18 @@ jobs:
           include-hidden-files: true
           if-no-files-found: error
 
-      - name: Get cache
-        id: get-cache
-        uses: ./.github/actions/get-cache
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          enable-cache: 'node_modules,cypress'
+      # - name: Get cache
+      #   id: get-cache
+      #   uses: ./.github/actions/get-cache
+      #   with:
+      #     github-token: ${{ secrets.GITHUB_TOKEN }}
+      #     enable-cache: 'cypress'
+
+      - name: Set NODE_PATH with yarn.lock checksum
+        run: |
+          export NODE_PATH=/home/runner/${{ hashFiles('**/yarn.lock') }}/node_modules/
+          echo "NODE_PATH=$NODE_PATH" >> $GITHUB_ENV
+          yarn install --immutable
 
       - name: License audit Node modules
         run: ./scripts/ci/20_license-audit.sh
