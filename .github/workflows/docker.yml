@@ -254,6 +254,8 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           tags: ${{ steps.meta.outputs.tags }}
           target: output-${{ matrix.docker }}
+          secrets: |
+            nx_cloud_access_token=${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
           build-args: |
             NODE_IMAGE_VERSION=${{ needs.prepare.outputs.node-image-version }}
             APP=${{ matrix.project }}
