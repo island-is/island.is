@@ -1,4 +1,4 @@
-import { FieldBaseProps } from '@island.is/application/types'
+import { FieldBaseProps, YES } from '@island.is/application/types'
 import { FC } from 'react'
 import { Box, GridColumn, GridRow, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
@@ -64,6 +64,12 @@ export const SchoolSelectionOverview: FC<FieldBaseProps> = ({
                 {selection?.[0]?.nordicLanguage?.name}
               </Text>
             )}
+            {!!selection?.[0]?.requestDormitory?.includes(YES) && (
+              <Text>
+                {formatMessage(overview.selection.requestDormitoryLabel)}:{' '}
+                {formatMessage(overview.selection.yesValue)}
+              </Text>
+            )}
           </GridColumn>
 
           {/* Second selection */}
@@ -93,6 +99,12 @@ export const SchoolSelectionOverview: FC<FieldBaseProps> = ({
                 <Text>
                   {formatMessage(overview.selection.nordicLanguageLabel)}:{' '}
                   {selection?.[1]?.nordicLanguage?.name}
+                </Text>
+              )}
+              {!!selection?.[1]?.requestDormitory?.includes(YES) && (
+                <Text>
+                  {formatMessage(overview.selection.requestDormitoryLabel)}:{' '}
+                  {formatMessage(overview.selection.yesValue)}
                 </Text>
               )}
             </GridColumn>
@@ -126,6 +138,12 @@ export const SchoolSelectionOverview: FC<FieldBaseProps> = ({
                   <Text>
                     {formatMessage(overview.selection.nordicLanguageLabel)}:{' '}
                     {selection?.[2]?.nordicLanguage?.name}
+                  </Text>
+                )}
+                {!!selection?.[3]?.requestDormitory?.includes(YES) && (
+                  <Text>
+                    {formatMessage(overview.selection.requestDormitoryLabel)}:{' '}
+                    {formatMessage(overview.selection.yesValue)}
                   </Text>
                 )}
               </GridColumn>

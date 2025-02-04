@@ -104,7 +104,7 @@ const SelectionSchema = z
         // Note: this include is only used for zod validation if there is only one program available, but a freshman should pick two
         include: z.boolean().optional(),
         require: z.boolean().optional(),
-        id: z.string().optional(),
+        id: z.string().optional().nullable(),
         nameIs: z.string().optional(),
         nameEn: z.string().optional(),
         registrationEndDate: z.string().optional(),
@@ -112,13 +112,13 @@ const SelectionSchema = z
       .optional(),
     thirdLanguage: z
       .object({
-        code: z.string().optional(),
+        code: z.string().optional().nullable(),
         name: z.string().optional(),
       })
       .optional(),
     nordicLanguage: z
       .object({
-        code: z.string().optional(),
+        code: z.string().optional().nullable(),
         name: z.string().optional(),
       })
       .optional(),
