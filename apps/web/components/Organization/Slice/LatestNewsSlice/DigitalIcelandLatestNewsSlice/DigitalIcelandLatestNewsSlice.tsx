@@ -19,7 +19,7 @@ import { shortenText } from '@island.is/web/screens/IcelandicGovernmentInstituti
 import * as styles from './DigitalIcelandLatestNewsSlice.css'
 
 interface ItemProps {
-  imageSrc?: string
+  imageSrc: string
   date: string
   title: string
   description?: string | null
@@ -131,7 +131,7 @@ export const DigitalIcelandLatestNewsSlice: React.FC<
                 href={linkResolver('organizationnews', [slug, news.slug]).href}
                 date={news.date}
                 description={news.intro}
-                imageSrc={news.image?.url}
+                imageSrc={news.image?.url ?? ''}
                 tags={news.genericTags.map((tag) => tag.title)}
                 title={news.title}
               />
