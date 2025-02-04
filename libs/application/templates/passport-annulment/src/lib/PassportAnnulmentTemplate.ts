@@ -21,6 +21,7 @@ import {
   twoDays,
 } from './constants'
 import { dataSchema } from './dataSchema'
+import { CodeOwners } from '@island.is/shared/constants'
 
 const pruneAfter = (time: number) => {
   return {
@@ -37,6 +38,7 @@ const PassportAnnulmentTemplate: ApplicationTemplate<
 > = {
   type: ApplicationTypes.PASSPORT_ANNULMENT,
   name: m.formName.defaultMessage,
+  codeOwner: CodeOwners.Juni,
   featureFlag: Features.passportAnnulmentApplication,
   dataSchema,
   stateMachineConfig: {

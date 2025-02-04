@@ -23,6 +23,12 @@ export const application = defineMessages({
     description:
       'Description of application state/status when the application is in draft',
   },
+  actionCardEdit: {
+    id: 'ss.application:actionCardEdit',
+    defaultMessage: 'Í vinnslu (áður innsend)',
+    description:
+      'Description of application state/status when the application is in edit',
+  },
   actionCardSubmitted: {
     id: 'ss.application:actionCardSubmitted',
     defaultMessage: 'Innsend',
@@ -30,7 +36,7 @@ export const application = defineMessages({
       'Description of application state/status when application is submitted',
   },
   actionCardInReview: {
-    id: 'ss.application:actionCardCompleted',
+    id: 'ss.application:actionCardInReview',
     defaultMessage: 'Í vinnslu hjá stofnun',
     description:
       'Description of application state/status when application is completed',
@@ -52,6 +58,12 @@ export const application = defineMessages({
     defaultMessage: 'Draft',
     description:
       'Meta name of application state when the application is in draft',
+  },
+  stateMetaNameEdit: {
+    id: 'ss.application:stateMetaNameEdit',
+    defaultMessage: 'Edit',
+    description:
+      'Meta name of application state when the application is in edit',
   },
   stateMetaNameSubmitted: {
     id: 'ss.application:stateMetaNameSubmitted',
@@ -75,36 +87,46 @@ export const application = defineMessages({
 
 export const historyMessages = defineMessages({
   edited: {
-    id: 'ss.historyMessages:edited',
-    defaultMessage: 'Umsókn dregin tilbaka (breyting)',
+    id: 'ss.application:historyMessages.edited',
+    defaultMessage: 'Umsókn færð tilbaka í vinnslu',
     description: 'History message application edited',
   },
+  changesAborted: {
+    id: 'ss.application:historyMessages.changesAborted',
+    defaultMessage: 'Hætt við breytingar',
+    description: 'History message application changes aborted',
+  },
   reviewFinished: {
-    id: 'ss.historyMessages:reviewFinished',
+    id: 'ss.application:historyMessages.reviewFinished',
     defaultMessage: 'Yfirferð lokið',
     description: 'History message application review finished',
   },
 })
 
 export const pendingActionMessages = defineMessages({
+  waitingForReviewTitle: {
+    id: 'ss.application:pendingActionMessages.waitingForReviewTitle',
+    defaultMessage: 'Umsókn bíður yfirferðar',
+    description: 'Pending action waiting for review',
+  },
   inReviewTitle: {
-    id: 'ss.pendingActionMessages:inReviewTitle',
+    id: 'ss.application:pendingActionMessages.inReviewTitle',
     defaultMessage: 'Er í yfirferð',
     description: 'Pending action message application in review title',
   },
   inReviewDescription: {
-    id: 'ss.pendingActionMessages:inReviewDescription',
+    id: 'ss.application:pendingActionMessages.inReviewDescription',
     defaultMessage: 'Umsóknin þín er í yfirferð',
     description: 'Pending action message application in review description',
   },
   reviewFinishedTitle: {
-    id: 'ss.pendingActionMessages:reviewFinishedTitle',
+    id: 'ss.application:pendingActionMessages.reviewFinishedTitle',
     defaultMessage: 'Yfirferð lokið',
     description:
       'Pending action message application review finished description',
   },
   reviewFinishedDescription: {
-    id: 'ss.pendingActionMessages:reviewFinishedDescription',
+    id: 'ss.application:pendingActionMessages.reviewFinishedDescription',
     defaultMessage: 'Yfirferð á umsókn þinni hefur verið lokið',
     description:
       'Pending action message application review finished description',
