@@ -16,7 +16,7 @@ import {
   SecondarySchool,
 } from '../../utils'
 import { Controller, useFormContext } from 'react-hook-form'
-import { getValueViaPath } from '@island.is/application/core'
+import { getErrorViaPath, getValueViaPath } from '@island.is/application/core'
 import { useLazyProgramList } from '../../hooks/useLazyProgramList'
 
 type Option = {
@@ -318,6 +318,10 @@ export const SelectionItem: FC<FieldBaseProps & SelectionItemProps> = (
     .filter((fieldId) => watch(`${fieldId}.include`) === true)
     .map((fieldId) => watch(`${fieldId}.school.id`))
 
+  const getErrorMessage = (fieldId: string) => {
+    return props.errors && getErrorViaPath(props.errors, fieldId)
+  }
+
   return (
     <Box>
       <Box marginTop={2}>
@@ -326,6 +330,7 @@ export const SelectionItem: FC<FieldBaseProps & SelectionItemProps> = (
           label={formatMessage(school.selection.schoolLabel)}
           backgroundColor="blue"
           required
+          error={getErrorMessage(`${props.field.id}.school.id`)}
           options={(schoolOptions || [])
             .filter(
               (x) =>
@@ -354,6 +359,13 @@ export const SelectionItem: FC<FieldBaseProps & SelectionItemProps> = (
                 label={formatMessage(school.selection.firstProgramLabel)}
                 backgroundColor="blue"
                 required
+                hasError={
+                  getErrorMessage(`${props.field.id}.firstProgram.id`) !==
+                  undefined
+                }
+                errorMessage={getErrorMessage(
+                  `${props.field.id}.firstProgram.id`,
+                )}
                 isLoading={isLoadingPrograms}
                 isDisabled={isLoadingPrograms}
                 value={selectedFirstProgram}
@@ -387,6 +399,13 @@ export const SelectionItem: FC<FieldBaseProps & SelectionItemProps> = (
                   label={formatMessage(school.selection.secondProgramLabel)}
                   backgroundColor="blue"
                   required={isSecondProgramRequired}
+                  hasError={
+                    getErrorMessage(`${props.field.id}.secondProgram.id`) !==
+                    undefined
+                  }
+                  errorMessage={getErrorMessage(
+                    `${props.field.id}.secondProgram.id`,
+                  )}
                   isClearable={!isSecondProgramRequired}
                   isLoading={isLoadingPrograms}
                   isDisabled={isLoadingPrograms}
