@@ -7,8 +7,6 @@ import {
 import {
   ActionCard,
   CardLoader,
-  FootNote,
-  IntroHeader,
   IntroWrapper,
   LinkButton,
   m as coreMessages,
@@ -17,31 +15,65 @@ import {
 import { m } from '../../lib/messages'
 import { Problem } from '@island.is/react-spa/shared'
 import { SocialInsuranceMaintenancePaths } from '../../lib/paths'
-import { useGetIncomePlanQuery } from './IncomePlan.generated'
+import {
+  useGetIncomePlanApplicationQuery,
+  useGetIncomePlanQuery,
+} from './IncomePlan.generated'
 import { SocialInsuranceIncomePlanStatus } from '@island.is/api/schema'
-
-const parseSubtext = (
-  tag: SocialInsuranceIncomePlanStatus,
-  date: Date,
-  formatMessage: FormatMessage,
-) => {
-  switch (tag) {
-    case SocialInsuranceIncomePlanStatus.ACCEPTED:
-      return `${formatMessage(coreMessages.approved)}: ${formatDate(date)}`
-    case SocialInsuranceIncomePlanStatus.IN_PROGRESS:
-      return `${formatMessage(m.receivedInProgress)}: ${formatDate(date)}`
-    case SocialInsuranceIncomePlanStatus.CANCELLED:
-      return `${formatMessage(coreMessages.rejected)}: ${formatDate(date)}`
-    default:
-      return
-  }
-}
+import { mapStatus } from './mapper'
+import { ApplicationStatus, Status } from './types'
+import { IncomePlanCard } from './IncomePlanCard'
 
 const IncomePlan = () => {
   useNamespaces('sp.social-insurance-maintenance')
-  const { formatMessage } = useLocale()
+  const { formatMessage, locale } = useLocale()
 
   const { data, loading, error } = useGetIncomePlanQuery()
+  const { data: applications, error: applicationsError } =
+    useGetIncomePlanApplicationQuery({
+      variables: {
+        input: {
+          typeId: ['IncomePlan'],
+          scopeCheck: true,
+        },
+        locale,
+      },
+    })
+
+  let status: Status
+  if (error || applicationsError) {
+    status = 'error'
+  } else {
+    const applicationState = applications
+      ? applications.applicationApplications?.[
+          applications.applicationApplications.length - 1
+        ].state
+      : undefined
+    status = mapStatus(
+      data?.socialInsuranceIncomePlan?.status,
+      applicationState ? (applicationState as ApplicationStatus) : undefined,
+    )
+  }
+
+  const alertBox = () => {
+    if (
+      status === 'in_review' ||
+      (status === 'accepted' &&
+        data?.socialInsuranceIncomePlan?.isEligibleForChange.isEligible)
+    ) {
+      return (
+        <AlertMessage
+          type="info"
+          title={formatMessage(m.incomePlanModifyUnavailable)}
+          message={formatMessage(m.incomePlanModifyUnavailableText)}
+        />
+      )
+    }
+
+    return undefined
+  }
+
+  const applicationButtonAboveCard = () => {}
 
   return (
     <IntroWrapper
@@ -53,32 +85,22 @@ const IncomePlan = () => {
       )}
     >
       {error && !loading ? (
-        <Problem error={error} noBorder={false} />
+        <Problem error={error || applicationsError} noBorder={false} />
       ) : loading ? (
         <Box marginBottom={2}>
           <CardLoader />
         </Box>
       ) : (
         <Stack space={2}>
-          {!error &&
-            !loading &&
-            data?.socialInsuranceIncomePlan &&
-            !data?.socialInsuranceIncomePlan?.isEligibleForChange
-              .isEligible && (
-              <AlertMessage
-                type="info"
-                title={formatMessage(m.incomePlanModifyUnavailable)}
-                message={formatMessage(m.incomePlanModifyUnavailableText)}
-              />
-            )}
           <Inline space={2}>
+            {!error && !loading && alertBox()}
             <LinkButton
               to={formatMessage(m.incomePlanLink)}
               text={formatMessage(m.incomePlanLinkText)}
               icon="open"
               variant="utility"
             />
-            {data?.socialInsuranceIncomePlan && (
+            {status === 'accepted' && (
               <LinkButton
                 to={`${document.location.origin}/${formatMessage(
                   m.incomePlanModifyLink,
@@ -94,58 +116,19 @@ const IncomePlan = () => {
               />
             )}
           </Inline>
-          {data?.socialInsuranceIncomePlan ? (
-            <ActionCard
-              image={{
-                type: 'image',
-                url: './assets/images/tr.svg',
-              }}
-              text={
-                data?.socialInsuranceIncomePlan?.status &&
-                data?.socialInsuranceIncomePlan.registrationDate
-                  ? parseSubtext(
-                      data.socialInsuranceIncomePlan?.status,
-                      new Date(data.socialInsuranceIncomePlan.registrationDate),
-                      formatMessage,
-                    )
-                  : undefined
-              }
-              heading={formatMessage(coreMessages.incomePlan)}
-              cta={{
-                label: formatMessage(m.viewIncomePlan),
-                url:
-                  data.socialInsuranceIncomePlan.status ===
-                  SocialInsuranceIncomePlanStatus.IN_PROGRESS
-                    ? `${document.location.origin}/${formatMessage(
-                        m.incomePlanModifyLink,
-                      )}`
-                    : SocialInsuranceMaintenancePaths.SocialInsuranceMaintenanceIncomePlanDetail,
-                variant: 'text',
-              }}
-            />
-          ) : (
-            <ActionCard
-              image={{
-                type: 'image',
-                url: './assets/images/tr.svg',
-              }}
-              text={formatMessage(m.noActiveIncomePlan)}
-              headingColor="currentColor"
-              heading={formatMessage(coreMessages.incomePlan)}
-              backgroundColor="blue"
-              borderColor="blue200"
-              cta={{
-                label: formatMessage(m.submitIncomePlan),
-                url: `${document.location.origin}/${formatMessage(
-                  m.incomePlanModifyLink,
-                )}`,
-                variant: 'primary',
-                size: 'medium',
-                icon: 'open',
-                centered: true,
-              }}
-            />
-          )}
+          <IncomePlanCard
+            applicationStatus={status}
+            incomePlanStatus={
+              data?.socialInsuranceIncomePlan?.status ?? undefined
+            }
+            incomePlanRegistrationDate={
+              data?.socialInsuranceIncomePlan?.registrationDate
+            }
+            incomePlanEligibleForChange={
+              data?.socialInsuranceIncomePlan?.isEligibleForChange.isEligible ??
+              undefined
+            }
+          />
         </Stack>
       )}
     </IntroWrapper>

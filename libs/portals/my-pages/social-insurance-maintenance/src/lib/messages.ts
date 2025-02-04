@@ -114,9 +114,29 @@ export const m = defineMessages({
     id: 'sp.social-insurance-maintenance:received-in-progress',
     defaultMessage: 'Móttekið til vinnslu',
   },
+  continueApplication: {
+    id: 'sp.social-insurance-maintenance:continue-application',
+    defaultMessage: 'Halda áfram með umsókn',
+  },
   noActiveIncomePlan: {
     id: 'sp.social-insurance-maintenance:no-active-income-plan',
     defaultMessage: 'Engin gild tekjuáætlun',
+  },
+  applicationInProgress: {
+    id: 'sp.social-insurance-maintenance:application-in-progress',
+    defaultMessage: 'Umsókn í vinnslu',
+  },
+  applicationRejected: {
+    id: 'sp.social-insurance-maintenance:application-rejected',
+    defaultMessage: 'Umsókn hafnað',
+  },
+  applicationInReview: {
+    id: 'sp.social-insurance-maintenance:application-in-review',
+    defaultMessage: 'Umsókn bíður samþykkis',
+  },
+  applicationAccepted: {
+    id: 'sp.social-insurance-maintenance:application-accepted',
+    defaultMessage: 'Umsókn bíður samþykkis',
   },
   incomePlanLink: {
     id: 'sp.social-insurance-maintenance:income-plan-link',
