@@ -1295,4 +1295,32 @@ export const messages = defineMessages({
     defaultMessage:
       'Ofangreindur aðili má einnig fletta upp mínum lyfjaávísunum í apóteki.',
   },
+  vaccineUnfinished: {
+    id: 'sp.health:vaccine-unfinished',
+    defaultMessage: 'Ólokið',
+  },
+  vaccineExpired: {
+    id: 'sp.health:vaccine-expired',
+    defaultMessage: 'Útrunnið',
+  },
+  vaccineUnvaccined: {
+    id: 'sp.health:vaccine-unvaccined',
+    defaultMessage: 'Óbólusett',
+  },
+  vaccineValid: {
+    id: 'sp.health:vaccine-valid',
+    defaultMessage: 'Í gildi',
+  },
+  vaccineFinished: {
+    id: 'sp.health:vaccine-finished',
+    defaultMessage: 'Lokið',
+  },
+  vaccineUncertain: {
+    id: 'sp.health:vaccine-uncertain',
+    defaultMessage: 'Óljós',
+  },
+  vaccineUnregistered: {
+    id: 'sp.health:vaccine-unregistered',
+    defaultMessage: 'Óskráð',
+  },
 })
