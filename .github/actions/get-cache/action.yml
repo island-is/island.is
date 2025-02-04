@@ -44,6 +44,7 @@ runs:
 
     # NOTE: Will restore NX cloud cache or generate new cache
     - name: Codegen
+      if: ${{ !github.event.localrun }}
       id: codegen
       shell: bash
       run: yarn codegen
