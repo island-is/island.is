@@ -50,6 +50,7 @@ import {
   incomePlanFormMessage,
   statesMessages,
 } from './messages'
+import { CodeOwners } from '@island.is/shared/constants'
 
 const IncomePlanTemplate: ApplicationTemplate<
   ApplicationContext,
@@ -58,6 +59,7 @@ const IncomePlanTemplate: ApplicationTemplate<
 > = {
   type: ApplicationTypes.INCOME_PLAN,
   name: incomePlanFormMessage.shared.applicationTitle,
+  codeOwner: CodeOwners.Deloitte,
   institution: socialInsuranceAdministrationMessage.shared.institution,
   featureFlag: Features.IncomePlanEnabled,
   translationNamespaces: ApplicationConfigurations.IncomePlan.translation,
