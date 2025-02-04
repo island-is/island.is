@@ -113,18 +113,9 @@ jobs:
           include-hidden-files: true
           if-no-files-found: error
 
-      # - name: Get cache
-      #   id: get-cache
-      #   uses: ./.github/actions/get-cache
-      #   with:
-      #     github-token: ${{ secrets.GITHUB_TOKEN }}
-      #     enable-cache: 'cypress'
-
-      - name: Set NODE_PATH with yarn.lock checksum
+      - name: Yarn efs
         run: |
-          export NODE_PATH=/home/runner/${{ hashFiles('**/yarn.lock') }}/node_modules/
-          echo "NODE_PATH=$NODE_PATH" >> $GITHUB_ENV
-          yarn install --immutable
+          ./scripts/yarn-efs.sh ${{ hashFiles('**/yarn.lock') }}
 
       - name: License audit Node modules
         run: ./scripts/ci/20_license-audit.sh
@@ -220,11 +211,9 @@ jobs:
       - name: Setup yarn
         run: corepack enable
 
-      - name: Set NODE_PATH with yarn.lock checksum
+      - name: Yarn efs
         run: |
-          export NODE_PATH=/home/runner/${{ hashFiles('**/yarn.lock') }}/node_modules/
-          echo "NODE_PATH=$NODE_PATH" >> $GITHUB_ENV
-          yarn install --immutable
+          ./scripts/yarn-efs.sh ${{ hashFiles('**/yarn.lock') }}
 
       - name: Run unit tests
         uses: ./.github/actions/unit-test
@@ -262,11 +251,9 @@ jobs:
       - name: Setup yarn
         run: corepack enable
 
-      - name: Set NODE_PATH with yarn.lock checksum
+      - name: Yarn efs
         run: |
-          export NODE_PATH=/home/runner/${{ hashFiles('**/yarn.lock') }}/node_modules/
-          echo "NODE_PATH=$NODE_PATH" >> $GITHUB_ENV
-          yarn install --immutable
+          ./scripts/yarn-efs.sh ${{ hashFiles('**/yarn.lock') }}
 
       - name: Running e2e tests
         run: ./scripts/ci/40_e2e.sh "${AFFECTED_PROJECT}"
@@ -285,11 +272,9 @@ jobs:
       - name: Setup yarn
         run: corepack enable
 
-      - name: Set NODE_PATH with yarn.lock checksum
+      - name: Yarn efs
         run: |
-          export NODE_PATH=/home/runner/${{ hashFiles('**/yarn.lock') }}/node_modules/
-          echo "NODE_PATH=$NODE_PATH" >> $GITHUB_ENV
-          yarn install --immutable
+          ./scripts/yarn-efs.sh ${{ hashFiles('**/yarn.lock') }}
 
       - name: Linting workspace
         run: ./scripts/ci/20_lint-workspace.sh
@@ -329,11 +314,9 @@ jobs:
           node-version-file: 'package.json'
       - name: Setup yarn
         run: corepack enable
-      - name: Set NODE_PATH with yarn.lock checksum
+      - name: Yarn efs
         run: |
-          export NODE_PATH=/home/runner/${{ hashFiles('**/yarn.lock') }}/node_modules/
-          echo "NODE_PATH=$NODE_PATH" >> $GITHUB_ENV
-          yarn install --immutable
+          ./scripts/yarn-efs.sh ${{ hashFiles('**/yarn.lock') }}
       - name: NX format:check
         if: ${{ github.ref == 'ref/heads/main' }}
         run: ./scripts/ci/20_check-formatting.sh "check"
@@ -363,11 +346,9 @@ jobs:
           node-version-file: 'package.json'
       - name: Setup yarn
         run: corepack enable
-      - name: Set NODE_PATH with yarn.lock checksum
+      - name: Yarn efs
         run: |
-          export NODE_PATH=/home/runner/${{ hashFiles('**/yarn.lock') }}/node_modules/
-          echo "NODE_PATH=$NODE_PATH" >> $GITHUB_ENV
-          yarn install --immutable
+          ./scripts/yarn-efs.sh ${{ hashFiles('**/yarn.lock') }}
       - name: Linting
         run: ./scripts/ci/run-in-parallel-native.sh lint
 
@@ -390,11 +371,9 @@ jobs:
           node-version-file: 'package.json'
       - name: Setup yarn
         run: corepack enable
-      - name: Set NODE_PATH with yarn.lock checksum
+      - name: Yarn efs
         run: |
-          export NODE_PATH=/home/runner/${{ hashFiles('**/yarn.lock') }}/node_modules/
-          echo "NODE_PATH=$NODE_PATH" >> $GITHUB_ENV
-          yarn install --immutable
+          ./scripts/yarn-efs.sh ${{ hashFiles('**/yarn.lock') }}
 
       - name: Building
         run: ./scripts/ci/run-in-parallel-native.sh build
