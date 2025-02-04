@@ -113,6 +113,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix: ${{ fromJson(needs.prepare.outputs.matrix) }}
+      max-parallel: 1
 
     permissions:
       id-token: write # This is required for requesting the JWT for AWS/ECR login
