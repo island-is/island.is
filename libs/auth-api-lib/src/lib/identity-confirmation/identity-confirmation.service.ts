@@ -8,11 +8,13 @@ import { IdentityConfirmationType } from './types/identity-confirmation-type'
 import { SmsService } from '@island.is/nova-sms'
 import { EmailService } from '@island.is/email-service'
 import { join } from 'path'
+import { IdentityConfirmationApiConfig } from './config'
+import type { ConfigType } from '@island.is/nest/config'
 
 const ZENDESK_CUSTOM_FIELDS = {
-  Email: 21401464004498,
-  Phone: 21401435545234,
-  Chat: 21683921674002,
+  Email: 1,
+  Phone: 2,
+  Chat: 3,
 }
 
 @Injectable()
@@ -24,6 +26,8 @@ export class IdentityConfirmationService {
     private readonly smsService: SmsService,
     @Inject(EmailService)
     private readonly emailService: EmailService,
+    @Inject(IdentityConfirmationApiConfig.KEY)
+    private readonly config: ConfigType<typeof IdentityConfirmationApiConfig>,
   ) {}
 
   async identityConfirmation({
@@ -48,13 +52,13 @@ export class IdentityConfirmationService {
 
     switch (type) {
       case IdentityConfirmationType.EMAIL:
-        await this.sendViaEmail('gunnlaugur@aranja.com', link)
+        await this.sendViaEmail(email, link)
         break
       case IdentityConfirmationType.PHONE:
-        await this.sendViaSms('6916391', link)
+        await this.sendViaSms(phone, link)
         break
       case IdentityConfirmationType.CHAT:
-        await this.sendViaChat(id, link)
+        await this.sendViaChat(chat, link)
         break
       default:
         throw new Error('Invalid confirmation type')
@@ -66,18 +70,12 @@ export class IdentityConfirmationService {
   sendViaEmail(email: string, link: string) {
     return this.emailService.sendEmail({
       from: {
-        // TODO Set as config
-        name: 'island.is',
-        address: 'noreply@island.is',
-      },
-      replyTo: {
-        // TODO Set as config
-        name: 'island.is',
-        address: 'noreply@island.is',
+        name: this.config.email.fromName,
+        address: this.config.email.fromEmail,
       },
       to: [
         {
-          name: 'Gunnlaugur',
+          name: '',
           address: email,
         },
       ],
@@ -100,7 +98,7 @@ export class IdentityConfirmationService {
             },
           },
           {
-            component: 'Heading',
+            component: 'Copy',
             context: {
               copy: 'Vinasamlegast ýttu hér til að staðfesta auðkenningu',
               small: true,

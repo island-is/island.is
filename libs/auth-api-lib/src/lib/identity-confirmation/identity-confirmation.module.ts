@@ -8,8 +8,8 @@ import { ZendeskModule, ZendeskServiceConfig } from '@island.is/clients/zendesk'
 
 import { IdentityConfirmationService } from './identity-confirmation.service'
 import { IdentityConfirmation } from './models/Identity-Confirmation.model'
-import { LoggingModule } from '@island.is/logging'
 import { XRoadConfig } from '@island.is/nest/config'
+import { IdentityConfirmationApiConfig } from './config'
 
 @Module({
   imports: [
@@ -24,6 +24,7 @@ import { XRoadConfig } from '@island.is/nest/config'
         ZendeskServiceConfig,
         smsModuleConfig,
         emailModuleConfig,
+        IdentityConfirmationApiConfig,
       ],
       envFilePath: ['.env', '.env.secret'],
     }),
