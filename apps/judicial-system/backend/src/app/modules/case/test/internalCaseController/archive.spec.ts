@@ -280,7 +280,8 @@ describe('InternalCaseController - Archive', () => {
                 as: 'offenses',
               },
             ],
-          },          { model: CaseFile, as: 'caseFiles' },
+          },
+          { model: CaseFile, as: 'caseFiles' },
           { model: CaseString, as: 'caseStrings' },
         ],
         order: [

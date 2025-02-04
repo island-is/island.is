@@ -35,7 +35,7 @@ export class IndictmentCount {
 
   @Field(() => [Offense], { nullable: true })
   readonly offenses?: Offense[]
-  
+
   @Field(() => [IndictmentCountOffense], { nullable: true })
   readonly deprecatedOffenses?: IndictmentCountOffense[]
 

@@ -189,7 +189,8 @@ export const getIncidentDescriptionReason = (
     .filter((offense) => offense !== IndictmentCountOffense.SPEEDING)
     .reduce((acc, offense, index) => {
       if (
-        (deprecatedOffenses.length > 1 && index === deprecatedOffenses.length - 1) ||
+        (deprecatedOffenses.length > 1 &&
+          index === deprecatedOffenses.length - 1) ||
         (deprecatedOffenses.length > 2 &&
           index === deprecatedOffenses.length - 2 &&
           offense === IndictmentCountOffense.ILLEGAL_DRUGS_DRIVING)
@@ -216,7 +217,9 @@ export const getIncidentDescriptionReason = (
           break
         case IndictmentCountOffense.PRESCRIPTION_DRUGS_DRIVING:
           acc +=
-            (deprecatedOffenses.includes(IndictmentCountOffense.ILLEGAL_DRUGS_DRIVING)
+            (deprecatedOffenses.includes(
+              IndictmentCountOffense.ILLEGAL_DRUGS_DRIVING,
+            )
               ? ''
               : `${formatMessage(
                   strings.incidentDescriptionDrugsDrivingPrefixAutofill,
@@ -229,7 +232,10 @@ export const getIncidentDescriptionReason = (
       return acc
     }, '')
 
-  const relevantSubstances = getRelevantSubstances(deprecatedOffenses, substances)
+  const relevantSubstances = getRelevantSubstances(
+    deprecatedOffenses,
+    substances,
+  )
 
   reason += relevantSubstances.reduce((acc, substance, index) => {
     if (index === 0) {
@@ -687,48 +693,49 @@ export const IndictmentCount: FC<Props> = ({
               required
             />
           </Box>
-          {indictmentCount.deprecatedOffenses && indictmentCount.deprecatedOffenses.length > 0 && (
-            <Box marginBottom={2}>
-              {indictmentCount.deprecatedOffenses.map((offense) => (
-                <Box
-                  display="inlineBlock"
-                  key={`${indictmentCount.id}-${offense}`}
-                  component="span"
-                  marginBottom={1}
-                  marginRight={1}
-                >
-                  <Tag
-                    variant="darkerBlue"
-                    onClick={() => {
-                      const deprecatedOffenses = (indictmentCount.deprecatedOffenses ?? []).filter(
-                        (o) => o !== offense,
-                      )
-
-                      offenseSubstances[offense].forEach((e) => {
-                        if (indictmentCount.substances) {
-                          delete indictmentCount.substances[e]
-                        }
-                      })
-
-                      handleIndictmentCountChanges({
-                        deprecatedOffenses,
-                        substances: indictmentCount.substances,
-                        ...(offense === IndictmentCountOffense.SPEEDING && {
-                          recordedSpeed: null,
-                          speedLimit: null,
-                        }),
-                      })
-                    }}
+          {indictmentCount.deprecatedOffenses &&
+            indictmentCount.deprecatedOffenses.length > 0 && (
+              <Box marginBottom={2}>
+                {indictmentCount.deprecatedOffenses.map((offense) => (
+                  <Box
+                    display="inlineBlock"
+                    key={`${indictmentCount.id}-${offense}`}
+                    component="span"
+                    marginBottom={1}
+                    marginRight={1}
                   >
-                    <Box display="flex" alignItems="center">
-                      {formatMessage(enumStrings[offense])}
-                      <Icon icon="close" size="small" />
-                    </Box>
-                  </Tag>
-                </Box>
-              ))}
-            </Box>
-          )}
+                    <Tag
+                      variant="darkerBlue"
+                      onClick={() => {
+                        const deprecatedOffenses = (
+                          indictmentCount.deprecatedOffenses ?? []
+                        ).filter((o) => o !== offense)
+
+                        offenseSubstances[offense].forEach((e) => {
+                          if (indictmentCount.substances) {
+                            delete indictmentCount.substances[e]
+                          }
+                        })
+
+                        handleIndictmentCountChanges({
+                          deprecatedOffenses,
+                          substances: indictmentCount.substances,
+                          ...(offense === IndictmentCountOffense.SPEEDING && {
+                            recordedSpeed: null,
+                            speedLimit: null,
+                          }),
+                        })
+                      }}
+                    >
+                      <Box display="flex" alignItems="center">
+                        {formatMessage(enumStrings[offense])}
+                        <Icon icon="close" size="small" />
+                      </Box>
+                    </Tag>
+                  </Box>
+                ))}
+              </Box>
+            )}
           {indictmentCount.deprecatedOffenses?.includes(
             IndictmentCountOffense.DRUNK_DRIVING,
           ) && (

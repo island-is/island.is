@@ -142,10 +142,10 @@ export class IndictmentCountController {
     )
   }
 
-  @UseGuards(CaseExistsGuard, CaseWriteGuard, OffenseExistsGuard) 
+  @UseGuards(CaseExistsGuard, CaseWriteGuard, OffenseExistsGuard)
   @RolesRules(prosecutorRule, prosecutorRepresentativeRule)
   @Delete(':indictmentCountId/offense/:offenseId')
-  @ApiOkResponse({ description: 'Deletes an offense',})
+  @ApiOkResponse({ description: 'Deletes an offense' })
   async deleteOffense(
     @Param('caseId') caseId: string,
     @Param('indictmentCountId') indictmentCountId: string,
@@ -157,7 +157,7 @@ export class IndictmentCountController {
 
     const deleted = await this.indictmentCountService.deleteOffense(
       indictmentCountId,
-      offenseId
+      offenseId,
     )
 
     return { deleted }

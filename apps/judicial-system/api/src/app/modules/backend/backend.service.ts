@@ -465,7 +465,7 @@ export class BackendService extends DataSource<{ req: Request }> {
       `case/${caseId}/indictmentCount/${indictmentCountId}/offense/${offenseId}`,
     )
   }
-  
+
   limitedAccessGetCase(id: string): Promise<Case> {
     return this.get<Case>(`case/${id}/limitedAccess`, this.caseTransformer)
   }

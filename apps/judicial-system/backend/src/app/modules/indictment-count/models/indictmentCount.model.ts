@@ -58,7 +58,7 @@ export class IndictmentCount extends Model {
   @HasMany(() => Offense, 'indictmentCountId')
   @ApiPropertyOptional({ type: () => Offense, isArray: true })
   offenses?: Offense[]
-  
+
   @Column({ type: DataType.JSONB, allowNull: true })
   @ApiPropertyOptional({ enum: IndictmentCountOffense, isArray: true })
   deprecatedOffenses?: IndictmentCountOffense[]

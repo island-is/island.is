@@ -40,13 +40,17 @@ describe('Offense Exists Guard', () => {
     const indictmentCountId = uuid()
     const offenseId = uuid()
 
-    const offense = {id: offenseId, indictmentCountId}
-    const indictmentCount = { id: indictmentCountId, caseId, offenses: [offense] }
+    const offense = { id: offenseId, indictmentCountId }
+    const indictmentCount = {
+      id: indictmentCountId,
+      caseId,
+      offenses: [offense],
+    }
     const theCase = { id: caseId, indictmentCounts: [indictmentCount] }
     const request = {
       params: { caseId, indictmentCountId, offenseId },
       case: theCase,
-      offense: undefined
+      offense: undefined,
     }
     let then: Then
 
