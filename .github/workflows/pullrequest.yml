@@ -220,13 +220,11 @@ jobs:
       - name: Setup yarn
         run: corepack enable
 
-      - name: Get cache
-        id: get-cache
-        uses: ./.github/actions/get-cache
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          keys: ${{ needs.prepare.outputs.CACHE_KEYS }}
-          enable-cache: 'node_modules,cypress'
+      - name: Set NODE_PATH with yarn.lock checksum
+        run: |
+          export NODE_PATH=/home/runner/${{ hashFiles('**/yarn.lock') }}/node_modules/
+          echo "NODE_PATH=$NODE_PATH" >> $GITHUB_ENV
+          yarn install --immutable
 
       - name: Run unit tests
         uses: ./.github/actions/unit-test
@@ -264,13 +262,11 @@ jobs:
       - name: Setup yarn
         run: corepack enable
 
-      - name: Get cache
-        id: get-cache
-        uses: ./.github/actions/get-cache
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          keys: ${{ needs.prepare.outputs.CACHE_KEYS }}
-          enable-cache: 'node_modules,cypress'
+      - name: Set NODE_PATH with yarn.lock checksum
+        run: |
+          export NODE_PATH=/home/runner/${{ hashFiles('**/yarn.lock') }}/node_modules/
+          echo "NODE_PATH=$NODE_PATH" >> $GITHUB_ENV
+          yarn install --immutable
 
       - name: Running e2e tests
         run: ./scripts/ci/40_e2e.sh "${AFFECTED_PROJECT}"
@@ -289,13 +285,11 @@ jobs:
       - name: Setup yarn
         run: corepack enable
 
-      - name: Get cache
-        id: get-cache
-        uses: ./.github/actions/get-cache
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          keys: ${{ needs.prepare.outputs.CACHE_KEYS }}
-          enable-cache: 'node_modules'
+      - name: Set NODE_PATH with yarn.lock checksum
+        run: |
+          export NODE_PATH=/home/runner/${{ hashFiles('**/yarn.lock') }}/node_modules/
+          echo "NODE_PATH=$NODE_PATH" >> $GITHUB_ENV
+          yarn install --immutable
 
       - name: Linting workspace
         run: ./scripts/ci/20_lint-workspace.sh
@@ -335,13 +329,11 @@ jobs:
           node-version-file: 'package.json'
       - name: Setup yarn
         run: corepack enable
-      - name: Get cache
-        id: get-cache
-        uses: ./.github/actions/get-cache
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          keys: ${{ needs.prepare.outputs.CACHE_KEYS }}
-          enable-cache: 'node_modules'
+      - name: Set NODE_PATH with yarn.lock checksum
+        run: |
+          export NODE_PATH=/home/runner/${{ hashFiles('**/yarn.lock') }}/node_modules/
+          echo "NODE_PATH=$NODE_PATH" >> $GITHUB_ENV
+          yarn install --immutable
       - name: NX format:check
         if: ${{ github.ref == 'ref/heads/main' }}
         run: ./scripts/ci/20_check-formatting.sh "check"
@@ -371,13 +363,11 @@ jobs:
           node-version-file: 'package.json'
       - name: Setup yarn
         run: corepack enable
-      - name: Get cache
-        id: get-cache
-        uses: ./.github/actions/get-cache
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          keys: ${{ needs.prepare.outputs.CACHE_KEYS }}
-          enable-cache: 'node_modules'
+      - name: Set NODE_PATH with yarn.lock checksum
+        run: |
+          export NODE_PATH=/home/runner/${{ hashFiles('**/yarn.lock') }}/node_modules/
+          echo "NODE_PATH=$NODE_PATH" >> $GITHUB_ENV
+          yarn install --immutable
       - name: Linting
         run: ./scripts/ci/run-in-parallel-native.sh lint
 
@@ -400,13 +390,11 @@ jobs:
           node-version-file: 'package.json'
       - name: Setup yarn
         run: corepack enable
-      - name: Get cache
-        id: get-cache
-        uses: ./.github/actions/get-cache
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          keys: ${{ needs.prepare.outputs.CACHE_KEYS }}
-          enable-cache: 'node_modules'
+      - name: Set NODE_PATH with yarn.lock checksum
+        run: |
+          export NODE_PATH=/home/runner/${{ hashFiles('**/yarn.lock') }}/node_modules/
+          echo "NODE_PATH=$NODE_PATH" >> $GITHUB_ENV
+          yarn install --immutable
 
       - name: Building
         run: ./scripts/ci/run-in-parallel-native.sh build
