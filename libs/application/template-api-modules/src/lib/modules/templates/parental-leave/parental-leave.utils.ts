@@ -550,7 +550,7 @@ export const getFromDate = (
     : period.startDate
 }
 
-export const isPreBirthRight = (right: string | undefined) => {
+export const isFixedRight = (right: string | undefined) => {
   if (!right) {
     return false
   }
