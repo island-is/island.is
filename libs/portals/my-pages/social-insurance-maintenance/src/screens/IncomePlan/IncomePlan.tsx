@@ -58,9 +58,9 @@ const IncomePlan = () => {
     if (error || applicationsError) {
       return 'error'
     }
-    const applicationState = applications
-      ? applications.applicationApplications?.[
-          applications.applicationApplications.length - 1
+    const applicationState = applications?.applicationApplications?.length
+      ? applications?.applicationApplications?.[
+          applications?.applicationApplications?.length - 1
         ].state
       : undefined
     return mapStatus(
