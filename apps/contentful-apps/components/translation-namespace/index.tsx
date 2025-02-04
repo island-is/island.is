@@ -129,10 +129,10 @@ export const App = () => {
 
               {values[item].markdown ? (
                 <div>
-                  <Markdown>{values[item].defaultMessage}</Markdown>
+                  <Markdown>{values[item].defaultMessage ?? ''}</Markdown>
                 </div>
               ) : (
-                <p>{values[item].defaultMessage}</p>
+                <p>{values[item].defaultMessage ?? ''}</p>
               )}
             </TableCell>
           </TableRow>

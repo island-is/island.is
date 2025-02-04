@@ -26,7 +26,6 @@ export const siblingsSubSection = buildSubSection({
       children: [
         buildTableRepeaterField({
           id: 'siblings',
-          title: '',
           formTitle:
             newPrimarySchoolMessages.primarySchool.siblingsRegistrationTitle,
           addItemButtonText:

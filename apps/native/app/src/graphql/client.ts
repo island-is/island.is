@@ -66,25 +66,6 @@ const retryLink = new RetryLink({
 const errorLink = onError(
   ({ graphQLErrors, networkError, forward, operation }) => {
     if (graphQLErrors) {
-      if (graphQLErrors?.[0]?.message === 'Unauthorized') {
-        return fromPromise(
-          getNewToken().catch((error) => {
-            return
-          }),
-        )
-          .filter((value) => Boolean(value))
-          .flatMap((accessToken: any) => {
-            const oldHeaders = operation.getContext().headers
-            operation.setContext({
-              headers: {
-                ...oldHeaders,
-                authorization: `Bearer ${accessToken}`,
-              },
-            })
-            return forward(operation)
-          })
-      }
-
       graphQLErrors.map(({ message, locations, path }) =>
         console.log(
           `[GraphQL error]: Message: ${message}, Location: ${JSON.stringify(
@@ -114,33 +95,46 @@ const errorLink = onError(
   },
 )
 
-const getAndRefreshToken = () => {
-  const { authorizeResult, refresh } = authStore.getState()
+const getAndRefreshToken = async () => {
+  const { refresh } = authStore.getState()
+  let { authorizeResult } = authStore.getState()
 
-  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  const isTokenAboutToExpire =
-    new Date(authorizeResult?.accessTokenExpirationDate ?? 0).getTime() <
-    Date.now() - 60 * 5 * 1000
-  if (isTokenAboutToExpire) {
-    // expires in less than 5 minutes, so refresh
-    refresh()
+  const timeUntilExpiration =
+    new Date(authorizeResult?.accessTokenExpirationDate ?? 0).getTime() -
+    Date.now()
+  const isTokenPerhapsExpired = timeUntilExpiration < 5 * 1000
+  const isTokenCloseToExpiring = timeUntilExpiration < 60 * 1000
+  if (isTokenPerhapsExpired) {
+    // get a new token to be safe
+    await refresh()
+    authorizeResult = authStore.getState().authorizeResult
+  } else if (isTokenCloseToExpiring) {
+    // expires in less than 60 seconds, so refresh in the background
+    refresh().catch((err) => {
+      console.error('Failed to refresh token in the background', err)
+    })
   }
+
   return authorizeResult?.accessToken
 }
 
-const authLink = setContext(async (_, { headers }) => ({
-  headers: {
-    ...headers,
-    authorization: `Bearer ${getAndRefreshToken()}`,
-    'X-Cognito-Token': `Bearer ${
-      environmentStore.getState().cognito?.accessToken
-    }`,
-    'User-Agent': getCustomUserAgent(),
-    cookie: [authStore.getState().cookies]
-      .filter((x) => String(x) !== '')
-      .join('; '),
-  },
-}))
+const authLink = setContext(async (_, { headers }) => {
+  const token = await getAndRefreshToken()
+
+  return {
+    headers: {
+      ...headers,
+      authorization: `Bearer ${token}`,
+      'X-Cognito-Token': `Bearer ${
+        environmentStore.getState().cognito?.accessToken
+      }`,
+      'User-Agent': getCustomUserAgent(),
+      cookie: [authStore.getState().cookies]
+        .filter((x) => String(x) !== '')
+        .join('; '),
+    },
+  }
+})
 
 export const archivedCache = new Map()
 

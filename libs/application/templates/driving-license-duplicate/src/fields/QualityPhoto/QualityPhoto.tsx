@@ -1,7 +1,6 @@
 import React, { FC } from 'react'
 
 import { Box, SkeletonLoader } from '@island.is/island-ui/core'
-import { formatText } from '@island.is/application/core'
 import { Application, FieldBaseProps } from '@island.is/application/types'
 import { m } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
@@ -14,7 +13,6 @@ interface QualityPhotoData {
 
 const Photo: FC<React.PropsWithChildren<QualityPhotoData>> = ({
   qualityPhoto,
-  application,
 }: QualityPhotoData) => {
   const { formatMessage } = useLocale()
 
@@ -24,11 +22,7 @@ const Photo: FC<React.PropsWithChildren<QualityPhotoData>> = ({
 
   const src = qualityPhoto
   return (
-    <img
-      alt={formatText(m.qualityPhotoAltText, application, formatMessage) || ''}
-      src={src}
-      id="myimage"
-    />
+    <img alt={formatMessage(m.qualityPhotoAltText)} src={src} id="myimage" />
   )
 }
 
@@ -39,7 +33,7 @@ const QualityPhoto: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   const img = Photo({ qualityPhoto, application })
   return (
     <Box
-      marginTop={4}
+      marginTop={2}
       marginBottom={3}
       style={{ width: '191px', height: '242px' }}
     >
