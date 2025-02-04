@@ -54,6 +54,8 @@ env:
   IMAGE_REGISTRY: ${{ vars.IMAGE_REGISTRY || 'localhost' }}
   AWS_ECR_REPO_BASE: ${{ vars.AWS_ECR_REPO_BASE || 'docker.io' }}
   NODE_IMAGE_VERSION: 20
+  NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
+  NX_TASKS_RUNNER: ci
 
 jobs:
   prepare:
