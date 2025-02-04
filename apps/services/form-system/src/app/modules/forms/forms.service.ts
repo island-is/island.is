@@ -117,6 +117,11 @@ export class FormsService {
           zipObject(keys, Array(keys.length).fill(null)),
         ) as FormDto
       }),
+      organizationNationalIds: await this.organizationModel
+        .findAll({
+          attributes: ['nationalId'],
+        })
+        .then((organizations) => organizations.map((org) => org.nationalId)),
     }
 
     return formResponseDto
