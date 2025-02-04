@@ -28,9 +28,8 @@ const RENDER_ALERT_BOX_CONDITIONALS: Status[] = [
 ]
 
 const RENDER_LINK_BUTTON_CONDITIONALS: Status[] = [
-  'in_review',
+  'accepted',
   'accepted_no_changes',
-  'rejected_no_changes',
 ]
 
 const IncomePlan = () => {
@@ -80,6 +79,8 @@ const IncomePlan = () => {
     loading,
   ])
 
+  console.log(applications)
+
   const renderAlertBox = () => {
     if (RENDER_ALERT_BOX_CONDITIONALS.includes(status)) {
       return (
@@ -96,10 +97,14 @@ const IncomePlan = () => {
     if (RENDER_LINK_BUTTON_CONDITIONALS.includes(status)) {
       return (
         <LinkButton
-          to={formatMessage(m.incomePlanLink)}
-          text={formatMessage(m.incomePlanLinkText)}
+          to={`${document.location.origin}/${formatMessage(
+            m.incomePlanModifyLink,
+          )}`}
+          text={formatMessage(m.modifyIncomePlan)}
+          disabled={status === 'accepted_no_changes' || status === 'in_review'}
           icon="open"
-          variant="utility"
+          variant="primary"
+          size="small"
         />
       )
     }
@@ -118,24 +123,32 @@ const IncomePlan = () => {
       case 'accepted':
       case 'accepted_no_changes':
       case 'in_review':
+      case 'no_data':
       case 'in_progress': {
         return (
           <Stack space={2}>
+            {renderAlertBox()}
             <Inline space={2}>
-              {renderAlertBox()}
+              <LinkButton
+                to={formatMessage(m.incomePlanLink)}
+                text={formatMessage(m.incomePlanLinkText)}
+                icon="open"
+                variant="utility"
+              />
               {renderLinkButton()}
             </Inline>
             <IncomePlanCard
               status={status}
-              registrationDate={
-                data?.socialInsuranceIncomePlan?.registrationDate
-              }
+              registrationDate={new Date().toISOString()}
             />
           </Stack>
         )
       }
-      default:
+      case 'unknown':
+      case 'rejected_no_changes':
+      case 'rejected': {
         return <Problem type="no_data" noBorder={false} />
+      }
     }
   }
 

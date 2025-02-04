@@ -116,5 +116,29 @@ export const IncomePlanCard = ({ status, registrationDate }: Props) => {
         />
       )
     }
+    default:
+      return (
+        <ActionCard
+          image={{
+            type: 'image',
+            url: './assets/images/tr.svg',
+          }}
+          text={formatMessage(m.noActiveIncomePlan)}
+          headingColor="currentColor"
+          heading={formatMessage(coreMessages.incomePlan)}
+          backgroundColor="blue"
+          borderColor="blue200"
+          cta={{
+            label: formatMessage(m.submitIncomePlan),
+            url: `${document.location.origin}/${formatMessage(
+              m.incomePlanModifyLink,
+            )}`,
+            variant: 'primary',
+            size: 'medium',
+            icon: 'open',
+            centered: true,
+          }}
+        />
+      )
   }
 }
