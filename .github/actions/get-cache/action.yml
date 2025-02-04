@@ -49,6 +49,11 @@ runs:
         npx yarn install --immutable
         node cache-action.mjs
 
+    - name: GHA cache
+      if: ${{ !!github.event.localrun }}
+      uses: actions/cache@v3
+      with:
+        path: .nx/cache
     # NOTE: Will restore NX cloud cache or generate new cache
     - name: Codegen
       id: codegen
