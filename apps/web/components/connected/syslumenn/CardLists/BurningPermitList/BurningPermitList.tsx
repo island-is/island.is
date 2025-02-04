@@ -11,7 +11,6 @@ import {
   GridRow,
   Input,
   LoadingDots,
-  Tag,
   Text,
 } from '@island.is/island-ui/core'
 import { SyslumennListCsvExport } from '@island.is/web/components'
@@ -78,17 +77,20 @@ export const BurningPermitList: FC<
           formatMessage(t.date),
           formatMessage(t.type),
           formatMessage(t.subtype),
+          formatMessage(t.size),
         ]
         const dataRows = []
         for (const permit of burningPermits) {
+          const dateString = createDateString(permit)
           dataRows.push([
             permit.licensee ?? '',
             permit.place ?? '',
             permit.responsibleParty ?? '',
             permit.office ?? '',
-            permit.date ? format(new Date(permit.date), DATE_FORMAT) : '',
+            dateString,
             permit.type ?? '',
             permit.subtype ?? '',
+            String(permit.size) ?? '',
           ])
         }
 
@@ -108,6 +110,22 @@ export const BurningPermitList: FC<
       permit.responsibleParty ?? '',
     ]),
   )
+
+  const createDateString = (
+    permit: Query['getBurningPermits']['list'][number],
+  ) => {
+    return permit.dateFrom
+      ? `${format(new Date(permit.dateFrom), DATE_FORMAT)} ${
+          permit.timeFrom ? permit.timeFrom : ''
+        }${
+          !permit.dateTo
+            ? ''
+            : ` - ${format(new Date(permit.dateTo), DATE_FORMAT)} ${
+                permit.timeTo ? permit.timeTo : ''
+              }`
+        }`
+      : ''
+  }
 
   return (
     <Box>
@@ -167,17 +185,7 @@ export const BurningPermitList: FC<
         <Box>
           <Box paddingTop={[4, 4, 6]} paddingBottom={[4, 5, 10]}>
             {filteredburningPermits.slice(0, showCount).map((permit, index) => {
-              const dateString = permit.dateFrom
-                ? `${format(new Date(permit.dateFrom), DATE_FORMAT)} ${
-                    permit.timeFrom ? permit.timeFrom : ''
-                  }${
-                    !permit.dateTo
-                      ? ''
-                      : ` - ${format(new Date(permit.dateTo), DATE_FORMAT)} ${
-                          permit.timeTo ? permit.timeTo : ''
-                        }`
-                  }`
-                : ''
+              const dateString = createDateString(permit)
               return (
                 <Box
                   key={`burning-permit-${index}`}
