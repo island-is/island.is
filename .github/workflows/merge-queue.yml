@@ -67,8 +67,13 @@ jobs:
         env:
           BASE: ${{ env.NX_BASE || env.GITHUB_BASE_REF || github.event.pull_request.base.sha }}
           HEAD: ${{ env.NX_HEAD || env.GITHUB_HEAD_REF || github.event.pull_request.head.sha }}
+          is_debug: ${{ contains(github.event.pull_request.labels.*.name, 'ci debug') }}
         run: |
-          chunks="build-chunks={\"projects\":$(./scripts/ci/generate-chunks.sh build)}"
+          if [[ "$is_debug" == true ]]; then
+            chunks='["web","air-discount-scheme-api,air-discount-scheme-backend,air-discount-scheme-web","license-api","system-e2e","island-ui-storybook"]'
+          else
+            chunks="build-chunks={\"projects\":$(./scripts/ci/generate-chunks.sh build)}"
+          fi
           echo "$chunks" | tee -a "$GITHUB_OUTPUT"
           echo "nx={\"parallel\":${{ env.NX_PARALLEL }},\"max-parallel\":${{ env.NX_MAX_PARALLEL }}}" | tee -a "$GITHUB_OUTPUT"
 
