@@ -25,7 +25,7 @@ export const useScrolledPassed = (id: string) => {
             setIsScrolled(false)
           }
         }
-      }, 200)
+      }, 150)
     }
 
     window.addEventListener('scroll', handleScroll)

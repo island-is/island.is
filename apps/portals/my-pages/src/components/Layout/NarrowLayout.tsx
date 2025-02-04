@@ -41,7 +41,7 @@ export const NarrowLayout = ({
 
   const scrollDirection = useScrollDirection()
   const stickyHeight =
-    scrollDirection === 'up' ? SERVICE_PORTAL_HEADER_HEIGHT_SM : 0
+    scrollDirection === 'up' ? SERVICE_PORTAL_HEADER_HEIGHT_SM - 1 : -1 // -1 to hide the shadow
 
   const mapChildren = (item: ServicePortalNavigationItem): SubNavItemType => {
     if (item.children) {

@@ -77,12 +77,6 @@ export const menuBtn = style({
   },
 })
 
-// export const menuBtnLessPadding = style({
-//   transition: 'padding-left 400ms, padding-right 400ms',
-//   paddingLeft: theme.spacing[1],
-//   paddingRight: theme.spacing[1],
-// })
-
 export const listItem = style({
   position: 'relative',
 })
