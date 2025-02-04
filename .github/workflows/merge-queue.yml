@@ -75,9 +75,9 @@ jobs:
     with:
       projects: ${{ needs.prepare.outputs.affected }}
       build-args: |
-        --build-arg="NX_PARALLEL=${{ needs.prepare.outputs.nx.parallel }}"
-        --build-arg="NX_MAX_PARALLEL=${{ needs.prepare.outputs.nx.max-parallel }}"
-        --build-arg="NX_TASKS_RUNNER=ci"
+        NX_PARALLEL=${{ needs.prepare.outputs.nx.parallel }}
+        NX_MAX_PARALLEL=${{ needs.prepare.outputs.nx.max-parallel }}
+        NX_TASKS_RUNNER=ci
 
   success:
     runs-on: arc-runners
