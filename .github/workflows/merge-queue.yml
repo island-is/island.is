@@ -36,7 +36,7 @@ jobs:
     runs-on: arc-runners
     outputs:
       affected: ${{ steps.affected.outputs.build-chunks }}
-      nx: ${{ steps.build-args.outputs.nx }}
+      nx: ${{ steps.affected.outputs.nx }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
