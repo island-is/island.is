@@ -69,8 +69,8 @@ jobs:
           HEAD: ${{ env.NX_HEAD || env.GITHUB_HEAD_REF }}
         run: |
           chunks="build-chunks={\"projects\":$(./scripts/ci/generate-chunks.sh build)}"
-          echo "$chunks" >>"$GITHUB_OUTPUT"
-          echo "nx={\"parallel\":${{ env.NX_PARALLEL }},\"max-parallel\":${{ env.NX_MAX_PARALLEL }}}"
+          echo "$chunks" | tee -a "$GITHUB_OUTPUT"
+          echo "nx={\"parallel\":${{ env.NX_PARALLEL }},\"max-parallel\":${{ env.NX_MAX_PARALLEL }}}" | tee -a "$GITHUB_OUTPUT"
 
   docker-build:
     uses: ./.github/workflows/docker.yml
@@ -79,8 +79,8 @@ jobs:
     with:
       projects: ${{ needs.prepare.outputs.affected }}
       build-args: |
-        NX_PARALLEL=${{ needs.prepare.outputs.nx.parallel }}
-        NX_MAX_PARALLEL=${{ needs.prepare.outputs.nx.max-parallel }}
+        NX_PARALLEL=${{ fromJson(needs.prepare.outputs.nx).parallel }}
+        NX_MAX_PARALLEL=${{ fromJson(needs.prepare.outputs.nx).max-parallel }}
         NX_TASKS_RUNNER=ci
 
   success:
