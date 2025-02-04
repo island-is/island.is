@@ -108,7 +108,7 @@ query Case($input: CaseQueryInput!) {
     introduction
     courtLegalArguments
     ruling
-    decision #test for regen
+    decision
     validToDate
     isValidToDateInThePast
     isCustodyIsolation
