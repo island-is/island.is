@@ -1,7 +1,9 @@
 import {
   buildMultiField,
+  buildRadioField,
   buildSection,
   buildSelectField,
+  getValueViaPath,
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
 import { Jurisdiction } from '@island.is/clients/driving-license'
@@ -15,11 +17,23 @@ export const sectionDelivery = buildSection({
       title: m.deliveryMethodTitle,
       description: m.deliveryMethodDescription,
       children: [
+        buildRadioField({
+          id: 'delivery.deliveryMethod',
+          title: 'Hvernig vilt þú fá plastökuskírteinið þitt afhent?',
+          defaultValue: '1',
+          width: 'half',
+          options: [
+            { value: '1', label: 'Sent heim í pósti' },
+            { value: '2', label: 'Sækja á afhendingarstað' },
+          ],
+        }),
         buildSelectField({
-          id: 'district',
-          title: m.deliveryMethodOfficeLabel,
+          id: 'delivery.district',
+          title: 'Veldu afhendingarstað',
           placeholder: m.deliveryMethodOfficeSelectPlaceholder,
           required: true,
+          condition: (answers) =>
+            getValueViaPath(answers, 'delivery.deliveryMethod') === '2',
           options: ({
             externalData: {
               jurisdictions: { data },

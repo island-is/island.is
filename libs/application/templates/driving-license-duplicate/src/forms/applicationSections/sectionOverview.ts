@@ -73,7 +73,8 @@ export const sectionOverview = buildSection({
           id: 'overview.deliveryTitle',
           title: m.deliveryMethodSectionTitle,
           titleVariant: 'h4',
-          description: ({ answers: { district }, externalData }) => {
+          description: ({ answers, externalData }) => {
+            const district = getValueViaPath(answers, 'delivery.district')
             const districts = getValueViaPath(
               externalData,
               'jurisdictions.data',
@@ -82,7 +83,9 @@ export const sectionOverview = buildSection({
               (d) => d.id.toString() === district,
             )
             const districtPlace = `${
-              selectedDistrict?.zip ? selectedDistrict.zip + ' ' : ''
+              selectedDistrict?.zip
+                ? selectedDistrict.zip + ' '
+                : 'Sent heim í pósti'
             }${selectedDistrict?.name ?? ''}`
             return districtPlace
           },

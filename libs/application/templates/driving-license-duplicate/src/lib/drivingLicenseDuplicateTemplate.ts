@@ -46,16 +46,25 @@ const pruneAfter = (time: number) => {
     whenToPrune: time,
   }
 }
+
 const getCodes = (application: Application): BasicChargeItem[] => {
+  const codes: BasicChargeItem[] = []
+
   const chargeItemCode = getValueViaPath<string>(
     application.answers,
     'chargeItemCode',
   )
 
-  if (!chargeItemCode) {
-    throw new Error('chargeItemCode missing in answers')
+  codes.push({ code: chargeItemCode as string })
+
+  const withDeliveryFee =
+    getValueViaPath<number>(application.answers, 'deliveryMethod') === 1
+
+  if (withDeliveryFee) {
+    codes.push({ code: 'AY145' })
   }
-  return [{ code: chargeItemCode }]
+
+  return codes
 }
 
 const configuration =
