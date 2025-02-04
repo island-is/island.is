@@ -214,10 +214,7 @@ jobs:
           build-args: |
             NODE_IMAGE_VERSION=${{ needs.prepare.outputs.node-image-version }}
             PLAYWRIGHT_IMAGE_TAG=${{ needs.prepare.outputs.playwright-image-tag }}
-
             ${{ inputs.build-args }}
-            # Comment test
-            INVALID_ARG=true
           cache-from: |
             ${{ steps.args.outputs.build-cache-local }}
             ${{ steps.args.outputs.build-cache }}
