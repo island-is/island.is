@@ -143,13 +143,13 @@ export const CourtCaseInfo: FC<Props> = ({ workingCase }) => {
       )}
       {isIndictmentCase(workingCase.type) &&
       isCompletedCase(workingCase.state) ? (
-        <Box marginTop={1}>
-          <Text as="h5" variant="h5">
-            {formatMessage(strings.rulingDate, {
-              rulingDate: `${formatDate(workingCase.rulingDate, 'PPP')}`,
-            })}
-          </Text>
-        </Box>
+        workingCase.courtEndTime && (
+          <Box marginTop={1}>
+            <Text as="h5" variant="h5">
+              {`Máli lokið ${formatDate(workingCase.courtEndTime, 'PPP')}`}
+            </Text>
+          </Box>
+        )
       ) : (
         <ProsecutorAndDefendantsEntries workingCase={workingCase} />
       )}

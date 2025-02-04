@@ -64,12 +64,21 @@ export class CaseListInterceptor implements NestInterceptor {
             }
           }
 
-          const indictmentInfo = getIndictmentInfo(
-            theCase.indictmentRulingDecision,
-            theCase.rulingDate,
-            theCase.defendants,
-            theCase.eventLogs,
-          )
+          const {
+            indictmentRulingDecision,
+            courtEndTime,
+            rulingDate,
+            defendants,
+            eventLogs,
+          } = theCase
+
+          const indictmentInfo = getIndictmentInfo({
+            indictmentRulingDecision,
+            courtEndTime,
+            rulingDate,
+            defendants,
+            eventLogs,
+          })
 
           return {
             ...theCase,

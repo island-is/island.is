@@ -658,21 +658,21 @@ describe('getIndictmentInfo', () => {
     // Arrange
 
     // Act
-    const indictmentInfo = getIndictmentInfo(
-      CaseIndictmentRulingDecision.RULING,
-    )
+    const indictmentInfo = getIndictmentInfo({
+      indictmentRulingDecision: CaseIndictmentRulingDecision.RULING,
+    })
 
     // Assert
     expect(indictmentInfo).toEqual({})
   })
 
   it('should return correct indictment info when ruling date is provided', () => {
-    const rulingDate = '2022-06-15T19:50:08.033Z'
+    const courtEndTime = '2022-06-15T19:50:08.033Z'
 
-    const indictmentInfo = getIndictmentInfo(
-      CaseIndictmentRulingDecision.RULING,
-      rulingDate,
-    )
+    const indictmentInfo = getIndictmentInfo({
+      indictmentRulingDecision: CaseIndictmentRulingDecision.RULING,
+      courtEndTime,
+    })
 
     expect(indictmentInfo).toEqual({
       indictmentAppealDeadline: '2022-07-13T23:59:59.999Z',
@@ -682,17 +682,20 @@ describe('getIndictmentInfo', () => {
   })
 
   it('should return correct indictment info when some defendants have yet to view the verdict', () => {
+    const courtEndTime = '2022-06-14T19:50:08.033Z'
     const rulingDate = '2022-06-14T19:50:08.033Z'
+
     const defendants = [
       { verdictViewDate: '2022-06-15T19:50:08.033Z' } as Defendant,
       { verdictViewDate: undefined } as Defendant,
     ]
 
-    const indictmentInfo = getIndictmentInfo(
-      CaseIndictmentRulingDecision.RULING,
+    const indictmentInfo = getIndictmentInfo({
+      indictmentRulingDecision: CaseIndictmentRulingDecision.RULING,
+      courtEndTime,
       rulingDate,
       defendants,
-    )
+    })
 
     expect(indictmentInfo).toEqual({
       indictmentAppealDeadline: '2022-07-12T23:59:59.999Z',
@@ -702,6 +705,7 @@ describe('getIndictmentInfo', () => {
   })
 
   it('should return correct indictment info when no defendants have yet to view the verdict', () => {
+    const courtEndTime = '2022-06-14T19:50:08.033Z'
     const rulingDate = '2022-06-14T19:50:08.033Z'
     const defendants = [
       { verdictViewDate: '2022-06-15T19:50:08.033Z' } as Defendant,
@@ -711,11 +715,12 @@ describe('getIndictmentInfo', () => {
       } as Defendant,
     ]
 
-    const indictmentInfo = getIndictmentInfo(
-      CaseIndictmentRulingDecision.RULING,
+    const indictmentInfo = getIndictmentInfo({
+      indictmentRulingDecision: CaseIndictmentRulingDecision.RULING,
+      courtEndTime,
       rulingDate,
       defendants,
-    )
+    })
 
     expect(indictmentInfo).toEqual({
       indictmentAppealDeadline: '2022-07-12T23:59:59.999Z',
@@ -725,6 +730,7 @@ describe('getIndictmentInfo', () => {
   })
 
   it('should return correct indictment info when the indictment ruling decision is FINE and the appeal deadline is not expired', () => {
+    const courtEndTime = new Date()
     const rulingDate = new Date()
     const defendants = [
       {
@@ -733,13 +739,14 @@ describe('getIndictmentInfo', () => {
       } as Defendant,
     ]
 
-    const indictmentInfo = getIndictmentInfo(
-      CaseIndictmentRulingDecision.FINE,
-      rulingDate.toISOString(),
+    const indictmentInfo = getIndictmentInfo({
+      indictmentRulingDecision: CaseIndictmentRulingDecision.FINE,
+      courtEndTime: courtEndTime.toISOString(),
+      rulingDate: rulingDate.toISOString(),
       defendants,
-    )
+    })
 
-    const expectedIndictmentAppealDeadline = endOfDay(addDays(rulingDate, 3))
+    const expectedIndictmentAppealDeadline = endOfDay(addDays(courtEndTime, 3))
 
     expect(indictmentInfo).toEqual({
       indictmentAppealDeadline: expectedIndictmentAppealDeadline.toISOString(),
@@ -749,6 +756,7 @@ describe('getIndictmentInfo', () => {
   })
 
   it('should return correct indictment info when the indictment ruling decision is FINE and the appeal deadline is expired', () => {
+    const courtEndTime = '2024-05-26T21:51:19.156Z'
     const rulingDate = '2024-05-26T21:51:19.156Z'
     const defendants = [
       {
@@ -757,11 +765,12 @@ describe('getIndictmentInfo', () => {
       } as Defendant,
     ]
 
-    const indictmentInfo = getIndictmentInfo(
-      CaseIndictmentRulingDecision.FINE,
+    const indictmentInfo = getIndictmentInfo({
+      indictmentRulingDecision: CaseIndictmentRulingDecision.FINE,
+      courtEndTime,
       rulingDate,
       defendants,
-    )
+    })
 
     expect(indictmentInfo).toEqual({
       indictmentAppealDeadline: '2024-05-29T23:59:59.999Z',
