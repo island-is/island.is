@@ -193,10 +193,7 @@ jobs:
             ${{ steps.args.outputs.build-cache }},mode=max
         run: |
           jq -c \
-            --arg build-args "$build_args" \
-            --arg image_repository "$image_repository" \
-            --arg cache_from "$cache_from" \
-            --arg cache_to "$cache_to" \
+            --arg build_args "$build_args"  --arg image_repository "$image_repository"  --arg cache_from "$cache_from"  --arg cache_to "$cache_to" \
           '{
             file: "scripts/ci/Dockerfile",
             push: false,
@@ -204,7 +201,6 @@ jobs:
             image-repository: $image_repository
             cache-from: ($cache_from | split("\n") | map(trim_str) | join(","))
             cache-to: ($cache_to | split("\n") | map(trim_str) | join(","))
-
           }' | tee -a "$GITHUB_OUTPUT"
 
       # Build stable layers; only difference between these steps should be the `target`
