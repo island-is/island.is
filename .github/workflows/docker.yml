@@ -193,10 +193,10 @@ jobs:
           cat <<EOF | tee -a "$GITHUB_OUTPUT"
           file=scripts/ci/Dockerfile
           push=false
-          build-args=$build_args
-          image-repository=$image_repository
-          cache-from=$cache_from
-          cache-to=$cache_to
+          build-args="$build_args"
+          image-repository="$image_repository"
+          cache-from="$cache_from"
+          cache-to="$cache_to"
           EOF
 
       # Build stable layers; only difference between these steps should be the `target`
