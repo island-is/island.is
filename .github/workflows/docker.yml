@@ -128,13 +128,12 @@ jobs:
       - name: Prepare arguments
         id: args
         env:
-          # We don't use a repository prefix (e.g. <registry>/island.is/<project>), just the raw project
-          image_repository: ${{ env.IMAGE_REGISTRY }}/${{ matrix.project }}
+          image_repository: ${{ env.IMAGE_REGISTRY }}/docker-cache
           localrun: ${{ github.event.localrun }}
         run: |
           echo image-repository="$image_repository" | tee -a "$GITHUB_OUTPUT"
           echo build-cache-local="type=local,src=/tmp,dest=/tmp,mode=max,enabled=${{ !!github.event.localrun }}" | tee -a "$GITHUB_OUTPUT"
-          echo build-cache="type=registry,image-manifest=true,oci-mediatypes=true,ref=$image_repository:cache,enabled=${{ !github.event.localrun }}" | tee -a "$GITHUB_OUTPUT"
+          echo build-cache="type=registry,image-manifest=true,oci-mediatypes=true,ref=$image_repository,enabled=${{ !github.event.localrun }}" | tee -a "$GITHUB_OUTPUT"
 
       - name: Configure AWS Credentials
         if: ${{ !github.event.localrun }}
