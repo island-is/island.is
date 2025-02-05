@@ -151,9 +151,7 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
     const teacher = answers.drivingInstructor as string
     const email = answers.email as string
     const deliveryMethod = (answers.delivery as { deliveryMethod: Pickup })
-      ?.deliveryMethod
-      ? (answers.delivery as { deliveryMethod: Pickup }).deliveryMethod
-      : undefined
+      .deliveryMethod
     const phone = formatPhoneNumber(answers.phone as string)
 
     const postHealthDeclaration = async (
@@ -180,9 +178,9 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
       return this.drivingLicenseService.renewDrivingLicense65AndOver(
         auth.authorization.replace('Bearer ', ''),
         {
-          ...(jurisdictionId && {
-            districtId: jurisdictionId as unknown as number,
-          }),
+          districtId: jurisdictionId
+            ? (jurisdictionId as unknown as number)
+            : 37,
           ...(deliveryMethod
             ? {
                 pickupPlasticAtDistrict: deliveryMethod === Pickup.DISTRICT,
