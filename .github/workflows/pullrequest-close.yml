@@ -40,7 +40,7 @@ jobs:
           git commit -m "Adding stuff"
           git push --set-upstream origin ci/test_pr
 
-          PR=$(gh pr create -B $ci/cherry-pick-unicorn -H $ci/test_pr --title "Automated cherry-pick of test" --body "Automated cherry-pick test")
+          PR=$(gh pr create -B ci/cherry-pick-unicorn -H ci/test_pr --title "Automated cherry-pick of test" --body "Automated cherry-pick test")
           echo "$PR created"
 
       # - uses: actions/setup-node@v4
