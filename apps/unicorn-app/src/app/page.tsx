@@ -10,7 +10,7 @@ export default function Index() {
                 <br></br>
                 some hot fix
                 <br></br>
-                Hello next pull request
+                Hello next pull request 2
               </span>
             </h1>
           </div>
