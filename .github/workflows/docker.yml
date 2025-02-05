@@ -155,8 +155,13 @@ jobs:
         run: |
           echo file="scripts/ci/Dockerfile" | tee -a "$GITHUB_OUTPUT"
           echo push="$localrun" | tee -a "$GITHUB_OUTPUT"
-          echo build-args="$build_args" | tee -a "$GITHUB_OUTPUT"
-          echo image-repository="$image_repository" | tee -a "$GITHUB_OUTPUT"
+
+          echo 'build-args<<EOF' | tee -a "$GITHUB_OUTPUT"
+          echo "$build_args" | tee -a "$GITHUB_OUTPUT"
+          echo 'EOF' | tee -a "$GITHUB_OUTPUT"
+
+          echo -e "image-repository<<EOF\n$image_repository\nEOF" | tee -a "$GITHUB_OUTPUT"
+
           echo cache-from="$cache_from" | tee -a "$GITHUB_OUTPUT"
           echo cache-to="$cache_to" | tee -a "$GITHUB_OUTPUT"
 
