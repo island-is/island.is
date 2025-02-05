@@ -5,7 +5,6 @@ import { sectionInformation } from './applicationSections/sectionInformation'
 import { sectionDelivery } from './applicationSections/sectionDelivery'
 import { sectionOverview } from './applicationSections/sectionOverview'
 import { sectionPayment } from './applicationSections/sectionPayment'
-import { m } from '../lib/messages'
 import { sectionFakeData } from './applicationSections/sectionFakeData'
 import { sectionReasonForApplication } from './applicationSections/sectionReasonForApplication'
 import { sectionDigitalLicenseInfo } from './applicationSections/sectionDigitalLicenseInfo'
@@ -20,13 +19,12 @@ export const getApplication = ({ allowFakeData = false }): Form => {
     renderLastScreenBackButton: true,
     children: [
       buildSection({
-        id: 'externalData',
-        title: m.dataCollectionTitle,
-        children: [
-          ...(allowFakeData ? [sectionFakeData] : []),
-          sectionDataProviders,
-        ],
+        id: 'fakeData',
+        title: 'Gervigögn',
+        condition: () => allowFakeData,
+        children: [sectionFakeData],
       }),
+      sectionDataProviders,
       sectionReasonForApplication,
       sectionInformation,
       sectionSignatureAndPhoto,

@@ -1,6 +1,7 @@
 import {
   buildExternalDataProvider,
   buildDataProviderItem,
+  buildSection,
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
 import {
@@ -16,52 +17,58 @@ import {
   SyslumadurPaymentCatalogApi,
 } from '../../dataProviders'
 
-export const sectionDataProviders = buildExternalDataProvider({
-  id: 'approveExternalData',
+export const sectionDataProviders = buildSection({
+  id: 'externalData',
   title: m.dataCollectionTitle,
-  subTitle: m.dataCollectionSubtitle,
-  description: m.dataCollectionDescription,
-  checkboxLabel: m.dataCollectionCheckboxLabel,
-  enableMockPayment: true,
-  dataProviders: [
-    buildDataProviderItem({
-      provider: NationalRegistryUserApi,
-      title: m.dataCollectionNationalRegistryTitle,
-      subTitle: m.dataCollectionNationalRegistrySubtitle,
-    }),
-    buildDataProviderItem({
-      provider: QualityPhotoApi,
-      title: m.dataCollectionQualityPhotoTitle,
-      subTitle: m.dataCollectionQualityPhotoSubtitle,
-    }),
-    buildDataProviderItem({
-      provider: QualitySignatureApi,
-      title: '',
-      subTitle: '',
-    }),
-    buildDataProviderItem({
-      provider: DuplicateEligibilityApi,
-      title: '',
-      subTitle: '',
-    }),
-    buildDataProviderItem({
-      provider: UserProfileApi,
-      title: m.dataCollectionUserProfileTitle,
-      subTitle: m.dataCollectionUserProfileSubtitle,
-    }),
-    buildDataProviderItem({
-      provider: JurisdictionApi,
-      title: '',
-      subTitle: '',
-    }),
-    buildDataProviderItem({
-      provider: CurrentLicenseApi,
-      title: '',
-      subTitle: '',
-    }),
-    buildDataProviderItem({
-      provider: SyslumadurPaymentCatalogApi,
-      title: '',
+  children: [
+    buildExternalDataProvider({
+      id: 'approveExternalData',
+      title: m.dataCollectionTitle,
+      subTitle: m.dataCollectionSubtitle,
+      description: m.dataCollectionDescription,
+      checkboxLabel: m.dataCollectionCheckboxLabel,
+      enableMockPayment: true,
+      dataProviders: [
+        buildDataProviderItem({
+          provider: NationalRegistryUserApi,
+          title: m.dataCollectionNationalRegistryTitle,
+          subTitle: m.dataCollectionNationalRegistrySubtitle,
+        }),
+        buildDataProviderItem({
+          provider: QualityPhotoApi,
+          title: m.dataCollectionQualityPhotoTitle,
+          subTitle: m.dataCollectionQualityPhotoSubtitle,
+        }),
+        buildDataProviderItem({
+          provider: QualitySignatureApi,
+          title: '',
+          subTitle: '',
+        }),
+        buildDataProviderItem({
+          provider: DuplicateEligibilityApi,
+          title: '',
+          subTitle: '',
+        }),
+        buildDataProviderItem({
+          provider: UserProfileApi,
+          title: m.dataCollectionUserProfileTitle,
+          subTitle: m.dataCollectionUserProfileSubtitle,
+        }),
+        buildDataProviderItem({
+          provider: JurisdictionApi,
+          title: '',
+          subTitle: '',
+        }),
+        buildDataProviderItem({
+          provider: CurrentLicenseApi,
+          title: '',
+          subTitle: '',
+        }),
+        buildDataProviderItem({
+          provider: SyslumadurPaymentCatalogApi,
+          title: '',
+        }),
+      ],
     }),
   ],
 })
