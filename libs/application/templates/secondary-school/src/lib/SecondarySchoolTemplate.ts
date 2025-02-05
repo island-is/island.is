@@ -210,7 +210,7 @@ const template: ApplicationTemplate<
             shouldBeListed: true,
             shouldBePruned: true,
             whenToPrune: (application: Application) =>
-              pruneInDaysAfterRegistrationCloses(application, 30),
+              pruneInDaysAfterRegistrationCloses(application, 2 * 30),
           },
           onExit: defineTemplateApi({
             action: ApiActions.submitApplication,
@@ -271,7 +271,7 @@ const template: ApplicationTemplate<
             shouldBeListed: true,
             shouldBePruned: true,
             whenToPrune: (application: Application) =>
-              pruneInDaysAfterRegistrationCloses(application, 30),
+              pruneInDaysAfterRegistrationCloses(application, 2 * 30),
           },
           onDelete: defineTemplateApi({
             action: ApiActions.deleteApplication,
