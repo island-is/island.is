@@ -49,6 +49,7 @@ jobs:
     steps:
       # Creates homedir if missing (e.g. when set to /tmp/runner/ when running locally with act)
       - name: Debug home etc.
+        if: ${{ github.event.localrun }}
         run: |
           echo "docker version: $(docker --version)"
           echo "User: HOME=$HOME, PWD=$PWD, id=$(id)"
