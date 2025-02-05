@@ -3,11 +3,11 @@ name: Validate code in the merge queue (post merge)
 on:
   workflow_dispatch: {}
   merge_group:
-  pull_request:
-    # For debugging with 'ci debug' label
-    types:
-      - synchronize
-      - labeled
+  # pull_request:
+  #   # For debugging with 'ci debug' label
+  #   types:
+  #     - synchronize
+  #     - labeled
 defaults:
   run:
     shell: bash -euo pipefail {0}
