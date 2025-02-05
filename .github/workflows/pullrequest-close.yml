@@ -1,10 +1,10 @@
 name: PR close
 
 on:
-  push:
-    branches:
-      - ci/cherry-pick-unicorn
-      - ci/cherry-pick-pr
+  # push:
+  #   branches:
+  #     - ci/cherry-pick-unicorn
+  #     - ci/cherry-pick-pr
   pull_request:
     types:
       - closed
