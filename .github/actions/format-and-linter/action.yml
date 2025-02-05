@@ -4,12 +4,16 @@ inputs:
   push-changes:
     description: 'Should push changes'
     default: 'false'
+  test-everything:
+    description: 'Should test everything'
+    default: 'false'
 runs:
   using: 'composite'
   steps:
     - name: Format
       env:
         RUN_WRITE: ${{ inputs.push-changes }}
+        TEST_EVERYTHING: ${{ inputs.test-everything }}
       shell: bash
       run: |
         if [ "$RUN_WRITE" != "true" ]; then
