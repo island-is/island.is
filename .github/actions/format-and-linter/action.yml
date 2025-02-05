@@ -22,10 +22,6 @@ runs:
         fi
     - name: Get Linter Jobs
       id: get-linter-jobs
-      env:
-        DISABLE_CHUNKS: 'true'
-        DISABLE_GROUPING: 'true'
-        DISABLE_PROBLEMATIC: 'true'
       shell: bash
       run: |
         node scripts/ci/_get_affected_projects.mjs
