@@ -153,6 +153,12 @@ jobs:
           if [[ "$CHUNKS" != "[]" ]]; then
             echo "CHUNKS={\"projects\":$CHUNKS}" >> "$GITHUB_OUTPUT"
           fi
+      - name: Formatting
+        id: format-and-linter
+        uses: ./.github/actions/format-and-linter
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          push-changes: 'true'
 
       - name: Prepare test targets
         id: test_projects
@@ -308,73 +314,6 @@ jobs:
           fail-level: info
           exclude: >-
             */node_modules/*
-
-  formatting:
-    needs:
-      - prepare
-    runs-on: arc-runners
-    timeout-minutes: 5
-    env:
-      NX_BASE: ${{ needs.prepare.outputs.NX_BASE }}
-    steps:
-      - uses: actions/checkout@v4
-        if: ${{ github.event_name == 'pull_request' }}
-        with:
-          token: ${{ secrets.DIRTY_FIX_BOT_TOKEN }}
-          ref: ${{ github.event.pull_request.head.ref }}
-      - uses: actions/checkout@v4
-        if: ${{ github.ref == 'ref/heads/main' }}
-      - uses: actions/setup-node@v4
-        with:
-          node-version-file: 'package.json'
-      - name: Setup yarn
-        run: corepack enable
-      - name: Get cache
-        id: get-cache
-        uses: ./.github/actions/get-cache
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          keys: ${{ needs.prepare.outputs.CACHE_KEYS }}
-          enable-cache: 'node_modules'
-      - name: NX format:check
-        if: ${{ github.ref == 'ref/heads/main' }}
-        run: ./scripts/ci/20_check-formatting.sh "check"
-      # - name: NX format:write
-      #   if: ${{ github.event_name == 'pull_request' }}
-      #   run: |
-      #     ./scripts/ci/20_check-formatting.sh "write"
-      #     ./infra/scripts/ci/git-check-dirty.sh "/" "nx format:write" "dirtybot"
-
-  linting:
-    needs:
-      - prepare
-    runs-on: arc-runners
-    timeout-minutes: 35
-    if: needs.prepare.outputs.LINT_CHUNKS
-    env:
-      AFFECTED_PROJECTS: ${{ matrix.projects }}
-      NODE_OPTIONS: --max-old-space-size=4096
-      NX_BASE: ${{ needs.prepare.outputs.NX_BASE }}
-    strategy:
-      fail-fast: false
-      matrix: ${{ fromJson(needs.prepare.outputs.LINT_CHUNKS) }}
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version-file: 'package.json'
-      - name: Setup yarn
-        run: corepack enable
-      - name: Get cache
-        id: get-cache
-        uses: ./.github/actions/get-cache
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          keys: ${{ needs.prepare.outputs.CACHE_KEYS }}
-          enable-cache: 'node_modules'
-      - name: Linting
-        run: ./scripts/ci/run-in-parallel-native.sh lint
-
   build:
     needs:
       - prepare

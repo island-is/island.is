@@ -1,0 +1,29 @@
+name: 'Format and linter'
+description: 'Action to format and linter'
+inputs:
+  github-token:
+    description: 'GitHub token'
+    required: true
+  push-changes:
+    description: 'Should push changes'
+    default: 'false'
+runs:
+  using: 'composite'
+  steps:
+    - name: Format
+      env:
+        GITHUB_TOKEN: ${{ inputs.github-token }}
+        RUN_WRITE: ${{ inputs.push-changes }}
+      shell: bash
+      run: |
+        if [ "$RUN_WRITE" != "true" ]; then
+          ./scripts/ci/20_check-formatting.sh "check"
+        else
+          ./infra/scripts/ci/git-check-dirty.sh "/" "nx format:write" "dirtybot"
+        fi
+    - name: Lint
+      env:
+        GITHUB_TOKEN: ${{ inputs.github-token }}
+      shell: bash
+      run: |
+        ./scripts/ci/run-in-parallel-native.sh lint
