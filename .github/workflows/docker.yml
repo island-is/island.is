@@ -232,7 +232,7 @@ jobs:
 
   build:
     name: Build ${{ matrix.project }}
-    runs-on: ${{ inputs.runners || 'arc-runners' }}
+    runs-on: arc-runners
     needs:
       - deps
     strategy:
