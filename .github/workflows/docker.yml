@@ -132,9 +132,9 @@ jobs:
           image_repository: ${{ env.IMAGE_REGISTRY }}/${{ matrix.project }}
           localrun: ${{ github.event.localrun }}
         run: |
-          echo image-repository="$image_repository" >>"$GITHUB_OUTPUT"
-          echo build-cache-local="type=local,src=/tmp,dest=/tmp,mode=max,enabled=${{ !!github.event.localrun }}" >>"$GITHUB_OUTPUT"
-          echo build-cache="type=registry,image-manifest=true,oci-mediatypes=true,ref=$image_repository:cache,enabled=${{ !github.event.localrun }}" >>"$GITHUB_OUTPUT"
+          echo image-repository="$image_repository" | tee -a "$GITHUB_OUTPUT"
+          echo build-cache-local="type=local,src=/tmp,dest=/tmp,mode=max,enabled=${{ !!github.event.localrun }}" | tee -a "$GITHUB_OUTPUT"
+          echo build-cache="type=registry,image-manifest=true,oci-mediatypes=true,ref=$image_repository:cache,enabled=${{ !github.event.localrun }}" | tee -a "$GITHUB_OUTPUT"
 
       - name: Configure AWS Credentials
         if: ${{ !github.event.localrun }}
@@ -162,7 +162,7 @@ jobs:
       - name: Prepare creds
         id: creds
         run: |
-          cat <<EOF >>"$GITHUB_OUTPUT"
+          cat <<EOF | tee -a "$GITHUB_OUTPUT"
           registry=${{ steps.ecr-login.outputs.registry }}
           username=${{ steps.ecr-login.outputs[ format('docker_username_{0}',env.IMAGE_REGISTRY) ] }}
           password=${{ steps.ecr-login.outputs[ format('docker_password_{0}',env.IMAGE_REGISTRY) ] }}
@@ -190,7 +190,7 @@ jobs:
             ${{ steps.args.outputs.build-cache-local }},mode=max
             ${{ steps.args.outputs.build-cache }},mode=max
         run: |
-          cat <<EOF >>"$GITHUB_OUTPUT"
+          cat <<EOF | tee -a "$GITHUB_OUTPUT"
           file=scripts/ci/Dockerfile
           push=false
           build-args=$build_args
