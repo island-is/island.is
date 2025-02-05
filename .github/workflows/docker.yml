@@ -221,6 +221,18 @@ jobs:
           file: ${{ steps.common.outputs.file }}
           push: ${{ steps.common.outputs.push }}
           build-args: ${{ steps.common.outputs.build-args }}
+          cache-from: |
+            type=registry,image-manifest=true,oci-mediatypes=true,ref=821090935708.dkr.ecr.eu-west-1.amazonaws.com/docker-cache:cache,enabled=true
+          cache-to: |
+              type=registry,image-manifest=true,oci-mediatypes=true,ref=821090935708.dkr.ecr.eu-west-1.amazonaws.com/docker-cache:cache,enabled=true,mode=max
+      - name: Docker build/cache dependencies (deps)
+        uses: docker/build-push-action@v6
+        with:
+          target: deps
+          context: .
+          file: ${{ steps.common.outputs.file }}
+          push: ${{ steps.common.outputs.push }}
+          build-args: ${{ steps.common.outputs.build-args }}
           cache-from: ${{ steps.common.outputs.cache-from }}
           cache-to: ${{ steps.common.outputs.cache-to }}
       - name: Docker build/cache dependencies (output-base)
