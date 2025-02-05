@@ -6,11 +6,7 @@ export default function Index() {
           <div id="welcome">
             <h1>
               <span role="img" aria-label="unicorn">
-                Welcome unicorn 🦄 Q-Test Hallo4
-                <br></br>
-                This is a new line
-                <br></br>
-                This is a new line
+                Welcome unicorn 🦄 Q-Test
               </span>
             </h1>
           </div>
