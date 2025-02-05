@@ -308,4 +308,3 @@ jobs:
             ${{ inputs.build-args }}
           # Caching final images doesn't make sense when this should only run if the project is affected (changed)
           cache-from: ${{ steps.deps.outputs.common.cache-from }}
-          cache-to: ${{ steps.deps.outputs.common.cache-to }}
