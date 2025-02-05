@@ -39,11 +39,10 @@ jobs:
           echo "# $(date)" >> .github/workflows/pullrequest-close.yml
           git add .github/workflows/pullrequest-close.yml
           git commit -m "Adding stuff"
-          git push
-          git status
           git push --set-upstream origin ci/test_pr
+          git status
 
-          PR=$(gh pr create -B ci/cherry-pick-unicorn -H ci/test_pr --title "Automated cherry-pick of test" --body "Automated cherry-pick test")
+          PR=$(gh pr create -B main -H ci/test_pr --title "Automated cherry-pick of test" --body "Automated cherry-pick test")
           echo "$PR created"
 
           gh pr merge -s $PR
