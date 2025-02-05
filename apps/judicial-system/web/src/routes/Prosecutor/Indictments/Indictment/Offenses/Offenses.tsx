@@ -312,7 +312,7 @@ export const Offenses = ({
           updateIndictmentCountState={updateIndictmentCountState}
         />
       )}
-      {/* DRUGS SUBSTANCE FIELDS */}
+      {/* DRUG SUBSTANCE FIELDS */}
       {getDrugsDriving(offenses).map((o) => (
         <Box key={`${indictmentCount.id}-${o.offense}-substances`}>
           <Substances offense={o} onChange={handleOffenseSubstanceUpdate} />
