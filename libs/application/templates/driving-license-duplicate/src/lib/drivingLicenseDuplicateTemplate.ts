@@ -168,8 +168,6 @@ const DrivingLicenseDuplicateTemplate: ApplicationTemplate<
           lifecycle: pruneAfter(thirtyDays),
           onEntry: defineTemplateApi({
             action: ApiActions.submitApplication,
-            shouldPersistToExternalData: true,
-            throwOnError: true,
           }),
           roles: [
             {

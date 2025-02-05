@@ -22,6 +22,7 @@ export const sectionDataProviders = buildExternalDataProvider({
   subTitle: m.dataCollectionSubtitle,
   description: m.dataCollectionDescription,
   checkboxLabel: m.dataCollectionCheckboxLabel,
+  enableMockPayment: true,
   dataProviders: [
     buildDataProviderItem({
       provider: NationalRegistryUserApi,
