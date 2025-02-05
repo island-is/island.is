@@ -137,6 +137,32 @@ jobs:
           echo build-cache-local="type=local,src=/tmp,dest=/tmp,mode=max,enabled=${{ !!github.event.localrun }}" | tee -a "$GITHUB_OUTPUT"
           echo build-cache="type=registry,image-manifest=true,oci-mediatypes=true,ref=$image_repository,enabled=${{ !github.event.localrun }}" | tee -a "$GITHUB_OUTPUT"
 
+      - name: Common config
+        id: common
+        env:
+          build_args: |
+            NODE_IMAGE_VERSION=${{ needs.prepare.outputs.node-image-version }}
+            PLAYWRIGHT_IMAGE_TAG=${{ needs.prepare.outputs.playwright-image-tag }}
+            DOCKER_IMAGE_REGISTRY=${{ env.ECR_PULLTHROUGH_CACHE }}
+          image_repository: ${{ steps.args.outputs.image-repository }}
+          cache_from: |
+            ${{ steps.args.outputs.build-cache-local }}
+            ${{ steps.args.outputs.build-cache }}
+          cache_to: |
+            ${{ steps.args.outputs.build-cache-local }},mode=max
+            ${{ steps.args.outputs.build-cache }},mode=max
+        run: |
+          echo | jq -s -c \
+            --arg build_args "$build_args"  --arg image_repository "$image_repository"  --arg cache_from "$cache_from"  --arg cache_to "$cache_to" \
+          '{
+            file: "scripts/ci/Dockerfile",
+            push: false,
+            "build-args": $build_args,
+            "image-repository": $image_repository,
+            "cache-from": $cache_from,
+            "cache-to": $cache_to,
+          } | to_entries | .[] | "\(.key)=\(.value)"' | tee -a "$GITHUB_OUTPUT"
+
       - name: Configure AWS Credentials
         if: ${{ !github.event.localrun }}
         id: aws-creds
@@ -176,32 +202,6 @@ jobs:
           registry: ${{ steps.creds.outputs.registry }}
           username: ${{ steps.creds.outputs.username }}
           password: ${{ steps.creds.outputs.password }}
-
-      - name: Common config
-        id: common
-        env:
-          build_args: |
-            NODE_IMAGE_VERSION=${{ needs.prepare.outputs.node-image-version }}
-            PLAYWRIGHT_IMAGE_TAG=${{ needs.prepare.outputs.playwright-image-tag }}
-            DOCKER_IMAGE_REGISTRY=${{ env.ECR_PULLTHROUGH_CACHE }}
-          image_repository: ${{ steps.args.outputs.image-repository }}
-          cache_from: |
-            ${{ steps.args.outputs.build-cache-local }}
-            ${{ steps.args.outputs.build-cache }}
-          cache_to: |
-            ${{ steps.args.outputs.build-cache-local }},mode=max
-            ${{ steps.args.outputs.build-cache }},mode=max
-        run: |
-          echo | jq -s -c \
-            --arg build_args "$build_args"  --arg image_repository "$image_repository"  --arg cache_from "$cache_from"  --arg cache_to "$cache_to" \
-          '{
-            file: "scripts/ci/Dockerfile",
-            push: false,
-            "build-args": $build_args,
-            "image-repository": $image_repository,
-            "cache-from": $cache_from,
-            "cache-to": $cache_to,
-          }' | tee -a "$GITHUB_OUTPUT"
 
       # Build stable layers; only difference between these steps should be the `target`
       - name: Docker build/cache dependencies
