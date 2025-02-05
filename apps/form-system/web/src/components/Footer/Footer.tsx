@@ -1,7 +1,10 @@
 import { Box, Button, GridColumn, GridContainer } from "@island.is/island-ui/core"
 import * as styles from './Footer.css'
-export const Footer = () => {
+import { useApplicationContext } from "../../context/ApplicationProvider"
 
+
+export const Footer = () => {
+  const { state, dispatch } = useApplicationContext()
 
   return (
     <Box marginTop={7} className={styles.buttonContainer}>
@@ -20,17 +23,22 @@ export const Footer = () => {
             {/* Implement logic on whether submit button should be rendered */}
             <Button
               icon="arrowForward"
-              type="submit"
+              onClick={() => dispatch({
+                type: 'INCREMENT'
+              })}
             >
               Áfram
             </Button>
           </Box>
-          <Box display={['inlineFlex', 'none']} padding={2} paddingLeft="none">
-
+          {/* <Box display={['inlineFlex', 'none']} padding={2} paddingLeft="none"> */}
+          <Box display="inlineFlex" padding={2} paddingLeft="none">
             {/* Implement logic on whether go back button should be rendered */}
             <Button
               variant="ghost"
-              data-testid="step-back"
+              onClick={() => dispatch({
+                type: 'DECREMENT'
+              })}
+            // data-testid="step-back"
             // onClick={goBack}
             // disabled={!canProceed || loading}
             >

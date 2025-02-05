@@ -1,12 +1,11 @@
 import {
   Box,
   GridColumn,
-  Text
 } from '@island.is/island-ui/core'
 import { Footer } from '../Footer/Footer'
 
-export const Screen = () => {
 
+export const Screen = () => {
   return (
     <Box
       component="form"

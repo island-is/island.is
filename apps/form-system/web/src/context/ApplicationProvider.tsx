@@ -1,11 +1,19 @@
-import { createContext, Dispatch, useContext, useState, ReactNode, useReducer } from "react"
-import { FormSystemApplication } from "@island.is/api/schema"
+import { createContext, Dispatch, useContext, useReducer, useEffect, useMemo, ReactNode } from "react"
+import { FormSystemApplication, FormSystemScreen, FormSystemSection } from "@island.is/api/schema"
 import { applicationReducer, initialReducer } from "../reducers/applicationReducer"
 import { Action, ApplicationState } from "../reducers/reducerTypes"
+import { useQuery } from "@apollo/client"
+import { GET_APPLICATION, removeTypename } from "../../../../../libs/portals/form-system/graphql/src"
+import { ApplicationLoading } from "../components/ApplicationsLoading/ApplicationLoading"
+import { Form } from "../components/Form/Form"
 
 interface ApplicationContextProvider {
-  state: ApplicationState,
+  state: ApplicationState
   dispatch: Dispatch<Action>
+}
+
+interface LoaderProps {
+  id: string
 }
 
 export const ApplicationContext = createContext<ApplicationContextProvider>({
@@ -13,34 +21,65 @@ export const ApplicationContext = createContext<ApplicationContextProvider>({
     application: {},
     sections: [],
     screens: [],
-    currentSection: '',
-    currentScreen: '',
+    currentSection: { id: "", index: 0 },
+    currentScreen: undefined,
   },
   dispatch: () => undefined,
 })
 
+// const [state, dispatch] = useReducer(applicationReducer, {
+//   application: app,
+//   sections: [],
+//   screens: [],
+//   currentSection: { id: "", index: 0 },
+//   currentScreen: undefined
+// }, initialReducer)
+
 export const useApplicationContext = () => useContext(ApplicationContext)
 
-export const ApplicationProvider: React.FC<{ children: ReactNode, application: FormSystemApplication }> = ({ children, application }) => {
-  const [state, dispatch] = useReducer(
-    applicationReducer,
-    {
-      application,
-      sections: [],
-      screens: [],
-      currentSection: '',
-      currentScreen: undefined,
-    },
-    initialReducer,
-  )
+export const ApplicationLoader = ({ id }: LoaderProps) => {
+  const { data, error, loading } = useQuery(GET_APPLICATION, {
+    variables: { input: { id } },
+    skip: !id,
+    fetchPolicy: "cache-first",
+  })
+
+  if (loading) {
+    return <ApplicationLoading />
+  }
+
+  if (error) {
+    return <div>Error</div>
+  }
+  console.log(data)
   return (
-    <ApplicationContext.Provider
-      value={{
-        state,
-        dispatch
-      }}
-    >
-      {children}
+    <ApplicationProvider application={removeTypename(data?.formSystemGetApplication)} />
+  )
+}
+
+export const ApplicationProvider: React.FC<{ application: FormSystemApplication }> = ({ application }) => {
+  const app = useMemo(() => application, [application])
+
+  const [state, dispatch] = useReducer(applicationReducer, {
+    application: app,
+    sections: [],
+    screens: [],
+    currentSection: { id: '', index: 0 },
+    currentScreen: undefined
+  }, initialReducer)
+
+  const contextValue = useMemo(() => ({ state, dispatch }), [state]);
+
+  useEffect(() => {
+    console.log("state", state)
+  }, [state])
+
+
+  return (
+    <ApplicationContext.Provider value={contextValue}>
+      <Form />
     </ApplicationContext.Provider>
   )
 }
+
+

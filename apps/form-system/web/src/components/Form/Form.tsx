@@ -6,25 +6,17 @@ import {
 } from '@island.is/island-ui/core'
 import * as styles from './Form.css'
 import { useHeaderInfo } from '../../context/HeaderInfoProvider'
-import { ApplicationLoading } from "../../components/ApplicationsLoading/ApplicationLoading"
-import { useQuery } from "@apollo/client"
-import { GET_APPLICATION, removeTypename } from "@island.is/form-system/graphql"
 import { FormStepper } from '@island.is/form-system/ui'
-import { FormSystemApplication, FormSystemSection } from '@island.is/api/schema'
+import { FormSystemSection } from '@island.is/api/schema'
 import { Screen } from '../Screen/Screen'
 import { useApplicationContext } from '../../context/ApplicationProvider'
 
-type FormProps = {
-  slug: string
-  id: string
 
-}
-
-export const Form = ({ slug, id }: FormProps) => {
+export const Form = () => {
   const { setInfo } = useHeaderInfo()
   const { state } = useApplicationContext()
   const { application } = state
-  console.log(state)
+
   return (
     <Box className={styles.root}>
       <Box
@@ -65,7 +57,9 @@ export const Form = ({ slug, id }: FormProps) => {
                 className={styles.sidebarInner}
               >
                 <FormStepper
-                  sections={(application.sections ?? []).filter((section): section is FormSystemSection => section !== null)}
+                  sections={(state.sections ?? []).filter((section): section is FormSystemSection => section !== null)}
+                  currentSection={state.currentSection}
+                  currentScreen={state.currentScreen}
                 />
               </Box>
             </Column>
