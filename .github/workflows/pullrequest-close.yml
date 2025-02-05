@@ -34,17 +34,17 @@ jobs:
         run: |
           git config --global user.email "${{ github.actor }}@users.noreply.github.com"
           git config --global user.name "${{ github.actor }} (automated)"
-          # git checkout -b ci/test_pr
-          # echo "hallo" > test.txt
-          # git add test.txt
-          # git commit -m "Adding stuff"
-          # git status
-          # git push --set-upstream origin ci/test_pr
+          git checkout -b ci/test_pr
+          echo "hallo" > test.txt
+          git add test.txt
+          git commit -m "Adding stuff"
+          git status
+          git push --set-upstream origin ci/test_pr
 
-          # PR=$(gh pr create -B ci/cherry-pick-unicorn -H ci/test_pr --title "Automated cherry-pick of test" --body "Automated cherry-pick test")
-          # echo "$PR created"
+          PR=$(gh pr create -B ci/cherry-pick-unicorn -H ci/test_pr --title "Automated cherry-pick of test" --body "Automated cherry-pick test")
+          echo "$PR created"
 
-          gh pr merge -s https://github.com/island-is/island.is/pull/17836
+          gh pr merge -s $PR
 
       # - uses: actions/setup-node@v4
       #   with:
