@@ -144,7 +144,6 @@ jobs:
         id: format-and-linter
         uses: ./.github/actions/format-and-linter
         with:
-          test-everything: ${{ env.AFFECTED_ALL == '7913-${{ github.head_ref }}' && 'true' || 'false' }}
           push-changes: 'true'
 
       - name: Prepare test targets
