@@ -181,7 +181,6 @@ jobs:
           echo "DEBUG AWS user/login"
           echo "$aws_output"
           aws sts get-caller-identity
-          aws ecr describe-repositories
       - name: Log in to Amazon ECR
         if: ${{ steps.aws-creds.conclusion == 'success' }}
         id: ecr-login
