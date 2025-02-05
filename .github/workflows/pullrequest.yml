@@ -47,8 +47,6 @@ jobs:
       CACHE_KEYS: ${{ steps.get-cache.outputs.keys }}
       NX_BASE: ${{ steps.export-sha.outputs.NX_BASE }}
     steps:
-      # Creates homedir if missing (e.g. when set to /tmp/runner/ when running locally with act)
-
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
@@ -267,7 +265,7 @@ jobs:
     needs:
       - prepare
     runs-on: arc-runners
-    timeout-minutes: 5
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
