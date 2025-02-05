@@ -49,6 +49,7 @@ import {
 import {
   ComplainedForTypes,
   ComplaineeTypes,
+  GenderAnswerOptions,
   OmbudsmanComplaintTypeEnum,
   UPLOAD_ACCEPT,
 } from '../shared/constants'
@@ -162,23 +163,23 @@ export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
               options: [
                 {
                   label: 'Kona/Kvenkyns',
-                  value: 'female',
+                  value: GenderAnswerOptions.FEMALE,
                 },
                 {
                   label: 'Karl/Karlkyns',
-                  value: 'male',
+                  value: GenderAnswerOptions.MAlE,
                 },
                 {
                   label: 'Kvár/Kynsegin',
-                  value: 'they',
+                  value: GenderAnswerOptions.NONBINARY,
                 },
                 {
                   label: 'Annað',
-                  value: 'other',
+                  value: GenderAnswerOptions.OTHER,
                 },
                 {
                   label: 'Vil ekki svara',
-                  value: 'declinedToAnswer',
+                  value: GenderAnswerOptions.DECLINED,
                 },
               ],
             }),
