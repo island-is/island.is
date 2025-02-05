@@ -32,7 +32,7 @@ env:
 
 jobs:
   prepare:
-    if: ${{ github.event_name != 'pull_request' || contains(github.event.pull_request.labels.*.name, 'ci debug') }}
+    if: ${{ github.event_name != 'pull_request' || contains(github.event.pull_request.labels.*.name, 'ci debug:merge queue') }}
     runs-on: arc-runners
     outputs:
       affected: ${{ steps.affected.outputs.build-chunks }}
