@@ -14,6 +14,7 @@ import { DataProtectionComplaintSchema } from './dataSchema'
 import { application } from './messages'
 import { Roles, TEMPLATE_API_ACTIONS } from '../shared'
 import { States } from '../constants'
+import { CodeOwners } from '@island.is/shared/constants'
 
 type DataProtectionComplaintEvent = { type: DefaultEvents.SUBMIT }
 
@@ -29,6 +30,7 @@ const DataProtectionComplaintTemplate: ApplicationTemplate<
 > = {
   type: ApplicationTypes.DATA_PROTECTION_AUTHORITY_COMPLAINT,
   name: application.name,
+  codeOwner: CodeOwners.NordaApplications,
   institution: application.institutionName,
   dataSchema: DataProtectionComplaintSchema,
   stateMachineConfig: {
