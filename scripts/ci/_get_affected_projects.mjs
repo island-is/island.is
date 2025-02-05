@@ -37,7 +37,7 @@ export const runLinterAffectedProjects = (props = {}) => {
         return;
     }
     console.log(`Affected projects for ${props.target ?? DEFAULT_TARGET}: ${chunks}`);
-    execSync(`npx nx run-many --target=${props.target ?? DEFAULT_TARGET} --projects=${chunks}`);
+    execSync(`npx nx run-many --target=${props.target ?? DEFAULT_TARGET} --projects=${chunks}`, {encoding: 'utf-8'});
 }
 
 if (import.meta.url === `file://${process.argv[1]}`) {
