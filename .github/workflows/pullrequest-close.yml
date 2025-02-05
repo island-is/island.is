@@ -36,8 +36,8 @@ jobs:
           git config --global user.name "${{ github.actor }} (automated)"
           git fetch --all
           git checkout -b ci/test_pr
-          echo "# $(date)" >> .github/workflows/pullrequest-close.yml
-          git add .github/workflows/pullrequest-close.yml
+          echo "# $(date)" >> .github/CODEOWNERS
+          git add .github/CODEOWNERS
           git commit -m "Adding stuff"
           git push --set-upstream origin ci/test_pr
           git status
