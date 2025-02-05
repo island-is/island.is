@@ -13,7 +13,7 @@ import {
 
 import { CivilClaimant, Defendant } from '../../defendant'
 
-export const defenderCaseFileCategoriesForRequestCases = [
+const defenderCaseFileCategoriesForRequestCases = [
   CaseFileCategory.PROSECUTOR_APPEAL_BRIEF,
   CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT,
   CaseFileCategory.DEFENDANT_APPEAL_BRIEF,
@@ -25,12 +25,12 @@ export const defenderCaseFileCategoriesForRequestCases = [
   CaseFileCategory.APPEAL_COURT_RECORD,
 ]
 
-export const defenderDefaultCaseFileCategoriesForIndictmentCases = [
+const defenderDefaultCaseFileCategoriesForIndictmentCases = [
   CaseFileCategory.COURT_RECORD,
   CaseFileCategory.RULING,
 ]
 
-export const defenderCaseFileCategoriesForIndictmentCases =
+const defenderCaseFileCategoriesForIndictmentCases =
   defenderDefaultCaseFileCategoriesForIndictmentCases.concat(
     CaseFileCategory.CRIMINAL_RECORD,
     CaseFileCategory.COST_BREAKDOWN,
@@ -169,4 +169,35 @@ export const canLimitedAccessUserViewCaseFile = (
   }
 
   return false
+}
+
+export const getDefenceUserCaseFileCategories = (
+  nationalId: string,
+  caseType: CaseType,
+  defendants?: Defendant[],
+  civilClaimants?: CivilClaimant[],
+) => {
+  if (isRequestCase(caseType)) {
+    return defenderCaseFileCategoriesForRequestCases
+  }
+
+  if (
+    Defendant.isConfirmedDefenderOfDefendantWithCaseFileAccess(
+      nationalId,
+      defendants,
+    )
+  ) {
+    return defenderCaseFileCategoriesForIndictmentCases
+  }
+
+  if (
+    CivilClaimant.isConfirmedSpokespersonOfCivilClaimantWithCaseFileAccess(
+      nationalId,
+      civilClaimants,
+    )
+  ) {
+    return defenderCaseFileCategoriesForIndictmentCases
+  }
+
+  return defenderDefaultCaseFileCategoriesForIndictmentCases
 }
