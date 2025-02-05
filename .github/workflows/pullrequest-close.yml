@@ -1,10 +1,6 @@
 name: PR close
 
 on:
-  push:
-    branches:
-      - ci/cherry-pick-unicorn
-      - ci/cherry-pick-pr
   pull_request:
     types:
       - closed
@@ -16,10 +12,9 @@ defaults:
 jobs:
   check-unicorn:
     name: Is this a unicorn PR
-    runs-on: ubuntu-latest
+    if: github.event.pull_request.merged == true
+    runs-on: arc-runners
     timeout-minutes: 10
-    env:
-      GITHUB_CONTEXT: ${{ toJson(github) }}
     outputs:
       IS_UNICORN: ${{ steps.unicorn_affected.outputs.IS_UNICORN }}
       LATEST_RELEASE: ${{ steps.get_latest_release.outputs.LATEST_RELEASE }}
@@ -28,116 +23,97 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Verify that we can't accept PRs
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: 'package.json'
+
+      - name: Setup yarn
+        run: corepack enable
+
+      - name: Get cache
+        id: get-cache
+        uses: ./.github/actions/get-cache
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          enable-cache: 'node_modules'
+
+      - name: Derive appropriate SHAs
+        uses: nrwl/nx-set-shas@v4
+
+      - run: |
+          echo "BASE: ${{ env.NX_BASE }}"
+          echo "HEAD: ${{ env.NX_HEAD }}"
+      - name: Check unicorn affected
+        id: unicorn_affected
+        run: |
+          echo "Comparing nx affected for ${{ env.NX_HEAD }} using ${{ env.NX_BASE }} as base branch"
+          echo IS_UNICORN=$(node scripts/ci/unicorn-utils.mjs "{\"head\": \"${{ env.NX_HEAD }}\", \"base\": \"${{ env.NX_BASE }}\" }") >> "$GITHUB_OUTPUT"
+
+      - name: Results
+        run: |
+          echo "Unicorn = ${{ steps.unicorn_affected.outputs.IS_UNICORN }}"
+
+      - name: Find Latest Release Branch
+        if: ${{ steps.unicorn_affected.outputs.IS_UNICORN == 'true' }}
+        id: get_latest_release
+        run: |
+          LATEST_RELEASE="$(node scripts/ci/get-last-release.mjs $(git branch -r))"
+          echo LATEST_RELEASE=$LATEST_RELEASE >> "$GITHUB_OUTPUT"
+
+      - run: "echo 'latest release: ${{ steps.get_latest_release.outputs.LATEST_RELEASE }}'"
+
+      - name: Create a PR
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_BRANCH: ${{ github.head_ref}}/cherry-pick
+          TARGET_BRANCH: release/${{ steps.get_latest_release.outputs.LATEST_RELEASE }}
         run: |
           git config --global user.email "${{ github.actor }}@users.noreply.github.com"
           git config --global user.name "${{ github.actor }} (automated)"
-          git fetch --all
-          git checkout -b ci/test_pr
-          echo "# $(date)" >> .github/CODEOWNERS
-          git add .github/CODEOWNERS
-          git commit -m "Adding stuff"
-          git push --set-upstream origin ci/test_pr
-          git status
-
-          PR=$(gh pr create -B main -H ci/test_pr --title "Automated cherry-pick of test" --body "Automated cherry-pick test")
+          echo ${{ github.event.pull_request.merge_commit_sha }}
+          echo ${{ github.head_ref}}
+          git checkout $TARGET_BRANCH
+          git checkout -b $PR_BRANCH
+          git cherry-pick -x ${{ github.event.pull_request.merge_commit_sha }}
+          git commit --allow-empty -am "Automated cherry-pick of ${{ github.event.pull_request.merge_commit_sha }}"
+          git push --set-upstream origin $PR_BRANCH
+          echo "new branch created"
+          PR=$(gh pr create -B $TARGET_BRANCH -H $PR_BRANCH --title "Automated cherry-pick of ${{ github.event.pull_request.merge_commit_sha }}" --body "Automated cherry-pick of ${{ github.event.pull_request.merge_commit_sha }}")
           echo "$PR created"
 
-          gh pr merge -s $PR
-
-      # - uses: actions/setup-node@v4
-      #   with:
-      #     node-version-file: 'package.json'
-
-      # - name: Setup yarn
-      #   run: corepack enable
-
-      # - name: Get cache
-      #   id: get-cache
-      #   uses: ./.github/actions/get-cache
-      #   with:
-      #     github-token: ${{ secrets.GITHUB_TOKEN }}
-      #     enable-cache: 'node_modules'
-
-      # - name: Derive appropriate SHAs
-      #   uses: nrwl/nx-set-shas@v4
-
-      # - run: |
-      #     echo "BASE: ${{ env.NX_BASE }}"
-      #     echo "HEAD: ${{ env.NX_HEAD }}"
-      # - name: Check unicorn affected
-      #   id: unicorn_affected
-      #   run: |
-      #     # echo "Comparing nx affected for ${{ env.NX_HEAD }} using ${{ env.NX_BASE }} as base branch"
-      #     # echo IS_UNICORN=$(node scripts/ci/unicorn-utils.mjs "{\"head\": \"${{ env.NX_HEAD }}\", \"base\": \"${{ env.NX_BASE }}\" }") >> "$GITHUB_OUTPUT"
-      #     echo IS_UNICORN=true >> "$GITHUB_OUTPUT"
-      # - name: Results
-      #   run: |
-      #     echo "Unicorn = ${{ steps.unicorn_affected.outputs.IS_UNICORN }}"
-
-      # - name: Find Latest Release Branch
-      #   if: ${{ steps.unicorn_affected.outputs.IS_UNICORN == 'true' }}
-      #   id: get_latest_release
-      #   run: |
-      #     LATEST_RELEASE="$(node scripts/ci/get-last-release.mjs $(git branch -r))"
-      #     echo LATEST_RELEASE=$LATEST_RELEASE >> "$GITHUB_OUTPUT"
-
-      # - run: "echo 'latest release: ${{ steps.get_latest_release.outputs.LATEST_RELEASE }}'"
-
-      # - name: Create a PR
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      #     PR_BRANCH: ${{ github.head_ref}}/cherry-pick
-      #     TARGET_BRANCH: ci/dummy-target
-      #   run: |
-      #     git config --global user.email "${{ github.actor }}@users.noreply.github.com"
-      #     git config --global user.name "${{ github.actor }} (automated)"
-      #     echo ${{ github.event.pull_request.merge_commit_sha }}
-      #     echo ${{ github.head_ref}}
-      #     git checkout $TARGET_BRANCH
-      #     git checkout -b $PR_BRANCH
-      #     git cherry-pick -x ${{ github.event.pull_request.merge_commit_sha }}
-      #     git commit --allow-empty -am "Automated cherry-pick of ${{ github.event.pull_request.merge_commit_sha }}"
-      #     git push --set-upstream origin $PR_BRANCH
-      #     echo "new branch created"
-      #     PR=$(gh pr create -B $TARGET_BRANCH -H $PR_BRANCH --title "Automated cherry-pick of ${{ github.event.pull_request.merge_commit_sha }}" --body "Automated cherry-pick of ${{ github.event.pull_request.merge_commit_sha }}")
-      #     echo "$PR created"
-
-  # cleanup:
-  #   name: Clean up feature deployment
-  #   runs-on: arc-runners
-  #   steps:
-  #     - name: Get git branch
-  #       run: |
-  #         set -euo pipefail
-  #         GIT_BRANCH="${GITHUB_HEAD_REF:-${GITHUB_REF/refs\/heads\//}}"
-  #         echo "GIT_BRANCH=$GIT_BRANCH" >> "$GITHUB_ENV"
-  #     - name: Generate deployment branch name
-  #       id: git-branch-deploy
-  #       run: |
-  #         set -euo pipefail
-  #         GIT_BRANCH_DEPLOY="$GIT_BRANCH"
-  #         if [[ ! ("$GIT_BRANCH_DEPLOY" =~ "feature/") ]]; then
-  #           # If event is pull request but branch is not prefixed with feature/
-  #           GIT_BRANCH_DEPLOY=feature/$GIT_BRANCH_DEPLOY
-  #         fi
-  #         # Avoid too long resource names
-  #         GIT_BRANCH_DEPLOY="${GIT_BRANCH_DEPLOY:0:50}"
-  #         echo "GIT_BRANCH_DEPLOY=$GIT_BRANCH_DEPLOY" >> "$GITHUB_ENV"
-  #     - name: Clean up feature
-  #       env:
-  #         SPINNAKER_WEBHOOK_TOKEN: ${{ secrets.SPINNAKER_WEBHOOK_TOKEN }}
-  #         SPINNAKER_URL: https://spinnaker-gate.shared.devland.is
-  #       run: |
-  #         set -euo pipefail
-  #         curl "$SPINNAKER_URL/webhooks/webhook/feature-cleanup" -H "content-type: application/json" --data-binary @- <<BODY
-  #         {
-  #           "token": "$SPINNAKER_WEBHOOK_TOKEN",
-  #           "parameters": {
-  #             "feature_name": "$(echo "$GIT_BRANCH_DEPLOY" | cut -d"/" -f2- | tr -cd '[:alnum:]-' | tr '[:upper:]' '[:lower:]' | cut -c1-50)"
-  #           }
-  #         }
-  #         BODY
+  cleanup:
+    name: Clean up feature deployment
+    runs-on: arc-runners
+    steps:
+      - name: Get git branch
+        run: |
+          set -euo pipefail
+          GIT_BRANCH="${GITHUB_HEAD_REF:-${GITHUB_REF/refs\/heads\//}}"
+          echo "GIT_BRANCH=$GIT_BRANCH" >> "$GITHUB_ENV"
+      - name: Generate deployment branch name
+        id: git-branch-deploy
+        run: |
+          set -euo pipefail
+          GIT_BRANCH_DEPLOY="$GIT_BRANCH"
+          if [[ ! ("$GIT_BRANCH_DEPLOY" =~ "feature/") ]]; then
+            # If event is pull request but branch is not prefixed with feature/
+            GIT_BRANCH_DEPLOY=feature/$GIT_BRANCH_DEPLOY
+          fi
+          # Avoid too long resource names
+          GIT_BRANCH_DEPLOY="${GIT_BRANCH_DEPLOY:0:50}"
+          echo "GIT_BRANCH_DEPLOY=$GIT_BRANCH_DEPLOY" >> "$GITHUB_ENV"
+      - name: Clean up feature
+        env:
+          SPINNAKER_WEBHOOK_TOKEN: ${{ secrets.SPINNAKER_WEBHOOK_TOKEN }}
+          SPINNAKER_URL: https://spinnaker-gate.shared.devland.is
+        run: |
+          set -euo pipefail
+          curl "$SPINNAKER_URL/webhooks/webhook/feature-cleanup" -H "content-type: application/json" --data-binary @- <<BODY
+          {
+            "token": "$SPINNAKER_WEBHOOK_TOKEN",
+            "parameters": {
+              "feature_name": "$(echo "$GIT_BRANCH_DEPLOY" | cut -d"/" -f2- | tr -cd '[:alnum:]-' | tr '[:upper:]' '[:lower:]' | cut -c1-50)"
+            }
+          }
+          BODY
 

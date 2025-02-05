@@ -6,7 +6,6 @@ on:
       - 'main'
       - 'release/**'
       - 'pre-release/**'
-      - '!ci/cherry-pickj-unicorn'
     paths-ignore:
       - '**/*.md'
     tags:
