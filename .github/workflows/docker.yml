@@ -182,6 +182,7 @@ jobs:
             NODE_IMAGE_VERSION=${{ needs.prepare.outputs.node-image-version }}
             PLAYWRIGHT_IMAGE_TAG=${{ needs.prepare.outputs.playwright-image-tag }}
             DOCKER_IMAGE_REGISTRY=${{ env.ECR_PULLTHROUGH_CACHE }}
+          image_repository: ${{ steps.args.outputs.image-repository }}
           cache_from: |
             ${{ steps.args.outputs.build-cache-local }}
             ${{ steps.args.outputs.build-cache }}
@@ -193,6 +194,7 @@ jobs:
           file=scripts/ci/Dockerfile
           push=false
           build-args=$build_args
+          image-repository=$image_repository
           cache-from=$cache_from
           cache-to=$cache_to
           EOF
