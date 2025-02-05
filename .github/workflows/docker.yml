@@ -179,8 +179,8 @@ jobs:
           aws_output: ${{ toJson(steps.aws-creds.outputs) }}
         run: |
           echo "DEBUG AWS user/login"
-          echo "$aws_output"
-          aws sts get-caller-identity
+          echo "aws-creds.outputs: $aws_output"
+          aws sts get-caller-identity | xargs echo "STS caller identity:"
       - name: Log in to Amazon ECR
         if: ${{ steps.aws-creds.conclusion == 'success' }}
         id: ecr-login
