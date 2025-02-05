@@ -19,11 +19,4 @@ export const up = compose(
     description: 'Veitir aðgang að upplýsingum um líffæragjafir',
     addToClients: ['@island.is/clients/api'],
   }),
-  createScope({
-    name: '@landlaeknir.is/health',
-    displayName: 'health',
-    description:
-      'Veitir aðgang að upplýsingum um tilvísanir, biðlista og lyfjaávísanir',
-    addToClients: ['@island.is/clients/api'],
-  }),
 )
