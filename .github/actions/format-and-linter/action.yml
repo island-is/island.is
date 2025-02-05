@@ -13,7 +13,6 @@ runs:
     - name: Format
       env:
         RUN_WRITE: ${{ inputs.push-changes }}
-        TEST_EVERYTHING: ${{ inputs.test-everything }}
       shell: bash
       run: |
         if [ "$RUN_WRITE" != "true" ]; then
@@ -24,6 +23,8 @@ runs:
     - name: Lint
       id: get-linter-jobs
       shell: bash
+      env:
+        TEST_EVERYTHING: ${{ inputs.test-everything }}
       run: |
         node scripts/ci/_get_affected_projects.mjs
     
