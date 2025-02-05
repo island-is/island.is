@@ -7,10 +7,9 @@ import {
 } from '@island.is/nest/config'
 import {
   Configuration,
-  MeDispensationsApi,
-  MePrescriptionsApi,
-  MeReferralsApi,
-  MeWaitingListsApi,
+  PrescriptionsApi,
+  ReferralsApi,
+  WaitingListsApi,
 } from './gen/fetch'
 import { HealthDirectorateHealthClientConfig } from './health.config'
 
@@ -19,7 +18,7 @@ export const sharedApiConfig = {
   scope: LazyDuringDevScope,
   useFactory: (
     xRoadConfig: ConfigType<typeof XRoadConfig>,
-    config: ConfigType<typeof HealthDirectorateHealthClientConfig>, // TODO: Change to correct key
+    config: ConfigType<typeof HealthDirectorateHealthClientConfig>,
     idsClientConfig: ConfigType<typeof IdsClientConfig>,
   ) =>
     new Configuration({
@@ -45,16 +44,15 @@ export const sharedApiConfig = {
     }),
   inject: [
     XRoadConfig.KEY,
-    HealthDirectorateHealthClientConfig.KEY, // TODO: Change to correct key
+    HealthDirectorateHealthClientConfig.KEY,
     IdsClientConfig.KEY,
   ],
 }
 
 export const exportedHealthApis = [
-  MeWaitingListsApi,
-  MeReferralsApi,
-  MePrescriptionsApi,
-  MeDispensationsApi,
+  WaitingListsApi,
+  ReferralsApi,
+  PrescriptionsApi,
 ].map((Api) => ({
   provide: Api,
   useFactory: (configuration: Configuration) => {
