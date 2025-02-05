@@ -152,8 +152,6 @@ const userNotificationCleanupWorkerService =
 const unicornApp = unicornAppSetup()
 const formSystemApi = formSystemApiSetup()
 
-const unicornApp = unicornAppSetup()
-
 const githubActionsCache = githubActionsCacheSetup()
 
 const externalContractsTests = externalContractsTestsSetup()
