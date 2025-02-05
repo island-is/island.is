@@ -34,8 +34,8 @@ jobs:
         run: |
           git config --global user.email "${{ github.actor }}@users.noreply.github.com"
           git config --global user.name "${{ github.actor }} (automated)"
-          git pull
           git checkout -b ci/test_pr
+          git pull
           echo "hallo" > test.txt
           git add test.txt
           git commit -m "Adding stuff"
