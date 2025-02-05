@@ -3,6 +3,7 @@ import { execSync } from 'child_process';
 import { setOutput } from '@actions/core';
 
 const IS_CI = process.env.CI === 'true';
+const DEFAULT_TARGET = 'lint';
 
 const getShowAllProjects = () => {
     return process.env.BRANCH && process.env.AFFECTED_ALL && process.env.AFFECTED_ALL === `7913-${process.env.BRANCH}` ||
@@ -14,7 +15,7 @@ export const getAffectedProjectsArray = ({
     SHOW_ALL_PROJECTS = getShowAllProjects(),
     BASE = process.env.BASE ?? 'main',
     HEAD = process.env.HEAD ?? 'HEAD',
-    TARGET = process.argv[2] ?? 'lint'
+    TARGET = process.argv[2] ?? DEFAULT_TARGET
 } = {}) => {
     
     const EXTRA_ARGS = SHOW_ALL_PROJECTS ? [] : ['--affected', '--base', BASE, '--head', HEAD];
@@ -36,6 +37,7 @@ export const setAffectedProjects = (props = {}) => {
     if (!chunks) {
         return;
     }
+    console.log(`Affected projects for ${props.target ?? DEFAULT_TARGET}: ${chunks}`);
     setOutput('AFFECTED_PROJECTS', `{"projects":${chunks}}`);
 }
 
