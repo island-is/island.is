@@ -37,6 +37,7 @@ import {
 import { buildPaymentState } from '@island.is/application/utils'
 import { number } from 'zod'
 import { PaymentForm } from '@island.is/application/ui-forms'
+import { CodeOwners } from '@island.is/shared/constants'
 
 const pruneAfter = (time: number) => {
   return {
@@ -56,6 +57,7 @@ const MarriageConditionsTemplate: ApplicationTemplate<
 > = {
   type: ApplicationTypes.MARRIAGE_CONDITIONS,
   name: m.applicationTitle,
+  codeOwner: CodeOwners.Juni,
   dataSchema: dataSchema,
   translationNamespaces: [configuration.translation],
   stateMachineConfig: {
