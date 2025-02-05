@@ -135,7 +135,7 @@ jobs:
         run: |
           echo image-repository="$image_repository" | tee -a "$GITHUB_OUTPUT"
           echo build-cache-local="type=local,src=/tmp,dest=/tmp,mode=max,enabled=${{ !!github.event.localrun }}" | tee -a "$GITHUB_OUTPUT"
-          echo build-cache="type=registry,image-manifest=true,oci-mediatypes=true,ref=$image_repository,enabled=${{ !github.event.localrun }}" | tee -a "$GITHUB_OUTPUT"
+          echo build-cache="type=registry,image-manifest=true,oci-mediatypes=true,ref=$image_repository:cache,enabled=${{ !github.event.localrun }}" | tee -a "$GITHUB_OUTPUT"
 
       - name: Common config
         id: common
