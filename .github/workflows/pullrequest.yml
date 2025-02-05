@@ -48,12 +48,6 @@ jobs:
       NX_BASE: ${{ steps.export-sha.outputs.NX_BASE }}
     steps:
       # Creates homedir if missing (e.g. when set to /tmp/runner/ when running locally with act)
-      - name: Debug home etc.
-        run: |
-          echo "docker version: $(docker --version)"
-          echo "User: HOME=$HOME, PWD=$PWD, id=$(id)"
-          mkdir -p "$HOME"
-          ls -lah "$HOME"
 
       - uses: actions/checkout@v4
         with:
