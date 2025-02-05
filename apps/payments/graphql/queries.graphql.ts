@@ -18,6 +18,7 @@ export const GetPaymentFlow = gql`
   query getPaymentFlow($input: GetPaymentFlowInput!) {
     paymentsGetFlow(input: $input) {
       id
+      isPaid
       productTitle
       productPrice
       payerNationalId
@@ -26,6 +27,7 @@ export const GetPaymentFlow = gql`
       availablePaymentMethods
       organisationId
       metadata
+      returnUrl
     }
   }
 `

@@ -66,7 +66,9 @@ export class PaymentFlowService {
       }
     } catch (e) {
       this.logger.error('Failed to create payment url', e)
-      throw new Error(PaymentServiceCode.CouldNotCreatePaymentFlow)
+      throw new BadRequestException(
+        PaymentServiceCode.CouldNotCreatePaymentFlow,
+      )
     }
   }
 
@@ -157,8 +159,10 @@ export class PaymentFlowService {
     )?.toJSON()
 
     if (paymentFlowSuccessEvent) {
-      throw new BadRequestException(PaymentServiceCode.PaymentFlowAlreadyPaid)
+      return false
     }
+
+    return true
   }
 
   async getPaymentFlowWithPaymentDetails(id: string) {
@@ -188,10 +192,6 @@ export class PaymentFlowService {
       })
     )?.toJSON()
 
-    if (paymentFlowSuccessEvent) {
-      throw new BadRequestException(PaymentServiceCode.PaymentFlowAlreadyPaid)
-    }
-
     const paymentDetails = await this.getPaymentFlowChargeDetails(
       paymentFlow.organisationId,
       paymentFlow.charges,
@@ -200,12 +200,13 @@ export class PaymentFlowService {
     return {
       paymentFlow,
       paymentDetails,
+      isAlreadyPaid: !!paymentFlowSuccessEvent,
     }
   }
 
   async getPaymentFlow(id: string): Promise<GetPaymentFlowDTO | null> {
     try {
-      const { paymentFlow, paymentDetails } =
+      const { paymentFlow, paymentDetails, isAlreadyPaid } =
         await this.getPaymentFlowWithPaymentDetails(id)
 
       const payerName = await this.getPayerName(paymentFlow.payerNationalId)
@@ -218,6 +219,7 @@ export class PaymentFlowService {
         payerName,
         availablePaymentMethods:
           paymentFlow.availablePaymentMethods as PaymentMethod[],
+        isPaid: isAlreadyPaid,
       }
     } catch (e) {
       this.logger.error('Failed to get payment flow', e)

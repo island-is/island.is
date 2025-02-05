@@ -66,6 +66,12 @@ export class GetPaymentFlowDTO {
   })
   organisationId!: string
 
+  @ApiProperty({
+    description: 'Indiciates if the payment flow has been paid',
+    type: Boolean,
+  })
+  isPaid!: boolean
+
   @ApiPropertyOptional({
     description:
       'Arbitrary JSON data that will be returned on in callbacks (e.g. onSuccess, onUpdate)',
@@ -73,4 +79,11 @@ export class GetPaymentFlowDTO {
     example: { customData: 'value' },
   })
   metadata?: object
+
+  @ApiPropertyOptional({
+    description:
+      'Optional identifier for an invoice associated with the payment flow',
+    type: String,
+  })
+  returnUrl?: string
 }

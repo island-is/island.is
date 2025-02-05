@@ -43,6 +43,19 @@ export const card = defineMessages({
   },
 })
 
+export const cardSuccess = defineMessages({
+  title: {
+    id: 'payments.cardSuccess:title',
+    defaultMessage: 'Greiðsla tókst',
+    description: 'Payment successful',
+  },
+  subTitle: {
+    id: 'payments.cardSuccess:subTitle',
+    defaultMessage: 'Kvittun verður send í pósthólfið',
+    description: 'Receipt will be sent to your islandis inbox',
+  },
+})
+
 export const cardValidationError = defineMessages({
   cardNumber: {
     id: 'payments.validationError.card:cardNumberError',

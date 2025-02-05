@@ -25,7 +25,7 @@ import { VerificationStatusResponse } from './dtos/verificationStatus.response.d
 import { VerifyCardResponse } from './dtos/verifyCard.response.dto'
 import { ChargeCardResponse } from './dtos/chargeCard.response.dto'
 import { PaymentFlowFjsChargeConfirmation } from '../paymentFlow/models/paymentFlowFjsChargeConfirmation.model'
-import { CardErrorCode } from '@island.is/shared/constants'
+import { CardErrorCode, PaymentServiceCode } from '@island.is/shared/constants'
 
 @UseGuards(FeatureFlagGuard)
 @FeatureFlag(Features.isIslandisPaymentEnabled)
@@ -48,9 +48,13 @@ export class CardPaymentController {
     @Body() cardVerificationInput: VerifyCardInput,
   ): Promise<VerifyCardResponse> {
     try {
-      await this.paymentFlowService.isEligibleToBePaid(
+      const canBePaid = await this.paymentFlowService.isEligibleToBePaid(
         cardVerificationInput.paymentFlowId,
       )
+
+      if (!canBePaid) {
+        throw new BadRequestException(PaymentServiceCode.PaymentFlowAlreadyPaid)
+      }
 
       const verification = await this.cardPaymentService.verify(
         cardVerificationInput,
@@ -76,7 +80,7 @@ export class CardPaymentController {
         reason: 'payment_failed',
         message: `Card verification was not started because of an error: ${e.message}`,
       })
-      throw new Error(e.message)
+      throw new BadRequestException(e.message)
     }
   }
 
@@ -166,15 +170,21 @@ export class CardPaymentController {
       const {
         paymentFlow,
         paymentDetails: { catalogItems, totalPrice },
+        isAlreadyPaid,
       } = await this.paymentFlowService.getPaymentFlowWithPaymentDetails(
         chargeCardInput.paymentFlowId,
       )
+
+      if (isAlreadyPaid) {
+        throw new BadRequestException(PaymentServiceCode.PaymentFlowAlreadyPaid)
+      }
 
       // Payment confirmation
       const result = await this.cardPaymentService.charge(chargeCardInput)
 
       let confirmation: null | PaymentFlowFjsChargeConfirmation = null
 
+      // eslint-disable-next-line no-useless-catch
       try {
         // Send charge confirmation to FJS
         const fjsChargePayload =
@@ -201,6 +211,7 @@ export class CardPaymentController {
         // Error code = 400 and message = "Búið að taka á móti álagningu XXX ..."
         // (there is a 24 hour limit on buying certain items)
         // Then we should refund the payment
+        throw e
       }
 
       await this.paymentFlowService.logPaymentFlowUpdate({
@@ -228,7 +239,7 @@ export class CardPaymentController {
       })
 
       // TODO
-      throw new BadRequestException(CardErrorCode.Unknown)
+      throw new BadRequestException(e.message || CardErrorCode.Unknown)
     }
   }
 }

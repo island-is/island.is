@@ -14,6 +14,11 @@ import { SequelizeConfigService } from '../../sequelizeConfig.service'
 import { SavedVerificationPendingData } from './cardPayment.types'
 import { generateMd } from './cardPayment.utils'
 import { VerificationCallbackInput } from './dtos/verificationCallback.input'
+import { PaymentFlowService } from '../paymentFlow/paymentFlow.service'
+import { ChargeCardInput } from './dtos/chargeCard.input'
+import { PaymentFlowEvent } from '../paymentFlow/models/paymentFlowEvent.model'
+import { getModelToken } from '@nestjs/sequelize'
+import { BadRequestException } from '@nestjs/common'
 
 const getCreatePaymentFlowPayload = (): CreatePaymentFlowInput => ({
   charges: [
@@ -36,10 +41,14 @@ describe('CardPaymentController', () => {
   let app: TestApp
   let server: request.SuperTest<request.Test>
   let cacheManager: CacheManager
+  let paymentFlowService: PaymentFlowService
+  let paymentFlowEventModel: typeof PaymentFlowEvent
 
   let previousPaymentGatewayApiUrl = ''
   let previousTokenSigningSecret = ''
   let previousTokenSigningAlgorithm = ''
+
+  let paymentFlowId: string
 
   beforeAll(async () => {
     previousPaymentGatewayApiUrl = process.env.PAYMENTS_GATEWAY_API_URL!
@@ -54,6 +63,12 @@ describe('CardPaymentController', () => {
     app = await testServer({
       appModule: AppModule,
       enableVersioning: true,
+      override: (builder) =>
+        builder.overrideProvider(getModelToken(PaymentFlowEvent)).useClass(
+          jest.fn(() => ({
+            findOne: jest.fn(),
+          })),
+        ),
       hooks: [
         useDatabase({ type: 'postgres', provider: SequelizeConfigService }),
       ],
@@ -61,6 +76,21 @@ describe('CardPaymentController', () => {
     server = request(app.getHttpServer())
 
     cacheManager = app.get<CacheManager>(CACHE_MANAGER)
+    paymentFlowService = app.get<PaymentFlowService>(PaymentFlowService)
+    paymentFlowEventModel = app.get(getModelToken(PaymentFlowEvent))
+
+    // Create a payment flow
+    const createPayload = getCreatePaymentFlowPayload()
+
+    const response = await server.post('/v1/payments').send(createPayload)
+
+    expect(response.status).toBe(200)
+
+    const {
+      urls: { is },
+    } = response.body
+
+    paymentFlowId = is.split('/').pop()
   })
 
   afterAll(async () => {
@@ -75,22 +105,6 @@ describe('CardPaymentController', () => {
   })
 
   describe('verify', () => {
-    let paymentFlowId: string
-
-    beforeAll(async () => {
-      const createPayload = getCreatePaymentFlowPayload()
-
-      const response = await server.post('/v1/payments').send(createPayload)
-
-      expect(response.status).toBe(200)
-
-      const {
-        urls: { is },
-      } = response.body
-
-      paymentFlowId = is.split('/').pop()
-    })
-
     it('should throw an error if trying to verify invalid payment flow', async () => {
       const verifyPayload: VerifyCardInput = {
         amount: 1000,
@@ -108,6 +122,31 @@ describe('CardPaymentController', () => {
 
       const errorCode = response.body.detail
       expect(errorCode).toBe(PaymentServiceCode.PaymentFlowNotFound)
+    })
+
+    it('should throw an error if trying to verify a payment flow that has already been paid', async () => {
+      const verifyPayload: VerifyCardInput = {
+        amount: 1000,
+        cardNumber: 4242424242424242,
+        expiryMonth: 12,
+        expiryYear: new Date().getFullYear() - 2000,
+        paymentFlowId,
+      }
+
+      const paymentFlowServiceAlreadyPaidCheckSpy = jest
+        .spyOn(paymentFlowService, 'isEligibleToBePaid')
+        .mockReturnValue(Promise.resolve(false))
+
+      const response = await server
+        .post('/v1/payments/card/verify')
+        .send(verifyPayload)
+
+      expect(response.status).toBe(400)
+
+      const errorCode = response.body.detail
+      expect(errorCode).toBe(PaymentServiceCode.PaymentFlowAlreadyPaid)
+
+      paymentFlowServiceAlreadyPaidCheckSpy.mockRestore()
     })
 
     it('it should generate the correct cache payloads (cache and fetch) when verify is called with a valid card', async () => {
@@ -321,6 +360,66 @@ describe('CardPaymentController', () => {
       cacheDelSpy.mockRestore()
       cacheSetSpy.mockRestore()
       fetchSpy.mockRestore()
+    })
+  })
+
+  describe('charge', () => {
+    it('should throw an error if trying to charge an invalid payment flow', async () => {
+      const chargeInput: ChargeCardInput = {
+        paymentFlowId,
+        amount: 1000,
+        cardNumber: 4242424242424242,
+        expiryMonth: 12,
+        expiryYear: new Date().getFullYear() - 2000,
+        cvc: 123,
+      }
+
+      const getPaymentFlowWithPaymentDetailsSpy = jest
+        .spyOn(paymentFlowService, 'getPaymentFlowWithPaymentDetails')
+        .mockRejectedValue(
+          new BadRequestException(PaymentServiceCode.PaymentFlowNotFound),
+        )
+
+      const response = await server
+        .post('/v1/payments/card/charge')
+        .send(chargeInput)
+
+      expect(response.status).toBe(400)
+
+      const errorCode = response.body.detail
+      expect(errorCode).toBe(PaymentServiceCode.PaymentFlowNotFound)
+
+      getPaymentFlowWithPaymentDetailsSpy.mockRestore()
+    })
+
+    it('should throw an error if trying to charge a payment flow that has already been paid', async () => {
+      const chargeInput: ChargeCardInput = {
+        paymentFlowId,
+        amount: 1000,
+        cardNumber: 4242424242424242,
+        expiryMonth: 12,
+        expiryYear: new Date().getFullYear() - 2000,
+        cvc: 123,
+      }
+
+      const getPaymentFlowWithPaymentDetailsSpy = jest
+        .spyOn(paymentFlowService, 'getPaymentFlowWithPaymentDetails')
+        .mockResolvedValue({
+          isAlreadyPaid: true,
+          paymentDetails: {} as any,
+          paymentFlow: {} as any,
+        })
+
+      const response = await server
+        .post('/v1/payments/card/charge')
+        .send(chargeInput)
+
+      expect(response.status).toBe(400)
+
+      const errorCode = response.body.detail
+      expect(errorCode).toBe(PaymentServiceCode.PaymentFlowAlreadyPaid)
+
+      getPaymentFlowWithPaymentDetailsSpy.mockRestore()
     })
   })
 })

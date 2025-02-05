@@ -6,6 +6,11 @@ export const generic = defineMessages({
     defaultMessage: 'Hætta við',
     description: 'Cancel',
   },
+  buttonFinishAndReturn: {
+    id: 'payments.generic:buttonFinishAndReturn',
+    defaultMessage: 'Ljúka',
+    description: 'Finish',
+  },
   footerHelp: {
     id: 'payments.generic:footerHelp',
     defaultMessage: 'Aðstoð',
@@ -25,6 +30,21 @@ export const generic = defineMessages({
     id: 'payments.generic:back',
     defaultMessage: 'Til baka',
     description: 'Back',
+  },
+  product: {
+    id: 'payments.generic:product',
+    defaultMessage: 'Vara',
+    description: 'Product',
+  },
+  amount: {
+    id: 'payments.generic:amount',
+    defaultMessage: 'Upphæð',
+    description: 'Amount',
+  },
+  paidAt: {
+    id: 'payments.generic:paidAt',
+    defaultMessage: 'Greiðslutími',
+    description: 'Paid at',
   },
 })
 

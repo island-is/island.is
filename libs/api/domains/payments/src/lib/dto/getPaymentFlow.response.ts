@@ -7,6 +7,9 @@ export class GetPaymentFlowResponse {
   @Field(() => ID)
   id!: string
 
+  @Field(() => Boolean)
+  isPaid!: boolean
+
   @Field(() => String)
   productTitle!: string
 

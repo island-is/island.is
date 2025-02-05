@@ -2,7 +2,9 @@ import { useState } from 'react'
 import { GetServerSideProps } from 'next'
 import { FormProvider, SubmitHandler, useForm } from 'react-hook-form'
 import { useRouter } from 'next/router'
-import { Box, Button, ModalBase } from '@island.is/island-ui/core'
+import format from 'date-fns/format'
+
+import { Box, Button, ModalBase, Table, Text } from '@island.is/island-ui/core'
 import { Features } from '@island.is/feature-flags'
 import { useLocale } from '@island.is/localization'
 import { findProblemInApolloError } from '@island.is/shared/problem'
@@ -13,9 +15,13 @@ import { PaymentHeader } from '../../../components/PaymentHeader/PaymentHeader'
 import { PaymentSelector } from '../../../components/PaymentSelector/PaymentSelector'
 import { CardPayment } from '../../../components/CardPayment/CardPayment'
 import { InvoicePayment } from '../../../components/InvoicePayment/InvoicePayment'
-import { ALLOWED_LOCALES, Locale } from '../../../utils'
+import {
+  ALLOWED_LOCALES,
+  Locale,
+  todoCallGlobalFormatUtilFunction,
+} from '../../../utils'
 import { getConfigcatClient } from '../../../clients/configcat'
-import { card, generic, invoice } from '../../../messages'
+import { card, cardSuccess, generic, invoice } from '../../../messages'
 import { ThreeDSecure } from '../../../components/ThreeDSecure/ThreeDSecure'
 import {
   getErrorTitleAndMessage,
@@ -41,7 +47,27 @@ import {
   PaymentsChargeCardInput,
   PaymentsVerifyCardInput,
 } from '@island.is/api/schema'
-import { CardErrorCode, PaymentServiceCode } from '@island.is/shared/constants'
+import { CardErrorCode } from '@island.is/shared/constants'
+import Link from 'next/link'
+
+const TD = ({
+  children,
+  style,
+}: {
+  children: React.ReactNode
+  style?: React.CSSProperties
+}) => (
+  <Table.Data
+    style={{
+      ...style,
+      border: 'none',
+      verticalAlign: 'top',
+      padding: '4px 0px',
+    }}
+  >
+    <Text variant="medium">{children}</Text>
+  </Table.Data>
+)
 
 interface PaymentPageProps {
   locale: string
@@ -128,19 +154,10 @@ export const getServerSideProps: GetServerSideProps<PaymentPageProps> = async (
     const problem = findProblemInApolloError(e)
 
     if (problem) {
-      const code = problem?.detail as string
-
-      if (code === PaymentServiceCode.PaymentFlowAlreadyPaid) {
-        return {
-          redirect: {
-            destination: `/${locale}/${paymentFlowId}/greitt`,
-            permanent: false,
-          },
-        }
-      }
+      const code = problem?.detail as CardErrorCode
 
       paymentFlowErrorCode = {
-        code: problem?.detail as CardErrorCode,
+        code,
       }
     }
   }
@@ -338,7 +355,7 @@ export default function PaymentPage({
     })
 
     if (chargeCardResponse.isSuccess) {
-      router.push(`${router.asPath}/greitt`)
+      router.reload()
     }
   }
 
@@ -378,6 +395,53 @@ export default function PaymentPage({
     invalidFlowSetup,
     paymentError,
   )
+
+  if (canRenderMainFlow && paymentFlow.isPaid) {
+    return (
+      <>
+        <PageCard
+          headerSlot={
+            <PaymentHeader
+              title={formatMessage(cardSuccess.title)}
+              subTitle={formatMessage(cardSuccess.subTitle)}
+              type="success"
+            />
+          }
+          bodySlot={
+            <>
+              <Table.Table>
+                <Table.Body>
+                  <Table.Row>
+                    <TD>{formatMessage(generic.product)}</TD>
+                    <TD>{productInformation.title}</TD>
+                  </Table.Row>
+                  <Table.Row>
+                    <TD>{formatMessage(generic.amount)}</TD>
+                    <TD>
+                      {todoCallGlobalFormatUtilFunction(
+                        productInformation.amount,
+                      )}
+                    </TD>
+                  </Table.Row>
+                  <Table.Row>
+                    <TD>{formatMessage(generic.paidAt)}</TD>
+                    <TD>{format(new Date(), 'yyyy-MM-dd HH:MM')}</TD>
+                  </Table.Row>
+                </Table.Body>
+              </Table.Table>
+              <Box marginTop={4} width="full">
+                <Link href={paymentFlow.returnUrl ?? 'https://island.is'}>
+                  <Button fluid>
+                    {formatMessage(generic.buttonFinishAndReturn)}
+                  </Button>
+                </Link>
+              </Box>
+            </>
+          }
+        />
+      </>
+    )
+  }
 
   return (
     <>
