@@ -305,7 +305,7 @@ jobs:
     needs:
       - prepare
     runs-on: arc-runners
-    timeout-minutes: 5
+    timeout-minutes: 15
     env:
       NX_BASE: ${{ needs.prepare.outputs.NX_BASE }}
     steps:
