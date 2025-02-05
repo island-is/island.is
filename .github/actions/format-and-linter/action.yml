@@ -28,11 +28,7 @@ runs:
         DISABLE_PROBLEMATIC: 'true'
       shell: bash
       run: |
-        set -euo pipefail
-        CHUNKS="$(./scripts/ci/generate-chunks.sh lint)"
-        if [[ "$CHUNKS" != "[]" ]]; then
-          echo "AFFECTED_PROJECTS={\"projects\":$CHUNKS}" >> "$GITHUB_OUTPUT"
-        fi
+        node scripts/ci/_get_affected_projects.mjs
     - name: Lint
       if: ${{ env.AFFECTED_PROJECTS != '' }}
       env:
