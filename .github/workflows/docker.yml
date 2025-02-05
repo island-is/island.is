@@ -235,6 +235,7 @@ jobs:
     name: Build ${{ matrix.project }}
     runs-on: arc-runners
     needs:
+      - prepare
       - deps
     strategy:
       fail-fast: false
