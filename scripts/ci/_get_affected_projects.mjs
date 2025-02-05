@@ -6,8 +6,8 @@ const DEFAULT_TARGET = 'lint';
 
 const getShowAllProjects = () => {
     return process.env.BRANCH && process.env.AFFECTED_ALL && process.env.AFFECTED_ALL === `7913-${process.env.BRANCH}` ||
-            process.env.NX_AFFECTED_ALL === 'true' ||
-            process.env.TEST_EVERYTHING === 'true';
+        process.env.NX_AFFECTED_ALL === 'true' ||
+        process.env.TEST_EVERYTHING === 'true';
 }
 
 export const getDefault = () => {
@@ -26,7 +26,7 @@ export const getAffectedProjectsArray = ({
     HEAD = process.env.HEAD ?? 'HEAD',
     TARGET = process.argv[2] ?? DEFAULT_TARGET
 } = {}) => {
-    
+
     const EXTRA_ARGS = SHOW_ALL_PROJECTS ? [] : ['--affected', '--base', BASE, '--head', HEAD];
     const COMMAND = `npx nx show projects --withTarget="${TARGET}" ${EXTRA_ARGS.join(' ')} --json`;
     const OUTPUT = JSON.parse(execSync(COMMAND, { encoding: 'utf-8' }));
@@ -43,20 +43,27 @@ export const getAffectedProjectsString = (props = {}) => {
 
 export const runLinterAffectedProjects = (_props = {}) => {
     const props = { ...getDefault(), ..._props };
+    console.log({ props });
     if (props.SHOW_ALL_PROJECTS) {
-        console.log(`Showing all projects for ${props.TARGET ?? DEFAULT_TARGET}`);
-        execSync(`npx nx run-many --parallel=${props.MAX_RUNNERS} --target=${props.TARGET ?? DEFAULT_TARGET} --all`, {encoding: 'utf-8'});
+        console.log(`Running all projects for ${props.TARGET ?? DEFAULT_TARGET}`);
+        execSync(`npx nx run-many --parallel=${props.MAX_RUNNERS} --target=${props.TARGET ?? DEFAULT_TARGET} --all`, {
+            encoding: 'utf-8',
+            stdio: 'inherit'
+        });
         return;
     }
     console.log(`Running ${props.TARGET ?? DEFAULT_TARGET} on affected projects`);
-    execSync(`npx nx affected --parallel=${props.MAX_RUNNERS} --target=${props.TARGET ?? DEFAULT_TARGET} --base=${props.BASE} --head=${props.HEAD}`, {encoding: 'utf-8'});
+    execSync(`npx nx affected --parallel=${props.MAX_RUNNERS} --target=${props.TARGET ?? DEFAULT_TARGET} --base=${props.BASE} --head=${props.HEAD}`, {
+        encoding: 'utf-8',
+        stdio: 'inherit'
+    });
 }
 
 if (import.meta.url === `file://${process.argv[1]}`) {
     if (IS_CI) {
         runLinterAffectedProjects();
     } else {
-        console.log(getAffectedProjectsArray());   
+        console.log(getAffectedProjectsArray());
     }
 
 }
