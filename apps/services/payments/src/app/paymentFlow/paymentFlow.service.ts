@@ -110,14 +110,14 @@ export class PaymentFlowService {
 
   private async getPayerName(payerNationalId: string) {
     if (!isValid(payerNationalId)) {
-      throw new Error(PaymentServiceCode.InvalidPayerNationalId)
+      throw new BadRequestException(PaymentServiceCode.InvalidPayerNationalId)
     }
 
     if (isCompany(payerNationalId)) {
       const company = await this.companyRegistryApi.getCompany(payerNationalId)
 
       if (!company) {
-        throw new Error(PaymentServiceCode.CompanyNotFound)
+        throw new BadRequestException(PaymentServiceCode.CompanyNotFound)
       }
 
       return company.name
@@ -128,7 +128,7 @@ export class PaymentFlowService {
     )
 
     if (!person) {
-      throw new Error(PaymentServiceCode.PersonNotFound)
+      throw new BadRequestException(PaymentServiceCode.PersonNotFound)
     }
 
     return person.nafn ?? ''
