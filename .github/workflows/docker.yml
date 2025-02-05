@@ -75,9 +75,6 @@ jobs:
       - name: Build arg prep
         id: args-prep
         run: |
-          node_image_version="$NODE_IMAGE_VERSION"
-          echo node-image-version="$node_image_version" >>"$GITHUB_OUTPUT"
-          yarn info --json @playwright/test | jq -r '.children.Version | "playwright-image-tag=v\(.)-focal"' >>"$GITHUB_OUTPUT"
 
       - name: Create matrix from input
         id: set-matrix
@@ -111,20 +108,23 @@ jobs:
               ]
             }')" | tee -a "$GITHUB_OUTPUT"
 
-  build:
-    name: Build ${{ matrix.project }}
-    runs-on: ${{ inputs.runners || 'arc-runners' }}
+  deps:
+    name: Build dependencies
+    runs-on: arc-runners
     needs: prepare
-    strategy:
-      fail-fast: false
-      matrix: ${{ fromJson(needs.prepare.outputs.matrix) }}
-      max-parallel: 1
 
     permissions:
       id-token: write # This is required for requesting the JWT for AWS/ECR login
       contents: read # This is required for actions/checkout
 
+    outputs:
+      creds: ${{ steps.creds.outputs }}
+      meta: ${{ steps.meta.outputs }}
+      common: ${{ steps.common.outputs }}
+
     steps:
+      - name: Check out repo
+        uses: actions/checkout@v4
       - name: Prepare arguments
         id: args
         env:
@@ -136,9 +136,6 @@ jobs:
           echo build-cache-local="type=local,src=/tmp,dest=/tmp,mode=max,enabled=${{ !!github.event.localrun }}" >>"$GITHUB_OUTPUT"
           echo build-cache="type=registry,image-manifest=true,oci-mediatypes=true,ref=$image_repository:cache,enabled=${{ !github.event.localrun }}" >>"$GITHUB_OUTPUT"
 
-      - name: Check out repo
-        uses: actions/checkout@v4
-
       - name: Configure AWS Credentials
         if: ${{ !github.event.localrun }}
         id: aws-creds
@@ -149,22 +146,114 @@ jobs:
           # Identical to usage in push.yml
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          # TODO: Use this instead of aws-{access,secret}, but needs proper roles & policies
-          # role-to-assume: ${{ vars.AWS_ECR_ROLE }}
-
       - name: Log in to Amazon ECR
         if: ${{ steps.aws-creds.conclusion == 'success' }}
         id: ecr-login
         uses: aws-actions/amazon-ecr-login@v2
-
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+        with:
+          driver: docker-container
+          # We get rate-limited if using docker.io's image for buildkit.
+          driver-opts: |
+            image=${{ env.AWS_ECR_REPO_BASE }}/moby/buildkit:buildx-stable-1
+          install: true
+          use: true
+      - name: Prepare creds
+        id: creds
+        run: |
+          cat <<EOF >>"$GITHUB_OUTPUT"
+          registry=${{ steps.ecr-login.outputs.registry }}
+          username=${{ steps.ecr-login.outputs[ format('docker_username_{0}',env.IMAGE_REGISTRY) ] }}
+          password=${{ steps.ecr-login.outputs[ format('docker_password_{0}',env.IMAGE_REGISTRY) ] }}
+          EOF
       - name: Log in Docker
         if: ${{ steps.ecr-login.conclusion == 'success' }}
         id: docker-login
         uses: docker/login-action@v3
         with:
-          registry: ${{ steps.ecr-login.outputs.registry }}
-          username: ${{ steps.ecr-login.outputs[ format('docker_username_{0}',env.IMAGE_REGISTRY) ] }}
-          password: ${{ steps.ecr-login.outputs[ format('docker_password_{0}',env.IMAGE_REGISTRY) ] }}
+          registry: ${{ steps.creds.outputs.registry }}
+          username: ${{ steps.creds.outputs.username }}
+          password: ${{ steps.creds.outputs.password }}
+
+      - name: Common config
+        id: common
+        env:
+          build_args: |
+            NODE_IMAGE_VERSION=${{ needs.prepare.outputs.node-image-version }}
+            PLAYWRIGHT_IMAGE_TAG=${{ needs.prepare.outputs.playwright-image-tag }}
+            DOCKER_IMAGE_REGISTRY=${{ env.ECR_PULLTHROUGH_CACHE }}
+          cache_from: |
+            ${{ steps.args.outputs.build-cache-local }}
+            ${{ steps.args.outputs.build-cache }}
+          cache_to: |
+            ${{ steps.args.outputs.build-cache-local }},mode=max
+            ${{ steps.args.outputs.build-cache }},mode=max
+        run: |
+          cat <<EOF >>"$GITHUB_OUTPUT"
+          file=scripts/ci/Dockerfile
+          push=false
+          build-args=$build_args
+          cache-from=$cache_from
+          cache-to=$cache_to
+          EOF
+
+      - name: Docker build/cache dependencies
+        uses: docker/build-push-action@v6
+        with:
+          target: deps
+          context: .
+          file: ${{ steps.common.outputs.file }}
+          push: ${{ steps.common.outputs.push }}
+          build-args: ${{ steps.common.outputs.build-args }}
+          cache-from: ${{ steps.common.outputs.cache-from }}
+          cache-to: ${{ steps.common.outputs.cache-to }}
+      - name: Docker build/cache dependencies
+        uses: docker/build-push-action@v6
+        with:
+          target: output-base
+          context: .
+          file: ${{ steps.common.outputs.file }}
+          push: ${{ steps.common.outputs.push }}
+          build-args: ${{ steps.common.outputs.build-args }}
+          cache-from: ${{ steps.common.outputs.cache-from }}
+          cache-to: ${{ steps.common.outputs.cache-to }}
+      - name: Docker build/cache dependencies
+        uses: docker/build-push-action@v6
+        with:
+          target: base-node-with-pg
+          context: .
+          file: ${{ steps.common.outputs.file }}
+          push: ${{ steps.common.outputs.push }}
+          build-args: ${{ steps.common.outputs.build-args }}
+          cache-from: ${{ steps.common.outputs.cache-from }}
+          cache-to: ${{ steps.common.outputs.cache-to }}
+
+  build:
+    name: Build ${{ matrix.project }}
+    runs-on: ${{ inputs.runners || 'arc-runners' }}
+    needs:
+      - deps
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJson(needs.prepare.outputs.matrix) }}
+      max-parallel: 1
+
+    permissions:
+      id-token: write # This is required for requesting the JWT for AWS/ECR login
+      contents: read # This is required for actions/checkout
+
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v4
+      - name: Log in Docker
+        if: ${{ steps.ecr-login.conclusion == 'success' }}
+        id: docker-login
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ needs.deps.outputs.creds.registry }}
+          username: ${{ needs.deps.outputs.creds.username }}
+          password: ${{ needs.deps.outputs.creds.password }}
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -201,84 +290,20 @@ jobs:
             type=raw,value=${{ inputs.version }},enable=${{ !!inputs.version }}
             type=raw,value=mcgh-${{ github.event.pull_request.merge_commit_sha }}
 
-      - name: Get cache
-        uses: ./.github/actions/get-cache
-        with:
-          github-token: ${{ github.token }}
-          enable-cache: 'node_modules'
-
-      - name: Godegen
-        run: |
-          # Cached by GitHub Actions
-          corepack enable
-          # Cached by get-cache
-          yarn install --immutable
-          # Cached by Nx Cloud
-          yarn codegen
-
-      - name: Docker build/cache dependencies
-        uses: docker/build-push-action@v6
-        with:
-          context: .
-          file: scripts/ci/Dockerfile
-          push: false
-          target: deps
-          secrets: |
-            nx_cloud_access_token=${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
-          build-args: |
-            NODE_IMAGE_VERSION=${{ needs.prepare.outputs.node-image-version }}
-            PLAYWRIGHT_IMAGE_TAG=${{ needs.prepare.outputs.playwright-image-tag }}
-            DOCKER_IMAGE_REGISTRY=${{ env.ECR_PULLTHROUGH_CACHE }}
-            ${{ inputs.build-args }}
-          cache-from: |
-            ${{ steps.args.outputs.build-cache-local }}
-            ${{ steps.args.outputs.build-cache }}
-          cache-to: |
-            ${{ steps.args.outputs.build-cache-local }},mode=max
-            ${{ steps.args.outputs.build-cache }},mode=max
-
-      - name: Docker build/cache output base
-        uses: docker/build-push-action@v6
-        with:
-          context: .
-          file: scripts/ci/Dockerfile
-          push: false
-          target: output-base
-          secrets: |
-            nx_cloud_access_token=${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
-          build-args: |
-            NODE_IMAGE_VERSION=${{ needs.prepare.outputs.node-image-version }}
-            PLAYWRIGHT_IMAGE_TAG=${{ needs.prepare.outputs.playwright-image-tag }}
-            DOCKER_IMAGE_REGISTRY=${{ env.ECR_PULLTHROUGH_CACHE }}
-            ${{ inputs.build-args }}
-          cache-from: |
-            ${{ steps.args.outputs.build-cache-local }}
-            ${{ steps.args.outputs.build-cache }}
-          cache-to: |
-            ${{ steps.args.outputs.build-cache-local }},mode=max
-            ${{ steps.args.outputs.build-cache }},mode=max
-
       - name: Build and push Docker image
         uses: docker/build-push-action@v6
         with:
+          target: output-${{ matrix.docker }}
           context: .
-          file: scripts/ci/Dockerfile
+          file: ${{ needs.deps.outputs.common.file }}
           push: ${{ !github.event.localrun }}
           labels: ${{ steps.meta.outputs.labels }}
           tags: ${{ steps.meta.outputs.tags }}
-          target: output-${{ matrix.docker }}
           secrets: |
             nx_cloud_access_token=${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
           build-args: |
-            NODE_IMAGE_VERSION=${{ needs.prepare.outputs.node-image-version }}
-            APP=${{ matrix.project }}
-            PLAYWRIGHT_IMAGE_TAG=${{ needs.prepare.outputs.playwright-image-tag }}
-            DOCKER_IMAGE_REGISTRY=${{ env.ECR_PULLTHROUGH_CACHE }}
+            ${{ needs.deps.outputs.common.build-args }}
             ${{ inputs.build-args }}
           # Caching final images doesn't make sense when this should only run if the project is affected (changed)
-          cache-from: |
-            ${{ steps.args.outputs.build-cache-local }}
-            ${{ steps.args.outputs.build-cache }}
-          cache-to: |
-            ${{ steps.args.outputs.build-cache-local }},mode=min
-            ${{ steps.args.outputs.build-cache }},mode=min
+          cache-from: ${{ steps.deps.outputs.common.cache-from }}
+          cache-to: ${{ steps.deps.outputs.common.cache-to }}
