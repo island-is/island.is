@@ -1,6 +1,5 @@
 // @ts-check
 import { execSync } from 'child_process';
-import { setOutput } from '@actions/core';
 
 const IS_CI = process.env.CI === 'true';
 const DEFAULT_TARGET = 'lint';
@@ -32,18 +31,18 @@ export const getAffectedProjectsString = (props = {}) => {
     return projects.join(',');
 }
 
-export const setAffectedProjects = (props = {}) => {
+export const runLinterAffectedProjects = (props = {}) => {
     const chunks = getAffectedProjectsString(props);
     if (!chunks) {
         return;
     }
     console.log(`Affected projects for ${props.target ?? DEFAULT_TARGET}: ${chunks}`);
-    setOutput('AFFECTED_PROJECTS', `{"projects":${chunks}}`);
+    execSync(`npx nx run-many --target=${props.target ?? DEFAULT_TARGET} --projects=${chunks}`);
 }
 
 if (import.meta.url === `file://${process.argv[1]}`) {
     if (IS_CI) {
-        setAffectedProjects();
+        runLinterAffectedProjects();
     } else {
         console.log(getAffectedProjectsArray());   
     }

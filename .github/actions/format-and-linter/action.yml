@@ -1,9 +1,6 @@
 name: 'Format and linter'
 description: 'Action to format and linter'
 inputs:
-  max-jobs: 
-    description: 'Max jobs'
-    default: '2'
   push-changes:
     description: 'Should push changes'
     default: 'false'
@@ -20,15 +17,9 @@ runs:
         else
           ./infra/scripts/ci/git-check-dirty.sh "/" "nx format:write" "dirtybot"
         fi
-    - name: Get Linter Jobs
+    - name: Lint
       id: get-linter-jobs
       shell: bash
       run: |
         node scripts/ci/_get_affected_projects.mjs
-    - name: Lint
-      if: ${{ env.AFFECTED_PROJECTS != '' }}
-      env:
-        MAX_JOBS: ${{ inputs.max-jobs }}
-      shell: bash
-      run: |
-        ./scripts/ci/run-in-parallel-native.sh lint
+    
