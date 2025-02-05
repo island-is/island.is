@@ -1519,6 +1519,7 @@
     "/Verdict/getVerdicts": {
       "post": {
         "tags": ["Verdict"],
+        "summary": "Search verdicts.\r\nUsing advanced key search and multiple criteria parameters.\r\nUse \"orderBy\" expression parameter. Syntax: sort_field [ ASC | DESC ] [ , ...n ]\r\nSupported fields for sort_field: { Court | Casetype | CaseNumber | Category | Title | VerdictDate | PublishDate }\r\nSamples: \"Court ASC\", \"Court, VerdictDate DESC\"",
         "operationId": "GetVerdicts",
         "consumes": ["application/json", "text/json"],
         "produces": ["application/json", "text/json"],
@@ -1526,6 +1527,7 @@
           {
             "name": "requestData",
             "in": "body",
+            "description": "",
             "required": true,
             "schema": { "$ref": "#/definitions/GetVerdictsRequest" }
           },
@@ -1550,11 +1552,18 @@
     "/Verdict/{id}": {
       "get": {
         "tags": ["Verdict"],
+        "summary": "Get a detailed verdict data specified by unique ID",
         "operationId": "GetVerdict",
         "consumes": [],
         "produces": ["application/json", "text/json"],
         "parameters": [
-          { "name": "id", "in": "path", "required": true, "type": "string" },
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Unique ID of the published verdict",
+            "required": true,
+            "type": "string"
+          },
           {
             "name": "Token",
             "in": "header",
@@ -1576,6 +1585,7 @@
     "/Verdict/publishVerdict": {
       "post": {
         "tags": ["Verdict"],
+        "summary": "Register or update a verdict in public registry by court, external case id and number, title and announcement date.\r\nIf case by specified court and external id is already published then it is updated",
         "operationId": "PublishVerdict",
         "consumes": ["application/json", "text/json"],
         "produces": ["application/json", "text/json"],
@@ -1583,6 +1593,7 @@
           {
             "name": "requestData",
             "in": "body",
+            "description": "",
             "required": true,
             "schema": { "$ref": "#/definitions/PublishVerdictRequest" }
           },
@@ -1607,6 +1618,7 @@
     "/Verdict/addVerdictDocument": {
       "post": {
         "tags": ["Verdict"],
+        "summary": "Upload a PDF representation of the verdict.\r\nUnique id of the published verdict: verdictID\r\nBase64 encoded content of the PDF document: content",
         "operationId": "AddVerdictDocument",
         "consumes": ["application/json", "text/json"],
         "produces": ["application/json", "text/json"],
@@ -1614,6 +1626,7 @@
           {
             "name": "requestData",
             "in": "body",
+            "description": "",
             "required": true,
             "schema": { "$ref": "#/definitions/AddVerdictDocumentRequest" }
           },
@@ -1638,6 +1651,7 @@
     "/Verdict/getCaseTypes": {
       "post": {
         "tags": ["Verdict"],
+        "summary": "Get list of case templates in use",
         "operationId": "GetCaseTypes",
         "consumes": [],
         "produces": ["application/json", "text/json"],
@@ -1663,6 +1677,7 @@
     "/Verdict/getCaseCategories": {
       "post": {
         "tags": ["Verdict"],
+        "summary": "Get list of case categories in use",
         "operationId": "GetCaseCategories",
         "consumes": [],
         "produces": ["application/json", "text/json"],
@@ -1688,6 +1703,7 @@
     "/Verdict/getKeywords": {
       "post": {
         "tags": ["Verdict"],
+        "summary": "Get list of keywords",
         "operationId": "GetKeywords",
         "consumes": [],
         "produces": ["application/json", "text/json"],
@@ -2831,8 +2847,8 @@
       "properties": {
         "searchTerm": { "type": "string" },
         "courtLevel": { "type": "string" },
-        "caseCategory": { "type": "string" },
-        "caseType": { "type": "string" },
+        "caseCategories": { "type": "array", "items": { "type": "string" } },
+        "caseTypes": { "type": "array", "items": { "type": "string" } },
         "caseNumber": { "type": "string" },
         "title": { "type": "string" },
         "keywords": { "type": "array", "items": { "type": "string" } },
@@ -2973,10 +2989,22 @@
     "AddVerdictDocumentRequest": {
       "type": "object",
       "properties": {
-        "verdictID": { "type": "string" },
-        "subject": { "type": "string" },
-        "fileName": { "type": "string" },
-        "content": { "type": "string" }
+        "verdictID": {
+          "description": "Record ID of the immediate parent.\r\nMatches both container case in GoPro and verdict ID from the custom table.",
+          "type": "string"
+        },
+        "subject": {
+          "description": "Subject/title of the new document",
+          "type": "string"
+        },
+        "fileName": {
+          "description": "File name of the document",
+          "type": "string"
+        },
+        "content": {
+          "description": "Binary content that will be uploaed. Represented as Base64 encoded string",
+          "type": "string"
+        }
       }
     },
     "GetCaseTypesResponse": {

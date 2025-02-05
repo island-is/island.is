@@ -1,11 +1,8 @@
 import { CacheField } from '@island.is/nest/graphql'
-import { Field, Int, ObjectType } from '@nestjs/graphql'
+import { Field, ObjectType } from '@nestjs/graphql'
 
 @ObjectType('WebVerdictCaseCategory')
 class CaseCategory {
-  @Field(() => Int)
-  id!: number
-
   @Field()
   label!: string
 }

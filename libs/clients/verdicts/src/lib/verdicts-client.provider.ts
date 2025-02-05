@@ -1,14 +1,22 @@
-import { LazyDuringDevScope } from '@island.is/nest/config'
-import { createEnhancedFetch } from '@island.is/clients/middlewares'
-import { SecurityApi, VerdictApi, Configuration } from '../../gen/fetch'
-import { VerdictsClientConfig } from './verdicts-client.config'
 import { ConfigType } from '@nestjs/config'
+import { createEnhancedFetch } from '@island.is/clients/middlewares'
+import { LazyDuringDevScope } from '@island.is/nest/config'
+import {
+  DefaultApi,
+  Configuration as SupremeCourtConfiguration,
+} from '../../gen/fetch/supreme-court'
+import {
+  SecurityApi,
+  VerdictApi,
+  Configuration as GoProConfiguration,
+} from '../../gen/fetch/gopro'
+import { VerdictsClientConfig } from './verdicts-client.config'
 
-export const ApiConfig = {
-  provide: 'VerdictsClientConfig',
+export const GoProApiConfig = {
+  provide: 'GoProVerdictApiConfig',
   scope: LazyDuringDevScope,
   useFactory: (config: ConfigType<typeof VerdictsClientConfig>) => {
-    return new Configuration({
+    return new GoProConfiguration({
       fetchApi: createEnhancedFetch({
         name: 'clients-gopro-verdicts',
         logErrorResponseBody: true,
@@ -23,10 +31,34 @@ export const ApiConfig = {
   inject: [VerdictsClientConfig.KEY],
 }
 
-export const ApiProviders = [SecurityApi, VerdictApi].map((api) => ({
+export const GoProApiProviders = [SecurityApi, VerdictApi].map((api) => ({
   provide: api,
-  useFactory: (config: Configuration) => {
+  useFactory: (config: GoProConfiguration) => {
     return new api(config)
   },
-  inject: [ApiConfig.provide],
+  inject: [GoProApiConfig.provide],
 }))
+
+export const SupremeCourtApiConfig = {
+  provide: 'SupremeCourtVerdictApiConfig',
+  scope: LazyDuringDevScope,
+  useFactory: () => {
+    return new SupremeCourtConfiguration({
+      fetchApi: createEnhancedFetch({
+        name: 'clients-supreme-court-verdicts',
+        logErrorResponseBody: true,
+      }),
+      headers: {
+        Accept: 'application/json',
+      },
+    })
+  },
+}
+
+export const SupremeCourtApiProviders = [
+  {
+    provide: DefaultApi,
+    useFactory: (config: SupremeCourtConfiguration) => new DefaultApi(config),
+    inject: [SupremeCourtApiConfig.provide],
+  },
+]

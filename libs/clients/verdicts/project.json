@@ -19,8 +19,10 @@
       "executor": "nx:run-commands",
       "options": {
         "commands": [
-          "curl https://foris.gopro.net/domssm/services/swagger/docs/v1 > src/clientConfig.json",
-          "prettier --write src/clientConfig.json"
+          "curl https://foris.gopro.net/domssm/services/swagger/docs/v1 > src/goproClientConfig.json",
+          "prettier --write src/goproClientConfig.json",
+          "curl https://dom-haestirettur.eu.ngrok.io/api/v2/docs.yaml > src/supremeCourtClientConfig.yaml",
+          "prettier --write src/supremeCourtClientConfig.yaml"
         ],
         "parallel": false,
         "cwd": "libs/clients/verdicts"
@@ -29,9 +31,15 @@
     "codegen/backend-client": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "yarn openapi-generator -o libs/clients/verdicts/gen/fetch -i libs/clients/verdicts/src/clientConfig.json --skip-validate-spec"
+        "commands": [
+          "yarn openapi-generator -o libs/clients/verdicts/gen/fetch/gopro -i libs/clients/verdicts/src/goproClientConfig.json --skip-validate-spec",
+          "yarn openapi-generator -o libs/clients/verdicts/gen/fetch/supreme-court -i libs/clients/verdicts/src/supremeCourtClientConfig.yaml"
+        ]
       },
-      "outputs": ["{projectRoot}/gen/fetch"]
+      "outputs": [
+        "{projectRoot}/gen/fetch/gopro",
+        "{projectRoot}/gen/fetch/supreme-court"
+      ]
     }
   }
 }

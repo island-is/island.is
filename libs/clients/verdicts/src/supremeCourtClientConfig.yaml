@@ -1,0 +1,178 @@
+openapi: 3.0.0
+info:
+  title: Verdicts API
+  version: 2.0.0
+  description: API for accessing court verdicts and related data
+servers:
+  - url: https://dom-haestirettur.eu.ngrok.io
+    description: Development server
+
+paths:
+  /api/v2/Verdict/{id}:
+    get:
+      summary: Get a specific verdict by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  item:
+                    $ref: '#/components/schemas/DetailedVerdictData'
+                  succeeded:
+                    type: boolean
+                  returnCode:
+                    type: integer
+                  message:
+                    type: string
+
+  /api/v2/Verdict/getVerdicts:
+    get:
+      summary: Get all verdicts
+      parameters:
+        - name: orderBy
+          in: query
+          schema:
+            type: string
+          description: "Field and order (e.g., 'caseNumber ASC')"
+        - name: page
+          in: query
+          schema:
+            type: integer
+        - name: limit
+          in: query
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/DetailedVerdictData'
+                  total:
+                    type: integer
+                  currentPage:
+                    type: integer
+                  itemsPerPage:
+                    type: integer
+                  succeeded:
+                    type: boolean
+                  returnCode:
+                    type: integer
+                  message:
+                    type: string
+
+  /api/v2/Verdict/getKeywords:
+    get:
+      summary: Get all keywords
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/KeywordInfo'
+                  succeeded:
+                    type: boolean
+                  returnCode:
+                    type: integer
+                  message:
+                    type: string
+
+  /api/v2/Verdict/getCaseTypes:
+    get:
+      summary: Get all case types
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/CaseTypeInfo'
+                  succeeded:
+                    type: boolean
+                  returnCode:
+                    type: integer
+                  message:
+                    type: string
+
+components:
+  schemas:
+    DetailedVerdictData:
+      type: object
+      properties:
+        id:
+          type: string
+        court:
+          type: string
+        caseId:
+          type: string
+        caseNumber:
+          type: string
+        caseType:
+          type: string
+        title:
+          type: string
+        verdictHtml:
+          type: string
+        verdictDate:
+          type: string
+          format: date-time
+        keywords:
+          type: array
+          items:
+            type: string
+        lawCitations:
+          type: array
+          items:
+            type: string
+        judges:
+          type: array
+          items:
+            $ref: '#/components/schemas/JuryJudge'
+
+    JuryJudge:
+      type: object
+      properties:
+        isPresident:
+          type: boolean
+        name:
+          type: string
+        title:
+          type: string
+
+    KeywordInfo:
+      type: object
+      properties:
+        label:
+          type: string
+
+    CaseTypeInfo:
+      type: object
+      properties:
+        label:
+          type: string

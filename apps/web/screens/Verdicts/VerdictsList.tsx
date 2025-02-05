@@ -75,12 +75,12 @@ const VerdictsList: Screen<VerdictsListProps> = ({
     'page',
     parseAsInteger
       .withDefault(1)
-      .withOptions({ clearOnDefault: true, shallow: false, scroll: true }),
+      .withOptions({ clearOnDefault: true, shallow: true, scroll: true }),
   )
-  const [caseTypeIds, setCaseTypeIds] = useQueryState(
+  const [selectedCaseTypes, setSelectedCaseTypes] = useQueryState(
     'caseTypes',
     parseAsArrayOf(
-      parseAsInteger.withOptions({
+      parseAsString.withOptions({
         clearOnDefault: true,
         shallow: false,
       }),
@@ -91,10 +91,10 @@ const VerdictsList: Screen<VerdictsListProps> = ({
         shallow: false,
       }),
   )
-  const [caseCategoryIds, setCaseCategoryIds] = useQueryState(
+  const [selectedCaseCategories, setSelectedCaseCategories] = useQueryState(
     'caseCategories',
     parseAsArrayOf(
-      parseAsInteger.withOptions({
+      parseAsString.withOptions({
         clearOnDefault: true,
         shallow: false,
       }),
@@ -105,10 +105,10 @@ const VerdictsList: Screen<VerdictsListProps> = ({
         shallow: false,
       }),
   )
-  const [keywordIds, setKeywordIds] = useQueryState(
+  const [selectedKeywords, setSelectedKeywords] = useQueryState(
     'keywords',
     parseAsArrayOf(
-      parseAsInteger.withOptions({
+      parseAsString.withOptions({
         clearOnDefault: true,
         shallow: false,
       }),
@@ -122,19 +122,19 @@ const VerdictsList: Screen<VerdictsListProps> = ({
 
   const caseTypeOptions = useMemo(() => {
     return caseTypes.map((type) => ({
-      value: type.id,
+      value: type.label,
       label: type.label,
     }))
   }, [caseTypes])
   const caseCategoryOptions = useMemo(() => {
     return caseCategories.map((category) => ({
-      value: category.id,
+      value: category.label,
       label: category.label,
     }))
   }, [caseCategories])
   const keywordOptions = useMemo(() => {
     return keywords.map((keyword) => ({
-      value: keyword.id,
+      value: keyword.label,
       label: keyword.label,
     }))
   }, [keywords])
@@ -171,7 +171,7 @@ const VerdictsList: Screen<VerdictsListProps> = ({
               isMulti={true}
               size="sm"
               onChange={(newValue) => {
-                setCaseTypeIds(newValue.map(({ value }) => value))
+                setSelectedCaseTypes(newValue.map(({ value }) => value))
                 setPage(1)
               }}
             />
@@ -182,7 +182,7 @@ const VerdictsList: Screen<VerdictsListProps> = ({
               isMulti={true}
               size="sm"
               onChange={(newValue) => {
-                setCaseCategoryIds(newValue.map(({ value }) => value))
+                setSelectedCaseCategories(newValue.map(({ value }) => value))
                 setPage(1)
               }}
             />
@@ -193,7 +193,7 @@ const VerdictsList: Screen<VerdictsListProps> = ({
               isMulti={true}
               size="sm"
               onChange={(newValue) => {
-                setKeywordIds(newValue.map(({ value }) => value))
+                setSelectedKeywords(newValue.map(({ value }) => value))
                 setPage(1)
               }}
             />
@@ -300,15 +300,13 @@ const VerdictsList: Screen<VerdictsListProps> = ({
 
 VerdictsList.getProps = async ({ apolloClient, query }) => {
   const searchTerm = parseAsString.withDefault('').parseServerSide(query.q)
-  const caseTypeIds = parseAsArrayOf(parseAsInteger).parseServerSide(
-    query.caseTypes,
-  )
-  const caseCategoryIds = parseAsArrayOf(parseAsInteger).parseServerSide(
+  const caseCategories = parseAsArrayOf(parseAsString).parseServerSide(
     query.caseCategories,
   )
-  const keywordIds = parseAsArrayOf(parseAsInteger).parseServerSide(
-    query.keywords,
+  const caseTypes = parseAsArrayOf(parseAsString).parseServerSide(
+    query.caseTypes,
   )
+  const keywords = parseAsArrayOf(parseAsString).parseServerSide(query.keywords)
   const page = parseAsInteger.withDefault(1).parseServerSide(query.page)
 
   const [
@@ -322,9 +320,9 @@ VerdictsList.getProps = async ({ apolloClient, query }) => {
       variables: {
         input: {
           searchTerm,
-          caseTypeIds,
-          caseCategoryIds,
-          keywordIds,
+          caseCategories,
+          caseTypes,
+          keywords,
           page,
         },
       },

@@ -38,7 +38,6 @@ export const GET_VERDICT_CASE_TYPES_QUERY = gql`
   query GetVerdictCaseTypes {
     webVerdictCaseTypes {
       caseTypes {
-        id
         label
       }
     }
@@ -49,7 +48,6 @@ export const GET_VERDICT_CASE_CATEGORIES_QUERY = gql`
   query GetVerdictCaseCategories {
     webVerdictCaseCategories {
       caseCategories {
-        id
         label
       }
     }
@@ -60,7 +58,6 @@ export const GET_VERDICT_KEYWORDS_QUERY = gql`
   query GetVerdictKeywords {
     webVerdictKeywords {
       keywords {
-        id
         label
       }
     }

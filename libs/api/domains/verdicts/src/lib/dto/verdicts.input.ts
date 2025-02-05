@@ -9,12 +9,12 @@ export class VerdictsInput {
   @Field(() => Int, { nullable: true })
   page?: number
 
-  @Field(() => [Int], { nullable: true })
-  caseTypeIds?: number[]
+  @Field(() => [String], { nullable: true })
+  caseTypes?: string[]
 
-  @Field(() => [Int], { nullable: true })
-  caseCategoryIds?: number[]
+  @Field(() => [String], { nullable: true })
+  caseCategories?: string[]
 
-  @Field(() => [Int], { nullable: true })
-  keywordIds?: number[]
+  @Field(() => [String], { nullable: true })
+  keywords?: string[]
 }
