@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from 'react'
+import React, { useCallback, useMemo, useState } from 'react'
 import { FormattedDate, useIntl } from 'react-intl'
 import { Alert, FlatList, View } from 'react-native'
 import {
