@@ -1,32 +1,71 @@
-import { useMemo } from 'react'
+import { Dispatch, SetStateAction, useMemo, useState } from 'react'
+import InputMask from 'react-input-mask'
 import { useIntl } from 'react-intl'
 
-import { Box, Icon, Select, Tag } from '@island.is/island-ui/core'
-import { IndictmentCountOffense } from '@island.is/judicial-system/types'
+import { Box, Icon, Input, Select, Tag } from '@island.is/island-ui/core'
+import {
+  IndictmentCountOffense,
+  SubstanceMap,
+} from '@island.is/judicial-system/types'
 import { SectionHeading } from '@island.is/judicial-system-web/src/components'
-import { Case } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  Case,
+  Offense,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import { TempIndictmentCount } from '@island.is/judicial-system-web/src/types'
 import { isNonEmptyArray } from '@island.is/judicial-system-web/src/utils/arrayHelpers'
+import {
+  removeErrorMessageIfValid,
+  validateAndSetErrorMessage,
+} from '@island.is/judicial-system-web/src/utils/formHelper'
 import { UpdateIndictmentCount } from '@island.is/judicial-system-web/src/utils/hooks'
 import useOffenses from '@island.is/judicial-system-web/src/utils/hooks/useOffenses'
 
 import { indictmentCount as strings } from '../IndictmentCount.strings'
 import { indictmentCountEnum as enumStrings } from '../IndictmentCountEnum.strings'
 
-// TODO: it seems like we need to commit to server AND update the case state
+const getUpdatedOffenses = (
+  currentOffenses: Offense[],
+  updatedOffense: Offense,
+) => [
+  ...currentOffenses.filter((o) => o.id !== updatedOffense.id),
+  updatedOffense,
+]
+const getDrunkDriving = (offenses: Offense[]) =>
+  offenses.find((o) => o.offense === IndictmentCountOffense.DRUNK_DRIVING)
+
 export const Offenses = ({
   workingCase,
+  setWorkingCase,
   indictmentCount,
   handleIndictmentCountChanges,
+  updateIndictmentCountState,
 }: {
   workingCase: Case
+  setWorkingCase: Dispatch<SetStateAction<Case>>
   indictmentCount: TempIndictmentCount
-  handleIndictmentCountChanges: (update: UpdateIndictmentCount) => void
+  handleIndictmentCountChanges: (
+    update: UpdateIndictmentCount,
+    updatedOffenses?: Offense[],
+  ) => void
+  updateIndictmentCountState: (
+    indictmentCountId: string,
+    update: UpdateIndictmentCount,
+    setWorkingCase: Dispatch<SetStateAction<Case>>,
+    updatedOffenses?: Offense[],
+  ) => void
 }) => {
   const { formatMessage } = useIntl()
-  const { createOffense, deleteOffense } = useOffenses()
+  const [bloodAlcoholContentErrorMessage, setBloodAlcoholContentErrorMessage] =
+    useState<string>('')
 
-  const { offenses } = indictmentCount
+  const { createOffense, updateOffense, deleteOffense } = useOffenses()
+
+  const offenses = useMemo(
+    () => indictmentCount.offenses ?? [],
+    [indictmentCount.offenses],
+  )
+  const drunkDrivingOffense = getDrunkDriving(offenses)
 
   const offensesOptions = useMemo(
     () =>
@@ -38,6 +77,84 @@ export const Offenses = ({
     [formatMessage, offenses],
   )
 
+  // handlers
+  const handleCreateOffense = async (
+    selectedOffense: IndictmentCountOffense,
+  ) => {
+    const hasOffense = offenses?.some((o) => o.offense === selectedOffense)
+    console.log({hasOffense, offenses})
+    if (!hasOffense) {
+      const newOffense = await createOffense(
+        workingCase.id,
+        indictmentCount.id,
+        selectedOffense,
+      )
+      if (newOffense) {
+        const updatedOffenses = [...(offenses || []), newOffense]
+        // add the new offense to the offenses on the indictment count state
+        updateIndictmentCountState(
+          indictmentCount.id,
+          {},
+          setWorkingCase,
+          updatedOffenses,
+        )
+      }
+    }
+  }
+
+  const handleDeleteOffense = async (
+    offenseId: string,
+    offense: IndictmentCountOffense,
+  ) => {
+    await deleteOffense(workingCase.id, indictmentCount.id, offenseId)
+    const updatedOffenses = offenses?.filter((o) => o.id !== offenseId)
+
+    // handle the offenses state on the indictment count
+    updateIndictmentCountState(
+      indictmentCount.id,
+      {},
+      setWorkingCase,
+      updatedOffenses,
+    )
+
+    // handle changes on indictment count impacted by deleting an offense
+    handleIndictmentCountChanges({
+      ...(offense === IndictmentCountOffense.SPEEDING && {
+        recordedSpeed: null,
+        speedLimit: null,
+      }),
+    })
+  }
+
+  const handleAlcoholSubstanceUpdate = async (
+    offense: Offense,
+    alcoholValue: string,
+  ) => {
+    const offenseToBeUpdated = {
+      substances: {
+        ...offense.substances,
+        ALCOHOL: alcoholValue,
+      } as SubstanceMap,
+    }
+    const updatedOffense = await updateOffense(
+      workingCase.id,
+      indictmentCount.id,
+      offense.id,
+      offenseToBeUpdated,
+    )
+
+    if (updatedOffense) {
+      const updatedOffenses = getUpdatedOffenses(offenses, updatedOffense)
+      updateIndictmentCountState(
+        indictmentCount.id,
+        {},
+        setWorkingCase,
+        updatedOffenses,
+      )
+
+      handleIndictmentCountChanges({}, updatedOffenses)
+    }
+  }
 
   return (
     <>
@@ -52,18 +169,9 @@ export const Offenses = ({
           options={offensesOptions}
           label={formatMessage(strings.incidentLabel)}
           placeholder={formatMessage(strings.incidentPlaceholder)}
-          onChange={async (so) => {
-            const selectedOffense = so?.value as IndictmentCountOffense
-            const hasOffense = offenses?.some((o) => o.offense === selectedOffense)
-            if (!hasOffense) {
-              const offense = await createOffense(
-                workingCase.id,
-                indictmentCount.id,
-                selectedOffense,
-              )
-            }
-            // TODO: do we need to update some state as well? yes
-          }}
+          onChange={async (so) =>
+            handleCreateOffense(so?.value as IndictmentCountOffense)
+          }
           value={null}
           required
         />
@@ -84,21 +192,7 @@ export const Offenses = ({
               >
                 <Tag
                   variant="darkerBlue"
-                  onClick={async () => {
-                    await deleteOffense(
-                      workingCase.id,
-                      indictmentCount.id,
-                      offenseId,
-                    )
-
-                    // TODO: update state
-                    handleIndictmentCountChanges({
-                      ...(offense === IndictmentCountOffense.SPEEDING && {
-                        recordedSpeed: null,
-                        speedLimit: null,
-                      }),
-                    })
-                  }}
+                  onClick={async () => handleDeleteOffense(offenseId, offense)}
                 >
                   <Box display="flex" alignItems="center">
                     {formatMessage(enumStrings[offense])}
@@ -108,6 +202,79 @@ export const Offenses = ({
               </Box>
             )
           })}
+        </Box>
+      )}
+      {drunkDrivingOffense && (
+        <Box marginBottom={2}>
+          <SectionHeading
+            title={formatMessage(strings.bloodAlcoholContentTitle)}
+            heading="h4"
+            marginBottom={2}
+          />
+          <InputMask
+            mask={'9,99'}
+            maskPlaceholder={null}
+            value={drunkDrivingOffense.substances?.ALCOHOL ?? ''}
+            onChange={async (event) => {
+              const alcoholValue = event.target.value
+              removeErrorMessageIfValid(
+                ['empty'],
+                alcoholValue,
+                bloodAlcoholContentErrorMessage,
+                setBloodAlcoholContentErrorMessage,
+              )
+              const updatedOffense = {
+                ...drunkDrivingOffense,
+                substances: {
+                  ...drunkDrivingOffense.substances,
+                  ALCOHOL: alcoholValue,
+                } as SubstanceMap,
+              }
+              const updatedOffenses = getUpdatedOffenses(
+                offenses,
+                updatedOffense,
+              )
+
+              // only update state, not server
+              updateIndictmentCountState(
+                indictmentCount.id,
+                {},
+                setWorkingCase,
+                updatedOffenses,
+              )
+            }}
+            onBlur={async (event) => {
+              const alcoholValue =
+                event.target.value.length > 0
+                  ? `${event.target.value}${'0,00'.slice(
+                      event.target.value.length,
+                    )}`
+                  : event.target.value
+
+              validateAndSetErrorMessage(
+                ['empty'],
+                alcoholValue,
+                setBloodAlcoholContentErrorMessage,
+              )
+              // update offense on server, and update indictment count state and fields offense effects
+              await handleAlcoholSubstanceUpdate(
+                drunkDrivingOffense,
+                alcoholValue,
+              )
+            }}
+          >
+            <Input
+              name="alcohol"
+              autoComplete="off"
+              label={formatMessage(strings.bloodAlcoholContentLabel)}
+              placeholder={formatMessage(
+                strings.bloodAlcoholContentPlaceholder,
+              )}
+              errorMessage={bloodAlcoholContentErrorMessage}
+              hasError={bloodAlcoholContentErrorMessage !== ''}
+              required
+            />
+          </InputMask>
         </Box>
       )}
     </>

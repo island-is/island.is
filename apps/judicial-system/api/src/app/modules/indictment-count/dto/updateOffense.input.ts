@@ -1,10 +1,9 @@
-import { Allow, IsEnum, IsOptional } from 'class-validator'
+import { Allow, IsOptional } from 'class-validator'
 import { GraphQLJSONObject } from 'graphql-type-json'
 
 import { Field, ID, InputType } from '@nestjs/graphql'
 
 import type { SubstanceMap } from '@island.is/judicial-system/types'
-import { IndictmentCountOffense } from '@island.is/judicial-system/types'
 
 @InputType()
 export class UpdateOffenseInput {
@@ -19,11 +18,6 @@ export class UpdateOffenseInput {
   @Allow()
   @Field(() => ID)
   readonly indictmentCountId!: string
-
-  @Allow()
-  @IsEnum(IndictmentCountOffense)
-  @Field(() => IndictmentCountOffense)
-  readonly offense!: IndictmentCountOffense
 
   @Allow()
   @IsOptional()

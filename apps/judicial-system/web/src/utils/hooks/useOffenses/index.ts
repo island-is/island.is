@@ -2,7 +2,10 @@ import { useCallback } from 'react'
 import { useIntl } from 'react-intl'
 
 import { toast } from '@island.is/island-ui/core'
-import { IndictmentCountOffense, SubstanceMap } from '@island.is/judicial-system/types'
+import {
+  IndictmentCountOffense,
+  SubstanceMap,
+} from '@island.is/judicial-system/types'
 import { errors } from '@island.is/judicial-system-web/messages'
 import { UpdateOffenseInput } from '@island.is/judicial-system-web/src/graphql/schema'
 
@@ -26,14 +29,18 @@ const useOffenses = () => {
   const [deleteOffenseMutation] = useDeleteOffenseMutation()
 
   const createOffense = useCallback(
-    async (caseId: string, indictmentCountId: string, offense: IndictmentCountOffense) => {
+    async (
+      caseId: string,
+      indictmentCountId: string,
+      offense: IndictmentCountOffense,
+    ) => {
       try {
         const { data } = await createOffenseMutation({
           variables: {
             input: {
               caseId,
               indictmentCountId,
-              offense
+              offense,
             },
           },
         })

@@ -38,7 +38,7 @@ import { isDefendantStepValidIndictments } from '@island.is/judicial-system-web/
 
 import { DefendantInfo } from '../../components'
 import { getIndictmentIntroductionAutofill } from '../Indictment/Indictment'
-import { getIncidentDescription } from '../Indictment/IndictmentCount'
+import { getIncidentDescription } from '../Indictment/lib/getIncidentDescription'
 import { LokeNumberList } from './LokeNumberList/LokeNumberList'
 import { PoliceCaseInfo } from './PoliceCaseInfo/PoliceCaseInfo'
 import { usePoliceCaseInfoQuery } from './policeCaseInfo.generated'

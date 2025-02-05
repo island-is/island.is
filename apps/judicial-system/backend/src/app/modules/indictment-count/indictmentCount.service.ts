@@ -1,11 +1,12 @@
 import { Transaction } from 'sequelize/types'
+import { Sequelize } from 'sequelize-typescript'
 
 import {
   Inject,
   Injectable,
   InternalServerErrorException,
 } from '@nestjs/common'
-import { InjectModel } from '@nestjs/sequelize'
+import { InjectConnection, InjectModel } from '@nestjs/sequelize'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -20,6 +21,7 @@ import { Offense } from './models/offense.model'
 @Injectable()
 export class IndictmentCountService {
   constructor(
+    @InjectConnection() private readonly sequelize: Sequelize,
     @InjectModel(IndictmentCount)
     private readonly indictmentCountModel: typeof IndictmentCount,
     @InjectModel(Offense) private readonly offenseModel: typeof Offense,
@@ -64,20 +66,27 @@ export class IndictmentCountService {
   }
 
   async delete(caseId: string, indictmentCountId: string): Promise<boolean> {
-    const numberOfAffectedRows = await this.indictmentCountModel.destroy({
-      where: { id: indictmentCountId, caseId },
-    })
+    this.sequelize.transaction(async (transaction) => {
+      const numberOfAffectedRows = await this.indictmentCountModel.destroy({
+        where: { id: indictmentCountId, caseId },
+        transaction,
+      })
+      await this.offenseModel.destroy({
+        where: { id: indictmentCountId },
+        transaction,
+      })
 
-    if (numberOfAffectedRows > 1) {
-      // Tolerate failure, but log error
-      this.logger.error(
-        `Unexpected number of rows (${numberOfAffectedRows}) affected when deleting indictment count ${indictmentCountId} of case ${caseId}`,
-      )
-    } else if (numberOfAffectedRows < 1) {
-      throw new InternalServerErrorException(
-        `Could not delete indictment count ${indictmentCountId} of case ${caseId}`,
-      )
-    }
+      if (numberOfAffectedRows > 1) {
+        // Tolerate failure, but log error
+        this.logger.error(
+          `Unexpected number of rows (${numberOfAffectedRows}) affected when deleting indictment count ${indictmentCountId} of case ${caseId}`,
+        )
+      } else if (numberOfAffectedRows < 1) {
+        throw new InternalServerErrorException(
+          `Could not delete indictment count ${indictmentCountId} of case ${caseId}`,
+        )
+      }
+    })
 
     return true
   }
