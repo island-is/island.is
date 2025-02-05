@@ -45,6 +45,7 @@ import {
   SyslumadurPaymentCatalogApi,
 } from '../dataProviders'
 import { buildPaymentState } from '@island.is/application/utils'
+import { CodeOwners } from '@island.is/shared/constants'
 
 const configuration =
   ApplicationConfigurations[ApplicationTypes.DRIVING_LICENSE]
@@ -71,6 +72,7 @@ const DrivingLicenseTemplate: ApplicationTemplate<
         ' - ' +
         m.applicationForRenewalLicenseTitle.defaultMessage
       : m.applicationForDrivingLicense.defaultMessage,
+  codeOwner: CodeOwners.Juni,
   institution: m.nationalCommissionerOfPolice,
   dataSchema,
   translationNamespaces: [configuration.translation],

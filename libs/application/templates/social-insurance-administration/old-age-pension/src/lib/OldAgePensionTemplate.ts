@@ -51,6 +51,7 @@ import {
   Roles,
   States,
 } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
+import { CodeOwners } from '@island.is/shared/constants'
 
 const OldAgePensionTemplate: ApplicationTemplate<
   ApplicationContext,
@@ -59,6 +60,7 @@ const OldAgePensionTemplate: ApplicationTemplate<
 > = {
   type: ApplicationTypes.OLD_AGE_PENSION,
   name: determineNameFromApplicationAnswers,
+  codeOwner: CodeOwners.Deloitte,
   institution: socialInsuranceAdministrationMessage.shared.institution,
   translationNamespaces: ApplicationConfigurations.OldAgePension.translation,
   dataSchema,
