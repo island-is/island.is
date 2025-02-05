@@ -409,7 +409,6 @@ export const IndictmentCount: FC<Props> = ({
   setWorkingCase,
 }) => {
   const { features } = useContext(FeatureContext)
-  // TODO: remove from dev, staging and prod!!!
   const isOffenseEndpointEnabled = features.includes(Feature.OFFENSE_ENDPOINTS)
 
   const { formatMessage } = useIntl()
@@ -683,7 +682,11 @@ export const IndictmentCount: FC<Props> = ({
             />
           </Box>
           {isOffenseEndpointEnabled ? (
-            <Offenses indictmentCount={indictmentCount} />
+            <Offenses
+              workingCase={workingCase}
+              indictmentCount={indictmentCount}
+              handleIndictmentCountChanges={handleIndictmentCountChanges}
+            />
           ) : (
             <>
               <Box marginBottom={2}>
