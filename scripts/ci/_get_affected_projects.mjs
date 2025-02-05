@@ -10,6 +10,16 @@ const getShowAllProjects = () => {
             process.env.TEST_EVERYTHING === 'true';
 }
 
+export const getDefault = () => {
+    return {
+        SHOW_ALL_PROJECTS: getShowAllProjects(),
+        BASE: process.env.BASE ?? 'main',
+        HEAD: process.env.HEAD ?? 'HEAD',
+        MAX_RUNNERS: 3,
+        TARGET: process.argv[2] ?? DEFAULT_TARGET
+    };
+}
+
 export const getAffectedProjectsArray = ({
     SHOW_ALL_PROJECTS = getShowAllProjects(),
     BASE = process.env.BASE ?? 'main',
@@ -31,13 +41,15 @@ export const getAffectedProjectsString = (props = {}) => {
     return projects.join(',');
 }
 
-export const runLinterAffectedProjects = (props = {}) => {
-    const chunks = getAffectedProjectsString(props);
-    if (!chunks) {
+export const runLinterAffectedProjects = (_props = {}) => {
+    const props = { ...getDefault(), ..._props };
+    if (props.SHOW_ALL_PROJECTS) {
+        console.log(`Showing all projects for ${props.TARGET ?? DEFAULT_TARGET}`);
+        execSync(`npx nx run-many --parallel=${props.MAX_RUNNERS} --target=${props.TARGET ?? DEFAULT_TARGET} --all`, {encoding: 'utf-8'});
         return;
     }
-    console.log(`Affected projects for ${props.target ?? DEFAULT_TARGET}: ${chunks}`);
-    execSync(`npx nx run-many --target=${props.target ?? DEFAULT_TARGET} --projects=${chunks}`, {encoding: 'utf-8'});
+    console.log(`Running ${props.TARGET ?? DEFAULT_TARGET} on affected projects`);
+    execSync(`npx nx affected --parallel=${props.MAX_RUNNERS} --target=${props.TARGET ?? DEFAULT_TARGET} --base=${props.BASE} --head=${props.HEAD}`, {encoding: 'utf-8'});
 }
 
 if (import.meta.url === `file://${process.argv[1]}`) {
