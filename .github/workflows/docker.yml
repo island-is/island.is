@@ -131,7 +131,7 @@ jobs:
         id: args
         env:
           image_repository: ${{ env.IMAGE_REGISTRY }}/docker-cache
-          localrun: ${{ github.event.localrun }}
+          localrun: ${{ !!github.event.localrun }}
         run: |
           echo image-repository="$image_repository" | tee -a "$GITHUB_OUTPUT"
           echo build-cache-local="type=local,src=/tmp,dest=/tmp,mode=max,enabled=${{ !!github.event.localrun }}" | tee -a "$GITHUB_OUTPUT"
@@ -151,6 +151,7 @@ jobs:
           cache_to: |
             ${{ steps.args.outputs.build-cache-local }},mode=max
             ${{ steps.args.outputs.build-cache }},mode=max
+          localrun: ${{ !!github.event.localrun }}
         run: |
           echo file="scripts/ci/Dockerfile" | tee -a "$GITHUB_OUTPUT"
           echo push="$localrun" | tee -a "$GITHUB_OUTPUT"
