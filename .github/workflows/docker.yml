@@ -197,10 +197,10 @@ jobs:
           '{
             file: "scripts/ci/Dockerfile",
             push: false,
-            build-args: $build_args
-            image-repository: $image_repository
-            cache-from: ($cache_from | split("\n") | map(trim_str) | join(","))
-            cache-to: ($cache_to | split("\n") | map(trim_str) | join(","))
+            "build-args": $build_args,
+            "image-repository": $image_repository,
+            "cache-from": $cache_from,
+            "cache-to": $cache_to,
           }' | tee -a "$GITHUB_OUTPUT"
 
       # Build stable layers; only difference between these steps should be the `target`
