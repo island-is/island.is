@@ -116,7 +116,7 @@ jobs:
 
       - name: yarn s3
         run: |
-          ./scripts/yarn-s3.sh
+          ./scripts/yarn-s3.sh ${{ hashFiles('**/yarn.lock') }}
 
       - name: License audit Node modules
         run: ./scripts/ci/20_license-audit.sh
@@ -214,7 +214,7 @@ jobs:
 
       - name: yarn s3
         run: |
-          ./scripts/yarn-s3.sh
+          ./scripts/yarn-s3.sh ${{ hashFiles('**/yarn.lock') }}
 
       - name: Run unit tests
         uses: ./.github/actions/unit-test
@@ -254,7 +254,7 @@ jobs:
 
       - name: yarn s3
         run: |
-          ./scripts/yarn-s3.sh
+          ./scripts/yarn-s3.sh ${{ hashFiles('**/yarn.lock') }}
 
       - name: Running e2e tests
         run: ./scripts/ci/40_e2e.sh "${AFFECTED_PROJECT}"
@@ -275,7 +275,7 @@ jobs:
 
       - name: yarn s3
         run: |
-          ./scripts/yarn-s3.sh
+          ./scripts/yarn-s3.sh ${{ hashFiles('**/yarn.lock') }}
 
       - name: Linting workspace
         run: ./scripts/ci/20_lint-workspace.sh
@@ -317,7 +317,7 @@ jobs:
         run: corepack enable
       - name: yarn s3
         run: |
-          ./scripts/yarn-s3.sh
+          ./scripts/yarn-s3.sh ${{ hashFiles('**/yarn.lock') }}
       - name: NX format:check
         if: ${{ github.ref == 'ref/heads/main' }}
         run: ./scripts/ci/20_check-formatting.sh "check"
@@ -349,7 +349,7 @@ jobs:
         run: corepack enable
       - name: yarn s3
         run: |
-          ./scripts/yarn-s3.sh
+          ./scripts/yarn-s3.sh ${{ hashFiles('**/yarn.lock') }}
       - name: Linting
         run: ./scripts/ci/run-in-parallel-native.sh lint
 
@@ -374,7 +374,7 @@ jobs:
         run: corepack enable
       - name: yarn s3
         run: |
-          ./scripts/yarn-s3.sh
+          ./scripts/yarn-s3.sh ${{ hashFiles('**/yarn.lock') }}
 
       - name: Building
         run: ./scripts/ci/run-in-parallel-native.sh build
