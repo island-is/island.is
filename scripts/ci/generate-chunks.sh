@@ -15,7 +15,7 @@ fi
 
 BRANCH=${BRANCH:-$GITHUB_HEAD_REF}
 SKIP_TESTS_ON_BRANCH=${SKIP_TESTS_ON_BRANCH:-}
-if [[ "$SKIP_TESTS_ON_BRANCH" == "7913-$BRANCH" ]]; then
+if [[ "$SKIP_TESTS_ON_BRANCH" == "7913-$BRANCH" ]] || [[ "${SKIP_TESTS:-}" == true ]]; then
   #Skipping tests
   echo "[]"
 elif [[ "${CI_DEBUG:-}" == true ]]; then
