@@ -75,6 +75,9 @@ jobs:
       - name: Build arg prep
         id: args-prep
         run: |
+          node_image_version="$NODE_IMAGE_VERSION"
+          echo node-image-version="$node_image_version" >>"$GITHUB_OUTPUT"
+          yarn info --json @playwright/test | jq -r '.children.Version | "playwright-image-tag=v\(.)-focal"' >>"$GITHUB_OUTPUT"
 
       - name: Create matrix from input
         id: set-matrix
