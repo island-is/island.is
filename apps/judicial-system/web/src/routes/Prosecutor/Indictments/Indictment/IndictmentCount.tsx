@@ -56,7 +56,7 @@ import {
 
 import { getIncidentDescription } from './lib/getIncidentDescription'
 import { Offenses } from './Offenses/Offenses'
-import { Substances as SubstanceChoices } from './Substances/Substances'
+import { DeprecatedSubstances as SubstanceChoices } from './Substances/DeprecatedSubstances'
 import { indictmentCount as strings } from './IndictmentCount.strings'
 import { indictmentCountEnum as enumStrings } from './IndictmentCountEnum.strings'
 import * as styles from './IndictmentCount.css'
@@ -687,7 +687,6 @@ export const IndictmentCount: FC<Props> = ({
                   </InputMask>
                 </Box>
               )}
-              {/* HERE */}
               {indictmentCount.deprecatedOffenses?.includes(
                 IndictmentCountOffense.SPEEDING,
               ) && (
@@ -789,6 +788,7 @@ export const IndictmentCount: FC<Props> = ({
                   </InputMask>
                 </Box>
               )}
+              {/* HERE */}
               {indictmentCount.deprecatedOffenses
                 ?.filter(
                   (offenseType) =>

@@ -21,6 +21,8 @@ import {
 import { UpdateIndictmentCount } from '@island.is/judicial-system-web/src/utils/hooks'
 import useOffenses from '@island.is/judicial-system-web/src/utils/hooks/useOffenses'
 
+import { DeprecatedSubstances as SubstanceChoices } from '../Substances/DeprecatedSubstances'
+import { Substances } from '../Substances/Substances'
 import { SpeedingOffenseFields } from './SpeedingOffenseFields'
 import { indictmentCount as strings } from '../IndictmentCount.strings'
 import { indictmentCountEnum as enumStrings } from '../IndictmentCountEnum.strings'
@@ -37,6 +39,13 @@ const getDrunkDriving = (offenses: Offense[]) =>
 
 const getSpeeding = (offenses: Offense[]) =>
   offenses.find((o) => o.offense === IndictmentCountOffense.SPEEDING)
+
+const getDrugsDriving = (offenses: Offense[]) =>
+  offenses?.filter(
+    (o) =>
+      o.offense === IndictmentCountOffense.ILLEGAL_DRUGS_DRIVING ||
+      o.offense === IndictmentCountOffense.PRESCRIPTION_DRUGS_DRIVING,
+  )
 
 export const Offenses = ({
   workingCase,
@@ -87,7 +96,6 @@ export const Offenses = ({
     selectedOffense: IndictmentCountOffense,
   ) => {
     const hasOffense = offenses?.some((o) => o.offense === selectedOffense)
-    console.log({ hasOffense, offenses })
     if (!hasOffense) {
       const newOffense = await createOffense(
         workingCase.id,
@@ -131,14 +139,14 @@ export const Offenses = ({
     })
   }
 
-  const handleAlcoholSubstanceUpdate = async (
+  const handleOffenseSubstanceUpdate = async (
     offense: Offense,
-    alcoholValue: string,
+    updatedSubstances: SubstanceMap,
   ) => {
     const offenseToBeUpdated = {
       substances: {
         ...offense.substances,
-        ALCOHOL: alcoholValue,
+        ...updatedSubstances,
       } as SubstanceMap,
     }
     const updatedOffense = await updateOffense(
@@ -159,6 +167,17 @@ export const Offenses = ({
 
       handleIndictmentCountChanges({}, updatedOffenses)
     }
+  }
+
+  const handleAlcoholSubstanceUpdate = async (
+    offense: Offense,
+    alcoholValue: string,
+  ) => {
+    const substances = {
+      ...offense.substances,
+      ALCOHOL: alcoholValue,
+    } as SubstanceMap
+    await handleOffenseSubstanceUpdate(offense, substances)
   }
 
   return (
@@ -293,6 +312,12 @@ export const Offenses = ({
           updateIndictmentCountState={updateIndictmentCountState}
         />
       )}
+      {/* DRUGS SUBSTANCE FIELDS */}
+      {getDrugsDriving(offenses).map((o) => (
+        <Box key={`${indictmentCount.id}-${o.offense}-substances`}>
+          <Substances offense={o} onChange={handleOffenseSubstanceUpdate} />
+        </Box>
+      ))}
     </>
   )
 }
