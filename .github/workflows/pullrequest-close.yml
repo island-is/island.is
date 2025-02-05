@@ -79,7 +79,7 @@ jobs:
           echo ${{ github.head_ref}}
           git checkout $TARGET_BRANCH
           git checkout -b $PR_BRANCH
-          git cherry-pick -x --strategy ours ${{ github.event.pull_request.merge_commit_sha }}
+          git cherry-pick -x ${{ github.event.pull_request.merge_commit_sha }}
           git commit --allow-empty -am "Automated cherry-pick of ${{ github.event.pull_request.merge_commit_sha }}"
           git push --set-upstream origin $PR_BRANCH
           echo "new branch created"
