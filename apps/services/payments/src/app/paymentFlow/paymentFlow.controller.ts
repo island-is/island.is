@@ -20,8 +20,6 @@ import {
 } from '@island.is/nest/feature-flags'
 import { CreatePaymentFlowInput } from './dtos/createPaymentFlow.input'
 
-type CreatePaymentUrlResponse = { url: string }
-
 @UseGuards(FeatureFlagGuard)
 @FeatureFlag(Features.isIslandisPaymentEnabled)
 @ApiTags('payments')

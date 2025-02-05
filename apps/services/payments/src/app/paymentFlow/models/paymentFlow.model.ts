@@ -161,6 +161,14 @@ export class PaymentFlow extends Model<
   })
   metadata?: object
 
+  @ApiPropertyOptional()
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+    field: 'return_url',
+  })
+  returnUrl?: string
+
   @CreatedAt
   @Column({
     type: DataType.DATE,

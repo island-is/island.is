@@ -34,4 +34,7 @@ export class GetPaymentFlowResponse {
       'Arbitrary JSON data provided by the consuming service that will be returned on in callbacks (e.g. onSuccess, onUpdate). Example use case: the service that created the payment flow needs to pass some data that will be returned in the callback',
   })
   metadata?: object
+
+  @Field(() => String, { nullable: true })
+  returnUrl?: string
 }

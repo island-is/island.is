@@ -107,4 +107,12 @@ export class CreatePaymentFlowInput {
   @IsString()
   @IsOptional()
   existingInvoiceId?: string
+
+  @Field(() => String, {
+    nullable: true,
+    description: 'URL to redirect the user to after payment is completed',
+  })
+  @IsString()
+  @IsOptional()
+  returnUrl?: string
 }

@@ -125,4 +125,13 @@ export class CreatePaymentFlowInput {
     type: String,
   })
   existingInvoiceId?: string
+
+  @IsString()
+  @IsOptional()
+  @ApiPropertyOptional({
+    description:
+      'URL to redirect the payer to after the payment flow has been completed successfully',
+    type: String,
+  })
+  returnUrl?: string
 }
