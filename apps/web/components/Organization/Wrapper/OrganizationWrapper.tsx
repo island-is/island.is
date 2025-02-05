@@ -798,7 +798,13 @@ export const OrganizationFooter: React.FC<
     case 'digital-iceland':
       OrganizationFooterComponent = (
         <GridContainer>
-          <DigitalIcelandFooter links={n('digitalIcelandFooterLinks', [])} />
+          <DigitalIcelandFooter
+            illustrationSrc={n(
+              'digitalIcelandFooterIllustrationSrc',
+              'https://images.ctfassets.net/8k0h54kbe6bj/X3D3BSLC0PHyxvOkfhlbt/7d6b3bb0a552af01275b15cac8b16eb9/DigitalIcelandHeaderImage_1__1_.svg',
+            )}
+            links={n('digitalIcelandFooterLinks', [])}
+          />
         </GridContainer>
       )
       break

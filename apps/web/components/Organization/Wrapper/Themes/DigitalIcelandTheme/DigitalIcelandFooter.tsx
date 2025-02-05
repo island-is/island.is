@@ -11,16 +11,25 @@ import * as styles from './DigitalIcelandFooter.css'
 
 interface DigitalIcelandFooterProps {
   links: { label: string; href: string }[]
+  illustrationSrc: string
 }
 
-export const DigitalIcelandFooter = ({ links }: DigitalIcelandFooterProps) => {
+export const DigitalIcelandFooter = ({
+  links,
+  illustrationSrc,
+}: DigitalIcelandFooterProps) => {
   return (
     <Box>
+      {Boolean(illustrationSrc) && (
+        <Box display="flex" justifyContent="center">
+          <img src={illustrationSrc} alt="" />
+        </Box>
+      )}
       <Box
         background="blue100"
         borderRadius="large"
         paddingX={[3, 3, 5, 5, 15]}
-        paddingY={[2, 2, 4]}
+        paddingY={[3, 3, 4]}
         className={styles.container}
       >
         <Logo
