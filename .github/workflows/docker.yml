@@ -213,7 +213,7 @@ jobs:
           password: ${{ steps.creds.outputs.password }}
 
       # Build stable layers; only difference between these steps should be the `target`
-      - name: Docker build/cache dependencies
+      - name: Docker build/cache dependencies (deps)
         uses: docker/build-push-action@v6
         with:
           target: deps
@@ -223,7 +223,7 @@ jobs:
           build-args: ${{ steps.common.outputs.build-args }}
           cache-from: ${{ steps.common.outputs.cache-from }}
           cache-to: ${{ steps.common.outputs.cache-to }}
-      - name: Docker build/cache dependencies
+      - name: Docker build/cache dependencies (output-base)
         uses: docker/build-push-action@v6
         with:
           target: output-base
@@ -233,7 +233,7 @@ jobs:
           build-args: ${{ steps.common.outputs.build-args }}
           cache-from: ${{ steps.common.outputs.cache-from }}
           cache-to: ${{ steps.common.outputs.cache-to }}
-      - name: Docker build/cache dependencies
+      - name: Docker build/cache dependencies (base-node-with-pg)
         uses: docker/build-push-action@v6
         with:
           target: base-node-with-pg
