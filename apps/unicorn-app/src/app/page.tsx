@@ -8,7 +8,7 @@ export default function Index() {
               <span role="img" aria-label="unicorn">
                 Welcome unicorn 🦄 Q-Test
                 <br></br>
-                Hello pull request
+                some hot fix
                 <br></br>
                 Hello next pull request
               </span>
