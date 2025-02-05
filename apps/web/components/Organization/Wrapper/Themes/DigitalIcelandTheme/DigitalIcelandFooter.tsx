@@ -40,8 +40,8 @@ export const DigitalIcelandFooter = ({
         />
         <GridRow rowGap={[3, 3, 5, 9]}>
           {links.map((link) => (
-            <GridColumn span={['1/1', '1/1', '1/1', '1/3']}>
-              <LinkV2 key={link.href} href={link.href}>
+            <GridColumn key={link.href} span={['1/1', '1/1', '1/1', '1/3']}>
+              <LinkV2 href={link.href}>
                 <Button as="span" unfocusable={true} variant="text">
                   {link.label}
                 </Button>
