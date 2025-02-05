@@ -2,12 +2,17 @@ import { useState } from 'react'
 import { GetServerSideProps } from 'next'
 import { FormProvider, SubmitHandler, useForm } from 'react-hook-form'
 import { useRouter } from 'next/router'
-import format from 'date-fns/format'
+import Link from 'next/link'
 
-import { Box, Button, ModalBase, Table, Text } from '@island.is/island-ui/core'
+import { Box, Button, ModalBase } from '@island.is/island-ui/core'
 import { Features } from '@island.is/feature-flags'
 import { useLocale } from '@island.is/localization'
 import { findProblemInApolloError } from '@island.is/shared/problem'
+import {
+  PaymentsChargeCardInput,
+  PaymentsVerifyCardInput,
+} from '@island.is/api/schema'
+import { CardErrorCode } from '@island.is/shared/constants'
 
 import { PageCard } from '../../../components/PageCard/PageCard'
 import initApollo from '../../../graphql/client'
@@ -15,11 +20,7 @@ import { PaymentHeader } from '../../../components/PaymentHeader/PaymentHeader'
 import { PaymentSelector } from '../../../components/PaymentSelector/PaymentSelector'
 import { CardPayment } from '../../../components/CardPayment/CardPayment'
 import { InvoicePayment } from '../../../components/InvoicePayment/InvoicePayment'
-import {
-  ALLOWED_LOCALES,
-  Locale,
-  todoCallGlobalFormatUtilFunction,
-} from '../../../utils'
+import { ALLOWED_LOCALES, Locale } from '../../../utils'
 import { getConfigcatClient } from '../../../clients/configcat'
 import { card, cardSuccess, generic, invoice } from '../../../messages'
 import { ThreeDSecure } from '../../../components/ThreeDSecure/ThreeDSecure'
@@ -43,31 +44,7 @@ import {
   GetOrganizationByNationalIdQueryVariables,
   useGetVerificationStatusLazyQuery,
 } from '../../../graphql/queries.graphql.generated'
-import {
-  PaymentsChargeCardInput,
-  PaymentsVerifyCardInput,
-} from '@island.is/api/schema'
-import { CardErrorCode } from '@island.is/shared/constants'
-import Link from 'next/link'
-
-const TD = ({
-  children,
-  style,
-}: {
-  children: React.ReactNode
-  style?: React.CSSProperties
-}) => (
-  <Table.Data
-    style={{
-      ...style,
-      border: 'none',
-      verticalAlign: 'top',
-      padding: '4px 0px',
-    }}
-  >
-    <Text variant="medium">{children}</Text>
-  </Table.Data>
-)
+import { PaymentReceipt } from '../../../components/PaymentReceipt/PaymentReceipt'
 
 interface PaymentPageProps {
   locale: string
@@ -409,26 +386,11 @@ export default function PaymentPage({
           }
           bodySlot={
             <>
-              <Table.Table>
-                <Table.Body>
-                  <Table.Row>
-                    <TD>{formatMessage(generic.product)}</TD>
-                    <TD>{productInformation.title}</TD>
-                  </Table.Row>
-                  <Table.Row>
-                    <TD>{formatMessage(generic.amount)}</TD>
-                    <TD>
-                      {todoCallGlobalFormatUtilFunction(
-                        productInformation.amount,
-                      )}
-                    </TD>
-                  </Table.Row>
-                  <Table.Row>
-                    <TD>{formatMessage(generic.paidAt)}</TD>
-                    <TD>{format(new Date(), 'yyyy-MM-dd HH:MM')}</TD>
-                  </Table.Row>
-                </Table.Body>
-              </Table.Table>
+              <PaymentReceipt
+                productTitle={productInformation.title}
+                amount={productInformation.amount}
+                paidAt={new Date()}
+              />
               <Box marginTop={4} width="full">
                 <Link href={paymentFlow.returnUrl ?? 'https://island.is'}>
                   <Button fluid>
