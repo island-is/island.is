@@ -73,5 +73,5 @@ export class PaymentFlowFjsChargeConfirmation extends Model<
     defaultValue: DataType.NOW,
     field: 'modified',
   })
-  updated!: CreationOptional<Date>
+  modified!: CreationOptional<Date>
 }

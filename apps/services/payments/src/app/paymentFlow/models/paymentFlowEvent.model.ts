@@ -112,7 +112,7 @@ export class PaymentFlowEvent extends Model<
     type: DataType.DATE,
     allowNull: false,
     defaultValue: DataType.NOW,
-    field: 'updated',
+    field: 'modified',
   })
-  updated!: CreationOptional<Date>
+  modified!: CreationOptional<Date>
 }
