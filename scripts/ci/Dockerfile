@@ -1,4 +1,3 @@
-# syntax=docker/dockerfile:1.2
 # This is a multi-stage Dockerfile which contains all CI-related operations as well as images to be deployed in production
 # `base-*` layers are intended for maximum cacheability, only doing system-level actions
 
