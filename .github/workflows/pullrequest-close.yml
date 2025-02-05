@@ -34,7 +34,8 @@ jobs:
         run: |
           git config --global user.email "${{ github.actor }}@users.noreply.github.com"
           git config --global user.name "${{ github.actor }} (automated)"
-          git checkout -b main
+          git fetch --all
+          git checkout main
           echo $(date) > test.txt
           git add test.txt
           git commit -m "Adding stuff"
