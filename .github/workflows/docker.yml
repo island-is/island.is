@@ -56,6 +56,8 @@ env:
   NODE_IMAGE_VERSION: 20
   NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
   NX_TASKS_RUNNER: ci
+  # Registry without trailing `/docker`
+  ECR_PULLTHROUGH_CACHE: ${{ vars.ECR_PULLTHROUGH_CACHE || 'public.ecr.aws' }}
 
 jobs:
   prepare:
@@ -217,6 +219,7 @@ jobs:
           build-args: |
             NODE_IMAGE_VERSION=${{ needs.prepare.outputs.node-image-version }}
             PLAYWRIGHT_IMAGE_TAG=${{ needs.prepare.outputs.playwright-image-tag }}
+            DOCKER_IMAGE_REGISTRY=${{ env.ECR_PULLTHROUGH_CACHE }}
             ${{ inputs.build-args }}
           cache-from: |
             ${{ steps.args.outputs.build-cache-local }}
@@ -237,6 +240,7 @@ jobs:
           build-args: |
             NODE_IMAGE_VERSION=${{ needs.prepare.outputs.node-image-version }}
             PLAYWRIGHT_IMAGE_TAG=${{ needs.prepare.outputs.playwright-image-tag }}
+            DOCKER_IMAGE_REGISTRY=${{ env.ECR_PULLTHROUGH_CACHE }}
             ${{ inputs.build-args }}
           cache-from: |
             ${{ steps.args.outputs.build-cache-local }}
@@ -260,6 +264,7 @@ jobs:
             NODE_IMAGE_VERSION=${{ needs.prepare.outputs.node-image-version }}
             APP=${{ matrix.project }}
             PLAYWRIGHT_IMAGE_TAG=${{ needs.prepare.outputs.playwright-image-tag }}
+            DOCKER_IMAGE_REGISTRY=${{ env.ECR_PULLTHROUGH_CACHE }}
             ${{ inputs.build-args }}
           # Caching final images doesn't make sense when this should only run if the project is affected (changed)
           cache-from: |
