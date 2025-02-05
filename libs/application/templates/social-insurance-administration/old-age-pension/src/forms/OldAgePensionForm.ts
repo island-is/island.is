@@ -533,7 +533,7 @@ export const OldAgePensionForm: Form = buildForm({
 
                         return currentEmployer?.ratioType === RatioType.YEARLY
                       },
-                      placeholder: '1%',
+                      placeholder: '1-50%',
                       variant: 'number',
                       width: 'full',
                     }),
@@ -628,28 +628,6 @@ export const OldAgePensionForm: Form = buildForm({
       id: 'fileUpload',
       title: socialInsuranceAdministrationMessage.fileUpload.title,
       children: [
-        buildSubSection({
-          condition: (answers, externalData) => {
-            const earlyRetirement = isEarlyRetirement(answers, externalData)
-            return earlyRetirement
-          },
-          id: 'fileUpload.earlyRetirement.section',
-          title: oldAgePensionFormMessage.fileUpload.earlyRetirementTitle,
-          children: [
-            buildFileUploadField({
-              id: 'fileUpload.earlyRetirement',
-              title: oldAgePensionFormMessage.fileUpload.earlyRetirementTitle,
-              description:
-                oldAgePensionFormMessage.fileUpload.earlyRetirementDescription,
-              introduction:
-                oldAgePensionFormMessage.fileUpload.earlyRetirementDescription,
-              ...fileUploadSharedProps,
-              condition: (answers, externalData) => {
-                return isEarlyRetirement(answers, externalData)
-              },
-            }),
-          ],
-        }),
         buildSubSection({
           id: 'fileUpload.pension.section',
           title: oldAgePensionFormMessage.fileUpload.pensionFileTitle,

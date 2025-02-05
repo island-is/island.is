@@ -71,7 +71,13 @@ export class UserProfileService extends BaseTemplateApiService {
       )
     }
 
-    if (params?.validateEmail && !email) {
+    const isActor = !!auth.actor?.nationalId
+
+    if (
+      (params?.validateEmail ||
+        (params?.validateEmailIfNotActor && !isActor)) &&
+      !email
+    ) {
       throw new TemplateApiError(
         {
           title: coreErrorMessages.noEmailFound,
@@ -84,7 +90,10 @@ export class UserProfileService extends BaseTemplateApiService {
       )
     }
 
-    if (params?.validatePhoneNumber) {
+    if (
+      params?.validatePhoneNumber ||
+      (params?.validatePhoneNumberIfNotActor && !isActor)
+    ) {
       if (!mobilePhoneNumber || !this.isValidPhoneNumber(mobilePhoneNumber))
         throw new TemplateApiError(
           {

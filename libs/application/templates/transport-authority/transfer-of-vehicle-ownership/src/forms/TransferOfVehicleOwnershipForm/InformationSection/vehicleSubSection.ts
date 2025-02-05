@@ -90,6 +90,7 @@ export const vehicleSubSection = buildSubSection({
           title: information.labels.vehicle.mileage,
           width: 'full',
           variant: 'number',
+          required: true,
           condition: (answers, externalData) => {
             const vehicle = getSelectedVehicle(externalData, answers)
             return vehicle?.requireMileage || false

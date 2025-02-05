@@ -61,6 +61,7 @@ export const SelectionItem: FC<FieldBaseProps & SelectionItemProps> = (
     useState<boolean>(false)
 
   // state variables for values in dropdown that use Controller + Select
+  const [selectedSchool, setSelectedSchool] = useState<Option | null>(null)
   const [selectedFirstProgram, setSelectedFirstProgram] =
     useState<Option | null>(null)
   const [selectedSecondProgram, setSelectedSecondProgram] =
@@ -121,6 +122,12 @@ export const SelectionItem: FC<FieldBaseProps & SelectionItemProps> = (
           // initialize values in dropdowns:
 
           const schoolInfo = schoolOptions?.find((x) => x.id === schoolIdAnswer)
+          if (schoolInfo) {
+            setSelectedSchool({
+              value: schoolInfo.id,
+              label: schoolInfo.name,
+            })
+          }
 
           const firstProgramInfo = programs.find(
             (x) => x.id === firstProgramIdAnswer,
@@ -193,6 +200,12 @@ export const SelectionItem: FC<FieldBaseProps & SelectionItemProps> = (
 
     const schoolId = option.value
     const schoolInfo = schoolOptions?.find((x) => x.id === schoolId)
+    if (schoolInfo) {
+      setSelectedSchool({
+        value: schoolInfo.id,
+        label: schoolInfo.name,
+      })
+    }
 
     setIsLoadingPrograms(true)
     getProgramListCallback(schoolId)
@@ -398,67 +411,73 @@ export const SelectionItem: FC<FieldBaseProps & SelectionItemProps> = (
         </Box>
       )}
 
-      <Box marginTop={2}>
-        <Controller
-          name={`${props.field.id}.thirdLanguage.code`}
-          render={({ field: { onChange } }) => {
-            return (
-              <Select
-                name={`${props.field.id}.thirdLanguage.code`}
-                label={formatMessage(school.selection.thirdLanguageLabel)}
-                backgroundColor="blue"
-                isClearable
-                isLoading={isLoadingPrograms}
-                isDisabled={isLoadingPrograms}
-                value={selectedThirdLanguage}
-                options={thirdLanguageOptions.map((language) => {
-                  return {
-                    label: language.name,
-                    value: language.code,
-                  }
-                })}
-                onChange={(option: Option | null) => {
-                  onChange(option?.value)
-                  setSelectedThirdLanguage(option)
-                  setValueThirdLanguage(option?.value)
-                }}
-              />
-            )
-          }}
-        />
-      </Box>
-
-      <Box marginTop={2}>
-        <Controller
-          name={`${props.field.id}.nordicLanguage.code`}
-          render={({ field: { onChange } }) => {
-            return (
-              <Select
-                name={`${props.field.id}.nordicLanguage.code`}
-                label={formatMessage(school.selection.nordicLanguageLabel)}
-                backgroundColor="blue"
-                isClearable
-                isLoading={isLoadingPrograms}
-                isDisabled={isLoadingPrograms}
-                value={selectedNordicLanguage}
-                options={nordicLanguageOptions
-                  .filter((x) => x.code !== LANGUAGE_CODE_DANISH)
-                  .map((language) => {
+      {(!selectedSchool || !!thirdLanguageOptions.length) && (
+        <Box marginTop={2}>
+          <Controller
+            name={`${props.field.id}.thirdLanguage.code`}
+            render={({ field: { onChange } }) => {
+              return (
+                <Select
+                  name={`${props.field.id}.thirdLanguage.code`}
+                  label={formatMessage(school.selection.thirdLanguageLabel)}
+                  backgroundColor="blue"
+                  isClearable
+                  isLoading={isLoadingPrograms}
+                  isDisabled={isLoadingPrograms}
+                  value={selectedThirdLanguage}
+                  options={thirdLanguageOptions.map((language) => {
                     return {
                       label: language.name,
                       value: language.code,
                     }
                   })}
-                onChange={(option: Option | null) => {
-                  onChange(option?.value)
-                  setSelectedNordicLanguage(option)
-                  setValueNordicLanguage(option?.value)
-                }}
-              />
-            )
-          }}
-        />
-      </Box>
+                  onChange={(option: Option | null) => {
+                    onChange(option?.value)
+                    setSelectedThirdLanguage(option)
+                    setValueThirdLanguage(option?.value)
+                  }}
+                />
+              )
+            }}
+          />
+        </Box>
+      )}
+
+      {(!selectedSchool ||
+        !!nordicLanguageOptions.filter((x) => x.code !== LANGUAGE_CODE_DANISH)
+          .length) && (
+        <Box marginTop={2}>
+          <Controller
+            name={`${props.field.id}.nordicLanguage.code`}
+            render={({ field: { onChange } }) => {
+              return (
+                <Select
+                  name={`${props.field.id}.nordicLanguage.code`}
+                  label={formatMessage(school.selection.nordicLanguageLabel)}
+                  backgroundColor="blue"
+                  isClearable
+                  isLoading={isLoadingPrograms}
+                  isDisabled={isLoadingPrograms}
+                  value={selectedNordicLanguage}
+                  options={nordicLanguageOptions
+                    .filter((x) => x.code !== LANGUAGE_CODE_DANISH)
+                    .map((language) => {
+                      return {
+                        label: language.name,
+                        value: language.code,
+                      }
+                    })}
+                  onChange={(option: Option | null) => {
+                    onChange(option?.value)
+                    setSelectedNordicLanguage(option)
+                    setValueNordicLanguage(option?.value)
+                  }}
+                />
+              )
+            }}
+          />
+        </Box>
+      )}
 
       {allowRequestDormitory && (
         <Box marginTop={2}>

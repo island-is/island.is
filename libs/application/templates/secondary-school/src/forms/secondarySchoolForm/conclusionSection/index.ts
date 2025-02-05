@@ -3,28 +3,28 @@ import { conclusion } from '../../../lib/messages'
 import { buildFormConclusionSection } from '@island.is/application/ui-forms'
 import { ApplicationType } from '../../../utils'
 
-export const conclusionSectionFreshman = buildFormConclusionSection({
-  condition: (answers) => {
-    return (
-      getValueViaPath<ApplicationType>(answers, 'applicationType.value') ===
-      ApplicationType.FRESHMAN
-    )
-  },
+export const conclusionSection = buildFormConclusionSection({
   alertTitle: conclusion.general.alertTitle,
-  alertMessage: conclusion.general.alertMessageFreshman,
-  expandableHeader: conclusion.general.accordionTitle,
-  expandableDescription: conclusion.general.accordionTextFreshman,
-})
-
-export const conclusionSectionGeneral = buildFormConclusionSection({
-  condition: (answers) => {
-    return (
-      getValueViaPath<ApplicationType>(answers, 'applicationType.value') !==
-      ApplicationType.FRESHMAN
-    )
+  alertMessage: (application) => {
+    const isFreshman =
+      getValueViaPath<ApplicationType>(
+        application.answers,
+        'applicationType.value',
+      ) === ApplicationType.FRESHMAN
+    return isFreshman
+      ? conclusion.general.alertMessageFreshman
+      : conclusion.general.alertMessageGeneral
   },
-  alertTitle: conclusion.general.alertTitle,
-  alertMessage: conclusion.general.alertMessageGeneral,
   expandableHeader: conclusion.general.accordionTitle,
-  expandableDescription: conclusion.general.accordionTextGeneral,
+  expandableIntro: '',
+  expandableDescription: (application) => {
+    const isFreshman =
+      getValueViaPath<ApplicationType>(
+        application.answers,
+        'applicationType.value',
+      ) === ApplicationType.FRESHMAN
+    return isFreshman
+      ? conclusion.general.accordionTextFreshman
+      : conclusion.general.accordionTextGeneral
+  },
 })
