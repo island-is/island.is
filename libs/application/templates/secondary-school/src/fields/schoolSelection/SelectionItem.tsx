@@ -8,7 +8,7 @@ import {
 import { FC, useState, useCallback, useEffect } from 'react'
 import { school } from '../../lib/messages'
 import {
-  ApplicationType,
+  checkIsFreshman,
   getTranslatedProgram,
   Language,
   LANGUAGE_CODE_DANISH,
@@ -39,11 +39,7 @@ export const SelectionItem: FC<FieldBaseProps & SelectionItemProps> = (
   const [isSecondProgramRequired, setIsSecondProgramRequired] =
     useState<boolean>(true)
 
-  const isFreshman =
-    getValueViaPath<ApplicationType>(
-      application.answers,
-      'applicationType.value',
-    ) === ApplicationType.FRESHMAN
+  const isFreshman = checkIsFreshman(application.answers)
 
   // options for dropdowns
   const schoolOptions = getValueViaPath<SecondarySchool[]>(
