@@ -79,7 +79,7 @@ export const mapCaseStateToTagVariant = (
       if (
         isIndictmentCase(theCase.type) &&
         theCase.defendants &&
-        theCase.court &&
+        theCase.courtDate &&
         !haveAllSubpoenasBeenServiced(theCase.defendants)
       ) {
         return {
