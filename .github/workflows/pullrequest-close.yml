@@ -63,6 +63,7 @@ jobs:
       - run: "echo 'latest release: ${{ steps.get_latest_release.outputs.LATEST_RELEASE }}'"
 
       - name: Create a PR
+        if: ${{ steps.unicorn_affected.outputs.IS_UNICORN == 'true' }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PR_BRANCH: ${{ github.head_ref}}/cherry-pick
