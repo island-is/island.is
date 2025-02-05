@@ -48,12 +48,13 @@ jobs:
       NX_BASE: ${{ steps.export-sha.outputs.NX_BASE }}
     steps:
       # Creates homedir if missing (e.g. when set to /tmp/runner/ when running locally with act)
-      - name: Debug home etc.
-        run: |
-          echo "docker version: $(docker --version)"
-          echo "User: HOME=$HOME, PWD=$PWD, id=$(id)"
-          mkdir -p "$HOME"
-          ls -lah "$HOME"
+      # TODO: set arc if condition
+      # - name: Debug home etc.
+      #   run: |
+      #     echo "docker version: $(docker --version)"
+      #     echo "User: HOME=$HOME, PWD=$PWD, id=$(id)"
+      #     mkdir -p "$HOME"
+      #     ls -lah "$HOME"
 
       - uses: actions/checkout@v4
         with:
@@ -115,7 +116,7 @@ jobs:
 
       - name: Yarn efs
         run: |
-          ./scripts/yarn-efs.sh ${{ hashFiles('**/yarn.lock') }}
+          ./scripts/yarn-s3.sh ${{ hashFiles('**/yarn.lock') }}
 
       - name: License audit Node modules
         run: ./scripts/ci/20_license-audit.sh
@@ -213,7 +214,7 @@ jobs:
 
       - name: Yarn efs
         run: |
-          ./scripts/yarn-efs.sh ${{ hashFiles('**/yarn.lock') }}
+          ./scripts/yarn-s3.sh ${{ hashFiles('**/yarn.lock') }}
 
       - name: Run unit tests
         uses: ./.github/actions/unit-test
@@ -253,7 +254,7 @@ jobs:
 
       - name: Yarn efs
         run: |
-          ./scripts/yarn-efs.sh ${{ hashFiles('**/yarn.lock') }}
+          ./scripts/yarn-s3.sh ${{ hashFiles('**/yarn.lock') }}
 
       - name: Running e2e tests
         run: ./scripts/ci/40_e2e.sh "${AFFECTED_PROJECT}"
@@ -274,7 +275,7 @@ jobs:
 
       - name: Yarn efs
         run: |
-          ./scripts/yarn-efs.sh ${{ hashFiles('**/yarn.lock') }}
+          ./scripts/yarn-s3.sh ${{ hashFiles('**/yarn.lock') }}
 
       - name: Linting workspace
         run: ./scripts/ci/20_lint-workspace.sh
@@ -316,7 +317,7 @@ jobs:
         run: corepack enable
       - name: Yarn efs
         run: |
-          ./scripts/yarn-efs.sh ${{ hashFiles('**/yarn.lock') }}
+          ./scripts/yarn-s3.sh ${{ hashFiles('**/yarn.lock') }}
       - name: NX format:check
         if: ${{ github.ref == 'ref/heads/main' }}
         run: ./scripts/ci/20_check-formatting.sh "check"
@@ -348,7 +349,7 @@ jobs:
         run: corepack enable
       - name: Yarn efs
         run: |
-          ./scripts/yarn-efs.sh ${{ hashFiles('**/yarn.lock') }}
+          ./scripts/yarn-s3.sh ${{ hashFiles('**/yarn.lock') }}
       - name: Linting
         run: ./scripts/ci/run-in-parallel-native.sh lint
 
@@ -373,7 +374,7 @@ jobs:
         run: corepack enable
       - name: Yarn efs
         run: |
-          ./scripts/yarn-efs.sh ${{ hashFiles('**/yarn.lock') }}
+          ./scripts/yarn-s3.sh ${{ hashFiles('**/yarn.lock') }}
 
       - name: Building
         run: ./scripts/ci/run-in-parallel-native.sh build
