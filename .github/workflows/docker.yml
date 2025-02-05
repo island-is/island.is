@@ -174,6 +174,10 @@ jobs:
           # Identical to usage in push.yml
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      - name: Debug AWS user/login
+        run: |
+          aws sts get-caller-identity
+          aws ecr describe-repositories
       - name: Log in to Amazon ECR
         if: ${{ steps.aws-creds.conclusion == 'success' }}
         id: ecr-login
