@@ -1,10 +1,10 @@
 name: PR close
 
 on:
-  # push:
-  #   branches:
-  #     - ci/cherry-pick-unicorn
-  #     - ci/cherry-pick-pr
+  push:
+    branches:
+      - ci/cherry-pick-unicorn
+      - ci/cherry-pick-pr
   pull_request:
     types:
       - closed
@@ -27,6 +27,21 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
+
+      - name: Verify that we can't accept PRs
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git config --global user.email "${{ github.actor }}@users.noreply.github.com"
+          git config --global user.name "${{ github.actor }} (automated)"
+          git checkout -b ci/test_pr
+          echo "hallo" > test.txt
+          git add test.txt
+          git commit -m "Adding stuff"
+          git push --set-upstream origin ci/test_pr
+
+          PR=$(gh pr create -B $ci/cherry-pick-unicorn -H $ci/test_pr --title "Automated cherry-pick of test" --body "Automated cherry-pick test")
+          echo "$PR created"
 
       # - uses: actions/setup-node@v4
       #   with:
@@ -67,24 +82,24 @@ jobs:
 
       # - run: "echo 'latest release: ${{ steps.get_latest_release.outputs.LATEST_RELEASE }}'"
 
-      - name: Create a PR
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          PR_BRANCH: ${{ github.head_ref}}/cherry-pick
-          TARGET_BRANCH: ci/dummy-target
-        run: |
-          git config --global user.email "${{ github.actor }}@users.noreply.github.com"
-          git config --global user.name "${{ github.actor }} (automated)"
-          echo ${{ github.event.pull_request.merge_commit_sha }}
-          echo ${{ github.head_ref}}
-          git checkout $TARGET_BRANCH
-          git checkout -b $PR_BRANCH
-          git cherry-pick -x ${{ github.event.pull_request.merge_commit_sha }}
-          git commit --allow-empty -am "Automated cherry-pick of ${{ github.event.pull_request.merge_commit_sha }}"
-          git push --set-upstream origin $PR_BRANCH
-          echo "new branch created"
-          PR=$(gh pr create -B $TARGET_BRANCH -H $PR_BRANCH --title "Automated cherry-pick of ${{ github.event.pull_request.merge_commit_sha }}" --body "Automated cherry-pick of ${{ github.event.pull_request.merge_commit_sha }}")
-          echo "$PR created"
+      # - name: Create a PR
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #     PR_BRANCH: ${{ github.head_ref}}/cherry-pick
+      #     TARGET_BRANCH: ci/dummy-target
+      #   run: |
+      #     git config --global user.email "${{ github.actor }}@users.noreply.github.com"
+      #     git config --global user.name "${{ github.actor }} (automated)"
+      #     echo ${{ github.event.pull_request.merge_commit_sha }}
+      #     echo ${{ github.head_ref}}
+      #     git checkout $TARGET_BRANCH
+      #     git checkout -b $PR_BRANCH
+      #     git cherry-pick -x ${{ github.event.pull_request.merge_commit_sha }}
+      #     git commit --allow-empty -am "Automated cherry-pick of ${{ github.event.pull_request.merge_commit_sha }}"
+      #     git push --set-upstream origin $PR_BRANCH
+      #     echo "new branch created"
+      #     PR=$(gh pr create -B $TARGET_BRANCH -H $PR_BRANCH --title "Automated cherry-pick of ${{ github.event.pull_request.merge_commit_sha }}" --body "Automated cherry-pick of ${{ github.event.pull_request.merge_commit_sha }}")
+      #     echo "$PR created"
 
   # cleanup:
   #   name: Clean up feature deployment
