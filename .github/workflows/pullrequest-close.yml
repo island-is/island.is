@@ -37,8 +37,8 @@ jobs:
           git checkout -b ci/test_pr
           echo "hallo" > test.txt
           git add test.txt
-          git status
           git commit -m "Adding stuff"
+          git status
           git push --set-upstream origin ci/test_pr
 
           PR=$(gh pr create -B ci/cherry-pick-unicorn -H ci/test_pr --title "Automated cherry-pick of test" --body "Automated cherry-pick test")
