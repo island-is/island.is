@@ -2,13 +2,20 @@
 
 set -euox pipefail
 
-CACHE_DIR=/mnt/cache
+CACHE_MOUNT=/mnt/cache
 
 export YARN_ENABLE_HARDENED_MODE=0
-export YARN_CACHE_FOLDER=${CACHE_DIR}/.yarn/cache
+export S3_YARN_CACHE="${CACHE_MOUNT}/.yarn/cache"
 
-mkdir -p "$YARN_CACHE_FOLDER"
+mkdir -p .yarn/cache
+if [ -f "${CACHE_MOUNT}/.yarn/install-state.gz" ]; then
+  cp "${CACHE_MOUNT}/.yarn/install-state.gz" .yarn/
+fi
 
-rsync -ah --delete "${YARN_CACHE_FOLDER}/" .yarn/cache/ || true
+rsync -ah --delete "${S3_YARN_CACHE}/" .yarn/cache/ || true
+
 yarn install --immutable
-rsync -ah --delete .yarn/cache/ "${YARN_CACHE_FOLDER}/"
+
+mkdir -p "${CACHE_MOUNT}/.yarn/cache"
+cp .yarn/install-state.gz "${CACHE_MOUNT}/.yarn/" || true
+rsync -ah --delete .yarn/cache/ "${S3_YARN_CACHE}/"
