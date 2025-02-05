@@ -11,6 +11,8 @@ export default function Index() {
                 This is a new line
                 <br></br>
                 This is a new line
+                <br></br>
+                This is a new line
               </span>
             </h1>
           </div>
