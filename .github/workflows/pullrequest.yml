@@ -344,16 +344,14 @@ jobs:
       - name: Building
         run: ./scripts/ci/run-in-parallel-native.sh build
 
-  success:
+  °
     runs-on: arc-runners
     if: ${{ !cancelled() }}
     needs:
       - prepare
       - linting-workspace
       - tests
-      - linting
       - run-shellcheck
-      - formatting
       - e2e
       - build
     steps:
