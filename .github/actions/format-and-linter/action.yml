@@ -1,9 +1,9 @@
 name: 'Format and linter'
 description: 'Action to format and linter'
 inputs:
-  github-token:
-    description: 'GitHub token'
-    required: true
+  max-jobs: 
+    description: 'Max jobs'
+    default: '2'
   push-changes:
     description: 'Should push changes'
     default: 'false'
@@ -12,7 +12,6 @@ runs:
   steps:
     - name: Format
       env:
-        GITHUB_TOKEN: ${{ inputs.github-token }}
         RUN_WRITE: ${{ inputs.push-changes }}
       shell: bash
       run: |
@@ -21,9 +20,23 @@ runs:
         else
           ./infra/scripts/ci/git-check-dirty.sh "/" "nx format:write" "dirtybot"
         fi
-    - name: Lint
+    - name: Get Linter Jobs
+      id: get-linter-jobs
       env:
-        GITHUB_TOKEN: ${{ inputs.github-token }}
+        DISABLE_CHUNKS: 'true'
+        DISABLE_GROUPING: 'true'
+        DISABLE_PROBLEMATIC: 'true'
+      shell: bash
+      run: |
+        set -euo pipefail
+        CHUNKS="$(./scripts/ci/generate-chunks.sh lint)"
+        if [[ "$CHUNKS" != "[]" ]]; then
+          echo "AFFECTED_PROJECTS={\"projects\":$CHUNKS}" >> "$GITHUB_OUTPUT"
+        fi
+    - name: Lint
+      if: ${{ env.AFFECTED_PROJECTS != '' }}
+      env:
+        MAX_JOBS: ${{ inputs.max-jobs }}
       shell: bash
       run: |
         ./scripts/ci/run-in-parallel-native.sh lint

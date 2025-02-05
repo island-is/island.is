@@ -140,25 +140,10 @@ jobs:
         run: |
           echo "## WARN permissions" >> "$GITHUB_STEP_SUMMARY"
           echo "User '$GITHUB_ACTOR' does not have the required permissions to apply the 'test everything' label" >> "$GITHUB_STEP_SUMMARY"
-
-      - name: Prepare lint targets
-        id: lint_projects
-        env:
-          # Linting is easy, no need to split/chunk it
-          DISABLE_CHUNKS: 'true'
-          DISABLE_GROUPING: 'true'
-          DISABLE_PROBLEMATIC: 'true'
-        run: |
-          set -euo pipefail
-          CHUNKS="$(./scripts/ci/generate-chunks.sh lint)"
-          if [[ "$CHUNKS" != "[]" ]]; then
-            echo "CHUNKS={\"projects\":$CHUNKS}" >> "$GITHUB_OUTPUT"
-          fi
       - name: Formatting
         id: format-and-linter
         uses: ./.github/actions/format-and-linter
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
           push-changes: 'true'
 
       - name: Prepare test targets
