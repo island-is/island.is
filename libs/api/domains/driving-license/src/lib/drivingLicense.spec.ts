@@ -393,6 +393,7 @@ describe('DrivingLicenseService', () => {
         needsToPresentHealthCertificate: false,
         needsToPresentQualityPhoto: false,
         licenseCategory: DrivingLicenseCategory.B,
+        sendLicenseInMail: 0,
       })
 
       expect(response).toStrictEqual({
@@ -410,6 +411,7 @@ describe('DrivingLicenseService', () => {
           needsToPresentHealthCertificate: false,
           needsToPresentQualityPhoto: true,
           licenseCategory: DrivingLicenseCategory.B,
+          sendLicenseInMail: 0,
         })
         .catch((e) => expect(e).toBeTruthy())
     })
