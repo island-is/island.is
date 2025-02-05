@@ -17,6 +17,7 @@ import {
   defaultRenderMarkObject,
   defaultRenderNodeObject,
 } from '@island.is/island-ui/contentful'
+import { GridContainer } from '@island.is/island-ui/core'
 import { Locale } from '@island.is/shared/types'
 import {
   AccordionSlice,
@@ -28,6 +29,7 @@ import {
   ChartNumberBox,
   ChartsCard,
   ChartsCardsProps,
+  DigitalIcelandMailingListThumbnailCard,
   DrivingInstructorList,
   EmailSignup,
   Form,
@@ -201,6 +203,13 @@ export const webRenderConnectedComponent = (
       break
     case 'WHODAS/Calculator':
       connectedComponent = <WHODASCalculator slice={slice} />
+      break
+    case 'DigitalIcelandMailingListThumbnailCard':
+      connectedComponent = (
+        <GridContainer>
+          <DigitalIcelandMailingListThumbnailCard slice={slice} />
+        </GridContainer>
+      )
       break
     default:
       connectedComponent = renderConnectedComponent(slice)
